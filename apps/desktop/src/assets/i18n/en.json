@@ -33,6 +33,7 @@
 	"upload.add-connector": "Add connector",
 	"upload.connectors": "Connectors",
 	"upload.labels": "Apply labels to resources uploaded through this connector",
+	"upload.no-labels": "If you want to assign labels when uploading files, define some labelsets in your dashboard.",
 	"upload.refresh": "Refresh {{field}}",
 	"upload.s3.region": "Region",
 	"upload.s3.region_help": "e.g. us-east-1",

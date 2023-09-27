@@ -60,7 +60,7 @@
       name="info"></pa-icon>
     <a
       [href]="connector.helpUrl"
-      (click)="goToDocumentation($event, connector.helpUrl)"
+      (click)="goToUrl($event, connector.helpUrl)"
       target="_blank"
       rel="noopener noreferrer">
       {{ 'upload.source.help' | translate: { source: connector.title } }}
@@ -103,10 +103,23 @@
       </pa-button>
     </div>
     <div
-      *ngIf="showLabels"
+      *ngIf="(hasLabelSets | async) === true"
       class="field">
       <div class="body-m">{{ 'upload.labels' | translate }}</div>
       <app-label-field [(selection)]="selectedLabels"></app-label-field>
+    </div>
+    <div
+      *ngIf="(hasLabelSets | async) === false"
+      class="field">
+      <div class="body-m">
+        <a
+          [href]="dashboardUrl"
+          (click)="goToUrl($event, dashboardUrl)"
+          target="_blank"
+          rel="noopener noreferrer">
+          {{ 'upload.no-labels' | translate }}
+        </a>
+      </div>
     </div>
   </div>
 

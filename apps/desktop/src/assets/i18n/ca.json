@@ -33,6 +33,7 @@
 	"upload.add-connector": "Afegir connector",
 	"upload.connectors": "Connectors",
 	"upload.labels": "Apliqueu etiquetes als recursos penjats mitjançant aquest connector",
+	"upload.no-labels": "Si voleu assignar etiquetes quan pengeu fitxers, definiu alguns conjunts d'etiquetes al vostre tauler.",
 	"upload.refresh": "Actualització {{field}}",
 	"upload.s3.region": "Regió",
 	"upload.s3.region_help": "Per exemple: eu-west-3",

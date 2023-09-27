@@ -9,25 +9,17 @@ import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
 export class LabelsService {
   private _labelsSubject = new BehaviorSubject<LabelSets | null>(null);
   labelSets = this._labelsSubject.asObservable();
+  hasLabelSets = this.labelSets.pipe(map((sets) => !!sets && Object.keys(sets).length > 0));
 
   constructor(private sdk: SDKService) {
     this.sdk.currentKb
       .pipe(
-        tap(() => {
-          this._labelsSubject.next(null);
-        }),
+        tap(() => this._labelsSubject.next(null)),
         filter((kb) => !!kb),
         distinctUntilKeyChanged('id'),
         switchMap(() => this.refreshLabelsSets()),
       )
       .subscribe();
-  }
-
-  hasLabelSets(): Observable<boolean> {
-    return this.labelSets.pipe(
-      take(1),
-      map((sets) => !!sets && Object.keys(sets).length > 0),
-    );
   }
 
   hasLabel(setId: string, labelName: string): Observable<boolean> {
