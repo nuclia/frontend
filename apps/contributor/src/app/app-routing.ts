@@ -12,6 +12,7 @@ import {
   SearchComponent,
   SelectAccountComponent,
   SelectKbComponent,
+  UploadDataComponent,
 } from '@flaps/common';
 
 export const routerOptions: ExtraOptions = {
@@ -48,6 +49,10 @@ export const routes: Routes = [
                 loadChildren: () =>
                   // eslint-disable-next-line @nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
+              },
+              {
+                path: 'upload',
+                component: UploadDataComponent,
               },
               {
                 path: 'search',
