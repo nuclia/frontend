@@ -26,7 +26,9 @@
         (click)="selectUpload('qna')"></stf-upload-option>
     </div>
 
-    <div class="desktop-option">
+    <div
+      class="desktop-option"
+      *ngIf="!standalone">
       <p class="body-m description">
         <span class="title-xs">Nuclia Desktop.</span>
         {{ 'stash.upload.desktop.description' | translate }}
