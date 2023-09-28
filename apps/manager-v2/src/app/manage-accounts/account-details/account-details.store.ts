@@ -24,7 +24,9 @@ export class AccountDetailsStore {
 
   setAccountDetails(account: ExtendedAccount) {
     this._accountDetails.next(account);
-    this._currentState.next(BLOCKING_STATE_LABEL[account.blocking_state]);
+    if (account.blocking_state) {
+      this._currentState.next(BLOCKING_STATE_LABEL[account.blocking_state]);
+    }
   }
 
   setZones(zones: ZoneSummary[]) {

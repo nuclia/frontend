@@ -12,7 +12,7 @@
       class="users-left"
       *ngIf="account && account.max_users != null">
       {{ 'account.users_left' | translate }}
-      <strong>{{ account.max_users - account.current_users }}</strong>
+      <strong>{{ (account.max_users || 0) - (account.current_users || 0) }}</strong>
     </div>
   </div>
 

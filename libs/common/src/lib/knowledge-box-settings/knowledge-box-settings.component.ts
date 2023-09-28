@@ -19,6 +19,12 @@ import { Sluggable } from '../validators';
 import { Router } from '@angular/router';
 import { SisToastService } from '@nuclia/sistema';
 
+const EMPTY_CONFIG = {
+  display: [] as LearningConfigurationSet,
+  full: [] as LearningConfigurationSet,
+  keys: {} as LearningConfigurationUserKeys,
+};
+
 @Component({
   templateUrl: './knowledge-box-settings.component.html',
   styleUrls: ['./knowledge-box-settings.component.scss'],
@@ -79,18 +85,17 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         tap((data) => (this.kb = data || undefined)),
         switchMap(() => this.stateService.account.pipe(takeUntil(this.unsubscribeAll))),
         tap((data) => (this.account = data || undefined)),
-        switchMap(() => (this.kb?.getConfiguration().pipe(catchError(() => of({}))) || of({})).pipe(take(1))),
+        switchMap(() =>
+          (this.sdk.nuclia.options.standalone
+            ? of({})
+            : this.kb?.getConfiguration().pipe(catchError(() => of({}))) || of({})
+          ).pipe(take(1)),
+        ),
         tap((conf) => (this.currentConfig = conf)),
         switchMap(() =>
-          this.sdk.getVisibleLearningConfiguration(false).pipe(
-            catchError(() =>
-              of({
-                display: [] as LearningConfigurationSet,
-                full: [] as LearningConfigurationSet,
-                keys: {} as LearningConfigurationUserKeys,
-              }),
-            ),
-          ),
+          this.sdk.nuclia.options.standalone
+            ? of(EMPTY_CONFIG)
+            : this.sdk.getVisibleLearningConfiguration(false).pipe(catchError(() => of(EMPTY_CONFIG))),
         ),
         takeUntil(this.unsubscribeAll),
       )

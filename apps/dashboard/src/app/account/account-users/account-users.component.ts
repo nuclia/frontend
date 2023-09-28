@@ -25,7 +25,7 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
 
   account$ = this.stateService.account.pipe(filter((account) => !!account));
   canAddUsers = this.account$.pipe(
-    map((account) => account!.max_users == null || account!.current_users < account!.max_users),
+    map((account) => account!.max_users == null || (account!.current_users || 0) < account!.max_users),
   );
 
   unsubscribeAll = new Subject<void>();

@@ -3,13 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { catchError, Subject, throwError } from 'rxjs';
 import { filter, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
-import { SDKService, SimpleAccount, StaticEnvironmentConfiguration, STFUtils } from '@flaps/core';
+import { SDKService, StaticEnvironmentConfiguration, STFUtils, standaloneSimpleAccount } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
-import { IKnowledgeBoxItem } from '@nuclia/core';
+import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '../../validators';
 import { NavigationService } from '../../services';
-import { standaloneSimpleAccount } from '../utils';
 import { SisToastService } from '@nuclia/sistema';
 
 @Component({
@@ -19,7 +18,7 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectKbComponent implements OnInit, OnDestroy {
-  account: SimpleAccount | undefined;
+  account: Account | undefined;
   kbs: IKnowledgeBoxItem[] | undefined;
   addKb: boolean = false;
   accountData = this.route.paramMap.pipe(
@@ -29,7 +28,10 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   );
   canManage = this.accountData.pipe(map((account) => account.can_manage_account));
   canAddKb = this.accountData.pipe(
-    map((account) => account.can_manage_account && (account.max_kbs > account.current_kbs || account.max_kbs === -1)),
+    map(
+      (account) =>
+        account.can_manage_account && (account.max_kbs > (account.current_kbs || 0) || account.max_kbs === -1),
+    ),
   );
   kbName = new FormControl<string>('', [Sluggable()]);
   unsubscribeAll = new Subject<void>();

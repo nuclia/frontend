@@ -61,9 +61,9 @@ class NucliaCloudKBImpl implements IDestinationConnector {
       return this.getAccount().pipe(
         tap((account) => {
           const applicableLimit = this.isMedia(mimetype)
-            ? account.limits.upload.upload_limit_max_media_file_size
-            : account.limits.upload.upload_limit_max_non_media_file_size;
-          if (blob.size > applicableLimit) {
+            ? account.limits?.upload.upload_limit_max_media_file_size
+            : account.limits?.upload.upload_limit_max_non_media_file_size;
+          if (applicableLimit && blob.size > applicableLimit) {
             console.error(`File too large. Size=${blob.size}, limit=${applicableLimit}`);
             throw new Error(`File "${filename}" is too large.`);
           }

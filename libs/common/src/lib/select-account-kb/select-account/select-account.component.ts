@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router, Scroll } from '@angular/router';
 import { filter, Subject } from 'rxjs';
-import { SimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
+import { StaticEnvironmentConfiguration, standaloneSimpleAccount } from '@flaps/core';
 import { AccountsKbs, SelectAccountKbService } from '../select-account-kb.service';
-import { selectAnimations, standaloneSimpleAccount } from '../utils';
+import { selectAnimations } from '../utils';
+import { Account } from '@nuclia/core';
 
 @Component({
   selector: 'app-select-account',
@@ -13,7 +14,7 @@ import { selectAnimations, standaloneSimpleAccount } from '../utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectAccountComponent implements OnInit, OnDestroy {
-  accounts: SimpleAccount[] | null = null;
+  accounts: Account[] | null = null;
   kbs: AccountsKbs | null = null;
   selectKb: boolean = false;
   unsubscribeAll = new Subject<void>();

@@ -178,7 +178,10 @@ export class AccountHomeComponent {
   getLimit(statsType: StatsType): Observable<number | undefined> {
     return this.account$.pipe(
       map((account) => {
-        const limits = account.limits.usage;
+        const limits = account.limits?.usage;
+        if (!limits) {
+          return undefined;
+        }
         let limit;
         let processedLimit;
         switch (statsType) {

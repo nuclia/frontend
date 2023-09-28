@@ -37,7 +37,7 @@ export class LimitsComponent implements OnInit, OnDestroy {
       .getAccount()
       .pipe(
         tap((accountDetails) => {
-          Object.entries(accountDetails.limits.upload).forEach(([key, limit]) => {
+          Object.entries(accountDetails.limits?.upload || {}).forEach(([key, limit]) => {
             const radioKey = `${key}-radio`;
             this.limitsForm.controls.upload.addControl(
               key,
@@ -50,7 +50,7 @@ export class LimitsComponent implements OnInit, OnDestroy {
               }),
             );
           });
-          Object.entries(accountDetails.limits.usage).forEach(([key, limit]) => {
+          Object.entries(accountDetails.limits?.usage || {}).forEach(([key, limit]) => {
             this.limitsForm.controls.usage.addControl(
               key,
               new FormGroup({
@@ -86,11 +86,14 @@ export class LimitsComponent implements OnInit, OnDestroy {
       this.isSaving = true;
       const rawValues = this.limitsForm.getRawValue();
       const payload: AccountLimitsPatchPayload = Object.entries(rawValues).reduce((data, [groupKey, limits]) => {
-        data[groupKey as 'usage' | 'upload'] = Object.entries(limits).reduce((value, [key, limitData]) => {
-          const limitAndRadio = limitData as any;
-          value[key] = limitAndRadio[key + '-radio'] === 'unlimited' ? -1 : (limitAndRadio['limit'] as number);
-          return value;
-        }, {} as { [key: string]: number }) as any;
+        data[groupKey as 'usage' | 'upload'] = Object.entries(limits).reduce(
+          (value, [key, limitData]) => {
+            const limitAndRadio = limitData as any;
+            value[key] = limitAndRadio[key + '-radio'] === 'unlimited' ? -1 : (limitAndRadio['limit'] as number);
+            return value;
+          },
+          {} as { [key: string]: number },
+        ) as any;
         return data;
       }, {} as AccountLimitsPatchPayload);
       this.updateLimits(payload);
@@ -169,7 +172,7 @@ export class LimitsComponent implements OnInit, OnDestroy {
   }
 
   private updateForm(updatedAccount: ExtendedAccount) {
-    const newLimits = Object.entries(updatedAccount.limits).reduce((data, [groupKey, limits]) => {
+    const newLimits = Object.entries(updatedAccount.limits || {}).reduce((data, [groupKey, limits]) => {
       data[groupKey] = Object.entries(limits as { [limitKey: string]: number }).reduce((values, [key, limit]) => {
         values[key] = {
           limit,

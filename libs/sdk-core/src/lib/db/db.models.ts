@@ -19,13 +19,13 @@ export interface Account {
   zone: string;
   type: AccountTypes;
   can_manage_account: boolean;
-  current_kbs: number;
+  current_kbs?: number;
   max_kbs: number;
-  current_users: number;
+  current_users?: number;
   max_users: number | null;
   config?: AccountConfig;
-  limits: AccountLimits;
-  blocking_state: AccountBlockingState;
+  limits?: AccountLimits;
+  blocking_state?: AccountBlockingState;
   blocked_features: BlockedFeature[];
   trial_expiration_date?: string;
 }
