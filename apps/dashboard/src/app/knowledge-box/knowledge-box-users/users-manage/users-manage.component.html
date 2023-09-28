@@ -103,7 +103,9 @@
           aspect="basic"
           icon="trash"
           size="small"
-          [disabled]="(userCount | async) || 0 < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)"
+          [disabled]="
+            ((userCount | async) || 0) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)
+          "
           (click)="deleteUser(user)">
           {{ 'generic.delete' | translate }}
         </pa-button>
