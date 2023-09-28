@@ -4,23 +4,25 @@
   import Label from '../../common/label/Label.svelte';
   import Chip from '../../common/chip/Chip.svelte';
   import { combineLatest, iif, map, of, switchMap, take, tap } from 'rxjs';
+  import type { TypedResult } from '../../core';
   import {
-      _,
-      addLabelFilter,
-      getFieldDataFromResource,
-      getFirstResourceField,
-      getNavigationUrl,
-      getResourceById, getResultType,
-      goToUrl,
-      navigateToFile,
-      navigateToLink,
-      NO_SUGGESTION_RESULTS,
-      suggestEntities,
-      suggestionError,
-      suggestions,
-      suggestionsHasError,
-      typeAhead, TypedResult,
-      viewerData
+    _,
+    addLabelFilter,
+    getFieldDataFromResource,
+    getFirstResourceField,
+    getNavigationUrl,
+    getResourceById,
+    getResultType,
+    goToUrl,
+    navigateToFile,
+    navigateToLink,
+    NO_SUGGESTION_RESULTS,
+    suggestEntities,
+    suggestionError,
+    suggestions,
+    suggestionsHasError,
+    typeAhead,
+    viewerData
   } from '../../core';
   import { createEventDispatcher } from 'svelte';
 
@@ -70,16 +72,16 @@
   function openViewer(resource: IResource, field?: ResourceField) {
     if (field) {
       const fieldData = getFieldDataFromResource(resource, field);
-      const {resultType, resultIcon} = getResultType({...resource, field, fieldData });
+      const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
       const result: TypedResult = {
-          ...resource,
-          resultType,
-          resultIcon,
-          field: {field_id: field.field_id, field_type: field.field_type},
+        ...resource,
+        resultType,
+        resultIcon,
+        field: { field_id: field.field_id, field_type: field.field_type }
       };
       viewerData.set({
         result,
-        selectedParagraphIndex: -1,
+        selectedParagraphIndex: -1
       });
     }
   }

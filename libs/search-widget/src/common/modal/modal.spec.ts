@@ -1,4 +1,4 @@
-import Modal from './Modal.svelte';
+import { Modal } from './';
 import { fireEvent, render } from '@testing-library/svelte';
 
 describe('Modal', () => {
@@ -9,7 +9,7 @@ describe('Modal', () => {
 
   it('should close on ESC', async () => {
     const { component } = render(Modal, { show: true });
-    const mock = jest.fn();
+    const mock = vi.fn();
     component.$on('close', mock);
     fireEvent(
       global.window,
@@ -22,7 +22,7 @@ describe('Modal', () => {
 
   it('should close on outside click', () => {
     const { component, container } = render(Modal, { show: true });
-    const mock = jest.fn();
+    const mock = vi.fn();
     component.$on('close', mock);
     fireEvent.click(container.getElementsByClassName('sw-modal-backdrop')[0]);
     expect(mock).toHaveBeenCalled();
@@ -30,7 +30,7 @@ describe('Modal', () => {
 
   it('should not close on inside click', () => {
     const { component, container } = render(Modal, { show: true });
-    const mock = jest.fn();
+    const mock = vi.fn();
     component.$on('close', mock);
     fireEvent.click(container.getElementsByClassName('modal-content')[0]);
     expect(mock).not.toHaveBeenCalled();

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { NerLinkHydrated, NerLink, NerNode } from '../../core/knowledge-graph.models';
+  import type { NerLinkHydrated, NerLink, NerNode } from '../../core/knowledge-graph.models';
   import { createEventDispatcher } from 'svelte';
   import { graphSearchResults, graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
   import { getFontColor } from '../../core/utils';

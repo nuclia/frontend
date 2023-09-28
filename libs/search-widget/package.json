@@ -30,5 +30,6 @@
       "svelte": "./index.js"
     }
   },
-  "private": false
+  "private": false,
+  "type": "module"
 }

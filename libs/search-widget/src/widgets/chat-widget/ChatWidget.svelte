@@ -1,4 +1,4 @@
-<svelte:options tag="nuclia-chat" />
+<svelte:options customElement="nuclia-chat" />
 
 <script lang="ts">
   import { initNuclia, resetNuclia } from '../../core/api';

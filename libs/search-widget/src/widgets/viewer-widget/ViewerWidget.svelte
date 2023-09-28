@@ -1,4 +1,4 @@
-<svelte:options tag="nuclia-viewer" />
+<svelte:options customElement="nuclia-viewer" />
 
 <script lang="ts">
   import {
@@ -16,8 +16,10 @@
     setCDN,
     setLang,
     setWidgetActions,
-    TypedResult,
     viewerData,
+  } from '../../core';
+  import type {
+    TypedResult,
   } from '../../core';
   import { onMount } from 'svelte';
   import type { FieldFullId, KBStates } from '@nuclia/core';

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { graphSelection, graphSelectionParagraphs, graphSelectionRelations } from '../../core/stores/graph.store';
-  import { NerLinkHydrated } from '../../core/knowledge-graph.models';
+  import { graphSelection, graphSelectionParagraphs, graphSelectionRelations } from '../../core';
+  import type { NerLinkHydrated } from '../../core';
   import type { Observable } from 'rxjs';
   import { BehaviorSubject, combineLatest, map } from 'rxjs';
   import { Button } from '../../common';
