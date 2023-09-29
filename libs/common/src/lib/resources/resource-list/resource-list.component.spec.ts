@@ -85,7 +85,7 @@ describe('ResourceListComponent', () => {
           stream: jest.fn(() => of('')),
         }),
         MockProvider(LabelsService, {
-          getLabelsByKind: jest.fn(() => of({})),
+          resourceLabelSets: of({}),
         }),
         MockProvider(UploadService, {
           statusCount: of({

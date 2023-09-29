@@ -1,21 +1,19 @@
 <div class="main-container">
-  <p *ngIf="noLabels; else labelSelector">
-    {{ 'resource.classification.no-resource-labelset' | translate }}
-    <a [routerLink]="(kbUrl | async) + '/label-sets'">{{ 'resource.classification-page-link' | translate }}</a>
-  </p>
-  <ng-template #labelSelector>
-    <div class="scrollable-area classification-container">
-      <app-label-field
-        [selection]="currentLabels"
-        [disabled]="(isAdminOrContrib | async) === false"
-        (noLabels)="noLabels = $event"
-        (selectionChange)="updateLabels($event)"></app-label-field>
-    </div>
-  </ng-template>
+  <div class="scrollable-area classification-container">
+    <p *ngIf="(isReady | async) && !hasLabels">
+      {{ 'resource.classification.no-resource-labelset' | translate }}
+      <a [routerLink]="(kbUrl | async) + '/label-sets'">{{ 'resource.classification-page-link' | translate }}</a>
+    </p>
+    <app-label-field
+      [selection]="currentLabels"
+      [disabled]="!hasLabels || (isAdminOrContrib | async) === false"
+      (hasLabels)="updateHasLabels($event)"
+      (selectionChange)="updateLabels($event)"></app-label-field>
+  </div>
 </div>
 
 <footer
-  *ngIf="!noLabels"
+  *ngIf="hasLabels"
   class="form-buttons">
   <pa-button
     kind="primary"

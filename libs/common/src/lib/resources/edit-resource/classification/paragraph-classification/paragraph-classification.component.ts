@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { ActivatedRoute } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
 import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
-import { Classification, FieldId, LabelSetKind, LabelSets, Resource, Search } from '@nuclia/core';
+import { Classification, FieldId, LabelSets, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '../../../../label/labels.service';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
 import { ParagraphClassificationService } from './paragraph-classification.service';
@@ -29,7 +29,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
     }),
   );
 
-  availableLabels: Observable<LabelSets | null> = this.labelsService.getLabelsByKind(LabelSetKind.PARAGRAPHS);
+  availableLabels: Observable<LabelSets | null> = this.labelsService.paragraphLabelSets;
   hasLabels: Observable<boolean> = this.availableLabels.pipe(
     map((labels) => !!labels && Object.keys(labels).length > 0),
     tap(() => {
