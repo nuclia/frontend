@@ -9,6 +9,7 @@
   import globalCss from '../../common/_global.scss?inline';
   import { initAnswer, initUsageTracking, initViewer, resetStatesAndEffects } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
+  import { injectCustomCss } from '../../core/utils';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -21,6 +22,7 @@
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
   export let standalone = false;
+  export let cssPath = '';
 
   export let layout: 'inline' | 'fullscreen' = 'fullscreen';
   export let height = '';
@@ -41,6 +43,7 @@
   };
 
   let svgSprite;
+  let container: HTMLElement;
   let ready = false;
 
   onMount(() => {
@@ -72,6 +75,7 @@
 
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
+    injectCustomCss(cssPath, container);
 
     ready = true;
 
@@ -80,9 +84,9 @@
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
-<slot />
 
 <div
+  bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready && !!svgSprite}

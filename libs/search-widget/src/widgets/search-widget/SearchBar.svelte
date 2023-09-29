@@ -24,6 +24,7 @@
   } from '../../core/stores/effects';
   import { searchQuery, triggerSearch } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
+  import { injectCustomCss } from '../../core/utils';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -40,6 +41,7 @@
   export let standalone = false;
   export let mode = '';
   export let filters = '';
+  export let cssPath = '';
 
   $: darkMode = mode === 'dark';
 
@@ -70,6 +72,7 @@
 
   let svgSprite;
   let ready = false;
+  let container: HTMLElement;
 
   onMount(() => {
     if (cdn) {
@@ -140,6 +143,7 @@
       setupTriggerGraphNerSearch();
     }
     initUsageTracking();
+    injectCustomCss(cssPath, container);
 
     ready = true;
 
@@ -151,8 +155,9 @@
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
-<slot />
+
 <div
+  bind:this={container}
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
