@@ -5,7 +5,6 @@ import { filter, map } from 'rxjs/operators';
 import { DEFAULT_PAGE_SIZE, DEFAULT_SORTING, ResourceWithLabels } from './resource-list.model';
 import {
   IResource,
-  LabelSetKind,
   LabelSets,
   ProcessingStatusResponse,
   Resource,
@@ -56,7 +55,7 @@ export class ResourceListService {
   private _emptyKb = new Subject<boolean>();
   emptyKb = this._emptyKb.asObservable();
 
-  labelSets: Observable<LabelSets> = this.labelService.getLabelsByKind(LabelSetKind.RESOURCES).pipe(
+  labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
     filter((labelSets) => !!labelSets),
     map((labelSets) => labelSets as LabelSets),
   );

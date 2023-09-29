@@ -1,5 +1,5 @@
 <div
-  *ngIf="hasLabels | async"
+  *ngIf="hasLabels$ | async"
   class="label-field"
   [class.small-button]="size === 'small'">
   <app-label-dropdown

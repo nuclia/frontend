@@ -9,6 +9,14 @@ import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
 export class LabelsService {
   private _labelsSubject = new BehaviorSubject<LabelSets | null>(null);
   labelSets = this._labelsSubject.asObservable();
+  resourceLabelSets = this.labelSets.pipe(
+    filter((labels) => !!labels),
+    map((labels) => this.filterByKind(labels, LabelSetKind.RESOURCES)),
+  );
+  paragraphLabelSets = this.labelSets.pipe(
+    filter((labels) => !!labels),
+    map((labels) => this.filterByKind(labels, LabelSetKind.PARAGRAPHS)),
+  );
   hasLabelSets = this.labelSets.pipe(map((sets) => !!sets && Object.keys(sets).length > 0));
 
   constructor(private sdk: SDKService) {
@@ -33,31 +41,25 @@ export class LabelsService {
     );
   }
 
-  getLabelsByKind(kind: LabelSetKind): Observable<LabelSets | null> {
-    return this.labelSets.pipe(
-      map((labels) => {
-        if (!labels) {
-          return labels;
-        } else {
-          const filtered: LabelSets = {};
-          Object.entries(labels).forEach(([key, labelSet]) => {
-            if (labelSet.kind.length === 0 || labelSet.kind.includes(kind)) {
-              filtered[key] = labelSet;
-            }
-          });
-          return filtered;
+  private filterByKind(labels: LabelSets | null, kind: LabelSetKind): LabelSets | null {
+    if (!labels) {
+      return labels;
+    } else {
+      const filtered: LabelSets = {};
+      Object.entries(labels).forEach(([key, labelSet]) => {
+        if (labelSet.kind.length === 0 || labelSet.kind.includes(kind)) {
+          filtered[key] = labelSet;
         }
-      }),
-    );
+      });
+      return filtered;
+    }
   }
 
   refreshLabelsSets(): Observable<LabelSets> {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.getLabels()),
-      tap((labels) => {
-        this._labelsSubject.next(labels);
-      }),
+      tap((labels) => this._labelsSubject.next(labels)),
     );
   }
 
