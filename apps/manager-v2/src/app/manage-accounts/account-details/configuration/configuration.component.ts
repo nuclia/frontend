@@ -30,7 +30,9 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       max_kbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
     max_dedicated_processors: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
-    zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    zone: new FormControl<string>(''),
+    // restore the validation when the zone is not readonly anymore
+    // zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     trial_expiration_date: new FormControl<string>(''),
     dedicated_processors_state: new FormControl<DedicatedProcessorsState>('disabled', {
       nonNullable: true,
@@ -118,6 +120,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     if (this.accountBackup) {
       this.patchConfigForm(this.accountBackup);
       this.configForm.markAsPristine();
+      this.cdr.markForCheck();
     }
   }
 
@@ -127,6 +130,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     }
     this.configForm.controls.kbs.controls.max_kbs.patchValue(this.defaultLimits.max_kbs);
     this.configForm.controls.kbs.markAsDirty();
+    this.cdr.markForCheck();
   }
 
   toggleAccountType() {
@@ -134,6 +138,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       this.configForm.controls.type.value === 'stash-trial' ? 'stash-enterprise' : 'stash-trial',
     );
     this.configForm.controls.type.markAsDirty();
+    this.cdr.markForCheck();
   }
 
   private patchConfigForm(accountDetails: ExtendedAccount) {
@@ -142,5 +147,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       accountDetails.stashes.max_stashes === -1 ? 'unlimited' : 'limit',
     );
     this.configForm.controls.kbs.controls.max_kbs.patchValue(accountDetails.stashes.max_stashes);
+    this.cdr.markForCheck();
   }
 }
