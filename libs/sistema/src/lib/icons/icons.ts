@@ -1,54 +1,32 @@
 export const mimeIcons: { [mime: string]: string } = {
-  'application/excel': 'application/excel.svg',
-  'application/msword': 'application/doc.svg',
-  'application/note': 'application/note.svg',
-  'application/pdf': 'application/pdf.svg',
-  'application/powerpoint': 'application/ppt.svg',
-  'application/vnd.ms-powerpoint': 'application/ppt.svg',
-  'application/vnd.ms-excel': 'application/xls.svg',
-  'application/stf-conversation': 'application/stf-conversation.svg',
-  'application/stf-link': 'application/stf-link.svg',
-  'application/stf-page': 'application/stf-page.svg',
-  'application/stf-text': 'application/stf-text.svg',
-  'application/ticket': 'application/ticket.svg',
-  'application/zip': 'application/zip.svg',
-  'application/vnd.oasis.opendocument.text': 'application/vnd.oasis.opendocument.text.svg',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'application/xlsx.svg',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'application/doc.svg',
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'application/ppt.svg',
+  'application/pdf': 'file-pdf',
+  'application/stf-conversation': 'chat',
+  'application/stf-link': 'link',
 
-  'image/bmp': 'image/bmp.svg',
-  'image/jpeg': 'image/jpg.svg',
-  'image/pdf': 'image/pdf.svg',
-  'image/svg+xml': 'image/svg+xml.svg',
-  'image/zip': 'image/zip.svg',
-  'image/gif': 'image/gif.svg',
-  'image/jpg': 'image/jpg.svg',
-  'image/png': 'image/png.svg',
-  'image/txt': 'image/txt.svg',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'file',
+  'application/vnd.oasis.opendocument.text': 'file',
+  'application/msword': 'file',
+  'application/stf-text': 'file',
+  'text/html': 'file',
+  'text/plain': 'file',
+  'text/rtf': 'file',
 
-  'text/html': 'text/html.svg',
-  'text/plain': 'text/plain.svg',
-  'text/rtf': 'text/rtf.svg',
-  'text/csv': 'text/csv.svg',
-
-  'unknown/dwg': 'unknown/dwg.svg',
-  'unknown/msg': 'unknown/msg.svg',
-  'unknown/mts': 'unknown/mts.svg',
-
-  'video/mp4': 'video/mp4.svg',
-  'video/quicktime': 'video/mov.svg',
-  'audio/mpeg': 'audio/mpeg.svg',
-  'media/video': 'video/video.svg',
-  'media/video+srt': 'video/video-cc.svg',
+  'application/excel': 'spreadsheet',
+  'application/vnd.ms-excel': 'spreadsheet',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'spreadsheet',
+  'text/csv': 'spreadsheet',
 };
 
-const defaultIcons: { [mime: string]: string } = {
-  video: 'video/video.svg',
-};
-
-const genericIcon = 'application/generic.svg';
+const genericIcon = 'file-empty';
 
 export function getMimeIcon(mime: string): string {
-  return mimeIcons[mime] || defaultIcons[mime.split('/')[0]] || genericIcon;
+  if (mime.includes('video')) {
+    return 'play';
+  } else if (mime.includes('audio')) {
+    return 'audio';
+  } else if (mime.includes('image')) {
+    return 'image';
+  } else {
+    return mimeIcons[mime] || genericIcon;
+  }
 }

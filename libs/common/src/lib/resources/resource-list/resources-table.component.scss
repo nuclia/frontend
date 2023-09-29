@@ -43,6 +43,10 @@ table {
   justify-content: space-between;
   width: 100%;
 
+  pa-icon {
+    color: $color-neutral-regular;
+  }
+
   .title-and-description small {
     overflow: hidden;
     display: -webkit-box;
