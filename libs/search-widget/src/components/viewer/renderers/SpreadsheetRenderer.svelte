@@ -3,7 +3,7 @@
   import Tab from '../../../common/tabs/TabItem.svelte';
   import { combineLatest, filter, map, Subject, take } from 'rxjs';
   import { fieldData } from '../../../core';
-  import { FileFieldExtractedData } from '@nuclia/core';
+  import type { FileFieldExtractedData } from '@nuclia/core';
   import { onMount } from 'svelte';
 
   const selectedSheetId = new Subject<string>();

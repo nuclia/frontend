@@ -17,9 +17,9 @@
     navigateToLink,
     targetNewTab,
     trackingEngagement,
-    TypedResult,
     viewerData,
   } from '../../core';
+  import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
   import { combineLatest, map, of, switchMap, take } from 'rxjs';
   import { FieldMetadata } from './';

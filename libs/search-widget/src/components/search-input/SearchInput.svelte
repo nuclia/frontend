@@ -1,20 +1,37 @@
 <script lang="ts">
-  import { _ } from '../../core/i18n';
   import { createEventDispatcher } from 'svelte';
-  import { entitiesDefaultColor, getCDN } from '../../core/utils';
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
   import Suggestions from '../suggestions/Suggestions.svelte';
+  import type { EntityFilter, EntityGroup, LabelSetWithId } from '../../core';
   import {
+    _,
+    addEntityFilter,
+    addLabelFilter,
+    autofilters,
+    entities,
+    entitiesDefaultColor,
+    entityFilters,
+    getCDN,
+    hasFilterButton,
     hasSuggestions,
-    suggestedLabels,
+    hideLogo,
+    labelFilters,
+    orderedLabelSetList,
+    removeAutofilter,
+    removeEntityFilter,
+    removeLabelFilter,
+    searchQuery,
     suggestedEntities,
+    suggestedLabels,
     suggestedParagraphs,
     suggestionsHasError,
     suggestionState,
+    triggerSearch,
     triggerSuggestions,
     typeAhead,
-  } from '../../core/stores/suggestions.store';
+    widgetPlaceholder
+  } from '../../core';
   import { tap } from 'rxjs/operators';
   import Label from '../../common/label/Label.svelte';
   import Chip from '../../common/chip/Chip.svelte';
@@ -22,26 +39,9 @@
   import { combineLatest, map } from 'rxjs';
   import IconButton from '../../common/button/IconButton.svelte';
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
-  import type { LabelSetWithId } from '../../core/stores/labels.store';
-  import { orderedLabelSetList } from '../../core/stores/labels.store';
-  import { getParentLiRect, LabelFilter } from '../../common/label/label.utils';
+  import type { LabelFilter } from '../../common';
+  import { getParentLiRect } from '../../common';
   import Button from '../../common/button/Button.svelte';
-  import { hasFilterButton, hideLogo, widgetPlaceholder } from '../../core/stores/widget.store';
-  import {
-    addEntityFilter,
-    addLabelFilter,
-    autofilters,
-    EntityFilter,
-    entityFilters,
-    labelFilters,
-    removeAutofilter,
-    removeEntityFilter,
-    removeLabelFilter,
-    searchQuery,
-    triggerSearch,
-  } from '../../core/stores/search.store';
-  import { entities } from '../../core/stores/entities.store';
-  import type { EntityGroup } from '../../core/models';
 
   let searchInputElement: HTMLInputElement;
   const dispatch = createEventDispatcher();
@@ -75,19 +75,19 @@
       ...labels.map((value) => ({
         type: 'label',
         key: value.classification.label + value.classification.labelset,
-        value: value.classification,
+        value: value.classification
       })),
       ...entities.map((value) => ({
         type: 'entity',
         key: value.family + value.entity,
-        value,
+        value
       })),
       ...autofilters.map((value) => ({
         type: 'entity',
         key: value.family + value.entity,
         value,
-        autofilter: true,
-      })),
+        autofilter: true
+      }))
     ]),
     tap((filters) => {
       // search box size changes when there are filters or not
@@ -96,14 +96,14 @@
         hasFilters = hasFiltersNow;
         setTimeout(() => setInputPosition());
       }
-    }),
+    })
   );
 
   const selectedLabels: Observable<string[]> = labelFilters.pipe(
-    map((filters) => filters.map((filter) => filter.classification.label)),
+    map((filters) => filters.map((filter) => filter.classification.label))
   );
   const selectedEntities: Observable<string[]> = entityFilters.pipe(
-    map((filters) => filters.map((filter) => filter.entity)),
+    map((filters) => filters.map((filter) => filter.entity))
   );
   const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
 

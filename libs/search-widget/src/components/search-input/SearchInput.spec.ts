@@ -1,4 +1,4 @@
-import SearchInput from './SearchInput.svelte';
+import { SearchInput } from './';
 import { fireEvent, render } from '@testing-library/svelte';
 import { firstValueFrom } from 'rxjs';
 import { searchQuery } from '../../core/stores/search.store';

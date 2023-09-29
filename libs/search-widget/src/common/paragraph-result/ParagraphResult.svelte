@@ -2,7 +2,7 @@
   import TimeIndicator from '../indicators/TimeIndicator.svelte';
   import { createEventDispatcher } from 'svelte';
   import PageIndicator from '../indicators/PageIndicator.svelte';
-  import { ResultType } from '../../core';
+  import type { ResultType } from '../../core';
   import IconButton from '../button/IconButton.svelte';
   import { Search } from '@nuclia/core';
 

@@ -1,21 +1,12 @@
 <script lang="ts">
-  import {
-    fieldMetadata,
-    generatedEntitiesColor,
-    graphState,
-    NerFamily,
-    NerLink,
-    NerNode,
-    PositionWithRelevance,
-    RelationWithRelevance,
-    translateInstant
-  } from '../../core';
+  import type { NerFamily, NerLink, NerNode, PositionWithRelevance, RelationWithRelevance } from '../../core';
+  import { fieldMetadata, generatedEntitiesColor, graphState, translateInstant } from '../../core';
   import { Checkbox, Expander } from '../../common';
   import Graph from './Graph.svelte';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { map, Subject, takeUntil } from 'rxjs';
   import { filter } from 'rxjs/operators';
-  import { FieldMetadata } from '@nuclia/core';
+  import type { FieldMetadata } from '@nuclia/core';
 
   export let rightPanelOpen = false;
 

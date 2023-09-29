@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
   import { filter } from 'rxjs';
-  import { currentResultType, ResultType } from '../../core';
+  import { currentResultType } from '../../core';
+  import type { ResultType } from '../../core';
   import {
     AudioRenderer,
     ConversationRenderer,

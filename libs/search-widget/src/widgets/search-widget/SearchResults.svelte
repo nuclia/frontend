@@ -1,4 +1,4 @@
-<svelte:options tag="nuclia-search-results" />
+<svelte:options customElement="nuclia-search-results" />
 
 <script lang="ts">
   import { onMount } from 'svelte';

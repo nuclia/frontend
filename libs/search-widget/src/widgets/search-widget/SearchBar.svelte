@@ -1,4 +1,4 @@
-<svelte:options tag="nuclia-search-bar" />
+<svelte:options customElement="nuclia-search-bar" />
 
 <script lang="ts">
   import type { KBStates, WidgetFeatures } from '@nuclia/core';

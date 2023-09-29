@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import * as path from 'path';
-const sveltePreprocess = require('svelte-preprocess');
+import sveltePreprocess from 'svelte-preprocess';
 
 const widgetFolder = process.argv[5] || 'search-widget';
 const fileName = process.argv[6] || 'nuclia-widget';
@@ -40,4 +40,10 @@ export default defineConfig({
       },
     }),
   ],
+  test: {
+    // Jest like globals
+    globals: true,
+    environment: 'jsdom',
+    include: ['src/**/*.{test,spec}.ts'],
+  }
 });

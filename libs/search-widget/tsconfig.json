@@ -6,7 +6,7 @@
     "module": "esnext",
     "resolveJsonModule": true,
     "useDefineForClassFields": true,
-    "importsNotUsedAsValues": "error",
+    "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "sourceMap": true,
     "types": ["svelte"],
