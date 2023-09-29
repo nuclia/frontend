@@ -17,7 +17,7 @@
   form > div {
     align-items: flex-start;
     display: flex;
-    margin-bottom: rhythm(2);
+    margin-top: rhythm(4);
 
     label,
     .label {
@@ -33,19 +33,29 @@
       width: 100%;
     }
 
+    pa-radio-group {
+      display: flex !important;
+      flex-direction: column;
+      gap: rhythm(0.5);
+    }
+
     .fields {
       display: flex;
       flex-direction: column;
       gap: rhythm(2);
-      margin-top: rhythm(3);
+      margin-top: rhythm(4);
     }
 
     .user-prompts {
-      margin-top: rhythm(2);
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1.5);
+      margin-top: rhythm(5);
       pa-select {
-        margin-top: rhythm(1);
+        border-bottom: 1px solid $color-neutral-light;
       }
       pa-textarea {
+        margin: rhythm(1) 0 0 0;
         width: 100%;
       }
     }
