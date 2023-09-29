@@ -68,9 +68,10 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     this.route.params
       .pipe(
         filter((params) => !!params['id']),
+        switchMap((params) => this.editResource.loadResource(params['id'])),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((params) => this.editResource.loadResource(params['id']));
+      .subscribe();
   }
 
   ngOnInit() {

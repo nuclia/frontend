@@ -237,8 +237,8 @@ export class Resource extends ReadableResource implements IResource {
     );
   }
 
-  deleteField(type: FIELD_TYPE, field: string): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/${type}/${field}`);
+  deleteField(type: FIELD_TYPE, field: string, synchronous = false): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/${type}/${field}`, undefined, synchronous);
   }
 
   setField(

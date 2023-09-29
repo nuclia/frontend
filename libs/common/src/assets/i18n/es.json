@@ -604,6 +604,7 @@
 	"resource.status_unknown": "Aún no hay estado disponible para la cola de procesamiento de esta cuenta",
 	"resource.summary": "Resumen",
 	"resource.text": "Texto",
+	"resource.thumbnail.delete": "Eliminar miniatura",
 	"resource.thumbnail.drop": "Suelte la imagen o haga clic aquí",
 	"resource.thumbnail.help": "Sube una imagen o elige de las sugerencias",
 	"resource.thumbnail.label": "Miniatura",

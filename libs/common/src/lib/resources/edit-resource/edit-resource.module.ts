@@ -22,6 +22,7 @@ import {
   PaDatePickerModule,
   PaDropdownModule,
   PaExpanderModule,
+  PaFocusableModule,
   PaIconModule,
   PaScrollModule,
   PaTableModule,
@@ -35,6 +36,7 @@ import { FileUploadModule, STFPipesModule } from '@flaps/core';
 import { RouterModule } from '@angular/router';
 import { LabelModule } from '../../label/label.module';
 import { HintModule } from '../../hint/hint.module';
+import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
 
 @NgModule({
   imports: [
@@ -58,6 +60,7 @@ import { HintModule } from '../../hint/hint.module';
     PaScrollModule,
     PaTextFieldModule,
     PaTogglesModule,
+    PaFocusableModule,
 
     STFPipesModule,
     PaTooltipModule,
@@ -80,6 +83,7 @@ import { HintModule } from '../../hint/hint.module';
     ResourceProfileComponent,
     ResourceTextComponent,
     SelectFirstFieldDirective,
+    ThumbnailComponent,
   ],
   exports: [LabelSelectionComponent],
 })

@@ -1,8 +1,9 @@
-# 1.6.3 (unreleased)
+# 1.6.3 (2023-10-02)
 
 ### Improvements
 
 - Add synchronous option to `/chat` endpoint, allowing to get the response as a JSON instead of a stream
+- Add synchronous option to delete field method
 
 # 1.6.2 (2023-09-11)
 

@@ -607,6 +607,7 @@
 	"resource.status_unknown": "No status available for this account processing queue yet",
 	"resource.summary": "Summary",
 	"resource.text": "Text",
+	"resource.thumbnail.delete": "Delete thumbnail",
 	"resource.thumbnail.drop": "Drop image or click here",
 	"resource.thumbnail.help": "Upload an image or pick from suggestions",
 	"resource.thumbnail.label": "Thumbnail",
