@@ -30,7 +30,9 @@
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { InfoCard, InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
+  import { injectCustomCss } from '../../core/utils';
 
+  export let cssPath = '';
   export let mode = '';
   $: darkMode = mode === 'dark';
 
@@ -43,6 +45,7 @@
   }
 
   let svgSprite: string;
+  let container: HTMLElement;
 
   onMount(() => {
     if (pendingResults.getValue() || resultList.getValue().length > 0) {
@@ -50,6 +53,7 @@
     }
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
+    injectCustomCss(cssPath, container);
   });
 
   function renderingDone(node: HTMLElement) {
@@ -67,8 +71,9 @@
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
-<slot />
+
 <div
+  bind:this={container}
   class="nuclia-widget sw-video-results"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">

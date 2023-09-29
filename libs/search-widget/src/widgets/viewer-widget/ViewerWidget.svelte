@@ -18,15 +18,14 @@
     setWidgetActions,
     viewerData,
   } from '../../core';
-  import type {
-    TypedResult,
-  } from '../../core';
+  import type { TypedResult } from '../../core';
   import { onMount } from 'svelte';
   import type { FieldFullId, KBStates } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { forkJoin, Observable } from 'rxjs';
   import { onClosePreview, Viewer } from '../../components';
+  import { injectCustomCss } from '../../core/utils';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -39,6 +38,7 @@
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
   export let standalone = false;
+  export let cssPath = '';
 
   export let rid = '';
   export let field_id = '';
@@ -90,6 +90,7 @@
   };
 
   let svgSprite;
+  let container: HTMLElement;
   let ready = false;
 
   onMount(() => {
@@ -118,6 +119,7 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     initViewer();
+    injectCustomCss(cssPath, container);
 
     ready = true;
 
@@ -126,9 +128,9 @@
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
-<slot />
 
 <div
+  bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready && !!svgSprite}

@@ -315,3 +315,15 @@ export function getFindParagraphs(results: Search.FindResults, fullId: FieldFull
     results.resources?.[fullId.resourceId]?.fields[`/${getFieldIdWithShortType(fullId)}`]?.paragraphs || {},
   );
 }
+
+export function injectCustomCss(cssPath: string, element: HTMLElement) {
+  if (cssPath) {
+    fetch(cssPath)
+      .then((res) => res.text())
+      .then((css) => {
+        const style = document.createElement('style');
+        style.innerHTML = css;
+        element.getRootNode().appendChild(style);
+      });
+  }
+}
