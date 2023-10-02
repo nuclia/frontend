@@ -42,11 +42,9 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/apps/search-widget-demo"],
+      "executor": "nx:run-commands",
       "options": {
-        "jestConfig": "apps/search-widget-demo/jest.config.js",
-        "passWithNoTests": true
+        "command": "vitest -r=apps/search-widget-demo --run --passWithNoTests"
       }
     }
   }
