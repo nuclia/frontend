@@ -13,4 +13,10 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  test: {
+    // Jest like globals
+    globals: true,
+    environment: 'jsdom',
+    include: ['src/**/*.{test,spec}.ts'],
+  }
 });
