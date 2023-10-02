@@ -1,0 +1,28 @@
+<div
+  class="resource-thumbnail-container"
+  paFocusable
+  [class.selected]="selected"
+  [class.disabled]="disabled"
+  (keyup.enter)="onSelect()"
+  (keyup.space)="onSelect()"
+  (click)="onSelect()">
+  <img
+    class="resource-thumbnail"
+    [src]="url"
+    [alt]="alt" />
+
+  <pa-button
+    *ngIf="!selected"
+    class="delete-thumbnail"
+    size="small"
+    iconSize="small"
+    icon="trash"
+    aspect="solid"
+    kind="destructive"
+    [disabled]="disabled"
+    (keyup.enter)="onDelete($event)"
+    (keyup.space)="onDelete($event)"
+    (click)="onDelete($event)">
+    {{ 'resource.thumbnail.delete' | translate }}
+  </pa-button>
+</div>

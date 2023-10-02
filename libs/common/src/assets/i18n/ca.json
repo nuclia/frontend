@@ -604,6 +604,7 @@
 	"resource.status_unknown": "Encara no hi ha cap estat disponible per a aquesta cua de processament del compte",
 	"resource.summary": "Resum",
 	"resource.text": "Text",
+	"resource.thumbnail.delete": "Suprimeix la miniatura",
 	"resource.thumbnail.drop": "Deixeu la imatge o feu clic aquí",
 	"resource.thumbnail.help": "Penja una imatge o tria entre els suggeriments",
 	"resource.thumbnail.label": "Miniatura",

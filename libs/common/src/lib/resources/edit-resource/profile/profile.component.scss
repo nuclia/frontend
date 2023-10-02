@@ -11,10 +11,19 @@ form > section > div {
 
 form > div {
   .thumbnails-container {
-    $thumbnail-height: rhythm(14) + rhythm(1);
-
     display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(2);
+    position: relative;
 
+    .loading-mask {
+      bottom: 0;
+      background: rgba($color-dark-stronger, 0.5);
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
     .drop-container {
       display: flex;
       flex-direction: column;
@@ -28,44 +37,16 @@ form > div {
         display: flex;
         flex: 1 0 auto;
         justify-content: center;
-        margin-bottom: rhythm(2);
-        min-height: $thumbnail-height;
+        height: $thumbnail-height;
+        text-align: center;
         transition: background-color $transition-hint;
-        width: rhythm(28);
+        width: $thumbnail-width;
 
         &.file-over {
           background-color: $color-neutral-lightest;
         }
       }
-
-      .radio-placeholder {
-        height: rhythm(2);
-      }
     }
-
-    pa-radio-group {
-      align-items: flex-start;
-      column-gap: rhythm(4);
-      display: flex !important;
-      flex-wrap: wrap;
-      row-gap: rhythm(2);
-    }
-
-    .radio-thumbnail-container {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
-
-      img {
-        margin-bottom: rhythm(2);
-        max-height: $thumbnail-height;
-      }
-    }
-  }
-
-  .resource-thumbnail {
-    max-height: rhythm(28);
-    max-width: rhythm(28);
   }
 }
 

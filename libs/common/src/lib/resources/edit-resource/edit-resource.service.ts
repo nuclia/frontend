@@ -115,7 +115,7 @@ export class EditResourceService {
     private navigation: NavigationService,
   ) {}
 
-  private _loadResource(resourceId: string): Observable<Resource> {
+  loadResource(resourceId: string): Observable<Resource> {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
@@ -131,10 +131,6 @@ export class EditResourceService {
       ),
       tap((resource) => this._resource.next(resource)),
     );
-  }
-
-  loadResource(resourceId: string) {
-    this._loadResource(resourceId).subscribe();
   }
 
   loadResourceEntities(): Observable<EntityGroup[]> {
@@ -175,7 +171,7 @@ export class EditResourceService {
     );
   }
 
-  savePartialResource(partialResource: Partial<Resource>): Observable<void | null> {
+  savePartialResource(partialResource: Partial<Resource>, showSuccessToast = true): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
       return of(null);
@@ -191,7 +187,11 @@ export class EditResourceService {
         this.toaster.error('generic.error.oops');
         return throwError(() => error);
       }),
-      map(() => this.toaster.success('resource.save-successful')),
+      map(() => {
+        if (showSuccessToast) {
+          this.toaster.success('resource.save-successful');
+        }
+      }),
     );
   }
 
@@ -401,7 +401,7 @@ export class EditResourceService {
         switchMap(() => this.deleteField(fieldType, fieldId)),
         tap((done) => {
           if (done !== null) {
-            this.router.navigate(['../../profile'], { relativeTo: route });
+            this.router.navigate(['../../resource'], { relativeTo: route });
           }
         }),
       );

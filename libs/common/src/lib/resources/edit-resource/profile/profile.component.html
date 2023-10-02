@@ -30,57 +30,57 @@
       </div>
       <div>
         <div>
-          <label
-            class="title-s"
-            for="radio-group-resource-thumbnail">
+          <label class="title-s">
             {{ 'resource.thumbnail.label' | translate }}
           </label>
           <div class="body-s">{{ 'resource.thumbnail.help' | translate }}</div>
         </div>
         <div class="thumbnails-container">
-          <pa-radio-group
-            name="resource-thumbnail"
-            id="radio-group-resource-thumbnail"
-            formControlName="thumbnail">
-            <div class="drop-container">
-              <div
-                class="drop-image-area"
-                [class.file-over]="hasBaseDropZoneOver"
-                stfFileDrop
-                fileDropAccept="image/*"
-                (fileOver)="fileOverBase($event)"
-                (atFileDrop)="uploadThumbnail($event)"
-                (click)="chooseFiles($event)">
-                <span *ngIf="!isUploading">{{ 'resource.thumbnail.drop' | translate }}</span>
-                <nsi-spinner
-                  *ngIf="isUploading"
-                  size="small"></nsi-spinner>
-              </div>
-              <div class="radio-placeholder"></div>
+          <div
+            class="drop-container"
+            *ngIf="!newThumbnail">
+            <div
+              class="drop-image-area"
+              [class.file-over]="hasBaseDropZoneOver"
+              stfFileDrop
+              fileDropAccept="image/*"
+              (fileOver)="fileOverBase($event)"
+              (atFileDrop)="uploadThumbnail($event)"
+              (click)="chooseFiles($event)">
+              <span>{{ 'resource.thumbnail.drop' | translate }}</span>
+            </div>
+          </div>
 
-              <input
-                #thumbnailFileInput
-                type="file"
-                accept="image/*"
-                stfFileSelect
-                multiple
-                hidden
-                (atFileSelect)="uploadThumbnail($event)" />
-            </div>
-            <div *ngFor="let thumb of thumbnails | async; let index = index; let count = count; trackBy: trackByUri">
-              <div class="radio-thumbnail-container">
-                <img
-                  class="resource-thumbnail"
-                  [src]="thumb.blob"
-                  alt="thumbnail {{ index }}" />
-                <pa-radio
-                  *ngIf="count > 1"
-                  [disabled]="!currentValue"
-                  [value]="thumb.uri"
-                  [ariaLabel]="'Thumbnail ' + index"></pa-radio>
-              </div>
-            </div>
-          </pa-radio-group>
+          <input
+            #thumbnailFileInput
+            type="file"
+            accept="image/*"
+            stfFileSelect
+            hidden
+            (atFileSelect)="uploadThumbnail($event)" />
+
+          <stf-thumbnail
+            *ngIf="newThumbnail"
+            alt="New thumbnail"
+            [url]="newThumbnail"
+            [selected]="newThumbnail === selectedThumbnail"
+            (select)="selectThumbnail(newThumbnail)"
+            (delete)="markThumbnailForDeletion(newThumbnail)"></stf-thumbnail>
+
+          <div *ngFor="let thumb of thumbnails | async; let index = index; let count = count; trackBy: trackByUri">
+            <stf-thumbnail
+              [disabled]="isSaving"
+              [url]="thumb.blob"
+              [selected]="thumb.uri === selectedThumbnail"
+              [alt]="'Thumbnail ' + index"
+              (select)="selectThumbnail(thumb.uri)"
+              (delete)="markThumbnailForDeletion(thumb.uri)"></stf-thumbnail>
+          </div>
+          <div
+            class="loading-mask"
+            *ngIf="isSaving">
+            <nsi-spinner></nsi-spinner>
+          </div>
         </div>
       </div>
 
@@ -163,14 +163,14 @@
 <footer class="form-buttons with-right-panel">
   <pa-button
     kind="primary"
-    [disabled]="!form.valid || form.pristine || isSaving"
+    [disabled]="!form.valid || (form.pristine && !this.thumbnailChanged) || isSaving"
     (click)="save()">
     {{ 'generic.save' | translate }}
   </pa-button>
 
   <pa-button
     aspect="basic"
-    [disabled]="form.pristine || isSaving"
+    [disabled]="(form.pristine && !this.thumbnailChanged) || isSaving"
     (click)="cancel()">
     {{ 'generic.cancel' | translate }}
   </pa-button>
