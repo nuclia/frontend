@@ -107,7 +107,7 @@
                     *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['prompt']"
                     class="user-prompts">
                     <div class="title-m">{{ 'stash.create.user_prompts.prompt' | translate }}</div>
-                    <div class="prompt-description">Defines the way we want the system to act when we ask a question. Here we can define more specific rules, that could even override the defined behaviour. For example, we could have a prompt that makes the system only give results in lists, or even ask to answer in a given language.</div>
+                    <div class="prompt-description">{{ 'stash.create.user_prompts.prompt_help' | translate }}</div>
                     <pa-textarea
                       formControlName="prompt"
                       [rows]="5"
