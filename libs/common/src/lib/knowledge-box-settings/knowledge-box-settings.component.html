@@ -36,7 +36,7 @@
         formGroupName="config"
         *ngFor="let conf of displayedLearningConfigurations">
         <div class="label">
-          <label class="title-s">{{ 'stash.create.' + conf.id + '.label' | translate }}</label>
+          <label class="title-m">{{ 'stash.create.' + conf.id + '.label' | translate }}</label>
           <div class="body-xs">
             {{ 'stash.create.' + conf.id + '.help' | translate }}
           </div>
@@ -72,7 +72,7 @@
               <ng-container *ngIf="ownKey">
                 <div
                   *ngIf="hasTranslation('stash.config.key.' + groupId)"
-                  class="title-s">
+                  class="title-m">
                   {{ 'stash.config.key.' + groupId | translate }}:
                 </div>
                 <ng-container *ngFor="let field of userKeys?.[groupId] || {} | keyvalue">
@@ -106,9 +106,11 @@
                   <div
                     *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['prompt']"
                     class="user-prompts">
-                    <label class="title-s">{{ 'stash.create.user_prompts.prompt' | translate }}</label>
+                    <div class="title-m">{{ 'stash.create.user_prompts.prompt' | translate }}</div>
+                    <div class="prompt-description">{{ 'stash.create.user_prompts.prompt_help' | translate }}</div>
                     <pa-textarea
                       formControlName="prompt"
+                      [rows]="5"
                       [help]="promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.info || ''">
                       {{ promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.title }}
                     </pa-textarea>
@@ -129,9 +131,11 @@
                   <div
                     *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['system']"
                     class="user-prompts">
-                    <label class="title-s">{{ 'stash.create.user_prompts.system' | translate }}</label>
+                    <div class="title-m">{{ 'stash.create.user_prompts.system' | translate }}</div>
+                    <div>{{ 'stash.create.user_prompts.system_help' | translate }}</div>
                     <pa-textarea
                       formControlName="system"
+                      [rows]="5"
                       [help]="promptConfigurations?.schemas?.[key]?.properties?.['system']?.info || ''">
                       {{ promptConfigurations?.schemas?.[key]?.properties?.['system']?.title }}
                     </pa-textarea>
