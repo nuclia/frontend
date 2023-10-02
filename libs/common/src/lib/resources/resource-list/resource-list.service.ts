@@ -17,6 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LabelsService } from '../../label/labels.service';
 import { UploadService } from '../../upload/upload.service';
 import { SisToastService } from '@nuclia/sistema';
+import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
@@ -26,6 +27,7 @@ export class ResourceListService {
   private stateService = inject(StateService);
   private uploadService = inject(UploadService);
   private toastService = inject(SisToastService);
+  private navigationService = inject(ResourceNavigationService);
 
   private processingStatus?: ProcessingStatusResponse;
   private _status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
@@ -153,9 +155,19 @@ export class ResourceListService {
           ? this.getTitleOnlyData(data.results, data.kbId, labelSets)
           : this.getResourceData(this._query, data.results, data.kbId, labelSets);
         const newData = this._page === 0 ? newResults : this._data.value.concat(newResults);
+        const hasMore = !!data.results.fulltext?.next_page;
         this._data.next(newData);
         this._ready.next(true);
-        this._hasMore = !!data.results.fulltext?.next_page;
+        this._hasMore = hasMore;
+        this.navigationService.navigationData = {
+          resourceIdList: newData.map((data) => data.resource.uuid),
+          hasMore,
+          page: this._page,
+          pageSize: this._pageSize,
+          sort: this._sort,
+          query: this._query,
+          titleOnly: this._titleOnly,
+        };
         return;
       }),
       switchMap(() =>

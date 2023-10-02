@@ -15,6 +15,7 @@ import { EditResourceView } from './edit-resource.helpers';
 import { NavigationService } from '../../services/navigation.service';
 import { SisModalService } from '@nuclia/sistema';
 import { FeatureFlagService } from '@flaps/core';
+import { ResourceNavigationService } from './resource-navigation.service';
 
 const PAWLS_KEY = 'pawls';
 
@@ -64,11 +65,16 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private modal: SisModalService,
     private featureFlag: FeatureFlagService,
+    public navigation: ResourceNavigationService,
   ) {
     this.route.params
       .pipe(
         filter((params) => !!params['id']),
-        switchMap((params) => this.editResource.loadResource(params['id'])),
+        switchMap((params) => {
+          const resourceId = params['id'];
+          this.navigation.currentResourceId = resourceId;
+          return this.editResource.loadResource(resourceId);
+        }),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
@@ -157,5 +163,12 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     this.backRoute
       .pipe(take(1))
       .subscribe((resourceRoute) => this.router.navigate([resourceRoute], { queryParams: { preserveFilters: true } }));
+  }
+
+  previousResource() {
+    // TODO
+  }
+  nextResource() {
+    //TODO
   }
 }

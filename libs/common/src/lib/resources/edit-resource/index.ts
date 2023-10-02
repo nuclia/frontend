@@ -9,3 +9,4 @@ export * from './edit-resource.component';
 export * from './edit-resource.helpers';
 export * from './edit-resource.service';
 export * from './paragraph.service';
+export * from './resource-navigation.service';
