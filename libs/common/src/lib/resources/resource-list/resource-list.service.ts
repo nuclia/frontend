@@ -2,7 +2,13 @@ import { inject, Injectable } from '@angular/core';
 import { SDKService, StateService } from '@flaps/core';
 import { BehaviorSubject, catchError, forkJoin, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { DEFAULT_PAGE_SIZE, DEFAULT_SORTING, ResourceWithLabels } from './resource-list.model';
+import {
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_SORTING,
+  ResourceListParams,
+  ResourceWithLabels,
+  searchResources,
+} from './resource-list.model';
 import {
   IResource,
   LabelSets,
@@ -10,13 +16,13 @@ import {
   Resource,
   RESOURCE_STATUS,
   Search,
-  SearchOptions,
   SortOption,
 } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LabelsService } from '../../label/labels.service';
 import { UploadService } from '../../upload/upload.service';
 import { SisToastService } from '@nuclia/sistema';
+import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
@@ -26,6 +32,7 @@ export class ResourceListService {
   private stateService = inject(StateService);
   private uploadService = inject(UploadService);
   private toastService = inject(SisToastService);
+  private navigationService = inject(ResourceNavigationService);
 
   private processingStatus?: ProcessingStatusResponse;
   private _status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
@@ -116,46 +123,44 @@ export class ResourceListService {
       this._page = 0;
     }
 
+    const resourceListParams: ResourceListParams = {
+      status: this.status,
+      page: this._page,
+      pageSize: this._pageSize,
+      sort: this._sort,
+      query: this._query,
+      titleOnly: this._titleOnly,
+      filters: this._filters.value,
+    };
     return forkJoin([
       this.labelSets.pipe(take(1)),
       this.sdk.currentKb.pipe(
         take(1),
-        switchMap((kb) => {
-          const filters =
-            this.status === RESOURCE_STATUS.PROCESSED
-              ? this._filters.value
-              : [`/n/s/${this.status}`].concat(this._filters.value);
-          const searchOptions: SearchOptions = {
-            page_number: this._page,
-            page_size: this._pageSize,
-            sort: this._sort,
-            filters,
-            with_status: this.status === RESOURCE_STATUS.PROCESSED ? this.status : undefined,
-          };
-          const searchFeatures =
-            this._query.length > 0
-              ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
-              : [Search.Features.DOCUMENT];
-          const getResults = this._titleOnly
-            ? kb.catalog(this._query, searchOptions)
-            : kb.search(this._query, searchFeatures, searchOptions);
-          return getResults.pipe(
-            map((res) => ({
-              results: (res.type === 'error' ? { type: 'searchResults' } : res) as Search.Results,
-              kbId: kb.id,
-            })),
-          );
-        }),
+        switchMap((kb) => searchResources(kb, resourceListParams)),
       ),
     ]).pipe(
       map(([labelSets, data]) => {
-        const newResults = this._titleOnly
+        const newResults: ResourceWithLabels[] = this._titleOnly
           ? this.getTitleOnlyData(data.results, data.kbId, labelSets)
           : this.getResourceData(this._query, data.results, data.kbId, labelSets);
-        const newData = this._page === 0 ? newResults : this._data.value.concat(newResults);
+        const newData =
+          this._page === 0
+            ? newResults
+            : this._data.value.concat(newResults).reduce((deduplicatedList, data) => {
+                if (!deduplicatedList.find((item) => item.resource.id === data.resource.id)) {
+                  deduplicatedList.push(data);
+                }
+                return deduplicatedList;
+              }, [] as ResourceWithLabels[]);
+        const hasMore = !!data.results.fulltext?.next_page;
         this._data.next(newData);
         this._ready.next(true);
-        this._hasMore = !!data.results.fulltext?.next_page;
+        this._hasMore = hasMore;
+        this.navigationService.navigationData = {
+          ...resourceListParams,
+          resourceIdList: newData.map((data) => data.resource.id),
+          hasMore,
+        };
         return;
       }),
       switchMap(() =>

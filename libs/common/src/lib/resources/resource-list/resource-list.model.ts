@@ -1,5 +1,16 @@
-import { Classification, Resource, SortField, SortOption } from '@nuclia/core';
+import {
+  Classification,
+  Resource,
+  RESOURCE_STATUS,
+  Search,
+  SearchOptions,
+  SortField,
+  SortOption,
+  WritableKnowledgeBox,
+} from '@nuclia/core';
 import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface ColoredLabel extends Classification {
   color: string;
@@ -34,4 +45,51 @@ export interface BulkAction {
   done: number;
   errors: number;
   label: string;
+}
+
+export interface ResourceListParams {
+  status: RESOURCE_STATUS;
+  page: number;
+  pageSize: number;
+  sort: SortOption;
+  query: string;
+  titleOnly: boolean;
+  filters: string[];
+}
+export function getSearchOptions(params: ResourceListParams): {
+  searchOptions: SearchOptions;
+  searchFeatures: Search.Features[];
+} {
+  const filters =
+    params.status === RESOURCE_STATUS.PROCESSED ? params.filters : [`/n/s/${params.status}`].concat(params.filters);
+  const searchOptions: SearchOptions = {
+    page_number: params.page,
+    page_size: params.pageSize,
+    sort: params.sort,
+    filters,
+    with_status: params.status === RESOURCE_STATUS.PROCESSED ? params.status : undefined,
+  };
+  const searchFeatures =
+    params.query.length > 0
+      ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
+      : [Search.Features.DOCUMENT];
+  return {
+    searchOptions,
+    searchFeatures,
+  };
+}
+export function searchResources(
+  kb: WritableKnowledgeBox,
+  resourceListParams: ResourceListParams,
+): Observable<{ results: Search.Results; kbId: string }> {
+  const { searchOptions, searchFeatures } = getSearchOptions(resourceListParams);
+  const getResults = resourceListParams.titleOnly
+    ? kb.catalog(resourceListParams.query, searchOptions)
+    : kb.search(resourceListParams.query, searchFeatures, searchOptions);
+  return getResults.pipe(
+    map((res) => ({
+      results: (res.type === 'error' ? { type: 'searchResults' } : res) as Search.Results,
+      kbId: kb.id,
+    })),
+  );
 }

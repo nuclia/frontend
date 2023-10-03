@@ -65,6 +65,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     map(([data, selection]) => data.length > 0 && selection.length === data.length),
   );
   isLoading = false;
+  isShardReady = new BehaviorSubject<boolean>(false);
 
   private _bulkAction: BulkAction = {
     inProgress: false,
@@ -103,7 +104,11 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.resourceListService.status = this.status;
-    this.resourceListService.loadResources().subscribe();
+    this.resourceListService.loadResources().subscribe(() => {
+      // loadResources is launching the first `/catalog` request which will set the shard.
+      // we need to wait for it to be done before launching other request to prevent using different shards for different requests
+      this.isShardReady.next(true);
+    });
   }
 
   ngOnDestroy() {

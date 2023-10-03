@@ -1,14 +1,41 @@
 <div class="edit-resource">
   <header>
-    <pa-button
-      iconAndText
-      icon="chevron-left"
-      aspect="basic"
-      size="small"
-      data-cy="back-to-resources"
-      (click)="backToResources()">
-      {{ 'resource.resources' | translate }}
-    </pa-button>
+    <div class="navigation-buttons">
+      <pa-button
+        icon="chevrons-left"
+        aspect="basic"
+        size="small"
+        data-cy="back-to-resources"
+        [paTooltip]="'resource.tooltip.back-to-resources' | translate"
+        (click)="backToResources()">
+        {{ 'resource.tooltip.back-to-resources' | translate }}
+      </pa-button>
+      <pa-button
+        icon="chevron-left"
+        aspect="basic"
+        size="small"
+        data-cy="previous-resource"
+        [disabled]="
+          (resourceNavigationService.hasData | async) === false || (resourceNavigationService.isFirstResource | async)
+        "
+        [paTooltip]="'resource.tooltip.previous-resource' | translate"
+        (click)="previousResource()">
+        {{ 'resource.tooltip.previous-resource' | translate }}
+      </pa-button>
+      <pa-button
+        icon="chevron-right"
+        aspect="basic"
+        size="small"
+        data-cy="next-resource"
+        [disabled]="
+          (resourceNavigationService.hasData | async) === false || (resourceNavigationService.isLastResource | async)
+        "
+        [paTooltip]="'resource.tooltip.next-resource' | translate"
+        (click)="nextResource()">
+        {{ 'resource.tooltip.next-resource' | translate }}
+      </pa-button>
+    </div>
+
     <div class="title-s">{{ (resource | async)?.title }}</div>
     <div class="actions">
       <pa-button

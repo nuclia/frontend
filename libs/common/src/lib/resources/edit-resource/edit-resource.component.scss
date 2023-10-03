@@ -8,11 +8,16 @@
     display: flex;
     height: $height-header;
     justify-content: space-between;
-    padding: 0 $padding-horizontal-header;
+    padding: 0 $padding-horizontal-header 0 #{$padding-horizontal-header + rhythm(1)};
+
+    .navigation-buttons {
+      display: flex;
+      gap: rhythm(1);
+    }
 
     .title-s {
       flex: 1 0 auto;
-      padding-left: rhythm(10);
+      padding-left: rhythm(8) + rhythm(0.5);
       padding-right: rhythm(1);
     }
 
