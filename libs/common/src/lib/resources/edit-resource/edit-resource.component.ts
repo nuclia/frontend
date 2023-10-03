@@ -146,6 +146,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
       .onClose.pipe(
         filter((confirm) => !!confirm),
         switchMap(() => this.editResource.resource),
+        take(1),
         map((resource) => resource as Resource),
         switchMap((resource: Resource) => resource.delete(true)),
       )
