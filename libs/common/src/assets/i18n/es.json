@@ -572,6 +572,7 @@
 	"resource.menu.annotate": "Anotar",
 	"resource.menu.classify": "Clasificar",
 	"resource.menu.edit": "Editar",
+	"resource.menu.label": "Más",
 	"resource.origin.collaborators": "Colaboradores",
 	"resource.origin.collaborators-helper": "Lista de colaboradores separados por comas",
 	"resource.origin.created": "Data de creación",

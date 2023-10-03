@@ -568,6 +568,7 @@
 	"resource.menu.annotate": "Annoter",
 	"resource.menu.classify": "Classer",
 	"resource.menu.edit": "Modifier",
+	"resource.menu.label": "Plus",
 	"resource.origin.collaborators": "Collaborateurs",
 	"resource.origin.collaborators-helper": "Liste des collaborateurs séparés par des virgules",
 	"resource.origin.created": "Créé",

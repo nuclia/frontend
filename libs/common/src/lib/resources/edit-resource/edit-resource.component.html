@@ -44,7 +44,9 @@
         [active]="currentView === 'preview'"
         paTooltip="resource.tooltip.preview"
         aspect="basic"
-        (click)="onViewChange()"></pa-button>
+        (click)="onViewChange()">
+        {{ 'resource.tooltip.preview' | translate }}
+      </pa-button>
       <pa-button
         icon="edit"
         routerLink="resource"
@@ -52,21 +54,27 @@
         [disabled]="(isAdminOrContrib | async) === false"
         paTooltip="resource.tooltip.edition"
         aspect="basic"
-        (click)="onViewChange()"></pa-button>
+        (click)="onViewChange()">
+        {{ 'resource.tooltip.edition' | translate }}
+      </pa-button>
       <pa-button
         icon="label"
         routerLink="classification"
         [active]="currentView === 'classification'"
         paTooltip="resource.tooltip.classification"
         aspect="basic"
-        (click)="onViewChange()"></pa-button>
+        (click)="onViewChange()">
+        {{ 'resource.tooltip.classification' | translate }}
+      </pa-button>
       <pa-button
         icon="form"
         routerLink="annotation"
         [active]="currentView === 'annotation'"
         paTooltip="resource.tooltip.annotation"
         aspect="basic"
-        (click)="onViewChange()"></pa-button>
+        (click)="onViewChange()">
+        {{ 'resource.tooltip.annotation' | translate }}
+      </pa-button>
       <pa-button
         *ngIf="isPdfAnnotationEnabled | async"
         icon="annotate"
@@ -75,60 +83,74 @@
         aspect="basic"
         (click)="goToPawls()"></pa-button>
       <pa-button
-        icon="plus"
-        routerLink="add-field"
-        [active]="currentView === 'add-field'"
-        [disabled]="(isAdminOrContrib | async) === false"
-        paTooltip="resource.tooltip.add-field"
+        icon="more-vertical"
         aspect="basic"
-        (click)="onViewChange()"></pa-button>
-      <pa-button
-        icon="refresh"
-        paTooltip="resource.tooltip.reprocess"
-        aspect="basic"
-        [disabled]="(resource | async)?.metadata?.status === 'PENDING' || (isAdminOrContrib | async) === false"
-        (click)="reprocessResource()"></pa-button>
-      <pa-button
-        icon="trash"
-        paTooltip="resource.tooltip.delete"
-        [disabled]="(isAdminOrContrib | async) === false"
-        aspect="basic"
-        (click)="deleteResource()"></pa-button>
+        paTooltip="resource.menu.label"
+        [paPopup]="resourceMenu">
+        {{ 'resource.menu.label' | translate }}
+      </pa-button>
+
+      <pa-dropdown #resourceMenu>
+        <pa-option
+          [disabled]="(resource | async)?.metadata?.status === 'PENDING' || (isAdminOrContrib | async) === false"
+          (selectOption)="reprocessResource()">
+          {{ 'resource.tooltip.reprocess' | translate }}
+        </pa-option>
+        <pa-option
+          destructive
+          [disabled]="(isAdminOrContrib | async) === false"
+          (selectOption)="deleteResource()">
+          {{ 'resource.tooltip.delete' | translate }}
+        </pa-option>
+      </pa-dropdown>
     </div>
   </header>
 
   <div class="page-container">
     <nav>
-      <ul *ngIf="currentView !== 'add-field'">
-        <li
-          *ngIf="currentView !== 'preview' && currentView !== 'annotation'"
-          [class.active]="(currentField | async) === 'resource'"
-          (click)="navigateToField('resource')">
-          <pa-icon
-            name="file"
-            size="small"></pa-icon>
-          {{ 'resource.profile' | translate }}
-        </li>
-        <li
-          *ngFor="let field of fields | async"
-          [class.active]="
-            activeField !== 'resource' &&
-            activeField?.field_id === field.field_id &&
-            activeField?.field_type === field.field_type
-          "
-          (click)="navigateToField(field)">
-          <pa-icon
-            [name]="field.icon"
-            size="small"></pa-icon>
-          {{ 'resource.field-' + field.field_type | translate }}
-
-          <span
-            class="error-marker"
-            *ngIf="field.hasError">
+      <ul>
+        <ng-container *ngIf="currentView !== 'add-field'">
+          <li
+            *ngIf="currentView !== 'preview' && currentView !== 'annotation'"
+            [class.active]="(currentField | async) === 'resource'"
+            (click)="navigateToField('resource')">
             <pa-icon
-              name="warning"
+              name="file"
               size="small"></pa-icon>
-          </span>
+            {{ 'resource.profile' | translate }}
+          </li>
+          <li
+            *ngFor="let field of fields | async"
+            [class.active]="
+              activeField !== 'resource' &&
+              activeField?.field_id === field.field_id &&
+              activeField?.field_type === field.field_type
+            "
+            (click)="navigateToField(field)">
+            <pa-icon
+              [name]="field.icon"
+              size="small"></pa-icon>
+            {{ 'resource.field-' + field.field_type | translate }}
+
+            <span
+              class="error-marker"
+              *ngIf="field.hasError">
+              <pa-icon
+                name="warning"
+                size="small"></pa-icon>
+            </span>
+          </li>
+        </ng-container>
+
+        <li
+          *ngIf="(isAdminOrContrib | async) === true"
+          routerLink="add-field"
+          routerLinkActive="active"
+          (click)="onViewChange()">
+          <pa-icon
+            name="plus"
+            size="small"></pa-icon>
+          {{ 'resource.tooltip.add-field' | translate }}
         </li>
       </ul>
     </nav>

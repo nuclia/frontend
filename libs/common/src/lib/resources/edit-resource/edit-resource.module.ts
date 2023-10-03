@@ -24,6 +24,7 @@ import {
   PaExpanderModule,
   PaFocusableModule,
   PaIconModule,
+  PaPopupModule,
   PaScrollModule,
   PaTableModule,
   PaTextFieldModule,
@@ -68,6 +69,7 @@ import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
     PaTableModule,
     JsonViewerComponent,
     PaTextFieldModule,
+    PaPopupModule,
   ],
   declarations: [
     AddFieldComponent,

@@ -572,6 +572,7 @@
 	"resource.menu.annotate": "Anotar",
 	"resource.menu.classify": "Classificar",
 	"resource.menu.edit": "Edita",
+	"resource.menu.label": "Més",
 	"resource.origin.collaborators": "Col·laboradors",
 	"resource.origin.collaborators-helper": "Llista de col·laboradors separats per comes",
 	"resource.origin.created": "Data creació",
