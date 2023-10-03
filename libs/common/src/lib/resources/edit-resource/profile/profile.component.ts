@@ -7,6 +7,8 @@ import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, of, 
 import { delay, shareReplay, takeUntil } from 'rxjs/operators';
 import { EditResourceService } from '../edit-resource.service';
 import { JsonValidator } from '../../../validators';
+import { ActivatedRoute } from '@angular/router';
+import { ResourceNavigationService } from '../resource-navigation.service';
 
 type Thumbnail = { uri: string; blob: SafeUrl };
 
@@ -87,7 +89,11 @@ export class ResourceProfileComponent implements OnInit {
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
-  ) {}
+    private route: ActivatedRoute,
+    private resourceNavigation: ResourceNavigationService,
+  ) {
+    this.resourceNavigation.currentRoute = this.route;
+  }
 
   ngOnInit() {
     this.editResource.setCurrentView('resource');

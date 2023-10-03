@@ -65,14 +65,14 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private modal: SisModalService,
     private featureFlag: FeatureFlagService,
-    public navigation: ResourceNavigationService,
+    public resourceNavigationService: ResourceNavigationService,
   ) {
     this.route.params
       .pipe(
         filter((params) => !!params['id']),
         switchMap((params) => {
           const resourceId = params['id'];
-          this.navigation.currentResourceId = resourceId;
+          this.resourceNavigationService.currentResourceId = resourceId;
           return this.editResource.loadResource(resourceId);
         }),
         takeUntil(this.unsubscribeAll),
@@ -166,9 +166,9 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   }
 
   previousResource() {
-    // TODO
+    this.resourceNavigationService.goToPrevious();
   }
   nextResource() {
-    //TODO
+    this.resourceNavigationService.goToNext();
   }
 }

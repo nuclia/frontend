@@ -15,7 +15,9 @@
         aspect="basic"
         size="small"
         data-cy="previous-resource"
-        [disabled]="(navigation.hasData | async) === false || (navigation.isFirstResource | async)"
+        [disabled]="
+          (resourceNavigationService.hasData | async) === false || (resourceNavigationService.isFirstResource | async)
+        "
         [paTooltip]="'resource.tooltip.previous-resource' | translate"
         (click)="previousResource()">
         {{ 'resource.tooltip.previous-resource' | translate }}
@@ -25,7 +27,9 @@
         aspect="basic"
         size="small"
         data-cy="next-resource"
-        [disabled]="(navigation.hasData | async) === false || (navigation.isLastResource | async)"
+        [disabled]="
+          (resourceNavigationService.hasData | async) === false || (resourceNavigationService.isLastResource | async)
+        "
         [paTooltip]="'resource.tooltip.next-resource' | translate"
         (click)="nextResource()">
         {{ 'resource.tooltip.next-resource' | translate }}

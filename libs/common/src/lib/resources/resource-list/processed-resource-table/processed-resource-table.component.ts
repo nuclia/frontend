@@ -1,7 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ColoredLabel, ColumnHeader, DEFAULT_PREFERENCES, RESOURCE_LIST_PREFERENCES } from '../resource-list.model';
 import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { BehaviorSubject, catchError, combineLatest, forkJoin, Observable, of, skip, Subject, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  forkJoin,
+  Observable,
+  of,
+  skip,
+  Subject,
+  take,
+} from 'rxjs';
 import { HeaderCell, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import {
   Classification,
@@ -133,7 +144,13 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
       this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(this.userPreferences));
     });
 
-    this.loadFilters();
+    this.isShardReady
+      .pipe(
+        filter((ready) => ready),
+        take(1),
+        switchMap(() => this.loadFilters()),
+      )
+      .subscribe();
   }
 
   override ngOnDestroy() {
@@ -301,31 +318,28 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     return this.filterOptions[type].filter((option) => option.selected).map((option) => option.value);
   }
 
-  private loadFilters() {
+  private loadFilters(): Observable<void> {
     const mimeFacets = ['/n/i/application', '/n/i/audio', '/n/i/image', '/n/i/text', '/n/i/video'];
-    forkJoin([
+    return forkJoin([
       this.sdk.currentKb.pipe(take(1)),
       this.labelSets.pipe(take(1)),
       this.route.queryParamMap.pipe(take(1)),
       this.resourceListService.filters.pipe(take(1)),
-    ])
-      .pipe(
-        switchMap(([kb, labelSets, queryParams, filters]) => {
-          const faceted = mimeFacets.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-          return kb.catalog('', { faceted }).pipe(map((results) => ({ results, queryParams, filters })));
-        }),
-      )
-      .subscribe(({ results, queryParams, filters }) => {
+    ]).pipe(
+      switchMap(([kb, labelSets, queryParams, filters]) => {
+        const faceted = mimeFacets.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
+        return kb.catalog('', { faceted }).pipe(map((results) => ({ results, queryParams, filters })));
+      }),
+      map(({ results, queryParams, filters }) => {
         if (results.type !== 'error') {
           const previousFilters = queryParams.get('preserveFilters') ? filters : queryParams.getAll('filters');
           this.formatFiltersFromFacets(results.fulltext?.facets || {}, previousFilters);
           if (previousFilters.length > 0) {
             this.onToggleFilter();
-          } else {
-            this.resourceListService.filter([]);
           }
         }
-      });
+      }),
+    );
   }
 
   private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[]) {

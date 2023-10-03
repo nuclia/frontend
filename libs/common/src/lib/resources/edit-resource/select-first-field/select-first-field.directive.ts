@@ -6,6 +6,8 @@ import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { takeUntil } from 'rxjs/operators';
 import { ResourceNavigationService } from '../resource-navigation.service';
 
+const REGEXP_RESOURCE_ID = /resources\/(\w+)\//;
+
 @Directive({
   selector: '[appSelectFirstField]',
 })
@@ -34,6 +36,9 @@ export class SelectFirstFieldDirective implements OnDestroy {
     this.route.params
       .pipe(
         filter((params) => !params['fieldId'] && !params['fieldType']),
+        switchMap(() => this.editResource.resource),
+        // Make sure the resource stored in editResource service is matching the one from the current path
+        filter((resource) => !!resource && location.pathname.match(REGEXP_RESOURCE_ID)?.[1] === resource.id),
         switchMap(() => this.editResource.fields),
         filter((fields) => fields.length > 0),
         takeUntil(this.unsubscribeAll),

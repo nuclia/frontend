@@ -4,6 +4,8 @@ import { FIELD_TYPE, getDataKeyFromFieldType, LinkField, Resource, TextField, Te
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { ActivatedRoute } from '@angular/router';
+import { ResourceNavigationService } from '../resource-navigation.service';
 
 @Component({
   templateUrl: './add-field.component.html',
@@ -53,7 +55,14 @@ export class AddFieldComponent implements OnInit, OnDestroy {
     pattern: 'validation.url_required',
   };
 
-  constructor(private editResource: EditResourceService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private editResource: EditResourceService,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private resourceNavigation: ResourceNavigationService,
+  ) {
+    this.resourceNavigation.currentRoute = this.route;
+  }
 
   ngOnInit(): void {
     this.editResource.setCurrentView('add-field');
