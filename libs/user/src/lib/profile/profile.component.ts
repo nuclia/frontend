@@ -26,8 +26,8 @@ export class ProfileComponent implements OnInit {
   userPrefs: WelcomeUser | undefined;
   languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
 
-  canModifyPassword: boolean = false; // TODO
-  canModifyEmail: boolean = false; // TODO
+  canModifyPassword = false; // TODO
+  canModifyEmail = false; // TODO
 
   profileForm = this.formBuilder.group({
     name: ['', [Validators.required]],
