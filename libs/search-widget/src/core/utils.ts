@@ -1,16 +1,11 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from, map, Observable, of } from 'rxjs';
+import type { FileField, FieldFullId, IFieldData, IResource, LinkField, ResourceField } from '@nuclia/core';
 import {
   FIELD_TYPE,
-  FieldFullId,
-  FileField,
   FileFieldData,
-  IFieldData,
-  IResource,
-  LinkField,
   longToShortFieldType,
-  ResourceField,
   Search,
   sliceUnicode,
 } from '@nuclia/core';
