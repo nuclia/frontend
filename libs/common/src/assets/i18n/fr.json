@@ -638,6 +638,7 @@
 	"stash.config.failure": "Une erreur s'est produite lors de l'enregistrement des paramètres.",
 	"stash.config.key.azure_openai": "Clé Azure OpenAI",
 	"stash.config.key.openai": "Clé OpenAI",
+	"stash.config.option.anthropic": "Anthropic Claude",
 	"stash.config.option.chatgpt": "ChatGPT OpenAI",
 	"stash.config.option.chatgpt-azure": "ChatGPT Azure OpenAI",
 	"stash.config.option.cohere": "Cohérer (bêta)",
