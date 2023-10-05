@@ -10,7 +10,7 @@
 	"account.chart_error_media_seconds": "Unable to fetch \"Media hours\" data",
 	"account.chart_error_processing_status": "Unable to fetch \"resources pending to be processed\" data",
 	"account.chart_error_searches": "Unable to fetch \"Searches\" data",
-	"account.chart_error_train_seconds": "Unable to fetch \"Train hours\" data",
+	"account.chart_error_train_seconds": "Unable to fetch \"Training hours\" data",
 	"account.chart_media_seconds": "Media hours",
 	"account.chart_number_resources": "Number of resources",
 	"account.chart_range_label": "Last {{hours}}",
