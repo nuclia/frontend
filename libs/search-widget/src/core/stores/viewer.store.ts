@@ -1,9 +1,8 @@
 import type { ResultType, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
-import type { CloudLink, FieldFullId, IFieldData } from '@nuclia/core';
+import type { CloudLink, FieldFullId, IFieldData, FieldMetadata } from '@nuclia/core';
 import {
   FIELD_TYPE,
-  FieldMetadata,
   FileFieldData,
   getFieldTypeFromString,
   LinkFieldData,

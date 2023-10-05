@@ -1,8 +1,6 @@
-import {
-  Chat,
+import type {
   ChatOptions,
   Classification,
-  ExtractedDataTypes,
   FieldFullId,
   FieldMetadata,
   IErrorResponse,
@@ -10,15 +8,12 @@ import {
   IResource,
   KBStates,
   LabelSets,
-  Nuclia,
   NucliaOptions,
   Resource,
   ResourceField,
-  ResourceFieldProperties,
-  ResourceProperties,
-  Search,
   SearchOptions,
 } from '@nuclia/core';
+import { Chat, ExtractedDataTypes, Nuclia, ResourceFieldProperties, ResourceProperties, Search } from '@nuclia/core';
 import { filter, forkJoin, from, map, merge, Observable, of, switchMap, take, tap } from 'rxjs';
 import type { EntityGroup, WidgetOptions } from './models';
 import { entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
