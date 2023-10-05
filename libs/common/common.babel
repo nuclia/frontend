@@ -617,37 +617,6 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>consuming</name>
-								<description/>
-								<comment/>
-								<translations>
-									<translation>
-										<language>ca-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>de-DE</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>en-US</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>es-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>fr-FR</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>pt-PT</language>
-										<approved>false</approved>
-									</translation>
-								</translations>
-							</concept_node>
-							<concept_node>
 								<name>create_new_db</name>
 								<description/>
 								<comment/>
@@ -18230,10 +18199,10 @@
 												<language>ca-ES</language>
 												<approved>false</approved>
 											</translation>
-                      <translation>
-                        <language>de-DE</language>
-                        <approved>false</approved>
-                      </translation>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
 											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
@@ -18246,10 +18215,10 @@
 												<language>fr-FR</language>
 												<approved>false</approved>
 											</translation>
-                      <translation>
-                        <language>pt-PT</language>
-                        <approved>false</approved>
-                      </translation>
+											<translation>
+												<language>pt-PT</language>
+												<approved>false</approved>
+											</translation>
 										</translations>
 									</concept_node>
 								</children>
@@ -19492,6 +19461,37 @@
 										</translations>
 									</concept_node>
 									<concept_node>
+										<name>back-to-resources</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
 										<name>classification</name>
 										<description/>
 										<comment/>
@@ -19585,6 +19585,37 @@
 										</translations>
 									</concept_node>
 									<concept_node>
+										<name>next-resource</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
 										<name>pdf-annotation</name>
 										<description/>
 										<comment/>
@@ -19617,6 +19648,37 @@
 									</concept_node>
 									<concept_node>
 										<name>preview</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>previous-resource</name>
 										<description/>
 										<comment/>
 										<translations>
