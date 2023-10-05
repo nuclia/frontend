@@ -46,7 +46,7 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
   updateLabels(labels: Classification[]) {
     this.currentLabels = labels;
     this.isModified = true;
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   cancel() {
