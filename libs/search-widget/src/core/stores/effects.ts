@@ -9,7 +9,8 @@ import {
   suggest,
 } from '../api';
 import { labelSets, labelState } from './labels.store';
-import { Suggestions, suggestions, suggestionState, triggerSuggestions, typeAhead } from './suggestions.store';
+import type { Suggestions } from './suggestions.store';
+import { suggestions, suggestionState, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
   combineLatest,
   debounceTime,
@@ -27,7 +28,8 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { NO_SUGGESTION_RESULTS, TypedResult } from '../models';
+import type { TypedResult } from '../models';
+import { NO_SUGGESTION_RESULTS,  } from '../models';
 import { widgetFeatures } from './widget.store';
 import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
