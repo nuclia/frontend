@@ -277,7 +277,7 @@ export class STFUtils {
   }
 
   public static supportedLanguages() {
-    return ['ca', 'es', 'en', 'fr', 'de', 'pt'];
+    return ['ca', 'es', 'en', 'fr'];
   }
 
   static getDateFormat(locale: string): string {
