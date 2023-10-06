@@ -1,4 +1,4 @@
-import { Account, INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, IKnowledgeBoxItem, INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   baseLogoPath,
@@ -114,7 +114,20 @@ class NucliaCloudKBImpl implements IDestinationConnector {
   }
 
   private getKbField(): Observable<Field> {
-    return this.nuclia.db.getKnowledgeBoxes(localStorage.getItem(ACCOUNT_KEY) || '').pipe(
+    const request: Observable<IKnowledgeBoxItem[]> = this.nuclia.options.standalone
+      ? this.nuclia.db.getStandaloneKbs().pipe(
+          map((kbs) =>
+            kbs.map((kb) => ({
+              id: kb.uuid,
+              zone: '',
+              slug: kb.slug,
+              title: kb.slug,
+              role_on_kb: 'SOWNER',
+            })),
+          ),
+        )
+      : this.nuclia.db.getKnowledgeBoxes(localStorage.getItem(ACCOUNT_KEY) || '');
+    return request.pipe(
       map((kbs) => ({
         id: 'kb',
         label: 'Knowledge Box',

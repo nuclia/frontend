@@ -66,7 +66,7 @@ export interface SearchResults {
 }
 
 export interface ConnectorSettings {
-  [key: string]: string;
+  [key: string]: any;
 }
 
 export interface ConnectorParameters {

@@ -79,48 +79,83 @@
 
   <div class="destination">
     <div class="body-m">{{ 'upload.source.destination' | translate }}:</div>
-    <div
-      *ngIf="kbField.type === 'select'"
-      class="select-field-container">
-      <pa-select
-        formControlName="kb"
-        [label]="kbField.label"
-        (valueChange)="onSelectKb($event)">
-        <pa-option
-          *ngFor="let option of kbField.options"
-          [disabled]="option.disabled"
-          [value]="option.value">
-          {{ option.label }}
-        </pa-option>
-      </pa-select>
-      <pa-button
-        *ngIf="kbField.canBeRefreshed"
-        icon="refresh"
-        aspect="basic"
-        [paTooltip]="'upload.refresh' | translate: { field: kbField.label }"
-        (click)="refreshField(kbField.id)">
-        {{ 'upload.refresh' | translate: { field: kbField.label } }}
-      </pa-button>
+    <div>
+      <pa-checkbox
+        formControlName="local"
+        (valueChange)="onToggleLocal($event)">
+        {{ 'upload.source.use-nucliadb' | translate }}
+      </pa-checkbox>
     </div>
-    <div
-      *ngIf="(hasLabelSets | async) === true"
-      class="field">
-      <div class="body-m">{{ 'upload.labels' | translate }}</div>
-      <app-label-field [(selection)]="selectedLabels"></app-label-field>
-    </div>
-    <div
-      *ngIf="(hasLabelSets | async) === false"
-      class="field">
-      <div class="body-m">
-        <a
-          [href]="dashboardUrl"
-          (click)="goToUrl($event, dashboardUrl)"
-          target="_blank"
-          rel="noopener noreferrer">
-          {{ 'upload.no-labels' | translate }}
-        </a>
+    <ng-container *ngIf="!local">
+      <div
+        *ngIf="kbField"
+        class="select-field-container">
+        <pa-select
+          formControlName="kb"
+          [label]="kbField.label">
+          <pa-option
+            *ngFor="let option of kbField.options"
+            [disabled]="option.disabled"
+            [value]="option.value">
+            {{ option.label }}
+          </pa-option>
+        </pa-select>
+        <pa-button
+          *ngIf="kbField.canBeRefreshed"
+          icon="refresh"
+          aspect="basic"
+          [paTooltip]="'upload.refresh' | translate : { field: kbField.label }"
+          (click)="refreshKbs(local)">
+          {{ 'upload.refresh' | translate : { field: kbField.label } }}
+        </pa-button>
       </div>
-    </div>
+    </ng-container>
+    <ng-container *ngIf="local">
+      <div>
+        <pa-input
+          formControlName="localUrl"
+          placeholder="http://localhost:8080/api">
+          {{ 'upload.source.nucliadb-url' | translate }}
+        </pa-input>
+      </div>
+      <div
+        *ngIf="localKbField"
+        class="select-field-container">
+        <pa-select
+          formControlName="localKb"
+          [label]="localKbField.label">
+          <pa-option
+            *ngFor="let option of localKbField.options"
+            [disabled]="option.disabled"
+            [value]="option.value">
+            {{ option.label }}
+          </pa-option>
+        </pa-select>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="(labelSets | async) !== null">
+      <div
+        *ngIf="(hasLabelSets | async) === true"
+        class="field">
+        <div class="body-m labels">{{ 'upload.labels' | translate }}</div>
+        <app-label-field
+          [labelSets]="labelSets | async"
+          [(selection)]="selectedLabels"></app-label-field>
+      </div>
+      <div
+        *ngIf="(hasLabelSets | async) === false"
+        class="field">
+        <div class="body-m">
+          <a
+            [href]="dashboardUrl"
+            (click)="goToUrl($event, dashboardUrl)"
+            target="_blank"
+            rel="noopener noreferrer">
+            {{ 'upload.no-labels' | translate }}
+          </a>
+        </div>
+      </div>
+    </ng-container>
   </div>
 
   <div class="buttons">

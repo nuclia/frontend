@@ -80,7 +80,7 @@ export class Db implements IDb {
       }
 
       const kbEndpoint = this.nuclia.options.standalone
-        ? `/kb/${knowledgeBox}`
+        ? `/kb/${knowledgeBoxSlug}`
         : `/account/${account}/kb/${knowledgeBoxSlug}`;
       return this.nuclia.rest.get<IKnowledgeBox>(kbEndpoint).pipe(
         switchMap((kb) =>

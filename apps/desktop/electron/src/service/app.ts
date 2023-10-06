@@ -1,5 +1,6 @@
 import express, { Express } from 'express';
 import cors from 'cors';
+import dns from 'node:dns';
 import bodyParser from 'body-parser';
 import { router } from './routes';
 import { sync } from './sync';
@@ -23,6 +24,8 @@ export const initSyncService = () => {
       });
     });
   }
+  // Allow requests to "localhost" domain (https://github.com/nodejs/node/issues/40702)
+  dns.setDefaultResultOrder('ipv4first');
 
   app.use(
     cors({
