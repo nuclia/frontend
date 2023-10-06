@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { Classification, LabelSetKind } from '@nuclia/core';
-import { BehaviorSubject, map, tap } from 'rxjs';
+import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
+import { BehaviorSubject, map, merge, ReplaySubject, tap } from 'rxjs';
 import { LabelsService } from '../labels.service';
 import { Size } from '@guillotinaweb/pastanaga-angular';
 import { switchMap } from 'rxjs/operators';
@@ -25,15 +25,24 @@ export class LabelFieldComponent {
   @Input() set kind(kind: LabelSetKind) {
     this._kind.next(kind);
   }
+  private _labelSets = new ReplaySubject<LabelSets>();
+  @Input() set labelSets(value: LabelSets | undefined) {
+    if (value) {
+      this._labelSets.next(value);
+    }
+  }
   @Input() size: Size | undefined;
   @Input() disabled: boolean = false;
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
   @Output() hasLabels = new EventEmitter<boolean>();
 
-  labelSets$ = this._kind.pipe(
-    switchMap((kind) =>
-      kind === LabelSetKind.RESOURCES ? this.labelsService.resourceLabelSets : this.labelsService.paragraphLabelSets,
+  labelSets$ = merge(
+    this._labelSets,
+    this._kind.pipe(
+      switchMap((kind) =>
+        kind === LabelSetKind.RESOURCES ? this.labelsService.resourceLabelSets : this.labelsService.paragraphLabelSets,
+      ),
     ),
   );
   hasLabels$ = this.labelSets$.pipe(
