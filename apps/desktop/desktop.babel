@@ -35,6 +35,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -44,6 +48,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -58,6 +66,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -67,6 +79,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -81,6 +97,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -90,6 +110,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -111,6 +135,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -120,6 +148,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -134,6 +166,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -143,6 +179,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -157,6 +197,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -166,6 +210,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -180,6 +228,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -189,6 +241,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -203,6 +259,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -212,6 +272,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -226,6 +290,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -235,6 +303,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -249,6 +321,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -258,6 +334,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -272,6 +352,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -281,6 +365,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -295,6 +383,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -304,6 +396,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -323,6 +419,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -332,6 +432,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -346,6 +450,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -355,6 +463,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -369,6 +481,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -378,6 +494,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -392,6 +512,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -401,6 +525,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -415,6 +543,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -424,6 +556,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -438,6 +574,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -447,6 +587,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -466,6 +610,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -475,6 +623,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -489,6 +641,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -498,6 +654,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -512,6 +672,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -521,6 +685,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -540,6 +708,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -549,6 +721,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -563,6 +739,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -572,6 +752,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -586,6 +770,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -595,6 +783,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -614,6 +806,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -623,6 +819,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -637,6 +837,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -646,6 +850,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -663,6 +871,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -672,6 +884,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -686,6 +902,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -695,6 +915,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -709,6 +933,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -718,6 +946,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -732,6 +964,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -741,6 +977,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -755,6 +995,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -764,6 +1008,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -785,6 +1033,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -794,6 +1046,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -808,6 +1064,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -817,6 +1077,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -831,6 +1095,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -840,6 +1108,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -854,6 +1126,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -863,6 +1139,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -877,6 +1157,10 @@
 										<approved>false</approved>
 									</translation>
 									<translation>
+										<language>de-DE</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
 										<language>en-US</language>
 										<approved>false</approved>
 									</translation>
@@ -886,6 +1170,10 @@
 									</translation>
 									<translation>
 										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>pt-PT</language>
 										<approved>false</approved>
 									</translation>
 								</translations>
@@ -903,6 +1191,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -912,6 +1204,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -926,6 +1222,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -935,6 +1235,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -954,6 +1258,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -963,6 +1271,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -977,6 +1289,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -986,6 +1302,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1000,6 +1320,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1009,6 +1333,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1028,6 +1356,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1037,6 +1369,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1051,6 +1387,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1060,6 +1400,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1074,6 +1418,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1083,6 +1431,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1097,6 +1449,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1106,6 +1462,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1120,6 +1480,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1129,6 +1493,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1143,6 +1511,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1152,6 +1524,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1171,6 +1547,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1180,6 +1560,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1194,6 +1578,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1203,6 +1591,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1217,6 +1609,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1226,6 +1622,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1240,6 +1640,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1249,6 +1653,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1263,6 +1671,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1272,6 +1684,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1286,6 +1702,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1295,6 +1715,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1309,6 +1733,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1318,6 +1746,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1332,6 +1764,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1341,6 +1777,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1355,6 +1795,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1364,6 +1808,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1378,6 +1826,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1387,6 +1839,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1406,6 +1862,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1415,6 +1875,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1429,6 +1893,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1438,6 +1906,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1452,6 +1924,10 @@
 												<approved>false</approved>
 											</translation>
 											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
 												<language>en-US</language>
 												<approved>false</approved>
 											</translation>
@@ -1461,6 +1937,10 @@
 											</translation>
 											<translation>
 												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
 												<approved>false</approved>
 											</translation>
 										</translations>
@@ -1479,6 +1959,9 @@
 			<code>ca-ES</code>
 		</language>
 		<language>
+			<code>de-DE</code>
+		</language>
+		<language>
 			<code>en-US</code>
 		</language>
 		<language>
@@ -1486,6 +1969,9 @@
 		</language>
 		<language>
 			<code>fr-FR</code>
+		</language>
+		<language>
+			<code>pt-PT</code>
 		</language>
 	</languages>
 	<translation_packages>
@@ -1495,6 +1981,10 @@
 				<translation_url>
 					<path>src/assets/i18n/ca.json</path>
 					<language>ca-ES</language>
+				</translation_url>
+				<translation_url>
+					<path>src/assets/i18n/de.json</path>
+					<language>de-DE</language>
 				</translation_url>
 				<translation_url>
 					<path>src/assets/i18n/en.json</path>
@@ -1507,6 +1997,10 @@
 				<translation_url>
 					<path>src/assets/i18n/fr.json</path>
 					<language>fr-FR</language>
+				</translation_url>
+				<translation_url>
+					<path>src/assets/i18n/pt.json</path>
+					<language>pt-PT</language>
 				</translation_url>
 			</translation_urls>
 		</translation_package>
