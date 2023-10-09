@@ -135,12 +135,12 @@ export class SelectKbComponent implements OnInit, OnDestroy {
     this.router.navigate([this.navigation.getAccountManageUrl(this.account!.slug)]);
   }
 
-  deleteKb(event: MouseEvent, slug: string, title: string) {
+  deleteKb(event: MouseEvent, slug: string, title?: string) {
     event.stopPropagation();
     this.modalService
       .openConfirm({
         title: 'stash.delete.delete',
-        description: `${title} (${slug})`,
+        description: `${title || ''} (${slug})`,
         confirmLabel: 'generic.delete',
         isDestructive: true,
       })

@@ -75,17 +75,18 @@
       pointer-events: none;
     }
     .delete-btn {
-      visibility: hidden;
+      opacity: 0;
       position: absolute;
       top: 50%;
       left: rhythm(1.5);
       transform: translateY(-50%);
+      transition: opacity $transition-hint;
     }
 
     &:hover {
       background-color: $color-background-menu-option-hover;
       .delete-btn {
-        visibility: visible;
+        opacity: 1;
       }
     }
 
