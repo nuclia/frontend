@@ -643,6 +643,7 @@
 	"stash.config.failure": "Ocorreu um erro ao salvar as configurações.",
 	"stash.config.key.azure_openai": "Chave OpenAI do Azure",
 	"stash.config.key.openai": "Chave OpenAI",
+	"stash.config.option.anthropic": "Anthropic Claude",
 	"stash.config.option.chatgpt": "ChatGPT OpenAI",
 	"stash.config.option.chatgpt-azure": "ChatGPT Azure OpenAI",
 	"stash.config.option.cohere": "Coerente (beta)",
