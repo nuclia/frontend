@@ -74,9 +74,20 @@
       color: $color-text-menu-option-disabled;
       pointer-events: none;
     }
+    .delete-btn {
+      opacity: 0;
+      position: absolute;
+      top: 50%;
+      left: rhythm(1.5);
+      transform: translateY(-50%);
+      transition: opacity $transition-hint;
+    }
 
     &:hover {
       background-color: $color-background-menu-option-hover;
+      .delete-btn {
+        opacity: 1;
+      }
     }
 
     pa-icon {

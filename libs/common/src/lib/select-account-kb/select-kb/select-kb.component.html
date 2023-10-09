@@ -37,6 +37,14 @@
           class="kb"
           [class.disabled]="!kb.role_on_kb"
           [routerLink]="!!kb.role_on_kb ? getKbUrl(kb.slug) : null">
+          <pa-button
+            class="delete-btn"
+            *ngIf="standalone"
+            (click)="deleteKb($event, kb.slug, kb.title)"
+            icon="trash"
+            aspect="basic"
+            kind="destructive"
+            size="small"></pa-button>
           {{ kb.title }}
           <pa-icon
             *ngIf="!!kb.role_on_kb"

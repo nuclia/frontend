@@ -267,7 +267,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   delete(): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${this.account}/kb/${this.slug}`);
+    const endpoint = this.account === 'local' ? `/kb/${this.id}` : `/account/${this.account}/kb/${this.slug}`;
+    return this.nuclia.rest.delete(endpoint);
   }
 
   createEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void> {

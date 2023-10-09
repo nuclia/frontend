@@ -23440,6 +23440,37 @@
 										</translations>
 									</concept_node>
 									<concept_node>
+										<name>manage-kbs</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
 										<name>settings</name>
 										<description/>
 										<comment/>
