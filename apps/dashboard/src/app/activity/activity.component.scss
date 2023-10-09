@@ -1,7 +1,7 @@
 @import 'variables';
 
 .activity {
-  padding: rhythm(6) var(--app-layout-margin-right) rhythm(7) 5%;
+  padding: rhythm(6) var(--app-layout-margin-right) rhythm(7) var(--app-layout-margin-left);
   position: relative;
   min-height: 200px;
 }

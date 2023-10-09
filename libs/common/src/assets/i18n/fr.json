@@ -449,6 +449,7 @@
 	"modal.upload.queue_length": "Longueur de la file d'attente",
 	"modal.upload.title": "Téléchargez vos fichiers",
 	"modal.upload_folder": "Ajouter un dossier",
+	"need-help-book-demo": "Besoin d'aide? Réservez une démo !",
 	"ner-add-entity-dialog.title": "Ajouter NER",
 	"ner-family-dialog.family-color": "Couleur de la famille NER",
 	"ner-family-dialog.family-color-placeholder": "Couleur hexadécimale (#ffdd1a)",

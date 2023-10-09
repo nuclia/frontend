@@ -1,7 +1,7 @@
 @import 'variables';
 
 .knowledge-box-keys {
-  padding: 70px var(--app-layout-margin-right);
+  padding: 70px var(--app-layout-margin-right) 70px var(--app-layout-margin-left);
 
   h2 {
     margin: 0 0 rhythm(0.25) 0;
