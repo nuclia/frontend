@@ -3,8 +3,7 @@ import { AccountService } from '../account.service';
 import { ActivatedRoute } from '@angular/router';
 import { filter, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AccountDetailsStore } from './account-details.store';
-import { ZoneService } from '../../manage-zones/zone.service';
+import { ManagerStore } from '../../manager.store';
 
 @Component({
   templateUrl: './account-details.component.html',
@@ -15,25 +14,23 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   account = this.store.accountDetails;
+  kbList = this.store.kbList;
   currentState = this.store.currentState;
 
   constructor(
     private route: ActivatedRoute,
     private accountService: AccountService,
-    private zoneService: ZoneService,
-    private store: AccountDetailsStore,
+    private store: ManagerStore,
   ) {}
 
   ngOnInit() {
     this.route.params
       .pipe(
         filter((params) => !!params['accountId']),
-        switchMap((params) => this.accountService.getAccount(params['accountId'])),
+        switchMap((params) => this.accountService.loadAccountDetails(params['accountId'])),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((account) => this.store.setAccountDetails(account));
-
-    this.zoneService.getZones().subscribe((zones) => this.store.setZones(zones));
+      .subscribe();
   }
 
   ngOnDestroy() {
@@ -42,6 +39,6 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
   }
 
   resetAccount() {
-    this.store.resetAccountDetails();
+    this.store.setAccountDetails(null);
   }
 }

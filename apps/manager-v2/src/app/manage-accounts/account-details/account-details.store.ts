@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, filter, map, Observable, take } from 'rxjs';
-import { ExtendedAccount, KbSummary } from '../account.models';
-import { ZoneSummary } from '../../manage-zones/zone.models';
+import { ExtendedAccount, KbSummary } from '../global-account.models';
 import { AccountBlockingState } from '@nuclia/core';
+import { ZoneSummary } from '../../manage-zones/zone.models';
 
 const BLOCKING_STATE_LABEL = {
   [AccountBlockingState.UNBLOCKED]: 'Active',

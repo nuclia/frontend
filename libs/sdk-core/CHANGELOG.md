@@ -1,3 +1,10 @@
+# 1.6.4 (unreleased)
+
+### Improvements
+
+- Update `BlockedFeature` model to match backend one
+- Improve maintainability of `AccountLimits` and `AccountLimitsPatchPayload` using better typing construction
+
 # 1.6.3 (2023-10-02)
 
 ### Improvements

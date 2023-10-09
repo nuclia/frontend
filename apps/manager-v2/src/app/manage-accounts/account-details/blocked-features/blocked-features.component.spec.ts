@@ -4,7 +4,7 @@ import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
 import { AccountDetailsStore } from '../account-details.store';
 import { AccountService } from '../../account.service';
 import { of } from 'rxjs';
-import { ExtendedAccount } from '../../account.models';
+import { ExtendedAccount } from '../../global-account.models';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';

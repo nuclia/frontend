@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { AccountDetailsStore } from '../account-details.store';
-import { Subject, switchMap } from 'rxjs';
-import { ExtendedAccount } from '../../account.models';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AccountService } from '../../account.service';
 import { BlockedFeature } from '@nuclia/core';
+import { AccountService } from '../../account.service';
+import { ManagerStore } from '../../../manager.store';
+
+type BlockedFeaturesForm = Record<BlockedFeature, FormControl<boolean>>;
 
 @Component({
   templateUrl: './blocked-features.component.html',
@@ -14,33 +15,30 @@ import { BlockedFeature } from '@nuclia/core';
 })
 export class BlockedFeaturesComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
-  private accountId = '';
-  private accountBackup?: ExtendedAccount;
+  private blockedFeaturesBackup?: BlockedFeature[];
 
-  blockedFeatures = new FormGroup({
-    upload: new FormControl<boolean>(false, { nonNullable: true }),
-    processing: new FormControl<boolean>(false, { nonNullable: true }),
-    search: new FormControl<boolean>(false, { nonNullable: true }),
-    generative: new FormControl<boolean>(false, { nonNullable: true }),
-    training: new FormControl<boolean>(false, { nonNullable: true }),
-    public_upload: new FormControl<boolean>(false, { nonNullable: true }),
-    public_processing: new FormControl<boolean>(false, { nonNullable: true }),
-    public_search: new FormControl<boolean>(false, { nonNullable: true }),
-    public_generative: new FormControl<boolean>(false, { nonNullable: true }),
-  });
+  blockedFeatures: FormGroup<BlockedFeaturesForm>;
   isSaving = false;
 
-  constructor(private store: AccountDetailsStore, private accountService: AccountService) {}
+  constructor(
+    private store: ManagerStore,
+    private accountService: AccountService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    const features = Object.values(BlockedFeature).reduce((controls, feature) => {
+      controls[feature] = new FormControl<boolean>(false, { nonNullable: true });
+      return controls;
+    }, {} as BlockedFeaturesForm);
+    this.blockedFeatures = new FormGroup(features);
+  }
 
   ngOnInit(): void {
-    this.store
-      .getAccount()
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((accountDetails) => {
-        this.accountBackup = { ...accountDetails };
-        this.accountId = accountDetails.id;
-        accountDetails.blocked_features.forEach((feature) => this.blockedFeatures.controls[feature].patchValue(true));
+    this.store.blockedFeatures.pipe(takeUntil(this.unsubscribeAll)).subscribe((blockedFeatures) => {
+      this.blockedFeaturesBackup = [...blockedFeatures];
+      Object.entries(this.blockedFeatures.controls).forEach(([feature, control]) => {
+        control.patchValue(blockedFeatures.includes(<BlockedFeature>feature));
       });
+    });
   }
 
   ngOnDestroy(): void {
@@ -49,19 +47,27 @@ export class BlockedFeaturesComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    if (this.blockedFeatures.valid) {
+    const accountId = this.store.getAccountId();
+    if (this.blockedFeatures.valid && accountId) {
       this.isSaving = true;
 
-      this.accountService
-        .updateBlockedFeatures(this.accountId, this.blockedFeatures.getRawValue())
-        .pipe(switchMap(() => this.accountService.getAccount(this.accountId)))
-        .subscribe((updatedAccount) => this.store.setAccountDetails(updatedAccount));
+      this.accountService.updateBlockedFeatures(accountId, this.blockedFeatures.getRawValue()).subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.blockedFeatures.markAsPristine();
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.isSaving = false;
+          this.cdr.markForCheck();
+        },
+      });
     }
   }
 
   reset() {
-    if (this.accountBackup) {
-      const blockedBackup = this.accountBackup.blocked_features;
+    if (this.blockedFeaturesBackup) {
+      const blockedBackup = this.blockedFeaturesBackup;
       Object.entries(this.blockedFeatures.controls).forEach(([feature, control]) => {
         control.patchValue(blockedBackup.includes(<BlockedFeature>feature));
       });

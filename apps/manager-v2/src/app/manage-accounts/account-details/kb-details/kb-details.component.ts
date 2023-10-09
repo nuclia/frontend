@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, debounceTime, filter, forkJoin, map, Subject, switchMap } from 'rxjs';
+import { combineLatest, debounceTime, filter, map, of, Subject, switchMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { AccountService } from '../../account.service';
-import { AccountDetailsStore } from '../account-details.store';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SisToastService } from '@nuclia/sistema';
-import { KbUser } from '../../account.models';
+import { KbUser } from '../../global-account.models';
 import { KBRoles } from '@nuclia/core';
 import { UserService } from '../../../manage-users/user.service';
 import { UserSearch } from '../../../manage-users/user.models';
+import { ManagerStore } from '../../../manager.store';
+import { AccountDetails, KbDetails } from '../../account-ui.models';
 
 @Component({
   templateUrl: './kb-details.component.html',
@@ -17,6 +18,7 @@ import { UserSearch } from '../../../manage-users/user.models';
 })
 export class KbDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
+
   kbForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -25,35 +27,48 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
   isSaving = false;
 
   searchMemberTerm$ = new Subject<string>();
-  potentialMembers$ = combineLatest([
-    this.searchMemberTerm$.pipe(
-      filter((term) => term.length > 2 || term.length === 0),
-      debounceTime(300),
-    ),
-    this.store.getAccount(),
-  ]).pipe(switchMap(([term, account]) => this.userService.searchAccountUser(account.id, term)));
+  potentialMembers$ = this.searchMemberTerm$.pipe(
+    filter((term) => term.length > 2 || term.length === 0),
+    debounceTime(300),
+    switchMap((term) => {
+      const accountId = this.store.getAccountId();
+      return accountId ? this.userService.searchAccountUser(accountId, term) : of([]);
+    }),
+  );
+
+  private currentAccountId?: string;
+  private backupKb?: KbDetails;
 
   constructor(
     private route: ActivatedRoute,
     private accountService: AccountService,
     private userService: UserService,
-    private store: AccountDetailsStore,
+    private store: ManagerStore,
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
     combineLatest([
-      this.store.getAccount(),
+      this.store.accountDetails.pipe(
+        filter((accountDetails) => !!accountDetails),
+        map((accountDetails) => accountDetails as AccountDetails),
+      ),
       this.route.params.pipe(
         filter((params) => !!params['kbId']),
         map((params) => params['kbId'] as string),
       ),
     ])
-      .pipe(switchMap(([account, kbId]) => this.accountService.getKb(account.id, kbId)))
+      .pipe(
+        switchMap(([account, kbId]) => {
+          this.currentAccountId = account.id;
+          return this.accountService.loadKb(account.id, kbId);
+        }),
+      )
       .subscribe((kb) => {
-        this.store.setKbDetails(kb);
+        this.backupKb = kb;
         this.kbForm.patchValue({ title: kb.title, slug: kb.slug });
+        this.cdr.markForCheck();
       });
   }
 
@@ -64,17 +79,10 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
 
   save() {
     this.isSaving = true;
-    forkJoin([this.store.getAccount(), this.store.getKb()])
-      .pipe(
-        switchMap(([account, kb]) =>
-          this.accountService
-            .updateKb(account.id, kb.id, this.kbForm.getRawValue())
-            .pipe(switchMap(() => this.accountService.getKb(account.id, kb.id))),
-        ),
-      )
-      .subscribe({
+    if (this.backupKb && this.currentAccountId) {
+      this.accountService.updateKb(this.currentAccountId, this.backupKb.id, this.kbForm.getRawValue()).subscribe({
         next: (updatedKb) => {
-          this.store.setKbDetails(updatedKb);
+          this.backupKb = updatedKb;
           this.isSaving = false;
           this.kbForm.markAsPristine();
           this.cdr.markForCheck();
@@ -85,13 +93,14 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
           this.toast.error('Updating knowledge box failed');
         },
       });
+    }
   }
 
   reset() {
-    this.store.getKb().subscribe((kb) => {
-      this.kbForm.patchValue({ title: kb.title, slug: kb.slug });
-      this.kbForm.markAsPristine();
-    });
+    if (this.backupKb) {
+      this.kbForm.patchValue(this.backupKb);
+      this.cdr.markForCheck();
+    }
   }
 
   setAsOwner(member: KbUser) {
@@ -106,69 +115,27 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
     this.updateUser(member.id, 'SMEMBER');
   }
 
-  removeUser(member: KbUser) {
-    forkJoin([this.store.getAccount(), this.store.getKb()])
-      .pipe(
-        switchMap(([account, kb]) =>
-          this.accountService
-            .removeKbUser(account.id, kb.id, member.id)
-            .pipe(switchMap(() => this.accountService.getKb(account.id, kb.id))),
-        ),
-      )
-      .subscribe({
-        next: (updatedKb) => {
-          this.store.setKbDetails(updatedKb);
-          this.kbForm.markAsPristine();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.cdr.markForCheck();
-          this.toast.error('Removing user failed');
-        },
+  addMember(member: UserSearch) {
+    if (this.backupKb && this.currentAccountId) {
+      this.accountService.addKbUser(this.currentAccountId, this.backupKb.id, member.id).subscribe({
+        error: () => this.toast.error('Adding user failed'),
       });
+    }
   }
 
-  addMember(member: UserSearch) {
-    forkJoin([this.store.getAccount(), this.store.getKb()])
-      .pipe(
-        switchMap(([account, kb]) =>
-          this.accountService
-            .addKbUser(account.id, kb.id, member.id)
-            .pipe(switchMap(() => this.accountService.getKb(account.id, kb.id))),
-        ),
-      )
-      .subscribe({
-        next: (updatedKb) => {
-          this.store.setKbDetails(updatedKb);
-          this.kbForm.markAsPristine();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.cdr.markForCheck();
-          this.toast.error('Adding user failed');
-        },
+  removeUser(member: KbUser) {
+    if (this.backupKb && this.currentAccountId) {
+      this.accountService.removeKbUser(this.currentAccountId, this.backupKb.id, member.id).subscribe({
+        error: () => this.toast.error('Removing user failed'),
       });
+    }
   }
 
   private updateUser(userId: string, newRole: KBRoles) {
-    forkJoin([this.store.getAccount(), this.store.getKb()])
-      .pipe(
-        switchMap(([account, kb]) =>
-          this.accountService
-            .updateKbUser(account.id, kb.id, userId, newRole)
-            .pipe(switchMap(() => this.accountService.getKb(account.id, kb.id))),
-        ),
-      )
-      .subscribe({
-        next: (updatedKb) => {
-          this.store.setKbDetails(updatedKb);
-          this.kbForm.markAsPristine();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.cdr.markForCheck();
-          this.toast.error('Updating user role failed');
-        },
+    if (this.backupKb && this.currentAccountId) {
+      this.accountService.updateKbUser(this.currentAccountId, this.backupKb.id, userId, newRole).subscribe({
+        error: () => this.toast.error('Updating user role failed'),
       });
+    }
   }
 }

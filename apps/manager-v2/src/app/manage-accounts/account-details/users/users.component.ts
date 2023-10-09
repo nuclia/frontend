@@ -1,42 +1,23 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AccountDetailsStore } from '../account-details.store';
-import { debounceTime, filter, map, Observable, Subject, switchMap } from 'rxjs';
-import { AccountUser, ExtendedAccount } from '../../account.models';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { debounceTime, filter, map, Subject, switchMap } from 'rxjs';
 import { AccountService } from '../../account.service';
 import { SisToastService } from '@nuclia/sistema';
 import { UserService } from '../../../manage-users/user.service';
 import { UserSearch } from '../../../manage-users/user.models';
-
-interface ExtendedAccountUser extends AccountUser {
-  isManager: boolean;
-}
+import { ManagerStore } from '../../../manager.store';
+import { AccountDetails, AccountUser } from '../../account-ui.models';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UsersComponent {
-  users: Observable<ExtendedAccountUser[]> = this.store.accountDetails.pipe(
-    filter((account) => !!account),
-    map((extendedAccount) => {
-      const account = extendedAccount as ExtendedAccount;
-      return account.users
-        .map((user) => ({
-          ...user,
-          isManager: account.managers.includes(user.id),
-        }))
-        .sort((a, b) => {
-          if (a.isManager && !b.isManager) {
-            return -1;
-          } else if (!a.isManager && b.isManager) {
-            return 1;
-          } else {
-            return a.name.localeCompare(b.name);
-          }
-        });
-    }),
-  );
+export class UsersComponent implements OnInit, OnDestroy {
+  private unsubscribeAll = new Subject<void>();
+  private accountId?: string;
+
+  users = this.store.accountUsers;
   hasSeveralManagers = this.users.pipe(map((users) => users.filter((user) => user.isManager).length > 1));
 
   searchMemberTerm$ = new Subject<string>();
@@ -47,79 +28,67 @@ export class UsersComponent {
   );
 
   constructor(
-    private store: AccountDetailsStore,
+    private store: ManagerStore,
     private accountService: AccountService,
     private userService: UserService,
     private toast: SisToastService,
   ) {}
 
-  removeUser(event: MouseEvent | KeyboardEvent, user: AccountUser) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.store
-      .getAccount()
+  ngOnInit() {
+    this.store.accountDetails
       .pipe(
-        switchMap((account) =>
-          this.accountService
-            .removeAccountUser(account.id, user.id)
-            .pipe(switchMap(() => this.accountService.getAccount(account.id))),
-        ),
+        filter((details) => !!details),
+        map((details) => details as AccountDetails),
+        switchMap((details) => {
+          this.accountId = details.id;
+          return this.accountService.loadAccountUsers(details.id);
+        }),
+        takeUntil(this.unsubscribeAll),
       )
-      .subscribe({
-        next: (updatedAccount) => this.store.setAccountDetails(updatedAccount),
-        error: () => this.toast.error('Removing user failed'),
-      });
+      .subscribe();
   }
 
-  removeFromManagers(event: MouseEvent | KeyboardEvent, user: ExtendedAccountUser) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.store
-      .getAccount()
-      .pipe(
-        switchMap((account) =>
-          this.accountService
-            .updateAccountUserType(account.id, user.id, 'member')
-            .pipe(switchMap(() => this.accountService.getAccount(account.id))),
-        ),
-      )
-      .subscribe({
-        next: (updatedAccount) => this.store.setAccountDetails(updatedAccount),
-        error: () => this.toast.error('Updating user permission failed'),
-      });
-  }
-
-  addToManagers(event: MouseEvent | KeyboardEvent, user: ExtendedAccountUser) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.store
-      .getAccount()
-      .pipe(
-        switchMap((account) =>
-          this.accountService
-            .updateAccountUserType(account.id, user.id, 'manager')
-            .pipe(switchMap(() => this.accountService.getAccount(account.id))),
-        ),
-      )
-      .subscribe({
-        next: (updatedAccount) => this.store.setAccountDetails(updatedAccount),
-        error: () => this.toast.error('Updating user permission failed'),
-      });
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   addMember(member: UserSearch) {
-    this.store
-      .getAccount()
-      .pipe(
-        switchMap((account) =>
-          this.accountService
-            .addAccountUser(account.id, member.id)
-            .pipe(switchMap(() => this.accountService.getAccount(account.id))),
-        ),
-      )
-      .subscribe({
-        next: (updatedAccount) => this.store.setAccountDetails(updatedAccount),
+    if (this.accountId) {
+      this.accountService.addAccountUser(this.accountId, member.id).subscribe({
         error: () => this.toast.error('Adding member failed'),
       });
+    }
+  }
+
+  removeUser(event: MouseEvent | KeyboardEvent, user: AccountUser) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (this.accountId) {
+      this.accountService.removeAccountUser(this.accountId, user.id).subscribe({
+        error: () => this.toast.error('Removing user failed'),
+      });
+    }
+  }
+
+  addToManagers(event: MouseEvent | KeyboardEvent, user: AccountUser) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (this.accountId) {
+      this.accountService.updateAccountUserType(this.accountId, user.id, 'manager').subscribe({
+        error: () => this.toast.error('Updating user permission failed'),
+      });
+    }
+  }
+
+  removeFromManagers(event: MouseEvent | KeyboardEvent, user: AccountUser) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (this.accountId) {
+      this.accountService.updateAccountUserType(this.accountId, user.id, 'member').subscribe({
+        error: () => this.toast.error('Updating user permission failed'),
+      });
+    }
   }
 }

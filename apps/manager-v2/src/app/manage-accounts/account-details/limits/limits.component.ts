@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { AccountDetailsStore } from '../account-details.store';
 import { AccountService } from '../../account.service';
 import { SisToastService } from '@nuclia/sistema';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subject, switchMap, tap } from 'rxjs';
+import { filter, map, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AccountLimitsPatchPayload } from '@nuclia/core';
-import { ExtendedAccount } from '../../account.models';
 import { AccountTypeDefaults } from '@flaps/core';
+import { ManagerStore } from '../../../manager.store';
+import { AccountDetails } from '../../account-ui.models';
 
 @Component({
   templateUrl: './limits.component.html',
@@ -16,6 +16,7 @@ import { AccountTypeDefaults } from '@flaps/core';
 })
 export class LimitsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
+  private backup?: AccountDetails;
 
   limitsForm = new FormGroup({
     upload: new FormGroup({}),
@@ -26,17 +27,20 @@ export class LimitsComponent implements OnInit, OnDestroy {
   defaultLimits?: AccountTypeDefaults;
 
   constructor(
-    private store: AccountDetailsStore,
+    private store: ManagerStore,
     private accountService: AccountService,
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    this.store
-      .getAccount()
+    this.store.accountDetails
       .pipe(
+        filter((accountDetails) => !!accountDetails),
+        map((accountDetails) => accountDetails as AccountDetails),
+        take(1),
         tap((accountDetails) => {
+          this.backup = { ...accountDetails };
           Object.entries(accountDetails.limits?.upload || {}).forEach(([key, limit]) => {
             const radioKey = `${key}-radio`;
             this.limitsForm.controls.upload.addControl(
@@ -96,12 +100,16 @@ export class LimitsComponent implements OnInit, OnDestroy {
         ) as any;
         return data;
       }, {} as AccountLimitsPatchPayload);
+
       this.updateLimits(payload);
     }
   }
 
   cancel() {
-    this.store.getAccount().subscribe((account) => this.updateForm(account));
+    if (this.backup) {
+      this.updateForm(this.backup);
+      this.limitsForm.markAsPristine();
+    }
   }
 
   reset(groupKey: string, limitKey: string) {
@@ -117,7 +125,7 @@ export class LimitsComponent implements OnInit, OnDestroy {
   }
 
   resetAllToDefault() {
-    const resetPayload = this.getLimitPayload(null);
+    const resetPayload: AccountLimitsPatchPayload = this.getLimitPayload(null);
     this.updateLimits(resetPayload);
   }
 
@@ -146,22 +154,17 @@ export class LimitsComponent implements OnInit, OnDestroy {
     return resetPayload;
   }
 
-  private updateLimits(payload: AccountLimitsPatchPayload) {
-    this.isSaving = true;
-    this.store
-      .getAccount()
-      .pipe(
-        switchMap((account) =>
-          this.accountService
-            .updateAccount(account.id, { limits: payload })
-            .pipe(switchMap(() => this.accountService.getAccount(account.id))),
-        ),
-      )
-      .subscribe({
-        next: (updatedAccount: ExtendedAccount) => {
-          this.store.setAccountDetails(updatedAccount);
+  private updateLimits(limits: AccountLimitsPatchPayload) {
+    const accountId = this.store.getAccountId();
+    if (accountId) {
+      this.isSaving = true;
+      this.accountService.updateAccountLimits(accountId, limits).subscribe({
+        next: (updatedAccount) => {
           this.isSaving = false;
+          this.backup = { ...updatedAccount };
           this.updateForm(updatedAccount);
+          this.limitsForm.markAsPristine();
+          this.cdr.markForCheck();
         },
         error: () => {
           this.isSaving = false;
@@ -169,9 +172,10 @@ export class LimitsComponent implements OnInit, OnDestroy {
           this.toast.error('Updating limits failed');
         },
       });
+    }
   }
 
-  private updateForm(updatedAccount: ExtendedAccount) {
+  private updateForm(updatedAccount: AccountDetails) {
     const newLimits = Object.entries(updatedAccount.limits || {}).reduce((data, [groupKey, limits]) => {
       data[groupKey] = Object.entries(limits as { [limitKey: string]: number }).reduce((values, [key, limit]) => {
         values[key] = {

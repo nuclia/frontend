@@ -16,7 +16,11 @@
     <pa-table-cell>{{ kb.slug }}</pa-table-cell>
     <pa-table-cell>{{ kb.title }}</pa-table-cell>
     <pa-table-cell>
-      <div class="count">{{ counters[kb.id] }}</div>
+      <div
+        class="count"
+        *ngIf="counters | async as count">
+        {{ count[kb.id] }}
+      </div>
     </pa-table-cell>
   </pa-table-row>
 </pa-table>
