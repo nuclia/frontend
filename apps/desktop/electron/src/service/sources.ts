@@ -108,30 +108,30 @@ export function syncFile(
   const nucliaConnector = new NucliaCloud(source.kb);
   return downloadFileOrLink(sourceId, item).pipe(
     switchMap((data) => {
-      if (data.type === 'blob' && data.blob) {
-        return from(data.blob.arrayBuffer()).pipe(
-          switchMap((arrayBuffer) => {
-            try {
+      try {
+        if (data.type === 'blob' && data.blob) {
+          return from(data.blob.arrayBuffer()).pipe(
+            switchMap((arrayBuffer) => {
               return nucliaConnector.upload(item.originalId, item.title, {
                 buffer: arrayBuffer,
                 metadata: { ...item.metadata, labels: source.labels },
               });
-            } catch (err) {
-              return of({ success: false, message: `${err}` });
-            }
-          }),
-        );
-      } else if (data.type === 'text' && data.text) {
-        return nucliaConnector.upload(item.originalId, item.title, {
-          text: data.text,
-          metadata: { labels: source.labels },
-        });
-      } else if (data.type === 'link' && data.link) {
-        return nucliaConnector
-          .uploadLink(item.originalId, item.title, data.link)
-          .pipe(map(() => ({ success: true, message: '' })));
-      } else {
-        return of({ success: false, message: '' });
+            }),
+          );
+        } else if (data.type === 'text' && data.text) {
+          return nucliaConnector.upload(item.originalId, item.title, {
+            text: data.text,
+            metadata: { labels: source.labels },
+          });
+        } else if (data.type === 'link' && data.link) {
+          return nucliaConnector
+            .uploadLink(item.originalId, item.title, data.link)
+            .pipe(map(() => ({ success: true, message: '' })));
+        } else {
+          return of({ success: false, message: '' });
+        }
+      } catch (err) {
+        return of({ success: false, message: `${err}` });
       }
     }),
     tap((res) => {
