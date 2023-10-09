@@ -448,6 +448,7 @@
 	"modal.upload.queue_length": "Tamaño de la cola",
 	"modal.upload.title": "Sube tus ficheros",
 	"modal.upload_folder": "Añade una carpeta",
+	"need-help-book-demo": "¿Necesitas ayuda? ¡Reserve una demo!",
 	"ner-add-entity-dialog.title": "Añadir NER",
 	"ner-family-dialog.family-color": "Color de la familia NER",
 	"ner-family-dialog.family-color-placeholder": "Color hexadecimal (#ffdd1a)",

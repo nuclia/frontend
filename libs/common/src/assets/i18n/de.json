@@ -449,6 +449,7 @@
 	"modal.upload.queue_length": "Warteschlangenlänge",
 	"modal.upload.title": "Laden Sie Ihre Dateien hoch",
 	"modal.upload_folder": "Fügen Sie einen Ordner hinzu",
+	"need-help-book-demo": "Brauchen Sie Hilfe? Buchen Sie eine Demo!",
 	"ner-add-entity-dialog.title": "NER hinzufügen",
 	"ner-family-dialog.family-color": "Farbe der NER-Familie",
 	"ner-family-dialog.family-color-placeholder": "Hexadezimale Farbe (#ffdd1a)",

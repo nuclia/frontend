@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { SDKService, STFTrackingService, UserService } from '@flaps/core';
+import { SDKService, UserService } from '@flaps/core';
 import { map, take } from 'rxjs';
 import { NavigationService } from '../services';
 import { StandaloneService } from '../services/standalone.service';
@@ -25,12 +25,13 @@ export class TopbarComponent {
   hasValidKey = this.standaloneService.hasValidKey;
   errorMessage = this.standaloneService.errorMessage;
 
+  showDemo = !this.standalone;
+
   constructor(
     private router: Router,
     private userService: UserService,
     private navigationService: NavigationService,
     private sdk: SDKService,
-    private tracking: STFTrackingService,
     private standaloneService: StandaloneService,
   ) {}
 
@@ -38,5 +39,9 @@ export class TopbarComponent {
     this.navigationService.homeUrl.pipe(take(1)).subscribe((url) => {
       this.router.navigate([url]);
     });
+  }
+
+  bookDemo() {
+    window.open('https://calendly.com/nuclia/30min?back=1&month=2023-10', 'blank', 'noreferrer');
   }
 }

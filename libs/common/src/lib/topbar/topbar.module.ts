@@ -11,6 +11,7 @@ import { KbSwitchComponent } from './kb-switch/kb-switch.component';
 import {
   PaButtonModule,
   PaDropdownModule,
+  PaFocusableModule,
   PaIconModule,
   PaPopupModule,
   PaTooltipModule,
@@ -31,6 +32,7 @@ import { DropdownButtonComponent } from '@nuclia/sistema';
     PaTooltipModule,
     DropdownButtonComponent,
     RouterModule,
+    PaFocusableModule,
   ],
   exports: [TopbarComponent],
   declarations: [TopbarComponent, KbSwitchComponent],

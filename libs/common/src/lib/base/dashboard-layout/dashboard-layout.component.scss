@@ -1,7 +1,4 @@
-:host > ::ng-deep app-account-kbs {
-  margin: 22px;
-  display: block;
-}
+@import 'apps/dashboard/src/variables';
 
 stf-sidebar {
   top: var(--app-topbar-height) !important;

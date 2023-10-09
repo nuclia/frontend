@@ -1,7 +1,7 @@
 @import 'apps/dashboard/src/variables';
 
 .upload-data-page {
-  padding: rhythm(6) var(--app-layout-margin-right);
+  padding: rhythm(6) var(--app-layout-margin-right) rhythm(6) var(--app-layout-margin-left);
 
   .upload-options-container {
     display: flex;

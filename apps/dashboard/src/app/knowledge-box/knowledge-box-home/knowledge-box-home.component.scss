@@ -1,7 +1,7 @@
 @import 'variables';
 
 .knowledge-box-home {
-  padding: rhythm(6) var(--app-layout-margin-right);
+  padding: rhythm(6) var(--app-layout-margin-right) rhythm(6) var(--app-layout-margin-left);
 
   $flex-gap: rhythm(3);
   $width-right-column: rhythm(40) + rhythm(1);

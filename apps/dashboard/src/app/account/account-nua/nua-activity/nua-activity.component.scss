@@ -1,7 +1,7 @@
 @import 'variables';
 
 .nua-activity {
-  padding: 50px var(--app-layout-margin-right) 60px 5%;
+  padding: 50px var(--app-layout-margin-right) 60px var(--app-layout-margin-left);
   position: relative;
   min-height: 200px;
 }

@@ -17,6 +17,20 @@
       [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
   </button>
 
+  <pa-button
+    *ngIf="showDemo"
+    kind="primary"
+    aspect="basic"
+    paFocusable
+    (click)="bookDemo()"
+    (keyup.enter)="bookDemo()">
+    <a
+      href="https://calendly.com/nuclia/30min?back=1&month=2023-10"
+      target="_blank">
+      {{ 'need-help-book-demo' | translate }}
+    </a>
+  </pa-button>
+
   <div class="topbar-actions">
     <pa-button
       *ngIf="!standalone && (accountType | async) && (isAccountManager | async)"

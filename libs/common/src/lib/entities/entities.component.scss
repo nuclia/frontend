@@ -2,7 +2,7 @@
 
 $page-padding-top: rhythm(5);
 $page-padding-bottom: rhythm(8);
-$page-padding-left: 5%;
+$page-padding-left: var(--app-layout-margin-left);
 $header-height: rhythm(12);
 $header-margin-bottom: rhythm(5);
 $navbar-width: rhythm(7);
@@ -95,7 +95,8 @@ $gap-family-selection: rhythm(7);
             transition: opacity $transition-hint;
           }
         }
-        &.selected-family, &:hover {
+        &.selected-family,
+        &:hover {
           .family-actions pa-button {
             opacity: 1;
           }

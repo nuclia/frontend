@@ -449,6 +449,7 @@
 	"modal.upload.queue_length": "Queue length",
 	"modal.upload.title": "Upload your files",
 	"modal.upload_folder": "Add a folder",
+	"need-help-book-demo": "Need help? Book a demo!",
 	"ner-add-entity-dialog.title": "Add NER",
 	"ner-family-dialog.family-color": "NER family color",
 	"ner-family-dialog.family-color-placeholder": "Hexadecimal color (#ffdd1a)",
