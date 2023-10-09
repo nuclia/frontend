@@ -9,7 +9,7 @@ import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '../../validators';
 import { NavigationService } from '../../services';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-select-kb',
@@ -48,6 +48,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
     private toast: SisToastService,
+    private modalService: SisModalService,
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
@@ -132,6 +133,26 @@ export class SelectKbComponent implements OnInit, OnDestroy {
 
   goToAccountManage() {
     this.router.navigate([this.navigation.getAccountManageUrl(this.account!.slug)]);
+  }
+
+  deleteKb(event: MouseEvent, slug: string, title: string) {
+    event.stopPropagation();
+    this.modalService
+      .openConfirm({
+        title: 'stash.delete.delete',
+        description: `${title} (${slug})`,
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((yes) => !!yes),
+        switchMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, slug)),
+        switchMap((kb) => kb.delete()),
+      )
+      .subscribe(() => {
+        this.kbs = (this.kbs || []).filter((kb) => kb.slug !== slug);
+        this.cdr.markForCheck();
+      });
   }
 
   ngOnDestroy(): void {
