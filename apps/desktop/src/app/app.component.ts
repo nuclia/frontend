@@ -35,8 +35,8 @@ export class AppComponent implements OnInit {
     private user: UserService,
     private sdk: SDKService,
     private router: Router,
-    private tracking: STFTrackingService,
     private modalService: SisModalService,
+    private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
   ) {
     this.initTranslate(undefined);
