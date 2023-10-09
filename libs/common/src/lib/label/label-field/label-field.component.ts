@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
-import { BehaviorSubject, map, ReplaySubject, Subject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, of, switchMap, tap } from 'rxjs';
 import { LabelsService } from '../labels.service';
 import { Size } from '@guillotinaweb/pastanaga-angular';
-import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-label-field',
@@ -11,7 +10,7 @@ import { switchMap } from 'rxjs/operators';
   styleUrls: ['./label-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LabelFieldComponent implements OnDestroy, OnInit {
+export class LabelFieldComponent {
   @Input()
   set selection(value: Classification[]) {
     this._selection = value || [];
@@ -21,16 +20,14 @@ export class LabelFieldComponent implements OnDestroy, OnInit {
   }
   private _selection: Classification[] = [];
 
-  private _kind = new BehaviorSubject<LabelSetKind>(LabelSetKind.RESOURCES);
+  private _kind = new BehaviorSubject<LabelSetKind | undefined>(undefined);
   @Input() set kind(kind: LabelSetKind) {
     this._kind.next(kind);
   }
 
   private _labelSets = new BehaviorSubject<LabelSets | undefined>(undefined);
-  @Input() set labelSets(value: LabelSets | undefined) {
-    if (value) {
-      this.labelSets$.next(value);
-    }
+  @Input() set labelSets(value: LabelSets) {
+    this._labelSets.next(value);
   }
   @Input() size: Size | undefined;
   @Input() disabled: boolean = false;
@@ -38,45 +35,32 @@ export class LabelFieldComponent implements OnDestroy, OnInit {
   @Output() selectionChange = new EventEmitter<Classification[]>();
   @Output() hasLabels = new EventEmitter<boolean>();
 
-  labelSets$ = new ReplaySubject<LabelSets>();
+  labelSets$ = combineLatest([this._kind, this._labelSets]).pipe(
+    switchMap(([kind, labelSets]) => {
+      if (kind && labelSets) {
+        console.warn(`Incompatible parameters: labelSets and kind cannot be used at the same time`);
+        return of(null);
+      } else if (labelSets) {
+        return of(labelSets);
+      } else if (kind) {
+        return kind === LabelSetKind.RESOURCES
+          ? this.labelsService.resourceLabelSets
+          : this.labelsService.paragraphLabelSets;
+      } else {
+        return this.labelsService.resourceLabelSets;
+      }
+    }),
+  );
+
   hasLabels$ = this.labelSets$.pipe(
     map((labels) => !!labels && Object.keys(labels).length > 0),
     tap((hasLabel) => this.hasLabels.emit(hasLabel)),
   );
-  unsubscribeAll = new Subject<void>();
 
   constructor(private labelsService: LabelsService) {}
-
-  ngOnInit() {
-    if (this._labelSets.getValue()) {
-      this._labelSets
-        .pipe(
-          map((labelsets) => labelsets as LabelSets),
-          takeUntil(this.unsubscribeAll),
-        )
-        .subscribe(this.labelSets$);
-    } else {
-      this._kind
-        .pipe(
-          switchMap((kind) =>
-            kind === LabelSetKind.RESOURCES
-              ? this.labelsService.resourceLabelSets
-              : this.labelsService.paragraphLabelSets,
-          ),
-          map((labelsets) => labelsets || {}),
-          takeUntil(this.unsubscribeAll),
-        )
-        .subscribe(this.labelSets$);
-    }
-  }
 
   updateSelection($event: Classification[]) {
     this.selection = [...$event];
     this.selectionChange.emit(this.selection);
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 }

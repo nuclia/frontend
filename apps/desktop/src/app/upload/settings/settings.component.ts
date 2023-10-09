@@ -30,7 +30,7 @@ import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@
 import { SyncService } from '../../sync/sync.service';
 import { ConnectorDefinition, Field } from '../../sync/models';
 import { SDKService } from '@flaps/core';
-import { Classification, KnowledgeBox, LabelSets, Nuclia } from '@nuclia/core';
+import { Classification, KnowledgeBox, LabelSetKind, LabelSets, Nuclia } from '@nuclia/core';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -172,7 +172,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
   }
 
   validate() {
-    const kbId = (this.local ? this.form?.value.localKb : this.form?.value.kb).split('|')[0];
+    const kbId = (this.local ? this.form?.value.localKb : this.form?.value.kb)?.split('|')[0];
     this.sync
       .setSourceData(this.form?.value.name || '', {
         connectorId: this.connector?.id || '',
@@ -273,6 +273,11 @@ export class SettingsComponent implements OnDestroy, OnInit {
         );
     return setDashboardUrl.pipe(
       switchMap((account) => this.getKb(account, kbId).getLabels()),
+      map((labelSets) =>
+        Object.entries(labelSets)
+          .filter(([, value]) => value.kind.length === 0 || value.kind.includes(LabelSetKind.RESOURCES))
+          .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as LabelSets),
+      ),
       tap((labelSets) => {
         this.labelSets.next(labelSets);
         this.selectedLabels = this.selectedLabels.filter((label) =>
