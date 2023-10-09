@@ -51,7 +51,7 @@
 	"account.home": "Account dashboard",
 	"account.invited_user": "We have sent an invitation email to {{user}} to join this account",
 	"account.kb-description": "A Knowledge Box is a collection of content that Nuclia searches on. Some search engines call it an \"index\" or \"corpus\".  In most cases, you only need one Knowledge Box for your application.",
-	"account.knowledgeboxes": "Knowledge boxes",
+	"account.knowledgeboxes": "Knowledge Boxes",
 	"account.licence": "License",
 	"account.logo": "Box image",
 	"account.logotip": "Logo",
