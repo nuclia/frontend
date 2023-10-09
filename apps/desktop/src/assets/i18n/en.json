@@ -52,10 +52,12 @@
 	"upload.source.destination": "Push your selected data to",
 	"upload.source.help": "Refer to our documentation on how to add files from {{source}}.",
 	"upload.source.name": "Name your connector",
+	"upload.source.nucliadb-url": "NucliaDB URL",
 	"upload.source.permanent-sync": "Permanent synchronization",
 	"upload.source.settings": "Connector settings",
 	"upload.source.settings-description": "Name and configure your connector",
 	"upload.source.title": "Source integration",
+	"upload.source.use-nucliadb": "Use a local NucliaDB",
 	"upload.steps.configure": "Configure",
 	"upload.steps.data": "Choose data",
 	"upload.steps.source": "Select the source"

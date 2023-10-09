@@ -173,8 +173,8 @@ export class SyncService {
     }
     return (instances[instance] as ReplaySubject<ISourceConnector>).asObservable();
   }
-  getDestination(id: string): Observable<IDestinationConnector> {
-    return this.destinations[id].definition.factory(this.destinations[id].settings);
+  getDestination(id: string, settings: ConnectorSettings = {}): Observable<IDestinationConnector> {
+    return this.destinations[id].definition.factory({ ...this.destinations[id].settings, ...settings });
   }
 
   setSourceData(sourceId: string, source: Source): Observable<void> {
@@ -232,30 +232,43 @@ export class SyncService {
     );
   }
 
-  setSourceDestination(sourceId: string, kbId: string, labels?: Classification[]): Observable<void> {
+  setSourceDestination(
+    sourceId: string,
+    kbId: string,
+    localBackend?: string,
+    labels?: Classification[],
+  ): Observable<void> {
     return this.getSourceData(sourceId).pipe(
-      switchMap((source) =>
-        this.getKb(kbId).pipe(
-          switchMap((kb) => {
-            if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
-              return of(source);
-            } else {
-              return this.getNucliaKey(kb).pipe(
-                map((data) => ({
-                  ...source,
-                  labels,
-                  kb: {
-                    zone: this.sdk.nuclia.options.zone,
-                    backend: this.sdk.nuclia.options.backend,
-                    knowledgeBox: data.kbid,
-                    apiKey: data.token,
-                  } as NucliaOptions,
-                })),
-              );
-            }
-          }),
-        ),
-      ),
+      switchMap((source) => {
+        if (localBackend) {
+          return of({
+            ...source,
+            labels,
+            kb: { standalone: true, zone: '', backend: localBackend, account: 'local', knowledgeBox: kbId },
+          });
+        } else {
+          return this.getKb(kbId).pipe(
+            switchMap((kb) => {
+              if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
+                return of(source);
+              } else {
+                return this.getNucliaKey(kb).pipe(
+                  map((data) => ({
+                    ...source,
+                    labels,
+                    kb: {
+                      zone: this.sdk.nuclia.options.zone,
+                      backend: this.sdk.nuclia.options.backend,
+                      knowledgeBox: data.kbid,
+                      apiKey: data.token,
+                    } as NucliaOptions,
+                  })),
+                );
+              }
+            }),
+          );
+        }
+      }),
       switchMap((source) => this.setSourceData(sourceId, source)),
     );
   }

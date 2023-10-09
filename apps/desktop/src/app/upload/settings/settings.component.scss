@@ -27,13 +27,11 @@ form {
 
 .select-field-container {
   display: flex;
+  gap: rhythm(2);
   margin-bottom: $margin-bottom-field;
 
   pa-select {
     flex: 1 0 auto;
-  }
-  pa-button {
-    margin-left: rhythm(2);
   }
 }
 
@@ -54,8 +52,12 @@ form {
 .destination {
   display: flex;
   flex-direction: column;
-  gap: rhythm(2);
+  gap: rhythm(3);
   margin: rhythm(6) 0;
+}
+
+.labels {
+  margin-bottom: rhythm(1);
 }
 
 .buttons {

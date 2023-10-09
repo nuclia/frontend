@@ -52,10 +52,12 @@
 	"upload.source.destination": "Envieu les dades seleccionades a",
 	"upload.source.help": "Consulta la documentació sobre com afegir arxius des de {{source}}.",
 	"upload.source.name": "Anomena el teu connector",
+	"upload.source.nucliadb-url": "URL de NucliaDB",
 	"upload.source.permanent-sync": "Sincronització permanent",
 	"upload.source.settings": "Configuració del connector",
 	"upload.source.settings-description": "Anomena configura el teu connector",
 	"upload.source.title": "Origen",
+	"upload.source.use-nucliadb": "Utilitzar una NucliaDB local",
 	"upload.steps.configure": "Configurar",
 	"upload.steps.data": "Escollir dades",
 	"upload.steps.source": "Selecciona l'origen"
