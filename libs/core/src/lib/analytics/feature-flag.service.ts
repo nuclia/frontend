@@ -1,20 +1,45 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
+import { StateService } from '../state.service';
+import SparkMD5 from 'spark-md5';
 
 export interface Features {
-  [key: string]: string | boolean | undefined;
+  [key: string]: boolean;
+}
+
+interface FeaturesData {
+  [key: string]: {
+    rollout: 0 | 1;
+    variants?: { [key: string]: any };
+  };
 }
 
 const CUSTOM_FEATURE_FLAGS = 'NUCLIA_CUSTOM_FEATURE_FLAGS';
+const FEATURE_PREFIX = 'application_';
 
 const stageFeatures: Features = {};
 
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {
-  private remoteFeatures = fromFetch('https://nuclia.github.io/status/features.json').pipe(
+  private accountMd5 = this.state.account.pipe(map((account) => (account ? SparkMD5.hash(account.id) : null)));
+  private featuresData = fromFetch('https://nuclia.github.io/status/features-v2.json').pipe(
     switchMap((res) => res.json()),
-    shareReplay(),
+    map((res) => res as FeaturesData),
+  );
+  private remoteFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
+    map(([data, md5]) =>
+      Object.entries(data)
+        .filter(([key]) => key.startsWith(FEATURE_PREFIX))
+        .reduce((acc, [key, feature]) => {
+          return {
+            ...acc,
+            [key.slice(FEATURE_PREFIX.length)]:
+              feature?.rollout === 1 || (feature?.variants?.['account_id_md5'] || []).includes(md5),
+          };
+        }, {}),
+    ),
+    shareReplay(1),
   );
   private stageFeatures = new BehaviorSubject<Features>({ ...stageFeatures, ...this.getCustomFeatures() });
   private features: Observable<Features> = this.remoteFeatures.pipe(
@@ -23,15 +48,9 @@ export class FeatureFlagService {
 
   private isNotProd = location.hostname !== 'nuclia.cloud';
 
-  isFeatureEnabled(feature: string): Observable<boolean> {
-    if (this.isNotProd) {
-      return this.stageFeatures.pipe(map((features) => (features[feature] !== undefined ? !!features[feature] : true)));
-    } else {
-      return this.features.pipe(map((features) => !!features[feature]));
-    }
-  }
+  constructor(private state: StateService) {}
 
-  getFeatureFlag(feature: string): Observable<string | boolean | undefined> {
+  isFeatureEnabled(feature: string): Observable<boolean> {
     if (this.isNotProd) {
       return this.stageFeatures.pipe(map((features) => features[feature] || true));
     } else {

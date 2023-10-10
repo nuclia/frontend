@@ -12,21 +12,17 @@ import { map, take } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeaturesModalComponent {
-  booleanFeatures = this.featureFlag.getFeatures().pipe(
-    map((features) =>
-      Object.entries(features)
-        .filter(([, value]) => typeof value === 'boolean')
-        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as Features),
-    ),
-  );
   hasCustomFeatures = Object.keys(this.featureFlag.getCustomFeatures()).length > 0;
   features?: Features;
 
   constructor(public modal: ModalRef, private featureFlag: FeatureFlagService, private cdr: ChangeDetectorRef) {
-    this.booleanFeatures.pipe(take(1)).subscribe((features) => {
-      this.features = { ...features };
-      this.cdr?.markForCheck();
-    });
+    this.featureFlag
+      .getFeatures()
+      .pipe(take(1))
+      .subscribe((features) => {
+        this.features = { ...features };
+        this.cdr?.markForCheck();
+      });
   }
 
   save() {
