@@ -45,7 +45,7 @@
             [formControlName]="conf.id"
             [name]="conf.id"
             (valueChange)="conf.id === 'generative_model' ? updatePrompts($event) : undefined"
-            [class.two-columns]="conf.data.options.length > 5">
+            [class.two-columns]="(conf.data.options || []).length > 5">
             <pa-radio
               *ngFor="let value of conf.data.options"
               [value]="value.value">
