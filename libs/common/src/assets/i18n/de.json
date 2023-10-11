@@ -667,7 +667,7 @@
 	"stash.create.semantic_model.label": "Sprachen",
 	"stash.create.title": "Erstellen Sie eine Knowledge Box",
 	"stash.create.user_prompts.examples": "Beispiele",
-	"stash.create.user_prompts.prompt": "Benutzerdefinierte Eingabeaufforderung",
+	"stash.create.user_prompts.prompt": "Prompt",
 	"stash.create.user_prompts.prompt_help": "Definiert die Art und Weise, wie sich das System verhalten soll, wenn wir eine Frage stellen. Hier können wir spezifischere Regeln definieren, die sogar das definierte Verhalten außer Kraft setzen können. Beispielsweise könnten wir eine Eingabeaufforderung einrichten, die dafür sorgt, dass das System Ergebnisse nur in Listen ausgibt oder sogar um eine Antwort in einer bestimmten Sprache bittet.",
 	"stash.create.user_prompts.system": "Benutzerdefiniertes Verhalten",
 	"stash.create.user_prompts.system_help": "Definiert allgemeine Persönlichkeitsmerkmale des Assistenten oder darüber, wie er sich bei der Beantwortung von Fragen/während eines Gesprächs verhalten soll. Beispielsweise könnten wir definieren, dass das System als Gesundheitsexperte antwortet.",

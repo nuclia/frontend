@@ -666,7 +666,7 @@
 	"stash.create.semantic_model.label": "Idiomas",
 	"stash.create.title": "Crea una Knowledge Box",
 	"stash.create.user_prompts.examples": "Ejemplos",
-	"stash.create.user_prompts.prompt": "Prompt personalizado",
+	"stash.create.user_prompts.prompt": "Prompt",
 	"stash.create.user_prompts.prompt_help": "Define la forma en que queremos que actúe el sistema cuando hacemos una pregunta. Aquí podemos definir reglas más específicas, que incluso podrían anular el comportamiento definido. Por ejemplo, podríamos tener una pregunta que haga que el sistema sólo dé resultados en listas, o incluso que pida responder en un idioma determinado.",
 	"stash.create.user_prompts.system": "Comportamiento personalizado",
 	"stash.create.user_prompts.system_help": "Define rasgos generales de la personalidad del asistente, o sobre cómo debe comportarse al responder preguntas/ durante una conversación. Por ejemplo, podríamos definir que el sistema responda como un profesional sanitario.",
