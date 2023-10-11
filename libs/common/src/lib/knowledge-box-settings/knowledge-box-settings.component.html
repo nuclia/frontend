@@ -104,7 +104,7 @@
               <div
                 *ngFor="let key of promptKeys"
                 [formGroupName]="key">
-                <div [hidden]="key !== currentPromptKey">
+                <div *ngIf="key == currentPromptKey">
                   <div
                     *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['prompt']"
                     class="user-prompts">
