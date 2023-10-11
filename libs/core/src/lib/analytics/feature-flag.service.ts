@@ -10,8 +10,10 @@ export interface Features {
 
 interface FeaturesData {
   [key: string]: {
-    rollout: 0 | 1;
-    variants?: { [key: string]: any };
+    rollout: number;
+    variants?: {
+      account_id_md5?: string[];
+    };
   };
 }
 
@@ -35,7 +37,9 @@ export class FeatureFlagService {
           return {
             ...acc,
             [key.slice(FEATURE_PREFIX.length)]:
-              feature?.rollout === 1 || (feature?.variants?.['account_id_md5'] || []).includes(md5),
+              feature?.rollout === 1 || // TODO: this line keeps backward compatibility. Can be delete once feature flag data uses 100 instead of 1
+              feature?.rollout === 100 ||
+              (feature?.variants?.account_id_md5 || []).includes(md5),
           };
         }, {}),
     ),
