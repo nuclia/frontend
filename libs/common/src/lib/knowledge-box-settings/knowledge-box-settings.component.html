@@ -34,18 +34,18 @@
 
       <div
         formGroupName="config"
+        class="config"
         *ngFor="let conf of displayedLearningConfigurations">
-        <div class="label">
-          <label class="title-m">{{ 'stash.create.' + conf.id + '.label' | translate }}</label>
-          <div class="body-xs">
-            {{ 'stash.create.' + conf.id + '.help' | translate }}
-          </div>
+        <div class="header">
+          <h3 class="title-m">{{ 'stash.create.' + conf.id + '.label' | translate }}</h3>
+          <div class="body-m">{{ 'stash.create.' + conf.id + '.help' | translate }}</div>
         </div>
-        <div class="options">
+        <div>
           <pa-radio-group
             [formControlName]="conf.id"
             [name]="conf.id"
-            (valueChange)="conf.id === 'generative_model' ? updatePrompts($event) : undefined">
+            (valueChange)="conf.id === 'generative_model' ? updatePrompts($event) : undefined"
+            [class.two-columns]="conf.data.options.length > 5">
             <pa-radio
               *ngFor="let value of conf.data.options"
               [value]="value.value">
@@ -61,7 +61,7 @@
             *ngIf="getVisibleFieldGroup(conf) as groupId"
             formGroupName="user_keys">
             <div
-              class="fields"
+              class="user-keys"
               [formGroupName]="groupId">
               <pa-toggle
                 labelOnRight
@@ -75,19 +75,21 @@
                   class="title-m">
                   {{ 'stash.config.key.' + groupId | translate }}:
                 </div>
-                <ng-container *ngFor="let field of userKeys?.[groupId] || {} | keyvalue">
-                  <pa-input
-                    *ngIf="!field.value.textarea"
-                    [formControlName]="field.key">
-                    {{ field.value.title | translate }}
-                  </pa-input>
-                  <pa-textarea
-                    *ngIf="field.value.textarea"
-                    [formControlName]="field.key"
-                    [rows]="5">
-                    {{ field.value.title | translate }}
-                  </pa-textarea>
-                </ng-container>
+                <div>
+                  <ng-container *ngFor="let field of userKeys?.[groupId] || {} | keyvalue">
+                    <pa-input
+                      *ngIf="!field.value.textarea"
+                      [formControlName]="field.key">
+                      {{ field.value.title | translate }}
+                    </pa-input>
+                    <pa-textarea
+                      *ngIf="field.value.textarea"
+                      [formControlName]="field.key"
+                      [rows]="5">
+                      {{ field.value.title | translate }}
+                    </pa-textarea>
+                  </ng-container>
+                </div>
               </ng-container>
             </div>
           </div>
@@ -106,14 +108,10 @@
                   <div
                     *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['prompt']"
                     class="user-prompts">
-                    <div class="title-m">{{ 'stash.create.user_prompts.prompt' | translate }}</div>
-                    <div class="prompt-description">{{ 'stash.create.user_prompts.prompt_help' | translate }}</div>
-                    <pa-textarea
-                      formControlName="prompt"
-                      [rows]="5"
-                      [help]="promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.info || ''">
-                      {{ promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.title }}
-                    </pa-textarea>
+                    <div class="header">
+                      <h3 class="title-m">{{ 'stash.create.user_prompts.prompt' | translate }}</h3>
+                      <div class="body-m">{{ 'stash.create.user_prompts.prompt_help' | translate }}</div>
+                    </div>
                     <pa-select
                       formControlName="prompt_examples"
                       [dim]="true"
@@ -127,18 +125,20 @@
                         {{ option }}
                       </pa-option>
                     </pa-select>
+                    <pa-textarea
+                      formControlName="prompt"
+                      [rows]="5"
+                      [help]="promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.info || ''">
+                      {{ promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.title }}
+                    </pa-textarea>
                   </div>
                   <div
                     *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['system']"
                     class="user-prompts">
-                    <div class="title-m">{{ 'stash.create.user_prompts.system' | translate }}</div>
-                    <div>{{ 'stash.create.user_prompts.system_help' | translate }}</div>
-                    <pa-textarea
-                      formControlName="system"
-                      [rows]="5"
-                      [help]="promptConfigurations?.schemas?.[key]?.properties?.['system']?.info || ''">
-                      {{ promptConfigurations?.schemas?.[key]?.properties?.['system']?.title }}
-                    </pa-textarea>
+                    <div class="header">
+                      <h3 class="title-m">{{ 'stash.create.user_prompts.system' | translate }}</h3>
+                      <div class="body-m">{{ 'stash.create.user_prompts.system_help' | translate }}</div>
+                    </div>
                     <pa-select
                       formControlName="system_examples"
                       [dim]="true"
@@ -152,6 +152,12 @@
                         {{ option }}
                       </pa-option>
                     </pa-select>
+                    <pa-textarea
+                      formControlName="system"
+                      [rows]="5"
+                      [help]="promptConfigurations?.schemas?.[key]?.properties?.['system']?.info || ''">
+                      {{ promptConfigurations?.schemas?.[key]?.properties?.['system']?.title }}
+                    </pa-textarea>
                   </div>
                 </div>
               </div>

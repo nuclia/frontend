@@ -3,60 +3,57 @@
 .knowledge-box-settings {
   padding: rhythm(6) rhythm(12);
 
-  h2 {
-    margin: 0 0 rhythm(4) 0;
+  form {
+    width: rhythm(80);
   }
 
   pa-input,
   pa-textarea {
     display: block;
-    margin-bottom: rhythm(2);
-    width: rhythm(56);
+    margin-bottom: rhythm(3);
   }
 
-  form > div {
-    align-items: flex-start;
-    display: flex;
-    margin-top: rhythm(4);
+  .config {
+    margin-top: rhythm(7);
 
-    label,
-    .label {
-      width: rhythm(28);
-    }
-
-    .label {
-      padding-right: rhythm(3);
-    }
-
-    .options {
-      margin-top: rhythm(1);
-      width: 100%;
+    .header {
+      margin-bottom: rhythm(3);
+      h3 {
+        margin-bottom: rhythm(1);
+      }
     }
 
     pa-radio-group {
-      display: flex !important;
-      flex-direction: column;
-      gap: rhythm(0.5);
+      pa-radio {
+        display: block;
+        margin-bottom: rhythm(1);
+      }
+      &.two-columns {
+        columns: 2;
+        pa-radio {
+          break-inside: avoid;
+        }
+      }
     }
 
-    .fields {
+    .user-keys {
       display: flex;
       flex-direction: column;
       gap: rhythm(2);
-      margin-top: rhythm(4);
+      margin-top: rhythm(5);
     }
 
     .user-prompts {
-      display: flex;
-      flex-direction: column;
-      gap: rhythm(1.5);
-      margin-top: rhythm(5);
+      margin-top: rhythm(7);
       pa-select {
-        border-bottom: 1px solid $color-neutral-light;
+        display: block;
+        margin-bottom: rhythm(2);
+        ::ng-deep .pa-field .pa-field-control {
+          background-color: $color-neutral-lightest;
+        }
       }
       pa-textarea {
-        margin: rhythm(1) 0 0 0;
-        width: 100%;
+        margin: 0;
       }
     }
   }
