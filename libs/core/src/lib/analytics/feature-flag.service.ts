@@ -39,7 +39,7 @@ export class FeatureFlagService {
             [key.slice(FEATURE_PREFIX.length)]:
               feature?.rollout === 1 || // TODO: this line keeps backward compatibility. Can be delete once feature flag data uses 100 instead of 1
               feature?.rollout === 100 ||
-              (feature?.variants?.account_id_md5 || []).includes(md5),
+              (feature?.variants?.account_id_md5 || []).includes(md5 || ''),
           };
         }, {}),
     ),
