@@ -1,7 +1,8 @@
 import { from, map, Observable, of, switchMap } from 'rxjs';
 import type { INuclia, IRest } from '../models';
 
-/** Handles the elementary REST requests to the Nuclia backend, setting the appropriate HTTP headers.
+/**
+ * Handles the elementary REST requests to the Nuclia backend, setting the appropriate HTTP headers.
  *
  * Its main methods implement the corresponding HTTP verbs (`GET` is `get()`, POST is `post()`, etc.)
  * For each of them, `extraHeaders` is an optional parameter that can be used to add headers to the request.
@@ -179,7 +180,8 @@ export class Rest implements IRest {
     return this.getZones().pipe(map((zones) => zones[zoneId]));
   }
 
-  /** Downloads the file, converts it to a BLOB and returns its `blob:` URL.
+  /**
+   * Downloads the file, converts it to a BLOB and returns its `blob:` URL.
    *
    * Use carefully with big files as it can impact the memory.
    */

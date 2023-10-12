@@ -32,7 +32,8 @@ import { ResourceProperties } from '../db.models'; // eslint-disable-next-line @
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}
 
-/** Provide access to all the Knowledge Box contents and services in read mode.
+/**
+ * Provides access to all the Knowledge Box contents and services in read mode.
  *
  * For any Knowledge Box operation that requires write access, you need to use `WritableKnowledgeBox` instead.
  */
@@ -40,7 +41,8 @@ export class KnowledgeBox implements IKnowledgeBox {
   account: string;
   protected nuclia: INuclia;
 
-  /** The Knowledge Box path on the regional API.
+  /**
+   * The Knowledge Box path on the regional API.
    *
    * Example: `/v1/kb/3cce4a71-9cb9-4fda-beee-8a1512616bf0`
    */
@@ -48,7 +50,8 @@ export class KnowledgeBox implements IKnowledgeBox {
     return `/kb/${this.id}`;
   }
 
-  /** The Knowledge Box fullpath on the regional API.
+  /**
+   * The Knowledge Box fullpath on the regional API.
    *
    * Example: `https://europe-1.nuclia.cloud/api/v1/kb/3cce4a71-9cb9-4fda-beee-8a1512616bf0`
    */
@@ -92,7 +95,8 @@ export class KnowledgeBox implements IKnowledgeBox {
     );
   }
 
-  /** Retrieves a resource from the Knowledge Box.
+  /**
+   * Retrieves a resource from the Knowledge Box.
    * 
    * - `show` defines which properties are returned. Default takes all the following properties 
    * and may result in a large response:
@@ -194,7 +198,8 @@ export class KnowledgeBox implements IKnowledgeBox {
     return new Resource(this.nuclia, this.id, data);
   }
 
-  /** Retrieves a generative answer for the given query.
+  /**
+   * Retrieves a generative answer for the given query.
    * 
    * The generative answer is a text that is generated chunk by chunk by the language model.
    * It is retrieved through a readable HTTP stream, so the `chat()` method returns an `Observable`
@@ -220,7 +225,8 @@ export class KnowledgeBox implements IKnowledgeBox {
     return chat(this.nuclia, this.path, query, context, features, options);
   }
 
-  /** Performs a find operation in the knowledge box, which is the recommended way to search for results.
+  /**
+   * Performs a find operation in the Knowledge Box, which is the recommended way to search for results.
    * 
    * Example:
     ```ts
@@ -239,7 +245,8 @@ export class KnowledgeBox implements IKnowledgeBox {
     return find(this.nuclia, this.id, this.path, query, features, options);
   }
 
-  /** Performs a search operation in the knowledge box.
+  /**
+   * Performs a search operation in the knowledge box.
    * 
    * It is similar to `find()` but the results are not nested.
    * 
@@ -298,7 +305,8 @@ export class KnowledgeBox implements IKnowledgeBox {
       );
   }
 
-  /** Returns an ephemeral token.
+  /**
+   * Returns an ephemeral token.
    * 
    * This is useful when displaying a clickable link to a file in a private Knowledge Box
    * (the token will authorize the request even though there are no authentication headers).
@@ -360,7 +368,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this._training;
   }
 
-  /** Modifies the Knowledge Box properties.
+  /**
+   * Modifies the Knowledge Box properties.
    * 
    * Example:
     ```ts
@@ -402,7 +411,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.delete(`${this.path}/entitiesgroup/${groupId}`);
   }
 
-  /** Create or update a label set.
+  /**
+   * Create or update a label set.
    * 
    * Example:
     ```ts
@@ -450,7 +460,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     );
   }
 
-  /** Creates a new link resource in the Knowledge Box more easily than using `createResource`.
+  /**
+   * Creates a new link resource in the Knowledge Box more easily than using `createResource`.
    * 
    * Example:
     ```ts
@@ -512,7 +523,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     );
   }
 
-  /** Uploads a file to the Knowledge Box and automatically creates a new resource to store the file.
+  /**
+   * Uploads a file to the Knowledge Box and automatically creates a new resource to store the file.
    * The resource path is returned in the `resource` property of the `UploadResult`
    * (and `field` provides the path to the `FileField`).
    * 
@@ -536,7 +548,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return upload(this.nuclia, `/kb/${this.id}`, data, !!TUS, metadata);
   }
 
-  /** Uploads a list of files to the Knowledge Box. It automatically creates a new resource for each file
+  /**
+   * Uploads a list of files to the Knowledge Box. It automatically creates a new resource for each file
    * and uses the [TUS](https://tus.io/) protocol to upload the files. */
   batchUpload(files: FileList | File[] | FileWithMetadata[]): Observable<UploadStatus> {
     return batchUpload(this.nuclia, `/kb/${this.id}`, files, false);

@@ -39,7 +39,8 @@ export class Db implements IDb {
     return this.nuclia.rest.post<Account>('/accounts', account);
   }
 
-  /** Modifies account properties.
+  /**
+   * Modifies account properties.
    * 
    * Example:
     ```ts
@@ -62,7 +63,8 @@ export class Db implements IDb {
     return this.nuclia.rest.delete(`/account/${account}`);
   }
 
-  /** Returns account status.
+  /**
+   * Returns account status.
    * 
    * Example:
     ```ts
@@ -78,7 +80,8 @@ export class Db implements IDb {
     return this.nuclia.rest.get<AccountStatus>(`/account/${account}/status`);
   }
 
-  /** Returns user information.
+  /**
+   * Returns user information.
    * 
    * Example:
     ```ts
@@ -108,12 +111,13 @@ export class Db implements IDb {
     return this.nuclia.rest.get<{ kbs: IStandaloneKb[] }>('/kbs').pipe(map((result) => result.kbs));
   }
 
-  /** Returns a list of all the Knowledge Boxes for the given account. */
+  /** Returns a list of all the Knowledge Boxes for the given account slug. */
   getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]> {
     return this.nuclia.rest.get<IKnowledgeBoxItem[]>(`/account/${account}/kbs`);
   }
 
-  /** Returns the Knowledge Box with the given slug, or the one defined in the Nuclia options
+  /**
+   * Returns the Knowledge Box with the given slug, or the one defined in the Nuclia options
    * if no slug is provided.
    */
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
@@ -153,7 +157,8 @@ export class Db implements IDb {
     }
   }
 
-  /** Creates a new Knowledge Box.
+  /**
+   * Creates a new Knowledge Box.
    * 
    * Example:
     ```ts
@@ -200,7 +205,8 @@ export class Db implements IDb {
     );
   }
 
-  /** Uploads and pushes a file to Nuclia Understanding API.
+  /**
+   * Uploads and pushes a file to Nuclia Understanding API.
    * 
    * _Requires a NUA token._
    * 
@@ -235,7 +241,8 @@ export class Db implements IDb {
     );
   }
 
-  /** Pulls the latest data from Nuclia Understanding API.
+  /**
+   * Pulls the latest data from Nuclia Understanding API.
    *
    * _Requires a NUA token._
    */

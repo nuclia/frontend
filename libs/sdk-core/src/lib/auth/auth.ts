@@ -13,7 +13,8 @@ const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
 const REFRESH_DELAY = 6 * 60 * 60 * 1000; // 6 hours
 // const REFRESH_DELAY = 5 * 60 * 1000; // 5 min
 
-/** It manages authentication to the Nuclia backend.
+/**
+ * It manages authentication to the Nuclia backend.
  * It can be based on login/password for account authentication,
  * or on an API key for private Knowledge Box authentication.
  * Authentication is not necessary when using a public Knowledge Box.
@@ -33,7 +34,8 @@ export class Authentication implements IAuthentication {
     }
   }
 
-  /** Returns the authentication header (which will be `Authorization` for account authentication, or `X-NUCLIA-SERVICEACCOUNT` for private Knowledge Box authentication).
+  /**
+   * Returns the authentication header (which will be `Authorization` for account authentication, or `X-NUCLIA-SERVICEACCOUNT` for private Knowledge Box authentication).
    * 
    * Example:
     ```ts
@@ -80,7 +82,8 @@ export class Authentication implements IAuthentication {
     return nucliaDbRole;
   }
 
-  /** Emits when the authentication status changes.
+  /**
+   * Emits when the authentication status changes.
    * 
    * Example:
     ```ts
@@ -97,7 +100,8 @@ export class Authentication implements IAuthentication {
     return this._isAuthenticated.asObservable();
   }
 
-  /** Returns an `Observable` emitting when the user has logged out.
+  /**
+   * Returns an `Observable` emitting when the user has logged out.
    * 
    * Example:
     ```ts
@@ -115,7 +119,8 @@ export class Authentication implements IAuthentication {
     );
   }
 
-  /** Calls the login endpoint for account authentication and emits when done.
+  /**
+   * Calls the login endpoint for account authentication and emits when done.
    * 
    * It can optionally take a reCaptcha validation code if the Nuclia backend requires it.
    * Once authenticated, the Nuclia SDK will periodically refresh the token before it expires.
@@ -146,7 +151,8 @@ export class Authentication implements IAuthentication {
     ).pipe(map((tokens) => this.authenticate(tokens)));
   }
 
-  /** Returns a boolean if successful. Stores authentication tokens in localStorage and triggers `isAuthenticated`.
+  /**
+   * Returns a boolean if successful. Stores authentication tokens in localStorage and triggers `isAuthenticated`.
    * 
    * This method is automatically called when using `login` and can be useful when using a custom authentication flow.
    * 
@@ -197,7 +203,8 @@ export class Authentication implements IAuthentication {
     return this.nuclia.options.public ? '' : localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
   }
 
-  /** Sets the current user’s password.
+  /**
+   * Sets the current user’s password.
    * 
    * Example:
     ```ts
@@ -222,7 +229,8 @@ export class Authentication implements IAuthentication {
     );
   }
 
-  /** Deletes current user account and removes stored tokens.
+  /**
+   * Deletes current user account and removes stored tokens.
    * 
    * Example:
     ```ts
@@ -235,7 +243,8 @@ export class Authentication implements IAuthentication {
     return this.nuclia.rest.delete('/user').pipe(tap(() => this.storeTokens({ access_token: '', refresh_token: '' })));
   }
 
-  /** Parses JWT token and returns corresponding user information.
+  /**
+   * Parses JWT token and returns corresponding user information.
    * 
    * Example:
     ```ts

@@ -27,7 +27,8 @@ export class Nuclia implements INuclia {
     return this.options.backend.replace('//', `//${this.options.zone}.`);
   }
 
-  /** Direct access to the current Knowledge Box instance
+  /**
+   * Direct access to the current Knowledge Box instance
    * (it returns a Knowledge Box in read mode, and does not work with account authentication). */
   get knowledgeBox(): KnowledgeBox {
     if (!this.options.knowledgeBox || (!this.options.zone && !this.options.standalone)) {
@@ -56,7 +57,8 @@ export class Nuclia implements INuclia {
     }) as unknown as PromiseMapper<KnowledgeBox>;
   }
 
-  /** Depending on your use case, you might want to:
+  /**
+   * Depending on your use case, you might want to:
    * 
    * - Use the Nuclia SDK to access and manage a Nuclia account. In this case you will need to provide the `backend` and `account` options, and you will use **account authentication**.
    * - Use the Nuclia SDK to use a Nuclia Knowledge Box. In this case you will need to provide the `backend`, `knowledgeBox` and `zone` options. You will also either use **knowledge box authentication**, or **no authentication** if the Knowledge Box is public.

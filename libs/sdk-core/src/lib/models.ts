@@ -129,36 +129,43 @@ export interface IDb {
 }
 
 export interface NucliaOptions {
-  /** The Nuclia backend to use.
+  /**
+   * The Nuclia backend to use.
    *
    * Example: `https://nuclia.cloud/api` */
   backend: string;
-  /** The geographical zone for the regional API calls.
+  /**
+   * The geographical zone for the regional API calls.
    *
    * Example: `europe-1` */
   zone?: string;
-  /** Allows you to make calls to a private Knowledge Box.
+  /**
+   * Allows you to make calls to a private Knowledge Box.
    *
    * It can be used in a server-side app, but never in a web app. */
   apiKey?: string;
   nuaKey?: string;
-  /** The Nuclia account slug.
+  /**
+   * The Nuclia account slug.
    *
    * Example: `my-account` */
   account?: string;
   accountType?: AccountTypes;
-  /** The Nuclia Knowledge Box unique id.
+  /**
+   * The Nuclia Knowledge Box unique id.
    *
    * Example: `17815eb2-06a5-40ee-a5aa-b2f9dbc5da70` */
   knowledgeBox?: string;
-  /** The Knowledge Box slug.
+  /**
+   * The Knowledge Box slug.
    *
    * Example: `my-kb` */
   kbSlug?: string;
   client?: string;
   /** Indicates if you are using a local NucliaDB instance. */
   standalone?: boolean;
-  /** Indicates if the Knowledge Box is public or not.
+  /**
+   * Indicates if the Knowledge Box is public or not.
    *
    * Set it to `false` when using a private Knowledge Box.
    */

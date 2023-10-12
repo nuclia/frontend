@@ -32,7 +32,8 @@ import { setEntities, setLabels, sliceUnicode } from './resource.helpers';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}
 
-/** Implements all the read operations on resources.
+/**
+ * Implements all the read operations on resources.
  *
  * A resource allows you to store content in the Knowledge Box.
  * A single resource might contain several fields.
@@ -43,7 +44,8 @@ export class ReadableResource implements IResource {
   data: ResourceData = {};
   private fieldTextsCache: { [key: string]: string[] } = {};
 
-  /** Note: Usually you will not need to create a `Resource` object yourself.
+  /**
+   * Note: Usually you will not need to create a `Resource` object yourself.
    * It is returned by the `getResource` method of the `KnowledgeBox` object. */
   constructor(data: IResource) {
     if (!data.data) {
@@ -218,7 +220,8 @@ export class Resource extends ReadableResource implements IResource {
     this.uuid = data.id;
   }
 
-  /** Modifies the resource attributes.
+  /**
+   * Modifies the resource attributes.
    * 
    * Example:
     ```ts
@@ -276,7 +279,8 @@ export class Resource extends ReadableResource implements IResource {
     return this.nuclia.rest.delete(`${this.path}/${type}/${field}`, undefined, synchronous);
   }
 
-  /** Adds or updates a field in the resource.
+  /**
+   * Adds or updates a field in the resource.
    * 
    * Example:
     ```ts
@@ -307,7 +311,8 @@ export class Resource extends ReadableResource implements IResource {
     return this.nuclia.rest.put(`${this.path}/${type}/${field}`, data);
   }
 
-  /** Uploads a file in the resource. The field will be stored in the indicated field.
+  /**
+   * Uploads a file in the resource. The field will be stored in the indicated field.
    * 
    * Example:
     ```ts
@@ -333,7 +338,8 @@ export class Resource extends ReadableResource implements IResource {
     return upload(this.nuclia, `${this.path}/file/${field}`, data, !!TUS, metadata);
   }
 
-  /** Uploads a list of files in the resource. It automatically creates a new field for each file (named according to the filename).
+  /**
+   * Uploads a list of files in the resource. It automatically creates a new field for each file (named according to the filename).
    * It uses the [TUS](https://tus.io/) protocol to upload the files. */
   batchUpload(files: FileList | File[]): Observable<UploadStatus> {
     return batchUpload(this.nuclia, this.path, files, true);
@@ -348,7 +354,7 @@ export class Resource extends ReadableResource implements IResource {
     return search(this.nuclia, this.kb, this.path, query, features, options, true);
   }
 
-  /**  Performs a find operation in the resource. */
+  /** Performs a find operation in the resource. */
   find(
     query: string,
     features: Search.ResourceFeatures[] = [],
