@@ -396,23 +396,23 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.delete(endpoint);
   }
 
-  /** Create a new NER family. */
+  /** Creates a new NER family. */
   createEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void> {
     return this.nuclia.rest.post<void>(`${this.path}/entitiesgroups`, { ...group, group: groupId });
   }
 
-  /** Update a NER family. */
+  /** Updates a NER family. */
   updateEntitiesGroup(groupId: string, payload: UpdateEntitiesGroupPayload): Observable<void> {
     return this.nuclia.rest.patch<void>(`${this.path}/entitiesgroup/${groupId}`, payload);
   }
 
-  /** Delete a NER family. */
+  /** Deletes a NER family. */
   deleteEntitiesGroup(groupId: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/entitiesgroup/${groupId}`);
   }
 
   /**
-   * Create or update a label set.
+   * Creates or updates a label set.
    * 
    * Example:
     ```ts
@@ -436,7 +436,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.post<void>(`${this.path}/labelset/${setId}`, labelSet);
   }
 
-  /** Delete a label set. */
+  /** Deletes a label set. */
   deleteLabelSet(setId: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/labelset/${setId}`);
   }
@@ -510,7 +510,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   /**
-   * Create a resource or update it if it already exists
+   * Creates a resource or updates it if it already exists
    */
   createOrUpdateResource(data: ICreateResource, synchronous = true): Observable<{ uuid: string } | void> {
     const resourceExists = data.slug ? this.hasResource(data.slug) : of(false);
