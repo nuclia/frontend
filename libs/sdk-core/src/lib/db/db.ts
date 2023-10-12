@@ -21,6 +21,7 @@ import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation 
 import { IStandaloneKb, WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
+/** Allows you to access Nuclia accounts and/or Nuclia Knowledge Boxes. */
 export class Db implements IDb {
   private nuclia: INuclia;
 
@@ -28,30 +29,75 @@ export class Db implements IDb {
     this.nuclia = nuclia;
   }
 
+  /** Returns a list of all the accounts which are accessible for the current authenticated user. */
   getAccounts(): Observable<Account[]> {
     return this.nuclia.rest.get<Account[]>('/accounts');
   }
 
+  /** Creates a new account. */
   createAccount(account: AccountCreation): Observable<Account> {
     return this.nuclia.rest.post<Account>('/accounts', account);
   }
 
+  /**
+   * Modifies account properties.
+   * 
+   * Example:
+    ```ts
+    nuclia.db.modifyAccount('my-account', { title: 'My account' }).subscribe({
+      next: () => {
+        console.log('account modified');
+      },
+      error: (error) => {
+        console.error(error);
+      },
+    });
+    ```
+  */
   modifyAccount(account: string, data: Partial<Account>): Observable<void> {
     return this.nuclia.rest.patch<void>(`/account/${account}`, data);
   }
 
+  /** Deletes an account. */
   deleteAccount(account: string): Observable<void> {
     return this.nuclia.rest.delete(`/account/${account}`);
   }
 
+  /**
+   * Returns account status.
+   * 
+   * Example:
+    ```ts
+    nuclia.db
+      .getAccountStatus('my-account')
+      .pipe(filter((status) => status.available))
+      .subscribe((status) => {
+        console.log('account ready');
+      });
+    ```
+   */
   getAccountStatus(account: string): Observable<AccountStatus> {
     return this.nuclia.rest.get<AccountStatus>(`/account/${account}/status`);
   }
 
+  /**
+   * Returns user information.
+   * 
+   * Example:
+    ```ts
+    nuclia.db.getWelcome().subscribe((welcome) => {
+      console.log(`Welcome ${welcome.preferences.name}`);
+    });
+    ```
+  */
   getWelcome(): Observable<Welcome> {
     return this.nuclia.rest.get<Welcome>('/user/welcome');
   }
 
+  /**
+   * Returns the account with the given slug, or the one defined in the Nuclia options
+   * if no slug is provided.
+   */
   getAccount(): Observable<Account>;
   getAccount(account?: string): Observable<Account> {
     account = account || this.nuclia.options.account;
@@ -65,10 +111,15 @@ export class Db implements IDb {
     return this.nuclia.rest.get<{ kbs: IStandaloneKb[] }>('/kbs').pipe(map((result) => result.kbs));
   }
 
+  /** Returns a list of all the Knowledge Boxes for the given account slug. */
   getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]> {
     return this.nuclia.rest.get<IKnowledgeBoxItem[]>(`/account/${account}/kbs`);
   }
 
+  /**
+   * Returns the Knowledge Box with the given slug, or the one defined in the Nuclia options
+   * if no slug is provided.
+   */
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account: string, knowledgeBox: string): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account?: string, knowledgeBox?: string): Observable<WritableKnowledgeBox> {
@@ -106,6 +157,20 @@ export class Db implements IDb {
     }
   }
 
+  /**
+   * Creates a new Knowledge Box.
+   * 
+   * Example:
+    ```ts
+    const knowledgeBox = {
+      slug: 'my-kb',
+      title: 'My knowledge box',
+    };
+    nuclia.db.createKnowledgeBox('my-account', knowledgeBox).subscribe((knowledgeBox) => {
+      console.log('knowledge box', knowledgeBox);
+    });
+    ```
+  */
   createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox> {
     return this.nuclia.rest
       .post<IKnowledgeBox>(this.nuclia.options.standalone ? '/kbs' : `/account/${account}/kbs`, knowledgeBox)
@@ -140,6 +205,25 @@ export class Db implements IDb {
     );
   }
 
+  /**
+   * Uploads and pushes a file to Nuclia Understanding API.
+   * 
+   * _Requires a NUA token._
+   * 
+   * Example:
+
+    ```ts
+    const file = input.files[0];
+    nuclia.db.upload(file).subscribe({
+    next: (response) => {
+      console.log('file uploaded', response);
+    },
+    error: (error) => {
+      console.error(error);
+    },
+    });
+    ```
+   */
   upload(file: FileWithMetadata): Observable<ProcessingPushResponse> {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /process');
@@ -157,6 +241,11 @@ export class Db implements IDb {
     );
   }
 
+  /**
+   * Pulls the latest data from Nuclia Understanding API.
+   *
+   * _Requires a NUA token._
+   */
   pull(): Observable<ProcessingPullResponse> {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /processing');
@@ -219,6 +308,7 @@ export class Db implements IDb {
     };
   }
 
+  /** Creates a NUA client and a NUA token. */
   createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }> {
     const payload: NUAClientPayload & { processing_webhook?: { uri: string } } = { ...data };
     if (payload.webhook) {
@@ -242,6 +332,7 @@ export class Db implements IDb {
     );
   }
 
+  /** Renews a NUA token. */
   renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }> {
     return this.nuclia.rest.put<{ client_id: string; token: string }>(
       `/account/${account}/nua_client/${client_id}/key`,
@@ -249,6 +340,7 @@ export class Db implements IDb {
     );
   }
 
+  /** Deletes a NUA client. */
   deleteNUAClient(account: string, client_id: string): Observable<void> {
     return this.nuclia.rest.delete(`/account/${account}/nua_client/${client_id}`);
   }

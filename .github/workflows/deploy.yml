@@ -9,6 +9,7 @@ env:
   APP_IMAGE_NAME: app
   MANAGER_IMAGE_NAME: manager
   CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
+  DOCS_STORAGE: ${{ secrets.DOCS_STORAGE }}
   CONTAINER_REGISTRY: eu.gcr.io/${{ secrets.PROJECT_ID }}
 
 permissions:
@@ -99,6 +100,12 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
           package: ./dist/sdk-core/package.json
+
+      - name: Generate and push SDK docs
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes'
+        run: |-
+          sh ./tools/build-sdk-docs.sh
+          gsutil cp -r ./libs/sdk-core/docs/* gs://$DOCS_STORAGE/js-sdk
 
       - name: Build dashboard image
         if: steps.check-deploy.outputs.deploy-app == 'yes'

@@ -1,6 +1,24 @@
 import { from, map, Observable, of, switchMap } from 'rxjs';
 import type { INuclia, IRest } from '../models';
 
+/**
+ * Handles the elementary REST requests to the Nuclia backend, setting the appropriate HTTP headers.
+ *
+ * Its main methods implement the corresponding HTTP verbs (`GET` is `get()`, POST is `post()`, etc.)
+ * For each of them, `extraHeaders` is an optional parameter that can be used to add headers to the request.
+ *
+ * On POST, PUT, PATCH and DELETE, the `synchronous` parameter will make the call synchronous,
+ * meaning the response will be returned only when the operation is fully completed. It is `false` by default.
+ *
+ *
+ * The default headers set by `Nuclia.rest` are:
+ *
+ * - `'content-type': 'application/json'`
+ * - `Authorization` or `X-NUCLIA-SERVICEACCOUNT` depending on the type of authentication.
+ *
+ * The default headers will be overridden by `extraHeaders` if they have the same entries.
+ *
+ * `doNotParse` is a boolean that can be used to disable the automatic JSON parsing of the response. */
 export class Rest implements IRest {
   private nuclia: INuclia;
   private zones?: { [key: string]: string };
@@ -118,6 +136,7 @@ export class Rest implements IRest {
     );
   }
 
+  /** Returns the full URL of the given path, using the regional or the global Nuclia backend according the path. */
   getFullUrl(path: string): string {
     const isGlobal =
       path.startsWith('/account') ||
@@ -140,6 +159,7 @@ export class Rest implements IRest {
     return `${backend}${version}${path}`;
   }
 
+  /** Returns a dictionary giving the geographical zones available slugs by unique ids. */
   getZones(): Observable<{ [key: string]: string }> {
     if (this.zones) {
       return of(this.zones);
@@ -160,6 +180,11 @@ export class Rest implements IRest {
     return this.getZones().pipe(map((zones) => zones[zoneId]));
   }
 
+  /**
+   * Downloads the file, converts it to a BLOB and returns its `blob:` URL.
+   *
+   * Use carefully with big files as it can impact the memory.
+   */
   getObjectURL(path: string): Observable<string> {
     return this.get<Response>(path, undefined, true).pipe(
       switchMap((res) => from(res.blob())),
