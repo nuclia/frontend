@@ -13,6 +13,11 @@ const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
 const REFRESH_DELAY = 6 * 60 * 60 * 1000; // 6 hours
 // const REFRESH_DELAY = 5 * 60 * 1000; // 5 min
 
+/** It manages authentication to the Nuclia backend.
+ * It can be based on login/password for account authentication,
+ * or on an API key for private Knowledge Box authentication.
+ * Authentication is not necessary when using a public Knowledge Box.
+ */
 export class Authentication implements IAuthentication {
   private nuclia: INuclia;
   private _isAuthenticated: ReplaySubject<boolean> = new ReplaySubject(1);
@@ -28,6 +33,13 @@ export class Authentication implements IAuthentication {
     }
   }
 
+  /** Returns the authentication header (which will be `Authorization` for account authentication, or `X-NUCLIA-SERVICEACCOUNT` for private Knowledge Box authentication).
+   * 
+   * Example:
+    ```ts
+    const headers = nuclia.auth.getAuthHeaders();
+    ```
+   */
   getAuthHeaders(): { [key: string]: string };
   getAuthHeaders(method: string, path: string): { [key: string]: string };
   getAuthHeaders(method?: string, path?: string): { [key: string]: string } {
@@ -68,10 +80,34 @@ export class Authentication implements IAuthentication {
     return nucliaDbRole;
   }
 
+  /** Emits when the authentication status changes.
+   * 
+   * Example:
+    ```ts
+    nuclia.auth.isAuthenticated().subscribe((isAuthenticated) => {
+      if (isAuthenticated) {
+        console.log('You are authenticated');
+      } else {
+        console.log('You are not authenticated');
+      }
+    });
+    ```
+   */
   isAuthenticated(): Observable<boolean> {
     return this._isAuthenticated.asObservable();
   }
 
+  /** Returns an `Observable` emitting when the user has logged out.
+   * 
+   * Example:
+    ```ts
+    nuclia.auth.hasLoggedOut().subscribe((loggedOut) => {
+      if (loggedOut) {
+        // do something
+      }
+    });
+    ```
+   */
   hasLoggedOut(): Observable<boolean> {
     return this.isAuthenticated().pipe(
       skip(1),
@@ -79,6 +115,28 @@ export class Authentication implements IAuthentication {
     );
   }
 
+  /** Calls the login endpoint for account authentication and emits when done.
+   * 
+   * It can optionally take a reCaptcha validation code if the Nuclia backend requires it.
+   * Once authenticated, the Nuclia SDK will periodically refresh the token before it expires.
+   * 
+   * Example:
+    ```ts
+    nuclia.auth.login(username, password).subscribe({
+      next: (success) => {
+        this.loginError = success ? '' : 'Error';
+        console.log('logged in', success);
+      },
+      error: (error) => {
+        this.loginError = 'Error';
+        console.error(error);
+      },
+      complete: () => {
+        this.pending = false;
+      },
+    });
+    ```
+   */
   login(username: string, password: string, validation?: string): Observable<boolean> {
     return this.fetch<AuthTokens>(
       '/auth/login',
@@ -88,6 +146,15 @@ export class Authentication implements IAuthentication {
     ).pipe(map((tokens) => this.authenticate(tokens)));
   }
 
+  /** Returns a boolean if successful. Stores authentication tokens in localStorage and triggers `isAuthenticated`.
+   * 
+   * This method is automatically called when using `login` and can be useful when using a custom authentication flow.
+   * 
+   * Example:
+      ```ts
+      nuclia.auth.authenticate(tokens);
+      ```
+   */
   authenticate(tokens: AuthTokens): boolean {
     if (!tokens.access_token) {
       this._isAuthenticated.next(false);
@@ -99,6 +166,7 @@ export class Authentication implements IAuthentication {
     }
   }
 
+  /** Calls the logout endopint and removes the token stored in localStorage. */
   logout(): void {
     this.fetch('/auth/logout', {}, true, {}).subscribe();
     localStorage.removeItem(LOCALSTORAGE_AUTH_KEY);
@@ -124,20 +192,57 @@ export class Authentication implements IAuthentication {
     );
   }
 
+  /** Returns authentication token stored in localStorage. */
   getToken(): string {
     return this.nuclia.options.public ? '' : localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
   }
 
+  /** Sets the current user's password.
+   * 
+   * Example:
+    ```ts
+    nuclia.auth.setPassword(password).subscribe({
+      next: (success) => {
+        this.passwordError = success ? '' : 'Error';
+        console.log('password set', success);
+      },
+      error: (error) => {
+        this.passwordError = 'Error';
+        console.error(error);
+      },
+      complete: () => {
+        this.pending = false;
+      },
+    });
+    ```
+   */
   setPassword(password: string): Observable<boolean> {
     return this.fetch<AuthTokens>('/auth/setpassword', { password }, true, {}).pipe(
       map((tokens) => this.authenticate(tokens)),
     );
   }
 
+  /** Deletes current user account and removes stored tokens.
+   * 
+   * Example:
+    ```ts
+    nuclia.auth.deleteAuthenticatedUser().subscribe(() => {
+      console.log('User deleted');
+    });
+    ```
+   */
   deleteAuthenticatedUser(): Observable<void> {
     return this.nuclia.rest.delete('/user').pipe(tap(() => this.storeTokens({ access_token: '', refresh_token: '' })));
   }
 
+  /** Parses JWT token and returns corresponding user information.
+   * 
+   * Example:
+    ```ts
+    const user = nuclia.auth.getJWTUser();
+    console.log(`Hello ${user?.ext.first_name}!`);
+    ```
+   */
   getJWTUser(): JwtUser | null {
     const token = this.getToken();
     if (token) {
@@ -147,6 +252,8 @@ export class Authentication implements IAuthentication {
     return null;
   }
 
+  /** Returns refresh token stored in localStorage.
+   */
   getRefreshToken(): string {
     return localStorage.getItem(LOCALSTORAGE_REFRESH_KEY) || '';
   }

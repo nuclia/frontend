@@ -12,6 +12,7 @@
 /apps/search-widget-demo/public/tmp
 /connectors-db.json
 /remote-connectors
+/libs/sdk-core/docs/
 
 # dependencies
 node_modules
