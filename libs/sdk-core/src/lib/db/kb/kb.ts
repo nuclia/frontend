@@ -68,14 +68,14 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
   }
 
-  /** Returns all the entities groups defined in the Knowledge Box. */
+  /** Returns all the NER families defined in the Knowledge Box. */
   getEntities(withEntities = false): Observable<Entities> {
     return this.nuclia.rest
       .get<{ groups: Entities }>(`${this.path}/entitiesgroups?show_entities=${withEntities}`)
       .pipe(map((res) => res.groups));
   }
 
-  /** Returns the entities group with the given id. */
+  /** Returns the NER family with the given id. */
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup> {
     return this.nuclia.rest.get<EntitiesGroup>(`${this.path}/entitiesgroup/${groupId}`);
   }
@@ -220,7 +220,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     return chat(this.nuclia, this.path, query, context, features, options);
   }
 
-  /** Performs a find operation in the knowledge box, which is the recommended way to searcj for results.
+  /** Performs a find operation in the knowledge box, which is the recommended way to search for results.
    * 
    * Example:
     ```ts
@@ -277,7 +277,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.post(`${this.path}/feedback`, { ident: answerId, good, task: 'CHAT', feedback: '' });
   }
 
-  /** Returns totals for the contents stored in the Knowledge Box */
+  /** Returns totals for each kind of contents stored in the Knowledge Box (resources, fields, paragraphs, vectors) */
   counters(): Observable<Counters> {
     return this.nuclia.rest.get<Counters>(`/kb/${this.id}/counters`);
   }
@@ -349,7 +349,7 @@ export class KnowledgeBox implements IKnowledgeBox {
 export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowledgeBox {
   /** True if the current user is an administrator of the Knowledge Box. */
   admin?: boolean;
-  /** True if the current user is a contributor to the Knowledge Box. */
+  /** True if the current user is a contributor of the Knowledge Box. */
   contrib?: boolean;
   private _training?: Training;
 
@@ -387,17 +387,17 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.delete(endpoint);
   }
 
-  /** Create a new entities group. */
+  /** Create a new NER family. */
   createEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void> {
     return this.nuclia.rest.post<void>(`${this.path}/entitiesgroups`, { ...group, group: groupId });
   }
 
-  /** Update an entities group. */
+  /** Update a NER family. */
   updateEntitiesGroup(groupId: string, payload: UpdateEntitiesGroupPayload): Observable<void> {
     return this.nuclia.rest.patch<void>(`${this.path}/entitiesgroup/${groupId}`, payload);
   }
 
-  /** Delete an entities group. */
+  /** Delete a NER family. */
   deleteEntitiesGroup(groupId: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/entitiesgroup/${groupId}`);
   }

@@ -194,7 +194,7 @@ export class ReadableResource implements IResource {
   }
 }
 
-/** Extends `Readableresource` and implements all the write operations. */
+/** Extends `ReadableResource` and implements all the write operations. */
 export class Resource extends ReadableResource implements IResource {
   kb: string;
   uuid: string;

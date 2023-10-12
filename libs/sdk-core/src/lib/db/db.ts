@@ -29,7 +29,7 @@ export class Db implements IDb {
     this.nuclia = nuclia;
   }
 
-  /** Returns a list of all the accounts. */
+  /** Returns a list of all the accounts which are accessible for the current authenticated user. */
   getAccounts(): Observable<Account[]> {
     return this.nuclia.rest.get<Account[]>('/accounts');
   }

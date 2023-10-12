@@ -166,7 +166,7 @@ export class Authentication implements IAuthentication {
     }
   }
 
-  /** Calls the logout endopint and removes the token stored in localStorage. */
+  /** Calls the logout endpoint and removes the token stored in localStorage. */
   logout(): void {
     this.fetch('/auth/logout', {}, true, {}).subscribe();
     localStorage.removeItem(LOCALSTORAGE_AUTH_KEY);
@@ -197,7 +197,7 @@ export class Authentication implements IAuthentication {
     return this.nuclia.options.public ? '' : localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
   }
 
-  /** Sets the current user's password.
+  /** Sets the current user’s password.
    * 
    * Example:
     ```ts
@@ -252,8 +252,7 @@ export class Authentication implements IAuthentication {
     return null;
   }
 
-  /** Returns refresh token stored in localStorage.
-   */
+  /** Returns refresh token stored in localStorage. */
   getRefreshToken(): string {
     return localStorage.getItem(LOCALSTORAGE_REFRESH_KEY) || '';
   }
