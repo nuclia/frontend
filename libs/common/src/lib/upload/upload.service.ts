@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { md5, SDKService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -68,12 +68,11 @@ export class UploadService {
       .reduce((acc, val) => acc.concat(val), [] as Classification[]);
     this.createMissingLabels(labels)
       .pipe(
-        concatMap(() => forkJoin(files.map((file) => md5(file)))),
-        switchMap((filelist) =>
+        switchMap(() =>
           this.sdk.currentKb.pipe(
             take(1),
             switchMap((kb) =>
-              kb.batchUpload(filelist).pipe(
+              kb.batchUpload(files).pipe(
                 tap((progress) => {
                   if (progress.completed) {
                     if (progress.failed === 0) {
