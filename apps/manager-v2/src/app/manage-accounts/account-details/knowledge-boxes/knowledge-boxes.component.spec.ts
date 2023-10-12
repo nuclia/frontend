@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { KnowledgeBoxesComponent } from './knowledge-boxes.component';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { AccountDetailsStore } from '../account-details.store';
-import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
-import { ExtendedAccount } from '../../global-account.models';
 import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { ManagerStore } from '../../../manager.store';
+import { AccountDetails } from '../../account-ui.models';
+import { AccountService } from '../../account.service';
 
 describe('KnowledgeBoxesComponent', () => {
   let component: KnowledgeBoxesComponent;
@@ -16,11 +16,11 @@ describe('KnowledgeBoxesComponent', () => {
       imports: [MockModule(PaTableModule)],
       declarations: [KnowledgeBoxesComponent],
       providers: [
-        MockProvider(AccountDetailsStore, {
-          getAccount: jest.fn(() => of({} as ExtendedAccount)),
-          zones: of([]),
+        MockProvider(ManagerStore, {
+          accountDetails: of({} as AccountDetails),
+          kbList: of([]),
         }),
-        MockProvider(SDKService),
+        MockProvider(AccountService),
       ],
     }).compileComponents();
 
