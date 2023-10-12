@@ -1,106 +1,182 @@
-import { Injectable } from '@angular/core';
-import { AccountService as GlobalAccountService, AccountTypeDefaults, SDKService } from '@flaps/core';
-import { map, Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { GlobalAccountService } from './global-account.service';
+import { AccountLimitsPatchPayload, AccountTypes } from '@nuclia/core';
+import { forkJoin, map, Observable, switchMap } from 'rxjs';
+import { AccountTypeDefaults } from '@flaps/core';
+import { AccountUserType, KbRoles } from './global-account.models';
 import {
-  AccountPatchPayload,
+  AccountConfigurationPayload,
+  AccountDetails,
   AccountSummary,
-  AccountUserType,
-  BlockedFeature,
-  BlockedFeaturesPayload,
-  ExtendedAccount,
-  KbRoles,
+  AccountUser,
+  BlockedFeatureFormValues,
+  KbCounters,
+  KbDetails,
   KbSummary,
-} from './account.models';
-import { AccountBlockingState, AccountTypes } from '@nuclia/core';
-
-const ACCOUNTS_ENDPOINT = '/manage/@accounts';
-const ACCOUNT_ENDPOINT = '/manage/@account';
-const KB_ENDPOINT = '@stashes';
+} from './account-ui.models';
+import { ManagerStore } from '../manager.store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
-  private _accountTypes = this.globalAccount.getAccountTypes();
-
-  constructor(private sdk: SDKService, private globalAccount: GlobalAccountService) {}
+  private globalService = inject(GlobalAccountService);
+  private store = inject(ManagerStore);
 
   getDefaultLimits(accountType: AccountTypes): Observable<AccountTypeDefaults> {
-    return this._accountTypes.pipe(map((accountTypes) => accountTypes[accountType]));
+    return this.globalService.getDefaultLimits(accountType);
   }
 
+  /**
+   * Get account list
+   */
   getAccounts(): Observable<AccountSummary[]> {
-    return this.sdk.nuclia.rest.get<AccountSummary[]>(ACCOUNTS_ENDPOINT);
+    return this.globalService
+      .getAccounts()
+      .pipe(
+        map((accounts) => accounts.map((summary) => this.globalService.mapAccountSummaryToAccountSummaryUI(summary))),
+      );
   }
 
-  getAccount(id: string): Observable<ExtendedAccount> {
-    return this.sdk.nuclia.rest.get<ExtendedAccount>(`${ACCOUNT_ENDPOINT}/${id}`);
+  /**
+   * Get account details and set `AccountDetails` and `KbList` in store.
+   */
+  loadAccountDetails(accountId: string): Observable<AccountDetails> {
+    return this.globalService.getAccount(accountId).pipe(
+      map((extendedAccount) => {
+        const accountDetails = this.globalService.mapExtendedToDetails(extendedAccount);
+        this.store.setAccountDetails(accountDetails);
+        this.store.setKbList(this.globalService.mapExtendedToKbList(extendedAccount));
+        this.store.setBlockedFeatures(extendedAccount.blocked_features);
+        return accountDetails;
+      }),
+    );
   }
 
-  updateAccount(id: string, data: AccountPatchPayload): Observable<void> {
-    return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}`, data);
+  /**
+   * Load counters for all the KB listed
+   */
+  loadKbCounters(accountId: string, kbList: KbSummary[]): Observable<KbCounters> {
+    return this.globalService.loadKbCounters(accountId, kbList);
   }
 
-  deleteAccount(id: string): Observable<void> {
-    return this.sdk.nuclia.rest.delete(`${ACCOUNT_ENDPOINT}/${id}`);
+  /**
+   * Update account configuration and update the store accordingly
+   */
+  updateAccount(accountId: string, data: AccountConfigurationPayload): Observable<AccountDetails> {
+    return this.globalService.updateAccount(accountId, data).pipe(switchMap(() => this.loadAccountDetails(accountId)));
   }
 
-  updateBlockedFeatures(
-    id: string,
-    formValue: {
-      generative: boolean;
-      search: boolean;
-      upload: boolean;
-      processing: boolean;
-    },
-  ): Observable<void> {
-    const blockedFeatures = Object.entries(formValue).reduce((blockedFeatures, [feature, blocked]) => {
-      if (blocked) {
-        blockedFeatures.push(feature as BlockedFeature);
-      }
-      return blockedFeatures;
-    }, [] as BlockedFeature[]);
-    const payload: BlockedFeaturesPayload = {
-      blocking_state: blockedFeatures.length > 0 ? AccountBlockingState.MANAGER : AccountBlockingState.UNBLOCKED,
-      blocked_features: blockedFeatures,
-    };
-    return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}/blocking_status`, payload);
+  /**
+   * Update account limits and update the store accordingly
+   */
+  updateAccountLimits(accountId: string, limits: AccountLimitsPatchPayload): Observable<AccountDetails> {
+    return this.globalService
+      .updateAccountLimits(accountId, limits)
+      .pipe(switchMap(() => this.loadAccountDetails(accountId)));
   }
 
-  addAccountUser(accountId: string, userId: string): Observable<void> {
-    return this.sdk.nuclia.rest.post(`${ACCOUNT_ENDPOINT}/${accountId}`, { id: userId });
+  /**
+   * Update blocked features of an account and update the store accordingly
+   */
+  updateBlockedFeatures(accountId: string, formValue: BlockedFeatureFormValues): Observable<AccountDetails> {
+    return this.globalService
+      .updateBlockedFeatures(accountId, formValue)
+      .pipe(switchMap(() => this.loadAccountDetails(accountId)));
   }
 
-  updateAccountUserType(accountId: string, userId: string, newType: AccountUserType): Observable<void> {
-    return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${accountId}/${userId}`, { type: newType });
+  /**
+   * Load KB details
+   */
+  loadKb(accountId: string, kbId: string): Observable<KbDetails> {
+    return this.globalService.getKb(accountId, kbId).pipe(
+      map((kbSummary) => {
+        const kbDetails = this.globalService.mapKbSummaryToDetails(kbSummary);
+        this.store.setKbDetails(kbDetails);
+        return kbDetails;
+      }),
+    );
   }
 
-  removeAccountUser(accountId: string, userId: string): Observable<void> {
-    return this.sdk.nuclia.rest.delete(`${ACCOUNT_ENDPOINT}/${accountId}/${userId}`);
+  /**
+   * Update KB slug and/or title and update the store accordingly
+   */
+  updateKb(accountId: string, kbId: string, data: { slug?: string; title?: string }): Observable<KbDetails> {
+    return this.globalService.updateKb(accountId, kbId, data).pipe(
+      switchMap(() =>
+        // load Account Details to update the kb list on the navigation panel
+        forkJoin([this.loadAccountDetails(accountId), this.loadKb(accountId, kbId)]).pipe(
+          map(([, kbDetails]) => kbDetails),
+        ),
+      ),
+    );
   }
 
-  getKb(accountId: string, kbId: string): Observable<KbSummary> {
-    return this.sdk.nuclia.rest.get(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}`);
+  /**
+   * Add user to a KB and update the store accordingly
+   */
+  addKbUser(accountId: string, kbId: string, userId: string): Observable<KbDetails> {
+    return this.globalService.addKbUser(accountId, kbId, userId).pipe(switchMap(() => this.loadKb(accountId, kbId)));
   }
 
-  updateKb(accountId: string, kbId: string, data: { slug?: string; title?: string }): Observable<void> {
-    return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}`, data);
+  /**
+   * Update user role on a KB and update the store accordingly
+   */
+  updateKbUser(accountId: string, kbId: string, userId: string, newRole: KbRoles): Observable<KbDetails> {
+    return this.globalService
+      .updateKbUser(accountId, kbId, userId, newRole)
+      .pipe(switchMap(() => this.loadKb(accountId, kbId)));
   }
 
-  updateKbUser(accountId: string, kbId: string, userId: string, newRole: KbRoles): Observable<void> {
-    return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}/${userId}`, {
-      role: newRole,
-    });
+  /**
+   * Remove user from a KB and update the store accordingly
+   */
+  removeKbUser(accountId: string, kbId: string, userId: string): Observable<KbDetails> {
+    return this.globalService.removeKbUser(accountId, kbId, userId).pipe(switchMap(() => this.loadKb(accountId, kbId)));
   }
 
-  addKbUser(accountId: string, kbId: string, userId: string): Observable<void> {
-    return this.sdk.nuclia.rest.post(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}`, {
-      user: userId,
-      stash: kbId,
-    });
+  /**
+   * Load account users and add them to the store
+   */
+  loadAccountUsers(accountId: string): Observable<AccountUser[]> {
+    return this.globalService.getAccount(accountId).pipe(
+      map((extendedAccount) => {
+        const accountUsers = this.globalService.mapExtendedAccountToUsers(extendedAccount);
+        this.store.setAccountUsers(accountUsers);
+        return accountUsers;
+      }),
+    );
   }
 
-  removeKbUser(accountId: string, kbId: string, userId: string): Observable<void> {
-    return this.sdk.nuclia.rest.delete(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}/${userId}`);
+  /**
+   * Add user to the account
+   */
+  addAccountUser(accountId: string, userId: string): Observable<AccountUser[]> {
+    return this.globalService.addAccountUser(accountId, userId).pipe(switchMap(() => this.loadAccountUsers(accountId)));
+  }
+
+  /**
+   * Remove user from the account
+   */
+  removeAccountUser(accountId: string, userId: string): Observable<AccountUser[]> {
+    return this.globalService
+      .removeAccountUser(accountId, userId)
+      .pipe(switchMap(() => this.loadAccountUsers(accountId)));
+  }
+
+  /**
+   * Update account user type
+   */
+  updateAccountUserType(accountId: string, userId: string, newType: AccountUserType): Observable<AccountUser[]> {
+    return this.globalService
+      .updateAccountUserType(accountId, userId, newType)
+      .pipe(switchMap(() => this.loadAccountUsers(accountId)));
+  }
+
+  /**
+   * Delete account
+   */
+  deleteAccount(accountId: string): Observable<void> {
+    return this.globalService.deleteAccount(accountId);
   }
 }

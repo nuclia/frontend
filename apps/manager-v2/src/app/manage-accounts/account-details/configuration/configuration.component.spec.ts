@@ -5,7 +5,7 @@ import { AccountDetailsStore } from '../account-details.store';
 import { AccountService } from '../../account.service';
 import { SisToastService } from '@nuclia/sistema';
 import { of } from 'rxjs';
-import { ExtendedAccount } from '../../account.models';
+import { ExtendedAccount } from '../../global-account.models';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';

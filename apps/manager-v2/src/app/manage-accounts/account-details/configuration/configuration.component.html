@@ -4,21 +4,10 @@
   (ngSubmit)="save()">
   <pa-input formControlName="email">Email</pa-input>
   <pa-input formControlName="slug">Slug</pa-input>
-  <pa-select
-    label="Zone"
-    formControlName="zone"
-    readonly>
-    <pa-option
-      *ngFor="let zone of zones | async"
-      [value]="zone.id">
-      {{ zone.title }}
-    </pa-option>
-  </pa-select>
   <div class="account-type-container">
     <pa-select
       readonly
       label="Account type"
-      help="ALL testing account MUST be Trial"
       formControlName="type">
       <pa-option value="stash-trial">Trial</pa-option>
       <pa-option value="stash-enterprise">Enterprise</pa-option>
@@ -39,16 +28,16 @@
   <pa-date-picker
     *ngIf="canModifyTrialExpiration"
     label="Trial expiration date"
-    formControlName="trial_expiration_date"></pa-date-picker>
+    formControlName="trialExpirationDate"></pa-date-picker>
   <pa-input
     type="number"
-    formControlName="max_dedicated_processors">
+    formControlName="maxDedicatedProcessors">
     Max dedicated processors
   </pa-input>
 
   <pa-select
     label="Dedicated processors state"
-    formControlName="dedicated_processors_state">
+    formControlName="dedicatedProcessorsState">
     <pa-option value="enabled">Enabled</pa-option>
     <pa-option value="disabled">Disabled</pa-option>
     <pa-option value="paused">Paused</pa-option>
@@ -75,7 +64,7 @@
         <pa-input
           type="number"
           externalLabel
-          formControlName="max_kbs"></pa-input>
+          formControlName="maxKbs"></pa-input>
         <pa-button
           size="small"
           icon="reload"

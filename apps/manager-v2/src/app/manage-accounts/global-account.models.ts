@@ -49,6 +49,7 @@ export interface AccountPatchPayload {
   email?: string;
   creator?: string;
   type?: string;
+  dedicated_processors_state?: string;
   kbs?: number;
   max_dedicated_processors?: number;
   data?: object;
@@ -78,6 +79,7 @@ export interface KbSummary {
   owners: KbUser[];
   created: string;
   modified: string;
+  zone: string;
 }
 
 export interface KnowledgeBox {

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
-import { AccountSummary } from '../account.models';
+import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
+import { AccountSummary } from '../account-ui.models';
 import { AccountService } from '../account.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 
@@ -30,7 +30,7 @@ export class AccountListComponent {
     private modalService: SisModalService,
     private toast: SisToastService,
   ) {
-    this.loadAccounts();
+    this.loadAccounts().subscribe();
   }
 
   onReachAnchor() {
@@ -47,18 +47,20 @@ export class AccountListComponent {
         title: `Are you sure you want to delete "${account.slug}"?`,
         description: `You’re about to delete "${account.title}" (${account.slug})?`,
         isDestructive: true,
+        cancelLabel: 'Cancel',
+        confirmLabel: 'Delete',
       })
       .onClose.pipe(
-        filter((confirm) => confirm),
+        filter((confirm) => !!confirm),
         switchMap(() => this.accountService.deleteAccount(account.id)),
+        switchMap(() => this.loadAccounts()),
       )
       .subscribe({
-        next: () => this.loadAccounts(),
         error: () => this.toast.error('Account deletion failed'),
       });
   }
 
-  private loadAccounts() {
-    this.accountService.getAccounts().subscribe((accounts) => this._allAccounts.next(accounts));
+  private loadAccounts(): Observable<AccountSummary[]> {
+    return this.accountService.getAccounts().pipe(tap((accounts) => this._allAccounts.next(accounts)));
   }
 }

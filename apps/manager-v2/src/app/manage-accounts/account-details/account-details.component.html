@@ -27,17 +27,19 @@
         Type:
         <strong>{{ (account | async)?.type }}</strong>
       </div>
-      <div *ngIf="(account | async)?.type === 'stash-trial' && !!(account | async)?.trial_expiration_date">
-        Trial expiration date:
-        <strong>{{ (account | async)?.trial_expiration_date | date : 'yyyy-MM-dd' }}</strong>
-      </div>
+      <ng-container *ngIf="(account | async)?.type === 'stash-trial'">
+        <div *ngIf="(account | async)?.trialExpirationDate as trialExpirationDate">
+          Trial expiration date:
+          <strong>{{ trialExpirationDate | date: 'yyyy-MM-dd' }}</strong>
+        </div>
+      </ng-container>
       <div>
-        Max kbs:
-        <strong>{{ (account | async)?.stashes?.max_stashes }}</strong>
+        Max KBs:
+        <strong>{{ (account | async)?.maxKbs === -1 ? 'Unlimited' : (account | async)?.maxKbs }}</strong>
       </div>
       <div>
         Dedicated processors state:
-        <strong>{{ (account | async)?.dedicated_processors_state }}</strong>
+        <strong style="text-transform: capitalize">{{ (account | async)?.dedicatedProcessorsState }}</strong>
       </div>
     </div>
     <nav>
@@ -58,7 +60,7 @@
           Knowledge Boxes
         </li>
         <li
-          *ngFor="let kb of (account | async)?.stashes?.items"
+          *ngFor="let kb of kbList | async"
           class="child-route"
           [routerLink]="'kb/' + kb.id"
           routerLinkActive="active">

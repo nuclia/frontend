@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { AccountDetailsStore } from '../account-details.store';
 import { AccountTypes } from '@nuclia/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subject, switchMap, tap } from 'rxjs';
+import { filter, map, Subject, switchMap, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AccountPatchPayload, DedicatedProcessorsState, ExtendedAccount } from '../../account.models';
+import { DedicatedProcessorsState } from '../../global-account.models';
 import { AccountService } from '../../account.service';
 import { SisToastService } from '@nuclia/sistema';
 import { AccountTypeDefaults } from '@flaps/core';
+import { ManagerStore } from '../../../manager.store';
+import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
 
 @Component({
   templateUrl: './configuration.component.html',
@@ -16,7 +17,7 @@ import { AccountTypeDefaults } from '@flaps/core';
 })
 export class ConfigurationComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
-  private accountBackup?: ExtendedAccount;
+  private accountBackup?: AccountDetails;
 
   configForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -27,19 +28,18 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      max_kbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+      maxKbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
-    max_dedicated_processors: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+    maxDedicatedProcessors: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl<string>(''),
     // restore the validation when the zone is not readonly anymore
     // zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    trial_expiration_date: new FormControl<string>(''),
-    dedicated_processors_state: new FormControl<DedicatedProcessorsState>('disabled', {
+    trialExpirationDate: new FormControl<string>(''),
+    dedicatedProcessorsState: new FormControl<DedicatedProcessorsState>('disabled', {
       nonNullable: true,
       validators: [Validators.required],
     }),
   });
-  zones = this.store.zones;
   isSaving = false;
 
   defaultLimits?: AccountTypeDefaults;
@@ -53,16 +53,17 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private store: AccountDetailsStore,
+    private store: ManagerStore,
     private accountService: AccountService,
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    this.store
-      .getAccount()
+    this.store.accountDetails
       .pipe(
+        filter((details) => !!details),
+        map((accountDetails) => accountDetails as AccountDetails),
         tap((accountDetails) => {
           this.accountBackup = { ...accountDetails };
           this.patchConfigForm(accountDetails);
@@ -79,40 +80,29 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    if (this.configForm.valid) {
+    if (this.configForm.valid && this.accountBackup) {
       this.isSaving = true;
-      this.store
-        .getAccount()
-        .pipe(
-          switchMap((account) => {
-            const { trial_expiration_date, ...rawValue } = this.configForm.getRawValue();
-            const payload: AccountPatchPayload = {
-              ...rawValue,
-              kbs: rawValue.kbs.kbs_radio === 'limit' ? rawValue.kbs.max_kbs : -1,
-            };
-            if (this.canModifyTrialExpiration) {
-              payload.trial_expiration_date = trial_expiration_date ? trial_expiration_date : null;
-            }
-            return this.accountService
-              .updateAccount(account.id, payload)
-              .pipe(switchMap(() => this.accountService.getAccount(account.id)));
-          }),
-        )
-        .subscribe({
-          next: (updatedAccount) => {
-            this.store.setAccountDetails(updatedAccount);
-            this.accountBackup = { ...updatedAccount };
-            this.patchConfigForm(updatedAccount);
-            this.isSaving = false;
-            this.configForm.markAsPristine();
-            this.cdr.markForCheck();
-          },
-          error: () => {
-            this.isSaving = false;
-            this.cdr.markForCheck();
-            this.toast.error('Updating account failed');
-          },
-        });
+      const { trialExpirationDate, kbs, ...rawValue } = this.configForm.getRawValue();
+      const payload: AccountConfigurationPayload = {
+        ...rawValue,
+        maxKbs: kbs.kbs_radio === 'limit' ? kbs.maxKbs : -1,
+      };
+      if (this.canModifyTrialExpiration) {
+        payload.trialExpirationDate = trialExpirationDate ? trialExpirationDate : null;
+      }
+      this.accountService.updateAccount(this.accountBackup.id, payload).subscribe({
+        next: (updatedAccount) => {
+          this.isSaving = false;
+          this.accountBackup = { ...updatedAccount };
+          this.configForm.markAsPristine();
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.isSaving = false;
+          this.cdr.markForCheck();
+          this.toast.error('Updating account failed');
+        },
+      });
     }
   }
 
@@ -128,7 +118,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     if (!this.defaultLimits) {
       return;
     }
-    this.configForm.controls.kbs.controls.max_kbs.patchValue(this.defaultLimits.max_kbs);
+    this.configForm.controls.kbs.controls.maxKbs.patchValue(this.defaultLimits.max_kbs);
     this.configForm.controls.kbs.markAsDirty();
     this.cdr.markForCheck();
   }
@@ -141,12 +131,10 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private patchConfigForm(accountDetails: ExtendedAccount) {
+  private patchConfigForm(accountDetails: AccountDetails) {
     this.configForm.patchValue(accountDetails);
-    this.configForm.controls.kbs.controls.kbs_radio.patchValue(
-      accountDetails.stashes.max_stashes === -1 ? 'unlimited' : 'limit',
-    );
-    this.configForm.controls.kbs.controls.max_kbs.patchValue(accountDetails.stashes.max_stashes);
+    this.configForm.controls.kbs.controls.kbs_radio.patchValue(accountDetails.maxKbs === -1 ? 'unlimited' : 'limit');
+    this.configForm.controls.kbs.controls.maxKbs.patchValue(accountDetails.maxKbs);
     this.cdr.markForCheck();
   }
 }

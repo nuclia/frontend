@@ -36,37 +36,29 @@ export interface AccountConfig {
   max_dedicated_processors: number;
 }
 
+export type UploadLimitsEntries = 'upload_limit_max_media_file_size' | 'upload_limit_max_non_media_file_size';
+export type UploadLimits = Record<UploadLimitsEntries, number>;
+export type NullableUploadLimits = Record<UploadLimitsEntries, number | null>;
+
+export type UsageLimitsEntries =
+  | 'monthly_limit_docs_no_media_processed'
+  | 'monthly_limit_hosted_answers_generated'
+  | 'monthly_limit_hosted_searches_performed'
+  | 'monthly_limit_media_seconds_processed'
+  | 'monthly_limit_paragraphs_processed'
+  | 'monthly_limit_paragraphs_stored'
+  | 'monthly_limit_self_hosted_answers_generated'
+  | 'monthly_limit_self_hosted_searches_performed';
+export type UsageLimits = Record<UsageLimitsEntries, number>;
+export type NullableUsageLimits = Record<UsageLimitsEntries, number | null>;
+
 export interface AccountLimits {
-  upload: {
-    upload_limit_max_media_file_size: number;
-    upload_limit_max_non_media_file_size: number;
-  };
-  usage: {
-    monthly_limit_docs_no_media_processed: number;
-    monthly_limit_hosted_answers_generated: number;
-    monthly_limit_hosted_searches_performed: number;
-    monthly_limit_media_seconds_processed: number;
-    monthly_limit_paragraphs_processed: number;
-    monthly_limit_paragraphs_stored: number;
-    monthly_limit_self_hosted_answers_generated: number;
-    monthly_limit_self_hosted_searches_performed: number;
-  };
+  upload: UploadLimits;
+  usage: UsageLimits;
 }
 export interface AccountLimitsPatchPayload {
-  upload: {
-    upload_limit_max_media_file_size: number | null;
-    upload_limit_max_non_media_file_size: number | null;
-  };
-  usage: {
-    monthly_limit_docs_no_media_processed: number | null;
-    monthly_limit_hosted_answers_generated: number | null;
-    monthly_limit_hosted_searches_performed: number | null;
-    monthly_limit_media_seconds_processed: number | null;
-    monthly_limit_paragraphs_processed: number | null;
-    monthly_limit_paragraphs_stored: number | null;
-    monthly_limit_self_hosted_answers_generated: number | null;
-    monthly_limit_self_hosted_searches_performed: number | null;
-  };
+  upload: NullableUploadLimits;
+  usage: NullableUsageLimits;
 }
 
 export enum AccountBlockingState {
@@ -79,6 +71,11 @@ export enum BlockedFeature {
   PROCESSING = 'processing',
   SEARCH = 'search',
   GENERATIVE = 'generative',
+  TRAINING = 'training',
+  PUBLIC_UPLOAD = 'public_upload',
+  PUBLIC_PROCESSING = 'public_processing',
+  PUBLIC_SEARCH = 'public_search',
+  PUBLIC_GENERATIVE = 'public_generative',
 }
 
 export interface AccountCreation {
