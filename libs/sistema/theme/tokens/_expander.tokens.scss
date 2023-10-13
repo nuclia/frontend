@@ -9,9 +9,8 @@ $color-collapsed-expander-header-title: $color-dark-stronger;
 $color-collapsed-expander-header-icon: $color-dark-stronger;
 
 // Expanded theme
-$background-color-expanded-expander-header: $color-dark-stronger;
-$background-color-expanded-expander-header-hover: lighten($color-dark-stronger, 10%);
-$box-shadow-expanded-expander-header: inset 0 -1px 0 $color-dark-stronger;
-$color-expanded-expander-header-title: $color-light-stronger;
-$color-expanded-expander-header-title-hover: $color-light-stronger;
-$color-expanded-expander-header-icon: $color-light-stronger;
+$background-color-expanded-expander-header: $color-neutral-lighter;
+$background-color-expanded-expander-header-hover: $color-neutral-lighter;
+$box-shadow-expanded-expander-header: none;
+$color-expanded-expander-header-title: $color-dark-stronger;
+$color-expanded-expander-header-icon: $color-dark-stronger;

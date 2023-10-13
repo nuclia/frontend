@@ -508,7 +508,7 @@
 	"resource.add_labels_error": "Ocorreu um erro ao adicionar rótulos em {{count}} recursos",
 	"resource.add_labels_success": "Rótulos adicionados com sucesso em {{count}} recursos",
 	"resource.adding_labels": "Adicionando rótulos",
-	"resource.classification.clean-up": "Limpar",
+	"resource.classification.clean-up": "Limpar seleção de rótulo",
 	"resource.classification.no-paragraph-labelset": "Não há rótulo definido para parágrafos. Você pode adicionar alguns",
 	"resource.classification.no-resource-labelset": "Não há rótulo definido para recursos. Você pode adicionar alguns",
 	"resource.classification.remove-label": "Remover rótulo da seleção",

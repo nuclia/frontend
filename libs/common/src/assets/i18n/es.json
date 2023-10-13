@@ -507,7 +507,7 @@
 	"resource.add_labels_error": "Se produjo un error al agregar etiquetas en {{count}} recursos",
 	"resource.add_labels_success": "Etiquetas añadidas correctamente en {{count}} recursos",
 	"resource.adding_labels": "Agregando etiquetas",
-	"resource.classification.clean-up": "Limpiar",
+	"resource.classification.clean-up": "Limpiar selección de etiquetas",
 	"resource.classification.no-paragraph-labelset": "No hay un conjunto de etiquetas para los párrafos. Puedes agregar algunos en",
 	"resource.classification.no-resource-labelset": "No hay ninguna etiqueta establecida para los recursos. Puedes agregar algunos en",
 	"resource.classification.remove-label": "Eliminar etiqueta de la selección",

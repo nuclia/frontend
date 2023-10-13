@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
-import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { Classification, FieldId, LabelSets, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '../../../../label/labels.service';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
@@ -29,6 +29,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
     }),
   );
 
+  currentSelection: { [id: string]: boolean } = {};
   availableLabels: Observable<LabelSets | null> = this.labelsService.paragraphLabelSets;
   hasLabels: Observable<boolean> = this.availableLabels.pipe(
     map((labels) => !!labels && Object.keys(labels).length > 0),
@@ -37,7 +38,12 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
       this.cdr.markForCheck();
     }),
   );
-  currentLabels: Classification[] = [];
+  currentLabels: BehaviorSubject<Classification[]> = new BehaviorSubject<Classification[]>([]);
+  emptyLabelSelection = this.currentLabels.pipe(
+    map((labels) => {
+      return labels.length === 0;
+    }),
+  );
   isModified = false;
   isSaving = false;
   labelLoaded = false;
@@ -75,23 +81,42 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
     this.classificationService.cleanup();
   }
 
-  updateSelection(labels: Classification[]) {
-    this.currentLabels = labels;
+  updateSelection(event: { selected: boolean; labelset: string; label: string }) {
+    const { selected, labelset, label } = event;
+    if (selected) {
+      this.currentLabels.next(this.currentLabels.value.concat([{ label, labelset }]));
+    } else {
+      this.currentLabels.next(
+        this.currentLabels.value.filter((item) => !(item.labelset === labelset && item.label === label)),
+      );
+    }
+    this.currentSelection[`${labelset}_${label}`] = selected;
+    this.cdr.detectChanges();
   }
 
   cleanUpLabels() {
-    this.currentLabels = [];
+    this.currentLabels.next([]);
+    this.currentSelection = Object.keys(this.currentSelection).reduce(
+      (newSelection, key) => {
+        newSelection[key] = false;
+        return newSelection;
+      },
+      {} as { [id: string]: boolean },
+    );
+    this.cdr.markForCheck();
   }
 
   removeLabelFromSelection(classificationToRemove: Classification) {
-    this.currentLabels = this.currentLabels.filter(
-      (item) => !(item.labelset === classificationToRemove.labelset && item.label === classificationToRemove.label),
+    this.currentLabels.next(
+      this.currentLabels.value.filter(
+        (item) => !(item.labelset === classificationToRemove.labelset && item.label === classificationToRemove.label),
+      ),
     );
   }
 
   addLabelsOnParagraph(paragraph: ParagraphWithTextAndClassifications) {
     this.availableLabels.pipe(take(1)).subscribe((labelSets) => {
-      this.currentLabels.forEach((label) => {
+      this.currentLabels.value.forEach((label) => {
         this.classificationService.classifyParagraph(label, paragraph, !!labelSets?.[label.labelset]?.multiple);
       });
       this.isModified = this.classificationService.hasModifications();

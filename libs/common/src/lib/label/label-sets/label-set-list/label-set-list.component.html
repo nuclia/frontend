@@ -29,8 +29,7 @@
           *ngIf="(isAdminOrContrib | async) === true"
           icon="edit"
           aspect="basic"
-          [routerLink]="'../' + labelSet.key"
-          [kind]="expandedLabelSetIds.includes(labelSet.key) ? 'inverted' : 'secondary'">
+          [routerLink]="'../' + labelSet.key">
           {{ 'label-set.edit' | translate }}
         </pa-button>
         <pa-button
