@@ -4,6 +4,7 @@
 
 - Update `BlockedFeature` model to match backend one
 - Improve maintainability of `AccountLimits` and `AccountLimitsPatchPayload` using better typing construction
+- `getTempToken` method optimizes token usage by caching previously generated tokens
 
 # 1.6.3 (2023-10-02)
 

@@ -1,4 +1,4 @@
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import type {
   ActivityDownloadList,
   Counters,
@@ -27,7 +27,9 @@ import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } fro
 import type { BaseSearchOptions, Chat } from '../search';
 import { catalog, chat, find, Search, search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
-import { ResourceProperties } from '../db.models'; // eslint-disable-next-line @typescript-eslint/no-empty-interface
+import { ResourceProperties } from '../db.models';
+
+const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}
@@ -40,6 +42,7 @@ export interface KnowledgeBox extends IKnowledgeBox {}
 export class KnowledgeBox implements IKnowledgeBox {
   account: string;
   protected nuclia: INuclia;
+  private tempToken?: { token: string; expiration: number };
 
   /**
    * The Knowledge Box path on the regional API.
@@ -317,18 +320,24 @@ export class KnowledgeBox implements IKnowledgeBox {
     ```
    */
   getTempToken(): Observable<string> {
+    if (this.tempToken && this.tempToken.expiration > Date.now()) {
+      return of(this.tempToken.token);
+    }
     const account = this.account || this.nuclia.options.account;
     const kbSlug = this.slug || this.nuclia.options.kbSlug;
+    let request: Observable<{ token: string }> | undefined;
     if (!this.nuclia.options.standalone) {
       if (!account || !kbSlug) {
         throw new Error('Account and KB slug are required to get a temp token');
       }
-      return this.nuclia.rest
-        .post<{ token: string }>(`/account/${account}/kb/${kbSlug}/ephemeral_tokens`, {})
-        .pipe(map((res) => res.token));
+      request = this.nuclia.rest.post<{ token: string }>(`/account/${account}/kb/${kbSlug}/ephemeral_tokens`, {});
     } else {
-      return this.nuclia.rest.get<{ token: string }>('/temp-access-token').pipe(map((res) => res.token));
+      request = this.nuclia.rest.get<{ token: string }>('/temp-access-token');
     }
+    return request.pipe(
+      map((res) => res.token),
+      tap((token) => (this.tempToken = { token, expiration: Date.now() + TEMP_TOKEN_DURATION })),
+    );
   }
 
   listActivity(type?: EventType, page?: number, size?: number): Observable<EventList> {
