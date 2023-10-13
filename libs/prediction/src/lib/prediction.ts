@@ -36,10 +36,12 @@ export class NucliaPrediction {
         switchMap((result) => {
           return result.ok ? from(result.json()) : throwError(() => new Error('Unable to load modelType'));
         }),
-        switchMap((definition: { model: string }) => {
-          const vocab = `${getCDN()}models/classifier/${definition.model}/vocab.json`;
-          const model = `${kbPath}/train/classifier/model/onnx_models/model-int8.onnx`;
-          const session = ort.InferenceSession.create(model, this.options);
+        switchMap((definition: { model: string }) =>
+          from(this.loadModelOnnx(kbPath, headers)).pipe(map((buffer) => ({ definition, buffer }))),
+        ),
+        switchMap((res) => {
+          const vocab = `${getCDN()}models/classifier/${res.definition.model}/vocab.json`;
+          const session = ort.InferenceSession.create(res.buffer, this.options);
           return forkJoin([
             from(loadTokenizer(vocab, false, true)),
             from(session.then((s: any) => (this.session = s))),
@@ -150,5 +152,10 @@ export class NucliaPrediction {
   private async loadModelDefinition(kbPath: string, headers: { [key: string]: string }) {
     const modelTypeUrl = `${kbPath}/train/classifier/model/model/nuclia.json`;
     return fetch(modelTypeUrl, { headers });
+  }
+
+  private async loadModelOnnx(kbPath: string, headers: { [key: string]: string }) {
+    const model = `${kbPath}/train/classifier/model/onnx_models/model-int8.onnx`;
+    return fetch(model, { headers }).then((res) => res.arrayBuffer());
   }
 }
