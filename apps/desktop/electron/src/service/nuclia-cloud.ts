@@ -64,6 +64,7 @@ export class NucliaCloud {
             }),
           ),
         ),
+        catchError(() => of(undefined)),
         delay(500),
         switchMap((resource) => {
           if (!resource) {
