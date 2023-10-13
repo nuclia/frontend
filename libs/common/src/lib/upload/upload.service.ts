@@ -76,7 +76,7 @@ export class UploadService {
               kb.batchUpload(filelist).pipe(
                 tap((progress) => {
                   if (progress.completed) {
-                    if (progress.failed === 0) {
+                    if (progress.failed === 0 || progress.failed === progress.conflicts) {
                       this.onUploadComplete(true, kb.id);
                     } else if (!hasNotifiedError) {
                       hasNotifiedError = true;

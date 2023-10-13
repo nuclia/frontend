@@ -855,7 +855,7 @@
 	"upload.answer_format": "Formato de resposta",
 	"upload.check_files": "Verifique o status do arquivo",
 	"upload.completed": "Concluído",
-	"upload.conflict": "Encontrou um arquivo com o mesmo nome.",
+	"upload.conflict": "Esta é uma duplicata. Demitido.",
 	"upload.csv_description": "Crie vários recursos selecionando um arquivo CSV com 4 colunas: <code>Título, Corpo, Formato, Rótulos</code>",
 	"upload.csv_format": "<code>A coluna de formato</code> deve ter um destes valores: <code>PLAIN / MARKDOWN / HTML / RST</code>",
 	"upload.csv_labels": " A coluna<code>Rótulos</code> segue este padrão:\n<code>labelset1/label1|labelset2/label2...</code>",

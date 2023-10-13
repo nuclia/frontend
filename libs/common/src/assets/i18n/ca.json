@@ -854,7 +854,7 @@
 	"upload.answer_format": "Format de resposta",
 	"upload.check_files": "Comprova l'estat dels fitxers",
 	"upload.completed": "completat",
-	"upload.conflict": "S'ha trobat un fitxer amb el mateix nom.",
+	"upload.conflict": "Això és un duplicat. Descartat.",
 	"upload.csv_description": "Creeu diversos recursos seleccionant un fitxer CSV amb 4 columnes: <code>Títol, Cos, Format, Etiquetes</code>",
 	"upload.csv_format": "La columna <code>Format</code> pot ser un d'aquests valors: <code>PLAIN / MARKDOWN / HTML / RST</code>",
 	"upload.csv_labels": "La columna <code>Etiquetes</code>segueix aquest patró:\n<code>labelset1/label1|labelset2/label2...</code>",
