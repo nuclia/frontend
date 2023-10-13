@@ -855,7 +855,7 @@
 	"upload.answer_format": "Answer format",
 	"upload.check_files": "Check file status",
 	"upload.completed": "completed",
-	"upload.conflict": "Found a file with the same name.",
+	"upload.conflict": "This is a duplicate. Dismissed.",
 	"upload.csv_description": "Create multiple resources by selecting a CSV file with 4 columns: <code>Title, Body, Format, Labels</code>",
 	"upload.csv_format": "<code>Format</code> column must be one of theses values: <code>PLAIN / MARKDOWN / HTML / RST</code>",
 	"upload.csv_labels": "<code>Labels</code> column follows this pattern:\n<code>labelset1/label1|labelset2/label2...</code>",

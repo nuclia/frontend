@@ -855,7 +855,7 @@
 	"upload.answer_format": "Format de réponse",
 	"upload.check_files": "Vérifier l'état des fichiers",
 	"upload.completed": "terminé",
-	"upload.conflict": "Un fichier portant le même nom a été trouvé.",
+	"upload.conflict": "Il s'agit d'un doublon. Rejeté.",
 	"upload.csv_description": "Créer des ressources multiples en sélectionnant un fichier CSV avec 4 colonnes : <code>Titre, Corps, Format, Etiquettes</code>",
 	"upload.csv_format": " La colonne<code>Format</code> doit être l'une de ces valeurs : <code>PLAIN / MARKDOWN / HTML / RST</code>",
 	"upload.csv_labels": " La colonne<code>Étiquettes</code> suit ce modèle :\n<code>jeu d'étiquettes1/étiquette1|jeu d'étiquettes2/étiquette2...</code>",

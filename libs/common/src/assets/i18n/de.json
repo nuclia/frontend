@@ -855,7 +855,7 @@
 	"upload.answer_format": "Antwortformat",
 	"upload.check_files": "Überprüfen Sie den Dateistatus",
 	"upload.completed": "Abgeschlossen",
-	"upload.conflict": "Es wurde eine Datei mit demselben Namen gefunden.",
+	"upload.conflict": "Dies ist ein Duplikat. Entlassen.",
 	"upload.csv_description": "Erstellen Sie mehrere Ressourcen, indem Sie eine CSV-Datei mit 4 Spalten auswählen: <code>Titel, Text, Format, Beschriftungen</code>",
 	"upload.csv_format": "<code>Format Spalte</code> muss einer dieser Werte sein: <code>PLAIN / MARKDOWN / HTML / RST</code>",
 	"upload.csv_labels": " Die Spalte<code>Labels</code> folgt diesem Muster:\n<code>labelset1/label1|labelset2/label2...</code>",
