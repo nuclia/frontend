@@ -146,7 +146,8 @@
       {/if}
       <div>
         <h3
-          class="ellipsis title-m"
+          class="ellipsis title-m result-title"
+          class:no-thumbnail={$hideThumbnails}
           on:click={() => clickOnResult()}
           on:keyup={(e) => {
             if (e.key === 'Enter') clickOnResult();
