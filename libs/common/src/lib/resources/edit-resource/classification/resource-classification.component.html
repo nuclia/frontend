@@ -1,19 +1,31 @@
 <div class="main-container">
-  <div class="scrollable-area classification-container">
-    <p *ngIf="(isReady | async) && !hasLabels">
+  <div
+    class="scrollable-area classification-container"
+    *ngIf="isReady | async">
+    <p *ngIf="(hasLabels | async) === false">
       {{ 'resource.classification.no-resource-labelset' | translate }}
       <a [routerLink]="(kbUrl | async) + '/label-sets'">{{ 'resource.classification-page-link' | translate }}</a>
     </p>
-    <app-label-field
-      [selection]="currentLabels"
-      [disabled]="!hasLabels || (isAdminOrContrib | async) === false"
-      (hasLabels)="updateHasLabels($event)"
-      (selectionChange)="updateLabels($event)"></app-label-field>
+
+    <div class="labels-container">
+      <div
+        *ngIf="(isAdminOrContrib | async) === true"
+        class="label-selector-container">
+        <stf-labels-expander
+          [labelSets]="resourceLabelSets | async"
+          [currentSelection]="currentSelection"
+          (updateSelection)="updateLabel($event)"></stf-labels-expander>
+      </div>
+      <app-label-list
+        [labelSets]="resourceLabelSets | async"
+        [labelSelection]="(currentLabels | async) || []"
+        (labelSelectionChange)="updateLabels($event)"></app-label-list>
+    </div>
   </div>
 </div>
 
 <footer
-  *ngIf="hasLabels"
+  *ngIf="hasLabels | async"
   class="form-buttons">
   <pa-button
     kind="primary"

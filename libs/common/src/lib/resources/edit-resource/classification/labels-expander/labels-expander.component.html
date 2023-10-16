@@ -1,0 +1,13 @@
+<pa-expander *ngFor="let labelset of labelSets | keyvalue">
+  <pa-expander-header>{{ labelset.value.title }}</pa-expander-header>
+  <pa-expander-body>
+    <div class="label-selector">
+      <pa-checkbox
+        *ngFor="let label of labelset.value.labels"
+        [value]="currentSelection[labelset.key + '_' + label.title]"
+        (valueChange)="updateSelection.emit({ selected: $event, labelset: labelset.key, label: label.title })">
+        {{ label.title }}
+      </pa-checkbox>
+    </div>
+  </pa-expander-body>
+</pa-expander>

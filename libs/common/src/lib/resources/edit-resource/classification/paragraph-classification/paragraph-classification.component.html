@@ -25,7 +25,7 @@
       <div
         *ngIf="(hasLabels | async) === true"
         class="scrollable-area with-search-and-footer with-right-panel paragraphs-container"
-        [class.disabled]="currentLabels.length === 0">
+        [class.disabled]="currentLabels.value.length === 0">
         <pa-infinite-scroll (reachAnchor)="loadMore()">
           <div
             class="paragraph-container"
@@ -65,25 +65,19 @@
           </p>
         </div>
         <div class="label-selection-container">
-          <app-label-dropdown
-            [labelSets]="availableLabels | async"
-            [selection]="currentLabels"
-            (selectionChange)="updateSelection($event)">
-            {{ 'generic.select_tags' | translate }}
-          </app-label-dropdown>
-
-          <stf-label-selection
-            [selection]="currentLabels"
-            (removeFromSelection)="removeLabelFromSelection($event)"></stf-label-selection>
-
           <pa-button
-            *ngIf="currentLabels.length > 0"
             aspect="basic"
             kind="destructive"
             size="small"
+            [disabled]="(emptyLabelSelection | async) === true"
             (click)="cleanUpLabels()">
             {{ 'resource.classification.clean-up' | translate }}
           </pa-button>
+
+          <stf-labels-expander
+            [labelSets]="availableLabels | async"
+            [currentSelection]="currentSelection"
+            (updateSelection)="updateSelection($event)"></stf-labels-expander>
         </div>
       </div>
     </div>

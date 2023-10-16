@@ -4,7 +4,6 @@ import {
   AddFieldComponent,
   DropzoneComponent,
   EditResourceComponent,
-  LabelSelectionComponent,
   ParagraphAnnotationComponent,
   ParagraphClassificationComponent,
   PreviewComponent,
@@ -38,6 +37,7 @@ import { RouterModule } from '@angular/router';
 import { LabelModule } from '../../label/label.module';
 import { HintModule } from '../../hint/hint.module';
 import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
+import { LabelsExpanderComponent } from './classification/labels-expander/labels-expander.component';
 
 @NgModule({
   imports: [
@@ -75,7 +75,6 @@ import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
     AddFieldComponent,
     DropzoneComponent,
     EditResourceComponent,
-    LabelSelectionComponent,
     ParagraphAnnotationComponent,
     ParagraphClassificationComponent,
     PreviewComponent,
@@ -86,7 +85,7 @@ import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
     ResourceTextComponent,
     SelectFirstFieldDirective,
     ThumbnailComponent,
+    LabelsExpanderComponent,
   ],
-  exports: [LabelSelectionComponent],
 })
 export class EditResourceModule {}

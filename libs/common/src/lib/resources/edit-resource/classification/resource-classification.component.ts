@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Classification, Resource } from '@nuclia/core';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { Classification, LabelSets, Resource } from '@nuclia/core';
+import { BehaviorSubject, combineLatest, map, tap } from 'rxjs';
 import { SelectFirstFieldDirective } from '../select-first-field/select-first-field.directive';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
+import { LabelsService } from '../../../label';
 
 @Component({
   templateUrl: './resource-classification.component.html',
@@ -10,12 +11,30 @@ import { takeUntil } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceClassificationComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {
-  private resourceLabels: Classification[] = [];
-  currentLabels: Classification[] = [];
+  backupLabels: Classification[] = [];
   isModified = false;
-  hasLabels = false;
   kbUrl = this.editResource.kbUrl;
   isAdminOrContrib = this.editResource.isAdminOrContrib;
+
+  currentSelection: { [id: string]: boolean } = {};
+  resourceLabelSets = this.labelsService.resourceLabelSets.pipe(
+    filter((labelset) => !!labelset && Object.keys(labelset).length > 0),
+    map((labelset) => labelset as LabelSets),
+  );
+  currentLabels: BehaviorSubject<Classification[]> = new BehaviorSubject<Classification[]>([]);
+  hasLabels = this.currentLabels.pipe(
+    map((labels) => {
+      this.currentSelection = labels.reduce(
+        (selection, classification) => {
+          selection[`${classification.labelset}_${classification.label}`] = true;
+          return selection;
+        },
+        {} as { [id: string]: boolean },
+      );
+      this.cdr.markForCheck();
+      return labels.length > 0;
+    }),
+  );
 
   private _hasLabelLoaded = new BehaviorSubject(false);
   private _resourceClassificationLoaded = new BehaviorSubject(false);
@@ -23,7 +42,10 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
     map(([hasLabelLoaded, resourceClassificationLoaded]) => hasLabelLoaded && resourceClassificationLoaded),
   );
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private labelsService: LabelsService,
+  ) {
     super();
   }
 
@@ -31,26 +53,33 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
     this.editResource.setCurrentView('classification');
     this.editResource.resource
       .pipe(
-        map((resource) => resource?.getClassifications() || []),
+        filter((resource) => !!resource),
+        map((resource) => (resource as Resource).getClassifications() || []),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe((labels) => {
-        this.resourceLabels = labels;
-        this.currentLabels = labels;
+        this.backupLabels = labels;
+        this.currentLabels.next(labels);
         this.isModified = false;
         this._resourceClassificationLoaded.next(true);
         this.cdr.detectChanges();
       });
+    this.resourceLabelSets
+      .pipe(
+        tap(() => this._hasLabelLoaded.next(true)),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe();
   }
 
   updateLabels(labels: Classification[]) {
-    this.currentLabels = labels;
-    this.isModified = true;
+    this.currentLabels.next(labels);
+    this.updateIsModified();
     this.cdr.detectChanges();
   }
 
   cancel() {
-    this.currentLabels = [...this.resourceLabels];
+    this.currentLabels.next([...this.backupLabels]);
     this.isModified = false;
     this.cdr.markForCheck();
   }
@@ -58,15 +87,35 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
   save() {
     const partial: Partial<Resource> = {
       usermetadata: {
-        classifications: this.editResource.getClassificationsPayload(this.currentLabels),
+        classifications: this.editResource.getClassificationsPayload(this.currentLabels.value),
       },
     };
     this.editResource.savePartialResource(partial).subscribe();
   }
 
-  updateHasLabels(hasLabel: boolean) {
-    this.hasLabels = hasLabel;
-    this._hasLabelLoaded.next(true);
+  updateLabel(event: { selected: boolean; labelset: string; label: string }) {
+    const { selected, labelset, label } = event;
+    if (selected) {
+      this.currentLabels.next(this.currentLabels.value.concat([{ label, labelset }]));
+    } else {
+      this.currentLabels.next(
+        this.currentLabels.value.filter((item) => !(item.labelset === labelset && item.label === label)),
+      );
+    }
+
+    this.updateIsModified();
+  }
+
+  private updateIsModified() {
+    const current = this.currentLabels.value;
+    this.isModified =
+      current.length !== this.backupLabels.length ||
+      !current.every(
+        (classification) =>
+          !!this.backupLabels.find(
+            (item) => item.labelset === classification.labelset && item.label === classification.label,
+          ),
+      );
     this.cdr.markForCheck();
   }
 }

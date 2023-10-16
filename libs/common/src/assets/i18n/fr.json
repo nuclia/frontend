@@ -508,7 +508,7 @@
 	"resource.add_labels_error": "Une erreur s'est produite lors de l'ajout de libellés sur {{count}} ressources",
 	"resource.add_labels_success": "Libellés ajoutés avec succès sur {{count}}  ressources",
 	"resource.adding_labels": "Ajout d'étiquettes",
-	"resource.classification.clean-up": "Nettoyer",
+	"resource.classification.clean-up": "Nettoyer la sélection d'étiquettes",
 	"resource.classification.no-paragraph-labelset": "Aucune étiquette n’est définie pour les paragraphes. Vous pouvez en ajouter",
 	"resource.classification.no-resource-labelset": "Aucune étiquette n’est définie pour les ressources. Vous pouvez en ajouter",
 	"resource.classification.remove-label": "Supprimer l'étiquette de la sélection",

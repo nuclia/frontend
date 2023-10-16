@@ -508,7 +508,7 @@
 	"resource.add_labels_error": "Beim Hinzufügen von Labels für {{count}} Ressourcen ist ein Fehler aufgetreten",
 	"resource.add_labels_success": "Labels wurden erfolgreich für {{count}} Ressourcen hinzugefügt",
 	"resource.adding_labels": "Etiketten hinzufügen",
-	"resource.classification.clean-up": "Aufräumen",
+	"resource.classification.clean-up": "Bereinigen etikettenauswahl",
 	"resource.classification.no-paragraph-labelset": "Für Absätze ist keine Beschriftung festgelegt. Sie können einige hinzufügen",
 	"resource.classification.no-resource-labelset": "Für Ressourcen ist kein Label festgelegt. Sie können einige hinzufügen",
 	"resource.classification.remove-label": "Etikett aus Auswahl entfernen",
