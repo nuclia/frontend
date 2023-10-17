@@ -137,7 +137,10 @@ export class NucliaPrediction {
   }
 
   private injectScript(id: string, url: string, callback: () => void) {
-    if (!document.getElementById(id)) {
+    if (document.getElementById(id)) {
+      callback();
+    }
+    else {
       const script = window.document.createElement('script');
       script.id = id;
       script.type = 'text/javascript';
