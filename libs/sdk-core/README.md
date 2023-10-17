@@ -4,7 +4,7 @@ Nuclia SDK is an open-source library wrapping Nuclia API in order to integrate [
 
 It supports both JavaScript and TypeScript.
 
-The full documentation is available at [https://docs.nuclia.dev/docs/docs/sdk/js/](https://docs.nuclia.dev/docs/docs/sdk/js/).
+The full documentation is available at [https://docs.stashify.cloud/docs/docs/sdk/js-sdk/](https://docs.stashify.cloud/docs/docs/sdk/js-sdk/).
 
 ## Basic usage
 

@@ -24,7 +24,7 @@ import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from
 import { ExtractedDataTypes, Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import type { BaseSearchOptions, Chat } from '../search';
+import type { Chat, ChatOptions } from '../search';
 import { catalog, chat, find, Search, search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
 import { ResourceProperties } from '../db.models';
@@ -100,8 +100,8 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   /**
    * Retrieves a resource from the Knowledge Box.
-   * 
-   * - `show` defines which properties are returned. Default takes all the following properties 
+   *
+   * - `show` defines which properties are returned. Default takes all the following properties
    * and may result in a large response:
    *   - `ResourceProperties.BASIC`
    *   - `ResourceProperties.ORIGIN`
@@ -109,16 +109,16 @@ export class KnowledgeBox implements IKnowledgeBox {
    *   - `ResourceProperties.VALUES`
    *   - `ResourceProperties.EXTRACTED`
    *   - `ResourceProperties.ERRORS`
-   * 
+   *
    *  - `extracted` defines which extracted data are returned
    * (it is ignored if `ResourceProperties.EXTRACTED` is not in the returned properties). Default takes the following:
    *   - `ExtractedDataTypes.TEXT`
    *   - `ExtractedDataTypes.METADATA`
    *   - `ExtractedDataTypes.LINK`
    *   - `ExtractedDataTypes.FILE`
-   * 
+   *
    *   Other possible values are `ExtractedDataTypes.LARGE_METADATA` and `ExtractedDataTypes.VECTOR` (Note: they may significantly increase the response size).
-   * 
+   *
    * Example:
     ```ts
     nuclia.db
@@ -203,12 +203,12 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   /**
    * Retrieves a generative answer for the given query.
-   * 
+   *
    * The generative answer is a text that is generated chunk by chunk by the language model.
    * It is retrieved through a readable HTTP stream, so the `chat()` method returns an `Observable`
    * emitting a value each time a new chunk is available.
    * The `incomplete` attribute of the emitted value indicates if the asnwer is complete or not.
-   * 
+   *
    * Example:
    ```ts
     nuclia.knowledgeBox
@@ -223,14 +223,32 @@ export class KnowledgeBox implements IKnowledgeBox {
     query: string,
     context?: Chat.ContextEntry[],
     features?: Chat.Features[],
-    options?: BaseSearchOptions,
+    options?: ChatOptions,
+  ): Observable<Chat.Answer | IErrorResponse>;
+  chat(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: ChatOptions,
+    callback?: (answer: Chat.Answer | IErrorResponse) => void,
+  ): Observable<Chat.Answer | IErrorResponse>;
+  chat(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: ChatOptions,
+    callback?: (answer: Chat.Answer | IErrorResponse) => void,
   ): Observable<Chat.Answer | IErrorResponse> {
-    return chat(this.nuclia, this.path, query, context, features, options);
+    const chatRequest = chat(this.nuclia, this.path, query, context, features, options);
+    if (callback) {
+      chatRequest.subscribe((response) => callback(response));
+    }
+    return chatRequest;
   }
 
   /**
    * Performs a find operation in the Knowledge Box, which is the recommended way to search for results.
-   * 
+   *
    * Example:
     ```ts
     nuclia.knowledgeBox
@@ -250,9 +268,9 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   /**
    * Performs a search operation in the knowledge box.
-   * 
+   *
    * It is similar to `find()` but the results are not nested.
-   * 
+   *
    * Example:
     ```ts
     nuclia.knowledgeBox
@@ -310,10 +328,10 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   /**
    * Returns an ephemeral token.
-   * 
+   *
    * This is useful when displaying a clickable link to a file in a private Knowledge Box
    * (the token will authorize the request even though there are no authentication headers).
-   * 
+   *
    * Example:
     ```ts
     const downloadLink = `${nuclia.rest.getFullpath(filePath)}?eph-token=${nuclia.knowledgeBox.getTempToken()}`;
@@ -379,7 +397,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   /**
    * Modifies the Knowledge Box properties.
-   * 
+   *
    * Example:
     ```ts
     nuclia.db.getKnowledgeBox("my-account", "my-kb").pipe(
@@ -422,7 +440,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   /**
    * Creates or updates a label set.
-   * 
+   *
    * Example:
     ```ts
     nuclia.db
@@ -471,7 +489,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   /**
    * Creates a new link resource in the Knowledge Box more easily than using `createResource`.
-   * 
+   *
    * Example:
     ```ts
     nuclia.db
@@ -536,7 +554,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
    * Uploads a file to the Knowledge Box and automatically creates a new resource to store the file.
    * The resource path is returned in the `resource` property of the `UploadResult`
    * (and `field` provides the path to the `FileField`).
-   * 
+   *
    * Example:
     ```ts
     nuclia.db
