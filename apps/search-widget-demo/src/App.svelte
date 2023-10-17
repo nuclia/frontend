@@ -4,6 +4,7 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
   import type { FieldFullId } from '@nuclia/core';
+  import { Chat, Nuclia } from '@nuclia/core';
   import { onMount } from 'svelte';
 
   let selected = 'tiles';
@@ -42,35 +43,50 @@
         label: 'Delete',
         action: (fullId: FieldFullId) => {
           console.log('delete', fullId);
-        },
+        }
       },
       {
         label: 'Edit',
         action: (fullId: FieldFullId) => {
           console.log('edit', fullId);
-        },
-      },
+        }
+      }
     ]);
     viewerWidget?.setViewerMenu([
       {
         label: 'Delete',
         action: (fullId: FieldFullId) => {
           console.log('delete', fullId);
-        },
+        }
       },
       {
         label: 'Edit',
         action: (fullId: FieldFullId) => {
           console.log('edit', fullId);
-        },
+        }
       },
       {
         label: 'Close',
         action: () => {
           viewerWidget.closePreview();
-        },
-      },
+        }
+      }
     ]);
+
+    const nuclia = new Nuclia({
+      backend: 'https://nuclia.cloud/api',
+      zone: 'europe-1',
+      knowledgeBox: 'df8b4c24-2807-4888-ad6c-ae97357a638b'
+    });
+    nuclia.asyncKnowledgeBox
+      .chat(
+        'What can I do with NucliaDB?',
+        undefined,
+        [Chat.Features.PARAGRAPHS],
+        undefined,
+        (answer) => console.log('callback:', answer)
+      )
+      .then();
   });
 </script>
 
@@ -262,6 +278,7 @@
 <style lang="scss">
   @import '../../../libs/search-widget/src/common/global.scss';
   @import '../../../libs/search-widget/src/common/common-style.scss';
+
   main {
     font-family: sans-serif;
     padding: 1em;

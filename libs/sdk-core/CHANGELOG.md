@@ -6,6 +6,11 @@
 - Improve maintainability of `AccountLimits` and `AccountLimitsPatchPayload` using better typing construction
 - `getTempToken` method optimizes token usage by caching previously generated tokens
 
+### Bug fix
+
+- Fix typing of `chat`’s `options` parameter
+- Fix ability to use `chat` method with `asyncKnowledgeBox` by adding an overload signature taking a callback parameter
+
 # 1.6.3 (2023-10-02)
 
 ### Improvements

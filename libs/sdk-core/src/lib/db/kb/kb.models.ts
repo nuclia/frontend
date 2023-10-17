@@ -1,7 +1,7 @@
 import type { Observable } from 'rxjs';
 import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
-import type { Chat, Search, SearchOptions } from '../search';
+import type { Chat, ChatOptions, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
 import type { ResourceProperties } from '../db.models';
 
@@ -66,6 +66,14 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
     query: string,
     context?: Chat.ContextEntry[],
     features?: Chat.Features[],
+    options?: ChatOptions,
+  ): Observable<Chat.Answer | IErrorResponse>;
+  chat(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: ChatOptions,
+    callback?: (answer: Chat.Answer | IErrorResponse) => void,
   ): Observable<Chat.Answer | IErrorResponse>;
 
   find(

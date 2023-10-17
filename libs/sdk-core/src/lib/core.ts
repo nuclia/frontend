@@ -59,10 +59,10 @@ export class Nuclia implements INuclia {
 
   /**
    * Depending on your use case, you might want to:
-   * 
+   *
    * - Use the Nuclia SDK to access and manage a Nuclia account. In this case you will need to provide the `backend` and `account` options, and you will use **account authentication**.
    * - Use the Nuclia SDK to use a Nuclia Knowledge Box. In this case you will need to provide the `backend`, `knowledgeBox` and `zone` options. You will also either use **knowledge box authentication**, or **no authentication** if the Knowledge Box is public.
-   * 
+   *
    * Example:
 
     ```ts
