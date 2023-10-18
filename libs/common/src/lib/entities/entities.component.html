@@ -28,7 +28,9 @@
           <div class="family-name">
             {{ family.title }}
           </div>
-          <div class="family-actions">
+          <div
+            class="family-actions"
+            *ngIf="(isAdminOrContrib | async) === true">
             <pa-button
               *ngIf="family.custom"
               aspect="basic"
