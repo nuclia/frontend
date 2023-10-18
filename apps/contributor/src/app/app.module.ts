@@ -14,6 +14,7 @@ import { routerOptions, routes } from './app-routing';
 import { HomePageComponent } from './home/home-page.component';
 import { MainContainerComponent } from './home/main-container/main-container.component';
 import { UploadModule } from '@flaps/common';
+import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 // Load locales
 import localeEn from '@angular/common/locales/en';
@@ -50,6 +51,7 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
     }),
     RouterModule.forRoot(routes, routerOptions),
     UploadModule,
+    PaIconModule,
   ],
   providers: [TranslatePipe, { provide: APP_BASE_HREF, useValue: '/contributor' }],
   bootstrap: [AppComponent],

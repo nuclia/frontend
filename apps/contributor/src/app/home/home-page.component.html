@@ -1,27 +1,38 @@
-<div class="home-container">
-  <p>
-    {{ (this.hasValidKey | async) ? 'As you are using' : 'By using' }}
-    a NUA API Key you can utilize
-    <a
-      href="https://nuclia.cloud"
-      target="_blank">
-      Nuclia's Cloud Processing Engine
-    </a>
-    .
-    <br />
-    {{
-      (this.hasValidKey | async)
-        ? 'Your data remains stored locally, but you have access to a dashboard for following your metrics and more.'
-        : 'Your data would remain stored locally, but you would have access to a dashboard for following your metrics and more.'
-    }}
+<div class="home-container body-m">
+  <ng-container *ngIf="hasValidKey | async">
+    <p>
+      By using a NUA API Key you can utilize
+      <a
+        href="https://nuclia.cloud"
+        target="_blank">
+        Nuclia's Cloud Processing Engine
+      </a>
+    </p>
+    <p>Your data remains stored locally, but you have access to a dashboard for following your metrics and more.</p>
+  </ng-container>
 
-    <br />
-  </p>
-  <p *ngIf="(hasValidKey | async) === false">
-    To configure your NUA API Key for the server, use the environment variable
-    <code>NUA_API_KEY</code>
-    or the
-    <code>--nuclia-api-key</code>
-    cli flag.
-  </p>
+  <div *ngIf="(hasValidKey | async) === false">
+    <h1>
+      <pa-icon
+        name="warning"
+        size="xlarge"></pa-icon>
+      {{ errorMessage | async }}
+    </h1>
+    <p>
+      Provide your NUA API Key by using the environment variable
+      <code>NUA_API_KEY</code>
+      or the
+      <code>--nuclia-api-key</code>
+      cli flag.
+    </p>
+    <p>
+      If you don't have a NUA API Key follow this
+      <a
+        href="https://docs.nuclia.dev/docs/docs/getting-started/on-premise"
+        rel="noopener noreferrer"
+        target="_blank">
+        guide
+      </a>
+    </p>
+  </div>
 </div>

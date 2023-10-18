@@ -23,7 +23,8 @@
             [routerLink]="kbUrl + '/upload'"
             class="nav-link"
             routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }">
+            [routerLinkActiveOptions]="{ exact: true }"
+            [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
             <pa-icon name="upload"></pa-icon>
             <span class="nav-link-title">{{ 'stash.upload_data' | translate }}</span>
           </a>
@@ -34,14 +35,16 @@
           <a
             class="nav-link"
             routerLinkActive="active"
-            [routerLink]="kbUrl + '/search'">
+            [routerLink]="kbUrl + '/search'"
+            [class.disabled]="invalidKey | async">
             <pa-icon name="search"></pa-icon>
             <span class="nav-link-title">{{ 'stash.search' | translate }}</span>
           </a>
           <a
             [routerLink]="kbUrl + '/resources'"
             routerLinkActive="active"
-            class="nav-link">
+            class="nav-link"
+            [class.disabled]="invalidKey | async">
             <pa-icon name="list"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.list' | translate }}</span>
           </a>
@@ -60,7 +63,8 @@
           <a
             [routerLink]="kbUrl + '/label-sets'"
             routerLinkActive="active"
-            class="nav-link">
+            class="nav-link"
+            [class.disabled]="invalidKey | async">
             <pa-icon name="label"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.classification' | translate }}</span>
           </a>
@@ -68,7 +72,8 @@
             *ngIf="isEntitiesEnabled | async"
             [routerLink]="[kbUrl + '/entities']"
             routerLinkActive="active"
-            class="nav-link">
+            class="nav-link"
+            [class.disabled]="invalidKey | async">
             <pa-icon name="form"></pa-icon>
             <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
           </a>
@@ -91,7 +96,7 @@
             [routerLink]="kbUrl + '/manage'"
             routerLinkActive="active"
             class="nav-link"
-            [class.disabled]="!(isAdmin | async)">
+            [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
             <pa-icon name="settings"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
           </a>
@@ -138,7 +143,7 @@
             [routerLink]="kbUrl + '/widget-generator'"
             routerLinkActive="active"
             class="nav-link"
-            [class.disabled]="!(isAdmin | async)">
+            [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
             <pa-icon name="widget"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
           </a>
