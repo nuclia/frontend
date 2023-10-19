@@ -4,6 +4,7 @@ import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
 import { SelectFirstFieldDirective } from '../select-first-field/select-first-field.directive';
 import { filter, takeUntil } from 'rxjs/operators';
 import { LabelsService } from '../../../label';
+import { getClassificationFromSelection } from './classification.helpers';
 
 @Component({
   templateUrl: './resource-classification.component.html',
@@ -57,16 +58,22 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
         this._resourceClassificationLoaded.next(true);
         this.cdr.detectChanges();
       });
-    this.currentLabels
+    combineLatest([this.resourceLabelSets, this.currentLabels])
       .pipe(
-        tap((labels) => {
-          this.currentSelection = labels.reduce(
-            (selection, classification) => {
-              selection[`${classification.labelset}_${classification.label}`] = true;
+        tap(([labelSets, labels]) => {
+          this.currentSelection = Object.entries(labelSets).reduce(
+            (selection, [key, item]) => {
+              item.labels.forEach(
+                (label) =>
+                  (selection[`${key}_${label.title}`] = !!labels.find(
+                    (item) => item.labelset === key && item.label === label.title,
+                  )),
+              );
               return selection;
             },
             {} as { [id: string]: boolean },
           );
+
           this.cdr.markForCheck();
         }),
         takeUntil(this.unsubscribeAll),
@@ -95,16 +102,8 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
     this.editResource.savePartialResource(partial).subscribe();
   }
 
-  updateLabel(event: { selected: boolean; labelset: string; label: string }) {
-    const { selected, labelset, label } = event;
-    if (selected) {
-      this.currentLabels.next(this.currentLabels.value.concat([{ label, labelset }]));
-    } else {
-      this.currentLabels.next(
-        this.currentLabels.value.filter((item) => !(item.labelset === labelset && item.label === label)),
-      );
-    }
-
+  updateLabel(newSelection: { [id: string]: boolean }) {
+    this.currentLabels.next(getClassificationFromSelection(newSelection));
     this.updateIsModified();
   }
 
