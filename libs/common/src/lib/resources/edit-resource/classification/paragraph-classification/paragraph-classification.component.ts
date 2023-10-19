@@ -7,6 +7,7 @@ import { LabelsService } from '../../../../label/labels.service';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
 import { ParagraphClassificationService } from './paragraph-classification.service';
 import { takeUntil } from 'rxjs/operators';
+import { getClassificationFromSelection } from '../classification.helpers';
 
 @Component({
   templateUrl: './paragraph-classification.component.html',
@@ -81,17 +82,9 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
     this.classificationService.cleanup();
   }
 
-  updateSelection(event: { selected: boolean; labelset: string; label: string }) {
-    const { selected, labelset, label } = event;
-    if (selected) {
-      this.currentLabels.next(this.currentLabels.value.concat([{ label, labelset }]));
-    } else {
-      this.currentLabels.next(
-        this.currentLabels.value.filter((item) => !(item.labelset === labelset && item.label === label)),
-      );
-    }
-    this.currentSelection[`${labelset}_${label}`] = selected;
-    this.cdr.detectChanges();
+  updateSelection(newSelection: { [id: string]: boolean }) {
+    this.currentLabels.next(getClassificationFromSelection(newSelection));
+    this.currentSelection = newSelection;
   }
 
   cleanUpLabels() {
