@@ -25,7 +25,7 @@ import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
-const DEFAULT_CHAT_MODE = [Chat.Features.PARAGRAPHS];
+const DEFAULT_CHAT_MODE = [Chat.Features.VECTORS, Chat.Features.PARAGRAPHS];
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;

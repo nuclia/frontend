@@ -1,3 +1,9 @@
+# 1.7.0 (2023-10-19)
+
+### Breaking changes
+
+- The `/chat` endpoint needs `vectors` to be mentioned explicitly in its `features` parameter.
+
 # 1.6.5 (2023-10-19)
 
 ### Bug fix
