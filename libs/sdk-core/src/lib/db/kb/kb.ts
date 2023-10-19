@@ -231,17 +231,18 @@ export class KnowledgeBox implements IKnowledgeBox {
     features?: Chat.Features[],
     options?: ChatOptions,
     callback?: (answer: Chat.Answer | IErrorResponse) => void,
-  ): Observable<Chat.Answer | IErrorResponse>;
+  ): Observable<null>;
   chat(
     query: string,
     context?: Chat.ContextEntry[],
     features?: Chat.Features[],
     options?: ChatOptions,
     callback?: (answer: Chat.Answer | IErrorResponse) => void,
-  ): Observable<Chat.Answer | IErrorResponse> {
+  ): Observable<Chat.Answer | IErrorResponse> | Observable<null> {
     const chatRequest = chat(this.nuclia, this.path, query, context, features, options);
     if (callback) {
       chatRequest.subscribe((response) => callback(response));
+      return of(null);
     }
     return chatRequest;
   }
