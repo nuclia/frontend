@@ -20,7 +20,7 @@
 
   // let kb = 'eed07421-dc96-4067-a73b-32c89eac0229'; // philo
   // let kb = 'd10ea56b-7af9-495d-860f-23b616a44f9a'; // eudald
-  // let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
+  let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
   // let kb = '6b9f8f55-a57f-4ed4-b60e-759da54281fd'; // Robin Hobb
   // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
@@ -32,10 +32,10 @@
 
   // KB in prod
   // let kb = '16375869-1037-460d-8648-b3ee9c9206c0' // market outlook reports
-  let kb = 'df8b4c24-2807-4888-ad6c-ae97357a638b'; // nuclia docs
+  // let kb = 'df8b4c24-2807-4888-ad6c-ae97357a638b'; // nuclia docs
 
-  // const backend = 'https://stashify.cloud/api';
-  const backend = 'https://nuclia.cloud/api';
+  const backend = 'https://stashify.cloud/api';
+  // const backend = 'https://nuclia.cloud/api';
 
   onMount(() => {
     resultsWidget?.setViewerMenu([
@@ -43,50 +43,46 @@
         label: 'Delete',
         action: (fullId: FieldFullId) => {
           console.log('delete', fullId);
-        }
+        },
       },
       {
         label: 'Edit',
         action: (fullId: FieldFullId) => {
           console.log('edit', fullId);
-        }
-      }
+        },
+      },
     ]);
     viewerWidget?.setViewerMenu([
       {
         label: 'Delete',
         action: (fullId: FieldFullId) => {
           console.log('delete', fullId);
-        }
+        },
       },
       {
         label: 'Edit',
         action: (fullId: FieldFullId) => {
           console.log('edit', fullId);
-        }
+        },
       },
       {
         label: 'Close',
         action: () => {
           viewerWidget.closePreview();
-        }
-      }
+        },
+      },
     ]);
 
-    const nuclia = new Nuclia({
-      backend: 'https://nuclia.cloud/api',
-      zone: 'europe-1',
-      knowledgeBox: 'df8b4c24-2807-4888-ad6c-ae97357a638b'
-    });
-    nuclia.asyncKnowledgeBox
-      .chat(
-        'What can I do with NucliaDB?',
-        undefined,
-        [Chat.Features.PARAGRAPHS],
-        undefined,
-        (answer) => console.log('callback:', answer)
-      )
-      .then();
+    // const nuclia = new Nuclia({
+    //   backend: 'https://nuclia.cloud/api',
+    //   zone: 'europe-1',
+    //   knowledgeBox: 'df8b4c24-2807-4888-ad6c-ae97357a638b',
+    // });
+    // nuclia.asyncKnowledgeBox
+    //   .chat('What can I do with NucliaDB?', undefined, [Chat.Features.VECTORS, Chat.Features.PARAGRAPHS], undefined, (answer) =>
+    //     console.log('callback:', answer),
+    //   )
+    //   .then();
   });
 </script>
 
@@ -125,7 +121,7 @@
         knowledgebox={kb}
         lang="en"
         placeholder="Search"
-        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,zanswers,zonlyAnswers,zhideSources,displayMetadata,hideThumbnails,noBM25forChat" />
+        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,zonlyAnswers,zhideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
