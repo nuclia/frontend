@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { combineLatest, map, merge, Observable, of, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { NavigationService } from '../services';
+import { NavigationService, StandaloneService } from '../services';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SmallNavbarDirective } from './small-navbar.directive';
@@ -52,6 +52,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   ]).pipe(map(([featureEnabled, accountType]) => featureEnabled && accountType === 'stash-business'));
 
   standalone = this.sdk.nuclia.options.standalone;
+  invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
 
   constructor(
     private tracking: STFTrackingService,
@@ -59,6 +60,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
     private stateService: StateService,
     private router: Router,
     private navigationService: NavigationService,
+    private standaloneService: StandaloneService,
   ) {
     super();
   }

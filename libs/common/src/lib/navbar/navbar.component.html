@@ -20,10 +20,11 @@
       <div class="nav-group">
         <div class="group-items">
           <a
-            [routerLink]="kbUrl + '/upload'"
+            [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/upload' : null"
             class="nav-link"
             routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }">
+            [routerLinkActiveOptions]="{ exact: true }"
+            [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
             <pa-icon name="upload"></pa-icon>
             <span class="nav-link-title">{{ 'stash.upload_data' | translate }}</span>
           </a>
@@ -34,21 +35,22 @@
           <a
             class="nav-link"
             routerLinkActive="active"
-            [routerLink]="kbUrl + '/search'">
+            [routerLink]="!(invalidKey | async) ? kbUrl + '/search' : null"
+            [class.disabled]="invalidKey | async">
             <pa-icon name="search"></pa-icon>
             <span class="nav-link-title">{{ 'stash.search' | translate }}</span>
           </a>
           <a
-            [routerLink]="kbUrl + '/resources'"
+            [routerLink]="!(invalidKey | async) ? kbUrl + '/resources' : null"
             routerLinkActive="active"
-            class="nav-link">
+            class="nav-link"
+            [class.disabled]="invalidKey | async">
             <pa-icon name="list"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.list' | translate }}</span>
           </a>
-          <ng-container *ngIf="!standalone">
+          <ng-container *ngIf="!standalone && (isTrial | async) === false">
             <a
-              *ngIf="(isTrial | async) === false"
-              [routerLink]="kbUrl + '/activity/download'"
+              [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/activity/download' : null"
               routerLinkActive="active"
               class="nav-link"
               [class.disabled]="!(isAdminOrContrib | async)">
@@ -58,17 +60,19 @@
           </ng-container>
 
           <a
-            [routerLink]="kbUrl + '/label-sets'"
+            [routerLink]="!(invalidKey | async) ? kbUrl + '/label-sets' : null"
             routerLinkActive="active"
-            class="nav-link">
+            class="nav-link"
+            [class.disabled]="invalidKey | async">
             <pa-icon name="label"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.classification' | translate }}</span>
           </a>
           <a
             *ngIf="isEntitiesEnabled | async"
-            [routerLink]="[kbUrl + '/entities']"
+            [routerLink]="!(invalidKey | async) ? kbUrl + '/entities' : null"
             routerLinkActive="active"
-            class="nav-link">
+            class="nav-link"
+            [class.disabled]="invalidKey | async">
             <pa-icon name="form"></pa-icon>
             <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
           </a>
@@ -88,10 +92,10 @@
       <div class="nav-group">
         <div class="group-items">
           <a
-            [routerLink]="kbUrl + '/manage'"
+            [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/manage' : null"
             routerLinkActive="active"
             class="nav-link"
-            [class.disabled]="!(isAdmin | async)">
+            [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
             <pa-icon name="settings"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
           </a>
@@ -101,7 +105,7 @@
             *ngIf="isTrainingEnabled | async"
             class="group-items">
             <a
-              [routerLink]="kbUrl + '/training'"
+              [routerLink]="(isAdmin | async) ? kbUrl + '/training' : null"
               routerLinkActive="active"
               class="nav-link"
               [class.disabled]="!(isAdmin | async)">
@@ -135,10 +139,10 @@
 
         <div class="group-items">
           <a
-            [routerLink]="kbUrl + '/widget-generator'"
+            [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widget-generator' : null"
             routerLinkActive="active"
             class="nav-link"
-            [class.disabled]="!(isAdmin | async)">
+            [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
             <pa-icon name="widget"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
           </a>
@@ -158,7 +162,7 @@
         *ngIf="!standalone">
         <div class="group-items">
           <a
-            [routerLink]="(accountUrl | async) + '/home'"
+            [routerLink]="(isAccountManager | async) ? (accountUrl | async) + '/home' : null"
             class="nav-link"
             routerLinkActive="active"
             [class.disabled]="!(isAccountManager | async)">

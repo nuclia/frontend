@@ -49,9 +49,7 @@
       <ng-container *ngIf="isMainView && (isAdminOrContrib | async)">
         <stf-upload-button></stf-upload-button>
 
-        <pa-button
-          *ngIf="!standalone"
-          (click)="useDesktop()">
+        <pa-button (click)="useDesktop()">
           {{ 'resource.upload_via_desktop' | translate }}
         </pa-button>
         <pa-button

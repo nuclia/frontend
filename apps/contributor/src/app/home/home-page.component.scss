@@ -7,6 +7,16 @@
   height: calc(100vh - var(--app-topbar-height));
   justify-content: center;
 
+  h1 {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
+    justify-content: center;
+    pa-icon {
+      color: $color-secondary-strong;
+    }
+  }
+
   p {
     max-width: rhythm(60);
     text-align: center;

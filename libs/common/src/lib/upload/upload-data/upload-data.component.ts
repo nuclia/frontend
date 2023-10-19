@@ -3,7 +3,6 @@ import { openDesktop } from '../../utils';
 import { UploadDialogService, UploadType } from '../../resources/upload-button/upload-dialog.service';
 import { filter } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'stf-upload-data',
@@ -12,14 +11,7 @@ import { SDKService } from '@flaps/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadDataComponent {
-  standalone = this.sdk.nuclia.options.standalone;
-
-  constructor(
-    private uploadService: UploadDialogService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private sdk: SDKService,
-  ) {}
+  constructor(private uploadService: UploadDialogService, private router: Router, private route: ActivatedRoute) {}
 
   selectUpload(type: UploadType) {
     this.uploadService

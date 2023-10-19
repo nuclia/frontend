@@ -9,6 +9,7 @@ import { StandaloneService } from '@flaps/common';
 })
 export class HomePageComponent {
   hasValidKey = this.standaloneService.hasValidKey;
+  errorMessage = this.standaloneService.errorMessage;
 
   constructor(private standaloneService: StandaloneService) {}
 }
