@@ -1,3 +1,9 @@
+# 1.6.5 (2023-10-19)
+
+### Bug fix
+
+- Prevent `/chat` endpoint to be called twice when using `chat` method with a callback.
+
 # 1.6.4 (2023-10-17)
 
 ### Improvements
