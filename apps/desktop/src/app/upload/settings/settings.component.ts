@@ -10,8 +10,8 @@ import {
 } from '@angular/core';
 import {
   BehaviorSubject,
-  debounceTime,
   catchError,
+  debounceTime,
   delay,
   filter,
   forkJoin,
@@ -19,11 +19,11 @@ import {
   merge,
   Observable,
   of,
+  Subject,
   switchMap,
   take,
-  tap,
-  Subject,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { IErrorMessages, markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
@@ -32,6 +32,7 @@ import { ConnectorDefinition, Field } from '../../sync/models';
 import { SDKService } from '@flaps/core';
 import { Classification, KnowledgeBox, LabelSetKind, LabelSets, Nuclia } from '@nuclia/core';
 import { environment } from '../../../environments/environment';
+import { getClassificationFromSelection, getSelectionFromClassification } from '@nuclia/sistema';
 
 @Component({
   selector: 'nde-settings',
@@ -63,6 +64,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
   labelSets = new BehaviorSubject<LabelSets | null>(null);
   hasLabelSets = this.labelSets.pipe(map((labelSets) => Object.keys(labelSets || {}).length > 0));
   unsubscribeAll = new Subject<void>();
+  currentSelection: { [id: string]: boolean } = {};
 
   constructor(
     private sync: SyncService,
@@ -201,37 +203,6 @@ export class SettingsComponent implements OnDestroy, OnInit {
     this._refreshKbs(local).subscribe();
   }
 
-  private _refreshKbs(local: boolean) {
-    if (local && !this.localUrl) {
-      this.localKbField = undefined;
-      this.cdr.markForCheck();
-      return of(undefined);
-    }
-    return this.getDestination(local).pipe(
-      take(1),
-      switchMap((destination) => destination.refreshField('kb')),
-      tap((field: Field) => {
-        if (local) {
-          this.localKbField = field;
-        } else {
-          this.kbField = field;
-        }
-        markForCheck(this.cdr);
-      }),
-      catchError(() => {
-        if (local) {
-          this.localKbField = undefined;
-          this.form?.controls.localUrl.setErrors({ invalid: true });
-          this.form?.controls.localUrl.markAsDirty();
-          this.form?.controls.localKb.reset();
-          markForCheck(this.cdr);
-        }
-        return of(undefined);
-      }),
-      map(() => undefined),
-    );
-  }
-
   goToUrl(event: MouseEvent, url: string) {
     if ((window as any)['electron']) {
       event.preventDefault();
@@ -248,45 +219,6 @@ export class SettingsComponent implements OnDestroy, OnInit {
         sourceId: this.sync.getCurrentSourceId() || '',
       });
     }
-  }
-
-  private _onSelectKb(kbId: string | undefined): Observable<undefined> {
-    if (!kbId) {
-      this.labelSets.next(null);
-      this.selectedLabels = [];
-      this.cdr.markForCheck();
-      return of(undefined);
-    }
-    const setDashboardUrl: Observable<string> = !this.local
-      ? forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.kbList.pipe(take(1))]).pipe(
-          map(([account, kbs]) => {
-            const kb = kbs.find((kb) => kb.id === kbId);
-            this.dashboardUrl = this.getDashboardUrl(environment.dashboard, account.slug, kb?.slug || '');
-            return account.slug;
-          }),
-        )
-      : of(this.getDashboardUrl(`${this.localUrl?.split('/api')?.[0]}/contributor/#/contributor`, 'local', kbId)).pipe(
-          map((url) => {
-            this.dashboardUrl = url;
-            return 'local';
-          }),
-        );
-    return setDashboardUrl.pipe(
-      switchMap((account) => this.getKb(account, kbId).getLabels()),
-      map((labelSets) =>
-        Object.entries(labelSets)
-          .filter(([, value]) => value.kind.length === 0 || value.kind.includes(LabelSetKind.RESOURCES))
-          .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as LabelSets),
-      ),
-      tap((labelSets) => {
-        this.labelSets.next(labelSets);
-        this.selectedLabels = this.selectedLabels.filter((label) =>
-          (labelSets[label.labelset]?.labels || []).some((item) => item.title === label.label),
-        );
-        this.cdr.markForCheck();
-      }),
-      map(() => undefined),
-    );
   }
 
   getDashboardUrl(path: string, account: string, kb: string) {
@@ -331,5 +263,95 @@ export class SettingsComponent implements OnDestroy, OnInit {
     this.form?.controls.kb?.updateValueAndValidity();
     this.form?.controls.localKb?.updateValueAndValidity();
     this.form?.controls.localUrl?.updateValueAndValidity();
+  }
+
+  updateLabelSelection(selection: { [id: string]: boolean }) {
+    this.currentSelection = selection;
+    this.selectedLabels = getClassificationFromSelection(selection);
+    this.cdr.detectChanges();
+  }
+
+  updateLabels(labels: Classification[]) {
+    const labelSets = this.labelSets.value;
+    if (labelSets) {
+      this.currentSelection = getSelectionFromClassification(labelSets, labels);
+      this.selectedLabels = [...labels];
+      this.cdr.detectChanges();
+    }
+  }
+
+  private _onSelectKb(kbId: string | undefined): Observable<undefined> {
+    if (!kbId) {
+      this.labelSets.next(null);
+      this.selectedLabels = [];
+      this.cdr.markForCheck();
+      return of(undefined);
+    }
+    const setDashboardUrl: Observable<string> = !this.local
+      ? forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.kbList.pipe(take(1))]).pipe(
+          map(([account, kbs]) => {
+            const kb = kbs.find((kb) => kb.id === kbId);
+            this.dashboardUrl = this.getDashboardUrl(environment.dashboard, account.slug, kb?.slug || '');
+            return account.slug;
+          }),
+        )
+      : of(this.getDashboardUrl(`${this.localUrl?.split('/api')?.[0]}/contributor/#/contributor`, 'local', kbId)).pipe(
+          map((url) => {
+            this.dashboardUrl = url;
+            return 'local';
+          }),
+        );
+    return setDashboardUrl.pipe(
+      switchMap((account) => this.getKb(account, kbId).getLabels()),
+      map((labelSets) =>
+        Object.entries(labelSets)
+          .filter(([, value]) => value.kind.length === 0 || value.kind.includes(LabelSetKind.RESOURCES))
+          .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as LabelSets),
+      ),
+      tap((labelSets) => {
+        this.labelSets.next(labelSets);
+        this.currentSelection = Object.entries(labelSets).reduce(
+          (selection, [key, item]) => {
+            item.labels.forEach((label) => (selection[`${key}_${label.title}`] = false));
+            return selection;
+          },
+          {} as { [id: string]: boolean },
+        );
+        this.selectedLabels = [];
+        this.cdr.markForCheck();
+      }),
+      map(() => undefined),
+    );
+  }
+
+  private _refreshKbs(local: boolean) {
+    if (local && !this.localUrl) {
+      this.localKbField = undefined;
+      this.cdr.markForCheck();
+      return of(undefined);
+    }
+    return this.getDestination(local).pipe(
+      take(1),
+      switchMap((destination) => destination.refreshField('kb')),
+      tap((field: Field) => {
+        if (local) {
+          this.localKbField = field;
+        } else {
+          this.kbField = field;
+        }
+        markForCheck(this.cdr);
+      }),
+      catchError(() => {
+        if (local) {
+          this.localKbField = undefined;
+          this.form?.controls.localUrl.setErrors({ invalid: true });
+          this.form?.controls.localUrl.markAsDirty();
+          this.form?.controls.localKb.reset();
+          markForCheck(this.cdr);
+        }
+        return of(undefined);
+      }),
+      map(() => undefined),
+    );
   }
 }

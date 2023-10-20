@@ -74,10 +74,10 @@
             {{ 'resource.classification.clean-up' | translate }}
           </pa-button>
 
-          <stf-labels-expander
+          <nsi-labels-expander
             [labelSets]="availableLabels | async"
             [currentSelection]="currentSelection"
-            (updateSelection)="updateSelection($event)"></stf-labels-expander>
+            (updateSelection)="updateSelection($event)"></nsi-labels-expander>
         </div>
       </div>
     </div>

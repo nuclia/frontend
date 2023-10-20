@@ -7,7 +7,7 @@ import { UploadComponent } from './upload.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectFilesComponent } from './select-files/select-files.component';
 import { SettingsComponent } from './settings/settings.component';
-import { SisProgressModule } from '@nuclia/sistema';
+import { LabelsExpanderComponent, SisProgressModule } from '@nuclia/sistema';
 import {
   PaButtonModule,
   PaIconModule,
@@ -32,6 +32,7 @@ import { LabelModule } from '@flaps/common';
     PaIconModule,
     SisProgressModule,
     LabelModule,
+    LabelsExpanderComponent,
   ],
   exports: [],
   declarations: [UploadComponent, SelectFilesComponent, SettingsComponent],

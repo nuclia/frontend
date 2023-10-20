@@ -7,7 +7,7 @@ import { LabelsService } from '../../../../label/labels.service';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
 import { ParagraphClassificationService } from './paragraph-classification.service';
 import { takeUntil } from 'rxjs/operators';
-import { getClassificationFromSelection } from '../classification.helpers';
+import { getClassificationFromSelection } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './paragraph-classification.component.html',

@@ -4,7 +4,7 @@ import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
 import { SelectFirstFieldDirective } from '../select-first-field/select-first-field.directive';
 import { filter, takeUntil } from 'rxjs/operators';
 import { LabelsService } from '../../../label';
-import { getClassificationFromSelection } from './classification.helpers';
+import { getClassificationFromSelection, getSelectionFromClassification } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './resource-classification.component.html',
@@ -61,20 +61,8 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
     combineLatest([this.resourceLabelSets, this.currentLabels])
       .pipe(
         tap(([labelSets, labels]) => {
-          this.currentSelection = Object.entries(labelSets).reduce(
-            (selection, [key, item]) => {
-              item.labels.forEach(
-                (label) =>
-                  (selection[`${key}_${label.title}`] = !!labels.find(
-                    (item) => item.labelset === key && item.label === label.title,
-                  )),
-              );
-              return selection;
-            },
-            {} as { [id: string]: boolean },
-          );
-
-          this.cdr.markForCheck();
+          this.currentSelection = getSelectionFromClassification(labelSets, labels);
+          this.cdr.detectChanges();
         }),
         takeUntil(this.unsubscribeAll),
       )
