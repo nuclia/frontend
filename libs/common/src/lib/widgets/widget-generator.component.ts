@@ -48,13 +48,16 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
   canSuggestEntities = this.tracking.isFeatureEnabled('suggest-entities');
   isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter');
-  areSynonymsEnabled = combineLatest([
-    this.tracking.isFeatureEnabled('manage-synonyms'),
-    this.stateService.account.pipe(
+  areSynonymsEnabled = this.stateService.account
+    .pipe(
       filter((account) => !!account),
       map((account) => account?.type),
-    ),
-  ]).pipe(map(([featureEnabled, accountType]) => featureEnabled && accountType === 'stash-business'));
+    )
+    .pipe(
+      map(
+        (accountType) => !!accountType && ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(accountType),
+      ),
+    );
   canHideLogo = this.sdk.currentAccount.pipe(
     map((account) => ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(account.type)),
   );

@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { combineLatest, map, merge, Observable, of, Subject } from 'rxjs';
+import { map, merge, Observable, of, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { NavigationService, StandaloneService } from '../services';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
@@ -43,13 +43,16 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   isEntitiesEnabled = this.tracking.isFeatureEnabled('manage-entities');
   isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
-  isSynonymsEnabled: Observable<boolean> = combineLatest([
-    this.tracking.isFeatureEnabled('manage-synonyms'),
-    this.account.pipe(
+  isSynonymsEnabled: Observable<boolean> = this.account
+    .pipe(
       filter((account) => !!account),
       map((account) => account?.type),
-    ),
-  ]).pipe(map(([featureEnabled, accountType]) => featureEnabled && accountType === 'stash-business'));
+    )
+    .pipe(
+      map(
+        (accountType) => !!accountType && ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(accountType),
+      ),
+    );
 
   standalone = this.sdk.nuclia.options.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
