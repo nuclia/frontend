@@ -25,7 +25,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { IErrorMessages, markForCheck } from '@guillotinaweb/pastanaga-angular';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { SyncService } from '../../sync/sync.service';
 import { ConnectorDefinition, Field } from '../../sync/models';
@@ -159,7 +159,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
         this.updateValidators(local);
       }
     }
-    markForCheck(this.cdr);
+    this.cdr.markForCheck();
   }
 
   getFieldValidators(field: Field) {
@@ -310,14 +310,10 @@ export class SettingsComponent implements OnDestroy, OnInit {
       ),
       tap((labelSets) => {
         this.labelSets.next(labelSets);
-        this.currentSelection = Object.entries(labelSets).reduce(
-          (selection, [key, item]) => {
-            item.labels.forEach((label) => (selection[`${key}_${label.title}`] = false));
-            return selection;
-          },
-          {} as { [id: string]: boolean },
-        );
-        this.selectedLabels = [];
+        if (this.addNew) {
+          this.selectedLabels = [];
+        }
+        this.currentSelection = getSelectionFromClassification(labelSets, this.selectedLabels);
         this.cdr.markForCheck();
       }),
       map(() => undefined),
@@ -339,7 +335,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
         } else {
           this.kbField = field;
         }
-        markForCheck(this.cdr);
+        this.cdr.detectChanges();
       }),
       catchError(() => {
         if (local) {
@@ -347,7 +343,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
           this.form?.controls.localUrl.setErrors({ invalid: true });
           this.form?.controls.localUrl.markAsDirty();
           this.form?.controls.localKb.reset();
-          markForCheck(this.cdr);
+          this.cdr.detectChanges();
         }
         return of(undefined);
       }),
