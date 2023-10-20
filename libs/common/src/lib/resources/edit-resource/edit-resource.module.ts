@@ -14,7 +14,12 @@ import {
   ResourceTextComponent,
   SelectFirstFieldDirective,
 } from './';
-import { DropdownButtonComponent, JsonViewerComponent, SisProgressModule } from '@nuclia/sistema';
+import {
+  DropdownButtonComponent,
+  JsonViewerComponent,
+  LabelsExpanderComponent,
+  SisProgressModule,
+} from '@nuclia/sistema';
 import {
   PaButtonModule,
   PaChipsModule,
@@ -37,7 +42,6 @@ import { RouterModule } from '@angular/router';
 import { LabelModule } from '../../label/label.module';
 import { HintModule } from '../../hint/hint.module';
 import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
-import { LabelsExpanderComponent } from './classification/labels-expander/labels-expander.component';
 
 @NgModule({
   imports: [
@@ -70,6 +74,7 @@ import { LabelsExpanderComponent } from './classification/labels-expander/labels
     JsonViewerComponent,
     PaTextFieldModule,
     PaPopupModule,
+    LabelsExpanderComponent,
   ],
   declarations: [
     AddFieldComponent,
@@ -85,7 +90,6 @@ import { LabelsExpanderComponent } from './classification/labels-expander/labels
     ResourceTextComponent,
     SelectFirstFieldDirective,
     ThumbnailComponent,
-    LabelsExpanderComponent,
   ],
 })
 export class EditResourceModule {}

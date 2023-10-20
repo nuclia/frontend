@@ -1,8 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { LabelSets } from '@nuclia/core';
+import { PaExpanderModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'stf-labels-expander',
+  standalone: true,
+  imports: [PaExpanderModule, CommonModule, PaTogglesModule],
+  selector: 'nsi-labels-expander',
   templateUrl: './labels-expander.component.html',
   styleUrls: ['./labels-expander.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

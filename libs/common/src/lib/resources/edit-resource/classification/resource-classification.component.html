@@ -11,10 +11,10 @@
       <div
         *ngIf="(isAdminOrContrib | async) === true"
         class="label-selector-container">
-        <stf-labels-expander
+        <nsi-labels-expander
           [labelSets]="resourceLabelSets | async"
           [currentSelection]="currentSelection"
-          (updateSelection)="updateLabel($event)"></stf-labels-expander>
+          (updateSelection)="updateLabel($event)"></nsi-labels-expander>
       </div>
       <app-label-list
         [labelSets]="resourceLabelSets | async"
