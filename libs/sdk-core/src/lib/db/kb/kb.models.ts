@@ -133,7 +133,7 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   deleteAllSynonyms(): Observable<void>;
 
-  createResource(resource: IResource): Observable<{ uuid: string }>;
+  createResource(resource: IResource, synchronous: boolean): Observable<{ uuid: string }>;
 
   createLinkResource(
     link: LinkField,

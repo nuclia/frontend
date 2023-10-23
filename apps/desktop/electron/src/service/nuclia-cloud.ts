@@ -9,7 +9,7 @@ import {
   UploadResponse,
   WritableKnowledgeBox,
 } from '../../../../../libs/sdk-core/src';
-import { catchError, delay, map, Observable, of, switchMap, throwError } from 'rxjs';
+import { catchError, delay, map, Observable, of, retry, switchMap, throwError, timer } from 'rxjs';
 import { lookup } from 'mime-types';
 import { createHash } from 'node:crypto';
 import { Link } from './models';
@@ -19,6 +19,17 @@ require('localstorage-polyfill');
 function sha256(message: string): string {
   return createHash('sha256').update(message).digest('hex');
 }
+
+const retryDelays = [1000, 5000, 20000];
+const RETRY_CONFIG = {
+  count: 3,
+  delay: (error: unknown, retryCount: number) => {
+    // failing operator will be retried once this delay function emits,
+    // retryDelays is an array containing the delay to wait before retrying
+    return timer(retryDelays[retryCount <= retryDelays.length ? retryCount - 1 : retryDelays.length - 1]);
+  },
+};
+
 export class NucliaCloud {
   nuclia: INuclia;
   private kb: WritableKnowledgeBox;
@@ -54,9 +65,10 @@ export class NucliaCloud {
                 if (data.metadata.labels) {
                   resourceData.usermetadata = { classifications: data.metadata?.labels };
                 }
-                return kb
-                  .createResource(resourceData, true)
-                  .pipe(map((data) => kb.getResourceFromData({ id: data.uuid })));
+                return kb.createResource(resourceData, true).pipe(
+                  retry(RETRY_CONFIG),
+                  map((data) => kb.getResourceFromData({ id: data.uuid })),
+                );
               } else {
                 console.error(`Problem creating ${slug}, status ${error.status}`);
                 return of(undefined);
@@ -151,6 +163,7 @@ export class NucliaCloud {
             icon: 'application/stf-link',
           })
           .pipe(
+            retry(RETRY_CONFIG),
             catchError((error) => {
               console.log(`createOrUpdateResource – error:`, JSON.stringify(error));
               return throwError(() => new Error('Resource creation/modification failed'));

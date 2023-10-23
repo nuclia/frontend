@@ -77,17 +77,6 @@ export interface IDestinationConnector {
   refreshField(fieldId: string): Observable<Field | undefined>;
   getParameters(): Observable<Field[]>;
   authenticate(): Observable<boolean>;
-  upload(
-    originalId: string,
-    filename: string,
-    params: ConnectorParameters,
-    data: { blob?: Blob; metadata?: any },
-  ): Observable<void>;
-  uploadLink?(
-    filename: string,
-    params: ConnectorParameters,
-    data: { uri: string; extra_headers: { [key: string]: string } },
-  ): Observable<void>;
 }
 
 export interface Field {
