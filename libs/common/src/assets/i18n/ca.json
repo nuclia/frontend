@@ -704,7 +704,7 @@
 	"stash.search_users_add": "Vols afegir aquest nou usuari al compte?",
 	"stash.seats_available": "Queden {{ seats }} seients",
 	"stash.see_stats": "Veure dades",
-	"stash.service_access": "Tecles API",
+	"stash.service_access": "Claus API",
 	"stash.service_access_description": "Important! Copieu i deseu la clau de l'API. Desapareixerà un cop afegit.",
 	"stash.settings.processes.classifier": "Formació sobre la intenció de cerca d'etiquetes",
 	"stash.settings.processes.classifier_info": "Per obtenir suggeriments de cerca d'etiquetes precisos, el contingut existent s'ha d'etiquetar. A mesura que s'etiqueti més contingut, la formació millorarà. Podeu crear noves etiquetes i classificacions des de la pàgina d'ontologia.",
