@@ -50,7 +50,6 @@
     "@sentry/utils": "7.60.0",
     "@sveltejs/kit": "^1.15.2",
     "@sveltejs/package": "^2.0.2",
-    "algoliasearch": "^4.13.1",
     "angular-svg-icon": "^16.0.0",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
