@@ -15,9 +15,9 @@ export class TopbarComponent {
   userInfo = this.userService.userInfo;
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
-  private _accountType = this.sdk.currentAccount.pipe(shareReplay());
-  accountType = this._accountType.pipe(map((account) => account.type));
-  isAccountManager = this._accountType.pipe(map((account) => account.can_manage_account));
+  private _account = this.sdk.currentAccount.pipe(shareReplay());
+  accountType = this._account.pipe(map((account) => account.type));
+  isAccountManager = this._account.pipe(map((account) => account.can_manage_account));
   isTypeEnforced = combineLatest([this.accountType, this.route.queryParams.pipe(map((params) => params['type']))]).pipe(
     map(([currentType, nextType]) => nextType && currentType !== nextType),
   );
