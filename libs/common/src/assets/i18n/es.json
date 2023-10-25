@@ -787,6 +787,8 @@
 	"stash.widgets.hideThumbnails.label": "Ocultar miniaturas",
 	"stash.widgets.hint_1": "Para mostrar correctamente los resultados, el ancho de la barra de búsqueda no debería ser inferior a 384px.",
 	"stash.widgets.hint_2": "Si el color de fondo de su página de búsqueda no es neutral, recuerde agregar un color de fondo en su cuadro de búsqueda para que sea más fácil de leer.",
+	"stash.widgets.knowledgeGraph.help": "Permitir mostrar todas las relaciones entre entidades para un recurso determinado.",
+	"stash.widgets.knowledgeGraph.label": "Gráfico de relaciónes",
 	"stash.widgets.labels": "Filtrar per etiquetas",
 	"stash.widgets.navigateToFile.help": "Al usar Nuclia para buscar páginas web, hacer clic en un resultado abrirá el archivo original en lugar de mostrarlo en el visor.",
 	"stash.widgets.navigateToFile.label": "Navega hacia los archivos",
