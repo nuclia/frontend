@@ -114,6 +114,13 @@
             {{ 'stash.widgets.relations.label' | translate }}
           </pa-toggle>
           <pa-toggle
+            *ngIf="isKnowledgeGraphEnabled | async"
+            labelOnRight
+            help="stash.widgets.knowledgeGraph.help"
+            formControlName="knowledgeGraph">
+            {{ 'stash.widgets.knowledgeGraph.label' | translate }}
+          </pa-toggle>
+          <pa-toggle
             labelOnRight
             help="stash.widgets.navigateToLink.help"
             formControlName="navigateToLink"

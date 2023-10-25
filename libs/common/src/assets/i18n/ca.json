@@ -787,6 +787,8 @@
 	"stash.widgets.hideThumbnails.label": "Amaga les miniatures",
 	"stash.widgets.hint_1": "Per mostrar correctament els resultats, l'amplada de la barra de cerca no hauria de ser inferior a 348px.",
 	"stash.widgets.hint_2": "Si el color de fons de la pàgina de cerca no és neutre, recordeu d'afegir un color de fons al quadre de cerca perquè sigui més fàcil de llegir.",
+	"stash.widgets.knowledgeGraph.help": "Permet mostrar totes les relacions entre entitats per a un recurs determinat",
+	"stash.widgets.knowledgeGraph.label": "Gràfic de relacions",
 	"stash.widgets.labels": "Filtrar per etiquetes",
 	"stash.widgets.navigateToFile.help": "Quan feu servir Nuclia per cercar pàgines web, fer clic a un resultat obrirà l'arxiu original en lloc de mostrar-lo al visor.",
 	"stash.widgets.navigateToFile.label": "Navega cap als arxius",

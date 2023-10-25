@@ -788,6 +788,8 @@
 	"stash.widgets.hideThumbnails.label": "Miniaturansichten ausblenden",
 	"stash.widgets.hint_1": "Um die Ergebnisse korrekt lesen zu können, sollte die Breite der Suchleiste nicht weniger als 384 Pixel betragen.",
 	"stash.widgets.hint_2": "Wenn die Hintergrundfarbe Ihrer Suchseite nicht neutral ist, denken Sie daran, Ihrem Suchfeld eine Hintergrundfarbe hinzuzufügen, um die Lesbarkeit zu verbessern.",
+	"stash.widgets.knowledgeGraph.help": "Ermöglicht die Anzeige aller Beziehungen zwischen Entitäten für eine bestimmte Ressource",
+	"stash.widgets.knowledgeGraph.label": "Beziehungsdiagramm",
 	"stash.widgets.labels": "Nach Labels filtern",
 	"stash.widgets.navigateToFile.help": "Wenn Sie Nuclia zum Durchsuchen von Webseiten verwenden, wird durch Klicken auf ein Ergebnis die Originaldatei geöffnet, anstatt sie im Viewer anzuzeigen",
 	"stash.widgets.navigateToFile.label": "Navigieren Sie zu Dateien",

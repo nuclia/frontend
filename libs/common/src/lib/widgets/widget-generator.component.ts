@@ -48,6 +48,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
   canSuggestEntities = this.tracking.isFeatureEnabled('suggest-entities');
   isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter');
+  isKnowledgeGraphEnabled = this.tracking.isFeatureEnabled('knowledge-graph');
   areSynonymsEnabled = this.stateService.account
     .pipe(
       filter((account) => !!account),
@@ -148,6 +149,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               displayMetadata: [config.features.includes('displayMetadata')],
               noBM25forChat: [config.features.includes('noBM25forChat')],
               hideLogo: [config.features.includes('hideLogo')],
+              knowledgeGraph: [config.features.includes('knowledgeGraph')],
             }),
           });
           setTimeout(() => this.generateSnippet(), 100);
