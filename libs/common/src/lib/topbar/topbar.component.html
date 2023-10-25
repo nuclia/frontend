@@ -33,7 +33,7 @@
 
   <div class="topbar-actions">
     <pa-button
-      *ngIf="!standalone && (accountType | async) && (isAccountManager | async)"
+      *ngIf="!standalone && (shouldAccountTypeBeVisible | async)"
       kind="primary"
       aspect="basic"
       size="small"
