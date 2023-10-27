@@ -1,3 +1,9 @@
+# 1.7.1 (unreleased)
+
+### Improvements
+
+- Add `allow_kb_management` property to `NUAClientPayload`
+
 # 1.7.0 (2023-10-19)
 
 ### Breaking changes

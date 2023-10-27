@@ -144,6 +144,7 @@ export type UserType = 'ROOT' | 'DEALER' | 'USER';
 export type Language = 'CA' | 'ES' | 'EN';
 
 export interface NUAClientPayload {
+  allow_kb_management?: boolean;
   client_id?: string;
   contact: string;
   description?: string;

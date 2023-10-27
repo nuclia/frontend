@@ -6,6 +6,7 @@
 	"account.add_user": "Nutzer hinzufügen",
 	"account.admin.make_admin": "Administrator erstellen",
 	"account.admin.warning": "Wenn Sie diesem Benutzer die Administratorrolle zuweisen, kann er auf alle Optionen zugreifen und diese bearbeiten.",
+	"account.allow_kb_management": "Erlauben Sie die Verwaltung von Knowledge Boxes",
 	"account.billing": "Zahlung & Abonnement",
 	"account.chart_error_media_seconds": "Die Daten zu „Medienstunden“ konnten nicht abgerufen werden",
 	"account.chart_error_processing_status": "Die Daten „zur Verarbeitung ausstehende Ressourcen“ konnten nicht abgerufen werden",

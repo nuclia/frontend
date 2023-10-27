@@ -32,6 +32,7 @@ export class ClientDialogComponent implements OnInit {
   clientForm = this.formBuilder.group({
     title: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
+    allow_kb_management: [false],
     webhook: [''],
     zone: ['', [Validators.required]],
   });
@@ -101,6 +102,7 @@ export class ClientDialogComponent implements OnInit {
     const payload = {
       title: this.clientForm.value.title,
       contact: this.clientForm.value.email,
+      allow_kb_management: this.clientForm.value.allow_kb_management,
       webhook: this.clientForm.value.webhook,
     };
     this.nua.createClient(payload).subscribe(({ token }) => {

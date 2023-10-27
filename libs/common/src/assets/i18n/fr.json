@@ -6,6 +6,7 @@
 	"account.add_user": "Ajouter un utilisateur",
 	"account.admin.make_admin": "Faire administrateur",
 	"account.admin.warning": "Si vous donnez le rôle d'administrateur à cet utilisateur, il pourra accéder à toutes les options et les modifier.",
+	"account.allow_kb_management": "Autoriser la gestion des Knowledge Boxes",
 	"account.billing": "Paiement et abonnement",
 	"account.chart_error_media_seconds": "Impossible de récupérer les données \"Heures médias\"",
 	"account.chart_error_processing_status": "Impossible de récupérer les données \"ressources en attente de traitement\".",
