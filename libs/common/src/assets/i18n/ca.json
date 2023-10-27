@@ -6,6 +6,7 @@
 	"account.add_user": "Afegir usuari",
 	"account.admin.make_admin": "Fer Administrador",
 	"account.admin.warning": "Si converteixes aquest usuari en administrador podrà accedir i editar a totes les opcions.",
+	"account.allow_kb_management": "Permetre la gestió de Knowledge Boxes",
 	"account.billing": "Pagament i subscripció",
 	"account.chart_error_media_seconds": "No s'han pogut obtenir les dades de \"Hores de mèdia\".",
 	"account.chart_error_processing_status": "No s'han pogut obtenir les dades dels \"recursos pendents de processar\".",

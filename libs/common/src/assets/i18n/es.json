@@ -6,6 +6,7 @@
 	"account.add_user": "Añadir usuario",
 	"account.admin.make_admin": "Hacer administrador",
 	"account.admin.warning": "Si le otorgas a este usuario un rol de administrador, el usuario podrá acceder y editar todas las opciones.",
+	"account.allow_kb_management": "Permitir la gestión de Knowledge Boxes",
 	"account.billing": "Pago y suscripción",
 	"account.chart_error_media_seconds": "No se pueden obtener los datos de \"Horas de media\"",
 	"account.chart_error_processing_status": "No se pueden recuperar los datos de \"recursos pendientes de procesamiento\"",

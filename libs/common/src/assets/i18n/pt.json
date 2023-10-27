@@ -6,6 +6,7 @@
 	"account.add_user": "Adicionar usuário",
 	"account.admin.make_admin": "Tornar administrador",
 	"account.admin.warning": "Se você atribuir a função de administrador a esse usuário, ele poderá acessar e editar todas as opções.",
+	"account.allow_kb_management": "Permitir gerenciamento de Knowledge Boxes",
 	"account.billing": "Pagamento e assinatura",
 	"account.chart_error_media_seconds": "Não foi possível buscar os dados de \"Horas de mídia\"",
 	"account.chart_error_processing_status": "Não é possível buscar dados de \"recursos pendentes para serem processados\"",

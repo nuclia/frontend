@@ -6,6 +6,7 @@
 	"account.add_user": "Add user",
 	"account.admin.make_admin": "Make Administrator",
 	"account.admin.warning": "If you give the administrator role to this user, they will be able to access and edit all options.",
+	"account.allow_kb_management": "Allow management of Knowledge Boxes",
 	"account.billing": "Payment & Subscription",
 	"account.chart_error_media_seconds": "Unable to fetch \"Media hours\" data",
 	"account.chart_error_processing_status": "Unable to fetch \"resources pending to be processed\" data",
