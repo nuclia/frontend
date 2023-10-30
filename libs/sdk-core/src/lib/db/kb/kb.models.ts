@@ -244,6 +244,7 @@ export interface WidgetFeatures {
   useSynonyms?: boolean;
   autofilter?: boolean;
   noBM25forChat?: boolean;
+  filterByLabelFamily?: boolean;
 }
 
 export interface Counters {

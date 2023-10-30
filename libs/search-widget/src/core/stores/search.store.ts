@@ -366,7 +366,11 @@ export const addLabelFilter = (label: Classification, kinds: LabelSetKind[]) => 
   const filter = { classification: label, kind };
   const currentFilters = labelFilters.getValue();
 
-  if (!currentFilters.includes(filter)) {
+  if (
+    !currentFilters.some(
+      (current) => current.classification.labelset === label.labelset && current.classification.label === label.label,
+    )
+  ) {
     labelFilters.set(currentFilters.concat([filter]));
   }
 };

@@ -1,0 +1,31 @@
+.sw-labels-expander {
+  max-height: var(--rhythm-40);
+  overflow-y: auto;
+  .header {
+    align-items: center;
+    background-color: var(--color-neutral-lightest);
+    border-bottom: 1px solid var(--color-neutral-light);
+    display: flex;
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-semi-bold);
+    gap: var(--rhythm-1);
+    height: var(--rhythm-5);
+    justify-content: space-between;
+    padding: 0 var(--rhythm-1_5);
+    &.expended {
+      background-color: var(--color-neutral-lighter);
+      border: 0;
+      .expander-icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .labels {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--font-size-small);
+    gap: var(--rhythm-1);
+    padding: var(--rhythm-1) var(--rhythm-2) var(--rhythm-1) calc(var(--rhythm-5) - var(--rhythm-0_5));
+  }
+}
