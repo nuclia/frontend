@@ -62,6 +62,8 @@ class GDriveImpl extends OAuthBaseConnector implements ISourceConnector {
     previous?: SearchResults,
   ): Observable<SearchResults> {
     let path = `https://www.googleapis.com/drive/v3/files?pageSize=50&fields=nextPageToken,files(id,name,mimeType,modifiedTime)`;
+    const allDrives = '&corpora=allDrives&supportsAllDrives=true&includeItemsFromAllDrives=true';
+    path += allDrives;
     if (query) {
       path += `&q=name contains '${query}' and ${
         foldersOnly ? '' : 'not '
