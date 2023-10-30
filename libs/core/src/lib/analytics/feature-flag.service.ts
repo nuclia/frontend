@@ -13,6 +13,7 @@ interface FeaturesData {
     rollout: number;
     variants?: {
       account_id_md5?: string[];
+      blocklist?: string[];
     };
   };
 }
@@ -24,10 +25,14 @@ const stageFeatures: Features = {};
 
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {
-  private accountMd5 = this.state.account.pipe(map((account) => (account ? SparkMD5.hash(account.id) : null)));
+  private accountMd5 = this.state.account.pipe(
+    map((account) => (account ? SparkMD5.hash(account.id) : null)),
+    shareReplay(1),
+  );
   private featuresData = fromFetch('https://nuclia.github.io/status/features-v2.json').pipe(
     switchMap((res) => res.json()),
     map((res) => res as FeaturesData),
+    shareReplay(1),
   );
   private remoteFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
     map(([data, md5]) =>
@@ -43,7 +48,6 @@ export class FeatureFlagService {
           };
         }, {}),
     ),
-    shareReplay(1),
   );
   private stageFeatures = new BehaviorSubject<Features>({ ...stageFeatures, ...this.getCustomFeatures() });
   private features: Observable<Features> = this.remoteFeatures.pipe(
@@ -90,5 +94,14 @@ export class FeatureFlagService {
 
   setCustomFeatures(features: Features) {
     localStorage.setItem(CUSTOM_FEATURE_FLAGS, JSON.stringify(features));
+  }
+
+  getFeatureBlocklist(feature: string): Observable<string[]> {
+    return this.featuresData.pipe(
+      map((features) => {
+        const featureData = features[FEATURE_PREFIX + feature];
+        return featureData?.variants?.blocklist || [];
+      }),
+    );
   }
 }
