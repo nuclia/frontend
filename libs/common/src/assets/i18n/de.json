@@ -784,6 +784,8 @@
 	"stash.widgets.filter.help": "Zeigt Filter in der Suchleiste an",
 	"stash.widgets.filter.label": "Filter",
 	"stash.widgets.filter_type": "Filtertypen",
+	"stash.widgets.filterByLabelFamily.help": "Diese Option ist nur wirksam, wenn die Etikettenfilterung aktiviert ist",
+	"stash.widgets.filterByLabelFamily.label": "Filtern nach Etikettenfamilie zulassen",
 	"stash.widgets.hideLogo.help": "Nuclia-Logo aus der Suchleiste ausblenden",
 	"stash.widgets.hideLogo.label": "Logo ausblenden",
 	"stash.widgets.hideSources.help": "Verstecken Sie die Quellen, die zur Generierung der Antwort verwendet wurden",

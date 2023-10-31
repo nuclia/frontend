@@ -784,6 +784,8 @@
 	"stash.widgets.filter.help": "Exibe filtros na barra de pesquisa",
 	"stash.widgets.filter.label": "Filtro",
 	"stash.widgets.filter_type": "Tipos de filtro",
+	"stash.widgets.filterByLabelFamily.help": "Esta opção só tem efeito se a filtragem de rótulos estiver ativada",
+	"stash.widgets.filterByLabelFamily.label": "Permitir filtragem por família de rótulos",
 	"stash.widgets.hideLogo.help": "Ocultar o logotipo da Nuclia da barra de pesquisa",
 	"stash.widgets.hideLogo.label": "Esconder logo",
 	"stash.widgets.hideSources.help": "Ocultar fontes usadas para gerar a resposta",

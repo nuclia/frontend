@@ -1,0 +1,37 @@
+.sw-labels-expander {
+  --header-button-width: var(--rhythm-4);
+  --header-gap: var(--rhythm-1);
+  
+  max-height: var(--rhythm-40);
+  overflow-y: auto;
+  .header {
+    align-items: center;
+    background-color: var(--color-neutral-lightest);
+    border-bottom: 1px solid var(--color-neutral-light);
+    display: flex;
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-semi-bold);
+    gap: var(--header-gap);
+    height: var(--rhythm-5);
+    justify-content: space-between;
+    padding: 0 var(--rhythm-1_5);
+    &.expended {
+      background-color: var(--color-neutral-lighter);
+      border: 0;
+      .header-button {
+        transform: rotate(180deg);
+      }
+    }
+    .header-checkbox {
+      max-width: calc(100% - var(--header-button-width) - var(--header-gap));
+    }
+  }
+
+  .labels {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--font-size-small);
+    gap: var(--rhythm-1);
+    padding: var(--rhythm-1) var(--rhythm-2) var(--rhythm-1) calc(var(--rhythm-5) - var(--rhythm-0_5));
+  }
+}

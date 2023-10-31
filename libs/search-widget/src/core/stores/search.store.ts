@@ -9,7 +9,9 @@ import {
   getFieldTypeFromString,
   getFilterFromEntity,
   getFilterFromLabel,
+  getFilterFromLabelSet,
   getLabelFromFilter,
+  getLabelSetFromFilter,
   IErrorResponse,
   IFieldData,
   LabelSetKind,
@@ -24,6 +26,7 @@ import type { LabelFilter } from '../../common';
 
 interface SearchFilters {
   labels?: LabelFilter[];
+  labelSets?: LabelSetFilter[];
   entities?: EntityFilter[];
   autofilters?: EntityFilter[];
 }
@@ -31,6 +34,11 @@ interface SearchFilters {
 export interface EntityFilter {
   family: string;
   entity: string;
+}
+
+export interface LabelSetFilter {
+  id: string;
+  kind: LabelSetKind;
 }
 
 type EngagementType = 'CHAT' | 'RESULT';
@@ -166,6 +174,7 @@ export const searchShow = searchState.writer<ResourceProperties[]>(
 export const searchFilters = searchState.writer<string[], { filters: string[]; titleOnly: boolean }>(
   (state) => [
     ...(state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
+    ...(state.filters.labelSets || []).map((filter) => getFilterFromLabelSet(filter.id)),
     ...(state.filters.entities || []).map((filter) => getFilterFromEntity(filter)),
   ],
   (state, data) => {
@@ -173,14 +182,26 @@ export const searchFilters = searchState.writer<string[], { filters: string[]; t
     data.filters.forEach((filter) => {
       const spreadFilter = filter.split('/').filter((val) => !!val);
       if (spreadFilter[0] === 'l') {
-        const labelFilter = {
-          classification: getLabelFromFilter(filter),
-          kind: data.titleOnly ? LabelSetKind.RESOURCES : LabelSetKind.PARAGRAPHS,
-        };
-        if (!filters.labels) {
-          filters.labels = [labelFilter];
+        if (spreadFilter.length === 3) {
+          const labelFilter = {
+            classification: getLabelFromFilter(filter),
+            kind: data.titleOnly ? LabelSetKind.RESOURCES : LabelSetKind.PARAGRAPHS,
+          };
+          if (!filters.labels) {
+            filters.labels = [labelFilter];
+          } else {
+            filters.labels.push(labelFilter);
+          }
         } else {
-          filters.labels.push(labelFilter);
+          const labelSetFilter = {
+            id: getLabelSetFromFilter(filter),
+            kind: data.titleOnly ? LabelSetKind.RESOURCES : LabelSetKind.PARAGRAPHS,
+          };
+          if (!filters.labelSets) {
+            filters.labelSets = [labelSetFilter];
+          } else {
+            filters.labelSets.push(labelSetFilter);
+          }
         }
       } else if (spreadFilter[0] === 'e') {
         const entityFilter = getEntityFromFilter(filter);
@@ -205,6 +226,16 @@ export const labelFilters = searchState.writer<LabelFilter[]>(
     filters: {
       ...state.filters,
       labels: labelFilters,
+    },
+  }),
+);
+export const labelSetFilters = searchState.writer<LabelSetFilter[]>(
+  (state) => state.filters.labelSets || [],
+  (state, filters) => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      labelSets: filters,
     },
   }),
 );
@@ -242,6 +273,7 @@ export const isEmptySearchQuery = searchState.reader<boolean>(
   (state) =>
     !state.query &&
     (!state.filters.labels || state.filters.labels.length === 0) &&
+    (!state.filters.labelSets || state.filters.labelSets.length === 0) &&
     (!state.filters.entities || state.filters.entities.length === 0),
 );
 
@@ -346,12 +378,12 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
-export const isTitleOnly = combineLatest([searchQuery, labelFilters, entityFilters]).pipe(
+export const isTitleOnly = combineLatest([searchQuery, labelFilters, labelSetFilters, entityFilters]).pipe(
   map(
-    ([query, labels, entities]) =>
+    ([query, labels, labelSets, entities]) =>
       !query &&
-      !!labels &&
-      labels.every((label) => label.kind === LabelSetKind.RESOURCES) &&
+      ((labels?.length > 0 && labels.every((label) => label.kind === LabelSetKind.RESOURCES)) ||
+        (labelSets?.length > 0 && labelSets.every((labelSet) => labelSet.kind === LabelSetKind.RESOURCES))) &&
       (entities || []).length === 0,
   ),
 );
@@ -366,7 +398,11 @@ export const addLabelFilter = (label: Classification, kinds: LabelSetKind[]) => 
   const filter = { classification: label, kind };
   const currentFilters = labelFilters.getValue();
 
-  if (!currentFilters.includes(filter)) {
+  if (
+    !currentFilters.some(
+      (current) => current.classification.labelset === label.labelset && current.classification.label === label.label,
+    )
+  ) {
     labelFilters.set(currentFilters.concat([filter]));
   }
 };
@@ -378,6 +414,23 @@ export const removeLabelFilter = (label: Classification) => {
       (filter) => filter.classification.label !== label.label || filter.classification.labelset !== label.labelset,
     ),
   );
+};
+
+export const addLabelSetFilter = (id: string, kinds: LabelSetKind[]) => {
+  const kind =
+    kinds.length === 1 || (kinds.length > 1 && !kinds.includes(LabelSetKind.RESOURCES))
+      ? kinds[0]
+      : LabelSetKind.RESOURCES;
+  const filter = { id, kind };
+  const currentFilters = labelSetFilters.getValue();
+  if (!currentFilters.map((filter) => filter.id).includes(filter.id)) {
+    labelSetFilters.set(currentFilters.concat([filter]));
+  }
+};
+
+export const removeLabelSetFilter = (id: string) => {
+  const currentFilters = labelSetFilters.getValue();
+  labelSetFilters.set(currentFilters.filter((filter) => filter.id !== id));
 };
 
 export const addEntityFilter = (entity: EntityFilter) => {

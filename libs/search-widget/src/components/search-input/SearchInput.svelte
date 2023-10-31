@@ -12,15 +12,18 @@
     entities,
     entitiesDefaultColor,
     entityFilters,
+    filterByLabelFamily,
     getCDN,
     hasFilterButton,
     hasSuggestions,
     hideLogo,
     labelFilters,
+    labelSetFilters,
     orderedLabelSetList,
     removeAutofilter,
     removeEntityFilter,
     removeLabelFilter,
+    removeLabelSetFilter,
     searchQuery,
     suggestedEntities,
     suggestedLabels,
@@ -42,6 +45,7 @@
   import type { LabelFilter } from '../../common';
   import { getParentLiRect } from '../../common';
   import Button from '../../common/button/Button.svelte';
+  import LabelsExpander from '../labels-expander/LabelsExpander.svelte';
 
   let searchInputElement: HTMLInputElement;
   const dispatch = createEventDispatcher();
@@ -65,17 +69,22 @@
 
   const filters: Observable<
     {
-      type: 'label' | 'entity';
+      type: 'label' | 'labelset' | 'entity';
       key: string;
       value: LabelFilter | EntityFilter;
       autofilter?: boolean;
     }[]
-  > = combineLatest([labelFilters, entityFilters, autofilters]).pipe(
-    map(([labels, entities, autofilters]) => [
+  > = combineLatest([labelFilters, labelSetFilters, entityFilters, autofilters]).pipe(
+    map(([labels, labelSets, entities, autofilters]) => [
       ...labels.map((value) => ({
         type: 'label',
         key: value.classification.label + value.classification.labelset,
         value: value.classification
+      })),
+      ...labelSets.map((value) => ({
+        type: 'labelset',
+        key: `labelset-${value.id}`,
+        value: value.id
       })),
       ...entities.map((value) => ({
         type: 'entity',
@@ -167,10 +176,11 @@
     }
   };
 
-  const selectLabel = (label) => {
-    showFilterSubmenu = false;
-    if (selectedLabelSet) {
-      addLabelFilter({ labelset: selectedLabelSet.id, label: label.title }, selectedLabelSet.kind);
+  const selectLabel = (labelSet, label, selected) => {
+    const classification = { labelset: labelSet.id, label: label.title };
+    selected ? addLabelFilter(classification, labelSet.kind) : removeLabelFilter(classification);
+    if (showFilterSubmenu) {
+      showFilterSubmenu = false;
       selectedLabelSet = undefined;
     }
   };
@@ -242,6 +252,7 @@
           icon="filter"
           aspect="basic"
           size="medium"
+          active={showFilterDropdowns}
           on:click={toggleFilter} />
       </div>
     {/if}
@@ -255,6 +266,12 @@
             label={filter.value}
             removable
             on:remove={() => removeLabelFilter(filter.value)} />
+        {/if}
+        {#if filter.type === 'labelset'}
+          <Label
+            label={{ labelset: filter.value, label: '' }}
+            removable
+            on:remove={() => removeLabelSetFilter(filter.value)} />
         {/if}
         {#if filter.type === 'entity'}
           <Chip
@@ -288,6 +305,12 @@
                       removable
                       on:remove={() => removeLabelFilter(filter.value)} />
                   {/if}
+                  {#if filter.type === 'labelset'}
+                    <Label
+                      label={{ labelset: filter.value, label: '' }}
+                      removable
+                      on:remove={() => removeLabelSetFilter(filter.value)} />
+                  {/if}
                   {#if filter.type === 'entity'}
                     <Chip
                       removable
@@ -311,34 +334,41 @@
   <Dropdown
     position={{ top: filterButtonPosition.top - 5, left: filterButtonPosition.right + 16 }}
     on:close={() => (showFilterDropdowns = false)}>
-    <ul
-      class="sw-dropdown-options"
-      bind:this={labelSetDropdownElement}>
-      {#each $labelSets as labelSet}
-        <li
-          class="filter-option"
-          on:mouseenter={(event) => openSubMenu(event, labelSet)}>
-          <div
-            class="filter-color"
-            style:background-color={labelSet.color} />
-          <div class="filter-title ellipsis">{labelSet.title}</div>
-          <Icon name="chevron-right" />
-        </li>
-      {/each}
-      {#each $entities as family}
-        <li
-          class="filter-option"
-          on:mouseenter={(event) => openSubMenu(event, undefined, family)}>
-          <div
-            class="filter-color"
-            style:background-color={family.color} />
-          <div class="filter-title ellipsis">
-            {family.title}
-          </div>
-          <Icon name="chevron-right" />
-        </li>
-      {/each}
-    </ul>
+    {#if $filterByLabelFamily}
+      <LabelsExpander
+        labelSets={$labelSets}
+        selectedLabels={$selectedLabels}
+        on:labelSelect={(e) => selectLabel(e.detail.labelSet, e.detail.label, e.detail.selected)}></LabelsExpander>
+    {:else}
+      <ul
+        class="sw-dropdown-options"
+        bind:this={labelSetDropdownElement}>
+        {#each $labelSets as labelSet}
+          <li
+            class="filter-option"
+            on:mouseenter={(event) => openSubMenu(event, labelSet)}>
+            <div
+              class="filter-color"
+              style:background-color={labelSet.color} />
+            <div class="filter-title ellipsis">{labelSet.title}</div>
+            <Icon name="chevron-right" />
+          </li>
+        {/each}
+        {#each $entities as family}
+          <li
+            class="filter-option"
+            on:mouseenter={(event) => openSubMenu(event, undefined, family)}>
+            <div
+              class="filter-color"
+              style:background-color={family.color} />
+            <div class="filter-title ellipsis">
+              {family.title}
+            </div>
+            <Icon name="chevron-right" />
+          </li>
+        {/each}
+      </ul>
+    {/if}
   </Dropdown>
 {/if}
 {#if showFilterSubmenu}
@@ -352,7 +382,7 @@
           <li
             class="ellipsis"
             class:selected={$selectedLabels.includes(label.title)}
-            on:click={() => selectLabel(label)}>
+            on:click={() => selectLabel(selectedLabelSet, label, !$selectedLabels.includes(label.title))}>
             {label.title}
           </li>
         {/each}
