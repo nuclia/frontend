@@ -18,10 +18,12 @@
     hasSuggestions,
     hideLogo,
     labelFilters,
+    labelSetFilters,
     orderedLabelSetList,
     removeAutofilter,
     removeEntityFilter,
     removeLabelFilter,
+    removeLabelSetFilter,
     searchQuery,
     suggestedEntities,
     suggestedLabels,
@@ -67,17 +69,22 @@
 
   const filters: Observable<
     {
-      type: 'label' | 'entity';
+      type: 'label' | 'labelset' | 'entity';
       key: string;
       value: LabelFilter | EntityFilter;
       autofilter?: boolean;
     }[]
-  > = combineLatest([labelFilters, entityFilters, autofilters]).pipe(
-    map(([labels, entities, autofilters]) => [
+  > = combineLatest([labelFilters, labelSetFilters, entityFilters, autofilters]).pipe(
+    map(([labels, labelSets, entities, autofilters]) => [
       ...labels.map((value) => ({
         type: 'label',
         key: value.classification.label + value.classification.labelset,
         value: value.classification
+      })),
+      ...labelSets.map((value) => ({
+        type: 'labelset',
+        key: `labelset-${value.id}`,
+        value: value.id
       })),
       ...entities.map((value) => ({
         type: 'entity',
@@ -260,6 +267,12 @@
             removable
             on:remove={() => removeLabelFilter(filter.value)} />
         {/if}
+        {#if filter.type === 'labelset'}
+          <Label
+            label={{ labelset: filter.value, label: '' }}
+            removable
+            on:remove={() => removeLabelSetFilter(filter.value)} />
+        {/if}
         {#if filter.type === 'entity'}
           <Chip
             removable
@@ -291,6 +304,12 @@
                       label={filter.value}
                       removable
                       on:remove={() => removeLabelFilter(filter.value)} />
+                  {/if}
+                  {#if filter.type === 'labelset'}
+                    <Label
+                      label={{ labelset: filter.value, label: '' }}
+                      removable
+                      on:remove={() => removeLabelSetFilter(filter.value)} />
                   {/if}
                   {#if filter.type === 'entity'}
                     <Chip

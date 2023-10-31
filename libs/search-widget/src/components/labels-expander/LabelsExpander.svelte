@@ -2,7 +2,7 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import { map, Observable, take } from 'rxjs';
   import type { LabelSetWithId } from '../../core';
-  import { addLabelFilter, labelFilters, removeLabelFilter } from '../../core';
+  import { addLabelSetFilter, labelFilters, labelSetFilters, removeLabelSetFilter } from '../../core';
   import IconButton from '../../common/button/IconButton.svelte';
   import Checkbox from '../../common/checkbox/Checkbox.svelte';
 
@@ -11,22 +11,12 @@
 
   const dispatch = createEventDispatcher();
   let expandedLabelSets: { [id: string]: boolean } = {};
-
-  const selectedLabelSets: Observable<string[]> = labelFilters.pipe(
-    map((filters) =>
-      labelSets
-        .filter((labelSet) =>
-          labelSet.labels.length === filters.filter((filter) => filter.classification.labelset === labelSet.id).length
-        )
-        .map((labelSet) => labelSet.id)
-    ),
+  const selectedLabelSets: Observable<string[]> = labelSetFilters.pipe(
+    map((filters) => filters.map((filter) => filter.id)),
   );
 
   function selectLabelSet(labelSet, selected)  {
-    labelSet.labels.forEach((label) => {
-      const classification = { labelset: labelSet.id, label: label.title };
-      selected  ? addLabelFilter(classification, labelSet.kind) : removeLabelFilter(classification);
-    });
+    selected  ? addLabelSetFilter(labelSet.id, labelSet.kind) : removeLabelSetFilter(labelSet.id);
   }
 
   function toggleLabelSet(labelSetId) {

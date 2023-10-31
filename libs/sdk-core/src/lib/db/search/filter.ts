@@ -9,6 +9,14 @@ export function getLabelFromFilter(filter: string): Classification {
   return { labelset: items[2], label: items[3] };
 }
 
+export function getFilterFromLabelSet(labelSet: string) {
+  return `/l/${labelSet}`;
+}
+
+export function getLabelSetFromFilter(filter: string): string {
+  return filter.split('/')[2];
+}
+
 export function getFilterFromEntity(entity: { family: string; entity: string }) {
   return `/e/${entity.family}/${entity.entity}`;
 }
