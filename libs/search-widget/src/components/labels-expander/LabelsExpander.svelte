@@ -39,12 +39,14 @@
     <div
       class="header"
       class:expended={expandedLabelSets[labelSet.id]}>
-      <Checkbox
-        checked={$selectedLabelSets.includes(labelSet.id)}
-        on:change={(event) => selectLabelSet(labelSet, event.detail)}>
-        {labelSet.title}
-      </Checkbox>
-      <span class="expander-icon">
+      <div class="header-checkbox">
+        <Checkbox
+          checked={$selectedLabelSets.includes(labelSet.id)}
+          on:change={(event) => selectLabelSet(labelSet, event.detail)}>
+          {labelSet.title}
+        </Checkbox>
+      </div>
+      <span class="header-button">
         <IconButton
           on:click={() => toggleLabelSet(labelSet.id)}
           icon="chevron-down"

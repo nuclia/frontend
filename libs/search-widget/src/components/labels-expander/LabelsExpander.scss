@@ -1,4 +1,7 @@
 .sw-labels-expander {
+  --header-button-width: var(--rhythm-4);
+  --header-gap: var(--rhythm-1);
+  
   max-height: var(--rhythm-40);
   overflow-y: auto;
   .header {
@@ -8,16 +11,19 @@
     display: flex;
     font-size: var(--font-size-medium);
     font-weight: var(--font-weight-semi-bold);
-    gap: var(--rhythm-1);
+    gap: var(--header-gap);
     height: var(--rhythm-5);
     justify-content: space-between;
     padding: 0 var(--rhythm-1_5);
     &.expended {
       background-color: var(--color-neutral-lighter);
       border: 0;
-      .expander-icon {
+      .header-button {
         transform: rotate(180deg);
       }
+    }
+    .header-checkbox {
+      max-width: calc(100% - var(--header-button-width) - var(--header-gap));
     }
   }
 
