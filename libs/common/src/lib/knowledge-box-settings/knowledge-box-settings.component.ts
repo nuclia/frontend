@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { catchError, filter, of, Subject } from 'rxjs';
-import { auditTime, concatMap, share, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, forkJoin, of, Subject } from 'rxjs';
+import { auditTime, concatMap, map, share, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { FeatureFlagService, SDKService, StateService, STFUtils } from '@flaps/core';
 import {
   Account,
@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Sluggable } from '../validators';
 import { Router } from '@angular/router';
 import { SisToastService } from '@nuclia/sistema';
+import { ta } from 'date-fns/locale';
 
 const EMPTY_CONFIG = {
   display: [] as LearningConfigurationSet,
@@ -57,7 +58,17 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   promptKeys: string[] = [];
   currentPromptConfig?: LearningConfigurationSchema;
   currentPromptKey?: string;
-  isUserPromptsEnabled = this.featureFlag.isFeatureEnabled('user-prompts');
+  // user-prompts is always enabled for growth and enterprise accounts
+  // but is still managed as a feature flagged feature for other account types
+  // so we can enable it specifically for some accounts throught the `variants` field
+  // in `status/features-v2.json`
+  isUserPromptsEnabled = forkJoin([
+    this.featureFlag.isFeatureEnabled('user-prompts').pipe(take(1)),
+    this.sdk.currentAccount.pipe(
+      map((account) => ['stash-growth', 'stash-enterprise'].includes(account.type)),
+      take(1),
+    ),
+  ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
 
   constructor(
     private formBuilder: UntypedFormBuilder,
