@@ -2,7 +2,7 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import { map, Observable, take } from 'rxjs';
   import type { LabelSetWithId } from '../../core';
-  import { addLabelSetFilter, labelFilters, labelSetFilters, removeLabelSetFilter } from '../../core';
+  import { addLabelSetFilter, labelFilters, labelSetFilters, removeLabelFilter, removeLabelSetFilter } from '../../core';
   import IconButton from '../../common/button/IconButton.svelte';
   import Checkbox from '../../common/checkbox/Checkbox.svelte';
 
@@ -16,7 +16,13 @@
   );
 
   function selectLabelSet(labelSet, selected)  {
-    selected  ? addLabelSetFilter(labelSet.id, labelSet.kind) : removeLabelSetFilter(labelSet.id);
+    if (selected) {
+      labelSet.labels.forEach((label) => removeLabelFilter({ labelset: labelSet.id, label: label.title}));
+      addLabelSetFilter(labelSet.id, labelSet.kind)
+    }
+    else {
+      removeLabelSetFilter(labelSet.id);
+    }
   }
 
   function toggleLabelSet(labelSetId) {
@@ -60,6 +66,7 @@
           <div>
             <Checkbox
               checked={selectedLabels.includes(label.title)}
+              disabled={$selectedLabelSets.includes(labelSet.id)}
               on:change={(event) => dispatch('labelSelect', { labelSet, label, selected: event.detail })}>
               {label.title}
             </Checkbox>

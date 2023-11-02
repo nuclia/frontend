@@ -3,6 +3,7 @@
   import { createEventDispatcher } from 'svelte';
 
   export let checked = false;
+  export let disabled = false;
 
   const dispatch = createEventDispatcher();
   let labelElement: HTMLElement;
@@ -13,11 +14,14 @@
   };
 </script>
 
-<div class="sw-checkbox">
+<div
+  class="sw-checkbox"
+  class:disabled>
   <input
     {id}
     type="checkbox"
     class="sw-checkbox-control"
+    {disabled}
     bind:checked
     on:change={onChange} />
   <label

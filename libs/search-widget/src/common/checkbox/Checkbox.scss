@@ -22,6 +22,13 @@
       background-image: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36"><g fill="none" fill-rule="evenodd"><polygon fill="%23000" points="29.021 17.021 11.021 17.021 11.021 9.021 7.021 9.021 7.021 21.021 29.021 21.021" transform="rotate(-45 18.02 15.02)"/></g></svg>');
       background-size: var(--size-checkbox) var(--size-checkbox);
     }
+
+    &:disabled {
+      border-color: var(--color-neutral-light);
+      & ~ label {
+        color: var(--color-neutral-light);
+      }
+    }
   }
 
   label {
