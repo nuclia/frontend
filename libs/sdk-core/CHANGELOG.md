@@ -3,6 +3,7 @@
 ### Improvements
 
 - Add `allow_kb_management` property to `NUAClientPayload`
+- Add optional `zoneSlug` parameter to `getFullUrl`, `fetch`, `get`, `post`, `put` and `delete` methods.
 
 # 1.7.0 (2023-10-19)
 

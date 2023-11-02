@@ -27,8 +27,13 @@ export class Rest implements IRest {
     this.nuclia = nuclia;
   }
 
-  get<T>(path: string, extraHeaders?: { [key: string]: string }, doNotParse?: boolean): Observable<T> {
-    return this.fetch('GET', path, undefined, extraHeaders, doNotParse);
+  get<T>(
+    path: string,
+    extraHeaders?: { [key: string]: string },
+    doNotParse?: boolean,
+    zoneSlug?: string,
+  ): Observable<T> {
+    return this.fetch('GET', path, undefined, extraHeaders, doNotParse, undefined, zoneSlug);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,8 +43,9 @@ export class Rest implements IRest {
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
     synchronous?: boolean,
+    zoneSlug?: string,
   ): Observable<T> {
-    return this.fetch('POST', path, body, extraHeaders, doNotParse, synchronous);
+    return this.fetch('POST', path, body, extraHeaders, doNotParse, synchronous, zoneSlug);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,8 +55,9 @@ export class Rest implements IRest {
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
     synchronous?: boolean,
+    zoneSlug?: string,
   ): Observable<T> {
-    return this.fetch('PUT', path, body, extraHeaders, doNotParse, synchronous);
+    return this.fetch('PUT', path, body, extraHeaders, doNotParse, synchronous, zoneSlug);
   }
 
   patch<T>(
@@ -60,12 +67,18 @@ export class Rest implements IRest {
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
     synchronous?: boolean,
+    zoneSlug?: string,
   ): Observable<T> {
-    return this.fetch('PATCH', path, body, extraHeaders, doNotParse, synchronous);
+    return this.fetch('PATCH', path, body, extraHeaders, doNotParse, synchronous, zoneSlug);
   }
 
-  delete<T>(path: string, extraHeaders?: { [key: string]: string }, synchronous?: boolean): Observable<T> {
-    return this.fetch('DELETE', path, undefined, extraHeaders, true, synchronous);
+  delete<T>(
+    path: string,
+    extraHeaders?: { [key: string]: string },
+    synchronous?: boolean,
+    zoneSlug?: string,
+  ): Observable<T> {
+    return this.fetch('DELETE', path, undefined, extraHeaders, true, synchronous, zoneSlug);
   }
 
   head(path: string, extraHeaders?: { [key: string]: string }): Observable<Response> {
@@ -101,10 +114,11 @@ export class Rest implements IRest {
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
     synchronous = false,
+    zoneSlug: string | undefined = undefined,
   ): Observable<T> {
     const specialContentType = extraHeaders && extraHeaders['content-type'];
     return from(
-      fetch(this.getFullUrl(path), {
+      fetch(this.getFullUrl(path, zoneSlug), {
         method,
         headers: this.getHeaders(method, path, extraHeaders, synchronous),
         body: specialContentType ? body : JSON.stringify(body),
@@ -136,8 +150,10 @@ export class Rest implements IRest {
     );
   }
 
-  /** Returns the full URL of the given path, using the regional or the global Nuclia backend according the path. */
-  getFullUrl(path: string): string {
+  /**
+   *  Returns the full URL of the given path, using the regional or the global Nuclia backend according to the path or the provided zone slug (if any).
+   */
+  getFullUrl(path: string, zoneSlug?: string): string {
     const isGlobal =
       path.startsWith('/account') ||
       path.startsWith('/user') ||
@@ -147,7 +163,13 @@ export class Rest implements IRest {
       path.startsWith('/configuration') ||
       path.startsWith('/manage') ||
       (path.includes('/activity') && !path.includes('/activity/download'));
-    const backend = isGlobal || this.nuclia.options.standalone ? this.nuclia.backend : this.nuclia.regionalBackend;
+
+    let backend: string;
+    if (zoneSlug && !this.nuclia.options.standalone) {
+      backend = `${this.nuclia.backend.replace('https://', `https://${zoneSlug}.`)}`;
+    } else {
+      backend = isGlobal || this.nuclia.options.standalone ? this.nuclia.backend : this.nuclia.regionalBackend;
+    }
     const version =
       path.startsWith('/auth') ||
       path.startsWith('/export') ||

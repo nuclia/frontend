@@ -12,22 +12,22 @@ export type AccountTypes =
 export const NUA_KEY = 'NUCLIA_NUA_KEY';
 
 export interface Account {
+  blocked_features: BlockedFeature[];
+  blocking_state?: AccountBlockingState;
+  can_manage_account: boolean;
+  config?: AccountConfig;
+  current_kbs?: number;
+  current_users?: number;
+  description?: string;
   id: string;
+  limits?: AccountLimits;
+  max_kbs: number;
+  max_users: number | null;
   slug: string;
   title: string;
-  description?: string;
-  zone: string;
-  type: AccountTypes;
-  can_manage_account: boolean;
-  current_kbs?: number;
-  max_kbs: number;
-  current_users?: number;
-  max_users: number | null;
-  config?: AccountConfig;
-  limits?: AccountLimits;
-  blocking_state?: AccountBlockingState;
-  blocked_features: BlockedFeature[];
   trial_expiration_date?: string;
+  type: AccountTypes;
+  zone: string;
 }
 
 export interface AccountConfig {

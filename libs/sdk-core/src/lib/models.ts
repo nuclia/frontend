@@ -58,7 +58,12 @@ export interface IAuthentication {
 }
 
 export interface IRest {
-  get<T>(path: string, extraHeaders?: { [key: string]: string }, doNotParse?: boolean): Observable<T>;
+  get<T>(
+    path: string,
+    extraHeaders?: { [key: string]: string },
+    doNotParse?: boolean,
+    zoneSlug?: string,
+  ): Observable<T>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   post<T>(
     path: string,
@@ -66,6 +71,7 @@ export interface IRest {
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
     synchronous?: boolean,
+    zoneSlug?: string,
   ): Observable<T>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   put<T>(
@@ -74,6 +80,7 @@ export interface IRest {
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
     synchronous?: boolean,
+    zoneSlug?: string,
   ): Observable<T>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   patch<T>(
@@ -82,8 +89,14 @@ export interface IRest {
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
     synchronous?: boolean,
+    zoneSlug?: string,
   ): Observable<T>;
-  delete(path: string, extraHeaders?: { [key: string]: string }, synchronous?: boolean): Observable<void>;
+  delete(
+    path: string,
+    extraHeaders?: { [key: string]: string },
+    synchronous?: boolean,
+    zoneSlug?: string,
+  ): Observable<void>;
   head(path: string, extraHeaders?: { [key: string]: string }): Observable<Response>;
   getZones(): Observable<{ [key: string]: string }>;
   getZoneSlug(zoneId: string): Observable<string>;
