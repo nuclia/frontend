@@ -1,5 +1,5 @@
-import { AccountBlockingState, AccountLimits, AccountTypes, BlockedFeature } from '@nuclia/core';
-import { KbUser } from './global-account.models';
+import { AccountBlockingState, AccountLimits, AccountTypes, BlockedFeature, KBRoles } from '@nuclia/core';
+import { DedicatedProcessorsState } from './regional-account.models';
 
 export interface AccountSummary {
   id: string;
@@ -7,8 +7,6 @@ export interface AccountSummary {
   title: string;
   type: AccountTypes;
 }
-
-export type DedicatedProcessorsState = 'enabled' | 'disabled' | 'paused';
 
 export interface AccountDetails extends AccountSummary {
   blockingState?: AccountBlockingState;
@@ -18,13 +16,15 @@ export interface AccountDetails extends AccountSummary {
   maxDedicatedProcessors: number;
   maxKbs: number;
   trialExpirationDate?: string;
-  zone: string;
+  users: AccountUser[];
 }
 
 export interface KbSummary {
   id: string;
   slug: string;
   title: string;
+  accountId: string;
+  zoneId: string;
 }
 
 export interface KbCounters {
@@ -36,6 +36,13 @@ export interface KbDetails extends KbSummary {
   contributors: KbUser[];
   members: KbUser[];
   owners: KbUser[];
+}
+
+export interface KbUser {
+  id: string;
+  name: string;
+  email: string;
+  role: KBRoles;
 }
 
 export interface AccountUser {

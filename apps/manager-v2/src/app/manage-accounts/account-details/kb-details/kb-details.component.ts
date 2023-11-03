@@ -1,15 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, debounceTime, filter, map, of, Subject, switchMap } from 'rxjs';
+import { combineLatest, debounceTime, filter, map, of, Subject, switchMap, tap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { AccountService } from '../../account.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SisToastService } from '@nuclia/sistema';
-import { KbUser } from '../../global-account.models';
 import { KBRoles } from '@nuclia/core';
 import { UserService } from '../../../manage-users/user.service';
 import { UserSearch } from '../../../manage-users/user.models';
 import { ManagerStore } from '../../../manager.store';
-import { AccountDetails, KbDetails } from '../../account-ui.models';
+import { AccountDetails, KbDetails, KbSummary, KbUser } from '../../account-ui.models';
 
 @Component({
   templateUrl: './kb-details.component.html',
@@ -34,9 +33,9 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
       const accountId = this.store.getAccountId();
       return accountId ? this.userService.searchAccountUser(accountId, term) : of([]);
     }),
+    tap(() => this.cdr.markForCheck()),
   );
 
-  private currentAccountId?: string;
   private backupKb?: KbDetails;
 
   constructor(
@@ -55,15 +54,18 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
         map((accountDetails) => accountDetails as AccountDetails),
       ),
       this.route.params.pipe(
-        filter((params) => !!params['kbId']),
-        map((params) => params['kbId'] as string),
+        filter((params) => !!params['kbId'] && !!params['zoneId']),
+        map((params) => ({ kbId: params['kbId'] as string, zoneId: params['zoneId'] as string })),
       ),
     ])
       .pipe(
-        switchMap(([account, kbId]) => {
-          this.currentAccountId = account.id;
-          return this.accountService.loadKb(account.id, kbId);
-        }),
+        switchMap(([account, { kbId, zoneId }]) =>
+          this.accountService.loadKb({
+            accountId: account.id,
+            zoneId,
+            id: kbId,
+          } as KbSummary),
+        ),
       )
       .subscribe((kb) => {
         this.backupKb = kb;
@@ -79,8 +81,8 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
 
   save() {
     this.isSaving = true;
-    if (this.backupKb && this.currentAccountId) {
-      this.accountService.updateKb(this.currentAccountId, this.backupKb.id, this.kbForm.getRawValue()).subscribe({
+    if (this.backupKb) {
+      this.accountService.updateKb(this.backupKb, this.kbForm.getRawValue()).subscribe({
         next: (updatedKb) => {
           this.backupKb = updatedKb;
           this.isSaving = false;
@@ -98,7 +100,8 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
 
   reset() {
     if (this.backupKb) {
-      this.kbForm.patchValue(this.backupKb);
+      this.kbForm.patchValue({ title: this.backupKb.title, slug: this.backupKb.slug });
+      this.kbForm.markAsPristine();
       this.cdr.markForCheck();
     }
   }
@@ -116,24 +119,24 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
   }
 
   addMember(member: UserSearch) {
-    if (this.backupKb && this.currentAccountId) {
-      this.accountService.addKbUser(this.currentAccountId, this.backupKb.id, member.id).subscribe({
+    if (this.backupKb) {
+      this.accountService.addKbUser(this.backupKb, member.id).subscribe({
         error: () => this.toast.error('Adding user failed'),
       });
     }
   }
 
   removeUser(member: KbUser) {
-    if (this.backupKb && this.currentAccountId) {
-      this.accountService.removeKbUser(this.currentAccountId, this.backupKb.id, member.id).subscribe({
+    if (this.backupKb) {
+      this.accountService.removeKbUser(this.backupKb, member.id).subscribe({
         error: () => this.toast.error('Removing user failed'),
       });
     }
   }
 
   private updateUser(userId: string, newRole: KBRoles) {
-    if (this.backupKb && this.currentAccountId) {
-      this.accountService.updateKbUser(this.currentAccountId, this.backupKb.id, userId, newRole).subscribe({
+    if (this.backupKb) {
+      this.accountService.updateKbUser(this.backupKb, userId, newRole).subscribe({
         error: () => this.toast.error('Updating user role failed'),
       });
     }

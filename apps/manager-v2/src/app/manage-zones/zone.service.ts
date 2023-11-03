@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Zone, ZoneAddPayload, ZonePatchPayload, ZoneSummary } from './zone.models';
 
 const ZONES_ENDPOINT = '/manage/@zones';
@@ -14,6 +14,31 @@ export class ZoneService {
 
   getZones(): Observable<ZoneSummary[]> {
     return this.sdk.nuclia.rest.get(ZONES_ENDPOINT);
+  }
+
+  /**
+   * Get a map of zone slug indexed by their id
+   */
+  getZoneSlugs(): Observable<{ [zoneId: string]: string }> {
+    return this.getZones().pipe(
+      map((zones) =>
+        zones.reduce(
+          (map, zone) => {
+            map[zone.id] = zone.slug;
+            return map;
+          },
+          {} as { [zoneId: string]: string },
+        ),
+      ),
+    );
+  }
+
+  /**
+   * Get Zone slug corresponding to zone id provided
+   * @param zoneId
+   */
+  getZoneSlug(zoneId: string): Observable<string | undefined> {
+    return this.getZoneSlugs().pipe(map((zoneSlugs) => zoneSlugs[zoneId]));
   }
 
   getZone(zoneId: string): Observable<Zone> {

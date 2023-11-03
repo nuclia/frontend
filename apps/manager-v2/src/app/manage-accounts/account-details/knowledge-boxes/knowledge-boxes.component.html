@@ -9,7 +9,7 @@
   <pa-table-row
     *ngFor="let kb of kbList | async"
     clickable
-    [routerLink]="'../kb/' + kb.id">
+    [routerLink]="'../zone/' + kb.zoneId + '/kb/' + kb.id">
     <pa-table-cell>
       <small>{{ kb.id }}</small>
     </pa-table-cell>

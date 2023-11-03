@@ -1,5 +1,6 @@
 import { Account, AccountBlockingState, AccountConfig, AccountLimitsPatchPayload, WelcomeUser } from '@nuclia/core';
 import { Language, UserType } from '@flaps/core';
+import { DedicatedProcessorsState } from './regional-account.models';
 
 export interface AccountSummary {
   id: string;
@@ -34,7 +35,7 @@ export interface ExtendedAccount extends Account, AccountConfig {
   stashes: AccountKbList;
   dedicated_processors_state: DedicatedProcessorsState;
 }
-export type DedicatedProcessorsState = 'enabled' | 'disabled' | 'paused';
+
 export type AccountUserType = 'manager' | 'member';
 
 export interface AccountCreationPayload {
