@@ -3,12 +3,12 @@ import { AccountTypes } from '@nuclia/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, map, Subject, switchMap, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DedicatedProcessorsState } from '../../global-account.models';
 import { AccountService } from '../../account.service';
 import { SisToastService } from '@nuclia/sistema';
 import { AccountTypeDefaults } from '@flaps/core';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
+import { DedicatedProcessorsState } from '../../regional-account.models';
 
 @Component({
   templateUrl: './configuration.component.html',

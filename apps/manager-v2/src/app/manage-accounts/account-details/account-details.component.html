@@ -62,7 +62,7 @@
         <li
           *ngFor="let kb of kbList | async"
           class="child-route"
-          [routerLink]="'kb/' + kb.id"
+          [routerLink]="'zone/' + kb.zoneId + '/kb/' + kb.id"
           routerLinkActive="active">
           <pa-icon
             name="knowledge-box"

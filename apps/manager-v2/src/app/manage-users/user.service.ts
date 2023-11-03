@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthenticatedUser, User, UserSearch, UserSummary } from './user.models';
 
 const USERS_ENDPOINT = '/manage/@users';
 const USER_ENDPOINT = '/manage/@user';
 const SEARCH_USERS_ENDPOINT = '/manage/@search_users';
-const SEARCH_USERS_ACCOUNT_ENDPOINT = '/manage/@search_users_account';
+export const SEARCH_USERS_ACCOUNT_ENDPOINT = '/manage/@search_users_account';
 
 @Injectable({
   providedIn: 'root',

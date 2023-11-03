@@ -57,7 +57,7 @@ const ROUTES: Routes = [
             component: KnowledgeBoxesComponent,
           },
           {
-            path: 'kb/:kbId',
+            path: 'zone/:zoneId/kb/:kbId',
             component: KbDetailsComponent,
           },
           {

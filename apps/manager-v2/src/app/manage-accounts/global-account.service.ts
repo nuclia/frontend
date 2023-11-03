@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AccountService, AccountTypeDefaults, SDKService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import {
   AccountPatchPayload,
@@ -32,17 +32,10 @@ const KB_ENDPOINT = '@stashes';
   providedIn: 'root',
 })
 export class GlobalAccountService {
-  private _accountTypes = this.coreAccountService.getAccountTypes();
-
   constructor(
     private sdk: SDKService,
-    private coreAccountService: AccountService,
     private zoneService: ZoneService,
   ) {}
-
-  getDefaultLimits(accountType: AccountTypes): Observable<AccountTypeDefaults> {
-    return this._accountTypes.pipe(map((accountTypes) => accountTypes[accountType]));
-  }
 
   getAccounts(): Observable<AccountSummary[]> {
     return this.sdk.nuclia.rest.get<AccountSummary[]>(ACCOUNTS_ENDPOINT);
@@ -170,25 +163,42 @@ export class GlobalAccountService {
       slug: extended.slug,
       type: extended.type,
       email: extended.email,
-      zone: extended.zone,
       trialExpirationDate: extended.trial_expiration_date,
       maxKbs: extended.stashes.max_stashes,
       dedicatedProcessorsState: extended.dedicated_processors_state,
       maxDedicatedProcessors: extended.max_dedicated_processors,
       blockingState: extended.blocking_state,
       limits: extended.limits as AccountLimits,
+      users: extended.users,
     };
   }
 
-  mapKbSummaryToDetails(kb: KbSummary): KbDetails {
+  mapKbSummaryToDetails(accountId: string, kb: KbSummary): KbDetails {
     return {
       id: kb.id,
       slug: kb.slug,
       title: kb.title,
       created: kb.created,
-      contributors: kb.contributors,
-      members: kb.members,
-      owners: kb.owners,
+      contributors: kb.contributors.map((user) => ({
+        id: user.id,
+        name: user.name || '',
+        email: user.email,
+        role: 'SCONTRIBUTOR',
+      })),
+      members: kb.members.map((user) => ({
+        id: user.id,
+        name: user.name || '',
+        email: user.email,
+        role: 'SMEMBER',
+      })),
+      owners: kb.owners.map((user) => ({
+        id: user.id,
+        name: user.name || '',
+        email: user.email,
+        role: 'SOWNER',
+      })),
+      accountId: accountId,
+      zoneId: kb.zone,
     };
   }
 
@@ -197,6 +207,8 @@ export class GlobalAccountService {
       id: item.id,
       slug: item.slug,
       title: item.title,
+      accountId: item.account,
+      zoneId: item.zone,
     }));
   }
 
