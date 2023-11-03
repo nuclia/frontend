@@ -1,3 +1,10 @@
+# 1.9.0 (unreleased)
+
+### Breaking changes
+
+- All `/activity` endpoints are using regional domain now. In those endpoints, all regional account references should be done by id instead of slug.
+- `getNUAActivity` method now requires the NUA client zone slug
+
 # 1.8.0 (2023-11-10)
 
 ### Features

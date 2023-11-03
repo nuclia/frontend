@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import { catchError, shareReplay, switchMap, take } from 'rxjs/operators';
-import { EventList, ResourceProperties } from '@nuclia/core';
+import { EventList, NUAClient, ResourceProperties } from '@nuclia/core';
 
 export interface Activity {
   resourceId: Observable<string>;
@@ -20,7 +20,7 @@ export class NuaActivityService {
   private _activityLogs: BehaviorSubject<Activity[]> = new BehaviorSubject<Activity[]>([]);
   private _hasMore: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _nextPage?: number;
-  private _account?: { accountSlug: string; clientId: string };
+  private _nuaClient?: { accountId: string; clientId: string; zoneSlug: string };
 
   get activityLogs() {
     return this._activityLogs.asObservable();
@@ -32,11 +32,11 @@ export class NuaActivityService {
 
   constructor(private sdk: SDKService) {}
 
-  loadActivity(accountSlug: string, clientId: string): Observable<EventList> {
-    this._account = { accountSlug, clientId };
-    return this.sdk.nuclia.db.getNUAActivity(accountSlug, clientId).pipe(
+  loadActivity(accountId: string, client: NUAClient): Observable<EventList> {
+    this._nuaClient = { accountId: accountId, clientId: client.client_id, zoneSlug: client.zone };
+    return this.sdk.nuclia.db.getNUAActivity(accountId, client.client_id, client.zone).pipe(
       tap((data) => {
-        this._activityLogs.next(this.mapEventsToActivityLogs(data, accountSlug));
+        this._activityLogs.next(this.mapEventsToActivityLogs(data, accountId));
         this._hasMore.next(!data.pagination.last);
         this._nextPage = data.pagination.page + 1;
       }),
@@ -44,15 +44,17 @@ export class NuaActivityService {
   }
 
   loadMore() {
-    if (!this._account || !this._nextPage) {
+    if (!this._nuaClient || !this._nextPage) {
       return;
     }
-    const accountSlug = this._account.accountSlug;
-    this.sdk.nuclia.db.getNUAActivity(accountSlug, this._account.clientId, this._nextPage).subscribe((data) => {
-      this._activityLogs.next(this._activityLogs.value.concat(this.mapEventsToActivityLogs(data, accountSlug)));
-      this._hasMore.next(!data.pagination.last);
-      this._nextPage = data.pagination.page + 1;
-    });
+    const accountId = this._nuaClient.accountId;
+    this.sdk.nuclia.db
+      .getNUAActivity(accountId, this._nuaClient.clientId, this._nuaClient.zoneSlug, this._nextPage)
+      .subscribe((data) => {
+        this._activityLogs.next(this._activityLogs.value.concat(this.mapEventsToActivityLogs(data, accountId)));
+        this._hasMore.next(!data.pagination.last);
+        this._nextPage = data.pagination.page + 1;
+      });
   }
 
   private getUserName(userId: string, accountSlug: string): Observable<string> {

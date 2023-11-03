@@ -146,7 +146,7 @@ export interface IDb {
   deleteNUAClient(account: string, client_id: string): Observable<void>;
   deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
   hasNUAClient(): boolean;
-  getNUAActivity(accountSlug: string, client_id: string, pageIndex?: number): Observable<EventList>;
+  getNUAActivity(accountId: string, client_id: string, zoneSlug: string, pageIndex?: number): Observable<EventList>;
   getLearningConfigurations(): Observable<LearningConfigurations>;
   predictTokens(text: string): Observable<PredictedToken[]>;
 

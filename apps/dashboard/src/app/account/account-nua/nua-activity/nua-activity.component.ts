@@ -23,8 +23,6 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
     takeUntil(this._terminator),
   );
 
-  displayedColumns: string[] = ['file', 'timestamp', 'actor'];
-
   activityLogs: Observable<Activity[]> = this.nuaActivity.activityLogs;
   hasMore: Observable<boolean> = this.nuaActivity.hasMore;
 
@@ -41,7 +39,7 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
         filter(([, client]) => !!client),
         map(([account, client]) => ({ account, client }) as { account: Account; client: NUAClient }),
         take(1),
-        switchMap(({ account, client }) => this.nuaActivity.loadActivity(account.slug, client.client_id)),
+        switchMap(({ account, client }) => this.nuaActivity.loadActivity(account.id, client)),
       )
       .subscribe();
   }
