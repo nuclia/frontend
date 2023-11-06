@@ -10,6 +10,11 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
 
   const selectedAccount = route.children[0]?.paramMap.get('account');
 
+  if (selectedAccount) {
+    // when loading `/select/{account}` (happens when there is only 1 account and when we reload the KB selection page)
+    // set account in state and continue
+    return selectService.selectAccount(selectedAccount).pipe(map(() => true));
+  }
   return selectService.loadAccounts().pipe(
     switchMap((accounts) => {
       // No accounts
@@ -21,10 +26,6 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
         return selectService
           .selectAccount(accountSlug)
           .pipe(map((account) => router.createUrlTree([`/select/${accountSlug}`])));
-      } else if (selectedAccount) {
-        // when loading a `/select/{account}` page directly
-        // set account in state and continue
-        return selectService.selectAccount(selectedAccount).pipe(map(() => true));
       } else {
         // several accounts, we continue to account selection
         return of(true);

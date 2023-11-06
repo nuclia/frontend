@@ -30,7 +30,7 @@
   <div class="select-kb-body">
     <div
       class="select-kb-list"
-      *ngIf="(kbs | async).length > 0; else noKb">
+      *ngIf="((kbs | async)?.length || 0) > 0; else noKb">
       <ng-container *ngFor="let kb of kbs | async">
         <a
           *ngIf="kb.slug"
