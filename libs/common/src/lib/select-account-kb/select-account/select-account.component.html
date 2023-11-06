@@ -1,6 +1,6 @@
 <div
   class="select"
-  *ngIf="accounts && kbs">
+  *ngIf="(accounts | async) !== null">
   <div class="select-container">
     <div class="logo">
       <img
@@ -16,10 +16,11 @@
         <div class="select-account-list">
           <div
             class="select-account-item"
-            *ngFor="let account of accounts">
+            *ngFor="let account of accounts | async">
             <a
               class="account"
-              [routerLink]="getAccountUrl(account.slug)">
+              [routerLink]="'/select/' + account.slug"
+              (click)="selectAccount(account)">
               {{ account.title }}
               <pa-icon
                 class="account-arrow"

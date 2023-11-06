@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router, Scroll } from '@angular/router';
-import { filter, Subject } from 'rxjs';
-import { StaticEnvironmentConfiguration, standaloneSimpleAccount } from '@flaps/core';
-import { AccountsKbs, SelectAccountKbService } from '../select-account-kb.service';
+import { NavigationStart, Router, Scroll } from '@angular/router';
+import { filter, Observable, of, Subject } from 'rxjs';
+import { standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
+import { SelectAccountKbService } from '../select-account-kb.service';
 import { selectAnimations } from '../utils';
 import { Account } from '@nuclia/core';
 
@@ -14,8 +14,7 @@ import { Account } from '@nuclia/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectAccountComponent implements OnInit, OnDestroy {
-  accounts: Account[] | null = null;
-  kbs: AccountsKbs | null = null;
+  accounts: Observable<Account[] | null> = this.selectService.accounts;
   selectKb: boolean = false;
   unsubscribeAll = new Subject<void>();
 
@@ -23,19 +22,12 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
 
   constructor(
     private selectService: SelectAccountKbService,
-    private route: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
   ngOnInit() {
-    this.accounts = this.selectService.getAccounts();
-    this.kbs = this.selectService.getKbs();
-
-    if (this.accounts?.length === 1) {
-      this.router.navigate([this.getAccountUrl(this.accounts[0].slug)]);
-    }
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart || event instanceof Scroll))
       .subscribe((event) => {
@@ -50,13 +42,8 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
       });
 
     if (this.standalone) {
-      this.accounts = [standaloneSimpleAccount];
-      this.kbs = { standalone: [] };
+      this.accounts = of([standaloneSimpleAccount]);
     }
-  }
-
-  getAccountUrl(account: string) {
-    return `/select/${account}`;
   }
 
   logout() {
@@ -68,5 +55,9 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
       this.unsubscribeAll.next();
       this.unsubscribeAll.complete();
     }
+  }
+
+  selectAccount(account: Account) {
+    this.selectService.selectAccount(account.slug).subscribe();
   }
 }
