@@ -43,7 +43,7 @@ export class SelectAccountKbService {
           ),
           catchError((error) => {
             this.toast.error(
-              'We cannot load your knowledge box, please check NucliaDB docker image is running and try again.',
+              'We cannot load your knowledge box, please check NucliaDB server is running and try again.',
             );
             return throwError(() => error);
           }),
