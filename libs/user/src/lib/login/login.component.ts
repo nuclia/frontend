@@ -38,6 +38,7 @@ export class LoginComponent {
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
+  isLoggingIn = false;
 
   constructor(
     private oAuthService: OAuthService,
@@ -72,6 +73,7 @@ export class LoginComponent {
   login() {
     if (!this.loginForm.valid) return;
     const recaptchaKey = this.config.getRecaptchaKey();
+    this.isLoggingIn = true;
     if (recaptchaKey) {
       this.reCaptchaV3Service.execute(recaptchaKey, 'login', (token) => {
         this.doLogin(token);
@@ -92,8 +94,13 @@ export class LoginComponent {
   firstPartyLogin(recaptchaToken: string) {
     const formValue = this.loginForm.getRawValue();
     this.sdk.nuclia.auth.login(formValue.email, formValue.password, recaptchaToken).subscribe({
-      next: () => this.router.navigate(['/']),
-      error: () => (this.formError = true),
+      next: () => {
+        this.router.navigate(['/']);
+      },
+      error: () => {
+        this.formError = true;
+        this.isLoggingIn = false;
+      },
     });
   }
 

@@ -63,7 +63,7 @@
           <pa-button
             type="submit"
             kind="primary"
-            [disabled]="loginForm.invalid">
+            [disabled]="loginForm.invalid || isLoggingIn">
             {{ 'login.login' | translate }}
           </pa-button>
         </div>
