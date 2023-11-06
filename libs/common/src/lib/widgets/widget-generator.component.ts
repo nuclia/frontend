@@ -10,10 +10,12 @@ import { WidgetHintDialogComponent } from './hint/widget-hint.component';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { NavigationService } from '@flaps/common';
 
+type FilterType = 'labels' | 'entities' | 'created';
+
 const DEFAULT_WIDGET_CONFIG: {
   features: string[];
   placeholder?: string;
-  filters?: { labels: boolean; entities: boolean };
+  filters?: { [key in FilterType]: boolean };
 } = {
   features: [],
 };
@@ -39,7 +41,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     },
   };
   placeholder?: string;
-  filters = { labels: true, entities: true };
+  filters: { [key in FilterType]: boolean } = { labels: true, entities: true, created: false };
   snippet = '';
   snippetPreview: SafeHtml = '';
   unsubscribeAll = new Subject<void>();
@@ -124,7 +126,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         switchMap(([kb, isEntityFiltersEnabled]) => {
           const config = this.widgetConfigurations[kb.id] || DEFAULT_WIDGET_CONFIG;
           this.placeholder = config.placeholder;
-          this.filters = { labels: true, entities: !!isEntityFiltersEnabled };
+          this.filters = { labels: true, entities: !!isEntityFiltersEnabled, created: false };
           if (config.filters) {
             this.filters = config.filters;
           }

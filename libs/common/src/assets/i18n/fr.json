@@ -776,6 +776,7 @@
 	"stash.widgets.autofilter.help": "Détecte les entités mentionnées dans la requête de l'utilisateur et les transforme automatiquement en filtres.",
 	"stash.widgets.autofilter.label": "Filtrage automatique",
 	"stash.widgets.configuration": "Configuration du widget",
+	"stash.widgets.created": "Filtrer par date de création",
 	"stash.widgets.darkMode.help": "Activer le thème sombre sur le widget",
 	"stash.widgets.darkMode.label": "Mode sombre",
 	"stash.widgets.displayMetadata.help": "Afficher quelques métadonnées sur les résultats de recherche",

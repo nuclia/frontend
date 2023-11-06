@@ -775,6 +775,7 @@
 	"stash.widgets.autofilter.help": "Detecta les entitats mencionades a la consulta de l'usuari i les converteix automàticament en filtres",
 	"stash.widgets.autofilter.label": "Filtrat automàtic",
 	"stash.widgets.configuration": "Configuració del widget",
+	"stash.widgets.created": "Filtrar per data de creació",
 	"stash.widgets.darkMode.help": "Activa el tema fosc al giny",
 	"stash.widgets.darkMode.label": "Mode fosc",
 	"stash.widgets.displayMetadata.help": "Mostra algunes metadades als resultats de la cerca",
