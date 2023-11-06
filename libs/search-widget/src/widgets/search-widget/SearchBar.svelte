@@ -10,7 +10,7 @@
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
   import { get_current_component } from 'svelte/internal';
-  import { widgetFeatures, widgetPlaceholder } from '../../core/stores/widget.store';
+  import { widgetFeatures, widgetFilters, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
     activateTypeAheadSuggestions,
@@ -25,6 +25,7 @@
   import { searchQuery, triggerSearch } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
   import { injectCustomCss } from '../../core/utils';
+  import type { FilterType } from '../../core';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -46,7 +47,7 @@
   $: darkMode = mode === 'dark';
 
   let _features: WidgetFeatures = {};
-  let _filters: { [key: 'labels' | 'entities']: boolean } = {};
+  let _filters: { [key: FilterType]: boolean } = {};
 
   export function search(query: string) {
     searchQuery.set(query);
@@ -110,6 +111,7 @@
 
     // Setup widget in the store
     widgetFeatures.set(_features);
+    widgetFilters.set(_filters);
     if (placeholder) {
       widgetPlaceholder.set(placeholder);
     }

@@ -53,3 +53,5 @@ export interface EntityGroup {
   custom?: boolean;
   entities: string[];
 }
+
+export type FilterType = 'labels' | 'entities' | 'created';

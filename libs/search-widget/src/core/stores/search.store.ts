@@ -269,12 +269,40 @@ export const autofilerDisabled = searchState.writer<boolean | undefined>(
   }),
 );
 
+export const creationStart = searchState.writer<string | undefined>(
+  (state) =>
+    state.options.range_creation_start && new Date(state.options.range_creation_start).toISOString().slice(0, 10),
+  (state, date) => ({
+    ...state,
+    options: {
+      ...state.options,
+      range_creation_start: date && new Date(date).toISOString(),
+    },
+  }),
+);
+
+export const creationEnd = searchState.writer<string | undefined>(
+  (state) => state.options.range_creation_end && new Date(state.options.range_creation_end).toISOString().slice(0, 10),
+  (state, date) => ({
+    ...state,
+    options: {
+      ...state.options,
+      range_creation_end: date && new Date(date).toISOString(),
+    },
+  }),
+);
+
+export const rangeCreation = combineLatest([creationStart, creationEnd]).pipe(map(([start, end]) => ({ start, end })));
+export const hasRangeCreation = combineLatest([creationStart, creationEnd]).pipe(map(([start, end]) => start || end));
+
 export const isEmptySearchQuery = searchState.reader<boolean>(
   (state) =>
     !state.query &&
     (!state.filters.labels || state.filters.labels.length === 0) &&
     (!state.filters.labelSets || state.filters.labelSets.length === 0) &&
-    (!state.filters.entities || state.filters.entities.length === 0),
+    (!state.filters.entities || state.filters.entities.length === 0) &&
+    !state.options.range_creation_start &&
+    !state.options.range_creation_end,
 );
 
 export const hasMore = searchState.reader<boolean>((state) => state.results.next_page);
@@ -378,12 +406,19 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
-export const isTitleOnly = combineLatest([searchQuery, labelFilters, labelSetFilters, entityFilters]).pipe(
+export const isTitleOnly = combineLatest([
+  searchQuery,
+  labelFilters,
+  labelSetFilters,
+  entityFilters,
+  hasRangeCreation,
+]).pipe(
   map(
-    ([query, labels, labelSets, entities]) =>
+    ([query, labels, labelSets, entities, hasRangeCreation]) =>
       !query &&
       ((labels?.length > 0 && labels.every((label) => label.kind === LabelSetKind.RESOURCES)) ||
-        (labelSets?.length > 0 && labelSets.every((labelSet) => labelSet.kind === LabelSetKind.RESOURCES))) &&
+        (labelSets?.length > 0 && labelSets.every((labelSet) => labelSet.kind === LabelSetKind.RESOURCES)) ||
+        hasRangeCreation) &&
       (entities || []).length === 0,
   ),
 );

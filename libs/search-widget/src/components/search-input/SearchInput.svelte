@@ -9,6 +9,8 @@
     addEntityFilter,
     addLabelFilter,
     autofilters,
+    creationEnd,
+    creationStart,
     entities,
     entitiesDefaultColor,
     entityFilters,
@@ -20,6 +22,7 @@
     labelFilters,
     labelSetFilters,
     orderedLabelSetList,
+    rangeCreation,
     removeAutofilter,
     removeEntityFilter,
     removeLabelFilter,
@@ -69,13 +72,18 @@
 
   const filters: Observable<
     {
-      type: 'label' | 'labelset' | 'entity';
+      type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end';
       key: string;
-      value: LabelFilter | EntityFilter;
+      value: LabelFilter | EntityFilter | string;
       autofilter?: boolean;
     }[]
-  > = combineLatest([labelFilters, labelSetFilters, entityFilters, autofilters]).pipe(
-    map(([labels, labelSets, entities, autofilters]) => [
+  > = combineLatest([rangeCreation, labelFilters, labelSetFilters, entityFilters, autofilters]).pipe(
+    map(([rangeCreation, labels, labelSets, entities, autofilters]) => [
+      ...Object.entries(rangeCreation).filter(([,value]) => !!value).map(([key, value]) => ({
+        type: `creation-${key}`,
+        key,
+        value: new Intl.DateTimeFormat(navigator.language, { timeZone: 'UTC' }).format(new Date(value)),
+      })),
       ...labels.map((value) => ({
         type: 'label',
         key: value.classification.label + value.classification.labelset,
@@ -261,6 +269,22 @@
   {#if $filters.length > 0}
     <div class="filters-container">
       {#each $filters.slice(0, filterDisplayLimit) as filter (filter.key)}
+        {#if filter.type === 'creation-start'}
+          <Chip
+            removable
+            color={entitiesDefaultColor}
+            on:remove={() => creationStart.set(undefined)}>
+            {$_('input.created_from')} {filter.value}
+          </Chip>
+        {/if}
+        {#if filter.type === 'creation-end'}
+          <Chip
+            removable
+            color={entitiesDefaultColor}
+            on:remove={() => creationEnd.set(undefined)}>
+            {$_('input.created_to')} {filter.value}
+          </Chip>
+        {/if}
         {#if filter.type === 'label'}
           <Label
             label={filter.value}

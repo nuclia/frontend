@@ -1,7 +1,7 @@
 .sw-labels-expander {
   --header-button-width: var(--rhythm-4);
   --header-gap: var(--rhythm-1);
-  
+
   max-height: var(--rhythm-40);
   overflow-y: auto;
   .header {
@@ -22,16 +22,29 @@
         transform: rotate(180deg);
       }
     }
-    .header-checkbox {
+    .header-content {
       max-width: calc(100% - var(--header-button-width) - var(--header-gap));
     }
   }
 
-  .labels {
+  .expander-content {
     display: flex;
     flex-direction: column;
     font-size: var(--font-size-small);
     gap: var(--rhythm-1);
+    padding: var(--rhythm-1_5);
+  }
+
+  .labels {
     padding: var(--rhythm-1) var(--rhythm-2) var(--rhythm-1) calc(var(--rhythm-5) - var(--rhythm-0_5));
+  }
+
+  input[type="date"] {
+    background: none;
+    border: 1px solid var(--color-neutral-light);
+    box-sizing: border-box;
+    font-family: inherit;
+    padding: var(--rhythm-1);
+    width: 100%;
   }
 }

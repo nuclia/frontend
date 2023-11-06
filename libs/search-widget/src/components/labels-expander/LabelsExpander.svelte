@@ -1,8 +1,19 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
-  import { map, Observable, take } from 'rxjs';
+  import { combineLatest, map, Observable, take } from 'rxjs';
   import type { LabelSetWithId } from '../../core';
-  import { addLabelSetFilter, labelFilters, labelSetFilters, removeLabelFilter, removeLabelSetFilter } from '../../core';
+  import {
+    _,
+    addLabelSetFilter,
+    labelFilters,
+    labelSetFilters,
+    creationEnd,
+    creationStart,
+    filterByCreatedDate,
+    hasRangeCreation,
+    removeLabelFilter,
+    removeLabelSetFilter,
+  } from '../../core';
   import IconButton from '../../common/button/IconButton.svelte';
   import Checkbox from '../../common/checkbox/Checkbox.svelte';
 
@@ -10,7 +21,7 @@
   export let selectedLabels: string[] = [];
 
   const dispatch = createEventDispatcher();
-  let expandedLabelSets: { [id: string]: boolean } = {};
+  let expanders: { [id: string]: boolean } = {};
   const selectedLabelSets: Observable<string[]> = labelSetFilters.pipe(
     map((filters) => filters.map((filter) => filter.id)),
   );
@@ -25,27 +36,67 @@
     }
   }
 
-  function toggleLabelSet(labelSetId) {
-    expandedLabelSets[labelSetId] = !expandedLabelSets[labelSetId];
+  function toggleExpander(id) {
+    expanders[id] = !expanders[id];
   }
 
   onMount(() => {
-    labelFilters.pipe(take(1)).subscribe((filters) => {
-      expandedLabelSets = filters.map((filter) => filter.classification.labelset).reduce(
+    combineLatest([labelFilters, hasRangeCreation]).pipe(take(1)).subscribe(([filters, hasRangeCreation]) => {
+      expanders = filters.map((filter) => filter.classification.labelset).reduce(
         (acc, curr) => ({ ...acc, [curr]: true }),
         {},
       );
+      expanders['created'] = hasRangeCreation;
     });
   })
 
 </script>
 
 <div class="sw-labels-expander">
+  {#if $filterByCreatedDate}
+    <div
+      class="header"
+      class:expended={expanders['created']}>
+      <div class="header-content">{$_('input.date_created')}</div>
+      <span class="header-button">
+          <IconButton
+            on:click={() => toggleExpander('created')}
+            icon="chevron-down"
+            size="small"
+            aspect="basic" />
+        </span>
+    </div>
+    {#if expanders['created']}
+      <div class="expander-content">
+        <div>
+          <label for="range-creation-start">{$_('input.from')}</label>
+          <div>
+            <input
+              id="range-creation-start"
+              type="date"
+              value={$creationStart}
+              on:change={(e) => creationStart.set(e.target.value || undefined)} />
+          </div>
+        </div>
+        <div>
+          <label for="range-creation-end">{$_('input.to')}</label>
+          <div>
+            <input
+              id="range-creation-end"
+              type="date"
+              value={$creationEnd}
+              on:change={(e) => creationEnd.set(e.target.value || undefined)}
+            />
+          </div>
+        </div>
+      </div>
+    {/if}
+  {/if}
   {#each labelSets as labelSet}
     <div
       class="header"
-      class:expended={expandedLabelSets[labelSet.id]}>
-      <div class="header-checkbox">
+      class:expended={expanders[labelSet.id]}>
+      <div class="header-content">
         <Checkbox
           checked={$selectedLabelSets.includes(labelSet.id)}
           on:change={(event) => selectLabelSet(labelSet, event.detail)}>
@@ -54,14 +105,14 @@
       </div>
       <span class="header-button">
         <IconButton
-          on:click={() => toggleLabelSet(labelSet.id)}
+          on:click={() => toggleExpander(labelSet.id)}
           icon="chevron-down"
           size="small"
           aspect="basic" />
       </span>
     </div>
-    {#if expandedLabelSets[labelSet.id]}
-      <div class="labels">
+    {#if expanders[labelSet.id]}
+      <div class="expander-content labels">
         {#each labelSet.labels as label}
           <div>
             <Checkbox
