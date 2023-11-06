@@ -17,12 +17,15 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
     ? selectService.loadKbs(accountSlug).pipe(
         switchMap((kbs) => {
           if (kbs.length === 0) {
-            return sdk.currentAccount.pipe(
-              map((account) =>
-                account.can_manage_account ? router.createUrlTree([navigation.getAccountUrl(accountSlug)]) : true,
-              ),
-            );
-          } else if (kbs.length === 1) {
+            return selectService.standalone
+              ? of(true)
+              : sdk.currentAccount.pipe(
+                  map((account) =>
+                    account.can_manage_account ? router.createUrlTree([navigation.getAccountUrl(accountSlug)]) : true,
+                  ),
+                );
+          } else if (kbs.length === 1 && !selectService.standalone) {
+            // if there's only one KB, and we're not in NucliaDB admin app, then we automatically select the KB
             return of(router.createUrlTree([navigation.getKbUrl(accountSlug, kbs[0].slug || '')]));
           } else {
             return of(true);

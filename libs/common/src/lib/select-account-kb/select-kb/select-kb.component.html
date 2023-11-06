@@ -3,7 +3,7 @@
   *ngIf="(kbs | async) !== null">
   <div class="select-kb-header">
     <nsi-back-button
-      *ngIf="!standalone"
+      *ngIf="!standalone && (hasSeveralAccounts | async)"
       class="select-kb-back"
       link="/select">
       {{ 'generic.back' | translate }}

@@ -12,6 +12,7 @@ import {
   SearchComponent,
   SelectAccountComponent,
   SelectKbComponent,
+  selectKbGuard,
   UploadDataComponent,
 } from '@flaps/common';
 
@@ -95,6 +96,7 @@ export const routes: Routes = [
       {
         path: ':account',
         component: SelectKbComponent,
+        canActivate: [selectKbGuard],
       },
     ],
   },

@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { SDKService } from '@flaps/core';
-import { Account, IKnowledgeBoxItem } from '@nuclia/core';
+import { Inject, Injectable } from '@angular/core';
+import { BehaviorSubject, catchError, Observable, of, tap, throwError } from 'rxjs';
+import { SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
+import { Account, IKnowledgeBoxItem, KBRoles } from '@nuclia/core';
+import { map } from 'rxjs/operators';
+import { SisToastService } from '@nuclia/sistema';
 
 @Injectable({
   providedIn: 'root',
@@ -12,18 +14,54 @@ export class SelectAccountKbService {
 
   readonly accounts = this.accountsSubject.asObservable();
   readonly kbs = this.kbsSubject.asObservable();
+  readonly standalone = this.environment.standalone;
 
-  constructor(private sdk: SDKService) {}
+  constructor(
+    private sdk: SDKService,
+    private toast: SisToastService,
+    @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
+  ) {}
 
   loadAccounts(): Observable<Account[]> {
-    return this.sdk.nuclia.db.getAccounts().pipe(tap((accounts) => this.accountsSubject.next(accounts)));
+    const loadAccountRequest: Observable<Account[]> = this.standalone
+      ? of([standaloneSimpleAccount])
+      : this.sdk.nuclia.db.getAccounts();
+    return loadAccountRequest.pipe(tap((accounts) => this.accountsSubject.next(accounts)));
   }
 
   loadKbs(accountSlug: string): Observable<IKnowledgeBoxItem[]> {
-    return this.sdk.nuclia.db.getKnowledgeBoxes(accountSlug).pipe(tap((kbs) => this.kbsSubject.next(kbs)));
+    const loadKbsRequest: Observable<IKnowledgeBoxItem[]> = this.standalone
+      ? this.sdk.nuclia.db.getStandaloneKbs().pipe(
+          map((kbs) =>
+            kbs.map((kb) => ({
+              id: kb.uuid,
+              slug: kb.uuid,
+              zone: 'local',
+              title: kb.slug,
+              role_on_kb: 'SOWNER' as KBRoles,
+            })),
+          ),
+          catchError((error) => {
+            this.toast.error(
+              'We cannot load your knowledge box, please check NucliaDB docker image is running and try again.',
+            );
+            return throwError(() => error);
+          }),
+        )
+      : this.sdk.nuclia.db.getKnowledgeBoxes(accountSlug);
+
+    return loadKbsRequest.pipe(
+      tap((kbs) => {
+        this.kbsSubject.next(kbs);
+      }),
+    );
   }
 
   selectAccount(accountSlug: string) {
     return this.sdk.setCurrentAccount(accountSlug);
+  }
+
+  removeKb(kbSlug: string) {
+    this.kbsSubject.next((this.kbsSubject.value || []).filter((kb) => kb.slug !== kbSlug));
   }
 }

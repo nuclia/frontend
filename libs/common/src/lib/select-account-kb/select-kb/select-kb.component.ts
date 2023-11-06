@@ -1,23 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import {
-  BehaviorSubject,
-  catchError,
-  filter,
-  Observable,
-  of,
-  shareReplay,
-  Subject,
-  switchMap,
-  take,
-  tap,
-  throwError,
-} from 'rxjs';
+import { filter, Observable, of, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration, STFUtils } from '@flaps/core';
+import { SDKService, STFUtils } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
-import { IKnowledgeBoxItem, KBRoles } from '@nuclia/core';
+import { IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '../../validators';
 import { NavigationService } from '../../services';
@@ -31,18 +19,14 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 })
 export class SelectKbComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
-  standalone = this.environment.standalone;
+  standalone = this.selectService.standalone;
 
-  private kbs$ = new BehaviorSubject<IKnowledgeBoxItem[] | null>(null);
-  kbs: Observable<IKnowledgeBoxItem[] | null> = this.kbs$.asObservable();
-
-  account = this.route.paramMap.pipe(
-    filter((params) => params.get('account') !== null),
-    switchMap((params) =>
-      this.standalone ? of(standaloneSimpleAccount) : this.sdk.nuclia.db.getAccount(params.get('account')!),
-    ),
-    shareReplay(),
+  kbs: Observable<IKnowledgeBoxItem[] | null> = this.selectService.kbs.pipe(shareReplay());
+  hasSeveralAccounts: Observable<boolean> = this.selectService.accounts.pipe(
+    map((accounts) => !!accounts && accounts.length > 1),
   );
+
+  account = this.sdk.currentAccount;
   canManage = this.account.pipe(map((account) => account.can_manage_account));
   canAddKb = this.standalone
     ? of(true)
@@ -61,35 +45,12 @@ export class SelectKbComponent implements OnDestroy {
   constructor(
     private navigation: NavigationService,
     private selectService: SelectAccountKbService,
-    private route: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
     private toast: SisToastService,
     private modalService: SisModalService,
-    @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
-  ) {
-    const loadKbs: Observable<IKnowledgeBoxItem[] | null> = this.standalone
-      ? this.sdk.nuclia.db.getStandaloneKbs().pipe(
-          map((kbs) =>
-            kbs.map((kb) => ({
-              id: kb.uuid,
-              slug: kb.uuid,
-              zone: 'local',
-              title: kb.slug,
-              role_on_kb: 'SOWNER' as KBRoles,
-            })),
-          ),
-          catchError((error) => {
-            this.toast.error(
-              'We cannot load your knowledge box, please check NucliaDB docker image is running and try again.',
-            );
-            return throwError(error);
-          }),
-        )
-      : this.selectService.kbs;
-    loadKbs.subscribe((kbs) => this.kbs$.next(kbs));
-  }
+  ) {}
 
   toggleForm() {
     this.addKb = !this.addKb;
@@ -161,7 +122,7 @@ export class SelectKbComponent implements OnDestroy {
         switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, slug)),
         switchMap((kb) => kb.delete()),
       )
-      .subscribe(() => this.kbs$.next((this.kbs$.value || []).filter((kb) => kb.slug !== slug)));
+      .subscribe(() => this.selectService.removeKb(slug));
   }
 
   ngOnDestroy(): void {

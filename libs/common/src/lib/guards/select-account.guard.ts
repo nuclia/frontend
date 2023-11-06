@@ -13,7 +13,18 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
   if (selectedAccount) {
     // when loading `/select/{account}` (happens when there is only 1 account and when we reload the KB selection page)
     // set account in state and continue
-    return selectService.selectAccount(selectedAccount).pipe(map(() => true));
+    return selectService.accounts.pipe(
+      switchMap((accounts) => {
+        const selectAccount$ = selectService.selectAccount(selectedAccount);
+        if (!accounts) {
+          // on reload, we need to load accounts list
+          return selectService.loadAccounts().pipe(switchMap(() => selectAccount$));
+        } else {
+          return selectAccount$;
+        }
+      }),
+      map(() => true),
+    );
   }
   return selectService.loadAccounts().pipe(
     switchMap((accounts) => {
