@@ -1,5 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Account, Counters, IKnowledgeBoxItem, KnowledgeBox, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import {
+  Account,
+  Counters,
+  IKnowledgeBoxItem,
+  KBRoles,
+  KnowledgeBox,
+  Nuclia,
+  WritableKnowledgeBox,
+} from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -97,9 +105,10 @@ export class SDKService {
     if (currentAccount && currentAccount.slug === accountSlug) {
       return of(currentAccount);
     } else {
-      return (
-        this.config.staticConf.standalone ? of(standaloneSimpleAccount) : this.nuclia.db.getAccount(accountSlug)
-      ).pipe(tap((account) => (this.account = account)));
+      const getAccount = this.config.staticConf.standalone
+        ? of(standaloneSimpleAccount)
+        : this.nuclia.db.getAccount(accountSlug);
+      return getAccount.pipe(tap((account) => (this.account = account)));
     }
   }
 
@@ -130,18 +139,24 @@ export class SDKService {
   }
 
   private _refreshKbList(refreshCurrentKb = false) {
-    const kbList = this.nuclia.options.standalone
-      ? this.nuclia.db
-          .getStandaloneKbs()
-          .pipe(
-            map((kbs) => kbs.map((kb) => ({ ...kb, id: kb.uuid, title: kb.slug, zone: 'local' }) as IKnowledgeBoxItem)),
-          )
+    const kbList: Observable<IKnowledgeBoxItem[]> = this.nuclia.options.standalone
+      ? this.nuclia.db.getStandaloneKbs().pipe(
+          map((kbs) =>
+            kbs.map((kb) => ({
+              id: kb.uuid,
+              slug: kb.uuid,
+              zone: 'local',
+              title: kb.slug,
+              role_on_kb: 'SOWNER' as KBRoles,
+            })),
+          ),
+        )
       : this.currentAccount.pipe(
           take(1),
           switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug)),
         );
 
-    kbList.subscribe((list) => this._kbList.next(list));
+    kbList.subscribe((list) => this._kbList.next(list.sort((a, b) => (a.title || '').localeCompare(b.title || ''))));
 
     if (refreshCurrentKb) {
       forkJoin([this.currentAccount.pipe(take(1)), this.currentKb.pipe(take(1))])

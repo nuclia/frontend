@@ -21,7 +21,7 @@ export class SelectKbComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
   standalone = this.selectService.standalone;
 
-  kbs: Observable<IKnowledgeBoxItem[] | null> = this.selectService.kbs.pipe(shareReplay());
+  kbs: Observable<IKnowledgeBoxItem[] | null> = this.sdk.kbList.pipe(shareReplay());
   hasSeveralAccounts: Observable<boolean> = this.selectService.accounts.pipe(
     map((accounts) => !!accounts && accounts.length > 1),
   );
@@ -78,6 +78,7 @@ export class SelectKbComponent implements OnDestroy {
           };
           return this.sdk.nuclia.db.createKnowledgeBox(account.slug, kbData).pipe(
             tap((kb) => {
+              this.sdk.refreshKbList();
               this.router.navigate([this.navigation.getKbUrl(account.slug, this.standalone ? kb.id : kbSlug)]);
             }),
           );
@@ -122,7 +123,7 @@ export class SelectKbComponent implements OnDestroy {
         switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, slug)),
         switchMap((kb) => kb.delete()),
       )
-      .subscribe(() => this.selectService.removeKb(slug));
+      .subscribe(() => this.sdk.refreshKbList());
   }
 
   ngOnDestroy(): void {

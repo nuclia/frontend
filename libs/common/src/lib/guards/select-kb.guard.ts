@@ -13,8 +13,12 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
 
   const accountSlug = route.paramMap.get('account');
 
+  if (sdk.nuclia.options.standalone) {
+    selectService.selectAccount('local').subscribe();
+  }
+
   return accountSlug
-    ? selectService.loadKbs(accountSlug).pipe(
+    ? sdk.kbList.pipe(
         switchMap((kbs) => {
           if (kbs.length === 0) {
             return selectService.standalone
