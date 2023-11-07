@@ -25,8 +25,8 @@ export const suggestEntities: Observable<boolean> = widgetFeatures.pipe(map((fea
 export const displayMetadata: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.displayMetadata));
 export const hideThumbnails: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideThumbnails));
 export const hideLogo: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideLogo));
-export const filterByLabelFamily: Observable<boolean> = widgetFeatures.pipe(
-  map((features) => !!features?.filterByLabelFamily),
+export const filterByLabelFamilies: Observable<boolean> = widgetFilters.pipe(
+  map((filters) => !!filters?.labelFamilies),
 );
 export const filterByCreatedDate: Observable<boolean> = widgetFilters.pipe(map((filters) => !!filters.created));
 export const onlyAnswers: Observable<boolean> = combineLatest([

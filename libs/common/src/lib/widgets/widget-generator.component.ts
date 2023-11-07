@@ -10,7 +10,7 @@ import { WidgetHintDialogComponent } from './hint/widget-hint.component';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { NavigationService } from '@flaps/common';
 
-type FilterType = 'labels' | 'entities' | 'created';
+type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
 
 const DEFAULT_WIDGET_CONFIG: {
   features: string[];
@@ -41,7 +41,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     },
   };
   placeholder?: string;
-  filters: { [key in FilterType]: boolean } = { labels: true, entities: true, created: false };
+  filters: { [key in FilterType]: boolean } = { labels: true, entities: true, created: false, labelFamilies: false };
   snippet = '';
   snippetPreview: SafeHtml = '';
   unsubscribeAll = new Subject<void>();
@@ -126,7 +126,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         switchMap(([kb, isEntityFiltersEnabled]) => {
           const config = this.widgetConfigurations[kb.id] || DEFAULT_WIDGET_CONFIG;
           this.placeholder = config.placeholder;
-          this.filters = { labels: true, entities: !!isEntityFiltersEnabled, created: false };
+          this.filters.entities = !!isEntityFiltersEnabled;
           if (config.filters) {
             this.filters = config.filters;
           }
@@ -152,7 +152,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               noBM25forChat: [config.features.includes('noBM25forChat')],
               hideLogo: [config.features.includes('hideLogo')],
               knowledgeGraph: [config.features.includes('knowledgeGraph')],
-              filterByLabelFamily: [config.features.includes('filterByLabelFamily')],
             }),
           });
           setTimeout(() => this.generateSnippet(), 100);

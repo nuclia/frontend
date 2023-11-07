@@ -12,7 +12,6 @@
     entities,
     entitiesDefaultColor,
     entityFilters,
-    filterByLabelFamily,
     getCDN,
     hasFilterButton,
     hasSuggestions,

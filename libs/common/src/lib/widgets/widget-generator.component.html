@@ -82,6 +82,12 @@
               {{ 'stash.widgets.labels' | translate }}
             </pa-checkbox>
             <pa-checkbox
+              [(value)]="filters.labelFamilies"
+              (valueChange)="onFiltersChange()"
+              [disabled]="filters.labelFamilies && hasOneFilter">
+              {{ 'stash.widgets.labelFamilies' | translate }}
+            </pa-checkbox>
+            <pa-checkbox
               [(value)]="filters.created"
               (valueChange)="onFiltersChange()"
               [disabled]="filters.created && hasOneFilter">
@@ -189,12 +195,6 @@
             help="stash.widgets.hideLogo.help"
             formControlName="hideLogo">
             {{ 'stash.widgets.hideLogo.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.filterByLabelFamily.help"
-            formControlName="filterByLabelFamily">
-            {{ 'stash.widgets.filterByLabelFamily.label' | translate }}
           </pa-toggle>
         </div>
 

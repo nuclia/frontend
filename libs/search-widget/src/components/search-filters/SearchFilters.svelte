@@ -11,7 +11,7 @@
     creationEnd,
     creationStart,
     filterByCreatedDate,
-    filterByLabelFamily,
+    filterByLabelFamilies,
     hasRangeCreation,
     orderedLabelSetList,
     removeLabelFilter,
@@ -27,7 +27,7 @@
   const selectedLabels: Observable<string[]> = labelFilters.pipe(
     map((filters) => filters.map((filter) => filter.classification.label))
   );
-  const expanders: { [id: string]: boolean } = {};
+  let expanders: { [id: string]: boolean } = {};
 
   function selectLabelSet(labelSet, selected)  {
     if (selected) {
@@ -111,7 +111,7 @@
       class="header"
       class:expended={expanders[labelSet.id]}>
       <div class="header-content">
-        {#if $filterByLabelFamily}
+        {#if $filterByLabelFamilies}
         <Checkbox
           checked={$selectedLabelSets.includes(labelSet.id)}
           on:change={(event) => selectLabelSet(labelSet, event.detail)}>

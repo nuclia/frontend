@@ -54,4 +54,4 @@ export interface EntityGroup {
   entities: string[];
 }
 
-export type FilterType = 'labels' | 'entities' | 'created';
+export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
