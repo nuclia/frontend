@@ -101,7 +101,7 @@ export class SelectKbComponent implements OnDestroy {
   goToKb(kb: IKnowledgeBoxItem) {
     if (kb.slug && kb.role_on_kb) {
       const kbSlug = kb.slug;
-      this.account.subscribe((account) => {
+      this.account.pipe(take(1)).subscribe((account) => {
         this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]);
       });
     }
