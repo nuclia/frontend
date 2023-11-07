@@ -3,7 +3,7 @@ import { BehaviorSubject, combineLatest, distinctUntilKeyChanged, forkJoin, map,
 import { tap } from 'rxjs/operators';
 import { TrainingType } from '@nuclia/core';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
-import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackingService } from '@flaps/core';
+import { BackendConfigurationService, FeatureFlagService, SDKService } from '@flaps/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceViewerService } from '../resources';
@@ -85,7 +85,6 @@ export class SearchComponent implements OnInit, OnDestroy {
     private backendConfig: BackendConfigurationService,
     private translation: TranslateService,
     private viewerService: ResourceViewerService,
-    private tracking: STFTrackingService,
     private featureFlag: FeatureFlagService,
     private standaloneService: StandaloneService,
   ) {}

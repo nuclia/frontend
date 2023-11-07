@@ -37,6 +37,7 @@ describe('KnowledgeBoxTrainingComponent', () => {
         {
           provide: SDKService,
           useValue: {
+            currentAccount: of({ type: 'stash-enterprise' }),
             currentKb: of({ getStatus: () => TrainingStatus.not_running }),
             counters: of({ resources: 1 }),
           },

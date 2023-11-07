@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SearchComponent } from './search.component';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
+import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackingService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { PaTogglesModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
@@ -34,6 +34,7 @@ describe('SearchComponent', () => {
         }),
         MockProvider(BackendConfigurationService),
         MockProvider(TranslateService),
+        MockProvider(FeatureFlagService, { isFeatureEnabled: jest.fn(() => of(true)) }),
         MockProvider(ResourceViewerService),
         {
           provide: STFTrackingService,

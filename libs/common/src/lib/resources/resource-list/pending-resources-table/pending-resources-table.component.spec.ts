@@ -4,7 +4,7 @@ import { PendingResourcesTableComponent } from './pending-resources-table.compon
 import { MockModule, MockProvider } from 'ng-mocks';
 import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
-import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   PaButtonModule,
@@ -34,6 +34,7 @@ describe('PendingResourcesTableComponent', () => {
       ],
       providers: [
         MockProvider(SDKService, {
+          currentAccount: of({ id: '123' } as Account),
           currentKb: of({
             admin: true,
             catalog: jest.fn(() => of()),
