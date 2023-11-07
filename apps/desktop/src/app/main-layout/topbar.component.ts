@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { SDKService, StateService, UserService } from '@flaps/core';
+import { SDKService, UserService } from '@flaps/core';
 import { map, Observable } from 'rxjs';
 import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
 import { SyncService } from '../sync/sync.service';
@@ -15,13 +15,12 @@ export class TopbarComponent {
   constructor(
     private router: Router,
     private user: UserService,
-    private state: StateService,
     private sdk: SDKService,
     private sync: SyncService,
   ) {}
 
   menuOpen = false;
-  account$ = this.state.account;
+  account$ = this.sdk.currentAccount;
   isServerDown = this.sync.isServerDown;
 
   avatar: Observable<AvatarModel> = this.user.userPrefs.pipe(

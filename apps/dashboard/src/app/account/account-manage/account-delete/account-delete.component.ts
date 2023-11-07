@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { SDKService, StateService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { map, of, shareReplay, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { NavigationService } from '@flaps/common';
@@ -24,7 +24,6 @@ export class AccountDeleteComponent {
 
   constructor(
     public modal: ModalRef,
-    private stateService: StateService,
     private sdk: SDKService,
     private toaster: SisToastService,
     private router: Router,
@@ -42,7 +41,7 @@ export class AccountDeleteComponent {
       )
       .subscribe({
         next: () => {
-          this.stateService.cleanAccount();
+          this.sdk.cleanAccount();
           if (keepUser) {
             this.router.navigate([this.navigation.getAccountSelectUrl()]);
           } else {

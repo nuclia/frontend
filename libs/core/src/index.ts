@@ -9,5 +9,3 @@ export * from './lib/models';
 export * from './lib/testing';
 export * from './lib/ui';
 export * from './lib/utils';
-
-export * from './lib/state.service';

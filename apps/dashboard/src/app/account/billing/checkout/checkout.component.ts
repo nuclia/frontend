@@ -24,7 +24,7 @@ import {
 } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { injectScript, SDKService, StateService, UserService } from '@flaps/core';
+import { injectScript, SDKService, UserService } from '@flaps/core';
 import { BillingService } from '../billing.service';
 import { StripeCustomer, SubscriptionError } from '../billing.models';
 import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
@@ -124,7 +124,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
     private sdk: SDKService,
-    private stateService: StateService,
     private userService: UserService,
     private route: ActivatedRoute,
     private router: Router,
@@ -384,7 +383,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           ),
         ),
         switchMap((account) => this.sdk.nuclia.db.getAccount(account.slug)),
-        tap((newAccount) => this.stateService.setAccount(newAccount)),
+        tap((newAccount) => (this.sdk.account = newAccount)),
       )
       .subscribe({
         next: (newAccount) => {

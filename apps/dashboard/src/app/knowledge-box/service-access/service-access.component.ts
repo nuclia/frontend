@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { SDKService, StateService } from '@flaps/core';
+import { switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { SDKService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
 import { TokenDialogComponent } from '@flaps/common';
@@ -31,7 +31,6 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
 
   constructor(
-    private stateService: StateService,
     private formBuilder: UntypedFormBuilder,
     private cdr: ChangeDetectorRef,
     private modalService: SisModalService,
@@ -39,12 +38,11 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    combineLatest([this.stateService.account, this.stateService.kb])
+    combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
       .pipe(
-        filter(([account, kb]) => !!account && !!kb),
         tap(([account, kb]) => {
-          this.account = account!;
-          this.kb = kb!;
+          this.account = account;
+          this.kb = kb;
         }),
         switchMap(() => this.updateServiceAccess()),
         takeUntil(this.unsubscribeAll),

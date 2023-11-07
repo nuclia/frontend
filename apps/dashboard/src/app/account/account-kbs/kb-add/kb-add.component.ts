@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { SDKService, STFUtils, Zone } from '@flaps/core';
-import { Sluggable } from '@flaps/common';
+import { KnowledgeBoxSettingsService, Sluggable } from '@flaps/common';
 import { Account, KnowledgeBoxCreation, LearningConfiguration } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
@@ -44,11 +44,12 @@ export class KbAddComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
     private translate: TranslateService,
+    private kbSettingsService: KnowledgeBoxSettingsService,
   ) {}
 
   ngOnInit(): void {
     this.zones = this.modal.config.data?.['zones'] || [];
-    this.sdk.getVisibleLearningConfiguration().subscribe(({ display, full }) => {
+    this.kbSettingsService.getVisibleLearningConfiguration().subscribe(({ display, full }) => {
       this.displayedLearningConfigurations = display;
       this.learningConfigurations = full;
       this.kbForm = this.formBuilder.group({

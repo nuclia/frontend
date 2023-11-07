@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   BackendConfigurationService,
   SDKService,
-  StateService,
   STFSplashScreenService,
   STFTrackingService,
   STFUtils,
@@ -31,7 +30,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   version: string | undefined;
 
   constructor(
-    private state: StateService,
     private router: Router,
     private user: UserService,
     private splashScreenService: STFSplashScreenService,
@@ -56,7 +54,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.sdk.nuclia.auth.hasLoggedOut().subscribe(() => {
       this.tracking.logout();
       this.router.navigate(['/user/login']);
-      this.state.cleanAccount();
+      this.sdk.cleanAccount();
     });
 
     if (this.config.useRemoteLogin()) {

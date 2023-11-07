@@ -3,7 +3,7 @@ import { UntypedFormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
 import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { AccountRoles, AccountUser, SDKService, SetUsersAccount, StateService, UsersService } from '@flaps/core';
+import { AccountRoles, AccountUser, SDKService, SetUsersAccount, UsersService } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 
@@ -23,7 +23,7 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
     AMEMBER: 'generic.member',
   };
 
-  account$ = this.stateService.account.pipe(filter((account) => !!account));
+  account$ = this.sdk.currentAccount;
   canAddUsers = this.account$.pipe(
     map((account) => account!.max_users == null || (account!.current_users || 0) < account!.max_users),
   );
@@ -32,7 +32,6 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
 
   constructor(
     private usersService: UsersService,
-    private stateService: StateService,
     private translate: TranslateService,
     private sdk: SDKService,
     private toaster: SisToastService,
@@ -113,7 +112,7 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
         switchMap(() => this.sdk.nuclia.db.getAccount(this.account!.slug)),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((account) => this.stateService.setAccount(account));
+      .subscribe((account) => (this.sdk.account = account));
   }
 
   private _changeRole(user: AccountUser, role: AccountRoles): Observable<void> {

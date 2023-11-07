@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
-import { SDKService, StateService, STFTrackingService } from '@flaps/core';
+import { SDKService, STFTrackingService } from '@flaps/core';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { LabelSetKind, TrainingStatus, TrainingType } from '@nuclia/core';
 import { forkJoin, Observable, shareReplay, Subject, take, tap } from 'rxjs';
@@ -32,8 +32,8 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
   private unsubscribeAll: Subject<void> = new Subject();
 
   hasResources = this.sdk.counters.pipe(map((counters) => counters.resources > 0));
-  cannotTrain = this.stateService.account.pipe(
-    map((account) => !!account && (account.type === 'stash-basic' || account.type === 'stash-trial')),
+  cannotTrain = this.sdk.currentAccount.pipe(
+    map((account) => account.type === 'stash-basic' || account.type === 'stash-trial'),
   );
   trainingTypes = TrainingType;
   labelSets: Observable<TrainingOption[]> = this.sdk.currentKb.pipe(
@@ -66,16 +66,19 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
     TrainingType.paragraph_labeler,
     TrainingType.ner,
   ];
-  trainings = this.trainingList.reduce((acc, trainingType) => {
-    acc[trainingType] = {
-      agreement: false,
-      running: false,
-      selectedOptions: [],
-      open: false,
-      lastRun: '',
-    };
-    return acc;
-  }, {} as { [key in TrainingType]: TrainingState });
+  trainings = this.trainingList.reduce(
+    (acc, trainingType) => {
+      acc[trainingType] = {
+        agreement: false,
+        running: false,
+        selectedOptions: [],
+        open: false,
+        lastRun: '',
+      };
+      return acc;
+    },
+    {} as { [key in TrainingType]: TrainingState },
+  );
   hoursRequired = 10;
   options: { [key: string]: Observable<{ value: string; title: string; kind?: LabelSetKind[] }[]> } = {
     [TrainingType.classifier]: this.labelSets,
@@ -100,7 +103,6 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
 
   constructor(
     private sdk: SDKService,
-    private stateService: StateService,
     private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,
     private translate: TranslateService,

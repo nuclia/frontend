@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { BackendConfigurationService, SDKService, StateService, STFTrackingService } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
 import { combineLatest, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
-import { debounceTime, filter } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { WidgetHintDialogComponent } from './hint/widget-hint.component';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -49,16 +49,10 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   canSuggestEntities = this.tracking.isFeatureEnabled('suggest-entities');
   isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter');
   isKnowledgeGraphEnabled = this.tracking.isFeatureEnabled('knowledge-graph');
-  areSynonymsEnabled = this.stateService.account
-    .pipe(
-      filter((account) => !!account),
-      map((account) => account?.type),
-    )
-    .pipe(
-      map(
-        (accountType) => !!accountType && ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(accountType),
-      ),
-    );
+  areSynonymsEnabled = this.sdk.currentAccount.pipe(
+    map((account) => account.type),
+    map((accountType) => !!accountType && ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(accountType)),
+  );
   canHideLogo = this.sdk.currentAccount.pipe(
     map((account) => ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(account.type)),
   );
@@ -101,7 +95,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     private modalService: SisModalService,
     private sdk: SDKService,
     private navigation: NavigationService,
-    private stateService: StateService,
   ) {
     const config = this.localStorage.getItem(WIDGETS_CONFIGURATION);
     if (config) {

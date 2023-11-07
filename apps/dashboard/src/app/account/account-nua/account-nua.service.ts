@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, filter, take, switchMap } from 'rxjs';
-import { SDKService, StateService } from '@flaps/core';
+import { BehaviorSubject, map, switchMap, take } from 'rxjs';
+import { SDKService } from '@flaps/core';
 import { NUAClientPayload } from '@nuclia/core';
 
 @Injectable({ providedIn: 'root' })
 export class AccountNUAService {
-  private accountSlug = this.stateService.account.pipe(
-    filter((account) => !!account),
-    map((account) => account!.slug),
+  private accountSlug = this.sdk.currentAccount.pipe(
+    map((account) => account.slug),
     take(1),
   );
 
@@ -18,7 +17,7 @@ export class AccountNUAService {
     switchMap((account) => this.sdk.nuclia.db.getNUAClients(account)),
   );
 
-  constructor(private sdk: SDKService, private stateService: StateService) {}
+  constructor(private sdk: SDKService) {}
 
   updateClients() {
     this.onUpdate.next();
