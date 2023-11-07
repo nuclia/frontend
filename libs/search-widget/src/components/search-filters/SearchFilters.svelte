@@ -4,16 +4,20 @@
   import type { LabelSetWithId } from '../../core';
   import {
     _,
+    addEntityFilter,
     addLabelFilter,
     addLabelSetFilter,
+    entityFilters,
     labelFilters,
     labelSetFilters,
     creationEnd,
     creationStart,
+    entities,
     filterByCreatedDate,
     filterByLabelFamilies,
     hasRangeCreation,
     orderedLabelSetList,
+    removeEntityFilter,
     removeLabelFilter,
     removeLabelSetFilter,
   } from '../../core';
@@ -26,6 +30,9 @@
   );
   const selectedLabels: Observable<string[]> = labelFilters.pipe(
     map((filters) => filters.map((filter) => filter.classification.label))
+  );
+  const selectedEntities: Observable<string[]> = entityFilters.pipe(
+    map((filters) => filters.map((filter) => filter.entity))
   );
   let expanders: { [id: string]: boolean } = {};
 
@@ -46,6 +53,11 @@
   function selectLabel(labelSet, label, selected) {
     const classification = { labelset: labelSet.id, label: label.title };
     selected ? addLabelFilter(classification, labelSet.kind) : removeLabelFilter(classification);
+  };
+
+  function selectEntity(family, entity, selected) {
+    const filter = { family: family.id, entity };
+    selected ? addEntityFilter(filter) : removeEntityFilter(filter);
   };
 
   onMount(() => {
@@ -134,7 +146,9 @@
       </span>
     </div>
     {#if expanders[labelSet.id]}
-      <div class="expander-content labels">
+      <div
+        class="expander-content"
+        class:indented={$filterByLabelFamilies}>
         {#each labelSet.labels as label}
           <div>
             <Checkbox
@@ -142,6 +156,39 @@
               disabled={$selectedLabelSets.includes(labelSet.id)}
               on:change={(event) => selectLabel(labelSet, label, event.detail)}>
               {label.title}
+            </Checkbox>
+          </div>
+        {/each}
+      </div>
+    {/if}
+  {/each}
+  {#each $entities as family}
+    <div
+      class="header"
+      class:expended={expanders[family.id]}>
+      <div class="header-content">
+        <span
+          class="header-title"
+          on:click={() => toggleExpander(family.id)}>
+          {family.title}
+        </span>
+      </div>
+      <span class="header-button">
+        <IconButton
+          on:click={() => toggleExpander(family.id)}
+          icon="chevron-down"
+          size="small"
+          aspect="basic" />
+      </span>
+    </div>
+    {#if expanders[family.id]}
+      <div class="expander-content">
+        {#each family.entities as entity}
+          <div>
+            <Checkbox
+              checked={$selectedEntities.includes(entity)}
+              on:change={(event) => selectEntity(family, entity, event.detail)}>
+              {entity}
             </Checkbox>
           </div>
         {/each}
