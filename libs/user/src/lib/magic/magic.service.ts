@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, MagicAction, SDKService, StateService } from '@flaps/core';
+import { AuthService, MagicAction, SDKService } from '@flaps/core';
 
 @Injectable({
   providedIn: 'root',
@@ -9,13 +9,12 @@ export class MagicService {
   constructor(
     private authService: AuthService,
     private sdk: SDKService,
-    private stateService: StateService,
     private router: Router,
   ) {}
 
   execute(action: MagicAction): void {
     this.authService.setNextUrl(null);
-    this.stateService.cleanAccount();
+    this.sdk.cleanAccount();
 
     if (action.token) {
       this.sdk.nuclia.auth.authenticate(action.token);

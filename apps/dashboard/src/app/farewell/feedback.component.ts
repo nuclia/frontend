@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CancellationFeedback } from '../account/billing/billing.models';
 import { map, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
-import { SDKService, StateService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { BillingService } from '../account/billing/billing.service';
 import { NavigationService } from '@flaps/common';
 
@@ -22,7 +22,6 @@ export class FeedbackComponent {
     private sdk: SDKService,
     private toaster: SisToastService,
     private billingService: BillingService,
-    private stateService: StateService,
     private router: Router,
     private route: ActivatedRoute,
     private navigation: NavigationService,
@@ -37,7 +36,7 @@ export class FeedbackComponent {
         map((params) => params.get('account') || ''),
         switchMap((slug) => this.sdk.nuclia.db.getAccount(slug)),
         switchMap((account) => {
-          this.stateService.setAccount(account); // Billing service only works if account is set
+          this.sdk.account = account; // Billing service only works if account is set
           return this.billingService
             .cancelSubscription({
               feedback: this.feedback,

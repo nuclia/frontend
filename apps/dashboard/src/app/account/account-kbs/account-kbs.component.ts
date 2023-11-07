@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
-import { SDKService, StateService, Zone, ZoneService } from '@flaps/core';
+import { SDKService, Zone, ZoneService } from '@flaps/core';
 import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -22,17 +22,13 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   account?: Account;
   knowledgeBoxes: IKnowledgeBoxItem[] | undefined;
   maxKnowledgeBoxes: number = 1;
-  canAddKb = this.stateService.account.pipe(
-    filter((account) => !!account),
-    map((account) => account!.can_manage_account),
-  );
+  canAddKb = this.sdk.currentAccount.pipe(map((account) => account!.can_manage_account));
   unsubscribeAll = new Subject<void>();
 
   constructor(
     private translate: TranslateService,
     private navigation: NavigationService,
     private router: Router,
-    private stateService: StateService,
     private zoneService: ZoneService,
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
@@ -41,10 +37,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const account$ = this.stateService.account.pipe(
-      filter((account): account is Account => !!account),
-      take(1),
-    );
+    const account$ = this.sdk.currentAccount.pipe(take(1));
     const zones$ = this.zones ? of(this.zones) : this.zoneService.getZones().pipe(take(1));
     forkJoin([account$, zones$])
       .pipe(

@@ -3,7 +3,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { map, merge, Observable, of, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { NavigationService, StandaloneService } from '../services';
-import { SDKService, StateService, STFTrackingService } from '@flaps/core';
+import { SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SmallNavbarDirective } from './small-navbar.directive';
 
@@ -34,7 +34,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
 
   isAdminOrContrib = this.sdk.isAdminOrContrib;
   isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || kb.account === 'local'));
-  account = this.stateService.account.pipe(filter((account) => !!account));
+  account = this.sdk.currentAccount;
   isTrial = this.account.pipe(map((account) => account?.type === 'stash-trial'));
   kb = this.sdk.currentKb;
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
@@ -60,7 +60,6 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   constructor(
     private tracking: STFTrackingService,
     private sdk: SDKService,
-    private stateService: StateService,
     private router: Router,
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,

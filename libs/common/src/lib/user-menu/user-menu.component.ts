@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { SDKService, StateService, STFTrackingService, UserService } from '@flaps/core';
+import { SDKService, STFTrackingService, UserService } from '@flaps/core';
 import { Account, Welcome } from '@nuclia/core';
 import { map, Subject, takeUntil } from 'rxjs';
 import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
@@ -47,16 +47,15 @@ export class UserMenuComponent implements OnDestroy {
 
   constructor(
     private router: Router,
-    private stateService: StateService,
     private navigation: NavigationService,
     private userService: UserService,
     private sdk: SDKService,
     private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
   ) {
-    this.stateService.account.pipe(takeUntil(this.unsubscribeAll)).subscribe((account) => {
+    this.sdk.currentAccount.pipe(takeUntil(this.unsubscribeAll)).subscribe((account) => {
       this.account = account;
-      this.cdr?.markForCheck();
+      this.cdr.markForCheck();
     });
   }
 
@@ -77,7 +76,7 @@ export class UserMenuComponent implements OnDestroy {
 
   switchAccount() {
     this.close.emit();
-    this.stateService.cleanAccount();
+    this.sdk.cleanAccount();
     this.router.navigate([this.navigation.getAccountSelectUrl()]);
   }
 

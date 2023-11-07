@@ -1,24 +1,24 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { catchError, filter, forkJoin, of, Subject } from 'rxjs';
-import { auditTime, concatMap, map, share, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { FeatureFlagService, SDKService, StateService, STFUtils } from '@flaps/core';
+import { catchError, combineLatest, forkJoin, of, Subject } from 'rxjs';
+import { auditTime, concatMap, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { FeatureFlagService, SDKService, STFUtils } from '@flaps/core';
 import {
   Account,
   KnowledgeBox,
   LearningConfiguration,
-  USER_PROMPTS,
-  WritableKnowledgeBox,
-  LearningConfigurationUserKeys,
   LearningConfigurationSchema,
   LearningConfigurationSet,
+  LearningConfigurationUserKeys,
+  USER_PROMPTS,
+  WritableKnowledgeBox,
 } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Sluggable } from '../validators';
 import { Router } from '@angular/router';
 import { SisToastService } from '@nuclia/sistema';
-import { ta } from 'date-fns/locale';
+import { KnowledgeBoxSettingsService } from './knowledge-box-settings.service';
 
 const EMPTY_CONFIG = {
   display: [] as LearningConfigurationSet,
@@ -71,8 +71,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
 
   constructor(
+    private settingService: KnowledgeBoxSettingsService,
     private formBuilder: UntypedFormBuilder,
-    private stateService: StateService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -90,12 +90,13 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(() => this.updateFormValidators());
-    this.stateService.kb
+
+    combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
       .pipe(
-        filter((data) => !!data),
-        tap((data) => (this.kb = data || undefined)),
-        switchMap(() => this.stateService.account.pipe(takeUntil(this.unsubscribeAll))),
-        tap((data) => (this.account = data || undefined)),
+        tap(([account, kb]) => {
+          this.account = account;
+          this.kb = kb;
+        }),
         switchMap(() =>
           (this.sdk.nuclia.options.standalone
             ? of({})
@@ -106,7 +107,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         switchMap(() =>
           this.sdk.nuclia.options.standalone
             ? of(EMPTY_CONFIG)
-            : this.sdk.getVisibleLearningConfiguration(false).pipe(catchError(() => of(EMPTY_CONFIG))),
+            : this.settingService.getVisibleLearningConfiguration(false).pipe(catchError(() => of(EMPTY_CONFIG))),
         ),
         takeUntil(this.unsubscribeAll),
       )
@@ -318,7 +319,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       .subscribe((kb) => {
         this.kbForm?.markAsPristine();
         this.saving = false;
-        this.stateService.setKb(kb);
+        this.sdk.kb = kb;
         if (isSlugUpdated) {
           this.router.navigateByUrl(this.router.url.replace(oldSlug, newSlug));
         }

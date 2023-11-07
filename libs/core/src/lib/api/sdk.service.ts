@@ -1,16 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  Account,
-  Counters,
-  IKnowledgeBoxItem,
-  KnowledgeBox,
-  LearningConfiguration,
-  LearningConfigurationSet,
-  LearningConfigurationUserKeys,
-  Nuclia,
-  USER_PROMPTS,
-  WritableKnowledgeBox,
-} from '@nuclia/core';
+import { Account, Counters, IKnowledgeBoxItem, KnowledgeBox, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -28,8 +17,6 @@ import {
   tap,
 } from 'rxjs';
 import { BackendConfigurationService } from '../config';
-import { StateService } from '../state.service';
-import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { take } from 'rxjs/operators';
 import { standaloneSimpleAccount } from '../models/account.model';
 
@@ -41,6 +28,8 @@ export class SDKService {
     standalone: this.config.staticConf.standalone,
   });
 
+  private _account = new BehaviorSubject<Account | null>(null);
+  private _kb = new BehaviorSubject<KnowledgeBox | null>(null);
   private _currentKB = new ReplaySubject<WritableKnowledgeBox>(1);
   private _kbList = new ReplaySubject<IKnowledgeBoxItem[]>(1);
   private _refreshCounter = new Subject<boolean>();
@@ -50,7 +39,7 @@ export class SDKService {
 
   currentKb = this._currentKB.asObservable();
   kbList: Observable<IKnowledgeBoxItem[]> = this._kbList.asObservable();
-  currentAccount: Observable<Account> = this.stateService.account.pipe(
+  currentAccount: Observable<Account> = this._account.pipe(
     filter((account) => !!account),
     map((account) => account as Account),
   );
@@ -63,14 +52,19 @@ export class SDKService {
     return this._isKbLoaded;
   }
 
-  constructor(
-    private config: BackendConfigurationService,
-    private stateService: StateService,
-    private featureFlagService: FeatureFlagService,
-  ) {
+  set kb(kb: KnowledgeBox | null) {
+    this._kb.next(kb);
+  }
+
+  set account(account: Account | null) {
+    this._account.next(account);
+  }
+
+  constructor(private config: BackendConfigurationService) {
     this._triggerRefreshKbs.subscribe((refreshCurrentKb) => this._refreshKbList(refreshCurrentKb));
-    this.stateService.account.pipe(filter((account) => !!account)).subscribe((account) => this.refreshKbList());
-    combineLatest([this.stateService.kb, this.stateService.account])
+    this.currentAccount.subscribe(() => this.refreshKbList());
+
+    combineLatest([this._kb, this._account])
       .pipe(
         filter(([kb, account]) => !!kb && !!kb.slug && !!account && !!account.slug),
         map(([kb, account]) => [kb, account] as [KnowledgeBox, Account]),
@@ -92,27 +86,32 @@ export class SDKService {
     this.refreshCounter(true);
   }
 
+  cleanAccount() {
+    this.account = null;
+    this.kb = null;
+  }
+
   setCurrentAccount(accountSlug: string): Observable<Account> {
     // returns the current account and set it if not set
-    const currentAccount = this.stateService.getAccount();
+    const currentAccount = this._account.value;
     if (currentAccount && currentAccount.slug === accountSlug) {
       return of(currentAccount);
     } else {
       return (
         this.config.staticConf.standalone ? of(standaloneSimpleAccount) : this.nuclia.db.getAccount(accountSlug)
-      ).pipe(tap((account) => this.stateService.setAccount(account)));
+      ).pipe(tap((account) => (this.account = account)));
     }
   }
 
   setCurrentKnowledgeBox(accountSlug: string, kbSlug: string, force = false): Observable<WritableKnowledgeBox> {
     // returns the current kb and set it if not set
-    const currentKb = this.stateService.getKb();
+    const currentKb = this._kb.value;
     if (!force && currentKb && currentKb.slug === kbSlug) {
       return of(currentKb as WritableKnowledgeBox);
     } else {
       return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(
         map((kb) => {
-          this.stateService.setKb(kb);
+          this.kb = kb;
           return kb;
         }),
       );
@@ -137,9 +136,7 @@ export class SDKService {
           .pipe(
             map((kbs) => kbs.map((kb) => ({ ...kb, id: kb.uuid, title: kb.slug, zone: 'local' }) as IKnowledgeBoxItem)),
           )
-      : this.stateService.account.pipe(
-          filter((account) => !!account),
-          map((account) => account as Account),
+      : this.currentAccount.pipe(
           take(1),
           switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug)),
         );
@@ -196,59 +193,5 @@ export class SDKService {
         }),
       )
       .subscribe();
-  }
-
-  getVisibleLearningConfiguration(onCreation = true): Observable<{
-    display: LearningConfigurationSet;
-    full: LearningConfigurationSet;
-    keys: LearningConfigurationUserKeys;
-  }> {
-    return forkJoin([
-      this.featureFlagService.isFeatureEnabled('kb-anonymization').pipe(take(1)),
-      this.featureFlagService.isFeatureEnabled('pdf-annotation').pipe(take(1)),
-      this.nuclia.db.getLearningConfigurations().pipe(take(1)),
-      this.currentAccount.pipe(take(1)),
-    ]).pipe(
-      map(([hasAnonymization, hasPdfAnnotation, conf, account]) => {
-        const full = Object.entries(conf)
-          .filter(([id, value]) => 'options' in value || (!onCreation && id === USER_PROMPTS))
-          .map((entry) => entry as [string, LearningConfiguration])
-          .map(([id, data]) => ({ id, data }))
-          // some options cannot be changed after kb creation
-          .filter((entry) => (onCreation && entry.data.create) || (!onCreation && entry.data.update));
-
-        return {
-          // At display, hide configurations with only one option or under feature flagging
-          display: full.filter(
-            (entry) =>
-              entry.id === USER_PROMPTS ||
-              (entry.data.options &&
-                entry.data.options.length > 1 &&
-                (entry.id !== 'anonymization_model' || hasAnonymization) &&
-                (entry.id !== 'visual_labeling' || hasPdfAnnotation)),
-          ),
-          full,
-          keys:
-            account.type === 'stash-enterprise'
-              ? Object.entries(conf['user_keys']?.schemas || {}).reduce((acc, [schemaId, schema]) => {
-                  acc[schemaId] = Object.entries(schema.properties)
-                    .filter(([, property]) => property.type === 'string')
-                    .reduce(
-                      (acc, [propertyId, property]) => {
-                        acc[propertyId] = {
-                          title: property.title,
-                          required: schema.required.includes(propertyId),
-                          textarea: property.widget === 'textarea',
-                        };
-                        return acc;
-                      },
-                      {} as { [key: string]: { title: string; required: boolean; textarea: boolean } },
-                    );
-                  return acc;
-                }, {} as LearningConfigurationUserKeys)
-              : {},
-        };
-      }),
-    );
   }
 }

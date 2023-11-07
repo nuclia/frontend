@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
-import { StateService } from '../state.service';
 import SparkMD5 from 'spark-md5';
+import { SDKService } from '../api';
 
 export interface Features {
   [key: string]: boolean;
@@ -25,8 +25,8 @@ const stageFeatures: Features = {};
 
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {
-  private accountMd5 = this.state.account.pipe(
-    map((account) => (account ? SparkMD5.hash(account.id) : null)),
+  private accountMd5 = this.sdk.currentAccount.pipe(
+    map((account) => SparkMD5.hash(account.id)),
     shareReplay(1),
   );
   private featuresData = fromFetch('https://nuclia.github.io/status/features-v2.json').pipe(
@@ -56,7 +56,7 @@ export class FeatureFlagService {
 
   private isNotProd = location.hostname !== 'nuclia.cloud';
 
-  constructor(private state: StateService) {}
+  constructor(private sdk: SDKService) {}
 
   isFeatureEnabled(feature: string): Observable<boolean> {
     if (this.isNotProd) {

@@ -4,7 +4,7 @@ import { NUAClient } from '@nuclia/core';
 import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
 import { Router } from '@angular/router';
-import { StateService, STFTrackingService } from '@flaps/core';
+import { SDKService, STFTrackingService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { NavigationService, TokenDialogComponent } from '@flaps/common';
 
@@ -23,7 +23,7 @@ export class AccountNUAComponent {
   constructor(
     private nua: AccountNUAService,
     private router: Router,
-    private stateService: StateService,
+    private sdk: SDKService,
     private navigation: NavigationService,
     private tracking: STFTrackingService,
     private modalService: SisModalService,
@@ -53,8 +53,7 @@ export class AccountNUAComponent {
       .pipe(
         take(1),
         filter((enabled) => enabled),
-        switchMap(() => this.stateService.account),
-        filter((account) => !!account),
+        switchMap(() => this.sdk.currentAccount),
         take(1),
         map((account) => this.navigation.getAccountUrl(account!.slug)),
       )

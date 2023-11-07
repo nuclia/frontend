@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, StateService, StaticEnvironmentConfiguration, standaloneSimpleAccount } from '@flaps/core';
+import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
 import { combineLatest, map, Observable } from 'rxjs';
 
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
@@ -10,13 +10,13 @@ const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
 })
 export class NavigationService {
   constructor(
-    private stateService: StateService,
     private router: Router,
     private authService: AuthService,
+    private sdk: SDKService,
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
-  homeUrl: Observable<string> = combineLatest([this.stateService.account, this.stateService.kb]).pipe(
+  homeUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
     map(([account, kb]) => {
       if (account && this.inAccountManagement(location.pathname)) {
         return this.getAccountManageUrl(account.slug);
@@ -96,7 +96,7 @@ export class NavigationService {
   }
 
   resetState() {
-    this.stateService.cleanAccount();
+    this.sdk.cleanAccount();
     this.router.navigate([this.getAccountSelectUrl()]);
   }
 }

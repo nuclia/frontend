@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { filter, map, take, tap } from 'rxjs';
-import { Account, NUAClient } from '@nuclia/core';
-import { SDKService, StateService, UserService } from '@flaps/core';
+import { NUAClient } from '@nuclia/core';
+import { SDKService, UserService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
@@ -16,10 +16,7 @@ export interface ClientDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClientDialogComponent implements OnInit {
-  account = this.stateService.account.pipe(
-    filter((account): account is Account => !!account),
-    take(1),
-  );
+  account = this.sdkService.currentAccount.pipe(take(1));
 
   email = this.userService.userPrefs.pipe(
     filter((prefs) => !!prefs),
@@ -52,7 +49,6 @@ export class ClientDialogComponent implements OnInit {
   constructor(
     public modal: ModalRef,
     private formBuilder: UntypedFormBuilder,
-    private stateService: StateService,
     private userService: UserService,
     private nua: AccountNUAService,
     private sdkService: SDKService,

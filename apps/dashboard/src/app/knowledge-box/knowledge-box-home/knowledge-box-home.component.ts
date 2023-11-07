@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { SDKService, StateService, STFTrackingService } from '@flaps/core';
+import { SDKService, STFTrackingService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
+import { Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
 import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take, tap } from 'rxjs';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
@@ -20,7 +20,7 @@ export class KnowledgeBoxHomeComponent {
   state = this.sdk.currentKb.pipe(map((kb) => kb.state));
   stateLabel = this.state.pipe(map((state) => this.translate.transform(`stash.state.${state?.toLowerCase()}`)));
   isPublished = this.state.pipe(map((state) => state === 'PUBLISHED'));
-  account = this.stateService.account.pipe(filter((account) => !!account)) as Observable<Account>;
+  account = this.sdk.currentAccount;
   counters: Observable<Counters> = this.sdk.counters;
   private _processing = combineLatest([this.account, this.sdk.currentKb]).pipe(
     switchMap(([account, kb]) =>
@@ -86,7 +86,6 @@ export class KnowledgeBoxHomeComponent {
   constructor(
     private app: AppService,
     private sdk: SDKService,
-    private stateService: StateService,
     private translate: TranslatePipe,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,

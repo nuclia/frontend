@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SDKService, StateService, STFTrackingService } from '@flaps/core';
+import { SDKService, STFTrackingService } from '@flaps/core';
 
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { of } from 'rxjs';
@@ -36,14 +36,11 @@ describe('KnowledgeBoxHomeComponent', () => {
         {
           provide: SDKService,
           useValue: {
+            currentAccount: of({ slug: 'some-account' }),
             currentKb: of({ fullpath: 'http://somewhere/api' }),
             counters: of({ resources: 0 }),
             nuclia: { db: { getStats: () => of([]) } },
           },
-        },
-        {
-          provide: StateService,
-          useValue: { account: of({ slug: 'some-account' }) },
         },
         {
           provide: STFTrackingService,

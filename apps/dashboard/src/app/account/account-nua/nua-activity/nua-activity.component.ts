@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, filter, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { StateService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
 import { Account, NUAClient } from '@nuclia/core';
 import { Activity, NuaActivityService } from './nua-activity.service';
@@ -29,16 +29,16 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
   hasMore: Observable<boolean> = this.nuaActivity.hasMore;
 
   constructor(
+    private sdk: SDKService,
     private activatedRoute: ActivatedRoute,
-    private stateService: StateService,
     private nua: AccountNUAService,
     private nuaActivity: NuaActivityService,
   ) {}
 
   ngOnInit() {
-    combineLatest([this.stateService.account, this.client])
+    combineLatest([this.sdk.currentAccount, this.client])
       .pipe(
-        filter(([account, client]) => !!account && !!client),
+        filter(([, client]) => !!client),
         map(([account, client]) => ({ account, client }) as { account: Account; client: NUAClient }),
         take(1),
         switchMap(({ account, client }) => this.nuaActivity.loadActivity(account.slug, client.client_id)),

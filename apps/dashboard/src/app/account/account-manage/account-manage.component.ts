@@ -9,10 +9,9 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
-import { concatMap, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { AccountModification, SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
+import { concatMap, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { AccountModification, SDKService, Zone, ZoneService } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
 import { NavigationService, Sluggable } from '@flaps/common';
@@ -69,22 +68,18 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   );
 
   constructor(
-    private stateService: StateService,
     private formBuilder: UntypedFormBuilder,
     private zoneService: ZoneService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
-    private tracking: STFTrackingService,
-    private router: Router,
     private navigation: NavigationService,
     private modalService: SisModalService,
     private billingService: BillingService,
   ) {}
 
   ngOnInit(): void {
-    this.stateService.account
+    this.sdk.currentAccount
       .pipe(
-        filter((account): account is Account => !!account),
         tap((account) => {
           this.account = account;
           this.initialValues.title = account.title;
@@ -140,7 +135,7 @@ export class AccountManageComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe((account) => {
-        this.stateService.setAccount(account);
+        this.sdk.account = account;
       });
   }
 

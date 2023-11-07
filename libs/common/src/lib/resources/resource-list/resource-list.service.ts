@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { SDKService, StateService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, forkJoin, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import {
@@ -29,7 +29,6 @@ export class ResourceListService {
   private sdk = inject(SDKService);
   private labelService = inject(LabelsService);
   private translate = inject(TranslateService);
-  private stateService = inject(StateService);
   private uploadService = inject(UploadService);
   private toastService = inject(SisToastService);
   private navigationService = inject(ResourceNavigationService);
@@ -42,7 +41,7 @@ export class ResourceListService {
   set status(status: RESOURCE_STATUS) {
     this._status = status;
     if (status === RESOURCE_STATUS.PENDING && !this.sdk.nuclia.options.standalone) {
-      forkJoin([this.stateService.account.pipe(take(1)), this.stateService.kb.pipe(take(1))])
+      forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentKb.pipe(take(1))])
         .pipe(
           filter(([account, kb]) => !!account && !!kb),
           take(1),

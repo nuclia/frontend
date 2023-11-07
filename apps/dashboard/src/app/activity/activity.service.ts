@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { catchError, concatMap, filter, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { SDKService, StateService, UsersService } from '@flaps/core';
+import { catchError, concatMap, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { SDKService, UsersService } from '@flaps/core';
 import { EventType, ResourcePagination, ResourceProperties } from '@nuclia/core';
 
 export interface ActivityEvent {
@@ -37,7 +37,6 @@ export class ActivityService implements OnDestroy {
   constructor(
     private sdk: SDKService,
     private users: UsersService,
-    private stateService: StateService,
   ) {
     this.triggerLoad
       .pipe(
@@ -87,11 +86,10 @@ export class ActivityService implements OnDestroy {
 
   private getUser(id: string) {
     if (!this._users[id]) {
-      this._users[id] = this.stateService.account.pipe(
-        filter((account) => !!account),
+      this._users[id] = this.sdk.currentAccount.pipe(
         take(1),
         switchMap((account) =>
-          this.users.getAccountUser(account!.slug!, id).pipe(
+          this.users.getAccountUser(account.slug, id).pipe(
             map((user) => user.name || ''),
             catchError(() => of(id)), // In case the user no longer exists
           ),

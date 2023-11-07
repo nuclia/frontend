@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { filter, map, take } from 'rxjs';
-import { DroppedFile, SDKService, StateService, STFTrackingService, STFUtils } from '@flaps/core';
-import { Account, Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
+import { take } from 'rxjs';
+import { DroppedFile, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
+import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { FILES_TO_IGNORE, PATTERNS_TO_IGNORE, UploadService } from '../upload.service';
 import mime from 'mime';
 import { StandaloneService } from '../../services';
@@ -41,22 +41,15 @@ export class UploadFilesComponent {
     private cdr: ChangeDetectorRef,
     private uploadService: UploadService,
     private tracking: STFTrackingService,
-    private stateService: StateService,
     private sdk: SDKService,
     private standaloneService: StandaloneService,
   ) {
-    this.stateService.account
-      .pipe(
-        filter((account) => !!account),
-        map((account) => account as Account),
-        take(1),
-      )
-      .subscribe((account) => {
-        if (account.limits) {
-          this.maxFileSize = account.limits.upload.upload_limit_max_non_media_file_size;
-          this.maxMediaFileSize = account.limits.upload.upload_limit_max_media_file_size;
-        }
-      });
+    this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+      if (account.limits) {
+        this.maxFileSize = account.limits.upload.upload_limit_max_non_media_file_size;
+        this.maxMediaFileSize = account.limits.upload.upload_limit_max_media_file_size;
+      }
+    });
   }
 
   chooseFiles($event: any) {
