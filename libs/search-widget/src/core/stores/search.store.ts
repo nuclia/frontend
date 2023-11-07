@@ -287,7 +287,7 @@ export const creationEnd = searchState.writer<string | undefined>(
     ...state,
     options: {
       ...state.options,
-      range_creation_end: date && new Date(date).toISOString(),
+      range_creation_end: date && new Date(`${date}T23:59:59.000Z`).toISOString(),
     },
   }),
 );
