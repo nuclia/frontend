@@ -1,30 +1,33 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { combineLatest, map, Observable, take } from 'rxjs';
   import type { LabelSetWithId } from '../../core';
   import {
     _,
+    addLabelFilter,
     addLabelSetFilter,
     labelFilters,
     labelSetFilters,
     creationEnd,
     creationStart,
     filterByCreatedDate,
+    filterByLabelFamily,
     hasRangeCreation,
+    orderedLabelSetList,
     removeLabelFilter,
     removeLabelSetFilter,
   } from '../../core';
   import IconButton from '../../common/button/IconButton.svelte';
   import Checkbox from '../../common/checkbox/Checkbox.svelte';
 
-  export let labelSets: LabelSetWithId[] = [];
-  export let selectedLabels: string[] = [];
-
-  const dispatch = createEventDispatcher();
-  let expanders: { [id: string]: boolean } = {};
+  const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
   const selectedLabelSets: Observable<string[]> = labelSetFilters.pipe(
     map((filters) => filters.map((filter) => filter.id)),
   );
+  const selectedLabels: Observable<string[]> = labelFilters.pipe(
+    map((filters) => filters.map((filter) => filter.classification.label))
+  );
+  const expanders: { [id: string]: boolean } = {};
 
   function selectLabelSet(labelSet, selected)  {
     if (selected) {
@@ -40,6 +43,11 @@
     expanders[id] = !expanders[id];
   }
 
+  function selectLabel(labelSet, label, selected) {
+    const classification = { labelset: labelSet.id, label: label.title };
+    selected ? addLabelFilter(classification, labelSet.kind) : removeLabelFilter(classification);
+  };
+
   onMount(() => {
     combineLatest([labelFilters, hasRangeCreation]).pipe(take(1)).subscribe(([filters, hasRangeCreation]) => {
       expanders = filters.map((filter) => filter.classification.labelset).reduce(
@@ -52,12 +60,18 @@
 
 </script>
 
-<div class="sw-labels-expander">
+<div class="sw-search-filters">
   {#if $filterByCreatedDate}
     <div
       class="header"
       class:expended={expanders['created']}>
-      <div class="header-content">{$_('input.date_created')}</div>
+      <div class="header-content">
+        <span
+          class="header-title"
+          on:click={() => toggleExpander('created')}>
+          {$_('input.date_created')}
+        </span>
+      </div>
       <span class="header-button">
           <IconButton
             on:click={() => toggleExpander('created')}
@@ -92,16 +106,24 @@
       </div>
     {/if}
   {/if}
-  {#each labelSets as labelSet}
+  {#each $labelSets as labelSet}
     <div
       class="header"
       class:expended={expanders[labelSet.id]}>
       <div class="header-content">
+        {#if $filterByLabelFamily}
         <Checkbox
           checked={$selectedLabelSets.includes(labelSet.id)}
           on:change={(event) => selectLabelSet(labelSet, event.detail)}>
           {labelSet.title}
         </Checkbox>
+        {:else}
+          <span
+            class="header-title"
+            on:click={() => toggleExpander(labelSet.id)}>
+            {labelSet.title}
+          </span>
+        {/if}
       </div>
       <span class="header-button">
         <IconButton
@@ -116,9 +138,9 @@
         {#each labelSet.labels as label}
           <div>
             <Checkbox
-              checked={selectedLabels.includes(label.title)}
+              checked={$selectedLabels.includes(label.title)}
               disabled={$selectedLabelSets.includes(labelSet.id)}
-              on:change={(event) => dispatch('labelSelect', { labelSet, label, selected: event.detail })}>
+              on:change={(event) => selectLabel(labelSet, label, event.detail)}>
               {label.title}
             </Checkbox>
           </div>
@@ -130,4 +152,4 @@
 
 <style
   lang="scss"
-  src="./LabelsExpander.scss"></style>
+  src="./SearchFilters.scss"></style>

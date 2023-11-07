@@ -1,4 +1,4 @@
-.sw-labels-expander {
+.sw-search-filters {
   --header-button-width: var(--rhythm-4);
   --header-gap: var(--rhythm-1);
 
@@ -24,6 +24,9 @@
     }
     .header-content {
       max-width: calc(100% - var(--header-button-width) - var(--header-gap));
+    }
+    .header-title {
+      cursor: pointer;
     }
   }
 
