@@ -13,8 +13,9 @@ import {
   rootGuard,
   SearchComponent,
   SelectAccountComponent,
-  selectAccountKbGuard,
+  selectAccountGuard,
   SelectKbComponent,
+  selectKbGuard,
   UploadDataComponent,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
@@ -183,11 +184,12 @@ const routes: Routes = [
   {
     path: 'select',
     component: SelectAccountComponent,
-    canActivate: [authGuard, selectAccountKbGuard],
+    canActivate: [authGuard, selectAccountGuard],
     children: [
       {
         path: ':account',
         component: SelectKbComponent,
+        canActivate: [selectKbGuard],
       },
     ],
   },

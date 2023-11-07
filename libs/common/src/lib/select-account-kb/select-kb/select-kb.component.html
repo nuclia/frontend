@@ -1,9 +1,9 @@
 <div
   class="select-kb"
-  *ngIf="account && kbs">
+  *ngIf="(kbs | async) !== null">
   <div class="select-kb-header">
     <nsi-back-button
-      *ngIf="!standalone"
+      *ngIf="!standalone && (hasSeveralAccounts | async)"
       class="select-kb-back"
       link="/select">
       {{ 'generic.back' | translate }}
@@ -12,7 +12,7 @@
     <h2
       class="select-kb-title"
       paEllipsisTooltip>
-      {{ account.title }}
+      {{ (account | async)?.title }}
     </h2>
 
     <pa-button
@@ -30,13 +30,13 @@
   <div class="select-kb-body">
     <div
       class="select-kb-list"
-      *ngIf="kbs.length > 0">
-      <ng-container *ngFor="let kb of kbs">
+      *ngIf="((kbs | async)?.length || 0) > 0; else noKb">
+      <ng-container *ngFor="let kb of kbs | async">
         <a
           *ngIf="kb.slug"
           class="kb"
           [class.disabled]="!kb.role_on_kb"
-          [routerLink]="!!kb.role_on_kb ? getKbUrl(kb.slug) : null">
+          (click)="goToKb(kb)">
           <pa-button
             class="delete-btn"
             *ngIf="standalone"
@@ -54,17 +54,19 @@
       </ng-container>
     </div>
 
-    <div
-      class="select-kb-empty"
-      *ngIf="kbs.length === 0 && !addKb">
-      <div class="select-kb-empty-message">{{ 'stash.no_knowledge_boxes' | translate }}</div>
-
+    <ng-template #noKb>
       <div
-        *ngIf="(canAddKb | async) === false"
-        class="select-kb-empty-message">
-        {{ 'stash.contact_admin' | translate }}
+        class="select-kb-empty"
+        *ngIf="!addKb">
+        <div class="select-kb-empty-message">{{ 'stash.no_knowledge_boxes' | translate }}</div>
+
+        <div
+          *ngIf="(canAddKb | async) === false"
+          class="select-kb-empty-message">
+          {{ 'stash.contact_admin' | translate }}
+        </div>
       </div>
-    </div>
+    </ng-template>
 
     <ng-container *ngIf="addKb">
       <div class="select-kb-input">

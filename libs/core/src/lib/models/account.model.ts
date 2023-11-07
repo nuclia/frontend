@@ -1,4 +1,4 @@
-import { Account, AccountTypes, BlockedFeature } from '@nuclia/core';
+import { Account, BlockedFeature } from '@nuclia/core';
 
 export const standaloneSimpleAccount: Account = {
   id: 'local',
