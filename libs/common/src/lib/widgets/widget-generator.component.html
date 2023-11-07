@@ -73,7 +73,7 @@
             {{ 'stash.widgets.filter.label' | translate }}
           </pa-toggle>
           <div
-            *ngIf="mainFormFeatures.filter && isEntityFiltersEnabled | async"
+            *ngIf="mainFormFeatures.filter"
             class="filter-type">
             <pa-checkbox
               [(value)]="filters.labels"
@@ -82,6 +82,19 @@
               {{ 'stash.widgets.labels' | translate }}
             </pa-checkbox>
             <pa-checkbox
+              [(value)]="filters.labelFamilies"
+              (valueChange)="onFiltersChange()"
+              [disabled]="filters.labelFamilies && hasOneFilter">
+              {{ 'stash.widgets.labelFamilies' | translate }}
+            </pa-checkbox>
+            <pa-checkbox
+              [(value)]="filters.created"
+              (valueChange)="onFiltersChange()"
+              [disabled]="filters.created && hasOneFilter">
+              {{ 'stash.widgets.created' | translate }}
+            </pa-checkbox>
+            <pa-checkbox
+              *ngIf="isEntityFiltersEnabled | async"
               [(value)]="filters.entities"
               (valueChange)="onFiltersChange()"
               [disabled]="filters.entities && hasOneFilter">
@@ -182,12 +195,6 @@
             help="stash.widgets.hideLogo.help"
             formControlName="hideLogo">
             {{ 'stash.widgets.hideLogo.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.filterByLabelFamily.help"
-            formControlName="filterByLabelFamily">
-            {{ 'stash.widgets.filterByLabelFamily.label' | translate }}
           </pa-toggle>
         </div>
 

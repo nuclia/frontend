@@ -29,12 +29,14 @@ import {
   tap,
 } from 'rxjs';
 import type { TypedResult } from '../models';
-import { NO_SUGGESTION_RESULTS,  } from '../models';
+import { NO_SUGGESTION_RESULTS } from '../models';
 import { widgetFeatures } from './widget.store';
 import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import { formatQueryKey, getFindParagraphs, getUrlParams, updateQueryParams } from '../utils';
 import {
+  creationEnd,
+  creationStart,
   getFieldDataFromResource,
   getResultType,
   isEmptySearchQuery,
@@ -119,6 +121,8 @@ const queryKey = formatQueryKey('query');
 const filterKey = formatQueryKey('filter');
 const titleOnlyKey = formatQueryKey('titleOnly');
 const previewKey = formatQueryKey('preview');
+const creationStartKey = formatQueryKey('creationStart');
+const creationEndKey = formatQueryKey('creationEnd');
 
 /**
  * Initialise answer feature
@@ -149,15 +153,21 @@ export function activatePermalinks() {
       .pipe(
         switchMap(() => isEmptySearchQuery.pipe(take(1))),
         filter((isEmptySearchQuery) => !isEmptySearchQuery),
-        switchMap(() => combineLatest([searchQuery, searchFilters, isTitleOnly]).pipe(take(1))),
+        switchMap(() =>
+          combineLatest([searchQuery, searchFilters, isTitleOnly, creationStart, creationEnd]).pipe(take(1)),
+        ),
       )
-      .subscribe(([query, filters, isTitleOnly]) => {
+      .subscribe(([query, filters, isTitleOnly, creationStart, creationEnd]) => {
         const urlParams = getUrlParams();
         urlParams.set(queryKey, query);
         urlParams.delete(filterKey);
         urlParams.delete(titleOnlyKey);
+        urlParams.delete(creationStartKey);
+        urlParams.delete(creationEndKey);
         filters.forEach((filter) => urlParams.append(filterKey, filter));
         urlParams.append(titleOnlyKey, `${isTitleOnly}`);
+        if (creationStart) urlParams.append(creationStartKey, creationStart);
+        if (creationEnd) urlParams.append(creationEndKey, creationEnd);
         updateQueryParams(urlParams);
       }),
     // Remove search parameters from the URL when search results are reset
@@ -172,6 +182,8 @@ export function activatePermalinks() {
         urlParams.delete(queryKey);
         urlParams.delete(filterKey);
         urlParams.delete(titleOnlyKey);
+        urlParams.delete(creationStartKey);
+        urlParams.delete(creationEndKey);
         updateQueryParams(urlParams);
       }),
     // Add current field id in the URL when preview is open
@@ -212,11 +224,15 @@ function initStoreFromUrlParams() {
   const query = urlParams.get(queryKey);
   const titleOnly = urlParams.get(titleOnlyKey) === 'true';
   const filters = urlParams.getAll(filterKey);
+  const start = urlParams.get(creationStartKey);
+  const end = urlParams.get(creationEndKey);
 
-  if (query || filters.length > 0) {
+  if (query || filters.length > 0 || start || end) {
     searchQuery.set(query || '');
     searchFilters.set({ filters, titleOnly });
     typeAhead.set(query || '');
+    creationStart.set(start || undefined);
+    creationEnd.set(end || undefined);
     triggerSearch.next();
   }
 

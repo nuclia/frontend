@@ -3,23 +3,22 @@
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
   import Suggestions from '../suggestions/Suggestions.svelte';
-  import type { EntityFilter, EntityGroup, LabelSetWithId } from '../../core';
+  import type { EntityFilter } from '../../core';
   import {
     _,
-    addEntityFilter,
-    addLabelFilter,
     autofilters,
+    creationEnd,
+    creationStart,
     entities,
     entitiesDefaultColor,
     entityFilters,
-    filterByLabelFamily,
     getCDN,
     hasFilterButton,
     hasSuggestions,
     hideLogo,
     labelFilters,
     labelSetFilters,
-    orderedLabelSetList,
+    rangeCreation,
     removeAutofilter,
     removeEntityFilter,
     removeLabelFilter,
@@ -43,39 +42,38 @@
   import IconButton from '../../common/button/IconButton.svelte';
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
   import type { LabelFilter } from '../../common';
-  import { getParentLiRect } from '../../common';
   import Button from '../../common/button/Button.svelte';
-  import LabelsExpander from '../labels-expander/LabelsExpander.svelte';
+  import SearchFilters from '../search-filters/SearchFilters.svelte';
 
   let searchInputElement: HTMLInputElement;
   const dispatch = createEventDispatcher();
 
   let inputContainerElement: HTMLElement | undefined;
   let filterButtonElement: HTMLElement | undefined;
-  let labelSetDropdownElement: HTMLElement | undefined;
   let moreFilterElement: HTMLElement | undefined;
-  let selectedLabelSet: LabelSetWithId | undefined;
-  let selectedFamily: EntityGroup | undefined;
   let position: DOMRect | undefined;
   let filterButtonPosition: DOMRect | undefined;
   let moreFilterPosition: { left: number; top: number } | undefined;
-  let submenuPosition: { left: number; top: number } | undefined;
   let showSuggestions = false;
   let showFilterDropdowns = false;
-  let showFilterSubmenu = false;
   let hasFilters = false;
   let displayMoreFilters = false;
   const filterDisplayLimit = 2;
 
   const filters: Observable<
     {
-      type: 'label' | 'labelset' | 'entity';
+      type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end';
       key: string;
-      value: LabelFilter | EntityFilter;
+      value: LabelFilter | EntityFilter | string;
       autofilter?: boolean;
     }[]
-  > = combineLatest([labelFilters, labelSetFilters, entityFilters, autofilters]).pipe(
-    map(([labels, labelSets, entities, autofilters]) => [
+  > = combineLatest([rangeCreation, labelFilters, labelSetFilters, entityFilters, autofilters]).pipe(
+    map(([rangeCreation, labels, labelSets, entities, autofilters]) => [
+      ...Object.entries(rangeCreation).filter(([,value]) => !!value).map(([key, value]) => ({
+        type: `creation-${key}`,
+        key,
+        value: new Intl.DateTimeFormat(navigator.language, { timeZone: 'UTC' }).format(new Date(value)),
+      })),
       ...labels.map((value) => ({
         type: 'label',
         key: value.classification.label + value.classification.labelset,
@@ -107,14 +105,6 @@
       }
     })
   );
-
-  const selectedLabels: Observable<string[]> = labelFilters.pipe(
-    map((filters) => filters.map((filter) => filter.classification.label))
-  );
-  const selectedEntities: Observable<string[]> = entityFilters.pipe(
-    map((filters) => filters.map((filter) => filter.entity))
-  );
-  const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
 
   const suggestionModalMinWidth = 384;
   let suggestionModalWidth;
@@ -167,34 +157,6 @@
     }
     displayMoreFilters = true;
   };
-
-  const selectEntity = (entity) => {
-    showFilterSubmenu = false;
-    if (selectedFamily) {
-      addEntityFilter({ family: selectedFamily.id, entity });
-      selectedFamily = undefined;
-    }
-  };
-
-  const selectLabel = (labelSet, label, selected) => {
-    const classification = { labelset: labelSet.id, label: label.title };
-    selected ? addLabelFilter(classification, labelSet.kind) : removeLabelFilter(classification);
-    if (showFilterSubmenu) {
-      showFilterSubmenu = false;
-      selectedLabelSet = undefined;
-    }
-  };
-
-  function openSubMenu(event, labelSet, family) {
-    selectedLabelSet = labelSet;
-    selectedFamily = family;
-    if (labelSetDropdownElement) {
-      const dropdownRect = labelSetDropdownElement?.getBoundingClientRect();
-      const top = getParentLiRect(event)?.top || event.clientY;
-      submenuPosition = { left: dropdownRect.right, top };
-      showFilterSubmenu = true;
-    }
-  }
 
   function clear() {
     suggestionState.reset();
@@ -261,6 +223,22 @@
   {#if $filters.length > 0}
     <div class="filters-container">
       {#each $filters.slice(0, filterDisplayLimit) as filter (filter.key)}
+        {#if filter.type === 'creation-start'}
+          <Chip
+            removable
+            color={entitiesDefaultColor}
+            on:remove={() => creationStart.set(undefined)}>
+            {$_('input.from')} {filter.value}
+          </Chip>
+        {/if}
+        {#if filter.type === 'creation-end'}
+          <Chip
+            removable
+            color={entitiesDefaultColor}
+            on:remove={() => creationEnd.set(undefined)}>
+            {$_('input.to')} {filter.value}
+          </Chip>
+        {/if}
         {#if filter.type === 'label'}
           <Label
             label={filter.value}
@@ -334,70 +312,7 @@
   <Dropdown
     position={{ top: filterButtonPosition.top - 5, left: filterButtonPosition.right + 16 }}
     on:close={() => (showFilterDropdowns = false)}>
-    {#if $filterByLabelFamily}
-      <LabelsExpander
-        labelSets={$labelSets}
-        selectedLabels={$selectedLabels}
-        on:labelSelect={(e) => selectLabel(e.detail.labelSet, e.detail.label, e.detail.selected)}></LabelsExpander>
-    {:else}
-      <ul
-        class="sw-dropdown-options"
-        bind:this={labelSetDropdownElement}>
-        {#each $labelSets as labelSet}
-          <li
-            class="filter-option"
-            on:mouseenter={(event) => openSubMenu(event, labelSet)}>
-            <div
-              class="filter-color"
-              style:background-color={labelSet.color} />
-            <div class="filter-title ellipsis">{labelSet.title}</div>
-            <Icon name="chevron-right" />
-          </li>
-        {/each}
-        {#each $entities as family}
-          <li
-            class="filter-option"
-            on:mouseenter={(event) => openSubMenu(event, undefined, family)}>
-            <div
-              class="filter-color"
-              style:background-color={family.color} />
-            <div class="filter-title ellipsis">
-              {family.title}
-            </div>
-            <Icon name="chevron-right" />
-          </li>
-        {/each}
-      </ul>
-    {/if}
-  </Dropdown>
-{/if}
-{#if showFilterSubmenu}
-  <Dropdown
-    secondary
-    position={submenuPosition}
-    on:close={() => (showFilterSubmenu = false)}>
-    <ul class="sw-dropdown-options">
-      {#if selectedLabelSet}
-        {#each selectedLabelSet.labels as label}
-          <li
-            class="ellipsis"
-            class:selected={$selectedLabels.includes(label.title)}
-            on:click={() => selectLabel(selectedLabelSet, label, !$selectedLabels.includes(label.title))}>
-            {label.title}
-          </li>
-        {/each}
-      {/if}
-      {#if selectedFamily}
-        {#each selectedFamily.entities as entity}
-          <li
-            class="ellipsis"
-            class:selected={$selectedEntities.includes(entity)}
-            on:click={() => selectEntity(entity)}>
-            {entity}
-          </li>
-        {/each}
-      {/if}
-    </ul>
+    <SearchFilters />
   </Dropdown>
 {/if}
 

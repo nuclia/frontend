@@ -60,41 +60,6 @@ mark.ner[family] {
   padding-left: 0;
 }
 
-ul.sw-dropdown-options {
-  li {
-    cursor: pointer;
-    line-height: var(--rhythm-5);
-    padding: 0 var(--rhythm-2);
-
-    &:hover {
-      background-color: var(--hover-background-color);
-    }
-    &.selected {
-      background-color: var(--selected-background-color);
-      color: var(--selected-text-color);
-    }
-  }
-}
-
-.sw-dropdown-options {
-  .filter-option {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    gap: var(--rhythm-1);
-    justify-content: space-between;
-
-    .filter-title {
-      flex: 1 1 0;
-    }
-    .filter-color {
-      flex: 0 0 auto;
-      height: var(--rhythm-1);
-      width: var(--rhythm-1);
-    }
-  }
-}
-
 .sw-text-rendering {
   background: var(--container-background-color);
   margin: 0 auto;

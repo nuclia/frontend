@@ -131,7 +131,7 @@ export const formatTitle = (title?: string): string => {
   }
 };
 
-export const entitiesDefaultColor = '#c6c6c6';
+export const entitiesDefaultColor = '#e6e6e6';
 
 export const generatedEntitiesColor: { [key: string]: string } = {
   DATE: '#FF8989',
