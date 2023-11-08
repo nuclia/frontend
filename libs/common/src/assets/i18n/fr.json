@@ -777,6 +777,7 @@
 	"stash.widgets.autofilter.label": "Filtrage automatique",
 	"stash.widgets.configuration": "Configuration du widget",
 	"stash.widgets.created": "Filtrer par date de création",
+	"stash.widgets.created-warning": "Le filtrage sera basé sur la valeur <code>origin.created</code> si elle est fournie dans la ressource, sinon il sera par défaut sur la date de création de la ressource (<code>created</code>).<br> Attention : toutes les ressources créées avant le 02/11/2023 devront être retraitées pour que <code>origin.created</code> soit filtrable.",
 	"stash.widgets.darkMode.help": "Activer le thème sombre sur le widget",
 	"stash.widgets.darkMode.label": "Mode sombre",
 	"stash.widgets.displayMetadata.help": "Afficher quelques métadonnées sur les résultats de recherche",

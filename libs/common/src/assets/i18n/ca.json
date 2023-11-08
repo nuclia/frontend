@@ -776,6 +776,7 @@
 	"stash.widgets.autofilter.label": "Filtrat automàtic",
 	"stash.widgets.configuration": "Configuració del widget",
 	"stash.widgets.created": "Filtrar per data de creació",
+	"stash.widgets.created-warning": "El filtratge es basarà en el valor <code>origin.created</code> si es proporciona en el recurs, en cas contrari, s'utilitzarà per defecte la data de creació del recurs (<code>created</code>). <br>Tingueu en compte: tots els recursos creats abans del 02/11/2023 s'hauran de reprocessar per tal que es pugui filtrar per <code>origin.created</code>.",
 	"stash.widgets.darkMode.help": "Activa el tema fosc al giny",
 	"stash.widgets.darkMode.label": "Mode fosc",
 	"stash.widgets.displayMetadata.help": "Mostra algunes metadades als resultats de la cerca",
