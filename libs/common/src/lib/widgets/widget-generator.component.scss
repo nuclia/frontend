@@ -35,6 +35,11 @@ $width-configuration: rhythm(56);
     }
   }
 
+  .filter-warning {
+    color: $color-neutral-regular;
+    padding: rhythm(0.5) 0 0 rhythm(3.5);
+  }
+
   .preview-container {
     display: flex;
     flex-direction: column;

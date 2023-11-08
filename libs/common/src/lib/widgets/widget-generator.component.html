@@ -88,18 +88,24 @@
               {{ 'stash.widgets.labelFamilies' | translate }}
             </pa-checkbox>
             <pa-checkbox
-              [(value)]="filters.created"
-              (valueChange)="onFiltersChange()"
-              [disabled]="filters.created && hasOneFilter">
-              {{ 'stash.widgets.created' | translate }}
-            </pa-checkbox>
-            <pa-checkbox
               *ngIf="isEntityFiltersEnabled | async"
               [(value)]="filters.entities"
               (valueChange)="onFiltersChange()"
               [disabled]="filters.entities && hasOneFilter">
               {{ 'stash.widgets.entities' | translate }}
             </pa-checkbox>
+            <div>
+              <pa-checkbox
+                [(value)]="filters.created"
+                (valueChange)="onFiltersChange()"
+                [disabled]="filters.created && hasOneFilter">
+                {{ 'stash.widgets.created' | translate }}
+              </pa-checkbox>
+              <div
+                *ngIf="filters.created"
+                class="filter-warning"
+                [innerHtml]="'stash.widgets.created-warning' | translate"></div>
+            </div>
           </div>
           <pa-toggle
             labelOnRight
