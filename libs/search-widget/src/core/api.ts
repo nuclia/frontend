@@ -33,6 +33,7 @@ let SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
 let CHAT_MODE = [...DEFAULT_CHAT_MODE];
 let SUGGEST_MODE: Search.SuggestionFeatures[] = [];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
+let prompt: string | undefined = undefined;
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {
@@ -60,6 +61,8 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
     highlight: widgetOptions.highlight,
     autofilter: !!widgetOptions.features?.autofilter,
   });
+  prompt = widgetOptions.prompt;
+
   if (widgetOptions.features?.suggestLabels) {
     const kbPath = nucliaApi?.knowledgeBox.fullpath;
     if (kbPath) {
@@ -139,7 +142,7 @@ export const getAnswer = (
     query,
     context,
     mode,
-    options ? { ...options, highlight: true } : { highlight: true },
+    options ? { ...options, highlight: true, prompt } : { highlight: true, prompt },
   );
 };
 

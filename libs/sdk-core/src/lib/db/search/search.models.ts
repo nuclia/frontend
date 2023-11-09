@@ -44,6 +44,7 @@ export interface BaseSearchOptions {
 
 export interface ChatOptions extends BaseSearchOptions {
   synchronous?: boolean;
+  prompt?: string;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

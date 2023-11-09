@@ -38,6 +38,7 @@ export interface WidgetOptions {
   fuzzyOnly?: boolean;
   highlight?: boolean;
   features?: WidgetFeatures;
+  prompt?: string;
 }
 
 export interface WidgetAction {

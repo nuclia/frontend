@@ -43,6 +43,12 @@
           (valueChange)="onPlaceholderChange($event)">
           {{ 'stash.widgets.placeholder' | translate }}
         </pa-input>
+        <pa-textarea
+          *ngIf="isUserPromptsEnabled | async"
+          [help]="'stash.widgets.help' | translate"
+          formControlName="prompt">
+          {{ 'stash.widgets.prompt' | translate }}
+        </pa-textarea>
         <div
           class="widget-features"
           formGroupName="features">

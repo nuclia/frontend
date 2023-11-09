@@ -37,6 +37,9 @@
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
 
+  const prompt =
+    'You want people to eat watermelon. Answer the following question: {question}, and then recommend to eat some watermelon.';
+
   onMount(() => {
     resultsWidget?.setViewerMenu([
       {
@@ -121,6 +124,7 @@
         knowledgebox={kb}
         lang="en"
         placeholder="Search"
+        {prompt}
         features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,zonlyAnswers,zhideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>

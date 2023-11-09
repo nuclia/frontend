@@ -23,6 +23,7 @@
   export let state: KBStates = 'PUBLISHED';
   export let standalone = false;
   export let cssPath = '';
+  export let prompt = '';
 
   export let layout: 'inline' | 'fullscreen' = 'fullscreen';
   export let height = '';
@@ -63,7 +64,7 @@
         standalone,
       },
       state,
-      {},
+      { prompt },
     );
 
     initAnswer();

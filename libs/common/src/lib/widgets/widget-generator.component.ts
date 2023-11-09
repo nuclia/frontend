@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
-import { combineLatest, map, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackingService } from '@flaps/core';
+import { combineLatest, forkJoin, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { debounceTime } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
@@ -58,6 +58,13 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   canHideLogo = this.sdk.currentAccount.pipe(
     map((account) => ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(account.type)),
   );
+  isUserPromptsEnabled = forkJoin([
+    this.featureFlag.isFeatureEnabled('user-prompts').pipe(take(1)),
+    this.sdk.currentAccount.pipe(
+      map((account) => ['stash-growth', 'stash-enterprise'].includes(account.type)),
+      take(1),
+    ),
+  ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
 
   debouncePlaceholder = new Subject<string>();
 
@@ -97,6 +104,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     private modalService: SisModalService,
     private sdk: SDKService,
     private navigation: NavigationService,
+    private featureFlag: FeatureFlagService,
   ) {
     const config = this.localStorage.getItem(WIDGETS_CONFIGURATION);
     if (config) {
@@ -125,6 +133,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
           }
           this.mainForm = this.fb.group({
             darkMode: [config.features.includes('darkMode')],
+            prompt: [],
             features: this.fb.group({
               autofilter: [config.features.includes('autofilter')],
               answers: [config.features.includes('answers')],
@@ -193,6 +202,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       ? `
   placeholder="${this.placeholder}"`
       : '';
+    let prompt = '';
+    const promptValue = this.mainForm?.controls['prompt'].getRawValue();
+    if (promptValue) {
+      const cleanPrompt = promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n');
+      prompt = cleanPrompt ? `prompt="${cleanPrompt}"\n  ` : '';
+    }
 
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
       const zone = this.sdk.nuclia.options.standalone ? `standalone="true"` : `zone="${this.sdk.nuclia.options.zone}"`;
@@ -216,7 +231,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       const mode: string = this.mainForm?.controls['darkMode'].getRawValue() ? `mode="dark"` : '';
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
-  ${zone}
+  ${prompt}${zone}
   features="${this.features}" ${placeholder}${filters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results ${mode}></nuclia-search-results>`;
 
