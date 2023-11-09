@@ -45,9 +45,9 @@
         </pa-input>
         <pa-textarea
           *ngIf="isUserPromptsEnabled | async"
-          [help]="'stash.widgets.help' | translate"
+          [help]="'stash.widgets.prompt.help' | translate"
           formControlName="prompt">
-          {{ 'stash.widgets.prompt' | translate }}
+          {{ 'stash.widgets.prompt.label' | translate }}
         </pa-textarea>
         <div
           class="widget-features"
