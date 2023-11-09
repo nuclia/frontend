@@ -256,7 +256,7 @@ export class UploadService {
   }
 
   updateStatusCount(): Observable<{ pending: number; error: number; processed: number }> {
-    const statusFacet = '/n/s';
+    const statusFacet = '/metadata.status';
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
