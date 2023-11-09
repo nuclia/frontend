@@ -14,7 +14,11 @@ export class UserService {
   readonly userPrefs = this.userInfoSubject.pipe(map((user) => user?.preferences));
   readonly hasOwnAccount = this.userInfo.pipe(map((info) => (info?.dependant_accounts.length || 0) > 0));
 
-  constructor(private sdk: SDKService, private authService: AuthService, private route: ActivatedRoute) {
+  constructor(
+    private sdk: SDKService,
+    private authService: AuthService,
+    private route: ActivatedRoute,
+  ) {
     if (!this.sdk.nuclia.options.standalone) {
       this.sdk.nuclia.auth
         .isAuthenticated()
@@ -40,9 +44,5 @@ export class UserService {
         this.userInfoSubject.next(welcome);
       }),
     );
-  }
-
-  getUserinfo(): Welcome | undefined {
-    return this.userInfoSubject.getValue();
   }
 }

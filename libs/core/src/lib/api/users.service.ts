@@ -1,52 +1,46 @@
 import { Injectable } from '@angular/core';
-import { DeprecatedApiService } from './deprecated-api.service';
-import { AccountUser, SetUsersAccount, InviteAccountData, KbUser, InviteKbData, SetUsersKb, User } from '../models';
+import { AccountUser, InviteAccountData, InviteKbData, KbUser, SetUsersAccount, SetUsersKb, User } from '../models';
 import { Observable } from 'rxjs';
+import { SDKService } from './sdk.service';
 
-const VERSION = 'v1';
 const ACCOUNT = 'account';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService {
-  constructor(private api: DeprecatedApiService) {}
+  constructor(private sdk: SDKService) {}
 
   getAccountUser(slug: string, id: string): Observable<Partial<User>> {
-    return this.api.get(`/${VERSION}/${ACCOUNT}/${slug}/user/${id}`, true, undefined, true);
+    return this.sdk.nuclia.rest.get(`/${ACCOUNT}/${slug}/user/${id}`);
   }
 
   getAccountUsers(slug: string): Observable<AccountUser[]> {
-    return this.api.get(`/${VERSION}/${ACCOUNT}/${slug}/users`, true, undefined, true);
+    return this.sdk.nuclia.rest.get(`/${ACCOUNT}/${slug}/users`);
   }
 
   setAccountUsers(slug: string, users: SetUsersAccount): Observable<void> {
-    const url = `/${VERSION}/${ACCOUNT}/${slug}/users`;
-    return this.api.patch(url, JSON.stringify(users), true, undefined, true);
-  }
-
-  searchAccountUsers(slug: string, query: string): Observable<AccountUser[]> {
-    const url = `/${VERSION}/${ACCOUNT}/${slug}/users/search?query=${query}`;
-    return this.api.get(url, true, undefined, true);
+    const url = `/${ACCOUNT}/${slug}/users`;
+    return this.sdk.nuclia.rest.patch(url, users);
   }
 
   getKbUsers(accountSlug: string, kbSlug: string): Observable<KbUser[]> {
-    const url = `/${VERSION}/${ACCOUNT}/${accountSlug}/kb/${kbSlug}/users`;
-    return this.api.get(url, true, undefined, true);
+    const url = `/${ACCOUNT}/${accountSlug}/kb/${kbSlug}/users`;
+    return this.sdk.nuclia.rest.get(url);
   }
 
   setKbUsers(accountSlug: string, kbSlug: string, data: SetUsersKb): Observable<void> {
-    const url = `/${VERSION}/${ACCOUNT}/${accountSlug}/kb/${kbSlug}/users`;
-    return this.api.patch(url, JSON.stringify(data), true, undefined, true);
+    const url = `/${ACCOUNT}/${accountSlug}/kb/${kbSlug}/users`;
+    return this.sdk.nuclia.rest.patch(url, data);
   }
 
   inviteToKb(accountSlug: string, kbSlug: string, data: InviteKbData): Observable<void> {
-    const url = `/${VERSION}/${ACCOUNT}/${accountSlug}/kb/${kbSlug}/invite`;
-    return this.api.post(url, JSON.stringify(data), true, undefined, undefined, true);
+    const url = `/${ACCOUNT}/${accountSlug}/kb/${kbSlug}/invite`;
+    return this.sdk.nuclia.rest.post(url, data);
   }
 
   inviteToAccount(slug: string, data: InviteAccountData): Observable<void> {
-    const url = `/${VERSION}/${ACCOUNT}/${slug}/invite`;
-    return this.api.post(url, JSON.stringify(data), true, undefined, undefined, true);
+    const url = `/${ACCOUNT}/${slug}/invite`;
+    return this.sdk.nuclia.rest.post(url, data);
   }
 }

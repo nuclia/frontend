@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { AuthTokens } from '../models';
 import { BackendConfigurationService } from '../config';
-import { DeprecatedApiService } from './deprecated-api.service';
+import { SDKService } from './sdk.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SsoService {
-  constructor(private api: DeprecatedApiService, private config: BackendConfigurationService) {}
+  constructor(
+    private sdk: SDKService,
+    private config: BackendConfigurationService,
+  ) {}
 
   getSsoLoginUrl(provider: 'google' | 'github'): string {
     return `${this.config.getAPIURL()}/auth/${provider}/authorize?came_from=${window.location.origin}`;
@@ -19,8 +22,7 @@ export class SsoService {
     if (url === null || !this.isSafeRedirect(url)) {
       return throwError(() => new Error('Invalid state'));
     }
-    const data = { code: code };
-    return this.api.post(url, JSON.stringify(data), false);
+    return this.sdk.nuclia.rest.post(url, { code });
   }
 
   private getLoginUrl(state: string): string | null {

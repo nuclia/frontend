@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DeprecatedApiService } from '../api';
+import { SDKService } from '../api';
 import { BackendConfigurationService } from '../config';
 import { MagicAction } from '../models';
 
@@ -11,10 +11,13 @@ const MAGIC = 'magic';
   providedIn: 'root',
 })
 export class TokenService {
-  constructor(private api: DeprecatedApiService, private config: BackendConfigurationService) {}
+  constructor(
+    private sdk: SDKService,
+    private config: BackendConfigurationService,
+  ) {}
 
   validate(token: string): Observable<MagicAction> {
     const url = this.config.getAPIURL() + `/${AUTH}/${MAGIC}?token=${token}`;
-    return this.api.post(url, {}, false, undefined);
+    return this.sdk.nuclia.rest.post(url, {});
   }
 }
