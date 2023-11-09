@@ -810,6 +810,8 @@
 	"stash.widgets.permalink.label": "Permalinks",
 	"stash.widgets.placeholder": "Search bar placeholder",
 	"stash.widgets.preview": "Preview",
+	"stash.widgets.prompt.help": "It will take precedence on the user prompt defined in the Knowledge Box settings. Note: the prompt strategy might change depending on the generative model. Check the examples in the settings page.",
+	"stash.widgets.prompt.label": "User prompt",
 	"stash.widgets.publish_kb": "You can publish it from the",
 	"stash.widgets.publish_kb_link": "Dashboard",
 	"stash.widgets.recommendations": "Recommendations",

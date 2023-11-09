@@ -810,6 +810,8 @@
 	"stash.widgets.permalink.label": "Permalinks",
 	"stash.widgets.placeholder": "Platzhalter für die Suchleiste",
 	"stash.widgets.preview": "Vorschau",
+	"stash.widgets.prompt.help": "Sie hat Vorrang vor der in den Knowledge Box-Einstellungen definierten Benutzeraufforderung. Hinweis: Die Eingabeaufforderungsstrategie kann sich je nach generativem Modell ändern. Sehen Sie sich die Beispiele auf der Einstellungsseite an.",
+	"stash.widgets.prompt.label": "Benutzer prompt",
 	"stash.widgets.publish_kb": "Sie können es im veröffentlichen",
 	"stash.widgets.publish_kb_link": "Instrumententafel",
 	"stash.widgets.recommendations": "Empfehlungen",

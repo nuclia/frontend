@@ -810,6 +810,8 @@
 	"stash.widgets.permalink.label": "Links permanentes",
 	"stash.widgets.placeholder": "Espaço reservado da barra de pesquisa",
 	"stash.widgets.preview": "Visualizar",
+	"stash.widgets.prompt.help": "Terá precedência no prompt do usuário definido nas configurações da Caixa de conhecimento. Nota: a estratégia imediata pode mudar dependendo do modelo generativo. Verifique os exemplos na página de configurações.",
+	"stash.widgets.prompt.label": "Prompt do usuário",
 	"stash.widgets.publish_kb": "Você pode publicá-lo no",
 	"stash.widgets.publish_kb_link": "Painel de controle",
 	"stash.widgets.recommendations": "Recomendações",

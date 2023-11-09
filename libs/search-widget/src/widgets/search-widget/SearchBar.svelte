@@ -43,6 +43,7 @@
   export let mode = '';
   export let filters = '';
   export let cssPath = '';
+  export let prompt = '';
 
   $: darkMode = mode === 'dark';
 
@@ -106,6 +107,7 @@
       {
         highlight: true,
         features: _features,
+        prompt,
       },
     );
 

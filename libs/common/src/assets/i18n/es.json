@@ -809,6 +809,8 @@
 	"stash.widgets.permalink.label": "Permalinks",
 	"stash.widgets.placeholder": "Placeholder de la barra de búsqueda",
 	"stash.widgets.preview": "Previsualizar",
+	"stash.widgets.prompt.help": "Tendrá prioridad en el prompt de usuario definido en la configuración del Knowledge Box. Nota: la estrategia de prompt puede cambiar según el modelo generativo. Consulte los ejemplos en la página de configuración.",
+	"stash.widgets.prompt.label": "Prompt de usuario",
 	"stash.widgets.publish_kb": "Puedes publicarlo desde el",
 	"stash.widgets.publish_kb_link": "Tablero",
 	"stash.widgets.recommendations": "Recomendaciones",

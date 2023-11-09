@@ -809,6 +809,8 @@
 	"stash.widgets.permalink.label": "Permalinks",
 	"stash.widgets.placeholder": "Placeholder de la barra de cerca",
 	"stash.widgets.preview": "Vista prèvia",
+	"stash.widgets.prompt.help": "Tindrà prioritat a el prompt de l'usuari definida a la configuració del Knowledge Box. Nota: l'estratègia del prompt pot canviar en funció del model generatiu. Comproveu els exemples a la pàgina de configuració.",
+	"stash.widgets.prompt.label": "Prompt de l'usuari",
 	"stash.widgets.publish_kb": "Podeu publicar·lo des de",
 	"stash.widgets.publish_kb_link": "Panell",
 	"stash.widgets.recommendations": "Recomanacions",
