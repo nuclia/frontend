@@ -319,7 +319,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   }
 
   private loadFilters(): Observable<void> {
-    const mimeFacets = ['/n/i/application', '/n/i/audio', '/n/i/image', '/n/i/text', '/n/i/video'];
+    const mimeFacets = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video'];
     return forkJoin([
       this.sdk.currentKb.pipe(take(1)),
       this.labelSets.pipe(take(1)),
@@ -349,11 +349,11 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
       mainTypes: { key: string; count: number }[];
     } = Object.entries(allFacets).reduce(
       (groups, [facetId, values]) => {
-        if (facetId.startsWith('/l/')) {
+        if (facetId.startsWith('/classification.labels/')) {
           Object.entries(values).forEach(([key, count]) => {
             groups.classification.push({ key, count });
           });
-        } else if (facetId.startsWith('/n/i/')) {
+        } else if (facetId.startsWith('/icon/')) {
           Object.entries(values).forEach(([key, count]) => {
             groups.mainTypes.push({ key, count });
           });
@@ -372,11 +372,10 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
       mainTypes: [],
     };
     if (facetGroups.classification.length > 0) {
-      facetGroups.classification.forEach((facet) =>
-        filters.classification.push(
-          this.getOptionFromFacet(facet, facet.key.substring(3), queryParamsFilters.includes(facet.key)),
-        ),
-      );
+      facetGroups.classification.forEach((facet) => {
+        const label = facet.key.split('/').slice(2).join('/');
+        filters.classification.push(this.getOptionFromFacet(facet, label, queryParamsFilters.includes(facet.key)));
+      });
       filters.classification.sort((a, b) => a.label.localeCompare(b.label));
     }
     if (facetGroups.mainTypes.length > 0) {
