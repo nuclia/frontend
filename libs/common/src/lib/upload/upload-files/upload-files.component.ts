@@ -1,10 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { take } from 'rxjs';
+import { filter, of, switchMap, take } from 'rxjs';
 import { DroppedFile, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
-import { FILES_TO_IGNORE, PATTERNS_TO_IGNORE, UploadService } from '../upload.service';
+import {
+  ARCHIVE_MIMES,
+  FILES_TO_IGNORE,
+  PATTERNS_TO_IGNORE,
+  SPREADSHEET_MIMES,
+  UploadService,
+} from '../upload.service';
 import mime from 'mime';
 import { StandaloneService } from '../../services';
+import { TranslateService } from '@ngx-translate/core';
+import { SisModalService } from '@nuclia/sistema';
 
 const GENERAL_LABELSET = 'General';
 
@@ -43,6 +51,8 @@ export class UploadFilesComponent {
     private tracking: STFTrackingService,
     private sdk: SDKService,
     private standaloneService: StandaloneService,
+    private translate: TranslateService,
+    private modal: SisModalService,
   ) {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
       if (account.limits) {
@@ -109,8 +119,39 @@ export class UploadFilesComponent {
     });
   }
 
-  startUpload() {
+  onUpload() {
     const files = this.allowedFiles;
+    const spreadsheets = files.filter((file) => SPREADSHEET_MIMES.includes(file.type));
+    const archives = files.filter((file) => ARCHIVE_MIMES.includes(file.type));
+    (spreadsheets.length > 0
+      ? this.modal.openConfirm({
+          title: this.translate.instant('upload.warning-spreadsheet-title', { num: spreadsheets.length }),
+          description: this.translate.instant('upload.warning-spreadsheets-description', {
+            url: 'https://docs.nuclia.dev/docs/guides/using/indexing/#structured-text',
+          }),
+          confirmLabel: 'generic.upload',
+        }).onClose
+      : of(true)
+    )
+      .pipe(
+        filter((res) => res),
+        switchMap(() =>
+          archives.length > 0
+            ? this.modal.openConfirm({
+                title: this.translate.instant('upload.warning-archive-title', { num: archives.length }),
+                description: 'upload.warning-archive-description',
+                confirmLabel: 'generic.upload',
+              }).onClose
+            : of(true),
+        ),
+        filter((res) => res),
+      )
+      .subscribe(() => {
+        this.startUpload(files);
+      });
+  }
+
+  startUpload(files: File[]) {
     if (files.length > 0) {
       this.upload.emit();
       const labelledFiles = this.setLabels(files);

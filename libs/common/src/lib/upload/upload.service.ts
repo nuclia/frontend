@@ -40,6 +40,21 @@ export const UPLOAD_DONE_KEY = 'NUCLIA_UPLOAD_DONE';
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 export const PATTERNS_TO_IGNORE = [/^~.+/, /.+\.tmp$/];
 const REGEX_YOUTUBE_URL = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/)/;
+export const SPREADSHEET_MIMES = [
+  'text/csv',
+  'application/json',
+  'text/xml',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.oasis.opendocument.spreadsheet',
+];
+export const ARCHIVE_MIMES = [
+  'application/zip',
+  'application/gzip',
+  'application/x-gzip',
+  'application/x-tar',
+  'application/x-rar',
+];
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
@@ -54,11 +69,7 @@ export class UploadService {
   barDisabled = this._barDisabled.asObservable();
   statusCount = this._statusCount.asObservable();
 
-  constructor(
-    private sdk: SDKService,
-    private labelsService: LabelsService,
-    private toaster: SisToastService,
-  ) {}
+  constructor(private sdk: SDKService, private labelsService: LabelsService, private toaster: SisToastService) {}
 
   uploadFiles(files: FileWithMetadata[]) {
     let hasNotifiedError = false;
