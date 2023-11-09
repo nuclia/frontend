@@ -88,15 +88,12 @@ export class AppComponent implements OnInit, OnDestroy {
           ]),
         ),
         filter(([accountParams]) => !!accountParams?.get('account')),
-        switchMap(([accountParams, kbParams]) =>
-          combineLatest([
-            this.sdk.setCurrentAccount(accountParams?.get('account') as string),
-            kbParams && kbParams.get('stash')
-              ? this.sdk.setCurrentKnowledgeBox(
-                  accountParams?.get('account') as string,
-                  kbParams.get('stash') as string,
-                )
-              : of(undefined),
+        switchMap(([accountParams, kbParams]) => {
+          const account = accountParams?.get('account') as string;
+          const kb = kbParams && kbParams.get('kb');
+          return combineLatest([
+            this.sdk.setCurrentAccount(account),
+            kb ? this.sdk.setCurrentKnowledgeBox(account, kb as string) : of(undefined),
           ]).pipe(
             catchError((error) => {
               if (error.status === 403) {
@@ -104,8 +101,8 @@ export class AppComponent implements OnInit, OnDestroy {
               }
               return of([{ title: '' }, { title: '' }]);
             }),
-          ),
-        ),
+          );
+        }),
       )
       .subscribe(([, kb]) =>
         kb ? this.titleService.setTitle(`NucliaDB – ${kb.title}`) : this.titleService.setTitle(`NucliaDB`),

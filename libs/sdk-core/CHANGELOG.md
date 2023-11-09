@@ -5,6 +5,10 @@
 - Add `allow_kb_management` property to `NUAClientPayload`
 - Add optional `zoneSlug` parameter to `getFullUrl`, `fetch`, `get`, `post`, `put` and `delete` methods.
 - Add `LearningConfigurationOption` interface
+- Add support for regional KBs 
+  - new `getKbIndexes` method in `db` allowing to list of the KB index of an account
+  - update `getKnowledgeBoxes`, `getKnowledgeBox`, `createKnowledgeBox`, `WritableKnowledgeBox.modify` and `WritableKnowledgeBox.delete` methods for supporting regional endpoints when the flag `NUCLIA_NEW_REGIONAL_ENDPOINTS` is enabled
+  - add `getKnowledgeBoxesForZone` method listing all the KBs for an account and a zone
 
 # 1.7.0 (2023-10-19)
 

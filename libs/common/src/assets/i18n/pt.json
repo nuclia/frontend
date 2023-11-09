@@ -707,6 +707,7 @@
 	"stash.publish.title": "Publicar Knowledge Box",
 	"stash.publish.warning": "Se você publicar a Knowledge Box \"{{ kb }}\", todas as informações nela contidas serão públicas.",
 	"stash.retire.error": "Erro ao cancelar a publicação da Knowledge Box",
+	"stash.retire.title": "Cancelar publicação da Knowledge Box",
 	"stash.retire.warning": "Se você cancelar a publicação da Knowledge Box \"{{ kb }}\", todas as informações nela contidas se tornarão privadas.",
 	"stash.search": "Procurar",
 	"stash.search-toggle-answer": "Resposta generativa",

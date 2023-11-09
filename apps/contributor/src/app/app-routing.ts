@@ -37,7 +37,7 @@ export const routes: Routes = [
         component: DashboardLayoutComponent,
         children: [
           {
-            path: `:stash`,
+            path: `:kb`,
             component: MainContainerComponent,
             children: [
               {

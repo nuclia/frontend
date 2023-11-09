@@ -24,6 +24,7 @@ import type {
   Welcome,
   WritableKnowledgeBox,
 } from './db';
+import { KbIndex } from './db';
 
 export interface INuclia {
   options: NucliaOptions;
@@ -107,6 +108,7 @@ export interface IRest {
 
 export interface IDb {
   getAccounts(): Observable<Account[]>;
+  getKbIndexes(accountSlug: string): Observable<KbIndex[]>;
   createAccount(account: AccountCreation): Observable<Account>;
   getAccountStatus(account: string): Observable<AccountStatus>;
   modifyAccount(account: string, data: Partial<Account>): Observable<void>;
@@ -115,7 +117,8 @@ export interface IDb {
   getAccount(): Observable<Account>;
   getAccount(account?: string): Observable<Account>;
   getStandaloneKbs(): Observable<IStandaloneKb[]>;
-  getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account: string, knowledgeBox: string): Observable<WritableKnowledgeBox>;
   createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox>;
@@ -155,15 +158,24 @@ export interface NucliaOptions {
   /**
    * Allows you to make calls to a private Knowledge Box.
    *
-   * It can be used in a server-side app, but never in a web app. */
+   * It can be used in a server-side app, but never in a web app.
+   */
   apiKey?: string;
+  /**
+   * Allows you to make calls the NUA processing.
+   */
   nuaKey?: string;
   /**
    * The Nuclia account slug.
    *
-   * Example: `my-account` */
+   * Example: `my-account`
+   */
   account?: string;
   accountType?: AccountTypes;
+  /**
+   * The Nuclia account id.
+   */
+  accountId?: string;
   /**
    * The Nuclia Knowledge Box unique id.
    *

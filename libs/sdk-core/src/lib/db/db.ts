@@ -1,6 +1,6 @@
-import { catchError, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, filter, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IDb, INuclia } from '../models';
-import type { LearningConfigurations, PredictedToken } from './db.models';
+import type { KbIndex, LearningConfigurations, PredictedToken } from './db.models';
 import {
   Account,
   AccountCreation,
@@ -24,6 +24,7 @@ import { FileWithMetadata, uploadToProcess } from './upload';
 /** Allows you to access Nuclia accounts and/or Nuclia Knowledge Boxes. */
 export class Db implements IDb {
   private nuclia: INuclia;
+  private useRegionalSystem = localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
 
   public constructor(nuclia: INuclia) {
     this.nuclia = nuclia;
@@ -34,6 +35,14 @@ export class Db implements IDb {
     return this.nuclia.rest.get<Account[]>('/accounts');
   }
 
+  /**
+   * Returns a list of all the KB indexes (account id, kb id, zone id) for the provided account slug.
+   * @param accountSlug
+   */
+  getKbIndexes(accountSlug: string): Observable<KbIndex[]> {
+    return this.nuclia.rest.get<KbIndex[]>(`/account/${accountSlug}/index/kbs`);
+  }
+
   /** Creates a new account. */
   createAccount(account: AccountCreation): Observable<Account> {
     return this.nuclia.rest.post<Account>('/accounts', account);
@@ -41,7 +50,7 @@ export class Db implements IDb {
 
   /**
    * Modifies account properties.
-   * 
+   *
    * Example:
     ```ts
     nuclia.db.modifyAccount('my-account', { title: 'My account' }).subscribe({
@@ -65,7 +74,7 @@ export class Db implements IDb {
 
   /**
    * Returns account status.
-   * 
+   *
    * Example:
     ```ts
     nuclia.db
@@ -82,7 +91,7 @@ export class Db implements IDb {
 
   /**
    * Returns user information.
-   * 
+   *
    * Example:
     ```ts
     nuclia.db.getWelcome().subscribe((welcome) => {
@@ -112,8 +121,36 @@ export class Db implements IDb {
   }
 
   /** Returns a list of all the Knowledge Boxes for the given account slug. */
-  getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]> {
-    return this.nuclia.rest.get<IKnowledgeBoxItem[]>(`/account/${account}/kbs`);
+  getKnowledgeBoxes(accountSlug: string): Observable<IKnowledgeBoxItem[]> {
+    const accountId = this.nuclia.options.accountId;
+    if (this.useRegionalSystem && !accountId) {
+      console.error('Account ID must be set in Nuclia options in order to load KBs using regional system');
+    }
+    return this.useRegionalSystem && accountId
+      ? forkJoin([this.nuclia.rest.getZones(), this.getKbIndexes(accountSlug)]).pipe(
+          switchMap(([zoneMap, indexes]) => {
+            const zones = indexes.reduce((zoneIds, index) => {
+              const zoneSlug = zoneMap[index.zone_id];
+              if (!zoneIds.includes(zoneSlug)) {
+                zoneIds.push(zoneSlug);
+              }
+              return zoneIds;
+            }, [] as string[]);
+            return zones.length > 0
+              ? forkJoin(zones.map((zone) => this.getKnowledgeBoxesForZone(accountId, zone)))
+              : of([]);
+          }),
+          map((kbByZone) =>
+            kbByZone.reduce((kbList, list) => {
+              return kbList.concat(list);
+            }, [] as IKnowledgeBoxItem[]),
+          ),
+        )
+      : this.nuclia.rest.get<IKnowledgeBoxItem[]>(`/account/${accountSlug}/kbs`);
+  }
+
+  getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]> {
+    return this.nuclia.rest.get<IKnowledgeBoxItem[]>(`/account/${accountId}/kbs`, undefined, undefined, zone);
   }
 
   /**
@@ -123,43 +160,77 @@ export class Db implements IDb {
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account: string, knowledgeBox: string): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account?: string, knowledgeBox?: string): Observable<WritableKnowledgeBox> {
-    account = account || this.nuclia.options.account;
-    if (account) {
-      const knowledgeBoxSlug = knowledgeBox || this.nuclia.options.knowledgeBox || this.nuclia.options.kbSlug;
-      if (!knowledgeBoxSlug) {
-        throw new Error('account and knowledgeBox must be defined in the Nuclia options');
-      }
+    if (this.useRegionalSystem) {
+      const accountId = this.nuclia.options.accountId;
+      if (accountId) {
+        // TODO use knowledgeBox param if defined, once old system will be cleaned up (rename to knowledgeBoxId to make it explicit)
+        // get kb slug from nuclia options for standalone case
+        const kbId = this.nuclia.options.knowledgeBox;
+        const kbSlug = knowledgeBox || this.nuclia.options.kbSlug;
+        if (!kbId) {
+          throw new Error('knowledgeBox id must be defined in the Nuclia options');
+        }
 
-      const kbEndpoint = this.nuclia.options.standalone
-        ? `/kb/${knowledgeBoxSlug}`
-        : `/account/${account}/kb/${knowledgeBoxSlug}`;
-      return this.nuclia.rest.get<IKnowledgeBox>(kbEndpoint).pipe(
-        switchMap((kb) =>
-          this.nuclia.options.zone || this.nuclia.options.standalone
-            ? of(kb)
-            : this.nuclia.rest.getZoneSlug(kb.zone).pipe(
-                tap((zone) => (this.nuclia.options.zone = zone)),
-                map(() => kb),
-              ),
-        ),
-        map((kb) => new WritableKnowledgeBox(this.nuclia, account as string, kb)),
-      );
-    } else {
-      if (!this.nuclia.options.knowledgeBox || !this.nuclia.options.zone) {
-        throw new Error('zone must be defined in the Nuclia options');
+        const kbEndpoint = this.nuclia.options.standalone ? `/kb/${kbSlug}` : `/account/${accountId}/kb/${kbId}`;
+
+        return this.nuclia.rest
+          .get<IKnowledgeBox>(
+            kbEndpoint,
+            undefined,
+            undefined,
+            this.nuclia.options.standalone ? undefined : this.nuclia.options.zone,
+          )
+          .pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, account as string, kb)));
+      } else {
+        if (!this.nuclia.options.knowledgeBox || !this.nuclia.options.zone) {
+          throw new Error('zone must be defined in the Nuclia options');
+        }
+        return of(
+          new WritableKnowledgeBox(this.nuclia, '', {
+            id: this.nuclia.options.knowledgeBox,
+            zone: this.nuclia.options.zone,
+          }),
+        );
       }
-      return of(
-        new WritableKnowledgeBox(this.nuclia, '', {
-          id: this.nuclia.options.knowledgeBox,
-          zone: this.nuclia.options.zone,
-        }),
-      );
+    } else {
+      account = account || this.nuclia.options.account;
+      if (account) {
+        const knowledgeBoxSlug = knowledgeBox || this.nuclia.options.knowledgeBox || this.nuclia.options.kbSlug;
+        if (!knowledgeBoxSlug) {
+          throw new Error('account and knowledgeBox must be defined in the Nuclia options');
+        }
+
+        const kbEndpoint = this.nuclia.options.standalone
+          ? `/kb/${knowledgeBoxSlug}`
+          : `/account/${account}/kb/${knowledgeBoxSlug}`;
+        return this.nuclia.rest.get<IKnowledgeBox>(kbEndpoint).pipe(
+          switchMap((kb) =>
+            this.nuclia.options.zone || this.nuclia.options.standalone
+              ? of(kb)
+              : this.nuclia.rest.getZoneSlug(kb.zone).pipe(
+                  tap((zone) => (this.nuclia.options.zone = zone)),
+                  map(() => kb),
+                ),
+          ),
+          map((kb) => new WritableKnowledgeBox(this.nuclia, account as string, kb)),
+        );
+      } else {
+        if (!this.nuclia.options.knowledgeBox || !this.nuclia.options.zone) {
+          throw new Error('zone must be defined in the Nuclia options');
+        }
+        return of(
+          new WritableKnowledgeBox(this.nuclia, '', {
+            id: this.nuclia.options.knowledgeBox,
+            zone: this.nuclia.options.zone,
+          }),
+        );
+      }
     }
   }
 
   /**
    * Creates a new Knowledge Box.
-   * 
+   *
    * Example:
     ```ts
     const knowledgeBox = {
@@ -172,17 +243,31 @@ export class Db implements IDb {
     ```
   */
   createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox> {
-    return this.nuclia.rest
-      .post<IKnowledgeBox>(this.nuclia.options.standalone ? '/kbs' : `/account/${account}/kbs`, knowledgeBox)
-      .pipe(
-        switchMap((res) => {
-          const id = res.id || res.uuid;
-          if (!id) {
-            throw 'KnowledgeBox creation failed';
-          }
-          return this.getKnowledgeBox(account, this.nuclia.options.standalone ? id : knowledgeBox.slug);
-        }),
-      );
+    const creation: Observable<IKnowledgeBox> = this.useRegionalSystem
+      ? this.nuclia.rest.post<IKnowledgeBox>(
+          `/account/${this.nuclia.options.accountId}/kbs`,
+          knowledgeBox,
+          undefined,
+          undefined,
+          undefined,
+          this.nuclia.options.zone,
+        )
+      : this.nuclia.rest.post<IKnowledgeBox>(
+          this.nuclia.options.standalone ? '/kbs' : `/account/${account}/kbs`,
+          knowledgeBox,
+        );
+    return creation.pipe(
+      switchMap((res) => {
+        const id = res.id || res.uuid;
+        if (!id) {
+          throw 'KnowledgeBox creation failed';
+        }
+        // TODO: once old endpoints will be cleaned up, we should pass the KB id directly to getKnowledgeBox
+        // set the created KB Id in nuclia options, so we can properly getKnowledgeBox afterward
+        this.nuclia.options.knowledgeBox = id;
+        return this.getKnowledgeBox(account, this.nuclia.options.standalone ? id : knowledgeBox.slug);
+      }),
+    );
   }
 
   getStats(
@@ -207,9 +292,9 @@ export class Db implements IDb {
 
   /**
    * Uploads and pushes a file to Nuclia Understanding API.
-   * 
+   *
    * _Requires a NUA token._
-   * 
+   *
    * Example:
 
     ```ts

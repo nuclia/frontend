@@ -109,7 +109,7 @@ export class KnowledgeBoxHomeComponent {
         switchMap(
           (kb) =>
             this.modalService.openConfirm({
-              title: `stash.${actionLabel}.${actionLabel}`,
+              title: `stash.${actionLabel}.title`,
               description: this.translate.transform(`stash.${actionLabel}.warning`, { kb: kb.title }),
             }).onClose,
         ),

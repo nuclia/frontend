@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, Observable, of, Subject } from 'rxjs';
-import { filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { forkJoin, of, Subject } from 'rxjs';
+import { filter, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
 import { SDKService, Zone, ZoneService } from '@flaps/core';
 import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
@@ -57,15 +57,6 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     // TODO: if no kbs, we should display to the default Empty page
   }
 
-  updateKbs(): Observable<IKnowledgeBoxItem[]> {
-    return this.sdk.nuclia.db.getKnowledgeBoxes(this.account!.slug).pipe(
-      map((kbs) => kbs.sort((a, b) => (a.title || '').localeCompare(b.title || ''))),
-      tap((kbs) => {
-        this.knowledgeBoxes = kbs;
-      }),
-    );
-  }
-
   manageKb(slug: string): void {
     this.router.navigate([this.navigation.getKbManageUrl(this.account!.slug, slug)]);
   }
@@ -93,7 +84,6 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
           }
           return !!result?.success;
         }),
-        switchMap(() => this.updateKbs()),
       )
       .subscribe(() => {
         this.cdr?.markForCheck();
@@ -116,7 +106,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
         switchMap(
           (message) =>
             this.modalService.openConfirm({
-              title: `stash.${actionLabel}.${actionLabel}`,
+              title: `stash.${actionLabel}.title`,
               description: message,
             }).onClose,
         ),
@@ -125,7 +115,6 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
           this.setLoading(true);
           return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).modify({ state });
         }),
-        switchMap(() => this.updateKbs()),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe({
@@ -154,7 +143,6 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
           this.setLoading(true);
           return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).delete();
         }),
-        switchMap(() => this.updateKbs()),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe({

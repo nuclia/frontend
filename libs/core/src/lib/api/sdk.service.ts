@@ -56,6 +56,8 @@ export class SDKService {
   refreshing = this._refreshCounter.asObservable();
   isAdminOrContrib = this.currentKb.pipe(map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
 
+  useRegionalSystem = localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
+
   get isKbLoaded() {
     return this._isKbLoaded;
   }
@@ -65,6 +67,7 @@ export class SDKService {
   }
 
   set account(account: Account | null) {
+    this.nuclia.options.accountId = account?.id;
     this._account.next(account);
   }
 
@@ -116,12 +119,18 @@ export class SDKService {
     }
   }
 
-  setCurrentKnowledgeBox(accountSlug: string, kbSlug: string, force = false): Observable<WritableKnowledgeBox> {
+  setCurrentKnowledgeBox(
+    accountSlug: string,
+    kbSlug: string,
+    zone?: string,
+    force = false,
+  ): Observable<WritableKnowledgeBox> {
     // returns the current kb and set it if not set
     const currentKb = this._kb.value;
     if (!force && currentKb && currentKb.slug === kbSlug) {
       return of(currentKb as WritableKnowledgeBox);
     } else {
+      this.nuclia.options.zone = zone;
       return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(
         map((kb) => {
           this.kb = kb;

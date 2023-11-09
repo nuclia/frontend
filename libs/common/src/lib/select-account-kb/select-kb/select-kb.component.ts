@@ -102,6 +102,10 @@ export class SelectKbComponent implements OnDestroy {
   goToKb(kb: IKnowledgeBoxItem) {
     if (kb.slug && kb.role_on_kb) {
       const kbSlug = kb.slug;
+      this.sdk.nuclia.options.knowledgeBox = kb.id;
+      if (this.sdk.useRegionalSystem) {
+        this.sdk.nuclia.options.zone = kb.zone;
+      }
       this.account.pipe(take(1)).subscribe((account) => {
         this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]);
       });

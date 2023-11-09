@@ -383,6 +383,8 @@ export class KnowledgeBox implements IKnowledgeBox {
 
 /** Extends `KnowledgeBox` with all the write operations. */
 export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowledgeBox {
+  private useRegionalSystem = localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
+
   /** True if the current user is an administrator of the Knowledge Box. */
   admin?: boolean;
   /** True if the current user is a contributor of the Knowledge Box. */
@@ -409,19 +411,31 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     ```
   */
   modify(data: Partial<IKnowledgeBox>): Observable<void> {
-    const endpoint = this.account === 'local' ? `/kb/${this.id}` : `/account/${this.account}/kb/${this.slug}`;
-    return this.nuclia.rest.patch<void>(endpoint, data);
+    const { endpoint, zone } = this.getEndpointAndZone();
+    return this.nuclia.rest.patch<void>(endpoint, data, undefined, undefined, undefined, zone);
+  }
+
+  /** Deletes the Knowledge Box. */
+  delete(): Observable<void> {
+    const { endpoint, zone } = this.getEndpointAndZone();
+    return this.nuclia.rest.delete(endpoint, undefined, undefined, zone);
+  }
+
+  private getEndpointAndZone() {
+    let endpoint: string;
+    let zone: string | undefined;
+    if (this.useRegionalSystem) {
+      endpoint = `/account/${this.nuclia.options.accountId}/kb/${this.id}`;
+      zone = this.nuclia.options.zone;
+    } else {
+      endpoint = this.account === 'local' ? `/kb/${this.id}` : `/account/${this.account}/kb/${this.slug}`;
+    }
+    return { endpoint, zone };
   }
 
   /** Publishes or unpublishes the Knowledge Box. */
   publish(published: boolean): Observable<void> {
     return this.modify({ state: published ? 'PUBLISHED' : 'PRIVATE' });
-  }
-
-  /** Deletes the Knowledge Box. */
-  delete(): Observable<void> {
-    const endpoint = this.account === 'local' ? `/kb/${this.id}` : `/account/${this.account}/kb/${this.slug}`;
-    return this.nuclia.rest.delete(endpoint);
   }
 
   /** Creates a new NER family. */
