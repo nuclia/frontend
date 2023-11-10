@@ -36,8 +36,6 @@
     "@angular/platform-browser-dynamic": "16.2.12",
     "@angular/router": "16.2.12",
     "@angular/service-worker": "16.2.12",
-    "@aws-sdk/client-s3": "^3.348.0",
-    "@aws-sdk/s3-request-presigner": "^3.190.0",
     "@ng-web-apis/common": "^2.1.0",
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
