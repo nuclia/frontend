@@ -42,6 +42,7 @@ import { RouterModule } from '@angular/router';
 import { LabelModule } from '../../label/label.module';
 import { HintModule } from '../../hint/hint.module';
 import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
+import { PipesModule } from '@flaps/common';
 
 @NgModule({
   imports: [
@@ -75,6 +76,7 @@ import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
     PaTextFieldModule,
     PaPopupModule,
     LabelsExpanderComponent,
+    PipesModule,
   ],
   declarations: [
     AddFieldComponent,
