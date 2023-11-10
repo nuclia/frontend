@@ -1,4 +1,4 @@
-import { catchError, filter, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, filter, forkJoin, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import type { AccountUsersPayload, FullAccountUser, IDb, INuclia, InviteAccountUserPayload } from '../models';
 import type { KbIndex, LearningConfigurations, PredictedToken } from './db.models';
 import {
@@ -370,12 +370,32 @@ export class Db implements IDb {
   }
 
   getNUAClients(account: string): Observable<NUAClient[]> {
-    return this.nuclia.rest
-      .get<{ clients: NUAClient[] }>(`/account/${account}/nua_clients`)
-      .pipe(map((res) => res.clients));
+    if (this.useRegionalSystem) {
+      return this.nuclia.rest.getZones().pipe(
+        switchMap((zones) =>
+          forkJoin(
+            Object.values(zones).map((zoneSlug) =>
+              this.nuclia.rest
+                .get<{ clients: NUAClient[] }>(`/account/${account}/nua_clients`, undefined, undefined, zoneSlug)
+                .pipe(catchError(() => of({ clients: [] as NUAClient[] }))),
+            ),
+          ),
+        ),
+        map((response) =>
+          response.reduce((allClients, { clients }) => {
+            return allClients.concat(clients);
+          }, [] as NUAClient[]),
+        ),
+      );
+    } else {
+      return this.nuclia.rest
+        .get<{ clients: NUAClient[] }>(`/account/${account}/nua_clients`)
+        .pipe(map((res) => res.clients));
+    }
   }
 
   getNUAClient(account: string, client_id: string): Observable<NUAClient> {
+    // FIXME: once new regional system will be in place, we'll need account id instead of slug, and we'll need the zone
     return this.nuclia.rest.get<NUAClient>(`/account/${account}/nua_client/${client_id}`);
   }
 
@@ -394,40 +414,78 @@ export class Db implements IDb {
   }
 
   /** Creates a NUA client and a NUA token. */
-  createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }> {
+  createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
+  createNUAClient(
+    accountId: string,
+    data: NUAClientPayload,
+    zone: string,
+  ): Observable<{ client_id: string; token: string }>;
+  createNUAClient(
+    account?: string,
+    data?: NUAClientPayload,
+    zone?: string,
+  ): Observable<{ client_id: string; token: string }> {
+    if (!account || !data) {
+      const error = 'Account and data are required to create a NUA client';
+      console.error(error);
+      return throwError(() => error);
+    }
+
     const payload: NUAClientPayload & { processing_webhook?: { uri: string } } = { ...data };
     if (payload.webhook) {
       payload.processing_webhook = { uri: payload.webhook };
       delete payload.webhook;
     }
-    return this.nuclia.rest.post<{ client_id: string; token: string }>(`/account/${account}/nua_clients`, payload).pipe(
-      catchError((err) => {
-        if (err.status === 409 && data.client_id) {
-          return this.renewNUAClient(account, data.client_id);
-        } else {
-          throw err;
-        }
-      }),
-      tap((key) => {
-        if (this.nuclia.options.client === 'desktop') {
-          this.nuclia.options.nuaKey = key.token;
-          localStorage.setItem(NUA_KEY, key.token);
-        }
-      }),
-    );
+
+    return this.nuclia.rest
+      .post<{ client_id: string; token: string }>(
+        `/account/${account}/nua_clients`,
+        payload,
+        undefined,
+        undefined,
+        undefined,
+        zone,
+      )
+      .pipe(
+        catchError((err) => {
+          if (err.status === 409 && data.client_id) {
+            return this.renewNUAClient(account, data.client_id);
+          } else {
+            throw err;
+          }
+        }),
+        tap((key) => {
+          if (this.nuclia.options.client === 'desktop') {
+            this.nuclia.options.nuaKey = key.token;
+            localStorage.setItem(NUA_KEY, key.token);
+          }
+        }),
+      );
   }
 
   /** Renews a NUA token. */
-  renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }> {
+  renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
+  renewNUAClient(accountId: string, client_id: string, zone: string): Observable<{ client_id: string; token: string }>;
+  renewNUAClient(
+    account?: string,
+    client_id?: string,
+    zone?: string,
+  ): Observable<{ client_id: string; token: string }> {
     return this.nuclia.rest.put<{ client_id: string; token: string }>(
       `/account/${account}/nua_client/${client_id}/key`,
       {},
+      undefined,
+      undefined,
+      undefined,
+      zone,
     );
   }
 
   /** Deletes a NUA client. */
-  deleteNUAClient(account: string, client_id: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${account}/nua_client/${client_id}`);
+  deleteNUAClient(account: string, client_id: string): Observable<void>;
+  deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
+  deleteNUAClient(account?: string, client_id?: string, zone?: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${account}/nua_client/${client_id}`, undefined, undefined, zone);
   }
 
   getLearningConfigurations(): Observable<LearningConfigurations> {

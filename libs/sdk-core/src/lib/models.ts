@@ -136,8 +136,15 @@ export interface IDb {
   getNUAClients(account: string): Observable<NUAClient[]>;
   getNUAClient(account: string, client_id: string): Observable<NUAClient>;
   createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
+  createNUAClient(
+    accountId: string,
+    data: NUAClientPayload,
+    zone: string,
+  ): Observable<{ client_id: string; token: string }>;
   renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
+  renewNUAClient(accountId: string, client_id: string, zone: string): Observable<{ client_id: string; token: string }>;
   deleteNUAClient(account: string, client_id: string): Observable<void>;
+  deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
   hasNUAClient(): boolean;
   getNUAActivity(accountSlug: string, client_id: string, pageIndex?: number): Observable<EventList>;
   getLearningConfigurations(): Observable<LearningConfigurations>;
