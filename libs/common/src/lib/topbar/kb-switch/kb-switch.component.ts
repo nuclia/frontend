@@ -29,6 +29,9 @@ export class KbSwitchComponent {
 
   goToKb(kb: IKnowledgeBoxItem) {
     this.account.pipe(take(1)).subscribe((account) => {
+      if (this.sdk.useRegionalSystem) {
+        this.sdk.nuclia.options.zone = kb.zone;
+      }
       this.router.navigate([this.navigation.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id)]);
       this.close.emit();
     });
