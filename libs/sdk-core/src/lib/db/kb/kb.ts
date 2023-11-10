@@ -630,19 +630,30 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   getServiceAccounts(): Observable<ServiceAccount[]> {
-    return this.nuclia.rest.get<ServiceAccount[]>(`/account/${this.account}/kb/${this.slug}/service_accounts`);
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.get<ServiceAccount[]>(`${endpoint}/service_accounts`, undefined, undefined, zone);
   }
 
   createServiceAccount(data: ServiceAccountCreation): Observable<void> {
-    return this.nuclia.rest.post(`/account/${this.account}/kb/${this.slug}/service_accounts`, data);
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.post(`${endpoint}/service_accounts`, data, undefined, undefined, undefined, zone);
   }
 
   deleteServiceAccount(saId: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${this.account}/kb/${this.slug}/service_account/${saId}`);
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.delete(`${endpoint}/service_account/${saId}`, undefined, undefined, zone);
   }
 
   createKey(saId: string, expires: string): Observable<{ token: string }> {
-    return this.nuclia.rest.post(`/account/${this.account}/kb/${this.slug}/service_account/${saId}/keys`, { expires });
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.post(
+      `${endpoint}/service_account/${saId}/keys`,
+      { expires },
+      undefined,
+      undefined,
+      undefined,
+      zone,
+    );
   }
 
   createKeyForService(data: ServiceAccountCreation, expires: string): Observable<{ token: string }> {
@@ -663,7 +674,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   deleteKey(saId: string, saKeyId: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${this.account}/kb/${this.slug}/service_account/${saId}/key/${saKeyId}`);
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.delete(`${endpoint}/service_account/${saId}/key/${saKeyId}`, undefined, undefined, zone);
   }
 
   setConfiguration(config: { [id: string]: any }): Observable<void> {
