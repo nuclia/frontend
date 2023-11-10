@@ -142,6 +142,11 @@ export interface IDb {
   getNUAActivity(accountSlug: string, client_id: string, pageIndex?: number): Observable<EventList>;
   getLearningConfigurations(): Observable<LearningConfigurations>;
   predictTokens(text: string): Observable<PredictedToken[]>;
+
+  getAccountUser(accountSlug: string, userId: string): Observable<Partial<FullAccountUser>>;
+  getAccountUsers(accountSlug: string): Observable<FullAccountUser[]>;
+  setAccountUsers(accountSlug: string, users: AccountUsersPayload): Observable<void>;
+  inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void>;
 }
 
 export interface NucliaOptions {
@@ -207,4 +212,25 @@ export interface IErrorResponse {
   type: 'error';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any;
+}
+export type AccountRoles = 'AOWNER' | 'AMEMBER';
+export interface FullAccountUser {
+  id: string;
+  name: string;
+  email: string;
+  role: AccountRoles;
+}
+
+export interface AccountUser {
+  id: string;
+  role: AccountRoles;
+}
+
+export interface AccountUsersPayload {
+  add?: AccountUser[];
+  delete?: string[];
+}
+
+export interface InviteAccountUserPayload {
+  email: string;
 }

@@ -1,14 +1,27 @@
-# 1.7.1 (unreleased)
+# 1.8.0 (2023-11-10)
+
+### Features
+
+- Add account user management methods in `db`:
+  - getAccountUser: get an account user by their id
+  - getAccountUsers: get the list of all users of an account
+  - setAccountUsers: add and/or delete users from an account
+  - inviteToAccount: invite a user to an account
+- Add Knowledge Box user management methods in `kb`:
+  - getUsers: get the list of Knowledge Box users
+  - updateUsers: update the list of Knowledge Box users
+  - inviteToKb: invite a user to the Knowledge Box
 
 ### Improvements
 
 - Add `allow_kb_management` property to `NUAClientPayload`
 - Add optional `zoneSlug` parameter to `getFullUrl`, `fetch`, `get`, `post`, `put` and `delete` methods.
 - Add `LearningConfigurationOption` interface
-- Add support for regional KBs 
+- Add support for regional Knowledge Boxes 
   - new `getKbIndexes` method in `db` allowing to list of the KB index of an account
   - update `getKnowledgeBoxes`, `getKnowledgeBox`, `createKnowledgeBox`, `WritableKnowledgeBox.modify` and `WritableKnowledgeBox.delete` methods for supporting regional endpoints when the flag `NUCLIA_NEW_REGIONAL_ENDPOINTS` is enabled
   - add `getKnowledgeBoxesForZone` method listing all the KBs for an account and a zone
+  - support regional Knowledge Boxes on user management methods
 
 # 1.7.0 (2023-10-19)
 

@@ -1,5 +1,5 @@
 import { catchError, filter, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
-import type { IDb, INuclia } from '../models';
+import type { AccountUsersPayload, FullAccountUser, IDb, INuclia, InviteAccountUserPayload } from '../models';
 import type { KbIndex, LearningConfigurations, PredictedToken } from './db.models';
 import {
   Account,
@@ -444,5 +444,42 @@ export class Db implements IDb {
         time: number;
       }>(`/predict/tokens?text=${encodeURIComponent(text)}`, this.getNUAHeader())
       .pipe(map((response) => response.tokens));
+  }
+
+  /**
+   * Get an account user by their id
+   * @param accountSlug
+   * @param userId
+   */
+  getAccountUser(accountSlug: string, userId: string): Observable<Partial<FullAccountUser>> {
+    return this.nuclia.rest.get(`/account/${accountSlug}/user/${userId}`);
+  }
+
+  /**
+   * Get the list of all users of an account
+   * @param accountSlug
+   */
+  getAccountUsers(accountSlug: string): Observable<FullAccountUser[]> {
+    return this.nuclia.rest.get(`/account/${accountSlug}/users`);
+  }
+
+  /**
+   * Add and/or delete users from an account
+   * @param accountSlug
+   * @param users
+   */
+  setAccountUsers(accountSlug: string, users: AccountUsersPayload): Observable<void> {
+    const url = `/account/${accountSlug}/users`;
+    return this.nuclia.rest.patch(url, users);
+  }
+
+  /**
+   * Invite a user to an account
+   * @param accountSlug
+   * @param data
+   */
+  inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void> {
+    const url = `/account/${accountSlug}/invite`;
+    return this.nuclia.rest.post(url, data);
   }
 }

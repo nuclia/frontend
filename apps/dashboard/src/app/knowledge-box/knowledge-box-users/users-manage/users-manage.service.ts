@@ -1,57 +1,39 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, ReplaySubject } from 'rxjs';
-import { shareReplay, switchMap, take, tap } from 'rxjs/operators';
-import { InviteKbData, SDKService, UsersService } from '@flaps/core';
-import { KBRoles } from '@nuclia/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { shareReplay, switchMap, tap } from 'rxjs/operators';
+import { SDKService } from '@flaps/core';
+import { InviteKbData, KBRoles } from '@nuclia/core';
 
 @Injectable()
 export class UsersManageService {
-  private accountSlug = this.sdk.currentAccount.pipe(
-    map((account) => account.slug),
-    take(1),
-  );
-
-  private _onUpdateUsers = new ReplaySubject<string>();
+  private _onUpdateUsers = new BehaviorSubject<null>(null);
 
   usersKb = this._onUpdateUsers.pipe(
-    switchMap((kbSlug: string) =>
-      this.accountSlug.pipe(switchMap((accountSlug) => this.users.getKbUsers(accountSlug, kbSlug))),
-    ),
+    switchMap(() => this.sdk.currentKb.pipe(switchMap((kb) => kb.getUsers()))),
     shareReplay(),
   );
 
-  constructor(
-    private users: UsersService,
-    private sdk: SDKService,
-  ) {}
+  constructor(private sdk: SDKService) {}
 
-  updateUsers(kbSlug: string): void {
-    this._onUpdateUsers.next(kbSlug);
+  updateUsers(): void {
+    this._onUpdateUsers.next(null);
   }
 
-  inviteUser(kbSlug: string, data: InviteKbData): Observable<void> {
-    return this.accountSlug.pipe(switchMap((accountSlug) => this.users.inviteToKb(accountSlug, kbSlug, data)));
+  inviteUser(data: InviteKbData): Observable<void> {
+    return this.sdk.currentKb.pipe(switchMap((kb) => kb.inviteToKb(data)));
   }
 
-  changeRole(kbSlug: string, id: string, role: KBRoles) {
-    return this.accountSlug.pipe(
-      switchMap((accountSlug) =>
-        this.users.setKbUsers(accountSlug, kbSlug, {
-          update: [{ id, role }],
-        }),
-      ),
-      tap(() => {
-        this.updateUsers(kbSlug);
-      }),
+  changeRole(userId: string, role: KBRoles) {
+    return this.sdk.currentKb.pipe(
+      switchMap((kb) => kb.updateUsers({ update: [{ id: userId, role }] })),
+      tap(() => this.updateUsers()),
     );
   }
 
-  deleteUser(kbSlug: string, id: string) {
-    return this.accountSlug.pipe(
-      switchMap((accountSlug) => this.users.setKbUsers(accountSlug, kbSlug, { delete: [id] })),
-      tap(() => {
-        this.updateUsers(kbSlug);
-      }),
+  deleteUser(userId: string) {
+    return this.sdk.currentKb.pipe(
+      switchMap((kb) => kb.updateUsers({ delete: [userId] })),
+      tap(() => this.updateUsers()),
     );
   }
 }
