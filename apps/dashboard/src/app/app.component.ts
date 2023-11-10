@@ -10,12 +10,25 @@ import {
   UserService,
 } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { catchError, combineLatest, filter, forkJoin, map, of, Subject, switchMap, take, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  filter,
+  map,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesModalComponent, MessageModalComponent, NavigationService } from '@flaps/common';
+import { Account, IKnowledgeBoxItem, WritableKnowledgeBox } from '@nuclia/core';
 
 @Component({
   selector: 'app-root',
@@ -139,15 +152,19 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
                         this.sdk.nuclia.options.knowledgeBox = kb.id;
                         return this.sdk
                           .setCurrentKnowledgeBox(account.slug, kbSlug as string, zone)
-                          .pipe(map((kb) => [account, kb]));
+                          .pipe(map((kb) => [account, kb] as [Account, IKnowledgeBoxItem | null]));
                       }),
                     );
                   }),
                 )
-              : forkJoin([
-                  this.sdk.setCurrentAccount(account),
-                  kbSlug ? this.sdk.setCurrentKnowledgeBox(account, kbSlug) : of(),
-                ]);
+              : this.sdk.setCurrentAccount(account).pipe(
+                  switchMap((account) => {
+                    const kbRequest: Observable<WritableKnowledgeBox | null> = kbSlug
+                      ? this.sdk.setCurrentKnowledgeBox(account.slug, kbSlug)
+                      : of(null);
+                    return kbRequest.pipe(map((kb) => [account, kb] as [Account, IKnowledgeBoxItem | null]));
+                  }),
+                );
           return getAccountAndKb.pipe(
             catchError((error) => {
               if (error.status === 403) {
@@ -158,7 +175,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
           );
         }),
       )
-      .subscribe(([account, kb]) => this.titleService.setTitle(`Nuclia – ${account.title} – ${kb.title}`));
+      .subscribe(([account, kb]) => this.titleService.setTitle(`Nuclia – ${account.title} – ${kb?.title}`));
   }
 
   private displayAlert() {
