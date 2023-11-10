@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of, Subject } from 'rxjs';
+import { forkJoin, of, Subject, tap } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
 import { SDKService, Zone, ZoneService } from '@flaps/core';
@@ -115,6 +115,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
           this.setLoading(true);
           return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).modify({ state });
         }),
+        tap(() => this.sdk.refreshKbList()),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe({
