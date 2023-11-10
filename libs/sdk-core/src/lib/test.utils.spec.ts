@@ -13,7 +13,7 @@ export const mockFetch = (response: any) => {
   ) as jest.Mock;
 };
 
-class LocalStorageMock {
+export class LocalStorageMock {
   store: { [key: string]: string } = {};
 
   clear() {

@@ -1,7 +1,12 @@
 import { Nuclia } from './core';
+import { LocalStorageMock } from './test.utils.spec';
 
 describe('Nuclia', () => {
-  it('should instanciate all the services', () => {
+  beforeAll(() => {
+    global.localStorage = new LocalStorageMock() as unknown as Storage;
+  });
+
+  it('should instantiate all the services', () => {
     const nuclia = new Nuclia({ backend: 'http://here', zone: 'europe-1', account: 'dc', knowledgeBox: 'gotham' });
     expect(nuclia.backend).toEqual('http://here');
     expect(nuclia.auth).toBeTruthy();
