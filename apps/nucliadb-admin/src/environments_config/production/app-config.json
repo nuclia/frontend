@@ -2,7 +2,7 @@
   "version": "STF_DOCKER_CONFIG_VERSION",
   "production": true,
   "backend": {
-    "app": "contributor",
+    "app": "nucliadb-admin",
     "apiPath": "/api",
     "siteKey": "",
     "sentry_environment": "prod",

@@ -6,7 +6,7 @@ version = open("VERSION").read()
 setup(
     name="nucliadb-contributor-assets",
     version=version,
-    description="Packaging of NulcliaDB Contributor JS app",
+    description="Packaging of NulcliaDB admin JS app",
     long_description="",
     classifiers=[],
     keywords="",

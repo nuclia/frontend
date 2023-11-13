@@ -1,10 +1,10 @@
 /* eslint-disable */
 export default {
-  displayName: 'contributor',
+  displayName: 'nucliadb-admin',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {},
-  coverageDirectory: '../../coverage/apps/contributor',
+  coverageDirectory: '../../coverage/apps/nucliadb-admin',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',

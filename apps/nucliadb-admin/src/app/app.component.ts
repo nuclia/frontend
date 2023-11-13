@@ -12,7 +12,7 @@ import { NavigationEnd, Router } from '@angular/router';
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
 @Component({
-  selector: 'nco-root',
+  selector: 'nad-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

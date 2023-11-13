@@ -3,7 +3,7 @@ import { combineLatest, map } from 'rxjs';
 import { UploadService } from '@flaps/common';
 
 @Component({
-  selector: 'nco-main-container',
+  selector: 'nad-main-container',
   templateUrl: './main-container.component.html',
   styleUrls: ['./main-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
