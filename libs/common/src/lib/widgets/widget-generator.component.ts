@@ -203,10 +203,11 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   placeholder="${this.placeholder}"`
       : '';
     let prompt = '';
+    let copiablePrompt = '';
     const promptValue = this.mainForm?.controls['prompt'].getRawValue();
     if (promptValue) {
-      const cleanPrompt = promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n');
-      prompt = cleanPrompt ? `prompt="${cleanPrompt}"\n  ` : '';
+      prompt = `prompt="${promptValue}"`;
+      copiablePrompt = `prompt="${promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n`;
     }
 
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
@@ -231,18 +232,19 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       const mode: string = this.mainForm?.controls['darkMode'].getRawValue() ? `mode="dark"` : '';
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
-  ${prompt}${zone}
+  ${zone}
   features="${this.features}" ${placeholder}${filters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results ${mode}></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
-${baseSnippet}`;
+${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
       this.snippetPreview = this.sanitized.bypassSecurityTrustHtml(
         baseSnippet
           .replace(
             'zone=',
             `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
       lang="${this.translation.currentLang}"
+      ${prompt}
       zone=`,
           )
           .replace('standalone=', 'client="dashboard" standalone=')
