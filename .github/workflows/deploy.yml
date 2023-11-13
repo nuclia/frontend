@@ -22,7 +22,7 @@ jobs:
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
-      deploy-contributor: ${{ steps.check-deploy.outputs.deploy-contributor }}
+      deploy-nucliadb-admin: ${{ steps.check-deploy.outputs.deploy-nucliadb-admin }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
       deploy-desktop: ${{ steps.check-deploy.outputs.deploy-desktop }}
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
@@ -70,7 +70,7 @@ jobs:
         run: |-
           (test -d dist/libs/search-widget && echo "deploy-widget=yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
           (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
-          (test -d dist/apps/contributor && echo "deploy-contributor=yes" >> $GITHUB_OUTPUT) || echo "Contributor unchanged"
+          (test -d dist/apps/nucliadb-admin && echo "deploy-nucliadb-admin=yes" >> $GITHUB_OUTPUT) || echo "NucliaDB admin unchanged"
           (test -d dist/apps/manager-v2 && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
           ((test -d dist/apps/desktop || test -d dist/apps/desktop-electron) && echo "deploy-desktop=yes" >> $GITHUB_OUTPUT) || echo "Desktop unchanged"
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
@@ -115,12 +115,12 @@ jobs:
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
 
-      - name: Publish contributor app
-        if: steps.check-deploy.outputs.deploy-contributor == 'yes'
+      - name: Publish NucliaDB admin app
+        if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes'
         run: |-
-          sed -i.bak "s,STF_DOCKER_CONFIG_VERSION,$GITHUB_SHA,g" dist/apps/contributor/assets/deployment/app-config.json
-          cp -r dist/apps/contributor/* tools/python-contributor-dist/nucliadb_contributor_assets/
-          make -C tools/python-contributor-dist/ publish ARGS="--build=${{github.run_number}}"
+          sed -i.bak "s,STF_DOCKER_CONFIG_VERSION,$GITHUB_SHA,g" dist/apps/nucliadb-admin/assets/deployment/app-config.json
+          cp -r dist/apps/nucliadb-admin/* tools/python-nucliadb-admin-dist/nucliadb_admin_assets/
+          make -C tools/python-nucliadb-admin-dist/ publish ARGS="--build=${{github.run_number}}"
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}

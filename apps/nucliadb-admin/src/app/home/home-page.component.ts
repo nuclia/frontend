@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StandaloneService } from '@flaps/common';
 
 @Component({
-  selector: 'nco-home-page',
+  selector: 'nad-home-page',
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -232,7 +232,7 @@ CI/CD deployment does not cover:
 
 - the desktop app as its artefacts are released directly in the Github repo;
 - the SDK as it is released in the NPM registry;
-- the contributor app as it is released in the Python registry.
+- the NucliaDB admin app as it is released in the Python registry.
 
 It covers:
 
