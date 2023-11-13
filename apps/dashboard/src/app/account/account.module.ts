@@ -8,6 +8,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import {
   ChartsModule,
   HintModule,
+  KnowledgeBoxSettingsModule,
   NavbarModule,
   PipesModule,
   STFSidebarModule,
@@ -83,6 +84,7 @@ const Components = [
     BillingModule,
     AccountStatusComponent,
     PaDateTimeModule,
+    KnowledgeBoxSettingsModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountHomeComponent, AccountManageComponent],
