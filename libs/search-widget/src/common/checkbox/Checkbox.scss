@@ -18,9 +18,7 @@
     transition: border-color var(--transition-superfast);
 
     &:checked {
-      border-color: var(--color-dark-stronger);
-      background-image: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36"><g fill="none" fill-rule="evenodd"><polygon fill="%23000" points="29.021 17.021 11.021 17.021 11.021 9.021 7.021 9.021 7.021 21.021 29.021 21.021" transform="rotate(-45 18.02 15.02)"/></g></svg>');
-      background-size: var(--size-checkbox) var(--size-checkbox);
+      border-color: var(--border-color);
     }
 
     &:disabled {
@@ -29,6 +27,15 @@
         color: var(--color-neutral-light);
       }
     }
+  }
+
+  svg {
+    border: 1px solid transparent;
+    fill: currentColor;
+    pointer-events: none;
+    position: absolute;
+    height: var(--size-checkbox);
+    width: var(--size-checkbox);
   }
 
   label {
@@ -44,11 +51,7 @@
     }
 
     &:hover .sw-checkbox-control {
-      border-color: var(--color-dark-stronger);
-
-      &:checked {
-        border-color: var(--color-neutral-regular);
-      }
+      border-color: var(--border-color);
     }
   }
 }

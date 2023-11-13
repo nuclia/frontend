@@ -6,7 +6,7 @@
   overflow-y: auto;
   .header {
     align-items: center;
-    background-color: var(--color-neutral-lightest);
+    background-color: var(--filter-header-background-color);
     border-bottom: 1px solid var(--color-neutral-light);
     display: flex;
     font-size: var(--font-size-medium);
@@ -15,8 +15,8 @@
     height: var(--rhythm-5);
     justify-content: space-between;
     padding: 0 var(--rhythm-1_5);
-    &.expended {
-      background-color: var(--color-neutral-lighter);
+    &.expanded {
+      background-color: var(--filter-header-background-active-color);
       border: 0;
       .header-button {
         transform: rotate(180deg);
@@ -24,6 +24,9 @@
     }
     .header-content {
       max-width: calc(100% - var(--header-button-width) - var(--header-gap));
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .header-title {
       cursor: pointer;
