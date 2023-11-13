@@ -53,7 +53,7 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
     UploadModule,
     PaIconModule,
   ],
-  providers: [TranslatePipe, { provide: APP_BASE_HREF, useValue: '/nucliadb-admin' }],
+  providers: [TranslatePipe, { provide: APP_BASE_HREF, useValue: '/admin' }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

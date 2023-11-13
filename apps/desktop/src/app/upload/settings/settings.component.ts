@@ -295,9 +295,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
             return account.slug;
           }),
         )
-      : of(
-          this.getDashboardUrl(`${this.localUrl?.split('/api')?.[0]}/nucliadb-admin/#/nucliadb-admin`, 'local', kbId),
-        ).pipe(
+      : of(this.getDashboardUrl(`${this.localUrl?.split('/api')?.[0]}/admin/#/admin`, 'local', kbId)).pipe(
           map((url) => {
             this.dashboardUrl = url;
             return 'local';
