@@ -76,7 +76,7 @@
   {#if $filterByCreatedDate}
     <div
       class="header"
-      class:expended={expanders['created']}>
+      class:expanded={expanders['created']}>
       <div class="header-content">
         <span
           class="header-title"
@@ -121,7 +121,7 @@
   {#each $labelSets as labelSet}
     <div
       class="header"
-      class:expended={expanders[labelSet.id]}>
+      class:expanded={expanders[labelSet.id]}>
       <div class="header-content">
         {#if $filterByLabelFamilies}
         <Checkbox
@@ -165,7 +165,7 @@
   {#each $entities as family}
     <div
       class="header"
-      class:expended={expanders[family.id]}>
+      class:expanded={expanders[family.id]}>
       <div class="header-content">
         <span
           class="header-title"
