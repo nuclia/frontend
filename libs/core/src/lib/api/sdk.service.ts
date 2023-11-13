@@ -97,10 +97,6 @@ export class SDKService {
     this.refreshCounter(true);
   }
 
-  updateCurrentKb(kb: WritableKnowledgeBox) {
-    this._currentKB.next(kb);
-  }
-
   cleanAccount() {
     this.account = null;
     this.kb = null;

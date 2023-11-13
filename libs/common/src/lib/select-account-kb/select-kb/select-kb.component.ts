@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { filter, Observable, of, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
+import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SDKService, STFUtils } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
@@ -106,7 +106,10 @@ export class SelectKbComponent implements OnDestroy {
       if (this.sdk.useRegionalSystem) {
         this.sdk.nuclia.options.zone = kb.zone;
       }
-      this.account.pipe(take(1)).subscribe((account) => {
+      forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([zones, account]) => {
+        if (!this.sdk.useRegionalSystem) {
+          this.sdk.nuclia.options.zone = zones[kb.zone];
+        }
         this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]);
       });
     }
