@@ -310,7 +310,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       .subscribe((kb) => {
         this.kbForm?.markAsPristine();
         this.saving = false;
-        this.sdk.updateCurrentKb(kb);
+        this.sdk.refreshKbList(true);
+
         if (isSlugUpdated) {
           this.router.navigateByUrl(this.router.url.replace(oldSlug, newSlug));
         }

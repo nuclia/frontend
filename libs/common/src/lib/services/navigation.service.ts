@@ -39,7 +39,9 @@ export class NavigationService {
   }
 
   getKbUrl(accountSlug: string, kbSlug: string): string {
-    return `/at/${accountSlug}/${kbSlug}`;
+    return this.sdk.nuclia.options.standalone
+      ? `/at/${accountSlug}/${kbSlug}`
+      : `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/${kbSlug}`;
   }
 
   getAccountSelectUrl() {

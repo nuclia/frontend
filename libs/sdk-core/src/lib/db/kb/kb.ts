@@ -1,4 +1,4 @@
-import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, forkJoin, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import type {
   ActivityDownloadList,
   Counters,
@@ -8,7 +8,9 @@ import type {
   EventType,
   IKnowledgeBox,
   IKnowledgeBoxCreation,
+  InviteKbData,
   IWritableKnowledgeBox,
+  KbUserPayload,
   LabelSet,
   LabelSets,
   ResourceList,
@@ -19,6 +21,7 @@ import type {
   SynonymsPayload,
   UpdateEntitiesGroupPayload,
 } from './kb.models';
+import { FullKbUser, KbUser } from './kb.models';
 import type { IErrorResponse, INuclia } from '../../models';
 import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from '../resource';
 import { ExtractedDataTypes, Resource } from '../resource';
@@ -43,6 +46,8 @@ export class KnowledgeBox implements IKnowledgeBox {
   account: string;
   protected nuclia: INuclia;
   private tempToken?: { token: string; expiration: number };
+
+  protected useRegionalSystem = localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
 
   /**
    * The Knowledge Box path on the regional API.
@@ -379,6 +384,35 @@ export class KnowledgeBox implements IKnowledgeBox {
   getConfiguration(): Observable<{ [id: string]: any }> {
     return this.nuclia.rest.get<{ [id: string]: any }>(`/kb/${this.id}/configuration`);
   }
+
+  getUsers(): Observable<FullKbUser[]> {
+    if (this.useRegionalSystem) {
+      return forkJoin([
+        this.nuclia.db.getAccountUsers(this.account),
+        this.nuclia.rest.get<KbUser[]>(
+          `/account/${this.nuclia.options.accountId}/kb/${this.id}/users`,
+          undefined,
+          undefined,
+          this.nuclia.options.zone,
+        ),
+      ]).pipe(
+        map(([accountUsers, kbUsers]) => {
+          return kbUsers.reduce((fullKbUsers, kbUser) => {
+            const accountUser = accountUsers.find((accountUser) => accountUser.id === kbUser.id);
+            if (accountUser) {
+              fullKbUsers.push({
+                ...accountUser,
+                role: kbUser.role,
+              });
+            }
+            return fullKbUsers;
+          }, [] as FullKbUser[]);
+        }),
+      );
+    } else {
+      return this.nuclia.rest.get<FullKbUser[]>(`/account/${this.account}/kb/${this.slug}/users`);
+    }
+  }
 }
 
 /** Extends `KnowledgeBox` with all the write operations. */
@@ -409,19 +443,31 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     ```
   */
   modify(data: Partial<IKnowledgeBox>): Observable<void> {
-    const endpoint = this.account === 'local' ? `/kb/${this.id}` : `/account/${this.account}/kb/${this.slug}`;
-    return this.nuclia.rest.patch<void>(endpoint, data);
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.patch<void>(endpoint, data, undefined, undefined, undefined, zone);
+  }
+
+  /** Deletes the Knowledge Box. */
+  delete(): Observable<void> {
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.delete(endpoint, undefined, undefined, zone);
+  }
+
+  protected getKbEndpointAndZone() {
+    let endpoint: string;
+    let zone: string | undefined;
+    if (this.useRegionalSystem) {
+      endpoint = `/account/${this.nuclia.options.accountId}/kb/${this.id}`;
+      zone = this.nuclia.options.zone;
+    } else {
+      endpoint = this.account === 'local' ? `/kb/${this.id}` : `/account/${this.account}/kb/${this.slug}`;
+    }
+    return { endpoint, zone };
   }
 
   /** Publishes or unpublishes the Knowledge Box. */
   publish(published: boolean): Observable<void> {
     return this.modify({ state: published ? 'PUBLISHED' : 'PRIVATE' });
-  }
-
-  /** Deletes the Knowledge Box. */
-  delete(): Observable<void> {
-    const endpoint = this.account === 'local' ? `/kb/${this.id}` : `/account/${this.account}/kb/${this.slug}`;
-    return this.nuclia.rest.delete(endpoint);
   }
 
   /** Creates a new NER family. */
@@ -584,19 +630,30 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   getServiceAccounts(): Observable<ServiceAccount[]> {
-    return this.nuclia.rest.get<ServiceAccount[]>(`/account/${this.account}/kb/${this.slug}/service_accounts`);
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.get<ServiceAccount[]>(`${endpoint}/service_accounts`, undefined, undefined, zone);
   }
 
   createServiceAccount(data: ServiceAccountCreation): Observable<void> {
-    return this.nuclia.rest.post(`/account/${this.account}/kb/${this.slug}/service_accounts`, data);
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.post(`${endpoint}/service_accounts`, data, undefined, undefined, undefined, zone);
   }
 
   deleteServiceAccount(saId: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${this.account}/kb/${this.slug}/service_account/${saId}`);
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.delete(`${endpoint}/service_account/${saId}`, undefined, undefined, zone);
   }
 
   createKey(saId: string, expires: string): Observable<{ token: string }> {
-    return this.nuclia.rest.post(`/account/${this.account}/kb/${this.slug}/service_account/${saId}/keys`, { expires });
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.post(
+      `${endpoint}/service_account/${saId}/keys`,
+      { expires },
+      undefined,
+      undefined,
+      undefined,
+      zone,
+    );
   }
 
   createKeyForService(data: ServiceAccountCreation, expires: string): Observable<{ token: string }> {
@@ -617,10 +674,29 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   deleteKey(saId: string, saKeyId: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${this.account}/kb/${this.slug}/service_account/${saId}/key/${saKeyId}`);
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.delete(`${endpoint}/service_account/${saId}/key/${saKeyId}`, undefined, undefined, zone);
   }
 
   setConfiguration(config: { [id: string]: any }): Observable<void> {
     return this.nuclia.rest.patch(`/kb/${this.id}/configuration`, config);
+  }
+
+  /**
+   * Update the list of users of the Knowledge Box, providing the list of users (id and role) to add and/or update, and the list of user ids to delete.
+   * @param data
+   */
+  updateUsers(data: KbUserPayload): Observable<void> {
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.patch(`${endpoint}/users`, data, undefined, undefined, undefined, zone);
+  }
+
+  /**
+   * Invite a user to the Knowledge Box
+   * @param data
+   */
+  inviteToKb(data: InviteKbData): Observable<void> {
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.post(`${endpoint}/invite`, data, undefined, undefined, undefined, zone);
   }
 }

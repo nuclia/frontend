@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { catchError, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary } from './account-ui.models';
-import { Account, Kb, KbIndex } from './regional-account.models';
+import { Account, Kb } from './regional-account.models';
 import { ZoneService } from '../manage-zones/zone.service';
 import { KBRoles, Nuclia } from '@nuclia/core';
 
@@ -26,10 +26,7 @@ export class RegionalAccountService {
   }
 
   getKbList(accountSlug: string): Observable<KbSummary[]> {
-    return forkJoin([
-      this.zoneService.getZoneSlugs(),
-      this.sdk.nuclia.rest.get<KbIndex[]>(`${ACCOUNT_ENDPOINT}/${accountSlug}/index/kbs`),
-    ]).pipe(
+    return forkJoin([this.zoneService.getZoneSlugs(), this.sdk.nuclia.db.getKbIndexes(accountSlug)]).pipe(
       switchMap(([zoneSlugs, indexes]) =>
         forkJoin(
           indexes.map((index) =>

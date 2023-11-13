@@ -33,14 +33,3 @@ export class TranslatePipeMock implements PipeTransform {
     return query;
   }
 }
-
-@Pipe({
-  name: 'getfile',
-})
-export class GetFilePipeMock implements PipeTransform {
-  public name: string = 'getfile';
-
-  public transform(query: string, ...args: any[]): any {
-    return query;
-  }
-}

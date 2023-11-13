@@ -39,7 +39,7 @@ export class AccountNUAComponent {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        switchMap(() => this.nua.renewClient(client.client_id)),
+        switchMap(() => this.nua.renewClient(client.client_id, client.zone)),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(({ token }) => {
@@ -86,7 +86,7 @@ export class AccountNUAComponent {
       });
   }
 
-  deleteClient(id: string) {
+  deleteClient(client: NUAClient) {
     this.modalService
       .openConfirm({
         title: 'account.nua_key_delete',
@@ -96,7 +96,7 @@ export class AccountNUAComponent {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        switchMap(() => this.nua.deleteClient(id)),
+        switchMap(() => this.nua.deleteClient(client.client_id, client.zone)),
       )
       .subscribe(() => {
         this.nua.updateClients();

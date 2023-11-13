@@ -32,12 +32,6 @@ export interface Account {
   users: AccountUser[];
 }
 
-export interface KbIndex {
-  account_id: string;
-  kb_id: string;
-  zone_id: string;
-}
-
 export interface Kb {
   id: string;
   slug: string;

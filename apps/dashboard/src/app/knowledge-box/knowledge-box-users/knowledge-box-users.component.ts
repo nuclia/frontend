@@ -7,7 +7,7 @@ import { SDKService } from '@flaps/core';
   template: `
     <div class="knowledge-box-users">
       <h2 class="display-s">{{ 'stash.side.users' | translate }}</h2>
-      <app-users-manage [kb]="(kbSlug | async) || undefined"></app-users-manage>
+      <app-users-manage></app-users-manage>
     </div>
   `,
   styleUrls: ['./knowledge-box-users.component.scss'],

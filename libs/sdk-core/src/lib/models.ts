@@ -24,6 +24,7 @@ import type {
   Welcome,
   WritableKnowledgeBox,
 } from './db';
+import { KbIndex } from './db';
 
 export interface INuclia {
   options: NucliaOptions;
@@ -107,6 +108,7 @@ export interface IRest {
 
 export interface IDb {
   getAccounts(): Observable<Account[]>;
+  getKbIndexes(accountSlug: string): Observable<KbIndex[]>;
   createAccount(account: AccountCreation): Observable<Account>;
   getAccountStatus(account: string): Observable<AccountStatus>;
   modifyAccount(account: string, data: Partial<Account>): Observable<void>;
@@ -115,7 +117,8 @@ export interface IDb {
   getAccount(): Observable<Account>;
   getAccount(account?: string): Observable<Account>;
   getStandaloneKbs(): Observable<IStandaloneKb[]>;
-  getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account: string, knowledgeBox: string): Observable<WritableKnowledgeBox>;
   createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox>;
@@ -133,12 +136,24 @@ export interface IDb {
   getNUAClients(account: string): Observable<NUAClient[]>;
   getNUAClient(account: string, client_id: string): Observable<NUAClient>;
   createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
+  createNUAClient(
+    accountId: string,
+    data: NUAClientPayload,
+    zone: string,
+  ): Observable<{ client_id: string; token: string }>;
   renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
+  renewNUAClient(accountId: string, client_id: string, zone: string): Observable<{ client_id: string; token: string }>;
   deleteNUAClient(account: string, client_id: string): Observable<void>;
+  deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
   hasNUAClient(): boolean;
   getNUAActivity(accountSlug: string, client_id: string, pageIndex?: number): Observable<EventList>;
   getLearningConfigurations(): Observable<LearningConfigurations>;
   predictTokens(text: string): Observable<PredictedToken[]>;
+
+  getAccountUser(accountSlug: string, userId: string): Observable<Partial<FullAccountUser>>;
+  getAccountUsers(accountSlug: string): Observable<FullAccountUser[]>;
+  setAccountUsers(accountSlug: string, users: AccountUsersPayload): Observable<void>;
+  inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void>;
 }
 
 export interface NucliaOptions {
@@ -155,15 +170,24 @@ export interface NucliaOptions {
   /**
    * Allows you to make calls to a private Knowledge Box.
    *
-   * It can be used in a server-side app, but never in a web app. */
+   * It can be used in a server-side app, but never in a web app.
+   */
   apiKey?: string;
+  /**
+   * Allows you to make calls the NUA processing.
+   */
   nuaKey?: string;
   /**
    * The Nuclia account slug.
    *
-   * Example: `my-account` */
+   * Example: `my-account`
+   */
   account?: string;
   accountType?: AccountTypes;
+  /**
+   * The Nuclia account id.
+   */
+  accountId?: string;
   /**
    * The Nuclia Knowledge Box unique id.
    *
@@ -195,4 +219,25 @@ export interface IErrorResponse {
   type: 'error';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any;
+}
+export type AccountRoles = 'AOWNER' | 'AMEMBER';
+export interface FullAccountUser {
+  id: string;
+  name: string;
+  email: string;
+  role: AccountRoles;
+}
+
+export interface AccountUser {
+  id: string;
+  role: AccountRoles;
+}
+
+export interface AccountUsersPayload {
+  add?: AccountUser[];
+  delete?: string[];
+}
+
+export interface InviteAccountUserPayload {
+  email: string;
 }

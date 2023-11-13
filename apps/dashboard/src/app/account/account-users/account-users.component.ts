@@ -3,8 +3,8 @@ import { UntypedFormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
 import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { AccountRoles, AccountUser, SDKService, SetUsersAccount, UsersService } from '@flaps/core';
-import { Account } from '@nuclia/core';
+import { SDKService } from '@flaps/core';
+import { Account, AccountRoles, AccountUsersPayload, FullAccountUser } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
@@ -15,7 +15,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 })
 export class AccountUsersComponent implements OnDestroy, OnInit {
   account?: Account;
-  users?: AccountUser[];
+  users?: FullAccountUser[];
   email = new UntypedFormControl([''], [Validators.required, Validators.email]);
 
   roleTranslations: { [role: string]: string } = {
@@ -31,7 +31,6 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
   unsubscribeAll = new Subject<void>();
 
   constructor(
-    private usersService: UsersService,
     private translate: TranslateService,
     private sdk: SDKService,
     private toaster: SisToastService,
@@ -55,8 +54,8 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
     return this.sdk.nuclia.auth.getJWTUser()?.sub === userId;
   }
 
-  updateUsers(): Observable<AccountUser[]> {
-    return this.usersService.getAccountUsers(this.account!.slug).pipe(
+  updateUsers(): Observable<FullAccountUser[]> {
+    return this.sdk.nuclia.db.getAccountUsers(this.account!.slug).pipe(
       tap((users) => {
         this.users = users;
         this.cdr?.markForCheck();
@@ -66,14 +65,14 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
 
   addUser() {
     const data = { email: this.email.value };
-    this.usersService.inviteToAccount(this.account!.slug, data).subscribe(() => {
+    this.sdk.nuclia.db.inviteToAccount(this.account!.slug, data).subscribe(() => {
       this.toaster.success(this.translate.instant('account.invited_user', { user: this.email.value }));
       this.email.patchValue('');
       this.cdr?.markForCheck();
     });
   }
 
-  changeRole(user: AccountUser, role: string): void {
+  changeRole(user: FullAccountUser, role: string): void {
     if (role === 'AMEMBER') {
       this._changeRole(user, role)
         .pipe(switchMap(() => this.updateUsers()))
@@ -93,7 +92,7 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
     }
   }
 
-  deleteUserConfirm(user: AccountUser): void {
+  deleteUserConfirm(user: FullAccountUser): void {
     this.translate
       .get('account.delete_user_warning', { username: `${user.name} (${user.email})` })
       .pipe(
@@ -115,18 +114,18 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
       .subscribe((account) => (this.sdk.account = account));
   }
 
-  private _changeRole(user: AccountUser, role: AccountRoles): Observable<void> {
-    const users: SetUsersAccount = {
+  private _changeRole(user: FullAccountUser, role: AccountRoles): Observable<void> {
+    const users: AccountUsersPayload = {
       add: [{ id: user.id, role: role }],
     };
-    return this.usersService.setAccountUsers(this.account!.slug, users);
+    return this.sdk.nuclia.db.setAccountUsers(this.account!.slug, users);
   }
 
-  deleteUser(user: AccountUser): Observable<void> {
-    const users: SetUsersAccount = {
+  deleteUser(user: FullAccountUser): Observable<void> {
+    const users: AccountUsersPayload = {
       delete: [user.id],
     };
-    return this.usersService.setAccountUsers(this.account!.slug, users);
+    return this.sdk.nuclia.db.setAccountUsers(this.account!.slug, users);
   }
 
   ngOnDestroy() {

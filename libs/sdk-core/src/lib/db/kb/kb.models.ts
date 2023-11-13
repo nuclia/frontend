@@ -45,6 +45,29 @@ export interface IStandaloneKb {
   uuid: string;
 }
 
+export interface FullKbUser {
+  id: string;
+  name: string;
+  email: string;
+  role: KBRoles;
+}
+
+export interface KbUser {
+  id: string;
+  role: KBRoles;
+}
+
+export interface KbUserPayload {
+  add?: KbUser[];
+  update?: KbUser[];
+  delete?: string[];
+}
+
+export interface InviteKbData {
+  email: string;
+  role: KBRoles;
+}
+
 export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   get path(): string;
 
@@ -107,6 +130,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   downloadActivity(type: EventType, month: string): Observable<Blob>;
 
   getConfiguration(): Observable<{ [id: string]: any }>;
+
+  getUsers(): Observable<FullKbUser[]>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
@@ -158,15 +183,19 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   createServiceAccount(data: ServiceAccountCreation): Observable<void>;
 
-  deleteServiceAccount(saId: string): Observable<void>;
+  deleteServiceAccount(serviceAccountId: string): Observable<void>;
 
   createKeyForService(data: ServiceAccountCreation, expires: string): Observable<{ token: string }>;
 
-  createKey(saId: string, expires: string): Observable<{ token: string }>;
+  createKey(serviceAccountId: string, expires: string): Observable<{ token: string }>;
 
-  deleteKey(saId: string, saKeyId: string): Observable<void>;
+  deleteKey(serviceAccountId: string, serviceAccountKeyId: string): Observable<void>;
 
   setConfiguration(config: { [id: string]: any }): Observable<void>;
+
+  updateUsers(data: KbUserPayload): Observable<void>;
+
+  inviteToKb(data: InviteKbData): Observable<void>;
 }
 
 export interface KnowledgeBoxCreation {

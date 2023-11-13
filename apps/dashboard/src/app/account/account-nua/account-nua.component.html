@@ -50,7 +50,7 @@
           {{ 'account.generate_key' | translate }}
         </pa-button>
         <pa-button
-          (click)="deleteClient(client.client_id)"
+          (click)="deleteClient(client)"
           [attr.data-cy]="client.title + '-delete'"
           aspect="basic"
           icon="trash"

@@ -23,7 +23,7 @@
               <p
                 [attr.paragraphId]="paragraph.paragraphId"
                 [class.family-selected]="(selectedFamily | async) !== null"
-                [innerHTML]="paragraph.annotatedText | safe : 'html'"
+                [innerHTML]="paragraph.annotatedText | safeHtml"
                 (mouseup)="onMouseUp($event)"></p>
 
               <div

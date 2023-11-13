@@ -30,12 +30,14 @@ export const knowledgeBoxOwnerGuard = (route: ActivatedRouteSnapshot, routerStat
   const sdk: SDKService = inject(SDKService);
 
   const accountSlug = routerState.root.firstChild?.firstChild?.paramMap.get('account');
-  const kbSlug = routerState.root.firstChild?.firstChild?.firstChild?.paramMap.get('stash');
+  const kbParams = routerState.root.firstChild?.firstChild?.firstChild?.paramMap;
+  const kbSlug = kbParams?.get('kb');
+  const zone = kbParams?.get('zone') || undefined;
   if (!accountSlug || !kbSlug) {
     return of(false);
   } else {
     return sdk
-      .setCurrentKnowledgeBox(accountSlug, kbSlug)
+      .setCurrentKnowledgeBox(accountSlug, kbSlug, zone)
       .pipe(
         switchMap((kb) => (!!kb.admin ? of(true) : navigation.homeUrl.pipe(map((url) => router.createUrlTree([url]))))),
       );

@@ -241,3 +241,9 @@ export enum ResourceProperties {
   ERRORS = 'errors',
   EXTRA = 'extra',
 }
+
+export interface KbIndex {
+  account_id: string;
+  kb_id: string;
+  zone_id: string;
+}

@@ -1,4 +1,4 @@
-<ng-container *ngIf="kb && (isAccountManager | async) && (canAddUsers | async)">
+<ng-container *ngIf="(isAccountManager | async) && (canAddUsers | async)">
   <h3>{{ 'stash.users.new_user' | translate }}</h3>
   <form
     class="add-user"

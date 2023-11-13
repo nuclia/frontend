@@ -107,7 +107,7 @@ const routes: Routes = [
             ],
           },
           {
-            path: `:stash`,
+            path: `:zone/:kb`,
             component: KnowledgeBoxComponent,
             children: [
               {

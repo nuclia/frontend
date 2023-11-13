@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { DeprecatedApiService } from './deprecated-api.service';
 import { Zone } from '../models';
-import { Observable, map, switchMap } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
+import { SDKService } from './sdk.service';
 
 const VERSION = 'v1';
 const ZONES = 'zones';
@@ -12,13 +12,13 @@ const ZONES = 'zones';
 })
 export class ZoneService {
   constructor(
-    private api: DeprecatedApiService,
+    private sdk: SDKService,
     private featureFlagService: FeatureFlagService,
   ) {}
 
   getZones(): Observable<Zone[]> {
-    return this.api
-      .get(`/${VERSION}/${ZONES}`, true, undefined, true)
+    return this.sdk.nuclia.rest
+      .get(`/${ZONES}`)
       .pipe(
         switchMap((zones) =>
           this.featureFlagService

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SDKService, UsersService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import { catchError, shareReplay, switchMap, take } from 'rxjs/operators';
 import { EventList, ResourceProperties } from '@nuclia/core';
@@ -30,10 +30,7 @@ export class NuaActivityService {
     return this._hasMore.asObservable();
   }
 
-  constructor(
-    private sdk: SDKService,
-    private userService: UsersService,
-  ) {}
+  constructor(private sdk: SDKService) {}
 
   loadActivity(accountSlug: string, clientId: string): Observable<EventList> {
     this._account = { accountSlug, clientId };
@@ -63,7 +60,7 @@ export class NuaActivityService {
       return of(userId);
     }
     if (!this._userNames[userId]) {
-      this._userNames[userId] = this.userService.getAccountUser(accountSlug, userId).pipe(
+      this._userNames[userId] = this.sdk.nuclia.db.getAccountUser(accountSlug, userId).pipe(
         map((user) => user.name || userId),
         catchError(() => of(userId)), // In case the user no longer exists
         shareReplay(1),

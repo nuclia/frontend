@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, NavigationStart } from '@angular/router';
-import { DeprecatedApiService, SDKService } from '../api';
+import { SDKService } from '../api';
 import { BackendConfigurationService } from '../config';
 import { filter, Observable } from 'rxjs';
 import { PostHogService } from './post-hog.service';
@@ -16,7 +16,6 @@ export class STFTrackingService {
 
   constructor(
     private config: BackendConfigurationService,
-    private apiService: DeprecatedApiService,
     private sdk: SDKService,
     private postHogService: PostHogService,
     private featureFlagService: FeatureFlagService,
@@ -64,18 +63,6 @@ export class STFTrackingService {
 
   logout() {
     this.postHogService.reset();
-  }
-
-  successResult(search_query: string, success: string, resource: string | undefined) {
-    if (!this.config.isBrowser) return;
-    this.postHogService.logEvent('success', {
-      search_query: search_query,
-      success: success,
-    });
-
-    this.apiService
-      .get(resource + '/@feedback?' + success + '=' + search_query, true, undefined, true)
-      .subscribe(() => {});
   }
 
   /**

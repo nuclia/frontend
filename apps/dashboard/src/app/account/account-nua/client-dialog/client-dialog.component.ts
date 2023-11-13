@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, map, take, tap } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
 import { SDKService, UserService } from '@flaps/core';
@@ -26,12 +26,21 @@ export class ClientDialogComponent implements OnInit {
 
   editMode: boolean;
 
-  clientForm = this.formBuilder.group({
-    title: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    allow_kb_management: [false],
-    webhook: [''],
-    zone: ['', [Validators.required]],
+  clientForm = new FormGroup({
+    title: new FormControl<string>('', {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
+    contact: new FormControl<string>('', {
+      validators: [Validators.required, Validators.email],
+      nonNullable: true,
+    }),
+    allow_kb_management: new FormControl<boolean>(false, { nonNullable: true }),
+    webhook: new FormControl<string>('', { nonNullable: true }),
+    zone: new FormControl<string>('', {
+      validators: [Validators.required],
+      nonNullable: true,
+    }),
   });
 
   validationMessages = {
@@ -48,7 +57,6 @@ export class ClientDialogComponent implements OnInit {
 
   constructor(
     public modal: ModalRef,
-    private formBuilder: UntypedFormBuilder,
     private userService: UserService,
     private nua: AccountNUAService,
     private sdkService: SDKService,
@@ -77,7 +85,7 @@ export class ClientDialogComponent implements OnInit {
             this.cdr.markForCheck();
           });
           this.email.subscribe((email) => {
-            this.clientForm.get('email')?.patchValue(email);
+            this.clientForm.get('contact')?.patchValue(email);
             this.cdr.markForCheck();
           });
         }
@@ -95,13 +103,8 @@ export class ClientDialogComponent implements OnInit {
   }
 
   create(): void {
-    const payload = {
-      title: this.clientForm.value.title,
-      contact: this.clientForm.value.email,
-      allow_kb_management: this.clientForm.value.allow_kb_management,
-      webhook: this.clientForm.value.webhook,
-    };
-    this.nua.createClient(payload).subscribe(({ token }) => {
+    const { zone, ...payload } = this.clientForm.getRawValue();
+    this.nua.createClient(payload, zone).subscribe(({ token }) => {
       this.modal.close(token);
     });
   }
