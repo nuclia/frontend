@@ -154,6 +154,9 @@ export class Rest implements IRest {
    *  Returns the full URL of the given path, using the regional or the global Nuclia backend according to the path or the provided zone slug (if any).
    */
   getFullUrl(path: string, zoneSlug?: string): string {
+    if (path.startsWith('http')) {
+      return path;
+    }
     const isGlobal =
       path.startsWith('/account') ||
       path.startsWith('/user') ||
