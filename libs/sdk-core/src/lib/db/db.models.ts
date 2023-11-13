@@ -180,8 +180,15 @@ export interface LearningConfigurations {
   [key: string]: LearningConfiguration;
 }
 
+export interface LearningConfigurationOption {
+  value: string;
+  name: string;
+  user_key?: string;
+  user_prompt?: string;
+}
+
 export interface LearningConfiguration {
-  options?: { value: string; name: string; user_key?: string; user_prompt?: string }[];
+  options?: LearningConfigurationOption[];
   schemas?: { [key: string]: LearningConfigurationSchema };
   default: string;
   create: boolean;

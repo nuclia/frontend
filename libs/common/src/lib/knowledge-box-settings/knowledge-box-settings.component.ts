@@ -17,7 +17,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Sluggable } from '../validators';
 import { Router } from '@angular/router';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { KnowledgeBoxSettingsService } from './knowledge-box-settings.service';
 
 const EMPTY_CONFIG = {
@@ -79,6 +79,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private router: Router,
     private featureFlag: FeatureFlagService,
     private toast: SisToastService,
+    private modal: SisModalService,
   ) {}
 
   ngOnInit(): void {
@@ -132,62 +133,66 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         this.userKeys = keys;
 
         if (this.kb) {
-          this.kbForm = this.formBuilder.group({
-            uid: [this.kb?.id],
-            slug: [this.kb?.slug, [Sluggable()]],
-            title: [this.kb?.title, [Validators.required]],
-            description: [this.kb?.description],
-            config: this.formBuilder.group({
-              ...(this.displayedLearningConfigurations || []).reduce(
-                (acc, entry) => {
-                  acc[entry.id] = this.currentConfig[entry.id];
-                  return acc;
-                },
-                {} as { [key: string]: any },
-              ),
-              user_keys: this.formBuilder.group(
-                Object.entries(this.userKeys || {}).reduce(
-                  (acc, [groupId, group]) => {
-                    acc[groupId] = this.formBuilder.group(
-                      Object.entries(group).reduce(
-                        (acc, [fieldId, field]) => {
-                          acc[fieldId] = [this.currentConfig['user_keys']?.[groupId]?.[fieldId] || ''];
-                          return acc;
-                        },
-                        {} as { [key: string]: any },
-                      ),
-                    );
-                    return acc;
-                  },
-                  {} as { [key: string]: any },
-                ),
-              ),
-              user_prompts: this.formBuilder.group(
-                Object.entries(promptsValues || {}).reduce(
-                  (acc, [key, value]) => {
-                    acc[key] = this.formBuilder.group(
-                      Object.entries(value).reduce(
-                        (acc, [fieldId, field]) => {
-                          acc[fieldId] = [field || ''];
-                          acc[`${fieldId}_examples`] = [''];
-                          return acc;
-                        },
-                        {} as { [key: string]: string[] },
-                      ),
-                    );
-                    return acc;
-                  },
-                  {} as { [key: string]: UntypedFormGroup },
-                ),
-              ),
-            }),
-          });
+          this.kbForm = this.getKbForm(promptsValues);
           this.updatePrompts(this.currentConfig['generative_model'] || '');
           this.ownKey = this.hasOwnKey();
           this.formReady.next();
           this.cdr?.markForCheck();
         }
       });
+  }
+
+  private getKbForm(promptsValues: { [p: string]: { prompt?: string; system?: string } }) {
+    return this.formBuilder.group({
+      uid: [this.kb?.id],
+      slug: [this.kb?.slug, [Sluggable()]],
+      title: [this.kb?.title, [Validators.required]],
+      description: [this.kb?.description],
+      config: this.formBuilder.group({
+        ...(this.displayedLearningConfigurations || []).reduce(
+          (acc, entry) => {
+            acc[entry.id] = this.currentConfig[entry.id];
+            return acc;
+          },
+          {} as { [key: string]: any },
+        ),
+        user_keys: this.formBuilder.group(
+          Object.entries(this.userKeys || {}).reduce(
+            (acc, [groupId, group]) => {
+              acc[groupId] = this.formBuilder.group(
+                Object.entries(group).reduce(
+                  (acc, [fieldId, field]) => {
+                    acc[fieldId] = [this.currentConfig['user_keys']?.[groupId]?.[fieldId] || ''];
+                    return acc;
+                  },
+                  {} as { [key: string]: any },
+                ),
+              );
+              return acc;
+            },
+            {} as { [key: string]: any },
+          ),
+        ),
+        user_prompts: this.formBuilder.group(
+          Object.entries(promptsValues || {}).reduce(
+            (acc, [key, value]) => {
+              acc[key] = this.formBuilder.group(
+                Object.entries(value).reduce(
+                  (acc, [fieldId, field]) => {
+                    acc[fieldId] = [field || ''];
+                    acc[`${fieldId}_examples`] = [''];
+                    return acc;
+                  },
+                  {} as { [key: string]: string[] },
+                ),
+              );
+              return acc;
+            },
+            {} as { [key: string]: UntypedFormGroup },
+          ),
+        ),
+      }),
+    });
   }
 
   initKbForm() {
@@ -262,55 +267,41 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     kb.modify(data)
       .pipe(
         switchMap(() => {
-          const current = (this.learningConfigurations || []).reduce(
-            (acc, entry) => {
-              if (this.currentConfig[entry.id]) {
-                acc[entry.id] = this.currentConfig[entry.id];
-              }
-              return acc;
-            },
-            {} as { [key: string]: any },
-          );
-          const conf = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
-            acc[entry.id] = this.kbForm?.value.config[entry.id];
-            return acc;
-          }, current);
+          const current = this.getCurrentLearningConf();
+          const newConfiguration = this.getNewConfiguration(current);
 
-          const userKeys = {
-            user_keys: (this.displayedLearningConfigurations || []).reduce(
-              (acc, entry) => {
-                const group = this.getVisibleFieldGroup(entry);
-                if (group && this.ownKey) {
-                  acc[group] = Object.keys(this.userKeys?.[group] || {}).reduce(
-                    (acc, fieldId) => {
-                      const value = this.kbForm?.value.config['user_keys'][group][fieldId];
-                      acc[fieldId] = value;
-                      return acc;
-                    },
-                    {} as { [key: string]: any },
-                  );
-                }
-                return acc;
-              },
-              {} as { [key: string]: any },
-            ),
-          };
-
-          const promptKey = this.getPromptKeyForModel(this.kbForm?.value.config['generative_model'] || '');
-          if (promptKey) {
-            if (!conf['user_prompts']) {
-              conf['user_prompts'] = {};
-            }
-            conf['user_prompts'][promptKey] = this.kbForm?.value.config['user_prompts'][promptKey];
+          if (
+            current['anonymization_model'] === 'disabled' &&
+            newConfiguration['anonymization_model'] === 'multilingual'
+          ) {
+            return this.modal
+              .openConfirm({
+                title: this.translate.instant('stash.config.confirm-anonymization.title'),
+                description: this.translate.instant('stash.config.confirm-anonymization.description'),
+                confirmLabel: this.translate.instant('stash.config.confirm-anonymization.confirm-button'),
+              })
+              .onClose.pipe(
+                switchMap((confirm) => {
+                  return confirm
+                    ? kb.setConfiguration(newConfiguration).pipe(
+                        tap(() => this.toast.success(this.translate.instant('stash.config.success'))),
+                        catchError(() => {
+                          this.toast.error(this.translate.instant('stash.config.failure'));
+                          return of(undefined);
+                        }),
+                      )
+                    : of(true).pipe(tap(() => {}));
+                }),
+              );
+          } else {
+            return kb.setConfiguration(newConfiguration).pipe(
+              tap(() => this.toast.success(this.translate.instant('stash.config.success'))),
+              catchError(() => {
+                this.toast.error(this.translate.instant('stash.config.failure'));
+                return of(undefined);
+              }),
+            );
           }
-
-          return kb.setConfiguration({ ...conf, ...userKeys }).pipe(
-            tap(() => this.toast.success(this.translate.instant('stash.config.success'))),
-            catchError(() => {
-              this.toast.error(this.translate.instant('stash.config.failure'));
-              return of(undefined);
-            }),
-          );
         }),
         concatMap(() =>
           this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.account === 'local' ? kb.id : newSlug),
@@ -319,11 +310,62 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       .subscribe((kb) => {
         this.kbForm?.markAsPristine();
         this.saving = false;
-        this.sdk.kb = kb;
+        this.sdk.updateCurrentKb(kb);
         if (isSlugUpdated) {
           this.router.navigateByUrl(this.router.url.replace(oldSlug, newSlug));
         }
       });
+  }
+
+  private getNewConfiguration(current: { [p: string]: any }): { [id: string]: any } {
+    const newConf = (this.displayedLearningConfigurations || []).reduce(
+      (acc, entry) => {
+        acc[entry.id] = this.kbForm?.value.config[entry.id];
+        return acc;
+      },
+      { ...current },
+    );
+
+    const userKeys = {
+      user_keys: (this.displayedLearningConfigurations || []).reduce(
+        (acc, entry) => {
+          const group = this.getVisibleFieldGroup(entry);
+          if (group && this.ownKey) {
+            acc[group] = Object.keys(this.userKeys?.[group] || {}).reduce(
+              (acc, fieldId) => {
+                acc[fieldId] = this.kbForm?.value.config['user_keys'][group][fieldId];
+                return acc;
+              },
+              {} as { [key: string]: any },
+            );
+          }
+          return acc;
+        },
+        {} as { [key: string]: any },
+      ),
+    };
+
+    const promptKey = this.getPromptKeyForModel(this.kbForm?.value.config['generative_model'] || '');
+    if (promptKey) {
+      if (!newConf['user_prompts']) {
+        newConf['user_prompts'] = {};
+      }
+      newConf['user_prompts'][promptKey] = this.kbForm?.value.config['user_prompts'][promptKey];
+    }
+
+    return { ...newConf, ...userKeys };
+  }
+
+  private getCurrentLearningConf() {
+    return (this.learningConfigurations || []).reduce(
+      (acc, entry) => {
+        if (this.currentConfig[entry.id]) {
+          acc[entry.id] = this.currentConfig[entry.id];
+        }
+        return acc;
+      },
+      {} as { [key: string]: any },
+    );
   }
 
   getVisibleFieldGroup(conf: { id: string; data: LearningConfiguration }): string | undefined {
