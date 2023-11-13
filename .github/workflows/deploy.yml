@@ -105,7 +105,7 @@ jobs:
         if: steps.check-deploy.outputs.deploy-sdk == 'yes'
         run: |-
           sh ./tools/build-sdk-docs.sh
-          gsutil rsync -r ./libs/sdk-core/docs gs://$DOCS_STORAGE/js-sdk
+          gsutil -m rsync -r ./libs/sdk-core/docs gs://$DOCS_STORAGE/js-sdk
 
       - name: Build dashboard image
         if: steps.check-deploy.outputs.deploy-app == 'yes'
