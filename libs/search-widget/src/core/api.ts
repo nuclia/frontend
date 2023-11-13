@@ -101,13 +101,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
     throw new Error('Nuclia API not initialized');
   }
 
-  // TODO: remove when date filterig works properly on semantic search
-  let mode = SEARCH_MODE;
-  if (options?.range_creation_start || options?.range_creation_end) {
-    mode = SEARCH_MODE.filter((feature) => feature !== Search.Features.VECTOR);
-  }
-
-  return nucliaApi.knowledgeBox.find(query, mode, { ...DEFAULT_SEARCH_OPTIONS, ...options }).pipe(
+  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...DEFAULT_SEARCH_OPTIONS, ...options }).pipe(
     filter((res) => {
       if (res.type === 'error') {
         searchError.set(res);
@@ -132,16 +126,10 @@ export const getAnswer = (
     return acc;
   }, [] as Chat.ContextEntry[]);
 
-  // TODO: remove when date filterig works properly on semantic search
-  let mode = CHAT_MODE;
-  if (options?.range_creation_start || options?.range_creation_end) {
-    mode = CHAT_MODE.filter((feature) => feature !== Chat.Features.VECTORS);
-  }
-
   return nucliaApi.knowledgeBox.chat(
     query,
     context,
-    mode,
+    CHAT_MODE,
     options ? { ...options, highlight: true, prompt } : { highlight: true, prompt },
   );
 };
