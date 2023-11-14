@@ -21,7 +21,11 @@ export class ZoneListComponent {
 
   lastIndex = 100;
 
-  constructor(private zoneService: ZoneService, private modalService: SisModalService, private toast: SisToastService) {
+  constructor(
+    private zoneService: ZoneService,
+    private modalService: SisModalService,
+    private toast: SisToastService,
+  ) {
     this.loadZones();
   }
 
@@ -39,9 +43,11 @@ export class ZoneListComponent {
         title: `Are you sure you want to delete "${zone.slug}"?`,
         description: `You’re about to delete ${zone.slug}`,
         isDestructive: true,
+        confirmLabel: 'Delete',
+        cancelLabel: 'Cancel',
       })
       .onClose.pipe(
-        filter((confirm) => confirm),
+        filter((confirm) => !!confirm),
         switchMap(() => this.zoneService.deleteZone(zone.id)),
       )
       .subscribe({
