@@ -50,9 +50,11 @@ export class UserListComponent {
         title: `Are you sure you want to delete "${user.email}"?`,
         description: `You’re about to delete ${user.email}${user.name ? ' (' + user.name + ')' : ''}?`,
         isDestructive: true,
+        confirmLabel: 'Delete',
+        cancelLabel: 'Cancel',
       })
       .onClose.pipe(
-        filter((confirm) => confirm),
+        filter((confirm) => !!confirm),
         switchMap(() => this.userService.deleteUser(user.id)),
       )
       .subscribe({
