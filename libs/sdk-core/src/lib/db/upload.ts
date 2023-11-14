@@ -293,7 +293,7 @@ export const uploadToProcess = (
   metadata?: FileMetadata,
 ): Observable<string> => {
   const headers = {
-    'x-stf-nuakey': `Bearer ${nuaKey}`,
+    'x-nuclia-nuakey': `Bearer ${nuaKey}`,
     'content-type': metadata?.contentType || 'application/octet-stream',
     ...getFileMetadata(metadata),
   };
