@@ -99,6 +99,7 @@
     <div class="button-container">
       <pa-button
         kind="primary"
+        data-cy="save-label-set"
         (click)="saveLabelSet()"
         [disabled]="labelSetForm.invalid || !hasChanges || !labelSet.labels?.length">
         {{ 'generic.save' | translate }}

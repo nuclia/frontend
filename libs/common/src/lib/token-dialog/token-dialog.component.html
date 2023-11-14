@@ -5,6 +5,7 @@
       <pa-button
         icon="cross"
         aspect="basic"
+        data-cy="close-token-dialog"
         (click)="close()">
         {{ 'generic.close' | translate }}
       </pa-button>
@@ -13,9 +14,10 @@
   <pa-modal-content>
     <p [innerHTML]="'account.token_description' | translate"></p>
     <div class="token-container">
-      <div class="token-dialog-value">{{ modal.config.data?.['token'] | slice: 1:30 }}…</div>
+      <div class="token-dialog-value">{{ modal.config.data?.['token'] | slice: 1 : 30 }}…</div>
       <pa-button
         *ngIf="clipboardSupported"
+        data-cy="copy-token"
         (click)="copy()">
         {{ (successMessage ? 'generic.copied' : 'generic.copy') | translate }}
       </pa-button>

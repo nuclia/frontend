@@ -90,6 +90,7 @@
       <span>{{ 'login.have_account' | translate }}</span>
       <a
         [routerLink]="['../signup']"
+        data-cy="create-account"
         queryParamsHandling="merge">
         {{ 'login.create_one' | translate }}
       </a>

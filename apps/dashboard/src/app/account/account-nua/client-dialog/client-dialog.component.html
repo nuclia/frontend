@@ -69,6 +69,7 @@
     <pa-button
       kind="primary"
       type="submit"
+      data-cy="save-nua-client"
       [disabled]="clientForm.pristine || clientForm.invalid"
       (click)="save()">
       {{ 'generic.save' | translate }}
