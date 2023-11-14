@@ -18,9 +18,8 @@ h2, h3 {
 form {
   display: flex;
   flex-direction: column;
-  gap: rhythm(5);
+  gap: rhythm(3);
   max-width: rhythm(90);
-  padding-bottom: rhythm(4);
 }
 
 pa-radio-group {
@@ -38,7 +37,6 @@ pa-radio-group {
 .separator {
   border-bottom: 1px solid $color-neutral-lighter;
   margin: rhythm(0.5) 0;
-  width: rhythm(10);
 }
 
 .field-block {
@@ -55,6 +53,9 @@ pa-radio-group {
     flex-shrink: 0;
     font-weight: $font-weight-semi-bold;
     min-width: rhythm(10);
+    &.disabled {
+      color: $color-neutral-light;
+    }
   }
 }
 
@@ -63,9 +64,12 @@ pa-radio-group {
   margin-top: - rhythm(0.5);
 }
 
-.total {
-  color: $color-primary-regular;
-  margin-left: rhythm(1);
+.overall {
+  margin: rhythm(2) 0 rhythm(4) 0;
+  .cost {
+    color: $color-primary-regular;
+    margin-left: rhythm(1);
+  }
 }
 
 pa-modal-footer {

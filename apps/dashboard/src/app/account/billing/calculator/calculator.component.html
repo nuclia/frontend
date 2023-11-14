@@ -8,7 +8,7 @@
   <pa-modal-content>
     <form>
       <div>
-        <div class="title-s">{{ 'billing.subscription_tier' | translate }}</div>
+        <div class="title-m">{{ 'billing.subscription_tier' | translate }}</div>
         <div>{{ 'billing.tier_select.help' | translate }}</div>
         <pa-radio-group
           name="radio-tier"
@@ -19,32 +19,42 @@
         </pa-radio-group>
       </div>
       <div class="section">
+        <div class="separator"></div>
         <h3 class="title-m">{{ 'billing.quotas.ingestion' | translate }}</h3>
         <ng-container
           [ngTemplateOutlet]="sliderTemplate"
           [ngTemplateOutletContext]="{ param: 'media' }"></ng-container>
         <ng-container
           [ngTemplateOutlet]="sliderTemplate"
-          [ngTemplateOutletContext]="{ param: 'paragraphs_processed' }"></ng-container>
+          [ngTemplateOutletContext]="{
+            param: 'paragraphs_processed',
+            help: 'billing.paragraphs_per_file'
+          }"></ng-container>
         <div class="separator"></div>
-        <h3 class="title-m">{{ 'billing.quotas.search_inference' | translate }}</h3>
-        <pa-checkbox
-          [value]="selfHosted"
-          (valueChange)="toggleSelfHosted()">
-          Self hosted
-        </pa-checkbox>
+        <h3 class="title-m">{{ 'billing.hosting' | translate }}</h3>
+        <pa-radio-group
+          name="radio-mode"
+          [(value)]="mode"
+          (valueChange)="onModeChange()">
+          <pa-radio value="cloud">NucliaDB Cloud</pa-radio>
+          <pa-radio value="on-prem">NucliaDB On-prem</pa-radio>
+        </pa-radio-group>
+        <div class="separator"></div>
+        <h3 class="title-m">{{ 'billing.quotas.search' | translate }}</h3>
         <ng-container
           [ngTemplateOutlet]="sliderTemplate"
-          [ngTemplateOutletContext]="{
-            param: 'searches',
-            text: 'billing.quotas.searches'
-          }"></ng-container>
+          [ngTemplateOutletContext]="{ param: 'searches' }"></ng-container>
         <ng-container
           [ngTemplateOutlet]="sliderTemplate"
-          [ngTemplateOutletContext]="{
-            param: 'generative',
-            text: 'billing.quotas.generative'
-          }"></ng-container>
+          [ngTemplateOutletContext]="{ param: 'generative' }"></ng-container>
+        <ng-container
+          [ngTemplateOutlet]="sliderTemplate"
+          [ngTemplateOutletContext]="{ param: 'predict' }"></ng-container>
+        <div class="separator"></div>
+        <h3 class="title-m">{{ 'billing.quotas.storage' | translate }}</h3>
+        <ng-container
+          [ngTemplateOutlet]="sliderTemplate"
+          [ngTemplateOutletContext]="{ param: 'paragraphs' }"></ng-container>
         <div class="separator"></div>
         <h3 class="title-m">{{ 'billing.quotas.train' | translate }}</h3>
         <ng-container
@@ -53,30 +63,36 @@
         <ng-template
           #sliderTemplate
           let-param="param"
-          let-text="text">
+          let-help="help">
           <div *ngIf="asUsageType(param) as usageType">
             <div class="field-block">
               <pa-slider
+                [disabled]="disabledParams.includes(param)"
                 [min]="prices[tier].usage[usageType].threshold || 0"
-                [max]="maxValue(getUnitPrice(tier, usageType), prices[tier].usage[usageType].threshold)"
+                [max]="maxValue(prices[tier].usage[usageType].price, prices[tier].usage[usageType].threshold)"
                 [value]="values[usageType]"
                 (valueChange)="update(usageType, $event)">
-                <span class="title-xxs">{{ text || 'billing.parameter.' + usageType | translate }}</span>
+                <span class="title-xxs">{{ 'billing.parameter.' + usageType | translate }}</span>
               </pa-slider>
-              <div class="price">{{ calculatePrice(usageType) | currency: currency }}</div>
+              <div
+                class="price"
+                [class.disabled]="disabledParams.includes(param)">
+                {{ calculatePrice(usageType) | currency: currency }}
+              </div>
             </div>
             <div class="unit-price body-xs">
-              {{ getUnitPrice(tier, usageType) | currency: currency : 'symbol' : '1.2-6' }} /
+              {{ prices[tier].usage[usageType].price | currency: currency : 'symbol' : '1.2-6' }} /
               {{ (['media', 'training'].includes(usageType) ? 'billing.hour' : 'billing.unit') | translate }}
+              <div *ngIf="help">{{ help | translate }}</div>
             </div>
           </div>
         </ng-template>
       </div>
-      <div class="section">
+      <div class="overall">
         <div>
           <div class="title-l">
             {{ 'billing.monthly_estimation.title' | translate }}
-            <span class="total">{{ total | currency: currency }} *</span>
+            <span class="cost">{{ total | currency: currency }} *</span>
           </div>
           <div>*{{ 'billing.monthly_estimation.description' | translate }}</div>
           <div *ngIf="isSpain | async">{{ 'billing.without_vat' | translate }}</div>
@@ -84,7 +100,7 @@
       </div>
     </form>
   </pa-modal-content>
-  <pa-modal-footer>
+  <pa-modal-footer *ngIf="(isSubscribed | async) === false">
     <pa-button
       aspect="basic"
       (click)="modal.close()">
