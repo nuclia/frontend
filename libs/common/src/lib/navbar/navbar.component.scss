@@ -51,6 +51,7 @@ $height-breakpoint: 856px;
         position: relative;
         text-decoration: none;
         user-select: none;
+        transition: background-color $transition-hint;
 
         pa-icon {
           display: flex;
@@ -60,6 +61,13 @@ $height-breakpoint: 856px;
         }
         &.active {
           background-color: $color-light-stronger;
+        }
+        &:not(.active).sub-item {
+          background-color: $color-neutral-light;
+
+          &:hover {
+            background-color: $color-neutral-lightest;
+          }
         }
 
         &.disabled {

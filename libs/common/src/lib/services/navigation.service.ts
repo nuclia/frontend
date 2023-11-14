@@ -21,7 +21,7 @@ export class NavigationService {
       if (account && this.inAccountManagement(location.pathname)) {
         return this.getAccountManageUrl(account.slug);
       } else if (account && kb) {
-        return this.getKbUrl(account.slug, kb.slug!);
+        return this.getKbUrl(account.slug, kb.slug || '');
       } else if (account) {
         return this.getKbSelectUrl(account.slug);
       } else {
@@ -32,6 +32,21 @@ export class NavigationService {
 
   inAccountManagement(path: string): boolean {
     return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
+  }
+  inKbSettings(path: string, kbUrl: string): boolean {
+    const settingsPages = [
+      'activity',
+      'label-sets',
+      'entities',
+      'synonyms',
+      'manage',
+      'training',
+      'users',
+      'keys',
+      'widget-generator',
+    ];
+    const pattern = `${kbUrl}/(${settingsPages.join('|')})`;
+    return path.match(new RegExp(pattern)) !== null;
   }
 
   getAccountUrl(accountSlug: string): string {
