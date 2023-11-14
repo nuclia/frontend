@@ -14,7 +14,8 @@
     gap: var(--header-gap);
     height: var(--rhythm-5);
     justify-content: space-between;
-    padding: 0 var(--rhythm-1_5);
+    padding: 0 var(--rhythm-0_5) 0 var(--rhythm-1_5);
+
     &.expanded {
       background-color: var(--filter-header-background-active-color);
       border: 0;
@@ -23,13 +24,14 @@
       }
     }
     .header-content {
-      max-width: calc(100% - var(--header-button-width) - var(--header-gap));
+      box-sizing: border-box;
+      cursor: pointer;
+      height: var(--rhythm-5);
       overflow: hidden;
+      padding: calc(var(--rhythm-1) + var(--rhythm-0_25)) 0;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-    .header-title {
-      cursor: pointer;
+      width: calc(100% - var(--header-button-width) - var(--header-gap));
     }
   }
 
@@ -44,7 +46,7 @@
     }
   }
 
-  input[type="date"] {
+  input[type='date'] {
     background: none;
     border: 1px solid var(--color-neutral-light);
     box-sizing: border-box;
