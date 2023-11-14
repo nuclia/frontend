@@ -82,17 +82,27 @@ export class OnboardingService {
           this.toaster.error('Account creation failed');
           throw error;
         }),
-        switchMap(({ accountSlug }) => {
+        switchMap(({ accountSlug }) =>
+          this.sdk.nuclia.rest.getZones().pipe(
+            map((zones) => {
+              const zoneSlug = zones[zoneId];
+              return { zoneSlug, accountSlug };
+            }),
+          ),
+        ),
+        switchMap(({ accountSlug, zoneSlug }) => {
           this._onboardingState.next({ creating: true, accountCreated: true, kbCreated: false, creationFailed: false });
-          return this.createKb(accountSlug, zoneId);
+          return this.createKb(accountSlug, zoneId).pipe(
+            map(({ accountSlug, kbSlug }) => ({ accountSlug, kbSlug, zoneSlug })),
+          );
         }),
         tap(() => {
           this._onboardingState.next({ creating: true, accountCreated: true, kbCreated: true, creationFailed: false });
           this.tracking.logEvent('account_creation_success');
         }),
       )
-      .subscribe(({ accountSlug, kbSlug }) => {
-        this.router.navigate([`/at/${accountSlug}/${kbSlug}/resources/dataset`]);
+      .subscribe(({ accountSlug, kbSlug, zoneSlug }) => {
+        this.router.navigate([`/at/${accountSlug}/${zoneSlug}/${kbSlug}/resources/dataset`]);
       });
   }
 
