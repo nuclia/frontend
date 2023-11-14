@@ -410,9 +410,9 @@ export class Db implements IDb {
     return this.nuclia.options.nuaKey || '';
   }
 
-  getNUAHeader(): { 'x-stf-nuakey': string } {
+  getNUAHeader(): { 'x-nuclia-nuakey': string } {
     return {
-      'x-stf-nuakey': `Bearer ${this.getNUAKey()}`,
+      'x-nuclia-nuakey': `Bearer ${this.getNUAKey()}`,
     };
   }
 

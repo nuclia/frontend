@@ -42,7 +42,7 @@ import fetch from 'node-fetch';
 
 fetch('https://europe-1.nuclia.cloud/api/v1/processing/pull', {
   headers: {
-    'x-stf-nuakey': `Bearer ${NUA_KEY}`,
+    'x-nuclia-nuakey': `Bearer ${NUA_KEY}`,
     'content-type': 'application/json',
   },
   method: 'GET',

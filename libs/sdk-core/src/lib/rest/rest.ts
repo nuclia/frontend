@@ -91,7 +91,7 @@ export class Rest implements IRest {
     extraHeaders?: { [key: string]: string },
     synchronous = false,
   ): { [key: string]: string } {
-    const auth = extraHeaders && extraHeaders['x-stf-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders(method, path);
+    const auth = extraHeaders && extraHeaders['x-nuclia-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders(method, path);
     const defaultHeaders: { [key: string]: string } = {
       'content-type': 'application/json',
       'x-ndb-client': this.nuclia.options.client || 'web',
