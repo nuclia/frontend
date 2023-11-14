@@ -158,14 +158,13 @@ export class Rest implements IRest {
       return path;
     }
     const isGlobal =
-      path.startsWith('/account') ||
+      (path.startsWith('/account') && !path.includes('/activity')) ||
       path.startsWith('/user') ||
       path.startsWith('/auth') ||
       path.startsWith('/zones') ||
       path.startsWith('/billing') ||
       path.startsWith('/configuration') ||
-      path.startsWith('/manage') ||
-      (path.includes('/activity') && !path.includes('/activity/download'));
+      path.startsWith('/manage');
 
     let backend: string;
     if (zoneSlug && !this.nuclia.options.standalone) {

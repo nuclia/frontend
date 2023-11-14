@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, shareReplay, switchMap, take } from 'rxjs';
+import { BehaviorSubject, map, shareReplay, switchMap, take } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { NUAClientPayload } from '@nuclia/core';
 
@@ -17,6 +17,7 @@ export class AccountNUAService {
         ? this.sdk.nuclia.db.getNUAClients(account.id)
         : this.sdk.nuclia.db.getNUAClients(account.slug),
     ),
+    switchMap(nuaClients => this.zones.pipe(map((zones) => nuaClients.map((nuaClient) => ({ ...nuaClient, zone: zones[nuaClient.zone] })))))
   );
 
   constructor(private sdk: SDKService) {}
