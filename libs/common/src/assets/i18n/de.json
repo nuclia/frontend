@@ -178,7 +178,7 @@
 	"billing.my-subscription": "Mein Abonnement",
 	"billing.next-payment": "Nächste Zahlung",
 	"billing.not_company": "Ich bin kein Unternehmen",
-	"billing.on_premise_cost": "Mit <b>NucliaDB On-prem</b> fallen keine zusätzlichen Kosten an.",
+	"billing.on_premise_cost": "Mit <strong>NucliaDB On-prem</strong> fallen keine zusätzlichen Kosten an.",
 	"billing.order_number": "Bestellnummer",
 	"billing.paragraphs_per_file": "Eine 10-seitige Textdatei enthält etwa 300 Textblöcke",
 	"billing.parameter.files": "Wie viele Dokumente?",
