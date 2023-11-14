@@ -131,6 +131,7 @@
 	"billing.company_address": "Firmenanschrift",
 	"billing.contact": "Kontaktiere uns",
 	"billing.contact_name": "Kontaktname",
+	"billing.cost_over_limits": "Kosten über Grenzen",
 	"billing.cost_per_consumption": "Kosten pro Verbrauch",
 	"billing.cost_per_consumption_help": "Berechnen Sie Ihre Kosten pro Nutzung",
 	"billing.country": "Land",

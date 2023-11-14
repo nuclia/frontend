@@ -130,6 +130,7 @@
 	"billing.company_address": "Adreça de l'empresa",
 	"billing.contact": "Contactar",
 	"billing.contact_name": "Persona de contacte",
+	"billing.cost_over_limits": "Cost per sobre dels límits",
 	"billing.cost_per_consumption": "Costos per consum",
 	"billing.cost_per_consumption_help": "Calcula el teu cost per ús",
 	"billing.country": "País",
