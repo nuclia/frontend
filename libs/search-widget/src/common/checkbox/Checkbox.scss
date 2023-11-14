@@ -5,6 +5,7 @@
   display: inline-flex;
   gap: var(--rhythm-1);
   max-width: 100%;
+  position: relative;
 
   .sw-checkbox-control {
     -webkit-appearance: none;
