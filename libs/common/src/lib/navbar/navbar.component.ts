@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { map, merge, Observable, of, Subject } from 'rxjs';
+import { combineLatest, map, merge, Observable, of, Subject, switchMap } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { NavigationService, StandaloneService } from '../services';
 import { SDKService, STFTrackingService } from '@flaps/core';
@@ -28,6 +28,21 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
       filter((event) => event instanceof NavigationEnd),
       map((event) => this.navigationService.inAccountManagement((event as NavigationEnd).url)),
       takeUntil(this.unsubscribeAll),
+    ),
+  );
+  inSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
+    map(([account, kb]) => {
+      return this.navigationService.getKbUrl(account.slug, kb.slug || '');
+    }),
+    switchMap((kbUrl) =>
+      merge(
+        of(this.navigationService.inKbSettings(location.pathname, kbUrl)),
+        this.router.events.pipe(
+          filter((event) => event instanceof NavigationEnd),
+          map((event) => this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl)),
+          takeUntil(this.unsubscribeAll),
+        ),
+      ),
     ),
   );
   kbUrl: string = '';
