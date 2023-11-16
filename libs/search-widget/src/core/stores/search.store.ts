@@ -1,7 +1,16 @@
 import { SvelteState } from '../state-lib';
-import type { FieldId, IResource, Paragraph, ResourceField, Search, SearchOptions } from '@nuclia/core';
-import {
+import type {
   Classification,
+  FieldId,
+  IErrorResponse,
+  IFieldData,
+  IResource,
+  Paragraph,
+  ResourceField,
+  Search,
+  SearchOptions,
+} from '@nuclia/core';
+import {
   FIELD_TYPE,
   FileFieldData,
   getDataKeyFromFieldType,
@@ -12,15 +21,14 @@ import {
   getFilterFromLabelSet,
   getLabelFromFilter,
   getLabelSetFromFilter,
-  IErrorResponse,
-  IFieldData,
   LabelSetKind,
   LinkFieldData,
   ResourceProperties,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import { FindResultsAsList, NO_RESULT_LIST, ResultType, TypedResult } from '../models';
+import type { FindResultsAsList, ResultType, TypedResult } from '../models';
+import { NO_RESULT_LIST } from '../models';
 import { combineLatest, filter, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
 

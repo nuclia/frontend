@@ -1,7 +1,7 @@
 import type { Classification } from '../resource';
 
 export function getFilterFromLabel(label: Classification) {
-  return `/l/${label.labelset}/${label.label}`;
+  return `/classification.labels/${label.labelset}/${label.label}`;
 }
 
 export function getLabelFromFilter(filter: string): Classification {
@@ -10,7 +10,7 @@ export function getLabelFromFilter(filter: string): Classification {
 }
 
 export function getFilterFromLabelSet(labelSet: string) {
-  return `/l/${labelSet}`;
+  return `/classification.labels/${labelSet}`;
 }
 
 export function getLabelSetFromFilter(filter: string): string {
@@ -18,7 +18,7 @@ export function getLabelSetFromFilter(filter: string): string {
 }
 
 export function getFilterFromEntity(entity: { family: string; entity: string }) {
-  return `/e/${entity.family}/${entity.entity}`;
+  return `/entities/${entity.family}/${entity.entity}`;
 }
 
 export function getEntityFromFilter(filter: string): { family: string; entity: string } {
