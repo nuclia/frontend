@@ -61,9 +61,9 @@
           <pa-toggle
             *ngIf="canSuggestEntities | async"
             labelOnRight
-            help="stash.widgets.suggestEntities.help"
-            formControlName="suggestEntities">
-            {{ 'stash.widgets.suggestEntities.label' | translate }}
+            help="stash.widgets.autocompleteFromNERs.help"
+            formControlName="autocompleteFromNERs">
+            {{ 'stash.widgets.autocompleteFromNERs.label' | translate }}
           </pa-toggle>
           <pa-toggle
             *ngIf="isTrainingEnabled | async"

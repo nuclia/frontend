@@ -147,7 +147,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               permalink: [config.features.includes('permalink')],
               relations: [config.features.includes('relations')],
               suggestLabels: [config.features.includes('suggestLabels')],
-              suggestEntities: [config.features.includes('suggestEntities')],
+              autocompleteFromNERs: [config.features.includes('autocompleteFromNERs')],
               suggestions: [config.features.includes('suggestions')],
               useSynonyms: [config.features.includes('useSynonyms')],
               displayMetadata: [config.features.includes('displayMetadata')],

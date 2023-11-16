@@ -262,7 +262,7 @@ export interface WidgetFeatures {
   relations?: boolean;
   suggestions?: boolean;
   suggestLabels?: boolean;
-  suggestEntities?: boolean;
+  autocompleteFromNERs?: boolean;
   displayMetadata?: boolean;
   answers?: boolean;
   onlyAnswers?: boolean;
