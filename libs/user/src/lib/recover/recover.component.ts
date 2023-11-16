@@ -60,7 +60,7 @@ export class RecoverComponent {
         switchMap(
           (description) =>
             this.modalService.openConfirm({
-              title: 'login.check_email',
+              title: 'login.check_email.title',
               description,
               confirmLabel: 'Ok',
               onlyConfirm: true,
