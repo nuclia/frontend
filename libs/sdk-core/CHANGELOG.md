@@ -5,6 +5,10 @@
 - All `/activity` endpoints are using regional domain now. In those endpoints, all regional account references should be done by id instead of slug.
 - `getNUAActivity` method now requires the NUA client zone slug
 
+### Improvements
+
+- Support `proxy` option in `Nuclia` class to allow calling the Nuclia regional API through a proxy
+
 # 1.8.0 (2023-11-10)
 
 ### Features
@@ -24,7 +28,7 @@
 - Add `allow_kb_management` property to `NUAClientPayload`
 - Add optional `zoneSlug` parameter to `getFullUrl`, `fetch`, `get`, `post`, `put` and `delete` methods.
 - Add `LearningConfigurationOption` interface
-- Add support for regional Knowledge Boxes 
+- Add support for regional Knowledge Boxes
   - new `getKbIndexes` method in `db` allowing to list of the KB index of an account
   - update `getKnowledgeBoxes`, `getKnowledgeBox`, `createKnowledgeBox`, `WritableKnowledgeBox.modify` and `WritableKnowledgeBox.delete` methods for supporting regional endpoints when the flag `NUCLIA_NEW_REGIONAL_ENDPOINTS` is enabled
   - add `getKnowledgeBoxesForZone` method listing all the KBs for an account and a zone

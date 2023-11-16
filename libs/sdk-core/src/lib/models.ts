@@ -201,6 +201,8 @@ export interface NucliaOptions {
   client?: string;
   /** Indicates if you are using a local NucliaDB instance. */
   standalone?: boolean;
+  /** Indicates if you are using a proxy. */
+  proxy?: boolean;
   /**
    * Indicates if the Knowledge Box is public or not.
    *

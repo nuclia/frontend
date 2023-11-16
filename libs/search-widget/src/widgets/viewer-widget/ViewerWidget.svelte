@@ -38,6 +38,7 @@
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
   export let standalone = false;
+  export let proxy = false;
   export let cssPath = '';
 
   export let rid = '';
@@ -108,6 +109,7 @@
         kbSlug: kbslug,
         account,
         standalone,
+        proxy,
       },
       state,
       {},

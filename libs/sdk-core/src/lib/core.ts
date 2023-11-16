@@ -31,7 +31,7 @@ export class Nuclia implements INuclia {
    * Direct access to the current Knowledge Box instance
    * (it returns a Knowledge Box in read mode, and does not work with account authentication). */
   get knowledgeBox(): KnowledgeBox {
-    if (!this.options.knowledgeBox || (!this.options.zone && !this.options.standalone)) {
+    if (!this.options.knowledgeBox || (!this.options.zone && !this.options.standalone && !this.options.proxy)) {
       throw new Error('zone and knowledge box id must be defined in the Nuclia options');
     }
     if (!this.readKb) {
