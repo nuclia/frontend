@@ -29,7 +29,7 @@ import {
 } from '@nuclia/core';
 import type { FindResultsAsList, ResultType, TypedResult } from '../models';
 import { NO_RESULT_LIST } from '../models';
-import { combineLatest, filter, map, Subject } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
 
 interface SearchFilters {
@@ -63,6 +63,7 @@ interface Engagement {
 interface SearchState {
   query: string;
   filters: SearchFilters;
+  preselectedFilters: string[];
   options: SearchOptions;
   show: ResourceProperties[];
   results: FindResultsAsList;
@@ -81,6 +82,7 @@ interface SearchState {
 export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
+  preselectedFilters: [],
   options: { inTitleOnly: false, highlight: true, page_number: 0 },
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   results: NO_RESULT_LIST,
@@ -176,6 +178,14 @@ export const searchShow = searchState.writer<ResourceProperties[]>(
   (state, show) => ({
     ...state,
     show,
+  }),
+);
+
+export const preselectedFilters = searchState.writer<string[]>(
+  (state) => state.preselectedFilters,
+  (state, preselectedFilters) => ({
+    ...state,
+    preselectedFilters,
   }),
 );
 
@@ -414,7 +424,7 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
-export const isTitleOnly = combineLatest([
+export const isTitleOnly: Observable<boolean> = combineLatest([
   searchQuery,
   labelFilters,
   labelSetFilters,
@@ -426,7 +436,7 @@ export const isTitleOnly = combineLatest([
       !query &&
       ((labels?.length > 0 && labels.every((label) => label.kind === LabelSetKind.RESOURCES)) ||
         (labelSets?.length > 0 && labelSets.every((labelSet) => labelSet.kind === LabelSetKind.RESOURCES)) ||
-        hasRangeCreation) &&
+        !!hasRangeCreation) &&
       (entities || []).length === 0,
   ),
 );

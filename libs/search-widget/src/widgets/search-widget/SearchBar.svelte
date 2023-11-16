@@ -22,7 +22,7 @@
     resetStatesAndEffects,
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
-  import { searchQuery, triggerSearch } from '../../core/stores/search.store';
+  import { preselectedFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
   import { injectCustomCss } from '../../core/utils';
   import type { FilterType } from '../../core';
@@ -43,6 +43,7 @@
   export let proxy = false;
   export let mode = '';
   export let filters = '';
+  export let preselected_filters = '';
   export let cssPath = '';
   export let prompt = '';
 
@@ -91,7 +92,7 @@
     );
     if (Object.keys(_filters).length === 0) {
       _filters.labels = true;
-      //_filters.entities = true;  // TODO: Uncomment once entity filters work properly
+      _filters.entities = true;
     }
     initNuclia(
       {
@@ -126,6 +127,9 @@
       if (_filters.entities) {
         initEntitiesStore();
       }
+    }
+    if (preselected_filters) {
+      preselectedFilters.set(preselected_filters.split(','));
     }
     if (_features.answers) {
       initAnswer();

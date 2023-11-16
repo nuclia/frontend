@@ -125,7 +125,7 @@
         lang="en"
         placeholder="Search"
         {prompt}
-        filters="labels,created"
+        preselected_filters="/classification.labels/artist/Mademoiselle K"
         features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,zonlyAnswers,zhideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>

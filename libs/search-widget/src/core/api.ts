@@ -125,7 +125,6 @@ export const getAnswer = (
     acc.push({ author: Chat.Author.NUCLIA, text: curr.answer.text });
     return acc;
   }, [] as Chat.ContextEntry[]);
-
   return nucliaApi.knowledgeBox.chat(
     query,
     context,
