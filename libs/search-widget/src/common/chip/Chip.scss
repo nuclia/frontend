@@ -15,14 +15,14 @@
     padding-right: var(--rhythm-0_5);
   }
 
+  &.clickable {
+    cursor: pointer;
+  }
+
   span {
     flex: 1 1 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
-    &.clickable {
-      cursor: pointer;
-    }
   }
 }
