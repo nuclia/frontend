@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { combineLatest, map, Observable, take } from 'rxjs';
-  import type { LabelSetWithId } from '../../core';
+  import type { EntityGroup, LabelSetWithId } from '../../core';
   import {
     _,
     addEntityFilter,
@@ -23,6 +23,7 @@
   } from '../../core';
   import IconButton from '../../common/button/IconButton.svelte';
   import Checkbox from '../../common/checkbox/Checkbox.svelte';
+  import type { Label } from '@nuclia/core';
 
   const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
   const selectedLabelSets: Observable<string[]> = labelSetFilters.pipe(
@@ -36,7 +37,7 @@
   );
   let expanders: { [id: string]: boolean } = {};
 
-  function selectLabelSet(labelSet, selected)  {
+  function selectLabelSet(labelSet: LabelSetWithId, selected: boolean)  {
     if (selected) {
       labelSet.labels.forEach((label) => removeLabelFilter({ labelset: labelSet.id, label: label.title}));
       addLabelSetFilter(labelSet.id, labelSet.kind)
@@ -46,19 +47,19 @@
     }
   }
 
-  function toggleExpander(id) {
+  function toggleExpander(id: string) {
     expanders[id] = !expanders[id];
   }
 
-  function selectLabel(labelSet, label, selected) {
+  function selectLabel(labelSet: LabelSetWithId, label: Label, selected: boolean) {
     const classification = { labelset: labelSet.id, label: label.title };
     selected ? addLabelFilter(classification, labelSet.kind) : removeLabelFilter(classification);
-  };
+  }
 
-  function selectEntity(family, entity, selected) {
+  function selectEntity(family: EntityGroup, entity: string, selected: boolean) {
     const filter = { family: family.id, entity };
     selected ? addEntityFilter(filter) : removeEntityFilter(filter);
-  };
+  }
 
   onMount(() => {
     combineLatest([labelFilters, hasRangeCreation]).pipe(take(1)).subscribe(([filters, hasRangeCreation]) => {
@@ -77,10 +78,8 @@
     <div
       class="header"
       class:expanded={expanders['created']}>
-      <div class="header-content">
-        <span
-          class="header-title"
-          on:click={() => toggleExpander('created')}>
+      <div class="header-content" on:click={() => toggleExpander('created')}>
+        <span>
           {$_('input.date_created')}
         </span>
       </div>
@@ -122,19 +121,15 @@
     <div
       class="header"
       class:expanded={expanders[labelSet.id]}>
-      <div class="header-content">
+      <div class="header-content" on:click={() => toggleExpander(labelSet.id)}>
         {#if $filterByLabelFamilies}
-        <Checkbox
-          checked={$selectedLabelSets.includes(labelSet.id)}
-          on:change={(event) => selectLabelSet(labelSet, event.detail)}>
-          {labelSet.title}
-        </Checkbox>
-        {:else}
-          <span
-            class="header-title"
-            on:click={() => toggleExpander(labelSet.id)}>
+          <Checkbox
+            checked={$selectedLabelSets.includes(labelSet.id)}
+            on:change={(event) => selectLabelSet(labelSet, event.detail)}>
             {labelSet.title}
-          </span>
+          </Checkbox>
+        {:else}
+          <span title="{labelSet.title}">{labelSet.title}</span>
         {/if}
       </div>
       <span class="header-button">

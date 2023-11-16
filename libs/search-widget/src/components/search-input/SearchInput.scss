@@ -1,20 +1,24 @@
 .sw-search-input {
+  --search-input-height: var(--rhythm-6);
+
   border: var(--search-bar-border);
   border-radius: var(--search-bar-border-radius);
   display: flex;
   flex-direction: column;
-  height: var(--rhythm-6);
+  height: var(--search-input-height);
   max-width: var(--search-bar-max-width);
   position: relative;
+  transition: height var(--transition-fast);
 
   .input-container {
     align-items: center;
     box-sizing: border-box;
     display: flex;
-    flex: 1 0 auto;
+    flex: 0 0 auto;
     padding-left: var(--rhythm-5);
     padding-right: var(--rhythm-1);
     position: relative;
+    height: var(--search-input-height);
   }
 
   input {
@@ -84,14 +88,8 @@
   .filters-container {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     gap: var(--rhythm-1);
-  }
-  .more-filters-dropdown {
-    padding: var(--rhythm-1);
-
-    li:not(:last-child) {
-      margin-bottom: var(--rhythm-1);
-    }
   }
 
   &.has-filters .input-container:after {
@@ -105,10 +103,10 @@
   }
 
   &.has-filters .filters-container {
-    padding: var(--rhythm-0_5) var(--rhythm-1) var(--rhythm-1);
+    padding: var(--rhythm-1);
   }
   &.has-filters {
-    height: var(--rhythm-12);
+    height: calc(var(--search-input-height) + var(--filters-height));
   }
 
   .search-icon-container {
