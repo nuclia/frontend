@@ -5,7 +5,7 @@
 	"generic.or": "Ou",
 	"login.access_request": "souhaite accéder à Nuclia en votre nom et être en mesure de :",
 	"login.boarding_title": "Embarquer avec Nuclia",
-	"login.check_email.check_spams": "ou vérifiez votre dossier spam.",
+	"login.check_email.check_spams": "ou vérifiez vos courriers indésirables.",
 	"login.check_email.details": "Cliquez sur le lien d'activation que nous venons de vous envoyer à <strong>{{ email }}</strong>. ",
 	"login.check_email.email_sent": "On vous a envoyé un email!",
 	"login.check_email.resend": "Renvoyer",
