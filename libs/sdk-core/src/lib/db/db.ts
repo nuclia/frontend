@@ -178,7 +178,7 @@ export class Db implements IDb {
             kbEndpoint,
             undefined,
             undefined,
-            this.nuclia.options.standalone ? undefined : this.nuclia.options.zone,
+            this.nuclia.options.standalone || this.nuclia.options.proxy ? undefined : this.nuclia.options.zone,
           )
           .pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, account as string, kb)));
       } else {
@@ -205,7 +205,7 @@ export class Db implements IDb {
           : `/account/${account}/kb/${knowledgeBoxSlug}`;
         return this.nuclia.rest.get<IKnowledgeBox>(kbEndpoint).pipe(
           switchMap((kb) =>
-            this.nuclia.options.zone || this.nuclia.options.standalone
+            this.nuclia.options.zone || this.nuclia.options.standalone || this.nuclia.options.proxy
               ? of(kb)
               : this.nuclia.rest.getZoneSlug(kb.zone).pipe(
                   tap((zone) => (this.nuclia.options.zone = zone)),

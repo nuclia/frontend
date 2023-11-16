@@ -167,10 +167,13 @@ export class Rest implements IRest {
       path.startsWith('/manage');
 
     let backend: string;
-    if (zoneSlug && !this.nuclia.options.standalone) {
+    if (zoneSlug && !this.nuclia.options.standalone && !this.nuclia.options.proxy) {
       backend = `${this.nuclia.backend.replace('https://', `https://${zoneSlug}.`)}`;
     } else {
-      backend = isGlobal || this.nuclia.options.standalone ? this.nuclia.backend : this.nuclia.regionalBackend;
+      backend =
+        isGlobal || this.nuclia.options.standalone || this.nuclia.options.proxy
+          ? this.nuclia.backend
+          : this.nuclia.regionalBackend;
     }
     const version =
       path.startsWith('/auth') ||

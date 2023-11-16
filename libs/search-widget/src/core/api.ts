@@ -280,7 +280,9 @@ export const getRegionalBackend = () => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.options.standalone ? `${nucliaApi.options.backend}/v1` : nucliaApi.regionalBackend + '/v1';
+  return nucliaApi.options.standalone || nucliaApi.options.proxy
+    ? `${nucliaApi.options.backend}/v1`
+    : nucliaApi.regionalBackend + '/v1';
 };
 
 export const getTempToken = (): Observable<string> => {
