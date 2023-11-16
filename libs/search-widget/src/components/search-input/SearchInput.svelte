@@ -50,15 +50,13 @@
 
   let inputContainerElement: HTMLElement | undefined;
   let filterButtonElement: HTMLElement | undefined;
-  let moreFilterElement: HTMLElement | undefined;
+  let filterContainerElement: HTMLElement | undefined;
   let position: DOMRect | undefined;
   let filterButtonPosition: DOMRect | undefined;
-  let moreFilterPosition: { left: number; top: number } | undefined;
   let showSuggestions = false;
   let showFilterDropdowns = false;
   let hasFilters = false;
-  let displayMoreFilters = false;
-  const filterDisplayLimit = 2;
+  let filterHeight: string | undefined;
 
   const filters: Observable<
     {
@@ -103,11 +101,12 @@
         hasFilters = hasFiltersNow;
         setTimeout(() => setInputPosition());
       }
+      setTimeout(() => filterHeight = filterContainerElement ? `${filterContainerElement.offsetHeight}px` : undefined);
     })
   );
 
   const suggestionModalMinWidth = 384;
-  let suggestionModalWidth;
+  let suggestionModalWidth: string;
   $: {
     if (inputContainerElement) {
       suggestionModalWidth = `${Math.max(inputContainerElement.offsetWidth, suggestionModalMinWidth)}px`;
@@ -150,14 +149,6 @@
     showFilterDropdowns = !showFilterDropdowns;
   };
 
-  const showMoreFilters = () => {
-    if (moreFilterElement && inputContainerElement) {
-      const buttonRect = moreFilterElement.getBoundingClientRect();
-      moreFilterPosition = { left: buttonRect.left, top: buttonRect.top + buttonRect.height + 6 };
-    }
-    displayMoreFilters = true;
-  };
-
   function clear() {
     suggestionState.reset();
     searchQuery.set('');
@@ -171,7 +162,9 @@
   class="sw-search-input"
   class:has-filters={$filters.length > 0}
   class:has-logo={!$hideLogo}
-  bind:this={inputContainerElement}>
+  bind:this={inputContainerElement}
+  style:--filters-height={filterHeight}
+>
   {#if !$hideLogo}
     <img
       src={`${getCDN()}logos/nuclia-grey.svg`}
@@ -221,8 +214,8 @@
   </div>
 
   {#if $filters.length > 0}
-    <div class="filters-container">
-      {#each $filters.slice(0, filterDisplayLimit) as filter (filter.key)}
+    <div class="filters-container" bind:this={filterContainerElement}>
+      {#each $filters as filter (filter.key)}
         {#if filter.type === 'creation-start'}
           <Chip
             removable
@@ -260,50 +253,6 @@
           </Chip>
         {/if}
       {/each}
-      {#if $filters.length > filterDisplayLimit}
-        <div bind:this={moreFilterElement}>
-          <Button
-            aspect="basic"
-            size="small"
-            active={displayMoreFilters}
-            on:click={showMoreFilters}>
-            {$_('input.more_filters', { count: $filters.length - filterDisplayLimit })}
-          </Button>
-        </div>
-        {#if displayMoreFilters}
-          <Dropdown
-            position={moreFilterPosition}
-            on:close={() => (displayMoreFilters = false)}>
-            <ul class="more-filters-dropdown">
-              {#each $filters.slice(filterDisplayLimit) as filter (filter.key)}
-                <li>
-                  {#if filter.type === 'label'}
-                    <Label
-                      label={filter.value}
-                      removable
-                      on:remove={() => removeLabelFilter(filter.value)} />
-                  {/if}
-                  {#if filter.type === 'labelset'}
-                    <Label
-                      label={{ labelset: filter.value, label: '' }}
-                      removable
-                      on:remove={() => removeLabelSetFilter(filter.value)} />
-                  {/if}
-                  {#if filter.type === 'entity'}
-                    <Chip
-                      removable
-                      color={$entities.find((family) => family.id === filter.value.family)?.color || entitiesDefaultColor}
-                      on:remove={() =>
-                        filter.autofilter ? removeAutofilter(filter.value) : removeEntityFilter(filter.value)}>
-                      {filter.value.entity}
-                    </Chip>
-                  {/if}
-                </li>
-              {/each}
-            </ul>
-          </Dropdown>
-        {/if}
-      {/if}
     </div>
   {/if}
 </form>
