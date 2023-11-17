@@ -10,6 +10,7 @@ export namespace Chat {
   export enum Features {
     PARAGRAPHS = 'paragraphs',
     RELATIONS = 'relations',
+    VECTORS = 'vectors',
   }
 
   export interface Answer {
