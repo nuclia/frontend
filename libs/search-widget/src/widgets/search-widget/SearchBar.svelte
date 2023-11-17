@@ -142,9 +142,9 @@
     }
     initUsageTracking();
 
-    const globalSearchButton = document.querySelector('[data-nuclia="global-search-button"]');
-    if (globalSearchButton) {
-      globalSearchButton.addEventListener('click', toggleSearchVisibility);
+    const globalSearchButtons = document.querySelectorAll('[data-nuclia="global-search-button"]');
+    if (globalSearchButtons.length > 0) {
+      globalSearchButtons.forEach((button) => button.addEventListener('click', toggleSearchVisibility))
     } else {
       console.error(`No button found to open Nuclia’s global search. Make sure you added 'data-nuclia="global-search-button"' to your search button.`);
     }
@@ -155,8 +155,8 @@
       showResults.set(true);
     }
     return () => {
-      if (globalSearchButton) {
-        globalSearchButton.removeEventListener('click', toggleSearchVisibility);
+      if (globalSearchButtons.length > 0) {
+        globalSearchButtons.forEach((button) => button.removeEventListener('click', toggleSearchVisibility));
       }
       resetNuclia();
       resetStatesAndEffects();
