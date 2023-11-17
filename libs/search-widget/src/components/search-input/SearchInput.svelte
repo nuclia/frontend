@@ -135,8 +135,7 @@
       event.preventDefault();
       if (showSuggestions && selectedEntity.getValue()) {
         autocomplete(selectedEntity.getValue());
-      }
-      else {
+      } else {
         search();
       }
       showSuggestions = false;
@@ -150,12 +149,11 @@
     if (showSuggestions && suggestedEntities.getValue().length > 0) {
       if (event.key === 'ArrowDown') {
         selectNextEntity.do();
-      }
-      else if (event.key === 'ArrowUp') {
+      } else if (event.key === 'ArrowUp') {
         selectPrevEntity.do();
       }
     }
-  }
+  };
 
   const closeSuggestions = () => {
     showSuggestions = false;
