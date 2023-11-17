@@ -35,10 +35,12 @@
         <a
           *ngIf="kb.slug"
           class="kb"
+          data-cy="kb-list-item"
           [class.disabled]="!kb.role_on_kb"
           (click)="goToKb(kb)">
           <pa-button
             class="delete-btn"
+            data-cy="delete-kb-button"
             *ngIf="standalone"
             (click)="deleteKb($event, kb.slug, kb.title)"
             icon="trash"
@@ -57,6 +59,7 @@
     <ng-template #noKb>
       <div
         class="select-kb-empty"
+        data-cy="no-kb-message"
         *ngIf="!addKb">
         <div class="select-kb-empty-message">{{ 'stash.no_knowledge_boxes' | translate }}</div>
 
@@ -72,6 +75,7 @@
       <div class="select-kb-input">
         <pa-input
           hasFocus
+          data-cy="new-kb-name-input"
           [formControl]="kbName"
           [errorMessages]="errorMessages">
           {{ 'stash.name_your_kb' | translate }}
@@ -83,6 +87,7 @@
   <div class="select-kb-footer">
     <pa-button
       *ngIf="!addKb && (standalone || (canAddKb | async) === true)"
+      data-cy="create-kb-button"
       (click)="toggleForm()">
       {{ 'stash.create.title' | translate }}
     </pa-button>
@@ -96,6 +101,7 @@
 
       <pa-button
         [disabled]="kbName.invalid || creatingKb"
+        data-cy="save-new-kb-button"
         (click)="save()">
         {{ 'generic.save' | translate }}
       </pa-button>
