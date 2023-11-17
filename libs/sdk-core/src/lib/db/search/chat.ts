@@ -12,7 +12,7 @@ export function chat(
   path: string,
   query: string,
   context: Chat.ContextEntry[] = [],
-  features: Chat.Features[] = [Chat.Features.PARAGRAPHS],
+  features: Chat.Features[] = [Chat.Features.VECTORS, Chat.Features.PARAGRAPHS],
   options: BaseSearchOptions = {},
 ): Observable<Chat.Answer | IErrorResponse> {
   let sourcesLength = 0;
