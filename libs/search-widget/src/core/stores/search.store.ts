@@ -21,8 +21,10 @@ import {
   getFilterFromLabelSet,
   getLabelFromFilter,
   getLabelSetFromFilter,
+  LABEL_FILTER_PREFIX,
   LabelSetKind,
   LinkFieldData,
+  NER_FILTER_PREFIX,
   ResourceProperties,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
@@ -199,7 +201,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[]; t
     const filters: SearchFilters = {};
     data.filters.forEach((filter) => {
       const spreadFilter = filter.split('/').filter((val) => !!val);
-      if (spreadFilter[0] === 'l') {
+      if (spreadFilter[0] === LABEL_FILTER_PREFIX) {
         if (spreadFilter.length === 3) {
           const labelFilter = {
             classification: getLabelFromFilter(filter),
@@ -221,7 +223,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[]; t
             filters.labelSets.push(labelSetFilter);
           }
         }
-      } else if (spreadFilter[0] === 'e') {
+      } else if (spreadFilter[0] === NER_FILTER_PREFIX) {
         const entityFilter = getEntityFromFilter(filter);
         if (!filters.entities) {
           filters.entities = [entityFilter];
