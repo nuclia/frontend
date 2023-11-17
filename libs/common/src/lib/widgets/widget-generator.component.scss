@@ -44,6 +44,7 @@ $width-configuration: rhythm(56);
     display: flex;
     flex-direction: column;
     gap: rhythm(2);
+    min-height: rhythm(9);
   }
 
   .snippet-configuration-container {
