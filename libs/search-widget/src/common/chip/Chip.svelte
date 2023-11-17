@@ -22,16 +22,23 @@
       dispatch('click');
     }
   };
+  const onKeyup = (event: KeyboardEvent) => {
+    if (clickable && event.key === 'Enter') {
+      dispatch('click');
+    }
+  }
 </script>
 
 <div
   class="sw-chip"
   class:closeable={removable}
+  class:clickable
   style:background-color={color}
   style:color={fontColor}
-  on:click={onClick}>
-  <span
-    class:clickable>
+  tabindex={clickable ? 0 : -1}
+  on:click={onClick}
+  on:keyup={onKeyup}>
+  <span>
     <slot />
   </span>
   {#if removable}

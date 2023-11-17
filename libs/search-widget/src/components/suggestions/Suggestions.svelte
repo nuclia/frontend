@@ -8,6 +8,8 @@
   import {
     _,
     addLabelFilter,
+    autocomplete,
+    autocompleteFromNERs,
     getFieldDataFromResource,
     getFirstResourceField,
     getNavigationUrl,
@@ -17,11 +19,10 @@
     navigateToFile,
     navigateToLink,
     NO_SUGGESTION_RESULTS,
-    suggestEntities,
+    selectedEntity,
     suggestionError,
     suggestions,
     suggestionsHasError,
-    typeAhead,
     viewerData
   } from '../../core';
   import { createEventDispatcher } from 'svelte';
@@ -31,9 +32,9 @@
   export let labels: Classification[] = [];
 
   const dispatch = createEventDispatcher();
-  const search = (query) => {
-    typeAhead.set(query);
-    suggestions.set({ results: NO_SUGGESTION_RESULTS });
+
+  const onClickEntity = (suggestion) => {
+    autocomplete(suggestion);
     dispatch('search');
   };
 
@@ -112,16 +113,16 @@
         </ul>
       </section>
     {/if}
-    {#if entities.length > 0 && $suggestEntities}
+    {#if entities.length > 0 && $autocompleteFromNERs}
       <section>
         <h3>{$_('suggest.entities')}</h3>
         <ul class="entities">
-          {#each entities.slice(0, 4) as entity}
+          {#each entities as entity}
             <li>
               <Chip
-                color="var(--color-neutral-lightest)"
+                color={$selectedEntity === entity ? 'var(--color-neutral-lighter)' : 'var(--color-neutral-lightest)'}
                 clickable
-                on:click={() => search(entity)}>
+                on:click={() => onClickEntity(entity)}>
                 {entity}
               </Chip>
             </li>

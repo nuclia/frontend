@@ -62,7 +62,7 @@
 	"results.semantic": "Semantic results",
 	"results.sentences": "Relevant sentences",
 	"results.summary": "Summary",
-	"suggest.entities": "Suggested entities",
+	"suggest.entities": "Autocomplete from NERs",
 	"suggest.intents": "Labels",
 	"suggest.titles": "Suggested titles",
 	"viewer.find-in-audio": "Find in audio",

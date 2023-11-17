@@ -78,7 +78,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
   if (widgetOptions.features?.suggestions) {
     SUGGEST_MODE.push(Search.SuggestionFeatures.PARAGRAPH);
   }
-  if (widgetOptions.features?.suggestEntities) {
+  if (widgetOptions.features?.autocompleteFromNERs) {
     SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
   }
   if (widgetOptions.features?.noBM25forChat) {

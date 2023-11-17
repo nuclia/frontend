@@ -6,6 +6,7 @@
   import type { EntityFilter } from '../../core';
   import {
     _,
+    autocomplete,
     autofilters,
     creationEnd,
     creationStart,
@@ -24,6 +25,9 @@
     removeLabelFilter,
     removeLabelSetFilter,
     searchQuery,
+    selectedEntity,
+    selectNextEntity,
+    selectPrevEntity,
     suggestedEntities,
     suggestedLabels,
     suggestedParagraphs,
@@ -42,7 +46,6 @@
   import IconButton from '../../common/button/IconButton.svelte';
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
   import type { LabelFilter } from '../../common';
-  import Button from '../../common/button/Button.svelte';
   import SearchFilters from '../search-filters/SearchFilters.svelte';
 
   let searchInputElement: HTMLInputElement;
@@ -130,11 +133,25 @@
   const onKeyPress = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      search();
+      if (showSuggestions && selectedEntity.getValue()) {
+        autocomplete(selectedEntity.getValue());
+      } else {
+        search();
+      }
       showSuggestions = false;
     } else {
       showSuggestions = true;
       setInputPosition();
+    }
+  };
+
+  const onKeyUp = (event: KeyboardEvent) => {
+    if (showSuggestions && suggestedEntities.getValue().length > 0) {
+      if (event.key === 'ArrowDown') {
+        selectNextEntity.do();
+      } else if (event.key === 'ArrowUp') {
+        selectPrevEntity.do();
+      }
     }
   };
 
@@ -199,7 +216,8 @@
       aria-label="Search input"
       bind:value={$typeAhead}
       on:input={() => triggerSuggestions.next()}
-      on:keypress={onKeyPress} />
+      on:keypress={onKeyPress}
+      on:keyup={onKeyUp}/>
 
     {#if $hasFilterButton}
       <div bind:this={filterButtonElement}>

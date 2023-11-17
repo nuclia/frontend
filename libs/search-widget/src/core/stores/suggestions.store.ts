@@ -2,7 +2,8 @@ import { SvelteState } from '../state-lib';
 import type { Classification, IErrorResponse, Search } from '@nuclia/core';
 import { NO_SUGGESTION_RESULTS } from '../models';
 import { combineLatest, map, Observable, Subject } from 'rxjs';
-import { suggestEntities } from './widget.store';
+
+const MAX_ENTITIES = 4;
 
 export type Suggestions = {
   results: Search.Suggestions;
@@ -13,6 +14,7 @@ interface SuggestionState {
   typeAhead: string;
   suggestions: Suggestions;
   error?: IErrorResponse;
+  selectedEntity?: number;
 }
 
 export const suggestionState = new SvelteState<SuggestionState>({
@@ -38,6 +40,7 @@ export const suggestions = suggestionState.writer<Suggestions>(
     ...state,
     suggestions,
     error: undefined,
+    selectedEntity: undefined,
   }),
 );
 
@@ -58,20 +61,43 @@ export const suggestedLabels: Observable<Classification[]> = suggestionState.rea
   (state) => state.suggestions.labels || [],
 );
 
-export const suggestedEntities: Observable<string[]> = suggestionState.reader<string[]>(
-  (state) => state.suggestions.results.entities?.entities || [],
+export const suggestedEntities = suggestionState.reader<string[]>((state) =>
+  (state.suggestions.results.entities?.entities || []).slice(0, MAX_ENTITIES),
 );
 
 export const hasSuggestions: Observable<boolean> = combineLatest([
   suggestedParagraphs,
   suggestedLabels,
   suggestedEntities,
-  suggestEntities,
 ]).pipe(
   map(
-    ([suggestedParagraphs, suggestedLabels, suggestedEntities, canSuggestEntities]) =>
-      suggestedParagraphs.length > 0 ||
-      suggestedLabels.length > 0 ||
-      (suggestedEntities.length > 0 && canSuggestEntities), // TODO: canSuggestEntities can be deleted once "features" param works properly on suggest endpoint
+    ([suggestedParagraphs, suggestedLabels, suggestedEntities]) =>
+      suggestedParagraphs.length > 0 || suggestedLabels.length > 0 || suggestedEntities.length > 0,
   ),
 );
+
+export const selectedEntity = suggestionState.reader<string>(
+  (state) => state.suggestions.results.entities?.entities?.[state.selectedEntity] || '',
+);
+
+export const selectNextEntity = suggestionState.action((state) => {
+  const entities = suggestedEntities.getValue();
+  const selectedEntity = typeof state.selectedEntity === 'number' ? (state.selectedEntity + 1) % entities.length : 0;
+  return { ...state, selectedEntity };
+});
+
+export const selectPrevEntity = suggestionState.action((state) => {
+  const entities = suggestedEntities.getValue();
+  let selectedEntity = typeof state.selectedEntity === 'number' ? state.selectedEntity - 1 : 0;
+  if (selectedEntity < 0) selectedEntity = entities.length - 1;
+  return { ...state, selectedEntity };
+});
+
+export const autocomplete = (suggestion: string) => {
+  let query = typeAhead.getValue();
+  const words = query.split(/\s+/).filter((word) => word);
+  const index = query.lastIndexOf(words[words.length - 1]);
+  query = query.substring(0, index) + suggestion;
+  typeAhead.set(query);
+  suggestions.set({ results: NO_SUGGESTION_RESULTS, selectedEntity: undefined });
+};

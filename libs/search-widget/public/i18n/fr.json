@@ -59,7 +59,7 @@
 	"results.semantic": "Résultats sémantiques",
 	"results.sentences": "Phrases pertinentes",
 	"results.summary": "Résumé",
-	"suggest.entities": "Entités suggérées",
+	"suggest.entities": "Saisie semi-automatique à partir des NER",
 	"suggest.intents": "Labels",
 	"suggest.titles": "Titres suggérés",
 	"viewer.find-in-audio": "Rechercher dans l'audio",

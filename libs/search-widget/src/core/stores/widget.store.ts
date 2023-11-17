@@ -21,7 +21,9 @@ export const isAnswerEnabled: Observable<boolean> = widgetFeatures.pipe(map((fea
 export const isKnowledgeGraphEnabled: Observable<boolean> = widgetFeatures.pipe(
   map((features) => !!features?.knowledgeGraph),
 );
-export const suggestEntities: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.suggestEntities));
+export const autocompleteFromNERs: Observable<boolean> = widgetFeatures.pipe(
+  map((features) => !!features?.autocompleteFromNERs),
+);
 export const displayMetadata: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.displayMetadata));
 export const hideThumbnails: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideThumbnails));
 export const hideLogo: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideLogo));

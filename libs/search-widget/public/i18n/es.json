@@ -61,7 +61,7 @@
 	"results.semantic": "Resultados semánticos",
 	"results.sentences": "Frases relevantes",
 	"results.summary": "Resumen",
-	"suggest.entities": "Entidades sugeridas",
+	"suggest.entities": "Autocompletar desde NERs",
 	"suggest.intents": "Etiquetas",
 	"suggest.titles": "Títulos sugeridos",
 	"viewer.find-in-audio": "Buscar en audio",
