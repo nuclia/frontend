@@ -8,6 +8,7 @@
 ### Improvements
 
 - Support `proxy` option in `Nuclia` class to allow calling the Nuclia regional API through a proxy
+- Use filter alias syntax in filter utility functions.
 
 # 1.8.0 (2023-11-10)
 

@@ -1,7 +1,16 @@
 import { SvelteState } from '../state-lib';
-import type { FieldId, IResource, Paragraph, ResourceField, Search, SearchOptions } from '@nuclia/core';
-import {
+import type {
   Classification,
+  FieldId,
+  IErrorResponse,
+  IFieldData,
+  IResource,
+  Paragraph,
+  ResourceField,
+  Search,
+  SearchOptions,
+} from '@nuclia/core';
+import {
   FIELD_TYPE,
   FileFieldData,
   getDataKeyFromFieldType,
@@ -12,16 +21,17 @@ import {
   getFilterFromLabelSet,
   getLabelFromFilter,
   getLabelSetFromFilter,
-  IErrorResponse,
-  IFieldData,
+  LABEL_FILTER_PREFIX,
   LabelSetKind,
   LinkFieldData,
+  NER_FILTER_PREFIX,
   ResourceProperties,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import { FindResultsAsList, NO_RESULT_LIST, ResultType, TypedResult } from '../models';
-import { combineLatest, filter, map, Subject } from 'rxjs';
+import type { FindResultsAsList, ResultType, TypedResult } from '../models';
+import { NO_RESULT_LIST } from '../models';
+import { combineLatest, filter, map, Observable, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
 
 interface SearchFilters {
@@ -55,6 +65,7 @@ interface Engagement {
 interface SearchState {
   query: string;
   filters: SearchFilters;
+  preselectedFilters: string[];
   options: SearchOptions;
   show: ResourceProperties[];
   results: FindResultsAsList;
@@ -73,6 +84,7 @@ interface SearchState {
 export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
+  preselectedFilters: [],
   options: { inTitleOnly: false, highlight: true, page_number: 0 },
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   results: NO_RESULT_LIST,
@@ -171,6 +183,14 @@ export const searchShow = searchState.writer<ResourceProperties[]>(
   }),
 );
 
+export const preselectedFilters = searchState.writer<string[]>(
+  (state) => state.preselectedFilters,
+  (state, preselectedFilters) => ({
+    ...state,
+    preselectedFilters,
+  }),
+);
+
 export const searchFilters = searchState.writer<string[], { filters: string[]; titleOnly: boolean }>(
   (state) => [
     ...(state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
@@ -181,7 +201,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[]; t
     const filters: SearchFilters = {};
     data.filters.forEach((filter) => {
       const spreadFilter = filter.split('/').filter((val) => !!val);
-      if (spreadFilter[0] === 'l') {
+      if (spreadFilter[0] === LABEL_FILTER_PREFIX) {
         if (spreadFilter.length === 3) {
           const labelFilter = {
             classification: getLabelFromFilter(filter),
@@ -203,7 +223,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[]; t
             filters.labelSets.push(labelSetFilter);
           }
         }
-      } else if (spreadFilter[0] === 'e') {
+      } else if (spreadFilter[0] === NER_FILTER_PREFIX) {
         const entityFilter = getEntityFromFilter(filter);
         if (!filters.entities) {
           filters.entities = [entityFilter];
@@ -406,7 +426,7 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
-export const isTitleOnly = combineLatest([
+export const isTitleOnly: Observable<boolean> = combineLatest([
   searchQuery,
   labelFilters,
   labelSetFilters,
@@ -418,7 +438,7 @@ export const isTitleOnly = combineLatest([
       !query &&
       ((labels?.length > 0 && labels.every((label) => label.kind === LabelSetKind.RESOURCES)) ||
         (labelSets?.length > 0 && labelSets.every((labelSet) => labelSet.kind === LabelSetKind.RESOURCES)) ||
-        hasRangeCreation) &&
+        !!hasRangeCreation) &&
       (entities || []).length === 0,
   ),
 );

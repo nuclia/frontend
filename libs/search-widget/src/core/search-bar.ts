@@ -13,6 +13,7 @@ import {
   onlyAnswers,
   pageNumber,
   pendingResults,
+  preselectedFilters,
   searchFilters,
   searchOptions,
   searchQuery,
@@ -56,6 +57,7 @@ export const setupTriggerSearch = (
                 searchOptions.pipe(take(1)),
                 searchShow.pipe(take(1)),
                 searchFilters.pipe(take(1)),
+                preselectedFilters.pipe(take(1)),
                 isTitleOnly.pipe(take(1)),
                 autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
@@ -65,47 +67,58 @@ export const setupTriggerSearch = (
                     pendingResults.set(true);
                   }
                 }),
-                switchMap(([onlyAnswers, options, show, filters, inTitleOnly, autoFilterDisabled, isAnswerEnabled]) => {
-                  const currentOptions: SearchOptions = {
-                    ...options,
+                switchMap(
+                  ([
+                    onlyAnswers,
+                    options,
                     show,
                     filters,
+                    preselectedFilters,
                     inTitleOnly,
-                    ...(autoFilterDisabled ? { autofilter: false } : {}),
-                  };
-                  if (isAnswerEnabled && !trigger?.more) {
-                    return askQuestion(query, true, currentOptions).pipe(
-                      tap((res) => {
-                        if (res.type === 'error' && res.status === 402 && !onlyAnswers) {
-                          disableAnswers();
-                          triggerSearch.next();
-                        }
-                      }),
-                      filter((res) => res.type !== 'error'),
-                      map((res) => res as Chat.Answer),
-                      // Chat is emitting several times until the answer is complete, but the result sources doesn't change while answer is incomplete
-                      // So we make sure to emit only when results are changing, preventing to write in the state several times while loading the answer
-                      distinctUntilChanged((previous, current) => previous.sources === current.sources),
-                      map((res) => ({
-                        results: res.sources,
-                        append: false,
-                        onlyAnswers,
-                        loadingMore: false,
-                        options: currentOptions,
-                      })),
-                    );
-                  } else {
-                    return search(query, currentOptions).pipe(
-                      map((results) => ({
-                        results,
-                        append: !!trigger?.more,
-                        onlyAnswers,
-                        loadingMore: trigger?.more,
-                        options: currentOptions,
-                      })),
-                    );
-                  }
-                }),
+                    autoFilterDisabled,
+                    isAnswerEnabled,
+                  ]) => {
+                    const currentOptions: SearchOptions = {
+                      ...options,
+                      show,
+                      filters: filters.concat(preselectedFilters),
+                      inTitleOnly,
+                      ...(autoFilterDisabled ? { autofilter: false } : {}),
+                    };
+                    if (isAnswerEnabled && !trigger?.more) {
+                      return askQuestion(query, true, currentOptions).pipe(
+                        tap((res) => {
+                          if (res.type === 'error' && res.status === 402 && !onlyAnswers) {
+                            disableAnswers();
+                            triggerSearch.next();
+                          }
+                        }),
+                        filter((res) => res.type !== 'error'),
+                        map((res) => res as Chat.Answer),
+                        // Chat is emitting several times until the answer is complete, but the result sources doesn't change while answer is incomplete
+                        // So we make sure to emit only when results are changing, preventing to write in the state several times while loading the answer
+                        distinctUntilChanged((previous, current) => previous.sources === current.sources),
+                        map((res) => ({
+                          results: res.sources,
+                          append: false,
+                          onlyAnswers,
+                          loadingMore: false,
+                          options: currentOptions,
+                        })),
+                      );
+                    } else {
+                      return search(query, currentOptions).pipe(
+                        map((results) => ({
+                          results,
+                          append: !!trigger?.more,
+                          onlyAnswers,
+                          loadingMore: trigger?.more,
+                          options: currentOptions,
+                        })),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ),

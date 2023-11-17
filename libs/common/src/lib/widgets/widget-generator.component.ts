@@ -134,6 +134,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
           this.mainForm = this.fb.group({
             darkMode: [config.features.includes('darkMode')],
             prompt: [],
+            preselectedFilters: '',
             features: this.fb.group({
               autofilter: [config.features.includes('autofilter')],
               answers: [config.features.includes('answers')],
@@ -229,11 +230,20 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         ? `
   filters="${this.filtersValue}"`
         : '';
+      const preselectionValue = ((this.mainForm?.controls['preselectedFilters'].getRawValue() || '') as string)
+        .split('\n')
+        .map((filter) => filter.trim())
+        .join(',');
+      const preselectedFilters = preselectionValue
+        ? `
+  preselected_filters="${preselectionValue}"
+      `
+        : '';
       const mode: string = this.mainForm?.controls['darkMode'].getRawValue() ? `mode="dark"` : '';
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
   ${zone}
-  features="${this.features}" ${placeholder}${filters}${privateDetails}${backend}></nuclia-search-bar>
+  features="${this.features}" ${placeholder}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results ${mode}></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>

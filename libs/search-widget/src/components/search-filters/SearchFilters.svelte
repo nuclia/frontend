@@ -7,42 +7,57 @@
     addEntityFilter,
     addLabelFilter,
     addLabelSetFilter,
-    entityFilters,
-    labelFilters,
-    labelSetFilters,
     creationEnd,
     creationStart,
     entities,
+    entityFilters,
     filterByCreatedDate,
     filterByLabelFamilies,
     hasRangeCreation,
+    labelFilters,
+    labelSetFilters,
     orderedLabelSetList,
+    preselectedFilters,
     removeEntityFilter,
     removeLabelFilter,
-    removeLabelSetFilter,
+    removeLabelSetFilter
   } from '../../core';
   import IconButton from '../../common/button/IconButton.svelte';
   import Checkbox from '../../common/checkbox/Checkbox.svelte';
   import type { Label } from '@nuclia/core';
+  import { getFilterFromEntity, getFilterFromLabel } from '@nuclia/core';
 
   const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
-  const selectedLabelSets: Observable<string[]> = labelSetFilters.pipe(
-    map((filters) => filters.map((filter) => filter.id)),
-  );
-  const selectedLabels: Observable<string[]> = labelFilters.pipe(
-    map((filters) => filters.map((filter) => filter.classification.label))
-  );
-  const selectedEntities: Observable<string[]> = entityFilters.pipe(
-    map((filters) => filters.map((filter) => filter.entity))
-  );
+  const preselection: Observable<string[]> = preselectedFilters;
+
+  const selectedLabelSets: Observable<string[]> = combineLatest([
+    labelSetFilters,
+    preselection
+  ])
+    .pipe(
+      map(([filters, preselection]) => filters.map((filter) => filter.id).concat(preselection))
+    );
+  const selectedLabels: Observable<string[]> = combineLatest([
+    labelFilters,
+    preselection
+  ])
+    .pipe(
+      map(([filters, preselection]) => filters.map((filter) => getFilterFromLabel(filter.classification)).concat(preselection))
+    );
+  const selectedEntities: Observable<string[]> = combineLatest([
+    entityFilters,
+    preselection
+  ])
+    .pipe(
+      map(([filters, preselection]) => filters.map((filter) => getFilterFromEntity(filter)).concat(preselection))
+    );
   let expanders: { [id: string]: boolean } = {};
 
-  function selectLabelSet(labelSet: LabelSetWithId, selected: boolean)  {
+  function selectLabelSet(labelSet: LabelSetWithId, selected: boolean) {
     if (selected) {
-      labelSet.labels.forEach((label) => removeLabelFilter({ labelset: labelSet.id, label: label.title}));
-      addLabelSetFilter(labelSet.id, labelSet.kind)
-    }
-    else {
+      labelSet.labels.forEach((label) => removeLabelFilter({ labelset: labelSet.id, label: label.title }));
+      addLabelSetFilter(labelSet.id, labelSet.kind);
+    } else {
       removeLabelSetFilter(labelSet.id);
     }
   }
@@ -65,11 +80,11 @@
     combineLatest([labelFilters, hasRangeCreation]).pipe(take(1)).subscribe(([filters, hasRangeCreation]) => {
       expanders = filters.map((filter) => filter.classification.labelset).reduce(
         (acc, curr) => ({ ...acc, [curr]: true }),
-        {},
+        {}
       );
       expanders['created'] = hasRangeCreation;
     });
-  })
+  });
 
 </script>
 
@@ -125,6 +140,7 @@
         {#if $filterByLabelFamilies}
           <Checkbox
             checked={$selectedLabelSets.includes(labelSet.id)}
+            disabled={$preselection.includes(labelSet.id)}
             on:change={(event) => selectLabelSet(labelSet, event.detail)}>
             {labelSet.title}
           </Checkbox>
@@ -147,8 +163,8 @@
         {#each labelSet.labels as label}
           <div>
             <Checkbox
-              checked={$selectedLabels.includes(label.title)}
-              disabled={$selectedLabelSets.includes(labelSet.id)}
+              checked={$selectedLabels.includes(getFilterFromLabel({labelset: labelSet.id, label: label.title}))}
+              disabled={$selectedLabelSets.includes(labelSet.id) || $preselection.includes(getFilterFromLabel({labelset: labelSet.id, label: label.title}))}
               on:change={(event) => selectLabel(labelSet, label, event.detail)}>
               {label.title}
             </Checkbox>
@@ -161,10 +177,8 @@
     <div
       class="header"
       class:expanded={expanders[family.id]}>
-      <div class="header-content">
-        <span
-          class="header-title"
-          on:click={() => toggleExpander(family.id)}>
+      <div class="header-content" on:click={() => toggleExpander(family.id)}>
+        <span title="{family.title}">
           {family.title}
         </span>
       </div>
@@ -181,7 +195,7 @@
         {#each family.entities as entity}
           <div>
             <Checkbox
-              checked={$selectedEntities.includes(entity)}
+              checked={$selectedEntities.includes(getFilterFromEntity({family: family.id, entity: entity}))}
               on:change={(event) => selectEntity(family, entity, event.detail)}>
               {entity}
             </Checkbox>

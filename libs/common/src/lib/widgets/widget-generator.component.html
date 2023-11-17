@@ -46,8 +46,16 @@
         <pa-textarea
           *ngIf="isUserPromptsEnabled | async"
           [help]="'stash.widgets.prompt.help' | translate"
+          [rows]="2"
           formControlName="prompt">
           {{ 'stash.widgets.prompt.label' | translate }}
+        </pa-textarea>
+        <pa-textarea
+          formControlName="preselectedFilters"
+          [rows]="2"
+          [placeholder]="'stash.widgets.preselected-filters.placeholder' | translate"
+          [help]="'stash.widgets.preselected-filters.help' | translate">
+          {{ 'stash.widgets.preselected-filters.label' | translate }}
         </pa-textarea>
         <div
           class="widget-features"

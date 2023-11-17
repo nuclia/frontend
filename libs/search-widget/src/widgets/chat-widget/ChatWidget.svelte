@@ -10,6 +10,7 @@
   import { initAnswer, initUsageTracking, initViewer, resetStatesAndEffects } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
+  import { preselectedFilters } from '../../core';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -25,6 +26,7 @@
   export let proxy = false;
   export let cssPath = '';
   export let prompt = '';
+  export let preselected_filters = '';
 
   export let layout: 'inline' | 'fullscreen' = 'fullscreen';
   export let height = '';
@@ -44,7 +46,7 @@
     resetStatesAndEffects();
   };
 
-  let svgSprite;
+  let svgSprite: string;
   let container: HTMLElement;
   let ready = false;
 
@@ -69,6 +71,9 @@
       { prompt },
     );
 
+    if (preselected_filters) {
+      preselectedFilters.set(preselected_filters.split(','));
+    }
     initAnswer();
     initViewer();
     initUsageTracking();
