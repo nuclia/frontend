@@ -35,11 +35,16 @@ export class EntityListComponent implements OnInit, OnDestroy {
 
   get entities(): Entity[] {
     return Object.values(this.family?.entities || {})
-      .filter((entity) => !entity.merged)
+      .filter((entity) => {
+        return !entity.merged && this.filterQuery.length >= 3
+          ? entity.value.toLocaleLowerCase().includes(this.filterQuery.toLocaleLowerCase())
+          : true;
+      })
       .sort((a, b) => a.value.localeCompare(b.value));
   }
 
   @Input() selection: string[] = [];
+  @Input() filterQuery = '';
   @Output() selectionChange: EventEmitter<string[]> = new EventEmitter();
   @ViewChild('listContainer') listContainer?: ElementRef;
 

@@ -388,7 +388,6 @@
 	"generic.yes": "Sí",
 	"generic.zone": "Zona de procesamiento",
 	"generic.zone_and_provider": "Zona y proveedor de procesamiento",
-	"input.placeholder": "Tu búsqueda",
 	"label-set.add": "Agregar conjunto de etiquetas",
 	"label-set.add-button": "Añadir nuevo",
 	"label-set.delete.confirm-description": "Al eliminar el conjunto de etiquetas, también se eliminarán todas sus etiquetas. No puede deshacer esta acción. También podría afectar las capacitaciones en curso y las sugerencias generadas.",

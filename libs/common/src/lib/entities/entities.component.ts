@@ -1,6 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
-import { Observable, switchMap, tap } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { Observable, Subject, switchMap, tap } from 'rxjs';
+import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
 import { Entities } from '@nuclia/core';
 import { Entity, generatedEntitiesColor, getNerFamilyTitle, NerFamily } from './model';
 import { EntitiesService } from './entities.service';
@@ -15,9 +23,10 @@ import { AddNerDialogComponent } from './add-ner-dialog';
   styleUrls: ['./entities.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EntitiesComponent {
+export class EntitiesComponent implements OnInit, OnDestroy {
   @ViewChild('entityInput') entityInput?: ElementRef;
 
+  unsubscribeAll = new Subject<void>();
   familyColors = generatedEntitiesColor;
   nerFamilies: Observable<NerFamily[]> = this.entitiesService.entities.pipe(
     filter((entities): entities is Entities => !!entities),
@@ -38,7 +47,8 @@ export class EntitiesComponent {
   selectedNer: Entity[] = [];
   selectedIds: string[] = [];
   matchingEntities: Entity[] = [];
-  duplicatedEntity?: Entity;
+  nerQueryDebounce = new Subject<string>();
+  nerQuery = '';
 
   constructor(
     private translate: TranslateService,
@@ -46,6 +56,22 @@ export class EntitiesComponent {
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  ngOnInit() {
+    this.nerQueryDebounce.pipe(debounceTime(200), takeUntil(this.unsubscribeAll)).subscribe((query) => {
+      this.nerQuery = query;
+      this.cdr.detectChanges();
+    });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+
+  onNerQueryChange(newQuery: string) {
+    this.nerQueryDebounce.next(newQuery);
+  }
 
   trackByFamily(index: number, family: NerFamily) {
     return family.key;

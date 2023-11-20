@@ -389,7 +389,6 @@
 	"generic.yes": "Sim",
 	"generic.zone": "Zona de processamento",
 	"generic.zone_and_provider": "Provedor e zona de processamento",
-	"input.placeholder": "Procurar",
 	"label-set.add": "Adicionar conjunto de rótulos",
 	"label-set.add-button": "Adicionar novo",
 	"label-set.delete.confirm-description": "Excluir o conjunto de rótulos também excluirá todos os seus rótulos. Você não pode desfazer esta ação. Também pode afetar os treinamentos contínuos e as sugestões geradas.",

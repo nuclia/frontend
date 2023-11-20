@@ -26,3 +26,12 @@ $color-background-field-error: $color-secondary-lightest;
 $border-color-field-regular: $color-neutral-light;
 $border-color-field-regular-hover: $color-neutral-regular;
 $border-color-field-error: $color-secondary-regular;
+
+//=====================================
+// SPACING and SHADOWS
+//=====================================
+$padding-field-control-top: rhythm(1);
+$height-field-control: calc(#{rhythm(5)} - #{rhythm(0.25)});
+$top-control-label: $padding-field-control-top;
+$translateY-text-field-label: rhythm(3);
+$top-select-chevron: rhythm(1);

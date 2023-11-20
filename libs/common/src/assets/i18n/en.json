@@ -389,7 +389,6 @@
 	"generic.yes": "Yes",
 	"generic.zone": "Processing zone",
 	"generic.zone_and_provider": "Provider and processing zone",
-	"input.placeholder": "Search",
 	"label-set.add": "Add label set",
 	"label-set.add-button": "Add new",
 	"label-set.delete.confirm-description": "Deleting the label set will also delete all its labels. You cannot undo this action. It might also affect ongoing trainings and generated suggestions.",

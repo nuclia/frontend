@@ -61,7 +61,14 @@
       class="selected-family-container"
       *ngIf="selectedFamily">
       <div class="family-toolbar">
-        <div class="title-s">{{ selectedFamily.title }}</div>
+        <div>
+          <pa-input
+            icon="search"
+            [value]="nerQuery"
+            (valueChange)="onNerQueryChange($event)">
+            {{ 'stash.search' | translate }}
+          </pa-input>
+        </div>
         <div
           class="family-actions"
           *ngIf="(isAdminOrContrib | async) === true">
@@ -121,6 +128,7 @@
       <app-entity-list
         [family]="selectedFamily"
         [selection]="selectedIds"
+        [filterQuery]="nerQuery"
         (selectionChange)="selectEntities($event)"></app-entity-list>
     </div>
   </div>
