@@ -60,6 +60,10 @@ export class SignupComponent implements OnInit {
         queryParamsHandling: 'merge', // Preserve token
       });
     }
+
+    this.signupForm.get('name')?.markAsDirty();
+    this.signupForm.get('email')?.markAsDirty();
+    this.signupForm.get('password')?.markAsDirty();
   }
 
   submitForm() {
