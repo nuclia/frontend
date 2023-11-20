@@ -106,6 +106,12 @@ const routes: Routes = [
               },
             ],
           },
+          // backward compatibility with old urls
+          {
+            path: ':kb',
+            redirectTo: '/select',
+            pathMatch: 'full',
+          },
           {
             path: `:zone/:kb`,
             component: KnowledgeBoxComponent,
