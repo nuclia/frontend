@@ -389,7 +389,6 @@
 	"generic.yes": "Oui",
 	"generic.zone": "Zone de traitement",
 	"generic.zone_and_provider": "Zone d'approvisionnement et de transformation",
-	"input.placeholder": "Chercher",
 	"label-set.add": "Ajouter un jeu d'étiquettes",
 	"label-set.add-button": "Ajouter nouveau",
 	"label-set.delete.confirm-description": "La suppression du jeu d'étiquettes supprimera également toutes ses étiquettes. Vous ne pouvez pas annuler cette action. Cela peut également affecter les formations en cours et les suggestions générées.",

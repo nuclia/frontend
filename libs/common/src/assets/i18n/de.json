@@ -389,7 +389,6 @@
 	"generic.yes": "Ja",
 	"generic.zone": "Verarbeitungszone",
 	"generic.zone_and_provider": "Anbieter und Verarbeitungszone",
-	"input.placeholder": "Suche",
 	"label-set.add": "Etikettensatz hinzufügen",
 	"label-set.add-button": "Neue hinzufügen",
 	"label-set.delete.confirm-description": "Durch das Löschen des Etikettensatzes werden auch alle zugehörigen Etiketten gelöscht. Sie können diese Aktion nicht rückgängig machen. Es kann sich auch auf laufende Schulungen und generierte Vorschläge auswirken.",

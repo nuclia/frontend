@@ -4,7 +4,7 @@ $page-padding-top: rhythm(5);
 $page-padding-bottom: rhythm(8);
 $page-padding-left: var(--app-layout-margin-left);
 $header-height: rhythm(12);
-$header-margin-bottom: rhythm(5);
+$header-margin-bottom: rhythm(4);
 $navbar-width: rhythm(7);
 
 $family-list-width: rhythm(48);
@@ -44,6 +44,7 @@ $gap-family-selection: rhythm(7);
       display: flex;
       justify-content: flex-end;
       margin-bottom: rhythm(2);
+      padding-top: rhythm(1);
       padding-bottom: rhythm(1);
       padding-right: $scrollbar-width;
       position: sticky;
@@ -112,6 +113,7 @@ $gap-family-selection: rhythm(7);
         #{$scrollbar-width}* 2
     );
     overflow: hidden;
+    padding-top: rhythm(1);
 
     .family-toolbar {
       align-items: center;

@@ -388,7 +388,6 @@
 	"generic.yes": "Sí",
 	"generic.zone": "Zona de processament",
 	"generic.zone_and_provider": "Zona i proveïdor de processament",
-	"input.placeholder": "La teva cerca",
 	"label-set.add": "Afegeix conjunt d'etiquetes",
 	"label-set.add-button": "Afegir nou",
 	"label-set.delete.confirm-description": "Si suprimiu el conjunt d'etiquetes, també se suprimiran totes les seves etiquetes. No podeu desfer aquesta acció. També pot afectar les formacions en curs i els suggeriments generats.",
