@@ -232,41 +232,60 @@
   </div>
 
   {#if $filters.length > 0}
-    <div class="filters-container" bind:this={filterContainerElement}>
+    <div
+      class="filters-container"
+      bind:this={filterContainerElement}>
       {#each $filters as filter (filter.key)}
         {#if filter.type === 'creation-start'}
           <Chip
             removable
             color={entitiesDefaultColor}
-            on:remove={() => creationStart.set(undefined)}>
-            {$_('input.from')} {filter.value}
+            on:remove={() => {
+              creationStart.set(undefined);
+              search();
+            }}>
+            {$_('input.from')}
+            {filter.value}
           </Chip>
         {/if}
         {#if filter.type === 'creation-end'}
           <Chip
             removable
             color={entitiesDefaultColor}
-            on:remove={() => creationEnd.set(undefined)}>
-            {$_('input.to')} {filter.value}
+            on:remove={() => {
+              creationEnd.set(undefined);
+              search();
+            }}>
+            {$_('input.to')}
+            {filter.value}
           </Chip>
         {/if}
         {#if filter.type === 'label'}
           <Label
             label={filter.value}
             removable
-            on:remove={() => removeLabelFilter(filter.value)} />
+            on:remove={() => {
+              removeLabelFilter(filter.value);
+              search();
+            }} />
         {/if}
         {#if filter.type === 'labelset'}
           <Label
             label={{ labelset: filter.value, label: '' }}
             removable
-            on:remove={() => removeLabelSetFilter(filter.value)} />
+            on:remove={() => {
+              removeLabelSetFilter(filter.value);
+              search();
+            }} />
         {/if}
         {#if filter.type === 'entity'}
           <Chip
             removable
             color={$entities.find((family) => family.id === filter.value.family)?.color || entitiesDefaultColor}
-            on:remove={() => (filter.autofilter ? removeAutofilter(filter.value) : removeEntityFilter(filter.value))}>
+            on:remove={() => {
+              filter.autofilter ? removeAutofilter(filter.value) : removeEntityFilter(filter.value);
+              search();
+            }}>
             {filter.value.entity}
           </Chip>
         {/if}
@@ -279,7 +298,7 @@
   <Dropdown
     position={{ top: filterButtonPosition.top - 5, left: filterButtonPosition.right + 16 }}
     on:close={() => (showFilterDropdowns = false)}>
-    <SearchFilters />
+    <SearchFilters on:search={() => search()} />
   </Dropdown>
 {/if}
 
