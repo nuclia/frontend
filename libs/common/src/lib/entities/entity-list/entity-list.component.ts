@@ -38,7 +38,7 @@ export class EntityListComponent implements OnInit, OnDestroy {
       .filter((entity) => {
         return !entity.merged && this.filterQuery.length >= 3
           ? entity.value.toLocaleLowerCase().includes(this.filterQuery.toLocaleLowerCase())
-          : true;
+          : !entity.merged;
       })
       .sort((a, b) => a.value.localeCompare(b.value));
   }
