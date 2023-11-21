@@ -18,7 +18,6 @@ import { RouterModule } from '@angular/router';
 import {
   DialogExampleComponent,
   ModalExampleComponent,
-  SistemaButtonsComponent,
   SistemaConfirmationDialogComponent,
   SistemaIconsComponent,
   SistemaModalComponent,
@@ -46,7 +45,6 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     SistemaScrollbarComponent,
     SistemaTableComponent,
     SistemaLabelComponent,
-    SistemaButtonsComponent,
     SistemaToastComponent,
     SistemaConfirmationDialogComponent,
     SistemaBackButtonComponent,

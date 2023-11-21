@@ -4,6 +4,7 @@ import {
   AvatarPageComponent,
   AvatarPilePageComponent,
   BreakpointPageComponent,
+  ButtonPageComponent,
   CardPageComponent,
   CheckboxPageComponent,
   ChipPageComponent,
@@ -41,7 +42,6 @@ import {
 } from '../../../../libs/pastanaga-angular/projects/demo/src';
 import { RadioPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/radio-page/radio-page.component';
 import {
-  SistemaButtonsComponent,
   SistemaConfirmationDialogComponent,
   SistemaIconsComponent,
   SistemaModalComponent,
@@ -90,7 +90,7 @@ export const menu: IDemoMenuSection[] = [
     pages: [
       { view: 'avatar', title: 'Avatar', type: AvatarPageComponent },
       { view: 'avatar-pile', title: 'Avatar pile', type: AvatarPilePageComponent },
-      { view: 'button', title: 'Button', type: SistemaButtonsComponent },
+      { view: 'button', title: 'Button', type: ButtonPageComponent },
       { view: 'card', title: 'Card', type: CardPageComponent },
       { view: 'chip', title: 'Chip', type: ChipPageComponent },
       { view: 'confirmation-dialog', title: 'Confirmation dialog', type: SistemaConfirmationDialogComponent },
