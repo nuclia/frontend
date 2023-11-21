@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { LabelSets } from '@nuclia/core';
 import { PaExpanderModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { CommonModule } from '@angular/common';
-import { getLabelFromSelectionKey, getSelectionKey } from './classification.helpers';
+import { getLabelFromSelectionKey, getSelectionKey, LABEL_SEPARATOR } from './classification.helpers';
 
 @Component({
   standalone: true,
@@ -17,7 +17,7 @@ export class LabelsExpanderComponent {
   @Input() labelSets?: LabelSets | null;
 
   @Output() updateSelection = new EventEmitter<{ [id: string]: boolean }>();
-  getSelectionKey = getSelectionKey;
+  LABEL_SEPARATOR = LABEL_SEPARATOR;
 
   onSelection(data: { labelset: string; label: string; selected: boolean }) {
     if (!data.selected) {

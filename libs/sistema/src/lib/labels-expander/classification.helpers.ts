@@ -1,6 +1,6 @@
 import { Classification, LabelSets } from '@nuclia/core';
 
-const SEPARATOR = '/';
+export const LABEL_SEPARATOR = '/';
 
 export function getClassificationFromSelection(selection: { [id: string]: boolean }): Classification[] {
   return Object.entries(selection).reduce((selectedLabels, [id, selected]) => {
@@ -30,10 +30,10 @@ export function getSelectionFromClassification(
 }
 
 export function getSelectionKey(labelSet: string, label: string) {
-  return `${labelSet}${SEPARATOR}${label}`;
+  return `${labelSet}${LABEL_SEPARATOR}${label}`;
 }
 
 export function getLabelFromSelectionKey(key: string): Classification {
-  const [labelset, label] = key.split(SEPARATOR);
+  const [labelset, label] = key.split(LABEL_SEPARATOR);
   return { label, labelset };
 }
