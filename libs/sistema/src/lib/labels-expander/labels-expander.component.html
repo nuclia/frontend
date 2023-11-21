@@ -4,7 +4,7 @@
     <div class="label-selector">
       <pa-checkbox
         *ngFor="let label of labelset.value.labels"
-        [value]="currentSelection[labelset.key + '_' + label.title]"
+        [value]="currentSelection[getSelectionKey(labelset.key, label.title)]"
         (valueChange)="onSelection({ selected: $event, labelset: labelset.key, label: label.title })">
         {{ label.title }}
       </pa-checkbox>
