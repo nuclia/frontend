@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { combineLatest, map, Observable, take } from 'rxjs';
   import type { EntityGroup, LabelSetWithId } from '../../core';
   import {
@@ -20,7 +20,8 @@
     preselectedFilters,
     removeEntityFilter,
     removeLabelFilter,
-    removeLabelSetFilter
+    removeLabelSetFilter,
+    searchFilters,
   } from '../../core';
   import IconButton from '../../common/button/IconButton.svelte';
   import Checkbox from '../../common/checkbox/Checkbox.svelte';
@@ -29,6 +30,7 @@
 
   const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
   const preselection: Observable<string[]> = preselectedFilters;
+  const dispatch = createEventDispatcher();
 
   const selectedLabelSets: Observable<string[]> = combineLatest([
     labelSetFilters,
@@ -84,6 +86,16 @@
       );
       expanders['created'] = hasRangeCreation;
     });
+    const initialFilters =  searchFilters.getValue();
+    const initialCreation = `${creationStart.getValue()}${creationEnd.getValue()}`;
+    return () => {
+      if (
+        JSON.stringify(initialFilters) !== JSON.stringify(searchFilters.getValue()) ||
+        initialCreation !== `${creationStart.getValue()}${creationEnd.getValue()}`
+      ) {
+        dispatch('search');
+      }
+    };
   });
 
 </script>

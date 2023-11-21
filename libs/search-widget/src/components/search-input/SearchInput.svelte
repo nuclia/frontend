@@ -36,7 +36,7 @@
     triggerSearch,
     triggerSuggestions,
     typeAhead,
-    widgetPlaceholder
+    widgetPlaceholder,
   } from '../../core';
   import { tap } from 'rxjs/operators';
   import Label from '../../common/label/Label.svelte';
@@ -45,8 +45,8 @@
   import { combineLatest, map } from 'rxjs';
   import IconButton from '../../common/button/IconButton.svelte';
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
-  import type { LabelFilter } from '../../common';
   import SearchFilters from '../search-filters/SearchFilters.svelte';
+  import type { Classification } from '@nuclia/core';
 
   let searchInputElement: HTMLInputElement;
   const dispatch = createEventDispatcher();
@@ -61,14 +61,20 @@
   let hasFilters = false;
   let filterHeight: string | undefined;
 
-  const filters: Observable<
-    {
-      type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end';
-      key: string;
-      value: LabelFilter | EntityFilter | string;
-      autofilter?: boolean;
-    }[]
-  > = combineLatest([rangeCreation, labelFilters, labelSetFilters, entityFilters, autofilters]).pipe(
+  interface Filter {
+    type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end';
+    key: string;
+    value: Classification | EntityFilter | string;
+    autofilter?: boolean;
+  }
+
+  const filters: Observable<Filter[]> = combineLatest([
+    rangeCreation,
+    labelFilters,
+    labelSetFilters,
+    entityFilters,
+    autofilters,
+  ]).pipe(
     map(([rangeCreation, labels, labelSets, entities, autofilters]) => [
       ...Object.entries(rangeCreation).filter(([,value]) => !!value).map(([key, value]) => ({
         type: `creation-${key}`,
@@ -122,12 +128,29 @@
     }
   };
 
-  const search = () => {
+  const search = (filter?: Filter) => {
+    if (filter) removeFilter(filter);
     searchQuery.set(typeAhead.getValue());
     triggerSearch.next();
     dispatch('search');
     // Make sure the keyboard disappear when triggering search in Mobile
     searchInputElement.blur();
+  };
+
+  const removeFilter = (filter: Filter) => {
+    if (filter.type === 'creation-start') {
+      creationStart.set(undefined);
+    } else if (filter.type === 'creation-end') {
+      creationEnd.set(undefined);
+    } else if (filter.type === 'label') {
+      removeLabelFilter((filter.value as Classification));
+    } else if (filter.type === 'labelset') {
+      removeLabelSetFilter(filter.value as string);
+    } else if (filter.type === 'entity') {
+      filter.autofilter
+        ? removeAutofilter(filter.value as EntityFilter)
+        : removeEntityFilter(filter.value as EntityFilter);
+    }
   };
 
   const onKeyPress = (event: KeyboardEvent) => {
@@ -232,41 +255,45 @@
   </div>
 
   {#if $filters.length > 0}
-    <div class="filters-container" bind:this={filterContainerElement}>
+    <div
+      class="filters-container"
+      bind:this={filterContainerElement}>
       {#each $filters as filter (filter.key)}
         {#if filter.type === 'creation-start'}
           <Chip
             removable
             color={entitiesDefaultColor}
-            on:remove={() => creationStart.set(undefined)}>
-            {$_('input.from')} {filter.value}
+            on:remove={() => search(filter)}>
+            {$_('input.from')}
+            {filter.value}
           </Chip>
         {/if}
         {#if filter.type === 'creation-end'}
           <Chip
             removable
             color={entitiesDefaultColor}
-            on:remove={() => creationEnd.set(undefined)}>
-            {$_('input.to')} {filter.value}
+            on:remove={() => search(filter)}>
+            {$_('input.to')}
+            {filter.value}
           </Chip>
         {/if}
         {#if filter.type === 'label'}
           <Label
             label={filter.value}
             removable
-            on:remove={() => removeLabelFilter(filter.value)} />
+            on:remove={() => search(filter)} />
         {/if}
         {#if filter.type === 'labelset'}
           <Label
             label={{ labelset: filter.value, label: '' }}
             removable
-            on:remove={() => removeLabelSetFilter(filter.value)} />
+            on:remove={() => search(filter)} />
         {/if}
         {#if filter.type === 'entity'}
           <Chip
             removable
             color={$entities.find((family) => family.id === filter.value.family)?.color || entitiesDefaultColor}
-            on:remove={() => (filter.autofilter ? removeAutofilter(filter.value) : removeEntityFilter(filter.value))}>
+            on:remove={() => search(filter)}>
             {filter.value.entity}
           </Chip>
         {/if}
@@ -279,7 +306,7 @@
   <Dropdown
     position={{ top: filterButtonPosition.top - 5, left: filterButtonPosition.right + 16 }}
     on:close={() => (showFilterDropdowns = false)}>
-    <SearchFilters />
+    <SearchFilters on:search={() => search()} />
   </Dropdown>
 {/if}
 
