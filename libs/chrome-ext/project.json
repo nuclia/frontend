@@ -22,8 +22,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/chrome-ext"],
       "options": {
-        "jestConfig": "libs/chrome-ext/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/chrome-ext/jest.config.ts"
       }
     }
   },

@@ -137,10 +137,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "manager-v2:build:production"
+          "buildTarget": "manager-v2:build:production"
         },
         "local-stage": {
-          "browserTarget": "manager-v2:build:local-stage"
+          "buildTarget": "manager-v2:build:local-stage"
         }
       },
       "defaultConfiguration": "development"
@@ -148,11 +148,11 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "manager-v2:build"
+        "buildTarget": "manager-v2:build"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/manager-v2/**/*.ts", "apps/manager-v2/**/*.html"]
@@ -162,14 +162,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/manager-v2/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+        "jestConfig": "apps/manager-v2/jest.config.ts"
       }
     }
   }
