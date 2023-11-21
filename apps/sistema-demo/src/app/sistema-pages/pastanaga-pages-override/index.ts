@@ -1,4 +1,3 @@
-export * from './sistema-buttons/sistema-buttons.component';
 export * from './sistema-confirmation-dialog/sistema-confirmation-dialog.component';
 export * from './sistema-icons/sistema-icons.component';
 export * from './sistema-modal';

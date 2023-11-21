@@ -71,7 +71,6 @@
           <pa-button
             icon="edit"
             aspect="basic"
-            iconSize="small"
             [active]="editing === row.key"
             (click)="editing = editing === row.key ? '' : row.key">
             {{ 'synonyms.table.edit-synonym' | translate }}
@@ -80,7 +79,6 @@
             icon="trash"
             kind="destructive"
             aspect="basic"
-            iconSize="small"
             (click)="deleteEntry(row.key, row.value)">
             {{ 'synonyms.table.delete-synonym' | translate }}
           </pa-button>

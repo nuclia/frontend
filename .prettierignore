@@ -4,3 +4,5 @@
 /coverage
 /libs/common/src/assets/i18n
 .angular
+
+/.nx/cache

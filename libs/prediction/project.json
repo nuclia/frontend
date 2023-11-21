@@ -11,7 +11,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/prediction/**/*.ts"]
@@ -21,8 +21,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/prediction"],
       "options": {
-        "jestConfig": "libs/prediction/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/prediction/jest.config.ts"
       }
     }
   },

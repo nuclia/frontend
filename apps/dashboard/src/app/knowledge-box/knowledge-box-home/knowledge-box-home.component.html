@@ -14,7 +14,6 @@
         *ngIf="clipboardSupported"
         aspect="basic"
         [icon]="copyIcon"
-        iconSize="small"
         (click)="copyEndpoint()">
         {{ 'generic.copy' | translate }}
       </pa-button>
@@ -62,7 +61,6 @@
           aspect="solid"
           kind="primary"
           iconAndText
-          iconSize="medium"
           icon="upload">
           <a [routerLink]="(kbUrl | async) + '/upload'">
             {{ 'stash.upload_data' | translate }}

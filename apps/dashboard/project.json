@@ -195,17 +195,17 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "browserTarget": "dashboard:build"
+        "buildTarget": "dashboard:build"
       },
       "configurations": {
         "production": {
-          "browserTarget": "dashboard:build:production"
+          "buildTarget": "dashboard:build:production"
         },
         "local-stage": {
-          "browserTarget": "dashboard:build:local-stage"
+          "buildTarget": "dashboard:build:local-stage"
         },
         "local-prod": {
-          "browserTarget": "dashboard:build:local-prod"
+          "buildTarget": "dashboard:build:local-prod"
         }
       },
       "defaultConfiguration": "local-stage"
@@ -213,15 +213,14 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "dashboard:build"
+        "buildTarget": "dashboard:build"
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/dashboard"],
       "options": {
-        "jestConfig": "apps/dashboard/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "apps/dashboard/jest.config.js"
       }
     }
   },

@@ -32,21 +32,34 @@
             *ngFor="let paragraph of paragraphs | async">
             <p (click)="addLabelsOnParagraph(paragraph)">{{ paragraph.text }}</p>
             <div class="labels-container">
-              <pa-chip-closeable
-                *ngFor="let label of paragraph.generatedClassifications"
-                [noCloseButton]="(isAdminOrContrib | async) === false"
-                [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
-                (closed)="cancelGeneratedLabel(paragraph, label)">
-                {{ label.label }}
-              </pa-chip-closeable>
+              <ng-container *ngFor="let label of paragraph.generatedClassifications">
+                @if ((isAdminOrContrib | async) === false) {
+                  <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
+                    {{ label.label }}
+                  </pa-chip>
+                } @else {
+                  <pa-chip-closeable
+                    [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
+                    (closed)="cancelGeneratedLabel(paragraph, label)">
+                    {{ label.label }}
+                  </pa-chip-closeable>
+                }
+              </ng-container>
+
               <ng-container *ngFor="let label of paragraph.userClassifications">
-                <pa-chip-closeable
-                  *ngIf="!label.cancelled_by_user"
-                  [noCloseButton]="(isAdminOrContrib | async) === false"
-                  [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
-                  (closed)="removeUserLabel(paragraph, label)">
-                  {{ label.label }}
-                </pa-chip-closeable>
+                @if (!label.cancelled_by_user) {
+                  @if ((isAdminOrContrib | async) === false) {
+                    <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
+                      {{ label.label }}
+                    </pa-chip>
+                  } @else {
+                    <pa-chip-closeable
+                      [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
+                      (closed)="removeUserLabel(paragraph, label)">
+                      {{ label.label }}
+                    </pa-chip-closeable>
+                  }
+                }
               </ng-container>
             </div>
           </div>

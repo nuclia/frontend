@@ -70,3 +70,5 @@ Thumbs.db
 
 # Sentry Auth Token
 .sentryclirc
+
+.nx/cache

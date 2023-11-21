@@ -11,7 +11,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": ["libs/sdk-core/**/*.ts"]
       },
@@ -21,8 +21,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/sdk-core"],
       "options": {
-        "jestConfig": "libs/sdk-core/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/sdk-core/jest.config.js"
       }
     }
   },

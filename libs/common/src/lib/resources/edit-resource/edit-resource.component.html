@@ -4,7 +4,6 @@
       <pa-button
         icon="chevrons-left"
         aspect="basic"
-        size="small"
         data-cy="back-to-resources"
         [paTooltip]="'resource.tooltip.back-to-resources' | translate"
         (click)="backToResources()">
@@ -13,7 +12,6 @@
       <pa-button
         icon="chevron-left"
         aspect="basic"
-        size="small"
         data-cy="previous-resource"
         [disabled]="
           (resourceNavigationService.hasData | async) === false || (resourceNavigationService.isFirstResource | async)
@@ -25,7 +23,6 @@
       <pa-button
         icon="chevron-right"
         aspect="basic"
-        size="small"
         data-cy="next-resource"
         [disabled]="
           (resourceNavigationService.hasData | async) === false || (resourceNavigationService.isLastResource | async)
