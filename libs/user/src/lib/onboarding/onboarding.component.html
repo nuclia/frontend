@@ -20,6 +20,7 @@
             formControlName="company"
             id="company"
             externalLabel
+            help="validation.required"
             [errorMessages]="validationMessages.company"></pa-input>
         </div>
         <div class="field">
@@ -31,6 +32,7 @@
           <pa-select
             id="use_case"
             formControlName="use_case"
+            help="validation.required"
             [errorMessages]="validationMessages.use_case">
             <pa-option value="Customer / employee support">{{ 'onboarding.use_case.support' | translate }}</pa-option>
             <pa-option value="Global site search">{{ 'onboarding.use_case.global_search' | translate }}</pa-option>
@@ -66,6 +68,7 @@
             formControlName="organization_size"
             id="orgSize"
             externalLabel
+            help="validation.required"
             [errorMessages]="validationMessages.organization_size">
             <pa-option value="1-50">1-50</pa-option>
             <pa-option value="50-200">50-200</pa-option>
@@ -92,6 +95,7 @@
               formControlName="phoneNumber"
               externalLabel
               placeholder="11 1111 1111"
+              help="validation.required"
               [errorMessages]="validationMessages.phoneNumber"></pa-input>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnboardingService, OnboardingStatus } from './onboarding.service';
 import { OnboardingPayload } from './onboarding.models';
@@ -14,7 +14,7 @@ const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
   styleUrls: ['./onboarding.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OnboardingComponent implements OnInit {
+export class OnboardingComponent {
   onboardingForm = new FormGroup({
     company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     use_case: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -48,15 +48,6 @@ export class OnboardingComponent implements OnInit {
     private zoneService: ZoneService,
   ) {
     this.zoneService.getZones().subscribe((zones) => (this.zones = zones));
-  }
-
-  ngOnInit(): void {
-    this.onboardingForm.get('company')?.markAsDirty();
-    this.onboardingForm.get('use_case')?.markAsDirty();
-    this.onboardingForm.get('hosted_nucliadb')?.markAsDirty();
-    this.onboardingForm.get('organization_size')?.markAsDirty();
-    this.onboardingForm.get('phoneInternationalCode')?.markAsDirty();
-    this.onboardingForm.get('phoneNumber')?.markAsDirty();
   }
 
   submitForm() {

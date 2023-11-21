@@ -18,7 +18,8 @@
         required
         autocapitalize="off"
         formControlName="name"
-        [errorMessages]="validationMessages.name">
+        [errorMessages]="validationMessages.name"
+        help="validation.required">
         {{ 'login.full_name' | translate }}
       </pa-input>
       <pa-input
@@ -30,7 +31,8 @@
       </pa-input>
       <nsi-password-input
         formControlName="password"
-        [errorMessages]="validationMessages.password">
+        [errorMessages]="validationMessages.password"
+        help="validation.required">
         {{ 'login.password' | translate }}
       </nsi-password-input>
 
