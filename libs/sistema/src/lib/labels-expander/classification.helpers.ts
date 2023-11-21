@@ -1,10 +1,11 @@
 import { Classification, LabelSets } from '@nuclia/core';
 
+export const LABEL_SEPARATOR = '/';
+
 export function getClassificationFromSelection(selection: { [id: string]: boolean }): Classification[] {
   return Object.entries(selection).reduce((selectedLabels, [id, selected]) => {
     if (selected) {
-      const [labelset, label] = id.split('_');
-      selectedLabels.push({ label, labelset });
+      selectedLabels.push(getLabelFromSelectionKey(id));
     }
     return selectedLabels;
   }, [] as Classification[]);
@@ -18,7 +19,7 @@ export function getSelectionFromClassification(
     (selection, [key, item]) => {
       item.labels.forEach(
         (label) =>
-          (selection[`${key}_${label.title}`] = !!labels.find(
+          (selection[getSelectionKey(key, label.title)] = !!labels.find(
             (item) => item.labelset === key && item.label === label.title,
           )),
       );
@@ -26,4 +27,13 @@ export function getSelectionFromClassification(
     },
     {} as { [id: string]: boolean },
   );
+}
+
+export function getSelectionKey(labelSet: string, label: string) {
+  return `${labelSet}${LABEL_SEPARATOR}${label}`;
+}
+
+export function getLabelFromSelectionKey(key: string): Classification {
+  const [labelset, label] = key.split(LABEL_SEPARATOR);
+  return { label, labelset };
 }
