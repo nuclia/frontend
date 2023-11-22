@@ -103,44 +103,54 @@ export function chat(
     return find(nuclia, kbid, path, query, searchFeatures, searchOptions).pipe(
       switchMap((results) => {
         if (results.type === 'findResults') {
+          const resourceMapping = Object.values(results.resources || {}).reduce(
+            (acc, curr, index) => {
+              const shortId = `${index + 1}`;
+              acc[curr.id] = shortId;
+              acc[shortId] = curr.id;
+              return acc;
+            },
+            {} as { [key: string]: string },
+          );
           const paragraphs = Object.values(results.resources || [])
             .map((r) =>
               Object.values(r.fields).map((f) =>
-                Object.values(f.paragraphs).map((p) => `From resource ${r.id}: ${p.text}`),
+                Object.values(f.paragraphs).map(
+                  (p) => `Content: ${p.text}\nInternal source reference: ${resourceMapping[r.id]}\n\n`,
+                ),
               ),
             )
             .flat()
             .flat();
-          return nuclia.db
-            .predictAnswer(
-              `${query}. After the answer, add all the corresponding resource ids as a comma separated list formatted like this: RESOURCE IDS: ID1,ID2,ID3`,
-              paragraphs,
-              answerRelatedResultsOnly.model,
-            )
-            .pipe(
-              map((res) => {
-                const answer = res.split('RESOURCE IDS:')[0];
-                const ids = (res.split('RESOURCE IDS:')?.[1] || '')
-                  .split('\n')[0]
-                  .split(',')
-                  .map((id) => id.trim());
-                const matchingResources = Object.values(results.resources || {})
-                  .filter((r) => ids.includes(r.id))
-                  .reduce(
-                    (acc, curr) => {
-                      acc[curr.id] = curr;
-                      return acc;
-                    },
-                    {} as { [id: string]: Search.FindResource },
-                  );
-                return {
-                  type: 'answer',
-                  text: answer,
-                  id: 'N/A',
-                  sources: { ...results, resources: matchingResources },
-                } as Chat.Answer;
-              }),
-            );
+          const completeQuery = `${query}. At the end of the answer, add all the corresponding nInternal source references as a comma separated list formatted like this: INTERNAL SOURCES: 1, 2, 13\n\nDO NOT mention the internal source references when phrasing the answer itself.`;
+          console.log('completeQuery', completeQuery);
+          console.log('paragraphs', paragraphs);
+          return nuclia.db.predictAnswer(completeQuery, paragraphs, answerRelatedResultsOnly.model).pipe(
+            map((res) => {
+              const answer = res.split('INTERNAL SOURCES:')[0];
+              console.log('answer', answer);
+              const ids = (res.split('INTERNAL SOURCES:')?.[1] || '')
+                .split('\n')[0]
+                .split(',')
+                .map((id) => resourceMapping[id.trim()] || '');
+              console.log('ids', ids);
+              const matchingResources = Object.values(results.resources || {})
+                .filter((r) => ids.includes(r.id))
+                .reduce(
+                  (acc, curr) => {
+                    acc[curr.id] = curr;
+                    return acc;
+                  },
+                  {} as { [id: string]: Search.FindResource },
+                );
+              return {
+                type: 'answer',
+                text: answer,
+                id: 'N/A',
+                sources: { ...results, resources: matchingResources },
+              } as Chat.Answer;
+            }),
+          );
         } else {
           return of(results as IErrorResponse);
         }
