@@ -1,4 +1,4 @@
-import { catchError, filter, forkJoin, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, concatMap, filter, forkJoin, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import type { AccountUsersPayload, FullAccountUser, IDb, INuclia, InviteAccountUserPayload } from '../models';
 import type { KbIndex, LearningConfigurations, PredictedToken } from './db.models';
 import {
@@ -505,6 +505,28 @@ export class Db implements IDb {
         time: number;
       }>(`/predict/tokens?text=${encodeURIComponent(text)}`, this.getNUAHeader())
       .pipe(map((response) => response.tokens));
+  }
+
+  predictAnswer(question: string, context: string[], model?: string): Observable<string> {
+    if (!this.hasNUAClient()) {
+      throw new Error('NUA key is needed to be able to call /predict');
+    }
+    const modelParam = model ? `?model=${encodeURIComponent(model)}` : '';
+    return this.nuclia.rest
+      .post<Response>(
+        `/predict/chat${modelParam}`,
+        {
+          question,
+          user_id: 'Anonymous',
+          query_context: context,
+        },
+        this.getNUAHeader(),
+        true,
+      )
+      .pipe(
+        concatMap((res) => from(res.text())),
+        map((answer) => answer.slice(0, -1)),
+      );
   }
 
   /**

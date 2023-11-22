@@ -1,4 +1,4 @@
-# 1.9.0 (unreleased)
+# 1.9.0 (2023-11-22)
 
 ### Breaking changes
 
@@ -9,6 +9,8 @@
 
 - Support `proxy` option in `Nuclia` class to allow calling the Nuclia regional API through a proxy
 - Use filter alias syntax in filter utility functions.
+- Support `/predict/chat` endpoint
+- Experimental option in chat to restrict results to the ones that have been effectively used to generate the answer
 
 # 1.8.0 (2023-11-10)
 
