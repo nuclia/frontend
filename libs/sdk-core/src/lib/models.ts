@@ -149,6 +149,7 @@ export interface IDb {
   getNUAActivity(accountId: string, client_id: string, zoneSlug: string, pageIndex?: number): Observable<EventList>;
   getLearningConfigurations(): Observable<LearningConfigurations>;
   predictTokens(text: string): Observable<PredictedToken[]>;
+  predictAnswer(question: string, context: string[], model?: string): Observable<string>;
 
   getAccountUser(accountSlug: string, userId: string): Observable<Partial<FullAccountUser>>;
   getAccountUsers(accountSlug: string): Observable<FullAccountUser[]>;
