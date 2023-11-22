@@ -123,17 +123,13 @@ export function chat(
             .flat()
             .flat();
           const completeQuery = `${query}. At the end of the answer, add all the corresponding nInternal source references as a comma separated list formatted like this: INTERNAL SOURCES: 1, 2, 13\n\nDO NOT mention the internal source references when phrasing the answer itself.`;
-          console.log('completeQuery', completeQuery);
-          console.log('paragraphs', paragraphs);
           return nuclia.db.predictAnswer(completeQuery, paragraphs, answerRelatedResultsOnly.model).pipe(
             map((res) => {
               const answer = res.split('INTERNAL SOURCES:')[0];
-              console.log('answer', answer);
               const ids = (res.split('INTERNAL SOURCES:')?.[1] || '')
                 .split('\n')[0]
                 .split(',')
                 .map((id) => resourceMapping[id.trim()] || '');
-              console.log('ids', ids);
               const matchingResources = Object.values(results.resources || {})
                 .filter((r) => ids.includes(r.id))
                 .reduce(
