@@ -23,11 +23,15 @@ export class SearchComponent implements OnInit, OnDestroy {
   enabledAnswer =
     !localStorage.getItem(ENABLE_GENERATIVE_ANSWER) || localStorage.getItem(ENABLE_GENERATIVE_ANSWER) === 'true';
   private _answerToggle = new BehaviorSubject<boolean>(this.enabledAnswer);
-  searchWidget = combineLatest([this._answerToggle, this.sdk.currentKb.pipe(distinctUntilKeyChanged('id'))]).pipe(
+  searchWidget = combineLatest([
+    this._answerToggle,
+    this.sdk.currentKb.pipe(distinctUntilKeyChanged('id')),
+    this.sdk.currentAccount,
+  ]).pipe(
     tap(() => {
       document.getElementById(searchWidgetId)?.remove();
     }),
-    switchMap(([toggleAnswerEnabled, kb]) =>
+    switchMap(([toggleAnswerEnabled, kb, account]) =>
       forkJoin([
         kb.getLabels().pipe(map((labelSets) => Object.keys(labelSets).length > 0)),
         kb.training.hasModel(TrainingType.classifier),
@@ -35,6 +39,7 @@ export class SearchComponent implements OnInit, OnDestroy {
       ]).pipe(
         map(([hasLabels, hasClassifier, isKnowledgeGraphEnabled]) => ({
           kb,
+          account,
           hasLabels,
           hasClassifier,
           isChatEnabled: toggleAnswerEnabled,
@@ -42,7 +47,7 @@ export class SearchComponent implements OnInit, OnDestroy {
         })),
       ),
     ),
-    map(({ kb, hasLabels, hasClassifier, isChatEnabled, isKnowledgeGraphEnabled }) => {
+    map(({ kb, account, hasLabels, hasClassifier, isChatEnabled, isKnowledgeGraphEnabled }) => {
       let featureList = !hasLabels
         ? DEFAULT_FEATURES_LIST.filter((feature) => feature !== 'filter')
         : DEFAULT_FEATURES_LIST;
@@ -66,7 +71,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     backend="${this.backendConfig.getAPIURL()}"
     state="${kb.state || ''}"
     kbslug="${kb.slug || ''}"
-    account="${kb.account || ''}"
+    account="${this.sdk.useRegionalSystem ? account.id : kb.account || ''}"
     lang="${this.translation.currentLang}"
     features="${features}"
   ></nuclia-search-bar>`);

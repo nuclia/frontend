@@ -1,3 +1,9 @@
+# 1.9.1 (unreleased)
+
+### Improvements
+
+-  `/ephemeral_tokens` endpoint can now be called using regional domain
+
 # 1.9.0 (2023-11-22)
 
 ### Breaking changes

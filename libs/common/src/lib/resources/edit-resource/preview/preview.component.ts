@@ -27,10 +27,12 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
     ),
   );
 
-  viewerWidget: Observable<SafeHtml> = this.sdk.currentKb.pipe(
-    distinctUntilKeyChanged('id'),
+  viewerWidget: Observable<SafeHtml> = combineLatest([
+    this.sdk.currentKb.pipe(distinctUntilKeyChanged('id')),
+    this.sdk.currentAccount,
+  ]).pipe(
     tap(() => document.getElementById(viewerId)?.remove()),
-    map((kb) => {
+    map(([kb, account]) => {
       return this.sanitizer.bypassSecurityTrustHtml(`<nuclia-viewer id="viewer-widget"
         knowledgebox="${kb.id}"
         zone="${this.sdk.nuclia.options.zone}"
@@ -39,7 +41,7 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
         backend="${this.backendConfig.getAPIURL()}"
         state="${kb.state || ''}"
         kbslug="${kb.slug || ''}"
-        account="${kb.account || ''}"
+        account="${this.sdk.useRegionalSystem ? account.id : kb.account || ''}"
         lang="${this.translate.currentLang}"
         ${this.sdk.nuclia.options.standalone ? 'standalone="true"' : ''}
         ></nuclia-viewer>`);

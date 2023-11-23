@@ -347,14 +347,30 @@ export class KnowledgeBox implements IKnowledgeBox {
     if (this.tempToken && this.tempToken.expiration > Date.now()) {
       return of(this.tempToken.token);
     }
-    const account = this.account || this.nuclia.options.account;
-    const kbSlug = this.slug || this.nuclia.options.kbSlug;
     let request: Observable<{ token: string }> | undefined;
     if (!this.nuclia.options.standalone) {
-      if (!account || !kbSlug) {
-        throw new Error('Account and KB slug are required to get a temp token');
+      if (this.useRegionalSystem) {
+        const account = this.nuclia.options.accountId;
+        const zone = this.nuclia.options.zone;
+        if (!account || !zone) {
+          throw new Error('Account id and zone are required to get a temp token');
+        }
+        request = this.nuclia.rest.post<{ token: string }>(
+          `/account/${account}/kb/${this.id}/ephemeral_tokens`,
+          {},
+          undefined,
+          undefined,
+          undefined,
+          zone,
+        );
+      } else {
+        const account = this.account || this.nuclia.options.account;
+        const kbSlug = this.slug || this.nuclia.options.kbSlug;
+        if (!account || !kbSlug) {
+          throw new Error('Account and KB slug are required to get a temp token');
+        }
+        request = this.nuclia.rest.post<{ token: string }>(`/account/${account}/kb/${kbSlug}/ephemeral_tokens`, {});
       }
-      request = this.nuclia.rest.post<{ token: string }>(`/account/${account}/kb/${kbSlug}/ephemeral_tokens`, {});
     } else {
       request = this.nuclia.rest.get<{ token: string }>('/temp-access-token');
     }

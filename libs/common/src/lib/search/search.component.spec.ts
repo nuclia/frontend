@@ -4,7 +4,7 @@ import { SearchComponent } from './search.component';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackingService } from '@flaps/core';
 import { of } from 'rxjs';
-import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { PaTogglesModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceViewerService } from '../resources/resource-viewer.service';
@@ -26,6 +26,7 @@ describe('SearchComponent', () => {
               hasModel: jest.fn(() => of(true)),
             },
           } as any as WritableKnowledgeBox),
+          currentAccount: of({ id: 'test' } as Account),
           nuclia: {
             options: {
               zone: 'europe',

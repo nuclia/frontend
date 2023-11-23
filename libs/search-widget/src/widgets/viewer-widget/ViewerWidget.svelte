@@ -108,6 +108,7 @@
         apiKey: apikey,
         kbSlug: kbslug,
         account,
+        accountId: account,
         standalone,
         proxy,
       },
