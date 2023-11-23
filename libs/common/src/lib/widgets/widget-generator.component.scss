@@ -1,25 +1,36 @@
 @import 'variables';
 
-$dock-max-width: rhythm(7);
-$padding-side: rhythm(12);
-$width-configuration: rhythm(56);
 .widget-generator {
-  padding: rhythm(6) $padding-side;
+  $margin-bottom-title: rhythm(4);
+  $height-tab-header: rhythm(6);
+  $gap-page-content: rhythm(4);
+  $width-config-panel: rhythm(47);
 
-  > .warning {
-    margin-bottom: rhythm(4);
+  padding: $padding-top-page $padding-right-page 0 0;
+
+  h1 {
+    margin-bottom: $margin-bottom-title;
+    margin-left: $padding-right-page;
   }
 
-  .snippet .warning {
+  > .warning-container {
+    gap: rhythm(1.5);
+    margin-bottom: $margin-bottom-title;
+    padding: rhythm(1.5) rhythm(4) rhythm(1.5) rhythm(2);
+    position: absolute;
+    right: 0;
+    top: calc(var(--app-topbar-height) + #{rhythm(4)});
+  }
+
+  .snippet .warning-container {
     margin-bottom: rhythm(2);
   }
 
-  .warning {
+  .warning-container {
     align-items: center;
     background: $color-secondary-regular;
+    color: $color-dark-stronger;
     display: flex;
-    gap: rhythm(1);
-    padding: rhythm(1);
 
     .warning-content {
       flex-direction: column;
@@ -35,73 +46,282 @@ $width-configuration: rhythm(56);
     }
   }
 
-  .filter-warning {
-    color: $color-neutral-regular;
-    padding: rhythm(0.5) 0 0 rhythm(3.5);
-  }
+  .page-content {
+    $content-height: calc(
+      100vh - var(--app-topbar-height) - #{$padding-top-page} - #{$line-height-display-s} - #{$margin-bottom-title} - #{$height-tab-header} -
+        #{rhythm(0.5)}
+    );
 
-  .preview-container {
     display: flex;
-    flex-direction: column;
-    gap: rhythm(2);
-    min-height: rhythm(9);
-  }
+    gap: $gap-page-content;
 
-  .snippet-configuration-container {
-    display: flex;
-    gap: rhythm(3);
-    margin-top: rhythm(3);
+    .configuration-panel {
+      width: $width-config-panel;
 
-    section {
-      background: $color-neutral-lightest;
-      border-radius: rhythm(0.5);
-      padding: rhythm(2) rhythm(3);
+      .tab-content {
+        background: $color-neutral-lightest;
+        height: $content-height;
+        overflow: auto;
+        padding: rhythm(2) 0;
 
-      h3 {
-        font-weight: $font-weight-body;
+        pa-expander ::ng-deep .pa-expander-header {
+          background-color: inherit;
+          padding: 0 rhythm(3) 0 rhythm(2);
+        }
+
+        .title-s {
+          align-items: center;
+          display: flex;
+          height: rhythm(5);
+        }
+      }
+      .preset-content {
+        padding: rhythm(2) rhythm(4);
+      }
+
+      .advanced-content {
+        .advanced-category {
+          padding: rhythm(1) rhythm(1) rhythm(2) rhythm(3);
+        }
+
+        .toggle-and-help {
+          align-items: center;
+          display: flex;
+          gap: rhythm(1);
+
+          & > :first-child {
+            flex: 1 0 auto;
+          }
+        }
+
+        .placeholder-container {
+          padding-right: rhythm(5);
+        }
+        .toggle-and-help,
+        .filter-by-container,
+        .placeholder-container {
+          margin-bottom: rhythm(2);
+        }
+
+        .filter-by-container {
+          padding-left: rhythm(8);
+        }
       }
     }
 
-    section.snippet-configuration {
-      display: flex;
-      flex: 0 0 auto;
-      flex-direction: column;
-      gap: rhythm(2);
-      width: $width-configuration;
+    .preview-container {
+      flex: 1 0 auto;
+      max-width: calc(
+        100vw - #{$navbar-width} - #{$width-config-panel} - #{$gap-page-content} - #{$padding-right-page}
+      );
 
-      .widget-features {
+      h4 {
+        margin: rhythm(1.5) 0 rhythm(1);
+      }
+
+      .preview-content {
         display: flex;
         flex-direction: column;
         gap: rhythm(2);
+        height: $content-height;
+        overflow: auto;
+        padding: rhythm(2) rhythm(1) rhythm(4);
       }
-      .filter-type {
-        display: flex;
-        flex-direction: column;
-        gap: rhythm(1);
-        margin-left: rhythm(8);
+
+      &.dark-mode .preview-content {
+        background: #1f2023;
+        color: $color-light-stronger;
+      }
+    }
+  }
+
+  .code-snippet-overlay {
+    $padding-overlay: rhythm(2);
+    $height-overlay-open: rhythm(50);
+    $height-overlay-header: rhythm(5);
+    $height-overlay-footer: rhythm(8);
+
+    background: $color-dark-stronger;
+    color: $color-light-stronger;
+    height: $height-overlay-header;
+    position: fixed;
+    right: calc(-1 * #{rhythm(3)});
+    top: rhythm(24);
+    transition:
+      height $transition-slide,
+      right $transition-slide;
+
+    .overlay-header {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+
+      pa-button ::ng-deep .pa-button {
+        border-radius: 0;
+      }
+      pa-icon {
+        opacity: 0;
+        transition: opacity $transition-response;
       }
     }
 
-    section.snippet {
-      flex: 1 0 auto;
-      max-width: calc(100vw - #{$width-configuration} - #{$padding-side}* 2 - #{rhythm(2)} - #{$dock-max-width});
-
-      h3 {
-        align-items: center;
-        display: flex;
-        justify-content: space-between;
-      }
+    .snippet-container {
+      overflow: hidden;
+      transition: width $transition-slide;
+      width: 0;
 
       pre {
-        margin: 0;
-        word-break: break-all;
+        margin-bottom: 0;
+        opacity: 0;
+        padding: $padding-overlay;
+        max-height: calc(#{$height-overlay-open} - #{$height-overlay-header} - #{$height-overlay-footer});
+        overflow: auto;
+        transition: opacity $transition-hint;
+
+        code {
+          white-space: pre-wrap;
+        }
+
+        &.has-warning {
+          max-height: calc(
+            #{$height-overlay-open} - #{$height-overlay-header} - #{$height-overlay-footer} - #{rhythm(7)}
+          );
+        }
+      }
+    }
+
+    .overlay-footer {
+      background: inherit;
+      bottom: 0;
+      opacity: 0;
+      padding: $padding-overlay;
+      position: absolute;
+      transition:
+        opacity $transition-hint,
+        z-index $transition-hint;
+      width: 100%;
+      z-index: -1;
+
+      pa-button ::ng-deep .pa-button {
+        min-width: rhythm(14);
+      }
+    }
+
+    .warning-container {
+      gap: rhythm(1);
+      margin: 0 $padding-overlay;
+      opacity: 0;
+      padding: rhythm(1.5);
+
+      .title-xxs {
+        line-height: $line-height-body-xs;
+      }
+    }
+
+    &.opened {
+      height: $height-overlay-open;
+      right: 0;
+
+      .overlay-header pa-icon {
+        opacity: 1;
+        transition: opacity $transition-response $transition-process-duration;
+      }
+      .snippet-container {
+        overflow: auto;
+        width: rhythm(45);
+
+        pre {
+          opacity: 1;
+          transition: opacity $transition-hint calc(#{$transition-slide-duration} - #{$duration-fast});
+        }
+      }
+
+      .warning-container {
+        opacity: 1;
+        transition: opacity $transition-hint calc(#{$transition-slide-duration} - #{$duration-fast});
+      }
+
+      .overlay-footer {
+        opacity: 1;
+        transition:
+          opacity $transition-hint calc(#{$transition-slide-duration} - #{$duration-fast}),
+          z-index $transition-hint;
+        z-index: 0;
       }
     }
   }
-
-  .widget-preview.dark {
-    background: #1f2023;
-    color: $color-light-stronger;
-    padding: rhythm(2);
-  }
 }
+
+//$dock-max-width: rhythm(7);
+//$padding-side: rhythm(12);
+//$width-configuration: rhythm(56);
+//.widget-generator {
+//  padding: rhythm(6) $padding-side;
+//
+//
+//  .filter-warning {
+//    color: $color-neutral-regular;
+//    padding: rhythm(0.5) 0 0 rhythm(3.5);
+//  }
+//
+
+//
+//  .snippet-configuration-container {
+//    display: flex;
+//    gap: rhythm(3);
+//    margin-top: rhythm(3);
+//
+//    section {
+//      background: $color-neutral-lightest;
+//      border-radius: rhythm(0.5);
+//      padding: rhythm(2) rhythm(3);
+//
+//      h3 {
+//        font-weight: $font-weight-body;
+//      }
+//    }
+//
+//    section.snippet-configuration {
+//      display: flex;
+//      flex: 0 0 auto;
+//      flex-direction: column;
+//      gap: rhythm(2);
+//      width: $width-configuration;
+//
+//      .widget-features {
+//        display: flex;
+//        flex-direction: column;
+//        gap: rhythm(2);
+//      }
+//      .filter-type {
+//        display: flex;
+//        flex-direction: column;
+//        gap: rhythm(1);
+//        margin-left: rhythm(8);
+//      }
+//    }
+//
+//    section.snippet {
+//      flex: 1 0 auto;
+//      max-width: calc(100vw - #{$width-configuration} - #{$padding-side}* 2 - #{rhythm(2)} - #{$dock-max-width});
+//
+//      h3 {
+//        align-items: center;
+//        display: flex;
+//        justify-content: space-between;
+//      }
+//
+//      pre {
+//        margin: 0;
+//        word-break: break-all;
+//      }
+//    }
+//  }
+//
+//  .widget-preview.dark {
+//    background: #1f2023;
+//    color: $color-light-stronger;
+//    padding: rhythm(2);
+//  }
+//}

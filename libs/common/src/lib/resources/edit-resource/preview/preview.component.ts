@@ -87,8 +87,8 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
     super.ngOnDestroy();
     this.paragraphService.cleanup();
     const viewerElement = document.querySelector('nuclia-viewer') as any;
-    if (typeof viewerElement?.$destroy === 'function') {
-      viewerElement.$destroy();
+    if (typeof viewerElement?.$$c?.$destroy === 'function') {
+      viewerElement.$$c.$destroy();
     }
   }
 
@@ -96,11 +96,12 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
     this.loadingPreview = true;
     forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))])
       .pipe(
-        switchMap(([fieldId, resource]) =>
-          (document.getElementById(viewerId) as unknown as any)?.openPreview(
-            { ...fieldId, resourceId: resource.id },
-            resource.title,
-          ),
+        switchMap(
+          ([fieldId, resource]) =>
+            (document.getElementById(viewerId) as unknown as any)?.openPreview(
+              { ...fieldId, resourceId: resource.id },
+              resource.title,
+            ),
         ),
         filter((isPreviewing) => !!isPreviewing),
         take(1),

@@ -1,263 +1,535 @@
 <div class="widget-generator">
   <h1>
-    {{ 'stash.widgets.title' | translate }}
+    {{ 'widget.generator.page-title' | translate }}
   </h1>
 
-  <div
-    class="warning"
-    *ngIf="showWarning | async">
-    <pa-icon
-      name="warning"
-      size="large"></pa-icon>
-    <div class="warning-content">
-      <div
-        class="title-m"
-        [innerHTML]="'stash.widgets.warning' | translate"></div>
-      <div
-        *ngIf="showLink | async"
-        class="publish-link body-m">
-        <span [innerHTML]="'stash.widgets.publish_kb' | translate"></span>
-        <a [routerLink]="homeUrl | async">{{ 'stash.widgets.publish_kb_link' | translate }}</a>
+  @if (showWarning | async) {
+    <div class="warning-container">
+      <pa-icon
+        name="warning"
+        size="large"></pa-icon>
+      <div class="warning-content">
+        <div
+          class="title-m"
+          [innerHTML]="'widget.generator.private-kb-warning.title' | translate"></div>
+        @if (showLink | async) {
+          <div class="publish-link body-m">
+            <span [innerHTML]="'widget.generator.private-kb-warning.description' | translate"></span>
+            <a [routerLink]="homeUrl | async">{{ 'widget.generator.private-kb-warning.link' | translate }}</a>
+          </div>
+        }
       </div>
     </div>
-  </div>
+  }
 
-  <div
-    class="widget-preview"
-    [class.dark]="mainForm?.controls?.['darkMode']?.value">
-    <h3>{{ 'stash.widgets.preview' | translate }}</h3>
-    <div
-      id="preview"
-      class="preview-container"
-      [innerHtml]="snippetPreview"></div>
-  </div>
+  <div class="page-content">
+    <div class="configuration-panel">
+      <pa-tabs>
+        <pa-tab
+          (click)="selectedTab = 'preset'"
+          [active]="selectedTab === 'preset'">
+          {{ 'widget.generator.tabs.presets' | translate }}
+        </pa-tab>
+        <pa-tab
+          (click)="selectedTab = 'advanced'"
+          [active]="selectedTab === 'advanced'">
+          {{ 'widget.generator.tabs.advanced' | translate }}
+        </pa-tab>
+      </pa-tabs>
 
-  <form
-    *ngIf="mainForm"
-    [formGroup]="mainForm">
-    <div class="snippet-configuration-container">
-      <section class="snippet-configuration">
-        <h3>{{ 'stash.widgets.configuration' | translate }}</h3>
-        <pa-input
-          [(value)]="placeholder"
-          (valueChange)="onPlaceholderChange($event)">
-          {{ 'stash.widgets.placeholder' | translate }}
-        </pa-input>
-        <pa-textarea
-          *ngIf="isUserPromptsEnabled | async"
-          [help]="'stash.widgets.prompt.help' | translate"
-          [rows]="2"
-          formControlName="prompt">
-          {{ 'stash.widgets.prompt.label' | translate }}
-        </pa-textarea>
-        <pa-textarea
-          formControlName="preselectedFilters"
-          [rows]="2"
-          [placeholder]="'stash.widgets.preselected-filters.placeholder' | translate"
-          [help]="'stash.widgets.preselected-filters.help' | translate">
-          {{ 'stash.widgets.preselected-filters.label' | translate }}
-        </pa-textarea>
-        <div
-          class="widget-features"
-          formGroupName="features">
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.suggestions.help"
-            formControlName="suggestions">
-            {{ 'stash.widgets.suggestions.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            *ngIf="canSuggestEntities | async"
-            labelOnRight
-            help="stash.widgets.autocompleteFromNERs.help"
-            formControlName="autocompleteFromNERs">
-            {{ 'stash.widgets.autocompleteFromNERs.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            *ngIf="isTrainingEnabled | async"
-            labelOnRight
-            help="stash.widgets.suggestLabels.help"
-            formControlName="suggestLabels">
-            {{ 'stash.widgets.suggestLabels.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.filter.help"
-            formControlName="filter">
-            {{ 'stash.widgets.filter.label' | translate }}
-          </pa-toggle>
-          <div
-            *ngIf="mainFormFeatures.filter"
-            class="filter-type">
-            <pa-checkbox
-              [(value)]="filters.labels"
-              (valueChange)="onFiltersChange()"
-              [disabled]="filters.labels && hasOneFilter">
-              {{ 'stash.widgets.labels' | translate }}
-            </pa-checkbox>
-            <pa-checkbox
-              [(value)]="filters.labelFamilies"
-              (valueChange)="onFiltersChange()"
-              [disabled]="filters.labelFamilies && hasOneFilter">
-              {{ 'stash.widgets.labelFamilies' | translate }}
-            </pa-checkbox>
-            <pa-checkbox
-              *ngIf="isEntityFiltersEnabled | async"
-              [(value)]="filters.entities"
-              (valueChange)="onFiltersChange()"
-              [disabled]="filters.entities && hasOneFilter">
-              {{ 'stash.widgets.entities' | translate }}
-            </pa-checkbox>
-            <div>
-              <pa-checkbox
-                [(value)]="filters.created"
-                (valueChange)="onFiltersChange()"
-                [disabled]="filters.created && hasOneFilter">
-                {{ 'stash.widgets.created' | translate }}
-              </pa-checkbox>
-              <div
-                *ngIf="filters.created"
-                class="filter-warning"
-                [innerHtml]="'stash.widgets.created-warning' | translate"></div>
-            </div>
+      @switch (selectedTab) {
+        @case ('preset') {
+          <div class="tab-content preset-content">Presets content</div>
+        }
+        @case ('advanced') {
+          <div class="tab-content advanced-content">
+            <form [formGroup]="advancedForm">
+              <pa-expander [contentLoaded]="answerGenerationEnabled">
+                <pa-expander-header>
+                  <div class="title-s">
+                    {{ 'widget.generator.advanced.generative-answer-category.title' | translate }}
+                  </div>
+                </pa-expander-header>
+                <pa-expander-body>
+                  <div class="advanced-category">
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="answers"
+                        (valueChange)="toggleAnswers($event)">
+                        {{ 'widget.generator.advanced.generative-answer-category.answers.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="answerHelp" />
+                      <pa-popover #answerHelp>
+                        {{ 'widget.generator.advanced.generative-answer-category.answers.help' | translate }}
+                      </pa-popover>
+                    </div>
+
+                    @if (answerGenerationEnabled) {
+                      @if (isUserPromptsEnabled | async) {
+                        <div class="toggle-and-help">
+                          <pa-textarea
+                            [rows]="2"
+                            formControlName="userPrompt"
+                            resizable>
+                            {{ 'widget.generator.advanced.generative-answer-category.prompt.label' | translate }}
+                          </pa-textarea>
+                          <pa-icon
+                            name="info"
+                            [paPopover]="userPromptHelp" />
+                          <pa-popover #userPromptHelp>
+                            {{ 'widget.generator.advanced.generative-answer-category.prompt.help' | translate }}
+                          </pa-popover>
+                        </div>
+                      }
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="hideSources">
+                          {{ 'widget.generator.advanced.generative-answer-category.hide-sources.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="hideSourcesHelp" />
+                        <pa-popover #hideSourcesHelp>
+                          {{ 'widget.generator.advanced.generative-answer-category.hide-sources.help' | translate }}
+                        </pa-popover>
+                      </div>
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="onlyAnswers">
+                          {{ 'widget.generator.advanced.generative-answer-category.only-answers.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="onlyAnswersHelp" />
+                        <pa-popover #onlyAnswersHelp>
+                          {{ 'widget.generator.advanced.generative-answer-category.only-answers.help' | translate }}
+                        </pa-popover>
+                      </div>
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="noBM25forChat">
+                          {{
+                            'widget.generator.advanced.generative-answer-category.no-bm25-for-chat.label' | translate
+                          }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="noBM25forChatHelp" />
+                        <pa-popover #noBM25forChatHelp>
+                          {{ 'widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help' | translate }}
+                        </pa-popover>
+                      </div>
+                    }
+                  </div>
+                </pa-expander-body>
+              </pa-expander>
+
+              <pa-expander [contentLoaded]="filtersEnabled">
+                <pa-expander-header>
+                  <div class="title-s">
+                    {{ 'widget.generator.advanced.search-and-filtering-category.title' | translate }}
+                  </div>
+                </pa-expander-header>
+                <pa-expander-body>
+                  <div class="advanced-category">
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="filter">
+                        {{ 'widget.generator.advanced.search-and-filtering-category.filter.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="filterHelp" />
+                      <pa-popover #filterHelp>
+                        {{ 'widget.generator.advanced.search-and-filtering-category.filter.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    @if (filtersEnabled) {
+                      <div class="filter-by-container">
+                        <pa-checkbox
+                          [(value)]="filters.labels"
+                          (valueChange)="onFiltersChange()"
+                          [disabled]="filters.labels && hasOneFilter">
+                          {{ 'widget.generator.advanced.search-and-filtering-category.filter-by-labels' | translate }}
+                        </pa-checkbox>
+                        <pa-checkbox
+                          [(value)]="filters.labelFamilies"
+                          (valueChange)="onFiltersChange()"
+                          [disabled]="filters.labelFamilies && hasOneFilter">
+                          {{
+                            'widget.generator.advanced.search-and-filtering-category.filter-by-label-families'
+                              | translate
+                          }}
+                        </pa-checkbox>
+                        @if (isEntityFiltersEnabled | async) {
+                          <pa-checkbox
+                            [(value)]="filters.entities"
+                            (valueChange)="onFiltersChange()"
+                            [disabled]="filters.entities && hasOneFilter">
+                            {{
+                              'widget.generator.advanced.search-and-filtering-category.filter-by-entities' | translate
+                            }}
+                          </pa-checkbox>
+                        }
+
+                        <div class="toggle-and-help">
+                          <pa-checkbox
+                            [(value)]="filters.created"
+                            (valueChange)="onFiltersChange()"
+                            [disabled]="filters.created && hasOneFilter">
+                            {{
+                              'widget.generator.advanced.search-and-filtering-category.filter-by-created.label'
+                                | translate
+                            }}
+                          </pa-checkbox>
+                          <pa-icon
+                            name="info"
+                            [paPopover]="filterCreatedHelp" />
+                          <pa-popover #filterCreatedHelp>
+                            <div
+                              [innerHtml]="
+                                'widget.generator.advanced.search-and-filtering-category.filter-by-created.help'
+                                  | translate
+                              "></div>
+                          </pa-popover>
+                        </div>
+                      </div>
+                    }
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="autofilter">
+                        {{ 'widget.generator.advanced.search-and-filtering-category.autofilter.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="autoFilterHelp" />
+                      <pa-popover #autoFilterHelp>
+                        {{ 'widget.generator.advanced.search-and-filtering-category.autofilter.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    <div class="toggle-and-help">
+                      <pa-textarea
+                        resizable
+                        formControlName="preselectedFilters"
+                        [rows]="2"
+                        [placeholder]="
+                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.placeholder'
+                            | translate
+                        ">
+                        {{
+                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.label'
+                            | translate
+                        }}
+                      </pa-textarea>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="preselectedFiltersHelp" />
+                      <pa-popover #preselectedFiltersHelp>
+                        {{
+                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.help' | translate
+                        }}
+                      </pa-popover>
+                    </div>
+                    @if (areSynonymsEnabled | async) {
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="useSynonyms"
+                          (valueChange)="toggleSynonyms($event)">
+                          {{ 'widget.generator.advanced.search-and-filtering-category.synonyms.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="synonymsHelp" />
+                        <pa-popover #synonymsHelp>
+                          {{ 'widget.generator.advanced.search-and-filtering-category.synonyms.help' | translate }}
+                        </pa-popover>
+                      </div>
+                    }
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="suggestions">
+                        {{ 'widget.generator.advanced.search-and-filtering-category.suggestions.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="suggestionsHelp" />
+                      <pa-popover #suggestionsHelp>
+                        {{ 'widget.generator.advanced.search-and-filtering-category.suggestions.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    @if (isTrainingEnabled | async) {
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="suggestLabels">
+                          {{
+                            'widget.generator.advanced.search-and-filtering-category.suggest-labels.label' | translate
+                          }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="suggestLabelsHelp" />
+                        <pa-popover #suggestLabelsHelp>
+                          {{
+                            'widget.generator.advanced.search-and-filtering-category.suggest-labels.help' | translate
+                          }}
+                        </pa-popover>
+                      </div>
+                    }
+                  </div>
+                </pa-expander-body>
+              </pa-expander>
+              <pa-expander [contentLoaded]="navigateToLinkEnabled || navigateToFilesEnabled">
+                <pa-expander-header>
+                  <div class="title-s">{{ 'widget.generator.advanced.navigation-category.title' | translate }}</div>
+                </pa-expander-header>
+                <pa-expander-body>
+                  <div class="advanced-category">
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="permalink">
+                        {{ 'widget.generator.advanced.navigation-category.permalink.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="permalinkHelp" />
+                      <pa-popover #permalinkHelp>
+                        {{ 'widget.generator.advanced.navigation-category.permalink.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="navigateToLink"
+                        (valueChange)="navigateToChanged()">
+                        {{ 'widget.generator.advanced.navigation-category.navigate-to-link.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="navigateToLinkHelp" />
+                      <pa-popover #navigateToLinkHelp>
+                        {{ 'widget.generator.advanced.navigation-category.navigate-to-link.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="navigateToFile"
+                        (valueChange)="navigateToChanged()">
+                        {{ 'widget.generator.advanced.navigation-category.navigate-to-file.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="navigateToFilesHelp" />
+                      <pa-popover #navigateToFilesHelp>
+                        {{ 'widget.generator.advanced.navigation-category.navigate-to-file.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    @if (navigateToLinkEnabled || navigateToFilesEnabled) {
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="targetNewTab">
+                          {{ 'widget.generator.advanced.navigation-category.target-new-tab.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="targetNewTabHelp" />
+                        <pa-popover #targetNewTabHelp>
+                          {{ 'widget.generator.advanced.navigation-category.target-new-tab.help' | translate }}
+                        </pa-popover>
+                      </div>
+                    }
+                  </div>
+                </pa-expander-body>
+              </pa-expander>
+              <pa-expander>
+                <pa-expander-header>
+                  <div class="title-s">{{ 'widget.generator.advanced.display-category.title' | translate }}</div>
+                </pa-expander-header>
+                <pa-expander-body>
+                  <div class="advanced-category">
+                    <div class="placeholder-container">
+                      <pa-input
+                        [(value)]="placeholder"
+                        (valueChange)="onPlaceholderChange($event)">
+                        {{ 'widget.generator.advanced.display-category.placeholder' | translate }}
+                      </pa-input>
+                    </div>
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="displayMetadata">
+                        {{ 'widget.generator.advanced.display-category.display-metadata.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="displayMetadataHelp" />
+                      <pa-popover #displayMetadataHelp>
+                        {{ 'widget.generator.advanced.display-category.display-metadata.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="hideThumbnails">
+                        {{ 'widget.generator.advanced.display-category.hide-thumbnails.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="hideThumbnailsHelp" />
+                      <pa-popover #hideThumbnailsHelp>
+                        {{ 'widget.generator.advanced.display-category.hide-thumbnails.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="darkMode">
+                        {{ 'widget.generator.advanced.display-category.dark-mode.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="darkModeHelp" />
+                      <pa-popover #darkModeHelp>
+                        {{ 'widget.generator.advanced.display-category.dark-mode.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    @if (canHideLogo | async) {
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="hideLogo">
+                          {{ 'widget.generator.advanced.display-category.hide-logo.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="hideLogoHelp" />
+                        <pa-popover #hideLogoHelp>
+                          {{ 'widget.generator.advanced.display-category.hide-logo.help' | translate }}
+                        </pa-popover>
+                      </div>
+                    }
+                  </div>
+                </pa-expander-body>
+              </pa-expander>
+              <pa-expander>
+                <pa-expander-header>
+                  <div class="title-s">{{ 'widget.generator.advanced.ner-category.title' | translate }}</div>
+                </pa-expander-header>
+                <pa-expander-body>
+                  <div class="advanced-category">
+                    @if (autocompleteFromNerEnabled | async) {
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="autocompleteFromNERs">
+                          {{ 'widget.generator.advanced.ner-category.autocomplete-from-ners.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="autocompleteFromNERsHelp" />
+                        <pa-popover #autocompleteFromNERsHelp>
+                          {{ 'widget.generator.advanced.ner-category.autocomplete-from-ners.help' | translate }}
+                        </pa-popover>
+                      </div>
+                    }
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="relations"
+                        (valueChange)="toggleRelations($event)">
+                        {{ 'widget.generator.advanced.ner-category.relations.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="relationsHelp" />
+                      <pa-popover #relationsHelp>
+                        {{ 'widget.generator.advanced.ner-category.relations.help' | translate }}
+                      </pa-popover>
+                    </div>
+                    @if (isKnowledgeGraphEnabled | async) {
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="knowledgeGraph">
+                          {{ 'widget.generator.advanced.ner-category.knowledge-graph.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="knowledgeGraphHelp" />
+                        <pa-popover #knowledgeGraphHelp>
+                          {{ 'widget.generator.advanced.ner-category.knowledge-graph.help' | translate }}
+                        </pa-popover>
+                      </div>
+                    }
+                  </div>
+                </pa-expander-body>
+              </pa-expander>
+            </form>
           </div>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.answers.help"
-            formControlName="answers">
-            {{ 'stash.widgets.answers.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.onlyAnswers.help"
-            formControlName="onlyAnswers">
-            {{ 'stash.widgets.onlyAnswers.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.hideSources.help"
-            formControlName="hideSources">
-            {{ 'stash.widgets.hideSources.label' | translate }}
-          </pa-toggle>
-
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.relations.help"
-            formControlName="relations">
-            {{ 'stash.widgets.relations.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            *ngIf="isKnowledgeGraphEnabled | async"
-            labelOnRight
-            help="stash.widgets.knowledgeGraph.help"
-            formControlName="knowledgeGraph">
-            {{ 'stash.widgets.knowledgeGraph.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.navigateToLink.help"
-            formControlName="navigateToLink"
-            (valueChange)="updateTarget($event)">
-            {{ 'stash.widgets.navigateToLink.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.targetNewTab.help"
-            formControlName="targetNewTab">
-            {{ 'stash.widgets.targetNewTab.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.navigateToFile.help"
-            formControlName="navigateToFile">
-            {{ 'stash.widgets.navigateToFile.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.permalink.help"
-            formControlName="permalink">
-            {{ 'stash.widgets.permalink.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            *ngIf="areSynonymsEnabled | async"
-            labelOnRight
-            help="stash.widgets.synonyms.help"
-            formControlName="useSynonyms">
-            {{ 'stash.widgets.synonyms.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.autofilter.help"
-            formControlName="autofilter">
-            {{ 'stash.widgets.autofilter.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.displayMetadata.help"
-            formControlName="displayMetadata">
-            {{ 'stash.widgets.displayMetadata.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.hideThumbnails.help"
-            formControlName="hideThumbnails">
-            {{ 'stash.widgets.hideThumbnails.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            labelOnRight
-            help="stash.widgets.noBM25forChat.help"
-            formControlName="noBM25forChat">
-            {{ 'stash.widgets.noBM25forChat.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            *ngIf="canHideLogo | async"
-            labelOnRight
-            help="stash.widgets.hideLogo.help"
-            formControlName="hideLogo">
-            {{ 'stash.widgets.hideLogo.label' | translate }}
-          </pa-toggle>
-        </div>
-
-        <pa-toggle
-          labelOnRight
-          help="stash.widgets.darkMode.help"
-          formControlName="darkMode">
-          {{ 'stash.widgets.darkMode.label' | translate }}
-        </pa-toggle>
-      </section>
-      <section class="snippet">
-        <h3>
-          {{ 'stash.widgets.snippet' | translate }}
-          <pa-button
-            aspect="basic"
-            icon="info"
-            iconAndText
-            (click)="showHints()">
-            {{ 'stash.widgets.recommendations' | translate }}
-          </pa-button>
-          <pa-button
-            *ngIf="clipboardSupported"
-            aspect="basic"
-            size="small"
-            [icon]="copyIcon"
-            (click)="copy()">
-            Copy snippet
-          </pa-button>
-        </h3>
-
-        <div
-          class="warning"
-          *ngIf="showWarning | async">
-          <pa-icon name="warning"></pa-icon>
-          <div class="warning-content">
-            <div class="title-xxs">
-              {{ 'stash.widgets.warning-dangerous-snippet' | translate }}
-            </div>
-            <div class="body-m">{{ 'stash.widgets.warning-dangerous-snippet-details' | translate }}</div>
-          </div>
-        </div>
-        <pre><code class="highlight">{{ snippet }}</code></pre>
-      </section>
+        }
+      }
     </div>
-  </form>
+    <div
+      class="preview-container"
+      [class.dark-mode]="darkModeEnabled">
+      <h4>{{ 'widget.generator.preview' | translate }}</h4>
+
+      <div
+        id="preview"
+        class="preview-content"
+        [innerHtml]="snippetPreview"></div>
+    </div>
+    <div
+      class="code-snippet-overlay"
+      [class.opened]="snippetOverlayOpen">
+      <div
+        class="overlay-header"
+        (click)="toggleSnippet($event)">
+        <pa-button
+          icon="code"
+          iconAndText
+          (click)="toggleSnippet($event)">
+          {{ 'widget.generator.snippet' | translate }}
+        </pa-button>
+        <pa-icon name="chevron-right"></pa-icon>
+      </div>
+      <div class="snippet-container">
+        @if (showWarning | async) {
+          <div class="warning-container">
+            <pa-icon name="warning"></pa-icon>
+            <div class="warning-content">
+              <div class="title-xxs">
+                {{ 'widget.generator.private-kb-warning.snippet' | translate }}
+              </div>
+            </div>
+          </div>
+        }
+        <pre [class.has-warning]="showWarning | async"><code>{{snippet}}</code></pre>
+      </div>
+      @if (clipboardSupported) {
+        <div class="overlay-footer">
+          <pa-button
+            kind="inverted"
+            size="small"
+            [active]="copyButtonActive"
+            (click)="copySnippet()">
+            {{ copyButtonLabel | translate }}
+          </pa-button>
+        </div>
+      }
+    </div>
+  </div>
 </div>

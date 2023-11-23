@@ -168,6 +168,21 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get relationsControl() {
     return this.advancedForm.get('relations');
   }
+  get userPromptControl() {
+    return this.advancedForm.get('userPrompt');
+  }
+  get hideSourcesControl() {
+    return this.advancedForm.get('hideSources');
+  }
+  get onlyAnswersControl() {
+    return this.advancedForm.get('onlyAnswers');
+  }
+  get noBM25forChatControl() {
+    return this.advancedForm.get('noBM25forChat');
+  }
+  get targetNewTabControl() {
+    return this.advancedForm.get('targetNewTab');
+  }
 
   constructor(
     private sdk: SDKService,
@@ -221,17 +236,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       .subscribe(() => this.updateSnippetAndStoreConfig());
   }
 
-  private updateSnippetAndStoreConfig() {
-    this.generateSnippet();
-    this.widgetConfigurations[this.currentKbId] = {
-      features: this.advancedForm.getRawValue(),
-      placeholder: this.placeholder,
-      filters: this.filtersEnabled ? this.filters : undefined,
-    };
-    this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
-    this.cdr.detectChanges();
-  }
-
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
@@ -250,6 +254,16 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   onFiltersChange() {
     // Wait for detection cycle to end before updating the snippet
     setTimeout(() => this.updateSnippetAndStoreConfig());
+  }
+
+  // reset options requiring answer generation to be enabled
+  toggleAnswers(answerGeneration: boolean) {
+    if (!answerGeneration) {
+      this.userPromptControl?.patchValue('');
+      this.hideSourcesControl?.patchValue(false);
+      this.onlyAnswersControl?.patchValue(false);
+      this.noBM25forChatControl?.patchValue(false);
+    }
   }
 
   // deactivate relations option if synonyms option is enabled
@@ -272,7 +286,37 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     }
   }
 
-  generateSnippet() {
+  navigateToChanged() {
+    if (!this.navigateToLinkEnabled && !this.navigateToFilesEnabled) {
+      this.targetNewTabControl?.patchValue(false);
+    }
+  }
+
+  copySnippet() {
+    navigator.clipboard.writeText(this.snippet);
+
+    this.copyButtonLabel = 'generic.copied';
+    this.copyButtonActive = true;
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.copyButtonLabel = 'generic.copy';
+      this.copyButtonActive = false;
+      this.cdr.markForCheck();
+    }, 1000);
+  }
+
+  private updateSnippetAndStoreConfig() {
+    this.generateSnippet();
+    this.widgetConfigurations[this.currentKbId] = {
+      features: this.advancedForm.getRawValue(),
+      placeholder: this.placeholder,
+      filters: this.filtersEnabled ? this.filters : undefined,
+    };
+    this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
+    this.cdr.detectChanges();
+  }
+
+  private generateSnippet() {
     this.deletePreview();
     const placeholder = !!this.placeholder
       ? `
@@ -352,7 +396,7 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
     }, 500);
   }
 
-  deletePreview() {
+  private deletePreview() {
     const searchWidgetElement = document.querySelector('nuclia-search') as any;
     const searchBarElement = document.querySelector('nuclia-search-bar') as any;
     const searchResultsElement = document.querySelector('nuclia-search-results') as any;
@@ -368,18 +412,5 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
     searchWidgetElement?.remove();
     searchBarElement?.remove();
     searchResultsElement?.remove();
-  }
-
-  copySnippet() {
-    navigator.clipboard.writeText(this.snippet);
-
-    this.copyButtonLabel = 'generic.copied';
-    this.copyButtonActive = true;
-    this.cdr.markForCheck();
-    setTimeout(() => {
-      this.copyButtonLabel = 'generic.copy';
-      this.copyButtonActive = false;
-      this.cdr.markForCheck();
-    }, 1000);
   }
 }
