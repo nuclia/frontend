@@ -7,7 +7,7 @@ import { SyncService } from '../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 
 @Component({
-  selector: 'nde-upload',
+  selector: 'nsy-upload',
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

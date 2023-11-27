@@ -35,7 +35,7 @@ import { environment } from '../../../environments/environment';
 import { getClassificationFromSelection, getSelectionFromClassification } from '@nuclia/sistema';
 
 @Component({
-  selector: 'nde-settings',
+  selector: 'nsy-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

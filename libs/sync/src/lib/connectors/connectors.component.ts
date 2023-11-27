@@ -3,7 +3,7 @@ import { SyncService } from '../sync/sync.service';
 import { map } from 'rxjs';
 
 @Component({
-  selector: 'nde-connectors',
+  selector: 'nsy-connectors',
   templateUrl: './connectors.component.html',
   styleUrls: ['./connectors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

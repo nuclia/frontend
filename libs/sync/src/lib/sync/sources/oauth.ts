@@ -1,7 +1,6 @@
 import { ISourceConnector, ConnectorParameters, Field } from '../models';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { clearDeeplink, getDeeplink } from '../../utils';
-import { environment } from '../../../environments/environment';
 
 const TOKEN = 'token';
 const REFRESH = 'refresh';
@@ -9,14 +8,16 @@ const REFRESH = 'refresh';
 export class OAuthConnector implements ISourceConnector {
   name: string;
   id: string;
+  path: string;
   hasServerSideAuth = true;
   isExternal = true;
   resumable = false;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor(name: string, id: string) {
+  constructor(name: string, id: string, path: string) {
     this.name = name;
     this.id = id;
+    this.path = path;
   }
 
   getParameters(): Observable<Field[]> {
@@ -31,7 +32,7 @@ export class OAuthConnector implements ISourceConnector {
     return {
       token: localStorage.getItem(this.prefixStorageKey(TOKEN)),
       refresh: localStorage.getItem(this.prefixStorageKey(REFRESH)),
-      refresh_endpoint: `${environment.dashboard}/api/external_auth/${this.name}/refresh`,
+      refresh_endpoint: `${this.path}/api/external_auth/${this.name}/refresh`,
     };
   }
 
@@ -41,7 +42,7 @@ export class OAuthConnector implements ISourceConnector {
     }
     const token = localStorage.getItem(this.prefixStorageKey(TOKEN));
     if (!token) {
-      const authorizeEndpoint = `${environment.dashboard}/api/external_auth/${this.name}/authorize`;
+      const authorizeEndpoint = `${this.path}/api/external_auth/${this.name}/authorize`;
 
       if ((window as any)['electron']) {
         (window as any)['electron'].openExternal(`${authorizeEndpoint}?redirect=nuclia-desktop://index.html`);

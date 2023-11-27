@@ -6,7 +6,7 @@ import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
 import { SyncService } from '../sync/sync.service';
 
 @Component({
-  selector: 'nde-topbar',
+  selector: 'nsy-topbar',
   templateUrl: 'topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

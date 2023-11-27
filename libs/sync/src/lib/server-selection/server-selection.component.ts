@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LOCAL_SYNC_SERVER, SYNC_SERVER_KEY, SyncService } from '../sync/sync.service';
 
 @Component({
-  selector: 'nde-server-selection',
+  selector: 'nsy-server-selection',
   templateUrl: './server-selection.component.html',
   styleUrls: ['./server-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

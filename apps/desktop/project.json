@@ -30,6 +30,11 @@
           },
           {
             "glob": "**/*",
+            "input": "libs/sync/src/assets/i18n",
+            "output": "assets/i18n/sync"
+          },
+          {
+            "glob": "**/*",
             "input": "libs/sdk-core/protobuf/nucliadb_protos",
             "output": "assets/nucliadb_protos"
           }
@@ -74,6 +79,11 @@
               "glob": "**/*",
               "input": "libs/sistema/assets",
               "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
             }
           ]
         },
@@ -109,6 +119,11 @@
               "glob": "**/*",
               "input": "libs/sistema/assets",
               "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
             }
           ]
         },
@@ -148,6 +163,11 @@
               "glob": "**/*",
               "input": "libs/sistema/assets",
               "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
             }
           ]
         }

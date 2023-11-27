@@ -4,7 +4,7 @@ import { SyncService } from '../sync/sync.service';
 import { UserService } from '@flaps/core';
 
 @Component({
-  selector: 'nde-home',
+  selector: 'nsy-home',
   templateUrl: 'home.component.html',
   styleUrls: ['home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

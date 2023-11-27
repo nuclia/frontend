@@ -18,7 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SyncService } from '../../sync/sync.service';
 
 @Component({
-  selector: 'nde-select-files',
+  selector: 'nsy-select-files',
   templateUrl: './select-files.component.html',
   styleUrls: ['./select-files.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

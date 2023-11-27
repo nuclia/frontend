@@ -5,7 +5,7 @@ import { catchError, filter, of, switchMap, take } from 'rxjs';
 import { ACCOUNT_KEY, SyncService } from '../sync/sync.service';
 
 @Component({
-  selector: 'nde-main-layout',
+  selector: 'nsy-main-layout',
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

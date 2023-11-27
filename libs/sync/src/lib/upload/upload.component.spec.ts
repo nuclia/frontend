@@ -148,7 +148,7 @@ describe('UploadComponent', () => {
     const name = fixture.debugElement.nativeElement.querySelector('pa-input[formcontrolname="name"]');
     expect(name).toBeTruthy();
 
-    const settings = fixture.debugElement.query(By.css('nde-settings'));
+    const settings = fixture.debugElement.query(By.css('nsy-settings'));
     settings.triggerEventHandler('save', {
       name: 'sync-1',
       connectorId: connectorId,
@@ -157,7 +157,7 @@ describe('UploadComponent', () => {
     expect(sync.setStep).toHaveBeenCalledWith(2);
 
     fixture.detectChanges();
-    const selectFiles = fixture.debugElement.query(By.css('nde-select-files'));
+    const selectFiles = fixture.debugElement.query(By.css('nsy-select-files'));
     selectFiles.componentInstance.ngAfterViewInit();
     tick(300);
     fixture.detectChanges();

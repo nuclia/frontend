@@ -14,18 +14,18 @@
       </div>
     </ng-container>
   </div>
-  <nde-connectors
+  <nsy-connectors
     *ngIf="(step | async) === 0"
     type="sources"
     (select)="onSelectConnector($event)"
-    (cancel)="cancel()"></nde-connectors>
-  <nde-settings
+    (cancel)="cancel()"></nsy-connectors>
+  <nsy-settings
     *ngIf="(step | async) === 1"
     [addNew]="newConnector"
     (save)="selectSource($event)"
-    (cancel)="cancel()"></nde-settings>
+    (cancel)="cancel()"></nsy-settings>
   <ng-container *ngIf="(step | async) === 2">
-    <nde-select-files
+    <nsy-select-files
       (cancel)="cancel()"
       (settings)="goToSettings()" />
   </ng-container>

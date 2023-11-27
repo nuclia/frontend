@@ -9,7 +9,7 @@ interface ProgressRow extends SyncRow {
 }
 
 @Component({
-  selector: 'nde-history',
+  selector: 'nsy-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

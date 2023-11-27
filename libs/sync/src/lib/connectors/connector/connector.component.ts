@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
-  selector: 'nde-connector',
+  selector: 'nsy-connector',
   templateUrl: './connector.component.html',
   styleUrls: ['./connector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

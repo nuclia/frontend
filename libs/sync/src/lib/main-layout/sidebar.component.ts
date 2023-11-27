@@ -4,7 +4,7 @@ import { BehaviorSubject, combineLatest, filter, from, map, switchMap } from 'rx
 import { SyncService } from '../sync/sync.service';
 
 @Component({
-  selector: 'nde-sidebar',
+  selector: 'nsy-sidebar',
   templateUrl: 'sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
