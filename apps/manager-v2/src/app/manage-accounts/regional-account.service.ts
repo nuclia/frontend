@@ -106,7 +106,7 @@ export class RegionalAccountService {
               if (accountUser) {
                 const kbUser = {
                   ...user,
-                  name: accountUser.name,
+                  name: accountUser.name || '',
                   email: accountUser.email,
                 };
                 switch (user.role) {

@@ -47,7 +47,7 @@ export interface KbUser {
 
 export interface AccountUser {
   id: string;
-  name: string;
+  name: string | null;
   email: string;
   isManager?: boolean;
 }
