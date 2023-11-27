@@ -18,6 +18,6 @@ import { UploadModule } from './upload/upload.module';
     ServerSelectionModule,
     SyncRoutingModule,
     UploadModule,
-  ]
+  ],
 })
-export class SyncModule { }
+export class SyncModule {}

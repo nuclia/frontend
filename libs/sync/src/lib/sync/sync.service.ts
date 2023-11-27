@@ -59,9 +59,9 @@ export class SyncService {
         title: 'Google Drive',
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
-        factory: (settings) => of(new OAuthConnector('gdrive', settings?.id || '', settings?.path || '')),
+        factory: (settings) => of(new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getAPIOrigin())),
       },
-      settings: { path: this.config.getAPIOrigin() },
+      settings: {},
     },
     onedrive: {
       definition: {
@@ -69,9 +69,9 @@ export class SyncService {
         title: 'One Drive',
         logo: `${baseLogoPath}/onedrive.svg`,
         description: 'Microsoft OneDrive file hosting service',
-        factory: (settings) => of(new OAuthConnector('onedrive', settings?.id || '', settings?.path || '')),
+        factory: (settings) => of(new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getAPIOrigin())),
       },
-      settings: { path: this.config.getAPIOrigin() },
+      settings: {},
     },
     sharepoint: {
       definition: {
@@ -80,9 +80,9 @@ export class SyncService {
         logo: `${baseLogoPath}/sharepoint.svg`,
         description: 'Microsoft Sharepoint service',
         permanentSyncOnly: true,
-        factory: (settings) => of(new SharepointImpl('sharepoint', settings?.id || '', settings?.path || '')),
+        factory: (settings) => of(new SharepointImpl('sharepoint', settings?.['id'] || '', this.config.getAPIOrigin())),
       },
-      settings: { path: this.config.getAPIOrigin() },
+      settings: {},
     },
     dropbox: {
       definition: {
@@ -90,9 +90,9 @@ export class SyncService {
         title: 'Dropbox',
         logo: `${baseLogoPath}/dropbox.svg`,
         description: 'File storage and synchronization service developed by Dropbox',
-        factory: (settings) => of(new OAuthConnector('dropbox', settings?.id || '', settings?.path || '')),
+        factory: (settings) => of(new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getAPIOrigin())),
       },
-      settings: { path: this.config.getAPIOrigin() },
+      settings: {},
     },
     folder: { definition: FolderConnector, settings: {} },
     sitemap: { definition: SitemapConnector, settings: {} },
@@ -104,7 +104,7 @@ export class SyncService {
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
       definition: NucliaCloudKB,
-      settings:  {
+      settings: {
         backend: this.config.getAPIURL(),
         client: this.config.staticConf.client,
       },

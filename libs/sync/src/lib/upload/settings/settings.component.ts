@@ -47,7 +47,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
     } as IErrorMessages,
   };
 
-  @Input() addNew: string;
+  @Input() addNew: string = '';
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<{
     name: string;
@@ -120,11 +120,11 @@ export class SettingsComponent implements OnDestroy, OnInit {
       localKb: [''],
     });
     merge(
-      this.form.controls.kb.valueChanges.pipe(
+      this.form.controls['kb'].valueChanges.pipe(
         delay(10), // wait until form is updated
         filter(() => !this.local),
       ),
-      this.form.controls.localKb.valueChanges.pipe(
+      this.form.controls['localKb'].valueChanges.pipe(
         delay(10), // wait until form is updated
         filter(() => this.local),
       ),
@@ -135,7 +135,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
       )
       .subscribe();
 
-    this.form?.controls.localUrl?.valueChanges
+    this.form?.controls['localUrl']?.valueChanges
       .pipe(
         debounceTime(500),
         switchMap(() => this._refreshKbs(this.local)),
@@ -258,12 +258,12 @@ export class SettingsComponent implements OnDestroy, OnInit {
   }
 
   updateValidators(local: boolean) {
-    this.form?.controls.kb.setValidators(local ? [] : [Validators.required]);
-    this.form?.controls.localKb.setValidators(local ? [Validators.required] : []);
-    this.form?.controls.localUrl.setValidators(local ? [Validators.required] : []);
-    this.form?.controls.kb?.updateValueAndValidity();
-    this.form?.controls.localKb?.updateValueAndValidity();
-    this.form?.controls.localUrl?.updateValueAndValidity();
+    this.form?.controls['kb'].setValidators(local ? [] : [Validators.required]);
+    this.form?.controls['localKb'].setValidators(local ? [Validators.required] : []);
+    this.form?.controls['localUrl'].setValidators(local ? [Validators.required] : []);
+    this.form?.controls['kb']?.updateValueAndValidity();
+    this.form?.controls['localKb']?.updateValueAndValidity();
+    this.form?.controls['localUrl']?.updateValueAndValidity();
   }
 
   updateLabelSelection(selection: { [id: string]: boolean }) {
@@ -330,6 +330,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
     return this.getDestination(local).pipe(
       take(1),
       switchMap((destination) => destination.refreshField('kb')),
+      map((field) => field as Field),
       tap((field: Field) => {
         if (local) {
           this.localKbField = field;
@@ -341,9 +342,9 @@ export class SettingsComponent implements OnDestroy, OnInit {
       catchError(() => {
         if (local) {
           this.localKbField = undefined;
-          this.form?.controls.localUrl.setErrors({ invalid: true });
-          this.form?.controls.localUrl.markAsDirty();
-          this.form?.controls.localKb.reset();
+          this.form?.controls['localUrl'].setErrors({ invalid: true });
+          this.form?.controls['localUrl'].markAsDirty();
+          this.form?.controls['localKb'].reset();
           this.cdr.detectChanges();
         }
         return of(undefined);

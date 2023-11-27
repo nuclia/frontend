@@ -107,7 +107,7 @@ export class SelectFilesComponent implements AfterViewInit {
         this.cdr?.markForCheck();
       });
     } else {
-      this.selection = new SelectionModel(true, []);
+      this.selection = new SelectionModel<SyncItem>(true, []);
       this.cdr?.markForCheck();
     }
   }
@@ -127,8 +127,8 @@ export class SelectFilesComponent implements AfterViewInit {
         if (data) {
           this.selection.setSelection({
             uuid: '',
-            title: data.path,
-            originalId: data.path,
+            title: data['path'],
+            originalId: data['path'],
             metadata: {},
             status: FileStatus.PENDING,
           });

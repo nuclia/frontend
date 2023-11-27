@@ -21,7 +21,7 @@ export class SharepointImpl extends OAuthConnector {
   }
 
   override handleParameters(params: ConnectorParameters) {
-    localStorage.setItem(SITE_NAME, params.site_name);
+    localStorage.setItem(SITE_NAME, params['site_name']);
   }
 
   override getParametersValues(): ConnectorParameters {

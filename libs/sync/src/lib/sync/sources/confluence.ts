@@ -41,7 +41,7 @@ class ConfluenceImpl implements ISourceConnector {
   }
 
   handleParameters(params: ConnectorParameters) {
-    localStorage.setItem(TOKEN, params.token);
+    localStorage.setItem(TOKEN, params['token']);
   }
 
   getParametersValues(): ConnectorParameters {
@@ -55,6 +55,6 @@ class ConfluenceImpl implements ISourceConnector {
   }
 
   authenticate(): Observable<boolean> {
-    return of(!!this.getParametersValues().token);
+    return of(!!this.getParametersValues()['token']);
   }
 }

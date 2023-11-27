@@ -3,6 +3,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { SyncService } from '@nuclia/sync';
+import { MockModule} from 'ng-mocks';
+import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 import { SelectAccountComponent } from './account.component';
 
@@ -14,7 +16,7 @@ describe('SelectAccountComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [SelectAccountComponent],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, MockModule(PaIconModule)],
       providers: [
         { provide: SyncService, useValue: { selectAccount: jest.fn() } },
         {

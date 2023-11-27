@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SDKService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, NEVER, of } from 'rxjs';
 import { ConnectorComponent } from '../connectors/connector/connector.component';
@@ -128,6 +128,7 @@ describe('UploadComponent', () => {
           },
         },
         MockProvider(STFTrackingService),
+        MockProvider(BackendConfigurationService),
       ],
     }).compileComponents();
   });

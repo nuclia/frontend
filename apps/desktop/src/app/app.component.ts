@@ -4,7 +4,7 @@ import { BackendConfigurationService, SDKService, STFTrackingService, STFUtils, 
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { CONNECTOR_ID_KEY, SOURCE_NAME_KEY } from '@nuclia/sync';
-import { clearDeeplink, getDeeplink } from './utils';
+import { clearDeeplink, getDeeplink } from '@nuclia/sync';
 import pkg from '../../../../package.json';
 import { filter, map, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
@@ -91,7 +91,7 @@ export class AppComponent implements OnInit {
                 // Add delay, otherwise localstorage might not be stored properly
                 setTimeout(() => {
                   location.search = '';
-                },100);
+                }, 100);
               }
               clearDeeplink();
               clearInterval(interval);
