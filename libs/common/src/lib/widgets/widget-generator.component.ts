@@ -1,23 +1,43 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackingService } from '@flaps/core';
-import { combineLatest, forkJoin, map, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
-import { debounceTime } from 'rxjs/operators';
-import { SisModalService } from '@nuclia/sistema';
-import { WidgetHintDialogComponent } from './hint/widget-hint.component';
+import { combineLatest, forkJoin, map, Subject, take } from 'rxjs';
+import { TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { NavigationService } from '@flaps/common';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { FormControl, FormGroup } from '@angular/forms';
 
 type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
 
-const DEFAULT_WIDGET_CONFIG: {
-  features: string[];
+type AdvancedForm = {
+  answers: boolean;
+  userPrompt: string;
+  hideSources: boolean;
+  onlyAnswers: boolean;
+  noBM25forChat: boolean;
+  filter: boolean;
+  autofilter: boolean;
+  preselectedFilters: string;
+  useSynonyms: boolean;
+  suggestions: boolean;
+  suggestLabels: boolean;
+  permalink: boolean;
+  navigateToLink: boolean;
+  navigateToFile: boolean;
+  targetNewTab: boolean;
+  displayMetadata: boolean;
+  hideThumbnails: boolean;
+  darkMode: boolean;
+  hideLogo: boolean;
+  autocompleteFromNERs: boolean;
+  relations: boolean;
+  knowledgeGraph: boolean;
+};
+type WidgetConfiguration = {
+  features?: AdvancedForm;
   placeholder?: string;
   filters?: { [key in FilterType]: boolean };
-} = {
-  features: [],
 };
 const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
 
@@ -30,34 +50,28 @@ const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
 export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   private localStorage = inject(LOCAL_STORAGE);
 
+  private unsubscribeAll = new Subject<void>();
+  private currentKbId = '';
+  private readonly widgetConfigurations: { [kbId: string]: WidgetConfiguration };
+
+  selectedTab: 'preset' | 'advanced' = 'preset';
+  copyButtonLabel = 'generic.copy';
+  copyButtonActive = false;
+
   showWarning = this.sdk.currentKb.pipe(map((kb) => kb.state === 'PRIVATE'));
   showLink = this.sdk.currentKb.pipe(map((kb) => !!kb.admin && kb.state === 'PRIVATE'));
   homeUrl = this.navigation.homeUrl;
 
-  mainForm?: FormGroup;
-  validationMessages = {
-    title: {
-      sluggable: 'stash.widgets.invalid-id',
-    },
-  };
-  placeholder?: string;
-  filters: { [key in FilterType]: boolean } = { labels: true, entities: true, created: false, labelFamilies: false };
+  snippetOverlayOpen = false;
   snippet = '';
   snippetPreview: SafeHtml = '';
-  unsubscribeAll = new Subject<void>();
-  clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
-  copyIcon = 'copy';
-  isTrainingEnabled = this.tracking.isFeatureEnabled('training');
-  canSuggestEntities = this.tracking.isFeatureEnabled('suggest-entities');
-  isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter');
-  isKnowledgeGraphEnabled = this.tracking.isFeatureEnabled('knowledge-graph');
-  areSynonymsEnabled = this.sdk.currentAccount.pipe(
-    map((account) => account.type),
-    map((accountType) => !!accountType && ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(accountType)),
-  );
-  canHideLogo = this.sdk.currentAccount.pipe(
-    map((account) => ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(account.type)),
-  );
+  currentQuery = '';
+
+  filters: { [key in FilterType]: boolean } = { labels: true, entities: true, created: false, labelFamilies: false };
+  placeholder = '';
+  debouncePlaceholder = new Subject<string>();
+
+  // FEATURES AVAILABILITY
   isUserPromptsEnabled = forkJoin([
     this.featureFlag.isFeatureEnabled('user-prompts').pipe(take(1)),
     this.sdk.currentAccount.pipe(
@@ -65,46 +79,105 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       take(1),
     ),
   ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
+  isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter');
+  autocompleteFromNerEnabled = this.tracking.isFeatureEnabled('suggest-entities');
+  isTrainingEnabled = this.tracking.isFeatureEnabled('training');
+  areSynonymsEnabled = this.sdk.currentAccount.pipe(
+    map((account) => account.type),
+    map((accountType) => !!accountType && ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(accountType)),
+  );
+  isKnowledgeGraphEnabled = this.tracking.isFeatureEnabled('knowledge-graph');
+  canHideLogo = this.sdk.currentAccount.pipe(
+    map((account) => ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(account.type)),
+  );
+  clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
 
-  debouncePlaceholder = new Subject<string>();
+  // controls have the name expected by the widget features list
+  advancedForm = new FormGroup({
+    answers: new FormControl<boolean>(false, { nonNullable: true }),
+    userPrompt: new FormControl<string>('', { nonNullable: true }),
+    hideSources: new FormControl<boolean>(false, { nonNullable: true }),
+    onlyAnswers: new FormControl<boolean>(false, { nonNullable: true }),
+    noBM25forChat: new FormControl<boolean>(false, { nonNullable: true }),
+    filter: new FormControl<boolean>(false, { nonNullable: true }),
+    autofilter: new FormControl<boolean>(false, { nonNullable: true }),
+    preselectedFilters: new FormControl<string>('', { nonNullable: true }),
+    useSynonyms: new FormControl<boolean>(false, { nonNullable: true }),
+    suggestions: new FormControl<boolean>(false, { nonNullable: true }),
+    suggestLabels: new FormControl<boolean>(false, { nonNullable: true }),
+    permalink: new FormControl<boolean>(false, { nonNullable: true }),
+    navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
+    navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),
+    targetNewTab: new FormControl<boolean>(false, { nonNullable: true }),
+    displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
+    hideThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
+    darkMode: new FormControl<boolean>(false, { nonNullable: true }),
+    hideLogo: new FormControl<boolean>(false, { nonNullable: true }),
+    autocompleteFromNERs: new FormControl<boolean>(false, { nonNullable: true }),
+    relations: new FormControl<boolean>(false, { nonNullable: true }),
+    knowledgeGraph: new FormControl<boolean>(false, { nonNullable: true }),
+  });
+  private readonly notFeatures = ['userPrompt', 'preselectedFilters', 'darkMode'];
 
-  widgetConfigurations: { [kbId: string]: typeof DEFAULT_WIDGET_CONFIG };
-
-  get mainFormFeatures() {
-    return this.mainForm?.controls['features'].value || {};
+  // FLAGS FOR CONDITIONAL FIELDS AND FEATURES
+  get answerGenerationEnabled() {
+    return this.advancedForm.controls.answers.value;
+  }
+  get filtersEnabled() {
+    return this.advancedForm.controls.filter.value;
+  }
+  get navigateToLinkEnabled() {
+    return this.advancedForm.controls.navigateToLink.value;
+  }
+  get navigateToFilesEnabled() {
+    return this.advancedForm.controls.navigateToFile.value;
+  }
+  get darkModeEnabled() {
+    return this.advancedForm.controls.darkMode.value;
   }
 
-  get features(): string {
-    return Object.entries(this.mainFormFeatures).reduce((features, [feature, enabled]) => {
-      if (enabled) {
-        features = `${features.length > 0 ? features + ',' : ''}${feature}`;
-      }
-      return features;
-    }, '');
+  // ADVANCED FORM VALUES ACCESSORS
+  get userPrompt() {
+    return this.advancedForm.controls.userPrompt.value;
   }
-
+  get preselectedFilters() {
+    return this.advancedForm.controls.preselectedFilters.value;
+  }
+  get hasOneFilter(): boolean {
+    return Object.entries(this.filters).filter(([, value]) => value).length === 1;
+  }
   get filtersValue(): string {
     return Object.entries(this.filters)
       .filter(([, value]) => value)
       .map(([key]) => key)
       .join(',');
   }
+  get features() {
+    return Object.entries(this.advancedForm.getRawValue()).reduce((features, [feature, enabled]) => {
+      if (enabled && !this.notFeatures.includes(feature)) {
+        features = `${features.length > 0 ? features + ',' : ''}${feature}`;
+      }
+      return features;
+    }, '');
+  }
 
-  get hasOneFilter(): boolean {
-    return Object.entries(this.filters).filter(([, value]) => value).length === 1;
+  // ADVANCED FORM CONTROLS ACCESSORS
+  get useSynonymsControl() {
+    return this.advancedForm.get('useSynonyms');
+  }
+  get relationsControl() {
+    return this.advancedForm.get('relations');
   }
 
   constructor(
-    private fb: NonNullableFormBuilder,
-    private sanitized: DomSanitizer,
-    private cdr: ChangeDetectorRef,
-    private backendConfig: BackendConfigurationService,
-    private tracking: STFTrackingService,
-    private translation: TranslateService,
-    private modalService: SisModalService,
     private sdk: SDKService,
-    private navigation: NavigationService,
     private featureFlag: FeatureFlagService,
+    private tracking: STFTrackingService,
+    private cdr: ChangeDetectorRef,
+    private sanitized: DomSanitizer,
+    private backendConfig: BackendConfigurationService,
+    private translate: TranslateService,
+    private navigation: NavigationService,
   ) {
     const config = this.localStorage.getItem(WIDGETS_CONFIGURATION);
     if (config) {
@@ -117,95 +190,97 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     } else {
       this.widgetConfigurations = {};
     }
-
-    this.preloadAlternativeWidget();
   }
 
   ngOnInit() {
+    this.debouncePlaceholder.pipe(debounceTime(500)).subscribe((placeholder) => {
+      this.placeholder = placeholder;
+      this.generateSnippet();
+    });
+
     combineLatest([this.sdk.currentKb, this.isEntityFiltersEnabled])
-      .pipe(
-        switchMap(([kb, isEntityFiltersEnabled]) => {
-          const config = this.widgetConfigurations[kb.id] || DEFAULT_WIDGET_CONFIG;
-          this.placeholder = config.placeholder;
-          this.filters.entities = !!isEntityFiltersEnabled;
-          if (config.filters) {
-            this.filters = config.filters;
-          }
-          this.mainForm = this.fb.group({
-            darkMode: [config.features.includes('darkMode')],
-            prompt: [],
-            preselectedFilters: '',
-            features: this.fb.group({
-              autofilter: [config.features.includes('autofilter')],
-              answers: [config.features.includes('answers')],
-              filter: [config.features.includes('filter')],
-              navigateToFile: [config.features.includes('navigateToFile')],
-              navigateToLink: [config.features.includes('navigateToLink')],
-              targetNewTab: [config.features.includes('targetNewTab')],
-              onlyAnswers: [config.features.includes('onlyAnswers')],
-              hideSources: [config.features.includes('hideSources')],
-              hideThumbnails: [config.features.includes('hideThumbnails')],
-              permalink: [config.features.includes('permalink')],
-              relations: [config.features.includes('relations')],
-              suggestLabels: [config.features.includes('suggestLabels')],
-              autocompleteFromNERs: [config.features.includes('autocompleteFromNERs')],
-              suggestions: [config.features.includes('suggestions')],
-              useSynonyms: [config.features.includes('useSynonyms')],
-              displayMetadata: [config.features.includes('displayMetadata')],
-              noBM25forChat: [config.features.includes('noBM25forChat')],
-              hideLogo: [config.features.includes('hideLogo')],
-              knowledgeGraph: [config.features.includes('knowledgeGraph')],
-            }),
-          });
-          setTimeout(() => this.generateSnippet(), 100);
-          return this.mainForm.valueChanges;
-        }),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(() => {
-        this.onFormChange();
-        this.mainForm?.markAsDirty();
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(([kb, isEntityFiltersEnabled]) => {
+        this.currentKbId = kb.id;
+        const config = this.widgetConfigurations[kb.id] || {};
+        this.placeholder = config.placeholder || '';
+        this.filters.entities = !!isEntityFiltersEnabled;
+        if (config.filters) {
+          this.filters = config.filters;
+        }
+        if (config.features) {
+          this.advancedForm.patchValue(config.features);
+        }
+        setTimeout(() => this.updateSnippetAndStoreConfig());
       });
 
-    this.debouncePlaceholder.pipe(debounceTime(500)).subscribe((placeholder) => {
-      this.placeholder = placeholder || undefined;
-      this.onFormChange();
-    });
+    // some changes in the form are causing other changes.
+    // Debouncing allows to update the snippet only once after all changes are done.
+    this.advancedForm.valueChanges
+      .pipe(debounceTime(100), takeUntil(this.unsubscribeAll))
+      .subscribe(() => this.updateSnippetAndStoreConfig());
   }
 
-  ngOnDestroy(): void {
+  private updateSnippetAndStoreConfig() {
+    this.generateSnippet();
+    this.widgetConfigurations[this.currentKbId] = {
+      features: this.advancedForm.getRawValue(),
+      placeholder: this.placeholder,
+      filters: this.filtersEnabled ? this.filters : undefined,
+    };
+    this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
+    this.cdr.detectChanges();
+  }
+
+  ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
     this.deletePreview();
   }
 
-  deletePreview() {
-    const searchWidgetElement = document.querySelector('nuclia-search') as any;
-    const searchBarElement = document.querySelector('nuclia-search-bar') as any;
-    const searchResultsElement = document.querySelector('nuclia-search-results') as any;
-    if (typeof searchWidgetElement?.$destroy === 'function') {
-      searchWidgetElement.$destroy();
+  toggleSnippet($event: MouseEvent | KeyboardEvent) {
+    $event.stopPropagation();
+    this.snippetOverlayOpen = !this.snippetOverlayOpen;
+  }
+
+  onPlaceholderChange(value: string) {
+    this.debouncePlaceholder.next(value);
+  }
+
+  onFiltersChange() {
+    // Wait for detection cycle to end before updating the snippet
+    setTimeout(() => this.updateSnippetAndStoreConfig());
+  }
+
+  // deactivate relations option if synonyms option is enabled
+  toggleSynonyms(useSynonyms: boolean) {
+    if (useSynonyms) {
+      this.relationsControl?.patchValue(false);
+      this.relationsControl?.disable();
+    } else {
+      this.relationsControl?.enable();
     }
-    if (typeof searchBarElement?.$destroy === 'function') {
-      searchBarElement.$destroy();
+  }
+
+  // deactivate synonyms option if relations option is enabled
+  toggleRelations(relations: boolean) {
+    if (relations) {
+      this.useSynonymsControl?.patchValue(false);
+      this.useSynonymsControl?.disable();
+    } else {
+      this.useSynonymsControl?.enable();
     }
-    if (typeof searchResultsElement?.$destroy === 'function') {
-      searchResultsElement.$destroy();
-    }
-    searchWidgetElement?.remove();
-    searchBarElement?.remove();
-    searchResultsElement?.remove();
   }
 
   generateSnippet() {
     this.deletePreview();
-    const placeholder = this.hasPlaceholder()
+    const placeholder = !!this.placeholder
       ? `
-  placeholder="${this.placeholder}"`
+    placeholder="${this.placeholder}"`
       : '';
     let prompt = '';
     let copiablePrompt = '';
-    const promptValue = this.mainForm?.controls['prompt'].getRawValue();
+    const promptValue = this.userPrompt;
     if (promptValue) {
       prompt = `prompt="${promptValue}"`;
       copiablePrompt = `prompt="${promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n`;
@@ -226,11 +301,11 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         ? `
   backend="${this.backendConfig.getAPIURL()}"`
         : '';
-      const filters = this.mainFormFeatures.filter
+      const filters = this.filtersEnabled
         ? `
   filters="${this.filtersValue}"`
         : '';
-      const preselectionValue = ((this.mainForm?.controls['preselectedFilters'].getRawValue() || '') as string)
+      const preselectionValue = this.preselectedFilters
         .split('\n')
         .map((filter) => filter.trim())
         .join(',');
@@ -239,7 +314,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   preselected_filters="${preselectionValue}"
       `
         : '';
-      const mode: string = this.mainForm?.controls['darkMode'].getRawValue() ? `mode="dark"` : '';
+      const mode: string = this.darkModeEnabled ? `mode="dark"` : '';
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
   ${zone}
@@ -253,79 +328,58 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
           .replace(
             'zone=',
             `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
-      lang="${this.translation.currentLang}"
-      ${prompt}
-      zone=`,
+  lang="${this.translate.currentLang}"
+  ${prompt}
+  zone=`,
           )
           .replace('standalone=', 'client="dashboard" standalone=')
           .replace(apiKey, ''),
       );
     });
 
-    markForCheck(this.cdr);
-  }
+    this.cdr.detectChanges();
 
-  private hasPlaceholder() {
-    return !!this.placeholder;
-  }
-
-  copy() {
-    navigator.clipboard.writeText(this.snippet);
-    this.copyIcon = 'check';
-    markForCheck(this.cdr);
+    // Run the search with the current query if any
     setTimeout(() => {
-      this.copyIcon = 'copy';
-      markForCheck(this.cdr);
+      const searchWidget = document.getElementsByTagName('nuclia-search-bar')[0] as unknown as any;
+      if (this.currentQuery) {
+        searchWidget?.search(this.currentQuery);
+      }
+      searchWidget?.addEventListener('search', (query: string) => {
+        // FIXME make sure this is working as part of https://app.shortcut.com/flaps/story/7916/dispatchcustomevent-doesn-t-work-anymore
+        this.currentQuery = query;
+      });
+    }, 500);
+  }
+
+  deletePreview() {
+    const searchWidgetElement = document.querySelector('nuclia-search') as any;
+    const searchBarElement = document.querySelector('nuclia-search-bar') as any;
+    const searchResultsElement = document.querySelector('nuclia-search-results') as any;
+    if (typeof searchWidgetElement?.$$c?.$destroy === 'function') {
+      searchWidgetElement.$$c.$destroy();
+    }
+    if (typeof searchBarElement?.$$c?.$destroy === 'function') {
+      searchBarElement.$$c.$destroy();
+    }
+    if (typeof searchResultsElement?.$$c?.$destroy === 'function') {
+      searchResultsElement.$$c.$destroy();
+    }
+    searchWidgetElement?.remove();
+    searchBarElement?.remove();
+    searchResultsElement?.remove();
+  }
+
+  copySnippet() {
+    navigator.clipboard.writeText(this.snippet);
+
+    this.copyButtonLabel = 'generic.copied';
+    this.copyButtonActive = true;
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.copyButtonLabel = 'generic.copy';
+      this.copyButtonActive = false;
+      this.cdr.markForCheck();
     }, 1000);
-  }
-
-  onPlaceholderChange(value: string) {
-    this.debouncePlaceholder.next(value);
-  }
-
-  onFiltersChange() {
-    this.onFormChange();
-  }
-
-  showHints() {
-    this.modalService.openModal(WidgetHintDialogComponent);
-  }
-
-  private preloadAlternativeWidget() {
-    const id = 'old-widget-script';
-    if (!document.querySelector(`#${id}`)) {
-      const widgetScript = window.document.createElement('script');
-      widgetScript.id = id;
-      widgetScript.type = 'text/javascript';
-      widgetScript.async = true;
-      widgetScript.defer = true;
-      widgetScript.src = `${this.backendConfig.getCDN()}/nuclia-widget.umd.js`;
-      window.document.body.appendChild(widgetScript);
-    }
-  }
-
-  onFormChange() {
-    this.generateSnippet();
-    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
-      this.widgetConfigurations[kb.id] = {
-        features: this.features.split(','),
-        placeholder: this.placeholder,
-        filters: this.mainFormFeatures.filter ? this.filters : undefined,
-      };
-      this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
-    });
-  }
-
-  updateTarget(navigateToLinkEnabled: boolean) {
-    const targetNewTabControl = this.mainForm?.controls['features']?.get('targetNewTab');
-    if (!targetNewTabControl) {
-      return;
-    }
-    if (navigateToLinkEnabled) {
-      targetNewTabControl.enable();
-    } else {
-      targetNewTabControl.patchValue(false);
-      targetNewTabControl.disable();
-    }
   }
 }
