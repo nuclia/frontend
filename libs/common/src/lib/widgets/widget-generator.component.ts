@@ -7,39 +7,7 @@ import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { NavigationService } from '@flaps/common';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
-
-type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
-
-type AdvancedForm = {
-  answers: boolean;
-  userPrompt: string;
-  hideSources: boolean;
-  onlyAnswers: boolean;
-  noBM25forChat: boolean;
-  filter: boolean;
-  autofilter: boolean;
-  preselectedFilters: string;
-  useSynonyms: boolean;
-  suggestions: boolean;
-  suggestLabels: boolean;
-  permalink: boolean;
-  navigateToLink: boolean;
-  navigateToFile: boolean;
-  targetNewTab: boolean;
-  displayMetadata: boolean;
-  hideThumbnails: boolean;
-  darkMode: boolean;
-  hideLogo: boolean;
-  autocompleteFromNERs: boolean;
-  relations: boolean;
-  knowledgeGraph: boolean;
-};
-type WidgetConfiguration = {
-  features?: AdvancedForm;
-  placeholder?: string;
-  filters?: { [key in FilterType]: boolean };
-};
-const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
+import { FilterType, WidgetConfiguration, WIDGETS_CONFIGURATION } from './widget-generator.models';
 
 @Component({
   selector: 'app-widget-generator',
@@ -66,10 +34,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   snippet = '';
   snippetPreview: SafeHtml = '';
   currentQuery = '';
-
-  filters: { [key in FilterType]: boolean } = { labels: true, entities: true, created: false, labelFamilies: false };
-  placeholder = '';
-  debouncePlaceholder = new Subject<string>();
 
   // FEATURES AVAILABILITY
   isUserPromptsEnabled = forkJoin([
@@ -118,6 +82,11 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     knowledgeGraph: new FormControl<boolean>(false, { nonNullable: true }),
   });
   private readonly notFeatures = ['userPrompt', 'preselectedFilters', 'darkMode'];
+
+  // advanced options not managed directly in the form
+  filters: { [key in FilterType]: boolean } = { labels: true, entities: true, created: false, labelFamilies: false };
+  placeholder = '';
+  debouncePlaceholder = new Subject<string>();
 
   // FLAGS FOR CONDITIONAL FIELDS AND FEATURES
   get answerGenerationEnabled() {

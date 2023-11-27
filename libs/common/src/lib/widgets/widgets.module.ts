@@ -16,8 +16,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { WidgetGeneratorComponent } from './widget-generator.component';
 
-import { WidgetHintDialogComponent } from './hint/widget-hint.component';
-
 const routes = [
   {
     path: '',
@@ -42,7 +40,7 @@ const routes = [
     PaPopupModule,
   ],
   exports: [],
-  declarations: [WidgetGeneratorComponent, WidgetHintDialogComponent],
+  declarations: [WidgetGeneratorComponent],
   providers: [],
 })
 export class WidgetsModule {}
