@@ -48,7 +48,7 @@ export class ManagerStore {
         } else if (!a.isManager && b.isManager) {
           return 1;
         } else {
-          return a.name.localeCompare(b.name);
+          return (a.name || '').localeCompare(b.name || '');
         }
       }),
     );
