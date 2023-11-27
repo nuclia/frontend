@@ -1,0 +1,9 @@
+<nsy-topbar></nsy-topbar>
+<nsy-sidebar></nsy-sidebar>
+<div class="page-wrapper">
+  <div
+    class="page-content"
+    *ngIf="isLogged">
+    <router-outlet></router-outlet>
+  </div>
+</div>

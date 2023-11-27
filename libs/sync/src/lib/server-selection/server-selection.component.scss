@@ -1,0 +1,12 @@
+@import 'apps/dashboard/src/variables';
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+pa-button {
+  margin: rhythm(1) 0;
+}
+h3 {
+  margin: rhythm(2) 0 rhythm(1) 0;
+}

@@ -73,6 +73,7 @@ export class AppInitService {
             config.production && location.origin.startsWith('http')
               ? location.origin.replace('manage.', '').replace('auth.', '')
               : config.backend.apiOrigin;
+          config.backend.apiOrigin = apiOrigin;
           config.backend.api = apiOrigin + config.backend.apiPath;
           config.backend.cdn = staticEnv.standalone ? 'https://cdn.nuclia.cloud' : apiOrigin.replace('//', '//cdn.');
           if (config.backend.cdn && !JS_INJECTED) {

@@ -1,0 +1,12 @@
+@import 'apps/dashboard/src/variables';
+
+h2 {
+  margin-bottom: 0;
+}
+
+.connectors-list {
+  display: flex;
+  flex-wrap: wrap;
+  padding: rhythm(1);
+  margin-bottom: rhythm(8);
+}

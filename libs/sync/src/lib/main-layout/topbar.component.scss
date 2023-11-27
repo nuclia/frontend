@@ -1,0 +1,37 @@
+@import 'apps/dashboard/src/variables';
+
+.top-bar {
+  align-items: center;
+  background-color: $color-dark-stronger;
+  display: flex;
+  height: rhythm(9);
+  left: 0;
+  padding-right: rhythm(12);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 900;
+}
+.logo {
+  cursor: pointer;
+  margin-left: rhythm(3);
+}
+.status {
+  margin-left: auto;
+  padding: 0 rhythm(2);
+}
+.separator {
+  width: 1px;
+  height: 100%;
+  margin: 0 rhythm(4);
+  background-color: $color-neutral-regular;
+}
+
+:host {
+  pa-avatar ::ng-deep .pa-avatar {
+    cursor: pointer;
+  }
+  pa-dropdown ::ng-deep .pa-popup {
+    z-index: 910;
+  }
+}

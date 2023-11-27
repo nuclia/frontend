@@ -1,0 +1,85 @@
+@import 'apps/dashboard/src/variables';
+
+.select-files {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+h2 {
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.searchbar {
+  align-items: center;
+  flex: 0 0 auto;
+  display: flex;
+  height: rhythm(6);
+  margin-top: rhythm(3);
+}
+
+.body {
+  overflow-y: auto;
+}
+
+.footer {
+  display: flex;
+  gap: rhythm(2);
+  padding-top: rhythm(8);
+}
+
+.search-form {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  margin-bottom: rhythm(1);
+  padding-right: rhythm(2);
+
+  pa-input ::ng-deep .pa-field-control {
+    height: rhythm(4);
+  }
+
+  pa-button {
+    margin-left: rhythm(0.5);
+  }
+}
+
+table {
+  border-spacing: 0;
+  border-top: 2px solid $color-neutral-regular;
+  margin-top: rhythm(1);
+  width: calc(100% - #{rhythm(2)});
+}
+
+td {
+  align-items: center;
+  border-bottom: 1px solid $color-neutral-regular;
+  display: flex;
+  height: rhythm(4);
+  transition: color $transition-hint;
+
+  .disabled {
+    color: $color-text-disabled;
+    padding-left: rhythm(3.5);
+  }
+}
+
+.parameters {
+  margin-top: rhythm(4);
+}
+
+.source-destination {
+  align-items: center;
+  display:flex;
+  gap: rhythm(1);
+  margin-bottom: rhythm(8);
+  img {
+    width: rhythm(3);
+    height: rhythm(3);
+  }
+}

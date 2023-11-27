@@ -1,0 +1,78 @@
+@import 'apps/dashboard/src/variables';
+
+.sidebar {
+  background: $color-neutral-lightest;
+  height: calc(100% - #{rhythm(9)});
+  position: fixed;
+  top: rhythm(9);
+  left: 0;
+  overflow-y: auto;
+  padding-top: rhythm(6);
+  width: rhythm(35);
+
+  .upload-menu {
+    border-bottom: 1px solid $color-neutral-light;
+  }
+
+  .menu-title {
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: rhythm(1);
+    margin-left: rhythm(4);
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      font-size: $font-size-title-s;
+      gap: rhythm(2);
+      padding: 0 rhythm(4);
+      position: relative;
+      height: rhythm(6);
+      transition: background-color $transition-hint, color $transition-hint;
+
+      .logo {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        width: rhythm(3);
+        height: rhythm(3);
+      }
+
+      &:focus,
+      &:hover {
+        outline: 0;
+        background-color: $color-neutral-lighter;
+
+        .arrow {
+          visibility: visible;
+        }
+      }
+
+      .arrow {
+        position: absolute;
+        top: 50%;
+        right: rhythm(2);
+        transform: translateY(-50%);
+        visibility: hidden;
+      }
+
+      &.active {
+        background-color: $color-dark-stronger;
+        color: $color-light-stronger;
+        font-weight: $font-weight-semi-bold;
+
+        .arrow {
+          visibility: visible;
+        }
+      }
+    }
+  }
+}

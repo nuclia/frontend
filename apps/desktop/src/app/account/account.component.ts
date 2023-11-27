@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ACCOUNT_KEY, SyncService } from '../sync/sync.service';
+import { ACCOUNT_KEY, SyncService } from '@nuclia/sync';
 import { SDKService } from '@flaps/core';
 import { catchError, of, tap } from 'rxjs';
 
