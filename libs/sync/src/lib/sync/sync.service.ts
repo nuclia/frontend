@@ -17,7 +17,6 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { environment } from '../../environments/environment';
 import {
   baseLogoPath,
   ConnectorSettings,
@@ -31,7 +30,7 @@ import {
   SyncRow,
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
-import { injectScript, SDKService } from '@flaps/core';
+import { BackendConfigurationService, injectScript, SDKService } from '@flaps/core';
 import { SitemapConnector } from './sources/sitemap';
 import { Classification, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { DynamicConnectorWrapper } from './dynamic-connector';
@@ -60,9 +59,9 @@ export class SyncService {
         title: 'Google Drive',
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
-        factory: (settings) => of(new OAuthConnector('gdrive', settings?.id || '')),
+        factory: (settings) => of(new OAuthConnector('gdrive', settings?.id || '', settings?.path || '')),
       },
-      settings: {},
+      settings: { path: this.config.getAPIOrigin() },
     },
     onedrive: {
       definition: {
@@ -70,9 +69,9 @@ export class SyncService {
         title: 'One Drive',
         logo: `${baseLogoPath}/onedrive.svg`,
         description: 'Microsoft OneDrive file hosting service',
-        factory: (settings) => of(new OAuthConnector('onedrive', settings?.id || '')),
+        factory: (settings) => of(new OAuthConnector('onedrive', settings?.id || '', settings?.path || '')),
       },
-      settings: {},
+      settings: { path: this.config.getAPIOrigin() },
     },
     sharepoint: {
       definition: {
@@ -81,9 +80,9 @@ export class SyncService {
         logo: `${baseLogoPath}/sharepoint.svg`,
         description: 'Microsoft Sharepoint service',
         permanentSyncOnly: true,
-        factory: (settings) => of(new SharepointImpl('sharepoint', settings?.id || '')),
+        factory: (settings) => of(new SharepointImpl('sharepoint', settings?.id || '', settings?.path || '')),
       },
-      settings: {},
+      settings: { path: this.config.getAPIOrigin() },
     },
     dropbox: {
       definition: {
@@ -91,9 +90,9 @@ export class SyncService {
         title: 'Dropbox',
         logo: `${baseLogoPath}/dropbox.svg`,
         description: 'File storage and synchronization service developed by Dropbox',
-        factory: (settings) => of(new OAuthConnector('dropbox', settings?.id || '')),
+        factory: (settings) => of(new OAuthConnector('dropbox', settings?.id || '', settings?.path || '')),
       },
-      settings: {},
+      settings: { path: this.config.getAPIOrigin() },
     },
     folder: { definition: FolderConnector, settings: {} },
     sitemap: { definition: SitemapConnector, settings: {} },
@@ -105,7 +104,10 @@ export class SyncService {
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
       definition: NucliaCloudKB,
-      settings: environment.connectors.nucliacloud,
+      settings:  {
+        backend: this.config.getAPIURL(),
+        client: this.config.staticConf.client,
+      },
     },
   };
   sourceObs = new BehaviorSubject(Object.values(this.sources).map((obj) => obj.definition));
@@ -129,6 +131,7 @@ export class SyncService {
   constructor(
     private sdk: SDKService,
     private http: HttpClient,
+    private config: BackendConfigurationService,
   ) {
     const account = this.getAccountId();
     if (account) {

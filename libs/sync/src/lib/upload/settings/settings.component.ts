@@ -31,7 +31,7 @@ import { SyncService } from '../../sync/sync.service';
 import { ConnectorDefinition, Field } from '../../sync/models';
 import { SDKService } from '@flaps/core';
 import { Classification, KnowledgeBox, LabelSetKind, LabelSets, Nuclia } from '@nuclia/core';
-import { environment } from '../../../environments/environment';
+import { BackendConfigurationService } from '@flaps/core';
 import { getClassificationFromSelection, getSelectionFromClassification } from '@nuclia/sistema';
 
 @Component({
@@ -71,6 +71,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
     private cdr: ChangeDetectorRef,
     private formBuilder: UntypedFormBuilder,
     private sdk: SDKService,
+    private config: BackendConfigurationService,
   ) {}
 
   get local(): boolean {
@@ -229,7 +230,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
     const nuclia = this.local
       ? new Nuclia({
           backend: this.localUrl || '',
-          client: environment.client,
+          client: this.config.staticConf.client,
           standalone: true,
         })
       : this.sdk.nuclia;
@@ -291,7 +292,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
       ? forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.kbList.pipe(take(1))]).pipe(
           map(([account, kbs]) => {
             const kb = kbs.find((kb) => kb.id === kbId);
-            this.dashboardUrl = this.getDashboardUrl(environment.dashboard, account.slug, kb?.slug || '');
+            this.dashboardUrl = this.getDashboardUrl(this.config.getAPIOrigin(), account.slug, kb?.slug || '');
             return account.slug;
           }),
         )

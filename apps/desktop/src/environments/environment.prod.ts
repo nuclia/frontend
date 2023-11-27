@@ -7,11 +7,4 @@ export const environment = {
     new_api: true,
   },
   locales: ['en-US', 'es', 'ca'],
-  connectors: {
-    nucliacloud: {
-      backend: 'https://nuclia.cloud/api',
-      client: 'desktop',
-      zone: 'europe-1',
-    },
-  },
 };
