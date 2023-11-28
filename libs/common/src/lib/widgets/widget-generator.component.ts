@@ -62,7 +62,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       take(1),
     ),
   ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
-  isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter');
   autocompleteFromNerEnabled = this.tracking.isFeatureEnabled('suggest-entities');
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
   areSynonymsEnabled = this.sdk.currentAccount.pipe(
