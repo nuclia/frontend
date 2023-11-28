@@ -127,6 +127,8 @@ export class SyncService {
   currentSource = combineLatest([this.sourcesCache, this.currentSourceId]).pipe(
     map(([sources, sourceId]) => sources[sourceId || '']),
   );
+  private _basePath = new BehaviorSubject<string>('/');
+  basePath = this._basePath.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -460,5 +462,9 @@ export class SyncService {
   logout() {
     localStorage.removeItem(ACCOUNT_KEY);
     this.sdk.nuclia.auth.logout();
+  }
+
+  setBasePath(path: string) {
+    this._basePath.next(path);
   }
 }

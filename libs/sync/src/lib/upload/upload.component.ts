@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { delay, filter, forkJoin, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { STFTrackingService } from '@flaps/core';
 import { CONNECTOR_ID_KEY, ISourceConnector, SOURCE_NAME_KEY } from '../sync/models';
@@ -26,6 +26,7 @@ export class UploadComponent implements OnInit, OnDestroy {
     private tracking: STFTrackingService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -139,6 +140,6 @@ export class UploadComponent implements OnInit, OnDestroy {
 
   cancel() {
     this.reset();
-    this.router.navigate(['/']);
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
 }

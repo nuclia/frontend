@@ -21,6 +21,7 @@ export class SidebarComponent {
     ),
   );
   step = this.sync.step;
+  basePath = this.sync.basePath;
   currentSourceId = this.sync.currentSourceId;
   isServerPage = new BehaviorSubject(false);
 
@@ -32,13 +33,13 @@ export class SidebarComponent {
       .pipe(
         filter((event) => event instanceof NavigationEnd),
         map((event) => event as NavigationEnd),
-        map((event) => event.url === '/server'),
+        map((event) => event.url.endsWith('/server')),
       )
       .subscribe((isServer) => this.isServerPage.next(isServer));
   }
 
   goToSource(connectorId: string, sourceId: string) {
-    from(this.router.navigate(['/add-upload'])).subscribe(() => {
+    this.basePath.pipe(switchMap((path) => from(this.router.navigate([path + 'add-upload'])))).subscribe(() => {
       setTimeout(() => {
         this.sync.showSource.next({ connectorId, sourceId });
       }, 0);
@@ -46,7 +47,7 @@ export class SidebarComponent {
   }
 
   addSource() {
-    from(this.router.navigate(['/add-upload'])).subscribe(() => {
+    this.basePath.pipe(switchMap((path) => from(this.router.navigate([path + 'add-upload'])))).subscribe(() => {
       setTimeout(() => {
         this.sync.addSource.next();
       }, 0);

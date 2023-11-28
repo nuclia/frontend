@@ -8,7 +8,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { combineLatest, Observable, of, Subject, take } from 'rxjs';
 import { catchError, filter, map, scan, share, switchMap, tap } from 'rxjs/operators';
@@ -78,6 +78,7 @@ export class SelectFilesComponent implements AfterViewInit {
     private modalService: SisModalService,
     private translate: TranslateService,
     private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   ngAfterViewInit() {
@@ -145,7 +146,7 @@ export class SelectFilesComponent implements AfterViewInit {
       }
       this.sync.addSync(this.sync.getCurrentSourceId() || '', this.selection.selected).subscribe((success) => {
         if (success) {
-          this.router.navigate(['/history'], { queryParams: { active: 'true' } });
+          this.router.navigate(['../history'], { relativeTo: this.route, queryParams: { active: 'true' } });
         }
       });
     });
