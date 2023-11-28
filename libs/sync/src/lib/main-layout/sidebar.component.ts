@@ -24,11 +24,15 @@ export class SidebarComponent {
   currentSourceId = this.sync.currentSourceId;
   isServerPage = new BehaviorSubject(false);
 
-  constructor(private sync: SyncService, private router: Router) {
+  constructor(
+    private sync: SyncService,
+    private router: Router,
+  ) {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
-        map((event: NavigationEnd) => event.url === '/server'),
+        map((event) => event as NavigationEnd),
+        map((event) => event.url === '/server'),
       )
       .subscribe((isServer) => this.isServerPage.next(isServer));
   }
