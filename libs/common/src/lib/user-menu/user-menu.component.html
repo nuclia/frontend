@@ -32,7 +32,8 @@
       (click)="createAccount()">
       {{ 'generic.create_account' | translate }}
     </pa-option>
-  } @else if (!standalone) {
+  }
+  @if (!standalone) {
     <pa-option
       data-cy="go-to-manage-account"
       icon="account"
