@@ -93,4 +93,11 @@ export class UserMenuComponent implements OnDestroy {
     this.close.emit();
     this.router.navigate(['/user/onboarding']);
   }
+
+  goToManageAccount() {
+    this.close.emit();
+    if (this.account) {
+      this.router.navigate([this.navigation.getAccountManageUrl(this.account.slug) + '/home']);
+    }
+  }
 }

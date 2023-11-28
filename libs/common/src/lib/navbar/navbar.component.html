@@ -48,6 +48,15 @@
             <pa-icon name="list"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.list' | translate }}</span>
           </a>
+          <a
+            [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widget-generator' : null"
+            routerLinkActive="active"
+            class="nav-link"
+            data-cy="go-to-widget"
+            [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+            <pa-icon name="widget"></pa-icon>
+            <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
+          </a>
         </div>
       </div>
       <div class="nav-group">
@@ -59,7 +68,7 @@
             [class.sub-item]="inSettings | async"
             data-cy="go-to-settings"
             [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
-            <pa-icon name="settings"></pa-icon>
+            <pa-icon name="gear"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
           </a>
         </div>
@@ -138,15 +147,6 @@
                 <span class="nav-link-title">{{ 'stash.side.users' | translate }}</span>
               </a>
             </ng-container>
-            <a
-              [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widget-generator' : null"
-              routerLinkActive="active"
-              class="nav-link sub-item"
-              data-cy="go-to-widget"
-              [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
-              <pa-icon name="widget"></pa-icon>
-              <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
-            </a>
           </div>
         </div>
       </ng-container>
@@ -160,21 +160,6 @@
           <a class="nav-link">
             <pa-icon name="knowledge-box"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.manage-kbs' | translate }}</span>
-          </a>
-        </div>
-      </div>
-      <div
-        class="nav-group"
-        *ngIf="!standalone">
-        <div class="group-items">
-          <a
-            [routerLink]="(isAccountManager | async) ? (accountUrl | async) + '/home' : null"
-            class="nav-link"
-            routerLinkActive="active"
-            data-cy="go-to-manage-account"
-            [class.disabled]="!(isAccountManager | async)">
-            <pa-icon name="account"></pa-icon>
-            <span class="nav-link-title">{{ 'account.manage' | translate }}</span>
           </a>
         </div>
       </div>
@@ -199,7 +184,7 @@
             routerLinkActive="active"
             data-cy="go-to-account-settings"
             class="nav-link">
-            <pa-icon name="settings"></pa-icon>
+            <pa-icon name="gear"></pa-icon>
             <span class="nav-link-title">{{ 'account.settings' | translate }}</span>
           </a>
         </div>
