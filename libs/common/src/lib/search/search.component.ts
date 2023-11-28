@@ -101,11 +101,11 @@ export class SearchComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     const searchBarElement = document.querySelector('nuclia-search-bar') as any;
     const searchResultsElement = document.querySelector('nuclia-search-results') as any;
-    if (typeof searchBarElement?.$destroy === 'function') {
-      searchBarElement.$destroy();
+    if (typeof searchBarElement?.$$c?.$destroy === 'function') {
+      searchBarElement.$$c.$destroy();
     }
-    if (typeof searchResultsElement?.$destroy === 'function') {
-      searchResultsElement.$destroy();
+    if (typeof searchResultsElement?.$$c?.$destroy === 'function') {
+      searchResultsElement.$$c.$destroy();
     }
   }
 

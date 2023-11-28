@@ -9,32 +9,38 @@
     (click)="goProfile()">
     {{ 'generic.user_preferences' | translate }}
   </pa-option>
-  <ng-container *ngIf="(isBillingEnabled | async) && (isAccountManager | async)">
+  @if ((isBillingEnabled | async) && (isAccountManager | async)) {
     <pa-separator></pa-separator>
     <pa-option
       icon="payment"
       (click)="goToBilling()">
       {{ 'account.billing' | translate }}
     </pa-option>
-  </ng-container>
-
-  <ng-container *ngIf="accounts.length > 1 || standalone">
+  }
+  @if (accounts.length > 1 || standalone) {
     <pa-separator></pa-separator>
     <pa-option
       icon="reload"
       (click)="switchAccount()">
       {{ 'generic.switch_account' | translate }}
     </pa-option>
-  </ng-container>
-
-  <ng-container *ngIf="(hasOwnAccount | async) === false">
+  }
+  @if ((hasOwnAccount | async) === false) {
     <pa-separator></pa-separator>
     <pa-option
       icon="account"
       (click)="createAccount()">
       {{ 'generic.create_account' | translate }}
     </pa-option>
-  </ng-container>
+  }
+  @if (!standalone) {
+    <pa-option
+      data-cy="go-to-manage-account"
+      icon="account"
+      (click)="goToManageAccount()">
+      {{ 'account.manage' | translate }}
+    </pa-option>
+  }
 
   <pa-separator></pa-separator>
   <pa-option

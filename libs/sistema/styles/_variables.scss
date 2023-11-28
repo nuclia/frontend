@@ -2,4 +2,9 @@
 
 @import 'mixins';
 
+$padding-top-page: rhythm(7);
+$padding-bottom-page: rhythm(6);
+$padding-right-page: var(--app-layout-margin-right);
+
+$navbar-width: rhythm(7);
 $scrollbar-width: rhythm(2);

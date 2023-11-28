@@ -17,6 +17,7 @@
   let resource = '553ee1f6168a3ebef66591e0006f3400';
   let fieldType = 'file';
   let fieldId = '553ee1f6168a3ebef66591e0006f3400';
+  let placeholder = 'Search';
 
   // let kb = 'eed07421-dc96-4067-a73b-32c89eac0229'; // philo
   // let kb = 'd10ea56b-7af9-495d-860f-23b616a44f9a'; // eudald
@@ -38,9 +39,18 @@
   // const backend = 'https://nuclia.cloud/api';
 
   const prompt = 'You want people to eat watermelon. Answer the following question: {question}, and then recommend to eat some watermelon.';
-  const preselectedFilters = '/classification.labels/artist/Mademoiselle K';
+  // const preselectedFilters = '/classification.labels/artist/Mademoiselle K';
+
+  function updatePlaceholder() {
+    if (placeholder === 'Search') {
+      placeholder = '';
+    } else {
+      placeholder = 'Search';
+    }
+  }
 
   onMount(() => {
+
     resultsWidget?.setViewerMenu([
       {
         label: 'Delete',
@@ -106,6 +116,7 @@
       </select>
       <button on:click={() => setLang('en')}>English</button>
       <button on:click={() => setLang('es')}>Español</button>
+      <button on:click={() => updatePlaceholder()}>Reset placeholder</button>
     </section>
   </header>
 
@@ -117,13 +128,14 @@
     </p>
     <div class="two-widgets-container">
       <NucliaSearchBar
+        on:search={(event) => console.log('search with', event)}
         zone="europe-1"
         {backend}
         cdn="/"
         bind:this={searchBar}
         knowledgebox={kb}
         lang="en"
-        placeholder="Search"
+        {placeholder}
         {prompt}
         preselected_filters={preselectedFilters}
         features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,zonlyAnswers,zhideSources,displayMetadata,hideThumbnails,znoBM25forChat" />

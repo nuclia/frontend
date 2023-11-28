@@ -48,6 +48,9 @@
   export let prompt = '';
 
   $: darkMode = mode === 'dark';
+  $: {
+    widgetPlaceholder.set(placeholder || 'input.placeholder');
+  }
 
   let _features: WidgetFeatures = {};
   let _filters: { [key: FilterType]: boolean } = {};
@@ -118,9 +121,7 @@
     // Setup widget in the store
     widgetFeatures.set(_features);
     widgetFilters.set(_filters);
-    if (placeholder) {
-      widgetPlaceholder.set(placeholder);
-    }
+
     if (_features.filter) {
       if (_filters.labels) {
         initLabelStore();

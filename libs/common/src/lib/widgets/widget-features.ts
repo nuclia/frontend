@@ -1,5 +1,7 @@
 import { WidgetFeatures } from '@nuclia/core';
 
+// TODO to be refactored, we probably want our search page to use presets instead of this default set of features manually updated
+
 export const DEFAULT_FEATURES: WidgetFeatures = {
   editLabels: false,
   entityAnnotation: false,
