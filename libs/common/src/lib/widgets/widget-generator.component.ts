@@ -35,7 +35,6 @@ const EXPANDER_CREATION_TIME = 100;
 })
 export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   private localStorage = inject(LOCAL_STORAGE);
-
   private unsubscribeAll = new Subject<void>();
   private currentKbId = '';
   private readonly widgetConfigurations: { [kbId: string]: WidgetConfiguration };
