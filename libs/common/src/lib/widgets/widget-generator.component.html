@@ -26,12 +26,12 @@
     <div class="configuration-panel">
       <pa-tabs>
         <pa-tab
-          (click)="selectedTab = 'preset'"
+          (click)="selectTab('preset')"
           [active]="selectedTab === 'preset'">
           {{ 'widget.generator.tabs.presets' | translate }}
         </pa-tab>
         <pa-tab
-          (click)="selectedTab = 'advanced'"
+          (click)="selectTab('advanced')"
           [active]="selectedTab === 'advanced'">
           {{ 'widget.generator.tabs.advanced' | translate }}
         </pa-tab>
@@ -39,11 +39,164 @@
 
       @switch (selectedTab) {
         @case ('preset') {
-          <div class="tab-content preset-content">Presets content</div>
+          <div class="tab-content preset-content">
+            <div class="tab-description tab-content-body body-m">
+              {{ 'widget.generator.presets.description' | translate }}
+            </div>
+            <form [formGroup]="presetForm">
+              <pa-expander
+                emitOnly
+                [expanded]="presetAccordionExpanded === 'preset'"
+                (toggleExpander)="toggleAccordion('preset')">
+                <pa-expander-header>
+                  <div class="title-s">
+                    {{ 'widget.generator.presets.search-experience' | translate }}
+                  </div>
+                </pa-expander-header>
+                <pa-expander-body>
+                  <div class="tab-content-body">
+                    <pa-radio-group
+                      name="radio-presets"
+                      formControlName="preset">
+                      @for (preset of presetList | async; track preset) {
+                        <div class="toggle-and-help">
+                          <pa-radio
+                            [value]="preset"
+                            [help]="'widget.generator.presets.' + preset + '.short-description'">
+                            {{ 'widget.generator.presets.' + preset + '.title' | translate }}
+                          </pa-radio>
+
+                          <pa-icon
+                            name="info"
+                            [paPopover]="presetPopover"></pa-icon>
+                          <pa-popover #presetPopover>
+                            {{ 'widget.generator.presets.' + preset + '.long-description' | translate }}
+                          </pa-popover>
+                        </div>
+                      }
+                    </pa-radio-group>
+                  </div>
+                </pa-expander-body>
+              </pa-expander>
+
+              @if (selectedPreset === 'ask') {
+                <pa-expander
+                  emitOnly
+                  [expanded]="presetAccordionExpanded === 'answerOutput'"
+                  (toggleExpander)="toggleAccordion('answerOutput')">
+                  <pa-expander-header>
+                    <div class="title-s">
+                      {{ 'widget.generator.presets.ask.what-to-show.title' | translate }}
+                    </div>
+                  </pa-expander-header>
+                  <pa-expander-body>
+                    <div class="tab-content-body">
+                      <div class="body-m">
+                        {{ 'widget.generator.presets.ask.what-to-show.question' | translate }}
+                      </div>
+                      <pa-radio-group
+                        name="radio-presets"
+                        formControlName="answerOutput">
+                        <pa-radio
+                          noEllipsis
+                          value="onlyAnswers">
+                          {{ 'widget.generator.presets.ask.what-to-show.only-answer' | translate }}
+                        </pa-radio>
+                        <pa-radio
+                          noEllipsis
+                          value="answerAndResults">
+                          {{ 'widget.generator.presets.ask.what-to-show.answer-and-results' | translate }}
+                        </pa-radio>
+                      </pa-radio-group>
+                    </div>
+                  </pa-expander-body>
+                </pa-expander>
+                @if (isAiCopilotEnabled | async) {
+                  <pa-expander
+                    emitOnly
+                    [expanded]="presetAccordionExpanded === 'copilot'"
+                    (toggleExpander)="toggleAccordion('copilot')">
+                    <pa-expander-header>
+                      <div class="title-s">
+                        {{ 'widget.generator.presets.copilot.title' | translate }}
+                      </div>
+                    </pa-expander-header>
+                    <pa-expander-body>
+                      <div class="tab-content-body">
+                        <div class="title-xs">{{ 'widget.generator.presets.copilot.question' | translate }}</div>
+                        <div class="body-m">{{ 'widget.generator.presets.copilot.description' | translate }}</div>
+                        <pa-button aspect="solid">
+                          {{ 'widget.generator.presets.copilot.create-copilot-button' | translate }}
+                        </pa-button>
+                      </div>
+                    </pa-expander-body>
+                  </pa-expander>
+                }
+              }
+
+              @if (
+                selectedPreset === 'search' ||
+                selectedPreset === 'find' ||
+                (selectedPreset === 'ask' && answersAndResultsSelected)
+              ) {
+                <pa-expander
+                  emitOnly
+                  [expanded]="presetAccordionExpanded === 'location'"
+                  (toggleExpander)="toggleAccordion('location')">
+                  <pa-expander-header>
+                    <div class="title-s">
+                      {{ 'widget.generator.presets.widget-location.title' | translate }}
+                    </div>
+                  </pa-expander-header>
+                  <pa-expander-body>
+                    <div class="tab-content-body">
+                      <div class="body-m">
+                        {{ 'widget.generator.presets.widget-location.question' | translate }}
+                      </div>
+                      <pa-radio-group
+                        name="radio-presets"
+                        formControlName="location">
+                        <pa-radio
+                          noEllipsis
+                          value="public">
+                          {{ 'widget.generator.presets.widget-location.public' | translate }}
+                        </pa-radio>
+                        <pa-radio
+                          noEllipsis
+                          value="application">
+                          {{ 'widget.generator.presets.widget-location.application' | translate }}
+                        </pa-radio>
+                      </pa-radio-group>
+                    </div>
+                  </pa-expander-body>
+                </pa-expander>
+              }
+            </form>
+          </div>
         }
         @case ('advanced') {
           <div class="tab-content advanced-content">
             <form [formGroup]="advancedForm">
+              @if (selectedPreset) {
+                <div class="tab-content-body tab-description toggle-and-help">
+                  <div class="body-m">
+                    {{ 'widget.generator.advanced.selected-preset.label' | translate }}
+                    {{ 'widget.generator.presets.' + selectedPreset + '.title' | translate }}
+                    @if (isModified) {
+                      {{ 'widget.generator.advanced.selected-preset.edited' | translate }}
+                    }
+                  </div>
+                  <pa-button
+                    class="undo-button"
+                    [class.undo-visible]="isModified"
+                    icon="undo"
+                    aspect="basic"
+                    (click)="resetToPreset()">
+                    {{ 'generic.reset' | translate }}
+                  </pa-button>
+                </div>
+              }
+
               <pa-expander [contentLoaded]="answerGenerationEnabled">
                 <pa-expander-header>
                   <div class="title-s">
@@ -51,7 +204,7 @@
                   </div>
                 </pa-expander-header>
                 <pa-expander-body>
-                  <div class="advanced-category">
+                  <div class="tab-content-body">
                     <div class="toggle-and-help">
                       <pa-toggle
                         labelOnRight
@@ -137,7 +290,7 @@
                   </div>
                 </pa-expander-header>
                 <pa-expander-body>
-                  <div class="advanced-category">
+                  <div class="tab-content-body">
                     <div class="toggle-and-help">
                       <pa-toggle
                         labelOnRight
@@ -159,15 +312,6 @@
                           [disabled]="filters.labels && hasOneFilter">
                           {{ 'widget.generator.advanced.search-and-filtering-category.filter-by-labels' | translate }}
                         </pa-checkbox>
-                        <pa-checkbox
-                          [(value)]="filters.labelFamilies"
-                          (valueChange)="onFiltersChange()"
-                          [disabled]="filters.labelFamilies && hasOneFilter">
-                          {{
-                            'widget.generator.advanced.search-and-filtering-category.filter-by-label-families'
-                              | translate
-                          }}
-                        </pa-checkbox>
                         @if (isEntityFiltersEnabled | async) {
                           <pa-checkbox
                             [(value)]="filters.entities"
@@ -178,6 +322,15 @@
                             }}
                           </pa-checkbox>
                         }
+                        <pa-checkbox
+                          [(value)]="filters.labelFamilies"
+                          (valueChange)="onFiltersChange()"
+                          [disabled]="filters.labelFamilies && hasOneFilter">
+                          {{
+                            'widget.generator.advanced.search-and-filtering-category.filter-by-label-families'
+                              | translate
+                          }}
+                        </pa-checkbox>
 
                         <div class="toggle-and-help">
                           <pa-checkbox
@@ -219,6 +372,7 @@
                       <pa-textarea
                         resizable
                         formControlName="preselectedFilters"
+                        [help]="'TODO: https://docs.nuclia.dev/docs/guides/using/search/#filters'"
                         [rows]="2"
                         [placeholder]="
                           'widget.generator.advanced.search-and-filtering-category.preselected-filters.placeholder'
@@ -294,7 +448,7 @@
                   <div class="title-s">{{ 'widget.generator.advanced.navigation-category.title' | translate }}</div>
                 </pa-expander-header>
                 <pa-expander-body>
-                  <div class="advanced-category">
+                  <div class="tab-content-body">
                     <div class="toggle-and-help">
                       <pa-toggle
                         labelOnRight
@@ -359,7 +513,7 @@
                   <div class="title-s">{{ 'widget.generator.advanced.display-category.title' | translate }}</div>
                 </pa-expander-header>
                 <pa-expander-body>
-                  <div class="advanced-category">
+                  <div class="tab-content-body">
                     <div class="placeholder-container">
                       <pa-input
                         [(value)]="placeholder"
@@ -429,7 +583,7 @@
                   <div class="title-s">{{ 'widget.generator.advanced.ner-category.title' | translate }}</div>
                 </pa-expander-header>
                 <pa-expander-body>
-                  <div class="advanced-category">
+                  <div class="tab-content-body">
                     @if (autocompleteFromNerEnabled | async) {
                       <div class="toggle-and-help">
                         <pa-toggle

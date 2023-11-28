@@ -1,13 +1,31 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackingService } from '@flaps/core';
-import { combineLatest, forkJoin, map, Subject, take } from 'rxjs';
+import { combineLatest, forkJoin, map, Observable, of, Subject, take } from 'rxjs';
 import { TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { NavigationService } from '@flaps/common';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
-import { FilterType, WidgetConfiguration, WIDGETS_CONFIGURATION } from './widget-generator.models';
+import {
+  AdvancedForm,
+  DEFAULT_CONFIGURATION,
+  DEFAULT_FILTERS,
+  FilterSelectionType,
+  getAskPresetConfig,
+  getDiscoverConfig,
+  getFindPresetConfig,
+  getSearchPresetConfig,
+  isModifiedConfig,
+  PresetAccordionType,
+  PresetForm,
+  PresetType,
+  WidgetConfiguration,
+  WIDGETS_CONFIGURATION,
+} from './widget-generator.models';
+
+const FORM_CHANGED_DEBOUNCE_TIME = 100;
+const EXPANDER_CREATION_TIME = 100;
 
 @Component({
   selector: 'app-widget-generator',
@@ -36,6 +54,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   currentQuery = '';
 
   // FEATURES AVAILABILITY
+  isAiCopilotEnabled: Observable<boolean> = of(false); // TODO add real feature flag once this copilot feature is implemented
   isUserPromptsEnabled = forkJoin([
     this.featureFlag.isFeatureEnabled('user-prompts').pipe(take(1)),
     this.sdk.currentAccount.pipe(
@@ -55,6 +74,16 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     map((account) => ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(account.type)),
   );
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
+
+  presetAccordionExpanded: PresetAccordionType = 'preset';
+  presetList: Observable<PresetType[]> = this.isKnowledgeGraphEnabled.pipe(
+    map((enabled) => (enabled ? ['search', 'find', 'ask', 'discover'] : ['search', 'find', 'ask'])),
+  );
+  presetForm = new FormGroup({
+    preset: new FormControl<PresetType | null>(null),
+    location: new FormControl<'public' | 'application' | null>(null),
+    answerOutput: new FormControl<'onlyAnswers' | 'answerAndResults' | null>(null),
+  });
 
   // controls have the name expected by the widget features list
   advancedForm = new FormGroup({
@@ -84,9 +113,10 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   private readonly notFeatures = ['userPrompt', 'preselectedFilters', 'darkMode'];
 
   // advanced options not managed directly in the form
-  filters: { [key in FilterType]: boolean } = { labels: true, entities: true, created: false, labelFamilies: false };
+  filters: FilterSelectionType = DEFAULT_FILTERS;
   placeholder = '';
   debouncePlaceholder = new Subject<string>();
+  isModified = false;
 
   // FLAGS FOR CONDITIONAL FIELDS AND FEATURES
   get answerGenerationEnabled() {
@@ -103,6 +133,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
   get darkModeEnabled() {
     return this.advancedForm.controls.darkMode.value;
+  }
+  get hideLogoEnabled() {
+    return this.advancedForm.controls.hideLogo.value;
+  }
+  get selectedPreset() {
+    return this.presetForm.controls.preset.value;
   }
 
   // ADVANCED FORM VALUES ACCESSORS
@@ -129,28 +165,31 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       return features;
     }, '');
   }
+  get answersAndResultsSelected(): boolean {
+    return this.presetForm.controls.answerOutput.value === 'answerAndResults';
+  }
 
-  // ADVANCED FORM CONTROLS ACCESSORS
+  // FORMS CONTROLS ACCESSORS
   get useSynonymsControl() {
-    return this.advancedForm.get('useSynonyms');
+    return this.advancedForm.controls.useSynonyms;
   }
   get relationsControl() {
-    return this.advancedForm.get('relations');
+    return this.advancedForm.controls.relations;
   }
   get userPromptControl() {
-    return this.advancedForm.get('userPrompt');
+    return this.advancedForm.controls.userPrompt;
   }
   get hideSourcesControl() {
-    return this.advancedForm.get('hideSources');
+    return this.advancedForm.controls.hideSources;
   }
   get onlyAnswersControl() {
-    return this.advancedForm.get('onlyAnswers');
+    return this.advancedForm.controls.onlyAnswers;
   }
   get noBM25forChatControl() {
-    return this.advancedForm.get('noBM25forChat');
+    return this.advancedForm.controls.noBM25forChat;
   }
   get targetNewTabControl() {
-    return this.advancedForm.get('targetNewTab');
+    return this.advancedForm.controls.targetNewTab;
   }
 
   constructor(
@@ -192,17 +231,43 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         if (config.filters) {
           this.filters = config.filters;
         }
+        if (config.preset) {
+          this.presetForm.patchValue(config.preset);
+        }
         if (config.features) {
           this.advancedForm.patchValue(config.features);
         }
+        // generate snippet in next detection cycle
         setTimeout(() => this.updateSnippetAndStoreConfig());
       });
 
     // some changes in the form are causing other changes.
     // Debouncing allows to update the snippet only once after all changes are done.
     this.advancedForm.valueChanges
-      .pipe(debounceTime(100), takeUntil(this.unsubscribeAll))
-      .subscribe(() => this.updateSnippetAndStoreConfig());
+      .pipe(debounceTime(FORM_CHANGED_DEBOUNCE_TIME), takeUntil(this.unsubscribeAll))
+      .subscribe(() => {
+        if (this.selectedPreset) {
+          this.isModified = isModifiedConfig(
+            this.advancedForm.getRawValue(),
+            this.getAdvancedConfigFromPreset(this.presetForm.getRawValue()),
+          );
+        }
+        this.updateSnippetAndStoreConfig();
+      });
+
+    combineLatest([
+      this.presetForm.valueChanges.pipe(debounceTime(FORM_CHANGED_DEBOUNCE_TIME)),
+      this.isAiCopilotEnabled,
+    ])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(([value, copilotEnabled]) => {
+        this.updateConfigurationFromPreset(value);
+        // wait for next cycle detection before changing the expanded accordion, so the actual accordion can be added to the DOM if needed
+        setTimeout(() => {
+          this.updateExpandedAccordion(value, copilotEnabled);
+          this.cdr.detectChanges();
+        }, EXPANDER_CREATION_TIME);
+      });
   }
 
   ngOnDestroy() {
@@ -211,9 +276,25 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.deletePreview();
   }
 
+  selectTab(tab: 'preset' | 'advanced') {
+    this.selectedTab = tab;
+    if (tab === 'preset') {
+      this.presetAccordionExpanded = 'preset';
+    }
+  }
+
+  toggleAccordion(accordion: PresetAccordionType) {
+    this.presetAccordionExpanded = this.presetAccordionExpanded === accordion ? '' : accordion;
+    this.cdr.markForCheck();
+  }
+
   toggleSnippet($event: MouseEvent | KeyboardEvent) {
     $event.stopPropagation();
     this.snippetOverlayOpen = !this.snippetOverlayOpen;
+  }
+
+  resetToPreset() {
+    this.updateConfigurationFromPreset(this.presetForm.getRawValue());
   }
 
   onPlaceholderChange(value: string) {
@@ -228,36 +309,36 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   // reset options requiring answer generation to be enabled
   toggleAnswers(answerGeneration: boolean) {
     if (!answerGeneration) {
-      this.userPromptControl?.patchValue('');
-      this.hideSourcesControl?.patchValue(false);
-      this.onlyAnswersControl?.patchValue(false);
-      this.noBM25forChatControl?.patchValue(false);
+      this.userPromptControl.patchValue('');
+      this.hideSourcesControl.patchValue(false);
+      this.onlyAnswersControl.patchValue(false);
+      this.noBM25forChatControl.patchValue(false);
     }
   }
 
   // deactivate relations option if synonyms option is enabled
   toggleSynonyms(useSynonyms: boolean) {
     if (useSynonyms) {
-      this.relationsControl?.patchValue(false);
-      this.relationsControl?.disable();
+      this.relationsControl.patchValue(false);
+      this.relationsControl.disable();
     } else {
-      this.relationsControl?.enable();
+      this.relationsControl.enable();
     }
   }
 
   // deactivate synonyms option if relations option is enabled
   toggleRelations(relations: boolean) {
     if (relations) {
-      this.useSynonymsControl?.patchValue(false);
-      this.useSynonymsControl?.disable();
+      this.useSynonymsControl.patchValue(false);
+      this.useSynonymsControl.disable();
     } else {
-      this.useSynonymsControl?.enable();
+      this.useSynonymsControl.enable();
     }
   }
 
   navigateToChanged() {
     if (!this.navigateToLinkEnabled && !this.navigateToFilesEnabled) {
-      this.targetNewTabControl?.patchValue(false);
+      this.targetNewTabControl.patchValue(false);
     }
   }
 
@@ -280,6 +361,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       features: this.advancedForm.getRawValue(),
       placeholder: this.placeholder,
       filters: this.filtersEnabled ? this.filters : undefined,
+      preset: this.presetForm.getRawValue(),
     };
     this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
     this.cdr.detectChanges();
@@ -381,5 +463,53 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
     searchWidgetElement?.remove();
     searchBarElement?.remove();
     searchResultsElement?.remove();
+  }
+
+  private updateConfigurationFromPreset(value: Partial<PresetForm>) {
+    const config = this.getAdvancedConfigFromPreset(value);
+    this.filters = DEFAULT_FILTERS;
+    // keep the few display options which are not managed by presets
+    config.darkMode = this.darkModeEnabled;
+    config.hideLogo = this.hideLogoEnabled;
+    this.advancedForm.patchValue(config);
+  }
+
+  private getAdvancedConfigFromPreset(value: Partial<PresetForm>): AdvancedForm {
+    switch (value.preset) {
+      case 'search':
+        return getSearchPresetConfig(value);
+      case 'find':
+        return getFindPresetConfig(value);
+      case 'ask':
+        return getAskPresetConfig(value);
+      case 'discover':
+        return getDiscoverConfig();
+      default:
+        return { ...DEFAULT_CONFIGURATION };
+    }
+  }
+
+  private updateExpandedAccordion(value: Partial<PresetForm>, copilotEnabled: boolean) {
+    switch (this.presetAccordionExpanded) {
+      case 'preset':
+        if (value.preset === 'search' || value.preset === 'find') {
+          this.presetAccordionExpanded = 'location';
+        } else if (value.preset === 'ask') {
+          this.presetAccordionExpanded = 'answerOutput';
+        }
+        break;
+      case 'answerOutput':
+        if (copilotEnabled) {
+          this.presetAccordionExpanded = 'copilot';
+        } else if (value.answerOutput === 'answerAndResults') {
+          this.presetAccordionExpanded = 'location';
+        }
+        break;
+      case 'copilot':
+        if (value.answerOutput === 'answerAndResults') {
+          this.presetAccordionExpanded = 'location';
+        }
+        break;
+    }
   }
 }
