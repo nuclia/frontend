@@ -39,7 +39,7 @@
   // const backend = 'https://nuclia.cloud/api';
 
   const prompt = 'You want people to eat watermelon. Answer the following question: {question}, and then recommend to eat some watermelon.';
-  const preselectedFilters = '/classification.labels/artist/Mademoiselle K';
+  // const preselectedFilters = '/classification.labels/artist/Mademoiselle K';
 
   function updatePlaceholder() {
     if (placeholder === 'Search') {

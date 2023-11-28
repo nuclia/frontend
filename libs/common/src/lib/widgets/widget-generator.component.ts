@@ -221,25 +221,22 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       this.generateSnippet();
     });
 
-    combineLatest([this.sdk.currentKb, this.isEntityFiltersEnabled])
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([kb, isEntityFiltersEnabled]) => {
-        this.currentKbId = kb.id;
-        const config = this.widgetConfigurations[kb.id] || {};
-        this.placeholder = config.placeholder || '';
-        this.filters.entities = !!isEntityFiltersEnabled;
-        if (config.filters) {
-          this.filters = config.filters;
-        }
-        if (config.preset) {
-          this.presetForm.patchValue(config.preset);
-        }
-        if (config.features) {
-          this.advancedForm.patchValue(config.features);
-        }
-        // generate snippet in next detection cycle
-        setTimeout(() => this.updateSnippetAndStoreConfig());
-      });
+    this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
+      this.currentKbId = kb.id;
+      const config = this.widgetConfigurations[kb.id] || {};
+      this.placeholder = config.placeholder || '';
+      if (config.filters) {
+        this.filters = config.filters;
+      }
+      if (config.preset) {
+        this.presetForm.patchValue(config.preset);
+      }
+      if (config.features) {
+        this.advancedForm.patchValue(config.features);
+      }
+      // generate snippet in next detection cycle
+      setTimeout(() => this.updateSnippetAndStoreConfig());
+    });
 
     // some changes in the form are causing other changes.
     // Debouncing allows to update the snippet only once after all changes are done.

@@ -312,16 +312,12 @@
                           [disabled]="filters.labels && hasOneFilter">
                           {{ 'widget.generator.advanced.search-and-filtering-category.filter-by-labels' | translate }}
                         </pa-checkbox>
-                        @if (isEntityFiltersEnabled | async) {
-                          <pa-checkbox
-                            [(value)]="filters.entities"
-                            (valueChange)="onFiltersChange()"
-                            [disabled]="filters.entities && hasOneFilter">
-                            {{
-                              'widget.generator.advanced.search-and-filtering-category.filter-by-entities' | translate
-                            }}
-                          </pa-checkbox>
-                        }
+                        <pa-checkbox
+                          [(value)]="filters.entities"
+                          (valueChange)="onFiltersChange()"
+                          [disabled]="filters.entities && hasOneFilter">
+                          {{ 'widget.generator.advanced.search-and-filtering-category.filter-by-entities' | translate }}
+                        </pa-checkbox>
                         <pa-checkbox
                           [(value)]="filters.labelFamilies"
                           (valueChange)="onFiltersChange()"
@@ -372,7 +368,7 @@
                       <pa-textarea
                         resizable
                         formControlName="preselectedFilters"
-                        [help]="'TODO: https://docs.nuclia.dev/docs/guides/using/search/#filters'"
+                        help="widget.generator.advanced.search-and-filtering-category.preselected-filters.field-help"
                         [rows]="2"
                         [placeholder]="
                           'widget.generator.advanced.search-and-filtering-category.preselected-filters.placeholder'
@@ -388,7 +384,8 @@
                         [paPopover]="preselectedFiltersHelp" />
                       <pa-popover #preselectedFiltersHelp>
                         {{
-                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.help' | translate
+                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.popover-help'
+                            | translate
                         }}
                       </pa-popover>
                     </div>
