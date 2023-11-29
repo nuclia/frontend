@@ -32,7 +32,7 @@ export class UploadComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const connectorId = localStorage.getItem(CONNECTOR_ID_KEY) || '';
     const sourceName = localStorage.getItem(SOURCE_NAME_KEY) || '';
-    // useful for dev mode in browser (in Electron, as the page is not reloaded, authenticate is already waiting for an answer)
+    // Used in browser by dashboard and desktop dev mode (in Electron, as the page is not reloaded, authenticate is already waiting for an answer)
     if (connectorId && sourceName) {
       this.sync.setCurrentSourceId(sourceName);
       forkJoin([this.sync.getSource(connectorId, sourceName).pipe(take(1)), this.sync.hasCurrentSourceAuth()])
@@ -44,6 +44,7 @@ export class UploadComponent implements OnInit, OnDestroy {
           this.goTo(2);
           localStorage.removeItem(CONNECTOR_ID_KEY);
           localStorage.removeItem(SOURCE_NAME_KEY);
+          this.router.navigate([], { queryParams: {} });
         });
     } else {
       this.goTo(0);
@@ -98,9 +99,10 @@ export class UploadComponent implements OnInit, OnDestroy {
       this.sync.getSource(event.connectorId, event.name).pipe(take(1)),
       this.sync.currentSource.pipe(take(1)),
       this.sync.hasCurrentSourceAuth(),
+      this.sync.basePath.pipe(take(1)),
     ])
       .pipe(
-        switchMap(([source, sourceData, hasAuth]) => {
+        switchMap(([source, sourceData, hasAuth, basePath]) => {
           sourceInstance = source;
           if (source.handleParameters && sourceData.data) {
             source.handleParameters(sourceData.data);
@@ -113,7 +115,7 @@ export class UploadComponent implements OnInit, OnDestroy {
                 localStorage.setItem(CONNECTOR_ID_KEY, event.connectorId);
                 localStorage.setItem(SOURCE_NAME_KEY, event.name);
               }
-              source.goToOAuth(true);
+              source.goToOAuth(`${window.location.origin}${basePath}`, true);
               return this.sync.authenticateToSource(sourceInstance);
             } else {
               this.toaster.error('Missing authentication');

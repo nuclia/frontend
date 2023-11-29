@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
-import { SyncService } from '@nuclia/sync';
-import { ActivatedRoute } from '@angular/router';
-import { filter, map, of, repeat, switchMap, Subject, takeUntil } from 'rxjs';
+import { CONNECTOR_ID_KEY, getDeeplink, SOURCE_NAME_KEY, SyncService } from '@nuclia/sync';
+import { ActivatedRoute, Router } from '@angular/router';
+import { filter, map, of, repeat, switchMap, Subject, takeUntil, take } from 'rxjs';
+import { BackendConfigurationService, SDKService } from '@flaps/core';
 
 @Component({
   selector: 'nsy-main-layout',
@@ -14,7 +15,10 @@ export class MainLayoutComponent implements OnDestroy {
 
   constructor(
     private sync: SyncService,
+    private sdk: SDKService,
     private route: ActivatedRoute,
+    private router: Router,
+    private config: BackendConfigurationService,
   ) {
     const path = this.route.pathFromRoot
       .map((item) => item.snapshot.url)
@@ -22,6 +26,21 @@ export class MainLayoutComponent implements OnDestroy {
       .map((segments) => segments.map((segment) => segment.path).join('/'))
       .join('/');
     this.sync.setBasePath(path ? `/${path}/` : '/');
+
+    if (this.config.staticConf.client === 'dashboard') {
+      // Automatically select current account (In dashboard there's no account selection page like in Desktop app)
+      this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+        this.sync.selectAccount(account.slug);
+      });
+
+      // Check if it's a redirect from OAuth server
+      if (localStorage.getItem(CONNECTOR_ID_KEY) && localStorage.getItem(SOURCE_NAME_KEY)) {
+        const deeplink = getDeeplink();
+        if (deeplink && deeplink.includes('?')) {
+          this.router.navigateByUrl(`${path}/add-upload${deeplink}`);
+        }
+      }
+    }
 
     of(true)
       .pipe(

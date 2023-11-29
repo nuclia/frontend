@@ -36,7 +36,7 @@ export class OAuthConnector implements ISourceConnector {
     };
   }
 
-  goToOAuth(reset?: boolean) {
+  goToOAuth(redirect: string, reset?: boolean) {
     if (reset) {
       localStorage.removeItem(this.prefixStorageKey(TOKEN));
     }
@@ -47,7 +47,7 @@ export class OAuthConnector implements ISourceConnector {
       if ((window as any)['electron']) {
         (window as any)['electron'].openExternal(`${authorizeEndpoint}?redirect=nuclia-desktop://index.html`);
       } else {
-        location.href = `${authorizeEndpoint}?redirect=http://localhost:4200`;
+        location.href = `${authorizeEndpoint}?redirect=${redirect}`;
       }
     } else {
       this.isAuthenticated.next(true);
