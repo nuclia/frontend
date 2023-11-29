@@ -22,7 +22,6 @@ import { ResourceListService } from './resource-list.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
-import { ta } from 'date-fns/locale';
 
 export const COMMON_COLUMNS = [
   { id: 'title', label: 'resource.title', size: '3fr', sortable: false },
