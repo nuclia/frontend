@@ -111,6 +111,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
     options?: SearchOptions,
   ): Observable<Search.Results | IErrorResponse>;
 
+  summarize(ressourceIds: string[]): Observable<string>;
+
   catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse>;
 
   suggest(query: string): Observable<Search.Suggestions | IErrorResponse>;

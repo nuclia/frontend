@@ -2,7 +2,8 @@
 
 ### Improvements
 
--  `/ephemeral_tokens` endpoint can now be called using regional domain
+- `/ephemeral_tokens` endpoint can now be called using regional domain
+- Support `summarize` operation on resources
 
 # 1.9.0 (2023-11-22)
 

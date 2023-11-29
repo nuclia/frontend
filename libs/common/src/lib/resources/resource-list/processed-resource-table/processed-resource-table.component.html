@@ -233,6 +233,11 @@
               </pa-option>
               <pa-option
                 [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="triggerAction(row.resource, 'summarize')">
+                {{ 'resource.menu.summarize' | translate }}
+              </pa-option>
+              <pa-option
+                [disabled]="!(isAdminOrContrib | async)"
                 (selectOption)="triggerAction(row.resource, 'reprocess')">
                 {{ 'generic.reindex' | translate }}
               </pa-option>

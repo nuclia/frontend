@@ -294,6 +294,26 @@ export class KnowledgeBox implements IKnowledgeBox {
     return search(this.nuclia, this.id, this.path, query, features, options);
   }
 
+  /**
+   * Summarize resources.
+   *
+   * It reads the resources text content and return a unique summary about them.
+   *
+   * Example:
+    ```ts
+    nuclia.knowledgeBox
+      .summarize(['09a94719a6444c5a9689394f6ed9baf6'])
+      .subscribe((summary) => {
+        console.log('Summary', summary);
+      });
+    ```
+  */
+  summarize(ressourceIds: string[]): Observable<string> {
+    return this.nuclia.rest
+      .post<{ summary: string }>(`${this.path}/summarize`, { resources: ressourceIds })
+      .pipe(map((res) => res.summary));
+  }
+
   catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse> {
     return catalog(this.nuclia, this.id, query, options);
   }

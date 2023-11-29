@@ -29,7 +29,7 @@ export interface ColumnHeader extends IHeaderCell {
   visible?: boolean;
 }
 
-export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reprocess';
+export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reprocess' | 'summarize';
 
 export const DEFAULT_PREFERENCES = {
   columns: ['modification', 'language'],

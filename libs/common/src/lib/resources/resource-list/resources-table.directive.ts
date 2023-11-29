@@ -22,6 +22,7 @@ import { ResourceListService } from './resource-list.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
+import { ta } from 'date-fns/locale';
 
 export const COMMON_COLUMNS = [
   { id: 'title', label: 'resource.title', size: '3fr', sortable: false },
@@ -169,7 +170,28 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
       case 'reprocess':
         this.reprocess([resource]).subscribe();
         break;
+      case 'summarize':
+        this.summarize(resource).subscribe();
+        break;
     }
+  }
+
+  summarize(resource: Resource) {
+    const avoidTabClosing = (event: BeforeUnloadEvent) => event.preventDefault();
+    return this.modalService
+      .openConfirm({
+        title: 'resource.confirm-summarize.title',
+        description: 'resource.confirm-summarize.description',
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.sdk.currentKb),
+        take(1),
+        tap(() => window.addEventListener('beforeunload', avoidTabClosing)),
+        switchMap((kb) => kb.summarize([resource.id])),
+        switchMap((summary) => resource.modify({ summary })),
+        tap(() => window.removeEventListener('beforeunload', avoidTabClosing)),
+      );
   }
 
   delete(resources: Resource[]) {
