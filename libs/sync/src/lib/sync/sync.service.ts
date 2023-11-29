@@ -10,7 +10,6 @@ import {
   map,
   Observable,
   of,
-  repeat,
   ReplaySubject,
   Subject,
   switchMap,
@@ -142,14 +141,6 @@ export class SyncService {
     // UNCOMMENT TO ENABLE DYNAMIC CONNECTORS
     // this.fetchDynamicConnectors();
 
-    of(true)
-      .pipe(
-        filter(() => !!this._syncServer.getValue()),
-        switchMap(() => this.serverStatus(this._syncServer.getValue())),
-        map((res) => !res.running),
-        repeat({ delay: 5000 }),
-      )
-      .subscribe(this._isServerDown);
     this.isServerDown
       .pipe(
         distinctUntilChanged(),
@@ -466,5 +457,13 @@ export class SyncService {
 
   setBasePath(path: string) {
     this._basePath.next(path);
+  }
+
+  getSyncServer() {
+    return this._syncServer.getValue();
+  }
+
+  setServerStatus(isDown: boolean) {
+    this._isServerDown.next(isDown);
   }
 }

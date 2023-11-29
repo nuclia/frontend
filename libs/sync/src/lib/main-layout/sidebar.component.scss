@@ -2,6 +2,8 @@
 
 .sidebar {
   background: $color-neutral-lightest;
+  display: flex;
+  flex-direction: column;
   height: calc(100% - #{rhythm(9)});
   position: fixed;
   top: rhythm(9);
@@ -73,6 +75,14 @@
           visibility: visible;
         }
       }
+    }
+  }
+
+  .status {
+    border-top: 1px solid $color-neutral-light;
+    margin-top: auto;
+    &.down {
+      color: $color-secondary-stronger;
     }
   }
 }
