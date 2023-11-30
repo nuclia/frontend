@@ -245,6 +245,18 @@
             <span class="nav-link-title">{{ 'account.billing' | translate }}</span>
           </a>
         </div>
+        <div
+          *ngIf="isSyncEnabled | async"
+          class="group-items">
+          <a
+            [routerLink]="(accountUrl | async) + '/sync'"
+            routerLinkActive="active"
+            data-cy="go-to-sync"
+            class="nav-link">
+            <pa-icon name="upload"></pa-icon>
+            <span class="nav-link-title">{{ 'account.sync' | translate }}</span>
+          </a>
+        </div>
       </div>
       <div
         class="nav-group"

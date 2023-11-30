@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, from, map, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, from, map, switchMap, take } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
 import { BackendConfigurationService } from '@flaps/core';
 
@@ -43,18 +43,28 @@ export class SidebarComponent {
   }
 
   goToSource(connectorId: string, sourceId: string) {
-    this.basePath.pipe(switchMap((path) => from(this.router.navigate([path + 'add-upload'])))).subscribe(() => {
-      setTimeout(() => {
-        this.sync.showSource.next({ connectorId, sourceId });
-      }, 0);
-    });
+    this.basePath
+      .pipe(
+        take(1),
+        switchMap((path) => from(this.router.navigate([path + 'add-upload']))),
+      )
+      .subscribe(() => {
+        setTimeout(() => {
+          this.sync.showSource.next({ connectorId, sourceId });
+        }, 0);
+      });
   }
 
   addSource() {
-    this.basePath.pipe(switchMap((path) => from(this.router.navigate([path + 'add-upload'])))).subscribe(() => {
-      setTimeout(() => {
-        this.sync.addSource.next();
-      }, 0);
-    });
+    this.basePath
+      .pipe(
+        take(1),
+        switchMap((path) => from(this.router.navigate([path + 'add-upload']))),
+      )
+      .subscribe(() => {
+        setTimeout(() => {
+          this.sync.addSource.next();
+        }, 0);
+      });
   }
 }

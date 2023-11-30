@@ -81,6 +81,7 @@
 	"account.stash.retire": "Despublicar",
 	"account.stash.upgrade": "Incrementar màxim KB",
 	"account.stash.users": "Gestió d'usuaris",
+	"account.sync": "Sincronitzar",
 	"account.threshold": "Llindar de consum",
 	"account.title": "Nom",
 	"account.token_description": "<strong>Important!</strong> Copieu i deseu la clau de l'API. Desapareixerà un cop afegit.",

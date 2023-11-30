@@ -82,6 +82,7 @@
 	"account.stash.retire": "Cancelar publicação",
 	"account.stash.upgrade": "Aumentar o máximo de KB",
 	"account.stash.users": "Gerenciamento de Usuários",
+	"account.sync": "Sincronizar",
 	"account.threshold": "Limite de consumo",
 	"account.title": "Nome",
 	"account.token_description": "<strong>Importante!</strong> Copie e salve a chave de API. Ele desaparecerá depois de adicionado.",

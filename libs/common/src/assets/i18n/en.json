@@ -82,6 +82,7 @@
 	"account.stash.retire": "Unpublish",
 	"account.stash.upgrade": "Increase KB maximum",
 	"account.stash.users": "Users management",
+	"account.sync": "Synchronize",
 	"account.threshold": "Consumption threshold",
 	"account.title": "Name",
 	"account.token_description": "<strong>Important!</strong> Copy and save the API key. It will disappear once added.",
