@@ -1,0 +1,78 @@
+<form
+  class="onboarding-form"
+  [formGroup]="configurationForm"
+  (ngSubmit)="submitForm()">
+  <div class="field">
+    <label
+      for="region"
+      class="title-s">
+      {{ 'onboarding.step2.region-label' | translate }}
+    </label>
+    <pa-radio-group
+      id="region"
+      formControlName="region">
+      @for (zone of zones; track zone.id) {
+        <pa-radio
+          [value]="zone.slug"
+          [disabled]="zone.notAvailableYet">
+          {{ zone.title || zone.slug }}
+          @if (zone.notAvailableYet) {
+            ({{ 'onboarding.step2.coming-soon' | translate }})
+          }
+        </pa-radio>
+      }
+    </pa-radio-group>
+  </div>
+  <div class="field">
+    <label class="title-s">{{ 'onboarding.step2.languages.label' | translate }}</label>
+    <pa-radio-group formControlName="multilingual">
+      <pa-radio value="english">{{ 'onboarding.step2.languages.english' | translate }}</pa-radio>
+      <pa-radio value="multilingual">{{ 'onboarding.step2.languages.multilingual' | translate }}</pa-radio>
+    </pa-radio-group>
+    @if (multilingualSelected) {
+      <div class="second-choice languages-container">
+        @for (language of languages; track language.label) {
+          <pa-checkbox [(value)]="language.selected">{{ language.label }}</pa-checkbox>
+        }
+      </div>
+    }
+  </div>
+  @if (datasets.length > 0) {
+    <div class="field">
+      <label class="title-s">{{ 'onboarding.step2.starting-data.label' | translate }}</label>
+      <pa-radio-group formControlName="startWith">
+        <pa-radio value="upload">{{ 'onboarding.step2.starting-data.upload' | translate }}</pa-radio>
+        <pa-radio value="dataset">{{ 'onboarding.step2.starting-data.dataset' | translate }}</pa-radio>
+      </pa-radio-group>
+      @if (datasetSelected) {
+        <div class="second-choice">
+          <pa-select
+            [label]="'onboarding.step2.starting-data.dataset-label' | translate"
+            formControlName="dataset">
+            @for (dataset of datasets; track dataset.id) {
+              <pa-option [value]="dataset.id">{{ dataset.title }}</pa-option>
+            }
+          </pa-select>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="form-footer">
+    <pa-button
+      type="submit"
+      kind="primary"
+      [disabled]="configurationForm.invalid">
+      {{ 'onboarding.next-button' | translate }}
+    </pa-button>
+  </div>
+</form>
+
+<div class="consent body-xs">
+  <pa-icon
+    name="info"
+    size="small"></pa-icon>
+  <div>
+    <span [innerHTML]="'onboarding.step2.consent' | translate"></span>
+  </div>
+</div>

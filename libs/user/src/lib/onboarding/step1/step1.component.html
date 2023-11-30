@@ -1,0 +1,105 @@
+<form
+  class="onboarding-form"
+  [formGroup]="onboardingForm"
+  (ngSubmit)="submitForm()">
+  <div class="field">
+    <label
+      class="title-s"
+      for="company">
+      {{ 'onboarding.step1.company' | translate }}
+    </label>
+    <pa-input
+      formControlName="company"
+      id="company"
+      externalLabel
+      help="validation.required"
+      [errorMessages]="validationMessages.company"></pa-input>
+  </div>
+  <div class="field">
+    <label
+      class="title-s"
+      for="use_case">
+      {{ 'onboarding.step1.use_case.label' | translate }}
+    </label>
+    <pa-select
+      id="use_case"
+      formControlName="use_case"
+      help="validation.required"
+      [errorMessages]="validationMessages.use_case">
+      <pa-option value="Customer / employee support">{{ 'onboarding.step1.use_case.support' | translate }}</pa-option>
+      <pa-option value="Global site search">{{ 'onboarding.step1.use_case.global_search' | translate }}</pa-option>
+      <pa-option value="Workspace search">{{ 'onboarding.step1.use_case.workspace_search' | translate }}</pa-option>
+      <pa-option value="Research & Analysis">{{ 'onboarding.step1.use_case.research_analysis' | translate }}</pa-option>
+      <pa-option value="Model Training">{{ 'onboarding.step1.use_case.ai_training' | translate }}</pa-option>
+      <pa-option value="Other">{{ 'onboarding.step1.use_case.other' | translate }}</pa-option>
+    </pa-select>
+  </div>
+  <div class="field">
+    <label
+      class="title-s"
+      for="hosting">
+      {{ 'onboarding.step1.host_db.label' | translate }}
+    </label>
+    <pa-select
+      formControlName="hosted_nucliadb"
+      id="hosting"
+      externalLabel
+      help="onboarding.step1.host_db.help"
+      [errorMessages]="validationMessages.hosted_nucliadb">
+      <pa-option value="yes">{{ 'onboarding.step1.host_db.yes' | translate }}</pa-option>
+      <pa-option value="no">{{ 'onboarding.step1.host_db.no' | translate }}</pa-option>
+    </pa-select>
+  </div>
+  <div class="field">
+    <label
+      class="title-s"
+      for="orgSize">
+      {{ 'onboarding.step1.org_size' | translate }}
+    </label>
+    <pa-select
+      formControlName="organization_size"
+      id="orgSize"
+      externalLabel
+      help="validation.required"
+      [errorMessages]="validationMessages.organization_size">
+      <pa-option value="1-50">1-50</pa-option>
+      <pa-option value="50-200">50-200</pa-option>
+      <pa-option value="200-1000">200-1000</pa-option>
+      <pa-option value="1000-5000">1000-5000</pa-option>
+      <pa-option value="+5000">+5000</pa-option>
+    </pa-select>
+  </div>
+  <div class="field">
+    <label
+      class="title-s"
+      for="phoneNumber">
+      {{ 'onboarding.step1.phone' | translate }}
+    </label>
+    <div class="phone-field">
+      <pa-input
+        class="phone-code"
+        formControlName="phoneInternationalCode"
+        externalLabel
+        placeholder="+99"
+        [errorMessages]="validationMessages.phoneInternationalCode"></pa-input>
+      <pa-input
+        id="phoneNumber"
+        formControlName="phoneNumber"
+        externalLabel
+        placeholder="11 1111 1111"
+        help="validation.required"
+        [errorMessages]="validationMessages.phoneNumber"></pa-input>
+    </div>
+  </div>
+
+  <pa-checkbox formControlName="getUpdates">{{ 'onboarding.step1.updates' | translate }}</pa-checkbox>
+
+  <div class="form-footer">
+    <pa-button
+      type="submit"
+      kind="primary"
+      [disabled]="onboardingForm.invalid">
+      {{ 'onboarding.next-button' | translate }}
+    </pa-button>
+  </div>
+</form>

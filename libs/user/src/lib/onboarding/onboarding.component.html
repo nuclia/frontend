@@ -1,152 +1,27 @@
 <stf-user-container alignTopOnSmallScreens="">
   <div class="onboarding-container">
-    <ng-container *ngIf="!(onboardingStatus | async)?.creating; else settingUp">
+    @if (onboardingStep | async; as step) {
       <header>
-        <h1>{{ 'onboarding.title' | translate }}</h1>
-        <p>{{ 'onboarding.subtitle' | translate }}</p>
+        <h1>{{ 'onboarding.' + step + '.title' | translate }}</h1>
+        <p>{{ 'onboarding.' + step + '.subtitle' | translate }}</p>
       </header>
 
-      <form
-        class="onboarding-form"
-        [formGroup]="onboardingForm"
-        (ngSubmit)="submitForm()">
-        <div class="field">
-          <label
-            class="title-s"
-            for="company">
-            {{ 'onboarding.company' | translate }}
-          </label>
-          <pa-input
-            formControlName="company"
-            id="company"
-            externalLabel
-            help="validation.required"
-            [errorMessages]="validationMessages.company"></pa-input>
-        </div>
-        <div class="field">
-          <label
-            class="title-s"
-            for="use_case">
-            {{ 'onboarding.use_case_label' | translate }}
-          </label>
-          <pa-select
-            id="use_case"
-            formControlName="use_case"
-            help="validation.required"
-            [errorMessages]="validationMessages.use_case">
-            <pa-option value="Customer / employee support">{{ 'onboarding.use_case.support' | translate }}</pa-option>
-            <pa-option value="Global site search">{{ 'onboarding.use_case.global_search' | translate }}</pa-option>
-            <pa-option value="Workspace search">{{ 'onboarding.use_case.workspace_search' | translate }}</pa-option>
-            <pa-option value="Research & Analysis">{{ 'onboarding.use_case.research_analysis' | translate }}</pa-option>
-            <pa-option value="Model Training">{{ 'onboarding.use_case.ai_training' | translate }}</pa-option>
-            <pa-option value="Other">{{ 'onboarding.use_case.other' | translate }}</pa-option>
-          </pa-select>
-        </div>
-        <div class="field">
-          <label
-            class="title-s"
-            for="hosting">
-            {{ 'onboarding.host_db' | translate }}
-          </label>
-          <pa-select
-            formControlName="hosted_nucliadb"
-            id="hosting"
-            externalLabel
-            help="onboarding.host_db_help"
-            [errorMessages]="validationMessages.hosted_nucliadb">
-            <pa-option value="yes">{{ 'onboarding.host_db_yes' | translate }}</pa-option>
-            <pa-option value="no">{{ 'onboarding.host_db_no' | translate }}</pa-option>
-          </pa-select>
-        </div>
-        <div class="field">
-          <label
-            class="title-s"
-            for="orgSize">
-            {{ 'onboarding.org_size' | translate }}
-          </label>
-          <pa-select
-            formControlName="organization_size"
-            id="orgSize"
-            externalLabel
-            help="validation.required"
-            [errorMessages]="validationMessages.organization_size">
-            <pa-option value="1-50">1-50</pa-option>
-            <pa-option value="50-200">50-200</pa-option>
-            <pa-option value="200-1000">200-1000</pa-option>
-            <pa-option value="1000-5000">1000-5000</pa-option>
-            <pa-option value="+5000">+5000</pa-option>
-          </pa-select>
-        </div>
-        <div class="field">
-          <label
-            class="title-s"
-            for="phoneNumber">
-            {{ 'onboarding.phone' | translate }}
-          </label>
-          <div class="phone-field">
-            <pa-input
-              class="phone-code"
-              formControlName="phoneInternationalCode"
-              externalLabel
-              placeholder="+99"
-              [errorMessages]="validationMessages.phoneInternationalCode"></pa-input>
-            <pa-input
-              id="phoneNumber"
-              formControlName="phoneNumber"
-              externalLabel
-              placeholder="11 1111 1111"
-              help="validation.required"
-              [errorMessages]="validationMessages.phoneNumber"></pa-input>
-          </div>
-        </div>
-
-        <pa-checkbox formControlName="getUpdates">{{ 'onboarding.updates' | translate }}</pa-checkbox>
-
-        <div class="form-footer">
-          <pa-button
-            type="submit"
-            kind="primary"
-            [disabled]="onboardingForm.invalid">
-            {{ 'onboarding.get_started' | translate }}
-          </pa-button>
-        </div>
-      </form>
-
-      <div class="consent body-xs">
-        <pa-icon
-          name="info"
-          size="small"></pa-icon>
-        <div>
-          <span [innerHTML]="'onboarding.storage_zone' | translate"></span>
-          <br />
-          <span [innerHTML]="'onboarding.consent' | translate"></span>
-        </div>
-      </div>
-    </ng-container>
-
-    <ng-template #settingUp>
-      <div class="setting-up">
-        <header>
-          <h1>{{ 'onboarding.setting_up' | translate }}</h1>
-          <p>{{ 'onboarding.setting_up_subtitle' | translate }}</p>
-        </header>
-        <p class="body-m">
-          {{ 'onboarding.account_creation' | translate }}
-          <pa-icon
-            *ngIf="(onboardingStatus | async)?.accountCreated"
-            name="circle-check"
-            size="small"></pa-icon>
-        </p>
-        <p
-          *ngIf="(onboardingStatus | async)?.accountCreated"
-          class="body-m">
-          {{ 'onboarding.kb_creation' | translate }}
-          <pa-icon
-            *ngIf="(onboardingStatus | async)?.kbCreated"
-            name="circle-check"
-            size="small"></pa-icon>
-        </p>
-      </div>
-    </ng-template>
+      @switch (step) {
+        @case ('step1') {
+          <nus-onboarding-step1 (submitStep1)="onStep1Done($event)"></nus-onboarding-step1>
+        }
+        @case ('step2') {
+          <nus-onboarding-step2
+            [zones]="zones | async"
+            (submitStep2)="onStep2Done($event)"></nus-onboarding-step2>
+        }
+        @case ('setting-up-upload') {
+          <nus-onboarding-setting-up></nus-onboarding-setting-up>
+        }
+        @case ('setting-up-dataset') {
+          <nus-onboarding-setting-up withDataset></nus-onboarding-setting-up>
+        }
+      }
+    }
   </div>
 </stf-user-container>

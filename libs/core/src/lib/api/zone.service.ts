@@ -16,15 +16,20 @@ export class ZoneService {
     private featureFlagService: FeatureFlagService,
   ) {}
 
-  getZones(): Observable<Zone[]> {
-    return this.sdk.nuclia.rest
-      .get(`/${ZONES}`)
-      .pipe(
-        switchMap((zones) =>
-          this.featureFlagService
-            .getFeatureBlocklist('zones')
-            .pipe(map((blocklist) => (zones as Zone[]).filter((zone) => !blocklist.includes(zone.slug)))),
+  getZones(includeZonesBlocked = false): Observable<Zone[]> {
+    return this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`).pipe(
+      switchMap((zones) =>
+        this.featureFlagService.getFeatureBlocklist('zones').pipe(
+          map((blocklist) => {
+            return includeZonesBlocked
+              ? zones.map((zone) => ({
+                  ...zone,
+                  notAvailableYet: blocklist.includes(zone.slug),
+                }))
+              : zones.filter((zone) => !blocklist.includes(zone.slug));
+          }),
         ),
-      );
+      ),
+    );
   }
 }
