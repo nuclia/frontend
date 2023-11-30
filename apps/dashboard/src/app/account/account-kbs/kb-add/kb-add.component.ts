@@ -93,11 +93,13 @@ export class KbAddComponent implements OnInit {
 
     const payload: KnowledgeBoxCreation = {
       slug: STFUtils.generateSlug(this.kbForm.value.title),
-      zone: this.kbForm.value.zone,
       title: this.kbForm.value.title,
       description: this.kbForm.value.description,
       learning_configuration,
     };
+    if (!this.sdk.useRegionalSystem) {
+      payload.zone = this.kbForm.value.zone;
+    }
     this.saving = true;
     const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
     this.error = '';
