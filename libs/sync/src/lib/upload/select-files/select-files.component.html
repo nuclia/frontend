@@ -39,7 +39,7 @@
   <ng-container *ngIf="canSelectFiles | async">
     <div class="searchbar">
       <pa-checkbox
-        *ngIf="!(currentSource | async).permanentSync"
+        *ngIf="!(currentSource | async)?.permanentSync"
         [value]="isSelectingAll"
         (valueChange)="toggleSelectAll($event)">
         {{ 'upload.select.all' | translate }}
