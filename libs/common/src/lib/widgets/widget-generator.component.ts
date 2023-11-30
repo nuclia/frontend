@@ -272,10 +272,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.deletePreview();
   }
 
-  onChange(event: Event) {
-    console.log('onChange', event);
-  }
-
   selectTab(tab: 'preset' | 'advanced') {
     this.selectedTab = tab;
     if (tab === 'preset') {
