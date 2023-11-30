@@ -863,7 +863,7 @@
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.label": "Nur semantische Ergebnisse",
 	"widget.generator.advanced.generative-answer-category.only-answers.help": "Zeigt Antworten, aber keine Suchergebnisse an. ",
 	"widget.generator.advanced.generative-answer-category.only-answers.label": "Nur Antworten",
-	"widget.generator.advanced.generative-answer-category.prompt.description": "Anscheinend verwenden Sie in dieser Benutzeraufforderung keine Variable, da dies zu inkonsistenten Antworten führen könnte. Bitte überprüfen Sie die Beispiele für Benutzeraufforderungen auf der Einstellungsseite.",
+	"widget.generator.advanced.generative-answer-category.prompt.error": "Anscheinend verwenden Sie in dieser Benutzeraufforderung keine Variable, da dies zu inkonsistenten Antworten führen könnte. Bitte überprüfen Sie die Beispiele für Benutzeraufforderungen auf der Einstellungsseite.",
 	"widget.generator.advanced.generative-answer-category.prompt.help": "Sie hat Vorrang vor der in den Knowledge Box-Einstellungen definierten Benutzeraufforderung. Hinweis: Die Eingabeaufforderungsstrategie kann sich je nach generativem Modell ändern. Sehen Sie sich die Beispiele auf der Einstellungsseite an.",
 	"widget.generator.advanced.generative-answer-category.prompt.label": "Benutzer prompt",
 	"widget.generator.advanced.generative-answer-category.title": "Generative Antworten",

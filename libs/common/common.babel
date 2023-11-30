@@ -27469,7 +27469,7 @@
 														<name>prompt</name>
 														<children>
 															<concept_node>
-																<name>description</name>
+																<name>error</name>
 																<description/>
 																<comment/>
 																<translations>

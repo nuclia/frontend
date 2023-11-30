@@ -862,7 +862,7 @@
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.label": "Sólo resultados semánticos",
 	"widget.generator.advanced.generative-answer-category.only-answers.help": "Muestra respuestas pero no resultados de búsqueda.",
 	"widget.generator.advanced.generative-answer-category.only-answers.label": "Solo respuestas",
-	"widget.generator.advanced.generative-answer-category.prompt.description": "Parece que no está utilizando ninguna variable en este mensaje de usuario, podría producir respuestas inconsistentes. Consulte los ejemplos de mensajes de usuario en la página de configuración.",
+	"widget.generator.advanced.generative-answer-category.prompt.error": "Parece que no está utilizando ninguna variable en este mensaje de usuario, podría producir respuestas inconsistentes. Consulte los ejemplos de mensajes de usuario en la página de configuración.",
 	"widget.generator.advanced.generative-answer-category.prompt.help": "Tendrá prioridad en el prompt de usuario definido en la configuración del Knowledge Box. Nota: la estrategia de prompt puede cambiar según el modelo generativo. Consulte los ejemplos en la página de configuración.",
 	"widget.generator.advanced.generative-answer-category.prompt.label": "Prompt de usuario",
 	"widget.generator.advanced.generative-answer-category.title": "Respuestas generativas",

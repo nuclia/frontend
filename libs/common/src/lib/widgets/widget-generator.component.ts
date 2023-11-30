@@ -113,7 +113,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     relations: new FormControl<boolean>(false, { nonNullable: true }),
     knowledgeGraph: new FormControl<boolean>(false, { nonNullable: true }),
   });
-  userPromptErrors = { pattern: 'widget.generator.advanced.generative-answer-category.prompt.description' };
+  userPromptErrors = { pattern: 'widget.generator.advanced.generative-answer-category.prompt.error' };
   private readonly notFeatures = ['userPrompt', 'preselectedFilters', 'darkMode', 'placeholder'];
 
   // advanced options not managed directly in the form
@@ -242,7 +242,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.advancedForm.valueChanges
       .pipe(debounceTime(FORM_CHANGED_DEBOUNCE_TIME), takeUntil(this.unsubscribeAll))
       .subscribe((changes) => {
-        console.log('advancedForm.valueChanges', changes);
         if (this.selectedPreset) {
           this.isModified = isModifiedConfig(
             this.advancedForm.getRawValue(),
