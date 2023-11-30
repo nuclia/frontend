@@ -95,6 +95,7 @@ describe('UploadComponent', () => {
             clearCurrentSourceId: () => (currentSourceId = null),
             hasCurrentSourceAuth: () => of(true),
             canSelectFiles: () => true,
+            basePath: of('/'),
             getFiles: () =>
               of({
                 items: [
