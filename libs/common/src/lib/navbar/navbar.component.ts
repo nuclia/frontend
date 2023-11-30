@@ -58,6 +58,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   isEntitiesEnabled = this.tracking.isFeatureEnabled('manage-entities');
   isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
+  isSyncEnabled = this.tracking.isFeatureEnabled('sync');
   isSynonymsEnabled: Observable<boolean> = this.account
     .pipe(
       filter((account) => !!account),

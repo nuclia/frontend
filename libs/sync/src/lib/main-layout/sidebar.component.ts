@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, from, map, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, from, map, switchMap, take } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
+import { BackendConfigurationService } from '@flaps/core';
 
 @Component({
   selector: 'nsy-sidebar',
@@ -21,31 +22,49 @@ export class SidebarComponent {
     ),
   );
   step = this.sync.step;
+  basePath = this.sync.basePath;
+  isServerDown = this.sync.isServerDown;
   currentSourceId = this.sync.currentSourceId;
   isServerPage = new BehaviorSubject(false);
+  isDashboard = this.config.staticConf.client === 'dashboard';
 
-  constructor(private sync: SyncService, private router: Router) {
+  constructor(
+    private sync: SyncService,
+    private router: Router,
+    private config: BackendConfigurationService,
+  ) {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
-        map((event: NavigationEnd) => event.url === '/server'),
+        map((event) => event as NavigationEnd),
+        map((event) => event.url.endsWith('/server')),
       )
       .subscribe((isServer) => this.isServerPage.next(isServer));
   }
 
   goToSource(connectorId: string, sourceId: string) {
-    from(this.router.navigate(['/add-upload'])).subscribe(() => {
-      setTimeout(() => {
-        this.sync.showSource.next({ connectorId, sourceId });
-      }, 0);
-    });
+    this.basePath
+      .pipe(
+        take(1),
+        switchMap((path) => from(this.router.navigate([path + 'add-upload']))),
+      )
+      .subscribe(() => {
+        setTimeout(() => {
+          this.sync.showSource.next({ connectorId, sourceId });
+        }, 0);
+      });
   }
 
   addSource() {
-    from(this.router.navigate(['/add-upload'])).subscribe(() => {
-      setTimeout(() => {
-        this.sync.addSource.next();
-      }, 0);
-    });
+    this.basePath
+      .pipe(
+        take(1),
+        switchMap((path) => from(this.router.navigate([path + 'add-upload']))),
+      )
+      .subscribe(() => {
+        setTimeout(() => {
+          this.sync.addSource.next();
+        }, 0);
+      });
   }
 }

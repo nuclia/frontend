@@ -4,9 +4,9 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 
-import { MainLayoutComponent } from './main-layout.component';
-import { SidebarComponent } from './sidebar.component';
-import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { TopbarComponent } from './topbar.component';
+import { BaseLayoutComponent } from './base-layout.component';
+import { PaAvatarModule, PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
   imports: [
@@ -15,10 +15,11 @@ import { PaButtonModule, PaIconModule, PaTooltipModule } from '@guillotinaweb/pa
     CommonModule,
     TranslateModule,
     PaButtonModule,
-    PaIconModule,
-    PaTooltipModule,
+    PaAvatarModule,
+    PaDropdownModule,
+    PaPopupModule,
   ],
   exports: [],
-  declarations: [MainLayoutComponent, SidebarComponent],
+  declarations: [BaseLayoutComponent, TopbarComponent],
 })
-export class MainLayoutModule {}
+export class BaseLayoutModule {}

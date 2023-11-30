@@ -1,9 +1,11 @@
 @import 'apps/dashboard/src/variables';
 
+$padding-vertical-container: rhythm(5);
+
 .select-files {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100vh - var(--app-topbar-height) - #{$padding-vertical-container * 2});
 }
 
 h2 {

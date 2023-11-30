@@ -17,6 +17,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { AccountModule } from './account/account.module';
 import { LoginModule } from './login/login.module';
 import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
+import { BaseLayoutModule } from './base-layout/base-layout.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/sync/', '.json');
@@ -42,6 +43,7 @@ registerLocaleData(localeCa);
     PaToastModule,
     AccountModule,
     LoginModule,
+    BaseLayoutModule,
   ],
   providers: [TranslatePipe],
   bootstrap: [AppComponent],

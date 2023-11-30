@@ -47,7 +47,7 @@ export class SettingsComponent implements OnDestroy, OnInit {
     } as IErrorMessages,
   };
 
-  @Input() addNew: string = '';
+  @Input() addNew: string | undefined = undefined;
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<{
     name: string;

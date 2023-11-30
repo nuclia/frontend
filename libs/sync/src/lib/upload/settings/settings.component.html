@@ -7,15 +7,15 @@
   (ngSubmit)="validate()">
   <div class="selected-source">
     <img
-      [src]="connector.logo"
-      [alt]="connector.title" />
-    <div>{{ connector.title }}</div>
+      [src]="connector?.logo"
+      [alt]="connector?.title" />
+    <div>{{ connector?.title || '' }}</div>
   </div>
   <div class="settings">
     <div class="field">
       <pa-input
         formControlName="name"
-        [errorMessages]="validationMessages.name">
+        [errorMessages]="validationMessages['name']">
         {{ 'upload.source.name' | translate }}
       </pa-input>
     </div>
@@ -26,14 +26,14 @@
     class="field">
     <pa-input
       *ngIf="field.type === 'text'"
-      [help]="field.help | translate"
+      [help]="field.help ? (field.help | translate) : undefined"
       [placeholder]="field.placeholder"
       [formControlName]="field.id">
       {{ field.label | translate }}
     </pa-input>
     <pa-textarea
       *ngIf="field.type === 'textarea'"
-      [help]="field.help | translate"
+      [help]="field.help ? (field.help | translate) : undefined"
       [formControlName]="field.id">
       {{ field.label | translate }}
     </pa-textarea>
@@ -53,17 +53,17 @@
     </div>
   </div>
   <div
-    *ngIf="connector.helpUrl"
+    *ngIf="connector?.helpUrl"
     class="help">
     <pa-icon
       size="small"
       name="info"></pa-icon>
     <a
-      [href]="connector.helpUrl"
-      (click)="goToUrl($event, connector.helpUrl)"
+      [href]="connector?.helpUrl"
+      (click)="goToUrl($event, connector?.helpUrl || '')"
       target="_blank"
       rel="noopener noreferrer">
-      {{ 'upload.source.help' | translate: { source: connector.title } }}
+      {{ 'upload.source.help' | translate: { source: connector?.title || '' } }}
     </a>
   </div>
 

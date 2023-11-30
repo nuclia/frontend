@@ -1,12 +1,12 @@
 <div class="container">
   <div
     class="steps"
-    *ngIf="!(currentSourceId | async)">
+    *ngIf="(currentSourceId | async) === null">
     <ng-container *ngFor="let id of steps; let last = last; let i = index">
       <div
         class="step"
         [class.active]="i === (step | async)"
-        [class.pending]="i > (step | async)">
+        [class.pending]="i > ((step | async) || -1)">
         {{ 'upload.steps.' + id | translate }}
         <pa-icon
           *ngIf="!last"

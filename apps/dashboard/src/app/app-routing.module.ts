@@ -104,6 +104,11 @@ const routes: Routes = [
                 path: 'billing',
                 loadChildren: () => import('./account/billing/billing.module').then((m) => m.BillingModule),
               },
+              {
+                path: 'sync',
+                // eslint-disable-next-line @nx/enforce-module-boundaries
+                loadChildren: () => import('../../../../libs/sync/src/lib/sync.module').then((m) => m.SyncModule),
+              },
             ],
           },
           // backward compatibility with old urls

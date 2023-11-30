@@ -17,7 +17,7 @@ interface DynamicConnector {
   isExternal?: boolean;
   getParameters?(): Field[];
   handleParameters?(params: ConnectorParameters): void;
-  goToOAuth?(reset?: boolean): void;
+  goToOAuth?(redirect: string, reset?: boolean): void;
   authenticate?(): Promise<boolean>;
   getFiles(query?: string, pageSize?: number): Promise<PromisedSearchResults>;
   download?(resource: SyncItem): Promise<Blob>;
@@ -60,9 +60,9 @@ export class DynamicConnectorWrapper implements ISourceConnector {
     return {};
   }
 
-  goToOAuth(reset?: boolean) {
+  goToOAuth(redirect: string, reset?: boolean) {
     if (this.connector.goToOAuth) {
-      this.connector.goToOAuth(reset);
+      this.connector.goToOAuth(redirect, reset);
     }
   }
 

@@ -82,6 +82,7 @@
 	"account.stash.retire": "Veröffentlichung aufheben",
 	"account.stash.upgrade": "Erhöhen Sie das KB-Maximum",
 	"account.stash.users": "Benutzerverwaltung",
+	"account.sync": "Synchronisieren",
 	"account.threshold": "Verbrauchsschwelle",
 	"account.title": "Name",
 	"account.token_description": "<strong>Wichtig!</strong> Kopieren und speichern Sie den API-Schlüssel. Es verschwindet, sobald es hinzugefügt wurde.",

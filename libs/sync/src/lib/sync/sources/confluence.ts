@@ -50,7 +50,7 @@ class ConfluenceImpl implements ISourceConnector {
     };
   }
 
-  goToOAuth(reset?: boolean) {
+  goToOAuth(redirect: string, reset?: boolean) {
     return of(true);
   }
 

@@ -49,6 +49,7 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
   return new MultiTranslateHttpLoader(http, [
     { prefix: 'assets/i18n/user/', suffix },
     { prefix: 'assets/i18n/common/', suffix },
+    { prefix: 'assets/i18n/sync/', suffix },
   ]);
 }
 

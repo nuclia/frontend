@@ -3,10 +3,10 @@ import { Router } from '@angular/router';
 import { SDKService, UserService } from '@flaps/core';
 import { map, Observable } from 'rxjs';
 import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
-import { SyncService } from '../sync/sync.service';
+import { SyncService } from '@nuclia/sync';
 
 @Component({
-  selector: 'nsy-topbar',
+  selector: 'nde-topbar',
   templateUrl: 'topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

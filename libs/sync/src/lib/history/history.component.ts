@@ -18,7 +18,7 @@ export class HistoryComponent implements OnDestroy {
   private unSubscribeAll = new Subject<void>();
   private _logs: BehaviorSubject<SyncRow[]> = new BehaviorSubject<SyncRow[]>([]);
   private _activeLogs: BehaviorSubject<ProgressRow[]> = new BehaviorSubject<ProgressRow[]>([]);
-  private _showActive = this.route.queryParams.pipe(map((params) => !!params.active));
+  private _showActive = this.route.queryParams.pipe(map((params) => !!params['active']));
 
   activeLogs = this._activeLogs.asObservable();
   uploads = this._logs.asObservable();
