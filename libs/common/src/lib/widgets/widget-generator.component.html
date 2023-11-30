@@ -226,6 +226,7 @@
                           <pa-textarea
                             [rows]="2"
                             formControlName="userPrompt"
+                            [errorMessages]="userPromptErrors"
                             resizable>
                             {{ 'widget.generator.advanced.generative-answer-category.prompt.label' | translate }}
                           </pa-textarea>
@@ -513,8 +514,7 @@
                   <div class="tab-content-body">
                     <div class="placeholder-container">
                       <pa-input
-                        [(value)]="placeholder"
-                        (valueChange)="onPlaceholderChange($event)">
+                        formControlName="placeholder">
                         {{ 'widget.generator.advanced.display-category.placeholder' | translate }}
                       </pa-input>
                     </div>

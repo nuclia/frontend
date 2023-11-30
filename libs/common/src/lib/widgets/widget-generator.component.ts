@@ -6,7 +6,7 @@ import { TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { NavigationService } from '@flaps/common';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   AdvancedForm,
   DEFAULT_CONFIGURATION,
@@ -86,7 +86,11 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   // controls have the name expected by the widget features list
   advancedForm = new FormGroup({
     answers: new FormControl<boolean>(false, { nonNullable: true }),
-    userPrompt: new FormControl<string>('', { nonNullable: true }),
+    userPrompt: new FormControl<string>('', {
+      nonNullable: true,
+      updateOn: 'blur',
+      validators: [Validators.pattern(/\{.+\}/)],
+    }),
     hideSources: new FormControl<boolean>(false, { nonNullable: true }),
     onlyAnswers: new FormControl<boolean>(false, { nonNullable: true }),
     noBM25forChat: new FormControl<boolean>(false, { nonNullable: true }),
@@ -100,6 +104,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),
     targetNewTab: new FormControl<boolean>(false, { nonNullable: true }),
+    placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
     hideThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
     darkMode: new FormControl<boolean>(false, { nonNullable: true }),
@@ -108,12 +113,11 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     relations: new FormControl<boolean>(false, { nonNullable: true }),
     knowledgeGraph: new FormControl<boolean>(false, { nonNullable: true }),
   });
-  private readonly notFeatures = ['userPrompt', 'preselectedFilters', 'darkMode'];
+  userPromptErrors = { pattern: 'widget.generator.advanced.generative-answer-category.prompt.description' };
+  private readonly notFeatures = ['userPrompt', 'preselectedFilters', 'darkMode', 'placeholder'];
 
   // advanced options not managed directly in the form
   filters: FilterSelectionType = DEFAULT_FILTERS;
-  placeholder = '';
-  debouncePlaceholder = new Subject<string>();
   isModified = false;
 
   // FLAGS FOR CONDITIONAL FIELDS AND FEATURES
@@ -142,6 +146,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   // ADVANCED FORM VALUES ACCESSORS
   get userPrompt() {
     return this.advancedForm.controls.userPrompt.value;
+  }
+  get placeholder() {
+    return this.advancedForm.controls.placeholder.value;
   }
   get preselectedFilters() {
     return this.advancedForm.controls.preselectedFilters.value;
@@ -214,15 +221,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.debouncePlaceholder.pipe(debounceTime(500)).subscribe((placeholder) => {
-      this.placeholder = placeholder;
-      this.generateSnippet();
-    });
-
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
       this.currentKbId = kb.id;
       const config = this.widgetConfigurations[kb.id] || {};
-      this.placeholder = config.placeholder || '';
       if (config.filters) {
         this.filters = config.filters;
       }
@@ -240,7 +241,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     // Debouncing allows to update the snippet only once after all changes are done.
     this.advancedForm.valueChanges
       .pipe(debounceTime(FORM_CHANGED_DEBOUNCE_TIME), takeUntil(this.unsubscribeAll))
-      .subscribe(() => {
+      .subscribe((changes) => {
+        console.log('advancedForm.valueChanges', changes);
         if (this.selectedPreset) {
           this.isModified = isModifiedConfig(
             this.advancedForm.getRawValue(),
@@ -271,6 +273,10 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.deletePreview();
   }
 
+  onChange(event: Event) {
+    console.log('onChange', event);
+  }
+
   selectTab(tab: 'preset' | 'advanced') {
     this.selectedTab = tab;
     if (tab === 'preset') {
@@ -290,10 +296,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   resetToPreset() {
     this.updateConfigurationFromPreset(this.presetForm.getRawValue());
-  }
-
-  onPlaceholderChange(value: string) {
-    this.debouncePlaceholder.next(value);
   }
 
   onFiltersChange() {
@@ -354,7 +356,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.generateSnippet();
     this.widgetConfigurations[this.currentKbId] = {
       features: this.advancedForm.getRawValue(),
-      placeholder: this.placeholder,
       filters: this.filtersEnabled ? this.filters : undefined,
       preset: this.presetForm.getRawValue(),
     };
