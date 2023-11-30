@@ -1,6 +1,7 @@
 import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
-import type { Search, SearchOptions } from './search.models';
+import type { SearchOptions } from './search.models';
+import { Search } from './search.models';
 
 export const find = (
   nuclia: INuclia,
@@ -12,6 +13,15 @@ export const find = (
   useGet?: boolean,
 ): Observable<Search.FindResults | IErrorResponse> => {
   const { inTitleOnly, ...others } = options || {};
+  if (
+    options?.with_synonyms &&
+    (features.includes(Search.Features.VECTOR) || features.includes(Search.Features.RELATIONS))
+  ) {
+    console.warn(`with_synonyms option cannot work with VECTOR and RELATIONS features`);
+    features = features.filter(
+      (feature) => feature === Search.Features.PARAGRAPH || feature === Search.Features.DOCUMENT,
+    );
+  }
   const params: { [key: string]: string | string[] } = {
     query: query || '',
     features,
