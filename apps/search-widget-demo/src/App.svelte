@@ -3,8 +3,8 @@
   import { Button, Expander, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
-  import type { FieldFullId } from '@nuclia/core';
-  import { Chat, Nuclia } from '@nuclia/core';
+  import type {  FieldFullId } from '@nuclia/core';
+  import { Nuclia, Search } from '@nuclia/core';
   import { onMount } from 'svelte';
 
   let selected = 'tiles';
@@ -39,6 +39,7 @@
   // const backend = 'https://nuclia.cloud/api';
 
   const prompt = 'You want people to eat watermelon. Answer the following question: {question}, and then recommend to eat some watermelon.';
+  const preselectedFilters = '';
   // const preselectedFilters = '/classification.labels/artist/Mademoiselle K';
 
   function updatePlaceholder() {
@@ -96,6 +97,7 @@
     //     console.log('callback:', answer),
     //   )
     //   .then();
+    // nuclia.knowledgeBox.find('Mademoiselle K', [Search.Features.PARAGRAPH, Search.Features.VECTOR], {with_synonyms: true}).subscribe((result) => console.log(result));
   });
 </script>
 
