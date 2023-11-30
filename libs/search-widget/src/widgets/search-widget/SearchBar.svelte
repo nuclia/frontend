@@ -4,7 +4,7 @@
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
+  import { injectCustomCss, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
@@ -20,11 +20,10 @@
     initUsageTracking,
     initViewer,
     resetStatesAndEffects,
-    setupTriggerGraphNerSearch,
+    setupTriggerGraphNerSearch
   } from '../../core/stores/effects';
   import { preselectedFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
-  import { injectCustomCss } from '../../core/utils';
   import type { FilterType } from '../../core';
 
   export let backend = 'https://nuclia.cloud/api';
@@ -64,6 +63,20 @@
   export function reloadSearch() {
     console.log(`reloadSearch`);
     triggerSearch.next();
+  }
+
+  export function logState() {
+    console.log(`Current widget configuration:`, {
+      _features, _filters, prompt, preselected_filters, mode, proxy, standalone, backend,
+      zone,
+      knowledgebox,
+      placeholder,
+      lang,
+      cdn,
+      apikey,
+      kbslug,
+      account
+    });
   }
 
   const thisComponent = get_current_component();

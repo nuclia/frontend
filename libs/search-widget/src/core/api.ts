@@ -26,16 +26,25 @@ import { hasViewerSearchError } from './stores/viewer.store';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 const DEFAULT_CHAT_MODE = [Chat.Features.VECTORS, Chat.Features.PARAGRAPHS];
+const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
+// IMPORTANT! do not initialise those options outside initNuclia,
+// otherwise options might be kept in memory when using the widget generator
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
-let SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
-let CHAT_MODE = [...DEFAULT_CHAT_MODE];
-let SUGGEST_MODE: Search.SuggestionFeatures[] = [];
-const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
+let SEARCH_MODE: Search.Features[];
+let CHAT_MODE: Chat.Features[];
+let SEARCH_OPTIONS: Partial<SearchOptions>;
+let SUGGEST_MODE: Search.SuggestionFeatures[];
 let prompt: string | undefined = undefined;
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
+  SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
+  CHAT_MODE = [...DEFAULT_CHAT_MODE];
+  SEARCH_OPTIONS = { ...DEFAULT_SEARCH_OPTIONS };
+  SUGGEST_MODE = [];
+  prompt = undefined;
+
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
   }
@@ -46,7 +55,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
     SEARCH_MODE = [Search.Features.PARAGRAPH];
   }
   if (widgetOptions.features?.useSynonyms) {
-    DEFAULT_SEARCH_OPTIONS.with_synonyms = true;
+    SEARCH_OPTIONS.with_synonyms = true;
   }
   nucliaApi = new Nuclia(options);
   initTracking(nucliaApi.options.knowledgeBox || 'kb not defined');
@@ -101,7 +110,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
     throw new Error('Nuclia API not initialized');
   }
 
-  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...DEFAULT_SEARCH_OPTIONS, ...options }).pipe(
+  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, ...options }).pipe(
     filter((res) => {
       if (res.type === 'error') {
         searchError.set(res);
