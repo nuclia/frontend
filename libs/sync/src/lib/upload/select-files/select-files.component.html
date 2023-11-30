@@ -30,8 +30,8 @@
         kind="destructive"
         aspect="basic"
         (click)="delete()"
-        paTooltip="generic.delete">
-        {{ 'generic.delete' | translate }}
+        paTooltip="action.delete">
+        {{ 'action.delete' | translate }}
       </pa-button>
     </div>
   </div>
@@ -99,13 +99,13 @@
       kind="primary"
       [disabled]="(canSelectFiles | async) && selection.isEmpty()"
       (click)="upload()">
-      {{ 'generic.upload' | translate }}
+      {{ 'action.upload' | translate }}
     </pa-button>
     <pa-button
       qa="cancel"
       aspect="basic"
       (click)="cancel.next()">
-      {{ 'generic.cancel' | translate }}
+      {{ 'action.cancel' | translate }}
     </pa-button>
   </div>
 </div>

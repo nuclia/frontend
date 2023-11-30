@@ -158,7 +158,7 @@ export class SelectFilesComponent implements AfterViewInit {
       .openConfirm({
         title: this.translate.instant('upload.source.confirm-delete-title', { name: sourceId }),
         description: 'upload.source.confirm-delete-description',
-        confirmLabel: 'generic.delete',
+        confirmLabel: 'action.delete',
         isDestructive: true,
       })
       .onClose.pipe(
