@@ -123,7 +123,7 @@
 						</children>
 					</folder_node>
 					<folder_node>
-						<name>generic</name>
+						<name>action</name>
 						<children>
 							<concept_node>
 								<name>cancel</name>
@@ -220,99 +220,6 @@
 							</concept_node>
 							<concept_node>
 								<name>save</name>
-								<description/>
-								<comment/>
-								<translations>
-									<translation>
-										<language>ca-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>de-DE</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>en-US</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>es-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>fr-FR</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>pt-PT</language>
-										<approved>false</approved>
-									</translation>
-								</translations>
-							</concept_node>
-							<concept_node>
-								<name>select_tags</name>
-								<description/>
-								<comment/>
-								<translations>
-									<translation>
-										<language>ca-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>de-DE</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>en-US</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>es-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>fr-FR</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>pt-PT</language>
-										<approved>false</approved>
-									</translation>
-								</translations>
-							</concept_node>
-							<concept_node>
-								<name>server_down</name>
-								<description/>
-								<comment/>
-								<translations>
-									<translation>
-										<language>ca-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>de-DE</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>en-US</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>es-ES</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>fr-FR</language>
-										<approved>false</approved>
-									</translation>
-									<translation>
-										<language>pt-PT</language>
-										<approved>false</approved>
-									</translation>
-								</translations>
-							</concept_node>
-							<concept_node>
-								<name>server_up</name>
 								<description/>
 								<comment/>
 								<translations>
@@ -1441,6 +1348,68 @@
 									</concept_node>
 									<concept_node>
 										<name>local-button</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>server_down</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pt-PT</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>server_up</name>
 										<description/>
 										<comment/>
 										<translations>

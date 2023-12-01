@@ -12,7 +12,7 @@
       [kind]="(isServerDown | async) ? 'destructive' : 'inverted'"
       aspect="basic">
       <a routerLink="/server">
-        {{ ((isServerDown | async) ? 'generic.server_down' : 'generic.server_up') | translate }}
+        {{ ((isServerDown | async) ? 'upload.server.server_down' : 'upload.server.server_up') | translate }}
       </a>
     </pa-button>
   </div>
@@ -36,12 +36,12 @@
   <pa-option
     icon="reload"
     (selectOption)="goSelect()">
-    {{ 'generic.switch_account' | translate }}
+    {{ 'action.switch_account' | translate }}
   </pa-option>
   <pa-separator></pa-separator>
   <pa-option
     icon="log-out"
     (selectOption)="logout()">
-    {{ 'generic.logout' | translate }}
+    {{ 'action.logout' | translate }}
   </pa-option>
 </pa-dropdown>

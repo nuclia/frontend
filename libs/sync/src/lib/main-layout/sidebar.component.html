@@ -54,7 +54,7 @@
       <pa-icon
         *ngIf="isServerDown | async"
         name="warning"></pa-icon>
-      {{ ((isServerDown | async) ? 'generic.server_down' : 'generic.server_up') | translate }}
+      {{ ((isServerDown | async) ? 'upload.server.server_down' : 'upload.server.server_up') | translate }}
       <pa-icon
         class="arrow"
         name="chevron-right"
