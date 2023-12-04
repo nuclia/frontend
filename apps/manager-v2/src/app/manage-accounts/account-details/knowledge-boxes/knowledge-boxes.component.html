@@ -1,10 +1,11 @@
 <h3>Knowledge Boxes</h3>
-<pa-table columns="2fr repeat(2, 1fr) 96px">
+<pa-table columns="2fr repeat(2, 1fr) 96px 80px">
   <pa-table-header>
     <pa-table-cell header>Id</pa-table-cell>
     <pa-table-cell header>Slug</pa-table-cell>
     <pa-table-cell header>Title</pa-table-cell>
     <pa-table-cell header>Resources</pa-table-cell>
+    <pa-table-cell header>Activity</pa-table-cell>
   </pa-table-header>
   <pa-table-row
     *ngFor="let kb of kbList | async"
@@ -22,5 +23,11 @@
         {{ count[kb.id] }}
       </div>
     </pa-table-cell>
+    <pa-table-cell-menu>
+      <pa-button
+        icon="square-arrow"
+        aspect="basic"
+        (click)="openActivity($event, kb.id)"></pa-button>
+    </pa-table-cell-menu>
   </pa-table-row>
 </pa-table>
