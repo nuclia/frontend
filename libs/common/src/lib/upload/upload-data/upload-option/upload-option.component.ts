@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { trimString } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-upload-option',
@@ -7,21 +8,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadOptionComponent {
-  @Input()
-  set icon(value: string | undefined) {
-    this._icon = value || '';
-  }
-  get icon(): string {
-    return this._icon;
-  }
-  @Input()
-  set text(value: string | undefined) {
-    this._text = value || '';
-  }
-  get text(): string {
-    return this._text;
-  }
-
-  private _icon = '';
-  private _text = '';
+  @Input({ transform: trimString }) icon = '';
+  @Input({ transform: trimString }) text = '';
+  @Input({ transform: booleanAttribute }) active = false;
 }

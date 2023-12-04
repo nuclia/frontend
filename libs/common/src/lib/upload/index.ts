@@ -10,4 +10,5 @@ export * from './upload-progress/upload-progress-dialog.component';
 export * from './upload-text/upload-text.component';
 export * from './upload.module';
 export * from './upload.service';
+export * from './upload.utils';
 export * from './csv-parser';

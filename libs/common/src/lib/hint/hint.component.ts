@@ -1,6 +1,7 @@
 import {
   AfterContentInit,
   AfterViewInit,
+  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -12,7 +13,6 @@ import {
 } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { delay, map, take } from 'rxjs';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'ncom-hint',
@@ -25,15 +25,7 @@ export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges
   @Input() learnMore?: string;
   @Input() label?: string;
   @Input() values?: { [key: string]: string } | null;
-
-  @Input()
-  set noMaxWidth(value: any) {
-    this._noMaxWidth = coerceBooleanProperty(value);
-  }
-  get noMaxWidth() {
-    return this._noMaxWidth;
-  }
-  private _noMaxWidth = false;
+  @Input({ transform: booleanAttribute }) noMaxWidth = false;
 
   @ViewChild('content') content?: ElementRef;
   @ViewChild('container') container?: ElementRef;
@@ -44,7 +36,10 @@ export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges
   containerWidth = '100%';
   copyIcon: 'copy' | 'check' = 'copy';
 
-  constructor(private sdk: SDKService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private sdk: SDKService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngAfterViewInit() {
     if (!this.noMaxWidth) {

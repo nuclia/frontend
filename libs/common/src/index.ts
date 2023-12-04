@@ -15,7 +15,6 @@ export * from './lib/navbar';
 export * from './lib/page-not-found';
 export * from './lib/pagination';
 export * from './lib/pipes';
-export * from './lib/progress-bar';
 export * from './lib/resources';
 export * from './lib/search';
 export * from './lib/select-account-kb';

@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@import '../../../../styles/variables';
 
 :host {
   display: block;
@@ -6,13 +6,17 @@
 }
 
 .progress-bar {
-  height: rhythm(0.5);
+  --track-color: #{$color-light-stronger};
+  --bar-color: #{$color-primary-regular};
 
-  &-white {
-    background-color: $color-light-stronger;
+  height: rhythm(0.5);
+  background-color: var(--track-color);
+
+  &.grey-track {
+    --track-color: #{$color-neutral-lighter};
   }
-  &-gray {
-    background-color: $color-neutral-lighter;
+  &.grey-bar {
+    --bar-color: #{$color-neutral-light};
   }
 
   .progress {
@@ -20,7 +24,7 @@
     transition: width $duration-superfast linear;
 
     &:not(.indeterminate) {
-      background-color: $color-primary-regular;
+      background-color: var(--bar-color);
     }
 
     &.indeterminate {
@@ -31,7 +35,7 @@
       &::before {
         content: '';
         position: absolute;
-        background-color: $color-primary-regular;
+        background-color: var(--bar-color);
         top: 0;
         left: 0;
         bottom: 0;
@@ -41,7 +45,7 @@
       &::after {
         content: '';
         position: absolute;
-        background-color: $color-primary-regular;
+        background-color: var(--bar-color);
         top: 0;
         left: 0;
         bottom: 0;

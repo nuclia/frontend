@@ -22,11 +22,10 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { SisProgressModule } from '@nuclia/sistema';
+import { ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
 import { HintModule } from '../hint/hint.module';
 import { LabelModule } from '../label/label.module';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
-import { ProgressBarModule } from '../progress-bar/progress-bar.module';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
 import { UploadDataComponent } from './upload-data/upload-data.component';
 import { UploadOptionComponent } from './upload-data/upload-option/upload-option.component';
@@ -49,9 +48,9 @@ import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-s
     PaTooltipModule,
     PaTextFieldModule,
     SisProgressModule,
-    ProgressBarModule,
     PaModalModule,
     PaTableModule,
+    ProgressBarComponent,
   ],
   declarations: [
     CreateLinkComponent,
@@ -67,6 +66,12 @@ import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-s
     UploadOptionComponent,
     DesktopSourcesComponent,
   ],
-  exports: [UploadBarComponent, CsvSelectComponent, UploadDataComponent, DesktopSourcesComponent],
+  exports: [
+    UploadBarComponent,
+    CsvSelectComponent,
+    UploadDataComponent,
+    DesktopSourcesComponent,
+    UploadOptionComponent,
+  ],
 })
 export class UploadModule {}

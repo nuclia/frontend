@@ -8,10 +8,13 @@ import {
   LabelSet,
   LabelSetKind,
   Message,
+  ProcessingStatusResponse,
+  Resource,
   Search,
   TextFieldFormat,
   TextFormat,
   UploadStatus,
+  WritableKnowledgeBox,
 } from '@nuclia/core';
 import { LabelsService } from '../label/labels.service';
 import {
@@ -34,11 +37,10 @@ import {
   toArray,
 } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { TranslateService } from '@ngx-translate/core';
 
 export const UPLOAD_DONE_KEY = 'NUCLIA_UPLOAD_DONE';
-export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
-export const PATTERNS_TO_IGNORE = [/^~.+/, /.+\.tmp$/];
 const REGEX_YOUTUBE_URL = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/)/;
 export const SPREADSHEET_MIMES = [
   'text/csv',
@@ -55,6 +57,7 @@ export const ARCHIVE_MIMES = [
   'application/x-tar',
   'application/x-rar',
 ];
+export const STATUS_FACET = '/metadata.status';
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
@@ -69,9 +72,43 @@ export class UploadService {
   barDisabled = this._barDisabled.asObservable();
   statusCount = this._statusCount.asObservable();
 
-  constructor(private sdk: SDKService, private labelsService: LabelsService, private toaster: SisToastService) {}
+  constructor(
+    private sdk: SDKService,
+    private labelsService: LabelsService,
+    private toaster: SisToastService,
+    private modal: SisModalService,
+    private translate: TranslateService,
+  ) {}
 
-  uploadFiles(files: FileWithMetadata[]) {
+  checkFileTypesAndConfirm(files: File[]): Observable<boolean> {
+    const spreadsheets = files.filter((file) => SPREADSHEET_MIMES.includes(file.type));
+    const archives = files.filter((file) => ARCHIVE_MIMES.includes(file.type));
+    return (
+      spreadsheets.length > 0
+        ? this.modal.openConfirm({
+            title: this.translate.instant('upload.warning-spreadsheet-title', { num: spreadsheets.length }),
+            description: this.translate.instant('upload.warning-spreadsheets-description', {
+              url: 'https://docs.nuclia.dev/docs/guides/using/indexing/#structured-text',
+            }),
+            confirmLabel: 'generic.upload',
+          }).onClose
+        : of(true)
+    ).pipe(
+      filter((res) => !!res),
+      switchMap(() =>
+        archives.length > 0
+          ? this.modal.openConfirm({
+              title: this.translate.instant('upload.warning-archive-title', { num: archives.length }),
+              description: 'upload.warning-archive-description',
+              confirmLabel: 'generic.upload',
+            }).onClose
+          : of(true),
+      ),
+      filter((res) => !!res),
+    );
+  }
+
+  uploadFilesAndManageCompletion(files: FileWithMetadata[]) {
     let hasNotifiedError = false;
     const labels = files
       .filter((file) => !!file.payload && !!file.payload.usermetadata && !!file.payload.usermetadata.classifications)
@@ -79,25 +116,17 @@ export class UploadService {
       .reduce((acc, val) => acc.concat(val), [] as Classification[]);
     this.createMissingLabels(labels)
       .pipe(
-        concatMap(() => forkJoin(files.map((file) => md5(file)))),
-        switchMap((filelist) =>
-          this.sdk.currentKb.pipe(
-            take(1),
-            switchMap((kb) =>
-              kb.batchUpload(filelist).pipe(
-                tap((progress) => {
-                  if (progress.completed) {
-                    if (progress.failed === 0 || progress.failed === progress.conflicts) {
-                      this.onUploadComplete(true, kb.id);
-                    } else if (!hasNotifiedError) {
-                      hasNotifiedError = true;
-                      this.onUploadComplete(false, kb.id);
-                    }
-                  }
-                }),
-              ),
-            ),
-          ),
+        concatMap(() =>
+          this.uploadFiles(files, (kb, progress) => {
+            if (progress.completed) {
+              if (progress.failed === 0 || progress.failed === progress.conflicts) {
+                this.onUploadComplete(true, kb.id);
+              } else if (!hasNotifiedError) {
+                hasNotifiedError = true;
+                this.onUploadComplete(false, kb.id);
+              }
+            }
+          }),
         ),
         startWith({ files: [], progress: 0, completed: false, uploaded: 0, failed: 0, conflicts: 0 }),
       )
@@ -105,6 +134,28 @@ export class UploadService {
         this._progress.next(progress);
       });
     this._barDisabled.next(false);
+  }
+
+  uploadFiles(
+    files: File[],
+    onUploadCompletion?: (kb: WritableKnowledgeBox, progress: UploadStatus) => void,
+  ): Observable<UploadStatus> {
+    return forkJoin(files.map((file) => md5(file))).pipe(
+      switchMap((fileList) =>
+        this.sdk.currentKb.pipe(
+          take(1),
+          switchMap((kb) =>
+            kb.batchUpload(fileList).pipe(
+              tap((progress) => {
+                if (typeof onUploadCompletion === 'function') {
+                  onUploadCompletion(kb, progress);
+                }
+              }),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   disableBar() {
@@ -266,21 +317,43 @@ export class UploadService {
     );
   }
 
-  updateStatusCount(): Observable<{ pending: number; error: number; processed: number }> {
-    const statusFacet = '/metadata.status';
+  /**
+   * Request the resource status facet on the current KB and returns corresponding search results.
+   * Those results contain the facets in `fulltext` property,
+   * but they also return the first page of resources the KB contains with their status and seqid.
+   */
+  getResourceStatusCount(): Observable<Search.Results> {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
         kb.catalog('', {
-          faceted: [statusFacet],
+          faceted: [STATUS_FACET],
         }),
       ),
       filter((results) => results.type !== 'error' && !!results.fulltext?.facets),
       map((results) => results as Search.Results),
+    );
+  }
+
+  getResourcePlaceInProcessingQueue(resource: Resource, processingStatus: ProcessingStatusResponse): number | null {
+    if (!processingStatus || !resource.last_account_seq) {
+      return null;
+    }
+    const last_delivered_seqid =
+      resource.queue === 'private'
+        ? processingStatus.account?.last_delivered_seqid
+        : processingStatus.shared?.last_delivered_seqid;
+    return typeof last_delivered_seqid === 'number'
+      ? resource.last_account_seq - last_delivered_seqid
+      : resource.last_account_seq - 1;
+  }
+
+  updateStatusCount(): Observable<{ pending: number; error: number; processed: number }> {
+    return this.getResourceStatusCount().pipe(
       map((results: Search.Results) => ({
-        pending: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PENDING`] || 0,
-        error: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/ERROR`] || 0,
-        processed: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PROCESSED`] || 0,
+        pending: results.fulltext?.facets?.[STATUS_FACET]?.[`${STATUS_FACET}/PENDING`] || 0,
+        error: results.fulltext?.facets?.[STATUS_FACET]?.[`${STATUS_FACET}/ERROR`] || 0,
+        processed: results.fulltext?.facets?.[STATUS_FACET]?.[`${STATUS_FACET}/PROCESSED`] || 0,
       })),
       tap((count) => {
         this._statusCount.next({ pending: count.pending, error: count.error });

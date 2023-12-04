@@ -17,7 +17,8 @@
     background: $color-neutral-lighter;
   }
 
-  &:active {
+  &:active,
+  &.active {
     background: $color-neutral-light;
   }
 }

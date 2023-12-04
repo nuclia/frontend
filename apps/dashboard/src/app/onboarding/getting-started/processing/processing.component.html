@@ -1,0 +1,17 @@
+<h1>{{ 'getting-started.processing.title' | translate }}</h1>
+
+<div class="main-container">
+  <p>{{ 'getting-started.processing.description' | translate }}</p>
+
+  <div>
+    <app-getting-started-upload-list [itemsToUpload]="itemsToUpload"></app-getting-started-upload-list>
+
+    @if (totalEstimatedTime) {
+      <div class="estimated-time">
+        <strong>
+          {{ 'getting-started.processing.estimated-time' | translate: { estimation: totalEstimatedTime } }}
+        </strong>
+      </div>
+    }
+  </div>
+</div>

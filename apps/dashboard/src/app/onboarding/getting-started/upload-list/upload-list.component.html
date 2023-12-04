@@ -1,0 +1,61 @@
+<div class="upload-list-container">
+  <ul class="upload-list">
+    @for (item of itemsToUpload; track item.id) {
+      <li>
+        <span paEllipsisTooltip>{{ item.title }}</span>
+
+        @if (canDelete) {
+          <pa-button
+            aspect="basic"
+            size="small"
+            icon="trash"
+            (click)="removeItem.emit(item.id)">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
+        } @else {
+          <div class="progress-container">
+            <div class="progress-status">
+              @if (!item.uploaded) {
+                <span class="title-xxs">
+                  {{ 'getting-started.processing.status.uploading' | translate }}
+                </span>
+
+                @if (item.uploadFailed) {
+                  <span class="body-s">
+                    {{ 'getting-started.processing.status.failed' | translate }}
+                  </span>
+                }
+              } @else if (!item.processed) {
+                <span class="title-xxs">
+                  {{ 'getting-started.processing.status.processing' | translate }}
+                </span>
+
+                @if (!item.processing) {
+                  <span class="body-s">
+                    {{ 'getting-started.processing.status.queued' | translate }}
+                  </span>
+                } @else {
+                  <span class="body-s">
+                    {{
+                      'getting-started.processing.status.estimated-time'
+                        | translate: { estimation: item.estimation || 1 }
+                    }}
+                  </span>
+                }
+              }
+            </div>
+            @if (!item.processed && !item.uploadFailed) {
+              <nsi-progress-bar
+                [progress]="!item.uploaded ? item.uploadProgress : null"
+                [greyBar]="!item.uploaded"></nsi-progress-bar>
+            } @else if (item.processed) {
+              <span class="title-xxs">
+                {{ 'getting-started.processing.status.processed' | translate }}
+              </span>
+            }
+          </div>
+        }
+      </li>
+    }
+  </ul>
+</div>

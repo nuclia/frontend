@@ -1,0 +1,60 @@
+@import 'apps/dashboard/src/variables';
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+
+  .dropzone {
+    align-items: center;
+    border: rhythm(0.25) dashed $color-neutral-light;
+    color: $color-neutral-light;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    min-height: rhythm(8);
+    transition: border-color $transition-hint;
+
+    &.disabled {
+      cursor: no-drop;
+      pointer-events: none;
+    }
+
+    span {
+      transition: opacity $transition-hint;
+    }
+    &:not(.disabled).file-over {
+      border: 2px dashed $color-primary-regular;
+    }
+  }
+
+  .separator {
+    align-items: center;
+    color: $color-neutral-regular;
+    display: flex;
+    gap: rhythm(3);
+    justify-content: space-between;
+    text-transform: uppercase;
+
+    .line {
+      background: $color-neutral-light;
+      height: 1px;
+      flex: 1 0 auto;
+    }
+  }
+
+  pa-textarea ::ng-deep .pa-field .pa-field-control {
+    font-size: $font-size-body-s;
+  }
+
+  .disclaimer {
+    margin-top: rhythm(1);
+    margin-bottom: 0;
+  }
+}

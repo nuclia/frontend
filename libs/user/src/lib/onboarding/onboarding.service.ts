@@ -135,7 +135,8 @@ export class OnboardingService {
         this.tracking.logEvent('account_creation_success');
         const basePath = `/at/${accountSlug}/${configuration.zoneSlug}/${kbSlug}`;
         const path = basePath + (configuration.dataset ? '/search' : '');
-        this.router.navigate([path]);
+        const queryParams = configuration.dataset ? undefined : { getting_started: 'upload' };
+        this.router.navigate([path], { queryParams });
       });
   }
 

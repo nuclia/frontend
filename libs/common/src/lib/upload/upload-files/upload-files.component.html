@@ -30,12 +30,12 @@
 
     <div
       stfFileDrop
+      class="dropzone"
       [class.file-over]="hasBaseDropZoneOver"
+      [class.folder]="folderMode"
       (fileOver)="fileOverBase($event)"
       (atFileDrop)="addFiles($event)"
-      (click)="chooseFiles($event)"
-      class="dropzone"
-      [class.folder]="folderMode">
+      (click)="chooseFiles($event)">
       <span>{{ (folderMode ? 'modal.upload.drop_folder' : 'modal.upload.drop') | translate }}</span>
     </div>
     <input
@@ -49,7 +49,7 @@
     <input
       *ngIf="folderMode"
       type="file"
-      id="upload-file-chooser"
+      id="upload-folder-chooser"
       multiple
       webkitdirectory
       directory

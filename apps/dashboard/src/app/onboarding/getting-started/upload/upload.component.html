@@ -1,0 +1,60 @@
+<h1>{{ 'getting-started.upload.title' | translate }}</h1>
+
+<div class="main-container">
+  <p>{{ 'getting-started.upload.description' | translate }}</p>
+  <div class="upload-area">
+    <div>
+      <div
+        stfFileDrop
+        class="dropzone"
+        [class.file-over]="hasBaseDropZoneOver"
+        [class.disabled]="itemsToUpload.length >= 5"
+        (fileOver)="fileOverBase($event)"
+        (atFileDrop)="addFiles($event)"
+        (click)="chooseFiles($event)">
+        <span>{{ 'modal.upload.drop' | translate }}</span>
+      </div>
+      <input
+        type="file"
+        stfFileSelect
+        [disabled]="itemsToUpload.length >= 5"
+        (atFileSelect)="addFiles($event)"
+        id="upload-file-chooser"
+        multiple
+        hidden />
+    </div>
+
+    <div class="separator">
+      <div class="line"></div>
+      {{ 'getting-started.upload.and-or' | translate }}
+      <div class="line"></div>
+    </div>
+
+    <div>
+      <pa-textarea
+        rows="2"
+        [formControl]="linkControl"
+        [help]="'getting-started.upload.link-textarea.help' | translate">
+        {{ 'getting-started.upload.link-textarea.label' | translate }}
+      </pa-textarea>
+
+      <p class="disclaimer body-xs">
+        <span [innerHTML]="'getting-started.upload.disclaimer.limit' | translate"></span>
+        <br />
+        {{
+          ((isTrial | async)
+            ? 'getting-started.upload.disclaimer.dont-worry-trial'
+            : 'getting-started.upload.disclaimer.dont-worry'
+          ) | translate
+        }}
+      </p>
+    </div>
+  </div>
+
+  @if (itemsToUpload.length > 0) {
+    <app-getting-started-upload-list
+      canDelete
+      [itemsToUpload]="itemsToUpload"
+      (removeItem)="removeItem($event)"></app-getting-started-upload-list>
+  }
+</div>

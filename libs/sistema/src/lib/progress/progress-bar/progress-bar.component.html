@@ -1,6 +1,7 @@
 <div
   class="progress-bar"
-  [class]="'progress-bar-' + track">
+  [class.grey-track]="greyTrack"
+  [class.grey-bar]="greyBar">
   <div
     class="progress"
     [class.indeterminate]="isIndeterminate"

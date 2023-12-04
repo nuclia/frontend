@@ -1,0 +1,15 @@
+@import 'apps/dashboard/src/variables';
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+}
+
+.estimated-time {
+  margin-top: rhythm(1);
+
+  strong {
+    font-weight: $font-weight-semi-bold;
+  }
+}

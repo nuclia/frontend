@@ -23,14 +23,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
-import {
-  ChartsModule,
-  HintModule,
-  PipesModule,
-  ProgressBarModule,
-  TokenDialogModule,
-  UploadModule,
-} from '@flaps/common';
+import { ChartsModule, HintModule, PipesModule, TokenDialogModule, UploadModule } from '@flaps/common';
 
 @NgModule({
   imports: [
@@ -40,7 +33,6 @@ import {
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
-    ProgressBarModule,
     TokenDialogModule,
     ChartsModule,
     PipesModule,

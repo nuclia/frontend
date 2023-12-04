@@ -37,10 +37,9 @@
               {{ 'upload.error' | translate }}
             </div>
 
-            <stf-progress-bar
+            <nsi-progress-bar
               *ngIf="file.progress !== 100"
-              track="white"
-              [progress]="file.progress"></stf-progress-bar>
+              [progress]="file.progress"></nsi-progress-bar>
           </div>
         </div>
       </div>
