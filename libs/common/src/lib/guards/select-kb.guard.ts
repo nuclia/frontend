@@ -2,7 +2,7 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { NavigationService, SelectAccountKbService } from '@flaps/common';
 import { inject } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { of, switchMap } from 'rxjs';
+import { filter, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
@@ -17,8 +17,15 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
     selectService.selectAccount('local').subscribe();
   }
 
+  const isKbListReady = sdk.currentAccount.pipe(
+    filter((account) => account.slug === accountSlug),
+    switchMap(() => sdk.refreshingKbList),
+    filter((refreshing) => !refreshing),
+  );
+
   return accountSlug
-    ? sdk.kbList.pipe(
+    ? isKbListReady.pipe(
+        switchMap(() => sdk.kbList),
         switchMap((kbs) => {
           if (kbs.length === 0) {
             return selectService.standalone

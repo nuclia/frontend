@@ -40,6 +40,7 @@ export class SDKService {
   private _kb = new BehaviorSubject<KnowledgeBox | null>(null);
   private _currentKB = new ReplaySubject<WritableKnowledgeBox>(1);
   private _kbList = new ReplaySubject<IKnowledgeBoxItem[]>(1);
+  private _refreshingKbList = new BehaviorSubject<boolean>(false);
   private _refreshCounter = new Subject<boolean>();
   private _triggerRefreshKbs = new Subject<boolean>();
   private _repetitiveRefreshCounter = new Subject<void>();
@@ -47,6 +48,7 @@ export class SDKService {
 
   currentKb = this._currentKB.asObservable();
   kbList: Observable<IKnowledgeBoxItem[]> = this._kbList.asObservable();
+  refreshingKbList: Observable<boolean> = this._refreshingKbList.asObservable();
   currentAccount: Observable<Account> = this._account.pipe(
     filter((account) => !!account),
     map((account) => account as Account),
@@ -148,6 +150,7 @@ export class SDKService {
   }
 
   private _refreshKbList(refreshCurrentKb = false) {
+    this._refreshingKbList.next(true);
     const kbList: Observable<IKnowledgeBoxItem[]> = this.nuclia.options.standalone
       ? this.nuclia.db.getStandaloneKbs().pipe(
           map((kbs) =>
@@ -165,7 +168,13 @@ export class SDKService {
           switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug)),
         );
 
-    kbList.subscribe((list) => this._kbList.next(list.sort((a, b) => (a.title || '').localeCompare(b.title || ''))));
+    kbList.subscribe({
+      next: (list) => {
+        this._kbList.next(list.sort((a, b) => (a.title || '').localeCompare(b.title || '')));
+        this._refreshingKbList.next(false);
+      },
+      error: () => this._refreshingKbList.next(false),
+    });
 
     if (refreshCurrentKb) {
       forkJoin([this.currentAccount.pipe(take(1)), this.currentKb.pipe(take(1))])
