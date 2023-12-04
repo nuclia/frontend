@@ -319,7 +319,7 @@
 	"generic.deleting": "Suppression de",
 	"generic.description": "Description",
 	"generic.deselect_all": "Effacer tout",
-	"generic.disabled": "Handicapés",
+	"generic.disabled": "Désactivé",
 	"generic.download": "Télécharger",
 	"generic.download_algolia_json": "Télécharger JSON pour Algolia",
 	"generic.edit": "Edit",
