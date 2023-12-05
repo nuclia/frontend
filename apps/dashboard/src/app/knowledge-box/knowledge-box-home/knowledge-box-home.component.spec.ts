@@ -7,6 +7,7 @@ import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { AppService, NavigationService } from '@flaps/common';
 import { MockProvider } from 'ng-mocks';
+import { RouterTestingModule } from '@angular/router/testing';
 
 function createTranslateLoader() {
   return {
@@ -22,6 +23,7 @@ describe('KnowledgeBoxHomeComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [KnowledgeBoxHomeComponent],
       imports: [
+        RouterTestingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
