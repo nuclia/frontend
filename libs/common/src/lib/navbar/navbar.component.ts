@@ -1,7 +1,6 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnDestroy, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { combineLatest, map, merge, Observable, of, Subject, switchMap } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { NavigationService, StandaloneService } from '../services';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
@@ -11,6 +10,7 @@ import { SmallNavbarDirective } from './small-navbar.directive';
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [style({ opacity: 0 }), animate('150ms', style({ opacity: 1 }))]),
@@ -45,6 +45,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
       ),
     ),
   );
+  showSettings = false;
   kbUrl: string = '';
 
   isAdminOrContrib = this.sdk.isAdminOrContrib;
@@ -87,7 +88,17 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
       const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
       this.kbUrl = this.navigationService.getKbUrl(kb.account, kbSlug);
+      this.cdr.markForCheck();
     });
+    this.inSettings
+      .pipe(
+        filter((inSettings) => inSettings),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((inSettings) => {
+        this.showSettings = inSettings;
+        this.cdr.markForCheck();
+      });
   }
 
   override ngOnDestroy() {
@@ -96,5 +107,10 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
       this.unsubscribeAll.next();
       this.unsubscribeAll.complete();
     }
+  }
+
+  toggleSettings() {
+    this.showSettings = !this.showSettings;
+    this.cdr.markForCheck();
   }
 }
