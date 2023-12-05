@@ -67,8 +67,8 @@
             class="nav-link"
             data-cy="go-to-advanced"
             paFocusable
-            [paFocusDisabled]="!(isAdminOrContrib | async) || (invalidKey | async)"
-            [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+            [paFocusDisabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true"
+            [class.disabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true">
             <pa-icon [name]="showSettings ? 'chevron-up' : 'chevron-down'"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.advanced' | translate }}</span>
           </a>
