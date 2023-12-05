@@ -74,7 +74,7 @@
           </a>
         </div>
       </div>
-      <ng-container *ngIf="showSettings">
+      @if (showSettings) {
         <div class="nav-group">
           <div class="group-items">
             <a
@@ -159,7 +159,7 @@
             </ng-container>
           </div>
         </div>
-      </ng-container>
+      }
       <div
         class="nav-group"
         *ngIf="standalone">
