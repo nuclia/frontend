@@ -742,6 +742,7 @@
 	"stash.settings.processes.training.stop": "Deixa d'entrenar",
 	"stash.settings.processes.training.time_requirement": "El temps necessari per entrenar és d'unes {{hours}} hores que es restaran de les hores disponibles.",
 	"stash.side.activity": "Registre d'activitat",
+	"stash.side.advanced": "Avançat",
 	"stash.side.api_keys": "Tecles API",
 	"stash.side.classification": "Conjunts d'etiquetes",
 	"stash.side.list": "Llistat recursos",

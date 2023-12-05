@@ -743,6 +743,7 @@
 	"stash.settings.processes.training.stop": "Hören Sie auf zu trainieren",
 	"stash.settings.processes.training.time_requirement": "Die für das Training erforderliche Zeit beträgt etwa {{hours}} Stunden, die von den verfügbaren Stunden abgezogen werden.",
 	"stash.side.activity": "Aktivitätsprotokoll",
+	"stash.side.advanced": "Erweitert",
 	"stash.side.api_keys": "API-Schlüssel",
 	"stash.side.classification": "Etikettensätze",
 	"stash.side.list": "Ressourcenliste",

@@ -62,7 +62,7 @@ $height-breakpoint: 856px;
         &.active {
           background-color: $color-light-stronger;
         }
-        &:not(.active).sub-item {
+        &:not(.active):not(.disabled).sub-item {
           background-color: $color-neutral-light;
 
           &:hover {

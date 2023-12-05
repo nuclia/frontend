@@ -62,20 +62,30 @@
       <div class="nav-group">
         <div class="group-items">
           <a
-            [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/manage' : null"
-            routerLinkActive="active"
+            (click)="toggleSettings()"
+            (keyup.enter)="toggleSettings()"
             class="nav-link"
-            [class.sub-item]="inSettings | async"
-            data-cy="go-to-settings"
-            [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
-            <pa-icon name="gear"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
+            data-cy="go-to-advanced"
+            paFocusable
+            [paFocusDisabled]="!(isAdminOrContrib | async) || (invalidKey | async)"
+            [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+            <pa-icon [name]="showSettings ? 'chevron-up' : 'chevron-down'"></pa-icon>
+            <span class="nav-link-title">{{ 'stash.side.advanced' | translate }}</span>
           </a>
         </div>
       </div>
-      <ng-container *ngIf="inSettings | async">
+      <ng-container *ngIf="showSettings">
         <div class="nav-group">
           <div class="group-items">
+            <a
+              [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/manage' : null"
+              routerLinkActive="active"
+              class="nav-link sub-item"
+              data-cy="go-to-settings"
+              [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+              <pa-icon name="gear"></pa-icon>
+              <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
+            </a>
             <ng-container *ngIf="!standalone">
               <a
                 *ngIf="(isTrial | async) === false"

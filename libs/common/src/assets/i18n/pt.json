@@ -743,6 +743,7 @@
 	"stash.settings.processes.training.stop": "Pare de treinar",
 	"stash.settings.processes.training.time_requirement": "O tempo necessário para treinar é de cerca de {{hours}} horas que serão subtraídas das horas disponíveis.",
 	"stash.side.activity": "Registro de atividade",
+	"stash.side.advanced": "Avançado",
 	"stash.side.api_keys": "Chaves de Api",
 	"stash.side.classification": "Conjuntos de etiquetas",
 	"stash.side.list": "Lista de recursos",
