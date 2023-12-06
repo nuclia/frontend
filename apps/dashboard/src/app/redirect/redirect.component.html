@@ -15,7 +15,21 @@
   } @else if (fromChromeExtension) {
     <span>{{ 'redirect.chrome' | translate }}</span>
   } @else if (fromMarketPlace) {
-    <span>{{ 'redirect.marketplace.message' | translate }}</span>
+    <div class="marketplace-container">
+      <h2>{{ 'redirect.marketplace.title' | translate }}</h2>
+      <pa-radio-group
+        [(value)]="selectedAccount"
+        id="group-keep-user">
+        @for (account of accounts; track account) {
+          <pa-radio [value]="account.id">{{ account.slug }}</pa-radio>
+        }
+      </pa-radio-group>
+      <pa-button
+        (click)="callbackToMarketplace()"
+        [disabled]="!selectedAccount">
+        {{ 'redirect.marketplace.connect' | translate }}
+      </pa-button>
+    </div>
   } @else {
     <span>{{ 'redirect.desktop' | translate }}</span>
   }
