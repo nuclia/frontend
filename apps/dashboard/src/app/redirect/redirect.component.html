@@ -1,17 +1,22 @@
 <div class="redirect">
-  <div *ngIf="displayToken | async; else redirect">
-    <h2>{{ 'Authentication token' | translate }}</h2>
-    <code>{{ token }}</code>
-    <div class="copy">
-      <pa-button (click)="copy()">
-        {{ 'generic.copy' | translate }}
-      </pa-button>
-      <pa-icon
-        [class.active]="copied"
-        name="check"></pa-icon>
+  @if (displayToken | async) {
+    <div>
+      <h2>{{ 'Authentication token' | translate }}</h2>
+      <code>{{ token }}</code>
+      <div class="copy">
+        <pa-button (click)="copy()">
+          {{ 'generic.copy' | translate }}
+        </pa-button>
+        <pa-icon
+          [class.active]="copied"
+          name="check"></pa-icon>
+      </div>
     </div>
-  </div>
-  <ng-template #redirect>
-    {{ fromChromeExtension ? 'Redirecting to Nuclia Chrome extension…' : 'Redirecting to Nuclia Desktop…' }}
-  </ng-template>
+  } @else if (fromChromeExtension) {
+    <span>{{ 'redirect.chrome' | translate }}</span>
+  } @else if (fromMarketPlace) {
+    <span>{{ 'redirect.marketplace.message' | translate }}</span>
+  } @else {
+    <span>{{ 'redirect.desktop' | translate }}</span>
+  }
 </div>
