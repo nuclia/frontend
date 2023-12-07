@@ -18,7 +18,7 @@ export const inviteGuard = (route: ActivatedRouteSnapshot) => {
       if (isNewUser) {
         return true;
       } else {
-        const path = slugs.kbSlug ? `/at/${slugs.accountSlug}/${slugs.kbSlug}` : '/select/${slugs.accountSlug}';
+        const path = slugs.kbSlug ? `/at/${slugs.accountSlug}/${slugs.kbSlug}` : `/select/${slugs.accountSlug}`;
         return router.createUrlTree([path]);
       }
     }),
