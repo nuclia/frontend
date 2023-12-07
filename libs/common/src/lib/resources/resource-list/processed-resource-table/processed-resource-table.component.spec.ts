@@ -13,7 +13,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
-import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -37,6 +37,7 @@ describe('ResourceTableComponent', () => {
       ],
       providers: [
         MockProvider(SDKService, {
+          currentAccount: of({ id: '123' } as Account),
           currentKb: of({
             admin: true,
             catalog: jest.fn(() => of()),
