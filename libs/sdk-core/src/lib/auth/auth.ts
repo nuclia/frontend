@@ -48,10 +48,10 @@ export class Authentication implements IAuthentication {
     return this.nuclia.options.standalone
       ? { 'X-NUCLIADB-ROLES': this.getNucliaDbRole(method, path) }
       : this.nuclia.options.apiKey
-      ? { 'X-NUCLIA-SERVICEACCOUNT': `Bearer ${this.nuclia.options.apiKey}` }
-      : this.getToken()
-      ? { Authorization: `Bearer ${this.getToken()}` }
-      : {};
+        ? { 'X-NUCLIA-SERVICEACCOUNT': `Bearer ${this.nuclia.options.apiKey}` }
+        : this.getToken()
+          ? { Authorization: `Bearer ${this.getToken()}` }
+          : {};
   }
 
   private getNucliaDbRole(method?: string, path?: string): NucliaDBRole {
@@ -277,21 +277,18 @@ export class Authentication implements IAuthentication {
     if (token) {
       const helper = new JwtHelper(token);
       const expiration = helper.getTokenExpirationDate()?.getTime();
-      if (expiration) {
-        const now = new Date().getTime();
-        if (expiration < now) {
-          this.logout();
-        } else {
-          this._isAuthenticated.next(true);
-          // we refresh the token in 6 hours (or immediately if it should expire sooner)
-          const timeout = expiration - now < REFRESH_DELAY ? 0 : REFRESH_DELAY;
-          this.timerSubscription?.unsubscribe();
-          this.timerSubscription = timer(timeout)
-            .pipe(switchMap(() => this.refresh()))
-            .subscribe();
-        }
+      const now = new Date().getTime();
+      if (expiration && expiration < now) {
+        this.logout();
       } else {
-        this._isAuthenticated.next(false);
+        this._isAuthenticated.next(true);
+        // we refresh the token in 6 hours (or immediately if it should expire sooner)
+        // note: expiration might be undefined when running e2e tests, if so, we just use the default delay
+        const timeout = expiration && expiration - now < REFRESH_DELAY ? 0 : REFRESH_DELAY;
+        this.timerSubscription?.unsubscribe();
+        this.timerSubscription = timer(timeout)
+          .pipe(switchMap(() => this.refresh()))
+          .subscribe();
       }
     } else {
       this._isAuthenticated.next(false);
