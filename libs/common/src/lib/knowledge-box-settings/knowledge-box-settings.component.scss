@@ -24,10 +24,6 @@
     }
 
     pa-radio-group {
-      pa-radio {
-        display: block;
-        margin-bottom: rhythm(1);
-      }
       &.two-columns {
         columns: 2;
         pa-radio {
