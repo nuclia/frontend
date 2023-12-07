@@ -17,7 +17,7 @@ import {
 import type { INuclia } from '../models';
 import type { ICreateResource } from './resource';
 
-const CHUNK_SIZE = 512 * 1024; // minimum size accepted by GCS
+const CHUNK_SIZE = 5 * 1024 * 1024; // minimum size accepted by Amazon S3
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
 
 export interface UploadResponse {
