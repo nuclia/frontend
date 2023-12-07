@@ -3,7 +3,6 @@
 .setup-invite {
   display: flex;
   flex-direction: column;
-  min-height: var(--setup-container-min-height);
   padding: rhythm(8) rhythm(12);
 
   .logo {
@@ -16,8 +15,6 @@
 
   .setup-invite-title {
     margin: rhythm(4) 0 rhythm(5) 0;
-    font-size: var(--stf-font-size-title);
-    font-weight: var(--stf-font-weight-bold);
     text-align: center;
   }
 

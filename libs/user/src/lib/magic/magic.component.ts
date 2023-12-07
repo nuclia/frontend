@@ -1,52 +1,67 @@
-import { MagicAction, MagicActionError, TokenService } from '@flaps/core';
-import { Component, OnDestroy } from '@angular/core';
+import { MagicActionError, TokenService } from '@flaps/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MagicService } from './magic.service';
-import { Observable, Subscription, switchMap } from 'rxjs';
+import { catchError, map, of, Subject, takeUntil, tap } from 'rxjs';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-magic',
   templateUrl: './magic.component.html',
-  styleUrls: ['./magic.component.css'],
+  styleUrls: ['./magic.component.scss'],
 })
-export class MagicComponent implements OnDestroy {
-  private subscription: Subscription;
+export class MagicComponent implements OnInit, OnDestroy {
+  private unsubscribeAll = new Subject<void>();
 
-  magic$: Observable<MagicAction>;
-  message = 'Loading...';
-
+  token = '';
   constructor(
     private tokenService: TokenService,
     private magicService: MagicService,
     private route: ActivatedRoute,
     private router: Router,
-  ) {
-    this.magic$ = this.route.queryParamMap.pipe(
-      switchMap((params: ParamMap) => {
-        const token = params.get('token');
-        return this.tokenService.validate(token!);
-      }),
-    );
+    private toaster: SisToastService,
+  ) {}
 
-    this.subscription = this.magic$.subscribe({
-      next: (data) => {
-        this.magicService.execute(data);
-      },
-      error: (error) => {
-        let message: string;
-        const cause = error.detail as MagicActionError;
-        if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
-          message = `login.${cause}`;
-        } else {
-          message = 'login.token_expired';
+  ngOnInit() {
+    this.route.queryParamMap
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        map((params: ParamMap) => params.get('token')),
+      )
+      .subscribe((token) => {
+        if (!token) {
+          this.toaster.error('Missing token in the URL');
         }
-        this.router.navigate(['/user/login'], {
-          queryParams: { message: message },
-        });
-      },
-    });
+        this.token = token || '';
+      });
   }
+
+  join() {
+    if (this.token) {
+      this.tokenService
+        .validate(this.token)
+        .pipe(
+          tap((data) => this.magicService.execute(data)),
+          catchError((error) => {
+            let message: string;
+            const cause = error.detail as MagicActionError;
+            if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
+              message = `login.${cause}`;
+            } else {
+              message = 'login.token_expired';
+            }
+            this.router.navigate(['/user/login'], {
+              queryParams: { message: message },
+            });
+            return of(null);
+          }),
+        )
+        .subscribe();
+    }
+  }
+
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 }

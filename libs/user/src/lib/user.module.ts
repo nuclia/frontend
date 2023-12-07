@@ -109,6 +109,7 @@ export const userRoutes: Routes = [
     Step1Component,
     Step2Component,
     SettingUpComponent,
+    PaButtonModule,
   ],
   exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
 })
