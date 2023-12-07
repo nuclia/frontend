@@ -1,8 +1,7 @@
 <stf-user-container>
   <div class="main-container with-gap">
     <div class="form-header">
-      <h1>{{ 'login.boarding_title' | translate }}</h1>
-      <p>{{ 'login.subtitle' | translate }}</p>
+      <h1>{{ 'signup.title' | translate }}</h1>
     </div>
     <div
       class="signup-error title-xxs"
@@ -20,14 +19,14 @@
         formControlName="name"
         [errorMessages]="validationMessages.name"
         help="validation.required">
-        {{ 'login.full_name' | translate }}
+        {{ 'signup.name' | translate }}
       </pa-input>
       <pa-input
         type="email"
-        [help]="'login.email_signup_help' | translate"
+        [help]="'signup.email.help' | translate"
         formControlName="email"
         [errorMessages]="validationMessages.email">
-        {{ 'login.email_signup' | translate }}
+        {{ 'login.email' | translate }}
       </pa-input>
       <nsi-password-input
         formControlName="password"
@@ -41,7 +40,7 @@
         type="submit"
         kind="primary"
         [disabled]="signupForm.invalid">
-        {{ 'login.signup' | translate }}
+        {{ 'signup.signup-button-label' | translate }}
       </pa-button>
     </form>
 
@@ -57,7 +56,7 @@
     </div>
 
     <p class="existing-account">
-      {{ 'login.have_account_already' | translate }}
+      {{ 'signup.have_account_already' | translate }}
       <a routerLink="../login">{{ 'login.login' | translate }}</a>
     </p>
   </div>

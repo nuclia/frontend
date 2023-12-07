@@ -1,0 +1,51 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>
+    <div class="step-indicator-container">
+      <pa-icon
+        name="upload"
+        [class.active]="step !== 'intro'"></pa-icon>
+      <div
+        class="pa-separator"
+        [class.active]="step !== 'intro' && step !== 'upload'"></div>
+      <pa-icon
+        name="list"
+        [class.active]="step === 'processing' || step === 'search'"></pa-icon>
+      <div
+        class="pa-separator"
+        [class.active]="step === 'search'"></div>
+      <pa-icon
+        name="search"
+        [class.active]="step === 'search'"></pa-icon>
+    </div>
+  </pa-modal-title>
+  <pa-modal-content>
+    @switch (step) {
+      @case ('intro') {
+        <app-getting-started-intro />
+      }
+      @case ('upload') {
+        <app-getting-started-upload (uploadReady)="onUploadReady($event)" />
+      }
+      @case ('processing') {
+        <app-getting-started-processing
+          [itemsToUpload]="itemsToUpload"
+          [totalEstimatedTime]="totalEstimatedTime" />
+      }
+      @case ('search') {
+        <h1>{{ 'getting-started.search.title' | translate }}</h1>
+        <p>
+          {{ 'getting-started.search.description' | translate }}
+        </p>
+      }
+    }
+  </pa-modal-content>
+
+  <pa-modal-footer>
+    <pa-button
+      kind="primary"
+      [disabled]="nextDisabled"
+      (click)="next()">
+      {{ (step !== 'search' ? 'generic.next' : 'getting-started.search.go-to-search') | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

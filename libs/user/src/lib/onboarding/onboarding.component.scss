@@ -19,51 +19,6 @@
       margin-bottom: 0;
     }
   }
-
-  .onboarding-form {
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(1.5);
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: rhythm(0.25);
-    }
-
-    .form-footer {
-      text-align: center;
-    }
-  }
-
-  .consent {
-    display: flex;
-    gap: rhythm(1);
-
-    pa-icon {
-      margin-top: rhythm(0.25);
-    }
-
-    ::ng-deep a {
-      color: inherit;
-    }
-  }
-
-  .setting-up {
-    min-height: rhythm(24);
-
-    header {
-      margin-bottom: rhythm(5);
-    }
-  }
-
-  .phone-field {
-    display: flex;
-    .phone-code {
-      width: rhythm(8);
-      margin-right: rhythm(1);
-    }
-  }
 }
 
 @media (max-height: $height-viewport-medium-max) {

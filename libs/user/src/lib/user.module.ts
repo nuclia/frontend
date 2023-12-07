@@ -30,6 +30,9 @@ import { SsoButtonComponent } from './sso/sso-button.component';
 import { CheckMailComponent } from './check-mail/check-mail.component';
 import { UserContainerModule } from './user-container';
 import { OnboardingComponent } from './onboarding/onboarding.component';
+import { Step1Component } from './onboarding/step1/step1.component';
+import { Step2Component } from './onboarding/step2/step2.component';
+import { SettingUpComponent } from './onboarding/setting-up/setting-up.component';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -103,6 +106,9 @@ export const userRoutes: Routes = [
     SisPasswordInputModule,
     UserContainerModule,
     PaAvatarModule,
+    Step1Component,
+    Step2Component,
+    SettingUpComponent,
   ],
   exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
 })

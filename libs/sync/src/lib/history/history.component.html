@@ -28,9 +28,10 @@
       <pa-table-cell>{{ active.to }}</pa-table-cell>
       <pa-table-cell>
         <!-- progress null allows to display indeterminate progress bar until we find a way to display progress properly -->
-        <stf-progress-bar
+        <nsi-progress-bar
           *ngIf="!active.completed"
-          [progress]="null"></stf-progress-bar>
+          greyTrack
+          [progress]="null"></nsi-progress-bar>
         <pa-icon
           *ngIf="active.completed && !active.errors"
           name="check"

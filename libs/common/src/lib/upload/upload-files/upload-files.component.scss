@@ -24,19 +24,19 @@
   display: flex;
   justify-content: center;
   margin-bottom: rhythm(4);
-  border: 2px dashed #ccc;
+  border: rhythm(0.25) dashed $color-neutral-light;
   color: rgba(0, 0, 0, 0.5);
   min-height: rhythm(12);
-  transition: border-color 0.15s;
+  transition: border-color $transition-hint;
   cursor: pointer;
   &.folder {
     cursor: copy;
   }
   span {
-    transition: opacity 0.15s;
+    transition: opacity $transition-hint;
   }
   &.file-over {
-    border: 2px dashed var(--stf-primary);
+    border: 2px dashed $color-primary-regular;
     span {
       opacity: 0.3;
     }

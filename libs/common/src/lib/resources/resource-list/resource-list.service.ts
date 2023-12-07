@@ -257,27 +257,19 @@ export class ResourceListService {
   }
 
   private getProcessingStatus(resource: Resource, processingStatus: ProcessingStatusResponse): string {
+    const placeInQueue = this.uploadService.getResourcePlaceInProcessingQueue(resource, processingStatus);
     if (!processingStatus) {
       return '';
     }
-    const last_delivered_seqid =
-      resource.queue === 'private'
-        ? processingStatus.account?.last_delivered_seqid
-        : processingStatus.shared?.last_delivered_seqid;
-    if (resource.last_account_seq !== undefined) {
-      const count =
-        typeof last_delivered_seqid === 'number'
-          ? resource.last_account_seq - last_delivered_seqid
-          : resource.last_account_seq - 1;
-      let statusKey = 'resource.status_processing';
-      if (count === 1) {
-        statusKey = 'resource.status_next';
-      } else if (count > 1) {
-        statusKey = 'resource.status_pending';
-      }
-      return this.translate.instant(statusKey, { count });
-    } else {
+    if (resource.last_account_seq === undefined || placeInQueue === null) {
       return this.translate.instant('resource.status_unknown');
     }
+    let statusKey = 'resource.status_processing';
+    if (placeInQueue === 1) {
+      statusKey = 'resource.status_next';
+    } else if (placeInQueue > 1) {
+      statusKey = 'resource.status_pending';
+    }
+    return this.translate.instant(statusKey, { count: placeInQueue });
   }
 }

@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { combineLatest, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { combineLatest, map, Subject, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
-import { AppService, UploadFilesDialogComponent, UploadService } from '@flaps/common';
+import { SampleDatasetService, UploadService } from '@flaps/common';
+import { SDKService } from '@flaps/core';
+import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
+import { GettingStartedComponent } from '../../onboarding/getting-started/getting-started.component';
 
 @Component({
   templateUrl: './knowledge-box.component.html',
@@ -12,57 +14,35 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   showBar = combineLatest([this.uploadService.progress, this.uploadService.barDisabled]).pipe(
     map(([progress, disabled]) => !progress.completed && !disabled),
   );
-  isEmptyKbAlertOpen = false;
   private unsubscribeAll = new Subject<void>();
 
   constructor(
+    private sdk: SDKService,
     private uploadService: UploadService,
-    private activatedRoute: ActivatedRoute,
-    private appService: AppService,
     private modalService: SisModalService,
-  ) {
-    this.activatedRoute.queryParams
-      .pipe(
-        filter((params) => !!params['firstUpload']),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(() => {
-        this.openUploadDialog();
-      });
-  }
+    private sampleDatasetService: SampleDatasetService,
+  ) {}
 
   ngOnInit() {
-    this.appService
-      .isKbStillEmptyAfterFirstDay()
-      .pipe(
-        switchMap((result) => (result && !this.isEmptyKbAlertOpen ? this.showKBEmptyAlert() : of(undefined))),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe();
-  }
-
-  showKBEmptyAlert() {
-    this.isEmptyKbAlertOpen = true;
-    return this.modalService
-      .openConfirm({
-        title: 'stash.empty_kb',
-        description: 'stash.upload_to_search',
-        confirmLabel: 'stash.upload_data',
-      })
-      .onClose.pipe(
-        tap(() => (this.isEmptyKbAlertOpen = false)),
-        filter((result) => !!result),
-        tap(() => {
-          this.openUploadDialog();
-        }),
-      );
-  }
-
-  openUploadDialog() {
-    this.modalService.openModal(UploadFilesDialogComponent, {
-      dismissable: true,
-      data: { folderMode: false },
-    });
+    const gettingStartedDone = localStorage.getItem(GETTING_STARTED_DONE_KEY) === 'true';
+    if (!gettingStartedDone) {
+      this.sdk.counters
+        .pipe(
+          take(1),
+          switchMap((counters) =>
+            this.sampleDatasetService
+              .hasOnlySampleResources(counters)
+              .pipe(map((hasOnlySample) => ({ counters, hasOnlySample }))),
+          ),
+        )
+        .subscribe(({ counters, hasOnlySample }) => {
+          if (counters.resources === 0) {
+            this.modalService.openModal(GettingStartedComponent);
+          } else if (!hasOnlySample) {
+            localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
+          }
+        });
+    }
   }
 
   ngOnDestroy() {

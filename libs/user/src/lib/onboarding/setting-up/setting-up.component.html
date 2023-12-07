@@ -1,0 +1,30 @@
+<div class="setting-up">
+  <p class="body-m">
+    {{ 'onboarding.setting-up.account_creation' | translate }}
+    @if ((onboardingStatus | async)?.accountCreated) {
+      <pa-icon
+        name="circle-check"
+        size="small"></pa-icon>
+    }
+  </p>
+  @if ((onboardingStatus | async)?.accountCreated) {
+    <p class="body-m">
+      {{ 'onboarding.setting-up.kb_creation' | translate }}
+      @if ((onboardingStatus | async)?.kbCreated) {
+        <pa-icon
+          name="circle-check"
+          size="small"></pa-icon>
+      }
+    </p>
+  }
+  @if (withDataset && (onboardingStatus | async)?.kbCreated) {
+    <p class="body-m">
+      {{ 'onboarding.setting-up.import_dataset' | translate }}
+      @if ((onboardingStatus | async)?.datasetImported) {
+        <pa-icon
+          name="circle-check"
+          size="small"></pa-icon>
+      }
+    </p>
+  }
+</div>

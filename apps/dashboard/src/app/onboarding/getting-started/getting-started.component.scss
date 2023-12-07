@@ -1,0 +1,33 @@
+@import 'apps/dashboard/src/variables';
+
+.step-indicator-container {
+  align-items: center;
+  color: $color-neutral-light;
+  display: flex;
+
+  & > .active {
+    color: $color-primary-regular;
+    border-color: $color-primary-regular;
+  }
+
+  pa-icon {
+    border: 1px solid $color-neutral-light;
+    border-radius: 50%;
+    padding: calc(#{rhythm(0.5)} - 1px);
+    display: flex;
+    transition:
+      color $transition-hint,
+      border-color $transition-hint;
+  }
+
+  .pa-separator {
+    background: $color-neutral-light;
+    height: 1px;
+    width: rhythm(5);
+    transition: background-color $transition-hint;
+
+    &.active {
+      background: $color-primary-regular;
+    }
+  }
+}

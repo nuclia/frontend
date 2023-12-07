@@ -1,0 +1,23 @@
+@import 'apps/dashboard/src/variables';
+
+.languages-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  max-height: rhythm(13);
+}
+
+.second-choice {
+  margin-top: rhythm(1);
+  padding-left: rhythm(3) + rhythm(0.5);
+}
+
+.consent {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+
+  ::ng-deep a {
+    color: inherit;
+  }
+}

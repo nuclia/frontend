@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
-import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, share, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { AppService, DesktopUploadService, NavigationService } from '@flaps/common';
@@ -82,6 +82,8 @@ export class KnowledgeBoxHomeComponent {
   );
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'copy';
+
+  unsubscribeAll = new Subject<void>();
 
   constructor(
     private app: AppService,

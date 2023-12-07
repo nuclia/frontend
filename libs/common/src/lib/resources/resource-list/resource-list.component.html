@@ -1,27 +1,26 @@
 <div class="resource-list">
   <div class="resource-list-header">
-    <form
-      *ngIf="isMainView; else backButton"
-      class="search-bar-container"
-      [formGroup]="searchForm"
-      (ngSubmit)="search()">
-      <label
-        for="search-resources"
-        class="title-xxs">
-        {{ 'stash.search' | translate }}
-      </label>
-      <pa-select
-        dim
-        formControlName="searchIn"
-        [options]="searchOptions"></pa-select>
-      <pa-input
-        id="search-resources"
-        externalLabel
-        icon="search"
-        formControlName="query"></pa-input>
-    </form>
-
-    <ng-template #backButton>
+    @if (isMainView) {
+      <form
+        class="search-bar-container"
+        [formGroup]="searchForm"
+        (ngSubmit)="search()">
+        <label
+          for="search-resources"
+          class="title-xxs">
+          {{ 'stash.search' | translate }}
+        </label>
+        <pa-select
+          dim
+          formControlName="searchIn"
+          [options]="searchOptions"></pa-select>
+        <pa-input
+          id="search-resources"
+          externalLabel
+          icon="search"
+          formControlName="query"></pa-input>
+      </form>
+    } @else {
       <pa-button
         data-cy="back-to-processed"
         routerLink="./processed"
@@ -31,35 +30,37 @@
         size="small">
         {{ 'resource.processed_resources' | translate }}
       </pa-button>
-    </ng-template>
+    }
 
-    <div
-      class="shared-queue-container title-s"
-      *ngIf="isPendingView && (isTrial | async)">
-      <pa-icon name="info"></pa-icon>
-      {{ 'resource.shared_queue' | translate }}
-      <a
-        *ngIf="isAccountManager | async"
-        [routerLink]="upgradeUrl | async">
-        {{ 'billing.upgrade_now' | translate }}
-      </a>
-    </div>
+    @if (isPendingView && (isTrial | async)) {
+      <div class="shared-queue-container title-s">
+        <pa-icon name="info"></pa-icon>
+        {{ 'resource.shared_queue' | translate }}
+        @if (isAccountManager | async) {
+          <a [routerLink]="upgradeUrl | async">
+            {{ 'billing.upgrade_now' | translate }}
+          </a>
+        }
+      </div>
+    }
 
     <div class="upload-container">
-      <ng-container *ngIf="isMainView && (isAdminOrContrib | async)">
+      @if (isMainView && (isAdminOrContrib | async)) {
         <stf-upload-button></stf-upload-button>
 
         <pa-button (click)="useDesktop()">
           {{ 'resource.upload_via_desktop' | translate }}
         </pa-button>
-        <pa-button
-          *ngIf="hasSampleData | async"
-          kind="destructive"
-          aspect="basic"
-          (click)="deleteSampleDataset()">
-          {{ 'dataset.delete' | translate }}
-        </pa-button>
-      </ng-container>
+
+        @if (hasSampleData | async) {
+          <pa-button
+            kind="destructive"
+            aspect="basic"
+            (click)="deleteSampleDataset()">
+            {{ 'dataset.delete' | translate }}
+          </pa-button>
+        }
+      }
     </div>
     <div class="status-buttons-container">
       <div
@@ -87,26 +88,26 @@
         <div class="popover-content">{{ 'resource.pending_resources_popover' | translate }}</div>
       </pa-popover>
 
-      <div
-        class="status-button"
-        *ngIf="(statusCount | async)?.error || 0 > 0">
-        <pa-button
-          routerLink="./error"
-          routerLinkActive
-          #rla="routerLinkActive"
-          icon="warning"
-          size="small"
-          iconSize="medium"
-          kind="destructive"
-          aspect="basic"
-          iconAndText
-          #failedPopoverDirective="paPopoverRef"
-          [paPopover]="failedPopover"
-          paPopoverOffset="0px"
-          [active]="rla.isActive">
-          {{ (statusCount | async)?.error }}
-        </pa-button>
-      </div>
+      @if ((statusCount | async)?.error || 0 > 0) {
+        <div class="status-button">
+          <pa-button
+            routerLink="./error"
+            routerLinkActive
+            #rla="routerLinkActive"
+            icon="warning"
+            size="small"
+            iconSize="medium"
+            kind="destructive"
+            aspect="basic"
+            iconAndText
+            #failedPopoverDirective="paPopoverRef"
+            [paPopover]="failedPopover"
+            paPopoverOffset="0px"
+            [active]="rla.isActive">
+            {{ (statusCount | async)?.error }}
+          </pa-button>
+        </div>
+      }
       <pa-popover #failedPopover>
         <div class="popover-content">{{ 'resource.failed_resources_popover' | translate }}</div>
       </pa-popover>
@@ -116,17 +117,14 @@
   <div class="resource-list-content">
     <router-outlet></router-outlet>
 
-    <div
-      *ngIf="isMainView && (emptyKb | async) === true && !standalone"
-      class="empty-kb"
-      data-cy="empty-kb">
-      <p>
-        <strong>{{ 'resource.empty' | translate }}</strong>
-      </p>
-      <ng-container *ngIf="(neverGotData | async) && (isMonoLingual | async) === false">
-        <p>{{ 'resource.empty_import' | translate }}</p>
-        <stf-dataset-selector (imported)="onDatasetImport($event)"></stf-dataset-selector>
-      </ng-container>
-    </div>
+    @if (isMainView && (emptyKb | async) === true && !standalone) {
+      <div
+        class="empty-kb"
+        data-cy="empty-kb">
+        <p>
+          <strong>{{ 'resource.empty' | translate }}</strong>
+        </p>
+      </div>
+    }
   </div>
 </div>

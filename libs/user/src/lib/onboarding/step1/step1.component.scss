@@ -1,0 +1,9 @@
+@import 'apps/dashboard/src/variables';
+
+.phone-field {
+  display: flex;
+  .phone-code {
+    width: rhythm(8);
+    margin-right: rhythm(1);
+  }
+}

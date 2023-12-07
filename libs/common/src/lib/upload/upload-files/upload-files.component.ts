@@ -1,18 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { filter, of, switchMap, take } from 'rxjs';
+import { take } from 'rxjs';
 import { DroppedFile, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
-import {
-  ARCHIVE_MIMES,
-  FILES_TO_IGNORE,
-  PATTERNS_TO_IGNORE,
-  SPREADSHEET_MIMES,
-  UploadService,
-} from '../upload.service';
-import mime from 'mime';
+import { UploadService } from '../upload.service';
 import { StandaloneService } from '../../services';
-import { TranslateService } from '@ngx-translate/core';
-import { SisModalService } from '@nuclia/sistema';
+import { getFilesGroupedByType } from '../upload.utils';
 
 const GENERAL_LABELSET = 'General';
 
@@ -51,8 +43,6 @@ export class UploadFilesComponent {
     private tracking: STFTrackingService,
     private sdk: SDKService,
     private standaloneService: StandaloneService,
-    private translate: TranslateService,
-    private modal: SisModalService,
   ) {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
       if (account.limits) {
@@ -70,17 +60,7 @@ export class UploadFilesComponent {
   }
 
   addFiles(filesOrFileList: File[] | FileList) {
-    const files = Array.from(filesOrFileList)
-      .filter(
-        (file) =>
-          !FILES_TO_IGNORE.includes(file.name) && !PATTERNS_TO_IGNORE.some((pattern) => file.name.match(pattern)),
-      )
-      .map((file) => {
-        // Some file types (like .mkv) are not recognized by some browsers
-        return file.type ? file : new File([file], file.name, { type: mime.getType(file.name) || undefined });
-      });
-    const mediaFiles = this.getFilesByType(files, true);
-    const nonMediaFiles = this.getFilesByType(files, false);
+    const { mediaFiles, nonMediaFiles } = getFilesGroupedByType(filesOrFileList);
 
     this.files = [
       ...this.files,
@@ -111,51 +91,16 @@ export class UploadFilesComponent {
     this.cdr.markForCheck();
   }
 
-  getFilesByType(files: File[], mediaFile: boolean): File[] {
-    return files.filter((file) => {
-      const type = file.type?.split('/')[0];
-      const isMediaFile = type === 'audio' || type === 'video' || type === 'image';
-      return mediaFile ? isMediaFile : !isMediaFile;
-    });
-  }
-
   onUpload() {
     const files = this.allowedFiles;
-    const spreadsheets = files.filter((file) => SPREADSHEET_MIMES.includes(file.type));
-    const archives = files.filter((file) => ARCHIVE_MIMES.includes(file.type));
-    (spreadsheets.length > 0
-      ? this.modal.openConfirm({
-          title: this.translate.instant('upload.warning-spreadsheet-title', { num: spreadsheets.length }),
-          description: this.translate.instant('upload.warning-spreadsheets-description', {
-            url: 'https://docs.nuclia.dev/docs/guides/using/indexing/#structured-text',
-          }),
-          confirmLabel: 'generic.upload',
-        }).onClose
-      : of(true)
-    )
-      .pipe(
-        filter((res) => res),
-        switchMap(() =>
-          archives.length > 0
-            ? this.modal.openConfirm({
-                title: this.translate.instant('upload.warning-archive-title', { num: archives.length }),
-                description: 'upload.warning-archive-description',
-                confirmLabel: 'generic.upload',
-              }).onClose
-            : of(true),
-        ),
-        filter((res) => res),
-      )
-      .subscribe(() => {
-        this.startUpload(files);
-      });
+    this.uploadService.checkFileTypesAndConfirm(files).subscribe(() => this.startUpload(files));
   }
 
   startUpload(files: File[]) {
     if (files.length > 0) {
       this.upload.emit();
       const labelledFiles = this.setLabels(files);
-      this.uploadService.uploadFiles(labelledFiles);
+      this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
       this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
     } else {
       this.close.emit();

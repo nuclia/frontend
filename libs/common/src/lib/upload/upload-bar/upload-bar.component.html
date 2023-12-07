@@ -4,9 +4,7 @@
     [innerHTML]="'upload.uploading_files' | translate"></div>
 
   <div class="upload-bar-progress">
-    <stf-progress-bar
-      track="white"
-      [progress]="progress | async"></stf-progress-bar>
+    <nsi-progress-bar [progress]="progress | async"></nsi-progress-bar>
   </div>
 
   <div class="upload-bar-percentage">
