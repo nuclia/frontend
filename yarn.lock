@@ -19273,7 +19273,7 @@ __metadata:
     typedoc-plugin-markdown: ^3.16.0
     typescript: 5.2.2
     uuid: ^7.0.3
-    vite: 4.4.9
+    vite: 4.4.12
     vite-plugin-eslint: ^1.8.1
     vite-tsconfig-paths: ^4.0.2
     vitest: ^0.34.5
@@ -24657,9 +24657,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:4.4.9":
-  version: 4.4.9
-  resolution: "vite@npm:4.4.9"
+"vite@npm:4.4.12":
+  version: 4.4.12
+  resolution: "vite@npm:4.4.12"
   dependencies:
     esbuild: ^0.18.10
     fsevents: ~2.3.2
@@ -24693,7 +24693,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: c511024ceae39c68c7dbf2ac4381ee655cd7bb62cf43867a14798bc835d3320b8fa7867a336143c30825c191c1fb4e9aa3348fce831ab617e96203080d3d2908
+  checksum: 84049f6d8fb6955b48a2a77a6979b2876a06f1f4eda5f26da786cf8f97584a3d9bb00563f0746df97d62379c4739cd51127c086782df5c626d7fa1bb9aa9b7a8
   languageName: node
   linkType: hard
 
