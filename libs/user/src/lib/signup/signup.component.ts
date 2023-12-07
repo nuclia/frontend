@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { BackendConfigurationService, LoginService } from '@flaps/core';
+import { BackendConfigurationService, FeatureFlagService, LoginService } from '@flaps/core';
 import { Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -41,6 +41,7 @@ export class SignupComponent implements OnInit {
   get emailControl() {
     return this.signupForm.controls['email'];
   }
+  isGitHubEnabled = this.featureFlag.isFeatureEnabled('github-signin');
 
   constructor(
     private router: Router,
@@ -49,6 +50,7 @@ export class SignupComponent implements OnInit {
     private loginService: LoginService,
     public config: BackendConfigurationService,
     private cdr: ChangeDetectorRef,
+    private featureFlag: FeatureFlagService,
   ) {}
 
   ngOnInit(): void {
