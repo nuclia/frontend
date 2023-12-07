@@ -4,7 +4,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { LoginService, MIN_PASSWORD_LENGTH, SDKService } from '@flaps/core';
 import { SamePassword } from '@nuclia/user';
 import { Router } from '@angular/router';
-import { concatMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'nuclia-invite',
@@ -45,13 +45,12 @@ export class InviteComponent {
     const password = this.passwordForm.value.password;
     const name = this.passwordForm.value.username;
 
-    this.loginService
-      .setPreferences({ name })
-      .pipe(concatMap(() => this.sdk.nuclia.auth.setPassword(password)))
-      .subscribe((success) => {
-        if (success) {
-          this.router.navigate(['/select']);
-        }
+    this.sdk.nuclia.auth
+      .setPassword(password)
+      .pipe(switchMap(() => this.loginService.setPreferences({ name })))
+      .subscribe({
+        next: () => this.router.navigate(['/select']),
+        error: () => this.router.navigate(['/select']),
       });
   }
 }

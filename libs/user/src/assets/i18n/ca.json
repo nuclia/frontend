@@ -3,6 +3,8 @@
 	"generic.email": "Correu electrònic",
 	"generic.logout": "Sortir",
 	"generic.or": "O",
+	"invite.join-button": "Som-hi",
+	"invite.title": "Has estat convidat a unir-te a Nuclia!",
 	"login.access_request": "vol accedir al teu compte de Nuclia i poder: ",
 	"login.check_email.check_spams": "o comproveu la vostra carpeta de correu brossa.",
 	"login.check_email.details": "Feu clic a l'enllaç d'activació que us acabem d'enviar a <strong>{{ email }}</strong>. ",

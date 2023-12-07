@@ -1,5 +1,13 @@
 <stf-user-container>
-  <p>
-    {{ message }}
-  </p>
+  <div class="join-container">
+    <h2>
+      {{ 'invite.title' | translate }}
+    </h2>
+    <pa-button
+      kind="primary"
+      [disabled]="!token"
+      (click)="join()">
+      {{ 'invite.join-button' | translate }}
+    </pa-button>
+  </div>
 </stf-user-container>

@@ -3,6 +3,8 @@
 	"generic.email": "O email",
 	"generic.logout": "Sair",
 	"generic.or": "Ou",
+	"invite.join-button": "Vamos",
+	"invite.title": "Você foi convidado para se juntar à Nuclia!",
 	"login.access_request": "deseja acessar a Nuclia em seu nome e ser capaz de:",
 	"login.check_email.check_spams": "ou verifique sua pasta de spam.",
 	"login.check_email.details": "Clique no link de ativação que acabamos de enviar para você em <strong>{{ email }}</strong>. ",
