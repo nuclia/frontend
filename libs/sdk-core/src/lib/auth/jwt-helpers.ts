@@ -118,7 +118,7 @@ export class JwtHelper {
 
   public getTokenExpirationDate(token: string = this.token): Date | null {
     const user = this.getJWTUser(token);
-    if (!user) {
+    if (!user || !user.exp) {
       return null;
     }
     const date = new Date(0);
