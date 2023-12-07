@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { SelectAccountKbService } from '@flaps/common';
 import { SDKService, UserService } from '@flaps/core';
-import { take, map, filter, switchMap, combineLatest } from 'rxjs';
+import { Account } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
+import { take, map, filter, switchMap, combineLatest, from, tap } from 'rxjs';
 
 const AUTHORIZED_REDIRECTS = ['nuclia-desktop://', 'http://localhost:4200'];
 const AUTHORIZED_REDIRECTS_REGEX = [/^chrome\-extension\:\/\/[a-z]+\/options\/options\.html$/];
@@ -13,18 +16,24 @@ const AUTHORIZED_REDIRECTS_REGEX = [/^chrome\-extension\:\/\/[a-z]+\/options\/op
 })
 export class RedirectComponent {
   fromChromeExtension = false;
+  fromMarketPlace = false;
   isValidToken = combineLatest([this.sdk.nuclia.auth.isAuthenticated(), this.userService.userInfo]).pipe(
     map(([authenticated, userInfo]) => !!(authenticated && userInfo)),
   );
   token = this.sdk.nuclia.auth.getToken();
   displayToken = this.route.queryParamMap.pipe(map((params) => params.get('display') === 'token'));
   copied = false;
+  accounts: Account[] = [];
+  selectedAccount = '';
+  marketplace_callback_url = '';
 
   constructor(
     private sdk: SDKService,
     private userService: UserService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
+    private toaster: SisToastService,
+    private selectAccountService: SelectAccountKbService,
   ) {
     this.isValidToken
       .pipe(
@@ -35,6 +44,17 @@ export class RedirectComponent {
       .subscribe((params) => {
         if (params['fromExtension']) {
           this.fromChromeExtension = true;
+        }
+        this.marketplace_callback_url = params['marketplace_callback_url'];
+        if (this.marketplace_callback_url) {
+          this.fromMarketPlace = true;
+          this.selectAccountService
+            .loadAccounts()
+            .pipe(take(1))
+            .subscribe((accounts) => {
+              this.accounts = accounts || [];
+              this.cdr.markForCheck();
+            });
         }
         let redirectUrl: string = params['redirect'] || '';
         if (redirectUrl) {
@@ -47,6 +67,7 @@ export class RedirectComponent {
           const tokens = `access_token=${this.sdk.nuclia.auth.getToken()}&refresh_token=${this.sdk.nuclia.auth.getRefreshToken()}`;
           location.href = redirectUrl + tokens;
         }
+        this.cdr.markForCheck();
       });
   }
 
@@ -58,5 +79,23 @@ export class RedirectComponent {
       this.copied = false;
       this.cdr.markForCheck();
     }, 2000);
+  }
+
+  callbackToMarketplace() {
+    from(
+      fetch(this.marketplace_callback_url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.sdk.nuclia.auth.getToken()}`,
+        },
+        body: JSON.stringify({ account_id: this.selectedAccount }),
+      }),
+    ).subscribe((res) => {
+      if (res.ok) {
+        this.toaster.success('redirect.marketplace.success');
+      } else {
+        this.toaster.error('redirect.marketplace.error');
+      }
+    });
   }
 }

@@ -1,17 +1,36 @@
 <div class="redirect">
-  <div *ngIf="displayToken | async; else redirect">
-    <h2>{{ 'Authentication token' | translate }}</h2>
-    <code>{{ token }}</code>
-    <div class="copy">
-      <pa-button (click)="copy()">
-        {{ 'generic.copy' | translate }}
-      </pa-button>
-      <pa-icon
-        [class.active]="copied"
-        name="check"></pa-icon>
+  @if (displayToken | async) {
+    <div>
+      <h2>{{ 'Authentication token' | translate }}</h2>
+      <code>{{ token }}</code>
+      <div class="copy">
+        <pa-button (click)="copy()">
+          {{ 'generic.copy' | translate }}
+        </pa-button>
+        <pa-icon
+          [class.active]="copied"
+          name="check"></pa-icon>
+      </div>
     </div>
-  </div>
-  <ng-template #redirect>
-    {{ fromChromeExtension ? 'Redirecting to Nuclia Chrome extension…' : 'Redirecting to Nuclia Desktop…' }}
-  </ng-template>
+  } @else if (fromChromeExtension) {
+    <span>{{ 'redirect.chrome' | translate }}</span>
+  } @else if (fromMarketPlace) {
+    <div class="marketplace-container">
+      <h2>{{ 'redirect.marketplace.title' | translate }}</h2>
+      <pa-radio-group
+        [(value)]="selectedAccount"
+        id="group-keep-user">
+        @for (account of accounts; track account) {
+          <pa-radio [value]="account.id">{{ account.slug }}</pa-radio>
+        }
+      </pa-radio-group>
+      <pa-button
+        (click)="callbackToMarketplace()"
+        [disabled]="!selectedAccount">
+        {{ 'redirect.marketplace.connect' | translate }}
+      </pa-button>
+    </div>
+  } @else {
+    <span>{{ 'redirect.desktop' | translate }}</span>
+  }
 </div>
