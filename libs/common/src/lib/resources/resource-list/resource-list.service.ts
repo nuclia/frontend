@@ -40,13 +40,15 @@ export class ResourceListService {
   }
   set status(status: RESOURCE_STATUS) {
     this._status = status;
-    if (status === RESOURCE_STATUS.PENDING && !this.sdk.nuclia.options.standalone) {
+    if (!this.sdk.nuclia.options.standalone) {
       forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentKb.pipe(take(1))])
         .pipe(
           take(1),
           switchMap(([account]) => this.sdk.nuclia.db.getProcessingStatus(account.id)),
         )
-        .subscribe((processingStatus) => (this.processingStatus = processingStatus));
+        .subscribe((processingStatus) => {
+          this.processingStatus = processingStatus;
+        });
     }
   }
 
