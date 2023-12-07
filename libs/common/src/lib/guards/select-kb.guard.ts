@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { NavigationService, SelectAccountKbService } from '@flaps/common';
 import { inject } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { SDKService, ZoneService } from '@flaps/core';
 import { filter, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -10,6 +10,7 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
   const navigation: NavigationService = inject(NavigationService);
   const sdk: SDKService = inject(SDKService);
   const router: Router = inject(Router);
+  const zoneService: ZoneService = inject(ZoneService);
 
   const accountSlug = route.paramMap.get('account');
 
@@ -24,9 +25,9 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
   );
 
   return accountSlug
-    ? isKbListReady.pipe(
-        switchMap(() => sdk.kbList),
-        switchMap((kbs) => {
+    ? zoneService.getZones().pipe(
+        switchMap((zones) => isKbListReady.pipe(switchMap(() => sdk.kbList.pipe(map((kbs) => ({ kbs, zones })))))),
+        switchMap(({ kbs, zones }) => {
           if (kbs.length === 0) {
             return selectService.standalone
               ? of(true)
@@ -39,6 +40,11 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
             // if there's only one KB, and we're not in NucliaDB admin app, then we automatically select the KB
             if (sdk.useRegionalSystem) {
               sdk.nuclia.options.zone = kbs[0].zone;
+            } else {
+              const zone = zones.find((zone) => zone.id === kbs[0].zone);
+              if (zone) {
+                sdk.nuclia.options.zone = zone.slug;
+              }
             }
             return of(router.createUrlTree([navigation.getKbUrl(accountSlug, kbs[0].slug || '')]));
           } else {
