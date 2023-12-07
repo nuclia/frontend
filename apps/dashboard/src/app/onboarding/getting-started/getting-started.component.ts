@@ -12,6 +12,7 @@ import { Resource, RESOURCE_STATUS, UploadStatus } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 
 const AVERAGE_PROCESSING_TIME = 5;
 const POLLING_DELAY = 30000; // in milliseconds, so 30s
@@ -80,6 +81,7 @@ export class GettingStartedComponent implements OnDestroy {
         this.kbUrl.subscribe((url) => {
           this.router.navigate([`${url}/search`]);
           this.modal.close();
+          localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
         });
         break;
     }
@@ -185,7 +187,6 @@ export class GettingStartedComponent implements OnDestroy {
                       return total;
                     }, 0);
                   }
-                  console.log(`Total estimation:`, this.totalEstimatedTime);
                   this.cdr.markForCheck();
                 }),
               ),

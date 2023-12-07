@@ -39,8 +39,8 @@ import {
 import { tap } from 'rxjs/operators';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
+import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 
-export const UPLOAD_DONE_KEY = 'NUCLIA_UPLOAD_DONE';
 const REGEX_YOUTUBE_URL = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/)/;
 export const SPREADSHEET_MIMES = [
   'text/csv',
@@ -364,22 +364,12 @@ export class UploadService {
   onUploadComplete(success: boolean, kbId: string) {
     if (success) {
       this.toaster.success('upload.toast.successful');
-      this.setUploadDone(kbId);
+      localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
     } else {
       this.toaster.warning('upload.toast.failed');
     }
     timer(1000)
       .pipe(switchMap(() => this.updateStatusCount()))
       .subscribe();
-  }
-
-  hasKbGotData(kbId: string) {
-    return JSON.parse(localStorage.getItem(UPLOAD_DONE_KEY) || '{}')[kbId] === 'true';
-  }
-
-  private setUploadDone(kbId: string) {
-    const currentState = JSON.parse(localStorage.getItem(UPLOAD_DONE_KEY) || '{}');
-    currentState[kbId] = 'true';
-    localStorage.setItem(UPLOAD_DONE_KEY, JSON.stringify(currentState));
   }
 }

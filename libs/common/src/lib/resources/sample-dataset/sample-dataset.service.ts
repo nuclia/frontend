@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import { IErrorResponse, Resource, Search } from '@nuclia/core';
+import { Counters, IErrorResponse, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '../../label/labels.service';
 
 const sampleLabelSet = 'dataset';
@@ -13,10 +13,30 @@ const sampleLabel = 'Sample dataset';
 export class SampleDatasetService {
   private refresh = new BehaviorSubject<boolean>(false);
 
-  constructor(private sdk: SDKService, private labelService: LabelsService) {}
+  constructor(
+    private sdk: SDKService,
+    private labelService: LabelsService,
+  ) {}
 
   hasSampleResources(): Observable<boolean> {
     return this.refresh.pipe(switchMap(() => this.labelService.hasLabel(sampleLabelSet, sampleLabel)));
+  }
+
+  hasOnlySampleResources(counters: Counters): Observable<boolean> {
+    const facetKey = '/classification.labels/dataset';
+    const fullFacetKey = '/classification.labels/dataset/Sample dataset';
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.catalog('', { faceted: [facetKey] })),
+      map((data) => {
+        if (data.type === 'searchResults') {
+          return (data.fulltext?.facets[facetKey]?.[fullFacetKey] || 0) === counters.resources;
+        } else {
+          console.warn(`Error while checking if KB has only sample resources`);
+          return true;
+        }
+      }),
+    );
   }
 
   importDataset(sampleId: string): Observable<void> {

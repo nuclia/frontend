@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { AccountAndKbConfiguration, OnboardingPayload, OnboardingStatus, OnboardingStep } from './onboarding.models';
+import {
+  AccountAndKbConfiguration,
+  GETTING_STARTED_DONE_KEY,
+  OnboardingPayload,
+  OnboardingStatus,
+  OnboardingStep,
+} from './onboarding.models';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap } from 'rxjs';
 import { SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import * as Sentry from '@sentry/angular';
@@ -135,8 +141,8 @@ export class OnboardingService {
         this.tracking.logEvent('account_creation_success');
         const basePath = `/at/${accountSlug}/${configuration.zoneSlug}/${kbSlug}`;
         const path = basePath + (configuration.dataset ? '/search' : '');
-        const queryParams = configuration.dataset ? undefined : { getting_started: 'upload' };
-        this.router.navigate([path], { queryParams });
+        localStorage.setItem(GETTING_STARTED_DONE_KEY, 'false');
+        this.router.navigate([path]);
       });
   }
 
@@ -204,6 +210,6 @@ export class OnboardingService {
 
   private getIncrementedSlug(slug: string): string {
     const existingIncrement = parseInt(slug.split('_').pop() || '');
-    return isNaN(existingIncrement) ? `${slug}_1` : `${slug.slice(0, -1)}_${existingIncrement + 1}`;
+    return isNaN(existingIncrement) ? `${slug}_1` : `${slug.slice(0, -2)}_${existingIncrement + 1}`;
   }
 }

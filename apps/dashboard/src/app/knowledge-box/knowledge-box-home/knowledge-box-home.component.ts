@@ -7,9 +7,6 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { AppService, DesktopUploadService, NavigationService } from '@flaps/common';
 import { UPGRADABLE_ACCOUNT_TYPES } from '../../account/billing/billing.service';
-import { ActivatedRoute } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
-import { GettingStartedComponent } from '../../onboarding/getting-started/getting-started.component';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -97,16 +94,7 @@ export class KnowledgeBoxHomeComponent {
     private modalService: SisModalService,
     private tracking: STFTrackingService,
     private navigationService: NavigationService,
-    private route: ActivatedRoute,
-  ) {
-    this.route.queryParams
-      .pipe(
-        filter((params) => params['getting_started']),
-        switchMap(() => this.modalService.openModal(GettingStartedComponent).onClose),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe((data) => console.log(data));
-  }
+  ) {}
 
   toggleKbState() {
     this.isPublished.pipe(take(1)).subscribe((isPublished) => {

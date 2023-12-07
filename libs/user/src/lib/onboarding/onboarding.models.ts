@@ -29,3 +29,4 @@ export interface OnboardingStatus {
 }
 
 export type OnboardingStep = 'step1' | 'step2' | 'setting-up-dataset' | 'setting-up-upload';
+export const GETTING_STARTED_DONE_KEY = 'NUCLIA_GETTING_STARTED_DONE';

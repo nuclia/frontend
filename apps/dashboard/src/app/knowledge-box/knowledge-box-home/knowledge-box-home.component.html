@@ -1,40 +1,42 @@
 <div class="knowledge-box-home">
-  <div
-    data-cy="home-endpoint-container"
-    class="endpoint-container"
-    *ngIf="!!(endpoint | async)">
-    <div class="title-s">{{ 'stats.endpoint' | translate }}</div>
-    <div class="endpoint-text">
-      <div
-        class="endpoint"
-        data-cy="kb-endpoint">
-        {{ endpoint | async }}
+  @if (!!(endpoint | async)) {
+    <div
+      data-cy="home-endpoint-container"
+      class="endpoint-container">
+      <div class="title-s">{{ 'stats.endpoint' | translate }}</div>
+      <div class="endpoint-text">
+        <div
+          class="endpoint"
+          data-cy="kb-endpoint">
+          {{ endpoint | async }}
+        </div>
+        @if (clipboardSupported) {
+          <pa-button
+            aspect="basic"
+            [icon]="copyIcon"
+            (click)="copyEndpoint()">
+            {{ 'generic.copy' | translate }}
+          </pa-button>
+        }
       </div>
-      <pa-button
-        *ngIf="clipboardSupported"
-        aspect="basic"
-        [icon]="copyIcon"
-        (click)="copyEndpoint()">
-        {{ 'generic.copy' | translate }}
-      </pa-button>
     </div>
-  </div>
+  }
 
   <div class="home-main-layout">
     <div class="left-column">
-      <ng-container *ngIf="isAccountManager | async">
+      @if (isAccountManager | async) {
         <div class="container chart-container">
           <div class="chart-header">
             <div class="title-m">{{ 'stats.total_search' | translate }}</div>
-            <div
-              *ngIf="locale | async as loc"
-              class="display-m">
-              {{ totalSearch | async | number: '1.0-0' : loc }}
-            </div>
+            @if (locale | async; as loc) {
+              <div class="display-m">
+                {{ totalSearch | async | number: '1.0-0' : loc }}
+              </div>
+            }
           </div>
-          <app-empty-chart
-            *ngIf="!(search | async)"
-            [numLines]="6"></app-empty-chart>
+          @if (!(search | async)) {
+            <app-empty-chart [numLines]="6"></app-empty-chart>
+          }
           <app-line-chart [data]="(search | async) || []"></app-line-chart>
         </div>
 
@@ -42,60 +44,62 @@
           <div class="chart-header">
             <div class="title-m">{{ 'stats.processing_time' | translate }}</div>
           </div>
-          <app-empty-chart
-            *ngIf="!(processing | async)"
-            [numLines]="3"></app-empty-chart>
-          <app-bar-chart [data]="(processing | async) || []"></app-bar-chart>
+          @if (!(processing | async)) {
+            <app-empty-chart [numLines]="3"></app-empty-chart>
+            <app-bar-chart [data]="(processing | async) || []"></app-bar-chart>
+          }
         </div>
-      </ng-container>
+      }
     </div>
 
     <div class="right-column">
-      <div
-        class="container upload-data"
-        *ngIf="isKbContrib | async">
-        <div class="title-m">{{ 'stash.home.upload-block.title' | translate }}</div>
-        <pa-button
-          [routerLink]="(kbUrl | async) + '/upload'"
-          class="full-width"
-          aspect="solid"
-          kind="primary"
-          iconAndText
-          icon="upload">
-          <a [routerLink]="(kbUrl | async) + '/upload'">
-            {{ 'stash.upload_data' | translate }}
-          </a>
-        </pa-button>
-        <div>
-          {{ 'stash.home.upload-block.description' | translate }}
-          <ng-container *ngIf="isDownloadDesktopEnabled | async">
-            {{ 'stash.home.upload-block.description-desktop' | translate }}
-          </ng-container>
+      @if (isKbContrib | async) {
+        <div class="container upload-data">
+          <div class="title-m">{{ 'stash.home.upload-block.title' | translate }}</div>
+          <pa-button
+            [routerLink]="(kbUrl | async) + '/upload'"
+            class="full-width"
+            aspect="solid"
+            kind="primary"
+            iconAndText
+            icon="upload">
+            <a [routerLink]="(kbUrl | async) + '/upload'">
+              {{ 'stash.upload_data' | translate }}
+            </a>
+          </pa-button>
+          <div>
+            {{ 'stash.home.upload-block.description' | translate }}
+            <ng-container *ngIf="isDownloadDesktopEnabled | async">
+              {{ 'stash.home.upload-block.description-desktop' | translate }}
+            </ng-container>
+          </div>
+          <stf-desktop-sources *ngIf="isDownloadDesktopEnabled | async"></stf-desktop-sources>
         </div>
-        <stf-desktop-sources *ngIf="isDownloadDesktopEnabled | async"></stf-desktop-sources>
-      </div>
-      <div
-        class="container account-status"
-        *ngIf="canUpgrade | async">
-        <app-account-status></app-account-status>
-      </div>
+      }
+      @if (canUpgrade | async) {
+        <div class="container account-status">
+          <app-account-status></app-account-status>
+        </div>
+      }
       <div class="container resource-stats">
-        <div *ngIf="locale | async as loc">
-          <dl class="total-resources">
-            <dt>{{ 'stats.total.title' | translate }}</dt>
-            <dd class="display-s">{{ (counters | async)?.resources | number: '1.0-0' : loc }}</dd>
-          </dl>
-          <dl>
-            <dt>{{ 'stats.total.fields' | translate }}</dt>
-            <dd>{{ (counters | async)?.fields | number: '1.0-0' : loc }}</dd>
+        @if (locale | async; as loc) {
+          <div>
+            <dl class="total-resources">
+              <dt>{{ 'stats.total.title' | translate }}</dt>
+              <dd class="display-s">{{ (counters | async)?.resources | number: '1.0-0' : loc }}</dd>
+            </dl>
+            <dl>
+              <dt>{{ 'stats.total.fields' | translate }}</dt>
+              <dd>{{ (counters | async)?.fields | number: '1.0-0' : loc }}</dd>
 
-            <dt>{{ 'stats.total.paragraphs' | translate }}</dt>
-            <dd>{{ (counters | async)?.paragraphs | number: '1.0-0' : loc }}</dd>
+              <dt>{{ 'stats.total.paragraphs' | translate }}</dt>
+              <dd>{{ (counters | async)?.paragraphs | number: '1.0-0' : loc }}</dd>
 
-            <dt>{{ 'stats.total.sentences' | translate }}</dt>
-            <dd>{{ (counters | async)?.sentences | number: '1.0-0' : loc }}</dd>
-          </dl>
-        </div>
+              <dt>{{ 'stats.total.sentences' | translate }}</dt>
+              <dd>{{ (counters | async)?.sentences | number: '1.0-0' : loc }}</dd>
+            </dl>
+          </div>
+        }
       </div>
 
       <div class="container state-container">
@@ -103,15 +107,16 @@
           <span class="body-m">{{ 'stash.state.label' | translate }}</span>
           <span class="title-s">{{ stateLabel | async }}</span>
         </div>
-        <pa-button
-          *ngIf="isKbAdmin | async"
-          (click)="toggleKbState()">
-          {{ ((isPublished | async) ? 'account.stash.retire' : 'account.stash.publish') | translate }}
-        </pa-button>
+        @if (isKbAdmin | async) {
+          <pa-button (click)="toggleKbState()">
+            {{ ((isPublished | async) ? 'account.stash.retire' : 'account.stash.publish') | translate }}
+          </pa-button>
+        }
       </div>
     </div>
   </div>
 </div>
-<ng-container *ngIf="(totalSearch | async) || 0 > 0">
+
+@if ((totalSearch | async) || 0 > 0) {
   <app-knowledge-box-survey [totalSearch]="totalSearch | async"></app-knowledge-box-survey>
-</ng-container>
+}
