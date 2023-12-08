@@ -38,6 +38,8 @@
 	"login.title": "Benvinguts a Nuclia",
 	"login.token_expired": "El testimoni ha caducat",
 	"login.try_again": "Torna-ho a intentar o recupera la contrasenya.",
+	"onboarding.failed": "S'ha produït un error, poseu-vos en contacte amb el vostre administrador.",
+	"onboarding.loading": "S'està carregant…",
 	"onboarding.next-button": "Pròxim",
 	"onboarding.setting-up.account_creation": "Creació del compte...",
 	"onboarding.setting-up.import_dataset": "S'està important el vostre conjunt de dades...",

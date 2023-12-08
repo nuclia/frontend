@@ -38,6 +38,8 @@
 	"login.title": "Welcome to Nuclia",
 	"login.token_expired": "Token has expired",
 	"login.try_again": "Please try again or reset your password below.",
+	"onboarding.failed": "Something went wrong, please contact your administrator.",
+	"onboarding.loading": "Loading…",
 	"onboarding.next-button": "Next",
 	"onboarding.setting-up.account_creation": "Account creation…",
 	"onboarding.setting-up.import_dataset": "Importing your sample dataset...",

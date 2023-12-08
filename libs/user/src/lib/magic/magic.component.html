@@ -1,13 +1,3 @@
 <stf-user-container>
-  <div class="join-container">
-    <h2>
-      {{ 'invite.title' | translate }}
-    </h2>
-    <pa-button
-      kind="primary"
-      [disabled]="!token"
-      (click)="join()">
-      {{ 'invite.join-button' | translate }}
-    </pa-button>
-  </div>
+  <p>{{ (error ? error : 'onboarding.loading') | translate }}</p>
 </stf-user-container>

@@ -38,6 +38,7 @@
 	"login.title": "Bem-vindo à Nuclia",
 	"login.token_expired": "O token expirou",
 	"login.try_again": "Tente novamente ou redefina sua senha abaixo.",
+	"onboarding.loading": "Carregando…",
 	"onboarding.next-button": "Próximo",
 	"onboarding.setting-up.account_creation": "Criação de conta…",
 	"onboarding.setting-up.import_dataset": "Importando seu conjunto de dados...",
