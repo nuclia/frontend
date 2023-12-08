@@ -4,6 +4,7 @@
 
 - `/ephemeral_tokens` endpoint can now be called using regional domain
 - Support `summarize` operation on resources
+- Remove `onlyAnswers` property from `WidgetFeatures` interface, only answers is now managed by `hideSources` option. 
 
 # 1.9.0 (2023-11-22)
 

@@ -138,9 +138,8 @@
         knowledgebox={kb}
         lang="en"
         {placeholder}
-        {prompt}
         preselected_filters={preselectedFilters}
-        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,zonlyAnswers,zhideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
+        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,hideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}

@@ -895,8 +895,6 @@
 	"widget.generator.advanced.generative-answer-category.hide-sources.label": "Ocultar fontes",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help": "Os resultados de texto completo não serão usados para gerar respostas",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.label": "Apenas resultados semânticos",
-	"widget.generator.advanced.generative-answer-category.only-answers.help": "Exibe respostas, mas não resultados de pesquisa. ",
-	"widget.generator.advanced.generative-answer-category.only-answers.label": "Apenas respostas",
 	"widget.generator.advanced.generative-answer-category.prompt.error": "Parece que você não está usando nenhuma variável neste prompt do usuário; isso pode produzir respostas inconsistentes. Verifique os exemplos de prompts do usuário na página de configurações.",
 	"widget.generator.advanced.generative-answer-category.prompt.help": "Terá precedência no prompt do usuário definido nas configurações da Caixa de conhecimento. Nota: a estratégia imediata pode mudar dependendo do modelo generativo. Verifique os exemplos na página de configurações.",
 	"widget.generator.advanced.generative-answer-category.prompt.label": "Prompt do usuário",
