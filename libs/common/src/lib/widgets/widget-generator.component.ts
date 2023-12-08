@@ -426,9 +426,8 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
       if (this.currentQuery) {
         searchWidget?.search(this.currentQuery);
       }
-      searchWidget?.addEventListener('search', (query: string) => {
-        // FIXME make sure this is working as part of https://app.shortcut.com/flaps/story/7916/dispatchcustomevent-doesn-t-work-anymore
-        this.currentQuery = query;
+      searchWidget?.addEventListener('search', (event: { detail: string }) => {
+        this.currentQuery = event.detail;
       });
     }, 500);
   }

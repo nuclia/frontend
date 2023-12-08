@@ -130,7 +130,7 @@
     </p>
     <div class="two-widgets-container">
       <NucliaSearchBar
-        on:search={(event) => console.log('search with', event)}
+        on:search={(event) => console.log(`search triggered – query: "${event.detail}"`)}
         zone="europe-1"
         {backend}
         cdn="/"
