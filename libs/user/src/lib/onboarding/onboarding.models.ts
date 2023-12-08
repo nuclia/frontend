@@ -3,7 +3,7 @@ export interface OnboardingPayload {
   phone: string;
   receive_updates: boolean;
   use_case?: string;
-  hosted_nucliadb?: boolean;
+  learn_about_us?: string;
   organization_size?: string;
 }
 export type DatasetType = { id: string; title: string; description: string };
