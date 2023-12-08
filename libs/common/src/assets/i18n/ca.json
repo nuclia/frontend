@@ -894,8 +894,6 @@
 	"widget.generator.advanced.generative-answer-category.hide-sources.label": "Amaga les fonts",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help": "Els resultats de full text no s'utilitzaran per generar respostes",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.label": "Només resultats semàntics",
-	"widget.generator.advanced.generative-answer-category.only-answers.help": "Mostra respostes però no resultats de cerca. ",
-	"widget.generator.advanced.generative-answer-category.only-answers.label": "Només respostes",
 	"widget.generator.advanced.generative-answer-category.prompt.error": "Sembla que no utilitzeu cap variable en aquest indicador de l'usuari, pot produir respostes inconsistents. Comproveu els exemples d'indicacions de l'usuari a la pàgina de configuració.",
 	"widget.generator.advanced.generative-answer-category.prompt.help": "Tindrà prioritat a el prompt de l'usuari definida a la configuració del Knowledge Box. Nota: l'estratègia del prompt pot canviar en funció del model generatiu. Comproveu els exemples a la pàgina de configuració.",
 	"widget.generator.advanced.generative-answer-category.prompt.label": "Prompt de l'usuari",

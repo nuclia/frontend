@@ -267,7 +267,6 @@ export interface WidgetFeatures {
   autocompleteFromNERs?: boolean;
   displayMetadata?: boolean;
   answers?: boolean;
-  onlyAnswers?: boolean;
   hideLogo?: boolean;
   hideSources?: boolean;
   hideThumbnails?: boolean;

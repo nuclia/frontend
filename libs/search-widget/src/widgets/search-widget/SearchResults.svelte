@@ -13,20 +13,19 @@
     getTrackingDataAfterResultsReceived,
     hasMore,
     hasPartialResults,
-    hasSearchError,
+    hasSearchError, hideSources,
     isAnswerEnabled,
     isEmptySearchQuery,
     loadFonts,
     loadMore,
     loadSvgSprite,
     logEvent,
-    onlyAnswers,
     pendingResults,
     resultList,
     searchError,
     setWidgetActions,
     showResults,
-    trackingReset,
+    trackingReset
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { InfoCard, InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
@@ -86,7 +85,7 @@
           <strong>{$_('error.search')}</strong>
         {/if}
       </div>
-    {:else if !$pendingResults && $resultList.length === 0 && !$onlyAnswers}
+    {:else if !$pendingResults && $resultList.length === 0 && !$hideSources}
       <strong>{$_('results.empty')}</strong>
       <div
         class="results-end"

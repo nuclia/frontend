@@ -254,19 +254,6 @@
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight
-                          formControlName="onlyAnswers">
-                          {{ 'widget.generator.advanced.generative-answer-category.only-answers.label' | translate }}
-                        </pa-toggle>
-                        <pa-icon
-                          name="info"
-                          [paPopover]="onlyAnswersHelp" />
-                        <pa-popover #onlyAnswersHelp>
-                          {{ 'widget.generator.advanced.generative-answer-category.only-answers.help' | translate }}
-                        </pa-popover>
-                      </div>
-                      <div class="toggle-and-help">
-                        <pa-toggle
-                          labelOnRight
                           formControlName="noBM25forChat">
                           {{
                             'widget.generator.advanced.generative-answer-category.no-bm25-for-chat.label' | translate
@@ -513,8 +500,7 @@
                 <pa-expander-body>
                   <div class="tab-content-body">
                     <div class="placeholder-container">
-                      <pa-input
-                        formControlName="placeholder">
+                      <pa-input formControlName="placeholder">
                         {{ 'widget.generator.advanced.display-category.placeholder' | translate }}
                       </pa-input>
                     </div>
