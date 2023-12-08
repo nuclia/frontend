@@ -50,9 +50,11 @@
       <stf-sso-button
         provider="google"
         signup></stf-sso-button>
-      <stf-sso-button
-        provider="github"
-        signup></stf-sso-button>
+      @if (isGitHubEnabled | async) {
+        <stf-sso-button
+          provider="github"
+          signup></stf-sso-button>
+      }
     </div>
 
     <p class="existing-account">
