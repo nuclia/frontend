@@ -30,24 +30,14 @@
       <pa-option value="Global site search">{{ 'onboarding.step1.use_case.global_search' | translate }}</pa-option>
       <pa-option value="Workspace search">{{ 'onboarding.step1.use_case.workspace_search' | translate }}</pa-option>
       <pa-option value="Research & Analysis">{{ 'onboarding.step1.use_case.research_analysis' | translate }}</pa-option>
-      <pa-option value="Model Training">{{ 'onboarding.step1.use_case.ai_training' | translate }}</pa-option>
+      <pa-option value="Document summarisation">
+        {{ 'onboarding.step1.use_case.document_summarization' | translate }}
+      </pa-option>
+      <pa-option value="Automatic classification">
+        {{ 'onboarding.step1.use_case.ai_classification' | translate }}
+      </pa-option>
+      <pa-option value="Fine-tune my own AI model">{{ 'onboarding.step1.use_case.ai_training' | translate }}</pa-option>
       <pa-option value="Other">{{ 'onboarding.step1.use_case.other' | translate }}</pa-option>
-    </pa-select>
-  </div>
-  <div class="field">
-    <label
-      class="title-s"
-      for="hosting">
-      {{ 'onboarding.step1.host_db.label' | translate }}
-    </label>
-    <pa-select
-      formControlName="hosted_nucliadb"
-      id="hosting"
-      externalLabel
-      help="onboarding.step1.host_db.help"
-      [errorMessages]="validationMessages.hosted_nucliadb">
-      <pa-option value="yes">{{ 'onboarding.step1.host_db.yes' | translate }}</pa-option>
-      <pa-option value="no">{{ 'onboarding.step1.host_db.no' | translate }}</pa-option>
     </pa-select>
   </div>
   <div class="field">
@@ -69,6 +59,25 @@
       <pa-option value="+5000">+5000</pa-option>
     </pa-select>
   </div>
+  <div class="field">
+    <label
+      class="title-s"
+      for="learn_about_us">
+      {{ 'onboarding.step1.learn-about-us.label' | translate }}
+    </label>
+    <pa-select
+      formControlName="learn_about_us"
+      id="learn_about_us"
+      externalLabel
+      [errorMessages]="validationMessages.learn_about_us">
+      <pa-option value="Web search">{{ 'onboarding.step1.learn-about-us.web' | translate }}</pa-option>
+      <pa-option value="GitHub">{{ 'onboarding.step1.learn-about-us.github' | translate }}</pa-option>
+      <pa-option value="Article/publication">{{ 'onboarding.step1.learn-about-us.article' | translate }}</pa-option>
+      <pa-option value="Event">{{ 'onboarding.step1.learn-about-us.event' | translate }}</pa-option>
+      <pa-option value="Other">{{ 'onboarding.step1.learn-about-us.other' | translate }}</pa-option>
+    </pa-select>
+  </div>
+
   <div class="field">
     <label
       class="title-s"
