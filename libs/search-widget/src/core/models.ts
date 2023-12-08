@@ -56,3 +56,9 @@ export interface EntityGroup {
 }
 
 export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
+export interface WidgetFilters {
+  labels?: boolean;
+  entities?: boolean;
+  created?: boolean;
+  labelFamilies?: boolean;
+}

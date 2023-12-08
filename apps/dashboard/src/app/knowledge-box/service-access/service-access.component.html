@@ -3,7 +3,7 @@
     <form
       [formGroup]="addForm"
       (ngSubmit)="addServiceAccess()">
-      <h3>{{ 'stash.create_service_access' | translate }}</h3>
+      <h3>{{ 'api-key-management.create-key.title' | translate }}</h3>
       <div class="form-content">
         <pa-input formControlName="title">{{ 'generic.name' | translate }}</pa-input>
 
@@ -27,7 +27,7 @@
     <div
       *ngIf="serviceAccess && serviceAccess.length > 0"
       class="container">
-      <h3>{{ 'stash.view_edit_service_access' | translate }}</h3>
+      <h3>{{ 'api-key-management.view-edit-keys.title' | translate }}</h3>
       <div class="service-access-list">
         <div
           class="service-access"
@@ -50,8 +50,8 @@
                 aspect="basic"
                 icon="plus"
                 size="small"
-                paTooltip="stash.new_service_access_token">
-                {{ 'stash.new_service_access_token' | translate }}
+                paTooltip="api-key-management.create-key.button">
+                {{ 'api-key-management.create-key.button' | translate }}
               </pa-button>
               <pa-button
                 (click)="deleteServiceAccess(sa)"

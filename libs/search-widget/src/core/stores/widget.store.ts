@@ -1,6 +1,6 @@
 import { writableSubject } from '../state-lib';
 import { combineLatest, map, Observable } from 'rxjs';
-import type { FilterType, WidgetAction } from '../models';
+import type { WidgetAction, WidgetFilters } from '../models';
 import type { WidgetFeatures } from '@nuclia/core';
 
 let widgetActions: WidgetAction[] = [];
@@ -11,7 +11,7 @@ export const getWidgetActions = () => widgetActions;
 
 export const widgetFeatures = writableSubject<WidgetFeatures | null>(null);
 export const widgetPlaceholder = writableSubject<string>('input.placeholder');
-export const widgetFilters = writableSubject<{ [filter: FilterType]: boolean }>({});
+export const widgetFilters = writableSubject<WidgetFilters>({});
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const targetNewTab: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.targetNewTab));
