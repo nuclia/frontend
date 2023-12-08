@@ -3,13 +3,12 @@
 <script lang="ts">
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
   import { initNuclia, resetNuclia } from '../../core/api';
-  import { onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { injectCustomCss, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
-  import { get_current_component } from 'svelte/internal';
   import { widgetFeatures, widgetFilters, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
@@ -24,11 +23,11 @@
   } from '../../core/stores/effects';
   import { preselectedFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
-  import type { FilterType } from '../../core';
+  import type { WidgetFilters } from '../../core';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
-  export let knowledgebox;
+  export let knowledgebox: string;
   export let placeholder = '';
   export let lang = '';
   export let cdn = '';
@@ -52,7 +51,7 @@
   }
 
   let _features: WidgetFeatures = {};
-  let _filters: { [key: FilterType]: boolean } = {};
+  let _filters: WidgetFilters = {};
 
   export function search(query: string) {
     searchQuery.set(query);
@@ -61,7 +60,7 @@
   }
 
   export function reloadSearch() {
-    console.log(`reloadSearch`);
+    console.log(`Reload search`);
     triggerSearch.next();
   }
 
@@ -79,18 +78,12 @@
     });
   }
 
-  const thisComponent = get_current_component();
+  const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {
-    thisComponent.dispatchEvent &&
-      thisComponent.dispatchEvent(
-        new CustomEvent(name, {
-          detail,
-          composed: true,
-        }),
-      );
+    dispatch(name, detail);
   };
 
-  let svgSprite;
+  let svgSprite: string;
   let ready = false;
   let container: HTMLElement;
 
