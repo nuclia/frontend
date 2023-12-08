@@ -24,8 +24,10 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
     filter((refreshing) => !refreshing),
   );
 
+  const zoneList = selectService.standalone ? of([]) : zoneService.getZones();
+
   return accountSlug
-    ? zoneService.getZones().pipe(
+    ? zoneList.pipe(
         switchMap((zones) => isKbListReady.pipe(switchMap(() => sdk.kbList.pipe(map((kbs) => ({ kbs, zones })))))),
         switchMap(({ kbs, zones }) => {
           if (kbs.length === 0) {
