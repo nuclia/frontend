@@ -1,9 +1,8 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
 .knowledge-box-training {
   width: 770px;
   max-width: 100%;
-  padding: rhythm(6) rhythm(12);
 
   section {
     padding: rhythm(6) 0;

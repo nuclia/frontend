@@ -1,21 +1,19 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
 .account-users {
-  padding: 70px var(--app-layout-margin-right) 60px var(--app-layout-margin-left);
   h2 {
-    margin: 0 0 36px 0;
-    font-weight: var(--stf-font-weight-bold);
+    margin-bottom: rhythm(4);
   }
   .users-left,
   .users-amount {
     strong {
-      margin: 0 4px;
+      margin: 0 rhythm(0.5);
       text-decoration: underline;
     }
   }
   .users-left {
     strong {
-      color: var(--stf-primary);
+      color: $color-primary-regular;
     }
   }
 
@@ -25,7 +23,7 @@
     gap: rhythm(1);
     margin: rhythm(3) 0 rhythm(5);
     input {
-      min-width: 240px;
+      min-width: rhythm(16);
     }
   }
 }

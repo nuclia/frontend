@@ -1,4 +1,4 @@
-<ng-container *ngIf="(isAccountManager | async) && (canAddUsers | async)">
+@if ((isAccountManager | async) && (canAddUsers | async)) {
   <h3>{{ 'stash.users.new_user' | translate }}</h3>
   <form
     class="add-user"
@@ -26,7 +26,7 @@
       {{ 'generic.add' | translate }}
     </pa-button>
   </form>
-</ng-container>
+}
 
 <div class="users-list-header">
   <h3>{{ 'stash.users.users_list' | translate }}</h3>

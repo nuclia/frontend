@@ -1,21 +1,11 @@
-<stf-sidebar
-  class="main-sidebar"
-  name="main-sidebar"
-  lockedOpen="gt-xs"
-  [folded]="true"
-  [foldedWidth]="smallNavbar ? 48 : 56"
-  [foldedAutoTriggerOnHover]="true"
-  zIndex="900"
-  zIndexBackdrop="850">
-  <ng-template
-    #sidebarContent
-    let-unfolded="unfolded">
-    <app-navbar [isUnfolded]="unfolded"></app-navbar>
-  </ng-template>
-</stf-sidebar>
+<div class="dashboard-layout">
+  <nav>
+    <app-navbar></app-navbar>
+  </nav>
 
-<div class="container">
-  <main>
-    <router-outlet></router-outlet>
-  </main>
+  <div class="dashboard-content">
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>

@@ -1,103 +1,105 @@
-<div
-  class="loading-shade"
-  *ngIf="isLoading">
-  <nsi-spinner></nsi-spinner>
-</div>
-<div
-  *ngIf="zones && account && knowledgeBoxes"
-  class="account-kbs">
-  <h1>{{ 'account.related_kbs' | translate }}</h1>
+@if (isLoading) {
+  <div class="loading-shade">
+    <nsi-spinner></nsi-spinner>
+  </div>
+}
 
-  <p>{{ 'account.kb-description' | translate }}</p>
+@if (zones && account && knowledgeBoxes) {
+  <div class="account-kbs page-spacing">
+    <h1>{{ 'account.related_kbs' | translate }}</h1>
 
-  <div class="account-kbs-list">
-    <div
-      class="account-kb"
-      *ngFor="let kb of knowledgeBoxes">
-      <a
-        class="account-kb-title"
-        [attr.data-cy]="kb.title + '-link'"
-        [class.disabled]="!kb.role_on_kb || !account.can_manage_account"
-        [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null">
-        {{ kb.title }}
-      </a>
-      <div class="actions">
-        <ng-container *ngIf="account.can_manage_account">
-          <pa-button
-            class="icon-button"
-            icon="add-user"
-            aspect="basic"
-            paTooltip="account.stash.users"
-            (click)="manageKbUsers(kb)">
-            {{ 'account.stash.users' | translate }}
-          </pa-button>
+    <p>{{ 'account.kb-description' | translate }}</p>
 
-          <pa-button
-            *ngIf="!!kb.role_on_kb"
-            class="icon-button"
-            icon="edit"
-            aspect="basic"
-            paTooltip="account.stash.edit"
-            (click)="manageKb(kb.slug!)">
-            {{ 'account.stash.edit' | translate }}
-          </pa-button>
-        </ng-container>
+    <div class="account-kbs-list">
+      <div
+        class="account-kb"
+        *ngFor="let kb of knowledgeBoxes">
+        <a
+          class="account-kb-title"
+          [attr.data-cy]="kb.title + '-link'"
+          [class.disabled]="!kb.role_on_kb || !account.can_manage_account"
+          [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null">
+          {{ kb.title }}
+        </a>
+        <div class="actions">
+          @if (account.can_manage_account) {
+            <pa-button
+              class="icon-button"
+              icon="add-user"
+              aspect="basic"
+              paTooltip="account.stash.users"
+              (click)="manageKbUsers(kb)">
+              {{ 'account.stash.users' | translate }}
+            </pa-button>
 
-        <ng-container *ngIf="kb.role_on_kb === 'SOWNER' || account.can_manage_account">
-          <pa-button
-            *ngIf="kb.state === 'PUBLISHED'"
-            size="small"
-            icon="lock"
-            aspect="basic"
-            iconAndText
-            (click)="retireKb(kb)">
-            {{ 'account.stash.retire' | translate }}
-          </pa-button>
+            @if (!!kb.role_on_kb) {
+              <pa-button
+                class="icon-button"
+                icon="edit"
+                aspect="basic"
+                paTooltip="account.stash.edit"
+                (click)="manageKb(kb.slug!)">
+                {{ 'account.stash.edit' | translate }}
+              </pa-button>
+            }
+          }
 
-          <pa-button
-            *ngIf="kb.state === 'PRIVATE'"
-            size="small"
-            icon="unlock"
-            iconAndText
-            (click)="publishKb(kb)">
-            {{ 'account.stash.publish' | translate }}
-          </pa-button>
+          @if (kb.role_on_kb === 'SOWNER' || account.can_manage_account) {
+            <pa-button
+              *ngIf="kb.state === 'PUBLISHED'"
+              size="small"
+              icon="lock"
+              aspect="basic"
+              iconAndText
+              (click)="retireKb(kb)">
+              {{ 'account.stash.retire' | translate }}
+            </pa-button>
 
-          <pa-button
-            size="small"
-            icon="trash"
-            kind="destructive"
-            iconAndText
-            [attr.data-cy]="kb.title + '-delete'"
-            (click)="deleteKb(kb)">
-            {{ 'generic.delete' | translate }}
-          </pa-button>
-        </ng-container>
+            <pa-button
+              *ngIf="kb.state === 'PRIVATE'"
+              size="small"
+              icon="unlock"
+              iconAndText
+              (click)="publishKb(kb)">
+              {{ 'account.stash.publish' | translate }}
+            </pa-button>
+
+            <pa-button
+              size="small"
+              icon="trash"
+              kind="destructive"
+              iconAndText
+              [attr.data-cy]="kb.title + '-delete'"
+              (click)="deleteKb(kb)">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
+          }
+        </div>
       </div>
     </div>
-  </div>
 
-  <div
-    *ngIf="canAddKb | async"
-    class="add-kb-container">
-    <div
-      class="account-kbs-counter"
-      *ngIf="knowledgeBoxes.length > 0 && maxKnowledgeBoxes !== -1">
-      {{ knowledgeBoxes.length }} {{ 'generic.of' | translate }} {{ maxKnowledgeBoxes }}
-    </div>
+    @if (canAddKb | async) {
+      <div class="add-kb-container">
+        @if (knowledgeBoxes.length > 0 && maxKnowledgeBoxes !== -1) {
+          <div class="account-kbs-counter">
+            {{ knowledgeBoxes.length }} {{ 'generic.of' | translate }} {{ maxKnowledgeBoxes }}
+          </div>
+        }
 
-    <pa-button
-      size="small"
-      data-cy="add-kb"
-      [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes && maxKnowledgeBoxes !== -1"
-      (click)="addKb(zones, account)">
-      {{ 'account.stash.add' | translate }}
-    </pa-button>
-  </div>
+        <pa-button
+          size="small"
+          data-cy="add-kb"
+          [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes && maxKnowledgeBoxes !== -1"
+          (click)="addKb(zones, account)">
+          {{ 'account.stash.add' | translate }}
+        </pa-button>
+      </div>
+    }
 
-  <div
-    class="account-kbs-empty"
-    *ngIf="knowledgeBoxes.length === 0 && !(canAddKb | async)">
-    {{ 'stash.contact_admin' | translate }}
+    @if (knowledgeBoxes.length === 0 && !(canAddKb | async)) {
+      <div class="account-kbs-empty">
+        {{ 'stash.contact_admin' | translate }}
+      </div>
+    }
   </div>
-</div>
+}

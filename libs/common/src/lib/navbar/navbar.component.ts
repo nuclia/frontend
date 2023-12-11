@@ -1,26 +1,16 @@
-import { Component, ChangeDetectionStrategy, Input, OnDestroy, OnInit } from '@angular/core';
-import { animate, style, transition, trigger } from '@angular/animations';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { NavigationService, StandaloneService } from '../services';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { SmallNavbarDirective } from './small-navbar.directive';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [style({ opacity: 0 }), animate('150ms', style({ opacity: 1 }))]),
-      transition(':leave', [animate('150ms', style({ opacity: 0 }))]),
-    ]),
-  ],
 })
-export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnDestroy {
-  @Input() isUnfolded: boolean = false;
-
+export class NavbarComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   inAccount: Observable<boolean> = merge(
     of(this.navigationService.inAccountManagement(location.pathname)),
@@ -75,14 +65,13 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,
     private sdk: SDKService,
     private router: Router,
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,
-  ) {
-    super();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
@@ -101,8 +90,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
       });
   }
 
-  override ngOnDestroy() {
-    super.ngOnDestroy();
+  ngOnDestroy() {
     if (this.unsubscribeAll) {
       this.unsubscribeAll.next();
       this.unsubscribeAll.complete();

@@ -1,10 +1,8 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
 .service-access-container {
-  h3 {
-    margin: 0 0 rhythm(0.5) 0;
-    font-size: var(--stf-font-size-medium);
-    font-weight: var(--stf-font-weight-semibold);
+  h4 {
+    margin-bottom: rhythm(0.5);
   }
 
   form {

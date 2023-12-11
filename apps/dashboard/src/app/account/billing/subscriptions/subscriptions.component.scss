@@ -1,4 +1,4 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
 h2 {
   margin-bottom: rhythm(3);
@@ -23,11 +23,11 @@ h2 {
   }
 
   tr:not(:last-child) td {
-    position:relative;
+    position: relative;
     &::after {
       border-bottom: 1px solid $color-neutral-lighter;
       bottom: 0;
-      content: "";
+      content: '';
       left: rhythm(2);
       position: absolute;
       right: rhythm(2);

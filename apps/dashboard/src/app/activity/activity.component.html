@@ -1,6 +1,6 @@
-<div class="activity">
+<div class="activity page-spacing">
   <div class="activity-header">
-    <ng-container *ngIf="currentTab$ | async as currentTab">
+    @if (currentTab$ | async; as currentTab) {
       <pa-tabs
         noSlider
         notFullWidth>
@@ -11,18 +11,19 @@
           {{ tab.title | translate }}
         </pa-tab>
       </pa-tabs>
-    </ng-container>
+    }
   </div>
 
   <div class="tab-content">
     <app-activity-list [items]="(data | async)?.['events'] || []"></app-activity-list>
     <div class="more-results">
-      <pa-button
-        *ngIf="(data | async)?.['pagination']?.last === false"
-        kind="inverted"
-        (click)="loadMoreEvents()">
-        {{ 'search.more_results' | translate }}
-      </pa-button>
+      @if ((data | async)?.['pagination']?.last === false) {
+        <pa-button
+          kind="inverted"
+          (click)="loadMoreEvents()">
+          {{ 'search.more_results' | translate }}
+        </pa-button>
+      }
     </div>
   </div>
 </div>

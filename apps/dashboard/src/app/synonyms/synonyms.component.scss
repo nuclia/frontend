@@ -1,8 +1,7 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
 :host {
   display: block;
-  padding: rhythm(6) rhythm(12);
 }
 
 .page-title {

@@ -55,6 +55,11 @@ $height-breakpoint: 856px;
 
         pa-icon {
           display: flex;
+          transition: transform $transition-hint;
+
+          &.expanded {
+            transform: rotate(90deg);
+          }
         }
         &:hover {
           background-color: $color-neutral-lightest;
@@ -92,18 +97,6 @@ $height-breakpoint: 856px;
             font-size: font-size(s);
           }
         }
-      }
-    }
-  }
-}
-
-.app-navbar:not(.is-unfolded) {
-  .navbar-scroll-container {
-    .navbar-content {
-      padding-top: 0;
-
-      .nav-link-title {
-        display: none;
       }
     }
   }

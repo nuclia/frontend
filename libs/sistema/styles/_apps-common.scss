@@ -1,5 +1,18 @@
 @import 'variables';
 
+:root {
+  --app-min-width: 1024px;
+  --app-background-color: $color-light-stronger;
+  --app-topbar-height: #{$height-top-bar};
+  --app-layout-padding-bottom: #{$padding-bottom-page};
+  --app-layout-padding-left: #{$padding-left-page};
+  --app-layout-padding-right: #{$padding-right-page};
+  --app-layout-padding-top: #{$padding-top-page};
+
+  // z-index
+  --app-zindex-topbar: 1000;
+}
+
 html,
 body {
   height: 100%;
@@ -44,4 +57,10 @@ pa-button.full-width {
   .pa-button {
     flex: 1 0 auto;
   }
+}
+
+.page-spacing {
+  min-height: calc(100vh - var(--app-topbar-height));
+  padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
+    var(--app-layout-padding-left);
 }

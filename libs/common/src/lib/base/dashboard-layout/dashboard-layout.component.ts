@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SmallNavbarDirective } from '../../navbar';
 
 @Component({
   selector: 'stf-dashboard-layout',
@@ -7,4 +6,4 @@ import { SmallNavbarDirective } from '../../navbar';
   styleUrls: ['./dashboard-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardLayoutComponent extends SmallNavbarDirective {}
+export class DashboardLayoutComponent {}

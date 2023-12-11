@@ -5,8 +5,8 @@ import { SDKService } from '@flaps/core';
 @Component({
   selector: 'app-knowledge-box-users',
   template: `
-    <div class="knowledge-box-users">
-      <h2 class="display-s">{{ 'stash.side.users' | translate }}</h2>
+    <div class="knowledge-box-users page-spacing">
+      <h2 class="display-s">{{ 'sidenav.users' | translate }}</h2>
       <app-users-manage></app-users-manage>
     </div>
   `,

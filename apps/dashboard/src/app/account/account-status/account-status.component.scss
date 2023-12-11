@@ -1,4 +1,4 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
 .account-status {
   align-items: center;
@@ -15,7 +15,7 @@
   color: $color-primary-regular;
 }
 
-.buttons{
+.buttons {
   align-items: center;
   display: flex;
   flex-direction: column;
