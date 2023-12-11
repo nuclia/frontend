@@ -147,24 +147,28 @@ export class BillingService {
       map((res) => {
         return Object.keys(res).reduce(
           (acc, key) => {
-            acc[key as AccountTypes] = {
-              ...res[key as AccountTypes],
-              usage: {
-                ...res[key as AccountTypes].usage,
-                files: {
-                  price: res[key as AccountTypes].usage.paragraphs.price * 140,
-                  threshold: Math.floor(res[key as AccountTypes].usage.paragraphs.threshold / 140),
+            const usage = res[key as AccountTypes].usage;
+            if (usage.paragraphs) {
+              acc[key as AccountTypes] = {
+                ...res[key as AccountTypes],
+                usage: {
+                  ...usage,
+                  files: {
+                    price: usage.paragraphs.price * 140,
+                    threshold: Math.floor(usage.paragraphs.threshold / 140),
+                  },
+                  media: {
+                    price: usage.media.price * 60,
+                    threshold: Math.floor(usage.media.threshold / 60),
+                  },
+                  training: {
+                    price: usage.training.price * 60,
+                    threshold: Math.floor(usage.training.threshold / 60),
+                  },
                 },
-                media: {
-                  price: res[key as AccountTypes].usage.media.price * 60,
-                  threshold: Math.floor(res[key as AccountTypes].usage.media.threshold / 60),
-                },
-                training: {
-                  price: res[key as AccountTypes].usage.training.price * 60,
-                  threshold: Math.floor(res[key as AccountTypes].usage.training.threshold / 60),
-                },
-              },
-            };
+              };
+            }
+
             return acc;
           },
           {} as { [key in AccountTypes]: Prices },
