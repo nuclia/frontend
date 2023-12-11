@@ -1,6 +1,4 @@
-<div
-  class="app-navbar"
-  [class.is-unfolded]="isUnfolded">
+<div class="app-navbar">
   <div class="navbar-scroll-container">
     <div
       *ngIf="!(inAccount | async)"
@@ -46,7 +44,7 @@
             data-cy="go-to-resources"
             [class.disabled]="invalidKey | async">
             <pa-icon name="list"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.list' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.list' | translate }}</span>
           </a>
           <a
             [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widget-generator' : null"
@@ -55,7 +53,7 @@
             data-cy="go-to-widget"
             [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
             <pa-icon name="widget"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.widgets' | translate }}</span>
           </a>
         </div>
       </div>
@@ -69,8 +67,10 @@
             paFocusable
             [paFocusDisabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true"
             [class.disabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true">
-            <pa-icon [name]="showSettings ? 'chevron-up' : 'chevron-down'"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.advanced' | translate }}</span>
+            <pa-icon
+              name="chevron-right"
+              [class.expanded]="showSettings"></pa-icon>
+            <span class="nav-link-title">{{ 'sidenav.advanced' | translate }}</span>
           </a>
         </div>
       </div>
@@ -84,7 +84,7 @@
               data-cy="go-to-settings"
               [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
               <pa-icon name="gear"></pa-icon>
-              <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
+              <span class="nav-link-title">{{ 'sidenav.settings' | translate }}</span>
             </a>
             <ng-container *ngIf="!standalone">
               <a
@@ -95,7 +95,7 @@
                 data-cy="go-to-activity-log"
                 [class.disabled]="!(isAdminOrContrib | async)">
                 <pa-icon name="activity-log"></pa-icon>
-                <span class="nav-link-title">{{ 'stash.side.activity' | translate }}</span>
+                <span class="nav-link-title">{{ 'sidenav.activity' | translate }}</span>
               </a>
 
               <a
@@ -105,7 +105,7 @@
                 data-cy="go-to-api-keys"
                 class="nav-link sub-item">
                 <pa-icon name="lock-off"></pa-icon>
-                <span class="nav-link-title">{{ 'stash.side.api_keys' | translate }}</span>
+                <span class="nav-link-title">{{ 'sidenav.api_keys' | translate }}</span>
               </a>
             </ng-container>
             <a
@@ -115,7 +115,7 @@
               data-cy="go-to-classification"
               [class.disabled]="invalidKey | async">
               <pa-icon name="label"></pa-icon>
-              <span class="nav-link-title">{{ 'stash.side.classification' | translate }}</span>
+              <span class="nav-link-title">{{ 'sidenav.classification' | translate }}</span>
             </a>
             <a
               *ngIf="isEntitiesEnabled | async"
@@ -135,7 +135,7 @@
                 data-cy="go-to-synonyms"
                 class="nav-link sub-item">
                 <pa-icon name="synonyms"></pa-icon>
-                <span class="nav-link-title">{{ 'stash.side.synonyms' | translate }}</span>
+                <span class="nav-link-title">{{ 'sidenav.synonyms' | translate }}</span>
               </a>
               <a
                 *ngIf="isTrainingEnabled | async"
@@ -145,7 +145,7 @@
                 data-cy="go-to-trainings"
                 [class.disabled]="!(isAdmin | async)">
                 <pa-icon name="submenu"></pa-icon>
-                <span class="nav-link-title">{{ 'stash.side.trainings' | translate }}</span>
+                <span class="nav-link-title">{{ 'sidenav.trainings' | translate }}</span>
               </a>
               <a
                 *ngIf="isAccountManager | async"
@@ -154,7 +154,7 @@
                 data-cy="go-to-users"
                 class="nav-link sub-item">
                 <pa-icon name="users"></pa-icon>
-                <span class="nav-link-title">{{ 'stash.side.users' | translate }}</span>
+                <span class="nav-link-title">{{ 'sidenav.users' | translate }}</span>
               </a>
             </ng-container>
           </div>
@@ -169,7 +169,7 @@
           data-cy="go-to-manage-kbs">
           <a class="nav-link">
             <pa-icon name="knowledge-box"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.manage-kbs' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.manage-kbs' | translate }}</span>
           </a>
         </div>
       </div>
@@ -185,7 +185,7 @@
             data-cy="go-to-account-home"
             class="nav-link">
             <pa-icon name="home"></pa-icon>
-            <span class="nav-link-title">{{ 'account.home' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.account-home' | translate }}</span>
           </a>
         </div>
         <div class="group-items">
@@ -195,7 +195,7 @@
             data-cy="go-to-account-settings"
             class="nav-link">
             <pa-icon name="gear"></pa-icon>
-            <span class="nav-link-title">{{ 'account.settings' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.account-settings' | translate }}</span>
           </a>
         </div>
         <div class="group-items">
@@ -205,7 +205,7 @@
             data-cy="go-to-account-kbs"
             class="nav-link">
             <pa-icon name="knowledge-box"></pa-icon>
-            <span class="nav-link-title">{{ 'account.knowledgeboxes' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.manage-kbs' | translate }}</span>
           </a>
         </div>
         <div class="group-items">
@@ -215,7 +215,7 @@
             data-cy="go-to-account-users"
             class="nav-link">
             <pa-icon name="users"></pa-icon>
-            <span class="nav-link-title">{{ 'account.users' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.users' | translate }}</span>
           </a>
         </div>
         <div class="group-items">
@@ -225,7 +225,7 @@
             data-cy="go-to-nua-keys"
             class="nav-link">
             <pa-icon name="key"></pa-icon>
-            <span class="nav-link-title">{{ 'account.nua_keys' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.nua-keys' | translate }}</span>
           </a>
         </div>
         <div
@@ -237,7 +237,7 @@
             data-cy="go-to-billing"
             class="nav-link">
             <pa-icon name="payment"></pa-icon>
-            <span class="nav-link-title">{{ 'account.billing' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.billing' | translate }}</span>
           </a>
         </div>
         <div
@@ -249,7 +249,7 @@
             data-cy="go-to-sync"
             class="nav-link">
             <pa-icon name="upload"></pa-icon>
-            <span class="nav-link-title">{{ 'account.sync' | translate }}</span>
+            <span class="nav-link-title">{{ 'sidenav.sync' | translate }}</span>
           </a>
         </div>
       </div>

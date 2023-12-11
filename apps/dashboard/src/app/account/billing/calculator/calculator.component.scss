@@ -1,4 +1,4 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
 :host {
   pa-slider ::ng-deep {
@@ -11,7 +11,8 @@
   }
 }
 
-h2, h3 {
+h2,
+h3 {
   margin: 0;
 }
 

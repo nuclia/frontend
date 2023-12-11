@@ -11,7 +11,6 @@ import {
   KnowledgeBoxSettingsModule,
   NavbarModule,
   PipesModule,
-  STFSidebarModule,
   TokenDialogModule,
 } from '@flaps/common';
 
@@ -66,7 +65,6 @@ const Components = [
     PipesModule,
     TokenDialogModule,
     ChartsModule,
-    STFSidebarModule,
     NavbarModule,
     UsersManageModule,
     HintModule,

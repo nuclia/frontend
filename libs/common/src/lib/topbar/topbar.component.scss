@@ -3,12 +3,12 @@
 .topbar {
   align-items: center;
   background-color: $color-light-stronger;
-  border-bottom: 1px solid $color-neutral-lighter;
+  border-bottom: 1px solid $color-neutral-light;
   display: flex;
   height: var(--app-topbar-height);
   justify-content: space-between;
   left: 0;
-  padding: 0 var(--app-layout-margin-right) 0 rhythm(2);
+  padding: 0 var(--app-layout-padding-right) 0 rhythm(2);
   position: fixed;
   top: 0;
   width: 100%;

@@ -1,5 +1,20 @@
 @import 'apps/dashboard/src/variables';
 
-stf-sidebar {
-  top: var(--app-topbar-height) !important;
+$width-sidenav: rhythm(26);
+.dashboard-layout {
+  display: flex;
+  position: relative;
+  height: calc(100vh - var(--app-topbar-height));
+  overflow: hidden;
+
+  nav {
+    flex: 0 0 auto;
+    width: $width-sidenav;
+  }
+
+  .dashboard-content {
+    width: calc(100vw - #{$width-sidenav});
+    max-height: calc(100vh - var(--app-topbar-height));
+    overflow: auto;
+  }
 }

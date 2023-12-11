@@ -1,8 +1,5 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
-.container {
-  padding: rhythm(9) var(--app-layout-margin-right) rhythm(8) var(--app-layout-margin-left);
-}
 h1 {
   margin-bottom: rhythm(4);
 }

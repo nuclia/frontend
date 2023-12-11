@@ -1,12 +1,7 @@
 @import 'apps/dashboard/src/variables';
 
-:host {
-  display: block;
-  padding: rhythm(6) rhythm(12);
-}
-
 .label-sets-management {
-  width: rhythm(50);
+  width: rhythm(56);
 
   header {
     align-items: center;

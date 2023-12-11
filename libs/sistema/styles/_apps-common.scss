@@ -45,3 +45,9 @@ pa-button.full-width {
     flex: 1 0 auto;
   }
 }
+
+.page-spacing {
+  min-height: calc(100vh - var(--app-topbar-height));
+  padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
+    var(--app-layout-padding-left);
+}

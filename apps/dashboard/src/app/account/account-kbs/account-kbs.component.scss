@@ -1,7 +1,6 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
 .account-kbs {
-  padding: 70px var(--app-layout-margin-right) 60px var(--app-layout-margin-left);
   h2 {
     margin: 0 0 rhythm(1) 0;
   }

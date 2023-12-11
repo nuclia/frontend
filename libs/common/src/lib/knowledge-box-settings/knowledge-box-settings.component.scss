@@ -1,8 +1,6 @@
-@import 'variables';
+@import 'apps/dashboard/src/variables';
 
 .knowledge-box-settings {
-  padding: rhythm(6) rhythm(12);
-
   form {
     width: rhythm(80);
   }

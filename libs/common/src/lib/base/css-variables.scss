@@ -1,11 +1,12 @@
 :root {
   --app-min-width: 1024px;
-  --app-background-color: var(--stf-gray-background);
-  --app-topbar-height: 72px;
-  --app-layout-margin-left: 6rem;
-  --app-layout-margin-right: 2rem;
+  --app-background-color: #fff;
+  --app-topbar-height: 4.5rem;
+  --app-layout-padding-bottom: 3rem;
+  --app-layout-padding-left: 6rem;
+  --app-layout-padding-right: 2rem;
+  --app-layout-padding-top: 3.5rem;
 
   // z-index
   --app-zindex-topbar: 1000;
-  --app-zindex-filter-sidebar: 800;
 }

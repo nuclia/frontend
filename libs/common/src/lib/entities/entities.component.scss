@@ -1,16 +1,12 @@
 @import 'apps/dashboard/src/variables';
 
-$page-padding-top: rhythm(5);
-$page-padding-bottom: rhythm(8);
-$page-padding-left: var(--app-layout-margin-left);
-$header-height: rhythm(12);
-$header-margin-bottom: rhythm(4);
+$header-height: rhythm(16);
+$header-margin-bottom: rhythm(3);
 
 $family-list-width: rhythm(48);
 $gap-family-selection: rhythm(7);
 
 .ner-management {
-  padding: $page-padding-top var(--app-layout-margin-right) $page-padding-bottom $page-padding-left;
   position: relative;
 
   header {
@@ -22,14 +18,9 @@ $gap-family-selection: rhythm(7);
     display: flex;
     gap: calc(#{$gap-family-selection} - #{$scrollbar-width});
     max-height: calc(
-      100vh - var(--app-topbar-height) - #{$page-padding-top} - #{$page-padding-bottom} - #{$header-height} - #{$header-margin-bottom}
+      100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - var(--app-layout-padding-bottom) - #{$header-height}
     );
     overflow: hidden;
-  }
-
-  .ner-family-list-container,
-  .selected-family-container {
-    max-height: calc(100% - #{rhythm(8)});
   }
 
   .ner-family-list-container {
@@ -106,11 +97,6 @@ $gap-family-selection: rhythm(7);
   }
 
   .selected-family-container {
-    flex: 1 0 auto;
-    max-width: calc(
-      100vw - #{$navbar-width} - #{$family-list-width} - var(--app-layout-margin-right) - #{$page-padding-left} - #{$gap-family-selection} -
-        #{$scrollbar-width}* 2
-    );
     overflow: hidden;
     padding-top: rhythm(1);
 

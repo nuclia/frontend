@@ -3,7 +3,6 @@
 $table-breakpoint: 1400px;
 
 .resource-list {
-  padding: rhythm(5) var(--app-layout-margin-right) rhythm(8) var(--app-layout-margin-left);
   position: relative;
   min-height: rhythm(24);
 }
@@ -19,7 +18,7 @@ $table-breakpoint: 1400px;
   margin-bottom: rhythm(4);
   padding-bottom: rhythm(1);
   position: sticky;
-  top: var(--app-topbar-height);
+  top: rhythm(3);
   z-index: 10;
 
   .search-bar-container {
@@ -71,16 +70,6 @@ $table-breakpoint: 1400px;
   padding: 0 rhythm(3) 0 rhythm(1.5);
   .title-filter {
     max-width: 35%;
-  }
-}
-
-::ng-deep .mat-menu-panel.resource-actions {
-  min-width: 0;
-  min-height: 0;
-  border-radius: 0;
-  box-shadow: var(--stf-shadow-dropdown);
-  .mat-menu-content {
-    padding: 0;
   }
 }
 
