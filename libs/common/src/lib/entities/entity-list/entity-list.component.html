@@ -9,35 +9,44 @@
         <pa-table-cell header>{{ 'ner-list.duplicates' | translate }}</pa-table-cell>
       </pa-table-row>
     </pa-table-header>
-    <pa-table-row *ngFor="let ner of entities; trackBy: trackByValue">
-      <pa-table-cell>
-        <pa-checkbox
-          [disabled]="(isAdminOrContrib | async) === false"
-          [value]="selection.includes(ner.value)"
-          (change)="toggleSelection(ner.value)"></pa-checkbox>
-      </pa-table-cell>
-      <pa-table-cell>
-        {{ ner.value }}
-      </pa-table-cell>
-      <pa-table-cell>
-        <div class="duplicate-list">
-          <div
-            *ngFor="let duplicate of ner.represents"
-            class="duplicate-item">
-            {{ duplicate }}
-            <pa-button
-              *ngIf="(isAdminOrContrib | async) === true"
-              class="table-row-action"
-              icon="arrows-unrelated"
-              aspect="basic"
-              size="small"
-              paTooltip="ner-list.remove-duplicate-tooltip"
-              (click)="removeDuplicate(ner, duplicate)">
-              {{ 'ner-list.remove-duplicate-tooltip' | translate }}
-            </pa-button>
+    @for (ner of entities; track ner.value) {
+      <pa-table-row>
+        <pa-table-cell>
+          <pa-checkbox
+            [disabled]="(isAdminOrContrib | async) === false"
+            [value]="selection.includes(ner.value)"
+            (change)="toggleSelection(ner.value)"></pa-checkbox>
+        </pa-table-cell>
+        <pa-table-cell>
+          {{ ner.value }}
+        </pa-table-cell>
+        <pa-table-cell>
+          <div class="duplicate-list">
+            @for (duplicate of ner.represents; track duplicate) {
+              <div class="duplicate-item">
+                {{ duplicate }}
+
+                @if ((isAdminOrContrib | async) === true) {
+                  <pa-button
+                    class="table-row-action"
+                    icon="arrows-unrelated"
+                    aspect="basic"
+                    size="small"
+                    paTooltip="ner-list.remove-duplicate-tooltip"
+                    (click)="removeDuplicate(ner, duplicate)">
+                    {{ 'ner-list.remove-duplicate-tooltip' | translate }}
+                  </pa-button>
+                }
+              </div>
+            }
           </div>
-        </div>
-      </pa-table-cell>
-    </pa-table-row>
+        </pa-table-cell>
+      </pa-table-row>
+    }
   </pa-table>
+  @if (totalNERs > displayedNERs) {
+    <p class="more-ners">
+      {{ 'ner-list.more-ners' | translate: { count: totalNERs - displayedNERs } }}
+    </p>
+  }
 </div>

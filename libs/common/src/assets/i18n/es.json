@@ -494,6 +494,7 @@
 	"ner-list.delete-entity-tooltip": "Eliminar NER seleccionado",
 	"ner-list.duplicates": "Duplicados",
 	"ner-list.duplicates-of": "Duplicados de",
+	"ner-list.more-ners": "Hay {{count}} NER más. Utilice el filtro para limitar su selección.",
 	"ner-list.remove-duplicate-tooltip": "Salir de duplicados",
 	"ner-management.add-family": "Familia NER",
 	"ner-management.page-description": "Crea tu propia lista de NER, personalízalos y luego capacítalos. Puede cargarlos desde un archivo CSV para acelerar el proceso o ingresar todos los NER manualmente.",

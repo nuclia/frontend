@@ -494,6 +494,7 @@
 	"ner-list.delete-entity-tooltip": "Suprimeix el NER seleccionat",
 	"ner-list.duplicates": "Duplicats",
 	"ner-list.duplicates-of": "Duplicats de",
+	"ner-list.more-ners": "Hi ha {{count}} NER més, utilitzeu el filtratge per restringir la vostra selecció.",
 	"ner-list.remove-duplicate-tooltip": "Sortiu dels duplicats",
 	"ner-management.add-family": "Família NER",
 	"ner-management.page-description": "Creeu la vostra pròpia llista de NER, personalitzeu-los i, a continuació, entreneu-los. Podeu carregar-los des d'un fitxer CSV per accelerar el procés o introduir tots els NER manualment.",

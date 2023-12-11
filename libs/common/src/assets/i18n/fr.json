@@ -495,6 +495,7 @@
 	"ner-list.delete-entity-tooltip": "Supprimer le NER sélectionné",
 	"ner-list.duplicates": "Doublons",
 	"ner-list.duplicates-of": "Doublons de",
+	"ner-list.more-ners": "Il y a {{count}}  NER supplémentaires. Veuillez utiliser le filtrage pour affiner votre sélection.",
 	"ner-list.remove-duplicate-tooltip": "Sortir des doublons",
 	"ner-management.add-family": "Famille NER",
 	"ner-management.page-description": "Créez votre propre liste de NER, personnalisez-les, puis formez-les. Vous pouvez les télécharger à partir d'un fichier CSV pour accélérer le processus, ou saisir manuellement tous les NER.",
