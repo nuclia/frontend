@@ -495,6 +495,7 @@
 	"ner-list.delete-entity-tooltip": "Delete selected NER",
 	"ner-list.duplicates": "Duplicates",
 	"ner-list.duplicates-of": "Duplicates of",
+	"ner-list.more-ners": "There are {{count}} more NERs, please use filtering to narrow down your selection.",
 	"ner-list.remove-duplicate-tooltip": "Move out of duplicates",
 	"ner-management.add-family": "NER family",
 	"ner-management.page-description": "Create your own list of NER, customize them, and then train them. You can upload them from a CSV file for speeding up the process, or enter all the NER manually.",
