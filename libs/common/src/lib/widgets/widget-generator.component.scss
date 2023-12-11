@@ -19,7 +19,7 @@
     padding: rhythm(1.5) rhythm(4) rhythm(1.5) rhythm(2);
     position: absolute;
     right: 0;
-    top: calc(var(--app-topbar-height) + #{rhythm(4)});
+    top: rhythm(4);
   }
 
   .snippet .warning-container {

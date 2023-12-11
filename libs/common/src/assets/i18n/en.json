@@ -685,6 +685,7 @@
 	"sidenav.sync": "Synchronize",
 	"sidenav.synonyms": "Synonyms",
 	"sidenav.trainings": "Trainings",
+	"sidenav.upload-data": "Upload data",
 	"sidenav.users": "Users",
 	"sidenav.widgets": "Widgets",
 	"standalone.nua-key-status.invalid": "Nuclia Understanding API key provided is invalid",
