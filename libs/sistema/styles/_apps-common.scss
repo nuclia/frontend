@@ -1,5 +1,18 @@
 @import 'variables';
 
+:root {
+  --app-min-width: 1024px;
+  --app-background-color: $color-light-stronger;
+  --app-topbar-height: #{$height-top-bar};
+  --app-layout-padding-bottom: #{$padding-bottom-page};
+  --app-layout-padding-left: #{$padding-left-page};
+  --app-layout-padding-right: #{$padding-right-page};
+  --app-layout-padding-top: #{$padding-top-page};
+
+  // z-index
+  --app-zindex-topbar: 1000;
+}
+
 html,
 body {
   height: 100%;
