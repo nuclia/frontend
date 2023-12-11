@@ -100,6 +100,11 @@ export class OnboardingService {
         }),
         switchMap(({ learningConfiguration, accountSlug }) => {
           const kbConfig = this.getKbConfig(configuration, learningConfiguration);
+          this.tracking.logEvent('kb_creation_submitted', {
+            region: configuration.zoneSlug,
+            learningConfiguration: kbConfig.learning_configuration?.['semantic_model'] || '',
+            firstUpload: (!configuration.ownData ? `Own data` : configuration.dataset) || '',
+          });
           this._onboardingState.next({
             creating: true,
             accountCreated: true,
@@ -118,9 +123,14 @@ export class OnboardingService {
             datasetImported: false,
           });
           if (configuration.dataset) {
+            this.tracking.logEvent('importing_dataset_started');
             return this.sdk.nuclia.rest.post(`/export/${configuration.dataset}/import_to/${kbId}`, {}).pipe(
-              map(() => ({ accountSlug, kbSlug })),
+              map(() => {
+                this.tracking.logEvent('importing_dataset_done');
+                return { accountSlug, kbSlug };
+              }),
               catchError(() => {
+                this.tracking.logEvent('importing_dataset_failed');
                 this.toaster.warning(this.translate.instant('onboarding.setting-up-dataset.import-failed'));
                 return of({ accountSlug, kbSlug });
               }),

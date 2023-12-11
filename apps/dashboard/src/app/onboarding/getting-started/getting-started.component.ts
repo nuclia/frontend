@@ -9,7 +9,7 @@ import { ItemToUpload } from './getting-started.models';
 import { NavigationService, UploadService } from '@flaps/common';
 import { filter, forkJoin, map, Observable, of, repeat, Subject, switchMap, take, tap, timer } from 'rxjs';
 import { Resource, RESOURCE_STATUS, UploadStatus } from '@nuclia/core';
-import { SDKService } from '@flaps/core';
+import { PostHogService, SDKService } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
@@ -56,6 +56,7 @@ export class GettingStartedComponent implements OnDestroy {
     private sdk: SDKService,
     private router: Router,
     private navigationService: NavigationService,
+    private postHog: PostHogService,
   ) {}
 
   ngOnDestroy() {
@@ -75,9 +76,11 @@ export class GettingStartedComponent implements OnDestroy {
         this.uploadAndProcess();
         break;
       case 'processing':
+        this.postHog.logEvent('getting_started_processing_done');
         this.step = 'search';
         break;
       case 'search':
+        this.postHog.logEvent('getting_started_fully_done');
         this.kbUrl.subscribe((url) => {
           this.router.navigate([`${url}/search`]);
           this.modal.close();
@@ -98,11 +101,32 @@ export class GettingStartedComponent implements OnDestroy {
     this.uploadService
       .checkFileTypesAndConfirm(files)
       .pipe(
-        filter((confirmed) => confirmed),
+        filter((confirmed) => {
+          if (!confirmed) {
+            this.postHog.logEvent('getting_started_closed');
+          }
+          return confirmed;
+        }),
         tap(() => {
           this.step = 'processing';
           this.nextDisabled = true;
           this.cdr.markForCheck();
+
+          const counts = this.itemsToUpload.reduce(
+            (counts, item) => {
+              if (item.link) {
+                counts.linkCount += 1;
+              } else if (item.file) {
+                counts.fileCount += 1;
+              }
+              return counts;
+            },
+            { fileCount: 0, linkCount: 0 },
+          );
+          this.postHog.logEvent('getting_started_upload', {
+            fileCount: `${counts.fileCount}`,
+            linkCount: `${counts.linkCount}`,
+          });
         }),
         switchMap((): Observable<ItemToUpload[]> => {
           const linkList: ItemToUpload[] = this.itemsToUpload.filter((item) => !!item.link);
