@@ -5,6 +5,10 @@
       <pa-icon
         name="circle-check"
         size="small"></pa-icon>
+    } @else if ((onboardingStatus | async)?.creationFailed) {
+      <pa-icon
+        name="circle-cross"
+        size="small"></pa-icon>
     }
   </p>
   @if ((onboardingStatus | async)?.accountCreated) {
@@ -13,6 +17,10 @@
       @if ((onboardingStatus | async)?.kbCreated) {
         <pa-icon
           name="circle-check"
+          size="small"></pa-icon>
+      } @else if ((onboardingStatus | async)?.creationFailed) {
+        <pa-icon
+          name="circle-cross"
           size="small"></pa-icon>
       }
     </p>
