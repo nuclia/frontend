@@ -399,7 +399,7 @@
 	"getting-started.intro.three-steps-headline": "Estás a sólo tres pasos de generar respuestas a partir de tus datos.",
 	"getting-started.intro.title": "Comience en solo 3 simples pasos",
 	"getting-started.processing.description": "Dependiendo del contenido, puede llevar algunos minutos procesar sus datos en la base de datos vectorial NucliaDB.",
-	"getting-started.processing.estimated-time": "Tiempo de procesamiento estimado: {{estimation}}min",
+	"getting-started.processing.estimated-time": "Tiempo de procesamiento estimado: {{estimation}}",
 	"getting-started.processing.status.estimated-time": "Quedan {{estimation}} min",
 	"getting-started.processing.status.failed": "Ha fallado",
 	"getting-started.processing.status.processed": "Procesamiento completado",

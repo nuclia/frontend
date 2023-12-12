@@ -400,7 +400,7 @@
 	"getting-started.intro.three-steps-headline": "Vous n'êtes qu'à trois étapes de générer des réponses à partir de vos données",
 	"getting-started.intro.title": "Commencez en seulement 3 étapes simples",
 	"getting-started.processing.description": "Selon le contenu, le traitement de vos données dans la base de données vectorielles NucliaDB peut prendre quelques minutes.",
-	"getting-started.processing.estimated-time": "Temps de traitement estimé :  {{estimation}} min",
+	"getting-started.processing.estimated-time": "Temps de traitement estimé :  {{estimation}}",
 	"getting-started.processing.status.estimated-time": "Il reste {{estimation}}  min",
 	"getting-started.processing.status.failed": "En échec",
 	"getting-started.processing.status.processed": "Traitement terminé",

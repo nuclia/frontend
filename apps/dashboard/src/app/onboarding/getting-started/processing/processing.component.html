@@ -9,7 +9,9 @@
     @if (totalEstimatedTime) {
       <div class="estimated-time">
         <strong>
-          {{ 'getting-started.processing.estimated-time' | translate: { estimation: totalEstimatedTime } }}
+          {{
+            'getting-started.processing.estimated-time' | translate: { estimation: totalEstimatedTime | formatDuration }
+          }}
         </strong>
       </div>
     }
