@@ -5,7 +5,7 @@ import { NUAClientPayload } from '@nuclia/core';
 
 @Injectable({ providedIn: 'root' })
 export class AccountNUAService {
-  private account = this.sdk.currentAccount.pipe(take(1));
+  private account = this.sdk.currentAccount;
   private zones = this.sdk.nuclia.rest.getZones().pipe(take(1), shareReplay());
 
   private onUpdate = new BehaviorSubject<void>(undefined);
@@ -17,7 +17,16 @@ export class AccountNUAService {
         ? this.sdk.nuclia.db.getNUAClients(account.id)
         : this.sdk.nuclia.db.getNUAClients(account.slug),
     ),
-    switchMap(nuaClients => this.zones.pipe(map((zones) => nuaClients.map((nuaClient) => ({ ...nuaClient, zone: zones[nuaClient.zone] })))))
+    switchMap((nuaClients) =>
+      this.zones.pipe(
+        map((zones) =>
+          nuaClients.map((nuaClient) => ({
+            ...nuaClient,
+            zone: this.sdk.useRegionalSystem ? nuaClient.zone : zones[nuaClient.zone],
+          })),
+        ),
+      ),
+    ),
   );
 
   constructor(private sdk: SDKService) {}
@@ -41,31 +50,21 @@ export class AccountNUAService {
     );
   }
 
-  renewClient(id: string, zoneId: string) {
+  renewClient(id: string, zone: string) {
     return this.account.pipe(
-      switchMap((account) =>
-        this.sdk.useRegionalSystem
-          ? this.zones.pipe(
-              switchMap((zones) => {
-                const zone = zones[zoneId];
-                return this.sdk.nuclia.db.renewNUAClient(account.id, id, zone);
-              }),
-            )
-          : this.sdk.nuclia.db.renewNUAClient(account.slug, id),
-      ),
+      switchMap((account) => {
+        return this.sdk.useRegionalSystem
+          ? this.sdk.nuclia.db.renewNUAClient(account.id, id, zone)
+          : this.sdk.nuclia.db.renewNUAClient(account.slug, id);
+      }),
     );
   }
 
-  deleteClient(id: string, zoneId: string) {
+  deleteClient(id: string, zone: string) {
     return this.account.pipe(
       switchMap((account) =>
         this.sdk.useRegionalSystem
-          ? this.zones.pipe(
-              switchMap((zones) => {
-                const zone = zones[zoneId];
-                return this.sdk.nuclia.db.deleteNUAClient(account.id, id, zone);
-              }),
-            )
+          ? this.sdk.nuclia.db.deleteNUAClient(account.id, id, zone)
           : this.sdk.nuclia.db.deleteNUAClient(account.slug, id),
       ),
     );

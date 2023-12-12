@@ -12,56 +12,57 @@
     {{ 'account.create_nua_key' | translate }}
   </pa-button>
 
-  <div
-    *ngIf="clients$ | async as clients"
-    class="container">
-    <h4>{{ 'account.existing_keys' | translate }}</h4>
-    <div
-      class="client-row"
-      *ngFor="let client of clients">
-      <div
-        class="title"
-        paEllipsisTooltip>
-        {{ client.title }}
-      </div>
-      <div class="date">
-        <pa-datetime [datetime]="client.created"></pa-datetime>
-      </div>
-      <div
-        class="email"
-        paEllipsisTooltip>
-        {{ client.contact }}
-      </div>
-      <div class="zone">{{ client.zone }}</div>
-      <div class="buttons">
-        <pa-button
-          *ngIf="isNuaActivityEnabled | async"
-          (click)="goToActivity(client)"
-          aspect="basic"
-          icon="activity-log"
-          size="small"
-          paTooltip="account.nua_key_activity">
-          {{ 'account.nua_key_activity' | translate }}
-        </pa-button>
-        <pa-button
-          (click)="askConfirmation(client)"
-          aspect="basic"
-          icon="refresh"
-          size="small"
-          paTooltip="account.generate_key">
-          {{ 'account.generate_key' | translate }}
-        </pa-button>
-        <pa-button
-          (click)="deleteClient(client)"
-          [attr.data-cy]="client.title + '-delete'"
-          aspect="basic"
-          icon="trash"
-          size="small"
-          kind="destructive"
-          paTooltip="generic.delete">
-          {{ 'account.delete' | translate }}
-        </pa-button>
-      </div>
+  @if (clients$ | async; as clients) {
+    <div class="container">
+      <h4>{{ 'account.existing_keys' | translate }}</h4>
+      @for (client of clients; track client.client_id) {
+        <div class="client-row">
+          <div
+            class="title"
+            paEllipsisTooltip>
+            {{ client.title }}
+          </div>
+          <div class="date">
+            <pa-datetime [datetime]="client.created"></pa-datetime>
+          </div>
+          <div
+            class="email"
+            paEllipsisTooltip>
+            {{ client.contact }}
+          </div>
+          <div class="zone">{{ client.zone }}</div>
+          <div class="buttons">
+            @if (isNuaActivityEnabled | async) {
+              <pa-button
+                (click)="goToActivity(client)"
+                aspect="basic"
+                icon="activity-log"
+                size="small"
+                paTooltip="account.nua_key_activity">
+                {{ 'account.nua_key_activity' | translate }}
+              </pa-button>
+            }
+            <pa-button
+              (click)="askConfirmation(client)"
+              aspect="basic"
+              icon="refresh"
+              size="small"
+              paTooltip="account.generate_key">
+              {{ 'account.generate_key' | translate }}
+            </pa-button>
+            <pa-button
+              (click)="deleteClient(client)"
+              [attr.data-cy]="client.title + '-delete'"
+              aspect="basic"
+              icon="trash"
+              size="small"
+              kind="destructive"
+              paTooltip="generic.delete">
+              {{ 'account.delete' | translate }}
+            </pa-button>
+          </div>
+        </div>
+      }
     </div>
-  </div>
+  }
 </div>

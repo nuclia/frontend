@@ -6,6 +6,10 @@
 - Support `summarize` operation on resources
 - Remove `onlyAnswers` property from `WidgetFeatures` interface, only answers is now managed by `hideSources` option. 
 
+### Bugfix
+
+- In regional system, automatically set the zone slug in nua client returned by `getNUAClients`
+
 # 1.9.0 (2023-11-22)
 
 ### Breaking changes
