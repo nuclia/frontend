@@ -3,14 +3,12 @@
     <div
       class="search-bar-container"
       [innerHtml]="searchWidget | async"></div>
-    <ng-container *ngIf="standalone">
-      <div
-        *ngIf="(hasValidKey | async) === false"
-        class="nua-key-warning">
+    @if (standalone && (hasValidKey | async) === false) {
+      <div class="nua-key-warning">
         <pa-icon name="info"></pa-icon>
         {{ 'standalone.search-no-nua-key' | translate }}
       </div>
-    </ng-container>
+    }
   </div>
   <div class="answer-toggle">
     <pa-toggle

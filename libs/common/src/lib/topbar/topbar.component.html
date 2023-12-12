@@ -3,66 +3,60 @@
     class="topbar-logo"
     (click)="goToHome()">
     <img
-      [src]="!standalone ? 'assets/logos/logo.svg' : 'assets/logos/nucliadb.svg'"
       class="topbar-logo-expanded"
+      [src]="!standalone ? 'assets/logos/logo.svg' : 'assets/logos/nucliadb.svg'"
       [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
+    @if (isStage) {
+      <img
+        src="assets/logos/stage-icon.svg"
+        class="is-stage"
+        alt="Stage" />
+    }
+
     <img
-      *ngIf="isStage"
-      src="assets/logos/stage-icon.svg"
-      class="is-stage"
-      alt="Stage" />
-    <img
-      [src]="!standalone ? 'assets/logos/nuclia-symbol.svg' : 'assets/logos/nucliadb-symbol.svg'"
       class="topbar-logo-collapsed"
+      [src]="!standalone ? 'assets/logos/nuclia-symbol.svg' : 'assets/logos/nucliadb-symbol.svg'"
       [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
   </button>
 
-  <pa-button
-    *ngIf="showDemo"
-    kind="primary"
-    aspect="basic"
-    paFocusable
-    (click)="bookDemo()"
-    (keyup.enter)="bookDemo()">
-    <a
-      href="https://calendly.com/nuclia/30min?back=1&month=2023-10"
-      target="_blank">
-      {{ 'need-help-book-demo' | translate }}
-    </a>
-  </pa-button>
-
-  <div class="topbar-actions">
+  @if (showDemo) {
     <pa-button
-      *ngIf="!standalone && (shouldAccountTypeBeVisible | async)"
       kind="primary"
       aspect="basic"
-      size="small"
-      [routerLink]="billingUrl | async">
-      {{ 'account.type.' + (accountType | async) | translate }}
+      paFocusable
+      (click)="bookDemo()"
+      (keyup.enter)="bookDemo()">
+      <a
+        href="https://calendly.com/nuclia/30min?back=1&month=2023-10"
+        target="_blank">
+        {{ 'need-help-book-demo' | translate }}
+      </a>
     </pa-button>
+  }
 
-    <div
-      *ngIf="((userInfo | async)?.accounts?.length || 0) > 1"
-      class="topbar-account">
-      <strong>{{ (kb | async)?.account }}</strong>
-    </div>
+  <div class="topbar-actions">
+    @if (!standalone && (shouldAccountTypeBeVisible | async)) {
+      <pa-button
+        kind="primary"
+        aspect="basic"
+        size="small"
+        [routerLink]="billingUrl | async">
+        {{ 'account.type.' + (accountType | async) | translate }}
+      </pa-button>
+    }
+
+    @if (((userInfo | async)?.accounts?.length || 0) > 1) {
+      <div class="topbar-account">
+        <strong>{{ (kb | async)?.account }}</strong>
+      </div>
+    }
 
     <app-kb-switch></app-kb-switch>
 
-    <app-user-menu
-      data-cy="user-menu"
-      *ngIf="!standalone"
-      [userInfo]="userInfo | async"></app-user-menu>
-
-    <ng-container *ngIf="standalone">
-      <div
-        class="standalone-config"
-        [paTooltip]="(errorMessage | async) || ''">
-        <pa-icon
-          [name]="(hasValidKey | async) === true ? 'circle-check' : 'warning'"
-          [class]="(hasValidKey | async) === true ? 'valid' : 'invalid'"></pa-icon>
-        <div class="title-xs">nuclia.cloud</div>
-      </div>
-    </ng-container>
+    @if (!standalone) {
+      <app-user-menu
+        data-cy="user-menu"
+        [userInfo]="userInfo | async"></app-user-menu>
+    }
   </div>
 </div>

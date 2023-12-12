@@ -52,6 +52,7 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
     RouterModule.forRoot(routes, routerOptions),
     UploadModule,
     PaIconModule,
+    PaIconModule,
   ],
   providers: [TranslatePipe, { provide: APP_BASE_HREF, useValue: '/admin' }],
   bootstrap: [AppComponent],

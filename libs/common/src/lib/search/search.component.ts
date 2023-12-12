@@ -82,7 +82,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   );
 
   standalone = this.standaloneService.standalone;
-  hasValidKey = this.standaloneService.hasValidKey.pipe(tap(console.log));
+  hasValidKey = this.standaloneService.hasValidKey;
 
   constructor(
     private sdk: SDKService,

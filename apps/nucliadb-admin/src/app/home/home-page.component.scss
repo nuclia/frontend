@@ -1,10 +1,47 @@
-@import 'variables';
+@import 'apps/nucliadb-admin/src/variables';
+
+.home-page {
+  display: flex;
+  gap: rhythm(3);
+  align-items: flex-start;
+
+  .container-box {
+    background: $color-neutral-lightest;
+    border: 1px solid $color-neutral-light;
+    border-radius: rhythm(0.5);
+    padding: rhythm(2) rhythm(3);
+  }
+
+  .check-item {
+    display: flex;
+    gap: rhythm(1);
+    margin-top: calc(-1 * #{rhythm(0.25)});
+
+    & > strong {
+      padding-top: rhythm(0.25);
+    }
+    pa-icon {
+      margin-right: rhythm(0.5);
+    }
+    pa-icon.primary {
+      color: $color-primary-regular;
+    }
+    pa-icon.destructive {
+      color: $color-secondary-strong;
+    }
+  }
+
+  .version-container {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: rhythm(1);
+  }
+}
 
 .home-container {
   align-items: center;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - var(--app-topbar-height));
   justify-content: center;
 
   h1 {
