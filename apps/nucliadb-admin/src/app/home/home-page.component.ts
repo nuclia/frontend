@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { StandaloneService } from '@flaps/common';
 
 @Component({
@@ -7,10 +7,14 @@ import { StandaloneService } from '@flaps/common';
   styleUrls: ['./home-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent {
+export class HomePageComponent implements OnInit {
   hasValidKey = this.standaloneService.hasValidKey;
   errorMessage = this.standaloneService.errorMessage;
   version = this.standaloneService.version;
 
   constructor(private standaloneService: StandaloneService) {}
+
+  ngOnInit() {
+    this.standaloneService.checkVersions();
+  }
 }
