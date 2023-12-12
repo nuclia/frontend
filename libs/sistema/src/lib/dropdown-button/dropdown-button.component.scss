@@ -6,15 +6,17 @@
   .nsi-dropdown-button ::ng-deep {
     .pa-button {
       min-width: rhythm(16);
+      padding: rhythm(0.5) rhythm(0.5) rhythm(0.5) rhythm(1.5);
     }
 
+    .pa-button-wrapper {
+      width: 100%;
+    }
     .pa-button-label {
       align-items: center;
       display: flex;
       justify-content: space-between;
+      width: 100%;
     }
-  }
-  pa-icon {
-    margin-left: rhythm(2);
   }
 }
