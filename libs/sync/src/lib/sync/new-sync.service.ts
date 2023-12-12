@@ -22,17 +22,17 @@ import {
   DestinationConnectorDefinition,
   IDestinationConnector,
   ISourceConnector,
+  ISyncEntity,
   SearchResults,
   Source,
   SourceConnectorDefinition,
   SyncItem,
   SyncRow,
-} from './models';
+} from './new-models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
-import { BackendConfigurationService, injectScript, SDKService } from '@flaps/core';
+import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { SitemapConnector } from './sources/sitemap';
 import { Classification, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
-import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './sources/folder';
 import { SharepointImpl } from './sources/sharepoint';
@@ -40,11 +40,11 @@ import { ConfluenceConnector } from './sources/confluence';
 import { OAuthConnector } from './sources/oauth';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
-export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
+export const LOCAL_SYNC_SERVER = 'http://localhost:8000';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 
 @Injectable({ providedIn: 'root' })
-export class SyncService {
+export class NewSyncService {
   sources: {
     [id: string]: {
       definition: SourceConnectorDefinition;
@@ -58,6 +58,7 @@ export class SyncService {
         title: 'Google Drive',
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
+        permanentSyncOnly: true,
         factory: (settings) => of(new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getAPIOrigin())),
       },
       settings: {},
@@ -68,6 +69,7 @@ export class SyncService {
         title: 'One Drive',
         logo: `${baseLogoPath}/onedrive.svg`,
         description: 'Microsoft OneDrive file hosting service',
+        permanentSyncOnly: true,
         factory: (settings) => of(new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getAPIOrigin())),
       },
       settings: {},
@@ -89,6 +91,7 @@ export class SyncService {
         title: 'Dropbox',
         logo: `${baseLogoPath}/dropbox.svg`,
         description: 'File storage and synchronization service developed by Dropbox',
+        permanentSyncOnly: true,
         factory: (settings) => of(new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getAPIOrigin())),
       },
       settings: {},
@@ -134,6 +137,8 @@ export class SyncService {
     private http: HttpClient,
     private config: BackendConfigurationService,
   ) {
+    console.log('NewSyncService');
+
     const account = this.getAccountId();
     if (account) {
       this.setAccount();
@@ -213,21 +218,33 @@ export class SyncService {
   }
 
   setSourceData(sourceId: string, source: Source): Observable<void> {
-    return this.http.post<void>(`${this._syncServer.getValue()}/source`, { [sourceId]: source }).pipe(
-      tap(() => {
-        const existing = this._sourcesCache.getValue()[sourceId];
-        const value = existing ? { ...existing, ...source } : source;
-        this._sourcesCache.next({ ...this._sourcesCache.getValue(), [sourceId]: value });
-      }),
-    );
+    const existing = this._sourcesCache.getValue()[sourceId];
+    const newValue = existing
+      ? {
+          ...existing,
+          source: { ...source, data: { ...existing.data, ...source.data } },
+          kb: { ...existing.kb, ...source.kb },
+        }
+      : source;
+    const data: ISyncEntity = {
+      id: sourceId,
+      connector: { name: newValue.connectorId, parameters: newValue.data },
+      kb: newValue.kb,
+      labels: newValue.labels,
+      title: sourceId,
+    };
+    const req = existing
+      ? this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, data)
+      : this.http.post<void>(`${this._syncServer.getValue()}/sync`, data);
+    return req.pipe(tap(() => this._sourcesCache.next({ ...this._sourcesCache.getValue(), [sourceId]: newValue })));
   }
 
   getSourceData(sourceId: string): Observable<Source> {
-    return this.http.get<Source>(`${this._syncServer.getValue()}/source/${sourceId}`);
+    return this.http.get<Source>(`${this._syncServer.getValue()}/sync/${sourceId}`);
   }
 
   deleteSource(sourceId: string): Observable<void> {
-    return this.http.delete<void>(`${this._syncServer.getValue()}/source/${sourceId}`).pipe(
+    return this.http.delete<void>(`${this._syncServer.getValue()}/sync/${sourceId}`).pipe(
       tap(() => {
         const sources = this._sourcesCache.getValue();
         delete sources[sourceId];
@@ -242,35 +259,47 @@ export class SyncService {
       return of(false);
     } else {
       return this.http
-        .get<{ hasAuth: boolean }>(`${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/auth`)
+        .get<{ hasAuth: boolean }>(`${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/auth`)
         .pipe(map((res) => res.hasAuth));
     }
   }
 
   getSources(): Observable<{ [id: string]: Source }> {
-    return this.http.get<{ [id: string]: Source }>(`${this._syncServer.getValue()}/sources`);
+    // TODO: refactor the Source model to match what the API provides
+    return this.http.get<{ [id: string]: any }>(`${this._syncServer.getValue()}/sync`).pipe(
+      map((sources) =>
+        Object.entries(sources).reduce(
+          (acc, [id, source]) => ({
+            ...acc,
+            [id]: {
+              connectorId: source.connector.name,
+              data: source.connector.parameters,
+              kb: source.kb,
+              items: source.items,
+              permanentSync: true,
+              labels: source.labels,
+            },
+          }),
+          {},
+        ),
+      ),
+    );
   }
 
   getFiles(query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
-      `${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/files/search${
-        query ? `?query=${query}` : ''
-      }`,
+      `${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/files/search${query ? `?query=${query}` : ''}`,
     );
   }
 
   getFolders(query?: string): Observable<SearchResults> {
-    return this.http.get<SearchResults>(
-      `${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/folders/search${
-        query ? `?query=${query}` : ''
-      }`,
-    );
+    return this.http.get<SearchResults>(`${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/folders`);
   }
 
   addSync(sourceId: string, items: SyncItem[]): Observable<boolean> {
     return this.getSourceData(sourceId).pipe(
       switchMap((source) =>
-        this.http.patch<void>(`${this._syncServer.getValue()}/source/${sourceId}`, {
+        this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, {
           ...source,
           items,
         }),
@@ -317,26 +346,6 @@ export class SyncService {
     return this._sourcesCache.getValue()[name];
   }
 
-  private fetchDynamicConnectors() {
-    (window as any).registerConnector = (connector: any) => {
-      this.sources[connector.id] = {
-        definition: { ...connector, factory: () => of(new DynamicConnectorWrapper(connector.factory())) },
-        settings: {},
-      };
-      this.sourceObs.next(Object.values(this.sources).map((obj) => obj.definition));
-    };
-    from(
-      fetch('https://nuclia.github.io/status/connectors.json').then((res) => {
-        if (!res.ok) {
-          throw new Error('Failed to fetch connectors');
-        }
-        return res.json();
-      }),
-    )
-      .pipe(switchMap((urls: string[]) => forkJoin(urls.map((url) => injectScript(url)))))
-      .subscribe();
-  }
-
   getKb(kbId: string): Observable<WritableKnowledgeBox> {
     return this.sdk.currentAccount.pipe(
       take(1),
@@ -368,10 +377,10 @@ export class SyncService {
   }
 
   serverStatus(server: string): Observable<{ running: boolean }> {
-    return this.http.get<{ running: boolean; logs: string[] }>(`${server}/status`).pipe(
+    return this.http.get<{ running: boolean; logs?: string[] }>(`${server}/status`).pipe(
       catchError(() => of({ running: false, logs: ['Server down'] })),
       map((res) => {
-        res.logs.forEach((log) => console.log('[SERVER]', log));
+        (res.logs || []).forEach((log) => console.log('[SERVER]', log));
         return { running: res.running };
       }),
     );

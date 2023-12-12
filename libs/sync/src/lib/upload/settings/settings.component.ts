@@ -177,20 +177,16 @@ export class SettingsComponent implements OnDestroy, OnInit {
   validate() {
     const kbId = (this.local ? this.form?.value.localKb : this.form?.value.kb)?.split('|')[0];
     this.sync
-      .setSourceData(this.form?.value.name || '', {
-        connectorId: this.connector?.id || '',
-        data: this.form?.value.fields || {},
-        permanentSync: this.form?.value.permanentSync,
-      })
-      .pipe(
-        switchMap(() =>
-          this.sync.setSourceDestination(
-            this.form?.value.name || '',
-            kbId,
-            this.local ? this.localUrl : undefined,
-            this.selectedLabels,
-          ),
-        ),
+      .setSourceAndDestination(
+        this.form?.value.name || '',
+        {
+          connectorId: this.connector?.id || '',
+          data: this.form?.value.fields || {},
+          permanentSync: this.form?.value.permanentSync,
+        },
+        kbId,
+        this.local ? this.localUrl : undefined,
+        this.selectedLabels,
       )
       .subscribe(() => {
         this.save.emit({

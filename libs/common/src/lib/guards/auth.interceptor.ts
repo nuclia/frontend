@@ -7,12 +7,19 @@ import { SDKService } from '@flaps/core';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private router: Router, private sdk: SDKService) {}
+  constructor(
+    private router: Router,
+    private sdk: SDKService,
+  ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError((error) => {
-        this.handle400Error(error);
+        // 440 on requests to external APIs (like connectors)
+        // or to local NucliaDB should not redirect to login
+        if (request.url.startsWith('https://nuclia.cloud') || request.url.startsWith('https://stashify.cloud')) {
+          this.handle400Error(error);
+        }
         return throwError(error);
       }),
     );
