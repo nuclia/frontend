@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { map, Observable, of, tap } from 'rxjs';
+import { map, Observable, of, Subject } from 'rxjs';
 import { catchError, filter } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
@@ -41,16 +41,8 @@ export class StandaloneService {
     }),
   );
 
-  version: Observable<NucliaDBVersions> = this.sdk.nuclia.rest.get<NucliaDBVersions>('/versions').pipe(
-    tap((version) => {
-      if (
-        version.nucliadb.installed < version.nucliadb.latest ||
-        version['nucliadb-admin-assets'].installed < version['nucliadb-admin-assets'].latest
-      ) {
-        this.toast.warning('standalone.new-version-available-toast');
-      }
-    }),
-  );
+  private _versions = new Subject<NucliaDBVersions>();
+  version: Observable<NucliaDBVersions> = this._versions.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -65,5 +57,19 @@ export class StandaloneService {
         of({ has_key: false, valid: false, error: this.translate.instant('standalone.nua-key-status.loading-error') }),
       ),
     );
+  }
+
+  checkVersions() {
+    this.sdk.nuclia.rest.get<NucliaDBVersions>('/versions').subscribe((version) => {
+      const versionSeparator = '.post';
+      if (
+        version.nucliadb.installed.split(versionSeparator)[0] < version.nucliadb.latest.split(versionSeparator)[0] ||
+        version['nucliadb-admin-assets'].installed.split(versionSeparator)[0] <
+          version['nucliadb-admin-assets'].latest.split(versionSeparator)[0]
+      ) {
+        this.toast.warning('standalone.new-version-available-toast');
+      }
+      this._versions.next(version);
+    });
   }
 }
