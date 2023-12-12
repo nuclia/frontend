@@ -8,6 +8,7 @@ import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { PaTogglesModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceViewerService } from '../resources/resource-viewer.service';
+import { StandaloneService } from '@flaps/common';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -43,6 +44,7 @@ describe('SearchComponent', () => {
             isFeatureEnabled: () => of(true),
           },
         },
+        MockProvider(StandaloneService),
       ],
     }).compileComponents();
 

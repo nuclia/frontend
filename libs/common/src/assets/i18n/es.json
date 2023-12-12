@@ -695,7 +695,7 @@
 	"standalone.nua-key-status.invalid.title": "La clave Nuclia Understanding API proporcionada no es válida",
 	"standalone.nua-key-status.valid.nua-allows-to": "Su clave API de NUA le permite utilizar <a href=\"https://nuclia.cloud\"target=\"_blank\">el motor de procesamiento en la nube de Nuclia</a>.",
 	"standalone.nua-key-status.valid.store-locally": "Sus datos permanecen almacenados localmente, pero tiene acceso a un panel para seguir sus métricas y más.",
-	"standalone.search-no-nua-key": "Estás desconectado del servidor nuclia.cloud y solo obtendrás respuestas basadas en palabras clave. Los resultados semánticos y la búsqueda de gráficos de conocimiento no funcionarán. Para una experiencia de búsqueda completa, conéctese al servidor utilizando una clave Nuclia Understanding API.",
+	"standalone.search-no-nua-key": "Está desconectado del servidor nuclia.cloud y solo obtendrá respuestas basadas en palabras clave. Los resultados semánticos no funcionarán. Para obtener una experiencia de búsqueda completa, conéctese al servidor mediante una clave API de Nuclia Understanding.",
 	"standalone.upload-no-nua-key": "No estás conectado al servidor <strong>nuclia.cloud</strong> y no se procesarán nuevos datos.",
 	"stash.add_user": "Añadir usuario",
 	"stash.added_user": "El usuario {{user}} ha sido añadido",
