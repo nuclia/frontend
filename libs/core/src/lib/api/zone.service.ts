@@ -17,16 +17,21 @@ export class ZoneService {
   ) {}
 
   getZones(includeZonesBlocked = false): Observable<Zone[]> {
+    const isRegionalSystemBetaTester = localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
     return this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`).pipe(
       switchMap((zones) =>
         this.featureFlagService.getFeatureBlocklist('zones').pipe(
           map((blocklist) => {
-            return includeZonesBlocked
-              ? zones.map((zone) => ({
-                  ...zone,
-                  notAvailableYet: blocklist.includes(zone.slug),
-                }))
-              : zones.filter((zone) => !blocklist.includes(zone.slug));
+            if (isRegionalSystemBetaTester) {
+              return zones;
+            } else {
+              return includeZonesBlocked
+                ? zones.map((zone) => ({
+                    ...zone,
+                    notAvailableYet: blocklist.includes(zone.slug),
+                  }))
+                : zones.filter((zone) => !blocklist.includes(zone.slug));
+            }
           }),
         ),
       ),
