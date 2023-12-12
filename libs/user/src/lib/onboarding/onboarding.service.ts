@@ -75,7 +75,12 @@ export class OnboardingService {
               title: configuration.company,
             })
             .pipe(
-              map(() => ({ accountSlug })),
+              map((account) => {
+                if (this.sdk.useRegionalSystem) {
+                  this.sdk.nuclia.options.accountId = account.id;
+                }
+                return { accountSlug };
+              }),
               catchError((error) => {
                 this.tracking.logEvent('account_creation_failed');
                 this._onboardingState.next({
