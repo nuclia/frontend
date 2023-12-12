@@ -17,7 +17,7 @@
           [disabled]="zone.notAvailableYet">
           {{ zone.title || zone.slug }}
           @if (zone.notAvailableYet) {
-            ({{ 'onboarding.step2.coming-soon' | translate }})
+            {{ 'onboarding.step2.coming-soon' | translate }}
           }
         </pa-radio>
       }
