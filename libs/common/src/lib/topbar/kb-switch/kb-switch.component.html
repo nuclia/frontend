@@ -1,4 +1,4 @@
-<ng-container *ngIf="showKbSelector | async">
+@if (showKbSelector | async) {
   <nsi-dropdown-button
     size="small"
     aspect="basic"
@@ -6,10 +6,10 @@
     [popupRef]="kbSwitch">
     {{ (kb | async)?.title }}
   </nsi-dropdown-button>
-</ng-container>
+}
 
 <pa-dropdown #kbSwitch>
-  <ng-container *ngFor="let kb of knowledgeBoxes | async; let last = last">
+  @for (kb of knowledgeBoxes | async; track kb.id) {
     <pa-option
       [disabled]="!kb.role_on_kb && !standalone"
       iconOnRight
@@ -18,5 +18,5 @@
       (selectOption)="goToKb(kb)">
       {{ kb.title }}
     </pa-option>
-  </ng-container>
+  }
 </pa-dropdown>

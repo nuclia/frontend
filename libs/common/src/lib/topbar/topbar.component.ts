@@ -32,7 +32,6 @@ export class TopbarComponent {
   );
 
   standalone = this.standaloneService.standalone;
-  hasValidKey = this.standaloneService.hasValidKey;
   errorMessage = this.standaloneService.errorMessage;
 
   showDemo = !this.standalone;
