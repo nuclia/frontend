@@ -399,7 +399,7 @@
 	"getting-started.intro.three-steps-headline": "Només esteu a tres passos curts per generar respostes a partir de les vostres dades",
 	"getting-started.intro.title": "Comença amb només 3 passos senzills",
 	"getting-started.processing.description": "Depenent del contingut, pot trigar uns minuts a processar les vostres dades a la base de dades vectorials NucliaDB.",
-	"getting-started.processing.estimated-time": "Temps de processament estimat: {{estimation}}min",
+	"getting-started.processing.estimated-time": "Temps de processament estimat: {{estimation}}",
 	"getting-started.processing.status.estimated-time": "Queden {{estimation}} min",
 	"getting-started.processing.status.failed": "Fracassat",
 	"getting-started.processing.status.processed": "Processament completat",

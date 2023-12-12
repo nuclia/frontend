@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { FormatDatePipe, FormatTimePipe } from './format-date.pipe';
+import { FormatDatePipe } from './format-date.pipe';
 import { SafeHtmlPipe } from './safe-html.pipe';
+import { FormatTimePipe } from './format-time.pipe';
 
 @NgModule({
   imports: [CommonModule],
