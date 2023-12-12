@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, map, take, tap } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
-import { SDKService, UserService } from '@flaps/core';
+import { SDKService, UserService, Zone, ZoneService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
@@ -53,7 +53,7 @@ export class ClientDialogComponent implements OnInit {
     },
   };
 
-  zones: { id: string; title: string }[] = [];
+  zones: Zone[] = [];
 
   constructor(
     public modal: ModalRef,
@@ -61,15 +61,15 @@ export class ClientDialogComponent implements OnInit {
     private nua: AccountNUAService,
     private sdkService: SDKService,
     private cdr: ChangeDetectorRef,
+    private zoneService: ZoneService,
   ) {
     this.editMode = !!this.modal.config.data?.['client'];
   }
 
   ngOnInit() {
-    this.sdkService.nuclia.rest
+    this.zoneService
       .getZones()
       .pipe(
-        map((zoneMap) => Object.entries(zoneMap).map(([key, title]) => ({ id: key, title }))),
         tap((zones) => {
           this.zones = zones;
           this.cdr.detectChanges();
