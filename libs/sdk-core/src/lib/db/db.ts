@@ -380,12 +380,15 @@ export class Db implements IDb {
             Object.values(zones).map((zoneSlug) =>
               this.nuclia.rest
                 .get<{ clients: NUAClient[] }>(`/account/${account}/nua_clients`, undefined, undefined, zoneSlug)
-                .pipe(catchError(() => of({ clients: [] as NUAClient[] }))),
+                .pipe(
+                  map(({ clients }) => clients.map((client) => ({ ...client, zone: zoneSlug }) as NUAClient)),
+                  catchError(() => of([] as NUAClient[])),
+                ),
             ),
           ),
         ),
         map((response) =>
-          response.reduce((allClients, { clients }) => {
+          response.reduce((allClients, clients) => {
             return allClients.concat(clients);
           }, [] as NUAClient[]),
         ),
