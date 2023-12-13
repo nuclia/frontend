@@ -8,6 +8,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import {
   ChartsModule,
   HintModule,
+  KbAddModule,
   KnowledgeBoxSettingsModule,
   NavbarModule,
   PipesModule,
@@ -17,7 +18,6 @@ import {
 import { AccountHomeComponent } from './account-home/account-home.component';
 import { AccountManageComponent } from './account-manage/account-manage.component';
 import { AccountKbsComponent } from './account-kbs/account-kbs.component';
-import { KbAddComponent } from './account-kbs/kb-add/kb-add.component';
 import { UsersDialogComponent } from './account-kbs/users-dialog/users-dialog.component';
 import { AccountNUAComponent } from './account-nua/account-nua.component';
 import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
@@ -45,7 +45,6 @@ const Components = [
   AccountHomeComponent,
   AccountManageComponent,
   AccountKbsComponent,
-  KbAddComponent,
   UsersDialogComponent,
   AccountNUAComponent,
   ClientDialogComponent,
@@ -82,6 +81,7 @@ const Components = [
     BillingModule,
     AccountStatusComponent,
     PaDateTimeModule,
+    KbAddModule,
     KnowledgeBoxSettingsModule,
   ],
   declarations: [...Components, NuaActivityComponent],

@@ -88,7 +88,7 @@
     <pa-button
       *ngIf="!addKb && (standalone || (canAddKb | async) === true)"
       data-cy="create-kb-button"
-      (click)="toggleForm()">
+      (click)="openKbForm()">
       {{ 'stash.create.title' | translate }}
     </pa-button>
 

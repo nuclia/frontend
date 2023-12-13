@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { SDKService, STFUtils, Zone } from '@flaps/core';
-import { KnowledgeBoxSettingsService, Sluggable } from '@flaps/common';
+import { Sluggable } from '../validators';
+import { KnowledgeBoxSettingsService } from '../knowledge-box-settings';
 import { Account, KnowledgeBoxCreation, LearningConfiguration } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
@@ -97,7 +98,9 @@ export class KbAddComponent implements OnInit {
       description: this.kbForm.value.description,
       learning_configuration,
     };
-    if (!this.sdk.useRegionalSystem) {
+    if (this.sdk.useRegionalSystem) {
+      this.sdk.nuclia.options.zone = this.zones.find((zone) => zone.id === this.kbForm?.value.zone)?.slug;
+    } else {
       payload.zone = this.kbForm.value.zone;
     }
     this.saving = true;

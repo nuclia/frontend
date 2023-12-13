@@ -3,13 +3,14 @@ import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SDKService, STFUtils } from '@flaps/core';
+import { SDKService, STFUtils, ZoneService } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '../../validators';
 import { NavigationService } from '../../services';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { KbAddComponent } from '../../kb-add';
 
 @Component({
   selector: 'app-select-kb',
@@ -50,7 +51,34 @@ export class SelectKbComponent implements OnDestroy {
     private sdk: SDKService,
     private toast: SisToastService,
     private modalService: SisModalService,
+    private zoneService: ZoneService,
   ) {}
+
+  openKbForm() {
+    if (this.standalone) {
+      this.toggleForm();
+    } else {
+      forkJoin([this.account.pipe(take(1)), this.zoneService.getZones()])
+        .pipe(
+          switchMap(([account, zones]) => {
+            if (!this.sdk.nuclia.options.zone) {
+              // zone must be set to get configuration schema
+              this.sdk.nuclia.options.zone = zones[0]?.slug;
+            }
+            return this.modalService.openModal(KbAddComponent, { dismissable: true, data: { account, zones } }).onClose;
+          }),
+          filter((result) => {
+            if (result?.success === false) {
+              this.toast.error('error.creating-kb');
+            }
+            return !!result?.success;
+          }),
+        )
+        .subscribe(() => {
+          this.sdk.refreshKbList();
+        });
+    }
+  }
 
   toggleForm() {
     this.addKb = !this.addKb;
@@ -79,7 +107,7 @@ export class SelectKbComponent implements OnDestroy {
           return this.sdk.nuclia.db.createKnowledgeBox(account.slug, kbData).pipe(
             tap((kb) => {
               this.sdk.refreshKbList();
-              this.router.navigate([this.navigation.getKbUrl(account.slug, this.standalone ? kb.id : kbSlug)]);
+              this.router.navigate([this.navigation.getKbUrl(account.slug, kb.id)]);
             }),
           );
         }),
