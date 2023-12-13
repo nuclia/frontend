@@ -38,6 +38,8 @@ import {
 import { KnowledgeBoxModule } from './knowledge-box';
 import { InviteModule } from './invite/invite.module';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
+import { SyncService } from '@nuclia/sync';
+import { NewSyncService } from '../../../../libs/sync/src/lib/sync/new-sync.service';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -91,7 +93,13 @@ const appModules = [
     }),
     PaToastModule,
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, TranslatePipe],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    TranslatePipe,
+    // TO BE REMOVED WHEN DESKTOP APP IS GONE
+    // override SyncService with NewSyncService to use the new agent API
+    { provide: SyncService, useClass: NewSyncService },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
