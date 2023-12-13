@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { SDKService, STFUtils, Zone } from '@flaps/core';
-import { KnowledgeBoxSettingsService, Sluggable } from '@flaps/common';
+import { Sluggable } from '../validators';
+import { KnowledgeBoxSettingsService } from '../knowledge-box-settings';
 import { Account, KnowledgeBoxCreation, LearningConfiguration } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';

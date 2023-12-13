@@ -8,6 +8,7 @@ export * from './lib/entities';
 export * from './lib/features';
 export * from './lib/guards';
 export * from './lib/hint';
+export * from './lib/kb-add';
 export * from './lib/knowledge-box-settings';
 export * from './lib/label';
 export * from './lib/messages';

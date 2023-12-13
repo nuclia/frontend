@@ -5,10 +5,9 @@ import { forkJoin, of, Subject, tap } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
 import { SDKService, Zone, ZoneService } from '@flaps/core';
-import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { NavigationService } from '@flaps/common';
+import { KbAddComponent, KbAddData, NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-account-kbs',
