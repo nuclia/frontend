@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AccountService, SDKService } from '@flaps/core';
-import { StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
+import { IKnowledgeBoxItem, StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { addDays, format, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
 import { TranslateService } from '@ngx-translate/core';
@@ -125,6 +126,7 @@ export class AccountHomeComponent {
     private accountService: AccountService,
     private cdr: ChangeDetectorRef,
     private navigation: NavigationService,
+    private router: Router,
   ) {}
 
   getChartData(statsType: StatsType): Observable<ChartData> {
@@ -221,7 +223,10 @@ export class AccountHomeComponent {
     this.cdr.markForCheck();
   }
 
-  getKbUrl(account: string, kb: string) {
-    return this.navigation.getKbUrl(account, kb);
+  goToKb(account: string, kb: IKnowledgeBoxItem) {
+    if (this.sdk.useRegionalSystem) {
+      this.sdk.nuclia.options.zone = kb.zone;
+    }
+    this.router.navigate([this.navigation.getKbUrl(account, kb.slug || '')]);
   }
 }
