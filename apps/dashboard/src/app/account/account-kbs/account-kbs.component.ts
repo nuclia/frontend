@@ -113,6 +113,9 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
         filter((confirm) => !!confirm),
         switchMap(() => {
           this.setLoading(true);
+          if (this.sdk.useRegionalSystem) {
+            this.sdk.nuclia.options.zone = kb.zone;
+          }
           return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).modify({ state });
         }),
         tap(() => this.sdk.refreshKbList()),
@@ -142,6 +145,9 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
         filter((confirm) => !!confirm),
         switchMap(() => {
           this.setLoading(true);
+          if (this.sdk.useRegionalSystem) {
+            this.sdk.nuclia.options.zone = kb.zone;
+          }
           return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).delete();
         }),
         takeUntil(this.unsubscribeAll),
