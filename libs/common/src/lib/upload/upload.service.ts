@@ -234,6 +234,23 @@ export class UploadService {
     );
   }
 
+  createCloudFileResource(uri: string, classifications: Classification[]) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.createResource({
+          title: uri,
+          usermetadata: { classifications },
+          files: {
+            ['cloud-file']: {
+              file: { uri },
+            },
+          },
+        }),
+      ),
+    );
+  }
+
   uploadTextResource(title: string, body: string, format: TextFieldFormat, classifications?: Classification[]) {
     const resource: ICreateResource = {
       title: title,

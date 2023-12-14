@@ -22,49 +22,78 @@
       [formGroup]="linkForm"
       (ngSubmit)="add()">
       <div class="link-form">
-        <pa-radio-group formControlName="type">
-          <pa-radio value="one">{{ 'generic.link' | translate }}</pa-radio>
-          <pa-radio value="multiple">{{ 'modal.create_link.multiple' | translate }}</pa-radio>
-          <pa-radio value="csv">{{ 'modal.create_link.csv_file' | translate }}</pa-radio>
-        </pa-radio-group>
-        <pa-input
-          *ngIf="linkForm.value.type === 'one'"
-          formControlName="link"
-          [errorMessages]="validationMessages['link']">
-          {{ 'modal.create_link.input' | translate }}
-        </pa-input>
-        <pa-textarea
-          *ngIf="linkForm.value.type === 'multiple'"
-          formControlName="links"
-          [rows]="5"
-          [errorMessages]="validationMessages['link']">
-          {{ 'modal.create_link.textarea' | translate }}
-        </pa-textarea>
-        <div
-          *ngIf="linkForm.value.type === 'csv'"
-          class="csv-container">
-          <app-csv-select
-            [help]="['upload.csv_links_description', 'upload.csv_labels']"
-            [fields]="2"
-            (select)="checkCsv($event)"></app-csv-select>
-          <div
-            *ngIf="csv.length > 0"
-            class="uploads">
+        <div class="radio-group-and-label">
+          <label
+            class="body-m"
+            for="linkTo">
+            {{ 'modal.create_link.link-to.label' | translate }}
+          </label>
+          <pa-radio-group
+            id="linkTo"
+            formControlName="linkTo">
+            <pa-radio value="web">{{ 'modal.create_link.link-to.web-page' | translate }}</pa-radio>
+            <pa-radio value="file">{{ 'modal.create_link.link-to.file' | translate }}</pa-radio>
+          </pa-radio-group>
+        </div>
+
+        <div class="radio-group-and-label">
+          <label
+            class="body-m"
+            for="uploadType">
+            {{ 'modal.create_link.upload' | translate }}
+          </label>
+          <pa-radio-group
+            id="uploadType"
+            formControlName="type">
+            <pa-radio value="one">{{ 'modal.create_link.single-link.label' | translate }}</pa-radio>
+            <pa-radio value="multiple">{{ 'modal.create_link.multiple-links.label' | translate }}</pa-radio>
+            <pa-radio value="csv">{{ 'modal.create_link.csv-file' | translate }}</pa-radio>
+          </pa-radio-group>
+        </div>
+        @if (linkForm.value.type === 'one') {
+          <pa-input
+            formControlName="link"
+            [placeholder]="'modal.create_link.single-link.placeholder' | translate"
+            [errorMessages]="validationMessages['link']">
+            {{ 'modal.create_link.single-link.label' | translate }}
+          </pa-input>
+        }
+        @if (linkForm.value.type === 'multiple') {
+          <pa-textarea
+            formControlName="links"
+            [placeholder]="'modal.create_link.multiple-links.placeholder' | translate"
+            [rows]="5"
+            [errorMessages]="validationMessages['link']">
+            {{ 'modal.create_link.textarea' | translate }}
+          </pa-textarea>
+        }
+
+        @if (linkForm.value.type === 'csv') {
+          <div class="csv-container">
+            <app-csv-select
+              [help]="['upload.csv_links_description', 'upload.csv_labels']"
+              [fields]="2"
+              (select)="checkCsv($event)"></app-csv-select>
             <div
-              *ngFor="let row of csv"
-              class="upload">
-              <span paEllipsisTooltip>{{ row.link }}</span>
+              *ngIf="csv.length > 0"
+              class="uploads">
+              <div
+                *ngFor="let row of csv"
+                class="upload">
+                <span paEllipsisTooltip>{{ row.link }}</span>
+              </div>
             </div>
           </div>
-        </div>
-        <app-label-field
-          *ngIf="linkForm.value.type !== 'csv'"
-          [(selection)]="selectedLabels"></app-label-field>
+        }
+
+        @if (linkForm.value.type !== 'csv') {
+          <app-label-field [(selection)]="selectedLabels"></app-label-field>
+        }
       </div>
 
-      <nsi-spinner
-        *ngIf="pending"
-        size="small"></nsi-spinner>
+      @if (pending) {
+        <nsi-spinner size="small"></nsi-spinner>
+      }
     </form>
   </pa-modal-content>
   <pa-modal-footer>

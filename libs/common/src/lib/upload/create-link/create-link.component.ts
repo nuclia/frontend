@@ -22,9 +22,13 @@ interface Row {
 })
 export class CreateLinkComponent {
   linkForm = new FormGroup({
-    link: new FormControl<string>('', { validators: [Validators.pattern(/^http(s?):\/\//)] }),
-    links: new FormControl<string>('', { validators: [Validators.pattern(/^([\r\n]*http(s?):\/\/.*?)+$/)] }),
-    type: new FormControl<'one' | 'multiple' | 'csv'>('one'),
+    link: new FormControl<string>('', { nonNullable: true, validators: [Validators.pattern(/^http(s?):\/\//)] }),
+    links: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.pattern(/^([\r\n]*http(s?):\/\/.*?)+$/)],
+    }),
+    linkTo: new FormControl<'web' | 'file'>('web', { nonNullable: true }),
+    type: new FormControl<'one' | 'multiple' | 'csv'>('one', { nonNullable: true }),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -52,35 +56,42 @@ export class CreateLinkComponent {
   add() {
     if (this.linkForm.valid) {
       this.pending = true;
-      this.cdr?.markForCheck();
+      this.cdr.markForCheck();
+      const formValue = this.linkForm.getRawValue();
+      const isCloudFile = formValue.linkTo === 'file';
       let obs: Observable<{ errors: number }>;
-      if (this.linkForm.value.type === 'multiple') {
-        this.tracking.logEvent('multiple_links_upload');
-        const links: string[] = (this.linkForm.value.links || '')
-          .split('\n')
-          .map((link: string) => link.trim())
-          .filter((link: string) => !!link);
-        obs = this.uploadService.bulkUpload(
-          links.map((link) => this.uploadService.createLinkResource(link, this.selectedLabels)),
-        );
-      } else if (this.linkForm.value.type === 'one') {
-        this.tracking.logEvent('link_upload');
-        obs = this.uploadService.bulkUpload([
-          this.uploadService.createLinkResource(this.linkForm.value.link || '', this.selectedLabels),
-        ]);
-      } else {
-        this.tracking.logEvent('link_upload_from_csv');
-        const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
-        obs = this.uploadService
-          .createMissingLabels(allLabels)
-          .pipe(
-            switchMap(() =>
-              this.uploadService.bulkUpload(
-                this.csv.map((link) => this.uploadService.createLinkResource(link.link, link.labels)),
-              ),
-            ),
+      switch (formValue.type) {
+        case 'multiple':
+          this.tracking.logEvent('multiple_links_upload');
+          const links: string[] = formValue.links
+            .split('\n')
+            .map((link: string) => link.trim())
+            .filter((link: string) => !!link);
+          obs = this.uploadService.bulkUpload(
+            links.map((link) => this.getResourceCreationObs(isCloudFile, link, this.selectedLabels)),
           );
+          break;
+        case 'one':
+          this.tracking.logEvent('link_upload');
+          obs = this.uploadService.bulkUpload([
+            this.getResourceCreationObs(isCloudFile, formValue.link, this.selectedLabels),
+          ]);
+          break;
+        case 'csv':
+          this.tracking.logEvent('link_upload_from_csv');
+          const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
+          obs = this.uploadService
+            .createMissingLabels(allLabels)
+            .pipe(
+              switchMap(() =>
+                this.uploadService.bulkUpload(
+                  this.csv.map((link) => this.getResourceCreationObs(isCloudFile, link.link, link.labels)),
+                ),
+              ),
+            );
+          break;
       }
+
       obs.subscribe((res) => {
         this.sdk.refreshCounter();
         if (res.errors === 0) {
@@ -105,5 +116,15 @@ export class CreateLinkComponent {
 
   close(): void {
     this.modal.close({ cancel: true });
+  }
+
+  private getResourceCreationObs(
+    isCloudFile: boolean,
+    link: string,
+    labels: Classification[],
+  ): Observable<{ uuid: string }> {
+    return isCloudFile
+      ? this.uploadService.createCloudFileResource(link, labels)
+      : this.uploadService.createLinkResource(link, labels);
   }
 }
