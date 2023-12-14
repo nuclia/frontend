@@ -712,6 +712,7 @@
 	"stash.config.option.cohere": "Cohere Command (beta)",
 	"stash.config.option.disabled": "Disabled",
 	"stash.config.option.enabled": "Enabled",
+	"stash.config.option.gemini-pro": "Google Gemini Pro",
 	"stash.config.option.generative-multilingual-2023": "No-Generation Mode",
 	"stash.config.option.multilingual-2023-08-16": "multilingual (alpha)",
 	"stash.config.option.nuclia-atlas-v1": "Nuclia Atlas",
