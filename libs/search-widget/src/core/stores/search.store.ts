@@ -595,6 +595,9 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
 }
 
 export function getFieldDataFromResource(resource: IResource, field: FieldId): IFieldData | undefined {
+  if (!field) {
+    return;
+  }
   const dataKey = getDataKeyFromFieldType(field.field_type);
   return dataKey ? resource.data?.[dataKey]?.[field.field_id] : undefined;
 }

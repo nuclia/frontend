@@ -1,7 +1,7 @@
 import { Directive, inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EditResourceService } from '../edit-resource.service';
-import { combineLatest, filter, map, Observable, of, Subject, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Observable, of, ReplaySubject, Subject, switchMap } from 'rxjs';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { takeUntil } from 'rxjs/operators';
 import { ResourceNavigationService } from '../resource-navigation.service';
@@ -29,6 +29,8 @@ export class SelectFirstFieldDirective implements OnDestroy {
       return field;
     }),
   );
+  private _noField = new ReplaySubject<boolean>(1);
+  protected noField: Observable<boolean> = this._noField.asObservable();
 
   constructor() {
     this.route.params
@@ -52,10 +54,14 @@ export class SelectFirstFieldDirective implements OnDestroy {
           }
         });
         const field: ResourceField = notGenericFields[0];
-        this.router.navigate([`./${field.field_type}/${field.field_id}`], {
-          relativeTo: this.route,
-          replaceUrl: true,
-        });
+        if (field) {
+          this.router.navigate([`./${field.field_type}/${field.field_id}`], {
+            relativeTo: this.route,
+            replaceUrl: true,
+          });
+        } else {
+          this._noField.next(true);
+        }
       });
     this.navigationService.currentRoute = this.route;
   }

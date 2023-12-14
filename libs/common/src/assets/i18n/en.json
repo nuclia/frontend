@@ -585,6 +585,7 @@
 	"resource.entities.time": "Time",
 	"resource.entities.work_of_art": "Art",
 	"resource.error.loading-failed": "Loading resources failed.",
+	"resource.error.no-field": "There is no field in this resource",
 	"resource.extra-metadata.invalid-json": "Invalid JSON",
 	"resource.extra-metadata.label": "Extra metadata",
 	"resource.failed_resources_popover": "Processing failed files",

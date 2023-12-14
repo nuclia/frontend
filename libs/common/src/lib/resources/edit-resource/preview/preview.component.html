@@ -1,47 +1,53 @@
 <div class="main-container">
   <div class="scrollable-area">
-    <div
-      class="error-container"
-      *ngIf="errors">
-      <p>
-        <pa-icon
-          name="warning"
-          size="small"></pa-icon>
-        {{ errors.body }}
-      </p>
-    </div>
-    <ng-container *ngIf="loaded; else loading">
-      <div
-        class="paragraph-container"
-        *ngFor="let paragraph of paragraphs | async">
-        <p>{{ paragraph.text }}</p>
+    @if (errors) {
+      <div class="error-container">
+        <p>
+          <pa-icon
+            name="warning"
+            size="small"></pa-icon>
+          {{ errors.body }}
+        </p>
       </div>
-      <div
-        *ngIf="(paragraphs | async)?.length === 0 && !(jsonTextField | async)"
-        class="paragraph-container">
-        <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+    }
+
+    @if (loaded) {
+      @for (paragraph of paragraphs | async; track paragraph.paragraphId) {
+        <div class="paragraph-container">
+          <p>{{ paragraph.text }}</p>
+        </div>
+      }
+
+      @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async)) {
+        <div class="paragraph-container">
+          <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+        </div>
+      }
+
+      @if (jsonTextField | async) {
+        <div class="paragraph-container">
+          <pre><code>{{ jsonTextField | async }}</code></pre>
+        </div>
+      }
+    } @else if (noField | async) {
+      <div class="paragraph-container">
+        <p>{{ 'resource.error.no-field' | translate }}</p>
       </div>
-      <div
-        *ngIf="jsonTextField | async"
-        class="paragraph-container">
-        <pre><code>{{ jsonTextField | async }}</code></pre>
-      </div>
-    </ng-container>
+    } @else {
+      <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
+    }
   </div>
   <div class="viewer-button-container">
-    <pa-button
-      *ngIf="loaded"
-      [disabled]="loadingPreview"
-      (click)="openViewer()">
-      {{ 'resource.preview.open-viewer' | translate }}
-    </pa-button>
+    @if (loaded) {
+      <pa-button
+        [disabled]="loadingPreview"
+        (click)="openViewer()">
+        {{ 'resource.preview.open-viewer' | translate }}
+      </pa-button>
+    }
   </div>
 </div>
 
 <div class="viewer-container">
   <div [innerHTML]="viewerWidget | async"></div>
 </div>
-
-<ng-template #loading>
-  <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
-</ng-template>
