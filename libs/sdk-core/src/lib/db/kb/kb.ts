@@ -15,6 +15,7 @@ import type {
   LabelSets,
   ResourceList,
   ResourcePagination,
+  SentenceToken,
   ServiceAccount,
   ServiceAccountCreation,
   Synonyms,
@@ -312,6 +313,64 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest
       .post<{ summary: string }>(`${this.path}/summarize`, { resources: ressourceIds })
       .pipe(map((res) => res.summary));
+  }
+
+  /**
+   * Performs a tokenization of the given text.
+   *
+   * Example:
+    ```ts
+    nuclia.knowledgeBox
+      .tokens('Does James Joyce live in Dublin?')
+      .subscribe((tokens) => {
+        console.log('tokens', tokens);
+      });
+    ```
+  */
+  tokens(text: string): Observable<SentenceToken[]> {
+    return this.nuclia.rest
+      .get<{ tokens: SentenceToken[] }>(`${this.path}/predict/tokens?text=${decodeURIComponent(text)}`)
+      .pipe(map((res) => res.tokens));
+  }
+
+  /**
+   * Performs a question answering operation based on a given context.
+   *
+   * Example:
+    ```ts
+    nuclia.knowledgeBox
+      .generate('Who is Eric from Toronto?', [
+        'Eric is a taxi driver',
+        'Eric was born in France',
+        'Eric lives in Toronto',
+      ]))
+      .subscribe((answer) => {
+        console.log('answer', answer);
+      });
+    ```
+  */
+  generate(question: string, context: string[] = []): Observable<{ answer: string; cannotAnswer: boolean }> {
+    return this.nuclia.rest
+      .post<Response>(
+        `${this.path}/predict/chat`,
+        {
+          question,
+          query_context: context,
+          user_id: 'USER',
+        },
+        undefined,
+        true,
+      )
+      .pipe(
+        switchMap((res) => from(res.text())),
+        map((text) => {
+          const cannotAnswer = text.slice(-1) !== '0';
+          return {
+            answer: text.slice(0, -1),
+            cannotAnswer,
+          };
+        }),
+      );
   }
 
   catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse> {

@@ -1,0 +1,7 @@
+@import 'apps/dashboard/src/variables';
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}
