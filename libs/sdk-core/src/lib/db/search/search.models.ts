@@ -45,12 +45,6 @@ export interface BaseSearchOptions {
 export interface ChatOptions extends BaseSearchOptions {
   synchronous?: boolean;
   prompt?: string;
-  /**
-   * It will return in the results the resources that have been effectively used to build the answer.
-   * The other ones will be filtered out.
-   * Note: this is an experimental feature.
-   */
-  answerRelatedResultsOnly?: { enabled: boolean; model?: string };
 }
 
 export interface SearchOptions extends BaseSearchOptions {
