@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { md5, SDKService } from '@flaps/core';
+import { md5, SDKService, STFUtils } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -230,6 +230,23 @@ export class UploadService {
           true,
           REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
         ),
+      ),
+    );
+  }
+
+  createCloudFileResource(uri: string, classifications: Classification[]) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.createResource({
+          title: uri,
+          usermetadata: { classifications },
+          files: {
+            [STFUtils.generateSlug(uri)]: {
+              file: { uri },
+            },
+          },
+        }),
       ),
     );
   }

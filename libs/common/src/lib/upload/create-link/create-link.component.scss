@@ -10,6 +10,12 @@
     display: block;
     margin-bottom: rhythm(4);
   }
+
+  .radio-group-and-label label {
+    display: block;
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: rhythm(0.5);
+  }
 }
 
 .dialog-title-with-button {
