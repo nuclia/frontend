@@ -56,6 +56,7 @@
     gap: $gap-page-content;
 
     .configuration-panel {
+      flex: 0 0 auto;
       width: $width-config-panel;
 
       .tab-content {
@@ -134,9 +135,7 @@
 
     .preview-container {
       flex: 1 0 auto;
-      max-width: calc(
-        100vw - #{$navbar-width} - #{$width-config-panel} - #{$gap-page-content} - #{$padding-right-page}
-      );
+      max-width: calc(100vw - #{$width-sidenav} - #{$width-config-panel} - #{$gap-page-content});
 
       h4 {
         margin: rhythm(1.5) 0 rhythm(1);
@@ -148,7 +147,7 @@
         gap: rhythm(2);
         height: $content-height;
         overflow: auto;
-        padding: rhythm(2) rhythm(1) rhythm(4);
+        padding: rhythm(2) $padding-right-page rhythm(4) 0;
       }
 
       &.dark-mode .preview-content {
