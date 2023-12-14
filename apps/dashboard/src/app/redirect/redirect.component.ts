@@ -87,6 +87,7 @@ export class RedirectComponent {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${this.sdk.nuclia.auth.getToken()}`,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ account_id: this.selectedAccount }),
       }),
