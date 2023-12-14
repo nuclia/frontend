@@ -113,6 +113,10 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   summarize(ressourceIds: string[]): Observable<string>;
 
+  tokens(text: string): Observable<SentenceToken[]>;
+
+  generate(question: string, context: string[]): Observable<{ answer: string; cannotAnswer: boolean }>;
+
   catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse>;
 
   suggest(query: string): Observable<Search.Suggestions | IErrorResponse>;
@@ -329,4 +333,11 @@ export interface SynonymsPayload {
 
 export interface Synonyms {
   [main: string]: string[];
+}
+
+export interface SentenceToken {
+  text: string;
+  ner: string;
+  start: number;
+  end: number;
 }

@@ -23,6 +23,8 @@ import {
   WidgetConfiguration,
   WIDGETS_CONFIGURATION,
 } from './widget-generator.models';
+import { SisModalService } from '@nuclia/sistema';
+import { CopilotModalComponent } from './copilot/copilot-modal.component';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
@@ -53,7 +55,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   currentQuery = '';
 
   // FEATURES AVAILABILITY
-  isAiCopilotEnabled: Observable<boolean> = of(false); // TODO add real feature flag once this copilot feature is implemented
   isUserPromptsEnabled = forkJoin([
     this.featureFlag.isFeatureEnabled('user-prompts').pipe(take(1)),
     this.sdk.currentAccount.pipe(
@@ -202,6 +203,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     private backendConfig: BackendConfigurationService,
     private translate: TranslateService,
     private navigation: NavigationService,
+    private modalService: SisModalService,
   ) {
     const config = this.localStorage.getItem(WIDGETS_CONFIGURATION);
     if (config) {
@@ -249,7 +251,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
     combineLatest([
       this.presetForm.valueChanges.pipe(debounceTime(FORM_CHANGED_DEBOUNCE_TIME)),
-      this.isAiCopilotEnabled,
+      this.isUserPromptsEnabled,
     ])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([value, copilotEnabled]) => {
@@ -496,5 +498,19 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
         }
         break;
     }
+  }
+
+  openCopilotModal() {
+    this.modalService
+      .openModal(CopilotModalComponent, { dismissable: true })
+      .onClose.subscribe((result: { prompt: string; filters: string }) => {
+        if (result) {
+          this.advancedForm.patchValue({
+            userPrompt: result.prompt,
+            preselectedFilters: result.filters,
+          });
+          this.cdr.markForCheck();
+        }
+      });
   }
 }

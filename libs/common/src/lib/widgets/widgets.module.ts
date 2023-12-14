@@ -15,6 +15,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { WidgetGeneratorComponent } from './widget-generator.component';
+import { CopilotModalComponent } from './copilot/copilot-modal.component';
 
 const routes = [
   {
@@ -40,7 +41,7 @@ const routes = [
     PaPopupModule,
   ],
   exports: [],
-  declarations: [WidgetGeneratorComponent],
+  declarations: [WidgetGeneratorComponent, CopilotModalComponent],
   providers: [],
 })
 export class WidgetsModule {}

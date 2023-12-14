@@ -111,7 +111,7 @@
                     </div>
                   </pa-expander-body>
                 </pa-expander>
-                @if (isAiCopilotEnabled | async) {
+                @if (isUserPromptsEnabled | async) {
                   <pa-expander
                     emitOnly
                     [expanded]="presetAccordionExpanded === 'copilot'"
@@ -125,7 +125,9 @@
                       <div class="tab-content-body">
                         <div class="title-xs">{{ 'widget.generator.presets.copilot.question' | translate }}</div>
                         <div class="body-m">{{ 'widget.generator.presets.copilot.description' | translate }}</div>
-                        <pa-button aspect="solid">
+                        <pa-button
+                          aspect="solid"
+                          (click)="openCopilotModal()">
                           {{ 'widget.generator.presets.copilot.create-copilot-button' | translate }}
                         </pa-button>
                       </div>

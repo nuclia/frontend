@@ -1,0 +1,45 @@
+<pa-modal-dialog>
+  <pa-modal-title>
+    <h2>{{ 'widget.copilot.title' | translate }}</h2>
+  </pa-modal-title>
+  <pa-modal-content>
+    <form [formGroup]="form">
+      <div class="body-m">{{ 'widget.copilot.description' | translate }}</div>
+      <pa-input
+        formControlName="agent"
+        [placeholder]="'widget.copilot.agent-placeholder' | translate">
+        {{ 'widget.copilot.agent' | translate }}
+      </pa-input>
+      <pa-input
+        formControlName="topic"
+        [placeholder]="'widget.copilot.topic-placeholder' | translate"
+        [help]="'widget.copilot.topic-help' | translate">
+        {{ 'widget.copilot.topic' | translate }}
+      </pa-input>
+      <pa-button
+        kind="primary"
+        [disabled]="!form.controls['topic'].value || loading"
+        (click)="generate()">
+        {{ 'widget.copilot.generate' | translate }}
+      </pa-button>
+      <pa-textarea
+        formControlName="prompt"
+        [resizable]="true">
+        {{ 'widget.copilot.prompt' | translate }}
+      </pa-textarea>
+      <pa-textarea
+        formControlName="filters"
+        [resizable]="true">
+        {{ 'widget.copilot.filters' | translate }}
+      </pa-textarea>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      kind="primary"
+      [disabled]="!form.controls['prompt'].value || loading"
+      (click)="apply()">
+      {{ 'widget.copilot.apply' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>
