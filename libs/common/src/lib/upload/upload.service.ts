@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { md5, SDKService, STFUtils } from '@flaps/core';
+import { md5, SDKService } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -242,7 +242,7 @@ export class UploadService {
           title: uri,
           usermetadata: { classifications },
           files: {
-            [STFUtils.generateSlug(uri)]: {
+            ['cloud-file']: {
               file: { uri },
             },
           },
