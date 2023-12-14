@@ -1,39 +1,41 @@
 <div class="home-page page-spacing">
   @if (version | async; as versions) {
-    <div class="version-container container-box">
-      <strong>NucliaDB:</strong>
-      <div>
-        {{ versions.nucliadb.installed }}
-      </div>
-      <strong>NucliaDB Admin:</strong>
-      <div>
-        {{ versions['nucliadb-admin-assets'].installed }}
-      </div>
-      <strong>NUA API Key:</strong>
-      <div class="check-item">
-        @if (hasValidKey | async) {
-          <div>
+    <nsi-home-container>
+      <div class="version-container">
+        <strong>NucliaDB:</strong>
+        <div>
+          {{ versions.nucliadb.installed }}
+        </div>
+        <strong>NucliaDB Admin:</strong>
+        <div>
+          {{ versions['nucliadb-admin-assets'].installed }}
+        </div>
+        <strong>NUA API Key:</strong>
+        <div class="check-item">
+          @if (hasValidKey | async) {
             <div>
-              <pa-icon
-                class="primary"
-                name="circle-check"></pa-icon>
-              <span [innerHTML]="'standalone.nua-key-status.valid.nua-allows-to' | translate"></span>
+              <div>
+                <pa-icon
+                  class="primary"
+                  name="circle-check"></pa-icon>
+                <span [innerHTML]="'standalone.nua-key-status.valid.nua-allows-to' | translate"></span>
+              </div>
+              <div>{{ 'standalone.nua-key-status.valid.store-locally' | translate }}</div>
             </div>
-            <div>{{ 'standalone.nua-key-status.valid.store-locally' | translate }}</div>
-          </div>
-        } @else {
-          <div>
+          } @else {
             <div>
-              <pa-icon
-                class="destructive"
-                name="warning"></pa-icon>
-              <strong>{{ errorMessage | async }}</strong>
+              <div>
+                <pa-icon
+                  class="destructive"
+                  name="warning"></pa-icon>
+                <strong>{{ errorMessage | async }}</strong>
+              </div>
+              <div [innerHTML]="'standalone.nua-key-status.invalid.provide-by' | translate"></div>
+              <div [innerHTML]="'standalone.nua-key-status.invalid.how-to-get-nua-key' | translate"></div>
             </div>
-            <div [innerHTML]="'standalone.nua-key-status.invalid.provide-by' | translate"></div>
-            <div [innerHTML]="'standalone.nua-key-status.invalid.how-to-get-nua-key' | translate"></div>
-          </div>
-        }
+          }
+        </div>
       </div>
-    </div>
+    </nsi-home-container>
   }
 </div>

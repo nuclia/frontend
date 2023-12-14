@@ -5,13 +5,6 @@
   gap: rhythm(3);
   align-items: flex-start;
 
-  .container-box {
-    background: $color-neutral-lightest;
-    border: 1px solid $color-neutral-light;
-    border-radius: rhythm(0.5);
-    padding: rhythm(2) rhythm(3);
-  }
-
   .check-item {
     display: flex;
     gap: rhythm(1);
