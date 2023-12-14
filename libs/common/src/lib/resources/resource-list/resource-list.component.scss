@@ -13,12 +13,14 @@ $table-breakpoint: 1400px;
   border-bottom: 1px solid $color-neutral-lighter;
   display: flex;
   gap: rhythm(2);
-  height: rhythm(6);
+  height: rhythm(9);
   justify-content: space-between;
+  margin-top: calc(-1 * #{rhythm(3)});
   margin-bottom: rhythm(4);
+  padding-top: rhythm(3);
   padding-bottom: rhythm(1);
   position: sticky;
-  top: rhythm(3);
+  top: 0;
   z-index: 10;
 
   .search-bar-container {

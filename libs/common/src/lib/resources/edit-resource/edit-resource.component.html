@@ -106,49 +106,52 @@
   <div class="page-container">
     <nav>
       <ul>
-        <ng-container *ngIf="currentView !== 'add-field'">
-          <li
-            *ngIf="currentView !== 'preview' && currentView !== 'annotation'"
-            [class.active]="(currentField | async) === 'resource'"
-            (click)="navigateToField('resource')">
-            <pa-icon
-              name="file"
-              size="small"></pa-icon>
-            {{ 'resource.profile' | translate }}
-          </li>
-          <li
-            *ngFor="let field of fields | async"
-            [class.active]="
-              activeField !== 'resource' &&
-              activeField?.field_id === field.field_id &&
-              activeField?.field_type === field.field_type
-            "
-            (click)="navigateToField(field)">
-            <pa-icon
-              [name]="field.icon"
-              size="small"></pa-icon>
-            {{ 'resource.field-' + field.field_type | translate }}
-
-            <span
-              class="error-marker"
-              *ngIf="field.hasError">
+        @if (currentView !== 'add-field') {
+          @if (currentView !== 'preview' && currentView !== 'annotation') {
+            <li
+              [class.active]="(currentField | async) === 'resource'"
+              (click)="navigateToField('resource')">
               <pa-icon
-                name="warning"
+                name="file"
                 size="small"></pa-icon>
-            </span>
-          </li>
-        </ng-container>
+              {{ 'resource.profile' | translate }}
+            </li>
+          }
+          @for (field of fields | async; track field.id) {
+            <li
+              [class.active]="
+                activeField !== 'resource' &&
+                activeField?.field_id === field.field_id &&
+                activeField?.field_type === field.field_type
+              "
+              (click)="navigateToField(field)">
+              <pa-icon
+                [name]="field.icon"
+                size="small"></pa-icon>
+              {{ 'resource.field-' + field.field_type | translate }}
 
-        <li
-          *ngIf="(isAdminOrContrib | async) === true"
-          routerLink="add-field"
-          routerLinkActive="active"
-          (click)="onViewChange()">
-          <pa-icon
-            name="plus"
-            size="small"></pa-icon>
-          {{ 'resource.tooltip.add-field' | translate }}
-        </li>
+              <span
+                class="error-marker"
+                *ngIf="field.hasError">
+                <pa-icon
+                  name="warning"
+                  size="small"></pa-icon>
+              </span>
+            </li>
+          }
+        }
+
+        @if ((isAdminOrContrib | async) === true) {
+          <li
+            routerLink="add-field"
+            routerLinkActive="active"
+            (click)="onViewChange()">
+            <pa-icon
+              name="plus"
+              size="small"></pa-icon>
+            {{ 'resource.tooltip.add-field' | translate }}
+          </li>
+        }
       </ul>
     </nav>
     <div class="page-content">

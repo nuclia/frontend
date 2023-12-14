@@ -24,7 +24,8 @@
   // let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
   // let kb = '6b9f8f55-a57f-4ed4-b60e-759da54281fd'; // Robin Hobb
-  let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
+  let kb = '41620b98-a1eb-40dc-b4ac-8a46cdd11b54'; // Resources without field (search for caracol)
+  // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
   // let kb = '1154f6a1-af3c-4a19-9039-35466f024448'; // Knowledge graph (daria wiki + an article)
   // let kb = '096d9070-f7be-40c8-a24c-19c89072e3ff'; // e2e permanent
@@ -139,7 +140,7 @@
         lang="en"
         {placeholder}
         preselected_filters={preselectedFilters}
-        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,hideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
+        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,zanswers,hideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
