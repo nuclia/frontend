@@ -18,7 +18,7 @@
       </pa-input>
       <pa-button
         kind="primary"
-        [disabled]="!form.controls.topic.value || loading"
+        [disabled]="!form.controls['topic'].value || loading"
         (click)="generate()">
         {{ 'widget.copilot.generate' | translate }}
       </pa-button>
@@ -37,7 +37,7 @@
   <pa-modal-footer>
     <pa-button
       kind="primary"
-      [disabled]="!form.controls.prompt.value || loading"
+      [disabled]="!form.controls['prompt'].value || loading"
       (click)="apply()">
       {{ 'widget.copilot.apply' | translate }}
     </pa-button>
