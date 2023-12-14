@@ -111,21 +111,22 @@
       </div>
       <div>
         <div class="title-s">{{ 'account.knowledgeboxes' | translate }}</div>
-        <ul
-          class="kb-list"
-          *ngIf="account$ | async as account">
-          <li *ngFor="let kb of kbs | async">
-            <a
-              class="kb-item"
-              [routerLink]="kb.role_on_kb && kb.slug ? getKbUrl(account.slug, kb.slug) : undefined">
-              {{ kb.title }}
-              <pa-icon
-                *ngIf="kb.state === 'PRIVATE'"
-                size="small"
-                name="lock"></pa-icon>
-            </a>
-          </li>
-        </ul>
+        @if (account$ | async; as account) {
+          <ul class="kb-list">
+            @for (kb of kbs | async; track kb.id) {
+              <li
+                class="kb-item"
+                [class.disabled]="!kb.role_on_kb"
+                (click)="kb.role_on_kb ? goToKb(account.slug, kb) : null">
+                {{ kb.title }}
+                <pa-icon
+                  *ngIf="kb.state === 'PRIVATE'"
+                  size="small"
+                  name="lock"></pa-icon>
+              </li>
+            }
+          </ul>
+        }
       </div>
       <div>
         <div class="title-s">{{ 'account.total_queries' | translate }}</div>

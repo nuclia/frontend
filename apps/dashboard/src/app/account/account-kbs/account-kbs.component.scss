@@ -37,15 +37,11 @@
     &:first-child {
       border-top: 1px solid rgba(0, 0, 0, 0.3);
     }
-    &-title {
-      @include text-truncate();
-      padding-right: 15px;
-      color: inherit;
-      text-decoration: underline;
-      font-weight: var(--stf-font-weight-semibold);
-      &.disabled {
-        text-decoration: none;
-        font-weight: var(--stf-font-weight-regular);
+    .kb-title {
+      margin-right: rhythm(2);
+      &:not(.disabled) {
+        cursor: pointer;
+        text-decoration: underline;
       }
     }
 

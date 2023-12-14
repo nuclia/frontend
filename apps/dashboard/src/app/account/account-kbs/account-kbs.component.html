@@ -14,13 +14,14 @@
       <div
         class="account-kb"
         *ngFor="let kb of knowledgeBoxes">
-        <a
-          class="account-kb-title"
+        <div
+          class="kb-title"
           [attr.data-cy]="kb.title + '-link'"
-          [class.disabled]="!kb.role_on_kb || !account.can_manage_account"
-          [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null">
+          [class.disabled]="!kb.role_on_kb"
+          (click)="kb.role_on_kb ? goToKb(kb) : null"
+          paEllipsisTooltip>
           {{ kb.title }}
-        </a>
+        </div>
         <div class="actions">
           @if (account.can_manage_account) {
             <pa-button
@@ -38,7 +39,7 @@
                 icon="edit"
                 aspect="basic"
                 paTooltip="account.stash.edit"
-                (click)="manageKb(kb.slug!)">
+                (click)="manageKb(kb)">
                 {{ 'account.stash.edit' | translate }}
               </pa-button>
             }

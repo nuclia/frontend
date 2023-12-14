@@ -56,16 +56,29 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     // TODO: if no kbs, we should display to the default Empty page
   }
 
-  manageKb(slug: string): void {
-    this.router.navigate([this.navigation.getKbManageUrl(this.account!.slug, slug)]);
+  manageKb(kb: IKnowledgeBoxItem): void {
+    if (this.sdk.useRegionalSystem) {
+      this.sdk.nuclia.options.zone = kb.zone;
+    }
+    this.router.navigate([this.navigation.getKbManageUrl(this.account?.slug || '', kb.slug || '')]);
   }
 
   manageKbUsers(kb: IKnowledgeBoxItem): void {
+    if (this.sdk.useRegionalSystem) {
+      this.sdk.nuclia.options.zone = kb.zone;
+    }
     if (kb.role_on_kb) {
       this.router.navigate([this.navigation.getKbUsersUrl(this.account!.slug, kb.slug!)]);
     } else {
       this.modalService.openModal(UsersDialogComponent, { dismissable: true, data: { kb: kb.slug } });
     }
+  }
+
+  goToKb(kb: IKnowledgeBoxItem) {
+    if (this.sdk.useRegionalSystem) {
+      this.sdk.nuclia.options.zone = kb.zone;
+    }
+    this.router.navigate([this.navigation.getKbUrl(this.account?.slug || '', kb.slug || '')]);
   }
 
   addKb(zones: Zone[], account: Account) {
@@ -161,10 +174,6 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
           this.toaster.error('stash.delete.error');
         },
       });
-  }
-
-  getKbUrl(accountSlug: string, kbSlug: string): string {
-    return this.navigation.getKbUrl(accountSlug, kbSlug);
   }
 
   ngOnDestroy() {

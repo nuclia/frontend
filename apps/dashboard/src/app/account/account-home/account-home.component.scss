@@ -72,10 +72,11 @@
 
     .kb-item {
       align-items: center;
-      color: inherit;
       display: flex;
       gap: rhythm(1);
-      text-decoration: none;
+      &:not(.disabled) {
+        cursor: pointer;
+      }
 
       pa-icon {
         display: flex;
