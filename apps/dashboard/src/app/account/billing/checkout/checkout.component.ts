@@ -180,9 +180,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.subscribeMode
       .pipe(
         switchMap((subscribeMode) => {
-          return subscribeMode
-            ? this.billingService.budgetEstimation.pipe(take(1))
-            : this.billingService.getAccountUsage().pipe(map((usage) => usage.budget));
+          return subscribeMode ? of(0) : this.billingService.getAccountUsage().pipe(map((usage) => usage.budget));
         }),
       )
       .subscribe((budget) => {

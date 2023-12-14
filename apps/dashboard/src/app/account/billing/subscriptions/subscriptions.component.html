@@ -328,19 +328,4 @@
         [innerHTML]="'billing.on_premise_cost' | translate"></div>
     </div>
   </div>
-
-  <div>
-    <h2>{{ 'billing.cost_per_consumption' | translate }}</h2>
-    <div class="body-s">
-      {{ 'billing.cost_per_consumption_help' | translate }}
-    </div>
-    <div class="calculator">
-      <pa-button
-        (click)="openCalculator()"
-        icon="settings"
-        iconAndText>
-        {{ 'billing.estimate_cost' | translate }}
-      </pa-button>
-    </div>
-  </div>
 </div>

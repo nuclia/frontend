@@ -92,15 +92,9 @@ h2 {
 }
 
 .notes {
-  border-bottom: 1px solid $color-neutral-lighter;
   color: $color-neutral-regular;
-  margin: rhythm(6) 0;
-  padding-bottom: rhythm(2);
+  margin-top: rhythm(6);
   .on-premise {
     margin-left: rhythm(2);
   }
-}
-
-.calculator {
-  margin-top: rhythm(2);
 }

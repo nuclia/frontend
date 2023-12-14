@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 import { BillingService } from '../billing.service';
-import { CalculatorComponent } from '../calculator/calculator.component';
-import { combineLatest, map, of, shareReplay, Subject, switchMap, take, tap, takeUntil } from 'rxjs';
-import { SisModalService } from '@nuclia/sistema';
+import { combineLatest, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
 import { AccountService, STFTrackingService } from '@flaps/core';
 import { Currency } from '../billing.models';
 import { WINDOW } from '@ng-web-apis/common';
@@ -30,7 +28,6 @@ export class SubscriptionsComponent implements OnDestroy {
 
   constructor(
     private billing: BillingService,
-    private modalService: SisModalService,
     private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
@@ -47,18 +44,6 @@ export class SubscriptionsComponent implements OnDestroy {
         }
         this.cdr.markForCheck();
       });
-  }
-
-  openCalculator() {
-    this.prices.pipe(take(1)).subscribe((prices) => {
-      this.modalService.openModal(CalculatorComponent, {
-        dismissable: true,
-        data: {
-          prices,
-          currency: this.currency,
-        },
-      });
-    });
   }
 
   setCurrency(currency: Currency) {

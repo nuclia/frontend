@@ -36,17 +36,10 @@ export class BillingService {
   private _initialCurrency = new BehaviorSubject<Currency>('USD');
   initialCurrency = this._initialCurrency.asObservable();
 
-  private _budgetEstimation = new BehaviorSubject<number>(0);
-  budgetEstimation = this._budgetEstimation.asObservable();
-
   constructor(private sdk: SDKService) {}
 
   setInitialCurrency(currency: Currency) {
     this._initialCurrency.next(currency);
-  }
-
-  setBudgetEstimation(budget: number) {
-    this._budgetEstimation.next(Math.floor(budget));
   }
 
   getCustomer(): Observable<StripeCustomer | null> {
