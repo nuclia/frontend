@@ -1,0 +1,11 @@
+@import 'apps/dashboard/src/variables';
+
+.usage-modal-chart-container {
+  margin-left: calc(-1 * #{rhythm(2)});
+  height: 75vh;
+  width: 75vw;
+
+  .dropdown-container {
+    margin-left: rhythm(0.5);
+  }
+}

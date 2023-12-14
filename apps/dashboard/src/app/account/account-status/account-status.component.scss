@@ -3,12 +3,15 @@
 .account-status {
   align-items: center;
   display: flex;
-  gap: rhythm(3);
+  gap: rhythm(1);
   justify-content: space-between;
 }
 
-.type {
-  font-weight: $font-weight-semi-bold;
+.account-type-container {
+  column-gap: rhythm(1);
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 0;
 }
 
 .expiration {

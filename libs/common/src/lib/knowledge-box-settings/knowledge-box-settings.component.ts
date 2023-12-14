@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { catchError, combineLatest, forkJoin, of, Subject } from 'rxjs';
+import { catchError, combineLatest, filter, forkJoin, of, Subject } from 'rxjs';
 import { auditTime, concatMap, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { FeatureFlagService, SDKService, STFUtils } from '@flaps/core';
 import {
@@ -32,7 +32,7 @@ const EMPTY_CONFIG = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
-  kb: KnowledgeBox | undefined;
+  kb: WritableKnowledgeBox | undefined;
   account: Account | undefined;
 
   kbForm?: UntypedFormGroup;
@@ -413,5 +413,29 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  toggleKbState() {
+    if (!this.kb) {
+      return;
+    }
+    const kb = this.kb;
+    const isPublished = kb.state === 'PUBLISHED';
+    const label = isPublished ? 'retire' : 'publish';
+    const state = isPublished ? 'PRIVATE' : 'PUBLISHED';
+    this.modal
+      .openConfirm({
+        title: `stash.${label}.title`,
+        description: this.translate.instant(`stash.${label}.warning`, { kb: kb.title }),
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => kb.publish(state === 'PUBLISHED').pipe(tap(() => this.sdk.refreshKbList(true)))),
+        take(1),
+      )
+      .subscribe({
+        next: () => this.cdr?.markForCheck(),
+        error: () => this.toast.error(`stash.${label}.error`),
+      });
   }
 }

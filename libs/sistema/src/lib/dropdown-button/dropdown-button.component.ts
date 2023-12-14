@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   Aspect,
@@ -9,7 +9,6 @@ import {
   PaPopupModule,
   Size,
 } from '@guillotinaweb/pastanaga-angular';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'nsi-dropdown-button',
@@ -21,73 +20,11 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 })
 export class DropdownButtonComponent {
   @Input() popupRef?: DropdownComponent;
-  @Input()
-  set size(value: Size | undefined) {
-    if (value) {
-      this._size = value;
-    }
-  }
-  get size(): Size {
-    return this._size;
-  }
-
-  @Input()
-  set kind(value: Kind | undefined) {
-    if (value) {
-      this._kind = value;
-    }
-  }
-  get kind(): Kind {
-    return this._kind;
-  }
-
-  @Input()
-  set aspect(value: Aspect | undefined) {
-    if (value) {
-      this._aspect = value;
-    }
-  }
-  get aspect(): Aspect {
-    return this._aspect;
-  }
-
-  @Input()
-  set open(value: any) {
-    this._open = coerceBooleanProperty(value);
-  }
-  get open() {
-    return this._open;
-  }
-
-  @Input()
-  set disabled(value: any) {
-    this._disabled = coerceBooleanProperty(value);
-  }
-  get disabled() {
-    return this._disabled;
-  }
-
-  @Input()
-  set freeWidth(value: any) {
-    this._freeWidth = coerceBooleanProperty(value);
-  }
-  get freeWidth() {
-    return this._freeWidth;
-  }
-
-  @Input()
-  set icon(value: string | undefined) {
-    this._icon = value || '';
-  }
-  get icon(): string {
-    return this._icon;
-  }
-
-  private _aspect: Aspect = 'solid';
-  private _kind: Kind = 'secondary';
-  private _size: Size = 'medium';
-  private _open = false;
-  private _disabled = false;
-  private _freeWidth = false;
-  private _icon = '';
+  @Input() size: Size = 'medium';
+  @Input() kind: Kind = 'secondary';
+  @Input() aspect: Aspect = 'solid';
+  @Input({ transform: booleanAttribute }) open = false;
+  @Input({ transform: booleanAttribute }) disabled = false;
+  @Input({ transform: booleanAttribute }) freeWidth = false;
+  @Input() icon = '';
 }

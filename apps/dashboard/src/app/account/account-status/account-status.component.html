@@ -1,45 +1,54 @@
 <div class="account-status">
-  <div>
-    <div class="body-m type">
-      <span *ngIf="isTrial | async">{{ 'account.free_trial' | translate }}</span>
-      <span *ngIf="!(isTrial | async)">{{ 'account.type.' + (accountType | async) | translate }}</span>
+  <div class="title-m account-type-container">
+    <div>
+      @if (isTrial | async) {
+        {{ 'account.free_trial' | translate }}
+      } @else {
+        {{ 'account.type.' + (accountType | async) | translate }}
+      }
     </div>
-    <div class="title-l expiration">
-      <span *ngIf="(isSubscribed | async) && (isCancelScheduled | async)">
-        {{
-          (subscriptionDaysLeft | async) === 1
-            ? ('account.day_left' | translate)
-            : ('account.days_left' | translate: { days: (subscriptionDaysLeft | async) })
-        }}
-      </span>
-      <ng-container *ngIf="isTrial | async">
-        <span *ngIf="trialExpired | async">{{ 'account.expired' | translate }}</span>
-        <span *ngIf="!(trialExpired | async) && (daysLeft | async) !== null">
+    <div class="expiration">
+      @if ((isSubscribed | async) && (isCancelScheduled | async)) {
+        <span>
           {{
-            (daysLeft | async) === 1
+            (subscriptionDaysLeft | async) === 1
               ? ('account.day_left' | translate)
-              : ('account.days_left' | translate: { days: (daysLeft | async) })
+              : ('account.days_left' | translate: { days: (subscriptionDaysLeft | async) })
           }}
         </span>
-      </ng-container>
+      }
+      @if (isTrial | async) {
+        @if (trialExpired | async) {
+          <span>{{ 'account.expired' | translate }}</span>
+        } @else if (!(trialExpired | async) && (daysLeft | async) !== null) {
+          <span>
+            {{
+              (daysLeft | async) === 1
+                ? ('account.day_left' | translate)
+                : ('account.days_left' | translate: { days: (daysLeft | async) })
+            }}
+          </span>
+        }
+      }
     </div>
   </div>
   <div class="buttons">
-    <pa-button
-      *ngIf="(isSubscribed | async) && (isCancelScheduled | async)"
-      [routerLink]="reactivateUrl | async">
-      {{ 'billing.reactivate' | translate }}
-    </pa-button>
-    <pa-button
-      *ngIf="!((isSubscribed | async) && (isCancelScheduled | async))"
-      [routerLink]="upgradeUrl | async">
-      {{ 'billing.upgrade' | translate }}
-    </pa-button>
-    <pa-button
-      *ngIf="canExtendTrial | async"
-      aspect="basic"
-      (click)="contact()">
-      {{ 'account.extend_trial' | translate }}
-    </pa-button>
+    @if ((isSubscribed | async) && (isCancelScheduled | async)) {
+      <pa-button [routerLink]="reactivateUrl | async">
+        {{ 'billing.reactivate' | translate }}
+      </pa-button>
+    } @else if (!((isSubscribed | async) && (isCancelScheduled | async))) {
+      <pa-button [routerLink]="upgradeUrl | async">
+        {{ 'billing.upgrade' | translate }}
+      </pa-button>
+    }
+
+    @if (canExtendTrial | async) {
+      <pa-button
+        aspect="basic"
+        (click)="contact()">
+        {{ 'account.extend_trial' | translate }}
+      </pa-button>
+    }
   </div>
 </div>

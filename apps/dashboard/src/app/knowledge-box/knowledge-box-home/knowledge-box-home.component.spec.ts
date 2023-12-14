@@ -1,13 +1,20 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SDKService, STFTrackingService } from '@flaps/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { of } from 'rxjs';
-import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
-import { AppService, NavigationService } from '@flaps/common';
-import { MockProvider } from 'ng-mocks';
 import { RouterTestingModule } from '@angular/router/testing';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { AppService, NavigationService, UploadModule, UploadService } from '@flaps/common';
+import { SDKService, STFTrackingService } from '@flaps/core';
+import { MetricsService } from '../../account/metrics.service';
+import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
+import { Account, WritableKnowledgeBox } from '@nuclia/core';
+import { KbMetricsComponent } from './kb-metrics/kb-metrics.component';
+import { PaButtonModule, PaDropdownModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { UsageChartsComponent } from './kb-usage/usage-charts.component';
+import { AccountStatusComponent } from '../../account/account-status/account-status.component';
 
 function createTranslateLoader() {
   return {
@@ -19,8 +26,8 @@ describe('KnowledgeBoxHomeComponent', () => {
   let component: KnowledgeBoxHomeComponent;
   let fixture: ComponentFixture<KnowledgeBoxHomeComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       declarations: [KnowledgeBoxHomeComponent],
       imports: [
         RouterTestingModule,
@@ -32,34 +39,53 @@ describe('KnowledgeBoxHomeComponent', () => {
           useDefaultLang: true,
           defaultLanguage: 'en',
         }),
+        MockModule(PaButtonModule),
+        MockModule(PaDropdownModule),
+        MockModule(PaTableModule),
+        MockModule(UploadModule),
+        MockComponent(DropdownButtonComponent),
+        MockComponent(AccountStatusComponent),
+        HomeContainerComponent,
+        KbMetricsComponent,
+        UsageChartsComponent,
       ],
       providers: [
         MockProvider(AppService),
-        {
-          provide: SDKService,
-          useValue: {
-            currentAccount: of({ slug: 'some-account' }),
-            currentKb: of({ fullpath: 'http://somewhere/api' }),
-            counters: of({ resources: 0 }),
-            nuclia: { db: { getStats: () => of([]) } },
+        MockProvider(SDKService, {
+          currentKb: of({
+            id: 'kb-id',
+            slug: 'kb-slug',
+            state: 'PRIVATE',
+            fullpath: 'http://somewhere/api',
+            admin: true,
+            getConfiguration: () => of({}),
+            catalog: () => of({ type: 'searchResults' }),
+          } as unknown as WritableKnowledgeBox),
+          currentAccount: of({
+            type: 'stash-trial',
+            can_manage_account: true,
+          } as Account),
+          nuclia: {
+            options: { standalone: false },
+            db: {},
           },
-        },
-        {
-          provide: STFTrackingService,
-          useValue: {
-            isFeatureEnabled: () => of(true),
-          },
-        },
-        MockProvider(TranslatePipe),
-        MockProvider(NavigationService),
+        } as SDKService),
+        MockProvider(STFTrackingService, { isFeatureEnabled: () => of(true) }),
+        MockProvider(NavigationService, {
+          getKbUrl: () => 'kb-url',
+        }),
+        MockProvider(UploadService, {
+          getResourceStatusCount: () => of({ type: 'searchResults' }),
+        }),
+        MockProvider(MetricsService),
+        MockProvider(SisModalService),
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(KnowledgeBoxHomeComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -67,7 +93,8 @@ describe('KnowledgeBoxHomeComponent', () => {
   });
 
   it('should translate properly', () => {
+    fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.endpoint-container .title-s').textContent).toContain('NucliaDB API endpoint');
+    expect(compiled.querySelector('.kb-details .title-xxs').textContent).toContain('NucliaDB API endpoint');
   });
 });

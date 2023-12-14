@@ -11,8 +11,19 @@
     margin-bottom: rhythm(3);
   }
 
+  .kb-status {
+    h3 {
+      margin-bottom: rhythm(1);
+    }
+    pa-button {
+      margin-top: rhythm(1);
+    }
+  }
+
   .config {
-    margin-top: rhythm(7);
+    $gap-between-fields: rhythm(6);
+
+    margin-top: $gap-between-fields;
 
     .header {
       margin-bottom: rhythm(3);
@@ -34,11 +45,11 @@
       display: flex;
       flex-direction: column;
       gap: rhythm(2);
-      margin-top: rhythm(5);
+      margin-top: $gap-between-fields;
     }
 
     .user-prompts {
-      margin-top: rhythm(7);
+      margin-top: rhythm(4);
       pa-select {
         display: block;
         margin-bottom: rhythm(2);
