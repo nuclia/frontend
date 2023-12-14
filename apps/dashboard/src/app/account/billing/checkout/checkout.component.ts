@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, forkJoin, from, of, Subject } from 'rxjs';
+import { combineLatest, forkJoin, from, merge, of, Subject } from 'rxjs';
 import {
   catchError,
   delay,
@@ -84,11 +84,13 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   prices$ = this.billingService.getPrices().pipe(shareReplay());
   updateCurrency = new Subject<string>();
-  currency$ = this.updateCurrency.pipe(
-    distinctUntilChanged(),
-    switchMap((country) => this.billingService.getCurrency(country)),
-    shareReplay(),
-  );
+  currency$ = merge(
+    this.billingService.initialCurrency,
+    this.updateCurrency.pipe(
+      distinctUntilChanged(),
+      switchMap((country) => this.billingService.getCurrency(country)),
+    ),
+  ).pipe(shareReplay(1));
 
   editCustomer = true;
   private _customer?: StripeCustomer;
@@ -155,12 +157,11 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   initCustomer() {
     forkJoin([
       this.billingService.getCustomer(),
-      this.billingService.country.pipe(take(1)),
       this.userService.userPrefs.pipe(
         filter((user) => !!user),
         take(1),
       ),
-    ]).subscribe(([customer, country, user]) => {
+    ]).subscribe(([customer, user]) => {
       if (customer) {
         this.customer = customer;
         this.updateCustomerForm(customer);
@@ -168,10 +169,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         this.editCard = true;
         this.cdr?.markForCheck();
       } else {
-        if (country) {
-          this.customerForm.patchValue({ country });
-          this.updateCurrency.next(country);
-        }
         if (user?.email) {
           this.customerForm.patchValue({ email: user.email });
         }

@@ -1,13 +1,32 @@
 @import 'apps/dashboard/src/variables';
 
-h2 {
-  margin-bottom: rhythm(3);
+.header {
+  margin-bottom: rhythm(2);
+  width: rhythm(90);
 }
 
-.field-block {
-  width: rhythm(24);
+h2 {
   margin-bottom: rhythm(1);
 }
+
+.currency {
+  background-color: transparent;
+  border: 1px solid $color-neutral-regular;
+  cursor: pointer;
+  padding: 0 rhythm(1.5);
+  &:first-child {
+    border-radius: rhythm(0.5) 0 0 rhythm(0.5);
+    border-right: 0;
+  }
+  &:last-child {
+    border-radius: 0 rhythm(0.5) rhythm(0.5) 0;
+  }
+  &.selected {
+    background-color: $color-neutral-regular;
+    color: $color-light-stronger;
+  }
+}
+
 .subscriptions {
   border-collapse: separate;
   border-spacing: rhythm(1.5) 0;

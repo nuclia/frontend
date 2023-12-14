@@ -227,7 +227,7 @@
 	"billing.self_hosted": "<a href=\"{{ url }}\">Contactez-nous</a> si vous souhaitez que vos données soient auto-hébergées à l'aide de NucliaDB pour connaître tous les détails de paiement.",
 	"billing.state": "Etat",
 	"billing.subscribed": "Souscrit",
-	"billing.subscription.country": "Sélectionnez le pays de facturation",
+	"billing.subscription.help": "Nuclia propose un modèle d'abonnement + consommation. Sélectionnez le niveau qui correspond le plus à vos besoins et payez au fur et à mesure, évoluez instantanément ou effectuez une mise à niveau à tout moment pour bénéficier de fonctionnalités avancées.",
 	"billing.subscription.title": "Niveaux d'abonnement",
 	"billing.subscription-end": "Votre abonnement prendra fin le",
 	"billing.subscription-ended": "Vous avez mis fin à votre abonnement à Nuclia",

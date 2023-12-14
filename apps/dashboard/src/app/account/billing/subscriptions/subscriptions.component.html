@@ -1,24 +1,25 @@
-<h2>{{ 'billing.subscription.title' | translate }}</h2>
-
-<div
-  class="field-block"
-  *ngIf="!currency">
-  <label
-    class="title-s"
-    for="country">
-    {{ 'billing.subscription.country' | translate }}
-  </label>
-  <pa-typeahead-select
-    externalLabel
-    id="country"
-    (valueChange)="onSelectCountry($event)">
-    <pa-option
-      *ngFor="let country of countryList"
-      [value]="country.code">
-      {{ country.name }}
-    </pa-option>
-  </pa-typeahead-select>
+<div class="header">
+  <h2>{{ 'billing.subscription.title' | translate }}</h2>
+  <div>{{ 'billing.subscription.help' | translate }}</div>
 </div>
+
+@if (canSelectCurrency) {
+  <div>
+    <button
+      class="currency title-xs"
+      [class.selected]="currency === 'USD'"
+      (click)="setCurrency('USD')">
+      USD
+    </button>
+    <button
+      class="currency title-xs"
+      [class.selected]="currency === 'EUR'"
+      (click)="setCurrency('EUR')">
+      EUR
+    </button>
+  </div>
+}
+
 <div *ngIf="currency">
   <table
     class="subscriptions body-m"

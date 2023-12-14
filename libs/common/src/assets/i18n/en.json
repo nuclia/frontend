@@ -227,7 +227,7 @@
 	"billing.self_hosted": "<a href=\"{{ url }}\">Contact us</a> if you want your data self-hosted using NucliaDB to know all payment details.",
 	"billing.state": "State",
 	"billing.subscribed": "Subscribed",
-	"billing.subscription.country": "Select the billing country",
+	"billing.subscription.help": "Nuclia offers a subscription + consumption model. Select the tier that fits your need the most and pay as you go, scale instantly or upgrade anytime for advanced features.",
 	"billing.subscription.title": "Subscription tiers",
 	"billing.subscription-end": "Your subscription will end on",
 	"billing.subscription-ended": "You ended your subscription to Nuclia",

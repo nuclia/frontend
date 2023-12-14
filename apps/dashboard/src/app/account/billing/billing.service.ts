@@ -33,16 +33,16 @@ export class BillingService {
     shareReplay(1),
   );
 
-  private _country = new BehaviorSubject<string | null>(null);
-  country = this._country.asObservable();
+  private _initialCurrency = new BehaviorSubject<Currency>('USD');
+  initialCurrency = this._initialCurrency.asObservable();
 
   private _budgetEstimation = new BehaviorSubject<number>(0);
   budgetEstimation = this._budgetEstimation.asObservable();
 
   constructor(private sdk: SDKService) {}
 
-  setCountry(country: string | null) {
-    this._country.next(country);
+  setInitialCurrency(currency: Currency) {
+    this._initialCurrency.next(currency);
   }
 
   setBudgetEstimation(budget: number) {
