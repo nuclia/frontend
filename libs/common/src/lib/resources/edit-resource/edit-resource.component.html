@@ -117,7 +117,7 @@
               {{ 'resource.profile' | translate }}
             </li>
           }
-          @for (field of fields | async; track field.id) {
+          @for (field of fields | async; track field.field_id) {
             <li
               [class.active]="
                 activeField !== 'resource' &&

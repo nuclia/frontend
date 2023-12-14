@@ -12,7 +12,7 @@
     }
 
     @if (loaded) {
-      @for (paragraph of paragraphs | async; track paragraph.id) {
+      @for (paragraph of paragraphs | async; track paragraph.paragraphId) {
         <div class="paragraph-container">
           <p>{{ paragraph.text }}</p>
         </div>
