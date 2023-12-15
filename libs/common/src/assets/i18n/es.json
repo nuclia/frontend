@@ -917,6 +917,8 @@
 	"widget.generator.advanced.display-category.title": "Mostrar",
 	"widget.generator.advanced.generative-answer-category.answers.help": "Generar respuesta a las preguntas de los usuarios y permitir chatear con el sistema",
 	"widget.generator.advanced.generative-answer-category.answers.label": "Generación de respuesta",
+	"widget.generator.advanced.generative-answer-category.citations.help": "Muestre qué fuentes se han utilizado para generar la respuesta.",
+	"widget.generator.advanced.generative-answer-category.citations.label": "Citas",
 	"widget.generator.advanced.generative-answer-category.hide-sources.help": "Ocultar las fuentes utilizadas para generar la respuesta",
 	"widget.generator.advanced.generative-answer-category.hide-sources.label": "Ocultar fuentes",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help": "Los resultados de full text no se utilizarán para generar respuestas.",

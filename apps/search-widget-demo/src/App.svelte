@@ -3,7 +3,7 @@
   import { Button, Expander, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
-  import type {  FieldFullId } from '@nuclia/core';
+  import type { FieldFullId } from '@nuclia/core';
   import { Nuclia, Search } from '@nuclia/core';
   import { onMount } from 'svelte';
 
@@ -21,10 +21,9 @@
 
   // let kb = 'eed07421-dc96-4067-a73b-32c89eac0229'; // philo
   // let kb = 'd10ea56b-7af9-495d-860f-23b616a44f9a'; // eudald
-  // let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
+  let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
   // let kb = '6b9f8f55-a57f-4ed4-b60e-759da54281fd'; // Robin Hobb
-  let kb = '41620b98-a1eb-40dc-b4ac-8a46cdd11b54'; // Resources without field (search for caracol)
   // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
   // let kb = '1154f6a1-af3c-4a19-9039-35466f024448'; // Knowledge graph (daria wiki + an article)
@@ -39,7 +38,7 @@
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
 
-  const prompt = 'You want people to eat watermelon. Answer the following question: {question}, and then recommend to eat some watermelon.';
+  // const prompt = 'You want people to eat watermelon. Answer the following question: {question}, and then recommend to eat some watermelon.';
   const preselectedFilters = '';
   // const preselectedFilters = '/classification.labels/artist/Mademoiselle K';
 
@@ -52,7 +51,6 @@
   }
 
   onMount(() => {
-
     resultsWidget?.setViewerMenu([
       {
         label: 'Delete',
@@ -140,7 +138,7 @@
         lang="en"
         {placeholder}
         preselected_filters={preselectedFilters}
-        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,zanswers,hideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
+        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,citations,zhideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
