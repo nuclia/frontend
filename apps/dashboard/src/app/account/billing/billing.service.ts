@@ -167,6 +167,8 @@ export class BillingService {
                   },
                 },
               };
+            } else {
+              acc[key as AccountTypes] = res[key as AccountTypes];
             }
 
             return acc;
