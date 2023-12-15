@@ -23,6 +23,7 @@ import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
+import { de } from 'date-fns/locale';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 const DEFAULT_CHAT_MODE = [Chat.Features.VECTORS, Chat.Features.PARAGRAPHS];
@@ -37,6 +38,7 @@ let CHAT_MODE: Chat.Features[];
 let SEARCH_OPTIONS: Partial<SearchOptions>;
 let SUGGEST_MODE: Search.SuggestionFeatures[];
 let prompt: string | undefined = undefined;
+let CITATIONS = false;
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
@@ -56,6 +58,9 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
   }
   if (widgetOptions.features?.useSynonyms) {
     SEARCH_OPTIONS.with_synonyms = true;
+  }
+  if (widgetOptions.features?.citations) {
+    CITATIONS = true;
   }
   nucliaApi = new Nuclia(options);
   initTracking(nucliaApi.options.knowledgeBox || 'kb not defined');
@@ -134,11 +139,16 @@ export const getAnswer = (
     acc.push({ author: Chat.Author.NUCLIA, text: curr.answer.text });
     return acc;
   }, [] as Chat.ContextEntry[]);
+  const defaultOptions: ChatOptions = {
+    highlight: true,
+    prompt,
+    citations: CITATIONS,
+  };
   return nucliaApi.knowledgeBox.chat(
     query,
     context,
     CHAT_MODE,
-    options ? { ...options, highlight: true, prompt } : { highlight: true, prompt },
+    options ? { ...options, ...defaultOptions } : defaultOptions,
   );
 };
 
