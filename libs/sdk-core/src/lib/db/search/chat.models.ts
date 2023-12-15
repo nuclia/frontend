@@ -18,6 +18,7 @@ export namespace Chat {
     text: string;
     id: string;
     sources?: Search.FindResults;
+    citations?: Citations;
     incomplete?: boolean;
     inError?: boolean;
   }
@@ -31,4 +32,11 @@ export namespace Chat {
     author: Author;
     text: string;
   }
+}
+
+export interface Citations {
+  [paragraphId: string]: {
+    start: number;
+    end: number;
+  }[];
 }

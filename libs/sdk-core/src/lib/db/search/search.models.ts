@@ -45,6 +45,10 @@ export interface BaseSearchOptions {
 export interface ChatOptions extends BaseSearchOptions {
   synchronous?: boolean;
   prompt?: string;
+  /**
+   * It will return the text blocks that have been effectively used to build each section of the answer.
+   */
+  citations?: boolean;
 }
 
 export interface SearchOptions extends BaseSearchOptions {
