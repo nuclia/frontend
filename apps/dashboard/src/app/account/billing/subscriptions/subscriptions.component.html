@@ -1,331 +1,221 @@
 <div class="header">
   <h2>{{ 'billing.subscription.title' | translate }}</h2>
   <div>{{ 'billing.subscription.help' | translate }}</div>
-</div>
-
-@if (canSelectCurrency) {
-  <div>
-    <button
-      class="currency title-xs"
-      [class.selected]="currency === 'USD'"
-      (click)="setCurrency('USD')">
-      USD
-    </button>
-    <button
-      class="currency title-xs"
-      [class.selected]="currency === 'EUR'"
-      (click)="setCurrency('EUR')">
-      EUR
-    </button>
-  </div>
-}
-
-<div *ngIf="currency">
-  <table
-    class="subscriptions body-m"
-    *ngIf="accountTypesDefaults | async as defaults">
-    <tr>
-      <th></th>
-      <th class="plan">
-        <div class="plan-name">
-          {{ 'billing.trial.title' | translate: { days: defaults['stash-trial'].max_trial_days } }}
-        </div>
-        <div class="price">{{ 'billing.free' | translate }}</div>
-        <div
-          *ngIf="(accountType | async) === 'stash-trial'"
-          class="subscribed">
-          <pa-icon name="check"></pa-icon>
-        </div>
-      </th>
-      <th class="plan">
-        <div class="plan-name">Starter</div>
-        <div
-          class="price"
-          *ngIf="(prices | async)?.['stash-starter']?.recurring as starter">
-          <span>{{ starter.month.price | currency: currency }}</span>
-          <span class="unit">/{{ 'billing.month' | translate }}</span>
-        </div>
-        <pa-button
-          *ngIf="(accountType | async) === 'stash-trial'"
-          kind="primary"
-          routerLink="../checkout"
-          [queryParams]="{ type: 'stash-starter' }">
-          {{ 'billing.upgrade' | translate }}
-        </pa-button>
-        <div
-          *ngIf="(accountType | async) === 'stash-starter'"
-          class="subscribed">
-          <pa-icon name="check"></pa-icon>
-        </div>
-      </th>
-      <th class="plan">
-        <div class="plan-name">Growth</div>
-        <div class="price">
-          <span class="unit">-</span>
-        </div>
-        <pa-button
-          *ngIf="(accountType | async) !== 'stash-growth'"
-          (click)="contact()">
-          {{ 'billing.contact' | translate }}
-        </pa-button>
-        <div
-          *ngIf="(accountType | async) === 'stash-growth'"
-          class="subscribed">
-          <pa-icon name="check"></pa-icon>
-        </div>
-      </th>
-      <th class="plan">
-        <div class="plan-name">Enterprise</div>
-        <div class="price">
-          <span class="unit">{{ 'billing.enterprise_ready' | translate }}</span>
-        </div>
-        <pa-button
-          *ngIf="(accountType | async) !== 'stash-enterprise'"
-          (click)="contact()">
-          {{ 'billing.contact' | translate }}
-        </pa-button>
-        <div
-          *ngIf="(accountType | async) === 'stash-enterprise'"
-          class="subscribed">
-          <pa-icon name="check"></pa-icon>
-        </div>
-      </th>
-    </tr>
-    <tr class="section-header">
-      <td class="title-m">{{ 'account.knowledgeboxes' | translate }}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>{{ 'billing.quotas.kbs' | translate }}</td>
-      <td>{{ defaults['stash-trial'].max_kbs }}</td>
-      <td>{{ defaults['stash-starter'].max_kbs }}</td>
-      <td>{{ defaults['stash-growth'].max_kbs }}</td>
-      <td>{{ defaults['stash-enterprise'].max_kbs }}</td>
-    </tr>
-    <tr class="section-header">
-      <td class="title-m">{{ 'billing.quotas.ingestion' | translate }}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>{{ 'billing.quotas.paragraphs_processed' | translate }} *</td>
-      <td>
-        <div>{{ defaults['stash-trial'].monthly_limit_paragraphs_processed | number }}</div>
-        <div class="unit">
-          {{ 'billing.quotas.files-up-to' | translate }}
-          {{ defaults['stash-trial'].upload_limit_max_non_media_file_size | size }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['paragraphs_processed'] as starterParagraphsProcessed">
-          {{ starterParagraphsProcessed.threshold | number }}
-        </div>
-        <div class="unit">
-          {{ 'billing.quotas.files-up-to' | translate }}
-          {{ defaults['stash-starter'].upload_limit_max_non_media_file_size | size }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['paragraphs_processed'] as growthParagraphsProcessed">
-          {{ growthParagraphsProcessed.threshold | number }}
-        </div>
-        <div class="unit">
-          {{ 'billing.quotas.files-up-to' | translate }}
-          {{ defaults['stash-growth'].upload_limit_max_non_media_file_size | size }}
-        </div>
-      </td>
-      <td>
-        <div
-          *ngIf="
-            (prices | async)?.['stash-enterprise']?.usage?.['paragraphs_processed'] as enterpriseParagraphsProcessed
-          ">
-          {{ enterpriseParagraphsProcessed.threshold | number }}
-        </div>
-        <div class="unit">
-          {{ 'billing.quotas.files-up-to' | translate }}
-          {{ defaults['stash-enterprise'].upload_limit_max_non_media_file_size | size }}
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td>{{ 'billing.quotas.media' | translate }}</td>
-      <td>
-        <div *ngIf="defaults['stash-trial'].monthly_limit_media_seconds_processed / 3600 as hours">
-          {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
-        </div>
-        <div class="unit">
-          {{ 'billing.quotas.files-up-to' | translate }}
-          {{ defaults['stash-trial'].upload_limit_max_media_file_size | size }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['media']?.price as price">
-          {{ price | currency }}/{{ 'billing.hour' | translate }}
-        </div>
-        <div class="unit">
-          {{ 'billing.quotas.files-up-to' | translate }}
-          {{ defaults['stash-starter'].upload_limit_max_media_file_size | size }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['media']?.price as price">
-          {{ price | currency }}/{{ 'billing.hour' | translate }}
-        </div>
-        <div class="unit">
-          {{ 'billing.quotas.files-up-to' | translate }}
-          {{ defaults['stash-growth'].upload_limit_max_media_file_size | size }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-enterprise']?.usage?.['media']?.price as price">
-          {{ price | currency }}/{{ 'billing.hour' | translate }}
-        </div>
-      </td>
-    </tr>
-    <tr class="section-header">
-      <td class="title-m">{{ 'billing.quotas.search' | translate }}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>{{ 'billing.quotas.searches' | translate }}</td>
-      <td>
-        <div>{{ defaults['stash-trial'].monthly_limit_hosted_searches_performed | number }}</div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['searches'] as starterSearches">
-          {{ starterSearches.price | currency: currency : 'symbol' : '1.2-6' }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['searches'] as growthSearches">
-          {{ growthSearches.price | currency: currency : 'symbol' : '1.2-6' }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-enterprise']?.usage?.['searches'] as enterpriseSearches">
-          {{ enterpriseSearches.price | currency: currency : 'symbol' : '1.2-6' }}
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td>{{ 'billing.quotas.generative' | translate }}</td>
-      <td>
-        <div>{{ defaults['stash-trial'].monthly_limit_hosted_answers_generated | number }}</div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['generative'] as starterGenerative">
-          {{ starterGenerative.price | currency: currency : 'symbol' : '1.2-6' }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['generative'] as growthGenerative">
-          {{ growthGenerative.price | currency: currency : 'symbol' : '1.2-6' }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-enterprise']?.usage?.['generative'] as enterpriseGenerative">
-          {{ enterpriseGenerative.price | currency: currency : 'symbol' : '1.2-6' }}
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td>{{ 'billing.quotas.predict' | translate }}</td>
-      <td>
-        <div>-</div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['predict'] as starterPredict">
-          {{ starterPredict.price | currency: currency : 'symbol' : '1.2-6' }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['predict'] as growthPredict">
-          {{ growthPredict.price | currency: currency : 'symbol' : '1.2-6' }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-enterprise']?.usage?.['predict'] as enterprisePredict">
-          {{ enterprisePredict.price | currency: currency : 'symbol' : '1.2-6' }}
-        </div>
-      </td>
-    </tr>
-    <tr class="section-header">
-      <td class="title-m">{{ 'billing.quotas.storage' | translate }}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>{{ 'billing.quotas.paragraphs' | translate }}</td>
-      <td>
-        {{ 'billing.quotas.up-to' | translate }}
-        {{ defaults['stash-trial'].monthly_limit_paragraphs_stored | number }}
-      </td>
-      <td>
-        {{ 'billing.quotas.up-to' | translate }}
-        <span *ngIf="(prices | async)?.['stash-starter']?.usage?.['paragraphs'] as starterParagraphs">
-          {{ starterParagraphs.threshold | number }} **
-        </span>
-      </td>
-      <td>
-        {{ 'billing.quotas.up-to' | translate }}
-        <span *ngIf="(prices | async)?.['stash-growth']?.usage?.['paragraphs'] as growthParagraphs">
-          {{ growthParagraphs.threshold | number }} **
-        </span>
-      </td>
-      <td>
-        {{ 'billing.quotas.up-to' | translate }}
-        <span *ngIf="(prices | async)?.['stash-enterprise']?.usage?.['paragraphs'] as enterpriseParagraphs">
-          {{ enterpriseParagraphs.threshold | number }} **
-        </span>
-      </td>
-    </tr>
-    <tr class="section-header">
-      <td class="title-m">{{ 'billing.quotas.train' | translate }}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>{{ 'billing.quotas.training' | translate }}</td>
-      <td>
-        <div>–</div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['training'] as starterTraining">
-          {{ starterTraining.price | currency: currency : 'symbol' : '1.2-6' }}/{{ 'hour' | translate }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['training'] as growthTraining">
-          {{ growthTraining.price | currency: currency : 'symbol' : '1.2-6' }}/{{ 'hour' | translate }}
-        </div>
-      </td>
-      <td>
-        <div *ngIf="(prices | async)?.['stash-enterprise']?.usage?.['training'] as enterpriseTraining">
-          {{ enterpriseTraining.price | currency: currency : 'symbol' : '1.2-6' }}/{{ 'hour' | translate }}
-        </div>
-      </td>
-    </tr>
-  </table>
-  <div class="notes">
-    <div>* {{ 'billing.paragraphs_per_file' | translate }}</div>
-    <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['paragraphs']?.price as price">
-      **
-      {{ 'billing.extra_paragraphs_cost' | translate: { price: price | currency: currency : 'symbol' : '1.2-6' } }}
-      <div
-        class="on-premise"
-        [innerHTML]="'billing.on_premise_cost' | translate"></div>
+  @if (canSelectCurrency) {
+    <div>
+      <button
+        class="currency title-xs"
+        [class.selected]="currency === 'USD'"
+        (click)="setCurrency('USD')">
+        USD
+      </button>
+      <button
+        class="currency title-xs"
+        [class.selected]="currency === 'EUR'"
+        (click)="setCurrency('EUR')">
+        EUR
+      </button>
     </div>
-  </div>
+  }
 </div>
+
+@if (currency) {
+  @if (accountTypesDefaults | async; as defaults) {
+    <table
+      class="subscriptions"
+      [class]="accountType | async">
+      <tr>
+        <th></th>
+        <th class="plan">
+          <div class="plan-name">Starter</div>
+          @if ((prices | async)?.['v3starter']; as starter) {
+            <div class="price">
+              <span>{{ starter?.recurring.month.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+              <span class="unit">/{{ 'billing.month' | translate }}</span>
+            </div>
+          }
+          @if ((accountType | async) === 'stash-trial') {
+            <pa-button
+              kind="primary"
+              routerLink="../checkout"
+              [queryParams]="{ type: 'v3starter' }">
+              {{ 'billing.upgrade' | translate }}
+            </pa-button>
+          } @else if ((accountType | async) === 'v3starter') {
+            <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+          } @else {
+            <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+          }
+        </th>
+        <th class="plan">
+          <div class="plan-name">Fly</div>
+          @if ((prices | async)?.['v3fly']; as fly) {
+            <div class="price">
+              <span>{{ fly?.recurring.year.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+              <span class="unit">/{{ 'billing.year' | translate }}</span>
+            </div>
+          }
+          @if ((accountType | async) === 'stash-trial') {
+            <pa-button
+              kind="primary"
+              routerLink="../checkout"
+              [queryParams]="{ type: 'v3fly' }">
+              {{ 'billing.upgrade' | translate }}
+            </pa-button>
+          } @else if ((accountType | async) === 'v3fly') {
+            <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+          } @else {
+            <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+          }
+        </th>
+        <th class="plan">
+          <div class="plan-name">Growth</div>
+          <div class="price">
+            <span class="unit">-</span>
+          </div>
+          @if ((accountType | async) === 'v3growth') {
+            <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+          } @else {
+            <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+          }
+        </th>
+        <th class="plan">
+          <div class="plan-name">Enterprise</div>
+          <div class="price">
+            <span class="unit">-</span>
+          </div>
+          @if ((accountType | async) === 'v3enterprise') {
+            <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+          } @else {
+            <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+          }
+        </th>
+      </tr>
+      <tr>
+        <td>{{ 'billing.max-file-size' | translate }}</td>
+        <td>
+          @if (defaults['v3starter'].upload_limit_max_non_media_file_size; as max) {
+            {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
+          }
+        </td>
+        <td>
+          @if (defaults['v3fly'].upload_limit_max_non_media_file_size; as max) {
+            {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
+          }
+        </td>
+        <td>
+          @if (defaults['v3growth'].upload_limit_max_non_media_file_size; as max) {
+            {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
+          }
+        </td>
+        <td>
+          @if (defaults['v3enterprise'].upload_limit_max_non_media_file_size; as max) {
+            {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
+          }
+        </td>
+      </tr>
+      <tr>
+        <td>{{ 'account.knowledgeboxes' | translate }}</td>
+        <td>
+          {{ defaults['v3starter'].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults['v3starter'].max_kbs }}
+        </td>
+        <td>
+          {{ defaults['v3fly'].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults['v3fly'].max_kbs }}
+        </td>
+        <td>
+          {{ defaults['v3growth'].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults['v3growth'].max_kbs }}
+        </td>
+        <td>
+          {{
+            defaults['v3enterprise'].max_kbs === -1
+              ? ('billing.unlimited' | translate)
+              : defaults['v3enterprise'].max_kbs
+          }}
+        </td>
+      </tr>
+      <tr>
+        <td>{{ 'billing.usage.consumption' | translate }}*</td>
+        <td>{{ 0.05 | currency: currency }}</td>
+        <td>{{ 0.05 | currency: currency }}</td>
+        <td>{{ 0.05 | currency: currency }}</td>
+        <td>{{ 0.05 | currency: currency }}</td>
+      </tr>
+      <tr>
+        <td>NucliaDB</td>
+        <td>Cloud / On-Prem</td>
+        <td>Cloud / On-Prem</td>
+        <td>Cloud / On-Prem</td>
+        <td>Cloud / On-Prem</td>
+      </tr>
+      <tr>
+        <td>Nuclia preprocessing</td>
+        <td>Cloud</td>
+        <td>Cloud</td>
+        <td>Cloud</td>
+        <td>Cloud / On-Prem</td>
+      </tr>
+      <tr>
+        <td>{{ 'billing.support' | translate }}</td>
+        <td>Community</td>
+        <td>Community / Email</td>
+        <td>Slack / Email</td>
+        <td>ZenDesk + SLA</td>
+      </tr>
+      <tr>
+        <td>{{ 'billing.audit-log' | translate }}</td>
+        <td>
+          <pa-icon
+            name="cross"
+            size="small"></pa-icon>
+        </td>
+        <td>
+          <pa-icon
+            name="check"
+            size="small"></pa-icon>
+        </td>
+        <td>
+          <pa-icon
+            name="check"
+            size="small"></pa-icon>
+        </td>
+        <td>
+          <pa-icon
+            name="check"
+            size="small"></pa-icon>
+        </td>
+      </tr>
+      <tr>
+        <td>{{ 'billing.continuous-training' | translate }}</td>
+        <td>
+          <pa-icon
+            name="cross"
+            size="small"></pa-icon>
+        </td>
+        <td>
+          <pa-icon
+            name="cross"
+            size="small"></pa-icon>
+        </td>
+        <td>
+          <pa-icon
+            name="check"
+            size="small"></pa-icon>
+        </td>
+        <td>
+          <pa-icon
+            name="check"
+            size="small"></pa-icon>
+        </td>
+      </tr>
+      <ng-template #subscribed>
+        <div class="subscribed">
+          <pa-icon
+            name="circle-check"
+            size="small"></pa-icon>
+          <span class="title-s">{{ 'billing.current-plan' | translate }}</span>
+        </div>
+      </ng-template>
+    </table>
+    <div class="notes">* {{ 'billing.search-endpoints' | translate }}</div>
+  }
+}

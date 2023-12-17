@@ -1,7 +1,7 @@
 @import 'apps/dashboard/src/variables';
 
 .header {
-  margin-bottom: rhythm(2);
+  margin-bottom: rhythm(5);
   width: rhythm(90);
 }
 
@@ -14,6 +14,7 @@ h2 {
   border: 1px solid $color-neutral-regular;
   cursor: pointer;
   padding: 0 rhythm(1.5);
+  margin-top: rhythm(2);
   &:first-child {
     border-radius: rhythm(0.5) 0 0 rhythm(0.5);
     border-right: 0;
@@ -28,40 +29,40 @@ h2 {
 }
 
 .subscriptions {
-  border-collapse: separate;
-  border-spacing: rhythm(1.5) 0;
   white-space: nowrap;
+
+  &.v3starter th:nth-child(2),
+  &.v3starter td:nth-child(2),
+  &.v3fly th:nth-child(3),
+  &.v3fly td:nth-child(3),
+  &.v3growth th:nth-child(4),
+  &.v3growth td:nth-child(4),
+  &.v3enterprise th:nth-child(5),
+  &.v3enterprise td:nth-child(5) {
+    background-color: $color-light-stronger;
+  }
+
+  tr {
+    border-bottom: 1px solid $color-neutral-lighter;
+    &:first-child {
+      border-bottom: 0;
+    }
+  }
 
   th {
     padding: rhythm(2);
   }
 
   td {
-    padding: rhythm(1) rhythm(2);
+    padding: rhythm(1.5) rhythm(2);
     vertical-align: top;
-  }
-
-  tr:not(:last-child) td {
-    position: relative;
-    &::after {
-      border-bottom: 1px solid $color-neutral-lighter;
-      bottom: 0;
-      content: '';
-      left: rhythm(2);
-      position: absolute;
-      right: rhythm(2);
+    &:first-child {
+      font-weight: $font-weight-semi-bold;
     }
   }
 
-  th:not(:first-child):not(:nth-child(2)),
-  td:not(:nth-child(2)) {
-    background-color: $color-light-stronger;
-  }
-
-  .section-header td {
-    font-weight: $font-weight-bold;
-    height: rhythm(8);
-    vertical-align: bottom;
+  pa-icon[name="check"] {
+    color: $color-primary-regular;
   }
 
   .plan {
@@ -76,6 +77,8 @@ h2 {
 
   .price {
     color: $color-primary-regular;
+    display: flex;
+    gap: rhythm(1);
     font-size: $font-size-title-l;
     margin-bottom: rhythm(2);
   }
@@ -84,17 +87,21 @@ h2 {
     color: $color-neutral-regular;
     font-size: $font-size-body-s;
     font-weight: $font-weight-regular;
+    text-transform: lowercase;
   }
 
   .subscribed {
-    color: $color-primary-regular;
+    align-items: center;
+    background-color: $color-primary-lighter;
+    display: flex;
+    gap: rhythm(0.5);
+    justify-content: center;
+    margin: 0 -#{rhythm(2)};
+    padding: rhythm(1) 0;
   }
 }
 
 .notes {
   color: $color-neutral-regular;
-  margin-top: rhythm(6);
-  .on-premise {
-    margin-left: rhythm(2);
-  }
+  margin-top: rhythm(3);
 }
