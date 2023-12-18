@@ -46,11 +46,9 @@ export interface ChatOptions extends BaseSearchOptions {
   synchronous?: boolean;
   prompt?: string;
   /**
-   * It will return in the results the resources that have been effectively used to build the answer.
-   * The other ones will be filtered out.
-   * Note: this is an experimental feature.
+   * It will return the text blocks that have been effectively used to build each section of the answer.
    */
-  answerRelatedResultsOnly?: { enabled: boolean; model?: string };
+  citations?: boolean;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

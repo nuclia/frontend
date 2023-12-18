@@ -278,6 +278,7 @@ export interface WidgetFeatures {
   useSynonyms?: boolean;
   autofilter?: boolean;
   noBM25forChat?: boolean;
+  citations?: boolean;
 }
 
 export interface Counters {

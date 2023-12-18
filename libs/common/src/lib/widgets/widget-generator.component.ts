@@ -92,6 +92,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       updateOn: 'blur',
       validators: [Validators.pattern(/\{.+\}/)],
     }),
+    citations: new FormControl<boolean>(false, { nonNullable: true }),
     hideSources: new FormControl<boolean>(false, { nonNullable: true }),
     noBM25forChat: new FormControl<boolean>(false, { nonNullable: true }),
     filter: new FormControl<boolean>(false, { nonNullable: true }),
@@ -183,6 +184,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
   get userPromptControl() {
     return this.advancedForm.controls.userPrompt;
+  }
+  get citationsControl() {
+    return this.advancedForm.controls.citations;
   }
   get hideSourcesControl() {
     return this.advancedForm.controls.hideSources;
@@ -300,6 +304,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   toggleAnswers(answerGeneration: boolean) {
     if (!answerGeneration) {
       this.userPromptControl.patchValue('');
+      this.citationsControl.patchValue(false);
       this.hideSourcesControl.patchValue(false);
       this.noBM25forChatControl.patchValue(false);
     }

@@ -1,10 +1,11 @@
-# 1.9.1 (unreleased)
+# 1.9.1 (2023-12-18)
 
 ### Improvements
 
 - `/ephemeral_tokens` endpoint can now be called using regional domain
 - Support `summarize` operation on resources
-- Remove `onlyAnswers` property from `WidgetFeatures` interface, only answers is now managed by `hideSources` option. 
+- Remove `onlyAnswers` property from `WidgetFeatures` interface, only answers is now managed by `hideSources` option.
+- Support the `citation` option on `/chat` endpoint
 
 ### Bugfix
 

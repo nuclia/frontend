@@ -243,6 +243,19 @@
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight
+                          formControlName="citations">
+                          {{ 'widget.generator.advanced.generative-answer-category.citations.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="citationsHelp" />
+                        <pa-popover #citationsHelp>
+                          {{ 'widget.generator.advanced.generative-answer-category.citations.help' | translate }}
+                        </pa-popover>
+                      </div>
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
                           formControlName="hideSources">
                           {{ 'widget.generator.advanced.generative-answer-category.hide-sources.label' | translate }}
                         </pa-toggle>

@@ -918,6 +918,8 @@
 	"widget.generator.advanced.display-category.title": "Display",
 	"widget.generator.advanced.generative-answer-category.answers.help": "Generate a response to the user's questions and allow to chat with the system",
 	"widget.generator.advanced.generative-answer-category.answers.label": "Answer generation",
+	"widget.generator.advanced.generative-answer-category.citations.help": "Show which sources have been used to generate the answer.",
+	"widget.generator.advanced.generative-answer-category.citations.label": "Citations",
 	"widget.generator.advanced.generative-answer-category.hide-sources.help": "Hide sources used to generate the answer",
 	"widget.generator.advanced.generative-answer-category.hide-sources.label": "Hide sources",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help": "Full text results will not be used to generate answers",
