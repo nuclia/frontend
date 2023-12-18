@@ -84,9 +84,10 @@ export class KnowledgeBoxHomeComponent {
     ),
     map((data) => Object.values(data.results.resources || {})),
   );
-  pendingResourceCount: Observable<number> = this.uploadService
-    .getResourceStatusCount()
-    .pipe(map((data) => data.fulltext?.facets?.[STATUS_FACET]?.[`${STATUS_FACET}/PENDING`] || 0));
+  pendingResourceCount: Observable<number> = this.currentKb.pipe(
+    switchMap(() => this.uploadService.getResourceStatusCount()),
+    map((data) => data.fulltext?.facets?.[STATUS_FACET]?.[`${STATUS_FACET}/PENDING`] || 0),
+  );
   isChartDropdownOpen = false;
 
   readonly chartHeight = 232;

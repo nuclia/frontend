@@ -143,66 +143,73 @@
           </nsi-home-container>
         }
 
-        <nsi-home-container
-          class="growing-container"
-          [class.fit-content]="((lastUploadedResources | async)?.length || 6) < 6">
-          <div class="kb-content">
-            <section>
-              <div class="title-m title-with-action">
-                {{ 'dashboard-home.kb-content.latest-resources.title' | translate }}
-                <pa-button
-                  icon="list"
-                  aspect="basic"
-                  [routerLink]="kbUrl + '/resources'">
-                  {{ 'dashboard-home.go-to.resource-list' | translate }}
-                </pa-button>
-              </div>
-              @if ((lastUploadedResources | async)?.length === 0) {
-                <p class="no-content">
-                  {{ 'dashboard-home.kb-content.latest-resources.no-upload' | translate }}
-                </p>
-              } @else {
-                <ul class="latest-uploaded-list">
-                  @for (resource of lastUploadedResources | async; track resource.id) {
-                    <li
-                      paEllipsisTooltip
-                      [routerLink]="kbUrl + '/resources/' + resource.id + '/edit/preview'">
-                      @if (resource.icon | mimeIcon; as icon) {
-                        <pa-icon [name]="icon"></pa-icon>
-                      }
-                      {{ resource.title }}
-                    </li>
+        @if ({ lastUploads: lastUploadedResources | async }; as data) {
+          <nsi-home-container
+            class="growing-container"
+            [class.fit-content]="!data.lastUploads || data.lastUploads.length < 6">
+            <div class="kb-content">
+              <section>
+                <div class="title-m title-with-action">
+                  {{ 'dashboard-home.kb-content.latest-resources.title' | translate }}
+                  <pa-button
+                    icon="list"
+                    aspect="basic"
+                    [routerLink]="kbUrl + '/resources'">
+                    {{ 'dashboard-home.go-to.resource-list' | translate }}
+                  </pa-button>
+                </div>
+                @if (data.lastUploads && data.lastUploads.length === 0) {
+                  <p class="no-content">
+                    {{ 'dashboard-home.kb-content.latest-resources.no-upload' | translate }}
+                  </p>
+                } @else if (data.lastUploads && data.lastUploads.length > 0) {
+                  <ul class="latest-uploaded-list">
+                    @for (resource of data.lastUploads; track resource.id) {
+                      <li
+                        paEllipsisTooltip
+                        [routerLink]="kbUrl + '/resources/' + resource.id + '/edit/preview'">
+                        @if (resource.icon | mimeIcon; as icon) {
+                          <pa-icon [name]="icon"></pa-icon>
+                        }
+                        {{ resource.title }}
+                      </li>
+                    }
+                  </ul>
+                }
+              </section>
+
+              <section>
+                <div class="title-m title-with-action">
+                  {{ 'dashboard-home.kb-content.processing-queue.title' | translate }}
+                  <pa-button
+                    icon="clock-dash"
+                    aspect="basic"
+                    [routerLink]="kbUrl + '/resources/pending'">
+                    {{ 'dashboard-home.go-to.pending-list' | translate }}
+                  </pa-button>
+                </div>
+
+                @if ({ pendingCount: pendingResourceCount | async }; as data) {
+                  @if (data.pendingCount === 0) {
+                    <p class="no-content">
+                      {{ 'dashboard-home.kb-content.processing-queue.no-pending' | translate }}
+                    </p>
+                  } @else if (data.pendingCount === 1) {
+                    <p class="body-m">
+                      {{ 'dashboard-home.kb-content.processing-queue.pending' | translate }}
+                    </p>
+                  } @else {
+                    <p class="body-m">
+                      {{
+                        'dashboard-home.kb-content.processing-queue.pendings' | translate: { count: data.pendingCount }
+                      }}
+                    </p>
                   }
-                </ul>
-              }
-            </section>
-
-            <section>
-              <div class="title-m title-with-action">
-                {{ 'dashboard-home.kb-content.processing-queue.title' | translate }}
-                <pa-button
-                  icon="clock-dash"
-                  aspect="basic"
-                  [routerLink]="kbUrl + '/resources/pending'">
-                  {{ 'dashboard-home.go-to.pending-list' | translate }}
-                </pa-button>
-              </div>
-
-              @if ((pendingResourceCount | async) === 0) {
-                <p class="no-content">
-                  {{ 'dashboard-home.kb-content.processing-queue.no-pending' | translate }}
-                </p>
-              } @else {
-                <p class="body-m">
-                  {{
-                    'dashboard-home.kb-content.processing-queue.pending'
-                      | translate: { count: pendingResourceCount | async }
-                  }}
-                </p>
-              }
-            </section>
-          </div>
-        </nsi-home-container>
+                }
+              </section>
+            </div>
+          </nsi-home-container>
+        }
 
         @if (isAccountManager | async) {
           <nsi-home-container class="growing-container">
