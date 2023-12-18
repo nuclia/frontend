@@ -65,7 +65,7 @@
         <div class="kb-details">
           <div class="title-m title-with-action">
             {{ 'dashboard-home.kb-details.title' | translate }}
-            @if (isKbAdmin) {
+            @if (isKbAdmin | async) {
               <pa-button
                 [routerLink]="kbUrl + '/manage'"
                 icon="gear"
