@@ -714,6 +714,7 @@
 	"stash.config.option.anthropic": "Anthropic Claude",
 	"stash.config.option.chatgpt": "OpenAI ChatGPT-3.5",
 	"stash.config.option.chatgpt-azure": "OpenAI + Azure ChatGPT-4",
+	"stash.config.option.chatgpt-azure-3": "OpenAI + Azure ChatGPT-3.5",
 	"stash.config.option.cohere": "Cohere Command (beta)",
 	"stash.config.option.disabled": "Deshabilitado",
 	"stash.config.option.enabled": "Habilitado",
