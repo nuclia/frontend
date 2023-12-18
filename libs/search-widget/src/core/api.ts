@@ -59,9 +59,8 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
   if (widgetOptions.features?.useSynonyms) {
     SEARCH_OPTIONS.with_synonyms = true;
   }
-  if (widgetOptions.features?.citations) {
-    CITATIONS = true;
-  }
+  CITATIONS = !!widgetOptions.features?.citations;
+
   nucliaApi = new Nuclia(options);
   initTracking(nucliaApi.options.knowledgeBox || 'kb not defined');
   logEvent('init', {

@@ -59,11 +59,11 @@ export function chat(
           // - 1st block: 4 first bytes indicates the size of the 2nd block
           // - 2nd block: a base64 encoded JSON containing the sources used to build the answer
           // - 3rd block: the answer text, ended by "_CIT_" (or "_END_" if no citations)
-          // - 4th block (optionally):
+          // - 4th block (optional):
           //      - 4 first bytes indicates the size of the block,
           //      - followed by a base64 encoded JSON containing the citations
           //      - ended by "_END_"
-          // - 5th block (optionally): base64 encoded JSON containing the relations
+          // - 5th block (optional): base64 encoded JSON containing the relations
           if (sourcesLength === 0 && data.length >= 4) {
             sourcesLength = new DataView(data.buffer.slice(0, 4)).getUint32(0);
           }

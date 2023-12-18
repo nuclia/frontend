@@ -46,22 +46,22 @@
         .map((resource) => ({
           ...resource,
           fields: Object.entries(resource.fields).reduce(
-            (acc, field) => {
-              acc[field[0]] = {
-                ...field[1],
-                paragraphs: Object.entries(field[1].paragraphs).reduce(
-                  (acc, paragraph) => {
-                    if (citedParagraphs.includes(paragraph[0])) {
-                      acc[paragraph[0]] = paragraph[1];
+            (allFields, [fieldId, field]) => {
+              allFields[fieldId] = {
+                ...field,
+                paragraphs: Object.entries(field.paragraphs).reduce(
+                  (allParagraphs, [paragraphId, paragraph]) => {
+                    if (citedParagraphs.includes(paragraphId)) {
+                      allParagraphs[paragraphId] = paragraph;
                     }
-                    return acc;
+                    return allParagraphs;
                   },
                   {} as {
                     [id: string]: Search.FindParagraph;
                   },
                 ),
               };
-              return acc;
+              return allFields;
             },
             {} as {
               [id: string]: Search.FindField;
