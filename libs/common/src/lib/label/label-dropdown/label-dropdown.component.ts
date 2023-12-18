@@ -46,7 +46,7 @@ export class LabelDropdownComponent {
     return this._single;
   }
 
-  @Input() size: Size | undefined;
+  @Input() size: Size = 'medium';
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
   @Output() close = new EventEmitter<void>();

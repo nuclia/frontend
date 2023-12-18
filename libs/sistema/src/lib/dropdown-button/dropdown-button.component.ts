@@ -26,5 +26,5 @@ export class DropdownButtonComponent {
   @Input({ transform: booleanAttribute }) open = false;
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input({ transform: booleanAttribute }) freeWidth = false;
-  @Input() icon = '';
+  @Input() icon?: string;
 }

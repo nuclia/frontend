@@ -120,7 +120,7 @@
               <pre><code>{{ slug | async }}</code></pre>
             </div>
           </div>
-          @if ((configuration | async)?.generative_model; as model) {
+          @if ((configuration | async)?.['generative_model']; as model) {
             <div>
               <div class="title-xxs">{{ 'dashboard-home.kb-details.language-model' | translate }}</div>
               <div class="body-s">
@@ -129,7 +129,7 @@
             </div>
           }
           <div class="title-xxs">
-            {{ stateLabel | async | translate }}
+            {{ (stateLabel | async) || '' | translate }}
           </div>
         </div>
       </nsi-home-container>
@@ -145,7 +145,7 @@
 
         <nsi-home-container
           class="growing-container"
-          [class.fit-content]="(lastUploadedResources | async)?.length < 6">
+          [class.fit-content]="((lastUploadedResources | async)?.length || 6) < 6">
           <div class="kb-content">
             <section>
               <div class="title-m title-with-action">
@@ -248,7 +248,7 @@
                   [processingChart]="processingChart | async"
                   [searchChart]="searchChart | async"></app-kb-usage-charts>
 
-                <pa-table columns="2fr 1fr 1fr">
+                <pa-table columns="2fr minmax(80px, 1fr) minmax(80px, 1fr)">
                   <pa-table-header>
                     <pa-table-cell></pa-table-cell>
                     <pa-table-cell>
@@ -263,16 +263,18 @@
                       <pa-table-cell>
                         <span class="body-s">{{ 'metrics.search.title' | translate }}</span>
                       </pa-table-cell>
-                      <pa-table-cell>
-                        <span class="body-s">
-                          <strong>{{ queriesCount.month | number: '1.0-0' : (locale | async) }}</strong>
-                        </span>
-                      </pa-table-cell>
-                      <pa-table-cell>
-                        <span class="body-s">
-                          <strong>{{ queriesCount.year | number: '1.0-0' : (locale | async) }}</strong>
-                        </span>
-                      </pa-table-cell>
+                      @if (locale | async; as locale) {
+                        <pa-table-cell>
+                          <span class="body-s">
+                            <strong>{{ queriesCount.month | number: '1.0-0' : locale }}</strong>
+                          </span>
+                        </pa-table-cell>
+                        <pa-table-cell>
+                          <span class="body-s">
+                            <strong>{{ queriesCount.year | number: '1.0-0' : locale }}</strong>
+                          </span>
+                        </pa-table-cell>
+                      }
                     </pa-table-row>
                   }
                 </pa-table>

@@ -34,7 +34,7 @@
                 [xDomain]="chart.domain"
                 [yDomain]="{ min: 0 }"
                 [threshold]="chart.threshold"
-                [yUnit]="chart.yUnit | translate"
+                [yUnit]="chart.yUnit || '' | translate"
                 [xAxisTickOptions]="{ modulo: 2 }"
                 [height]="260"></app-line-chart>
             }

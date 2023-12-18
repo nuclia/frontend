@@ -1,24 +1,26 @@
-@switch (currentChart.value) {
-  @case ('search') {
-    @if (searchChart; as chart) {
-      <app-line-chart
-        [yUnit]="chart.yUnit | translate"
-        [data]="chart.data"
-        [xAxisTickOptions]="smallContainer ? { modulo: 4 } : null"
-        [height]="chartHeight"></app-line-chart>
-    } @else {
-      <div [style]="'height:' + chartHeight + 'px'"></div>
+@if (currentChart) {
+  @switch (currentChart.value) {
+    @case ('search') {
+      @if (searchChart; as chart) {
+        <app-line-chart
+          [yUnit]="chart.yUnit || '' | translate"
+          [data]="chart.data"
+          [xAxisTickOptions]="smallContainer ? { modulo: 4 } : null"
+          [height]="chartHeight"></app-line-chart>
+      } @else {
+        <div [style]="'height:' + chartHeight + 'px'"></div>
+      }
     }
-  }
-  @case ('processing') {
-    @if (processingChart; as chart) {
-      <app-line-chart
-        [yUnit]="chart.yUnit | translate"
-        [data]="chart.data"
-        [xAxisTickOptions]="smallContainer ? { modulo: 4 } : null"
-        [height]="chartHeight"></app-line-chart>
-    } @else {
-      <div [style]="'height:' + chartHeight + 'px'"></div>
+    @case ('processing') {
+      @if (processingChart; as chart) {
+        <app-line-chart
+          [yUnit]="chart.yUnit || '' | translate"
+          [data]="chart.data"
+          [xAxisTickOptions]="smallContainer ? { modulo: 4 } : null"
+          [height]="chartHeight"></app-line-chart>
+      } @else {
+        <div [style]="'height:' + chartHeight + 'px'"></div>
+      }
     }
   }
 }

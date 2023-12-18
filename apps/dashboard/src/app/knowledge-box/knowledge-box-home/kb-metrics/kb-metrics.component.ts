@@ -12,6 +12,6 @@ import { Counters } from '@nuclia/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KbMetricsComponent {
-  @Input() metrics!: Counters | null;
-  @Input() locale!: string;
+  @Input() metrics?: Counters | null;
+  @Input() locale?: string | null;
 }

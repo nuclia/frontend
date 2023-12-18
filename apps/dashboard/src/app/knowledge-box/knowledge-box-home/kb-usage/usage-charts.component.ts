@@ -13,9 +13,9 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsageChartsComponent {
-  @Input() processingChart?: ChartData;
-  @Input() searchChart?: ChartData;
-  @Input() currentChart?: OptionModel;
+  @Input() processingChart?: ChartData | null;
+  @Input() searchChart?: ChartData | null;
+  @Input() currentChart?: OptionModel | null;
   @Input({ transform: numberAttribute }) chartHeight?: number;
   @Input({ transform: booleanAttribute }) smallContainer = false;
 }
