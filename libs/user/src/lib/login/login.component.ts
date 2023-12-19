@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 
-import { BackendConfigurationService, OAuthService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, OAuthService, SDKService, STFTrackingService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 
@@ -40,6 +40,8 @@ export class LoginComponent {
   });
   isLoggingIn = false;
 
+  isOnboardingDisabled = this.tracking.isFeatureEnabled('disable-onboarding');
+
   constructor(
     private oAuthService: OAuthService,
     private router: Router,
@@ -47,6 +49,7 @@ export class LoginComponent {
     private reCaptchaV3Service: ReCaptchaV3Service,
     public config: BackendConfigurationService,
     private sdk: SDKService,
+    private tracking: STFTrackingService,
   ) {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();

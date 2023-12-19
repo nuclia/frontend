@@ -29,6 +29,7 @@
 	"login.google-workspace": "Google Workspace",
 	"login.have_account": "Vous n’avez pas de compte ?",
 	"login.login": "Se connecter",
+	"login.onboarding-disabled": "La création de compte est désactivée pour le moment, elle sera bientôt de retour.",
 	"login.password": "Mot de passe",
 	"login.recover": "Récupérer mon mot de passe",
 	"login.recover_help": "Problèmes de connexion ?",

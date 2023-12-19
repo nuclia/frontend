@@ -29,6 +29,7 @@
 	"login.google-workspace": "Google Workspace",
 	"login.have_account": "No tens un compte?",
 	"login.login": "Accedir",
+	"login.onboarding-disabled": "La creació del compte està desactivada de moment, tornarà aviat.",
 	"login.password": "Contrasenya",
 	"login.recover": "Recuperar contrasenya",
 	"login.recover_help": "Problemes amb la paraula de pas?",
