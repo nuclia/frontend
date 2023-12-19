@@ -53,8 +53,8 @@ export interface BillingDetails {
 }
 
 export enum RecurrentPriceInterval {
-  MONTHLY = 'monthly',
-  YEARLY = 'yearly',
+  MONTH = 'month',
+  YEAR = 'year',
 }
 
 export interface PaymentMethod {

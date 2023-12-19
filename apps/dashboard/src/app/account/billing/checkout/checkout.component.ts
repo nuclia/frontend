@@ -26,7 +26,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { injectScript, SDKService, UserService } from '@flaps/core';
 import { BillingService } from '../billing.service';
-import { StripeCustomer, SubscriptionError } from '../billing.models';
+import { RecurrentPriceInterval, StripeCustomer, SubscriptionError } from '../billing.models';
 import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
@@ -83,6 +83,14 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   subscribeMode = this.accountType.pipe(map((type) => !!type));
 
   prices$ = this.billingService.getPrices().pipe(shareReplay());
+  monthly = combineLatest([
+    this.prices$,
+    this.accountType.pipe(
+      filter((accountType) => !!accountType),
+      map((accountType) => accountType as AccountTypes),
+    ),
+  ]).pipe(map(([prices, accountType]) => !!prices[accountType]?.recurring?.month));
+
   updateCurrency = new Subject<string>();
   currency$ = this.updateCurrency.pipe(
     distinctUntilChanged(),
@@ -325,18 +333,22 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.cdr?.markForCheck();
         }),
         switchMap(() =>
-          this.accountType.pipe(
-            take(1),
-            filter((accountType) => !!accountType),
-            map((accountType) => accountType as AccountTypes),
-          ),
+          forkJoin([
+            this.accountType.pipe(
+              take(1),
+              filter((accountType) => !!accountType),
+              map((accountType) => accountType as AccountTypes),
+            ),
+            this.monthly.pipe(take(1)),
+          ]),
         ),
-        switchMap((accountType) =>
+        switchMap(([accountType, monthly]) =>
           this.billingService
             .createSubscription({
               payment_method_id: this.paymentMethodId || '',
               on_demand_budget: parseInt(this.budget.value),
               account_type: accountType,
+              billing_interval: monthly ? RecurrentPriceInterval.MONTH : RecurrentPriceInterval.YEAR,
             })
             .pipe(
               catchError((error) => {

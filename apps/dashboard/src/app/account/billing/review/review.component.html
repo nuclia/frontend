@@ -7,13 +7,21 @@
       <h2 class="title-s">
         {{ 'billing.review.subscribe_to' | translate: { account: 'account.type.' + account | translate } }}
       </h2>
-      <div
-        class="body-m"
-        *ngIf="cost">
-        {{
-          'billing.review.cost' | translate: { cost: cost | currency: currency, budget: budget | currency: currency }
-        }}
-      </div>
+      @if (prices && currency) {
+        <div class="body-m">
+          {{
+            'billing.review.cost'
+              | translate
+                : {
+                    cost: monthly
+                      ? (prices.recurring?.month?.price || 0 | currency: currency) + '/' + ('billing.month' | translate)
+                      : (prices.recurring?.year?.price || 0 | currency: currency) + '/' + ('billing.year' | translate),
+
+                    budget: budget | currency: currency
+                  }
+          }}
+        </div>
+      }
     </div>
     <div
       *ngIf="customer"
