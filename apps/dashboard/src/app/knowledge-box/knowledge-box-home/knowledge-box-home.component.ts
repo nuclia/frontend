@@ -26,8 +26,9 @@ export class KnowledgeBoxHomeComponent {
   protected readonly openDesktop = openDesktop;
 
   locale: Observable<string> = this.app.currentLocale;
-  account = this.sdk.currentAccount.pipe(shareReplay());
-  currentKb = this.sdk.currentKb.pipe(shareReplay());
+  account = this.sdk.currentAccount;
+  currentKb = this.sdk.currentKb;
+
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
   uid = this.currentKb.pipe(map((kb) => kb.id));
