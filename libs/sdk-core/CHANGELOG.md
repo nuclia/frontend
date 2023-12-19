@@ -1,3 +1,9 @@
+# 1.9.2 (unreleased)
+
+### Improvements
+
+- Add `v3starter`, `v3fly`, `v3growth` and `v3enterprise` to `AccountTypes`
+
 # 1.9.1 (2023-12-18)
 
 ### Improvements
