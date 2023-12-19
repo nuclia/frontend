@@ -33,6 +33,7 @@ export class LocalStorageMock {
   }
 }
 global.localStorage = new LocalStorageMock() as unknown as Storage;
+global.location = new URL('http://here') as unknown as Location;
 
 describe('Just test utils', () => {
   it.skip('should do nothing', () => {});
