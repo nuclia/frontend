@@ -29,6 +29,7 @@
 	"login.google-workspace": "Google Workspace",
 	"login.have_account": "Don’t have an account?",
 	"login.login": "Log in",
+	"login.onboarding-disabled": "Account creation is temporarily disabled as part of a maintenance operation. It will be restored quickly.",
 	"login.password": "Password",
 	"login.recover": "Recover password",
 	"login.recover_help": "Problems logging in?",

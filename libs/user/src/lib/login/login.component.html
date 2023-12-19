@@ -86,14 +86,19 @@
         <stf-sso-button provider="github"></stf-sso-button>
       </div>
     </div>
+
     <div class="login_signup">
-      <span>{{ 'login.have_account' | translate }}</span>
-      <a
-        [routerLink]="['../signup']"
-        data-cy="create-account"
-        queryParamsHandling="merge">
-        {{ 'login.create_one' | translate }}
-      </a>
+      @if (!(isOnboardingDisabled | async)) {
+        <span>{{ 'login.have_account' | translate }}</span>
+        <a
+          [routerLink]="['../signup']"
+          data-cy="create-account"
+          queryParamsHandling="merge">
+          {{ 'login.create_one' | translate }}
+        </a>
+      } @else {
+        {{ 'login.onboarding-disabled' | translate }}
+      }
     </div>
   </div>
 </stf-user-container>
