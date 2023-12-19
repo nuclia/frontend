@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { AccountService, SDKService } from '@flaps/core';
 import { BillingService, UPGRADABLE_ACCOUNT_TYPES } from './billing/billing.service';
 import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
-import { addDays, format, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
+import { addDays, format, isFuture, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
 import { StatsPeriod, StatsType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
@@ -31,9 +31,14 @@ export class MetricsService {
   trialPeriod = combineLatest([this.account$, this.accountService.getAccountTypes()]).pipe(
     map(([account, defaults]) => {
       const expiration = account.trial_expiration_date ? new Date(`${account.trial_expiration_date}+00:00`) : undefined;
-      return expiration
-        ? { start: subDays(expiration, defaults['stash-trial'].max_trial_days), end: expiration }
-        : undefined;
+      if (expiration) {
+        // If start date is in the future, that means the trial has been extended (maybe a lot like we do for Nuclia’s accounts),
+        // so better to return undefined, so we use currentMonth as chart period
+        const start = subDays(expiration, defaults['stash-trial'].max_trial_days);
+        return !isFuture(start) ? { start, end: expiration } : undefined;
+      } else {
+        return undefined;
+      }
     }),
   );
   subscriptionPeriod = this.accountUsage.pipe(
@@ -55,7 +60,6 @@ export class MetricsService {
       }
     }),
     map((period) => period || this.currentMonth),
-    shareReplay(),
   );
   prices = this.billingService.getPrices().pipe(shareReplay());
 
@@ -104,32 +108,41 @@ export class MetricsService {
       ),
       this.period,
     ]).pipe(
-      map(([stats, threshold, period]) => ({
-        data: stats
-          .map((stat) => [new Date(stat.time_period), stat.stats] as [Date, number])
-          .reverse()
-          // Keep only points in current period
-          .reduce(
-            (currentMonthStats, point) => {
-              const currentPeriod = { start: new Date(period.start).setUTCHours(0, 0, 0, 0), end: new Date() };
-              if (isWithinInterval(point[0], currentPeriod)) {
-                currentMonthStats.push([
-                  point[0],
-                  cumulative ? (currentMonthStats[currentMonthStats.length - 1]?.[1] || 0) + point[1] : point[1],
-                ]);
-              }
-              return currentMonthStats;
-            },
-            [] as [Date, number][],
-          )
-          .map((stat) => [
-            format(stat[0], 'd/MM'),
-            this.mappers[statsType] ? this.mappers[statsType](stat[1]) : stat[1],
-          ]),
-        domain: stats.map((stat) => format(new Date(stat.time_period), 'd/MM')).reverse(),
-        threshold,
-        yUnit: this.units[statsType],
-      })),
+      map(
+        ([stats, threshold, period]) => ({
+          data: stats
+            .map((stat) => [new Date(stat.time_period), stat.stats] as [Date, number])
+            .reverse()
+            // Keep only points in current period
+            .reduce(
+              (currentMonthStats, point) => {
+                const currentPeriod = { start: new Date(period.start).setUTCHours(0, 0, 0, 0), end: new Date() };
+                if (isWithinInterval(point[0], currentPeriod)) {
+                  currentMonthStats.push([
+                    point[0],
+                    cumulative ? (currentMonthStats[currentMonthStats.length - 1]?.[1] || 0) + point[1] : point[1],
+                  ]);
+                }
+                return currentMonthStats;
+              },
+              [] as [Date, number][],
+            )
+            .map((stat) => [
+              format(stat[0], 'd/MM'),
+              this.mappers[statsType] ? this.mappers[statsType](stat[1]) : stat[1],
+            ]),
+          domain: stats.map((stat) => format(new Date(stat.time_period), 'd/MM')).reverse(),
+          threshold,
+          yUnit: this.units[statsType],
+        }),
+        catchError((error) => {
+          console.error(`Error while getting chart data for ${statsType}`, error);
+          return of({
+            data: [],
+            domain: [],
+          });
+        }),
+      ),
     );
   }
 
