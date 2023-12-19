@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
+import { PaToastModule, SPRITE_CACHE_VERSION } from '@guillotinaweb/pastanaga-angular';
 
 import { BackendConfigurationService, STFConfigModule, STFPipesModule } from '@flaps/core';
 import { environment } from '../environments/environment';
@@ -94,6 +94,11 @@ const appModules = [
     PaToastModule,
   ],
   providers: [
+    {
+      provide: SPRITE_CACHE_VERSION,
+      useFactory: (config: BackendConfigurationService) => config.getVersion(),
+      deps: [BackendConfigurationService],
+    },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     TranslatePipe,
     // TO BE REMOVED WHEN DESKTOP APP IS GONE
