@@ -49,7 +49,7 @@ export class KnowledgeBoxSettingsService {
           ),
           full,
           keys:
-            account.type === 'stash-enterprise'
+            account.type === 'stash-enterprise' || account.type === 'v3enterprise'
               ? Object.entries(conf['user_keys']?.schemas || {}).reduce((acc, [schemaId, schema]) => {
                   acc[schemaId] = Object.entries(schema.properties)
                     .filter(([, property]) => property.type === 'string')

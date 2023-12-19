@@ -58,7 +58,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isUserPromptsEnabled = forkJoin([
     this.featureFlag.isFeatureEnabled('user-prompts').pipe(take(1)),
     this.sdk.currentAccount.pipe(
-      map((account) => ['stash-growth', 'stash-enterprise'].includes(account.type)),
+      map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
       take(1),
     ),
   ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
@@ -66,11 +66,17 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
   areSynonymsEnabled = this.sdk.currentAccount.pipe(
     map((account) => account.type),
-    map((accountType) => !!accountType && ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(accountType)),
+    map(
+      (accountType) =>
+        !!accountType &&
+        ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(accountType),
+    ),
   );
   isKnowledgeGraphEnabled = this.tracking.isFeatureEnabled('knowledge-graph');
   canHideLogo = this.sdk.currentAccount.pipe(
-    map((account) => ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(account.type)),
+    map((account) =>
+      ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
+    ),
   );
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
 

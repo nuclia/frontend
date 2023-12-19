@@ -57,7 +57,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     )
     .pipe(
       map(
-        (accountType) => !!accountType && ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(accountType),
+        (accountType) =>
+          !!accountType &&
+          ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(accountType),
       ),
     );
 
