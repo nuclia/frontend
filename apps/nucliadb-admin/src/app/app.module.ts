@@ -21,6 +21,7 @@ import localeEn from '@angular/common/locales/en';
 import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
+import { HomeContainerComponent } from '@nuclia/sistema';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -53,6 +54,7 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
     UploadModule,
     PaIconModule,
     PaIconModule,
+    HomeContainerComponent,
   ],
   providers: [TranslatePipe, { provide: APP_BASE_HREF, useValue: '/admin' }],
   bootstrap: [AppComponent],

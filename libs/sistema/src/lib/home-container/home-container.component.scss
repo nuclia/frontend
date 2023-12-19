@@ -1,0 +1,9 @@
+@import '../../../styles/variables';
+
+:host {
+  display: block;
+  background: $color-neutral-lightest;
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(0.5);
+  padding: rhythm(2) rhythm(3);
+}

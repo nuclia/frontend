@@ -6,9 +6,9 @@ export const MIN_PASSWORD_LENGTH = 8;
 export const DEFAULT_LANG = 'en';
 
 const DATE_FORMATS: { [locale: string]: string } = {
-  ca: 'dd - LL - yyyy',
-  es: 'dd - LL - yyyy',
-  'en-US': 'LL - dd - yyyy',
+  ca: 'dd/LL/yyyy',
+  es: 'dd/LL/yyyy',
+  'en-US': 'LL/dd/yyyy',
   fr: 'dd/LL/yyyy',
 };
 

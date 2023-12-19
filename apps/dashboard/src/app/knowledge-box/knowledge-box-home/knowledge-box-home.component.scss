@@ -1,93 +1,61 @@
 @import 'apps/dashboard/src/variables';
 
 .knowledge-box-home {
-  $flex-gap: rhythm(3);
-  $width-right-column: rhythm(40) + rhythm(1);
-  .home-main-layout {
-    display: flex;
-    width: 100%;
-    gap: $flex-gap;
+  --width-small-column: #{rhythm(47)};
+  --gap-size: #{rhythm(3)};
+
+  display: flex;
+  gap: var(--gap-size);
+
+  .small-container {
+    flex: 0 1 auto;
+    min-width: rhythm(35);
+    max-width: var(--width-small-column);
+  }
+  .account-type-container {
+    width: var(--width-small-column);
   }
 
-  .left-column {
-    flex: 1 1 auto;
-    max-width: calc(100% - #{$width-right-column} - #{$flex-gap});
+  .fit-content {
+    height: fit-content;
   }
 
-  .right-column {
+  .column-container {
     display: flex;
-    flex: 0 0 auto;
     flex-direction: column;
-    gap: rhythm(2);
-    width: $width-right-column;
+    gap: var(--gap-size);
+
+    &.wide-column {
+      flex: 1 1 auto;
+      min-width: var(--width-small-column);
+      max-width: calc(var(--width-small-column) * 2 + var(--gap-size));
+    }
+  }
+  .row-container {
+    display: flex;
+    gap: var(--gap-size);
+    flex: 1 0 auto;
+
+    .growing-container {
+      flex: 1 1 auto;
+      width: calc(100% / 2);
+    }
   }
 
-  .container {
-    padding: rhythm(1.5) rhythm(2);
-    background-color: $color-neutral-lightest;
-    border-radius: rhythm(0.5);
-  }
-
-  .chart-container {
-    padding-bottom: rhythm(5);
-    margin-bottom: $flex-gap;
-  }
-
-  .chart-header {
+  .title-with-action {
     align-items: center;
     display: flex;
     justify-content: space-between;
-    line-height: 1;
-    margin-bottom: rhythm(4);
-  }
 
-  .resource-stats {
-    dl {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      font-size: font-size(m);
-      row-gap: rhythm(1);
-
-      dt {
-        flex: 1 0 75%;
-        font-weight: $font-weight-thin;
-      }
-
-      dd {
-        flex: 1 0 25%;
-        font-weight: $font-weight-bold;
-        margin-bottom: 0;
-        text-align: right;
-      }
-    }
-
-    .total-resources {
-      margin-bottom: rhythm(2);
-    }
-  }
-
-  .endpoint-container {
-    margin-bottom: rhythm(4);
-
-    .endpoint-text {
-      align-items: center;
-      display: flex;
-      gap: rhythm(2);
-    }
-
-    .endpoint {
-      font-family: $font-family-monospace;
-      font-size: font-size(s);
-      white-space: nowrap;
+    pa-button {
+      margin-right: calc(-1 * #{rhythm(1)});
     }
   }
 
   .upload-data {
     display: flex;
     flex-direction: column;
-    gap: rhythm(1.5);
+    gap: rhythm(2);
 
     stf-desktop-sources {
       display: block;
@@ -95,17 +63,87 @@
     }
   }
 
-  .total-resources {
-    font-size: rhythm(5);
-    margin-bottom: rhythm(4);
+  .desktop-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+
+    img {
+      height: rhythm(4);
+    }
+    small {
+      text-align: center;
+    }
   }
 
-  .state-container {
-    align-items: center;
+  .kb-details {
     display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
 
-    .state {
-      flex: 1 0 auto;
+    .details-block {
+      align-items: center;
+      display: flex;
+      gap: rhythm(0.5);
+      margin-top: calc(-1 * #{rhythm(0.25)});
+
+      pre {
+        margin-bottom: 0;
+        white-space: normal;
+      }
+    }
+  }
+
+  .kb-content {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
+
+    .title-m {
+      margin-bottom: rhythm(1);
+    }
+
+    .no-content {
+      font-style: italic;
+    }
+
+    .latest-uploaded-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        background-color: $color-neutral-lightest;
+        box-shadow: $box-shadow-border-bottom;
+        cursor: pointer;
+        line-height: rhythm(5);
+        transition: background-color $transition-hint;
+
+        &:hover {
+          background-color: $color-neutral-lighter;
+        }
+
+        pa-icon {
+          color: $color-neutral-regular;
+          margin-right: rhythm(0.5);
+        }
+      }
+    }
+  }
+
+  .usage-charts {
+    .title-m {
+      margin-bottom: rhythm(1);
+    }
+
+    .chart-container {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(2);
+    }
+
+    pa-table ::ng-deep .pa-table-grid--cell {
+      background-color: $color-neutral-lightest;
     }
   }
 }

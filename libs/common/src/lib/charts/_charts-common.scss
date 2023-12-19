@@ -6,7 +6,8 @@ $chart-font-size: font-size(xs);
 @mixin chart() {
   position: relative;
 
-  .tick text {
+  .tick text,
+  .unit {
     font-family: $font-family-body;
     font-size: $chart-font-size;
     font-weight: $font-weight-thin;

@@ -29,7 +29,7 @@ export class LabelFieldComponent {
   @Input() set labelSets(value: LabelSets) {
     this._labelSets.next(value);
   }
-  @Input() size: Size | undefined;
+  @Input() size: Size = 'medium';
   @Input() disabled: boolean = false;
 
   @Output() selectionChange = new EventEmitter<Classification[]>();

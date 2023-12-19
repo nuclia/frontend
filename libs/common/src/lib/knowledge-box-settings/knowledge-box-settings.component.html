@@ -32,6 +32,18 @@
         {{ 'generic.description' | translate }}
       </pa-textarea>
 
+      <div class="kb-status">
+        <h3 class="title-m">{{ 'stash.settings.status.label' | translate }}</h3>
+        @if (kb?.state?.toLowerCase(); as state) {
+          <div class="body-m">
+            <span [innerHTML]="'stash.settings.status.' + state | translate"></span>
+          </div>
+          <pa-button (click)="toggleKbState()">
+            {{ (state === 'published' ? 'account.stash.retire' : 'account.stash.publish') | translate }}
+          </pa-button>
+        }
+      </div>
+
       <div
         formGroupName="config"
         class="config"

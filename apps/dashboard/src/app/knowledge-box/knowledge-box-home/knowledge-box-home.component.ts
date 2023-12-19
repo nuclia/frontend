@@ -1,12 +1,20 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { SDKService, STFTrackingService } from '@flaps/core';
-import { TranslatePipe } from '@ngx-translate/core';
-import { Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
-import { combineLatest, filter, map, Observable, share, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { markForCheck } from '@guillotinaweb/pastanaga-angular';
-import { AppService, DesktopUploadService, NavigationService } from '@flaps/common';
+import {
+  AppService,
+  NavigationService,
+  openDesktop,
+  searchResources,
+  STATUS_FACET,
+  UploadService,
+} from '@flaps/common';
+import { MetricsService } from '../../account/metrics.service';
+import { SisModalService } from '@nuclia/sistema';
+import { combineLatest, map, Observable, shareReplay, switchMap, take } from 'rxjs';
+import { Counters, IResource, RESOURCE_STATUS, SortField, StatsType } from '@nuclia/core';
 import { UPGRADABLE_ACCOUNT_TYPES } from '../../account/billing/billing.service';
+import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
+import { UsageModalComponent } from './kb-usage/usage-modal.component';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -15,128 +23,148 @@ import { UPGRADABLE_ACCOUNT_TYPES } from '../../account/billing/billing.service'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KnowledgeBoxHomeComponent {
+  protected readonly openDesktop = openDesktop;
+
   locale: Observable<string> = this.app.currentLocale;
-  endpoint = this.sdk.currentKb.pipe(map((kb) => kb.fullpath));
-  state = this.sdk.currentKb.pipe(map((kb) => kb.state));
-  stateLabel = this.state.pipe(map((state) => this.translate.transform(`stash.state.${state?.toLowerCase()}`)));
-  isPublished = this.state.pipe(map((state) => state === 'PUBLISHED'));
-  account = this.sdk.currentAccount;
+  account = this.sdk.currentAccount.pipe(shareReplay());
+  currentKb = this.sdk.currentKb.pipe(shareReplay());
+  configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
+  endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
+  uid = this.currentKb.pipe(map((kb) => kb.id));
+  slug = this.currentKb.pipe(map((kb) => kb.slug));
+  stateLabel: Observable<string> = this.currentKb.pipe(
+    map((kb) => kb.state),
+    map((state) => (state ? `dashboard-home.state.${state.toLowerCase()}` : '')),
+  );
   counters: Observable<Counters> = this.sdk.counters;
-  private _processing = combineLatest([this.account, this.sdk.currentKb]).pipe(
-    switchMap(([account, kb]) =>
-      this.sdk.nuclia.db.getStats(account!.slug, StatsType.PROCESSING_TIME, kb.id, StatsPeriod.YEAR),
-    ),
-    share(),
-  );
-  processing = this._processing.pipe(
-    map((stats) =>
-      stats
-        .map((stat) => [new Date(stat.time_period), stat.stats] as [Date, number])
-        .map(
-          (stat) =>
-            [
-              `${(stat[0].getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 })}/${
-                stat[0].getFullYear() % 100
-              }`,
-              stat[1],
-            ] as [string, number],
-        )
-        .reverse(),
-    ),
-  );
-  private _search = combineLatest([this.account, this.sdk.currentKb]).pipe(
-    switchMap(([account, kb]) =>
-      this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, kb.id, StatsPeriod.YEAR),
-    ),
+
+  processingChart = this.currentKb.pipe(
+    switchMap((kb) => this.metrics.getChartData(StatsType.PROCESSING_TIME, false, kb.id)),
     shareReplay(),
   );
-  totalSearch = this._search.pipe(map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)));
-  search = this._search.pipe(
-    map((stats) =>
-      stats
-        .map((stat) => [new Date(stat.time_period), stat.stats] as [Date, number])
-        .map(
-          (stat) =>
-            [
-              `${(stat[0].getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 })}/${
-                stat[0].getFullYear() % 100
-              }`,
-              stat[1],
-            ] as [string, number],
-        )
-        .reverse(),
-    ),
+  searchChart = this.currentKb.pipe(
+    switchMap((kb) => this.metrics.getChartData(StatsType.SEARCHES, false, kb.id)),
+    shareReplay(),
   );
-  isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
-  isKbContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
-  kbUrl = this.sdk.currentKb.pipe(
+  searchQueriesCounts = this.currentKb.pipe(switchMap((kb) => this.metrics.getSearchQueriesCountForKb(kb.id)));
+
+  isKbAdmin = this.currentKb.pipe(map((kb) => !!kb.admin));
+  isKbContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  kbUrl = this.currentKb.pipe(
     map((kb) => {
       const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
       return this.navigationService.getKbUrl(kb.account, kbSlug);
     }),
   );
-  isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
+  isAccountManager = this.account.pipe(
+    map((account) => {
+      return account.can_manage_account;
+    }),
+  );
   isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app');
   canUpgrade = combineLatest([this.isAccountManager, this.account]).pipe(
     map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.includes(account.type)),
   );
-  clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
-  copyIcon = 'copy';
 
-  unsubscribeAll = new Subject<void>();
+  showLeftColumn = combineLatest([this.canUpgrade, this.isKbContrib]).pipe(
+    map(([canUpgrade, canUpload]) => canUpgrade || canUpload),
+  );
+
+  lastUploadedResources: Observable<IResource[]> = this.currentKb.pipe(
+    switchMap((kb) =>
+      searchResources(kb, {
+        pageSize: 6,
+        sort: { field: SortField.created, order: 'desc' },
+        query: '',
+        titleOnly: true,
+        filters: [],
+        page: 0,
+        status: RESOURCE_STATUS.PROCESSED,
+      }),
+    ),
+    map((data) => Object.values(data.results.resources || {})),
+  );
+  pendingResourceCount: Observable<number> = this.currentKb.pipe(
+    switchMap(() => this.uploadService.getResourceStatusCount()),
+    map((data) => data.fulltext?.facets?.[STATUS_FACET]?.[`${STATUS_FACET}/PENDING`] || 0),
+  );
+  isChartDropdownOpen = false;
+
+  readonly chartHeight = 232;
+  readonly defaultChartOption = new OptionModel({
+    id: 'search',
+    label: 'metrics.search.title',
+    value: 'search',
+  });
+  currentChart: OptionModel = this.defaultChartOption;
+  chartDropdownOptions: OptionModel[] = [
+    this.defaultChartOption,
+    new OptionModel({ id: 'processing', label: 'metrics.processing.title', value: 'processing' }),
+    // FIXME add generative answers option once NUA will support it
+    // new OptionModel({ id: 'answers', label: 'metrics.answers.title', value: 'answers' }),
+  ];
+  clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
+  copyIcon = {
+    endpoint: 'copy',
+    uid: 'copy',
+    slug: 'copy',
+  };
 
   constructor(
     private app: AppService,
     private sdk: SDKService,
-    private translate: TranslatePipe,
-    private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
-    private modalService: SisModalService,
     private tracking: STFTrackingService,
     private navigationService: NavigationService,
+    private uploadService: UploadService,
+    private metrics: MetricsService,
+    private modal: SisModalService,
   ) {}
 
-  toggleKbState() {
-    this.isPublished.pipe(take(1)).subscribe((isPublished) => {
-      const label = isPublished ? 'retire' : 'publish';
-      const state = isPublished ? 'PRIVATE' : 'PUBLISHED';
-      return this.changeState(label, state);
-    });
-  }
-
-  private changeState(actionLabel: string, state: KBStates): void {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap(
-          (kb) =>
-            this.modalService.openConfirm({
-              title: `stash.${actionLabel}.title`,
-              description: this.translate.transform(`stash.${actionLabel}.warning`, { kb: kb.title }),
-            }).onClose,
-        ),
-        filter((confirm) => !!confirm),
-        switchMap(() => this.sdk.currentKb),
-        switchMap((kb) => kb.publish(state === 'PUBLISHED').pipe(tap(() => this.sdk.refreshKbList(true)))),
-        take(1),
-      )
-      .subscribe({
-        next: () => this.cdr?.markForCheck(),
-        error: () => this.toaster.error(`stash.${actionLabel}.error`),
-      });
-  }
-
   copyEndpoint() {
-    this.endpoint.pipe(take(1)).subscribe((endpoint) => {
-      navigator.clipboard.writeText(endpoint);
-      this.copyIcon = 'check';
-      markForCheck(this.cdr);
-      setTimeout(() => {
-        this.copyIcon = 'copy';
-        markForCheck(this.cdr);
-      }, 1000);
-    });
+    this.endpoint.pipe(take(1)).subscribe((endpoint) => this.copyToClipboard('endpoint', endpoint));
   }
 
-  protected readonly DesktopUploadService = DesktopUploadService;
+  copyUid() {
+    this.uid.pipe(take(1)).subscribe((uid) => this.copyToClipboard('uid', uid));
+  }
+
+  copySlug() {
+    this.slug.pipe(take(1)).subscribe((slug) => this.copyToClipboard('slug', slug || ''));
+  }
+
+  private copyToClipboard(type: 'endpoint' | 'uid' | 'slug', text: string) {
+    navigator.clipboard.writeText(text);
+    this.copyIcon = {
+      ...this.copyIcon,
+      [type]: 'check',
+    };
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.copyIcon = {
+        ...this.copyIcon,
+        [type]: 'copy',
+      };
+      this.cdr.markForCheck();
+    }, 1000);
+  }
+
+  selectChart(option: OptionModel) {
+    this.currentChart = option;
+  }
+
+  openFullscreen() {
+    this.tracking.logEvent('open_home_chart_fullscreen');
+    this.modal.openModal(
+      UsageModalComponent,
+      new ModalConfig({
+        data: {
+          processingChart: this.processingChart,
+          searchChart: this.searchChart,
+          currentChart: this.currentChart,
+          chartDropdownOptions: this.chartDropdownOptions,
+        },
+      }),
+    );
+  }
 }

@@ -6,16 +6,17 @@ import { BillingService } from '../billing/billing.service';
 import { SubscriptionStatus } from '../billing/billing.models';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { PaButtonModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { differenceInDays } from 'date-fns';
 import { SisModalService } from '@nuclia/sistema';
 import { WINDOW } from '@ng-web-apis/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
 
 @Component({
   selector: 'app-account-status',
-  imports: [CommonModule, RouterModule, PaTranslateModule, PaButtonModule],
+  imports: [CommonModule, RouterModule, TranslateModule, PaButtonModule, PaIconModule],
   standalone: true,
   templateUrl: './account-status.component.html',
   styleUrls: ['./account-status.component.scss'],

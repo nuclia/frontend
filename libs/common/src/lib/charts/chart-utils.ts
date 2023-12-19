@@ -12,16 +12,18 @@ export function createYAxis(
   width: number,
   height: number,
   margin: { top: number; bottom: number; left: number; right: number },
+  yUnit?: string,
 ): d3.ScaleLinear<number, number> {
   const y = d3.scaleLinear().domain(domain).nice(numTicks).range([height, 0]);
+  const rightSpace = margin.right - (yUnit ? 21 : 1);
 
   element
     .append('g')
-    .attr('transform', `translate(${width + margin.right - 1}, 0)`)
+    .attr('transform', `translate(${width + rightSpace}, 0)`)
     .attr('class', 'y-axis')
     .call(d3.axisLeft(y).tickArguments([numTicks]))
     .call((g) => g.select('.domain').remove())
-    .call((g) => g.selectAll('.tick text').attr('x', 0).attr('dy', 11))
+    .call((g) => g.selectAll('.tick text').attr('x', 0).attr('dy', -4))
     .call((g) => g.selectAll('.tick line').attr('x2', -37));
 
   // Add grid lines
@@ -31,9 +33,24 @@ export function createYAxis(
     .join('line')
     .attr('class', 'grid-line')
     .attr('x1', 0)
-    .attr('x2', width)
+    .attr('x2', width + rightSpace)
     .attr('y1', (d) => y(d)!)
     .attr('y2', (d) => y(d)!);
+
+  // Remove the grid line on top of the chart (which is cut otherwise)
+  element.call((g) => g.select('.grid-line[y1="0"]').remove());
+
+  // Add axis unit
+  if (yUnit) {
+    element
+      .append('text')
+      .attr('transform', `translate(${width + margin.right - 12}, ${height / 2}) rotate(90)`)
+      .attr('y', 0)
+      .attr('x', 0)
+      .attr('class', 'unit')
+      .style('text-anchor', 'middle')
+      .text(yUnit);
+  }
 
   return y;
 }

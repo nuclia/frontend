@@ -1,0 +1,39 @@
+<pa-modal-advanced
+  fitContent
+  fitContentHeight>
+  <pa-modal-title>
+    {{ 'dashboard-home.usage.title' | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <div class="usage-modal-chart-container">
+      <div class="dropdown-container">
+        <nsi-dropdown-button
+          freeWidth
+          aspect="basic"
+          [popupRef]="chartDropdown"
+          [open]="isChartDropdownOpen">
+          {{ currentChart.label | translate }}
+        </nsi-dropdown-button>
+
+        <pa-dropdown
+          #chartDropdown
+          (onClose)="isChartDropdownOpen = false"
+          (onOpen)="isChartDropdownOpen = true">
+          @for (option of config.chartDropdownOptions; track option.id) {
+            <pa-option
+              [value]="option.value"
+              (selectOption)="selectChart(option)">
+              {{ option.label | translate }}
+            </pa-option>
+          }
+        </pa-dropdown>
+      </div>
+
+      <app-kb-usage-charts
+        [chartHeight]="chartHeight"
+        [currentChart]="currentChart"
+        [processingChart]="config.processingChart | async"
+        [searchChart]="config.searchChart | async"></app-kb-usage-charts>
+    </div>
+  </pa-modal-content>
+</pa-modal-advanced>

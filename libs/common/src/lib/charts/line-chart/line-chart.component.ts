@@ -1,9 +1,11 @@
 import {
   AfterViewInit,
+  booleanAttribute,
   ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
+  numberAttribute,
   OnDestroy,
   ViewChild,
   ViewEncapsulation,
@@ -12,7 +14,6 @@ import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
 import * as d3 from 'd3';
 import { createYAxis, drawThreshold, TickOptions } from '../chart-utils';
-import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
 
 let nextUniqueId = 0;
 const NUM_TICKS = 7;
@@ -26,42 +27,18 @@ const NUM_TICKS = 7;
 export class LineChartComponent implements AfterViewInit, OnDestroy {
   id = `line-chart-${nextUniqueId++}`;
   unsubscribeAll = new Subject<void>();
+  defaultHeight = 336;
 
   @ViewChild('container') private container: ElementRef | undefined;
 
   @Input() xAxisTickOptions?: TickOptions | null;
-  @Input() tooltipsEnabled = false;
-
-  @Input()
-  set area(value: any) {
-    this._area = coerceBooleanProperty(value);
-  }
-  get area() {
-    return this._area;
-  }
-  private _area: boolean = false;
-
-  @Input()
-  set height(value: any) {
-    if (typeof value === 'number' || typeof value === 'string') {
-      this._height = coerceNumberProperty(value);
-    }
-  }
-  get height() {
-    return this._height;
-  }
-  private _height: number = 332;
-
-  @Input()
-  set threshold(value: any) {
-    if (typeof value === 'number' || typeof value === 'string') {
-      this._threshold = coerceNumberProperty(value);
-    }
-  }
-  get threshold() {
-    return this._threshold;
-  }
-  private _threshold?: number;
+  @Input({ transform: booleanAttribute }) tooltipsEnabled = false;
+  @Input({ transform: booleanAttribute }) area = false;
+  @Input({ transform: numberAttribute }) threshold?: number;
+  @Input({ transform: numberAttribute }) height = this.defaultHeight;
+  @Input() xDomain?: string[];
+  @Input() yDomain?: { min?: number; max?: number };
+  @Input() yUnit?: string;
 
   @Input()
   set data(values: [string, number][]) {
@@ -69,9 +46,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
     this.draw();
   }
   private _data: [string, number][] = [];
-
-  @Input() xDomain?: string[];
-  @Input() yDomain?: { min?: number; max?: number };
 
   showTooltip = false;
   tooltipContent?: [string, number];
@@ -109,10 +83,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
 
     // Set the dimensions and margins
     const availableWidth = this.container?.nativeElement.offsetWidth;
-
-    const margin = { top: 0, right: 50, bottom: 30, left: 15 },
-      width = availableWidth - margin.left - margin.right,
-      height = this.height - margin.top - margin.bottom;
+    const margin = { top: 0, right: this.yUnit ? 64 : 48, bottom: 32, left: 16 };
+    const width = availableWidth - margin.left - margin.right;
+    const height = (this.height || this.defaultHeight) - margin.top - margin.bottom;
 
     // Tooltip event handlers
     const mousemove = (event: MouseEvent) => {
@@ -148,7 +121,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Create axis
-    const y = createYAxis(svg, [minValue, maxValue * 1.5], NUM_TICKS, width, height, margin);
+    const y = createYAxis(svg, [minValue, maxValue * 1.1], NUM_TICKS, width, height, margin, this.yUnit);
     const x = this.createXAxis(svg, width, height);
     if (this.threshold !== undefined) {
       drawThreshold(svg, this.threshold, width, y);

@@ -1,5 +1,6 @@
 export * from './lib/back-button';
 export * from './lib/dropdown-button';
+export * from './lib/home-container';
 export * from './lib/icons';
 export * from './lib/json-viewer';
 export * from './lib/label';
