@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { AccountUsage, InvoiceItem, UsageType } from '../billing.models';
-import { STFTrackingService } from '@flaps/core';
 import { map, Observable, ReplaySubject } from 'rxjs';
+import { BillingService } from '../billing.service';
 
 @Component({
   selector: 'app-usage-table',
@@ -10,15 +10,7 @@ import { map, Observable, ReplaySubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsageTableComponent {
-  paramsToShow: UsageType[] = [
-    'media',
-    'paragraphs_processed',
-    'searches',
-    'predict',
-    'generative',
-    'paragraphs',
-    'training',
-  ];
+  paramsToShow = ['media', 'paragraphs_processed', 'searches', 'predict', 'generative', 'paragraphs', 'training'];
 
   @Input()
   set usage(value: AccountUsage | undefined | null) {
@@ -37,6 +29,7 @@ export class UsageTableComponent {
         .sort(([type1], [type2]) => params.indexOf(type1 as UsageType) - params.indexOf(type2 as UsageType));
     }),
   );
+  isDeprecatedAccount = this.billing.isDeprecatedAccount;
 
-  constructor(private tracking: STFTrackingService) {}
+  constructor(private billing: BillingService) {}
 }

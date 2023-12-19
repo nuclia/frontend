@@ -11,7 +11,8 @@ import { COUNTRIES } from '../utils';
 })
 export class ReviewComponent {
   account = this.modal.config.data?.account || '';
-  cost = this.modal.config.data?.prices.recurring?.month.price || '';
+  prices = this.modal.config.data?.prices;
+  monthly = !!this.prices?.recurring?.month;
   currency = this.modal.config.data?.currency || '';
   budget = this.modal.config.data?.budget || '';
   customer = this.modal.config.data?.customer;

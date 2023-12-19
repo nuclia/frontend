@@ -2,6 +2,9 @@ import { AccountTypes } from '@nuclia/core';
 
 export type Currency = 'USD' | 'EUR';
 export type UsageType =
+  | 'ai-tokens-used'
+
+  // Deprecated items
   | 'generative'
   | 'media'
   | 'searches'
@@ -9,8 +12,6 @@ export type UsageType =
   | 'training'
   | 'paragraphs'
   | 'paragraphs_processed'
-
-  // Deprecated items
   | 'self-hosted-qa'
   | 'qa'
   | 'self-hosted-predict'
@@ -20,11 +21,11 @@ export type UsageType =
 
 export interface Prices {
   recurring: {
-    month: { price: number };
-    year: { price: number };
+    month?: { price: number };
+    year?: { price: number };
   } | null;
   usage: {
-    [key in UsageType]: Usage;
+    [key in Partial<UsageType>]: Usage;
   };
 }
 
@@ -53,8 +54,8 @@ export interface BillingDetails {
 }
 
 export enum RecurrentPriceInterval {
-  MONTHLY = 'monthly',
-  YEARLY = 'yearly',
+  MONTH = 'month',
+  YEAR = 'year',
 }
 
 export interface PaymentMethod {

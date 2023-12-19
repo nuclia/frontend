@@ -21,6 +21,7 @@ export const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'stash-s
 @Injectable({ providedIn: 'root' })
 export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
+  isDeprecatedAccount = this.type.pipe(map((type) => type.startsWith('stash-')));
   isSubscribed = combineLatest([this.type, this.getPrices()]).pipe(
     switchMap(([type, prices]) => {
       if (type === 'stash-enterprise') {
@@ -181,18 +182,22 @@ export class BillingService {
         currency: usage.currency.toUpperCase() as Currency,
         invoice_items: {
           ...usage.invoice_items,
-          media: {
-            ...usage.invoice_items.media,
-            threshold: Math.floor(usage.invoice_items.media.threshold / 60),
-            current_usage: Math.ceil((usage.invoice_items.media.current_usage / 60) * 10) / 10,
-            over_usage: Math.ceil((usage.invoice_items.media.over_usage / 60) * 10) / 10,
-          },
-          training: {
-            ...usage.invoice_items.training,
-            threshold: Math.floor(usage.invoice_items.training.threshold / 60),
-            current_usage: Math.ceil((usage.invoice_items.training.current_usage / 60) * 10) / 10,
-            over_usage: Math.ceil((usage.invoice_items.training.over_usage / 60) * 10) / 10,
-          },
+          ...(usage.invoice_items.media && usage.invoice_items.training
+            ? {
+                media: {
+                  ...usage.invoice_items.media,
+                  threshold: Math.floor(usage.invoice_items.media.threshold / 60),
+                  current_usage: Math.ceil((usage.invoice_items.media.current_usage / 60) * 10) / 10,
+                  over_usage: Math.ceil((usage.invoice_items.media.over_usage / 60) * 10) / 10,
+                },
+                training: {
+                  ...usage.invoice_items.training,
+                  threshold: Math.floor(usage.invoice_items.training.threshold / 60),
+                  current_usage: Math.ceil((usage.invoice_items.training.current_usage / 60) * 10) / 10,
+                  over_usage: Math.ceil((usage.invoice_items.training.over_usage / 60) * 10) / 10,
+                },
+              }
+            : {}),
         },
       })),
     );
