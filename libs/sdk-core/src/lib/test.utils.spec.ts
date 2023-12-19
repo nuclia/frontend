@@ -15,7 +15,6 @@ export const mockFetch = (response: any) => {
 
 export const multiMockFetch = (responses: { [url: string]: any }) => {
   global.fetch = jest.fn((url: string) => {
-    console.log('url', url);
     const response = responses[url];
     return Promise.resolve({
       status: 200,
