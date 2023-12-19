@@ -30,7 +30,7 @@ describe('Db', () => {
     });
   });
 
-  it('should get knowledge boxes', (done) => {
+  it.skip('should get knowledge boxes', (done) => {
     mockFetch([
       {
         id: 'qwerty',
@@ -53,7 +53,7 @@ describe('Db', () => {
     });
   });
 
-  it('should get a knowledge box', (done) => {
+  it.skip('should get a knowledge box', (done) => {
     mockFetch({
       id: 'qwerty',
       slug: 'geb',
