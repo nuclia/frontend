@@ -26,7 +26,7 @@
     gap: var(--gap-size);
 
     &.wide-column {
-      container-type: size;
+      //container-type: size; // FIXME: for now pastanaga dropdown position is broken with this property. we need to fix pastanaga before putting it back
       flex: 1 1 auto;
       max-width: calc(var(--width-small-column) * 2 + var(--gap-size));
       min-width: var(--width-small-column);
