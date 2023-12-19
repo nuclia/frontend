@@ -29,7 +29,7 @@
 	"login.google-workspace": "Google Workspace",
 	"login.have_account": "¿No tienes una cuenta?",
 	"login.login": "Iniciar sesión",
-	"login.onboarding-disabled": "La creación de cuenta está temporalmente deshabilitada como parte de una operación de mantenimiento. Ella será restaurada rápidamente.",
+	"login.onboarding-disabled": "La creación de cuenta está temporalmente deshabilitada como parte de una operación de mantenimiento. Se restaurará rápidamente.",
 	"login.password": "Contraseña",
 	"login.recover": "Recuperar contraseña",
 	"login.recover_help": "Problemas con la contraseña?",
