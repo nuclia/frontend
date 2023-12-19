@@ -26,9 +26,22 @@
     gap: var(--gap-size);
 
     &.wide-column {
+      container-type: size;
       flex: 1 1 auto;
-      min-width: var(--width-small-column);
       max-width: calc(var(--width-small-column) * 2 + var(--gap-size));
+      min-width: var(--width-small-column);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    @container (width < 40rem) {
+      .row-container {
+        flex-direction: column;
+
+        .growing-container {
+          width: 100%;
+        }
+      }
     }
   }
   .row-container {
