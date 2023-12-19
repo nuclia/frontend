@@ -20,9 +20,11 @@
         {{ 'generic.email' | translate }}*
       </pa-input>
 
-      <pa-checkbox formControlName="allow_kb_management">
-        {{ 'account.allow_kb_management' | translate }}
-      </pa-checkbox>
+      @if (isAllowKbManagementEnabled | async) {
+        <pa-checkbox formControlName="allow_kb_management">
+          {{ 'account.allow_kb_management' | translate }}
+        </pa-checkbox>
+      }
 
       <pa-input
         formControlName="webhook"
