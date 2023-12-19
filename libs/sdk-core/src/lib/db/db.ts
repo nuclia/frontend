@@ -25,7 +25,9 @@ import { FileWithMetadata, uploadToProcess } from './upload';
 export class Db implements IDb {
   private nuclia: INuclia;
   private useRegionalSystem =
-    location.hostname === 'stashify.cloud' || localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
+    location.hostname === 'stashify.cloud' ||
+    location.hostname === 'localhost' ||
+    localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
 
   public constructor(nuclia: INuclia) {
     this.nuclia = nuclia;

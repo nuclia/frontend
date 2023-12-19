@@ -59,7 +59,9 @@ export class SDKService {
   isAdminOrContrib = this.currentKb.pipe(map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
 
   useRegionalSystem =
-    location.hostname === 'stashify.cloud' || localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
+    location.hostname === 'stashify.cloud' ||
+    location.hostname === 'localhost' ||
+    localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
 
   get isKbLoaded() {
     return this._isKbLoaded;

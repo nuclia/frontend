@@ -18,7 +18,9 @@ export class ZoneService {
 
   getZones(includeZonesBlocked = false): Observable<Zone[]> {
     const isRegionalSystemBetaTester =
-      location.hostname === 'stashify.cloud' || localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
+      location.hostname === 'stashify.cloud' ||
+      location.hostname === 'localhost' ||
+      localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
     return this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`).pipe(
       switchMap((zones) =>
         this.featureFlagService.getFeatureBlocklist('zones').pipe(
