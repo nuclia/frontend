@@ -13,6 +13,21 @@ export const mockFetch = (response: any) => {
   ) as jest.Mock;
 };
 
+export const multiMockFetch = (responses: { [url: string]: any }) => {
+  global.fetch = jest.fn((url: string) => {
+    const response = responses[url];
+    return Promise.resolve({
+      status: 200,
+      ok: true,
+      clone: () => ({
+        json: () => Promise.resolve(response),
+      }),
+      json: () => Promise.resolve(response),
+      text: () => Promise.resolve(response),
+    });
+  }) as jest.Mock;
+};
+
 export class LocalStorageMock {
   store: { [key: string]: string } = {};
 
@@ -33,7 +48,6 @@ export class LocalStorageMock {
   }
 }
 global.localStorage = new LocalStorageMock() as unknown as Storage;
-global.location = new URL('http://here') as unknown as Location;
 
 describe('Just test utils', () => {
   it.skip('should do nothing', () => {});

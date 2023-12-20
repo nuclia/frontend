@@ -24,10 +24,7 @@ import { FileWithMetadata, uploadToProcess } from './upload';
 /** Allows you to access Nuclia accounts and/or Nuclia Knowledge Boxes. */
 export class Db implements IDb {
   private nuclia: INuclia;
-  private useRegionalSystem =
-    location.hostname === 'stashify.cloud' ||
-    location.hostname === 'localhost' ||
-    localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
+  private useRegionalSystem = true;
 
   public constructor(nuclia: INuclia) {
     this.nuclia = nuclia;

@@ -48,10 +48,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   protected nuclia: INuclia;
   private tempToken?: { token: string; expiration: number };
 
-  protected useRegionalSystem =
-    location.hostname === 'stashify.cloud' ||
-    location.hostname === 'localhost' ||
-    localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
+  protected useRegionalSystem = true;
 
   /**
    * The Knowledge Box path on the regional API.

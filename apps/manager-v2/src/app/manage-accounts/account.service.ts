@@ -26,10 +26,7 @@ export class AccountService {
   private globalService = inject(GlobalAccountService);
   private regionalService = inject(RegionalAccountService);
   private store = inject(ManagerStore);
-  private useRegionalSystem =
-    location.hostname === 'stashify.cloud' ||
-    location.hostname === 'localhost' ||
-    localStorage.getItem('NUCLIA_NEW_REGIONAL_ENDPOINTS') === 'true';
+  private useRegionalSystem = true;
 
   private _accountTypes = this.coreAccountService.getAccountTypes().pipe(shareReplay());
 
