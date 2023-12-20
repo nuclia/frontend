@@ -190,11 +190,11 @@ export class MetricsService {
         const usage = prices[account.type].usage;
         switch (statsType) {
           case StatsType.MEDIA_SECONDS:
-            return usage.media.threshold;
+            return usage?.media?.threshold;
           case StatsType.SEARCHES:
-            return usage.searches.threshold;
+            return usage?.searches?.threshold;
           case StatsType.TRAIN_SECONDS:
-            return usage.training.threshold;
+            return usage?.training?.threshold;
           default:
             return undefined;
         }

@@ -203,6 +203,7 @@
 	"billing.quotas.predict": "Peticiones de clasificación",
 	"billing.quotas.searches": "Búsquedas",
 	"billing.quotas.train": "Entrenar",
+	"billing.quotas.training": "Entrenamiento",
 	"billing.quotas.up-to": "Hasta",
 	"billing.quotas_label": "Cuotas mensuales",
 	"billing.reactivate": "Reactivar",

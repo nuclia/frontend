@@ -24,9 +24,7 @@ export interface Prices {
     month?: { price: number };
     year?: { price: number };
   } | null;
-  usage: {
-    [key in Partial<UsageType>]: Usage;
-  };
+  usage: Partial<{ [key in UsageType]: Usage }>;
 }
 
 export interface Usage {

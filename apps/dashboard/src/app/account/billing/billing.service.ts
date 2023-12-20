@@ -142,7 +142,7 @@ export class BillingService {
         return Object.keys(res).reduce(
           (acc, key) => {
             const usage = res[key as AccountTypes].usage;
-            if (usage.paragraphs) {
+            if (usage.paragraphs && usage.media && usage.training) {
               acc[key as AccountTypes] = {
                 ...res[key as AccountTypes],
                 usage: {

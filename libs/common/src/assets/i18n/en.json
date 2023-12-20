@@ -204,6 +204,7 @@
 	"billing.quotas.predict": "Classification query",
 	"billing.quotas.searches": "Searches",
 	"billing.quotas.train": "Train",
+	"billing.quotas.training": "Training",
 	"billing.quotas.up-to": "Up to",
 	"billing.quotas_label": "Monthly quotas",
 	"billing.reactivate": "Reactivate",
