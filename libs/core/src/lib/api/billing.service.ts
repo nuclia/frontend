@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { SDKService } from '@flaps/core';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { SDKService } from './sdk.service';
+import { catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
 import {
   AccountSubscription,
@@ -14,9 +14,7 @@ import {
   StripeSubscription,
   StripeSubscriptionCancellation,
   StripeSubscriptionCreation,
-} from './billing.models';
-
-export const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'stash-starter', 'v3starter'];
+} from '../models/billing.model';
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
@@ -34,14 +32,7 @@ export class BillingService {
     shareReplay(1),
   );
 
-  private _initialCurrency = new BehaviorSubject<Currency>('USD');
-  initialCurrency = this._initialCurrency.asObservable();
-
   constructor(private sdk: SDKService) {}
-
-  setInitialCurrency(currency: Currency) {
-    this._initialCurrency.next(currency);
-  }
 
   getCustomer(): Observable<StripeCustomer | null> {
     return this.sdk.currentAccount.pipe(

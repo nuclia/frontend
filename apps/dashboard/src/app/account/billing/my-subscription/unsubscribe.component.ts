@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { Currency } from '../billing.models';
+import { Currency } from '@flaps/core';
 
 export interface UnsubscribeModalData {
   currency: Currency;

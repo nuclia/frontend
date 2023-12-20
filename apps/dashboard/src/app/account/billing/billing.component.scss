@@ -1,41 +1,5 @@
 @import 'apps/dashboard/src/variables';
 
 .billing {
-  display: flex;
-  min-height: calc(100vh - var(--app-topbar-height));
-  width: 100%;
-
-  .sidebar {
-    background-color: $color-light-stronger;
-    flex-shrink: 0;
-    padding: rhythm(7) rhythm(3) 0 rhythm(5);
-    width: rhythm(28);
-  }
-
-  .main-content {
-    background-color: $color-neutral-lightest;
-    flex-grow: 1;
-    padding: rhythm(8) rhythm(10);
-  }
-
-  .menu {
-    padding: 0;
-    list-style: none;
-
-    li {
-      margin-bottom: rhythm(1.5);
-    }
-
-    a {
-      color: inherit;
-      font-weight: $font-weight-regular;
-      text-decoration: none;
-      &.active {
-        font-weight: $font-weight-bold;
-      }
-      &:not([href]) {
-        color: $color-neutral-light;
-      }
-    }
-  }
+  background-color: $color-neutral-lightest;
 }

@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
-import { BillingService } from '../billing.service';
 import { combineLatest, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
-import { AccountService, STFTrackingService } from '@flaps/core';
-import { Currency } from '../billing.models';
+import { AccountService, BillingService, Currency } from '@flaps/core';
+import { SubscriptionService } from '../subscription.service';
 import { WINDOW } from '@ng-web-apis/common';
 
 @Component({
@@ -28,12 +27,12 @@ export class SubscriptionsComponent implements OnDestroy {
 
   constructor(
     private billing: BillingService,
-    private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
+    private subscriptionService: SubscriptionService,
     @Inject(WINDOW) private window: Window,
   ) {
-    combineLatest([this.customerCurrency, this.billing.initialCurrency])
+    combineLatest([this.customerCurrency, this.subscriptionService.initialCurrency])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([currency, initialCurrency]) => {
         if (currency) {
@@ -47,7 +46,7 @@ export class SubscriptionsComponent implements OnDestroy {
   }
 
   setCurrency(currency: Currency) {
-    this.billing.setInitialCurrency(currency);
+    this.subscriptionService.setInitialCurrency(currency);
   }
 
   contact() {

@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { AccountService, SDKService } from '@flaps/core';
-import { BillingService, UPGRADABLE_ACCOUNT_TYPES } from './billing/billing.service';
+import { BillingService } from '@flaps/core';
+import { UPGRADABLE_ACCOUNT_TYPES } from './billing/subscription.service';
 import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { addDays, format, isFuture, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
 import { StatsPeriod, StatsType } from '@nuclia/core';

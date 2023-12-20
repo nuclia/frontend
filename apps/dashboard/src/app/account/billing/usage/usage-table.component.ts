@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { AccountUsage, InvoiceItem, UsageType } from '../billing.models';
+import { AccountUsage, BillingService, InvoiceItem, UsageType } from '@flaps/core';
 import { map, Observable, ReplaySubject } from 'rxjs';
-import { BillingService } from '../billing.service';
 
 @Component({
   selector: 'app-usage-table',

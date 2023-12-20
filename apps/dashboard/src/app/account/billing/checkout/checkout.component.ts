@@ -24,14 +24,21 @@ import {
 } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { injectScript, SDKService, UserService } from '@flaps/core';
-import { BillingService } from '../billing.service';
-import { RecurrentPriceInterval, StripeCustomer, SubscriptionError } from '../billing.models';
+import {
+  BillingService,
+  injectScript,
+  RecurrentPriceInterval,
+  SDKService,
+  StripeCustomer,
+  SubscriptionError,
+  UserService,
+} from '@flaps/core';
 import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
 import { NavigationService } from '@flaps/common';
 import { ReviewComponent } from '../review/review.component';
+import { SubscriptionService } from '../subscription.service';
 
 @Component({
   selector: 'app-checkout',
@@ -92,7 +99,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   ]).pipe(map(([prices, accountType]) => !!prices[accountType]?.recurring?.month));
   updateCurrency = new Subject<string>();
   currency$ = merge(
-    this.billingService.initialCurrency,
+    this.subscription.initialCurrency,
     this.updateCurrency.pipe(
       distinctUntilChanged(),
       switchMap((country) => this.billingService.getCurrency(country)),
@@ -139,6 +146,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     private navigation: NavigationService,
     private modalService: SisModalService,
     private translate: TranslateService,
+    private subscription: SubscriptionService,
   ) {
     this.initCustomer();
     this.initStripe();

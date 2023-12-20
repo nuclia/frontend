@@ -12,7 +12,7 @@ import { MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, map, Observable, shareReplay, switchMap, take } from 'rxjs';
 import { Counters, IResource, RESOURCE_STATUS, SortField, StatsType } from '@nuclia/core';
-import { UPGRADABLE_ACCOUNT_TYPES } from '../../account/billing/billing.service';
+import { UPGRADABLE_ACCOUNT_TYPES } from '../../account/billing/subscription.service';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
 

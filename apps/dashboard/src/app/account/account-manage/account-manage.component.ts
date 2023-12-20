@@ -11,15 +11,13 @@ import {
 import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { concatMap, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { AccountModification, SDKService, Zone, ZoneService } from '@flaps/core';
+import { AccountModification, BillingService, SDKService, SubscriptionStatus, Zone, ZoneService } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
 import { NavigationService, Sluggable } from '@flaps/common';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
-import { BillingService } from '../billing/billing.service';
-import { SubscriptionStatus } from '../billing/billing.models';
 
 type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 

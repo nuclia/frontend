@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { NavigationService, StandaloneService } from '../services';
-import { SDKService, STFTrackingService } from '@flaps/core';
+import { BillingService, SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -35,6 +35,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
       ),
     ),
   );
+  inBilling: Observable<boolean> = merge(
+    of(this.navigationService.inAccountBilling(location.pathname)),
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => this.navigationService.inAccountBilling((event as NavigationEnd).url)),
+      takeUntil(this.unsubscribeAll),
+    ),
+  );
   showSettings = false;
   kbUrl: string = '';
 
@@ -65,6 +73,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   standalone = this.sdk.nuclia.options.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
+  isSubscribed = this.billing.isSubscribed;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -73,6 +82,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private router: Router,
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,
+    private billing: BillingService,
   ) {}
 
   ngOnInit(): void {

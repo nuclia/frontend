@@ -1,9 +1,6 @@
 import { Component, ChangeDetectionStrategy, OnDestroy, OnInit, Inject } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter, map } from 'rxjs';
 import { injectScript } from '@flaps/core';
 import { WINDOW } from '@ng-web-apis/common';
-import { BillingService } from './billing.service';
 
 @Component({
   selector: 'app-billing',
@@ -12,13 +9,7 @@ import { BillingService } from './billing.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BillingComponent implements OnInit, OnDestroy {
-  isSubscribed = this.billingService.isSubscribed;
-  isCheckoutActive = this.router.events.pipe(
-    filter((event) => event instanceof NavigationEnd),
-    map(() => this.router.url.includes('checkout')),
-  );
-
-  constructor(private router: Router, private billingService: BillingService, @Inject(WINDOW) private window: Window) {}
+  constructor(@Inject(WINDOW) private window: Window) {}
 
   ngOnInit() {
     const tidioApi = (this.window as any)?.tidioChatApi;

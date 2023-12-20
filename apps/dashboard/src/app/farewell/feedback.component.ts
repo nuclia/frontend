@@ -1,10 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CancellationFeedback } from '../account/billing/billing.models';
 import { map, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
-import { SDKService } from '@flaps/core';
-import { BillingService } from '../account/billing/billing.service';
+import { BillingService, CancellationFeedback, SDKService } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
 
 @Component({

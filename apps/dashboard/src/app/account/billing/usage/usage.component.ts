@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { shareReplay, switchMap, take } from 'rxjs';
-import { BillingService } from '../billing.service';
+import { BillingService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 
 @Component({
@@ -14,7 +14,11 @@ export class UsageComponent {
   usage = this.billing.getAccountUsage().pipe(shareReplay());
   budget = new FormControl<string>('0', { nonNullable: true, validators: [Validators.required, Validators.min(0)] });
 
-  constructor(private billing: BillingService, private cdr: ChangeDetectorRef, private toaster: SisToastService) {
+  constructor(
+    private billing: BillingService,
+    private cdr: ChangeDetectorRef,
+    private toaster: SisToastService,
+  ) {
     this.usage.pipe(take(1)).subscribe((usage) => {
       this.budget.setValue(usage.budget.toString());
     });

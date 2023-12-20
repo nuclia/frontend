@@ -5,8 +5,7 @@ import { combineLatest, filter, map, shareReplay, switchMap, take } from 'rxjs';
 import { AccountService, SDKService } from '@flaps/core';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { UnsubscribeComponent, UnsubscribeModalData } from './unsubscribe.component';
-import { BillingService } from '../billing.service';
-import { RecurrentPriceInterval, SubscriptionStatus, UsageType } from '../billing.models';
+import { BillingService, RecurrentPriceInterval, SubscriptionStatus, UsageType } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
 
 @Component({
