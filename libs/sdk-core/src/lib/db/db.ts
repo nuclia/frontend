@@ -243,19 +243,21 @@ export class Db implements IDb {
     ```
   */
   createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox> {
-    const creation: Observable<IKnowledgeBox> = this.useRegionalSystem
-      ? this.nuclia.rest.post<IKnowledgeBox>(
-          `/account/${this.nuclia.options.accountId}/kbs`,
-          knowledgeBox,
-          undefined,
-          undefined,
-          undefined,
-          this.nuclia.options.zone,
-        )
-      : this.nuclia.rest.post<IKnowledgeBox>(
-          this.nuclia.options.standalone ? '/kbs' : `/account/${account}/kbs`,
-          knowledgeBox,
-        );
+    let creation: Observable<IKnowledgeBox>;
+    if (this.nuclia.options.standalone) {
+      creation = this.nuclia.rest.post<IKnowledgeBox>('/kbs', knowledgeBox);
+    } else {
+      creation = this.useRegionalSystem
+        ? this.nuclia.rest.post<IKnowledgeBox>(
+            `/account/${this.nuclia.options.accountId}/kbs`,
+            knowledgeBox,
+            undefined,
+            undefined,
+            undefined,
+            this.nuclia.options.zone,
+          )
+        : this.nuclia.rest.post<IKnowledgeBox>(`/account/${account}/kbs`, knowledgeBox);
+    }
     return creation.pipe(
       switchMap((res) => {
         const id = res.id || res.uuid;
