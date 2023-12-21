@@ -26,6 +26,7 @@ import { UsageTableComponent } from './usage/usage-table.component';
 import { RedirectComponent } from './redirect.component';
 import { MySubscriptionComponent } from './my-subscription/my-subscription.component';
 import { UnsubscribeComponent } from './my-subscription/unsubscribe.component';
+import { DeprecatedSubscriptionsComponent } from './subscriptions/deprecated-subscriptions.component';
 
 const routes: Routes = [
   {
@@ -90,6 +91,7 @@ const routes: Routes = [
     UsageTableComponent,
     MySubscriptionComponent,
     UnsubscribeComponent,
+    DeprecatedSubscriptionsComponent,
   ],
   exports: [UsageTableComponent],
 })
