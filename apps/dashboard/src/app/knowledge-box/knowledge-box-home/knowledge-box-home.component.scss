@@ -26,15 +26,17 @@
     gap: var(--gap-size);
 
     &.wide-column {
-      //container-type: size; // FIXME: for now pastanaga dropdown position is broken with this property. we need to fix pastanaga before putting it back
+      container-type: size;
       flex: 1 1 auto;
+      margin-right: calc(-1 * #{var(--app-layout-padding-right)});
       max-width: calc(var(--width-small-column) * 2 + var(--gap-size));
       min-width: var(--width-small-column);
+      padding-right: var(--app-layout-padding-right);
       overflow-x: hidden;
       overflow-y: auto;
     }
 
-    @container (width < 40rem) {
+    @container (width < 43rem) {
       .row-container {
         flex-direction: column;
 
@@ -110,7 +112,7 @@
   .kb-content {
     display: flex;
     flex-direction: column;
-    gap: rhythm(4);
+    gap: rhythm(2);
 
     .title-m {
       margin-bottom: rhythm(1);
