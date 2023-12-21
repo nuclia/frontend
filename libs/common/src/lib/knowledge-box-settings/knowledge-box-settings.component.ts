@@ -306,9 +306,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             );
           }
         }),
-        concatMap(() =>
-          this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.account === 'local' ? kb.id : newSlug),
-        ),
+        concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.id)),
       )
       .subscribe((kb) => {
         this.kbForm?.markAsPristine();

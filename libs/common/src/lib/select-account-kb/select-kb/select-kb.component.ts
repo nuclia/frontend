@@ -145,19 +145,19 @@ export class SelectKbComponent implements OnDestroy {
     }
   }
 
-  deleteKb(event: MouseEvent, slug: string, title?: string) {
+  deleteKb(event: MouseEvent, kbId: string, title?: string) {
     event.stopPropagation();
     this.modalService
       .openConfirm({
         title: 'stash.delete.delete',
-        description: `${title || ''} (${slug})`,
+        description: `${title || ''} (${kbId})`,
         confirmLabel: 'generic.delete',
         isDestructive: true,
       })
       .onClose.pipe(
         filter((yes) => !!yes),
         switchMap(() => this.account),
-        switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, slug)),
+        switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kbId)),
         switchMap((kb) => kb.delete()),
       )
       .subscribe(() => this.sdk.refreshKbList());

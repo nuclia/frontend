@@ -137,7 +137,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
                   }
                   this.sdk.nuclia.options.knowledgeBox = kb.id;
                   return this.sdk
-                    .setCurrentKnowledgeBox(account.slug, kbSlug as string, zone)
+                    .setCurrentKnowledgeBox(account.slug, kb.id, zone)
                     .pipe(map((kb) => [account, kb] as [Account, IKnowledgeBoxItem | null]));
                 }),
               );

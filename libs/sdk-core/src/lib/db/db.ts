@@ -154,24 +154,21 @@ export class Db implements IDb {
   }
 
   /**
-   * Returns the Knowledge Box with the given slug, or the one defined in the Nuclia options
-   * if no slug is provided.
+   * Returns the Knowledge Box with the given id, or the one defined in the Nuclia options
+   * if no param is provided.
    */
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
-  getKnowledgeBox(account: string, knowledgeBox: string): Observable<WritableKnowledgeBox>;
-  getKnowledgeBox(account?: string, knowledgeBox?: string): Observable<WritableKnowledgeBox> {
+  getKnowledgeBox(account: string, knowledgeBoxId: string): Observable<WritableKnowledgeBox>;
+  getKnowledgeBox(account?: string, knowledgeBoxId?: string): Observable<WritableKnowledgeBox> {
     const accountId = this.nuclia.options.accountId;
     if (accountId || this.nuclia.options.standalone) {
-      // TODO use knowledgeBox param if defined, once old system will be cleaned up (rename to knowledgeBoxId to make it explicit)
-      // get kb slug from nuclia options for standalone case
-      const kbId = this.nuclia.options.knowledgeBox;
-      const kbSlug = knowledgeBox || this.nuclia.options.kbSlug;
+      const kbId = knowledgeBoxId || this.nuclia.options.knowledgeBox;
 
       if (!this.nuclia.options.standalone && !kbId) {
         throw new Error('knowledgeBox id must be defined in the Nuclia options');
       }
 
-      const kbEndpoint = this.nuclia.options.standalone ? `/kb/${kbSlug}` : `/account/${accountId}/kb/${kbId}`;
+      const kbEndpoint = this.nuclia.options.standalone ? `/kb/${kbId}` : `/account/${accountId}/kb/${kbId}`;
 
       return this.nuclia.rest
         .get<IKnowledgeBox>(
@@ -180,14 +177,14 @@ export class Db implements IDb {
           undefined,
           this.nuclia.options.standalone || this.nuclia.options.proxy ? undefined : this.nuclia.options.zone,
         )
-        .pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, account as string, kb)));
+        .pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, account || (accountId as string), kb)));
     } else {
       if (!this.nuclia.options.knowledgeBox || !this.nuclia.options.zone) {
         throw new Error('zone must be defined in the Nuclia options');
       }
       return of(
         new WritableKnowledgeBox(this.nuclia, '', {
-          id: this.nuclia.options.knowledgeBox,
+          id: knowledgeBoxId || this.nuclia.options.knowledgeBox,
           zone: this.nuclia.options.zone,
         }),
       );
@@ -228,10 +225,7 @@ export class Db implements IDb {
         if (!id) {
           throw 'KnowledgeBox creation failed';
         }
-        // TODO: once old endpoints will be cleaned up, we should pass the KB id directly to getKnowledgeBox
-        // set the created KB Id in nuclia options, so we can properly getKnowledgeBox afterward
-        this.nuclia.options.knowledgeBox = id;
-        return this.getKnowledgeBox(account, this.nuclia.options.standalone ? id : knowledgeBox.slug);
+        return this.getKnowledgeBox(account, id);
       }),
     );
   }

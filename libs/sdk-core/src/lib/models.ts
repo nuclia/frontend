@@ -120,7 +120,7 @@ export interface IDb {
   getKnowledgeBoxes(accountSlug: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
-  getKnowledgeBox(account: string, knowledgeBox: string): Observable<WritableKnowledgeBox>;
+  getKnowledgeBox(account: string, knowledgeBoxId: string): Observable<WritableKnowledgeBox>;
   createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox>;
   getStats(
     account: string,
