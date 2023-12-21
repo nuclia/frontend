@@ -31,10 +31,7 @@ export class AccountNUAService {
     return this.account.pipe(
       switchMap((account) =>
         this.zones.pipe(
-          switchMap((zones) => {
-            const zone = zones[zoneId];
-            return this.sdk.nuclia.db.createNUAClient(account.id, payload, zone);
-          }),
+          switchMap((zones) => this.sdk.nuclia.db.createNUAClient(account.id, payload, zones[zoneId])),
         ),
       ),
     );
