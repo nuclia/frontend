@@ -12,7 +12,6 @@
       <pa-button
         routerLink="../subscriptions"
         icon="edit"
-        size="small"
         aspect="basic"></pa-button>
     </div>
     <div class="section-body">
@@ -20,11 +19,15 @@
         class="body-m"
         *ngIf="accountType | async as account">
         {{ 'account.type.' + account | translate }}
-        <ng-container *ngIf="currency$ | async as currency">
-          <ng-container *ngIf="(prices$ | async)?.[account]?.recurring as prices">
-            - {{ prices.month.price | currency : currency }}/{{ 'billing.month' | translate }}
-          </ng-container>
-        </ng-container>
+        @if (currency$ | async; as currency) {
+          @if ((prices$ | async)?.[account]?.recurring; as prices) {
+            @if (monthly | async) {
+              {{ prices.month?.price | currency: currency }}/{{ 'billing.month' | translate }}
+            } @else {
+              {{ prices.year?.price | currency: currency }}/{{ 'billing.year' | translate }}
+            }
+          }
+        }
       </div>
     </div>
   </div>
@@ -39,7 +42,6 @@
         <pa-button
           (click)="showCustomerForm()"
           icon="edit"
-          size="small"
           aspect="basic"></pa-button>
       </div>
     </div>
@@ -233,7 +235,6 @@
         <pa-button
           (click)="showCardForm()"
           icon="edit"
-          size="small"
           aspect="basic"></pa-button>
       </div>
     </div>

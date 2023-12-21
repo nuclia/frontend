@@ -112,5 +112,11 @@ $height-breakpoint: 856px;
     &:not(:hover).active {
       color: $color-dark-stronger;
     }
+    &.sub-item {
+      color: $color-dark-stronger;
+      &:hover {
+        background-color: $color-neutral-lightest;
+      }
+    }
   }
 }

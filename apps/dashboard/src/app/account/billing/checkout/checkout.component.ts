@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, forkJoin, from, of, Subject } from 'rxjs';
+import { combineLatest, forkJoin, from, merge, of, Subject } from 'rxjs';
 import {
   catchError,
   delay,
@@ -24,14 +24,21 @@ import {
 } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { injectScript, SDKService, UserService } from '@flaps/core';
-import { BillingService } from '../billing.service';
-import { StripeCustomer, SubscriptionError } from '../billing.models';
+import {
+  BillingService,
+  injectScript,
+  RecurrentPriceInterval,
+  SDKService,
+  StripeCustomer,
+  SubscriptionError,
+  UserService,
+} from '@flaps/core';
 import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
 import { NavigationService } from '@flaps/common';
 import { ReviewComponent } from '../review/review.component';
+import { SubscriptionService } from '../subscription.service';
 
 @Component({
   selector: 'app-checkout',
@@ -83,12 +90,21 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   subscribeMode = this.accountType.pipe(map((type) => !!type));
 
   prices$ = this.billingService.getPrices().pipe(shareReplay());
+  monthly = combineLatest([
+    this.prices$,
+    this.accountType.pipe(
+      filter((accountType) => !!accountType),
+      map((accountType) => accountType as AccountTypes),
+    ),
+  ]).pipe(map(([prices, accountType]) => !!prices[accountType]?.recurring?.month));
   updateCurrency = new Subject<string>();
-  currency$ = this.updateCurrency.pipe(
-    distinctUntilChanged(),
-    switchMap((country) => this.billingService.getCurrency(country)),
-    shareReplay(),
-  );
+  currency$ = merge(
+    this.subscription.initialCurrency,
+    this.updateCurrency.pipe(
+      distinctUntilChanged(),
+      switchMap((country) => this.billingService.getCurrency(country)),
+    ),
+  ).pipe(shareReplay(1));
 
   editCustomer = true;
   private _customer?: StripeCustomer;
@@ -130,6 +146,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     private navigation: NavigationService,
     private modalService: SisModalService,
     private translate: TranslateService,
+    private subscription: SubscriptionService,
   ) {
     this.initCustomer();
     this.initStripe();
@@ -155,12 +172,11 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   initCustomer() {
     forkJoin([
       this.billingService.getCustomer(),
-      this.billingService.country.pipe(take(1)),
       this.userService.userPrefs.pipe(
         filter((user) => !!user),
         take(1),
       ),
-    ]).subscribe(([customer, country, user]) => {
+    ]).subscribe(([customer, user]) => {
       if (customer) {
         this.customer = customer;
         this.updateCustomerForm(customer);
@@ -168,10 +184,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         this.editCard = true;
         this.cdr?.markForCheck();
       } else {
-        if (country) {
-          this.customerForm.patchValue({ country });
-          this.updateCurrency.next(country);
-        }
         if (user?.email) {
           this.customerForm.patchValue({ email: user.email });
         }
@@ -183,9 +195,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.subscribeMode
       .pipe(
         switchMap((subscribeMode) => {
-          return subscribeMode
-            ? this.billingService.budgetEstimation.pipe(take(1))
-            : this.billingService.getAccountUsage().pipe(map((usage) => usage.budget));
+          return subscribeMode ? of(0) : this.billingService.getAccountUsage().pipe(map((usage) => usage.budget));
         }),
       )
       .subscribe((budget) => {
@@ -325,18 +335,23 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.cdr?.markForCheck();
         }),
         switchMap(() =>
-          this.accountType.pipe(
-            take(1),
-            filter((accountType) => !!accountType),
-            map((accountType) => accountType as AccountTypes),
-          ),
+          forkJoin([
+            this.accountType.pipe(
+              take(1),
+              filter((accountType) => !!accountType),
+              map((accountType) => accountType as AccountTypes),
+              take(1),
+            ),
+            this.monthly.pipe(take(1)),
+          ]),
         ),
-        switchMap((accountType) =>
+        switchMap(([accountType, monthly]) =>
           this.billingService
             .createSubscription({
               payment_method_id: this.paymentMethodId || '',
               on_demand_budget: parseInt(this.budget.value),
               account_type: accountType,
+              billing_interval: monthly ? RecurrentPriceInterval.MONTH : RecurrentPriceInterval.YEAR,
             })
             .pipe(
               catchError((error) => {

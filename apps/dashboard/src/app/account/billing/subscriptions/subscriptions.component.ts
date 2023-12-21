@@ -1,12 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
-import { BillingService } from '../billing.service';
-import { CalculatorComponent } from '../calculator/calculator.component';
-import { forkJoin, shareReplay, take, tap } from 'rxjs';
-import { SisModalService } from '@nuclia/sistema';
-import { AccountService, STFTrackingService } from '@flaps/core';
-import { COUNTRIES } from '../utils';
-import { Currency } from '../billing.models';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
+import { combineLatest, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
+import { AccountService, BillingService, Currency, STFTrackingService } from '@flaps/core';
+import { SubscriptionService, TOKENS_PER_REQUEST } from '../subscription.service';
 import { WINDOW } from '@ng-web-apis/common';
+import { AccountTypes } from '@nuclia/core';
 
 @Component({
   selector: 'app-subscriptions',
@@ -14,53 +11,55 @@ import { WINDOW } from '@ng-web-apis/common';
   styleUrls: ['./subscriptions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SubscriptionsComponent {
+export class SubscriptionsComponent implements OnDestroy {
   accountType = this.billing.type.pipe(shareReplay());
-  countryList = Object.entries(COUNTRIES)
-    .map(([code, name]) => ({ code, name }))
-    .sort((a, b) => a.name.localeCompare(b.name));
   currency?: Currency;
+  canSelectCurrency = false;
   prices = this.billing.getPrices().pipe(shareReplay());
   accountTypesDefaults = this.accountService.getAccountTypes().pipe(shareReplay());
+  customerCurrency = this.billing
+    .getCustomer()
+    .pipe(
+      switchMap((customer) =>
+        customer ? this.billing.getCurrency(customer.billing_details?.country || '') : of(null),
+      ),
+    );
+  tokensPerRequest = TOKENS_PER_REQUEST;
+  tiers: AccountTypes[] = ['v3starter', 'v3fly', 'v3growth', 'v3enterprise'];
+  isNewPricingEnabled = this.tracking.isFeatureEnabled('new-pricing');
+  unsubscribeAll = new Subject<void>();
 
   constructor(
     private billing: BillingService,
-    private modalService: SisModalService,
-    private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
+    private subscriptionService: SubscriptionService,
+    private tracking: STFTrackingService,
     @Inject(WINDOW) private window: Window,
   ) {
-    forkJoin([this.billing.getCustomer(), this.billing.country.pipe(take(1))]).subscribe(([customer, country]) => {
-      if (customer) {
-        this.onSelectCountry(customer.billing_details.country);
-      } else if (country) {
-        this.onSelectCountry(country);
-      }
-    });
-  }
-
-  openCalculator() {
-    this.prices.pipe(take(1)).subscribe((prices) => {
-      this.modalService.openModal(CalculatorComponent, {
-        dismissable: true,
-        data: {
-          prices,
-          currency: this.currency,
-        },
+    combineLatest([this.customerCurrency, this.subscriptionService.initialCurrency])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(([currency, initialCurrency]) => {
+        if (currency) {
+          this.currency = currency;
+        } else {
+          this.currency = initialCurrency;
+          this.canSelectCurrency = true;
+        }
+        this.cdr.markForCheck();
       });
-    });
   }
 
-  onSelectCountry(country: string) {
-    this.billing.setCountry(country);
-    this.billing
-      .getCurrency(country)
-      .pipe(tap((currency) => (this.currency = currency)))
-      .subscribe(() => this.cdr.markForCheck());
+  setCurrency(currency: Currency) {
+    this.subscriptionService.setInitialCurrency(currency);
   }
 
   contact() {
     this.window.location.href = 'mailto:support@nuclia.com';
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 }

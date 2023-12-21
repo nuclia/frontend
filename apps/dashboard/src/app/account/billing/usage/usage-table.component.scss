@@ -5,7 +5,7 @@ header {
   justify-content: space-between;
   margin-bottom: rhythm(4);
   h2 {
-    margin: 0;
+    margin: 0 0 rhythm(0.5) 0;
   }
   .total {
     color: $color-primary-regular;
@@ -21,12 +21,16 @@ header {
 // pa-table hacks
 :host ::ng-deep .pa-table-grid--cell {
   background-color: transparent;
-  font-size: $font-size-body-s;
-  line-height: $line-height-body-s;
-  min-height: rhythm(5);
+  font-size: $font-size-body-m;
+  line-height: $line-height-body-m;
 }
 :host ::ng-deep .pa-table-grid--head .pa-table-grid--header {
   background-color: transparent;
   font-size: $font-size-body-xs;
   line-height: $line-height-body-xs;
+}
+
+.notes {
+  color: $color-neutral-regular;
+  margin-top: rhythm(2);
 }

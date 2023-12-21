@@ -1,10 +1,4 @@
-import { UsageType } from './billing.models';
-
 export const REQUIRED_VAT_COUNTRIES = ['ES'];
-
-export function asUsageType(something: string): UsageType {
-  return something as UsageType;
-}
 
 export const COUNTRIES: { [code: string]: string } = {
   AF: 'Afghanistan',

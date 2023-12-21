@@ -4,6 +4,7 @@ import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConf
 import { combineLatest, map, Observable } from 'rxjs';
 
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
+const IN_ACCOUNT_BILLING = new RegExp('/at/[^/]+/manage/billing');
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,9 @@ export class NavigationService {
     const settingsPages = ['activity', 'label-sets', 'entities', 'synonyms', 'manage', 'training', 'users', 'keys'];
     const pattern = `${kbUrl}/(${settingsPages.join('|')})`;
     return path.match(new RegExp(pattern)) !== null;
+  }
+  inAccountBilling(path: string): boolean {
+    return path.match(IN_ACCOUNT_BILLING) !== null;
   }
 
   getAccountUrl(accountSlug: string): string {

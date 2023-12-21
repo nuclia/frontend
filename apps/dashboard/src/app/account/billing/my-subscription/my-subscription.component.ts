@@ -5,8 +5,7 @@ import { combineLatest, filter, map, shareReplay, switchMap, take } from 'rxjs';
 import { AccountService, SDKService } from '@flaps/core';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { UnsubscribeComponent, UnsubscribeModalData } from './unsubscribe.component';
-import { BillingService } from '../billing.service';
-import { SubscriptionStatus, UsageType } from '../billing.models';
+import { BillingService, RecurrentPriceInterval, SubscriptionStatus, UsageType } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
 
 @Component({
@@ -33,6 +32,11 @@ export class MySubscriptionComponent {
   cancelScheduled = this.subscription.pipe(
     map((subscription) => subscription?.status === SubscriptionStatus.CANCEL_SCHEDULED),
   );
+  monthly = this.subscription.pipe(
+    map((subscription) => subscription?.billing_interval === RecurrentPriceInterval.MONTH),
+  );
+  isDeprecatedAccount = this.billingService.isDeprecatedAccount;
+  doNotShowPrice = ['v3growth', 'v3enterprise'];
   params: UsageType[] = [
     'media',
     'paragraphs_processed',

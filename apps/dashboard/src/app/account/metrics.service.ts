@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { AccountService, SDKService } from '@flaps/core';
-import { BillingService, UPGRADABLE_ACCOUNT_TYPES } from './billing/billing.service';
+import { BillingService } from '@flaps/core';
+import { UPGRADABLE_ACCOUNT_TYPES } from './billing/subscription.service';
 import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { addDays, format, isFuture, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
 import { StatsPeriod, StatsType } from '@nuclia/core';
@@ -190,11 +191,11 @@ export class MetricsService {
         const usage = prices[account.type].usage;
         switch (statsType) {
           case StatsType.MEDIA_SECONDS:
-            return usage.media.threshold;
+            return usage?.media?.threshold;
           case StatsType.SEARCHES:
-            return usage.searches.threshold;
+            return usage?.searches?.threshold;
           case StatsType.TRAIN_SECONDS:
-            return usage.training.threshold;
+            return usage?.training?.threshold;
           default:
             return undefined;
         }

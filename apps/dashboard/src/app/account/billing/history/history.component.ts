@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
-import { InvoicesList } from '../billing.models';
-import { BillingService } from '../billing.service';
+import { BillingService, InvoicesList } from '@flaps/core';
 import { concatMap, filter, map, shareReplay, Subject, takeUntil, tap } from 'rxjs';
 import { WINDOW } from '@ng-web-apis/common';
 
