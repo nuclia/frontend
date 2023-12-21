@@ -155,7 +155,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
           );
         }),
       )
-      .subscribe(([account, kb]) => this.titleService.setTitle(`Nuclia – ${account.title} – ${kb?.title}`));
+      .subscribe(([account, kb]) =>
+        this.titleService.setTitle(
+          `Nuclia${account?.title ? ' – ' + account.title : ''}${kb?.title ? ' – ' + kb.title : ''}`,
+        ),
+      );
   }
 
   private displayAlert() {
