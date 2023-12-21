@@ -6363,7 +6363,7 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>language-model</name>
+										<name>generative-model</name>
 										<description/>
 										<comment/>
 										<translations>

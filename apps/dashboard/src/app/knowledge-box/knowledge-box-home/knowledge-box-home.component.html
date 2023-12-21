@@ -122,7 +122,7 @@
           </div>
           @if ((configuration | async)?.['generative_model']; as model) {
             <div>
-              <div class="title-xxs">{{ 'dashboard-home.kb-details.language-model' | translate }}</div>
+              <div class="title-xxs">{{ 'dashboard-home.kb-details.generative-model' | translate }}</div>
               <div class="body-s">
                 {{ 'stash.config.option.' + model | translate }}
               </div>

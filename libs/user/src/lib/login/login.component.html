@@ -88,17 +88,13 @@
     </div>
 
     <div class="login_signup">
-      @if (!(isOnboardingDisabled | async)) {
-        <span>{{ 'login.have_account' | translate }}</span>
-        <a
-          [routerLink]="['../signup']"
-          data-cy="create-account"
-          queryParamsHandling="merge">
-          {{ 'login.create_one' | translate }}
-        </a>
-      } @else {
-        {{ 'login.onboarding-disabled' | translate }}
-      }
+      <span>{{ 'login.have_account' | translate }}</span>
+      <a
+        [routerLink]="['../signup']"
+        data-cy="create-account"
+        queryParamsHandling="merge">
+        {{ 'login.create_one' | translate }}
+      </a>
     </div>
   </div>
 </stf-user-container>

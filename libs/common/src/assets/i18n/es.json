@@ -267,7 +267,7 @@
 	"dashboard-home.kb-content.processing-queue.pendings": "{{count}} recursos están pendientes de ser procesados.",
 	"dashboard-home.kb-content.processing-queue.title": "Cola de procesamiento",
 	"dashboard-home.kb-details.endpoint": "NucliaDB API endpoint",
-	"dashboard-home.kb-details.language-model": "Modelo de lenguaje aplicado",
+	"dashboard-home.kb-details.generative-model": "Modelo generativo",
 	"dashboard-home.kb-details.slug": "Knowledge Box slug",
 	"dashboard-home.kb-details.title": "Detalles del Knowledge Box ",
 	"dashboard-home.kb-details.uid": "Knowledge Box UID",
