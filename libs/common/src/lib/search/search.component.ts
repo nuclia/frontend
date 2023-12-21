@@ -71,7 +71,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     backend="${this.backendConfig.getAPIURL()}"
     state="${kb.state || ''}"
     kbslug="${kb.slug || ''}"
-    account="${this.sdk.useRegionalSystem ? account.id : kb.account || ''}"
+    account="${account.id}"
     lang="${this.translation.currentLang}"
     features="${features}"
   ></nuclia-search-bar>`);

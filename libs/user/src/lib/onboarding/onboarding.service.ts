@@ -76,9 +76,7 @@ export class OnboardingService {
             })
             .pipe(
               map((account) => {
-                if (this.sdk.useRegionalSystem) {
-                  this.sdk.nuclia.options.accountId = account.id;
-                }
+                this.sdk.nuclia.options.accountId = account.id;
                 return { accountSlug };
               }),
               catchError((error) => {

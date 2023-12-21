@@ -33,7 +33,7 @@
       *ngIf="((kbs | async)?.length || 0) > 0; else noKb">
       <ng-container *ngFor="let kb of kbs | async">
         <a
-          *ngIf="kb.slug"
+          *ngIf="kb.id"
           class="kb"
           data-cy="kb-list-item"
           [class.disabled]="!kb.role_on_kb"
@@ -42,7 +42,7 @@
             class="delete-btn"
             data-cy="delete-kb-button"
             *ngIf="standalone"
-            (click)="deleteKb($event, kb.slug, kb.title)"
+            (click)="deleteKb($event, kb.id, kb.title)"
             icon="trash"
             aspect="basic"
             kind="destructive"

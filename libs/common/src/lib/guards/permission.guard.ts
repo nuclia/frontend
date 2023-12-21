@@ -37,7 +37,7 @@ export const knowledgeBoxOwnerGuard = (route: ActivatedRouteSnapshot, routerStat
     return of(false);
   } else {
     return sdk
-      .setCurrentKnowledgeBox(accountSlug, kbSlug, zone)
+      .setCurrentKnowledgeBoxFromSlug(accountSlug, kbSlug, zone)
       .pipe(
         switchMap((kb) => (!!kb.admin ? of(true) : navigation.homeUrl.pipe(map((url) => router.createUrlTree([url]))))),
       );

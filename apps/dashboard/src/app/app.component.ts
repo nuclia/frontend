@@ -10,25 +10,13 @@ import {
   UserService,
 } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
-import {
-  catchError,
-  combineLatest,
-  filter,
-  map,
-  Observable,
-  of,
-  Subject,
-  switchMap,
-  take,
-  tap,
-  throwError,
-} from 'rxjs';
+import { catchError, combineLatest, filter, map, of, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import { Title } from '@angular/platform-browser';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesModalComponent, MessageModalComponent, NavigationService } from '@flaps/common';
-import { Account, IKnowledgeBoxItem, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 
 @Component({
   selector: 'app-root',
@@ -132,39 +120,31 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         switchMap(([accountParams, kbParams]) => {
           const account = accountParams.get('account') as string;
           const kbSlug = kbParams && kbParams.get('kb');
-          const zone = (kbParams && kbParams.get('zone')) || undefined;
+          const zone: string | null = kbParams && kbParams.get('zone');
 
-          const getAccountAndKb =
-            this.sdk.useRegionalSystem && zone
-              ? this.sdk.setCurrentAccount(account).pipe(
-                  switchMap((account) => {
-                    const accountId = account.id;
-                    this.sdk.nuclia.options.accountId = accountId;
-                    return this.sdk.nuclia.db.getKnowledgeBoxesForZone(accountId, zone).pipe(
-                      switchMap((kbs) => {
-                        const kb = kbs.find((item) => item.slug === kbSlug);
-                        if (!kb) {
-                          return throwError(() => ({
-                            status: 403,
-                            message: `No KB found for ${kbSlug} in account ${account} on ${zone}.`,
-                          }));
-                        }
-                        this.sdk.nuclia.options.knowledgeBox = kb.id;
-                        return this.sdk
-                          .setCurrentKnowledgeBox(account.slug, kbSlug as string, zone)
-                          .pipe(map((kb) => [account, kb] as [Account, IKnowledgeBoxItem | null]));
-                      }),
-                    );
-                  }),
-                )
-              : this.sdk.setCurrentAccount(account).pipe(
-                  switchMap((account) => {
-                    const kbRequest: Observable<WritableKnowledgeBox | null> = kbSlug
-                      ? this.sdk.setCurrentKnowledgeBox(account.slug, kbSlug)
-                      : of(null);
-                    return kbRequest.pipe(map((kb) => [account, kb] as [Account, IKnowledgeBoxItem | null]));
-                  }),
-                );
+          const getAccountAndKb = this.sdk.setCurrentAccount(account).pipe(
+            switchMap((account) => {
+              const accountId = account.id;
+              this.sdk.nuclia.options.accountId = accountId;
+              return zone
+                ? this.sdk.nuclia.db.getKnowledgeBoxesForZone(accountId, zone).pipe(
+                    switchMap((kbs) => {
+                      const kb = kbs.find((item) => item.slug === kbSlug);
+                      if (!kb) {
+                        return throwError(() => ({
+                          status: 403,
+                          message: `No KB found for ${kbSlug} in account ${account} on ${zone}.`,
+                        }));
+                      }
+                      this.sdk.nuclia.options.knowledgeBox = kb.id;
+                      return this.sdk
+                        .setCurrentKnowledgeBox(account.slug, kb.id, zone)
+                        .pipe(map((kb) => [account, kb] as [Account, IKnowledgeBoxItem | null]));
+                    }),
+                  )
+                : of([]);
+            }),
+          );
           return getAccountAndKb.pipe(
             catchError((error) => {
               if (error.status === 403) {

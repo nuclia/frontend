@@ -23,6 +23,7 @@ import {
   switchMap,
   takeUntil,
   tap,
+  throwError,
 } from 'rxjs';
 import { BackendConfigurationService } from '../config';
 import { take } from 'rxjs/operators';
@@ -58,8 +59,6 @@ export class SDKService {
   refreshing = this._refreshCounter.asObservable();
   isAdminOrContrib = this.currentKb.pipe(map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
 
-  useRegionalSystem = true;
-
   get isKbLoaded() {
     return this._isKbLoaded;
   }
@@ -86,7 +85,7 @@ export class SDKService {
         ),
         switchMap(([kb, account]) =>
           this.nuclia.db
-            .getKnowledgeBox(account.slug, (this.config.staticConf.standalone ? kb.id : kb.slug) as string)
+            .getKnowledgeBox(account.slug, kb.id)
             .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug, data))),
         ),
         tap(() => (this._isKbLoaded = true)),
@@ -119,22 +118,54 @@ export class SDKService {
 
   setCurrentKnowledgeBox(
     accountSlug: string,
-    kbSlug: string,
+    kbId: string,
     zone?: string,
     force = false,
   ): Observable<WritableKnowledgeBox> {
     // returns the current kb and set it if not set
     const currentKb = this._kb.value;
-    if (!force && currentKb && currentKb.slug === kbSlug) {
+    if (!force && currentKb && currentKb.id === kbId) {
       return of(currentKb as WritableKnowledgeBox);
     } else {
       this.nuclia.options.zone = zone;
-      return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(
+      return this.nuclia.db.getKnowledgeBox(accountSlug, kbId).pipe(
         map((kb) => {
           this.kb = kb;
           return kb;
         }),
       );
+    }
+  }
+
+  setCurrentKnowledgeBoxFromSlug(accountSlug: string, kbSlug: string, zone?: string): Observable<WritableKnowledgeBox> {
+    const currentKb = this._kb.value;
+    const currentAccount = this._account.value;
+    this.nuclia.options.zone = zone;
+    if (currentKb && currentKb.slug === kbSlug) {
+      return of(currentKb as WritableKnowledgeBox);
+    } else if (zone) {
+      return (currentAccount ? of(currentAccount) : this.setCurrentAccount(accountSlug)).pipe(
+        switchMap((account) => {
+          this.nuclia.options.accountId = account.id;
+          return this.nuclia.db.getKnowledgeBoxesForZone(account.id, zone);
+        }),
+        switchMap((kbs) => {
+          const kb = kbs.find((item) => item.slug === kbSlug);
+          if (!kb) {
+            return throwError(() => ({
+              status: 403,
+              message: `No KB found for ${kbSlug} in account ${accountSlug} on ${zone}.`,
+            }));
+          }
+          this.nuclia.options.knowledgeBox = kb.id;
+          return this.setCurrentKnowledgeBox(accountSlug, kb.id, zone);
+        }),
+      );
+    } else {
+      return throwError(() => ({
+        status: 403,
+        message: `No KB found for ${kbSlug} in account ${accountSlug} on ${zone}.`,
+      }));
     }
   }
 
@@ -181,10 +212,7 @@ export class SDKService {
         .pipe(
           switchMap(([account, kb]) =>
             this.nuclia.db
-              .getKnowledgeBox(
-                account.slug || account.id,
-                (this.config.staticConf.standalone ? kb.id : kb.slug) as string,
-              )
+              .getKnowledgeBox(account.slug || account.id, kb.id)
               .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug || account.id, data))),
           ),
         )

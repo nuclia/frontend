@@ -41,7 +41,7 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
         backend="${this.backendConfig.getAPIURL()}"
         state="${kb.state || ''}"
         kbslug="${kb.slug || ''}"
-        account="${this.sdk.useRegionalSystem ? account.id : kb.account || ''}"
+        account="${account.id}"
         lang="${this.translate.currentLang}"
         ${this.sdk.nuclia.options.standalone ? 'standalone="true"' : ''}
         ></nuclia-viewer>`);
