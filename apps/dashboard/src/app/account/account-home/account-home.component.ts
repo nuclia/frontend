@@ -90,9 +90,7 @@ export class AccountHomeComponent {
   }
 
   goToKb(account: string, kb: IKnowledgeBoxItem) {
-    if (this.sdk.useRegionalSystem) {
-      this.sdk.nuclia.options.zone = kb.zone;
-    }
+    this.sdk.nuclia.options.zone = kb.zone;
     this.router.navigate([this.navigation.getKbUrl(account, kb.slug || '')]);
   }
 }

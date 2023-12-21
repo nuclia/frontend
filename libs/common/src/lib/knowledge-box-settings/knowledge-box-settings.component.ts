@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { catchError, combineLatest, filter, forkJoin, of, Subject } from 'rxjs';
+import { catchError, combineLatest, filter, forkJoin, Observable, of, Subject } from 'rxjs';
 import { auditTime, concatMap, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { FeatureFlagService, SDKService, STFUtils } from '@flaps/core';
 import {
@@ -34,6 +34,8 @@ const EMPTY_CONFIG = {
 export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   kb: WritableKnowledgeBox | undefined;
   account: Account | undefined;
+
+  currentKb$ = this.sdk.currentKb.pipe(tap((kb) => (this.kb = kb)));
 
   kbForm?: UntypedFormGroup;
 
@@ -92,54 +94,55 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => this.updateFormValidators());
 
-    combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
-      .pipe(
-        tap(([account, kb]) => {
-          this.account = account;
-          this.kb = kb;
-        }),
-        switchMap(() =>
-          (this.sdk.nuclia.options.standalone
-            ? of({})
-            : this.kb?.getConfiguration().pipe(catchError(() => of({}))) || of({})
-          ).pipe(take(1)),
-        ),
+    let initRequest: Observable<{
+      display: LearningConfigurationSet;
+      full: LearningConfigurationSet;
+      keys: LearningConfigurationUserKeys;
+    }>;
+
+    if (this.sdk.nuclia.options.standalone) {
+      initRequest = this.currentKb$.pipe(switchMap(() => of(EMPTY_CONFIG)));
+    } else {
+      initRequest = combineLatest([
+        this.sdk.currentAccount.pipe(tap((account) => (this.account = account))),
+        this.currentKb$,
+      ]).pipe(
+        switchMap(([, kb]) => kb.getConfiguration().pipe(take(1))),
         tap((conf) => (this.currentConfig = conf)),
         switchMap(() =>
-          this.sdk.nuclia.options.standalone
-            ? of(EMPTY_CONFIG)
-            : this.settingService.getVisibleLearningConfiguration(false).pipe(catchError(() => of(EMPTY_CONFIG))),
+          this.settingService.getVisibleLearningConfiguration(false).pipe(catchError(() => of(EMPTY_CONFIG))),
         ),
         takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(({ display, full, keys }) => {
-        this.displayedLearningConfigurations = display.filter((entry) => entry.id !== USER_PROMPTS);
-        this.promptConfigurations = display.find((entry) => entry.id === USER_PROMPTS)?.data;
-        this.promptKeys = Object.keys(this.promptConfigurations?.schemas || {});
-        const promptsValues = Object.entries(this.promptConfigurations?.schemas || {}).reduce(
-          (acc, [key, value]) => {
-            acc[key] = {};
-            if (value.properties['prompt']) {
-              acc[key]['prompt'] = this.currentConfig['user_prompts']?.[key]?.prompt || '';
-            }
-            if (value.properties['system']) {
-              acc[key]['system'] = this.currentConfig['user_prompts']?.[key]?.system || '';
-            }
-            return acc;
-          },
-          {} as { [key: string]: { prompt?: string; system?: string } },
-        );
-        this.learningConfigurations = full;
-        this.userKeys = keys;
+      );
+    }
+    initRequest.subscribe(({ display, full, keys }) => {
+      this.displayedLearningConfigurations = display.filter((entry) => entry.id !== USER_PROMPTS);
+      this.promptConfigurations = display.find((entry) => entry.id === USER_PROMPTS)?.data;
+      this.promptKeys = Object.keys(this.promptConfigurations?.schemas || {});
+      const promptsValues = Object.entries(this.promptConfigurations?.schemas || {}).reduce(
+        (acc, [key, value]) => {
+          acc[key] = {};
+          if (value.properties['prompt']) {
+            acc[key]['prompt'] = this.currentConfig['user_prompts']?.[key]?.prompt || '';
+          }
+          if (value.properties['system']) {
+            acc[key]['system'] = this.currentConfig['user_prompts']?.[key]?.system || '';
+          }
+          return acc;
+        },
+        {} as { [key: string]: { prompt?: string; system?: string } },
+      );
+      this.learningConfigurations = full;
+      this.userKeys = keys;
 
-        if (this.kb) {
-          this.kbForm = this.getKbForm(promptsValues);
-          this.updatePrompts(this.currentConfig['generative_model'] || '');
-          this.ownKey = this.hasOwnKey();
-          this.formReady.next();
-          this.cdr?.markForCheck();
-        }
-      });
+      if (this.kb) {
+        this.kbForm = this.getKbForm(promptsValues);
+        this.updatePrompts(this.currentConfig['generative_model'] || '');
+        this.ownKey = this.hasOwnKey();
+        this.formReady.next();
+      }
+      this.cdr.markForCheck();
+    });
   }
 
   private getKbForm(promptsValues: { [p: string]: { prompt?: string; system?: string } }) {

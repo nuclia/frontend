@@ -31,7 +31,7 @@ function getSlugs(sdk: SDKService, accountId: string, kbId?: string) {
     switchMap((accountSlug) => {
       if (!accountSlug) throw new Error();
       if (kbId) {
-        return sdk.nuclia.db.getKnowledgeBoxes(accountSlug!).pipe(
+        return sdk.nuclia.db.getKnowledgeBoxes(accountSlug).pipe(
           map((kbs) => ({
             accountSlug,
             kbSlug: kbs.find((kb) => kb.id === kbId)?.slug,

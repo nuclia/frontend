@@ -131,16 +131,12 @@ export class SelectKbComponent implements OnDestroy {
     if (kb.slug && kb.role_on_kb) {
       const kbSlug = kb.slug;
       this.sdk.nuclia.options.knowledgeBox = kb.id;
-      if (this.sdk.useRegionalSystem) {
-        this.sdk.nuclia.options.zone = kb.zone;
-      }
+
       if (!this.standalone) {
-        forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([zones, account]) => {
-          if (!this.sdk.useRegionalSystem) {
-            this.sdk.nuclia.options.zone = zones[kb.zone];
-          }
-          this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]);
-        });
+        this.sdk.nuclia.options.zone = kb.zone;
+        forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([zones, account]) =>
+          this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]),
+        );
       } else {
         this.account
           .pipe(take(1))

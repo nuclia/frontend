@@ -48,8 +48,6 @@ export class KnowledgeBox implements IKnowledgeBox {
   protected nuclia: INuclia;
   private tempToken?: { token: string; expiration: number };
 
-  protected useRegionalSystem = true;
-
   /**
    * The Knowledge Box path on the regional API.
    *
@@ -428,28 +426,19 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
     let request: Observable<{ token: string }> | undefined;
     if (!this.nuclia.options.standalone) {
-      if (this.useRegionalSystem) {
-        const account = this.nuclia.options.accountId;
-        const zone = this.nuclia.options.zone;
-        if (!account || !zone) {
-          throw new Error('Account id and zone are required to get a temp token');
-        }
-        request = this.nuclia.rest.post<{ token: string }>(
-          `/account/${account}/kb/${this.id}/ephemeral_tokens`,
-          {},
-          undefined,
-          undefined,
-          undefined,
-          zone,
-        );
-      } else {
-        const account = this.account || this.nuclia.options.account;
-        const kbSlug = this.slug || this.nuclia.options.kbSlug;
-        if (!account || !kbSlug) {
-          throw new Error('Account and KB slug are required to get a temp token');
-        }
-        request = this.nuclia.rest.post<{ token: string }>(`/account/${account}/kb/${kbSlug}/ephemeral_tokens`, {});
+      const account = this.nuclia.options.accountId;
+      const zone = this.nuclia.options.zone;
+      if (!account || !zone) {
+        throw new Error('Account id and zone are required to get a temp token');
       }
+      request = this.nuclia.rest.post<{ token: string }>(
+        `/account/${account}/kb/${this.id}/ephemeral_tokens`,
+        {},
+        undefined,
+        undefined,
+        undefined,
+        zone,
+      );
     } else {
       request = this.nuclia.rest.get<{ token: string }>('/temp-access-token');
     }
@@ -481,32 +470,28 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   getUsers(): Observable<FullKbUser[]> {
-    if (this.useRegionalSystem) {
-      return forkJoin([
-        this.nuclia.db.getAccountUsers(this.account),
-        this.nuclia.rest.get<KbUser[]>(
-          `/account/${this.nuclia.options.accountId}/kb/${this.id}/users`,
-          undefined,
-          undefined,
-          this.nuclia.options.zone,
-        ),
-      ]).pipe(
-        map(([accountUsers, kbUsers]) => {
-          return kbUsers.reduce((fullKbUsers, kbUser) => {
-            const accountUser = accountUsers.find((accountUser) => accountUser.id === kbUser.id);
-            if (accountUser) {
-              fullKbUsers.push({
-                ...accountUser,
-                role: kbUser.role,
-              });
-            }
-            return fullKbUsers;
-          }, [] as FullKbUser[]);
-        }),
-      );
-    } else {
-      return this.nuclia.rest.get<FullKbUser[]>(`/account/${this.account}/kb/${this.slug}/users`);
-    }
+    return forkJoin([
+      this.nuclia.db.getAccountUsers(this.account),
+      this.nuclia.rest.get<KbUser[]>(
+        `/account/${this.nuclia.options.accountId}/kb/${this.id}/users`,
+        undefined,
+        undefined,
+        this.nuclia.options.zone,
+      ),
+    ]).pipe(
+      map(([accountUsers, kbUsers]) => {
+        return kbUsers.reduce((fullKbUsers, kbUser) => {
+          const accountUser = accountUsers.find((accountUser) => accountUser.id === kbUser.id);
+          if (accountUser) {
+            fullKbUsers.push({
+              ...accountUser,
+              role: kbUser.role,
+            });
+          }
+          return fullKbUsers;
+        }, [] as FullKbUser[]);
+      }),
+    );
   }
 }
 
@@ -551,12 +536,14 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   protected getKbEndpointAndZone() {
     let endpoint: string;
     let zone: string | undefined;
-    if (this.useRegionalSystem) {
+
+    if (this.account === 'local') {
+      endpoint = `/kb/${this.id}`;
+    } else {
       endpoint = `/account/${this.nuclia.options.accountId}/kb/${this.id}`;
       zone = this.nuclia.options.zone;
-    } else {
-      endpoint = this.account === 'local' ? `/kb/${this.id}` : `/account/${this.account}/kb/${this.slug}`;
     }
+
     return { endpoint, zone };
   }
 

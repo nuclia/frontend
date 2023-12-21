@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { combineLatest, filter, map, Observable, shareReplay, switchMap } from 'rxjs';
+import { filter, Observable, shareReplay, switchMap } from 'rxjs';
 import { ManagerStore } from '../../../manager.store';
-import { AccountDetails, KbCounters, KbSummary } from '../../account-ui.models';
+import { KbCounters, KbSummary } from '../../account-ui.models';
 import { AccountService } from '../../account.service';
 
 @Component({
@@ -11,10 +11,9 @@ import { AccountService } from '../../account.service';
 })
 export class KnowledgeBoxesComponent {
   kbList: Observable<KbSummary[]> = this.store.kbList;
-  counters: Observable<KbCounters> = combineLatest([this.store.accountDetails, this.kbList]).pipe(
-    filter(([account, kbs]) => !!account && kbs.length > 0),
-    map(([account, kbs]) => [account, kbs] as [AccountDetails, KbSummary[]]),
-    switchMap(([account, kbs]) => this.accountService.loadKbCounters((account as AccountDetails).id, kbs)),
+  counters: Observable<KbCounters> = this.kbList.pipe(
+    filter((kbs) => kbs.length > 0),
+    switchMap((kbs) => this.accountService.loadKbCounters(kbs)),
     shareReplay(),
   );
 

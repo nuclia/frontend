@@ -26,7 +26,6 @@ export class AccountService {
   private globalService = inject(GlobalAccountService);
   private regionalService = inject(RegionalAccountService);
   private store = inject(ManagerStore);
-  private useRegionalSystem = true;
 
   private _accountTypes = this.coreAccountService.getAccountTypes().pipe(shareReplay());
 
@@ -46,38 +45,26 @@ export class AccountService {
    * Get account details and set `AccountDetails` and `KbList` in store.
    */
   loadAccountDetails(accountId: string): Observable<AccountDetails> {
-    return this.useRegionalSystem
-      ? this.regionalService.getAccount(accountId).pipe(
-          switchMap((account) => {
-            const accountDetails = this.regionalService.mapAccountToDetails(account);
-            this.store.setAccountDetails(accountDetails);
-            this.store.setBlockedFeatures(account.blocked_features);
-            return this.regionalService.getKbList(account.slug).pipe(
-              map((kbList) => {
-                this.store.setKbList(kbList);
-                return accountDetails;
-              }),
-            );
-          }),
-        )
-      : this.globalService.getAccount(accountId).pipe(
-          map((extendedAccount) => {
-            const accountDetails = this.globalService.mapExtendedToDetails(extendedAccount);
-            this.store.setAccountDetails(accountDetails);
-            this.store.setKbList(this.globalService.mapExtendedToKbList(extendedAccount));
-            this.store.setBlockedFeatures(extendedAccount.blocked_features);
+    return this.regionalService.getAccount(accountId).pipe(
+      switchMap((account) => {
+        const accountDetails = this.regionalService.mapAccountToDetails(account);
+        this.store.setAccountDetails(accountDetails);
+        this.store.setBlockedFeatures(account.blocked_features);
+        return this.regionalService.getKbList(account.slug).pipe(
+          map((kbList) => {
+            this.store.setKbList(kbList);
             return accountDetails;
           }),
         );
+      }),
+    );
   }
 
   /**
    * Load counters for all the KB listed
    */
-  loadKbCounters(accountId: string, kbList: KbSummary[]): Observable<KbCounters> {
-    return this.useRegionalSystem
-      ? this.regionalService.loadKbCounters(kbList)
-      : this.globalService.loadKbCounters(accountId, kbList);
+  loadKbCounters(kbList: KbSummary[]): Observable<KbCounters> {
+    return this.regionalService.loadKbCounters(kbList);
   }
 
   /**
@@ -112,110 +99,70 @@ export class AccountService {
    * Load KB details
    */
   loadKb(kbSummary: KbSummary): Observable<KbDetails> {
-    return this.useRegionalSystem
-      ? this.store.accountDetails.pipe(
-          switchMap((accountDetails) =>
-            accountDetails ? of(accountDetails) : this.loadAccountDetails(kbSummary.accountId),
-          ),
-          switchMap((accountDetails) => this.regionalService.getKbDetails(kbSummary, accountDetails)),
-          map((kbDetails) => {
-            this.store.setKbDetails(kbDetails);
-            return kbDetails;
-          }),
-        )
-      : this.globalService.getKb(kbSummary.accountId, kbSummary.id).pipe(
-          map((kb) => {
-            const kbDetails = this.globalService.mapKbSummaryToDetails(kbSummary.accountId, kb);
-            this.store.setKbDetails(kbDetails);
-            return kbDetails;
-          }),
-        );
+    return this.store.accountDetails.pipe(
+      switchMap((accountDetails) =>
+        accountDetails ? of(accountDetails) : this.loadAccountDetails(kbSummary.accountId),
+      ),
+      switchMap((accountDetails) => this.regionalService.getKbDetails(kbSummary, accountDetails)),
+      map((kbDetails) => {
+        this.store.setKbDetails(kbDetails);
+        return kbDetails;
+      }),
+    );
   }
 
   /**
    * Update KB slug and/or title and update the store accordingly
    */
   updateKb(kbSummary: KbSummary, data: { slug?: string; title?: string }): Observable<KbDetails> {
-    return this.useRegionalSystem
-      ? this.regionalService.updateKb(kbSummary, data).pipe(
-          tap(() => console.log(`update kb done`)),
-          switchMap(() =>
-            // load Account Details to update the kb list on the navigation panel
-            forkJoin([
-              this.loadAccountDetails(kbSummary.accountId).pipe(take(1)),
-              this.loadKb(kbSummary).pipe(take(1)),
-            ]),
-          ),
-          map(([, kbDetails]) => kbDetails),
-        )
-      : this.globalService.updateKb(kbSummary.accountId, kbSummary.id, data).pipe(
-          switchMap(() =>
-            // load Account Details to update the kb list on the navigation panel
-            forkJoin([this.loadAccountDetails(kbSummary.accountId), this.loadKb(kbSummary)]).pipe(
-              map(([, kbDetails]) => kbDetails),
-            ),
-          ),
-        );
+    return this.regionalService.updateKb(kbSummary, data).pipe(
+      tap(() => console.log(`update kb done`)),
+      switchMap(() =>
+        // load Account Details to update the kb list on the navigation panel
+        forkJoin([this.loadAccountDetails(kbSummary.accountId).pipe(take(1)), this.loadKb(kbSummary).pipe(take(1))]),
+      ),
+      map(([, kbDetails]) => kbDetails),
+    );
   }
 
   /**
    * Add user to a KB and update the store accordingly
    */
   addKbUser(kbSummary: KbSummary, userId: string): Observable<KbDetails> {
-    return this.useRegionalSystem
-      ? this.regionalService
-          .updateKbUsers(kbSummary, { add: [{ id: userId, role: 'SMEMBER' }], update: [], delete: [] })
-          .pipe(switchMap(() => this.loadKb(kbSummary)))
-      : this.globalService
-          .addKbUser(kbSummary.accountId, kbSummary.id, userId)
-          .pipe(switchMap(() => this.loadKb(kbSummary)));
+    return this.regionalService
+      .updateKbUsers(kbSummary, { add: [{ id: userId, role: 'SMEMBER' }], update: [], delete: [] })
+      .pipe(switchMap(() => this.loadKb(kbSummary)));
   }
 
   /**
    * Update user role on a KB and update the store accordingly
    */
   updateKbUser(kbSummary: KbSummary, userId: string, newRole: KbRoles): Observable<KbDetails> {
-    return this.useRegionalSystem
-      ? this.regionalService
-          .updateKbUsers(kbSummary, { add: [], update: [{ id: userId, role: newRole }], delete: [] })
-          .pipe(switchMap(() => this.loadKb(kbSummary)))
-      : this.globalService
-          .updateKbUser(kbSummary.accountId, kbSummary.id, userId, newRole)
-          .pipe(switchMap(() => this.loadKb(kbSummary)));
+    return this.regionalService
+      .updateKbUsers(kbSummary, { add: [], update: [{ id: userId, role: newRole }], delete: [] })
+      .pipe(switchMap(() => this.loadKb(kbSummary)));
   }
 
   /**
    * Remove user from a KB and update the store accordingly
    */
   removeKbUser(kbSummary: KbSummary, userId: string): Observable<KbDetails> {
-    return this.useRegionalSystem
-      ? this.regionalService
-          .updateKbUsers(kbSummary, { add: [], update: [], delete: [userId] })
-          .pipe(switchMap(() => this.loadKb(kbSummary)))
-      : this.globalService
-          .removeKbUser(kbSummary.accountId, kbSummary.id, userId)
-          .pipe(switchMap(() => this.loadKb(kbSummary)));
+    return this.regionalService
+      .updateKbUsers(kbSummary, { add: [], update: [], delete: [userId] })
+      .pipe(switchMap(() => this.loadKb(kbSummary)));
   }
 
   /**
    * Load account users and add them to the store
    */
   loadAccountUsers(accountId: string): Observable<AccountUser[]> {
-    return this.useRegionalSystem
-      ? this.regionalService.getAccount(accountId).pipe(
-          map((account) => {
-            const users = this.regionalService.mapExtendedAccountToUsers(account);
-            this.store.setAccountUsers(users);
-            return users;
-          }),
-        )
-      : this.globalService.getAccount(accountId).pipe(
-          map((extendedAccount) => {
-            const accountUsers = this.globalService.mapExtendedAccountToUsers(extendedAccount);
-            this.store.setAccountUsers(accountUsers);
-            return accountUsers;
-          }),
-        );
+    return this.regionalService.getAccount(accountId).pipe(
+      map((account) => {
+        const users = this.regionalService.mapExtendedAccountToUsers(account);
+        this.store.setAccountUsers(users);
+        return users;
+      }),
+    );
   }
 
   /**

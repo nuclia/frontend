@@ -57,16 +57,12 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   }
 
   manageKb(kb: IKnowledgeBoxItem): void {
-    if (this.sdk.useRegionalSystem) {
-      this.sdk.nuclia.options.zone = kb.zone;
-    }
+    this.sdk.nuclia.options.zone = kb.zone;
     this.router.navigate([this.navigation.getKbManageUrl(this.account?.slug || '', kb.slug || '')]);
   }
 
   manageKbUsers(kb: IKnowledgeBoxItem): void {
-    if (this.sdk.useRegionalSystem) {
-      this.sdk.nuclia.options.zone = kb.zone;
-    }
+    this.sdk.nuclia.options.zone = kb.zone;
     if (kb.role_on_kb) {
       this.router.navigate([this.navigation.getKbUsersUrl(this.account!.slug, kb.slug!)]);
     } else {
@@ -75,9 +71,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   }
 
   goToKb(kb: IKnowledgeBoxItem) {
-    if (this.sdk.useRegionalSystem) {
-      this.sdk.nuclia.options.zone = kb.zone;
-    }
+    this.sdk.nuclia.options.zone = kb.zone;
     this.router.navigate([this.navigation.getKbUrl(this.account?.slug || '', kb.slug || '')]);
   }
 
@@ -125,9 +119,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
         filter((confirm) => !!confirm),
         switchMap(() => {
           this.setLoading(true);
-          if (this.sdk.useRegionalSystem) {
-            this.sdk.nuclia.options.zone = kb.zone;
-          }
+          this.sdk.nuclia.options.zone = kb.zone;
           return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).modify({ state });
         }),
         tap(() => this.sdk.refreshKbList()),
@@ -157,9 +149,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
         filter((confirm) => !!confirm),
         switchMap(() => {
           this.setLoading(true);
-          if (this.sdk.useRegionalSystem) {
-            this.sdk.nuclia.options.zone = kb.zone;
-          }
+          this.sdk.nuclia.options.zone = kb.zone;
           return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).delete();
         }),
         takeUntil(this.unsubscribeAll),

@@ -40,14 +40,8 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
                 );
           } else if (kbs.length === 1 && !selectService.standalone) {
             // if there's only one KB, and we're not in NucliaDB admin app, then we automatically select the KB
-            if (sdk.useRegionalSystem) {
-              sdk.nuclia.options.zone = kbs[0].zone;
-            } else {
-              const zone = zones.find((zone) => zone.id === kbs[0].zone);
-              if (zone) {
-                sdk.nuclia.options.zone = zone.slug;
-              }
-            }
+            sdk.nuclia.options.zone = kbs[0].zone;
+
             return of(router.createUrlTree([navigation.getKbUrl(accountSlug, kbs[0].slug || '')]));
           } else {
             return of(true);

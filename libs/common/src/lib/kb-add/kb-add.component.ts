@@ -98,11 +98,7 @@ export class KbAddComponent implements OnInit {
       description: this.kbForm.value.description,
       learning_configuration,
     };
-    if (this.sdk.useRegionalSystem) {
-      this.sdk.nuclia.options.zone = this.zones.find((zone) => zone.id === this.kbForm?.value.zone)?.slug;
-    } else {
-      payload.zone = this.kbForm.value.zone;
-    }
+    this.sdk.nuclia.options.zone = this.zones.find((zone) => zone.id === this.kbForm?.value.zone)?.slug;
     this.saving = true;
     const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
     this.error = '';

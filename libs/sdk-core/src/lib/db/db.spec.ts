@@ -7,7 +7,13 @@ describe('Db', () => {
   let db: Db;
 
   beforeEach(() => {
-    const nuclia = new Nuclia({ backend: 'http://here', zone: 'europe-1', account: 'dc', knowledgeBox: 'gotham' });
+    const nuclia = new Nuclia({
+      backend: 'http://here',
+      zone: 'europe-1',
+      account: 'dc',
+      knowledgeBox: 'gotham',
+      accountId: 'dc-id',
+    });
     db = new Db({
       ...nuclia,
       auth: {
@@ -30,7 +36,7 @@ describe('Db', () => {
     });
   });
 
-  it.skip('should get knowledge boxes', (done) => {
+  it('should get knowledge boxes', (done) => {
     mockFetch([
       {
         id: 'qwerty',
@@ -42,8 +48,21 @@ describe('Db', () => {
       },
     ]);
     db.getKnowledgeBoxes('my-account').subscribe((res) => {
+      expect(global.fetch).toHaveBeenCalledTimes(3);
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/account/my-account/kbs',
+        'http://here/v1/zones',
+        expect.objectContaining({
+          method: 'GET',
+        }),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        'http://here/v1/account/my-account/index/kbs',
+        expect.objectContaining({
+          method: 'GET',
+        }),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        'http://here/v1/account/dc-id/kbs',
         expect.objectContaining({
           method: 'GET',
         }),
@@ -53,7 +72,7 @@ describe('Db', () => {
     });
   });
 
-  it.skip('should get a knowledge box', (done) => {
+  it('should get a knowledge box', (done) => {
     mockFetch({
       id: 'qwerty',
       slug: 'geb',
@@ -64,7 +83,7 @@ describe('Db', () => {
     });
     db.getKnowledgeBox().subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://here/v1/account/dc/kb/gotham',
+        'http://here/v1/account/dc-id/kb/gotham',
         expect.objectContaining({
           method: 'GET',
         }),
