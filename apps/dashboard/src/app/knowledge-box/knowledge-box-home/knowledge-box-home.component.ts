@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import {
   AppService,
@@ -10,11 +10,12 @@ import {
 } from '@flaps/common';
 import { MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
-import { combineLatest, map, Observable, shareReplay, switchMap, take } from 'rxjs';
+import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { Counters, IResource, RESOURCE_STATUS, SortField, StatsType } from '@nuclia/core';
 import { UPGRADABLE_ACCOUNT_TYPES } from '../../account/billing/billing.service';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -22,12 +23,21 @@ import { UsageModalComponent } from './kb-usage/usage-modal.component';
   styleUrls: ['./knowledge-box-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KnowledgeBoxHomeComponent {
+export class KnowledgeBoxHomeComponent implements OnDestroy {
   protected readonly openDesktop = openDesktop;
+  private unsubscribeAll = new Subject<void>();
 
   locale: Observable<string> = this.app.currentLocale;
   account = this.sdk.currentAccount;
   currentKb = this.sdk.currentKb;
+
+  isKbAdmin = this.currentKb.pipe(map((kb) => !!kb.admin));
+  isKbContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isAccountManager = this.account.pipe(
+    map((account) => {
+      return account.can_manage_account;
+    }),
+  );
 
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
@@ -39,27 +49,31 @@ export class KnowledgeBoxHomeComponent {
   );
   counters: Observable<Counters> = this.sdk.counters;
 
-  processingChart = this.currentKb.pipe(
+  processingChart = this.isAccountManager.pipe(
+    filter((isManager) => isManager),
+    switchMap(() => this.currentKb),
     switchMap((kb) => this.metrics.getChartData(StatsType.PROCESSING_TIME, false, kb.id)),
+    takeUntil(this.unsubscribeAll),
     shareReplay(),
   );
-  searchChart = this.currentKb.pipe(
+  searchChart = this.isAccountManager.pipe(
+    filter((isManager) => isManager),
+    switchMap(() => this.currentKb),
     switchMap((kb) => this.metrics.getChartData(StatsType.SEARCHES, false, kb.id)),
+    takeUntil(this.unsubscribeAll),
     shareReplay(),
   );
-  searchQueriesCounts = this.currentKb.pipe(switchMap((kb) => this.metrics.getSearchQueriesCountForKb(kb.id)));
+  searchQueriesCounts = this.isAccountManager.pipe(
+    filter((isManager) => isManager),
+    switchMap(() => this.currentKb),
+    switchMap((kb) => this.metrics.getSearchQueriesCountForKb(kb.id)),
+    takeUntil(this.unsubscribeAll),
+  );
 
-  isKbAdmin = this.currentKb.pipe(map((kb) => !!kb.admin));
-  isKbContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   kbUrl = this.currentKb.pipe(
     map((kb) => {
       const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
       return this.navigationService.getKbUrl(kb.account, kbSlug);
-    }),
-  );
-  isAccountManager = this.account.pipe(
-    map((account) => {
-      return account.can_manage_account;
     }),
   );
   isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app');
@@ -121,6 +135,11 @@ export class KnowledgeBoxHomeComponent {
     private metrics: MetricsService,
     private modal: SisModalService,
   ) {}
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
 
   copyEndpoint() {
     this.endpoint.pipe(take(1)).subscribe((endpoint) => this.copyToClipboard('endpoint', endpoint));
