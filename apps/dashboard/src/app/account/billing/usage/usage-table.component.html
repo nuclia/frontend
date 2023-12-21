@@ -49,7 +49,7 @@
       @if (usage.invoice_items['ai-tokens-used']; as aiTokens) {
         <pa-table-row>
           <pa-table-cell>{{ 'billing.parameter.ai-tokens-used' | translate }}*</pa-table-cell>
-          <pa-table-cell>{{ aiTokens.current_usage | number }}</pa-table-cell>
+          <pa-table-cell>{{ aiTokens.current_usage / tokensPerRequest | number: '1.0-0' }}</pa-table-cell>
           <pa-table-cell>
             <div class="cost">{{ aiTokens.over_cost | currency: usage.currency }}</div>
           </pa-table-cell>

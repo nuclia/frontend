@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 import { combineLatest, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
 import { AccountService, BillingService, Currency } from '@flaps/core';
-import { SubscriptionService } from '../subscription.service';
+import { SubscriptionService, TOKENS_PER_REQUEST } from '../subscription.service';
 import { WINDOW } from '@ng-web-apis/common';
+import { AccountTypes } from '@nuclia/core';
 
 @Component({
   selector: 'app-subscriptions',
@@ -23,6 +24,8 @@ export class SubscriptionsComponent implements OnDestroy {
         customer ? this.billing.getCurrency(customer.billing_details?.country || '') : of(null),
       ),
     );
+  tokensPerRequest = TOKENS_PER_REQUEST;
+  tiers: AccountTypes[] = ['v3starter', 'v3fly', 'v3growth', 'v3enterprise'];
   unsubscribeAll = new Subject<void>();
 
   constructor(

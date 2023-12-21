@@ -47,7 +47,7 @@
       <div>{{ token.card.brand }}</div>
       <div>**** **** **** {{ token.card.last4 }}</div>
     </div>
-    @if (customer?.billing_details.country === 'ES') {
+    @if (customer?.billing_details?.country === 'ES') {
       <div class="body-m">{{ 'billing.without_vat' | translate }}</div>
     }
   </pa-modal-content>

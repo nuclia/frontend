@@ -30,7 +30,7 @@
           <div class="plan-name">Starter</div>
           @if ((prices | async)?.['v3starter']; as starter) {
             <div class="price">
-              <span>{{ starter?.recurring.month.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+              <span>{{ starter?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
               <span class="unit">/{{ 'billing.month' | translate }}</span>
             </div>
           }
@@ -51,8 +51,8 @@
           <div class="plan-name">Fly</div>
           @if ((prices | async)?.['v3fly']; as fly) {
             <div class="price">
-              <span>{{ fly?.recurring.year.price | currency: currency : 'symbol' : '1.0-0' }}</span>
-              <span class="unit">/{{ 'billing.year' | translate }}</span>
+              <span>{{ fly?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+              <span class="unit">/{{ 'billing.month' | translate }}</span>
             </div>
           }
           @if ((accountType | async) === 'stash-trial') {
@@ -93,52 +93,27 @@
       </tr>
       <tr>
         <td>{{ 'billing.max-file-size' | translate }}</td>
-        <td>
-          @if (defaults['v3starter'].upload_limit_max_non_media_file_size; as max) {
-            {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
-          }
-        </td>
-        <td>
-          @if (defaults['v3fly'].upload_limit_max_non_media_file_size; as max) {
-            {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
-          }
-        </td>
-        <td>
-          @if (defaults['v3growth'].upload_limit_max_non_media_file_size; as max) {
-            {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
-          }
-        </td>
-        <td>
-          @if (defaults['v3enterprise'].upload_limit_max_non_media_file_size; as max) {
-            {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
-          }
-        </td>
+        @for (tier of tiers; track tier) {
+          <td>
+            @if (defaults[tier].upload_limit_max_non_media_file_size; as max) {
+              {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
+            }
+          </td>
+        }
       </tr>
       <tr>
         <td>{{ 'account.knowledgeboxes' | translate }}</td>
-        <td>
-          {{ defaults['v3starter'].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults['v3starter'].max_kbs }}
-        </td>
-        <td>
-          {{ defaults['v3fly'].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults['v3fly'].max_kbs }}
-        </td>
-        <td>
-          {{ defaults['v3growth'].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults['v3growth'].max_kbs }}
-        </td>
-        <td>
-          {{
-            defaults['v3enterprise'].max_kbs === -1
-              ? ('billing.unlimited' | translate)
-              : defaults['v3enterprise'].max_kbs
-          }}
-        </td>
+        @for (tier of tiers; track tier) {
+          <td>{{ defaults[tier].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults[tier].max_kbs }}</td>
+        }
       </tr>
       <tr>
         <td>{{ 'billing.usage.consumption' | translate }}*</td>
-        <td>{{ 0.05 | currency: currency }}</td>
-        <td>{{ 0.05 | currency: currency }}</td>
-        <td>{{ 0.05 | currency: currency }}</td>
-        <td>{{ 0.05 | currency: currency }}</td>
+        @for (tier of tiers; track tier) {
+          @if ((prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price; as price) {
+            <td>{{ price * tokensPerRequest | currency: currency }}</td>
+          }
+        }
       </tr>
       <tr>
         <td>NucliaDB</td>

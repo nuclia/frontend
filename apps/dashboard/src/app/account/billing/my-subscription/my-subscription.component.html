@@ -7,12 +7,12 @@
       *ngIf="prices$ | async as prices">
       <div class="subscription-tier">
         <div class="title-l">{{ 'account.type.' + (type | async) | translate }}</div>
-        @if (!doNotShowPrice.includes(type | async)) {
+        @if (!doNotShowPrice.includes((type | async) || '')) {
           @if (prices.recurring; as recurring) {
             @if (currency$ | async; as currency) {
               <div>
                 <span class="title-l price">
-                  {{ ((monthly | async) ? recurring.month.price : recurring.year.price) | currency: currency }}
+                  {{ ((monthly | async) ? recurring.month?.price : recurring.year?.price) | currency: currency }}
                 </span>
                 <span class="unit">/{{ ((monthly | async) ? 'billing.month' : 'billing.year') | translate }}</span>
               </div>
@@ -48,13 +48,13 @@
             </pa-table-cell>
             <pa-table-cell>
               <span class="body-m">
-                {{ prices.usage[param].threshold | number }}
+                {{ prices.usage[param]?.threshold | number }}
                 {{ param === 'media' ? ('billing.hours' | translate) : '' }}
               </span>
             </pa-table-cell>
             <pa-table-cell>
               <span>
-                <span class="body-m">{{ prices.usage[param].price | currency: currency : 'symbol' : '1.2-6' }}</span>
+                <span class="body-m">{{ prices.usage[param]?.price | currency: currency : 'symbol' : '1.2-6' }}</span>
                 <span class="unit">
                   /{{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
                 </span>
