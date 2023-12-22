@@ -40,6 +40,7 @@ import { ConfluenceConnector } from './sources/confluence';
 import { OAuthConnector } from './sources/oauth';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
+export const ACCOUNT_ID_KEY = 'NUCLIA_ID_ACCOUNT';
 export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 
@@ -284,12 +285,17 @@ export class SyncService {
     return source && !(source.connectorId === 'sitemap' || (source.connectorId === 'folder' && source.permanentSync));
   }
 
-  getAccountId(): string {
+  getAccountSlug(): string {
     return localStorage.getItem(ACCOUNT_KEY) || '';
   }
 
-  selectAccount(account: string) {
+  getAccountId(): string {
+    return localStorage.getItem(ACCOUNT_ID_KEY) || '';
+  }
+
+  selectAccount(account: string, accountId: string) {
     localStorage.setItem(ACCOUNT_KEY, account);
+    localStorage.setItem(ACCOUNT_ID_KEY, accountId);
     this.setAccount();
   }
 
@@ -300,7 +306,10 @@ export class SyncService {
         take(1),
         switchMap(() =>
           this.sdk.nuclia.db.getAccount(this.getAccountId()).pipe(
-            tap((account) => (this.sdk.nuclia.options.accountType = account.type)),
+            tap((account) => {
+              this.sdk.nuclia.options.accountType = account.type;
+              this.sdk.nuclia.options.account = account.slug;
+            }),
             switchMap((account) => this.sdk.nuclia.rest.getZoneSlug(account.zone)),
             tap((zone) => (this.sdk.nuclia.options.zone = zone)),
           ),
@@ -341,9 +350,9 @@ export class SyncService {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
-        this.sdk.nuclia.db.getKnowledgeBoxes(account.slug).pipe(
+        this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id).pipe(
           map((kbs) => kbs.find((kb) => kb.id === kbId)),
-          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kb?.slug || '')),
+          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kb?.id || '')),
         ),
       ),
     );
@@ -448,8 +457,13 @@ export class SyncService {
     return this.http.delete<void>(`${this._syncServer.getValue()}/logs`);
   }
 
-  logout() {
+  cleanUpAccount() {
     localStorage.removeItem(ACCOUNT_KEY);
+    localStorage.removeItem(ACCOUNT_ID_KEY);
+  }
+
+  logout() {
+    this.cleanUpAccount();
     this.sdk.nuclia.auth.logout();
   }
 

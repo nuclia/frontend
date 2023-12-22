@@ -117,7 +117,7 @@ export interface IDb {
   getAccount(): Observable<Account>;
   getAccount(account?: string): Observable<Account>;
   getStandaloneKbs(): Observable<IStandaloneKb[]>;
-  getKnowledgeBoxes(accountSlug: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug: string, accountId?: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account: string, knowledgeBoxId: string): Observable<WritableKnowledgeBox>;

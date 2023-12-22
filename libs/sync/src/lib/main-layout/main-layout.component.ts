@@ -30,7 +30,7 @@ export class MainLayoutComponent implements OnDestroy {
     if (this.config.staticConf.client === 'dashboard') {
       // Automatically select current account (In dashboard there's no account selection page like in Desktop app)
       this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
-        this.sync.selectAccount(account.slug);
+        this.sync.selectAccount(account.slug, account.id);
       });
 
       // Check if it's a redirect from OAuth server

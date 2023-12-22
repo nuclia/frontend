@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { SyncService } from '@nuclia/sync';
-import { MockModule} from 'ng-mocks';
+import { MockModule } from 'ng-mocks';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 import { SelectAccountComponent } from './account.component';
@@ -22,7 +22,7 @@ describe('SelectAccountComponent', () => {
         {
           provide: SDKService,
           useValue: {
-            nuclia: { db: { getAccounts: () => of([{ slug: 'account1', title: 'Account 1' }]) } },
+            nuclia: { db: { getAccounts: () => of([{ slug: 'account1', id: '123', title: 'Account 1' }]) } },
           },
         },
       ],
@@ -39,6 +39,6 @@ describe('SelectAccountComponent', () => {
   it('should select account', () => {
     const element = fixture.debugElement.nativeElement.querySelector('li');
     element.click();
-    expect(sync.selectAccount).toHaveBeenCalledWith('account1');
+    expect(sync.selectAccount).toHaveBeenCalledWith('account1', '123');
   });
 });

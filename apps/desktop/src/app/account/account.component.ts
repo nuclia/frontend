@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ACCOUNT_KEY, SyncService } from '@nuclia/sync';
+import { SyncService } from '@nuclia/sync';
 import { SDKService } from '@flaps/core';
 import { catchError, of, tap } from 'rxjs';
 
@@ -23,15 +23,19 @@ export class SelectAccountComponent {
     }),
   );
 
-  constructor(private sdk: SDKService, private sync: SyncService, private router: Router) {}
+  constructor(
+    private sdk: SDKService,
+    private sync: SyncService,
+    private router: Router,
+  ) {}
 
-  selectAccount(account: string) {
-    this.sync.selectAccount(account);
+  selectAccount(account: string, accountId: string) {
+    this.sync.selectAccount(account, accountId);
     this.router.navigate(['/']);
   }
 
   logout() {
-    localStorage.removeItem(ACCOUNT_KEY);
+    this.sync.cleanUpAccount();
     this.sdk.nuclia.auth.logout();
     this.router.navigate(['/']);
   }

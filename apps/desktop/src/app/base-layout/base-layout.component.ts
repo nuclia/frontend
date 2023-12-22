@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { catchError, filter, of, switchMap, take } from 'rxjs';
-import { ACCOUNT_KEY, SyncService } from '@nuclia/sync';
+import { SyncService } from '@nuclia/sync';
 
 @Component({
   selector: 'nde-base-layout',
@@ -24,12 +24,13 @@ export class BaseLayoutComponent {
         filter((yes) => yes),
         take(1),
         switchMap(() => {
+          const accountSlug = this.sync.getAccountSlug();
           const accountId = this.sync.getAccountId();
           return !accountId
             ? of(false)
-            : this.sdk.nuclia.db.getKnowledgeBoxes(accountId).pipe(
+            : this.sdk.nuclia.db.getKnowledgeBoxes(accountSlug, accountId).pipe(
                 catchError(() => {
-                  localStorage.removeItem(ACCOUNT_KEY);
+                  this.sync.cleanUpAccount();
                   this.sdk.nuclia.auth.logout();
                   this.router.navigate(['/']);
                   return of(false);
