@@ -55,7 +55,7 @@ export class SubscriptionsComponent implements OnDestroy {
   }
 
   contact() {
-    this.window.location.href = 'mailto:support@nuclia.com';
+    this.window.location.href = 'mailto:sales@nuclia.com';
   }
 
   ngOnDestroy() {
