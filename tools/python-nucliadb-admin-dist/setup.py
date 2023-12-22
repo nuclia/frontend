@@ -12,7 +12,7 @@ setup(
     keywords="",
     author="Nuclia",
     author_email="nucliadb@nuclia.com",
-    url="https://github.com/nucliadb/frontend",
+    url="https://github.com/nuclia/frontend",
     packages=["nucliadb_admin_assets"],
     zip_safe=True,
     include_package_data=True,
