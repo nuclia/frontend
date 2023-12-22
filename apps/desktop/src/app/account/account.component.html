@@ -5,7 +5,7 @@
   <ul>
     <li
       *ngFor="let account of accounts | async"
-      (click)="selectAccount(account.slug)">
+      (click)="selectAccount(account.slug, account.id)">
       {{ account.title }}
       <pa-icon
         class="account-arrow"

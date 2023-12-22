@@ -7,7 +7,7 @@ import {
   Field,
   IDestinationConnector,
 } from '../models';
-import { ACCOUNT_KEY } from '../sync.service';
+import { ACCOUNT_ID_KEY, ACCOUNT_KEY } from '../sync.service';
 
 export const NucliaCloudKB: DestinationConnectorDefinition = {
   id: 'nucliacloud',
@@ -59,7 +59,10 @@ class NucliaCloudKBImpl implements IDestinationConnector {
             })),
           ),
         )
-      : this.nuclia.db.getKnowledgeBoxes(localStorage.getItem(ACCOUNT_KEY) || '');
+      : this.nuclia.db.getKnowledgeBoxes(
+          localStorage.getItem(ACCOUNT_KEY) || '',
+          localStorage.getItem(ACCOUNT_ID_KEY) || '',
+        );
     return request.pipe(
       map((kbs) => ({
         id: 'kb',

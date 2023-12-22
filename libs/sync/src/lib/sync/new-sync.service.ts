@@ -350,9 +350,9 @@ export class NewSyncService {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
-        this.sdk.nuclia.db.getKnowledgeBoxes(account.slug).pipe(
+        this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id).pipe(
           map((kbs) => kbs.find((kb) => kb.id === kbId)),
-          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kb?.slug || '')),
+          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kb?.id || '')),
         ),
       ),
     );
