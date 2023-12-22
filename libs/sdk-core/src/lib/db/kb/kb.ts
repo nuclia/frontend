@@ -1,4 +1,4 @@
-import { catchError, forkJoin, from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, forkJoin, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import type {
   ActivityDownloadList,
   Counters,
@@ -369,6 +369,66 @@ export class KnowledgeBox implements IKnowledgeBox {
           };
         }),
       );
+  }
+
+  /**
+   * Performs a question rephrasing operation.
+   * It returns a rephrased question that can be used as input for the `generate()` method.
+   * Example:
+    ```ts
+    nuclia.knowledgeBox
+    .rephrase('Eric lives Toronto')
+    .subscribe((rephrased) => {
+      console.log('rephrased', rephrased); // Where does Eric live?
+    });
+    ```
+  */
+  rephrase(question: string): Observable<string> {
+    return this.nuclia.rest
+      .post<string>(`${this.path}/predict/rephrase`, { question, user_id: 'USER' })
+      .pipe(map((res) => res.slice(0, -1)));
+  }
+
+  /**
+   * Generates a random question about the given resource.
+   * It picks an entities relation from the extracted metadata and generates a question about it.
+   * It returns an empty string if no question can be generated.
+   * Example:
+     ```ts
+      nuclia.knowledgeBox
+      .getResource('09a94719a6444c5a9689394f6ed9baf6', [ResourceProperties.EXTRACTED], [ExtractedDataTypes.METADATA])
+      .pipe(
+        switchMap((resource) => knowledgeBox.generateRandomQuestionAboutResource(resource)),
+      )
+      .subscribe((question) => {
+        console.log('question', question);
+      });
+    ```
+  */
+  generateRandomQuestionAboutResource(resource: Resource): Observable<string> {
+    const fieldWithExtractedMetadata = resource.getFields().filter((field) => !!field.extracted?.metadata);
+    if (fieldWithExtractedMetadata.length === 0) {
+      return throwError(
+        () =>
+          'No field with extracted metadata. Make sure to call `getResource` with `show=extracted` and `extracted=metadata`',
+      );
+    }
+    const firstFieldWithEntitiesRelations = fieldWithExtractedMetadata.find(
+      (field) =>
+        (
+          field.extracted?.metadata?.metadata.relations?.filter(
+            (rel) => rel.from?.type === 'entity' && rel.to.type === 'entity',
+          ) || []
+        ).length > 0,
+    );
+    if (!firstFieldWithEntitiesRelations) {
+      return of('');
+    } else {
+      const relation = firstFieldWithEntitiesRelations.extracted?.metadata?.metadata.relations?.find(
+        (rel) => rel.from?.type === 'entity' && rel.to.type === 'entity',
+      );
+      return this.rephrase(`${relation?.from?.value} ${relation?.label} ${relation?.to.value}`);
+    }
   }
 
   catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse> {

@@ -8,9 +8,9 @@ import { ProcessingComponent } from './processing/processing.component';
 import { ItemToUpload } from './getting-started.models';
 import { NavigationService, UploadService } from '@flaps/common';
 import { filter, forkJoin, map, Observable, of, repeat, Subject, switchMap, take, tap, timer } from 'rxjs';
-import { Resource, RESOURCE_STATUS, UploadStatus } from '@nuclia/core';
+import { ExtractedDataTypes, Resource, RESOURCE_STATUS, ResourceProperties, Search, UploadStatus } from '@nuclia/core';
 import { PostHogService, SDKService } from '@flaps/core';
-import { takeUntil } from 'rxjs/operators';
+import { catchError, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 
@@ -81,11 +81,13 @@ export class GettingStartedComponent implements OnDestroy {
         break;
       case 'search':
         this.postHog.logEvent('getting_started_fully_done');
-        this.kbUrl.subscribe((url) => {
-          this.router.navigate([`${url}/search`]);
-          this.modal.close();
-          localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
-        });
+        forkJoin([this.kbUrl.pipe(take(1)), this.generateExampleQuestion().pipe(take(1))]).subscribe(
+          ([url, question]) => {
+            this.router.navigate([`${url}/search`], { queryParams: { __nuclia_query__: question } });
+            this.modal.close();
+            localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
+          },
+        );
         break;
     }
   }
@@ -255,6 +257,33 @@ export class GettingStartedComponent implements OnDestroy {
             item.uuid = response.uuid;
             return item;
           }),
+        ),
+      ),
+    );
+  }
+
+  private generateExampleQuestion(): Observable<string> {
+    return this.sdk.currentKb.pipe(
+      switchMap((kb) =>
+        kb.catalog('').pipe(
+          map((results) => Object.keys((results as Search.Results)?.resources || {})),
+          switchMap((ids) => {
+            if (ids.length > 0) {
+              return kb.getResource(ids[0], [ResourceProperties.EXTRACTED], [ExtractedDataTypes.METADATA]);
+            } else {
+              return of(null);
+            }
+          }),
+          switchMap((resource) =>
+            resource
+              ? kb.generateRandomQuestionAboutResource(resource).pipe(
+                  catchError((err) => {
+                    console.error(err);
+                    return of('');
+                  }),
+                )
+              : of(''),
+          ),
         ),
       ),
     );
