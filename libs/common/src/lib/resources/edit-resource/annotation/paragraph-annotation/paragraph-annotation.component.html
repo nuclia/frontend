@@ -1,5 +1,5 @@
-<ng-container *ngIf="hasParagraph | async; else noParagraph">
-  <ng-container *ngIf="paragraphLoaded | async; else loading">
+@if (hasParagraph | async) {
+  @if (paragraphLoaded | async) {
     <div class="main-container">
       <div class="search-box-container">
         <pa-input
@@ -60,6 +60,22 @@
             </div>
           </pa-infinite-scroll>
         </div>
+
+        <footer class="form-buttons with-right-panel">
+          <pa-button
+            kind="primary"
+            [disabled]="!isModified || isSaving"
+            (click)="save()">
+            {{ 'generic.save' | translate }}
+          </pa-button>
+
+          <pa-button
+            aspect="basic"
+            [disabled]="!isModified || isSaving"
+            (click)="cancel()">
+            {{ 'generic.cancel' | translate }}
+          </pa-button>
+        </footer>
       </div>
 
       <div class="right-panel-container">
@@ -72,62 +88,45 @@
           </p>
         </div>
 
-        <pa-expander
-          *ngFor="let family of entityFamilies | async"
-          emitOnly
-          [expanded]="(selectedFamily | async)?.id === family.id"
-          (toggleExpander)="selectFamily(family)">
-          <pa-expander-header>
-            <div
-              class="family-color"
-              [style.background-color]="family.color"></div>
-            <span class="family-title">{{ family.title }}</span>
-            ({{ family.entities.length }})
-          </pa-expander-header>
-          <pa-expander-body>
-            <ul
-              class="entity-list"
-              [style.border-left-color]="family.color">
-              <li
-                *ngFor="let entity of family.entities"
-                paEllipsisTooltip>
-                {{ entity }}
-              </li>
-              <li *ngIf="family.entities.length === 0">{{ 'resource.entities.no-entity' | translate }}</li>
-            </ul>
-          </pa-expander-body>
-        </pa-expander>
+        <div class="ner-families-container">
+          @for (family of entityFamilies | async; track family.id) {
+            <pa-expander
+              emitOnly
+              [expanded]="(selectedFamily | async)?.id === family.id"
+              (toggleExpander)="selectFamily(family)">
+              <pa-expander-header>
+                <div
+                  class="family-color"
+                  [style.background-color]="family.color"></div>
+                <span class="family-title">{{ family.title }}</span>
+                ({{ family.entities.length }})
+              </pa-expander-header>
+              <pa-expander-body>
+                <ul
+                  class="entity-list"
+                  [style.border-left-color]="family.color">
+                  <li
+                    *ngFor="let entity of family.entities"
+                    paEllipsisTooltip>
+                    {{ entity }}
+                  </li>
+                  <li *ngIf="family.entities.length === 0">{{ 'resource.entities.no-entity' | translate }}</li>
+                </ul>
+              </pa-expander-body>
+            </pa-expander>
+          }
+        </div>
       </div>
     </div>
-
-    <footer class="form-buttons with-right-panel">
-      <pa-button
-        kind="primary"
-        [disabled]="!isModified || isSaving"
-        (click)="save()">
-        {{ 'generic.save' | translate }}
-      </pa-button>
-
-      <pa-button
-        aspect="basic"
-        [disabled]="!isModified || isSaving"
-        (click)="cancel()">
-        {{ 'generic.cancel' | translate }}
-      </pa-button>
-    </footer>
-  </ng-container>
-</ng-container>
-
-<ng-template #noParagraph>
+  } @else {
+    <div class="main-container">
+      <div class="scrollable-area">
+        <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
+      </div>
+    </div>
+  }
+} @else {
   <div class="main-container">
     <p>{{ 'resource.field-no-paragraph' | translate }}</p>
   </div>
-</ng-template>
-
-<ng-template #loading>
-  <div class="main-container">
-    <div class="scrollable-area">
-      <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
-    </div>
-  </div>
-</ng-template>
+}

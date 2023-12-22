@@ -144,6 +144,22 @@
         </div>
       </section>
     </form>
+
+    <footer class="form-buttons with-right-panel">
+      <pa-button
+        kind="primary"
+        [disabled]="!form.valid || (form.pristine && !this.thumbnailChanged) || isSaving"
+        (click)="save()">
+        {{ 'generic.save' | translate }}
+      </pa-button>
+
+      <pa-button
+        aspect="basic"
+        [disabled]="(form.pristine && !this.thumbnailChanged) || isSaving"
+        (click)="cancel()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+    </footer>
   </div>
 
   <div class="right-panel-container">
@@ -159,19 +175,3 @@
     </ncom-hint>
   </div>
 </div>
-
-<footer class="form-buttons with-right-panel">
-  <pa-button
-    kind="primary"
-    [disabled]="!form.valid || (form.pristine && !this.thumbnailChanged) || isSaving"
-    (click)="save()">
-    {{ 'generic.save' | translate }}
-  </pa-button>
-
-  <pa-button
-    aspect="basic"
-    [disabled]="(form.pristine && !this.thumbnailChanged) || isSaving"
-    (click)="cancel()">
-    {{ 'generic.cancel' | translate }}
-  </pa-button>
-</footer>

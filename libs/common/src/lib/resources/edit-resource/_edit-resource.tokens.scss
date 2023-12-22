@@ -1,21 +1,18 @@
 @import 'apps/dashboard/src/variables';
 
 $height-header: rhythm(7);
-$padding-top-page-container: rhythm(6);
-$padding-horizontal-header: rhythm(6);
-$padding-horizontal-header-xlarge: rhythm(10);
 $padding-vertical-footer: rhythm(3);
 $footer-height: $padding-vertical-footer * 2 + rhythm(5);
 $footer-margin: rhythm(5);
 
-$width-page-content: rhythm(64);
-$width-page-content-large: rhythm(90);
+$width-page-content: rhythm(80);
 
 $header-separator: inset 0 -1px 0 $color-neutral-light;
 $footer-separator: inset 0 1px 0 $color-neutral-light;
 
 $annotation-header-height: rhythm(9);
-$spacing-top: rhythm(1);
+$height-help-container: rhythm(6);
+$sticky-top: calc(#{$height-header} + var(--app-layout-padding-top) - #{rhythm(1)});
 
 $thumbnail-height: rhythm(10);
 $thumbnail-width: rhythm(17);

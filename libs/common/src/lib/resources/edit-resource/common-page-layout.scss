@@ -2,69 +2,47 @@
 
 .main-container {
   display: flex;
-  gap: rhythm(5);
-  max-height: calc(
-    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
-  );
+  gap: rhythm(3);
 
   & > p {
     margin-bottom: 0;
-    margin-top: rhythm(0.5); // align message with the navigation menu
   }
 }
 
 .search-box-container {
+  $width-search-input: rhythm(40);
   position: absolute;
   background: white;
+  top: 0;
+  padding: #{$sticky-top} calc(#{$width-page-content} - #{$width-search-input}) #{rhythm(2)} 0;
   z-index: 1;
 
+  pa-input {
+    display: block;
+    width: $width-search-input;
+  }
   pa-input.can-reset ::ng-deep pa-icon {
     cursor: pointer;
   }
 }
 .scrollable-area {
-  height: calc(100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container});
-  overflow: auto;
-  padding: $spacing-top rhythm(2) rhythm(2) 0;
-  width: $width-page-content-large;
+  flex: 1 1 auto;
+  padding: 0 0 0 rhythm(1.5);
+  max-width: $width-page-content;
 
-  &.with-right-panel {
-    width: $width-page-content;
-  }
-
-  &.with-footer {
-    height: calc(
-      100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
-    );
-  }
   &.with-search-and-footer {
-    height: calc(
-      100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height} - #{$annotation-header-height}
-    );
     margin-top: $annotation-header-height;
   }
 }
 
 .right-panel-container {
-  max-height: calc(
-    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{rhythm(5)}
-  );
-  overflow: auto;
+  flex: 0 0 auto;
+  position: relative;
   width: rhythm(32);
-}
+  z-index: 1;
 
-footer:not(.with-right-panel) {
-  max-width: $width-page-content-large;
-}
-footer.with-right-panel {
-  max-width: $width-page-content;
-}
-
-@media (min-width: $size-viewport-xlarge-min) {
-  .scrollable-area.with-right-panel {
-    width: $width-page-content-large;
-  }
-  footer.with-right-panel {
-    max-width: $width-page-content-large;
+  > :first-child {
+    position: sticky;
+    top: $sticky-top;
   }
 }

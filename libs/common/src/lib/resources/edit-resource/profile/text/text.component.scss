@@ -4,7 +4,7 @@
 :host {
   pa-textarea ::ng-deep textarea {
     height: calc(
-      100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height} - #{$footer-margin}
+      100vh - var(--app-topbar-height) - #{$height-header} - var(--app-layout-padding-top) - #{$footer-height} - #{$footer-margin}
     );
     min-height: rhythm(10);
   }

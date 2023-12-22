@@ -1,130 +1,123 @@
-<ng-container *ngIf="hasParagraph | async; else noParagraph">
-  <ng-container *ngIf="paragraphLoaded | async; else loading">
+@if (hasParagraph | async) {
+  @if (paragraphLoaded | async) {
     <div class="main-container">
-      <div
-        *ngIf="(hasLabels | async) === true; else noLabel"
-        class="search-box-container">
-        <pa-input
-          [icon]="searchQuery ? 'cross' : 'search'"
-          [class.can-reset]="!!searchQuery"
-          [(ngModel)]="searchQuery"
-          (click)="onSearchInputClick($event)"
-          (keyup.enter)="triggerSearch()">
-          {{ 'resource.field.search' | translate }}
-        </pa-input>
-      </div>
-      <ng-template #noLabel>
-        <p *ngIf="labelLoaded">
+      @if ((hasLabels | async) === true) {
+        <div>
+          <div class="search-box-container">
+            <pa-input
+              [icon]="searchQuery ? 'cross' : 'search'"
+              [class.can-reset]="!!searchQuery"
+              [(ngModel)]="searchQuery"
+              (click)="onSearchInputClick($event)"
+              (keyup.enter)="triggerSearch()">
+              {{ 'resource.field.search' | translate }}
+            </pa-input>
+          </div>
+          <div
+            class="scrollable-area with-search-and-footer with-right-panel paragraphs-container"
+            [class.disabled]="currentLabels.value.length === 0">
+            <pa-infinite-scroll (reachAnchor)="loadMore()">
+              <div
+                class="paragraph-container"
+                *ngFor="let paragraph of paragraphs | async">
+                <p (click)="addLabelsOnParagraph(paragraph)">{{ paragraph.text }}</p>
+                <div class="labels-container">
+                  <ng-container *ngFor="let label of paragraph.generatedClassifications">
+                    @if ((isAdminOrContrib | async) === false) {
+                      <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
+                        {{ label.label }}
+                      </pa-chip>
+                    } @else {
+                      <pa-chip-closeable
+                        [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
+                        (closed)="cancelGeneratedLabel(paragraph, label)">
+                        {{ label.label }}
+                      </pa-chip-closeable>
+                    }
+                  </ng-container>
+
+                  <ng-container *ngFor="let label of paragraph.userClassifications">
+                    @if (!label.cancelled_by_user) {
+                      @if ((isAdminOrContrib | async) === false) {
+                        <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
+                          {{ label.label }}
+                        </pa-chip>
+                      } @else {
+                        <pa-chip-closeable
+                          [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
+                          (closed)="removeUserLabel(paragraph, label)">
+                          {{ label.label }}
+                        </pa-chip-closeable>
+                      }
+                    }
+                  </ng-container>
+                </div>
+              </div>
+            </pa-infinite-scroll>
+          </div>
+
+          <footer class="form-buttons with-right-panel">
+            <pa-button
+              kind="primary"
+              [disabled]="!isModified || isSaving"
+              (click)="save()">
+              {{ 'generic.save' | translate }}
+            </pa-button>
+
+            <pa-button
+              aspect="basic"
+              [disabled]="!isModified || isSaving"
+              (click)="cancel()">
+              {{ 'generic.cancel' | translate }}
+            </pa-button>
+          </footer>
+        </div>
+      } @else if (labelLoaded) {
+        <p>
           {{ 'resource.classification.no-paragraph-labelset' | translate }}
           <a [routerLink]="(kbUrl | async) + '/label-sets'">
             {{ 'resource.classification-page-link' | translate }}
           </a>
         </p>
-      </ng-template>
+      }
 
-      <div
-        *ngIf="(hasLabels | async) === true"
-        class="scrollable-area with-search-and-footer with-right-panel paragraphs-container"
-        [class.disabled]="currentLabels.value.length === 0">
-        <pa-infinite-scroll (reachAnchor)="loadMore()">
-          <div
-            class="paragraph-container"
-            *ngFor="let paragraph of paragraphs | async">
-            <p (click)="addLabelsOnParagraph(paragraph)">{{ paragraph.text }}</p>
-            <div class="labels-container">
-              <ng-container *ngFor="let label of paragraph.generatedClassifications">
-                @if ((isAdminOrContrib | async) === false) {
-                  <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
-                    {{ label.label }}
-                  </pa-chip>
-                } @else {
-                  <pa-chip-closeable
-                    [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
-                    (closed)="cancelGeneratedLabel(paragraph, label)">
-                    {{ label.label }}
-                  </pa-chip-closeable>
-                }
-              </ng-container>
-
-              <ng-container *ngFor="let label of paragraph.userClassifications">
-                @if (!label.cancelled_by_user) {
-                  @if ((isAdminOrContrib | async) === false) {
-                    <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
-                      {{ label.label }}
-                    </pa-chip>
-                  } @else {
-                    <pa-chip-closeable
-                      [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
-                      (closed)="removeUserLabel(paragraph, label)">
-                      {{ label.label }}
-                    </pa-chip-closeable>
-                  }
-                }
-              </ng-container>
-            </div>
+      @if ((hasLabels | async) === true && (isAdminOrContrib | async) === true) {
+        <div class="right-panel-container">
+          <div class="help">
+            <pa-icon
+              name="info"
+              size="small"></pa-icon>
+            <p>
+              {{ 'resource.field-classification.help' | translate }}
+            </p>
           </div>
-        </pa-infinite-scroll>
-      </div>
+          <div class="label-selection-container">
+            <pa-button
+              aspect="basic"
+              kind="destructive"
+              size="small"
+              [disabled]="(emptyLabelSelection | async) === true"
+              (click)="cleanUpLabels()">
+              {{ 'resource.classification.clean-up' | translate }}
+            </pa-button>
 
-      <div
-        class="right-panel-container"
-        *ngIf="(hasLabels | async) === true && (isAdminOrContrib | async) === true">
-        <div class="help">
-          <pa-icon
-            name="info"
-            size="small"></pa-icon>
-          <p>
-            {{ 'resource.field-classification.help' | translate }}
-          </p>
+            <nsi-labels-expander
+              [labelSets]="availableLabels | async"
+              [currentSelection]="currentSelection"
+              (updateSelection)="updateSelection($event)"></nsi-labels-expander>
+          </div>
         </div>
-        <div class="label-selection-container">
-          <pa-button
-            aspect="basic"
-            kind="destructive"
-            size="small"
-            [disabled]="(emptyLabelSelection | async) === true"
-            (click)="cleanUpLabels()">
-            {{ 'resource.classification.clean-up' | translate }}
-          </pa-button>
-
-          <nsi-labels-expander
-            [labelSets]="availableLabels | async"
-            [currentSelection]="currentSelection"
-            (updateSelection)="updateSelection($event)"></nsi-labels-expander>
-        </div>
+      }
+    </div>
+  } @else {
+    <div class="main-container">
+      <div class="scrollable-area">
+        <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
       </div>
     </div>
-
-    <footer
-      class="form-buttons with-right-panel"
-      *ngIf="(hasLabels | async) === true">
-      <pa-button
-        kind="primary"
-        [disabled]="!isModified || isSaving"
-        (click)="save()">
-        {{ 'generic.save' | translate }}
-      </pa-button>
-
-      <pa-button
-        aspect="basic"
-        [disabled]="!isModified || isSaving"
-        (click)="cancel()">
-        {{ 'generic.cancel' | translate }}
-      </pa-button>
-    </footer>
-  </ng-container>
-</ng-container>
-
-<ng-template #noParagraph>
+  }
+} @else {
   <div class="main-container">
     <p>{{ 'resource.field-no-paragraph' | translate }}</p>
   </div>
-</ng-template>
-
-<ng-template #loading>
-  <div class="main-container">
-    <div class="scrollable-area">
-      <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
-    </div>
-  </div>
-</ng-template>
+}
