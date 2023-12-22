@@ -117,6 +117,10 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   generate(question: string, context: string[]): Observable<{ answer: string; cannotAnswer: boolean }>;
 
+  rephrase(question: string): Observable<string>;
+
+  generateRandomQuestionAboutResource(resource: Resource): Observable<string>;
+
   catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse>;
 
   suggest(query: string): Observable<Search.Suggestions | IErrorResponse>;
