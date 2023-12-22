@@ -12,15 +12,15 @@ export class BillingComponent implements OnInit, OnDestroy {
   constructor(@Inject(WINDOW) private window: Window) {}
 
   ngOnInit() {
-    const tidioApi = (this.window as any)?.tidioChatApi;
-    if (tidioApi) {
-      tidioApi.show();
+    const hubSpotApi = (this.window as any)?.HubSpotConversations;
+    if (hubSpotApi) {
+      hubSpotApi.widget?.load();
     } else {
-      injectScript('//code.tidio.co/kynayco5sfwolxr9cjmy639y9ez12wrs.js').subscribe();
+      injectScript('//js-eu1.hs-scripts.com/139773752.js').subscribe();
     }
   }
 
   ngOnDestroy() {
-    (this.window as any)?.tidioChatApi?.hide();
+    (this.window as any)?.HubSpotConversations?.widget?.remove();
   }
 }

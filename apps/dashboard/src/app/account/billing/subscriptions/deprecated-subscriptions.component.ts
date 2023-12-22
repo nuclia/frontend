@@ -22,6 +22,6 @@ export class DeprecatedSubscriptionsComponent {
   ) {}
 
   contact() {
-    this.window.location.href = 'mailto:support@nuclia.com';
+    this.window.location.href = 'mailto:sales@nuclia.com';
   }
 }
