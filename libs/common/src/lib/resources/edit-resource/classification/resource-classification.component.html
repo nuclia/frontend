@@ -1,43 +1,46 @@
 <div class="main-container">
-  <div
-    class="scrollable-area classification-container"
-    *ngIf="isReady | async">
-    <p *ngIf="(hasLabels | async) === false">
-      {{ 'resource.classification.no-resource-labelset' | translate }}
-      <a [routerLink]="(kbUrl | async) + '/label-sets'">{{ 'resource.classification-page-link' | translate }}</a>
-    </p>
+  @if (isReady | async) {
+    <div class="scrollable-area classification-container">
+      @if ((hasLabels | async) === false) {
+        <p>
+          {{ 'resource.classification.no-resource-labelset' | translate }}
+          <a [routerLink]="(kbUrl | async) + '/label-sets'">{{ 'resource.classification-page-link' | translate }}</a>
+        </p>
+      }
 
-    <div class="labels-container">
-      <div
-        *ngIf="(isAdminOrContrib | async) === true"
-        class="label-selector-container">
-        <nsi-labels-expander
+      <div class="labels-container">
+        @if ((isAdminOrContrib | async) === true) {
+          <div class="label-selector-container">
+            <nsi-labels-expander
+              [labelSets]="resourceLabelSets | async"
+              [currentSelection]="currentSelection"
+              (updateSelection)="updateLabel($event)"></nsi-labels-expander>
+          </div>
+        }
+
+        <app-label-list
           [labelSets]="resourceLabelSets | async"
-          [currentSelection]="currentSelection"
-          (updateSelection)="updateLabel($event)"></nsi-labels-expander>
+          [labelSelection]="(currentLabels | async) || []"
+          (labelSelectionChange)="updateLabels($event)"></app-label-list>
       </div>
-      <app-label-list
-        [labelSets]="resourceLabelSets | async"
-        [labelSelection]="(currentLabels | async) || []"
-        (labelSelectionChange)="updateLabels($event)"></app-label-list>
     </div>
-  </div>
+  }
 </div>
 
-<footer
-  *ngIf="hasLabels | async"
-  class="form-buttons">
-  <pa-button
-    kind="primary"
-    [disabled]="!isModified"
-    (click)="save()">
-    {{ 'generic.save' | translate }}
-  </pa-button>
+@if (hasLabels | async) {
+  <footer class="form-buttons">
+    <pa-button
+      kind="primary"
+      [disabled]="!isModified"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
 
-  <pa-button
-    aspect="basic"
-    [disabled]="!isModified"
-    (click)="cancel()">
-    {{ 'generic.cancel' | translate }}
-  </pa-button>
-</footer>
+    <pa-button
+      aspect="basic"
+      [disabled]="!isModified"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+  </footer>
+}

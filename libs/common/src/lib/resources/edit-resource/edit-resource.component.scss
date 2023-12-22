@@ -3,42 +3,61 @@
 
 .edit-resource {
   header {
+    $gap-header-buttons: rhythm(1);
+    $button-size: rhythm(5);
+
     align-items: center;
     background: $color-neutral-lightest;
     display: flex;
     height: $height-header;
     justify-content: space-between;
-    padding: 0 $padding-horizontal-header 0 #{$padding-horizontal-header + rhythm(1)};
+    padding: 0 calc(var(--app-layout-padding-right) - #{rhythm(1)}) 0 var(--app-layout-padding-left);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    .header-left-block {
+      align-items: center;
+      display: flex;
+    }
 
     .navigation-buttons {
       display: flex;
-      gap: rhythm(1);
+      gap: $gap-header-buttons;
     }
 
     .title-s {
       flex: 1 0 auto;
-      padding-left: rhythm(8) + rhythm(0.5);
+      padding-left: rhythm(9);
       padding-right: rhythm(1);
+      max-width: calc(
+        100vw - #{$width-side-panel} - var(--app-layout-padding-left) - ($button-size * 3) - ($button-size * 5) - var(--app-layout-padding-right)
+      );
     }
 
     .actions {
       align-items: center;
       display: flex;
-      gap: rhythm(1);
+      gap: $gap-header-buttons;
     }
   }
   .page-container {
     display: flex;
     gap: rhythm(0.5);
-    padding-top: $padding-top-page-container;
+    min-height: calc(100vh - var(--app-topbar-height) - #{$height-header});
+    padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
+      var(--app-layout-padding-left);
 
     nav {
-      margin-top: calc(#{rhythm(0.5)} * -1);
-      padding: 0 rhythm(1);
-      width: rhythm(32);
+      flex: 0 0 auto;
+      position: relative;
+      top: -#{rhythm(2)};
+      width: rhythm(24);
 
       ul {
-        padding-left: $padding-horizontal-header;
+        padding: 0;
+        position: sticky;
+        top: $sticky-top;
       }
 
       li {
@@ -68,12 +87,17 @@
     }
 
     .page-content {
-      flex: 1 0 auto;
+      flex: 1 1 auto;
 
       footer {
+        background: $color-light-stronger;
+        bottom: 0;
         box-shadow: $footer-separator;
         display: flex;
+        max-width: $width-page-content;
         padding: $padding-vertical-footer 0;
+        position: sticky;
+        z-index: 100;
 
         &.form-buttons,
         .save-actions {
@@ -86,23 +110,6 @@
         .save-actions {
           display: flex;
         }
-      }
-    }
-  }
-}
-
-@media (min-width: $size-viewport-xlarge-min) {
-  .edit-resource {
-    header {
-      padding: 0 $padding-horizontal-header-xlarge;
-
-      .title-s {
-        padding-left: rhythm(6);
-      }
-    }
-    .page-container {
-      nav ul {
-        padding-left: $padding-horizontal-header-xlarge;
       }
     }
   }

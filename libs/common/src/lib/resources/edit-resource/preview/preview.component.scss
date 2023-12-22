@@ -1,4 +1,5 @@
 @import 'apps/dashboard/src/variables';
+@import '../edit-resource.tokens';
 
 .main-container {
   display: flex;
@@ -10,7 +11,7 @@
 
   pa-button {
     position: sticky;
-    top: 0;
+    top: calc(#{$height-header} + var(--app-layout-padding-top));
   }
 }
 

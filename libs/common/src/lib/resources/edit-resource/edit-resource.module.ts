@@ -77,6 +77,7 @@ import { PipesModule } from '@flaps/common';
     PaPopupModule,
     LabelsExpanderComponent,
     PipesModule,
+    PaTooltipModule,
   ],
   declarations: [
     AddFieldComponent,
