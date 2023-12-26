@@ -85,7 +85,7 @@
         </pa-button>
       </div>
       <pa-popover #pendingPopover>
-        <div class="popover-content">{{ 'resource.pending_resources_popover' | translate }}</div>
+        <div class="popover-content">{{ 'resource.popover.pending-resources' | translate }}</div>
       </pa-popover>
 
       @if ((statusCount | async)?.error || 0 > 0) {
@@ -109,7 +109,7 @@
         </div>
       }
       <pa-popover #failedPopover>
-        <div class="popover-content">{{ 'resource.failed_resources_popover' | translate }}</div>
+        <div class="popover-content">{{ 'resource.popover.error-resources' | translate }}</div>
       </pa-popover>
     </div>
   </div>

@@ -290,6 +290,7 @@ export interface Counters {
   paragraphs: number;
   fields: number;
   sentences: number;
+  index_size: number;
 }
 
 export interface ResourceList {
