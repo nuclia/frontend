@@ -277,6 +277,7 @@
 	"dashboard-home.kb-details.uid": "Knowledge Box UID",
 	"dashboard-home.kb-metrics.title": "Contenido del Knowledge Box",
 	"dashboard-home.kb-metrics.total.fields": "Campos",
+	"dashboard-home.kb-metrics.total.index-size": "Tamaño del índice",
 	"dashboard-home.kb-metrics.total.paragraphs": "Bloques de texto",
 	"dashboard-home.kb-metrics.total.sentences": "Vectores",
 	"dashboard-home.kb-metrics.total.title": "Recursos",

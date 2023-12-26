@@ -5,6 +5,7 @@
 - Add `v3starter`, `v3fly`, `v3growth` and `v3enterprise` to `AccountTypes`
 - Support `/rephrase` endpoint in KnowledgeBox
 - Add `generateRandomQuestionAboutResource` method
+- Add `index_size` in `Counters` model
 
 # 1.9.1 (2023-12-18)
 
