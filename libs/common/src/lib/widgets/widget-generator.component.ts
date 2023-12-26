@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackingService } from '@flaps/core';
-import { combineLatest, forkJoin, map, Observable, of, Subject, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { NavigationService } from '@flaps/common';
@@ -45,9 +45,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   copyButtonLabel = 'generic.copy';
   copyButtonActive = false;
 
-  showWarning = this.sdk.currentKb.pipe(map((kb) => kb.state === 'PRIVATE'));
-  showLink = this.sdk.currentKb.pipe(map((kb) => !!kb.admin && kb.state === 'PRIVATE'));
-  homeUrl = this.navigation.homeUrl;
+  isPrivateKb = this.sdk.currentKb.pipe(map((kb) => kb.state === 'PRIVATE'));
+  isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
 
   snippetOverlayOpen = false;
   snippet = '';
@@ -343,16 +342,39 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
 
   copySnippet() {
-    navigator.clipboard.writeText(this.snippet);
+    forkJoin([this.isPrivateKb.pipe(take(1)), this.isKbAdmin.pipe(take(1))])
+      .pipe(
+        switchMap(([isPrivate, isAdmin]) =>
+          isPrivate
+            ? this.modalService.openConfirm({
+                title: 'widget.generator.private-kb-warning.title',
+                description: isAdmin
+                  ? 'widget.generator.private-kb-warning.description-admin'
+                  : 'widget.generator.private-kb-warning.description',
+                isDestructive: true,
+                confirmLabel: this.copyButtonLabel,
+              }).onClose
+            : of(true),
+        ),
+        filter((confirmed) => {
+          if (!confirmed) {
+            navigator.clipboard.writeText('');
+          }
+          return confirmed;
+        }),
+      )
+      .subscribe(() => {
+        navigator.clipboard.writeText(this.snippet);
 
-    this.copyButtonLabel = 'generic.copied';
-    this.copyButtonActive = true;
-    this.cdr.markForCheck();
-    setTimeout(() => {
-      this.copyButtonLabel = 'generic.copy';
-      this.copyButtonActive = false;
-      this.cdr.markForCheck();
-    }, 1000);
+        this.copyButtonLabel = 'generic.copied';
+        this.copyButtonActive = true;
+        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.copyButtonLabel = 'generic.copy';
+          this.copyButtonActive = false;
+          this.cdr.markForCheck();
+        }, 1000);
+      });
   }
 
   private updateSnippetAndStoreConfig() {

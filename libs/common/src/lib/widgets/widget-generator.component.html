@@ -3,25 +3,6 @@
     {{ 'widget.generator.page-title' | translate }}
   </h1>
 
-  @if (showWarning | async) {
-    <div class="warning-container">
-      <pa-icon
-        name="warning"
-        size="large"></pa-icon>
-      <div class="warning-content">
-        <div
-          class="title-m"
-          [innerHTML]="'widget.generator.private-kb-warning.title' | translate"></div>
-        @if (showLink | async) {
-          <div class="publish-link body-m">
-            <span [innerHTML]="'widget.generator.private-kb-warning.description' | translate"></span>
-            <a [routerLink]="homeUrl | async">{{ 'widget.generator.private-kb-warning.link' | translate }}</a>
-          </div>
-        }
-      </div>
-    </div>
-  }
-
   <div class="page-content">
     <div class="configuration-panel">
       <pa-tabs>
@@ -659,7 +640,7 @@
         <pa-icon name="chevron-right"></pa-icon>
       </div>
       <div class="snippet-container">
-        @if (showWarning | async) {
+        @if (isPrivateKb | async) {
           <div class="warning-container">
             <pa-icon name="warning"></pa-icon>
             <div class="warning-content">
@@ -669,7 +650,7 @@
             </div>
           </div>
         }
-        <pre [class.has-warning]="showWarning | async"><code>{{snippet}}</code></pre>
+        <pre [class.has-warning]="isPrivateKb | async"><code>{{snippet}}</code></pre>
       </div>
       @if (clipboardSupported) {
         <div class="overlay-footer">
