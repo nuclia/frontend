@@ -138,7 +138,7 @@
       max-width: calc(100vw - #{$width-sidenav} - #{$width-config-panel} - #{$gap-page-content});
 
       h4 {
-        margin: rhythm(1.5) 0 rhythm(1);
+        margin: rhythm(1.5) rhythm(1) 0 rhythm(1);
       }
 
       .preview-content {
@@ -147,7 +147,7 @@
         gap: rhythm(2);
         height: $content-height;
         overflow: auto;
-        padding: rhythm(2) $padding-right-page rhythm(4) 0;
+        padding: rhythm(2) $padding-right-page rhythm(4) rhythm(1);
       }
 
       &.dark-mode .preview-content {

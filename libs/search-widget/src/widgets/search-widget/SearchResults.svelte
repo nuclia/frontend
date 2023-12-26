@@ -33,6 +33,7 @@
 
   export let cssPath = '';
   export let mode = '';
+  export let scrollableContainerSelector = '';
   $: darkMode = mode === 'dark';
 
   const showLoading = pendingResults.pipe(debounceTime(1500));
@@ -115,6 +116,7 @@
             {#if $hasMore}
               <InfiniteScroll
                 hasMore={$hasMore}
+                {scrollableContainerSelector}
                 on:loadMore={onLoadMore} />
             {/if}
           </div>

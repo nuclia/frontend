@@ -449,7 +449,8 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
   zone=`,
           )
           .replace('standalone=', 'client="dashboard" standalone=')
-          .replace(apiKey, ''),
+          .replace(apiKey, '')
+          .replace('<nuclia-search-results', '<nuclia-search-results scrollableContainerSelector=".preview-content"'),
       );
     });
 

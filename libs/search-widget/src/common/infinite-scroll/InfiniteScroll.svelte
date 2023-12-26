@@ -2,13 +2,22 @@
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
   export let hasMore = true;
+  export let scrollableContainerSelector = '';
 
   const dispatch = createEventDispatcher();
   let mustLoadMore = false;
   let component: HTMLElement | undefined = undefined;
+  let scrollableContainer: HTMLElement | null;
 
   onMount(() => {
-    document.addEventListener('scroll', onScroll);
+    if (scrollableContainerSelector) {
+      scrollableContainer = document.querySelector(scrollableContainerSelector);
+    }
+    if (scrollableContainer) {
+      scrollableContainer.addEventListener('scroll', onScroll);
+    } else {
+      document.addEventListener('scroll', onScroll);
+    }
     document.addEventListener('resize', onScroll);
   });
 
@@ -29,7 +38,11 @@
   };
 
   onDestroy(() => {
-    document.removeEventListener('scroll', onScroll, true);
+    if (scrollableContainer) {
+      scrollableContainer.removeEventListener('scroll', onScroll, true);
+    } else {
+      document.removeEventListener('scroll', onScroll, true);
+    }
     document.removeEventListener('resize', onScroll, true);
   });
 </script>
