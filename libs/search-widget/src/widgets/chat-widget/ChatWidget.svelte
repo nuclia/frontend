@@ -27,6 +27,7 @@
   export let cssPath = '';
   export let prompt = '';
   export let preselected_filters = '';
+  export let no_tracking = false;
 
   export let layout: 'inline' | 'fullscreen' = 'fullscreen';
   export let height = '';
@@ -70,6 +71,7 @@
       },
       state,
       { prompt },
+      no_tracking
     );
 
     if (preselected_filters) {
@@ -77,7 +79,7 @@
     }
     initAnswer();
     initViewer();
-    initUsageTracking();
+    initUsageTracking(no_tracking);
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);

@@ -34,6 +34,7 @@
   export let cssPath = '';
   export let mode = '';
   export let scrollableContainerSelector = '';
+  export let no_tracking = false;
   $: darkMode = mode === 'dark';
 
   const showLoading = pendingResults.pipe(debounceTime(1500));
@@ -57,14 +58,17 @@
   });
 
   function renderingDone(node: HTMLElement) {
-    getTrackingDataAfterResultsReceived.pipe(take(1)).subscribe((tracking) => {
-      const tti = Date.now() - tracking.startTime;
-      logEvent('search', {
-        searchId: tracking.searchId || '',
-        tti,
+    if (!no_tracking) {
+      getTrackingDataAfterResultsReceived.pipe(take(1)).subscribe((tracking) => {
+        const tti = Date.now() - tracking.startTime;
+        logEvent('search', {
+          searchId: tracking.searchId || '',
+          tti,
+        });
+        trackingReset.set(undefined);
       });
-      trackingReset.set(undefined);
-    });
+    }
+
   }
 
   const onLoadMore = () => loadMore.set();
