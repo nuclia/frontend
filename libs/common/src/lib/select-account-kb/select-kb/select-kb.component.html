@@ -1,110 +1,122 @@
-<div
-  class="select-kb"
-  *ngIf="(kbs | async) !== null">
-  <div class="select-kb-header">
-    <nsi-back-button
-      *ngIf="!standalone && (hasSeveralAccounts | async)"
-      class="select-kb-back"
-      link="/select">
-      {{ 'generic.back' | translate }}
-    </nsi-back-button>
+@if ((kbs | async) !== null) {
+  <div class="select-kb">
+    <div class="select-kb-header">
+      @if (!standalone) {
+        @if (hasSeveralAccounts | async) {
+          <nsi-back-button
+            class="select-kb-back"
+            link="/select">
+            {{ 'generic.back' | translate }}
+          </nsi-back-button>
+        } @else {
+          <nsi-back-button
+            class="select-kb-back"
+            link="/user/logout">
+            {{ 'generic.logout' | translate }}
+          </nsi-back-button>
+        }
+      }
 
-    <h2
-      class="select-kb-title"
-      paEllipsisTooltip>
-      {{ (account | async)?.title }}
-    </h2>
+      <h2
+        class="select-kb-title"
+        paEllipsisTooltip>
+        {{ (account | async)?.title }}
+      </h2>
 
-    <pa-button
-      *ngIf="canManage | async"
-      icon="gear"
-      size="small"
-      aspect="basic"
-      class="manage-account-button"
-      [paTooltip]="'generic.manage_account' | translate"
-      (click)="goToAccountManage()">
-      {{ 'generic.manage_account' | translate }}
-    </pa-button>
-  </div>
-
-  <div class="select-kb-body">
-    <div
-      class="select-kb-list"
-      *ngIf="((kbs | async)?.length || 0) > 0; else noKb">
-      <ng-container *ngFor="let kb of kbs | async">
-        <a
-          *ngIf="kb.id"
-          class="kb"
-          data-cy="kb-list-item"
-          [class.disabled]="!kb.role_on_kb"
-          (click)="goToKb(kb)">
-          <pa-button
-            class="delete-btn"
-            data-cy="delete-kb-button"
-            *ngIf="standalone"
-            (click)="deleteKb($event, kb.id, kb.title)"
-            icon="trash"
-            aspect="basic"
-            kind="destructive"
-            size="small"></pa-button>
-          {{ kb.title }}
-          <pa-icon
-            *ngIf="!!kb.role_on_kb"
-            name="chevron-right"
-            size="small"></pa-icon>
-        </a>
-      </ng-container>
+      @if (canManage | async) {
+        <pa-button
+          icon="gear"
+          size="small"
+          aspect="basic"
+          class="manage-account-button"
+          [paTooltip]="'generic.manage_account' | translate"
+          (click)="goToAccountManage()">
+          {{ 'generic.manage_account' | translate }}
+        </pa-button>
+      }
     </div>
 
-    <ng-template #noKb>
-      <div
-        class="select-kb-empty"
-        data-cy="no-kb-message"
-        *ngIf="!addKb">
-        <div class="select-kb-empty-message">{{ 'stash.no_knowledge_boxes' | translate }}</div>
+    <div class="select-kb-body">
+      @if (((kbs | async)?.length || 0) > 0) {
+        <div class="select-kb-list">
+          @for (kb of kbs | async; track kb.id) {
+            @if (kb.id) {
+              <a
+                class="kb"
+                data-cy="kb-list-item"
+                [class.disabled]="!kb.role_on_kb"
+                (click)="goToKb(kb)">
+                @if (standalone) {
+                  <pa-button
+                    class="delete-btn"
+                    data-cy="delete-kb-button"
+                    icon="trash"
+                    aspect="basic"
+                    kind="destructive"
+                    size="small"
+                    (click)="deleteKb($event, kb.id, kb.title)"></pa-button>
+                }
 
-        <div
-          *ngIf="(canAddKb | async) === false"
-          class="select-kb-empty-message">
-          {{ 'stash.contact_admin' | translate }}
+                {{ kb.title }}
+                @if (!!kb.role_on_kb) {
+                  <pa-icon
+                    name="chevron-right"
+                    size="small"></pa-icon>
+                }
+              </a>
+            }
+          }
         </div>
-      </div>
-    </ng-template>
+      } @else if (!addKb) {
+        <div
+          class="select-kb-empty"
+          data-cy="no-kb-message">
+          <div class="select-kb-empty-message">{{ 'stash.no_knowledge_boxes' | translate }}</div>
 
-    <ng-container *ngIf="addKb">
-      <div class="select-kb-input">
-        <pa-input
-          hasFocus
-          data-cy="new-kb-name-input"
-          [formControl]="kbName"
-          [errorMessages]="errorMessages">
-          {{ 'stash.name_your_kb' | translate }}
-        </pa-input>
-      </div>
-    </ng-container>
+          @if ((canAddKb | async) === false) {
+            <div class="select-kb-empty-message">
+              {{ 'stash.contact_admin' | translate }}
+            </div>
+          }
+        </div>
+      }
+
+      @if (addKb) {
+        <div class="select-kb-input">
+          <pa-input
+            hasFocus
+            data-cy="new-kb-name-input"
+            [formControl]="kbName"
+            [errorMessages]="errorMessages">
+            {{ 'stash.name_your_kb' | translate }}
+          </pa-input>
+        </div>
+      }
+    </div>
+
+    <div class="select-kb-footer">
+      @if (!addKb && (standalone || (canAddKb | async) === true)) {
+        <pa-button
+          data-cy="create-kb-button"
+          (click)="openKbForm()">
+          {{ 'stash.create.title' | translate }}
+        </pa-button>
+      }
+
+      @if (addKb) {
+        <pa-button
+          aspect="basic"
+          (click)="toggleForm()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+
+        <pa-button
+          [disabled]="kbName.invalid || creatingKb"
+          data-cy="save-new-kb-button"
+          (click)="save()">
+          {{ 'generic.save' | translate }}
+        </pa-button>
+      }
+    </div>
   </div>
-
-  <div class="select-kb-footer">
-    <pa-button
-      *ngIf="!addKb && (standalone || (canAddKb | async) === true)"
-      data-cy="create-kb-button"
-      (click)="openKbForm()">
-      {{ 'stash.create.title' | translate }}
-    </pa-button>
-
-    <ng-container *ngIf="addKb">
-      <pa-button
-        aspect="basic"
-        (click)="toggleForm()">
-        {{ 'generic.cancel' | translate }}
-      </pa-button>
-
-      <pa-button
-        [disabled]="kbName.invalid || creatingKb"
-        data-cy="save-new-kb-button"
-        (click)="save()">
-        {{ 'generic.save' | translate }}
-      </pa-button>
-    </ng-container>
-  </div>
-</div>
+}
