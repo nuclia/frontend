@@ -10,6 +10,16 @@ export const EMPTY_LABEL_SET: LabelSet = {
   labels: [],
 };
 
+export type LabelSetCounts = {
+  [LabelSetKind.RESOURCES]: number;
+  [LabelSetKind.PARAGRAPHS]: number;
+  [LabelSetKind.SELECTIONS]: number;
+};
+
+export interface LabelSetDisplay extends LabelSet {
+  id: string;
+}
+
 export class MutableLabelSet {
   title: string;
   color: string;
@@ -24,44 +34,6 @@ export class MutableLabelSet {
     this.multiple = labelSet.multiple;
     this.kind = [...labelSet.kind];
     this.labels = labelSet.labels ? labelSet.labels.map((label) => cloneDeep(label)) : undefined;
-  }
-
-  getLabel(labelTitle: string): Label | undefined {
-    return (this.labels || []).find((label) => label.title === labelTitle);
-  }
-
-  addLabel(title: string): void {
-    const newLabel = {
-      title: title,
-    };
-    if (this.labels) {
-      this.labels.push(newLabel);
-    } else {
-      this.labels = [newLabel];
-    }
-  }
-
-  modifyLabel(labelTitle: string, changes: Partial<Label>): void {
-    const index = this.getLabelIndex(labelTitle);
-    if (index >= 0) {
-      this.labels![index] = { ...this.labels![index], ...changes };
-    }
-  }
-
-  deleteLabel(labelTitle: string): void {
-    this.labels = this.labels?.filter((label) => label.title !== labelTitle);
-  }
-
-  setLabelOrder(labelTitles: string[]) {
-    this.labels?.sort((a: Label, b: Label) => {
-      const aIndex = labelTitles.indexOf(a.title);
-      const bIndex = labelTitles.indexOf(b.title);
-      return aIndex - bIndex;
-    });
-  }
-
-  private getLabelIndex(labelTitle: string): number {
-    return (this.labels || []).findIndex((label) => label.title === labelTitle);
   }
 
   getCopy(): LabelSet {

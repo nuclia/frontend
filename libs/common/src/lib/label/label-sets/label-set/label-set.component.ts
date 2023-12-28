@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, Subject, take } from 'rxjs';
+import { combineLatest, map, Subject, take } from 'rxjs';
 import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FeatureFlagService, STFUtils } from '@flaps/core';
 import { LabelSetKind, LabelSets } from '@nuclia/core';
-import { EMPTY_LABEL_SET, MutableLabelSet } from '../model';
+import { EMPTY_LABEL_SET, LabelSetCounts, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { Sluggable } from '../../../validators';
+import { noDuplicateListItemsValidator, Sluggable } from '../../../validators';
 import { LabelsService } from '../../labels.service';
+import { LABEL_COLORS } from '@nuclia/sistema';
 
 const KINDS = [
   { id: LabelSetKind.RESOURCES, name: 'label-set.resources' },
@@ -33,6 +33,14 @@ export class LabelSetComponent implements OnDestroy {
     title: new FormControl<string>('', { validators: [Validators.required, Sluggable()], nonNullable: true }),
     kind: new FormControl<LabelSetKind | undefined>(undefined, { validators: [Validators.required] }),
     exclusive: new FormControl<boolean>(false),
+    labels: new FormControl<string>('', {
+      nonNullable: true,
+      updateOn: 'blur',
+      validators: [
+        Validators.required,
+        noDuplicateListItemsValidator(',', 'label-set.form.labels.duplicated-name-in-list'),
+      ],
+    }),
   });
 
   colors: string[] = LABEL_MAIN_COLORS;
@@ -41,6 +49,7 @@ export class LabelSetComponent implements OnDestroy {
     .pipe(
       map((enabled) => (enabled ? KINDS.concat({ id: LabelSetKind.SELECTIONS, name: 'label-set.selections' }) : KINDS)),
     );
+  counts = this.labelsService.labelSetsCount;
 
   validationMessages: { [key: string]: LabelSetTitleError } = {
     title: {
@@ -51,11 +60,21 @@ export class LabelSetComponent implements OnDestroy {
 
   labelSet?: MutableLabelSet;
   labelSetId?: string;
-  addNew: boolean = false;
-  labelOrder: string[] = [];
+
+  addNew = false;
+  labelView: 'list' | 'grid' = 'list';
+  labelInputValue = '';
+  labelInputError = '';
   labelSetBackup?: LabelSets;
   hasChanges: boolean = false;
   unsubscribeAll = new Subject<void>();
+
+  get labelControl() {
+    return this.labelSetForm.controls.labels;
+  }
+  get labelControlValue() {
+    return this.labelSetForm.controls.labels.value;
+  }
 
   constructor(
     private router: Router,
@@ -77,7 +96,7 @@ export class LabelSetComponent implements OnDestroy {
         filter((labelSets) => !this.labelSetId || !!(this.labelSetId && labelSets[this.labelSetId])),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((labelSets: LabelSets) => {
+      .subscribe((labelSets) => {
         this.labelSetBackup = labelSets;
         this.initState(labelSets);
       });
@@ -87,6 +106,11 @@ export class LabelSetComponent implements OnDestroy {
         const data = this.labelSetForm.getRawValue();
         this.labelSet.title = data.title;
         this.labelSet.multiple = !data.exclusive;
+        this.labelSet.labels = data.labels
+          .split(',')
+          .map((label) => label.trim())
+          .filter((label) => !!label)
+          .map((title) => ({ title }));
         if (data.kind) {
           this.labelSet.kind = [data.kind];
         }
@@ -94,6 +118,22 @@ export class LabelSetComponent implements OnDestroy {
         this.cdr.markForCheck();
       }
     });
+
+    combineLatest([this.counts, this.labelSetForm.controls.kind.valueChanges])
+      .pipe(
+        filter(([counts, kind]) => this.addNew && !!counts && !!kind),
+        map(([counts, kind]) => [counts, kind] as [LabelSetCounts, LabelSetKind]),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(([counts, kind]) => {
+        let colorIndex = counts[kind];
+        if (colorIndex > LABEL_COLORS.length - 1) {
+          colorIndex = 0;
+        }
+        if (this.labelSet) {
+          this.labelSet.color = LABEL_COLORS[colorIndex].mainColor;
+        }
+      });
   }
 
   private hasChanged(): boolean {
@@ -113,50 +153,42 @@ export class LabelSetComponent implements OnDestroy {
       title: this.labelSet.title,
       kind: this.labelSet.kind[0],
       exclusive: !this.labelSet.multiple,
+      labels: (this.labelSet.labels || [])
+        .map((label) => label.title.trim())
+        .filter((label) => !!label)
+        .join(', '),
     });
     if (!this.addNew) {
       this.labelSetForm.controls.kind.disable();
     }
-    this.labelOrder = this.getLabelOrder();
     this.hasChanges = false;
     this.cdr.markForCheck();
   }
 
-  getLabelOrder(): string[] {
-    return this.labelSet?.labels ? this.labelSet.labels.map((label) => label.title) : [];
-  }
-
-  setColor(color: string) {
-    if (this.labelSet) {
-      this.labelSet.color = color;
-      this.hasChanges = this.hasChanged();
-      this.cdr.markForCheck();
+  addLabel(title?: string) {
+    if (title) {
+      if (this.labelControlValue.includes(title)) {
+        this.labelInputError = 'label-set.form.labels.duplicated-name';
+      } else {
+        this.labelInputError = '';
+        this.labelControl.patchValue(this.labelControlValue ? `${this.labelControlValue}, ${title}` : title);
+        this.hasChanges = this.hasChanged();
+        setTimeout(() => {
+          this.labelInputValue = '';
+          this.cdr.detectChanges();
+        });
+      }
     }
   }
 
-  addLabel(title: string) {
-    this.labelSet?.addLabel(title);
-    this.labelOrder = this.getLabelOrder();
-    this.hasChanges = this.hasChanged();
-  }
-
-  modifyLabel(title: string, newTitle: string) {
-    this.labelSet?.modifyLabel(title, { title: newTitle });
-    this.labelOrder = this.getLabelOrder();
-    this.hasChanges = this.hasChanged();
-  }
-
   deleteLabel(title: string) {
-    this.labelSet?.deleteLabel(title);
-    this.labelOrder = this.getLabelOrder();
+    this.labelControl.patchValue(
+      this.labelControlValue
+        .split(', ')
+        .filter((label) => title !== label)
+        .join(', '),
+    );
     this.hasChanges = this.hasChanged();
-  }
-
-  drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.labelOrder, event.previousIndex, event.currentIndex);
-    this.labelSet?.setLabelOrder(this.labelOrder);
-    this.hasChanges = this.hasChanged();
-    this.cdr.markForCheck();
   }
 
   saveLabelSet(): void {

@@ -1,0 +1,36 @@
+@import 'apps/dashboard/src/variables';
+
+.label-sets-management {
+  display: flex;
+  gap: rhythm(9);
+
+  header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: rhythm(6);
+  }
+
+  .label-set-list {
+    flex: 0 0 auto;
+    width: rhythm(56);
+
+    .no-label-set {
+      margin-top: rhythm(8);
+    }
+
+    .label-set-container {
+      margin-bottom: rhythm(3);
+
+      .title-s {
+        margin-bottom: rhythm(1);
+      }
+    }
+  }
+
+  .label-set-form {
+    flex: 1 1 auto;
+    max-width: rhythm(56);
+    min-width: rhythm(40);
+  }
+}

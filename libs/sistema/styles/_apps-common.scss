@@ -64,3 +64,52 @@ pa-button.full-width {
   padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
     var(--app-layout-padding-left);
 }
+
+ul.nsi-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    background: $color-neutral-lightest;
+    cursor: pointer;
+    display: flex;
+    gap: rhythm(1);
+    justify-content: space-between;
+    line-height: rhythm(5);
+    padding-right: rhythm(1);
+    text-transform: capitalize;
+    transition: background $transition-hint;
+
+    .action-buttons-container {
+      display: flex;
+      align-items: center;
+
+      pa-button {
+        height: rhythm(4);
+        opacity: 0;
+        transition: opacity $transition-hint;
+      }
+    }
+
+    &:not(:last-of-type) {
+      box-shadow: inset 0 -1px 0px $color-neutral-light;
+    }
+
+    &:hover {
+      background: $color-neutral-lighter;
+    }
+
+    &.selected {
+      background: $color-dark-stronger;
+      color: $color-light-stronger;
+    }
+
+    &.selected,
+    &:hover {
+      .action-buttons-container pa-button {
+        opacity: 1;
+      }
+    }
+  }
+}

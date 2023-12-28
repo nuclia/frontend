@@ -1,51 +1,28 @@
-<div class="label-sets-management">
-  <header>
-    <div class="title-container">
-      <div class="display-s">{{ 'label-set.title' | translate }}</div>
-      <div class="body-m">{{ 'label-set.subtitle' | translate }}</div>
-    </div>
-    <pa-button
-      [disabled]="(isAdminOrContrib | async) === false"
-      iconAndText
-      icon="circle-plus"
-      kind="primary"
-      aspect="solid"
-      data-cy="add-label-set"
-      (click)="addLabelSet()">
-      {{ 'label-set.add-button' | translate }}
-    </pa-button>
-  </header>
-
-  <pa-expander
-    emitOnly
-    *ngFor="let labelSet of labelSets | async | keyvalue"
-    [expanded]="expandedLabelSetIds.includes(labelSet.key)"
-    (toggleExpander)="selectLabelSet(labelSet.key)">
-    <pa-expander-header>
-      <div paEllipsisTooltip>{{ labelSet.value.title }}</div>
-    </pa-expander-header>
-    <pa-expander-header-side-block>
-      <div>
-        <pa-button
-          *ngIf="(isAdminOrContrib | async) === true"
-          icon="edit"
-          aspect="basic"
-          [routerLink]="'../' + labelSet.key">
-          {{ 'label-set.edit' | translate }}
-        </pa-button>
-        <pa-button
-          *ngIf="(isAdminOrContrib | async) === true"
-          icon="trash"
-          aspect="basic"
-          kind="destructive"
-          (click)="delete(labelSet.key, labelSet.value)">
-          {{ 'label-set.delete.label' | translate }}
-        </pa-button>
+<ul class="nsi-list">
+  @for (labelSet of labelSets; track labelSet.id) {
+    <li
+      [class.selected]="rla.isActive"
+      routerLinkActive
+      #rla="routerLinkActive"
+      [attr.data-cy]="'label-set-' + labelSet.id"
+      [routerLink]="'./' + labelSet.id">
+      <div
+        class="label-set-title"
+        paEllipsisTooltip>
+        {{ labelSet.title }}
       </div>
-    </pa-expander-header-side-block>
-
-    <pa-expander-body>
-      <div class="labels">{{ labelSet.value.labels | labelList }}</div>
-    </pa-expander-body>
-  </pa-expander>
-</div>
+      @if (isAdmin) {
+        <div class="action-buttons-container">
+          <pa-button
+            icon="trash"
+            aspect="basic"
+            kind="destructive"
+            size="small"
+            (click)="delete(labelSet.id, labelSet, rla.isActive)">
+            {{ 'label-set.delete.label' | translate }}
+          </pa-button>
+        </div>
+      }
+    </li>
+  }
+</ul>

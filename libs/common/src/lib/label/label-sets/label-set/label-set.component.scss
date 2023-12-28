@@ -3,20 +3,16 @@
 $page-title-height: rhythm(8);
 $global-width: rhythm(80);
 $form-width: rhythm(50);
-$main-gap: rhythm(4);
 $footer-height: rhythm(5);
 $footer-vertical-padding: rhythm(4);
 $footer-top-margin: rhythm(2);
 
 .label-set-editor {
-  .form-container {
-    width: $global-width;
-  }
   form {
     display: flex;
     flex-direction: column;
-    gap: $main-gap;
-    margin: rhythm(4) 0;
+    gap: rhythm(3);
+    margin: rhythm(1) 0;
 
     .multiple-description {
       margin-bottom: rhythm(0.5);
@@ -40,41 +36,28 @@ $footer-top-margin: rhythm(2);
     }
   }
 
-  .form-section-container {
-    align-items: center;
+  .label-list {
     display: flex;
-    gap: rhythm(2);
+    flex-direction: column;
+    gap: rhythm(1);
 
-    & > :first-child {
-      flex: 1 0 auto;
-    }
+    .label-list-title {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
 
-    & > :last-child {
-      flex: 0 0 auto;
-      width: $form-width;
-    }
-
-    &.align-top {
-      align-items: start;
+      .label-display-buttons {
+        display: flex;
+        gap: rhythm(0.5);
+      }
     }
   }
 
-  .label-list {
-    margin-top: rhythm(3);
-
-    app-label {
-      display: block;
-      margin-bottom: rhythm(1);
-    }
-
-    .cdk-drag-placeholder {
-      opacity: 0.4;
-    }
-
-    .cdk-drag-animating,
-    &.cdk-drop-list-dragging app-label:not(.cdk-drag-placeholder) {
-      transition: transform $transition-response;
-    }
+  .label-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(1);
+    margin-top: rhythm(4);
   }
 
   .scrollable-container {
