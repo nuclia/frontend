@@ -1,3 +1,5 @@
+import { CopilotData } from './copilot/copilot-modal.component';
+
 export type PresetType = 'search' | 'find' | 'ask' | 'discover';
 export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
 export type FilterSelectionType = { [key in FilterType]: boolean };
@@ -36,6 +38,7 @@ export type WidgetConfiguration = {
   placeholder?: string;
   filters?: { [key in FilterType]: boolean };
   preset?: PresetForm;
+  copilotData?: CopilotData;
 };
 export const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
 export const DEFAULT_FILTERS: FilterSelectionType = {

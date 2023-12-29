@@ -4,7 +4,6 @@ import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackin
 import { combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { NavigationService } from '@flaps/common';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
@@ -24,7 +23,7 @@ import {
   WIDGETS_CONFIGURATION,
 } from './widget-generator.models';
 import { SisModalService } from '@nuclia/sistema';
-import { CopilotModalComponent } from './copilot/copilot-modal.component';
+import { CopilotData, CopilotModalComponent } from './copilot/copilot-modal.component';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
@@ -88,6 +87,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     location: new FormControl<'public' | 'application' | null>(null),
     answerOutput: new FormControl<'onlyAnswers' | 'answerAndResults' | null>(null),
   });
+
+  copilotData?: CopilotData;
 
   // controls have the name expected by the widget features list
   advancedForm = new FormGroup({
@@ -211,7 +212,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private translate: TranslateService,
-    private navigation: NavigationService,
     private modalService: SisModalService,
   ) {
     const config = this.localStorage.getItem(WIDGETS_CONFIGURATION);
@@ -239,6 +239,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       }
       if (config.features) {
         this.advancedForm.patchValue(config.features);
+      }
+      if (config.copilotData) {
+        this.copilotData = config.copilotData;
       }
       // generate snippet in next detection cycle
       setTimeout(() => this.updateSnippetAndStoreConfig());
@@ -383,6 +386,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       features: this.advancedForm.getRawValue(),
       filters: this.filtersEnabled ? this.filters : undefined,
       preset: this.presetForm.getRawValue(),
+      copilotData: this.copilotData,
     };
     this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
     this.cdr.detectChanges();
@@ -536,9 +540,10 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
 
   openCopilotModal() {
     this.modalService
-      .openModal(CopilotModalComponent, { dismissable: true })
-      .onClose.subscribe((result: { prompt: string; filters: string }) => {
+      .openModal(CopilotModalComponent, { dismissable: false, data: this.copilotData })
+      .onClose.subscribe((result?: CopilotData) => {
         if (result) {
+          this.copilotData = result;
           this.advancedForm.patchValue({
             userPrompt: result.prompt,
             preselectedFilters: result.filters,

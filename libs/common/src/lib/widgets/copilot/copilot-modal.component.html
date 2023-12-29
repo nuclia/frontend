@@ -1,35 +1,53 @@
-<pa-modal-dialog>
+<pa-modal-advanced fitContentHeight>
   <pa-modal-title>
-    <h2>{{ 'widget.copilot.title' | translate }}</h2>
+    {{ 'widget.copilot.title' | translate }}
   </pa-modal-title>
   <pa-modal-content>
     <form [formGroup]="form">
-      <div class="body-m">{{ 'widget.copilot.description' | translate }}</div>
+      <div class="description body-m">{{ 'widget.copilot.description' | translate }}</div>
       <pa-input
         formControlName="agent"
         [placeholder]="'widget.copilot.agent-placeholder' | translate">
         {{ 'widget.copilot.agent' | translate }}
       </pa-input>
-      <pa-input
+      <pa-textarea
         formControlName="topic"
+        resizable
+        [rows]="2"
         [placeholder]="'widget.copilot.topic-placeholder' | translate"
         [help]="'widget.copilot.topic-help' | translate">
         {{ 'widget.copilot.topic' | translate }}
-      </pa-input>
-      <pa-button
-        kind="primary"
-        [disabled]="!form.controls['topic'].value || loading"
-        (click)="generate()">
-        {{ 'widget.copilot.generate' | translate }}
-      </pa-button>
+      </pa-textarea>
+
+      <div class="generate-button">
+        <pa-button
+          [disabled]="!form.controls['topic'].value || loading"
+          (click)="generate()">
+          {{ (loading ? 'widget.copilot.generating' : 'widget.copilot.generate') | translate }}
+        </pa-button>
+      </div>
+
       <pa-textarea
         formControlName="prompt"
-        [resizable]="true">
+        resizable
+        [rows]="2">
         {{ 'widget.copilot.prompt' | translate }}
       </pa-textarea>
+
+      @if (hasLabelSets | async) {
+        <app-label-dropdown
+          [selection]="labelSelection"
+          [labelSets]="resourceLabelSets | async"
+          (selectionChange)="updateFilters($event)"
+          aspect="basic"
+          size="small">
+          {{ 'widget.copilot.add-label-filters' | translate }}
+        </app-label-dropdown>
+      }
       <pa-textarea
         formControlName="filters"
-        [resizable]="true">
+        resizable
+        [rows]="2">
         {{ 'widget.copilot.filters' | translate }}
       </pa-textarea>
     </form>
@@ -42,4 +60,4 @@
       {{ 'widget.copilot.apply' | translate }}
     </pa-button>
   </pa-modal-footer>
-</pa-modal-dialog>
+</pa-modal-advanced>

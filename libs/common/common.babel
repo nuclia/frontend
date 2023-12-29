@@ -22066,6 +22066,29 @@
 								<name>copilot</name>
 								<children>
 									<concept_node>
+										<name>add-label-filters</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
 										<name>agent</name>
 										<description/>
 										<comment/>
@@ -22182,6 +22205,29 @@
 									</concept_node>
 									<concept_node>
 										<name>generate</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>generating</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -24101,6 +24147,29 @@
 													</concept_node>
 													<concept_node>
 														<name>description</name>
+														<description/>
+														<comment/>
+														<translations>
+															<translation>
+																<language>ca-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>en-US</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>es-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>fr-FR</language>
+																<approved>false</approved>
+															</translation>
+														</translations>
+													</concept_node>
+													<concept_node>
+														<name>edit-copilot-button</name>
 														<description/>
 														<comment/>
 														<translations>
