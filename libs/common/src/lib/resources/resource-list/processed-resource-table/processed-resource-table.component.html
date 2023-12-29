@@ -1,62 +1,65 @@
-<div
-  data-cy="spinner"
-  class="loading-shade"
-  *ngIf="isLoading">
-  <nsi-spinner></nsi-spinner>
-</div>
+@if (isLoading) {
+  <div
+    data-cy="spinner"
+    class="loading-shade">
+    <nsi-spinner></nsi-spinner>
+  </div>
+}
 
-<ng-container *ngIf="(isReady | async) === true && (emptyKb | async) === false">
+@if ((isReady | async) === true && (emptyKb | async) === false) {
   <div class="resource-table-header">
-    <div
-      class="resource-bulk-actions"
-      *ngIf="(isAdminOrContrib | async) && selection.length > 0">
-      {{ 'resource.selected_count' | translate: { num: selection.length } }}
+    @if ((isAdminOrContrib | async) && selection.length > 0) {
+      <div class="resource-bulk-actions">
+        {{ 'resource.selected_count' | translate: { num: selection.length } }}
 
-      <ng-container *ngIf="hasLabelSets | async">
-        <app-label-dropdown
-          [labelSets]="labelSets | async"
-          (selectionChange)="updateLabelList($event)"
-          (close)="addLabelsToSelection()"
-          aspect="basic"
-          size="small">
-          {{ 'resource.add_labels' | translate }}
-        </app-label-dropdown>
-      </ng-container>
+        @if (hasLabelSets | async) {
+          <app-label-dropdown
+            [labelSets]="labelSets | async"
+            (selectionChange)="updateLabelList($event)"
+            (close)="addLabelsToSelection()"
+            aspect="basic"
+            size="small">
+            {{ 'resource.add_labels' | translate }}
+          </app-label-dropdown>
+        }
 
-      <ng-container *ngIf="selection.length > 0">
-        <pa-button
-          data-cy="delete-selection"
-          kind="destructive"
-          aspect="basic"
-          size="small"
-          [disabled]="bulkAction.inProgress"
-          (click)="bulkDelete()">
-          {{ 'generic.delete' | translate }}
-        </pa-button>
-        <pa-button
-          aspect="basic"
-          size="small"
-          [disabled]="bulkAction.inProgress"
-          (click)="bulkReprocess()">
-          {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
-        </pa-button>
-        <div
-          class="body-m"
-          *ngIf="bulkAction.inProgress">
-          {{ bulkAction.label | translate }}
-          {{ bulkAction.done }} / {{ bulkAction.total }}
-        </div>
-      </ng-container>
-    </div>
+        @if (selection.length > 0) {
+          <pa-button
+            data-cy="delete-selection"
+            kind="destructive"
+            aspect="basic"
+            size="small"
+            [disabled]="bulkAction.inProgress"
+            (click)="bulkDelete()">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
+          <pa-button
+            aspect="basic"
+            size="small"
+            [disabled]="bulkAction.inProgress"
+            (click)="bulkReprocess()">
+            {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
+          </pa-button>
+          @if (bulkAction.inProgress) {
+            <div class="body-m">
+              {{ bulkAction.label | translate }}
+              {{ bulkAction.done }} / {{ bulkAction.total }}
+            </div>
+          }
+        }
+      </div>
+    }
+
     <div class="table-options">
-      <ng-container *ngIf="hasFilters">
-        <pa-button
-          *ngIf="isFiltering"
-          aspect="basic"
-          kind="primary"
-          (click)="clearFilters()">
-          {{ 'resource.filter.clear' | translate }}
-        </pa-button>
+      @if (hasFilters) {
+        @if (isFiltering) {
+          <pa-button
+            aspect="basic"
+            kind="primary"
+            (click)="clearFilters()">
+            {{ 'resource.filter.clear' | translate }}
+          </pa-button>
+        }
 
         <div>
           <nsi-dropdown-button
@@ -67,39 +70,42 @@
             {{ 'resource.filtered-by' | translate }}
           </nsi-dropdown-button>
           <pa-dropdown #availableFilters>
-            <ng-container *ngIf="filterOptions.classification.length > 0">
+            @if (filterOptions.classification.length > 0) {
               <pa-option-header>{{ 'resource.classification-column' | translate }}</pa-option-header>
-              <pa-option
-                *ngFor="let option of filterOptions.classification"
-                (selectOption)="onSelectFilter(option, $event)"
-                dontCloseOnSelect>
-                <pa-checkbox
-                  [(value)]="option.selected"
-                  (valueChange)="onToggleFilter()">
-                  {{ option.label }}
-                </pa-checkbox>
-              </pa-option>
-            </ng-container>
-            <ng-container *ngIf="filterOptions.classification.length > 0 && filterOptions.mainTypes.length > 0">
+
+              @for (option of filterOptions.classification; track option.id) {
+                <pa-option
+                  (selectOption)="onSelectFilter(option, $event)"
+                  dontCloseOnSelect>
+                  <pa-checkbox
+                    [(value)]="option.selected"
+                    (valueChange)="onToggleFilter()">
+                    {{ option.label }}
+                  </pa-checkbox>
+                </pa-option>
+              }
+            }
+            @if (filterOptions.classification.length > 0 && filterOptions.mainTypes.length > 0) {
               <pa-separator></pa-separator>
-            </ng-container>
-            <ng-container *ngIf="filterOptions.mainTypes.length > 0">
+            }
+            @if (filterOptions.mainTypes.length > 0) {
               <pa-option-header>{{ 'resource.filter.main-type' | translate }}</pa-option-header>
-              <pa-option
-                *ngFor="let option of filterOptions.mainTypes"
-                (selectOption)="onSelectFilter(option, $event)"
-                [paTooltip]="option.help"
-                dontCloseOnSelect>
-                <pa-checkbox
-                  [(value)]="option.selected"
-                  (valueChange)="onToggleFilter()">
-                  {{ option.label }}
-                </pa-checkbox>
-              </pa-option>
-            </ng-container>
+              @for (option of filterOptions.mainTypes; track option.id) {
+                <pa-option
+                  (selectOption)="onSelectFilter(option, $event)"
+                  [paTooltip]="option.help"
+                  dontCloseOnSelect>
+                  <pa-checkbox
+                    [(value)]="option.selected"
+                    (valueChange)="onToggleFilter()">
+                    {{ option.label }}
+                  </pa-checkbox>
+                </pa-option>
+              }
+            }
           </pa-dropdown>
         </div>
-      </ng-container>
+      }
 
       <div>
         <nsi-dropdown-button
@@ -110,17 +116,18 @@
           {{ 'resource.visible_columns_dropdown' | translate }}
         </nsi-dropdown-button>
         <pa-dropdown #visibleColumns>
-          <pa-option
-            *ngFor="let column of optionalColumns"
-            [value]="column.id"
-            (selectOption)="selectColumn(column, $event)"
-            dontCloseOnSelect>
-            <pa-checkbox
-              [(value)]="column.visible"
-              (valueChange)="this.columnVisibilityUpdate.next($event)">
-              {{ column.label | translate }}
-            </pa-checkbox>
-          </pa-option>
+          @for (column of optionalColumns; track column.id) {
+            <pa-option
+              [value]="column.id"
+              (selectOption)="selectColumn(column, $event)"
+              dontCloseOnSelect>
+              <pa-checkbox
+                [(value)]="column.visible"
+                (valueChange)="this.columnVisibilityUpdate.next($event)">
+                {{ column.label | translate }}
+              </pa-checkbox>
+            </pa-option>
+          }
         </pa-dropdown>
       </div>
     </div>
@@ -132,126 +139,128 @@
         <pa-table-sortable-header
           [cells]="headerCells | async"
           (sort)="sortBy($event)">
-          <pa-table-cell
-            header
-            *ngIf="isAdminOrContrib | async">
-            <pa-checkbox
-              data-cy="select-all"
-              [value]="allSelected | async"
-              [paTooltip]="((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate"
-              [disabled]="bulkAction.inProgress"
-              (change)="toggleAll()"></pa-checkbox>
-          </pa-table-cell>
+          @if (isAdminOrContrib | async) {
+            <pa-table-cell header>
+              <pa-checkbox
+                data-cy="select-all"
+                [value]="allSelected | async"
+                [paTooltip]="
+                  ((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate
+                "
+                [disabled]="bulkAction.inProgress"
+                (change)="toggleAll()"></pa-checkbox>
+            </pa-table-cell>
+          }
         </pa-table-sortable-header>
 
-        <pa-table-row *ngFor="let row of data | async; trackBy: trackById">
-          <pa-table-cell *ngIf="isAdminOrContrib | async">
-            <pa-checkbox
-              [value]="selection.includes(row.resource.id)"
-              (change)="toggleSelection(row.resource.id)"></pa-checkbox>
-          </pa-table-cell>
-          <pa-table-cell
-            clickable
-            (click)="onClickTitle(row.resource)">
-            <div class="title-with-icon">
-              <pa-icon
-                *ngIf="row.resource.icon | mimeIcon as icon"
-                [name]="icon"></pa-icon>
-              <div class="title-and-description">
-                <div
-                  class="body-s"
-                  data-cy="resource-title">
-                  {{ row.resource.title }}
+        @for (row of data | async; track row.resource.id) {
+          <pa-table-row>
+            @if (isAdminOrContrib | async) {
+              <pa-table-cell>
+                <pa-checkbox
+                  [value]="selection.includes(row.resource.id)"
+                  (change)="toggleSelection(row.resource.id)"></pa-checkbox>
+              </pa-table-cell>
+            }
+
+            <pa-table-cell
+              clickable
+              (click)="onClickTitle(row.resource)">
+              <div class="title-with-icon">
+                @if (row.resource.icon | mimeIcon; as icon) {
+                  <pa-icon [name]="icon"></pa-icon>
+                }
+                <div class="title-and-description">
+                  <div
+                    class="body-s"
+                    data-cy="resource-title">
+                    {{ row.resource.title }}
+                  </div>
+                  @if (row.description) {
+                    <small
+                      class="body-xs"
+                      data-cy="resource-description">
+                      {{ row.description }}
+                    </small>
+                  }
                 </div>
-                <small
-                  *ngIf="row.description"
-                  class="body-xs"
-                  data-cy="resource-description">
-                  {{ row.description }}
-                </small>
+                <div class="title-status">
+                  @if (row.resource.metadata?.status === 'PENDING') {
+                    <pa-icon name="clock-dash"></pa-icon>
+                  } @else if (row.resource.metadata?.status === 'ERROR') {
+                    <pa-icon
+                      class="error"
+                      name="warning"></pa-icon>
+                  }
+                </div>
               </div>
-              <div class="title-status">
-                <pa-icon
-                  *ngIf="row.resource.metadata?.status === 'PENDING'"
-                  name="clock-dash"></pa-icon>
-                <pa-icon
-                  class="error"
-                  *ngIf="row.resource.metadata?.status === 'ERROR'"
-                  name="warning"></pa-icon>
-              </div>
-            </div>
-          </pa-table-cell>
-          <pa-table-cell
-            class="classification-cell"
-            *ngIf="(visibleColumnsId | async)?.includes('classification')">
-            <div class="label-container">
-              <nsi-label
-                *ngFor="let label of row.labels"
-                [color]="label.color"
-                [disabled]="deletingLabel"
-                (removeLabel)="onRemoveLabel(row.resource, label, $event)">
-                {{ label.label }}
-              </nsi-label>
-            </div>
-          </pa-table-cell>
-          <pa-table-cell
-            center
-            *ngIf="(visibleColumnsId | async)?.includes('created')">
-            <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
-          </pa-table-cell>
-          <pa-table-cell
-            center
-            *ngIf="(visibleColumnsId | async)?.includes('language')">
-            <span class="body-s">{{ row.resource.metadata?.language || '–' }}</span>
-          </pa-table-cell>
-          <pa-table-cell-menu *ngIf="isAdminOrContrib | async">
-            <pa-button
-              icon="more-vertical"
-              data-cy="menu-button"
-              aspect="basic"
-              size="small"
-              paTooltip="generic.actions"
-              [disabled]="bulkAction.inProgress"
-              [paPopup]="menu">
-              {{ 'generic.actions' | translate }}
-            </pa-button>
-            <pa-dropdown #menu>
-              <pa-option
-                [disabled]="!(isAdminOrContrib | async)"
-                (selectOption)="triggerAction(row.resource, 'edit')">
-                {{ 'resource.menu.edit' | translate }}
-              </pa-option>
-              <pa-option
-                [disabled]="!(isAdminOrContrib | async)"
-                (selectOption)="triggerAction(row.resource, 'annotate')">
-                {{ 'resource.menu.annotate' | translate }}
-              </pa-option>
-              <pa-option
-                [disabled]="!(isAdminOrContrib | async)"
-                (selectOption)="triggerAction(row.resource, 'classify')">
-                {{ 'resource.menu.classify' | translate }}
-              </pa-option>
-              <pa-option
-                [disabled]="!(isAdminOrContrib | async)"
-                (selectOption)="triggerAction(row.resource, 'summarize')">
-                {{ 'resource.menu.summarize' | translate }}
-              </pa-option>
-              <pa-option
-                [disabled]="!(isAdminOrContrib | async)"
-                (selectOption)="triggerAction(row.resource, 'reprocess')">
-                {{ 'generic.reindex' | translate }}
-              </pa-option>
-              <pa-separator></pa-separator>
-              <pa-option
-                destructive
-                [disabled]="!(isAdminOrContrib | async)"
-                (selectOption)="triggerAction(row.resource, 'delete')">
-                {{ 'generic.delete' | translate }}
-              </pa-option>
-            </pa-dropdown>
-          </pa-table-cell-menu>
-        </pa-table-row>
+            </pa-table-cell>
+            @if (visibleColumnsId | async; as visibleColumns) {
+              @if (visibleColumns.includes('classification')) {
+                <pa-table-cell class="classification-cell">
+                  <div class="label-container">
+                    @for (label of row.labels; track label.labelset + label.label) {
+                      <nsi-label
+                        [color]="label.color"
+                        [disabled]="deletingLabel"
+                        (removeLabel)="onRemoveLabel(row.resource, label, $event)">
+                        {{ label.label }}
+                      </nsi-label>
+                    }
+                  </div>
+                </pa-table-cell>
+              }
+              @if (visibleColumns.includes('created')) {
+                <pa-table-cell center>
+                  <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
+                </pa-table-cell>
+              }
+              @if (visibleColumns.includes('language')) {
+                <pa-table-cell center>
+                  <span class="body-s">{{ row.resource.metadata?.language || '–' }}</span>
+                </pa-table-cell>
+              }
+            }
+            @if (isAdminOrContrib | async) {
+              <pa-table-cell-menu>
+                <pa-button
+                  icon="more-vertical"
+                  data-cy="menu-button"
+                  aspect="basic"
+                  size="small"
+                  paTooltip="generic.actions"
+                  [disabled]="bulkAction.inProgress"
+                  [paPopup]="menu">
+                  {{ 'generic.actions' | translate }}
+                </pa-button>
+                <pa-dropdown #menu>
+                  <pa-option (selectOption)="triggerAction(row.resource, 'edit')">
+                    {{ 'resource.menu.edit' | translate }}
+                  </pa-option>
+                  <pa-option (selectOption)="triggerAction(row.resource, 'annotate')">
+                    {{ 'resource.menu.annotate' | translate }}
+                  </pa-option>
+                  <pa-option (selectOption)="triggerAction(row.resource, 'classify')">
+                    {{ 'resource.menu.classify' | translate }}
+                  </pa-option>
+                  <pa-option (selectOption)="triggerAction(row.resource, 'summarize')">
+                    {{ 'resource.menu.summarize' | translate }}
+                  </pa-option>
+                  <pa-option (selectOption)="triggerAction(row.resource, 'reprocess')">
+                    {{ 'generic.reindex' | translate }}
+                  </pa-option>
+                  <pa-separator></pa-separator>
+                  <pa-option
+                    destructive
+                    (selectOption)="triggerAction(row.resource, 'delete')">
+                    {{ 'generic.delete' | translate }}
+                  </pa-option>
+                </pa-dropdown>
+              </pa-table-cell-menu>
+            }
+          </pa-table-row>
+        }
       </pa-table>
     </pa-infinite-scroll>
   </div>
-</ng-container>
+}
