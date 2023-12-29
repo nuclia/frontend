@@ -36,7 +36,7 @@ export class Authentication implements IAuthentication {
 
   /**
    * Returns the authentication header (which will be `Authorization` for account authentication, or `X-NUCLIA-SERVICEACCOUNT` for private Knowledge Box authentication).
-   * 
+   *
    * Example:
     ```ts
     const headers = nuclia.auth.getAuthHeaders();
@@ -84,7 +84,7 @@ export class Authentication implements IAuthentication {
 
   /**
    * Emits when the authentication status changes.
-   * 
+   *
    * Example:
     ```ts
     nuclia.auth.isAuthenticated().subscribe((isAuthenticated) => {
@@ -102,7 +102,7 @@ export class Authentication implements IAuthentication {
 
   /**
    * Returns an `Observable` emitting when the user has logged out.
-   * 
+   *
    * Example:
     ```ts
     nuclia.auth.hasLoggedOut().subscribe((loggedOut) => {
@@ -121,10 +121,10 @@ export class Authentication implements IAuthentication {
 
   /**
    * Calls the login endpoint for account authentication and emits when done.
-   * 
+   *
    * It can optionally take a reCaptcha validation code if the Nuclia backend requires it.
    * Once authenticated, the Nuclia SDK will periodically refresh the token before it expires.
-   * 
+   *
    * Example:
     ```ts
     nuclia.auth.login(username, password).subscribe({
@@ -153,9 +153,9 @@ export class Authentication implements IAuthentication {
 
   /**
    * Returns a boolean if successful. Stores authentication tokens in localStorage and triggers `isAuthenticated`.
-   * 
+   *
    * This method is automatically called when using `login` and can be useful when using a custom authentication flow.
-   * 
+   *
    * Example:
       ```ts
       nuclia.auth.authenticate(tokens);
@@ -200,12 +200,18 @@ export class Authentication implements IAuthentication {
 
   /** Returns authentication token stored in localStorage. */
   getToken(): string {
-    return this.nuclia.options.public ? '' : localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
+    let token = '';
+    try {
+      token = this.nuclia.options.public ? '' : localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
+    } catch (e) {
+      // Local storage is disabled
+    }
+    return token;
   }
 
   /**
    * Sets the current user’s password.
-   * 
+   *
    * Example:
     ```ts
     nuclia.auth.setPassword(password).subscribe({
@@ -231,7 +237,7 @@ export class Authentication implements IAuthentication {
 
   /**
    * Deletes current user account and removes stored tokens.
-   * 
+   *
    * Example:
     ```ts
     nuclia.auth.deleteAuthenticatedUser().subscribe(() => {
@@ -245,7 +251,7 @@ export class Authentication implements IAuthentication {
 
   /**
    * Parses JWT token and returns corresponding user information.
-   * 
+   *
    * Example:
     ```ts
     const user = nuclia.auth.getJWTUser();
@@ -314,7 +320,7 @@ export class Authentication implements IAuthentication {
     }).pipe(
       switchMap((response) => {
         if (!response.ok) {
-          return throwError(response);
+          return throwError(() => response);
         }
         return from(response.clone().json());
       }),

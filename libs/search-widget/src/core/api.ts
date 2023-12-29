@@ -23,7 +23,6 @@ import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
-import { de } from 'date-fns/locale';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 const DEFAULT_CHAT_MODE = [Chat.Features.VECTORS, Chat.Features.PARAGRAPHS];
@@ -40,7 +39,12 @@ let SUGGEST_MODE: Search.SuggestionFeatures[];
 let prompt: string | undefined = undefined;
 let CITATIONS = false;
 
-export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
+export const initNuclia = (
+  options: NucliaOptions,
+  state: KBStates,
+  widgetOptions: WidgetOptions,
+  noTracking?: boolean,
+) => {
   SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
   CHAT_MODE = [...DEFAULT_CHAT_MODE];
   SEARCH_OPTIONS = { ...DEFAULT_SEARCH_OPTIONS };
@@ -62,13 +66,16 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
   CITATIONS = !!widgetOptions.features?.citations;
 
   nucliaApi = new Nuclia(options);
-  initTracking(nucliaApi.options.knowledgeBox || 'kb not defined');
-  logEvent('init', {
-    widget_features: Object.entries(widgetOptions?.features || {})
-      .filter(([, value]) => !!value)
-      .map(([key]) => key)
-      .join(','),
-  });
+  if (!noTracking) {
+    initTracking(nucliaApi.options.knowledgeBox || 'kb not defined');
+    logEvent('init', {
+      widget_features: Object.entries(widgetOptions?.features || {})
+        .filter(([, value]) => !!value)
+        .map(([key]) => key)
+        .join(','),
+    });
+  }
+
   searchOptions.set({
     inTitleOnly: false,
     highlight: widgetOptions.highlight,

@@ -6,6 +6,7 @@
 - Support `/rephrase` endpoint in KnowledgeBox
 - Add `generateRandomQuestionAboutResource` method
 - Add `index_size` in `Counters` model
+- Don't crash on `getToken` when local storage is disabled on the browser
 
 # 1.9.1 (2023-12-18)
 

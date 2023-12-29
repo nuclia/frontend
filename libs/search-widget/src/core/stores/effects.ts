@@ -378,13 +378,15 @@ export function askQuestion(
   );
 }
 
-export function initUsageTracking() {
-  subscriptions.push(
-    trackingEngagement
-      .pipe(
-        distinctUntilChanged(),
-        filter((engagement) => Object.keys(engagement).length > 0),
-      )
-      .subscribe((engagement) => logEvent('engage', { ...engagement })),
-  );
+export function initUsageTracking(noTracking?: boolean) {
+  if (!noTracking) {
+    subscriptions.push(
+      trackingEngagement
+        .pipe(
+          distinctUntilChanged(),
+          filter((engagement) => Object.keys(engagement).length > 0),
+        )
+        .subscribe((engagement) => logEvent('engage', { ...engagement })),
+    );
+  }
 }

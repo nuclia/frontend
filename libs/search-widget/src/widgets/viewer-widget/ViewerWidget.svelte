@@ -40,6 +40,7 @@
   export let standalone = false;
   export let proxy = false;
   export let cssPath = '';
+  export let no_tracking = false;
 
   export let rid = '';
   export let field_id = '';
@@ -114,6 +115,7 @@
       },
       state,
       {},
+      no_tracking
     );
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';

@@ -44,6 +44,7 @@
   export let preselected_filters = '';
   export let cssPath = '';
   export let prompt = '';
+  export let no_tracking = false;
 
   $: darkMode = mode === 'dark';
   $: {
@@ -122,6 +123,7 @@
         features: _features,
         prompt,
       },
+      no_tracking
     );
 
     // Setup widget in the store
@@ -160,7 +162,7 @@
     if (_features.knowledgeGraph) {
       setupTriggerGraphNerSearch();
     }
-    initUsageTracking();
+    initUsageTracking(no_tracking);
     injectCustomCss(cssPath, container);
 
     ready = true;
