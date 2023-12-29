@@ -1,0 +1,34 @@
+@if (row) {
+  <div class="title-with-icon">
+    @if (row.resource.icon | mimeIcon; as icon) {
+      <pa-icon [name]="icon"></pa-icon>
+    }
+    <div class="title-and-description">
+      <div
+        class="body-s"
+        data-cy="resource-title">
+        <a
+          [routerLink]="'../' + row.resource.id + '/edit/preview'"
+          (click)="onClickLink($event)">
+          {{ row.resource.title }}
+        </a>
+      </div>
+      @if (row.description) {
+        <small
+          class="body-xs"
+          data-cy="resource-description">
+          {{ row.description }}
+        </small>
+      }
+    </div>
+    <div class="title-status">
+      @if (row.resource.metadata?.status === 'PENDING') {
+        <pa-icon name="clock-dash"></pa-icon>
+      } @else if (row.resource.metadata?.status === 'ERROR') {
+        <pa-icon
+          class="error"
+          name="warning"></pa-icon>
+      }
+    </div>
+  </div>
+}

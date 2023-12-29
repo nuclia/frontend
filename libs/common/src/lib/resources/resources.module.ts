@@ -52,6 +52,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { TitleCellComponent } from './resource-list/title-cell/title-cell.component';
 
 const ROUTES: Routes = [
   {
@@ -186,6 +187,7 @@ const ROUTES: Routes = [
     FileUploadModule,
 
     EditResourceModule,
+    TitleCellComponent,
   ],
   declarations: [
     DatasetImportComponent,

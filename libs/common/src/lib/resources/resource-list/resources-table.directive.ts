@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angular/core';
-import { BulkAction, ColumnHeader, MenuAction, ResourceWithLabels } from './resource-list.model';
+import { BulkAction, ColumnHeader, MenuAction } from './resource-list.model';
 import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { delay, map, switchMap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
@@ -141,10 +141,6 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
         this.resourceListService.sortBy(sorting);
         break;
     }
-  }
-
-  trackById(index: number, resource: ResourceWithLabels) {
-    return resource.resource.id;
   }
 
   onClickTitle(resource: Resource) {

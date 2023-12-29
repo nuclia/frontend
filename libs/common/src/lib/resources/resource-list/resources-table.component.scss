@@ -36,33 +36,6 @@ table {
   width: 100%;
 }
 
-.title-with-icon {
-  align-items: center;
-  display: flex;
-  gap: rhythm(1);
-  justify-content: space-between;
-  width: 100%;
-
-  pa-icon {
-    color: $color-neutral-regular;
-  }
-
-  .title-and-description small {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  .title-status {
-    margin-left: auto;
-    color: $color-dark-stronger;
-    .error {
-      color: $color-secondary-strong;
-    }
-  }
-}
-
 .label-container {
   display: flex;
   gap: rhythm(0.5);
