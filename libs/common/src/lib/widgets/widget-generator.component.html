@@ -109,7 +109,12 @@
                         <pa-button
                           aspect="solid"
                           (click)="openCopilotModal()">
-                          {{ 'widget.generator.presets.copilot.create-copilot-button' | translate }}
+                          {{
+                            (copilotData
+                              ? 'widget.generator.presets.copilot.edit-copilot-button'
+                              : 'widget.generator.presets.copilot.create-copilot-button'
+                            ) | translate
+                          }}
                         </pa-button>
                       </div>
                     </pa-expander-body>

@@ -17,7 +17,7 @@ export class LabelsService {
     filter((labels) => !!labels),
     map((labels) => this.filterByKind(labels, LabelSetKind.PARAGRAPHS)),
   );
-  hasLabelSets = this.labelSets.pipe(map((sets) => !!sets && Object.keys(sets).length > 0));
+  hasResourceLabelSets = this.resourceLabelSets.pipe(map((sets) => !!sets && Object.keys(sets).length > 0));
 
   constructor(private sdk: SDKService) {
     this.sdk.currentKb
