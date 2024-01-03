@@ -22,6 +22,10 @@
     h3 {
       margin: 0;
     }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
     .result-title-container {
       display: flex;
       gap: var(--rhythm-1);
@@ -76,7 +80,7 @@
     .result-container {
       width: calc(100% - var(--width-thumbnail) - var(--rhythm-2));
 
-      h3 {
+      h3 span {
         cursor: pointer;
       }
       .result-title-container {
