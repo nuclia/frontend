@@ -110,7 +110,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     permalink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),
-    targetNewTab: new FormControl<boolean>(false, { nonNullable: true }),
     placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
     hideThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
@@ -199,9 +198,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
   get noBM25forChatControl() {
     return this.advancedForm.controls.noBM25forChat;
-  }
-  get targetNewTabControl() {
-    return this.advancedForm.controls.targetNewTab;
   }
 
   constructor(
@@ -335,12 +331,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       this.useSynonymsControl.disable();
     } else {
       this.useSynonymsControl.enable();
-    }
-  }
-
-  navigateToChanged() {
-    if (!this.navigateToLinkEnabled && !this.navigateToFilesEnabled) {
-      this.targetNewTabControl.patchValue(false);
     }
   }
 

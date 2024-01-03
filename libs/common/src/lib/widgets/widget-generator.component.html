@@ -451,8 +451,7 @@
                     <div class="toggle-and-help">
                       <pa-toggle
                         labelOnRight
-                        formControlName="navigateToLink"
-                        (valueChange)="navigateToChanged()">
+                        formControlName="navigateToLink">
                         {{ 'widget.generator.advanced.navigation-category.navigate-to-link.label' | translate }}
                       </pa-toggle>
                       <pa-icon
@@ -465,8 +464,7 @@
                     <div class="toggle-and-help">
                       <pa-toggle
                         labelOnRight
-                        formControlName="navigateToFile"
-                        (valueChange)="navigateToChanged()">
+                        formControlName="navigateToFile">
                         {{ 'widget.generator.advanced.navigation-category.navigate-to-file.label' | translate }}
                       </pa-toggle>
                       <pa-icon
@@ -476,21 +474,6 @@
                         {{ 'widget.generator.advanced.navigation-category.navigate-to-file.help' | translate }}
                       </pa-popover>
                     </div>
-                    @if (navigateToLinkEnabled || navigateToFilesEnabled) {
-                      <div class="toggle-and-help">
-                        <pa-toggle
-                          labelOnRight
-                          formControlName="targetNewTab">
-                          {{ 'widget.generator.advanced.navigation-category.target-new-tab.label' | translate }}
-                        </pa-toggle>
-                        <pa-icon
-                          name="info"
-                          [paPopover]="targetNewTabHelp" />
-                        <pa-popover #targetNewTabHelp>
-                          {{ 'widget.generator.advanced.navigation-category.target-new-tab.help' | translate }}
-                        </pa-popover>
-                      </div>
-                    }
                   </div>
                 </pa-expander-body>
               </pa-expander>

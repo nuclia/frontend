@@ -14,7 +14,6 @@ export const widgetPlaceholder = writableSubject<string>('input.placeholder');
 export const widgetFilters = writableSubject<WidgetFilters>({});
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
-export const targetNewTab: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.targetNewTab));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));
 export const hasFilterButton: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.filter));
 export const isAnswerEnabled: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.answers));

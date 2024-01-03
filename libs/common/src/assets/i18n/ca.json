@@ -964,8 +964,6 @@
 	"widget.generator.advanced.navigation-category.navigate-to-link.label": "Navega cap als enllaços",
 	"widget.generator.advanced.navigation-category.permalink.help": "Afegiu paràmetres addicionals a l'URL que permet l'obertura directa d'un recurs o dels resultats d'una cerca",
 	"widget.generator.advanced.navigation-category.permalink.label": "Permalinks",
-	"widget.generator.advanced.navigation-category.target-new-tab.help": "Obriu enllaços i/o fitxers en una pestanya nova",
-	"widget.generator.advanced.navigation-category.target-new-tab.label": "Orienta una pestanya nova",
 	"widget.generator.advanced.navigation-category.title": "Navegació",
 	"widget.generator.advanced.ner-category.autocomplete-from-ners.help": "Suggereix NERs per autocompletar la consulta de cerca",
 	"widget.generator.advanced.ner-category.autocomplete-from-ners.label": "Autocompletar des de NERs",

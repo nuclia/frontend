@@ -24,7 +24,6 @@ export type AdvancedForm = {
   permalink: boolean;
   navigateToLink: boolean;
   navigateToFile: boolean;
-  targetNewTab: boolean;
   displayMetadata: boolean;
   hideThumbnails: boolean;
   darkMode: boolean;
@@ -62,7 +61,6 @@ export const DEFAULT_CONFIGURATION: AdvancedForm = {
   permalink: false,
   navigateToLink: false,
   navigateToFile: false,
-  targetNewTab: false,
   displayMetadata: false,
   hideThumbnails: false,
   darkMode: false,

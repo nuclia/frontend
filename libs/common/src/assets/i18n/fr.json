@@ -965,8 +965,6 @@
 	"widget.generator.advanced.navigation-category.navigate-to-link.label": "Accédez aux liens",
 	"widget.generator.advanced.navigation-category.permalink.help": "Ajouter des paramètres supplémentaires dans l'URL permettant l'ouverture directe d'une ressource ou des résultats de recherche",
 	"widget.generator.advanced.navigation-category.permalink.label": "Liens permanents",
-	"widget.generator.advanced.navigation-category.target-new-tab.help": "Ouvrir les liens et/ou les fichiers dans un nouvel onglet",
-	"widget.generator.advanced.navigation-category.target-new-tab.label": "Cibler un nouvel onglet",
 	"widget.generator.advanced.navigation-category.title": "Navigation",
 	"widget.generator.advanced.ner-category.autocomplete-from-ners.help": "Suggérer des NERs pour compléter automatiquement la requête de recherche",
 	"widget.generator.advanced.ner-category.autocomplete-from-ners.label": "Saisie semi-automatique à partir des NER",
