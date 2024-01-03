@@ -396,14 +396,14 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       copiablePrompt = `prompt="${promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n`;
     }
 
-    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
+    forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).subscribe(([kb, account]) => {
       const zone = this.sdk.nuclia.options.standalone ? `standalone="true"` : `zone="${this.sdk.nuclia.options.zone}"`;
       const apiKey = `apikey="YOUR_API_TOKEN"`;
       const privateDetails =
         kb.state === 'PRIVATE'
           ? `
   state="${kb.state}"
-  account="${kb.account}"
+  account="${account.id}"
   kbslug="${kb.slug}"
   ${apiKey}`
           : '';
