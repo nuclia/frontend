@@ -224,7 +224,7 @@ export class LabelSetComponent implements OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  validateLabelList($event: KeyboardEvent) {
+  validateLabelList($event: Event) {
     $event.stopPropagation();
     $event.preventDefault();
     this.labelListElement?.nativeElement.querySelector('textarea')?.blur();
