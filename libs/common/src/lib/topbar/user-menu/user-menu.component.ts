@@ -7,15 +7,33 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLinkActive } from '@angular/router';
 import { SDKService, STFTrackingService, UserService } from '@flaps/core';
 import { Account, Welcome } from '@nuclia/core';
 import { map, Subject, takeUntil } from 'rxjs';
-import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
-import { NavigationService } from '../services';
+import {
+  AvatarModel,
+  PaAvatarModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { NavigationService } from '../../services';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-menu',
+  standalone: true,
+  imports: [
+    CommonModule,
+    TranslateModule,
+    PaIconModule,
+    PaAvatarModule,
+    PaDropdownModule,
+    PaPopupModule,
+    RouterLinkActive,
+  ],
   templateUrl: './user-menu.component.html',
   styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -46,7 +46,7 @@ export class LoginService {
   }
 
   setPreferences(data: SetUserPreferences) {
-    const url = this.config.getAPIURL() + `/${USER}`;
+    const url = this.config.getAPIURL() + `/v1/${USER}`;
     return this.sdk.nuclia.rest.patch(url, data);
   }
 }

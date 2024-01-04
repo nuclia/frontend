@@ -1,0 +1,24 @@
+<pa-button
+  icon="more-vertical"
+  aspect="basic"
+  [paPopup]="standaloneMenu">
+  {{ 'standalone.menu.button-label' | translate }}
+</pa-button>
+
+<pa-dropdown #standaloneMenu>
+  <pa-option
+    data-cy="go-to-kb-list"
+    icon="knowledge-box"
+    routerLink="/">
+    {{ 'standalone.menu.kb-list' | translate }}
+  </pa-option>
+  <a
+    data-cy="download-introspection-data"
+    [href]="introspectionUrl"
+    class="introspection-link"
+    download="introspection_data.tar">
+    <pa-option icon="download">
+      {{ 'standalone.menu.introspect' | translate }}
+    </pa-option>
+  </a>
+</pa-dropdown>

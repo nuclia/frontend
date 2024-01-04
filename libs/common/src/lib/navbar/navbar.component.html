@@ -86,28 +86,31 @@
               <pa-icon name="gear"></pa-icon>
               <span class="nav-link-title">{{ 'sidenav.settings' | translate }}</span>
             </a>
-            <ng-container *ngIf="!standalone">
-              <a
-                *ngIf="(isTrial | async) === false"
-                [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/activity/download' : null"
-                routerLinkActive="active"
-                class="nav-link sub-item"
-                data-cy="go-to-activity-log"
-                [class.disabled]="!(isAdminOrContrib | async)">
-                <pa-icon name="activity-log"></pa-icon>
-                <span class="nav-link-title">{{ 'sidenav.activity' | translate }}</span>
-              </a>
+            @if (!standalone) {
+              @if ((isTrial | async) === false) {
+                <a
+                  [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/activity/download' : null"
+                  routerLinkActive="active"
+                  class="nav-link sub-item"
+                  data-cy="go-to-activity-log"
+                  [class.disabled]="!(isAdminOrContrib | async)">
+                  <pa-icon name="activity-log"></pa-icon>
+                  <span class="nav-link-title">{{ 'sidenav.activity' | translate }}</span>
+                </a>
+              }
 
-              <a
-                *ngIf="isAdmin | async"
-                [routerLink]="kbUrl + '/keys'"
-                routerLinkActive="active"
-                data-cy="go-to-api-keys"
-                class="nav-link sub-item">
-                <pa-icon name="lock-off"></pa-icon>
-                <span class="nav-link-title">{{ 'sidenav.api_keys' | translate }}</span>
-              </a>
-            </ng-container>
+              @if (isAdmin | async) {
+                <a
+                  [routerLink]="kbUrl + '/keys'"
+                  routerLinkActive="active"
+                  data-cy="go-to-api-keys"
+                  class="nav-link sub-item">
+                  <pa-icon name="lock-off"></pa-icon>
+                  <span class="nav-link-title">{{ 'sidenav.api_keys' | translate }}</span>
+                </a>
+              }
+            }
+
             <a
               [routerLink]="!(invalidKey | async) ? kbUrl + '/label-sets' : null"
               routerLinkActive="active"
@@ -117,62 +120,54 @@
               <pa-icon name="label"></pa-icon>
               <span class="nav-link-title">{{ 'sidenav.classification' | translate }}</span>
             </a>
-            <a
-              *ngIf="isEntitiesEnabled | async"
-              [routerLink]="!(invalidKey | async) ? kbUrl + '/entities' : null"
-              routerLinkActive="active"
-              class="nav-link sub-item"
-              data-cy="go-to-ner"
-              [class.disabled]="invalidKey | async">
-              <pa-icon name="form"></pa-icon>
-              <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
-            </a>
-            <ng-container *ngIf="!standalone">
+            @if (isEntitiesEnabled | async) {
               <a
-                *ngIf="isSynonymsEnabled | async"
-                [routerLink]="[kbUrl + '/synonyms']"
-                routerLinkActive="active"
-                data-cy="go-to-synonyms"
-                class="nav-link sub-item">
-                <pa-icon name="synonyms"></pa-icon>
-                <span class="nav-link-title">{{ 'sidenav.synonyms' | translate }}</span>
-              </a>
-              <a
-                *ngIf="isTrainingEnabled | async"
-                [routerLink]="(isAdmin | async) ? kbUrl + '/training' : null"
+                [routerLink]="!(invalidKey | async) ? kbUrl + '/entities' : null"
                 routerLinkActive="active"
                 class="nav-link sub-item"
-                data-cy="go-to-trainings"
-                [class.disabled]="!(isAdmin | async)">
-                <pa-icon name="submenu"></pa-icon>
-                <span class="nav-link-title">{{ 'sidenav.trainings' | translate }}</span>
+                data-cy="go-to-ner"
+                [class.disabled]="invalidKey | async">
+                <pa-icon name="form"></pa-icon>
+                <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
               </a>
-              <a
-                *ngIf="isAccountManager | async"
-                [routerLink]="kbUrl + '/users'"
-                routerLinkActive="active"
-                data-cy="go-to-users"
-                class="nav-link sub-item">
-                <pa-icon name="users"></pa-icon>
-                <span class="nav-link-title">{{ 'sidenav.users' | translate }}</span>
-              </a>
-            </ng-container>
+            }
+
+            @if (!standalone) {
+              @if (isSynonymsEnabled | async) {
+                <a
+                  [routerLink]="[kbUrl + '/synonyms']"
+                  routerLinkActive="active"
+                  data-cy="go-to-synonyms"
+                  class="nav-link sub-item">
+                  <pa-icon name="synonyms"></pa-icon>
+                  <span class="nav-link-title">{{ 'sidenav.synonyms' | translate }}</span>
+                </a>
+              }
+              @if (isTrainingEnabled | async) {
+                <a
+                  [routerLink]="(isAdmin | async) ? kbUrl + '/training' : null"
+                  routerLinkActive="active"
+                  class="nav-link sub-item"
+                  data-cy="go-to-trainings"
+                  [class.disabled]="!(isAdmin | async)">
+                  <pa-icon name="submenu"></pa-icon>
+                  <span class="nav-link-title">{{ 'sidenav.trainings' | translate }}</span>
+                </a>
+              }
+              @if (isAccountManager | async) {
+                <a
+                  [routerLink]="kbUrl + '/users'"
+                  routerLinkActive="active"
+                  data-cy="go-to-users"
+                  class="nav-link sub-item">
+                  <pa-icon name="users"></pa-icon>
+                  <span class="nav-link-title">{{ 'sidenav.users' | translate }}</span>
+                </a>
+              }
+            }
           </div>
         </div>
       }
-      <div
-        class="nav-group"
-        *ngIf="standalone">
-        <div
-          class="group-items"
-          routerLink="/"
-          data-cy="go-to-manage-kbs">
-          <a class="nav-link">
-            <pa-icon name="knowledge-box"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.manage-kbs' | translate }}</span>
-          </a>
-        </div>
-      </div>
     </div>
     <div
       *ngIf="(inAccount | async) && (isAccountManager | async)"

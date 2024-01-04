@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { UserMenuModule } from '../user-menu';
 
 import { TopbarComponent } from './topbar.component';
 import { KbSwitchComponent } from './kb-switch/kb-switch.component';
@@ -17,13 +16,14 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
+import { UserMenuComponent } from './user-menu';
+import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
 
 @NgModule({
   imports: [
     CommonModule,
     AngularSvgIconModule,
     OverlayModule,
-    UserMenuModule,
     TranslateModule,
     PaIconModule,
     PaButtonModule,
@@ -33,6 +33,8 @@ import { DropdownButtonComponent } from '@nuclia/sistema';
     DropdownButtonComponent,
     RouterModule,
     PaFocusableModule,
+    UserMenuComponent,
+    StandaloneMenuComponent,
   ],
   exports: [TopbarComponent],
   declarations: [TopbarComponent, KbSwitchComponent],

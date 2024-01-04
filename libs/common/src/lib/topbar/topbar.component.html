@@ -56,7 +56,9 @@
     @if (!standalone) {
       <app-user-menu
         data-cy="user-menu"
-        [userInfo]="userInfo | async"></app-user-menu>
+        [userInfo]="userInfo | async" />
+    } @else {
+      <app-standalone-menu data-cy="standalone-menu" />
     }
   </div>
 </div>
