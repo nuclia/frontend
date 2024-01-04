@@ -971,8 +971,6 @@
 	"widget.generator.advanced.navigation-category.navigate-to-link.label": "Navigate to links",
 	"widget.generator.advanced.navigation-category.permalink.help": "Add extra parameters in URL allowing direct opening of a resource or search results",
 	"widget.generator.advanced.navigation-category.permalink.label": "Permalinks",
-	"widget.generator.advanced.navigation-category.target-new-tab.help": "Open links and/or files in a new tab",
-	"widget.generator.advanced.navigation-category.target-new-tab.label": "Target new tab",
 	"widget.generator.advanced.navigation-category.title": "Navigation",
 	"widget.generator.advanced.ner-category.autocomplete-from-ners.help": "Suggest NERs to autocomplete the search query",
 	"widget.generator.advanced.ner-category.autocomplete-from-ners.label": "Autocomplete from NERs",

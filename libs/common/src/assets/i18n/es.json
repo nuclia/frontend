@@ -970,8 +970,6 @@
 	"widget.generator.advanced.navigation-category.navigate-to-link.label": "Navega hacia los enlaces",
 	"widget.generator.advanced.navigation-category.permalink.help": "Agregue parámetros adicionales en la URL que permita la apertura directa de un recurso o de los resultados de una búsqueda",
 	"widget.generator.advanced.navigation-category.permalink.label": "Permalinks",
-	"widget.generator.advanced.navigation-category.target-new-tab.help": "Abrir enlaces y/o archivos en una nueva pestaña",
-	"widget.generator.advanced.navigation-category.target-new-tab.label": "Apuntar a nueva pestaña",
 	"widget.generator.advanced.navigation-category.title": "Navegación",
 	"widget.generator.advanced.ner-category.autocomplete-from-ners.help": "Sugerir NER para autocompletar la consulta de búsqueda",
 	"widget.generator.advanced.ner-category.autocomplete-from-ners.label": "Autocompletar desde NER",

@@ -110,7 +110,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     permalink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),
-    targetNewTab: new FormControl<boolean>(false, { nonNullable: true }),
     placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
     hideThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
@@ -199,9 +198,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
   get noBM25forChatControl() {
     return this.advancedForm.controls.noBM25forChat;
-  }
-  get targetNewTabControl() {
-    return this.advancedForm.controls.targetNewTab;
   }
 
   constructor(
@@ -338,12 +334,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     }
   }
 
-  navigateToChanged() {
-    if (!this.navigateToLinkEnabled && !this.navigateToFilesEnabled) {
-      this.targetNewTabControl.patchValue(false);
-    }
-  }
-
   copySnippet() {
     forkJoin([this.isPrivateKb.pipe(take(1)), this.isKbAdmin.pipe(take(1))])
       .pipe(
@@ -406,14 +396,14 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       copiablePrompt = `prompt="${promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n`;
     }
 
-    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
+    forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).subscribe(([kb, account]) => {
       const zone = this.sdk.nuclia.options.standalone ? `standalone="true"` : `zone="${this.sdk.nuclia.options.zone}"`;
       const apiKey = `apikey="YOUR_API_TOKEN"`;
       const privateDetails =
         kb.state === 'PRIVATE'
           ? `
   state="${kb.state}"
-  account="${kb.account}"
+  account="${account.id}"
   kbslug="${kb.slug}"
   ${apiKey}`
           : '';

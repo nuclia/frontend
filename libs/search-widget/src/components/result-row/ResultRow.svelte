@@ -15,7 +15,6 @@
     hideThumbnails,
     navigateToFile,
     navigateToLink,
-    targetNewTab,
     trackingEngagement,
     viewerData,
   } from '../../core';
@@ -64,33 +63,32 @@
     }
   }
 
+  const url = combineLatest([navigateToFile, navigateToLink]).pipe(
+    take(1),
+    switchMap(([toFile, toLink]) => {
+      if (result.field) {
+        const resourceField: ResourceField = { ...result.field, ...result.fieldData };
+        return toFile || toLink
+          ? getNavigationUrl(toFile, toLink, result, resourceField).pipe(map((url) => url || undefined))
+          : of(undefined);
+      }
+      return of(undefined);
+    }),
+  );
+
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
-      const resourceField: ResourceField = { ...result.field, ...result.fieldData };
-      combineLatest([navigateToFile, navigateToLink, targetNewTab])
-        .pipe(
-          take(1),
-          map((features) => features as boolean[]),
-          switchMap(([toFile, toLink, newTab]) =>
-            toFile || toLink
-              ? getNavigationUrl(toFile, toLink, result, resourceField).pipe(
-                  map((url) => (url ? { url, newTab } : false)),
-                )
-              : of(false),
-          ),
-        )
-        .subscribe((data) => {
-          if (data) {
-            const { url, newTab } = data as { url: string; newTab: boolean };
-            goToUrl(url, paragraph?.text, newTab || metaKeyOn);
-          } else {
-            viewerData.set({
-              result,
-              selectedParagraphIndex: typeof index === 'number' ? index : -1,
-            });
-          }
-        });
+      url.subscribe((url) => {
+        if (url) {
+          goToUrl(url, paragraph?.text, metaKeyOn);
+        } else {
+          viewerData.set({
+            result,
+            selectedParagraphIndex: typeof index === 'number' ? index : -1,
+          });
+        }
+      });
     }
   }
 
@@ -147,12 +145,23 @@
       <div>
         <h3
           class="ellipsis title-m result-title"
-          class:no-thumbnail={$hideThumbnails}
-          on:click={() => clickOnResult()}
-          on:keyup={(e) => {
-            if (e.key === 'Enter') clickOnResult();
-          }}>
-          {result?.title}
+          class:no-thumbnail={$hideThumbnails}>
+          {#if $url}
+            <a
+              href={$url}
+              on:click|preventDefault={() => clickOnResult()}>
+              {result?.title}
+            </a>
+          {:else}
+            <span
+              tabindex="0"
+              on:click={() => clickOnResult()}
+              on:keyup={(e) => {
+                if (e.key === 'Enter') clickOnResult();
+              }}>
+              {result?.title}
+            </span>
+          {/if}
         </h3>
 
         {#if $displayMetadata}
