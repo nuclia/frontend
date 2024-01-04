@@ -16,11 +16,11 @@
         </pa-button>
       </div>
 
-      <ul class="ner-family-list">
+      <ul class="nsi-list ner-family-list">
         <li
           *ngFor="let family of nerFamilies | async; trackBy: trackByFamily"
           class="ner-family"
-          [class.selected-family]="family.key === selectedFamily?.key"
+          [class.selected]="family.key === selectedFamily?.key"
           (click)="selectFamily(family)">
           <div
             class="family-color"
@@ -29,7 +29,7 @@
             {{ family.title }}
           </div>
           <div
-            class="family-actions"
+            class="action-buttons-container"
             *ngIf="(isAdminOrContrib | async) === true">
             <pa-button
               *ngIf="family.custom"

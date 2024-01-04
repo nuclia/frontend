@@ -1,16 +1,5 @@
 @import 'apps/dashboard/src/variables';
 
-.label-sets-management {
-  width: rhythm(56);
-
-  header {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: rhythm(6);
-  }
-
-  .labels {
-    padding: rhythm(1) rhythm(2);
-  }
+.label-set-title {
+  padding: 0 rhythm(1);
 }

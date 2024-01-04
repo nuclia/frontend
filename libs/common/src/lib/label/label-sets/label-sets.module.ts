@@ -9,35 +9,22 @@ import { A11yModule } from '@angular/cdk/a11y';
 
 import { LabelSetsComponent } from './label-sets.component';
 import { LabelSetListComponent } from './label-set-list/label-set-list.component';
-import { LabelSetComponent } from './label-set/label-set.component';
-import { ColorPickerComponent } from './label-set/color-picker/color-picker.component';
-import { LabelComponent } from './label-set/label/label.component';
+import { ColorPickerComponent, LabelComponent, LabelSetComponent } from './label-set';
 import {
   PaButtonModule,
-  PaExpanderModule,
   PaIconModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { LabelListPipe } from './label-list.pipe';
-
-const Components = [LabelSetsComponent, LabelSetListComponent, LabelSetComponent, ColorPickerComponent, LabelComponent];
+import { SisLabelModule } from '@nuclia/sistema';
 
 const ROUTES: Routes = [
   {
     path: '',
     component: LabelSetsComponent,
     children: [
-      {
-        path: '',
-        redirectTo: 'list',
-        pathMatch: 'full',
-      },
-      {
-        path: 'list',
-        component: LabelSetListComponent,
-      },
       {
         path: 'add',
         component: LabelSetComponent,
@@ -64,9 +51,16 @@ const ROUTES: Routes = [
     PaButtonModule,
     PaIconModule,
     PaTooltipModule,
-    PaExpanderModule,
+    SisLabelModule,
   ],
-  declarations: [...Components, LabelListPipe],
+  declarations: [
+    ColorPickerComponent,
+    LabelSetsComponent,
+    LabelSetListComponent,
+    LabelSetComponent,
+    LabelComponent,
+    LabelListPipe,
+  ],
   exports: [],
 })
 export class LabelSetsModule {}

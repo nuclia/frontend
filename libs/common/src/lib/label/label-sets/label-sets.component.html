@@ -1,0 +1,68 @@
+<div class="label-sets-management page-spacing">
+  <div class="label-set-list">
+    <header>
+      <div class="title-container">
+        <div class="display-s">{{ 'label-set.title' | translate }}</div>
+        <div class="body-m">{{ 'label-set.subtitle' | translate }}</div>
+      </div>
+      <pa-button
+        routerLink="./add"
+        routerLinkActive
+        #rla="routerLinkActive"
+        [active]="rla.isActive"
+        [disabled]="(isAdminOrContrib | async) === false"
+        iconAndText
+        icon="circle-plus"
+        kind="primary"
+        aspect="solid"
+        data-cy="add-label-set">
+        {{ 'label-set.add-button' | translate }}
+      </pa-button>
+    </header>
+
+    @if (noLabelSets | async) {
+      <p class="no-label-set">{{ 'label-set.no-label-set' | translate }}</p>
+    } @else {
+      @if (resourceLabelSets | async; as resourceLabels) {
+        @if (resourceLabels.length > 0) {
+          <div
+            class="label-set-container"
+            data-cy="resource-label-sets">
+            <div class="title-s">{{ 'label-set.type.resource-title' | translate }}</div>
+            <app-label-set-list
+              [labelSets]="resourceLabels"
+              [isAdmin]="(isAdminOrContrib | async) === true"></app-label-set-list>
+          </div>
+        }
+      }
+
+      @if (textBlockLabelSets | async; as textBlockLabels) {
+        @if (textBlockLabels.length > 0) {
+          <div
+            class="label-set-container"
+            data-cy="text-block-label-sets">
+            <div class="title-s">{{ 'label-set.type.text-block-title' | translate }}</div>
+            <app-label-set-list
+              [labelSets]="textBlockLabels"
+              [isAdmin]="(isAdminOrContrib | async) === true"></app-label-set-list>
+          </div>
+        }
+      }
+
+      @if (selectionLabelSets | async; as selectionLabels) {
+        @if (selectionLabels.length > 0) {
+          <div class="label-set-container">
+            <div class="title-s">{{ 'label-set.type.selection-title' | translate }}</div>
+            <app-label-set-list
+              [labelSets]="selectionLabels"
+              [isAdmin]="(isAdminOrContrib | async) === true"></app-label-set-list>
+          </div>
+        }
+      }
+    }
+  </div>
+
+  <div class="label-set-form">
+    <router-outlet></router-outlet>
+  </div>
+</div>

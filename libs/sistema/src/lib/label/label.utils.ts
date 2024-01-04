@@ -8,6 +8,12 @@ export const LABEL_COLORS: LabelColor[] = [
   { mainColor: '#DAF3E6', textColor: '#0CAD55' },
   { mainColor: '#FFE8D9', textColor: '#EF670A' },
   { mainColor: '#CCCED6', textColor: '#1E264F' },
+  { mainColor: '#FFFBE6', textColor: '#917E12' },
+  { mainColor: '#FFEBF3', textColor: '#7A0031' },
+  { mainColor: '#EBFFFE', textColor: '#007A76' },
+  { mainColor: '#FFF1EB', textColor: '#CC4400' },
+  { mainColor: '#FCFFD6', textColor: '#707A00' },
+  { mainColor: '#FFEBFF', textColor: '#7A007A' },
 ];
 
 export function getLabelColor(mainColor: string): LabelColor | undefined {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, distinctUntilKeyChanged, filter, map, Observable, switchMap, take, tap } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
+import { LabelSetCounts } from './label-sets/model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,27 @@ export class LabelsService {
     map((labels) => this.filterByKind(labels, LabelSetKind.PARAGRAPHS)),
   );
   hasResourceLabelSets = this.resourceLabelSets.pipe(map((sets) => !!sets && Object.keys(sets).length > 0));
+
+  labelSetsCount: Observable<LabelSetCounts> = this.labelSets.pipe(
+    map((labelsets) => {
+      if (!labelsets) {
+        return { [LabelSetKind.RESOURCES]: 0, [LabelSetKind.PARAGRAPHS]: 0, [LabelSetKind.SELECTIONS]: 0 };
+      }
+      return Object.values(labelsets).reduce(
+        (count, labelSet) => {
+          if (labelSet.kind.includes(LabelSetKind.RESOURCES)) {
+            count[LabelSetKind.RESOURCES]++;
+          } else if (labelSet.kind.includes(LabelSetKind.PARAGRAPHS)) {
+            count[LabelSetKind.PARAGRAPHS]++;
+          } else if (labelSet.kind.includes(LabelSetKind.SELECTIONS)) {
+            count[LabelSetKind.SELECTIONS]++;
+          }
+          return count;
+        },
+        { [LabelSetKind.RESOURCES]: 0, [LabelSetKind.PARAGRAPHS]: 0, [LabelSetKind.SELECTIONS]: 0 },
+      );
+    }),
+  );
 
   constructor(private sdk: SDKService) {
     this.sdk.currentKb

@@ -42,55 +42,14 @@ $gap-family-selection: rhythm(7);
     }
 
     .ner-family-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
       width: $family-list-width;
 
       .ner-family {
-        background: $color-neutral-lightest;
-        cursor: pointer;
-        display: flex;
-        gap: rhythm(1);
-        justify-content: space-between;
-        line-height: rhythm(5);
-        padding-right: rhythm(1);
-        text-transform: capitalize;
-        transition: background $transition-hint;
-
-        &:not(:last-of-type) {
-          box-shadow: inset 0 -1px 0px $color-neutral-light;
-        }
-
-        &:hover {
-          background: $color-neutral-lighter;
-        }
-
-        &.selected-family {
-          background: $color-dark-stronger;
-          color: $color-light-stronger;
-        }
-
         .family-color {
           width: rhythm(1);
         }
         .family-name {
           flex: 1 0 auto;
-        }
-        .family-actions {
-          display: flex;
-          align-items: center;
-          pa-button {
-            height: rhythm(4);
-            opacity: 0;
-            transition: opacity $transition-hint;
-          }
-        }
-        &.selected-family,
-        &:hover {
-          .family-actions pa-button {
-            opacity: 1;
-          }
         }
       }
     }
