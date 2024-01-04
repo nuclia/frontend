@@ -469,7 +469,7 @@
 	"label-set.form.labels.duplicated-name-in-list": "La llista d'etiquetes conté un nom d'etiqueta duplicat",
 	"label-set.form.labels.grid-help": "Premeu Intro per afegir una etiqueta nova",
 	"label-set.form.labels.list-help": "Llista les etiquetes separades per comes",
-	"label-set.form.labels.naming-constraint": "No es permeten claudàtors",
+	"label-set.form.labels.naming-constraint": "No es permeten claudàtors ni barra inclinada",
 	"label-set.form.labels.title": "Llista d'etiquetes",
 	"label-set.form.name": "Nom del conjunt d'etiquetes",
 	"label-set.form.name-invalid": "El nom del conjunt d'etiquetes no és vàlid",

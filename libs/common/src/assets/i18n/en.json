@@ -470,7 +470,7 @@
 	"label-set.form.labels.duplicated-name-in-list": "The label list contains a duplicated label name",
 	"label-set.form.labels.grid-help": "Press Enter to add a new label",
 	"label-set.form.labels.list-help": "List the labels comma-separated",
-	"label-set.form.labels.naming-constraint": "Curly brackets not allowed",
+	"label-set.form.labels.naming-constraint": "Curly brackets and slash not allowed",
 	"label-set.form.labels.title": "Labels list",
 	"label-set.form.name": "Label set name",
 	"label-set.form.name-invalid": "Invalid label set name",

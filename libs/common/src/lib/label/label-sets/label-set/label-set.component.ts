@@ -7,7 +7,6 @@ import { FeatureFlagService, STFUtils } from '@flaps/core';
 import { LabelSetKind, LabelSets } from '@nuclia/core';
 import { EMPTY_LABEL_SET, LabelSetCounts, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { noDuplicateListItemsValidator, Sluggable } from '../../../validators';
 import { LabelsService } from '../../labels.service';
 import { LABEL_COLORS } from '@nuclia/sistema';
@@ -16,11 +15,6 @@ const KINDS = [
   { id: LabelSetKind.RESOURCES, name: 'label-set.resources' },
   { id: LabelSetKind.PARAGRAPHS, name: 'label-set.paragraphs' },
 ];
-
-interface LabelSetTitleError extends IErrorMessages {
-  required: string;
-  sluggable: string;
-}
 
 @Component({
   selector: 'app-label-set',
@@ -39,6 +33,7 @@ export class LabelSetComponent implements OnDestroy {
       validators: [
         Validators.required,
         noDuplicateListItemsValidator(',', 'label-set.form.labels.duplicated-name-in-list'),
+        Validators.pattern('[^/{}]+'),
       ],
     }),
   });
@@ -51,10 +46,13 @@ export class LabelSetComponent implements OnDestroy {
     );
   counts = this.labelsService.labelSetsCount;
 
-  validationMessages: { [key: string]: LabelSetTitleError } = {
+  validationMessages = {
     title: {
       required: 'label-set.form.name-required',
       sluggable: 'label-set.form.name-invalid',
+    },
+    labels: {
+      pattern: 'label-set.form.labels.naming-constraint',
     },
   };
 
@@ -169,6 +167,8 @@ export class LabelSetComponent implements OnDestroy {
     if (title) {
       if (this.labelControlValue.includes(title)) {
         this.labelInputError = 'label-set.form.labels.duplicated-name';
+      } else if (title.includes('/') || title.includes('{') || title.includes('}')) {
+        this.labelInputError = this.validationMessages.labels.pattern as string;
       } else {
         this.labelInputError = '';
         this.labelControl.patchValue(this.labelControlValue ? `${this.labelControlValue}, ${title}` : title);

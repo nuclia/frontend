@@ -470,7 +470,7 @@
 	"label-set.form.labels.duplicated-name-in-list": "La liste des étiquettes contient un nom d'étiquette en double",
 	"label-set.form.labels.grid-help": "Appuyez sur Entrée pour ajouter une nouvelle étiquette",
 	"label-set.form.labels.list-help": "Répertoriez les étiquettes séparées par des virgules",
-	"label-set.form.labels.naming-constraint": "Les accolades ne sont pas autorisées",
+	"label-set.form.labels.naming-constraint": "Les accolades et les barres obliques ne sont pas autorisées",
 	"label-set.form.labels.title": "Liste des étiquettes",
 	"label-set.form.name": "Nom du jeu d'étiquettes",
 	"label-set.form.name-invalid": "Nom du jeu d'étiquettes non valide",
