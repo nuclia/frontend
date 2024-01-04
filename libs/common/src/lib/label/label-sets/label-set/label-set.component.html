@@ -70,6 +70,7 @@
             <div>
               @if (labelView === 'list') {
                 <pa-textarea
+                  #labelList
                   externalLabel
                   id="label-list"
                   help="label-set.form.labels.list-help"
@@ -77,7 +78,8 @@
                   formControlName="labels"
                   data-cy="label-list-input"
                   [errorMessages]="validationMessages.labels"
-                  [rows]="2"></pa-textarea>
+                  [rows]="2"
+                  (keyup.enter)="validateLabelList($event)"></pa-textarea>
               } @else {
                 <pa-input
                   externalLabel

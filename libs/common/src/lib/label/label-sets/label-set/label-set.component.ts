@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, map, Subject, take } from 'rxjs';
@@ -23,6 +23,8 @@ const KINDS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelSetComponent implements OnDestroy {
+  @ViewChild('labelList', { read: ElementRef }) labelListElement?: ElementRef;
+
   labelSetForm = new FormGroup({
     title: new FormControl<string>('', { validators: [Validators.required, Sluggable()], nonNullable: true }),
     kind: new FormControl<LabelSetKind | undefined>(undefined, { validators: [Validators.required] }),
@@ -220,5 +222,11 @@ export class LabelSetComponent implements OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  validateLabelList($event: KeyboardEvent) {
+    $event.stopPropagation();
+    $event.preventDefault();
+    this.labelListElement?.nativeElement.querySelector('textarea')?.blur();
   }
 }
