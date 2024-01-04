@@ -468,7 +468,7 @@
 	"label-set.form.labels.duplicated-name": "Nombre de etiqueta duplicado",
 	"label-set.form.labels.duplicated-name-in-list": "La lista de etiquetas contiene un nombre de etiqueta duplicado.",
 	"label-set.form.labels.grid-help": "Presione Enter para agregar una nueva etiqueta",
-	"label-set.form.labels.list-help": "Enumere las etiquetas separadas por comas",
+	"label-set.form.labels.list-help": "Enumere las etiquetas separadas por comas y presione Entrar para agregarlas",
 	"label-set.form.labels.naming-constraint": "No se permiten llaves ni barra diagonal",
 	"label-set.form.labels.title": "Lista de etiquetas",
 	"label-set.form.name": "Nombre del conjunto de etiquetas",
