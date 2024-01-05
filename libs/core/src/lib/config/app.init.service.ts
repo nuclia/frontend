@@ -43,7 +43,7 @@ export class AppInitService {
     const timestamp = Math.floor(Date.now() / 1000);
     return firstValueFrom(
       from(
-        fetch(`assets/deployment/app-config.json?t=${timestamp}`).then(function (response) {
+        fetch(`assets/deployment/app-config.json?t=${Date.now()}`).then(function (response) {
           return response.json();
         }),
       ).pipe(
