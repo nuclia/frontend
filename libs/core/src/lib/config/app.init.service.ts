@@ -42,7 +42,7 @@ export class AppInitService {
   public init(staticEnv: StaticEnvironmentConfiguration) {
     return firstValueFrom(
       from(
-        fetch('assets/deployment/app-config.json').then(function (response) {
+        fetch(`assets/deployment/app-config.json?t=${Date.now()}`).then(function (response) {
           return response.json();
         }),
       ).pipe(
