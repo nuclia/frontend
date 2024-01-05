@@ -63,7 +63,6 @@ describe('ResourceListComponent', () => {
               type: 'test-type',
             }),
             counters: of({ resources: 0 }),
-            refreshing: of(true),
             nuclia: {
               options: {
                 zone: 'europe',

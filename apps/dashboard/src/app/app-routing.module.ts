@@ -16,6 +16,8 @@ import {
   selectAccountGuard,
   SelectKbComponent,
   selectKbGuard,
+  setAccountGuard,
+  setKbGuard,
   UploadDataComponent,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
@@ -56,6 +58,7 @@ const routes: Routes = [
       {
         path: `at/:account`,
         component: DashboardLayoutComponent,
+        canActivate: [setAccountGuard],
         children: [
           {
             path: '',
@@ -120,6 +123,7 @@ const routes: Routes = [
           {
             path: `:zone/:kb`,
             component: KnowledgeBoxComponent,
+            canActivate: [setKbGuard],
             children: [
               {
                 path: '',
@@ -227,6 +231,7 @@ const routes: Routes = [
 
 const routerOptions: ExtraOptions = {
   scrollPositionRestoration: 'enabled',
+  paramsInheritanceStrategy: 'always',
 };
 
 @NgModule({
