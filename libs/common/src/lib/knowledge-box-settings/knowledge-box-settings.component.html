@@ -14,6 +14,12 @@
           </pa-input>
 
           <pa-input
+            formControlName="zone"
+            readonly>
+            {{ 'generic.zone' | translate }}
+          </pa-input>
+
+          <pa-input
             formControlName="slug"
             [errorMessages]="validationMessages['slug']">
             {{ 'generic.slug' | translate }}
