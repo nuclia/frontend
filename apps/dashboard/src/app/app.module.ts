@@ -40,6 +40,8 @@ import { InviteModule } from './invite/invite.module';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { SyncService } from '@nuclia/sync';
 import { NewSyncService } from '../../../../libs/sync/src/lib/sync/new-sync.service';
+import { TitleStrategy } from '@angular/router';
+import { AppTitleStrategy } from './app-title.strategy';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -101,6 +103,7 @@ const appModules = [
     },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     TranslatePipe,
+    { provide: TitleStrategy, useClass: AppTitleStrategy },
     // TO BE REMOVED WHEN DESKTOP APP IS GONE
     // override SyncService with NewSyncService to use the new agent API
     { provide: SyncService, useClass: NewSyncService },
