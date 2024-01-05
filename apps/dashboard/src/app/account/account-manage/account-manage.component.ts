@@ -8,10 +8,10 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
-import { concatMap, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { AccountModification, BillingService, SDKService, SubscriptionStatus, Zone, ZoneService } from '@flaps/core';
+import { UntypedFormBuilder } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
+import { AccountModification, BillingService, SDKService, SubscriptionStatus } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
 import { NavigationService, Sluggable } from '@flaps/common';
@@ -46,8 +46,6 @@ export class AccountManageComponent implements OnInit, OnDestroy {
     } as IErrorMessages,
   };
 
-  zones: Zone[] | undefined;
-  zone = new UntypedFormControl();
   speechToText: boolean = false;
   initialValues = { title: '', description: '', slug: '', uid: '' };
 
@@ -67,7 +65,6 @@ export class AccountManageComponent implements OnInit, OnDestroy {
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private zoneService: ZoneService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private navigation: NavigationService,
@@ -85,7 +82,6 @@ export class AccountManageComponent implements OnInit, OnDestroy {
           this.initialValues.uid = account.id;
           this.initialValues.slug = account.slug;
         }),
-        switchMap(() => this.initZones()),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(() => {
@@ -93,23 +89,10 @@ export class AccountManageComponent implements OnInit, OnDestroy {
         this.initAccountForm();
         this.cdr?.markForCheck();
       });
-
-    this.zone.valueChanges
-      .pipe(distinctUntilChanged(), takeUntil(this.unsubscribeAll))
-      .subscribe((zone) => this.saveZone(zone));
   }
 
   initAccountForm(): void {
     this.accountForm.reset(this.initialValues);
-  }
-
-  initZones(): Observable<void> {
-    return this.zoneService.getZones().pipe(
-      map((zones) => {
-        this.zones = zones;
-        this.zone.patchValue(this.account!.zone, { emitEvent: false });
-      }),
-    );
   }
 
   ngOnDestroy(): void {
@@ -135,10 +118,6 @@ export class AccountManageComponent implements OnInit, OnDestroy {
       .subscribe((account) => {
         this.sdk.account = account;
       });
-  }
-
-  saveZone(value: string) {
-    //TODO: missing field "zone" in AccountModification
   }
 
   deleteAccount() {

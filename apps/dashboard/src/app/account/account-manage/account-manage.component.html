@@ -19,18 +19,6 @@
           readonly>
           {{ 'generic.slug' | translate }}
         </pa-input>
-        <pa-select
-          *ngIf="zones"
-          readonly
-          [formControl]="zone"
-          help="account.zone_description"
-          [label]="'generic.zone' | translate">
-          <pa-option
-            *ngFor="let zone of zones"
-            [value]="zone.id">
-            {{ zone.title }}
-          </pa-option>
-        </pa-select>
         <pa-input
           id="account-title"
           formControlName="title"
