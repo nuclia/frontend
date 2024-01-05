@@ -40,7 +40,6 @@ export class AppInitService {
   // This is the method you want to call at bootstrap
   // Important: It should return a Promise
   public init(staticEnv: StaticEnvironmentConfiguration) {
-    const timestamp = Math.floor(Date.now() / 1000);
     return firstValueFrom(
       from(
         fetch(`assets/deployment/app-config.json?t=${Date.now()}`).then(function (response) {
