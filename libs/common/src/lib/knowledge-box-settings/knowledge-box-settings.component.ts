@@ -148,6 +148,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   private getKbForm(promptsValues: { [p: string]: { prompt?: string; system?: string } }) {
     return this.formBuilder.group({
       uid: [this.kb?.id],
+      zone: [this.kb?.zone],
       slug: [this.kb?.slug, [Sluggable()]],
       title: [this.kb?.title, [Validators.required]],
       description: [this.kb?.description],
@@ -208,6 +209,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       title: this.kb.title,
       description: this.kb.description,
       config: this.currentConfig,
+      zone: this.kb.zone,
     });
     this.updatePrompts(this.currentConfig['generative_model'] || '');
     this.kbForm.markAsPristine();
