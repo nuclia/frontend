@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Zone } from '../models';
-import { map, Observable, switchMap } from 'rxjs';
+import { forkJoin, map, Observable, switchMap } from 'rxjs';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { SDKService } from './sdk.service';
+import { UserService } from './user.service';
+import { take } from 'rxjs/operators';
 
 const VERSION = 'v1';
 const ZONES = 'zones';
@@ -14,15 +16,17 @@ export class ZoneService {
   constructor(
     private sdk: SDKService,
     private featureFlagService: FeatureFlagService,
+    private userService: UserService,
   ) {}
 
   getZones(includeZonesBlocked = false): Observable<Zone[]> {
-    const isRegionalSystemBetaTester = false;
-    return this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`).pipe(
-      switchMap((zones) =>
-        this.featureFlagService.getFeatureBlocklist('zones').pipe(
+    let isNucliaBetaTester = false;
+    return forkJoin([this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`), this.userService.userInfo.pipe(take(1))]).pipe(
+      switchMap(([zones, userInfo]) => {
+        isNucliaBetaTester = !!userInfo?.preferences.email.includes('@nuclia.com');
+        return this.featureFlagService.getFeatureBlocklist('zones').pipe(
           map((blocklist) => {
-            if (isRegionalSystemBetaTester) {
+            if (isNucliaBetaTester) {
               return zones;
             } else {
               return includeZonesBlocked
@@ -33,8 +37,8 @@ export class ZoneService {
                 : zones.filter((zone) => !blocklist.includes(zone.slug));
             }
           }),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
