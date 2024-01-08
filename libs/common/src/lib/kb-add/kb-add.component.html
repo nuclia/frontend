@@ -36,7 +36,7 @@
             class="kb-add-zone-select">
             <pa-option
               *ngFor="let zone of zones"
-              [value]="zone.id">
+              [value]="zone.slug">
               {{ zone.title }}
             </pa-option>
           </pa-select>

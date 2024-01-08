@@ -47,7 +47,7 @@
 
     @if (((userInfo | async)?.accounts?.length || 0) > 1) {
       <div class="topbar-account">
-        <strong>{{ (kb | async)?.account }}</strong>
+        <strong>{{ (account | async)?.title }}</strong>
       </div>
     }
 

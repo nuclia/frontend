@@ -115,7 +115,7 @@ export class OnboardingService {
             creationFailed: false,
             datasetImported: false,
           });
-          return this.createKb(accountSlug, kbConfig);
+          return this.createKb(accountSlug, kbConfig, configuration.zoneSlug);
         }),
         switchMap(({ accountSlug, kbSlug, kbId }) => {
           this._onboardingState.next({
@@ -185,14 +185,15 @@ export class OnboardingService {
   private createKb(
     accountSlug: string,
     kbConfig: KnowledgeBoxCreation,
+    zone: string,
   ): Observable<{ accountSlug: string; kbSlug: string; kbId: string }> {
-    return this.sdk.nuclia.db.createKnowledgeBox(accountSlug, kbConfig).pipe(
+    return this.sdk.nuclia.db.createKnowledgeBox(accountSlug, kbConfig, zone).pipe(
       map((kb) => ({ accountSlug, kbSlug: kbConfig.slug, kbId: kb.id })),
       catchError((error) => {
         this.tracking.logEvent('account_creation_kb_failed');
         this._kbCreationFailureCount += 1;
         if (this._kbCreationFailureCount < 5) {
-          return this.createKb(accountSlug, kbConfig);
+          return this.createKb(accountSlug, kbConfig, zone);
         } else {
           Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
           this.toaster.error('stash.create.failure');

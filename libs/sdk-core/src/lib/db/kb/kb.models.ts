@@ -212,7 +212,6 @@ export interface KnowledgeBoxCreation {
   slug: string;
   title: string;
   description?: string;
-  zone?: string;
   learning_configuration?: { [configId: string]: any };
 }
 

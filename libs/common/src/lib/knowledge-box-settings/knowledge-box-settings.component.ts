@@ -255,19 +255,22 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
 
   saveKb(): void {
-    if (!this.kbForm || this.kbForm.invalid || !this.kb) {
+    if (!this.kbForm || this.kbForm.invalid || !this.kb || !this.account) {
       return;
     }
 
     this.saving = true;
-    const newSlug = STFUtils.generateSlug(this.kbForm.value.slug);
+    const accountId = this.account.id;
+    const formValue = this.kbForm.getRawValue();
+    const newSlug = STFUtils.generateSlug(formValue.slug);
     const oldSlug = this.kb.slug || '';
     const isSlugUpdated = newSlug !== oldSlug;
     const data: Partial<KnowledgeBox> = {
-      title: this.kbForm.value.title,
-      description: this.kbForm.value.description,
+      title: formValue.title,
+      description: formValue.description,
       slug: newSlug,
     };
+    const zone = formValue.zone;
     const kb = this.kb as WritableKnowledgeBox;
     kb.modify(data)
       .pipe(
@@ -295,7 +298,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
                           return of(undefined);
                         }),
                       )
-                    : of(true).pipe(tap(() => {}));
+                    : of(true).pipe(map(() => {}));
                 }),
               );
           } else {
@@ -308,9 +311,9 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             );
           }
         }),
-        concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.id)),
+        concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(accountId, kb.id, zone)),
       )
-      .subscribe((kb) => {
+      .subscribe(() => {
         this.kbForm?.markAsPristine();
         this.saving = false;
         this.sdk.refreshKbList(true);

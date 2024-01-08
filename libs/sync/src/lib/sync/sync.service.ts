@@ -352,7 +352,7 @@ export class SyncService {
       switchMap((account) =>
         this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id).pipe(
           map((kbs) => kbs.find((kb) => kb.id === kbId)),
-          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kb?.id || '')),
+          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kb?.id || '', kb?.zone)),
         ),
       ),
     );

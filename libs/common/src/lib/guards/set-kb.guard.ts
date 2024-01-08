@@ -24,7 +24,7 @@ export const setKbGuard = (route: ActivatedRouteSnapshot) => {
             return of(router.createUrlTree(['/select']));
           }
           sdk.nuclia.options.knowledgeBox = kb.id;
-          return sdk.setCurrentKnowledgeBox(account.slug, kb.id, zone);
+          return sdk.setCurrentKnowledgeBox(account.id, kb.id, zone);
         }),
       );
     }),

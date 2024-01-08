@@ -1,4 +1,15 @@
-# 1.9.2 (unreleased)
+# 1.10.0 (2024-01-08)
+
+### Breaking changes
+
+- Account slug is replaced by account id in several methods’ signature, and zone is required (except when using local NucliaDB instance):
+  - getKnowledgeBox
+  - createKnowledgeBox
+  - getNUAClients
+  - getNUAClient
+  - createNUAClient
+  - renewNUAClient
+  - deleteNUAClient
 
 ### Improvements
 
@@ -7,6 +18,7 @@
 - Add `generateRandomQuestionAboutResource` method
 - Add `index_size` in `Counters` model
 - Don't crash on `getToken` when local storage is disabled on the browser
+
 
 # 1.9.1 (2023-12-18)
 

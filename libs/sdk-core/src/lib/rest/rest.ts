@@ -36,9 +36,9 @@ export class Rest implements IRest {
     return this.fetch('GET', path, undefined, extraHeaders, doNotParse, undefined, zoneSlug);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   post<T>(
     path: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body: any,
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
@@ -48,9 +48,9 @@ export class Rest implements IRest {
     return this.fetch('POST', path, body, extraHeaders, doNotParse, synchronous, zoneSlug);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   put<T>(
     path: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body: any,
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
@@ -221,7 +221,7 @@ export class Rest implements IRest {
     );
   }
 
-  getStream(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }> {
+  getStream(path: string, body: unknown): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }> {
     path = this.getFullUrl(path);
     return new Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>((observer) => {
       fetch(path, {

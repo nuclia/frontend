@@ -54,7 +54,7 @@
                     aspect="basic"
                     kind="destructive"
                     size="small"
-                    (click)="deleteKb($event, kb.id, kb.title)"></pa-button>
+                    (click)="deleteKb($event, kb.id, kb.zone, kb.title)"></pa-button>
                 }
 
                 {{ kb.title }}
@@ -83,13 +83,15 @@
 
       @if (addKb) {
         <div class="select-kb-input">
-          <pa-input
-            hasFocus
-            data-cy="new-kb-name-input"
-            [formControl]="kbName"
-            [errorMessages]="errorMessages">
-            {{ 'stash.name_your_kb' | translate }}
-          </pa-input>
+          <form [formGroup]="newKbForm">
+            <pa-input
+              hasFocus
+              data-cy="new-kb-name-input"
+              formControlName="kbName"
+              [errorMessages]="errorMessages">
+              {{ 'stash.name_your_kb' | translate }}
+            </pa-input>
+          </form>
         </div>
       }
     </div>
@@ -111,7 +113,7 @@
         </pa-button>
 
         <pa-button
-          [disabled]="kbName.invalid || creatingKb"
+          [disabled]="newKbForm.invalid || creatingKb"
           data-cy="save-new-kb-button"
           (click)="save()">
           {{ 'generic.save' | translate }}

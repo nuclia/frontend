@@ -135,7 +135,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
 
 function getLabels(settings) {
   return getSDK(settings.NUCLIA_TOKEN)
-    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB)
+    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
     .pipe(
       rxjs.switchMap((kb) => kb.getLabels()),
       rxjs.map((labels) =>
@@ -159,7 +159,7 @@ function uploadSingleLink(settings, url, labels) {
 
 function uploadLink(settings, url, labels) {
   return getSDK(settings.NUCLIA_TOKEN)
-    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB)
+    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
     .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })));
 }
 

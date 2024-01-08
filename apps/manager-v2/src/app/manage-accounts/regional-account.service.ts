@@ -55,8 +55,6 @@ export class RegionalAccountService {
           }
           const specificNuclia = new Nuclia({
             ...this.sdk.nuclia.options,
-            zone: zoneSlug,
-            knowledgeBox: kb.id,
           });
           return specificNuclia.knowledgeBox.counters().pipe(
             map((counters) => ({ kbId: kb.id, counters })),
