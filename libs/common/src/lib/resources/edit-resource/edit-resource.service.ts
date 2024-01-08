@@ -84,7 +84,9 @@ export class EditResourceService {
       }, [] as ResourceField[]),
     ),
   );
-  kbUrl: Observable<string> = this.sdk.currentKb.pipe(map((kb) => this.navigation.getKbUrl(kb.account, kb.slug!)));
+  kbUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
+    map(([account, kb]) => this.navigation.getKbUrl(account.slug, kb.slug!)),
+  );
   pawlsData = combineLatest([this.sdk.currentKb, this.resource, this.currentField]).pipe(
     map(([kb, resource, fieldId]) => {
       if (resource && fieldId !== 'resource') {
@@ -93,7 +95,7 @@ export class EditResourceService {
           return undefined;
         }
         return {
-          options: { ...this.sdk.nuclia.options, account: kb.account, kb: kb.id, kbSlug: kb.slug },
+          options: { ...this.sdk.nuclia.options, account: kb.accountId, kb: kb.id, kbSlug: kb.slug },
           resId: resource?.id || '',
           fieldId: fieldId.field_id,
           pdf: fieldData.extracted?.file?.file_preview?.uri || fieldData.value?.file?.uri,

@@ -141,7 +141,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getConfiguration(): Observable<{ [id: string]: any }>;
 
-  getUsers(): Observable<FullKbUser[]>;
+  getUsers(accountSlug: string): Observable<FullKbUser[]>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {

@@ -44,7 +44,7 @@ export interface KnowledgeBox extends IKnowledgeBox {}
  * For any Knowledge Box operation that requires write access, you need to use `WritableKnowledgeBox` instead.
  */
 export class KnowledgeBox implements IKnowledgeBox {
-  account: string;
+  accountId: string;
   protected nuclia: INuclia;
   private tempToken?: { token: string; expiration: number };
 
@@ -68,7 +68,7 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   constructor(nuclia: INuclia, account: string, data: IKnowledgeBoxCreation) {
     this.nuclia = nuclia;
-    this.account = account;
+    this.accountId = account;
     Object.assign(this, data);
     if (!data.id && data.uuid) {
       this.id = data.uuid;
@@ -530,9 +530,9 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.get<{ [id: string]: any }>(`/kb/${this.id}/configuration`);
   }
 
-  getUsers(): Observable<FullKbUser[]> {
+  getUsers(accountSlug: string): Observable<FullKbUser[]> {
     return forkJoin([
-      this.nuclia.db.getAccountUsers(this.account),
+      this.nuclia.db.getAccountUsers(accountSlug),
       this.nuclia.rest.get<KbUser[]>(
         `/account/${this.nuclia.options.accountId}/kb/${this.id}/users`,
         undefined,
@@ -598,7 +598,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     let endpoint: string;
     let zone: string | undefined;
 
-    if (this.account === 'local') {
+    if (this.accountId === 'local') {
       endpoint = `/kb/${this.id}`;
     } else {
       endpoint = `/account/${this.nuclia.options.accountId}/kb/${this.id}`;
