@@ -95,7 +95,7 @@ export class EditResourceService {
           return undefined;
         }
         return {
-          options: { ...this.sdk.nuclia.options, account: kb.account, kb: kb.id, kbSlug: kb.slug },
+          options: { ...this.sdk.nuclia.options, account: kb.accountId, kb: kb.id, kbSlug: kb.slug },
           resId: resource?.id || '',
           fieldId: fieldId.field_id,
           pdf: fieldData.extracted?.file?.file_preview?.uri || fieldData.value?.file?.uri,
