@@ -36,11 +36,12 @@ export class KbAddComponent implements OnInit {
   failures = 0;
   error = '';
   zones: Zone[] = [];
+  account?: Account;
 
   private _lastStep = 1;
 
   constructor(
-    public modal: ModalRef,
+    public modal: ModalRef<KbAddData>,
     private formBuilder: UntypedFormBuilder,
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
@@ -49,14 +50,15 @@ export class KbAddComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.zones = this.modal.config.data?.['zones'] || [];
+    this.account = this.modal.config.data?.account;
+    this.zones = this.modal.config.data?.zones || [];
     this.kbSettingsService.getVisibleLearningConfiguration().subscribe(({ display, full }) => {
       this.displayedLearningConfigurations = display;
       this.learningConfigurations = full;
       this.kbForm = this.formBuilder.group({
         title: ['', [Sluggable()]],
         description: [''],
-        zone: [this.modal.config.data?.['account'].zone],
+        zone: [this.zones.length === 1 ? this.zones[0].slug : ''],
         config: this.formBuilder.group(
           this.displayedLearningConfigurations.reduce(
             (acc, entry) => {
@@ -78,7 +80,7 @@ export class KbAddComponent implements OnInit {
       return;
     }
 
-    if (!this.kbForm || this.kbForm.invalid) return;
+    if (!this.kbForm || this.kbForm.invalid || !this.account) return;
 
     const default_learning_configuration = (this.learningConfigurations || []).reduce(
       (acc, entry) => {
@@ -87,23 +89,23 @@ export class KbAddComponent implements OnInit {
       },
       {} as { [key: string]: string },
     );
+    const formValue = this.kbForm.getRawValue();
     const learning_configuration = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
-      acc[entry.id] = this.kbForm?.value.config[entry.id];
+      acc[entry.id] = formValue.config[entry.id];
       return acc;
     }, default_learning_configuration);
 
     const payload: KnowledgeBoxCreation = {
-      slug: STFUtils.generateSlug(this.kbForm.value.title),
-      title: this.kbForm.value.title,
-      description: this.kbForm.value.description,
+      slug: STFUtils.generateSlug(formValue.title),
+      title: formValue.title,
+      description: formValue.description,
       learning_configuration,
     };
-    this.sdk.nuclia.options.zone = this.zones.find((zone) => zone.id === this.kbForm?.value.zone)?.slug;
     this.saving = true;
     const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
     this.error = '';
     this.cdr?.markForCheck();
-    this.sdk.nuclia.db.createKnowledgeBox(this.modal.config.data?.['account'].slug, payload).subscribe({
+    this.sdk.nuclia.db.createKnowledgeBox(this.account.id, payload, formValue.zone).subscribe({
       next: () => {
         clearTimeout(inProgressTimeout);
         this.modal.close({ success: true });

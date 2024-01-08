@@ -47,7 +47,7 @@ describe('Db', () => {
         description: null,
       },
     ]);
-    db.getKnowledgeBoxes('my-account').subscribe((res) => {
+    db.getKnowledgeBoxes('my-account', 'dc-id').subscribe((res) => {
       expect(global.fetch).toHaveBeenCalledTimes(3);
       expect(global.fetch).toHaveBeenCalledWith(
         'http://here/v1/zones',

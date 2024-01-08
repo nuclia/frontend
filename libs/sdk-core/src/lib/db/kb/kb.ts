@@ -471,6 +471,7 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   /**
    * Returns an ephemeral token.
+   * Requires account id and zone to be set in the Nuclia options (except when working with a local NucliaDB instance).
    *
    * This is useful when displaying a clickable link to a file in a private Knowledge Box
    * (the token will authorize the request even though there are no authentication headers).
@@ -486,13 +487,13 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
     let request: Observable<{ token: string }> | undefined;
     if (!this.nuclia.options.standalone) {
-      const account = this.nuclia.options.accountId;
+      const accountId = this.nuclia.options.accountId;
       const zone = this.nuclia.options.zone;
-      if (!account || !zone) {
+      if (!accountId || !zone) {
         throw new Error('Account id and zone are required to get a temp token');
       }
       request = this.nuclia.rest.post<{ token: string }>(
-        `/account/${account}/kb/${this.id}/ephemeral_tokens`,
+        `/account/${accountId}/kb/${this.id}/ephemeral_tokens`,
         {},
         undefined,
         undefined,

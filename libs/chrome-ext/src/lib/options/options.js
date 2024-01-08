@@ -46,7 +46,7 @@ function fetchData() {
           ? rxjs.of([])
           : rxjs.forkJoin(
               accountsData.map((account) =>
-                nuclia.db.getKnowledgeBoxes(account.slug).pipe(rxjs.map((kbs) => [account.slug, kbs])),
+                nuclia.db.getKnowledgeBoxes(account.slug, account.id).pipe(rxjs.map((kbs) => [account.slug, kbs])),
               ),
             );
       }),

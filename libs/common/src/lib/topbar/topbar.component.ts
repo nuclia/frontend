@@ -13,6 +13,7 @@ import { StandaloneService } from '../services/standalone.service';
 })
 export class TopbarComponent {
   userInfo = this.userService.userInfo;
+  account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
   private _account = this.sdk.currentAccount.pipe(shareReplay());

@@ -62,13 +62,13 @@ export class Db implements IDb {
     });
     ```
   */
-  modifyAccount(account: string, data: Partial<Account>): Observable<void> {
-    return this.nuclia.rest.patch<void>(`/account/${account}`, data);
+  modifyAccount(accountSlug: string, data: Partial<Account>): Observable<void> {
+    return this.nuclia.rest.patch<void>(`/account/${accountSlug}`, data);
   }
 
   /** Deletes an account. */
-  deleteAccount(account: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${account}`);
+  deleteAccount(accountSlug: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${accountSlug}`);
   }
 
   /**
@@ -84,8 +84,8 @@ export class Db implements IDb {
       });
     ```
    */
-  getAccountStatus(account: string): Observable<AccountStatus> {
-    return this.nuclia.rest.get<AccountStatus>(`/account/${account}/status`);
+  getAccountStatus(accountSlug: string): Observable<AccountStatus> {
+    return this.nuclia.rest.get<AccountStatus>(`/account/${accountSlug}/status`);
   }
 
   /**
@@ -120,26 +120,29 @@ export class Db implements IDb {
   }
 
   /**
-   * Returns a list of all the Knowledge Boxes for the given account slug.
-   * Account id is also required and can be passed either as parameter of as part of nuclia options.
+   * Returns a list of all the Knowledge Boxes for the given account. Account slug and id can be provided in the Nuclia options or as parameters.
    */
-  getKnowledgeBoxes(accountSlug: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
-    const accountID = accountId || this.nuclia.options.accountId;
-    if (!accountID) {
-      return throwError(() => 'Account ID must be set in Nuclia options in order to load KBs');
+  getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug?: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
+    const slug = accountSlug || this.nuclia.options.account;
+    const id = accountId || this.nuclia.options.accountId;
+    if (!slug || !id) {
+      return throwError(
+        () =>
+          'Account slug and ID must be provided in order to load KBs. You can provide them as parameter or in Nuclia options.',
+      );
     }
-    return forkJoin([this.nuclia.rest.getZones(), this.getKbIndexes(accountSlug)]).pipe(
+    return forkJoin([this.nuclia.rest.getZones(), this.getKbIndexes(slug)]).pipe(
       switchMap(([zoneMap, indexes]) => {
         const zones = indexes.reduce((zoneIds, index) => {
-          const zoneSlug = zoneMap[index.zone_id];
+          const zoneSlug: string = zoneMap[index.zone_id];
           if (!zoneIds.includes(zoneSlug)) {
             zoneIds.push(zoneSlug);
           }
           return zoneIds;
         }, [] as string[]);
-        return zones.length > 0
-          ? forkJoin(zones.map((zone) => this.getKnowledgeBoxesForZone(accountID, zone)))
-          : of([]);
+        return zones.length > 0 ? forkJoin(zones.map((zone) => this.getKnowledgeBoxesForZone(id, zone))) : of([]);
       }),
       map((kbByZone) =>
         kbByZone.reduce((kbList, list) => {
@@ -149,43 +152,50 @@ export class Db implements IDb {
     );
   }
 
+  /**
+   * Returns the list of Knowledge Boxes for the given account id and zone.
+   * @param accountId
+   * @param zone
+   */
   getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]> {
     return this.nuclia.rest.get<IKnowledgeBoxItem[]>(`/account/${accountId}/kbs`, undefined, undefined, zone);
   }
 
   /**
-   * Returns the Knowledge Box with the given id, or the one defined in the Nuclia options
-   * if no param is provided.
+   * Returns the Knowledge Box corresponding to the account id, Knowledge Box id and zone provided as parameters or the ones defined in the Nuclia options
+   * if no parameters are provided.
+   * Zone is mandatory except if the Knowledge Box is from a local NucliaDB instance.
    */
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
-  getKnowledgeBox(account: string, knowledgeBoxId: string): Observable<WritableKnowledgeBox>;
-  getKnowledgeBox(account?: string, knowledgeBoxId?: string): Observable<WritableKnowledgeBox> {
-    const accountId = this.nuclia.options.accountId;
-    if (accountId || this.nuclia.options.standalone) {
-      const kbId = knowledgeBoxId || this.nuclia.options.knowledgeBox;
+  getKnowledgeBox(accountId: string, knowledgeBoxId: string, zone?: string): Observable<WritableKnowledgeBox>;
+  getKnowledgeBox(accountId?: string, knowledgeBoxId?: string, zone?: string): Observable<WritableKnowledgeBox> {
+    const accountID = accountId || this.nuclia.options.accountId;
+    const kbId = knowledgeBoxId || this.nuclia.options.knowledgeBox;
+    const zoneSlug = zone || this.nuclia.options.zone;
 
-      if (!this.nuclia.options.standalone && !kbId) {
-        throw new Error('knowledgeBox id must be defined in the Nuclia options');
+    if (accountID || this.nuclia.options.standalone) {
+      if (!this.nuclia.options.standalone && !this.nuclia.options.proxy && (!kbId || !zoneSlug)) {
+        throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
 
-      const kbEndpoint = this.nuclia.options.standalone ? `/kb/${kbId}` : `/account/${accountId}/kb/${kbId}`;
+      const kbEndpoint = this.nuclia.options.standalone ? `/kb/${kbId}` : `/account/${accountID}/kb/${kbId}`;
 
       return this.nuclia.rest
         .get<IKnowledgeBox>(
           kbEndpoint,
           undefined,
           undefined,
-          this.nuclia.options.standalone || this.nuclia.options.proxy ? undefined : this.nuclia.options.zone,
+          this.nuclia.options.standalone || this.nuclia.options.proxy ? undefined : zoneSlug,
         )
-        .pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, account || (accountId as string), kb)));
+        .pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));
     } else {
-      if (!this.nuclia.options.knowledgeBox || !this.nuclia.options.zone) {
-        throw new Error('zone must be defined in the Nuclia options');
+      if ((!this.nuclia.options.knowledgeBox && !kbId) || (!this.nuclia.options.zone && !zone)) {
+        throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
       return of(
         new WritableKnowledgeBox(this.nuclia, '', {
-          id: knowledgeBoxId || this.nuclia.options.knowledgeBox,
-          zone: this.nuclia.options.zone,
+          id: knowledgeBoxId || (this.nuclia.options.knowledgeBox as string),
+          zone: zone || (this.nuclia.options.zone as string),
         }),
       );
     }
@@ -193,45 +203,49 @@ export class Db implements IDb {
 
   /**
    * Creates a new Knowledge Box.
-   *
+   * Zone parameter is mandatory except if the Knowledge Box is from a local NucliaDB instance.
    * Example:
     ```ts
     const knowledgeBox = {
       slug: 'my-kb',
       title: 'My knowledge box',
     };
-    nuclia.db.createKnowledgeBox('my-account', knowledgeBox).subscribe((knowledgeBox) => {
+    nuclia.db.createKnowledgeBox('my-account-id', 'europe-1', knowledgeBox).subscribe((knowledgeBox) => {
       console.log('knowledge box', knowledgeBox);
     });
     ```
   */
-  createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox> {
+  createKnowledgeBox(
+    accountId: string,
+    knowledgeBox: KnowledgeBoxCreation,
+    zone?: string,
+  ): Observable<WritableKnowledgeBox> {
     let creation: Observable<IKnowledgeBox>;
     if (this.nuclia.options.standalone) {
       creation = this.nuclia.rest.post<IKnowledgeBox>('/kbs', knowledgeBox);
     } else {
       creation = this.nuclia.rest.post<IKnowledgeBox>(
-        `/account/${this.nuclia.options.accountId}/kbs`,
+        `/account/${accountId}/kbs`,
         knowledgeBox,
         undefined,
         undefined,
         undefined,
-        this.nuclia.options.zone,
+        zone,
       );
     }
     return creation.pipe(
       switchMap((res) => {
         const id = res.id || res.uuid;
         if (!id) {
-          throw 'KnowledgeBox creation failed';
+          throw 'Knowledge Box creation failed';
         }
-        return this.getKnowledgeBox(account, id);
+        return this.getKnowledgeBox(accountId, id, zone);
       }),
     );
   }
 
   getStats(
-    account: string,
+    accountSlug: string,
     type: StatsType,
     knowledgeBox?: string,
     period: StatsPeriod = StatsPeriod.DAY,
@@ -244,7 +258,7 @@ export class Db implements IDb {
     if (knowledgeBox) {
       params.push(`knowledgebox=${knowledgeBox}`);
     }
-    return this.nuclia.rest.get<{ data: ProcessingStat[] }>(`/account/${account}/stats?${params.join('&')}`).pipe(
+    return this.nuclia.rest.get<{ data: ProcessingStat[] }>(`/account/${accountSlug}/stats?${params.join('&')}`).pipe(
       map((response) => response.data),
       filter((data) => !!data),
     );
@@ -332,13 +346,13 @@ export class Db implements IDb {
     );
   }
 
-  getNUAClients(account: string): Observable<NUAClient[]> {
+  getNUAClients(accountId: string): Observable<NUAClient[]> {
     return this.nuclia.rest.getZones().pipe(
       switchMap((zones) =>
         forkJoin(
           Object.values(zones).map((zoneSlug) =>
             this.nuclia.rest
-              .get<{ clients: NUAClient[] }>(`/account/${account}/nua_clients`, undefined, undefined, zoneSlug)
+              .get<{ clients: NUAClient[] }>(`/account/${accountId}/nua_clients`, undefined, undefined, zoneSlug)
               .pipe(
                 map(({ clients }) => clients.map((client) => ({ ...client, zone: zoneSlug }) as NUAClient)),
                 catchError(() => of([] as NUAClient[])),
@@ -354,9 +368,8 @@ export class Db implements IDb {
     );
   }
 
-  getNUAClient(account: string, client_id: string): Observable<NUAClient> {
-    // FIXME: once new regional system will be in place, we'll need account id instead of slug, and we'll need the zone
-    return this.nuclia.rest.get<NUAClient>(`/account/${account}/nua_client/${client_id}`);
+  getNUAClient(accountId: string, client_id: string, zone: string): Observable<NUAClient> {
+    return this.nuclia.rest.get<NUAClient>(`/account/${accountId}/nua_client/${client_id}`, undefined, undefined, zone);
   }
 
   hasNUAClient(): boolean {
@@ -373,19 +386,24 @@ export class Db implements IDb {
     };
   }
 
-  /** Creates a NUA client and a NUA token. */
-  createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
+  /**
+   * Creates a NUA client and a NUA token.
+   * Zone parameter must be provided except when working with a local NucliaDB instance.
+   * @param accountId Account identifier
+   * @param data NUA client data
+   */
+  createNUAClient(accountId: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
   createNUAClient(
     accountId: string,
     data: NUAClientPayload,
     zone: string,
   ): Observable<{ client_id: string; token: string }>;
   createNUAClient(
-    account?: string,
+    accountId?: string,
     data?: NUAClientPayload,
     zone?: string,
   ): Observable<{ client_id: string; token: string }> {
-    if (!account || !data) {
+    if (!accountId || !data) {
       const error = 'Account and data are required to create a NUA client';
       console.error(error);
       return throwError(() => error);
@@ -399,7 +417,7 @@ export class Db implements IDb {
 
     return this.nuclia.rest
       .post<{ client_id: string; token: string }>(
-        `/account/${account}/nua_clients`,
+        `/account/${accountId}/nua_clients`,
         payload,
         undefined,
         undefined,
@@ -409,7 +427,7 @@ export class Db implements IDb {
       .pipe(
         catchError((err) => {
           if (err.status === 409 && data.client_id) {
-            return this.renewNUAClient(account, data.client_id);
+            return this.renewNUAClient(accountId, data.client_id);
           } else {
             throw err;
           }
@@ -423,16 +441,19 @@ export class Db implements IDb {
       );
   }
 
-  /** Renews a NUA token. */
-  renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
+  /**
+   *  Renews a NUA token.
+   *  Zone parameter must be provided except when working with a local NucliaDB instance.
+   */
+  renewNUAClient(accountId: string, client_id: string): Observable<{ client_id: string; token: string }>;
   renewNUAClient(accountId: string, client_id: string, zone: string): Observable<{ client_id: string; token: string }>;
   renewNUAClient(
-    account?: string,
+    accountId?: string,
     client_id?: string,
     zone?: string,
   ): Observable<{ client_id: string; token: string }> {
     return this.nuclia.rest.put<{ client_id: string; token: string }>(
-      `/account/${account}/nua_client/${client_id}/key`,
+      `/account/${accountId}/nua_client/${client_id}/key`,
       {},
       undefined,
       undefined,
@@ -441,11 +462,14 @@ export class Db implements IDb {
     );
   }
 
-  /** Deletes a NUA client. */
-  deleteNUAClient(account: string, client_id: string): Observable<void>;
+  /**
+   * Deletes a NUA client.
+   * Zone parameter must be provided except when working with a local NucliaDB instance.
+   */
+  deleteNUAClient(accountId: string, client_id: string): Observable<void>;
   deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
-  deleteNUAClient(account?: string, client_id?: string, zone?: string): Observable<void> {
-    return this.nuclia.rest.delete(`/account/${account}/nua_client/${client_id}`, undefined, undefined, zone);
+  deleteNUAClient(accountId?: string, client_id?: string, zone?: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${accountId}/nua_client/${client_id}`, undefined, undefined, zone);
   }
 
   getLearningConfigurations(): Observable<LearningConfigurations> {

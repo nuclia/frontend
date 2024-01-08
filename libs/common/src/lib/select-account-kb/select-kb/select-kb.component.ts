@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SDKService, STFUtils, ZoneService } from '@flaps/core';
@@ -38,9 +38,10 @@ export class SelectKbComponent implements OnDestroy {
         ),
       );
   addKb: boolean = false;
-  kbName = new FormControl<string>('', [Sluggable()]);
+  newKbForm = new FormGroup({
+    kbName: new FormControl<string>('', { nonNullable: true, validators: [Sluggable(), Validators.required] }),
+  });
   errorMessages: IErrorMessages = { sluggable: 'stash.kb_name_invalid' } as IErrorMessages;
-
   creatingKb = false;
 
   constructor(
@@ -82,19 +83,20 @@ export class SelectKbComponent implements OnDestroy {
 
   toggleForm() {
     this.addKb = !this.addKb;
-    this.kbName.reset();
+    this.newKbForm.reset();
     this.cdr.markForCheck();
   }
 
   save() {
-    if (this.kbName.invalid || !this.kbName.value) {
+    if (this.newKbForm.invalid || !this.newKbForm.value) {
       return;
     }
 
     this.creatingKb = true;
-    this.kbName.disable();
-    const kbSlug = STFUtils.generateSlug(this.kbName.value);
-    const kbTitle = this.kbName.value;
+    this.newKbForm.disable();
+    const formValue = this.newKbForm.getRawValue();
+    const kbSlug = STFUtils.generateSlug(formValue.kbName);
+    const kbTitle = formValue.kbName;
 
     this.account
       .pipe(
@@ -116,7 +118,7 @@ export class SelectKbComponent implements OnDestroy {
         error: () => {
           this.toast.error('error.creating-kb');
           this.creatingKb = false;
-          this.kbName.enable();
+          this.newKbForm.enable();
         },
       });
   }
@@ -145,7 +147,7 @@ export class SelectKbComponent implements OnDestroy {
     }
   }
 
-  deleteKb(event: MouseEvent, kbId: string, title?: string) {
+  deleteKb(event: MouseEvent, kbId: string, zone: string, title?: string) {
     event.stopPropagation();
     this.modalService
       .openConfirm({
@@ -157,7 +159,7 @@ export class SelectKbComponent implements OnDestroy {
       .onClose.pipe(
         filter((yes) => !!yes),
         switchMap(() => this.account),
-        switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kbId)),
+        switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.id, kbId, zone)),
         switchMap((kb) => kb.delete()),
       )
       .subscribe(() => this.sdk.refreshKbList());

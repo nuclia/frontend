@@ -77,11 +77,11 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
 
   addKb(zones: Zone[], account: Account) {
     const data: KbAddData = {
-      zones: zones,
-      account: account,
+      zones,
+      account,
     };
     this.modalService
-      .openModal(KbAddComponent, { dismissable: true, data: data })
+      .openModal(KbAddComponent, { dismissable: true, data })
       .onClose.pipe(
         takeUntil(this.unsubscribeAll),
         filter((result) => {

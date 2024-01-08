@@ -78,15 +78,13 @@ export class SDKService {
 
     combineLatest([this._kb, this._account])
       .pipe(
-        filter(([kb, account]) => !!kb && !!kb.slug && !!account && !!account.slug),
+        filter(([kb, account]) => !!kb && !!kb.slug && !!account),
         map(([kb, account]) => [kb, account] as [KnowledgeBox, Account]),
-        distinctUntilChanged(
-          (previous, current) => previous[0].id === current[0].id && previous[0].slug === current[0].slug,
-        ),
+        distinctUntilChanged(([previous], [current]) => previous.id === current.id && previous.slug === current.slug),
         switchMap(([kb, account]) =>
           this.nuclia.db
-            .getKnowledgeBox(account.slug, kb.id)
-            .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug, data))),
+            .getKnowledgeBox(account.id, kb.id, kb.zone)
+            .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug || account.id, data))),
         ),
         tap(() => (this._isKbLoaded = true)),
       )
@@ -94,7 +92,7 @@ export class SDKService {
         this._currentKB.next(kb);
       });
 
-    this.countersRefreshSubcriptions();
+    this.countersRefreshSubscriptions();
     this.refreshCounter(true);
   }
 
@@ -117,7 +115,7 @@ export class SDKService {
   }
 
   setCurrentKnowledgeBox(
-    accountSlug: string,
+    accountId: string,
     kbId: string,
     zone?: string,
     force = false,
@@ -128,7 +126,7 @@ export class SDKService {
       return of(currentKb as WritableKnowledgeBox);
     } else {
       this.nuclia.options.zone = zone;
-      return this.nuclia.db.getKnowledgeBox(accountSlug, kbId).pipe(
+      return this.nuclia.db.getKnowledgeBox(accountId, kbId, zone).pipe(
         map((kb) => {
           this.kb = kb;
           return kb;
@@ -147,18 +145,19 @@ export class SDKService {
       return (currentAccount ? of(currentAccount) : this.setCurrentAccount(accountSlug)).pipe(
         switchMap((account) => {
           this.nuclia.options.accountId = account.id;
-          return this.nuclia.db.getKnowledgeBoxesForZone(account.id, zone);
-        }),
-        switchMap((kbs) => {
-          const kb = kbs.find((item) => item.slug === kbSlug);
-          if (!kb) {
-            return throwError(() => ({
-              status: 403,
-              message: `No KB found for ${kbSlug} in account ${accountSlug} on ${zone}.`,
-            }));
-          }
-          this.nuclia.options.knowledgeBox = kb.id;
-          return this.setCurrentKnowledgeBox(accountSlug, kb.id, zone);
+          return this.nuclia.db.getKnowledgeBoxesForZone(account.id, zone).pipe(
+            switchMap((kbs) => {
+              const kb = kbs.find((item) => item.slug === kbSlug);
+              if (!kb) {
+                return throwError(() => ({
+                  status: 403,
+                  message: `No KB found for ${kbSlug} in account ${accountSlug} on ${zone}.`,
+                }));
+              }
+              this.nuclia.options.knowledgeBox = kb.id;
+              return this.setCurrentKnowledgeBox(account.id, kb.id, zone);
+            }),
+          );
         }),
       );
     } else {
@@ -196,7 +195,7 @@ export class SDKService {
         )
       : this.currentAccount.pipe(
           take(1),
-          switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug)),
+          switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
         );
 
     kbList.subscribe({
@@ -212,7 +211,7 @@ export class SDKService {
         .pipe(
           switchMap(([account, kb]) =>
             this.nuclia.db
-              .getKnowledgeBox(account.slug || account.id, kb.id)
+              .getKnowledgeBox(account.id, kb.id, kb.zone)
               .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug || account.id, data))),
           ),
         )
@@ -220,7 +219,7 @@ export class SDKService {
     }
   }
 
-  private countersRefreshSubcriptions() {
+  private countersRefreshSubscriptions() {
     this._refreshCounter
       .pipe(
         filter((refresh) => refresh),

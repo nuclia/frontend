@@ -65,27 +65,27 @@ export interface IRest {
     doNotParse?: boolean,
     zoneSlug?: string,
   ): Observable<T>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   post<T>(
     path: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body: any,
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
     synchronous?: boolean,
     zoneSlug?: string,
   ): Observable<T>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   put<T>(
     path: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body: any,
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
     synchronous?: boolean,
     zoneSlug?: string,
   ): Observable<T>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   patch<T>(
     path: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body: any,
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
@@ -103,6 +103,7 @@ export interface IRest {
   getZoneSlug(zoneId: string): Observable<string>;
   getFullUrl(path: string): string;
   getObjectURL(path: string): Observable<string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getStream(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>;
 }
 
@@ -110,20 +111,25 @@ export interface IDb {
   getAccounts(): Observable<Account[]>;
   getKbIndexes(accountSlug: string): Observable<KbIndex[]>;
   createAccount(account: AccountCreation): Observable<Account>;
-  getAccountStatus(account: string): Observable<AccountStatus>;
-  modifyAccount(account: string, data: Partial<Account>): Observable<void>;
-  deleteAccount(account: string): Observable<void>;
+  getAccountStatus(accountSlug: string): Observable<AccountStatus>;
+  modifyAccount(accountSlug: string, data: Partial<Account>): Observable<void>;
+  deleteAccount(accountSlug: string): Observable<void>;
   getWelcome(): Observable<Welcome>;
   getAccount(): Observable<Account>;
   getAccount(account?: string): Observable<Account>;
   getStandaloneKbs(): Observable<IStandaloneKb[]>;
-  getKnowledgeBoxes(accountSlug: string, accountId?: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
-  getKnowledgeBox(account: string, knowledgeBoxId: string): Observable<WritableKnowledgeBox>;
-  createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox>;
+  getKnowledgeBox(accountId: string, knowledgeBoxId: string, zone?: string): Observable<WritableKnowledgeBox>;
+  createKnowledgeBox(
+    accountId: string,
+    knowledgeBox: KnowledgeBoxCreation,
+    zone?: string,
+  ): Observable<WritableKnowledgeBox>;
   getStats(
-    account: string,
+    accountSlug: string,
     type: StatsType,
     knowledgeBox?: string,
     period?: StatsPeriod,
@@ -133,17 +139,17 @@ export interface IDb {
   getProcessingStatus(accountId?: string): Observable<ProcessingStatusResponse>;
   getProcessingStats(range?: StatsRange, accountId?: string): Observable<ProcessingStat[]>;
   pull(): Observable<ProcessingPullResponse>;
-  getNUAClients(account: string): Observable<NUAClient[]>;
-  getNUAClient(account: string, client_id: string): Observable<NUAClient>;
-  createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
+  getNUAClients(accountId: string): Observable<NUAClient[]>;
+  getNUAClient(accountId: string, client_id: string, zone: string): Observable<NUAClient>;
+  createNUAClient(accountId: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
   createNUAClient(
     accountId: string,
     data: NUAClientPayload,
     zone: string,
   ): Observable<{ client_id: string; token: string }>;
-  renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
+  renewNUAClient(accountId: string, client_id: string): Observable<{ client_id: string; token: string }>;
   renewNUAClient(accountId: string, client_id: string, zone: string): Observable<{ client_id: string; token: string }>;
-  deleteNUAClient(account: string, client_id: string): Observable<void>;
+  deleteNUAClient(accountId: string, client_id: string): Observable<void>;
   deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
   hasNUAClient(): boolean;
   getNUAActivity(accountId: string, client_id: string, zoneSlug: string, pageIndex?: number): Observable<EventList>;
