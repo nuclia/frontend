@@ -790,6 +790,8 @@
 	"stash.create.in_progress": "Création de la Knowledge Box en cours…",
 	"stash.create.semantic_model.help": "Indiquez les langues utilisées dans les informations que vous téléchargerez dans votre KB.",
 	"stash.create.semantic_model.label": "Les langues",
+	"stash.create.summary_model.help": "Indique le modèle utilisé par la fonctionnalité de résumé à la demande",
+	"stash.create.summary_model.label": "Résumé à la demande",
 	"stash.create.title": "Créer une Knowledge Box",
 	"stash.create.user_prompts.examples": "Exemples",
 	"stash.create.user_prompts.prompt": "Prompt",
