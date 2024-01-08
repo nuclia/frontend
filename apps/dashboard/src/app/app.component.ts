@@ -10,13 +10,11 @@ import {
   UserService,
 } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { catchError, combineLatest, filter, map, of, Subject, switchMap, take, tap, throwError } from 'rxjs';
-import { Title } from '@angular/platform-browser';
+import { filter, Subject, take } from 'rxjs';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesModalComponent, MessageModalComponent, NavigationService } from '@flaps/common';
-import { Account, IKnowledgeBoxItem } from '@nuclia/core';
+import { FeaturesModalComponent, MessageModalComponent } from '@flaps/common';
 
 @Component({
   selector: 'app-root',
@@ -37,16 +35,16 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private ngxTranslate: TranslateService,
     private tracking: STFTrackingService,
     private config: BackendConfigurationService,
-    private navigation: NavigationService,
     private sdk: SDKService,
     private modalService: SisModalService,
     private paTranslate: PaTranslateService,
-    private titleService: Title,
     @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();
 
-    this.updateStateOnRouteChange();
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => this.tracking.navigation(event as NavigationEnd));
 
     this.initTranslate(undefined);
     this.user.userPrefs.subscribe((prefs) => {
@@ -98,68 +96,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.ngxTranslate.onLangChange
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((event) => this.paTranslate.initTranslationsAndUse(event.lang, event.translations));
-  }
-
-  private updateStateOnRouteChange() {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        tap((event) => this.tracking.navigation(event as NavigationEnd)),
-        filter(
-          (event) =>
-            ((event as NavigationEnd).url.startsWith('/at/') || (event as NavigationEnd).url.startsWith('/select/')) &&
-            !!this.router.routerState.root.firstChild?.firstChild,
-        ),
-        switchMap(() =>
-          combineLatest([
-            this.router.routerState.root.firstChild!.firstChild!.paramMap,
-            this.router.routerState.root.firstChild?.firstChild?.firstChild?.paramMap || of(),
-          ]),
-        ),
-        filter(([accountParams]) => !!accountParams.get('account')),
-        switchMap(([accountParams, kbParams]) => {
-          const account = accountParams.get('account') as string;
-          const kbSlug = kbParams && kbParams.get('kb');
-          const zone: string | null = kbParams && kbParams.get('zone');
-
-          const getAccountAndKb = this.sdk.setCurrentAccount(account).pipe(
-            switchMap((account) => {
-              const accountId = account.id;
-              this.sdk.nuclia.options.accountId = accountId;
-              return zone
-                ? this.sdk.nuclia.db.getKnowledgeBoxesForZone(accountId, zone).pipe(
-                    switchMap((kbs) => {
-                      const kb = kbs.find((item) => item.slug === kbSlug);
-                      if (!kb) {
-                        return throwError(() => ({
-                          status: 403,
-                          message: `No KB found for ${kbSlug} in account ${account} on ${zone}.`,
-                        }));
-                      }
-                      this.sdk.nuclia.options.knowledgeBox = kb.id;
-                      return this.sdk
-                        .setCurrentKnowledgeBox(account.slug, kb.id, zone)
-                        .pipe(map((kb) => [account, kb] as [Account, IKnowledgeBoxItem | null]));
-                    }),
-                  )
-                : of([]);
-            }),
-          );
-          return getAccountAndKb.pipe(
-            catchError((error) => {
-              if (error.status === 403) {
-                this.navigation.resetState();
-              }
-              return of([{ title: '' }, { title: '' }]);
-            }),
-          );
-        }),
-      )
-      .subscribe(([account, kb]) =>
-        this.titleService.setTitle(
-          `Nuclia${account?.title ? ' – ' + account.title : ''}${kb?.title ? ' – ' + kb.title : ''}`,
-        ),
-      );
   }
 
   private displayAlert() {

@@ -9,7 +9,7 @@ import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { environment } from '../environments/environment';
-import { RouterModule } from '@angular/router';
+import { RouterModule, TitleStrategy } from '@angular/router';
 import { routerOptions, routes } from './app-routing';
 import { HomePageComponent } from './home/home-page.component';
 import { MainContainerComponent } from './home/main-container/main-container.component';
@@ -22,6 +22,7 @@ import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { HomeContainerComponent } from '@nuclia/sistema';
+import { AppTitleStrategy } from './app-title.strategy';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -56,7 +57,11 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
     PaIconModule,
     HomeContainerComponent,
   ],
-  providers: [TranslatePipe, { provide: APP_BASE_HREF, useValue: '/admin' }],
+  providers: [
+    TranslatePipe,
+    { provide: APP_BASE_HREF, useValue: '/admin' },
+    { provide: TitleStrategy, useClass: AppTitleStrategy },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

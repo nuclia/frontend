@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angu
 import { BackendConfigurationService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, combineLatest, filter, of, Subject, switchMap, take, tap } from 'rxjs';
+import { filter, Subject, take } from 'rxjs';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
 import { MessageModalComponent, NavigationService } from '@flaps/common';
@@ -33,7 +33,10 @@ export class AppComponent implements OnInit, OnDestroy {
     private navigation: NavigationService,
     private router: Router,
   ) {
-    this.updateStateOnRouteChange();
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => this.tracking.navigation(event as NavigationEnd));
+
     const userLocale = localStorage.getItem(userLocaleKey);
     this.initTranslate(userLocale);
   }
@@ -69,44 +72,6 @@ export class AppComponent implements OnInit, OnDestroy {
       localStorage.setItem(userLocaleKey, event.lang);
       this.paTranslate.initTranslationsAndUse(event.lang, event.translations);
     });
-  }
-
-  private updateStateOnRouteChange() {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        tap((event) => this.tracking.navigation(event as NavigationEnd)),
-        filter(
-          (event) =>
-            ((event as NavigationEnd).url.startsWith('/at/') || (event as NavigationEnd).url.startsWith('/select/')) &&
-            !!this.router.routerState.root.firstChild?.firstChild,
-        ),
-        switchMap(() =>
-          combineLatest([
-            this.router.routerState.root.firstChild?.firstChild?.paramMap || of(undefined),
-            this.router.routerState.root.firstChild?.firstChild?.firstChild?.paramMap || of(undefined),
-          ]),
-        ),
-        filter(([accountParams]) => !!accountParams?.get('account')),
-        switchMap(([accountParams, kbParams]) => {
-          const account = accountParams?.get('account') as string;
-          const kb = kbParams && kbParams.get('kb');
-          return combineLatest([
-            this.sdk.setCurrentAccount(account),
-            kb ? this.sdk.setCurrentKnowledgeBox(account, kb as string) : of(undefined),
-          ]).pipe(
-            catchError((error) => {
-              if (error.status === 403) {
-                this.navigation.resetState();
-              }
-              return of([{ title: '' }, { title: '' }]);
-            }),
-          );
-        }),
-      )
-      .subscribe(([, kb]) =>
-        kb ? this.titleService.setTitle(`NucliaDB – ${kb.title}`) : this.titleService.setTitle(`NucliaDB`),
-      );
   }
 
   private preventDefault(e: DragEvent) {

@@ -5,6 +5,7 @@ import { standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { selectAnimations } from '../utils';
 import { Account } from '@nuclia/core';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-select-account',
@@ -29,7 +30,10 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart || event instanceof Scroll))
+      .pipe(
+        filter((event) => event instanceof NavigationStart || event instanceof Scroll),
+        takeUntil(this.unsubscribeAll),
+      )
       .subscribe((event) => {
         // Good animation is done using NavigationStart,
         // but we also listen to Scroll event because NavigationStart isn't triggered when loading a page directly

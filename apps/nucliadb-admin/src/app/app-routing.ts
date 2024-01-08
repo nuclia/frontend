@@ -13,12 +13,15 @@ import {
   SelectAccountComponent,
   SelectKbComponent,
   selectKbGuard,
+  setAccountGuard,
+  setLocalKbGuard,
   UploadDataComponent,
 } from '@flaps/common';
 
 export const routerOptions: ExtraOptions = {
   onSameUrlNavigation: 'reload',
   scrollPositionRestoration: 'enabled',
+  paramsInheritanceStrategy: 'always',
   useHash: true,
 };
 
@@ -35,10 +38,12 @@ export const routes: Routes = [
       {
         path: `at/:account`,
         component: DashboardLayoutComponent,
+        canActivate: [setAccountGuard],
         children: [
           {
             path: `:kb`,
             component: MainContainerComponent,
+            canActivate: [setLocalKbGuard],
             children: [
               {
                 path: '',

@@ -47,6 +47,7 @@ export class SDKService {
   private _repetitiveRefreshCounter = new Subject<void>();
   private _isKbLoaded = false;
 
+  hasKb = this._kb.pipe(map((kb) => kb !== null));
   currentKb = this._currentKB.asObservable();
   kbList: Observable<IKnowledgeBoxItem[]> = this._kbList.asObservable();
   refreshingKbList: Observable<boolean> = this._refreshingKbList.asObservable();
@@ -56,7 +57,6 @@ export class SDKService {
   );
   counters = new ReplaySubject<Counters>(1);
   pendingRefresh = new BehaviorSubject(false);
-  refreshing = this._refreshCounter.asObservable();
   isAdminOrContrib = this.currentKb.pipe(map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
 
   get isKbLoaded() {
