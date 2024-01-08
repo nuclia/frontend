@@ -302,7 +302,9 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
     );
   }
 
-  @HostListener('window:keyup', ['$event'])
+  @HostListener('window:keyup.enter', ['$event'])
+  @HostListener('window:keyup.escape', ['$event'])
+  @HostListener('window:keyup.delete', ['$event'])
   private onKeyUp(event: KeyboardEvent) {
     if (document.activeElement !== document.body) return;
     forkJoin([this.paragraphs.pipe(take(1)), this.isAdminOrContrib.pipe(take(1))]).subscribe(
