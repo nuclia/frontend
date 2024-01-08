@@ -84,7 +84,9 @@ export class EditResourceService {
       }, [] as ResourceField[]),
     ),
   );
-  kbUrl: Observable<string> = this.sdk.currentKb.pipe(map((kb) => this.navigation.getKbUrl(kb.account, kb.slug!)));
+  kbUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
+    map(([account, kb]) => this.navigation.getKbUrl(account.slug, kb.slug!)),
+  );
   pawlsData = combineLatest([this.sdk.currentKb, this.resource, this.currentField]).pipe(
     map(([kb, resource, fieldId]) => {
       if (resource && fieldId !== 'resource') {

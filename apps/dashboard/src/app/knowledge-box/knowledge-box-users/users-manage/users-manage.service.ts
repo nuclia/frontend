@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { shareReplay, switchMap, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { InviteKbData, KBRoles } from '@nuclia/core';
@@ -9,7 +9,11 @@ export class UsersManageService {
   private _onUpdateUsers = new BehaviorSubject<null>(null);
 
   usersKb = this._onUpdateUsers.pipe(
-    switchMap(() => this.sdk.currentKb.pipe(switchMap((kb) => kb.getUsers()))),
+    switchMap(() =>
+      combineLatest([this.sdk.currentKb, this.sdk.currentAccount]).pipe(
+        switchMap(([kb, account]) => kb.getUsers(account.slug)),
+      ),
+    ),
     shareReplay(),
   );
 

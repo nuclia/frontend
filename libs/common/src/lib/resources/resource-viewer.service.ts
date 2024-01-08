@@ -1,4 +1,4 @@
-import { filter, map, Observable, switchMap, take, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, switchMap, take, tap } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Injectable, NgZone } from '@angular/core';
@@ -179,10 +179,10 @@ export class ResourceViewerService {
   }
 
   private getResourcesBasePath(): Observable<string> {
-    return this.sdk.currentKb.pipe(
+    return combineLatest([this.sdk.currentKb, this.sdk.currentAccount]).pipe(
       take(1),
-      filter((kb) => !!kb.admin || !!kb.contrib),
-      map((kb) => `/at/${kb.account}/${kb.slug}/resources`),
+      filter(([kb]) => !!kb.admin || !!kb.contrib),
+      map(([kb, account]) => `/at/${account.slug}/${kb.slug}/resources`),
     );
   }
   private navigateTo(path: string) {

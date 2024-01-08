@@ -47,7 +47,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   kbUrl: string = '';
 
   isAdminOrContrib = this.sdk.isAdminOrContrib;
-  isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || kb.account === 'local'));
+  isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || kb.accountId === 'local'));
   account = this.sdk.currentAccount;
   isTrial = this.account.pipe(map((account) => account?.type === 'stash-trial'));
   kb = this.sdk.currentKb;
@@ -86,11 +86,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
-      const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-      this.kbUrl = this.navigationService.getKbUrl(kb.account, kbSlug);
-      this.cdr.markForCheck();
-    });
+    combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(([account, kb]) => {
+        const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
+        this.kbUrl = this.navigationService.getKbUrl(account.slug, kbSlug);
+        this.cdr.markForCheck();
+      });
     this.inSettings
       .pipe(
         filter((inSettings) => inSettings),

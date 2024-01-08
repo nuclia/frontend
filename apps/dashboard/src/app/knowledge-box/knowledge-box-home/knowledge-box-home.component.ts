@@ -70,10 +70,10 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     takeUntil(this.unsubscribeAll),
   );
 
-  kbUrl = this.currentKb.pipe(
-    map((kb) => {
+  kbUrl = combineLatest([this.account, this.currentKb]).pipe(
+    map(([account, kb]) => {
       const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-      return this.navigationService.getKbUrl(kb.account, kbSlug);
+      return this.navigationService.getKbUrl(account.slug, kbSlug);
     }),
   );
   isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app');

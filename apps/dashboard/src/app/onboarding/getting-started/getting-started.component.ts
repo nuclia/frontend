@@ -7,7 +7,20 @@ import { UploadComponent } from './upload/upload.component';
 import { ProcessingComponent } from './processing/processing.component';
 import { ItemToUpload } from './getting-started.models';
 import { NavigationService, UploadService } from '@flaps/common';
-import { filter, forkJoin, map, Observable, of, repeat, Subject, switchMap, take, tap, timer } from 'rxjs';
+import {
+  combineLatest,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  repeat,
+  Subject,
+  switchMap,
+  take,
+  tap,
+  timer,
+} from 'rxjs';
 import { ExtractedDataTypes, Resource, RESOURCE_STATUS, ResourceProperties, Search, UploadStatus } from '@nuclia/core';
 import { PostHogService, SDKService } from '@flaps/core';
 import { catchError, takeUntil } from 'rxjs/operators';
@@ -42,10 +55,10 @@ export class GettingStartedComponent implements OnDestroy {
 
   unsubscribeAll = new Subject<void>();
   allProcessed = new Subject<void>();
-  kbUrl = this.sdk.currentKb.pipe(
-    map((kb) => {
+  kbUrl = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
+    map(([account, kb]) => {
       const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
-      return this.navigationService.getKbUrl(kb.account, kbSlug);
+      return this.navigationService.getKbUrl(account.slug, kbSlug);
     }),
   );
 
