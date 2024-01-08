@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostListener,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -298,6 +299,40 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
       switchMap(([field, resource]) =>
         this.annotationService.searchInField(query, resource, field, this.nextPageNumber),
       ),
+    );
+  }
+
+  @HostListener('window:keyup.enter', ['$event'])
+  @HostListener('window:keyup.escape', ['$event'])
+  @HostListener('window:keyup.delete', ['$event'])
+  private onKeyUp(event: KeyboardEvent) {
+    if (document.activeElement !== document.body) return;
+    forkJoin([this.paragraphs.pipe(take(1)), this.isAdminOrContrib.pipe(take(1))]).subscribe(
+      ([paragraphs, isAdminOrContrib]) => {
+        if (!isAdminOrContrib || !this.annotationService.selectedFamilyValue) return;
+        if (this.selectedEntity) {
+          const paragraph = paragraphs.find((paragraph) => paragraph.paragraphId === this.selectedEntity?.paragraphId);
+          if (paragraph) {
+            if (event.key === 'Enter') {
+              this.updateEntity(paragraph);
+            } else if (event.key === 'Delete') {
+              this.removeEntityFromParagraph(paragraph);
+            } else if (event.key === 'Escape') {
+              this.cleanupSelection();
+            }
+          }
+        } else if (this.userSelection) {
+          const paragraph = paragraphs.find((paragraph) => paragraph.paragraphId === this.userSelection?.paragraphId);
+          if (paragraph) {
+            if (event.key === 'Enter') {
+              this.addEntity(paragraph);
+            } else if (event.key === 'Escape') {
+              this.cleanupSelection();
+              window.getSelection()?.empty();
+            }
+          }
+        }
+      },
     );
   }
 }
