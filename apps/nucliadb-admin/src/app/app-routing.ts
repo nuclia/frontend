@@ -14,9 +14,9 @@ import {
   SelectKbComponent,
   selectKbGuard,
   setAccountGuard,
+  setLocalKbGuard,
   UploadDataComponent,
 } from '@flaps/common';
-import { setLocalKbGuard } from '../../../../libs/common/src/lib/guards/set-local-kb.guard';
 
 export const routerOptions: ExtraOptions = {
   onSameUrlNavigation: 'reload',
