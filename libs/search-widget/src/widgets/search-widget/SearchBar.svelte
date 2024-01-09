@@ -21,9 +21,11 @@
     resetStatesAndEffects,
     setupTriggerGraphNerSearch
   } from '../../core/stores/effects';
-  import { preselectedFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
+  import { entityRelations, preselectedFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
   import type { WidgetFilters } from '../../core';
+  import { InfoCard } from '../../components';
+  import { IconButton, Modal } from '../../common';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -87,6 +89,8 @@
   let svgSprite: string;
   let ready = false;
   let container: HTMLElement;
+
+  let showRelations = false;
 
   onMount(() => {
     if (cdn) {
@@ -172,6 +176,13 @@
       resetStatesAndEffects();
     };
   });
+
+  function displayRelations(){
+    showRelations = true;
+  }
+  function hideRelations(){
+    showRelations = false;
+  }
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
@@ -182,8 +193,24 @@
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready && !!svgSprite}
-    <SearchInput />
+    <div class="search-box">
+      <SearchInput />
+
+      {#if $entityRelations.length > 0}
+        <IconButton icon="info" aspect="basic" on:click={displayRelations} />
+      {/if}
+    </div>
   {/if}
+
+  <Modal show={showRelations} on:close={hideRelations}>
+    <div class="close-button">
+      <IconButton icon="cross" aspect="basic" on:click={hideRelations} />
+    </div>
+    <div class="dialog-content">
+      <InfoCard entityRelations={$entityRelations} />
+    </div>
+  </Modal>
+
   <div
     id="nuclia-glyphs-sprite"
     hidden>
@@ -193,4 +220,4 @@
 
 <style
   lang="scss"
-  src="../../common/common-style.scss"></style>
+  src="./SearchBar.scss"></style>

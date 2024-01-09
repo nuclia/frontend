@@ -16,8 +16,8 @@
   }
 
   &:not(.popup) .modal-content {
-    width: var(--modal-width, fit-content);
-    height: var(--modal-height, fit-content);
+    width: fit-content;
+    height: fit-content;
   }
 }
 @media (min-width: 599px) {
@@ -29,10 +29,6 @@
     }
     &.popup.align-right .modal {
       left: max(calc(var(--popup-left) - var(--modal-width)), 0px);
-    }
-    &:not(.popup) .modal-content {
-      width: var(--resource-modal-width-md, fit-content);
-      height: 100vh;
     }
   }
 }
