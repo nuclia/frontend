@@ -8,7 +8,6 @@
   import globalCss from '../../common/_global.scss?inline';
   import {
     _,
-    entityRelations,
     getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
     hasMore,
@@ -28,7 +27,7 @@
     trackingReset
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
-  import { InfoCard, InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
+  import { InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
 
   export let cssPath = '';
@@ -103,8 +102,7 @@
       {/if}
       <div class="results-container">
         <div
-          class="results"
-          class:with-relations={$entityRelations.length > 0}>
+          class="results">
           {#if $isAnswerEnabled}
             <InitialAnswer />
           {/if}
@@ -125,9 +123,6 @@
             {/if}
           </div>
         </div>
-        {#if $entityRelations.length > 0}
-          <InfoCard entityRelations={$entityRelations} />
-        {/if}
       </div>
       {#if $showLoading}
         <LoadingDots />

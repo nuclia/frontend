@@ -32,7 +32,4 @@
   .results-container {
     flex-direction: row;
   }
-  .results.with-relations {
-    width: calc(100% - var(--rhythm-40) - var(--rhythm-2));
-  }
 }
