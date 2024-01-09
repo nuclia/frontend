@@ -10,6 +10,7 @@ import {
   LearningConfigurationSchema,
   LearningConfigurationSet,
   LearningConfigurationUserKeys,
+  SUMMARY_PROMPT,
   USER_PROMPTS,
   WritableKnowledgeBox,
 } from '@nuclia/core';
@@ -56,21 +57,22 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   userKeys?: LearningConfigurationUserKeys;
   currentConfig: { [key: string]: any } = {};
   ownKey = false;
-  promptConfigurations?: LearningConfiguration;
-  promptKeys: string[] = [];
-  currentPromptConfig?: LearningConfigurationSchema;
-  currentPromptKey?: string;
-  // user-prompts is always enabled for growth and enterprise accounts
-  // but is still managed as a feature flagged feature for other account types
-  // so we can enable it specifically for some accounts throught the `variants` field
+  userPromptConfigurations?: LearningConfiguration;
+  userPromptKeys: string[] = [];
+  currentUserPromptConfig?: LearningConfigurationSchema;
+  currentUserPromptKey?: string;
+
+  // user-prompts and summarization are always enabled for growth and enterprise accounts
+  // but are still managed as a feature flagged feature for other account types
+  // so we can enable it specifically for some accounts through the `variants` field
   // in `status/features-v2.json`
   isUserPromptsEnabled = forkJoin([
     this.featureFlag.isFeatureEnabled('user-prompts').pipe(take(1)),
-    this.sdk.currentAccount.pipe(
-      map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
-      take(1),
-    ),
+    this.settingService.enterpriseOrGrowth,
   ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
+  isSummarizationEnabled = this.settingService.isSummarizationEnabled;
+
+  summaryPromptConfigurations?: LearningConfiguration;
 
   constructor(
     private settingService: KnowledgeBoxSettingsService,
@@ -116,10 +118,13 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       );
     }
     initRequest.subscribe(({ display, full, keys }) => {
-      this.displayedLearningConfigurations = display.filter((entry) => entry.id !== USER_PROMPTS);
-      this.promptConfigurations = display.find((entry) => entry.id === USER_PROMPTS)?.data;
-      this.promptKeys = Object.keys(this.promptConfigurations?.schemas || {});
-      const promptsValues = Object.entries(this.promptConfigurations?.schemas || {}).reduce(
+      this.displayedLearningConfigurations = display.filter(
+        (entry) => entry.id !== USER_PROMPTS && entry.id !== SUMMARY_PROMPT,
+      );
+      this.userPromptConfigurations = display.find((entry) => entry.id === USER_PROMPTS)?.data;
+      this.summaryPromptConfigurations = display.find((entry) => entry.id === SUMMARY_PROMPT)?.data;
+      this.userPromptKeys = Object.keys(this.userPromptConfigurations?.schemas || {});
+      const userPromptsValues = Object.entries(this.userPromptConfigurations?.schemas || {}).reduce(
         (acc, [key, value]) => {
           acc[key] = {};
           if (value.properties['prompt']) {
@@ -136,8 +141,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       this.userKeys = keys;
 
       if (this.kb) {
-        this.kbForm = this.getKbForm(promptsValues);
-        this.updatePrompts(this.currentConfig['generative_model'] || '');
+        this.kbForm = this.getKbForm(userPromptsValues);
+        this.updateUserPrompts(this.currentConfig['generative_model'] || '');
         this.ownKey = this.hasOwnKey();
         this.formReady.next();
       }
@@ -145,7 +150,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getKbForm(promptsValues: { [p: string]: { prompt?: string; system?: string } }) {
+  private getKbForm(userPromptsValues: { [p: string]: { prompt?: string; system?: string } }) {
     return this.formBuilder.group({
       uid: [this.kb?.id],
       zone: [this.kb?.zone],
@@ -178,7 +183,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
           ),
         ),
         user_prompts: this.formBuilder.group(
-          Object.entries(promptsValues || {}).reduce(
+          Object.entries(userPromptsValues || {}).reduce(
             (acc, [key, value]) => {
               acc[key] = this.formBuilder.group(
                 Object.entries(value).reduce(
@@ -195,6 +200,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             {} as { [key: string]: UntypedFormGroup },
           ),
         ),
+        summary_prompt: this.formBuilder.group({
+          prompt: [''],
+          prompt_examples: [''],
+        }),
       }),
     });
   }
@@ -211,7 +220,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       config: this.currentConfig,
       zone: this.kb.zone,
     });
-    this.updatePrompts(this.currentConfig['generative_model'] || '');
+    this.updateUserPrompts(this.currentConfig['generative_model'] || '');
     this.kbForm.markAsPristine();
   }
 
@@ -250,7 +259,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
           fieldControl.updateValueAndValidity({ emitEvent: false });
         });
       });
-      this.cdr?.markForCheck();
+      this.cdr.markForCheck();
     }
   }
 
@@ -325,9 +334,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
 
   private getNewConfiguration(current: { [p: string]: any }): { [id: string]: any } {
+    const configFormValue = this.kbForm?.value.config;
     const newConf = (this.displayedLearningConfigurations || []).reduce(
       (acc, entry) => {
-        acc[entry.id] = this.kbForm?.value.config[entry.id];
+        acc[entry.id] = configFormValue?.[entry.id];
         return acc;
       },
       { ...current },
@@ -340,7 +350,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
           if (group && this.ownKey) {
             acc[group] = Object.keys(this.userKeys?.[group] || {}).reduce(
               (acc, fieldId) => {
-                acc[fieldId] = this.kbForm?.value.config['user_keys'][group][fieldId];
+                acc[fieldId] = configFormValue?.['user_keys'][group][fieldId];
                 return acc;
               },
               {} as { [key: string]: any },
@@ -352,12 +362,16 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       ),
     };
 
-    const promptKey = this.getPromptKeyForModel(this.kbForm?.value.config['generative_model'] || '');
-    if (promptKey) {
+    const userPromptKey = this.getUserPromptKeyForModel(configFormValue?.['generative_model'] || '');
+    if (userPromptKey) {
       if (!newConf['user_prompts']) {
         newConf['user_prompts'] = {};
       }
-      newConf['user_prompts'][promptKey] = this.kbForm?.value.config['user_prompts'][promptKey];
+      newConf['user_prompts'][userPromptKey] = configFormValue?.['user_prompts'][userPromptKey];
+    }
+    const summaryPrompt = configFormValue?.['summary_prompt'];
+    if (summaryPrompt) {
+      newConf['summary_prompt'] = summaryPrompt;
     }
 
     return { ...newConf, ...userKeys };
@@ -386,8 +400,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     return translation !== key && translation !== '';
   }
 
-  private getPromptKeyForModel(model: string): string | undefined {
-    if (this.promptConfigurations) {
+  private getUserPromptKeyForModel(model: string): string | undefined {
+    if (this.userPromptConfigurations) {
       const modelsConfig = this.displayedLearningConfigurations?.find((conf) => conf.id === 'generative_model');
       if (modelsConfig) {
         const selectedModel = modelsConfig.data.options?.find((option) => option.value === model);
@@ -399,20 +413,29 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     return undefined;
   }
 
-  updatePrompts(model: string) {
-    this.currentPromptKey = this.getPromptKeyForModel(model);
-    if (this.promptConfigurations && this.currentPromptKey && this.kbForm) {
-      this.currentPromptConfig = this.promptConfigurations.schemas?.[this.currentPromptKey];
+  updateUserPrompts(model: string) {
+    this.currentUserPromptKey = this.getUserPromptKeyForModel(model);
+    if (this.userPromptConfigurations && this.currentUserPromptKey && this.kbForm) {
+      this.currentUserPromptConfig = this.userPromptConfigurations.schemas?.[this.currentUserPromptKey];
     }
-    this.cdr?.markForCheck();
+    this.cdr.markForCheck();
   }
 
-  setPrompt(field: string, key: string, value: string) {
+  setUserPrompt(field: string, key: string, value: string) {
     if (this.kbForm && value) {
       this.kbForm.controls['config'].patchValue({
         user_prompts: { [key]: { [field]: value, [`${field}_examples`]: '' } },
       });
-      this.cdr?.markForCheck();
+      this.cdr.markForCheck();
+    }
+  }
+
+  setSummaryPrompt(value: string) {
+    if (this.kbForm && value) {
+      this.kbForm.controls['config'].patchValue({
+        summary_prompt: { prompt: value, prompt_examples: '' },
+      });
+      this.cdr.markForCheck();
     }
   }
 
@@ -440,7 +463,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         take(1),
       )
       .subscribe({
-        next: () => this.cdr?.markForCheck(),
+        next: () => this.cdr.markForCheck(),
         error: () => this.toast.error(`stash.${label}.error`),
       });
   }
