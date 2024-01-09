@@ -1,3 +1,9 @@
+# 1.10.1 (unrelease)
+
+### Improvements
+
+- Update `LearningConfiguration` model
+
 # 1.10.0 (2024-01-08)
 
 ### Breaking changes

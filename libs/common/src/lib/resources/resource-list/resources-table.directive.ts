@@ -22,6 +22,7 @@ import { ResourceListService } from './resource-list.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
+import { KnowledgeBoxSettingsService } from '../../knowledge-box-settings';
 
 export const COMMON_COLUMNS = [
   { id: 'title', label: 'resource.title', size: '3fr', sortable: false },
@@ -46,12 +47,15 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected modalService = inject(SisModalService);
   protected toaster = inject(SisToastService);
   protected translate = inject(TranslateService);
+  protected kbSettingsService = inject(KnowledgeBoxSettingsService);
 
   // status is set to processed by default, but will be overridden by each component extending this directive
   status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
   data = this.resourceListService.data;
   sorting = this.resourceListService.sort;
   isAdminOrContrib = this.sdk.isAdminOrContrib;
+
+  isSummarizationEnabled = this.kbSettingsService.isSummarizationEnabled;
 
   private _selection = new BehaviorSubject<string[]>([]);
   set selection(selection: string[]) {

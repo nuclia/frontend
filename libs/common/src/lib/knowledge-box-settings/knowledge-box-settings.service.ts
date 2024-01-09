@@ -4,6 +4,7 @@ import {
   LearningConfiguration,
   LearningConfigurationSet,
   LearningConfigurationUserKeys,
+  SUMMARY_PROMPT,
   USER_PROMPTS,
 } from '@nuclia/core';
 import { take } from 'rxjs/operators';
@@ -13,6 +14,16 @@ import { FeatureFlagService, SDKService } from '@flaps/core';
   providedIn: 'root',
 })
 export class KnowledgeBoxSettingsService {
+  enterpriseOrGrowth = this.sdk.currentAccount.pipe(
+    map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+    take(1),
+  );
+
+  isSummarizationEnabled = forkJoin([
+    this.featureFlagService.isFeatureEnabled('summarization').pipe(take(1)),
+    this.enterpriseOrGrowth,
+  ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
+
   constructor(
     private sdk: SDKService,
     private featureFlagService: FeatureFlagService,
@@ -26,12 +37,15 @@ export class KnowledgeBoxSettingsService {
     return forkJoin([
       this.featureFlagService.isFeatureEnabled('kb-anonymization').pipe(take(1)),
       this.featureFlagService.isFeatureEnabled('pdf-annotation').pipe(take(1)),
+      this.featureFlagService.isFeatureEnabled('summarization').pipe(take(1)),
       this.sdk.nuclia.db.getLearningConfigurations().pipe(take(1)),
       this.sdk.currentAccount.pipe(take(1)),
     ]).pipe(
-      map(([hasAnonymization, hasPdfAnnotation, conf, account]) => {
+      map(([hasAnonymization, hasPdfAnnotation, hasSummarization, conf, account]) => {
         const full = Object.entries(conf)
-          .filter(([id, value]) => 'options' in value || (!onCreation && id === USER_PROMPTS))
+          .filter(
+            ([id, value]) => 'options' in value || (!onCreation && (id === USER_PROMPTS || id === SUMMARY_PROMPT)),
+          )
           .map((entry) => entry as [string, LearningConfiguration])
           .map(([id, data]) => ({ id, data }))
           // some options cannot be changed after kb creation
@@ -42,6 +56,8 @@ export class KnowledgeBoxSettingsService {
           display: full.filter(
             (entry) =>
               entry.id === USER_PROMPTS ||
+              (hasSummarization &&
+                (entry.id === SUMMARY_PROMPT || entry.id === 'summary' || entry.id === 'summary_model')) ||
               (entry.data.options &&
                 entry.data.options.length > 1 &&
                 (entry.id !== 'anonymization_model' || hasAnonymization) &&

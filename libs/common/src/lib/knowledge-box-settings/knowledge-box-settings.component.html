@@ -61,122 +61,162 @@
                 <pa-radio-group
                   [formControlName]="conf.id"
                   [name]="conf.id"
-                  (valueChange)="conf.id === 'generative_model' ? updatePrompts($event) : undefined"
+                  (valueChange)="conf.id === 'generative_model' ? updateUserPrompts($event) : undefined"
                   [class.two-columns]="(conf.data.options || []).length > 5">
-                  <pa-radio
-                    *ngFor="let option of conf.data.options"
-                    [value]="option.value">
-                    {{ option | learningOption: conf.id }}
-                  </pa-radio>
+                  @for (option of conf.data.options; track option.value) {
+                    <pa-radio [value]="option.value">
+                      {{ option | learningOption: conf.id }}
+                    </pa-radio>
+                  }
                 </pa-radio-group>
-                <div
-                  *ngIf="getVisibleFieldGroup(conf) as groupId"
-                  formGroupName="user_keys">
-                  <div
-                    class="user-keys"
-                    [formGroupName]="groupId">
-                    <pa-toggle
-                      labelOnRight
-                      [value]="ownKey"
-                      (valueChange)="toggleOwnKey()">
-                      {{ 'stash.config.own_key' | translate }}
-                    </pa-toggle>
-                    <ng-container *ngIf="ownKey">
-                      <div
-                        *ngIf="hasTranslation('stash.config.key.' + groupId)"
-                        class="title-m">
-                        {{ 'stash.config.key.' + groupId | translate }}:
-                      </div>
-                      <div>
-                        <ng-container *ngFor="let field of userKeys?.[groupId] || {} | keyvalue">
-                          <pa-input
-                            *ngIf="!field.value.textarea"
-                            [formControlName]="field.key">
-                            {{ field.value.title | translate }}
-                          </pa-input>
-                          <pa-textarea
-                            *ngIf="field.value.textarea"
-                            [formControlName]="field.key"
-                            [rows]="5">
-                            {{ field.value.title | translate }}
-                          </pa-textarea>
-                        </ng-container>
-                      </div>
-                    </ng-container>
-                  </div>
-                </div>
-                <div
-                  *ngIf="
-                    (isUserPromptsEnabled | async) === true &&
-                    conf.id === 'generative_model' &&
-                    !!currentPromptConfig &&
-                    currentPromptKey
-                  ">
-                  <div formGroupName="user_prompts">
+                @if (getVisibleFieldGroup(conf); as groupId) {
+                  <div formGroupName="user_keys">
                     <div
-                      *ngFor="let key of promptKeys"
-                      [formGroupName]="key">
-                      <div *ngIf="key == currentPromptKey">
-                        <div
-                          *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['prompt']"
-                          class="user-prompts">
+                      class="user-keys"
+                      [formGroupName]="groupId">
+                      <pa-toggle
+                        labelOnRight
+                        [value]="ownKey"
+                        (valueChange)="toggleOwnKey()">
+                        {{ 'stash.config.own_key' | translate }}
+                      </pa-toggle>
+                      @if (ownKey) {
+                        @if (hasTranslation('stash.config.key.' + groupId)) {
+                          <div class="title-m">{{ 'stash.config.key.' + groupId | translate }}:</div>
+                        }
+                        <div>
+                          @for (field of userKeys?.[groupId] || {} | keyvalue; track field) {
+                            @if (field.value.textarea) {
+                              <pa-textarea
+                                [formControlName]="field.key"
+                                [rows]="5">
+                                {{ field.value.title | translate }}
+                              </pa-textarea>
+                            } @else {
+                              <pa-input [formControlName]="field.key">
+                                {{ field.value.title | translate }}
+                              </pa-input>
+                            }
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                @if (
+                  (isUserPromptsEnabled | async) === true &&
+                  conf.id === 'generative_model' &&
+                  !!currentUserPromptConfig &&
+                  currentUserPromptKey
+                ) {
+                  <div>
+                    <div formGroupName="user_prompts">
+                      @for (key of userPromptKeys; track key) {
+                        <div [formGroupName]="key">
+                          @if (key == currentUserPromptKey) {
+                            <div>
+                              @if (userPromptConfigurations?.schemas?.[key]?.properties; as properties) {
+                                @if (properties['prompt']; as prompt) {
+                                  <div class="user-prompts">
+                                    <div class="header">
+                                      <h3 class="title-m">{{ 'stash.create.user_prompts.prompt' | translate }}</h3>
+                                      <div class="body-m">
+                                        {{ 'stash.create.user_prompts.prompt_help' | translate }}
+                                      </div>
+                                    </div>
+                                    <pa-select
+                                      formControlName="prompt_examples"
+                                      [dim]="true"
+                                      [label]="'stash.create.user_prompts.examples' | translate"
+                                      (valueChange)="setUserPrompt('prompt', key, $event)">
+                                      @for (option of prompt.examples || []; track option) {
+                                        <pa-option [value]="option">
+                                          {{ option }}
+                                        </pa-option>
+                                      }
+                                    </pa-select>
+                                    <pa-textarea
+                                      formControlName="prompt"
+                                      [rows]="5"
+                                      [help]="prompt.info || ''">
+                                      {{ prompt.title }}
+                                    </pa-textarea>
+                                  </div>
+                                }
+                                @if (properties['system']; as system) {
+                                  <div class="user-prompts">
+                                    <div class="header">
+                                      <h3 class="title-m">{{ 'stash.create.user_prompts.system' | translate }}</h3>
+                                      <div class="body-m">
+                                        {{ 'stash.create.user_prompts.system_help' | translate }}
+                                      </div>
+                                    </div>
+                                    <pa-select
+                                      formControlName="system_examples"
+                                      [dim]="true"
+                                      [label]="'stash.create.user_prompts.examples' | translate"
+                                      (valueChange)="setUserPrompt('system', key, $event)">
+                                      @for (option of system.examples || []; track option) {
+                                        <pa-option [value]="option">
+                                          {{ option }}
+                                        </pa-option>
+                                      }
+                                    </pa-select>
+                                    <pa-textarea
+                                      formControlName="system"
+                                      [rows]="5"
+                                      [help]="system.info || ''">
+                                      {{ system.title }}
+                                    </pa-textarea>
+                                  </div>
+                                }
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                @if (
+                  (isSummarizationEnabled | async) === true &&
+                  conf.id === 'summary_model' &&
+                  summaryPromptConfigurations
+                ) {
+                  <div formGroupName="summary_prompt">
+                    @if (summaryPromptConfigurations?.schema?.properties; as properties) {
+                      @if (properties['prompt']; as prompt) {
+                        <div class="user-prompts">
                           <div class="header">
-                            <h3 class="title-m">{{ 'stash.create.user_prompts.prompt' | translate }}</h3>
-                            <div class="body-m">{{ 'stash.create.user_prompts.prompt_help' | translate }}</div>
+                            <h3 class="title-m">{{ 'stash.create.summary_prompt.prompt' | translate }}</h3>
+                            <div class="body-m">
+                              {{ 'stash.create.summary_prompt.prompt_help' | translate }}
+                            </div>
                           </div>
                           <pa-select
                             formControlName="prompt_examples"
                             [dim]="true"
-                            [label]="'stash.create.user_prompts.examples' | translate"
-                            (valueChange)="setPrompt('prompt', key, $event)">
-                            <pa-option
-                              *ngFor="
-                                let option of promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.examples ||
-                                  []
-                              "
-                              [value]="option">
-                              {{ option }}
-                            </pa-option>
+                            [label]="'stash.create.summary_prompt.examples' | translate"
+                            (valueChange)="setSummaryPrompt($event)">
+                            @for (option of prompt.examples || []; track option) {
+                              <pa-option [value]="option">
+                                {{ option }}
+                              </pa-option>
+                            }
                           </pa-select>
                           <pa-textarea
                             formControlName="prompt"
                             [rows]="5"
-                            [help]="promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.info || ''">
-                            {{ promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.title }}
+                            [help]="prompt.info || ''">
+                            {{ prompt.title }}
                           </pa-textarea>
                         </div>
-                        <div
-                          *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['system']"
-                          class="user-prompts">
-                          <div class="header">
-                            <h3 class="title-m">{{ 'stash.create.user_prompts.system' | translate }}</h3>
-                            <div class="body-m">{{ 'stash.create.user_prompts.system_help' | translate }}</div>
-                          </div>
-                          <pa-select
-                            formControlName="system_examples"
-                            [dim]="true"
-                            [label]="'stash.create.user_prompts.examples' | translate"
-                            (valueChange)="setPrompt('system', key, $event)">
-                            <pa-option
-                              *ngFor="
-                                let option of promptConfigurations?.schemas?.[key]?.properties?.['system']?.examples ||
-                                  []
-                              "
-                              [value]="option">
-                              {{ option }}
-                            </pa-option>
-                          </pa-select>
-                          <pa-textarea
-                            formControlName="system"
-                            [rows]="5"
-                            [help]="promptConfigurations?.schemas?.[key]?.properties?.['system']?.info || ''">
-                            {{ promptConfigurations?.schemas?.[key]?.properties?.['system']?.title }}
-                          </pa-textarea>
-                        </div>
-                      </div>
-                    </div>
+                      }
+                    }
                   </div>
-                </div>
+                }
               </div>
             </div>
           }

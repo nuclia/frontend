@@ -195,6 +195,7 @@ export interface LearningConfigurationOption {
 
 export interface LearningConfiguration {
   options?: LearningConfigurationOption[];
+  schema?: LearningConfigurationSchema;
   schemas?: { [key: string]: LearningConfigurationSchema };
   default: string;
   create: boolean;
@@ -202,6 +203,7 @@ export interface LearningConfiguration {
 }
 
 export const USER_PROMPTS = 'user_prompts';
+export const SUMMARY_PROMPT = 'summary_prompt';
 
 export interface LearningConfigurationSchema {
   title: string;

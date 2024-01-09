@@ -8,9 +8,11 @@ import { TranslateService } from '@ngx-translate/core';
 export class LearningOptionPipe implements PipeTransform {
   constructor(private translate: TranslateService) {}
   transform(option: LearningConfigurationOption, confId?: string): string {
-    let key = 'stash.config.option.' + option.value;
+    let key = `stash.config.option.${option.value}`;
     if (confId === 'anonymization_model' && option.value === 'multilingual') {
       key = 'stash.config.option.enabled';
+    } else if (confId === 'summary') {
+      key = `stash.config.option.summary-${option.value}`;
     }
     const translation = this.translate.instant(key);
     return translation !== key ? translation : option.name.toLowerCase();
