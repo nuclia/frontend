@@ -20,7 +20,6 @@ const MENU_TYPES = [
       documentUrlPatterns: [
         'https://www.youtube.com/channel/*',
         'https://www.youtube.com/c/*',
-        'https://www.youtube.com/user/*',
         'https://www.youtube.com/playlist?list=*',
       ],
       contexts: ['page'],
@@ -51,7 +50,7 @@ function createMenu() {
       });
     });
     getSettings().then((settings) => {
-      if (settings.NUCLIA_ACCOUNT && settings.NUCLIA_KB && settings.NUCLIA_TOKEN) {
+      if (settings.NUCLIA_ACCOUNT && settings.NUCLIA_KB && settings.ZONE && settings.NUCLIA_TOKEN) {
         getLabels(settings).subscribe((labelsets) => {
           if (labelsets.length > 0) {
             MENU_TYPES.forEach((type) => {
@@ -91,7 +90,7 @@ function createSubmenus(labelsets, type) {
 
 chrome.contextMenus.onClicked.addListener((info) => {
   getSettings().then((settings) => {
-    if (settings.NUCLIA_ACCOUNT && settings.NUCLIA_KB && settings.NUCLIA_TOKEN) {
+    if (settings.NUCLIA_ACCOUNT && settings.NUCLIA_KB && settings.ZONE && settings.NUCLIA_TOKEN) {
       let labels = [];
       if (info.parentMenuItemId && info.parentMenuItemId.startsWith(MENU_LABELSET_PREFIX)) {
         labels.push({
@@ -134,7 +133,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
 });
 
 function getLabels(settings) {
-  return getSDK(settings.NUCLIA_TOKEN)
+  return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
     .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
     .pipe(
       rxjs.switchMap((kb) => kb.getLabels()),
@@ -158,13 +157,13 @@ function uploadSingleLink(settings, url, labels) {
 }
 
 function uploadLink(settings, url, labels) {
-  return getSDK(settings.NUCLIA_TOKEN)
+  return getSDK(settings.NUCLIA_TOKEN, settings.ZONE)
     .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB, settings.ZONE)
     .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })));
 }
 
 function getChannelVideos(settings, channelUrl, labels) {
-  getYoutubeChannelId(settings.YOUTUBE_KEY, channelUrl)
+  getYoutubeChannelId(channelUrl)
     .then((channelId) =>
       loadPaginated(
         `https://www.googleapis.com/youtube/v3/search?key=${settings.YOUTUBE_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=50`,

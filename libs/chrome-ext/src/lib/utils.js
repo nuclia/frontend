@@ -12,10 +12,7 @@ const isYoutubeVideoUrl = (url) => {
 };
 
 const isYoutubeChannelUrl = (url) => {
-  return (
-    isYoutubeUrl(url) &&
-    (isYoutubeCanonicalChannelUrl(url) || isYoutubeCustomChannelUrl(url) || isYoutubeLegacyChannelUrl(url))
-  );
+  return isYoutubeUrl(url) && (isYoutubeCanonicalChannelUrl(url) || isYoutubeCustomChannelUrl(url));
 };
 
 const isYoutubeCanonicalChannelUrl = (url) => {
@@ -26,42 +23,16 @@ const isYoutubeCustomChannelUrl = (url) => {
   return url.includes('/c/');
 };
 
-const isYoutubeLegacyChannelUrl = (url) => {
-  return url.includes('/user/');
-};
-
-const getYoutubeChannelId = (key, url) => {
+const getYoutubeChannelId = (url) => {
   return new Promise((resolve, reject) => {
     if (isYoutubeCanonicalChannelUrl(url)) {
       resolve(url.split('/channel/')[1].split('/')[0]);
-    } else if (isYoutubeLegacyChannelUrl(url)) {
-      const user = url.split('/user/')[1].split('/')[0];
-      getChannelIdByUser(key, user)
-        .then((channelId) => resolve(channelId))
-        .catch(reject);
     } else if (isYoutubeCustomChannelUrl(url)) {
       getChannelIdByCustomUrl(url)
         .then((channelId) => resolve(channelId))
         .catch(reject);
     }
   });
-};
-
-const getChannelIdByUser = (key, user) => {
-  return fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=id&key=${key}&forUsername=${user}`)
-    .then((response) => {
-      if (response.status !== 200) {
-        throw new Error(`${response.status}: ${response.statusText}`);
-      }
-      return response.json();
-    })
-    .then((response) => {
-      const channelId = response.items[0].id;
-      if (!channelId) {
-        throw new Error('User not found');
-      }
-      return channelId;
-    });
 };
 
 const getChannelIdByCustomUrl = (url) => {
