@@ -199,6 +199,7 @@
 	"billing.phone": "Numéro de téléphone",
 	"billing.phone_placeholder": "par exemple. +34 000 000 000",
 	"billing.postal_code": "Zip *: français",
+	"billing.prices_vat": "La TVA peut être applicable",
 	"billing.quotas.files": "Nombre maximum de fichiers",
 	"billing.quotas.files-up-to": "Fichiers jusqu'à",
 	"billing.quotas.generative": "Requête générative",

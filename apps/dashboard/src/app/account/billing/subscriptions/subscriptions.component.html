@@ -114,7 +114,7 @@
           <td>{{ 'billing.usage.consumption' | translate }}*</td>
           @for (tier of tiers; track tier) {
             @if ((prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price; as price) {
-              <td>{{ price * tokensPerRequest | currency: currency }}</td>
+              <td>{{ price * tokensPerRequest | currency: currency : 'symbol' : '1.2-6' }}</td>
             }
           }
         </tr>
