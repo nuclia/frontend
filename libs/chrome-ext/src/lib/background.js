@@ -20,7 +20,6 @@ const MENU_TYPES = [
       documentUrlPatterns: [
         'https://www.youtube.com/channel/*',
         'https://www.youtube.com/c/*',
-        'https://www.youtube.com/user/*',
         'https://www.youtube.com/playlist?list=*',
       ],
       contexts: ['page'],
@@ -164,7 +163,7 @@ function uploadLink(settings, url, labels) {
 }
 
 function getChannelVideos(settings, channelUrl, labels) {
-  getYoutubeChannelId(settings.YOUTUBE_KEY, channelUrl)
+  getYoutubeChannelId(channelUrl)
     .then((channelId) =>
       loadPaginated(
         `https://www.googleapis.com/youtube/v3/search?key=${settings.YOUTUBE_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=50`,
