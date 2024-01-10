@@ -198,6 +198,7 @@
 	"billing.phone": "Número de telèfon",
 	"billing.phone_placeholder": "e.g. +34 000 000 000",
 	"billing.postal_code": "Còdi postal",
+	"billing.prices_vat": "L'IVA podria ser aplicable",
 	"billing.quotas.files": "Nombre màxim de fitxers",
 	"billing.quotas.files-up-to": "Arxius fins a",
 	"billing.quotas.generative": "Consulta generativa",
