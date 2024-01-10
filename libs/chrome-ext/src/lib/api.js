@@ -6,10 +6,11 @@ const SETTINGS = { NUCLIA_ACCOUNT: '', NUCLIA_KB: '', NUCLIA_TOKEN: '', ZONE: ''
 // Service workers doesn't support localStorage, so a custom one is created.
 localStorage = getStorage();
 
-function getSDK(token) {
+function getSDK(token, zone) {
   const sdk = new NucliaSDK.Nuclia({
     backend: API_URL,
     client: 'chrome_extension',
+    zone,
   });
   sdk.auth.authenticate({
     access_token: token,

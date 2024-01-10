@@ -46,21 +46,23 @@ function fetchData() {
           ? rxjs.of([])
           : rxjs.forkJoin(
               accountsData.map((account) =>
-                nuclia.db.getKnowledgeBoxes(account.slug, account.id).pipe(rxjs.map((kbs) => [account.slug, kbs])),
+                nuclia.db.getKnowledgeBoxes(account.slug, account.id).pipe(rxjs.map((kbs) => [account.id, kbs])),
               ),
             );
       }),
       rxjs.switchMap((kbsData) => {
-        kbsData.forEach(([account, kbs]) => {
-          data.kbs[account] = kbs.filter((kb) => ['SOWNER', 'SCONTRIBUTOR'].includes(kb.role_on_kb));
+        kbsData.forEach(([accountId, kbs]) => {
+          data.kbs[accountId] = kbs.filter((kb) => ['SOWNER', 'SCONTRIBUTOR'].includes(kb.role_on_kb));
         });
         return rxjs.from(getSettings());
       }),
     )
     .subscribe({
       next: (settings) => {
-        const validAccount = data.accounts.some((account) => account.slug === settings.NUCLIA_ACCOUNT);
-        data.validKb = validAccount && data.kbs[settings.NUCLIA_ACCOUNT].some((kb) => kb.slug === settings.NUCLIA_KB);
+        const validAccount = data.accounts.some((account) => account.id === settings.NUCLIA_ACCOUNT);
+        data.validKb =
+          validAccount &&
+          data.kbs[settings.NUCLIA_ACCOUNT].some((kb) => kb.id === settings.NUCLIA_KB && kb.zone === settings.ZONE);
         initUI();
       },
       error: () => initUI(),
@@ -90,7 +92,7 @@ function setAccountOptions() {
   accountSelect.innerHTML = '<option value="">Select account</option>';
   data.accounts.forEach((account) => {
     const option = document.createElement('option');
-    option.setAttribute('value', account.slug);
+    option.setAttribute('value', account.id);
     option.textContent = account.title;
     accountSelect.append(option);
   });
@@ -111,7 +113,7 @@ function setKbOptions(account) {
   account ? kbSelect.removeAttribute('disabled') : kbSelect.setAttribute('disabled', '');
   (data.kbs[account] || []).forEach((kb) => {
     const option = document.createElement('option');
-    option.setAttribute('value', kb.slug);
+    option.setAttribute('value', kb.id);
     option.textContent = kb.title;
     kbSelect.append(option);
   });
@@ -123,10 +125,12 @@ function setKbOptions(account) {
 }
 
 function saveForm() {
-  const account = document.getElementById('account').value;
-  const kb = document.getElementById('kb').value;
+  const accountId = document.getElementById('account').value;
+  const kbId = document.getElementById('kb').value;
   const youTubeKey = document.getElementById('youTubeKey').value;
-  chrome.storage.local.set({ NUCLIA_ACCOUNT: account, NUCLIA_KB: kb, YOUTUBE_KEY: youTubeKey }, () => {
+  const kb = (data.kbs[accountId] || []).find((item) => item.id === kbId);
+  const zone = kb ? kb.zone : undefined;
+  chrome.storage.local.set({ NUCLIA_ACCOUNT: accountId, NUCLIA_KB: kbId, ZONE: zone, YOUTUBE_KEY: youTubeKey }, () => {
     const message = document.querySelector('.submit-message');
     message.textContent = 'Settings saved';
     chrome.runtime.sendMessage({ action: 'UPDATE_MENU' });
