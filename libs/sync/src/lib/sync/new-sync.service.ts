@@ -21,6 +21,7 @@ import {
   IDestinationConnector,
   ISourceConnector,
   ISyncEntity,
+  LogEntity,
   SearchResults,
   Source,
   SourceConnectorDefinition,
@@ -38,6 +39,7 @@ import { ConfluenceConnector } from './sources/confluence';
 import { OAuthConnector } from './sources/oauth';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
+export const ACCOUNT_ID_KEY = 'NUCLIA_ID_ACCOUNT';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8000';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 
@@ -217,10 +219,11 @@ export class NewSyncService {
 
   setSourceData(sourceId: string, source: Source): Observable<void> {
     const existing = this._sourcesCache.getValue()[sourceId];
-    const newValue = existing
+    const newValue: Source = existing
       ? {
           ...existing,
-          source: { ...source, data: { ...existing.data, ...source.data } },
+          ...source,
+          data: { ...existing.data, ...source.data },
           kb: { ...existing.kb, ...source.kb },
         }
       : source;
@@ -294,12 +297,12 @@ export class NewSyncService {
     return this.http.get<SearchResults>(`${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/folders`);
   }
 
-  addSync(sourceId: string, items: SyncItem[]): Observable<boolean> {
+  addSync(sourceId: string, foldersToSync: SyncItem[]): Observable<boolean> {
     return this.getSourceData(sourceId).pipe(
       switchMap((source) =>
         this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, {
           ...source,
-          items,
+          foldersToSync,
         }),
       ),
       map(() => true),
@@ -311,12 +314,17 @@ export class NewSyncService {
     return source && !(source.connectorId === 'sitemap' || (source.connectorId === 'folder' && source.permanentSync));
   }
 
-  getAccountId(): string {
+  getAccountSlug(): string {
     return localStorage.getItem(ACCOUNT_KEY) || '';
   }
 
-  selectAccount(account: string) {
+  getAccountId(): string {
+    return localStorage.getItem(ACCOUNT_ID_KEY) || '';
+  }
+
+  selectAccount(account: string, accountId: string) {
     localStorage.setItem(ACCOUNT_KEY, account);
+    localStorage.setItem(ACCOUNT_ID_KEY, accountId);
     this.setAccount();
   }
 
@@ -350,7 +358,7 @@ export class NewSyncService {
       switchMap((account) =>
         this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id).pipe(
           map((kbs) => kbs.find((kb) => kb.id === kbId)),
-          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kb?.id || '', kb?.zone)),
+          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.id, kb?.id || '', kb?.zone)),
         ),
       ),
     );
@@ -440,23 +448,41 @@ export class NewSyncService {
   }
 
   getLogs(since?: string): Observable<SyncRow[]> {
-    return this.http
-      .get<SyncRow[]>(`${this._syncServer.getValue()}/logs${since ? '/' + since : ''}`)
-      .pipe(map((logs) => logs.reverse()));
+    return this.http.get<LogEntity[]>(`${this._syncServer.getValue()}/logs${since ? '/' + since : ''}`).pipe(
+      map((logs) =>
+        logs.reverse().map(
+          (log) =>
+            ({
+              date: log.createdAt,
+              from: log.payload?.['title'],
+              to: log.payload?.['kb']?.['knowledgeBox'],
+              total: 1,
+              progress: 1,
+              started: true,
+              completed: true,
+              errors: '',
+            }) as SyncRow,
+        ),
+      ),
+    );
   }
 
   getActiveLogs(): Observable<SyncRow[]> {
-    return this.http
-      .get<{ [id: string]: SyncRow }>(`${this._syncServer.getValue()}/active-logs`)
-      .pipe(map((logs) => Object.values(logs)));
+    // to be removed when desktop is gone
+    return of([]);
   }
 
   clearLogs(): Observable<void> {
     return this.http.delete<void>(`${this._syncServer.getValue()}/logs`);
   }
 
-  logout() {
+  cleanUpAccount() {
     localStorage.removeItem(ACCOUNT_KEY);
+    localStorage.removeItem(ACCOUNT_ID_KEY);
+  }
+
+  logout() {
+    this.cleanUpAccount();
     this.sdk.nuclia.auth.logout();
   }
 

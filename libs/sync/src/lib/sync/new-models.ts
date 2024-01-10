@@ -134,3 +134,18 @@ export interface ISyncEntity {
   title: string;
   id: string;
 }
+
+export enum LogSeverityLevel {
+  low = 'low',
+  medium = 'medium',
+  high = 'high',
+}
+
+export interface LogEntity {
+  level: LogSeverityLevel;
+  message: string;
+  createdAt: string;
+  origin: string;
+  action: string;
+  payload: { [key: string]: any };
+}
