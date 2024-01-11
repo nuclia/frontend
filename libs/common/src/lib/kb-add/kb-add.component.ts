@@ -156,7 +156,6 @@ export class KbAddComponent implements OnInit {
   }
 
   updateLanguages(data: { multilingualSelected: boolean; languages: string[] }) {
-    console.log(`updateLanguages`, data);
     this.multilingualSelected = data.multilingualSelected;
     this.languages = data.languages;
     this.cdr.markForCheck();
