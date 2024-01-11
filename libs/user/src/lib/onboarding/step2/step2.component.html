@@ -23,20 +23,8 @@
       }
     </pa-radio-group>
   </div>
-  <div class="field">
-    <label class="title-s">{{ 'onboarding.step2.languages.label' | translate }}</label>
-    <pa-radio-group formControlName="multilingual">
-      <pa-radio value="english">{{ 'onboarding.step2.languages.english' | translate }}</pa-radio>
-      <pa-radio value="multilingual">{{ 'onboarding.step2.languages.multilingual' | translate }}</pa-radio>
-    </pa-radio-group>
-    @if (multilingualSelected) {
-      <div class="second-choice languages-container">
-        @for (language of languages; track language.label) {
-          <pa-checkbox [(value)]="language.selected">{{ language.label }}</pa-checkbox>
-        }
-      </div>
-    }
-  </div>
+  <nus-language-field (languageSelected)="updateLanguages($event)"></nus-language-field>
+
   @if (datasets.length > 0) {
     <div class="field">
       <label class="title-s">{{ 'onboarding.step2.starting-data.label' | translate }}</label>

@@ -1,5 +1,6 @@
 export * from './account.model';
 export * from './billing.model';
+export * from './kb.models';
 export * from './local.model';
 export * from './magic.model';
 export * from './permissions.model';

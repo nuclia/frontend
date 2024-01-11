@@ -1,17 +1,11 @@
 import { Injectable } from '@angular/core';
-import {
-  AccountAndKbConfiguration,
-  GETTING_STARTED_DONE_KEY,
-  OnboardingPayload,
-  OnboardingStatus,
-  OnboardingStep,
-} from './onboarding.models';
+import { GETTING_STARTED_DONE_KEY, OnboardingPayload, OnboardingStatus, OnboardingStep } from './onboarding.models';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap } from 'rxjs';
-import { SDKService, STFTrackingService, STFUtils } from '@flaps/core';
+import { AccountAndKbConfiguration, getSemanticModel, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
-import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { KnowledgeBoxCreation } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
@@ -76,8 +70,7 @@ export class OnboardingService {
             })
             .pipe(
               map((account) => {
-                this.sdk.nuclia.options.accountId = account.id;
-                return { accountSlug };
+                return { accountSlug, accountId: account.id };
               }),
               catchError((error) => {
                 this.tracking.logEvent('account_creation_failed');
@@ -95,14 +88,20 @@ export class OnboardingService {
               }),
             ),
         ),
-        switchMap(({ accountSlug }) => {
+        switchMap(({ accountSlug, accountId }) => {
           this.sdk.nuclia.options.zone = configuration.zoneSlug;
           return this.sdk.nuclia.db
             .getLearningConfigurations()
-            .pipe(map((learningConfiguration) => ({ learningConfiguration, accountSlug })));
+            .pipe(map((learningConfiguration) => ({ learningConfiguration, accountSlug, accountId })));
         }),
-        switchMap(({ learningConfiguration, accountSlug }) => {
-          const kbConfig = this.getKbConfig(configuration, learningConfiguration);
+        switchMap(({ learningConfiguration, accountSlug, accountId }) => {
+          const kbConfig = {
+            slug: 'basic',
+            title: 'Basic',
+            learning_configuration: {
+              semantic_model: getSemanticModel(configuration, learningConfiguration),
+            },
+          };
           this.tracking.logEvent('kb_creation_submitted', {
             region: configuration.zoneSlug,
             learningConfiguration: kbConfig.learning_configuration?.['semantic_model'] || '',
@@ -115,7 +114,7 @@ export class OnboardingService {
             creationFailed: false,
             datasetImported: false,
           });
-          return this.createKb(accountSlug, kbConfig, configuration.zoneSlug);
+          return this.createKb(accountSlug, accountId, kbConfig, configuration.zoneSlug);
         }),
         switchMap(({ accountSlug, kbSlug, kbId }) => {
           this._onboardingState.next({
@@ -159,41 +158,19 @@ export class OnboardingService {
       });
   }
 
-  private getKbConfig(configuration: AccountAndKbConfiguration, learningConfiguration: LearningConfigurations) {
-    const semanticModelName = !configuration.multilingual
-      ? 'EN'
-      : configuration.languages.includes('catalan') || configuration.languages.includes('other')
-        ? 'MULTILINGUAL_ALPHA'
-        : 'MULTILINGUAL';
-    const semanticModel = learningConfiguration['semantic_model'].options?.find(
-      (model) => model.name === semanticModelName,
-    );
-    const defaultSemanticModel = learningConfiguration['semantic_model'].default;
-    if (!semanticModel) {
-      console.warn(`Semantic model ${semanticModelName} not found, using default model ${defaultSemanticModel}.`);
-    }
-    const kbConfig: KnowledgeBoxCreation = {
-      slug: 'basic',
-      title: 'Basic',
-      learning_configuration: {
-        semantic_model: semanticModel?.value || defaultSemanticModel,
-      },
-    };
-    return kbConfig;
-  }
-
   private createKb(
     accountSlug: string,
+    accountId: string,
     kbConfig: KnowledgeBoxCreation,
     zone: string,
   ): Observable<{ accountSlug: string; kbSlug: string; kbId: string }> {
-    return this.sdk.nuclia.db.createKnowledgeBox(accountSlug, kbConfig, zone).pipe(
-      map((kb) => ({ accountSlug, kbSlug: kbConfig.slug, kbId: kb.id })),
+    return this.sdk.nuclia.db.createKnowledgeBox(accountId, kbConfig, zone).pipe(
+      map((kb) => ({ accountSlug: accountSlug, kbSlug: kbConfig.slug, kbId: kb.id })),
       catchError((error) => {
         this.tracking.logEvent('account_creation_kb_failed');
         this._kbCreationFailureCount += 1;
         if (this._kbCreationFailureCount < 5) {
-          return this.createKb(accountSlug, kbConfig, zone);
+          return this.createKb(accountSlug, accountId, kbConfig, zone);
         } else {
           Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
           this.toaster.error('stash.create.failure');
@@ -224,6 +201,8 @@ export class OnboardingService {
 
   private getIncrementedSlug(slug: string): string {
     const existingIncrement = parseInt(slug.split('_').pop() || '');
-    return isNaN(existingIncrement) ? `${slug}_1` : `${slug.slice(0, -2)}_${existingIncrement + 1}`;
+    return isNaN(existingIncrement)
+      ? `${slug}_1`
+      : `${slug.slice(0, -1 - `${existingIncrement}`.length)}_${existingIncrement + 1}`;
   }
 }

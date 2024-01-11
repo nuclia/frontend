@@ -8,18 +8,6 @@ export interface OnboardingPayload {
 }
 export type DatasetType = { id: string; title: string; description: string };
 
-export type KbConfiguration = {
-  zoneSlug: string;
-  multilingual: boolean;
-  languages: string[];
-  ownData: boolean;
-  dataset?: string;
-};
-
-export type AccountAndKbConfiguration = {
-  company: string;
-} & KbConfiguration;
-
 export interface OnboardingStatus {
   creating: boolean;
   accountCreated: boolean;

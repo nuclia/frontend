@@ -59,6 +59,7 @@ export class KnowledgeBoxSettingsService {
               (hasSummarization &&
                 (entry.id === SUMMARY_PROMPT || entry.id === 'summary' || entry.id === 'summary_model')) ||
               (entry.data.options &&
+                entry.id !== 'semantic_model' &&
                 entry.data.options.length > 1 &&
                 (entry.id !== 'anonymization_model' || hasAnonymization) &&
                 (entry.id !== 'visual_labeling' || hasPdfAnnotation)),
