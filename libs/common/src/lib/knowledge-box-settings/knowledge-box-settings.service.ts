@@ -14,6 +14,10 @@ import { FeaturesService, SDKService } from '@flaps/core';
   providedIn: 'root',
 })
 export class KnowledgeBoxSettingsService {
+  isAnonymizationEnabled = this.features.kbAnonymization;
+  isSummarizationEnabled = this.features.summarization;
+  isPdfAnnotationEnabled = this.features.pdfAnnotation;
+
   constructor(
     private sdk: SDKService,
     private features: FeaturesService,
@@ -25,9 +29,9 @@ export class KnowledgeBoxSettingsService {
     keys: LearningConfigurationUserKeys;
   }> {
     return forkJoin([
-      this.features.kbAnonymization.pipe(take(1)),
-      this.features.pdfAnnotation.pipe(take(1)),
-      this.features.summarization.pipe(take(1)),
+      this.isAnonymizationEnabled.pipe(take(1)),
+      this.isPdfAnnotationEnabled.pipe(take(1)),
+      this.isSummarizationEnabled.pipe(take(1)),
       this.sdk.nuclia.db.getLearningConfigurations().pipe(take(1)),
       this.sdk.currentAccount.pipe(take(1)),
     ]).pipe(

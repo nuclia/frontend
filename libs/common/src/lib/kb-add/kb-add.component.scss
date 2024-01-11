@@ -10,7 +10,7 @@
   .learning-config {
     display: flex;
     flex-direction: column;
-    gap: rhythm(1);
+    gap: rhythm(3);
 
     h3 {
       margin-bottom: rhythm(0.5);
@@ -29,14 +29,6 @@ pa-radio-group {
     display: block;
     margin-bottom: rhythm(1);
   }
-}
-
-.kb-add-separator {
-  margin: rhythm(1) 0;
-}
-
-.kb-add-zone h4 {
-  margin-bottom: rhythm(1.5);
 }
 
 .saving-spinner {

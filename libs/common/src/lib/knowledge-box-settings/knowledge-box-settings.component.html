@@ -44,7 +44,7 @@
                 <span [innerHTML]="'stash.settings.status.' + state | translate"></span>
               </div>
               <pa-button (click)="toggleKbState()">
-                {{ (state === 'published' ? 'account.stash.retire' : 'account.stash.publish') | translate }}
+                {{ (state === 'published' ? 'account.kb.retire' : 'account.kb.publish') | translate }}
               </pa-button>
             </div>
           }
@@ -54,8 +54,8 @@
               formGroupName="config"
               class="config">
               <div class="header">
-                <h3 class="title-m">{{ 'stash.create.' + conf.id + '.label' | translate }}</h3>
-                <div class="body-m">{{ 'stash.create.' + conf.id + '.help' | translate }}</div>
+                <h3 class="title-m">{{ 'kb.create.' + conf.id + '.label' | translate }}</h3>
+                <div class="body-m">{{ 'kb.create.' + conf.id + '.help' | translate }}</div>
               </div>
               <div>
                 <pa-radio-group
@@ -120,15 +120,15 @@
                                 @if (properties['prompt']; as prompt) {
                                   <div class="user-prompts">
                                     <div class="header">
-                                      <h3 class="title-m">{{ 'stash.create.user_prompts.prompt' | translate }}</h3>
+                                      <h3 class="title-m">{{ 'kb.create.user_prompts.prompt' | translate }}</h3>
                                       <div class="body-m">
-                                        {{ 'stash.create.user_prompts.prompt_help' | translate }}
+                                        {{ 'kb.create.user_prompts.prompt_help' | translate }}
                                       </div>
                                     </div>
                                     <pa-select
                                       formControlName="prompt_examples"
                                       [dim]="true"
-                                      [label]="'stash.create.user_prompts.examples' | translate"
+                                      [label]="'kb.create.user_prompts.examples' | translate"
                                       (valueChange)="setUserPrompt('prompt', key, $event)">
                                       @for (option of prompt.examples || []; track option) {
                                         <pa-option [value]="option">
@@ -147,15 +147,15 @@
                                 @if (properties['system']; as system) {
                                   <div class="user-prompts">
                                     <div class="header">
-                                      <h3 class="title-m">{{ 'stash.create.user_prompts.system' | translate }}</h3>
+                                      <h3 class="title-m">{{ 'kb.create.user_prompts.system' | translate }}</h3>
                                       <div class="body-m">
-                                        {{ 'stash.create.user_prompts.system_help' | translate }}
+                                        {{ 'kb.create.user_prompts.system_help' | translate }}
                                       </div>
                                     </div>
                                     <pa-select
                                       formControlName="system_examples"
                                       [dim]="true"
-                                      [label]="'stash.create.user_prompts.examples' | translate"
+                                      [label]="'kb.create.user_prompts.examples' | translate"
                                       (valueChange)="setUserPrompt('system', key, $event)">
                                       @for (option of system.examples || []; track option) {
                                         <pa-option [value]="option">
@@ -190,15 +190,15 @@
                       @if (properties['prompt']; as prompt) {
                         <div class="user-prompts">
                           <div class="header">
-                            <h3 class="title-m">{{ 'stash.create.summary_prompt.prompt' | translate }}</h3>
+                            <h3 class="title-m">{{ 'kb.create.summary_prompt.prompt' | translate }}</h3>
                             <div class="body-m">
-                              {{ 'stash.create.summary_prompt.prompt_help' | translate }}
+                              {{ 'kb.create.summary_prompt.prompt_help' | translate }}
                             </div>
                           </div>
                           <pa-select
                             formControlName="prompt_examples"
                             [dim]="true"
-                            [label]="'stash.create.summary_prompt.examples' | translate"
+                            [label]="'kb.create.summary_prompt.examples' | translate"
                             (valueChange)="setSummaryPrompt($event)">
                             @for (option of prompt.examples || []; track option) {
                               <pa-option [value]="option">
