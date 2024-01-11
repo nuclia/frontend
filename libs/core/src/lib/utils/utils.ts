@@ -39,7 +39,7 @@ export function injectScript(url: string) {
 
 export function getSemanticModel(languageConf: KbLanguageConf, learningConfiguration: LearningConfigurations) {
   const semanticModelName = !languageConf.multilingual
-    ? 'EN'
+    ? 'ENGLISH'
     : languageConf.languages.includes('catalan') || languageConf.languages.includes('other')
       ? 'MULTILINGUAL_ALPHA'
       : 'MULTILINGUAL';
