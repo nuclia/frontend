@@ -9,29 +9,13 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SDKService, Zone } from '@flaps/core';
+import { KbConfiguration, SDKService, Zone } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, switchMap, takeUntil } from 'rxjs';
-import { DatasetType, KbConfiguration } from '@nuclia/user';
-
-const LANGUAGES = [
-  'arabic',
-  'catalan',
-  'chinese',
-  'danish',
-  'english',
-  'finnish',
-  'french',
-  'german',
-  'italian',
-  'japanese',
-  'norwegian',
-  'portuguese',
-  'spanish',
-  'swedish',
-];
+import { DatasetType } from '../onboarding.models';
+import { LanguageFieldComponent } from '../language-field/language-field.component';
 
 @Component({
   selector: 'nus-onboarding-step2',
@@ -44,6 +28,7 @@ const LANGUAGES = [
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
+    LanguageFieldComponent,
   ],
   templateUrl: './step2.component.html',
   styleUrls: ['../_common-step.scss', './step2.component.scss'],
@@ -70,41 +55,28 @@ export class Step2Component implements OnInit, OnDestroy {
 
   configurationForm = new FormGroup({
     region: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    multilingual: new FormControl<'multilingual' | 'english'>('multilingual', { nonNullable: true }),
     startWith: new FormControl<'upload' | 'dataset'>('upload'),
     dataset: new FormControl<string>('', { nonNullable: true }),
   });
 
-  languages: { id: string; label: string; selected: boolean }[];
   datasets: DatasetType[] = [];
 
-  get multilingualSelected() {
-    return this.configurationForm.controls.multilingual.value === 'multilingual';
-  }
   get datasetSelected() {
     return this.configurationForm.controls.startWith.value === 'dataset';
   }
   get regionControl() {
     return this.configurationForm.controls.region;
   }
-  get multilingualControl() {
-    return this.configurationForm.controls.multilingual;
-  }
+
+  multilingualSelected = true;
+  languages: string[] = [];
 
   private unsubscribeAll = new Subject<void>();
 
   constructor(
-    private translate: TranslateService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
-  ) {
-    const languages: { id: string; label: string }[] = LANGUAGES.map((language) => ({
-      id: language,
-      label: this.translate.instant(`onboarding.step2.languages.${language}`),
-    })).sort((a, b) => a.label.localeCompare(b.label));
-    languages.push({ id: 'other', label: this.translate.instant(`onboarding.step2.languages.other`) });
-    this.languages = languages.map((language) => ({ ...language, selected: false }));
-  }
+  ) {}
 
   ngOnInit() {
     this.regionControl.valueChanges
@@ -116,12 +88,6 @@ export class Step2Component implements OnInit, OnDestroy {
         this.datasets = datasets;
         this.cdr.detectChanges();
       });
-
-    this.multilingualControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((language) => {
-      if (language === 'english') {
-        this.languages.forEach((language) => (language.selected = false));
-      }
-    });
   }
 
   ngOnDestroy() {
@@ -134,10 +100,16 @@ export class Step2Component implements OnInit, OnDestroy {
     const configuration: KbConfiguration = {
       zoneSlug: configFormValue.region,
       multilingual: this.multilingualSelected,
-      languages: this.languages.filter((language) => language.selected).map((language) => language.id),
+      languages: this.languages,
       ownData: configFormValue.startWith === 'upload',
       dataset: this.datasetSelected ? configFormValue.dataset : undefined,
     };
     this.submitStep2.emit(configuration);
+  }
+
+  updateLanguages(data: { multilingualSelected: boolean; languages: string[] }) {
+    this.multilingualSelected = data.multilingualSelected;
+    this.languages = data.languages;
+    this.cdr.markForCheck();
   }
 }

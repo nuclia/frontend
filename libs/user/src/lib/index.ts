@@ -5,6 +5,7 @@ export * from './login/login.component';
 export * from './logout/logout.component';
 export * from './magic/magic.component';
 export * from './magic/magic.service';
+export * from './onboarding/language-field/language-field.component';
 export * from './onboarding/onboarding.component';
 export * from './onboarding/onboarding.models';
 export * from './onboarding/onboarding.service';

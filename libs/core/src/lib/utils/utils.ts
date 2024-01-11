@@ -1,5 +1,7 @@
 import latinize from 'latinize';
 import { of, Subject } from 'rxjs';
+import { LearningConfigurations } from '@nuclia/core';
+import { KbLanguageConf } from '../models';
 
 export const MIN_PASSWORD_LENGTH = 8;
 
@@ -34,6 +36,23 @@ export function injectScript(url: string) {
     return isInit.asObservable();
   }
 }
+
+export function getSemanticModel(languageConf: KbLanguageConf, learningConfiguration: LearningConfigurations) {
+  const semanticModelName = !languageConf.multilingual
+    ? 'EN'
+    : languageConf.languages.includes('catalan') || languageConf.languages.includes('other')
+      ? 'MULTILINGUAL_ALPHA'
+      : 'MULTILINGUAL';
+  const semanticModel = learningConfiguration['semantic_model'].options?.find(
+    (model) => model.name === semanticModelName,
+  );
+  const defaultSemanticModel = learningConfiguration['semantic_model'].default;
+  if (!semanticModel) {
+    console.warn(`Semantic model ${semanticModelName} not found, using default model ${defaultSemanticModel}.`);
+  }
+  return semanticModel?.value || defaultSemanticModel;
+}
+
 export class STFUtils {
   // Generate a slug from arbitrary text.
   // Slugs only have alphanumeric lowercase characters (a-z, 0-9) and separators (-_)

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { SDKService, STFUtils, Zone } from '@flaps/core';
+import { getSemanticModel, SDKService, STFUtils, Zone } from '@flaps/core';
 import { Sluggable } from '../validators';
 import { KnowledgeBoxSettingsService } from '../knowledge-box-settings';
-import { Account, KnowledgeBoxCreation, LearningConfiguration } from '@nuclia/core';
+import { Account, KnowledgeBoxCreation, LearningConfiguration, LearningConfigurations } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,6 +37,9 @@ export class KbAddComponent implements OnInit {
   error = '';
   zones: Zone[] = [];
   account?: Account;
+
+  multilingualSelected = true;
+  languages: string[] = [];
 
   private _lastStep = 1;
 
@@ -95,6 +98,18 @@ export class KbAddComponent implements OnInit {
       return acc;
     }, default_learning_configuration);
 
+    const learningConf = (this.learningConfigurations || []).reduce((acc, entry) => {
+      acc[entry.id] = entry.data;
+      return acc;
+    }, {} as LearningConfigurations);
+    learning_configuration['semantic_model'] = getSemanticModel(
+      {
+        languages: this.languages,
+        multilingual: this.multilingualSelected,
+      },
+      learningConf,
+    );
+
     const payload: KnowledgeBoxCreation = {
       slug: STFUtils.generateSlug(formValue.title),
       title: formValue.title,
@@ -140,8 +155,9 @@ export class KbAddComponent implements OnInit {
     this.cdr?.markForCheck();
   }
 
-  hasTranslation(key: string) {
-    const translation = this.translate.instant(key);
-    return translation !== key && translation !== '';
+  updateLanguages(data: { multilingualSelected: boolean; languages: string[] }) {
+    this.multilingualSelected = data.multilingualSelected;
+    this.languages = data.languages;
+    this.cdr.markForCheck();
   }
 }

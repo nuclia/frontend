@@ -15,6 +15,7 @@ import { SisProgressModule } from '@nuclia/sistema';
 import { KnowledgeBoxSettingsModule } from '../knowledge-box-settings';
 
 import { KbAddComponent } from './kb-add.component';
+import { LanguageFieldComponent } from '@nuclia/user';
 
 @NgModule({
   imports: [
@@ -30,6 +31,7 @@ import { KbAddComponent } from './kb-add.component';
     PaTogglesModule,
     ReactiveFormsModule,
     SisProgressModule,
+    LanguageFieldComponent,
   ],
   declarations: [KbAddComponent],
   exports: [KbAddComponent],
