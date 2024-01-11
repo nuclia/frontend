@@ -56,13 +56,14 @@ export class KnowledgeBoxSettingsService {
           display: full.filter(
             (entry) =>
               entry.id === USER_PROMPTS ||
-              (hasSummarization &&
-                (entry.id === SUMMARY_PROMPT || entry.id === 'summary' || entry.id === 'summary_model')) ||
+              (hasSummarization && entry.id === SUMMARY_PROMPT) ||
               (entry.data.options &&
                 entry.id !== 'semantic_model' &&
                 entry.data.options.length > 1 &&
                 (entry.id !== 'anonymization_model' || hasAnonymization) &&
-                (entry.id !== 'visual_labeling' || hasPdfAnnotation)),
+                (entry.id !== 'visual_labeling' || hasPdfAnnotation) &&
+                (entry.id !== 'summary' || hasSummarization) &&
+                (entry.id !== 'summary_model' || hasSummarization)),
           ),
           full,
           keys:
