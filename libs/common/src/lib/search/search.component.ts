@@ -3,7 +3,7 @@ import { BehaviorSubject, combineLatest, distinctUntilKeyChanged, forkJoin, map,
 import { tap } from 'rxjs/operators';
 import { TrainingType } from '@nuclia/core';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
-import { BackendConfigurationService, FeatureFlagService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService, SDKService } from '@flaps/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceViewerService } from '../resources';
@@ -35,7 +35,7 @@ export class SearchComponent implements OnInit, OnDestroy {
       forkJoin([
         kb.getLabels().pipe(map((labelSets) => Object.keys(labelSets).length > 0)),
         kb.training.hasModel(TrainingType.classifier),
-        this.featureFlag.isFeatureEnabled('knowledge-graph').pipe(take(1)),
+        this.features.knowledgeGraph.pipe(take(1)),
       ]).pipe(
         map(([hasLabels, hasClassifier, isKnowledgeGraphEnabled]) => ({
           kb,
@@ -90,7 +90,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     private backendConfig: BackendConfigurationService,
     private translation: TranslateService,
     private viewerService: ResourceViewerService,
-    private featureFlag: FeatureFlagService,
+    private features: FeaturesService,
     private standaloneService: StandaloneService,
   ) {}
 

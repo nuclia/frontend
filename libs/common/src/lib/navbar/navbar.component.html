@@ -87,7 +87,7 @@
               <span class="nav-link-title">{{ 'sidenav.settings' | translate }}</span>
             </a>
             @if (!standalone) {
-              @if ((isTrial | async) === false) {
+              @if (isActivityEnabled | async) {
                 <a
                   [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/activity/download' : null"
                   routerLinkActive="active"

@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angula
 import { BulkAction, ColumnHeader, MenuAction } from './resource-list.model';
 import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { delay, map, switchMap } from 'rxjs/operators';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
 import {
   BehaviorSubject,
@@ -22,7 +22,6 @@ import { ResourceListService } from './resource-list.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
-import { KnowledgeBoxSettingsService } from '../../knowledge-box-settings';
 
 export const COMMON_COLUMNS = [
   { id: 'title', label: 'resource.title', size: '3fr', sortable: false },
@@ -47,7 +46,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected modalService = inject(SisModalService);
   protected toaster = inject(SisToastService);
   protected translate = inject(TranslateService);
-  protected kbSettingsService = inject(KnowledgeBoxSettingsService);
+  protected features = inject(FeaturesService);
 
   // status is set to processed by default, but will be overridden by each component extending this directive
   status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
@@ -55,7 +54,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   sorting = this.resourceListService.sort;
   isAdminOrContrib = this.sdk.isAdminOrContrib;
 
-  isSummarizationEnabled = this.kbSettingsService.isSummarizationEnabled;
+  isSummarizationEnabled = this.features.summarization;
 
   private _selection = new BehaviorSubject<string[]>([]);
   set selection(selection: string[]) {

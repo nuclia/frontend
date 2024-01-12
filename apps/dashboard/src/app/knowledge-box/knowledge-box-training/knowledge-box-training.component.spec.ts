@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SDKService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
+import { FeaturesService, SDKService, TranslatePipeMock } from '@flaps/core';
 import { TrainingStatus } from '@nuclia/core';
 import { of } from 'rxjs';
 
@@ -42,12 +42,7 @@ describe('KnowledgeBoxTrainingComponent', () => {
             counters: of({ resources: 1 }),
           },
         },
-        {
-          provide: STFTrackingService,
-          useValue: {
-            isFeatureEnabled: jest.fn(() => of(true)),
-          },
-        },
+        MockProvider(FeaturesService, { trainingNer: of(true) }),
         { provide: SvgIconRegistryService, useValue: { loadSvg: () => {} } },
         MockProvider(TranslateService),
       ],

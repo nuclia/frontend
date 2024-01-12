@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
-import { SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { LabelSetKind, TrainingStatus, TrainingType } from '@nuclia/core';
 import { forkJoin, Observable, shareReplay, Subject, take, tap } from 'rxjs';
@@ -94,15 +94,15 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
     [TrainingType.ner]: this.entitiesGroups,
   };
 
-  isBillingEnabled = this.tracking.isFeatureEnabled('billing');
-  enabledTrainings = this.tracking
-    .isFeatureEnabled('training_ner')
-    .pipe(map((enabled) => (enabled ? this.trainingList : this.trainingList.filter((t) => t !== TrainingType.ner))));
+  isBillingEnabled = this.features.billing;
+  enabledTrainings = this.features.trainingNer.pipe(
+    map((enabled) => (enabled ? this.trainingList : this.trainingList.filter((t) => t !== TrainingType.ner))),
+  );
 
   constructor(
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
-    private tracking: STFTrackingService,
+    private features: FeaturesService,
     private translate: TranslateService,
   ) {}
 

@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { Router, RouterLinkActive } from '@angular/router';
-import { SDKService, STFTrackingService, UserService } from '@flaps/core';
+import { FeaturesService, SDKService, UserService } from '@flaps/core';
 import { Account, Welcome } from '@nuclia/core';
 import { map, Subject, takeUntil } from 'rxjs';
 import {
@@ -57,7 +57,7 @@ export class UserMenuComponent implements OnDestroy {
   accounts: string[] = [];
   account: Account | null = null;
   isAccountManager = this.sdk.currentAccount.pipe(map((account) => account!.can_manage_account));
-  isBillingEnabled = this.tracking.isFeatureEnabled('billing');
+  isBillingEnabled = this.features.billing;
   hasOwnAccount = this.userService.hasOwnAccount;
   standalone = this.sdk.nuclia.options.standalone;
 
@@ -68,7 +68,7 @@ export class UserMenuComponent implements OnDestroy {
     private navigation: NavigationService,
     private userService: UserService,
     private sdk: SDKService,
-    private tracking: STFTrackingService,
+    private features: FeaturesService,
     private cdr: ChangeDetectorRef,
   ) {
     this.sdk.currentAccount.pipe(takeUntil(this.unsubscribeAll)).subscribe((account) => {

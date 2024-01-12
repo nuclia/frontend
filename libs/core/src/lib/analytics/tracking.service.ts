@@ -4,7 +4,6 @@ import { SDKService } from '../api';
 import { BackendConfigurationService } from '../config';
 import { filter, Observable } from 'rxjs';
 import { PostHogService } from './post-hog.service';
-import { FeatureFlagService } from './feature-flag.service';
 
 const STATUS_ALERT = 'NUCLIA_STATUS_ALERT';
 const ANNOUNCE = 'NUCLIA_ANNOUNCE';
@@ -18,7 +17,6 @@ export class STFTrackingService {
     private config: BackendConfigurationService,
     private sdk: SDKService,
     private postHogService: PostHogService,
-    private featureFlagService: FeatureFlagService,
   ) {
     this.sdk.nuclia.auth
       .isAuthenticated()
@@ -63,21 +61,6 @@ export class STFTrackingService {
 
   logout() {
     this.postHogService.reset();
-  }
-
-  /**
-   * Return an observable emitting true if the corresponding feature is enabled in postHog.
-   * @param feature
-   */
-  isFeatureEnabled(feature: string): Observable<boolean> {
-    return this.featureFlagService.isFeatureEnabled(feature);
-  }
-
-  /**
-   * Return the list of flags enabled in PostHog.
-   */
-  getEnabledFeatures(): Observable<string[]> {
-    return this.featureFlagService.getEnabledFeatures();
   }
 
   getStatusMessage(alert: boolean): Observable<string> {

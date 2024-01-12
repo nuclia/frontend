@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, map, take, tap } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
-import { SDKService, STFTrackingService, UserService, Zone, ZoneService } from '@flaps/core';
+import { FeaturesService, SDKService, UserService, Zone, ZoneService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
@@ -55,7 +55,7 @@ export class ClientDialogComponent implements OnInit {
 
   zones: Zone[] = [];
 
-  isAllowKbManagementEnabled = this.tracking.isFeatureEnabled('allow-kb-management-from-nua-key');
+  isAllowKbManagementEnabled = this.features.allowKbManagementFromNuaKey;
 
   constructor(
     public modal: ModalRef,
@@ -64,7 +64,7 @@ export class ClientDialogComponent implements OnInit {
     private sdkService: SDKService,
     private cdr: ChangeDetectorRef,
     private zoneService: ZoneService,
-    private tracking: STFTrackingService,
+    private features: FeaturesService,
   ) {
     this.editMode = !!this.modal.config.data?.['client'];
   }

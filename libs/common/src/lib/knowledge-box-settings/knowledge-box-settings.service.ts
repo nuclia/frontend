@@ -8,25 +8,15 @@ import {
   USER_PROMPTS,
 } from '@nuclia/core';
 import { take } from 'rxjs/operators';
-import { FeatureFlagService, SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class KnowledgeBoxSettingsService {
-  enterpriseOrGrowth = this.sdk.currentAccount.pipe(
-    map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
-    take(1),
-  );
-
-  isSummarizationEnabled = forkJoin([
-    this.featureFlagService.isFeatureEnabled('summarization').pipe(take(1)),
-    this.enterpriseOrGrowth,
-  ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
-
   constructor(
     private sdk: SDKService,
-    private featureFlagService: FeatureFlagService,
+    private features: FeaturesService,
   ) {}
 
   getVisibleLearningConfiguration(onCreation = true): Observable<{
@@ -35,9 +25,9 @@ export class KnowledgeBoxSettingsService {
     keys: LearningConfigurationUserKeys;
   }> {
     return forkJoin([
-      this.featureFlagService.isFeatureEnabled('kb-anonymization').pipe(take(1)),
-      this.featureFlagService.isFeatureEnabled('pdf-annotation').pipe(take(1)),
-      this.featureFlagService.isFeatureEnabled('summarization').pipe(take(1)),
+      this.features.kbAnonymization.pipe(take(1)),
+      this.features.pdfAnnotation.pipe(take(1)),
+      this.features.summarization.pipe(take(1)),
       this.sdk.nuclia.db.getLearningConfigurations().pipe(take(1)),
       this.sdk.currentAccount.pipe(take(1)),
     ]).pipe(

@@ -7,7 +7,7 @@ import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { AppService, NavigationService, UploadModule, UploadService } from '@flaps/common';
-import { SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
 import { MetricsService } from '../../account/metrics.service';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
@@ -70,7 +70,8 @@ describe('KnowledgeBoxHomeComponent', () => {
             db: {},
           },
         } as SDKService),
-        MockProvider(STFTrackingService, { isFeatureEnabled: () => of(true) }),
+        MockProvider(STFTrackingService, { logEvent: () => {} }),
+        MockProvider(FeaturesService),
         MockProvider(NavigationService, {
           getKbUrl: () => 'kb-url',
         }),
