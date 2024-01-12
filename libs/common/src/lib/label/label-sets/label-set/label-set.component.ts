@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, map, Subject, take } from 'rxjs';
 import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { FeatureFlagService, STFUtils } from '@flaps/core';
+import { FeaturesService, STFUtils } from '@flaps/core';
 import { LabelSetKind, LabelSets } from '@nuclia/core';
 import { EMPTY_LABEL_SET, LabelSetCounts, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
@@ -41,11 +41,9 @@ export class LabelSetComponent implements OnDestroy {
   });
 
   colors: string[] = LABEL_MAIN_COLORS;
-  kinds = this.featureFlag
-    .isFeatureEnabled('pdf-annotation')
-    .pipe(
-      map((enabled) => (enabled ? KINDS.concat({ id: LabelSetKind.SELECTIONS, name: 'label-set.selections' }) : KINDS)),
-    );
+  kinds = this.features.pdfAnnotation.pipe(
+    map((enabled) => (enabled ? KINDS.concat({ id: LabelSetKind.SELECTIONS, name: 'label-set.selections' }) : KINDS)),
+  );
   counts = this.labelsService.labelSetsCount;
 
   validationMessages = {
@@ -81,7 +79,7 @@ export class LabelSetComponent implements OnDestroy {
     private route: ActivatedRoute,
     private labelsService: LabelsService,
     private cdr: ChangeDetectorRef,
-    private featureFlag: FeatureFlagService,
+    private features: FeaturesService,
   ) {
     this.route.params
       .pipe(

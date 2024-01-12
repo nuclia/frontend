@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UploadDialogService, UploadType } from './upload-dialog.service';
-import { FeatureFlagService } from '@flaps/core';
+import { FeaturesService } from '@flaps/core';
 
 @Component({
   selector: 'stf-upload-button',
@@ -8,9 +8,12 @@ import { FeatureFlagService } from '@flaps/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadButtonComponent implements OnInit {
-  isQnAEnabled = this.feature.isFeatureEnabled('upload-q-and-a');
+  isQnAEnabled = this.features.uploadQAndA;
 
-  constructor(private uploadService: UploadDialogService, private feature: FeatureFlagService) {}
+  constructor(
+    private uploadService: UploadDialogService,
+    private features: FeaturesService,
+  ) {}
 
   ngOnInit(): void {}
 

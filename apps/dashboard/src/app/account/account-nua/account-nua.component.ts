@@ -4,7 +4,7 @@ import { NUAClient } from '@nuclia/core';
 import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
 import { Router } from '@angular/router';
-import { SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { NavigationService, TokenDialogComponent } from '@flaps/common';
 
@@ -18,14 +18,14 @@ export class AccountNUAComponent {
   clients$ = this.nua.clients;
   unsubscribeAll = new Subject<void>();
 
-  isNuaActivityEnabled = this.tracking.isFeatureEnabled('view-nua-activity');
+  isNuaActivityEnabled = this.features.viewNuaActivity;
 
   constructor(
     private nua: AccountNUAService,
     private router: Router,
     private sdk: SDKService,
     private navigation: NavigationService,
-    private tracking: STFTrackingService,
+    private features: FeaturesService,
     private modalService: SisModalService,
   ) {
     this.nua.updateClients();

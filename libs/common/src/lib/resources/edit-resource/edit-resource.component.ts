@@ -12,9 +12,9 @@ import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { EditResourceView } from './edit-resource.helpers';
-import { NavigationService } from '../../services/navigation.service';
+import { NavigationService } from '../../services';
 import { SisModalService } from '@nuclia/sistema';
-import { FeatureFlagService } from '@flaps/core';
+import { FeaturesService } from '@flaps/core';
 import { ResourceNavigationService } from './resource-navigation.service';
 
 const PAWLS_KEY = 'pawls';
@@ -52,7 +52,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         })),
     ),
   );
-  isPdfAnnotationEnabled = this.featureFlag.isFeatureEnabled('pdf-annotation');
+  isPdfAnnotationEnabled = this.features.pdfAnnotation;
   isAdminOrContrib = this.editResource.isAdminOrContrib;
 
   activeField?: FieldId | 'resource';
@@ -64,7 +64,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private cdr: ChangeDetectorRef,
     private modal: SisModalService,
-    private featureFlag: FeatureFlagService,
+    private features: FeaturesService,
     public resourceNavigationService: ResourceNavigationService,
   ) {
     this.route.params

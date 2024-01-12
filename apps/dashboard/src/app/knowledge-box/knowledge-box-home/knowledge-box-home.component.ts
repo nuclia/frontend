@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
 import {
   AppService,
   NavigationService,
@@ -76,7 +76,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
       return this.navigationService.getKbUrl(account.slug, kbSlug);
     }),
   );
-  isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app');
+  isDownloadDesktopEnabled = this.features.downloadDesktopApp;
   canUpgrade = combineLatest([this.isAccountManager, this.account]).pipe(
     map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.includes(account.type)),
   );
@@ -130,6 +130,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,
+    private features: FeaturesService,
     private navigationService: NavigationService,
     private uploadService: UploadService,
     private metrics: MetricsService,

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { catchError, combineLatest, filter, forkJoin, Observable, of, Subject } from 'rxjs';
+import { catchError, combineLatest, filter, Observable, of, Subject } from 'rxjs';
 import { auditTime, concatMap, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { FeatureFlagService, SDKService, STFUtils } from '@flaps/core';
+import { FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import {
   Account,
   KnowledgeBox,
@@ -62,15 +62,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   currentUserPromptConfig?: LearningConfigurationSchema;
   currentUserPromptKey?: string;
 
-  // user-prompts and summarization are always enabled for growth and enterprise accounts
-  // but are still managed as a feature flagged feature for other account types
-  // so we can enable it specifically for some accounts through the `variants` field
-  // in `status/features-v2.json`
-  isUserPromptsEnabled = forkJoin([
-    this.featureFlag.isFeatureEnabled('user-prompts').pipe(take(1)),
-    this.settingService.enterpriseOrGrowth,
-  ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
-  isSummarizationEnabled = this.settingService.isSummarizationEnabled;
+  isUserPromptsEnabled = this.features.userPrompts;
+  isSummarizationEnabled = this.features.summarization;
 
   summaryPromptConfigurations?: LearningConfiguration;
 
@@ -81,7 +74,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private router: Router,
-    private featureFlag: FeatureFlagService,
+    private features: FeaturesService,
     private toast: SisToastService,
     private modal: SisModalService,
   ) {}

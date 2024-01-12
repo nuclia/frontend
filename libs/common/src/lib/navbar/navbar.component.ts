@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { NavigationService, StandaloneService } from '../services';
-import { BillingService, SDKService, STFTrackingService } from '@flaps/core';
+import { BillingService, FeaturesService, SDKService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -54,22 +54,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
 
-  isEntitiesEnabled = this.tracking.isFeatureEnabled('manage-entities');
-  isBillingEnabled = this.tracking.isFeatureEnabled('billing');
-  isTrainingEnabled = this.tracking.isFeatureEnabled('training');
-  isSyncEnabled = this.tracking.isFeatureEnabled('sync');
-  isSynonymsEnabled: Observable<boolean> = this.account
-    .pipe(
-      filter((account) => !!account),
-      map((account) => account?.type),
-    )
-    .pipe(
-      map(
-        (accountType) =>
-          !!accountType &&
-          ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(accountType),
-      ),
-    );
+  isEntitiesEnabled = this.features.manageEntities;
+  isBillingEnabled = this.features.billing;
+  isTrainingEnabled = this.features.training;
+  isSyncEnabled = this.features.sync;
+  isSynonymsEnabled = this.features.synonyms;
+  isActivityEnabled = this.features.activityLog;
 
   standalone = this.sdk.nuclia.options.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
@@ -77,7 +67,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private tracking: STFTrackingService,
+    private features: FeaturesService,
     private sdk: SDKService,
     private router: Router,
     private navigationService: NavigationService,

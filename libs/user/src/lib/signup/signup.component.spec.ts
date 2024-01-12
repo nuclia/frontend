@@ -7,7 +7,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UserContainerComponent } from '../user-container';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { BackendConfigurationService, FeatureFlagService, LoginService, SignupResponse } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  FeaturesService,
+  LoginService,
+  SignupResponse,
+  StaticEnvironmentConfiguration,
+} from '@flaps/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { SisPasswordInputModule } from '@nuclia/sistema';
@@ -46,11 +52,12 @@ describe('SignupComponent', () => {
         MockProvider(LoginService, {
           signup: jest.fn(() => signupResponse.asObservable()),
         }),
-        MockProvider(FeatureFlagService, {
-          isFeatureEnabled: jest.fn(() => of(true)),
+        MockProvider(FeaturesService, {
+          githubSignin: of(true),
         }),
         MockProvider(BackendConfigurationService, {
           getRecaptchaKey: () => 'fake',
+          staticConf: { client: '' } as StaticEnvironmentConfiguration,
         }),
       ],
     }).compileComponents();

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { combineLatest, filter, map, shareReplay, switchMap, take } from 'rxjs';
-import { BillingService, SDKService, STFTrackingService, SubscriptionStatus } from '@flaps/core';
+import { BillingService, SDKService, SubscriptionStatus } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -29,7 +29,6 @@ export class AccountStatusComponent {
   reactivateUrl = this.sdk.currentAccount.pipe(
     map((account) => `${this.navigation.getBillingUrl(account.slug)}/my-subscription`),
   );
-  isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   daysLeft = this.sdk.currentAccount.pipe(
     filter((account) => !!account.trial_expiration_date),
     map((account) => {
@@ -65,7 +64,6 @@ export class AccountStatusComponent {
     private sdk: SDKService,
     private billingService: BillingService,
     private navigation: NavigationService,
-    private tracking: STFTrackingService,
     private modalService: SisModalService,
     private router: Router,
     @Inject(WINDOW) private window: Window,

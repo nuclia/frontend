@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackingService } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService, SDKService } from '@flaps/core';
 import { combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -53,24 +53,11 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   currentQuery = '';
 
   // FEATURES AVAILABILITY
-  isUserPromptsEnabled = forkJoin([
-    this.featureFlag.isFeatureEnabled('user-prompts').pipe(take(1)),
-    this.sdk.currentAccount.pipe(
-      map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
-      take(1),
-    ),
-  ]).pipe(map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth));
-  autocompleteFromNerEnabled = this.tracking.isFeatureEnabled('suggest-entities');
-  isTrainingEnabled = this.tracking.isFeatureEnabled('training');
-  areSynonymsEnabled = this.sdk.currentAccount.pipe(
-    map((account) => account.type),
-    map(
-      (accountType) =>
-        !!accountType &&
-        ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(accountType),
-    ),
-  );
-  isKnowledgeGraphEnabled = this.tracking.isFeatureEnabled('knowledge-graph');
+  isUserPromptsEnabled = this.featuresService.userPrompts;
+  autocompleteFromNerEnabled = this.featuresService.suggestEntities;
+  isTrainingEnabled = this.featuresService.training;
+  areSynonymsEnabled = this.featuresService.synonyms;
+  isKnowledgeGraphEnabled = this.featuresService.knowledgeGraph;
   canHideLogo = this.sdk.currentAccount.pipe(
     map((account) =>
       ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
@@ -202,8 +189,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   constructor(
     private sdk: SDKService,
-    private featureFlag: FeatureFlagService,
-    private tracking: STFTrackingService,
+    private featuresService: FeaturesService,
     private cdr: ChangeDetectorRef,
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,

@@ -5,7 +5,7 @@ import SparkMD5 from 'spark-md5';
 import { SDKService } from '../api';
 
 export interface Features {
-  [key: string]: boolean;
+  [key: string]: boolean | undefined;
 }
 
 interface FeaturesData {
@@ -42,9 +42,7 @@ export class FeatureFlagService {
           return {
             ...acc,
             [key.slice(FEATURE_PREFIX.length)]:
-              feature?.rollout === 1 || // TODO: this line keeps backward compatibility. Can be delete once feature flag data uses 100 instead of 1
-              feature?.rollout === 100 ||
-              (feature?.variants?.account_id_md5 || []).includes(md5 || ''),
+              feature?.rollout === 100 || (feature?.variants?.account_id_md5 || []).includes(md5 || ''),
           };
         }, {}),
     ),
@@ -60,9 +58,9 @@ export class FeatureFlagService {
 
   isFeatureEnabled(feature: string): Observable<boolean> {
     if (this.isNotProd) {
-      return this.stageFeatures.pipe(map((features) => features[feature] || true));
+      return this.stageFeatures.pipe(map((features) => !!features[feature] || true));
     } else {
-      return this.features.pipe(map((features) => features[feature]));
+      return this.features.pipe(map((features) => !!features[feature]));
     }
   }
 
