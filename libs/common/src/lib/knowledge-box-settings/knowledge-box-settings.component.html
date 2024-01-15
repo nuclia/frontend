@@ -14,12 +14,13 @@
             {{ 'generic.uid' | translate }}
           </pa-input>
 
-          <pa-input
-            formControlName="zone"
-            readonly>
-            {{ 'generic.zone' | translate }}
-          </pa-input>
-
+          @if (zoneValue) {
+            <pa-input
+              formControlName="zone"
+              readonly>
+              {{ 'generic.zone' | translate }}
+            </pa-input>
+          }
           <pa-input formControlName="slug">
             {{ 'generic.slug' | translate }}
           </pa-input>
@@ -55,12 +56,14 @@
                 {{ 'kb.settings.models-section.advanced' | translate }}
               </pa-toggle>
             </h3>
-            <pa-input
-              formControlName="semantic_model"
-              readonly
-              [help]="'kb.settings.semantic.help' | translate">
-              {{ 'kb.settings.semantic.label' | translate }}
-            </pa-input>
+            @if (generativeModelValue) {
+              <pa-input
+                formControlName="semantic_model"
+                readonly
+                [help]="'kb.settings.semantic.help' | translate">
+                {{ 'kb.settings.semantic.label' | translate }}
+              </pa-input>
+            }
           </div>
 
           @if (isAnonymizationEnabled | async) {

@@ -75,9 +75,6 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   isPdfAnnotationEnabled = this.features.pdfAnnotation;
 
   // accessors
-  get generativeModelValue() {
-    return this.configForm.controls.generative_model.value;
-  }
   get userPromptForm() {
     return this.configForm.controls.user_prompts;
   }
@@ -86,6 +83,12 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
   get userKeysGroup() {
     return this.configForm.controls.user_keys;
+  }
+  get zoneValue() {
+    return this.kbForm.controls.zone.value;
+  }
+  get generativeModelValue() {
+    return this.configForm.controls.generative_model.value;
   }
 
   saving = false;
@@ -127,10 +130,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     if (this.kb) {
       this.kbForm.patchValue({
         uid: this.kb.id,
-        zone: this.kb.zone,
+        zone: this.kb.zone || '',
         slug: this.kb.slug,
         title: this.kb.title,
-        description: this.kb.description,
+        description: this.kb.description || '',
       });
     }
   }
