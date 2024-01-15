@@ -5,6 +5,7 @@
 
       @if (kbForm) {
         <form
+          class="fields-container"
           [formGroup]="kbForm"
           (ngSubmit)="saveKb()">
           <pa-input
@@ -19,16 +20,14 @@
             {{ 'generic.zone' | translate }}
           </pa-input>
 
-          <pa-input
-            formControlName="slug"
-            [errorMessages]="validationMessages['slug']">
+          <pa-input formControlName="slug">
             {{ 'generic.slug' | translate }}
           </pa-input>
 
           <pa-input
             formControlName="title"
             [errorMessages]="validationMessages['title']">
-            {{ 'generic.name' | translate }}
+            {{ 'kb.name' | translate }}
           </pa-input>
 
           <pa-textarea
@@ -39,186 +38,275 @@
 
           @if (kb?.state?.toLowerCase(); as state) {
             <div class="kb-status">
-              <h3 class="title-m">{{ 'stash.settings.status.label' | translate }}</h3>
-              <div class="body-m">
-                <span [innerHTML]="'stash.settings.status.' + state | translate"></span>
-              </div>
+              <h3
+                class="title-m"
+                [innerHTML]="'kb.settings.status.label' | translate: { state: state }"></h3>
+
               <pa-button (click)="toggleKbState()">
-                {{ (state === 'published' ? 'account.stash.retire' : 'account.stash.publish') | translate }}
+                {{ (state === 'published' ? 'account.kb.retire' : 'account.kb.publish') | translate }}
               </pa-button>
             </div>
           }
 
-          @for (conf of displayedLearningConfigurations; track conf.id) {
-            <div
-              formGroupName="config"
-              class="config">
-              <div class="header">
-                <h3 class="title-m">{{ 'stash.create.' + conf.id + '.label' | translate }}</h3>
-                <div class="body-m">{{ 'stash.create.' + conf.id + '.help' | translate }}</div>
-              </div>
-              <div>
-                <pa-radio-group
-                  [formControlName]="conf.id"
-                  [name]="conf.id"
-                  (valueChange)="conf.id === 'generative_model' ? updateUserPrompts($event) : undefined"
-                  [class.two-columns]="(conf.data.options || []).length > 5">
-                  @for (option of conf.data.options; track option.value) {
-                    <pa-radio [value]="option.value">
-                      {{ option | learningOption: conf.id }}
-                    </pa-radio>
-                  }
-                </pa-radio-group>
-                @if (getVisibleFieldGroup(conf); as groupId) {
-                  <div formGroupName="user_keys">
-                    <div
-                      class="user-keys"
-                      [formGroupName]="groupId">
-                      <pa-toggle
-                        labelOnRight
-                        [value]="ownKey"
-                        (valueChange)="toggleOwnKey()">
-                        {{ 'stash.config.own_key' | translate }}
-                      </pa-toggle>
-                      @if (ownKey) {
-                        @if (hasTranslation('stash.config.key.' + groupId)) {
-                          <div class="title-m">{{ 'stash.config.key.' + groupId | translate }}:</div>
-                        }
-                        <div>
-                          @for (field of userKeys?.[groupId] || {} | keyvalue; track field) {
-                            @if (field.value.textarea) {
-                              <pa-textarea
-                                [formControlName]="field.key"
-                                [rows]="5">
-                                {{ field.value.title | translate }}
-                              </pa-textarea>
-                            } @else {
-                              <pa-input [formControlName]="field.key">
-                                {{ field.value.title | translate }}
-                              </pa-input>
-                            }
-                          }
-                        </div>
-                      }
-                    </div>
-                  </div>
-                }
+          <div>
+            <h3 class="title-m models-section-title">
+              {{ 'kb.settings.models-section.title' | translate }}
+              <pa-toggle [(value)]="showAdvancedSection">
+                {{ 'kb.settings.models-section.advanced' | translate }}
+              </pa-toggle>
+            </h3>
+            <pa-input
+              formControlName="semantic_model"
+              readonly
+              [help]="'kb.settings.semantic.help' | translate">
+              {{ 'kb.settings.semantic.label' | translate }}
+            </pa-input>
+          </div>
 
-                @if (
-                  (isUserPromptsEnabled | async) === true &&
-                  conf.id === 'generative_model' &&
-                  !!currentUserPromptConfig &&
-                  currentUserPromptKey
-                ) {
-                  <div>
-                    <div formGroupName="user_prompts">
-                      @for (key of userPromptKeys; track key) {
-                        <div [formGroupName]="key">
-                          @if (key == currentUserPromptKey) {
-                            <div>
-                              @if (userPromptConfigurations?.schemas?.[key]?.properties; as properties) {
-                                @if (properties['prompt']; as prompt) {
-                                  <div class="user-prompts">
-                                    <div class="header">
-                                      <h3 class="title-m">{{ 'stash.create.user_prompts.prompt' | translate }}</h3>
-                                      <div class="body-m">
-                                        {{ 'stash.create.user_prompts.prompt_help' | translate }}
-                                      </div>
-                                    </div>
-                                    <pa-select
-                                      formControlName="prompt_examples"
-                                      [dim]="true"
-                                      [label]="'stash.create.user_prompts.examples' | translate"
-                                      (valueChange)="setUserPrompt('prompt', key, $event)">
-                                      @for (option of prompt.examples || []; track option) {
-                                        <pa-option [value]="option">
-                                          {{ option }}
-                                        </pa-option>
-                                      }
-                                    </pa-select>
-                                    <pa-textarea
-                                      formControlName="prompt"
-                                      [rows]="5"
-                                      [help]="prompt.info || ''">
-                                      {{ prompt.title }}
-                                    </pa-textarea>
-                                  </div>
-                                }
-                                @if (properties['system']; as system) {
-                                  <div class="user-prompts">
-                                    <div class="header">
-                                      <h3 class="title-m">{{ 'stash.create.user_prompts.system' | translate }}</h3>
-                                      <div class="body-m">
-                                        {{ 'stash.create.user_prompts.system_help' | translate }}
-                                      </div>
-                                    </div>
-                                    <pa-select
-                                      formControlName="system_examples"
-                                      [dim]="true"
-                                      [label]="'stash.create.user_prompts.examples' | translate"
-                                      (valueChange)="setUserPrompt('system', key, $event)">
-                                      @for (option of system.examples || []; track option) {
-                                        <pa-option [value]="option">
-                                          {{ option }}
-                                        </pa-option>
-                                      }
-                                    </pa-select>
-                                    <pa-textarea
-                                      formControlName="system"
-                                      [rows]="5"
-                                      [help]="system.info || ''">
-                                      {{ system.title }}
-                                    </pa-textarea>
-                                  </div>
+          @if (isAnonymizationEnabled | async) {
+            <pa-toggle
+              formControlName="anonymization"
+              labelOnRight
+              [help]="'kb.settings.anonymization_toggle.help' | translate">
+              {{ 'kb.settings.anonymization_toggle.label' | translate }}
+            </pa-toggle>
+          }
+          @if (showAdvancedSection) {
+            @if (isPdfAnnotationEnabled | async) {
+              <pa-toggle
+                formControlName="pdf_annotation"
+                labelOnRight
+                [help]="'kb.settings.pdf_annotation_toggle.help' | translate">
+                {{ 'kb.settings.pdf_annotation_toggle.label' | translate }}
+              </pa-toggle>
+            }
+          }
+        </form>
+        <form
+          class="fields-container"
+          [formGroup]="configForm"
+          (ngSubmit)="saveKb()">
+          @if (showAdvancedSection) {
+            @if (learningConfigurations; as learningConfig) {
+              <div class="advanced-section">
+                <pa-expander [contentLoaded]="updateGenerativeExpanderHeight | async">
+                  <pa-expander-header>
+                    <div class="title-s">{{ 'kb.settings.generative_model.label' | translate }}</div>
+                  </pa-expander-header>
+                  <pa-expander-body>
+                    <div class="model-expander-body fields-container">
+                      <div class="radio-container">
+                        <label
+                          for="generative"
+                          class="title-xxs">
+                          {{ 'kb.settings.generative_model.help' | translate }}
+                        </label>
+                        @if (learningConfig['generative_model']?.options; as options) {
+                          <pa-radio-group
+                            formControlName="generative_model"
+                            id="generative"
+                            (valueChange)="updateCurrentGenerativeModel($event)">
+                            @for (option of options; track option.value) {
+                              <pa-radio [value]="option.value">
+                                {{ option | learningOption: 'generative_model' }}
+                              </pa-radio>
+                            }
+                          </pa-radio-group>
+                        }
+                      </div>
+
+                      @if ((isEnterpriseOrGrowth | async) && currentGenerativeModelPrompt) {
+                        @if (learningConfig['user_keys'].schemas?.[currentGenerativeModelPrompt]; as userKeys) {
+                          <pa-toggle
+                            labelOnRight
+                            [(value)]="hasOwnKey"
+                            (valueChange)="updateHasOwnKey()">
+                            {{ 'kb.settings.use_own_key.label' | translate }}
+                          </pa-toggle>
+
+                          @if (hasOwnKey) {
+                            <div
+                              class="fields-container small-gap"
+                              [formGroup]="userKeysGroup">
+                              @for (field of userKeys.properties | keyvalue; track field.key) {
+                                @if (field.value['widget'] === 'textarea') {
+                                  <pa-textarea
+                                    resizable
+                                    [formControlName]="field.key"
+                                    [rows]="2"
+                                    [help]="field.value.info">
+                                    {{ field.value.title }}
+                                  </pa-textarea>
+                                } @else {
+                                  <pa-input
+                                    [formControlName]="field.key"
+                                    [help]="field.value.info">
+                                    {{ field.value.title }}
+                                  </pa-input>
                                 }
                               }
                             </div>
                           }
-                        </div>
+                        }
+                      }
+
+                      @if ((isUserPromptsEnabled | async) && currentGenerativeModelPrompt) {
+                        @if (learningConfig['user_prompts'].schemas?.[currentGenerativeModelPrompt]; as userPrompt) {
+                          <div
+                            class="fields-container"
+                            [formGroup]="userPromptForm">
+                            @if (userPrompt.properties['prompt']; as prompt) {
+                              <div class="fields-container small-gap">
+                                <div>
+                                  <div class="title-m">{{ 'kb.settings.user_prompts.prompt' | translate }}</div>
+                                  <div class="body-s">
+                                    {{ 'kb.settings.user_prompts.prompt_help' | translate }}
+                                  </div>
+                                  <pa-select
+                                    dim
+                                    formControlName="prompt_examples"
+                                    class="select-with-background"
+                                    [label]="'kb.settings.user_prompts.examples' | translate"
+                                    (valueChange)="setPrompt('user', 'prompt', $event)">
+                                    @for (option of prompt.examples || []; track option) {
+                                      <pa-option [value]="option">
+                                        {{ option }}
+                                      </pa-option>
+                                    }
+                                  </pa-select>
+                                </div>
+                                <pa-textarea
+                                  formControlName="prompt"
+                                  resizable
+                                  [rows]="3"
+                                  [help]="prompt.info || ''">
+                                  {{ prompt.title }}
+                                </pa-textarea>
+                              </div>
+                            }
+
+                            @if (userPrompt.properties['system']; as system) {
+                              <div class="fields-container small-gap">
+                                <div>
+                                  <div class="title-m">{{ 'kb.settings.user_prompts.system' | translate }}</div>
+                                  <div class="body-s">
+                                    {{ 'kb.settings.user_prompts.system_help' | translate }}
+                                  </div>
+                                  <pa-select
+                                    dim
+                                    formControlName="system_examples"
+                                    class="select-with-background"
+                                    [label]="'kb.settings.user_prompts.examples' | translate"
+                                    (valueChange)="setPrompt('user', 'system', $event)">
+                                    @for (option of system.examples || []; track option) {
+                                      <pa-option [value]="option">
+                                        {{ option }}
+                                      </pa-option>
+                                    }
+                                  </pa-select>
+                                </div>
+                                <pa-textarea
+                                  formControlName="system"
+                                  resizable
+                                  [rows]="3"
+                                  [help]="system.info || ''">
+                                  {{ 'kb.settings.generative_model.system_prompt_label' | translate }}
+                                </pa-textarea>
+                              </div>
+                            }
+                          </div>
+                        }
                       }
                     </div>
-                  </div>
-                }
+                  </pa-expander-body>
+                </pa-expander>
 
-                @if (
-                  (isSummarizationEnabled | async) === true &&
-                  conf.id === 'summary_model' &&
-                  summaryPromptConfigurations
-                ) {
-                  <div formGroupName="summary_prompt">
-                    @if (summaryPromptConfigurations?.schema?.properties; as properties) {
-                      @if (properties['prompt']; as prompt) {
-                        <div class="user-prompts">
-                          <div class="header">
-                            <h3 class="title-m">{{ 'stash.create.summary_prompt.prompt' | translate }}</h3>
-                            <div class="body-m">
-                              {{ 'stash.create.summary_prompt.prompt_help' | translate }}
-                            </div>
-                          </div>
-                          <pa-select
-                            formControlName="prompt_examples"
-                            [dim]="true"
-                            [label]="'stash.create.summary_prompt.examples' | translate"
-                            (valueChange)="setSummaryPrompt($event)">
-                            @for (option of prompt.examples || []; track option) {
-                              <pa-option [value]="option">
-                                {{ option }}
-                              </pa-option>
-                            }
-                          </pa-select>
-                          <pa-textarea
-                            formControlName="prompt"
-                            [rows]="5"
-                            [help]="prompt.info || ''">
-                            {{ prompt.title }}
-                          </pa-textarea>
+                @if (isSummarizationEnabled | async) {
+                  <pa-expander>
+                    <pa-expander-header>
+                      <div class="title-s">{{ 'kb.settings.summary_model.label' | translate }}</div>
+                    </pa-expander-header>
+                    <pa-expander-body>
+                      <div class="model-expander-body fields-container">
+                        <div class="radio-container">
+                          <label
+                            for="summary_model"
+                            class="title-xxs">
+                            {{ 'kb.settings.summary_model.help' | translate }}
+                          </label>
+                          @if (learningConfig['summary_model']?.options; as options) {
+                            <pa-radio-group
+                              formControlName="summary_model"
+                              id="summary_model">
+                              @for (option of options; track option.value) {
+                                <pa-radio [value]="option.value">
+                                  {{ option | learningOption: 'summary_model' }}
+                                </pa-radio>
+                              }
+                            </pa-radio-group>
+                          }
                         </div>
-                      }
-                    }
-                  </div>
+
+                        <div class="radio-container">
+                          <label
+                            for="summary"
+                            class="title-xxs">
+                            {{ 'kb.settings.summary.help' | translate }}
+                          </label>
+                          @if (learningConfig['summary']?.options; as options) {
+                            <pa-radio-group
+                              formControlName="summary"
+                              id="summary">
+                              @for (option of options; track option.value) {
+                                <pa-radio [value]="option.value">
+                                  {{ option | learningOption: 'summary' }}
+                                </pa-radio>
+                              }
+                            </pa-radio-group>
+                          }
+                        </div>
+
+                        @if (learningConfig['summary_prompt'].schema; as summaryPrompt) {
+                          <div
+                            class="fields-container"
+                            [formGroup]="summaryPromptForm">
+                            @if (summaryPrompt.properties['prompt']; as prompt) {
+                              <div class="fields-container small-gap">
+                                <div>
+                                  <div class="title-m">{{ 'kb.settings.summary_prompt.prompt' | translate }}</div>
+                                  <div class="body-s">
+                                    {{ 'kb.settings.summary_prompt.prompt_help' | translate }}
+                                  </div>
+                                  <pa-select
+                                    dim
+                                    formControlName="prompt_examples"
+                                    class="select-with-background"
+                                    [label]="'kb.settings.summary_prompt.examples' | translate"
+                                    (valueChange)="setPrompt('summary', 'prompt', $event)">
+                                    @for (option of prompt.examples || []; track option) {
+                                      <pa-option [value]="option">
+                                        {{ option }}
+                                      </pa-option>
+                                    }
+                                  </pa-select>
+                                </div>
+                                <pa-textarea
+                                  formControlName="prompt"
+                                  resizable
+                                  [rows]="3"
+                                  [help]="prompt.info || ''">
+                                  {{ prompt.title }}
+                                </pa-textarea>
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </pa-expander-body>
+                  </pa-expander>
                 }
               </div>
-            </div>
+            }
           }
 
           <footer>
@@ -226,13 +314,13 @@
               type="submit"
               kind="primary"
               data-cy="save-kb-settings"
-              [disabled]="kbForm.invalid || kbForm.pristine || saving">
+              [disabled]="kbForm.invalid || (kbForm.pristine && configForm.pristine) || saving">
               {{ 'generic.save' | translate }}
             </pa-button>
             <pa-button
               aspect="basic"
-              [disabled]="kbForm.pristine"
-              (click)="initKbForm()">
+              [disabled]="kbForm.pristine && configForm.pristine"
+              (click)="resetForms()">
               {{ 'generic.cancel' | translate }}
             </pa-button>
           </footer>

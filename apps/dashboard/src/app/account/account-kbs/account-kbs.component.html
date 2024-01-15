@@ -28,9 +28,9 @@
               class="icon-button"
               icon="add-user"
               aspect="basic"
-              paTooltip="account.stash.users"
+              paTooltip="account.kb.users"
               (click)="manageKbUsers(kb)">
-              {{ 'account.stash.users' | translate }}
+              {{ 'account.kb.users' | translate }}
             </pa-button>
 
             @if (!!kb.role_on_kb) {
@@ -38,9 +38,9 @@
                 class="icon-button"
                 icon="edit"
                 aspect="basic"
-                paTooltip="account.stash.edit"
+                paTooltip="account.kb.edit"
                 (click)="manageKb(kb)">
-                {{ 'account.stash.edit' | translate }}
+                {{ 'account.kb.edit' | translate }}
               </pa-button>
             }
           }
@@ -53,7 +53,7 @@
               aspect="basic"
               iconAndText
               (click)="retireKb(kb)">
-              {{ 'account.stash.retire' | translate }}
+              {{ 'account.kb.retire' | translate }}
             </pa-button>
 
             <pa-button
@@ -62,7 +62,7 @@
               icon="unlock"
               iconAndText
               (click)="publishKb(kb)">
-              {{ 'account.stash.publish' | translate }}
+              {{ 'account.kb.publish' | translate }}
             </pa-button>
 
             <pa-button
@@ -83,7 +83,7 @@
       <div class="add-kb-container">
         @if (knowledgeBoxes.length > 0 && maxKnowledgeBoxes !== -1) {
           <div class="account-kbs-counter">
-            {{ knowledgeBoxes.length }} {{ 'generic.of' | translate }} {{ maxKnowledgeBoxes }}
+            {{ 'account.kb.count' | translate: { count: knowledgeBoxes.length, max: maxKnowledgeBoxes } }}
           </div>
         }
 
@@ -92,7 +92,7 @@
           data-cy="add-kb"
           [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes && maxKnowledgeBoxes !== -1"
           (click)="addKb(zones, account)">
-          {{ 'account.stash.add' | translate }}
+          {{ 'account.kb.add' | translate }}
         </pa-button>
       </div>
     }

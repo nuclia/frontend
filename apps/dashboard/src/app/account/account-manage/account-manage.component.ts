@@ -8,12 +8,11 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
 import { AccountModification, BillingService, SDKService, SubscriptionStatus } from '@flaps/core';
 import { Account } from '@nuclia/core';
-import { TOPBAR_HEIGHT } from '../../styles/js-variables';
 import { NavigationService, Sluggable } from '@flaps/common';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
@@ -29,20 +28,19 @@ type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 })
 export class AccountManageComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
-  topbarHeight = parseInt(TOPBAR_HEIGHT, 10);
   account: Account | undefined;
   @ViewChildren('section') sections: QueryList<ElementRef> | undefined;
 
   accountForm = this.formBuilder.group({
     uid: [''],
-    slug: [''],
-    title: ['', [Sluggable()]],
+    slug: ['', [Sluggable()]],
+    title: ['', [Validators.required]],
     description: [''],
   });
 
   validationMessages = {
     title: {
-      sluggable: 'account.account_name_invalid',
+      required: 'account.account_name_invalid',
     } as IErrorMessages,
   };
 

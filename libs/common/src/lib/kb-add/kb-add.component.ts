@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { getSemanticModel, SDKService, STFUtils, Zone } from '@flaps/core';
-import { Sluggable } from '../validators';
-import { KnowledgeBoxSettingsService } from '../knowledge-box-settings';
-import { Account, KnowledgeBoxCreation, LearningConfiguration, LearningConfigurations } from '@nuclia/core';
-import * as Sentry from '@sentry/angular';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FeaturesService, SDKService, STFUtils, Zone } from '@flaps/core';
+import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { TranslateService } from '@ngx-translate/core';
+import * as Sentry from '@sentry/angular';
+import { SisToastService } from '@nuclia/sistema';
 
 export interface KbAddData {
   account: Account;
@@ -20,60 +18,53 @@ export interface KbAddData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KbAddComponent implements OnInit {
-  step = 0;
-  kbForm?: UntypedFormGroup;
-  learningConfigurations?: { id: string; data: LearningConfiguration }[];
-  displayedLearningConfigurations?: { id: string; data: LearningConfiguration }[];
+  kbForm = new FormGroup({
+    title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    description: new FormControl<string>('', { nonNullable: true }),
+    zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    anonymization: new FormControl<boolean>(false, { nonNullable: true }),
+  });
+  multilingualSelected = true;
+  languages: string[] = [];
+
   validationMessages: { [key: string]: IErrorMessages } = {
     title: {
-      sluggable: 'stash.kb_name_invalid',
-    } as IErrorMessages,
+      required: 'validation.required',
+    },
   };
   totalSteps = 2;
+  step = 0;
   lastStep = 1;
   saving = false;
   creationInProgress = false;
   failures = 0;
-  error = '';
   zones: Zone[] = [];
   account?: Account;
 
-  multilingualSelected = true;
-  languages: string[] = [];
+  isAnonymizationEnabled = this.features.kbAnonymization;
 
   private _lastStep = 1;
 
   constructor(
     public modal: ModalRef<KbAddData>,
-    private formBuilder: UntypedFormBuilder,
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
-    private translate: TranslateService,
-    private kbSettingsService: KnowledgeBoxSettingsService,
+    private toast: SisToastService,
+    private features: FeaturesService,
   ) {}
 
   ngOnInit(): void {
     this.account = this.modal.config.data?.account;
     this.zones = this.modal.config.data?.zones || [];
-    this.kbSettingsService.getVisibleLearningConfiguration().subscribe(({ display, full }) => {
-      this.displayedLearningConfigurations = display;
-      this.learningConfigurations = full;
-      this.kbForm = this.formBuilder.group({
-        title: ['', [Sluggable()]],
-        description: [''],
-        zone: [this.zones.length === 1 ? this.zones[0].slug : ''],
-        config: this.formBuilder.group(
-          this.displayedLearningConfigurations.reduce(
-            (acc, entry) => {
-              acc[entry.id] = [entry.data.default];
-              return acc;
-            },
-            {} as { [key: string]: any },
-          ),
-        ),
-      });
-      this.cdr.markForCheck();
-    });
+    if (this.zones.length === 1) {
+      this.kbForm.controls.zone.patchValue(this.zones[0].slug);
+    }
+  }
+
+  updateLanguages(data: { multilingualSelected: boolean; languages: string[] }) {
+    this.multilingualSelected = data.multilingualSelected;
+    this.languages = data.languages;
+    this.cdr.markForCheck();
   }
 
   save() {
@@ -81,46 +72,24 @@ export class KbAddComponent implements OnInit {
     if (this.step < this._lastStep) {
       this.next();
       return;
+    } else if (this.kbForm.invalid || !this.account) {
+      return;
     }
 
-    if (!this.kbForm || this.kbForm.invalid || !this.account) return;
-
-    const default_learning_configuration = (this.learningConfigurations || []).reduce(
-      (acc, entry) => {
-        acc[entry.id] = entry.data.default;
-        return acc;
-      },
-      {} as { [key: string]: string },
-    );
-    const formValue = this.kbForm.getRawValue();
-    const learning_configuration = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
-      acc[entry.id] = formValue.config[entry.id];
-      return acc;
-    }, default_learning_configuration);
-
-    const learningConf = (this.learningConfigurations || []).reduce((acc, entry) => {
-      acc[entry.id] = entry.data;
-      return acc;
-    }, {} as LearningConfigurations);
-    learning_configuration['semantic_model'] = getSemanticModel(
-      {
-        languages: this.languages,
-        multilingual: this.multilingualSelected,
-      },
-      learningConf,
-    );
-
-    const payload: KnowledgeBoxCreation = {
-      slug: STFUtils.generateSlug(formValue.title),
-      title: formValue.title,
-      description: formValue.description,
-      learning_configuration,
-    };
     this.saving = true;
+    const kbConfig = this.kbForm.getRawValue();
+    const payload: KnowledgeBoxCreation = {
+      slug: STFUtils.generateSlug(kbConfig.title),
+      title: kbConfig.title,
+      description: kbConfig.description,
+      learning_configuration: {
+        anonymization_model: kbConfig.anonymization ? 'multilingual' : 'disabled',
+      },
+    };
+
     const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
-    this.error = '';
-    this.cdr?.markForCheck();
-    this.sdk.nuclia.db.createKnowledgeBox(this.account.id, payload, formValue.zone).subscribe({
+    this.cdr.markForCheck();
+    this.sdk.nuclia.db.createKnowledgeBox(this.account.id, payload, kbConfig.zone).subscribe({
       next: () => {
         clearTimeout(inProgressTimeout);
         this.modal.close({ success: true });
@@ -131,12 +100,12 @@ export class KbAddComponent implements OnInit {
         this.saving = false;
         this.creationInProgress = false;
         if (this.failures < 4) {
-          this.error = 'stash.create.error';
+          this.toast.error('kb.create.error');
         } else {
           Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
           this.modal.close({ success: false });
         }
-        this.cdr?.markForCheck();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -147,17 +116,11 @@ export class KbAddComponent implements OnInit {
 
   next() {
     this.step++;
-    this.cdr?.markForCheck();
+    this.cdr.markForCheck();
   }
 
   back() {
     this.step--;
-    this.cdr?.markForCheck();
-  }
-
-  updateLanguages(data: { multilingualSelected: boolean; languages: string[] }) {
-    this.multilingualSelected = data.multilingualSelected;
-    this.languages = data.languages;
     this.cdr.markForCheck();
   }
 }

@@ -7,7 +7,7 @@ import { FeaturesService, STFUtils } from '@flaps/core';
 import { LabelSetKind, LabelSets } from '@nuclia/core';
 import { EMPTY_LABEL_SET, LabelSetCounts, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
-import { noDuplicateListItemsValidator, Sluggable } from '../../../validators';
+import { noDuplicateListItemsValidator } from '../../../validators';
 import { LabelsService } from '../../labels.service';
 import { LABEL_COLORS } from '@nuclia/sistema';
 
@@ -26,7 +26,7 @@ export class LabelSetComponent implements OnDestroy {
   @ViewChild('labelList', { read: ElementRef }) labelListElement?: ElementRef;
 
   labelSetForm = new FormGroup({
-    title: new FormControl<string>('', { validators: [Validators.required, Sluggable()], nonNullable: true }),
+    title: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
     kind: new FormControl<LabelSetKind | undefined>(undefined, { validators: [Validators.required] }),
     exclusive: new FormControl<boolean>(false),
     labels: new FormControl<string>('', {
@@ -49,7 +49,6 @@ export class LabelSetComponent implements OnDestroy {
   validationMessages = {
     title: {
       required: 'label-set.form.name-required',
-      sluggable: 'label-set.form.name-invalid',
     },
     labels: {
       pattern: 'label-set.form.labels.naming-constraint',
