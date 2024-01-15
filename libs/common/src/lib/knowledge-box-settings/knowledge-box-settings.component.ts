@@ -71,7 +71,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;
   isAnonymizationEnabled = this.features.kbAnonymization;
   isSummarizationEnabled = this.features.summarization;
-  isUserPromptEnabled = this.features.userPrompts;
+  isUserPromptsEnabled = this.features.userPrompts;
   isPdfAnnotationEnabled = this.features.pdfAnnotation;
 
   // accessors

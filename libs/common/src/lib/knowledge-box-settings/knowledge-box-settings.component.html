@@ -36,7 +36,7 @@
             {{ 'generic.description' | translate }}
           </pa-textarea>
 
-          @if (kb.state.toLowerCase(); as state) {
+          @if (kb?.state?.toLowerCase(); as state) {
             <div class="kb-status">
               <h3
                 class="title-m"
@@ -115,8 +115,8 @@
                         }
                       </div>
 
-                      @if (isEnterpriseOrGrowth | async) {
-                        @if (learningConfig['user_keys'].schemas[currentGenerativeModelPrompt]; as userKeys) {
+                      @if ((isEnterpriseOrGrowth | async) && currentGenerativeModelPrompt) {
+                        @if (learningConfig['user_keys'].schemas?.[currentGenerativeModelPrompt]; as userKeys) {
                           <pa-toggle
                             labelOnRight
                             [(value)]="hasOwnKey"
@@ -129,7 +129,7 @@
                               class="fields-container small-gap"
                               [formGroup]="userKeysGroup">
                               @for (field of userKeys.properties | keyvalue; track field.key) {
-                                @if (field.value.widget === 'textarea') {
+                                @if (field.value['widget'] === 'textarea') {
                                   <pa-textarea
                                     resizable
                                     [formControlName]="field.key"
@@ -150,8 +150,8 @@
                         }
                       }
 
-                      @if (isUserPromptsEnabled | async) {
-                        @if (learningConfig['user_prompts'].schemas[currentGenerativeModelPrompt]; as userPrompt) {
+                      @if ((isUserPromptsEnabled | async) && currentGenerativeModelPrompt) {
+                        @if (learningConfig['user_prompts'].schemas?.[currentGenerativeModelPrompt]; as userPrompt) {
                           <div
                             class="fields-container"
                             [formGroup]="userPromptForm">
