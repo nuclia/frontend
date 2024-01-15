@@ -127,10 +127,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     if (this.kb) {
       this.kbForm.patchValue({
         uid: this.kb.id,
-        zone: this.kb.zone,
+        zone: this.kb.zone || '',
         slug: this.kb.slug,
         title: this.kb.title,
-        description: this.kb.description,
+        description: this.kb.description || '',
       });
     }
   }
