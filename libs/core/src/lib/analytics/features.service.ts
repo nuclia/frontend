@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { SDKService } from '../api/sdk.service';
+import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FeaturesService {
-  private enterpriseOrGrowth = this.sdk.currentAccount.pipe(
+  isEnterpriseOrGrowth = this.sdk.currentAccount.pipe(
     map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
   );
 
@@ -33,13 +33,12 @@ export class FeaturesService {
   sync = this.featureFlag.isFeatureEnabled('sync');
 
   // user-prompts and summarization are always enabled for growth and enterprise accounts
-  // but are still managed as a feature flagged feature for other account types
-  // so we can enable it specifically for some accounts through the `variants` field
-  // in `status/features-v2.json`
-  userPrompts = combineLatest([this.featureFlag.isFeatureEnabled('user-prompts'), this.enterpriseOrGrowth]).pipe(
+  // but are still managed as a feature flagged feature for other account types, so we can enable it specifically for some accounts
+  // through the `variants` field in `status/features-v2.json`
+  userPrompts = combineLatest([this.featureFlag.isFeatureEnabled('user-prompts'), this.isEnterpriseOrGrowth]).pipe(
     map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth),
   );
-  summarization = combineLatest([this.featureFlag.isFeatureEnabled('summarization'), this.enterpriseOrGrowth]).pipe(
+  summarization = combineLatest([this.featureFlag.isFeatureEnabled('summarization'), this.isEnterpriseOrGrowth]).pipe(
     map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth),
   );
 

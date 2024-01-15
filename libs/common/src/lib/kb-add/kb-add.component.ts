@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SDKService, STFUtils, Zone } from '@flaps/core';
-import { KnowledgeBoxSettingsService } from '../knowledge-box-settings';
+import { FeaturesService, SDKService, STFUtils, Zone } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import * as Sentry from '@sentry/angular';
@@ -42,7 +41,7 @@ export class KbAddComponent implements OnInit {
   zones: Zone[] = [];
   account?: Account;
 
-  isAnonymizationEnabled = this.kbSettingsService.isAnonymizationEnabled;
+  isAnonymizationEnabled = this.features.kbAnonymization;
 
   private _lastStep = 1;
 
@@ -51,7 +50,7 @@ export class KbAddComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
     private toast: SisToastService,
-    private kbSettingsService: KnowledgeBoxSettingsService,
+    private features: FeaturesService,
   ) {}
 
   ngOnInit(): void {

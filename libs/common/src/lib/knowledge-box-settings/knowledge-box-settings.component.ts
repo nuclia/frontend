@@ -2,25 +2,13 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, forkJoin, Observable, of, Subject } from 'rxjs';
 import { catchError, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { SDKService, STFUtils } from '@flaps/core';
-import {
-  LearningConfigurations,
-  LearningConfigurationSet,
-  LearningConfigurationUserKeys,
-  WritableKnowledgeBox,
-} from '@nuclia/core';
+import { FeaturesService, SDKService, STFUtils } from '@flaps/core';
+import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { KnowledgeBoxSettingsService } from './knowledge-box-settings.service';
 import { Sluggable } from '../validators';
-
-const EMPTY_CONFIG = {
-  display: [] as LearningConfigurationSet,
-  full: [] as LearningConfigurationSet,
-  keys: {} as LearningConfigurationUserKeys,
-};
 
 @Component({
   templateUrl: './knowledge-box-settings.component.html',
@@ -80,11 +68,11 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   updateGenerativeExpanderHeight = new Subject<string | boolean | undefined>();
 
   // permissions
-  isEnterpriseOrGrowth = this.settingService.isEnterpriseOrGrowth;
-  isAnonymizationEnabled = this.settingService.isAnonymizationEnabled;
-  isPdfAnnotationEnabled = this.settingService.isPdfAnnotationEnabled;
-  isUserPromptsEnabled = this.settingService.isUserPromptEnabled;
-  isSummarizationEnabled = this.settingService.isSummarizationEnabled;
+  isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;
+  isAnonymizationEnabled = this.features.kbAnonymization;
+  isSummarizationEnabled = this.features.summarization;
+  isUserPromptEnabled = this.features.userPrompts;
+  isPdfAnnotationEnabled = this.features.pdfAnnotation;
 
   // accessors
   get generativeModelValue() {
@@ -103,7 +91,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   saving = false;
 
   constructor(
-    private settingService: KnowledgeBoxSettingsService,
+    private features: FeaturesService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -120,7 +108,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
           this.resetKbForm();
           this.cdr.markForCheck();
         }),
-        switchMap((kb) => forkJoin([kb.getConfiguration(), this.settingService.getLearningConfiguration()])),
+        switchMap((kb) => forkJoin([kb.getConfiguration(), this.sdk.nuclia.db.getLearningConfigurations()])),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(([kbConfig, learningSchema]) => {
