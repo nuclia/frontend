@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
 import { GETTING_STARTED_DONE_KEY, OnboardingPayload, OnboardingStatus, OnboardingStep } from './onboarding.models';
-import { BehaviorSubject, catchError, map, Observable, of, switchMap } from 'rxjs';
-import { AccountAndKbConfiguration, getSemanticModel, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
+import { BehaviorSubject, catchError, map, mapTo, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  AccountAndKbConfiguration,
+  getSemanticModel,
+  SDKService,
+  STFTrackingService,
+  STFUtils,
+  UserService,
+} from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
@@ -31,6 +38,7 @@ export class OnboardingService {
     private tracking: STFTrackingService,
     private toaster: SisToastService,
     private translate: TranslateService,
+    private user: UserService,
   ) {}
 
   saveOnboardingInquiry(payload: OnboardingPayload) {
@@ -88,6 +96,7 @@ export class OnboardingService {
               }),
             ),
         ),
+        switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
         switchMap(({ accountSlug, accountId }) => {
           this.sdk.nuclia.options.zone = configuration.zoneSlug;
           return this.sdk.nuclia.db
