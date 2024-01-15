@@ -70,7 +70,8 @@
             <pa-toggle
               formControlName="anonymization"
               labelOnRight
-              [help]="'kb.settings.anonymization_toggle.help' | translate">
+              [help]="'kb.settings.anonymization_toggle.help' | translate"
+              (valueChange)="updateKbFormTouchedState()">
               {{ 'kb.settings.anonymization_toggle.label' | translate }}
             </pa-toggle>
           }
@@ -79,7 +80,8 @@
               <pa-toggle
                 formControlName="pdf_annotation"
                 labelOnRight
-                [help]="'kb.settings.pdf_annotation_toggle.help' | translate">
+                [help]="'kb.settings.pdf_annotation_toggle.help' | translate"
+                (valueChange)="updateKbFormTouchedState()">
                 {{ 'kb.settings.pdf_annotation_toggle.label' | translate }}
               </pa-toggle>
             }

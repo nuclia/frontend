@@ -87,6 +87,12 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   get zoneValue() {
     return this.kbForm.controls.zone.value;
   }
+  get anonymizationValue() {
+    return this.kbForm.controls.anonymization.value;
+  }
+  get pdfAnnotationValue() {
+    return this.kbForm.controls.pdf_annotation.value;
+  }
   get generativeModelValue() {
     return this.configForm.controls.generative_model.value;
   }
@@ -109,7 +115,6 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         tap((kb) => {
           this.kb = kb;
           this.resetKbForm();
-          this.cdr.markForCheck();
         }),
         switchMap((kb) => forkJoin([kb.getConfiguration(), this.sdk.nuclia.db.getLearningConfigurations()])),
         takeUntil(this.unsubscribeAll),
@@ -126,6 +131,18 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
+  updateKbFormTouchedState() {
+    if (!this.kbConfigBackup) {
+      return;
+    }
+    if (
+      this.anonymizationValue !== (this.kbConfigBackup['anonymization_model'] === 'multilingual') ||
+      this.pdfAnnotationValue !== (this.kbConfigBackup['visual_labeling'] !== 'disabled')
+    ) {
+      this.kbForm.markAsDirty();
+    }
+  }
+
   private resetKbForm() {
     if (this.kb) {
       this.kbForm.patchValue({
@@ -135,6 +152,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         title: this.kb.title,
         description: this.kb.description || '',
       });
+      this.kbForm.markAsPristine();
+      this.cdr.markForCheck();
     }
   }
   private resetConfigForm() {
@@ -160,6 +179,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         }
       }
       this.summaryPromptForm.patchValue(kbConfig['summary_prompt']);
+      setTimeout(() => {
+        this.configForm.markAsPristine();
+        this.cdr.markForCheck();
+      });
     }
   }
 
@@ -225,6 +248,9 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       this.currentGenerativeModelKey && this.hasOwnKey
         ? { [this.currentGenerativeModelKey]: kbConfig['user_keys'] }
         : {};
+    kbConfig['user_prompts'] = this.currentGenerativeModelPrompt
+      ? { [this.currentGenerativeModelPrompt]: kbConfig['user_prompts'] }
+      : {};
 
     const newSlug = STFUtils.generateSlug(kbDetails.slug);
     const oldSlug = kbBackup.slug || '';
