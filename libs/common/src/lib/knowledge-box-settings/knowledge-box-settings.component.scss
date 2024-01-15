@@ -5,67 +5,69 @@
     width: rhythm(80);
   }
 
-  pa-input,
-  pa-textarea {
-    display: block;
+  .fields-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(3);
     margin-bottom: rhythm(3);
+  }
+
+  .fields-container.small-gap {
+    gap: rhythm(2);
   }
 
   .kb-status {
     h3 {
       margin-bottom: rhythm(1);
     }
-    pa-button {
-      margin-top: rhythm(1);
-    }
   }
 
-  .config {
-    $gap-between-fields: rhythm(6);
+  .models-section-title {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
 
-    margin-top: $gap-between-fields;
+  .model-expander-body {
+    padding: rhythm(1) rhythm(2) rhythm(3);
+  }
 
-    .header {
-      margin-bottom: rhythm(3);
-      h3 {
-        margin-bottom: rhythm(1);
-      }
+  .radio-container {
+    label.title-xxs {
+      display: block;
+      margin-bottom: rhythm(0.5);
+    }
+    .body-s {
+      margin-bottom: rhythm(0.5);
     }
 
     pa-radio-group {
-      &.two-columns {
-        columns: 2;
-        pa-radio {
-          break-inside: avoid;
-        }
+      max-height: rhythm(10);
+      flex-wrap: wrap;
+      pa-radio {
+        break-inside: avoid;
       }
     }
+  }
 
-    .user-keys {
-      display: flex;
-      flex-direction: column;
-      gap: rhythm(2);
-      margin-top: $gap-between-fields;
-    }
+  .select-with-background {
+    display: block;
+    margin-top: rhythm(1);
 
-    .user-prompts {
-      margin-top: rhythm(4);
-      pa-select {
-        display: block;
-        margin-bottom: rhythm(2);
-        ::ng-deep .pa-field .pa-field-control {
-          background-color: $color-neutral-lightest;
-        }
-      }
-      pa-textarea {
-        margin: 0;
-      }
+    ::ng-deep .pa-field .pa-field-control {
+      background-color: $color-neutral-lightest;
     }
   }
 
   footer {
+    background: $color-light-stronger;
+    bottom: 0;
+    box-shadow: $box-shadow-border-top;
     display: flex;
     gap: rhythm(1);
-    margin-top: rhythm(7);
+    margin-top: rhythm(4);
+    padding: rhythm(3) 0 rhythm(2);
+    position: sticky;
+    z-index: 1;
   }
 }

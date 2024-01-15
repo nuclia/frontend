@@ -120,13 +120,23 @@
               <pre><code>{{ slug | async }}</code></pre>
             </div>
           </div>
-          @if ((configuration | async)?.['generative_model']; as model) {
-            <div>
-              <div class="title-xxs">{{ 'dashboard-home.kb-details.generative-model' | translate }}</div>
-              <div class="body-s">
-                {{ 'stash.config.option.' + model | translate }}
+          @if (configuration | async; as config) {
+            @if (config['generative_model']; as model) {
+              <div>
+                <div class="title-xxs">{{ 'dashboard-home.kb-details.generative-model' | translate }}</div>
+                <div class="body-s">
+                  {{ 'kb.settings.generative_model.options.' + model | translate }}
+                </div>
               </div>
-            </div>
+            }
+            @if (config['semantic_model']; as semanticModel) {
+              <div>
+                <div class="title-xxs">{{ 'kb.settings.semantic.label' | translate }}</div>
+                <div class="body-s">
+                  {{ semanticModel }}
+                </div>
+              </div>
+            }
           }
           <div class="title-xxs">
             {{ (stateLabel | async) || '' | translate }}

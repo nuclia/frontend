@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
 import {
   LearningConfiguration,
+  LearningConfigurations,
   LearningConfigurationSet,
   LearningConfigurationUserKeys,
   SUMMARY_PROMPT,
@@ -14,14 +15,20 @@ import { FeaturesService, SDKService } from '@flaps/core';
   providedIn: 'root',
 })
 export class KnowledgeBoxSettingsService {
+  isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;
   isAnonymizationEnabled = this.features.kbAnonymization;
   isSummarizationEnabled = this.features.summarization;
+  isUserPromptEnabled = this.features.userPrompts;
   isPdfAnnotationEnabled = this.features.pdfAnnotation;
 
   constructor(
     private sdk: SDKService,
     private features: FeaturesService,
   ) {}
+
+  getLearningConfiguration(): Observable<LearningConfigurations> {
+    return this.sdk.nuclia.db.getLearningConfigurations();
+  }
 
   getVisibleLearningConfiguration(onCreation = true): Observable<{
     display: LearningConfigurationSet;

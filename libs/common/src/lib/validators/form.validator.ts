@@ -1,10 +1,10 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { STFUtils } from '@flaps/core';
 
-export function Sluggable(): ValidatorFn {
+const forbiddenSlugPattern = new RegExp(/[^\w-_]+/g);
+export function Sluggable(kbSlug = false): ValidatorFn {
   return (control: AbstractControl) => {
-    const validSlug = STFUtils.generateSlug(control.value).length > 0;
-    return validSlug ? null : { sluggable: true };
+    const forbidden = forbiddenSlugPattern.test(control.value);
+    return forbidden ? { sluggable: kbSlug ? 'kb.invalid-slug' : 'validation.invalid-slug' } : null;
   };
 }
 

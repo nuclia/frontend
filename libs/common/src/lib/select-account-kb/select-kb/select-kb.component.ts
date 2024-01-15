@@ -7,7 +7,6 @@ import { SDKService, STFUtils, ZoneService } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { Sluggable } from '../../validators';
 import { NavigationService } from '../../services';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { KbAddComponent } from '../../kb-add';
@@ -39,9 +38,9 @@ export class SelectKbComponent implements OnDestroy {
       );
   addKb: boolean = false;
   newKbForm = new FormGroup({
-    kbName: new FormControl<string>('', { nonNullable: true, validators: [Sluggable(), Validators.required] }),
+    kbName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
-  errorMessages: IErrorMessages = { sluggable: 'stash.kb_name_invalid' } as IErrorMessages;
+  errorMessages: IErrorMessages = { required: 'validation.required' } as IErrorMessages;
   creatingKb = false;
 
   constructor(
