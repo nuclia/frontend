@@ -75,9 +75,6 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   isPdfAnnotationEnabled = this.features.pdfAnnotation;
 
   // accessors
-  get generativeModelValue() {
-    return this.configForm.controls.generative_model.value;
-  }
   get userPromptForm() {
     return this.configForm.controls.user_prompts;
   }
@@ -86,6 +83,12 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
   get userKeysGroup() {
     return this.configForm.controls.user_keys;
+  }
+  get zoneValue() {
+    return this.kbForm.controls.zone.value;
+  }
+  get generativeModelValue() {
+    return this.configForm.controls.generative_model.value;
   }
 
   saving = false;
