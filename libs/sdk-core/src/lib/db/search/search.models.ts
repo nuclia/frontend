@@ -168,7 +168,12 @@ export namespace Search {
   export interface Suggestions {
     type: 'suggestions';
     paragraphs?: Paragraphs;
-    entities?: { total?: number; entities?: string[] };
+    entities?: EntitySuggestions;
+  }
+
+  export interface EntitySuggestions {
+    total?: number;
+    entities?: { value: string; family: string }[];
   }
 
   export interface Sentences extends Pagination {

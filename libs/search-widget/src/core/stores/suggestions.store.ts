@@ -62,7 +62,7 @@ export const suggestedLabels: Observable<Classification[]> = suggestionState.rea
 );
 
 export const suggestedEntities = suggestionState.reader<string[]>((state) =>
-  (state.suggestions.results.entities?.entities || []).slice(0, MAX_ENTITIES),
+  (state.suggestions.results.entities?.entities || []).slice(0, MAX_ENTITIES).map((suggestion) => suggestion.value),
 );
 
 export const hasSuggestions: Observable<boolean> = combineLatest([
@@ -77,7 +77,7 @@ export const hasSuggestions: Observable<boolean> = combineLatest([
 );
 
 export const selectedEntity = suggestionState.reader<string>(
-  (state) => state.suggestions.results.entities?.entities?.[state.selectedEntity] || '',
+  (state) => state.suggestions.results.entities?.entities?.[state.selectedEntity]?.value || '',
 );
 
 export const selectNextEntity = suggestionState.action((state) => {
@@ -99,5 +99,5 @@ export const autocomplete = (suggestion: string) => {
   const index = query.lastIndexOf(words[words.length - 1]);
   query = query.substring(0, index) + suggestion;
   typeAhead.set(query);
-  suggestions.set({ results: NO_SUGGESTION_RESULTS, selectedEntity: undefined });
+  suggestions.set({ results: NO_SUGGESTION_RESULTS });
 };
