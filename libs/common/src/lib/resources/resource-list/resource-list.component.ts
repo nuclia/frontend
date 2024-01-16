@@ -13,13 +13,13 @@ import { filter, Subject } from 'rxjs';
 import { debounceTime, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
-import { SampleDatasetService } from '../sample-dataset';
 import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { UploadService } from '../../upload/upload.service';
 import { NavigationService } from '../../services';
 import { openDesktop } from '../../utils';
 import { ResourceListService } from './resource-list.service';
+import { SampleDatasetService } from '../sample-dataset.service';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
@@ -67,10 +67,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   currentKb = this.sdk.currentKb;
-  isMonoLingual = this.sdk.currentKb.pipe(
-    switchMap((kb) => kb.getConfiguration()),
-    map((config) => config['semantic_model'] === 'en'),
-  );
   isAdminOrContrib = this.sdk.isAdminOrContrib;
 
   searchForm = new FormGroup({
