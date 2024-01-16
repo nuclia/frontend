@@ -1,4 +1,8 @@
-# 1.10.1 (unrelease)
+# 1.11.0 (unrelease)
+
+### Breaking changes
+
+- The `/suggest`endpoint now returns the family of each suggested entity
 
 ### Improvements
 
