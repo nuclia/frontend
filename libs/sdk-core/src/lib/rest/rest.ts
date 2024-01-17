@@ -1,4 +1,4 @@
-import { from, map, Observable, of, switchMap } from 'rxjs';
+import { from, map, Observable, of, Subscriber, switchMap } from 'rxjs';
 import type { INuclia, IRest } from '../models';
 
 /**
@@ -221,14 +221,87 @@ export class Rest implements IRest {
     );
   }
 
-  getStream(path: string, body: unknown): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }> {
+  /**
+   * Call an endpoint streaming its response by batch of data,
+   * concatenate the data with the batch received previously until the response is marked as completed and then close the connection.
+   * @param path
+   * @param body body to be passed as parameter to the POST request made
+   */
+  getStreamedResponse(
+    path: string,
+    body: unknown,
+  ): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }> {
     path = this.getFullUrl(path);
     return new Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>((observer) => {
       fetch(path, {
         method: 'POST',
-        headers: this.getHeaders('POST', path, undefined),
+        headers: this.getHeaders('POST', path),
         body: JSON.stringify(body),
-      }).then((res) => {
+      }).then(
+        (res) => {
+          const reader = res.body?.getReader();
+          const headers = res.headers;
+          const status = res.status;
+          if (!reader || !res.ok) {
+            observer.error({ status });
+            observer.complete();
+          } else {
+            let data = new Uint8Array();
+            const readMore = () => {
+              reader.read().then(
+                ({ done, value }) => {
+                  if (done) {
+                    observer.next({ data, incomplete: false, headers });
+                    observer.complete();
+                  }
+                  if (value) {
+                    data = this.concat(data, value);
+                    observer.next({ data, incomplete: true, headers });
+                    readMore();
+                  }
+                },
+                (reason) => {
+                  observer.error(reason);
+                  observer.complete();
+                },
+              );
+            };
+            readMore();
+          }
+        },
+        (reason) => {
+          observer.error(reason);
+          observer.complete();
+        },
+      );
+    });
+  }
+
+  /**
+   * Call a long polling HTTP endpoint streaming its response until the connection times out.
+   * This method is keeping the connection alive by calling the endpoint again when it times out until the provided controller receives an abort signal
+   * (or if the endpoint returns an error unrelated to the timeout).
+   *
+   * @param path
+   * @param controller
+   */
+  getStreamMessages(path: string, controller: AbortController): Observable<{ data: Uint8Array; headers: Headers }> {
+    path = this.getFullUrl(path);
+    return new Observable<{ data: Uint8Array; headers: Headers }>((observer) =>
+      this.fetchStream(path, observer, controller),
+    );
+  }
+
+  private fetchStream(
+    path: string,
+    observer: Subscriber<{
+      data: Uint8Array;
+      headers: Headers;
+    }>,
+    controller: AbortController,
+  ) {
+    fetch(path, { method: 'GET', headers: this.getHeaders('GET', path), signal: controller.signal }).then(
+      (res) => {
         const reader = res.body?.getReader();
         const headers = res.headers;
         const status = res.status;
@@ -236,24 +309,31 @@ export class Rest implements IRest {
           observer.error({ status });
           observer.complete();
         } else {
-          let data = new Uint8Array();
           const readMore = () => {
-            reader.read().then(({ done, value }) => {
-              if (done) {
-                observer.next({ data, incomplete: false, headers });
+            reader.read().then(
+              ({ value }) => {
+                if (value) {
+                  observer.next({ data: value, headers });
+                  readMore();
+                } else {
+                  // when the stream is timing out, we get an undefined value
+                  this.fetchStream(path, observer, controller);
+                }
+              },
+              (reason) => {
+                observer.error(reason);
                 observer.complete();
-              }
-              if (value) {
-                data = this.concat(data, value);
-                observer.next({ data, incomplete: true, headers });
-                readMore();
-              }
-            });
+              },
+            );
           };
           readMore();
         }
-      });
-    });
+      },
+      (reason) => {
+        observer.error(reason);
+        observer.complete();
+      },
+    );
   }
 
   private concat(arr1: Uint8Array, arr2: Uint8Array) {

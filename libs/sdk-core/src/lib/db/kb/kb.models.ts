@@ -4,6 +4,7 @@ import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } fro
 import type { Chat, ChatOptions, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
 import type { ResourceProperties } from '../db.models';
+import { NotificationMessage } from '../notifications';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -142,6 +143,10 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   getConfiguration(): Observable<{ [id: string]: any }>;
 
   getUsers(accountSlug: string): Observable<FullKbUser[]>;
+
+  listenToAllNotifications(): Observable<NotificationMessage[]>;
+  listenToProcessingNotifications(): Observable<{ resourceId: string; success: boolean }[]>;
+  stopListeningToNotifications(): void;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {

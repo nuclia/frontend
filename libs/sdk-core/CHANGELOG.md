@@ -1,3 +1,9 @@
+# 1.11.3 (unreleased)
+
+### Improvements
+
+- Support Knowledge Box notification endpoint
+
 # 1.11.2 (2024-01-25)
 
 ### Improvements
