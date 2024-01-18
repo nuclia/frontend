@@ -69,7 +69,7 @@
       if (result.field) {
         const resourceField: ResourceField = { ...result.field, ...result.fieldData };
         return toFile || toLink
-          ? getNavigationUrl(toFile, toLink, result, resourceField).pipe(map((url) => url || undefined))
+          ? getNavigationUrl(toFile, toLink, result, resourceField)
           : of(undefined);
       }
       return of(undefined);

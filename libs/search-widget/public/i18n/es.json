@@ -1,10 +1,9 @@
 {
-	"answer.chat-action": "Chatea con tus documentos",
+	"answer.chat-action": "Preguntar más",
 	"answer.error.rephrasing": "Lo siento, no puedo procesar esta pregunta, tal vez reformularla ayudaría.",
 	"answer.input.label": "Entrada de chat",
 	"answer.placeholder": "Charlemos",
-	"answer.sources": "Basado en estas fuentes",
-	"answer.sources-mobile": "Fuentes",
+	"answer.sources": "Fuentes",
 	"answer.title": "Respuesta",
 	"entities.annotated": "Anotaciones",
 	"entities.annotations": "Anotaciones",

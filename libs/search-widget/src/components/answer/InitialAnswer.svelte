@@ -1,11 +1,8 @@
 <script lang="ts">
-  import Icon from '../../common/icons/Icon.svelte';
   import { _ } from '../../core/i18n';
   import { chatError, firstAnswer, isServiceOverloaded, resetChat } from '../../core/stores/answers.store';
   import Answer from './Answer.svelte';
   import Chat from './Chat.svelte';
-  import Feedback from './Feedback.svelte';
-  import { Button } from '../../common';
   import { trackingEngagement } from '../../core/stores/search.store';
 
   let showChat = false;
@@ -31,28 +28,12 @@
         {$_('error.search')}
       {/if}
     {:else}
-      <div class="container">
-        <div class="actions">
-          <Button
-            aspect="basic"
-            size="small"
-            on:click={openChat}>
-            <span class="go-to-chat">
-              <Icon name="chat" />
-              {$_('answer.chat-action')}
-            </span>
-          </Button>
-          <div class="feedback">
-            <Feedback rank={0} />
-          </div>
-        </div>
-        <div class="answer">
-          <Answer
-            answer={$firstAnswer}
-            rank={0}
-            hideFeedback={true} />
-        </div>
-      </div>
+      <h3 class="title-s">{$_('answer.title')}</h3>
+      <Answer
+        answer={$firstAnswer}
+        rank={0}
+        initialAnswer={true}
+        on:openChat={openChat} />
     {/if}
   </div>
 {/if}
