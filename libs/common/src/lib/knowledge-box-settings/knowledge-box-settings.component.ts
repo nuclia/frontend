@@ -276,6 +276,18 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
           }),
         ),
         switchMap(() =>
+          this.isSummarizationEnabled.pipe(
+            take(1),
+            tap((isSummarizationEnabled) => {
+              if (!isSummarizationEnabled) {
+                delete kbConfig['summary'];
+                delete kbConfig['summary_model'];
+                delete kbConfig['summary_prompt'];
+              }
+            }),
+          ),
+        ),
+        switchMap(() =>
           kbBackup.setConfiguration(kbConfig).pipe(
             tap(() => this.toast.success(this.translate.instant('kb.settings.toasts.success'))),
             catchError(() => {
