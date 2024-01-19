@@ -138,8 +138,8 @@ export class SelectFilesComponent implements AfterViewInit {
         // Add empty item just to trigger sitemap synchronization
         this.selection.setSelection({
           uuid: '',
-          title: '',
-          originalId: '',
+          title: 'Sitemap',
+          originalId: 'SITEMAP',
           metadata: {},
           status: FileStatus.PENDING,
         });
