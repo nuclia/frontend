@@ -1,0 +1,37 @@
+.sw-sources {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-3);
+  width: 100%;
+
+  .source {
+    display: flex;
+    gap: var(--rhythm-1);
+  }
+  .number {
+    background-color: var(--color-primary-lightest);
+    flex-shrink: 0;
+    height: var(--rhythm-2_5);
+    text-align: center;
+    width: var(--rhythm-2_5);
+  }
+  .paragaph {
+    width: calc(100% - var(--rhythm-2_5) - var(--rhythm-1));
+  }
+  .paragraph-text:hover {
+    background-color: var(--color-neutral-lightest);
+    cursor: pointer;
+  }
+  .resource-title {
+    font-style: italic;
+    margin-top: var(--rhythm-0_5);
+  }
+}
+
+@media (min-width: 599px) {
+  .sw-sources .resource-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

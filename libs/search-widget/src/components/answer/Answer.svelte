@@ -1,106 +1,88 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
-  import Expander from '../../common/expander/Expander.svelte';
   import Feedback from './Feedback.svelte';
-  import type { Chat, Citations, Search } from '@nuclia/core';
-  import { getSortedResults } from '../../core/stores/search.store';
+  import type { Chat, Citations, FieldId, Search } from '@nuclia/core';
+  import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
   import { createEventDispatcher } from 'svelte';
-  import { isMobileViewport } from '../../common/utils';
-  import ResultRow from '../result-row/ResultRow.svelte';
-  import { hideSources } from '../../core/stores/widget.store';
-  import { resource, type TypedResult } from '../../core';
+  import { Button, Expander } from '../../common';
+  import Sources from './Sources.svelte';
+  import { getFieldDataFromResource, getResultType, type TypedResult } from '../../core';
+
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
-  export let hideFeedback = false;
+  export let initialAnswer = false;
   let text = '';
-  let innerWidth = window.innerWidth;
 
   const dispatch = createEventDispatcher();
   const NEWLINE = new RegExp(/\n/g);
   $: text = answer.text?.replace(NEWLINE, '<br>') || '';
   $: notEnoughData = text === 'Not enough data to answer this.';
-  $: isMobile = isMobileViewport(innerWidth);
 
-  const sources = answer.sources?.resources
-    ? getSortedResults(removeNotCitedContent(Object.values(answer.sources?.resources), answer.citations))
-    : [];
+  const sources =
+    answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
 
-  function removeNotCitedContent(resources: Search.FindResource[], citations?: Citations) {
-    if (!citations || Object.keys(citations).length === 0) {
-      return resources;
-    }
-    const citedParagraphs = Object.keys(citations);
-    const citedResources = citedParagraphs.reduce((acc, paragraphId) => {
-      const resId = paragraphId.split('/')[0];
-      if (!acc.includes(resId)) {
-        acc.push(resId);
-      }
-      return acc;
-    }, [] as string[]);
-
-    return (
-      resources
-        // Remove resources that are not cited
-        .filter((resource) => citedResources.includes(resource.id))
-        // Remove paragraphs that are not cited
-        .map((resource) => ({
-          ...resource,
-          fields: Object.entries(resource.fields).reduce(
-            (allFields, [fieldId, field]) => {
-              allFields[fieldId] = {
-                ...field,
-                paragraphs: Object.entries(field.paragraphs).reduce(
-                  (allParagraphs, [paragraphId, paragraph]) => {
-                    if (citedParagraphs.includes(paragraphId)) {
-                      allParagraphs[paragraphId] = paragraph;
-                    }
-                    return allParagraphs;
-                  },
-                  {} as {
-                    [id: string]: Search.FindParagraph;
-                  },
-                ),
-              };
-              return allFields;
-            },
-            {} as {
-              [id: string]: Search.FindField;
-            },
-          ),
-        }))
-    );
+  function getSourcesResults(resources: { [key: string]: Search.FindResource }, citations: Citations): TypedResult[] {
+    return Object.keys(citations)
+      .map((paragraphId) => {
+        const [resourceId, shortFieldType, fieldId] = paragraphId.split('/');
+        const resource = resources[resourceId];
+        const paragraph = resources[resourceId]?.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[paragraphId];
+        if (resource && paragraph) {
+          const field: FieldId = {
+            field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+            field_id: fieldId,
+          };
+          const fieldData = getFieldDataFromResource(resource, field);
+          const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
+          return { ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] };
+        }
+        return undefined;
+      })
+      .filter((source) => !!source)
+      .map((source) => source as TypedResult);
   }
 </script>
 
-<svelte:window bind:innerWidth />
 <div class="sw-answer">
-  <div class="answer-container">
-    <div
-      class="text"
-      class:error={answer.inError}>
-      {@html text}
-    </div>
-    {#if !isMobile && !hideFeedback}
-      <Feedback {rank} />
-    {/if}
+  <div
+    class="answer-text"
+    class:error={answer.inError}>
+    {@html text}
   </div>
   {#if answer.sources && !notEnoughData}
-    <div class="feedback">
-      <Feedback {rank} />
+    <div class="actions">
+      <div>
+        <Feedback {rank} />
+      </div>
+      {#if initialAnswer}
+        <Button
+          aspect="basic"
+          size="small"
+          on:click={() => dispatch('openChat')}>
+          <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
+        </Button>
+      {/if}
     </div>
-    {#if !$hideSources}
-      <Expander on:toggleExpander>
-        <h3
-          class="title-xs"
-          slot="header">
-          {isMobile ? $_('answer.sources-mobile') : $_('answer.sources')}
-        </h3>
-        <div class="results">
-          {#each sources as result}
-            <ResultRow {result} />
-          {/each}
-        </div>
-      </Expander>
+    {#if sources.length > 0}
+      <div class="sources-container">
+        {#if initialAnswer}
+          <div class="title-s">{$_('answer.sources')}</div>
+          <div class="sources-list">
+            <Sources {sources} />
+          </div>
+        {:else}
+          <Expander>
+            <div
+              class="title-s"
+              slot="header">
+              {$_('answer.sources')}
+            </div>
+            <div class="sources-list">
+              <Sources {sources} />
+            </div>
+          </Expander>
+        {/if}
+      </div>
     {/if}
   {/if}
 </div>

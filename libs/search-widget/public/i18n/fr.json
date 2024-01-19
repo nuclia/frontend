@@ -1,10 +1,9 @@
 {
-	"answer.chat-action": "Discutez avec vos documents",
+	"answer.chat-action": "Demander plus",
 	"answer.error.rephrasing": "Désolé, je ne peux pas traiter cette question, peut-être que la reformuler aiderait.",
 	"answer.input.label": "Champ de saisie du chat",
 	"answer.placeholder": "Discutons",
-	"answer.sources": "Sur la base de ces sources",
-	"answer.sources-mobile": "Sources",
+	"answer.sources": "Sources",
 	"answer.title": "Réponse",
 	"entities.annotated": "Annotations",
 	"entities.annotations": "Annotations",

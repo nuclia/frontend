@@ -242,14 +242,14 @@
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight
-                          formControlName="hideSources">
-                          {{ 'widget.generator.advanced.generative-answer-category.hide-sources.label' | translate }}
+                          formControlName="hideResults">
+                          {{ 'widget.generator.advanced.generative-answer-category.hide-results.label' | translate }}
                         </pa-toggle>
                         <pa-icon
                           name="info"
-                          [paPopover]="hideSourcesHelp" />
-                        <pa-popover #hideSourcesHelp>
-                          {{ 'widget.generator.advanced.generative-answer-category.hide-sources.help' | translate }}
+                          [paPopover]="hideResultsHelp" />
+                        <pa-popover #hideResultsHelp>
+                          {{ 'widget.generator.advanced.generative-answer-category.hide-results.help' | translate }}
                         </pa-popover>
                       </div>
                       <div class="toggle-and-help">

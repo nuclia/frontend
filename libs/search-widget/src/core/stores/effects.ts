@@ -41,6 +41,7 @@ import {
   getResultType,
   isEmptySearchQuery,
   isTitleOnly,
+  pendingResults,
   preselectedFilters,
   resultList,
   searchFilters,
@@ -361,11 +362,13 @@ export function askQuestion(
                     } else {
                       chatError.set(result);
                     }
+                    pendingResults.set(false);
                   } else {
                     if (result.incomplete) {
                       currentAnswer.set(result);
                     } else {
                       chat.set({ question, answer: result });
+                      pendingResults.set(false);
                     }
                   }
                 }),

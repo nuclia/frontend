@@ -1,10 +1,9 @@
 {
-	"answer.chat-action": "Chat with your docs",
+	"answer.chat-action": "Ask more",
 	"answer.error.rephrasing": "Sorry, I cannot process this question, maybe rephrasing it would help.",
 	"answer.input.label": "Chat input",
 	"answer.placeholder": "Let's chat",
-	"answer.sources": "Based on these sources",
-	"answer.sources-mobile": "Sources",
+	"answer.sources": "Sources",
 	"answer.title": "Answer",
 	"entities.annotated": "Annotated",
 	"entities.annotations": "Annotations",

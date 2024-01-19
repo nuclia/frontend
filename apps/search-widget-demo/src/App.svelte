@@ -140,7 +140,7 @@
         no_tracking
         {placeholder}
         preselected_filters={preselectedFilters}
-        features="filter,suggestions,permalink,relations,knowledgeGraph,znavigateToLink,znavigateToFile,zanswers,citations,zhideSources,displayMetadata,hideThumbnails,znoBM25forChat" />
+        features="filter,suggestions,permalink,relations,knowledgeGraph,znavigateToLink,znavigateToFile,zanswers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat" />
       <NucliaSearchResults bind:this={resultsWidget} no_tracking />
     </div>
   {/if}

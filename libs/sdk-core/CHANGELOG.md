@@ -7,6 +7,8 @@
 ### Improvements
 
 - Update `LearningConfiguration` model
+- Remove `hideSources` option from `WidgetFeatures`
+- Add `hideResults` option to `WidgetFeatures`
 
 # 1.10.0 (2024-01-08)
 

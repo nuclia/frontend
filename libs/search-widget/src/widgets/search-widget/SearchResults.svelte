@@ -12,7 +12,8 @@
     getTrackingDataAfterResultsReceived,
     hasMore,
     hasPartialResults,
-    hasSearchError, hideSources,
+    hasSearchError,
+    hideResults,
     isAnswerEnabled,
     isEmptySearchQuery,
     loadFonts,
@@ -89,7 +90,7 @@
           <strong>{$_('error.search')}</strong>
         {/if}
       </div>
-    {:else if !$pendingResults && $resultList.length === 0 && !$hideSources}
+    {:else if !$pendingResults && $resultList.length === 0 && !$hideResults}
       <strong>{$_('results.empty')}</strong>
       <div
         class="results-end"

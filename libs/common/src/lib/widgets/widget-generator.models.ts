@@ -13,7 +13,7 @@ export type AdvancedForm = {
   answers: boolean;
   userPrompt: string;
   citations: boolean;
-  hideSources: boolean;
+  hideResults: boolean;
   noBM25forChat: boolean;
   filter: boolean;
   autofilter: boolean;
@@ -50,7 +50,7 @@ export const DEFAULT_CONFIGURATION: AdvancedForm = {
   answers: false,
   userPrompt: '',
   citations: false,
-  hideSources: false,
+  hideResults: false,
   noBM25forChat: false,
   filter: false,
   autofilter: false,
@@ -100,8 +100,8 @@ export function getAskPresetConfig(value: Partial<PresetForm>): AdvancedForm {
   return {
     ...DEFAULT_CONFIGURATION,
     answers: true,
-    citations: value.answerOutput !== 'onlyAnswers',
-    hideSources: value.answerOutput === 'onlyAnswers',
+    citations: true,
+    hideResults: value.answerOutput === 'onlyAnswers',
     permalink: true,
     navigateToFile: value.answerOutput === 'answerAndResults' && value.location === 'public',
     navigateToLink: value.answerOutput === 'answerAndResults' && value.location === 'public',

@@ -1,32 +1,21 @@
 .sw-answer {
-  .feedback {
-    float: right;
-    padding-top: var(--rhythm-0_5);
+  .answer-text {
+    line-height: calc(var(--font-size-base) * 1.4);
+    margin-top: var(--rhythm-1);
   }
-  .answer-container {
+  .error {
+    color: var(--color-neutral-light);
+  }
+  .actions {
     align-items: center;
     display: flex;
-    gap: var(--rhythm-1);
-    margin-top: var(--rhythm-1);
-
-    .error {
-      color: var(--color-neutral-light);
-    }
-    .text {
-      flex: 1 1 auto;
-    }
-  }
-  .results {
-    display: flex;
-    flex-direction: column;
     gap: var(--rhythm-2);
-    width: 100%;
+    padding-top: var(--rhythm-1);
   }
-}
-@media (min-width: 599px) {
-  .sw-answer {
-    .feedback {
-      display: none;
+  .sources-container {
+    margin-top: var(--rhythm-2_5);
+    .sources-list {
+      padding-top: var(--rhythm-2);
     }
   }
 }

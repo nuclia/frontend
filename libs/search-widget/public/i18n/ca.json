@@ -1,10 +1,9 @@
 {
-	"answer.chat-action": "Xateja amb els teus documents",
+	"answer.chat-action": "Preguntar més",
 	"answer.error.rephrasing": "Ho sento, no puc processar aquesta pregunta, potser ajudaria a reformular-la.",
 	"answer.input.label": "Entrada de xat",
 	"answer.placeholder": "Parlem",
-	"answer.sources": "A partir d'aquestes fonts",
-	"answer.sources-mobile": "Fonts",
+	"answer.sources": "Fonts",
 	"answer.title": "Resposta",
 	"entities.annotated": "Anotacions",
 	"entities.annotations": "Anotacions",

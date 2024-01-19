@@ -86,7 +86,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       validators: [Validators.pattern(/\{.+\}/)],
     }),
     citations: new FormControl<boolean>(false, { nonNullable: true }),
-    hideSources: new FormControl<boolean>(false, { nonNullable: true }),
+    hideResults: new FormControl<boolean>(false, { nonNullable: true }),
     noBM25forChat: new FormControl<boolean>(false, { nonNullable: true }),
     filter: new FormControl<boolean>(false, { nonNullable: true }),
     autofilter: new FormControl<boolean>(false, { nonNullable: true }),
@@ -180,8 +180,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get citationsControl() {
     return this.advancedForm.controls.citations;
   }
-  get hideSourcesControl() {
-    return this.advancedForm.controls.hideSources;
+  get hideResultsControl() {
+    return this.advancedForm.controls.hideResults;
   }
   get noBM25forChatControl() {
     return this.advancedForm.controls.noBM25forChat;
@@ -295,7 +295,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     if (!answerGeneration) {
       this.userPromptControl.patchValue('');
       this.citationsControl.patchValue(false);
-      this.hideSourcesControl.patchValue(false);
+      this.hideResultsControl.patchValue(false);
       this.noBM25forChatControl.patchValue(false);
     }
   }
