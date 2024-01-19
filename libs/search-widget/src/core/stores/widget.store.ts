@@ -30,10 +30,10 @@ export const filterByLabelFamilies: Observable<boolean> = widgetFilters.pipe(
   map((filters) => !!filters?.labelFamilies),
 );
 export const filterByCreatedDate: Observable<boolean> = widgetFilters.pipe(map((filters) => !!filters.created));
-export const hideSources: Observable<boolean> = combineLatest([
+export const hideResults: Observable<boolean> = combineLatest([
   isAnswerEnabled,
-  widgetFeatures.pipe(map((features) => !!features?.hideSources)),
-]).pipe(map(([answers, hideSources]) => answers && hideSources));
+  widgetFeatures.pipe(map((features) => !!features?.hideResults)),
+]).pipe(map(([answers, hideResults]) => answers && hideResults));
 
 export const disableAnswers = () => {
   widgetFeatures.set({ ...(widgetFeatures.value || {}), answers: false });

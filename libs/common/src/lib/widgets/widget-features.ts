@@ -12,7 +12,7 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   autocompleteFromNERs: false,
   notPublic: true,
   answers: false,
-  hideSources: false,
+  hideResults: false,
   autofilter: false,
   noBM25forChat: false,
   hideLogo: false,

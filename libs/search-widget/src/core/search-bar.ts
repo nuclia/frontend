@@ -6,7 +6,7 @@ import {
   askQuestion,
   autofilerDisabled,
   disableAnswers,
-  hideSources,
+  hideResults,
   isAnswerEnabled,
   isEmptySearchQuery,
   isTitleOnly,
@@ -53,7 +53,7 @@ export const setupTriggerSearch = (
             }),
             switchMap((query) =>
               forkJoin([
-                hideSources.pipe(take(1)),
+                hideResults.pipe(take(1)),
                 searchOptions.pipe(take(1)),
                 searchShow.pipe(take(1)),
                 searchFilters.pipe(take(1)),
@@ -62,14 +62,12 @@ export const setupTriggerSearch = (
                 autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
               ]).pipe(
-                tap(([hideSources]) => {
-                  if (!hideSources) {
-                    pendingResults.set(true);
-                  }
+                tap(() => {
+                  pendingResults.set(true);
                 }),
                 switchMap(
                   ([
-                    hideSources,
+                    hideResults,
                     options,
                     show,
                     filters,
@@ -88,7 +86,7 @@ export const setupTriggerSearch = (
                     if (isAnswerEnabled && !trigger?.more) {
                       return askQuestion(query, true, currentOptions).pipe(
                         tap((res) => {
-                          if (res.type === 'error' && res.status === 402 && !hideSources) {
+                          if (res.type === 'error' && res.status === 402 && !hideResults) {
                             disableAnswers();
                             triggerSearch.next();
                           }
@@ -101,7 +99,7 @@ export const setupTriggerSearch = (
                         map((res) => ({
                           results: res.sources,
                           append: false,
-                          hideSources,
+                          hideResults,
                           loadingMore: false,
                           options: currentOptions,
                         })),
@@ -111,7 +109,7 @@ export const setupTriggerSearch = (
                         map((results) => ({
                           results,
                           append: !!trigger?.more,
-                          hideSources,
+                          hideResults,
                           loadingMore: trigger?.more,
                           options: currentOptions,
                         })),
@@ -124,14 +122,14 @@ export const setupTriggerSearch = (
           ),
         ),
       )
-      .subscribe(({ results, append, hideSources, loadingMore, options }) => {
+      .subscribe(({ results, append, hideResults, loadingMore, options }) => {
         if (results && results.total === 0 && options.autofilter && (results.autofilters || []).length > 0) {
           // If autofilter is enabled and no results are found, retry without autofilters
           autofilerDisabled.set(true);
           triggerSearch.next(loadingMore ? { more: true } : undefined);
         } else if (results) {
           if (isAnswerEnabled && !loadingMore) {
-            if (!hideSources) {
+            if (!hideResults) {
               trackingSearchId.set(results.searchId);
               searchResults.set({ results: results, append: false });
             }

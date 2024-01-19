@@ -45,7 +45,7 @@
 
 <div class="sw-answer">
   <div
-    class="text"
+    class="answer-text"
     class:error={answer.inError}>
     {@html text}
   </div>
@@ -59,7 +59,7 @@
           aspect="basic"
           size="small"
           on:click={() => dispatch('openChat')}>
-          <span class="title-s">{$_('answer.chat-action')}</span>
+          <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
         </Button>
       {/if}
     </div>

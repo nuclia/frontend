@@ -274,7 +274,7 @@ export interface WidgetFeatures {
   displayMetadata?: boolean;
   answers?: boolean;
   hideLogo?: boolean;
-  hideSources?: boolean;
+  hideResults?: boolean;
   hideThumbnails?: boolean;
   knowledgeGraph?: boolean;
   useSynonyms?: boolean;
