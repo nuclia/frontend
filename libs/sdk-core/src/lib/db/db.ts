@@ -476,6 +476,9 @@ export class Db implements IDb {
     return this.nuclia.rest.get<LearningConfigurations>('/learning/configuration/schema');
   }
 
+  /**
+   * Extract NER tokens from a text.
+   */
   predictTokens(text: string): Observable<PredictedToken[]> {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /predict');
@@ -488,6 +491,9 @@ export class Db implements IDb {
       .pipe(map((response) => response.tokens));
   }
 
+  /**
+   * Generate an answer from a question and a context.
+   */
   predictAnswer(question: string, context: string[], model?: string): Observable<string> {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /predict');
@@ -508,6 +514,42 @@ export class Db implements IDb {
         concatMap((res) => from(res.text())),
         map((answer) => answer.slice(0, -1)),
       );
+  }
+
+  /**
+   * Generate a summary from a text.
+   *
+   * The optional `user_prompt` parameter allows you to provide a custom prompt to the model,
+   * it must use the `{text}` placeholder to indicate where the resource text should be inserted
+   * (example: 'Make a one-line summary of the following text: {text}').
+   */
+  predictSummarize(
+    text: string,
+    user_prompt?: string,
+    model: string = 'chatgpt-azure-3',
+    summary_kind: 'simple' | 'extended' = 'simple',
+  ): Observable<string> {
+    if (!this.hasNUAClient()) {
+      throw new Error('NUA key is needed to be able to call /predict');
+    }
+    const modelParam = model ? `?model=${encodeURIComponent(model)}` : '';
+    return this.nuclia.rest
+      .post<{ summary: string }>(
+        `/predict/summarize${modelParam}`,
+        {
+          resources: {
+            text: {
+              fields: {
+                text,
+              },
+            },
+          },
+          summary_kind,
+          user_prompt,
+        },
+        this.getNUAHeader(),
+      )
+      .pipe(map((answer) => answer.summary));
   }
 
   /**

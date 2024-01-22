@@ -1,4 +1,4 @@
-# 1.11.0 (unrelease)
+# 1.11.0 (2024-01-22)
 
 ### Breaking changes
 
@@ -9,6 +9,8 @@
 - Update `LearningConfiguration` model
 - Remove `hideSources` option from `WidgetFeatures`
 - Add `hideResults` option to `WidgetFeatures`
+- Support `/predict/summary` endpoint
+- Support the `user_prompt` parameter in Knowledge Box `/summarize` endpoint
 
 # 1.10.0 (2024-01-08)
 
@@ -30,7 +32,6 @@
 - Add `generateRandomQuestionAboutResource` method
 - Add `index_size` in `Counters` model
 - Don't crash on `getToken` when local storage is disabled on the browser
-
 
 # 1.9.1 (2023-12-18)
 
