@@ -1,3 +1,9 @@
+# 1.11.1 (2024-01-22)
+
+### Improvements
+
+- Let pass extra metadata at resource creation time.
+
 # 1.11.0 (2024-01-22)
 
 ### Breaking changes
