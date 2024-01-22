@@ -296,8 +296,12 @@ export class KnowledgeBox implements IKnowledgeBox {
   /**
    * Summarize resources.
    *
-   * It reads the resources text content and return a unique summary about them.
+   * It reads the resources text content and return a global summary about them and one summery per resource.
    *
+   * The optional `user_prompt` parameter allows you to specify a text that will be used to generate the summary,
+   * and must use the `{text}` placeholder to indicate where the resource text should be inserted
+   * (example: 'Make a one-line summary of the following text: {text}').
+   * 
    * Example:
     ```ts
     nuclia.knowledgeBox
@@ -307,9 +311,9 @@ export class KnowledgeBox implements IKnowledgeBox {
       });
     ```
   */
-  summarize(ressourceIds: string[]): Observable<string> {
+  summarize(ressourceIds: string[], user_prompt?: string): Observable<string> {
     return this.nuclia.rest
-      .post<{ summary: string }>(`${this.path}/summarize`, { resources: ressourceIds })
+      .post<{ summary: string }>(`${this.path}/summarize`, { resources: ressourceIds, user_prompt })
       .pipe(map((res) => res.summary));
   }
 

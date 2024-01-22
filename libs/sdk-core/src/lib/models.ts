@@ -156,7 +156,12 @@ export interface IDb {
   getLearningConfigurations(): Observable<LearningConfigurations>;
   predictTokens(text: string): Observable<PredictedToken[]>;
   predictAnswer(question: string, context: string[], model?: string): Observable<string>;
-
+  predictSummarize(
+    text: string,
+    user_prompt?: string,
+    model?: string,
+    summary_kind?: 'simple' | 'extended',
+  ): Observable<string>;
   getAccountUser(accountSlug: string, userId: string): Observable<Partial<FullAccountUser>>;
   getAccountUsers(accountSlug: string): Observable<FullAccountUser[]>;
   setAccountUsers(accountSlug: string, users: AccountUsersPayload): Observable<void>;
