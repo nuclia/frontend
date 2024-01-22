@@ -41,6 +41,7 @@ export interface ICreateResource {
   usermetadata?: UserMetadata;
   fieldmetadata?: UserFieldMetadata[];
   origin?: Origin;
+  extra?: ExtraMetadata;
   files?: { [key: string]: FileField };
   links?: { [key: string]: LinkField };
   texts?: { [key: string]: TextField };
