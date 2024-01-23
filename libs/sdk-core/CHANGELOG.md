@@ -1,3 +1,9 @@
+# 1.11.2 (unreleased)
+
+### Improvements
+
+- Add `AccountModification` and `AccountSamlConfig` interfaces
+
 # 1.11.1 (2024-01-22)
 
 ### Improvements

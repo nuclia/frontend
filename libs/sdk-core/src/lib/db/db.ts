@@ -1,6 +1,6 @@
 import { catchError, concatMap, filter, forkJoin, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import type { AccountUsersPayload, FullAccountUser, IDb, INuclia, InviteAccountUserPayload } from '../models';
-import type { KbIndex, LearningConfigurations, PredictedToken } from './db.models';
+import { AccountModification, KbIndex, LearningConfigurations, PredictedToken } from './db.models';
 import {
   Account,
   AccountCreation,
@@ -62,7 +62,7 @@ export class Db implements IDb {
     });
     ```
   */
-  modifyAccount(accountSlug: string, data: Partial<Account>): Observable<void> {
+  modifyAccount(accountSlug: string, data: AccountModification): Observable<void> {
     return this.nuclia.rest.patch<void>(`/account/${accountSlug}`, data);
   }
 

@@ -15,7 +15,7 @@ h1 {
 }
 
 .section-container {
-  max-width: 560px;
+  max-width: rhythm(80);
 }
 
 .section-container form,
@@ -29,7 +29,6 @@ h1 {
   align-items: center;
   display: flex;
   gap: rhythm(2);
-  margin-top: rhythm(5);
 }
 
 .zone-select {

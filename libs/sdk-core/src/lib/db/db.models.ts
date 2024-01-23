@@ -40,6 +40,14 @@ export interface AccountConfig {
   g_speech_to_text: boolean;
   indexer_slow_replicas: number; // Deprecated, use max_dedicated_processors instead
   max_dedicated_processors: number;
+  saml?: AccountSamlConfig;
+}
+
+export interface AccountSamlConfig {
+  domain: string;
+  entity_id: string;
+  sso_url: string;
+  x509_cert: string;
 }
 
 export type UploadLimitsEntries = 'upload_limit_max_media_file_size' | 'upload_limit_max_non_media_file_size';
@@ -90,6 +98,13 @@ export interface AccountCreation {
   description?: string;
   email?: string;
   zone?: string;
+}
+
+export interface AccountModification {
+  title?: string;
+  description?: string;
+  g_speech_to_text?: boolean;
+  saml?: AccountSamlConfig;
 }
 
 export interface AccountStatus {

@@ -9,7 +9,7 @@
         (ngSubmit)="saveAccount()">
         <pa-input
           id="account-uid"
-          formControlName="uid"
+          formControlName="id"
           readonly>
           {{ 'generic.uid' | translate }}
         </pa-input>
@@ -45,6 +45,44 @@
             *ngIf="!accountForm.pristine"
             aspect="basic"
             (click)="initAccountForm()">
+            {{ 'generic.cancel' | translate }}
+          </pa-button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-container">
+      <h3 class="title-m">{{ 'account.saml.title' | translate }}</h3>
+      <form
+        [formGroup]="samlForm"
+        (ngSubmit)="saveSaml()">
+        <pa-input formControlName="domain">
+          {{ 'account.saml.domain' | translate }}
+        </pa-input>
+        <pa-input formControlName="entity_id">
+          {{ 'account.saml.entity-id' | translate }}
+        </pa-input>
+        <pa-input formControlName="sso_url">
+          {{ 'account.saml.sso-url' | translate }}
+        </pa-input>
+        <pa-textarea
+          formControlName="x509_cert"
+          rows="3">
+          {{ 'account.saml.x509-cert' | translate }}
+        </pa-textarea>
+        <div class="account-form-cta">
+          <pa-button
+            type="submit"
+            kind="primary"
+            [disabled]="samlForm.invalid || samlForm.pristine">
+            {{ 'generic.save' | translate }}
+          </pa-button>
+          <pa-button
+            *ngIf="!samlForm.pristine"
+            aspect="basic"
+            (click)="initSamlForm()">
             {{ 'generic.cancel' | translate }}
           </pa-button>
         </div>
