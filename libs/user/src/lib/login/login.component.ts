@@ -2,8 +2,9 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReCaptchaV3Service } from 'ngx-captcha';
+import { catchError, map, of, switchMap } from 'rxjs';
 
-import { BackendConfigurationService, OAuthService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, OAuthService, SAMLService, SDKService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 
@@ -35,10 +36,25 @@ export class LoginComponent {
   };
 
   loginForm = new FormGroup({
-    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    email: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+      updateOn: 'blur',
+    }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
   isLoggingIn = false;
+
+  ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
+    switchMap((email) => {
+      const parts = (email || '').split('@');
+      const domain = parts.length > 1 ? parts.pop() : undefined;
+      return domain && domain.length > 0
+        ? this.samlService.checkDomain(domain).pipe(catchError(() => of(undefined)))
+        : of(undefined);
+    }),
+    map((result) => (result ? this.samlService.ssoUrl(result.account_id) : undefined)),
+  );
 
   constructor(
     private oAuthService: OAuthService,
@@ -47,6 +63,7 @@ export class LoginComponent {
     private reCaptchaV3Service: ReCaptchaV3Service,
     public config: BackendConfigurationService,
     private sdk: SDKService,
+    private samlService: SAMLService,
   ) {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();

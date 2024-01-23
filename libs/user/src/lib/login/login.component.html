@@ -39,6 +39,16 @@
             {{ 'login.password' | translate }}
           </nsi-password-input>
         </div>
+        @if (ssoUrl | async; as url) {
+          <div class="login_sso">
+            <a [href]="url">
+              {{ 'login.use-sso' | translate }}
+              <pa-icon
+                name="arrow-right"
+                size="small"></pa-icon>
+            </a>
+          </div>
+        }
         <input
           *ngIf="oauth"
           type="hidden"

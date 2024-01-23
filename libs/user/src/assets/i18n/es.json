@@ -38,6 +38,7 @@
 	"login.title": "Bienvenidos a Nuclia",
 	"login.token_expired": "El token ha caducado",
 	"login.try_again": "Vuelva a intentarlo o recupera la contraseña.",
+	"login.use-sso": "Utilice el inicio de sesión único",
 	"onboarding.failed": "Algo salió mal, comuníquese con su administrador.",
 	"onboarding.loading": "Cargando…",
 	"onboarding.next-button": "Siguiente",
