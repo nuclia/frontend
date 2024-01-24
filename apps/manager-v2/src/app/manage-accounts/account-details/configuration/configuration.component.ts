@@ -123,10 +123,8 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  toggleAccountType() {
-    this.configForm.controls.type.patchValue(
-      this.configForm.controls.type.value === 'stash-trial' ? 'stash-enterprise' : 'stash-trial',
-    );
+  toggleAccountType(type: AccountTypes) {
+    this.configForm.controls.type.patchValue(type);
     this.configForm.controls.type.markAsDirty();
     this.cdr.markForCheck();
   }

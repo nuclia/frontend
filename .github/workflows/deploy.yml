@@ -76,7 +76,7 @@ jobs:
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
           (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
 
-      - uses: google-github-actions/auth@v0
+      - uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
