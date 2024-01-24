@@ -1,8 +1,9 @@
 import type { Observable } from 'rxjs';
 import type { AuthTokens, JwtUser } from './auth';
-import type {
+import {
   Account,
   AccountCreation,
+  AccountModification,
   AccountStatus,
   AccountTypes,
   EventList,
@@ -112,7 +113,7 @@ export interface IDb {
   getKbIndexes(accountSlug: string): Observable<KbIndex[]>;
   createAccount(account: AccountCreation): Observable<Account>;
   getAccountStatus(accountSlug: string): Observable<AccountStatus>;
-  modifyAccount(accountSlug: string, data: Partial<Account>): Observable<void>;
+  modifyAccount(accountSlug: string, data: AccountModification): Observable<void>;
   deleteAccount(accountSlug: string): Observable<void>;
   getWelcome(): Observable<Welcome>;
   getAccount(): Observable<Account>;

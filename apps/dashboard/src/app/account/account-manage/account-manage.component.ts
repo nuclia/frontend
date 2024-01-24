@@ -1,24 +1,13 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  QueryList,
-  ViewChildren,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
-import { AccountModification, BillingService, SDKService, SubscriptionStatus } from '@flaps/core';
+import { BillingService, SDKService, SubscriptionStatus } from '@flaps/core';
 import { Account } from '@nuclia/core';
-import { NavigationService, Sluggable } from '@flaps/common';
+import { NavigationService } from '@flaps/common';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
-
-type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 
 @Component({
   selector: 'app-account-manage',
@@ -29,13 +18,18 @@ type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 export class AccountManageComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   account: Account | undefined;
-  @ViewChildren('section') sections: QueryList<ElementRef> | undefined;
 
   accountForm = this.formBuilder.group({
-    uid: [''],
-    slug: ['', [Sluggable()]],
+    id: [''],
+    slug: [''],
     title: ['', [Validators.required]],
     description: [''],
+  });
+  samlForm = this.formBuilder.group({
+    domain: [''],
+    entity_id: [''],
+    sso_url: [''],
+    x509_cert: [''],
   });
 
   validationMessages = {
@@ -43,9 +37,6 @@ export class AccountManageComponent implements OnInit, OnDestroy {
       required: 'account.account_name_invalid',
     } as IErrorMessages,
   };
-
-  speechToText: boolean = false;
-  initialValues = { title: '', description: '', slug: '', uid: '' };
 
   cannotDeleteAccount = this.billingService
     .getSubscription()
@@ -75,22 +66,29 @@ export class AccountManageComponent implements OnInit, OnDestroy {
       .pipe(
         tap((account) => {
           this.account = account;
-          this.initialValues.title = account.title;
-          this.initialValues.description = account.description || '';
-          this.initialValues.uid = account.id;
-          this.initialValues.slug = account.slug;
         }),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(() => {
-        this.speechToText = !!this.account!.config?.g_speech_to_text;
         this.initAccountForm();
+        this.initSamlForm();
         this.cdr?.markForCheck();
       });
   }
 
   initAccountForm(): void {
-    this.accountForm.reset(this.initialValues);
+    this.accountForm.reset(this.account);
+  }
+
+  initSamlForm() {
+    if (this.account) {
+      this.samlForm.reset({
+        domain: this.account.domain,
+        entity_id: this.account.saml_entity_id,
+        sso_url: this.account.saml_sso_url,
+        x509_cert: this.account.saml_x509_cert,
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -102,19 +100,31 @@ export class AccountManageComponent implements OnInit, OnDestroy {
 
   saveAccount() {
     if (this.accountForm.invalid) return;
-    const data: AccountModification = {
-      title: this.accountForm.value.title,
-      description: this.accountForm.value.description,
-    };
-
     this.sdk.nuclia.db
-      .modifyAccount(this.account!.slug, data)
+      .modifyAccount(this.account!.slug, {
+        title: this.accountForm.value.title,
+        description: this.accountForm.value.description,
+      })
       .pipe(
         concatMap(() => this.sdk.nuclia.db.getAccount(this.account!.slug)),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe((account) => {
         this.sdk.account = account;
+        this.initAccountForm();
+      });
+  }
+
+  saveSaml() {
+    if (this.samlForm.invalid || !this.account) return;
+    this.sdk.nuclia.db
+      .modifyAccount(this.account.slug, {
+        saml: this.samlForm.getRawValue(),
+      })
+      .pipe(concatMap(() => this.sdk.nuclia.db.getAccount(this.account?.slug || '')))
+      .subscribe((account) => {
+        this.sdk.account = account;
+        this.initSamlForm();
       });
   }
 

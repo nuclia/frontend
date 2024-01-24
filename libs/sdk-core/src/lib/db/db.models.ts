@@ -24,11 +24,15 @@ export interface Account {
   config?: AccountConfig;
   current_kbs?: number;
   current_users?: number;
+  domain?: string;
   description?: string;
   id: string;
   limits?: AccountLimits;
   max_kbs: number;
   max_users: number | null;
+  saml_entity_id?: string;
+  saml_sso_url?: string;
+  saml_x509_cert?: string;
   slug: string;
   title: string;
   trial_expiration_date?: string;
@@ -90,6 +94,18 @@ export interface AccountCreation {
   description?: string;
   email?: string;
   zone?: string;
+}
+
+export interface AccountModification {
+  title?: string;
+  description?: string;
+  g_speech_to_text?: boolean;
+  saml?: {
+    domain: string;
+    entity_id: string;
+    sso_url: string;
+    x509_cert: string;
+  };
 }
 
 export interface AccountStatus {

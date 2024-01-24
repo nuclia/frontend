@@ -73,3 +73,11 @@
     height: 1px;
   }
 }
+
+.login_sso {
+  margin: -#{rhythm(1)} 0 rhythm(2);
+  text-align: right;
+  a {
+    text-decoration: none;
+  }
+}

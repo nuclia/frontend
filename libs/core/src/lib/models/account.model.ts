@@ -20,13 +20,6 @@ export interface AccountCreation {
   zone?: string;
 }
 
-export interface AccountModification {
-  title?: string;
-  description?: string;
-  g_speech_to_text?: boolean;
-  indexer_slow_replicas?: boolean;
-}
-
 export interface AccountStatus {
   available: boolean;
 }

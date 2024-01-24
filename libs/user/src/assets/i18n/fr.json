@@ -38,6 +38,7 @@
 	"login.title": "Bienvenue à Nuclia",
 	"login.token_expired": "Le jeton a expiré",
 	"login.try_again": "Veuillez réessayer ou réinitialiser votre mot de passe ci-dessous.",
+	"login.use-sso": "Utiliser l'authentification unique",
 	"onboarding.failed": "Quelque chose s'est mal passé, veuillez contacter votre administrateur.",
 	"onboarding.loading": "Chargement…",
 	"onboarding.next-button": "Suivant",
