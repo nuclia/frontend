@@ -81,7 +81,14 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   }
 
   initSamlForm() {
-    this.samlForm.reset(this.account?.config?.saml || {});
+    if (this.account) {
+      this.samlForm.reset({
+        domain: this.account.domain,
+        entity_id: this.account.saml_entity_id,
+        sso_url: this.account.saml_sso_url,
+        x509_cert: this.account.saml_x509_cert,
+      });
+    }
   }
 
   ngOnDestroy(): void {

@@ -24,11 +24,15 @@ export interface Account {
   config?: AccountConfig;
   current_kbs?: number;
   current_users?: number;
+  domain?: string;
   description?: string;
   id: string;
   limits?: AccountLimits;
   max_kbs: number;
   max_users: number | null;
+  saml_entity_id?: string;
+  saml_sso_url?: string;
+  saml_x509_cert?: string;
   slug: string;
   title: string;
   trial_expiration_date?: string;
@@ -40,14 +44,6 @@ export interface AccountConfig {
   g_speech_to_text: boolean;
   indexer_slow_replicas: number; // Deprecated, use max_dedicated_processors instead
   max_dedicated_processors: number;
-  saml?: AccountSamlConfig;
-}
-
-export interface AccountSamlConfig {
-  domain: string;
-  entity_id: string;
-  sso_url: string;
-  x509_cert: string;
 }
 
 export type UploadLimitsEntries = 'upload_limit_max_media_file_size' | 'upload_limit_max_non_media_file_size';
@@ -104,7 +100,12 @@ export interface AccountModification {
   title?: string;
   description?: string;
   g_speech_to_text?: boolean;
-  saml?: AccountSamlConfig;
+  saml?: {
+    domain: string;
+    entity_id: string;
+    sso_url: string;
+    x509_cert: string;
+  };
 }
 
 export interface AccountStatus {

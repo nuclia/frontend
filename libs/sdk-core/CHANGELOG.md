@@ -2,7 +2,8 @@
 
 ### Improvements
 
-- Add `AccountModification` and `AccountSamlConfig` interfaces
+- Add SAML related properties to `Account` interface
+- Add `AccountModification` interface
 
 # 1.11.1 (2024-01-22)
 
