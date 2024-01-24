@@ -16,7 +16,7 @@ import {
   UploadStatus,
   WritableKnowledgeBox,
 } from '@nuclia/core';
-import { LabelsService } from '../label/labels.service';
+import { LabelsService } from '@flaps/core';
 import {
   BehaviorSubject,
   catchError,

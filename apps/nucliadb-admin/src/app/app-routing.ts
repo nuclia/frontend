@@ -72,7 +72,7 @@ export const routes: Routes = [
                 path: 'label-sets',
                 loadChildren: () =>
                   // eslint-disable-next-line @nx/enforce-module-boundaries
-                  import('../../../../libs/common/src/lib/label/label-sets/label-sets.module').then(
+                  import('../../../../libs/core/src/lib/label/label-sets/label-sets.module').then(
                     (m) => m.LabelSetsModule,
                   ),
               },

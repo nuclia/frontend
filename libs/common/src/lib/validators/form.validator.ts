@@ -23,13 +23,3 @@ export function JsonValidator(): ValidatorFn {
     return null;
   };
 }
-
-export function noDuplicateListItemsValidator(separator: string, error: string): ValidatorFn {
-  return (control: AbstractControl<string>): ValidationErrors | null => {
-    const list = control.value
-      .split(separator)
-      .map((item) => item.trim())
-      .filter((item) => !!item);
-    return list.some((item, index) => list.lastIndexOf(item) !== index) ? { duplicate: error } : null;
-  };
-}

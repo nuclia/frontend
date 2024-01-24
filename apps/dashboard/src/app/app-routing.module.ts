@@ -156,7 +156,7 @@ const routes: Routes = [
               {
                 path: 'label-sets',
                 loadChildren: () =>
-                  import('../../../../libs/common/src/lib/label/label-sets/label-sets.module').then(
+                  import('../../../../libs/core/src/lib/label/label-sets/label-sets.module').then(
                     (m) => m.LabelSetsModule,
                   ),
               },

@@ -1,6 +1,6 @@
-import { cloneDeep } from '@flaps/common';
 import { Label, LabelSet, LabelSetKind } from '@nuclia/core';
 import { LABEL_MAIN_COLORS } from './utils';
+import { cloneDeep } from '../../utils/clonedeep';
 
 export const EMPTY_LABEL_SET: LabelSet = {
   title: '',

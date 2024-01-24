@@ -23,7 +23,8 @@ import {
   Search,
   UserClassification,
 } from '@nuclia/core';
-import { getClassificationsPayload, LabelsService } from '@flaps/common';
+import { LabelsService } from '@flaps/core';
+import { getClassificationsPayload } from '@flaps/common';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { ResourcesTableDirective } from '../resources-table.directive';
 import mime from 'mime';

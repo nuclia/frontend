@@ -15,7 +15,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LabelModule } from '@flaps/common';
+import { LabelModule } from '@flaps/core';
 
 @NgModule({
   imports: [

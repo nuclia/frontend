@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FileUploadModule, STFPipesModule } from '@flaps/core';
+import { FileUploadModule, STFPipesModule, LabelModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
 import { CsvSelectComponent } from './csv-select/csv-select.component';
@@ -24,7 +24,6 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
 import { HintModule } from '../hint/hint.module';
-import { LabelModule } from '../label/label.module';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
 import { UploadDataComponent } from './upload-data/upload-data.component';

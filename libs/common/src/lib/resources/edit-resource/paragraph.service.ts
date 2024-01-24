@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { ParagraphWithText } from './edit-resource.helpers';
 import { FieldId, longToShortFieldType, Resource, Search } from '@nuclia/core';
-import { cloneDeep } from '../../utils';
+import { cloneDeep } from '@flaps/core';
 
 @Injectable({
   providedIn: 'root',
