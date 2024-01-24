@@ -1,0 +1,10 @@
+@import 'apps/dashboard/src/variables';
+
+.sync-status {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid $color-neutral-lighter;
+  background-color: white;
+  padding: rhythm(1) rhythm(1) rhythm(1) var(--app-layout-padding-left);
+}

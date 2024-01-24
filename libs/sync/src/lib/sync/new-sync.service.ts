@@ -8,10 +8,12 @@ import {
   map,
   Observable,
   of,
+  repeat,
   ReplaySubject,
   Subject,
   switchMap,
   take,
+  takeUntil,
   tap,
 } from 'rxjs';
 import {
@@ -130,8 +132,7 @@ export class NewSyncService {
     private http: HttpClient,
     private config: BackendConfigurationService,
   ) {
-    console.log('NewSyncService');
-    if (localStorage.getItem(SYNC_SERVER_KEY)) {
+    if (this.hasSyncServer()) {
       this.initServer();
     }
   }
@@ -145,10 +146,13 @@ export class NewSyncService {
       )
       .subscribe(this._sourcesCache);
 
-    // use local server by default and start it automatically when we start the app
-    if (!localStorage.getItem(SYNC_SERVER_KEY) || localStorage.getItem(SYNC_SERVER_KEY) === LOCAL_SYNC_SERVER) {
-      this.setSyncServer({ url: '', local: true });
-    }
+    of(true)
+      .pipe(
+        switchMap(() => this.serverStatus(this.getSyncServer())),
+        map((res) => !res.running),
+        repeat({ delay: 5000 }),
+      )
+      .subscribe((isServerDown) => this.setServerStatus(isServerDown));
   }
 
   getSource(connector: string, instance: string): Observable<ISourceConnector> {
@@ -371,6 +375,10 @@ export class NewSyncService {
       localStorage.setItem(SYNC_SERVER_KEY, server.url);
       this._syncServer.next(server.url);
     }
+  }
+
+  hasSyncServer(): boolean {
+    return !!localStorage.getItem(SYNC_SERVER_KEY);
   }
 
   resetSyncServer() {

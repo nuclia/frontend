@@ -478,4 +478,8 @@ export class SyncService {
   setServerStatus(isDown: boolean) {
     this._isServerDown.next(isDown);
   }
+
+  hasSyncServer(): boolean {
+    throw new Error('Method not implemented.');
+  }
 }

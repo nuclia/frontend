@@ -4,6 +4,7 @@ import { UploadDialogService, UploadType } from '../../resources/upload-button/u
 import { filter } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService } from '@flaps/core';
+import { SyncService } from '@nuclia/sync';
 
 @Component({
   selector: 'stf-upload-data',
@@ -13,11 +14,15 @@ import { FeaturesService } from '@flaps/core';
 })
 export class UploadDataComponent {
   isSyncEnabled = this.features.sync;
+  hasSyncServer = this.syncService.hasSyncServer();
+  isServerDown = this.syncService.isServerDown;
+
   constructor(
     private uploadService: UploadDialogService,
     private router: Router,
     private route: ActivatedRoute,
     private features: FeaturesService,
+    private syncService: SyncService,
   ) {}
 
   selectUpload(type: UploadType) {
@@ -29,5 +34,9 @@ export class UploadDataComponent {
 
   openDesktop() {
     openDesktop();
+  }
+
+  setupSync() {
+    this.router.navigate(['./sync/server'], { relativeTo: this.route });
   }
 }
