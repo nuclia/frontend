@@ -22,11 +22,16 @@
       <pa-option value="v3enterprise">Enterprise v3</pa-option>
     </pa-select>
 
-    <pa-button
-      *ngIf="configForm.controls.type.value === 'stash-trial' || configForm.controls.type.value === 'stash-enterprise'"
-      (click)="toggleAccountType()">
-      {{ configForm.controls.type.value === 'stash-trial' ? 'Upgrade to Enterprise' : 'Downgrade to Trial' }}
-    </pa-button>
+    @if (configForm.controls.type.value === 'stash-trial') {
+      <pa-button (click)="toggleAccountType('v3growth')">Upgrade to Growth</pa-button>
+      <pa-button (click)="toggleAccountType('v3enterprise')">Upgrade to Enterprise</pa-button>
+    } @else if (
+      configForm.controls.type.value === 'stash-enterprise' ||
+      configForm.controls.type.value === 'v3enterprise' ||
+      configForm.controls.type.value === 'v3growth'
+    ) {
+      <pa-button (click)="toggleAccountType('stash-trial')">Downgrade to Trial</pa-button>
+    }
   </div>
 
   <pa-date-picker
