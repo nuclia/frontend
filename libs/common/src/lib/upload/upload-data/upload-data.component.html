@@ -27,21 +27,28 @@
     </div>
 
     <div class="desktop-option">
-      <p class="body-m description">
-        <span class="title-xs">Nuclia Desktop.</span>
-        {{ 'stash.upload.desktop.description' | translate }}
-      </p>
-      <pa-button
-        class="desktop-button"
-        (click)="openDesktop()">
-        <img
-          src="assets/logos/nuclia-desktop-white.svg"
-          alt="Nuclia Desktop" />
-      </pa-button>
+      @if (isSyncEnabled | async) {
+        <p class="body-m description">
+          {{ 'stash.upload.sync.setup' | translate }}
+        </p>
+        <!-- <nsy-connectors type="sources"></nsy-connectors> -->
+      } @else {
+        <p class="body-m description">
+          <span class="title-xs">Nuclia Desktop.</span>
+          {{ 'stash.upload.desktop.description' | translate }}
+        </p>
+        <pa-button
+          class="desktop-button"
+          (click)="openDesktop()">
+          <img
+            src="assets/logos/nuclia-desktop-white.svg"
+            alt="Nuclia Desktop" />
+        </pa-button>
 
-      <div class="sources-container">
-        <stf-desktop-sources showDetails></stf-desktop-sources>
-      </div>
+        <div class="sources-container">
+          <stf-desktop-sources showDetails></stf-desktop-sources>
+        </div>
+      }
     </div>
   </div>
 </div>

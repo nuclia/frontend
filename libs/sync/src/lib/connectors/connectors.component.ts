@@ -11,11 +11,11 @@ import { map } from 'rxjs';
 export class ConnectorsComponent {
   connectors = this.sync.sourceObs.pipe(map((sources) => sources.sort((a, b) => a.title.localeCompare(b.title))));
 
-  @Output() select = new EventEmitter<string>();
+  @Output() selectConnector = new EventEmitter<string>();
 
   constructor(private sync: SyncService) {}
 
   onSelectConnector(id: string) {
-    this.select.emit(id);
+    this.selectConnector.emit(id);
   }
 }

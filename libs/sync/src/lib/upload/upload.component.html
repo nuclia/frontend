@@ -17,7 +17,7 @@
   <nsy-connectors
     *ngIf="(step | async) === 0"
     type="sources"
-    (select)="onSelectConnector($event)"
+    (selectConnector)="onSelectConnector($event)"
     (cancel)="cancel()"></nsy-connectors>
   <nsy-settings
     *ngIf="(step | async) === 1"

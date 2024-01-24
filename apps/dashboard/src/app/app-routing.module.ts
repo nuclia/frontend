@@ -18,7 +18,6 @@ import {
   selectKbGuard,
   setAccountGuard,
   setKbGuard,
-  UploadDataComponent,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
@@ -132,7 +131,8 @@ const routes: Routes = [
               },
               {
                 path: 'upload',
-                component: UploadDataComponent,
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/upload/upload.module').then((m) => m.UploadModule),
               },
               {
                 path: 'resources',

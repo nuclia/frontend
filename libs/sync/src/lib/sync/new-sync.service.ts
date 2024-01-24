@@ -38,9 +38,7 @@ import { SharepointImpl } from './sources/sharepoint';
 import { ConfluenceConnector } from './sources/confluence';
 import { OAuthConnector } from './sources/oauth';
 
-export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
-export const ACCOUNT_ID_KEY = 'NUCLIA_ID_ACCOUNT';
-export const LOCAL_SYNC_SERVER = 'http://localhost:8000';
+export const LOCAL_SYNC_SERVER = 'http://localhost:8080';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 
 @Injectable({ providedIn: 'root' })
@@ -99,9 +97,6 @@ export class NewSyncService {
     folder: { definition: FolderConnector, settings: {} },
     sitemap: { definition: SitemapConnector, settings: {} },
     confluence: { definition: ConfluenceConnector, settings: {} },
-    // s3: { definition: S3Connector, settings: {} },
-    // gcs: { definition: GCSConnector, settings: {} },
-    // brightcove: { definition: BrightcoveConnector, settings: {} },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
@@ -129,8 +124,6 @@ export class NewSyncService {
   currentSource = combineLatest([this.sourcesCache, this.currentSourceId]).pipe(
     map(([sources, sourceId]) => sources[sourceId || '']),
   );
-  private _basePath = new BehaviorSubject<string>('/');
-  basePath = this._basePath.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -138,14 +131,12 @@ export class NewSyncService {
     private config: BackendConfigurationService,
   ) {
     console.log('NewSyncService');
-
-    const account = this.getAccountId();
-    if (account) {
-      this.setAccount();
+    if (localStorage.getItem(SYNC_SERVER_KEY)) {
+      this.initServer();
     }
-    // UNCOMMENT TO ENABLE DYNAMIC CONNECTORS
-    // this.fetchDynamicConnectors();
+  }
 
+  initServer() {
     this.isServerDown
       .pipe(
         distinctUntilChanged(),
@@ -314,36 +305,6 @@ export class NewSyncService {
     return source && !(source.connectorId === 'sitemap' || (source.connectorId === 'folder' && source.permanentSync));
   }
 
-  getAccountSlug(): string {
-    return localStorage.getItem(ACCOUNT_KEY) || '';
-  }
-
-  getAccountId(): string {
-    return localStorage.getItem(ACCOUNT_ID_KEY) || '';
-  }
-
-  selectAccount(account: string, accountId: string) {
-    localStorage.setItem(ACCOUNT_KEY, account);
-    localStorage.setItem(ACCOUNT_ID_KEY, accountId);
-    this.setAccount();
-  }
-
-  setAccount() {
-    this.sdk
-      .setCurrentAccount(this.getAccountId())
-      .pipe(
-        take(1),
-        switchMap(() =>
-          this.sdk.nuclia.db.getAccount(this.getAccountId()).pipe(
-            tap((account) => (this.sdk.nuclia.options.accountType = account.type)),
-            switchMap((account) => this.sdk.nuclia.rest.getZoneSlug(account.zone)),
-            tap((zone) => (this.sdk.nuclia.options.zone = zone)),
-          ),
-        ),
-      )
-      .subscribe();
-  }
-
   setStep(step: number) {
     this._step.next(step);
   }
@@ -474,20 +435,6 @@ export class NewSyncService {
 
   clearLogs(): Observable<void> {
     return this.http.delete<void>(`${this._syncServer.getValue()}/logs`);
-  }
-
-  cleanUpAccount() {
-    localStorage.removeItem(ACCOUNT_KEY);
-    localStorage.removeItem(ACCOUNT_ID_KEY);
-  }
-
-  logout() {
-    this.cleanUpAccount();
-    this.sdk.nuclia.auth.logout();
-  }
-
-  setBasePath(path: string) {
-    this._basePath.next(path);
   }
 
   getSyncServer() {

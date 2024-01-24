@@ -905,6 +905,7 @@
 	"stash.upload.option.links": "Liens",
 	"stash.upload.option.q-and-a": "Q&R",
 	"stash.upload.page-subtitle": "Vous pouvez directement télécharger vos fichiers, liens, ressources ou dossiers",
+	"stash.upload.sync.setup": "Vous pouvez également configurer un agent de synchronisation pour utiliser la fonctionnalité de synchronisation et transférer automatiquement les données depuis :",
 	"stash.upload_data": "Télécharger des données",
 	"stash.upload_to_search": "Téléchargez des données pour commencer à utiliser le moteur de recherche AI.",
 	"stash.users.new_user": "Ajouter un nouvel utilisateur",

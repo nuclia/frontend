@@ -57,6 +57,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isEntitiesEnabled = this.features.manageEntities;
   isBillingEnabled = this.features.billing;
   isSyncEnabled = this.features.sync;
+  isTrainingEnabled = this.features.training;
   isSynonymsEnabled = this.features.synonyms;
   isActivityEnabled = this.features.activityLog;
 

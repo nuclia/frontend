@@ -3,6 +3,7 @@ import { openDesktop } from '../../utils';
 import { UploadDialogService, UploadType } from '../../resources/upload-button/upload-dialog.service';
 import { filter } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FeaturesService } from '@flaps/core';
 
 @Component({
   selector: 'stf-upload-data',
@@ -11,7 +12,13 @@ import { ActivatedRoute, Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadDataComponent {
-  constructor(private uploadService: UploadDialogService, private router: Router, private route: ActivatedRoute) {}
+  isSyncEnabled = this.features.sync;
+  constructor(
+    private uploadService: UploadDialogService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private features: FeaturesService,
+  ) {}
 
   selectUpload(type: UploadType) {
     this.uploadService
