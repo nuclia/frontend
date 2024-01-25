@@ -1,23 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SDKService } from '../api';
-import { BackendConfigurationService } from '../config';
 import { MagicAction } from '../models';
-
-const AUTH = 'auth';
-const MAGIC = 'magic';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenService {
-  constructor(
-    private sdk: SDKService,
-    private config: BackendConfigurationService,
-  ) {}
+  constructor(private sdk: SDKService) {}
 
-  validate(token: string): Observable<MagicAction> {
-    const url = this.config.getAPIURL() + `/${AUTH}/${MAGIC}?token=${token}`;
-    return this.sdk.nuclia.rest.post(url, {});
+  validate(token: string, zone?: string): Observable<MagicAction> {
+    return this.sdk.nuclia.rest.post(`/auth/magic?token=${token}`, undefined, undefined, undefined, undefined, zone);
   }
 }

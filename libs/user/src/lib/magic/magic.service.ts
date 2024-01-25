@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, MagicAction, SDKService } from '@flaps/core';
+import { AuthService, MagicAction, SDKService, TokenService } from '@flaps/core';
+import { catchError, map, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,17 +11,29 @@ export class MagicService {
     private authService: AuthService,
     private sdk: SDKService,
     private router: Router,
+    private tokenService: TokenService,
   ) {}
 
-  execute(action: MagicAction): void {
+  execute(action: MagicAction) {
     this.authService.setNextUrl(null);
     this.sdk.cleanAccount();
 
-    if (action.token) {
-      this.sdk.nuclia.auth.authenticate(action.token);
-      this.router.navigate(['/']);
+    if (action.action === 'join_regional_kb') {
+      // Action to join a kb has a different flow
+      if (action.login_token) {
+        this.sdk.nuclia.auth.authenticate(action.login_token);
+      }
+      return this.joinKb(action).pipe(map(() => undefined));
+    } else {
+      if (action.token) {
+        this.sdk.nuclia.auth.authenticate(action.token);
+      }
+      this._execute(action);
+      return of(undefined);
     }
+  }
 
+  private _execute(action: MagicAction): void {
     switch (action.action) {
       case 'create':
         this.router.navigate(['/edit/' + action.path], {
@@ -31,9 +44,13 @@ export class MagicService {
         this.router.navigate(['/edit/' + action.path]);
         break;
       case 'goaccount':
-      case 'gostash':
         this.router.navigate(['/setup/invite'], {
-          queryParams: { account: action.account, kb: action.stash },
+          queryParams: { account: action.account },
+        });
+        break;
+      case 'redict_to_kb':
+        this.router.navigate(['/setup/invite'], {
+          queryParams: { account: action.account, kb: action.kb },
         });
         break;
       case 'goselectaccount':
@@ -49,5 +66,19 @@ export class MagicService {
         this.router.navigate(['/user/onboarding']);
         break;
     }
+  }
+
+  joinKb(action: MagicAction) {
+    return this.validateToken(action.join_kb_token || '', action.zone || '').pipe(
+      tap((nextAction) => this._execute(nextAction)),
+    );
+  }
+
+  validateToken(token: string, zone?: string) {
+    return this.tokenService.validate(token, zone).pipe(
+      catchError((error) => {
+        throw { tokenError: error };
+      }),
+    );
   }
 }
