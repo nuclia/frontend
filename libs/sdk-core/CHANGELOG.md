@@ -1,9 +1,10 @@
-# 1.11.2 (unreleased)
+# 1.11.2 (2024-01-25)
 
 ### Improvements
 
 - Add SAML related properties to `Account` interface
 - Add `AccountModification` interface
+- Support `origin.path` metadata in `Resource` model
 
 # 1.11.1 (2024-01-22)
 

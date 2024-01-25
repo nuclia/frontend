@@ -728,6 +728,7 @@
 	"resource.origin.created": "Created",
 	"resource.origin.filename": "Filename",
 	"resource.origin.modified": "Modified",
+	"resource.origin.path": "Original file path",
 	"resource.origin.related": "Related",
 	"resource.origin.url": "URL",
 	"resource.popover.error-resources": "Files that have failed to process",

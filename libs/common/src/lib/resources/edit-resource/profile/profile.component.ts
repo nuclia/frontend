@@ -42,6 +42,7 @@ export class ResourceProfileComponent implements OnInit {
       created: new FormControl<string>('', { nonNullable: true }),
       modified: new FormControl<string>('', { nonNullable: true }),
       related: new FormControl<string>('', { nonNullable: true }),
+      path: new FormControl<string>('', { nonNullable: true }),
     }),
     extra: new FormControl<string>('', {
       nonNullable: true,
@@ -116,6 +117,7 @@ export class ResourceProfileComponent implements OnInit {
         created: data.origin?.created || '',
         modified: data.origin?.modified || '',
         related: (data.origin?.related || []).join('\n'),
+        path: data.origin?.path || '',
       },
       extra: JSON.stringify(data.extra?.metadata, null, 2) || '',
     });
@@ -171,6 +173,7 @@ export class ResourceProfileComponent implements OnInit {
             created: value.origin.created || undefined,
             modified: value.origin.modified || undefined,
             related: value.origin.related.split('\n').map((s) => s.trim()),
+            path: value.origin.path || undefined,
           },
           extra: value.extra ? { metadata: JSON.parse(value.extra) } : undefined,
         }

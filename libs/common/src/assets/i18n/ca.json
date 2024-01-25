@@ -727,6 +727,7 @@
 	"resource.origin.created": "Data creació",
 	"resource.origin.filename": "Nom de l'arxiu",
 	"resource.origin.modified": "Modificat",
+	"resource.origin.path": "Ruta del fitxer original",
 	"resource.origin.related": "Relacionats",
 	"resource.origin.url": "URL",
 	"resource.popover.error-resources": "Fitxers que no s'han pogut processar",
