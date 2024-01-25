@@ -1,8 +1,8 @@
-import { MagicActionError, TokenService } from '@flaps/core';
+import { MagicActionError } from '@flaps/core';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MagicService } from './magic.service';
-import { catchError, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'stf-magic',
@@ -13,7 +13,6 @@ export class MagicComponent implements OnInit, OnDestroy {
 
   error = '';
   constructor(
-    private tokenService: TokenService,
     private magicService: MagicService,
     private route: ActivatedRoute,
     private router: Router,
@@ -33,25 +32,24 @@ export class MagicComponent implements OnInit, OnDestroy {
           return token;
         }),
         filter((token) => !!token),
-        switchMap((token) => this.tokenService.validate(token as string)),
-        tap((data) => this.magicService.execute(data)),
-        catchError((error) => {
-          const cause = error.detail as MagicActionError;
-          if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
-            this.error = `login.${cause}`;
-          } else {
-            this.error = 'login.token_expired';
-          }
-          this.router.navigate(['/user/login'], {
-            queryParams: { message: this.error },
-          });
-          return of(null);
-        }),
+        switchMap((token) => this.magicService.validateToken(token as string)),
+        switchMap((action) => this.magicService.execute(action)),
       )
       .subscribe({
-        error: () => {
-          this.error = 'onboarding.failed';
-          this.cdr.markForCheck();
+        error: (error) => {
+          if (error?.tokenError) {
+            let message = 'login.token_expired';
+            const cause = error.tokenError.detail as MagicActionError;
+            if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
+              message = `login.${cause}`;
+            }
+            this.router.navigate(['/user/login'], {
+              queryParams: { message },
+            });
+          } else {
+            this.error = 'onboarding.failed';
+            this.cdr.markForCheck();
+          }
         },
       });
   }
