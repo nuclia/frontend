@@ -6,10 +6,12 @@ import type {
   EntitiesGroup,
   EventList,
   EventType,
+  FullKbUser,
   IKnowledgeBox,
   IKnowledgeBoxCreation,
   InviteKbData,
   IWritableKnowledgeBox,
+  KbUser,
   KbUserPayload,
   LabelSet,
   LabelSets,
@@ -22,16 +24,14 @@ import type {
   SynonymsPayload,
   UpdateEntitiesGroupPayload,
 } from './kb.models';
-import { FullKbUser, KbUser } from './kb.models';
 import type { IErrorResponse, INuclia } from '../../models';
-import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from '../resource';
-import { ExtractedDataTypes, Resource } from '../resource';
+import { ExtractedDataTypes, ICreateResource, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import type { Chat, ChatOptions } from '../search';
-import { catalog, chat, find, Search, search, SearchOptions, suggest } from '../search';
+import { catalog, chat, Chat, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
 import { ResourceProperties } from '../db.models';
+import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -47,6 +47,20 @@ export class KnowledgeBox implements IKnowledgeBox {
   accountId: string;
   protected nuclia: INuclia;
   private tempToken?: { token: string; expiration: number };
+  private notifications?: Observable<NotificationMessage[]>;
+  private notificationsController?: AbortController;
+
+  private resourceStatus: {
+    [resourceId: string]: {
+      seqid: number;
+      indexedNotificationCount: number;
+      sequence: NotificationType[];
+      operation?: NotificationOperation;
+      error?: boolean;
+      ingestion_succeeded?: boolean;
+      processing_errors?: boolean;
+    };
+  } = {};
 
   /**
    * The Knowledge Box path on the regional API.
@@ -301,7 +315,7 @@ export class KnowledgeBox implements IKnowledgeBox {
    * The optional `user_prompt` parameter allows you to specify a text that will be used to generate the summary,
    * and must use the `{text}` placeholder to indicate where the resource text should be inserted
    * (example: 'Make a one-line summary of the following text: {text}').
-   * 
+   *
    * Example:
     ```ts
     nuclia.knowledgeBox
@@ -555,6 +569,73 @@ export class KnowledgeBox implements IKnowledgeBox {
           }
           return fullKbUsers;
         }, [] as FullKbUser[]);
+      }),
+    );
+  }
+
+  /**
+   * Start listening to all the notifications sent by the Knowledge Box.
+   */
+  listenToAllNotifications(): Observable<NotificationMessage[]> {
+    if (!this.notifications) {
+      this.notificationsController = new AbortController();
+      this.notifications = getAllNotifications(this.nuclia, this.path, this.notificationsController);
+    }
+    return this.notifications;
+  }
+
+  /**
+   * Stop listening the notifications sent by the Knowledge Box.
+   */
+  stopListeningToNotifications() {
+    if (this.notificationsController) {
+      this.notificationsController.abort();
+      this.notificationsController = undefined;
+      this.notifications = undefined;
+    }
+  }
+
+  /**
+   * Start listening to the Knowledge Box notifications, and returns the list of resource’s id which processed finished.
+   */
+  listenToProcessingNotifications(): Observable<{ resourceId: string; success: boolean }[]> {
+    return this.listenToAllNotifications().pipe(
+      map((notifications) => {
+        notifications.forEach((message) => {
+          const data = message.data;
+          if (!this.resourceStatus[data.resource_uuid]) {
+            this.resourceStatus[data.resource_uuid] = {
+              seqid: data.seqid,
+              indexedNotificationCount: 0,
+              sequence: [],
+            };
+          }
+          if (message.type === 'resource_indexed') {
+            this.resourceStatus[data.resource_uuid].indexedNotificationCount++;
+          } else {
+            this.resourceStatus[data.resource_uuid] = {
+              ...this.resourceStatus[data.resource_uuid],
+              ...data,
+              sequence: [...this.resourceStatus[data.resource_uuid].sequence, message.type],
+            };
+          }
+        });
+        return Object.entries(this.resourceStatus).reduce(
+          (processedList, [resourceId, status]) => {
+            if (status.sequence.includes('resource_processed') && status.indexedNotificationCount >= 2) {
+              processedList.push({
+                resourceId,
+                success: !status.error && !status.processing_errors && !!status.ingestion_succeeded,
+              });
+            }
+            return processedList;
+          },
+          [] as { resourceId: string; success: boolean }[],
+        );
+      }),
+      tap((processedResources) => {
+        // clean up resource status when processing is done
+        processedResources.forEach((item) => delete this.resourceStatus[item.resourceId]);
       }),
     );
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { Counters, IErrorResponse, Resource, Search } from '@nuclia/core';
-import { LabelsService } from '../../label/labels.service';
+import { LabelsService } from '../label/labels.service';
 
 const sampleLabelSet = 'dataset';
 const sampleLabel = 'Sample dataset';
@@ -36,24 +36,6 @@ export class SampleDatasetService {
           return true;
         }
       }),
-    );
-  }
-
-  importDataset(sampleId: string): Observable<void> {
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) => this.sdk.nuclia.rest.post(`/export/${sampleId}/import_to/${kb.id}`, {})),
-      switchMap(() => this.labelService.refreshLabelsSets()),
-      map(() => {
-        this.refresh.next(true);
-      }),
-    );
-  }
-
-  // non-documented API so we keep it out of the SDK
-  getDatasets(): Observable<{ id: string; title: string; description: string }[]> {
-    return this.sdk.currentKb.pipe(
-      switchMap(() => this.sdk.nuclia.rest.get<{ id: string; title: string; description: string }[]>(`/exports`)),
     );
   }
 

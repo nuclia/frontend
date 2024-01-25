@@ -39,7 +39,6 @@ import { UploadButtonComponent } from './upload-button';
 import { PaginationModule } from '../pagination';
 import { PipesModule } from '../pipes';
 import { LabelModule } from '../label';
-import { DatasetImportComponent, DatasetSelectorComponent, LoadingModalComponent } from './sample-dataset';
 import { EditResourceModule } from './edit-resource/edit-resource.module';
 import {
   PaButtonModule,
@@ -81,10 +80,6 @@ const ROUTES: Routes = [
             component: ErrorResourcesTableComponent,
           },
         ],
-      },
-      {
-        path: 'dataset',
-        component: DatasetImportComponent,
       },
       {
         path: ':id/edit',
@@ -190,9 +185,6 @@ const ROUTES: Routes = [
     TitleCellComponent,
   ],
   declarations: [
-    DatasetImportComponent,
-    DatasetSelectorComponent,
-    LoadingModalComponent,
     ResourcesComponent,
     ResourceListComponent,
     ProcessedResourceTableComponent,

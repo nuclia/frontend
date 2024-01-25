@@ -1,4 +1,4 @@
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
 import { Chat, Citations } from './chat.models';
 import { ChatOptions, Search } from './search.models';
@@ -51,7 +51,7 @@ export function chat(
             } as Chat.Answer;
           }),
         )
-    : nuclia.rest.getStream(endpoint, body).pipe(
+    : nuclia.rest.getStreamedResponse(endpoint, body).pipe(
         map(({ data, incomplete, headers }) => {
           const searchId = headers.get('X-Nuclia-Trace-Id') || '';
           const id = headers.get('NUCLIA-LEARNING-ID') || '';

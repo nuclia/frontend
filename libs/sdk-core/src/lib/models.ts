@@ -105,7 +105,9 @@ export interface IRest {
   getFullUrl(path: string): string;
   getObjectURL(path: string): Observable<string>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getStream(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>;
+  getStreamedResponse(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>;
+
+  getStreamMessages(path: string, controller: AbortController): Observable<{ data: Uint8Array; headers: Headers }>;
 }
 
 export interface IDb {
