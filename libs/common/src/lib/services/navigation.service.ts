@@ -39,6 +39,10 @@ export class NavigationService {
     const pattern = `${kbUrl}/(${settingsPages.join('|')})`;
     return path.match(new RegExp(pattern)) !== null;
   }
+  inKbUpload(path: string, kbUrl: string): boolean {
+    const pattern = `${kbUrl}/upload`;
+    return path.match(new RegExp(pattern)) !== null;
+  }
   inAccountBilling(path: string): boolean {
     return path.match(IN_ACCOUNT_BILLING) !== null;
   }

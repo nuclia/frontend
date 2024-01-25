@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { ServerSelectionComponent } from './server-selection/server-selection.component';
+import { SyncComponent } from './upload/sync.component';
 
 const routes: Routes = [
   {
@@ -10,6 +11,10 @@ const routes: Routes = [
       {
         path: 'server',
         component: ServerSelectionComponent,
+      },
+      {
+        path: ':id',
+        component: SyncComponent,
       },
     ],
   },

@@ -29,11 +29,14 @@
 	"pastanaga.datetime.yesterday": "Ayer",
 	"upload.add-connector": "Añadir conector",
 	"upload.connectors": "Conectores",
+	"upload.deletion-failed": "Error al borrar",
+	"upload.failed": "Guardar fracaso",
 	"upload.labels": "Aplicar etiquetas a los recursos cargados a través de este conector",
 	"upload.no-labels": "Si desea asignar etiquetas al cargar archivos, defina algunos conjuntos de etiquetas en su panel.",
 	"upload.refresh": "Refrescar {{field}}",
 	"upload.s3.region": "Región",
 	"upload.s3.region_help": "Por ejemplo: eu-west-3",
+	"upload.saved": "Guardado exitosamente",
 	"upload.select.all": "Seleccionar todo",
 	"upload.select.description": "Selecciona los datos que quieres subir",
 	"upload.select.search": "Busca",
@@ -59,5 +62,10 @@
 	"upload.source.use-nucliadb": "Utilizar una NucliaDB local",
 	"upload.steps.configure": "Configurar",
 	"upload.steps.data": "Elegir datos",
-	"upload.steps.source": "Selecciona el origen"
+	"upload.steps.source": "Selecciona el origen",
+	"upload.tabs.activity": "Actividad",
+	"upload.tabs.filters": "Filtros",
+	"upload.tabs.folders": "Carpetas para sincronizar",
+	"upload.tabs.labels": "Etiquetas",
+	"upload.tabs.settings": "Configuración"
 }

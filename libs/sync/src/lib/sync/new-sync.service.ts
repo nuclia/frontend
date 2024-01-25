@@ -13,7 +13,6 @@ import {
   Subject,
   switchMap,
   take,
-  takeUntil,
   tap,
 } from 'rxjs';
 import {
@@ -119,10 +118,21 @@ export class NewSyncService {
   addSource = new Subject<void>();
   private _isServerDown = new BehaviorSubject<boolean>(true);
   isServerDown = this._isServerDown.asObservable();
-  private _currentSourceId = new BehaviorSubject<string | null>(null);
-  currentSourceId = this._currentSourceId.asObservable();
-  private _sourcesCache = new BehaviorSubject<{ [id: string]: Source }>({});
-  sourcesCache = this._sourcesCache.asObservable();
+  private _currentSyncId = new BehaviorSubject<string | null>(null);
+  currentSourceId = this._currentSyncId.asObservable();
+  private _syncCache = new BehaviorSubject<{ [id: string]: ISyncEntity }>({});
+  syncCache = this._syncCache.asObservable();
+  sourcesCache: Observable<{ [id: string]: Source }> = this.syncCache.pipe(
+    map((syncs) =>
+      Object.entries(syncs).reduce(
+        (acc, [id, sync]) => ({
+          ...acc,
+          [id]: this.sync2Source(sync),
+        }),
+        {},
+      ),
+    ),
+  );
   currentSource = combineLatest([this.sourcesCache, this.currentSourceId]).pipe(
     map(([sources, sourceId]) => sources[sourceId || '']),
   );
@@ -142,9 +152,21 @@ export class NewSyncService {
       .pipe(
         distinctUntilChanged(),
         filter((isDown) => !isDown),
-        switchMap(() => this.getSources()),
+        switchMap(() =>
+          this.getSources().pipe(
+            map((sources) =>
+              Object.entries(sources).reduce(
+                (acc, [id, source]) => {
+                  acc[id] = this.source2Sync(id, source);
+                  return acc;
+                },
+                {} as { [id: string]: ISyncEntity },
+              ),
+            ),
+          ),
+        ),
       )
-      .subscribe(this._sourcesCache);
+      .subscribe(this._syncCache);
 
     of(true)
       .pipe(
@@ -171,6 +193,13 @@ export class NewSyncService {
   }
   getDestination(id: string, settings: ConnectorSettings = {}): Observable<IDestinationConnector> {
     return this.destinations[id].definition.factory({ ...this.destinations[id].settings, ...settings });
+  }
+
+  getCurrentSync(): Observable<ISyncEntity> {
+    return this.currentSourceId.pipe(
+      switchMap((id) => this.syncCache.pipe(map((cache) => cache[id || '']))),
+      filter((sync) => !!sync),
+    );
   }
 
   setSourceAndDestination(
@@ -212,27 +241,23 @@ export class NewSyncService {
     }
   }
 
-  setSourceData(sourceId: string, source: Source): Observable<void> {
-    const existing = this._sourcesCache.getValue()[sourceId];
-    const newValue: Source = existing
-      ? {
-          ...existing,
-          ...source,
-          data: { ...existing.data, ...source.data },
-          kb: { ...existing.kb, ...source.kb },
-        }
-      : source;
+  setSourceData(sourceId: string, source: Partial<Source>): Observable<void> {
+    const existing = this._syncCache.getValue()[sourceId];
     const data: ISyncEntity = {
       id: sourceId,
-      connector: { name: newValue.connectorId, parameters: newValue.data },
-      kb: newValue.kb,
-      labels: newValue.labels,
       title: sourceId,
+      connector: {
+        name: source.connectorId || existing.connector.name,
+        parameters: { ...existing.connector.parameters, ...source.data },
+      },
+      kb: { ...(existing.kb || this.sdk.nuclia.options), ...source.kb },
+      labels: source.labels || existing.labels,
+      foldersToSync: source.items || existing.foldersToSync,
     };
     const req = existing
       ? this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, data)
       : this.http.post<void>(`${this._syncServer.getValue()}/sync`, data);
-    return req.pipe(tap(() => this._sourcesCache.next({ ...this._sourcesCache.getValue(), [sourceId]: newValue })));
+    return req.pipe(tap(() => this._syncCache.next({ ...this._syncCache.getValue(), [sourceId]: data })));
   }
 
   getSourceData(sourceId: string): Observable<Source> {
@@ -242,9 +267,9 @@ export class NewSyncService {
   deleteSource(sourceId: string): Observable<void> {
     return this.http.delete<void>(`${this._syncServer.getValue()}/sync/${sourceId}`).pipe(
       tap(() => {
-        const sources = this._sourcesCache.getValue();
+        const sources = this._syncCache.getValue();
         delete sources[sourceId];
-        this._sourcesCache.next(sources);
+        this._syncCache.next(sources);
       }),
     );
   }
@@ -261,7 +286,7 @@ export class NewSyncService {
   }
 
   getSources(): Observable<{ [id: string]: Source }> {
-    // TODO: refactor the Source model to match what the API provides
+    // TODO: when Desktop is gone, refactor the Source model to match what the API provides
     return this.http.get<{ [id: string]: any }>(`${this._syncServer.getValue()}/sync`).pipe(
       map((sources) =>
         Object.entries(sources).reduce(
@@ -271,14 +296,20 @@ export class NewSyncService {
               connectorId: source.connector.name,
               data: source.connector.parameters,
               kb: source.kb,
-              items: source.items,
               permanentSync: true,
               labels: source.labels,
+              items: source.foldersToSync,
             },
           }),
           {},
         ),
       ),
+    );
+  }
+
+  getSyncsForKB(kbId: string): Observable<ISyncEntity[]> {
+    return this.syncCache.pipe(
+      map((sources) => Object.values(sources).filter((source) => source.kb?.knowledgeBox === kbId)),
     );
   }
 
@@ -304,9 +335,9 @@ export class NewSyncService {
     );
   }
 
-  canSelectFiles(sourceId: string) {
-    const source = this._sourcesCache.getValue()[sourceId];
-    return source && !(source.connectorId === 'sitemap' || (source.connectorId === 'folder' && source.permanentSync));
+  canSelectFiles(syncId: string) {
+    const sync = this._syncCache.getValue()[syncId];
+    return sync && !(sync.connector.name === 'sitemap' || sync.connector.name === 'folder');
   }
 
   setStep(step: number) {
@@ -314,7 +345,7 @@ export class NewSyncService {
   }
 
   getSourceCache(name: string): Source {
-    return this._sourcesCache.getValue()[name];
+    return this.sync2Source(this._syncCache.getValue()[name]);
   }
 
   getKb(kbId: string): Observable<WritableKnowledgeBox> {
@@ -361,16 +392,6 @@ export class NewSyncService {
     if (server.local) {
       this._syncServer.next(LOCAL_SYNC_SERVER);
       localStorage.setItem(SYNC_SERVER_KEY, LOCAL_SYNC_SERVER);
-      const electron = (window as any)['electron'];
-      if (electron) {
-        this.serverStatus(LOCAL_SYNC_SERVER)
-          .pipe(take(1))
-          .subscribe((res) => {
-            if (!res.running) {
-              electron.startLocalServer();
-            }
-          });
-      }
     } else if (server.url) {
       localStorage.setItem(SYNC_SERVER_KEY, server.url);
       this._syncServer.next(server.url);
@@ -405,15 +426,15 @@ export class NewSyncService {
   }
 
   getCurrentSourceId(): string | null {
-    return this._currentSourceId.getValue();
+    return this._currentSyncId.getValue();
   }
 
   setCurrentSourceId(id: string) {
-    this._currentSourceId.next(id);
+    this._currentSyncId.next(id);
   }
 
   clearCurrentSourceId() {
-    this._currentSourceId.next(null);
+    this._currentSyncId.next(null);
   }
 
   getLogs(since?: string): Observable<SyncRow[]> {
@@ -451,5 +472,27 @@ export class NewSyncService {
 
   setServerStatus(isDown: boolean) {
     this._isServerDown.next(isDown);
+  }
+
+  private sync2Source(sync: ISyncEntity): Source {
+    return {
+      connectorId: sync.connector.name,
+      data: sync.connector.parameters,
+      kb: sync.kb || this.sdk.nuclia.options,
+      items: sync.foldersToSync,
+      permanentSync: true,
+      labels: sync.labels,
+    };
+  }
+
+  private source2Sync(sourceId: string, source: Source): ISyncEntity {
+    return {
+      id: sourceId,
+      connector: { name: source.connectorId, parameters: source.data },
+      kb: source.kb,
+      labels: source.labels,
+      title: sourceId,
+      foldersToSync: source.items,
+    };
   }
 }

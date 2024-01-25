@@ -1,0 +1,38 @@
+@if (canSelectFiles | async) {
+  <div class="body">
+    <table>
+      @for (resource of resources | async; track resource.uuid) {
+        <tr>
+          <td>
+            <pa-checkbox
+              [value]="selection.isSelected(resource)"
+              (valueChange)="toggle(resource)">
+              {{ resource.title }}
+            </pa-checkbox>
+          </td>
+        </tr>
+      }
+    </table>
+  </div>
+}
+@if (!(canSelectFiles | async)) {
+  <div class="parameters">
+    @for (param of (currentSource | async)?.data || {} | keyvalue; track param.value) {
+      <pa-checkbox
+        disabled
+        [value]="true">
+        {{ param.value }}
+      </pa-checkbox>
+    }
+  </div>
+}
+@if (loading) {
+  <nsi-spinner></nsi-spinner>
+}
+<div class="actions">
+  <pa-button
+    qa="save-button"
+    (click)="save()">
+    {{ 'action.save' | translate }}
+  </pa-button>
+</div>

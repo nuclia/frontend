@@ -3,6 +3,7 @@ import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, 
 import { NavigationService, StandaloneService } from '../services';
 import { BillingService, FeaturesService, SDKService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { SyncService } from '@nuclia/sync';
 
 @Component({
   selector: 'app-navbar',
@@ -35,6 +36,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
       ),
     ),
   );
+  inUpload: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
+    map(([account, kb]) => {
+      return this.navigationService.getKbUrl(account.slug, kb.slug || '');
+    }),
+    switchMap((kbUrl) =>
+      merge(
+        of(this.navigationService.inKbUpload(location.pathname, kbUrl)),
+        this.router.events.pipe(
+          filter((event) => event instanceof NavigationEnd),
+          map((event) => this.navigationService.inKbUpload((event as NavigationEnd).url, kbUrl)),
+          takeUntil(this.unsubscribeAll),
+        ),
+      ),
+    ),
+  );
   inBilling: Observable<boolean> = merge(
     of(this.navigationService.inAccountBilling(location.pathname)),
     this.router.events.pipe(
@@ -58,12 +74,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isBillingEnabled = this.features.billing;
   isSyncEnabled = this.features.sync;
   isTrainingEnabled = this.features.training;
+  isSyncEnabled = this.features.sync;
   isSynonymsEnabled = this.features.synonyms;
   isActivityEnabled = this.features.activityLog;
 
   standalone = this.sdk.nuclia.options.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
   isSubscribed = this.billing.isSubscribed;
+
+  syncs = combineLatest([this.inUpload, this.isAdminOrContrib, this.invalidKey]).pipe(
+    filter(([inUpload, isAdminOrContrib, invalidKey]) => inUpload && isAdminOrContrib && !invalidKey),
+    switchMap(() => this.sdk.currentKb),
+    switchMap((kb) => this.syncService.getSyncsForKB(kb.id)),
+  );
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -73,6 +96,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,
     private billing: BillingService,
+    private syncService: SyncService,
   ) {}
 
   ngOnInit(): void {

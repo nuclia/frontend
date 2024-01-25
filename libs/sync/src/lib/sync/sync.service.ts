@@ -38,6 +38,7 @@ import { FolderConnector } from './sources/folder';
 import { SharepointImpl } from './sources/sharepoint';
 import { ConfluenceConnector } from './sources/confluence';
 import { OAuthConnector } from './sources/oauth';
+import { ISyncEntity } from './new-models';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 export const ACCOUNT_ID_KEY = 'NUCLIA_ID_ACCOUNT';
@@ -479,7 +480,14 @@ export class SyncService {
     this._isServerDown.next(isDown);
   }
 
+  // METHODS FOR THE NEW SERVICE
   hasSyncServer(): boolean {
+    throw new Error('Method not implemented.');
+  }
+  getSyncsForKB(kbId: string): Observable<ISyncEntity[]> {
+    throw new Error('Method not implemented.');
+  }
+  getCurrentSync(): Observable<ISyncEntity> {
     throw new Error('Method not implemented.');
   }
 }

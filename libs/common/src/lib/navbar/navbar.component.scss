@@ -74,6 +74,10 @@ $height-breakpoint: 856px;
             background-color: $color-neutral-lightest;
           }
         }
+        &.sub-item.sync .nav-link-title {
+          font-weight: $font-weight-thin;
+          padding-left: rhythm(5);
+        }
 
         &.disabled {
           color: $color-text-menu-option-disabled;

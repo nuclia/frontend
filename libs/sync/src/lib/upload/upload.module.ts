@@ -11,11 +11,17 @@ import { LabelsExpanderComponent, SisProgressModule } from '@nuclia/sistema';
 import {
   PaButtonModule,
   PaIconModule,
+  PaTabsModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { LabelModule } from '@flaps/core';
+import { SyncComponent } from './sync.component';
+import { ViewSyncComponent } from './view-sync.component';
+import { EditSyncSettingsComponent } from './tabs/edit-settings.component';
+import { EditSyncFoldersComponent } from './tabs/edit-folders.component';
+import { EditSyncLabelsComponent } from './tabs/edit-labels.component';
 
 @NgModule({
   imports: [
@@ -33,9 +39,19 @@ import { LabelModule } from '@flaps/core';
     SisProgressModule,
     LabelModule,
     LabelsExpanderComponent,
+    PaTabsModule,
   ],
   exports: [],
-  declarations: [UploadComponent, SelectFilesComponent, SettingsComponent],
+  declarations: [
+    UploadComponent,
+    SelectFilesComponent,
+    SettingsComponent,
+    SyncComponent,
+    ViewSyncComponent,
+    EditSyncSettingsComponent,
+    EditSyncFoldersComponent,
+    EditSyncLabelsComponent,
+  ],
   providers: [],
 })
 export class UploadModule {}

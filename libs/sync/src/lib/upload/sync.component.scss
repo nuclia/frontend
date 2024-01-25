@@ -1,0 +1,17 @@
+@import 'apps/dashboard/src/variables';
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: rhythm(2);
+}
+h2 {
+  display: flex;
+  img {
+    height: rhythm(4);
+    margin-right: rhythm(2);
+  }
+}
+section {
+  margin-top: rhythm(4);
+}
