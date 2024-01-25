@@ -127,6 +127,13 @@
             {{ 'resource.origin.related' | translate }}
           </pa-textarea>
         </div>
+        <div>
+          <pa-input
+            id="path"
+            formControlName="path">
+            {{ 'resource.origin.path' | translate }}
+          </pa-input>
+        </div>
       </section>
       <section>
         <pa-toggle [(value)]="editExtraMetadata">Edit extra metadata</pa-toggle>

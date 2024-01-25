@@ -108,6 +108,7 @@ export interface Origin {
   filename?: string;
   related?: string[];
   source?: 'WEB' | 'DESKTOP' | 'API';
+  path?: string;
 }
 
 export interface IError {
