@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { catchError, map, of, switchMap } from 'rxjs';
+import { catchError, debounceTime, map, of, switchMap } from 'rxjs';
 
 import { BackendConfigurationService, OAuthService, SAMLService, SDKService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
@@ -36,16 +36,13 @@ export class LoginComponent {
   };
 
   loginForm = new FormGroup({
-    email: new FormControl<string>('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.email],
-      updateOn: 'blur',
-    }),
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
   isLoggingIn = false;
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
+    debounceTime(700),
     switchMap((email) => {
       const parts = (email || '').split('@');
       const domain = parts.length > 1 ? parts.pop() : undefined;
