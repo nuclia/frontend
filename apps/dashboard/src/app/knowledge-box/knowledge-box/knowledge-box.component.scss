@@ -2,7 +2,7 @@
 
 .upload-bar-container {
   position: sticky;
-  top: var(--app-topbar-height);
+  top: 0;
   padding: 0 rhythm(6) 0 var(--app-sidebar-width);
   z-index: $z-index-popup;
 }
