@@ -11,6 +11,7 @@ import {
   IKnowledgeBoxCreation,
   InviteKbData,
   IWritableKnowledgeBox,
+  KbInvite,
   KbUser,
   KbUserPayload,
   LabelSet,
@@ -574,6 +575,15 @@ export class KnowledgeBox implements IKnowledgeBox {
     );
   }
 
+  getInvites(): Observable<KbInvite[]> {
+    return this.nuclia.rest.get<KbInvite[]>(
+      `/account/${this.nuclia.options.accountId}/kb/${this.id}/invites`,
+      undefined,
+      undefined,
+      this.nuclia.options.zone,
+    );
+  }
+
   /**
    * Start listening to all the notifications sent by the Knowledge Box.
    */
@@ -945,5 +955,10 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   inviteToKb(data: InviteKbData): Observable<void> {
     const { endpoint, zone } = this.getKbEndpointAndZone();
     return this.nuclia.rest.post(`${endpoint}/invite`, data, undefined, undefined, undefined, zone);
+  }
+
+  deleteInvite(email: string): Observable<void> {
+    const { endpoint, zone } = this.getKbEndpointAndZone();
+    return this.nuclia.rest.delete(`${endpoint}/invite?email=${email}`, undefined, undefined, zone);
   }
 }

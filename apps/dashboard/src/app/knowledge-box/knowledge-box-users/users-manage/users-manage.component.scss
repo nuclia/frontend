@@ -24,3 +24,14 @@ h3 {
   text-align: right;
   width: 100%;
 }
+
+.email-container {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  justify-content: space-between;
+  width: 100%;
+  pa-icon {
+    color: $color-secondary-strong;
+  }
+}

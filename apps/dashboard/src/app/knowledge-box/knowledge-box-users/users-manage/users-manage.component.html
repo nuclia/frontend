@@ -13,11 +13,11 @@
       formControlName="role"
       label="{{ 'generic.role' | translate }}"
       dim>
-      <pa-option
-        *ngFor="let role of initialRoles"
-        [value]="role">
-        {{ roleTitles[role] | translate }}
-      </pa-option>
+      @for (role of initialRoles; track role) {
+        <pa-option [value]="role">
+          {{ roleTitles[role] | translate }}
+        </pa-option>
+      }
     </pa-select>
     <pa-button
       type="submit"
@@ -69,46 +69,60 @@
     <pa-table-cell header></pa-table-cell>
   </pa-table-header>
 
-  <pa-table-row *ngFor="let user of usersKb | async">
-    <pa-table-cell>
-      <span class="title-s">{{ user.name }}</span>
-    </pa-table-cell>
-    <pa-table-cell>
-      <span class="body-s">{{ user.email }}</span>
-    </pa-table-cell>
-    <pa-table-cell>
-      <nsi-dropdown-button
-        size="small"
-        aspect="basic"
-        [popupRef]="roleDropdown"
-        [disabled]="
-          (isAccountManager | async) === false || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)
-        ">
-        {{ roleTitles[user.role] | translate }}
-      </nsi-dropdown-button>
-      <pa-dropdown #roleDropdown>
-        <pa-option
-          *ngFor="let role of roles"
-          [value]="role"
-          (selectOption)="changeRole(user.id, role)">
-          {{ roleTitles[role] | translate }}
-        </pa-option>
-      </pa-dropdown>
-    </pa-table-cell>
-    <pa-table-cell>
-      <div class="actions">
-        <pa-button
-          *ngIf="(isAccountManager | async) === true"
-          aspect="basic"
-          icon="trash"
+  @for (user of userRows | async; track user.id) {
+    <pa-table-row>
+      <pa-table-cell>
+        <span class="title-s">{{ user.name }}</span>
+      </pa-table-cell>
+      <pa-table-cell>
+        <div class="email-container">
+          <span class="body-s">{{ user.email }}</span>
+          @if (user.expires) {
+            <pa-icon
+              name="clock-dash"
+              [paTooltip]="'kb.users.pending-invitation' | translate: { date: user.expires | date: 'short' }"></pa-icon>
+          }
+        </div>
+      </pa-table-cell>
+      <pa-table-cell>
+        <nsi-dropdown-button
           size="small"
+          aspect="basic"
+          [popupRef]="roleDropdown"
           [disabled]="
-            ((userCount | async) || 0) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)
-          "
-          (click)="deleteUser(user)">
-          {{ 'generic.delete' | translate }}
-        </pa-button>
-      </div>
-    </pa-table-cell>
-  </pa-table-row>
+            (isAccountManager | async) === false ||
+            (user.role === 'SOWNER' && (hasSeveralOwners | async) === false) ||
+            !!user.expires
+          ">
+          {{ roleTitles[user.role] | translate }}
+        </nsi-dropdown-button>
+        <pa-dropdown #roleDropdown>
+          @for (role of roles; track role) {
+            <pa-option
+              [value]="role"
+              (selectOption)="changeRole(user.id, role)">
+              {{ roleTitles[role] | translate }}
+            </pa-option>
+          }
+        </pa-dropdown>
+      </pa-table-cell>
+      <pa-table-cell>
+        <div class="actions">
+          @if ((isAccountManager | async) === true) {
+            <pa-button
+              aspect="basic"
+              icon="trash"
+              size="small"
+              [disabled]="
+                !user.expires &&
+                (((userCount | async) || 0) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false))
+              "
+              (click)="deleteUser(user)">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
+          }
+        </div>
+      </pa-table-cell>
+    </pa-table-row>
+  }
 </pa-table>

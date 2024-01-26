@@ -10,6 +10,10 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 type Order = 'role' | 'name';
 
+interface UserRow extends FullKbUser {
+  expires?: string;
+}
+
 @Component({
   selector: 'app-users-manage',
   templateUrl: './users-manage.component.html',
@@ -25,7 +29,12 @@ export class UsersManageComponent {
   order = new BehaviorSubject<Order>('role');
   orderOpen = false;
 
-  usersKb: Observable<FullKbUser[]> = combineLatest([this.users.usersKb, this.order]).pipe(
+  userRows: Observable<UserRow[]> = combineLatest([
+    combineLatest([this.users.usersKb, this.users.invitesKb]).pipe(
+      map(([users, invites]) => [...users, ...invites.map((invite) => ({ ...invite, id: invite.email, name: '-' }))]),
+    ),
+    this.order,
+  ]).pipe(
     map(([users, order]) => {
       if (order === 'name') {
         return [...users].sort((a, b) => a.name.localeCompare(b.name));
@@ -39,7 +48,7 @@ export class UsersManageComponent {
   );
   userCount: Observable<number> = this.users.usersKb.pipe(map((users) => users.length));
   isAccountManager = this.sdk.currentAccount.pipe(map((account) => account.can_manage_account));
-  hasSeveralOwners: Observable<boolean> = this.usersKb.pipe(
+  hasSeveralOwners: Observable<boolean> = this.users.usersKb.pipe(
     map((users: FullKbUser[]) => users.filter((user) => user.role === 'SOWNER')?.length > 1),
   );
   canAddUsers = this.sdk.currentAccount.pipe(
@@ -66,11 +75,18 @@ export class UsersManageComponent {
       email: this.addForm.value.email,
       role: this.addForm.value.role,
     };
-    this.users.inviteUser(data).subscribe(() => {
-      this.users.updateUsers();
-      this.toaster.success(this.translate.instant('stash.invited_user', { user: this.addForm.value.email }));
-      this.addForm.get('email')?.reset();
-      this.cdr?.markForCheck();
+    this.users.inviteUser(data).subscribe({
+      next: () => {
+        this.users.updateUsers();
+        this.toaster.success(this.translate.instant('stash.invited_user', { user: this.addForm.value.email }));
+        this.addForm.get('email')?.reset();
+        this.cdr?.markForCheck();
+      },
+      error: (error) => {
+        if (error?.status === 409) {
+          this.toaster.error(this.translate.instant('kb.users.already-exists', { email: this.addForm.value.email }));
+        }
+      },
     });
   }
 
@@ -82,7 +98,7 @@ export class UsersManageComponent {
     this.order.next(order);
   }
 
-  deleteUser(user: FullKbUser) {
+  deleteUser(user: UserRow) {
     this.modal
       .openConfirm({
         title: 'stash.confirm_delete_user.title',
@@ -92,7 +108,7 @@ export class UsersManageComponent {
       })
       .onClose.pipe(
         filter((result) => !!result),
-        switchMap(() => this.users.deleteUser(user.id)),
+        switchMap(() => (user.expires ? this.users.deleteInvite(user.email) : this.users.deleteUser(user.id))),
       )
       .subscribe(() => {
         this.toaster.success('stash.users.user_deleted');

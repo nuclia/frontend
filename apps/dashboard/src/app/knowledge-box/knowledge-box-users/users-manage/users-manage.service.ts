@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { shareReplay, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
+import { map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { InviteKbData, KBRoles } from '@nuclia/core';
 
@@ -10,11 +10,22 @@ export class UsersManageService {
 
   usersKb = this._onUpdateUsers.pipe(
     switchMap(() =>
-      combineLatest([this.sdk.currentKb, this.sdk.currentAccount]).pipe(
+      forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
         switchMap(([kb, account]) => kb.getUsers(account.slug)),
       ),
     ),
-    shareReplay(),
+    shareReplay(1),
+  );
+
+  invitesKb = this._onUpdateUsers.pipe(
+    switchMap(() => this.sdk.currentKb.pipe(take(1))),
+    switchMap((kb) => kb.getInvites()),
+    map((invites) =>
+      invites.map(
+        (invite) => ({ ...invite, expires: invite.expires + 'Z' }), // Set timezone
+      ),
+    ),
+    shareReplay(1),
   );
 
   constructor(private sdk: SDKService) {}
@@ -24,11 +35,15 @@ export class UsersManageService {
   }
 
   inviteUser(data: InviteKbData): Observable<void> {
-    return this.sdk.currentKb.pipe(switchMap((kb) => kb.inviteToKb(data)));
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.inviteToKb(data)),
+    );
   }
 
   changeRole(userId: string, role: KBRoles) {
     return this.sdk.currentKb.pipe(
+      take(1),
       switchMap((kb) => kb.updateUsers({ update: [{ id: userId, role }] })),
       tap(() => this.updateUsers()),
     );
@@ -36,7 +51,16 @@ export class UsersManageService {
 
   deleteUser(userId: string) {
     return this.sdk.currentKb.pipe(
+      take(1),
       switchMap((kb) => kb.updateUsers({ delete: [userId] })),
+      tap(() => this.updateUsers()),
+    );
+  }
+
+  deleteInvite(email: string) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.deleteInvite(email)),
       tap(() => this.updateUsers()),
     );
   }
