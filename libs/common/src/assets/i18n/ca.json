@@ -513,6 +513,8 @@
 	"kb.settings.user_prompts.prompt_help": "Defineix la manera com volem que actuï el sistema quan fem una pregunta. Aquí podem definir regles més específiques, que fins i tot podrien anul·lar el comportament definit. Per exemple, podríem tenir una indicació que fa que el sistema només doni resultats en llistes, o fins i tot demani que respongui en un idioma determinat.",
 	"kb.settings.user_prompts.system": "Comportament personalitzat",
 	"kb.settings.user_prompts.system_help": "Defineix els trets generals de la personalitat de l'assistent o com s'ha de comportar quan respon a preguntes o durant una conversa. Per exemple, podríem definir que el sistema respondrà com a professional de la salut.",
+	"kb.users.already-exists": "Un usuari amb correu electrònic <strong>{{email}}</strong> ja existeix en aquesta Knowledge Box",
+	"kb.users.pending-invitation": "Invitació pendent: caduca el {{date}}",
 	"label-set.add": "Afegeix conjunt d'etiquetes",
 	"label-set.add-button": "Afegir nou",
 	"label-set.delete.confirm-description": "Si suprimiu el conjunt d'etiquetes, també se suprimiran totes les seves etiquetes. No podeu desfer aquesta acció. També pot afectar les formacions en curs i els suggeriments generats.",

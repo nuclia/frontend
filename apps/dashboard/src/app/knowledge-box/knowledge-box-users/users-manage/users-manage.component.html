@@ -69,12 +69,19 @@
     <pa-table-cell header></pa-table-cell>
   </pa-table-header>
 
-  <pa-table-row *ngFor="let user of usersKb | async">
+  <pa-table-row *ngFor="let user of userRows | async">
     <pa-table-cell>
       <span class="title-s">{{ user.name }}</span>
     </pa-table-cell>
     <pa-table-cell>
-      <span class="body-s">{{ user.email }}</span>
+      <div class="email-container">
+        <span class="body-s">{{ user.email }}</span>
+        @if (user.expires) {
+          <pa-icon
+            name="clock-dash"
+            [paTooltip]="'kb.users.pending-invitation' | translate: { date: user.expires | date: 'short' }"></pa-icon>
+        }
+      </div>
     </pa-table-cell>
     <pa-table-cell>
       <nsi-dropdown-button
@@ -82,7 +89,9 @@
         aspect="basic"
         [popupRef]="roleDropdown"
         [disabled]="
-          (isAccountManager | async) === false || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)
+          (isAccountManager | async) === false ||
+          (user.role === 'SOWNER' && (hasSeveralOwners | async) === false) ||
+          !!user.expires
         ">
         {{ roleTitles[user.role] | translate }}
       </nsi-dropdown-button>
@@ -103,7 +112,8 @@
           icon="trash"
           size="small"
           [disabled]="
-            ((userCount | async) || 0) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)
+            !user.expires &&
+            (((userCount | async) || 0) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false))
           "
           (click)="deleteUser(user)">
           {{ 'generic.delete' | translate }}

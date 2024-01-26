@@ -513,6 +513,8 @@
 	"kb.settings.user_prompts.prompt_help": "Define la forma en que queremos que actúe el sistema cuando hacemos una pregunta. Aquí podemos definir reglas más específicas, que incluso podrían anular el comportamiento definido. Por ejemplo, podríamos tener una pregunta que haga que el sistema sólo dé resultados en listas, o incluso que pida responder en un idioma determinado.",
 	"kb.settings.user_prompts.system": "Comportamiento personalizado",
 	"kb.settings.user_prompts.system_help": "Define rasgos generales de la personalidad del asistente, o sobre cómo debe comportarse al responder preguntas/ durante una conversación. Por ejemplo, podríamos definir que el sistema responda como un profesional sanitario.",
+	"kb.users.already-exists": "Ya existe un usuario con correo electrónico <strong>{{email}}</strong> en esta Knowledge Box",
+	"kb.users.pending-invitation": "Invitación pendiente: expira el {{date}}",
 	"label-set.add": "Agregar conjunto de etiquetas",
 	"label-set.add-button": "Añadir nuevo",
 	"label-set.delete.confirm-description": "Al eliminar el conjunto de etiquetas, también se eliminarán todas sus etiquetas. No puede deshacer esta acción. También podría afectar las capacitaciones en curso y las sugerencias generadas.",

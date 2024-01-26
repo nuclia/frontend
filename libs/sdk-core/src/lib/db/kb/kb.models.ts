@@ -69,6 +69,12 @@ export interface InviteKbData {
   role: KBRoles;
 }
 
+export interface KbInvite {
+  email: string;
+  role: KBRoles;
+  expires: string;
+}
+
 export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   get path(): string;
 

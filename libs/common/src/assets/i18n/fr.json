@@ -514,6 +514,8 @@
 	"kb.settings.user_prompts.prompt_help": "Définit la manière dont nous voulons que le système agisse lorsque nous posons une question. Il est possible de définir des règles plus spécifiques, qui peuvent même remplacer le comportement défini. Par exemple, nous pourrions avoir une invite qui oblige le système à ne donner que des résultats sous forme de listes, ou même à demander de répondre dans une langue donnée.",
 	"kb.settings.user_prompts.system": "Comportement personnalisé",
 	"kb.settings.user_prompts.system_help": "Définit les traits de personnalité généraux de l'assistant, ou la manière dont il doit se comporter lorsqu'il répond à des questions ou au cours d'une conversation. Par exemple, nous pourrions définir que le système répondra en tant que professionnel de la santé.",
+	"kb.users.already-exists": "Un utilisateur avec l'adresse e-mail <strong>{{email}}</strong> existe déjà dans cette Knowledge Box",
+	"kb.users.pending-invitation": "En attente d'invitation: expire le {{date}}",
 	"label-set.add": "Ajouter un jeu d'étiquettes",
 	"label-set.add-button": "Ajouter nouveau",
 	"label-set.delete.confirm-description": "La suppression du jeu d'étiquettes supprimera également toutes ses étiquettes. Vous ne pouvez pas annuler cette action. Cela peut également affecter les formations en cours et les suggestions générées.",

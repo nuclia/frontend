@@ -3,7 +3,14 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PaButtonModule, PaDropdownModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { UsersManageComponent } from './users-manage.component';
 
@@ -16,9 +23,11 @@ import { UsersManageComponent } from './users-manage.component';
     FormsModule,
     PaButtonModule,
     PaDropdownModule,
+    PaIconModule,
     DropdownButtonComponent,
     PaTableModule,
     PaTextFieldModule,
+    PaTooltipModule,
   ],
   declarations: [UsersManageComponent],
   exports: [UsersManageComponent],
