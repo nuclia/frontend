@@ -46,3 +46,42 @@
     top: $sticky-top;
   }
 }
+
+.thumbnails-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: rhythm(2);
+  position: relative;
+
+  .loading-mask {
+    bottom: 0;
+    background: rgba($color-dark-stronger, 0.5);
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .drop-container {
+    display: flex;
+    flex-direction: column;
+
+    .drop-image-area {
+      align-items: center;
+      background-color: $color-light-stronger;
+      border: 1px dashed $color-neutral-light;
+      color: $color-neutral-light;
+      cursor: pointer;
+      display: flex;
+      flex: 1 0 auto;
+      justify-content: center;
+      height: $thumbnail-height;
+      text-align: center;
+      transition: background-color $transition-hint;
+      width: $thumbnail-width;
+
+      &.file-over {
+        background-color: $color-neutral-lightest;
+      }
+    }
+  }
+}

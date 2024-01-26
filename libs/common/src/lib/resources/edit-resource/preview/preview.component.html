@@ -1,3 +1,6 @@
+@if (extraMetadataFullscreen) {
+  <div class="backdrop"></div>
+}
 <div class="main-container">
   <div class="scrollable-area">
     @if (errors) {
@@ -29,12 +32,98 @@
           <pre><code>{{ jsonTextField | async }}</code></pre>
         </div>
       }
-    } @else if (noField | async) {
-      <div class="paragraph-container">
-        <p>{{ 'resource.error.no-field' | translate }}</p>
-      </div>
     } @else {
-      <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
+      @if (resource | async; as resource) {
+        <div class="paragraph-container">
+          <div class="title-m">{{ 'resource.preview.general' | translate }}</div>
+
+          <div class="title-xxs">{{ 'generic.uid' | translate }}</div>
+          <p>{{ resource.uuid }}</p>
+
+          <div class="title-xxs">{{ 'resource.title' | translate }}</div>
+          <p>{{ resource.title }}</p>
+
+          <div class="title-xxs">{{ 'resource.summary' | translate }}</div>
+          <p>{{ resource.summary || '–' }}</p>
+
+          <div class="title-xxs">{{ 'resource.thumbnail.label' | translate }}</div>
+          <div class="thumbnails-container">
+            @for (thumb of thumbnails | async; track thumb.uri; let index = $index) {
+              <div>
+                <stf-thumbnail
+                  noDeletion
+                  [selected]="resource.thumbnail === thumb.uri"
+                  [url]="thumb.blob"
+                  [alt]="'Thumbnail ' + index"></stf-thumbnail>
+              </div>
+            }
+            @if (!(hasThumbnail | async)) {
+              –
+            }
+          </div>
+
+          @if (resource.origin; as origin) {
+            <div class="title-m">{{ 'resource.preview.origin' | translate }}</div>
+
+            <div class="title-xxs">{{ 'resource.origin.collaborators' | translate }}</div>
+            <p>{{ origin.collaborators?.join(', ') || '–' }}</p>
+
+            <div class="title-xxs">{{ 'resource.origin.created' | translate }}</div>
+            <p>{{ origin.created || '–' }}</p>
+
+            <div class="title-xxs">{{ 'resource.origin.modified' | translate }}</div>
+            <p>{{ origin.modified || '–' }}</p>
+
+            <div class="title-xxs">{{ 'resource.origin.filename' | translate }}</div>
+            <p>{{ origin.filename || '–' }}</p>
+
+            <div class="title-xxs">{{ 'resource.origin.url' | translate }}</div>
+            <p>{{ origin.url || '–' }}</p>
+
+            <div class="title-xxs">{{ 'resource.origin.related' | translate }}</div>
+            <p>{{ origin.related?.join(', ') || '–' }}</p>
+
+            <div class="title-xxs">{{ 'resource.origin.path' | translate }}</div>
+            <p>{{ origin.path || '–' }}</p>
+          }
+          @if (extraMetadata | async; as extraMetadata) {
+            <div class="title-m title-with-button">
+              {{ 'resource.extra-metadata.label' | translate }}
+              <pa-button
+                icon="fullscreen"
+                kind="secondary"
+                size="small"
+                aspect="basic"
+                [paTooltip]="'resource.extra-metadata.fullscreen' | translate"
+                (click)="extraMetadataFullscreen = true">
+                {{ 'resource.extra-metadata.fullscreen' | translate }}
+              </pa-button>
+            </div>
+            <div
+              class="extra-metadata-container"
+              [class.fullscreen]="extraMetadataFullscreen">
+              @if (extraMetadataFullscreen) {
+                <div class="fullscreen-header">
+                  <pa-button
+                    icon="cross"
+                    kind="secondary"
+                    aspect="basic"
+                    (click)="extraMetadataFullscreen = false">
+                    {{ 'generic.close' | translate }}
+                  </pa-button>
+                </div>
+              }
+              <pre><code>{{extraMetadata}}</code></pre>
+            </div>
+          }
+        </div>
+      } @else if (noField | async) {
+        <div class="paragraph-container">
+          <p>{{ 'resource.error.no-field' | translate }}</p>
+        </div>
+      } @else {
+        <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
+      }
     }
   </div>
   <div class="viewer-button-container">
