@@ -136,7 +136,7 @@
         </div>
       </section>
       <section>
-        <pa-toggle [(value)]="editExtraMetadata">Edit extra metadata</pa-toggle>
+        <pa-toggle [(value)]="editExtraMetadata">{{ 'resource.extra-metadata.edit-toggle' | translate }}</pa-toggle>
         <div class="extra-metadata-container">
           <pa-textarea
             *ngIf="editExtraMetadata"

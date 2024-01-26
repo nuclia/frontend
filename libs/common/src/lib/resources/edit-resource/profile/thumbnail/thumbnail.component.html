@@ -11,17 +11,18 @@
     [src]="url"
     [alt]="alt" />
 
-  <pa-button
-    *ngIf="!selected"
-    class="delete-thumbnail"
-    size="small"
-    icon="trash"
-    aspect="solid"
-    kind="destructive"
-    [disabled]="disabled"
-    (keyup.enter)="onDelete($event)"
-    (keyup.space)="onDelete($event)"
-    (click)="onDelete($event)">
-    {{ 'resource.thumbnail.delete' | translate }}
-  </pa-button>
+  @if (!selected && !noDeletion) {
+    <pa-button
+      class="delete-thumbnail"
+      size="small"
+      icon="trash"
+      aspect="solid"
+      kind="destructive"
+      [disabled]="disabled"
+      (keyup.enter)="onDelete($event)"
+      (keyup.space)="onDelete($event)"
+      (click)="onDelete($event)">
+      {{ 'resource.thumbnail.delete' | translate }}
+    </pa-button>
+  }
 </div>

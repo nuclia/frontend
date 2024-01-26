@@ -4,6 +4,13 @@
 .main-container {
   display: flex;
   gap: rhythm(5);
+
+  .paragraph-container {
+    .title-m,
+    .thumbnails-container {
+      margin-bottom: rhythm(2);
+    }
+  }
 }
 
 .viewer-button-container {
@@ -28,4 +35,55 @@
       display: flex;
     }
   }
+}
+
+.backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  bottom: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}
+.extra-metadata-container {
+  background: $color-neutral-lightest;
+  max-height: rhythm(40);
+  overflow: auto;
+  transition:
+    max-height $transition-response,
+    width $transition-response;
+
+  pre {
+    padding: rhythm(2);
+  }
+
+  &.fullscreen {
+    bottom: rhythm(4);
+    left: 10vw;
+    height: fit-content;
+    max-height: calc(100vh - var(--app-topbar-height) - #{rhythm(8)});
+    position: absolute;
+    top: rhythm(4);
+    width: 80vw;
+    z-index: 100;
+
+    .fullscreen-header {
+      background: $color-neutral-lightest;
+      position: sticky;
+      height: rhythm(6);
+      padding: rhythm(0.5);
+      top: 0;
+
+      pa-button {
+        float: right;
+      }
+    }
+  }
+}
+
+.title-with-button {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }

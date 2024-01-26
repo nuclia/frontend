@@ -1,14 +1,26 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { SelectFirstFieldDirective } from '../select-first-field/select-first-field.directive';
-import { combineLatest, distinctUntilKeyChanged, filter, forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  combineLatest,
+  distinctUntilKeyChanged,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  ReplaySubject,
+  Subject,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphService } from '../paragraph.service';
-import { IError, Paragraph, TextField } from '@nuclia/core';
-import { getErrors, getParagraphs, ParagraphWithText } from '../edit-resource.helpers';
+import { FieldId, IError, Paragraph, Resource, TextField } from '@nuclia/core';
+import { getErrors, getParagraphs, ParagraphWithText, Thumbnail } from '../edit-resource.helpers';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { EditResourceService } from '../edit-resource.service';
+import { ActivatedRoute } from '@angular/router';
 
 const viewerId = 'viewer-widget';
 
@@ -17,7 +29,10 @@ const viewerId = 'viewer-widget';
   styleUrls: ['../common-page-layout.scss', './preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PreviewComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {
+export class PreviewComponent implements OnInit, OnDestroy {
+  private route: ActivatedRoute = inject(ActivatedRoute);
+
+  unsubscribeAll = new Subject<void>();
   paragraphs: Observable<ParagraphWithText[]> = this.paragraphService.paragraphList;
   jsonTextField = this.editResourceService.currentFieldData.pipe(
     map((field) =>
@@ -52,7 +67,30 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
   loadingPreview = false;
   errors?: IError | null;
 
+  resource: Observable<Resource> = this.editResource.resource.pipe(
+    filter((resource) => !!resource),
+    map((resource) => resource as Resource),
+  );
+  fieldId: Observable<FieldId> = this.route.params.pipe(
+    filter((params) => !!params['fieldType'] && !!params['fieldId']),
+    map((params) => {
+      const field: FieldId = { field_id: params['fieldId'], field_type: params['fieldType'] };
+      this.editResource.setCurrentField(field);
+      return field;
+    }),
+  );
+  extraMetadata = this.resource.pipe(map((resource) => JSON.stringify(resource.extra?.metadata, null, 2)));
+  extraMetadataFullscreen = false;
+
+  private _noField = new ReplaySubject<boolean>(1);
+  noField: Observable<boolean> = this._noField.asObservable();
+
+  thumbnails: Observable<Thumbnail[]> = this.resource.pipe(
+    switchMap((res) => this.editResource.getThumbnails(this.editResource.getThumbnailsAndImages(res))),
+  );
+
   constructor(
+    private editResource: EditResourceService,
     private paragraphService: ParagraphService,
     private editResourceService: EditResourceService,
     private sdk: SDKService,
@@ -60,9 +98,7 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
     private backendConfig: BackendConfigurationService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-  ) {
-    super();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.editResource.setCurrentView('preview');
@@ -83,8 +119,9 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
       });
   }
 
-  override ngOnDestroy() {
-    super.ngOnDestroy();
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
     this.paragraphService.cleanup();
     const viewerElement = document.querySelector('nuclia-viewer') as any;
     if (typeof viewerElement?.$$c?.$destroy === 'function') {

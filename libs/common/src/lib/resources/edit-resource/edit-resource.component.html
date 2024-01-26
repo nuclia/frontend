@@ -113,7 +113,7 @@
     <nav>
       <ul>
         @if (currentView !== 'add-field') {
-          @if (currentView !== 'preview' && currentView !== 'annotation') {
+          @if (currentView !== 'annotation') {
             <li
               [class.active]="(currentField | async) === 'resource'"
               (click)="navigateToField('resource')">

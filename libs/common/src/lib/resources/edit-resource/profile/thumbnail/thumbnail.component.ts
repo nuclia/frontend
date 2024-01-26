@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 
 @Component({
@@ -10,8 +10,9 @@ import { SafeUrl } from '@angular/platform-browser';
 export class ThumbnailComponent {
   @Input() url: SafeUrl | string | undefined;
   @Input() alt: string | undefined;
-  @Input() selected: boolean | undefined;
-  @Input() disabled: boolean | undefined;
+  @Input({ transform: booleanAttribute }) selected = false;
+  @Input({ transform: booleanAttribute }) disabled = false;
+  @Input({ transform: booleanAttribute }) noDeletion = false;
 
   @Output() select = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
