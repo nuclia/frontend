@@ -147,6 +147,12 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   listenToAllNotifications(): Observable<NotificationMessage[]>;
   listenToProcessingNotifications(): Observable<{ resourceId: string; success: boolean }[]>;
   stopListeningToNotifications(): void;
+
+  processingStatus(
+    cursor?: string,
+    scheduled?: boolean,
+    limit?: number,
+  ): Observable<{ cursor: string; results: ProcessingStatus[] }>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
@@ -349,4 +355,20 @@ export interface SentenceToken {
   ner: string;
   start: number;
   end: number;
+}
+
+export interface ProcessingStatus {
+  completed: boolean;
+  completed_at?: string | null;
+  failed: boolean;
+  kbid: string;
+  processing_id: string;
+  resource_id: string;
+  retries: number;
+  schedule_eta: number;
+  schedule_order: number;
+  scheduled: boolean;
+  scheduled_at: string;
+  timestamp: string;
+  title: string;
 }

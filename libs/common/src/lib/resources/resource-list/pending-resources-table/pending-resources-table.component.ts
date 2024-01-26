@@ -14,6 +14,6 @@ export class PendingResourcesTableComponent extends ResourcesTableDirective {
 
   protected override defaultColumns: ColumnHeader[] = [
     ...COMMON_COLUMNS,
-    { id: 'status', label: 'resource.status', size: 'minmax(176px, 1fr)', centered: true },
+    { id: 'status', label: 'resource.status.column-title', size: 'minmax(176px, 1fr)', centered: true },
   ];
 }

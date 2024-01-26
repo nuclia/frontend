@@ -64,6 +64,7 @@ export enum RESOURCE_STATUS {
   PENDING = 'PENDING',
   PROCESSED = 'PROCESSED',
   ERROR = 'ERROR',
+  DELETED = 'DELETED',
 }
 
 export interface Metadata {

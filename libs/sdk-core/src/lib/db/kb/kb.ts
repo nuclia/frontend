@@ -1,5 +1,5 @@
 import { catchError, forkJoin, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
-import type {
+import {
   ActivityDownloadList,
   Counters,
   Entities,
@@ -15,6 +15,7 @@ import type {
   KbUserPayload,
   LabelSet,
   LabelSets,
+  ProcessingStatus,
   ResourceList,
   ResourcePagination,
   SentenceToken,
@@ -638,6 +639,24 @@ export class KnowledgeBox implements IKnowledgeBox {
         processedResources.forEach((item) => delete this.resourceStatus[item.resourceId]);
       }),
     );
+  }
+
+  processingStatus(
+    cursor?: string,
+    scheduled?: boolean,
+    limit?: number,
+  ): Observable<{ cursor: string; results: ProcessingStatus[] }> {
+    const queryParams = new URLSearchParams();
+    if (cursor) {
+      queryParams.set('cursor', cursor);
+    }
+    if (typeof scheduled === 'boolean') {
+      queryParams.set('scheduled', `${scheduled}`);
+    }
+    if (typeof limit === 'number') {
+      queryParams.set('limit', `${limit}`);
+    }
+    return this.nuclia.rest.get(`${this.path}/processing-status?${queryParams}`);
   }
 }
 

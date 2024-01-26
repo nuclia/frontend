@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   height: rhythm(6);
-  padding: 0 var(--app-layout-padding-right) 0 rhythm(6);
+  padding: 0 rhythm(1) 0 rhythm(6);
   position: relative;
 
   .upload-bar-title {
@@ -24,9 +24,7 @@
     margin-right: rhythm(3);
   }
 
-  .close-button {
-    right: rhythm(2);
-    top: 50%;
-    transform: translateY(-50%);
+  .close-bar {
+    margin-left: rhythm(1);
   }
 }

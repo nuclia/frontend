@@ -22,12 +22,18 @@
       }
     </div>
     <div class="title-status">
-      @if (row.resource.metadata?.status === 'PENDING') {
-        <pa-icon name="clock-dash"></pa-icon>
-      } @else if (row.resource.metadata?.status === 'ERROR') {
-        <pa-icon
-          class="error"
-          name="warning"></pa-icon>
+      @switch (row.resource.metadata?.status) {
+        @case ('PENDING') {
+          <pa-icon name="clock-dash"></pa-icon>
+        }
+        @case ('ERROR') {
+          <pa-icon
+            class="error"
+            name="warning"></pa-icon>
+        }
+        @case ('DELETED') {
+          <pa-icon name="circle-dash"></pa-icon>
+        }
       }
     </div>
   </div>

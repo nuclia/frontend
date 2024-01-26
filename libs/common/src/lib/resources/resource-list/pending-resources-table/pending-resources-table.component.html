@@ -58,14 +58,17 @@
       </pa-table-sortable-header>
 
       @for (row of data | async; track row.resource.id) {
-        <pa-table-row>
-          <pa-table-cell *ngIf="isAdminOrContrib | async">
-            <pa-checkbox
-              [value]="selection.includes(row.resource.id)"
-              (change)="toggleSelection(row.resource.id)"></pa-checkbox>
-          </pa-table-cell>
+        <pa-table-row [disabled]="row.resource.metadata?.status === 'DELETED'">
+          @if (isAdminOrContrib | async) {
+            <pa-table-cell>
+              <pa-checkbox
+                [disabled]="row.resource.metadata?.status === 'DELETED'"
+                [value]="selection.includes(row.resource.id)"
+                (change)="toggleSelection(row.resource.id)"></pa-checkbox>
+            </pa-table-cell>
+          }
           <pa-table-cell
-            clickable
+            [clickable]="row.resource.metadata?.status !== 'DELETED'"
             (click)="onClickTitle(row.resource)">
             <stf-title-cell [row]="row"></stf-title-cell>
           </pa-table-cell>
@@ -74,7 +77,9 @@
             <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
           </pa-table-cell>
           <pa-table-cell>
-            <span class="body-s">{{ row.status }}</span>
+            <span
+              class="body-s"
+              [innerHTML]="row.status"></span>
           </pa-table-cell>
 
           @if (isAdminOrContrib | async) {
@@ -84,7 +89,7 @@
                 aspect="basic"
                 size="small"
                 paTooltip="generic.actions"
-                [disabled]="bulkAction.inProgress"
+                [disabled]="bulkAction.inProgress || row.resource.metadata?.status === 'DELETED'"
                 [paPopup]="menu">
                 {{ 'generic.actions' | translate }}
               </pa-button>
