@@ -1,13 +1,16 @@
 import { catchError, concatMap, filter, forkJoin, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import type { AccountUsersPayload, FullAccountUser, IDb, INuclia, InviteAccountUserPayload } from '../models';
-import { AccountModification, KbIndex, LearningConfigurations, PredictedToken } from './db.models';
 import {
   Account,
   AccountCreation,
+  AccountModification,
   AccountStatus,
+  KbIndex,
+  LearningConfigurations,
   NUA_KEY,
   NUAClient,
   NUAClientPayload,
+  PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
   ProcessingStat,
@@ -312,6 +315,10 @@ export class Db implements IDb {
     return this.nuclia.rest.get<ProcessingPullResponse>('/processing/pull', this.getNUAHeader());
   }
 
+  /**
+   * @deprecated replaced by processingStatus method of kb
+   * @param accountId
+   */
   getProcessingStatus(accountId?: string): Observable<ProcessingStatusResponse> {
     if (!accountId) {
       const hasNUAKey = this.hasNUAClient();

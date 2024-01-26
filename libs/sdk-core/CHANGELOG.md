@@ -3,6 +3,7 @@
 ### Improvements
 
 - Support Knowledge Box notification endpoint
+- Add support for new `/processing-status` endpoint in `kb.ts`, add `@deprecated` mark to `getProcessingStatus` method from `db.ts`.
 
 # 1.11.2 (2024-01-25)
 

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, forkJoin, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import {
@@ -12,6 +12,7 @@ import {
 import {
   IResource,
   LabelSets,
+  ProcessingStatus,
   ProcessingStatusResponse,
   Resource,
   RESOURCE_STATUS,
@@ -23,6 +24,7 @@ import { LabelsService } from '../../label/labels.service';
 import { UploadService } from '../../upload/upload.service';
 import { SisToastService } from '@nuclia/sistema';
 import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';
+import { FormatETAPipe } from '../../pipes';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
@@ -32,6 +34,7 @@ export class ResourceListService {
   private uploadService = inject(UploadService);
   private toastService = inject(SisToastService);
   private navigationService = inject(ResourceNavigationService);
+  private features = inject(FeaturesService);
 
   private processingStatus?: ProcessingStatusResponse;
   private _status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
@@ -41,6 +44,7 @@ export class ResourceListService {
   set status(status: RESOURCE_STATUS) {
     this._status = status;
     if (!this.sdk.nuclia.options.standalone) {
+      // TODO to be removed once we the new system will be enabled for all KBs
       forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentKb.pipe(take(1))])
         .pipe(
           take(1),
@@ -73,6 +77,8 @@ export class ResourceListService {
   private _sort: SortOption = DEFAULT_SORTING;
   private _query = '';
   private _titleOnly = true;
+  private _cursor?: string;
+  private formatETA: FormatETAPipe = new FormatETAPipe();
 
   constructor() {
     this._triggerResourceLoad
@@ -119,6 +125,61 @@ export class ResourceListService {
   }
 
   loadResources(replaceData = true, updateCount = true): Observable<void> {
+    const loadRequest =
+      this.status === RESOURCE_STATUS.PENDING
+        ? this.loadPendingResources(replaceData, updateCount)
+        : this.loadResourcesFromCatalog(replaceData, updateCount);
+
+    return loadRequest.pipe(
+      switchMap(() =>
+        updateCount
+          ? this.uploadService.updateStatusCount().pipe(
+              tap((count) => this._emptyKb.next(count.error === 0 && count.pending === 0 && count.processed === 0)),
+              map(() => {}),
+            )
+          : of(undefined),
+      ),
+      catchError((error) => {
+        console.error(`Error while loading results:`, error);
+        this.toastService.error(this.translate.instant('resource.error.loading-failed'));
+        this._data.next([]);
+        return of(undefined);
+      }),
+    );
+  }
+
+  private loadPendingResources(replaceData: boolean, updateCount: boolean): Observable<null | void> {
+    if (replaceData) {
+      this._cursor = undefined;
+    }
+    return this.features.newProcessingStatus.pipe(
+      switchMap((isEnabled) =>
+        isEnabled
+          ? this.sdk.currentKb.pipe(
+              take(1),
+              switchMap((kb) => kb.processingStatus(this._cursor)),
+              switchMap((processingStatus) => {
+                // processing status feature can be enabled on the frontend and not on the backend,
+                // so if we get no results from the new system we switch to the old one
+                if (processingStatus.results.length === 0) {
+                  return this.loadResourcesFromCatalog(replaceData, updateCount);
+                } else {
+                  const resourceWithLabels = this.getPendingResourcesData(processingStatus);
+                  const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
+                  this._data.next(newData);
+                  this._ready.next(true);
+                  this._hasMore = !!processingStatus.cursor;
+                  this._cursor = processingStatus.cursor;
+                  return of(null);
+                }
+              }),
+            )
+          : this.loadResourcesFromCatalog(replaceData, updateCount),
+      ),
+    );
+  }
+
+  private loadResourcesFromCatalog(replaceData: boolean, updateCount: boolean): Observable<void> {
     if (replaceData) {
       this._page = 0;
     }
@@ -163,20 +224,6 @@ export class ResourceListService {
         };
         return;
       }),
-      switchMap(() =>
-        updateCount
-          ? this.uploadService.updateStatusCount().pipe(
-              tap((count) => this._emptyKb.next(count.error === 0 && count.pending === 0 && count.processed === 0)),
-              map(() => {}),
-            )
-          : of(undefined),
-      ),
-      catchError((error) => {
-        console.error(`Error while loading results:`, error);
-        this.toastService.error(this.translate.instant('resource.error.loading-failed'));
-        this._data.next([]);
-        return of(undefined);
-      }),
     );
   }
 
@@ -199,8 +246,9 @@ export class ResourceListService {
         color: labelSets[label.labelset]?.color || '#ffffff',
       }));
     }
+
     if (this.status === 'PENDING' && this.processingStatus) {
-      resourceWithLabels.status = this.getProcessingStatus(resource, this.processingStatus);
+      resourceWithLabels.status = this.getDeprecatedProcessingStatus(resource, this.processingStatus);
     }
 
     return resourceWithLabels;
@@ -258,20 +306,47 @@ export class ResourceListService {
     return smartResults;
   }
 
-  private getProcessingStatus(resource: Resource, processingStatus: ProcessingStatusResponse): string {
+  private getDeprecatedProcessingStatus(resource: Resource, processingStatus: ProcessingStatusResponse): string {
     const placeInQueue = this.uploadService.getResourcePlaceInProcessingQueue(resource, processingStatus);
     if (!processingStatus) {
       return '';
     }
     if (resource.last_account_seq === undefined || placeInQueue === null) {
-      return this.translate.instant('resource.status_unknown');
+      return this.translate.instant('resource.status.unknown');
     }
-    let statusKey = 'resource.status_processing';
+    let statusKey = 'resource.status.processing';
     if (placeInQueue === 1) {
-      statusKey = 'resource.status_next';
+      statusKey = 'resource.status.next';
     } else if (placeInQueue > 1) {
-      statusKey = 'resource.status_pending';
+      statusKey = 'resource.status.pending';
     }
     return this.translate.instant(statusKey, { count: placeInQueue });
+  }
+
+  private getPendingResourcesData(processingStatus: {
+    cursor?: string;
+    results: ProcessingStatus[];
+  }): ResourceWithLabels[] {
+    return processingStatus.results.map((data) => {
+      const iResource: IResource = {
+        id: data.resource_id,
+        title: data.title || this.translate.instant('resource.status.deleted'),
+        created: data.timestamp,
+        metadata: {
+          status: data.title ? RESOURCE_STATUS.PENDING : RESOURCE_STATUS.DELETED,
+        },
+      };
+      const resource = new Resource(this.sdk.nuclia, data.kbid, iResource);
+      const eta = this.formatETA.transform(data.schedule_eta);
+      return {
+        resource,
+        labels: [],
+        status:
+          data.schedule_order === -1
+            ? this.translate.instant('resource.status.processing')
+            : `${this.translate.instant('resource.status.rank', { rank: data.schedule_order })}
+<br>${this.translate.instant('resource.status.starts-in', { eta })}`,
+      };
+    });
   }
 }
