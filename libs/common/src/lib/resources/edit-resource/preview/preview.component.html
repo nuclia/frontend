@@ -48,17 +48,16 @@
 
           <div class="title-xxs">{{ 'resource.thumbnail.label' | translate }}</div>
           <div class="thumbnails-container">
-            @if ((thumbnails | async)?.length > 0) {
-              @for (thumb of thumbnails | async; track thumb.uri; let index = $index) {
-                <div>
-                  <stf-thumbnail
-                    noDeletion
-                    [selected]="resource.thumbnail === thumb.uri"
-                    [url]="thumb.blob"
-                    [alt]="'Thumbnail ' + index"></stf-thumbnail>
-                </div>
-              }
-            } @else {
+            @for (thumb of thumbnails | async; track thumb.uri; let index = $index) {
+              <div>
+                <stf-thumbnail
+                  noDeletion
+                  [selected]="resource.thumbnail === thumb.uri"
+                  [url]="thumb.blob"
+                  [alt]="'Thumbnail ' + index"></stf-thumbnail>
+              </div>
+            }
+            @if (!(hasThumbnail | async)) {
               –
             }
           </div>
@@ -67,7 +66,7 @@
             <div class="title-m">{{ 'resource.preview.origin' | translate }}</div>
 
             <div class="title-xxs">{{ 'resource.origin.collaborators' | translate }}</div>
-            <p>{{ origin.collaborators.join(', ') || '–' }}</p>
+            <p>{{ origin.collaborators?.join(', ') || '–' }}</p>
 
             <div class="title-xxs">{{ 'resource.origin.created' | translate }}</div>
             <p>{{ origin.created || '–' }}</p>
@@ -82,7 +81,7 @@
             <p>{{ origin.url || '–' }}</p>
 
             <div class="title-xxs">{{ 'resource.origin.related' | translate }}</div>
-            <p>{{ origin.related.join(', ') || '–' }}</p>
+            <p>{{ origin.related?.join(', ') || '–' }}</p>
 
             <div class="title-xxs">{{ 'resource.origin.path' | translate }}</div>
             <p>{{ origin.path || '–' }}</p>

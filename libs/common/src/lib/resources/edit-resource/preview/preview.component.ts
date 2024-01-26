@@ -88,6 +88,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   thumbnails: Observable<Thumbnail[]> = this.resource.pipe(
     switchMap((res) => this.editResource.getThumbnails(this.editResource.getThumbnailsAndImages(res))),
   );
+  hasThumbnail: Observable<boolean> = this.thumbnails.pipe(map((thumbnails) => thumbnails.length > 0));
 
   constructor(
     private editResource: EditResourceService,
