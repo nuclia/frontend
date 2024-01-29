@@ -264,6 +264,7 @@ export enum ResourceProperties {
   EXTRACTED = 'extracted',
   ERRORS = 'errors',
   EXTRA = 'extra',
+  SECURITY = 'security',
 }
 
 export interface KbIndex {

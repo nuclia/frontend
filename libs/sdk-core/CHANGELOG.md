@@ -5,6 +5,7 @@
 - Support Knowledge Box notification endpoint
 - Add support for new `/processing-status` endpoint in `kb.ts`, add `@deprecated` mark to `getProcessingStatus` method from `db.ts`.
 - Support endpoints for retrieving and deleting existing invitations to a kb
+- Support security fields in `Resource` 
 
 # 1.11.2 (2024-01-25)
 

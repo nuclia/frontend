@@ -133,6 +133,7 @@ export class EditResourceService {
           ResourceProperties.EXTRACTED,
           ResourceProperties.ERRORS,
           ResourceProperties.EXTRA,
+          ResourceProperties.SECURITY,
         ]),
       ),
       tap((resource) => this._resource.next(resource)),
