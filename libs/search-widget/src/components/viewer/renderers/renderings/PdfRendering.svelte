@@ -5,7 +5,7 @@
   import { debounceTime, filter, Subject } from 'rxjs';
   import { IconButton, isMobileViewport, Spinner } from '../../../../common';
   import { getUnMarked } from '../../utils';
-  import { Search } from '@nuclia/core';
+  import type { Search } from '@nuclia/core';
 
   export let src: string;
   export let paragraph: Search.FindParagraph;
