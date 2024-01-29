@@ -10,6 +10,7 @@ export interface IResource {
   computedmetadata?: ComputedMetadata;
   extra?: ExtraMetadata;
   origin?: Origin;
+  security?: Security;
   created?: string;
   modified?: string;
   thumbnail?: string;
@@ -110,6 +111,10 @@ export interface Origin {
   related?: string[];
   source?: 'WEB' | 'DESKTOP' | 'API';
   path?: string;
+}
+
+export interface Security {
+  access_groups: string[];
 }
 
 export interface IError {

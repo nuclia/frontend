@@ -46,6 +46,9 @@ export class ResourceProfileComponent implements OnInit {
       nonNullable: true,
       validators: [JsonValidator()],
     }),
+    security: new FormGroup({
+      access_groups: new FormControl<string>('', { nonNullable: true }),
+    }),
   });
 
   thumbnailsToBeDeleted = new BehaviorSubject<string[]>([]);
@@ -55,6 +58,11 @@ export class ResourceProfileComponent implements OnInit {
       switchMap((res) => this.editResource.getThumbnails(this.editResource.getThumbnailsAndImages(res))),
     ),
   ]).pipe(map(([toBeDeleted, thumbnails]) => thumbnails.filter((thumbnail) => !toBeDeleted.includes(thumbnail.uri))));
+  thumbnailsLoaded = this.thumbnails.pipe(
+    delay(300),
+    tap((thumbnails) => this.updateGeneralExpanderSize.next(thumbnails)),
+  );
+  updateGeneralExpanderSize = new Subject();
 
   hintValues = this.resource.pipe(
     map((res) => ({
@@ -84,6 +92,13 @@ export class ResourceProfileComponent implements OnInit {
   ngOnInit() {
     this.editResource.setCurrentView('resource');
     this.editResource.setCurrentField('resource');
+    this.thumbnailsLoaded.pipe(takeUntil(this.unsubscribeAll)).subscribe();
+    this.updateGeneralExpanderSize
+      .pipe(
+        tap(() => this.cdr.detectChanges()),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe();
   }
 
   ngOnDestroy(): void {
@@ -105,6 +120,9 @@ export class ResourceProfileComponent implements OnInit {
         path: data.origin?.path || '',
       },
       extra: JSON.stringify(data.extra?.metadata, null, 2) || '',
+      security: {
+        access_groups: data.security?.access_groups.join('\n') || '',
+      },
     });
     this.selectedThumbnail = data.thumbnail;
     this.extraMetadata = data.extra?.metadata;
@@ -161,6 +179,7 @@ export class ResourceProfileComponent implements OnInit {
             path: value.origin.path || undefined,
           },
           extra: value.extra ? { metadata: JSON.parse(value.extra) } : undefined,
+          security: value.security ? { access_groups: value.security.access_groups.split('\n') } : undefined,
         }
       : {};
   }
@@ -257,5 +276,9 @@ export class ResourceProfileComponent implements OnInit {
       switchMap(() => this.editResource.loadResource(this.currentValue!.id)),
       map(() => null),
     );
+  }
+
+  onResizingTextarea($event: DOMRect) {
+    this.updateGeneralExpanderSize.next($event);
   }
 }

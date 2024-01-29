@@ -1,16 +1,15 @@
 @import 'apps/dashboard/src/variables';
 @import '../edit-resource.tokens';
 
-form > div,
-form > section > div {
+.form-section {
   display: flex;
   flex-direction: column;
-  gap: rhythm(0.5);
-  margin-bottom: rhythm(3);
-}
+  gap: rhythm(3);
+  padding: rhythm(3) 0;
 
-.extra-metadata-container {
-  margin-top: rhythm(1);
+  &.extra-metadata-container {
+    gap: rhythm(1);
+  }
 }
 
 .right-panel-container {
