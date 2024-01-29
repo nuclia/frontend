@@ -463,4 +463,15 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         this.cdr?.markForCheck();
       });
   }
+
+  updatePaymentMethod() {
+    const isProd = location.hostname === 'nuclia.cloud';
+    window.open(
+      isProd
+        ? 'https://billing.stripe.com/p/login/3csdRbcYAb0y07u000'
+        : 'https://billing.stripe.com/p/login/test_aEU4k8frDb9w2ModQQ',
+      'blank',
+      'noreferrer',
+    );
+  }
 }

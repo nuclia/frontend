@@ -217,11 +217,11 @@
     </div>
   </div>
 
-  <div *ngIf="subscribeMode | async">
+  <div>
     <div class="section-header">
       <div class="section-title">
         <pa-icon
-          [name]="token && !editCard ? 'circle-check' : 'circle-dash'"
+          [name]="(subscribeMode | async) === false || (token && !editCard) ? 'circle-check' : 'circle-dash'"
           [class.disabled]="!customer"></pa-icon>
         {{ 'billing.payment_method' | translate }}
         <div class="powered-by">
@@ -239,44 +239,48 @@
       </div>
     </div>
     <div class="section-body">
-      <div
-        class="payment-method-form"
-        [class.hidden]="!editCard">
-        <div class="field-block">
-          <label
-            class="title-s"
-            for="card-name">
-            {{ 'billing.card_name' | translate }}
-          </label>
-          <pa-input
-            id="card-name"
-            [formControl]="cardName"
-            [errorMessages]="errors"
-            externalLabel></pa-input>
-        </div>
-        <div>
-          <label class="title-s">
-            {{ 'billing.card_details' | translate }}
-          </label>
-          <div class="card-element">
-            <div #card></div>
+      @if (subscribeMode | async) {
+        <div
+          class="payment-method-form"
+          [class.hidden]="!editCard">
+          <div class="field-block">
+            <label
+              class="title-s"
+              for="card-name">
+              {{ 'billing.card_name' | translate }}
+            </label>
+            <pa-input
+              id="card-name"
+              [formControl]="cardName"
+              [errorMessages]="errors"
+              externalLabel></pa-input>
           </div>
-          <div class="card-error">{{ cardError }}</div>
+          <div>
+            <label class="title-s">
+              {{ 'billing.card_details' | translate }}
+            </label>
+            <div class="card-element">
+              <div #card></div>
+            </div>
+            <div class="card-error">{{ cardError }}</div>
+          </div>
+          <pa-button
+            (click)="createPaymentMethod()"
+            [disabled]="cardName.invalid || !validCard || loading"
+            kind="primary">
+            {{ 'billing.save_continue' | translate }}
+          </pa-button>
         </div>
-        <pa-button
-          (click)="createPaymentMethod()"
-          [disabled]="cardName.invalid || !validCard || loading"
-          kind="primary">
-          {{ 'billing.save_continue' | translate }}
-        </pa-button>
-      </div>
-      <div
-        *ngIf="!editCard && token"
-        class="body-m">
-        <div>{{ cardName.value }}</div>
-        <div>{{ token.card.brand }}</div>
-        <div>**** **** **** {{ token.card.last4 }}</div>
-      </div>
+        <div
+          *ngIf="!editCard && token"
+          class="body-m">
+          <div>{{ cardName.value }}</div>
+          <div>{{ token.card.brand }}</div>
+          <div>**** **** **** {{ token.card.last4 }}</div>
+        </div>
+      } @else {
+        <pa-button (click)="updatePaymentMethod()">{{ 'billing.update_payment_method' | translate }}</pa-button>
+      }
     </div>
   </div>
 
