@@ -3,34 +3,36 @@
     <h2>{{ 'billing.payment_details' | translate }}</h2>
   </div>
 
-  <div *ngIf="subscribeMode | async">
-    <div class="section-header">
-      <div class="section-title">
-        <pa-icon name="circle-check"></pa-icon>
-        {{ 'billing.subscription_tier' | translate }}
+  @if (subscribeMode | async) {
+    <div>
+      <div class="section-header">
+        <div class="section-title">
+          <pa-icon name="circle-check"></pa-icon>
+          {{ 'billing.subscription_tier' | translate }}
+        </div>
+        <pa-button
+          routerLink="../subscriptions"
+          icon="edit"
+          aspect="basic"></pa-button>
       </div>
-      <pa-button
-        routerLink="../subscriptions"
-        icon="edit"
-        aspect="basic"></pa-button>
-    </div>
-    <div class="section-body">
-      <div
-        class="body-m"
-        *ngIf="accountType | async as account">
-        {{ 'account.type.' + account | translate }}
-        @if (currency$ | async; as currency) {
-          @if ((prices$ | async)?.[account]?.recurring; as prices) {
-            @if (monthly | async) {
-              {{ prices.month?.price | currency: currency }}/{{ 'billing.month' | translate }}
-            } @else {
-              {{ prices.year?.price | currency: currency }}/{{ 'billing.year' | translate }}
+      <div class="section-body">
+        @if (accountType | async; as account) {
+          <div class="body-m">
+            {{ 'account.type.' + account | translate }}
+            @if (currency$ | async; as currency) {
+              @if ((prices$ | async)?.[account]?.recurring; as prices) {
+                @if (monthly | async) {
+                  {{ prices.month?.price | currency: currency }}/{{ 'billing.month' | translate }}
+                } @else {
+                  {{ prices.year?.price | currency: currency }}/{{ 'billing.year' | translate }}
+                }
+              }
             }
-          }
+          </div>
         }
       </div>
     </div>
-  </div>
+  }
 
   <div>
     <div class="section-header">
@@ -38,182 +40,184 @@
         <pa-icon [name]="customer && !editCustomer ? 'circle-check' : 'circle-dash'"></pa-icon>
         {{ 'billing.billing_details' | translate }}
       </div>
-      <div *ngIf="!editCustomer">
+      @if (!editCustomer) {
         <pa-button
           (click)="showCustomerForm()"
           icon="edit"
           aspect="basic"></pa-button>
-      </div>
+      }
     </div>
     <div class="section-body">
-      <form
-        *ngIf="editCustomer"
-        [formGroup]="customerForm"
-        class="customer-form">
-        <div class="not-company">
-          <pa-checkbox formControlName="not_company">{{ 'billing.not_company' | translate }}</pa-checkbox>
+      @if (editCustomer) {
+        <form
+          [formGroup]="customerForm"
+          class="customer-form">
+          <div class="not-company">
+            <pa-checkbox formControlName="not_company">{{ 'billing.not_company' | translate }}</pa-checkbox>
+          </div>
+          @if (isCompany) {
+            <div class="field-line">
+              <div class="field-block long">
+                <label
+                  class="title-s"
+                  for="company">
+                  {{ 'billing.company' | translate }} *
+                </label>
+                <pa-input
+                  id="company"
+                  formControlName="company"
+                  [errorMessages]="errors"
+                  externalLabel></pa-input>
+              </div>
+              <div class="field-block">
+                <label
+                  class="title-s"
+                  for="vat">
+                  {{ 'billing.vat_id' | translate }}
+                  @if (vatRequired) {
+                    <span>*</span>
+                  }
+                </label>
+                <pa-input
+                  id="vat"
+                  formControlName="vat"
+                  [errorMessages]="errors"
+                  externalLabel></pa-input>
+              </div>
+            </div>
+          }
+          <div class="field-line">
+            <div class="field-block">
+              <label
+                class="title-s"
+                for="name">
+                {{ (isCompany ? 'billing.contact_name' : 'generic.name') | translate }} *
+              </label>
+              <pa-input
+                id="name"
+                formControlName="name"
+                [errorMessages]="errors"
+                externalLabel></pa-input>
+            </div>
+            <div class="field-block">
+              <label
+                class="title-s"
+                for="email">
+                {{ 'billing.email' | translate }} *
+              </label>
+              <pa-input
+                id="email"
+                formControlName="email"
+                [errorMessages]="errors"
+                externalLabel></pa-input>
+            </div>
+            <div class="field-block">
+              <label
+                class="title-s"
+                for="phone">
+                {{ 'billing.phone' | translate }} *
+              </label>
+              <pa-input
+                id="phone"
+                formControlName="phone"
+                [placeholder]="'billing.phone_placeholder' | translate"
+                [errorMessages]="errors"
+                externalLabel></pa-input>
+            </div>
+          </div>
+          <div class="field-line">
+            <div class="field-block long">
+              <label
+                class="title-s"
+                for="address">
+                {{ (isCompany ? 'billing.company_address' : 'billing.address') | translate }} *
+              </label>
+              <pa-input
+                id="address"
+                formControlName="address"
+                [errorMessages]="errors"
+                externalLabel></pa-input>
+            </div>
+            <div class="field-block">
+              <label
+                class="title-s"
+                for="country">
+                {{ 'billing.country' | translate }} *
+              </label>
+              <pa-typeahead-select
+                id="country"
+                formControlName="country"
+                [readonly]="!!customer"
+                [errorMessages]="errors"
+                externalLabel>
+                @for (country of countryList; track country) {
+                  <pa-option [value]="country.code">
+                    {{ country.name }}
+                  </pa-option>
+                }
+              </pa-typeahead-select>
+            </div>
+          </div>
+          <div class="field-line">
+            <div class="field-block">
+              <label
+                class="title-s"
+                for="state">
+                {{ 'billing.state' | translate }}
+              </label>
+              <pa-input
+                id="state"
+                formControlName="state"
+                externalLabel></pa-input>
+            </div>
+            <div class="field-block">
+              <label
+                class="title-s"
+                for="city">
+                {{ 'billing.city' | translate }} *
+              </label>
+              <pa-input
+                id="city"
+                formControlName="city"
+                [errorMessages]="errors"
+                externalLabel></pa-input>
+            </div>
+            <div class="field-block">
+              <label
+                class="title-s"
+                for="postal_code">
+                {{ 'billing.postal_code' | translate }} *
+              </label>
+              <pa-input
+                id="postal_code"
+                formControlName="postal_code"
+                [errorMessages]="errors"
+                externalLabel></pa-input>
+            </div>
+          </div>
+          <pa-button
+            (click)="saveCustomer()"
+            [disabled]="!customerForm.valid"
+            kind="primary">
+            {{ ((subscribeMode | async) ? 'billing.save_continue' : 'generic.save') | translate }}
+          </pa-button>
+        </form>
+      } @else if (!editCustomer && customer) {
+        <div class="body-m">
+          @if (customer.billing_details.is_company && customer.billing_details.company) {
+            <div>{{ customer.billing_details.company }}</div>
+          }
+          @if (customer.billing_details.is_company && customer.billing_details.vat) {
+            <div>{{ customer.billing_details.vat }}</div>
+          }
+          <div>{{ customer.billing_details.name }}</div>
+          <div>{{ customer.billing_details.email }}</div>
+          <div>{{ customer.billing_details.phone }}</div>
+          <div>{{ customer.billing_details.address }}</div>
+          <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
+          <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>
         </div>
-        <div
-          class="field-line"
-          *ngIf="isCompany">
-          <div class="field-block long">
-            <label
-              class="title-s"
-              for="company">
-              {{ 'billing.company' | translate }} *
-            </label>
-            <pa-input
-              id="company"
-              formControlName="company"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="vat">
-              {{ 'billing.vat_id' | translate }}
-              <span *ngIf="vatRequired">*</span>
-            </label>
-            <pa-input
-              id="vat"
-              formControlName="vat"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-        </div>
-        <div class="field-line">
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="name">
-              {{ (isCompany ? 'billing.contact_name' : 'generic.name') | translate }} *
-            </label>
-            <pa-input
-              id="name"
-              formControlName="name"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="email">
-              {{ 'billing.email' | translate }} *
-            </label>
-            <pa-input
-              id="email"
-              formControlName="email"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="phone">
-              {{ 'billing.phone' | translate }} *
-            </label>
-            <pa-input
-              id="phone"
-              formControlName="phone"
-              [placeholder]="'billing.phone_placeholder' | translate"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-        </div>
-        <div class="field-line">
-          <div class="field-block long">
-            <label
-              class="title-s"
-              for="address">
-              {{ (isCompany ? 'billing.company_address' : 'billing.address') | translate }} *
-            </label>
-            <pa-input
-              id="address"
-              formControlName="address"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="country">
-              {{ 'billing.country' | translate }} *
-            </label>
-            <pa-typeahead-select
-              id="country"
-              formControlName="country"
-              [readonly]="!!customer"
-              [errorMessages]="errors"
-              externalLabel>
-              <pa-option
-                *ngFor="let country of countryList"
-                [value]="country.code">
-                {{ country.name }}
-              </pa-option>
-            </pa-typeahead-select>
-          </div>
-        </div>
-        <div class="field-line">
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="state">
-              {{ 'billing.state' | translate }}
-            </label>
-            <pa-input
-              id="state"
-              formControlName="state"
-              externalLabel></pa-input>
-          </div>
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="city">
-              {{ 'billing.city' | translate }} *
-            </label>
-            <pa-input
-              id="city"
-              formControlName="city"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="postal_code">
-              {{ 'billing.postal_code' | translate }} *
-            </label>
-            <pa-input
-              id="postal_code"
-              formControlName="postal_code"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-        </div>
-        <pa-button
-          (click)="saveCustomer()"
-          [disabled]="!customerForm.valid"
-          kind="primary">
-          {{ ((subscribeMode | async) ? 'billing.save_continue' : 'generic.save') | translate }}
-        </pa-button>
-      </form>
-      <div
-        *ngIf="!editCustomer && customer"
-        class="body-m">
-        <div *ngIf="customer.billing_details.is_company && customer.billing_details.company">
-          {{ customer.billing_details.company }}
-        </div>
-        <div *ngIf="customer.billing_details.is_company && customer.billing_details.vat">
-          {{ customer.billing_details.vat }}
-        </div>
-        <div>{{ customer.billing_details.name }}</div>
-        <div>{{ customer.billing_details.email }}</div>
-        <div>{{ customer.billing_details.phone }}</div>
-        <div>{{ customer.billing_details.address }}</div>
-        <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
-        <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>
-      </div>
+      }
     </div>
   </div>
 
@@ -231,12 +235,12 @@
             size="large"></pa-icon>
         </div>
       </div>
-      <div *ngIf="!editCard && token">
+      @if (!editCard && token) {
         <pa-button
           (click)="showCardForm()"
           icon="edit"
           aspect="basic"></pa-button>
-      </div>
+      }
     </div>
     <div class="section-body">
       @if (subscribeMode | async) {
@@ -271,13 +275,13 @@
             {{ 'billing.save_continue' | translate }}
           </pa-button>
         </div>
-        <div
-          *ngIf="!editCard && token"
-          class="body-m">
-          <div>{{ cardName.value }}</div>
-          <div>{{ token.card.brand }}</div>
-          <div>**** **** **** {{ token.card.last4 }}</div>
-        </div>
+        @if (!editCard && token) {
+          <div class="body-m">
+            <div>{{ cardName.value }}</div>
+            <div>{{ token.card.brand }}</div>
+            <div>**** **** **** {{ token.card.last4 }}</div>
+          </div>
+        }
       } @else {
         <pa-button (click)="updatePaymentMethod()">{{ 'billing.update_payment_method' | translate }}</pa-button>
       }
@@ -302,27 +306,30 @@
             externalLabel
             [formControl]="budget"
             [errorMessages]="errors"></pa-input>
-          <span
-            *ngIf="currency$ | async as currency"
-            class="title-m">
-            {{ currency === 'USD' ? '$' : '€' }}
-          </span>
+          @if (currency$ | async; as currency) {
+            <span class="title-m">
+              {{ currency === 'USD' ? '$' : '€' }}
+            </span>
+          }
         </div>
-        <pa-button
-          *ngIf="subscribeMode | async"
-          (click)="doSubscribe()"
-          [disabled]="editCustomer || editCard || budget.invalid || loading"
-          kind="primary">
-          {{ 'billing.review_confirm' | translate }}
-        </pa-button>
-        <pa-button
-          *ngIf="!(subscribeMode | async)"
-          (click)="saveBudget()"
-          [disabled]="budget.pristine || budget.invalid"
-          kind="primary">
-          {{ 'generic.save' | translate }}
-        </pa-button>
-        <nsi-spinner *ngIf="loading"></nsi-spinner>
+        @if (subscribeMode | async) {
+          <pa-button
+            (click)="doSubscribe()"
+            [disabled]="editCustomer || editCard || budget.invalid || loading"
+            kind="primary">
+            {{ 'billing.review_confirm' | translate }}
+          </pa-button>
+        } @else {
+          <pa-button
+            (click)="saveBudget()"
+            [disabled]="budget.pristine || budget.invalid"
+            kind="primary">
+            {{ 'generic.save' | translate }}
+          </pa-button>
+        }
+        @if (loading) {
+          <nsi-spinner></nsi-spinner>
+        }
       </div>
     </div>
   </div>
