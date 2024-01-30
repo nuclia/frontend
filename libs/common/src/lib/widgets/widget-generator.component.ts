@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, FeaturesService, SDKService } from '@flaps/core';
-import { combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, Observable, of, skip, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -24,6 +24,7 @@ import {
 } from './widget-generator.models';
 import { SisModalService } from '@nuclia/sistema';
 import { CopilotData, CopilotModalComponent } from './copilot/copilot-modal.component';
+import { RAGStrategyName } from '@nuclia/core';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
@@ -77,6 +78,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   copilotData?: CopilotData;
 
+  // WARNING: for isModifiedConfig function to work properly, the properties in DEFAULT_CONFIGURATION must be
+  // in the EXACT SAME order as the properties declared in advancedForm in widget generator page.
   // controls have the name expected by the widget features list
   advancedForm = new FormGroup({
     answers: new FormControl<boolean>(false, { nonNullable: true }),
@@ -88,9 +91,10 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     citations: new FormControl<boolean>(false, { nonNullable: true }),
     hideResults: new FormControl<boolean>(false, { nonNullable: true }),
     noBM25forChat: new FormControl<boolean>(false, { nonNullable: true }),
+    ragSpecificFieldIds: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     filter: new FormControl<boolean>(false, { nonNullable: true }),
     autofilter: new FormControl<boolean>(false, { nonNullable: true }),
-    preselectedFilters: new FormControl<string>('', { nonNullable: true }),
+    preselectedFilters: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     useSynonyms: new FormControl<boolean>(false, { nonNullable: true }),
     suggestions: new FormControl<boolean>(false, { nonNullable: true }),
     suggestLabels: new FormControl<boolean>(false, { nonNullable: true }),
@@ -107,11 +111,18 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     knowledgeGraph: new FormControl<boolean>(false, { nonNullable: true }),
   });
   userPromptErrors = { pattern: 'widget.generator.advanced.generative-answer-category.prompt.error' };
-  private readonly notFeatures = ['userPrompt', 'preselectedFilters', 'darkMode', 'placeholder'];
+  private readonly notFeatures = ['userPrompt', 'preselectedFilters', 'darkMode', 'placeholder', 'ragSpecificFieldIds'];
 
   // advanced options not managed directly in the form
   filters: FilterSelectionType = DEFAULT_FILTERS;
+  ragStrategiesToggles = {
+    field_extension: false,
+    full_resource: false,
+  };
   isModified = false;
+
+  // indicators for updating expanders
+  answerGenerationExpanderUpdated = new Subject();
 
   // FLAGS FOR CONDITIONAL FIELDS AND FEATURES
   get answerGenerationEnabled() {
@@ -145,6 +156,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
   get preselectedFilters() {
     return this.advancedForm.controls.preselectedFilters.value;
+  }
+  get ragSpecificFieldIds() {
+    return this.advancedForm.controls.ragSpecificFieldIds.value;
   }
   get hasOneFilter(): boolean {
     return Object.entries(this.filters).filter(([, value]) => value).length === 1;
@@ -186,6 +200,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get noBM25forChatControl() {
     return this.advancedForm.controls.noBM25forChat;
   }
+  get ragSpecificFieldIdsControl() {
+    return this.advancedForm.controls.ragSpecificFieldIds;
+  }
 
   constructor(
     private sdk: SDKService,
@@ -222,6 +239,14 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       if (config.features) {
         this.advancedForm.patchValue(config.features);
       }
+      if (config.rag_strategies) {
+        config.rag_strategies.forEach((strategy) => {
+          this.ragStrategiesToggles[strategy.name] = true;
+          if (strategy.fields) {
+            this.ragSpecificFieldIdsControl.patchValue(strategy.fields.join(', '));
+          }
+        });
+      }
       if (config.copilotData) {
         this.copilotData = config.copilotData;
       }
@@ -234,17 +259,13 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.advancedForm.valueChanges
       .pipe(debounceTime(FORM_CHANGED_DEBOUNCE_TIME), takeUntil(this.unsubscribeAll))
       .subscribe((changes) => {
-        if (this.selectedPreset) {
-          this.isModified = isModifiedConfig(
-            this.advancedForm.getRawValue(),
-            this.getAdvancedConfigFromPreset(this.presetForm.getRawValue()),
-          );
-        }
+        this.setIsModified();
+        this.answerGenerationExpanderUpdated.next(this.answerGenerationEnabled);
         this.updateSnippetAndStoreConfig();
       });
 
     combineLatest([
-      this.presetForm.valueChanges.pipe(debounceTime(FORM_CHANGED_DEBOUNCE_TIME)),
+      this.presetForm.valueChanges.pipe(skip(1), debounceTime(FORM_CHANGED_DEBOUNCE_TIME)),
       this.isUserPromptsEnabled,
     ])
       .pipe(takeUntil(this.unsubscribeAll))
@@ -256,6 +277,18 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         }, EXPANDER_CREATION_TIME);
       });
+  }
+
+  private setIsModified() {
+    if (this.selectedPreset) {
+      this.isModified =
+        isModifiedConfig(
+          this.advancedForm.getRawValue(),
+          this.getAdvancedConfigFromPreset(this.presetForm.getRawValue()),
+        ) ||
+        this.ragStrategiesToggles.full_resource ||
+        this.ragStrategiesToggles.field_extension;
+    }
   }
 
   ngOnDestroy() {
@@ -283,6 +316,11 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   resetToPreset() {
     this.updateConfigurationFromPreset(this.presetForm.getRawValue());
+    this.ragStrategiesToggles = {
+      field_extension: false,
+      full_resource: false,
+    };
+    this.isModified = false;
   }
 
   onFiltersChange() {
@@ -297,6 +335,10 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       this.citationsControl.patchValue(false);
       this.hideResultsControl.patchValue(false);
       this.noBM25forChatControl.patchValue(false);
+      Object.keys(this.ragStrategiesToggles).forEach((toggle: string) => {
+        this.ragStrategiesToggles[toggle as RAGStrategyName] = false;
+      });
+      this.ragSpecificFieldIdsControl.patchValue('');
     }
   }
 
@@ -364,6 +406,19 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       preset: this.presetForm.getRawValue(),
       copilotData: this.copilotData,
     };
+    if (this.ragStrategiesToggles.full_resource) {
+      this.widgetConfigurations[this.currentKbId].rag_strategies = [{ name: 'full_resource' }];
+    } else if (this.ragStrategiesToggles.field_extension && this.ragSpecificFieldIds) {
+      this.widgetConfigurations[this.currentKbId].rag_strategies = [
+        {
+          name: 'field_extension',
+          fields: this.ragSpecificFieldIds
+            .split(',')
+            .filter((id) => !!id)
+            .map((id) => id.trim()),
+        },
+      ];
+    }
     this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
     this.cdr.detectChanges();
   }
@@ -380,6 +435,15 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     if (promptValue) {
       prompt = `prompt="${promptValue}"`;
       copiablePrompt = `prompt="${promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n`;
+    }
+
+    let ragStrategies = '';
+    let ragFieldIds = '';
+    if (this.ragStrategiesToggles.full_resource) {
+      ragStrategies = 'full_resource';
+    } else if (this.ragStrategiesToggles.field_extension && this.ragSpecificFieldIds) {
+      ragStrategies = 'field_extension';
+      ragFieldIds = this.ragSpecificFieldIds;
     }
 
     forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).subscribe(([kb, account]) => {
@@ -410,11 +474,20 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   preselected_filters="${preselectionValue}"
       `
         : '';
+      const ragProperties = ragFieldIds
+        ? `
+  rag_strategies="${ragStrategies}"
+  rag_field_ids="${ragFieldIds}"
+  `
+        : ragStrategies
+          ? `
+  rag_strategies="${ragStrategies}"`
+          : '';
       const mode: string = this.darkModeEnabled ? `mode="dark"` : '';
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
   ${zone}
-  features="${this.features}" ${placeholder}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
+  features="${this.features}" ${ragProperties}${placeholder}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results ${mode}></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
@@ -527,5 +600,20 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
           this.cdr.markForCheck();
         }
       });
+  }
+
+  updateRagStrategies(toggle: 'full_resource' | 'field_extension', enabled: boolean) {
+    this.ragStrategiesToggles[toggle] = enabled;
+    if (enabled) {
+      if (toggle === 'full_resource') {
+        this.ragStrategiesToggles.field_extension = false;
+        this.ragSpecificFieldIdsControl.patchValue('');
+      } else {
+        this.ragStrategiesToggles.full_resource = false;
+      }
+    }
+    this.answerGenerationExpanderUpdated.next({ ...this.ragStrategiesToggles });
+    this.setIsModified();
+    setTimeout(() => this.updateSnippetAndStoreConfig());
   }
 }

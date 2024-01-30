@@ -1,6 +1,6 @@
 import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { search } from './api';
-import type { Chat, Search, SearchOptions } from '@nuclia/core';
+import type { Chat, ChatOptions, Search, SearchOptions } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
   askQuestion,
@@ -23,6 +23,7 @@ import {
   trackingSearchId,
   trackingStartTime,
   triggerSearch,
+  widgetRagStrategies,
 } from './stores';
 import { NO_RESULT_LIST } from './models';
 
@@ -61,6 +62,7 @@ export const setupTriggerSearch = (
                 isTitleOnly.pipe(take(1)),
                 autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
+                widgetRagStrategies.pipe(take(1)),
               ]).pipe(
                 tap(() => {
                   pendingResults.set(true);
@@ -75,6 +77,7 @@ export const setupTriggerSearch = (
                     inTitleOnly,
                     autoFilterDisabled,
                     isAnswerEnabled,
+                    ragStrategies,
                   ]) => {
                     const currentOptions: SearchOptions = {
                       ...options,
@@ -84,7 +87,11 @@ export const setupTriggerSearch = (
                       ...(autoFilterDisabled ? { autofilter: false } : {}),
                     };
                     if (isAnswerEnabled && !trigger?.more) {
-                      return askQuestion(query, true, currentOptions).pipe(
+                      const chatOptions: ChatOptions = currentOptions;
+                      if (ragStrategies.length > 0) {
+                        chatOptions.rag_strategies = ragStrategies;
+                      }
+                      return askQuestion(query, true, chatOptions).pipe(
                         tap((res) => {
                           if (res.type === 'error' && res.status === 402 && !hideResults) {
                             disableAnswers();
