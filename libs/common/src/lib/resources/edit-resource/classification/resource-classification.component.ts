@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Classification, LabelSets, Resource } from '@nuclia/core';
+import { Classification, LabelSetKind, LabelSets, Resource } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
 import { SelectFirstFieldDirective } from '../select-first-field/select-first-field.directive';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { LabelsService } from '../../../label';
 import { getClassificationFromSelection, getSelectionFromClassification } from '@nuclia/sistema';
 
@@ -24,6 +24,29 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
   resourceLabelSets = this._resourceLabelSets.pipe(
     filter((labelset) => !!labelset && Object.keys(labelset).length > 0),
     map((labelset) => labelset as LabelSets),
+    switchMap((labelSets) =>
+      this.currentLabels.pipe(
+        map((selection) => {
+          // add missing labels
+          // (the resources may have labels that are not defined in the kb's LabelSets)
+          selection.forEach((label) => {
+            if (!labelSets[label.labelset]) {
+              labelSets[label.labelset] = {
+                multiple: false,
+                labels: [],
+                title: label.labelset,
+                color: '',
+                kind: [LabelSetKind.RESOURCES],
+              };
+            }
+            if (!labelSets[label.labelset].labels.find((item) => item.title === label.label)) {
+              labelSets[label.labelset].labels.push({ title: label.label });
+            }
+          });
+          return labelSets;
+        }),
+      ),
+    ),
   );
   currentLabels: BehaviorSubject<Classification[]> = new BehaviorSubject<Classification[]>([]);
   hasLabels: Observable<boolean> = this._resourceLabelSets.pipe(
