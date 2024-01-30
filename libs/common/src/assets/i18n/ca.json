@@ -246,6 +246,7 @@
 	"billing.unsubscribe-error": "Error en cancel·lar la subscripció",
 	"billing.unsubscribe-help": "Encara que deixis de renovar la teva subscripció, encara pots utilitzar Nuclia durant un temps.",
 	"billing.unsubscribe-title": "No s'ha acabat fins que s'ha acabat de veritat...",
+	"billing.update_payment_method": "Actualitzar mètode de pagament",
 	"billing.upgrade": "Actualitzar",
 	"billing.upgrade_now": "Actualitzar ara",
 	"billing.usage.consumables": "Consumibles",
