@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, switchMap, take, tap } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../../utils';
 import { UsersManageService } from './users-manage.service';
@@ -75,19 +75,35 @@ export class UsersManageComponent {
       email: this.addForm.value.email,
       role: this.addForm.value.role,
     };
-    this.users.inviteUser(data).subscribe({
-      next: () => {
-        this.users.updateUsers();
-        this.toaster.success(this.translate.instant('stash.invited_user', { user: this.addForm.value.email }));
+    return this.sdk.currentAccount
+      .pipe(
+        take(1),
+        switchMap((account) => this.sdk.nuclia.db.getAccountUsers(account.slug)),
+        switchMap((accountUsers) => {
+          const user = accountUsers.find((user) => user.email === data.email);
+          if (user) {
+            return this.users.addUser(user.id, data.role);
+          } else {
+            return this.users.inviteUser(data).pipe(
+              tap(() =>
+                this.toaster.success(this.translate.instant('stash.invited_user', { user: this.addForm.value.email })),
+              ),
+              catchError((error) => {
+                if (error?.status === 409) {
+                  this.toaster.error(
+                    this.translate.instant('kb.users.already-exists', { email: this.addForm.value.email }),
+                  );
+                }
+                throw error;
+              }),
+            );
+          }
+        }),
+      )
+      .subscribe(() => {
         this.addForm.get('email')?.reset();
         this.cdr?.markForCheck();
-      },
-      error: (error) => {
-        if (error?.status === 409) {
-          this.toaster.error(this.translate.instant('kb.users.already-exists', { email: this.addForm.value.email }));
-        }
-      },
-    });
+      });
   }
 
   changeRole(userId: string, newRole: KBRoles) {
