@@ -11,10 +11,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "options": {
-        "lintFilePatterns": ["apps/search-widget-demo/**/*.{ts,svelte,spec.ts}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "check": {
       "executor": "nx:run-commands",
