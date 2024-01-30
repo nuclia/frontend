@@ -1,4 +1,5 @@
 import { CopilotData } from './copilot/copilot-modal.component';
+import { RAGStrategy } from '@nuclia/core';
 
 export type PresetType = 'search' | 'find' | 'ask' | 'discover';
 export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
@@ -17,7 +18,9 @@ export type AdvancedForm = {
   noBM25forChat: boolean;
   filter: boolean;
   autofilter: boolean;
+  placeholder: string;
   preselectedFilters: string;
+  ragSpecificFieldIds: string;
   useSynonyms: boolean;
   suggestions: boolean;
   suggestLabels: boolean;
@@ -38,6 +41,7 @@ export type WidgetConfiguration = {
   filters?: { [key in FilterType]: boolean };
   preset?: PresetForm;
   copilotData?: CopilotData;
+  rag_strategies?: RAGStrategy[];
 };
 export const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
 export const DEFAULT_FILTERS: FilterSelectionType = {
@@ -46,12 +50,15 @@ export const DEFAULT_FILTERS: FilterSelectionType = {
   created: false,
   labelFamilies: false,
 };
+// WARNING: for isModifiedConfig function to work properly, the properties in DEFAULT_CONFIGURATION must be
+// in the EXACT SAME order as the properties declared in advancedForm in widget generator page
 export const DEFAULT_CONFIGURATION: AdvancedForm = {
   answers: false,
   userPrompt: '',
   citations: false,
   hideResults: false,
   noBM25forChat: false,
+  ragSpecificFieldIds: '',
   filter: false,
   autofilter: false,
   preselectedFilters: '',
@@ -61,6 +68,7 @@ export const DEFAULT_CONFIGURATION: AdvancedForm = {
   permalink: false,
   navigateToLink: false,
   navigateToFile: false,
+  placeholder: '',
   displayMetadata: false,
   hideThumbnails: false,
   darkMode: false,

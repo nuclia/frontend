@@ -8,6 +8,7 @@ import type {
   RelationType,
 } from '../resource';
 import type { ResourceProperties } from '../db.models';
+import { RAGStrategy } from '../kb';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
@@ -49,6 +50,7 @@ export interface ChatOptions extends BaseSearchOptions {
    * It will return the text blocks that have been effectively used to build each section of the answer.
    */
   citations?: boolean;
+  rag_strategies?: RAGStrategy[];
 }
 
 export interface SearchOptions extends BaseSearchOptions {

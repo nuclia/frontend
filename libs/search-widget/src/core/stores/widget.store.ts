@@ -1,7 +1,7 @@
 import { writableSubject } from '../state-lib';
 import { combineLatest, map, Observable } from 'rxjs';
 import type { WidgetAction, WidgetFilters } from '../models';
-import type { WidgetFeatures } from '@nuclia/core';
+import type { RAGStrategy, WidgetFeatures } from '@nuclia/core';
 
 let widgetActions: WidgetAction[] = [];
 export const setWidgetActions = (actions: WidgetAction[]) => {
@@ -12,6 +12,7 @@ export const getWidgetActions = () => widgetActions;
 export const widgetFeatures = writableSubject<WidgetFeatures | null>(null);
 export const widgetPlaceholder = writableSubject<string>('input.placeholder');
 export const widgetFilters = writableSubject<WidgetFilters>({});
+export const widgetRagStrategies = writableSubject<RAGStrategy[]>([]);
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));

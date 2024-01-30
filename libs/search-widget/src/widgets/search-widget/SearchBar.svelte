@@ -1,7 +1,7 @@
 <svelte:options customElement="nuclia-search-bar" />
 
 <script lang="ts">
-  import type { KBStates, WidgetFeatures } from '@nuclia/core';
+  import type { KBStates, RAGStrategy, RAGStrategyName, WidgetFeatures } from '@nuclia/core';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import { injectCustomCss, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
@@ -9,7 +9,12 @@
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
-  import { widgetFeatures, widgetFilters, widgetPlaceholder } from '../../core/stores/widget.store';
+  import {
+    widgetFeatures,
+    widgetFilters,
+    widgetPlaceholder,
+    widgetRagStrategies
+  } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
     activateTypeAheadSuggestions,
@@ -47,6 +52,8 @@
   export let cssPath = '';
   export let prompt = '';
   export let no_tracking = false;
+  export let rag_strategies = '';
+  export let rag_field_ids = '';
 
   $: darkMode = mode === 'dark';
   $: {
@@ -55,6 +62,7 @@
 
   let _features: WidgetFeatures = {};
   let _filters: WidgetFilters = {};
+  let _ragStrategies: RAGStrategy[] = [];
 
   export function search(query: string) {
     searchQuery.set(query);
@@ -69,7 +77,7 @@
 
   export function logState() {
     console.log(`Current widget configuration:`, {
-      _features, _filters, prompt, preselected_filters, mode, proxy, standalone, backend,
+      _features, _filters, _ragStrategies, prompt, preselected_filters, mode, proxy, standalone, backend,
       zone,
       knowledgebox,
       placeholder,
@@ -77,7 +85,7 @@
       cdn,
       apikey,
       kbslug,
-      account
+      account,
     });
   }
 
@@ -108,6 +116,19 @@
       _filters.labels = true;
       _filters.entities = true;
     }
+    if (rag_strategies.includes('full_resource') && rag_strategies.includes('field_extension')) {
+      console.error(`Incompatible RAG strategies: if 'full_resource' strategy is chosen, it must be the only strategy`);
+    } else {
+      _ragStrategies = (rag_strategies ? rag_strategies.split(',').filter(strategy => !!strategy):[]).reduce((strategies, strategyName) => {
+        if (strategyName === 'full_resource') {
+          strategies.push({name: strategyName});
+        } else if (strategyName === 'field_extension' && !!rag_field_ids) {
+          strategies.push({name: strategyName, fields: rag_field_ids.split(',').filter(id => !!id).map(id => id.trim())});
+        }
+        return strategies;
+      }, [] as RAGStrategy[]);
+    }
+
     initNuclia(
       {
         backend,
@@ -133,6 +154,7 @@
     // Setup widget in the store
     widgetFeatures.set(_features);
     widgetFilters.set(_filters);
+    widgetRagStrategies.set(_ragStrategies);
 
     if (_features.filter) {
       if (_filters.labels) {

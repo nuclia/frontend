@@ -28,4 +28,7 @@
 <style lang="scss">
   @import '../../../libs/search-widget/src/common/global.scss';
   @import '../../../libs/search-widget/src/common/common-style.scss';
+  main {
+    padding: 1rem;
+  }
 </style>

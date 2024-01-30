@@ -185,7 +185,7 @@
                 </div>
               }
 
-              <pa-expander [contentLoaded]="answerGenerationEnabled">
+              <pa-expander [contentLoaded]="answerGenerationExpanderUpdated | async">
                 <pa-expander-header>
                   <div class="title-s">
                     {{ 'widget.generator.advanced.generative-answer-category.title' | translate }}
@@ -267,6 +267,77 @@
                           {{ 'widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help' | translate }}
                         </pa-popover>
                       </div>
+
+                      <div class="title-xxs">
+                        {{ 'widget.generator.advanced.generative-answer-category.rag-strategies.title' | translate }}
+                      </div>
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          [value]="ragStrategiesToggles.full_resource"
+                          (valueChange)="updateRagStrategies('full_resource', $event)">
+                          {{
+                            'widget.generator.advanced.generative-answer-category.rag-strategies.entire-resource.label'
+                              | translate
+                          }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="entireResourceHelp" />
+                        <pa-popover #entireResourceHelp>
+                          {{
+                            'widget.generator.advanced.generative-answer-category.rag-strategies.entire-resource.help'
+                              | translate
+                          }}
+                        </pa-popover>
+                      </div>
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          [value]="ragStrategiesToggles.field_extension"
+                          (valueChange)="updateRagStrategies('field_extension', $event)">
+                          {{
+                            'widget.generator.advanced.generative-answer-category.rag-strategies.specific-fields.label'
+                              | translate
+                          }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="specificLabelsHelp" />
+                        <pa-popover #specificLabelsHelp>
+                          {{
+                            'widget.generator.advanced.generative-answer-category.rag-strategies.specific-fields.help'
+                              | translate
+                          }}
+                        </pa-popover>
+                      </div>
+                      @if (ragStrategiesToggles.field_extension) {
+                        <div class="toggle-and-help">
+                          <pa-textarea
+                            formControlName="ragSpecificFieldIds"
+                            help="widget.generator.advanced.generative-answer-category.rag-strategies.field-ids-input.help"
+                            [rows]="2"
+                            [placeholder]="
+                              'widget.generator.advanced.generative-answer-category.rag-strategies.field-ids-input.placeholder'
+                                | translate
+                            ">
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-strategies.field-ids-input.label'
+                                | translate
+                            }}
+                          </pa-textarea>
+                          <pa-icon
+                            class="icon-for-field-with-help"
+                            name="info"
+                            [paPopover]="fieldIdsHelp" />
+                          <pa-popover #fieldIdsHelp>
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-strategies.field-ids-input.format-help'
+                                | translate
+                            }}
+                          </pa-popover>
+                        </div>
+                      }
                     }
                   </div>
                 </pa-expander-body>
@@ -369,6 +440,7 @@
                         }}
                       </pa-textarea>
                       <pa-icon
+                        class="icon-for-field-with-help"
                         name="info"
                         [paPopover]="preselectedFiltersHelp" />
                       <pa-popover #preselectedFiltersHelp>

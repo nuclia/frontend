@@ -299,6 +299,11 @@ export interface WidgetFeatures {
   noBM25forChat?: boolean;
   citations?: boolean;
 }
+export type RAGStrategyName = 'field_extension' | 'full_resource';
+export type RAGStrategy = {
+  name: RAGStrategyName;
+  fields?: string[];
+};
 
 export interface Counters {
   resources: number;

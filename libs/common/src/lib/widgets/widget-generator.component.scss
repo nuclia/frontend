@@ -92,6 +92,9 @@
             flex: 1 0 auto;
             max-width: calc(100% - #{rhythm(5)});
           }
+          .icon-for-field-with-help {
+            margin-top: calc(-1 * #{rhythm(3)});
+          }
         }
       }
 
