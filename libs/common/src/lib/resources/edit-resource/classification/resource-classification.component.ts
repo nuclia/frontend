@@ -32,7 +32,7 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
           selection.forEach((label) => {
             if (!labelSets[label.labelset]) {
               labelSets[label.labelset] = {
-                multiple: false,
+                multiple: true,
                 labels: [],
                 title: label.labelset,
                 color: '',
