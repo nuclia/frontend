@@ -55,7 +55,7 @@
   let filterButtonElement: HTMLElement | undefined;
   let filterContainerElement: HTMLElement | undefined;
   let position: DOMRect | undefined;
-  let filterButtonPosition: DOMRect | undefined;
+  let filterDropdownPosition: { top: number, left: number, width: number } | undefined;
   let showSuggestions = false;
   let showFilterDropdowns = false;
   let hasFilters = false;
@@ -183,11 +183,22 @@
   };
 
   const toggleFilter = () => {
-    if (filterButtonElement) {
-      filterButtonPosition = filterButtonElement.getBoundingClientRect();
-    }
+    setFilterDropdownPosition();
     showFilterDropdowns = !showFilterDropdowns;
   };
+
+  const setFilterDropdownPosition = () => {
+    if (filterButtonElement) {
+      const width = 27 * 8;
+      const buttonPosition = filterButtonElement.getBoundingClientRect();
+      if (buttonPosition.left + width < window.innerWidth) {
+        filterDropdownPosition = { top: buttonPosition.top - 5, left: buttonPosition.right + 16, width };
+      }
+      else {
+        filterDropdownPosition = { top: buttonPosition.bottom + 4, left: buttonPosition.right - width, width };
+      }
+    }
+  }
 
   function clear() {
     suggestionState.reset();
@@ -304,7 +315,7 @@
 
 {#if showFilterDropdowns}
   <Dropdown
-    position={{ top: filterButtonPosition.top - 5, left: filterButtonPosition.right + 16 }}
+    position={filterDropdownPosition}
     on:close={() => (showFilterDropdowns = false)}>
     <SearchFilters on:search={() => search()} />
   </Dropdown>
