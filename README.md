@@ -13,6 +13,7 @@
 - [Sistema](#sistema)
 - [Protobuf library](#protobuf-library)
 - [CI/CD Deployment](#cicd-deployment)
+- [Maintenance page](#maintenance-page)
 
 ---
 
