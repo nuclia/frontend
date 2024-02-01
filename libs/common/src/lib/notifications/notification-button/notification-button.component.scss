@@ -1,0 +1,19 @@
+@import '../../../../../../apps/dashboard/src/variables';
+
+.notification-button-container {
+  position: relative;
+
+  .count-container {
+    align-items: center;
+    background: $color-primary-regular;
+    border-radius: 50%;
+    color: $color-light-stronger;
+    display: flex;
+    height: rhythm(3);
+    justify-content: center;
+    position: absolute;
+    right: calc(-1 * #{rhythm(0.25)});
+    top: calc(-1 * #{rhythm(0.5)});
+    width: rhythm(3);
+  }
+}

@@ -1,0 +1,49 @@
+<aside
+  class="notifications-panel-container"
+  [class.visible]="isOpen">
+  <div
+    class="backdrop"
+    (click)="onClose()"></div>
+
+  <div class="notifications-panel">
+    <header class="panel-header">
+      <div class="title-l">{{ 'notification.panel.title' | translate }}</div>
+      <pa-button
+        icon="cross"
+        aspect="basic"
+        (click)="onClose()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
+    </header>
+    <div class="panel-body">
+      @if (notifications | async; as notifications) {
+        <ul class="notification-list">
+          @for (message of notifications; track message.timestamp) {
+            <li>
+              <stf-notification
+                [message]="message"
+                (followLink)="onClose()"></stf-notification>
+            </li>
+          } @empty {
+            <div class="no-notifications body-m">
+              {{ 'notification.panel.no-notifications' | translate }}
+            </div>
+          }
+        </ul>
+      }
+    </div>
+
+    <footer class="panel-footer">
+      @if (hasNotifications | async) {
+        <pa-button
+          iconAndText
+          icon="trash"
+          aspect="basic"
+          kind="destructive"
+          (click)="deleteAll()">
+          {{ 'notification.panel.delete-all-button' | translate }}
+        </pa-button>
+      }
+    </footer>
+  </div>
+</aside>

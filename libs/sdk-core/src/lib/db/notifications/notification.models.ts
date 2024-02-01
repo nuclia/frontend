@@ -3,6 +3,7 @@ export type NotificationOperation = 'created' | 'modified' | 'deleted';
 
 export interface BaseNotificationData {
   resource_uuid: string;
+  resource_title: string;
   seqid: number;
 }
 

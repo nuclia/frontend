@@ -151,7 +151,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   getUsers(accountSlug: string): Observable<FullKbUser[]>;
 
   listenToAllNotifications(): Observable<NotificationMessage[]>;
-  listenToProcessingNotifications(): Observable<{ resourceId: string; success: boolean }[]>;
+  listenToProcessingNotifications(): Observable<ResourceProcessingNotification[]>;
   stopListeningToNotifications(): void;
 
   processingStatus(
@@ -300,10 +300,10 @@ export interface WidgetFeatures {
   citations?: boolean;
 }
 export type RAGStrategyName = 'field_extension' | 'full_resource';
-export type RAGStrategy = {
+export interface RAGStrategy {
   name: RAGStrategyName;
   fields?: string[];
-};
+}
 
 export interface Counters {
   resources: number;
@@ -382,4 +382,11 @@ export interface ProcessingStatus {
   scheduled_at: string;
   timestamp: string;
   title: string;
+}
+
+export interface ResourceProcessingNotification {
+  resourceId: string;
+  resourceTitle: string;
+  timestamp: string;
+  success: boolean;
 }

@@ -1,0 +1,13 @@
+<div class="notification-button-container">
+  @if (count) {
+    <div class="count-container">
+      {{ count <= 9 ? count : '9+' }}
+    </div>
+  }
+  <pa-button
+    [active]="active"
+    icon="bell"
+    aspect="basic">
+    {{ 'notification.notification-button-label' | translate }}
+  </pa-button>
+</div>

@@ -71,13 +71,13 @@
                     (delete)="markThumbnailForDeletion(newThumbnail)"></stf-thumbnail>
                 }
 
-                @for (thumb of thumbnails | async; track thumb.uri; let index = $index) {
+                @for (thumb of thumbnails | async; track thumb.uri) {
                   <div>
                     <stf-thumbnail
                       [disabled]="isSaving"
                       [url]="thumb.blob"
                       [selected]="thumb.uri === selectedThumbnail"
-                      [alt]="'Thumbnail ' + index"
+                      [alt]="'Thumbnail ' + $index"
                       (select)="selectThumbnail(thumb.uri)"
                       (delete)="markThumbnailForDeletion(thumb.uri)"></stf-thumbnail>
                   </div>

@@ -48,13 +48,13 @@
 
           <div class="title-xxs">{{ 'resource.thumbnail.label' | translate }}</div>
           <div class="thumbnails-container">
-            @for (thumb of thumbnails | async; track thumb.uri; let index = $index) {
+            @for (thumb of thumbnails | async; track thumb.uri) {
               <div>
                 <stf-thumbnail
                   noDeletion
                   [selected]="resource.thumbnail === thumb.uri"
                   [url]="thumb.blob"
-                  [alt]="'Thumbnail ' + index"></stf-thumbnail>
+                  [alt]="'Thumbnail ' + $index"></stf-thumbnail>
               </div>
             }
             @if (!(hasThumbnail | async)) {

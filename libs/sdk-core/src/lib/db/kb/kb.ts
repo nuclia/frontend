@@ -19,6 +19,7 @@ import {
   ProcessingStatus,
   ResourceList,
   ResourcePagination,
+  ResourceProcessingNotification,
   SentenceToken,
   ServiceAccount,
   ServiceAccountCreation,
@@ -55,6 +56,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   private resourceStatus: {
     [resourceId: string]: {
       seqid: number;
+      resource_title: string;
       indexedNotificationCount: number;
       sequence: NotificationType[];
       operation?: NotificationOperation;
@@ -609,7 +611,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   /**
    * Start listening to the Knowledge Box notifications, and returns the list of resource’s id which processed finished.
    */
-  listenToProcessingNotifications(): Observable<{ resourceId: string; success: boolean }[]> {
+  listenToProcessingNotifications(): Observable<ResourceProcessingNotification[]> {
     return this.listenToAllNotifications().pipe(
       map((notifications) => {
         notifications.forEach((message) => {
@@ -617,6 +619,7 @@ export class KnowledgeBox implements IKnowledgeBox {
           if (!this.resourceStatus[data.resource_uuid]) {
             this.resourceStatus[data.resource_uuid] = {
               seqid: data.seqid,
+              resource_title: data.resource_title,
               indexedNotificationCount: 0,
               sequence: [],
             };
@@ -631,18 +634,17 @@ export class KnowledgeBox implements IKnowledgeBox {
             };
           }
         });
-        return Object.entries(this.resourceStatus).reduce(
-          (processedList, [resourceId, status]) => {
-            if (status.sequence.includes('resource_processed') && status.indexedNotificationCount >= 2) {
-              processedList.push({
-                resourceId,
-                success: !status.error && !status.processing_errors && !!status.ingestion_succeeded,
-              });
-            }
-            return processedList;
-          },
-          [] as { resourceId: string; success: boolean }[],
-        );
+        return Object.entries(this.resourceStatus).reduce((processedList, [resourceId, status]) => {
+          if (status.sequence.includes('resource_processed') && status.indexedNotificationCount >= 2) {
+            processedList.push({
+              resourceId,
+              resourceTitle: status.resource_title,
+              success: !status.error && !status.processing_errors && !!status.ingestion_succeeded,
+              timestamp: new Date(Date.now()).toISOString(),
+            });
+          }
+          return processedList;
+        }, [] as ResourceProcessingNotification[]);
       }),
       tap((processedResources) => {
         // clean up resource status when processing is done

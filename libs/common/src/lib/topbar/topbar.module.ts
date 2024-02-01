@@ -18,6 +18,7 @@ import {
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { UserMenuComponent } from './user-menu';
 import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
+import { NotificationButtonComponent } from '../notifications';
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.compo
     PaFocusableModule,
     UserMenuComponent,
     StandaloneMenuComponent,
+    NotificationButtonComponent,
   ],
   exports: [TopbarComponent],
   declarations: [TopbarComponent, KbSwitchComponent],

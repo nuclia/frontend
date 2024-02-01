@@ -1,0 +1,46 @@
+@if (message; as message) {
+  <div class="notification-container">
+    <div class="notification-header">
+      <div>
+        @if (message.failure) {
+          <pa-icon name="warning"></pa-icon>
+        }
+        <span
+          class="body-m"
+          [class.unread]="message.unread">
+          {{ message.type | notificationType: message.failure | translate }}
+        </span>
+      </div>
+
+      <small><pa-datetime [datetime]="message.timestamp"></pa-datetime></small>
+    </div>
+    <div class="notification-details body-s">
+      <ul>
+        @for (item of message.data.slice(0, maxItemsPerNotification); track item) {
+          <li>
+            @if (item.resourceUrl) {
+              <a
+                class="notification-link"
+                [routerLink]="item.resourceUrl"
+                (click)="followLink.emit()">
+                {{ item.title }}
+              </a>
+            } @else {
+              {{ item.title }}
+            }
+          </li>
+        }
+        @if (message.data.length > maxItemsPerNotification) {
+          <li>
+            <a
+              class="notification-link"
+              [routerLink]="resourceListUrl | async"
+              (click)="followLink.emit()">
+              {{ 'notification.panel.more' | translate: { count: message.data.length - maxItemsPerNotification } }}
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+}

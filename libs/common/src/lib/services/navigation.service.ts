@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
-import { combineLatest, map, Observable } from 'rxjs';
+import { combineLatest, forkJoin, map, Observable, take } from 'rxjs';
 
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
 const IN_ACCOUNT_BILLING = new RegExp('/at/[^/]+/manage/billing');
@@ -51,6 +51,16 @@ export class NavigationService {
     return this.sdk.nuclia.options.standalone
       ? `/at/${accountSlug}/${kbSlug}`
       : `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/${kbSlug}`;
+  }
+
+  getResourceListUrl(): Observable<string> {
+    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentKb.pipe(take(1))]).pipe(
+      map(([account, kb]) => (kb.slug ? `${this.getKbUrl(account.slug, kb.slug)}/resources` : '')),
+    );
+  }
+
+  getResourcePreviewUrl(accountSlug: string, kbSlug: string, resourceId: string): string {
+    return `${this.getKbUrl(accountSlug, kbSlug)}/resources/${resourceId}/edit/preview`;
   }
 
   getAccountSelectUrl() {
