@@ -1,4 +1,4 @@
-# 1.11.3 (unreleased)
+# 1.11.3 (2024-02-01)
 
 ### Improvements
 
