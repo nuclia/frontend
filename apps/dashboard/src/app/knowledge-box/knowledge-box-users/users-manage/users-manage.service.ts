@@ -38,6 +38,15 @@ export class UsersManageService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.inviteToKb(data)),
+      tap(() => this.updateUsers()),
+    );
+  }
+
+  addUser(id: string, role: KBRoles) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.updateUsers({ add: [{ id, role }] })),
+      tap(() => this.updateUsers()),
     );
   }
 
