@@ -264,3 +264,12 @@ Note: the desktop app is always directly deployed to prod (there is no stage, th
 ArgoCD allows to monitor deployments and also to read the logs of the different pods.
 
 [Full documentation](https://github.com/nuclia/internal/blob/master/platform/cd-strategy.md)
+
+## Maintenance page
+
+The maintenance page is in `./maintenance`.
+It is deployed manually to stage using the following command:
+
+```sh
+gsutil cp -r ./maintenance gs://stashify-cdn
+```
