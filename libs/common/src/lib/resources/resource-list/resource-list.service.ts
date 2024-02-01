@@ -45,9 +45,9 @@ export class ResourceListService {
     this._status = status;
     if (!this.sdk.nuclia.options.standalone) {
       // TODO to be removed once we the new system will be enabled for all KBs
-      forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentKb.pipe(take(1))])
+      forkJoin([this.sdk.currentAccount.pipe(take(1)), this.features.newProcessingStatus])
         .pipe(
-          take(1),
+          filter(([, newProcessingStatusEnabled]) => !newProcessingStatusEnabled),
           switchMap(([account]) => this.sdk.nuclia.db.getProcessingStatus(account.id)),
         )
         .subscribe((processingStatus) => {
@@ -159,19 +159,13 @@ export class ResourceListService {
               take(1),
               switchMap((kb) => kb.processingStatus(this._cursor)),
               switchMap((processingStatus) => {
-                // processing status feature can be enabled on the frontend and not on the backend,
-                // so if we get no results from the new system we switch to the old one
-                if (processingStatus.results.length === 0) {
-                  return this.loadResourcesFromCatalog(replaceData, updateCount);
-                } else {
-                  const resourceWithLabels = this.getPendingResourcesData(processingStatus);
-                  const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
-                  this._data.next(newData);
-                  this._ready.next(true);
-                  this._hasMore = !!processingStatus.cursor;
-                  this._cursor = processingStatus.cursor;
-                  return of(null);
-                }
+                const resourceWithLabels = this.getPendingResourcesData(processingStatus);
+                const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
+                this._data.next(newData);
+                this._ready.next(true);
+                this._hasMore = !!processingStatus.cursor;
+                this._cursor = processingStatus.cursor;
+                return of(null);
               }),
             )
           : this.loadResourcesFromCatalog(replaceData, updateCount),
