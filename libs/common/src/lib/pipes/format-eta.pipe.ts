@@ -12,9 +12,9 @@ export class FormatETAPipe implements PipeTransform {
     if (value >= 3600) {
       return '> 1h';
     } else if (value > 90) {
-      return `${Math.ceil(value / 60)}min`;
+      return `${Math.round(value / 60)}min`;
     } else {
-      return `${value}s`;
+      return `${Math.round(value)}s`;
     }
   }
 }
