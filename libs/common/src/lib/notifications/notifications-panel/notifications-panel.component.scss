@@ -56,7 +56,8 @@ $notification-panel-width: rhythm(56);
     }
 
     .panel-body {
-      height: 100%;
+      height: calc(100% - #{rhythm(9)}* 2);
+      overflow: auto;
 
       .notification-list {
         height: 100%;
