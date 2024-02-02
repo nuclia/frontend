@@ -1,0 +1,32 @@
+@import 'apps/dashboard/src/variables';
+
+.notification-container {
+  padding: rhythm(1) rhythm(2);
+
+  .notification-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+
+    pa-icon {
+      margin-right: rhythm(1);
+    }
+
+    .unread {
+      font-weight: $font-weight-semi-bold;
+    }
+  }
+  .notification-details {
+    color: $color-neutral-regular;
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .notification-link {
+      color: inherit;
+      font-weight: inherit;
+    }
+  }
+}

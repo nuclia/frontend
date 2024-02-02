@@ -1,0 +1,92 @@
+@import 'apps/dashboard/src/variables';
+
+$notification-panel-width: rhythm(56);
+
+.notifications-panel-container {
+  bottom: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: var(--app-topbar-height);
+  z-index: -1;
+  transition: z-index $transition-hint calc(#{$transition-process-duration} + #{$transition-hint-duration});
+
+  &.visible {
+    z-index: calc(var(--app-zindex-topbar) - 1);
+    transition: z-index $transition-hint;
+
+    .backdrop {
+      opacity: 0.4;
+      transition: opacity $transition-hint $transition-hint-duration;
+    }
+    .notifications-panel {
+      transform: translateX(0);
+    }
+  }
+
+  .backdrop {
+    background: $color-dark-stronger;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    transition: opacity $transition-hint $transition-process-duration;
+  }
+
+  $padding-notification-panel: rhythm(2);
+  .notifications-panel {
+    background: $color-light-stronger;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--app-topbar-height));
+    justify-content: space-between;
+    position: fixed;
+    right: 0;
+    transform: translateX($notification-panel-width);
+    transition: transform $transition-slide;
+    width: $notification-panel-width;
+
+    .panel-header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      padding: $padding-notification-panel;
+    }
+
+    .panel-body {
+      height: 100%;
+
+      .notification-list {
+        height: 100%;
+        justify-self: flex-start;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li:first-of-type {
+          border-top: 1px solid $color-neutral-lighter;
+        }
+        li {
+          box-shadow: $box-shadow-border-bottom;
+        }
+      }
+      .no-notifications {
+        align-items: center;
+        display: flex;
+        color: $color-neutral-regular;
+        height: 100%;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    .panel-footer {
+      padding: $padding-notification-panel;
+      pa-button {
+        float: right;
+      }
+    }
+  }
+}

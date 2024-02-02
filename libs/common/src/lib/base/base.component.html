@@ -1,5 +1,11 @@
-<app-topbar></app-topbar>
+<app-topbar
+  [isNotificationPanelOpen]="isNotificationPanelOpen"
+  (toggleNotificationPanel)="isNotificationPanelOpen = !isNotificationPanelOpen"></app-topbar>
 
 <div class="base-container">
   <router-outlet></router-outlet>
 </div>
+
+<stf-notifications-panel
+  [isOpen]="isNotificationPanelOpen"
+  (close)="isNotificationPanelOpen = false"></stf-notifications-panel>

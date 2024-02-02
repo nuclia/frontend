@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService, UserService } from '@flaps/core';
-import { combineLatest, map, shareReplay, take } from 'rxjs';
+import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
 import { NavigationService } from '../services';
 import { StandaloneService } from '../services/standalone.service';
+import { NotificationService } from '../notifications/notification.service';
 
 @Component({
   selector: 'app-topbar',
@@ -12,6 +13,9 @@ import { StandaloneService } from '../services/standalone.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopbarComponent {
+  @Input({ transform: booleanAttribute }) isNotificationPanelOpen = false;
+  @Output() toggleNotificationPanel = new EventEmitter<void>();
+
   userInfo = this.userService.userInfo;
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
@@ -40,6 +44,7 @@ export class TopbarComponent {
   errorMessage = this.standaloneService.errorMessage;
 
   showDemo = !this.standalone;
+  notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
 
   constructor(
     private router: Router,
@@ -48,6 +53,7 @@ export class TopbarComponent {
     private sdk: SDKService,
     private route: ActivatedRoute,
     private standaloneService: StandaloneService,
+    private notificationService: NotificationService,
   ) {}
 
   goToHome(): void {

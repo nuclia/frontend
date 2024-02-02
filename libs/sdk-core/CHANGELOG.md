@@ -1,3 +1,10 @@
+# 1.11.4 (unreleased)
+
+### Improvements
+
+- Add `resource_title` to `BaseNotificationData` model 
+- Create an interface for `listenToProcessingNotifications` response (`ResourceProcessingNotification`) including the resource title and a timestamp
+
 # 1.11.3 (2024-02-01)
 
 ### Improvements
