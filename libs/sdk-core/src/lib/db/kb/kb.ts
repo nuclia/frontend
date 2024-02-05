@@ -631,7 +631,7 @@ export class KnowledgeBox implements IKnowledgeBox {
       map((notifications) => {
         notifications.forEach((message) => {
           const data = message.data;
-          if (!this.resourceOperationStatus[data.resource_uuid] || message.type === 'resource_written') {
+          if (!this.resourceOperationStatus[data.resource_uuid] && message.type === 'resource_written') {
             this.resourceOperationStatus[data.resource_uuid] = {
               seqid: data.seqid,
               resource_title: data.resource_title,
@@ -639,14 +639,16 @@ export class KnowledgeBox implements IKnowledgeBox {
               sequence: [],
             };
           }
-          if (message.type === 'resource_indexed') {
-            this.resourceOperationStatus[data.resource_uuid].indexedNotificationCount++;
-          } else {
-            this.resourceOperationStatus[data.resource_uuid] = {
-              ...this.resourceOperationStatus[data.resource_uuid],
-              ...data,
-              sequence: [...this.resourceOperationStatus[data.resource_uuid].sequence, message.type],
-            };
+          if (this.resourceOperationStatus[data.resource_uuid]) {
+            if (message.type === 'resource_indexed') {
+              this.resourceOperationStatus[data.resource_uuid].indexedNotificationCount++;
+            } else {
+              this.resourceOperationStatus[data.resource_uuid] = {
+                ...this.resourceOperationStatus[data.resource_uuid],
+                ...data,
+                sequence: [...this.resourceOperationStatus[data.resource_uuid].sequence, message.type],
+              };
+            }
           }
         });
         return Object.entries(this.resourceOperationStatus).reduce((notificationList, [resourceId, data]) => {
