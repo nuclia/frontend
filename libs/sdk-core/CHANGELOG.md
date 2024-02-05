@@ -1,9 +1,10 @@
-# 1.11.4 (unreleased)
+# 1.11.4 (2024-02-05)
 
 ### Improvements
 
 - Add `resource_title` to `BaseNotificationData` model 
 - Create an interface for `listenToProcessingNotifications` response (`ResourceProcessingNotification`) including the resource title and a timestamp
+- Improve `getStreamMessages`: reconnect if the connection is lost and there was no error for the last 10s
 
 # 1.11.3 (2024-02-01)
 
