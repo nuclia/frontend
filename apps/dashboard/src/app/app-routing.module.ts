@@ -169,13 +169,6 @@ const routes: Routes = [
                 component: KnowledgeBoxSettingsComponent,
               },
               {
-                path: 'training',
-                loadChildren: () =>
-                  import('./knowledge-box/knowledge-box-training/knowledge-box-training.module').then(
-                    (m) => m.KnowledgeBoxTrainingModule,
-                  ),
-              },
-              {
                 path: 'users',
                 component: KnowledgeBoxUsersComponent,
                 canActivate: [accountOwnerGuard],

@@ -143,17 +143,6 @@
                   <span class="nav-link-title">{{ 'sidenav.synonyms' | translate }}</span>
                 </a>
               }
-              @if (isTrainingEnabled | async) {
-                <a
-                  [routerLink]="(isAdmin | async) ? kbUrl + '/training' : null"
-                  routerLinkActive="active"
-                  class="nav-link sub-item"
-                  data-cy="go-to-trainings"
-                  [class.disabled]="!(isAdmin | async)">
-                  <pa-icon name="submenu"></pa-icon>
-                  <span class="nav-link-title">{{ 'sidenav.trainings' | translate }}</span>
-                </a>
-              }
               @if (isAccountManager | async) {
                 <a
                   [routerLink]="kbUrl + '/users'"
