@@ -30,8 +30,16 @@ import {
 } from 'rxjs';
 import type { TypedResult } from '../models';
 import { NO_SUGGESTION_RESULTS } from '../models';
-import { widgetFeatures } from './widget.store';
-import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
+import { widgetFeatures, widgetRagStrategies } from './widget.store';
+import type {
+  BaseSearchOptions,
+  Chat,
+  ChatOptions,
+  Classification,
+  FieldFullId,
+  IErrorResponse,
+  Search,
+} from '@nuclia/core';
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import { formatQueryKey, getFindParagraphs, getUrlParams, updateQueryParams } from '../utils';
 import {
@@ -137,7 +145,18 @@ export function initAnswer() {
     ask
       .pipe(
         distinctUntilChanged(),
-        switchMap(({ question, reset }) => askQuestion(question, reset)),
+        switchMap(({ question, reset }) =>
+          widgetRagStrategies.pipe(
+            take(1),
+            switchMap((ragStrategies) => {
+              const chatOptions: ChatOptions = {};
+              if (ragStrategies.length > 0) {
+                chatOptions.rag_strategies = ragStrategies;
+              }
+              return askQuestion(question, reset, chatOptions);
+            }),
+          ),
+        ),
       )
       .subscribe(),
   );

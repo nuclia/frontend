@@ -3,14 +3,14 @@
 <script lang="ts">
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
+  import { getRAGStrategies, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
-  import type { KBStates } from '@nuclia/core';
+  import type { KBStates, RAGStrategy } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { initAnswer, initUsageTracking, initViewer, resetStatesAndEffects } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
-  import { preselectedFilters } from '../../core';
+  import { preselectedFilters, widgetRagStrategies } from '../../core';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -28,9 +28,12 @@
   export let prompt = '';
   export let preselected_filters = '';
   export let no_tracking = false;
+  export let rag_strategies = '';
+  export let rag_field_ids = '';
 
   export let layout: 'inline' | 'fullscreen' = 'fullscreen';
   export let height = '';
+  let _ragStrategies: RAGStrategy[] = [];
 
   let showChat = layout === 'inline';
 
@@ -77,6 +80,10 @@
     if (preselected_filters) {
       preselectedFilters.set(preselected_filters.split(','));
     }
+
+    _ragStrategies = getRAGStrategies(rag_strategies, rag_field_ids);
+    widgetRagStrategies.set(_ragStrategies);
+
     initAnswer();
     initViewer();
     initUsageTracking(no_tracking);

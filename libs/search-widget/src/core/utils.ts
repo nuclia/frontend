@@ -1,14 +1,16 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from, map, Observable, of } from 'rxjs';
-import type { FileField, FieldFullId, IFieldData, IResource, LinkField, ResourceField } from '@nuclia/core';
-import {
-  FIELD_TYPE,
-  FileFieldData,
-  longToShortFieldType,
-  Search,
-  sliceUnicode,
+import type {
+  FieldFullId,
+  FileField,
+  IFieldData,
+  IResource,
+  LinkField,
+  RAGStrategy,
+  ResourceField,
 } from '@nuclia/core';
+import { FIELD_TYPE, FileFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from './api';
 
 let CDN = 'https://cdn.nuclia.cloud/';
@@ -321,4 +323,28 @@ export function injectCustomCss(cssPath: string, element: HTMLElement) {
         element.getRootNode().appendChild(style);
       });
   }
+}
+
+export function getRAGStrategies(ragStrategies: string, fieldIds: string): RAGStrategy[] {
+  if (ragStrategies.includes('full_resource') && ragStrategies.includes('field_extension')) {
+    console.error(`Incompatible RAG strategies: if 'full_resource' strategy is chosen, it must be the only strategy`);
+    return [];
+  }
+  return (ragStrategies ? ragStrategies.split(',').filter((strategy) => !!strategy) : []).reduce(
+    (strategies, strategyName) => {
+      if (strategyName === 'full_resource') {
+        strategies.push({ name: strategyName });
+      } else if (strategyName === 'field_extension' && !!fieldIds) {
+        strategies.push({
+          name: strategyName,
+          fields: fieldIds
+            .split(',')
+            .filter((id) => !!id)
+            .map((id) => id.trim()),
+        });
+      }
+      return strategies;
+    },
+    [] as RAGStrategy[],
+  );
 }

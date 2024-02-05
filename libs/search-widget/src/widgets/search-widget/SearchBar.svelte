@@ -4,7 +4,7 @@
   import type { KBStates, RAGStrategy, RAGStrategyName, WidgetFeatures } from '@nuclia/core';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { injectCustomCss, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
+  import { getRAGStrategies, injectCustomCss, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
@@ -116,18 +116,7 @@
       _filters.labels = true;
       _filters.entities = true;
     }
-    if (rag_strategies.includes('full_resource') && rag_strategies.includes('field_extension')) {
-      console.error(`Incompatible RAG strategies: if 'full_resource' strategy is chosen, it must be the only strategy`);
-    } else {
-      _ragStrategies = (rag_strategies ? rag_strategies.split(',').filter(strategy => !!strategy):[]).reduce((strategies, strategyName) => {
-        if (strategyName === 'full_resource') {
-          strategies.push({name: strategyName});
-        } else if (strategyName === 'field_extension' && !!rag_field_ids) {
-          strategies.push({name: strategyName, fields: rag_field_ids.split(',').filter(id => !!id).map(id => id.trim())});
-        }
-        return strategies;
-      }, [] as RAGStrategy[]);
-    }
+    _ragStrategies = getRAGStrategies(rag_strategies, rag_field_ids);
 
     initNuclia(
       {
