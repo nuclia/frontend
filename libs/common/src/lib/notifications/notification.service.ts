@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, switchMap, take, tap } from 'rxjs';
 import { NotificationData, NotificationUI } from './notification.model';
 import { SDKService } from '@flaps/core';
 import { NavigationService } from '../services';
@@ -70,5 +70,9 @@ export class NotificationService {
 
   deleteAll() {
     this._notifications.next([]);
+  }
+
+  stopListening() {
+    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => kb.stopListeningToNotifications());
   }
 }
