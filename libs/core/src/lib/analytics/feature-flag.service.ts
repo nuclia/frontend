@@ -20,6 +20,7 @@ interface FeaturesData {
 
 const CUSTOM_FEATURE_FLAGS = 'NUCLIA_CUSTOM_FEATURE_FLAGS';
 const FEATURE_PREFIX = 'application_';
+const BACKEND_PREFIXES = ['nucliadb_', 'nua_'];
 
 const stageFeatures: Features = {};
 
@@ -34,7 +35,7 @@ export class FeatureFlagService {
     map((res) => res as FeaturesData),
     shareReplay(1),
   );
-  private remoteFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
+  private applicationRemoteFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
     map(([data, md5]) =>
       Object.entries(data)
         .filter(([key]) => key.startsWith(FEATURE_PREFIX))
@@ -47,8 +48,20 @@ export class FeatureFlagService {
         }, {}),
     ),
   );
+  private backendFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
+    map(([data, md5]) =>
+      Object.entries(data)
+        .filter(([key]) => !key.startsWith(FEATURE_PREFIX))
+        .reduce((acc, [key, feature]) => {
+          return {
+            ...acc,
+            [key]: feature?.rollout === 100 || (feature?.variants?.account_id_md5 || []).includes(md5 || ''),
+          };
+        }, {}),
+    ),
+  );
   private stageFeatures = new BehaviorSubject<Features>({ ...stageFeatures, ...this.getCustomFeatures() });
-  private features: Observable<Features> = this.remoteFeatures.pipe(
+  private applicationFeatures: Observable<Features> = this.applicationRemoteFeatures.pipe(
     map((features) => ({ ...features, ...this.getCustomFeatures() })),
   );
 
@@ -60,12 +73,15 @@ export class FeatureFlagService {
     if (this.isNotProd) {
       return this.stageFeatures.pipe(map((features) => !!features[feature] || true));
     } else {
-      return this.features.pipe(map((features) => !!features[feature]));
+      const isBackendPrefix = BACKEND_PREFIXES.some((prefix) => feature.startsWith(prefix));
+      return isBackendPrefix
+        ? this.backendFeatures.pipe(map((features) => !!features[feature]))
+        : this.applicationFeatures.pipe(map((features) => !!features[feature]));
     }
   }
 
   getEnabledFeatures(): Observable<string[]> {
-    return this.features.pipe(
+    return this.applicationFeatures.pipe(
       map((features) =>
         Object.entries(features)
           .filter(([, value]) => this.isNotProd || !!value)
@@ -75,11 +91,11 @@ export class FeatureFlagService {
   }
 
   getFeatures(): Observable<Features> {
-    return this.isNotProd ? this.stageFeatures : this.features;
+    return this.isNotProd ? this.stageFeatures : this.applicationFeatures;
   }
 
   getDefaultFeatures(): Observable<Features> {
-    return this.isNotProd ? of(stageFeatures) : this.remoteFeatures;
+    return this.isNotProd ? of(stageFeatures) : this.applicationRemoteFeatures;
   }
 
   getCustomFeatures(): Features {
