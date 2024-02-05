@@ -18,7 +18,7 @@
   $: text = answer.text?.replace(NEWLINE, '<br>') || '';
   $: notEnoughData = text === 'Not enough data to answer this.';
 
-  const sources =
+  $: sources =
     answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
 
   function getSourcesResults(resources: { [key: string]: Search.FindResource }, citations: Citations): TypedResult[] {
