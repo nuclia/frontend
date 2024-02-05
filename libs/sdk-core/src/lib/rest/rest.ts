@@ -22,6 +22,7 @@ import type { INuclia, IRest } from '../models';
 export class Rest implements IRest {
   private nuclia: INuclia;
   private zones?: { [key: string]: string };
+  private streamErrorAt?: number;
 
   public constructor(nuclia: INuclia) {
     this.nuclia = nuclia;
@@ -316,7 +317,7 @@ export class Rest implements IRest {
                   observer.next({ data: value, headers });
                   readMore();
                 } else {
-                  // when the stream is timing out, we get an undefined value
+                  // we get an undefined value when the stream is timing out, so we reconnect
                   this.fetchStream(path, observer, controller);
                 }
               },
@@ -330,8 +331,15 @@ export class Rest implements IRest {
         }
       },
       (reason) => {
-        observer.error(reason);
-        observer.complete();
+        // Error on fetch can be caused by the backend not closing gracefully the stream on time (causing errors like NS_ERROR_NET_PARTIAL_TRANSFER, or CORS error)
+        // If there was no error before, or last error was more than 10s ago, we reconnect
+        if (!this.streamErrorAt || Date.now() - this.streamErrorAt > 10000) {
+          this.streamErrorAt = Date.now();
+          this.fetchStream(path, observer, controller);
+        } else {
+          observer.error(reason);
+          observer.complete();
+        }
       },
     );
   }
