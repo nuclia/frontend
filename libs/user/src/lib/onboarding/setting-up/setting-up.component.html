@@ -25,14 +25,4 @@
       }
     </p>
   }
-  @if (withDataset && (onboardingStatus | async)?.kbCreated) {
-    <p class="body-m">
-      {{ 'onboarding.setting-up.import_dataset' | translate }}
-      @if ((onboardingStatus | async)?.datasetImported) {
-        <pa-icon
-          name="circle-check"
-          size="small"></pa-icon>
-      }
-    </p>
-  }
 </div>

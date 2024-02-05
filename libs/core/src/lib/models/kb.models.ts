@@ -5,8 +5,6 @@ export type KbLanguageConf = {
 
 export type KbConfiguration = {
   zoneSlug: string;
-  ownData: boolean;
-  dataset?: string;
 } & KbLanguageConf;
 
 export type AccountAndKbConfiguration = {
