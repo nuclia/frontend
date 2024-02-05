@@ -5,6 +5,7 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnDestroy,
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -23,7 +24,7 @@ import { NotificationService } from '../notification.service';
   styleUrl: './notifications-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationsPanelComponent {
+export class NotificationsPanelComponent implements OnDestroy {
   private notificationsService = inject(NotificationService);
 
   @Input({ transform: booleanAttribute }) isOpen = false;
@@ -39,5 +40,9 @@ export class NotificationsPanelComponent {
   onClose() {
     this.notificationsService.markAllAsRead();
     this.close.emit();
+  }
+
+  ngOnDestroy() {
+    this.notificationsService.stopListening();
   }
 }

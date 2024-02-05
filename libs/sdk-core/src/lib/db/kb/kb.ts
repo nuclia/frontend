@@ -668,6 +668,10 @@ export class KnowledgeBox implements IKnowledgeBox {
           return notificationList;
         }, [] as ResourceOperationNotification[]);
       }),
+      tap((notificationList) => {
+        // clean up resource status when notification is sent
+        notificationList.forEach((item) => delete this.resourceOperationStatus[item.resourceId]);
+      }),
     );
   }
 
