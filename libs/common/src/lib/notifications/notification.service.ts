@@ -20,6 +20,9 @@ export class NotificationService {
     private sdk: SDKService,
     private navigationService: NavigationService,
   ) {
+    // TODO: cleanup, this is for test purpose
+    this.sdk.currentKb.pipe(switchMap((kb) => kb.listenToResourceOperationNotifications())).subscribe(console.log);
+
     combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
       .pipe(
         switchMap(([account, kb]) =>

@@ -18,6 +18,7 @@ import {
   LabelSets,
   ProcessingStatus,
   ResourceList,
+  ResourceOperationNotification,
   ResourcePagination,
   ResourceProcessingNotification,
   SentenceToken,
@@ -53,7 +54,19 @@ export class KnowledgeBox implements IKnowledgeBox {
   private notifications?: Observable<NotificationMessage[]>;
   private notificationsController?: AbortController;
 
-  private resourceStatus: {
+  private resourceProcessingStatus: {
+    [resourceId: string]: {
+      seqid: number;
+      resource_title: string;
+      indexedNotificationCount: number;
+      sequence: NotificationType[];
+      operation?: NotificationOperation;
+      error?: boolean;
+      ingestion_succeeded?: boolean;
+      processing_errors?: boolean;
+    };
+  } = {};
+  private resourceOperationStatus: {
     [resourceId: string]: {
       seqid: number;
       resource_title: string;
@@ -609,15 +622,17 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   /**
-   * Start listening to the Knowledge Box notifications, and returns the list of resource’s id which processed finished.
+   * Start listening to the Knowledge Box notifications, and returns the list of notifications corresponding to the different operations affecting the resources:
+   * created, modified, deleted.
+   * The notification contains the resource id, title, a timestamp and a flag indicating if the operation was successful or not.
    */
-  listenToProcessingNotifications(): Observable<ResourceProcessingNotification[]> {
+  listenToResourceOperationNotifications(): Observable<ResourceOperationNotification[]> {
     return this.listenToAllNotifications().pipe(
       map((notifications) => {
         notifications.forEach((message) => {
           const data = message.data;
-          if (!this.resourceStatus[data.resource_uuid]) {
-            this.resourceStatus[data.resource_uuid] = {
+          if (!this.resourceOperationStatus[data.resource_uuid] || message.type === 'resource_written') {
+            this.resourceOperationStatus[data.resource_uuid] = {
               seqid: data.seqid,
               resource_title: data.resource_title,
               indexedNotificationCount: 0,
@@ -625,16 +640,65 @@ export class KnowledgeBox implements IKnowledgeBox {
             };
           }
           if (message.type === 'resource_indexed') {
-            this.resourceStatus[data.resource_uuid].indexedNotificationCount++;
+            this.resourceOperationStatus[data.resource_uuid].indexedNotificationCount++;
           } else {
-            this.resourceStatus[data.resource_uuid] = {
-              ...this.resourceStatus[data.resource_uuid],
+            this.resourceOperationStatus[data.resource_uuid] = {
+              ...this.resourceOperationStatus[data.resource_uuid],
               ...data,
-              sequence: [...this.resourceStatus[data.resource_uuid].sequence, message.type],
+              sequence: [...this.resourceOperationStatus[data.resource_uuid].sequence, message.type],
             };
           }
         });
-        return Object.entries(this.resourceStatus).reduce((processedList, [resourceId, status]) => {
+        return Object.entries(this.resourceOperationStatus).reduce((notificationList, [resourceId, data]) => {
+          if (
+            !!data.operation &&
+            (data.operation === 'deleted' ||
+              (data.sequence.includes('resource_processed') && data.indexedNotificationCount >= 2))
+          ) {
+            notificationList.push({
+              resourceId,
+              resourceTitle: data.resource_title,
+              success:
+                (data.operation === 'deleted' && !data.error) ||
+                (data.operation !== 'deleted' && !data.error && !data.processing_errors && !!data.ingestion_succeeded),
+              timestamp: new Date().toISOString(),
+              operation: data.operation,
+            });
+          }
+          return notificationList;
+        }, [] as ResourceOperationNotification[]);
+      }),
+    );
+  }
+
+  /**
+   * Start listening to the Knowledge Box notifications, and returns the list of notifications for resources which have processing completed (either successfully or not).
+   * Notifications are sent anytime processing is completed, and processing is done anytime the resource is created or modified (like when a summary is added to the resource for example).
+   */
+  listenToProcessingNotifications(): Observable<ResourceProcessingNotification[]> {
+    return this.listenToAllNotifications().pipe(
+      map((notifications) => {
+        notifications.forEach((message) => {
+          const data = message.data;
+          if (!this.resourceProcessingStatus[data.resource_uuid]) {
+            this.resourceProcessingStatus[data.resource_uuid] = {
+              seqid: data.seqid,
+              resource_title: data.resource_title,
+              indexedNotificationCount: 0,
+              sequence: [],
+            };
+          }
+          if (message.type === 'resource_indexed') {
+            this.resourceProcessingStatus[data.resource_uuid].indexedNotificationCount++;
+          } else {
+            this.resourceProcessingStatus[data.resource_uuid] = {
+              ...this.resourceProcessingStatus[data.resource_uuid],
+              ...data,
+              sequence: [...this.resourceProcessingStatus[data.resource_uuid].sequence, message.type],
+            };
+          }
+        });
+        return Object.entries(this.resourceProcessingStatus).reduce((processedList, [resourceId, status]) => {
           if (status.sequence.includes('resource_processed') && status.indexedNotificationCount >= 2) {
             processedList.push({
               resourceId,
@@ -648,7 +712,7 @@ export class KnowledgeBox implements IKnowledgeBox {
       }),
       tap((processedResources) => {
         // clean up resource status when processing is done
-        processedResources.forEach((item) => delete this.resourceStatus[item.resourceId]);
+        processedResources.forEach((item) => delete this.resourceProcessingStatus[item.resourceId]);
       }),
     );
   }

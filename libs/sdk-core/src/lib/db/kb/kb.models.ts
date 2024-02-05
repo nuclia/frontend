@@ -4,7 +4,7 @@ import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } fro
 import type { Chat, ChatOptions, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
 import type { ResourceProperties } from '../db.models';
-import { NotificationMessage } from '../notifications';
+import { NotificationMessage, NotificationOperation } from '../notifications';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -152,6 +152,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   listenToAllNotifications(): Observable<NotificationMessage[]>;
   listenToProcessingNotifications(): Observable<ResourceProcessingNotification[]>;
+  listenToResourceOperationNotifications(): Observable<ResourceOperationNotification[]>;
   stopListeningToNotifications(): void;
 
   processingStatus(
@@ -384,9 +385,13 @@ export interface ProcessingStatus {
   title: string;
 }
 
-export interface ResourceProcessingNotification {
+export interface ResourceBaseNotification {
   resourceId: string;
   resourceTitle: string;
   timestamp: string;
   success: boolean;
 }
+export interface ResourceOperationNotification extends ResourceBaseNotification {
+  operation: NotificationOperation;
+}
+export type ResourceProcessingNotification = ResourceBaseNotification;

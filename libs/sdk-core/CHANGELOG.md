@@ -1,3 +1,10 @@
+# 1.11.5 (2024-02-05)
+
+### Improvements
+
+- Add `listenToResourceOperationNotifications` method which is sending notifications about resource creation, modification and deletion.
+- Update `listenToProcessingNotifications` documentation to clarify that notifications are sent anytime processing is done, which occurs for both resource creation and modification.
+
 # 1.11.4 (2024-02-05)
 
 ### Improvements
