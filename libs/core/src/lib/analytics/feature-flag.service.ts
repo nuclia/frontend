@@ -48,7 +48,7 @@ export class FeatureFlagService {
         }, {}),
     ),
   );
-  private backendRemoteFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
+  private backendFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
     map(([data, md5]) =>
       Object.entries(data)
         .filter(([key]) => !key.startsWith(FEATURE_PREFIX))
@@ -62,9 +62,6 @@ export class FeatureFlagService {
   );
   private stageFeatures = new BehaviorSubject<Features>({ ...stageFeatures, ...this.getCustomFeatures() });
   private applicationFeatures: Observable<Features> = this.applicationRemoteFeatures.pipe(
-    map((features) => ({ ...features, ...this.getCustomFeatures() })),
-  );
-  private backendFeatures: Observable<Features> = this.backendRemoteFeatures.pipe(
     map((features) => ({ ...features, ...this.getCustomFeatures() })),
   );
 
