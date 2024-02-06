@@ -49,6 +49,13 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   );
   counters: Observable<Counters> = this.sdk.counters;
 
+  tokenChart = this.isAccountManager.pipe(
+    filter((isManager) => isManager),
+    switchMap(() => this.currentKb),
+    switchMap((kb) => this.metrics.getChartData(StatsType.AI_TOKENS_USED, false, kb.id)),
+    takeUntil(this.unsubscribeAll),
+    shareReplay(),
+  );
   processingChart = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
@@ -67,6 +74,12 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
     switchMap((kb) => this.metrics.getSearchQueriesCountForKb(kb.id)),
+    takeUntil(this.unsubscribeAll),
+  );
+  tokensCount = this.isAccountManager.pipe(
+    filter((isManager) => isManager),
+    switchMap(() => this.currentKb),
+    switchMap((kb) => this.metrics.getTokensCountForKb(kb.id)),
     takeUntil(this.unsubscribeAll),
   );
 
@@ -115,8 +128,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   chartDropdownOptions: OptionModel[] = [
     this.defaultChartOption,
     new OptionModel({ id: 'processing', label: 'metrics.processing.title', value: 'processing' }),
-    // FIXME add generative answers option once NUA will support it
-    // new OptionModel({ id: 'answers', label: 'metrics.answers.title', value: 'answers' }),
+    new OptionModel({ id: 'tokens', label: 'metrics.ai-tokens-used.title', value: 'tokens' }),
   ];
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = {
