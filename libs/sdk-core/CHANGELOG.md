@@ -7,6 +7,10 @@
   - we now prevent the observer to complete with an error when calling `stopListeningToNotifications`
   - better error message when fetch is raising an error
 
+### Improvements
+
+- Add `AI_TOKENS_USED` to `StatsType` enum.
+
 # 1.11.5 (2024-02-05)
 
 ### Improvements

@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { AccountService, SDKService } from '@flaps/core';
-import { BillingService } from '@flaps/core';
+import { AccountService, BillingService, SDKService } from '@flaps/core';
 import { UPGRADABLE_ACCOUNT_TYPES } from './billing/subscription.service';
 import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { addDays, format, isFuture, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
@@ -79,6 +78,7 @@ export class MetricsService {
     [StatsType.TRAIN_SECONDS]: 'metrics.units.hours',
     [StatsType.PROCESSING_TIME]: 'metrics.units.hours',
     [StatsType.SEARCHES]: 'metrics.units.queries',
+    [StatsType.AI_TOKENS_USED]: 'metrics.units.tokens',
   };
 
   constructor(
@@ -92,6 +92,21 @@ export class MetricsService {
         forkJoin([
           this.sdk.nuclia.db.getStats(account.slug, StatsType.SEARCHES, kbId, StatsPeriod.YEAR),
           this.sdk.nuclia.db.getStats(account.slug, StatsType.SEARCHES, kbId, StatsPeriod.MONTH),
+        ]),
+      ),
+      map(([yearStats, monthStats]) => ({
+        year: yearStats.reduce((acc, stat) => acc + stat.stats, 0),
+        month: monthStats.reduce((acc, stat) => acc + stat.stats, 0),
+      })),
+    );
+  }
+
+  getTokensCountForKb(kbId: string): Observable<{ year: number; month: number }> {
+    return this.account$.pipe(
+      switchMap((account) =>
+        forkJoin([
+          this.sdk.nuclia.db.getStats(account.slug, StatsType.AI_TOKENS_USED, kbId, StatsPeriod.YEAR),
+          this.sdk.nuclia.db.getStats(account.slug, StatsType.AI_TOKENS_USED, kbId, StatsPeriod.MONTH),
         ]),
       ),
       map(([yearStats, monthStats]) => ({

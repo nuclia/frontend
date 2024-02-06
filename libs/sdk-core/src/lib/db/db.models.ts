@@ -145,6 +145,7 @@ export enum StatsType {
   TRAIN_SECONDS = 'train_seconds',
   SUGGESTIONS = 'suggestions',
   DOCS_NO_MEDIA = 'docs_no_media',
+  AI_TOKENS_USED = 'ai_tokens_used',
 }
 
 export interface Welcome {

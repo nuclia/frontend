@@ -13,9 +13,14 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsageChartsComponent {
+  @Input() tokenChart?: ChartData | null;
   @Input() processingChart?: ChartData | null;
   @Input() searchChart?: ChartData | null;
   @Input() currentChart?: OptionModel | null;
   @Input({ transform: numberAttribute }) chartHeight?: number;
   @Input({ transform: booleanAttribute }) smallContainer = false;
+
+  get xAxisTickOptions() {
+    return this.smallContainer ? { modulo: 4 } : null;
+  }
 }

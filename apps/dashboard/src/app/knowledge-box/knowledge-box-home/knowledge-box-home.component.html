@@ -262,6 +262,7 @@
                   smallContainer
                   [chartHeight]="chartHeight"
                   [currentChart]="currentChart"
+                  [tokenChart]="tokenChart | async"
                   [processingChart]="processingChart | async"
                   [searchChart]="searchChart | async"></app-kb-usage-charts>
 
@@ -289,6 +290,25 @@
                         <pa-table-cell>
                           <span class="body-s">
                             <strong>{{ queriesCount.year | number: '1.0-0' : locale }}</strong>
+                          </span>
+                        </pa-table-cell>
+                      }
+                    </pa-table-row>
+                  }
+                  @if (tokensCount | async; as count) {
+                    <pa-table-row>
+                      <pa-table-cell>
+                        <span class="body-s">{{ 'metrics.ai-tokens-used.title' | translate }}</span>
+                      </pa-table-cell>
+                      @if (locale | async; as locale) {
+                        <pa-table-cell>
+                          <span class="body-s">
+                            <strong>{{ count.month | number: '1.0-0' : locale }}</strong>
+                          </span>
+                        </pa-table-cell>
+                        <pa-table-cell>
+                          <span class="body-s">
+                            <strong>{{ count.year | number: '1.0-0' : locale }}</strong>
                           </span>
                         </pa-table-cell>
                       }
