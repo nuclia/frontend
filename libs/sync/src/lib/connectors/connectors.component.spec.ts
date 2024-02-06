@@ -44,10 +44,10 @@ describe('ConnectorsComponent', () => {
 
   describe('sources', () => {
     it('should select connector', () => {
-      jest.spyOn(component.select, 'emit');
+      jest.spyOn(component.selectConnector, 'emit');
       const element = fixture.debugElement.nativeElement.querySelector('.connector');
       element.click();
-      expect(component.select.emit).toHaveBeenCalledWith('source1');
+      expect(component.selectConnector.emit).toHaveBeenCalledWith('source1');
     });
   });
 });
