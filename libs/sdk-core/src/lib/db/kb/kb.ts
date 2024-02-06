@@ -36,6 +36,7 @@ import { catalog, chat, Chat, ChatOptions, find, search, Search, SearchOptions, 
 import { Training } from '../training';
 import { ResourceProperties } from '../db.models';
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
+import { ABORT_STREAMING_REASON } from '../../rest';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -615,7 +616,7 @@ export class KnowledgeBox implements IKnowledgeBox {
    */
   stopListeningToNotifications() {
     if (this.notificationsController) {
-      this.notificationsController.abort();
+      this.notificationsController.abort(ABORT_STREAMING_REASON);
       this.notificationsController = undefined;
       this.notifications = undefined;
     }

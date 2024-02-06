@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, Observable, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
 import { NotificationData, NotificationUI } from './notification.model';
 import { SDKService } from '@flaps/core';
 import { NavigationService } from '../services';
 import { differenceInSeconds } from 'date-fns';
 import { WritableKnowledgeBox } from '@nuclia/core';
+import { takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -21,13 +22,14 @@ export class NotificationService {
   constructor(
     private sdk: SDKService,
     private navigationService: NavigationService,
-  ) {
+  ) {}
+
+  startListening() {
     combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
       .pipe(
         tap(([, kb]) => {
           if (this._currentKb) {
-            this._currentKb.stopListeningToNotifications();
-            this._notifications.next([]);
+            this.stopListening();
           }
           this._currentKb = kb;
         }),
@@ -71,6 +73,7 @@ export class NotificationService {
             }),
           ),
         ),
+        takeUntil(this.sdk.nuclia.auth.isAuthenticated().pipe(filter((isAuthenticated) => !isAuthenticated))),
       )
       .subscribe();
   }
@@ -84,6 +87,10 @@ export class NotificationService {
   }
 
   stopListening() {
-    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => kb.stopListeningToNotifications());
+    if (this._currentKb) {
+      this._currentKb.stopListeningToNotifications();
+      this._currentKb = undefined;
+      this._notifications.next([]);
+    }
   }
 }
