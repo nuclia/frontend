@@ -18,10 +18,10 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { LabelModule } from '@flaps/core';
 import { SyncComponent } from './sync.component';
-import { ViewSyncComponent } from './view-sync.component';
 import { EditSyncSettingsComponent } from './tabs/edit-settings.component';
 import { EditSyncFoldersComponent } from './tabs/edit-folders.component';
 import { EditSyncLabelsComponent } from './tabs/edit-labels.component';
+import { AddSyncComponent } from './add-sync.component';
 
 @NgModule({
   imports: [
@@ -47,10 +47,10 @@ import { EditSyncLabelsComponent } from './tabs/edit-labels.component';
     SelectFilesComponent,
     SettingsComponent,
     SyncComponent,
-    ViewSyncComponent,
     EditSyncSettingsComponent,
     EditSyncFoldersComponent,
     EditSyncLabelsComponent,
+    AddSyncComponent,
   ],
   providers: [],
 })

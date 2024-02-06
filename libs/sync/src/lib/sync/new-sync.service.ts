@@ -205,7 +205,7 @@ export class NewSyncService {
   setSourceAndDestination(
     sourceId: string,
     source: Source,
-    kbId: string,
+    kbId: string, // TO BE REMOVED (useless, kept for compatibility with old code)
     localBackend?: string,
     labels?: Classification[],
   ): Observable<void> {
@@ -217,9 +217,15 @@ export class NewSyncService {
       };
       return this.setSourceData(sourceId, source);
     } else {
-      return this.getKb(kbId).pipe(
+      return this.sdk.currentKb.pipe(
         switchMap((kb) => {
-          if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
+          if (localBackend) {
+            return of({
+              ...source,
+              labels,
+              kb: { standalone: true, zone: '', backend: localBackend, account: 'local', knowledgeBox: kb.id },
+            });
+          } else if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
             return of(source);
           } else {
             return this.getNucliaKey(kb).pipe(
@@ -247,12 +253,12 @@ export class NewSyncService {
       id: sourceId,
       title: sourceId,
       connector: {
-        name: source.connectorId || existing.connector.name,
-        parameters: { ...existing.connector.parameters, ...source.data },
+        name: source.connectorId || existing?.connector.name,
+        parameters: { ...existing?.connector.parameters, ...source.data },
       },
-      kb: { ...(existing.kb || this.sdk.nuclia.options), ...source.kb },
-      labels: source.labels || existing.labels,
-      foldersToSync: source.items || existing.foldersToSync,
+      kb: { ...(existing?.kb || this.sdk.nuclia.options), ...source.kb },
+      labels: source.labels || existing?.labels,
+      foldersToSync: source.items || existing?.foldersToSync,
     };
     const req = existing
       ? this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, data)

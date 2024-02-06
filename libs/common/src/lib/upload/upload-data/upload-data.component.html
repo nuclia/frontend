@@ -47,7 +47,8 @@
         }
         <nsy-connectors
           type="sources"
-          [disabled]="!hasSyncServer || (isServerDown | async)"></nsy-connectors>
+          [disabled]="!hasSyncServer || (isServerDown | async)"
+          (selectConnector)="onSelectConnector($event)"></nsy-connectors>
       } @else {
         <p class="body-m description">
           <span class="title-xs">Nuclia Desktop.</span>

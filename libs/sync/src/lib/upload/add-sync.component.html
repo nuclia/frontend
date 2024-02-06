@@ -1,8 +1,21 @@
+<h2>
+  <img
+    [src]="(connector | async)?.logo"
+    [alt]="(connector | async)?.title + ' logo'" />
+  {{ (connector | async)?.title }}
+</h2>
 @if (!!fields && !!form) {
   <form
     [formGroup]="form"
     qa="fields-form"
     (ngSubmit)="save()">
+    <div class="field">
+      <pa-input
+        formControlName="id"
+        [errorMessages]="validationMessages['id']">
+        {{ 'upload.source.name' | translate }}
+      </pa-input>
+    </div>
     @for (field of fields; track field.id) {
       <div
         formGroupName="fields"

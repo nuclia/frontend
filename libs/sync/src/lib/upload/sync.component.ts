@@ -38,6 +38,24 @@ export class SyncComponent implements OnInit, OnDestroy {
         this.syncService.setCurrentSourceId(sourceId);
         this.cdr.markForCheck();
       });
+    this.currentSync
+      .pipe(
+        take(1),
+        switchMap((sync) =>
+          this.syncService.hasCurrentSourceAuth().pipe(
+            filter((hasAuth) => !hasAuth),
+            switchMap(() => this.syncService.getSource(sync.connector.name, sync.id)),
+          ),
+        ),
+        switchMap((source) => this.syncService.authenticateToSource(source)),
+      )
+      .subscribe({
+        next: () => {
+          this.toast.success('upload.authentication.success');
+          this.router.navigate([], { queryParams: {} });
+        },
+        error: () => this.toast.error('upload.authentication.failed'),
+      });
   }
 
   ngOnDestroy(): void {

@@ -37,6 +37,10 @@ export class UploadDataComponent {
   }
 
   setupSync() {
-    this.router.navigate(['./sync/server'], { relativeTo: this.route });
+    this.router.navigate(['./sync/setup/server'], { relativeTo: this.route });
+  }
+
+  onSelectConnector(connectorId: string) {
+    this.router.navigate(['./sync/add/', connectorId], { relativeTo: this.route });
   }
 }

@@ -28,6 +28,8 @@
 	"pastanaga.datetime.one-minute-ago": "Hace 1 minuto",
 	"pastanaga.datetime.yesterday": "Ayer",
 	"upload.add-connector": "Añadir conector",
+	"upload.authentication.fail": "Autenticación fallida",
+	"upload.authentication.success": "Autenticación exitosa",
 	"upload.connectors": "Conectores",
 	"upload.deletion-failed": "Error al borrar",
 	"upload.failed": "Guardar fracaso",

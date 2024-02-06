@@ -1,0 +1,17 @@
+@import 'apps/dashboard/src/variables';
+
+h2 {
+  display: flex;
+  img {
+    height: rhythm(4);
+    margin-right: rhythm(2);
+  }
+}
+.field {
+  margin: rhythm(2) 0;
+
+  label {
+    display: block;
+    margin-bottom: rhythm(1);
+  }
+}

@@ -3,14 +3,19 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ServerSelectionComponent } from './server-selection/server-selection.component';
 import { SyncComponent } from './upload/sync.component';
+import { AddSyncComponent } from './upload/add-sync.component';
 
 const routes: Routes = [
   {
     path: '',
     children: [
       {
-        path: 'server',
+        path: 'setup/server',
         component: ServerSelectionComponent,
+      },
+      {
+        path: 'add/:connector',
+        component: AddSyncComponent,
       },
       {
         path: ':id',

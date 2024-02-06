@@ -28,6 +28,8 @@
 	"pastanaga.datetime.one-minute-ago": "Fa 1 min",
 	"pastanaga.datetime.yesterday": "Ahir",
 	"upload.add-connector": "Afegir connector",
+	"upload.authentication.fail": "L'autenticació ha fallat",
+	"upload.authentication.success": "Autenticació correcta",
 	"upload.connectors": "Connectors",
 	"upload.deletion-failed": "S'ha produït un error en la supressió",
 	"upload.failed": "Desa la fallada",
