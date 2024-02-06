@@ -1,15 +1,24 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { NotificationType } from './notification.model';
+import { NotificationUI } from './notification.model';
 
 @Pipe({
   name: 'notificationType',
   standalone: true,
 })
 export class NotificationTypePipe implements PipeTransform {
-  transform(value: NotificationType, failure: boolean): string {
-    switch (value) {
-      case 'resource-processing':
-        return failure ? 'notification.type.processing-failed' : 'notification.type.processing-completed';
+  transform(notification: NotificationUI): string {
+    if (notification.type !== 'resource') {
+      return '';
+    }
+    switch (notification.operation) {
+      case 'created':
+        return notification.failure ? 'notification.type.creation-failed' : 'notification.type.creation-completed';
+      case 'modified':
+        return notification.failure
+          ? 'notification.type.modification-failed'
+          : 'notification.type.modification-completed';
+      case 'deleted':
+        return notification.failure ? 'notification.type.deletion-failed' : 'notification.type.deletion-completed';
     }
   }
 }

@@ -8,7 +8,7 @@
         <span
           class="body-m"
           [class.unread]="message.unread">
-          {{ message.type | notificationType: message.failure | translate }}
+          {{ message | notificationType | translate }}
         </span>
       </div>
 

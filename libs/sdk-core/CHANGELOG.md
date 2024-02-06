@@ -1,4 +1,11 @@
-# 1.11.6 (unreleased)
+# 1.11.6 (2024-02-06)
+
+### Bugfix
+
+- Fix the error management in rest’s `getStreamMessages` method:
+  - firefox is raising `NS_BINDING_ABORTED` TypeError when reloading the page while the connection is opened, so our system allowing to reconnect once in case of network error was reconnecting while it shouldn't have on this specific case.
+  - we now prevent the observer to complete with an error when calling `stopListeningToNotifications`
+  - better error message when fetch is raising an error
 
 ### Improvements
 

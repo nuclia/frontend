@@ -21,7 +21,7 @@ const REFRESH_DELAY = 6 * 60 * 60 * 1000; // 6 hours
  */
 export class Authentication implements IAuthentication {
   private nuclia: INuclia;
-  private _isAuthenticated: ReplaySubject<boolean> = new ReplaySubject(1);
+  private _isAuthenticated = new ReplaySubject<boolean>(1);
   private timerSubscription?: Subscription;
 
   public constructor(nuclia: INuclia) {
