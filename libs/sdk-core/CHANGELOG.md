@@ -1,3 +1,9 @@
+# 1.11.6 (unreleased)
+
+### Improvements
+
+- Add `AI_TOKENS_USED` to `StatsType` enum.
+
 # 1.11.5 (2024-02-05)
 
 ### Improvements
