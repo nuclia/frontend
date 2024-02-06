@@ -127,7 +127,7 @@ export class NewSyncService {
       Object.entries(syncs).reduce(
         (acc, [id, sync]) => ({
           ...acc,
-          [id]: this.sync2Source(sync),
+          [id]: this.syncToSource(sync),
         }),
         {},
       ),
@@ -157,7 +157,7 @@ export class NewSyncService {
             map((sources) =>
               Object.entries(sources).reduce(
                 (acc, [id, source]) => {
-                  acc[id] = this.source2Sync(id, source);
+                  acc[id] = this.sourceToSync(id, source);
                   return acc;
                 },
                 {} as { [id: string]: ISyncEntity },
@@ -351,7 +351,7 @@ export class NewSyncService {
   }
 
   getSourceCache(name: string): Source {
-    return this.sync2Source(this._syncCache.getValue()[name]);
+    return this.syncToSource(this._syncCache.getValue()[name]);
   }
 
   getKb(kbId: string): Observable<WritableKnowledgeBox> {
@@ -480,7 +480,7 @@ export class NewSyncService {
     this._isServerDown.next(isDown);
   }
 
-  private sync2Source(sync: ISyncEntity): Source {
+  private syncToSource(sync: ISyncEntity): Source {
     return {
       connectorId: sync.connector.name,
       data: sync.connector.parameters,
@@ -491,7 +491,7 @@ export class NewSyncService {
     };
   }
 
-  private source2Sync(sourceId: string, source: Source): ISyncEntity {
+  private sourceToSync(sourceId: string, source: Source): ISyncEntity {
     return {
       id: sourceId,
       connector: { name: source.connectorId, parameters: source.data },
