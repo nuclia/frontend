@@ -1,6 +1,8 @@
 import { from, map, Observable, of, Subscriber, switchMap } from 'rxjs';
 import type { INuclia, IRest } from '../models';
 
+const NS_BINDING_ABORTED_ERROR = 'TypeError: NetworkError when attempting to fetch resource.';
+
 /**
  * Handles the elementary REST requests to the Nuclia backend, setting the appropriate HTTP headers.
  *
@@ -330,10 +332,15 @@ export class Rest implements IRest {
           readMore();
         }
       },
-      (reason) => {
+      (reason: TypeError) => {
         // Error on fetch can be caused by the backend not closing gracefully the stream on time (causing errors like NS_ERROR_NET_PARTIAL_TRANSFER, or CORS error)
         // If there was no error before, or last error was more than 10s ago, we reconnect
-        if (!this.streamErrorAt || Date.now() - this.streamErrorAt > 10000) {
+        // except if the error reason is from NS_BINDING_ABORTED, which happens when reloading the page on firefox
+        if (
+          reason.toString() !== NS_BINDING_ABORTED_ERROR &&
+          (!this.streamErrorAt || Date.now() - this.streamErrorAt > 10000)
+        ) {
+          console.warn(`Fetch failed: "${reason}". Reconnecting at ${new Date()}`);
           this.streamErrorAt = Date.now();
           this.fetchStream(path, observer, controller);
         } else {

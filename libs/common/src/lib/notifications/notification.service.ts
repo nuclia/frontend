@@ -4,11 +4,13 @@ import { NotificationData, NotificationUI } from './notification.model';
 import { SDKService } from '@flaps/core';
 import { NavigationService } from '../services';
 import { differenceInSeconds } from 'date-fns';
+import { WritableKnowledgeBox } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationService {
+  private _currentKb?: WritableKnowledgeBox;
   private _notifications = new BehaviorSubject<NotificationUI[]>([]);
   notifications: Observable<NotificationUI[]> = this._notifications.asObservable();
 
@@ -22,8 +24,15 @@ export class NotificationService {
   ) {
     combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
       .pipe(
+        tap(([, kb]) => {
+          if (this._currentKb) {
+            this._currentKb.stopListeningToNotifications();
+            this._notifications.next([]);
+          }
+          this._currentKb = kb;
+        }),
         switchMap(([account, kb]) =>
-          kb.listenToProcessingNotifications().pipe(
+          kb.listenToResourceOperationNotifications().pipe(
             tap((notifications) => {
               let existingNotifications = this._notifications.value;
               // most recent notifications are first in the list
@@ -37,10 +46,11 @@ export class NotificationService {
                     ? this.navigationService.getResourcePreviewUrl(account.slug, kb.slug, newNotif.resourceId)
                     : undefined,
                 };
-                // we group notifications happening within 30 seconds only for unread notification
+                // we group notifications happening within 30 seconds only for unread notification of the same operation type
                 if (
                   lastNotification &&
                   lastNotification.unread &&
+                  lastNotification.operation === newNotif.operation &&
                   differenceInSeconds(new Date(newNotif.timestamp), new Date(lastNotification.timestamp)) <= 30 &&
                   newNotif.success === !lastNotification.failure
                 ) {
@@ -48,7 +58,8 @@ export class NotificationService {
                   existingNotifications = [{ ...lastNotification }].concat(existingNotifications.slice(1));
                 } else {
                   newNotifications.push({
-                    type: 'resource-processing',
+                    type: 'resource',
+                    operation: newNotif.operation,
                     timestamp: newNotif.timestamp,
                     failure: !newNotif.success,
                     unread: true,
