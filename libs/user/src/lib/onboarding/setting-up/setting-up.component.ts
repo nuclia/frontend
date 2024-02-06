@@ -1,4 +1,4 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
@@ -17,6 +17,5 @@ import { OnboardingStatus } from '../onboarding.models';
 export class SettingUpComponent {
   private onboardingService = inject(OnboardingService);
 
-  @Input({ transform: booleanAttribute }) withDataset = false;
   onboardingStatus: Observable<OnboardingStatus> = this.onboardingService.onboardingState;
 }

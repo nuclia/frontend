@@ -15,11 +15,8 @@
             [zones]="zones | async"
             (submitStep2)="onStep2Done($event)"></nus-onboarding-step2>
         }
-        @case ('setting-up-upload') {
+        @case ('setting-up') {
           <nus-onboarding-setting-up></nus-onboarding-setting-up>
-        }
-        @case ('setting-up-dataset') {
-          <nus-onboarding-setting-up withDataset></nus-onboarding-setting-up>
         }
       }
     }

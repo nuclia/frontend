@@ -25,27 +25,6 @@
   </div>
   <nus-language-field (languageSelected)="updateLanguages($event)"></nus-language-field>
 
-  @if (datasets.length > 0) {
-    <div class="field">
-      <label class="title-s">{{ 'onboarding.step2.starting-data.label' | translate }}</label>
-      <pa-radio-group formControlName="startWith">
-        <pa-radio value="upload">{{ 'onboarding.step2.starting-data.upload' | translate }}</pa-radio>
-        <pa-radio value="dataset">{{ 'onboarding.step2.starting-data.dataset' | translate }}</pa-radio>
-      </pa-radio-group>
-      @if (datasetSelected) {
-        <div class="second-choice">
-          <pa-select
-            [label]="'onboarding.step2.starting-data.dataset-label' | translate"
-            formControlName="dataset">
-            @for (dataset of datasets; track dataset.id) {
-              <pa-option [value]="dataset.id">{{ dataset.title }}</pa-option>
-            }
-          </pa-select>
-        </div>
-      }
-    </div>
-  }
-
   <div class="form-footer">
     <pa-button
       type="submit"
