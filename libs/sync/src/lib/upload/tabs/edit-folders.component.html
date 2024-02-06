@@ -14,8 +14,7 @@
       }
     </table>
   </div>
-}
-@if (!(canSelectFiles | async)) {
+} @else {
   <div class="parameters">
     @for (param of (currentSource | async)?.data || {} | keyvalue; track param.value) {
       <pa-checkbox

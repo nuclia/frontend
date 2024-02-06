@@ -906,7 +906,7 @@
 	"stash.upload.option.q-and-a": "Q&A",
 	"stash.upload.page-subtitle": "You can directly upload your files, links, resources or folder",
 	"stash.upload.sync.description": "Select a source and pick folders you’d like to automatically push to your current Knowledge Box.",
-	"stash.upload.sync.setup": "Or set up a Sync Agent to use the Sychronization feature and automatically push data from:",
+	"stash.upload.sync.setup": "Or set up a Sync Agent to use the Synchronization feature and automatically push data from:",
 	"stash.upload.sync.setup-button": "Setup sync agent",
 	"stash.upload.sync.title": "Synchronization",
 	"stash.upload_data": "Upload data",
