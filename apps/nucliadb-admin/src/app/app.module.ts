@@ -13,7 +13,6 @@ import { RouterModule, TitleStrategy } from '@angular/router';
 import { routerOptions, routes } from './app-routing';
 import { HomePageComponent } from './home/home-page.component';
 import { MainContainerComponent } from './home/main-container/main-container.component';
-import { UploadModule } from '@flaps/common';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 // Load locales
@@ -37,7 +36,7 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
 }
 
 @NgModule({
-  declarations: [AppComponent, HomePageComponent, MainContainerComponent],
+  declarations: [AppComponent, HomePageComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -52,10 +51,10 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
       },
     }),
     RouterModule.forRoot(routes, routerOptions),
-    UploadModule,
     PaIconModule,
     PaIconModule,
     HomeContainerComponent,
+    MainContainerComponent,
   ],
   providers: [
     TranslatePipe,

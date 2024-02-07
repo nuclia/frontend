@@ -15,7 +15,6 @@ import {
   selectKbGuard,
   setAccountGuard,
   setLocalKbGuard,
-  UploadDataComponent,
 } from '@flaps/common';
 
 export const routerOptions: ExtraOptions = {
@@ -58,7 +57,9 @@ export const routes: Routes = [
               },
               {
                 path: 'upload',
-                component: UploadDataComponent,
+                loadChildren: () =>
+                  // eslint-disable-next-line @nx/enforce-module-boundaries
+                  import('../../../../libs/common/src/lib/upload/upload.module').then((m) => m.UploadModule),
               },
               {
                 path: 'search',
