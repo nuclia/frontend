@@ -3,7 +3,6 @@ import {
   combineLatest,
   distinctUntilKeyChanged,
   filter,
-  forkJoin,
   map,
   Observable,
   ReplaySubject,
@@ -14,7 +13,7 @@ import {
 } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphService } from '../paragraph.service';
-import { FieldId, IError, Paragraph, Resource, TextField } from '@nuclia/core';
+import { FIELD_TYPE, FieldId, IError, Paragraph, Resource, TextField } from '@nuclia/core';
 import { getErrors, getParagraphs, ParagraphWithText, Thumbnail } from '../edit-resource.helpers';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -71,6 +70,9 @@ export class PreviewComponent implements OnInit, OnDestroy {
     filter((resource) => !!resource),
     map((resource) => resource as Resource),
   );
+  isOnResourcePage: Observable<any> = this.route.params.pipe(
+    map((params) => !params['fieldId'] && !params['fieldType']),
+  );
   fieldId: Observable<FieldId> = this.route.params.pipe(
     filter((params) => !!params['fieldType'] && !!params['fieldId']),
     map((params) => {
@@ -90,6 +92,8 @@ export class PreviewComponent implements OnInit, OnDestroy {
   );
   hasThumbnail: Observable<boolean> = this.thumbnails.pipe(map((thumbnails) => thumbnails.length > 0));
 
+  currentFieldId?: FieldId;
+
   constructor(
     private editResource: EditResourceService,
     private paragraphService: ParagraphService,
@@ -107,6 +111,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
     combineLatest([this.fieldId, this.resource])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([fieldId, resource]) => {
+        this.currentFieldId = fieldId;
         this.errors = getErrors(fieldId, resource);
         const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
         const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
@@ -116,6 +121,20 @@ export class PreviewComponent implements OnInit, OnDestroy {
         }));
         this.paragraphService.setupParagraphs(enhancedParagraphs);
         this.loaded = true;
+        this.cdr.markForCheck();
+      });
+
+    this.isOnResourcePage
+      .pipe(
+        filter((isResourcePage) => isResourcePage),
+        switchMap(() => this.editResourceService.fields),
+        map((fields) => fields.filter((field) => field.field_type !== FIELD_TYPE.generic)),
+        filter((fields) => fields.length === 1),
+        map((fields) => fields[0]),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((field) => {
+        this.currentFieldId = field;
         this.cdr.markForCheck();
       });
   }
@@ -132,21 +151,25 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   openViewer() {
     this.loadingPreview = true;
-    forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))])
-      .pipe(
-        switchMap(
-          ([fieldId, resource]) =>
-            (document.getElementById(viewerId) as unknown as any)?.openPreview(
-              { ...fieldId, resourceId: resource.id },
-              resource.title,
-            ),
-        ),
-        filter((isPreviewing) => !!isPreviewing),
-        take(1),
-      )
-      .subscribe(() => {
-        this.loadingPreview = false;
-        this.cdr.markForCheck();
-      });
+    if (this.currentFieldId) {
+      const fieldId = this.currentFieldId;
+      this.resource
+        .pipe(
+          take(1),
+          switchMap(
+            (resource) =>
+              (document.getElementById(viewerId) as unknown as any)?.openPreview(
+                { ...fieldId, resourceId: resource.id },
+                resource.title,
+              ),
+          ),
+          filter((isPreviewing) => !!isPreviewing),
+          take(1),
+        )
+        .subscribe(() => {
+          this.loadingPreview = false;
+          this.cdr.markForCheck();
+        });
+    }
   }
 }

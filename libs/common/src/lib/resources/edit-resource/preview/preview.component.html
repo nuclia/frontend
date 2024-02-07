@@ -132,7 +132,7 @@
     }
   </div>
   <div class="viewer-button-container">
-    @if (loaded) {
+    @if (currentFieldId) {
       <pa-button
         [disabled]="loadingPreview"
         (click)="openViewer()">
