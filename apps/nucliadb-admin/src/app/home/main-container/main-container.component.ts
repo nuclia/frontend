@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { combineLatest, map } from 'rxjs';
-import { UploadModule, UploadService } from '@flaps/common';
+import { UploadBarComponent, UploadService } from '@flaps/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './main-container.component.html',
   styleUrls: ['./main-container.component.scss'],
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, UploadModule],
+  imports: [CommonModule, RouterModule, TranslateModule, UploadBarComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainContainerComponent {

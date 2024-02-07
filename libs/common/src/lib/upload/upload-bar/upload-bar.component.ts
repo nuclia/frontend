@@ -2,12 +2,17 @@ import { Component } from '@angular/core';
 import { map } from 'rxjs';
 import { UploadService } from '../upload.service';
 import { UploadProgressDialogComponent } from '../upload-progress/upload-progress-dialog.component';
-import { SisModalService } from '@nuclia/sistema';
+import { ProgressBarComponent, SisModalService } from '@nuclia/sistema';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-upload-bar',
   templateUrl: './upload-bar.component.html',
   styleUrls: ['./upload-bar.component.scss'],
+  standalone: true,
+  imports: [CommonModule, PaButtonModule, ProgressBarComponent, TranslateModule],
 })
 export class UploadBarComponent {
   progress = this.uploadService.progress.pipe(map((p) => p.progress));
