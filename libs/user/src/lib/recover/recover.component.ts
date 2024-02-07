@@ -55,7 +55,9 @@ export class RecoverComponent {
     this.loginService
       .recover(recoverInfo, token)
       .pipe(
-        switchMap(() => forkJoin([this.translate.get('login.email_sent'), this.translate.get('recover.verify')])),
+        switchMap(() =>
+          forkJoin([this.translate.get('login.check_email.email_sent'), this.translate.get('recover.verify')]),
+        ),
         map((messages) => messages.join('<br>')),
         switchMap(
           (description) =>
