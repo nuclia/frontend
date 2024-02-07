@@ -31,9 +31,8 @@ class FolderImpl implements ISourceConnector {
     ]);
   }
 
-  goToOAuth() {
-    // eslint-disable-next-line no-empty-function
-  }
+  // eslint-disable-next-line no-empty-function
+  goToOAuth() {}
 
   handleParameters(params: ConnectorParameters) {
     if (params['path']) {
