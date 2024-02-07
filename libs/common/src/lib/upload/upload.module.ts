@@ -58,10 +58,10 @@ import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module
     ConnectorsModule,
     SyncModule,
     UploadBarComponent,
+    CsvSelectComponent,
   ],
   declarations: [
     CreateLinkComponent,
-    CsvSelectComponent,
     UploadFilesComponent,
     UploadFilesDialogComponent,
     UploadProgressComponent,
