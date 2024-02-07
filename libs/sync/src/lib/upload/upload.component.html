@@ -14,10 +14,12 @@
       </div>
     </ng-container>
   </div>
+  <h2>{{ 'upload.source.title' | translate }}</h2>
+  <p>{{ 'upload.source.description' | translate }}</p>
   <nsy-connectors
     *ngIf="(step | async) === 0"
     type="sources"
-    (select)="onSelectConnector($event)"
+    (selectConnector)="onSelectConnector($event)"
     (cancel)="cancel()"></nsy-connectors>
   <nsy-settings
     *ngIf="(step | async) === 1"

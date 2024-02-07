@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { SDKService } from '@flaps/core';
+import { SDKService, LabelsService } from '@flaps/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { forkJoin, map, switchMap, take, tap } from 'rxjs';
-import { LabelsService } from '@flaps/common';
 import { Classification } from '@nuclia/core';
 
 export interface CopilotData {

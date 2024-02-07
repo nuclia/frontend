@@ -1,0 +1,34 @@
+@if (!!fields && !!form) {
+  <form
+    [formGroup]="form"
+    qa="fields-form"
+    (ngSubmit)="save()">
+    @for (field of fields; track field.id) {
+      <div
+        formGroupName="fields"
+        class="field">
+        @if (field.type === 'text') {
+          <pa-input
+            [help]="field.help ? (field.help | translate) : undefined"
+            [placeholder]="field.placeholder"
+            [formControlName]="field.id">
+            {{ field.label | translate }}
+          </pa-input>
+        }
+        @if (field.type === 'textarea') {
+          <pa-textarea
+            [help]="field.help ? (field.help | translate) : undefined"
+            [formControlName]="field.id">
+            {{ field.label | translate }}
+          </pa-textarea>
+        }
+      </div>
+    }
+    <pa-button
+      qa="save-button"
+      [disabled]="!form.valid"
+      type="submit">
+      {{ 'action.save' | translate }}
+    </pa-button>
+  </form>
+}

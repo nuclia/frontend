@@ -11,6 +11,7 @@ export class ConnectorComponent {
   @Input() title?: string;
   @Input() logo?: string;
   @Input() description?: string;
+  @Input() disabled = false;
   @Input()
   set selected(value: any) {
     this._selected = coerceBooleanProperty(value);

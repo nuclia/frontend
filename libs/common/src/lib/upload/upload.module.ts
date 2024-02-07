@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FileUploadModule, STFPipesModule } from '@flaps/core';
+import { FileUploadModule, STFPipesModule, LabelModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
 import { CsvSelectComponent } from './csv-select/csv-select.component';
@@ -24,12 +24,15 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
 import { HintModule } from '../hint/hint.module';
-import { LabelModule } from '../label/label.module';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
 import { UploadDataComponent } from './upload-data/upload-data.component';
 import { UploadOptionComponent } from './upload-data/upload-option/upload-option.component';
 import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-sources.component';
+import { UploadLayoutComponent } from './upload-data/upload-layout.component';
+import { UploadRoutingModule } from './upload-routing.module';
+import { SyncModule } from 'libs/sync/src/lib/new-sync.module';
+import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module';
 
 @NgModule({
   imports: [
@@ -51,6 +54,9 @@ import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-s
     PaModalModule,
     PaTableModule,
     ProgressBarComponent,
+    UploadRoutingModule,
+    ConnectorsModule,
+    SyncModule,
   ],
   declarations: [
     CreateLinkComponent,
@@ -65,6 +71,7 @@ import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-s
     UploadDataComponent,
     UploadOptionComponent,
     DesktopSourcesComponent,
+    UploadLayoutComponent,
   ],
   exports: [
     UploadBarComponent,
@@ -72,6 +79,7 @@ import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-s
     UploadDataComponent,
     DesktopSourcesComponent,
     UploadOptionComponent,
+    UploadLayoutComponent,
   ],
 })
 export class UploadModule {}

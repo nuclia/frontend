@@ -20,7 +20,7 @@ import {
   SortOption,
 } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
-import { LabelsService } from '../../label/labels.service';
+import { LabelsService } from '@flaps/core';
 import { UploadService } from '../../upload/upload.service';
 import { SisToastService } from '@nuclia/sistema';
 import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';

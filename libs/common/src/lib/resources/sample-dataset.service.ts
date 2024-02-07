@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { SDKService, LabelsService } from '@flaps/core';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { Counters, IErrorResponse, Resource, Search } from '@nuclia/core';
-import { LabelsService } from '../label/labels.service';
 
 const sampleLabelSet = 'dataset';
 const sampleLabel = 'Sample dataset';

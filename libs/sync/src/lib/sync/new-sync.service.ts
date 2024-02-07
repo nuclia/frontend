@@ -8,6 +8,7 @@ import {
   map,
   Observable,
   of,
+  repeat,
   ReplaySubject,
   Subject,
   switchMap,
@@ -38,9 +39,7 @@ import { SharepointImpl } from './sources/sharepoint';
 import { ConfluenceConnector } from './sources/confluence';
 import { OAuthConnector } from './sources/oauth';
 
-export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
-export const ACCOUNT_ID_KEY = 'NUCLIA_ID_ACCOUNT';
-export const LOCAL_SYNC_SERVER = 'http://localhost:8000';
+export const LOCAL_SYNC_SERVER = 'http://localhost:8080';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 
 @Injectable({ providedIn: 'root' })
@@ -99,9 +98,6 @@ export class NewSyncService {
     folder: { definition: FolderConnector, settings: {} },
     sitemap: { definition: SitemapConnector, settings: {} },
     confluence: { definition: ConfluenceConnector, settings: {} },
-    // s3: { definition: S3Connector, settings: {} },
-    // gcs: { definition: GCSConnector, settings: {} },
-    // brightcove: { definition: BrightcoveConnector, settings: {} },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
@@ -122,42 +118,63 @@ export class NewSyncService {
   addSource = new Subject<void>();
   private _isServerDown = new BehaviorSubject<boolean>(true);
   isServerDown = this._isServerDown.asObservable();
-  private _currentSourceId = new BehaviorSubject<string | null>(null);
-  currentSourceId = this._currentSourceId.asObservable();
-  private _sourcesCache = new BehaviorSubject<{ [id: string]: Source }>({});
-  sourcesCache = this._sourcesCache.asObservable();
+  private _currentSyncId = new BehaviorSubject<string | null>(null);
+  currentSourceId = this._currentSyncId.asObservable();
+  private _syncCache = new BehaviorSubject<{ [id: string]: ISyncEntity }>({});
+  syncCache = this._syncCache.asObservable();
+  sourcesCache: Observable<{ [id: string]: Source }> = this.syncCache.pipe(
+    map((syncs) =>
+      Object.entries(syncs).reduce(
+        (acc, [id, sync]) => ({
+          ...acc,
+          [id]: this.syncToSource(sync),
+        }),
+        {},
+      ),
+    ),
+  );
   currentSource = combineLatest([this.sourcesCache, this.currentSourceId]).pipe(
     map(([sources, sourceId]) => sources[sourceId || '']),
   );
-  private _basePath = new BehaviorSubject<string>('/');
-  basePath = this._basePath.asObservable();
 
   constructor(
     private sdk: SDKService,
     private http: HttpClient,
     private config: BackendConfigurationService,
   ) {
-    console.log('NewSyncService');
-
-    const account = this.getAccountId();
-    if (account) {
-      this.setAccount();
+    if (this.hasSyncServer()) {
+      this.initServer();
     }
-    // UNCOMMENT TO ENABLE DYNAMIC CONNECTORS
-    // this.fetchDynamicConnectors();
+  }
 
+  initServer() {
     this.isServerDown
       .pipe(
         distinctUntilChanged(),
         filter((isDown) => !isDown),
-        switchMap(() => this.getSources()),
+        switchMap(() =>
+          this.getSources().pipe(
+            map((sources) =>
+              Object.entries(sources).reduce(
+                (acc, [id, source]) => {
+                  acc[id] = this.sourceToSync(id, source);
+                  return acc;
+                },
+                {} as { [id: string]: ISyncEntity },
+              ),
+            ),
+          ),
+        ),
       )
-      .subscribe(this._sourcesCache);
+      .subscribe(this._syncCache);
 
-    // use local server by default and start it automatically when we start the app
-    if (!localStorage.getItem(SYNC_SERVER_KEY) || localStorage.getItem(SYNC_SERVER_KEY) === LOCAL_SYNC_SERVER) {
-      this.setSyncServer({ url: '', local: true });
-    }
+    of(true)
+      .pipe(
+        switchMap(() => this.serverStatus(this.getSyncServer())),
+        map((res) => !res.running),
+        repeat({ delay: 5000 }),
+      )
+      .subscribe((isServerDown) => this.setServerStatus(isServerDown));
   }
 
   getSource(connector: string, instance: string): Observable<ISourceConnector> {
@@ -178,10 +195,17 @@ export class NewSyncService {
     return this.destinations[id].definition.factory({ ...this.destinations[id].settings, ...settings });
   }
 
+  getCurrentSync(): Observable<ISyncEntity> {
+    return this.currentSourceId.pipe(
+      switchMap((id) => this.syncCache.pipe(map((cache) => cache[id || '']))),
+      filter((sync) => !!sync),
+    );
+  }
+
   setSourceAndDestination(
     sourceId: string,
     source: Source,
-    kbId: string,
+    kbId: string, // TO BE REMOVED (useless, kept for compatibility with old code)
     localBackend?: string,
     labels?: Classification[],
   ): Observable<void> {
@@ -193,9 +217,15 @@ export class NewSyncService {
       };
       return this.setSourceData(sourceId, source);
     } else {
-      return this.getKb(kbId).pipe(
+      return this.sdk.currentKb.pipe(
         switchMap((kb) => {
-          if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
+          if (localBackend) {
+            return of({
+              ...source,
+              labels,
+              kb: { standalone: true, zone: '', backend: localBackend, account: 'local', knowledgeBox: kb.id },
+            });
+          } else if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
             return of(source);
           } else {
             return this.getNucliaKey(kb).pipe(
@@ -217,27 +247,23 @@ export class NewSyncService {
     }
   }
 
-  setSourceData(sourceId: string, source: Source): Observable<void> {
-    const existing = this._sourcesCache.getValue()[sourceId];
-    const newValue: Source = existing
-      ? {
-          ...existing,
-          ...source,
-          data: { ...existing.data, ...source.data },
-          kb: { ...existing.kb, ...source.kb },
-        }
-      : source;
+  setSourceData(sourceId: string, source: Partial<Source>): Observable<void> {
+    const existing = this._syncCache.getValue()[sourceId];
     const data: ISyncEntity = {
       id: sourceId,
-      connector: { name: newValue.connectorId, parameters: newValue.data },
-      kb: newValue.kb,
-      labels: newValue.labels,
       title: sourceId,
+      connector: {
+        name: source.connectorId || existing?.connector.name,
+        parameters: { ...existing?.connector.parameters, ...source.data },
+      },
+      kb: { ...(existing?.kb || this.sdk.nuclia.options), ...source.kb },
+      labels: source.labels || existing?.labels,
+      foldersToSync: source.items || existing?.foldersToSync,
     };
     const req = existing
       ? this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, data)
       : this.http.post<void>(`${this._syncServer.getValue()}/sync`, data);
-    return req.pipe(tap(() => this._sourcesCache.next({ ...this._sourcesCache.getValue(), [sourceId]: newValue })));
+    return req.pipe(tap(() => this._syncCache.next({ ...this._syncCache.getValue(), [sourceId]: data })));
   }
 
   getSourceData(sourceId: string): Observable<Source> {
@@ -247,9 +273,9 @@ export class NewSyncService {
   deleteSource(sourceId: string): Observable<void> {
     return this.http.delete<void>(`${this._syncServer.getValue()}/sync/${sourceId}`).pipe(
       tap(() => {
-        const sources = this._sourcesCache.getValue();
+        const sources = this._syncCache.getValue();
         delete sources[sourceId];
-        this._sourcesCache.next(sources);
+        this._syncCache.next(sources);
       }),
     );
   }
@@ -266,7 +292,7 @@ export class NewSyncService {
   }
 
   getSources(): Observable<{ [id: string]: Source }> {
-    // TODO: refactor the Source model to match what the API provides
+    // TODO: when Desktop is gone, refactor the Source model to match what the API provides
     return this.http.get<{ [id: string]: any }>(`${this._syncServer.getValue()}/sync`).pipe(
       map((sources) =>
         Object.entries(sources).reduce(
@@ -276,14 +302,20 @@ export class NewSyncService {
               connectorId: source.connector.name,
               data: source.connector.parameters,
               kb: source.kb,
-              items: source.items,
               permanentSync: true,
               labels: source.labels,
+              items: source.foldersToSync,
             },
           }),
           {},
         ),
       ),
+    );
+  }
+
+  getSyncsForKB(kbId: string): Observable<ISyncEntity[]> {
+    return this.syncCache.pipe(
+      map((sources) => Object.values(sources).filter((source) => source.kb?.knowledgeBox === kbId)),
     );
   }
 
@@ -309,39 +341,9 @@ export class NewSyncService {
     );
   }
 
-  canSelectFiles(sourceId: string) {
-    const source = this._sourcesCache.getValue()[sourceId];
-    return source && !(source.connectorId === 'sitemap' || (source.connectorId === 'folder' && source.permanentSync));
-  }
-
-  getAccountSlug(): string {
-    return localStorage.getItem(ACCOUNT_KEY) || '';
-  }
-
-  getAccountId(): string {
-    return localStorage.getItem(ACCOUNT_ID_KEY) || '';
-  }
-
-  selectAccount(account: string, accountId: string) {
-    localStorage.setItem(ACCOUNT_KEY, account);
-    localStorage.setItem(ACCOUNT_ID_KEY, accountId);
-    this.setAccount();
-  }
-
-  setAccount() {
-    this.sdk
-      .setCurrentAccount(this.getAccountId())
-      .pipe(
-        take(1),
-        switchMap(() =>
-          this.sdk.nuclia.db.getAccount(this.getAccountId()).pipe(
-            tap((account) => (this.sdk.nuclia.options.accountType = account.type)),
-            switchMap((account) => this.sdk.nuclia.rest.getZoneSlug(account.zone)),
-            tap((zone) => (this.sdk.nuclia.options.zone = zone)),
-          ),
-        ),
-      )
-      .subscribe();
+  canSelectFiles(syncId: string) {
+    const sync = this._syncCache.getValue()[syncId];
+    return sync && !(sync.connector.name === 'sitemap' || sync.connector.name === 'folder');
   }
 
   setStep(step: number) {
@@ -349,7 +351,7 @@ export class NewSyncService {
   }
 
   getSourceCache(name: string): Source {
-    return this._sourcesCache.getValue()[name];
+    return this.syncToSource(this._syncCache.getValue()[name]);
   }
 
   getKb(kbId: string): Observable<WritableKnowledgeBox> {
@@ -396,20 +398,14 @@ export class NewSyncService {
     if (server.local) {
       this._syncServer.next(LOCAL_SYNC_SERVER);
       localStorage.setItem(SYNC_SERVER_KEY, LOCAL_SYNC_SERVER);
-      const electron = (window as any)['electron'];
-      if (electron) {
-        this.serverStatus(LOCAL_SYNC_SERVER)
-          .pipe(take(1))
-          .subscribe((res) => {
-            if (!res.running) {
-              electron.startLocalServer();
-            }
-          });
-      }
     } else if (server.url) {
       localStorage.setItem(SYNC_SERVER_KEY, server.url);
       this._syncServer.next(server.url);
     }
+  }
+
+  hasSyncServer(): boolean {
+    return !!localStorage.getItem(SYNC_SERVER_KEY);
   }
 
   resetSyncServer() {
@@ -436,15 +432,15 @@ export class NewSyncService {
   }
 
   getCurrentSourceId(): string | null {
-    return this._currentSourceId.getValue();
+    return this._currentSyncId.getValue();
   }
 
   setCurrentSourceId(id: string) {
-    this._currentSourceId.next(id);
+    this._currentSyncId.next(id);
   }
 
   clearCurrentSourceId() {
-    this._currentSourceId.next(null);
+    this._currentSyncId.next(null);
   }
 
   getLogs(since?: string): Observable<SyncRow[]> {
@@ -476,25 +472,33 @@ export class NewSyncService {
     return this.http.delete<void>(`${this._syncServer.getValue()}/logs`);
   }
 
-  cleanUpAccount() {
-    localStorage.removeItem(ACCOUNT_KEY);
-    localStorage.removeItem(ACCOUNT_ID_KEY);
-  }
-
-  logout() {
-    this.cleanUpAccount();
-    this.sdk.nuclia.auth.logout();
-  }
-
-  setBasePath(path: string) {
-    this._basePath.next(path);
-  }
-
   getSyncServer() {
     return this._syncServer.getValue();
   }
 
   setServerStatus(isDown: boolean) {
     this._isServerDown.next(isDown);
+  }
+
+  private syncToSource(sync: ISyncEntity): Source {
+    return {
+      connectorId: sync.connector.name,
+      data: sync.connector.parameters,
+      kb: sync.kb || this.sdk.nuclia.options,
+      items: sync.foldersToSync,
+      permanentSync: true,
+      labels: sync.labels,
+    };
+  }
+
+  private sourceToSync(sourceId: string, source: Source): ISyncEntity {
+    return {
+      id: sourceId,
+      connector: { name: source.connectorId, parameters: source.data },
+      kb: source.kb,
+      labels: source.labels,
+      title: sourceId,
+      foldersToSync: source.items,
+    };
   }
 }

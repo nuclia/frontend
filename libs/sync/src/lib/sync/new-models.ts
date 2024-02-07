@@ -101,7 +101,7 @@ export interface ConnectorCache {
 export interface Source {
   connectorId: string;
   data: ConnectorParameters;
-  kb: NucliaOptions;
+  kb?: NucliaOptions;
   items?: SyncItem[];
   permanentSync?: boolean;
   lastSync?: string;
@@ -133,6 +133,7 @@ export interface ISyncEntity {
   labels?: Classification[];
   title: string;
   id: string;
+  foldersToSync?: SyncItem[];
 }
 
 export enum LogSeverityLevel {

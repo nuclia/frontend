@@ -22,7 +22,7 @@ import {
 import { MockModule, MockProvider } from 'ng-mocks';
 import { By } from '@angular/platform-browser';
 import { FileStatus } from '../sync/models';
-import { LabelModule } from '@flaps/common';
+import { LabelModule } from '@flaps/core';
 
 let currentSourceId: string | null = null;
 const fileTitle = 'File title';

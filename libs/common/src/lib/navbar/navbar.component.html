@@ -28,6 +28,16 @@
             <pa-icon name="upload"></pa-icon>
             <span class="nav-link-title">{{ 'sidenav.upload-data' | translate }}</span>
           </a>
+          @if ((inUpload | async) && (isAdminOrContrib | async) && !(invalidKey | async)) {
+            @for (sync of syncs | async; track sync.id) {
+              <a
+                [routerLink]="kbUrl + '/upload/sync/' + sync.id"
+                routerLinkActive="active"
+                class="nav-link sub-item sync">
+                <span class="nav-link-title">{{ sync.title }}</span>
+              </a>
+            }
+          }
           <a
             class="nav-link"
             data-cy="go-to-search"
@@ -263,18 +273,6 @@
             </div>
           </div>
         }
-        <div
-          *ngIf="isSyncEnabled | async"
-          class="group-items">
-          <a
-            [routerLink]="(accountUrl | async) + '/sync'"
-            routerLinkActive="active"
-            data-cy="go-to-sync"
-            class="nav-link">
-            <pa-icon name="upload"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.sync' | translate }}</span>
-          </a>
-        </div>
       </div>
       <div
         class="nav-group"

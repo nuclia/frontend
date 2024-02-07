@@ -8,7 +8,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PaToastModule, SPRITE_CACHE_VERSION } from '@guillotinaweb/pastanaga-angular';
 
-import { BackendConfigurationService, STFConfigModule, STFPipesModule } from '@flaps/core';
+import { BackendConfigurationService, STFConfigModule, STFPipesModule, LabelSetsModule } from '@flaps/core';
 import { environment } from '../environments/environment';
 
 // App modules
@@ -30,7 +30,6 @@ import {
   AuthInterceptor,
   BaseModule,
   EntitiesModule,
-  LabelSetsModule,
   SelectAccountKbModule,
   TopbarModule,
   UploadModule,

@@ -1,0 +1,47 @@
+<h2>
+  <img
+    [src]="(connector | async)?.logo"
+    [alt]="(connector | async)?.title + ' logo'" />
+  {{ (connector | async)?.title }}
+</h2>
+@if (!!fields && !!form) {
+  <form
+    [formGroup]="form"
+    qa="fields-form"
+    (ngSubmit)="save()">
+    <div class="field">
+      <pa-input
+        formControlName="id"
+        [errorMessages]="validationMessages['id']">
+        {{ 'upload.source.name' | translate }}
+      </pa-input>
+    </div>
+    @for (field of fields; track field.id) {
+      <div
+        formGroupName="fields"
+        class="field">
+        @if (field.type === 'text') {
+          <pa-input
+            [help]="field.help ? (field.help | translate) : undefined"
+            [placeholder]="field.placeholder"
+            [formControlName]="field.id">
+            {{ field.label | translate }}
+          </pa-input>
+        }
+        @if (field.type === 'textarea') {
+          <pa-textarea
+            [help]="field.help ? (field.help | translate) : undefined"
+            [formControlName]="field.id">
+            {{ field.label | translate }}
+          </pa-textarea>
+        }
+      </div>
+    }
+    <pa-button
+      qa="save-button"
+      [disabled]="!form.valid"
+      type="submit">
+      {{ 'action.save' | translate }}
+    </pa-button>
+  </form>
+}

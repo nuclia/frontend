@@ -1,10 +1,9 @@
-<h2>{{ 'upload.source.title' | translate }}</h2>
-<p>{{ 'upload.source.description' | translate }}</p>
 <div class="connectors-list">
   <nsy-connector
     *ngFor="let connector of (connectors | async) || []"
     [title]="connector.title"
     [logo]="connector.logo"
     [description]="connector.description"
+    [disabled]="disabled"
     (selectConnector)="onSelectConnector(connector.id)"></nsy-connector>
 </div>

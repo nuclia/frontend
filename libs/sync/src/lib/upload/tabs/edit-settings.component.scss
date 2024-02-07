@@ -1,0 +1,10 @@
+@import 'apps/dashboard/src/variables';
+
+.field {
+  margin: rhythm(2) 0;
+
+  label {
+    display: block;
+    margin-bottom: rhythm(1);
+  }
+}

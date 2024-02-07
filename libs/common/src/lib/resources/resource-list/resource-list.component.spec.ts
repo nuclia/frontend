@@ -5,7 +5,7 @@ import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { LabelsService } from '../../label/labels.service';
+import { LabelsService } from '@flaps/core';
 import { of } from 'rxjs';
 import {
   PaDropdownModule,

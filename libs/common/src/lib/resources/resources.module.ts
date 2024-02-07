@@ -34,11 +34,10 @@ import {
   SisProgressModule,
   SisStatusComponent,
 } from '@nuclia/sistema';
-import { FileUploadModule, STFPipesModule } from '@flaps/core';
+import { FileUploadModule, STFPipesModule, LabelModule } from '@flaps/core';
 import { UploadButtonComponent } from './upload-button';
 import { PaginationModule } from '../pagination';
 import { PipesModule } from '../pipes';
-import { LabelModule } from '../label';
 import { EditResourceModule } from './edit-resource/edit-resource.module';
 import {
   PaButtonModule,

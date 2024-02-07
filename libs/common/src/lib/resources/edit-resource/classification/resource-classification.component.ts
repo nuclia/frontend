@@ -3,7 +3,7 @@ import { Classification, LabelSetKind, LabelSets, Resource } from '@nuclia/core'
 import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
 import { SelectFirstFieldDirective } from '../select-first-field/select-first-field.directive';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
-import { LabelsService } from '../../../label';
+import { LabelsService } from '@flaps/core';
 import { getClassificationFromSelection, getSelectionFromClassification } from '@nuclia/sistema';
 
 @Component({

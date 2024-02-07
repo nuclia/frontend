@@ -6,8 +6,7 @@ import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { FeaturesService, STFUtils } from '@flaps/core';
 import { LabelSetKind, LabelSets } from '@nuclia/core';
 import { EMPTY_LABEL_SET, LabelSetCounts, MutableLabelSet } from '../model';
-import { LABEL_MAIN_COLORS } from '../utils';
-import { noDuplicateListItemsValidator } from '../../../validators';
+import { LABEL_MAIN_COLORS, noDuplicateListItemsValidator } from '../utils';
 import { LabelsService } from '../../labels.service';
 import { LABEL_COLORS } from '@nuclia/sistema';
 

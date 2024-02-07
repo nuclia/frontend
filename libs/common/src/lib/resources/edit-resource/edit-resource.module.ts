@@ -37,9 +37,8 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { FileUploadModule, STFPipesModule } from '@flaps/core';
+import { FileUploadModule, STFPipesModule, LabelModule } from '@flaps/core';
 import { RouterModule } from '@angular/router';
-import { LabelModule } from '../../label/label.module';
 import { HintModule } from '../../hint/hint.module';
 import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
 import { PipesModule } from '@flaps/common';

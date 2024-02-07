@@ -1,5 +1,6 @@
 <pa-card
   [class.selected]="selected"
+  [disabled]="disabled"
   (cardClick)="selectConnector.emit($event)">
   <div
     class="connector"

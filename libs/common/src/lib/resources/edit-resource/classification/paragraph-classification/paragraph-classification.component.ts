@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { Classification, FieldId, LabelSets, Resource, Search } from '@nuclia/core';
-import { LabelsService } from '../../../../label/labels.service';
+import { LabelsService } from '@flaps/core';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
 import { ParagraphClassificationService } from './paragraph-classification.service';
 import { takeUntil } from 'rxjs/operators';

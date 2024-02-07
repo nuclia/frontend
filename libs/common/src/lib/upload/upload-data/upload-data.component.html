@@ -1,4 +1,4 @@
-<div class="upload-data-page page-spacing">
+<div class="upload-data-page">
   <h1>{{ 'stash.upload_data' | translate }}</h1>
   <p class="body-m">{{ 'stash.upload.page-subtitle' | translate }}</p>
 
@@ -27,21 +27,45 @@
     </div>
 
     <div class="desktop-option">
-      <p class="body-m description">
-        <span class="title-xs">Nuclia Desktop.</span>
-        {{ 'stash.upload.desktop.description' | translate }}
-      </p>
-      <pa-button
-        class="desktop-button"
-        (click)="openDesktop()">
-        <img
-          src="assets/logos/nuclia-desktop-white.svg"
-          alt="Nuclia Desktop" />
-      </pa-button>
+      @if (isSyncEnabled | async) {
+        @if (!hasSyncServer) {
+          <p class="body-m description">
+            {{ 'stash.upload.sync.setup' | translate }}
+          </p>
+          <pa-button
+            (click)="setupSync()"
+            size="small">
+            {{ 'stash.upload.sync.setup-button' | translate }}
+          </pa-button>
+        } @else {
+          <h2 class="title-m">
+            {{ 'stash.upload.sync.title' | translate }}
+          </h2>
+          <p class="body-m description">
+            {{ 'stash.upload.sync.description' | translate }}
+          </p>
+        }
+        <nsy-connectors
+          type="sources"
+          [disabled]="!hasSyncServer || (isServerDown | async) === true"
+          (selectConnector)="onSelectConnector($event)"></nsy-connectors>
+      } @else {
+        <p class="body-m description">
+          <span class="title-xs">Nuclia Desktop.</span>
+          {{ 'stash.upload.desktop.description' | translate }}
+        </p>
+        <pa-button
+          class="desktop-button"
+          (click)="openDesktop()">
+          <img
+            src="assets/logos/nuclia-desktop-white.svg"
+            alt="Nuclia Desktop" />
+        </pa-button>
 
-      <div class="sources-container">
-        <stf-desktop-sources showDetails></stf-desktop-sources>
-      </div>
+        <div class="sources-container">
+          <stf-desktop-sources showDetails></stf-desktop-sources>
+        </div>
+      }
     </div>
   </div>
 </div>
