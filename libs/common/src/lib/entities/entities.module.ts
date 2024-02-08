@@ -21,7 +21,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { NerFamilyDialogComponent } from './ner-family-dialog/ner-family-dialog.component';
 import { HintModule } from '../hint';
-import { UploadModule } from '../upload';
+import { CsvSelectComponent } from '../upload';
 import { SisProgressModule } from '@nuclia/sistema';
 
 @NgModule({
@@ -37,7 +37,7 @@ import { SisProgressModule } from '@nuclia/sistema';
     PaModalModule,
     PaExpanderModule,
     HintModule,
-    UploadModule,
+    CsvSelectComponent,
     SisProgressModule,
     PaTableModule,
     PaPopupModule,
