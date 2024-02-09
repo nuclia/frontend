@@ -1,5 +1,5 @@
-import { ISourceConnector, ConnectorParameters, Field } from '../models';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { ConnectorParameters, Field, ISourceConnector, SyncItem } from '../models';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { clearDeeplink, getDeeplink } from '../../utils';
 
 const TOKEN = 'token';
@@ -11,6 +11,7 @@ export class OAuthConnector implements ISourceConnector {
   path: string;
   hasServerSideAuth = true;
   isExternal = true;
+  allowToSelectFolders = true;
   resumable = false;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -79,5 +80,9 @@ export class OAuthConnector implements ISourceConnector {
 
   private prefixStorageKey(key: string): string {
     return `${this.name}-${this.id}-${key}`;
+  }
+
+  getStaticFolders(): SyncItem[] {
+    return [];
   }
 }

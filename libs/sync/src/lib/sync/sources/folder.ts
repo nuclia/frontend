@@ -15,10 +15,11 @@ export const FolderConnector: SourceConnectorDefinition = {
 class FolderImpl implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = false;
+  allowToSelectFolders = false;
   files: ElectronFile[] = [];
   path = '';
 
-  getItems(): SyncItem[] {
+  getStaticFolders(): SyncItem[] {
     return this.path
       ? [
           {

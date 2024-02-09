@@ -36,13 +36,14 @@ export interface ISourceConnectorOld {
 export interface ISourceConnector {
   hasServerSideAuth: boolean;
   isExternal: boolean;
+  allowToSelectFolders: boolean;
   getParameters(): Observable<Field[]>;
   handleParameters?(params: ConnectorParameters): void;
   getParametersValues(): ConnectorParameters;
   goToOAuth(redirect: string, reset?: boolean): void;
   authenticate(): Observable<boolean>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
-  getItems?(): SyncItem[];
+  getStaticFolders(): SyncItem[];
 }
 
 export enum FileStatus {

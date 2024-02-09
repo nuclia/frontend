@@ -59,8 +59,8 @@ export class AddSyncComponent implements OnInit {
           tap(() => this.syncService.setCurrentSourceId(id)),
           switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1))),
           switchMap((sourceConnector) => {
-            // Setup sync items from the source itself if we can't select files on this source
-            if (!this.syncService.canSelectFiles(id)) {
+            // Setup sync items from the source itself if the source doesn't allow to select folders
+            if (!sourceConnector.allowToSelectFolders) {
               if (typeof sourceConnector.handleParameters === 'function') {
                 sourceConnector.handleParameters(data);
               }
@@ -69,7 +69,7 @@ export class AddSyncComponent implements OnInit {
                   this.syncService
                     .setSourceData(id, {
                       ...sourceData,
-                      items: typeof sourceConnector.getItems === 'function' ? sourceConnector.getItems() : [],
+                      items: sourceConnector.getStaticFolders(),
                     })
                     .pipe(switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1)))),
                 ),

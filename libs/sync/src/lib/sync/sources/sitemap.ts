@@ -14,8 +14,9 @@ export const SitemapConnector: SourceConnectorDefinition = {
 class SitemapImpl implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = true;
+  allowToSelectFolders = false;
 
-  getItems(): SyncItem[] {
+  getStaticFolders(): SyncItem[] {
     return [
       {
         uuid: '',

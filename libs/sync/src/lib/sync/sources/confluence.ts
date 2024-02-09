@@ -1,4 +1,11 @@
-import { baseLogoPath, ConnectorParameters, Field, ISourceConnector, SourceConnectorDefinition } from '../models';
+import {
+  baseLogoPath,
+  ConnectorParameters,
+  Field,
+  ISourceConnector,
+  SourceConnectorDefinition,
+  SyncItem,
+} from '../models';
 import { Observable, of } from 'rxjs';
 
 export const ConfluenceConnector: SourceConnectorDefinition = {
@@ -14,6 +21,7 @@ const TOKEN = 'CONFLUENCE_TOKEN';
 class ConfluenceImpl implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = false;
+  allowToSelectFolders = true;
 
   getParameters(): Observable<Field[]> {
     return of([
@@ -56,5 +64,9 @@ class ConfluenceImpl implements ISourceConnector {
 
   authenticate(): Observable<boolean> {
     return of(!!this.getParametersValues()['token']);
+  }
+
+  getStaticFolders(): SyncItem[] {
+    return [];
   }
 }
