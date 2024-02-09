@@ -11,7 +11,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
@@ -51,6 +51,9 @@ describe('ResourceTableComponent', () => {
         MockProvider(SisModalService),
         MockProvider(SisToastService),
         MockProvider(TranslateService),
+        MockProvider(FeaturesService, {
+          newProcessingStatus: of(false),
+        }),
       ],
     }).compileComponents();
 

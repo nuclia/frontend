@@ -10,7 +10,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -50,6 +50,7 @@ describe('ErrorResourcesTableComponent', () => {
         MockProvider(SisToastService),
         MockProvider(TranslateService),
         MockProvider(UploadService),
+        MockProvider(FeaturesService),
       ],
     }).compileComponents();
 

@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import SparkMD5 from 'spark-md5';
 import { SDKService } from '../api';
+import { StaticEnvironmentConfiguration } from '../config';
 
 export interface Features {
   [key: string]: boolean | undefined;
@@ -65,12 +66,15 @@ export class FeatureFlagService {
     map((features) => ({ ...features, ...this.getCustomFeatures() })),
   );
 
-  private isNotProd = location.hostname !== 'nuclia.cloud';
+  private isStageOrDev = location.hostname === 'stashify.cloud' || !this.environment.production;
 
-  constructor(private sdk: SDKService) {}
+  constructor(
+    private sdk: SDKService,
+    @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
+  ) {}
 
   isFeatureEnabled(feature: string): Observable<boolean> {
-    if (this.isNotProd) {
+    if (this.isStageOrDev) {
       return this.stageFeatures.pipe(map((features) => !!features[feature] || true));
     } else {
       const isBackendPrefix = BACKEND_PREFIXES.some((prefix) => feature.startsWith(prefix));
@@ -84,18 +88,18 @@ export class FeatureFlagService {
     return this.applicationFeatures.pipe(
       map((features) =>
         Object.entries(features)
-          .filter(([, value]) => this.isNotProd || !!value)
+          .filter(([, value]) => this.isStageOrDev || !!value)
           .map(([key]) => key),
       ),
     );
   }
 
   getFeatures(): Observable<Features> {
-    return this.isNotProd ? this.stageFeatures : this.applicationFeatures;
+    return this.isStageOrDev ? this.stageFeatures : this.applicationFeatures;
   }
 
   getDefaultFeatures(): Observable<Features> {
-    return this.isNotProd ? of(stageFeatures) : this.applicationRemoteFeatures;
+    return this.isStageOrDev ? of(stageFeatures) : this.applicationRemoteFeatures;
   }
 
   getCustomFeatures(): Features {

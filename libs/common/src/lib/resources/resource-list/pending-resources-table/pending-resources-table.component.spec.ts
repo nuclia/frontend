@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PendingResourcesTableComponent } from './pending-resources-table.component';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -48,6 +48,9 @@ describe('PendingResourcesTableComponent', () => {
         MockProvider(SisModalService),
         MockProvider(SisToastService),
         MockProvider(TranslateService),
+        MockProvider(FeaturesService, {
+          newProcessingStatus: of(false),
+        }),
       ],
     }).compileComponents();
 

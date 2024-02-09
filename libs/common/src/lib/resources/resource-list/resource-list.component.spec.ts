@@ -2,7 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResourceListComponent } from './resource-list.component';
 import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
-import { BackendConfigurationService, LabelsService, NavigationService, SDKService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  FeaturesService,
+  LabelsService,
+  NavigationService,
+  SDKService,
+} from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -91,6 +97,7 @@ describe('ResourceListComponent', () => {
           }),
         }),
         MockProvider(NavigationService),
+        MockProvider(FeaturesService),
       ],
     }).compileComponents();
 
