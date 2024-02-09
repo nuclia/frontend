@@ -4,9 +4,9 @@ import { NUAClient } from '@nuclia/core';
 import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
 import { Router } from '@angular/router';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
-import { NavigationService, TokenDialogComponent } from '@flaps/common';
+import { TokenDialogComponent } from '@flaps/common';
 
 @Component({
   selector: 'app-account-nua',

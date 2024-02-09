@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
 import { NotificationData, NotificationUI } from './notification.model';
-import { SDKService } from '@flaps/core';
-import { NavigationService } from '../../../../common/src/lib/services';
+import { NavigationService } from '../services';
+import { SDKService } from '../api';
 import { differenceInSeconds } from 'date-fns';
 import { WritableKnowledgeBox } from '@nuclia/core';
 import { takeUntil } from 'rxjs/operators';

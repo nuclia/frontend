@@ -5,7 +5,7 @@ import { PaDateTimeModule, PaIconModule } from '@guillotinaweb/pastanaga-angular
 import { NotificationTypePipe } from '../notification-type.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
-import { NavigationService } from '@flaps/common';
+import { NavigationService } from '../../services';
 
 @Component({
   selector: 'stf-notification',

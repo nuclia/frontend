@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { BackendConfigurationService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
+import { BackendConfigurationService, NavigationService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, Subject, take } from 'rxjs';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
-import { MessageModalComponent, NavigationService } from '@flaps/common';
+import { MessageModalComponent } from '@flaps/common';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 

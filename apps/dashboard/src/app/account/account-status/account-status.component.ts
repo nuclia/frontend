@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { combineLatest, filter, map, shareReplay, switchMap, take } from 'rxjs';
-import { BillingService, SDKService, SubscriptionStatus } from '@flaps/core';
-import { NavigationService } from '@flaps/common';
+import { BillingService, NavigationService, SDKService, SubscriptionStatus } from '@flaps/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';

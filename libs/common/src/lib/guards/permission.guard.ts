@@ -2,8 +2,7 @@ import { inject } from '@angular/core';
 import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-import { SDKService } from '@flaps/core';
-import { NavigationService } from '../services';
+import { NavigationService, SDKService } from '@flaps/core';
 
 export const accountOwnerGuard = (route: ActivatedRouteSnapshot, routerState: RouterStateSnapshot) => {
   const navigation: NavigationService = inject(NavigationService);

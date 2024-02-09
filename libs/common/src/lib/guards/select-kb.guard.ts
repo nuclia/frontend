@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { NavigationService, SelectAccountKbService } from '@flaps/common';
+import { SelectAccountKbService } from '@flaps/common';
 import { inject } from '@angular/core';
-import { SDKService, ZoneService } from '@flaps/core';
+import { NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { filter, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 

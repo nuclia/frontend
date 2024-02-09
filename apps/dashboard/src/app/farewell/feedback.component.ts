@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
-import { BillingService, CancellationFeedback, SDKService } from '@flaps/core';
-import { NavigationService } from '@flaps/common';
+import { BillingService, NavigationService, CancellationFeedback, SDKService } from '@flaps/core';
 
 @Component({
   selector: 'app-feedback',

@@ -12,9 +12,8 @@ import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { EditResourceView } from './edit-resource.helpers';
-import { NavigationService } from '../../services';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService } from '@flaps/core';
+import { FeaturesService, NavigationService } from '@flaps/core';
 import { ResourceNavigationService } from './resource-navigation.service';
 
 const PAWLS_KEY = 'pawls';
@@ -46,8 +45,8 @@ export class EditResourceComponent implements OnInit, OnDestroy {
             field.field_type === FIELD_TYPE.text
               ? 'file'
               : field.field_type === FIELD_TYPE.conversation
-              ? 'chat'
-              : field.field_type,
+                ? 'chat'
+                : field.field_type,
           hasError: !!field.error,
         })),
     ),
