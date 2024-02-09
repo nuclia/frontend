@@ -18,7 +18,7 @@
       <ul>
         @for (item of message.data.slice(0, maxItemsPerNotification); track item) {
           <li>
-            @if (item.resourceUrl) {
+            @if (item.resourceUrl && message.operation !== 'deleted') {
               <a
                 class="notification-link"
                 [routerLink]="item.resourceUrl"

@@ -23,11 +23,13 @@
     [active]="selectedTab === 'settings'">
     {{ 'upload.tabs.settings' | translate }}
   </pa-tab>
-  <pa-tab
-    (click)="selectedTab = 'folders'"
-    [active]="selectedTab === 'folders'">
-    {{ 'upload.tabs.folders' | translate }}
-  </pa-tab>
+  @if (canSelectFiles | async) {
+    <pa-tab
+      (click)="selectedTab = 'folders'"
+      [active]="selectedTab === 'folders'">
+      {{ 'upload.tabs.folders' | translate }}
+    </pa-tab>
+  }
   <pa-tab
     (click)="selectedTab = 'filters'"
     [active]="selectedTab === 'filters'">

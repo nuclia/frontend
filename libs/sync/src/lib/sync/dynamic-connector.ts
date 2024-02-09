@@ -27,6 +27,7 @@ interface DynamicConnector {
 export class DynamicConnectorWrapper implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = false;
+  allowToSelectFolders = true;
   connector: DynamicConnector;
 
   constructor(connector: DynamicConnector) {
@@ -120,5 +121,9 @@ export class DynamicConnectorWrapper implements ISourceConnector {
     } else {
       throw new Error('Not implemented');
     }
+  }
+
+  getStaticFolders(): SyncItem[] {
+    return [];
   }
 }

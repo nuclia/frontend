@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SyncService } from '../sync/sync.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Subject, filter, forkJoin, map, switchMap, take, takeUntil, tap } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { map, of, switchMap, take, tap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { Field, ISourceConnector, Source } from '../sync/new-models';
+import { Field } from '../sync/new-models';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { SDKService } from '@flaps/core';
 
 @Component({
   templateUrl: 'add-sync.component.html',
@@ -46,18 +45,39 @@ export class AddSyncComponent implements OnInit {
   save() {
     const id = this.form?.value['id'];
     if (id) {
+      const data = this.form?.value['fields'];
       this.syncService
         .setSourceAndDestination(
           id,
           {
             connectorId: this.connectorId || '',
-            data: this.form?.value['fields'],
+            data,
           },
           '',
         )
         .pipe(
           tap(() => this.syncService.setCurrentSourceId(id)),
           switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1))),
+          switchMap((sourceConnector) => {
+            // Setup sync items from the source itself if the source doesn't allow to select folders
+            if (!sourceConnector.allowToSelectFolders) {
+              if (typeof sourceConnector.handleParameters === 'function') {
+                sourceConnector.handleParameters(data);
+              }
+              return this.syncService.getSourceData(id).pipe(
+                switchMap((sourceData) =>
+                  this.syncService
+                    .setSourceData(id, {
+                      ...sourceData,
+                      items: sourceConnector.getStaticFolders(),
+                    })
+                    .pipe(switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1)))),
+                ),
+              );
+            } else {
+              return of(sourceConnector);
+            }
+          }),
           tap((source) => {
             if (!source.hasServerSideAuth) {
               this.router.navigate([`../../${id}`], { relativeTo: this.route });
@@ -71,7 +91,8 @@ export class AddSyncComponent implements OnInit {
           next: () => {
             this.toast.success('upload.saved');
           },
-          error: () => {
+          error: (error) => {
+            console.warn(error);
             this.toast.error('upload.failed');
           },
         });

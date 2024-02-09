@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Observable, Subject, catchError, filter, forkJoin, map, of, scan, share, switchMap, take, tap } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, scan, share, Subject, switchMap, take, tap } from 'rxjs';
 import { SelectionModel } from '@angular/cdk/collections';
-import { FileStatus, SearchResults, Source, SyncItem } from '../../sync/new-models';
+import { SearchResults, Source, SyncItem } from '../../sync/new-models';
 import { SyncService } from '../../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -30,11 +30,14 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
       (source.permanentSync ? this.syncService.getFolders(this.query) : this.syncService.getFiles(this.query))
         .pipe(
           catchError((error) => {
-            this.toast.error(
-              typeof error === 'string'
-                ? error
-                : error?.error?.message || error?.error || error?.message || 'An error occurred',
-            );
+            if (error) {
+              this.toast.error(
+                typeof error === 'string'
+                  ? error
+                  : error.error?.message || error.error || error.message || 'An error occurred',
+              );
+            }
+
             return of({ items: [], nextPage: undefined });
           }),
         )
@@ -75,29 +78,6 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
     this.currentSource
       .pipe(
         take(1),
-        tap((source) => {
-          if (source.connectorId === 'folder') {
-            const data = source.data;
-            if (data) {
-              this.selection.setSelection({
-                uuid: '',
-                title: data['path'],
-                originalId: data['path'],
-                metadata: {},
-                status: FileStatus.PENDING,
-              });
-            }
-          } else if (source.connectorId === 'sitemap') {
-            // Add empty item just to trigger sitemap synchronization
-            this.selection.setSelection({
-              uuid: '',
-              title: 'Sitemap',
-              originalId: 'SITEMAP',
-              metadata: {},
-              status: FileStatus.PENDING,
-            });
-          }
-        }),
         switchMap(() => this.syncService.currentSourceId.pipe(take(1))),
         switchMap((id) => this.syncService.setSourceData(id || '', { items: this.selection.selected } as Source)),
       )

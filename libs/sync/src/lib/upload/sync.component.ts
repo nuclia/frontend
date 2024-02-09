@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SyncService } from '../sync/sync.service';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subject, filter, map, switchMap, take, takeUntil } from 'rxjs';
+import { filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 
 @Component({
@@ -15,6 +15,9 @@ export class SyncComponent implements OnInit, OnDestroy {
     switchMap((sync) =>
       this.syncService.sourceObs.pipe(map((sources) => sources.find((s) => s.id === sync.connector.name))),
     ),
+  );
+  canSelectFiles = this.syncService.currentSourceId.pipe(
+    map((sourceId) => this.syncService.canSelectFiles(sourceId || '')),
   );
   selectedTab = 'activity';
   private unsubscribeAll = new Subject<void>();
