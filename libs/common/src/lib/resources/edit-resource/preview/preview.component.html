@@ -44,7 +44,7 @@
           <p>{{ resource.title }}</p>
 
           <div class="title-xxs">{{ 'resource.summary' | translate }}</div>
-          <p>{{ resource.summary || '–' }}</p>
+          <p [innerHtml]="(summary | async) || '-'"></p>
 
           <div class="title-xxs">{{ 'resource.thumbnail.label' | translate }}</div>
           <div class="thumbnails-container">
