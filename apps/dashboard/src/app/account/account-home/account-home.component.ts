@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { IKnowledgeBoxItem, StatsRange, StatsType } from '@nuclia/core';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { format } from 'date-fns';
 import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
-import { NavigationService, TickOptions } from '@flaps/common';
+import { TickOptions } from '@flaps/common';
 import { ChartData, MetricsService } from '../metrics.service';
 
 @Component({

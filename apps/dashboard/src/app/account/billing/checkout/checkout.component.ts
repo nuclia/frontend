@@ -27,6 +27,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import {
   BillingService,
   injectScript,
+  NavigationService,
   RecurrentPriceInterval,
   SDKService,
   StripeCustomer,
@@ -36,7 +37,6 @@ import {
 import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
-import { NavigationService } from '@flaps/common';
 import { ReviewComponent } from '../review/review.component';
 import { SubscriptionService } from '../subscription.service';
 

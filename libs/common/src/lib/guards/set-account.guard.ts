@@ -1,7 +1,6 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { inject } from '@angular/core';
-import { NavigationService } from '../services';
 import { of, switchMap } from 'rxjs';
 
 export const setAccountGuard = (route: ActivatedRouteSnapshot) => {

@@ -14,6 +14,7 @@ import {
   switchMap,
   take,
   tap,
+  timer,
 } from 'rxjs';
 import {
   baseLogoPath,
@@ -30,7 +31,7 @@ import {
   SyncRow,
 } from './new-models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
-import { BackendConfigurationService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, NotificationService, SDKService } from '@flaps/core';
 import { SitemapConnector } from './sources/sitemap';
 import { Classification, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { HttpClient } from '@angular/common/http';
@@ -141,6 +142,7 @@ export class NewSyncService {
     private sdk: SDKService,
     private http: HttpClient,
     private config: BackendConfigurationService,
+    private notificationService: NotificationService,
   ) {
     if (this.hasSyncServer()) {
       this.initServer();
@@ -168,11 +170,14 @@ export class NewSyncService {
       )
       .subscribe(this._syncCache);
 
+    let delay = 5000;
     of(true)
       .pipe(
         switchMap(() => this.serverStatus(this.getSyncServer())),
+        // Delay of 5min when the server is running, and 5s when the server is down
+        tap((res) => (delay = res.running ? 5 * 60 * 1000 : 5000)),
         map((res) => !res.running),
-        repeat({ delay: 5000 }),
+        repeat({ delay: () => timer(delay) }),
       )
       .subscribe((isServerDown) => this.setServerStatus(isServerDown));
   }
@@ -477,6 +482,17 @@ export class NewSyncService {
   }
 
   setServerStatus(isDown: boolean) {
+    if (isDown && !this._isServerDown.value) {
+      this.notificationService.pushNotifications([
+        {
+          type: 'sync-server',
+          data: [],
+          timestamp: new Date().toISOString(),
+          unread: true,
+          failure: true,
+        },
+      ]);
+    }
     this._isServerDown.next(isDown);
   }
 

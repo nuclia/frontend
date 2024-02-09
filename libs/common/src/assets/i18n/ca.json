@@ -628,6 +628,7 @@
 	"notification.type.deletion-failed": "Supressió de recurs fallida",
 	"notification.type.modification-completed": "Edició del recurs completada",
 	"notification.type.modification-failed": "Edició del recurs fallida",
+	"notification.type.sync-server-down": "El servidor de sincronització està inactiu",
 	"pastanaga.calendar.invalid-format": "Format de data no vàlid (format esperat: \"MMM dd, YYYY\")",
 	"pastanaga.calendar.months": "Mesos",
 	"pastanaga.calendar.years": "Anys",

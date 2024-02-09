@@ -628,6 +628,7 @@
 	"notification.type.deletion-failed": "Eliminación de recursos fallada",
 	"notification.type.modification-completed": "Edición de recursos completada",
 	"notification.type.modification-failed": "Edición de recursos fallada",
+	"notification.type.sync-server-down": "El servidor de sincronización está inactivo",
 	"pastanaga.calendar.invalid-format": "Formato de fecha no válido (formato esperado: \"MMM dd, YYYY\")",
 	"pastanaga.calendar.months": "Meses",
 	"pastanaga.calendar.years": "Años",

@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable, take } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem } from '@nuclia/core';
-import { NavigationService } from '../../services';
 
 @Component({
   selector: 'app-kb-switch',

@@ -1,6 +1,6 @@
 import { NotificationOperation } from '@nuclia/core';
 
-export type NotificationType = 'resource';
+export type NotificationType = 'resource' | 'sync-server';
 
 export interface NotificationData {
   title: string;
@@ -10,7 +10,7 @@ export interface NotificationData {
 
 export interface NotificationUI {
   type: NotificationType;
-  operation: NotificationOperation;
+  operation?: NotificationOperation;
   timestamp: string;
   unread: boolean;
   failure: boolean;

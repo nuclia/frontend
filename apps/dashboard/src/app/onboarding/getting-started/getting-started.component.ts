@@ -6,7 +6,7 @@ import { IntroComponent } from './intro/intro.component';
 import { UploadComponent } from './upload/upload.component';
 import { ProcessingComponent } from './processing/processing.component';
 import { ItemToUpload } from './getting-started.models';
-import { NavigationService, UploadService } from '@flaps/common';
+import { UploadService } from '@flaps/common';
 import {
   combineLatest,
   filter,
@@ -22,7 +22,7 @@ import {
   timer,
 } from 'rxjs';
 import { ExtractedDataTypes, Resource, RESOURCE_STATUS, ResourceProperties, Search, UploadStatus } from '@nuclia/core';
-import { PostHogService, SDKService } from '@flaps/core';
+import { NavigationService, PostHogService, SDKService } from '@flaps/core';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';

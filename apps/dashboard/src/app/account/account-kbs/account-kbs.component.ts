@@ -4,10 +4,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, of, Subject, tap } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
-import { SDKService, Zone, ZoneService } from '@flaps/core';
+import { NavigationService, SDKService, Zone, ZoneService } from '@flaps/core';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { KbAddComponent, KbAddData, NavigationService } from '@flaps/common';
+import { KbAddComponent, KbAddData } from '@flaps/common';
 
 @Component({
   selector: 'app-account-kbs',

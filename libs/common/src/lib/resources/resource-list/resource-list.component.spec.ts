@@ -2,10 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResourceListComponent } from './resource-list.component';
 import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
-import { BackendConfigurationService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, LabelsService, NavigationService, SDKService } from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { LabelsService } from '@flaps/core';
 import { of } from 'rxjs';
 import {
   PaDropdownModule,
@@ -22,7 +21,6 @@ import { ErrorResourcesTableComponent } from './error-resources-table/error-reso
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
 import { SampleDatasetService } from '../sample-dataset.service';
 import { UploadService } from '../../upload/upload.service';
-import { NavigationService } from '../../services/navigation.service';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;

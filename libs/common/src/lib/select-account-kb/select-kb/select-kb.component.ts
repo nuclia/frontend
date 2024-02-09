@@ -3,11 +3,10 @@ import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SDKService, STFUtils, ZoneService } from '@flaps/core';
+import { NavigationService, SDKService, STFUtils, ZoneService } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { NavigationService } from '../../services';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { KbAddComponent } from '../../kb-add';
 

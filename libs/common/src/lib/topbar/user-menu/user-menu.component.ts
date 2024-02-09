@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { Router, RouterLinkActive } from '@angular/router';
-import { FeaturesService, SDKService, UserService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, UserService } from '@flaps/core';
 import { Account, Welcome } from '@nuclia/core';
 import { map, Subject, takeUntil } from 'rxjs';
 import {
@@ -18,7 +18,6 @@ import {
   PaIconModule,
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { NavigationService } from '../../services';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 

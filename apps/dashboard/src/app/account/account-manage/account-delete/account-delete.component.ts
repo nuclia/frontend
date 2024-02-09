@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { SDKService, STFTrackingService, UserService } from '@flaps/core';
-import { map, of, shareReplay, switchMap, take } from 'rxjs';
+import { NavigationService, SDKService, STFTrackingService, UserService } from '@flaps/core';
+import { map, shareReplay, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
-import { NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-account-delete',

@@ -6,7 +6,7 @@ import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.co
 import { NavbarModule } from '../navbar';
 import { CommonModule } from '@angular/common';
 import { PaSideNavModule } from '@guillotinaweb/pastanaga-angular';
-import { NotificationsPanelComponent } from '../notifications';
+import { NotificationsPanelComponent } from '@flaps/core';
 
 @NgModule({
   declarations: [BaseComponent, DashboardLayoutComponent],

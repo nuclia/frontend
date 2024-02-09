@@ -33,7 +33,7 @@ import {
   UserClassification,
   UserFieldMetadata,
 } from '@nuclia/core';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -49,7 +49,6 @@ import {
   Thumbnail,
 } from './edit-resource.helpers';
 import { generatedEntitiesColor, getNerFamilyTitle } from '../../entities/model';
-import { NavigationService } from '../../services';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({

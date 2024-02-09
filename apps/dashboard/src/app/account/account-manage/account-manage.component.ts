@@ -2,9 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
-import { BillingService, SDKService, SubscriptionStatus } from '@flaps/core';
+import { BillingService, NavigationService, SDKService, SubscriptionStatus } from '@flaps/core';
 import { Account } from '@nuclia/core';
-import { NavigationService } from '@flaps/common';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';

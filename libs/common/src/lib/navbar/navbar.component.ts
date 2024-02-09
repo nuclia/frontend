@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
-import { NavigationService, StandaloneService } from '../services';
-import { BillingService, FeaturesService, SDKService } from '@flaps/core';
+import { StandaloneService } from '../services';
+import { BillingService, NavigationService, FeaturesService, SDKService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SyncService } from '@nuclia/sync';
 
