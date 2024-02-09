@@ -18,7 +18,7 @@ import {
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { UserMenuComponent } from './user-menu';
 import { StandaloneMenuComponent } from './standalone-menu/standalone-menu.component';
-import { NotificationButtonComponent } from '../notifications';
+import { NotificationButtonComponent } from '@flaps/core';
 
 @NgModule({
   imports: [

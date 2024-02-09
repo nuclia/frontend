@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { NotificationService } from '../notifications/notification.service';
+import { NotificationService } from '@flaps/core';
 
 @Component({
   selector: 'app-base',

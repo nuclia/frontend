@@ -7,6 +7,7 @@ export * from './lib/auth';
 export * from './lib/config';
 export * from './lib/label';
 export * from './lib/models';
+export * from './lib/notifications';
 export * from './lib/testing';
 export * from './lib/ui';
 export * from './lib/utils';

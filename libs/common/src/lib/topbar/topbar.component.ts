@@ -1,10 +1,9 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SDKService, UserService } from '@flaps/core';
+import { NotificationService, SDKService, UserService } from '@flaps/core';
 import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
 import { NavigationService } from '../services';
 import { StandaloneService } from '../services/standalone.service';
-import { NotificationService } from '../notifications/notification.service';
 
 @Component({
   selector: 'app-topbar',

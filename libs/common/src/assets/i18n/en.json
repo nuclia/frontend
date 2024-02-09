@@ -629,6 +629,7 @@
 	"notification.type.deletion-failed": "Resource deletion failed",
 	"notification.type.modification-completed": "Resource edition completed",
 	"notification.type.modification-failed": "Resource edition failed",
+	"notification.type.sync-server-down": "Sync server is down",
 	"pastanaga.calendar.invalid-format": "Invalid date format (expected format: \"MMM dd, YYYY\")",
 	"pastanaga.calendar.months": "Months",
 	"pastanaga.calendar.years": "Years",
