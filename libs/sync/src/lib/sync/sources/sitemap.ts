@@ -1,5 +1,6 @@
 import { baseLogoPath, ConnectorParameters, Field, ISourceConnector, SourceConnectorDefinition } from '../models';
 import { Observable, of } from 'rxjs';
+import { FileStatus, SyncItem } from '../new-models';
 
 export const SitemapConnector: SourceConnectorDefinition = {
   id: 'sitemap',
@@ -13,6 +14,18 @@ export const SitemapConnector: SourceConnectorDefinition = {
 class SitemapImpl implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = true;
+
+  getItems(): SyncItem[] {
+    return [
+      {
+        uuid: '',
+        title: 'Sitemap',
+        originalId: 'SITEMAP',
+        metadata: {},
+        status: FileStatus.PENDING,
+      },
+    ];
+  }
 
   getParameters(): Observable<Field[]> {
     return of([

@@ -1,8 +1,8 @@
 import { baseLogoPath, ConnectorParameters, Field, ISourceConnector, SourceConnectorDefinition } from '../models';
 import { Observable, of } from 'rxjs';
+import { FileStatus, SyncItem } from '../new-models';
 
 type ElectronFile = File & { relativePath: string };
-const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 
 export const FolderConnector: SourceConnectorDefinition = {
   id: 'folder',
@@ -15,9 +15,22 @@ export const FolderConnector: SourceConnectorDefinition = {
 class FolderImpl implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = false;
-  resumable = false;
   files: ElectronFile[] = [];
   path = '';
+
+  getItems(): SyncItem[] {
+    return this.path
+      ? [
+          {
+            uuid: '',
+            title: this.path,
+            originalId: this.path,
+            metadata: {},
+            status: FileStatus.PENDING,
+          },
+        ]
+      : [];
+  }
 
   getParameters(): Observable<Field[]> {
     return of([
