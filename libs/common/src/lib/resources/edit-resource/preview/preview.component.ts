@@ -83,6 +83,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   );
   extraMetadata = this.resource.pipe(map((resource) => JSON.stringify(resource.extra?.metadata, null, 2)));
   extraMetadataFullscreen = false;
+  summary = this.resource.pipe(map((resource) => (resource.summary ? resource.summary.split('\n') : [])));
 
   private _noField = new ReplaySubject<boolean>(1);
   noField: Observable<boolean> = this._noField.asObservable();
