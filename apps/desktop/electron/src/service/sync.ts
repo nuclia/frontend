@@ -53,7 +53,7 @@ function syncFiles() {
                         }
 
                         const batch: Observable<{ id: string; success: boolean }>[] = source.items
-                          .slice(0, 10)
+                          .slice(0, 5)
                           .map((item) =>
                             of(item).pipe(
                               switchMap((item) =>

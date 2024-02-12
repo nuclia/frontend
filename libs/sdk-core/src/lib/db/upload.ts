@@ -1,6 +1,7 @@
 import {
   catchError,
   concatMap,
+  delay,
   filter,
   from,
   map,
@@ -10,6 +11,7 @@ import {
   of,
   range,
   repeat,
+  retry,
   startWith,
   switchMap,
   take,
@@ -98,9 +100,10 @@ export const uploadFile = (
     'content-type': metadata?.contentType || 'application/octet-stream',
     ...getFileMetadata(metadata),
   };
-  let retries = 1;
+  let retries = 3;
   const slug = metadata?.rslug ? `?rslug=${metadata.rslug}` : '';
   return nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers, true).pipe(
+    switchMap((res) => (res.status === 429 ? of(res).pipe(delay(1000)) : of(res))),
     repeat(),
     filter((res) => retries-- === 0 || res.status !== 503),
     take(1),
@@ -161,8 +164,9 @@ export const TUSuploadFile = (
   if (uploadMetadata.length > 0) {
     headers['upload-metadata'] = uploadMetadata.join(',');
   }
-  let retries = 1;
+  let retries = 3;
   return nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true).pipe(
+    switchMap((res) => (res.status === 429 ? of(res).pipe(delay(1000)) : of(res))),
     repeat(),
     filter((res) => retries-- === 0 || res.status !== 503),
     catchError((error) => of(error)),
@@ -195,6 +199,8 @@ export const TUSuploadFile = (
                         true,
                       )
                       .pipe(
+                        switchMap((res) => (res.status === 429 ? of(res).pipe(delay(1000)) : of(res))),
+                        retry(3),
                         map((res) => {
                           if (res.status !== 200) {
                             failed = true;
