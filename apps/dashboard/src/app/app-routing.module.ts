@@ -10,6 +10,7 @@ import {
   KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
+  PromptLabComponent,
   rootGuard,
   SearchComponent,
   SelectAccountComponent,
@@ -182,6 +183,10 @@ const routes: Routes = [
                 path: 'widget-generator',
                 loadChildren: () =>
                   import('../../../../libs/common/src/lib/widgets/widgets.module').then((m) => m.WidgetsModule),
+              },
+              {
+                path: 'prompt-lab',
+                component: PromptLabComponent,
               },
             ],
           },

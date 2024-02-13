@@ -122,7 +122,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isModified = false;
 
   // indicators for updating expanders
-  answerGenerationExpanderUpdated = new Subject();
+  answerGenerationExpanderUpdated = new Subject<unknown>();
+  searchFilteringExpanderUpdated = new Subject<unknown>();
 
   // FLAGS FOR CONDITIONAL FIELDS AND FEATURES
   get answerGenerationEnabled() {
@@ -227,6 +228,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.answerGenerationExpanderUpdated.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.cdr.detectChanges());
+    this.searchFilteringExpanderUpdated.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.cdr.detectChanges());
+
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
       this.currentKbId = kb.id;
       const config = this.widgetConfigurations[kb.id] || {};
@@ -261,6 +265,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       .subscribe((changes) => {
         this.setIsModified();
         this.answerGenerationExpanderUpdated.next(this.answerGenerationEnabled);
+        this.searchFilteringExpanderUpdated.next(this.filtersEnabled);
         this.updateSnippetAndStoreConfig();
       });
 
@@ -615,5 +620,10 @@ ${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
     this.answerGenerationExpanderUpdated.next({ ...this.ragStrategiesToggles });
     this.setIsModified();
     setTimeout(() => this.updateSnippetAndStoreConfig());
+  }
+
+  onResizingTextarea($event: DOMRect) {
+    this.answerGenerationExpanderUpdated.next($event);
+    this.searchFilteringExpanderUpdated.next($event);
   }
 }

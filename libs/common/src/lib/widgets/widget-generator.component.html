@@ -215,7 +215,8 @@
                             [rows]="2"
                             formControlName="userPrompt"
                             [errorMessages]="userPromptErrors"
-                            resizable>
+                            resizable
+                            (resizing)="onResizingTextarea($event)">
                             {{ 'widget.generator.advanced.generative-answer-category.prompt.label' | translate }}
                           </pa-textarea>
                           <pa-icon
@@ -320,7 +321,8 @@
                             [placeholder]="
                               'widget.generator.advanced.generative-answer-category.rag-strategies.field-ids-input.placeholder'
                                 | translate
-                            ">
+                            "
+                            (resizing)="onResizingTextarea($event)">
                             {{
                               'widget.generator.advanced.generative-answer-category.rag-strategies.field-ids-input.label'
                                 | translate
@@ -343,7 +345,7 @@
                 </pa-expander-body>
               </pa-expander>
 
-              <pa-expander [contentLoaded]="filtersEnabled">
+              <pa-expander [contentLoaded]="searchFilteringExpanderUpdated | async">
                 <pa-expander-header>
                   <div class="title-s">
                     {{ 'widget.generator.advanced.search-and-filtering-category.title' | translate }}
@@ -433,7 +435,8 @@
                         [placeholder]="
                           'widget.generator.advanced.search-and-filtering-category.preselected-filters.placeholder'
                             | translate
-                        ">
+                        "
+                        (resizing)="onResizingTextarea($event)">
                         {{
                           'widget.generator.advanced.search-and-filtering-category.preselected-filters.label'
                             | translate

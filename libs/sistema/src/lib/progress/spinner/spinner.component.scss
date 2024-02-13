@@ -38,7 +38,7 @@ $inner-size-large: rhythm(12);
         right: $inner-size-medium;
         top: 0;
         bottom: 0;
-        border-top: rhythm(1.5) solid;
+        border-top: rhythm(1) solid;
         box-sizing: border-box;
       }
 
@@ -56,7 +56,7 @@ $inner-size-large: rhythm(12);
           width: size-container($inner-size-medium);
           height: size-container($inner-size-medium);
           box-sizing: border-box;
-          border: rhythm(1.5) solid $color-primary-regular;
+          border: rhythm(1) solid $color-primary-regular;
           border-bottom-color: transparent;
           border-radius: 50%;
         }
