@@ -28,6 +28,14 @@ jobs:
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -193,7 +201,7 @@ jobs:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.GH_CICD_PUBLIC }}
+          token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/frontend_deploy
           event-type: promote
           client-payload: '{"component": "app", "chart-version": "${{ steps.version_step.outputs.version_number }}" }'
@@ -240,7 +248,7 @@ jobs:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.GH_CICD_PUBLIC }}
+          token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/frontend_deploy
           event-type: promote
           client-payload: '{"component": "manager", "chart-version": "${{ steps.version_step.outputs.version_number }}" }'
