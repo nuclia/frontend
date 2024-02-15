@@ -148,14 +148,17 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   }
 
   copyEndpoint() {
+    this.tracking.logEvent('home_page_copy', { data: 'endpoint' });
     this.endpoint.pipe(take(1)).subscribe((endpoint) => this.copyToClipboard('endpoint', endpoint));
   }
 
   copyUid() {
+    this.tracking.logEvent('home_page_copy', { data: 'uid' });
     this.uid.pipe(take(1)).subscribe((uid) => this.copyToClipboard('uid', uid));
   }
 
   copySlug() {
+    this.tracking.logEvent('home_page_copy', { data: 'slug' });
     this.slug.pipe(take(1)).subscribe((slug) => this.copyToClipboard('slug', slug || ''));
   }
 
@@ -176,6 +179,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   }
 
   selectChart(option: OptionModel) {
+    this.tracking.logEvent('select_home_chart', { chart: option.value });
     this.currentChart = option;
   }
 
@@ -192,5 +196,9 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
         },
       }),
     );
+  }
+
+  trackNavigationFromHome(destination: string) {
+    this.tracking.logEvent('navigate_from_home_page', { destination });
   }
 }
