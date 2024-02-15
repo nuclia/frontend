@@ -574,26 +574,24 @@ export class Db implements IDb {
       delay: (error, retryCount) => timer(retryDelays[retryCount - 1]),
     };
     return defer(() =>
-      this.nuclia.rest
-        .post<{ summary: string }>(
-          `/predict/summarize${modelParam}`,
-          {
-            resources: {
-              text: {
-                fields: {
-                  text,
-                },
+      this.nuclia.rest.post<{ summary: string }>(
+        `/predict/summarize${modelParam}`,
+        {
+          resources: {
+            text: {
+              fields: {
+                text,
               },
             },
-            summary_kind,
-            user_prompt,
           },
-          this.getNUAHeader(),
-        )
-        .pipe(
-          retry(retryConfig),
-          map((answer) => answer.summary),
-        ),
+          summary_kind,
+          user_prompt,
+        },
+        this.getNUAHeader(),
+      ),
+    ).pipe(
+      retry(retryConfig),
+      map((answer) => answer.summary),
     );
   }
 
