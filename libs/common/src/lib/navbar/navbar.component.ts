@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { StandaloneService } from '../services';
-import { BillingService, NavigationService, FeaturesService, SDKService } from '@flaps/core';
+import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SyncService } from '@nuclia/sync';
 
@@ -69,12 +69,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   kb = this.sdk.currentKb;
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
-
   isEntitiesEnabled = this.features.manageEntities;
   isBillingEnabled = this.features.billing;
-  isSyncEnabled = this.features.sync;
   isSynonymsEnabled = this.features.synonyms;
   isActivityEnabled = this.features.activityLog;
+  isPromptLabEnabled = this.features.isEnterpriseOrGrowth.pipe(
+    filter((isEnterprise) => isEnterprise),
+    switchMap(() => this.features.promptLabEnabled),
+  );
 
   standalone = this.sdk.nuclia.options.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));

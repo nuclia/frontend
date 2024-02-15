@@ -35,7 +35,17 @@ export class NavigationService {
     return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
   }
   inKbSettings(path: string, kbUrl: string): boolean {
-    const settingsPages = ['activity', 'label-sets', 'entities', 'synonyms', 'manage', 'training', 'users', 'keys'];
+    const settingsPages = [
+      'activity',
+      'label-sets',
+      'entities',
+      'synonyms',
+      'manage',
+      'training',
+      'users',
+      'keys',
+      'prompt-lab',
+    ];
     const pattern = `${kbUrl}/(${settingsPages.join('|')})`;
     return path.match(new RegExp(pattern)) !== null;
   }

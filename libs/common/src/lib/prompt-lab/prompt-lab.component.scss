@@ -1,0 +1,99 @@
+@import 'apps/dashboard/src/variables';
+
+.prompt-lab {
+  h1 {
+    margin-bottom: rhythm(1);
+  }
+
+  .expander-padding {
+    padding: rhythm(3) 0;
+  }
+  .field-spacing {
+    margin-bottom: rhythm(3);
+    max-width: rhythm(80);
+
+    ol {
+      padding: 0 0 0 rhythm(2);
+
+      .list-item {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+
+        pre > code {
+          white-space: break-spaces;
+        }
+      }
+    }
+  }
+  .field-and-button {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    margin-top: rhythm(1);
+
+    pa-input,
+    pa-textarea {
+      flex: 1 1 auto;
+    }
+    pa-button {
+      margin-top: calc(-1 * #{rhythm(2) + rhythm(0.5)});
+    }
+  }
+  .models-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+    margin-top: rhythm(1);
+  }
+
+  .prompt-container {
+    pre {
+      background: $color-neutral-lightest;
+      padding: rhythm(0.25) rhythm(0.5);
+      white-space: break-spaces;
+    }
+  }
+
+  .question.title-s {
+    margin-top: rhythm(3);
+  }
+
+  .answer-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.25);
+    margin-bottom: rhythm(1);
+
+    &.collapsed {
+      align-items: center;
+      flex-direction: row;
+      gap: rhythm(1);
+
+      .model-expander pa-button {
+        transform: rotate(-90deg);
+      }
+
+      .body-s {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    .model-expander {
+      align-items: center;
+      display: flex;
+      gap: rhythm(0.5);
+
+      strong {
+        flex: 1 0 auto;
+      }
+
+      pa-button {
+        transition: transform $transition-hint;
+      }
+    }
+  }
+}

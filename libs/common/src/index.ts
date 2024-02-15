@@ -10,6 +10,7 @@ export * from './lib/guards';
 export * from './lib/hint';
 export * from './lib/kb-add';
 export * from './lib/knowledge-box-settings';
+export * from './lib/prompt-lab';
 export * from './lib/messages';
 export * from './lib/navbar';
 export * from './lib/page-not-found';

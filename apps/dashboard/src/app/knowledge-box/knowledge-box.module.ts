@@ -26,6 +26,7 @@ import {
 import { DropdownButtonComponent, HomeContainerComponent, SisIconsModule } from '@nuclia/sistema';
 import {
   ChartsModule,
+  GenerativeModelPipe,
   HintModule,
   KnowledgeBoxSettingsModule,
   PipesModule,
@@ -68,6 +69,7 @@ import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts
     PaDropdownModule,
     PaTableModule,
     UsageChartsComponent,
+    GenerativeModelPipe,
   ],
   declarations: [
     KnowledgeBoxComponent,

@@ -32,6 +32,7 @@ export class FeaturesService {
   pdfAnnotation = this.featureFlag.isFeatureEnabled('pdf-annotation');
   sync = this.featureFlag.isFeatureEnabled('sync');
   newProcessingStatus = this.featureFlag.isFeatureEnabled('nucliadb_processing_v2');
+  promptLabEnabled = this.featureFlag.isFeatureEnabled('llm-prompt-lab');
 
   // user-prompts and summarization are always enabled for growth and enterprise accounts
   // but are still managed as a feature flagged feature for other account types, so we can enable it specifically for some accounts

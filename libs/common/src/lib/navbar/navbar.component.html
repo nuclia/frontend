@@ -154,6 +154,16 @@
                 </a>
               }
               @if (isAccountManager | async) {
+                @if (isPromptLabEnabled | async) {
+                  <a
+                    [routerLink]="[kbUrl + '/prompt-lab']"
+                    routerLinkActive="active"
+                    data-cy="go-to-prompt-lab"
+                    class="nav-link sub-item">
+                    <pa-icon name="lab"></pa-icon>
+                    <span class="nav-link-title">{{ 'sidenav.prompt-lab' | translate }}</span>
+                  </a>
+                }
                 <a
                   [routerLink]="kbUrl + '/users'"
                   routerLinkActive="active"

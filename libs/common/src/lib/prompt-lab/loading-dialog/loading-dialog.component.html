@@ -1,0 +1,31 @@
+<div
+  class="pa-modal-backdrop"
+  tabindex="0"
+  #modalContainer
+  (click)="outsideClick($event)">
+  <dialog
+    class="pa-modal pa-confirmation-dialog"
+    role="dialog"
+    [class.in]="!closing"
+    [class.out]="closing"
+    [attr.aria-labelledby]="'dialog-' + id + '-title'"
+    [attr.aria-describedby]="'dialog-' + id + '-description'">
+    <header class="pa-modal-header">
+      <h4
+        qa="confirmation-title"
+        [id]="'dialog-' + id + '-title'">
+        {{ ref.config.data?.['title'] | translate }}
+      </h4>
+    </header>
+
+    <div
+      class="pa-modal-description body-s"
+      qa="confirmation-description"
+      [id]="'dialog-' + id + '-description'"
+      [innerHTML]="ref.config.data?.['description'] | translate"></div>
+
+    <footer class="pa-modal-footer">
+      <nsi-progress-bar [progress]="ref.config.data?.['progress'] | async"></nsi-progress-bar>
+    </footer>
+  </dialog>
+</div>
