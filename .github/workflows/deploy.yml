@@ -28,14 +28,6 @@ jobs:
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
-      - name: Generate a token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
-          owner: nuclia
-
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -166,6 +158,14 @@ jobs:
     if: needs.build.outputs.deploy-app == 'yes'
 
     steps:
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -213,6 +213,14 @@ jobs:
     if: needs.build.outputs.deploy-manager == 'yes'
 
     steps:
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
