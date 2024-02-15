@@ -299,6 +299,7 @@ export class PromptLabComponent implements OnInit {
       link.setAttribute('href', url);
       link.setAttribute('download', filename);
       link.click();
+      URL.revokeObjectURL(url);
     }
   }
 
