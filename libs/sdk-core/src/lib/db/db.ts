@@ -1,4 +1,20 @@
-import { catchError, concatMap, filter, forkJoin, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  defer,
+  filter,
+  forkJoin,
+  from,
+  map,
+  Observable,
+  of,
+  retry,
+  RetryConfig,
+  switchMap,
+  tap,
+  throwError,
+  timer,
+} from 'rxjs';
 import type { AccountUsersPayload, FullAccountUser, IDb, INuclia, InviteAccountUserPayload } from '../models';
 import {
   Account,
@@ -552,8 +568,13 @@ export class Db implements IDb {
       throw new Error('NUA key is needed to be able to call /predict');
     }
     const modelParam = model ? `?model=${encodeURIComponent(model)}` : '';
-    return this.nuclia.rest
-      .post<{ summary: string }>(
+    const retryDelays = [0, 1000, 2000, 5000, 10000];
+    const retryConfig: RetryConfig = {
+      count: retryDelays.length,
+      delay: (error, retryCount) => timer(retryDelays[retryCount - 1]),
+    };
+    return defer(() =>
+      this.nuclia.rest.post<{ summary: string }>(
         `/predict/summarize${modelParam}`,
         {
           resources: {
@@ -567,8 +588,11 @@ export class Db implements IDb {
           user_prompt,
         },
         this.getNUAHeader(),
-      )
-      .pipe(map((answer) => answer.summary));
+      ),
+    ).pipe(
+      retry(retryConfig),
+      map((answer) => answer.summary),
+    );
   }
 
   /**

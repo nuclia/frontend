@@ -1,4 +1,18 @@
-import { catchError, forkJoin, from, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  defer,
+  forkJoin,
+  from,
+  map,
+  Observable,
+  of,
+  retry,
+  RetryConfig,
+  switchMap,
+  tap,
+  throwError,
+  timer,
+} from 'rxjs';
 import {
   ActivityDownloadList,
   Counters,
@@ -344,9 +358,17 @@ export class KnowledgeBox implements IKnowledgeBox {
     ```
   */
   summarize(ressourceIds: string[], user_prompt?: string): Observable<string> {
-    return this.nuclia.rest
-      .post<{ summary: string }>(`${this.path}/summarize`, { resources: ressourceIds, user_prompt })
-      .pipe(map((res) => res.summary));
+    const retryDelays = [0, 1000, 2000, 5000, 10000];
+    const retryConfig: RetryConfig = {
+      count: retryDelays.length,
+      delay: (error, retryCount) => timer(retryDelays[retryCount - 1]),
+    };
+    return defer(() =>
+      this.nuclia.rest.post<{ summary: string }>(`${this.path}/summarize`, { resources: ressourceIds, user_prompt }),
+    ).pipe(
+      retry(retryConfig),
+      map((res) => res.summary),
+    );
   }
 
   /**
