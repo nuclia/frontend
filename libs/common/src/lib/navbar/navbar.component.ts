@@ -69,12 +69,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   kb = this.sdk.currentKb;
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
-  isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;
   isEntitiesEnabled = this.features.manageEntities;
   isBillingEnabled = this.features.billing;
   isSynonymsEnabled = this.features.synonyms;
   isActivityEnabled = this.features.activityLog;
-  isPromptLabEnabled = this.isEnterpriseOrGrowth.pipe(
+  isPromptLabEnabled = this.features.isEnterpriseOrGrowth.pipe(
     filter((isEnterprise) => isEnterprise),
     switchMap(() => this.features.promptLabEnabled),
   );
