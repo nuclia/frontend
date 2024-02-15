@@ -121,11 +121,12 @@ export class Rest implements IRest {
     zoneSlug: string | undefined = undefined,
   ): Observable<T> {
     const specialContentType = extraHeaders && extraHeaders['content-type'];
+    const payload = specialContentType ? body : JSON.stringify(body);
     return from(
       fetch(this.getFullUrl(path, zoneSlug), {
         method,
         headers: this.getHeaders(method, path, extraHeaders, synchronous),
-        body: specialContentType ? body : JSON.stringify(body),
+        body: payload,
       }).then((res) => {
         if (!res.ok) {
           this.nuclia.events?.emit<{ status: number; path: string }>('api-error', {
@@ -134,9 +135,16 @@ export class Rest implements IRest {
           });
           return res.json().then(
             (body) => {
+              const logMessage = `${res.status} error on ${method} ${path}. ${payload ? 'Payload: ' + payload : ''}`;
+              try {
+                console.error(`${logMessage}: ${JSON.stringify(body)}`);
+              } catch (e) {
+                console.error(logMessage);
+              }
               throw { status: res.status, body };
             },
             () => {
+              console.error(`${res.status} error on ${method} ${path}. ${payload ? 'Payload: ' + payload : ''}`);
               throw { status: res.status };
             },
           );
@@ -247,6 +255,7 @@ export class Rest implements IRest {
           const headers = res.headers;
           const status = res.status;
           if (!reader || !res.ok) {
+            console.error(`getStreamedResponse: error ${status} on POST ${path}`);
             observer.error({ status });
             observer.complete();
           } else {
@@ -265,6 +274,7 @@ export class Rest implements IRest {
                   }
                 },
                 (reason) => {
+                  console.error(`getStreamedResponse: read error on POST ${path}`);
                   observer.error(reason);
                   observer.complete();
                 },
@@ -274,6 +284,12 @@ export class Rest implements IRest {
           }
         },
         (reason) => {
+          const logMessage = `getStreamedResponse: error on POST ${path}`;
+          try {
+            console.error(`${logMessage}: ${JSON.stringify(reason)}`);
+          } catch (e) {
+            console.error(logMessage);
+          }
           observer.error(reason);
           observer.complete();
         },
@@ -310,6 +326,7 @@ export class Rest implements IRest {
         const headers = res.headers;
         const status = res.status;
         if (!reader || !res.ok) {
+          console.error(`getStreamedMessage: error ${status} on GET ${path}`);
           observer.error({ status });
           observer.complete();
         } else {
@@ -350,6 +367,7 @@ export class Rest implements IRest {
             this.streamErrorAt = Date.now();
             this.fetchStream(path, observer, controller);
           } else {
+            console.error(`getStreamedMessage: error on GET ${path} (stream lost): ${reason}`);
             observer.error(`Message stream lost: ${reason}`);
             observer.complete();
           }

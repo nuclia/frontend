@@ -1,8 +1,9 @@
-# 1.11.7 (unreleased)
+# 1.11.7 (2024-02-15)
 
 ### Improvements
 
 - Improve reliability of `summarize` and `predictSummarize` methods
+- Add logs on error in Rest methods.
 
 # 1.11.6 (2024-02-06)
 
