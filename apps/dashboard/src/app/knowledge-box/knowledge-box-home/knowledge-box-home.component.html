@@ -18,10 +18,9 @@
                 aspect="solid"
                 kind="primary"
                 iconAndText
-                icon="upload">
-                <a [routerLink]="kbUrl + '/upload'">
-                  {{ 'stash.upload_data' | translate }}
-                </a>
+                icon="upload"
+                (click)="trackNavigationFromHome('upload')">
+                {{ 'stash.upload_data' | translate }}
               </pa-button>
               <div>
                 {{ 'dashboard-home.upload-block.description' | translate }}
@@ -69,7 +68,8 @@
               <pa-button
                 [routerLink]="kbUrl + '/manage'"
                 icon="gear"
-                aspect="basic">
+                aspect="basic"
+                (click)="trackNavigationFromHome('KB settings')">
                 {{ 'dashboard-home.go-to.kb-settings' | translate }}
               </pa-button>
             }
@@ -164,7 +164,8 @@
                   <pa-button
                     icon="list"
                     aspect="basic"
-                    [routerLink]="kbUrl + '/resources'">
+                    [routerLink]="kbUrl + '/resources'"
+                    (click)="trackNavigationFromHome('resource list')">
                     {{ 'dashboard-home.go-to.resource-list' | translate }}
                   </pa-button>
                 </div>
@@ -194,7 +195,8 @@
                   <pa-button
                     icon="clock-dash"
                     aspect="basic"
-                    [routerLink]="kbUrl + '/resources/pending'">
+                    [routerLink]="kbUrl + '/resources/pending'"
+                    (click)="trackNavigationFromHome('pending resources')">
                     {{ 'dashboard-home.go-to.pending-list' | translate }}
                   </pa-button>
                 </div>
@@ -221,7 +223,7 @@
           </nsi-home-container>
         }
 
-        @if (isAccountManager | async) {
+        @if ((isKbContrib | async) && (isAccountManager | async)) {
           <nsi-home-container class="growing-container">
             <div class="usage-charts">
               <div class="title-m title-with-action">
