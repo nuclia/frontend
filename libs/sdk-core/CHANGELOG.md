@@ -1,3 +1,9 @@
+# 1.11.7 (unreleased)
+
+### Improvements
+
+- Improve reliability of `summarize` and `predictSummarize` methods
+
 # 1.11.6 (2024-02-06)
 
 ### Bugfix
