@@ -11,6 +11,7 @@ env:
   CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
   DOCS_STORAGE: ${{ secrets.DOCS_STORAGE }}
   CONTAINER_REGISTRY: eu.gcr.io/${{ secrets.PROJECT_ID }}
+  REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/private
 
 permissions:
   contents: write
@@ -115,6 +116,11 @@ jobs:
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
 
+          docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
+          docker tag $REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $REGISTRY/$APP_IMAGE_NAME:main
+          docker push $REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
+          docker push $REGISTRY/$APP_IMAGE_NAME:main
+
       - name: Publish NucliaDB admin app
         if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes'
         run: |-
@@ -132,6 +138,11 @@ jobs:
           docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA}
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
+
+          docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA}
+          docker tag $REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $REGISTRY/$MANAGER_IMAGE_NAME:main
+          docker push $REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA}
+          docker push $REGISTRY/$MANAGER_IMAGE_NAME:main
 
       - name: Create 404 page for gh-pages
         if: steps.check-deploy.outputs.deploy-sistema == 'yes'
