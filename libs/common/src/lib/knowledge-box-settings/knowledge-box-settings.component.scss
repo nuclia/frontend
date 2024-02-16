@@ -9,7 +9,6 @@
     display: flex;
     flex-direction: column;
     gap: rhythm(3);
-    margin-bottom: rhythm(3);
   }
 
   .fields-container.small-gap {
@@ -19,43 +18,6 @@
   .kb-status {
     h3 {
       margin-bottom: rhythm(1);
-    }
-  }
-
-  .models-section-title {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .model-expander-body {
-    padding: rhythm(1) rhythm(2) rhythm(3);
-  }
-
-  .radio-container {
-    label.title-xxs {
-      display: block;
-      margin-bottom: rhythm(0.5);
-    }
-    .body-s {
-      margin-bottom: rhythm(0.5);
-    }
-
-    pa-radio-group {
-      max-height: rhythm(10);
-      flex-wrap: wrap;
-      pa-radio {
-        break-inside: avoid;
-      }
-    }
-  }
-
-  .select-with-background {
-    display: block;
-    margin-top: rhythm(1);
-
-    ::ng-deep .pa-field .pa-field-control {
-      background-color: $color-neutral-lightest;
     }
   }
 

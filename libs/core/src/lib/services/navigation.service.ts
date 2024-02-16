@@ -43,6 +43,7 @@ export class NavigationService {
   }
   inKbSettings(path: string, kbUrl: string): boolean {
     const settingsPages = [
+      'ai-models',
       'activity',
       'label-sets',
       'entities',
