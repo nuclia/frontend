@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { FeaturesService, SDKService, STFUtils, Zone } from '@flaps/core';
+import { FeaturesService, getSemanticModel, SDKService, STFUtils, Zone } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
+import { switchMap } from 'rxjs';
 
 export interface KbAddData {
   account: Account;
@@ -78,36 +79,53 @@ export class KbAddComponent implements OnInit {
 
     this.saving = true;
     const kbConfig = this.kbForm.getRawValue();
-    const payload: KnowledgeBoxCreation = {
-      slug: STFUtils.generateSlug(kbConfig.title),
-      title: kbConfig.title,
-      description: kbConfig.description,
-      learning_configuration: {
-        anonymization_model: kbConfig.anonymization ? 'multilingual' : 'disabled',
-      },
-    };
+    const accountId = this.account.id;
 
     const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
     this.cdr.markForCheck();
-    this.sdk.nuclia.db.createKnowledgeBox(this.account.id, payload, kbConfig.zone).subscribe({
-      next: () => {
-        clearTimeout(inProgressTimeout);
-        this.modal.close({ success: true });
-      },
-      error: () => {
-        clearTimeout(inProgressTimeout);
-        this.failures += 1;
-        this.saving = false;
-        this.creationInProgress = false;
-        if (this.failures < 4) {
-          this.toast.error('kb.create.error');
-        } else {
-          Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
-          this.modal.close({ success: false });
-        }
-        this.cdr.markForCheck();
-      },
-    });
+
+    this.sdk.nuclia.db
+      .getLearningConfigurations()
+      .pipe(
+        switchMap((learningConfiguration) => {
+          const payload: KnowledgeBoxCreation = {
+            slug: STFUtils.generateSlug(kbConfig.title),
+            title: kbConfig.title,
+            description: kbConfig.description,
+            learning_configuration: {
+              anonymization_model: kbConfig.anonymization ? 'multilingual' : 'disabled',
+              semantic_model: getSemanticModel(
+                {
+                  multilingual: this.multilingualSelected,
+                  languages: this.languages,
+                },
+                learningConfiguration,
+              ),
+            },
+          };
+
+          return this.sdk.nuclia.db.createKnowledgeBox(accountId, payload, kbConfig.zone);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          clearTimeout(inProgressTimeout);
+          this.modal.close({ success: true });
+        },
+        error: () => {
+          clearTimeout(inProgressTimeout);
+          this.failures += 1;
+          this.saving = false;
+          this.creationInProgress = false;
+          if (this.failures < 4) {
+            this.toast.error('kb.create.error');
+          } else {
+            Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
+            this.modal.close({ success: false });
+          }
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   close(): void {
