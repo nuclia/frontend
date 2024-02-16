@@ -703,7 +703,7 @@
 	"resource.confirm-reprocess.plural-description": "Necessitem un temps per processar les dades. Un cop reprocessats els podeu veure a la pàgina de llista de recursos disponible per editar, classificar o anotar.",
 	"resource.confirm-reprocess.plural-title": "Esteu segur que voleu tornar a processar els recursos?",
 	"resource.confirm-reprocess.title": "Esteu segur que voleu tornar a processar el recurs?",
-	"resource.confirm-summarize.description": "El resum resultant s'emmagatzemarà al recurs. Aquesta operació pot trigar un temps, s'executarà en segon pla, podeu continuar utilitzant el tauler, però no tanqueu aquesta pàgina fins que no finalitzi l'operació.",
+	"resource.confirm-summarize.description": "El resum resultant s'emmagatzemarà al recurs. Aquesta operació pot trigar fins a un minut, si us plau, no abandonis el dashboard fins que no s'hagi acabat.",
 	"resource.confirm-summarize.title": "Resumeix aquest recurs",
 	"resource.description.title": "Descripció",
 	"resource.empty": "No hi ha contingut al vostre Knowledge Box en aquest moment.",

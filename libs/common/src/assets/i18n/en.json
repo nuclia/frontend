@@ -704,7 +704,7 @@
 	"resource.confirm-reprocess.plural-description": "We need some time to process the data. Once reprocessed you can see them on the resource list page available for editing, classifying or annotating.",
 	"resource.confirm-reprocess.plural-title": "Are you sure you want to reprocess the resources?",
 	"resource.confirm-reprocess.title": "Are you sure you want to reprocess the resource?",
-	"resource.confirm-summarize.description": "The resulting summary will be stored in the resource. This operation can take time, it will run in the background, you can continue using the dashboard, but do not close this page until the operation is finished.",
+	"resource.confirm-summarize.description": "The resulting summary will be stored in the resource. This operation can take up to one minute, please don't leave the dashboard until it's done.",
 	"resource.confirm-summarize.title": "Summarize this resource",
 	"resource.description.title": "Description",
 	"resource.empty": "There is no content in your Knowledge Box at the moment.",
