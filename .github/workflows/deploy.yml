@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: nuclia-base
 
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
