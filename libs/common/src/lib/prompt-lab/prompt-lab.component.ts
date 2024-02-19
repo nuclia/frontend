@@ -5,6 +5,7 @@ import {
   ModalConfig,
   ModalRef,
   PaButtonModule,
+  PaCardModule,
   PaExpanderModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -38,14 +39,15 @@ const GENERATIVE_MODEL_KEY = 'generative_model';
   standalone: true,
   imports: [
     CommonModule,
-    TranslateModule,
+    GenerativeModelPipe,
+    LineBreakFormatterPipe,
+    PaButtonModule,
     PaExpanderModule,
     PaTextFieldModule,
-    PaButtonModule,
-    ReactiveFormsModule,
     PaTogglesModule,
-    LineBreakFormatterPipe,
-    GenerativeModelPipe,
+    ReactiveFormsModule,
+    TranslateModule,
+    PaCardModule,
   ],
   providers: [GenerativeModelPipe],
   templateUrl: './prompt-lab.component.html',
@@ -61,7 +63,6 @@ export class PromptLabComponent implements OnInit {
   currentQuery = '';
   currentPrompt = '';
   queries: string[] = [];
-  prompts: string[] = [];
 
   configBackup?: { [id: string]: any };
   learningModels?: LearningConfiguration;
@@ -69,7 +70,7 @@ export class PromptLabComponent implements OnInit {
   progress$ = new BehaviorSubject<number | null>(null);
   results: { query: string; data: { prompt?: string; results: { model: string; answer: string }[] }[] }[] = [];
   hasResults = new BehaviorSubject(false);
-  modelCollapsed: { [id: string]: boolean } = {};
+  queryCollapsed: { [query: string]: boolean } = {};
 
   get selectedModels(): string[] {
     return Object.entries(this.form.getRawValue())
@@ -79,10 +80,6 @@ export class PromptLabComponent implements OnInit {
 
   get questionsLimitReached() {
     return this.queries.length >= 3;
-  }
-
-  get promptsLimitReached() {
-    return this.prompts.length >= 3;
   }
 
   constructor(
@@ -129,20 +126,9 @@ export class PromptLabComponent implements OnInit {
     this.updateConfigurationExpanderSize.next(this.queries);
   }
 
-  addPrompt() {
-    this.prompts = this.prompts.concat([this.currentPrompt.trim()]);
-    this.currentPrompt = '';
-    this.updateConfigurationExpanderSize.next(this.prompts);
-  }
-
   deleteQuestion($index: number) {
     this.queries.splice($index, 1);
     this.updateConfigurationExpanderSize.next([...this.queries]);
-  }
-
-  deletePrompt($index: number) {
-    this.prompts.splice($index, 1);
-    this.updateConfigurationExpanderSize.next([...this.prompts]);
   }
 
   generate() {
@@ -169,7 +155,7 @@ export class PromptLabComponent implements OnInit {
               },
             }),
           );
-          return this._generateResults(this.queries, this.prompts);
+          return this._generateResults(this.queries, [this.currentPrompt]);
         }),
       )
       .subscribe();
@@ -268,9 +254,8 @@ export class PromptLabComponent implements OnInit {
     this.progress$.next((this.progress$.value || 0) + Math.ceil(100 / requestCount));
   }
 
-  collapseAnswer(query: string, prompt: string | undefined, model: string) {
-    const fullId = query + prompt + model;
-    this.modelCollapsed[fullId] = !this.modelCollapsed[fullId];
+  collapseAnswer(query: string) {
+    this.queryCollapsed[query] = !this.queryCollapsed[query];
   }
 
   downloadCsv() {
