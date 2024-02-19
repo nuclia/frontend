@@ -38,7 +38,7 @@ export const selectKbGuard = (route: ActivatedRouteSnapshot) => {
                     account.can_manage_account ? router.createUrlTree([navigation.getAccountUrl(accountSlug)]) : true,
                   ),
                 );
-          } else if (kbs.length === 1 && !selectService.standalone) {
+          } else if (kbs.length === 1 && !selectService.standalone && !!kbs[0].role_on_kb) {
             // if there's only one KB, and we're not in NucliaDB admin app, then we automatically select the KB
             sdk.nuclia.options.zone = kbs[0].zone;
 
