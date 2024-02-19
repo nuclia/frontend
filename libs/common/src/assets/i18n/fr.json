@@ -465,6 +465,7 @@
 	"kb.ai-models.confirm-anonymization.confirm-button": "Anonymiser",
 	"kb.ai-models.confirm-anonymization.description": "Une fois les ressources anonymisées, cela ne peut plus être annulé. <br>Remarque : les nouveaux paramètres d'anonymisation n'affecteront pas les ressources existantes",
 	"kb.ai-models.confirm-anonymization.title": "Attention : les ressources futures seront affectées",
+	"kb.ai-models.error.kb-not-supported": "Votre Knowledge Box ne prend pas en charge les modèles d’IA. Veuillez créer une nouvelle Knowledge Box pour utiliser cette fonctionnalité.",
 	"kb.ai-models.generative_model.help": "Indiquez le modèle utilisé pour générer des réponses aux questions des utilisateurs.",
 	"kb.ai-models.generative_model.label": "Génération de réponses",
 	"kb.ai-models.generative_model.system_prompt_label": "Comportement",

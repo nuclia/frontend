@@ -4,6 +4,10 @@
   .description {
     margin-bottom: rhythm(3);
   }
+  .error {
+    background: $color-secondary-regular;
+    padding: rhythm(1) rhythm(0.5);
+  }
 
   form {
     width: rhythm(80);

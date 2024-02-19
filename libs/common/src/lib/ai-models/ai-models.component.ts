@@ -7,7 +7,13 @@ import { catchError, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PaButtonModule, PaExpanderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaExpanderModule,
+  PaIconModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { LearningOptionPipe } from '../pipes';
 
 @Component({
@@ -22,6 +28,7 @@ import { LearningOptionPipe } from '../pipes';
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
+    PaIconModule,
   ],
   templateUrl: './ai-models.component.html',
   styleUrl: './ai-models.component.scss',
@@ -36,6 +43,7 @@ export class AiModelsComponent implements OnInit {
 
   kb?: WritableKnowledgeBox;
   kbConfigBackup?: { [key: string]: any };
+  noKbConfig = false;
   saving = false;
   hasOwnKey = false;
 
@@ -94,13 +102,18 @@ export class AiModelsComponent implements OnInit {
     this.sdk.currentKb
       .pipe(
         tap((kb) => (this.kb = kb)),
-        switchMap((kb) => forkJoin([kb.getConfiguration(), this.sdk.nuclia.db.getLearningConfigurations()])),
+        switchMap((kb) => forkJoin([kb.getConfiguration().pipe(catchError(() => of(null))), kb.getLearningSchema()])),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(([kbConfig, learningSchema]) => {
-        this.kbConfigBackup = kbConfig;
-        this.learningConfigurations = learningSchema;
-        this.resetForm();
+        if (kbConfig === null) {
+          this.noKbConfig = true;
+        } else {
+          this.kbConfigBackup = kbConfig;
+          this.learningConfigurations = learningSchema;
+          this.resetForm();
+        }
+        this.cdr.markForCheck();
       });
   }
 

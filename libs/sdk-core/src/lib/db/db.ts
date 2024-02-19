@@ -496,6 +496,9 @@ export class Db implements IDb {
     return this.nuclia.rest.delete(`/account/${accountId}/nua_client/${client_id}`, undefined, undefined, zone);
   }
 
+  /**
+   * Get available learning configuration schemas.
+   */
   getLearningConfigurations(): Observable<LearningConfigurations> {
     return this.nuclia.rest.get<LearningConfigurations>('/learning/configuration/schema').pipe(
       map((config) => {

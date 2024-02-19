@@ -3,7 +3,12 @@
     <div class="display-s">{{ 'kb.ai-models.page-title' | translate }}</div>
     <p class="description">{{ 'kb.ai-models.page-description' | translate }}</p>
 
-    @if (configForm) {
+    @if (noKbConfig) {
+      <p class="error">
+        <pa-icon name="warning"></pa-icon>
+        {{ 'kb.ai-models.error.kb-not-supported' | translate }}
+      </p>
+    } @else if (configForm) {
       <form
         [formGroup]="configForm"
         (ngSubmit)="save()">
