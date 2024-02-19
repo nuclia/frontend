@@ -66,7 +66,10 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     if (kb.role_on_kb) {
       this.router.navigate([this.navigation.getKbUsersUrl(this.account!.slug, kb.slug!)]);
     } else {
-      this.modalService.openModal(UsersDialogComponent, { dismissable: true, data: { kb: kb.slug } });
+      this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
+        const data = { kb: new WritableKnowledgeBox(this.sdk.nuclia, account.id, kb) };
+        this.modalService.openModal(UsersDialogComponent, { dismissable: true, data });
+      });
     }
   }
 
