@@ -42,20 +42,17 @@ export class NavigationService {
     return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
   }
   inKbSettings(path: string, kbUrl: string): boolean {
-    const settingsPages = [
-      'ai-models',
-      'activity',
-      'label-sets',
-      'entities',
-      'synonyms',
-      'manage',
-      'training',
-      'users',
-      'keys',
-      'prompt-lab',
-    ];
-    const pattern = `${kbUrl}/(${settingsPages.join('|')})`;
-    return path.match(new RegExp(pattern)) !== null;
+    // pages common to NucliaDB admin and Dashboard
+    const commonPages = ['ai-models', 'entities', 'label-sets', 'manage'];
+
+    if (path.startsWith('#')) {
+      const pattern = `/(${commonPages.join('|')})$`;
+      return path.match(new RegExp(pattern)) !== null;
+    } else {
+      const settingsPages = commonPages.concat(['activity', 'synonyms', 'training', 'users', 'keys', 'prompt-lab']);
+      const pattern = `${kbUrl}/(${settingsPages.join('|')})`;
+      return path.match(new RegExp(pattern)) !== null;
+    }
   }
   inKbUpload(path: string, kbUrl: string): boolean {
     const pattern = `${kbUrl}/upload`;

@@ -25,57 +25,59 @@ export class NotificationService {
   ) {}
 
   startListening() {
-    combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
-      .pipe(
-        tap(([, kb]) => {
-          if (this._currentKb) {
-            this.stopListening();
-          }
-          this._currentKb = kb;
-        }),
-        switchMap(([account, kb]) =>
-          kb.listenToResourceOperationNotifications().pipe(
-            tap((notifications) => {
-              let existingNotifications = this._notifications.value;
-              // most recent notifications are first in the list
-              const lastNotification = existingNotifications[0];
-              const newNotifications: NotificationUI[] = [];
-              notifications.forEach((newNotif) => {
-                const resourceInfo: NotificationData = {
-                  title: newNotif.resourceTitle,
-                  resourceId: newNotif.resourceId,
-                  resourceUrl: kb.slug
-                    ? this.navigationService.getResourcePreviewUrl(account.slug, kb.slug, newNotif.resourceId)
-                    : undefined,
-                };
-                // we group notifications happening within 30 seconds only for unread notification of the same operation type
-                if (
-                  lastNotification &&
-                  lastNotification.unread &&
-                  lastNotification.operation === newNotif.operation &&
-                  differenceInSeconds(new Date(newNotif.timestamp), new Date(lastNotification.timestamp)) <= 30 &&
-                  newNotif.success === !lastNotification.failure
-                ) {
-                  lastNotification.data = [resourceInfo].concat(lastNotification.data);
-                  existingNotifications = [{ ...lastNotification }].concat(existingNotifications.slice(1));
-                } else {
-                  newNotifications.push({
-                    type: 'resource',
-                    operation: newNotif.operation,
-                    timestamp: newNotif.timestamp,
-                    failure: !newNotif.success,
-                    unread: true,
-                    data: [resourceInfo],
-                  });
-                }
-              });
-              this._notifications.next(newNotifications.concat(existingNotifications));
-            }),
+    if (!this.sdk.nuclia.options.standalone) {
+      combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
+        .pipe(
+          tap(([, kb]) => {
+            if (this._currentKb) {
+              this.stopListening();
+            }
+            this._currentKb = kb;
+          }),
+          switchMap(([account, kb]) =>
+            kb.listenToResourceOperationNotifications().pipe(
+              tap((notifications) => {
+                let existingNotifications = this._notifications.value;
+                // most recent notifications are first in the list
+                const lastNotification = existingNotifications[0];
+                const newNotifications: NotificationUI[] = [];
+                notifications.forEach((newNotif) => {
+                  const resourceInfo: NotificationData = {
+                    title: newNotif.resourceTitle,
+                    resourceId: newNotif.resourceId,
+                    resourceUrl: kb.slug
+                      ? this.navigationService.getResourcePreviewUrl(account.slug, kb.slug, newNotif.resourceId)
+                      : undefined,
+                  };
+                  // we group notifications happening within 30 seconds only for unread notification of the same operation type
+                  if (
+                    lastNotification &&
+                    lastNotification.unread &&
+                    lastNotification.operation === newNotif.operation &&
+                    differenceInSeconds(new Date(newNotif.timestamp), new Date(lastNotification.timestamp)) <= 30 &&
+                    newNotif.success === !lastNotification.failure
+                  ) {
+                    lastNotification.data = [resourceInfo].concat(lastNotification.data);
+                    existingNotifications = [{ ...lastNotification }].concat(existingNotifications.slice(1));
+                  } else {
+                    newNotifications.push({
+                      type: 'resource',
+                      operation: newNotif.operation,
+                      timestamp: newNotif.timestamp,
+                      failure: !newNotif.success,
+                      unread: true,
+                      data: [resourceInfo],
+                    });
+                  }
+                });
+                this._notifications.next(newNotifications.concat(existingNotifications));
+              }),
+            ),
           ),
-        ),
-        takeUntil(this.sdk.nuclia.auth.isAuthenticated().pipe(filter((isAuthenticated) => !isAuthenticated))),
-      )
-      .subscribe();
+          takeUntil(this.sdk.nuclia.auth.isAuthenticated().pipe(filter((isAuthenticated) => !isAuthenticated))),
+        )
+        .subscribe();
+    }
   }
 
   pushNotifications(notifications: NotificationUI[]) {

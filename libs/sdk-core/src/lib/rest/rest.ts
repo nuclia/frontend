@@ -135,16 +135,16 @@ export class Rest implements IRest {
           });
           return res.json().then(
             (body) => {
-              const logMessage = `${res.status} error on ${method} ${path}. ${payload ? 'Payload: ' + payload : ''}`;
+              const logMessage = `${res.status} error on ${method} ${path}${payload ? '\nPayload: ' + payload : ''}`;
               try {
-                console.error(`${logMessage}: ${JSON.stringify(body)}`);
+                console.error(`${logMessage}\n${JSON.stringify(body)}`);
               } catch (e) {
                 console.error(logMessage);
               }
               throw { status: res.status, body };
             },
             () => {
-              console.error(`${res.status} error on ${method} ${path}. ${payload ? 'Payload: ' + payload : ''}`);
+              console.error(`${res.status} error on ${method} ${path}${payload ? '\nPayload: ' + payload : ''}`);
               throw { status: res.status };
             },
           );
@@ -286,7 +286,7 @@ export class Rest implements IRest {
         (reason) => {
           const logMessage = `getStreamedResponse: error on POST ${path}`;
           try {
-            console.error(`${logMessage}: ${JSON.stringify(reason)}`);
+            console.error(`${logMessage}\n${JSON.stringify(reason)}`);
           } catch (e) {
             console.error(logMessage);
           }
