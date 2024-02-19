@@ -6,7 +6,9 @@ import { SDKService } from '@flaps/core';
   template: `
     <div class="knowledge-box-users page-spacing">
       <h2 class="display-s">{{ 'sidenav.users' | translate }}</h2>
-      <app-users-manage [kb]="kb | async"></app-users-manage>
+      @if (kb | async; as kb) {
+        <app-users-manage [kb]="kb"></app-users-manage>
+      }
     </div>
   `,
   styleUrls: ['./knowledge-box-users.component.scss'],
