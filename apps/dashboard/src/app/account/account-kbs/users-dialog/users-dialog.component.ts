@@ -7,6 +7,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersDialogComponent {
+  kb = this.modal.config.data?.['kb'];
   constructor(public modal: ModalRef) {}
 
   close() {

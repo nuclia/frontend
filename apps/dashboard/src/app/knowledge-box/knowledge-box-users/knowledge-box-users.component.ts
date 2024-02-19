@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { map } from 'rxjs';
 import { SDKService } from '@flaps/core';
 
 @Component({
@@ -7,13 +6,14 @@ import { SDKService } from '@flaps/core';
   template: `
     <div class="knowledge-box-users page-spacing">
       <h2 class="display-s">{{ 'sidenav.users' | translate }}</h2>
-      <app-users-manage></app-users-manage>
+      <app-users-manage [kb]="kb | async"></app-users-manage>
     </div>
   `,
   styleUrls: ['./knowledge-box-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KnowledgeBoxUsersComponent {
-  kbSlug = this.sdk.currentKb.pipe(map((kb) => kb.slug || ''));
+  kb = this.sdk.currentKb;
+
   constructor(private sdk: SDKService) {}
 }

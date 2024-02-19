@@ -1,6 +1,8 @@
 <pa-modal-advanced fitContent>
   <pa-modal-title>{{ 'account.kb.users' | translate }}</pa-modal-title>
   <pa-modal-content>
-    <app-users-manage></app-users-manage>
+    @if (kb) {
+      <app-users-manage [kb]="kb"></app-users-manage>
+    }
   </pa-modal-content>
 </pa-modal-advanced>
