@@ -43,6 +43,11 @@
           },
           {
             "glob": "**/*",
+            "input": "libs/sync/src/assets/i18n",
+            "output": "assets/i18n/sync"
+          },
+          {
+            "glob": "**/*",
             "input": "apps/nucliadb-admin/src/environments_config/local-stage",
             "output": "assets/deployment"
           },
@@ -99,6 +104,11 @@
             },
             {
               "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
               "input": "apps/nucliadb-admin/src/environments_config/production",
               "output": "assets/deployment"
             },
@@ -141,6 +151,11 @@
               "glob": "**/*",
               "input": "libs/user/src/assets/i18n",
               "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
             },
             {
               "glob": "**/*",

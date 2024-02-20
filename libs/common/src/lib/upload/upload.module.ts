@@ -33,6 +33,8 @@ import { UploadLayoutComponent } from './upload-data/upload-layout.component';
 import { UploadRoutingModule } from './upload-routing.module';
 import { SyncModule } from 'libs/sync/src/lib/new-sync.module';
 import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module';
+import { SyncService } from '@nuclia/sync';
+import { NewSyncService } from '../../../../sync/src/lib/sync/new-sync.service';
 
 @NgModule({
   imports: [
@@ -80,6 +82,11 @@ import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module
     DesktopSourcesComponent,
     UploadOptionComponent,
     UploadLayoutComponent,
+  ],
+  providers: [
+    // TO BE REMOVED WHEN DESKTOP APP IS GONE
+    // override SyncService with NewSyncService to use the new agent API
+    { provide: SyncService, useClass: NewSyncService },
   ],
 })
 export class UploadModule {}
