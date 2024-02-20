@@ -5,6 +5,7 @@ import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary } from '.
 import { Account, Kb } from './regional-account.models';
 import { ZoneService } from '../manage-zones/zone.service';
 import { KBRoles, Nuclia } from '@nuclia/core';
+import { ZoneSummary } from '../manage-zones/zone.models';
 
 const MANAGE_ACCOUNT_ENDPOINT = '/manage/@account';
 const ACCOUNT_ENDPOINT = '/account';
@@ -26,35 +27,33 @@ export class RegionalAccountService {
   }
 
   getKbList(accountSlug: string): Observable<KbSummary[]> {
-    return forkJoin([this.zoneService.getZoneSlugs(), this.sdk.nuclia.db.getKbIndexes(accountSlug)]).pipe(
-      switchMap(([zoneSlugs, indexes]) =>
+    return forkJoin([this.zoneService.getZoneDict(), this.sdk.nuclia.db.getKbIndexes(accountSlug)]).pipe(
+      switchMap(([zoneDict, indexes]) =>
         forkJoin(
-          indexes.map((index) =>
-            this.sdk.nuclia.rest
-              .get<Kb>(
-                `${ACCOUNT_ENDPOINT}/${index.account_id}/kb/${index.kb_id}`,
-                undefined,
-                undefined,
-                zoneSlugs[index.zone_id],
-              )
-              .pipe(map((kb) => ({ ...kb, accountId: index.account_id, zoneId: index.zone_id }))),
-          ),
+          indexes.map((index) => {
+            const zone = zoneDict[index.zone_id];
+            return this.sdk.nuclia.rest
+              .get<Kb>(`${ACCOUNT_ENDPOINT}/${index.account_id}/kb/${index.kb_id}`, undefined, undefined, zone.slug)
+              .pipe(map((kb) => ({ ...kb, accountId: index.account_id, zone })));
+          }),
         ),
       ),
     );
   }
 
   loadKbCounters(kbList: KbSummary[]): Observable<KbCounters> {
-    return this.zoneService.getZoneSlugs().pipe(
+    return this.zoneService.getZoneDict().pipe(
       switchMap((zoneSlugs) => {
         const requests = kbList.map((kb) => {
-          const zoneSlug = zoneSlugs[kb.zoneId];
+          const zoneSlug = zoneSlugs[kb.zone.id].slug;
           if (!zoneSlug) {
             console.error(`No zone found for KB ${kb.slug}`, kb, zoneSlugs);
             return of(null);
           }
           const specificNuclia = new Nuclia({
             ...this.sdk.nuclia.options,
+            zone: zoneSlug,
+            knowledgeBox: kb.id,
           });
           return specificNuclia.knowledgeBox.counters().pipe(
             map((counters) => ({ kbId: kb.id, counters })),
@@ -78,12 +77,13 @@ export class RegionalAccountService {
   }
 
   getKbDetails(kbSummary: KbSummary, accountDetails: AccountDetails): Observable<KbDetails> {
-    return this.getKbZoneSlug(kbSummary).pipe(
-      switchMap((zoneSlug) => {
-        if (!zoneSlug) {
+    return this.getKbZone(kbSummary).pipe(
+      switchMap((zone) => {
+        if (!zone) {
           return of(kbSummary as KbDetails);
         }
 
+        const zoneSlug = zone.slug;
         const kbPath = `${ACCOUNT_ENDPOINT}/${kbSummary.accountId}/kb/${kbSummary.id}`;
         return forkJoin([
           this.sdk.nuclia.rest.get<Kb>(kbPath, undefined, undefined, zoneSlug),
@@ -92,6 +92,7 @@ export class RegionalAccountService {
           map(([kb, users]) => {
             const kbDetails: KbDetails = {
               ...kbSummary,
+              zone,
               slug: kb.slug,
               title: kb.title,
               created: kb.created,
@@ -180,8 +181,20 @@ export class RegionalAccountService {
     }));
   }
 
+  private getKbZone(kbSummary: KbSummary): Observable<ZoneSummary | undefined> {
+    return this.zoneService.getZoneDict().pipe(
+      map((zoneDict) => {
+        const zone = zoneDict[kbSummary.zone.id];
+        if (!zone) {
+          console.error(`No zone found for KB`, kbSummary);
+        }
+        return zone;
+      }),
+    );
+  }
+
   private getKbZoneSlug(kbSummary: KbSummary): Observable<string | undefined> {
-    return this.zoneService.getZoneSlug(kbSummary.zoneId).pipe(
+    return this.zoneService.getZoneSlug(kbSummary.zone.id).pipe(
       tap((zoneSlug) => {
         if (!zoneSlug) {
           console.error(`No zone found for KB`, kbSummary);

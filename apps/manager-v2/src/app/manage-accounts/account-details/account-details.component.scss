@@ -1,4 +1,4 @@
-@import 'variables';
+@import 'apps/manager-v2/src/variables';
 
 .account-info {
   background: $color-neutral-lightest;
@@ -7,4 +7,8 @@
   gap: rhythm(1);
   margin: rhythm(1) rhythm(2) rhythm(2);
   padding: rhythm(1);
+}
+
+.zone-name {
+  color: $color-neutral-regular;
 }

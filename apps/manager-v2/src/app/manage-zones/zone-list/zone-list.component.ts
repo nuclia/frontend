@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, take, tap } from 'rxjs';
 import { ZoneSummary } from '../zone.models';
 import { ZoneService } from '../zone.service';
 
@@ -9,7 +9,7 @@ import { ZoneService } from '../zone.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZoneListComponent {
-  private _allZones: BehaviorSubject<ZoneSummary[]> = new BehaviorSubject<ZoneSummary[]>([]);
+  private _allZones: Observable<ZoneSummary[]> = this.zoneService.zones;
 
   filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   zones$: Observable<ZoneSummary[]> = combineLatest([this._allZones, this.filter$]).pipe(
@@ -17,22 +17,25 @@ export class ZoneListComponent {
       filter ? zones.filter((zone) => zone.title.includes(filter) || zone.slug.includes(filter)) : zones,
     ),
     map((zones) => zones.sort((a, b) => a.title.localeCompare(b.title))),
+    tap(() => this.cdr.markForCheck()),
   );
 
   lastIndex = 100;
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private zoneService: ZoneService,
     private modalService: SisModalService,
     private toast: SisToastService,
-  ) {
-    this.loadZones();
-  }
+  ) {}
 
   onReachAnchor() {
-    if (this.lastIndex < this._allZones.getValue().length) {
-      this.lastIndex = this.lastIndex + 100;
-    }
+    this._allZones.pipe(take(1)).subscribe((zones) => {
+      if (this.lastIndex < zones.length) {
+        this.lastIndex = this.lastIndex + 100;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   deleteZone(event: MouseEvent, zone: ZoneSummary) {
@@ -49,14 +52,11 @@ export class ZoneListComponent {
       .onClose.pipe(
         filter((confirm) => !!confirm),
         switchMap(() => this.zoneService.deleteZone(zone.id)),
+        switchMap(() => this.zoneService.loadZones()),
       )
       .subscribe({
-        next: () => this.loadZones(),
+        next: () => {},
         error: () => this.toast.error('Zone deletion failed'),
       });
-  }
-
-  private loadZones() {
-    this.zoneService.getZones().subscribe((zones) => this._allZones.next(zones));
   }
 }

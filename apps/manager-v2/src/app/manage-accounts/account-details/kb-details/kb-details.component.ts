@@ -21,6 +21,7 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
   kbForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    zone: new FormControl<string>('', { nonNullable: true }),
   });
   kb$ = this.store.kbDetails;
   isSaving = false;
@@ -62,14 +63,14 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
         switchMap(([account, { kbId, zoneId }]) =>
           this.accountService.loadKb({
             accountId: account.id,
-            zoneId,
+            zone: { id: zoneId },
             id: kbId,
           } as KbSummary),
         ),
       )
       .subscribe((kb) => {
         this.backupKb = kb;
-        this.kbForm.patchValue({ title: kb.title, slug: kb.slug });
+        this.kbForm.patchValue({ title: kb.title, slug: kb.slug, zone: kb.zone.title });
         this.cdr.markForCheck();
       });
   }

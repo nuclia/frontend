@@ -16,6 +16,11 @@
       [value]="kb.created">
       Created
     </pa-input>
+    <pa-input
+      formControlName="zone"
+      readonly>
+      Zone
+    </pa-input>
     <pa-input formControlName="slug">Slug</pa-input>
     <pa-input formControlName="title">Title</pa-input>
     <nma-form-footer
@@ -32,15 +37,17 @@
       Search member to add
     </pa-input>
     <pa-dropdown #potentialMembersList>
-      <pa-option
-        *ngFor="let member of potentialMembers$ | async"
-        icon="circle-plus"
-        [description]="member.id"
-        (selectOption)="addMember(member)">
-        {{ member.name }} – {{ member.email }}
-      </pa-option>
+      @for (member of potentialMembers$ | async; track member.id) {
+        <pa-option
+          icon="circle-plus"
+          [description]="member.id"
+          (selectOption)="addMember(member)">
+          {{ member.name }} – {{ member.email }}
+        </pa-option>
+      }
     </pa-dropdown>
   </div>
+  <div class="body-s"></div>
   <pa-table columns="2fr repeat(3, 1fr) 96px">
     <pa-table-header>
       <pa-table-cell header>Id</pa-table-cell>
@@ -49,85 +56,93 @@
       <pa-table-cell header>Role</pa-table-cell>
       <pa-table-cell-menu header></pa-table-cell-menu>
     </pa-table-header>
-    <pa-table-row *ngFor="let owner of kb.owners">
-      <pa-table-cell>
-        <small>{{ owner.id }}</small>
-      </pa-table-cell>
-      <pa-table-cell>{{ owner.name }}</pa-table-cell>
-      <pa-table-cell>{{ owner.email }}</pa-table-cell>
-      <pa-table-cell>Owner</pa-table-cell>
-      <pa-table-cell-menu>
-        <ng-container *ngIf="kb.owners.length > 1">
+    @for (owner of kb.owners; track owner.id) {
+      <pa-table-row>
+        <pa-table-cell>
+          <small>{{ owner.id }}</small>
+        </pa-table-cell>
+        <pa-table-cell>{{ owner.name }}</pa-table-cell>
+        <pa-table-cell>{{ owner.email }}</pa-table-cell>
+        <pa-table-cell>Owner</pa-table-cell>
+        <pa-table-cell-menu>
+          @if (kb.owners.length > 1) {
+            <pa-button
+              icon="more-vertical"
+              aspect="basic"
+              [paPopup]="ownerMenu">
+              Menu
+            </pa-button>
+            <pa-dropdown #ownerMenu>
+              <pa-option (selectOption)="setAsContributor(owner)">Set as Contributor</pa-option>
+              <pa-option (selectOption)="setAsMember(owner)">Set as Member</pa-option>
+              <pa-separator></pa-separator>
+              <pa-option
+                destructive
+                (selectOption)="removeUser(owner)">
+                Remove
+              </pa-option>
+            </pa-dropdown>
+          }
+        </pa-table-cell-menu>
+      </pa-table-row>
+    }
+
+    @for (contributor of kb.contributors; track contributor.id) {
+      <pa-table-row>
+        <pa-table-cell>
+          <small>{{ contributor.id }}</small>
+        </pa-table-cell>
+        <pa-table-cell>{{ contributor.name }}</pa-table-cell>
+        <pa-table-cell>{{ contributor.email }}</pa-table-cell>
+        <pa-table-cell>Contributor</pa-table-cell>
+        <pa-table-cell-menu>
           <pa-button
             icon="more-vertical"
             aspect="basic"
-            [paPopup]="ownerMenu">
+            [paPopup]="contributorMenu">
             Menu
           </pa-button>
-          <pa-dropdown #ownerMenu>
-            <pa-option (selectOption)="setAsContributor(owner)">Set as Contributor</pa-option>
-            <pa-option (selectOption)="setAsMember(owner)">Set as Member</pa-option>
+          <pa-dropdown #contributorMenu>
+            <pa-option (selectOption)="setAsOwner(contributor)">Set as Owner</pa-option>
+            <pa-option (selectOption)="setAsMember(contributor)">Set as Member</pa-option>
             <pa-separator></pa-separator>
             <pa-option
               destructive
-              (selectOption)="removeUser(owner)">
+              (selectOption)="removeUser(contributor)">
               Remove
             </pa-option>
           </pa-dropdown>
-        </ng-container>
-      </pa-table-cell-menu>
-    </pa-table-row>
-    <pa-table-row *ngFor="let contributor of kb.contributors">
-      <pa-table-cell>
-        <small>{{ contributor.id }}</small>
-      </pa-table-cell>
-      <pa-table-cell>{{ contributor.name }}</pa-table-cell>
-      <pa-table-cell>{{ contributor.email }}</pa-table-cell>
-      <pa-table-cell>Contributor</pa-table-cell>
-      <pa-table-cell-menu>
-        <pa-button
-          icon="more-vertical"
-          aspect="basic"
-          [paPopup]="contributorMenu">
-          Menu
-        </pa-button>
-        <pa-dropdown #contributorMenu>
-          <pa-option (selectOption)="setAsOwner(contributor)">Set as Owner</pa-option>
-          <pa-option (selectOption)="setAsMember(contributor)">Set as Member</pa-option>
-          <pa-separator></pa-separator>
-          <pa-option
-            destructive
-            (selectOption)="removeUser(contributor)">
-            Remove
-          </pa-option>
-        </pa-dropdown>
-      </pa-table-cell-menu>
-    </pa-table-row>
-    <pa-table-row *ngFor="let member of kb.members">
-      <pa-table-cell>
-        <small>{{ member.id }}</small>
-      </pa-table-cell>
-      <pa-table-cell>{{ member.name }}</pa-table-cell>
-      <pa-table-cell>{{ member.email }}</pa-table-cell>
-      <pa-table-cell>Member</pa-table-cell>
-      <pa-table-cell-menu>
-        <pa-button
-          icon="more-vertical"
-          aspect="basic"
-          [paPopup]="memberMenu">
-          Menu
-        </pa-button>
-        <pa-dropdown #memberMenu>
-          <pa-option (selectOption)="setAsOwner(member)">Set as Owner</pa-option>
-          <pa-option (selectOption)="setAsContributor(member)">Set as Contributor</pa-option>
-          <pa-separator></pa-separator>
-          <pa-option
-            destructive
-            (selectOption)="removeUser(member)">
-            Remove
-          </pa-option>
-        </pa-dropdown>
-      </pa-table-cell-menu>
-    </pa-table-row>
+        </pa-table-cell-menu>
+      </pa-table-row>
+    }
+
+    @for (member of kb.members; track member.id) {
+      <pa-table-row>
+        <pa-table-cell>
+          <small>{{ member.id }}</small>
+        </pa-table-cell>
+        <pa-table-cell>{{ member.name }}</pa-table-cell>
+        <pa-table-cell>{{ member.email }}</pa-table-cell>
+        <pa-table-cell>Member</pa-table-cell>
+        <pa-table-cell-menu>
+          <pa-button
+            icon="more-vertical"
+            aspect="basic"
+            [paPopup]="memberMenu">
+            Menu
+          </pa-button>
+          <pa-dropdown #memberMenu>
+            <pa-option (selectOption)="setAsOwner(member)">Set as Owner</pa-option>
+            <pa-option (selectOption)="setAsContributor(member)">Set as Contributor</pa-option>
+            <pa-separator></pa-separator>
+            <pa-option
+              destructive
+              (selectOption)="removeUser(member)">
+              Remove
+            </pa-option>
+          </pa-dropdown>
+        </pa-table-cell-menu>
+      </pa-table-row>
+    }
   </pa-table>
 </ng-container>

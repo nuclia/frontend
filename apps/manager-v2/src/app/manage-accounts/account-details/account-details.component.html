@@ -77,16 +77,20 @@
           routerLinkActive="active">
           Knowledge Boxes
         </li>
-        <li
-          *ngFor="let kb of kbList | async"
-          class="child-route"
-          [routerLink]="'zone/' + kb.zoneId + '/kb/' + kb.id"
-          routerLinkActive="active">
-          <pa-icon
-            name="knowledge-box"
-            size="small"></pa-icon>
-          {{ kb.slug }}
-        </li>
+        @for (kb of kbList | async; track kb.id) {
+          <li
+            class="child-route"
+            [routerLink]="'zone/' + kb.zone.id + '/kb/' + kb.id"
+            routerLinkActive="active">
+            <pa-icon
+              name="knowledge-box"
+              size="small"></pa-icon>
+            <div>
+              {{ kb.slug }}
+              <small class="zone-name">({{ kb.zone.title }})</small>
+            </div>
+          </li>
+        }
         <li
           routerLink="limits"
           routerLinkActive="active">
