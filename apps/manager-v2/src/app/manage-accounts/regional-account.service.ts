@@ -5,6 +5,7 @@ import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary } from '.
 import { Account, Kb } from './regional-account.models';
 import { ZoneService } from '../manage-zones/zone.service';
 import { KBRoles, Nuclia } from '@nuclia/core';
+import { ZoneSummary } from '../manage-zones/zone.models';
 
 const MANAGE_ACCOUNT_ENDPOINT = '/manage/@account';
 const ACCOUNT_ENDPOINT = '/account';
@@ -76,12 +77,13 @@ export class RegionalAccountService {
   }
 
   getKbDetails(kbSummary: KbSummary, accountDetails: AccountDetails): Observable<KbDetails> {
-    return this.getKbZoneSlug(kbSummary).pipe(
-      switchMap((zoneSlug) => {
-        if (!zoneSlug) {
+    return this.getKbZone(kbSummary).pipe(
+      switchMap((zone) => {
+        if (!zone) {
           return of(kbSummary as KbDetails);
         }
 
+        const zoneSlug = zone.slug;
         const kbPath = `${ACCOUNT_ENDPOINT}/${kbSummary.accountId}/kb/${kbSummary.id}`;
         return forkJoin([
           this.sdk.nuclia.rest.get<Kb>(kbPath, undefined, undefined, zoneSlug),
@@ -90,6 +92,7 @@ export class RegionalAccountService {
           map(([kb, users]) => {
             const kbDetails: KbDetails = {
               ...kbSummary,
+              zone,
               slug: kb.slug,
               title: kb.title,
               created: kb.created,
@@ -176,6 +179,18 @@ export class RegionalAccountService {
       name: user.name,
       isManager: account.managers.includes(user.id),
     }));
+  }
+
+  private getKbZone(kbSummary: KbSummary): Observable<ZoneSummary | undefined> {
+    return this.zoneService.getZoneDict().pipe(
+      map((zoneDict) => {
+        const zone = zoneDict[kbSummary.zone.id];
+        if (!zone) {
+          console.error(`No zone found for KB`, kbSummary);
+        }
+        return zone;
+      }),
+    );
   }
 
   private getKbZoneSlug(kbSummary: KbSummary): Observable<string | undefined> {
