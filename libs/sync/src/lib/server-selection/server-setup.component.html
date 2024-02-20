@@ -1,0 +1,15 @@
+<h1>{{ 'upload.server.title' | translate }}</h1>
+<div class="container">
+  <pa-input
+    [formControl]="serverUrl"
+    placeholder="https://my.sync.server"
+    [help]="'upload.server.help' | translate: { url: localUrl }">
+    {{ 'upload.server.url' | translate }}
+  </pa-input>
+  <pa-button
+    (click)="save()"
+    kind="primary"
+    [disabled]="serverUrl.pristine">
+    {{ 'generic.save' | translate }}
+  </pa-button>
+</div>

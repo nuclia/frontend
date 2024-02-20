@@ -31,6 +31,13 @@ export class NavigationService {
     }),
   );
 
+  kbUrl = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
+    map(([account, kb]) => {
+      const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
+      return this.getKbUrl(account.slug, kbSlug);
+    }),
+  );
+
   inAccountManagement(path: string): boolean {
     return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
   }

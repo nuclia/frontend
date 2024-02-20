@@ -1,8 +1,14 @@
 <div class="page-spacing">
   <router-outlet></router-outlet>
 </div>
-@if (!standalone && hasSyncServer) {
+@if (!standalone && (hasSyncServer | async)) {
   <div class="sync-status">
     {{ ((isServerDown | async) ? 'upload.server.server_down' : 'upload.server.server_up') | translate }}
+    <pa-button
+      (click)="setupSync()"
+      icon="gear"
+      size="small"
+      aspect="basic"
+      paTooltip="stash.upload.sync.setup-button">{{ 'stash.upload.sync.setup-button' | translate }}</pa-button>
   </div>
 }

@@ -40,7 +40,7 @@ import { SharepointImpl } from './sources/sharepoint';
 import { ConfluenceConnector } from './sources/confluence';
 import { OAuthConnector } from './sources/oauth';
 
-export const LOCAL_SYNC_SERVER = 'http://localhost:8080';
+export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 
 @Injectable({ providedIn: 'root' })
@@ -399,14 +399,13 @@ export class NewSyncService {
     );
   }
 
+  // "local" parameter can be removed once desktop is gone
   setSyncServer(server: { url?: string; local?: boolean }) {
-    if (server.local) {
-      this._syncServer.next(LOCAL_SYNC_SERVER);
-      localStorage.setItem(SYNC_SERVER_KEY, LOCAL_SYNC_SERVER);
-    } else if (server.url) {
-      localStorage.setItem(SYNC_SERVER_KEY, server.url);
-      this._syncServer.next(server.url);
-    }
+    localStorage.setItem(SYNC_SERVER_KEY, server.url || '');
+    this._syncServer.next(server.url || '');
+    this.serverStatus(server.url || '').subscribe((status) => {
+      this.setServerStatus(!status.running);
+    });
   }
 
   hasSyncServer(): boolean {
