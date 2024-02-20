@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, filter, map, Observable, take, tap } from 'rxjs';
 import { Zone, ZoneAddPayload, ZonePatchPayload, ZoneSummary } from './zone.models';
 
 const ZONES_ENDPOINT = '/manage/@zones';
@@ -10,24 +10,31 @@ const ZONE_ENDPOINT = '/manage/@zone';
   providedIn: 'root',
 })
 export class ZoneService {
-  constructor(private sdk: SDKService) {}
+  private _zones = new BehaviorSubject<ZoneSummary[]>([]);
+  zones = this._zones.asObservable();
 
-  getZones(): Observable<ZoneSummary[]> {
-    return this.sdk.nuclia.rest.get(ZONES_ENDPOINT);
+  constructor(private sdk: SDKService) {
+    this.loadZones().subscribe();
+  }
+
+  loadZones(): Observable<ZoneSummary[]> {
+    return this.sdk.nuclia.rest.get<ZoneSummary[]>(ZONES_ENDPOINT).pipe(tap((zones) => this._zones.next(zones)));
   }
 
   /**
    * Get a map of zone slug indexed by their id
    */
-  getZoneSlugs(): Observable<{ [zoneId: string]: string }> {
-    return this.getZones().pipe(
+  getZoneDict(): Observable<{ [zoneId: string]: ZoneSummary }> {
+    return this.zones.pipe(
+      filter((zones) => zones.length > 0),
+      take(1),
       map((zones) =>
         zones.reduce(
           (map, zone) => {
-            map[zone.id] = zone.slug;
+            map[zone.id] = zone;
             return map;
           },
-          {} as { [zoneId: string]: string },
+          {} as { [zoneId: string]: ZoneSummary },
         ),
       ),
     );
@@ -38,7 +45,7 @@ export class ZoneService {
    * @param zoneId
    */
   getZoneSlug(zoneId: string): Observable<string | undefined> {
-    return this.getZoneSlugs().pipe(map((zoneSlugs) => zoneSlugs[zoneId]));
+    return this.getZoneDict().pipe(map((zoneSlugs) => zoneSlugs[zoneId].slug));
   }
 
   getZone(zoneId: string): Observable<Zone> {

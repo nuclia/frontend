@@ -1,5 +1,6 @@
 import { AccountBlockingState, AccountLimits, AccountTypes, BlockedFeature, KBRoles } from '@nuclia/core';
 import { DedicatedProcessorsState } from './regional-account.models';
+import { ZoneSummary } from '../manage-zones/zone.models';
 
 export interface AccountSummary {
   id: string;
@@ -24,7 +25,7 @@ export interface KbSummary {
   slug: string;
   title: string;
   accountId: string;
-  zoneId: string;
+  zone: ZoneSummary;
 }
 
 export interface KbCounters {

@@ -26,29 +26,25 @@ export class RegionalAccountService {
   }
 
   getKbList(accountSlug: string): Observable<KbSummary[]> {
-    return forkJoin([this.zoneService.getZoneSlugs(), this.sdk.nuclia.db.getKbIndexes(accountSlug)]).pipe(
-      switchMap(([zoneSlugs, indexes]) =>
+    return forkJoin([this.zoneService.getZoneDict(), this.sdk.nuclia.db.getKbIndexes(accountSlug)]).pipe(
+      switchMap(([zoneDict, indexes]) =>
         forkJoin(
-          indexes.map((index) =>
-            this.sdk.nuclia.rest
-              .get<Kb>(
-                `${ACCOUNT_ENDPOINT}/${index.account_id}/kb/${index.kb_id}`,
-                undefined,
-                undefined,
-                zoneSlugs[index.zone_id],
-              )
-              .pipe(map((kb) => ({ ...kb, accountId: index.account_id, zoneId: index.zone_id }))),
-          ),
+          indexes.map((index) => {
+            const zone = zoneDict[index.zone_id];
+            return this.sdk.nuclia.rest
+              .get<Kb>(`${ACCOUNT_ENDPOINT}/${index.account_id}/kb/${index.kb_id}`, undefined, undefined, zone.slug)
+              .pipe(map((kb) => ({ ...kb, accountId: index.account_id, zone })));
+          }),
         ),
       ),
     );
   }
 
   loadKbCounters(kbList: KbSummary[]): Observable<KbCounters> {
-    return this.zoneService.getZoneSlugs().pipe(
+    return this.zoneService.getZoneDict().pipe(
       switchMap((zoneSlugs) => {
         const requests = kbList.map((kb) => {
-          const zoneSlug = zoneSlugs[kb.zoneId];
+          const zoneSlug = zoneSlugs[kb.zone.id];
           if (!zoneSlug) {
             console.error(`No zone found for KB ${kb.slug}`, kb, zoneSlugs);
             return of(null);
@@ -181,7 +177,7 @@ export class RegionalAccountService {
   }
 
   private getKbZoneSlug(kbSummary: KbSummary): Observable<string | undefined> {
-    return this.zoneService.getZoneSlug(kbSummary.zoneId).pipe(
+    return this.zoneService.getZoneSlug(kbSummary.zone.id).pipe(
       tap((zoneSlug) => {
         if (!zoneSlug) {
           console.error(`No zone found for KB`, kbSummary);

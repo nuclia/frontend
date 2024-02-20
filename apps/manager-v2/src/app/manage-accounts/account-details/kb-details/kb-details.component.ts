@@ -62,7 +62,7 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
         switchMap(([account, { kbId, zoneId }]) =>
           this.accountService.loadKb({
             accountId: account.id,
-            zoneId,
+            zone: { id: zoneId },
             id: kbId,
           } as KbSummary),
         ),
