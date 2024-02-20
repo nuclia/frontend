@@ -6,5 +6,8 @@
   width: 100%;
   border-top: 1px solid $color-neutral-lighter;
   background-color: white;
-  padding: rhythm(1) rhythm(1) rhythm(1) var(--app-layout-padding-left);
+  padding: rhythm(0.5) rhythm(1) rhythm(0.5) var(--app-layout-padding-left);
+  display: flex;
+  align-items: center;
+  gap: rhythm(1);
 }
