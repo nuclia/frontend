@@ -667,6 +667,7 @@
 	"prompt-lab.page-description": "Test LLMs and prompts, see how they work together, choose which settings you want to apply to your Knowledge Box.",
 	"prompt-lab.page-title": "Prompt lab",
 	"prompt-lab.results.download-csv": "Download CSV",
+	"prompt-lab.results.error": "An error occurred while getting the answer, please try again later.",
 	"prompt-lab.results.prompt": "Prompt: ",
 	"prompt-lab.results.question": "Question: {{query}}",
 	"prompt-lab.results.title": "Results",

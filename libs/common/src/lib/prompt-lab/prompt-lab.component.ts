@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ModalConfig,
   ModalRef,
@@ -87,6 +87,7 @@ export class PromptLabComponent implements OnInit {
     private sdk: SDKService,
     private modalService: SisModalService,
     private generativeModelPipe: GenerativeModelPipe,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit() {
@@ -137,6 +138,7 @@ export class PromptLabComponent implements OnInit {
     }
 
     this.progress$.next(null);
+    this.results = [];
     this.modalService
       .openConfirm({
         title: 'prompt-lab.generate.confirmation.title',
@@ -197,7 +199,15 @@ export class PromptLabComponent implements OnInit {
                             this._addResult({ model, query, prompt, result: answer }, requestCount);
                           }),
                           catchError((error) => {
-                            this._addResult({ model, query, prompt, result: `Error: ${error}` }, requestCount);
+                            this._addResult(
+                              {
+                                model,
+                                query,
+                                prompt,
+                                result: this.translate.instant('prompt-lab.results.error'),
+                              },
+                              requestCount,
+                            );
                             return of(null);
                           }),
                         ),

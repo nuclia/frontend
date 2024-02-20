@@ -666,6 +666,7 @@
 	"prompt-lab.page-description": "Proveu els LLM i les indicacions, mireu com funcionen junts, trieu quina configuració voleu aplicar al vostre Knowledge Box.",
 	"prompt-lab.page-title": "Prompt lab",
 	"prompt-lab.results.download-csv": "Descarregar CSV",
+	"prompt-lab.results.error": "S'ha produït un error en obtenir la resposta, si us plau, torna-ho a provar més tard.",
 	"prompt-lab.results.prompt": "Prompt:",
 	"prompt-lab.results.question": "Pregunta: {{query}}",
 	"prompt-lab.results.title": "Resultats",

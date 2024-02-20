@@ -667,6 +667,7 @@
 	"prompt-lab.page-description": "Testez les LLM et les invites, voyez comment ils fonctionnent ensemble, choisissez les paramètres que vous souhaitez appliquer à votre Knowledge Box.",
 	"prompt-lab.page-title": "Prompt lab",
 	"prompt-lab.results.download-csv": "Télécharger CSV",
+	"prompt-lab.results.error": "Une erreur s'est produite lors de l'obtention de la réponse, veuillez réessayer plus tard.",
 	"prompt-lab.results.prompt": "Prompt : ",
 	"prompt-lab.results.question": "Question : {{query}}",
 	"prompt-lab.results.title": "Résultats",
