@@ -55,45 +55,57 @@
     }
   }
 
-  .question.title-s {
+  .answer-expander {
+    align-items: center;
+    display: flex;
+    gap: rhythm(0.5);
+
+    .title-s {
+      flex: 1 0 auto;
+    }
+
+    pa-button {
+      transition: transform $transition-hint;
+    }
+  }
+
+  .question {
     margin-top: rhythm(3);
+    &.collapsed {
+      .answer-expander pa-button {
+        transform: rotate(-90deg);
+      }
+    }
+  }
+
+  .answers {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
   }
 
   .answer-container {
     display: flex;
     flex-direction: column;
-    gap: rhythm(0.25);
-    margin-bottom: rhythm(1);
+    gap: rhythm(1);
+    transition:
+      height $transition-hint,
+      margin-bottom $transition-hint,
+      opacity $transition-hint;
 
     &.collapsed {
-      align-items: center;
-      flex-direction: row;
-      gap: rhythm(1);
-
-      .model-expander pa-button {
-        transform: rotate(-90deg);
-      }
-
-      .body-s {
-        flex: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+      display: none;
     }
 
-    .model-expander {
-      align-items: center;
-      display: flex;
-      gap: rhythm(0.5);
-
-      strong {
-        flex: 1 0 auto;
-      }
-
-      pa-button {
-        transition: transform $transition-hint;
-      }
+    &:last-child {
+      padding-bottom: rhythm(0.5);
     }
+  }
+
+  .expander-card-container {
+    border: 1px solid $color-neutral-light;
+    border-radius: $border-radius-chip;
+    margin: rhythm(2) 0;
+    padding: rhythm(1) rhythm(1.5);
   }
 }

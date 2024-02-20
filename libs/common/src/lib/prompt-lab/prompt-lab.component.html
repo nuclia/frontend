@@ -56,37 +56,12 @@
             <pa-textarea
               resizable
               rows="3"
-              [disabled]="promptsLimitReached"
               [(value)]="currentPrompt"
               [help]="'prompt-lab.configuration.prompts.placeholder' | translate"
               (resizing)="onResizingTextarea($event)">
               {{ 'prompt-lab.configuration.prompts.label' | translate }}
             </pa-textarea>
-            <pa-button
-              size="small"
-              icon="plus"
-              [disabled]="promptsLimitReached"
-              (click)="addPrompt()"></pa-button>
           </div>
-        </div>
-        <div class="field-spacing">
-          <ol class="body-m">
-            @for (prompt of prompts; track prompt) {
-              <li>
-                <div class="list-item">
-                  <pre><code>{{prompt}}</code></pre>
-                  <pa-button
-                    aspect="basic"
-                    icon="trash"
-                    size="small"
-                    kind="destructive"
-                    (click)="deletePrompt($index)">
-                    {{ 'generic.delete' | translate }}
-                  </pa-button>
-                </div>
-              </li>
-            }
-          </ol>
         </div>
         <div class="field-spacing">
           <div class="title-s">{{ 'prompt-lab.configuration.models.title' | translate }}</div>
@@ -122,39 +97,46 @@
         </pa-button>
 
         @for (entry of results; track entry.query) {
-          <div class="title-s question">{{ 'prompt-lab.results.question' | translate: { query: entry.query } }}</div>
-          @for (item of entry.data; track item) {
-            @if (item.prompt) {
-              <div class="prompt-container">
-                <span class="title-s">{{ 'prompt-lab.results.prompt' | translate }}</span>
-                <pre>{{ item.prompt }}</pre>
-              </div>
-            }
-
-            @for (result of item.results; track result) {
-              <div
-                class="answer-container"
-                [class.collapsed]="modelCollapsed[entry.query + item.prompt + result.model]">
-                <div class="model-expander">
-                  <pa-button
-                    aspect="basic"
-                    icon="chevron-down"
-                    size="small"
-                    (click)="collapseAnswer(entry.query, item.prompt, result.model)"></pa-button>
-                  <strong>{{ result.model | generativeModel }}</strong>
+          <div class="expander-card-container">
+            <pa-expander
+              card
+              expanded>
+              <pa-expander-header>
+                <div class="title-s">{{ 'prompt-lab.results.question' | translate: { query: entry.query } }}</div>
+              </pa-expander-header>
+              <pa-expander-body>
+                <div class="answers">
+                  @for (item of entry.data; track item) {
+                    @for (result of item.results; track result) {
+                      <div
+                        class="answer-container"
+                        [class.collapsed]="queryCollapsed[entry.query]">
+                        <div>
+                          <strong>{{ result.model | generativeModel }}</strong>
+                        </div>
+                        <div
+                          class="body-s"
+                          [innerHTML]="result.answer | lineBreakFormatter"></div>
+                      </div>
+                    }
+                  }
                 </div>
-                @if (modelCollapsed[entry.query + item.prompt + result.model]) {
-                  <div class="body-s">
-                    {{ result.answer }}
-                  </div>
-                } @else {
-                  <div
-                    class="body-s"
-                    [innerHTML]="result.answer | lineBreakFormatter"></div>
-                }
-              </div>
-            }
-          }
+              </pa-expander-body>
+            </pa-expander>
+          </div>
+
+          <!--          <div-->
+          <!--            class="question"-->
+          <!--            [class.collapsed]="queryCollapsed[entry.query]">-->
+          <!--            <div class="answer-expander">-->
+          <!--              <pa-button-->
+          <!--                aspect="basic"-->
+          <!--                icon="chevron-down"-->
+          <!--                size="small"-->
+          <!--                (click)="collapseAnswer(entry.query)"></pa-button>-->
+          <!--              <div class="title-s">{{ 'prompt-lab.results.question' | translate: { query: entry.query } }}</div>-->
+          <!--            </div>-->
+          <!--          </div>-->
         }
       </div>
     </pa-expander-body>
