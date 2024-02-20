@@ -38,10 +38,6 @@
         <strong>{{ (account | async)?.maxKbs === -1 ? 'Unlimited' : (account | async)?.maxKbs }}</strong>
       </div>
       <div>
-        Dedicated processors state:
-        <strong style="text-transform: capitalize">{{ (account | async)?.dedicatedProcessorsState }}</strong>
-      </div>
-      <div>
         Activity:
         <a
           [href]="'http://redash.nuclia.com/queries/25?p_account=' + (account | async)?.id"

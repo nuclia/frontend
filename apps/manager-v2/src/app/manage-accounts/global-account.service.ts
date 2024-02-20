@@ -38,10 +38,8 @@ export class GlobalAccountService {
       slug: data.slug,
       email: data.email,
       type: data.type,
-      max_dedicated_processors: data.maxDedicatedProcessors,
       trial_expiration_date: data.trialExpirationDate,
       kbs: data.maxKbs,
-      dedicated_processors_state: data.dedicatedProcessorsState,
     };
     return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}`, payload);
   }

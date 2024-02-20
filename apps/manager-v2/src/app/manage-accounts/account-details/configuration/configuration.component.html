@@ -34,23 +34,11 @@
     }
   </div>
 
-  <pa-date-picker
-    *ngIf="canModifyTrialExpiration"
-    label="Trial expiration date"
-    formControlName="trialExpirationDate"></pa-date-picker>
-  <pa-input
-    type="number"
-    formControlName="maxDedicatedProcessors">
-    Max dedicated processors
-  </pa-input>
-
-  <pa-select
-    label="Dedicated processors state"
-    formControlName="dedicatedProcessorsState">
-    <pa-option value="enabled">Enabled</pa-option>
-    <pa-option value="disabled">Disabled</pa-option>
-    <pa-option value="paused">Paused</pa-option>
-  </pa-select>
+  @if (canModifyTrialExpiration) {
+    <pa-date-picker
+      label="Trial expiration date"
+      formControlName="trialExpirationDate"></pa-date-picker>
+  }
 
   <div>
     <label
@@ -67,21 +55,21 @@
         <pa-radio value="unlimited">Unlimited</pa-radio>
         <pa-radio value="limit">Limit</pa-radio>
       </pa-radio-group>
-      <div
-        *ngIf="configForm.controls.kbs.controls.kbs_radio.value === 'limit'"
-        class="limit-container">
-        <pa-input
-          type="number"
-          externalLabel
-          formControlName="maxKbs"></pa-input>
-        <pa-button
-          icon="reload"
-          paTooltip="Reset to default"
-          aspect="basic"
-          (click)="resetMaxKbsToDefault()">
-          Reset to default
-        </pa-button>
-      </div>
+      @if (configForm.controls.kbs.controls.kbs_radio.value === 'limit') {
+        <div class="limit-container">
+          <pa-input
+            type="number"
+            externalLabel
+            formControlName="maxKbs"></pa-input>
+          <pa-button
+            icon="reload"
+            paTooltip="Reset to default"
+            aspect="basic"
+            (click)="resetMaxKbsToDefault()">
+            Reset to default
+          </pa-button>
+        </div>
+      }
     </div>
   </div>
   <nma-form-footer

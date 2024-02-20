@@ -1,5 +1,4 @@
 import { AccountBlockingState, AccountLimits, AccountTypes, BlockedFeature, KBRoles } from '@nuclia/core';
-import { DedicatedProcessorsState } from './regional-account.models';
 import { ZoneSummary } from '../manage-zones/zone.models';
 
 export interface AccountSummary {
@@ -11,10 +10,8 @@ export interface AccountSummary {
 
 export interface AccountDetails extends AccountSummary {
   blockingState?: AccountBlockingState;
-  dedicatedProcessorsState: DedicatedProcessorsState;
   email: string;
   limits: AccountLimits;
-  maxDedicatedProcessors: number;
   maxKbs: number;
   trialExpirationDate?: string;
   users: AccountUser[];
@@ -56,9 +53,7 @@ export interface AccountUser {
 export type BlockedFeatureFormValues = Record<BlockedFeature, boolean>;
 
 export interface AccountConfigurationPayload {
-  dedicatedProcessorsState: DedicatedProcessorsState;
   email: string;
-  maxDedicatedProcessors: number;
   maxKbs: number;
   slug: string;
   trialExpirationDate?: string | null;

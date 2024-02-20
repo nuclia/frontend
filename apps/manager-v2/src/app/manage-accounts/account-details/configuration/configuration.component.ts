@@ -8,7 +8,6 @@ import { SisToastService } from '@nuclia/sistema';
 import { AccountTypeDefaults } from '@flaps/core';
 import { ManagerStore } from '../../../manager.store';
 import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.models';
-import { DedicatedProcessorsState } from '../../regional-account.models';
 
 @Component({
   templateUrl: './configuration.component.html',
@@ -30,15 +29,10 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       }),
       maxKbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
-    maxDedicatedProcessors: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl<string>(''),
     // restore the validation when the zone is not readonly anymore
     // zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     trialExpirationDate: new FormControl<string>(''),
-    dedicatedProcessorsState: new FormControl<DedicatedProcessorsState>('disabled', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
   });
   isSaving = false;
 
