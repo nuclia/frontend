@@ -82,6 +82,7 @@
     display: flex;
     flex-direction: column;
     gap: rhythm(1.5);
+    padding: rhythm(1) 0 rhythm(0.5);
   }
 
   .answer-container {
@@ -95,10 +96,6 @@
 
     &.collapsed {
       display: none;
-    }
-
-    &:last-child {
-      padding-bottom: rhythm(0.5);
     }
   }
 
