@@ -9,6 +9,7 @@ import {
   EventList,
   IKnowledgeBoxItem,
   IStandaloneKb,
+  KbIndex,
   KnowledgeBox,
   KnowledgeBoxCreation,
   LearningConfigurations,
@@ -25,7 +26,6 @@ import {
   Welcome,
   WritableKnowledgeBox,
 } from './db';
-import { KbIndex } from './db';
 
 export interface INuclia {
   options: NucliaOptions;
@@ -156,7 +156,7 @@ export interface IDb {
   deleteNUAClient(accountId: string, client_id: string, zone: string): Observable<void>;
   hasNUAClient(): boolean;
   getNUAActivity(accountId: string, client_id: string, zoneSlug: string, pageIndex?: number): Observable<EventList>;
-  getLearningConfigurations(): Observable<LearningConfigurations>;
+  getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations>;
   predictTokens(text: string): Observable<PredictedToken[]>;
   predictAnswer(question: string, context: string[], model?: string): Observable<string>;
   predictSummarize(

@@ -95,7 +95,7 @@ export class OnboardingService {
         switchMap(({ accountSlug, accountId }) => {
           this.sdk.nuclia.options.zone = configuration.zoneSlug;
           return this.sdk.nuclia.db
-            .getLearningConfigurations()
+            .getLearningSchema(accountId, configuration.zoneSlug)
             .pipe(map((learningConfiguration) => ({ learningConfiguration, accountSlug, accountId })));
         }),
         switchMap(({ learningConfiguration, accountSlug, accountId }) => {

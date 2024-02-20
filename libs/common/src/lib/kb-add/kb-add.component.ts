@@ -85,7 +85,7 @@ export class KbAddComponent implements OnInit {
     this.cdr.markForCheck();
 
     this.sdk.nuclia.db
-      .getLearningConfigurations()
+      .getLearningSchema(accountId, kbConfig.zone)
       .pipe(
         switchMap((learningConfiguration) => {
           const payload: KnowledgeBoxCreation = {

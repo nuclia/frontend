@@ -497,21 +497,25 @@ export class Db implements IDb {
   }
 
   /**
-   * Get available learning configuration schemas.
+   * Get learning configuration schema available for provided account
+   * @param accountId
+   * @param zone
    */
-  getLearningConfigurations(): Observable<LearningConfigurations> {
-    return this.nuclia.rest.get<LearningConfigurations>('/learning/configuration/schema').pipe(
-      map((config) => {
-        // Normalize schemas property
-        Object.values(config).forEach((item) => {
-          if (item.schemas?.['title'] && item.schemas?.['type']) {
-            item.schema = item.schemas as unknown as LearningConfigurationSchema;
-            item.schemas = undefined;
-          }
-        });
-        return config;
-      }),
-    );
+  getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations> {
+    return this.nuclia.rest
+      .get<LearningConfigurations>(`/account/${accountId}/schema`, undefined, undefined, zone)
+      .pipe(
+        map((config) => {
+          // Normalize schemas property
+          Object.values(config).forEach((item) => {
+            if (item.schemas?.['title'] && item.schemas?.['type']) {
+              item.schema = item.schemas as unknown as LearningConfigurationSchema;
+              item.schemas = undefined;
+            }
+          });
+          return config;
+        }),
+      );
   }
 
   /**
