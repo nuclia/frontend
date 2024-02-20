@@ -44,13 +44,15 @@ export class RegionalAccountService {
     return this.zoneService.getZoneDict().pipe(
       switchMap((zoneSlugs) => {
         const requests = kbList.map((kb) => {
-          const zoneSlug = zoneSlugs[kb.zone.id];
+          const zoneSlug = zoneSlugs[kb.zone.id].slug;
           if (!zoneSlug) {
             console.error(`No zone found for KB ${kb.slug}`, kb, zoneSlugs);
             return of(null);
           }
           const specificNuclia = new Nuclia({
             ...this.sdk.nuclia.options,
+            zone: zoneSlug,
+            knowledgeBox: kb.id,
           });
           return specificNuclia.knowledgeBox.counters().pipe(
             map((counters) => ({ kbId: kb.id, counters })),

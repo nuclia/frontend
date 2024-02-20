@@ -1,33 +1,43 @@
 <h3>Knowledge Boxes</h3>
-<pa-table columns="2fr repeat(2, 1fr) 96px 80px">
+<pa-table columns="2fr repeat(2, 1fr) 96px 96px 80px">
   <pa-table-header>
     <pa-table-cell header>Id</pa-table-cell>
     <pa-table-cell header>Slug</pa-table-cell>
     <pa-table-cell header>Title</pa-table-cell>
+    <pa-table-cell header>Zone</pa-table-cell>
     <pa-table-cell header>Resources</pa-table-cell>
     <pa-table-cell header>Activity</pa-table-cell>
   </pa-table-header>
-  <pa-table-row
-    *ngFor="let kb of kbList | async"
-    clickable
-    [routerLink]="'../zone/' + kb.zone.id + '/kb/' + kb.id">
-    <pa-table-cell>
-      <small>{{ kb.id }}</small>
-    </pa-table-cell>
-    <pa-table-cell>{{ kb.slug }}</pa-table-cell>
-    <pa-table-cell>{{ kb.title }}</pa-table-cell>
-    <pa-table-cell>
-      <div
-        class="count"
-        *ngIf="counters | async as count">
-        {{ count[kb.id] }}
-      </div>
-    </pa-table-cell>
-    <pa-table-cell-menu>
-      <pa-button
-        icon="square-arrow"
-        aspect="basic"
-        (click)="openActivity($event, kb.id)"></pa-button>
-    </pa-table-cell-menu>
-  </pa-table-row>
+
+  @for (kb of kbList | async; track kb.id) {
+    <pa-table-row
+      clickable
+      [routerLink]="'../zone/' + kb.zone.id + '/kb/' + kb.id">
+      <pa-table-cell>
+        <small>{{ kb.id }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>{{ kb.slug }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>{{ kb.title }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        <small>{{ kb.zone.title }}</small>
+      </pa-table-cell>
+      <pa-table-cell>
+        @if (counters | async; as count) {
+          <div class="count body-s">
+            {{ count[kb.id] }}
+          </div>
+        }
+      </pa-table-cell>
+      <pa-table-cell-menu>
+        <pa-button
+          icon="square-arrow"
+          aspect="basic"
+          (click)="openActivity($event, kb.id)"></pa-button>
+      </pa-table-cell-menu>
+    </pa-table-row>
+  }
 </pa-table>
