@@ -136,6 +136,7 @@ export class PromptLabComponent implements OnInit {
       return;
     }
 
+    this.progress$.next(null);
     this.modalService
       .openConfirm({
         title: 'prompt-lab.generate.confirmation.title',
