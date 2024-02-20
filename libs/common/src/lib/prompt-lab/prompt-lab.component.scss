@@ -78,11 +78,16 @@
     }
   }
 
+  .answers {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+  }
+
   .answer-container {
     display: flex;
     flex-direction: column;
-    gap: rhythm(0.25);
-    margin-bottom: rhythm(1);
+    gap: rhythm(1);
     transition:
       height $transition-hint,
       margin-bottom $transition-hint,
@@ -90,6 +95,10 @@
 
     &.collapsed {
       display: none;
+    }
+
+    &:last-child {
+      padding-bottom: rhythm(0.5);
     }
   }
 
