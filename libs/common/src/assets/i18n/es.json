@@ -666,6 +666,7 @@
 	"prompt-lab.page-description": "Pruebe los LLM y las indicaciones, vea cómo funcionan juntos, elija qué configuraciones desea aplicar a su Knowledge Box.",
 	"prompt-lab.page-title": "Prompt lab",
 	"prompt-lab.results.download-csv": "Descargar CSV",
+	"prompt-lab.results.error": "Se produjo un error al obtener la respuesta, inténtelo nuevamente más tarde.",
 	"prompt-lab.results.prompt": "Prompt: ",
 	"prompt-lab.results.question": "Pregunta: {{query}}",
 	"prompt-lab.results.title": "Resultados",
