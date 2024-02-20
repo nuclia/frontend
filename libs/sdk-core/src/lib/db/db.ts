@@ -497,25 +497,35 @@ export class Db implements IDb {
   }
 
   /**
-   * Get learning configuration schema available for provided account
-   * @param accountId
-   * @param zone
+   * Get learning configuration schema.
+   * When used on Cloud account, this method is requiring account id and zone parameters.
+   * When used on standalone, this method doesn't take any parameter
    */
-  getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations> {
-    return this.nuclia.rest
-      .get<LearningConfigurations>(`/account/${accountId}/schema`, undefined, undefined, zone)
-      .pipe(
-        map((config) => {
-          // Normalize schemas property
-          Object.values(config).forEach((item) => {
-            if (item.schemas?.['title'] && item.schemas?.['type']) {
-              item.schema = item.schemas as unknown as LearningConfigurationSchema;
-              item.schemas = undefined;
-            }
-          });
-          return config;
-        }),
-      );
+  getLearningSchema(): Observable<LearningConfigurations>;
+  getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations>;
+  getLearningSchema(accountId?: string, zone?: string): Observable<LearningConfigurations> {
+    const standalone = this.nuclia.options.standalone;
+    if (!standalone && (!accountId || !zone)) {
+      const error = 'Account id and zone are mandatory to get learning schema for Cloud accounts.';
+      console.error(error);
+      return throwError(() => error);
+    }
+
+    const request = standalone
+      ? this.nuclia.rest.get<LearningConfigurations>('/nua/schema')
+      : this.nuclia.rest.get<LearningConfigurations>(`/account/${accountId}/schema`, undefined, undefined, zone);
+    return request.pipe(
+      map((config) => {
+        // Normalize schemas property
+        Object.values(config).forEach((item) => {
+          if (item.schemas?.['title'] && item.schemas?.['type']) {
+            item.schema = item.schemas as unknown as LearningConfigurationSchema;
+            item.schemas = undefined;
+          }
+        });
+        return config;
+      }),
+    );
   }
 
   /**

@@ -67,7 +67,7 @@
             }
           }
         </div>
-      } @else if (!addKb) {
+      } @else {
         <div
           class="select-kb-empty"
           data-cy="no-kb-message">
@@ -80,43 +80,14 @@
           }
         </div>
       }
-
-      @if (addKb) {
-        <div class="select-kb-input">
-          <form [formGroup]="newKbForm">
-            <pa-input
-              hasFocus
-              data-cy="new-kb-name-input"
-              formControlName="kbName"
-              [errorMessages]="errorMessages">
-              {{ 'stash.name_your_kb' | translate }}
-            </pa-input>
-          </form>
-        </div>
-      }
     </div>
 
     <div class="select-kb-footer">
-      @if (!addKb && (standalone || (canAddKb | async) === true)) {
+      @if (standalone || (canAddKb | async) === true) {
         <pa-button
           data-cy="create-kb-button"
           (click)="openKbForm()">
           {{ 'kb.create.title' | translate }}
-        </pa-button>
-      }
-
-      @if (addKb) {
-        <pa-button
-          aspect="basic"
-          (click)="toggleForm()">
-          {{ 'generic.cancel' | translate }}
-        </pa-button>
-
-        <pa-button
-          [disabled]="newKbForm.invalid || creatingKb"
-          data-cy="save-new-kb-button"
-          (click)="save()">
-          {{ 'generic.save' | translate }}
         </pa-button>
       }
     </div>

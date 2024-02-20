@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
@@ -35,7 +35,6 @@ export class SelectKbComponent implements OnDestroy {
             account.can_manage_account && (account.max_kbs > (account.current_kbs || 0) || account.max_kbs === -1),
         ),
       );
-  addKb: boolean = false;
   newKbForm = new FormGroup({
     kbName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
@@ -46,7 +45,6 @@ export class SelectKbComponent implements OnDestroy {
     private navigation: NavigationService,
     private selectService: SelectAccountKbService,
     private router: Router,
-    private cdr: ChangeDetectorRef,
     private sdk: SDKService,
     private toast: SisToastService,
     private modalService: SisModalService,
@@ -54,35 +52,26 @@ export class SelectKbComponent implements OnDestroy {
   ) {}
 
   openKbForm() {
-    if (this.standalone) {
-      this.toggleForm();
-    } else {
-      forkJoin([this.account.pipe(take(1)), this.zoneService.getZones()])
-        .pipe(
-          switchMap(([account, zones]) => {
-            if (!this.sdk.nuclia.options.zone) {
-              // zone must be set to get configuration schema
-              this.sdk.nuclia.options.zone = zones[0]?.slug;
-            }
-            return this.modalService.openModal(KbAddComponent, { dismissable: true, data: { account, zones } }).onClose;
-          }),
-          filter((result) => {
-            if (result?.success === false) {
-              this.toast.error('error.creating-kb');
-            }
-            return !!result?.success;
-          }),
-        )
-        .subscribe(() => {
-          this.sdk.refreshKbList();
-        });
-    }
-  }
-
-  toggleForm() {
-    this.addKb = !this.addKb;
-    this.newKbForm.reset();
-    this.cdr.markForCheck();
+    const zones$ = this.standalone ? of([]) : this.zoneService.getZones();
+    forkJoin([this.account.pipe(take(1)), zones$])
+      .pipe(
+        switchMap(([account, zones]) => {
+          if (!this.sdk.nuclia.options.zone) {
+            // zone must be set to get configuration schema
+            this.sdk.nuclia.options.zone = zones[0]?.slug;
+          }
+          return this.modalService.openModal(KbAddComponent, { dismissable: true, data: { account, zones } }).onClose;
+        }),
+        filter((result) => {
+          if (result?.success === false) {
+            this.toast.error('error.creating-kb');
+          }
+          return !!result?.success;
+        }),
+      )
+      .subscribe(() => {
+        this.sdk.refreshKbList();
+      });
   }
 
   save() {

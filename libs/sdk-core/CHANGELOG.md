@@ -1,8 +1,8 @@
-# 1.12.0 (unreleased)
+# 1.12.0 (2024-02-22)
 
 ### Breaking changes
 
-- `getLearningConfigurations` is now replaced by `getLearningSchema` method which is requiring account id and zone.
+- `getLearningConfigurations` is now replaced by `getLearningSchema` method which is requiring account id and zone for Cloud accounts.
 
 ### Improvements
 

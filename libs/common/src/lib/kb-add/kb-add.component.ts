@@ -1,11 +1,21 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FeaturesService, getSemanticModel, SDKService, STFUtils, Zone } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
-import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
+import {
+  IErrorMessages,
+  ModalRef,
+  PaButtonModule,
+  PaModalModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import * as Sentry from '@sentry/angular';
-import { SisToastService } from '@nuclia/sistema';
+import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { switchMap } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
+import { LanguageFieldComponent } from '@nuclia/user';
 
 export interface KbAddData {
   account: Account;
@@ -14,6 +24,18 @@ export interface KbAddData {
 
 @Component({
   selector: 'app-kb-add',
+  imports: [
+    CommonModule,
+    LanguageFieldComponent,
+    PaButtonModule,
+    PaModalModule,
+    PaTextFieldModule,
+    PaTogglesModule,
+    ReactiveFormsModule,
+    SisProgressModule,
+    TranslateModule,
+  ],
+  standalone: true,
   templateUrl: './kb-add.component.html',
   styleUrls: ['./kb-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,6 +81,8 @@ export class KbAddComponent implements OnInit {
     this.zones = this.modal.config.data?.zones || [];
     if (this.zones.length === 1) {
       this.kbForm.controls.zone.patchValue(this.zones[0].slug);
+    } else if (this.zones.length === 0) {
+      this.kbForm.controls.zone.clearValidators();
     }
   }
 
