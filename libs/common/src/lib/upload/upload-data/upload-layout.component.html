@@ -1,7 +1,7 @@
 <div class="page-spacing">
   <router-outlet></router-outlet>
 </div>
-@if (!standalone && hasSyncServer | async) {
+@if (!standalone && (hasSyncServer | async)) {
   <div class="sync-status">
     {{ ((isServerDown | async) ? 'upload.server.server_down' : 'upload.server.server_up') | translate }}
     <pa-button
