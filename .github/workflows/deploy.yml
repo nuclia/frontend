@@ -10,9 +10,9 @@ env:
   MANAGER_IMAGE_NAME: manager
   CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
   DOCS_STORAGE: ${{ secrets.DOCS_STORAGE }}
-  CONTAINER_REGISTRY: eu.gcr.io/${{ secrets.PROJECT_ID }}
 
 permissions:
+  id-token: write
   contents: write
 
 jobs:
@@ -28,9 +28,34 @@ jobs:
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Authenticate to Google Cloud
+        id: gcp-auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "${{ secrets.GCP_REGISTRY_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ secrets.GCP_REGISTRY_SERVICE_ACCOUNT }}"
+          token_format: access_token
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Login to Google GCR
+        uses: docker/login-action@v3
+        with:
+          registry: eu.gcr.io
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: Login to Google Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west4-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
 
       - uses: nrwl/nx-set-shas@v3
 
@@ -76,16 +101,6 @@ jobs:
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
           (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
 
-      - uses: google-github-actions/auth@v2
-        with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v0'
-
-      - name: Configure Docker
-        run: gcloud auth configure-docker --quiet
-
       - name: Publish widget
         if: steps.check-deploy.outputs.deploy-widget == 'yes'
         run: |-
@@ -107,8 +122,20 @@ jobs:
           sh ./tools/build-sdk-docs.sh
           gsutil -m rsync -r ./libs/sdk-core/docs gs://$DOCS_STORAGE/js-sdk
 
-      - name: Build dashboard image
+      - name: Build dashboard image for GCR
         if: steps.check-deploy.outputs.deploy-app == 'yes'
+        env:
+          CONTAINER_REGISTRY: eu.gcr.io/stashify-218417
+        run: |-
+          docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=dashboard .
+          docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
+          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
+          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
+
+      - name: Build dashboard image for GCR
+        if: steps.check-deploy.outputs.deploy-app == 'yes'
+        env:
+          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/private
         run: |-
           docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=dashboard .
           docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
@@ -125,8 +152,20 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
-      - name: Build manager image
+      - name: Build manager image for GCR
         if: steps.check-deploy.outputs.deploy-manager == 'yes'
+        env:
+          CONTAINER_REGISTRY: eu.gcr.io/stashify-218417
+        run: |-
+          docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager-v2 .
+          docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
+          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA}
+          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
+
+      - name: Build manager image for Artifact Repository
+        if: steps.check-deploy.outputs.deploy-manager == 'yes'
+        env:
+          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/private
         run: |-
           docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager-v2 .
           docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
@@ -174,6 +213,8 @@ jobs:
 
       - name: Set helm package image
         id: version_step
+        env:
+          CONTAINER_REGISTRY: eu.gcr.io/stashify-218417
         run: |-
           sed -i.bak "s#IMAGE_TO_REPLACE#$APP_IMAGE_NAME:${SHORT_SHA}#" ./charts/app/values.yaml
           sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/app/values.yaml
@@ -229,6 +270,8 @@ jobs:
 
       - name: Set helm package image
         id: version_step
+        env:
+          CONTAINER_REGISTRY: eu.gcr.io/stashify-218417
         run: |-
           sed -i.bak "s#IMAGE_TO_REPLACE#$MANAGER_IMAGE_NAME:${SHORT_SHA}#" ./charts/manager/values.yaml
           sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/manager/values.yaml
