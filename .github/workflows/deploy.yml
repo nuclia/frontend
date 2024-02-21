@@ -28,7 +28,7 @@ jobs:
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
