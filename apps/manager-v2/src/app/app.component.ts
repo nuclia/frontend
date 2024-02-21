@@ -20,8 +20,8 @@ export class AppComponent implements OnInit, OnDestroy {
   version?: string;
 
   constructor(
-    private paTranslate: PaTranslateService,
     private ngxTranslate: TranslateService,
+    private paTranslate: PaTranslateService,
     private config: BackendConfigurationService,
   ) {
     const userLocale = localStorage.getItem(userLocaleKey);
