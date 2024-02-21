@@ -26,9 +26,20 @@ export interface SortOption {
   order?: SortOrder;
 }
 
+export enum FilterOperator {
+  all = 'all',
+  any = 'any',
+  none = 'none',
+  not_all = 'not_all',
+}
+
+export type Filter = {
+  [operator in FilterOperator]: string[];
+};
+
 export interface BaseSearchOptions {
   fields?: string[];
-  filters?: string[];
+  filters?: string[] | Filter[];
   min_score?: number;
   range_creation_start?: string;
   range_creation_end?: string;
