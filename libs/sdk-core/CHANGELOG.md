@@ -1,3 +1,9 @@
+# 1.11.8 (unreleased)
+
+### Improvements
+
+- Support `all`, `any`, `none` and `not_all` operators in `filters` parameter
+
 # 1.11.7 (2024-02-15)
 
 ### Improvements
@@ -29,7 +35,7 @@
 
 ### Improvements
 
-- Add `resource_title` to `BaseNotificationData` model 
+- Add `resource_title` to `BaseNotificationData` model
 - Create an interface for `listenToProcessingNotifications` response (`ResourceProcessingNotification`) including the resource title and a timestamp
 - Improve `getStreamMessages`: reconnect if the connection is lost and there was no error for the last 10s
 
