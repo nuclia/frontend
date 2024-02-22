@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take, tap } from 'rxjs';
+import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { NavigationService, SDKService, STFUtils, ZoneService } from '@flaps/core';
+import { NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -69,44 +69,9 @@ export class SelectKbComponent implements OnDestroy {
           return !!result?.success;
         }),
       )
-      .subscribe(() => {
+      .subscribe((result) => {
         this.sdk.refreshKbList();
-      });
-  }
-
-  save() {
-    if (this.newKbForm.invalid || !this.newKbForm.value) {
-      return;
-    }
-
-    this.creatingKb = true;
-    this.newKbForm.disable();
-    const formValue = this.newKbForm.getRawValue();
-    const kbSlug = STFUtils.generateSlug(formValue.kbName);
-    const kbTitle = formValue.kbName;
-
-    this.account
-      .pipe(
-        switchMap((account) => {
-          const kbData = {
-            slug: kbSlug,
-            zone: account.zone,
-            title: kbTitle,
-          };
-          return this.sdk.nuclia.db.createKnowledgeBox(account.slug, kbData).pipe(
-            tap((kb) => {
-              this.sdk.refreshKbList();
-              this.router.navigate([this.navigation.getKbUrl(account.slug, kb.id)]);
-            }),
-          );
-        }),
-      )
-      .subscribe({
-        error: () => {
-          this.toast.error('error.creating-kb');
-          this.creatingKb = false;
-          this.newKbForm.enable();
-        },
+        this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbId)]);
       });
   }
 
