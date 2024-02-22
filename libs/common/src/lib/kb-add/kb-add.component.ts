@@ -132,9 +132,9 @@ export class KbAddComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: () => {
+        next: (kb) => {
           clearTimeout(inProgressTimeout);
-          this.modal.close({ success: true });
+          this.modal.close({ success: true, kbId: kb.id, accountSlug: this.account?.slug });
         },
         error: () => {
           clearTimeout(inProgressTimeout);
