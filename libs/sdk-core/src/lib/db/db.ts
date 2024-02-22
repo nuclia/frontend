@@ -23,7 +23,7 @@ import {
   AccountStatus,
   KbIndex,
   LearningConfigurations,
-  LearningConfigurationSchema,
+  normalizeSchemaProperty,
   NUA_KEY,
   NUAClient,
   NUAClientPayload,
@@ -510,22 +510,10 @@ export class Db implements IDb {
       console.error(error);
       return throwError(() => error);
     }
-
     const request = standalone
       ? this.nuclia.rest.get<LearningConfigurations>('/nua/schema')
       : this.nuclia.rest.get<LearningConfigurations>(`/account/${accountId}/schema`, undefined, undefined, zone);
-    return request.pipe(
-      map((config) => {
-        // Normalize schemas property
-        Object.values(config).forEach((item) => {
-          if (item.schemas?.['title'] && item.schemas?.['type']) {
-            item.schema = item.schemas as unknown as LearningConfigurationSchema;
-            item.schemas = undefined;
-          }
-        });
-        return config;
-      }),
-    );
+    return request.pipe(map((config) => normalizeSchemaProperty(config)));
   }
 
   /**

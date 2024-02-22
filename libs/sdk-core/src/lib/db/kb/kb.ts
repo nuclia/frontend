@@ -48,7 +48,7 @@ import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import { catalog, chat, Chat, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
-import { LearningConfigurations, ResourceProperties } from '../db.models';
+import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
 import { ABORT_STREAMING_REASON } from '../../rest';
 
@@ -589,7 +589,9 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   getLearningSchema(): Observable<LearningConfigurations> {
-    return this.nuclia.rest.get<LearningConfigurations>(`/kb/${this.id}/schema`);
+    return this.nuclia.rest
+      .get<LearningConfigurations>(`/kb/${this.id}/schema`)
+      .pipe(map((config) => normalizeSchemaProperty(config)));
   }
 
   getUsers(accountSlug: string): Observable<FullKbUser[]> {

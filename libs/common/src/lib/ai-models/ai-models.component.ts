@@ -136,7 +136,6 @@ export class AiModelsComponent implements OnInit {
     ) {
       this.configForm.markAsDirty();
     }
-    // FIXME
   }
 
   updateCurrentGenerativeModel(modelValue?: string) {
@@ -206,9 +205,9 @@ export class AiModelsComponent implements OnInit {
     const confirmAnonymization: Observable<boolean> =
       kbDetails.anonymization && this.kbConfigBackup?.['anonymization_model'] === 'disabled'
         ? this.modal.openConfirm({
-            title: this.translate.instant('kb.settings.confirm-anonymization.title'),
-            description: this.translate.instant('kb.settings.confirm-anonymization.description'),
-            confirmLabel: this.translate.instant('kb.settings.confirm-anonymization.confirm-button'),
+            title: this.translate.instant('kb.ai-models.confirm-anonymization.title'),
+            description: this.translate.instant('kb.ai-models.confirm-anonymization.description'),
+            confirmLabel: this.translate.instant('kb.ai-models.confirm-anonymization.confirm-button'),
           }).onClose
         : of(true);
 
@@ -259,7 +258,7 @@ export class AiModelsComponent implements OnInit {
       this.configForm.patchValue(kbConfig);
       this.semanticModel.patchValue(kbConfig['semantic_model']);
       this.anonymization.patchValue(kbConfig['anonymization_model'] === 'multilingual');
-      this.pdfAnnotation.patchValue(kbConfig['visual_labeling'] === 'multilingual');
+      this.pdfAnnotation.patchValue(kbConfig['visual_labeling'] === 'enabled');
 
       this.updateCurrentGenerativeModel();
       if (this.currentGenerativeModelPrompt) {
