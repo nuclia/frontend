@@ -1,4 +1,14 @@
-# 1.11.8 (unreleased)
+# 1.12.0 (2024-02-22)
+
+### Breaking changes
+
+- `getLearningConfigurations` is now replaced by `getLearningSchema` method which is requiring account id and zone for Cloud accounts.
+
+### Improvements
+
+- New `getLearningSchema` method in KB (do the same as db’s `getLearningConfigurations`, as KB endpoint is proxying db one internally).
+
+# 1.11.8 (2024-02-21)
 
 ### Improvements
 

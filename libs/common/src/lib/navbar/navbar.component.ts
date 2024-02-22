@@ -27,7 +27,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }),
     switchMap((kbUrl) =>
       merge(
-        of(this.navigationService.inKbSettings(location.pathname, kbUrl)),
+        of(this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl)),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
           map((event) => this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl)),
@@ -78,10 +78,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     switchMap(() => this.features.promptLabEnabled),
   );
 
-  standalone = this.sdk.nuclia.options.standalone;
+  standalone = this.standaloneService.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
   isSubscribed = this.billing.isSubscribed;
-
   syncs = combineLatest([this.inUpload, this.isAdminOrContrib, this.invalidKey]).pipe(
     filter(([inUpload, isAdminOrContrib, invalidKey]) => inUpload && isAdminOrContrib && !invalidKey),
     switchMap(() => this.sdk.currentKb),

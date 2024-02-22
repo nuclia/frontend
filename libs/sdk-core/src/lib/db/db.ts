@@ -23,7 +23,7 @@ import {
   AccountStatus,
   KbIndex,
   LearningConfigurations,
-  LearningConfigurationSchema,
+  normalizeSchemaProperty,
   NUA_KEY,
   NUAClient,
   NUAClientPayload,
@@ -496,19 +496,24 @@ export class Db implements IDb {
     return this.nuclia.rest.delete(`/account/${accountId}/nua_client/${client_id}`, undefined, undefined, zone);
   }
 
-  getLearningConfigurations(): Observable<LearningConfigurations> {
-    return this.nuclia.rest.get<LearningConfigurations>('/learning/configuration/schema').pipe(
-      map((config) => {
-        // Normalize schemas property
-        Object.values(config).forEach((item) => {
-          if (item.schemas?.['title'] && item.schemas?.['type']) {
-            item.schema = item.schemas as unknown as LearningConfigurationSchema;
-            item.schemas = undefined;
-          }
-        });
-        return config;
-      }),
-    );
+  /**
+   * Get learning configuration schema.
+   * When used on Cloud account, this method is requiring account id and zone parameters.
+   * When used on standalone, this method doesn't take any parameter
+   */
+  getLearningSchema(): Observable<LearningConfigurations>;
+  getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations>;
+  getLearningSchema(accountId?: string, zone?: string): Observable<LearningConfigurations> {
+    const standalone = this.nuclia.options.standalone;
+    if (!standalone && (!accountId || !zone)) {
+      const error = 'Account id and zone are mandatory to get learning schema for Cloud accounts.';
+      console.error(error);
+      return throwError(() => error);
+    }
+    const request = standalone
+      ? this.nuclia.rest.get<LearningConfigurations>('/nua/schema')
+      : this.nuclia.rest.get<LearningConfigurations>(`/account/${accountId}/schema`, undefined, undefined, zone);
+    return request.pipe(map((config) => normalizeSchemaProperty(config)));
   }
 
   /**

@@ -100,21 +100,21 @@ export class PromptLabComponent implements OnInit {
     this.sdk.currentKb
       .pipe(
         take(1),
-        switchMap((kb) => kb.getConfiguration()),
+        switchMap((kb) => forkJoin([kb.getConfiguration(), kb.getLearningSchema()])),
       )
-      .subscribe((config) => (this.configBackup = config));
-    this.sdk.nuclia.db.getLearningConfigurations().subscribe((learningConfig) => {
-      this.learningModels = {
-        ...learningConfig[GENERATIVE_MODEL_KEY],
-        options: [
-          ...(learningConfig[GENERATIVE_MODEL_KEY]?.options?.filter((model) => model.name !== 'NO_GENERATION') || []),
-        ],
-      };
-      this.learningModels.options?.forEach((model) => {
-        this.form.addControl(model.value, new FormControl<boolean>(false, { nonNullable: true }));
+      .subscribe(([config, schema]) => {
+        this.configBackup = config;
+        this.learningModels = {
+          ...schema[GENERATIVE_MODEL_KEY],
+          options: [
+            ...(schema[GENERATIVE_MODEL_KEY]?.options?.filter((model) => model.name !== 'NO_GENERATION') || []),
+          ],
+        };
+        this.learningModels.options?.forEach((model) => {
+          this.form.addControl(model.value, new FormControl<boolean>(false, { nonNullable: true }));
+        });
+        this.updateConfigurationExpanderSize.next(this.form.getRawValue());
       });
-      this.updateConfigurationExpanderSize.next(this.form.getRawValue());
-    });
   }
 
   onResizingTextarea($event: DOMRect) {

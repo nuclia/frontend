@@ -3,7 +3,7 @@ import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMe
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
 import type { Chat, ChatOptions, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
-import type { ResourceProperties } from '../db.models';
+import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
@@ -147,6 +147,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   downloadActivity(type: EventType, month: string): Observable<Blob>;
 
   getConfiguration(): Observable<{ [id: string]: any }>;
+  getLearningSchema(): Observable<LearningConfigurations>;
 
   getUsers(accountSlug: string): Observable<FullKbUser[]>;
 

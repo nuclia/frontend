@@ -3,6 +3,7 @@ import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
   accountOwnerGuard,
+  AiModelsComponent,
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
@@ -168,6 +169,10 @@ const routes: Routes = [
               {
                 path: 'manage',
                 component: KnowledgeBoxSettingsComponent,
+              },
+              {
+                path: 'ai-models',
+                component: AiModelsComponent,
               },
               {
                 path: 'users',

@@ -1,6 +1,7 @@
 /*
  * Public API Surface of @flaps/common
  */
+export * from './lib/ai-models';
 export * from './lib/base';
 export * from './lib/charts';
 export * from './lib/directives';

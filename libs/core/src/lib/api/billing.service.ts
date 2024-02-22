@@ -20,17 +20,20 @@ import {
 export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
   isDeprecatedAccount = this.type.pipe(map((type) => type.startsWith('stash-')));
-  isSubscribed = combineLatest([this.type, this.getPrices()]).pipe(
-    switchMap(([type, prices]) => {
-      if (type === 'stash-enterprise' || type === 'v3growth' || type === 'v3enterprise') {
-        // Not all enterprise accounts are subscribed
-        return this.getSubscription().pipe(map((subscription) => subscription !== null));
-      } else {
-        return of(Object.keys(prices).includes(type as string));
-      }
-    }),
-    shareReplay(1),
-  );
+
+  isSubscribed = this.sdk.nuclia.options.standalone
+    ? of(false)
+    : combineLatest([this.type, this.getPrices()]).pipe(
+        switchMap(([type, prices]) => {
+          if (type === 'stash-enterprise' || type === 'v3growth' || type === 'v3enterprise') {
+            // Not all enterprise accounts are subscribed
+            return this.getSubscription().pipe(map((subscription) => subscription !== null));
+          } else {
+            return of(Object.keys(prices).includes(type as string));
+          }
+        }),
+        shareReplay(1),
+      );
 
   constructor(private sdk: SDKService) {}
 

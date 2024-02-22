@@ -12,7 +12,7 @@
             data-cy="go-to-home"
             [routerLinkActiveOptions]="{ exact: true }">
             <pa-icon name="home"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.home' | translate }}</span>
+            <span class="nav-link-title">{{ 'navbar.home' | translate }}</span>
           </a>
         </div>
       </div>
@@ -26,7 +26,7 @@
             [routerLinkActiveOptions]="{ exact: true }"
             [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
             <pa-icon name="upload"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.upload-data' | translate }}</span>
+            <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
           </a>
           @if ((inUpload | async) && (isAdminOrContrib | async) && !(invalidKey | async)) {
             @for (sync of syncs | async; track sync.id) {
@@ -54,7 +54,7 @@
             data-cy="go-to-resources"
             [class.disabled]="invalidKey | async">
             <pa-icon name="list"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.list' | translate }}</span>
+            <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
           </a>
           <a
             [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widget-generator' : null"
@@ -63,7 +63,7 @@
             data-cy="go-to-widget"
             [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
             <pa-icon name="widget"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.widgets' | translate }}</span>
+            <span class="nav-link-title">{{ 'navbar.widgets' | translate }}</span>
           </a>
         </div>
       </div>
@@ -80,7 +80,7 @@
             <pa-icon
               name="chevron-right"
               [class.expanded]="showSettings"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.advanced' | translate }}</span>
+            <span class="nav-link-title">{{ 'navbar.advanced' | translate }}</span>
           </a>
         </div>
       </div>
@@ -94,7 +94,16 @@
               data-cy="go-to-settings"
               [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
               <pa-icon name="gear"></pa-icon>
-              <span class="nav-link-title">{{ 'sidenav.settings' | translate }}</span>
+              <span class="nav-link-title">{{ 'navbar.settings' | translate }}</span>
+            </a>
+            <a
+              [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/ai-models' : null"
+              routerLinkActive="active"
+              class="nav-link sub-item"
+              data-cy="go-to-ai-models"
+              [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+              <pa-icon name="settings"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.ai-models' | translate }}</span>
             </a>
             @if (!standalone) {
               @if (isActivityEnabled | async) {
@@ -105,7 +114,7 @@
                   data-cy="go-to-activity-log"
                   [class.disabled]="!(isAdminOrContrib | async)">
                   <pa-icon name="activity-log"></pa-icon>
-                  <span class="nav-link-title">{{ 'sidenav.activity' | translate }}</span>
+                  <span class="nav-link-title">{{ 'navbar.activity' | translate }}</span>
                 </a>
               }
 
@@ -116,7 +125,7 @@
                   data-cy="go-to-api-keys"
                   class="nav-link sub-item">
                   <pa-icon name="lock-off"></pa-icon>
-                  <span class="nav-link-title">{{ 'sidenav.api_keys' | translate }}</span>
+                  <span class="nav-link-title">{{ 'navbar.api_keys' | translate }}</span>
                 </a>
               }
             }
@@ -128,7 +137,7 @@
               data-cy="go-to-classification"
               [class.disabled]="invalidKey | async">
               <pa-icon name="label"></pa-icon>
-              <span class="nav-link-title">{{ 'sidenav.classification' | translate }}</span>
+              <span class="nav-link-title">{{ 'navbar.classification' | translate }}</span>
             </a>
             @if (isEntitiesEnabled | async) {
               <a
@@ -150,7 +159,7 @@
                   data-cy="go-to-synonyms"
                   class="nav-link sub-item">
                   <pa-icon name="synonyms"></pa-icon>
-                  <span class="nav-link-title">{{ 'sidenav.synonyms' | translate }}</span>
+                  <span class="nav-link-title">{{ 'navbar.synonyms' | translate }}</span>
                 </a>
               }
               @if (isAccountManager | async) {
@@ -161,7 +170,7 @@
                     data-cy="go-to-prompt-lab"
                     class="nav-link sub-item">
                     <pa-icon name="lab"></pa-icon>
-                    <span class="nav-link-title">{{ 'sidenav.prompt-lab' | translate }}</span>
+                    <span class="nav-link-title">{{ 'navbar.prompt-lab' | translate }}</span>
                   </a>
                 }
                 <a
@@ -170,7 +179,7 @@
                   data-cy="go-to-users"
                   class="nav-link sub-item">
                   <pa-icon name="users"></pa-icon>
-                  <span class="nav-link-title">{{ 'sidenav.users' | translate }}</span>
+                  <span class="nav-link-title">{{ 'navbar.users' | translate }}</span>
                 </a>
               }
             }
@@ -178,125 +187,126 @@
         </div>
       }
     </div>
-    <div
-      *ngIf="(inAccount | async) && (isAccountManager | async)"
-      class="navbar-content dark">
-      <div class="nav-group">
-        <div class="group-items">
-          <a
-            [routerLink]="(accountUrl | async) + '/home'"
-            routerLinkActive="active"
-            data-cy="go-to-account-home"
-            class="nav-link">
-            <pa-icon name="home"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.account-home' | translate }}</span>
-          </a>
+
+    @if (!standalone && (inAccount | async) && (isAccountManager | async)) {
+      <div class="navbar-content dark">
+        <div class="nav-group">
+          <div class="group-items">
+            <a
+              [routerLink]="(accountUrl | async) + '/home'"
+              routerLinkActive="active"
+              data-cy="go-to-account-home"
+              class="nav-link">
+              <pa-icon name="home"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.account-home' | translate }}</span>
+            </a>
+          </div>
+          <div class="group-items">
+            <a
+              [routerLink]="(accountUrl | async) + '/settings'"
+              routerLinkActive="active"
+              data-cy="go-to-account-settings"
+              class="nav-link">
+              <pa-icon name="gear"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.account-settings' | translate }}</span>
+            </a>
+          </div>
+          <div class="group-items">
+            <a
+              [routerLink]="(accountUrl | async) + '/kbs'"
+              routerLinkActive="active"
+              data-cy="go-to-account-kbs"
+              class="nav-link">
+              <pa-icon name="knowledge-box"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.manage-kbs' | translate }}</span>
+            </a>
+          </div>
+          <div class="group-items">
+            <a
+              [routerLink]="(accountUrl | async) + '/users'"
+              routerLinkActive="active"
+              data-cy="go-to-account-users"
+              class="nav-link">
+              <pa-icon name="users"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.users' | translate }}</span>
+            </a>
+          </div>
+          <div class="group-items">
+            <a
+              [routerLink]="(accountUrl | async) + '/nua'"
+              routerLinkActive="active"
+              data-cy="go-to-nua-keys"
+              class="nav-link">
+              <pa-icon name="key"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.nua-keys' | translate }}</span>
+            </a>
+          </div>
+          @if (isBillingEnabled | async) {
+            <div class="group-items">
+              <a
+                [routerLink]="(accountUrl | async) + '/billing/subscriptions'"
+                routerLinkActive="active"
+                data-cy="go-to-billing"
+                class="nav-link"
+                [class.sub-item]="inBilling | async">
+                <pa-icon name="payment"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.subscription' | translate }}</span>
+              </a>
+            </div>
+          }
+          @if ((isSubscribed | async) && (inBilling | async)) {
+            <div class="nav-group">
+              <div class="group-items">
+                <a
+                  [routerLink]="(accountUrl | async) + '/billing/checkout'"
+                  routerLinkActive="active"
+                  data-cy="go-to-checkout"
+                  class="nav-link sub-item">
+                  <pa-icon name="payment-details"></pa-icon>
+                  <span class="nav-link-title">{{ 'billing.payment_details' | translate }}</span>
+                </a>
+                <a
+                  [routerLink]="(accountUrl | async) + '/billing/my-subscription'"
+                  routerLinkActive="active"
+                  data-cy="go-to-my-subscription"
+                  class="nav-link sub-item">
+                  <pa-icon name="info"></pa-icon>
+                  <span class="nav-link-title">{{ 'billing.my-subscription' | translate }}</span>
+                </a>
+                <a
+                  [routerLink]="(accountUrl | async) + '/billing/usage'"
+                  routerLinkActive="active"
+                  data-cy="go-to-usage"
+                  class="nav-link sub-item">
+                  <pa-icon name="chart"></pa-icon>
+                  <span class="nav-link-title">{{ 'billing.usage.consumption' | translate }}</span>
+                </a>
+                <a
+                  [routerLink]="(accountUrl | async) + '/billing/history'"
+                  routerLinkActive="active"
+                  data-cy="go-to-history"
+                  class="nav-link sub-item">
+                  <pa-icon name="history"></pa-icon>
+                  <span class="nav-link-title">{{ 'billing.history.link' | translate }}</span>
+                </a>
+              </div>
+            </div>
+          }
         </div>
-        <div class="group-items">
-          <a
-            [routerLink]="(accountUrl | async) + '/settings'"
-            routerLinkActive="active"
-            data-cy="go-to-account-settings"
-            class="nav-link">
-            <pa-icon name="gear"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.account-settings' | translate }}</span>
-          </a>
-        </div>
-        <div class="group-items">
-          <a
-            [routerLink]="(accountUrl | async) + '/kbs'"
-            routerLinkActive="active"
-            data-cy="go-to-account-kbs"
-            class="nav-link">
-            <pa-icon name="knowledge-box"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.manage-kbs' | translate }}</span>
-          </a>
-        </div>
-        <div class="group-items">
-          <a
-            [routerLink]="(accountUrl | async) + '/users'"
-            routerLinkActive="active"
-            data-cy="go-to-account-users"
-            class="nav-link">
-            <pa-icon name="users"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.users' | translate }}</span>
-          </a>
-        </div>
-        <div class="group-items">
-          <a
-            [routerLink]="(accountUrl | async) + '/nua'"
-            routerLinkActive="active"
-            data-cy="go-to-nua-keys"
-            class="nav-link">
-            <pa-icon name="key"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.nua-keys' | translate }}</span>
-          </a>
-        </div>
-        <div
-          *ngIf="isBillingEnabled | async"
-          class="group-items">
-          <a
-            [routerLink]="(accountUrl | async) + '/billing/subscriptions'"
-            routerLinkActive="active"
-            data-cy="go-to-billing"
-            class="nav-link"
-            [class.sub-item]="inBilling | async">
-            <pa-icon name="payment"></pa-icon>
-            <span class="nav-link-title">{{ 'sidenav.subscription' | translate }}</span>
-          </a>
-        </div>
-        @if ((isSubscribed | async) && (inBilling | async)) {
+        @if (kb | async) {
           <div class="nav-group">
             <div class="group-items">
               <a
-                [routerLink]="(accountUrl | async) + '/billing/checkout'"
-                routerLinkActive="active"
-                data-cy="go-to-checkout"
-                class="nav-link sub-item">
-                <pa-icon name="payment-details"></pa-icon>
-                <span class="nav-link-title">{{ 'billing.payment_details' | translate }}</span>
-              </a>
-              <a
-                [routerLink]="(accountUrl | async) + '/billing/my-subscription'"
-                routerLinkActive="active"
-                data-cy="go-to-my-subscription"
-                class="nav-link sub-item">
-                <pa-icon name="info"></pa-icon>
-                <span class="nav-link-title">{{ 'billing.my-subscription' | translate }}</span>
-              </a>
-              <a
-                [routerLink]="(accountUrl | async) + '/billing/usage'"
-                routerLinkActive="active"
-                data-cy="go-to-usage"
-                class="nav-link sub-item">
-                <pa-icon name="chart"></pa-icon>
-                <span class="nav-link-title">{{ 'billing.usage.consumption' | translate }}</span>
-              </a>
-              <a
-                [routerLink]="(accountUrl | async) + '/billing/history'"
-                routerLinkActive="active"
-                data-cy="go-to-history"
-                class="nav-link sub-item">
-                <pa-icon name="history"></pa-icon>
-                <span class="nav-link-title">{{ 'billing.history.link' | translate }}</span>
+                [routerLink]="kbUrl"
+                data-cy="go-to-home-from-account"
+                class="nav-link">
+                <pa-icon name="chevron-left"></pa-icon>
+                <span class="nav-link-title">{{ 'generic.back' | translate }}</span>
               </a>
             </div>
           </div>
         }
       </div>
-      <div
-        class="nav-group"
-        *ngIf="kb | async">
-        <div class="group-items">
-          <a
-            [routerLink]="kbUrl"
-            data-cy="go-to-home-from-account"
-            class="nav-link">
-            <pa-icon name="chevron-left"></pa-icon>
-            <span class="nav-link-title">{{ 'generic.back' | translate }}</span>
-          </a>
-        </div>
-      </div>
-    </div>
+    }
   </div>
 </div>

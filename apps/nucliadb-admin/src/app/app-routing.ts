@@ -3,6 +3,7 @@ import { ExtraOptions, Routes } from '@angular/router';
 import { HomePageComponent } from './home/home-page.component';
 import { MainContainerComponent } from './home/main-container/main-container.component';
 import {
+  AiModelsComponent,
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
@@ -68,6 +69,10 @@ export const routes: Routes = [
               {
                 path: 'manage',
                 component: KnowledgeBoxSettingsComponent,
+              },
+              {
+                path: 'ai-models',
+                component: AiModelsComponent,
               },
               {
                 path: 'label-sets',
