@@ -10,11 +10,10 @@ import {
   Observable,
   of,
   range,
-  repeat,
   retry,
+  RetryConfig,
   startWith,
   switchMap,
-  take,
 } from 'rxjs';
 import type { INuclia } from '../models';
 import type { ICreateResource } from './resource';
@@ -62,6 +61,17 @@ export interface FileMetadata {
   rslug?: string;
 }
 
+const uploadRetryConfig: RetryConfig = {
+  count: 3,
+  delay: (error) => {
+    if (error.status === 429 || (error.status >= 500 && error.status <= 599)) {
+      return error.status === 429 ? of(true).pipe(delay(1000)) : of(true);
+    } else {
+      throw error;
+    }
+  },
+};
+
 export const upload = (
   nuclia: INuclia,
   path: string,
@@ -100,13 +110,10 @@ export const uploadFile = (
     'content-type': metadata?.contentType || 'application/octet-stream',
     ...getFileMetadata(metadata),
   };
-  let retries = 3;
   const slug = metadata?.rslug ? `?rslug=${metadata.rslug}` : '';
-  return nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers, true).pipe(
-    switchMap((res) => (res.status === 429 ? of(res).pipe(delay(1000)) : of(res))),
-    repeat(),
-    filter((res) => retries-- === 0 || res.status !== 503),
-    take(1),
+  return of(true).pipe(
+    switchMap(() => nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers, true)),
+    retry(uploadRetryConfig),
     switchMap((res) => {
       try {
         switch (res.status) {
@@ -130,6 +137,7 @@ export const uploadFile = (
         return of({ failed: true });
       }
     }),
+    catchError(() => of({ failed: true })),
   );
 };
 
@@ -164,13 +172,10 @@ export const TUSuploadFile = (
   if (uploadMetadata.length > 0) {
     headers['upload-metadata'] = uploadMetadata.join(',');
   }
-  let retries = 3;
-  return nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true).pipe(
-    switchMap((res) => (res.status === 429 ? of(res).pipe(delay(1000)) : of(res))),
-    repeat(),
-    filter((res) => retries-- === 0 || res.status !== 503),
+  return of(true).pipe(
+    switchMap(() => nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true)),
+    retry(uploadRetryConfig),
     catchError((error) => of(error)),
-    take(1),
     concatMap((res) =>
       merge(
         of(res).pipe(
@@ -187,37 +192,37 @@ export const TUSuploadFile = (
                 count += 1;
                 return failed
                   ? of({ failed })
-                  : nuclia.rest
-                      .patch<Response>(
-                        tusLocation,
-                        chunk,
-                        {
-                          'content-type': metadata?.contentType || 'application/octet-stream',
-                          'upload-offset': `${i}`,
-                          'content-length': `${chunk.byteLength}`,
-                        },
-                        true,
-                      )
-                      .pipe(
-                        switchMap((res) => (res.status === 429 ? of(res).pipe(delay(1000)) : of(res))),
-                        retry(3),
-                        map((res) => {
-                          if (res.status !== 200) {
-                            failed = true;
-                            return { failed };
-                          } else {
-                            i += CHUNK_SIZE;
-                            return {
-                              completed: count === loops,
-                              progress: i >= totalLength ? 100 : Math.min(Math.floor((i / totalLength) * 100), 100),
-                            };
-                          }
-                        }),
-                        catchError(() => {
+                  : of(true).pipe(
+                      switchMap(() =>
+                        nuclia.rest.patch<Response>(
+                          tusLocation,
+                          chunk,
+                          {
+                            'content-type': metadata?.contentType || 'application/octet-stream',
+                            'upload-offset': `${i}`,
+                            'content-length': `${chunk.byteLength}`,
+                          },
+                          true,
+                        ),
+                      ),
+                      retry(uploadRetryConfig),
+                      map((res) => {
+                        if (res.status !== 200) {
                           failed = true;
-                          return of({ failed: true });
-                        }),
-                      );
+                          return { failed };
+                        } else {
+                          i += CHUNK_SIZE;
+                          return {
+                            completed: count === loops,
+                            progress: i >= totalLength ? 100 : Math.min(Math.floor((i / totalLength) * 100), 100),
+                          };
+                        }
+                      }),
+                      catchError(() => {
+                        failed = true;
+                        return of({ failed: true });
+                      }),
+                    );
               }),
             ),
           ),

@@ -1,3 +1,9 @@
+# 1.12.1 (unreleased)
+
+### Improvements
+
+- Fix retry configuration in `uploadFile` and `TUSuploadFile` methods
+
 # 1.12.0 (2024-02-22)
 
 ### Breaking changes
