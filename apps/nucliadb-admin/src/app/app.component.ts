@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { BackendConfigurationService, NavigationService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
+import { BackendConfigurationService, STFTrackingService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, Subject, take } from 'rxjs';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
 import { MessageModalComponent } from '@flaps/common';
-import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
@@ -28,9 +27,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private paTranslate: PaTranslateService,
     private tracking: STFTrackingService,
     private modalService: SisModalService,
-    private sdk: SDKService,
-    private titleService: Title,
-    private navigation: NavigationService,
     private router: Router,
   ) {
     this.router.events

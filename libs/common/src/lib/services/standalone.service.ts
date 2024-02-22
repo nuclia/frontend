@@ -16,10 +16,12 @@ interface Version {
   latest: string;
 }
 
-interface NucliaDBVersions {
+export interface NucliaDBVersions {
   nucliadb: Version;
   'nucliadb-admin-assets': Version;
 }
+
+const VERSION_REGEXP = /(\d+\.\d+)\.\d+\.post\d+/;
 
 @Injectable({
   providedIn: 'root',
@@ -61,12 +63,12 @@ export class StandaloneService {
 
   checkVersions() {
     this.sdk.nuclia.rest.get<NucliaDBVersions>('/versions').subscribe((version) => {
-      const versionSeparator = '.post';
-      if (
-        version.nucliadb.installed.split(versionSeparator)[0] < version.nucliadb.latest.split(versionSeparator)[0] ||
-        version['nucliadb-admin-assets'].installed.split(versionSeparator)[0] <
-          version['nucliadb-admin-assets'].latest.split(versionSeparator)[0]
-      ) {
+      const installedNucliaDB = version.nucliadb.installed.match(VERSION_REGEXP)?.[1] || '';
+      const latestNucliaDB = version.nucliadb.latest.match(VERSION_REGEXP)?.[1] || '';
+      const installedNucliaDBAdmin = version['nucliadb-admin-assets'].installed.match(VERSION_REGEXP)?.[1] || '';
+      const latestNucliaDBAdmin = version['nucliadb-admin-assets'].latest.match(VERSION_REGEXP)?.[1] || '';
+
+      if (installedNucliaDB < latestNucliaDB || installedNucliaDBAdmin < latestNucliaDBAdmin) {
         this.toast.warning('standalone.new-version-available-toast');
       }
       this._versions.next(version);
