@@ -133,6 +133,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   suggest(query: string): Observable<Search.Suggestions | IErrorResponse>;
 
   feedback(answerId: string, good: boolean): Observable<void>;
+  listFeedback(): Observable<string[]>;
 
   counters(): Observable<Counters>;
 

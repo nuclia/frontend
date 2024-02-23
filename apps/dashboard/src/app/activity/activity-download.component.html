@@ -20,21 +20,20 @@
       class="secondary-tabs"
       notFullWidth>
       <pa-tab
-        *ngFor="let eventType of eventTypes[selectedTab]"
-        [active]="eventType === selectedEventType"
-        (click)="selectedEventType = eventType">
-        {{ 'activity.' + eventType.toLowerCase() | translate }}
+        *ngFor="let tab of activityTabs[selectedTab]"
+        [active]="tab === selectedActivityTab"
+        (click)="selectedActivityTab = tab">
+        {{ 'activity.type.' + tab.toLowerCase() | translate }}
       </pa-tab>
     </pa-tabs>
     <div class="download-list">
       <div
-        *ngFor="let item of activity[selectedEventType] | async"
+        *ngFor="let item of activity[selectedActivityTab] | async"
         class="download-item">
         <div class="body-m">{{ item.formatted }}</div>
         <pa-button
           icon="download"
           aspect="basic"
-          size="small"
           (click)="download(item.month)"></pa-button>
       </div>
     </div>

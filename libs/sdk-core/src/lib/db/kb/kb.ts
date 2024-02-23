@@ -506,6 +506,10 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.post(`${this.path}/feedback`, { ident: answerId, good, task: 'CHAT', feedback: '' });
   }
 
+  listFeedback(): Observable<string[]> {
+    return this.nuclia.rest.get<string[]>(`${this.path}/feedback`);
+  }
+
   /** Returns totals for each kind of contents stored in the Knowledge Box (resources, fields, paragraphs, vectors) */
   counters(): Observable<Counters> {
     return this.nuclia.rest.get<Counters>(`/kb/${this.id}/counters`);
@@ -567,6 +571,9 @@ export class KnowledgeBox implements IKnowledgeBox {
     );
   }
 
+  /**
+   * @deprecated
+   */
   listActivity(type?: EventType, page?: number, size?: number): Observable<EventList> {
     const params = [type ? `type=${type}` : '', page ? `page=${page}` : '', size ? `size=${size}` : '']
       .filter((p) => p)
