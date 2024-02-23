@@ -78,13 +78,14 @@
         (click)="onViewChange()">
         {{ 'resource.tooltip.annotation' | translate }}
       </pa-button>
-      <pa-button
-        *ngIf="isPdfAnnotationEnabled | async"
-        icon="annotate"
-        [disabled]="(isAdminOrContrib | async) === false"
-        paTooltip="resource.tooltip.pdf-annotation"
-        aspect="basic"
-        (click)="goToPawls()"></pa-button>
+      @if ((isPdfAnnotationEnabled | async) && (currentField | async) !== 'resource') {
+        <pa-button
+          icon="annotate"
+          [disabled]="(isAdminOrContrib | async) === false"
+          paTooltip="resource.tooltip.pdf-annotation"
+          aspect="basic"
+          (click)="goToPawls()"></pa-button>
+      }
       <pa-button
         icon="more-vertical"
         aspect="basic"
