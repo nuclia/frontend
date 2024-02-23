@@ -214,7 +214,7 @@ jobs:
       - name: Set helm package image
         id: version_step
         env:
-          CONTAINER_REGISTRY: eu.gcr.io/stashify-218417
+          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/nuclia
         run: |-
           sed -i.bak "s#IMAGE_TO_REPLACE#$APP_IMAGE_NAME:${SHORT_SHA}#" ./charts/app/values.yaml
           sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/app/values.yaml
@@ -271,7 +271,7 @@ jobs:
       - name: Set helm package image
         id: version_step
         env:
-          CONTAINER_REGISTRY: eu.gcr.io/stashify-218417
+          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/nuclia
         run: |-
           sed -i.bak "s#IMAGE_TO_REPLACE#$MANAGER_IMAGE_NAME:${SHORT_SHA}#" ./charts/manager/values.yaml
           sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/manager/values.yaml
