@@ -505,6 +505,7 @@
 	"kb.settings.learning-options.enabled": "Habilitado",
 	"kb.settings.learning-options.gemini-pro": "Google Gemini Pro",
 	"kb.settings.learning-options.generative-multilingual-2023": "Modo sin generación",
+	"kb.settings.learning-options.mistral": "Mistral AI Mixtral",
 	"kb.settings.learning-options.multilingual-2023-08-16": "multilingual (alpha)",
 	"kb.settings.learning-options.nuclia-atlas-v1": "Nuclia Atlas",
 	"kb.settings.learning-options.nuclia-etna-v1": "Nuclia Etna",
