@@ -61,7 +61,7 @@
 	"account.logotip": "Logotip",
 	"account.manage": "Gestió del compte",
 	"account.manage_account_users": "Gestió dels Usuaris del compte",
-	"account.monthly_consumibles": "Consum mensuals",
+	"account.monthly_consumables": "Consum mensuals",
 	"account.new_token": "Nova clau de l'API",
 	"account.nua_client": "Nom del client",
 	"account.nua_key_activity": "Registre d'activitat de la clau Nuclia Understanding API",
