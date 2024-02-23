@@ -170,7 +170,7 @@ export class Rest implements IRest {
       return path;
     }
     const isGlobal =
-      (path.startsWith('/account') && !path.includes('/activity')) ||
+      (path.startsWith('/account') && !path.includes('/activity') && !path.endsWith('/ephemeral_tokens')) ||
       path.startsWith('/user') ||
       path.startsWith('/auth') ||
       path.startsWith('/zones') ||
