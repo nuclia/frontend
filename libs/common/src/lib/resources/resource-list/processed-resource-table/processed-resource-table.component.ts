@@ -48,7 +48,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
 
   get initialColumns(): ColumnHeader[] {
     return [
-      { id: 'title', label: 'resource.title', size: '3fr', sortable: false, visible: true },
+      { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: false, visible: true },
       {
         id: 'classification',
         label: 'resource.classification-column',
