@@ -5,6 +5,9 @@ import { EventType } from '@nuclia/core';
 import { format } from 'date-fns';
 import { WINDOW } from '@ng-web-apis/common';
 
+type Tab = 'resources' | 'searches';
+type ActivityTab = EventType | 'feedback';
+
 @Component({
   selector: 'app-activity-download',
   templateUrl: './activity-download.component.html',
@@ -12,28 +15,36 @@ import { WINDOW } from '@ng-web-apis/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActivityDownloadComponent {
-  eventTypes = {
-    searches: [EventType.CHAT, EventType.SEARCH],
+  activityTabs: { [tab in Tab]: ActivityTab[] } = {
+    searches: [EventType.CHAT, EventType.SEARCH, 'feedback'],
     resources: [EventType.PROCESSED, EventType.NEW, EventType.MODIFIED],
   };
-  selectedTab: 'resources' | 'searches' = 'resources';
-  selectedEventType: EventType = this.eventTypes[this.selectedTab][0];
+  selectedTab: Tab = 'resources';
+  selectedActivityTab: ActivityTab = this.activityTabs[this.selectedTab][0];
 
-  activity = [...this.eventTypes.searches, ...this.eventTypes.resources].reduce((acc, eventType) => {
-    acc[eventType] = this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) => kb.listActivityDownloads(eventType)),
-      map((res) =>
-        res.downloads
-          .sort((a, b) => a.localeCompare(b) * -1)
-          .map((month) => ({ month, formatted: this.formatDate(month) })),
-      ),
-      shareReplay(),
-    );
-    return acc;
-  }, {} as { [key in EventType]: Observable<{ month: string; formatted: string }[]> });
+  activity = [...this.activityTabs.searches, ...this.activityTabs.resources].reduce(
+    (acc, tab) => {
+      acc[tab] = this.sdk.currentKb.pipe(
+        take(1),
+        switchMap((kb) =>
+          tab === 'feedback' ? kb.listFeedback() : kb.listActivityDownloads(tab).pipe(map((res) => res.downloads)),
+        ),
+        map((res) =>
+          res.sort((a, b) => a.localeCompare(b) * -1).map((month) => ({ month, formatted: this.formatDate(month) })),
+        ),
+        shareReplay(),
+      );
 
-  constructor(private sdk: SDKService, private cdr: ChangeDetectorRef, @Inject(WINDOW) private window: Window) {}
+      return acc;
+    },
+    {} as { [key in ActivityTab]: Observable<{ month: string; formatted: string }[]> },
+  );
+
+  constructor(
+    private sdk: SDKService,
+    private cdr: ChangeDetectorRef,
+    @Inject(WINDOW) private window: Window,
+  ) {}
 
   download(month: string) {
     this.sdk.currentKb
@@ -44,9 +55,11 @@ export class ActivityDownloadComponent {
             .getTempToken()
             .pipe(
               map((token) =>
-                this.sdk.nuclia.rest.getFullUrl(
-                  `/kb/${kb.id}/activity/download?type=${this.selectedEventType}&month=${month}&eph-token=${token}`,
-                ),
+                this.selectedActivityTab === 'feedback'
+                  ? this.sdk.nuclia.rest.getFullUrl(`/kb/${kb.id}/feedback/${month}?eph-token=${token}`)
+                  : this.sdk.nuclia.rest.getFullUrl(
+                      `/kb/${kb.id}/activity/download?type=${this.selectedActivityTab}&month=${month}&eph-token=${token}`,
+                    ),
               ),
             ),
         ),
@@ -56,9 +69,9 @@ export class ActivityDownloadComponent {
       });
   }
 
-  selectTab(tab: 'searches' | 'resources') {
+  selectTab(tab: Tab) {
     this.selectedTab = tab;
-    this.selectedEventType = this.eventTypes[tab][0];
+    this.selectedActivityTab = this.activityTabs[tab][0];
     this.cdr?.markForCheck();
   }
 

@@ -3,6 +3,7 @@
 ### Improvements
 
 - Fix retry configuration in `uploadFile` and `TUSuploadFile` methods
+- Add `listFeedback` method for retrieving user feedback
 
 # 1.12.0 (2024-02-22)
 
