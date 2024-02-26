@@ -24,7 +24,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 
 export const COMMON_COLUMNS = [
-  { id: 'title', label: 'resource.title', size: '3fr', sortable: false },
+  { id: 'title', label: 'resource.title', size: 'minmax(280px, 3fr)', sortable: false },
   {
     id: 'created',
     label: 'generic.date',
