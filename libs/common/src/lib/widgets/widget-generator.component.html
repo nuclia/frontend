@@ -268,6 +268,25 @@
                           {{ 'widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help' | translate }}
                         </pa-popover>
                       </div>
+                      <div class="toggle-and-help">
+                        <pa-input
+                          formControlName="notEnoughDataMessage"
+                          [acceptHtmlTags]="true">
+                          {{
+                            'widget.generator.advanced.generative-answer-category.not-enough-data-message.label'
+                              | translate
+                          }}
+                        </pa-input>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="notEnoughDataMessageHelp" />
+                        <pa-popover #notEnoughDataMessageHelp>
+                          {{
+                            'widget.generator.advanced.generative-answer-category.not-enough-data-message.help'
+                              | translate
+                          }}
+                        </pa-popover>
+                      </div>
 
                       <div class="title-xxs">
                         {{ 'widget.generator.advanced.generative-answer-category.rag-strategies.title' | translate }}

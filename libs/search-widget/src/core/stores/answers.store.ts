@@ -1,6 +1,7 @@
 import type { Chat, IErrorResponse } from '@nuclia/core';
 import { SvelteState } from '../state-lib';
 import { showResults } from './search.store';
+import { hasNotEnoughData } from '../utils';
 
 interface AnswerState {
   chat: Chat.Entry[];
@@ -64,7 +65,7 @@ export const chat = answerState.writer<Chat.Entry[], { question: string; answer:
         question: params.question,
         answer: {
           ...params.answer,
-          inError: params.answer.inError || params.answer.text === 'Not enough data to answer this.',
+          inError: params.answer.inError || hasNotEnoughData(params.answer.text),
         },
       },
     ],

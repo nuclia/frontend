@@ -109,9 +109,17 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     autocompleteFromNERs: new FormControl<boolean>(false, { nonNullable: true }),
     relations: new FormControl<boolean>(false, { nonNullable: true }),
     knowledgeGraph: new FormControl<boolean>(false, { nonNullable: true }),
+    notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
   });
   userPromptErrors = { pattern: 'widget.generator.advanced.generative-answer-category.prompt.error' };
-  private readonly notFeatures = ['userPrompt', 'preselectedFilters', 'darkMode', 'placeholder', 'ragSpecificFieldIds'];
+  private readonly notFeatures = [
+    'userPrompt',
+    'preselectedFilters',
+    'darkMode',
+    'placeholder',
+    'ragSpecificFieldIds',
+    'notEnoughDataMessage',
+  ];
 
   // advanced options not managed directly in the form
   filters: FilterSelectionType = DEFAULT_FILTERS;
@@ -161,6 +169,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get ragSpecificFieldIds() {
     return this.advancedForm.controls.ragSpecificFieldIds.value;
   }
+  get notEnoughDataMessage() {
+    return this.advancedForm.controls.notEnoughDataMessage.value;
+  }
   get hasOneFilter(): boolean {
     return Object.entries(this.filters).filter(([, value]) => value).length === 1;
   }
@@ -203,6 +214,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
   get ragSpecificFieldIdsControl() {
     return this.advancedForm.controls.ragSpecificFieldIds;
+  }
+  get notEnoughDataMessageControl() {
+    return this.advancedForm.controls.notEnoughDataMessage;
   }
 
   constructor(
@@ -344,6 +358,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         this.ragStrategiesToggles[toggle as RAGStrategyName] = false;
       });
       this.ragSpecificFieldIdsControl.patchValue('');
+      this.notEnoughDataMessageControl.patchValue('');
     }
   }
 
@@ -432,7 +447,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.deletePreview();
     const placeholder = !!this.placeholder
       ? `
-    placeholder="${this.placeholder}"`
+  placeholder="${this.placeholder}"`
       : '';
     let prompt = '';
     let copiablePrompt = '';
@@ -488,11 +503,15 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
           ? `
   rag_strategies="${ragStrategies}"`
           : '';
+      const notEnoughDataMessage = !!this.notEnoughDataMessage
+        ? `
+  not_enough_data_message="${this.notEnoughDataMessage.replace(/"/g, '&quot;')}"`
+        : '';
       const mode: string = this.darkModeEnabled ? `mode="dark"` : '';
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
   ${zone}
-  features="${this.features}" ${ragProperties}${placeholder}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
+  features="${this.features}" ${ragProperties}${placeholder}${notEnoughDataMessage}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results ${mode}></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>

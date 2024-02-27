@@ -34,6 +34,7 @@ export type AdvancedForm = {
   autocompleteFromNERs: boolean;
   relations: boolean;
   knowledgeGraph: boolean;
+  notEnoughDataMessage: string;
 };
 export type WidgetConfiguration = {
   features?: AdvancedForm;
@@ -42,6 +43,7 @@ export type WidgetConfiguration = {
   preset?: PresetForm;
   copilotData?: CopilotData;
   rag_strategies?: RAGStrategy[];
+  notEnoughDataMessage?: string;
 };
 export const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
 export const DEFAULT_FILTERS: FilterSelectionType = {
@@ -76,6 +78,7 @@ export const DEFAULT_CONFIGURATION: AdvancedForm = {
   autocompleteFromNERs: false,
   relations: false,
   knowledgeGraph: false,
+  notEnoughDataMessage: '',
 };
 
 export function getSearchPresetConfig(value: Partial<PresetForm>): AdvancedForm {

@@ -348,3 +348,8 @@ export function getRAGStrategies(ragStrategies: string, fieldIds: string): RAGSt
     [] as RAGStrategy[],
   );
 }
+
+export function hasNotEnoughData(text: string): boolean {
+  text = text.replace(/<br>/g, '').replace(/\n/g, '');
+  return text === 'Not enough data to answer this.';
+}
