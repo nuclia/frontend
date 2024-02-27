@@ -498,6 +498,7 @@
 	"kb.invalid-slug": "El Knowledge Box slug no es válido",
 	"kb.name": "Nombre de la Knowledge Box",
 	"kb.settings.learning-options.anthropic": "Anthropic Claude",
+	"kb.settings.learning-options.azure-mistral": "Mistral + Azure Mistral large",
 	"kb.settings.learning-options.chatgpt": "OpenAI ChatGPT-3.5",
 	"kb.settings.learning-options.chatgpt-azure": "OpenAI + Azure ChatGPT-4",
 	"kb.settings.learning-options.chatgpt-azure-3": "OpenAI + Azure ChatGPT-3.5",
