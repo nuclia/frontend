@@ -6,7 +6,7 @@
   import { createEventDispatcher } from 'svelte';
   import { Button, Expander } from '../../common';
   import Sources from './Sources.svelte';
-  import { getFieldDataFromResource, getResultType, type TypedResult } from '../../core';
+  import { getFieldDataFromResource, getResultType, hasNotEnoughData, notEnoughDataMessage, type TypedResult } from '../../core';
 
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
@@ -16,7 +16,7 @@
   const dispatch = createEventDispatcher();
   const NEWLINE = new RegExp(/\n/g);
   $: text = answer.text?.replace(NEWLINE, '<br>') || '';
-  $: notEnoughData = text === 'Not enough data to answer this.';
+  $: notEnoughData = hasNotEnoughData(answer.text || '');
 
   $: sources =
     answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
@@ -47,7 +47,12 @@
   <div
     class="answer-text"
     class:error={answer.inError}>
-    {@html text}
+    {#if (notEnoughData && $notEnoughDataMessage)}
+      {@html $notEnoughDataMessage}
+    {:else}
+      {@html text}
+    {/if}
+
   </div>
   {#if answer.sources && !notEnoughData}
     <div class="actions">

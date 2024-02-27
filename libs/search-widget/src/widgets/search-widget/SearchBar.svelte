@@ -10,6 +10,7 @@
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
   import {
+    notEnoughDataMessage,
     widgetFeatures,
     widgetFilters,
     widgetPlaceholder,
@@ -54,10 +55,14 @@
   export let no_tracking = false;
   export let rag_strategies = '';
   export let rag_field_ids = '';
+  export let not_enough_data_message = '';
 
   $: darkMode = mode === 'dark';
   $: {
     widgetPlaceholder.set(placeholder || 'input.placeholder');
+  }
+  $: {
+    notEnoughDataMessage.set(not_enough_data_message);
   }
 
   let _features: WidgetFeatures = {};
@@ -86,6 +91,7 @@
       apikey,
       kbslug,
       account,
+      not_enough_data_message,
     });
   }
 

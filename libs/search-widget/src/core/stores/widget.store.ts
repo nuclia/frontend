@@ -13,6 +13,7 @@ export const widgetFeatures = writableSubject<WidgetFeatures | null>(null);
 export const widgetPlaceholder = writableSubject<string>('input.placeholder');
 export const widgetFilters = writableSubject<WidgetFilters>({});
 export const widgetRagStrategies = writableSubject<RAGStrategy[]>([]);
+export const notEnoughDataMessage = writableSubject<string>('');
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));
