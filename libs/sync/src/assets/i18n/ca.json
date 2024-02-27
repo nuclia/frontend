@@ -27,6 +27,8 @@
 	"pastanaga.datetime.minutesAgo": "Fa {{minutes}} minuts",
 	"pastanaga.datetime.one-minute-ago": "Fa 1 min",
 	"pastanaga.datetime.yesterday": "Ahir",
+	"upload.activity.date": "Data",
+	"upload.activity.event": "Missatge",
 	"upload.add-connector": "Afegir connector",
 	"upload.authentication.fail": "L'autenticació ha fallat",
 	"upload.authentication.success": "Autenticació correcta",

@@ -442,7 +442,7 @@ export class SyncService {
     this._currentSourceId.next(null);
   }
 
-  getLogs(since?: string): Observable<SyncRow[]> {
+  getLogs(sync?: string, since?: string): Observable<SyncRow[]> {
     return this.http
       .get<SyncRow[]>(`${this._syncServer.getValue()}/logs${since ? '/' + since : ''}`)
       .pipe(map((logs) => logs.reverse()));

@@ -23,7 +23,10 @@ export class HistoryComponent implements OnDestroy {
   activeLogs = this._activeLogs.asObservable();
   uploads = this._logs.asObservable();
 
-  constructor(private sync: SyncService, private route: ActivatedRoute) {
+  constructor(
+    private sync: SyncService,
+    private route: ActivatedRoute,
+  ) {
     this.sync.getLogs().subscribe((logs) => this._logs.next(logs));
 
     this._showActive
@@ -40,7 +43,9 @@ export class HistoryComponent implements OnDestroy {
                 })),
               ),
             ),
-            switchMap((actives) => (actives.length === 0 ? this.sync.getLogs(this._logs.getValue()[0]?.date) : of([]))),
+            switchMap((actives) =>
+              actives.length === 0 ? this.sync.getLogs(undefined, this._logs.getValue()[0]?.date) : of([]),
+            ),
           ),
         ),
         takeUntil(this.unSubscribeAll),
