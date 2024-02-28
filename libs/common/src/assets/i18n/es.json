@@ -820,6 +820,7 @@
 	"resource.status.error": "Error al procesar",
 	"resource.status.loading": "Cargando estado…",
 	"resource.status.next": "Será procesado a continuación",
+	"resource.status.not-queued": "No en cola",
 	"resource.status.pending": "Se procesará después de {{count}} recursos",
 	"resource.status.processed": "Procesamiento completado",
 	"resource.status.processing": "Procesamiento en progreso",

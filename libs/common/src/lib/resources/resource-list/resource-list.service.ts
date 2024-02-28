@@ -125,7 +125,12 @@ export class ResourceListService {
   }
 
   loadResources(replaceData = true, updateCount = true): Observable<void> {
-    return this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
+    const loadRequest =
+      this.status === RESOURCE_STATUS.PENDING
+        ? this.loadPendingResources(replaceData, updateCount)
+        : this.loadResourcesFromCatalog(replaceData, updateCount);
+
+    return loadRequest.pipe(
       switchMap(() =>
         updateCount
           ? this.uploadService.updateStatusCount().pipe(
@@ -140,6 +145,54 @@ export class ResourceListService {
         this._data.next([]);
         return of(undefined);
       }),
+    );
+  }
+
+  private loadPendingResources(replaceData: boolean, updateCount: boolean): Observable<void> {
+    if (replaceData) {
+      this._cursor = undefined;
+    }
+    return this.features.newProcessingStatus.pipe(
+      switchMap((isEnabled) =>
+        isEnabled
+          ? // at the moment /processing-status does not return all the pending resources
+            // so we start by loading the resources from the catalog and then we fetch the processing status
+            // and update the status of the resources
+            this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
+              switchMap(() => this.sdk.currentKb),
+              take(1),
+              switchMap((kb) => kb.processingStatus(this._cursor)),
+              switchMap((processingStatus) => {
+                const resourceWithLabels = this.getPendingResourcesData(processingStatus);
+                const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
+                const oldData = this._data.value;
+                const mergedData = newData.reduce((deduplicatedList, data) => {
+                  const existingIndex = deduplicatedList.findIndex((item) => item.resource.id === data.resource.id);
+                  if (existingIndex > -1) {
+                    const existingData = deduplicatedList[existingIndex];
+                    deduplicatedList[existingIndex] = {
+                      ...existingData,
+                      resource: {
+                        ...existingData.resource,
+                        title: data.resource.title,
+                        metadata: data.resource.metadata
+                          ? { ...existingData.resource.metadata, status: data.resource.metadata.status }
+                          : existingData.resource.metadata,
+                      } as Resource,
+                      status: data.status,
+                    };
+                  }
+                  return deduplicatedList;
+                }, oldData);
+                this._data.next(mergedData);
+                this._ready.next(true);
+                this._hasMore = !!processingStatus.cursor;
+                this._cursor = processingStatus.cursor;
+                return of();
+              }),
+            )
+          : this.loadResourcesFromCatalog(replaceData, updateCount),
+      ),
     );
   }
 
@@ -211,7 +264,7 @@ export class ResourceListService {
       }));
     }
 
-    if (this.status === 'PENDING' && this.processingStatus) {
+    if (this.status === 'PENDING') {
       resourceWithLabels.status = this.getDeprecatedProcessingStatus(resource, this.processingStatus);
     }
 
@@ -270,11 +323,11 @@ export class ResourceListService {
     return smartResults;
   }
 
-  private getDeprecatedProcessingStatus(resource: Resource, processingStatus: ProcessingStatusResponse): string {
-    const placeInQueue = this.uploadService.getResourcePlaceInProcessingQueue(resource, processingStatus);
+  private getDeprecatedProcessingStatus(resource: Resource, processingStatus?: ProcessingStatusResponse): string {
     if (!processingStatus) {
-      return '';
+      return this.translate.instant('resource.status.not-queued');
     }
+    const placeInQueue = this.uploadService.getResourcePlaceInProcessingQueue(resource, processingStatus);
     if (resource.last_account_seq === undefined || placeInQueue === null) {
       return this.translate.instant('resource.status.unknown');
     }
