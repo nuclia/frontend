@@ -125,7 +125,12 @@ export class ResourceListService {
   }
 
   loadResources(replaceData = true, updateCount = true): Observable<void> {
-    return this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
+    const loadRequest =
+      this.status === RESOURCE_STATUS.PENDING
+        ? this.loadPendingResources(replaceData, updateCount)
+        : this.loadResourcesFromCatalog(replaceData, updateCount);
+
+    return loadRequest.pipe(
       switchMap(() =>
         updateCount
           ? this.uploadService.updateStatusCount().pipe(
@@ -140,6 +145,31 @@ export class ResourceListService {
         this._data.next([]);
         return of(undefined);
       }),
+    );
+  }
+
+  private loadPendingResources(replaceData: boolean, updateCount: boolean): Observable<null | void> {
+    if (replaceData) {
+      this._cursor = undefined;
+    }
+    return this.features.newProcessingStatus.pipe(
+      switchMap((isEnabled) =>
+        isEnabled
+          ? this.sdk.currentKb.pipe(
+              take(1),
+              switchMap((kb) => kb.processingStatus(this._cursor)),
+              switchMap((processingStatus) => {
+                const resourceWithLabels = this.getPendingResourcesData(processingStatus);
+                const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
+                this._data.next(newData);
+                this._ready.next(true);
+                this._hasMore = !!processingStatus.cursor;
+                this._cursor = processingStatus.cursor;
+                return of(null);
+              }),
+            )
+          : this.loadResourcesFromCatalog(replaceData, updateCount),
+      ),
     );
   }
 
