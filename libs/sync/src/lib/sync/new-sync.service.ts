@@ -223,6 +223,7 @@ export class NewSyncService {
       return this.setSourceData(sourceId, source);
     } else {
       return this.sdk.currentKb.pipe(
+        take(1),
         switchMap((kb) => {
           if (localBackend) {
             return of({

@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SyncService } from '../../sync/sync.service';
-import { Subject, catchError, filter, map, of, repeat, switchMap, takeUntil, timer } from 'rxjs';
+import { Subject, catchError, filter, map, of, repeat, startWith, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { SyncRow } from '../../sync/new-models';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'nsy-activity',
@@ -10,7 +11,7 @@ import { SyncRow } from '../../sync/new-models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyncActivityComponent implements OnInit, OnDestroy {
-  unSubscribeAll = new Subject<void>();
+  unsubscribeAll = new Subject<void>();
   since = '';
   currentIndex = 0;
   logs: { index: number; date: string; message: string; icon: string }[] = [];
@@ -18,13 +19,22 @@ export class SyncActivityComponent implements OnInit, OnDestroy {
   constructor(
     private syncService: SyncService,
     private cdr: ChangeDetectorRef,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.syncService.currentSourceId
+    this.router.events
       .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        tap(() => {
+          this.since = '';
+          this.logs = [];
+          this.cdr.markForCheck();
+        }),
+        startWith(null),
+        switchMap(() => this.syncService.currentSourceId),
         filter((id) => !!id),
-        switchMap((id) => of(id).pipe(repeat({ delay: () => timer(10000) }))),
+        switchMap((id) => of(id).pipe(repeat({ delay: 10000 }))),
         switchMap((id) =>
           this.syncService.getLogs(id!, this.since).pipe(
             catchError((error) => {
@@ -41,7 +51,7 @@ export class SyncActivityComponent implements OnInit, OnDestroy {
             icon: log.level === 'high' ? 'circle-cross' : log.level === 'medium' ? 'warning' : 'circle-check',
           })),
         ),
-        takeUntil(this.unSubscribeAll),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe((logs) => {
         this.since = logs[0]?.date || this.since;
@@ -51,7 +61,7 @@ export class SyncActivityComponent implements OnInit, OnDestroy {
       });
   }
   ngOnDestroy() {
-    this.unSubscribeAll.next();
-    this.unSubscribeAll.complete();
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 }
