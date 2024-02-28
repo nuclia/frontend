@@ -155,7 +155,10 @@ export class ResourceListService {
     return this.features.newProcessingStatus.pipe(
       switchMap((isEnabled) =>
         isEnabled
-          ? this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
+          ? // at the moment /processing-status does not return all the pending resources
+            // so we start by loading the resources from the catalog and then we fetch the processing status
+            // and update the status of the resources
+            this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
               switchMap(() => this.sdk.currentKb),
               take(1),
               switchMap((kb) => kb.processingStatus(this._cursor)),
