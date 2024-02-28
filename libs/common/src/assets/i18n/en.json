@@ -821,6 +821,7 @@
 	"resource.status.error": "Error while processing",
 	"resource.status.loading": "Loading status…",
 	"resource.status.next": "Will be processed next",
+	"resource.status.not-queued": "Not queued",
 	"resource.status.pending": "Will be processed after {{count}} resources",
 	"resource.status.processed": "Processing completed",
 	"resource.status.processing": "Processing in progress",

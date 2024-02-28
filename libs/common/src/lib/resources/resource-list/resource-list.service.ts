@@ -148,24 +148,44 @@ export class ResourceListService {
     );
   }
 
-  private loadPendingResources(replaceData: boolean, updateCount: boolean): Observable<null | void> {
+  private loadPendingResources(replaceData: boolean, updateCount: boolean): Observable<void> {
     if (replaceData) {
       this._cursor = undefined;
     }
     return this.features.newProcessingStatus.pipe(
       switchMap((isEnabled) =>
         isEnabled
-          ? this.sdk.currentKb.pipe(
+          ? this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
+              switchMap(() => this.sdk.currentKb),
               take(1),
               switchMap((kb) => kb.processingStatus(this._cursor)),
               switchMap((processingStatus) => {
                 const resourceWithLabels = this.getPendingResourcesData(processingStatus);
                 const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
-                this._data.next(newData);
+                const oldData = this._data.value;
+                const mergedData = newData.reduce((deduplicatedList, data) => {
+                  const existingIndex = deduplicatedList.findIndex((item) => item.resource.id === data.resource.id);
+                  if (existingIndex > -1) {
+                    const existingData = deduplicatedList[existingIndex];
+                    deduplicatedList[existingIndex] = {
+                      ...existingData,
+                      resource: {
+                        ...existingData.resource,
+                        title: data.resource.title,
+                        metadata: data.resource.metadata
+                          ? { ...existingData.resource.metadata, status: data.resource.metadata.status }
+                          : existingData.resource.metadata,
+                      } as Resource,
+                      status: data.status,
+                    };
+                  }
+                  return deduplicatedList;
+                }, oldData);
+                this._data.next(mergedData);
                 this._ready.next(true);
                 this._hasMore = !!processingStatus.cursor;
                 this._cursor = processingStatus.cursor;
-                return of(null);
+                return of();
               }),
             )
           : this.loadResourcesFromCatalog(replaceData, updateCount),
@@ -241,7 +261,7 @@ export class ResourceListService {
       }));
     }
 
-    if (this.status === 'PENDING' && this.processingStatus) {
+    if (this.status === 'PENDING') {
       resourceWithLabels.status = this.getDeprecatedProcessingStatus(resource, this.processingStatus);
     }
 
@@ -300,11 +320,11 @@ export class ResourceListService {
     return smartResults;
   }
 
-  private getDeprecatedProcessingStatus(resource: Resource, processingStatus: ProcessingStatusResponse): string {
-    const placeInQueue = this.uploadService.getResourcePlaceInProcessingQueue(resource, processingStatus);
+  private getDeprecatedProcessingStatus(resource: Resource, processingStatus?: ProcessingStatusResponse): string {
     if (!processingStatus) {
-      return '';
+      return this.translate.instant('resource.status.not-queued');
     }
+    const placeInQueue = this.uploadService.getResourcePlaceInProcessingQueue(resource, processingStatus);
     if (resource.last_account_seq === undefined || placeInQueue === null) {
       return this.translate.instant('resource.status.unknown');
     }

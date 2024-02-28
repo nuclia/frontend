@@ -821,6 +821,7 @@
 	"resource.status.error": "Erreur lors du traitement",
 	"resource.status.loading": "Statut de chargement…",
 	"resource.status.next": "Sera traitée ensuite",
+	"resource.status.not-queued": "Pas en file d'attente",
 	"resource.status.pending": "Sera traitée après {{count}}  ressources",
 	"resource.status.processed": "Traitement terminé",
 	"resource.status.processing": "Traitement en cours",
