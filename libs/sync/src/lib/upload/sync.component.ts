@@ -39,6 +39,7 @@ export class SyncComponent implements OnInit, OnDestroy {
       )
       .subscribe((sourceId) => {
         this.syncService.setCurrentSourceId(sourceId);
+        this.selectedTab = 'activity';
         this.cdr.markForCheck();
       });
     this.currentSync

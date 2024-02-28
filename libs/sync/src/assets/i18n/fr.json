@@ -27,6 +27,8 @@
 	"pastanaga.datetime.minutesAgo": "Il y a {{minutes}} minutes",
 	"pastanaga.datetime.one-minute-ago": "Il y a 1 minute",
 	"pastanaga.datetime.yesterday": "Hier",
+	"upload.activity.date": "Date",
+	"upload.activity.event": "Message",
 	"upload.add-connector": "Ajouter un connecteur",
 	"upload.authentication.fail": "Échec de l'authentification",
 	"upload.authentication.success": "Authentification réussie",

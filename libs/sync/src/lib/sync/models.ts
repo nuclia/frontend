@@ -121,4 +121,11 @@ export interface SyncRow {
   started: boolean | undefined;
   completed: boolean | undefined;
   errors: string;
+  level?: LogSeverityLevel;
+}
+
+export enum LogSeverityLevel {
+  low = 'low',
+  medium = 'medium',
+  high = 'high',
 }

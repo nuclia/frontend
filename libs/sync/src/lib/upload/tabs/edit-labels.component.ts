@@ -4,7 +4,7 @@ import { SyncService } from '../../sync/sync.service';
 import { SisToastService, getSelectionKey } from '@nuclia/sistema';
 import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
-import { getClassificationFromSelection, getSelectionFromClassification } from '@nuclia/sistema';
+import { getClassificationFromSelection } from '@nuclia/sistema';
 import { Source } from '../../sync/new-models';
 
 @Component({
@@ -16,6 +16,7 @@ import { Source } from '../../sync/new-models';
 export class EditSyncLabelsComponent implements OnInit {
   currentSource = this.syncService.currentSource;
   labelSets = this.sdk.currentKb.pipe(
+    take(1),
     switchMap((kb) => kb.getLabels()),
     map((labelSets) =>
       Object.entries(labelSets)

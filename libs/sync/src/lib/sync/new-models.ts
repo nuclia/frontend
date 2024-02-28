@@ -119,6 +119,7 @@ export interface SyncRow {
   started: boolean | undefined;
   completed: boolean | undefined;
   errors: string;
+  level?: LogSeverityLevel;
 }
 
 export type Connector = {
