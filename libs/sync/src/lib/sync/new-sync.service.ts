@@ -249,7 +249,7 @@ export class NewSyncService {
     const existing = this._syncCache.getValue()[sourceId];
     const data: ISyncEntity = {
       id: sourceId,
-      title: sourceId,
+      title: source.title || existing?.title || sourceId,
       connector: {
         name: source.connectorId || existing?.connector.name,
         parameters: { ...existing?.connector.parameters, ...source.data },
@@ -300,6 +300,7 @@ export class NewSyncService {
               connectorId: source.connector.name,
               data: source.connector.parameters,
               kb: source.kb,
+              title: source.title,
               permanentSync: true,
               labels: source.labels,
               items: source.foldersToSync,
@@ -494,6 +495,7 @@ export class NewSyncService {
   private syncToSource(sync: ISyncEntity): Source {
     return {
       connectorId: sync.connector.name,
+      title: sync.title,
       data: sync.connector.parameters,
       kb: sync.kb || this.sdk.nuclia.options,
       items: sync.foldersToSync,
@@ -508,7 +510,7 @@ export class NewSyncService {
       connector: { name: source.connectorId, parameters: source.data },
       kb: source.kb,
       labels: source.labels,
-      title: sourceId,
+      title: source.title || sourceId,
       foldersToSync: source.items,
     };
   }
