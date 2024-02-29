@@ -152,7 +152,10 @@ export class AiModelsComponent implements OnInit {
     if (generativeOption) {
       this.currentGenerativeModelPrompt = generativeOption.user_prompt;
       this.currentGenerativeModelKey = generativeOption.user_key;
-
+      this.userPromptForm.patchValue({
+        prompt: '',
+        system: '',
+      });
       if (this.currentGenerativeModelKey) {
         // add user_keys controls corresponding to generative model if any
         Object.keys(
