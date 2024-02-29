@@ -6,6 +6,7 @@ import { SisToastService } from '@nuclia/sistema';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Field } from '../sync/new-models';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { SDKService } from '@flaps/core';
 
 @Component({
   templateUrl: 'add-sync.component.html',
@@ -20,7 +21,8 @@ export class AddSyncComponent implements OnInit {
       pattern: 'Use only letters, numbers, dashes and underscores',
     } as IErrorMessages,
   };
-  connectorId = location.pathname.split('/upload/sync/add/')[1] || '';
+  connectorId =
+    (this.sdk.nuclia.options.standalone ? location.hash : location.pathname).split('/upload/sync/add/')[1] || '';
   connector = this.syncService.sourceObs.pipe(map((sources) => sources.find((s) => s.id === this.connectorId)));
 
   constructor(
@@ -30,6 +32,7 @@ export class AddSyncComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
+    private sdk: SDKService,
   ) {}
 
   ngOnInit(): void {
@@ -82,7 +85,13 @@ export class AddSyncComponent implements OnInit {
             if (!source.hasServerSideAuth) {
               this.router.navigate([`../../${id}`], { relativeTo: this.route });
             } else {
-              const basePath = location.href.split('/upload/sync/add/')[0];
+              let basePath = location.href.split('/upload/sync/add/')[0];
+              if (this.sdk.nuclia.options.standalone) {
+                // NucliaDB admin uses hash routing but the oauth flow does not support it
+                // so we remove '#/' from the path and we will restore it in app.component after
+                // the oauth flow is completed
+                basePath = basePath.replace('#/', '');
+              }
               source.goToOAuth(`${basePath}/upload/sync/${id}`, true);
             }
           }),

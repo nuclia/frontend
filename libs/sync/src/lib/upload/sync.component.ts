@@ -3,6 +3,7 @@ import { SyncService } from '../sync/sync.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
+import { SDKService } from '@flaps/core';
 
 @Component({
   templateUrl: 'sync.component.html',
@@ -27,10 +28,16 @@ export class SyncComponent implements OnInit, OnDestroy {
     private router: Router,
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
+    private sdk: SDKService,
   ) {}
 
   ngOnInit() {
-    this.syncService.setCurrentSourceId(location.pathname.split('/upload/sync/')[1]?.split('/')[0]);
+    this.syncService.setCurrentSourceId(
+      (this.sdk.nuclia.options.standalone ? location.hash : location.pathname)
+        .split('/upload/sync/')[1]
+        ?.split('/')[0]
+        .split('?')[0] || '',
+    );
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),

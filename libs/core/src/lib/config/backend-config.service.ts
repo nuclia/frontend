@@ -37,6 +37,10 @@ export class BackendConfigurationService {
     return this.config.backend.apiOrigin || '';
   }
 
+  getOAuthServer(): string {
+    return this.config.backend.oauth || this.getAPIOrigin();
+  }
+
   getAppName(): string {
     return this.config.backend.app;
   }

@@ -10,6 +10,7 @@ export type EnvironmentConfiguration = {
     app: string;
     api: string;
     apiOrigin?: string;
+    oauth?: string;
     siteKey?: string;
     sentry_environment?: string;
     sentry_url?: string;
@@ -28,6 +29,7 @@ export type StaticEnvironmentConfiguration = {
     social_login: boolean;
     oauth_login?: boolean;
     new_api?: boolean;
+    oauth?: string;
   };
   base_asset_url?: string;
   locales?: string[]; // List of registred locales in the app

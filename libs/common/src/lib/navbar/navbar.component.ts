@@ -3,7 +3,7 @@ import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, 
 import { StandaloneService } from '../services';
 import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { SyncService } from '@nuclia/sync';
+import { NewSyncService } from 'libs/sync/src/lib/sync/new-sync.service';
 
 @Component({
   selector: 'app-navbar',
@@ -23,7 +23,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   inSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
     map(([account, kb]) => {
-      return this.navigationService.getKbUrl(account.slug, kb.slug || '');
+      return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
     }),
     switchMap((kbUrl) =>
       merge(
@@ -38,11 +38,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   inUpload: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
     map(([account, kb]) => {
-      return this.navigationService.getKbUrl(account.slug, kb.slug || '');
+      return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
     }),
     switchMap((kbUrl) =>
       merge(
-        of(this.navigationService.inKbUpload(location.pathname, kbUrl)),
+        of(
+          this.navigationService.inKbUpload(
+            this.sdk.nuclia.options.standalone ? location.hash : location.pathname,
+            kbUrl,
+          ),
+        ),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
           map((event) => this.navigationService.inKbUpload((event as NavigationEnd).url, kbUrl)),
@@ -95,7 +100,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,
     private billing: BillingService,
-    private syncService: SyncService,
+    private syncService: NewSyncService,
   ) {}
 
   ngOnInit(): void {

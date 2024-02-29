@@ -29,6 +29,10 @@ export class AppComponent implements OnInit, OnDestroy {
     private modalService: SisModalService,
     private router: Router,
   ) {
+    if (location.href.includes('/admin/admin/')) {
+      // after OAuth flow, we need to restore hash-based routing
+      location.href = decodeURIComponent(location.href.replace('/admin/admin/', '/admin/#/admin/'));
+    }
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event) => this.tracking.navigation(event as NavigationEnd));
