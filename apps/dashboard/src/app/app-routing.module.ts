@@ -37,8 +37,8 @@ import {
   KnowledgeBoxKeysComponent,
   KnowledgeBoxUsersComponent,
 } from './knowledge-box';
-import { inviteGuard } from './invite/invite.guard';
-import { InviteComponent } from './invite/invite.component';
+import { inviteGuard } from './onboarding/invite/invite.guard';
+import { InviteComponent } from './onboarding/invite/invite.component';
 import { FeedbackComponent } from './farewell/feedback.component';
 
 const routes: Routes = [

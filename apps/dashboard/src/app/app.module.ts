@@ -35,7 +35,7 @@ import {
   UploadModule,
 } from '@flaps/common';
 import { KnowledgeBoxModule } from './knowledge-box';
-import { InviteModule } from './invite/invite.module';
+import { InviteModule } from './onboarding/invite/invite.module';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { TitleStrategy } from '@angular/router';
 import { AppTitleStrategy } from './app-title.strategy';
