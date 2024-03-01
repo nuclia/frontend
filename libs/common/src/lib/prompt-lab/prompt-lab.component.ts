@@ -63,6 +63,11 @@ export class PromptLabComponent implements OnInit {
   currentQuery = '';
   currentPrompt = '';
   queries: string[] = [];
+  promptExamples = [
+    this.translate.instant('prompt-lab.configuration.prompts.examples.first-example'),
+    this.translate.instant('prompt-lab.configuration.prompts.examples.second-example'),
+    this.translate.instant('prompt-lab.configuration.prompts.examples.third-example'),
+  ];
 
   configBackup?: { [id: string]: any };
   learningModels?: LearningConfiguration;
@@ -288,5 +293,12 @@ export class PromptLabComponent implements OnInit {
 
   private formatCellValue(value: string): string {
     return value.trim().replace(/"/g, '""');
+  }
+
+  setPrompt(value: string) {
+    if (value) {
+      this.currentPrompt = value;
+      this.cdr.markForCheck();
+    }
   }
 }
