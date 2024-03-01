@@ -82,17 +82,21 @@ export class BillingService {
     );
   }
 
-  getSubscription(): Observable<StripeAccountSubscription | null> {
+  getSubscription(): Observable<AccountSubscription | null> {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
-        this.sdk.nuclia.rest.get<AccountSubscription | StripeAccountSubscription>(
-          `/billing/account/${account.id}/subscription`,
-        ),
+        this.sdk.nuclia.rest.get<AccountSubscription>(`/billing/account/${account.id}/subscription`),
       ),
+      catchError(() => of(null)),
+    );
+  }
+
+  getStripeSubscription(): Observable<StripeAccountSubscription | null> {
+    return this.getSubscription().pipe(
       map((subscription) => {
         if (!(subscription as unknown as any).provider) {
-          return subscription as StripeAccountSubscription;
+          return null;
         } else {
           return (subscription as AccountSubscription).subscription as StripeAccountSubscription;
         }

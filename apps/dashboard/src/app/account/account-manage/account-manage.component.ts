@@ -38,7 +38,7 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   };
 
   cannotDeleteAccount = this.billingService
-    .getSubscription()
+    .getStripeSubscription()
     .pipe(
       map(
         (subscription) =>

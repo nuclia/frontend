@@ -23,7 +23,7 @@ export class AccountStatusComponent {
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
   isTrial = this.accountType.pipe(map((type) => type === 'stash-trial'));
   isSubscribed = this.billingService.isSubscribed;
-  subscription = this.billingService.getSubscription().pipe(shareReplay());
+  subscription = this.billingService.getStripeSubscription().pipe(shareReplay());
   upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
   reactivateUrl = this.sdk.currentAccount.pipe(
     map((account) => `${this.navigation.getBillingUrl(account.slug)}/my-subscription`),

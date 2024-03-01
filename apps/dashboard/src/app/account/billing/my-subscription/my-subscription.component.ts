@@ -24,7 +24,7 @@ export class MySubscriptionComponent {
   );
   usage = this.billingService.getAccountUsage().pipe(shareReplay());
   currency$ = this.usage.pipe(map((usage) => usage.currency));
-  subscription = this.billingService.getSubscription().pipe(shareReplay());
+  subscription = this.billingService.getStripeSubscription().pipe(shareReplay());
   activeSubscription = this.subscription.pipe(
     map((subscription) => subscription?.status === SubscriptionStatus.ACTIVE),
   );
