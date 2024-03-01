@@ -16,7 +16,6 @@ import {
   StripeSubscriptionCancellation,
   StripeSubscriptionCreation,
 } from '../models/billing.model';
-import { sub } from 'date-fns';
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
@@ -86,19 +85,31 @@ export class BillingService {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
-        this.sdk.nuclia.rest.get<AccountSubscription>(`/billing/account/${account.id}/subscription`),
+        this.sdk.nuclia.rest.get<AccountSubscription | StripeAccountSubscription>(
+          `/billing/account/${account.id}/subscription`,
+        ),
       ),
+      map((data) => {
+        if (!data.hasOwnProperty('provider')) {
+          return {
+            provider: 'stripe',
+            subscription: data,
+          } as AccountSubscription;
+        } else {
+          return data as AccountSubscription;
+        }
+      }),
       catchError(() => of(null)),
     );
   }
 
   getStripeSubscription(): Observable<StripeAccountSubscription | null> {
     return this.getSubscription().pipe(
-      map((subscription) => {
-        if (!(subscription as unknown as any).provider) {
+      map((data) => {
+        if (!data || data.provider !== 'stripe') {
           return null;
         } else {
-          return (subscription as AccountSubscription).subscription as StripeAccountSubscription;
+          return data.subscription;
         }
       }),
       catchError(() => of(null)),
