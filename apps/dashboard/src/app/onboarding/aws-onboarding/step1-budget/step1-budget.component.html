@@ -1,0 +1,23 @@
+<form
+  class="main-container"
+  [formGroup]="form"
+  (ngSubmit)="submitBudget()">
+  <h1>{{ 'onboarding.aws.title' | translate }}</h1>
+  <div>
+    <div class="title-s">{{ 'onboarding.aws.monthly-budget.question' | translate }}</div>
+    <nsi-help-card>
+      {{ 'onboarding.aws.monthly-budget.help' | translate }}
+    </nsi-help-card>
+  </div>
+  <pa-input
+    formControlName="budget"
+    class="budget-input"
+    type="number">
+    $
+  </pa-input>
+  <pa-button
+    kind="primary"
+    type="submit">
+    {{ 'onboarding.aws.monthly-budget.set-up-account-button' | translate }}
+  </pa-button>
+</form>

@@ -1,0 +1,15 @@
+<stf-user-container>
+  @switch (step) {
+    @case (1) {
+      <app-step1-budget (next)="setupBudget($event)"></app-step1-budget>
+    }
+    @case (2) {
+      <app-step2
+        (back)="step = 1"
+        (next)="nextStep($event)"></app-step2>
+    }
+    @case (3) {
+      <app-step3-kb (back)="step = 2"></app-step3-kb>
+    }
+  }
+</stf-user-container>

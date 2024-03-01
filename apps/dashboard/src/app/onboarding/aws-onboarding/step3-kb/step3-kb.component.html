@@ -1,0 +1,20 @@
+<form
+  class="main-container"
+  [formGroup]="form"
+  (ngSubmit)="createKb()">
+  <h1>{{ 'onboarding.aws.create-kb.title' | translate }}</h1>
+
+  <footer>
+    <pa-button
+      aspect="basic"
+      (click)="back.emit()">
+      {{ 'generic.back' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="form.invalid || form.pristine">
+      {{ 'onboarding.aws.get-started.next-button' | translate }}
+    </pa-button>
+  </footer>
+</form>

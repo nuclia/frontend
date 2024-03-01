@@ -123,16 +123,16 @@ export class Db implements IDb {
   }
 
   /**
-   * Returns the account with the given slug, or the one defined in the Nuclia options
-   * if no slug is provided.
+   * Returns the account with the given id or slug, or the one defined in the Nuclia options
+   * if no id nor slug is provided.
    */
   getAccount(): Observable<Account>;
-  getAccount(account?: string): Observable<Account> {
-    account = account || this.nuclia.options.account;
-    if (!account) {
+  getAccount(accountIdOrSlug?: string): Observable<Account> {
+    accountIdOrSlug = accountIdOrSlug || this.nuclia.options.account;
+    if (!accountIdOrSlug) {
       throw new Error('Account is not set');
     }
-    return this.nuclia.rest.get<Account>(`/account/${account}`);
+    return this.nuclia.rest.get<Account>(`/account/${accountIdOrSlug}`);
   }
 
   getStandaloneKbs(): Observable<IStandaloneKb[]> {

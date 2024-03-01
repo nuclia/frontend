@@ -1,0 +1,10 @@
+@import '../../../styles/variables';
+
+:host {
+  background: $color-neutral-lightest;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(1);
+  color: $color-neutral-regular;
+  display: block;
+  padding: rhythm(1.5) rhythm(2);
+}

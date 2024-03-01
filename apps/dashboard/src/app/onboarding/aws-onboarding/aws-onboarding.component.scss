@@ -1,0 +1,28 @@
+@import 'apps/dashboard/src/variables';
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  width: rhythm(60);
+
+  h1 {
+    margin-bottom: 0;
+  }
+
+  nsi-help-card {
+    margin-top: rhythm(1);
+  }
+
+  pa-input.budget-input {
+    width: rhythm(22);
+  }
+
+  footer {
+    border-top: 1px solid $color-neutral-lighter;
+    display: flex;
+    gap: rhythm(3);
+    justify-content: right;
+    padding: rhythm(2) 0;
+  }
+}

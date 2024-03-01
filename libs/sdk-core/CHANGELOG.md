@@ -9,6 +9,7 @@
 - Fix retry configuration in `uploadFile` and `TUSuploadFile` methods
 - Add `listFeedback` method for retrieving user feedback
 - Allow to pass LLM to `/chat` and `/summarize` endpoints
+- Add `marketplace` endpoints to global API
 
 # 1.12.0 (2024-02-22)
 

@@ -119,7 +119,7 @@ export interface IDb {
   deleteAccount(accountSlug: string): Observable<void>;
   getWelcome(): Observable<Welcome>;
   getAccount(): Observable<Account>;
-  getAccount(account?: string): Observable<Account>;
+  getAccount(accountIdOrSlug?: string): Observable<Account>;
   getStandaloneKbs(): Observable<IStandaloneKb[]>;
   getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
