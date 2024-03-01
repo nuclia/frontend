@@ -62,6 +62,7 @@ export interface ChatOptions extends BaseSearchOptions {
    */
   citations?: boolean;
   rag_strategies?: RAGStrategy[];
+  generative_model?: string;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

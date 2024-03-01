@@ -10,21 +10,8 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import {
-  BehaviorSubject,
-  concat,
-  concatMap,
-  filter,
-  forkJoin,
-  from,
-  Observable,
-  of,
-  Subject,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs';
-import { catchError, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
+import { catchError, filter, map, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SDKService } from '@flaps/core';
 import { Chat, IErrorResponse, LearningConfiguration } from '@nuclia/core';
@@ -63,6 +50,11 @@ export class PromptLabComponent implements OnInit {
   currentQuery = '';
   currentPrompt = '';
   queries: string[] = [];
+  promptExamples = [
+    this.translate.instant('prompt-lab.configuration.prompts.examples.first-example'),
+    this.translate.instant('prompt-lab.configuration.prompts.examples.second-example'),
+    this.translate.instant('prompt-lab.configuration.prompts.examples.third-example'),
+  ];
 
   configBackup?: { [id: string]: any };
   learningModels?: LearningConfiguration;
@@ -138,111 +130,70 @@ export class PromptLabComponent implements OnInit {
     }
 
     this.progress$.next(null);
+    const requestCount = this.queries.length * this.selectedModels.length;
     this.results = [];
-    this.modalService
-      .openConfirm({
-        title: 'prompt-lab.generate.confirmation.title',
-        description: 'prompt-lab.generate.confirmation.inconsistency-warning',
-      })
-      .onClose.pipe(
-        filter((confirm) => !!confirm),
-        switchMap(() => {
-          this.loadingModal = this.modalService.openModal(
-            LoadingDialogComponent,
-            new ModalConfig<{ title: string; description: string; progress: Observable<number | null> }>({
-              dismissable: false,
-              data: {
-                title: 'prompt-lab.generate.loading.title',
-                description: 'prompt-lab.generate.loading.description',
-                progress: this.progress$.asObservable(),
-              },
-            }),
-          );
-          return this._generateResults(this.queries, [this.currentPrompt]);
-        }),
-      )
-      .subscribe();
+
+    this.loadingModal = this.modalService.openModal(
+      LoadingDialogComponent,
+      new ModalConfig<{ title: string; description: string; progress: Observable<number | null> }>({
+        dismissable: false,
+        data: {
+          title: 'prompt-lab.generate.loading.title',
+          description: 'prompt-lab.generate.loading.description',
+          progress: this.progress$
+            .asObservable()
+            .pipe(map((progress) => Math.ceil(((progress || 0) * 100) / requestCount))),
+        },
+      }),
+    );
+    this.progress$.pipe(filter((progress) => progress === requestCount)).subscribe(() => this.loadingModal?.close());
+
+    this._generateResults(this.queries, this.currentPrompt).subscribe();
   }
 
-  private _generateResults(queries: string[], prompts: string[]): Observable<any> {
-    const requests: { query: string; prompt?: string }[] = queries.reduce(
-      (requests, query) => {
-        if (prompts.length > 0) {
-          requests = requests.concat(prompts.map((prompt) => ({ query, prompt })));
-        } else {
-          requests.push({ query });
-        }
-        return requests;
-      },
-      [] as { query: string; prompt?: string }[],
+  private _generateResults(queries: string[], prompt: string): Observable<any> {
+    const requests: { query: string; prompt: string; model: string }[] = queries.reduce(
+      (requests, query) => requests.concat(this.selectedModels.map((model) => ({ query, prompt, model }))),
+      [] as { query: string; prompt: string; model: string }[],
     );
 
-    const requestCount = requests.length * this.selectedModels.length;
     return this.sdk.currentKb.pipe(
       take(1),
-      concatMap((kb) =>
-        concat(
-          // First we run the queries for each model and prompts in sequence
-          concat(from(this.selectedModels)).pipe(
-            concatMap((model) => {
-              return kb.setConfiguration({ [GENERATIVE_MODEL_KEY]: model }).pipe(
-                concatMap(() =>
-                  forkJoin(
-                    requests.map(({ query, prompt }) =>
-                      kb
-                        .chat(query, undefined, undefined, {
-                          synchronous: true,
-                          prompt,
-                        })
-                        .pipe(
-                          tap((answer) => {
-                            this._addResult({ model, query, prompt, result: answer }, requestCount);
-                          }),
-                          catchError((error) => {
-                            this._addResult(
-                              {
-                                model,
-                                query,
-                                prompt,
-                                result: this.translate.instant('prompt-lab.results.error'),
-                              },
-                              requestCount,
-                            );
-                            return of(null);
-                          }),
-                        ),
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-          // Then we put back the KB as it was
-          this.sdk.currentKb.pipe(
-            take(1),
-            concatMap((kb) => {
-              const modelBackup = this.configBackup?.[GENERATIVE_MODEL_KEY];
-              return kb.setConfiguration({ [GENERATIVE_MODEL_KEY]: modelBackup });
-            }),
-            tap(() => {
-              this.hasResults.next(this.results.length > 0);
-              this.loadingModal?.close();
-            }),
+      switchMap((kb) =>
+        forkJoin(
+          requests.map(({ query, prompt, model }) =>
+            kb
+              .chat(query, undefined, undefined, {
+                synchronous: true,
+                prompt,
+                generative_model: model,
+              })
+              .pipe(
+                tap((answer) => {
+                  this._addResult({ model, query, prompt, result: answer });
+                }),
+                catchError((error) => {
+                  this._addResult({
+                    model,
+                    query,
+                    prompt,
+                    result: this.translate.instant('prompt-lab.results.error'),
+                  });
+                  return of(null);
+                }),
+              ),
           ),
         ),
       ),
     );
   }
 
-  private _addResult(
-    entry: {
-      model: string;
-      query: string;
-      prompt: string | undefined;
-      result: Chat.Answer | IErrorResponse | string;
-    },
-    requestCount: number,
-  ) {
+  private _addResult(entry: {
+    model: string;
+    query: string;
+    prompt: string | undefined;
+    result: Chat.Answer | IErrorResponse | string;
+  }) {
     const { model, query, prompt, result } = entry;
     const queryEntry = this.results.find((entry) => entry.query === query);
     const answer =
@@ -262,7 +213,7 @@ export class PromptLabComponent implements OnInit {
       this.results.push({ query, data: [{ prompt, results: [{ model, answer }] }] });
     }
 
-    this.progress$.next((this.progress$.value || 0) + Math.ceil(100 / requestCount));
+    this.progress$.next((this.progress$.value || 0) + 1);
   }
 
   collapseAnswer(query: string) {
@@ -301,5 +252,12 @@ export class PromptLabComponent implements OnInit {
 
   private formatCellValue(value: string): string {
     return value.trim().replace(/"/g, '""');
+  }
+
+  setPrompt(value: string) {
+    if (value) {
+      this.currentPrompt = value;
+      this.cdr.markForCheck();
+    }
   }
 }

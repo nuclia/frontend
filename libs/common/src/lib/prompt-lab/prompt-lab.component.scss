@@ -54,6 +54,14 @@
       white-space: break-spaces;
     }
   }
+  .select-with-background {
+    display: block;
+    margin-top: rhythm(1);
+
+    ::ng-deep .pa-field .pa-field-control {
+      background-color: $color-neutral-lightest;
+    }
+  }
 
   .answer-expander {
     align-items: center;

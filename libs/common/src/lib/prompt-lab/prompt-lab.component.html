@@ -52,6 +52,17 @@
 
         <div class="field-spacing">
           <div class="title-s">{{ 'prompt-lab.configuration.prompts.title' | translate }}</div>
+          <pa-select
+            dim
+            class="select-with-background"
+            [label]="'prompt-lab.configuration.prompts.example' | translate"
+            (valueChange)="setPrompt($event)">
+            @for (option of promptExamples || []; track option) {
+              <pa-option [value]="option">
+                {{ option }}
+              </pa-option>
+            }
+          </pa-select>
           <div class="field-and-button">
             <pa-textarea
               resizable
