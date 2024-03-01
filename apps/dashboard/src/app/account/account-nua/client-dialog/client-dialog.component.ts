@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { filter, map, take, tap } from 'rxjs';
+import { filter, forkJoin, map, take, tap } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
 import { FeaturesService, SDKService, UserService, Zone, ZoneService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
@@ -70,28 +70,25 @@ export class ClientDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.zoneService
-      .getZones()
+    this.email.subscribe((email) => {
+      this.clientForm.get('contact')?.patchValue(email);
+      this.cdr.markForCheck();
+    });
+
+    forkJoin([this.zoneService.getZones(), this.account.pipe(take(1))])
       .pipe(
-        tap((zones) => {
+        tap(([zones]) => {
           this.zones = zones;
           this.cdr.detectChanges();
         }),
       )
-      .subscribe(() => {
+      .subscribe(([zones, account]) => {
         if (this.modal.config.data?.['client']) {
           this.clientForm.patchValue(this.modal.config.data['client']);
-          this.cdr.markForCheck();
         } else {
-          this.account.subscribe((account) => {
-            this.clientForm.get('zone')?.patchValue(account.zone);
-            this.cdr.markForCheck();
-          });
-          this.email.subscribe((email) => {
-            this.clientForm.get('contact')?.patchValue(email);
-            this.cdr.markForCheck();
-          });
+          this.clientForm.get('zone')?.patchValue(zones.length === 1 ? zones[0].id : account.zone);
         }
+        this.cdr.markForCheck();
       });
   }
 
