@@ -162,7 +162,7 @@
                   <span class="nav-link-title">{{ 'navbar.synonyms' | translate }}</span>
                 </a>
               }
-              @if (isAccountManager | async) {
+              @if (isAdmin | async) {
                 @if (isPromptLabEnabled | async) {
                   <a
                     [routerLink]="[kbUrl + '/prompt-lab']"
@@ -173,6 +173,8 @@
                     <span class="nav-link-title">{{ 'navbar.prompt-lab' | translate }}</span>
                   </a>
                 }
+              }
+              @if (isAccountManager | async) {
                 <a
                   [routerLink]="kbUrl + '/users'"
                   routerLinkActive="active"
