@@ -74,8 +74,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isSynonymsEnabled = this.features.synonyms;
   isActivityEnabled = this.features.activityLog;
   isPromptLabEnabled = this.features.isEnterpriseOrGrowth.pipe(
-    // TODO: uncomment before emerging
-    // filter((isEnterprise) => isEnterprise),
+    filter((isEnterprise) => isEnterprise),
     switchMap(() => this.features.promptLabEnabled),
   );
 
