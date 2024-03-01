@@ -10,11 +10,13 @@ import {
   InvoicesList,
   PaymentMethod,
   Prices,
+  StripeAccountSubscription,
   StripeCustomer,
   StripeSubscription,
   StripeSubscriptionCancellation,
   StripeSubscriptionCreation,
 } from '../models/billing.model';
+import { sub } from 'date-fns';
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
@@ -80,12 +82,21 @@ export class BillingService {
     );
   }
 
-  getSubscription(): Observable<AccountSubscription | null> {
+  getSubscription(): Observable<StripeAccountSubscription | null> {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
-        this.sdk.nuclia.rest.get<AccountSubscription>(`/billing/account/${account.id}/subscription`),
+        this.sdk.nuclia.rest.get<AccountSubscription | StripeAccountSubscription>(
+          `/billing/account/${account.id}/subscription`,
+        ),
       ),
+      map((subscription) => {
+        if (!(subscription as unknown as any).provider) {
+          return subscription as StripeAccountSubscription;
+        } else {
+          return (subscription as AccountSubscription).subscription as StripeAccountSubscription;
+        }
+      }),
       catchError(() => of(null)),
     );
   }
