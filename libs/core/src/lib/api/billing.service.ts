@@ -10,6 +10,7 @@ import {
   InvoicesList,
   PaymentMethod,
   Prices,
+  StripeAccountSubscription,
   StripeCustomer,
   StripeSubscription,
   StripeSubscriptionCancellation,
@@ -84,8 +85,33 @@ export class BillingService {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
-        this.sdk.nuclia.rest.get<AccountSubscription>(`/billing/account/${account.id}/subscription`),
+        this.sdk.nuclia.rest.get<AccountSubscription | StripeAccountSubscription>(
+          `/billing/account/${account.id}/subscription`,
+        ),
       ),
+      map((data) => {
+        if (!data.hasOwnProperty('provider')) {
+          return {
+            provider: 'stripe',
+            subscription: data,
+          } as AccountSubscription;
+        } else {
+          return data as AccountSubscription;
+        }
+      }),
+      catchError(() => of(null)),
+    );
+  }
+
+  getStripeSubscription(): Observable<StripeAccountSubscription | null> {
+    return this.getSubscription().pipe(
+      map((data) => {
+        if (!data || data.provider !== 'stripe') {
+          return null;
+        } else {
+          return data.subscription;
+        }
+      }),
       catchError(() => of(null)),
     );
   }

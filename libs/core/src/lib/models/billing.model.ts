@@ -82,6 +82,11 @@ export enum CancellationFeedback {
 }
 
 export interface AccountSubscription {
+  provider: 'stripe' | 'aws-marketplace';
+  subscription: StripeAccountSubscription;
+}
+
+export interface StripeAccountSubscription {
   status: SubscriptionStatus;
   on_demand_budget: number;
   billing_interval: RecurrentPriceInterval;
