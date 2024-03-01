@@ -21,6 +21,8 @@ import { Step3KbComponent } from './step3-kb/step3-kb.component';
 export class AwsOnboardingComponent {
   step = 1;
 
+  account = this.sdk.currentAccount;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
@@ -46,15 +48,24 @@ export class AwsOnboardingComponent {
     });
   }
 
-  nextStep($event: { choice: 'createKB' | 'inviteOwner' }) {
+  goFrom2ToNext($event: { choice: 'createKB' | 'inviteOwner' }) {
     if ($event.choice === 'createKB') {
       this.step = 3;
     } else {
-      this.sdk.currentAccount.subscribe((account) =>
+      this.account.subscribe((account) =>
         this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
           queryParams: { setup: 'invite-collaborators' },
         }),
       );
     }
+  }
+
+  goFrom3ToNext() {
+    this.sdk.refreshKbList();
+    this.account.subscribe((account) =>
+      this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
+        queryParams: { setup: 'invite-collaborators' },
+      }),
+    );
   }
 }

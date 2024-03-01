@@ -6,10 +6,13 @@
     @case (2) {
       <app-step2
         (back)="step = 1"
-        (next)="nextStep($event)"></app-step2>
+        (next)="goFrom2ToNext($event)"></app-step2>
     }
     @case (3) {
-      <app-step3-kb (back)="step = 2"></app-step3-kb>
+      <app-step3-kb
+        [accountId]="(account | async)?.id"
+        (back)="step = 2"
+        (kbCreated)="goFrom3ToNext()"></app-step3-kb>
     }
   }
 </stf-user-container>

@@ -8,7 +8,7 @@ import { SelectAccountKbService } from '../select-account-kb.service';
 import { IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { KbAddComponent } from '../../kb-add';
+import { KbAddModalComponent } from '../../kb-add';
 
 @Component({
   selector: 'app-select-kb',
@@ -60,7 +60,8 @@ export class SelectKbComponent implements OnDestroy {
             // zone must be set to get configuration schema
             this.sdk.nuclia.options.zone = zones[0]?.slug;
           }
-          return this.modalService.openModal(KbAddComponent, { dismissable: true, data: { account, zones } }).onClose;
+          return this.modalService.openModal(KbAddModalComponent, { dismissable: true, data: { account, zones } })
+            .onClose;
         }),
         filter((result) => {
           if (result?.success === false) {

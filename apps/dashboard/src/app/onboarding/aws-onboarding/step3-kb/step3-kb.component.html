@@ -1,8 +1,12 @@
-<form
-  class="main-container"
-  [formGroup]="form"
-  (ngSubmit)="createKb()">
+<div class="main-container">
   <h1>{{ 'onboarding.aws.create-kb.title' | translate }}</h1>
+
+  <stf-kb-creation-form
+    [accountId]="accountId"
+    [zones]="zones"
+    [creationInProgress]="creationInProgress"
+    (kbConfig)="updateKbConfig($event)"
+    (learningConfig)="updateLearningConfig($event)"></stf-kb-creation-form>
 
   <footer>
     <pa-button
@@ -12,9 +16,9 @@
     </pa-button>
     <pa-button
       kind="primary"
-      type="submit"
-      [disabled]="form.invalid || form.pristine">
+      [disabled]="invalidKbConfig || !learningConfig || saving"
+      (click)="createKb()">
       {{ 'onboarding.aws.get-started.next-button' | translate }}
     </pa-button>
   </footer>
-</form>
+</div>

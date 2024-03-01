@@ -7,7 +7,7 @@ import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuc
 import { NavigationService, SDKService, Zone, ZoneService } from '@flaps/core';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { KbAddComponent, KbAddData } from '@flaps/common';
+import { KbAddData, KbAddModalComponent } from '@flaps/common';
 
 @Component({
   selector: 'app-account-kbs',
@@ -84,7 +84,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
       account,
     };
     this.modalService
-      .openModal(KbAddComponent, { dismissable: true, data })
+      .openModal(KbAddModalComponent, { dismissable: true, data })
       .onClose.pipe(
         takeUntil(this.unsubscribeAll),
         filter((result) => {
