@@ -7,8 +7,6 @@ import { PaFocusableModule, PaIconModule } from '@guillotinaweb/pastanaga-angula
 
 import { NavbarComponent } from './navbar.component';
 import { SmallNavbarDirective } from './small-navbar.directive';
-import { SyncService } from '@nuclia/sync';
-import { NewSyncService } from 'libs/sync/src/lib/sync/new-sync.service';
 
 @NgModule({
   imports: [

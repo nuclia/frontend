@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, filter, map, merge, Observable, of, repeat, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { StandaloneService } from '../services';
 import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NewSyncService } from 'libs/sync/src/lib/sync/new-sync.service';
+import { SyncService } from '@nuclia/sync';
 
 @Component({
   selector: 'app-navbar',
@@ -86,7 +86,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   standalone = this.standaloneService.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
   isSubscribed = this.billing.isSubscribed;
-  syncs = combineLatest([this.inUpload, this.isAdminOrContrib, this.invalidKey]).pipe(
+  syncs = of(null).pipe(
+    repeat({ delay: () => this.router.events.pipe(filter((event) => event instanceof NavigationEnd)) }),
+    switchMap(() => combineLatest([this.inUpload, this.isAdminOrContrib, this.invalidKey])),
     filter(([inUpload, isAdminOrContrib, invalidKey]) => inUpload && isAdminOrContrib && !invalidKey),
     switchMap(() => this.sdk.currentKb),
     switchMap((kb) => this.syncService.getSyncsForKB(kb.id)),
@@ -100,7 +102,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,
     private billing: BillingService,
-    private syncService: NewSyncService,
+    private syncService: SyncService,
   ) {}
 
   ngOnInit(): void {
