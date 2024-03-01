@@ -59,7 +59,7 @@ export class NewSyncService {
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
         permanentSyncOnly: true,
-        factory: (settings) => of(new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getAPIOrigin())),
+        factory: (settings) => of(new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getOAuthServer())),
       },
       settings: {},
     },
@@ -70,7 +70,7 @@ export class NewSyncService {
         logo: `${baseLogoPath}/onedrive.svg`,
         description: 'Microsoft OneDrive file hosting service',
         permanentSyncOnly: true,
-        factory: (settings) => of(new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getAPIOrigin())),
+        factory: (settings) => of(new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getOAuthServer())),
       },
       settings: {},
     },
@@ -81,7 +81,8 @@ export class NewSyncService {
         logo: `${baseLogoPath}/sharepoint.svg`,
         description: 'Microsoft Sharepoint service',
         permanentSyncOnly: true,
-        factory: (settings) => of(new SharepointImpl('sharepoint', settings?.['id'] || '', this.config.getAPIOrigin())),
+        factory: (settings) =>
+          of(new SharepointImpl('sharepoint', settings?.['id'] || '', this.config.getOAuthServer())),
       },
       settings: {},
     },
@@ -92,7 +93,7 @@ export class NewSyncService {
         logo: `${baseLogoPath}/dropbox.svg`,
         description: 'File storage and synchronization service developed by Dropbox',
         permanentSyncOnly: true,
-        factory: (settings) => of(new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getAPIOrigin())),
+        factory: (settings) => of(new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getOAuthServer())),
       },
       settings: {},
     },
@@ -211,53 +212,44 @@ export class NewSyncService {
     sourceId: string,
     source: Source,
     kbId: string, // TO BE REMOVED (useless, kept for compatibility with old code)
-    localBackend?: string,
+    localBackend?: string, // TO BE REMOVED (useless, kept for compatibility with old code)
     labels?: Classification[],
   ): Observable<void> {
-    if (localBackend) {
-      source = {
-        ...source,
-        labels,
-        kb: { standalone: true, zone: '', backend: localBackend, account: 'local', knowledgeBox: kbId },
-      };
-      return this.setSourceData(sourceId, source);
-    } else {
-      return this.sdk.currentKb.pipe(
-        take(1),
-        switchMap((kb) => {
-          if (localBackend) {
-            return of({
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => {
+        if (this.sdk.nuclia.options.standalone) {
+          return of({
+            ...source,
+            labels,
+            kb: { ...this.sdk.nuclia.options, knowledgeBox: kb.id },
+          });
+        } else if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
+          return of(source);
+        } else {
+          return this.getNucliaKey(kb).pipe(
+            map((data) => ({
               ...source,
               labels,
-              kb: { standalone: true, zone: '', backend: localBackend, account: 'local', knowledgeBox: kb.id },
-            });
-          } else if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
-            return of(source);
-          } else {
-            return this.getNucliaKey(kb).pipe(
-              map((data) => ({
-                ...source,
-                labels,
-                kb: {
-                  zone: this.sdk.nuclia.options.zone,
-                  backend: this.sdk.nuclia.options.backend,
-                  knowledgeBox: data.kbid,
-                  apiKey: data.token,
-                } as NucliaOptions,
-              })),
-            );
-          }
-        }),
-        switchMap((source) => this.setSourceData(sourceId, source)),
-      );
-    }
+              kb: {
+                zone: this.sdk.nuclia.options.zone,
+                backend: this.sdk.nuclia.options.backend,
+                knowledgeBox: data.kbid,
+                apiKey: data.token,
+              } as NucliaOptions,
+            })),
+          );
+        }
+      }),
+      switchMap((source) => this.setSourceData(sourceId, source)),
+    );
   }
 
   setSourceData(sourceId: string, source: Partial<Source>): Observable<void> {
     const existing = this._syncCache.getValue()[sourceId];
     const data: ISyncEntity = {
       id: sourceId,
-      title: sourceId,
+      title: source.title || existing?.title || sourceId,
       connector: {
         name: source.connectorId || existing?.connector.name,
         parameters: { ...existing?.connector.parameters, ...source.data },
@@ -308,6 +300,7 @@ export class NewSyncService {
               connectorId: source.connector.name,
               data: source.connector.parameters,
               kb: source.kb,
+              title: source.title,
               permanentSync: true,
               labels: source.labels,
               items: source.foldersToSync,
@@ -376,7 +369,7 @@ export class NewSyncService {
     return kb
       .createKeyForService(
         {
-          title: 'Desktop',
+          title: 'Sync',
           role: 'SCONTRIBUTOR',
         },
         this.getExpirationDate(),
@@ -502,6 +495,7 @@ export class NewSyncService {
   private syncToSource(sync: ISyncEntity): Source {
     return {
       connectorId: sync.connector.name,
+      title: sync.title,
       data: sync.connector.parameters,
       kb: sync.kb || this.sdk.nuclia.options,
       items: sync.foldersToSync,
@@ -516,7 +510,7 @@ export class NewSyncService {
       connector: { name: source.connectorId, parameters: source.data },
       kb: source.kb,
       labels: source.labels,
-      title: sourceId,
+      title: source.title || sourceId,
       foldersToSync: source.items,
     };
   }

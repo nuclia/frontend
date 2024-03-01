@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { combineLatest, filter, map, merge, Observable, of, repeat, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { StandaloneService } from '../services';
 import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
@@ -13,6 +13,11 @@ import { SyncService } from '@nuclia/sync';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
+  properKbId = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
+    map(([account, kb]) => {
+      return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
+    }),
+  );
   inAccount: Observable<boolean> = merge(
     of(this.navigationService.inAccountManagement(location.pathname)),
     this.router.events.pipe(
@@ -21,10 +26,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribeAll),
     ),
   );
-  inSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
-    map(([account, kb]) => {
-      return this.navigationService.getKbUrl(account.slug, kb.slug || '');
-    }),
+  inSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
         of(this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl)),
@@ -36,13 +38,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
       ),
     ),
   );
-  inUpload: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
-    map(([account, kb]) => {
-      return this.navigationService.getKbUrl(account.slug, kb.slug || '');
-    }),
+  inUpload: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
-        of(this.navigationService.inKbUpload(location.pathname, kbUrl)),
+        of(
+          this.navigationService.inKbUpload(
+            this.sdk.nuclia.options.standalone ? location.hash : location.pathname,
+            kbUrl,
+          ),
+        ),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
           map((event) => this.navigationService.inKbUpload((event as NavigationEnd).url, kbUrl)),
@@ -81,7 +85,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   standalone = this.standaloneService.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
   isSubscribed = this.billing.isSubscribed;
-  syncs = combineLatest([this.inUpload, this.isAdminOrContrib, this.invalidKey]).pipe(
+  syncs = of(null).pipe(
+    repeat({ delay: () => this.router.events.pipe(filter((event) => event instanceof NavigationEnd)) }),
+    switchMap(() => combineLatest([this.inUpload, this.isAdminOrContrib, this.invalidKey])),
     filter(([inUpload, isAdminOrContrib, invalidKey]) => inUpload && isAdminOrContrib && !invalidKey),
     switchMap(() => this.sdk.currentKb),
     switchMap((kb) => this.syncService.getSyncsForKB(kb.id)),

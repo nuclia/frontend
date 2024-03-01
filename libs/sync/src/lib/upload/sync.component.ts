@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SyncService } from '../sync/sync.service';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -27,10 +27,13 @@ export class SyncComponent implements OnInit, OnDestroy {
     private router: Router,
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
-    this.syncService.setCurrentSourceId(location.pathname.split('/upload/sync/')[1]?.split('/')[0]);
+    this.route.paramMap.subscribe((params) => {
+      this.syncService.setCurrentSourceId(params.get('id') || '');
+    });
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),

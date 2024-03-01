@@ -10,9 +10,7 @@
     qa="fields-form"
     (ngSubmit)="save()">
     <div class="field">
-      <pa-input
-        formControlName="id"
-        [errorMessages]="validationMessages['id']">
+      <pa-input formControlName="title">
         {{ 'upload.source.name' | translate }}
       </pa-input>
     </div>

@@ -37,10 +37,10 @@ import {
 import { KnowledgeBoxModule } from './knowledge-box';
 import { InviteModule } from './invite/invite.module';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
-import { SyncService } from '@nuclia/sync';
-import { NewSyncService } from '../../../../libs/sync/src/lib/sync/new-sync.service';
 import { TitleStrategy } from '@angular/router';
 import { AppTitleStrategy } from './app-title.strategy';
+import { SyncService } from '@nuclia/sync';
+import { NewSyncService } from 'libs/sync/src/lib/sync/new-sync.service';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);

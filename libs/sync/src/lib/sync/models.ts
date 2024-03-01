@@ -102,6 +102,7 @@ export interface ConnectorCache {
 
 export interface Source {
   connectorId: string;
+  title?: string;
   data: ConnectorParameters;
   kb?: NucliaOptions;
   items?: SyncItem[];

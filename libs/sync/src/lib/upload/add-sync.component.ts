@@ -6,6 +6,9 @@ import { SisToastService } from '@nuclia/sistema';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Field } from '../sync/new-models';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { SDKService } from '@flaps/core';
+
+const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
 
 @Component({
   templateUrl: 'add-sync.component.html',
@@ -15,12 +18,8 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 export class AddSyncComponent implements OnInit {
   form?: UntypedFormGroup;
   fields?: Field[];
-  validationMessages: { [key: string]: IErrorMessages } = {
-    id: {
-      pattern: 'Use only letters, numbers, dashes and underscores',
-    } as IErrorMessages,
-  };
-  connectorId = location.pathname.split('/upload/sync/add/')[1] || '';
+  connectorId =
+    (this.sdk.nuclia.options.standalone ? location.hash : location.pathname).split('/upload/sync/add/')[1] || '';
   connector = this.syncService.sourceObs.pipe(map((sources) => sources.find((s) => s.id === this.connectorId)));
 
   constructor(
@@ -30,6 +29,7 @@ export class AddSyncComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
+    private sdk: SDKService,
   ) {}
 
   ngOnInit(): void {
@@ -43,66 +43,75 @@ export class AddSyncComponent implements OnInit {
   }
 
   save() {
-    const id = this.form?.value['id'];
-    if (id) {
-      const data = this.form?.value['fields'];
-      this.syncService
-        .setSourceAndDestination(
-          id,
-          {
-            connectorId: this.connectorId || '',
-            data,
-          },
-          '',
-        )
-        .pipe(
-          tap(() => this.syncService.setCurrentSourceId(id)),
-          switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1))),
-          switchMap((sourceConnector) => {
-            // Setup sync items from the source itself if the source doesn't allow to select folders
-            if (!sourceConnector.allowToSelectFolders) {
-              if (typeof sourceConnector.handleParameters === 'function') {
-                sourceConnector.handleParameters(data);
-              }
-              return this.syncService.getSourceData(id).pipe(
-                switchMap((sourceData) =>
-                  this.syncService
-                    .setSourceData(id, {
-                      ...sourceData,
-                      items: sourceConnector.getStaticFolders(),
-                    })
-                    .pipe(switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1)))),
-                ),
-              );
-            } else {
-              return of(sourceConnector);
+    const title = this.form?.value['title'];
+    const data = this.form?.value['fields'];
+    let id = title?.toLowerCase().replace(SLUGIFY, '-');
+    this.sdk.currentKb
+      .pipe(
+        switchMap((kb) => {
+          id = `${kb.id}-${id}`;
+          return this.syncService.setSourceAndDestination(
+            id,
+            {
+              connectorId: this.connectorId || '',
+              title,
+              data,
+            },
+            '',
+          );
+        }),
+        tap(() => this.syncService.setCurrentSourceId(id)),
+        switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1))),
+        switchMap((sourceConnector) => {
+          // Setup sync items from the source itself if the source doesn't allow to select folders
+          if (!sourceConnector.allowToSelectFolders) {
+            if (typeof sourceConnector.handleParameters === 'function') {
+              sourceConnector.handleParameters(data);
             }
-          }),
-          tap((source) => {
-            if (!source.hasServerSideAuth) {
-              this.router.navigate([`../../${id}`], { relativeTo: this.route });
-            } else {
-              const basePath = location.href.split('/upload/sync/add/')[0];
-              source.goToOAuth(`${basePath}/upload/sync/${id}`, true);
+            return this.syncService.getSourceData(id).pipe(
+              switchMap((sourceData) =>
+                this.syncService
+                  .setSourceData(id, {
+                    ...sourceData,
+                    items: sourceConnector.getStaticFolders(),
+                  })
+                  .pipe(switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1)))),
+              ),
+            );
+          } else {
+            return of(sourceConnector);
+          }
+        }),
+        tap((source) => {
+          if (!source.hasServerSideAuth) {
+            this.router.navigate([`../../${id}`], { relativeTo: this.route });
+          } else {
+            let basePath = location.href.split('/upload/sync/add/')[0];
+            if (this.sdk.nuclia.options.standalone) {
+              // NucliaDB admin uses hash routing but the oauth flow does not support it
+              // so we remove '#/' from the path and we will restore it in app.component after
+              // the oauth flow is completed
+              basePath = basePath.replace('#/', '');
             }
-          }),
-        )
-        .subscribe({
-          next: () => {
-            this.toast.success('upload.saved');
-          },
-          error: (error) => {
-            console.warn(error);
-            this.toast.error('upload.failed');
-          },
-        });
-    }
+            source.goToOAuth(`${basePath}/upload/sync/${id}`, true);
+          }
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.toast.success('upload.saved');
+        },
+        error: (error) => {
+          console.warn(error);
+          this.toast.error('upload.failed');
+        },
+      });
   }
 
   showFields(fields: Field[]) {
     this.fields = fields;
     this.form = this.formBuilder.group({
-      id: ['', [Validators.required, Validators.pattern('[a-zA-Z-0-9-_]+')]],
+      title: ['', [Validators.required]],
       fields: this.formBuilder.group(
         fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', this.getFieldValidators(field)] }), {}),
       ),
