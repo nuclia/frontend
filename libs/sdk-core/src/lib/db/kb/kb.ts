@@ -357,14 +357,18 @@ export class KnowledgeBox implements IKnowledgeBox {
       });
     ```
   */
-  summarize(ressourceIds: string[], user_prompt?: string): Observable<string> {
+  summarize(ressourceIds: string[], user_prompt?: string, generative_model?: string): Observable<string> {
     const retryDelays = [0, 1000, 2000, 5000, 10000];
     const retryConfig: RetryConfig = {
       count: retryDelays.length,
       delay: (error, retryCount) => timer(retryDelays[retryCount - 1]),
     };
     return defer(() =>
-      this.nuclia.rest.post<{ summary: string }>(`${this.path}/summarize`, { resources: ressourceIds, user_prompt }),
+      this.nuclia.rest.post<{ summary: string }>(`${this.path}/summarize`, {
+        resources: ressourceIds,
+        user_prompt,
+        generative_model,
+      }),
     ).pipe(
       retry(retryConfig),
       map((res) => res.summary),

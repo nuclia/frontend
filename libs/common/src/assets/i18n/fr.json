@@ -686,8 +686,6 @@
 	"prompt-lab.configuration.question.placeholder": "Écrivez votre question ici",
 	"prompt-lab.configuration.question.title": "Écrivez jusqu'à trois questions avec lesquelles vous souhaitez tester",
 	"prompt-lab.configuration.title": "Configuration",
-	"prompt-lab.generate.confirmation.inconsistency-warning": "Veuillez noter que lors des tests, les utilisateurs susceptibles d'utiliser votre Knowledge Box pourraient rencontrer des réponses incohérentes.\n<br><br>Veuillez effectuer les tests pendant le développement ou lorsque vous êtes sûr qu'aucun utilisateur ne sera affecté par ces modifications.",
-	"prompt-lab.generate.confirmation.title": "Avant de continuer…",
 	"prompt-lab.generate.loading.description": "Nous générons vos résultats. Merci de ne pas quitter la page.",
 	"prompt-lab.generate.loading.title": "Juste un moment...",
 	"prompt-lab.page-description": "Testez les LLM et les invites, voyez comment ils fonctionnent ensemble, choisissez les paramètres que vous souhaitez appliquer à votre Knowledge Box.",

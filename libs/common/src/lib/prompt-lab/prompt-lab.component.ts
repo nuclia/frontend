@@ -139,29 +139,19 @@ export class PromptLabComponent implements OnInit {
 
     this.progress$.next(null);
     this.results = [];
-    this.modalService
-      .openConfirm({
-        title: 'prompt-lab.generate.confirmation.title',
-        description: 'prompt-lab.generate.confirmation.inconsistency-warning',
-      })
-      .onClose.pipe(
-        filter((confirm) => !!confirm),
-        switchMap(() => {
-          this.loadingModal = this.modalService.openModal(
-            LoadingDialogComponent,
-            new ModalConfig<{ title: string; description: string; progress: Observable<number | null> }>({
-              dismissable: false,
-              data: {
-                title: 'prompt-lab.generate.loading.title',
-                description: 'prompt-lab.generate.loading.description',
-                progress: this.progress$.asObservable(),
-              },
-            }),
-          );
-          return this._generateResults(this.queries, [this.currentPrompt]);
-        }),
-      )
-      .subscribe();
+
+    this.loadingModal = this.modalService.openModal(
+      LoadingDialogComponent,
+      new ModalConfig<{ title: string; description: string; progress: Observable<number | null> }>({
+        dismissable: false,
+        data: {
+          title: 'prompt-lab.generate.loading.title',
+          description: 'prompt-lab.generate.loading.description',
+          progress: this.progress$.asObservable(),
+        },
+      }),
+    );
+    this._generateResults(this.queries, [this.currentPrompt]).subscribe();
   }
 
   private _generateResults(queries: string[], prompts: string[]): Observable<any> {
@@ -184,38 +174,35 @@ export class PromptLabComponent implements OnInit {
         concat(
           // First we run the queries for each model and prompts in sequence
           concat(from(this.selectedModels)).pipe(
-            concatMap((model) => {
-              return kb.setConfiguration({ [GENERATIVE_MODEL_KEY]: model }).pipe(
-                concatMap(() =>
-                  forkJoin(
-                    requests.map(({ query, prompt }) =>
-                      kb
-                        .chat(query, undefined, undefined, {
-                          synchronous: true,
-                          prompt,
-                        })
-                        .pipe(
-                          tap((answer) => {
-                            this._addResult({ model, query, prompt, result: answer }, requestCount);
-                          }),
-                          catchError((error) => {
-                            this._addResult(
-                              {
-                                model,
-                                query,
-                                prompt,
-                                result: this.translate.instant('prompt-lab.results.error'),
-                              },
-                              requestCount,
-                            );
-                            return of(null);
-                          }),
-                        ),
+            concatMap((model) =>
+              forkJoin(
+                requests.map(({ query, prompt }) =>
+                  kb
+                    .chat(query, undefined, undefined, {
+                      synchronous: true,
+                      prompt,
+                      generative_model: model,
+                    })
+                    .pipe(
+                      tap((answer) => {
+                        this._addResult({ model, query, prompt, result: answer }, requestCount);
+                      }),
+                      catchError((error) => {
+                        this._addResult(
+                          {
+                            model,
+                            query,
+                            prompt,
+                            result: this.translate.instant('prompt-lab.results.error'),
+                          },
+                          requestCount,
+                        );
+                        return of(null);
+                      }),
                     ),
-                  ),
                 ),
-              );
-            }),
+              ),
+            ),
           ),
           // Then we put back the KB as it was
           this.sdk.currentKb.pipe(
