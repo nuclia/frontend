@@ -423,7 +423,10 @@ export class NewSyncService {
               data: source.getParametersValues(),
             }),
           ),
-          map(() => true),
+          map(() => {
+            source.cleanAuthData();
+            return true;
+          }),
         );
       }),
     );
