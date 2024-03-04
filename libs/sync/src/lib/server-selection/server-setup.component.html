@@ -9,6 +9,7 @@
   <h1>{{ 'upload.server.title' | translate }}</h1>
 </div>
 <div class="container">
+  <p [innerHTML]="'upload.server.description' | translate"></p>
   <pa-input
     [formControl]="serverUrl"
     placeholder="https://my.sync.server"
