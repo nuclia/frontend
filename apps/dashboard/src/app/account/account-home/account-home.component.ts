@@ -19,6 +19,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TickOptions } from '@flaps/common';
 import { ChartData, MetricsService } from '../metrics.service';
+import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import { InviteCollaboratorsModalComponent } from '../invite-collaborators-modal';
 
 @Component({
   selector: 'app-account-home',
@@ -102,10 +104,13 @@ export class AccountHomeComponent implements OnInit {
       .pipe(
         take(1),
         filter((params) => params['setup'] === 'invite-collaborators'),
+        switchMap(() => this.route.params),
       )
       .subscribe((params) => {
-        // TODO: invite collaborators modal
-        // this.modal.openModal();
+        this.modal.openModal(
+          InviteCollaboratorsModalComponent,
+          new ModalConfig({ dismissable: false, data: { accountSlug: params['account'] } }),
+        );
       });
   }
 

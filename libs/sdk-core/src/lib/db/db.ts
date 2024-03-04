@@ -15,7 +15,14 @@ import {
   throwError,
   timer,
 } from 'rxjs';
-import type { AccountUsersPayload, FullAccountUser, IDb, INuclia, InviteAccountUserPayload } from '../models';
+import {
+  AccountUsersPayload,
+  FullAccountUser,
+  IDb,
+  INuclia,
+  InviteAccountUserPayload,
+  PendingInvitation,
+} from '../models';
 import {
   Account,
   AccountCreation,
@@ -635,5 +642,22 @@ export class Db implements IDb {
   inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void> {
     const url = `/account/${accountSlug}/invite`;
     return this.nuclia.rest.post(url, data);
+  }
+
+  /**
+   * List pending account invitations
+   * @param accountId
+   */
+  listAccountInvitations(accountId: string): Observable<PendingInvitation[]> {
+    return this.nuclia.rest.get(`/account/${accountId}/invites`);
+  }
+
+  /**
+   * Delete account invitation
+   * @param accountId
+   * @param email
+   */
+  deleteAccountInvitation(accountId: string, email: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${accountId}/invite/${email}`);
   }
 }

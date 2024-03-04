@@ -44,6 +44,7 @@ export class Step3KbComponent implements OnInit {
   invalidKbConfig = true;
 
   saving = false;
+  // TODO: filter out zones which are not on AWS provider
   zones: Zone[] = [];
 
   constructor(

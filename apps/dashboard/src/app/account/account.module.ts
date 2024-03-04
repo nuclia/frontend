@@ -81,6 +81,7 @@ const Components = [
     AccountStatusComponent,
     PaDateTimeModule,
     KnowledgeBoxSettingsModule,
+    PaTooltipModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountHomeComponent, AccountManageComponent],

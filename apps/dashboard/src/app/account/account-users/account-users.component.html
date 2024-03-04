@@ -1,72 +1,89 @@
-<div
-  class="account-users page-spacing"
-  *ngIf="users">
-  <h1>{{ 'navbar.users' | translate }}</h1>
+@if (users) {
+  <div class="account-users page-spacing">
+    <h1>{{ 'navbar.users' | translate }}</h1>
 
-  <div>
-    <div class="users-amount">
-      {{ 'account.users_amount' | translate }}
-      <strong>{{ users.length }}</strong>
+    <div>
+      <div class="users-amount">
+        {{ 'account.users_amount' | translate }}
+        <strong>{{ users.length }}</strong>
+      </div>
+      @if (account && account.max_users != null) {
+        <div class="users-left">
+          {{ 'account.users_left' | translate }}
+          <strong>{{ (account.max_users || 0) - (account.current_users || 0) }}</strong>
+        </div>
+      }
     </div>
-    <div
-      class="users-left"
-      *ngIf="account && account.max_users != null">
-      {{ 'account.users_left' | translate }}
-      <strong>{{ (account.max_users || 0) - (account.current_users || 0) }}</strong>
-    </div>
-  </div>
 
-  <div
-    class="add-user"
-    *ngIf="canAddUsers | async">
-    <pa-input
-      type="email"
-      [formControl]="email">
-      {{ 'accounts.add_user_input' | translate }}
-    </pa-input>
-    <pa-button
-      [disabled]="email.invalid"
-      (click)="addUser()">
-      {{ 'account.add_user' | translate }}
-    </pa-button>
-  </div>
-
-  <pa-table columns="auto 180px 110px">
-    <pa-table-header>
-      <pa-table-cell header>{{ 'generic.user' | translate }}</pa-table-cell>
-      <pa-table-cell header>{{ 'generic.role' | translate }}</pa-table-cell>
-      <pa-table-cell header></pa-table-cell>
-    </pa-table-header>
-    <pa-table-row *ngFor="let user of users">
-      <pa-table-cell>{{ user.name }} – {{ user.email }}</pa-table-cell>
-      <pa-table-cell>
-        <nsi-dropdown-button
-          size="small"
-          aspect="basic"
-          [popupRef]="roleDropdown"
-          [disabled]="isItMe(user.id)">
-          {{ roleTranslations[user.role] | translate }}
-        </nsi-dropdown-button>
-        <pa-dropdown #roleDropdown>
-          <pa-option
-            *ngFor="let role of roleTranslations | keyvalue"
-            [value]="role.key"
-            (selectOption)="changeRole(user, role.key)">
-            {{ role.value | translate }}
-          </pa-option>
-        </pa-dropdown>
-      </pa-table-cell>
-      <pa-table-cell>
+    @if (canAddUsers | async) {
+      <div class="add-user">
+        <pa-input
+          type="email"
+          [formControl]="email">
+          {{ 'accounts.add_user_input' | translate }}
+        </pa-input>
         <pa-button
-          *ngIf="!isItMe(user.id)"
-          aspect="basic"
-          icon="trash"
-          size="small"
-          paTooltip="generic.delete"
-          (click)="deleteUserConfirm(user)">
-          {{ 'generic.delete' | translate }}
+          [disabled]="email.invalid"
+          (click)="addUser()">
+          {{ 'account.add_user' | translate }}
         </pa-button>
-      </pa-table-cell>
-    </pa-table-row>
-  </pa-table>
-</div>
+      </div>
+    }
+
+    <pa-table columns="repeat(2, 1fr) 210px 96px">
+      <pa-table-header>
+        <pa-table-cell header>{{ 'generic.name' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'generic.email' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'generic.role' | translate }}</pa-table-cell>
+        <pa-table-cell header></pa-table-cell>
+      </pa-table-header>
+      @for (user of users; track user) {
+        <pa-table-row>
+          <pa-table-cell>
+            @if (!user.id) {
+              <pa-icon
+                class="pending-icon"
+                name="clock-dash"
+                paTooltip="Pending: invitation sent"></pa-icon>
+            } @else {
+              <span class="title-s">{{ user.name }}</span>
+            }
+          </pa-table-cell>
+          <pa-table-cell>
+            {{ user.email }}
+          </pa-table-cell>
+          <pa-table-cell>
+            <nsi-dropdown-button
+              size="small"
+              aspect="basic"
+              [popupRef]="roleDropdown"
+              [disabled]="!user.id || isItMe(user.id)">
+              {{ roleTranslations[user.role] | translate }}
+            </nsi-dropdown-button>
+            <pa-dropdown #roleDropdown>
+              @for (role of roleTranslations | keyvalue; track role) {
+                <pa-option
+                  [value]="role.key"
+                  (selectOption)="changeRole(user, role.key)">
+                  {{ role.value | translate }}
+                </pa-option>
+              }
+            </pa-dropdown>
+          </pa-table-cell>
+          <pa-table-cell>
+            @if (!user.id || !isItMe(user.id)) {
+              <pa-button
+                aspect="basic"
+                icon="trash"
+                size="small"
+                paTooltip="generic.delete"
+                (click)="deleteUserConfirm(user)">
+                {{ 'generic.delete' | translate }}
+              </pa-button>
+            }
+          </pa-table-cell>
+        </pa-table-row>
+      }
+    </pa-table>
+  </div>
+}

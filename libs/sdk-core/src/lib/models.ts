@@ -170,6 +170,8 @@ export interface IDb {
   getAccountUsers(accountSlug: string): Observable<FullAccountUser[]>;
   setAccountUsers(accountSlug: string, users: AccountUsersPayload): Observable<void>;
   inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void>;
+  listAccountInvitations(accountId: string): Observable<PendingInvitation[]>;
+  deleteAccountInvitation(accountId: string, email: string): Observable<void>;
 }
 
 export interface NucliaOptions {
@@ -258,4 +260,11 @@ export interface AccountUsersPayload {
 
 export interface InviteAccountUserPayload {
   email: string;
+  role?: AccountRoles;
+}
+
+export interface PendingInvitation {
+  email: string;
+  role: AccountRoles;
+  expires: string;
 }

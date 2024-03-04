@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, Subject } from 'rxjs';
-import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { forkJoin, Observable, of, Subject, take } from 'rxjs';
+import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
-import { Account, AccountRoles, AccountUsersPayload, FullAccountUser } from '@nuclia/core';
+import { Account, AccountRoles, AccountUsersPayload, FullAccountUser, PendingInvitation } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
@@ -15,7 +15,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 })
 export class AccountUsersComponent implements OnDestroy, OnInit {
   account?: Account;
-  users?: FullAccountUser[];
+  users: (FullAccountUser | PendingInvitation)[] = [];
   email = new UntypedFormControl([''], [Validators.required, Validators.email]);
 
   roleTranslations: { [role: string]: string } = {
@@ -42,23 +42,26 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
     this.account$
       .pipe(
         tap((account) => {
-          this.account = account!;
+          this.account = account;
         }),
-        switchMap(() => this.updateUsers()),
+        switchMap((account) => this.updateUsers(account)),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(() => this.cdr?.markForCheck());
+      .subscribe(() => this.cdr.markForCheck());
   }
 
-  isItMe(userId: string) {
+  isItMe(userId?: string) {
     return this.sdk.nuclia.auth.getJWTUser()?.sub === userId;
   }
 
-  updateUsers(): Observable<FullAccountUser[]> {
-    return this.sdk.nuclia.db.getAccountUsers(this.account!.slug).pipe(
-      tap((users) => {
-        this.users = users;
-        this.cdr?.markForCheck();
+  updateUsers(account: Account): Observable<void> {
+    return forkJoin([
+      this.sdk.nuclia.db.getAccountUsers(account.slug),
+      this.sdk.nuclia.db.listAccountInvitations(account.id).pipe(catchError(() => of([]))),
+    ]).pipe(
+      map(([users, pendingInvitations]) => {
+        this.users = [...users, ...pendingInvitations];
+        this.cdr.markForCheck();
       }),
     );
   }
@@ -68,14 +71,17 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
     this.sdk.nuclia.db.inviteToAccount(this.account!.slug, data).subscribe(() => {
       this.toaster.success(this.translate.instant('account.invited_user', { user: this.email.value }));
       this.email.patchValue('');
-      this.cdr?.markForCheck();
+      this.cdr.markForCheck();
     });
   }
 
   changeRole(user: FullAccountUser, role: string): void {
     if (role === 'AMEMBER') {
       this._changeRole(user, role)
-        .pipe(switchMap(() => this.updateUsers()))
+        .pipe(
+          switchMap(() => this.account$.pipe(take(1))),
+          switchMap((account) => this.updateUsers(account)),
+        )
         .subscribe();
     } else {
       this.modalService
@@ -85,33 +91,48 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
         })
         .onClose.pipe(
           switchMap((result) => (!!result ? this._changeRole(user, role as AccountRoles) : of(null))),
-          switchMap(() => this.updateUsers()),
+          switchMap(() => this.account$.pipe(take(1))),
+          switchMap((account) => this.updateUsers(account)),
           takeUntil(this.unsubscribeAll),
         )
         .subscribe();
     }
   }
 
-  deleteUserConfirm(user: FullAccountUser): void {
-    this.translate
-      .get('account.delete_user_warning', { username: `${user.name} (${user.email})` })
-      .pipe(
-        switchMap(
-          (message) =>
-            this.modalService.openConfirm({
-              title: 'account.delete_user',
-              description: message,
-              confirmLabel: 'generic.delete',
-              isDestructive: true,
-            }).onClose,
-        ),
-        filter((confirm) => !!confirm),
-        switchMap(() => this.deleteUser(user)),
-        switchMap(() => this.updateUsers()),
-        switchMap(() => this.sdk.nuclia.db.getAccount(this.account!.slug)),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe((account) => (this.sdk.account = account));
+  deleteUserConfirm(userOrInvite: FullAccountUser | PendingInvitation): void {
+    if (userOrInvite.hasOwnProperty('id')) {
+      const user = userOrInvite as FullAccountUser;
+      this.translate
+        .get('account.delete_user_warning', { username: `${user.name} (${user.email})` })
+        .pipe(
+          switchMap(
+            (message) =>
+              this.modalService.openConfirm({
+                title: 'account.delete_user',
+                description: message,
+                confirmLabel: 'generic.delete',
+                isDestructive: true,
+              }).onClose,
+          ),
+          filter((confirm) => !!confirm),
+          switchMap(() => this.deleteUser(user)),
+          switchMap(() => this.account$.pipe(take(1))),
+          switchMap((account) =>
+            this.updateUsers(account).pipe(switchMap(() => this.sdk.nuclia.db.getAccount(account.slug))),
+          ),
+        )
+        .subscribe((account) => (this.sdk.account = account));
+    } else {
+      const invite = userOrInvite as PendingInvitation;
+      this.deleteInvitation(invite)
+        .pipe(
+          switchMap(() => this.account$.pipe(take(1))),
+          switchMap((account) =>
+            this.updateUsers(account).pipe(switchMap(() => this.sdk.nuclia.db.getAccount(account.slug))),
+          ),
+        )
+        .subscribe((account) => (this.sdk.account = account));
+    }
   }
 
   private _changeRole(user: FullAccountUser, role: AccountRoles): Observable<void> {
@@ -126,6 +147,18 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
       delete: [user.id],
     };
     return this.sdk.nuclia.db.setAccountUsers(this.account!.slug, users);
+  }
+
+  deleteInvitation(invite: PendingInvitation) {
+    return this.account$.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.db.deleteAccountInvitation(account.id, invite.email)),
+      tap(() => this.toaster.success(`${invite.email} invitation deleted.`)),
+      catchError(() => {
+        this.toaster.error(`An error occurred while deleting ${invite.email} invitation.`);
+        return of();
+      }),
+    );
   }
 
   ngOnDestroy() {

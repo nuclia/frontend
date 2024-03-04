@@ -16,6 +16,7 @@ export const awsGuard: CanActivateFn = (route, state) => {
           customer_token: customerToken,
         })
         .pipe(
+          // TODO: check if the account already have invited users/created KBs to know if we should do the onboarding flow or not
           tap((result) => sdk.nuclia.auth.authenticate(result)),
           switchMap((result) =>
             sdk.setCurrentAccount(result.account_id).pipe(
