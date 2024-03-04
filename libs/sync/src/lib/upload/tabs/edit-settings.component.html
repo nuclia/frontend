@@ -3,6 +3,9 @@
     [formGroup]="form"
     qa="fields-form"
     (ngSubmit)="save()">
+    <pa-input formControlName="title">
+      {{ 'upload.source.name' | translate }}
+    </pa-input>
     @for (field of fields; track field.id) {
       <div
         formGroupName="fields"

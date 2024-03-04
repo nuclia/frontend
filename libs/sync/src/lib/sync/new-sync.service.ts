@@ -495,6 +495,10 @@ export class NewSyncService {
     this._isServerDown.next(isDown);
   }
 
+  triggerSyncs(): Observable<void> {
+    return this.http.get<void>(`${this._syncServer.getValue()}/sync/execute`);
+  }
+
   private syncToSource(sync: ISyncEntity): Source {
     return {
       connectorId: sync.connector.name,

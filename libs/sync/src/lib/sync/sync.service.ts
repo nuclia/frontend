@@ -467,4 +467,7 @@ export class SyncService {
   getCurrentSync(): Observable<ISyncEntity> {
     throw new Error('Method not implemented.');
   }
+  triggerSyncs(): Observable<void> {
+    throw new Error('Method not implemented.');
+  }
 }
