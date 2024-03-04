@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SyncService } from '../../sync/sync.service';
-import { Subject, catchError, filter, map, of, repeat, startWith, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { Subject, catchError, filter, map, of, repeat, startWith, switchMap, take, takeUntil, tap, timer } from 'rxjs';
 import { SyncRow } from '../../sync/new-models';
 import { NavigationEnd, Router } from '@angular/router';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsy-activity',
@@ -15,11 +16,13 @@ export class SyncActivityComponent implements OnInit, OnDestroy {
   since = '';
   currentIndex = 0;
   logs: { index: number; date: string; message: string; icon: string }[] = [];
+  syncing = false;
 
   constructor(
     private syncService: SyncService,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private toast: SisToastService,
   ) {}
 
   ngOnInit(): void {
@@ -63,5 +66,21 @@ export class SyncActivityComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  triggerSync() {
+    this.syncing = true;
+    this.cdr.markForCheck();
+    this.syncService.triggerSyncs().subscribe({
+      complete: () => {
+        this.syncing = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.toast.error('upload.activity.error');
+        this.syncing = false;
+        this.cdr.markForCheck();
+      },
+    });
   }
 }

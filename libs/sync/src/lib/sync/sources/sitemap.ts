@@ -45,6 +45,10 @@ class SitemapImpl implements ISourceConnector {
     // eslint-disable-next-line no-empty-function
   }
 
+  cleanAuthData() {
+    throw new Error('Method not implemented.');
+  }
+
   getParametersValues(): ConnectorParameters {
     return {};
   }

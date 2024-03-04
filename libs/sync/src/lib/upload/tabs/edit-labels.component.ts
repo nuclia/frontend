@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { map, switchMap, take } from 'rxjs';
 import { SyncService } from '../../sync/sync.service';
 import { SisToastService, getSelectionKey } from '@nuclia/sistema';
@@ -14,6 +14,7 @@ import { Source } from '../../sync/new-models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditSyncLabelsComponent implements OnInit {
+  @Output() done = new EventEmitter();
   currentSource = this.syncService.currentSource;
   labelSets = this.sdk.currentKb.pipe(
     take(1),
@@ -57,6 +58,7 @@ export class EditSyncLabelsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toast.success('upload.saved');
+          this.done.emit();
         },
         error: () => {
           this.toast.error('upload.failed');

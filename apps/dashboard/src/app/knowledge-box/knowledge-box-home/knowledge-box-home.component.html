@@ -39,23 +39,25 @@
             [metrics]="counters | async"></app-kb-metrics>
         </nsi-home-container>
 
-        <nsi-home-container class="small-container">
-          <div class="desktop-container">
-            <img
-              src="assets/logos/nuclia-desktop.svg"
-              alt="Nuclia Desktop" />
-            <div>
-              {{ 'dashboard-home.desktop.description' | translate }}
-            </div>
-            <pa-button
-              class="full-width"
-              (click)="openDesktop()">
-              {{ 'dashboard-home.desktop.open' | translate }}
-            </pa-button>
+        @if (!(isSyncEnabled | async)) {
+          <nsi-home-container class="small-container">
+            <div class="desktop-container">
+              <img
+                src="assets/logos/nuclia-desktop.svg"
+                alt="Nuclia Desktop" />
+              <div>
+                {{ 'dashboard-home.desktop.description' | translate }}
+              </div>
+              <pa-button
+                class="full-width"
+                (click)="openDesktop()">
+                {{ 'dashboard-home.desktop.open' | translate }}
+              </pa-button>
 
-            <small>{{ 'dashboard-home.desktop.available-for' | translate }}</small>
-          </div>
-        </nsi-home-container>
+              <small>{{ 'dashboard-home.desktop.available-for' | translate }}</small>
+            </div>
+          </nsi-home-container>
+        }
       </div>
     }
 

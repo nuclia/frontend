@@ -423,7 +423,10 @@ export class NewSyncService {
               data: source.getParametersValues(),
             }),
           ),
-          map(() => true),
+          map(() => {
+            source.cleanAuthData();
+            return true;
+          }),
         );
       }),
     );
@@ -490,6 +493,10 @@ export class NewSyncService {
       ]);
     }
     this._isServerDown.next(isDown);
+  }
+
+  triggerSyncs(): Observable<void> {
+    return this.http.get<void>(`${this._syncServer.getValue()}/sync/execute`);
   }
 
   private syncToSource(sync: ISyncEntity): Source {

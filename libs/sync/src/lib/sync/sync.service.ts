@@ -32,7 +32,6 @@ import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { BackendConfigurationService, injectScript, SDKService } from '@flaps/core';
 import { SitemapConnector } from './sources/sitemap';
 import { Classification, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
-import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './sources/folder';
 import { SharepointImpl } from './sources/sharepoint';
@@ -140,8 +139,6 @@ export class SyncService {
     if (account) {
       this.setAccount();
     }
-    // UNCOMMENT TO ENABLE DYNAMIC CONNECTORS
-    // this.fetchDynamicConnectors();
 
     this.isServerDown
       .pipe(
@@ -327,26 +324,6 @@ export class SyncService {
     return this._sourcesCache.getValue()[name];
   }
 
-  private fetchDynamicConnectors() {
-    (window as any).registerConnector = (connector: any) => {
-      this.sources[connector.id] = {
-        definition: { ...connector, factory: () => of(new DynamicConnectorWrapper(connector.factory())) },
-        settings: {},
-      };
-      this.sourceObs.next(Object.values(this.sources).map((obj) => obj.definition));
-    };
-    from(
-      fetch('https://nuclia.github.io/status/connectors.json').then((res) => {
-        if (!res.ok) {
-          throw new Error('Failed to fetch connectors');
-        }
-        return res.json();
-      }),
-    )
-      .pipe(switchMap((urls: string[]) => forkJoin(urls.map((url) => injectScript(url)))))
-      .subscribe();
-  }
-
   getKb(kbId: string): Observable<WritableKnowledgeBox> {
     return this.sdk.currentAccount.pipe(
       take(1),
@@ -488,6 +465,9 @@ export class SyncService {
     throw new Error('Method not implemented.');
   }
   getCurrentSync(): Observable<ISyncEntity> {
+    throw new Error('Method not implemented.');
+  }
+  triggerSyncs(): Observable<void> {
     throw new Error('Method not implemented.');
   }
 }

@@ -23,7 +23,6 @@
             class="nav-link"
             routerLinkActive="active"
             data-cy="go-to-upload"
-            [routerLinkActiveOptions]="{ exact: true }"
             [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
             <pa-icon name="upload"></pa-icon>
             <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>

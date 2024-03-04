@@ -62,6 +62,10 @@ class ConfluenceImpl implements ISourceConnector {
     return of(true);
   }
 
+  cleanAuthData() {
+    throw new Error('Method not implemented.');
+  }
+
   authenticate(): Observable<boolean> {
     return of(!!this.getParametersValues()['token']);
   }

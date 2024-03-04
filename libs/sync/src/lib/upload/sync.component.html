@@ -30,11 +30,14 @@
       {{ 'upload.tabs.folders' | translate }}
     </pa-tab>
   }
-  <pa-tab
-    (click)="selectedTab = 'filters'"
-    [active]="selectedTab === 'filters'">
-    {{ 'upload.tabs.filters' | translate }}
-  </pa-tab>
+  @if (false) {
+    <!-- enable when https://app.shortcut.com/flaps/story/8740/implement-filtering-in-synchronizer is done -->
+    <pa-tab
+      (click)="selectedTab = 'filters'"
+      [active]="selectedTab === 'filters'">
+      {{ 'upload.tabs.filters' | translate }}
+    </pa-tab>
+  }
   <pa-tab
     (click)="selectedTab = 'labels'"
     [active]="selectedTab === 'labels'">
@@ -48,15 +51,15 @@
 }
 @if (selectedTab === 'settings') {
   <section>
-    <nsy-edit-settings></nsy-edit-settings>
+    <nsy-edit-settings (done)="done()"></nsy-edit-settings>
   </section>
 }
 @if (selectedTab === 'folders') {
-  <section><nsy-edit-folders></nsy-edit-folders></section>
+  <section><nsy-edit-folders (done)="done()"></nsy-edit-folders></section>
 }
 @if (selectedTab === 'filters') {
   <section>TO BE DONE</section>
 }
 @if (selectedTab === 'labels') {
-  <section><nsy-edit-labels></nsy-edit-labels></section>
+  <section><nsy-edit-labels (done)="done()"></nsy-edit-labels></section>
 }

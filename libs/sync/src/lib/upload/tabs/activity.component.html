@@ -1,3 +1,9 @@
+<p>{{ 'upload.activity.help' | translate }}</p>
+<pa-button
+  (click)="triggerSync()"
+  [disabled]="syncing">
+  {{ 'upload.activity.sync-now' | translate }}
+</pa-button>
 <pa-table columns="48px 200px auto">
   <pa-table-header>
     <pa-table-cell header></pa-table-cell>

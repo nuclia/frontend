@@ -40,6 +40,7 @@ export interface ISourceConnector {
   getParameters(): Observable<Field[]>;
   handleParameters?(params: ConnectorParameters): void;
   getParametersValues(): ConnectorParameters;
+  cleanAuthData(): void;
   goToOAuth(redirect: string, reset?: boolean): void;
   authenticate(): Observable<boolean>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;

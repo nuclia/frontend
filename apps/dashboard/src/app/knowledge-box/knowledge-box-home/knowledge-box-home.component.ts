@@ -129,6 +129,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     uid: 'copy',
     slug: 'copy',
   };
+  isSyncEnabled = this.features.sync;
 
   constructor(
     private app: AppService,

@@ -48,6 +48,10 @@ class FolderImpl implements ISourceConnector {
   // eslint-disable-next-line no-empty-function
   goToOAuth() {}
 
+  cleanAuthData() {
+    throw new Error('Method not implemented.');
+  }
+
   handleParameters(params: ConnectorParameters) {
     if (params['path']) {
       this.path = params['path'];

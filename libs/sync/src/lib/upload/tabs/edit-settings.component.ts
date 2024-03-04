@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { filter, map, switchMap, take, tap } from 'rxjs';
 import { Field, Source } from '../../sync/new-models';
@@ -12,6 +12,7 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditSyncSettingsComponent implements OnInit {
+  @Output() done = new EventEmitter();
   form?: UntypedFormGroup;
   fields?: Field[];
   source?: Source;
@@ -48,6 +49,7 @@ export class EditSyncSettingsComponent implements OnInit {
           switchMap((id) =>
             this.syncService.setSourceData(id || '', {
               ...this.source,
+              title: this.form?.value['title'] || '',
               connectorId: this.source?.connectorId || '',
               data: { ...this.source?.data, ...(this.form?.value['fields'] || {}) },
             }),
@@ -56,6 +58,7 @@ export class EditSyncSettingsComponent implements OnInit {
         .subscribe({
           next: () => {
             this.toast.success('upload.saved');
+            this.done.emit();
           },
           error: () => {
             this.toast.error('upload.failed');
@@ -67,13 +70,14 @@ export class EditSyncSettingsComponent implements OnInit {
   showFields(id: string | null, source: Source, fields: Field[]) {
     this.fields = fields;
     this.form = this.formBuilder.group({
+      title: ['', Validators.required],
       fields: this.formBuilder.group(
         fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', this.getFieldValidators(field)] }), {}),
       ),
     });
     this.form.patchValue({
       fields: source.data,
-      name: id || '',
+      title: source.title || id || '',
     });
     this.cdr.markForCheck();
   }

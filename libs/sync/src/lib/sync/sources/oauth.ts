@@ -37,9 +37,14 @@ export class OAuthConnector implements ISourceConnector {
     };
   }
 
+  cleanAuthData() {
+    localStorage.removeItem(this.prefixStorageKey(TOKEN));
+    localStorage.removeItem(this.prefixStorageKey(REFRESH));
+  }
+
   goToOAuth(redirect: string, reset?: boolean) {
     if (reset) {
-      localStorage.removeItem(this.prefixStorageKey(TOKEN));
+      this.cleanAuthData();
     }
     const token = localStorage.getItem(this.prefixStorageKey(TOKEN));
     if (!token) {
