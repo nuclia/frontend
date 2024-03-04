@@ -30,11 +30,14 @@
       {{ 'upload.tabs.folders' | translate }}
     </pa-tab>
   }
-  <pa-tab
-    (click)="selectedTab = 'filters'"
-    [active]="selectedTab === 'filters'">
-    {{ 'upload.tabs.filters' | translate }}
-  </pa-tab>
+  @if (false) {
+    <!-- enable when https://app.shortcut.com/flaps/story/8740/implement-filtering-in-synchronizer is done -->
+    <pa-tab
+      (click)="selectedTab = 'filters'"
+      [active]="selectedTab === 'filters'">
+      {{ 'upload.tabs.filters' | translate }}
+    </pa-tab>
+  }
   <pa-tab
     (click)="selectedTab = 'labels'"
     [active]="selectedTab === 'labels'">
