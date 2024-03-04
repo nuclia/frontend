@@ -52,7 +52,7 @@ export interface EntityGroup {
   title?: string;
   color?: string;
   custom?: boolean;
-  entities: string[];
+  entities?: string[];
 }
 
 export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';

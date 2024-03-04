@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   import { combineLatest, map, Observable, take } from 'rxjs';
-  import type { EntityGroup, LabelSetWithId } from '../../core';
+  import { type EntityGroup, type LabelSetWithId, refreshFamily } from '../../core';
   import {
     _,
     addEntityFilter,
@@ -66,6 +66,13 @@
 
   function toggleExpander(id: string) {
     expanders[id] = !expanders[id];
+  }
+
+  function toggleEntitiesExpander(familyId: string) {
+    if (!entities.getValue().find((family) => family.id === familyId)?.entities) {
+      refreshFamily(familyId);
+    }
+    toggleExpander(familyId);
   }
 
   function selectLabel(labelSet: LabelSetWithId, label: Label, selected: boolean) {
@@ -196,7 +203,7 @@
       </div>
       <span class="header-button">
         <IconButton
-          on:click={() => toggleExpander(family.id)}
+          on:click={() => toggleEntitiesExpander(family.id)}
           icon="chevron-down"
           size="small"
           aspect="basic" />
@@ -204,7 +211,7 @@
     </div>
     {#if expanders[family.id]}
       <div class="expander-content">
-        {#each family.entities as entity}
+        {#each family.entities || [] as entity}
           <div>
             <Checkbox
               checked={$selectedEntities.includes(getFilterFromEntity({family: family.id, entity: entity}))}

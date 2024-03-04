@@ -83,6 +83,12 @@ export class EntitiesComponent implements OnInit, OnDestroy {
 
   selectFamily(family: NerFamily) {
     this.selectedFamily = family;
+    this.cdr.markForCheck();
+    if (Object.keys(family.entities).length === 0) {
+      this.entitiesService.refreshFamily(family.key).subscribe(() => {
+        this.cdr.markForCheck();
+      });
+    }
   }
 
   addEntity() {
@@ -95,7 +101,7 @@ export class EntitiesComponent implements OnInit, OnDestroy {
           map((entities) => entities as string[]),
           switchMap((entities) => this.entitiesService.addEntitiesToFamily(family.key, entities)),
         )
-        .subscribe((updatedFamilies) => this.updateSelectedFamilyEntities(updatedFamilies));
+        .subscribe();
     }
   }
 

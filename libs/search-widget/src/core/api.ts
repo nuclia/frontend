@@ -272,9 +272,7 @@ export const getEntities = (): Observable<EntityGroup[]> => {
                 ? translateInstant(`entities.${groupId.toLowerCase()}`)
                 : groupId.toLocaleLowerCase()),
             color: group.color || generatedEntitiesColor[groupId] || entitiesDefaultColor,
-            entities: Object.entries(group.entities)
-              .map(([, entity]) => entity.value)
-              .sort((a, b) => a.localeCompare(b)),
+            entities: undefined,
             custom: group.custom,
           }))
           .sort((a, b) => translate(a.title).localeCompare(translate(b.title))),
@@ -284,6 +282,19 @@ export const getEntities = (): Observable<EntityGroup[]> => {
   } else {
     return of(_entities as EntityGroup[]);
   }
+};
+
+export const getFamilyEntities = (familyId: string): Observable<string[]> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.getEntitiesGroup(familyId).pipe(
+    map((family) =>
+      Object.entries(family.entities)
+        .map(([, entity]) => entity.value)
+        .sort((a, b) => a.localeCompare(b)),
+    ),
+  );
 };
 
 export const getLabelSets = (): Observable<LabelSets> => {

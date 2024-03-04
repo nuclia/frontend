@@ -125,10 +125,8 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   /** Returns all the NER families defined in the Knowledge Box. */
-  getEntities(withEntities = false): Observable<Entities> {
-    return this.nuclia.rest
-      .get<{ groups: Entities }>(`${this.path}/entitiesgroups?show_entities=${withEntities}`)
-      .pipe(map((res) => res.groups));
+  getEntities(): Observable<Entities> {
+    return this.nuclia.rest.get<{ groups: Entities }>(`${this.path}/entitiesgroups`).pipe(map((res) => res.groups));
   }
 
   /** Returns the NER family with the given id. */

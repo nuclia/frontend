@@ -49,15 +49,17 @@ export class NerFamilyDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.modal.config.data) {
-      const entities = Object.keys(this.modal.config.data.entities).join(',');
-      this.entityForm.patchValue({
-        title: this.modal.config.data.title,
-        color: this.modal.config.data.color,
-        entities,
+      this.entitiesService.refreshFamily(this.modal.config.data.key).subscribe((family) => {
+        const entities = Object.keys(family.entities).join(',');
+        this.entityForm.patchValue({
+          title: family.title || '',
+          color: family.color || '',
+          entities,
+        });
+        this.entitiesBackup = entities;
+        this.familyId = this.modal.config.data?.key;
+        this.mode = 'update';
       });
-      this.entitiesBackup = entities;
-      this.familyId = this.modal.config.data.key;
-      this.mode = 'update';
     }
 
     this.entityListChange.pipe(debounceTime(300), takeUntil(this.unsubscribeAll)).subscribe((value) => {
