@@ -24,6 +24,10 @@ export class ServerSetupComponent {
 
   save() {
     this.sync.setSyncServer({ url: this.serverUrl.value, local: false });
+    this.back();
+  }
+
+  back() {
     this.navigationService.kbUrl.pipe(take(1)).subscribe((url) => this.router.navigate([`${url}/upload`]));
   }
 }

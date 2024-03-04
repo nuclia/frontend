@@ -44,6 +44,7 @@
 	"upload.select.all": "Select all",
 	"upload.select.description": "Select the data you want to upload",
 	"upload.select.search": "Search",
+	"upload.server.back": "Back",
 	"upload.server.external": "External server",
 	"upload.server.external-button": "Use external server",
 	"upload.server.help": "Enter {{url}} if your sync agent is running locally",

@@ -1,4 +1,13 @@
-<h1>{{ 'upload.server.title' | translate }}</h1>
+<div class="header">
+  <pa-button
+    icon="chevron-left"
+    aspect="basic"
+    [paTooltip]="'upload.server.back' | translate"
+    (click)="back()">
+    {{ 'upload.server.back' | translate }}
+  </pa-button>
+  <h1>{{ 'upload.server.title' | translate }}</h1>
+</div>
 <div class="container">
   <pa-input
     [formControl]="serverUrl"
@@ -7,6 +16,7 @@
     {{ 'upload.server.url' | translate }}
   </pa-input>
   <pa-button
+    class="save-button"
     (click)="save()"
     kind="primary"
     [disabled]="serverUrl.pristine">

@@ -44,6 +44,7 @@
 	"upload.select.all": "Seleccionar todo",
 	"upload.select.description": "Selecciona los datos que quieres subir",
 	"upload.select.search": "Busca",
+	"upload.server.back": "Atrás",
 	"upload.server.external": "Servidor externo",
 	"upload.server.external-button": "Usar servidor externo",
 	"upload.server.help": "Introduce {{url}} si tu agente de sincronización se está ejecutando en local",

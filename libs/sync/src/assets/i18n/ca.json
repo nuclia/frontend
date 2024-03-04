@@ -44,6 +44,7 @@
 	"upload.select.all": "Seleccionar tot",
 	"upload.select.description": "Selecciona les dades que vols pujar",
 	"upload.select.search": "Cerca",
+	"upload.server.back": "Esquena",
 	"upload.server.external": "Servidor extern",
 	"upload.server.external-button": "Utilitzeu un servidor extern",
 	"upload.server.help": "Introduïu {{url}} si el vostre agent de sincronització s'executa en local",

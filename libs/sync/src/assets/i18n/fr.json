@@ -44,6 +44,7 @@
 	"upload.select.all": "Sélectionner tout",
 	"upload.select.description": "Sélectionnez les données que vous souhaitez télécharger",
 	"upload.select.search": "Rechercher",
+	"upload.server.back": "Retour",
 	"upload.server.external": "Serveur externe",
 	"upload.server.external-button": "Utiliser un serveur externe",
 	"upload.server.help": "Saisissez {{url}} si votre agent de synchronisation s'exécute localement",

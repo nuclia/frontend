@@ -1,13 +1,18 @@
 @import 'apps/dashboard/src/variables';
 
-h1 {
+.header {
+  display: flex;
   margin-bottom: rhythm(5);
+}
+
+h1 {
+  margin-left: rhythm(2);
 }
 
 .container {
   max-width: rhythm(80);
 }
 
-pa-button {
+.save-button {
   margin-top: rhythm(3);
 }
