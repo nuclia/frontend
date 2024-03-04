@@ -1,4 +1,8 @@
-# 1.12.1 (unreleased)
+# 1.13.0 (unreleased)
+
+### Breaking changes
+
+- Remove `withEntities` parameter from `getEntities` method. Now `getEntities` does not return the list of entities in any case.
 
 ### Improvements
 

@@ -80,7 +80,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   get fullpath(): string;
 
-  getEntities(withEntities?: boolean): Observable<Entities>;
+  getEntities(): Observable<Entities>;
 
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup>;
 
