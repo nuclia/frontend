@@ -5,6 +5,7 @@ import type { Observable } from 'rxjs';
 import { combineLatest, map, take } from 'rxjs';
 import { generatedEntitiesColor } from '../utils';
 import { _ } from '../i18n';
+import { getFamilyEntities } from '../api';
 
 interface EntitiesState {
   entities: EntityGroup[];
@@ -22,6 +23,18 @@ export const entities = entitiesState.writer<EntityGroup[]>(
   }),
 );
 
+export const refreshFamily = function (familyId: string) {
+  const newEntities = entities.getValue();
+  const index = entities.getValue().findIndex((family) => family.id === familyId);
+  if (index >= 0) {
+    getFamilyEntities(familyId).subscribe((familyEntities) => {
+      newEntities[index] = { ...newEntities[index], entities: familyEntities };
+      entities.set(newEntities);
+    });
+  }
+};
+
+/*
 export const entityGroups = writableSubject<EntityGroup[]>([]);
 export const selectedFamily = writableSubject('');
 
@@ -82,3 +95,4 @@ function mapEntities(
     })
     .sort((a, b) => translate(a.title).localeCompare(translate(b.title)));
 }
+*/
