@@ -86,4 +86,9 @@ export class SyncComponent implements OnInit, OnDestroy {
         },
       });
   }
+
+  done() {
+    this.selectedTab = 'activity';
+    this.cdr.markForCheck();
+  }
 }

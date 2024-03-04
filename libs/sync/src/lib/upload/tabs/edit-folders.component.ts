@@ -1,4 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { catchError, forkJoin, map, Observable, of, scan, share, Subject, switchMap, take, tap } from 'rxjs';
 import { SelectionModel } from '@angular/cdk/collections';
 import { SearchResults, Source, SyncItem } from '../../sync/new-models';
@@ -12,6 +20,7 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
+  @Output() done = new EventEmitter();
   currentSource = this.syncService.currentSource;
   loading = false;
   query = '';
@@ -84,6 +93,7 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: () => {
           this.toast.success('upload.saved');
+          this.done.emit();
         },
         error: () => {
           this.toast.error('upload.failed');
