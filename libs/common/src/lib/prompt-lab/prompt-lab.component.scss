@@ -57,6 +57,7 @@
   .select-with-background {
     display: block;
     margin-top: rhythm(1);
+    margin-bottom: rhythm(2);
 
     ::ng-deep .pa-field .pa-field-control {
       background-color: $color-neutral-lightest;
