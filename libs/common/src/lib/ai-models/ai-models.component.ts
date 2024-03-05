@@ -199,10 +199,10 @@ export class AiModelsComponent implements OnInit {
     kbConfig['visual_labeling'] = kbDetails.pdf_annotation ? 'enabled' : 'disabled';
     kbConfig['user_keys'] =
       this.currentGenerativeModelKey && this.hasOwnKey
-        ? { [this.currentGenerativeModelKey]: kbConfig['user_keys'] }
+        ? { [this.currentGenerativeModelKey]: kbConfig['user_keys'].trim() }
         : {};
     kbConfig['user_prompts'] = this.currentGenerativeModelPrompt
-      ? { [this.currentGenerativeModelPrompt]: kbConfig['user_prompts'] }
+      ? { [this.currentGenerativeModelPrompt]: kbConfig['user_prompts'].trim() }
       : {};
 
     const confirmAnonymization: Observable<boolean> =
