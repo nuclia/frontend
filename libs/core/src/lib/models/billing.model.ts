@@ -82,7 +82,7 @@ export enum CancellationFeedback {
 }
 
 export interface AccountSubscription {
-  provider: 'stripe' | 'aws-marketplace';
+  provider: 'STRIPE' | 'AWS_MARKETPLACE';
   subscription: StripeAccountSubscription;
 }
 

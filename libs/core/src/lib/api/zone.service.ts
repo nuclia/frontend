@@ -5,8 +5,8 @@ import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { SDKService } from './sdk.service';
 import { UserService } from './user.service';
 import { take } from 'rxjs/operators';
+import { BillingService } from './billing.service';
 
-const VERSION = 'v1';
 const ZONES = 'zones';
 
 @Injectable({
@@ -17,6 +17,7 @@ export class ZoneService {
     private sdk: SDKService,
     private featureFlagService: FeatureFlagService,
     private userService: UserService,
+    private billingService: BillingService,
   ) {}
 
   getZones(includeZonesBlocked = false): Observable<Zone[]> {
@@ -39,6 +40,17 @@ export class ZoneService {
           }),
         );
       }),
+      switchMap((zones) =>
+        this.billingService
+          .getSubscription()
+          .pipe(
+            map((subscription) =>
+              subscription && subscription.provider === 'AWS_MARKETPLACE'
+                ? zones.filter((zone) => zone.cloud_provider === 'AWS')
+                : zones,
+            ),
+          ),
+      ),
     );
   }
 }
