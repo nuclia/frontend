@@ -97,6 +97,8 @@
 	"account.speech_to_text_description": "Nuclia ofereix models millorats de veu a text. L'ús d'aquests models requereix un càlcul més elevat i suposen un cost addicional. Marqueu la casella de selecció  si voleu utilitzar els models millorats.",
 	"account.threshold": "Llindar de consum",
 	"account.title": "Nom",
+	"account.toast.delete-invite-failure": "S'ha produït un error en suprimir {{email}} invitació.",
+	"account.toast.delete-invite-success": "S'ha suprimit la invitació de {{email}} .",
 	"account.token_description": "<strong>Important!</strong> Copieu i deseu la clau de l'API. Desapareixerà un cop afegit.",
 	"account.token_generation_warning": "Si generes un nou codi perdràs l’accés amb la clau actual i es perdran els processos que s'estiguin executant en aquests moments.",
 	"account.total_queries": "Nombre total de cerques",

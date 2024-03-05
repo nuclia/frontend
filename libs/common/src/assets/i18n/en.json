@@ -98,6 +98,8 @@
 	"account.speech_to_text_description": "Nuclia offers enhanced speech-to-text models. Using these models require more computation and an associated extra cost. Check the following checkbox if you want to use the enhanced models.",
 	"account.threshold": "Consumption threshold",
 	"account.title": "Name",
+	"account.toast.delete-invite-failure": "An error occurred while deleting {{email}} invitation.",
+	"account.toast.delete-invite-success": "Invitation of {{email}} deleted.",
 	"account.token_description": "<strong>Important!</strong> Copy and save the API key. It will disappear once added.",
 	"account.token_generation_warning": "If you generate a new key, the current key will be disabled and any ongoing jobs will be lost",
 	"account.total_queries": "Total number of queries",

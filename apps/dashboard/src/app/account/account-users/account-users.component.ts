@@ -143,9 +143,11 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
       .pipe(
         take(1),
         switchMap((account) => this.sdk.nuclia.db.deleteAccountInvitation(account.id, invite.email)),
-        tap(() => this.toaster.success(`${invite.email} invitation deleted.`)),
+        tap(() =>
+          this.toaster.success(this.translate.instant('account.toast.delete-invite-success', { email: invite.email })),
+        ),
         catchError(() => {
-          this.toaster.error(`An error occurred while deleting ${invite.email} invitation.`);
+          this.toaster.error(this.translate.instant('account.toast.delete-invite-failure', { email: invite.email }));
           return of();
         }),
         switchMap(() => this.account$.pipe(take(1))),

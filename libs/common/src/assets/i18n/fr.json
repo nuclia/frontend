@@ -98,6 +98,8 @@
 	"account.speech_to_text_description": "Nuclia propose des modèles de synthèse vocale améliorés. L'utilisation de ces modèles nécessite plus de calculs et un coût supplémentaire associé. Cochez la case suivante si vous souhaitez utiliser les modèles améliorés.",
 	"account.threshold": "Seuil de consommation",
 	"account.title": "Nom",
+	"account.toast.delete-invite-failure": "Une erreur s'est produite lors de la suppression de {{email}} invitation.",
+	"account.toast.delete-invite-success": "Invitation de {{email}} supprimée.",
 	"account.token_description": "<strong> Important !</strong> Copiez et enregistrez la clé API. Il disparaîtra une fois ajouté.",
 	"account.token_generation_warning": "Si vous générez une nouvelle clé, la clé actuelle sera désactivée et tous les travaux en cours seront perdus.",
 	"account.total_queries": "Nombre total de requêtes",

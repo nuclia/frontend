@@ -97,6 +97,8 @@
 	"account.speech_to_text_description": "Nuclia ofrece modelos mejorados de voz a texto. El uso de estos modelos requiere un cómputo mayor y tienen un costo extra. Marque la siguiente casilla de verificación si desea utilizar los modelos mejorados.",
 	"account.threshold": "Umbral de consumo",
 	"account.title": "Nombre",
+	"account.toast.delete-invite-failure": "Se produjo un error al eliminar la invitación {{email}} .",
+	"account.toast.delete-invite-success": "Invitación de {{email}} eliminada.",
 	"account.token_description": "<strong>¡Importante!</strong> Copie y guarde la clave API. Desaparecerá una vez añadido.",
 	"account.token_generation_warning": "Si generas un nuevo código perderás el acceso con la clave actual y se perderán los procesos que se estén ejecutando en estos momentos.",
 	"account.total_queries": "Número total de búsquedas",
