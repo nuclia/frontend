@@ -66,7 +66,7 @@ export class FeatureFlagService {
     map((features) => ({ ...features, ...this.getCustomFeatures() })),
   );
 
-  private isStageOrDev = location.hostname === 'stashify.cloud' || !this.environment.production;
+  isStageOrDev = location.hostname === 'stashify.cloud' || !this.environment.production;
 
   constructor(
     private sdk: SDKService,
