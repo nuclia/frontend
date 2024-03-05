@@ -706,6 +706,7 @@
 	"profile.select_language": "Selecciona l’idioma preferent",
 	"prompt-lab.configuration.generate-button": "Generar",
 	"prompt-lab.configuration.models.title": "Seleccioneu tots els models que voleu comparar",
+	"prompt-lab.configuration.prompts.example": "Exemple",
 	"prompt-lab.configuration.prompts.label": "Prompt",
 	"prompt-lab.configuration.prompts.placeholder": "Introduïu la vostra sol·licitud amb la paraula {question} entre claudàtors on voleu que es col·loqui la consulta",
 	"prompt-lab.configuration.prompts.title": "Definiu les indicacions que influiran en la manera com es comporta el sistema quan feu una pregunta (opcional)",
