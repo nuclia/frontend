@@ -6,20 +6,6 @@
       <h2>{{ 'billing.budget' | translate }}</h2>
       <div [innerHTML]="'billing.budget_description' | translate"></div>
     </div>
-    <div class="budget-input">
-      <pa-input
-        type="number"
-        externalLabel
-        [formControl]="budget"></pa-input>
-      <span class="title-m">
-        {{ (usage | async)?.currency === 'USD' ? '$' : '€' }}
-      </span>
-    </div>
-    <pa-button
-      kind="primary"
-      [disabled]="budget.pristine || budget.invalid"
-      (click)="saveBudget()">
-      {{ 'generic.save' | translate }}
-    </pa-button>
+    <app-budget [usage]="usage | async"></app-budget>
   </div>
 </div>

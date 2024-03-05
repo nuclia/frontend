@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="aws-subscription.component.scss">
+<div class="aws-subscription">
+  <div>
+    <h2>{{ 'navbar.subscription' | translate }}</h2>
+    <div class="body-m">
+      {{ 'billing.modify-aws-subscription' | translate }}
+      <a
+        [href]="awsUrl | async"
+        target="_blank"
+        rel="noreferrer nofollow">
+        {{ 'billing.aws-account' | translate }}
+      </a>
+      .
+    </div>
+  </div>
+  <div class="budget">
+    <div>
+      <h2>{{ 'billing.budget' | translate }}</h2>
+      <div
+        class="body-m"
+        [innerHTML]="'billing.budget_description' | translate"></div>
+    </div>
+    <app-budget></app-budget>
+  </div>
+</div>

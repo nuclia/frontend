@@ -22,7 +22,7 @@ const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
 export class AccountStatusComponent {
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
   isTrial = this.accountType.pipe(map((type) => type === 'stash-trial'));
-  isSubscribed = this.billingService.isSubscribed;
+  isSubscribed = this.billingService.isSubscribedToStripe;
   subscription = this.billingService.getStripeSubscription().pipe(shareReplay());
   upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
   reactivateUrl = this.sdk.currentAccount.pipe(
