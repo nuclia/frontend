@@ -707,6 +707,7 @@
 	"profile.select_language": "Select language",
 	"prompt-lab.configuration.generate-button": "Generate",
 	"prompt-lab.configuration.models.title": "Select all the models you want to compare",
+	"prompt-lab.configuration.prompts.example": "Example",
 	"prompt-lab.configuration.prompts.label": "Prompt",
 	"prompt-lab.configuration.prompts.placeholder": "Input your prompt with the word {question} in brackets where you want the query to be placed",
 	"prompt-lab.configuration.prompts.title": "Define the prompts that will influence the way the system behaves when you ask a question (optional)",

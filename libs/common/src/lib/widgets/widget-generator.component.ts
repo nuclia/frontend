@@ -4,7 +4,7 @@ import { BackendConfigurationService, FeaturesService, SDKService } from '@flaps
 import { combineLatest, filter, forkJoin, map, Observable, of, skip, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { debounceTime, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   AdvancedForm,
@@ -81,7 +81,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   // WARNING: for isModifiedConfig function to work properly, the properties in DEFAULT_CONFIGURATION must be
   // in the EXACT SAME order as the properties declared in advancedForm in widget generator page.
-  // controls have the name expected by the widget features list
+  // Controls have the name expected by the widget features list
   advancedForm = new FormGroup({
     answers: new FormControl<boolean>(false, { nonNullable: true }),
     userPrompt: new FormControl<string>('', {
@@ -111,6 +111,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     relations: new FormControl<boolean>(false, { nonNullable: true }),
     knowledgeGraph: new FormControl<boolean>(false, { nonNullable: true }),
     notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    generativeModelToggle: new FormControl<boolean>(false, { nonNullable: true }),
     generativeModel: new FormControl<string>('', { nonNullable: true }),
   });
   userPromptErrors = { pattern: 'widget.generator.advanced.generative-answer-category.prompt.error' };
@@ -158,6 +159,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get selectedPreset() {
     return this.presetForm.controls.preset.value;
   }
+  get generativeModelEnabled() {
+    return this.advancedForm.controls.generativeModelToggle.value;
+  }
 
   // ADVANCED FORM VALUES ACCESSORS
   get userPrompt() {
@@ -178,6 +182,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get generativeModel() {
     return this.advancedForm.controls.generativeModel.value;
   }
+
   get hasOneFilter(): boolean {
     return Object.entries(this.filters).filter(([, value]) => value).length === 1;
   }
@@ -299,7 +304,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       .pipe(debounceTime(FORM_CHANGED_DEBOUNCE_TIME), takeUntil(this.unsubscribeAll))
       .subscribe((changes) => {
         this.setIsModified();
-        this.answerGenerationExpanderUpdated.next(this.answerGenerationEnabled);
+        this.answerGenerationExpanderUpdated.next(`${this.answerGenerationEnabled} – ${this.generativeModelEnabled}`);
         this.searchFilteringExpanderUpdated.next(this.filtersEnabled);
         this.updateSnippetAndStoreConfig();
       });
@@ -380,6 +385,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       });
       this.ragSpecificFieldIdsControl.patchValue('');
       this.notEnoughDataMessageControl.patchValue('');
+      this.generativeModelControl.patchValue('');
+    }
+  }
+
+  toggleGenerativeModels() {
+    if (!this.generativeModelEnabled) {
       this.generativeModelControl.patchValue('');
     }
   }

@@ -707,6 +707,7 @@
 	"profile.select_language": "Choisir la langue",
 	"prompt-lab.configuration.generate-button": "Générer",
 	"prompt-lab.configuration.models.title": "Sélectionnez tous les modèles que vous souhaitez comparer",
+	"prompt-lab.configuration.prompts.example": "Exemple",
 	"prompt-lab.configuration.prompts.label": "Prompt",
 	"prompt-lab.configuration.prompts.placeholder": "Saisissez votre prompt avec le mot {question} entre accolades à l'endroit où vous souhaitez que la requête soit placée.",
 	"prompt-lab.configuration.prompts.title": "Définir les prompts qui influenceront le comportement du système lorsque vous posez une question (facultatif)",
