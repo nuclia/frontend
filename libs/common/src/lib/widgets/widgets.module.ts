@@ -17,6 +17,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { WidgetGeneratorComponent } from './widget-generator.component';
 import { CopilotModalComponent } from './copilot/copilot-modal.component';
 import { LabelModule } from '@flaps/core';
+import { LearningOptionPipe } from '../pipes/learning-option.pipe';
 
 const routes = [
   {
@@ -41,6 +42,7 @@ const routes = [
     PaTogglesModule,
     PaPopupModule,
     LabelModule,
+    LearningOptionPipe,
   ],
   exports: [],
   declarations: [WidgetGeneratorComponent, CopilotModalComponent],

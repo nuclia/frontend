@@ -1039,6 +1039,8 @@
 	"widget.generator.advanced.generative-answer-category.answers.label": "Generación de respuesta",
 	"widget.generator.advanced.generative-answer-category.citations.help": "Muestre qué fuentes se han utilizado para generar la respuesta.",
 	"widget.generator.advanced.generative-answer-category.citations.label": "Citas",
+	"widget.generator.advanced.generative-answer-category.generative-model.help": "Utilice un modelo generativo diferente al predeterminado definido en la configuración AI del Knowledge Box",
+	"widget.generator.advanced.generative-answer-category.generative-model.label": "Modelo generativo específico",
 	"widget.generator.advanced.generative-answer-category.hide-results.help": "Ocultar los resultados de la búsqueda",
 	"widget.generator.advanced.generative-answer-category.hide-results.label": "Ocultar resultados",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help": "Los resultados de full text no se utilizarán para generar respuestas.",

@@ -39,6 +39,7 @@ export interface WidgetOptions {
   highlight?: boolean;
   features?: WidgetFeatures;
   prompt?: string;
+  generative_model?: string;
 }
 
 export interface WidgetAction {

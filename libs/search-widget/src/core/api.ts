@@ -37,6 +37,7 @@ let CHAT_MODE: Chat.Features[];
 let SEARCH_OPTIONS: Partial<SearchOptions>;
 let SUGGEST_MODE: Search.SuggestionFeatures[];
 let prompt: string | undefined = undefined;
+let generative_model: string | undefined = undefined;
 let CITATIONS = false;
 
 export const initNuclia = (
@@ -50,6 +51,7 @@ export const initNuclia = (
   SEARCH_OPTIONS = { ...DEFAULT_SEARCH_OPTIONS };
   SUGGEST_MODE = [];
   prompt = undefined;
+  generative_model = undefined;
 
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
@@ -82,6 +84,7 @@ export const initNuclia = (
     autofilter: !!widgetOptions.features?.autofilter,
   });
   prompt = widgetOptions.prompt;
+  generative_model = widgetOptions.generative_model;
 
   if (widgetOptions.features?.suggestLabels) {
     const kbPath = nucliaApi?.knowledgeBox.fullpath;
@@ -148,6 +151,7 @@ export const getAnswer = (
   const defaultOptions: ChatOptions = {
     highlight: true,
     prompt,
+    generative_model,
     citations: CITATIONS,
   };
   return nucliaApi.knowledgeBox.chat(
