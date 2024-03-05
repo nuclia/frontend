@@ -648,7 +648,7 @@ export class Db implements IDb {
    * List pending account invitations
    * @param accountId
    */
-  listAccountInvitations(accountId: string): Observable<PendingInvitation[]> {
+  getAccountInvitations(accountId: string): Observable<PendingInvitation[]> {
     return this.nuclia.rest.get(`/account/${accountId}/invites`);
   }
 

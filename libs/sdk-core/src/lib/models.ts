@@ -170,7 +170,7 @@ export interface IDb {
   getAccountUsers(accountSlug: string): Observable<FullAccountUser[]>;
   setAccountUsers(accountSlug: string, users: AccountUsersPayload): Observable<void>;
   inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void>;
-  listAccountInvitations(accountId: string): Observable<PendingInvitation[]>;
+  getAccountInvitations(accountId: string): Observable<PendingInvitation[]>;
   deleteAccountInvitation(accountId: string, email: string): Observable<void>;
 }
 

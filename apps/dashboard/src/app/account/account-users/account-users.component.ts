@@ -57,7 +57,7 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
   updateUsers(account: Account): Observable<void> {
     return forkJoin([
       this.sdk.nuclia.db.getAccountUsers(account.slug),
-      this.sdk.nuclia.db.listAccountInvitations(account.id).pipe(catchError(() => of([]))),
+      this.sdk.nuclia.db.getAccountInvitations(account.id).pipe(catchError(() => of([]))),
     ]).pipe(
       map(([users, pendingInvitations]) => {
         this.users = [...users, ...pendingInvitations];

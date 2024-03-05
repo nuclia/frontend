@@ -11,7 +11,7 @@
 - Allow to pass LLM to `/chat` and `/summarize` endpoints
 - Add `marketplace` endpoints to global API
 - Add account invitation management endpoints and models:
-  - `listAccountInvitations` allows to list all pending invitations
+  - `getAccountInvitations` allows to list all pending invitations
   - `deleteAccountInvitation` allows to delete a pending invitation
 - Update `inviteToAccount` payload which can now take an optional role
 

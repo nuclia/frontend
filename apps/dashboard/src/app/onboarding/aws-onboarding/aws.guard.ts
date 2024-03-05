@@ -1,13 +1,14 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { catchError, switchMap } from 'rxjs/operators';
-import { map, of, tap } from 'rxjs';
+import { forkJoin, of, tap } from 'rxjs';
 import { AuthTokens } from '@nuclia/core';
 
 export const awsGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const sdk = inject(SDKService);
+  const navigation = inject(NavigationService);
 
   const customerToken = route.queryParams['customer_token'];
   return customerToken
@@ -16,11 +17,23 @@ export const awsGuard: CanActivateFn = (route, state) => {
           customer_token: customerToken,
         })
         .pipe(
-          // TODO: check if the account already have invited users/created KBs to know if we should do the onboarding flow or not
           tap((result) => sdk.nuclia.auth.authenticate(result)),
           switchMap((result) =>
             sdk.setCurrentAccount(result.account_id).pipe(
-              map(() => true),
+              switchMap((account) =>
+                forkJoin([
+                  sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id),
+                  sdk.nuclia.db.getAccountInvitations(account.id),
+                  sdk.nuclia.db.getAccountUsers(account.slug),
+                ]).pipe(
+                  switchMap(([kbs, invitations, users]) => {
+                    const accountAlreadySet = kbs.length > 0 || invitations.length > 0 || users.length > 1;
+                    return accountAlreadySet
+                      ? router.navigate([navigation.getAccountManageUrl(account.slug)])
+                      : of(true);
+                  }),
+                ),
+              ),
               catchError((error) => {
                 console.warn(`Failed to load account ${result.account_id}`, error);
                 return of(true);
