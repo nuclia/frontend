@@ -102,6 +102,7 @@
                           <pa-textarea
                             formControlName="prompt"
                             resizable
+                            acceptHtmlTags
                             [rows]="3"
                             [help]="prompt.info || ''">
                             {{ prompt.title }}
@@ -132,6 +133,7 @@
                           <pa-textarea
                             formControlName="system"
                             resizable
+                            acceptHtmlTags
                             [rows]="3"
                             [help]="system.info || ''">
                             {{ 'kb.ai-models.generative_model.system_prompt_label' | translate }}
