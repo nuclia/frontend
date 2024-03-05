@@ -6,6 +6,8 @@
       <h2>{{ 'billing.budget' | translate }}</h2>
       <div [innerHTML]="'billing.budget_description' | translate"></div>
     </div>
-    <app-budget [usage]="usage | async"></app-budget>
+    @if (usage | async; as usage) {
+      <app-budget [usage]="usage"></app-budget>
+    }
   </div>
 </div>

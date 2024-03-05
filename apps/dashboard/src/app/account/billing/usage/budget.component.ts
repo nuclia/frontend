@@ -11,6 +11,7 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BudgetComponent {
+  isSubscribedToAws = this.billing.isSubscribedToAws;
   budget = new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.min(0)] });
   @Input() usage: AccountUsage | undefined;
 

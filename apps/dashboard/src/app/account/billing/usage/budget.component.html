@@ -5,7 +5,7 @@
     [formControl]="budget">
     @if (usage) {
       {{ usage.currency === 'USD' ? '$' : '€' }}
-    } @else {
+    } @else if (isSubscribedToAws | async) {
       $
     }
   </pa-input>
