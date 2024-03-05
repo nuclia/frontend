@@ -68,7 +68,10 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
   kbForm = new FormGroup({
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl<string>('', { nonNullable: true }),
-    zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    zone: new FormControl<string>('', {
+      nonNullable: true,
+      validators: this.sdk.nuclia.options.standalone ? [] : [Validators.required],
+    }),
     anonymization: new FormControl<boolean>(false, { nonNullable: true }),
   });
   multilingualSelected = true;
@@ -100,6 +103,11 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
     this.kbForm.controls.anonymization.valueChanges
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(() => this.computeAndEmitLearningConfig());
+
+    // No zone will initialise learning config on standalone mode, so we trigger it once manually
+    if (this.sdk.nuclia.options.standalone) {
+      this.computeAndEmitLearningConfig();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -127,8 +135,11 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
 
   private computeAndEmitLearningConfig() {
     const { anonymization, ...kbConfig } = this.kbForm.getRawValue();
-    if (this.accountId && kbConfig.zone) {
-      this.sdk.nuclia.db.getLearningSchema(this.accountId, kbConfig.zone).subscribe((learningConfiguration) => {
+    if (this.sdk.nuclia.options.standalone || (this.accountId && kbConfig.zone)) {
+      const request = this.sdk.nuclia.options.standalone
+        ? this.sdk.nuclia.db.getLearningSchema()
+        : this.sdk.nuclia.db.getLearningSchema(this.accountId as string, kbConfig.zone);
+      request.subscribe((learningConfiguration) => {
         this.learningConfig.emit({
           anonymization_model: anonymization ? 'multilingual' : 'disabled',
           semantic_model: getSemanticModel(
