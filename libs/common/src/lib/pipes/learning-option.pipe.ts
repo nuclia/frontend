@@ -15,7 +15,6 @@ export class LearningOptionPipe implements PipeTransform {
     } else if (confId === 'summary') {
       key = `kb.settings.learning-options.summary-${option.value}`;
     }
-    console.log('key', key);
     const translation = this.translate.instant(key);
     return translation !== key ? translation : option.name.toLowerCase();
   }

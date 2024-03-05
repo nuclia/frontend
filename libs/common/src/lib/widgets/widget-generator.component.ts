@@ -4,7 +4,7 @@ import { BackendConfigurationService, FeaturesService, SDKService } from '@flaps
 import { combineLatest, filter, forkJoin, map, Observable, of, skip, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   AdvancedForm,
@@ -24,7 +24,7 @@ import {
 } from './widget-generator.models';
 import { SisModalService } from '@nuclia/sistema';
 import { CopilotData, CopilotModalComponent } from './copilot/copilot-modal.component';
-import { RAGStrategyName } from '@nuclia/core';
+import { LearningConfigurationOption, RAGStrategyName } from '@nuclia/core';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
@@ -48,10 +48,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isPrivateKb = this.sdk.currentKb.pipe(map((kb) => kb.state === 'PRIVATE'));
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
 
-  generativeModels = this.sdk.currentKb.pipe(
-    switchMap((kb) => kb.getLearningSchema()),
-    map((schema) => schema['generative_model']?.options || []),
-  );
+  generativeModels: LearningConfigurationOption[] = [];
   snippetOverlayOpen = false;
   snippet = '';
   snippetPreview: SafeHtml = '';
@@ -257,32 +254,44 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.answerGenerationExpanderUpdated.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.cdr.detectChanges());
     this.searchFilteringExpanderUpdated.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.cdr.detectChanges());
 
-    this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
-      this.currentKbId = kb.id;
-      const config = this.widgetConfigurations[kb.id] || {};
-      if (config.filters) {
-        this.filters = config.filters;
-      }
-      if (config.preset) {
-        this.presetForm.patchValue(config.preset);
-      }
-      if (config.features) {
-        this.advancedForm.patchValue(config.features);
-      }
-      if (config.rag_strategies) {
-        config.rag_strategies.forEach((strategy) => {
-          this.ragStrategiesToggles[strategy.name] = true;
-          if (strategy.fields) {
-            this.ragSpecificFieldIdsControl.patchValue(strategy.fields.join(', '));
-          }
-        });
-      }
-      if (config.copilotData) {
-        this.copilotData = config.copilotData;
-      }
-      // generate snippet in next detection cycle
-      setTimeout(() => this.updateSnippetAndStoreConfig());
-    });
+    this.sdk.currentKb
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        switchMap((kb) =>
+          kb.getLearningSchema().pipe(
+            map((schema) => {
+              this.generativeModels = schema['generative_model']?.options || [];
+              return kb;
+            }),
+          ),
+        ),
+      )
+      .subscribe((kb) => {
+        this.currentKbId = kb.id;
+        const config = this.widgetConfigurations[kb.id] || {};
+        if (config.filters) {
+          this.filters = config.filters;
+        }
+        if (config.preset) {
+          this.presetForm.patchValue(config.preset);
+        }
+        if (config.features) {
+          this.advancedForm.patchValue(config.features);
+        }
+        if (config.rag_strategies) {
+          config.rag_strategies.forEach((strategy) => {
+            this.ragStrategiesToggles[strategy.name] = true;
+            if (strategy.fields) {
+              this.ragSpecificFieldIdsControl.patchValue(strategy.fields.join(', '));
+            }
+          });
+        }
+        if (config.copilotData) {
+          this.copilotData = config.copilotData;
+        }
+        // generate snippet in next detection cycle
+        setTimeout(() => this.updateSnippetAndStoreConfig());
+      });
 
     // some changes in the form are causing other changes.
     // Debouncing allows to update the snippet only once after all changes are done.

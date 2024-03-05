@@ -247,11 +247,11 @@
                             'widget.generator.advanced.generative-answer-category.generative-model.label' | translate
                           ">
                           <pa-option value="">&nbsp;</pa-option>
-                          <pa-option
-                            *ngFor="let model of generativeModels | async"
-                            [value]="model.value">
-                            {{ model | learningOption: 'generative_model' }}
-                          </pa-option>
+                          @for (model of generativeModels; track model.value) {
+                            <pa-option [value]="model.value">
+                              {{ model | learningOption: 'generative_model' }}
+                            </pa-option>
+                          }
                         </pa-select>
                         <pa-icon
                           name="info"
