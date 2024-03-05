@@ -14,7 +14,7 @@
     widgetFeatures,
     widgetFilters,
     widgetPlaceholder,
-    widgetRagStrategies
+    widgetRagStrategies,
   } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
@@ -25,7 +25,7 @@
     initUsageTracking,
     initViewer,
     resetStatesAndEffects,
-    setupTriggerGraphNerSearch
+    setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
   import { entityRelations, preselectedFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
@@ -40,7 +40,7 @@
   export let lang = '';
   export let cdn = '';
   export let apikey = '';
-  export let kbslug = '';  // TODO: kbslug not needed anymore once regional system come into service
+  export let kbslug = ''; // TODO: kbslug not needed anymore once regional system come into service
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
@@ -52,6 +52,7 @@
   export let preselected_filters = '';
   export let cssPath = '';
   export let prompt = '';
+  export let generativemodel = '';
   export let no_tracking = false;
   export let rag_strategies = '';
   export let rag_field_ids = '';
@@ -82,7 +83,16 @@
 
   export function logState() {
     console.log(`Current widget configuration:`, {
-      _features, _filters, _ragStrategies, prompt, preselected_filters, mode, proxy, standalone, backend,
+      _features,
+      _filters,
+      _ragStrategies,
+      prompt,
+      generativemodel,
+      preselected_filters,
+      mode,
+      proxy,
+      standalone,
+      backend,
       zone,
       knowledgebox,
       placeholder,
@@ -142,8 +152,9 @@
         highlight: true,
         features: _features,
         prompt,
+        generative_model: generativemodel,
       },
-      no_tracking
+      no_tracking,
     );
 
     // Setup widget in the store
@@ -194,10 +205,10 @@
     };
   });
 
-  function displayRelations(){
+  function displayRelations() {
     showRelations = true;
   }
-  function hideRelations(){
+  function hideRelations() {
     showRelations = false;
   }
 </script>
@@ -214,14 +225,22 @@
       <SearchInput />
 
       {#if $entityRelations.length > 0}
-        <IconButton icon="info" aspect="basic" on:click={displayRelations} />
+        <IconButton
+          icon="info"
+          aspect="basic"
+          on:click={displayRelations} />
       {/if}
     </div>
   {/if}
 
-  <Modal show={showRelations} on:close={hideRelations}>
+  <Modal
+    show={showRelations}
+    on:close={hideRelations}>
     <div class="close-button">
-      <IconButton icon="cross" aspect="basic" on:click={hideRelations} />
+      <IconButton
+        icon="cross"
+        aspect="basic"
+        on:click={hideRelations} />
     </div>
     <div class="dialog-content">
       <InfoCard entityRelations={$entityRelations} />

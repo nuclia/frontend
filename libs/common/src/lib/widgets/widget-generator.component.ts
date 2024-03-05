@@ -48,6 +48,10 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isPrivateKb = this.sdk.currentKb.pipe(map((kb) => kb.state === 'PRIVATE'));
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
 
+  generativeModels = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getLearningSchema()),
+    map((schema) => schema['generative_model']?.options || []),
+  );
   snippetOverlayOpen = false;
   snippet = '';
   snippetPreview: SafeHtml = '';
@@ -110,6 +114,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     relations: new FormControl<boolean>(false, { nonNullable: true }),
     knowledgeGraph: new FormControl<boolean>(false, { nonNullable: true }),
     notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    generativeModel: new FormControl<string>('', { nonNullable: true }),
   });
   userPromptErrors = { pattern: 'widget.generator.advanced.generative-answer-category.prompt.error' };
   private readonly notFeatures = [
@@ -119,6 +124,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     'placeholder',
     'ragSpecificFieldIds',
     'notEnoughDataMessage',
+    'generativeModel',
   ];
 
   // advanced options not managed directly in the form
@@ -172,6 +178,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get notEnoughDataMessage() {
     return this.advancedForm.controls.notEnoughDataMessage.value;
   }
+  get generativeModel() {
+    return this.advancedForm.controls.generativeModel.value;
+  }
   get hasOneFilter(): boolean {
     return Object.entries(this.filters).filter(([, value]) => value).length === 1;
   }
@@ -217,6 +226,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
   get notEnoughDataMessageControl() {
     return this.advancedForm.controls.notEnoughDataMessage;
+  }
+  get generativeModelControl() {
+    return this.advancedForm.controls.generativeModel;
   }
 
   constructor(
@@ -359,6 +371,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       });
       this.ragSpecificFieldIdsControl.patchValue('');
       this.notEnoughDataMessageControl.patchValue('');
+      this.generativeModelControl.patchValue('');
     }
   }
 
@@ -454,7 +467,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     const promptValue = this.userPrompt;
     if (promptValue) {
       prompt = `prompt="${promptValue}"`;
-      copiablePrompt = `prompt="${promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n`;
+      copiablePrompt = `prompt="${promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n  `;
     }
 
     let ragStrategies = '';
@@ -507,15 +520,19 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         ? `
   not_enough_data_message="${this.notEnoughDataMessage.replace(/"/g, '&quot;')}"`
         : '';
+      const generativeModel = !!this.generativeModel
+        ? `
+  generativemodel="${this.generativeModel}"`
+        : '';
       const mode: string = this.darkModeEnabled ? `mode="dark"` : '';
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
   ${zone}
-  features="${this.features}" ${ragProperties}${placeholder}${notEnoughDataMessage}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
+  features="${this.features}" ${ragProperties}${placeholder}${notEnoughDataMessage}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results ${mode}></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
-${baseSnippet.replace('zone=', copiablePrompt + '  zone=')}`;
+${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
       this.snippetPreview = this.sanitized.bypassSecurityTrustHtml(
         baseSnippet
           .replace(

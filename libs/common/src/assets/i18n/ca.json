@@ -1039,6 +1039,8 @@
 	"widget.generator.advanced.generative-answer-category.answers.label": "Generació de respostes",
 	"widget.generator.advanced.generative-answer-category.citations.help": "Mostra quines fonts s'han utilitzat per generar la resposta.",
 	"widget.generator.advanced.generative-answer-category.citations.label": "Citacions",
+	"widget.generator.advanced.generative-answer-category.generative-model.help": "Utilitzeu un model generatiu diferent del que s'ha definit per defecte a la configuració IA del Knowledge Box",
+	"widget.generator.advanced.generative-answer-category.generative-model.label": "Model generatiu específic",
 	"widget.generator.advanced.generative-answer-category.hide-results.help": "Amagar els resultats de la cerca",
 	"widget.generator.advanced.generative-answer-category.hide-results.label": "Amagar resultats",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help": "Els resultats de full text no s'utilitzaran per generar respostes",
