@@ -4,7 +4,7 @@
   </pa-modal-title>
   <pa-modal-content>
     <stf-kb-creation-form
-      [accountId]="account.id"
+      [accountId]="account?.id"
       [zones]="zones"
       [creationInProgress]="creationInProgress"
       (kbConfig)="updateKbConfig($event)"

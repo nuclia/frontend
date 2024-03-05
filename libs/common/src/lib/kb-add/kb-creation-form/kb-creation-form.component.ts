@@ -50,7 +50,7 @@ export interface LearningConfig {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() accountId = '';
+  @Input() accountId?: string;
   @Input() zones: Zone[] = [];
   @Input({ transform: booleanAttribute })
   set creationInProgress(creating: boolean) {

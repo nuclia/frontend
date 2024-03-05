@@ -32,7 +32,7 @@ import { WritableKnowledgeBox } from '@nuclia/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Step3KbComponent implements OnInit {
-  @Input() accountId = '';
+  @Input() accountId?: string;
 
   @Output() back = new EventEmitter<void>();
   @Output() kbCreated = new EventEmitter<WritableKnowledgeBox>();
@@ -73,7 +73,7 @@ export class Step3KbComponent implements OnInit {
   }
 
   createKb() {
-    if (!this.kbConfig || !this.learningConfig) {
+    if (!this.accountId || !this.kbConfig || !this.learningConfig) {
       return;
     }
 

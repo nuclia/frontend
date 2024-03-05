@@ -40,14 +40,7 @@
       @for (user of users; track user) {
         <pa-table-row>
           <pa-table-cell>
-            @if (!user.id) {
-              <pa-icon
-                class="pending-icon"
-                name="clock-dash"
-                paTooltip="Pending: invitation sent"></pa-icon>
-            } @else {
-              <span class="title-s">{{ user.name }}</span>
-            }
+            <span class="title-s">{{ user.name }}</span>
           </pa-table-cell>
           <pa-table-cell>
             {{ user.email }}
@@ -71,7 +64,7 @@
             </pa-dropdown>
           </pa-table-cell>
           <pa-table-cell>
-            @if (!user.id || !isItMe(user.id)) {
+            @if (!isItMe(user.id)) {
               <pa-button
                 aspect="basic"
                 icon="trash"
@@ -81,6 +74,45 @@
                 {{ 'generic.delete' | translate }}
               </pa-button>
             }
+          </pa-table-cell>
+        </pa-table-row>
+      }
+      @for (invitation of invitations; track invitation) {
+        <pa-table-row>
+          <pa-table-cell>
+            <pa-icon
+              class="pending-icon"
+              name="clock-dash"
+              paTooltip="Pending: invitation sent"></pa-icon>
+          </pa-table-cell>
+          <pa-table-cell>
+            {{ invitation.email }}
+          </pa-table-cell>
+          <pa-table-cell>
+            <nsi-dropdown-button
+              size="small"
+              aspect="basic"
+              disabled
+              [popupRef]="roleDropdown2">
+              {{ roleTranslations[invitation.role] | translate }}
+            </nsi-dropdown-button>
+            <pa-dropdown #roleDropdown2>
+              @for (role of roleTranslations | keyvalue; track role) {
+                <pa-option [value]="role.key">
+                  {{ role.value | translate }}
+                </pa-option>
+              }
+            </pa-dropdown>
+          </pa-table-cell>
+          <pa-table-cell>
+            <pa-button
+              aspect="basic"
+              icon="trash"
+              size="small"
+              paTooltip="generic.delete"
+              (click)="deleteInvitation(invitation)">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
           </pa-table-cell>
         </pa-table-row>
       }
