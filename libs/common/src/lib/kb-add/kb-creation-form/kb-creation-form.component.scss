@@ -4,8 +4,7 @@
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
-  gap: rhythm(2);
-  padding: rhythm(1) 0;
+  gap: rhythm(4);
 
   .learning-config {
     display: flex;
@@ -30,41 +29,10 @@ pa-radio-group {
     margin-bottom: rhythm(1);
   }
 }
-
 .saving-spinner {
   align-items: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin-top: rhythm(2);
-}
-
-.kb-creation-footer {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(1);
-  width: 100%;
-
-  .steps {
-    bottom: rhythm(0.25);
-    color: $color-neutral-regular;
-    left: 50%;
-    margin-top: rhythm(1);
-    position: absolute;
-    text-align: center;
-    transform: translateX(-50%);
-  }
-
-  .error {
-    background-color: $color-secondary-regular;
-    text-align: center;
-    padding: rhythm(1);
-  }
-
-  .footer-buttons {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    gap: rhythm(2);
-  }
 }

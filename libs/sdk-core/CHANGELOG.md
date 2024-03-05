@@ -1,4 +1,4 @@
-# 1.13.0 (unreleased)
+# 1.13.0 (2024-03-05)
 
 ### Breaking changes
 
@@ -9,6 +9,11 @@
 - Fix retry configuration in `uploadFile` and `TUSuploadFile` methods
 - Add `listFeedback` method for retrieving user feedback
 - Allow to pass LLM to `/chat` and `/summarize` endpoints
+- Add `marketplace` endpoints to global API
+- Add account invitation management endpoints and models:
+  - `getAccountInvitations` allows to list all pending invitations
+  - `deleteAccountInvitation` allows to delete a pending invitation
+- Update `inviteToAccount` payload which can now take an optional role
 
 # 1.12.0 (2024-02-22)
 

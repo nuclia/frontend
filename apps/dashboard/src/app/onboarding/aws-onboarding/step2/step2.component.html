@@ -1,0 +1,34 @@
+<form
+  class="main-container"
+  [formGroup]="form"
+  (ngSubmit)="submitChoice()">
+  <h1>{{ 'onboarding.aws.get-started.title' | translate }}</h1>
+  <div>
+    <div [innerHTML]="'onboarding.aws.get-started.kb-required' | translate"></div>
+    <nsi-help-card>
+      {{ 'onboarding.aws.get-started.kb-help' | translate }}
+    </nsi-help-card>
+  </div>
+
+  <div>
+    <p class="title-s">{{ 'onboarding.aws.get-started.create-kb-or-invite' | translate }}</p>
+    <pa-radio-group formControlName="choice">
+      <pa-radio value="createKB">{{ 'onboarding.aws.get-started.create-kb' | translate }}</pa-radio>
+      <pa-radio value="inviteOwner">{{ 'onboarding.aws.get-started.invite-owner' | translate }}</pa-radio>
+    </pa-radio-group>
+  </div>
+
+  <footer>
+    <pa-button
+      aspect="basic"
+      (click)="back.emit()">
+      {{ 'generic.back' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="form.invalid || form.pristine">
+      {{ 'onboarding.aws.get-started.next-button' | translate }}
+    </pa-button>
+  </footer>
+</form>

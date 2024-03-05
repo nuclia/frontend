@@ -1,13 +1,26 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { IKnowledgeBoxItem, StatsRange, StatsType } from '@nuclia/core';
-import { BehaviorSubject, catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  switchMap,
+  take,
+} from 'rxjs';
 import { format } from 'date-fns';
 import { TranslateService } from '@ngx-translate/core';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TickOptions } from '@flaps/common';
 import { ChartData, MetricsService } from '../metrics.service';
+import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import { InviteCollaboratorsModalComponent } from '../invite-collaborators-modal';
 
 @Component({
   selector: 'app-account-home',
@@ -15,7 +28,7 @@ import { ChartData, MetricsService } from '../metrics.service';
   styleUrls: ['./account-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountHomeComponent {
+export class AccountHomeComponent implements OnInit {
   account$ = this.metrics.account$;
   canUpgrade = this.metrics.canUpgrade;
   isSubscribed = this.metrics.isSubscribed;
@@ -82,7 +95,24 @@ export class AccountHomeComponent {
     private navigation: NavigationService,
     private router: Router,
     private metrics: MetricsService,
+    private route: ActivatedRoute,
+    private modal: SisModalService,
   ) {}
+
+  ngOnInit() {
+    this.route.queryParams
+      .pipe(
+        take(1),
+        filter((params) => params['setup'] === 'invite-collaborators'),
+        switchMap(() => this.route.params),
+      )
+      .subscribe((params) => {
+        this.modal.openModal(
+          InviteCollaboratorsModalComponent,
+          new ModalConfig({ dismissable: false, data: { accountSlug: params['account'] } }),
+        );
+      });
+  }
 
   toggleCharts() {
     this.allCharts = !this.allCharts;

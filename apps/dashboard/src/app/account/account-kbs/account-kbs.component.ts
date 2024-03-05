@@ -1,22 +1,21 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of, Subject, tap } from 'rxjs';
+import { forkJoin, Subject, tap } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
 import { NavigationService, SDKService, Zone, ZoneService } from '@flaps/core';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { KbAddComponent, KbAddData } from '@flaps/common';
+import { KbAddData, KbAddModalComponent } from '@flaps/common';
 
 @Component({
-  selector: 'app-account-kbs',
   templateUrl: './account-kbs.component.html',
   styleUrls: ['./account-kbs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountKbsComponent implements OnInit, OnDestroy {
-  @Input() zones: Zone[] | undefined;
+  zones: Zone[] = [];
   isLoading = false;
   account?: Account;
   knowledgeBoxes: IKnowledgeBoxItem[] | undefined;
@@ -37,7 +36,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const account$ = this.sdk.currentAccount.pipe(take(1));
-    const zones$ = this.zones ? of(this.zones) : this.zoneService.getZones().pipe(take(1));
+    const zones$ = this.zoneService.getZones().pipe(take(1));
     forkJoin([account$, zones$])
       .pipe(
         takeUntil(this.unsubscribeAll),
@@ -84,7 +83,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
       account,
     };
     this.modalService
-      .openModal(KbAddComponent, { dismissable: true, data })
+      .openModal(KbAddModalComponent, { dismissable: true, data })
       .onClose.pipe(
         takeUntil(this.unsubscribeAll),
         filter((result) => {

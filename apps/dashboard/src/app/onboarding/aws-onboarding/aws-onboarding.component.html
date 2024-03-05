@@ -1,0 +1,18 @@
+<stf-user-container>
+  @switch (step) {
+    @case (1) {
+      <app-step1-budget (next)="setupBudget($event)"></app-step1-budget>
+    }
+    @case (2) {
+      <app-step2
+        (back)="step = 1"
+        (next)="goFrom2ToNext($event)"></app-step2>
+    }
+    @case (3) {
+      <app-step3-kb
+        [accountId]="(account | async)?.id"
+        (back)="step = 2"
+        (kbCreated)="goFrom3ToNext()"></app-step3-kb>
+    }
+  }
+</stf-user-container>

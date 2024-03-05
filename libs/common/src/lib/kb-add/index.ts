@@ -1,1 +1,2 @@
-export * from './kb-add.component';
+export * from './kb-add-modal.component';
+export * from './kb-creation-form';

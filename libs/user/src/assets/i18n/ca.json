@@ -17,6 +17,8 @@
 	"login.dont_see": "No ho veus?",
 	"login.email": "Correu electrònic",
 	"login.error.auth_error": "Error d'autentificació.",
+	"login.error.aws.invalid_customer_token": "Customer_token no vàlid",
+	"login.error.aws.missing_customer_token": "Falta customer_token",
 	"login.error.get_consent_error": "S'ha produït un error a l'obtenir la informació de consentiment",
 	"login.error.google_workspace": "El registre amb Google està restringit als dominis de l'espai de treball, ho sento.",
 	"login.error.login_error": "S'ha produït un error durant l'autentificació",

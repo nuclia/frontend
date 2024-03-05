@@ -119,7 +119,7 @@ export interface IDb {
   deleteAccount(accountSlug: string): Observable<void>;
   getWelcome(): Observable<Welcome>;
   getAccount(): Observable<Account>;
-  getAccount(account?: string): Observable<Account>;
+  getAccount(accountIdOrSlug?: string): Observable<Account>;
   getStandaloneKbs(): Observable<IStandaloneKb[]>;
   getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
@@ -170,6 +170,8 @@ export interface IDb {
   getAccountUsers(accountSlug: string): Observable<FullAccountUser[]>;
   setAccountUsers(accountSlug: string, users: AccountUsersPayload): Observable<void>;
   inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void>;
+  getAccountInvitations(accountId: string): Observable<PendingInvitation[]>;
+  deleteAccountInvitation(accountId: string, email: string): Observable<void>;
 }
 
 export interface NucliaOptions {
@@ -258,4 +260,11 @@ export interface AccountUsersPayload {
 
 export interface InviteAccountUserPayload {
   email: string;
+  role?: AccountRoles;
+}
+
+export interface PendingInvitation {
+  email: string;
+  role: AccountRoles;
+  expires: string;
 }

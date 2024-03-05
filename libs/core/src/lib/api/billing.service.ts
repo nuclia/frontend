@@ -92,7 +92,7 @@ export class BillingService {
       map((data) => {
         if (!data.hasOwnProperty('provider')) {
           return {
-            provider: 'stripe',
+            provider: 'STRIPE',
             subscription: data,
           } as AccountSubscription;
         } else {
@@ -106,7 +106,7 @@ export class BillingService {
   getStripeSubscription(): Observable<StripeAccountSubscription | null> {
     return this.getSubscription().pipe(
       map((data) => {
-        if (!data || data.provider !== 'stripe') {
+        if (!data || data.provider !== 'STRIPE') {
           return null;
         } else {
           return data.subscription;

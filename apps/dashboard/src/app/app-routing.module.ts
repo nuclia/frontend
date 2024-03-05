@@ -37,9 +37,11 @@ import {
   KnowledgeBoxKeysComponent,
   KnowledgeBoxUsersComponent,
 } from './knowledge-box';
-import { inviteGuard } from './invite/invite.guard';
-import { InviteComponent } from './invite/invite.component';
+import { inviteGuard } from './onboarding/invite/invite.guard';
+import { InviteComponent } from './onboarding/invite/invite.component';
 import { FeedbackComponent } from './farewell/feedback.component';
+import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
+import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
 
 const routes: Routes = [
   {
@@ -224,6 +226,11 @@ const routes: Routes = [
     path: 'setup/invite',
     component: InviteComponent,
     canActivate: [authGuard, inviteGuard],
+  },
+  {
+    path: 'setup_account',
+    component: AwsOnboardingComponent,
+    canActivate: [awsGuard],
   },
   {
     path: 'user',

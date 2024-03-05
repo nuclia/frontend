@@ -176,7 +176,8 @@ export class Rest implements IRest {
       path.startsWith('/zones') ||
       path.startsWith('/billing') ||
       path.startsWith('/configuration') ||
-      path.startsWith('/manage');
+      path.startsWith('/manage') ||
+      path.startsWith('/marketplace');
 
     let backend: string;
     if (zoneSlug && !this.nuclia.options.standalone && !this.nuclia.options.proxy) {
@@ -192,7 +193,8 @@ export class Rest implements IRest {
       path.startsWith('/export') ||
       path.startsWith('/billing') ||
       path.startsWith('/configuration') ||
-      path.startsWith('/manage')
+      path.startsWith('/manage') ||
+      path.startsWith('/marketplace')
         ? ''
         : '/v1';
     return `${backend}${version}${path}`;

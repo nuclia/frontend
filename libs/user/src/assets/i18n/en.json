@@ -17,6 +17,8 @@
 	"login.dont_see": "Don’t see it?",
 	"login.email": "Email",
 	"login.error.auth_error": "Authentication error.",
+	"login.error.aws.invalid_customer_token": "Invalid customer_token",
+	"login.error.aws.missing_customer_token": "Missing customer_token",
 	"login.error.get_consent_error": "An error occurred while retrieving consent information",
 	"login.error.google_workspace": "Sign up with Google is restricted to workspace domains, sorry.",
 	"login.error.login_error": "An error occurred while logging in",

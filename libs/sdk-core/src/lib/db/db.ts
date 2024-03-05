@@ -15,7 +15,14 @@ import {
   throwError,
   timer,
 } from 'rxjs';
-import type { AccountUsersPayload, FullAccountUser, IDb, INuclia, InviteAccountUserPayload } from '../models';
+import {
+  AccountUsersPayload,
+  FullAccountUser,
+  IDb,
+  INuclia,
+  InviteAccountUserPayload,
+  PendingInvitation,
+} from '../models';
 import {
   Account,
   AccountCreation,
@@ -123,16 +130,16 @@ export class Db implements IDb {
   }
 
   /**
-   * Returns the account with the given slug, or the one defined in the Nuclia options
-   * if no slug is provided.
+   * Returns the account with the given id or slug, or the one defined in the Nuclia options
+   * if no id nor slug is provided.
    */
   getAccount(): Observable<Account>;
-  getAccount(account?: string): Observable<Account> {
-    account = account || this.nuclia.options.account;
-    if (!account) {
+  getAccount(accountIdOrSlug?: string): Observable<Account> {
+    accountIdOrSlug = accountIdOrSlug || this.nuclia.options.account;
+    if (!accountIdOrSlug) {
       throw new Error('Account is not set');
     }
-    return this.nuclia.rest.get<Account>(`/account/${account}`);
+    return this.nuclia.rest.get<Account>(`/account/${accountIdOrSlug}`);
   }
 
   getStandaloneKbs(): Observable<IStandaloneKb[]> {
@@ -635,5 +642,22 @@ export class Db implements IDb {
   inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void> {
     const url = `/account/${accountSlug}/invite`;
     return this.nuclia.rest.post(url, data);
+  }
+
+  /**
+   * List pending account invitations
+   * @param accountId
+   */
+  getAccountInvitations(accountId: string): Observable<PendingInvitation[]> {
+    return this.nuclia.rest.get(`/account/${accountId}/invites`);
+  }
+
+  /**
+   * Delete account invitation
+   * @param accountId
+   * @param email
+   */
+  deleteAccountInvitation(accountId: string, email: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${accountId}/invite/${email}`);
   }
 }
