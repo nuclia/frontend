@@ -22,13 +22,20 @@ export function chat(
   let citations: Citations | undefined;
   let text = '';
   const { synchronous, ...searchOptions } = options;
+  const noEmptyValues = Object.entries(searchOptions).reduce((acc, [key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (acc as any)[key] = value;
+    }
+    return acc;
+  }, {} as ChatOptions);
   const endpoint = `${path}/chat`;
   const body = {
     query,
     context,
     show: [ResourceProperties.BASIC, ResourceProperties.VALUES],
     features: features.length > 0 ? features : undefined,
-    ...searchOptions,
+    ...noEmptyValues,
   };
   return synchronous
     ? nuclia.rest
