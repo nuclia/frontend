@@ -45,6 +45,7 @@ export class PromptLabComponent implements OnInit {
   private unsubscribeAll = new Subject<void>();
 
   updateConfigurationExpanderSize = new Subject<unknown>();
+  updateResultsExpanderSize = new Subject<unknown>();
 
   form = new FormGroup({});
   currentQuery = '';
@@ -146,7 +147,10 @@ export class PromptLabComponent implements OnInit {
         },
       }),
     );
-    this.progress$.pipe(filter((progress) => progress === requestCount)).subscribe(() => this.loadingModal?.close());
+    this.progress$.pipe(filter((progress) => progress === requestCount)).subscribe(() => {
+      this.loadingModal?.close();
+      this.hasResults.next(this.results.length > 0);
+    });
 
     this._generateResults(this.queries, this.currentPrompt).subscribe();
   }
@@ -214,6 +218,7 @@ export class PromptLabComponent implements OnInit {
     }
 
     this.progress$.next((this.progress$.value || 0) + 1);
+    this.updateResultsExpanderSize.next(result);
   }
 
   collapseAnswer(query: string) {
