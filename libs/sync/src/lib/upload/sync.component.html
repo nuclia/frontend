@@ -18,11 +18,6 @@
     [active]="selectedTab === 'activity'">
     {{ 'upload.tabs.activity' | translate }}
   </pa-tab>
-  <pa-tab
-    (click)="selectedTab = 'settings'"
-    [active]="selectedTab === 'settings'">
-    {{ 'upload.tabs.settings' | translate }}
-  </pa-tab>
   @if (canSelectFiles | async) {
     <pa-tab
       (click)="selectedTab = 'folders'"
@@ -43,15 +38,15 @@
     [active]="selectedTab === 'labels'">
     {{ 'upload.tabs.labels' | translate }}
   </pa-tab>
+  <pa-tab
+    (click)="selectedTab = 'settings'"
+    [active]="selectedTab === 'settings'">
+    {{ 'upload.tabs.settings' | translate }}
+  </pa-tab>
 </pa-tabs>
 @if (selectedTab === 'activity') {
   <section>
     <nsy-activity></nsy-activity>
-  </section>
-}
-@if (selectedTab === 'settings') {
-  <section>
-    <nsy-edit-settings (done)="done()"></nsy-edit-settings>
   </section>
 }
 @if (selectedTab === 'folders') {
@@ -62,4 +57,9 @@
 }
 @if (selectedTab === 'labels') {
   <section><nsy-edit-labels (done)="done()"></nsy-edit-labels></section>
+}
+@if (selectedTab === 'settings') {
+  <section>
+    <nsy-edit-settings (done)="done()"></nsy-edit-settings>
+  </section>
 }

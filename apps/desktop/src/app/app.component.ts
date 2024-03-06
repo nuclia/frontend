@@ -49,6 +49,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.modalService.openConfirm({
+      title: 'home.deprecated.title',
+      description: 'home.deprecated.message',
+      onlyConfirm: true,
+    });
     if (this.config.getVersion()) {
       this.version = `${pkg['version']} - ${this.config.getVersion()}`;
     }

@@ -33,6 +33,7 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
     tap(() => {
       this.loading = true;
+      this.cdr.markForCheck();
     }),
     switchMap(() => this.currentSource.pipe(take(1))),
     switchMap((source) =>
@@ -53,6 +54,7 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
         .pipe(
           tap(() => {
             this.loading = false;
+            this.cdr.markForCheck();
           }),
           scan((acc, current) => acc.concat(current.items), [] as SyncItem[]),
         ),
