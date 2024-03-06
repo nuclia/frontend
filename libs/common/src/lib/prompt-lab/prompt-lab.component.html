@@ -94,7 +94,9 @@
       </form>
     </pa-expander-body>
   </pa-expander>
-  <pa-expander [expanded]="hasResults | async">
+  <pa-expander
+    [expanded]="hasResults | async"
+    [contentLoaded]="updateResultsExpanderSize | async">
     <pa-expander-header>
       <div class="title-xs">{{ 'prompt-lab.results.title' | translate }}</div>
     </pa-expander-header>
@@ -112,7 +114,8 @@
           <div class="expander-card-container">
             <pa-expander
               card
-              expanded>
+              expanded
+              [contentLoaded]="updateResultsExpanderSize | async">
               <pa-expander-header>
                 <div class="title-s">{{ 'prompt-lab.results.question' | translate: { query: entry.query } }}</div>
               </pa-expander-header>
