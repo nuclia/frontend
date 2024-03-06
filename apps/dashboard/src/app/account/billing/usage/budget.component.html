@@ -1,0 +1,18 @@
+<div class="budget">
+  <pa-input
+    type="number"
+    externalLabel
+    [formControl]="budget">
+    @if (usage) {
+      {{ usage.currency === 'USD' ? '$' : '€' }}
+    } @else if (isSubscribedToAws | async) {
+      $
+    }
+  </pa-input>
+</div>
+<pa-button
+  kind="primary"
+  [disabled]="budget.pristine || budget.invalid"
+  (click)="saveBudget()">
+  {{ 'generic.save' | translate }}
+</pa-button>

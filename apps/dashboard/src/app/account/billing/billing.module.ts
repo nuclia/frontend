@@ -27,6 +27,8 @@ import { RedirectComponent } from './redirect.component';
 import { MySubscriptionComponent } from './my-subscription/my-subscription.component';
 import { UnsubscribeComponent } from './my-subscription/unsubscribe.component';
 import { DeprecatedSubscriptionsComponent } from './subscriptions/deprecated-subscriptions.component';
+import { AwsSubscriptionComponent } from './subscriptions/aws-subscription/aws-subscription.component';
+import { BudgetComponent } from './usage/budget.component';
 
 const routes: Routes = [
   {
@@ -92,6 +94,8 @@ const routes: Routes = [
     MySubscriptionComponent,
     UnsubscribeComponent,
     DeprecatedSubscriptionsComponent,
+    AwsSubscriptionComponent,
+    BudgetComponent,
   ],
   exports: [UsageTableComponent],
 })

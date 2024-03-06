@@ -92,6 +92,7 @@ export interface StripeAccountSubscription {
   billing_interval: RecurrentPriceInterval;
   start_billing_period: string;
   end_billing_period: string;
+  aws_product_code?: string;
 }
 
 export interface StripeSubscriptionCreation {

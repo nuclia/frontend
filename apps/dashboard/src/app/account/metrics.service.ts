@@ -26,7 +26,7 @@ export class MetricsService {
   canUpgrade = this.account$.pipe(map((account) => UPGRADABLE_ACCOUNT_TYPES.includes(account.type)));
 
   isTrial = this.account$.pipe(map((account) => account.type === 'stash-trial'));
-  isSubscribed = this.billingService.isSubscribed;
+  isSubscribed = this.billingService.isSubscribedToStripe;
   accountUsage = this.billingService.getAccountUsage().pipe(shareReplay());
   trialPeriod = combineLatest([this.account$, this.accountService.getAccountTypes()]).pipe(
     map(([account, defaults]) => {

@@ -7,8 +7,12 @@ import { take } from 'rxjs';
   template: '',
 })
 export class RedirectComponent {
-  constructor(private router: Router, private billingService: BillingService, private route: ActivatedRoute) {
-    this.billingService.isSubscribed.pipe(take(1)).subscribe((isSubscribed) => {
+  constructor(
+    private router: Router,
+    private billingService: BillingService,
+    private route: ActivatedRoute,
+  ) {
+    this.billingService.isSubscribedToStripe.pipe(take(1)).subscribe((isSubscribed) => {
       this.router.navigate([isSubscribed ? './usage' : './subscriptions'], {
         replaceUrl: true,
         relativeTo: this.route,

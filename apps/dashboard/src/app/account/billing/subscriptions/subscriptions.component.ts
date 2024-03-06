@@ -27,6 +27,7 @@ export class SubscriptionsComponent implements OnDestroy {
   tokensPerRequest = TOKENS_PER_REQUEST;
   tiers: AccountTypes[] = ['v3starter', 'v3fly', 'v3growth', 'v3enterprise'];
   isNewPricingEnabled = this.features.newPricing;
+  isSubscribedToAws = this.billing.isSubscribedToAws;
   unsubscribeAll = new Subject<void>();
 
   constructor(

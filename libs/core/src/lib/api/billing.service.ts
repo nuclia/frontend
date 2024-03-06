@@ -22,18 +22,28 @@ export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
   isDeprecatedAccount = this.type.pipe(map((type) => type.startsWith('stash-')));
 
-  isSubscribed = this.sdk.nuclia.options.standalone
+  isSubscribedToStripe = this.sdk.nuclia.options.standalone
     ? of(false)
     : combineLatest([this.type, this.getPrices()]).pipe(
         switchMap(([type, prices]) => {
           if (type === 'stash-enterprise' || type === 'v3growth' || type === 'v3enterprise') {
             // Not all enterprise accounts are subscribed
-            return this.getSubscription().pipe(map((subscription) => subscription !== null));
+            return this.getStripeSubscription().pipe(map((subscription) => !!subscription));
           } else {
             return of(Object.keys(prices).includes(type as string));
           }
         }),
         shareReplay(1),
+      );
+
+  isSubscribedToAws = this.sdk.nuclia.options.standalone
+    ? of(false)
+    : this.type.pipe(
+        switchMap((type) =>
+          type === 'v3enterprise'
+            ? this.getSubscription().pipe(map((subs) => subs?.provider === 'AWS_MARKETPLACE'))
+            : of(false),
+        ),
       );
 
   constructor(private sdk: SDKService) {}

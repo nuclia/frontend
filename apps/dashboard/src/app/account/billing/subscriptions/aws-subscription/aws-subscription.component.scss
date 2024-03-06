@@ -1,0 +1,17 @@
+@import 'apps/dashboard/src/variables';
+
+h2 {
+  margin: 0 0 rhythm(1);
+}
+
+.aws-subscription {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(6);
+}
+
+.budget {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}

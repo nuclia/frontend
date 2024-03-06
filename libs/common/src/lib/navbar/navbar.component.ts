@@ -84,7 +84,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   standalone = this.standaloneService.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));
-  isSubscribed = this.billing.isSubscribed;
+  isSubscribed = this.billing.isSubscribedToStripe;
   syncs = of(null).pipe(
     repeat({ delay: () => this.router.events.pipe(filter((event) => event instanceof NavigationEnd)) }),
     switchMap(() => combineLatest([this.inUpload, this.isAdminOrContrib, this.invalidKey])),
