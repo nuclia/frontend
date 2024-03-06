@@ -3,7 +3,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { BehaviorSubject, debounceTime, firstValueFrom } from 'rxjs';
-  import { take } from 'rxjs/operators';
+  import { filter, take } from 'rxjs/operators';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import globalCss from '../../common/_global.scss?inline';
   import {
@@ -44,8 +44,9 @@
   export function closePreview() {
     onClosePreview();
   }
-  let ready = new BehaviorSubject(false);
-  export const onInit = () => firstValueFrom(ready.asObservable());
+  let _ready = new BehaviorSubject(false);
+  const ready = _ready.asObservable().pipe(filter((r) => r));
+  export const onReady = () => firstValueFrom(ready);
 
   let svgSprite: string;
   let container: HTMLElement;
@@ -57,7 +58,7 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     injectCustomCss(cssPath, container);
-    ready.next(true);
+    _ready.next(true);
   });
 
   function renderingDone(node: HTMLElement) {

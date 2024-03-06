@@ -1,3 +1,9 @@
+# 1.13.1 (unreleased)
+
+### Improvements
+
+- Allow to modify the HTTP headers in the Nuclia REST API calls.
+
 # 1.13.0 (2024-03-05)
 
 ### Breaking changes

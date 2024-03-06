@@ -104,10 +104,15 @@ export class Rest implements IRest {
     if (synchronous) {
       defaultHeaders['x-synchronous'] = `${synchronous}`;
     }
-    return {
+    const headers = {
       ...defaultHeaders,
       ...extraHeaders,
     };
+    if (this.nuclia.options.modifyHeaders) {
+      return this.nuclia.options.modifyHeaders(headers);
+    } else {
+      return headers;
+    }
   }
 
   private fetch<T>(

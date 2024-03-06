@@ -23,7 +23,7 @@
   import type { FieldFullId, KBStates } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
-  import { BehaviorSubject, firstValueFrom, forkJoin, Observable } from 'rxjs';
+  import { BehaviorSubject, filter, firstValueFrom, forkJoin, Observable } from 'rxjs';
   import { onClosePreview, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
 
@@ -90,8 +90,9 @@
     resetNuclia();
     resetStatesAndEffects();
   };
-  let ready = new BehaviorSubject(false);
-  export const onInit = () => firstValueFrom(ready.asObservable());
+  let _ready = new BehaviorSubject(false);
+  const ready = _ready.asObservable().pipe(filter((r) => r));
+  export const onReady = () => firstValueFrom(ready);
 
   let svgSprite;
   let container: HTMLElement;
@@ -127,7 +128,7 @@
     initViewer();
     injectCustomCss(cssPath, container);
 
-    ready.next(true);
+    _ready.next(true);
 
     return () => reset();
   });
