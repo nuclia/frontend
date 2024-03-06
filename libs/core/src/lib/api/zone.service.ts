@@ -40,21 +40,21 @@ export class ZoneService {
           }),
         );
       }),
-      switchMap((zones) =>
-        // Keep only AWS zones on AWS_MARKETPLACE subscriptions
-        // (always keeps all zones on stage as there is only one zone there)
-        this.featureFlagService.isStageOrDev
-          ? of(zones)
-          : this.billingService
-              .getSubscription()
-              .pipe(
-                map((subscription) =>
-                  subscription && subscription.provider === 'AWS_MARKETPLACE'
-                    ? zones.filter((zone) => zone.cloud_provider === 'AWS')
-                    : zones,
-                ),
-              ),
-      ),
+      // switchMap((zones) =>
+      //   // Keep only AWS zones on AWS_MARKETPLACE subscriptions
+      //   // (always keeps all zones on stage as there is only one zone there)
+      //   this.featureFlagService.isStageOrDev
+      //     ? of(zones)
+      //     : this.billingService
+      //         .getSubscription()
+      //         .pipe(
+      //           map((subscription) =>
+      //             subscription && subscription.provider === 'AWS_MARKETPLACE'
+      //               ? zones.filter((zone) => zone.cloud_provider === 'AWS')
+      //               : zones,
+      //           ),
+      //         ),
+      // ),
     );
   }
 }
