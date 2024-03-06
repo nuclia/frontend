@@ -13,7 +13,7 @@ export const ConfluenceConnector: SourceConnectorDefinition = {
   title: 'Confluence',
   logo: `${baseLogoPath}/confluence.svg`,
   description: 'Collaboration platform developed by Atlassian',
-  helpUrl: 'https://docs.nuclia.dev/docs/docs/using/nda#confluence-connector-usage',
+  helpUrl: 'https://docs.nuclia.dev/docs/docs/using/sync-agent#confluence-connector-usage',
   factory: () => of(new ConfluenceImpl()),
 };
 
