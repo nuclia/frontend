@@ -1,7 +1,15 @@
 <p>{{ 'upload.activity.help' | translate }}</p>
+@if ((canSelectFiles | async) && (noFolderSelected | async)) {
+  <div class="warning-container">
+    <pa-icon name="warning"></pa-icon>
+    <div class="title-xxs">
+      {{ 'upload.activity.no-folders' | translate }}
+    </div>
+  </div>
+}
 <pa-button
   (click)="triggerSync()"
-  [disabled]="syncing">
+  [disabled]="syncing || ((canSelectFiles | async) && (noFolderSelected | async))">
   {{ 'upload.activity.sync-now' | translate }}
 </pa-button>
 <pa-table columns="48px 200px auto">
