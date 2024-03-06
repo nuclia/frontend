@@ -1,7 +1,7 @@
 <svelte:options customElement="nuclia-search-bar" />
 
 <script lang="ts">
-  import type { KBStates, RAGStrategy, RAGStrategyName, WidgetFeatures } from '@nuclia/core';
+  import type { KBStates, RAGStrategy, WidgetFeatures } from '@nuclia/core';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import { getRAGStrategies, injectCustomCss, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
@@ -32,6 +32,7 @@
   import type { WidgetFilters } from '../../core';
   import { InfoCard } from '../../components';
   import { IconButton, Modal } from '../../common';
+  import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -57,6 +58,9 @@
   export let rag_strategies = '';
   export let rag_field_ids = '';
   export let not_enough_data_message = '';
+
+  let ready = new BehaviorSubject(false);
+  export const onInit = () => firstValueFrom(ready.asObservable());
 
   $: darkMode = mode === 'dark';
   $: {
@@ -111,7 +115,6 @@
   };
 
   let svgSprite: string;
-  let ready = false;
   let container: HTMLElement;
 
   let showRelations = false;
@@ -197,7 +200,7 @@
     initUsageTracking(no_tracking);
     injectCustomCss(cssPath, container);
 
-    ready = true;
+    ready.next(true);
 
     return () => {
       resetNuclia();
@@ -220,7 +223,7 @@
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if ready && !!svgSprite}
+  {#if $ready && !!svgSprite}
     <div class="search-box">
       <SearchInput />
 

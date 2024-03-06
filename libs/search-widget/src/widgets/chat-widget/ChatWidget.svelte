@@ -11,6 +11,7 @@
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
   import { preselectedFilters, widgetRagStrategies } from '../../core';
+  import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -49,10 +50,11 @@
     resetNuclia();
     resetStatesAndEffects();
   };
+  let ready = new BehaviorSubject(false);
+  export const onInit = () => firstValueFrom(ready.asObservable());
 
   let svgSprite: string;
   let container: HTMLElement;
-  let ready = false;
 
   onMount(() => {
     if (cdn) {
@@ -74,7 +76,7 @@
       },
       state,
       { prompt },
-      no_tracking
+      no_tracking,
     );
 
     if (preselected_filters) {
@@ -95,7 +97,7 @@
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     injectCustomCss(cssPath, container);
 
-    ready = true;
+    ready.next(true);
 
     return () => reset();
   });
@@ -107,7 +109,7 @@
   bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if ready && !!svgSprite}
+  {#if $ready && !!svgSprite}
     <Chat
       show={showChat}
       fullscreen={layout === 'fullscreen'}
