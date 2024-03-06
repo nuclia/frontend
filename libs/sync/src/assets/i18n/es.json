@@ -15,6 +15,8 @@
 	"history.source": "Origen",
 	"history.title": "Historial de subidas",
 	"home.active-connectors": "o verifique sus conectores activos en la lista de la izquierda.",
+	"home.deprecated.message": "La aplicación Nuclia Desktop está en desuso. Utilice el <a href=\"https://docs.nuclia.dev/docs/docs/using/sync-agent\">Nuclia Sync Agent</a>.",
+	"home.deprecated.title": "Advertencia de obsolescencia",
 	"home.new-connector": "Haga clic en el botón a continuación para agregar un nuevo conector a tu cuenta de Nuclia",
 	"home.welcome": "Bienvenido/a",
 	"login.button": "Iniciar sesión",
