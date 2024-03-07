@@ -123,6 +123,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     'ragSpecificFieldIds',
     'notEnoughDataMessage',
     'generativeModel',
+    'generativeModelToggle',
   ];
 
   // advanced options not managed directly in the form
