@@ -893,19 +893,13 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   /** Creates and indexes a new resource in the Knowledge Box. */
   createResource(resource: ICreateResource, synchronous = true): Observable<{ uuid: string }> {
-    const retryConfig: RetryConfig = {
-      count: 3,
-      delay: (error) => {
-        if (error.status === 429 || (error.status >= 500 && error.status <= 599)) {
-          return error.status === 429 ? of(true).pipe(delay(1000)) : of(true);
-        } else {
-          throw error;
-        }
-      },
-    };
-    return this.nuclia.rest
-      .post<{ uuid: string }>(`${this.path}/resources`, resource, undefined, undefined, synchronous)
-      .pipe(retry(retryConfig));
+    return this.nuclia.rest.post<{ uuid: string }>(
+      `${this.path}/resources`,
+      resource,
+      undefined,
+      undefined,
+      synchronous,
+    );
   }
 
   /**
