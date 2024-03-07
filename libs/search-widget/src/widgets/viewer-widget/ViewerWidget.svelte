@@ -12,7 +12,6 @@
     loadFonts,
     loadSvgSprite,
     resetNuclia,
-    resetStatesAndEffects,
     setCDN,
     setLang,
     setWidgetActions,
@@ -86,10 +85,8 @@
     onClosePreview();
   }
 
-  export const reset = () => {
-    resetNuclia();
-    resetStatesAndEffects();
-  };
+  export const reset = () => resetNuclia();
+
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);

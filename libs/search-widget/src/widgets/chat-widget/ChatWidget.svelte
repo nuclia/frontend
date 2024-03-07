@@ -7,7 +7,7 @@
   import { setLang } from '../../core/i18n';
   import type { KBStates, RAGStrategy } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
-  import { initAnswer, initUsageTracking, initViewer, resetStatesAndEffects } from '../../core/stores/effects';
+  import { initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
   import { preselectedFilters, widgetRagStrategies } from '../../core';
@@ -46,10 +46,8 @@
     showChat = false;
   }
 
-  export const reset = () => {
-    resetNuclia();
-    resetStatesAndEffects();
-  };
+  export const reset = () => resetNuclia();
+
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);

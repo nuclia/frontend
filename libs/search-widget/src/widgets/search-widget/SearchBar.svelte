@@ -26,7 +26,6 @@
     initLabelStore,
     initUsageTracking,
     initViewer,
-    resetStatesAndEffects,
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
   import { entityRelations, preselectedFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
@@ -214,10 +213,7 @@
 
     _ready.next(true);
 
-    return () => {
-      resetNuclia();
-      resetStatesAndEffects();
-    };
+    return () => resetNuclia();
   });
 
   function displayRelations() {

@@ -66,10 +66,11 @@ import { entities, entitiesState } from './entities.store';
 import { unsubscribeTriggerSearch } from '../search-bar';
 import { logEvent } from '../tracking';
 import { translateInstant } from '../i18n';
+import { reset } from '../reset';
 
 const subscriptions: Subscription[] = [];
 
-export function resetStatesAndEffects() {
+function resetStatesAndEffects() {
   subscriptions.forEach((subscription) => subscription.unsubscribe());
   unsubscribeTriggerSearch();
   answerState.reset();
@@ -80,6 +81,8 @@ export function resetStatesAndEffects() {
   suggestionState.reset();
   viewerState.reset();
 }
+
+reset.subscribe(() => resetStatesAndEffects());
 
 /**
  * Initialise label sets in the store
