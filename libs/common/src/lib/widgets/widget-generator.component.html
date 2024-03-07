@@ -27,7 +27,7 @@
             <form [formGroup]="presetForm">
               <pa-expander
                 emitOnly
-                [contentLoaded]="(presetList | async)?.length > 0"
+                [contentLoaded]="presetList | async"
                 [expanded]="presetAccordionExpanded === 'preset'"
                 (toggleExpander)="toggleAccordion('preset')">
                 <pa-expander-header>
