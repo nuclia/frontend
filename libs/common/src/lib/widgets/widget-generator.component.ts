@@ -262,41 +262,38 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         takeUntil(this.unsubscribeAll),
-        switchMap((kb) =>
-          kb.getLearningSchema().pipe(
-            map((schema) => {
-              this.generativeModels = schema['generative_model']?.options || [];
-              return kb;
-            }),
-          ),
-        ),
+        switchMap((kb) => kb.getLearningSchema()),
       )
-      .subscribe((kb) => {
-        this.currentKbId = kb.id;
-        const config = this.widgetConfigurations[kb.id] || {};
-        if (config.filters) {
-          this.filters = config.filters;
-        }
-        if (config.preset) {
-          this.presetForm.patchValue(config.preset);
-        }
-        if (config.features) {
-          this.advancedForm.patchValue(config.features);
-        }
-        if (config.rag_strategies) {
-          config.rag_strategies.forEach((strategy) => {
-            this.ragStrategiesToggles[strategy.name] = true;
-            if (strategy.fields) {
-              this.ragSpecificFieldIdsControl.patchValue(strategy.fields.join(', '));
-            }
-          });
-        }
-        if (config.copilotData) {
-          this.copilotData = config.copilotData;
-        }
-        // generate snippet in next detection cycle
-        setTimeout(() => this.updateSnippetAndStoreConfig());
+      .subscribe((schema) => {
+        this.generativeModels = schema['generative_model']?.options || [];
+        this.cdr.detectChanges();
       });
+    this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
+      this.currentKbId = kb.id;
+      const config = this.widgetConfigurations[kb.id] || {};
+      if (config.filters) {
+        this.filters = config.filters;
+      }
+      if (config.preset) {
+        this.presetForm.patchValue(config.preset);
+      }
+      if (config.features) {
+        this.advancedForm.patchValue(config.features);
+      }
+      if (config.rag_strategies) {
+        config.rag_strategies.forEach((strategy) => {
+          this.ragStrategiesToggles[strategy.name] = true;
+          if (strategy.fields) {
+            this.ragSpecificFieldIdsControl.patchValue(strategy.fields.join(', '));
+          }
+        });
+      }
+      if (config.copilotData) {
+        this.copilotData = config.copilotData;
+      }
+      // generate snippet in next detection cycle
+      setTimeout(() => this.updateSnippetAndStoreConfig());
+    });
 
     // some changes in the form are causing other changes.
     // Debouncing allows to update the snippet only once after all changes are done.

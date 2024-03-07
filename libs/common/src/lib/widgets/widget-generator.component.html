@@ -256,7 +256,7 @@
                           {{ 'widget.generator.advanced.generative-answer-category.generative-model.help' | translate }}
                         </pa-popover>
                       </div>
-                      @if (generativeModelEnabled) {
+                      @if (generativeModelEnabled && generativeModels.length > 0) {
                         <div class="toggle-and-help">
                           <pa-select
                             formControlName="generativeModel"
