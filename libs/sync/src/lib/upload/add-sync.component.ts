@@ -48,6 +48,7 @@ export class AddSyncComponent implements OnInit {
     let id = title?.toLowerCase().replace(SLUGIFY, '-');
     this.sdk.currentKb
       .pipe(
+        take(1),
         switchMap((kb) => {
           id = `${kb.id}-${id}`;
           return this.syncService.setSourceAndDestination(
