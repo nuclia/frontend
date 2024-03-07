@@ -27,6 +27,7 @@
             <form [formGroup]="presetForm">
               <pa-expander
                 emitOnly
+                [contentLoaded]="(presetList | async)?.length > 0"
                 [expanded]="presetAccordionExpanded === 'preset'"
                 (toggleExpander)="toggleAccordion('preset')">
                 <pa-expander-header>
@@ -240,36 +241,41 @@
                           {{ 'widget.generator.advanced.generative-answer-category.citations.help' | translate }}
                         </pa-popover>
                       </div>
-                      <div class="toggle-and-help">
-                        <pa-toggle
-                          labelOnRight
-                          formControlName="generativeModelToggle"
-                          (valueChange)="toggleGenerativeModels()">
-                          {{
-                            'widget.generator.advanced.generative-answer-category.generative-model.label' | translate
-                          }}
-                        </pa-toggle>
-                        <pa-icon
-                          name="info"
-                          [paPopover]="generativeModelToggleHelp" />
-                        <pa-popover #generativeModelToggleHelp>
-                          {{ 'widget.generator.advanced.generative-answer-category.generative-model.help' | translate }}
-                        </pa-popover>
-                      </div>
-                      @if (generativeModelEnabled && generativeModels.length > 0) {
+                      @if (generativeModels.length > 0) {
                         <div class="toggle-and-help">
-                          <pa-select
-                            formControlName="generativeModel"
-                            [label]="
+                          <pa-toggle
+                            labelOnRight
+                            formControlName="generativeModelToggle"
+                            (valueChange)="toggleGenerativeModels()">
+                            {{
                               'widget.generator.advanced.generative-answer-category.generative-model.label' | translate
-                            ">
-                            @for (model of generativeModels; track model.value) {
-                              <pa-option [value]="model.value">
-                                {{ model | learningOption: 'generative_model' }}
-                              </pa-option>
-                            }
-                          </pa-select>
+                            }}
+                          </pa-toggle>
+                          <pa-icon
+                            name="info"
+                            [paPopover]="generativeModelToggleHelp" />
+                          <pa-popover #generativeModelToggleHelp>
+                            {{
+                              'widget.generator.advanced.generative-answer-category.generative-model.help' | translate
+                            }}
+                          </pa-popover>
                         </div>
+                        @if (generativeModelEnabled) {
+                          <div class="toggle-and-help">
+                            <pa-select
+                              formControlName="generativeModel"
+                              [label]="
+                                'widget.generator.advanced.generative-answer-category.generative-model.label'
+                                  | translate
+                              ">
+                              @for (model of generativeModels; track model.value) {
+                                <pa-option [value]="model.value">
+                                  {{ model | learningOption: 'generative_model' }}
+                                </pa-option>
+                              }
+                            </pa-select>
+                          </div>
+                        }
                       }
 
                       <div class="toggle-and-help">
