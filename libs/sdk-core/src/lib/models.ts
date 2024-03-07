@@ -227,6 +227,10 @@ export interface NucliaOptions {
    * Set it to `false` when using a private Knowledge Box.
    */
   public?: boolean;
+  /**
+   * Allow to modify the headers for the REST calls.
+   */
+  modifyHeaders?: (headers: { [key: string]: string }) => { [key: string]: string };
 }
 
 export type PromiseMapper<T> = {

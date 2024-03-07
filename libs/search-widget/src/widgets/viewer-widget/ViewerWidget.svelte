@@ -12,7 +12,6 @@
     loadFonts,
     loadSvgSprite,
     resetNuclia,
-    resetStatesAndEffects,
     setCDN,
     setLang,
     setWidgetActions,
@@ -23,7 +22,7 @@
   import type { FieldFullId, KBStates } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
-  import { forkJoin, Observable } from 'rxjs';
+  import { BehaviorSubject, filter, firstValueFrom, forkJoin, Observable } from 'rxjs';
   import { onClosePreview, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
 
@@ -86,14 +85,14 @@
     onClosePreview();
   }
 
-  export const reset = () => {
-    resetNuclia();
-    resetStatesAndEffects();
-  };
+  export const reset = () => resetNuclia();
+
+  let _ready = new BehaviorSubject(false);
+  const ready = _ready.asObservable().pipe(filter((r) => r));
+  export const onReady = () => firstValueFrom(ready);
 
   let svgSprite;
   let container: HTMLElement;
-  let ready = false;
 
   onMount(() => {
     if (cdn) {
@@ -115,7 +114,7 @@
       },
       state,
       {},
-      no_tracking
+      no_tracking,
     );
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
@@ -126,7 +125,7 @@
     initViewer();
     injectCustomCss(cssPath, container);
 
-    ready = true;
+    _ready.next(true);
 
     return () => reset();
   });
@@ -138,7 +137,7 @@
   bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if ready && !!svgSprite}
+  {#if $ready && !!svgSprite}
     <Viewer />
   {/if}
 

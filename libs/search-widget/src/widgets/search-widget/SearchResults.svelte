@@ -2,8 +2,8 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { debounceTime } from 'rxjs';
-  import { take } from 'rxjs/operators';
+  import { BehaviorSubject, debounceTime, firstValueFrom } from 'rxjs';
+  import { filter, take } from 'rxjs/operators';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import globalCss from '../../common/_global.scss?inline';
   import {
@@ -25,7 +25,7 @@
     searchError,
     setWidgetActions,
     showResults,
-    trackingReset
+    trackingReset,
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
@@ -44,6 +44,9 @@
   export function closePreview() {
     onClosePreview();
   }
+  let _ready = new BehaviorSubject(false);
+  const ready = _ready.asObservable().pipe(filter((r) => r));
+  export const onReady = () => firstValueFrom(ready);
 
   let svgSprite: string;
   let container: HTMLElement;
@@ -55,6 +58,7 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     injectCustomCss(cssPath, container);
+    _ready.next(true);
   });
 
   function renderingDone(node: HTMLElement) {
@@ -68,7 +72,6 @@
         trackingReset.set(undefined);
       });
     }
-
   }
 
   const onLoadMore = () => loadMore.set();
@@ -102,8 +105,7 @@
         </div>
       {/if}
       <div class="results-container">
-        <div
-          class="results">
+        <div class="results">
           {#if $isAnswerEnabled}
             <InitialAnswer />
           {/if}

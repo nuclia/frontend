@@ -7,10 +7,11 @@
   import { setLang } from '../../core/i18n';
   import type { KBStates, RAGStrategy } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
-  import { initAnswer, initUsageTracking, initViewer, resetStatesAndEffects } from '../../core/stores/effects';
+  import { initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
   import { preselectedFilters, widgetRagStrategies } from '../../core';
+  import { BehaviorSubject, filter, firstValueFrom } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -45,14 +46,14 @@
     showChat = false;
   }
 
-  export const reset = () => {
-    resetNuclia();
-    resetStatesAndEffects();
-  };
+  export const reset = () => resetNuclia();
+
+  let _ready = new BehaviorSubject(false);
+  const ready = _ready.asObservable().pipe(filter((r) => r));
+  export const onReady = () => firstValueFrom(ready);
 
   let svgSprite: string;
   let container: HTMLElement;
-  let ready = false;
 
   onMount(() => {
     if (cdn) {
@@ -74,7 +75,7 @@
       },
       state,
       { prompt },
-      no_tracking
+      no_tracking,
     );
 
     if (preselected_filters) {
@@ -95,7 +96,7 @@
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     injectCustomCss(cssPath, container);
 
-    ready = true;
+    _ready.next(true);
 
     return () => reset();
   });
@@ -107,7 +108,7 @@
   bind:this={container}
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if ready && !!svgSprite}
+  {#if $ready && !!svgSprite}
     <Chat
       show={showChat}
       fullscreen={layout === 'fullscreen'}

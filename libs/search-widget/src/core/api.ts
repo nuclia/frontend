@@ -23,6 +23,7 @@ import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
+import { reset } from './reset';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 const DEFAULT_CHAT_MODE = [Chat.Features.VECTORS, Chat.Features.PARAGRAPHS];
@@ -54,7 +55,8 @@ export const initNuclia = (
   generative_model = undefined;
 
   if (nucliaApi) {
-    throw new Error('Cannot exist more than one Nuclia widget at the same time');
+    console.error('Cannot exist more than one Nuclia widget at the same time. Cancelling the first instance.');
+    resetNuclia();
   }
   if (widgetOptions.features?.useSynonyms && widgetOptions.features?.relations) {
     throw new Error('Cannot use synonyms and relations at the same time');
@@ -117,6 +119,7 @@ export const resetNuclia = () => {
   SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
   CHAT_MODE = [...DEFAULT_CHAT_MODE];
   SUGGEST_MODE = [];
+  reset.next();
 };
 
 export const search = (query: string, options: SearchOptions): Observable<Search.FindResults> => {

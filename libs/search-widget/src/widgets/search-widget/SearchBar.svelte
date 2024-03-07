@@ -1,7 +1,9 @@
-<svelte:options customElement="nuclia-search-bar" />
+<svelte:options
+  customElement="nuclia-search-bar"
+  accessors />
 
 <script lang="ts">
-  import type { KBStates, RAGStrategy, RAGStrategyName, WidgetFeatures } from '@nuclia/core';
+  import type { KBStates, Nuclia, RAGStrategy, WidgetFeatures } from '@nuclia/core';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import { getRAGStrategies, injectCustomCss, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
@@ -24,7 +26,6 @@
     initLabelStore,
     initUsageTracking,
     initViewer,
-    resetStatesAndEffects,
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
   import { entityRelations, preselectedFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
@@ -32,6 +33,7 @@
   import type { WidgetFilters } from '../../core';
   import { InfoCard } from '../../components';
   import { IconButton, Modal } from '../../common';
+  import { BehaviorSubject, delay, filter, firstValueFrom, map } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -57,6 +59,12 @@
   export let rag_strategies = '';
   export let rag_field_ids = '';
   export let not_enough_data_message = '';
+
+  let _ready = new BehaviorSubject(false);
+  const ready = _ready.asObservable().pipe(filter((r) => r));
+  export const onReady = () => firstValueFrom(ready);
+  let nucliaAPI: Nuclia;
+  export let initHook: (n: Nuclia) => void = () => {};
 
   $: darkMode = mode === 'dark';
   $: {
@@ -111,10 +119,18 @@
   };
 
   let svgSprite: string;
-  let ready = false;
   let container: HTMLElement;
 
   let showRelations = false;
+
+  ready.pipe(delay(200)).subscribe(() => {
+    initHook(nucliaAPI);
+
+    // any feature that calls the Nuclia API immediately at init time must be done here
+    if (_features.permalink) {
+      activatePermalinks();
+    }
+  });
 
   onMount(() => {
     if (cdn) {
@@ -134,7 +150,7 @@
     }
     _ragStrategies = getRAGStrategies(rag_strategies, rag_field_ids);
 
-    initNuclia(
+    nucliaAPI = initNuclia(
       {
         backend,
         zone,
@@ -188,21 +204,16 @@
 
     setupTriggerSearch(dispatchCustomEvent);
     initViewer();
-    if (_features.permalink) {
-      activatePermalinks();
-    }
+
     if (_features.knowledgeGraph) {
       setupTriggerGraphNerSearch();
     }
     initUsageTracking(no_tracking);
     injectCustomCss(cssPath, container);
 
-    ready = true;
+    _ready.next(true);
 
-    return () => {
-      resetNuclia();
-      resetStatesAndEffects();
-    };
+    return () => resetNuclia();
   });
 
   function displayRelations() {
@@ -220,7 +231,7 @@
   class="nuclia-widget"
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if ready && !!svgSprite}
+  {#if $ready && !!svgSprite}
     <div class="search-box">
       <SearchInput />
 
