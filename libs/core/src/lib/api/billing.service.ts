@@ -38,7 +38,7 @@ export class BillingService {
 
   isSubscribedToAws = this.sdk.nuclia.options.standalone
     ? of(false)
-    : this.type.pipe(switchMap(() => this.getSubscription().pipe(map((subs) => subs?.provider === 'AWS_MARKETPLACE'))));
+    : this.getSubscription().pipe(map((subs) => subs?.provider === 'AWS_MARKETPLACE'));
 
   constructor(private sdk: SDKService) {}
 
