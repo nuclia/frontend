@@ -21,6 +21,7 @@ export interface ResourceWithLabels {
   labels: ColoredLabel[];
   description?: string;
   status?: string;
+  rank?: number;
 }
 
 export interface ColumnHeader extends IHeaderCell {
