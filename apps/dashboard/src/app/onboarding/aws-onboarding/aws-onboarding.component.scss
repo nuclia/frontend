@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: rhythm(4);
+  max-height: calc(100vh - #{rhythm(14)});
   width: rhythm(60);
 
   h1 {
@@ -14,7 +15,8 @@
     margin-top: rhythm(1);
   }
 
-  pa-input.budget-input {
+  pa-input.budget-input,
+  pa-button.budget-button .pa-button {
     width: rhythm(22);
   }
 
