@@ -72,7 +72,7 @@ export class SelectKbComponent implements OnDestroy {
       )
       .subscribe((result) => {
         this.sdk.refreshKbList();
-        this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbId)]);
+        this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbSlug)]);
       });
   }
 
