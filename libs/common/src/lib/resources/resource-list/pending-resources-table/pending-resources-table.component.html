@@ -28,6 +28,19 @@
           (click)="bulkReprocess()">
           {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
         </pa-button>
+        @if (
+          (allSelected | async) === true &&
+          ((totalCount | async) || 0) > selection.length * 1.5 &&
+          !bulkAction.inProgress
+        ) {
+          <pa-button
+            aspect="basic"
+            kind="destructive"
+            (click)="deleteAllResources()"
+            [disabled]="bulkAction.inProgress">
+            {{ 'resource.delete-all-pending' | translate: { count: totalCount | async } }}
+          </pa-button>
+        }
         @if (bulkAction.inProgress) {
           <div class="body-m">
             {{ bulkAction.label | translate }}

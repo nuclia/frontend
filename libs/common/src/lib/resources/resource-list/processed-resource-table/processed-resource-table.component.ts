@@ -24,7 +24,7 @@ import {
   UserClassification,
 } from '@nuclia/core';
 import { LabelsService } from '@flaps/core';
-import { getClassificationsPayload } from '@flaps/common';
+import { getClassificationsPayload, UploadService } from '@flaps/common';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { ResourcesTableDirective } from '../resources-table.directive';
 import mime from 'mime';
@@ -42,9 +42,12 @@ interface Filters {
 })
 export class ProcessedResourceTableComponent extends ResourcesTableDirective implements OnInit, OnDestroy, OnChanges {
   override status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
+  private uploadService = inject(UploadService);
+  totalCount = this.uploadService.statusCount.pipe(map((statusCount) => statusCount.processed + statusCount.error));
   labelSets = this.resourceListService.labelSets;
   isReady = this.resourceListService.ready;
   emptyKb = this.resourceListService.emptyKb;
+  query = this.resourceListService.query;
 
   get initialColumns(): ColumnHeader[] {
     return [

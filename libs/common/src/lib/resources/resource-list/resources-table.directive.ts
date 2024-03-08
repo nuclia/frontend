@@ -318,6 +318,10 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     this.allResourcesSelected = true;
   }
 
+  deleteAllResources() {
+    this.selectAllResources();
+    this.bulkDelete();
+  }
 
   clearSelection() {
     this.allResourcesSelected = false;

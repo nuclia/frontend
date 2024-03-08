@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { COMMON_COLUMNS, ResourcesTableDirective } from '../resources-table.directive';
 import { ColumnHeader } from '../resource-list.model';
 import { RESOURCE_STATUS } from '@nuclia/core';
+import { UploadService } from '../../../upload';
+import { map, of } from 'rxjs';
 
 @Component({
   selector: 'stf-pending-resources-table',
@@ -11,6 +13,8 @@ import { RESOURCE_STATUS } from '@nuclia/core';
 })
 export class PendingResourcesTableComponent extends ResourcesTableDirective {
   override status: RESOURCE_STATUS = RESOURCE_STATUS.PENDING;
+  private uploadService = inject(UploadService);
+  totalCount = this.uploadService.statusCount.pipe(map((statusCount) => statusCount.pending));
 
   protected override defaultColumns: ColumnHeader[] = [
     ...COMMON_COLUMNS,

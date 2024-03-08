@@ -63,7 +63,8 @@ export const STATUS_FACET = '/metadata.status';
 export class UploadService {
   private _progress = new ReplaySubject<UploadStatus>();
   private _barDisabled = new BehaviorSubject<boolean>(false);
-  private _statusCount: BehaviorSubject<{ pending: number; error: number }> = new BehaviorSubject({
+  private _statusCount: BehaviorSubject<{ processed: number; pending: number; error: number }> = new BehaviorSubject({
+    processed: 0,
     pending: 0,
     error: 0,
   });
@@ -373,7 +374,7 @@ export class UploadService {
         processed: results.fulltext?.facets?.[STATUS_FACET]?.[`${STATUS_FACET}/PROCESSED`] || 0,
       })),
       tap((count) => {
-        this._statusCount.next({ pending: count.pending, error: count.error });
+        this._statusCount.next(count);
       }),
     );
   }

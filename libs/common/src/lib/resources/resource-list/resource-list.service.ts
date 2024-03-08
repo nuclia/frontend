@@ -65,6 +65,8 @@ export class ResourceListService {
   data = this._data.asObservable();
   private _emptyKb = new Subject<boolean>();
   emptyKb = this._emptyKb.asObservable();
+  private _query = new BehaviorSubject<string>('');
+  query = this._query.asObservable();
 
   labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
     filter((labelSets) => !!labelSets),
@@ -75,7 +77,6 @@ export class ResourceListService {
   private _hasMore = false;
   private _pageSize = DEFAULT_PAGE_SIZE;
   private _sort: SortOption = DEFAULT_SORTING;
-  private _query = '';
   private _titleOnly = true;
   private _cursor?: string;
   private formatETA: FormatETAPipe = new FormatETAPipe();
@@ -93,7 +94,7 @@ export class ResourceListService {
     this._hasMore = false;
     this._pageSize = DEFAULT_PAGE_SIZE;
     this._sort = DEFAULT_SORTING;
-    this._query = '';
+    this._query.next('');
     this._titleOnly = true;
   }
 
@@ -119,7 +120,7 @@ export class ResourceListService {
   }
 
   search(query: string, titleOnly: boolean) {
-    this._query = query;
+    this._query.next(query);
     this._titleOnly = titleOnly;
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
@@ -206,7 +207,7 @@ export class ResourceListService {
       page: this._page,
       pageSize: this._pageSize,
       sort: this._sort,
-      query: this._query,
+      query: this._query.value,
       titleOnly: this._titleOnly,
       filters: this._filters.value,
     };
@@ -220,7 +221,7 @@ export class ResourceListService {
       map(([labelSets, data]) => {
         const newResults: ResourceWithLabels[] = this._titleOnly
           ? this.getTitleOnlyData(data.results, data.kbId, labelSets)
-          : this.getResourceData(this._query, data.results, data.kbId, labelSets);
+          : this.getResourceData(this._query.value, data.results, data.kbId, labelSets);
         const newData =
           this._page === 0
             ? newResults
