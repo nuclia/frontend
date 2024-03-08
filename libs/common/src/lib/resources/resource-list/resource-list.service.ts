@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { FeaturesService, LabelsService, SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, forkJoin, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import {
@@ -20,7 +20,6 @@ import {
   SortOption,
 } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
-import { LabelsService } from '@flaps/core';
 import { UploadService } from '../../upload/upload.service';
 import { SisToastService } from '@nuclia/sistema';
 import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';
@@ -43,17 +42,6 @@ export class ResourceListService {
   }
   set status(status: RESOURCE_STATUS) {
     this._status = status;
-    if (!this.sdk.nuclia.options.standalone) {
-      // TODO to be removed once we the new system will be enabled for all KBs
-      forkJoin([this.sdk.currentAccount.pipe(take(1)), this.features.newProcessingStatus])
-        .pipe(
-          filter(([, newProcessingStatusEnabled]) => !newProcessingStatusEnabled),
-          switchMap(([account]) => this.sdk.nuclia.db.getProcessingStatus(account.id)),
-        )
-        .subscribe((processingStatus) => {
-          this.processingStatus = processingStatus;
-        });
-    }
   }
 
   private _triggerResourceLoad = new Subject<{ replaceData: boolean; updateCount: boolean }>();
@@ -156,7 +144,7 @@ export class ResourceListService {
       switchMap((isEnabled) =>
         isEnabled
           ? // at the moment /processing-status does not return all the pending resources
-            // so we start by loading the resources from the catalog and then we fetch the processing status
+            // so, we start by loading the resources from the catalog, and then we fetch the processing status
             // and update the status of the resources
             this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
               switchMap(() => this.sdk.currentKb),
@@ -180,10 +168,13 @@ export class ResourceListService {
                           : existingData.resource.metadata,
                       } as Resource,
                       status: data.status,
+                      rank: data.rank,
                     };
                   }
                   return deduplicatedList;
                 }, oldData);
+                // deduplication is reversing the order of the data, so we sort them back
+                mergedData.sort((r1, r2) => (r1.rank || -1) - (r2.rank || -1));
                 this._data.next(mergedData);
                 this._ready.next(true);
                 this._hasMore = !!processingStatus.cursor;
@@ -363,6 +354,7 @@ export class ResourceListService {
             ? this.translate.instant('resource.status.processing')
             : `${this.translate.instant('resource.status.rank', { rank: data.schedule_order })}
 <br>${this.translate.instant('resource.status.starts-in', { eta })}`,
+        rank: data.schedule_order,
       };
     });
   }
