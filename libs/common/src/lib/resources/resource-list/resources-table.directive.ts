@@ -1,6 +1,13 @@
 import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angular/core';
-import { BulkAction, ColumnHeader, MenuAction } from './resource-list.model';
-import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
+import {
+  BulkAction,
+  ColumnHeader,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_SORTING,
+  getSearchOptions,
+  MenuAction,
+} from './resource-list.model';
+import { IResource, KnowledgeBox, Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { delay, map, switchMap } from 'rxjs/operators';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
@@ -8,12 +15,15 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  EMPTY,
+  expand,
   filter,
   forkJoin,
   from,
   mergeMap,
   Observable,
   of,
+  reduce,
   take,
   tap,
   toArray,
@@ -69,6 +79,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   );
   isLoading = false;
   isShardReady = new BehaviorSubject<boolean>(false);
+  allResourcesSelected = false;
 
   private _bulkAction: BulkAction = {
     inProgress: false,
@@ -232,9 +243,11 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   }
 
   bulkDelete() {
-    this.getSelectedResources()
-      .pipe(switchMap((resources) => this.delete(resources)))
-      .subscribe();
+    const resourcesObs = this.allResourcesSelected ? this.getAllResources() : this.getSelectedResources();
+    resourcesObs.pipe(switchMap((resources) => this.delete(resources))).subscribe();
+    if (this.allResourcesSelected) {
+      this.allResourcesSelected = false;
+    }
   }
 
   reprocess(resources: Resource[]) {
@@ -277,9 +290,13 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   }
 
   bulkReprocess() {
-    this.getSelectedResources()
-      .pipe(switchMap((resources) => this.reprocess(resources)))
-      .subscribe();
+    const resourcesObs = this.allResourcesSelected ? this.getAllResources() : this.getSelectedResources();
+    resourcesObs.pipe(switchMap((resources) => this.reprocess(resources))).subscribe(() => {
+      if (this.allResourcesSelected) {
+        this.toaster.info('resource.reindex-all-info');
+        this.allResourcesSelected = false;
+      }
+    });
   }
 
   toggleAll() {
@@ -295,6 +312,16 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     } else {
       this.selection = this.selection.concat([resourceId]);
     }
+  }
+
+  selectAllResources() {
+    this.allResourcesSelected = true;
+  }
+
+
+  clearSelection() {
+    this.allResourcesSelected = false;
+    this.selection = [];
   }
 
   protected getSelectedResources(): Observable<Resource[]> {
@@ -340,5 +367,43 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     this.isLoading = false;
     this.bulkAction = { inProgress: false, total: 0, done: 0, errors: 0, label: '' };
     this.cdr.markForCheck();
+  }
+
+  private getAllResources(): Observable<Resource[]> {
+    this.isLoading = true;
+    let kb: KnowledgeBox;
+    const getResourcesPage = (kb: KnowledgeBox, page = 0) => {
+      const { searchOptions } = getSearchOptions({
+        page,
+        pageSize: DEFAULT_PAGE_SIZE,
+        sort: this.sorting || DEFAULT_SORTING,
+        status: this.status,
+        query: '',
+        titleOnly: true,
+        filters: [],
+      });
+      return kb.catalog('', searchOptions);
+    };
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((current) => {
+        kb = current;
+        return getResourcesPage(kb);
+      }),
+      expand((results) =>
+        results.type !== 'error' && results.fulltext?.next_page
+          ? getResourcesPage(kb, results.fulltext?.page_number + 1)
+          : EMPTY,
+      ),
+      map((results) => {
+        return results.type === 'error'
+          ? []
+          : Object.values(results.resources || {}).map(
+              (resourceData: IResource) => new Resource(this.sdk.nuclia, kb.id, resourceData),
+            );
+      }),
+      reduce((accData, data) => accData.concat(data), [] as Resource[]),
+      tap(() => (this.isLoading = false)),
+    );
   }
 }
