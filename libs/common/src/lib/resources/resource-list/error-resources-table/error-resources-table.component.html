@@ -9,7 +9,9 @@
 <div class="resource-table-header">
   @if ((isAdminOrContrib | async) && selection.length > 0) {
     <div class="resource-bulk-actions">
-      {{ 'resource.selected_count' | translate: { num: allErrorsSelected ? (errorCount | async) : selection.length } }}
+      {{
+        'resource.selected_count' | translate: { num: allResourcesSelected ? (totalCount | async) : selection.length }
+      }}
 
       @if (selection.length > 0) {
         <pa-button
@@ -29,9 +31,9 @@
         </pa-button>
 
         @if (
-          (allSelected | async) === true && ((errorCount | async) || 0) > selection.length && !bulkAction.inProgress
+          (allSelected | async) === true && ((totalCount | async) || 0) > selection.length && !bulkAction.inProgress
         ) {
-          @if (allErrorsSelected) {
+          @if (allResourcesSelected) {
             <pa-button
               aspect="basic"
               kind="primary"
@@ -42,8 +44,8 @@
             <pa-button
               aspect="basic"
               kind="primary"
-              (click)="selectAllErrors()">
-              {{ 'resource.select-all-failures' | translate: { count: errorCount | async } }}
+              (click)="selectAllResources()">
+              {{ 'resource.select-all-failures' | translate: { count: totalCount | async } }}
             </pa-button>
           }
         }
@@ -69,7 +71,7 @@
             <pa-checkbox
               [value]="allSelected | async"
               [paTooltip]="((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate"
-              [disabled]="bulkAction.inProgress"
+              [disabled]="bulkAction.inProgress || allResourcesSelected"
               (change)="toggleAll()"></pa-checkbox>
           </pa-table-cell>
         }
@@ -81,7 +83,8 @@
             <pa-table-cell>
               <pa-checkbox
                 [value]="selection.includes(row.resource.id)"
-                (change)="toggleSelection(row.resource.id)"></pa-checkbox>
+                (change)="toggleSelection(row.resource.id)"
+                [disabled]="allResourcesSelected"></pa-checkbox>
             </pa-table-cell>
           }
 
