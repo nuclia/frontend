@@ -26,14 +26,17 @@ export class BudgetComponent {
   }
 
   saveBudget() {
-    this.billing
-      .modifySubscription({ on_demand_budget: parseInt(this.budget.value) })
+    this.isSubscribedToAws
       .pipe(
-        switchMap(() => this.getBudget()),
-        catchError((error) => {
-          this.toaster.error('generic.error.oops');
-          throw error;
-        }),
+        switchMap((isAws) =>
+          this.billing.modifySubscription({ on_demand_budget: parseInt(this.budget.value) }, isAws).pipe(
+            switchMap(() => this.getBudget()),
+            catchError((error) => {
+              this.toaster.error('generic.error.oops');
+              throw error;
+            }),
+          ),
+        ),
       )
       .subscribe((budget) => {
         this.budget.setValue(budget.toString());

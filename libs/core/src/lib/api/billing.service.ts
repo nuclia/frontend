@@ -129,10 +129,12 @@ export class BillingService {
     );
   }
 
-  modifySubscription(data: { on_demand_budget: number }) {
+  modifySubscription(data: { on_demand_budget: number }, isAws = false) {
     return this.sdk.currentAccount.pipe(
       take(1),
-      switchMap((account) => this.sdk.nuclia.rest.patch<void>(`/billing/account/${account.id}/subscription`, data)),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.patch<void>(`/billing/account/${account.id}${isAws ? '/aws' : ''}/subscription`, data),
+      ),
     );
   }
 
