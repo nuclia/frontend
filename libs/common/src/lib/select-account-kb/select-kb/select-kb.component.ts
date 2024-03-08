@@ -72,7 +72,12 @@ export class SelectKbComponent implements OnDestroy {
       )
       .subscribe((result) => {
         this.sdk.refreshKbList();
-        this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbSlug)]);
+        if (!this.standalone) {
+          this.sdk.nuclia.options.zone = result.zone;
+          this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbSlug)]);
+        } else {
+          this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbId)]);
+        }
       });
   }
 
