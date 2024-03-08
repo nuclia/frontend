@@ -52,11 +52,11 @@
           formControlName="zone"
           [readonly]="(zones || []).length <= 1"
           [label]="'generic.zone' | translate">
-          <pa-option
-            *ngFor="let zone of zones"
-            [value]="zone.id">
-            {{ zone.title }}
-          </pa-option>
+          @for (zone of zones; track zone.slug) {
+            <pa-option [value]="zone.id">
+              {{ zone.title }}
+            </pa-option>
+          }
         </pa-select>
       </div>
     </form>
