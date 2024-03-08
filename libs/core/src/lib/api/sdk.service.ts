@@ -47,6 +47,7 @@ export class SDKService {
   private _repetitiveRefreshCounter = new Subject<void>();
   private _isKbLoaded = false;
 
+  hasAccount = this._account.pipe(map((account) => account !== null));
   hasKb = this._kb.pipe(map((kb) => kb !== null));
   currentKb = this._currentKB.asObservable();
   kbList: Observable<IKnowledgeBoxItem[]> = this._kbList.asObservable();

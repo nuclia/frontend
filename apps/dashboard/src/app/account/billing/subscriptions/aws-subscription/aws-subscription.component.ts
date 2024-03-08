@@ -10,13 +10,11 @@ import { map } from 'rxjs';
 })
 export class AwsSubscriptionComponent {
   awsUrl = this.billing
-    .getSubscription()
+    .getAwsSubscription()
     .pipe(
       map(
         (subscription) =>
-          `https://console.aws.amazon.com/marketplace/home#/subscriptions/${
-            subscription?.subscription?.aws_product_code || ''
-          }`,
+          `https://console.aws.amazon.com/marketplace/home#/subscriptions/${subscription?.aws_product_code || ''}`,
       ),
     );
 

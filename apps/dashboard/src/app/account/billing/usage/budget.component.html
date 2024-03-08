@@ -1,7 +1,6 @@
 <div class="budget">
   <pa-input
     type="number"
-    externalLabel
     [formControl]="budget">
     @if (usage) {
       {{ usage.currency === 'USD' ? '$' : '€' }}

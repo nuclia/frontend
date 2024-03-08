@@ -34,7 +34,7 @@ export class AwsOnboardingComponent {
 
   setupBudget(data: { budget: number | null }) {
     const request: Observable<void | boolean> =
-      data.budget !== null ? this.billing.modifySubscription({ on_demand_budget: data.budget }) : of(true);
+      data.budget !== null ? this.billing.modifySubscription({ on_demand_budget: data.budget }, true) : of(true);
     request.subscribe({
       next: () => {
         this.step = 2;
