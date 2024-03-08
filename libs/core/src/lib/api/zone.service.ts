@@ -44,6 +44,7 @@ export class ZoneService {
         // Keep only AWS zones on AWS_MARKETPLACE subscriptions
         // (except on stage where there is only one zone)
         this.sdk.hasAccount.pipe(
+          take(1),
           switchMap((hasAccount) =>
             hasAccount
               ? this.billingService.getSubscription().pipe(
