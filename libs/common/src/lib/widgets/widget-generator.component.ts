@@ -269,6 +269,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         this.generativeModels = schema['generative_model']?.options || [];
         this.cdr.detectChanges();
       });
+
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
       this.currentKbId = kb.id;
       const config = this.widgetConfigurations[kb.id] || {};
@@ -279,7 +280,15 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         this.presetForm.patchValue(config.preset);
       }
       if (config.features) {
-        this.advancedForm.patchValue(config.features);
+        const advancedForm = config.features;
+        if (
+          advancedForm.generativeModelToggle &&
+          !this.generativeModels.find((model) => model.value === advancedForm.generativeModel)
+        ) {
+          advancedForm.generativeModel = '';
+          advancedForm.generativeModelToggle = false;
+        }
+        this.advancedForm.patchValue(advancedForm);
       }
       if (config.rag_strategies) {
         config.rag_strategies.forEach((strategy) => {
