@@ -111,7 +111,7 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['zones'].currentValue) {
+    if (changes['zones']?.currentValue) {
       if (this.zones.length === 1) {
         this.kbForm.controls.zone.patchValue(this.zones[0].slug);
       } else if (this.zones.length === 0) {
