@@ -11,7 +11,7 @@ import { OnboardingPayload, OnboardingStep } from './onboarding.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OnboardingComponent {
-  zones: Observable<Zone[]> = this.zoneService.getZones(true);
+  zones: Observable<Zone[]> = this.zoneService.getZones();
   onboardingStep: Observable<OnboardingStep> = this.onboardingService.onboardingStep;
 
   private step1Data?: OnboardingPayload;
