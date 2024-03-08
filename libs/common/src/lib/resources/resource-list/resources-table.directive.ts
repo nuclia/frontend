@@ -291,11 +291,17 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   bulkReprocess() {
     const resourcesObs = this.allResourcesSelected ? this.getAllResources() : this.getSelectedResources();
-    resourcesObs.pipe(switchMap((resources) => this.reprocess(resources))).subscribe();
-    if (this.allResourcesSelected) {
-      this.toaster.info('resource.reindex-all-info');
-      this.allResourcesSelected = false;
-    }
+    resourcesObs.pipe(switchMap((resources) => this.reprocess(resources))).subscribe({
+      next: () => {
+        if (this.allResourcesSelected) {
+          this.toaster.info('resource.reindex-all-info');
+          this.allResourcesSelected = false;
+        }
+      },
+      error: () => {
+        this.allResourcesSelected = false;
+      },
+    });
   }
 
   toggleAll() {
