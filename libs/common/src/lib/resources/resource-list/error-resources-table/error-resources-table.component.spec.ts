@@ -49,7 +49,9 @@ describe('ErrorResourcesTableComponent', () => {
         MockProvider(SisModalService),
         MockProvider(SisToastService),
         MockProvider(TranslateService),
-        MockProvider(UploadService),
+        MockProvider(UploadService, {
+          statusCount: of({ processed: 0, pending: 0, error: 0 }),
+        }),
         MockProvider(FeaturesService),
       ],
     }).compileComponents();
