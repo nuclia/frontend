@@ -20,6 +20,8 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
     id: new FormControl('', { nonNullable: true }),
     slug: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    subdomain: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    cloud_provider: new FormControl<'AWS' | 'GCP'>('GCP', { nonNullable: true, validators: [Validators.required] }),
     creator: new FormControl('', { nonNullable: true }),
     created: new FormControl('', { nonNullable: true }),
     modified: new FormControl('', { nonNullable: true }),
@@ -61,10 +63,13 @@ export class ZoneDetailsComponent implements OnInit, OnDestroy {
   save() {
     this.isSaving = true;
     if (this.addZone) {
-      const { slug, title } = this.zoneForm.getRawValue();
+      const { slug, title, subdomain, cloud_provider } = this.zoneForm.getRawValue();
       this.userService
         .getAuthenticatedUser()
-        .pipe(switchMap((user) => this.zoneService.addZone({ slug, title, creator: user.id })))
+        .pipe(
+          switchMap((user) => this.zoneService.addZone({ slug, title, creator: user.id, subdomain, cloud_provider })),
+          switchMap(() => this.zoneService.loadZones()),
+        )
         .subscribe({
           next: () => {
             this.goToZones();
