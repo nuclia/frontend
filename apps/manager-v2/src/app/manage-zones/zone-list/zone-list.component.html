@@ -17,14 +17,16 @@
   </div>
 
   <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
-    <pa-table columns="repeat(3, 1fr) 96px">
+    <pa-table columns="repeat(3, 1fr) repeat(2, 160px) 96px">
       <pa-table-header>
         <pa-table-cell header>Id</pa-table-cell>
         <pa-table-cell header>Slug</pa-table-cell>
-        <pa-table-cell header>Tile</pa-table-cell>
+        <pa-table-cell header>Title</pa-table-cell>
+        <pa-table-cell header>Subdomain</pa-table-cell>
+        <pa-table-cell header>Cloud provider</pa-table-cell>
         <pa-table-cell-menu header></pa-table-cell-menu>
       </pa-table-header>
-      @for (zone of zones$ | async | slice: 0 : lastIndex; track zone.id) {
+      @for (zone of zones$ | async | slice: 0 : lastIndex; track zone.slug) {
         <pa-table-row
           [routerLink]="zone.id"
           clickable>
@@ -33,6 +35,8 @@
           </pa-table-cell>
           <pa-table-cell>{{ zone.slug }}</pa-table-cell>
           <pa-table-cell>{{ zone.title }}</pa-table-cell>
+          <pa-table-cell>{{ zone.subdomain }}</pa-table-cell>
+          <pa-table-cell>{{ zone.cloud_provider }}</pa-table-cell>
           <pa-table-cell-menu>
             <pa-button
               icon="trash"

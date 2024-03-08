@@ -25,24 +25,30 @@
       </pa-input>
       <pa-input formControlName="slug">Slug</pa-input>
       <pa-input formControlName="title">Title</pa-input>
-      <pa-input
-        *ngIf="!addZone"
-        readonly
-        formControlName="creator">
-        Creator
-      </pa-input>
-      <pa-input
-        *ngIf="!addZone"
-        readonly
-        formControlName="created">
-        Created
-      </pa-input>
-      <pa-input
-        *ngIf="!addZone"
-        readonly
-        formControlName="modified">
-        Modified
-      </pa-input>
+      <pa-input formControlName="subdomain">Subdomain</pa-input>
+      <pa-select
+        formControlName="cloud_provider"
+        label="Cloud provider">
+        <pa-option value="GCP">GCP</pa-option>
+        <pa-option value="AWS">AWS</pa-option>
+      </pa-select>
+      @if (!addZone) {
+        <pa-input
+          readonly
+          formControlName="creator">
+          Creator
+        </pa-input>
+        <pa-input
+          readonly
+          formControlName="created">
+          Created
+        </pa-input>
+        <pa-input
+          readonly
+          formControlName="modified">
+          Modified
+        </pa-input>
+      }
       <footer>
         <pa-button
           type="submit"
@@ -50,12 +56,13 @@
           [disabled]="zoneForm.pristine || zoneForm.invalid || isSaving">
           Save
         </pa-button>
-        <pa-button
-          *ngIf="!addZone"
-          aspect="basic"
-          (click)="reset()">
-          Cancel
-        </pa-button>
+        @if (!addZone) {
+          <pa-button
+            aspect="basic"
+            (click)="reset()">
+            Cancel
+          </pa-button>
+        }
       </footer>
     </form>
   </div>

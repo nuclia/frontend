@@ -6,6 +6,8 @@ export interface ZoneSummary {
   created: string;
   modified: string | null;
   '@id': string;
+  cloud_provider: 'AWS' | 'GCP';
+  subdomain: string;
 }
 
 export interface Zone {
@@ -15,15 +17,21 @@ export interface Zone {
   creator: string;
   created: string;
   modified: string;
+  cloud_provider: 'AWS' | 'GCP';
+  subdomain: string;
 }
 
 export interface ZoneAddPayload {
   slug: string;
   title: string;
   creator: string;
+  cloud_provider: 'AWS' | 'GCP';
+  subdomain: string;
 }
 
 export interface ZonePatchPayload {
   slug?: string;
   title?: string;
+  cloud_provider?: 'AWS' | 'GCP';
+  subdomain?: string;
 }
