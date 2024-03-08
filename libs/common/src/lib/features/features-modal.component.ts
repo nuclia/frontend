@@ -15,9 +15,13 @@ export class FeaturesModalComponent {
   hasCustomFeatures = Object.keys(this.featureFlag.getCustomFeatures()).length > 0;
   features?: Features;
 
-  constructor(public modal: ModalRef, private featureFlag: FeatureFlagService, private cdr: ChangeDetectorRef) {
+  constructor(
+    public modal: ModalRef,
+    private featureFlag: FeatureFlagService,
+    private cdr: ChangeDetectorRef,
+  ) {
     this.featureFlag
-      .getFeatures()
+      .getDisabledFeatures()
       .pipe(take(1))
       .subscribe((features) => {
         this.features = { ...features };

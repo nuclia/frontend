@@ -1,19 +1,22 @@
-<pa-modal-advanced>
+<pa-modal-advanced [fitContentHeight]="!!features">
   <pa-modal-title>{{ 'features.customize_features' | translate }}</pa-modal-title>
   <pa-modal-content>
-    <ng-container *ngIf="features">
-      <div *ngFor="let feature of features | keyvalue">
+    @if (features; as features) {
+      @for (feature of features | keyvalue; track feature) {
         <pa-checkbox [(value)]="features[feature.key]">{{ feature.key }}</pa-checkbox>
-      </div>
-    </ng-container>
+      }
+    }
   </pa-modal-content>
+
   <pa-modal-footer>
-    <pa-button
-      *ngIf="hasCustomFeatures"
-      kind="destructive"
-      (click)="reset()">
-      {{ 'generic.reset' | translate }}
-    </pa-button>
+    @if (hasCustomFeatures) {
+      <pa-button
+        kind="destructive"
+        (click)="reset()">
+        {{ 'generic.reset' | translate }}
+      </pa-button>
+    }
+
     <pa-button
       kind="primary"
       (click)="save()">

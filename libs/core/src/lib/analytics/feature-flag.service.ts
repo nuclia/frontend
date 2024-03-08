@@ -84,6 +84,21 @@ export class FeatureFlagService {
     }
   }
 
+  getDisabledFeatures(): Observable<Features> {
+    const customFeatures = this.getCustomFeatures();
+    return this.featuresData.pipe(
+      map((features) =>
+        Object.entries(features)
+          .filter(([key]) => key.startsWith(FEATURE_PREFIX))
+          .filter(([, value]) => !value.rollout)
+          .reduce((map, [key, value]) => {
+            map[key.slice(FEATURE_PREFIX.length)] = !!customFeatures[key];
+            return map;
+          }, {} as Features),
+      ),
+    );
+  }
+
   getEnabledFeatures(): Observable<string[]> {
     return this.applicationFeatures.pipe(
       map((features) =>
