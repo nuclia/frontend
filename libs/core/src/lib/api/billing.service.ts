@@ -5,6 +5,7 @@ import { AccountTypes } from '@nuclia/core';
 import {
   AccountSubscription,
   AccountUsage,
+  AwsAccountSubscription,
   BillingDetails,
   Currency,
   InvoicesList,
@@ -95,6 +96,7 @@ export class BillingService {
       ),
       map((data) => {
         if (!data.hasOwnProperty('provider')) {
+          // Backward compatibility: when there is no provider, it's an old STRIPE subscription
           return {
             provider: 'STRIPE',
             subscription: data,
@@ -113,10 +115,22 @@ export class BillingService {
         if (!data || data.provider !== 'STRIPE') {
           return null;
         } else {
-          return data.subscription;
+          return data.subscription as StripeAccountSubscription;
         }
       }),
       catchError(() => of(null)),
+    );
+  }
+
+  getAwsSubscription(): Observable<AwsAccountSubscription | null> {
+    return this.getSubscription().pipe(
+      map((data) => {
+        if (!data || data.provider !== 'AWS_MARKETPLACE') {
+          return null;
+        } else {
+          return data.subscription as AwsAccountSubscription;
+        }
+      }),
     );
   }
 
