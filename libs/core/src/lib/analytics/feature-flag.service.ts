@@ -92,7 +92,8 @@ export class FeatureFlagService {
           .filter(([key]) => key.startsWith(FEATURE_PREFIX))
           .filter(([, value]) => !value.rollout)
           .reduce((map, [key, value]) => {
-            map[key.slice(FEATURE_PREFIX.length)] = !!customFeatures[key];
+            const appKey = key.slice(FEATURE_PREFIX.length);
+            map[appKey] = customFeatures[appKey];
             return map;
           }, {} as Features),
       ),
