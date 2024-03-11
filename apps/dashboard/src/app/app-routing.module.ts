@@ -13,7 +13,6 @@ import {
   PageNotFoundModule,
   PromptLabComponent,
   rootGuard,
-  SearchComponent,
   SelectAccountComponent,
   selectAccountGuard,
   SelectKbComponent,
@@ -142,10 +141,6 @@ const routes: Routes = [
                 path: 'resources',
                 loadChildren: () =>
                   import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
-              },
-              {
-                path: 'search',
-                component: SearchComponent,
               },
               {
                 path: 'activity',
