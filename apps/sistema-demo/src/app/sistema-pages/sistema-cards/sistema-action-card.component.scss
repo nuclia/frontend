@@ -1,0 +1,11 @@
+$gap: 24px;
+.card-container {
+  display: flex;
+  gap: $gap;
+  flex-wrap: wrap;
+  margin-right: 0;
+
+  > * {
+    width: calc((100% - #{$gap} * 2) / 3);
+  }
+}

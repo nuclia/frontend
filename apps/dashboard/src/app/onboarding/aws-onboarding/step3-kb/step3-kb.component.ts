@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HelpCardComponent, SisToastService } from '@nuclia/sistema';
+import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { KbConfig, KbCreationFormComponent, LearningConfig } from '@flaps/common';
@@ -22,7 +22,7 @@ import { WritableKnowledgeBox } from '@nuclia/core';
   imports: [
     CommonModule,
     FormsModule,
-    HelpCardComponent,
+    InfoCardComponent,
     ReactiveFormsModule,
     TranslateModule,
     PaButtonModule,

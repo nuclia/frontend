@@ -1,0 +1,47 @@
+@import '../../../../styles/variables';
+
+$card-height: rhythm(24);
+:host {
+  display: flex;
+  height: rhythm(24);
+  max-width: rhythm(60);
+  min-width: rhythm(40);
+
+  pa-card {
+    display: flex;
+
+    .action-card-container {
+      color: $color-dark-stronger;
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1);
+      height: calc(#{$card-height} - #{$padding-vertical-card} * 2);
+      text-decoration: none;
+
+      .overline {
+        color: $color-tertiary-strong;
+      }
+
+      .body-s {
+        flex: 1 0 auto;
+      }
+
+      .text-link {
+        color: $color-primary-regular;
+      }
+
+      &:hover {
+        .text-link {
+          color: $color-text-link-regular-hover;
+          text-decoration: underline;
+        }
+      }
+      &:active {
+        .text-link {
+          color: $color-primary-stronger;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
