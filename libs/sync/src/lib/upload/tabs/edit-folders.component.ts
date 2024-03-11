@@ -90,7 +90,7 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
       .pipe(
         take(1),
         switchMap(() => this.syncService.currentSourceId.pipe(take(1))),
-        switchMap((id) => this.syncService.setSourceData(id || '', { items: this.selection.selected } as Source)),
+        switchMap((id) => this.syncService.setSourceData(id || '', { items: this.selection.selected } as Source, true)),
       )
       .subscribe({
         next: () => {

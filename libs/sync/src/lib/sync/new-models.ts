@@ -99,6 +99,17 @@ export interface ConnectorCache {
   permanentSync?: boolean;
 }
 
+export interface Filters {
+  fileExtensions?: {
+    extensions: string;
+    exclude?: boolean;
+  };
+  modified?: {
+    from?: string;
+    to?: string;
+  };
+}
+
 export interface Source {
   connectorId: string;
   title?: string;
@@ -109,6 +120,7 @@ export interface Source {
   lastSync?: string;
   total?: number;
   labels?: Classification[];
+  filters?: Filters;
 }
 
 export interface SyncRow {
@@ -137,6 +149,8 @@ export interface ISyncEntity {
   title: string;
   id: string;
   foldersToSync?: SyncItem[];
+  filters?: Filters;
+  lastSyncGMT?: string;
 }
 
 export enum LogSeverityLevel {

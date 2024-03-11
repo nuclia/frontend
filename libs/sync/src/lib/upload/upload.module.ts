@@ -10,6 +10,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { LabelsExpanderComponent, SisProgressModule } from '@nuclia/sistema';
 import {
   PaButtonModule,
+  PaDatePickerModule,
   PaDateTimeModule,
   PaIconModule,
   PaTableModule,
@@ -25,6 +26,7 @@ import { EditSyncFoldersComponent } from './tabs/edit-folders.component';
 import { EditSyncLabelsComponent } from './tabs/edit-labels.component';
 import { AddSyncComponent } from './add-sync.component';
 import { SyncActivityComponent } from './tabs/activity.component';
+import { EditSyncFiltersComponent } from './tabs/edit-filters.component';
 
 @NgModule({
   imports: [
@@ -45,6 +47,7 @@ import { SyncActivityComponent } from './tabs/activity.component';
     PaTabsModule,
     PaTableModule,
     PaDateTimeModule,
+    PaDatePickerModule,
   ],
   exports: [],
   declarations: [
@@ -56,6 +59,7 @@ import { SyncActivityComponent } from './tabs/activity.component';
     EditSyncSettingsComponent,
     EditSyncFoldersComponent,
     EditSyncLabelsComponent,
+    EditSyncFiltersComponent,
     AddSyncComponent,
   ],
   providers: [],
