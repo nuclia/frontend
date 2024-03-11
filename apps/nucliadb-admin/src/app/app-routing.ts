@@ -10,7 +10,6 @@ import {
   KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   rootGuard,
-  SearchComponent,
   SelectAccountComponent,
   SelectKbComponent,
   selectKbGuard,
@@ -61,10 +60,6 @@ export const routes: Routes = [
                 loadChildren: () =>
                   // eslint-disable-next-line @nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/upload/upload.module').then((m) => m.UploadModule),
-              },
-              {
-                path: 'search',
-                component: SearchComponent,
               },
               {
                 path: 'manage',
