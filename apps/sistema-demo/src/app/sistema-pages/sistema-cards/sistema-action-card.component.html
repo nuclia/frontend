@@ -1,0 +1,68 @@
+<pa-demo-page>
+  <pa-demo-title>Action card</pa-demo-title>
+  <pa-demo-description>
+    <p>
+      Action card component is used to display a card with an optional tagline, a title, a description and an action
+      link within a card. Clicking anywhere on the card allows trigger the routerLink.
+    </p>
+    <p>
+      Action card is internally using Pastanaga
+      <a routerLink="../card"><code>pa-card</code></a>
+      component.
+    </p>
+  </pa-demo-description>
+  <pa-demo-examples>
+    <div class="card-container">
+      <nsi-action-card
+        tagLine="tag line"
+        navigateTo="/action-card"
+        title="Example with a tag line"
+        description="A description which can be on several lines, there is enough space for it"
+        textLink="Text link"></nsi-action-card>
+      <nsi-action-card
+        title="Example without tag line"
+        navigateTo="/action-card"
+        description="A description which can be on several lines, there is enough space for it"
+        textLink="Text link"></nsi-action-card>
+      <nsi-action-card
+        disabled
+        tagLine="tag line"
+        title="Disabled example with tag line"
+        description="A description which can be on several lines, there is enough space for it"
+        textLink="Text link"></nsi-action-card>
+      <nsi-action-card
+        disabled
+        title="Disabled example without tag line"
+        description="A description which can be on several lines, there is enough space for it"
+        textLink="Text link"></nsi-action-card>
+    </div>
+  </pa-demo-examples>
+
+  <pa-demo-usage>
+    <h3>Inputs</h3>
+    <dl>
+      <dt>disabled</dt>
+      <dd>
+        Disable the card, meaning clicking on the card will do nothing.
+        <small>Optional</small>
+      </dd>
+      <dt>description</dt>
+      <dd>Action description</dd>
+      <dt>navigateTo</dt>
+      <dd>Url to be passed to routerLink</dd>
+      <dt>tagLine</dt>
+      <dd>
+        Optional tag line to be displayed on top of the card.
+        <small>Optional</small>
+      </dd>
+      <dt>textLink</dt>
+      <dd>Text of the call-to-action displayed on the bottom of the card.</dd>
+      <dt>title</dt>
+      <dd>Title of the action.</dd>
+    </dl>
+  </pa-demo-usage>
+
+  <pa-demo-code>
+    <pre><code>{{code}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>

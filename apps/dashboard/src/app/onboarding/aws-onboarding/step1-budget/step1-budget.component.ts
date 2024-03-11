@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HelpCardComponent } from '@nuclia/sistema';
+import { InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-step1-budget',
   standalone: true,
-  imports: [CommonModule, HelpCardComponent, TranslateModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule],
+  imports: [CommonModule, InfoCardComponent, TranslateModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule],
   templateUrl: './step1-budget.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

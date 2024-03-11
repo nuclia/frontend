@@ -1,0 +1,17 @@
+<pa-card [disabled]="disabled">
+  <a
+    class="action-card-container"
+    [routerLink]="navigateTo">
+    @if (tagLine) {
+      <div class="overline">{{ tagLine }}</div>
+    }
+    <div class="title-m">{{ title }}</div>
+    <div class="body-s">{{ description }}</div>
+    <div class="text-link title-xs">
+      {{ textLink }}
+      <pa-icon
+        size="small"
+        name="chevron-right"></pa-icon>
+    </div>
+  </a>
+</pa-card>
