@@ -918,7 +918,7 @@
 	"stash.confirm_delete_user.title": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
 	"stash.contact_admin": "Vous n'êtes pas autorisé à créer une Knowledge Box. Contactez votre administrateur.",
 	"stash.delete.delete": "Supprimer la Knowledge Box ?",
-	"stash.delete.error": "Erreur lors de la création de la Knowledge Box",
+	"stash.delete.error": "Erreur lors de la suppression de la Knowledge Box",
 	"stash.delete.warning": "Si vous supprimez la Knowledge Box {{ kb }}, toutes les données seront également supprimées",
 	"stash.description": "La description",
 	"stash.email": "Serveur de messagerie",

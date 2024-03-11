@@ -917,7 +917,7 @@
 	"stash.confirm_delete_user.title": "Estas segur que vols eliminar aquest usuari?",
 	"stash.contact_admin": "No esteu autoritzat per crear un Knowledge Box. Contacta amb el teu administrador.",
 	"stash.delete.delete": "Eliminar Knowledge Box?",
-	"stash.delete.error": "Error en crear el Knowledge Box",
+	"stash.delete.error": "Error en suprimir el Knowledge Box",
 	"stash.delete.warning": "Si borres la Knowledge Box {{ kb }} també s'esborraran totes les dades que conté.",
 	"stash.description": "Descipció",
 	"stash.email": "Servidor de correu",
