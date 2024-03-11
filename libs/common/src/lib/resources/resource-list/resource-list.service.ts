@@ -161,13 +161,13 @@ export class ResourceListService {
                     const existingData = deduplicatedList[existingIndex];
                     deduplicatedList[existingIndex] = {
                       ...existingData,
-                      resource: {
+                      resource: new Resource(this.sdk.nuclia, existingData.resource.kb, {
                         ...existingData.resource,
                         title: data.resource.title,
                         metadata: data.resource.metadata
                           ? { ...existingData.resource.metadata, status: data.resource.metadata.status }
                           : existingData.resource.metadata,
-                      } as Resource,
+                      }),
                       status: data.status,
                       rank: data.rank,
                     };
@@ -180,7 +180,7 @@ export class ResourceListService {
                 this._ready.next(true);
                 this._hasMore = !!processingStatus.cursor;
                 this._cursor = processingStatus.cursor;
-                return of();
+                return of(undefined);
               }),
             )
           : this.loadResourcesFromCatalog(replaceData, updateCount),
