@@ -11,7 +11,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, Subject } from 'rxjs';
 import { debounceTime, map, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { NavigationService, SDKService } from '@flaps/core';
+import { NavigationService, SDKService, STFTrackingService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -91,6 +91,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private uploadService: UploadService,
     private navigation: NavigationService,
     private resourceListService: ResourceListService,
+    private tracking: STFTrackingService,
   ) {}
 
   ngOnInit(): void {
@@ -136,6 +137,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     }
     const query = (this.searchForm.value.query || '').trim().replace('.', '\\.');
     const titleOnly = this.searchForm.value.searchIn === 'title';
+    this.tracking.logEvent('search-in-resource-list', { searchIn: titleOnly ? 'titles' : 'resources' });
     this.resourceListService.search(query, titleOnly);
   }
 
