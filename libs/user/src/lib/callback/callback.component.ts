@@ -4,6 +4,7 @@ import { BackendConfigurationService, SAMLService, SDKService, SsoService } from
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'stf-user-callback',
@@ -35,7 +36,10 @@ export class CallbackComponent implements OnInit {
     } else if (this.route.snapshot.data['samlOauth']) {
       // Returning from SAML authentication in a OAuth flow
       this.redirect();
-    } else if (this.route.snapshot.data['google'] || this.route.snapshot.data['github']) {
+    } else if (
+      !this.route.snapshot.queryParamMap.get('token') &&
+      (this.route.snapshot.data['google'] || this.route.snapshot.data['github'])
+    ) {
       this.ssoLogin();
     } else {
       this.loadUrlToken();
@@ -43,10 +47,10 @@ export class CallbackComponent implements OnInit {
   }
 
   loadUrlToken() {
-    this.route.queryParams.subscribe((params) =>
+    this.route.queryParams.pipe(take(1)).subscribe((params) =>
       this.authenticate({
         access_token: params['token'],
-        refresh_token: '',
+        refresh_token: params['refresh_token'] || '',
       }),
     );
   }
