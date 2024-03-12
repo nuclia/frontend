@@ -38,7 +38,6 @@ import {
   ProcessingPullResponse,
   ProcessingPushResponse,
   ProcessingStat,
-  ProcessingStatusResponse,
   StatsPeriod,
   StatsRange,
   StatsType,
@@ -337,23 +336,6 @@ export class Db implements IDb {
       throw new Error('NUA key is needed to be able to call /processing');
     }
     return this.nuclia.rest.get<ProcessingPullResponse>('/processing/pull', this.getNUAHeader());
-  }
-
-  /**
-   * @deprecated replaced by processingStatus method of kb
-   * @param accountId
-   */
-  getProcessingStatus(accountId?: string): Observable<ProcessingStatusResponse> {
-    if (!accountId) {
-      const hasNUAKey = this.hasNUAClient();
-      if (!hasNUAKey) {
-        throw new Error('NUA key or account id is needed to be able to call /processing/status');
-      }
-    }
-    const endpoint = !accountId ? '/processing/status' : `/processing/status?account_id=${accountId}`;
-    const headers = !accountId ? this.getNUAHeader() : undefined;
-
-    return this.nuclia.rest.get(endpoint, headers);
   }
 
   getProcessingStats(range?: StatsRange, accountId?: string): Observable<ProcessingStat[]> {

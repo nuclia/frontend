@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { md5, SDKService } from '@flaps/core';
+import { LabelsService, md5, SDKService } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -8,15 +8,12 @@ import {
   LabelSet,
   LabelSetKind,
   Message,
-  ProcessingStatusResponse,
-  Resource,
   Search,
   TextFieldFormat,
   TextFormat,
   UploadStatus,
   WritableKnowledgeBox,
 } from '@nuclia/core';
-import { LabelsService } from '@flaps/core';
 import {
   BehaviorSubject,
   catchError,
@@ -351,19 +348,6 @@ export class UploadService {
       filter((results) => results.type !== 'error' && !!results.fulltext?.facets),
       map((results) => results as Search.Results),
     );
-  }
-
-  getResourcePlaceInProcessingQueue(resource: Resource, processingStatus: ProcessingStatusResponse): number | null {
-    if (!processingStatus || !resource.last_account_seq) {
-      return null;
-    }
-    const last_delivered_seqid =
-      resource.queue === 'private'
-        ? processingStatus.account?.last_delivered_seqid
-        : processingStatus.shared?.last_delivered_seqid;
-    return typeof last_delivered_seqid === 'number'
-      ? resource.last_account_seq - last_delivered_seqid
-      : resource.last_account_seq - 1;
   }
 
   updateStatusCount(): Observable<{ pending: number; error: number; processed: number }> {

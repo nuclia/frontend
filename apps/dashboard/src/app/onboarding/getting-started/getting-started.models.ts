@@ -10,4 +10,5 @@ export type ItemToUpload = {
   processed?: boolean;
   estimation?: number;
   uploadProgress?: number;
+  rank?: number;
 };

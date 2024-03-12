@@ -9,16 +9,7 @@ import {
   ResourceWithLabels,
   searchResources,
 } from './resource-list.model';
-import {
-  IResource,
-  LabelSets,
-  ProcessingStatus,
-  ProcessingStatusResponse,
-  Resource,
-  RESOURCE_STATUS,
-  Search,
-  SortOption,
-} from '@nuclia/core';
+import { IResource, LabelSets, ProcessingStatus, Resource, RESOURCE_STATUS, Search, SortOption } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
 import { UploadService } from '../../upload/upload.service';
 import { SisToastService } from '@nuclia/sistema';
@@ -35,7 +26,6 @@ export class ResourceListService {
   private navigationService = inject(ResourceNavigationService);
   private features = inject(FeaturesService);
 
-  private processingStatus?: ProcessingStatusResponse;
   private _status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
   get status() {
     return this._status;
@@ -256,10 +246,6 @@ export class ResourceListService {
       }));
     }
 
-    if (this.status === 'PENDING') {
-      resourceWithLabels.status = this.getDeprecatedProcessingStatus(resource, this.processingStatus);
-    }
-
     return resourceWithLabels;
   }
 
@@ -313,23 +299,6 @@ export class ResourceListService {
     });
 
     return smartResults;
-  }
-
-  private getDeprecatedProcessingStatus(resource: Resource, processingStatus?: ProcessingStatusResponse): string {
-    if (!processingStatus) {
-      return this.translate.instant('resource.status.not-queued');
-    }
-    const placeInQueue = this.uploadService.getResourcePlaceInProcessingQueue(resource, processingStatus);
-    if (resource.last_account_seq === undefined || placeInQueue === null) {
-      return this.translate.instant('resource.status.unknown');
-    }
-    let statusKey = 'resource.status.processing';
-    if (placeInQueue === 1) {
-      statusKey = 'resource.status.next';
-    } else if (placeInQueue > 1) {
-      statusKey = 'resource.status.pending';
-    }
-    return this.translate.instant(statusKey, { count: placeInQueue });
   }
 
   private getPendingResourcesData(processingStatus: {

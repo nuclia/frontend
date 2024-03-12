@@ -463,6 +463,7 @@
 	"getting-started.processing.status.processed": "Processing completed",
 	"getting-started.processing.status.processing": "Processing",
 	"getting-started.processing.status.queued": "Queued",
+	"getting-started.processing.status.queued-with-rank": "Queued (rank: {{rank}})",
 	"getting-started.processing.status.uploading": "Uploading",
 	"getting-started.processing.title": "2. Uploading and processing",
 	"getting-started.search.description": "Ask questions about your data, compare results, create summaries, or chat with your documents.",

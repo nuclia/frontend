@@ -462,6 +462,7 @@
 	"getting-started.processing.status.processed": "Processament completat",
 	"getting-started.processing.status.processing": "Processament",
 	"getting-started.processing.status.queued": "En cua",
+	"getting-started.processing.status.queued-with-rank": "En cua (rang: {{rank}})",
 	"getting-started.processing.status.uploading": "Carregant",
 	"getting-started.processing.title": "2. Càrrega i processament",
 	"getting-started.search.description": "Feu preguntes sobre les vostres dades, compareu resultats, creeu resums o xateja amb els vostres documents.",
