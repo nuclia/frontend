@@ -34,7 +34,7 @@ export enum FilterOperator {
 }
 
 export type Filter = {
-  [operator in FilterOperator]: string[];
+  [operator in FilterOperator]?: string[];
 };
 
 export interface BaseSearchOptions {

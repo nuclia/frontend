@@ -4,6 +4,7 @@
 
 - Allow to modify the HTTP headers in the Nuclia REST API calls.
 - Add support for `css_selector` in Link fields
+- Support POST requests for `/catalog` endpoint
 
 ### Breaking changes
 

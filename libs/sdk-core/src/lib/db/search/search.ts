@@ -103,13 +103,14 @@ export const search = (
   return manageSearchRequest(nuclia, kbid, searchMethod);
 };
 
-export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: SearchOptions) => {
+export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: SearchOptions, useGet?: boolean) => {
   const params: { [key: string]: string | string[] } = {};
   params['query'] = query || '';
   params['shards'] = nuclia.currentShards?.[kbid] || [];
-  const searchMethod = nuclia.rest.get<Search.Results | IErrorResponse>(
-    `/kb/${kbid}/catalog?${options ? serialize(params, options) : ''}`,
-  );
+  const path = `/kb/${kbid}`;
+  const searchMethod = useGet
+    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/catalog?${options ? serialize(params, options) : ''}`)
+    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/catalog`, { ...params, ...options });
   return manageSearchRequest(nuclia, kbid, searchMethod);
 };
 
