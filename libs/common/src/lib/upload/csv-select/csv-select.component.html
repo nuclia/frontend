@@ -1,8 +1,8 @@
 <div class="upload-csv">
   <div class="upload-help body-s">
-    <div
-      *ngFor="let item of help"
-      [innerHtml]="item | translate"></div>
+    @for (item of help; track item) {
+      <div [innerHtml]="item | translate"></div>
+    }
   </div>
 
   <div class="select-csv">
