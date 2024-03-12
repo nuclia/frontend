@@ -245,7 +245,7 @@ export class NewSyncService {
     );
   }
 
-  setSourceData(sourceId: string, source: Partial<Source>): Observable<void> {
+  setSourceData(sourceId: string, source: Partial<Source>, resetLastSync?: boolean): Observable<void> {
     const existing = this._syncCache.getValue()[sourceId];
     const data: ISyncEntity = {
       id: sourceId,
@@ -257,6 +257,8 @@ export class NewSyncService {
       kb: { ...(existing?.kb || this.sdk.nuclia.options), ...source.kb },
       labels: source.labels || existing?.labels,
       foldersToSync: source.items || existing?.foldersToSync,
+      filters: source.filters || existing?.filters,
+      lastSyncGMT: resetLastSync ? '1970-01-01' : undefined,
     };
     const req = existing
       ? this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, data)
@@ -304,6 +306,7 @@ export class NewSyncService {
               permanentSync: true,
               labels: source.labels,
               items: source.foldersToSync,
+              filters: source.filters,
             },
           }),
           {},
@@ -508,6 +511,8 @@ export class NewSyncService {
       items: sync.foldersToSync,
       permanentSync: true,
       labels: sync.labels,
+      filters: sync.filters,
+      lastSync: sync.lastSyncGMT,
     };
   }
 
@@ -519,6 +524,8 @@ export class NewSyncService {
       labels: source.labels,
       title: source.title || sourceId,
       foldersToSync: source.items,
+      filters: source.filters,
+      lastSyncGMT: source.lastSync,
     };
   }
 }

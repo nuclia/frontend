@@ -211,7 +211,7 @@ export class SyncService {
     }
   }
 
-  setSourceData(sourceId: string, source: Source): Observable<void> {
+  setSourceData(sourceId: string, source: Source, resetLastSync?: boolean): Observable<void> {
     return this.http.post<void>(`${this._syncServer.getValue()}/source`, { [sourceId]: source }).pipe(
       tap(() => {
         const existing = this._sourcesCache.getValue()[sourceId];
