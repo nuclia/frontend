@@ -1,8 +1,12 @@
-# 1.13.1 (unreleased)
+# 1.14.0 (unreleased)
 
 ### Improvements
 
 - Allow to modify the HTTP headers in the Nuclia REST API calls.
+
+### Breaking changes
+
+- Remove deprecated method `getProcessingStatus` from `db` as the backend is not supporting it anymore
 
 # 1.13.0 (2024-03-05)
 

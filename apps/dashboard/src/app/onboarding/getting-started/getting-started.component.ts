@@ -27,7 +27,6 @@ import { catchError, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 
-const AVERAGE_PROCESSING_TIME = 5;
 const POLLING_DELAY = 30000; // in milliseconds, so 30s
 
 @Component({
@@ -174,16 +173,15 @@ export class GettingStartedComponent implements OnDestroy {
             : of(linkItems);
         }),
         switchMap((uploadedItems) => {
-          return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentKb.pipe(take(1))]).pipe(
-            switchMap(([account, kb]) =>
+          return this.sdk.currentKb.pipe(
+            take(1),
+            switchMap((kb) =>
               this.uploadService.getResourceStatusCount().pipe(
                 // repeat until allProcessed but with a step-back increasing by 3s at every step but maxing out at POLLING_DELAY
                 repeat({ delay: (count) => timer(Math.min(POLLING_DELAY, count * 3000)) }),
                 takeUntil(this.allProcessed),
                 switchMap((results) =>
-                  this.sdk.nuclia.db
-                    .getProcessingStatus(account.id)
-                    .pipe(map((processingStatus) => ({ processingStatus, results }))),
+                  kb.processingStatus().pipe(map((processingStatus) => ({ processingStatus, results }))),
                 ),
                 tap(({ processingStatus, results }) => {
                   const resources = results.resources || {};
@@ -196,20 +194,13 @@ export class GettingStartedComponent implements OnDestroy {
                       ? resources[item.uuid]
                       : resourceList.find((resource) => resource.title === item.title);
                     if (iResource) {
+                      const status = processingStatus.results.find((result) => result.resource_id === iResource.id);
                       const resource = new Resource(this.sdk.nuclia, kb.id, iResource);
-                      const placeInQueue = this.uploadService.getResourcePlaceInProcessingQueue(
-                        resource,
-                        processingStatus,
-                      );
-                      item.processed =
-                        resource.metadata?.status === RESOURCE_STATUS.PROCESSED ||
-                        (placeInQueue !== null && placeInQueue < 0);
-                      if (!item.processed) {
-                        item.processing = true;
-                        item.estimation =
-                          placeInQueue === null
-                            ? AVERAGE_PROCESSING_TIME
-                            : Math.max(placeInQueue * AVERAGE_PROCESSING_TIME, 0);
+                      item.processed = resource.metadata?.status === RESOURCE_STATUS.PROCESSED;
+                      if (!item.processed && status) {
+                        item.processing = status.schedule_order === -1;
+                        item.estimation = status.schedule_eta === -1 ? 1 : status.schedule_eta;
+                        item.rank = status.schedule_order;
                       }
                     }
                     return item;
@@ -221,10 +212,12 @@ export class GettingStartedComponent implements OnDestroy {
                     this.nextDisabled = false;
                     this.totalEstimatedTime = 0;
                   } else {
-                    this.totalEstimatedTime = this.itemsToUpload.reduce((total, item) => {
-                      total += !item.processed ? item.estimation || 0 : 0;
-                      return total;
-                    }, 0);
+                    const estimatedMin =
+                      this.itemsToUpload.reduce((total, item) => {
+                        total += !item.processed ? item.estimation || 0 : 0;
+                        return total;
+                      }, 0) / 60;
+                    this.totalEstimatedTime = Math.ceil(estimatedMin);
                   }
                   this.cdr.markForCheck();
                 }),

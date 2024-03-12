@@ -463,6 +463,7 @@
 	"getting-started.processing.status.processed": "Traitement terminé",
 	"getting-started.processing.status.processing": "Traitement",
 	"getting-started.processing.status.queued": "En file d'attente",
+	"getting-started.processing.status.queued-with-rank": "En attente (rang : {{rank}})",
 	"getting-started.processing.status.uploading": "Téléchargement",
 	"getting-started.processing.title": "2. Téléchargement et traitement",
 	"getting-started.search.description": "Posez des questions sur vos données, comparez les résultats, créez des résumés ou discutez avec vos documents.",

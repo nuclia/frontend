@@ -462,6 +462,7 @@
 	"getting-started.processing.status.processed": "Procesamiento completado",
 	"getting-started.processing.status.processing": "Tratamiento",
 	"getting-started.processing.status.queued": "En cola",
+	"getting-started.processing.status.queued-with-rank": "En cola (rango: {{rank}})",
 	"getting-started.processing.status.uploading": "Cargando",
 	"getting-started.processing.title": "2. Carga y procesamiento",
 	"getting-started.search.description": "Haz preguntas sobre tus datos, compara resultados, crea resúmenes o chatea con tus documentos.",

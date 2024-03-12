@@ -4,6 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { ItemToUpload } from '../getting-started.models';
 import { ProgressBarComponent } from '@nuclia/sistema';
+import { FormatETAPipe } from '@flaps/common';
 
 @Component({
   selector: 'app-getting-started-upload-list',
@@ -18,4 +19,6 @@ export class UploadListComponent {
   @Input({ transform: booleanAttribute }) canDelete = false;
 
   @Output() removeItem = new EventEmitter<string>();
+
+  formatETA: FormatETAPipe = new FormatETAPipe();
 }

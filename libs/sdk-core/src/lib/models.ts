@@ -19,7 +19,6 @@ import {
   ProcessingPullResponse,
   ProcessingPushResponse,
   ProcessingStat,
-  ProcessingStatusResponse,
   StatsPeriod,
   StatsRange,
   StatsType,
@@ -139,7 +138,6 @@ export interface IDb {
     utctime?: string,
   ): Observable<ProcessingStat[]>;
   upload(file: File): Observable<ProcessingPushResponse>;
-  getProcessingStatus(accountId?: string): Observable<ProcessingStatusResponse>;
   getProcessingStats(range?: StatsRange, accountId?: string): Observable<ProcessingStat[]>;
   pull(): Observable<ProcessingPullResponse>;
   getNUAClients(accountId: string): Observable<NUAClient[]>;

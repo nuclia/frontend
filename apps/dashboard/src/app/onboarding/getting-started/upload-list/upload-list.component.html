@@ -32,13 +32,18 @@
 
                 @if (!item.processing) {
                   <span class="body-s">
-                    {{ 'getting-started.processing.status.queued' | translate }}
+                    {{
+                      (item.rank !== undefined
+                        ? 'getting-started.processing.status.queued-with-rank'
+                        : 'getting-started.processing.status.queued'
+                      ) | translate: { rank: item.rank }
+                    }}
                   </span>
                 } @else {
                   <span class="body-s">
                     {{
                       'getting-started.processing.status.estimated-time'
-                        | translate: { estimation: item.estimation || 1 }
+                        | translate: { estimation: formatETA.transform(item.estimation || 1) }
                     }}
                   </span>
                 }
