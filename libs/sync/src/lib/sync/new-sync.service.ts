@@ -138,6 +138,9 @@ export class NewSyncService {
   currentSource = combineLatest([this.sourcesCache, this.currentSourceId]).pipe(
     map(([sources, sourceId]) => sources[sourceId || '']),
   );
+  serverHeaders = {
+    token: this.sdk.nuclia.auth.getToken(true),
+  };
 
   constructor(
     private sdk: SDKService,
@@ -261,7 +264,9 @@ export class NewSyncService {
       lastSyncGMT: resetLastSync ? '1970-01-01' : undefined,
     };
     const req = existing
-      ? this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, data)
+      ? this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, data, {
+          headers: this.serverHeaders,
+        })
       : this.http.post<void>(`${this._syncServer.getValue()}/sync`, data);
     return req.pipe(tap(() => this._syncCache.next({ ...this._syncCache.getValue(), [sourceId]: data })));
   }
@@ -271,13 +276,17 @@ export class NewSyncService {
   }
 
   deleteSource(sourceId: string): Observable<void> {
-    return this.http.delete<void>(`${this._syncServer.getValue()}/sync/${sourceId}`).pipe(
-      tap(() => {
-        const sources = this._syncCache.getValue();
-        delete sources[sourceId];
-        this._syncCache.next(sources);
-      }),
-    );
+    return this.http
+      .delete<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, {
+        headers: this.serverHeaders,
+      })
+      .pipe(
+        tap(() => {
+          const sources = this._syncCache.getValue();
+          delete sources[sourceId];
+          this._syncCache.next(sources);
+        }),
+      );
   }
 
   hasCurrentSourceAuth(): Observable<boolean> {
@@ -328,7 +337,9 @@ export class NewSyncService {
   }
 
   getFolders(query?: string): Observable<SearchResults> {
-    return this.http.get<SearchResults>(`${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/folders`);
+    return this.http.get<SearchResults>(`${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/folders`, {
+      headers: this.serverHeaders,
+    });
   }
 
   addSync(sourceId: string, foldersToSync: SyncItem[]): Observable<boolean> {

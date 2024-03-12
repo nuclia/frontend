@@ -51,7 +51,7 @@ export interface IAuthentication {
   logout(): void;
   getAuthHeaders(): { [key: string]: string };
   getAuthHeaders(method: string, path: string): { [key: string]: string };
-  getToken(): string;
+  getToken(force?: boolean): string;
   getRefreshToken(): string;
   authenticate(tokens: AuthTokens): boolean;
   setPassword(password: string): Observable<boolean>;
