@@ -1,5 +1,7 @@
 import {
   Classification,
+  Filter,
+  FilterOperator,
   Resource,
   RESOURCE_STATUS,
   Search,
@@ -61,8 +63,12 @@ export function getSearchOptions(params: ResourceListParams): {
   searchOptions: SearchOptions;
   searchFeatures: Search.Features[];
 } {
-  const filters =
-    params.status === RESOURCE_STATUS.PROCESSED ? params.filters : [`/n/s/${params.status}`].concat(params.filters);
+  const filters: Filter[] = [
+    { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/icon/')) },
+    { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
+    { [FilterOperator.any]: params.status === RESOURCE_STATUS.PROCESSED ? [] : [`/n/s/${params.status}`] },
+  ].filter((item) => (Object.values(item)[0] || []).length > 0);
+
   const searchOptions: SearchOptions = {
     page_number: params.page,
     page_size: params.pageSize,

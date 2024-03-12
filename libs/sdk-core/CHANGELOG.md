@@ -1,4 +1,10 @@
-# 1.14.0 (unreleased)
+# 1.14.1 (unreleased)
+
+### Improvements
+
+- Support POST requests for `/catalog` endpoint
+
+# 1.14.0 (2024-03-12)
 
 ### Improvements
 
