@@ -12,6 +12,7 @@ import { StandaloneService } from '../../services';
 interface Row {
   link: string;
   labels: Classification[];
+  css_selector?: string;
 }
 
 @Component({
@@ -29,6 +30,7 @@ export class CreateLinkComponent {
     }),
     linkTo: new FormControl<'web' | 'file'>('web', { nonNullable: true }),
     type: new FormControl<'one' | 'multiple' | 'csv'>('one', { nonNullable: true }),
+    css_selector: new FormControl<string | null>(null),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -68,13 +70,15 @@ export class CreateLinkComponent {
             .map((link: string) => link.trim())
             .filter((link: string) => !!link);
           obs = this.uploadService.bulkUpload(
-            links.map((link) => this.getResourceCreationObs(isCloudFile, link, this.selectedLabels)),
+            links.map((link) =>
+              this.getResourceCreationObs(isCloudFile, link, this.selectedLabels, formValue.css_selector),
+            ),
           );
           break;
         case 'one':
           this.tracking.logEvent('link_upload');
           obs = this.uploadService.bulkUpload([
-            this.getResourceCreationObs(isCloudFile, formValue.link, this.selectedLabels),
+            this.getResourceCreationObs(isCloudFile, formValue.link, this.selectedLabels, formValue.css_selector),
           ]);
           break;
         case 'csv':
@@ -85,7 +89,9 @@ export class CreateLinkComponent {
             .pipe(
               switchMap(() =>
                 this.uploadService.bulkUpload(
-                  this.csv.map((link) => this.getResourceCreationObs(isCloudFile, link.link, link.labels)),
+                  this.csv.map((row) =>
+                    this.getResourceCreationObs(isCloudFile, row.link, row.labels, row.css_selector),
+                  ),
                 ),
               ),
             );
@@ -105,7 +111,7 @@ export class CreateLinkComponent {
   }
 
   checkCsv(data: string[][]) {
-    const csv = data.map((row) => ({ link: row[0], labels: parseCsvLabels(row[1]) }));
+    const csv = data.map((row) => ({ link: row[0], labels: parseCsvLabels(row[1]), css_selector: row[2] }));
     if (csv.every((row) => !!row.labels)) {
       this.csv = csv as Row[];
       this.cdr?.markForCheck();
@@ -122,9 +128,10 @@ export class CreateLinkComponent {
     isCloudFile: boolean,
     link: string,
     labels: Classification[],
+    css_selector?: string | null,
   ): Observable<{ uuid: string }> {
     return isCloudFile
       ? this.uploadService.createCloudFileResource(link, labels)
-      : this.uploadService.createLinkResource(link, labels);
+      : this.uploadService.createLinkResource(link, labels, css_selector);
   }
 }

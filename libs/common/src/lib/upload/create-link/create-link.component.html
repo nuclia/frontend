@@ -11,12 +11,12 @@
     </div>
   </pa-modal-title>
   <pa-modal-content>
-    <ng-container *ngIf="standalone">
+    @if (standalone && (hasValidKey | async) === false) {
       <div
-        *ngIf="(hasValidKey | async) === false"
         class="warning body-s"
         [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
-    </ng-container>
+    }
+
     <form
       id="link-form"
       [formGroup]="linkForm"
@@ -67,22 +67,23 @@
             {{ 'modal.create_link.multiple-links.label' | translate }}
           </pa-textarea>
         }
+        @if (linkForm.value.linkTo === 'web' && (linkForm.value.type === 'one' || linkForm.value.type === 'multiple')) {
+          <pa-input
+            formControlName="css_selector"
+            [placeholder]="'modal.create_link.css-selector.placeholder' | translate">
+            {{ 'modal.create_link.css-selector.label' | translate }}
+          </pa-input>
+        }
 
         @if (linkForm.value.type === 'csv') {
           <div class="csv-container">
             <app-csv-select
-              [help]="['upload.csv_links_description', 'upload.csv_labels']"
-              [fields]="2"
+              [help]="['upload.csv_links_description', 'upload.csv_labels', 'upload.csv_css_selector']"
+              [fields]="3"
               (select)="checkCsv($event)"></app-csv-select>
-            <div
-              *ngIf="csv.length > 0"
-              class="uploads">
-              <div
-                *ngFor="let row of csv"
-                class="upload">
-                <span paEllipsisTooltip>{{ row.link }}</span>
-              </div>
-            </div>
+            @if (csv.length > 0) {
+              <p class="title-xxs">{{ 'modal.create_link.csv-summary' | translate: { count: csv.length } }}</p>
+            }
           </div>
         }
 
