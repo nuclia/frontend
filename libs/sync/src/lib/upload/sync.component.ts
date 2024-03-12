@@ -16,9 +16,9 @@ export class SyncComponent implements OnInit, OnDestroy {
       this.syncService.sourceObs.pipe(map((sources) => sources.find((s) => s.id === sync.connector.name))),
     ),
   );
-  canSelectFiles = this.syncService.currentSourceId.pipe(
-    map((sourceId) => this.syncService.canSelectFiles(sourceId || '')),
-  );
+  canSelectFiles = this.syncService
+    .getCurrentSync()
+    .pipe(map((sync) => this.syncService.canSelectFiles(sync.id || '')));
   selectedTab = 'activity';
   private unsubscribeAll = new Subject<void>();
 
@@ -51,10 +51,10 @@ export class SyncComponent implements OnInit, OnDestroy {
         switchMap((sync) =>
           this.syncService.hasCurrentSourceAuth().pipe(
             filter((hasAuth) => !hasAuth),
-            switchMap(() => this.syncService.getSource(sync.connector.name, sync.id)),
+            switchMap(() => this.syncService.getConnector(sync.connector.name, sync.id)),
+            switchMap((connector) => this.syncService.authenticateToConnector(sync.connector.name, connector)),
           ),
         ),
-        switchMap((source) => this.syncService.authenticateToSource(source)),
       )
       .subscribe({
         next: () => {
@@ -74,7 +74,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     this.syncService.currentSourceId
       .pipe(
         take(1),
-        switchMap((id) => this.syncService.deleteSource(id || '')),
+        switchMap((id) => this.syncService.deleteSync(id || '')),
       )
       .subscribe({
         next: () => {

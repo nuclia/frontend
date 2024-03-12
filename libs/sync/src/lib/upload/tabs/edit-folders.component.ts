@@ -21,7 +21,6 @@ import { SisToastService } from '@nuclia/sistema';
 })
 export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
   @Output() done = new EventEmitter();
-  currentSource = this.syncService.currentSource;
   loading = false;
   query = '';
   selection = new SelectionModel<SyncItem>(true, []);
@@ -35,9 +34,9 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
       this.loading = true;
       this.cdr.markForCheck();
     }),
-    switchMap(() => this.currentSource.pipe(take(1))),
-    switchMap((source) =>
-      (source.permanentSync ? this.syncService.getFolders(this.query) : this.syncService.getFiles(this.query))
+    switchMap(() =>
+      this.syncService
+        .getFolders(this.query)
         .pipe(
           catchError((error) => {
             if (error) {
@@ -69,15 +68,17 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    forkJoin([this.currentSource.pipe(take(1)), this.resources.pipe(take(1))]).subscribe(([current, resources]) => {
-      current.items?.forEach((item) => {
-        const match = resources.find((r) => r.uuid === item.uuid);
-        if (match) {
-          this.selection.select(match);
-        }
-      });
-      this.cdr.detectChanges();
-    });
+    forkJoin([this.syncService.getCurrentSync().pipe(take(1)), this.resources.pipe(take(1))]).subscribe(
+      ([current, resources]) => {
+        current.foldersToSync?.forEach((item) => {
+          const match = resources.find((r) => r.uuid === item.uuid);
+          if (match) {
+            this.selection.select(match);
+          }
+        });
+        this.cdr.detectChanges();
+      },
+    );
   }
 
   ngAfterViewInit() {
@@ -86,11 +87,10 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
     }, 200);
   }
   save() {
-    this.currentSource
+    this.syncService.currentSourceId
       .pipe(
         take(1),
-        switchMap(() => this.syncService.currentSourceId.pipe(take(1))),
-        switchMap((id) => this.syncService.setSourceData(id || '', { items: this.selection.selected } as Source, true)),
+        switchMap((id) => this.syncService.updateSync(id || '', { foldersToSync: this.selection.selected }, true)),
       )
       .subscribe({
         next: () => {

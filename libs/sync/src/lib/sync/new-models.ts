@@ -153,6 +153,13 @@ export interface ISyncEntity {
   lastSyncGMT?: string;
 }
 
+export interface SyncBasicData {
+  id: string;
+  kbId: string;
+  title: string;
+  connectorId: string;
+}
+
 export enum LogSeverityLevel {
   low = 'low',
   medium = 'medium',

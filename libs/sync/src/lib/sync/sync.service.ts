@@ -37,7 +37,7 @@ import { FolderConnector } from './sources/folder';
 import { SharepointImpl } from './sources/sharepoint';
 import { ConfluenceConnector } from './sources/confluence';
 import { OAuthConnector } from './sources/oauth';
-import { ISyncEntity } from './new-models';
+import { ISyncEntity, SyncBasicData } from './new-models';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 export const ACCOUNT_ID_KEY = 'NUCLIA_ID_ACCOUNT';
@@ -266,18 +266,6 @@ export class SyncService {
     );
   }
 
-  addSync(sourceId: string, items: SyncItem[]): Observable<boolean> {
-    return this.getSourceData(sourceId).pipe(
-      switchMap((source) =>
-        this.http.patch<void>(`${this._syncServer.getValue()}/source/${sourceId}`, {
-          ...source,
-          items,
-        }),
-      ),
-      map(() => true),
-    );
-  }
-
   canSelectFiles(sourceId: string) {
     const source = this._sourcesCache.getValue()[sourceId];
     return source && !(source.connectorId === 'sitemap' || (source.connectorId === 'folder' && source.permanentSync));
@@ -458,16 +446,41 @@ export class SyncService {
   }
 
   // METHODS FOR THE NEW SERVICE
+  syncListCache = new BehaviorSubject<SyncBasicData[]>([]).asObservable();
   hasSyncServer(): boolean {
     throw new Error('Method not implemented.');
   }
-  getSyncsForKB(kbId: string): Observable<ISyncEntity[]> {
+  getSyncsForKB(kbId: string): Observable<SyncBasicData[]> {
     throw new Error('Method not implemented.');
   }
   getCurrentSync(): Observable<ISyncEntity> {
     throw new Error('Method not implemented.');
   }
   triggerSyncs(): Observable<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  getSync(syncId: string): Observable<ISyncEntity> {
+    throw new Error('Method not implemented.');
+  }
+
+  addSync(sync: ISyncEntity): Observable<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  updateSync(syncId: string, sync: Partial<ISyncEntity>, resetLastSync?: boolean): Observable<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  getConnector(connector: string, instance: string): Observable<ISourceConnector> {
+    throw new Error('Method not implemented.');
+  }
+
+  deleteSync(syncId: string): Observable<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  authenticateToConnector(connectorId: string, connector: ISourceConnector): Observable<boolean> {
     throw new Error('Method not implemented.');
   }
 }

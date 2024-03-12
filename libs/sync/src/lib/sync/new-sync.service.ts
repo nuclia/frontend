@@ -3,7 +3,6 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
-  distinctUntilChanged,
   filter,
   map,
   Observable,
@@ -27,7 +26,7 @@ import {
   SearchResults,
   Source,
   SourceConnectorDefinition,
-  SyncItem,
+  SyncBasicData,
   SyncRow,
 } from './new-models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
@@ -45,7 +44,7 @@ export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 
 @Injectable({ providedIn: 'root' })
 export class NewSyncService {
-  sources: {
+  connectors: {
     [id: string]: {
       definition: SourceConnectorDefinition;
       settings: ConnectorSettings;
@@ -110,7 +109,7 @@ export class NewSyncService {
       },
     },
   };
-  sourceObs = new BehaviorSubject(Object.values(this.sources).map((obj) => obj.definition));
+  sourceObs = new BehaviorSubject(Object.values(this.connectors).map((obj) => obj.definition)); // TO BE REMOVED (kept for compatibility with old code)
   private _syncServer = new BehaviorSubject<string>(localStorage.getItem(SYNC_SERVER_KEY) || '');
   syncServer = this._syncServer.asObservable();
 
@@ -124,6 +123,8 @@ export class NewSyncService {
   currentSourceId = this._currentSyncId.asObservable();
   private _syncCache = new BehaviorSubject<{ [id: string]: ISyncEntity }>({});
   syncCache = this._syncCache.asObservable();
+  private _syncListCache = new BehaviorSubject<SyncBasicData[]>([]);
+  syncListCache = this._syncListCache.asObservable();
   sourcesCache: Observable<{ [id: string]: Source }> = this.syncCache.pipe(
     map((syncs) =>
       Object.entries(syncs).reduce(
@@ -154,26 +155,6 @@ export class NewSyncService {
   }
 
   initServer() {
-    this.isServerDown
-      .pipe(
-        distinctUntilChanged(),
-        filter((isDown) => !isDown),
-        switchMap(() =>
-          this.getSources().pipe(
-            map((sources) =>
-              Object.entries(sources).reduce(
-                (acc, [id, source]) => {
-                  acc[id] = this.sourceToSync(id, source);
-                  return acc;
-                },
-                {} as { [id: string]: ISyncEntity },
-              ),
-            ),
-          ),
-        ),
-      )
-      .subscribe(this._syncCache);
-
     let delay = 5000;
     of(true)
       .pipe(
@@ -187,7 +168,11 @@ export class NewSyncService {
   }
 
   getSource(connector: string, instance: string): Observable<ISourceConnector> {
-    const source = this.sources[connector];
+    throw new Error('Method not implemented.');
+  }
+
+  getConnector(connector: string, instance: string): Observable<ISourceConnector> {
+    const source = this.connectors[connector];
     if (!source.instances) {
       source.instances = {};
     }
@@ -200,14 +185,15 @@ export class NewSyncService {
     }
     return (instances[instance] as ReplaySubject<ISourceConnector>).asObservable();
   }
+
   getDestination(id: string, settings: ConnectorSettings = {}): Observable<IDestinationConnector> {
-    return this.destinations[id].definition.factory({ ...this.destinations[id].settings, ...settings });
+    throw new Error('Method not implemented.');
   }
 
   getCurrentSync(): Observable<ISyncEntity> {
     return this.currentSourceId.pipe(
-      switchMap((id) => this.syncCache.pipe(map((cache) => cache[id || '']))),
-      filter((sync) => !!sync),
+      filter((id) => !!id),
+      switchMap((id) => this.getSync(id!)),
     );
   }
 
@@ -218,22 +204,48 @@ export class NewSyncService {
     localBackend?: string, // TO BE REMOVED (useless, kept for compatibility with old code)
     labels?: Classification[],
   ): Observable<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  setSourceData(sourceId: string, source: Partial<Source>, resetLastSync?: boolean): Observable<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  getSourceData(sourceId: string): Observable<Source> {
+    throw new Error('Method not implemented.');
+  }
+
+  getSync(syncId: string): Observable<ISyncEntity> {
+    const syncs = this._syncCache.getValue();
+    if (syncs[syncId]) {
+      return of(syncs[syncId]);
+    } else {
+      return this.http
+        .get<ISyncEntity>(`${this._syncServer.getValue()}/sync/${syncId}`, {
+          headers: this.serverHeaders,
+        })
+        .pipe(
+          tap((sync) => {
+            syncs[syncId] = sync;
+            this._syncCache.next(syncs);
+          }),
+        );
+    }
+  }
+
+  addSync(sync: ISyncEntity): Observable<void> {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => {
         if (this.sdk.nuclia.options.standalone) {
           return of({
-            ...source,
-            labels,
+            ...sync,
             kb: { ...this.sdk.nuclia.options, knowledgeBox: kb.id },
           });
-        } else if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
-          return of(source);
         } else {
           return this.getNucliaKey(kb).pipe(
             map((data) => ({
-              ...source,
-              labels,
+              ...sync,
               kb: {
                 zone: this.sdk.nuclia.options.zone,
                 backend: this.sdk.nuclia.options.backend,
@@ -244,47 +256,64 @@ export class NewSyncService {
           );
         }
       }),
-      switchMap((source) => this.setSourceData(sourceId, source)),
+      switchMap((sync) =>
+        this.http.post<void>(`${this._syncServer.getValue()}/sync`, sync, {
+          headers: this.serverHeaders,
+        }),
+      ),
+      tap(() => {
+        const syncs = this._syncCache.getValue();
+        syncs[sync.id] = sync;
+        this._syncCache.next(syncs);
+        const syncsList = this._syncListCache.getValue();
+        this._syncListCache.next([
+          ...syncsList,
+          { id: sync.id, title: sync.title, connectorId: sync.connector.name, kbId: sync.kb?.knowledgeBox || '' },
+        ]);
+      }),
     );
   }
 
-  setSourceData(sourceId: string, source: Partial<Source>, resetLastSync?: boolean): Observable<void> {
-    const existing = this._syncCache.getValue()[sourceId];
-    const data: ISyncEntity = {
-      id: sourceId,
-      title: source.title || existing?.title || sourceId,
-      connector: {
-        name: source.connectorId || existing?.connector.name,
-        parameters: { ...existing?.connector.parameters, ...source.data },
-      },
-      kb: { ...(existing?.kb || this.sdk.nuclia.options), ...source.kb },
-      labels: source.labels || existing?.labels,
-      foldersToSync: source.items || existing?.foldersToSync,
-      filters: source.filters || existing?.filters,
-      lastSyncGMT: resetLastSync ? '1970-01-01' : undefined,
-    };
-    const req = existing
-      ? this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, data, {
+  updateSync(syncId: string, sync: Partial<ISyncEntity>, resetLastSync?: boolean): Observable<void> {
+    return this.http
+      .patch<void>(
+        `${this._syncServer.getValue()}/sync/${syncId}`,
+        { ...sync, lastSyncGMT: resetLastSync ? '1970-01-01' : undefined },
+        {
           headers: this.serverHeaders,
-        })
-      : this.http.post<void>(`${this._syncServer.getValue()}/sync`, data);
-    return req.pipe(tap(() => this._syncCache.next({ ...this._syncCache.getValue(), [sourceId]: data })));
-  }
-
-  getSourceData(sourceId: string): Observable<Source> {
-    return this.http.get<Source>(`${this._syncServer.getValue()}/sync/${sourceId}`);
+        },
+      )
+      .pipe(
+        tap(() => {
+          const syncs = this._syncCache.getValue();
+          syncs[syncId] = { ...syncs[syncId], ...sync };
+          this._syncCache.next(syncs);
+          const syncsList = this._syncListCache.getValue();
+          this._syncListCache.next(
+            syncsList.map((s) => (s.id === syncId ? { ...s, title: sync.title || s.title } : s)),
+          );
+          // next is used to trigger the update of the current sync title
+          this._currentSyncId.next(syncId);
+        }),
+      );
   }
 
   deleteSource(sourceId: string): Observable<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  deleteSync(syncId: string): Observable<void> {
     return this.http
-      .delete<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, {
+      .delete<void>(`${this._syncServer.getValue()}/sync/${syncId}`, {
         headers: this.serverHeaders,
       })
       .pipe(
         tap(() => {
-          const sources = this._syncCache.getValue();
-          delete sources[sourceId];
-          this._syncCache.next(sources);
+          const syncs = this._syncCache.getValue();
+          delete syncs[syncId];
+          this._syncCache.next(syncs);
+          const syncsList = this._syncListCache.getValue();
+          this._syncListCache.next(syncsList.filter((sync) => sync.id !== syncId));
         }),
       );
   }
@@ -301,33 +330,25 @@ export class NewSyncService {
   }
 
   getSources(): Observable<{ [id: string]: Source }> {
-    // TODO: when Desktop is gone, refactor the Source model to match what the API provides
-    return this.http.get<{ [id: string]: any }>(`${this._syncServer.getValue()}/sync`).pipe(
-      map((sources) =>
-        Object.entries(sources).reduce(
-          (acc, [id, source]) => ({
-            ...acc,
-            [id]: {
-              connectorId: source.connector.name,
-              data: source.connector.parameters,
-              kb: source.kb,
-              title: source.title,
-              permanentSync: true,
-              labels: source.labels,
-              items: source.foldersToSync,
-              filters: source.filters,
-            },
-          }),
-          {},
-        ),
-      ),
-    );
+    throw new Error('Method not implemented.');
   }
 
-  getSyncsForKB(kbId: string): Observable<ISyncEntity[]> {
-    return this.syncCache.pipe(
-      map((sources) => Object.values(sources).filter((source) => source.kb?.knowledgeBox === kbId)),
-    );
+  getSyncsForKB(kbId: string): Observable<SyncBasicData[]> {
+    const syncs = this._syncListCache.getValue();
+    if (!syncs.find((sync) => sync.kbId === kbId)) {
+      this.http
+        .get<
+          {
+            id: string;
+            title: string;
+            connectorId: string;
+          }[]
+        >(`${this._syncServer.getValue()}/sync/kb/${kbId}`)
+        .subscribe((data) => {
+          this._syncListCache.next([...syncs, ...data.map((sync) => ({ ...sync, kbId }))]);
+        });
+    }
+    return this._syncListCache.pipe(map((syncs) => syncs.filter((sync) => sync.kbId === kbId)));
   }
 
   getFiles(query?: string): Observable<SearchResults> {
@@ -340,18 +361,6 @@ export class NewSyncService {
     return this.http.get<SearchResults>(`${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/folders`, {
       headers: this.serverHeaders,
     });
-  }
-
-  addSync(sourceId: string, foldersToSync: SyncItem[]): Observable<boolean> {
-    return this.getSourceData(sourceId).pipe(
-      switchMap((source) =>
-        this.http.patch<void>(`${this._syncServer.getValue()}/sync/${sourceId}`, {
-          ...source,
-          foldersToSync,
-        }),
-      ),
-      map(() => true),
-    );
   }
 
   canSelectFiles(syncId: string) {
@@ -368,15 +377,7 @@ export class NewSyncService {
   }
 
   getKb(kbId: string): Observable<WritableKnowledgeBox> {
-    return this.sdk.currentAccount.pipe(
-      take(1),
-      switchMap((account) =>
-        this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id).pipe(
-          map((kbs) => kbs.find((kb) => kb.id === kbId)),
-          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.id, kb?.id || '', kb?.zone)),
-        ),
-      ),
-    );
+    throw new Error('Method not implemented.');
   }
 
   getNucliaKey(kb: WritableKnowledgeBox): Observable<{ token: string; kbid: string }> {
@@ -425,23 +426,21 @@ export class NewSyncService {
   }
 
   authenticateToSource(source: ISourceConnector): Observable<boolean> {
-    return source.authenticate().pipe(
+    throw new Error('Method not implemented.');
+  }
+
+  authenticateToConnector(connectorId: string, connector: ISourceConnector): Observable<boolean> {
+    return connector.authenticate().pipe(
       filter((authenticated) => authenticated),
       take(1),
-      switchMap(() => {
-        return this.currentSource.pipe(
-          take(1),
-          switchMap((currentSource) =>
-            this.setSourceData(this.getCurrentSourceId() || '', {
-              ...currentSource,
-              data: source.getParametersValues(),
-            }),
-          ),
-          map(() => {
-            source.cleanAuthData();
-            return true;
-          }),
-        );
+      switchMap(() =>
+        this.updateSync(this.getCurrentSourceId() || '', {
+          connector: { name: connectorId, parameters: connector.getParametersValues() },
+        }),
+      ),
+      map(() => {
+        connector.cleanAuthData();
+        return true;
       }),
     );
   }
