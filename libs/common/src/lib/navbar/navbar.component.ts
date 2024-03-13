@@ -105,7 +105,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.syncService.syncListCache.subscribe((list) => console.log(list));
     combineLatest([this.sdk.currentAccount, this.sdk.currentKb])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([account, kb]) => {
