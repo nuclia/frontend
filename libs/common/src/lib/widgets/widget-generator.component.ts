@@ -28,6 +28,16 @@ import { LearningConfigurationOption, RAGStrategyName } from '@nuclia/core';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
+// TODO: remove when all LLMs support citation
+// REMINDER: also fix the translation key: widget.generator.advanced.generative-answer-category.citations.help
+const LLMS_WITH_CITATION_SUPPORT = [
+  'anthropic',
+  'chatgpt-azure',
+  'chatgpt-azure-3',
+  'gemini-pro',
+  'claude-3',
+  'claude-3-fast',
+];
 
 @Component({
   selector: 'app-widget-generator',
@@ -53,6 +63,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   snippet = '';
   snippetPreview: SafeHtml = '';
   currentQuery = '';
+  defaultModelFromSettings = '';
 
   // FEATURES AVAILABILITY
   isUserPromptsEnabled = this.featuresService.userPrompts;
@@ -263,13 +274,18 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         takeUntil(this.unsubscribeAll),
-        switchMap((kb) => kb.getLearningSchema()),
+        switchMap((kb) => forkJoin([kb.getLearningSchema(), kb.getConfiguration()])),
       )
-      .subscribe((schema) => {
+      .subscribe(([schema, config]) => {
         this.generativeModels = schema['generative_model']?.options || [];
+        this.defaultModelFromSettings = config['generative_model'] || '';
+        // TODO: remove when all LLMs support citation
+        if (!LLMS_WITH_CITATION_SUPPORT.includes(this.defaultModelFromSettings)) {
+          this.advancedForm.controls.citations.patchValue(false);
+          this.advancedForm.controls.citations?.disable();
+        }
         this.cdr.detectChanges();
       });
-
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
       this.currentKbId = kb.id;
       const config = this.widgetConfigurations[kb.id] || {};
@@ -688,5 +704,15 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
   onResizingTextarea($event: DOMRect) {
     this.answerGenerationExpanderUpdated.next($event);
     this.searchFilteringExpanderUpdated.next($event);
+  }
+
+  changeLLM(llm: string) {
+    if (!LLMS_WITH_CITATION_SUPPORT.includes(llm)) {
+      this.advancedForm.controls.citations.patchValue(false);
+      this.advancedForm.controls.citations?.disable();
+    } else {
+      this.advancedForm.controls.citations?.enable();
+    }
+    this.cdr.detectChanges();
   }
 }
