@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { filter, map, switchMap, take, tap } from 'rxjs';
-import { Field, Source } from '../../sync/new-models';
+import { Field, ISyncEntity, Source } from '../../sync/new-models';
 import { SyncService } from '../../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -15,7 +15,7 @@ export class EditSyncSettingsComponent implements OnInit {
   @Output() done = new EventEmitter();
   form?: UntypedFormGroup;
   fields?: Field[];
-  source?: Source;
+  sync?: ISyncEntity;
 
   constructor(
     private syncService: SyncService,
@@ -25,36 +25,31 @@ export class EditSyncSettingsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.syncService.currentSource
+    this.syncService
+      .getCurrentSync()
       .pipe(
-        filter((source) => !!source),
-        tap((source) => (this.source = source)),
-        switchMap((source) =>
-          this.syncService.getSource(source.connectorId, '').pipe(
+        filter((sync) => !!sync),
+        tap((sync) => (this.sync = sync)),
+        switchMap((sync) =>
+          this.syncService.getConnector(sync.connector.name, '').pipe(
             switchMap((connector) => connector.getParameters()),
-            map((fields) => ({ source, fields })),
+            map((fields) => ({ sync, fields })),
           ),
         ),
-        switchMap(({ source, fields }) => this.syncService.currentSourceId.pipe(map((id) => ({ id, source, fields })))),
       )
-      .subscribe(({ id, source, fields }) => this.showFields(id, source, fields));
+      .subscribe(({ sync, fields }) => this.showFields(sync, fields));
   }
 
   save() {
-    if (this.source) {
-      this.syncService.currentSourceId
-        .pipe(
-          filter((id) => !!id),
-          take(1),
-          switchMap((id) =>
-            this.syncService.setSourceData(id || '', {
-              ...this.source,
-              title: this.form?.value['title'] || '',
-              connectorId: this.source?.connectorId || '',
-              data: { ...this.source?.data, ...(this.form?.value['fields'] || {}) },
-            }),
-          ),
-        )
+    if (this.sync) {
+      this.syncService
+        .updateSync(this.sync.id, {
+          title: this.form?.value['title'] || '',
+          connector: {
+            ...this.sync.connector,
+            parameters: { ...this.sync.connector.parameters, ...(this.form?.value['fields'] || {}) },
+          },
+        })
         .subscribe({
           next: () => {
             this.toast.success('upload.saved');
@@ -67,7 +62,7 @@ export class EditSyncSettingsComponent implements OnInit {
     }
   }
 
-  showFields(id: string | null, source: Source, fields: Field[]) {
+  showFields(sync: ISyncEntity, fields: Field[]) {
     this.fields = fields;
     this.form = this.formBuilder.group({
       title: ['', Validators.required],
@@ -76,8 +71,8 @@ export class EditSyncSettingsComponent implements OnInit {
       ),
     });
     this.form.patchValue({
-      fields: source.data,
-      title: source.title || id || '',
+      fields: sync.connector.parameters,
+      title: sync.title || sync.id,
     });
     this.cdr.markForCheck();
   }

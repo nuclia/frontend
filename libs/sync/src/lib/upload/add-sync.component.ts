@@ -34,7 +34,7 @@ export class AddSyncComponent implements OnInit {
 
   ngOnInit(): void {
     this.syncService
-      .getSource(this.connectorId, '')
+      .getConnector(this.connectorId, '')
       .pipe(
         take(1),
         switchMap((connector) => connector.getParameters()),
@@ -51,34 +51,25 @@ export class AddSyncComponent implements OnInit {
         take(1),
         switchMap((kb) => {
           id = `${kb.id}-${id}`;
-          return this.syncService.setSourceAndDestination(
+          return this.syncService.addSync({
             id,
-            {
-              connectorId: this.connectorId || '',
-              title,
-              data,
-            },
-            '',
-          );
+            connector: { name: this.connectorId || '', parameters: data },
+            title,
+          });
         }),
         tap(() => this.syncService.setCurrentSourceId(id)),
-        switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1))),
+        switchMap(() => this.syncService.getConnector(this.connectorId, id).pipe(take(1))),
         switchMap((sourceConnector) => {
           // Setup sync items from the source itself if the source doesn't allow to select folders
           if (!sourceConnector.allowToSelectFolders) {
             if (typeof sourceConnector.handleParameters === 'function') {
               sourceConnector.handleParameters(data);
             }
-            return this.syncService.getSourceData(id).pipe(
-              switchMap((sourceData) =>
-                this.syncService
-                  .setSourceData(id, {
-                    ...sourceData,
-                    items: sourceConnector.getStaticFolders(),
-                  })
-                  .pipe(switchMap(() => this.syncService.getSource(this.connectorId, id).pipe(take(1)))),
-              ),
-            );
+            return this.syncService
+              .updateSync(id, {
+                foldersToSync: sourceConnector.getStaticFolders(),
+              })
+              .pipe(switchMap(() => this.syncService.getConnector(this.connectorId, id).pipe(take(1))));
           } else {
             return of(sourceConnector);
           }

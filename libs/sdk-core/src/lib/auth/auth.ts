@@ -199,7 +199,10 @@ export class Authentication implements IAuthentication {
   }
 
   /** Returns authentication token stored in localStorage. */
-  getToken(): string {
+  getToken(force?: boolean): string {
+    if (force) {
+      return localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
+    }
     let token = '';
     try {
       token = this.nuclia.options.public ? '' : localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';

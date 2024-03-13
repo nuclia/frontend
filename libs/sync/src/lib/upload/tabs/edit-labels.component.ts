@@ -15,7 +15,6 @@ import { Source } from '../../sync/new-models';
 })
 export class EditSyncLabelsComponent implements OnInit {
   @Output() done = new EventEmitter();
-  currentSource = this.syncService.currentSource;
   labelSets = this.sdk.currentKb.pipe(
     take(1),
     switchMap((kb) => kb.getLabels()),
@@ -37,23 +36,26 @@ export class EditSyncLabelsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.currentSource.pipe(take(1)).subscribe((source) =>
-      this.updateLabelSelection(
-        (source.labels || []).reduce(
-          (all, label) => {
-            return { ...all, [getSelectionKey(label.labelset, label.label)]: true };
-          },
-          {} as { [id: string]: boolean },
+    this.syncService
+      .getCurrentSync()
+      .pipe(take(1))
+      .subscribe((sync) =>
+        this.updateLabelSelection(
+          (sync.labels || []).reduce(
+            (all, label) => {
+              return { ...all, [getSelectionKey(label.labelset, label.label)]: true };
+            },
+            {} as { [id: string]: boolean },
+          ),
         ),
-      ),
-    );
+      );
   }
 
   save() {
     this.syncService.currentSourceId
       .pipe(
         take(1),
-        switchMap((id) => this.syncService.setSourceData(id || '', { labels: this.selectedLabels } as Source)),
+        switchMap((id) => this.syncService.updateSync(id || '', { labels: this.selectedLabels })),
       )
       .subscribe({
         next: () => {

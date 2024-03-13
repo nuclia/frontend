@@ -144,11 +144,11 @@ export class SelectFilesComponent implements AfterViewInit {
           status: FileStatus.PENDING,
         });
       }
-      this.sync.addSync(this.sync.getCurrentSourceId() || '', this.selection.selected).subscribe((success) => {
-        if (success) {
+      this.sync
+        .updateSync(this.sync.getCurrentSourceId() || '', { foldersToSync: this.selection.selected })
+        .subscribe(() => {
           this.router.navigate(['../history'], { relativeTo: this.route, queryParams: { active: 'true' } });
-        }
-      });
+        });
     });
   }
 

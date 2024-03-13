@@ -13,7 +13,6 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class EditSyncFiltersComponent implements OnInit {
   @Output() done = new EventEmitter();
-  currentSource = this.syncService.currentSource;
   filtersForm = new FormGroup({
     fileExtensions: new FormControl<string>(''),
     exclude: new FormControl<boolean>(false),
@@ -28,16 +27,18 @@ export class EditSyncFiltersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.currentSource.pipe(take(1)).subscribe((source) => {
-      console.log(source);
-      this.filtersForm.setValue({
-        fileExtensions: source.filters?.fileExtensions?.extensions || '',
-        exclude: source.filters?.fileExtensions?.exclude || false,
-        fromDate: source.filters?.modified?.from || '',
-        toDate: source.filters?.modified?.to || '',
+    this.syncService
+      .getCurrentSync()
+      .pipe(take(1))
+      .subscribe((sync) => {
+        this.filtersForm.setValue({
+          fileExtensions: sync.filters?.fileExtensions?.extensions || '',
+          exclude: sync.filters?.fileExtensions?.exclude || false,
+          fromDate: sync.filters?.modified?.from || '',
+          toDate: sync.filters?.modified?.to || '',
+        });
+        this.cdr.markForCheck();
       });
-      this.cdr.markForCheck();
-    });
   }
 
   save() {
@@ -57,7 +58,7 @@ export class EditSyncFiltersComponent implements OnInit {
     this.syncService.currentSourceId
       .pipe(
         take(1),
-        switchMap((id) => this.syncService.setSourceData(id || '', { filters } as Source, true)),
+        switchMap((id) => this.syncService.updateSync(id || '', { filters }, true)),
       )
       .subscribe({
         next: () => {
