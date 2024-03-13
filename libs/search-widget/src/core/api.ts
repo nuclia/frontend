@@ -268,7 +268,7 @@ export const getEntities = (): Observable<EntityGroup[]> => {
     throw new Error('Nuclia API not initialized');
   }
   if (!_entities) {
-    return forkJoin([nucliaApi.knowledgeBox.getEntities(true), _.pipe(take(1))]).pipe(
+    return forkJoin([nucliaApi.knowledgeBox.getEntities(), _.pipe(take(1))]).pipe(
       map(([entityMap, translate]) =>
         Object.entries(entityMap)
           .map(([groupId, group]) => ({

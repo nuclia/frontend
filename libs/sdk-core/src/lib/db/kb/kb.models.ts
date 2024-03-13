@@ -236,7 +236,7 @@ export interface KnowledgeBoxCreation {
 }
 
 export interface Entities {
-  [key: string]: EntitiesGroup;
+  [key: string]: BaseEntitiesGroup;
 }
 
 export interface Entity {
@@ -245,11 +245,14 @@ export interface Entity {
   represents?: string[];
 }
 
-export interface EntitiesGroup {
+export interface BaseEntitiesGroup {
   title?: string;
   color?: string;
-  entities: { [key: string]: Entity };
   custom?: boolean;
+}
+
+export interface EntitiesGroup extends BaseEntitiesGroup {
+  entities: { [key: string]: Entity };
 }
 
 export interface UpdateEntitiesGroupPayload {

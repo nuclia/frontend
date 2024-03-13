@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { SDKService, STFUtils } from '@flaps/core';
-import { Entities, EntitiesGroup, Entity, IKnowledgeBox, UpdateEntitiesGroupPayload } from '@nuclia/core';
+import { EntitiesGroup, Entity, IKnowledgeBox, UpdateEntitiesGroupPayload } from '@nuclia/core';
+import { NerFamily } from '@flaps/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EntitiesService {
-  private entitiesSubject = new BehaviorSubject<Entities | null>(null);
+  private entitiesSubject = new BehaviorSubject<{ [key: string]: NerFamily } | null>(null);
 
   entities = this.entitiesSubject.asObservable();
   isAdminOrContrib = this.sdk.isAdminOrContrib;
@@ -23,7 +24,17 @@ export class EntitiesService {
         switchMap((kb) => kb.getEntities()),
       )
       .subscribe({
-        next: (entities) => this.entitiesSubject.next(entities),
+        next: (entities) => {
+          this.entitiesSubject.next(
+            Object.entries(entities)
+              .map(([familyKey, family]) => ({
+                ...family,
+                key: familyKey,
+                entities: undefined, // TODO: this line can be removed once getEntities method does not return "entities" property
+              }))
+              .reduce((acc, family) => ({ ...acc, [family.key]: family }), {}),
+          );
+        },
         error: () => this.entitiesSubject.next(null),
       });
   }
@@ -141,10 +152,10 @@ export class EntitiesService {
     mainEntity.represents = mainEntity.represents?.filter((d) => d !== duplicate);
 
     const entities = this.entitiesSubject.getValue();
-    if (!entities) {
+    const noMoreDuplicate = entities?.[groupId].entities?.[duplicate];
+    if (!noMoreDuplicate) {
       throw new Error('Bad state exception: removeDuplicate called while there is no entities');
     }
-    const noMoreDuplicate = entities[groupId].entities[duplicate];
     noMoreDuplicate.merged = false;
 
     return this.sdk.currentKb.pipe(
@@ -190,7 +201,7 @@ export class EntitiesService {
       tap((family) => {
         this.entitiesSubject.next({
           ...this.entitiesSubject.getValue(),
-          [familyId]: family,
+          [familyId]: { ...family, key: familyId, title: family.title || '' },
         });
       }),
     );

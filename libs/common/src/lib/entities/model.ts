@@ -1,4 +1,4 @@
-import { EntitiesGroup } from '@nuclia/core';
+import { BaseEntitiesGroup, EntitiesGroup } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
 
 export const generatedEntitiesColor: { [key: string]: string } = {
@@ -31,11 +31,11 @@ export interface NerFamily {
   key: string;
   title: string;
   color?: string;
-  entities: { [entityName: string]: Entity };
+  entities?: { [entityName: string]: Entity };
   custom?: boolean;
 }
 
-export function getNerFamilyTitle(familyId: string, family: EntitiesGroup, translate: TranslateService): string {
+export function getNerFamilyTitle(familyId: string, family: BaseEntitiesGroup, translate: TranslateService): string {
   return generatedEntitiesColor[familyId]
     ? translate.instant(`resource.entities.${familyId.toLowerCase()}`)
     : family.title || familyId.toLowerCase();

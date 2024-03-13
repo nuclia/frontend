@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { Observable, Subject, switchMap, tap } from 'rxjs';
 import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
-import { Entities } from '@nuclia/core';
 import { Entity, generatedEntitiesColor, getNerFamilyTitle, NerFamily } from './model';
 import { EntitiesService } from './entities.service';
 import { NerFamilyDialogComponent } from './ner-family-dialog/ner-family-dialog.component';
@@ -29,13 +28,12 @@ export class EntitiesComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   familyColors = generatedEntitiesColor;
   nerFamilies: Observable<NerFamily[]> = this.entitiesService.entities.pipe(
-    filter((entities): entities is Entities => !!entities),
+    filter((entities): entities is { [key: string]: NerFamily } => !!entities),
     tap((entities) => this.updateSelectedFamilyEntities(entities)),
     map((entities) =>
       Object.entries(entities)
         .map(([familyKey, family]) => ({
           ...family,
-          key: familyKey,
           title: getNerFamilyTitle(familyKey, family, this.translate),
         }))
         .sort((a, b) => (a.title || '').localeCompare(b.title || '')),
@@ -84,7 +82,7 @@ export class EntitiesComponent implements OnInit, OnDestroy {
   selectFamily(family: NerFamily) {
     this.selectedFamily = family;
     this.cdr.markForCheck();
-    if (Object.keys(family.entities).length === 0) {
+    if (!family.entities) {
       this.entitiesService.refreshFamily(family.key).subscribe(() => {
         this.cdr.markForCheck();
       });
@@ -169,14 +167,14 @@ export class EntitiesComponent implements OnInit, OnDestroy {
   }
 
   selectEntities(ids: string[]) {
-    if (this.selectedFamily) {
+    if (this.selectedFamily?.entities) {
       this.selectedIds = ids;
       this.selectedNer = Object.values(this.selectedFamily.entities).filter((entity) => ids.includes(entity.value));
       this.cdr.markForCheck();
     }
   }
 
-  private updateSelectedFamilyEntities(families: Entities) {
+  private updateSelectedFamilyEntities(families: { [key: string]: NerFamily }) {
     if (this.selectedFamily) {
       const updatedFamily = families[this.selectedFamily.key];
       if (updatedFamily) {
