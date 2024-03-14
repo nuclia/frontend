@@ -22,7 +22,6 @@ import {
   SearchResults,
   ConnectorDefinition,
   SyncBasicData,
-  SyncRow,
 } from './models';
 import { BackendConfigurationService, NotificationService, SDKService } from '@flaps/core';
 import { SitemapConnector } from './sources/sitemap';
@@ -374,27 +373,10 @@ export class SyncService {
     this._currentSyncId.next(null);
   }
 
-  getLogs(sync?: string, since?: string): Observable<SyncRow[]> {
+  getLogs(sync?: string, since?: string): Observable<LogEntity[]> {
     return this.http
       .get<LogEntity[]>(`${this._syncServer.getValue()}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`)
-      .pipe(
-        map((logs) =>
-          logs.reverse().map(
-            (log) =>
-              ({
-                date: log.createdAt,
-                from: log.payload?.['title'],
-                to: log.payload?.['kb']?.['knowledgeBox'],
-                total: 1,
-                progress: 1,
-                started: true,
-                completed: true,
-                level: log.level,
-                errors: log.message, // we use the message field to store the error, but when dropping desktop, we will not use this mapping anymore
-              }) as SyncRow,
-          ),
-        ),
-      );
+      .pipe(map((logs) => logs.reverse()));
   }
 
   clearLogs(): Observable<void> {

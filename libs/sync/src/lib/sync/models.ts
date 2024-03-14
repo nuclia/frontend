@@ -83,19 +83,6 @@ export interface Filters {
   };
 }
 
-export interface SyncRow {
-  date: string;
-  from: string;
-  to: string;
-  total: number;
-  kbSlug?: string;
-  progress: number;
-  started: boolean | undefined;
-  completed: boolean | undefined;
-  errors: string;
-  level?: LogSeverityLevel;
-}
-
 export type Connector = {
   name: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
