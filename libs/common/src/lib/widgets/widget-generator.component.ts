@@ -630,6 +630,7 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
     config.darkMode = this.darkModeEnabled;
     config.hideLogo = this.hideLogoEnabled;
     this.advancedForm.patchValue(config);
+    this.cdr.detectChanges();
   }
 
   private getAdvancedConfigFromPreset(value: Partial<PresetForm>): AdvancedForm {
