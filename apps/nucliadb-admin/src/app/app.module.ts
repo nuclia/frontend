@@ -22,8 +22,6 @@ import localeCa from '@angular/common/locales/ca';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { HomeContainerComponent } from '@nuclia/sistema';
 import { AppTitleStrategy } from './app-title.strategy';
-import { SyncService } from '@nuclia/sync';
-import { NewSyncService } from 'libs/sync/src/lib/sync/new-sync.service';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -63,9 +61,6 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
     TranslatePipe,
     { provide: APP_BASE_HREF, useValue: '/admin' },
     { provide: TitleStrategy, useClass: AppTitleStrategy },
-    // TO BE REMOVED WHEN DESKTOP APP IS GONE
-    // override SyncService with NewSyncService to use the new agent API
-    { provide: SyncService, useClass: NewSyncService },
   ],
   bootstrap: [AppComponent],
 })

@@ -5,7 +5,6 @@ import { SisToastService, getSelectionKey } from '@nuclia/sistema';
 import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 import { getClassificationFromSelection } from '@nuclia/sistema';
-import { Source } from '../../sync/new-models';
 
 @Component({
   selector: 'nsy-edit-labels',

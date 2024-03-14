@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { filter, map, switchMap, take, tap } from 'rxjs';
-import { Field, ISyncEntity, Source } from '../../sync/new-models';
+import { filter, map, switchMap, tap } from 'rxjs';
+import { Field, ISyncEntity } from '../../sync/models';
 import { SyncService } from '../../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 

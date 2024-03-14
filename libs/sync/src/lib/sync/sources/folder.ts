@@ -1,10 +1,10 @@
-import { baseLogoPath, ConnectorParameters, Field, ISourceConnector, SourceConnectorDefinition } from '../models';
+import { baseLogoPath, ConnectorParameters, Field, IConnector, ConnectorDefinition } from '../models';
 import { Observable, of } from 'rxjs';
-import { FileStatus, SyncItem } from '../new-models';
+import { FileStatus, SyncItem } from '../models';
 
 type ElectronFile = File & { relativePath: string };
 
-export const FolderConnector: SourceConnectorDefinition = {
+export const FolderConnector: ConnectorDefinition = {
   id: 'folder',
   title: 'Folder',
   logo: `${baseLogoPath}/folder.svg`,
@@ -12,7 +12,7 @@ export const FolderConnector: SourceConnectorDefinition = {
   factory: () => of(new FolderImpl()),
 };
 
-class FolderImpl implements ISourceConnector {
+class FolderImpl implements IConnector {
   hasServerSideAuth = false;
   isExternal = false;
   allowToSelectFolders = false;

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, On
 import { switchMap, take } from 'rxjs';
 import { SyncService } from '../../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
-import { Filters, Source } from '../../sync/new-models';
+import { Filters } from '../../sync/models';
 import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({

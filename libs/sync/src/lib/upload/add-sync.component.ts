@@ -4,8 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map, of, switchMap, take, tap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { Field } from '../sync/new-models';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { Field } from '../sync/models';
 import { SDKService } from '@flaps/core';
 
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
@@ -20,7 +19,7 @@ export class AddSyncComponent implements OnInit {
   fields?: Field[];
   connectorId =
     (this.sdk.nuclia.options.standalone ? location.hash : location.pathname).split('/upload/sync/add/')[1] || '';
-  connector = this.syncService.sourceObs.pipe(map((sources) => sources.find((s) => s.id === this.connectorId)));
+  connector = this.syncService.connectorsObs.pipe(map((sources) => sources.find((s) => s.id === this.connectorId)));
 
   constructor(
     private syncService: SyncService,

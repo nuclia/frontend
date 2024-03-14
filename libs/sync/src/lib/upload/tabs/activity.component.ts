@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SyncService } from '../../sync/sync.service';
 import { Subject, catchError, filter, map, of, repeat, startWith, switchMap, take, takeUntil, tap, timer } from 'rxjs';
-import { SyncRow } from '../../sync/new-models';
+import { LogEntity } from '../../sync/models';
 import { NavigationEnd, Router } from '@angular/router';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -47,15 +47,15 @@ export class SyncActivityComponent implements OnInit, OnDestroy {
           this.syncService.getLogs(id!, this.since).pipe(
             catchError((error) => {
               console.error('Error while fetching logs', error);
-              return of([] as SyncRow[]);
+              return of([] as LogEntity[]);
             }),
           ),
         ),
         map((logs) =>
           logs.map((log, index) => ({
             index: index + this.currentIndex,
-            date: log.date,
-            message: log.errors,
+            date: log.createdAt,
+            message: log.message,
             icon: log.level === 'high' ? 'circle-cross' : log.level === 'medium' ? 'warning' : 'circle-check',
           })),
         ),

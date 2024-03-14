@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FeaturesService, NavigationService, SDKService, STFTrackingService } from '@flaps/core';
-import { AppService, openDesktop, searchResources, STATUS_FACET, UploadService } from '@flaps/common';
+import { AppService, searchResources, STATUS_FACET, UploadService } from '@flaps/common';
 import { MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
@@ -17,7 +17,6 @@ import { takeUntil } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KnowledgeBoxHomeComponent implements OnDestroy {
-  protected readonly openDesktop = openDesktop;
   private unsubscribeAll = new Subject<void>();
 
   locale: Observable<string> = this.app.currentLocale;

@@ -24,7 +24,6 @@ jobs:
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
       deploy-nucliadb-admin: ${{ steps.check-deploy.outputs.deploy-nucliadb-admin }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
-      deploy-desktop: ${{ steps.check-deploy.outputs.deploy-desktop }}
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
@@ -36,8 +35,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "${{ secrets.GCP_REGISTRY_WORKLOAD_IDENTITY_PROVIDER }}"
-          service_account: "${{ secrets.GCP_REGISTRY_SERVICE_ACCOUNT }}"
+          workload_identity_provider: '${{ secrets.GCP_REGISTRY_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ secrets.GCP_REGISTRY_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: 'Set up Cloud SDK'
@@ -90,7 +89,6 @@ jobs:
           (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
           (test -d dist/apps/nucliadb-admin && echo "deploy-nucliadb-admin=yes" >> $GITHUB_OUTPUT) || echo "NucliaDB admin unchanged"
           (test -d dist/apps/manager-v2 && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
-          ((test -d dist/apps/desktop || test -d dist/apps/desktop-electron) && echo "deploy-desktop=yes" >> $GITHUB_OUTPUT) || echo "Desktop unchanged"
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
           (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
 
@@ -276,123 +274,3 @@ jobs:
           repository: nuclia/frontend_deploy
           event-type: promote
           client-payload: '{"component": "manager", "chart-version": "${{ steps.version_step.outputs.version_number }}" }'
-
-  pre-release:
-    name: 'Pre Release'
-    needs: build
-    if: needs.build.outputs.deploy-desktop == 'yes'
-    runs-on: 'ubuntu-latest'
-    outputs:
-      release-desktop: ${{ steps.release.outputs.released }}
-      release-tag: ${{ steps.release.outputs.release_tag }}
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Release
-        uses: justincy/github-action-npm-release@2.0.2
-        id: release
-
-  deploy-desktop:
-    name: Deploy desktop
-    needs: pre-release
-    if: needs.pre-release.outputs.release-desktop == 'true'
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: nrwl/nx-set-shas@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'yarn'
-      - name: Install project dependencies
-        run: |-
-          yarn
-          yarn missdev
-      - name: Build desktop app
-        run: |-
-          npx replace-in-file __SENTRY_URL__ ${{ secrets.SENTRY_URL }} ./apps/desktop/electron/src/environments/environment.prod.ts
-          npx replace-in-file __SENTRY_URL__ ${{ secrets.SENTRY_URL }} ./apps/desktop/src/environments_config/production/app-config.json
-          npx replace-in-file __SENTRY_RELEASE__ ${{ github.sha }} ./apps/desktop/electron/src/environments/environment.prod.ts
-          npx replace-in-file __SENTRY_RELEASE__ ${{ github.sha }} ./apps/desktop/src/environments_config/production/app-config.json
-          npx nx build desktop --configuration production
-          npx replace-in-file __VERSION__ ${{ github.sha }} ./dist/apps/desktop/assets/deployment/app-config.json
-      - name: Build electron app
-        run: |-
-          npx nx build desktop-electron --configuration production
-          npx tsc -p apps/desktop/electron/tsconfig.server.json
-          cp -r dist/service ./dist/apps/desktop-electron/assets
-      - name: Install the Apple certificate
-        if: startsWith(matrix.os, 'macos')
-        env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-        run: |
-          # create variables
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-
-          # import certificate from secrets
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
-
-          # create temporary keychain
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-
-          # import certificate to keychain
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-      - name: Prepare for app notarization
-        if: startsWith(matrix.os, 'macos')
-        run: |-
-          mkdir -p ~/private_keys/
-          echo '${{ secrets.APPLE_API_SECRET }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY }}.p8
-          echo "APPLE_API_ISSUER=${{ secrets.APPLE_API_ISSUER }}" > .env
-          echo "APPLE_API_KEY=${{ secrets.APPLE_API_KEY }}" >> .env
-      - name: Package electron app on MacOSX
-        if: startsWith(matrix.os, 'macos')
-        run: PYTHON_PATH=$(which python) npx nx run desktop-electron:make --publish always
-      - name: Package electron app on Windows
-        if: startsWith(matrix.os, 'windows')
-        run: npx nx run desktop-electron:make --publish always
-      - name: Package electron app on Ubuntu
-        if: startsWith(matrix.os, 'ubuntu')
-        run: npx nx run desktop-electron:make --publish always
-      - name: Release MacOSX installer
-        uses: softprops/action-gh-release@v1
-        if: startsWith(matrix.os, 'macos')
-        with:
-          tag_name: ${{ needs.pre-release.outputs.release-tag }}
-          files: |
-            dist/executables/*.dmg
-            dist/executables/*.zip
-            dist/executables/latest-*.yml
-      - name: Release Windows installer
-        uses: softprops/action-gh-release@v1
-        if: startsWith(matrix.os, 'windows')
-        with:
-          tag_name: ${{ needs.pre-release.outputs.release-tag }}
-          files: |
-            dist/executables/*.exe
-            dist/executables/*.exe.blockmap
-            dist/executables/*.yml
-      - name: Release Linux installer
-        uses: softprops/action-gh-release@v1
-        if: startsWith(matrix.os, 'ubuntu')
-        with:
-          tag_name: ${{ needs.pre-release.outputs.release-tag }}
-          files: |
-            dist/executables/*.snap
-            dist/executables/*.AppImage
-            dist/executables/latest-*.yml

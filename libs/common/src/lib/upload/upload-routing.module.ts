@@ -15,7 +15,7 @@ const routes = [
       {
         path: 'sync',
         // eslint-disable-next-line @nx/enforce-module-boundaries
-        loadChildren: () => import('../../../../sync/src/lib/new-sync.module').then((m) => m.SyncModule),
+        loadChildren: () => import('../../../../sync/src/lib/sync.module').then((m) => m.SyncModule),
       },
     ],
   },

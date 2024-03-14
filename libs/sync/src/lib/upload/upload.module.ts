@@ -3,10 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConnectorsModule } from '../connectors/connectors.module';
-import { UploadComponent } from './upload.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SelectFilesComponent } from './select-files/select-files.component';
-import { SettingsComponent } from './settings/settings.component';
 import { LabelsExpanderComponent, SisProgressModule } from '@nuclia/sistema';
 import {
   PaButtonModule,
@@ -51,9 +48,6 @@ import { EditSyncFiltersComponent } from './tabs/edit-filters.component';
   ],
   exports: [],
   declarations: [
-    UploadComponent,
-    SelectFilesComponent,
-    SettingsComponent,
     SyncComponent,
     SyncActivityComponent,
     EditSyncSettingsComponent,
