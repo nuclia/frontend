@@ -3,30 +3,29 @@
     {{ (folderMode ? 'modal.upload_folder' : 'modal.upload.title') | translate }}
   </pa-modal-title>
   <pa-modal-content>
-    <ng-container *ngIf="standalone">
+    @if (standalone && (hasValidKey | async) === false) {
       <div
-        *ngIf="(hasValidKey | async) === false"
         class="warning body-s"
         [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
-    </ng-container>
-    <div
-      class="size warning body-s"
-      *ngIf="limitsExceeded">
-      <pa-icon name="warning"></pa-icon>
-      <div>
-        <strong>
-          {{
-            'upload.size_warning_1'
-              | translate
-                : {
-                    maxMedia: (maxMediaFileSize | size),
-                    max: (maxFileSize | size)
-                  }
-          }}
-        </strong>
-        <div>{{ 'upload.size_warning_2' | translate }}</div>
+    }
+    @if (limitsExceeded) {
+      <div class="size warning body-s">
+        <pa-icon name="warning"></pa-icon>
+        <div>
+          <strong>
+            {{
+              'upload.size_warning_1'
+                | translate
+                  : {
+                      maxMedia: (maxMediaFileSize | size),
+                      max: (maxFileSize | size)
+                    }
+            }}
+          </strong>
+          <div>{{ 'upload.size_warning_2' | translate }}</div>
+        </div>
       </div>
-    </div>
+    }
 
     <div
       stfFileDrop
@@ -38,53 +37,56 @@
       (click)="chooseFiles($event)">
       <span>{{ (folderMode ? 'modal.upload.drop_folder' : 'modal.upload.drop') | translate }}</span>
     </div>
-    <input
-      *ngIf="!folderMode"
-      type="file"
-      stfFileSelect
-      (atFileSelect)="addFiles($event)"
-      id="upload-file-chooser"
-      multiple
-      hidden />
-    <input
-      *ngIf="folderMode"
-      type="file"
-      id="upload-folder-chooser"
-      multiple
-      webkitdirectory
-      directory
-      hidden />
-    <pa-toggle
-      *ngIf="folderMode"
-      [(value)]="useFoldersAsLabels"
-      [help]="'upload.use_folder_as_labels.help' | translate">
-      {{ 'upload.use_folder_as_labels.label' | translate }}
-    </pa-toggle>
 
-    <app-label-field
-      *ngIf="!useFoldersAsLabels"
-      [(selection)]="selectedLabels"></app-label-field>
+    @if (folderMode) {
+      <input
+        type="file"
+        id="upload-folder-chooser"
+        multiple
+        webkitdirectory
+        directory
+        hidden />
 
-    <div
-      class="file-list"
-      *ngIf="files.length > 0">
-      <div
-        class="file-item"
-        [class.over-limit]="item.aboveLimit"
-        *ngFor="let item of files">
-        <div class="file-name">{{ item.file.name }}</div>
-        <div class="file-size">{{ item.file.size | size }}</div>
-        <div class="file-actions">
-          <pa-button
-            icon="trash"
-            aspect="basic"
-            size="small"
-            (click)="removeFile(item.file)">
-            Remove file
-          </pa-button>
-        </div>
+      <pa-toggle
+        [(value)]="useFoldersAsLabels"
+        [help]="'upload.use_folder_as_labels.help' | translate">
+        {{ 'upload.use_folder_as_labels.label' | translate }}
+      </pa-toggle>
+    } @else {
+      <input
+        type="file"
+        stfFileSelect
+        (atFileSelect)="addFiles($event)"
+        id="upload-file-chooser"
+        multiple
+        hidden />
+    }
+
+    @if (!useFoldersAsLabels) {
+      <app-label-field [(selection)]="selectedLabels"></app-label-field>
+    }
+
+    @if (files.length > 0) {
+      <div class="file-list">
+        @for (item of files; track item) {
+          <div
+            class="file-item"
+            [class.over-limit]="item.aboveLimit">
+            <div class="file-name">{{ item.file.name }}</div>
+            <div class="file-size">{{ item.file.size | size }}</div>
+            <div class="file-actions">
+              <pa-button
+                icon="trash"
+                aspect="basic"
+                size="small"
+                (click)="removeFile(item.file)">
+                {{ 'upload.remove-file' | translate }}
+              </pa-button>
+            </div>
+          </div>
+        }
       </div>
-    </div>
+    }
 
     <ncom-hint
       noMaxWidth
@@ -102,6 +104,22 @@
         header.
       </p>
     </ncom-hint>
+
+    <div class="language-detection">
+      <pa-checkbox [(value)]="automaticLanguageDetection">
+        {{ 'upload.language-detection.checkbox-label' | translate }}
+      </pa-checkbox>
+
+      @if (!automaticLanguageDetection) {
+        <pa-input
+          minlength="2"
+          maxlength="2"
+          help="upload.language-detection.input-help"
+          [formControl]="langCode">
+          {{ 'upload.language-detection.input-label' | translate }}
+        </pa-input>
+      }
+    </div>
   </pa-modal-content>
   <pa-modal-footer>
     <pa-button
@@ -112,7 +130,7 @@
 
     <pa-button
       kind="primary"
-      [disabled]="allowedFiles.length === 0"
+      [disabled]="allowedFiles.length === 0 || (!automaticLanguageDetection && (!langCode.value || langCode.invalid))"
       (click)="onUpload()">
       {{ 'generic.add' | translate }}
     </pa-button>

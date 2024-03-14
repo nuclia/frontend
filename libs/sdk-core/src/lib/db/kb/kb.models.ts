@@ -198,15 +198,12 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   ): Observable<{ uuid: string }>;
 
   upload(file: File | FileWithMetadata, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
-
   upload(buffer: ArrayBuffer, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
-
   upload(
     data: File | FileWithMetadata | ArrayBuffer,
     TUS?: boolean,
     metadata?: FileMetadata,
   ): Observable<UploadResponse>;
-
   batchUpload(files: FileList | File[] | FileWithMetadata[]): Observable<UploadStatus>;
 
   getServiceAccounts(): Observable<ServiceAccount[]>;
