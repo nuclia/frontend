@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { openDesktop } from '../../utils';
 import { UploadDialogService, UploadType } from '../../resources/upload-button/upload-dialog.service';
 import { filter } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,10 +29,6 @@ export class UploadDataComponent {
       .upload(type)
       .onClose.pipe(filter((data) => !data || !data.cancel))
       .subscribe(() => this.router.navigate(['../resources/pending'], { relativeTo: this.route }));
-  }
-
-  openDesktop() {
-    openDesktop();
   }
 
   setupSync() {

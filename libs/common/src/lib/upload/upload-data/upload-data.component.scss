@@ -12,25 +12,12 @@
       gap: rhythm(4);
     }
 
-    .desktop-option {
+    .sync-option {
       .description {
         align-items: center;
         display: flex;
         gap: rhythm(0.5);
         margin-bottom: rhythm(2);
-      }
-
-      .desktop-button {
-        img {
-          width: rhythm(20);
-        }
-        ::ng-deep .pa-button-label {
-          display: flex;
-        }
-      }
-
-      .sources-container {
-        margin-top: rhythm(4);
       }
     }
   }

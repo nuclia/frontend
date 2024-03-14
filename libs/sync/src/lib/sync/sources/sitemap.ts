@@ -1,8 +1,8 @@
-import { baseLogoPath, ConnectorParameters, Field, ISourceConnector, SourceConnectorDefinition } from '../models';
+import { baseLogoPath, ConnectorParameters, Field, IConnector, ConnectorDefinition } from '../models';
 import { Observable, of } from 'rxjs';
-import { FileStatus, SyncItem } from '../new-models';
+import { FileStatus, SyncItem } from '../models';
 
-export const SitemapConnector: SourceConnectorDefinition = {
+export const SitemapConnector: ConnectorDefinition = {
   id: 'sitemap',
   title: 'Sitemap',
   logo: `${baseLogoPath}/sitemap.svg`,
@@ -11,7 +11,7 @@ export const SitemapConnector: SourceConnectorDefinition = {
   factory: () => of(new SitemapImpl()),
 };
 
-class SitemapImpl implements ISourceConnector {
+class SitemapImpl implements IConnector {
   hasServerSideAuth = false;
   isExternal = true;
   allowToSelectFolders = false;

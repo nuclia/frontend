@@ -1,14 +1,7 @@
-import {
-  baseLogoPath,
-  ConnectorParameters,
-  Field,
-  ISourceConnector,
-  SourceConnectorDefinition,
-  SyncItem,
-} from '../models';
+import { baseLogoPath, ConnectorParameters, Field, IConnector, ConnectorDefinition, SyncItem } from '../models';
 import { Observable, of } from 'rxjs';
 
-export const ConfluenceConnector: SourceConnectorDefinition = {
+export const ConfluenceConnector: ConnectorDefinition = {
   id: 'confluence',
   title: 'Confluence',
   logo: `${baseLogoPath}/confluence.svg`,
@@ -18,7 +11,7 @@ export const ConfluenceConnector: SourceConnectorDefinition = {
 };
 
 const TOKEN = 'CONFLUENCE_TOKEN';
-class ConfluenceImpl implements ISourceConnector {
+class ConfluenceImpl implements IConnector {
   hasServerSideAuth = false;
   isExternal = false;
   allowToSelectFolders = true;

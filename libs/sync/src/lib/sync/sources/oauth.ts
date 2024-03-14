@@ -1,11 +1,11 @@
-import { ConnectorParameters, Field, ISourceConnector, SyncItem } from '../models';
+import { ConnectorParameters, Field, IConnector, SyncItem } from '../models';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { clearDeeplink, getDeeplink } from '../../utils';
+import { getURLParams } from '../../utils';
 
 const TOKEN = 'token';
 const REFRESH = 'refresh';
 
-export class OAuthConnector implements ISourceConnector {
+export class OAuthConnector implements IConnector {
   name: string;
   id: string;
   path: string;
@@ -63,12 +63,11 @@ export class OAuthConnector implements ISourceConnector {
   authenticate(): Observable<boolean> {
     if (!this.isAuthenticated.getValue()) {
       const interval = setInterval(() => {
-        const deeplink = getDeeplink();
+        const deeplink = getURLParams();
         if (deeplink && deeplink.includes('?')) {
           const params = new URLSearchParams(deeplink.split('?')[1]);
           const token = params.get('token') || '';
           const refresh = params.get('refresh') || '';
-          clearDeeplink();
           clearInterval(interval);
           if (token) {
             localStorage.setItem(this.prefixStorageKey(TOKEN), token);

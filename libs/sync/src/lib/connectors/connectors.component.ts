@@ -11,7 +11,7 @@ import { map } from 'rxjs';
 export class ConnectorsComponent {
   @Input() disabled = false;
 
-  connectors = this.sync.sourceObs.pipe(map((sources) => sources.sort((a, b) => a.title.localeCompare(b.title))));
+  connectors = this.sync.connectorsObs.pipe(map((sources) => sources.sort((a, b) => a.title.localeCompare(b.title))));
 
   @Output() selectConnector = new EventEmitter<string>();
 

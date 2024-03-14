@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { catchError, forkJoin, map, Observable, of, scan, share, Subject, switchMap, take, tap } from 'rxjs';
 import { SelectionModel } from '@angular/cdk/collections';
-import { SearchResults, Source, SyncItem } from '../../sync/new-models';
+import { SearchResults, SyncItem } from '../../sync/models';
 import { SyncService } from '../../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 

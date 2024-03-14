@@ -6,6 +6,7 @@ export const baseLogoPath = 'assets/connector-logos';
 export const CONNECTOR_ID_KEY = 'NUCLIA_CONNECTOR_ID';
 export const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
 export const CONNECTOR_PARAMS_CACHE = 'CONNECTOR_PARAMS_CACHE';
+
 export interface ConnectorDefinition {
   id: string;
   title: string;
@@ -13,27 +14,10 @@ export interface ConnectorDefinition {
   description: string;
   helpUrl?: string;
   permanentSyncOnly?: boolean;
+  factory: (data?: ConnectorSettings) => Observable<IConnector>;
 }
 
-export interface SourceConnectorDefinition extends ConnectorDefinition {
-  factory: (data?: ConnectorSettings) => Observable<ISourceConnector>;
-}
-export interface DestinationConnectorDefinition extends ConnectorDefinition {
-  factory: (data?: ConnectorSettings) => Observable<IDestinationConnector>;
-}
-
-export interface ISourceConnectorOld {
-  hasServerSideAuth: boolean;
-  isExternal: boolean;
-  getParameters(): Observable<Field[]>;
-  handleParameters?(params: ConnectorParameters): void;
-  goToOAuth(reset?: boolean): void;
-  authenticate(): Observable<boolean>;
-  getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
-  isAuthError?: (message: any) => boolean;
-}
-
-export interface ISourceConnector {
+export interface IConnector {
   hasServerSideAuth: boolean;
   isExternal: boolean;
   allowToSelectFolders: boolean;
@@ -76,12 +60,6 @@ export interface ConnectorParameters {
   [key: string]: any;
 }
 
-export interface IDestinationConnector {
-  refreshField(fieldId: string): Observable<Field | undefined>;
-  getParameters(): Observable<Field[]>;
-  authenticate(): Observable<boolean>;
-}
-
 export interface Field {
   id: string;
   label: string;
@@ -94,13 +72,6 @@ export interface Field {
   canBeRefreshed?: boolean;
 }
 
-export interface ConnectorCache {
-  connectorId: string;
-  name: string;
-  params: any;
-  permanentSync?: boolean;
-}
-
 export interface Filters {
   fileExtensions?: {
     extensions: string;
@@ -110,19 +81,6 @@ export interface Filters {
     from?: string;
     to?: string;
   };
-}
-
-export interface Source {
-  connectorId: string;
-  title?: string;
-  data: ConnectorParameters;
-  kb?: NucliaOptions;
-  items?: SyncItem[];
-  permanentSync?: boolean;
-  lastSync?: string;
-  total?: number;
-  labels?: Classification[];
-  filters?: Filters;
 }
 
 export interface SyncRow {
@@ -138,8 +96,41 @@ export interface SyncRow {
   level?: LogSeverityLevel;
 }
 
+export type Connector = {
+  name: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  parameters: { [key: string]: any };
+};
+
+export interface ISyncEntity {
+  connector: Connector;
+  kb?: NucliaOptions;
+  labels?: Classification[];
+  title: string;
+  id: string;
+  foldersToSync?: SyncItem[];
+  filters?: Filters;
+  lastSyncGMT?: string;
+}
+
+export interface SyncBasicData {
+  id: string;
+  kbId: string;
+  title: string;
+  connectorId: string;
+}
+
 export enum LogSeverityLevel {
   low = 'low',
   medium = 'medium',
   high = 'high',
+}
+
+export interface LogEntity {
+  level: LogSeverityLevel;
+  message: string;
+  createdAt: string;
+  origin: string;
+  action: string;
+  payload: { [key: string]: any };
 }

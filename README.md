@@ -9,7 +9,6 @@
 - [Dashboard](#dashboard)
 - [Widget](#widget)
 - [SDK](#sdk)
-- [Desktop app](#desktop-app)
 - [Sistema](#sistema)
 - [Protobuf library](#protobuf-library)
 - [CI/CD Deployment](#cicd-deployment)
@@ -133,60 +132,6 @@ When you have some local changes to the widget you'd like to test on the dashboa
 
 [Documentation](https://docs.nuclia.dev/docs/docs/sdk/js_sdk_api)
 
-## Desktop app
-
-### Configuration
-
-Desktop application needs two configuration files to run:
-
-- in `apps/desktop/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration.
-- in `apps/desktop/src/environments`, create a file `environment.dev.ts`
-
-### Run & Build
-
-Run the UI in the browser:
-
-```
-nx serve desktop
-```
-
-Launch the server:
-
-```
-yarn desktop-server-dev
-```
-
-Note: the server can be used appart from the UI. It persists all its data in `~/Library/Application\ Support/nuclia/connectors-db.json`.
-
-Build for stage:
-
-```
-./tools/build-desktop.sh
-```
-
-### How to add a connector
-
-The desktop app is composed of 2 parts:
-
-- the frontend, which is a web app built with Angular and wrapped in Electron
-- the backend, which is a NodeJS server
-
-When adding a new connector, you need to add it to both parts.
-
-The frontend part is in charge to declare the parameters the user will have to provide when configuring the connector, and will manage the OAuth flow (if any).
-
-The backend part is in charge to implement the connector logic, i.e. the code that will fetch the data from the source.
-
-In both cases, you have to implement a class in TypeScript that extends a given base class (be careful, the base classes have the same name in the 2 cases but they are different) and declare it in a constant.
-
-In the frontend, you need to create a new file in `apps/desktop/src/app/sync/sources`, and implement a class extending `ISourceConnector`.
-This class is a pure TypeScript classes, it is not Angular based (which is good, so people not knowing about Angular can contribute to the desktop app, but it also means it can not inject Angular services, anyway, that should not be needed).
-Then the class plus the connector metadata (title, logo, etc.) must be declared in a `SourceConnectorDefinition` constant, and this constant must be imported in `apps/desktop/src/app/sync/sync.service.ts` and added to the `sources` property.
-
-In the backend, you need to create a new file in `apps/desktop/electron/src/service/connectors`, and implement a class extending `ISourceConnector` (same name as the frontend one, but different methods and properties). It must be declared in a `SourceConnectorDefinition` constant, and this constant must be imported in `apps/desktop/electron/src/service/connectors.ts` and added to the `connectors` constant.
-
-The OneDrive connector is a typical use case, it can be used as an example.
-
 ## Sistema
 
 Sistema is Nuclia's design system. It is based on [Pastanaga](https://github.com/plone/pastanaga-angular).
@@ -231,7 +176,6 @@ npm publish
 
 CI/CD deployment does not cover:
 
-- the desktop app as its artefacts are released directly in the Github repo;
 - the SDK as it is released in the NPM registry;
 - the NucliaDB admin app as it is released in the Python registry.
 
@@ -257,8 +201,6 @@ Then, choose `app` or `manager` component in the list (keep the default values f
 It triggers the prod promotion, and it can be monitored on [http://europe1.argocd.nuclia.com/applications/app?resource=](http://europe1.argocd.nuclia.com/applications/app?resource=) or [http://europe1.argocd.nuclia.com/applications/argocd/manager?view=tree&resource=](http://europe1.argocd.nuclia.com/applications/argocd/manager?view=tree&resource=).
 
 To deploy the widget, use [https://github.com/nuclia/frontend_deploy/actions/workflows/cdn-sync.yaml](https://github.com/nuclia/frontend_deploy/actions/workflows/cdn-sync.yaml).
-
-Note: the desktop app is always directly deployed to prod (there is no stage, the downloadable installers are stored as artefacts in the Github repo).
 
 ### About ArgoCD
 

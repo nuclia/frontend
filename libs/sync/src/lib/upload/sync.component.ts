@@ -13,7 +13,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   currentSync = this.syncService.getCurrentSync();
   connector = this.currentSync.pipe(
     switchMap((sync) =>
-      this.syncService.sourceObs.pipe(map((sources) => sources.find((s) => s.id === sync.connector.name))),
+      this.syncService.connectorsObs.pipe(map((sources) => sources.find((s) => s.id === sync.connector.name))),
     ),
   );
   canSelectFiles = this.syncService

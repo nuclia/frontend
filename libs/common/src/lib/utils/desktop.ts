@@ -38,24 +38,6 @@ export function getDesktopAppUrl(platform: 'mac' | 'win' | 'linux'): Observable<
   );
 }
 
-export function openDesktop() {
-  let appInstalled = false;
-
-  const onBlur = () => {
-    // A blur event indicates that the application is installed
-    appInstalled = true;
-  };
-  window.addEventListener('blur', onBlur);
-
-  timer(400).subscribe(() => {
-    if (!appInstalled) {
-      downloadDesktop();
-    }
-    window.removeEventListener('blur', onBlur);
-  });
-  window.location.href = 'nuclia-desktop://';
-}
-
 function downloadDesktop() {
   const platform = getDesktopPlatform();
   if (platform) {

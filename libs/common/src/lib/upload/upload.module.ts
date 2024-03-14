@@ -31,7 +31,6 @@ import { UploadOptionComponent } from './upload-data/upload-option/upload-option
 import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-sources.component';
 import { UploadLayoutComponent } from './upload-data/upload-layout.component';
 import { UploadRoutingModule } from './upload-routing.module';
-import { SyncModule } from 'libs/sync/src/lib/new-sync.module';
 import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module';
 
 @NgModule({
@@ -55,10 +54,9 @@ import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module
     PaTableModule,
     ProgressBarComponent,
     UploadRoutingModule,
-    ConnectorsModule,
-    SyncModule,
     UploadBarComponent,
     CsvSelectComponent,
+    ConnectorsModule,
   ],
   declarations: [
     CreateLinkComponent,

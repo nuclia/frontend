@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { SyncService } from '../../sync/sync.service';
 import { Subject, catchError, filter, map, of, repeat, startWith, switchMap, take, takeUntil, tap, timer } from 'rxjs';
-import { SyncRow } from '../../sync/new-models';
+import { SyncRow } from '../../sync/models';
 import { NavigationEnd, Router } from '@angular/router';
 import { SisToastService } from '@nuclia/sistema';
 

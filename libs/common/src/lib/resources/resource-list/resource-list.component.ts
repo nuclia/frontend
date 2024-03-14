@@ -16,7 +16,6 @@ import { SisToastService } from '@nuclia/sistema';
 import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { UploadService } from '../../upload/upload.service';
-import { openDesktop } from '../../utils';
 import { ResourceListService } from './resource-list.service';
 import { SampleDatasetService } from '../sample-dataset.service';
 
@@ -125,10 +124,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  useDesktop() {
-    openDesktop();
   }
 
   search() {

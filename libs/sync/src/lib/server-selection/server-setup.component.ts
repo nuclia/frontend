@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { LOCAL_SYNC_SERVER, SYNC_SERVER_KEY } from '../sync/new-sync.service';
+import { LOCAL_SYNC_SERVER, SYNC_SERVER_KEY } from '../sync/sync.service';
 import { SyncService } from '../sync/sync.service';
 import { NavigationService } from '@flaps/core';
 import { take } from 'rxjs';
@@ -23,7 +23,7 @@ export class ServerSetupComponent {
   ) {}
 
   save() {
-    this.sync.setSyncServer({ url: this.serverUrl.value, local: false });
+    this.sync.setSyncServer(this.serverUrl.value);
     this.back();
   }
 

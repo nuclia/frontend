@@ -6,7 +6,7 @@ import { Account } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { take, map, filter, switchMap, combineLatest, from, tap } from 'rxjs';
 
-const AUTHORIZED_REDIRECTS = ['nuclia-desktop://', 'http://localhost:4200'];
+const AUTHORIZED_REDIRECTS = ['http://localhost:4200'];
 const AUTHORIZED_REDIRECTS_REGEX = [/^chrome\-extension\:\/\/[a-z]+\/options\/options\.html$/];
 
 @Component({
