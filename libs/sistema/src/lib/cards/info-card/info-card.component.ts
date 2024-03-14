@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,4 +9,13 @@ import { CommonModule } from '@angular/common';
   styleUrl: './info-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InfoCardComponent {}
+export class InfoCardComponent {
+  @Input() type: 'default' | 'warning' | 'highlight' = 'default';
+
+  @HostBinding('class.warning') get warning() {
+    return this.type === 'warning';
+  }
+  @HostBinding('class.highlight') get highlight() {
+    return this.type === 'highlight';
+  }
+}

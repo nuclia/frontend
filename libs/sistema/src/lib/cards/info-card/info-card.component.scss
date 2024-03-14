@@ -1,10 +1,25 @@
 @import '../../../../styles/variables';
 
 :host {
-  background: $color-neutral-lightest;
-  border: 1px solid $color-neutral-lighter;
+  --info-card-background: #{$color-neutral-lightest};
+  --info-card-border-color: #{$color-neutral-lighter};
+  --info-card-color: #{$color-neutral-regular};
+
+  background: var(--info-card-background);
+  border: 1px solid var(--info-card-border-color);
   border-radius: rhythm(1);
-  color: $color-neutral-regular;
+  color: var(--info-card-color);
   display: block;
   padding: rhythm(1.5) rhythm(2);
+
+  &.warning {
+    --info-card-background: #{$color-secondary-lightest};
+    --info-card-border-color: #{$color-secondary-light};
+    --info-card-color: #{$color-secondary-stronger};
+  }
+  &.highlight {
+    --info-card-background: #{$color-tertiary-lightest};
+    --info-card-border-color: #{$color-tertiary-lighter};
+    --info-card-color: #{$color-tertiary-strong};
+  }
 }
