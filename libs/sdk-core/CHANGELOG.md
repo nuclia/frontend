@@ -3,6 +3,7 @@
 ### Improvements
 
 - Support POST requests for `/catalog` endpoint
+- Update `Entities` interface as `getEntities` no longer returns the `entities` property
 
 # 1.14.0 (2024-03-12)
 
