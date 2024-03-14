@@ -11,3 +11,4 @@ export * from './lib/progress';
 export * from './lib/sis-toast.service';
 export * from './lib/sis-modal.service';
 export * from './lib/status';
+export * from './lib/two-columns-configuration-item';

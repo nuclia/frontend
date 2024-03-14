@@ -1,0 +1,55 @@
+<pa-demo-page>
+  <pa-demo-title>Two columns configuration item</pa-demo-title>
+  <pa-demo-description>
+    <p>Layout component allowing to display two even size columns for configuration pages:</p>
+    <ul>
+      <li>The first column contains a title, a description and an optional label.</li>
+      <li>The second column has free content.</li>
+    </ul>
+    <p>
+      <code>two-columns-configuration-item</code>
+      component allows to build a row in such a two columns layout.
+    </p>
+  </pa-demo-description>
+  <pa-demo-examples>
+    <div>
+      <nsi-two-columns-configuration-item
+        itemTitle="Here is the item title"
+        description="and here the item description">
+        <p>This column is free content, you can use it to display whatever you need.</p>
+      </nsi-two-columns-configuration-item>
+      <nsi-two-columns-configuration-item
+        itemTitle="Anothere line"
+        label="optional label"
+        description="You can add as many items as you need, but remember that you should not add any space between them">
+        <div>
+          <pa-radio-group>
+            <pa-radio>Choice 1</pa-radio>
+            <pa-radio>Choice 2</pa-radio>
+            <pa-radio>Choice 3</pa-radio>
+          </pa-radio-group>
+        </div>
+      </nsi-two-columns-configuration-item>
+    </div>
+  </pa-demo-examples>
+
+  <pa-demo-usage>
+    <h3>Inputs</h3>
+    <dl>
+      <dt>description</dt>
+      <dd>Description to be displayed on the left column.</dd>
+
+      <dt>itemTitle</dt>
+      <dd>Title to be displayed on the left column.</dd>
+
+      <dt>label</dt>
+      <dd>
+        Label displayed next to the title.
+        <small>(optional)</small>
+      </dd>
+    </dl>
+  </pa-demo-usage>
+  <pa-demo-code>
+    <pre><code>{{code}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>
