@@ -115,7 +115,6 @@ export function getAskPresetConfig(value: Partial<PresetForm>): AdvancedForm {
   return {
     ...DEFAULT_CONFIGURATION,
     answers: true,
-    citations: true,
     hideResults: value.answerOutput === 'onlyAnswers',
     permalink: true,
     navigateToFile: value.answerOutput === 'answerAndResults' && value.location === 'public',
