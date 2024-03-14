@@ -21,8 +21,7 @@
     "sdk-build:default": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cd ../..",
     "postsdk-build:default": "yarn sdk-build-node",
     "sdk-build-node": "rimraf ./dist/sdk-core-node && cd ./libs/sdk-core/node && rollup -c && cd ../..",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org nuclia --project application ./dist && sentry-cli sourcemaps upload --org nuclia --project application ./dist",
-    "desktop-server-dev": "concurrently \"cd apps/desktop/electron && npx tsc -p ./tsconfig.server.json --watch\" \"nodemon -q dist/service/apps/desktop/electron/src/service/server.js\""
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org nuclia --project application ./dist && sentry-cli sourcemaps upload --org nuclia --project application ./dist"
   },
   "private": true,
   "dependencies": {
