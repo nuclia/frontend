@@ -1020,7 +1020,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   /**
    * Uploads a list of files to the Knowledge Box. It automatically creates a new resource for each file
-   * and uses the [TUS](https://tus.io/) protocol to upload the files. */
+   * and uses the [TUS](https://tus.io/) protocol to upload the files.
+   */
   batchUpload(files: FileList | File[] | FileWithMetadata[]): Observable<UploadStatus> {
     return batchUpload(this.nuclia, `/kb/${this.id}`, files, false);
   }

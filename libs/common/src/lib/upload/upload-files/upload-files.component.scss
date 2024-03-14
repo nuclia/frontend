@@ -1,12 +1,5 @@
 @import 'apps/dashboard/src/variables';
 
-.upload-files {
-  width: 50vw;
-  min-width: 350px;
-  max-width: 722px;
-  max-height: 85vh;
-}
-
 .warning {
   background-color: $color-secondary-regular;
   padding: rhythm(1);
@@ -51,7 +44,7 @@ app-label-field {
   @include scrollbar-style(6px, var(--stf-gray-background), var(--stf-gray-background), #000, #000, 0, 0);
   max-height: 13vh;
   overflow-y: auto;
-  margin-bottom: 26px;
+  margin-bottom: rhythm(3);
 }
 
 .file-item {
@@ -59,15 +52,15 @@ app-label-field {
   align-items: center;
   height: rhythm(4);
   margin-right: rhythm(1);
-  border-bottom: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+  box-shadow: $box-shadow-border-bottom;
   &:first-child {
-    border-top: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+    border-top: 1px solid $color-neutral-lighter;
   }
   &.over-limit {
     color: $color-neutral-light;
   }
   .file-name {
-    flex: 0 1 290px;
+    flex: 0 1 rhythm(35);
     @include text-truncate();
     padding-right: rhythm(2);
   }
@@ -86,4 +79,11 @@ pa-toggle {
   ::ng-deep .pa-field .pa-toggle-label-container {
     margin-left: 0 !important;
   }
+}
+
+.language-detection {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin: rhythm(3) 0;
 }

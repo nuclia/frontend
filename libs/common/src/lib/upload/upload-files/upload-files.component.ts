@@ -5,6 +5,7 @@ import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core'
 import { UploadService } from '../upload.service';
 import { StandaloneService } from '../../services';
 import { getFilesGroupedByType } from '../upload.utils';
+import { FormControl, Validators } from '@angular/forms';
 
 const GENERAL_LABELSET = 'General';
 
@@ -26,6 +27,11 @@ export class UploadFilesComponent {
   maxFileSize = 0;
   maxMediaFileSize = 0;
   useFoldersAsLabels = false;
+  automaticLanguageDetection = true;
+  langCode = new FormControl<string | undefined>(undefined, {
+    nonNullable: true,
+    validators: [Validators.pattern(/^[a-z]{2}$/)],
+  });
 
   standalone = this.standaloneService.standalone;
   noLimit = this.standalone;
@@ -100,6 +106,11 @@ export class UploadFilesComponent {
     if (files.length > 0) {
       this.upload.emit();
       const labelledFiles = this.setLabels(files);
+      if (this.langCode) {
+        labelledFiles.forEach((file) => {
+          file.lang = this.langCode.getRawValue();
+        });
+      }
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
       this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
     } else {

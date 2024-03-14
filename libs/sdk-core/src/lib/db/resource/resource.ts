@@ -222,7 +222,7 @@ export class Resource extends ReadableResource implements IResource {
 
   /**
    * Modifies the resource attributes.
-   * 
+   *
    * Example:
     ```ts
     nuclia.db
@@ -281,7 +281,7 @@ export class Resource extends ReadableResource implements IResource {
 
   /**
    * Adds or updates a field in the resource.
-   * 
+   *
    * Example:
     ```ts
     nuclia.db
@@ -313,7 +313,7 @@ export class Resource extends ReadableResource implements IResource {
 
   /**
    * Uploads a file in the resource. The field will be stored in the indicated field.
-   * 
+   *
    * Example:
     ```ts
     nuclia.db
