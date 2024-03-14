@@ -23,5 +23,4 @@ export * from './lib/services';
 export * from './lib/token-dialog';
 export * from './lib/topbar';
 export * from './lib/upload';
-export * from './lib/utils';
 export * from './lib/validators';
