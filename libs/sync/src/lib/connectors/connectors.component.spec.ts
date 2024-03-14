@@ -21,10 +21,10 @@ describe('ConnectorsComponent', () => {
         {
           provide: SyncService,
           useValue: {
-            sourceObs: of([
+            connectorsObs: of([
               {
-                id: 'source1',
-                title: 'Source 1',
+                id: 'connector1',
+                title: 'Connector 1',
                 icon: '',
                 description: '',
               },
@@ -47,7 +47,7 @@ describe('ConnectorsComponent', () => {
       jest.spyOn(component.selectConnector, 'emit');
       const element = fixture.debugElement.nativeElement.querySelector('.connector');
       element.click();
-      expect(component.selectConnector.emit).toHaveBeenCalledWith('source1');
+      expect(component.selectConnector.emit).toHaveBeenCalledWith('connector1');
     });
   });
 });
