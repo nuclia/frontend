@@ -1,0 +1,31 @@
+@import '../../../styles/variables';
+
+:host {
+  box-shadow: $box-shadow-border-bottom;
+  display: flex;
+  gap: rhythm(5);
+  padding: rhythm(3) 0;
+
+  &:first-of-type {
+    border-top: 1px solid $color-neutral-lighter;
+  }
+
+  .column {
+    flex: 1;
+  }
+
+  .title {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+  .label {
+    background: $color-tertiary-lightest;
+    border-radius: rhythm(1.5);
+    color: $color-tertiary-strong;
+    padding: 0 rhythm(1);
+  }
+  .description {
+    color: $color-neutral-regular;
+  }
+}

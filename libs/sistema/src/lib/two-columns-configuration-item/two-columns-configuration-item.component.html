@@ -1,0 +1,12 @@
+<div class="column">
+  <div class="title-xs title">
+    {{ itemTitle }}
+    @if (label) {
+      <span class="label overline">{{ label }}</span>
+    }
+  </div>
+  <div class="body-m description">{{ description }}</div>
+</div>
+<div class="column">
+  <ng-content></ng-content>
+</div>
