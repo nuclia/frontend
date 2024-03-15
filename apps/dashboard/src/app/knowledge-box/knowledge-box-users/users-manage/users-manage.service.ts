@@ -7,7 +7,7 @@ import { InviteKbData, KBRoles, WritableKnowledgeBox } from '@nuclia/core';
 @Injectable()
 export class UsersManageService {
   private _onUpdateUsers = new BehaviorSubject<null>(null);
-  private _kb = new ReplaySubject<WritableKnowledgeBox>();
+  private _kb = new ReplaySubject<WritableKnowledgeBox>(1);
 
   usersKb = this._onUpdateUsers.pipe(
     switchMap(() =>
