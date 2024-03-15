@@ -1,5 +1,7 @@
-import { from, map, Observable, of, Subscriber, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, Subscriber, switchMap } from 'rxjs';
 import type { INuclia, IRest } from '../models';
+import { KBRoles } from '../db/kb/kb.models';
+import { NucliaDBRole } from '../auth/auth.models';
 
 export const ABORT_STREAMING_REASON = 'Stop listening to streaming';
 const NS_BINDING_ABORTED_ERROR = 'TypeError: NetworkError when attempting to fetch resource.';
@@ -124,11 +126,12 @@ export class Rest implements IRest {
     doNotParse?: boolean,
     synchronous = false,
     zoneSlug: string | undefined = undefined,
+    insertAuthorizer?: boolean,
   ): Observable<T> {
     const specialContentType = extraHeaders && extraHeaders['content-type'];
     const payload = specialContentType ? body : JSON.stringify(body);
     return from(
-      fetch(this.getFullUrl(path, zoneSlug), {
+      fetch(this.getFullUrl(path, zoneSlug, insertAuthorizer), {
         method,
         headers: this.getHeaders(method, path, extraHeaders, synchronous),
         body: payload,
@@ -170,7 +173,10 @@ export class Rest implements IRest {
   /**
    *  Returns the full URL of the given path, using the regional or the global Nuclia backend according to the path or the provided zone slug (if any).
    */
-  getFullUrl(path: string, zoneSlug?: string): string {
+  getFullUrl(path: string, zoneSlug?: string, insertAuthorizer?: boolean): string {
+    if (path.includes('/api/authorizer/authorize')) {
+      return path;
+    }
     if (path.startsWith('http')) {
       return path;
     }
@@ -202,7 +208,21 @@ export class Rest implements IRest {
       path.startsWith('/marketplace')
         ? ''
         : '/v1';
-    return `${backend}${version}${path}`;
+    const authorizer = insertAuthorizer ? '/authorizer/authorize/api' : '';
+    return `${backend}${authorizer}${version}${path}`;
+  }
+
+  /**
+   * Check if the user has access to the given endpoint, and return the corresponding roles.
+   * */
+  checkAuthorization(endpoint: string): Observable<{ allowed: boolean; roles: (KBRoles | NucliaDBRole)[] }> {
+    return this.fetch<Response>('GET', endpoint, undefined, undefined, true, false, undefined, true).pipe(
+      map((res) => {
+        const roles = res.headers.get('x-nucliadb-roles') || '';
+        return { allowed: res.ok, roles: roles.split(';') as (KBRoles | NucliaDBRole)[] };
+      }),
+      catchError(() => of({ allowed: false, roles: [] })),
+    );
   }
 
   /** Returns a dictionary giving the geographical zones available slugs by unique ids. */

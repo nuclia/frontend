@@ -1,3 +1,9 @@
+# 1.14.2 (2024-03-15)
+
+### Improvements
+
+- Allow to check authorization on endpoints
+
 # 1.14.1 (2024-03-14)
 
 ### Improvements
