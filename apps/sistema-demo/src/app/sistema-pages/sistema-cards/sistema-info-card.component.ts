@@ -12,6 +12,10 @@ import { InfoCardComponent } from '@nuclia/sistema';
 })
 export class SistemaInfoCardComponent {
   code = `<nsi-info-card>Any content, default style.</nsi-info-card>
+
 <nsi-info-card type="highlight">Any content, highlight style.</nsi-info-card>
-<nsi-info-card type="warning">Any content, warning style.</nsi-info-card>`;
+
+<nsi-info-card type="warning" icon="warning">Any content, warning style.</nsi-info-card>
+
+<nsi-info-card icon="info">Any content, default style.</nsi-info-card>`;
 }
