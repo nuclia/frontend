@@ -11,7 +11,7 @@
     <nsi-info-card>
       Here is a default
       <code>info-card</code>
-      , giving you more context about something else in the screen, discretely highlighted mostly by the box.
+      giving you more context about something else in the screen, discretely highlighted mostly by the box.
     </nsi-info-card>
     <br />
     <nsi-info-card type="highlight">
@@ -25,11 +25,39 @@
       <code>warning</code>
       which is important to read, highlighted with destructive color and the box.
     </nsi-info-card>
+    <br />
+    <nsi-info-card icon="info">
+      Here is a default
+      <code>info-card</code>
+      giving you more context about something else in the screen, discretely highlighted mostly by the box.
+    </nsi-info-card>
+    <br />
+    <nsi-info-card
+      type="highlight"
+      icon="smile">
+      Here is some highlighted information using
+      <code>highlight</code>
+      type, giving you more context about something else in the screen, highlighted by the box and the colors.
+    </nsi-info-card>
+    <br />
+    <nsi-info-card
+      type="warning"
+      icon="warning">
+      Here is some
+      <code>warning</code>
+      which is important to read, highlighted with destructive color and the box.
+    </nsi-info-card>
   </pa-demo-examples>
 
   <pa-demo-usage>
     <h3>Inputs</h3>
     <dl>
+      <dt>icon</dt>
+      <dd>
+        Name of the glyph to be displayed on the left of the info-card.
+        <small>(optional)</small>
+      </dd>
+
       <dt>type</dt>
       <dd>
         Info card type:
