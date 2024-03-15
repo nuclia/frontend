@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import type { AuthTokens, JwtUser } from './auth';
+import type { AuthTokens, JwtUser, NucliaDBRole } from './auth';
 import {
   Account,
   AccountCreation,
@@ -9,6 +9,7 @@ import {
   EventList,
   IKnowledgeBoxItem,
   IStandaloneKb,
+  KBRoles,
   KbIndex,
   KnowledgeBox,
   KnowledgeBoxCreation,
@@ -107,6 +108,7 @@ export interface IRest {
   getStreamedResponse(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>;
 
   getStreamMessages(path: string, controller: AbortController): Observable<{ data: Uint8Array; headers: Headers }>;
+  checkAuthorization(path: string): Observable<{ allowed: boolean; roles: (KBRoles | NucliaDBRole)[] }>;
 }
 
 export interface IDb {
