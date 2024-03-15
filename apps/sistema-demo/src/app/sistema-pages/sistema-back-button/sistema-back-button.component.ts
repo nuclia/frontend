@@ -5,5 +5,5 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SistemaBackButtonComponent {
-  code = `<nsi-back-button link=".."></nsi-back-button>`;
+  code = `<nsi-back-button link="..">Back</nsi-back-button>`;
 }

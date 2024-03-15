@@ -1,8 +1,8 @@
-<pa-button
+<a
   [routerLink]="link"
-  iconAndText
-  icon="chevron-left"
-  aspect="basic"
-  size="small">
-  <a [routerLink]="link"><ng-content></ng-content></a>
-</pa-button>
+  class="title-xs">
+  <pa-icon
+    name="chevron-left"
+    size="small"></pa-icon>
+  <ng-content></ng-content>
+</a>

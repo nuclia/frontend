@@ -2,18 +2,15 @@
   <pa-demo-title>Back button</pa-demo-title>
   <pa-demo-description>
     <p>
-      Sistema provides a standalone back button component which is wrapping and styling a
-      <code>pa-button</code>
-      link.
+      Sistema provides a standalone back button component which is a simple styled link wrapping a
+      <code>pa-icon</code>
+      chevron-left component.
     </p>
-    <p>
-      <code>nsi-back-button</code>
-      is a small basic icon and text button with a smaller size padding than regular small buttons, as shown below.
-    </p>
+    <p>The link’s style is overridden to stay black instead of using primary color.</p>
   </pa-demo-description>
 
   <pa-demo-examples>
-    <nsi-back-button link=".."></nsi-back-button>
+    <nsi-back-button link="..">Back</nsi-back-button>
   </pa-demo-examples>
 
   <pa-demo-usage>
@@ -23,7 +20,8 @@
       <dd>
         Path to go to when clicking on the button. Navigation is done using
         <code>routerLink</code>
-        directive
+        directive.
+        <small>Mandatory</small>
       </dd>
     </dl>
   </pa-demo-usage>

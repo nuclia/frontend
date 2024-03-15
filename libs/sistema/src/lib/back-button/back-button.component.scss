@@ -1,5 +1,15 @@
-@import '../../../../pastanaga-angular/projects/pastanaga-angular/src/styles/variables';
+@import '../../../styles/variables';
 
-:host pa-button ::ng-deep .pa-button {
-  padding: rhythm(0.5) rhythm(1) rhythm(0.5) 0;
+:host {
+  pa-icon {
+    display: flex;
+  }
+
+  a {
+    align-items: center;
+    color: $color-dark-stronger;
+    display: flex;
+    gap: rhythm(1);
+    padding-right: rhythm(1);
+  }
 }
