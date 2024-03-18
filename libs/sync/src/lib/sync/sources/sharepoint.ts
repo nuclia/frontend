@@ -13,7 +13,7 @@ export class SharepointImpl extends OAuthConnector {
     return of([
       {
         id: 'site_name',
-        label: 'Site name',
+        label: 'connectors.sharepoint.site.label',
         type: 'text',
         required: true,
       },

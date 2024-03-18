@@ -20,21 +20,21 @@ class ConfluenceImpl implements IConnector {
     return of([
       {
         id: 'url',
-        label: 'Confluence site URL',
+        label: 'connectors.confluence.url.label',
         type: 'text',
         placeholder: 'https://my-site.atlassian.net/wiki',
         required: true,
       },
       {
         id: 'user',
-        label: 'User account',
+        label: 'connectors.confluence.user.label',
         type: 'text',
         placeholder: 'me@mycompany.com',
         required: true,
       },
       {
         id: 'token',
-        label: 'API token',
+        label: 'connectors.confluence.token.label',
         type: 'text',
         required: true,
       },

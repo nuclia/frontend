@@ -32,11 +32,19 @@ class SitemapImpl implements IConnector {
     return of([
       {
         id: 'sitemap',
-        label: 'Sitemap URL',
+        label: 'connectors.sitemap.url.label',
         type: 'text',
         required: true,
         pattern: /.+\.(ashx|xml)/,
         placeholder: 'https://my-website.com/sitemap.xml',
+      },
+      {
+        id: 'cssSelector',
+        label: 'connectors.sitemap.selector.label',
+        help: 'connectors.sitemap.selector.help',
+        type: 'text',
+        required: false,
+        placeholder: '.main-content',
       },
     ]);
   }
