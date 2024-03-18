@@ -107,10 +107,12 @@
 
       .side-panel {
         --panel-section-margin-bottom: var(--rhythm-1);
-        --metadata-height: var(--panel-section-margin-bottom) * (var(--metadata-block-count, 1)) -
-          var(--expander-header-height) * (var(--metadata-block-count, 1) + var(--search-section-count));
-        --expander-max-height: var(--header-height) - var(--top-padding) - var(--bottom-padding) -
-          var(--find-input-height) - var(--panel-section-margin-bottom) - var(--metadata-height);
+        --metadata-height: var(--panel-section-margin-bottom) * (var(--metadata-block-count, 1)) - var(
+            --expander-header-height
+          ) * (var(--metadata-block-count, 1) + var(--search-section-count));
+        --expander-max-height: var(--header-height) - var(--top-padding) - var(--bottom-padding) - var(
+            --find-input-height
+          ) - var(--panel-section-margin-bottom) - var(--metadata-height);
 
         display: flex;
         gap: var(--side-panel-gap);
@@ -147,6 +149,7 @@
         .find-bar-container {
           align-items: center;
           background: var(--container-background-color);
+          border-radius: var(--border-radius);
           display: flex;
           gap: var(--rhythm-1);
           justify-content: center;

@@ -8,7 +8,9 @@
   height: var(--search-input-height);
   max-width: var(--search-bar-max-width);
   position: relative;
-  transition: height var(--transition-fast);
+  transition:
+    height var(--transition-fast),
+    border-color var(--transition-superfast);
 
   .input-container {
     align-items: center;
@@ -38,8 +40,12 @@
   }
 
   input::placeholder {
-    color: var(--color-neutral-regular);
+    color: var(--search-bar-placeholder-color);
     transition: all 0s ease;
+  }
+
+  &:hover {
+    border: var(--search-bar-border-hover);
   }
 
   &:focus-within {
@@ -54,7 +60,7 @@
       position: absolute;
       top: calc(var(--rhythm-1_5) * -1 + var(--rhythm-0_25));
       width: var(--rhythm-7);
-      z-index: 1;
+      z-index: 0;
     }
 
     &:before,
@@ -64,6 +70,7 @@
       height: 1px;
       position: absolute;
       top: -1px;
+      transition: background-color var(--transition-superfast);
     }
 
     &:before {
@@ -73,6 +80,15 @@
     &:after {
       left: var(--rhythm-9);
       right: -1px;
+    }
+
+    &:hover {
+      border-top: 1px solid transparent;
+
+      &:before,
+      &:after {
+        background: var(--search-bar-border-hover-color);
+      }
     }
 
     &:focus-within {
