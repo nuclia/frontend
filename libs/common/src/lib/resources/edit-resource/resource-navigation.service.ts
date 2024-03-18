@@ -82,7 +82,7 @@ export class ResourceNavigationService {
   private navigateToNextResource(currentData: ResourceNavigationModel, nextIndex: number) {
     const resourceId = currentData.resourceIdList[nextIndex];
     const snapshot = this._currentRoute?.snapshot;
-    let newUrl = location.pathname.replace(/resources\/[a-z0-9]+/, `resources/${resourceId}`);
+    let newUrl = location.pathname.replace(/\/resources\/[a-z0-9]+\/edit/, `/resources/${resourceId}/edit`);
     const lastPath = snapshot?.routeConfig?.path?.split('/')[0];
     if (lastPath && lastPath !== 'resource') {
       newUrl = `${newUrl.split(lastPath)[0]}${lastPath}`;
