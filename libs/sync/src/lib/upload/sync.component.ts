@@ -20,6 +20,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     .getCurrentSync()
     .pipe(map((sync) => this.syncService.canSelectFiles(sync.id || '')));
   selectedTab = 'activity';
+  enabled = this.currentSync.pipe(map((sync) => !sync.disabled));
   private unsubscribeAll = new Subject<void>();
 
   constructor(
@@ -90,5 +91,18 @@ export class SyncComponent implements OnInit, OnDestroy {
   done() {
     this.selectedTab = 'activity';
     this.cdr.markForCheck();
+  }
+
+  toggle() {
+    this.currentSync
+      .pipe(
+        take(1),
+        switchMap((sync) => this.syncService.updateSync(sync.id, { disabled: !sync.disabled })),
+      )
+      .subscribe({
+        error: () => {
+          this.toast.error('upload.failed');
+        },
+      });
   }
 }

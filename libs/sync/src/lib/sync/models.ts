@@ -98,6 +98,7 @@ export interface ISyncEntity {
   foldersToSync?: SyncItem[];
   filters?: Filters;
   lastSyncGMT?: string;
+  disabled?: boolean;
 }
 
 export interface SyncBasicData {

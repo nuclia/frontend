@@ -29,6 +29,7 @@
 	"pastanaga.datetime.minutesAgo": "Fa {{minutes}} minuts",
 	"pastanaga.datetime.one-minute-ago": "Fa 1 min",
 	"pastanaga.datetime.yesterday": "Ahir",
+	"upload.active": "Actiu",
 	"upload.activity.date": "Data",
 	"upload.activity.error": "La sincronització ha fallat",
 	"upload.activity.event": "Missatge",

@@ -29,6 +29,7 @@
 	"pastanaga.datetime.minutesAgo": "Hace {{minutes}} minutos",
 	"pastanaga.datetime.one-minute-ago": "Hace 1 minuto",
 	"pastanaga.datetime.yesterday": "Ayer",
+	"upload.active": "Activo",
 	"upload.activity.date": "Fecha",
 	"upload.activity.error": "Sincronización fallida",
 	"upload.activity.event": "Mensaje",
