@@ -38,6 +38,8 @@ export class Nuclia implements INuclia {
       this.readKb = new KnowledgeBox(this, '', {
         id: this.options.knowledgeBox,
         zone: this.options.zone || '',
+        slug: this.options.kbSlug || '',
+        title: '',
       });
     }
     return this.readKb;

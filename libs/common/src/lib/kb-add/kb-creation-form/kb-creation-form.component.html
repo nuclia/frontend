@@ -1,14 +1,24 @@
 <form
   class="form-container"
   [formGroup]="kbForm">
-  <pa-input
-    id="kb-title"
-    formControlName="title"
-    data-cy="new-kb-name-input"
-    help="kb.form.required-name"
-    [errorMessages]="validationMessages['title']">
-    {{ 'kb.form.name' | translate }}
-  </pa-input>
+  <div>
+    <pa-input
+      id="kb-title"
+      formControlName="title"
+      data-cy="new-kb-name-input"
+      help="kb.form.required-name"
+      [errorMessages]="validationMessages['title']">
+      {{ 'kb.form.name' | translate }}
+    </pa-input>
+
+    @if (existingName) {
+      <nsi-info-card
+        icon="warning"
+        type="warning">
+        {{ 'kb.form.existing-name' | translate }}
+      </nsi-info-card>
+    }
+  </div>
 
   <pa-textarea
     id="kb-description"

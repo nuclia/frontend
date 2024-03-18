@@ -15,6 +15,8 @@ import { CommonModule } from '@angular/common';
 import { LanguageFieldComponent } from '@nuclia/user';
 import { KbConfig, KbCreationFormComponent, LearningConfig } from './kb-creation-form/kb-creation-form.component';
 import * as Sentry from '@sentry/angular';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 export interface KbAddData {
   account: Account;
@@ -78,15 +80,24 @@ export class KbAddModalComponent implements OnInit {
     const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
     this.cdr.markForCheck();
 
+    const slug = STFUtils.generateSlug(this.kbConfig.title);
+    const knowledgeBox = {
+      ...this.kbConfig,
+      slug,
+      learning_configuration: this.learningConfig,
+    };
+    const zone = this.kbConfig.zone;
     this.sdk.nuclia.db
-      .createKnowledgeBox(
-        accountId,
-        {
-          ...this.kbConfig,
-          slug: STFUtils.generateSlug(this.kbConfig.title),
-          learning_configuration: this.learningConfig,
-        },
-        this.kbConfig.zone,
+      .createKnowledgeBox(accountId, knowledgeBox, zone)
+      .pipe(
+        catchError((error) => {
+          if (error.status === 409) {
+            knowledgeBox.slug = `${knowledgeBox.slug}-${(Math.floor(Math.random() * 10000) + 4096).toString(16)}`;
+            return this.sdk.nuclia.db.createKnowledgeBox(accountId, knowledgeBox, zone);
+          } else {
+            return throwError(() => error);
+          }
+        }),
       )
       .subscribe({
         next: (kb) => {
@@ -105,7 +116,7 @@ export class KbAddModalComponent implements OnInit {
           this.saving = false;
           this.creationInProgress = false;
           if (this.failures < 4) {
-            this.toast.error('kb.create.error');
+            this.toast.error('kb.create.error.generic');
           } else {
             Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
             this.modal.close({ success: false });

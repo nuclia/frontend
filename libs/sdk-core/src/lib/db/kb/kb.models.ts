@@ -29,8 +29,8 @@ export enum EventType {
 
 export interface IKnowledgeBoxCreation {
   id: string;
-  slug?: string;
-  title?: string;
+  slug: string;
+  title: string;
   state?: KBStates;
   description?: string;
   zone: string;

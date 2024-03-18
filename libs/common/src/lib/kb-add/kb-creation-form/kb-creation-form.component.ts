@@ -16,9 +16,9 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { IErrorMessages, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { FeaturesService, getSemanticModel, SDKService, Zone } from '@flaps/core';
 import { LanguageFieldComponent } from '@nuclia/user';
-import { SisProgressModule } from '@nuclia/sistema';
+import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { map, Subject, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 export interface KbConfig {
@@ -44,6 +44,7 @@ export interface LearningConfig {
     TranslateModule,
     PaTextFieldModule,
     PaTogglesModule,
+    InfoCardComponent,
   ],
   templateUrl: './kb-creation-form.component.html',
   styleUrl: './kb-creation-form.component.scss',
@@ -85,16 +86,29 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
 
   isAnonymizationEnabled = this.features.kbAnonymization;
 
+  existingKbNames: string[] = [];
+  existingName = false;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
     private sdk: SDKService,
-  ) {}
+  ) {
+    this.sdk.kbList
+      .pipe(
+        take(1),
+        map((kbs) => kbs.map((kb) => kb.title)),
+      )
+      .subscribe((titles) => (this.existingKbNames = titles));
+  }
 
   ngOnInit() {
     this.kbForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       const { anonymization, ...kbConfig } = this.kbForm.getRawValue();
+      kbConfig.title = kbConfig.title.trim();
       this.kbConfig.emit(kbConfig);
+      this.existingName = this.existingKbNames.includes(kbConfig.title);
+      this.cdr.markForCheck();
     });
     // Learning schema depends on the zone and on anonymization, so if one of them changes, we make sure to compute and emit again the learning configuration
     this.kbForm.controls.zone.valueChanges

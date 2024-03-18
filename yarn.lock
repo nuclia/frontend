@@ -15960,7 +15960,6 @@ __metadata:
     typedoc: ^0.25.2
     typedoc-plugin-markdown: ^3.16.0
     typescript: 5.3.3
-    uuid: ^7.0.3
     vite: ^5.0.8
     vite-plugin-eslint: ^1.8.1
     vite-tsconfig-paths: ^4.0.2
@@ -20723,15 +20722,6 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: c81095493225ecfc28add49c106ca4f09cdf56bc66731aa8dabc2edbbccb1e1bfe2de6a115e5c6a380d3ea166d1636410b62ef216bb07b3feb1cfde1d95d5080
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^7.0.3":
-  version: 7.0.3
-  resolution: "uuid@npm:7.0.3"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: f5b7b5cc28accac68d5c083fd51cca64896639ebd4cca88c6cfb363801aaa83aa439c86dfc8446ea250a7a98d17afd2ad9e88d9d4958c79a412eccb93bae29de
   languageName: node
   linkType: hard
 
