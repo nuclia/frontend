@@ -48,9 +48,7 @@ describe('PendingResourcesTableComponent', () => {
         MockProvider(SisModalService),
         MockProvider(SisToastService),
         MockProvider(TranslateService),
-        MockProvider(FeaturesService, {
-          newProcessingStatus: of(false),
-        }),
+        MockProvider(FeaturesService),
       ],
     }).compileComponents();
 

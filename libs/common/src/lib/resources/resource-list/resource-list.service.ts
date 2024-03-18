@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { FeaturesService, LabelsService, SDKService } from '@flaps/core';
+import { LabelsService, SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, forkJoin, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import {
@@ -24,7 +24,6 @@ export class ResourceListService {
   private uploadService = inject(UploadService);
   private toastService = inject(SisToastService);
   private navigationService = inject(ResourceNavigationService);
-  private features = inject(FeaturesService);
 
   private _status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
   get status() {
@@ -131,50 +130,44 @@ export class ResourceListService {
     if (replaceData) {
       this._cursor = undefined;
     }
-    return this.features.newProcessingStatus.pipe(
-      switchMap((isEnabled) =>
-        isEnabled
-          ? // at the moment /processing-status does not return all the pending resources
-            // so, we start by loading the resources from the catalog, and then we fetch the processing status
-            // and update the status of the resources
-            this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
-              switchMap(() => this.sdk.currentKb),
-              take(1),
-              switchMap((kb) => kb.processingStatus(this._cursor)),
-              switchMap((processingStatus) => {
-                const resourceWithLabels = this.getPendingResourcesData(processingStatus);
-                const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
-                const oldData = this._data.value;
-                const mergedData = newData.reduce((deduplicatedList, data) => {
-                  const existingIndex = deduplicatedList.findIndex((item) => item.resource.id === data.resource.id);
-                  if (existingIndex > -1) {
-                    const existingData = deduplicatedList[existingIndex];
-                    deduplicatedList[existingIndex] = {
-                      ...existingData,
-                      resource: new Resource(this.sdk.nuclia, existingData.resource.kb, {
-                        ...existingData.resource,
-                        title: data.resource.title,
-                        metadata: data.resource.metadata
-                          ? { ...existingData.resource.metadata, status: data.resource.metadata.status }
-                          : existingData.resource.metadata,
-                      }),
-                      status: data.status,
-                      rank: data.rank,
-                    };
-                  }
-                  return deduplicatedList;
-                }, oldData);
-                // deduplication is reversing the order of the data, so we sort them back
-                mergedData.sort((r1, r2) => (r1.rank || -1) - (r2.rank || -1));
-                this._data.next(mergedData);
-                this._ready.next(true);
-                this._hasMore = !!processingStatus.cursor;
-                this._cursor = processingStatus.cursor;
-                return of(undefined);
+    // at the moment /processing-status does not return all the pending resources
+    // so, we start by loading the resources from the catalog, and then we fetch the processing status
+    // and update the status of the resources
+    return this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
+      switchMap(() => this.sdk.currentKb),
+      take(1),
+      switchMap((kb) => kb.processingStatus(this._cursor)),
+      switchMap((processingStatus) => {
+        const resourceWithLabels = this.getPendingResourcesData(processingStatus);
+        const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
+        const oldData = this._data.value;
+        const mergedData = newData.reduce((deduplicatedList, data) => {
+          const existingIndex = deduplicatedList.findIndex((item) => item.resource.id === data.resource.id);
+          if (existingIndex > -1) {
+            const existingData = deduplicatedList[existingIndex];
+            deduplicatedList[existingIndex] = {
+              ...existingData,
+              resource: new Resource(this.sdk.nuclia, existingData.resource.kb, {
+                ...existingData.resource,
+                title: data.resource.title,
+                metadata: data.resource.metadata
+                  ? { ...existingData.resource.metadata, status: data.resource.metadata.status }
+                  : existingData.resource.metadata,
               }),
-            )
-          : this.loadResourcesFromCatalog(replaceData, updateCount),
-      ),
+              status: data.status,
+              rank: data.rank,
+            };
+          }
+          return deduplicatedList;
+        }, oldData);
+        // deduplication is reversing the order of the data, so we sort them back
+        mergedData.sort((r1, r2) => (r1.rank || -1) - (r2.rank || -1));
+        this._data.next(mergedData);
+        this._ready.next(true);
+        this._hasMore = !!processingStatus.cursor;
+        this._cursor = processingStatus.cursor;
+        return of(undefined);
+      }),
     );
   }
 
