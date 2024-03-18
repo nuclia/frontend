@@ -123,10 +123,13 @@
 
   // Search bar
   --search-bar-border-color: var(--border-color);
+  --search-bar-border-hover-color: var(--border-hover-color);
   --search-bar-border-focus-color: var(--border-focus-color);
   --search-bar-border: 1px solid var(--search-bar-border-color);
+  --search-bar-border-hover: 1px solid var(--search-bar-border-hover-color);
   --search-bar-border-focus: 1px solid var(--search-bar-border-focus-color);
-  --search-bar-border-radius: 0;
+  --search-bar-border-radius: var(--border-radius);
+  --search-bar-placeholder-color: var(--custom-search-bar-placeholder-color, var(--color-neutral-regular));
   --search-bar-max-width: var(--rhythm-56);
 
   // Viewer
@@ -134,7 +137,8 @@
   --player-bar-height: var(--rhythm-5);
 
   // Customizable theme
-  --border-color: var(--custom-border-color, var(--color-dark-stronger));
+  --border-color: var(--custom-border-color, var(--color-neutral-light));
+  --border-hover-color: var(--custom-border-hover-color, var(--color-neutral-regular));
   --border-focus-color: var(--custom-border-focus-color, var(--color-primary-regular));
   --link-color: var(--custom-link-color, var(--color-primary-regular));
   --text-color: var(--custom-text-color, var(--color-dark-stronger));
@@ -146,7 +150,10 @@
   --dropdown-background-color: var(--custom-dropdown-background-color, var(--color-light-stronger));
   --container-background-color: var(--custom-container-background-color, var(--color-light-stronger));
   --filter-header-background-color: var(--custom-filter-header-background-color, var(--color-neutral-lightest));
-  --filter-header-background-active-color: var(--custom-filter-header-background-active-color, var(--color-neutral-lighter));
+  --filter-header-background-active-color: var(
+    --custom-filter-header-background-active-color,
+    var(--color-neutral-lighter)
+  );
 
   // Global style
   box-sizing: border-box;
@@ -158,8 +165,10 @@
   text-align: left;
 
   &.dark-mode {
-    --border-color: var(--color-neutral-lightest);
+    --border-color: var(--color-neutral-regular);
+    --border-hover-color: var(--color-light-stronger);
     --text-color: var(--color-neutral-lightest);
+    --search-bar-placeholder-color: var(--color-neutral-light);
     --selected-text-color: var(--color-dark-stronger);
     --hover-background-color: #2b2d30;
     --thumbnail-background-color: #2b2d30;

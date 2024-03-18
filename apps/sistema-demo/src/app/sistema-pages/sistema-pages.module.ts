@@ -29,6 +29,7 @@ import { SistemaBackButtonComponent } from './sistema-back-button/sistema-back-b
 import {
   BackButtonComponent,
   DropdownButtonComponent,
+  SisLabelModule,
   SisPasswordInputModule,
   SisProgressModule,
 } from '@nuclia/sistema';
@@ -73,6 +74,7 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     SisPasswordInputModule,
     SisProgressModule,
     ReactiveFormsModule,
+    SisLabelModule,
   ],
   exports: [SistemaSpinnerComponent],
 })

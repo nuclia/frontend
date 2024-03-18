@@ -1,13 +1,16 @@
-<pa-expander *ngFor="let labelset of labelSets | keyvalue">
-  <pa-expander-header>{{ labelset.value.title }}</pa-expander-header>
-  <pa-expander-body>
-    <div class="label-selector">
-      <pa-checkbox
-        *ngFor="let label of labelset.value.labels"
-        [value]="currentSelection[labelset.key + LABEL_SEPARATOR + label.title]"
-        (valueChange)="onSelection({ selected: $event, labelset: labelset.key, label: label.title })">
-        {{ label.title }}
-      </pa-checkbox>
-    </div>
-  </pa-expander-body>
-</pa-expander>
+@for (labelset of labelSets | keyvalue; track labelset) {
+  <pa-expander>
+    <pa-expander-header>{{ labelset.value.title }}</pa-expander-header>
+    <pa-expander-body>
+      <div class="label-selector">
+        @for (label of labelset.value.labels; track label) {
+          <pa-checkbox
+            [value]="currentSelection[labelset.key + LABEL_SEPARATOR + label.title]"
+            (valueChange)="onSelection({ selected: $event, labelset: labelset.key, label: label.title })">
+            {{ label.title }}
+          </pa-checkbox>
+        }
+      </div>
+    </pa-expander-body>
+  </pa-expander>
+}

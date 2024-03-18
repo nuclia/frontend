@@ -5,6 +5,8 @@
 $color-background-chip-default-selected: $color-neutral-lightest;
 $border-chip-selected: 1px solid $color-dark-stronger;
 
-$border-radius-chip: rhythm(0.25);
+$border-radius-chip: $border-radius-default;
 
 $font-size-chip: font-size(xs);
+
+$padding-chip: rhythm(0.5) rhythm(1);
