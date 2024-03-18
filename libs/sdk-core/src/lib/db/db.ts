@@ -220,8 +220,10 @@ export class Db implements IDb {
       }
       return of(
         new WritableKnowledgeBox(this.nuclia, '', {
-          id: knowledgeBoxId || (this.nuclia.options.knowledgeBox as string),
+          id: kbId as string,
           zone: zone || (this.nuclia.options.zone as string),
+          slug: '',
+          title: '',
         }),
       );
     }

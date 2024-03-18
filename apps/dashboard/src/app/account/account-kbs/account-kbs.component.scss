@@ -38,7 +38,8 @@
       border-top: 1px solid rgba(0, 0, 0, 0.3);
     }
     .kb-title {
-      margin-right: rhythm(2);
+      margin-right: rhythm(1);
+
       &:not(.disabled) {
         cursor: pointer;
         text-decoration: underline;

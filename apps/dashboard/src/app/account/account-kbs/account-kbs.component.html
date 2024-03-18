@@ -11,72 +11,72 @@
     <p>{{ 'account.kb-description' | translate }}</p>
 
     <div class="account-kbs-list">
-      <div
-        class="account-kb"
-        *ngFor="let kb of knowledgeBoxes">
-        <div
-          class="kb-title"
-          [attr.data-cy]="kb.title + '-link'"
-          [class.disabled]="!kb.role_on_kb"
-          (click)="kb.role_on_kb ? goToKb(kb) : null"
-          paEllipsisTooltip>
-          {{ kb.title }}
-        </div>
-        <div class="actions">
-          @if (account.can_manage_account) {
-            <pa-button
-              class="icon-button"
-              icon="add-user"
-              aspect="basic"
-              paTooltip="account.kb.users"
-              (click)="manageKbUsers(kb)">
-              {{ 'account.kb.users' | translate }}
-            </pa-button>
-
-            @if (!!kb.role_on_kb) {
+      @for (kb of knowledgeBoxes; track kb.id) {
+        <div class="account-kb">
+          <div
+            [attr.data-cy]="kb.title + '-link'"
+            [class.disabled]="!kb.role_on_kb"
+            (click)="kb.role_on_kb ? goToKb(kb) : null"
+            paEllipsisTooltip>
+            <span class="kb-title">{{ kb.title }}</span>
+            <small>({{ kb.slug }})</small>
+          </div>
+          <div class="actions">
+            @if (account.can_manage_account) {
               <pa-button
                 class="icon-button"
-                icon="edit"
+                icon="add-user"
                 aspect="basic"
-                paTooltip="account.kb.edit"
-                (click)="manageKb(kb)">
-                {{ 'account.kb.edit' | translate }}
+                paTooltip="account.kb.users"
+                (click)="manageKbUsers(kb)">
+                {{ 'account.kb.users' | translate }}
+              </pa-button>
+
+              @if (!!kb.role_on_kb) {
+                <pa-button
+                  class="icon-button"
+                  icon="edit"
+                  aspect="basic"
+                  paTooltip="account.kb.edit"
+                  (click)="manageKb(kb)">
+                  {{ 'account.kb.edit' | translate }}
+                </pa-button>
+              }
+            }
+
+            @if (kb.role_on_kb === 'SOWNER' || account.can_manage_account) {
+              @if (kb.state === 'PUBLISHED') {
+                <pa-button
+                  size="small"
+                  icon="lock"
+                  aspect="basic"
+                  iconAndText
+                  (click)="retireKb(kb)">
+                  {{ 'account.kb.retire' | translate }}
+                </pa-button>
+              } @else {
+                <pa-button
+                  size="small"
+                  icon="unlock"
+                  iconAndText
+                  (click)="publishKb(kb)">
+                  {{ 'account.kb.publish' | translate }}
+                </pa-button>
+              }
+
+              <pa-button
+                size="small"
+                icon="trash"
+                kind="destructive"
+                iconAndText
+                [attr.data-cy]="kb.title + '-delete'"
+                (click)="deleteKb(kb)">
+                {{ 'generic.delete' | translate }}
               </pa-button>
             }
-          }
-
-          @if (kb.role_on_kb === 'SOWNER' || account.can_manage_account) {
-            <pa-button
-              *ngIf="kb.state === 'PUBLISHED'"
-              size="small"
-              icon="lock"
-              aspect="basic"
-              iconAndText
-              (click)="retireKb(kb)">
-              {{ 'account.kb.retire' | translate }}
-            </pa-button>
-
-            <pa-button
-              *ngIf="kb.state === 'PRIVATE'"
-              size="small"
-              icon="unlock"
-              iconAndText
-              (click)="publishKb(kb)">
-              {{ 'account.kb.publish' | translate }}
-            </pa-button>
-
-            <pa-button
-              size="small"
-              icon="trash"
-              kind="destructive"
-              iconAndText
-              [attr.data-cy]="kb.title + '-delete'"
-              (click)="deleteKb(kb)">
-              {{ 'generic.delete' | translate }}
-            </pa-button>
-          }
+          </div>
         </div>
-      </div>
+      }
     </div>
 
     @if (canAddKb | async) {
