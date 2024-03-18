@@ -29,6 +29,7 @@
 	"pastanaga.datetime.minutesAgo": "{{minutes}} min ago",
 	"pastanaga.datetime.one-minute-ago": "1 min ago",
 	"pastanaga.datetime.yesterday": "Yesterday",
+	"upload.active": "Active",
 	"upload.activity.date": "Date",
 	"upload.activity.error": "Sync failed",
 	"upload.activity.event": "Message",
