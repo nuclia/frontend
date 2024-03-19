@@ -30,6 +30,7 @@ import {
   SidenavPageComponent,
   TableCellPageComponent,
   TableLeadCellMultiLinePageComponent,
+  TablePageComponent,
   TableRowPageComponent,
   TableSortableHeaderCellPageComponent,
   TableSortableHeaderPageComponent,
@@ -46,7 +47,6 @@ import {
   SistemaIconsComponent,
   SistemaModalComponent,
   SistemaScrollbarComponent,
-  SistemaTableComponent,
   SistemaToastComponent,
 } from './sistema-pages/pastanaga-pages-override';
 import {
@@ -137,7 +137,7 @@ export const menu: IDemoMenuSection[] = [
   {
     title: 'Pastanaga Tables',
     pages: [
-      { view: 'table', title: 'Table', type: SistemaTableComponent },
+      { view: 'table', title: 'Table', type: TablePageComponent },
       { view: 'table-row', title: 'Table row', type: TableRowPageComponent },
       { view: 'table-cell', title: 'Table cell', type: TableCellPageComponent },
       {

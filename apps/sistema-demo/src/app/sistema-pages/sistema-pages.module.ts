@@ -22,7 +22,6 @@ import {
   SistemaIconsComponent,
   SistemaModalComponent,
   SistemaScrollbarComponent,
-  SistemaTableComponent,
   SistemaToastComponent,
 } from './pastanaga-pages-override';
 import { SistemaBackButtonComponent } from './sistema-back-button/sistema-back-button.component';
@@ -44,7 +43,6 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     SistemaIconsComponent,
     SistemaModalComponent,
     SistemaScrollbarComponent,
-    SistemaTableComponent,
     SistemaLabelComponent,
     SistemaToastComponent,
     SistemaConfirmationDialogComponent,
