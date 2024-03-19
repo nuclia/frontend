@@ -510,6 +510,8 @@
 	"kb.create.in_progress": "Creación de la Knowledge Box en curso...",
 	"kb.create.invalid_name": "El nombre de la Knowledge Box no es válido",
 	"kb.create.title": "Crea una Knowledge Box",
+	"kb.form.allowed_origins.help": "Un dominio por línea",
+	"kb.form.allowed_origins.label": "Orígenes permitidos (CORS)",
 	"kb.form.existing-name": "Este nombre de Knowledge Box ya existe en la cuenta.",
 	"kb.form.invalid-slug": "El Knowledge Box slug no es válido",
 	"kb.form.name": "Nombre de la Knowledge Box",
