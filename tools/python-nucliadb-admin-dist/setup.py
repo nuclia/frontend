@@ -7,6 +7,7 @@ setup(
     name="nucliadb-admin-assets",
     version=version,
     description="Packaging of NucliaDB admin JS app",
+    long_description_content_type="text/plain",
     long_description="",
     classifiers=[],
     keywords="",
