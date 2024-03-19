@@ -1,8 +1,9 @@
-# 1.14.3 (2024-03-18)
+# 1.14.3 (unreleased)
 
 ### Improvements
 
 - Knowledge Box `title` and `slug` are required fields in `IKnowledgeBoxCreation` model
+- Adding optional `allowed_origins` field in `IKnowledgeBoxCreation` model
 
 # 1.14.2 (2024-03-15)
 

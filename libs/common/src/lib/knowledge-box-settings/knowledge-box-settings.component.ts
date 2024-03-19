@@ -25,6 +25,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     slug: new FormControl<string>('', { nonNullable: true, validators: [Sluggable(true)] }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl<string>('', { nonNullable: true }),
+    allowed_origins: new FormControl<string | null>(null),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -69,6 +70,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         slug: this.kb.slug,
         title: this.kb.title,
         description: this.kb.description || '',
+        allowed_origins: (this.kb.allowed_origins || []).join('\n'),
       });
       this.kbForm.markAsPristine();
       this.cdr.markForCheck();
@@ -87,12 +89,17 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     const newSlug = STFUtils.generateSlug(kbDetails.slug);
     const oldSlug = kbBackup.slug || '';
     const isSlugUpdated = newSlug !== oldSlug;
+    const origins = kbDetails.allowed_origins
+      ?.split('\n')
+      .map((origin) => origin.trim())
+      .filter((origin) => !!origin);
 
     kbBackup
       .modify({
         title: kbDetails.title,
         description: kbDetails.description,
         slug: newSlug,
+        allowed_origins: !!origins && origins.length > 0 ? origins : null,
       })
       .pipe(
         tap(() => this.toast.success(this.translate.instant('kb.settings.toasts.success'))),
