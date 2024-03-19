@@ -15,7 +15,9 @@
   </header>
 
   @if (isDeprecatedAccount | async) {
-    <pa-table columns="300px auto auto auto auto">
+    <pa-table
+      border
+      columns="300px auto auto auto auto">
       <pa-table-header>
         <pa-table-cell header>{{ 'billing.usage.consumables' | translate }}</pa-table-cell>
         <pa-table-cell header>{{ 'billing.usage.tier_included' | translate }}</pa-table-cell>
@@ -26,7 +28,7 @@
         </pa-table-cell>
       </pa-table-header>
       @for (item of invoiceItems | async; track item) {
-        <pa-table-row>
+        <pa-table-row [last]="$last">
           <pa-table-cell>{{ 'billing.parameter.' + item[0] | translate }}</pa-table-cell>
           <pa-table-cell>{{ item[1].threshold | number }}</pa-table-cell>
           <pa-table-cell>{{ item[1].current_usage | number }}</pa-table-cell>
@@ -38,7 +40,9 @@
       }
     </pa-table>
   } @else {
-    <pa-table columns="300px auto auto">
+    <pa-table
+      border
+      columns="300px auto auto">
       <pa-table-header>
         <pa-table-cell header>{{ 'billing.usage.consumables' | translate }}</pa-table-cell>
         <pa-table-cell header>{{ 'billing.usage.requests' | translate }}</pa-table-cell>
@@ -47,7 +51,7 @@
         </pa-table-cell>
       </pa-table-header>
       @if (usage.invoice_items['ai-tokens-used']; as aiTokens) {
-        <pa-table-row>
+        <pa-table-row last>
           <pa-table-cell>{{ 'billing.parameter.ai-tokens-used' | translate }}*</pa-table-cell>
           <pa-table-cell>{{ aiTokens.current_usage / tokensPerRequest | number: '1.0-0' }}</pa-table-cell>
           <pa-table-cell>

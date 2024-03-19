@@ -18,7 +18,9 @@
     </pa-option>
   </pa-dropdown>
 </div>
-<pa-table columns="2fr repeat(2, 1fr) 104px 96px">
+<pa-table
+  border
+  columns="2fr repeat(2, 1fr) 104px 96px">
   <pa-table-header>
     <pa-table-cell header>Id</pa-table-cell>
     <pa-table-cell header>Name</pa-table-cell>
@@ -26,51 +28,53 @@
     <pa-table-cell header>Is manager</pa-table-cell>
     <pa-table-cell-menu header></pa-table-cell-menu>
   </pa-table-header>
-  <pa-table-row
-    *ngFor="let user of users | async"
-    [routerLink]="'/users/' + user.id"
-    clickable>
-    <pa-table-cell>
-      <small>{{ user.id }}</small>
-    </pa-table-cell>
-    <pa-table-cell>{{ user.name || '' }}</pa-table-cell>
-    <pa-table-cell>{{ user.email }}</pa-table-cell>
-    <pa-table-cell>
-      <div class="manager-container">
-        <pa-icon
-          *ngIf="user.isManager"
-          name="shield-check"></pa-icon>
-      </div>
-    </pa-table-cell>
-    <pa-table-cell-menu>
-      <ng-container *ngIf="!user.isManager || (hasSeveralManagers | async) === true">
-        <pa-button
-          icon="more-vertical"
-          aspect="basic"
-          [paPopup]="menu">
-          Menu
-        </pa-button>
-        <pa-dropdown #menu>
-          <pa-option
-            *ngIf="user.isManager && (hasSeveralManagers | async) === true"
-            (selectOption)="removeFromManagers($event, user)">
-            Remove from managers
-          </pa-option>
-          <pa-option
-            *ngIf="!user.isManager"
-            (selectOption)="addToManagers($event, user)">
-            Add to managers
-          </pa-option>
-          <ng-container *ngIf="!user.isManager || (hasSeveralManagers | async) === true">
-            <pa-separator></pa-separator>
+  @for (user of users | async; track user.id) {
+    <pa-table-row
+      [last]="$last"
+      [routerLink]="'/users/' + user.id"
+      clickable>
+      <pa-table-cell>
+        <small>{{ user.id }}</small>
+      </pa-table-cell>
+      <pa-table-cell>{{ user.name || '' }}</pa-table-cell>
+      <pa-table-cell>{{ user.email }}</pa-table-cell>
+      <pa-table-cell>
+        <div class="manager-container">
+          <pa-icon
+            *ngIf="user.isManager"
+            name="shield-check"></pa-icon>
+        </div>
+      </pa-table-cell>
+      <pa-table-cell-menu>
+        <ng-container *ngIf="!user.isManager || (hasSeveralManagers | async) === true">
+          <pa-button
+            icon="more-vertical"
+            aspect="basic"
+            [paPopup]="menu">
+            Menu
+          </pa-button>
+          <pa-dropdown #menu>
             <pa-option
-              destructive
-              (selectOption)="removeUser($event, user)">
-              Remove
+              *ngIf="user.isManager && (hasSeveralManagers | async) === true"
+              (selectOption)="removeFromManagers($event, user)">
+              Remove from managers
             </pa-option>
-          </ng-container>
-        </pa-dropdown>
-      </ng-container>
-    </pa-table-cell-menu>
-  </pa-table-row>
+            <pa-option
+              *ngIf="!user.isManager"
+              (selectOption)="addToManagers($event, user)">
+              Add to managers
+            </pa-option>
+            <ng-container *ngIf="!user.isManager || (hasSeveralManagers | async) === true">
+              <pa-separator></pa-separator>
+              <pa-option
+                destructive
+                (selectOption)="removeUser($event, user)">
+                Remove
+              </pa-option>
+            </ng-container>
+          </pa-dropdown>
+        </ng-container>
+      </pa-table-cell-menu>
+    </pa-table-row>
+  }
 </pa-table>

@@ -64,6 +64,7 @@
   <pa-infinite-scroll (reachAnchor)="onLoadMore()">
     <pa-table [columns]="tableLayout | async">
       <pa-table-sortable-header
+        noBackground
         [cells]="headerCells | async"
         (sort)="sortBy($event)">
         @if (isAdminOrContrib | async) {

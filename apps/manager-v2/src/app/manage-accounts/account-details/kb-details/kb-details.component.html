@@ -48,7 +48,9 @@
     </pa-dropdown>
   </div>
   <div class="body-s"></div>
-  <pa-table columns="2fr repeat(3, 1fr) 96px">
+  <pa-table
+    border
+    columns="2fr repeat(3, 1fr) 96px">
     <pa-table-header>
       <pa-table-cell header>Id</pa-table-cell>
       <pa-table-cell header>Name</pa-table-cell>
@@ -57,7 +59,7 @@
       <pa-table-cell-menu header></pa-table-cell-menu>
     </pa-table-header>
     @for (owner of kb.owners; track owner.id) {
-      <pa-table-row>
+      <pa-table-row [last]="$last">
         <pa-table-cell>
           <small>{{ owner.id }}</small>
         </pa-table-cell>

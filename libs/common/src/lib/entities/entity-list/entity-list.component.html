@@ -1,7 +1,9 @@
 <div
   #listContainer
   class="ner-list-container">
-  <pa-table columns="32px 1fr 3fr">
+  <pa-table
+    border
+    columns="32px 1fr 3fr">
     <pa-table-header>
       <pa-table-row>
         <pa-table-cell header><div class="whitespace"></div></pa-table-cell>
@@ -10,7 +12,7 @@
       </pa-table-row>
     </pa-table-header>
     @for (ner of entities; track ner.value) {
-      <pa-table-row>
+      <pa-table-row [last]="$last">
         <pa-table-cell>
           <pa-checkbox
             [disabled]="(isAdminOrContrib | async) === false"

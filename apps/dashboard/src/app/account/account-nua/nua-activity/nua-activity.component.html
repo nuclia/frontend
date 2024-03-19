@@ -14,21 +14,25 @@
   </header>
 
   <div class="activity-container">
-    <pa-table columns="40% 1fr 1fr">
+    <pa-table
+      border
+      columns="40% 1fr 1fr">
       <pa-table-header>
         <pa-table-cell header>{{ 'activity.resource' | translate }}</pa-table-cell>
         <pa-table-cell header>{{ 'activity.timestamp' | translate }}</pa-table-cell>
         <pa-table-cell header>{{ 'activity.actor' | translate }}</pa-table-cell>
       </pa-table-header>
-      <pa-table-row *ngFor="let activity of activityLogs | async">
-        <pa-table-cell>{{ activity.resourceId | async }}</pa-table-cell>
-        <pa-table-cell>
-          <pa-datetime [datetime]="activity.timestamp"></pa-datetime>
-        </pa-table-cell>
-        <pa-table-cell>
-          {{ activity.userId | async }}
-        </pa-table-cell>
-      </pa-table-row>
+      @for (activity of activityLogs | async; track activity) {
+        <pa-table-row [last]="$last">
+          <pa-table-cell>{{ activity.resourceId | async }}</pa-table-cell>
+          <pa-table-cell>
+            <pa-datetime [datetime]="activity.timestamp"></pa-datetime>
+          </pa-table-cell>
+          <pa-table-cell>
+            {{ activity.userId | async }}
+          </pa-table-cell>
+        </pa-table-row>
+      }
     </pa-table>
 
     <div class="load-more">

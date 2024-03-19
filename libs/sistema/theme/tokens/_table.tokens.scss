@@ -5,11 +5,12 @@
 $color-text-table-header: $color-dark-stronger;
 $color-text-table-header-row: $color-dark-stronger;
 
-$color-border-table-header: $color-neutral-regular;
-$color-border-table-header-row: $color-neutral-regular;
+$color-border-table: $color-neutral-light;
+$color-border-table-header: $color-neutral-light;
+$color-border-table-header-row: $color-neutral-light;
 $color-border-table-row: $color-neutral-lighter;
 
-$color-background-table-header: $color-light-stronger;
+$color-background-table-header: $color-neutral-lightest;
 $color-background-table-header-row: $color-light-stronger;
 
 $padding-table-cell-medium: rhythm(0.5) rhythm(2);
