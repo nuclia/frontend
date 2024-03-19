@@ -4,6 +4,6 @@
     "https": "https://github.com/plone/pastanaga-angular.git",
     "path": "/projects/pastanaga-angular/src",
     "package": "@guillotinaweb/pastanaga-angular",
-    "tag": "2.65.3"
+    "tag": "2.65.4"
   }
 }
