@@ -29,7 +29,7 @@
 }
 
 <div class="users-list-header">
-  <h3>{{ 'stash.users.users_list' | translate }}</h3>
+  <div class="title-s">{{ 'stash.users.users_list' | translate }}</div>
   <div>
     <nsi-dropdown-button
       aspect="basic"
@@ -55,7 +55,9 @@
   </div>
 </div>
 
-<pa-table columns="1fr 1fr 1fr 1fr">
+<pa-table
+  border
+  columns="repeat(4, 1fr)">
   <pa-table-header>
     <pa-table-cell header>
       <span class="title-xxs">{{ 'generic.name' | translate }}</span>
@@ -70,7 +72,7 @@
   </pa-table-header>
 
   @for (user of userRows | async; track user.id) {
-    <pa-table-row>
+    <pa-table-row [last]="$last">
       <pa-table-cell>
         <span class="title-s">{{ user.name }}</span>
       </pa-table-cell>

@@ -9,14 +9,14 @@
 
   <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
     <pa-table columns="repeat(3, 1fr) 96px">
-      <pa-table-header>
+      <pa-table-header noBackground>
         <pa-table-cell header>Id</pa-table-cell>
         <pa-table-cell header>Name</pa-table-cell>
         <pa-table-cell header>Email</pa-table-cell>
         <pa-table-cell-menu header></pa-table-cell-menu>
       </pa-table-header>
       <pa-table-row
-        *ngFor="let user of users$ | async | slice: 0:lastIndex"
+        *ngFor="let user of users$ | async | slice: 0 : lastIndex"
         [routerLink]="user.id"
         clickable>
         <pa-table-cell>

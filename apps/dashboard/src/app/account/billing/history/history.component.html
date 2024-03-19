@@ -1,7 +1,9 @@
 <div class="history">
   <h2>{{ 'billing.history.title' | translate }}</h2>
 
-  <pa-table columns="200px auto auto auto auto">
+  <pa-table
+    border
+    columns="200px repeat(3, 1fr) 64px">
     <pa-table-header>
       <pa-table-cell header>{{ 'generic.date' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'billing.order_number' | translate }}</pa-table-cell>
@@ -9,23 +11,25 @@
       <pa-table-cell header>{{ 'billing.amount' | translate }}</pa-table-cell>
       <pa-table-cell header></pa-table-cell>
     </pa-table-header>
-    <pa-table-row *ngFor="let invoice of invoices.items">
-      <pa-table-cell>
-        {{ invoice.period_start | date: 'YYYY-MM-dd' }} - {{ invoice.period_end | date: 'YYYY-MM-dd' }}
-      </pa-table-cell>
-      <pa-table-cell>{{ invoice.order_number }}</pa-table-cell>
-      <pa-table-cell>{{ 'account.type.' + invoice.account_type | translate }}</pa-table-cell>
-      <pa-table-cell>
-        <span *ngIf="currency$ | async as currency">{{ invoice.amount | currency: currency }}</span>
-      </pa-table-cell>
-      <pa-table-cell>
-        <pa-button
-          icon="download"
-          aspect="basic"
-          size="small"
-          (click)="openPdf(invoice.pdf)"></pa-button>
-      </pa-table-cell>
-    </pa-table-row>
+    @for (invoice of invoices.items; track invoice.id) {
+      <pa-table-row [last]="$last">
+        <pa-table-cell>
+          {{ invoice.period_start | date: 'YYYY-MM-dd' }} - {{ invoice.period_end | date: 'YYYY-MM-dd' }}
+        </pa-table-cell>
+        <pa-table-cell>{{ invoice.order_number }}</pa-table-cell>
+        <pa-table-cell>{{ 'account.type.' + invoice.account_type | translate }}</pa-table-cell>
+        <pa-table-cell>
+          <span *ngIf="currency$ | async as currency">{{ invoice.amount | currency: currency }}</span>
+        </pa-table-cell>
+        <pa-table-cell>
+          <pa-button
+            icon="download"
+            aspect="basic"
+            size="small"
+            (click)="openPdf(invoice.pdf)"></pa-button>
+        </pa-table-cell>
+      </pa-table-row>
+    }
   </pa-table>
   <div
     class="load-more"

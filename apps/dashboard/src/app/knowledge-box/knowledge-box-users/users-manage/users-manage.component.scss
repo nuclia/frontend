@@ -16,8 +16,10 @@ h3 {
 }
 
 .users-list-header {
+  align-items: center;
   display: flex;
   justify-content: space-between;
+  margin-bottom: rhythm(1.5);
 }
 
 .actions {

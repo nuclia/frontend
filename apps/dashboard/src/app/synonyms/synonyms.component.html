@@ -29,7 +29,9 @@
 
   @if (hasSynonyms | async) {
     <div class="table-container">
-      <pa-table columns="1fr 3fr 120px">
+      <pa-table
+        border
+        columns="1fr 3fr 120px">
         <pa-table-header>
           <pa-table-cell header>
             <span class="title-xxs">{{ 'synonyms.table.main-word' | translate }}</span>
@@ -40,51 +42,53 @@
           <pa-table-cell header></pa-table-cell>
         </pa-table-header>
 
-        <pa-table-row
-          *ngFor="let row of synonyms | async | keyvalue"
-          hoverable
-          [class.pa-selected]="editing === row.key"
-          (mouseenter)="hoverOn = row.key"
-          (mouseleave)="hoverOn = ''">
-          <pa-table-cell>
-            <span class="body-m">{{ row.key }}</span>
-          </pa-table-cell>
-          <pa-table-cell
-            clickable
-            (click)="editing = row.key">
-            <span
-              class="body-m"
-              *ngIf="editing !== row.key">
-              {{ row.value.join(', ') }}
-            </span>
-            <input
-              *ngIf="editing === row.key"
-              paFocusable
-              class="edit-synonym-input"
-              [value]="row.value.join(', ')"
-              (keyup.enter)="editSynonym(row.key, $event)" />
-          </pa-table-cell>
-          <pa-table-cell-menu>
-            <div
-              class="action-buttons-container"
-              [class.visible]="hoverOn === row.key || editing === row.key">
-              <pa-button
-                icon="edit"
-                aspect="basic"
-                [active]="editing === row.key"
-                (click)="editing = editing === row.key ? '' : row.key">
-                {{ 'synonyms.table.edit-synonym' | translate }}
-              </pa-button>
-              <pa-button
-                icon="trash"
-                kind="destructive"
-                aspect="basic"
-                (click)="deleteEntry(row.key, row.value)">
-                {{ 'synonyms.table.delete-synonym' | translate }}
-              </pa-button>
-            </div>
-          </pa-table-cell-menu>
-        </pa-table-row>
+        @for (row of synonyms | async | keyvalue; track row) {
+          <pa-table-row
+            hoverable
+            [last]="$last"
+            [class.pa-selected]="editing === row.key"
+            (mouseenter)="hoverOn = row.key"
+            (mouseleave)="hoverOn = ''">
+            <pa-table-cell>
+              <span class="body-m">{{ row.key }}</span>
+            </pa-table-cell>
+            <pa-table-cell
+              clickable
+              (click)="editing = row.key">
+              <span
+                class="body-m"
+                *ngIf="editing !== row.key">
+                {{ row.value.join(', ') }}
+              </span>
+              <input
+                *ngIf="editing === row.key"
+                paFocusable
+                class="edit-synonym-input"
+                [value]="row.value.join(', ')"
+                (keyup.enter)="editSynonym(row.key, $event)" />
+            </pa-table-cell>
+            <pa-table-cell-menu>
+              <div
+                class="action-buttons-container"
+                [class.visible]="hoverOn === row.key || editing === row.key">
+                <pa-button
+                  icon="edit"
+                  aspect="basic"
+                  [active]="editing === row.key"
+                  (click)="editing = editing === row.key ? '' : row.key">
+                  {{ 'synonyms.table.edit-synonym' | translate }}
+                </pa-button>
+                <pa-button
+                  icon="trash"
+                  kind="destructive"
+                  aspect="basic"
+                  (click)="deleteEntry(row.key, row.value)">
+                  {{ 'synonyms.table.delete-synonym' | translate }}
+                </pa-button>
+              </div>
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
       </pa-table>
     </div>
   }

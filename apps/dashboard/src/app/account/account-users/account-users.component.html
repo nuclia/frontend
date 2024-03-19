@@ -30,7 +30,9 @@
       </div>
     }
 
-    <pa-table columns="repeat(2, 1fr) 210px 96px">
+    <pa-table
+      border
+      columns="repeat(2, 1fr) 210px 96px">
       <pa-table-header>
         <pa-table-cell header>{{ 'generic.name' | translate }}</pa-table-cell>
         <pa-table-cell header>{{ 'generic.email' | translate }}</pa-table-cell>
@@ -38,7 +40,7 @@
         <pa-table-cell header></pa-table-cell>
       </pa-table-header>
       @for (user of users; track user) {
-        <pa-table-row>
+        <pa-table-row [last]="$last">
           <pa-table-cell>
             <span class="title-s">{{ user.name }}</span>
           </pa-table-cell>

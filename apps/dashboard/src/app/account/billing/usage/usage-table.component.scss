@@ -20,12 +20,10 @@ header {
 
 // pa-table hacks
 :host ::ng-deep .pa-table-grid--cell {
-  background-color: transparent;
   font-size: $font-size-body-m;
   line-height: $line-height-body-m;
 }
 :host ::ng-deep .pa-table-grid--head .pa-table-grid--header {
-  background-color: transparent;
   font-size: $font-size-body-xs;
   line-height: $line-height-body-xs;
 }
