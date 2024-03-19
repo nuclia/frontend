@@ -43,7 +43,16 @@ import {
   UpdateEntitiesGroupPayload,
 } from './kb.models';
 import type { IErrorResponse, INuclia } from '../../models';
-import { ExtractedDataTypes, ICreateResource, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
+import {
+  ExtractedDataTypes,
+  ICreateResource,
+  IResource,
+  LinkField,
+  Origin,
+  Resource,
+  resourceRetryConfig,
+  UserMetadata,
+} from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import { catalog, chat, Chat, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
@@ -921,13 +930,9 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   /** Creates and indexes a new resource in the Knowledge Box. */
   createResource(resource: ICreateResource, synchronous = true): Observable<{ uuid: string }> {
-    return this.nuclia.rest.post<{ uuid: string }>(
-      `${this.path}/resources`,
-      resource,
-      undefined,
-      undefined,
-      synchronous,
-    );
+    return defer(() =>
+      this.nuclia.rest.post<{ uuid: string }>(`${this.path}/resources`, resource, undefined, undefined, synchronous),
+    ).pipe(retry(resourceRetryConfig));
   }
 
   /**
