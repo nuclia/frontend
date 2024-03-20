@@ -274,11 +274,11 @@ export class SyncService {
           {
             id: string;
             title: string;
-            connectorId: string;
+            connector: string;
           }[]
         >(`${this._syncServer.getValue()}/sync/kb/${kbId}`)
         .subscribe((data) => {
-          this._syncListCache.next([...syncs, ...data.map((sync) => ({ ...sync, kbId }))]);
+          this._syncListCache.next([...syncs, ...data.map((sync) => ({ ...sync, kbId, connectorId: sync.connector }))]);
         });
     }
     return this._syncListCache.pipe(map((syncs) => syncs.filter((sync) => sync.kbId === kbId)));

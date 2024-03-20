@@ -33,6 +33,7 @@
                 [routerLink]="kbUrl + '/upload/sync/' + sync.id"
                 routerLinkActive="active"
                 class="nav-link sub-item sync">
+                <img [src]="sync.logo" />
                 <span class="nav-link-title">{{ sync.title }}</span>
               </a>
             }
