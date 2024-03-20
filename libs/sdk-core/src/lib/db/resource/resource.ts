@@ -1,4 +1,4 @@
-import { forkJoin, Observable, tap } from 'rxjs';
+import { defer, forkJoin, Observable, retry, tap } from 'rxjs';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import type { IErrorResponse, INuclia } from '../../models';
@@ -27,7 +27,7 @@ import type {
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
 import type { Search, SearchOptions } from '../search';
 import { find, search } from '../search';
-import { setEntities, setLabels, sliceUnicode } from './resource.helpers';
+import { resourceRetryConfig, setEntities, setLabels, sliceUnicode } from './resource.helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}
@@ -237,7 +237,9 @@ export class Resource extends ReadableResource implements IResource {
     ```
    */
   modify(data: Partial<ICreateResource>, synchronous = true): Observable<void> {
-    return this.nuclia.rest.patch<void>(this.path, data, undefined, undefined, synchronous);
+    return defer(() => this.nuclia.rest.patch<void>(this.path, data, undefined, undefined, synchronous)).pipe(
+      retry(resourceRetryConfig),
+    );
   }
 
   /** Deletes the resource. */

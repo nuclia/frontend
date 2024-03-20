@@ -1,4 +1,5 @@
 import type { Classification, ParagraphClassification, TokenAnnotation, UserFieldMetadata } from './resource.models';
+import { RetryConfig, timer } from 'rxjs';
 
 export const deDuplicateList = (a: any[]): any[] => {
   return [...new Set([...a].map((item) => JSON.stringify(item)))].map((item) => JSON.parse(item));
@@ -120,4 +121,16 @@ export const lengthUnicode = (str: string | undefined) => {
     return 0;
   }
   return Array.from(str).length;
+};
+
+const retryDelays = [1000, 5000, 10000];
+export const resourceRetryConfig: RetryConfig = {
+  count: retryDelays.length,
+  delay: (error, count) => {
+    if (error?.status === 429) {
+      return timer(retryDelays[count - 1]);
+    } else {
+      throw error;
+    }
+  },
 };
