@@ -74,9 +74,14 @@ $height-breakpoint: 856px;
             background-color: $color-neutral-lightest;
           }
         }
-        &.sub-item.sync .nav-link-title {
-          font-weight: $font-weight-thin;
-          padding-left: rhythm(5);
+        &.sub-item.sync {
+          .nav-link-title {
+            font-weight: $font-weight-thin;
+          }
+          img {
+            margin: 0 rhythm(0.5);
+            width: rhythm(2);
+          }
         }
 
         &.disabled {

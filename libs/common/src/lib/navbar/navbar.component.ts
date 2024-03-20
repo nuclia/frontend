@@ -91,6 +91,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     filter(([inUpload, isAdminOrContrib, invalidKey]) => inUpload && isAdminOrContrib && !invalidKey),
     switchMap(() => this.sdk.currentKb),
     switchMap((kb) => this.syncService.getSyncsForKB(kb.id)),
+    map((syncs) =>
+      syncs.map((sync) => ({ ...sync, logo: this.syncService.connectors[sync.connectorId].definition.logo })),
+    ),
   );
 
   constructor(
