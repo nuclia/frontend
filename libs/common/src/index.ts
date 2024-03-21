@@ -18,6 +18,7 @@ export * from './lib/page-not-found';
 export * from './lib/pagination';
 export * from './lib/pipes';
 export * from './lib/resources';
+export * from './lib/search';
 export * from './lib/select-account-kb';
 export * from './lib/services';
 export * from './lib/token-dialog';

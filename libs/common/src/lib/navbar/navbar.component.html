@@ -39,6 +39,15 @@
             }
           }
           <a
+            class="nav-link"
+            data-cy="go-to-search"
+            routerLinkActive="active"
+            [routerLink]="!(invalidKey | async) ? kbUrl + '/search' : null"
+            [class.disabled]="invalidKey | async">
+            <pa-icon name="search"></pa-icon>
+            <span class="nav-link-title">{{ 'stash.search' | translate }}</span>
+          </a>
+          <a
             [routerLink]="!(invalidKey | async) ? kbUrl + '/resources' : null"
             routerLinkActive="active"
             class="nav-link"
@@ -53,7 +62,7 @@
             class="nav-link"
             data-cy="go-to-widget"
             [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
-            <pa-icon name="search"></pa-icon>
+            <pa-icon name="widget"></pa-icon>
             <span class="nav-link-title">{{ 'navbar.widgets' | translate }}</span>
           </a>
         </div>

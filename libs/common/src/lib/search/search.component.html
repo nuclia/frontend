@@ -1,0 +1,23 @@
+<div class="search-page page-spacing">
+  <div class="search-bar-section">
+    <div
+      class="search-bar-container"
+      [innerHtml]="searchWidget | async"></div>
+    @if (standalone && (hasValidKey | async) === false) {
+      <div class="nua-key-warning">
+        <pa-icon name="info"></pa-icon>
+        {{ 'standalone.search-no-nua-key' | translate }}
+      </div>
+    }
+  </div>
+  <div class="answer-toggle">
+    <pa-toggle
+      [value]="enabledAnswer"
+      (valueChange)="toggleAnswer($event)"
+      labelOnRight>
+      {{ 'stash.search-toggle-answer' | translate }}
+    </pa-toggle>
+  </div>
+
+  <div [innerHTML]="searchResults"></div>
+</div>

@@ -95,7 +95,7 @@ export class GettingStartedComponent implements OnDestroy {
         this.postHog.logEvent('getting_started_fully_done');
         forkJoin([this.kbUrl.pipe(take(1)), this.generateExampleQuestion().pipe(take(1))]).subscribe(
           ([url, question]) => {
-            this.router.navigate([`${url}/widget-generator`], { queryParams: { __nuclia_query__: question } });
+            this.router.navigate([`${url}/search`], { queryParams: { __nuclia_query__: question } });
             this.modal.close();
             localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
           },
