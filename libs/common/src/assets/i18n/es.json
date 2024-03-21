@@ -901,7 +901,7 @@
 	"standalone.menu.button-label": "Menú",
 	"standalone.menu.introspect": "Datos de introspección",
 	"standalone.menu.kb-list": "Knowledge Boxes",
-	"standalone.new-version-available-toast": "Hay disponible una versión más nueva de NucliaDB.",
+	"standalone.new-version-available-toast": "Hay disponible una versión más reciente de NucliaDB. <a href=\"https://docs.nuclia.dev/docs/guides/nucliadb/deploy/releases#upgrading\" target=\"_new\">Actualice</a>.",
 	"standalone.nua-key-status.invalid.how-to-get-nua-key": "Si no tiene una clave API de NUA, siga esta <a href=\"https://docs.nuclia.dev/docs/docs/getting-started/on-premise\" rel=\"noopener noreferrer\" target=\"_blank\">guía</a>.",
 	"standalone.nua-key-status.invalid.loading-error": "Error al cargar el estado de la clave Nuclia Understanding API",
 	"standalone.nua-key-status.invalid.not-provided": "No se proporcionó ninguna clave Nuclia Understanding API",

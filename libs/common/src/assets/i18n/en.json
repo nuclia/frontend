@@ -902,7 +902,7 @@
 	"standalone.menu.button-label": "Menu",
 	"standalone.menu.introspect": "Introspection data",
 	"standalone.menu.kb-list": "Knowledge Boxes",
-	"standalone.new-version-available-toast": "A newer version of NucliaDB is available.",
+	"standalone.new-version-available-toast": "A newer version of NucliaDB is available.Please <a href=\"https://docs.nuclia.dev/docs/guides/nucliadb/deploy/releases#upgrading\" target=\"_new\">upgrade</a>.",
 	"standalone.nua-key-status.invalid.how-to-get-nua-key": "If you don't have a NUA API Key follow this <a href=\"https://docs.nuclia.dev/docs/docs/getting-started/on-premise\" rel=\"noopener noreferrer\" target=\"_blank\">guide</a>.",
 	"standalone.nua-key-status.invalid.loading-error": "Error while loading Nuclia Understanding API key status",
 	"standalone.nua-key-status.invalid.not-provided": "No Nuclia Understanding API key provided",
