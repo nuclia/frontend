@@ -61,6 +61,6 @@ export class TopbarComponent {
   }
 
   bookDemo() {
-    window.open('https://calendly.com/nuclia/30min?back=1&month=2023-10', 'blank', 'noreferrer');
+    window.open('https://nuclia.com/book-a-demo/', 'blank', 'noreferrer');
   }
 }
