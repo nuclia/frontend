@@ -1,0 +1,20 @@
+@import 'apps/dashboard/src/variables';
+
+.search-page {
+  .search-bar-section {
+    display: flex;
+    gap: rhythm(8);
+    margin-bottom: rhythm(1);
+
+    .nua-key-warning {
+      display: flex;
+      gap: rhythm(1);
+    }
+  }
+  .search-bar-container {
+    display: flex;
+  }
+  .answer-toggle {
+    margin-bottom: rhythm(4);
+  }
+}
