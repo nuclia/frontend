@@ -11,6 +11,7 @@
 	"connectors.confluence.token.label": "Jeton d'API",
 	"connectors.confluence.url.label": "URL du site Confluence",
 	"connectors.confluence.user.label": "Compte d'utilisateur",
+	"connectors.rss.url.label": "URL du flux RSS",
 	"connectors.sharepoint.site.label": "Nom du site",
 	"connectors.sitemap.selector.help": "Limitera l'indexation au contenu texte correspondant à ce sélecteur CSS.",
 	"connectors.sitemap.selector.label": "Sélecteur CSS",

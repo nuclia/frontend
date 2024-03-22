@@ -30,6 +30,7 @@ import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './sources/folder';
 import { SharepointImpl } from './sources/sharepoint';
 import { ConfluenceConnector } from './sources/confluence';
+import { RSSConnector } from './sources/rss';
 import { OAuthConnector } from './sources/oauth';
 
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
@@ -92,6 +93,7 @@ export class SyncService {
     folder: { definition: FolderConnector, settings: {} },
     sitemap: { definition: SitemapConnector, settings: {} },
     confluence: { definition: ConfluenceConnector, settings: {} },
+    rss: { definition: RSSConnector, settings: {} },
   };
 
   connectorsObs = new BehaviorSubject(Object.values(this.connectors).map((obj) => obj.definition));
@@ -298,7 +300,9 @@ export class SyncService {
 
   canSelectFiles(syncId: string) {
     const sync = this._syncCache.getValue()[syncId];
-    return sync && !(sync.connector.name === 'sitemap' || sync.connector.name === 'folder');
+    return (
+      sync && !(sync.connector.name === 'sitemap' || sync.connector.name === 'folder' || sync.connector.name === 'rss')
+    );
   }
 
   getNucliaKey(kb: WritableKnowledgeBox): Observable<{ token: string; kbid: string }> {
