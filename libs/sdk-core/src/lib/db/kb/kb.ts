@@ -66,13 +66,14 @@ const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}
 
-function getOnlyChatGpt3Model(allSchema: LearningConfigurations): LearningConfigurations {
+function getRestrictedModelList(allSchema: LearningConfigurations): LearningConfigurations {
   return Object.entries(allSchema).reduce((schemas, [key, config]) => {
     if (key === 'generative_model' || key === 'summary_model') {
       schemas[key] = {
         ...config,
         options: (config.options || []).filter(
-          (option) => option.name === 'CHATGPT_AZURE3' || option.name === 'NO_GENERATION',
+          (option) =>
+            option.name === 'CHATGPT_AZURE3' || option.name === 'CHATGPT_AZURE' || option.name === 'NO_GENERATION',
         ),
       };
     } else {
@@ -633,7 +634,7 @@ export class KnowledgeBox implements IKnowledgeBox {
               .pipe(
                 map((account) =>
                   account.type === 'stash-starter' || account.type === 'v3starter'
-                    ? getOnlyChatGpt3Model(allSchema)
+                    ? getRestrictedModelList(allSchema)
                     : allSchema,
                 ),
               );
