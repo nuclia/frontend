@@ -21,7 +21,7 @@ interface FeaturesData {
 
 const CUSTOM_FEATURE_FLAGS = 'NUCLIA_CUSTOM_FEATURE_FLAGS';
 const FEATURE_PREFIX = 'application_';
-const BACKEND_PREFIXES = ['nucliadb_', 'nua_'];
+const BACKEND_PREFIXES = ['nucliadb_', 'nua_', 'rerank_'];
 
 const stageFeatures: Features = {};
 

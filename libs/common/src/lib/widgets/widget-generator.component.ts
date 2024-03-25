@@ -28,16 +28,6 @@ import { LearningConfigurationOption, RAGStrategyName } from '@nuclia/core';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
-// TODO: remove when all LLMs support citation
-// REMINDER: also fix the translation key: widget.generator.advanced.generative-answer-category.citations.help
-const LLMS_WITH_CITATION_SUPPORT = [
-  'anthropic',
-  'chatgpt-azure',
-  'chatgpt-azure-3',
-  'gemini-pro',
-  'claude-3',
-  'claude-3-fast',
-];
 
 @Component({
   selector: 'app-widget-generator',
@@ -50,6 +40,17 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private currentKbId = '';
   private readonly widgetConfigurations: { [kbId: string]: WidgetConfiguration };
+
+  // TODO: remove when all LLMs support citation
+  // REMINDER: also fix the translation key: widget.generator.advanced.generative-answer-category.citations.help
+  LLMS_WITH_CITATION_SUPPORT: string[] | undefined = [
+    'anthropic',
+    'chatgpt-azure',
+    'chatgpt-azure-3',
+    'gemini-pro',
+    'claude-3',
+    'claude-3-fast',
+  ];
 
   selectedTab: 'preset' | 'advanced' = 'preset';
   copyButtonLabel = 'generic.copy';
@@ -276,16 +277,28 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         takeUntil(this.unsubscribeAll),
-        switchMap((kb) => forkJoin([kb.getLearningSchema(), kb.getConfiguration()])),
+        switchMap((kb) =>
+          forkJoin([
+            kb.getLearningSchema(),
+            kb.getConfiguration(),
+            this.featuresService.citationsForAllEnabled.pipe(take(1)),
+          ]),
+        ),
       )
-      .subscribe(([schema, config]) => {
+      .subscribe(([schema, config, isCitationsForAllEnabled]) => {
         this.generativeModels = schema['generative_model']?.options || [];
         this.defaultModelFromSettings = config['generative_model'] || '';
         const promptKey = this.generativeModels.find((model) => model.value === this.defaultModelFromSettings)
           ?.user_prompt;
         this.defaultPromptFromSettings = promptKey ? config['user_prompts']?.[promptKey]?.['prompt'] || '' : '';
         // TODO: remove when all LLMs support citation
-        if (!LLMS_WITH_CITATION_SUPPORT.includes(this.defaultModelFromSettings)) {
+        if (isCitationsForAllEnabled) {
+          this.LLMS_WITH_CITATION_SUPPORT = undefined;
+        }
+        if (
+          this.LLMS_WITH_CITATION_SUPPORT &&
+          !this.LLMS_WITH_CITATION_SUPPORT.includes(this.defaultModelFromSettings)
+        ) {
           this.advancedForm.controls.citations.patchValue(false);
           this.advancedForm.controls.citations?.disable();
         }
@@ -716,7 +729,7 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
     this.checkDefaultPromptFromSettingsApplied();
   }
   changeLLM(llm: string) {
-    if (!LLMS_WITH_CITATION_SUPPORT.includes(llm)) {
+    if (this.LLMS_WITH_CITATION_SUPPORT && !this.LLMS_WITH_CITATION_SUPPORT.includes(llm)) {
       this.advancedForm.controls.citations.patchValue(false);
       this.advancedForm.controls.citations?.disable();
     } else {
