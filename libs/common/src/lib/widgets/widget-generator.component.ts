@@ -281,7 +281,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       .subscribe(([schema, config]) => {
         this.generativeModels = schema['generative_model']?.options || [];
         this.defaultModelFromSettings = config['generative_model'] || '';
-        this.defaultPromptFromSettings = config['user_prompts']?.[this.defaultModelFromSettings]?.['prompt'] || '';
+        const promptKey = this.generativeModels.find((model) => model.value === this.defaultModelFromSettings)
+          ?.user_prompt;
+        this.defaultPromptFromSettings = promptKey ? config['user_prompts']?.[promptKey]?.['prompt'] || '' : '';
         // TODO: remove when all LLMs support citation
         if (!LLMS_WITH_CITATION_SUPPORT.includes(this.defaultModelFromSettings)) {
           this.advancedForm.controls.citations.patchValue(false);
