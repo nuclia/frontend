@@ -32,6 +32,7 @@ export class FeaturesService {
   pdfAnnotation = this.featureFlag.isFeatureEnabled('pdf-annotation');
   sync = this.featureFlag.isFeatureEnabled('sync');
   promptLabEnabled = this.featureFlag.isFeatureEnabled('llm-prompt-lab');
+  citationsForAllEnabled = this.featureFlag.isFeatureEnabled('rerank_citations_enabled');
 
   // user-prompts and summarization are always enabled for growth and enterprise accounts
   // but are still managed as a feature flagged feature for other account types, so we can enable it specifically for some accounts
