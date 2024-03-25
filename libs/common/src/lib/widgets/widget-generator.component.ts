@@ -64,6 +64,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   snippetPreview: SafeHtml = '';
   currentQuery = '';
   defaultModelFromSettings = '';
+  defaultPromptFromSettings = '';
+  isDefaultPromptFromSettingsApplied = true;
 
   // FEATURES AVAILABILITY
   isUserPromptsEnabled = this.featuresService.userPrompts;
@@ -279,6 +281,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       .subscribe(([schema, config]) => {
         this.generativeModels = schema['generative_model']?.options || [];
         this.defaultModelFromSettings = config['generative_model'] || '';
+        this.defaultPromptFromSettings = config['user_prompts']?.[this.defaultModelFromSettings]?.['prompt'] || '';
         // TODO: remove when all LLMs support citation
         if (!LLMS_WITH_CITATION_SUPPORT.includes(this.defaultModelFromSettings)) {
           this.advancedForm.controls.citations.patchValue(false);
@@ -707,6 +710,9 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
     this.searchFilteringExpanderUpdated.next($event);
   }
 
+  onUserPromptChange() {
+    this.checkDefaultPromptFromSettingsApplied();
+  }
   changeLLM(llm: string) {
     if (!LLMS_WITH_CITATION_SUPPORT.includes(llm)) {
       this.advancedForm.controls.citations.patchValue(false);
@@ -714,6 +720,14 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
     } else {
       this.advancedForm.controls.citations?.enable();
     }
+    this.checkDefaultPromptFromSettingsApplied();
     this.cdr.detectChanges();
+  }
+
+  private checkDefaultPromptFromSettingsApplied() {
+    this.isDefaultPromptFromSettingsApplied =
+      (!this.advancedForm.controls.generativeModel.value ||
+        this.defaultModelFromSettings === this.advancedForm.controls.generativeModel.value) &&
+      this.userPrompt === '';
   }
 }

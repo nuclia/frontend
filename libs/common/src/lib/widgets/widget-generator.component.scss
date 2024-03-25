@@ -276,4 +276,12 @@
       }
     }
   }
+  nsi-info-card {
+    margin: rhythm(1) 0 rhythm(2) 0;
+    max-height: rhythm(12);
+    overflow-y: auto;
+    &.ignored {
+      text-decoration: line-through;
+    }
+  }
 }
