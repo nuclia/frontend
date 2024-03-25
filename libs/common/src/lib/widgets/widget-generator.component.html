@@ -210,6 +210,19 @@
                     </div>
 
                     @if (answerGenerationEnabled) {
+                      @if (defaultPromptFromSettings) {
+                        <div
+                          [innerHTML]="
+                            isDefaultPromptFromSettingsApplied
+                              ? ('widget.generator.advanced.generative-answer-category.current-prompt.applied'
+                                | translate)
+                              : ('widget.generator.advanced.generative-answer-category.current-prompt.ignored'
+                                | translate)
+                          "></div>
+                        <nsi-info-card [class.ignored]="!isDefaultPromptFromSettingsApplied">
+                          {{ defaultPromptFromSettings }}
+                        </nsi-info-card>
+                      }
                       @if (isUserPromptsEnabled | async) {
                         <div class="toggle-and-help">
                           <pa-textarea
@@ -217,6 +230,7 @@
                             formControlName="userPrompt"
                             [errorMessages]="userPromptErrors"
                             resizable
+                            (valueChange)="onUserPromptChange()"
                             (resizing)="onResizingTextarea($event)">
                             {{ 'widget.generator.advanced.generative-answer-category.prompt.label' | translate }}
                           </pa-textarea>
@@ -228,19 +242,6 @@
                           </pa-popover>
                         </div>
                       }
-                      <div class="toggle-and-help">
-                        <pa-toggle
-                          labelOnRight
-                          formControlName="citations">
-                          {{ 'widget.generator.advanced.generative-answer-category.citations.label' | translate }}
-                        </pa-toggle>
-                        <pa-icon
-                          name="info"
-                          [paPopover]="citationsHelp" />
-                        <pa-popover #citationsHelp>
-                          {{ 'widget.generator.advanced.generative-answer-category.citations.help' | translate }}
-                        </pa-popover>
-                      </div>
                       @if (generativeModels.length > 0) {
                         <div class="toggle-and-help">
                           <pa-toggle
@@ -284,7 +285,19 @@
                           </div>
                         }
                       }
-
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          formControlName="citations">
+                          {{ 'widget.generator.advanced.generative-answer-category.citations.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="citationsHelp" />
+                        <pa-popover #citationsHelp>
+                          {{ 'widget.generator.advanced.generative-answer-category.citations.help' | translate }}
+                        </pa-popover>
+                      </div>
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight

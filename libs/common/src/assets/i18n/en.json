@@ -1062,6 +1062,8 @@
 	"widget.generator.advanced.generative-answer-category.answers.label": "Answer generation",
 	"widget.generator.advanced.generative-answer-category.citations.help": "Show which sources have been used to generate the answer. This feature is currently not supported by all the generative models.",
 	"widget.generator.advanced.generative-answer-category.citations.label": "Citations",
+	"widget.generator.advanced.generative-answer-category.current-prompt.applied": "The following prompt is defined in your Knowledge Box's AI settings and will be applied:",
+	"widget.generator.advanced.generative-answer-category.current-prompt.ignored": "Due to your changes regarding the model and/or prompt, the following prompt defined in your Knowledge Box's AI settings will be <strong>ignored</strong>:",
 	"widget.generator.advanced.generative-answer-category.generative-model.default": "Current default",
 	"widget.generator.advanced.generative-answer-category.generative-model.help": "Use a different generative model than the default one defined in the Knowledge Box AI settings",
 	"widget.generator.advanced.generative-answer-category.generative-model.label": "Specific generative model",

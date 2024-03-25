@@ -1062,6 +1062,8 @@
 	"widget.generator.advanced.generative-answer-category.answers.label": "Génération de réponses",
 	"widget.generator.advanced.generative-answer-category.citations.help": "Affiche quelles sources ont été utilisées pour générer la réponse. Cette fonctionnalité n'est actuellement pas prise en charge par tous les modèles génératifs.",
 	"widget.generator.advanced.generative-answer-category.citations.label": "Citations",
+	"widget.generator.advanced.generative-answer-category.current-prompt.applied": "Le prompt suivant est défini dans les paramètres IA de votre Knowledge Box et sera appliqué :",
+	"widget.generator.advanced.generative-answer-category.current-prompt.ignored": "En raison de vos modifications concernant le modèle et/ou le prompt, le prompt suivant défini dans les paramètres IA de votre Knowledge Box sera <strong>ignoré</strong> :",
 	"widget.generator.advanced.generative-answer-category.generative-model.default": "Valeur par défaut actuelle",
 	"widget.generator.advanced.generative-answer-category.generative-model.help": "Utiliser un modèle génératif différent de celui par défaut défini dans les paramètres AI de la Knowledge Box",
 	"widget.generator.advanced.generative-answer-category.generative-model.label": "Modèle génératif spécifique",
