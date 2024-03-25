@@ -230,7 +230,7 @@
                             formControlName="userPrompt"
                             [errorMessages]="userPromptErrors"
                             resizable
-                            (valueChange)="onUserPromptChange($event)"
+                            (valueChange)="onUserPromptChange()"
                             (resizing)="onResizingTextarea($event)">
                             {{ 'widget.generator.advanced.generative-answer-category.prompt.label' | translate }}
                           </pa-textarea>
