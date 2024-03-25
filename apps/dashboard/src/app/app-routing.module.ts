@@ -42,6 +42,7 @@ import { InviteComponent } from './onboarding/invite/invite.component';
 import { FeedbackComponent } from './farewell/feedback.component';
 import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
 import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
+import { TasksAutomationComponent } from './tasks-automation/tasks-automation.component';
 
 const routes: Routes = [
   {
@@ -194,6 +195,11 @@ const routes: Routes = [
               {
                 path: 'prompt-lab',
                 component: PromptLabComponent,
+              },
+              {
+                path: 'tasks',
+                component: TasksAutomationComponent,
+                children: [],
               },
             ],
           },

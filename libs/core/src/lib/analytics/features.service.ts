@@ -48,6 +48,12 @@ export class FeaturesService {
       ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
     ),
   );
+  taskAutomation = combineLatest([
+    this.featureFlag.isFeatureEnabled('tasks-automation'),
+    this.sdk.currentAccount.pipe(
+      map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+    ),
+  ]).pipe(map(([isFeatureEnabled, isAccountTypeAllowed]) => isFeatureEnabled && isAccountTypeAllowed));
   activityLog = this.sdk.currentAccount.pipe(
     map((account) => !['stash-trial', 'stash-starter', 'v3starter'].includes(account.type)),
   );
