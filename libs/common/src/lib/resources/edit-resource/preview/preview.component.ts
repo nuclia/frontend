@@ -5,6 +5,7 @@ import {
   filter,
   map,
   Observable,
+  of,
   ReplaySubject,
   Subject,
   switchMap,
@@ -13,8 +14,14 @@ import {
 } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphService } from '../paragraph.service';
-import { FIELD_TYPE, FieldId, IError, Paragraph, Resource, TextField } from '@nuclia/core';
-import { getErrors, getParagraphs, ParagraphWithText, Thumbnail } from '../edit-resource.helpers';
+import { ConversationField, FIELD_TYPE, FieldId, IError, Paragraph, Resource, TextField } from '@nuclia/core';
+import {
+  getConversationParagraphs,
+  getErrors,
+  getParagraphs,
+  ParagraphWithText,
+  Thumbnail,
+} from '../edit-resource.helpers';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
@@ -93,6 +100,16 @@ export class PreviewComponent implements OnInit, OnDestroy {
   );
   hasThumbnail: Observable<boolean> = this.thumbnails.pipe(map((thumbnails) => thumbnails.length > 0));
 
+  // TODO: can be removed once the "GET /resource/{rid}" endpoint returns the correct messages
+  conversationField = combineLatest([this.fieldId, this.resource]).pipe(
+    filter(([fieldId]) => fieldId.field_type === FIELD_TYPE.conversation),
+    switchMap(([fieldId, resource]) =>
+      fieldId.field_type === FIELD_TYPE.conversation
+        ? resource.getField(fieldId.field_type, fieldId.field_id).pipe(map((field) => field.value as ConversationField))
+        : of(null),
+    ),
+  );
+
   currentFieldId?: FieldId;
 
   constructor(
@@ -109,12 +126,14 @@ export class PreviewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.editResource.setCurrentView('preview');
 
-    combineLatest([this.fieldId, this.resource])
+    combineLatest([this.fieldId, this.resource, this.conversationField])
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([fieldId, resource]) => {
+      .subscribe(([fieldId, resource, conversation]) => {
         this.currentFieldId = fieldId;
         this.errors = getErrors(fieldId, resource);
-        const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
+        const paragraphs: Paragraph[] = conversation
+          ? getConversationParagraphs(fieldId, resource, conversation.messages)
+          : getParagraphs(fieldId, resource);
         const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
           ...paragraph,
           paragraphId: this.editResource.getParagraphId(fieldId, paragraph),

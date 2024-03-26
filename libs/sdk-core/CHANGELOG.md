@@ -5,6 +5,7 @@
 - Knowledge Box `title` and `slug` are required fields in `IKnowledgeBoxCreation` model
 - Adding optional `allowed_origins` field in `IKnowledgeBoxCreation` model
 - Improve reliability of resource creation and modification
+- Update `getParagraphText`, `getSentenceText` and `getDataKeyFromFieldType` methods to support conversation fields
 
 # 1.14.2 (2024-03-15)
 

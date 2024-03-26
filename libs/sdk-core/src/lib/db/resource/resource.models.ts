@@ -31,6 +31,7 @@ export type ResourceData = {
   links?: { [key: string]: LinkFieldData };
   texts?: { [key: string]: TextFieldData };
   keywordsets?: { [key: string]: KeywordSetFieldData };
+  conversations?: { [key: string]: ConversationFieldData };
 };
 
 export interface ICreateResource {

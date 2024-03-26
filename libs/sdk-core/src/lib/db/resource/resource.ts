@@ -179,18 +179,20 @@ export class ReadableResource implements IResource {
   }
 
   getParagraphText(fieldType: FIELD_TYPE, fieldId: string, paragraph: Paragraph): string {
-    return sliceUnicode(this.getFieldText(fieldType, fieldId), paragraph.start, paragraph.end);
+    return sliceUnicode(this.getFieldText(fieldType, fieldId, paragraph.key), paragraph.start, paragraph.end);
   }
 
   getSentenceText(fieldType: FIELD_TYPE, fieldId: string, sentence: Sentence): string {
-    return sliceUnicode(this.getFieldText(fieldType, fieldId), sentence.start, sentence.end);
+    return sliceUnicode(this.getFieldText(fieldType, fieldId, sentence.key), sentence.start, sentence.end);
   }
 
-  private getFieldText(fieldType: FIELD_TYPE, fieldId: string): string[] {
-    const key = `${fieldType}-${fieldId}`;
+  private getFieldText(fieldType: FIELD_TYPE, fieldId: string, split?: string): string[] {
+    const key = `${fieldType}-${fieldId}` + (split ? `-${split}` : '');
     if (!this.fieldTextsCache[key]) {
       const field = this.getFieldData(`${fieldType}s` as keyof ResourceData, fieldId);
-      this.fieldTextsCache[key] = Array.from(field?.extracted?.text?.text || '');
+      this.fieldTextsCache[key] = split
+        ? Array.from(field?.extracted?.text?.split_text?.[split] || '')
+        : Array.from(field?.extracted?.text?.text || '');
     }
     return this.fieldTextsCache[key];
   }
