@@ -102,7 +102,6 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   // TODO: can be removed once the "GET /resource/{rid}" endpoint returns the correct messages
   conversationField = combineLatest([this.fieldId, this.resource]).pipe(
-    filter(([fieldId]) => fieldId.field_type === FIELD_TYPE.conversation),
     switchMap(([fieldId, resource]) =>
       fieldId.field_type === FIELD_TYPE.conversation
         ? resource.getField(fieldId.field_type, fieldId.field_id).pipe(map((field) => field.value as ConversationField))
