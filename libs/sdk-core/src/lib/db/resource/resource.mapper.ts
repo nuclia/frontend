@@ -41,6 +41,7 @@ export const getDataKeyFromFieldType = (fieldType: FIELD_TYPE): keyof ResourceDa
     case FIELD_TYPE.file:
     case FIELD_TYPE.link:
     case FIELD_TYPE.keywordset:
+    case FIELD_TYPE.conversation:
       return `${fieldType}s`;
     default:
       return null;

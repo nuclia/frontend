@@ -33,5 +33,6 @@ export class ServerSetupComponent {
 
   setDefaultLocal() {
     this.serverUrl.setValue(this.localUrl);
+    this.serverUrl.markAsDirty();
   }
 }

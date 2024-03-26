@@ -5,6 +5,7 @@ import {
   FieldId,
   getDataKeyFromFieldType,
   IError,
+  Message,
   Paragraph,
   ParagraphClassification,
   Resource,
@@ -53,6 +54,17 @@ export const getParagraphs = (fieldId: FieldId, resource: Resource): Paragraph[]
     return [];
   }
   return resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata?.metadata?.paragraphs || [];
+};
+
+export const getConversationParagraphs = (fieldId: FieldId, resource: Resource, messages: Message[]): Paragraph[] => {
+  const dataKey = getDataKeyFromFieldType(fieldId.field_type);
+  if (!dataKey || !resource.data[dataKey]) {
+    return [];
+  }
+  const metadata = resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata;
+  return Object.keys(metadata?.split_metadata || {})
+    .sort((a, b) => messages.findIndex((item) => item.ident === a) - messages.findIndex((item) => item.ident === b))
+    .reduce((acc, split) => [...acc, ...(metadata?.split_metadata?.[split]?.paragraphs || [])], [] as Paragraph[]);
 };
 
 export function getErrors(fieldId: FieldId, resource: Resource): IError | null {
