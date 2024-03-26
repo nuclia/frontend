@@ -12,10 +12,20 @@
   <p [innerHTML]="'upload.server.description' | translate"></p>
   <pa-input
     [formControl]="serverUrl"
-    placeholder="https://my.sync.server"
-    [help]="'upload.server.help' | translate: { url: localUrl }">
+    placeholder="https://my.sync.server">
     {{ 'upload.server.url' | translate }}
   </pa-input>
+  @if (serverUrl.value !== localUrl) {
+    <div class="local">
+      <span>{{ 'upload.server.help-local' | translate }}</span>
+      <pa-button
+        (click)="setDefaultLocal()"
+        size="small"
+        aspect="basic">
+        {{ 'upload.server.set-local' | translate }}
+      </pa-button>
+    </div>
+  }
   <pa-button
     class="save-button"
     (click)="save()"

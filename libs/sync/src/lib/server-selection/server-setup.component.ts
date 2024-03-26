@@ -30,4 +30,8 @@ export class ServerSetupComponent {
   back() {
     this.navigationService.kbUrl.pipe(take(1)).subscribe((url) => this.router.navigate([`${url}/upload`]));
   }
+
+  setDefaultLocal() {
+    this.serverUrl.setValue(this.localUrl);
+  }
 }
