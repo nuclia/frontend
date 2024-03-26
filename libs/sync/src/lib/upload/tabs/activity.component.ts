@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { SyncService } from '../../sync/sync.service';
 import { Subject, catchError, filter, map, of, repeat, startWith, switchMap, take, takeUntil, tap, timer } from 'rxjs';
 import { LogEntity } from '../../sync/models';
@@ -12,6 +20,7 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyncActivityComponent implements OnInit, OnDestroy {
+  @Output() goTo = new EventEmitter<string>();
   unsubscribeAll = new Subject<void>();
   since = '';
   currentIndex = 0;

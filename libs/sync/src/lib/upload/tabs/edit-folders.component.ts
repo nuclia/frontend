@@ -20,7 +20,7 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
-  @Output() done = new EventEmitter();
+  @Output() goTo = new EventEmitter<string>();
   loading = false;
   query = '';
   selection = new SelectionModel<SyncItem>(true, []);
@@ -95,7 +95,7 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: () => {
           this.toast.success('upload.saved');
-          this.done.emit();
+          this.goTo.emit('activity');
         },
         error: () => {
           this.toast.error('upload.failed');

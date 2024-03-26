@@ -48,20 +48,20 @@
 </pa-tabs>
 @if (selectedTab === 'activity') {
   <section>
-    <nsy-activity></nsy-activity>
+    <nsy-activity (goTo)="goTo($event)"></nsy-activity>
   </section>
 }
 @if (selectedTab === 'folders') {
-  <section><nsy-edit-folders (done)="done()"></nsy-edit-folders></section>
+  <section><nsy-edit-folders (goTo)="goTo($event)"></nsy-edit-folders></section>
 }
 @if (selectedTab === 'filters') {
-  <section><nsy-edit-filters (done)="done()"></nsy-edit-filters></section>
+  <section><nsy-edit-filters (goTo)="goTo($event)"></nsy-edit-filters></section>
 }
 @if (selectedTab === 'labels') {
-  <section><nsy-edit-labels (done)="done()"></nsy-edit-labels></section>
+  <section><nsy-edit-labels (goTo)="goTo($event)"></nsy-edit-labels></section>
 }
 @if (selectedTab === 'settings') {
   <section>
-    <nsy-edit-settings (done)="done()"></nsy-edit-settings>
+    <nsy-edit-settings (goTo)="goTo($event)"></nsy-edit-settings>
   </section>
 }

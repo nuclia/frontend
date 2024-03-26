@@ -12,7 +12,7 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditSyncSettingsComponent implements OnInit {
-  @Output() done = new EventEmitter();
+  @Output() goTo = new EventEmitter<string>();
   form?: UntypedFormGroup;
   fields?: Field[];
   sync?: ISyncEntity;
@@ -53,7 +53,7 @@ export class EditSyncSettingsComponent implements OnInit {
         .subscribe({
           next: () => {
             this.toast.success('upload.saved');
-            this.done.emit();
+            this.goTo.emit('activity');
           },
           error: () => {
             this.toast.error('upload.failed');
