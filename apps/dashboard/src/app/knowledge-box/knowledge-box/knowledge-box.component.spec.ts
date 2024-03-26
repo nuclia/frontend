@@ -3,7 +3,7 @@ import { BehaviorSubject, of } from 'rxjs';
 
 import { KnowledgeBoxComponent } from './knowledge-box.component';
 import { MockProvider } from 'ng-mocks';
-import { SampleDatasetService, UploadService } from '@flaps/common';
+import { UploadService } from '@flaps/common';
 import { SisModalService } from '@nuclia/sistema';
 import { SDKService } from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -23,7 +23,6 @@ describe('KnowledgeBoxComponent', () => {
           barDisabled: new BehaviorSubject(false).asObservable(),
         } as UploadService),
         MockProvider(SisModalService),
-        MockProvider(SampleDatasetService),
       ],
     }).compileComponents();
   });

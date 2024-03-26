@@ -1,0 +1,41 @@
+<pa-demo-page>
+  <pa-demo-title>Badges</pa-demo-title>
+  <pa-demo-description>
+    <p>Sistema badges are allowing to display short information including or not a count.</p>
+  </pa-demo-description>
+  <pa-demo-examples>
+    <div class="flex-container">
+      <nsi-badge>All resources</nsi-badge>
+      <nsi-badge count="120">Labels</nsi-badge>
+      <nsi-badge count="999">Count limit</nsi-badge>
+      <nsi-badge count="9999">Even more count limit</nsi-badge>
+      <nsi-badge>Super long text that should trigger ellipsis</nsi-badge>
+      <nsi-badge kind="tertiary">optional</nsi-badge>
+      <nsi-badge
+        kind="tertiary"
+        count="1">
+        optional
+      </nsi-badge>
+    </div>
+  </pa-demo-examples>
+
+  <pa-demo-usage>
+    <h3>Inputs</h3>
+    <dl>
+      <dt>count</dt>
+      <dd>
+        A number to display on the right of the badge.
+        <small>(optional)</small>
+      </dd>
+      <dt>kind</dt>
+      <dd>
+        Define the badge’s color. Can be "neutral" or "tertiary".
+        <small>(neutral by default)</small>
+      </dd>
+    </dl>
+  </pa-demo-usage>
+
+  <pa-demo-code>
+    <pre><code>{{code}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>

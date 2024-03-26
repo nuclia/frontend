@@ -60,6 +60,7 @@ import {
 import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
 import { SistemaInfoCardComponent } from './sistema-pages/sistema-cards/sistema-info-card.component';
 import { SistemaTwoColumnsConfigurationItemComponent } from './sistema-pages/sistema-two-columns-configuration-item/sistema-two-columns-configuration-item.component';
+import { SistemaBadgeComponent } from './sistema-pages/sistema-badge/sistema-badge.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -82,6 +83,7 @@ export const menu: IDemoMenuSection[] = [
     title: 'Nuclia Sistema',
     pages: [
       { view: 'action-card', title: 'Action card', type: SistemaActionCardComponent },
+      { view: 'badge', title: 'Badges', type: SistemaBadgeComponent },
       { view: 'info-card', title: 'Info card', type: SistemaInfoCardComponent },
       { view: 'back-button', title: 'Back button', type: SistemaBackButtonComponent },
       { view: 'dropdown-button', title: 'Dropdown button', type: SistemaDropdownButtonComponent },

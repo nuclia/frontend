@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, filter, map, merge, Observable, of, repeat, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { combineLatest, filter, map, merge, Observable, of, repeat, Subject, switchMap, takeUntil } from 'rxjs';
 import { StandaloneService } from '../services';
 import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
@@ -76,6 +76,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isEntitiesEnabled = this.features.manageEntities;
   isBillingEnabled = this.features.billing;
   isSynonymsEnabled = this.features.synonyms;
+  isTasksAutomationEnabled = this.features.taskAutomation;
   isActivityEnabled = this.features.activityLog;
   isPromptLabEnabled = this.features.isEnterpriseOrGrowth.pipe(
     filter((isEnterprise) => isEnterprise),

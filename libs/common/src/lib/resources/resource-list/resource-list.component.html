@@ -47,15 +47,6 @@
     <div class="upload-container">
       @if (isMainView && (isAdminOrContrib | async)) {
         <stf-upload-button></stf-upload-button>
-
-        @if (hasSampleData | async) {
-          <pa-button
-            kind="destructive"
-            aspect="basic"
-            (click)="deleteSampleDataset()">
-            {{ 'dataset.delete' | translate }}
-          </pa-button>
-        }
       }
     </div>
     <div class="status-buttons-container">

@@ -162,7 +162,18 @@
                   <span class="nav-link-title">{{ 'navbar.synonyms' | translate }}</span>
                 </a>
               }
+
               @if (isAdmin | async) {
+                @if (isTasksAutomationEnabled | async) {
+                  <a
+                    [routerLink]="[kbUrl + '/tasks']"
+                    routerLinkActive="active"
+                    data-cy="go-to-tasks"
+                    class="nav-link sub-item">
+                    <pa-icon name="submenu"></pa-icon>
+                    <span class="nav-link-title">{{ 'tasks-automation.page-title' | translate }}</span>
+                  </a>
+                }
                 @if (isPromptLabEnabled | async) {
                   <a
                     [routerLink]="[kbUrl + '/prompt-lab']"

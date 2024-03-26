@@ -1,56 +1,59 @@
 <div class="label-selector">
   <nsi-dropdown-button
+    [fullWidth]="fullWidth"
     [popupRef]="labelSelection"
     [size]="size"
     [aspect]="aspect"
-    [open]="open">
+    [open]="open"
+    [freeWidth]="fullWidth">
     <ng-content></ng-content>
   </nsi-dropdown-button>
 
   <pa-dropdown
     #labelSelection
-    dontAdjustPosition
+    [dontAdjustPosition]="!fullWidth"
     [companionElement]="level2Element?.nativeElement"
     (onClose)="closeDropdowns()"
     (onOpen)="open = true">
-    <ng-container *ngFor="let labelSet of labelSets | keyvalue; let index = index">
-      <pa-option
-        *ngIf="labelSet.value.labels.length > 0"
-        icon="chevron-right"
-        iconOnRight
-        dontCloseOnSelect
-        popupOnRight
-        [paPopup]="level2"
-        [popupVerticalOffset]="-40"
-        [selected]="labelSetExpanded === labelSet.key"
-        (selectOption)="onLevel1Selection(labelSet.key, labelSet.value)">
-        <span
-          class="label-color"
-          [style.background-color]="labelSet.value.color"></span>
-        {{ labelSet.value.title }}
-      </pa-option>
-    </ng-container>
+    @for (labelSet of labelSets | keyvalue; track labelSet) {
+      @if (labelSet.value.labels.length > 0) {
+        <pa-option
+          icon="chevron-right"
+          iconOnRight
+          dontCloseOnSelect
+          popupOnRight
+          [paPopup]="level2"
+          [popupVerticalOffset]="-40"
+          [selected]="labelSetExpanded === labelSet.key"
+          (selectOption)="onLevel1Selection(labelSet.key, labelSet.value)">
+          <span
+            class="label-color"
+            [style.background-color]="labelSet.value.color"></span>
+          {{ labelSet.value.title }}
+        </pa-option>
+      }
+    }
   </pa-dropdown>
 
   <pa-dropdown
     #level2
     dontAdjustPosition
     keepOthersOpen>
-    <pa-option
-      *ngFor="let labelValue of labelValues"
-      class="level2-option"
-      [dontCloseOnSelect]="!single"
-      (selectOption)="onOptionSelection(labelValue, $event)">
-      <ng-container *ngIf="single; else multiple">
-        {{ labelValue.label }}
-      </ng-container>
-      <ng-template #multiple>
-        <pa-checkbox
-          [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)"
-          (change)="toggleLabel(labelValue)">
+    @for (labelValue of labelValues; track labelValue) {
+      <pa-option
+        class="level2-option"
+        [dontCloseOnSelect]="!single"
+        (selectOption)="onOptionSelection(labelValue, $event)">
+        @if (single) {
           {{ labelValue.label }}
-        </pa-checkbox>
-      </ng-template>
-    </pa-option>
+        } @else {
+          <pa-checkbox
+            [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)"
+            (change)="toggleLabel(labelValue)">
+            {{ labelValue.label }}
+          </pa-checkbox>
+        }
+      </pa-option>
+    }
   </pa-dropdown>
 </div>

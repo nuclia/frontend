@@ -26,7 +26,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ProcessedResourceTableComponent } from './processed-resource-table/processed-resource-table.component';
 import { ErrorResourcesTableComponent } from './error-resources-table/error-resources-table.component';
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
-import { SampleDatasetService } from '../sample-dataset.service';
 import { UploadService } from '../../upload/upload.service';
 
 describe('ResourceListComponent', () => {
@@ -55,7 +54,6 @@ describe('ResourceListComponent', () => {
         MockComponent(DropdownButtonComponent),
       ],
       providers: [
-        MockProvider(SampleDatasetService),
         {
           provide: SDKService,
           useValue: {

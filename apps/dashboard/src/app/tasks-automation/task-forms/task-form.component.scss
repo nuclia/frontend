@@ -1,0 +1,23 @@
+@import 'apps/dashboard/src/variables';
+
+:host {
+  .filter-form-container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+
+    .filter-row {
+      display: flex;
+      gap: rhythm(1.5);
+
+      & > * {
+        width: calc((100% - #{rhythm(1.5)}) / 2);
+      }
+    }
+
+    & > * {
+      width: 100%;
+    }
+  }
+}

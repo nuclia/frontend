@@ -1,23 +1,13 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, Subject } from 'rxjs';
-import { debounceTime, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, map, takeUntil, tap } from 'rxjs/operators';
 import { NavigationService, SDKService, STFTrackingService } from '@flaps/core';
-import { SisToastService } from '@nuclia/sistema';
 import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceListService } from './resource-list.service';
-import { SampleDatasetService } from '../sample-dataset.service';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
@@ -31,8 +21,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   @ViewChild('failedPopoverDirective') failedPopoverDirective?: PopoverDirective;
 
   private localStorage = inject(LOCAL_STORAGE);
-  private sampleDatasetService = inject(SampleDatasetService);
-  hasSampleData = this.sampleDatasetService.hasSampleResources();
 
   unsubscribeAll = new Subject<void>();
 
@@ -84,8 +72,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   constructor(
     private sdk: SDKService,
-    private cdr: ChangeDetectorRef,
-    private toaster: SisToastService,
     private translate: TranslateService,
     private uploadService: UploadService,
     private navigation: NavigationService,
@@ -134,24 +120,5 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     const titleOnly = this.searchForm.value.searchIn === 'title';
     this.tracking.logEvent('search-in-resource-list', { searchIn: titleOnly ? 'titles' : 'resources' });
     this.resourceListService.search(query, titleOnly);
-  }
-
-  deleteSampleDataset() {
-    this.toaster.info('dataset.delete_in_progress');
-    this.sampleDatasetService
-      .deleteSampleDataset()
-      .pipe(
-        tap((count) => {
-          if (count.error === 0) {
-            this.toaster.success('dataset.delete_successful');
-          } else if (count.success > 0) {
-            this.toaster.warning(this.translate.instant('dataset.delete_partially_successful', { error: count.error }));
-          } else {
-            this.toaster.error('dataset.delete_failed');
-          }
-        }),
-        switchMap(() => this.resourceListService.loadResources()),
-      )
-      .subscribe(() => this.cdr.markForCheck());
   }
 }

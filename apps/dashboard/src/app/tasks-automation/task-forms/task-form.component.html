@@ -1,0 +1,88 @@
+<form [formGroup]="form">
+  <nsi-two-columns-configuration-item
+    itemTitle="What do you want the task to apply to?"
+    description="Keep the task running for future resources or run it once.">
+    <pa-radio-group>
+      <pa-radio>
+        Apply automatically to
+        <strong>all existing and future resources</strong>
+      </pa-radio>
+      <pa-radio>
+        Run once on
+        <strong>existing resources only</strong>
+      </pa-radio>
+    </pa-radio-group>
+  </nsi-two-columns-configuration-item>
+
+  <nsi-two-columns-configuration-item
+    itemTitle="Filter the resources"
+    description="The action will apply only to resources matching the selection."
+    badge="optional">
+    <div
+      class="filter-form-container"
+      formGroupName="filters">
+      <div class="filter-row">
+        <pa-select formControlName="searchIn">
+          <pa-option value="titleOrContent">Title or content contains</pa-option>
+          <pa-option value="title">Title contains</pa-option>
+          <pa-option value="content">Content contains</pa-option>
+        </pa-select>
+
+        <pa-input formControlName="searchQuery">Search</pa-input>
+      </div>
+
+      <div>
+        <nsi-dropdown-button
+          fullWidth
+          aspect="basic"
+          [popupRef]="fileTypesDropdown">
+          File types
+        </nsi-dropdown-button>
+
+        <pa-dropdown #fileTypesDropdown>
+          <pa-option>
+            <pa-checkbox>All file types</pa-checkbox>
+          </pa-option>
+        </pa-dropdown>
+      </div>
+
+      <div>
+        <nsi-dropdown-button
+          fullWidth
+          aspect="basic"
+          [popupRef]="languagesDropdown">
+          Languages
+        </nsi-dropdown-button>
+        <pa-dropdown #languagesDropdown>
+          <pa-option>
+            <pa-checkbox>All languages</pa-checkbox>
+          </pa-option>
+        </pa-dropdown>
+      </div>
+
+      @if (hasLabelSets | async) {
+        <app-label-dropdown
+          fullWidth
+          [selection]="labelSelection"
+          [labelSets]="resourceLabelSets | async"
+          (selectionChange)="updateFiltersWithLabels($event)"
+          aspect="basic">
+          {{ 'Resource labels' | translate }}
+        </app-label-dropdown>
+      }
+    </div>
+  </nsi-two-columns-configuration-item>
+  <nsi-two-columns-configuration-item
+    itemTitle="Select the LLM"
+    description="The chosen LLM will perform the task.">
+    <div></div>
+  </nsi-two-columns-configuration-item>
+
+  <ng-content></ng-content>
+
+  <nsi-two-columns-configuration-item
+    itemTitle="Trigger & web hook"
+    [description]="webHookDescription">
+    <div></div>
+  </nsi-two-columns-configuration-item>
+</form>
