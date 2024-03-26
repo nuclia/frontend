@@ -1,0 +1,10 @@
+@import 'apps/dashboard/src/variables';
+
+:host {
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
+    margin-bottom: rhythm(4);
+  }
+}

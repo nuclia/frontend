@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaDateTimeModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -54,6 +54,10 @@ export class TaskListItemComponent {
   @Input() taskTitle = '';
   @Input() taskDescription = '';
   @Input() taskList: (AutomatedTask | OneTimeTask)[] = [];
+  @Input({ transform: booleanAttribute }) hasArchive = false;
+
+  @Output() newTask = new EventEmitter<void>();
+  @Output() seeArchive = new EventEmitter<void>();
 
   get firstColumn(): { field: 'fieldName' | 'labelSet' | 'nerFamily'; header: string } {
     switch (this.taskType) {

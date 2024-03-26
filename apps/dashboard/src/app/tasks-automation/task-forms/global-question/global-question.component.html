@@ -1,0 +1,15 @@
+<div class="page-spacing">
+  <header>
+    <nsi-back-button [link]="(taskId | async) ? '../..' : '..'">Back to tasks</nsi-back-button>
+
+    <div>
+      <h1 class="page-title">{{ 'tasks-automation.global-question.title' | translate }}</h1>
+      <p class="page-description">{{ 'tasks-automation.global-question.description' | translate }}</p>
+    </div>
+  </header>
+
+  <app-task-form
+    [webHookDescription]="
+      'Whenever the trigger event is happening, Nuclia will make POST call to the given URL, passing the given headers (if any). The body will contain <ADD HERE WHAT THE BACKEND PLAN TO PASS AS BODY>.'
+    "></app-task-form>
+</div>

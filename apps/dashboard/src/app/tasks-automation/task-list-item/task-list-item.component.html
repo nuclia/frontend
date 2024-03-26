@@ -4,8 +4,18 @@
     <div class="description body-s">{{ taskDescription | translate }}</div>
   </div>
   <div class="actions">
-    <pa-button aspect="basic">{{ 'tasks-automation.cta.see-archive' | translate }}</pa-button>
-    <pa-button aspect="basic">{{ 'tasks-automation.cta.new-task' | translate }}</pa-button>
+    @if (hasArchive) {
+      <pa-button
+        aspect="basic"
+        (click)="seeArchive.emit()">
+        {{ 'tasks-automation.cta.see-archive' | translate }}
+      </pa-button>
+    }
+    <pa-button
+      aspect="basic"
+      (click)="newTask.emit()">
+      {{ 'tasks-automation.cta.new-task' | translate }}
+    </pa-button>
   </div>
 </header>
 

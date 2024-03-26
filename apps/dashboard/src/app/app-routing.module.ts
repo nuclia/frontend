@@ -42,7 +42,8 @@ import { InviteComponent } from './onboarding/invite/invite.component';
 import { FeedbackComponent } from './farewell/feedback.component';
 import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
 import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
-import { TasksAutomationComponent } from './tasks-automation/tasks-automation.component';
+import { GlobalQuestionComponent, TasksAutomationComponent } from './tasks-automation';
+import { TaskListComponent } from './tasks-automation/task-list';
 
 const routes: Routes = [
   {
@@ -199,7 +200,20 @@ const routes: Routes = [
               {
                 path: 'tasks',
                 component: TasksAutomationComponent,
-                children: [],
+                children: [
+                  {
+                    path: '',
+                    component: TaskListComponent,
+                  },
+                  {
+                    path: 'global-question',
+                    component: GlobalQuestionComponent,
+                  },
+                  {
+                    path: 'global-question/:taskId',
+                    component: GlobalQuestionComponent,
+                  },
+                ],
               },
             ],
           },

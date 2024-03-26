@@ -1,5 +1,5 @@
 <div class="page-spacing">
-  <div class="page-title">
+  <div>
     <h1 class="page-title">{{ 'tasks-automation.page-title' | translate }}</h1>
     <p class="page-description">{{ 'tasks-automation.page-description' | translate }}</p>
   </div>
@@ -12,7 +12,8 @@
     <app-task-list-item
       taskType="global-question"
       taskTitle="tasks-automation.global-question.title"
-      taskDescription="tasks-automation.global-question.description"></app-task-list-item>
+      taskDescription="tasks-automation.global-question.description"
+      (newTask)="createTask('global-question')"></app-task-list-item>
     <app-task-list-item
       taskType="label-resources"
       taskTitle="tasks-automation.label-resources.title"
