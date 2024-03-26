@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, map, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, map, Subject, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
-import { SampleDatasetService, UploadService } from '@flaps/common';
+import { UploadService } from '@flaps/common';
 import { SDKService } from '@flaps/core';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 import { GettingStartedComponent } from '../../onboarding/getting-started/getting-started.component';
@@ -20,28 +20,16 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
     private sdk: SDKService,
     private uploadService: UploadService,
     private modalService: SisModalService,
-    private sampleDatasetService: SampleDatasetService,
   ) {}
 
   ngOnInit() {
     const gettingStartedDone = localStorage.getItem(GETTING_STARTED_DONE_KEY) === 'true';
     if (!gettingStartedDone) {
-      this.sdk.counters
-        .pipe(
-          take(1),
-          switchMap((counters) =>
-            this.sampleDatasetService
-              .hasOnlySampleResources(counters)
-              .pipe(map((hasOnlySample) => ({ counters, hasOnlySample }))),
-          ),
-        )
-        .subscribe(({ counters, hasOnlySample }) => {
-          if (counters.resources === 0) {
-            this.modalService.openModal(GettingStartedComponent);
-          } else if (!hasOnlySample) {
-            localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
-          }
-        });
+      this.sdk.counters.pipe(take(1)).subscribe((counters) => {
+        if (counters.resources === 0) {
+          this.modalService.openModal(GettingStartedComponent);
+        }
+      });
     }
   }
 
