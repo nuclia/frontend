@@ -19,12 +19,7 @@
     display: flex;
     gap: rhythm(1);
   }
-  .label {
-    background: $color-tertiary-lightest;
-    border-radius: rhythm(1.5);
-    color: $color-tertiary-strong;
-    padding: 0 rhythm(1);
-  }
+
   .description {
     color: $color-neutral-regular;
   }

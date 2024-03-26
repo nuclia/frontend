@@ -15,7 +15,7 @@ import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 export class SistemaTwoColumnsConfigurationItemComponent {
   code = `<nsi-two-columns-configuration-item
     itemTitle="Here is the item title"
-    label="optional label"
+    badge="optional label"
     description="and here the item description">
     In here you can put whatever content you need, it will be displayed on the second column.
 </nsi-two-columns-configuration-item>`;
