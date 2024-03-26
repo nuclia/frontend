@@ -1,5 +1,6 @@
 <pa-button
   class="nsi-dropdown-button"
+  [class.full-width]="fullWidth"
   [size]="size"
   [aspect]="aspect"
   [kind]="kind"
@@ -7,7 +8,8 @@
   [paPopup]="popupRef"
   [icon]="icon"
   [iconAndText]="!!icon"
-  [sameWidth]="!freeWidth">
+  [sameWidth]="!freeWidth"
+  alignPopupOnLeft>
   <ng-content></ng-content>
   <pa-icon name="chevron-down"></pa-icon>
 </pa-button>

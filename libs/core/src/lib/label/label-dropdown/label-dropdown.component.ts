@@ -1,7 +1,15 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Classification, LabelSet, LabelSets } from '@nuclia/core';
 import { Aspect, PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'app-label-dropdown',
@@ -10,15 +18,11 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelDropdownComponent {
-  @Input()
-  set aspect(value: Aspect) {
-    this._aspect = value;
-  }
-  get aspect() {
-    return this._aspect;
-  }
-  private _aspect: Aspect = 'solid';
-
+  @Input() aspect: Aspect = 'solid';
+  @Input() labelSets: LabelSets = {};
+  @Input({ transform: booleanAttribute }) single = false;
+  @Input({ transform: booleanAttribute }) fullWidth = false;
+  @Input() size: Size = 'medium';
   @Input()
   set selection(value: Classification[]) {
     this._selection = [...value] || [];
@@ -27,26 +31,7 @@ export class LabelDropdownComponent {
   get selection() {
     return this._selection;
   }
-
-  @Input()
-  set labelSets(value: LabelSets | null) {
-    if (value) {
-      this._labelSets = value;
-    }
-  }
-  get labelSets(): LabelSets {
-    return this._labelSets;
-  }
-
-  @Input()
-  set single(value: any) {
-    this._single = coerceBooleanProperty(value);
-  }
-  get single() {
-    return this._single;
-  }
-
-  @Input() size: Size = 'medium';
+  private _selection: Classification[] = [];
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
   @Output() close = new EventEmitter<void>();
@@ -58,10 +43,6 @@ export class LabelDropdownComponent {
   labelValues: Classification[] = [];
   open: boolean = false;
   checkboxSelection: string[] = [];
-
-  private _selection: Classification[] = [];
-  private _labelSets: LabelSets = {};
-  private _single = false;
 
   onLevel1Selection(labelSetType: string, labelSet: LabelSet) {
     this.labelSetExpanded = labelSetType;
