@@ -13,7 +13,7 @@ import { getClassificationFromSelection } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditSyncLabelsComponent implements OnInit {
-  @Output() done = new EventEmitter();
+  @Output() goTo = new EventEmitter<string>();
   labelSets = this.sdk.currentKb.pipe(
     take(1),
     switchMap((kb) => kb.getLabels()),
@@ -59,7 +59,7 @@ export class EditSyncLabelsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toast.success('upload.saved');
-          this.done.emit();
+          this.goTo.emit('activity');
         },
         error: () => {
           this.toast.error('upload.failed');

@@ -43,6 +43,7 @@
 	"upload.activity.event": "Missatge",
 	"upload.activity.help": "Totes les sincronitzacions s'activen automàticament cada 60 minuts.",
 	"upload.activity.no-folders": "Encara no s'ha seleccionat cap carpeta. Aneu a la pestanya Carpetes per seleccionar les carpetes que voleu sincronitzar.",
+	"upload.activity.select-folder": "Aneu a la selecció de carpetes",
 	"upload.activity.sync-now": "Sincronitza ara",
 	"upload.add-connector": "Afegir connector",
 	"upload.authentication.fail": "L'autenticació ha fallat",

@@ -5,6 +5,12 @@
       <pa-icon name="warning"></pa-icon>
       <div class="title-xxs">
         {{ 'upload.activity.no-folders' | translate }}
+        <pa-button
+          (click)="goTo.emit('folders')"
+          aspect="basic"
+          size="small">
+          {{ 'upload.activity.select-folder' | translate }}
+        </pa-button>
       </div>
     </div>
   }

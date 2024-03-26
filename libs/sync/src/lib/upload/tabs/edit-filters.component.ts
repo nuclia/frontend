@@ -12,7 +12,7 @@ import { FormControl, FormGroup } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditSyncFiltersComponent implements OnInit {
-  @Output() done = new EventEmitter();
+  @Output() goTo = new EventEmitter<string>();
   filtersForm = new FormGroup({
     fileExtensions: new FormControl<string>(''),
     exclude: new FormControl<boolean>(false),
@@ -63,7 +63,7 @@ export class EditSyncFiltersComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toast.success('upload.saved');
-          this.done.emit();
+          this.goTo.emit('activity');
         },
         error: () => {
           this.toast.error('upload.failed');

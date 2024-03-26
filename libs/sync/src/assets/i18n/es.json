@@ -43,6 +43,7 @@
 	"upload.activity.event": "Mensaje",
 	"upload.activity.help": "Todas las sincronizaciones se activan automáticamente cada 60 minutos.",
 	"upload.activity.no-folders": "Aún no hay carpetas seleccionadas. Vaya a la pestaña Carpetas para seleccionar las carpetas que desea sincronizar.",
+	"upload.activity.select-folder": "Ir a la selección de carpetas",
 	"upload.activity.sync-now": "Sincronizar ahora",
 	"upload.add-connector": "Añadir conector",
 	"upload.authentication.fail": "Autenticación fallida",

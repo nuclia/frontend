@@ -43,6 +43,7 @@
 	"upload.activity.event": "Message",
 	"upload.activity.help": "Toutes les synchronisations sont déclenchées automatiquement toutes les 60 minutes.",
 	"upload.activity.no-folders": "Aucun dossier sélectionné pour l'instant. Allez dans l'onglet Dossiers pour sélectionner les dossiers que vous souhaitez synchroniser.",
+	"upload.activity.select-folder": "Aller à la sélection des dossiers",
 	"upload.activity.sync-now": "Synchroniser maintenant",
 	"upload.add-connector": "Ajouter un connecteur",
 	"upload.authentication.fail": "Échec de l'authentification",

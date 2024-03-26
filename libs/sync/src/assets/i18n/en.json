@@ -43,6 +43,7 @@
 	"upload.activity.event": "Message",
 	"upload.activity.help": "All syncs are triggered automatically every 60 minutes.",
 	"upload.activity.no-folders": "No folders selected yet. Go to the Folders tab to select the folders you want to sync.",
+	"upload.activity.select-folder": "Go to folders selection",
 	"upload.activity.sync-now": "Sync now",
 	"upload.add-connector": "Add connector",
 	"upload.authentication.fail": "Authentication failed",
