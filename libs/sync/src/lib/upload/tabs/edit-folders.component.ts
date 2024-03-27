@@ -13,6 +13,7 @@ import { SearchResults, SyncItem } from '../../sync/models';
 import { SyncService } from '../../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 
+const SLASH_REG = /\//g;
 @Component({
   selector: 'nsy-edit-folders',
   templateUrl: 'edit-folders.component.html',
@@ -57,6 +58,30 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
           }),
           scan((acc, current) => acc.concat(current.items), [] as SyncItem[]),
         ),
+    ),
+    map((items) =>
+      items
+        .map((item) => {
+          let path = item.metadata['path'];
+          if (!path) {
+            path = '/';
+          } else {
+            if (!path.startsWith('/')) {
+              path = `/${path}`;
+            }
+            path += '/';
+            path = path.replace(SLASH_REG, ' / ');
+          }
+          return {
+            ...item,
+            metadata: { ...(item.metadata || {}), path },
+          };
+        })
+        .sort((a, b) => {
+          const aFullPath = a.metadata['path'] === '/' ? ` / ${a.title}` : `${a.metadata['path']} / ${a.title}`;
+          const bFullPath = b.metadata['path'] === '/' ? ` / ${b.title}` : `${b.metadata['path']} / ${b.title}`;
+          return aFullPath.localeCompare(bFullPath);
+        }),
     ),
     share(),
   );

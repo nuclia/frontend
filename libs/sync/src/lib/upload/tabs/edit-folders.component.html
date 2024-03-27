@@ -6,6 +6,9 @@
           <pa-checkbox
             [value]="selection.isSelected(resource)"
             (valueChange)="toggle(resource)">
+            @if (resource.metadata['path']) {
+              <span class="body-xs">{{ resource.metadata['path'] }}</span>
+            }
             {{ resource.title }}
           </pa-checkbox>
         </td>
