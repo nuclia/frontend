@@ -24,15 +24,11 @@ import {
   UserClassification,
 } from '@nuclia/core';
 import { LabelsService } from '@flaps/core';
-import { getClassificationsPayload, UploadService } from '@flaps/common';
+import { Filters, formatFiltersFromFacets, MIME_FACETS } from '../../resource-filters.utils';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { ResourcesTableDirective } from '../resources-table.directive';
-import mime from 'mime';
-
-interface Filters {
-  classification: OptionModel[];
-  mainTypes: OptionModel[];
-}
+import { UploadService } from '../../../upload';
+import { getClassificationsPayload } from '../../edit-resource';
 
 @Component({
   selector: 'stf-processed-resource-table',
@@ -323,7 +319,6 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   }
 
   private loadFilters(): Observable<void> {
-    const mimeFacets = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video'];
     return forkJoin([
       this.sdk.currentKb.pipe(take(1)),
       this.labelSets.pipe(take(1)),
@@ -331,7 +326,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
       this.resourceListService.filters.pipe(take(1)),
     ]).pipe(
       switchMap(([kb, labelSets, queryParams, filters]) => {
-        const faceted = mimeFacets.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
+        const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
         return kb.catalog('', { faceted }).pipe(map((results) => ({ results, queryParams, filters })));
       }),
       map(({ results, queryParams, filters }) => {
@@ -346,77 +341,11 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     );
   }
 
-  private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[]) {
-    // Group facets by types
-    const facetGroups: {
-      classification: { key: string; count: number }[];
-      mainTypes: { key: string; count: number }[];
-    } = Object.entries(allFacets).reduce(
-      (groups, [facetId, values]) => {
-        if (facetId.startsWith('/classification.labels/')) {
-          Object.entries(values).forEach(([key, count]) => {
-            groups.classification.push({ key, count });
-          });
-        } else if (facetId.startsWith('/icon/')) {
-          Object.entries(values).forEach(([key, count]) => {
-            groups.mainTypes.push({ key, count });
-          });
-        }
-        return groups;
-      },
-      {
-        classification: [] as { key: string; count: number }[],
-        mainTypes: [] as { key: string; count: number }[],
-      },
-    );
-
-    // Create corresponding filter options
-    const filters: Filters = {
-      classification: [],
-      mainTypes: [],
-    };
-    if (facetGroups.classification.length > 0) {
-      facetGroups.classification.forEach((facet) => {
-        const label = facet.key.split('/').slice(2).join('/');
-        filters.classification.push(this.getOptionFromFacet(facet, label, queryParamsFilters.includes(facet.key)));
-      });
-      filters.classification.sort((a, b) => a.label.localeCompare(b.label));
-    }
-    if (facetGroups.mainTypes.length > 0) {
-      facetGroups.mainTypes.forEach((facet) => {
-        let help: string | undefined = facet.key.substring(5);
-        let label = mime.getExtension(help) || (facet.key.split('/').pop() as string);
-        if (label === 'stf-link') {
-          label = 'link';
-        }
-        if (help.includes('.')) {
-          help = help.split('.').pop();
-        }
-        return filters.mainTypes.push(
-          this.getOptionFromFacet(facet, label, queryParamsFilters.includes(facet.key), help),
-        );
-      });
-      filters.mainTypes.sort((a, b) => a.label.localeCompare(b.label));
-    }
-
+  private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[] = []) {
+    const filters = formatFiltersFromFacets(allFacets, queryParamsFilters);
     this.filterOptions = filters;
     this.hasFilters = filters.classification.length > 0 || filters.mainTypes.length > 0;
     this.cdr.markForCheck();
-  }
-
-  private getOptionFromFacet(
-    facet: { key: string; count: number },
-    label: string,
-    selected: boolean,
-    help?: string,
-  ): OptionModel {
-    return new OptionModel({
-      id: facet.key,
-      value: facet.key,
-      label: `${label} (${facet.count})`,
-      help,
-      selected,
-    });
   }
 
   private mergeExistingAndSelectedLabels(

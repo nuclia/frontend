@@ -1,48 +1,77 @@
-<form [formGroup]="form">
+<form
+  [formGroup]="form"
+  (ngSubmit)="activateTask()">
   <nsi-two-columns-configuration-item
-    itemTitle="What do you want the task to apply to?"
-    description="Keep the task running for future resources or run it once.">
-    <pa-radio-group>
-      <pa-radio>
-        Apply automatically to
-        <strong>all existing and future resources</strong>
+    [itemTitle]="'tasks-automation.form.apply-task-to.title' | translate"
+    [description]="'tasks-automation.form.apply-task-to.description' | translate">
+    <pa-radio-group formControlName="applyTaskTo">
+      <pa-radio value="automation">
+        <span [innerHTML]="'tasks-automation.form.apply-task-to.automation' | translate"></span>
       </pa-radio>
-      <pa-radio>
-        Run once on
-        <strong>existing resources only</strong>
+      <pa-radio value="once">
+        <span [innerHTML]="'tasks-automation.form.apply-task-to.one-time' | translate"></span>
       </pa-radio>
     </pa-radio-group>
   </nsi-two-columns-configuration-item>
 
   <nsi-two-columns-configuration-item
-    itemTitle="Filter the resources"
-    description="The action will apply only to resources matching the selection."
-    badge="optional">
+    [itemTitle]="'tasks-automation.form.filter.title' | translate"
+    [description]="'tasks-automation.form.filter.description' | translate"
+    [badge]="'tasks-automation.badge.optional' | translate">
     <div
-      class="filter-form-container"
+      class="form-container filter-form-container"
       formGroupName="filters">
       <div class="filter-row">
         <pa-select formControlName="searchIn">
-          <pa-option value="titleOrContent">Title or content contains</pa-option>
-          <pa-option value="title">Title contains</pa-option>
-          <pa-option value="content">Content contains</pa-option>
+          <pa-option value="titleOrContent">
+            {{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}
+          </pa-option>
+          <pa-option value="title">{{ 'tasks-automation.form.filter.search-in.title' | translate }}</pa-option>
+          <pa-option value="content">{{ 'tasks-automation.form.filter.search-in.content' | translate }}</pa-option>
         </pa-select>
 
-        <pa-input formControlName="searchQuery">Search</pa-input>
+        <pa-input formControlName="searchQuery">
+          {{ 'tasks-automation.form.filter.search-input-label' | translate }}
+        </pa-input>
       </div>
 
       <div>
         <nsi-dropdown-button
           fullWidth
           aspect="basic"
-          [popupRef]="fileTypesDropdown">
-          File types
+          [popupRef]="resourceTypesDropdown">
+          {{ 'tasks-automation.form.filter.resource-type.button-label' | translate }}
+
+          @if (resourceTypeSelectionCount > 0) {
+            ({{
+              resourceTypeSelectionCount === resourceTypeTotalCount
+                ? ('tasks-automation.form.filter.all' | translate)
+                : resourceTypeSelectionCount
+            }})
+          }
         </nsi-dropdown-button>
 
-        <pa-dropdown #fileTypesDropdown>
-          <pa-option>
-            <pa-checkbox>All file types</pa-checkbox>
+        <pa-dropdown #resourceTypesDropdown>
+          <pa-option
+            dontCloseOnSelect
+            (selectOption)="toggleAll('types', $event)">
+            <pa-checkbox [value]="allResourceTypesSelected">
+              {{ 'tasks-automation.form.filter.resource-type.all-types' | translate }}
+            </pa-checkbox>
           </pa-option>
+          <pa-separator></pa-separator>
+          @for (option of resourceTypeFilters; track option.id) {
+            <pa-option
+              [paTooltip]="option.help"
+              (selectOption)="onSelectFilter(option, $event)"
+              dontCloseOnSelect>
+              <pa-checkbox
+                [(value)]="option.selected"
+                (valueChange)="onToggleFilter()">
+                {{ option.label }}
+              </pa-checkbox>
+            </pa-option>
+          }
         </pa-dropdown>
       </div>
 
@@ -51,12 +80,37 @@
           fullWidth
           aspect="basic"
           [popupRef]="languagesDropdown">
-          Languages
+          {{ 'tasks-automation.form.filter.languages.button-label' | translate }}
+
+          @if (languageSelectionCount > 0) {
+            ({{
+              languageSelectionCount === languageTotalCount
+                ? ('tasks-automation.form.filter.all' | translate)
+                : languageSelectionCount
+            }})
+          }
         </nsi-dropdown-button>
         <pa-dropdown #languagesDropdown>
-          <pa-option>
-            <pa-checkbox>All languages</pa-checkbox>
+          <pa-option
+            dontCloseOnSelect
+            (selectOption)="toggleAll('languages', $event)">
+            <pa-checkbox [value]="allLanguagesSelected">
+              {{ 'tasks-automation.form.filter.languages.all-languages' | translate }}
+            </pa-checkbox>
           </pa-option>
+          <pa-separator></pa-separator>
+          @for (option of languageFilters; track option.id) {
+            <pa-option
+              [paTooltip]="option.help"
+              (selectOption)="onSelectFilter(option, $event)"
+              dontCloseOnSelect>
+              <pa-checkbox
+                [(value)]="option.selected"
+                (valueChange)="onToggleFilter()">
+                {{ option.label }}
+              </pa-checkbox>
+            </pa-option>
+          }
         </pa-dropdown>
       </div>
 
@@ -67,22 +121,96 @@
           [labelSets]="resourceLabelSets | async"
           (selectionChange)="updateFiltersWithLabels($event)"
           aspect="basic">
-          {{ 'Resource labels' | translate }}
+          {{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}
+          @if (labelSelectionCount > 0) {
+            ({{ labelSelectionCount }})
+          }
         </app-label-dropdown>
       }
     </div>
   </nsi-two-columns-configuration-item>
   <nsi-two-columns-configuration-item
-    itemTitle="Select the LLM"
-    description="The chosen LLM will perform the task.">
+    [itemTitle]="'tasks-automation.form.llm-selection.title' | translate"
+    [description]="'tasks-automation.form.llm-selection.description' | translate">
     <div></div>
   </nsi-two-columns-configuration-item>
 
   <ng-content></ng-content>
 
   <nsi-two-columns-configuration-item
-    itemTitle="Trigger & web hook"
-    [description]="webHookDescription">
-    <div></div>
+    [itemTitle]="'tasks-automation.form.webhook.title' | translate"
+    [description]="webHookBlockDescription | translate">
+    <div
+      class="form-container"
+      formGroupName="webhook">
+      <div>
+        <label for="trigger_description">{{ 'tasks-automation.form.webhook.trigger-label' | translate }}</label>
+        <nsi-info-card id="trigger_description">{{ triggerDescription | translate }}</nsi-info-card>
+      </div>
+      <div>
+        <label for="url">URL</label>
+        <pa-input
+          id="url"
+          externalLabel
+          formControlName="url"></pa-input>
+      </div>
+      <div formGroupName="headers">
+        <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
+        <pa-table
+          border
+          columns="repeat(2, 2fr) 1fr">
+          <pa-table-header>
+            <pa-table-cell header>{{ 'tasks-automation.form.webhook.headers.key' | translate }}</pa-table-cell>
+            <pa-table-cell header>{{ 'tasks-automation.form.webhook.headers.value' | translate }}</pa-table-cell>
+            <pa-table-cell header>{{ 'tasks-automation.form.webhook.headers.secret-value' | translate }}</pa-table-cell>
+          </pa-table-header>
+          @for (row of headersGroup; track row) {
+            <pa-table-row>
+              <pa-table-cell>
+                <pa-input
+                  [placeholder]="'tasks-automation.form.webhook.headers.key' | translate"
+                  [formControl]="row.controls.key"></pa-input>
+              </pa-table-cell>
+              <pa-table-cell>
+                <pa-input
+                  [placeholder]="'tasks-automation.form.webhook.headers.value' | translate"
+                  [formControl]="row.controls.value"
+                  [type]="row.controls.secret.value ? 'password' : 'text'"></pa-input>
+              </pa-table-cell>
+              <pa-table-cell>
+                <pa-toggle [formControl]="row.controls.secret"></pa-toggle>
+              </pa-table-cell>
+            </pa-table-row>
+          }
+          <pa-table-row-header>
+            <pa-button
+              class="table-header-button"
+              aspect="basic"
+              icon="plus"
+              size="small"
+              iconAndText
+              (click)="addHeader()">
+              {{ 'tasks-automation.form.webhook.headers.new' | translate }}
+            </pa-button>
+          </pa-table-row-header>
+        </pa-table>
+      </div>
+    </div>
   </nsi-two-columns-configuration-item>
+
+  <footer>
+    <div>
+      @if (applyTaskValue === 'automation') {
+        {{ footerNoteAutomation | translate }}
+      } @else if (resourceCount !== undefined) {
+        {{ footerNoteOneTime | translate: { count: resourceCount } }}
+      }
+    </div>
+    <pa-button aspect="basic">{{ 'generic.cancel' | translate }}</pa-button>
+    <pa-button
+      kind="primary"
+      type="submit">
+      {{ activateButtonLabel | translate }}
+    </pa-button>
+  </footer>
 </form>

@@ -1,52 +1,124 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DropdownButtonComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { LabelModule, LabelsService } from '@flaps/core';
+import {
+  DropdownButtonComponent,
+  InfoCardComponent,
+  SisToastService,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
+import {
+  OptionModel,
+  PaButtonModule,
+  PaDropdownModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { LabelModule, LabelsService, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { Classification } from '@nuclia/core';
-import { tap } from 'rxjs';
+import { Classification, Filter, Search } from '@nuclia/core';
+import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
+import { Filters, formatFiltersFromFacets, LANGUAGE_FACET, MIME_FACETS } from '../../resources';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+
+function createHeaderRow() {
+  return new FormGroup({
+    key: new FormControl<string>(''),
+    value: new FormControl<string>(''),
+    secret: new FormControl<boolean>(false),
+  });
+}
 
 @Component({
   selector: 'app-task-form',
   standalone: true,
   imports: [
     CommonModule,
+    DropdownButtonComponent,
+    InfoCardComponent,
+    LabelModule,
     PaDropdownModule,
     PaTextFieldModule,
     PaTogglesModule,
-    TwoColumnsConfigurationItemComponent,
+    PaTooltipModule,
     ReactiveFormsModule,
-    DropdownButtonComponent,
-    LabelModule,
+    TwoColumnsConfigurationItemComponent,
     TranslateModule,
+    PaTableModule,
+    PaButtonModule,
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaskFormComponent {
+export class TaskFormComponent implements OnInit, OnDestroy {
   private labelService = inject(LabelsService);
+  private toaster = inject(SisToastService);
+  private sdk = inject(SDKService);
   private cdr = inject(ChangeDetectorRef);
 
-  @Input() webHookDescription = '';
+  private unsubscribeAll = new Subject<void>();
+
+  // Text displayed below the "Trigger & Webhook" title on the left column
+  @Input() webHookBlockDescription = '';
+  // Text displayed in the info card below Trigger label on the right column
+  @Input() triggerDescription = '';
+  // Label displayed on the submit button
+  @Input() activateButtonLabel = 'Activate';
+  // Note displayed on the footer when task is applied automatically
+  @Input() footerNoteAutomation = '';
+  // Note displayed on the footer when task is applied once
+  @Input() footerNoteOneTime = '';
 
   form = new FormGroup({
+    applyTaskTo: new FormControl<'automation' | 'once'>('automation'),
     filters: new FormGroup({
       searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent'),
       searchQuery: new FormControl<string>(''),
     }),
+    webhook: new FormGroup({
+      url: new FormControl<string>(''),
+      headers: new FormArray([createHeaderRow()]),
+    }),
   });
 
-  // TODO: load file type filters
+  selectedFilters = new BehaviorSubject<string[] | Filter[]>([]);
+
+  get applyTaskValue() {
+    return this.form.controls.applyTaskTo.value;
+  }
+  get headersGroup() {
+    return this.form.controls.webhook.controls.headers.controls;
+  }
+
+  resourceCount?: number;
+
+  resourceTypeFilters: OptionModel[] = [];
+  allResourceTypesSelected = false;
+  get resourceTypeSelectionCount(): number {
+    return this.resourceTypeFilters.filter((option) => option.selected).length;
+  }
+  get resourceTypeTotalCount(): number {
+    return this.resourceTypeFilters.length;
+  }
+
+  languageFilters: OptionModel[] = [];
+  allLanguagesSelected = false;
+  get languageSelectionCount(): number {
+    return this.languageFilters.filter((option) => option.selected).length;
+  }
+  get languageTotalCount(): number {
+    return this.languageFilters.length;
+  }
 
   hasLabelSets = this.labelService.hasResourceLabelSets;
   resourceLabelSets = this.labelService.resourceLabelSets.pipe(
     tap((labelSets) => {
       if (labelSets) {
-        // FIXME for edition
-        const currentFilters = ''.split('\n');
+        // FIXME for edition depending on how the filters will be stored
+        const currentFilters: string[] = [];
         this.labelSelection = Object.entries(labelSets).reduce((selection, [id, labelset]) => {
           labelset.labels.forEach((label) => {
             const labelFilter = `/classification.labels/${id}/${label.title}`;
@@ -61,8 +133,109 @@ export class TaskFormComponent {
     }),
   );
   labelSelection: Classification[] = [];
+  labelFilters: string[] = [];
+  get labelSelectionCount(): number {
+    return this.labelFilters.length;
+  }
+
+  ngOnInit() {
+    this.sdk.currentKb
+      .pipe(
+        switchMap((kb) => kb.catalog('', { faceted: MIME_FACETS.concat(LANGUAGE_FACET) })),
+        map((results) => {
+          if (results.type === 'error') {
+            return;
+          }
+          const facets: Search.FacetsResult = results.fulltext?.facets || {};
+          return formatFiltersFromFacets(facets);
+        }),
+        filter((filters) => !!filters),
+        map((filters) => filters as Filters),
+      )
+      .subscribe((filters) => {
+        this.resourceTypeFilters = filters.mainTypes;
+        if (filters.languages) {
+          this.languageFilters = filters.languages;
+        }
+        this.cdr.detectChanges();
+      });
+
+    combineLatest([this.form.valueChanges, this.selectedFilters])
+      .pipe(
+        filter(([data]) => data.applyTaskTo === 'once'),
+        debounceTime(300),
+        switchMap(([data, filters]) =>
+          this.sdk.currentKb.pipe(switchMap((kb) => kb.catalog(data.filters?.searchQuery || '', { filters }))),
+        ),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe({
+        next: (results) => {
+          if (results.type !== 'error') {
+            this.resourceCount = results.fulltext?.total;
+            this.cdr.markForCheck();
+          }
+        },
+        error: () => this.toaster.error('tasks-automation.errors.counting-resources'),
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+
+  toggleAll(filter: 'types' | 'languages', event: MouseEvent | KeyboardEvent) {
+    const tagName = (event.target as HTMLElement).tagName;
+    if (tagName === 'LI' || tagName === 'INPUT') {
+      switch (filter) {
+        case 'types':
+          this.resourceTypeFilters = this.resourceTypeFilters.map(
+            (option) => new OptionModel({ ...option, selected: !this.allResourceTypesSelected }),
+          );
+          break;
+        case 'languages':
+          this.languageFilters = this.languageFilters.map(
+            (option) => new OptionModel({ ...option, selected: !this.allLanguagesSelected }),
+          );
+          break;
+      }
+      this.onToggleFilter();
+    }
+  }
+
+  onSelectFilter(option: OptionModel, event: MouseEvent | KeyboardEvent) {
+    if ((event.target as HTMLElement).tagName === 'LI') {
+      option.selected = !option.selected;
+      this.onToggleFilter();
+    }
+  }
 
   updateFiltersWithLabels(labels: Classification[]) {
+    this.labelFilters = labels.map((label) => `/classification.labels/${label.labelset}/${label.label}`);
+    this.onToggleFilter();
+  }
+
+  onToggleFilter() {
+    this.allResourceTypesSelected = this.resourceTypeFilters.every((option) => option.selected);
+    this.allLanguagesSelected = this.languageFilters.every((option) => option.selected);
+
+    const selectedResourceTypes = this.resourceTypeFilters
+      .filter((option) => option.selected)
+      .map((option) => option.value);
+    const selectedLanguages = this.languageFilters.filter((option) => option.selected).map((option) => option.value);
+
+    const resourceTypesFilters: Filter[] = selectedResourceTypes.length > 0 ? [{ any: selectedResourceTypes }] : [];
+    const languageFilters: Filter[] = selectedLanguages.length > 0 ? [{ any: selectedLanguages }] : [];
+    const selectedLabels: Filter[] = this.labelFilters.length > 0 ? [{ any: this.labelFilters }] : [];
+    this.selectedFilters.next(resourceTypesFilters.concat(languageFilters).concat(selectedLabels));
+  }
+
+  addHeader() {
+    this.headersGroup.push(createHeaderRow());
+  }
+
+  activateTask() {
     // TODO
   }
 }

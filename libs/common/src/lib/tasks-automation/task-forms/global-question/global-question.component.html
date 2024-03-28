@@ -9,7 +9,9 @@
   </header>
 
   <app-task-form
-    [webHookDescription]="
-      'Whenever the trigger event is happening, Nuclia will make POST call to the given URL, passing the given headers (if any). The body will contain <ADD HERE WHAT THE BACKEND PLAN TO PASS AS BODY>.'
-    "></app-task-form>
+    webHookBlockDescription="tasks-automation.global-question.webhook-block.description"
+    triggerDescription="tasks-automation.global-question.webhook-block.trigger-description"
+    activateButtonLabel="tasks-automation.global-question.footer.activate-button-label"
+    footerNoteAutomation="tasks-automation.global-question.footer.apply-automation"
+    footerNoteOneTime="tasks-automation.global-question.footer.apply-one-time"></app-task-form>
 </div>
