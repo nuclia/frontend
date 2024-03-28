@@ -1,27 +1,28 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormComponent } from '../task-form.component';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { TaskRouteDirective } from '../task-route.directive';
+import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
-  selector: 'app-global-question',
+  selector: 'stf-summarize-resources',
   standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,
-    TranslateModule,
-    TaskFormComponent,
-    TwoColumnsConfigurationItemComponent,
     InfoCardComponent,
+    TaskFormComponent,
+    TranslateModule,
+    TwoColumnsConfigurationItemComponent,
+    PaTogglesModule,
     PaTextFieldModule,
   ],
-  templateUrl: './global-question.component.html',
+  templateUrl: './summarize-resources.component.html',
   styleUrl: '../_task-form.common.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GlobalQuestionComponent extends TaskRouteDirective {
+export class SummarizeResourcesComponent extends TaskRouteDirective {
   generativeModels = ['nuclia-everest-v1', 'chatgpt-azure-3', 'chatgpt-azure', 'anthropic'];
 }

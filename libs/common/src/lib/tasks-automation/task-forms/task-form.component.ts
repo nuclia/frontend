@@ -65,8 +65,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   // List of LLMs available for this task
   @Input() availableLLMs: string[] = [];
-  // Text displayed below the "Trigger & Webhook" title on the left column
-  @Input() webHookBlockDescription = '';
   // Text displayed in the info card below Trigger label on the right column
   @Input() triggerDescription = '';
   // Label displayed on the submit button

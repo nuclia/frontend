@@ -1,0 +1,51 @@
+<div class="page-spacing">
+  <header>
+    <nsi-back-button [link]="(taskId | async) ? '../..' : '..'">
+      {{ 'tasks-automation.bach-to-tasks' | translate }}
+    </nsi-back-button>
+
+    <div>
+      <h1 class="page-title">{{ 'tasks-automation.summarize-resources.title' | translate }}</h1>
+      <p class="page-description">{{ 'tasks-automation.summarize-resources.description' | translate }}</p>
+    </div>
+  </header>
+
+  <app-task-form
+    triggerDescription="tasks-automation.summarize-resources.trigger-description"
+    activateButtonLabel="tasks-automation.summarize-resources.footer.activate-button-label"
+    footerNoteAutomation="tasks-automation.summarize-resources.footer.apply-automation"
+    footerNoteOneTime="tasks-automation.summarize-resources.footer.apply-one-time"
+    [availableLLMs]="generativeModels">
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.summarize-resources.summary-options.title"
+      description="tasks-automation.summarize-resources.summary-options.description">
+      <pa-radio-group>
+        <pa-radio>{{ 'kb.settings.learning-options.summary-simple' | translate }}</pa-radio>
+        <pa-radio>{{ 'kb.settings.learning-options.summary-extended' | translate }}</pa-radio>
+      </pa-radio-group>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.summarize-resources.add-prompt.title"
+      description="tasks-automation.summarize-resources.add-prompt.description"
+      badge="tasks-automation.badge.beta">
+      <div class="form-container">
+        <nsi-info-card>{{ 'tasks-automation.summarize-resources.add-prompt.info' | translate }}</nsi-info-card>
+        <pa-textarea rows="4">
+          {{ 'tasks-automation.summarize-resources.add-prompt.textarea-label' | translate }}
+        </pa-textarea>
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'tasks-automation.summarize-resources.add-prompt.warning' | translate }}
+        </nsi-info-card>
+      </div>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.summarize-resources.find-summary.title"
+      description="tasks-automation.summarize-resources.find-summary.description">
+      <nsi-info-card>{{ 'tasks-automation.summarize-resources.find-summary.info' | translate }}</nsi-info-card>
+    </nsi-two-columns-configuration-item>
+  </app-task-form>
+</div>

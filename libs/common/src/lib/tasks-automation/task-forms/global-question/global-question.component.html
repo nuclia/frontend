@@ -1,6 +1,8 @@
 <div class="page-spacing">
   <header>
-    <nsi-back-button [link]="(taskId | async) ? '../..' : '..'">Back to tasks</nsi-back-button>
+    <nsi-back-button [link]="(taskId | async) ? '../..' : '..'">
+      {{ 'tasks-automation.bach-to-tasks' | translate }}
+    </nsi-back-button>
 
     <div>
       <h1 class="page-title">{{ 'tasks-automation.global-question.title' | translate }}</h1>
@@ -9,8 +11,7 @@
   </header>
 
   <app-task-form
-    webHookBlockDescription="tasks-automation.global-question.webhook-block.description"
-    triggerDescription="tasks-automation.global-question.webhook-block.trigger-description"
+    triggerDescription="tasks-automation.global-question.trigger-description"
     activateButtonLabel="tasks-automation.global-question.footer.activate-button-label"
     footerNoteAutomation="tasks-automation.global-question.footer.apply-automation"
     footerNoteOneTime="tasks-automation.global-question.footer.apply-one-time"

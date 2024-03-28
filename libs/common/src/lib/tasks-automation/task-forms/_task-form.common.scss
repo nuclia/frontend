@@ -1,5 +1,12 @@
 @import 'apps/dashboard/src/variables';
 
+header {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  margin-bottom: rhythm(4);
+}
+
 .form-container {
   align-items: center;
   display: flex;

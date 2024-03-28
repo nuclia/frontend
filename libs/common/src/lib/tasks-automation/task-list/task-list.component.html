@@ -8,7 +8,8 @@
     <app-task-list-item
       taskType="summarize"
       taskTitle="tasks-automation.summarize-resources.title"
-      taskDescription="tasks-automation.summarize-resources.description"></app-task-list-item>
+      taskDescription="tasks-automation.summarize-resources.description"
+      (newTask)="createTask('summarize-resources')"></app-task-list-item>
     <app-task-list-item
       taskType="global-question"
       taskTitle="tasks-automation.global-question.title"

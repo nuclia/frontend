@@ -21,6 +21,7 @@ import {
   selectKbGuard,
   setAccountGuard,
   setKbGuard,
+  SummarizeResourcesComponent,
   TaskListComponent,
   TasksAutomationComponent,
 } from '@flaps/common';
@@ -213,6 +214,14 @@ const routes: Routes = [
                   {
                     path: 'global-question/:taskId',
                     component: GlobalQuestionComponent,
+                  },
+                  {
+                    path: 'summarize-resources',
+                    component: SummarizeResourcesComponent,
+                  },
+                  {
+                    path: 'summarize-resources/:taskId',
+                    component: SummarizeResourcesComponent,
                   },
                 ],
               },
