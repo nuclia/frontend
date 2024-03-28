@@ -1,17 +1,19 @@
 import { ChangeDetectionStrategy, Component, inject, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ColoredLabel, ColumnHeader, DEFAULT_PREFERENCES, RESOURCE_LIST_PREFERENCES } from '../resource-list.model';
-import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
 import {
   BehaviorSubject,
   catchError,
   combineLatest,
   filter,
   forkJoin,
+  from,
   Observable,
   of,
   skip,
   Subject,
   take,
+  toArray,
 } from 'rxjs';
 import { HeaderCell, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import {
@@ -246,7 +248,9 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
               );
             });
 
-            return forkJoin(requests).pipe(
+            return from(requests).pipe(
+              mergeMap((obs) => obs, 6),
+              toArray(),
               tap((results) => {
                 const errorCount = results.filter((res) => res.isError).length;
                 const successCount = results.length - errorCount;

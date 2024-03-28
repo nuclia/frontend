@@ -15,6 +15,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  defer,
   EMPTY,
   expand,
   filter,
@@ -229,7 +230,10 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
             this.cdr.markForCheck();
           }
         }),
-        switchMap(() => from(resources.map((resource) => this.updateBulkAction(resource.delete())))),
+        switchMap(() => {
+          const bulkActionItems = resources.map((resource) => this.updateBulkAction(defer(() => resource.delete())));
+          return from(bulkActionItems);
+        }),
         mergeMap((obs) => obs, 6),
         toArray(),
         delay(1000),
@@ -276,7 +280,10 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
             this.cdr.markForCheck();
           }
         }),
-        switchMap(() => from(resources.map((resource) => this.updateBulkAction(resource.reprocess())))),
+        switchMap(() => {
+          const bulkActionItems = resources.map((resource) => this.updateBulkAction(defer(() => resource.reprocess())));
+          return from(bulkActionItems);
+        }),
         mergeMap((obs) => obs, 6),
         toArray(),
         delay(wait),
