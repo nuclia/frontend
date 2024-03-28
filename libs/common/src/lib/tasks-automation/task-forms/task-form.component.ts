@@ -22,6 +22,7 @@ import { Classification, Filter, Search } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
 import { Filters, formatFiltersFromFacets, LANGUAGE_FACET, MIME_FACETS } from '../../resources';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { GenerativeModelPipe } from '../../pipes';
 
 function createHeaderRow() {
   return new FormGroup({
@@ -48,6 +49,7 @@ function createHeaderRow() {
     TranslateModule,
     PaTableModule,
     PaButtonModule,
+    GenerativeModelPipe,
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss',
@@ -61,6 +63,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   private unsubscribeAll = new Subject<void>();
 
+  // List of LLMs available for this task
+  @Input() availableLLMs: string[] = [];
   // Text displayed below the "Trigger & Webhook" title on the left column
   @Input() webHookBlockDescription = '';
   // Text displayed in the info card below Trigger label on the right column
@@ -78,6 +82,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent'),
       searchQuery: new FormControl<string>(''),
     }),
+    llm: new FormControl<string>(''),
     webhook: new FormGroup({
       url: new FormControl<string>(''),
       headers: new FormArray([createHeaderRow()]),

@@ -1,17 +1,7 @@
 @import 'apps/dashboard/src/variables';
+@import 'task-form.common';
 
 :host {
-  .form-container {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(1.5);
-
-    & > * {
-      width: 100%;
-    }
-  }
-
   .filter-form-container {
     .filter-row {
       display: flex;
@@ -21,11 +11,6 @@
         width: calc((100% - #{rhythm(1.5)}) / 2);
       }
     }
-  }
-
-  label {
-    @include title-xs();
-    color: $color-neutral-regular;
   }
 
   .table-header-button {
@@ -45,6 +30,7 @@
     z-index: 100;
 
     div {
+      color: $color-neutral-regular;
       flex: 1 0 auto;
     }
   }

@@ -1,0 +1,17 @@
+@import 'apps/dashboard/src/variables';
+
+.form-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+
+  & > * {
+    width: 100%;
+  }
+
+  label {
+    @include title-xs();
+    color: $color-neutral-regular;
+  }
+}
