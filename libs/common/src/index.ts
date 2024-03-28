@@ -21,6 +21,7 @@ export * from './lib/resources';
 export * from './lib/search';
 export * from './lib/select-account-kb';
 export * from './lib/services';
+export * from './lib/tasks-automation';
 export * from './lib/token-dialog';
 export * from './lib/topbar';
 export * from './lib/upload';

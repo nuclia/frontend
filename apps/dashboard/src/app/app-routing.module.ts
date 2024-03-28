@@ -7,6 +7,7 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
+  GlobalQuestionComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
@@ -20,6 +21,8 @@ import {
   selectKbGuard,
   setAccountGuard,
   setKbGuard,
+  TaskListComponent,
+  TasksAutomationComponent,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
@@ -42,8 +45,6 @@ import { InviteComponent } from './onboarding/invite/invite.component';
 import { FeedbackComponent } from './farewell/feedback.component';
 import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
 import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
-import { GlobalQuestionComponent, TasksAutomationComponent } from './tasks-automation';
-import { TaskListComponent } from './tasks-automation/task-list';
 
 const routes: Routes = [
   {
