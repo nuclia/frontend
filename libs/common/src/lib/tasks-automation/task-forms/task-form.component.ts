@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   DropdownButtonComponent,
@@ -73,6 +83,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input() footerNoteAutomation = '';
   // Note displayed on the footer when task is applied once
   @Input() footerNoteOneTime = '';
+
+  @Output() cancel = new EventEmitter<void>();
 
   form = new FormGroup({
     applyTaskTo: new FormControl<'automation' | 'once'>('automation'),

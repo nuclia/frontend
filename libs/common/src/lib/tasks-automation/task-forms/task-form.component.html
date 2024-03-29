@@ -221,7 +221,11 @@
         {{ footerNoteOneTime | translate: { count: resourceCount } }}
       }
     </div>
-    <pa-button aspect="basic">{{ 'generic.cancel' | translate }}</pa-button>
+    <pa-button
+      aspect="basic"
+      (click)="cancel.emit()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
     <pa-button
       kind="primary"
       type="submit">

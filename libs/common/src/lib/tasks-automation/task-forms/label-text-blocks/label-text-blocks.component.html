@@ -1,6 +1,6 @@
 <div class="page-spacing">
   <header>
-    <nsi-back-button [link]="(taskId | async) ? '../..' : '..'">
+    <nsi-back-button [link]="backRoute | async">
       {{ 'tasks-automation.bach-to-tasks' | translate }}
     </nsi-back-button>
 
@@ -15,7 +15,8 @@
     activateButtonLabel="tasks-automation.label-text-blocks.footer.activate-button-label"
     footerNoteAutomation="tasks-automation.label-text-blocks.footer.apply-automation"
     footerNoteOneTime="tasks-automation.label-text-blocks.footer.apply-one-time"
-    [availableLLMs]="generativeModels">
+    [availableLLMs]="generativeModels"
+    (cancel)="backToTaskList()">
     <stf-labeling-configuration type="text-blocks"></stf-labeling-configuration>
 
     <nsi-two-columns-configuration-item

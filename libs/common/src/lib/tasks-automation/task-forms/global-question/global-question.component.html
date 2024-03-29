@@ -1,6 +1,6 @@
 <div class="page-spacing">
   <header>
-    <nsi-back-button [link]="(taskId | async) ? '../..' : '..'">
+    <nsi-back-button [link]="backRoute | async">
       {{ 'tasks-automation.bach-to-tasks' | translate }}
     </nsi-back-button>
 
@@ -15,7 +15,8 @@
     activateButtonLabel="tasks-automation.global-question.footer.activate-button-label"
     footerNoteAutomation="tasks-automation.global-question.footer.apply-automation"
     footerNoteOneTime="tasks-automation.global-question.footer.apply-one-time"
-    [availableLLMs]="generativeModels">
+    [availableLLMs]="generativeModels"
+    (cancel)="backToTaskList()">
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.global-question.your-question.title"
       description="tasks-automation.global-question.your-question.description">
