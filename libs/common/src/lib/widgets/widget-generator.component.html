@@ -301,6 +301,19 @@
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight
+                          formControlName="rephrase">
+                          {{ 'widget.generator.advanced.generative-answer-category.rephrase.label' | translate }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="rephraseHelp" />
+                        <pa-popover #rephraseHelp>
+                          {{ 'widget.generator.advanced.generative-answer-category.rephrase.help' | translate }}
+                        </pa-popover>
+                      </div>
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
                           formControlName="hideResults">
                           {{ 'widget.generator.advanced.generative-answer-category.hide-results.label' | translate }}
                         </pa-toggle>
@@ -349,6 +362,50 @@
                       <div class="title-xxs">
                         {{ 'widget.generator.advanced.generative-answer-category.rag-strategies.title' | translate }}
                       </div>
+                      @if (isRagHierarchyEnabled | async) {
+                        <div class="toggle-and-help">
+                          <pa-toggle
+                            labelOnRight
+                            [value]="ragStrategiesToggles.hierarchy"
+                            (valueChange)="updateRagStrategies('hierarchy', $event)">
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-strategies.hierarchy.label'
+                                | translate
+                            }}
+                          </pa-toggle>
+                          <pa-icon
+                            name="info"
+                            [paPopover]="hierarchyHelp" />
+                          <pa-popover #hierarchyHelp>
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-strategies.hierarchy.help'
+                                | translate
+                            }}
+                          </pa-popover>
+                        </div>
+                        @if (ragStrategiesToggles.hierarchy) {
+                          <div class="toggle-and-help">
+                            <pa-input
+                              formControlName="ragCharactersCount"
+                              type="number"
+                              [acceptHtmlTags]="true">
+                              {{
+                                'widget.generator.advanced.generative-answer-category.rag-strategies.characters-count.label'
+                                  | translate
+                              }}
+                            </pa-input>
+                            <pa-icon
+                              name="info"
+                              [paPopover]="ragCharactersCountHelp" />
+                            <pa-popover #ragCharactersCountHelp>
+                              {{
+                                'widget.generator.advanced.generative-answer-category.rag-strategies.characters-count.help'
+                                  | translate
+                              }}
+                            </pa-popover>
+                          </div>
+                        }
+                      }
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight
@@ -369,6 +426,28 @@
                           }}
                         </pa-popover>
                       </div>
+                      @if (ragStrategiesToggles.full_resource) {
+                        <div class="toggle-and-help">
+                          <pa-input
+                            formControlName="ragResourcesCount"
+                            type="number"
+                            [acceptHtmlTags]="true">
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-strategies.resources-count.label'
+                                | translate
+                            }}
+                          </pa-input>
+                          <pa-icon
+                            name="info"
+                            [paPopover]="ragResourcesCountHelp" />
+                          <pa-popover #ragResourcesCountHelp>
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-strategies.resources-count.help'
+                                | translate
+                            }}
+                          </pa-popover>
+                        </div>
+                      }
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight
@@ -412,6 +491,70 @@
                           <pa-popover #fieldIdsHelp>
                             {{
                               'widget.generator.advanced.generative-answer-category.rag-strategies.field-ids-input.format-help'
+                                | translate
+                            }}
+                          </pa-popover>
+                        </div>
+                      }
+                      @if (isRagImagesEnabled | async) {
+                        <div class="toggle-and-help">
+                          <pa-toggle
+                            labelOnRight
+                            [value]="ragImagesStrategiesToggles.page_image"
+                            (valueChange)="updateRagImagesStrategies('page_image', $event)">
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-images-strategies.page-images.label'
+                                | translate
+                            }}
+                          </pa-toggle>
+                          <pa-icon
+                            name="info"
+                            [paPopover]="ragPageImagesHelp" />
+                          <pa-popover #ragPageImagesHelp>
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-images-strategies.page-images.help'
+                                | translate
+                            }}
+                          </pa-popover>
+                        </div>
+                        @if (ragImagesStrategiesToggles.page_image) {
+                          <div class="toggle-and-help">
+                            <pa-input
+                              formControlName="ragPageImagesCount"
+                              type="number"
+                              [acceptHtmlTags]="true">
+                              {{
+                                'widget.generator.advanced.generative-answer-category.rag-images-strategies.page-images-count.label'
+                                  | translate
+                              }}
+                            </pa-input>
+                            <pa-icon
+                              name="info"
+                              [paPopover]="ragPageimagesCountHelp" />
+                            <pa-popover #ragPageimagesCountHelp>
+                              {{
+                                'widget.generator.advanced.generative-answer-category.rag-images-strategies.page-images-count.help'
+                                  | translate
+                              }}
+                            </pa-popover>
+                          </div>
+                        }
+                        <div class="toggle-and-help">
+                          <pa-toggle
+                            labelOnRight
+                            [value]="ragImagesStrategiesToggles.paragraph_image"
+                            (valueChange)="updateRagImagesStrategies('paragraph_image', $event)">
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-images-strategies.paragraph-images.label'
+                                | translate
+                            }}
+                          </pa-toggle>
+                          <pa-icon
+                            name="info"
+                            [paPopover]="ragParagraphImagesHelp" />
+                          <pa-popover #ragParagraphImagesHelp>
+                            {{
+                              'widget.generator.advanced.generative-answer-category.rag-images-strategies.paragraph-images.help'
                                 | translate
                             }}
                           </pa-popover>

@@ -1,4 +1,4 @@
-# 1.14.3 (unreleased)
+# 1.14.3 (2024-03-38)
 
 ### Improvements
 
@@ -6,6 +6,7 @@
 - Adding optional `allowed_origins` field in `IKnowledgeBoxCreation` model
 - Improve reliability of resource creation and modification
 - Update `getParagraphText`, `getSentenceText` and `getDataKeyFromFieldType` methods to support conversation fields
+- Support rephrase feature and add more RAG strategies
 
 # 1.14.2 (2024-03-15)
 

@@ -57,7 +57,7 @@ export class SearchComponent implements OnInit, OnDestroy {
         features += ',suggestLabels';
       }
       if (isChatEnabled) {
-        features += ',answers';
+        features += ',answers,rephrase';
       }
       if (isKnowledgeGraphEnabled) {
         features += ',knowledgeGraph';

@@ -302,12 +302,40 @@ export interface WidgetFeatures {
   autofilter?: boolean;
   noBM25forChat?: boolean;
   citations?: boolean;
+  rephrase?: boolean;
 }
-export type RAGStrategyName = 'field_extension' | 'full_resource';
-export interface RAGStrategy {
-  name: RAGStrategyName;
-  fields?: string[];
+
+export enum RagStrategyName {
+  FIELD_EXTENSION = 'field_extension',
+  FULL_RESOURCE = 'full_resource',
+  HIERARCHY = 'hierarchy',
 }
+export interface FieldExtensionStrategy {
+  name: RagStrategyName.FIELD_EXTENSION;
+  fields: string[];
+}
+export interface FullResourceStrategy {
+  name: RagStrategyName.FULL_RESOURCE;
+  count?: number;
+}
+export interface HierarchyStrategy {
+  name: RagStrategyName.HIERARCHY;
+  count?: number;
+}
+export type RAGStrategy = FieldExtensionStrategy | FullResourceStrategy | HierarchyStrategy;
+
+export enum RagImageStrategyName {
+  PAGE_IMAGE = 'page_image',
+  PARAGRAPH_IMAGE = 'paragraph_image',
+}
+export interface PageImageStrategy {
+  name: RagImageStrategyName.PAGE_IMAGE;
+  count?: number;
+}
+export interface ParagraphImageStrategy {
+  name: RagImageStrategyName.PARAGRAPH_IMAGE;
+}
+export type RAGImageStrategy = PageImageStrategy | ParagraphImageStrategy;
 
 export interface Counters {
   resources: number;

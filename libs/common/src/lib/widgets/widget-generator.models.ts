@@ -1,5 +1,5 @@
 import { CopilotData } from './copilot/copilot-modal.component';
-import { RAGStrategy } from '@nuclia/core';
+import { RAGImageStrategy, RAGStrategy } from '@nuclia/core';
 
 export type PresetType = 'search' | 'find' | 'ask' | 'discover';
 export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
@@ -15,6 +15,7 @@ export type AdvancedForm = {
   userPrompt: string;
   citations: boolean;
   hideResults: boolean;
+  rephrase: boolean;
   noBM25forChat: boolean;
   filter: boolean;
   autofilter: boolean;
@@ -45,6 +46,7 @@ export type WidgetConfiguration = {
   preset?: PresetForm;
   copilotData?: CopilotData;
   rag_strategies?: RAGStrategy[];
+  rag_images_strategies?: RAGImageStrategy[];
   notEnoughDataMessage?: string;
 };
 export const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
@@ -61,6 +63,7 @@ export const DEFAULT_CONFIGURATION: AdvancedForm = {
   userPrompt: '',
   citations: false,
   hideResults: false,
+  rephrase: false,
   noBM25forChat: false,
   ragSpecificFieldIds: '',
   filter: false,
@@ -116,6 +119,7 @@ export function getAskPresetConfig(value: Partial<PresetForm>): AdvancedForm {
     ...DEFAULT_CONFIGURATION,
     answers: true,
     hideResults: value.answerOutput === 'onlyAnswers',
+    rephrase: true,
     permalink: true,
     navigateToFile: value.answerOutput === 'answerAndResults' && value.location === 'public',
     navigateToLink: value.answerOutput === 'answerAndResults' && value.location === 'public',

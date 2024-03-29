@@ -23,6 +23,7 @@ import {
   trackingSearchId,
   trackingStartTime,
   triggerSearch,
+  widgetImageRagStrategies,
   widgetRagStrategies,
 } from './stores';
 import { NO_RESULT_LIST } from './models';
@@ -63,6 +64,7 @@ export const setupTriggerSearch = (
                 autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
                 widgetRagStrategies.pipe(take(1)),
+                widgetImageRagStrategies.pipe(take(1)),
               ]).pipe(
                 tap(() => {
                   pendingResults.set(true);
@@ -78,6 +80,7 @@ export const setupTriggerSearch = (
                     autoFilterDisabled,
                     isAnswerEnabled,
                     ragStrategies,
+                    ragImageStrategies,
                   ]) => {
                     const currentOptions: SearchOptions = {
                       ...options,
@@ -90,6 +93,9 @@ export const setupTriggerSearch = (
                       const chatOptions: ChatOptions = currentOptions;
                       if (ragStrategies.length > 0) {
                         chatOptions.rag_strategies = ragStrategies;
+                      }
+                      if (ragImageStrategies.length > 0) {
+                        chatOptions.rag_images_strategies = ragImageStrategies;
                       }
                       return askQuestion(query, true, chatOptions).pipe(
                         tap((res) => {
