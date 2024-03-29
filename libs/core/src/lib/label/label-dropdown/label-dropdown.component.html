@@ -20,11 +20,11 @@
         <pa-option
           icon="chevron-right"
           iconOnRight
-          dontCloseOnSelect
           popupOnRight
+          [dontCloseOnSelect]="!labelSetSelection"
           [paPopup]="level2"
           [popupVerticalOffset]="-40"
-          [selected]="labelSetExpanded === labelSet.key"
+          [selected]="selectedLabelSet === labelSet.key || labelSetExpanded === labelSet.key"
           (selectOption)="onLevel1Selection(labelSet.key, labelSet.value)">
           <span
             class="label-color"
@@ -42,6 +42,7 @@
     @for (labelValue of labelValues; track labelValue) {
       <pa-option
         class="level2-option"
+        [disabled]="labelSetSelection"
         [dontCloseOnSelect]="!single"
         (selectOption)="onOptionSelection(labelValue, $event)">
         @if (single) {

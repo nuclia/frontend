@@ -45,7 +45,7 @@ export class LabelFieldComponent {
       } else if (kind) {
         return kind === LabelSetKind.RESOURCES
           ? this.labelsService.resourceLabelSets
-          : this.labelsService.paragraphLabelSets;
+          : this.labelsService.textBlockLabelSets;
       } else {
         return this.labelsService.resourceLabelSets;
       }

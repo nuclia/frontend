@@ -1,0 +1,10 @@
+<pa-modal-advanced>
+  <pa-modal-title>{{ 'label-set.creation-modal.title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <stf-label-set-form
+      addNew
+      inModal
+      (cancel)="modal.close(null)"
+      (done)="modal.close($event)"></stf-label-set-form>
+  </pa-modal-content>
+</pa-modal-advanced>

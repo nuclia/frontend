@@ -14,7 +14,7 @@ export class LabelsService {
     filter((labels) => !!labels),
     map((labels) => this.filterByKind(labels, LabelSetKind.RESOURCES)),
   );
-  paragraphLabelSets = this.labelSets.pipe(
+  textBlockLabelSets = this.labelSets.pipe(
     filter((labels) => !!labels),
     map((labels) => this.filterByKind(labels, LabelSetKind.PARAGRAPHS)),
   );

@@ -20,6 +20,7 @@ import { Aspect, PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
 export class LabelDropdownComponent {
   @Input() aspect: Aspect = 'solid';
   @Input() labelSets?: LabelSets | null;
+  @Input({ transform: booleanAttribute }) labelSetSelection = false;
   @Input({ transform: booleanAttribute }) single = false;
   @Input({ transform: booleanAttribute }) fullWidth = false;
   @Input() size: Size = 'medium';
@@ -32,8 +33,10 @@ export class LabelDropdownComponent {
     return this._selection;
   }
   private _selection: Classification[] = [];
+  @Input() selectedLabelSet?: string;
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
+  @Output() labelSetSelected = new EventEmitter<{ id: string; labelSet: LabelSet }>();
   @Output() close = new EventEmitter<void>();
 
   @ViewChild('level2', { read: ElementRef }) level2Element?: ElementRef;
@@ -41,13 +44,17 @@ export class LabelDropdownComponent {
 
   labelSetExpanded = '';
   labelValues: Classification[] = [];
-  open: boolean = false;
+  open = false;
   checkboxSelection: string[] = [];
 
   onLevel1Selection(labelSetType: string, labelSet: LabelSet) {
-    this.labelSetExpanded = labelSetType;
-    this.level2Popup?.close();
-    this.labelValues = labelSet.labels.map((label) => ({ labelset: labelSetType, label: label.title }));
+    if (this.labelSetSelection && this.single) {
+      this.labelSetSelected.emit({ id: labelSetType, labelSet });
+    } else {
+      this.labelSetExpanded = labelSetType;
+      this.level2Popup?.close();
+      this.labelValues = labelSet.labels.map((label) => ({ labelset: labelSetType, label: label.title }));
+    }
   }
 
   closeDropdowns() {
