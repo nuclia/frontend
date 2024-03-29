@@ -3,10 +3,17 @@
   accessors />
 
 <script lang="ts">
-  import type { KBStates, Nuclia, RAGStrategy, WidgetFeatures } from '@nuclia/core';
+  import type { KBStates, Nuclia, RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { getRAGStrategies, injectCustomCss, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
+  import {
+    getRAGImageStrategies,
+    getRAGStrategies,
+    injectCustomCss,
+    loadFonts,
+    loadSvgSprite,
+    setCDN,
+  } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
@@ -15,6 +22,7 @@
     notEnoughDataMessage,
     widgetFeatures,
     widgetFilters,
+    widgetImageRagStrategies,
     widgetPlaceholder,
     widgetRagStrategies,
   } from '../../core/stores/widget.store';
@@ -57,7 +65,7 @@
   export let generativemodel = '';
   export let no_tracking = false;
   export let rag_strategies = '';
-  export let rag_field_ids = '';
+  export let rag_image_strategies = '';
   export let not_enough_data_message = '';
 
   let _ready = new BehaviorSubject(false);
@@ -77,6 +85,7 @@
   let _features: WidgetFeatures = {};
   let _filters: WidgetFilters = {};
   let _ragStrategies: RAGStrategy[] = [];
+  let _ragImageStrategies: RAGImageStrategy[] = [];
 
   export function search(query: string) {
     searchQuery.set(query);
@@ -148,7 +157,8 @@
       _filters.labels = true;
       _filters.entities = true;
     }
-    _ragStrategies = getRAGStrategies(rag_strategies, rag_field_ids);
+    _ragStrategies = getRAGStrategies(rag_strategies);
+    _ragImageStrategies = getRAGImageStrategies(rag_image_strategies);
 
     nucliaAPI = initNuclia(
       {
@@ -177,6 +187,7 @@
     widgetFeatures.set(_features);
     widgetFilters.set(_filters);
     widgetRagStrategies.set(_ragStrategies);
+    widgetImageRagStrategies.set(_ragImageStrategies);
 
     if (_features.filter) {
       if (_filters.labels) {

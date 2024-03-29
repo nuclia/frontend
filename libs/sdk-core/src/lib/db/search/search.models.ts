@@ -8,7 +8,7 @@ import type {
   RelationType,
 } from '../resource';
 import type { ResourceProperties } from '../db.models';
-import { RAGStrategy } from '../kb';
+import { RAGImageStrategy, RAGStrategy } from '../kb';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
@@ -62,7 +62,9 @@ export interface ChatOptions extends BaseSearchOptions {
    */
   citations?: boolean;
   rag_strategies?: RAGStrategy[];
+  rag_images_strategies?: RAGImageStrategy[];
   generative_model?: string;
+  rephrase?: boolean;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

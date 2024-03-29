@@ -24,7 +24,7 @@ import {
 } from './widget-generator.models';
 import { SisModalService } from '@nuclia/sistema';
 import { CopilotData, CopilotModalComponent } from './copilot/copilot-modal.component';
-import { LearningConfigurationOption, RAGStrategyName } from '@nuclia/core';
+import { LearningConfigurationOption, RagImageStrategyName, RagStrategyName } from '@nuclia/core';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
@@ -69,6 +69,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isDefaultPromptFromSettingsApplied = true;
 
   // FEATURES AVAILABILITY
+  isRagHierarchyEnabled = this.featuresService.ragHierarchy;
+  isRagImagesEnabled = this.featuresService.ragImages;
   isUserPromptsEnabled = this.featuresService.userPrompts;
   autocompleteFromNerEnabled = this.featuresService.suggestEntities;
   isTrainingEnabled = this.featuresService.training;
@@ -105,8 +107,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     }),
     citations: new FormControl<boolean>(false, { nonNullable: true }),
     hideResults: new FormControl<boolean>(false, { nonNullable: true }),
+    rephrase: new FormControl<boolean>(false, { nonNullable: true }),
     noBM25forChat: new FormControl<boolean>(false, { nonNullable: true }),
     ragSpecificFieldIds: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    ragResourcesCount: new FormControl<number>(5, { updateOn: 'blur' }),
+    ragCharactersCount: new FormControl<number>(0, { updateOn: 'blur' }),
+    ragPageImagesCount: new FormControl<number>(5, { updateOn: 'blur' }),
     filter: new FormControl<boolean>(false, { nonNullable: true }),
     autofilter: new FormControl<boolean>(false, { nonNullable: true }),
     preselectedFilters: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
@@ -135,6 +141,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     'darkMode',
     'placeholder',
     'ragSpecificFieldIds',
+    'ragResourcesCount',
+    'ragCharactersCount',
+    'ragPageImagesCount',
     'notEnoughDataMessage',
     'generativeModel',
     'generativeModelToggle',
@@ -142,9 +151,14 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   // advanced options not managed directly in the form
   filters: FilterSelectionType = DEFAULT_FILTERS;
-  ragStrategiesToggles = {
+  ragStrategiesToggles: { [key in RagStrategyName]: boolean } = {
     field_extension: false,
     full_resource: false,
+    hierarchy: false,
+  };
+  ragImagesStrategiesToggles: { [key in RagImageStrategyName]: boolean } = {
+    page_image: false,
+    paragraph_image: false,
   };
   isModified = false;
 
@@ -191,6 +205,15 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get ragSpecificFieldIds() {
     return this.advancedForm.controls.ragSpecificFieldIds.value;
   }
+  get ragResourcesCount() {
+    return this.advancedForm.controls.ragResourcesCount.value;
+  }
+  get ragCharactersCount() {
+    return this.advancedForm.controls.ragCharactersCount.value;
+  }
+  get ragPageImagesCount() {
+    return this.advancedForm.controls.ragPageImagesCount.value;
+  }
   get notEnoughDataMessage() {
     return this.advancedForm.controls.notEnoughDataMessage.value;
   }
@@ -235,11 +258,23 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get hideResultsControl() {
     return this.advancedForm.controls.hideResults;
   }
+  get rephraseControl() {
+    return this.advancedForm.controls.rephrase;
+  }
   get noBM25forChatControl() {
     return this.advancedForm.controls.noBM25forChat;
   }
   get ragSpecificFieldIdsControl() {
     return this.advancedForm.controls.ragSpecificFieldIds;
+  }
+  get ragResourcesCountControl() {
+    return this.advancedForm.controls.ragResourcesCount;
+  }
+  get ragCharactersCountControl() {
+    return this.advancedForm.controls.ragCharactersCount;
+  }
+  get ragPageImagesCountControl() {
+    return this.advancedForm.controls.ragPageImagesCount;
   }
   get notEnoughDataMessageControl() {
     return this.advancedForm.controls.notEnoughDataMessage;
@@ -327,8 +362,21 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       if (config.rag_strategies) {
         config.rag_strategies.forEach((strategy) => {
           this.ragStrategiesToggles[strategy.name] = true;
-          if (strategy.fields) {
-            this.ragSpecificFieldIdsControl.patchValue(strategy.fields.join(', '));
+          if (strategy.name === RagStrategyName.FIELD_EXTENSION && strategy.fields) {
+            this.ragSpecificFieldIdsControl.patchValue(strategy.fields.join('\n'));
+          }
+          if (strategy.name === RagStrategyName.FULL_RESOURCE) {
+            this.ragResourcesCountControl.patchValue(strategy.count || null);
+          }
+          if (strategy.name === RagStrategyName.HIERARCHY) {
+            this.ragCharactersCountControl.patchValue(strategy.count || null);
+          }
+        });
+      }
+      if (config.rag_images_strategies) {
+        config.rag_images_strategies.forEach((strategy) => {
+          if (strategy.name === RagImageStrategyName.PAGE_IMAGE) {
+            this.ragPageImagesCountControl.patchValue(strategy.count || null);
           }
         });
       }
@@ -403,8 +451,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   resetToPreset() {
     this.updateConfigurationFromPreset(this.presetForm.getRawValue());
     this.ragStrategiesToggles = {
-      field_extension: false,
-      full_resource: false,
+      [RagStrategyName.FIELD_EXTENSION]: false,
+      [RagStrategyName.FULL_RESOURCE]: false,
+      [RagStrategyName.HIERARCHY]: false,
     };
     this.isModified = false;
   }
@@ -420,11 +469,15 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       this.userPromptControl.patchValue('');
       this.citationsControl.patchValue(false);
       this.hideResultsControl.patchValue(false);
+      this.rephraseControl.patchValue(false);
       this.noBM25forChatControl.patchValue(false);
-      Object.keys(this.ragStrategiesToggles).forEach((toggle: string) => {
-        this.ragStrategiesToggles[toggle as RAGStrategyName] = false;
+      Object.keys(this.ragStrategiesToggles).forEach((toggle) => {
+        this.ragStrategiesToggles[toggle as RagStrategyName] = false;
       });
       this.ragSpecificFieldIdsControl.patchValue('');
+      this.ragResourcesCountControl.patchValue(null);
+      this.ragCharactersCountControl.patchValue(null);
+      this.ragPageImagesCountControl.patchValue(null);
       this.notEnoughDataMessageControl.patchValue('');
       this.generativeModelControl.patchValue('');
     }
@@ -500,19 +553,36 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       preset: this.presetForm.getRawValue(),
       copilotData: this.copilotData,
     };
-    if (this.ragStrategiesToggles.full_resource) {
-      this.widgetConfigurations[this.currentKbId].rag_strategies = [{ name: 'full_resource' }];
-    } else if (this.ragStrategiesToggles.field_extension && this.ragSpecificFieldIds) {
+    if (this.ragStrategiesToggles.field_extension && this.ragSpecificFieldIds) {
       this.widgetConfigurations[this.currentKbId].rag_strategies = [
         {
-          name: 'field_extension',
+          name: RagStrategyName.FIELD_EXTENSION,
           fields: this.ragSpecificFieldIds
             .split(',')
             .filter((id) => !!id)
             .map((id) => id.trim()),
         },
       ];
+    } else {
+      this.widgetConfigurations[this.currentKbId].rag_strategies = Object.entries(this.ragStrategiesToggles)
+        .filter(([_, value]) => value)
+        .map(([name]) => {
+          if (name === RagStrategyName.FULL_RESOURCE) {
+            return { name: RagStrategyName.FULL_RESOURCE, count: this.ragResourcesCount || 5 };
+          } else {
+            return { name: RagStrategyName.HIERARCHY, count: this.ragCharactersCount || 0 };
+          }
+        });
     }
+    this.widgetConfigurations[this.currentKbId].rag_images_strategies = Object.entries(this.ragImagesStrategiesToggles)
+      .filter(([_, value]) => value)
+      .map(([name]) => {
+        if (name === RagImageStrategyName.PAGE_IMAGE) {
+          return { name: RagImageStrategyName.PAGE_IMAGE, count: this.ragPageImagesCount || 2 };
+        } else {
+          return { name: RagImageStrategyName.PARAGRAPH_IMAGE };
+        }
+      });
     this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
     this.cdr.detectChanges();
   }
@@ -531,13 +601,28 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       copiablePrompt = `prompt="${promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n  `;
     }
 
-    let ragStrategies = '';
-    let ragFieldIds = '';
+    const ragStrategies: string[] = [];
     if (this.ragStrategiesToggles.full_resource) {
-      ragStrategies = 'full_resource';
-    } else if (this.ragStrategiesToggles.field_extension && this.ragSpecificFieldIds) {
-      ragStrategies = 'field_extension';
-      ragFieldIds = this.ragSpecificFieldIds;
+      ragStrategies.push(`full_resource|${this.ragResourcesCount || 5}`);
+    } else {
+      if (this.ragStrategiesToggles.field_extension && this.ragSpecificFieldIds) {
+        ragStrategies.push(
+          `field_extension|${this.ragSpecificFieldIds
+            .split('\n')
+            .map((f) => f.trim())
+            .join('|')}`,
+        );
+      }
+      if (this.ragStrategiesToggles.hierarchy) {
+        ragStrategies.push(`hierarchy|${this.ragCharactersCount || 1000}`);
+      }
+    }
+    const ragImagesStrategies: string[] = [];
+    if (this.ragImagesStrategiesToggles.page_image) {
+      ragImagesStrategies.push(`page_image|${this.ragPageImagesCount || 2}`);
+    }
+    if (this.ragImagesStrategiesToggles.paragraph_image) {
+      ragImagesStrategies.push(`paragraph_image`);
     }
 
     forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).subscribe(([kb, account]) => {
@@ -568,14 +653,15 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   preselected_filters="${preselectionValue}"
       `
         : '';
-      const ragProperties = ragFieldIds
-        ? `
-  rag_strategies="${ragStrategies}"
-  rag_field_ids="${ragFieldIds}"
-  `
-        : ragStrategies
+      const ragProperties =
+        ragStrategies.length > 0
           ? `
-  rag_strategies="${ragStrategies}"`
+  rag_strategies="${ragStrategies.join(',')}"`
+          : '';
+      const ragImagesProperties =
+        ragImagesStrategies.length > 0
+          ? `
+  rag_images_strategies="${ragImagesStrategies.join(',')}"`
           : '';
       const notEnoughDataMessage = !!this.notEnoughDataMessage
         ? `
@@ -589,7 +675,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
   ${zone}
-  features="${this.features}" ${ragProperties}${placeholder}${notEnoughDataMessage}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
+  features="${this.features}" ${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results ${mode}></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
@@ -705,17 +791,26 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
       });
   }
 
-  updateRagStrategies(toggle: 'full_resource' | 'field_extension', enabled: boolean) {
+  updateRagStrategies(toggle: 'full_resource' | 'field_extension' | 'hierarchy', enabled: boolean) {
     this.ragStrategiesToggles[toggle] = enabled;
     if (enabled) {
       if (toggle === 'full_resource') {
         this.ragStrategiesToggles.field_extension = false;
         this.ragSpecificFieldIdsControl.patchValue('');
+        this.ragStrategiesToggles.hierarchy = false;
+        this.ragCharactersCountControl.patchValue(null);
       } else {
         this.ragStrategiesToggles.full_resource = false;
       }
     }
     this.answerGenerationExpanderUpdated.next({ ...this.ragStrategiesToggles });
+    this.setIsModified();
+    setTimeout(() => this.updateSnippetAndStoreConfig());
+  }
+
+  updateRagImagesStrategies(toggle: 'page_image' | 'paragraph_image', enabled: boolean) {
+    this.ragImagesStrategiesToggles[toggle] = enabled;
+    this.answerGenerationExpanderUpdated.next({ ...this.ragImagesStrategiesToggles });
     this.setIsModified();
     setTimeout(() => this.updateSnippetAndStoreConfig());
   }

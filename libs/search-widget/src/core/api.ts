@@ -40,6 +40,7 @@ let SUGGEST_MODE: Search.SuggestionFeatures[];
 let prompt: string | undefined = undefined;
 let generative_model: string | undefined = undefined;
 let CITATIONS = false;
+let REPHRASE = false;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -68,6 +69,7 @@ export const initNuclia = (
     SEARCH_OPTIONS.with_synonyms = true;
   }
   CITATIONS = !!widgetOptions.features?.citations;
+  REPHRASE = !!widgetOptions.features?.rephrase;
 
   nucliaApi = new Nuclia(options);
   if (!noTracking) {
@@ -156,6 +158,7 @@ export const getAnswer = (
     prompt,
     generative_model,
     citations: CITATIONS,
+    rephrase: REPHRASE,
   };
   return nucliaApi.knowledgeBox.chat(
     query,

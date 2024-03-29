@@ -1,14 +1,17 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from, map, Observable, of } from 'rxjs';
-import type {
-  FieldFullId,
-  FileField,
-  IFieldData,
-  IResource,
-  LinkField,
-  RAGStrategy,
-  ResourceField,
+import {
+  RagStrategyName,
+  type FieldFullId,
+  type FileField,
+  type IFieldData,
+  type IResource,
+  type LinkField,
+  type RAGStrategy,
+  type ResourceField,
+  type RAGImageStrategy,
+  RagImageStrategyName,
 } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from './api';
@@ -325,28 +328,57 @@ export function injectCustomCss(cssPath: string, element: HTMLElement) {
   }
 }
 
-export function getRAGStrategies(ragStrategies: string, fieldIds: string): RAGStrategy[] {
-  if (ragStrategies.includes('full_resource') && ragStrategies.includes('field_extension')) {
+export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
+  // ragStrategies format example: 'full_resource|3,field_extension|t/field1|f/field2,hierarchy|2'
+  if (!ragStrategies) {
+    return [];
+  }
+  const strategies: RAGStrategy[] = ragStrategies
+    .split(',')
+    .map((strategy) => {
+      const [name, ...rest] = strategy.split('|');
+      if (name === RagStrategyName.FULL_RESOURCE || name === RagStrategyName.HIERARCHY) {
+        return { name, count: parseInt(rest[0], 10) };
+      } else if (name === RagStrategyName.FIELD_EXTENSION) {
+        return { name, fields: rest };
+      } else {
+        console.error(`Unknown RAG strategy: ${name}`);
+        return undefined;
+      }
+    })
+    .filter((s) => s) as RAGStrategy[];
+  const strategiesNames = strategies.map((s) => s.name);
+  if (
+    (strategiesNames.includes(RagStrategyName.FIELD_EXTENSION) ||
+      strategiesNames.includes(RagStrategyName.HIERARCHY)) &&
+    strategiesNames.includes(RagStrategyName.FULL_RESOURCE)
+  ) {
     console.error(`Incompatible RAG strategies: if 'full_resource' strategy is chosen, it must be the only strategy`);
     return [];
   }
-  return (ragStrategies ? ragStrategies.split(',').filter((strategy) => !!strategy) : []).reduce(
-    (strategies, strategyName) => {
-      if (strategyName === 'full_resource') {
-        strategies.push({ name: strategyName });
-      } else if (strategyName === 'field_extension' && !!fieldIds) {
-        strategies.push({
-          name: strategyName,
-          fields: fieldIds
-            .split(',')
-            .filter((id) => !!id)
-            .map((id) => id.trim()),
-        });
+  return strategies;
+}
+
+export function getRAGImageStrategies(ragImageStrategies: string): RAGImageStrategy[] {
+  // ragImageStrategies format example: 'page_image|3,paragraph_image'
+  if (!ragImageStrategies) {
+    return [];
+  }
+  const strategies: RAGImageStrategy[] = ragImageStrategies
+    .split(',')
+    .map((strategy) => {
+      const [name, ...rest] = strategy.split('|');
+      if (name === RagImageStrategyName.PAGE_IMAGE) {
+        return { name, count: parseInt(rest[0], 10) };
+      } else if (name === RagImageStrategyName.PARAGRAPH_IMAGE) {
+        return { name };
+      } else {
+        console.error(`Unknown RAG image strategy: ${name}`);
+        return undefined;
       }
-      return strategies;
-    },
-    [] as RAGStrategy[],
-  );
+    })
+    .filter((s) => s) as RAGImageStrategy[];
+  return strategies as RAGImageStrategy[];
 }
 
 export function hasNotEnoughData(text: string): boolean {
