@@ -13,6 +13,7 @@ import {
   PageNotFoundComponent,
   PageNotFoundModule,
   PromptLabComponent,
+  QuestionAnswerComponent,
   rootGuard,
   SearchComponent,
   SelectAccountComponent,
@@ -222,6 +223,14 @@ const routes: Routes = [
                   {
                     path: 'summarize-resources/:taskId',
                     component: SummarizeResourcesComponent,
+                  },
+                  {
+                    path: 'question-answer',
+                    component: QuestionAnswerComponent,
+                  },
+                  {
+                    path: 'question-answer/:taskId',
+                    component: QuestionAnswerComponent,
                   },
                 ],
               },

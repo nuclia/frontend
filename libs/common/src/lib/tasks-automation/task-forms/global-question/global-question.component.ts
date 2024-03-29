@@ -7,7 +7,6 @@ import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../task-route.directive';
 
 @Component({
-  selector: 'app-global-question',
   standalone: true,
   imports: [
     CommonModule,

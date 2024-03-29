@@ -28,8 +28,9 @@
       taskTitle="tasks-automation.label-ners.title"
       taskDescription="tasks-automation.label-ners.description"></app-task-list-item>
     <app-task-list-item
-      taskType="q-and-a"
-      taskTitle="tasks-automation.q-and-a.title"
-      taskDescription="tasks-automation.q-and-a.description"></app-task-list-item>
+      taskType="question-answer"
+      taskTitle="tasks-automation.question-answer.title"
+      taskDescription="tasks-automation.question-answer.description"
+      (newTask)="createTask('question-answer')"></app-task-list-item>
   </div>
 </div>

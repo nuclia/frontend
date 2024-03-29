@@ -47,7 +47,7 @@ export class TaskListItemComponent {
   @Input() taskType:
     | 'summarize'
     | 'global-question'
-    | 'q-and-a'
+    | 'question-answer'
     | 'label-resources'
     | 'label-text-blocks'
     | 'label-ners' = 'summarize';
@@ -63,7 +63,7 @@ export class TaskListItemComponent {
     switch (this.taskType) {
       case 'summarize':
       case 'global-question':
-      case 'q-and-a':
+      case 'question-answer':
         return { field: 'fieldName', header: 'tasks-automation.table.header.field-name' };
       case 'label-resources':
       case 'label-text-blocks':
