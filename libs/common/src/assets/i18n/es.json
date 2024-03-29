@@ -1051,7 +1051,6 @@
 	"tasks-automation.summarize-resources.add-prompt.warning": "El uso del aviso puede producir resultados inesperados.",
 	"tasks-automation.summarize-resources.description": "Automatizar la creación de resumen sintético para tus recursos.",
 	"tasks-automation.summarize-resources.find-summary.description": "El resumen de cada recurso se almacena dentro de un nuevo campo en el recurso.",
-	"tasks-automation.summarize-resources.find-summary.info": "Se creará un nuevo campo en cada recurso que contenga el resumen.",
 	"tasks-automation.summarize-resources.find-summary.title": "¿Dónde encontrar los resúmenes?",
 	"tasks-automation.summarize-resources.footer.activate-button-label": "Activar resumen",
 	"tasks-automation.summarize-resources.footer.apply-automation": "Resuma todos los recursos existentes y futuros que coincidan con la selección.",

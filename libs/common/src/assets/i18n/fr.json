@@ -1052,7 +1052,6 @@
 	"tasks-automation.summarize-resources.add-prompt.warning": "L'utilisation de l'invite peut produire des résultats inattendus.",
 	"tasks-automation.summarize-resources.description": "Automatiser la création de résumé synthétique pour vos ressources.",
 	"tasks-automation.summarize-resources.find-summary.description": "Le résumé de chaque ressource est stocké dans un nouveau champ de la ressource.",
-	"tasks-automation.summarize-resources.find-summary.info": "Un nouveau champ sera créé dans chaque ressource contenant le résumé.",
 	"tasks-automation.summarize-resources.find-summary.title": "Où trouver les résumés ?",
 	"tasks-automation.summarize-resources.footer.activate-button-label": "Activer les résumés",
 	"tasks-automation.summarize-resources.footer.apply-automation": "Résumer toutes les ressources existantes et futures correspondant à la sélection.",

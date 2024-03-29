@@ -1052,7 +1052,6 @@
 	"tasks-automation.summarize-resources.add-prompt.warning": "Using prompt may produce unexpected results.",
 	"tasks-automation.summarize-resources.description": "Automate the creation of synthetic summary for your resources.",
 	"tasks-automation.summarize-resources.find-summary.description": "The summary of each resource is stored within a new field in the resource.",
-	"tasks-automation.summarize-resources.find-summary.info": "A new field will be created in each resource containing the summary.",
 	"tasks-automation.summarize-resources.find-summary.title": "Where to find the summaries?",
 	"tasks-automation.summarize-resources.footer.activate-button-label": "Activate summarization",
 	"tasks-automation.summarize-resources.footer.apply-automation": "Summarize all existing and future resources matching the selection.",

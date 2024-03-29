@@ -19,7 +19,7 @@ import { Aspect, PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
 })
 export class LabelDropdownComponent {
   @Input() aspect: Aspect = 'solid';
-  @Input() labelSets: LabelSets = {};
+  @Input() labelSets?: LabelSets | null;
   @Input({ transform: booleanAttribute }) single = false;
   @Input({ transform: booleanAttribute }) fullWidth = false;
   @Input() size: Size = 'medium';
@@ -58,6 +58,10 @@ export class LabelDropdownComponent {
   }
 
   toggleLabel(labelValue: Classification) {
+    if (!this.labelSets) {
+      return;
+    }
+
     const checkboxValue = `${labelValue.labelset}${labelValue.label}`;
     let newSelectedLabels;
 

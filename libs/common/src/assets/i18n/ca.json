@@ -1051,7 +1051,6 @@
 	"tasks-automation.summarize-resources.add-prompt.warning": "L'ús del missatge pot produir resultats inesperats.",
 	"tasks-automation.summarize-resources.description": "Automatitzar la creació de resum sintètic dels vostres recursos.",
 	"tasks-automation.summarize-resources.find-summary.description": "El resum de cada recurs s'emmagatzema dins d'un camp nou del recurs.",
-	"tasks-automation.summarize-resources.find-summary.info": "Es crearà un camp nou a cada recurs que contingui el resum.",
 	"tasks-automation.summarize-resources.find-summary.title": "On trobar els resums?",
 	"tasks-automation.summarize-resources.footer.activate-button-label": "Activa el resum",
 	"tasks-automation.summarize-resources.footer.apply-automation": "Resumeix tots els recursos existents i futurs que coincideixen amb la selecció.",
