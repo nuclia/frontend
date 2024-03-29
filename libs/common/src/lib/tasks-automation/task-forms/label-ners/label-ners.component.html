@@ -1,0 +1,120 @@
+<div class="page-spacing">
+  <header>
+    <nsi-back-button [link]="(taskId | async) ? '../..' : '..'">
+      {{ 'tasks-automation.bach-to-tasks' | translate }}
+    </nsi-back-button>
+
+    <div>
+      <h1 class="page-title">{{ 'tasks-automation.label-ners.title' | translate }}</h1>
+      <p class="page-description">{{ 'tasks-automation.label-ners.description' | translate }}</p>
+    </div>
+  </header>
+
+  <app-task-form
+    triggerDescription="tasks-automation.label-ners.trigger-description"
+    activateButtonLabel="tasks-automation.label-ners.footer.activate-button-label"
+    footerNoteAutomation="tasks-automation.label-ners.footer.apply-automation"
+    footerNoteOneTime="tasks-automation.label-ners.footer.apply-one-time"
+    [availableLLMs]="generativeModels">
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.label-ners.detection-options.title"
+      description="tasks-automation.label-ners.detection-options.description">
+      <div
+        class="form-container"
+        [formGroup]="detectionOptionsForm">
+        <pa-radio-group formControlName="annotatedBy">
+          <pa-radio value="manually-added">
+            {{ 'tasks-automation.label-ners.detection-options.manually-added.radio' | translate }}
+          </pa-radio>
+          <pa-radio value="prompt">
+            {{ 'tasks-automation.label-ners.detection-options.prompt.radio' | translate }}
+          </pa-radio>
+        </pa-radio-group>
+
+        @if (annotatedByValue === 'prompt') {
+          <nsi-info-card>
+            <span [innerHTML]="'tasks-automation.label-ners.detection-options.prompt.example' | translate"></span>
+          </nsi-info-card>
+
+          <pa-textarea
+            rows="4"
+            formControlName="prompt">
+            {{ 'tasks-automation.label-ners.detection-options.prompt.textarea' | translate }}
+          </pa-textarea>
+        } @else {
+          <div>
+            <label>{{ 'tasks-automation.label-ners.detection-options.manually-added.ner-family' | translate }}</label>
+            <div class="inline-form">
+              <div>
+                <nsi-dropdown-button
+                  fullWidth
+                  aspect="basic"
+                  [popupRef]="nerFamily">
+                  {{
+                    selectedFamily
+                      ? selectedFamily.title
+                      : ('tasks-automation.label-ners.detection-options.manually-added.select-ner-family' | translate)
+                  }}
+                </nsi-dropdown-button>
+                <pa-dropdown #nerFamily>
+                  @for (family of nerFamilies | async; track family.key) {
+                    <pa-option
+                      [value]="family.key"
+                      (selectOption)="selectFamily(family)">
+                      {{ family.title }}
+                    </pa-option>
+                  }
+                </pa-dropdown>
+              </div>
+              <span class="separator">{{ 'generic.or' | translate }}</span>
+              <pa-button
+                class="full-width"
+                icon="circle-plus"
+                iconAndText
+                (click)="createNerFamily()">
+                {{ 'tasks-automation.label-ners.detection-options.manually-added.create-ner-family' | translate }}
+              </pa-button>
+            </div>
+          </div>
+        }
+
+        @if (annotatedByValue === 'manually-added' && tokensCount !== undefined) {
+          <nsi-info-card>
+            <span
+              [innerHTML]="
+                'tasks-automation.label-ners.detection-options.manually-added.token-count'
+                  | translate: { count: tokensCount }
+              "></span>
+          </nsi-info-card>
+
+          @if (tokensCount === 0) {
+            <nsi-info-card
+              type="warning"
+              icon="warning">
+              {{ 'tasks-automation.label-ners.detection-options.manually-added.warning' | translate }}
+            </nsi-info-card>
+          }
+        } @else {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'tasks-automation.label-ners.detection-options.' + annotatedByValue + '.warning' | translate }}
+          </nsi-info-card>
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.label-ners.find-ners.title"
+      description="tasks-automation.label-ners.find-ners.description">
+      <div class="form-container">
+        <nsi-info-card>
+          <div class="info-card-content-with-icon">
+            <span [innerHTML]="'tasks-automation.label-ners.find-ners.info' | translate"></span>
+            <pa-icon name="form"></pa-icon>
+          </div>
+        </nsi-info-card>
+      </div>
+    </nsi-two-columns-configuration-item>
+  </app-task-form>
+</div>

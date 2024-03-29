@@ -1,4 +1,5 @@
 export * from './global-question/global-question.component';
+export * from './label-ners/label-ners.component';
 export * from './label-resources/label-resources.component';
 export * from './label-text-blocks/label-text-blocks.component';
 export * from './question-answer/question-answer.component';

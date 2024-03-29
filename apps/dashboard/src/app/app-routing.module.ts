@@ -10,6 +10,7 @@ import {
   GlobalQuestionComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
+  LabelNersComponent,
   LabelResourcesComponent,
   LabelTextBlocksComponent,
   PageNotFoundComponent,
@@ -249,6 +250,14 @@ const routes: Routes = [
                   {
                     path: 'label-text-blocks/:taskId',
                     component: LabelTextBlocksComponent,
+                  },
+                  {
+                    path: 'label-ners',
+                    component: LabelNersComponent,
+                  },
+                  {
+                    path: 'label-ners/:taskId',
+                    component: LabelNersComponent,
                   },
                 ],
               },

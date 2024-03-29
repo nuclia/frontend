@@ -1,20 +1,28 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
+import { BehaviorSubject, EMPTY, map, Observable } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { SDKService, STFUtils } from '@flaps/core';
 import { EntitiesGroup, Entity, IKnowledgeBox, UpdateEntitiesGroupPayload } from '@nuclia/core';
-import { NerFamily } from '@flaps/common';
+import { getNerFamilyTitle, NerFamily } from '@flaps/common';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
 })
-export class EntitiesService {
+export class NerService {
   private entitiesSubject = new BehaviorSubject<{ [key: string]: NerFamily } | null>(null);
 
   entities = this.entitiesSubject.asObservable();
+  nerFamilies: Observable<NerFamily[]> = this.entities.pipe(
+    filter((entities): entities is { [key: string]: NerFamily } => !!entities),
+    map((entities) => this.getNerFamilyWithTitles(entities)),
+  );
   isAdminOrContrib = this.sdk.isAdminOrContrib;
 
-  constructor(private sdk: SDKService) {
+  constructor(
+    private sdk: SDKService,
+    private translate: TranslateService,
+  ) {
     this.sdk.currentKb
       .pipe(
         tap(() => {
@@ -37,6 +45,15 @@ export class EntitiesService {
         },
         error: () => this.entitiesSubject.next(null),
       });
+  }
+
+  getNerFamilyWithTitles(entities: { [key: string]: NerFamily }): NerFamily[] {
+    return Object.entries(entities)
+      .map(([familyKey, family]) => ({
+        ...family,
+        title: getNerFamilyTitle(familyKey, family, this.translate),
+      }))
+      .sort((a, b) => (a.title || '').localeCompare(b.title || ''));
   }
 
   createFamily(family: { color: string; entities: string; title: string }): Observable<EntitiesGroup> {

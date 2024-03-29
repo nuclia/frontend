@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Entity, NerFamily } from '../model';
-import { EntitiesService } from '../entities.service';
+import { NerService } from '../ner.service';
 
 const COUNT_ROWS_DISPLAYED = 1000;
 
@@ -61,7 +61,7 @@ export class EntityListComponent implements OnDestroy {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private entitiesService: EntitiesService,
+    private entitiesService: NerService,
   ) {}
 
   ngOnDestroy(): void {
