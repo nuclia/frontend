@@ -10,6 +10,8 @@ import {
   GlobalQuestionComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
+  LabelResourcesComponent,
+  LabelTextBlocksComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   PromptLabComponent,
@@ -231,6 +233,22 @@ const routes: Routes = [
                   {
                     path: 'question-answer/:taskId',
                     component: QuestionAnswerComponent,
+                  },
+                  {
+                    path: 'label-resources',
+                    component: LabelResourcesComponent,
+                  },
+                  {
+                    path: 'label-resources/:taskId',
+                    component: LabelResourcesComponent,
+                  },
+                  {
+                    path: 'label-text-blocks',
+                    component: LabelTextBlocksComponent,
+                  },
+                  {
+                    path: 'label-text-blocks/:taskId',
+                    component: LabelTextBlocksComponent,
                   },
                 ],
               },

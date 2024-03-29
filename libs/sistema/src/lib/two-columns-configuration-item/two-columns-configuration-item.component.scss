@@ -6,7 +6,7 @@
   gap: rhythm(5);
   padding: rhythm(3) 0;
 
-  &:first-of-type {
+  &:first-of-type:not(.no-top-border) {
     border-top: 1px solid $color-neutral-lighter;
   }
 

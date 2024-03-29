@@ -1,0 +1,79 @@
+<nsi-two-columns-configuration-item
+  noTopBorder
+  itemTitle="tasks-automation.form.label-set-selection.title"
+  [description]="'tasks-automation.form.label-set-selection.description-' + type">
+  <div class="form-container">
+    <div class="inline-form">
+      <app-label-dropdown
+        labelSetSelection
+        single
+        fullWidth
+        aspect="basic"
+        [labelSets]="labelSets | async"
+        [selectedLabelSet]="selectedLabelSet?.id"
+        (labelSetSelected)="selectLabelSet($event)">
+        {{
+          selectedLabelSet
+            ? selectedLabelSet.labelSet.title
+            : ('tasks-automation.form.label-set-selection.select-dropdown-label' | translate)
+        }}
+      </app-label-dropdown>
+      <span class="separator">{{ 'generic.or' | translate }}</span>
+      <pa-button
+        class="full-width"
+        icon="circle-plus"
+        iconAndText
+        (click)="createLabelSet()">
+        {{ 'tasks-automation.form.label-set-selection.create-label-set-button' | translate }}
+      </pa-button>
+    </div>
+
+    @if (selectedLabelSet && labeledResourceCount !== undefined) {
+      <nsi-info-card>
+        <span
+          [innerHTML]="
+            'tasks-automation.form.label-set-selection.' + type + '-with-labels'
+              | translate: { count: labeledResourceCount }
+          "></span>
+      </nsi-info-card>
+    }
+  </div>
+</nsi-two-columns-configuration-item>
+
+<nsi-two-columns-configuration-item
+  itemTitle="tasks-automation.form.labeling-options.title"
+  [description]="'tasks-automation.form.labeling-options.description-' + type">
+  <div
+    class="form-container"
+    [formGroup]="labelingOptionsForm">
+    <pa-radio-group formControlName="labelingBy">
+      <pa-radio value="existing-labeling">
+        {{ 'tasks-automation.form.labeling-options.existing-labeling.radio' | translate }}
+      </pa-radio>
+      <pa-radio value="prompt">
+        <span class="option-with-badge">
+          {{ 'tasks-automation.form.labeling-options.prompt.radio' | translate }}
+          <nsi-badge kind="tertiary">{{ 'tasks-automation.badge.beta' | translate }}</nsi-badge>
+        </span>
+      </pa-radio>
+    </pa-radio-group>
+
+    @if (labelingByValue === 'prompt') {
+      <nsi-info-card>
+        <span [innerHTML]="'tasks-automation.form.labeling-options.prompt.info-' + type | translate"></span>
+      </nsi-info-card>
+
+      <pa-textarea
+        rows="4"
+        formControlName="prompt">
+        {{ 'tasks-automation.form.labeling-options.prompt.textarea' | translate }}
+      </pa-textarea>
+    }
+
+    <nsi-info-card
+      type="warning"
+      icon="warning">
+      {{ 'tasks-automation.form.labeling-options.' + labelingByValue + '.warning-' + type | translate }}
+    </nsi-info-card>
+  </div>
+</nsi-two-columns-configuration-item>

@@ -68,7 +68,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   // Text displayed in the info card below Trigger label on the right column
   @Input() triggerDescription = '';
   // Label displayed on the submit button
-  @Input() activateButtonLabel = 'Activate';
+  @Input() activateButtonLabel = '';
   // Note displayed on the footer when task is applied automatically
   @Input() footerNoteAutomation = '';
   // Note displayed on the footer when task is applied once
@@ -91,6 +91,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   get applyTaskValue() {
     return this.form.controls.applyTaskTo.value;
+  }
+  get llmValue() {
+    return this.form.controls.llm.value;
   }
   get headersGroup() {
     return this.form.controls.webhook.controls.headers.controls;
@@ -142,6 +145,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.form.patchValue({ llm: this.availableLLMs[0] });
+
     this.sdk.currentKb
       .pipe(
         switchMap((kb) => kb.catalog('', { faceted: MIME_FACETS.concat(LANGUAGE_FACET) })),

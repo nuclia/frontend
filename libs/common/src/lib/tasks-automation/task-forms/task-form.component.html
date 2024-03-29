@@ -139,11 +139,14 @@
         }
       </pa-radio-group>
 
-      <nsi-info-card
-        type="warning"
-        icon="warning">
-        {{ 'tasks-automation.form.llm-selection.warning' | translate }}
-      </nsi-info-card>
+      @if (llmValue) {
+        <!-- FIXME: update translation X param depending on the model -->
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'tasks-automation.form.llm-selection.warning' | translate }}
+        </nsi-info-card>
+      }
     </div>
   </nsi-two-columns-configuration-item>
 

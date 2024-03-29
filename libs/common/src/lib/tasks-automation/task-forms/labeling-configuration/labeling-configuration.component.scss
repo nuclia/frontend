@@ -1,0 +1,14 @@
+@import 'apps/dashboard/src/variables';
+@import '../task-form.common';
+
+.separator {
+  @include body-s();
+  color: $color-neutral-regular;
+  text-transform: lowercase;
+}
+
+.option-with-badge {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+}
