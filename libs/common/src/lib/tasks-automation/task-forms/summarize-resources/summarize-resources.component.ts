@@ -5,6 +5,7 @@ import { TaskFormComponent } from '../task-form.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskRouteDirective } from '../task-route.directive';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   standalone: true,
@@ -17,6 +18,7 @@ import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-ang
     TwoColumnsConfigurationItemComponent,
     PaTogglesModule,
     PaTextFieldModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './summarize-resources.component.html',
   styleUrl: '../_task-form.common.scss',
@@ -24,4 +26,10 @@ import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-ang
 })
 export class SummarizeResourcesComponent extends TaskRouteDirective {
   generativeModels = ['nuclia-everest-v1', 'chatgpt-azure-3', 'chatgpt-azure', 'anthropic'];
+
+  summaryForm = new FormGroup({
+    summary: new FormControl<'simple' | 'extended'>('simple'),
+    prompt: new FormControl<string>(''),
+    fieldName: new FormControl<string>('', [Validators.required]),
+  });
 }

@@ -228,7 +228,8 @@
     </pa-button>
     <pa-button
       kind="primary"
-      type="submit">
+      type="submit"
+      [disabled]="form.invalid || !validFormInside">
       {{ activateButtonLabel | translate }}
     </pa-button>
   </footer>

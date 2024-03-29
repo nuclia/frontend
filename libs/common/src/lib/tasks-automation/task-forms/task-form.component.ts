@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -25,7 +26,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LabelModule, LabelsService, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Classification, Filter, Search } from '@nuclia/core';
@@ -83,8 +84,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input() footerNoteAutomation = '';
   // Note displayed on the footer when task is applied once
   @Input() footerNoteOneTime = '';
+  // Flag indicating if the form inside ng-content is valid
+  @Input({ transform: booleanAttribute }) validFormInside = false;
 
   @Output() cancel = new EventEmitter<void>();
+  @Output() activate = new EventEmitter();
 
   form = new FormGroup({
     applyTaskTo: new FormControl<'automation' | 'once'>('automation'),
@@ -92,7 +96,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent'),
       searchQuery: new FormControl<string>(''),
     }),
-    llm: new FormControl<string>(''),
+    llm: new FormControl<string>('', [Validators.required]),
     webhook: new FormGroup({
       url: new FormControl<string>(''),
       headers: new FormArray([createHeaderRow()]),
@@ -257,5 +261,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   activateTask() {
     // TODO
+    this.activate.emit({ ...this.form.getRawValue(), filters: this.selectedFilters.value });
   }
 }
