@@ -17,6 +17,7 @@
     footerNoteOneTime="tasks-automation.label-text-blocks.footer.apply-one-time"
     [availableLLMs]="generativeModels"
     [validFormInside]="labelingConfig?.valid"
+    (activate)="activateTask($event)"
     (cancel)="backToTaskList()">
     <stf-labeling-configuration
       type="text-blocks"

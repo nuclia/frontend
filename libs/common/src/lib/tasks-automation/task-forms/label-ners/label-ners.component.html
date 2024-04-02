@@ -17,7 +17,8 @@
     footerNoteOneTime="tasks-automation.label-ners.footer.apply-one-time"
     [availableLLMs]="generativeModels"
     [validFormInside]="validForm"
-    (cancel)="backToTaskList()">
+    (cancel)="backToTaskList()"
+    (activate)="activateTask($event)">
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.label-ners.detection-options.title"
       description="tasks-automation.label-ners.detection-options.description">

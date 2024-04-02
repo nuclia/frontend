@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
-import { TaskFormComponent } from '../task-form.component';
+import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -30,4 +30,9 @@ export class GlobalQuestionComponent extends TaskRouteDirective {
     question: new FormControl<string>('', [Validators.required]),
     fieldName: new FormControl<string>('', [Validators.required]),
   });
+
+  activateTask(commonConfig: TaskFormCommonConfig) {
+    // TODO
+    console.log(`Activate global question with`, commonConfig, this.globalQuestionForm.getRawValue());
+  }
 }

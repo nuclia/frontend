@@ -8,7 +8,7 @@ import {
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
 import { LabelingConfigurationComponent } from '../labeling-configuration/labeling-configuration.component';
-import { TaskFormComponent } from '../task-form.component';
+import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskRouteDirective } from '../task-route.directive';
 import {
@@ -95,5 +95,10 @@ export class LabelNersComponent extends TaskRouteDirective implements OnInit {
           this.toaster.error('tasks-automation.errors.counting-labeled-resources');
         },
       });
+  }
+
+  activateTask(commonConfig: TaskFormCommonConfig) {
+    // TODO
+    console.log(`Activate NER task with`, commonConfig, this.detectionOptionsForm.getRawValue());
   }
 }

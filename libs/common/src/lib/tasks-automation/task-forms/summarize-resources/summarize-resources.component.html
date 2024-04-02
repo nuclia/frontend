@@ -17,6 +17,7 @@
     footerNoteOneTime="tasks-automation.summarize-resources.footer.apply-one-time"
     [availableLLMs]="generativeModels"
     [validFormInside]="summaryForm.valid"
+    (activate)="activateTask($event)"
     (cancel)="backToTaskList()">
     <div [formGroup]="summaryForm">
       <nsi-two-columns-configuration-item

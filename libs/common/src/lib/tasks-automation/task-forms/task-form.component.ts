@@ -37,10 +37,24 @@ import { GenerativeModelPipe } from '../../pipes';
 
 function createHeaderRow() {
   return new FormGroup({
-    key: new FormControl<string>(''),
-    value: new FormControl<string>(''),
-    secret: new FormControl<boolean>(false),
+    key: new FormControl<string>('', { nonNullable: true }),
+    value: new FormControl<string>('', { nonNullable: true }),
+    secret: new FormControl<boolean>(false, { nonNullable: true }),
   });
+}
+
+export interface TaskFormCommonConfig {
+  applyTaskTo: 'automation' | 'once';
+  filters: {
+    searchIn: 'titleOrContent' | 'title' | 'content';
+    searchQuery: string;
+    selectedFilters: string[] | Filter[];
+  };
+  llm: string;
+  webhook: {
+    url: string;
+    headers: { key: string; value: string; secret: boolean }[];
+  };
 }
 
 @Component({
@@ -88,17 +102,17 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input({ transform: booleanAttribute }) validFormInside = false;
 
   @Output() cancel = new EventEmitter<void>();
-  @Output() activate = new EventEmitter();
+  @Output() activate = new EventEmitter<TaskFormCommonConfig>();
 
   form = new FormGroup({
-    applyTaskTo: new FormControl<'automation' | 'once'>('automation'),
+    applyTaskTo: new FormControl<'automation' | 'once'>('automation', { nonNullable: true }),
     filters: new FormGroup({
-      searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent'),
-      searchQuery: new FormControl<string>(''),
+      searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent', { nonNullable: true }),
+      searchQuery: new FormControl<string>('', { nonNullable: true }),
     }),
-    llm: new FormControl<string>('', [Validators.required]),
+    llm: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     webhook: new FormGroup({
-      url: new FormControl<string>(''),
+      url: new FormControl<string>('', { nonNullable: true }),
       headers: new FormArray([createHeaderRow()]),
     }),
   });
@@ -260,7 +274,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
 
   activateTask() {
-    // TODO
-    this.activate.emit({ ...this.form.getRawValue(), filters: this.selectedFilters.value });
+    const rawValue = this.form.getRawValue();
+    this.activate.emit({ ...rawValue, filters: { ...rawValue.filters, selectedFilters: this.selectedFilters.value } });
   }
 }

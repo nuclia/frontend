@@ -17,6 +17,7 @@
     footerNoteOneTime="tasks-automation.question-answer.footer.apply-one-time"
     [availableLLMs]="generativeModels"
     [validFormInside]="questionAnswerForm.valid"
+    (activate)="activateTask($event)"
     (cancel)="backToTaskList()">
     <div>
       <nsi-two-columns-configuration-item

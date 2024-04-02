@@ -17,6 +17,7 @@
     footerNoteOneTime="tasks-automation.label-resources.footer.apply-one-time"
     [availableLLMs]="generativeModels"
     [validFormInside]="labelingConfig?.valid"
+    (activate)="activateTask($event)"
     (cancel)="backToTaskList()">
     <stf-labeling-configuration
       type="resources"

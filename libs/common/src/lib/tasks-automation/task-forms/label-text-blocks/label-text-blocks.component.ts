@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskRouteDirective } from '../task-route.directive';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { TaskFormComponent } from '../task-form.component';
+import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import {
@@ -33,5 +33,10 @@ export class LabelTextBlocksComponent extends TaskRouteDirective {
 
   onConfigurationChange(configuration: LabelingConfiguration) {
     this.labelingConfig = configuration;
+  }
+
+  activateTask(commonConfig: TaskFormCommonConfig) {
+    // TODO
+    console.log(`Activate label text blocks task with`, commonConfig, this.labelingConfig);
   }
 }
