@@ -53,7 +53,57 @@ export class TaskListItemComponent {
     | 'label-ners' = 'summarize';
   @Input() taskTitle = '';
   @Input() taskDescription = '';
-  @Input() taskList: (AutomatedTask | OneTimeTask)[] = [];
+  @Input() taskList: (AutomatedTask | OneTimeTask)[] = [
+    {
+      count: { total: 258, processed: 258 },
+      creationDate: new Date().toISOString(),
+      filters: [
+        { label: 'file type', count: 1 },
+        { label: 'language', count: 1 },
+      ],
+      running: true,
+      type: 'automated',
+      fieldName: 'summary_pdf',
+    },
+    {
+      count: { total: 85, processed: 85 },
+      creationDate: new Date().toISOString(),
+      filters: [{ label: 'labels', count: 120 }],
+      running: true,
+      type: 'automated',
+      fieldName: 'summary_contracts',
+    },
+    {
+      count: { total: 12, processed: 12 },
+      creationDate: new Date().toISOString(),
+      filters: [],
+      hasPrompt: true,
+      running: false,
+      type: 'automated',
+      fieldName: 'summary_test',
+    },
+    {
+      count: { total: 128, processed: 1 },
+      creationDate: new Date().toISOString(),
+      filters: [],
+      status: 'progress',
+      type: 'one-time',
+    },
+    {
+      count: { total: 12, processed: 12 },
+      creationDate: new Date().toISOString(),
+      filters: [],
+      status: 'completed',
+      type: 'one-time',
+    },
+    {
+      count: { total: 128, processed: 1 },
+      creationDate: new Date().toISOString(),
+      filters: [],
+      status: 'error',
+      type: 'one-time',
+    },
+  ];
   @Input({ transform: booleanAttribute }) hasArchive = false;
 
   @Output() newTask = new EventEmitter<void>();
