@@ -1,0 +1,8 @@
+@import 'apps/dashboard/src/variables';
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+  margin-top: rhythm(4);
+}

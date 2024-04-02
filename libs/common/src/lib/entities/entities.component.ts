@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { Observable, Subject, switchMap, tap } from 'rxjs';
 import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
-import { Entity, generatedEntitiesColor, getNerFamilyTitle, NerFamily } from './model';
-import { EntitiesService } from './entities.service';
+import { Entity, generatedEntitiesColor, NerFamily } from './model';
+import { NerService } from './ner.service';
 import { NerFamilyDialogComponent } from './ner-family-dialog/ner-family-dialog.component';
 import { ModalConfig, ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -27,19 +27,12 @@ export class EntitiesComponent implements OnInit, OnDestroy {
 
   unsubscribeAll = new Subject<void>();
   familyColors = generatedEntitiesColor;
-  nerFamilies: Observable<NerFamily[]> = this.entitiesService.entities.pipe(
+  nerFamilies: Observable<NerFamily[]> = this.nerService.entities.pipe(
     filter((entities): entities is { [key: string]: NerFamily } => !!entities),
     tap((entities) => this.updateSelectedFamilyEntities(entities)),
-    map((entities) =>
-      Object.entries(entities)
-        .map(([familyKey, family]) => ({
-          ...family,
-          title: getNerFamilyTitle(familyKey, family, this.translate),
-        }))
-        .sort((a, b) => (a.title || '').localeCompare(b.title || '')),
-    ),
+    map((entities) => this.nerService.getNerFamilyWithTitles(entities)),
   );
-  isAdminOrContrib = this.entitiesService.isAdminOrContrib;
+  isAdminOrContrib = this.nerService.isAdminOrContrib;
 
   selectedFamily?: NerFamily;
   selectedNer: Entity[] = [];
@@ -50,7 +43,7 @@ export class EntitiesComponent implements OnInit, OnDestroy {
 
   constructor(
     private translate: TranslateService,
-    private entitiesService: EntitiesService,
+    private nerService: NerService,
     private modalService: ModalService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -71,10 +64,6 @@ export class EntitiesComponent implements OnInit, OnDestroy {
     this.nerQueryDebounce.next(newQuery);
   }
 
-  trackByFamily(index: number, family: NerFamily) {
-    return family.key;
-  }
-
   addFamily() {
     this.modalService.openModal(NerFamilyDialogComponent).onClose.subscribe();
   }
@@ -83,7 +72,7 @@ export class EntitiesComponent implements OnInit, OnDestroy {
     this.selectedFamily = family;
     this.cdr.markForCheck();
     if (!family.entities) {
-      this.entitiesService.refreshFamily(family.key).subscribe(() => {
+      this.nerService.refreshFamily(family.key).subscribe(() => {
         this.cdr.markForCheck();
       });
     }
@@ -97,7 +86,7 @@ export class EntitiesComponent implements OnInit, OnDestroy {
         .onClose.pipe(
           filter((entities) => !!entities && entities.length > 0),
           map((entities) => entities as string[]),
-          switchMap((entities) => this.entitiesService.addEntitiesToFamily(family.key, entities)),
+          switchMap((entities) => this.nerService.addEntitiesToFamily(family.key, entities)),
         )
         .subscribe();
     }
@@ -119,7 +108,7 @@ export class EntitiesComponent implements OnInit, OnDestroy {
       })
       .onClose.pipe(
         filter((confirm) => confirm),
-        switchMap(() => this.entitiesService.deleteFamily(family.key)),
+        switchMap(() => this.nerService.deleteFamily(family.key)),
       )
       .subscribe({
         next: () => {
@@ -131,7 +120,7 @@ export class EntitiesComponent implements OnInit, OnDestroy {
 
   deleteEntities() {
     if (this.selectedFamily && this.selectedNer.length > 0) {
-      this.entitiesService
+      this.nerService
         .deleteEntities(this.selectedFamily.key, this.selectedNer)
         .subscribe(() => this.selectEntities([]));
     }
@@ -159,7 +148,7 @@ export class EntitiesComponent implements OnInit, OnDestroy {
 
   addDuplicateOf(entity: Entity) {
     if (this.selectedFamily && this.selectedNer.length > 0) {
-      this.entitiesService.addDuplicate(this.selectedFamily.key, this.selectedNer, entity).subscribe(() => {
+      this.nerService.addDuplicate(this.selectedFamily.key, this.selectedNer, entity).subscribe(() => {
         this.matchingEntities = [];
         this.selectEntities([]);
       });

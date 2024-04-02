@@ -1,11 +1,11 @@
 <div class="column">
   <div class="title-xs title">
-    {{ itemTitle }}
-    @if (label) {
-      <span class="label overline">{{ label }}</span>
+    {{ itemTitle | translate }}
+    @if (badge) {
+      <nsi-badge kind="tertiary">{{ badge | translate }}</nsi-badge>
     }
   </div>
-  <div class="body-m description">{{ description }}</div>
+  <div class="body-m description">{{ description | translate }}</div>
 </div>
 <div class="column">
   <ng-content></ng-content>

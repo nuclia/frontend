@@ -1,7 +1,7 @@
 <div class="ner-management page-spacing">
   <header>
-    <h1>{{ 'ner-management.page-title' | translate }}</h1>
-    <p>{{ 'ner-management.page-description' | translate }}</p>
+    <h1 class="page-title">{{ 'ner-management.page-title' | translate }}</h1>
+    <p class="page-description">{{ 'ner-management.page-description' | translate }}</p>
   </header>
 
   <div class="ner-container">
@@ -17,117 +17,121 @@
       </div>
 
       <ul class="nsi-list ner-family-list">
-        <li
-          *ngFor="let family of nerFamilies | async; trackBy: trackByFamily"
-          class="ner-family"
-          [class.selected]="family.key === selectedFamily?.key"
-          (click)="selectFamily(family)">
-          <div
-            class="family-color"
-            [style.background-color]="family.color || familyColors[family.key || '']"></div>
-          <div class="family-name">
-            {{ family.title }}
-          </div>
-          <div
-            class="action-buttons-container"
-            *ngIf="(isAdminOrContrib | async) === true">
-            <pa-button
-              *ngIf="family.custom"
-              aspect="basic"
-              size="small"
-              icon="edit"
-              [kind]="family.key === selectedFamily?.key ? 'inverted' : 'secondary'"
-              paTooltip="ner-family-toolbar.edit-button"
-              (click)="updateFamily(family)">
-              {{ 'ner-family-toolbar.edit-button' | translate }}
-            </pa-button>
-            <pa-button
-              aspect="basic"
-              size="small"
-              icon="trash"
-              kind="destructive"
-              paTooltip="ner-family-toolbar.remove-button"
-              (click)="removeFamily(family)">
-              {{ 'ner-family-toolbar.remove-button' | translate }}
-            </pa-button>
-          </div>
-        </li>
+        @for (family of nerFamilies | async; track family.key) {
+          <li
+            class="ner-family"
+            [class.selected]="family.key === selectedFamily?.key"
+            (click)="selectFamily(family)">
+            <div
+              class="family-color"
+              [style.background-color]="family.color || familyColors[family.key || '']"></div>
+            <div class="family-name">
+              {{ family.title }}
+            </div>
+
+            @if ((isAdminOrContrib | async) === true) {
+              <div class="action-buttons-container">
+                @if (family.custom) {
+                  <pa-button
+                    aspect="basic"
+                    size="small"
+                    icon="edit"
+                    [kind]="family.key === selectedFamily?.key ? 'inverted' : 'secondary'"
+                    paTooltip="ner-family-toolbar.edit-button"
+                    (click)="updateFamily(family)">
+                    {{ 'ner-family-toolbar.edit-button' | translate }}
+                  </pa-button>
+                }
+                <pa-button
+                  aspect="basic"
+                  size="small"
+                  icon="trash"
+                  kind="destructive"
+                  paTooltip="ner-family-toolbar.remove-button"
+                  (click)="removeFamily(family)">
+                  {{ 'ner-family-toolbar.remove-button' | translate }}
+                </pa-button>
+              </div>
+            }
+          </li>
+        }
       </ul>
     </div>
 
-    <div
-      class="selected-family-container"
-      *ngIf="selectedFamily">
-      <div class="family-toolbar">
-        <div>
-          <pa-input
-            icon="search"
-            [value]="nerQuery"
-            (valueChange)="onNerQueryChange($event)">
-            {{ 'stash.search' | translate }}
-          </pa-input>
-        </div>
-        <div
-          class="family-actions"
-          *ngIf="(isAdminOrContrib | async) === true">
-          <pa-button
-            aspect="basic"
-            icon="plus"
-            paTooltip="ner-family-toolbar.add-button"
-            (click)="addEntity()">
-            {{ 'ner-family-toolbar.add-button' | translate }}
-          </pa-button>
-          <pa-button
-            icon="trash"
-            kind="destructive"
-            aspect="basic"
-            paTooltip="ner-list.delete-entity-tooltip"
-            [disabled]="selectedNer.length === 0"
-            (click)="deleteEntities()">
-            {{ 'ner-list.delete-entity-tooltip' | translate }}
-          </pa-button>
-          <pa-button
-            icon="arrows-related"
-            aspect="basic"
-            paTooltip="ner-list.add-duplicate-tooltip"
-            [paPopup]="duplicateOf"
-            [disabled]="selectedNer.length === 0">
-            {{ 'ner-list.add-duplicate-tooltip' | translate }}
-          </pa-button>
-          <pa-popup
-            #duplicateOf
-            (onClose)="selectEntities([])"
-            (onOpen)="openDuplicatesOfPopup()">
-            <div class="duplicate-of-popup">
-              <label
-                for="entityInput"
-                class="body-xs">
-                {{ 'ner-list.duplicates-of' | translate }}
-              </label>
-              <input
-                #entityInput
-                id="entityInput"
-                class="entity-input"
-                paFocusable
-                (keyup)="getMatchingEntities($event)" />
-              <ul class="suggested-entities">
-                <pa-option
-                  *ngFor="let entity of matchingEntities"
-                  [value]="entity.value"
-                  (selectOption)="addDuplicateOf(entity)">
-                  {{ entity.value }}
-                </pa-option>
-              </ul>
-            </div>
-          </pa-popup>
-        </div>
-      </div>
+    @if (selectedFamily) {
+      <div class="selected-family-container">
+        <div class="family-toolbar">
+          <div>
+            <pa-input
+              icon="search"
+              [value]="nerQuery"
+              (valueChange)="onNerQueryChange($event)">
+              {{ 'stash.search' | translate }}
+            </pa-input>
+          </div>
 
-      <app-entity-list
-        [family]="selectedFamily"
-        [selection]="selectedIds"
-        [filterQuery]="nerQuery"
-        (selectionChange)="selectEntities($event)"></app-entity-list>
-    </div>
+          @if ((isAdminOrContrib | async) === true) {
+            <div class="family-actions">
+              <pa-button
+                aspect="basic"
+                icon="plus"
+                paTooltip="ner-family-toolbar.add-button"
+                (click)="addEntity()">
+                {{ 'ner-family-toolbar.add-button' | translate }}
+              </pa-button>
+              <pa-button
+                icon="trash"
+                kind="destructive"
+                aspect="basic"
+                paTooltip="ner-list.delete-entity-tooltip"
+                [disabled]="selectedNer.length === 0"
+                (click)="deleteEntities()">
+                {{ 'ner-list.delete-entity-tooltip' | translate }}
+              </pa-button>
+              <pa-button
+                icon="arrows-related"
+                aspect="basic"
+                paTooltip="ner-list.add-duplicate-tooltip"
+                [paPopup]="duplicateOf"
+                [disabled]="selectedNer.length === 0">
+                {{ 'ner-list.add-duplicate-tooltip' | translate }}
+              </pa-button>
+              <pa-popup
+                #duplicateOf
+                (onClose)="selectEntities([])"
+                (onOpen)="openDuplicatesOfPopup()">
+                <div class="duplicate-of-popup">
+                  <label
+                    for="entityInput"
+                    class="body-xs">
+                    {{ 'ner-list.duplicates-of' | translate }}
+                  </label>
+                  <input
+                    #entityInput
+                    id="entityInput"
+                    class="entity-input"
+                    paFocusable
+                    (keyup)="getMatchingEntities($event)" />
+                  <ul class="suggested-entities">
+                    <pa-option
+                      *ngFor="let entity of matchingEntities"
+                      [value]="entity.value"
+                      (selectOption)="addDuplicateOf(entity)">
+                      {{ entity.value }}
+                    </pa-option>
+                  </ul>
+                </div>
+              </pa-popup>
+            </div>
+          }
+        </div>
+
+        <app-entity-list
+          [family]="selectedFamily"
+          [selection]="selectedIds"
+          [filterQuery]="nerQuery"
+          (selectionChange)="selectEntities($event)"></app-entity-list>
+      </div>
+    }
   </div>
 </div>

@@ -1,0 +1,42 @@
+@import 'apps/dashboard/src/variables';
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  margin-bottom: rhythm(4);
+}
+
+.form-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+
+  & > * {
+    width: 100%;
+  }
+
+  label {
+    @include title-xs();
+    color: $color-neutral-regular;
+  }
+}
+
+.info-card-content-with-icon {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+}
+
+.inline-form {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  justify-content: space-between;
+
+  & > *:not(span) {
+    flex: 1 0 auto;
+    max-width: 50%;
+  }
+}

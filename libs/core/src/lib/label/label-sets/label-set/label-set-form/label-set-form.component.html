@@ -1,0 +1,132 @@
+<div
+  class="label-set-editor"
+  [class.in-modal]="inModal">
+  @if (labelSet) {
+    <div class="scrollable-container">
+      <div class="form-container">
+        <form [formGroup]="labelSetForm">
+          <pa-input
+            id="title"
+            formControlName="title"
+            data-cy="label-set-title-input"
+            [showAllErrors]="false"
+            [errorMessages]="validationMessages.title">
+            {{ 'label-set.form.name' | translate }}
+          </pa-input>
+
+          @if (addNew) {
+            <div>
+              <label class="title-xxs">
+                {{ 'label-set.form.kind' | translate }}
+              </label>
+              <pa-radio-group formControlName="kind">
+                @for (kind of kinds | async; track kind.id) {
+                  <pa-radio
+                    [value]="kind.id"
+                    [disabled]="!addNew">
+                    {{ kind.name | translate }}
+                  </pa-radio>
+                }
+              </pa-radio-group>
+
+              <nsi-info-card
+                type="warning"
+                icon="warning">
+                {{ 'label-set.form.kind-warning' | translate }}
+              </nsi-info-card>
+            </div>
+          }
+
+          <div>
+            <label class="title-xxs">
+              {{ 'label-set.form.exclusive.label' | translate }}
+            </label>
+            <pa-checkbox
+              formControlName="exclusive"
+              help="label-set.form.exclusive.description">
+              {{ 'label-set.form.exclusive.checkbox' | translate }}
+            </pa-checkbox>
+          </div>
+
+          <div class="label-list">
+            <div class="label-list-title">
+              <label
+                class="title-xxs"
+                for="label-list">
+                {{ 'label-set.form.labels.title' | translate }}
+              </label>
+
+              <div class="label-display-buttons">
+                <pa-button
+                  [aspect]="labelView === 'list' ? 'solid' : 'basic'"
+                  data-cy="list-view"
+                  size="small"
+                  icon="list-bullet"
+                  (click)="labelView = 'list'"></pa-button>
+                <pa-button
+                  [aspect]="labelView === 'grid' ? 'solid' : 'basic'"
+                  data-cy="grid-view"
+                  size="small"
+                  icon="grid"
+                  (click)="labelView = 'grid'"></pa-button>
+              </div>
+            </div>
+            <div>
+              @if (labelView === 'list') {
+                <pa-textarea
+                  #labelList
+                  externalLabel
+                  id="label-list"
+                  help="label-set.form.labels.list-help"
+                  resizable
+                  formControlName="labels"
+                  data-cy="label-list-input"
+                  [errorMessages]="validationMessages.labels"
+                  [rows]="2"
+                  (keyup.enter)="validateLabelList($event)"></pa-textarea>
+              } @else {
+                <pa-input
+                  externalLabel
+                  help="label-set.form.labels.grid-help"
+                  data-cy="label-item-input"
+                  [errorMessage]="labelInputError"
+                  [(value)]="labelInputValue"
+                  (valueChange)="this.labelInputError = ''"
+                  (enter)="addLabel($event.value)"></pa-input>
+                <div
+                  class="label-grid"
+                  data-cy="label-grid">
+                  @for (label of labelSet.labels; track label.title) {
+                    <nsi-label
+                      [color]="labelSet.color"
+                      (removeLabel)="deleteLabel(label.title)">
+                      {{ label.title }}
+                    </nsi-label>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer class="form-section-container">
+      <div class="footer-placeholder"></div>
+      <div class="button-container">
+        <pa-button
+          kind="primary"
+          data-cy="save-label-set"
+          (click)="saveLabelSet()"
+          [disabled]="labelSetForm.invalid || !hasChanges || !labelSet.labels?.length">
+          {{ 'generic.save' | translate }}
+        </pa-button>
+        <pa-button
+          aspect="basic"
+          (click)="cancel.emit()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+      </div>
+    </footer>
+  }
+</div>

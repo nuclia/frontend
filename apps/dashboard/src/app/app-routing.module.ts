@@ -195,6 +195,13 @@ const routes: Routes = [
                 path: 'prompt-lab',
                 component: PromptLabComponent,
               },
+              {
+                path: 'tasks',
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/tasks-automation/tasks-automation.routes').then(
+                    (m) => m.TASK_AUTOMATION_ROUTES,
+                  ),
+              },
             ],
           },
         ],

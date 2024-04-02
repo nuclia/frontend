@@ -6,7 +6,7 @@
   gap: rhythm(5);
   padding: rhythm(3) 0;
 
-  &:first-of-type {
+  &:first-of-type:not(.no-top-border) {
     border-top: 1px solid $color-neutral-lighter;
   }
 
@@ -19,12 +19,7 @@
     display: flex;
     gap: rhythm(1);
   }
-  .label {
-    background: $color-tertiary-lightest;
-    border-radius: rhythm(1.5);
-    color: $color-tertiary-strong;
-    padding: 0 rhythm(1);
-  }
+
   .description {
     color: $color-neutral-regular;
   }

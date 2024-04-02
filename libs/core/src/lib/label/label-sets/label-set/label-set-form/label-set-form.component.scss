@@ -1,0 +1,99 @@
+@import 'apps/dashboard/src/variables';
+
+$page-title-height: rhythm(8);
+$global-width: rhythm(80);
+$form-width: rhythm(50);
+$footer-height: rhythm(5);
+$footer-vertical-padding: rhythm(4);
+$footer-top-margin: rhythm(2);
+
+.label-set-editor {
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(3);
+    margin: rhythm(1) 0;
+
+    .multiple-description {
+      margin-bottom: rhythm(0.5);
+    }
+
+    pa-radio-group {
+      display: block;
+      margin-bottom: rhythm(1.5);
+    }
+    pa-radio {
+      display: inline-block;
+      margin: rhythm(1.5) rhythm(4) 0 0;
+    }
+  }
+
+  &.in-modal form {
+    margin-bottom: 0;
+  }
+
+  .label-list {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+
+    .label-list-title {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+
+      .label-display-buttons {
+        display: flex;
+        gap: rhythm(0.5);
+      }
+    }
+  }
+
+  .label-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(1);
+    margin-top: rhythm(4);
+  }
+
+  .scrollable-container {
+    height: calc(
+      100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - #{$page-title-height} - #{$footer-height} - #{$footer-top-margin} -
+        #{$footer-vertical-padding}* 2 - var(--app-layout-padding-bottom)
+    );
+    overflow-y: auto;
+  }
+
+  footer {
+    bottom: 0;
+    box-shadow: inset 0 1px 0 $color-neutral-light;
+    padding: $footer-vertical-padding 0;
+    position: sticky;
+
+    .footer-placeholder {
+      flex: 0 0 auto !important;
+      width: rhythm(28);
+    }
+  }
+
+  &.in-modal {
+    .scrollable-container {
+      max-height: 100%;
+    }
+    footer {
+      background-color: $background-color-modal;
+      left: $padding-modal;
+      position: absolute;
+      right: $padding-modal;
+    }
+  }
+
+  .button-container {
+    display: flex;
+    gap: rhythm(1.5);
+  }
+}
+
+app-label.cdk-drag-preview ::ng-deep .label {
+  background-color: $color-neutral-lighter;
+}

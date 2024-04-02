@@ -6,9 +6,9 @@
 
 @if (zones && account && knowledgeBoxes) {
   <div class="account-kbs page-spacing">
-    <h1>{{ 'account.related_kbs' | translate }}</h1>
+    <h1 class="page-title">{{ 'account.related_kbs' | translate }}</h1>
 
-    <p>{{ 'account.kb-description' | translate }}</p>
+    <p class="page-description">{{ 'account.kb-description' | translate }}</p>
 
     <div class="account-kbs-list">
       @for (kb of knowledgeBoxes; track kb.id) {

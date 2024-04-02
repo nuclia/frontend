@@ -1,0 +1,34 @@
+@import '../../../styles/variables';
+
+:host {
+  align-items: center;
+  background-color: $color-neutral-lighter;
+  border-radius: rhythm(1.5);
+  cursor: default;
+  display: flex;
+  gap: rhythm(0.5);
+  height: rhythm(2.5);
+  justify-content: space-between;
+  padding: 0 rhythm(1);
+
+  &.with-count {
+    padding-right: rhythm(0.25);
+  }
+
+  &.tertiary {
+    background-color: $color-tertiary-lightest;
+    color: $color-tertiary-strong;
+  }
+
+  .text {
+    max-width: rhythm(9);
+  }
+  .count {
+    background: $color-light-stronger;
+    border-radius: rhythm(5);
+    padding: 0 rhythm(0.5);
+    height: rhythm(2);
+    min-width: rhythm(2);
+    text-align: center;
+  }
+}

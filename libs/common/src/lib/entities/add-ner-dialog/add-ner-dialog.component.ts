@@ -1,8 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { Entity } from '../model';
-import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
 
 export type EntityDialogMode = 'view' | 'edit' | 'add';
 
@@ -20,8 +22,10 @@ export interface EntityDialogResponse {
 }
 
 @Component({
+  standalone: true,
   templateUrl: './add-ner-dialog.component.html',
   styleUrls: ['./add-ner-dialog.component.scss'],
+  imports: [CommonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, PaButtonModule, TranslateModule],
 })
 export class AddNerDialogComponent implements OnDestroy {
   entityForm = new FormGroup<{ entities: FormControl<string> }>({

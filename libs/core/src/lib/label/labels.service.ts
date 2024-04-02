@@ -14,11 +14,12 @@ export class LabelsService {
     filter((labels) => !!labels),
     map((labels) => this.filterByKind(labels, LabelSetKind.RESOURCES)),
   );
-  paragraphLabelSets = this.labelSets.pipe(
+  textBlockLabelSets = this.labelSets.pipe(
     filter((labels) => !!labels),
     map((labels) => this.filterByKind(labels, LabelSetKind.PARAGRAPHS)),
   );
   hasResourceLabelSets = this.resourceLabelSets.pipe(map((sets) => !!sets && Object.keys(sets).length > 0));
+  hasTextBlockLabelSets = this.textBlockLabelSets.pipe(map((sets) => !!sets && Object.keys(sets).length > 0));
 
   labelSetsCount: Observable<LabelSetCounts> = this.labelSets.pipe(
     map((labelsets) => {

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { EntitiesService } from './entities.service';
+import { NerService } from './ner.service';
 
 import { EntitiesComponent } from './entities.component';
 import { MockModule, MockProvider } from 'ng-mocks';
@@ -25,7 +25,7 @@ describe('EntitiesComponent', () => {
       providers: [
         MockProvider(TranslateService),
         MockProvider(ModalService),
-        MockProvider(EntitiesService, {
+        MockProvider(NerService, {
           entities: of({}),
         }),
       ],

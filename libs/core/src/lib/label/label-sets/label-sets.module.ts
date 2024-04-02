@@ -9,7 +9,7 @@ import { A11yModule } from '@angular/cdk/a11y';
 
 import { LabelSetsComponent } from './label-sets.component';
 import { LabelSetListComponent } from './label-set-list/label-set-list.component';
-import { ColorPickerComponent, LabelComponent, LabelSetComponent } from './label-set';
+import { ColorPickerComponent, LabelComponent, LabelSetComponent, LabelSetFormComponent } from './label-set';
 import {
   PaButtonModule,
   PaIconModule,
@@ -52,6 +52,7 @@ const ROUTES: Routes = [
     PaIconModule,
     PaTooltipModule,
     SisLabelModule,
+    LabelSetFormComponent,
   ],
   declarations: [
     ColorPickerComponent,

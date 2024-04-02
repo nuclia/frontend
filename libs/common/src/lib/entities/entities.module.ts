@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 
 import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
-import { AddNerDialogComponent } from './add-ner-dialog';
 import {
   PaButtonModule,
   PaExpanderModule,
@@ -19,7 +18,6 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { NerFamilyDialogComponent } from './ner-family-dialog/ner-family-dialog.component';
 import { HintModule } from '../hint';
 import { CsvSelectComponent } from '../upload';
 import { SisProgressModule } from '@nuclia/sistema';
@@ -44,7 +42,7 @@ import { SisProgressModule } from '@nuclia/sistema';
     PaFocusableModule,
     PaTogglesModule,
   ],
-  declarations: [EntitiesComponent, EntityListComponent, AddNerDialogComponent, NerFamilyDialogComponent],
+  declarations: [EntitiesComponent, EntityListComponent],
   exports: [],
 })
 export class EntitiesModule {}

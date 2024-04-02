@@ -23,11 +23,11 @@
         </nsi-dropdown-button>
       </div>
       <div>
-        <span>Inverted:</span>
+        <span>Basic:</span>
         <nsi-dropdown-button
           [popupRef]="pageSizeMenu2"
           [open]="dropdown2Open"
-          kind="inverted"
+          aspect="basic"
           [disabled]="disabled">
           {{ pageSize2.value }}
         </nsi-dropdown-button>
@@ -37,6 +37,7 @@
         <nsi-dropdown-button
           [popupRef]="pageSizeMenu3"
           [open]="dropdown3Open"
+          aspect="basic"
           size="small"
           [disabled]="disabled">
           {{ pageSize3.value }}
@@ -99,6 +100,20 @@
 
       <dt>disabled</dt>
       <dd>Set disable state.</dd>
+
+      <dt>freeWidth</dt>
+      <dd>
+        When enabled, frees the width of the dropdown.
+        <small>(default: false, meaning the dropdown has the same width as the button by default)</small>
+      </dd>
+
+      <dt>fullWidth</dt>
+      <dd>
+        Add
+        <code>full-width</code>
+        class to the button.
+        <small>(default: false)</small>
+      </dd>
 
       <dt>kind</dt>
       <dd>

@@ -31,7 +31,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   );
 
   currentSelection: { [id: string]: boolean } = {};
-  availableLabels: Observable<LabelSets | null> = this.labelsService.paragraphLabelSets;
+  availableLabels: Observable<LabelSets | null> = this.labelsService.textBlockLabelSets;
   hasLabels: Observable<boolean> = this.availableLabels.pipe(
     map((labels) => !!labels && Object.keys(labels).length > 0),
     tap(() => {

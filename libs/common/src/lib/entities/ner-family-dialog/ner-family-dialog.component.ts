@@ -1,10 +1,19 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { ConfirmationData, ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  ConfirmationData,
+  ModalRef,
+  PaButtonModule,
+  PaModalModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { EntitiesService } from '../entities.service';
+import { NerService } from '../ner.service';
 import { NerFamily } from '../model';
+import { CommonModule } from '@angular/common';
+import { CsvSelectComponent } from '../../upload';
+import { TranslateModule } from '@ngx-translate/core';
 
 const colorPattern = new RegExp(`^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$`);
 
@@ -16,6 +25,16 @@ const CONFIRM_CSV: ConfirmationData = {
 };
 
 @Component({
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PaModalModule,
+    PaTextFieldModule,
+    CsvSelectComponent,
+    PaButtonModule,
+    TranslateModule,
+  ],
+  standalone: true,
   templateUrl: './ner-family-dialog.component.html',
   styleUrls: ['./ner-family-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,7 +62,7 @@ export class NerFamilyDialogComponent implements OnInit, OnDestroy {
 
   constructor(
     public modal: ModalRef<NerFamily>,
-    private entitiesService: EntitiesService,
+    private entitiesService: NerService,
     private cdr: ChangeDetectorRef,
   ) {}
 
