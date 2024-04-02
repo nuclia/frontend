@@ -119,7 +119,6 @@ export function getAskPresetConfig(value: Partial<PresetForm>): AdvancedForm {
     ...DEFAULT_CONFIGURATION,
     answers: true,
     hideResults: value.answerOutput === 'onlyAnswers',
-    rephrase: true,
     permalink: true,
     navigateToFile: value.answerOutput === 'answerAndResults' && value.location === 'public',
     navigateToLink: value.answerOutput === 'answerAndResults' && value.location === 'public',
