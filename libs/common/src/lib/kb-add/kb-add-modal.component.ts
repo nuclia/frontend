@@ -116,7 +116,7 @@ export class KbAddModalComponent implements OnInit {
           this.saving = false;
           this.creationInProgress = false;
           if (this.failures < 4) {
-            this.toast.error('kb.create.error.generic');
+            this.toast.error('kb.create.error');
           } else {
             Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
             this.modal.close({ success: false });
