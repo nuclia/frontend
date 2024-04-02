@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
+import { Location } from '@angular/common';
 import {
   BehaviorSubject,
   catchError,
   filter,
+  interval,
   map,
   Observable,
   of,
-  repeat,
   ReplaySubject,
+  skip,
   switchMap,
   take,
   tap,
-  timer,
 } from 'rxjs';
 import {
   baseLogoPath,
@@ -117,6 +118,7 @@ export class SyncService {
     private http: HttpClient,
     private config: BackendConfigurationService,
     private notificationService: NotificationService,
+    private location: Location,
   ) {
     if (this.hasSyncServer()) {
       this.initServer();
@@ -124,16 +126,22 @@ export class SyncService {
   }
 
   initServer() {
-    let delay = 5000;
-    of(true)
+    let isUp = false;
+    interval(5000)
       .pipe(
-        switchMap(() => this.serverStatus(this.getSyncServer())),
+        // do not pull when not in upload page
+        filter(() => {
+          const path = this.location.path();
+          return path.includes('/upload/') || path.endsWith('/upload');
+        }),
         // Delay of 5min when the server is running, and 5s when the server is down
-        tap((res) => (delay = res.running ? 5 * 60 * 1000 : 5000)),
-        map((res) => !res.running),
-        repeat({ delay: () => timer(delay) }),
+        skip(isUp ? 60 : 0),
+        switchMap(() => this.serverStatus(this.getSyncServer())),
       )
-      .subscribe((isServerDown) => this.setServerStatus(isServerDown));
+      .subscribe((res) => {
+        isUp = res.running;
+        this.setServerStatus(!isUp);
+      });
   }
 
   getConnector(connector: string, instance: string): Observable<IConnector> {
@@ -336,9 +344,11 @@ export class SyncService {
   setSyncServer(server: string) {
     localStorage.setItem(SYNC_SERVER_KEY, server || '');
     this._syncServer.next(server || '');
-    this.serverStatus(server || '').subscribe((status) => {
-      this.setServerStatus(!status.running);
-    });
+    if (server) {
+      this.serverStatus(server).subscribe((status) => {
+        this.setServerStatus(!status.running);
+      });
+    }
   }
 
   hasSyncServer(): boolean {
