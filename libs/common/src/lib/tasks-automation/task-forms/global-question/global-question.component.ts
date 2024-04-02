@@ -5,17 +5,19 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormComponent } from '../task-form.component';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../task-route.directive';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,
-    TranslateModule,
-    TaskFormComponent,
-    TwoColumnsConfigurationItemComponent,
     InfoCardComponent,
     PaTextFieldModule,
+    ReactiveFormsModule,
+    TaskFormComponent,
+    TranslateModule,
+    TwoColumnsConfigurationItemComponent,
   ],
   templateUrl: './global-question.component.html',
   styleUrl: '../_task-form.common.scss',
@@ -23,4 +25,9 @@ import { TaskRouteDirective } from '../task-route.directive';
 })
 export class GlobalQuestionComponent extends TaskRouteDirective {
   generativeModels = ['nuclia-everest-v1', 'chatgpt-azure-3', 'chatgpt-azure', 'anthropic'];
+
+  globalQuestionForm = new FormGroup({
+    question: new FormControl<string>('', [Validators.required]),
+    fieldName: new FormControl<string>('', [Validators.required]),
+  });
 }

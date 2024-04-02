@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   BadgeComponent,
@@ -12,8 +22,19 @@ import { LabelModule, LabelSetFormModalComponent, LabelsService, SDKService } fr
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { LabelSet, LabelSetKind, LabelSets, Search } from '@nuclia/core';
-import { filter, map, Observable, switchMap, take } from 'rxjs';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { filter, map, Observable, Subject, switchMap, take } from 'rxjs';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
+
+interface LabelingConfigurationBase {
+  selectedLabelSet?: { id: string; labelSet: LabelSet };
+  labelingBy: 'existing-labeling' | 'prompt';
+  prompt: string;
+}
+
+export interface LabelingConfiguration extends LabelingConfigurationBase {
+  valid: boolean;
+}
 
 @Component({
   selector: 'stf-labeling-configuration',
@@ -35,33 +56,64 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './labeling-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LabelingConfigurationComponent {
+export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   private sdk = inject(SDKService);
   private labelService = inject(LabelsService);
   private modalService = inject(SisModalService);
   private toaster = inject(SisToastService);
   private cdr = inject(ChangeDetectorRef);
 
+  private unsubscribeAll = new Subject<void>();
   private _type: 'resources' | 'text-blocks' = 'resources';
   @Input() set type(value: 'resources' | 'text-blocks') {
     this._type = value;
     this.labelSets = value === 'resources' ? this.labelService.resourceLabelSets : this.labelService.textBlockLabelSets;
+    this.hasLabelSet =
+      value === 'resources' ? this.labelService.hasResourceLabelSets : this.labelService.hasTextBlockLabelSets;
   }
   get type() {
     return this._type;
   }
 
+  @Output() configurationChange = new EventEmitter<LabelingConfiguration>();
+
   labelSets?: Observable<LabelSets | null>;
+  hasLabelSet?: Observable<boolean>;
   selectedLabelSet?: { id: string; labelSet: LabelSet };
   labeledResourceCount?: number;
 
   labelingOptionsForm = new FormGroup({
-    labelingBy: new FormControl<'existing-labeling' | 'prompt'>('existing-labeling'),
-    prompt: new FormControl<string>(''),
+    labelingBy: new FormControl<'existing-labeling' | 'prompt'>('existing-labeling', { nonNullable: true }),
+    prompt: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
+  errorMessages = {
+    required: 'validation.required',
+  };
 
   get labelingByValue() {
     return this.labelingOptionsForm.controls.labelingBy.value;
+  }
+
+  private validConfiguration(config: LabelingConfigurationBase) {
+    return (
+      !!config.selectedLabelSet &&
+      (config.labelingBy === 'existing-labeling' || (config.labelingBy === 'prompt' && !!config.prompt))
+    );
+  }
+
+  ngOnInit() {
+    this.labelingOptionsForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      const config = { ...this.labelingOptionsForm.getRawValue(), selectedLabelSet: this.selectedLabelSet };
+      this.configurationChange.emit({
+        ...config,
+        valid: this.validConfiguration(config),
+      });
+    });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   createLabelSet() {
@@ -76,13 +128,15 @@ export class LabelingConfigurationComponent {
           (data.labelSet.kind[0] === LabelSetKind.RESOURCES && this.type === 'resources') ||
           (data.labelSet.kind[0] === LabelSetKind.PARAGRAPHS && this.type === 'text-blocks')
         ) {
-          this.selectLabelSet(data);
+          this.triggerSelectLabelSet(data);
         }
       });
   }
 
-  selectLabelSet(data: { id: string; labelSet: LabelSet }) {
+  triggerSelectLabelSet(data: { id: string; labelSet: LabelSet }) {
     this.selectedLabelSet = data;
+    const config = { ...this.labelingOptionsForm.getRawValue(), selectedLabelSet: data };
+    this.configurationChange.emit({ ...config, valid: this.validConfiguration(config) });
     const facetId = `/classification.labels/${data.id}`;
     this.sdk.currentKb
       .pipe(

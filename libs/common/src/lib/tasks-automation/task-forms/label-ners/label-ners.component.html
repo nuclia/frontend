@@ -16,6 +16,7 @@
     footerNoteAutomation="tasks-automation.label-ners.footer.apply-automation"
     footerNoteOneTime="tasks-automation.label-ners.footer.apply-one-time"
     [availableLLMs]="generativeModels"
+    [validFormInside]="validForm"
     (cancel)="backToTaskList()">
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.label-ners.detection-options.title"
@@ -42,57 +43,22 @@
             formControlName="prompt">
             {{ 'tasks-automation.label-ners.detection-options.prompt.textarea' | translate }}
           </pa-textarea>
-        } @else {
-          <div>
-            <label>{{ 'tasks-automation.label-ners.detection-options.manually-added.ner-family' | translate }}</label>
-            <div class="inline-form">
-              <div>
-                <nsi-dropdown-button
-                  fullWidth
-                  aspect="basic"
-                  [popupRef]="nerFamily">
-                  {{
-                    selectedFamily
-                      ? selectedFamily.title
-                      : ('tasks-automation.label-ners.detection-options.manually-added.select-ner-family' | translate)
-                  }}
-                </nsi-dropdown-button>
-                <pa-dropdown #nerFamily>
-                  @for (family of nerFamilies | async; track family.key) {
-                    <pa-option
-                      [value]="family.key"
-                      (selectOption)="selectFamily(family)">
-                      {{ family.title }}
-                    </pa-option>
-                  }
-                </pa-dropdown>
-              </div>
-              <span class="separator">{{ 'generic.or' | translate }}</span>
-              <pa-button
-                class="full-width"
-                icon="circle-plus"
-                iconAndText
-                (click)="createNerFamily()">
-                {{ 'tasks-automation.label-ners.detection-options.manually-added.create-ner-family' | translate }}
-              </pa-button>
-            </div>
-          </div>
         }
 
         @if (annotatedByValue === 'manually-added' && tokensCount !== undefined) {
-          <nsi-info-card>
-            <span
-              [innerHTML]="
-                'tasks-automation.label-ners.detection-options.manually-added.token-count'
-                  | translate: { count: tokensCount }
-              "></span>
-          </nsi-info-card>
-
           @if (tokensCount === 0) {
             <nsi-info-card
               type="warning"
               icon="warning">
               {{ 'tasks-automation.label-ners.detection-options.manually-added.warning' | translate }}
+            </nsi-info-card>
+          } @else {
+            <nsi-info-card>
+              <span
+                [innerHTML]="
+                  'tasks-automation.label-ners.detection-options.manually-added.token-count'
+                    | translate: { count: tokensCount }
+                "></span>
             </nsi-info-card>
           }
         } @else {

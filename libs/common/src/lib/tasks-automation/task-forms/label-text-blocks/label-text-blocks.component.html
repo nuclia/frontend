@@ -16,8 +16,11 @@
     footerNoteAutomation="tasks-automation.label-text-blocks.footer.apply-automation"
     footerNoteOneTime="tasks-automation.label-text-blocks.footer.apply-one-time"
     [availableLLMs]="generativeModels"
+    [validFormInside]="labelingConfig?.valid"
     (cancel)="backToTaskList()">
-    <stf-labeling-configuration type="text-blocks"></stf-labeling-configuration>
+    <stf-labeling-configuration
+      type="text-blocks"
+      (configurationChange)="onConfigurationChange($event)"></stf-labeling-configuration>
 
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.label-text-blocks.find-labels.title"

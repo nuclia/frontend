@@ -16,17 +16,23 @@
     footerNoteAutomation="tasks-automation.question-answer.footer.apply-automation"
     footerNoteOneTime="tasks-automation.question-answer.footer.apply-one-time"
     [availableLLMs]="generativeModels"
+    [validFormInside]="questionAnswerForm.valid"
     (cancel)="backToTaskList()">
-    <nsi-two-columns-configuration-item
-      itemTitle="tasks-automation.question-answer.field-name.title"
-      description="tasks-automation.question-answer.field-name.description">
-      <div class="form-container">
-        <nsi-info-card>{{ 'tasks-automation.question-answer.field-name.info' | translate }}</nsi-info-card>
-        <div>
-          <label>{{ 'tasks-automation.form.field-name.label' | translate }}</label>
-          <pa-input [placeholder]="'tasks-automation.form.field-name.placeholder' | translate"></pa-input>
+    <div>
+      <nsi-two-columns-configuration-item
+        itemTitle="tasks-automation.question-answer.field-name.title"
+        description="tasks-automation.question-answer.field-name.description">
+        <div class="form-container">
+          <nsi-info-card>{{ 'tasks-automation.question-answer.field-name.info' | translate }}</nsi-info-card>
+          <div [formGroup]="questionAnswerForm">
+            <label>{{ 'tasks-automation.form.field-name.label' | translate }}</label>
+            <pa-input
+              formControlName="fieldName"
+              [errorMessages]="errorMessages"
+              [placeholder]="'tasks-automation.form.field-name.placeholder' | translate"></pa-input>
+          </div>
         </div>
-      </div>
-    </nsi-two-columns-configuration-item>
+      </nsi-two-columns-configuration-item>
+    </div>
   </app-task-form>
 </div>

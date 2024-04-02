@@ -5,7 +5,10 @@ import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComp
 import { TaskFormComponent } from '../task-form.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { LabelingConfigurationComponent } from '../labeling-configuration/labeling-configuration.component';
+import {
+  LabelingConfiguration,
+  LabelingConfigurationComponent,
+} from '../labeling-configuration/labeling-configuration.component';
 
 @Component({
   standalone: true,
@@ -26,4 +29,9 @@ import { LabelingConfigurationComponent } from '../labeling-configuration/labeli
 })
 export class LabelTextBlocksComponent extends TaskRouteDirective {
   generativeModels = ['nuclia-everest-v1', 'chatgpt-azure-3'];
+  labelingConfig?: LabelingConfiguration;
+
+  onConfigurationChange(configuration: LabelingConfiguration) {
+    this.labelingConfig = configuration;
+  }
 }

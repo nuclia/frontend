@@ -16,6 +16,10 @@ export class TaskRouteDirective {
   );
   backRoute = this.activeRoute.params.pipe(map((params) => (!params['taskId'] ? '..' : '../..')));
 
+  errorMessages = {
+    required: 'validation.required',
+  };
+
   backToTaskList() {
     this.backRoute
       .pipe(

@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   BackButtonComponent,
   DropdownButtonComponent,
   InfoCardComponent,
-  SisModalService,
   SisToastService,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
@@ -20,8 +19,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { NerFamily, NerFamilyDialogComponent, NerService } from '../../../entities';
-import { Observable, switchMap, take } from 'rxjs';
+import { switchMap, take } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { Search } from '@nuclia/core';
 
@@ -48,12 +46,10 @@ import { Search } from '@nuclia/core';
   styleUrl: '../_task-form.common.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LabelNersComponent extends TaskRouteDirective {
-  private nerService = inject(NerService);
+export class LabelNersComponent extends TaskRouteDirective implements OnInit {
   private sdk = inject(SDKService);
   private cdr = inject(ChangeDetectorRef);
   private toaster = inject(SisToastService);
-  private modal = inject(SisModalService);
 
   generativeModels = ['nuclia-everest-v1', 'chatgpt-azure-3', 'chatgpt-azure', 'anthropic'];
 
@@ -62,22 +58,22 @@ export class LabelNersComponent extends TaskRouteDirective {
     prompt: new FormControl<string>(''),
   });
 
-  nerFamilies: Observable<NerFamily[]> = this.nerService.nerFamilies;
-  selectedFamily?: NerFamily;
   tokensCount?: number;
 
   get annotatedByValue() {
     return this.detectionOptionsForm.controls.annotatedBy.value;
   }
 
-  createNerFamily() {
-    // FIXME: double check with Vincent if we want to keep the ability to create a NER family from here knowing it requires annotation to be done before the task can work
-    this.modal.openModal(NerFamilyDialogComponent);
+  get validForm() {
+    const value = this.detectionOptionsForm.getRawValue();
+    return (
+      (value.annotatedBy === 'manually-added' && this.tokensCount && this.tokensCount > 0) ||
+      (value.annotatedBy === 'prompt' && !!value.prompt)
+    );
   }
 
-  selectFamily(family: NerFamily) {
-    this.selectedFamily = family;
-    const facetId = `/entities/${family.key}`;
+  ngOnInit() {
+    const facetId = `/entities`;
     this.sdk.currentKb
       .pipe(
         take(1),

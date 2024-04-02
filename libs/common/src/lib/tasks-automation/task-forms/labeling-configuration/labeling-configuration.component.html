@@ -4,21 +4,26 @@
   [description]="'tasks-automation.form.label-set-selection.description-' + type">
   <div class="form-container">
     <div class="inline-form">
-      <app-label-dropdown
-        labelSetSelection
-        single
-        fullWidth
-        aspect="basic"
-        [labelSets]="labelSets | async"
-        [selectedLabelSet]="selectedLabelSet?.id"
-        (labelSetSelected)="selectLabelSet($event)">
-        {{
-          selectedLabelSet
-            ? selectedLabelSet.labelSet.title
-            : ('tasks-automation.form.label-set-selection.select-dropdown-label' | translate)
-        }}
-      </app-label-dropdown>
-      <span class="separator">{{ 'generic.or' | translate }}</span>
+      @if (hasLabelSet | async) {
+        <app-label-dropdown
+          labelSetSelection
+          single
+          fullWidth
+          aspect="basic"
+          [labelSets]="labelSets | async"
+          [selectedLabelSet]="selectedLabelSet?.id"
+          (labelSetSelected)="triggerSelectLabelSet($event)">
+          {{
+            selectedLabelSet
+              ? selectedLabelSet.labelSet.title
+              : ('tasks-automation.form.label-set-selection.select-dropdown-label' | translate)
+          }}
+        </app-label-dropdown>
+        <span class="separator">{{ 'generic.or' | translate }}</span>
+      } @else {
+        <div><!-- Empty placeholder so creation button stay properly positioned --></div>
+      }
+
       <pa-button
         class="full-width"
         icon="circle-plus"
@@ -65,7 +70,8 @@
 
       <pa-textarea
         rows="4"
-        formControlName="prompt">
+        formControlName="prompt"
+        [errorMessages]="errorMessages">
         {{ 'tasks-automation.form.labeling-options.prompt.textarea' | translate }}
       </pa-textarea>
     }
