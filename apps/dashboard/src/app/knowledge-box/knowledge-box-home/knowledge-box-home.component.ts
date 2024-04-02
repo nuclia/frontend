@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { FeaturesService, NavigationService, SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
 import { AppService, searchResources, STATUS_FACET, UploadService } from '@flaps/common';
 import { MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
@@ -35,6 +35,12 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
   uid = this.currentKb.pipe(map((kb) => kb.id));
   slug = this.currentKb.pipe(map((kb) => kb.slug));
+  zone = combineLatest([this.currentKb, this.zoneService.getZones()]).pipe(
+    map(([kb, zones]) => {
+      const zone = zones.find((zone) => zone.slug === kb.zone);
+      return zone?.title || kb.zone;
+    }),
+  );
   stateLabel: Observable<string> = this.currentKb.pipe(
     map((kb) => kb.state),
     map((state) => (state ? `dashboard-home.state.${state.toLowerCase()}` : '')),
@@ -140,6 +146,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     private uploadService: UploadService,
     private metrics: MetricsService,
     private modal: SisModalService,
+    private zoneService: ZoneService,
   ) {}
 
   ngOnDestroy() {
@@ -155,11 +162,6 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   copyUid() {
     this.tracking.logEvent('home_page_copy', { data: 'uid' });
     this.uid.pipe(take(1)).subscribe((uid) => this.copyToClipboard('uid', uid));
-  }
-
-  copySlug() {
-    this.tracking.logEvent('home_page_copy', { data: 'slug' });
-    this.slug.pipe(take(1)).subscribe((slug) => this.copyToClipboard('slug', slug || ''));
   }
 
   private copyToClipboard(type: 'endpoint' | 'uid' | 'slug', text: string) {

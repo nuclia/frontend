@@ -87,19 +87,11 @@
               <pre><code>{{ uid | async }}</code></pre>
             </div>
           </div>
+
           <div>
-            <div class="title-xxs">{{ 'dashboard-home.kb-details.slug' | translate }}</div>
-            <div class="details-block">
-              @if (clipboardSupported) {
-                <pa-button
-                  aspect="basic"
-                  size="small"
-                  [icon]="copyIcon.slug"
-                  (click)="copySlug()">
-                  {{ 'generic.copy' | translate }}
-                </pa-button>
-              }
-              <pre><code>{{ slug | async }}</code></pre>
+            <div class="title-xxs">{{ 'dashboard-home.kb-details.region' | translate }}</div>
+            <div class="body-s">
+              {{ zone | async }}
             </div>
           </div>
           @if (configuration | async; as config) {

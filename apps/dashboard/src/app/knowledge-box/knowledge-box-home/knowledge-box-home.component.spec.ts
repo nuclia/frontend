@@ -4,10 +4,9 @@ import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
-import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { AppService, UploadModule, UploadService } from '@flaps/common';
-import { FeaturesService, NavigationService, SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
 import { MetricsService } from '../../account/metrics.service';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
@@ -15,6 +14,7 @@ import { KbMetricsComponent } from './kb-metrics/kb-metrics.component';
 import { PaButtonModule, PaDropdownModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { UsageChartsComponent } from './kb-usage/usage-charts.component';
 import { AccountStatusComponent } from '../../account/account-status/account-status.component';
+import { RouterModule } from '@angular/router';
 
 function createTranslateLoader() {
   return {
@@ -30,7 +30,6 @@ describe('KnowledgeBoxHomeComponent', () => {
     TestBed.configureTestingModule({
       declarations: [KnowledgeBoxHomeComponent],
       imports: [
-        RouterTestingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -42,6 +41,7 @@ describe('KnowledgeBoxHomeComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaDropdownModule),
         MockModule(PaTableModule),
+        MockModule(RouterModule),
         MockModule(UploadModule),
         MockComponent(DropdownButtonComponent),
         MockComponent(AccountStatusComponent),
@@ -80,6 +80,7 @@ describe('KnowledgeBoxHomeComponent', () => {
         }),
         MockProvider(MetricsService),
         MockProvider(SisModalService),
+        MockProvider(ZoneService),
       ],
     }).compileComponents();
   }));

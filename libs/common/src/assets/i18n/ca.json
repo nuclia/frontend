@@ -292,7 +292,7 @@
 	"dashboard-home.kb-content.processing-queue.title": "Cua de processament",
 	"dashboard-home.kb-details.endpoint": "NucliaDB API endpoint",
 	"dashboard-home.kb-details.generative-model": "Model generatiu",
-	"dashboard-home.kb-details.slug": "Knowledge Box slug",
+	"dashboard-home.kb-details.region": "Regió de la Knowledge Box",
 	"dashboard-home.kb-details.title": "Detalls de la Knowledge Box ",
 	"dashboard-home.kb-details.uid": "Knowledge Box UID",
 	"dashboard-home.kb-metrics.title": "Contingut de la Knowledge Box",
