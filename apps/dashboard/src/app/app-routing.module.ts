@@ -7,16 +7,11 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
-  GlobalQuestionComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
-  LabelNersComponent,
-  LabelResourcesComponent,
-  LabelTextBlocksComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   PromptLabComponent,
-  QuestionAnswerComponent,
   rootGuard,
   SearchComponent,
   SelectAccountComponent,
@@ -25,9 +20,6 @@ import {
   selectKbGuard,
   setAccountGuard,
   setKbGuard,
-  SummarizeResourcesComponent,
-  TaskListComponent,
-  TasksAutomationComponent,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
@@ -205,61 +197,10 @@ const routes: Routes = [
               },
               {
                 path: 'tasks',
-                component: TasksAutomationComponent,
-                children: [
-                  {
-                    path: '',
-                    component: TaskListComponent,
-                  },
-                  {
-                    path: 'global-question',
-                    component: GlobalQuestionComponent,
-                  },
-                  {
-                    path: 'global-question/:taskId',
-                    component: GlobalQuestionComponent,
-                  },
-                  {
-                    path: 'summarize-resources',
-                    component: SummarizeResourcesComponent,
-                  },
-                  {
-                    path: 'summarize-resources/:taskId',
-                    component: SummarizeResourcesComponent,
-                  },
-                  {
-                    path: 'question-answer',
-                    component: QuestionAnswerComponent,
-                  },
-                  {
-                    path: 'question-answer/:taskId',
-                    component: QuestionAnswerComponent,
-                  },
-                  {
-                    path: 'label-resources',
-                    component: LabelResourcesComponent,
-                  },
-                  {
-                    path: 'label-resources/:taskId',
-                    component: LabelResourcesComponent,
-                  },
-                  {
-                    path: 'label-text-blocks',
-                    component: LabelTextBlocksComponent,
-                  },
-                  {
-                    path: 'label-text-blocks/:taskId',
-                    component: LabelTextBlocksComponent,
-                  },
-                  {
-                    path: 'label-ners',
-                    component: LabelNersComponent,
-                  },
-                  {
-                    path: 'label-ners/:taskId',
-                    component: LabelNersComponent,
-                  },
-                ],
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/tasks-automation/tasks-automation.routes').then(
+                    (m) => m.TASK_AUTOMATION_ROUTES,
+                  ),
               },
             ],
           },
