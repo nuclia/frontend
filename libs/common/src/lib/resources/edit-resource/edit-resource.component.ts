@@ -7,13 +7,13 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, Subject, switchMap } from 'rxjs';
+import { filter, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { EditResourceView } from './edit-resource.helpers';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService, NavigationService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { ResourceNavigationService } from './resource-navigation.service';
 
 const PAWLS_KEY = 'pawls';
@@ -64,6 +64,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private modal: SisModalService,
     private features: FeaturesService,
+    private sdk: SDKService,
     public resourceNavigationService: ResourceNavigationService,
   ) {
     this.route.params
@@ -150,6 +151,30 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         switchMap((resource: Resource) => resource.delete(true)),
       )
       .subscribe((route) => this.backToResources());
+  }
+
+  summarizeResource() {
+    const avoidTabClosing = (event: BeforeUnloadEvent) => event.preventDefault();
+    return this.modal
+      .openConfirm({
+        title: 'resource.confirm-summarize.title',
+        description: 'resource.confirm-summarize.description',
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.editResource.resource),
+        take(1),
+        map((resource) => resource as Resource),
+        tap(() => window.addEventListener('beforeunload', avoidTabClosing)),
+        switchMap((resource) =>
+          this.sdk.currentKb.pipe(
+            switchMap((kb) => kb.summarize([resource.id])),
+            switchMap((summary) => resource.modify({ summary })),
+          ),
+        ),
+        tap(() => window.removeEventListener('beforeunload', avoidTabClosing)),
+      )
+      .subscribe();
   }
 
   goToPawls() {
