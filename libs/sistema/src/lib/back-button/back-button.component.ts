@@ -12,5 +12,5 @@ import { RouterModule } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BackButtonComponent {
-  @Input() link = '';
+  @Input() link?: string | null;
 }
