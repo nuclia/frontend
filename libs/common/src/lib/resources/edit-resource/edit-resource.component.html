@@ -96,6 +96,11 @@
 
       <pa-dropdown #resourceMenu>
         <pa-option
+          [disabled]="(isAdminOrContrib | async) === false"
+          (selectOption)="summarizeResource()">
+          {{ 'resource.menu.summarize' | translate }}
+        </pa-option>
+        <pa-option
           [disabled]="(resource | async)?.metadata?.status === 'PENDING' || (isAdminOrContrib | async) === false"
           (selectOption)="reprocessResource()">
           {{ 'resource.tooltip.reprocess' | translate }}
