@@ -27,6 +27,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { EditResourceService } from '../edit-resource.service';
 import { ActivatedRoute } from '@angular/router';
+import { ResourceNavigationService } from '../resource-navigation.service';
 
 const viewerId = 'viewer-widget';
 
@@ -120,7 +121,10 @@ export class PreviewComponent implements OnInit, OnDestroy {
     private backendConfig: BackendConfigurationService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-  ) {}
+    private resourceNavigation: ResourceNavigationService,
+  ) {
+    this.resourceNavigation.currentRoute = this.route;
+  }
 
   ngOnInit(): void {
     this.editResource.setCurrentView('preview');
