@@ -132,7 +132,6 @@ export class SyncService {
         // do not pull when not in upload page
         filter(() => {
           const path = this.location.path();
-          console.log('Path', path);
           return path.includes('/upload/') || path.endsWith('/upload');
         }),
         // Delay of 5min when the server is running, and 5s when the server is down
