@@ -12,7 +12,6 @@ import {
   TextFieldFormat,
   TextFormat,
   UploadStatus,
-  WritableKnowledgeBox,
 } from '@nuclia/core';
 import {
   BehaviorSubject,
@@ -115,13 +114,13 @@ export class UploadService {
     this.createMissingLabels(labels)
       .pipe(
         concatMap(() =>
-          this.uploadFiles(files, (kb, progress) => {
+          this.uploadFiles(files, (progress) => {
             if (progress.completed) {
               if (progress.failed === 0 || progress.failed === progress.conflicts) {
-                this.onUploadComplete(true, kb.id);
+                this.onUploadComplete(true, (progress.conflicts || 0) < progress.files.length);
               } else if (!hasNotifiedError) {
                 hasNotifiedError = true;
-                this.onUploadComplete(false, kb.id);
+                this.onUploadComplete(false);
               }
             }
           }),
@@ -134,10 +133,7 @@ export class UploadService {
     this._barDisabled.next(false);
   }
 
-  uploadFiles(
-    files: File[],
-    onUploadCompletion?: (kb: WritableKnowledgeBox, progress: UploadStatus) => void,
-  ): Observable<UploadStatus> {
+  uploadFiles(files: File[], onUploadCompletion?: (progress: UploadStatus) => void): Observable<UploadStatus> {
     return forkJoin(files.map((file) => md5(file))).pipe(
       switchMap((fileList) =>
         this.sdk.currentKb.pipe(
@@ -146,7 +142,7 @@ export class UploadService {
             kb.batchUpload(fileList).pipe(
               tap((progress) => {
                 if (typeof onUploadCompletion === 'function') {
-                  onUploadCompletion(kb, progress);
+                  onUploadCompletion(progress);
                 }
               }),
             ),
@@ -306,7 +302,7 @@ export class UploadService {
             title,
             conversations,
           })
-          .pipe(tap(() => this.onUploadComplete(true, kb.id))),
+          .pipe(tap(() => this.onUploadComplete(true))),
       ),
     );
   }
@@ -324,9 +320,8 @@ export class UploadService {
     return from(uploads).pipe(
       mergeMap((obs) => obs, 6),
       toArray(),
-      switchMap(() => this.sdk.currentKb.pipe(take(1))),
-      tap((kb) => {
-        this.onUploadComplete(errors === 0, kb.id);
+      tap(() => {
+        this.onUploadComplete(errors === 0);
       }),
       map(() => ({ errors })),
     );
@@ -363,12 +358,12 @@ export class UploadService {
     );
   }
 
-  onUploadComplete(success: boolean, kbId: string) {
+  onUploadComplete(success: boolean, showNotification = true) {
+    if (showNotification) {
+      success ? this.toaster.success('upload.toast.successful') : this.toaster.warning('upload.toast.failed');
+    }
     if (success) {
-      this.toaster.success('upload.toast.successful');
       localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
-    } else {
-      this.toaster.warning('upload.toast.failed');
     }
     timer(1000)
       .pipe(switchMap(() => this.updateStatusCount()))
