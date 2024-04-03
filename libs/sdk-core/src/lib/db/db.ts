@@ -38,6 +38,7 @@ import {
   ProcessingPullResponse,
   ProcessingPushResponse,
   ProcessingStat,
+  QueryInfo,
   StatsPeriod,
   StatsRange,
   StatsType,
@@ -545,6 +546,23 @@ export class Db implements IDb {
         concatMap((res) => from(res.text())),
         map((answer) => answer.slice(0, -1)),
       );
+  }
+
+  /**
+   * Analyse a sentence, returning the language, the entities intent and the embeddings.
+   */
+  predictQuery(text: string, rephrase?: boolean, model?: string): Observable<QueryInfo> {
+    if (!this.hasNUAClient()) {
+      throw new Error('NUA key is needed to be able to call /predict');
+    }
+    let queryParams = `?text=${encodeURIComponent(text)}`;
+    if (rephrase) {
+      queryParams += `&rephrase=true`;
+    }
+    if (model) {
+      queryParams += `&generative_model=${encodeURIComponent(model)}`;
+    }
+    return this.nuclia.rest.get<QueryInfo>(`/predict/query${queryParams}`, this.getNUAHeader());
   }
 
   /**

@@ -1,3 +1,9 @@
+# 1.14.4 (unreleased)
+
+### Improvements
+
+- Support the `/predict/query` endpoint
+
 # 1.14.3 (2024-03-38)
 
 ### Improvements

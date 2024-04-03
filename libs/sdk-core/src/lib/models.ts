@@ -20,6 +20,7 @@ import {
   ProcessingPullResponse,
   ProcessingPushResponse,
   ProcessingStat,
+  QueryInfo,
   StatsPeriod,
   StatsRange,
   StatsType,
@@ -160,6 +161,7 @@ export interface IDb {
   getLearningSchema(accountId: string, zone: string): Observable<LearningConfigurations>;
   predictTokens(text: string): Observable<PredictedToken[]>;
   predictAnswer(question: string, context: string[], model?: string): Observable<string>;
+  predictQuery(text: string, rephrase?: boolean, model?: string): Observable<QueryInfo>;
   predictSummarize(
     text: string,
     user_prompt?: string,
