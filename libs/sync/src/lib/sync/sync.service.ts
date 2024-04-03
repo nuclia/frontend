@@ -279,17 +279,30 @@ export class SyncService {
   getSyncsForKB(kbId: string): Observable<SyncBasicData[]> {
     const syncs = this._syncListCache.getValue();
     if (!syncs.find((sync) => sync.kbId === kbId)) {
-      this.http
-        .get<
-          {
-            id: string;
-            title: string;
-            connector: string;
-          }[]
-        >(`${this._syncServer.getValue()}/sync/kb/${kbId}`)
-        .subscribe((data) => {
-          this._syncListCache.next([...syncs, ...data.map((sync) => ({ ...sync, kbId, connectorId: sync.connector }))]);
-        });
+      this.isServerDown
+        .pipe(
+          switchMap((isDown) =>
+            isDown
+              ? of([])
+              : this.http
+                  .get<
+                    {
+                      id: string;
+                      title: string;
+                      connector: string;
+                    }[]
+                  >(`${this._syncServer.getValue()}/sync/kb/${kbId}`)
+                  .pipe(
+                    tap((data) => {
+                      this._syncListCache.next([
+                        ...syncs,
+                        ...data.map((sync) => ({ ...sync, kbId, connectorId: sync.connector })),
+                      ]);
+                    }),
+                  ),
+          ),
+        )
+        .subscribe();
     }
     return this._syncListCache.pipe(map((syncs) => syncs.filter((sync) => sync.kbId === kbId)));
   }
