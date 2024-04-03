@@ -278,3 +278,31 @@ export interface KbIndex {
   kb_id: string;
   zone_id: string;
 }
+
+export interface Ner {
+  text: string;
+  ner: string;
+  start: number;
+  end: number;
+}
+
+export interface TokenSearch {
+  tokens: Ner[];
+  time: number;
+}
+
+export interface SentenceSearch {
+  data: number[];
+  time: number;
+}
+
+export interface QueryInfo {
+  language: string;
+  stop_words: string[];
+  semantic_threshold: number;
+  visual_llm: boolean;
+  max_context: number;
+  entities?: TokenSearch;
+  sentence?: SentenceSearch;
+  query: string;
+}
