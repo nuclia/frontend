@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { combineLatest, map } from 'rxjs';
+import { combineLatest, map, of } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
 
@@ -35,6 +35,7 @@ export class FeaturesService {
   citationsForAllEnabled = this.featureFlag.isFeatureEnabled('rerank_citations_enabled');
   ragHierarchy = this.featureFlag.isFeatureEnabled('rag-hierarchy');
   ragImages = this.featureFlag.isFeatureEnabled('rag-images');
+  englishModel = this.featureFlag.isFeatureEnabled('english-model');
 
   // user-prompts and summarization are always enabled for growth and enterprise accounts
   // but are still managed as a feature flagged feature for other account types, so we can enable it specifically for some accounts

@@ -1,10 +1,12 @@
 <div class="field">
   <label class="title-s">{{ 'onboarding.step2.languages.label' | translate }}</label>
-  <pa-radio-group [formControl]="multilingual">
-    <pa-radio value="english">{{ 'onboarding.step2.languages.english' | translate }}</pa-radio>
-    <pa-radio value="multilingual">{{ 'onboarding.step2.languages.multilingual' | translate }}</pa-radio>
-  </pa-radio-group>
-  @if (multilingualSelected) {
+  @if (isEnglishEnabled | async) {
+    <pa-radio-group [formControl]="multilingual">
+      <pa-radio value="english">{{ 'onboarding.step2.languages.english' | translate }}</pa-radio>
+      <pa-radio value="multilingual">{{ 'onboarding.step2.languages.multilingual' | translate }}</pa-radio>
+    </pa-radio-group>
+  }
+  @if (multilingualSelected || !(isEnglishEnabled | async)) {
     <div class="second-choice languages-container">
       @for (language of languages; track language.label) {
         <pa-checkbox
