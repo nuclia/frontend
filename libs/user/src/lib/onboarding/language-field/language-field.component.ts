@@ -12,6 +12,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { FeaturesService } from '@flaps/core';
 
 const LANGUAGES = [
   'arabic',
@@ -45,6 +46,7 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
 
   multilingual = new FormControl<'multilingual' | 'english'>('multilingual', { nonNullable: true });
   languages: { id: string; label: string; selected: boolean }[];
+  isEnglishEnabled = this.features.englishModel;
 
   get multilingualSelected() {
     return this.multilingual.value === 'multilingual';
@@ -53,6 +55,7 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
   constructor(
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private features: FeaturesService,
   ) {
     const languages: { id: string; label: string }[] = LANGUAGES.map((language) => ({
       id: language,
