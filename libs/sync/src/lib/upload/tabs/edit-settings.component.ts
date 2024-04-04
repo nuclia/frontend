@@ -41,15 +41,29 @@ export class EditSyncSettingsComponent implements OnInit {
   }
 
   save() {
-    if (this.sync) {
+    const sync = this.sync;
+    if (sync) {
       this.syncService
-        .updateSync(this.sync.id, {
-          title: this.form?.value['title'] || '',
-          connector: {
-            ...this.sync.connector,
-            parameters: { ...this.sync.connector.parameters, ...(this.form?.value['fields'] || {}) },
-          },
-        })
+        .getConnector(sync.connector.name, '')
+        .pipe(
+          switchMap((sourceConnector) => {
+            const parameters = { ...sync.connector.parameters, ...(this.form?.value['fields'] || {}) };
+            const payload: Partial<ISyncEntity> = {
+              title: this.form?.value['title'] || '',
+              connector: {
+                ...sync.connector,
+                parameters,
+              },
+            };
+            if (!sourceConnector.allowToSelectFolders) {
+              if (typeof sourceConnector.handleParameters === 'function') {
+                sourceConnector.handleParameters(parameters);
+              }
+              payload.foldersToSync = sourceConnector.getStaticFolders();
+            }
+            return this.syncService.updateSync(sync.id, payload);
+          }),
+        )
         .subscribe({
           next: () => {
             this.toast.success('upload.saved');
