@@ -14,6 +14,16 @@
   <pa-demo-examples>
     <div>
       <nsi-two-columns-configuration-item
+        noTopBorder
+        itemTitle="First line"
+        description="with its description">
+        <p>
+          This line doesn't have a top border thanks to its
+          <code>noTopBorder</code>
+          attribute.
+        </p>
+      </nsi-two-columns-configuration-item>
+      <nsi-two-columns-configuration-item
         itemTitle="Here is the item title"
         description="and here the item description">
         <p>This column is free content, you can use it to display whatever you need.</p>
@@ -36,17 +46,20 @@
   <pa-demo-usage>
     <h3>Inputs</h3>
     <dl>
+      <dt>badge</dt>
+      <dd>
+        Badge displayed next to the title.
+        <small>(optional)</small>
+      </dd>
+
       <dt>description</dt>
       <dd>Description to be displayed on the left column.</dd>
 
       <dt>itemTitle</dt>
       <dd>Title to be displayed on the left column.</dd>
 
-      <dt>badge</dt>
-      <dd>
-        Badge displayed next to the title.
-        <small>(optional)</small>
-      </dd>
+      <dt>noTopBorder</dt>
+      <dd>When true, prevent the top border to be displayed</dd>
     </dl>
   </pa-demo-usage>
   <pa-demo-code>

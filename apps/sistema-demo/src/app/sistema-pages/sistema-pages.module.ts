@@ -35,6 +35,7 @@ import {
 import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistema-dropdown-button.component';
 import { SistemaPasswordInputComponent } from './sistema-password-input/sistema-password-input.component';
 import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     SisProgressModule,
     ReactiveFormsModule,
     SisLabelModule,
+    TranslateModule.forRoot(),
   ],
   exports: [SistemaSpinnerComponent],
 })
