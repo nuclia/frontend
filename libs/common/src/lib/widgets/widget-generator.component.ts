@@ -824,7 +824,7 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
     this.checkDefaultPromptFromSettingsApplied();
   }
   changeLLM(llm: string) {
-    if (this.LLMS_WITH_CITATION_SUPPORT && !this.LLMS_WITH_CITATION_SUPPORT.includes(llm)) {
+    if (llm.length > 0 && this.LLMS_WITH_CITATION_SUPPORT && !this.LLMS_WITH_CITATION_SUPPORT.includes(llm)) {
       this.advancedForm.controls.citations.patchValue(false);
       this.advancedForm.controls.citations?.disable();
     } else {
@@ -839,5 +839,11 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
       (!this.advancedForm.controls.generativeModel.value ||
         this.defaultModelFromSettings === this.advancedForm.controls.generativeModel.value) &&
       this.userPrompt === '';
+  }
+
+  onToggleCitations(useCitations: boolean) {
+    if (useCitations) {
+      this.hideResultsControl.patchValue(true);
+    }
   }
 }

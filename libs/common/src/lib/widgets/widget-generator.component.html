@@ -288,7 +288,8 @@
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight
-                          formControlName="citations">
+                          formControlName="citations"
+                          (valueChange)="onToggleCitations($event)">
                           {{ 'widget.generator.advanced.generative-answer-category.citations.label' | translate }}
                         </pa-toggle>
                         <pa-icon
