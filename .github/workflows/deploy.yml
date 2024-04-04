@@ -10,6 +10,8 @@ env:
   MANAGER_IMAGE_NAME: manager
   CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
   DOCS_STORAGE: ${{ secrets.DOCS_STORAGE }}
+  GCP_WORKLOAD_IDENTITY_PROVIDER: "projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider"
+  GCP_SERVICE_ACCOUNT: "github-actions@nuclia-internal.iam.gserviceaccount.com"
 
 permissions:
   id-token: write
@@ -35,8 +37,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: '${{ secrets.GCP_REGISTRY_WORKLOAD_IDENTITY_PROVIDER }}'
-          service_account: '${{ secrets.GCP_REGISTRY_SERVICE_ACCOUNT }}'
+          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
           token_format: access_token
 
       - name: 'Set up Cloud SDK'
