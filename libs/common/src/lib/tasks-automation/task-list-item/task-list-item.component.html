@@ -21,7 +21,7 @@
 
 @if (taskList.length > 0) {
   <pa-table
-    class="task-list-table"
+    class="task-list-table header-above"
     border
     columns="1fr 2fr repeat(3, 1fr) 80px">
     <pa-table-header>
@@ -33,7 +33,7 @@
       <pa-table-cell header>{{ 'tasks-automation.table.header.actions' | translate }}</pa-table-cell>
     </pa-table-header>
     @for (task of taskList; track task) {
-      <pa-table-row>
+      <pa-table-row [last]="$last">
         <pa-table-cell>
           <span class="body-s">{{ task[firstColumn.field] }}</span>
         </pa-table-cell>

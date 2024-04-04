@@ -68,6 +68,7 @@ pa-button.full-width {
     margin-bottom: rhythm(1);
   }
   .page-description {
+    @include body-m();
     color: $color-neutral-regular;
   }
 }
@@ -119,4 +120,8 @@ ul.nsi-list {
       }
     }
   }
+}
+
+pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
+  z-index: 1;
 }
