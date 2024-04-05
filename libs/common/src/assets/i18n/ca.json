@@ -1220,7 +1220,7 @@
 	"widget.generator.advanced.display-category.title": "Mostra",
 	"widget.generator.advanced.generative-answer-category.answers.help": "Genera resposta a les preguntes dels usuaris i permet xatejar amb el sistema",
 	"widget.generator.advanced.generative-answer-category.answers.label": "Generació de respostes",
-	"widget.generator.advanced.generative-answer-category.citations.help": "Mostra quines fonts s'han utilitzat per generar la resposta. Aquesta funció actualment no és compatible amb tots els models generatius.",
+	"widget.generator.advanced.generative-answer-category.citations.help": "Mostra quines fonts s'han utilitzat per generar la resposta.",
 	"widget.generator.advanced.generative-answer-category.citations.label": "Citacions",
 	"widget.generator.advanced.generative-answer-category.current-prompt.applied": "El següent prompt es defineix a la configuració AI de Knowledge Box i s'aplicarà:",
 	"widget.generator.advanced.generative-answer-category.current-prompt.ignored": "A causa dels vostres canvis pel que fa al model i/o el prompt, <strong>s'ignorarà</strong> la següent prompt definida a la configuració d'IA de la vostra caixa de coneixement:",

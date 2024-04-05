@@ -269,7 +269,7 @@
                                 'widget.generator.advanced.generative-answer-category.generative-model.label'
                                   | translate
                               "
-                              (valueChange)="changeLLM($event)">
+                              (valueChange)="changeLLM()">
                               @for (model of generativeModels; track model.value) {
                                 <pa-option [value]="model.value">
                                   {{ model | learningOption: 'generative_model' }}
