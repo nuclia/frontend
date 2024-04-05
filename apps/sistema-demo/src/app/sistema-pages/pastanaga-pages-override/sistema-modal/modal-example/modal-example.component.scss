@@ -1,9 +1,7 @@
 @import '../../../../../variables';
 
-.content {
+.form-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background: $color-neutral-lightest;
-  height: rhythm(40);
+  flex-direction: column;
+  gap: rhythm(1.5);
 }
