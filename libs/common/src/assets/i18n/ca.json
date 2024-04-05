@@ -502,7 +502,7 @@
 	"kb.ai-models.semantic-model.available-models.description": "El model semàntic actual depèn dels idiomes que heu seleccionat en crear aquest Knowledge Box.",
 	"kb.ai-models.semantic-model.available-models.label": "Model semàntic",
 	"kb.ai-models.semantic-model.available-models.title": "Model semàntic actual",
-	"kb.ai-models.summarization.prompt.description": "Defineix un prompt personalitzada que s'utilitzarà en lloc de la sol·licitud predeterminada quan es generi un resum.",
+	"kb.ai-models.summarization.prompt.description": "Defineix un prompt personalitzada que s'utilitzarà en lloc del prompt predeterminada quan es generi un resum.",
 	"kb.ai-models.summarization.prompt.title": "Establiu un prompt",
 	"kb.ai-models.summarization.select-llm.description": "Trieu el LLM que us proporcionarà el millor resum a demanda per a les vostres dades.",
 	"kb.ai-models.summarization.select-llm.title": "Seleccioneu el LLM utilitzat per generar resums",

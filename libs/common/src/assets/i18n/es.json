@@ -502,7 +502,7 @@
 	"kb.ai-models.semantic-model.available-models.description": "El modelo semántico actual depende de los idiomas que seleccionó al crear este Knowledge Box.",
 	"kb.ai-models.semantic-model.available-models.label": "Modelo semántico",
 	"kb.ai-models.semantic-model.available-models.title": "Modelo semántico actual",
-	"kb.ai-models.summarization.prompt.description": "Define un prompt personalizado que se utilizará en lugar del mensaje predeterminado al generar un resumen.",
+	"kb.ai-models.summarization.prompt.description": "Define un prompt personalizado que se utilizará en lugar del prompt predeterminado al generar un resumen.",
 	"kb.ai-models.summarization.prompt.title": "Establecer un prompt",
 	"kb.ai-models.summarization.select-llm.description": "Elija el LLM que proporcionará el mejor resumen bajo demanda para sus datos.",
 	"kb.ai-models.summarization.select-llm.title": "Seleccione el LLM utilizado para generar resúmenes",
