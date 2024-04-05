@@ -530,6 +530,8 @@
 	"kb.settings.learning-options.chatgpt": "OpenAI ChatGPT-3.5",
 	"kb.settings.learning-options.chatgpt-azure": "OpenAI + Azure ChatGPT-4",
 	"kb.settings.learning-options.chatgpt-azure-3": "OpenAI + Azure ChatGPT-3.5",
+	"kb.settings.learning-options.chatgpt-vision": "OpenAI ChatGPT-Vision",
+	"kb.settings.learning-options.chatgpt4": "OpenAI ChatGPT-4",
 	"kb.settings.learning-options.claude-3": "Anthropic Claude 3 Opus",
 	"kb.settings.learning-options.claude-3-fast": "Anthropic Claude 3 Sonnet",
 	"kb.settings.learning-options.cohere": "Cohere Command (beta)",
