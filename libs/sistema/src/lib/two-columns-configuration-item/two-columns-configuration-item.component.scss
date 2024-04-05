@@ -1,9 +1,11 @@
 @import '../../../styles/variables';
 
 :host {
+  $gap-columns: rhythm(5);
+
   box-shadow: $box-shadow-border-bottom;
   display: flex;
-  gap: rhythm(5);
+  gap: $gap-columns;
   padding: rhythm(3) 0;
 
   &:first-of-type:not(.no-top-border) {
@@ -12,6 +14,7 @@
 
   .column {
     flex: 1;
+    max-width: calc((100% - #{$gap-columns}) / 2);
   }
 
   .title {
@@ -21,6 +24,11 @@
   }
 
   .description {
+    color: $color-neutral-regular;
+  }
+
+  ::ng-deep label:not(.pa-toggle-label):not(.pa-field-label) {
+    @include title-xs();
     color: $color-neutral-regular;
   }
 }

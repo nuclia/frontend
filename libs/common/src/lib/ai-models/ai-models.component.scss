@@ -1,73 +1,7 @@
 @import 'apps/dashboard/src/variables';
 
 .ai-models {
-  .description {
-    margin-bottom: rhythm(3);
-  }
-  .error {
-    background: $color-secondary-regular;
-    padding: rhythm(1) rhythm(0.5);
-  }
-
-  form {
-    width: rhythm(80);
-  }
-  .fields-container {
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(3);
-  }
-
-  .fields-container.small-gap {
-    gap: rhythm(2);
-  }
-
-  .models-section-title {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .model-expander-body {
-    padding: rhythm(2) rhythm(2) rhythm(3);
-  }
-
-  .radio-container {
-    label.title-xxs {
-      display: block;
-      margin-bottom: rhythm(0.5);
-    }
-    .body-s {
-      margin-bottom: rhythm(0.5);
-    }
-
-    pa-radio-group {
-      max-height: rhythm(20);
-      flex-wrap: wrap;
-      pa-radio {
-        break-inside: avoid;
-      }
-    }
-  }
-
-  .select-with-background {
-    display: block;
-    margin-top: rhythm(1);
-
-    ::ng-deep .pa-field .pa-field-control {
-      background-color: $color-neutral-lightest;
-    }
-  }
-
-  footer {
-    background: $color-light-stronger;
-    bottom: 0;
-    box-shadow: $box-shadow-border-top;
-    display: flex;
-    gap: rhythm(1);
-    margin-top: rhythm(4);
-    padding: rhythm(3) 0 rhythm(2);
-    position: sticky;
-    z-index: 1;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
 }

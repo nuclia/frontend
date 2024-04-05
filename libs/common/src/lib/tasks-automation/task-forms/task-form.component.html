@@ -17,7 +17,7 @@
   <nsi-two-columns-configuration-item
     itemTitle="tasks-automation.form.filter.title"
     description="tasks-automation.form.filter.description"
-    badge="tasks-automation.badge.optional">
+    badge="generic.badge.optional">
     <div
       class="form-container filter-form-container"
       formGroupName="filters">
@@ -213,14 +213,14 @@
     </div>
   </nsi-two-columns-configuration-item>
 
-  <footer>
-    <div class="body-m">
+  <nsi-sticky-footer>
+    <span footerNote>
       @if (applyTaskValue === 'automation') {
         {{ footerNoteAutomation | translate }}
       } @else if (resourceCount !== undefined) {
         {{ footerNoteOneTime | translate: { count: resourceCount } }}
       }
-    </div>
+    </span>
     <pa-button
       aspect="basic"
       (click)="cancel.emit()">
@@ -232,5 +232,5 @@
       [disabled]="form.invalid || !validFormInside">
       {{ activateButtonLabel | translate }}
     </pa-button>
-  </footer>
+  </nsi-sticky-footer>
 </form>

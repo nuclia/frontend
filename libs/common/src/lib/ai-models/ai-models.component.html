@@ -1,307 +1,72 @@
-@if (kb) {
-  <div class="ai-models page-spacing">
-    <div class="display-s page-title">{{ 'kb.ai-models.page-title' | translate }}</div>
-    <p class="page-description description">{{ 'kb.ai-models.page-description' | translate }}</p>
+<div class="ai-models page-spacing">
+  <header>
+    <div class="page-title">{{ 'kb.ai-models.page-title' | translate }}</div>
+    <p class="page-description">{{ 'kb.ai-models.page-description' | translate }}</p>
+  </header>
 
-    @if (noKbConfig) {
-      <p class="error">
-        <pa-icon name="warning"></pa-icon>
-        {{ 'kb.ai-models.error.kb-not-supported' | translate }}
-      </p>
-    } @else if (configForm) {
-      <form
-        [formGroup]="configForm"
-        (ngSubmit)="save()">
-        @if (learningConfigurations; as learningConfig) {
-          <pa-expander [contentLoaded]="updateGenerativeExpanderHeight | async">
-            <pa-expander-header>
-              <div class="title-s">{{ 'kb.ai-models.generative_model.label' | translate }}</div>
-            </pa-expander-header>
-            <pa-expander-body>
-              <div class="model-expander-body fields-container">
-                <div class="radio-container">
-                  <label
-                    for="generative"
-                    class="title-xxs">
-                    {{ 'kb.ai-models.generative_model.help' | translate }}
-                  </label>
-                  @if (learningConfig['generative_model']?.options; as options) {
-                    <pa-radio-group
-                      formControlName="generative_model"
-                      id="generative"
-                      (valueChange)="updateCurrentGenerativeModel($event)">
-                      @for (option of options; track option.value) {
-                        <pa-radio [value]="option.value">
-                          {{ option | learningOption: 'generative_model' }}
-                        </pa-radio>
-                      }
-                    </pa-radio-group>
-                  }
-                </div>
+  @if (noKbConfig) {
+    <nsi-info-card
+      type="warning"
+      icon="warning">
+      {{ 'kb.ai-models.error.kb-not-supported' | translate }}
+    </nsi-info-card>
+  } @else {
+    <pa-tabs notFullWidth>
+      <pa-tab
+        (click)="selectedTab = 'answer-generation'"
+        [active]="selectedTab === 'answer-generation'">
+        {{ 'kb.ai-models.tabs.answer-generation' | translate }}
+      </pa-tab>
+      @if (isSummarizationEnabled | async) {
+        <pa-tab
+          (click)="selectedTab = 'summarization'"
+          [active]="selectedTab === 'summarization'">
+          {{ 'kb.ai-models.tabs.summarization' | translate }}
+        </pa-tab>
+      }
+      <pa-tab
+        (click)="selectedTab = 'semantic-model'"
+        [active]="selectedTab === 'semantic-model'">
+        {{ 'kb.ai-models.tabs.semantic-model' | translate }}
+      </pa-tab>
+      @if (isAnonymizationEnabled | async) {
+        <pa-tab
+          (click)="selectedTab = 'anonymization'"
+          [active]="selectedTab === 'anonymization'">
+          {{ 'kb.ai-models.tabs.anonymization' | translate }}
+        </pa-tab>
+      }
+    </pa-tabs>
 
-                @if ((isEnterpriseOrGrowth | async) && currentGenerativeModelPrompt) {
-                  @if (learningConfig['user_keys'].schemas?.[currentGenerativeModelPrompt]; as userKeys) {
-                    <pa-toggle
-                      labelOnRight
-                      [(value)]="hasOwnKey"
-                      (valueChange)="updateHasOwnKey()">
-                      {{ 'kb.ai-models.use_own_key.label' | translate }}
-                    </pa-toggle>
-
-                    @if (hasOwnKey) {
-                      <div
-                        class="fields-container small-gap"
-                        [formGroup]="userKeysGroup">
-                        @for (field of userKeys.properties | keyvalue; track field.key) {
-                          @if (field.value['widget'] === 'textarea') {
-                            <pa-textarea
-                              resizable
-                              [formControlName]="field.key"
-                              [rows]="2"
-                              [help]="field.value.info">
-                              {{ field.value.title }}
-                            </pa-textarea>
-                          } @else {
-                            <pa-input
-                              [formControlName]="field.key"
-                              [help]="field.value.info">
-                              {{ field.value.title }}
-                            </pa-input>
-                          }
-                        }
-                      </div>
-                    }
-                  }
-                }
-
-                @if ((isUserPromptsEnabled | async) && currentGenerativeModelPrompt) {
-                  @if (learningConfig['user_prompts'].schemas?.[currentGenerativeModelPrompt]; as userPrompt) {
-                    <div
-                      class="fields-container"
-                      [formGroup]="userPromptForm">
-                      @if (userPrompt.properties['prompt']; as prompt) {
-                        <div class="fields-container small-gap">
-                          <div>
-                            <div class="title-m">{{ 'kb.ai-models.user_prompts.prompt' | translate }}</div>
-                            <div class="body-s">
-                              {{ 'kb.ai-models.user_prompts.prompt_help' | translate }}
-                            </div>
-                            <pa-select
-                              dim
-                              formControlName="prompt_examples"
-                              class="select-with-background"
-                              [label]="'kb.ai-models.user_prompts.examples' | translate"
-                              (valueChange)="setPrompt('user', 'prompt', $event)">
-                              @for (option of prompt.examples || []; track option) {
-                                <pa-option [value]="option">
-                                  {{ option }}
-                                </pa-option>
-                              }
-                            </pa-select>
-                          </div>
-                          <pa-textarea
-                            formControlName="prompt"
-                            resizable
-                            acceptHtmlTags
-                            [rows]="3"
-                            [help]="prompt.info || ''">
-                            {{ prompt.title }}
-                          </pa-textarea>
-                        </div>
-                      }
-
-                      @if (userPrompt.properties['system']; as system) {
-                        <div class="fields-container small-gap">
-                          <div>
-                            <div class="title-m">{{ 'kb.ai-models.user_prompts.system' | translate }}</div>
-                            <div class="body-s">
-                              {{ 'kb.ai-models.user_prompts.system_help' | translate }}
-                            </div>
-                            <pa-select
-                              dim
-                              formControlName="system_examples"
-                              class="select-with-background"
-                              [label]="'kb.ai-models.user_prompts.examples' | translate"
-                              (valueChange)="setPrompt('user', 'system', $event)">
-                              @for (option of system.examples || []; track option) {
-                                <pa-option [value]="option">
-                                  {{ option }}
-                                </pa-option>
-                              }
-                            </pa-select>
-                          </div>
-                          <pa-textarea
-                            formControlName="system"
-                            resizable
-                            acceptHtmlTags
-                            [rows]="3"
-                            [help]="system.info || ''">
-                            {{ 'kb.ai-models.generative_model.system_prompt_label' | translate }}
-                          </pa-textarea>
-                        </div>
-                      }
-                    </div>
-                  }
-                }
-              </div>
-            </pa-expander-body>
-          </pa-expander>
-
-          @if (isSummarizationEnabled | async) {
-            <pa-expander [expanded]="false">
-              <pa-expander-header>
-                <div class="title-s">{{ 'kb.ai-models.summary_model.label' | translate }}</div>
-              </pa-expander-header>
-              <pa-expander-body>
-                <div class="model-expander-body fields-container">
-                  <div class="radio-container">
-                    <label
-                      for="summary_model"
-                      class="title-xxs">
-                      {{ 'kb.ai-models.summary_model.help' | translate }}
-                    </label>
-                    @if (learningConfig['summary_model']?.options; as options) {
-                      <pa-radio-group
-                        formControlName="summary_model"
-                        id="summary_model">
-                        @for (option of options; track option.value) {
-                          <pa-radio [value]="option.value">
-                            {{ option | learningOption: 'summary_model' }}
-                          </pa-radio>
-                        }
-                      </pa-radio-group>
-                    }
-                  </div>
-
-                  <div class="radio-container">
-                    <label
-                      for="summary"
-                      class="title-xxs">
-                      {{ 'kb.ai-models.summary.help' | translate }}
-                    </label>
-                    @if (learningConfig['summary']?.options; as options) {
-                      <pa-radio-group
-                        formControlName="summary"
-                        id="summary">
-                        @for (option of options; track option.value) {
-                          <pa-radio [value]="option.value">
-                            {{ option | learningOption: 'summary' }}
-                          </pa-radio>
-                        }
-                      </pa-radio-group>
-                    }
-                  </div>
-
-                  @if (learningConfig['summary_prompt'].schema; as summaryPrompt) {
-                    <div
-                      class="fields-container"
-                      [formGroup]="summaryPromptForm">
-                      @if (summaryPrompt.properties['prompt']; as prompt) {
-                        <div class="fields-container small-gap">
-                          <div>
-                            <div class="title-m">{{ 'kb.ai-models.summary_prompt.prompt' | translate }}</div>
-                            <div class="body-s">
-                              {{ 'kb.ai-models.summary_prompt.prompt_help' | translate }}
-                            </div>
-                            <pa-select
-                              dim
-                              formControlName="prompt_examples"
-                              class="select-with-background"
-                              [label]="'kb.ai-models.summary_prompt.examples' | translate"
-                              (valueChange)="setPrompt('summary', 'prompt', $event)">
-                              @for (option of prompt.examples || []; track option) {
-                                <pa-option [value]="option">
-                                  {{ option }}
-                                </pa-option>
-                              }
-                            </pa-select>
-                          </div>
-                          <pa-textarea
-                            formControlName="prompt"
-                            resizable
-                            [rows]="3"
-                            [help]="prompt.info || ''">
-                            {{ prompt.title }}
-                          </pa-textarea>
-                        </div>
-                      }
-                    </div>
-                  }
-                </div>
-              </pa-expander-body>
-            </pa-expander>
-          }
-
-          <pa-expander [expanded]="false">
-            <pa-expander-header>
-              <div class="title-s">{{ 'kb.ai-models.semantic.label' | translate }}</div>
-            </pa-expander-header>
-            <pa-expander-body>
-              <div class="model-expander-body fields-container">
-                <pa-input
-                  [formControl]="semanticModel"
-                  readonly
-                  [help]="'kb.ai-models.semantic.help' | translate">
-                  {{ 'kb.ai-models.semantic.label' | translate }}
-                </pa-input>
-              </div>
-            </pa-expander-body>
-          </pa-expander>
-          @if (isAnonymizationEnabled | async) {
-            <pa-expander [expanded]="false">
-              <pa-expander-header>
-                <div class="title-s">{{ 'kb.ai-models.anonymization_toggle.label' | translate }}</div>
-              </pa-expander-header>
-              <pa-expander-body>
-                <div class="model-expander-body fields-container">
-                  <pa-toggle
-                    [formControl]="anonymization"
-                    labelOnRight
-                    [help]="'kb.ai-models.anonymization_toggle.help' | translate"
-                    (valueChange)="updateKbFormTouchedState()">
-                    {{ 'kb.ai-models.anonymization_toggle.label' | translate }}
-                  </pa-toggle>
-                </div>
-              </pa-expander-body>
-            </pa-expander>
-          }
-
-          @if (isPdfAnnotationEnabled | async) {
-            <pa-expander [expanded]="false">
-              <pa-expander-header>
-                <div class="title-s">{{ 'kb.ai-models.pdf_annotation_toggle.label' | translate }}</div>
-              </pa-expander-header>
-              <pa-expander-body>
-                <div class="model-expander-body fields-container">
-                  <pa-toggle
-                    [formControl]="pdfAnnotation"
-                    labelOnRight
-                    [help]="'kb.ai-models.pdf_annotation_toggle.help' | translate"
-                    (valueChange)="updateKbFormTouchedState()">
-                    {{ 'kb.ai-models.pdf_annotation_toggle.label' | translate }}
-                  </pa-toggle>
-                </div>
-              </pa-expander-body>
-            </pa-expander>
-          }
+    @switch (selectedTab) {
+      @case ('answer-generation') {
+        <stf-answer-generation
+          [kb]="kb"
+          [learningConfigurations]="learningConfigurations"
+          [kbConfigBackup]="kbConfigBackup"></stf-answer-generation>
+      }
+      @case ('summarization') {
+        @if (isSummarizationEnabled | async) {
+          <stf-summarization
+            [kb]="kb"
+            [learningConfigurations]="learningConfigurations"
+            [kbConfigBackup]="kbConfigBackup"></stf-summarization>
         }
-
-        <footer>
-          <pa-button
-            type="submit"
-            kind="primary"
-            data-cy="save-kb-settings"
-            [disabled]="configForm.pristine || saving">
-            {{ 'generic.save' | translate }}
-          </pa-button>
-          <pa-button
-            aspect="basic"
-            [disabled]="configForm.pristine"
-            (click)="resetForm()">
-            {{ 'generic.cancel' | translate }}
-          </pa-button>
-        </footer>
-      </form>
+      }
+      @case ('semantic-model') {
+        <stf-semantic-model
+          [kb]="kb"
+          [learningConfigurations]="learningConfigurations"
+          [kbConfigBackup]="kbConfigBackup"></stf-semantic-model>
+      }
+      @case ('anonymization') {
+        @if (isAnonymizationEnabled | async) {
+          <stf-anonymization
+            [kb]="kb"
+            [learningConfigurations]="learningConfigurations"
+            [kbConfigBackup]="kbConfigBackup"></stf-anonymization>
+        }
+      }
     }
-  </div>
-}
+  }
+</div>

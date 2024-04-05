@@ -1,0 +1,40 @@
+<pa-demo-page>
+  <pa-demo-title>Sticky Footer</pa-demo-title>
+  <pa-demo-description>
+    <p>
+      In most pages including forms, we want the footer to be sticky on the bottom of the form when the form is small
+      enough, or on the bottom of the page when the form requires some scrolling.
+    </p>
+    <p>
+      <code>nsi-sticky-footer</code>
+      is a simple wrapper component which will style the footer as expected (with a top border and the buttons aligned
+      on the right). It is working with two
+      <code>ng-content</code>
+      blocks:
+    </p>
+    <ul>
+      <li>
+        the main
+        <code>ng-content</code>
+        allows to display buttons on the right of the footer
+      </li>
+      <li>
+        an optional
+        <code>footerNote</code>
+        allows to display some text on the left of the footer
+      </li>
+    </ul>
+  </pa-demo-description>
+
+  <pa-demo-examples>
+    <nsi-sticky-footer>
+      <span footerNote>You can display a note on the left side</span>
+      <pa-button aspect="basic">cancel</pa-button>
+      <pa-button kind="primary">save</pa-button>
+    </nsi-sticky-footer>
+  </pa-demo-examples>
+
+  <pa-demo-code>
+    <pre><code>{{code}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>

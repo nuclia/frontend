@@ -1,0 +1,18 @@
+<form
+  [formGroup]="configForm"
+  (ngSubmit)="save()">
+  <nsi-two-columns-configuration-item
+    noTopBorder
+    itemTitle="kb.ai-models.semantic-model.available-models.title"
+    description="kb.ai-models.semantic-model.available-models.description">
+    <div
+      class="form-container"
+      style="height: 100%; justify-content: center">
+      <pa-input
+        [formControl]="semanticModelControl"
+        readonly>
+        {{ 'kb.ai-models.old.semantic.label' | translate }}
+      </pa-input>
+    </div>
+  </nsi-two-columns-configuration-item>
+</form>
