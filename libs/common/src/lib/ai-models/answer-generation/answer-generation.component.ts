@@ -66,6 +66,10 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
     return this.configForm.controls.user_prompts;
   }
 
+  onOwnKeyToggle() {
+    this.configForm.markAsDirty();
+  }
+
   protected resetForm(): void {
     const kbConfig = this.kbConfigBackup;
     if (kbConfig) {
@@ -79,7 +83,8 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
       }
       if (this.currentGenerativeModelKey) {
         if (kbConfig['user_keys']) {
-          this.hasOwnKey = !!kbConfig['user_keys'][this.currentGenerativeModelKey];
+          const ownKey = !!kbConfig['user_keys'][this.currentGenerativeModelKey];
+          this.hasOwnKey = ownKey;
           this.userKeysGroup.patchValue(kbConfig['user_keys'][this.currentGenerativeModelKey]);
         }
       }
@@ -141,10 +146,6 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
       return;
     }
 
-    // remove all fields from the user_keys group
-    Object.keys(this.userKeysGroup.controls).forEach((oldKey) => {
-      this.userKeysGroup.removeControl(oldKey);
-    });
     const generativeOption = (this.learningConfigurations['generative_model'].options || []).find(
       (option) => option.value === (modelValue || this.generativeModelValue),
     );
@@ -158,10 +159,22 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
     }
     if (this.currentGenerativeModelKey) {
       // add user_keys controls corresponding to generative model if any
-      Object.keys(
+      const newUserKeys = Object.keys(
         this.learningConfigurations['user_keys'].schemas?.[this.currentGenerativeModelKey]?.properties || {},
-      ).forEach((key) => {
-        this.userKeysGroup.addControl(key, new FormControl<string>(''));
+      );
+      Object.keys(this.userKeysGroup.controls).forEach((oldKey) => {
+        if (newUserKeys.includes(oldKey)) {
+          // clean up value from previous fields
+          this.userKeysGroup.get(oldKey)?.patchValue('');
+        } else {
+          // remove unused control
+          this.userKeysGroup.removeControl(oldKey);
+        }
+      });
+      newUserKeys.forEach((key) => {
+        if (!this.userKeysGroup.get(key)) {
+          this.userKeysGroup.addControl(key, new FormControl<string>(''));
+        }
       });
     }
   }

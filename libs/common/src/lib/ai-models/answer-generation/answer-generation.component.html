@@ -29,7 +29,8 @@
 
               <pa-toggle
                 labelOnRight
-                [(value)]="hasOwnKey">
+                [(value)]="hasOwnKey"
+                (valueChange)="onOwnKeyToggle()">
                 {{
                   'kb.ai-models.answer-generation.select-llm.own-key.label'
                     | translate: { provider: keyProviders[currentGenerativeModelPrompt] }
