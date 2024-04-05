@@ -16126,7 +16126,7 @@ __metadata:
     typedoc: ^0.25.2
     typedoc-plugin-markdown: ^3.16.0
     typescript: 5.4.3
-    vite: ^5.0.13
+    vite: ^5.2.8
     vite-plugin-eslint: ^1.8.1
     vite-tsconfig-paths: ^4.0.2
     vitest: ^0.34.5
@@ -21149,7 +21149,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.13":
+"vite@npm:^5.2.8":
   version: 5.2.8
   resolution: "vite@npm:5.2.8"
   dependencies:
