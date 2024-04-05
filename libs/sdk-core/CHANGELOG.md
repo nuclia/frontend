@@ -1,8 +1,9 @@
-# 1.14.4 (unreleased)
+# 1.14.4 (2024-04-05)
 
 ### Improvements
 
 - Support the `/predict/query` endpoint
+- Add support for `xpath` selector in Link fields
 
 # 1.14.3 (2024-03-38)
 

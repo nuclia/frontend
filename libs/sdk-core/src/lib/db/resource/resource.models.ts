@@ -239,6 +239,7 @@ export interface LinkField {
   language?: string;
   localstorage?: { [id: string]: string };
   css_selector?: string | null;
+  xpath?: string | null;
 }
 
 export class TextFieldData implements IFieldData {
