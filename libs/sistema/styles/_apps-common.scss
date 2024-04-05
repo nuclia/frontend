@@ -65,6 +65,7 @@ pa-button.full-width {
     var(--app-layout-padding-left);
 
   .page-title {
+    @include display-s();
     margin-bottom: rhythm(1);
   }
   .page-description {
