@@ -68,11 +68,22 @@
           </pa-textarea>
         }
         @if (linkForm.value.linkTo === 'web' && (linkForm.value.type === 'one' || linkForm.value.type === 'multiple')) {
-          <pa-input
-            formControlName="css_selector"
-            [placeholder]="'modal.create_link.css-selector.placeholder' | translate">
-            {{ 'modal.create_link.css-selector.label' | translate }}
-          </pa-input>
+          <pa-expander [expanded]="false">
+            <pa-expander-header>{{ 'modal.create_link.restrict' | translate }}</pa-expander-header>
+            <pa-expander-body>
+              <pa-input
+                formControlName="css_selector"
+                [placeholder]="'modal.create_link.css-selector.placeholder' | translate">
+                {{ 'modal.create_link.css-selector.label' | translate }}
+              </pa-input>
+              <pa-input
+                formControlName="xpath"
+                [placeholder]="'modal.create_link.xpath-selector.placeholder' | translate"
+                [help]="'modal.create_link.xpath-selector.help' | translate">
+                {{ 'modal.create_link.xpath-selector.label' | translate }}
+              </pa-input>
+            </pa-expander-body>
+          </pa-expander>
         }
 
         @if (linkForm.value.type === 'csv') {

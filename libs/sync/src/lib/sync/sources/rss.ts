@@ -39,11 +39,19 @@ class RSSImpl implements IConnector {
       },
       {
         id: 'cssSelector',
-        label: 'connectors.sitemap.selector.label',
-        help: 'connectors.sitemap.selector.help',
+        label: 'connectors.selectors.css.label',
+        help: 'connectors.selectors.css.help',
         type: 'text',
         required: false,
         placeholder: '.main-content',
+      },
+      {
+        id: 'xpathSelector',
+        label: 'connectors.selectors.xpath.label',
+        help: 'connectors.selectors.xpath.help',
+        type: 'text',
+        required: false,
+        placeholder: '//div[@id="main"]',
       },
     ]);
   }

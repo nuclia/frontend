@@ -214,12 +214,17 @@ export class UploadService {
     );
   }
 
-  createLinkResource(uri: string, classifications: Classification[], css_selector?: string | null) {
+  createLinkResource(
+    uri: string,
+    classifications: Classification[],
+    css_selector?: string | null,
+    xpath?: string | null,
+  ) {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
         kb.createLinkResource(
-          { uri, css_selector: css_selector || null },
+          { uri, css_selector: css_selector || null, xpath: xpath || null },
           { classifications },
           true,
           REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },

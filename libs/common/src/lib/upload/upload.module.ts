@@ -15,6 +15,7 @@ import { UploadProgressDialogComponent } from './upload-progress/upload-progress
 import { UploadTextComponent } from './upload-text/upload-text.component';
 import {
   PaButtonModule,
+  PaExpanderModule,
   PaIconModule,
   PaModalModule,
   PaTableModule,
@@ -52,6 +53,7 @@ import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module
     SisProgressModule,
     PaModalModule,
     PaTableModule,
+    PaExpanderModule,
     ProgressBarComponent,
     UploadRoutingModule,
     UploadBarComponent,
