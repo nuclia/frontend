@@ -31,7 +31,7 @@ import { of } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnswerGenerationComponent extends LearningConfigurationDirective {
-  keyProviders = {
+  keyProviders: { [key: string]: string } = {
     azure_openai: 'Azure OpenAI',
     anthropic: 'Anthropic',
     claude3: 'Anthropic',
