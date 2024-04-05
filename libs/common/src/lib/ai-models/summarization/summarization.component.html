@@ -1,0 +1,92 @@
+<form
+  [formGroup]="configForm"
+  (ngSubmit)="save()">
+  @if (learningConfigurations; as learningConfig) {
+    <nsi-two-columns-configuration-item
+      noTopBorder
+      itemTitle="kb.ai-models.summarization.select-llm.title"
+      description="kb.ai-models.summarization.select-llm.description">
+      @if (learningConfig['summary_model']?.options; as options) {
+        <pa-radio-group
+          formControlName="summary_model"
+          id="summary_model">
+          @for (option of options; track option.value) {
+            <pa-radio [value]="option.value">
+              {{ option | learningOption: 'summary_model' }}
+            </pa-radio>
+          }
+        </pa-radio-group>
+      }
+    </nsi-two-columns-configuration-item>
+
+    <nsi-two-columns-configuration-item
+      itemTitle="kb.ai-models.summarization.summary-options.title"
+      description="kb.ai-models.summarization.summary-options.description">
+      @if (learningConfig['summary']?.options; as options) {
+        <pa-radio-group
+          formControlName="summary"
+          id="summary">
+          @for (option of options; track option.value) {
+            <pa-radio [value]="option.value">
+              {{ option | learningOption: 'summary' }}
+            </pa-radio>
+          }
+        </pa-radio-group>
+      }
+    </nsi-two-columns-configuration-item>
+
+    @if (learningConfig['summary_prompt'].schema; as summaryPrompt) {
+      @if (summaryPrompt.properties['prompt']; as prompt) {
+        <nsi-two-columns-configuration-item
+          itemTitle="kb.ai-models.summarization.prompt.title"
+          description="kb.ai-models.summarization.prompt.description"
+          badge="generic.badge.optional">
+          <div
+            class="form-container small-gap"
+            [formGroup]="summaryPromptForm">
+            <nsi-info-card>{{ prompt.info }}</nsi-info-card>
+            <pa-select
+              formControlName="prompt_examples"
+              class="select-with-background"
+              [label]="'kb.ai-models.common.examples' | translate"
+              (valueChange)="setPrompt('prompt', $event)">
+              @for (option of prompt.examples || []; track option) {
+                <pa-option [value]="option">
+                  {{ option }}
+                </pa-option>
+              }
+            </pa-select>
+
+            <pa-textarea
+              formControlName="prompt"
+              resizable
+              [rows]="3">
+              {{ 'kb.ai-models.common.prompt.label' | translate }}
+            </pa-textarea>
+
+            <nsi-info-card
+              type="warning"
+              icon="warning">
+              {{ 'kb.ai-models.common.prompt.warning' | translate }}
+            </nsi-info-card>
+          </div>
+        </nsi-two-columns-configuration-item>
+      }
+    }
+
+    <nsi-sticky-footer>
+      <pa-button
+        aspect="basic"
+        (click)="resetForm()"
+        [disabled]="configForm.pristine">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        type="submit"
+        [disabled]="configForm.invalid || configForm.pristine">
+        {{ 'kb.ai-models.common.save' | translate }}
+      </pa-button>
+    </nsi-sticky-footer>
+  }
+</form>

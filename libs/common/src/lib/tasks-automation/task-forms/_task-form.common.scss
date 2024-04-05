@@ -16,11 +16,6 @@ header {
   & > * {
     width: 100%;
   }
-
-  label {
-    @include title-xs();
-    color: $color-neutral-regular;
-  }
 }
 
 .info-card-content-with-icon {

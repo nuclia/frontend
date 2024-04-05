@@ -15,6 +15,7 @@ import {
   DropdownButtonComponent,
   InfoCardComponent,
   SisToastService,
+  StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
 import {
@@ -75,6 +76,7 @@ export interface TaskFormCommonConfig {
     PaTableModule,
     PaButtonModule,
     GenerativeModelPipe,
+    StickyFooterComponent,
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss',

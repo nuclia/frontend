@@ -1,0 +1,150 @@
+<form
+  [formGroup]="configForm"
+  (ngSubmit)="save()">
+  @if (learningConfigurations; as learningConfig) {
+    <nsi-two-columns-configuration-item
+      noTopBorder
+      itemTitle="kb.ai-models.answer-generation.select-llm.title"
+      description="kb.ai-models.answer-generation.select-llm.description">
+      <div class="form-container">
+        @if (learningConfig['generative_model']?.options; as options) {
+          <pa-radio-group
+            formControlName="generative_model"
+            id="generative"
+            (valueChange)="updateCurrentGenerativeModel($event)">
+            @for (option of options; track option.value) {
+              <pa-radio [value]="option.value">
+                {{ option | learningOption: 'generative_model' }}
+              </pa-radio>
+
+              @if ($first) {
+                <div class="separator"></div>
+              }
+            }
+          </pa-radio-group>
+
+          @if ((isEnterpriseOrGrowth | async) && currentGenerativeModelPrompt) {
+            @if (learningConfig['user_keys'].schemas?.[currentGenerativeModelPrompt]; as userKeys) {
+              <div class="separator"></div>
+
+              <pa-toggle
+                labelOnRight
+                [(value)]="hasOwnKey">
+                {{
+                  'kb.ai-models.answer-generation.select-llm.own-key.label'
+                    | translate: { provider: keyProviders[currentGenerativeModelPrompt] }
+                }}
+              </pa-toggle>
+
+              @if (hasOwnKey) {
+                <div
+                  class="form-container"
+                  [formGroup]="userKeysGroup">
+                  @for (field of userKeys.properties | keyvalue; track field.key) {
+                    @if (field.value['widget'] === 'textarea') {
+                      <pa-textarea
+                        resizable
+                        [formControlName]="field.key"
+                        [rows]="2"
+                        [help]="field.value.info">
+                        {{ field.value.title }}
+                      </pa-textarea>
+                    } @else {
+                      <pa-input
+                        [formControlName]="field.key"
+                        [help]="field.value.info">
+                        {{ field.value.title }}
+                      </pa-input>
+                    }
+                  }
+                </div>
+              }
+            }
+          }
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+
+    @if ((isUserPromptsEnabled | async) && currentGenerativeModelPrompt) {
+      <ng-container [formGroup]="userPromptForm">
+        @if (learningConfig['user_prompts'].schemas?.[currentGenerativeModelPrompt]; as userPrompt) {
+          @if (userPrompt.properties['prompt']; as prompt) {
+            <nsi-two-columns-configuration-item
+              badge="generic.badge.optional"
+              itemTitle="kb.ai-models.answer-generation.prompt.title"
+              description="kb.ai-models.answer-generation.prompt.description">
+              <div class="form-container small-gap">
+                <nsi-info-card>{{ prompt.info }}</nsi-info-card>
+                <pa-select
+                  formControlName="prompt_examples"
+                  [label]="'kb.ai-models.common.examples' | translate"
+                  (valueChange)="setPrompt('prompt', $event)">
+                  @for (option of prompt.examples || []; track option) {
+                    <pa-option [value]="option">
+                      {{ option }}
+                    </pa-option>
+                  }
+                </pa-select>
+
+                <pa-textarea
+                  formControlName="prompt"
+                  resizable
+                  acceptHtmlTags
+                  [rows]="3">
+                  {{ 'kb.ai-models.common.prompt.label' | translate }}
+                </pa-textarea>
+
+                <nsi-info-card
+                  type="warning"
+                  icon="warning">
+                  {{ 'kb.ai-models.common.prompt.warning' | translate }}
+                </nsi-info-card>
+              </div>
+            </nsi-two-columns-configuration-item>
+          }
+          @if (userPrompt.properties['system']; as system) {
+            <nsi-two-columns-configuration-item
+              badge="generic.badge.optional"
+              itemTitle="kb.ai-models.answer-generation.behavior.title"
+              description="kb.ai-models.answer-generation.behavior.description">
+              <div class="form-container small-gap">
+                <pa-select
+                  formControlName="system_examples"
+                  [label]="'kb.ai-models.common.examples' | translate"
+                  (valueChange)="setPrompt('system', $event)">
+                  @for (option of system.examples || []; track option) {
+                    <pa-option [value]="option">
+                      {{ option }}
+                    </pa-option>
+                  }
+                </pa-select>
+
+                <pa-textarea
+                  formControlName="system"
+                  resizable
+                  acceptHtmlTags
+                  [rows]="3">
+                  {{ 'kb.ai-models.answer-generation.behavior.label' | translate }}
+                </pa-textarea>
+              </div>
+            </nsi-two-columns-configuration-item>
+          }
+        }
+      </ng-container>
+    }
+    <nsi-sticky-footer>
+      <pa-button
+        aspect="basic"
+        [disabled]="configForm.pristine"
+        (click)="resetForm()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        type="submit"
+        [disabled]="configForm.invalid || configForm.pristine">
+        {{ 'kb.ai-models.common.save' | translate }}
+      </pa-button>
+    </nsi-sticky-footer>
+  }
+</form>
