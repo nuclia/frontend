@@ -56,10 +56,11 @@ import {
   SistemaLabelComponent,
   SistemaPasswordInputComponent,
   SistemaSpinnerComponent,
+  SistemaStickyFooterComponent,
+  SistemaTwoColumnsConfigurationItemComponent,
 } from './sistema-pages';
 import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
 import { SistemaInfoCardComponent } from './sistema-pages/sistema-cards/sistema-info-card.component';
-import { SistemaTwoColumnsConfigurationItemComponent } from './sistema-pages/sistema-two-columns-configuration-item/sistema-two-columns-configuration-item.component';
 import { SistemaBadgeComponent } from './sistema-pages/sistema-badge/sistema-badge.component';
 
 export const menu: IDemoMenuSection[] = [
@@ -90,6 +91,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
       { view: 'password-input', title: 'Password input', type: SistemaPasswordInputComponent },
       { view: 'spinner', title: 'Spinner', type: SistemaSpinnerComponent },
+      { view: 'sticky-footer', title: 'Sticky footer', type: SistemaStickyFooterComponent },
       {
         view: 'two-columns-config-item',
         title: 'Two columns configuration item',
