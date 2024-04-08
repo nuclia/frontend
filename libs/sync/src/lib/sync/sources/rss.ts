@@ -15,6 +15,7 @@ class RSSImpl implements IConnector {
   hasServerSideAuth = false;
   isExternal = true;
   allowToSelectFolders = false;
+  canSyncSecurityGroups = false;
 
   getStaticFolders(): SyncItem[] {
     return [

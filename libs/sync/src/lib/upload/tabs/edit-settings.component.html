@@ -27,6 +27,15 @@
         }
       </div>
     }
+    @if (canSyncSecurityGroups) {
+      <pa-toggle
+        formControlName="syncSecurityGroups"
+        labelOnRight
+        [help]="'upload.sync.security-groups.help' | translate">
+        {{ 'upload.sync.security-groups.label' | translate }}
+      </pa-toggle>
+    }
+
     <pa-button
       qa="save-button"
       [disabled]="!form.valid"

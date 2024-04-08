@@ -92,6 +92,8 @@
 	"upload.steps.configure": "Configurar",
 	"upload.steps.data": "Escollir dades",
 	"upload.steps.source": "Selecciona l'origen",
+	"upload.sync.security-groups.help": "El recurs Nuclia emmagatzemarà els grups definits a la font original com a mínim amb accés de lectura al contingut.",
+	"upload.sync.security-groups.label": "Sincronitzar els grups de seguretat",
 	"upload.tabs.activity": "Activitat",
 	"upload.tabs.filters": "Filtres",
 	"upload.tabs.folders": "Carpetes per sincronitzar",

@@ -92,6 +92,8 @@
 	"upload.steps.configure": "Configurer",
 	"upload.steps.data": "Choisir les données",
 	"upload.steps.source": "Sélectionner la source",
+	"upload.sync.security-groups.help": "La ressource Nuclia stockera les groupes définis dans la source d'origine comme ayant au moins un accès en lecture au contenu.",
+	"upload.sync.security-groups.label": "Synchroniser les groupes de sécurité",
 	"upload.tabs.activity": "Activité",
 	"upload.tabs.filters": "Filtres",
 	"upload.tabs.folders": "Dossiers à synchroniser",

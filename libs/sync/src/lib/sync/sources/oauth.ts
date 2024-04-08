@@ -13,9 +13,11 @@ export class OAuthConnector implements IConnector {
   isExternal = true;
   allowToSelectFolders = true;
   resumable = false;
+  canSyncSecurityGroups: boolean;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(name: string, id: string, path: string) {
+    this.canSyncSecurityGroups = name === 'gdrive';
     this.name = name;
     this.id = id;
     this.path = path;
