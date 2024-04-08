@@ -503,6 +503,7 @@
 	"kb.ai-models.semantic-model.available-models.description": "The current semantic model depends on the languages you selected while creating this Knowledge Box.",
 	"kb.ai-models.semantic-model.available-models.label": "Semantic model",
 	"kb.ai-models.semantic-model.available-models.title": "Current semantic model",
+	"kb.ai-models.semantic-model.label": "Semantic model",
 	"kb.ai-models.summarization.prompt.description": "Defines a custom prompt that will be used instead of the default prompt when generating a summary.",
 	"kb.ai-models.summarization.prompt.title": "Set a prompt",
 	"kb.ai-models.summarization.select-llm.description": "Choose the LLM that will provide the best on-demand summarization for your data.",
