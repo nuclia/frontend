@@ -6,7 +6,14 @@
   import { createEventDispatcher } from 'svelte';
   import { Button, Expander } from '../../common';
   import Sources from './Sources.svelte';
-  import { getFieldDataFromResource, getResultType, hasNotEnoughData, notEnoughDataMessage, type TypedResult } from '../../core';
+  import {
+    chat,
+    getFieldDataFromResource,
+    getResultType,
+    hasNotEnoughData,
+    notEnoughDataMessage,
+    type TypedResult
+  } from '../../core';
 
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
@@ -59,7 +66,7 @@
       <div>
         <Feedback {rank} />
       </div>
-      {#if initialAnswer}
+      {#if initialAnswer && !$chat[rank]?.answer.incomplete}
         <Button
           aspect="basic"
           size="small"
