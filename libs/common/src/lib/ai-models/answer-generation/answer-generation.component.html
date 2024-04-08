@@ -13,13 +13,11 @@
             id="generative"
             (valueChange)="updateCurrentGenerativeModel($event)">
             @for (option of options; track option.value) {
-              <pa-radio [value]="option.value">
+              <pa-radio
+                [value]="option.value"
+                [popoverHelp]="popoverHelp[option.value] | translate">
                 {{ option | learningOption: 'generative_model' }}
               </pa-radio>
-
-              @if ($first) {
-                <div class="separator"></div>
-              }
             }
           </pa-radio-group>
 

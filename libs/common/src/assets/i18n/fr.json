@@ -493,6 +493,7 @@
 	"kb.ai-models.answer-generation.prompt.description": "Définit la manière dont vous souhaitez que le système agisse lorsque vous posez une question. Ici, vous pouvez définir des règles plus spécifiques, qui pourraient même remplacer le comportement défini. Par exemple, vous pouvez définir un prompt qui oblige le système à donner uniquement des résultats sous forme de listes, ou même à demander de répondre dans une langue donnée.",
 	"kb.ai-models.answer-generation.prompt.title": "Définir un prompt",
 	"kb.ai-models.answer-generation.select-llm.description": "Choisissez le LLM qui fonctionnera le mieux pour répondre aux questions de vos utilisateurs.",
+	"kb.ai-models.answer-generation.select-llm.help.chatgpt-vision": "Ce modèle est le meilleur pour répondre aux questions concernant le contenu des images.",
 	"kb.ai-models.answer-generation.select-llm.own-key.label": "Utilisez votre propre clé {{provider}}",
 	"kb.ai-models.answer-generation.select-llm.title": "Sélectionner le LLM utilisé pour générer des réponses",
 	"kb.ai-models.common.examples": "Exemples",

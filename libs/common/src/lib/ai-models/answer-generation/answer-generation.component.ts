@@ -41,6 +41,9 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
     'chatgpt-vision': 'ChatGPT Vision',
     chatgpt4: 'ChatGPT 4',
   };
+  popoverHelp: { [key: string]: string } = {
+    'chatgpt-vision': 'kb.ai-models.answer-generation.select-llm.help.chatgpt-vision',
+  };
 
   configForm = new FormGroup({
     generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
