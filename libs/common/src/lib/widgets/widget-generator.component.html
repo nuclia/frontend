@@ -499,6 +499,7 @@
                         <div class="toggle-and-help">
                           <pa-toggle
                             labelOnRight
+                            [disabled]="!modelsSupportingVision.includes(currentGenerativeModel)"
                             [value]="ragImagesStrategiesToggles.page_image"
                             (valueChange)="updateRagImagesStrategies('page_image', $event)">
                             {{
@@ -540,6 +541,7 @@
                         <div class="toggle-and-help">
                           <pa-toggle
                             labelOnRight
+                            [disabled]="!modelsSupportingVision.includes(currentGenerativeModel)"
                             [value]="ragImagesStrategiesToggles.paragraph_image"
                             (valueChange)="updateRagImagesStrategies('paragraph_image', $event)">
                             {{

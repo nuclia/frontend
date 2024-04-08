@@ -49,6 +49,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
 
   generativeModels: LearningConfigurationOption[] = [];
+  modelsSupportingVision = ['chatgpt-vision'];
   snippetOverlayOpen = false;
   snippet = '';
   snippetPreview: SafeHtml = '';
@@ -272,6 +273,10 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     return this.advancedForm.controls.generativeModel;
   }
 
+  get currentGenerativeModel() {
+    return this.generativeModelControl.getRawValue() || this.defaultModelFromSettings;
+  }
+
   constructor(
     private sdk: SDKService,
     private featuresService: FeaturesService,
@@ -309,6 +314,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         const promptKey = this.generativeModels.find((model) => model.value === this.defaultModelFromSettings)
           ?.user_prompt;
         this.defaultPromptFromSettings = promptKey ? config['user_prompts']?.[promptKey]?.['prompt'] || '' : '';
+        this.checkVisionModel();
         this.cdr.detectChanges();
       });
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
@@ -797,6 +803,13 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
   }
   changeLLM() {
     this.checkDefaultPromptFromSettingsApplied();
+    this.checkVisionModel();
+  }
+
+  onToggleCitations(useCitations: boolean) {
+    if (useCitations) {
+      this.hideResultsControl.patchValue(true);
+    }
   }
 
   private checkDefaultPromptFromSettingsApplied() {
@@ -806,9 +819,13 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
       this.userPrompt === '';
   }
 
-  onToggleCitations(useCitations: boolean) {
-    if (useCitations) {
-      this.hideResultsControl.patchValue(true);
-    }
+  private checkVisionModel() {
+    // Needs to be in a new detection cycle to prevent disable state (when current model is not a vision one) to interfere with the toggle value
+    setTimeout(() => {
+      const visionModel = this.modelsSupportingVision.includes(this.currentGenerativeModel);
+      this.ragImagesStrategiesToggles.page_image = visionModel;
+      this.ragImagesStrategiesToggles.paragraph_image = visionModel;
+      this.cdr.detectChanges();
+    });
   }
 }
