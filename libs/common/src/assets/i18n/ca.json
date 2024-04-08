@@ -492,6 +492,7 @@
 	"kb.ai-models.answer-generation.prompt.description": "Defineix la manera com voleu que actuï el sistema quan feu una pregunta. Aquí podeu definir regles més específiques, que fins i tot podrien anul·lar el comportament definit. Per exemple, podríeu establir un prompt que faci que el sistema només doni resultats en llistes, o fins i tot demanar que respongui en un idioma determinat.",
 	"kb.ai-models.answer-generation.prompt.title": "Establiu un prompt",
 	"kb.ai-models.answer-generation.select-llm.description": "Trieu el LLM que funcioni millor per respondre les preguntes dels vostres usuaris.",
+	"kb.ai-models.answer-generation.select-llm.help.chatgpt-vision": "Aquest model és millor per respondre preguntes sobre el contingut de les imatges.",
 	"kb.ai-models.answer-generation.select-llm.own-key.label": "Utilitzeu la vostra pròpia clau {{provider}}",
 	"kb.ai-models.answer-generation.select-llm.title": "Seleccioneu el LLM utilitzat per generar respostes",
 	"kb.ai-models.common.examples": "Exemples",
