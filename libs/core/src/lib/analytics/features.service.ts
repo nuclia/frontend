@@ -32,7 +32,6 @@ export class FeaturesService {
   pdfAnnotation = this.featureFlag.isFeatureEnabled('pdf-annotation');
   sync = this.featureFlag.isFeatureEnabled('sync');
   promptLabEnabled = this.featureFlag.isFeatureEnabled('llm-prompt-lab');
-  citationsForAllEnabled = this.featureFlag.isFeatureEnabled('rerank_citations_enabled');
   ragHierarchy = this.featureFlag.isFeatureEnabled('rag-hierarchy');
   ragImages = this.featureFlag.isFeatureEnabled('rag-images');
   englishModel = this.featureFlag.isFeatureEnabled('english-model');

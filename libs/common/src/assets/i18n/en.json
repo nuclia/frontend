@@ -1221,7 +1221,7 @@
 	"widget.generator.advanced.display-category.title": "Display",
 	"widget.generator.advanced.generative-answer-category.answers.help": "Generate a response to the user's questions and allow to chat with the system",
 	"widget.generator.advanced.generative-answer-category.answers.label": "Answer generation",
-	"widget.generator.advanced.generative-answer-category.citations.help": "Show which sources have been used to generate the answer. This feature is currently not supported by all the generative models.",
+	"widget.generator.advanced.generative-answer-category.citations.help": "Show which sources have been used to generate the answer.",
 	"widget.generator.advanced.generative-answer-category.citations.label": "Citations",
 	"widget.generator.advanced.generative-answer-category.current-prompt.applied": "The following prompt is defined in your Knowledge Box's AI settings and will be applied:",
 	"widget.generator.advanced.generative-answer-category.current-prompt.ignored": "Due to your changes regarding the model and/or prompt, the following prompt defined in your Knowledge Box's AI settings will be <strong>ignored</strong>:",

@@ -41,17 +41,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   private currentKbId = '';
   private readonly widgetConfigurations: { [kbId: string]: WidgetConfiguration };
 
-  // TODO: remove when all LLMs support citation
-  // REMINDER: also fix the translation key: widget.generator.advanced.generative-answer-category.citations.help
-  LLMS_WITH_CITATION_SUPPORT: string[] | undefined = [
-    'anthropic',
-    'chatgpt-azure',
-    'chatgpt-azure-3',
-    'gemini-pro',
-    'claude-3',
-    'claude-3-fast',
-  ];
-
   selectedTab: 'preset' | 'advanced' = 'preset';
   copyButtonLabel = 'generic.copy';
   copyButtonActive = false;
@@ -312,31 +301,14 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         takeUntil(this.unsubscribeAll),
-        switchMap((kb) =>
-          forkJoin([
-            kb.getLearningSchema(),
-            kb.getConfiguration(),
-            this.featuresService.citationsForAllEnabled.pipe(take(1)),
-          ]),
-        ),
+        switchMap((kb) => forkJoin([kb.getLearningSchema(), kb.getConfiguration()])),
       )
-      .subscribe(([schema, config, isCitationsForAllEnabled]) => {
+      .subscribe(([schema, config]) => {
         this.generativeModels = schema['generative_model']?.options || [];
         this.defaultModelFromSettings = config['generative_model'] || '';
         const promptKey = this.generativeModels.find((model) => model.value === this.defaultModelFromSettings)
           ?.user_prompt;
         this.defaultPromptFromSettings = promptKey ? config['user_prompts']?.[promptKey]?.['prompt'] || '' : '';
-        // TODO: remove when all LLMs support citation
-        if (isCitationsForAllEnabled) {
-          this.LLMS_WITH_CITATION_SUPPORT = undefined;
-        }
-        if (
-          this.LLMS_WITH_CITATION_SUPPORT &&
-          !this.LLMS_WITH_CITATION_SUPPORT.includes(this.defaultModelFromSettings)
-        ) {
-          this.advancedForm.controls.citations.patchValue(false);
-          this.advancedForm.controls.citations?.disable();
-        }
         this.cdr.detectChanges();
       });
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
@@ -823,15 +795,8 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
   onUserPromptChange() {
     this.checkDefaultPromptFromSettingsApplied();
   }
-  changeLLM(llm: string) {
-    if (llm.length > 0 && this.LLMS_WITH_CITATION_SUPPORT && !this.LLMS_WITH_CITATION_SUPPORT.includes(llm)) {
-      this.advancedForm.controls.citations.patchValue(false);
-      this.advancedForm.controls.citations?.disable();
-    } else {
-      this.advancedForm.controls.citations?.enable();
-    }
+  changeLLM() {
     this.checkDefaultPromptFromSettingsApplied();
-    this.cdr.detectChanges();
   }
 
   private checkDefaultPromptFromSettingsApplied() {
