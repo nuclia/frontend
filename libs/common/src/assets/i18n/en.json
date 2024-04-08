@@ -485,6 +485,8 @@
 	"kb.ai-models.anonymization.confirm-anonymization.confirm-button": "Anonymize",
 	"kb.ai-models.anonymization.confirm-anonymization.description": "Once the resources are anonymized, it cannot be undone. <br>\nNote: new anonymization settings will not affect existing resources",
 	"kb.ai-models.anonymization.confirm-anonymization.title": "Warning: future resources will be affected",
+	"kb.ai-models.anonymization.toggle.help": "Apply General Data Protection Regulation (GDPR) compliant anonymization to all new resources in the Knowledge Box",
+	"kb.ai-models.anonymization.toggle.label": "Anonymization",
 	"kb.ai-models.answer-generation.behavior.description": "Define the personality traits of the assistant, how it should behave when answering questions or during a conversation. For example, you could define that the system will answer as a health professional.",
 	"kb.ai-models.answer-generation.behavior.label": "Describe behavior",
 	"kb.ai-models.answer-generation.behavior.title": "Customize behavior",

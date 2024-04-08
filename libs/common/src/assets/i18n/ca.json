@@ -484,6 +484,8 @@
 	"kb.ai-models.anonymization.confirm-anonymization.confirm-button": "Anònim",
 	"kb.ai-models.anonymization.confirm-anonymization.description": "Un cop anonimitzats els recursos, no es pot desfer. <br>Nota: la nova configuració d'anonimització no afectarà els recursos existents",
 	"kb.ai-models.anonymization.confirm-anonymization.title": "Avís: els recursos futurs es veuran afectats",
+	"kb.ai-models.anonymization.toggle.help": "Apliqueu l'anonimat conforme al Reglament General de Protecció de Dades (GDPR) a qualsevol recurs nou del Knowledge Box.",
+	"kb.ai-models.anonymization.toggle.label": "Anonimatització",
 	"kb.ai-models.answer-generation.behavior.description": "Definiu els trets de personalitat de l'assistent, com s'ha de comportar quan respon a preguntes o durant una conversa. Per exemple, podríeu definir que el sistema respondrà com a professional de la salut.",
 	"kb.ai-models.answer-generation.behavior.label": "Descriu el comportament",
 	"kb.ai-models.answer-generation.behavior.title": "Personalitzar el comportament",
