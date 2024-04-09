@@ -1172,6 +1172,7 @@
 	"upload.language-detection.checkbox-label": "Laissez Nuclia détecter automatiquement la langue",
 	"upload.language-detection.input-help": "Utiliser la langue spécifiée lors du traitement des fichiers téléchargés",
 	"upload.language-detection.input-label": "Code langue (format ISO 2 lettres)",
+	"upload.limit-exceeded": "Vous avez soumis trop de téléchargements. Réessayez dans un instant.",
 	"upload.link": "Ajouter des liens",
 	"upload.once_uploaded": "Une fois téléchargés, vous pouvez voir l'état de vos fichiers dans la page Ressources en attente. Lorsque les fichiers seront traités, ils apparaîtront dans la liste des ressources.",
 	"upload.progress-dialog-title": "File d'attente de téléchargement",

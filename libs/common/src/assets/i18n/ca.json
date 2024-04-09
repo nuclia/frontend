@@ -1171,6 +1171,7 @@
 	"upload.language-detection.checkbox-label": "Deixa que Nuclia detecti automàticament l'idioma",
 	"upload.language-detection.input-help": "Utilitzeu l'idioma especificat quan processeu els fitxers penjats",
 	"upload.language-detection.input-label": "Codi d'idioma (format ISO de 2 lletres)",
+	"upload.limit-exceeded": "Heu enviat massa càrregues. Torna-ho a provar d'aquí a un moment.",
 	"upload.link": "Afegeix enllaços",
 	"upload.once_uploaded": "Un cop penjats, podeu veure l'estat dels vostres fitxers a la pàgina Recursos pendents. Quan es processin els fitxers, apareixeran a la llista de Recursos.",
 	"upload.progress-dialog-title": "Cua de pujades",
