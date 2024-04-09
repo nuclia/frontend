@@ -16,6 +16,7 @@ import { of } from 'rxjs';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { RouterTestingModule } from '@angular/router/testing';
+import { UploadService } from '../../../upload';
 
 describe('ResourceTableComponent', () => {
   let component: ProcessedResourceTableComponent;
@@ -52,6 +53,9 @@ describe('ResourceTableComponent', () => {
         MockProvider(SisToastService),
         MockProvider(TranslateService),
         MockProvider(FeaturesService),
+        MockProvider(UploadService, {
+          statusCount: of({ processed: 0, pending: 0, error: 0 }),
+        }),
       ],
     }).compileComponents();
 
