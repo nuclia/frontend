@@ -15,6 +15,7 @@ class ConfluenceImpl implements IConnector {
   hasServerSideAuth = false;
   isExternal = false;
   allowToSelectFolders = true;
+  canSyncSecurityGroups = false;
 
   getParameters(): Observable<Field[]> {
     return of([

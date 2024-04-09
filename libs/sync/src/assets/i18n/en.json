@@ -93,6 +93,8 @@
 	"upload.steps.configure": "Configure",
 	"upload.steps.data": "Choose data",
 	"upload.steps.source": "Select the source",
+	"upload.sync.security-groups.help": "Nuclia resource will store the groups defined in the original source as having at least read access to the content.",
+	"upload.sync.security-groups.label": "Synchronize the security groups",
 	"upload.tabs.activity": "Activity",
 	"upload.tabs.filters": "Filters",
 	"upload.tabs.folders": "Folders to sync",

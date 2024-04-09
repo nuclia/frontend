@@ -49,6 +49,7 @@ export interface ICreateResource {
   texts?: { [key: string]: TextField };
   keywordsets?: { [key: string]: KeywordSetField };
   conversations?: { [key: string]: ConversationField };
+  security?: Security;
 }
 
 export enum FIELD_TYPE {

@@ -16,6 +16,7 @@ export class EditSyncSettingsComponent implements OnInit {
   form?: UntypedFormGroup;
   fields?: Field[];
   sync?: ISyncEntity;
+  canSyncSecurityGroups = false;
 
   constructor(
     private syncService: SyncService,
@@ -32,7 +33,10 @@ export class EditSyncSettingsComponent implements OnInit {
         tap((sync) => (this.sync = sync)),
         switchMap((sync) =>
           this.syncService.getConnector(sync.connector.name, '').pipe(
-            switchMap((connector) => connector.getParameters()),
+            switchMap((connector) => {
+              this.canSyncSecurityGroups = connector.canSyncSecurityGroups;
+              return connector.getParameters();
+            }),
             map((fields) => ({ sync, fields })),
           ),
         ),
@@ -54,6 +58,7 @@ export class EditSyncSettingsComponent implements OnInit {
                 ...sync.connector,
                 parameters,
               },
+              syncSecurityGroups: this.form?.value['syncSecurityGroups'],
             };
             if (!sourceConnector.allowToSelectFolders) {
               if (typeof sourceConnector.handleParameters === 'function') {
@@ -80,6 +85,7 @@ export class EditSyncSettingsComponent implements OnInit {
     this.fields = fields;
     this.form = this.formBuilder.group({
       title: ['', Validators.required],
+      syncSecurityGroups: [false],
       fields: this.formBuilder.group(
         fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', this.getFieldValidators(field)] }), {}),
       ),
@@ -87,6 +93,7 @@ export class EditSyncSettingsComponent implements OnInit {
     this.form.patchValue({
       fields: sync.connector.parameters,
       title: sync.title || sync.id,
+      syncSecurityGroups: sync.syncSecurityGroups || false,
     });
     this.cdr.markForCheck();
   }

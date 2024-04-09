@@ -21,6 +21,7 @@ export interface IConnector {
   hasServerSideAuth: boolean;
   isExternal: boolean;
   allowToSelectFolders: boolean;
+  canSyncSecurityGroups: boolean;
   getParameters(): Observable<Field[]>;
   handleParameters?(params: ConnectorParameters): void;
   getParametersValues(): ConnectorParameters;
@@ -99,6 +100,7 @@ export interface ISyncEntity {
   filters?: Filters;
   lastSyncGMT?: string;
   disabled?: boolean;
+  syncSecurityGroups?: boolean;
 }
 
 export interface SyncBasicData {

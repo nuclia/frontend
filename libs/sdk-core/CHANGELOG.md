@@ -1,3 +1,9 @@
+# 1.14.5 (2024-04-08)
+
+### Improvements
+
+- Support security groups when creating a resource.
+
 # 1.14.4 (2024-04-05)
 
 ### Improvements
