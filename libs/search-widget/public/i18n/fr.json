@@ -2,6 +2,7 @@
 	"answer.chat-action": "Demander plus",
 	"answer.error.rephrasing": "Désolé, je ne peux pas traiter cette question, peut-être que la reformuler aiderait.",
 	"answer.input.label": "Champ de saisie du chat",
+	"answer.no-citations": "Le LLM n'a pas été en mesure d'indiquer explicitement les sources qui ont été utilisées pour produire cette réponse.",
 	"answer.placeholder": "Discutons",
 	"answer.sources": "Sources",
 	"answer.title": "Réponse",

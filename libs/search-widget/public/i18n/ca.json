@@ -2,6 +2,7 @@
 	"answer.chat-action": "Preguntar més",
 	"answer.error.rephrasing": "Ho sento, no puc processar aquesta pregunta, potser ajudaria a reformular-la.",
 	"answer.input.label": "Entrada de xat",
+	"answer.no-citations": "El LLM no ha estat capaç d'indicar explícitament les fonts que s'han utilitzat per produir aquesta resposta.",
 	"answer.placeholder": "Parlem",
 	"answer.sources": "Fonts",
 	"answer.title": "Resposta",

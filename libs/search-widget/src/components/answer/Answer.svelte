@@ -11,6 +11,7 @@
     getFieldDataFromResource,
     getResultType,
     hasNotEnoughData,
+    isCitationsEnabled,
     notEnoughDataMessage,
     type TypedResult
   } from '../../core';
@@ -75,24 +76,29 @@
         </Button>
       {/if}
     </div>
-    {#if sources.length > 0}
+    {#if $isCitationsEnabled}
       <div class="sources-container">
-        {#if initialAnswer}
-          <div class="title-s">{$_('answer.sources')}</div>
-          <div class="sources-list">
-            <Sources {sources} />
-          </div>
-        {:else}
-          <Expander>
-            <div
-              class="title-s"
-              slot="header">
-              {$_('answer.sources')}
-            </div>
+        {#if sources.length > 0}
+          {#if initialAnswer}
+            <div class="title-s">{$_('answer.sources')}</div>
             <div class="sources-list">
               <Sources {sources} />
             </div>
-          </Expander>
+          {:else}
+            <Expander>
+              <div
+                class="title-s"
+                slot="header">
+                {$_('answer.sources')}
+              </div>
+              <div class="sources-list">
+                <Sources {sources} />
+              </div>
+            </Expander>
+          {/if}
+        {:else if !answer.incomplete}
+          <div class="title-s">{$_('answer.sources')}</div>
+          <div class="no-citations">{$_('answer.no-citations')}</div>
         {/if}
       </div>
     {/if}
