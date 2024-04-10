@@ -169,46 +169,11 @@
           externalLabel
           formControlName="url"></pa-input>
       </div>
-      <div formGroupName="headers">
+      <div>
         <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
-        <pa-table
-          border
-          columns="repeat(2, 2fr) 1fr">
-          <pa-table-header>
-            <pa-table-cell header>{{ 'tasks-automation.form.webhook.headers.key' | translate }}</pa-table-cell>
-            <pa-table-cell header>{{ 'tasks-automation.form.webhook.headers.value' | translate }}</pa-table-cell>
-            <pa-table-cell header>{{ 'tasks-automation.form.webhook.headers.secret-value' | translate }}</pa-table-cell>
-          </pa-table-header>
-          @for (row of headersGroup; track row) {
-            <pa-table-row>
-              <pa-table-cell>
-                <pa-input
-                  [placeholder]="'tasks-automation.form.webhook.headers.key' | translate"
-                  [formControl]="row.controls.key"></pa-input>
-              </pa-table-cell>
-              <pa-table-cell>
-                <pa-input
-                  [placeholder]="'tasks-automation.form.webhook.headers.value' | translate"
-                  [formControl]="row.controls.value"
-                  [type]="row.controls.secret.value ? 'password' : 'text'"></pa-input>
-              </pa-table-cell>
-              <pa-table-cell>
-                <pa-toggle [formControl]="row.controls.secret"></pa-toggle>
-              </pa-table-cell>
-            </pa-table-row>
-          }
-          <pa-table-row-header>
-            <pa-button
-              class="table-header-button"
-              aspect="basic"
-              icon="plus"
-              size="small"
-              iconAndText
-              (click)="addHeader()">
-              {{ 'tasks-automation.form.webhook.headers.new' | translate }}
-            </pa-button>
-          </pa-table-row-header>
-        </pa-table>
+        <app-editable-table
+          [values]="headers"
+          (valuesChanges)="setHeaders($event)"></app-editable-table>
       </div>
     </div>
   </nsi-two-columns-configuration-item>

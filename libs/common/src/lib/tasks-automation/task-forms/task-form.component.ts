@@ -28,7 +28,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LabelModule, LabelsService, SDKService } from '@flaps/core';
+import { EditableTableComponent, LabelModule, LabelsService, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Classification, Filter, Search } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
@@ -77,6 +77,7 @@ export interface TaskFormCommonConfig {
     PaButtonModule,
     GenerativeModelPipe,
     StickyFooterComponent,
+    EditableTableComponent,
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss',
@@ -115,9 +116,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     llm: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     webhook: new FormGroup({
       url: new FormControl<string>('', { nonNullable: true }),
-      headers: new FormArray([createHeaderRow()]),
     }),
   });
+  headers: { key: string; value: string; secret: boolean }[] = [];
 
   selectedFilters = new BehaviorSubject<string[] | Filter[]>([]);
 
@@ -126,9 +127,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
   get llmValue() {
     return this.form.controls.llm.value;
-  }
-  get headersGroup() {
-    return this.form.controls.webhook.controls.headers.controls;
   }
 
   resourceCount?: number;
@@ -271,12 +269,16 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.selectedFilters.next(resourceTypesFilters.concat(languageFilters).concat(selectedLabels));
   }
 
-  addHeader() {
-    this.headersGroup.push(createHeaderRow());
-  }
-
   activateTask() {
     const rawValue = this.form.getRawValue();
-    this.activate.emit({ ...rawValue, filters: { ...rawValue.filters, selectedFilters: this.selectedFilters.value } });
+    this.activate.emit({
+      ...rawValue,
+      webhook: { ...rawValue.webhook, headers: this.headers },
+      filters: { ...rawValue.filters, selectedFilters: this.selectedFilters.value },
+    });
+  }
+
+  setHeaders(headers: { key: string; value: string; secret: boolean }[]) {
+    this.headers = headers;
   }
 }
