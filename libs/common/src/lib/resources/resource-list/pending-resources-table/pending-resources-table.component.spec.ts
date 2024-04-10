@@ -15,6 +15,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { UploadService } from '../../../upload';
 
 describe('PendingResourcesTableComponent', () => {
   let component: PendingResourcesTableComponent;
@@ -49,6 +50,9 @@ describe('PendingResourcesTableComponent', () => {
         MockProvider(SisToastService),
         MockProvider(TranslateService),
         MockProvider(FeaturesService),
+        MockProvider(UploadService, {
+          statusCount: of({ processed: 0, pending: 0, error: 0 }),
+        }),
       ],
     }).compileComponents();
 

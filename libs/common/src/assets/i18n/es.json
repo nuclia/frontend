@@ -1171,6 +1171,7 @@
 	"upload.language-detection.checkbox-label": "Deja que Nuclia detecte automáticamente el idioma",
 	"upload.language-detection.input-help": "Utilice el lenguaje especificado al procesar los archivos cargados",
 	"upload.language-detection.input-label": "Código de idioma (formato ISO de 2 letras)",
+	"upload.limit-exceeded": "Has estado enviando demasiadas cargas. Inténtalo de nuevo en un momento.",
 	"upload.link": "Agregar enlaces",
 	"upload.once_uploaded": "Una vez cargados, puede ver el estado de sus archivos en la página de recursos pendientes. Cuando se procesen los archivos, aparecerán en la lista de Recursos.",
 	"upload.progress-dialog-title": "Cola de subidas",

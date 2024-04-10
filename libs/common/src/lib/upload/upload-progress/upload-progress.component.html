@@ -23,19 +23,20 @@
               *ngIf="file.uploaded"
               name="check"></pa-icon>
 
-            <div
-              class="error body-xs"
-              *ngIf="file.conflicts">
-              <pa-icon name="info"></pa-icon>
-              {{ 'upload.conflict' | translate }}
-            </div>
-
-            <div
-              class="error body-xs"
-              *ngIf="file.failed && !file.conflicts">
-              <pa-icon name="warning"></pa-icon>
-              {{ 'upload.error' | translate }}
-            </div>
+            @if (file.failed) {
+              <div class="error body-xs">
+                @if (file.conflicts) {
+                  <pa-icon name="info"></pa-icon>
+                  {{ 'upload.conflict' | translate }}
+                } @else if (file.limitExceeded) {
+                  <pa-icon name="warning"></pa-icon>
+                  {{ 'upload.limit-exceeded' | translate }}
+                } @else {
+                  <pa-icon name="warning"></pa-icon>
+                  {{ 'upload.error' | translate }}
+                }
+              </div>
+            }
 
             <nsi-progress-bar
               *ngIf="file.progress !== 100"

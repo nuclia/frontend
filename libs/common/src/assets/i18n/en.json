@@ -1172,6 +1172,7 @@
 	"upload.language-detection.checkbox-label": "Let Nuclia automatically detect the language",
 	"upload.language-detection.input-help": "Use specified language when processing the files uploaded",
 	"upload.language-detection.input-label": "Language code (2 letters ISO format)",
+	"upload.limit-exceeded": "Too many uploads. Try again in a moment.",
 	"upload.link": "Add links",
 	"upload.once_uploaded": "Once uploaded, you can see the status of your files in the Pending resources page. When the files are processed, they will show up in the Resources list.",
 	"upload.progress-dialog-title": "Upload queue",

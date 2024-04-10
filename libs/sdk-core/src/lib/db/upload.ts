@@ -28,6 +28,7 @@ export interface UploadResponse {
   failed?: boolean;
   completed?: boolean;
   conflict?: boolean;
+  limitExceeded?: boolean;
 }
 
 export interface UploadStatus {
@@ -37,6 +38,7 @@ export interface UploadStatus {
   uploaded: number;
   failed: number;
   conflicts?: number;
+  limitExceeded?: number;
 }
 
 export interface FileUploadStatus {
@@ -45,6 +47,7 @@ export interface FileUploadStatus {
   uploaded: boolean;
   failed: boolean;
   conflicts?: boolean;
+  limitExceeded?: boolean;
 }
 
 export interface FileWithMetadata extends File {
@@ -61,16 +64,23 @@ export interface FileMetadata {
   rslug?: string;
 }
 
-const uploadRetryConfig: RetryConfig = {
+const uploadRetryConfig = (maxWaitOn429: number): RetryConfig => ({
   count: 3,
-  delay: (error) => {
-    if (error.status === 429 || (error.status >= 500 && error.status <= 599)) {
-      return error.status === 429 ? of(true).pipe(delay(1000)) : of(true);
+  delay: (error, index) => {
+    const tryAfter = error?.body?.detail?.try_after;
+    if (error.status === 429 && tryAfter) {
+      const delayOn429 = Math.min(tryAfter * 1000 - Date.now(), maxWaitOn429);
+      return of(true).pipe(delay(delayOn429));
+    } else if (error.status === 429 && !tryAfter) {
+      const delays = [1000, 5000, 10000];
+      return of(true).pipe(delay(delays[index]));
+    } else if (error.status >= 500 && error.status <= 599) {
+      return of(true);
     } else {
       throw error;
     }
   },
-};
+});
 
 export const upload = (
   nuclia: INuclia,
@@ -105,6 +115,7 @@ export const uploadFile = (
   path: string,
   buffer: ArrayBuffer,
   metadata?: FileMetadata,
+  maxWaitOn429 = 30000,
 ): Observable<UploadResponse> => {
   const headers: { [key: string]: string } = {
     'content-type': metadata?.contentType || 'application/octet-stream',
@@ -113,7 +124,7 @@ export const uploadFile = (
   const slug = metadata?.rslug ? `?rslug=${metadata.rslug}` : '';
   return of(true).pipe(
     switchMap(() => nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers, true)),
-    retry(uploadRetryConfig),
+    retry(uploadRetryConfig(maxWaitOn429)),
     switchMap((res) => {
       try {
         switch (res.status) {
@@ -137,7 +148,7 @@ export const uploadFile = (
         return of({ failed: true });
       }
     }),
-    catchError(() => of({ failed: true })),
+    catchError((error) => of({ failed: true, limitExceeded: error.status === 429 })),
   );
 };
 
@@ -147,6 +158,7 @@ export const TUSuploadFile = (
   buffer: ArrayBuffer,
   metadata?: FileMetadata,
   creationPayload?: ICreateResource,
+  maxWaitOn429 = 30000,
 ): Observable<UploadResponse> => {
   let i = 0;
   let count = 0;
@@ -174,13 +186,13 @@ export const TUSuploadFile = (
   }
   return of(true).pipe(
     switchMap(() => nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true)),
-    retry(uploadRetryConfig),
+    retry(uploadRetryConfig(maxWaitOn429)),
     catchError((error) => of(error)),
     concatMap((res) =>
       merge(
         of(res).pipe(
           filter((res) => res.status !== 201 || !res.headers.get('location')),
-          map((res) => (res.status === 409 ? { conflict: true, failed: true } : { failed: true })),
+          map((res) => ({ failed: true, conflict: res.status === 409, limitExceeded: res.status === 429 })),
         ),
         of(res).pipe(
           filter((res) => res.status === 201 && !!res.headers.get('location')),
@@ -205,7 +217,7 @@ export const TUSuploadFile = (
                           true,
                         ),
                       ),
-                      retry(uploadRetryConfig),
+                      retry(uploadRetryConfig(maxWaitOn429)),
                       map((res) => {
                         if (res.status !== 200) {
                           failed = true;
@@ -220,7 +232,7 @@ export const TUSuploadFile = (
                       }),
                       catchError(() => {
                         failed = true;
-                        return of({ failed: true });
+                        return of({ failed: true, limitExceeded: res.status === 429 });
                       }),
                     );
               }),
@@ -277,6 +289,9 @@ export const batchUpload = (
       if (res.status.conflict) {
         fileStatus.conflicts = true;
       }
+      if (res.status.limitExceeded) {
+        fileStatus.limitExceeded = true;
+      }
       if (res.status.completed) {
         fileStatus.uploaded = true;
       }
@@ -287,12 +302,13 @@ export const batchUpload = (
       }
       const failed = filesStatus.filter((item) => item.failed).length;
       const conflicts = filesStatus.filter((item) => item.conflicts).length;
+      const limitExceeded = filesStatus.filter((item) => item.limitExceeded).length;
       const uploaded = filesStatus.filter((item) => item.uploaded).length;
       const completed = filesStatus.filter((item) => !item.failed && !item.uploaded).length === 0;
       const progress = Math.round(
         (filesStatus.reduce((acc, status) => acc + (status.file.size * status.progress) / 100, 0) / totalSize) * 100,
       );
-      return { files: filesStatus, progress, completed, uploaded, failed, conflicts };
+      return { files: filesStatus, progress, completed, uploaded, failed, conflicts, limitExceeded };
     }),
   );
 };

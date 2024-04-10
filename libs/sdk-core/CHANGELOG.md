@@ -1,3 +1,11 @@
+# 1.14.6 (unreleased)
+
+### Improvements
+
+- Improve reliability of file uploads
+  - Add `maxWaitOn429` parameter to `uploadFile` and `TUSuploadFile` methods
+  - Add `limitExceeded` field to file upload status
+
 # 1.14.5 (2024-04-08)
 
 ### Improvements

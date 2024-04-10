@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LabelsService, md5, SDKService } from '@flaps/core';
+import { LabelsService, md5, SDKService, STFTrackingService } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -75,6 +75,7 @@ export class UploadService {
     private toaster: SisToastService,
     private modal: SisModalService,
     private translate: TranslateService,
+    private tracking: STFTrackingService,
   ) {}
 
   checkFileTypesAndConfirm(files: File[]): Observable<boolean> {
@@ -121,6 +122,9 @@ export class UploadService {
               } else if (!hasNotifiedError) {
                 hasNotifiedError = true;
                 this.onUploadComplete(false);
+              }
+              if ((progress.limitExceeded || 0) > 0) {
+                this.tracking.logEvent('upload_limit_exceeded');
               }
             }
           }),
