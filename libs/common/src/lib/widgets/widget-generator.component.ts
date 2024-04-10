@@ -49,7 +49,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
 
   generativeModels: LearningConfigurationOption[] = [];
-  modelsSupportingVision = ['chatgpt-vision'];
+  modelsSupportingVision = ['chatgpt-vision', 'gemini-1-5-pro-vision'];
   snippetOverlayOpen = false;
   snippet = '';
   snippetPreview: SafeHtml = '';
