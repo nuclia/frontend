@@ -2,6 +2,7 @@
 	"answer.chat-action": "Ask more",
 	"answer.error.rephrasing": "Sorry, I cannot process this question, maybe rephrasing it would help.",
 	"answer.input.label": "Chat input",
+	"answer.no-citations": "The LLM was not able to indicate explicitly the sources that have been used to produce this answer.",
 	"answer.placeholder": "Let's chat",
 	"answer.sources": "Sources",
 	"answer.title": "Answer",

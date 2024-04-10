@@ -20,6 +20,7 @@ export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((feat
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));
 export const hasFilterButton: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.filter));
 export const isAnswerEnabled: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.answers));
+export const isCitationsEnabled: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.citations));
 export const isKnowledgeGraphEnabled: Observable<boolean> = widgetFeatures.pipe(
   map((features) => !!features?.knowledgeGraph),
 );
