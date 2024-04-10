@@ -1,6 +1,7 @@
 export type KbLanguageConf = {
   multilingual: boolean;
   languages: string[];
+  semanticModel?: string;
 };
 
 export type KbConfiguration = {

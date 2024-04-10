@@ -45,6 +45,7 @@ export class Step2Component {
     region: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
 
+  semanticModel = '';
   multilingualSelected = true;
   languages: string[] = [];
 
@@ -54,13 +55,15 @@ export class Step2Component {
     const configFormValue = this.configurationForm.getRawValue();
     const configuration: KbConfiguration = {
       zoneSlug: configFormValue.region,
+      semanticModel: this.semanticModel,
       multilingual: this.multilingualSelected,
       languages: this.languages,
     };
     this.submitStep2.emit(configuration);
   }
 
-  updateLanguages(data: { multilingualSelected: boolean; languages: string[] }) {
+  updateLanguages(data: { semanticModel: string; multilingualSelected: boolean; languages: string[] }) {
+    this.semanticModel = data.semanticModel;
     this.multilingualSelected = data.multilingualSelected;
     this.languages = data.languages;
     this.cdr.markForCheck();
