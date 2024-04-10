@@ -35,6 +35,7 @@ export class FeaturesService {
   ragHierarchy = this.featureFlag.isFeatureEnabled('rag-hierarchy');
   ragImages = this.featureFlag.isFeatureEnabled('rag-images');
   englishModel = this.featureFlag.isFeatureEnabled('english-model');
+  openAIModels = this.featureFlag.isFeatureEnabled('openai-models');
 
   // user-prompts and summarization are always enabled for growth and enterprise accounts
   // but are still managed as a feature flagged feature for other account types, so we can enable it specifically for some accounts

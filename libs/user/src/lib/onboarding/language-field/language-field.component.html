@@ -1,12 +1,18 @@
 <div class="field">
   <label class="title-s">{{ 'onboarding.step2.languages.label' | translate }}</label>
-  @if (isEnglishEnabled | async) {
+  @if ((isEnglishEnabled | async) || (areOpenAIModelsEnabled | async)) {
     <pa-radio-group [formControl]="multilingual">
-      <pa-radio value="english">{{ 'onboarding.step2.languages.english' | translate }}</pa-radio>
+      @if (isEnglishEnabled | async) {
+        <pa-radio value="english">{{ 'onboarding.step2.languages.english' | translate }}</pa-radio>
+      }
+      @if (areOpenAIModelsEnabled | async) {
+        <pa-radio value="OPENAI_3_SMALL">OpenAI 3 small</pa-radio>
+        <pa-radio value="OPENAI_3_LARGE">OpenAI 3 large</pa-radio>
+      }
       <pa-radio value="multilingual">{{ 'onboarding.step2.languages.multilingual' | translate }}</pa-radio>
     </pa-radio-group>
   }
-  @if (multilingualSelected || !(isEnglishEnabled | async)) {
+  @if (multilingualSelected || (isEnglishEnabled | async) === false) {
     <div class="second-choice languages-container">
       @for (language of languages; track language.label) {
         <pa-checkbox

@@ -40,13 +40,18 @@ const LANGUAGES = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageFieldComponent implements OnInit, OnDestroy {
-  @Output() languageSelected = new EventEmitter<{ multilingualSelected: boolean; languages: string[] }>();
+  @Output() languageSelected = new EventEmitter<{
+    multilingualSelected: boolean;
+    languages: string[];
+    semanticModel: string;
+  }>();
 
   private unsubscribeAll = new Subject<void>();
 
   multilingual = new FormControl<'multilingual' | 'english'>('multilingual', { nonNullable: true });
   languages: { id: string; label: string; selected: boolean }[];
   isEnglishEnabled = this.features.englishModel;
+  areOpenAIModelsEnabled = this.features.openAIModels;
 
   get multilingualSelected() {
     return this.multilingual.value === 'multilingual';
@@ -83,6 +88,7 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
 
   sendSelection() {
     this.languageSelected.emit({
+      semanticModel: this.multilingual.value,
       multilingualSelected: this.multilingualSelected,
       languages: this.languages.filter((language) => language.selected).map((language) => language.id),
     });
