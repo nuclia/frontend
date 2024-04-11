@@ -1,0 +1,53 @@
+@import '../../../../styles/variables';
+
+:host {
+  display: block;
+
+  .folder-tree-item {
+    align-items: center;
+    box-shadow: $box-shadow-border-bottom;
+    display: flex;
+    gap: rhythm(0.5);
+    height: rhythm(5);
+
+    pa-button {
+      display: flex;
+      transition: transform $transition-hint;
+
+      &.expanded {
+        transform: rotate(90deg);
+      }
+
+      ::ng-deep .pa-button {
+        height: rhythm(3);
+        width: rhythm(3);
+      }
+    }
+    .expander-button-placeholder {
+      width: rhythm(3);
+    }
+  }
+
+  .folder-checkbox {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    pa-icon {
+      display: flex;
+    }
+  }
+  .pa-folder-tree-children {
+    padding-left: rhythm(3);
+    transition:
+      opacity $transition-response,
+      height $transition-response;
+
+    &.collapsed {
+      height: 0 !important;
+      opacity: 0;
+      position: relative;
+      z-index: -1;
+    }
+  }
+}

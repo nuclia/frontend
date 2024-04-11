@@ -2,6 +2,7 @@ export * from './lib/back-button';
 export * from './lib/badge';
 export * from './lib/dropdown-button';
 export * from './lib/cards';
+export * from './lib/folder-tree';
 export * from './lib/home-container';
 export * from './lib/icons';
 export * from './lib/json-viewer';
