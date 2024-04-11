@@ -6,7 +6,7 @@
         icon="chevron-right"
         size="small"
         [class.expanded]="folder.expanded"
-        (click)="folder.expanded = !folder.expanded"></pa-button>
+        (click)="toggleExpand(folder)"></pa-button>
     } @else {
       <div class="expander-button-placeholder"></div>
     }
@@ -27,12 +27,13 @@
   </div>
 
   @if (folder.children && (folder.children | keyvalue).length > 0) {
-    @for (data of folder.children | keyvalue; track data.key) {
-      <div
-        class="pa-folder-tree-children"
-        [class.collapsed]="!folder.expanded">
+    <div
+      class="pa-folder-tree-children"
+      [style.height]="folder.height + 'px'"
+      [class.collapsed]="!folder.expanded">
+      @for (data of folder.children | keyvalue; track data.key) {
         <nsi-recursive-folder-tree [folderTree]="data.value"></nsi-recursive-folder-tree>
-      </div>
-    }
+      }
+    </div>
   }
 }

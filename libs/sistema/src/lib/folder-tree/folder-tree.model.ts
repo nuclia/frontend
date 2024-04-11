@@ -7,3 +7,8 @@ export interface FolderTree {
   selected?: boolean;
   expanded?: boolean;
 }
+
+export interface FolderTreeUI extends FolderTree {
+  height: number;
+  children?: { [id: string]: FolderTreeUI };
+}

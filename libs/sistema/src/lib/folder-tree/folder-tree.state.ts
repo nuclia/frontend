@@ -25,12 +25,24 @@ export class FolderTreeState {
 
   toggleFolder(folder: FolderTree, selected: boolean) {
     const updatedFolder = this.toggleAllChildren(folder, selected);
-    const updatedTree = this.updateAllParents(updatedFolder);
+    const updatedTree = this.updateAllParents(updatedFolder, true);
     if (updatedTree) {
       this._tree.next({ ...updatedTree });
     } else if (updatedFolder && updatedFolder.path === '/') {
       // updatedTree is undefined when folder is actually the root
       this._tree.next({ ...updatedFolder });
+    }
+  }
+
+  updateExpanded(folder: FolderTree) {
+    folder.expanded = !folder.expanded;
+    if (folder.path === '/') {
+      this._tree.next({ ...folder });
+    } else {
+      const updatedTree = this.updateAllParents(folder);
+      if (updatedTree) {
+        this._tree.next({ ...updatedTree });
+      }
     }
   }
 
@@ -48,7 +60,7 @@ export class FolderTreeState {
     };
   }
 
-  private updateAllParents(folder: FolderTree): FolderTree | undefined {
+  private updateAllParents(folder: FolderTree, updateSelection = false): FolderTree | undefined {
     if (folder.path === '/') {
       return;
     }
@@ -61,18 +73,21 @@ export class FolderTreeState {
       ...parent.children,
       [folder.id]: folder,
     };
-    const childList = Object.values(children);
-    const allChildrenSelected = childList.every((child) => child.selected);
     const updatedParent = {
       ...parent,
       children,
-      selected: allChildrenSelected,
-      indeterminate: !allChildrenSelected && childList.some((child) => child.selected || child.indeterminate),
     };
+    if (updateSelection) {
+      const childList = Object.values(children);
+      const allChildrenSelected = childList.every((child) => child.selected);
+      updatedParent.selected = allChildrenSelected;
+      updatedParent.indeterminate =
+        !allChildrenSelected && childList.some((child) => child.selected || child.indeterminate);
+    }
     if (updatedParent.path === '/') {
       return updatedParent;
     } else {
-      return this.updateAllParents(updatedParent);
+      return this.updateAllParents(updatedParent, updateSelection);
     }
   }
 
