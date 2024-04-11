@@ -6,9 +6,9 @@ import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular
 import { Subject, combineLatest, distinctUntilChanged, skip, startWith, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-editable-table',
-  templateUrl: 'editable-table.component.html',
-  styleUrls: ['editable-table.component.scss'],
+  selector: 'app-parameters-table',
+  templateUrl: 'parameters-table.component.html',
+  styleUrls: ['parameters-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -21,7 +21,7 @@ import { Subject, combineLatest, distinctUntilChanged, skip, startWith, takeUnti
     ReactiveFormsModule,
   ],
 })
-export class EditableTableComponent implements OnInit, OnDestroy {
+export class ParametersTableComponent implements OnInit, OnDestroy {
   form = new FormGroup({
     rows: new FormArray([this.createRow()]),
   });

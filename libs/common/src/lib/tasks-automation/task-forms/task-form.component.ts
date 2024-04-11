@@ -28,7 +28,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EditableTableComponent, LabelModule, LabelsService, SDKService } from '@flaps/core';
+import { ParametersTableComponent, LabelModule, LabelsService, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Classification, Filter, Search } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
@@ -77,7 +77,7 @@ export interface TaskFormCommonConfig {
     PaButtonModule,
     GenerativeModelPipe,
     StickyFooterComponent,
-    EditableTableComponent,
+    ParametersTableComponent,
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss',

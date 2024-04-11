@@ -31,9 +31,9 @@
             @if (field.help) {
               <p>{{ field.help | translate }}</p>
             }
-            <app-editable-table
+            <app-parameters-table
               [values]="tables[field.id] || []"
-              (valuesChanges)="updateTable(field.id, $event)"></app-editable-table>
+              (valuesChanges)="updateTable(field.id, $event)"></app-parameters-table>
           </div>
         }
       </div>
