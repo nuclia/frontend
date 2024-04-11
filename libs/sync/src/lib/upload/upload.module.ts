@@ -16,7 +16,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LabelModule } from '@flaps/core';
+import { EditableTableComponent, LabelModule } from '@flaps/core';
 import { SyncComponent } from './sync.component';
 import { EditSyncSettingsComponent } from './tabs/edit-settings.component';
 import { EditSyncFoldersComponent } from './tabs/edit-folders.component';
@@ -45,6 +45,7 @@ import { EditSyncFiltersComponent } from './tabs/edit-filters.component';
     PaTableModule,
     PaDateTimeModule,
     PaDatePickerModule,
+    EditableTableComponent,
   ],
   exports: [],
   declarations: [

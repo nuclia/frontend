@@ -25,6 +25,17 @@
             {{ field.label | translate }}
           </pa-textarea>
         }
+        @if (field.type === 'table') {
+          <div>
+            <h3 class="title-s">{{ field.label | translate }}</h3>
+            @if (field.help) {
+              <p>{{ field.help | translate }}</p>
+            }
+            <app-editable-table
+              [values]="tables[field.id] || []"
+              (valuesChanges)="updateTable(field.id, $event)"></app-editable-table>
+          </div>
+        }
       </div>
     }
     @if (canSyncSecurityGroups) {

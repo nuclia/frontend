@@ -17,6 +17,7 @@ export class EditSyncSettingsComponent implements OnInit {
   fields?: Field[];
   sync?: ISyncEntity;
   canSyncSecurityGroups = false;
+  tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
 
   constructor(
     private syncService: SyncService,
@@ -51,7 +52,7 @@ export class EditSyncSettingsComponent implements OnInit {
         .getConnector(sync.connector.name, '')
         .pipe(
           switchMap((sourceConnector) => {
-            const parameters = { ...sync.connector.parameters, ...(this.form?.value['fields'] || {}) };
+            const parameters = { ...sync.connector.parameters, ...(this.form?.value['fields'] || {}), ...this.tables };
             const payload: Partial<ISyncEntity> = {
               title: this.form?.value['title'] || '',
               connector: {
@@ -83,6 +84,16 @@ export class EditSyncSettingsComponent implements OnInit {
 
   showFields(sync: ISyncEntity, fields: Field[]) {
     this.fields = fields;
+    const regularFieldIds = fields.filter((field) => field.type !== 'table').map((field) => field.id);
+    const regularParams = Object.entries(sync.connector.parameters).reduce(
+      (acc, [key, value]) => {
+        if (regularFieldIds.includes(key)) {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as { [key: string]: string },
+    );
     this.form = this.formBuilder.group({
       title: ['', Validators.required],
       syncSecurityGroups: [false],
@@ -91,10 +102,19 @@ export class EditSyncSettingsComponent implements OnInit {
       ),
     });
     this.form.patchValue({
-      fields: sync.connector.parameters,
+      fields: regularParams,
       title: sync.title || sync.id,
       syncSecurityGroups: sync.syncSecurityGroups || false,
     });
+    this.tables = fields
+      .filter((field) => field.type === 'table')
+      .reduce(
+        (acc, field) => {
+          acc[field.id] = sync.connector.parameters[field.id] || [];
+          return acc;
+        },
+        {} as { [tableId: string]: { key: string; value: string; secret: boolean }[] },
+      );
     this.cdr.markForCheck();
   }
 
@@ -107,5 +127,9 @@ export class EditSyncSettingsComponent implements OnInit {
       validators.push(Validators.pattern(field.pattern));
     }
     return validators;
+  }
+
+  updateTable(fieldId: string, values: { key: string; value: string; secret: boolean }[]) {
+    this.tables[fieldId] = values;
   }
 }
