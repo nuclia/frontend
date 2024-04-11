@@ -20,6 +20,8 @@ export class AddSyncComponent implements OnInit {
   connectorId =
     (this.sdk.nuclia.options.standalone ? location.hash : location.pathname).split('/upload/sync/add/')[1] || '';
   connector = this.syncService.connectorsObs.pipe(map((sources) => sources.find((s) => s.id === this.connectorId)));
+  canSyncSecurityGroups = false;
+  tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
 
   constructor(
     private syncService: SyncService,
@@ -36,7 +38,10 @@ export class AddSyncComponent implements OnInit {
       .getConnector(this.connectorId, '')
       .pipe(
         take(1),
-        switchMap((connector) => connector.getParameters()),
+        switchMap((connector) => {
+          this.canSyncSecurityGroups = connector.canSyncSecurityGroups;
+          return connector.getParameters();
+        }),
       )
       .subscribe((fields) => this.showFields(fields));
   }
@@ -52,8 +57,9 @@ export class AddSyncComponent implements OnInit {
           id = `${kb.id}-${id}`;
           return this.syncService.addSync({
             id,
-            connector: { name: this.connectorId || '', parameters: data },
+            connector: { name: this.connectorId || '', parameters: { ...data, ...this.tables } },
             title,
+            syncSecurityGroups: this.form?.value['syncSecurityGroups'],
           });
         }),
         tap(() => this.syncService.setCurrentSourceId(id)),
@@ -103,6 +109,7 @@ export class AddSyncComponent implements OnInit {
     this.fields = fields;
     this.form = this.formBuilder.group({
       title: ['', [Validators.required]],
+      syncSecurityGroups: [false],
       fields: this.formBuilder.group(
         fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', this.getFieldValidators(field)] }), {}),
       ),
@@ -119,5 +126,9 @@ export class AddSyncComponent implements OnInit {
       validators.push(Validators.pattern(field.pattern));
     }
     return validators;
+  }
+
+  updateTable(fieldId: string, values: { key: string; value: string; secret: boolean }[]) {
+    this.tables[fieldId] = values;
   }
 }
