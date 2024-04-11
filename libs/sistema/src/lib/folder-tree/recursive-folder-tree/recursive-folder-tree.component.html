@@ -1,0 +1,38 @@
+@if (folderTree; as folder) {
+  <div class="folder-tree-item">
+    @if (folder.children && (folder.children | keyvalue).length > 0) {
+      <pa-button
+        aspect="basic"
+        icon="chevron-right"
+        size="small"
+        [class.expanded]="folder.expanded"
+        (click)="folder.expanded = !folder.expanded"></pa-button>
+    } @else {
+      <div class="expander-button-placeholder"></div>
+    }
+    <!-- We don't use (valueChange) on the checkbox, because it is triggered too much times on this context leading to bad updates of the state -->
+    <pa-checkbox
+      [id]="folder.id"
+      [indeterminate]="folder.indeterminate || false"
+      [value]="folder.selected"
+      (click)="toggleFolder(folder, !folder.selected)">
+      <div class="folder-checkbox">
+        <pa-icon
+          class="folder-icon"
+          size="small"
+          [path]="folderIcon"></pa-icon>
+        {{ folder.title }}
+      </div>
+    </pa-checkbox>
+  </div>
+
+  @if (folder.children && (folder.children | keyvalue).length > 0) {
+    @for (data of folder.children | keyvalue; track data.key) {
+      <div
+        class="pa-folder-tree-children"
+        [class.collapsed]="!folder.expanded">
+        <nsi-recursive-folder-tree [folderTree]="data.value"></nsi-recursive-folder-tree>
+      </div>
+    }
+  }
+}

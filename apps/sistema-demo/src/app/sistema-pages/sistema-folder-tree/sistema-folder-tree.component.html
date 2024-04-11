@@ -1,0 +1,66 @@
+<pa-demo-page>
+  <pa-demo-title>Folder tree</pa-demo-title>
+  <pa-demo-description>
+    <p>Component allowing to select folders in a tree hierarchy.</p>
+    <p><strong>Folder tree checkbox selection is quite common:</strong></p>
+    <ul>
+      <li>When selecting a parent, all its children are recursively selected as well</li>
+      <li>When unselecting a parent, all its children are recursively unselected as well</li>
+      <li>When selecting a child, all its parent are recursively marked as indeterminate</li>
+      <li>When selecting all children, the parent is automatically selected</li>
+      <li>When unselecting all children, the parent is automatically unselected</li>
+    </ul>
+    <p><strong>Folder tree selection event is a bit specific in its behavior though:</strong></p>
+    <ul>
+      <li>when selecting a folder without children, it is emitted in the selection</li>
+      <!-- prettier-ignore -->
+      <li>
+        when selecting a folder <code>A</code> which has children,
+        all the children are selected but the selection event will contain only the folder <code>A</code> id
+      </li>
+      <!-- prettier-ignore -->
+      <li>
+        when selecting a folder <code>A</code> which has children and then unselecting one child,
+        the selection event will not container folder <code>A</code> id, but it will contain the remaining selected child ids.
+      </li>
+    </ul>
+  </pa-demo-description>
+  <pa-demo-examples>
+    <p>
+      <strong>Selection:</strong>
+      {{ selection1 | json }}
+    </p>
+    <nsi-folder-tree
+      [folderTree]="tree1"
+      (selection)="selection1 = $event"></nsi-folder-tree>
+
+    <h4>Another tree, showing we can have two in the same page without interferences</h4>
+    <p>
+      <strong>Selection:</strong>
+      {{ selection2 | json }}
+    </p>
+    <nsi-folder-tree
+      [folderTree]="tree2"
+      (selection)="selection2 = $event"></nsi-folder-tree>
+  </pa-demo-examples>
+  <pa-demo-usage>
+    <h3>Inputs</h3>
+    <dl>
+      <dt>folderTree</dt>
+      <dd>
+        The folder tree to display. The root node is expected to have
+        <code>/</code>
+        as path.
+        <small>(Required)</small>
+      </dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl>
+      <dt>selection</dt>
+      <dd>Event emitted whenever the selection changes</dd>
+    </dl>
+  </pa-demo-usage>
+  <pa-demo-code>
+    <pre><code>{{code}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>
