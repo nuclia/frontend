@@ -52,6 +52,7 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
   languages: { id: string; label: string; selected: boolean }[];
   isEnglishEnabled = this.features.englishModel;
   areOpenAIModelsEnabled = this.features.openAIModels;
+  isGeckoModelEnabled = this.features.geckoModel;
 
   get multilingualSelected() {
     return this.multilingual.value === 'multilingual';
