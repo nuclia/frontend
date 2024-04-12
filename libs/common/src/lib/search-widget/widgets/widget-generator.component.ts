@@ -668,6 +668,7 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
   ${prompt}
   zone=`,
           )
+          .replace('features="', `features="dumpLog,`)
           .replace('standalone=', 'client="dashboard" standalone=')
           .replace(apiKey, '')
           .replace('<nuclia-search-results', '<nuclia-search-results scrollableContainerSelector=".preview-content"'),
