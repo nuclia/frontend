@@ -303,6 +303,7 @@ export interface WidgetFeatures {
   noBM25forChat?: boolean;
   citations?: boolean;
   rephrase?: boolean;
+  dumpLog?: boolean;
 }
 
 export enum RagStrategyName {

@@ -4,7 +4,7 @@
 
 <script lang="ts">
   import type { KBStates, Nuclia, RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
-  import { initNuclia, resetNuclia } from '../../core/api';
+  import { downloadDump, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import {
     downloadAsJSON,
@@ -124,10 +124,7 @@
   }
 
   export function dump() {
-    nucliaAPI.events
-      ?.dump()
-      .pipe(take(1))
-      .subscribe((data) => downloadAsJSON(data));
+    downloadDump();
   }
 
   const dispatch = createEventDispatcher();

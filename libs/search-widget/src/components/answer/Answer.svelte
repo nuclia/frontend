@@ -8,12 +8,14 @@
   import Sources from './Sources.svelte';
   import {
     chat,
+    downloadDump,
     getFieldDataFromResource,
     getResultType,
+    hasDumpLogButton,
     hasNotEnoughData,
     isCitationsEnabled,
     notEnoughDataMessage,
-    type TypedResult
+    type TypedResult,
   } from '../../core';
 
   export let answer: Partial<Chat.Answer>;
@@ -55,12 +57,11 @@
   <div
     class="answer-text"
     class:error={answer.inError}>
-    {#if (notEnoughData && $notEnoughDataMessage)}
+    {#if notEnoughData && $notEnoughDataMessage}
       {@html $notEnoughDataMessage}
     {:else}
       {@html text}
     {/if}
-
   </div>
   {#if answer.sources && !notEnoughData}
     <div class="actions">
@@ -73,6 +74,14 @@
           size="small"
           on:click={() => dispatch('openChat')}>
           <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
+        </Button>
+      {/if}
+      {#if $hasDumpLogButton}
+        <Button
+          aspect="basic"
+          size="small"
+          on:click={() => downloadDump()}>
+          <span>{$_('answer.download-log')}</span>
         </Button>
       {/if}
     </div>

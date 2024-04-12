@@ -8,8 +8,10 @@
   import globalCss from '../../common/_global.scss?inline';
   import {
     _,
+    downloadDump,
     getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
+    hasDumpLogButton,
     hasMore,
     hasPartialResults,
     hasSearchError,
@@ -30,6 +32,7 @@
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
+  import { Button } from '../../common';
 
   export let cssPath = '';
   export let mode = '';
@@ -108,6 +111,16 @@
         <div class="results">
           {#if $isAnswerEnabled}
             <InitialAnswer />
+          {/if}
+          {#if !$isAnswerEnabled && $hasDumpLogButton}
+            <div>
+              <Button
+                aspect="basic"
+                size="small"
+                on:click={() => downloadDump()}>
+                <span>{$_('answer.download-log')}</span>
+              </Button>
+            </div>
           {/if}
           <div class="search-results">
             {#each $resultList as result, i (getResultUniqueKey(result))}
