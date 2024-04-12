@@ -67,6 +67,11 @@ export const routes: Routes = [
                 component: SearchComponent,
               },
               {
+                path: 'sync',
+                // eslint-disable-next-line @nx/enforce-module-boundaries
+                loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes').then((m) => m.SYNC_ROUTES),
+              },
+              {
                 path: 'manage',
                 component: KnowledgeBoxSettingsComponent,
               },
