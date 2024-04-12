@@ -391,7 +391,5 @@ export function downloadAsJSON(data: any) {
   element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data)));
   element.setAttribute('download', `dump-${new Date().toISOString()}.json`);
   element.style.display = 'none';
-  document.body.appendChild(element);
   element.click();
-  document.body.removeChild(element);
 }
