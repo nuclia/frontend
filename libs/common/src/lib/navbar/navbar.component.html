@@ -27,17 +27,6 @@
             <pa-icon name="upload"></pa-icon>
             <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
           </a>
-          @if ((inUpload | async) && (isAdminOrContrib | async) && !(invalidKey | async)) {
-            @for (sync of syncs | async; track sync.id) {
-              <a
-                [routerLink]="kbUrl + '/upload/sync/' + sync.id"
-                routerLinkActive="active"
-                class="nav-link sub-item sync">
-                <img [src]="sync.logo" />
-                <span class="nav-link-title">{{ sync.title }}</span>
-              </a>
-            }
-          }
           <a
             class="nav-link"
             data-cy="go-to-search"

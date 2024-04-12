@@ -12,11 +12,6 @@ const routes = [
         path: '',
         component: UploadDataComponent,
       },
-      {
-        path: 'sync',
-        // eslint-disable-next-line @nx/enforce-module-boundaries
-        loadChildren: () => import('../../../../sync/src/lib/sync.module').then((m) => m.SyncModule),
-      },
     ],
   },
 ];
