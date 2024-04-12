@@ -6,8 +6,8 @@ import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 import { BackendConfigurationService, FeaturesService, SDKService } from '@flaps/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { ResourceViewerService } from '../resources';
-import { StandaloneService } from '../services';
+import { ResourceViewerService } from '../../resources';
+import { StandaloneService } from '../../services';
 
 const searchWidgetId = 'search-bar';
 const searchResultsId = 'search-results';

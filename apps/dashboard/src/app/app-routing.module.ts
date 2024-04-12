@@ -189,7 +189,9 @@ const routes: Routes = [
               {
                 path: 'widget-generator',
                 loadChildren: () =>
-                  import('../../../../libs/common/src/lib/widgets/widgets.module').then((m) => m.WidgetsModule),
+                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.module').then(
+                    (m) => m.WidgetsModule,
+                  ),
               },
               {
                 path: 'prompt-lab',
