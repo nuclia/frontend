@@ -25,6 +25,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BlockedFeaturesComponent } from './account-details/blocked-features/blocked-features.component';
 import { FormFooterComponent } from './form-footer/form-footer.component';
 import { FeatureNamePipe } from './account-details/blocked-features/feature-name.pipe';
+import { TokenConsumptionComponent } from './account-details/token-consumption/token-consumption.component';
 
 const ROUTES: Routes = [
   {
@@ -59,6 +60,10 @@ const ROUTES: Routes = [
           {
             path: 'limits',
             component: LimitsComponent,
+          },
+          {
+            path: 'tokens',
+            component: TokenConsumptionComponent,
           },
           {
             path: 'users',
