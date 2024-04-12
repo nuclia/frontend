@@ -8,6 +8,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceViewerService } from '../../resources';
 import { StandaloneService } from '../../services';
+import { MODELS_SUPPORTING_VISION } from '../search-widget.models';
 
 const searchWidgetId = 'search-bar';
 const searchResultsId = 'search-results';
@@ -36,18 +37,21 @@ export class SearchComponent implements OnInit, OnDestroy {
         kb.getLabels().pipe(map((labelSets) => Object.keys(labelSets).length > 0)),
         kb.training.hasModel(TrainingType.classifier),
         this.features.knowledgeGraph.pipe(take(1)),
+        kb.getConfiguration(),
       ]).pipe(
-        map(([hasLabels, hasClassifier, isKnowledgeGraphEnabled]) => ({
+        map(([hasLabels, hasClassifier, isKnowledgeGraphEnabled, config]) => ({
           kb,
           account,
           hasLabels,
           hasClassifier,
           isChatEnabled: toggleAnswerEnabled,
           isKnowledgeGraphEnabled,
+          config,
         })),
       ),
     ),
-    map(({ kb, account, hasLabels, hasClassifier, isChatEnabled, isKnowledgeGraphEnabled }) => {
+    map(({ kb, account, hasLabels, hasClassifier, isChatEnabled, isKnowledgeGraphEnabled, config }) => {
+      const isVisionModel = MODELS_SUPPORTING_VISION.includes(config['generative_model'] || '');
       let featureList = !hasLabels
         ? DEFAULT_FEATURES_LIST.filter((feature) => feature !== 'filter')
         : DEFAULT_FEATURES_LIST;
@@ -62,6 +66,10 @@ export class SearchComponent implements OnInit, OnDestroy {
       if (isKnowledgeGraphEnabled) {
         features += ',knowledgeGraph';
       }
+      let ragImagesStrategies: string[] = [];
+      if (isVisionModel) {
+        ragImagesStrategies = ['page_image|4', 'paragraph_image'];
+      }
       const zone = this.sdk.nuclia.options.standalone ? `standalone="true"` : `zone="${this.sdk.nuclia.options.zone}"`;
       return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-bar id="${searchWidgetId}"
     knowledgebox="${kb.id}"
@@ -74,6 +82,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     account="${account.id}"
     lang="${this.translation.currentLang}"
     features="${features}"
+    ${ragImagesStrategies.length > 0 ? `rag_images_strategies="${ragImagesStrategies.join(',')}"` : ''}
   ></nuclia-search-bar>`);
     }),
   );
