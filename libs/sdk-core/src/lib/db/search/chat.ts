@@ -95,15 +95,16 @@ export function chat(
                 try {
                   citations = JSON.parse(atob(citationsBase64));
                 } catch (e) {
-                  console.warn(e);
+                  // block is not complete yet
                 }
               }
               if (relationsBase64) {
                 try {
                   relations = JSON.parse(atob(relationsBase64));
                   sources.relations = relations;
+                  console.log('relations', relations);
                 } catch (e) {
-                  console.warn(e);
+                  // block is not complete yet
                 }
               }
             }
