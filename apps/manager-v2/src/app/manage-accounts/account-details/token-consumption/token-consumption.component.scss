@@ -1,0 +1,14 @@
+.body-s {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+
+  > .body-m {
+    flex: 1 0 auto;
+  }
+}
