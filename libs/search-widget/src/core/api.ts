@@ -112,6 +112,7 @@ export const initNuclia = (
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Chat.Features.PARAGRAPHS);
   }
   STATE = state;
+  nucliaApi.events?.log('widgetOptions', widgetOptions);
 
   return nucliaApi;
 };

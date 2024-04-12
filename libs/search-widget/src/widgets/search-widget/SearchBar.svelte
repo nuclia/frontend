@@ -7,6 +7,7 @@
   import { initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import {
+    downloadAsJSON,
     getRAGImageStrategies,
     getRAGStrategies,
     injectCustomCss,
@@ -41,7 +42,7 @@
   import type { WidgetFilters } from '../../core';
   import { InfoCard } from '../../components';
   import { IconButton, Modal } from '../../common';
-  import { BehaviorSubject, delay, filter, firstValueFrom, map } from 'rxjs';
+  import { BehaviorSubject, delay, filter, firstValueFrom, map, take } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -120,6 +121,13 @@
       account,
       not_enough_data_message,
     });
+  }
+
+  export function dump() {
+    nucliaAPI.events
+      ?.dump()
+      .pipe(take(1))
+      .subscribe((data) => downloadAsJSON(data));
   }
 
   const dispatch = createEventDispatcher();
