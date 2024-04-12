@@ -26,6 +26,7 @@ describe('SearchComponent', () => {
             training: {
               hasModel: jest.fn(() => of(true)),
             },
+            getConfiguration: jest.fn(() => of({})),
           } as any as WritableKnowledgeBox),
           currentAccount: of({ id: 'test' } as Account),
           nuclia: {
