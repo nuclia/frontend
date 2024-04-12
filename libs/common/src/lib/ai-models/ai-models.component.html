@@ -43,7 +43,8 @@
         <stf-answer-generation
           [kb]="kb"
           [learningConfigurations]="learningConfigurations"
-          [kbConfigBackup]="kbConfigBackup"></stf-answer-generation>
+          [kbConfigBackup]="kbConfigBackup"
+          [unsupportedModels]="unsupportedModels"></stf-answer-generation>
       }
       @case ('summarization') {
         @if (isSummarizationEnabled | async) {

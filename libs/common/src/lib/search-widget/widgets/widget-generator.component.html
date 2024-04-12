@@ -271,7 +271,9 @@
                               "
                               (valueChange)="changeLLM()">
                               @for (model of generativeModels; track model.value) {
-                                <pa-option [value]="model.value">
+                                <pa-option
+                                  [value]="model.value"
+                                  [disabled]="unsupportedModels.includes(model.value)">
                                   {{ model | learningOption: 'generative_model' }}
                                   @if (defaultModelFromSettings === model.value) {
                                     ({{
