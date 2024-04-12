@@ -10,7 +10,6 @@
 - [Widget](#widget)
 - [SDK](#sdk)
 - [Sistema](#sistema)
-- [Protobuf library](#protobuf-library)
 - [CI/CD Deployment](#cicd-deployment)
 - [Maintenance page](#maintenance-page)
 
@@ -147,28 +146,6 @@ To update the glyphs sprite:
 ./libs/sistema/scripts/update_icons.sh
 ```
 
-## Protobuf library
-
-Get lastest proto files from nucliadb (assuming nucliadb and frontend are in 2 siblings folders):
-
-```sh
-cd libs/sdk-core/protobuf
-./update.sh
-```
-
-Build the library:
-
-```sh
-cd libs/sdk-core/protobuf
-./build.sh
-```
-
-Publish the library:
-
-```sh
-cd libs/sdk-core/protobuf/build/protobuf
-npm publish
-```
 
 ## CI/CD Deployment
 
