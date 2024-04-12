@@ -92,7 +92,9 @@ export const routes: Routes = [
                 path: 'widget-generator',
                 loadChildren: () =>
                   // eslint-disable-next-line @nx/enforce-module-boundaries
-                  import('../../../../libs/common/src/lib/widgets/widgets.module').then((m) => m.WidgetsModule),
+                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.module').then(
+                    (m) => m.WidgetsModule,
+                  ),
               },
             ],
           },

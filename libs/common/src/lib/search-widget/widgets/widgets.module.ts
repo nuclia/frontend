@@ -17,7 +17,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { WidgetGeneratorComponent } from './widget-generator.component';
 import { CopilotModalComponent } from './copilot/copilot-modal.component';
 import { LabelModule } from '@flaps/core';
-import { LearningOptionPipe } from '../pipes/learning-option.pipe';
+import { LearningOptionPipe } from '../../pipes/learning-option.pipe';
 import { InfoCardComponent } from '@nuclia/sistema';
 
 const routes = [

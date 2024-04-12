@@ -25,6 +25,7 @@ import {
 import { SisModalService } from '@nuclia/sistema';
 import { CopilotData, CopilotModalComponent } from './copilot/copilot-modal.component';
 import { LearningConfigurationOption, RagImageStrategyName, RagStrategyName } from '@nuclia/core';
+import { MODELS_SUPPORTING_VISION } from '../search-widget.models';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
@@ -49,7 +50,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
 
   generativeModels: LearningConfigurationOption[] = [];
-  modelsSupportingVision = ['chatgpt-vision', 'gemini-1-5-pro-vision'];
+  modelsSupportingVision = MODELS_SUPPORTING_VISION;
   snippetOverlayOpen = false;
   snippet = '';
   snippetPreview: SafeHtml = '';

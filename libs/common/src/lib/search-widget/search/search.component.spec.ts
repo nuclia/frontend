@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { PaTogglesModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { ResourceViewerService } from '../resources/resource-viewer.service';
+import { ResourceViewerService } from '../../resources/resource-viewer.service';
 import { StandaloneService } from '@flaps/common';
 
 describe('SearchComponent', () => {
@@ -26,6 +26,7 @@ describe('SearchComponent', () => {
             training: {
               hasModel: jest.fn(() => of(true)),
             },
+            getConfiguration: jest.fn(() => of({})),
           } as any as WritableKnowledgeBox),
           currentAccount: of({ id: 'test' } as Account),
           nuclia: {
