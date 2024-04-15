@@ -1,98 +1,161 @@
 <h3>Token consumption</h3>
 
-<p class="flex-row">
-  <span class="body-m">Data aggregated for:</span>
-  <nsi-dropdown-button
-    [popupRef]="period"
-    aspect="basic">
-    Last 30 days
-  </nsi-dropdown-button>
-  <pa-dropdown #period>
-    <pa-option value="month">Last 7 days</pa-option>
-    <pa-option value="month">Last 30 days</pa-option>
-    <pa-option value="month">Last 12 months</pa-option>
-  </pa-dropdown>
-</p>
+<div class="flex-row gap-below">
+  <div class="body-m">
+    <strong>Total Nuclia tokens: 926</strong>
+  </div>
+  <div class="flex-row">
+    <span class="body-m">Data aggregated for:</span>
+    <nsi-dropdown-button
+      [popupRef]="period"
+      aspect="basic">
+      Last 30 days
+    </nsi-dropdown-button>
+  </div>
+</div>
+
+<pa-dropdown #period>
+  <pa-option value="month">Last 7 days</pa-option>
+  <pa-option value="month">Last 30 days</pa-option>
+  <pa-option value="month">Last 12 months</pa-option>
+</pa-dropdown>
+
 <pa-table
   border
-  columns="2fr repeat(6, 1fr)">
+  columns="2fr repeat(7, 1fr)">
   <pa-table-header>
-    <pa-table-cell header></pa-table-cell>
+    <pa-table-cell
+      class="right-border"
+      header></pa-table-cell>
     <pa-table-cell header>Raw usage input</pa-table-cell>
     <pa-table-cell header>Raw usage output</pa-table-cell>
-    <pa-table-cell header>Raw usage requests</pa-table-cell>
+    <pa-table-cell
+      header
+      class="right-border">
+      Raw usage requests
+    </pa-table-cell>
     <pa-table-cell header>Nuclia tokens from input</pa-table-cell>
     <pa-table-cell header>Nuclia tokens from output</pa-table-cell>
-    <pa-table-cell header>Nuclia tokens from requests</pa-table-cell>
+    <pa-table-cell
+      class="right-border"
+      header>
+      Nuclia tokens from requests
+    </pa-table-cell>
+    <pa-table-cell header>Total Nuclia tokens</pa-table-cell>
   </pa-table-header>
   <pa-table-row>
-    <pa-table-cell>
+    <pa-table-cell class="right-border">
       <span class="body-s">
         <strong>summarize predict chatgpt4</strong>
         <small>v20240409</small>
       </span>
     </pa-table-cell>
-    <pa-table-cell><span class="body-s">10</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">20</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">2</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">140</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">280</span></pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">10</span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">20</span></pa-table-cell>
+    <pa-table-cell
+      center
+      class="right-border">
+      <span class="body-s">2</span>
+    </pa-table-cell>
+    <pa-table-cell center><span class="body-s">140</span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">280</span></pa-table-cell>
+    <pa-table-cell
+      class="right-border"
+      center>
+      <span class="body-s"></span>
+    </pa-table-cell>
+    <pa-table-cell center><strong class="body-s">420</strong></pa-table-cell>
   </pa-table-row>
   <pa-table-row>
-    <pa-table-cell>
+    <pa-table-cell class="right-border">
       <span class="body-s">
         <strong>summarize predict chatgpt3</strong>
         <small>v20240409</small>
       </span>
     </pa-table-cell>
-    <pa-table-cell><span class="body-s">10</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">20</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">2</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">140</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">280</span></pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">10</span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">20</span></pa-table-cell>
+    <pa-table-cell
+      center
+      class="right-border">
+      <span class="body-s">2</span>
+    </pa-table-cell>
+    <pa-table-cell center><span class="body-s">140</span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">280</span></pa-table-cell>
+    <pa-table-cell
+      class="right-border"
+      center>
+      <span class="body-s"></span>
+    </pa-table-cell>
+    <pa-table-cell center><strong class="body-s">420</strong></pa-table-cell>
   </pa-table-row>
   <pa-table-row>
-    <pa-table-cell>
+    <pa-table-cell class="right-border">
       <span class="body-s">
         <strong>search nucliadb</strong>
         <small>v20240409</small>
       </span>
     </pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell><span class="body-s">40</span></pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell><span class="body-s">2</span></pa-table-cell>
+    <pa-table-cell center><span class="body-s"></span></pa-table-cell>
+    <pa-table-cell center><span class="body-s"></span></pa-table-cell>
+    <pa-table-cell
+      center
+      class="right-border">
+      <span class="body-s">40</span>
+    </pa-table-cell>
+    <pa-table-cell center><span class="body-s"></span></pa-table-cell>
+    <pa-table-cell center><span class="body-s"></span></pa-table-cell>
+    <pa-table-cell
+      class="right-border"
+      center>
+      <span class="body-s">2</span>
+    </pa-table-cell>
+    <pa-table-cell center><strong class="body-s">2</strong></pa-table-cell>
   </pa-table-row>
   <pa-table-row>
-    <pa-table-cell>
+    <pa-table-cell class="right-border">
       <span class="body-s">
         <strong>extract_tables predict</strong>
         <small>v20240409</small>
       </span>
     </pa-table-cell>
-    <pa-table-cell><span class="body-s">4</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">2</span></pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell><span class="body-s">8</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">4</span></pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">4</span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">2</span></pa-table-cell>
+    <pa-table-cell
+      center
+      class="right-border">
+      <span class="body-s"></span>
+    </pa-table-cell>
+    <pa-table-cell center><span class="body-s">8</span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">4</span></pa-table-cell>
+    <pa-table-cell
+      class="right-border"
+      center>
+      <span class="body-s"></span>
+    </pa-table-cell>
+    <pa-table-cell center><strong class="body-s">12</strong></pa-table-cell>
   </pa-table-row>
   <pa-table-row last>
-    <pa-table-cell>
+    <pa-table-cell class="right-border">
       <span class="body-s">
         <strong>extract_tables processing</strong>
         <small>v20240409</small>
       </span>
     </pa-table-cell>
-    <pa-table-cell><span class="body-s">6</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">12</span></pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell><span class="body-s">24</span></pa-table-cell>
-    <pa-table-cell><span class="body-s">48</span></pa-table-cell>
-    <pa-table-cell><span class="body-s"></span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">6</span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">12</span></pa-table-cell>
+    <pa-table-cell
+      center
+      class="right-border">
+      <span class="body-s"></span>
+    </pa-table-cell>
+    <pa-table-cell center><span class="body-s">24</span></pa-table-cell>
+    <pa-table-cell center><span class="body-s">48</span></pa-table-cell>
+    <pa-table-cell
+      class="right-border"
+      center>
+      <span class="body-s"></span>
+    </pa-table-cell>
+    <pa-table-cell center><strong class="body-s">72</strong></pa-table-cell>
   </pa-table-row>
 </pa-table>

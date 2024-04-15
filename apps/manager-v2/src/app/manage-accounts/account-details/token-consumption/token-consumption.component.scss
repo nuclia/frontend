@@ -1,14 +1,24 @@
+@import 'apps/manager-v2/src/variables';
+
 .body-s {
   display: flex;
   flex-direction: column;
+}
+strong.body-s {
+  font-weight: 600;
 }
 
 .flex-row {
   align-items: center;
   display: flex;
-  gap: 8px;
+  gap: rhythm(1);
+  justify-content: space-between;
 
-  > .body-m {
+  .grow {
     flex: 1 0 auto;
   }
+}
+
+.gap-below {
+  margin-bottom: rhythm(1.5);
 }
