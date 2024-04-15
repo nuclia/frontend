@@ -296,7 +296,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     options?: ChatOptions,
     callback?: (answer: Chat.Answer | IErrorResponse) => void,
   ): Observable<Chat.Answer | IErrorResponse> | Observable<null> {
-    const chatRequest = chat(this.nuclia, this.path, query, context, features, options);
+    const chatRequest = chat(this.nuclia, this.id, this.path, query, context, features, options);
     if (callback) {
       chatRequest.subscribe((response) => callback(response));
       return of(null);

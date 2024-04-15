@@ -10,6 +10,7 @@ const START_OF_CITATIONS = '_CIT_';
 
 export function chat(
   nuclia: INuclia,
+  kbid: string,
   path: string,
   query: string,
   context: Chat.ContextEntry[] = [],
@@ -37,6 +38,7 @@ export function chat(
     features: features.length > 0 ? features : undefined,
     ...noEmptyValues,
   };
+  body['shards'] = nuclia.currentShards?.[kbid] || [];
   nuclia.events?.log('lastQuery', { endpoint, params: body, nucliaOptions: nuclia.options });
   return synchronous
     ? nuclia.rest
@@ -114,6 +116,11 @@ export function chat(
         catchError((error) =>
           of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse),
         ),
-        tap((res) => nuclia.events?.log('lastResults', res)),
+        tap((res) => {
+          nuclia.events?.log('lastResults', res);
+          if (res.type === 'answer' && res.sources) {
+            nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.sources.shards || [] };
+          }
+        }),
       );
 }
