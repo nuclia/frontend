@@ -16,7 +16,7 @@ import type {
 import { Chat, ExtractedDataTypes, Nuclia, ResourceFieldProperties, ResourceProperties, Search } from '@nuclia/core';
 import { filter, forkJoin, from, map, merge, Observable, of, switchMap, take, tap } from 'rxjs';
 import type { EntityGroup, WidgetOptions } from './models';
-import { entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
+import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
 import { _, translateInstant } from './i18n';
 import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
@@ -112,6 +112,7 @@ export const initNuclia = (
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Chat.Features.PARAGRAPHS);
   }
   STATE = state;
+  nucliaApi.events?.log('widgetOptions', widgetOptions);
 
   return nucliaApi;
 };
@@ -387,4 +388,11 @@ export function getEvents(): IEvents {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.events;
+}
+
+export function downloadDump() {
+  nucliaApi?.events
+    ?.dump()
+    .pipe(take(1))
+    .subscribe((data) => downloadAsJSON(data));
 }

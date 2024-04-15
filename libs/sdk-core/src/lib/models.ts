@@ -41,8 +41,10 @@ export interface INuclia {
 }
 
 export interface IEvents {
-  emit<T>(eventName: string, data: T): void;
-  on<T>(eventName: string): Observable<T>;
+  emit<T = any>(eventName: string, data: T): void;
+  on<T = any>(eventName: string): Observable<T>;
+  log(eventName: string, data: any): void;
+  dump(): Observable<{ [name: string]: any }>;
 }
 
 export interface IAuthentication {

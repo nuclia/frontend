@@ -17,6 +17,7 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   noBM25forChat: false,
   hideLogo: false,
   knowledgeGraph: false,
+  dumpLog: true,
 };
 
 export const DEFAULT_FEATURES_LIST: string[] = Object.entries(DEFAULT_FEATURES)

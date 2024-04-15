@@ -1,4 +1,4 @@
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
 import { Chat, Citations } from './chat.models';
 import { ChatOptions, Search } from './search.models';
@@ -37,6 +37,7 @@ export function chat(
     features: features.length > 0 ? features : undefined,
     ...noEmptyValues,
   };
+  nuclia.events?.log('lastQuery', { endpoint, params: body, nucliaOptions: nuclia.options });
   return synchronous
     ? nuclia.rest
         .post<{ answer: string; relations: Search.Relations; results: Search.FindResults; citations: Citations }>(
@@ -57,6 +58,7 @@ export function chat(
               id: '',
             } as Chat.Answer;
           }),
+          tap((res) => nuclia.events?.log('lastResults', res)),
         )
     : nuclia.rest.getStreamedResponse(endpoint, body).pipe(
         map(({ data, incomplete, headers }) => {
@@ -93,15 +95,16 @@ export function chat(
                 try {
                   citations = JSON.parse(atob(citationsBase64));
                 } catch (e) {
-                  console.warn(e);
+                  // block is not complete yet
                 }
               }
               if (relationsBase64) {
                 try {
                   relations = JSON.parse(atob(relationsBase64));
                   sources.relations = relations;
+                  console.log('relations', relations);
                 } catch (e) {
-                  console.warn(e);
+                  // block is not complete yet
                 }
               }
             }
@@ -111,5 +114,6 @@ export function chat(
         catchError((error) =>
           of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse),
         ),
+        tap((res) => nuclia.events?.log('lastResults', res)),
       );
 }

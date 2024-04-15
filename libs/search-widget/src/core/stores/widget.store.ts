@@ -27,6 +27,7 @@ export const isKnowledgeGraphEnabled: Observable<boolean> = widgetFeatures.pipe(
 export const autocompleteFromNERs: Observable<boolean> = widgetFeatures.pipe(
   map((features) => !!features?.autocompleteFromNERs),
 );
+export const hasDumpLogButton: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.dumpLog));
 export const displayMetadata: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.displayMetadata));
 export const hideThumbnails: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideThumbnails));
 export const hideLogo: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideLogo));

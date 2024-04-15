@@ -4,9 +4,10 @@
 
 <script lang="ts">
   import type { KBStates, Nuclia, RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
-  import { initNuclia, resetNuclia } from '../../core/api';
+  import { downloadDump, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import {
+    downloadAsJSON,
     getRAGImageStrategies,
     getRAGStrategies,
     injectCustomCss,
@@ -41,7 +42,7 @@
   import type { WidgetFilters } from '../../core';
   import { InfoCard } from '../../components';
   import { IconButton, Modal } from '../../common';
-  import { BehaviorSubject, delay, filter, firstValueFrom, map } from 'rxjs';
+  import { BehaviorSubject, delay, filter, firstValueFrom, map, take } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -120,6 +121,10 @@
       account,
       not_enough_data_message,
     });
+  }
+
+  export function dump() {
+    downloadDump();
   }
 
   const dispatch = createEventDispatcher();

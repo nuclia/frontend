@@ -1,5 +1,6 @@
 {
 	"answer.chat-action": "Preguntar más",
+	"answer.download-log": "Descargar registro",
 	"answer.error.rephrasing": "Lo siento, no puedo procesar esta pregunta, tal vez reformularla ayudaría.",
 	"answer.input.label": "Entrada de chat",
 	"answer.no-citations": "El LLM no pudo indicar explícitamente las fuentes que se utilizaron para producir esta respuesta.",

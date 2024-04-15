@@ -32,6 +32,7 @@ export const find = (
 
   params['shards'] = nuclia.currentShards?.[kbid] || [];
   const endpoint = `${path}/find`;
+  nuclia.events?.log('lastQuery', { endpoint, params, nucliaOptions: nuclia.options });
   const searchMethod = useGet
     ? nuclia.rest.get<Response>(`${endpoint}?${serialize(params, others)}`, undefined, true)
     : nuclia.rest.post<Response>(endpoint, { ...params, ...others }, undefined, true);
@@ -70,6 +71,7 @@ export const find = (
     ),
     map((res) => (res.type === 'error' ? res : ({ ...res, type: 'findResults' } as Search.FindResults))),
     tap((res) => {
+      nuclia.events?.log('lastResults', res);
       if (res.type === 'findResults' && res.shards) {
         nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
       }
@@ -97,10 +99,11 @@ export const search = (
 
   params['shards'] = nuclia.currentShards?.[kbid] || [];
 
+  nuclia.events?.log('lastQuery', { endpoint: `${path}/search`, params, nucliaOptions: nuclia.options });
   const searchMethod = useGet
     ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/search?${serialize(params, others)}`)
     : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/search`, { ...params, ...others });
-  return manageSearchRequest(nuclia, kbid, searchMethod);
+  return manageSearchRequest(nuclia, kbid, searchMethod).pipe(tap((res) => nuclia.events?.log('lastResults', res)));
 };
 
 export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: SearchOptions, useGet?: boolean) => {

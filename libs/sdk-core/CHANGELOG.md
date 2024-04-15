@@ -1,10 +1,11 @@
-# 1.14.6 (unreleased)
+# 1.14.6 (2024-04-12)
 
 ### Improvements
 
 - Improve reliability of file uploads
-  - Add `maxWaitOn429` parameter to `uploadFile` and `TUSuploadFile` methods
-  - Add `limitExceeded` field to file upload status
+- Add `maxWaitOn429` parameter to `uploadFile` and `TUSuploadFile` methods
+- Add `limitExceeded` field to file upload status
+- Method to dump all the last logged events (last query, last results, etc.) and download it as JSON file
 
 # 1.14.5 (2024-04-08)
 
