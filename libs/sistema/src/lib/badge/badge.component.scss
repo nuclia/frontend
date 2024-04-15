@@ -20,6 +20,11 @@
     color: $color-tertiary-strong;
   }
 
+  &.success {
+    background-color: $color-success-lightest;
+    color: $color-success-strong;
+  }
+
   .text {
     max-width: rhythm(9);
   }
