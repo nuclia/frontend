@@ -11,7 +11,9 @@
           formControlName="summary_model"
           id="summary_model">
           @for (option of options; track option.value) {
-            <pa-radio [value]="option.value">
+            <pa-radio
+              [value]="option.value"
+              [disabled]="unsupportedModels.includes(option.value)">
               {{ option | learningOption: 'summary_model' }}
             </pa-radio>
           }

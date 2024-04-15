@@ -66,23 +66,6 @@ const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}
 
-function getRestrictedModelList(allSchema: LearningConfigurations): LearningConfigurations {
-  return Object.entries(allSchema).reduce((schemas, [key, config]) => {
-    if (key === 'generative_model' || key === 'summary_model') {
-      schemas[key] = {
-        ...config,
-        options: (config.options || []).filter(
-          (option) =>
-            option.name === 'CHATGPT_AZURE3' || option.name === 'CHATGPT_AZURE' || option.name === 'NO_GENERATION',
-        ),
-      };
-    } else {
-      schemas[key] = config;
-    }
-    return schemas;
-  }, {} as LearningConfigurations);
-}
-
 /**
  * Provides access to all the Knowledge Box contents and services in read mode.
  *
@@ -624,22 +607,9 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   getLearningSchema(): Observable<LearningConfigurations> {
-    return this.nuclia.rest.get<LearningConfigurations>(`/kb/${this.id}/schema`).pipe(
-      switchMap((config) => {
-        const allSchema = normalizeSchemaProperty(config);
-        return this.nuclia.options.standalone
-          ? of(allSchema)
-          : this.nuclia.db
-              .getAccount(this.accountId)
-              .pipe(
-                map((account) =>
-                  account.type === 'stash-starter' || account.type === 'v3starter'
-                    ? getRestrictedModelList(allSchema)
-                    : allSchema,
-                ),
-              );
-      }),
-    );
+    return this.nuclia.rest
+      .get<LearningConfigurations>(`/kb/${this.id}/schema`)
+      .pipe(map((config) => normalizeSchemaProperty(config)));
   }
 
   getUsers(accountSlug: string): Observable<FullKbUser[]> {

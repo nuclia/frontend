@@ -17,9 +17,10 @@ import { SemanticModelComponent } from './semantic-model/semantic-model.componen
 import { AnonymizationComponent } from './anonymization/anonymization.component';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { forkJoin, of, Subject } from 'rxjs';
+import { forkJoin, of, Subject, take } from 'rxjs';
 import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { getUnsupportedGenerativeModels } from './ai-models.utils';
 
 @Component({
   selector: 'stf-ai-models',
@@ -54,6 +55,7 @@ export class AiModelsComponent implements OnInit {
   learningConfigurations?: LearningConfigurations;
   kbConfigBackup?: { [key: string]: any };
   noKbConfig = false;
+  unsupportedModels: string[] = [];
 
   isSummarizationEnabled = this.features.summarization;
   isAnonymizationEnabled = this.features.kbAnonymization;
@@ -68,15 +70,26 @@ export class AiModelsComponent implements OnInit {
     this.sdk.currentKb
       .pipe(
         tap((kb) => (this.kb = kb)),
-        switchMap((kb) => forkJoin([kb.getConfiguration().pipe(catchError(() => of(null))), kb.getLearningSchema()])),
+        switchMap((kb) =>
+          forkJoin([
+            kb.getConfiguration().pipe(catchError(() => of(null))),
+            kb.getLearningSchema(),
+            this.sdk.currentAccount.pipe(take(1)),
+          ]),
+        ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(([kbConfig, learningSchema]) => {
+      .subscribe(([kbConfig, learningSchema, account]) => {
         if (kbConfig === null) {
           this.noKbConfig = true;
         } else {
           this.kbConfigBackup = kbConfig;
           this.learningConfigurations = learningSchema;
+          this.unsupportedModels = getUnsupportedGenerativeModels(
+            this.learningConfigurations,
+            this.kbConfigBackup['semantic_model'],
+            account.type,
+          );
         }
         this.cdr.markForCheck();
       });

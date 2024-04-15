@@ -26,6 +26,7 @@ import { SisModalService } from '@nuclia/sistema';
 import { CopilotData, CopilotModalComponent } from './copilot/copilot-modal.component';
 import { LearningConfigurationOption, RagImageStrategyName, RagStrategyName } from '@nuclia/core';
 import { MODELS_SUPPORTING_VISION } from '../search-widget.models';
+import { getUnsupportedGenerativeModels } from '../../ai-models/ai-models.utils';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
@@ -51,6 +52,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   generativeModels: LearningConfigurationOption[] = [];
   modelsSupportingVision = MODELS_SUPPORTING_VISION;
+  unsupportedModels: string[] = [];
   snippetOverlayOpen = false;
   snippet = '';
   snippetPreview: SafeHtml = '';
@@ -307,10 +309,13 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         takeUntil(this.unsubscribeAll),
-        switchMap((kb) => forkJoin([kb.getLearningSchema(), kb.getConfiguration()])),
+        switchMap((kb) =>
+          forkJoin([kb.getLearningSchema(), kb.getConfiguration(), this.sdk.currentAccount.pipe(take(1))]),
+        ),
       )
-      .subscribe(([schema, config]) => {
+      .subscribe(([schema, config, account]) => {
         this.generativeModels = schema['generative_model']?.options || [];
+        this.unsupportedModels = getUnsupportedGenerativeModels(schema, config['semantic_model'], account.type);
         this.defaultModelFromSettings = config['generative_model'] || '';
         const promptKey = this.generativeModels.find((model) => model.value === this.defaultModelFromSettings)
           ?.user_prompt;

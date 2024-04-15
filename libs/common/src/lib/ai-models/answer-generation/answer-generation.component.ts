@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InfoCardComponent, StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -44,6 +44,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
   popoverHelp: { [key: string]: string } = {
     'chatgpt-vision': 'kb.ai-models.answer-generation.select-llm.help.chatgpt-vision',
   };
+  @Input() unsupportedModels: string[] = [];
 
   configForm = new FormGroup({
     generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
