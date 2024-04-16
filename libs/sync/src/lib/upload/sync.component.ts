@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { SyncService } from '../sync/sync.service';
+import { SyncService } from '../logic/sync.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';

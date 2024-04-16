@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { SyncService } from '../sync/sync.service';
+import { SyncService } from '../logic/sync.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, of, switchMap, take, tap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { Field } from '../sync/models';
+import { Field } from '../logic/models';
 import { SDKService } from '@flaps/core';
 
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);

@@ -7,9 +7,9 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { SyncService } from '../../sync/sync.service';
-import { Subject, catchError, filter, map, of, repeat, startWith, switchMap, take, takeUntil, tap, timer } from 'rxjs';
-import { LogEntity } from '../../sync/models';
+import { SyncService } from '../../logic/sync.service';
+import { catchError, filter, map, of, repeat, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { LogEntity } from '../../logic/models';
 import { NavigationEnd, Router } from '@angular/router';
 import { SisToastService } from '@nuclia/sistema';
 

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { filter, Subject, switchMap, takeUntil, timer } from 'rxjs';
-import { SyncService } from './sync';
+import { SyncService } from './logic';
 
 @Component({
   standalone: true,
@@ -12,7 +12,7 @@ import { SyncService } from './sync';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SyncComponent implements OnInit, OnDestroy {
+export class SyncRootComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private syncService = inject(SyncService);
 

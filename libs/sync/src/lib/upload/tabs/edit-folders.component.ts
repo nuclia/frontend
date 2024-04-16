@@ -9,8 +9,8 @@ import {
 } from '@angular/core';
 import { catchError, forkJoin, map, Observable, of, scan, share, Subject, switchMap, take, tap } from 'rxjs';
 import { SelectionModel } from '@angular/cdk/collections';
-import { SearchResults, SyncItem } from '../../sync/models';
-import { SyncService } from '../../sync/sync.service';
+import { SearchResults, SyncItem } from '../../logic/models';
+import { SyncService } from '../../logic/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 
 const SLASH_REG = /\//g;

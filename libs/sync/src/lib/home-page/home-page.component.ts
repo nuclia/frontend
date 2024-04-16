@@ -12,8 +12,8 @@ import {
 import { map, Subject, take, takeUntil } from 'rxjs';
 import { BadgeComponent, DropdownButtonComponent } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncServerType, SyncService } from '../sync';
-import { ConnectorComponent } from '../connector';
+import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncServerType, SyncService } from '../logic';
+import { ConnectorComponent } from './connector';
 
 @Component({
   standalone: true,

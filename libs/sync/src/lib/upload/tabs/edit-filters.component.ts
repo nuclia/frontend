@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { switchMap, take } from 'rxjs';
-import { SyncService } from '../../sync/sync.service';
+import { SyncService } from '../../logic/sync.service';
 import { SisToastService } from '@nuclia/sistema';
-import { Filters } from '../../sync/models';
+import { Filters } from '../../logic/models';
 import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({

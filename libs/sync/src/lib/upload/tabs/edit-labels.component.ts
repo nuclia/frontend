@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { map, switchMap, take } from 'rxjs';
-import { SyncService } from '../../sync/sync.service';
-import { SisToastService, getSelectionKey } from '@nuclia/sistema';
+import { SyncService } from '../../logic/sync.service';
+import { getClassificationFromSelection, getSelectionKey, SisToastService } from '@nuclia/sistema';
 import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
-import { getClassificationFromSelection } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsy-edit-labels',

@@ -11,14 +11,14 @@ import {
   SyncBasicData,
 } from './models';
 import { BackendConfigurationService, NotificationService, SDKService } from '@flaps/core';
-import { SitemapConnector } from './sources/sitemap';
+import { SitemapConnector } from './connectors/sitemap';
 import { NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { HttpClient } from '@angular/common/http';
-import { FolderConnector } from './sources/folder';
-import { SharepointImpl } from './sources/sharepoint';
-import { ConfluenceConnector } from './sources/confluence';
-import { RSSConnector } from './sources/rss';
-import { OAuthConnector } from './sources/oauth';
+import { FolderConnector } from './connectors/folder';
+import { SharepointImpl } from './connectors/sharepoint';
+import { ConfluenceConnector } from './connectors/confluence';
+import { RSSConnector } from './connectors/rss';
+import { OAuthConnector } from './connectors/oauth';
 
 export type SyncServerType = 'desktop' | 'server';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
