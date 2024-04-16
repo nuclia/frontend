@@ -1,0 +1,31 @@
+.sw-feedback {
+  display: flex;
+
+  .dropdown {
+    background-color: var(--color-neutral-lightest);
+    padding: var(--rhythm-0_5) var(--rhythm-2) var(--rhythm-2);
+  }
+
+  .close {
+    margin-bottom: var(--rhythm-0_5);
+    text-align: right;
+  }
+
+  textarea {
+    box-sizing: border-box;
+    border-color: var(--color-neutral-light);
+    font-family: inherit;
+    font-size: var(--font-size-medium);
+    padding: var(--rhythm-1);
+    width: 100%;
+    &:focus {
+      border-color: var(--color-primary-regular);
+      outline: 0;
+    }
+  }
+
+  .submit {
+    margin-top: var(--rhythm-1_5);
+    text-align: right;
+  }
+}

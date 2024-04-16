@@ -169,11 +169,11 @@ export const getAnswer = (
   );
 };
 
-export const sendFeedback = (answer: Chat.Answer, approved: boolean) => {
+export const sendFeedback = (answer: Chat.Answer, approved: boolean, comment?: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.feedback(answer.id, approved);
+  return nucliaApi.knowledgeBox.feedback(answer.id, approved, comment);
 };
 
 export const searchInResource = (
