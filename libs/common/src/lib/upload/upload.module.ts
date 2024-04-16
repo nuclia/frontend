@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FileUploadModule, STFPipesModule, LabelModule } from '@flaps/core';
+import { FileUploadModule, LabelModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
 import { CsvSelectComponent } from './csv-select/csv-select.component';
@@ -32,7 +32,6 @@ import { UploadOptionComponent } from './upload-data/upload-option/upload-option
 import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-sources.component';
 import { UploadLayoutComponent } from './upload-data/upload-layout.component';
 import { UploadRoutingModule } from './upload-routing.module';
-import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module';
 
 @NgModule({
   imports: [
@@ -58,7 +57,6 @@ import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module
     UploadRoutingModule,
     UploadBarComponent,
     CsvSelectComponent,
-    ConnectorsModule,
     InfoCardComponent,
   ],
   declarations: [

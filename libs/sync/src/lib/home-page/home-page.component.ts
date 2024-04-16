@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   PaButtonModule,
@@ -13,7 +13,7 @@ import { map, Subject, take, takeUntil } from 'rxjs';
 import { BadgeComponent, DropdownButtonComponent } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncServerType, SyncService } from '../sync';
-import { ConnectorComponent } from '../connectors';
+import { ConnectorComponent } from '../connector';
 
 @Component({
   standalone: true,
@@ -37,6 +37,9 @@ import { ConnectorComponent } from '../connectors';
 })
 export class HomePageComponent implements OnInit, OnDestroy {
   private syncService = inject(SyncService);
+  private router = inject(Router);
+  private currentRoute = inject(ActivatedRoute);
+
   private unsubscribeAll = new Subject<void>();
 
   // TODO: download dropdown is placed in the layout but will be implemented in https://app.shortcut.com/flaps/story/9739/setup-sync-agent-download-dropdown

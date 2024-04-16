@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ConnectorsModule } from '../connectors/connectors.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LabelsExpanderComponent, SisProgressModule } from '@nuclia/sistema';
 import {
@@ -16,7 +15,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { ParametersTableComponent, LabelModule } from '@flaps/core';
+import { LabelModule, ParametersTableComponent } from '@flaps/core';
 import { SyncComponent } from './sync.component';
 import { EditSyncSettingsComponent } from './tabs/edit-settings.component';
 import { EditSyncFoldersComponent } from './tabs/edit-folders.component';
@@ -25,12 +24,15 @@ import { AddSyncComponent } from './add-sync.component';
 import { SyncActivityComponent } from './tabs/activity.component';
 import { EditSyncFiltersComponent } from './tabs/edit-filters.component';
 
+/**
+ * @deprecated
+ * TODO: cleanup once new sync pages are done
+ */
 @NgModule({
   imports: [
     RouterModule,
     CommonModule,
     TranslateModule,
-    ConnectorsModule,
     FormsModule,
     ReactiveFormsModule,
     PaTextFieldModule,
