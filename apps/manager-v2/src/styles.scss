@@ -111,6 +111,10 @@ form section {
   gap: rhythm(2);
   max-width: rhythm(64);
 
+  label.title-xxs {
+    display: block;
+    margin-bottom: rhythm(1.5);
+  }
   .radio-limit-container {
     align-items: center;
     display: flex;
