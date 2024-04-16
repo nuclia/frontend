@@ -49,10 +49,6 @@ const ROUTES: Routes = [
             component: ConfigurationComponent,
           },
           {
-            path: 'features',
-            component: BlockedFeaturesComponent,
-          },
-          {
             path: 'kbs',
             component: KnowledgeBoxesComponent,
           },
