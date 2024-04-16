@@ -6,24 +6,22 @@
 
   .source {
     display: flex;
-    gap: var(--rhythm-1);
+    gap: var(--rhythm-0_5);
   }
   .number {
     background-color: var(--color-primary-lightest);
     flex-shrink: 0;
-    height: var(--rhythm-2_5);
+    height: var(--rhythm-3);
+    line-height: var(--rhythm-3);
     text-align: center;
-    width: var(--rhythm-2_5);
+    width: var(--rhythm-3);
   }
-  .paragaph {
-    width: calc(100% - var(--rhythm-2_5) - var(--rhythm-1));
-  }
-  .paragraph-text:hover {
-    background-color: var(--color-neutral-lightest);
-    cursor: pointer;
+  .paragraph {
+    width: calc(100% - var(--rhythm-3) - var(--rhythm-0_5));
   }
   .resource-title {
     font-style: italic;
+    margin-left: var(--rhythm-3);
     margin-top: var(--rhythm-0_5);
   }
 }

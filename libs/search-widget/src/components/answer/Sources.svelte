@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { ResourceField, Search } from '@nuclia/core';
-  import { combineLatest, map, of, switchMap, take } from 'rxjs';
+  import { combineLatest, of, switchMap, take } from 'rxjs';
+  import { ParagraphResult } from '../../common';
   import {
     getNavigationUrl,
     goToUrl,
@@ -43,13 +44,15 @@
   {#each sources as source, i}
     <div class="source">
       <div class="number body-m">{i + 1}</div>
-      <div class="paragaph">
+      <div class="paragraph">
         {#if source.paragraphs?.[0]}
-          <div
-            class="body-m paragraph-text"
-            on:click={() => clickOnSource(source, source.paragraphs?.[0])}>
-            {@html source.paragraphs[0].text}
-          </div>
+          <ParagraphResult
+            resultType={source.resultType}
+            paragraph={source.paragraphs[0]}
+            ellipsis={true}
+            noIndicator
+            on:open={() => clickOnSource(source, source.paragraphs?.[0])}>
+          </ParagraphResult>
         {/if}
         <div class="resource-title body-s">{source.title}</div>
       </div>
