@@ -40,6 +40,7 @@ export interface WidgetOptions {
   features?: WidgetFeatures;
   prompt?: string;
   generative_model?: string;
+  ask_to_resource?: string;
 }
 
 export interface WidgetAction {

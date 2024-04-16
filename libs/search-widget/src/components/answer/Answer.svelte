@@ -81,7 +81,7 @@
           aspect="basic"
           size="small"
           on:click={() => downloadDump()}>
-          <span>{$_('answer.download-log')}</span>
+          <span class="title-s">{$_('answer.download-log')}</span>
         </Button>
       {/if}
     </div>

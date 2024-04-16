@@ -31,6 +31,7 @@ export class ResourceProfileComponent implements OnInit {
   );
   currentValue?: Resource;
   form = new FormGroup({
+    slug: new FormControl<string>('', { nonNullable: true }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     summary: new FormControl<string>('', { nonNullable: true }),
     origin: new FormGroup({
@@ -108,6 +109,7 @@ export class ResourceProfileComponent implements OnInit {
 
   updateForm(data: Resource): void {
     this.form.patchValue({
+      slug: data.slug,
       title: data.title,
       summary: data.summary,
       origin: {
@@ -166,6 +168,7 @@ export class ResourceProfileComponent implements OnInit {
     const value = this.form.getRawValue();
     return this.currentValue
       ? {
+          slug: value.slug,
           title: value.title,
           summary: value.summary,
           origin: {

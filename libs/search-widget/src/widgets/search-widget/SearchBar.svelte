@@ -68,6 +68,7 @@
   export let rag_strategies = '';
   export let rag_image_strategies = '';
   export let not_enough_data_message = '';
+  export let ask_to_resource = '';
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -184,6 +185,7 @@
         features: _features,
         prompt,
         generative_model: generativemodel,
+        ask_to_resource,
       },
       no_tracking,
     );

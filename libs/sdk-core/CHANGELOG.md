@@ -1,3 +1,9 @@
+# 1.14.7 (unreleased)
+
+### Improvements
+
+- `ask()` method in the resource, it allows to ask questions to the resource using the entire content of the resource as context
+
 # 1.14.6 (2024-04-12)
 
 ### Improvements
