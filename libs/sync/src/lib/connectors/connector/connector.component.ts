@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { PaCardModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
+  standalone: true,
   selector: 'nsy-connector',
+  imports: [CommonModule, PaCardModule, PaIconModule, PaIconModule],
   templateUrl: './connector.component.html',
   styleUrls: ['./connector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -11,15 +14,7 @@ export class ConnectorComponent {
   @Input() title?: string;
   @Input() logo?: string;
   @Input() description?: string;
-  @Input() disabled = false;
-  @Input()
-  set selected(value: any) {
-    this._selected = coerceBooleanProperty(value);
-  }
-  get selected() {
-    return this._selected;
-  }
-  private _selected = false;
+  @Input({ transform: booleanAttribute }) disabled = false;
 
   @Output() selectConnector: EventEmitter<MouseEvent | KeyboardEvent> = new EventEmitter<MouseEvent | KeyboardEvent>();
 }

@@ -1,23 +1,9 @@
 @import 'apps/dashboard/src/variables';
 
-pa-card {
-  margin: rhythm(2);
-
-  &.selected ::ng-deep .pa-card-wrapper {
-    border-color: $color-primary-regular;
-  }
-}
-
 .connector {
   align-items: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: rhythm(12);
+  gap: rhythm(1);
   width: rhythm(12);
-
-  img {
-    margin-top: rhythm(1.5);
-    width: rhythm(6);
-  }
 }

@@ -1,1 +1,92 @@
-<p>Home page to do</p>
+<div class="page-spacing">
+  <div>
+    <h1 class="page-title">{{ 'navbar.sync' | translate }}</h1>
+    <p class="page-description">{{ 'sync.home-page.description' | translate }}</p>
+  </div>
+
+  <section>
+    <div class="section-description">
+      <div class="title-l">{{ 'sync.home-page.setup-server.title' | translate }}</div>
+      <div class="page-description">{{ 'sync.home-page.setup-server.description' | translate }}</div>
+    </div>
+
+    <form
+      class="setup-sync-agent"
+      [formGroup]="syncAgentForm"
+      (ngSubmit)="saveSyncServer()">
+      <pa-radio-group formControlName="type">
+        <div class="radio-config-row">
+          <pa-radio
+            [help]="'sync.home-page.setup-server.on-desktop.radio-help' | translate"
+            value="desktop">
+            <span class="title-m">{{ 'sync.home-page.setup-server.on-desktop.radio-label' | translate }}</span>
+          </pa-radio>
+
+          @if (!syncAgentOnServer) {
+            @if (inactiveServer | async) {
+              <nsi-badge>{{ 'sync.badge.inactive' | translate }}</nsi-badge>
+
+              @if (downloadSyncAgentFeature) {
+                <nsi-dropdown-button aspect="basic">
+                  {{ 'sync.home-page.setup-server.on-desktop.download-dropdown' | translate }}
+                </nsi-dropdown-button>
+              }
+            } @else {
+              <nsi-badge kind="success">{{ 'sync.badge.active' | translate }}</nsi-badge>
+            }
+          }
+        </div>
+        <div class="separator"></div>
+        <div class="radio-config-row">
+          <pa-radio
+            [help]="'sync.home-page.setup-server.on-server.radio-help' | translate"
+            value="server">
+            <span class="title-m">{{ 'sync.home-page.setup-server.on-server.radio-label' | translate }}</span>
+          </pa-radio>
+
+          @if (syncAgentOnServer) {
+            <div class="inline-form">
+              @if (inactiveServer | async) {
+                <nsi-badge>{{ 'sync.badge.inactive' | translate }}</nsi-badge>
+              } @else {
+                <nsi-badge kind="success">{{ 'sync.badge.active' | translate }}</nsi-badge>
+              }
+              <pa-input
+                class="server-url"
+                formControlName="serverUrl">
+                Server URL
+              </pa-input>
+              <pa-button
+                [disabled]="!serverUrlChanged"
+                type="submit">
+                {{ 'generic.save' | translate }}
+              </pa-button>
+            </div>
+          }
+        </div>
+      </pa-radio-group>
+    </form>
+  </section>
+
+  <div class="separator"></div>
+
+  <section>
+    <div class="section-description">
+      <div class="title-l">{{ 'sync.home-page.add-sources.title' | translate }}</div>
+      <div class="page-description">{{ 'sync.home-page.add-sources.description' | translate }}</div>
+    </div>
+    <div class="connector-list">
+      @for (connector of connectors | async; track connector.id) {
+        <nsy-connector
+          [paTooltip]="
+            ((inactiveServer | async) ? 'sync.home-page.add-sources.disabled-source-tooltip' : '') | translate
+          "
+          [disabled]="inactiveServer | async"
+          [title]="connector.title"
+          [logo]="connector.logo"
+          [description]="connector.description"
+          (selectConnector)="onSelectConnector(connector)"></nsy-connector>
+      }
+    </div>
+  </section>
+</div>

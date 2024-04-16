@@ -1,27 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Location } from '@angular/common';
-import {
-  BehaviorSubject,
-  catchError,
-  filter,
-  interval,
-  map,
-  Observable,
-  of,
-  ReplaySubject,
-  skip,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, catchError, filter, map, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import {
   baseLogoPath,
+  ConnectorDefinition,
   ConnectorSettings,
   IConnector,
   ISyncEntity,
   LogEntity,
   SearchResults,
-  ConnectorDefinition,
   SyncBasicData,
 } from './models';
 import { BackendConfigurationService, NotificationService, SDKService } from '@flaps/core';
@@ -34,8 +20,10 @@ import { ConfluenceConnector } from './sources/confluence';
 import { RSSConnector } from './sources/rss';
 import { OAuthConnector } from './sources/oauth';
 
+export type SyncServerType = 'desktop' | 'server';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
+export const SYNC_SERVER_TYPE_KEY = 'NUCLIA_SYNC_SERVER_TYPE';
 
 @Injectable({ providedIn: 'root' })
 export class SyncService {
@@ -98,7 +86,10 @@ export class SyncService {
   };
 
   connectorsObs = new BehaviorSubject(Object.values(this.connectors).map((obj) => obj.definition));
-  private _syncServer = new BehaviorSubject<string>(localStorage.getItem(SYNC_SERVER_KEY) || '');
+  private _syncServer = new BehaviorSubject<{ serverUrl: string; type: SyncServerType }>({
+    serverUrl: localStorage.getItem(SYNC_SERVER_KEY) || LOCAL_SYNC_SERVER,
+    type: (localStorage.getItem(SYNC_SERVER_TYPE_KEY) as SyncServerType) || 'desktop',
+  });
   syncServer = this._syncServer.asObservable();
 
   private _isServerDown = new BehaviorSubject<boolean>(true);
@@ -118,31 +109,7 @@ export class SyncService {
     private http: HttpClient,
     private config: BackendConfigurationService,
     private notificationService: NotificationService,
-    private location: Location,
-  ) {
-    if (this.hasSyncServer()) {
-      this.initServer();
-    }
-  }
-
-  initServer() {
-    let isUp = false;
-    interval(5000)
-      .pipe(
-        // do not pull when not in upload page
-        filter(() => {
-          const path = this.location.path();
-          return path.includes('/upload/') || path.endsWith('/upload');
-        }),
-        // Delay of 5min when the server is running, and 5s when the server is down
-        skip(isUp ? 60 : 0),
-        switchMap(() => this.serverStatus(this.getSyncServer())),
-      )
-      .subscribe((res) => {
-        isUp = res.running;
-        this.setServerStatus(!isUp);
-      });
-  }
+  ) {}
 
   getConnector(connector: string, instance: string): Observable<IConnector> {
     const source = this.connectors[connector];
@@ -172,7 +139,7 @@ export class SyncService {
       return of(syncs[syncId]);
     } else {
       return this.http
-        .get<ISyncEntity>(`${this._syncServer.getValue()}/sync/${syncId}`, {
+        .get<ISyncEntity>(`${this._syncServer.getValue().serverUrl}/sync/${syncId}`, {
           headers: this.serverHeaders,
         })
         .pipe(
@@ -208,7 +175,7 @@ export class SyncService {
         }
       }),
       switchMap((sync) =>
-        this.http.post<void>(`${this._syncServer.getValue()}/sync`, sync, {
+        this.http.post<void>(`${this._syncServer.getValue().serverUrl}/sync`, sync, {
           headers: this.serverHeaders,
         }),
       ),
@@ -228,7 +195,7 @@ export class SyncService {
   updateSync(syncId: string, sync: Partial<ISyncEntity>, resetLastSync?: boolean): Observable<void> {
     return this.http
       .patch<void>(
-        `${this._syncServer.getValue()}/sync/${syncId}`,
+        `${this._syncServer.getValue().serverUrl}/sync/${syncId}`,
         { ...sync, lastSyncGMT: resetLastSync ? '1970-01-01' : undefined },
         {
           headers: this.serverHeaders,
@@ -251,7 +218,7 @@ export class SyncService {
 
   deleteSync(syncId: string): Observable<void> {
     return this.http
-      .delete<void>(`${this._syncServer.getValue()}/sync/${syncId}`, {
+      .delete<void>(`${this._syncServer.getValue().serverUrl}/sync/${syncId}`, {
         headers: this.serverHeaders,
       })
       .pipe(
@@ -271,7 +238,7 @@ export class SyncService {
       return of(false);
     } else {
       return this.http
-        .get<{ hasAuth: boolean }>(`${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/auth`)
+        .get<{ hasAuth: boolean }>(`${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSourceId()}/auth`)
         .pipe(map((res) => res.hasAuth));
     }
   }
@@ -291,7 +258,7 @@ export class SyncService {
                       title: string;
                       connector: string;
                     }[]
-                  >(`${this._syncServer.getValue()}/sync/kb/${kbId}`)
+                  >(`${this._syncServer.getValue().serverUrl}/sync/kb/${kbId}`)
                   .pipe(
                     tap((data) => {
                       this._syncListCache.next([
@@ -309,14 +276,19 @@ export class SyncService {
 
   getFiles(query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
-      `${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/files/search${query ? `?query=${query}` : ''}`,
+      `${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSourceId()}/files/search${
+        query ? `?query=${query}` : ''
+      }`,
     );
   }
 
   getFolders(query?: string): Observable<SearchResults> {
-    return this.http.get<SearchResults>(`${this._syncServer.getValue()}/sync/${this.getCurrentSourceId()}/folders`, {
-      headers: this.serverHeaders,
-    });
+    return this.http.get<SearchResults>(
+      `${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSourceId()}/folders`,
+      {
+        headers: this.serverHeaders,
+      },
+    );
   }
 
   canSelectFiles(syncId: string) {
@@ -354,22 +326,15 @@ export class SyncService {
     );
   }
 
-  setSyncServer(server: string) {
-    localStorage.setItem(SYNC_SERVER_KEY, server || '');
-    this._syncServer.next(server || '');
-    if (server) {
-      this.serverStatus(server).subscribe((status) => {
+  setSyncServer(serverUrl: string, type: 'desktop' | 'server') {
+    localStorage.setItem(SYNC_SERVER_KEY, serverUrl || '');
+    localStorage.setItem(SYNC_SERVER_TYPE_KEY, type);
+    this._syncServer.next({ serverUrl: serverUrl || '', type });
+    if (serverUrl) {
+      this.serverStatus(serverUrl).subscribe((status) => {
         this.setServerStatus(!status.running);
       });
     }
-  }
-
-  hasSyncServer(): boolean {
-    return !!localStorage.getItem(SYNC_SERVER_KEY);
-  }
-
-  resetSyncServer() {
-    this._syncServer.next('');
   }
 
   authenticateToConnector(connectorId: string, connector: IConnector): Observable<boolean> {
@@ -402,16 +367,18 @@ export class SyncService {
 
   getLogs(sync?: string, since?: string): Observable<LogEntity[]> {
     return this.http
-      .get<LogEntity[]>(`${this._syncServer.getValue()}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`)
+      .get<LogEntity[]>(
+        `${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`,
+      )
       .pipe(map((logs) => logs.reverse()));
   }
 
   clearLogs(): Observable<void> {
-    return this.http.delete<void>(`${this._syncServer.getValue()}/logs`);
+    return this.http.delete<void>(`${this._syncServer.getValue().serverUrl}/logs`);
   }
 
   getSyncServer() {
-    return this._syncServer.getValue();
+    return this._syncServer.getValue().serverUrl;
   }
 
   setServerStatus(isDown: boolean) {
@@ -430,6 +397,6 @@ export class SyncService {
   }
 
   triggerSyncs(): Observable<void> {
-    return this.http.get<void>(`${this._syncServer.getValue()}/sync/execute`);
+    return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute`);
   }
 }
