@@ -1,0 +1,7 @@
+@import 'apps/dashboard/src/variables';
+
+.page-spacing {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+}

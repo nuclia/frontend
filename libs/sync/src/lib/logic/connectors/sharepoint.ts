@@ -1,4 +1,4 @@
-import { ConnectorParameters, Field } from '../models';
+import { ConnectorParameters, Section } from '../models';
 import { Observable, of } from 'rxjs';
 import { OAuthConnector } from './oauth';
 
@@ -9,13 +9,19 @@ export class SharepointImpl extends OAuthConnector {
     super(name, id, path);
   }
 
-  override getParameters(): Observable<Field[]> {
+  override getParametersSections(): Observable<Section[]> {
     return of([
       {
-        id: 'site_name',
-        label: 'connectors.sharepoint.site.label',
-        type: 'text',
-        required: true,
+        id: 'account',
+        title: 'sync.connectors.sharepoint.account.title',
+        fields: [
+          {
+            id: 'site_name',
+            label: 'sync.connectors.sharepoint.site.label',
+            type: 'text',
+            required: true,
+          },
+        ],
       },
     ]);
   }

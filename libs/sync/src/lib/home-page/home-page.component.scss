@@ -1,15 +1,5 @@
 @import 'apps/dashboard/src/variables';
-
-.page-spacing {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(4);
-}
-
-.separator {
-  background-color: $color-neutral-lighter;
-  height: 1px;
-}
+@import '../common-sync';
 
 section {
   display: flex;

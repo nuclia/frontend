@@ -126,3 +126,45 @@ ul.nsi-list {
 pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
   z-index: 1;
 }
+
+.separator {
+  background-color: $color-neutral-lighter;
+  height: 1px;
+  width: 100%;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+
+  &.small-gap {
+    gap: rhythm(1.5);
+  }
+
+  .label-field-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+  }
+}
+
+.inline-form {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+
+  &.small-gap {
+    gap: rhythm(1);
+  }
+  & > *:not(span) {
+    flex: 1 0 auto;
+    max-width: 50%;
+  }
+}
+
+.container-with-border {
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(1);
+  padding: rhythm(2);
+}

@@ -40,7 +40,7 @@ export class AddSyncComponent implements OnInit {
         take(1),
         switchMap((connector) => {
           this.canSyncSecurityGroups = connector.canSyncSecurityGroups;
-          return connector.getParameters();
+          return connector.getParametersSections();
         }),
       )
       .subscribe((fields) => this.showFields(fields));

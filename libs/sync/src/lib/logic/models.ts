@@ -22,7 +22,7 @@ export interface IConnector {
   isExternal: boolean;
   allowToSelectFolders: boolean;
   canSyncSecurityGroups: boolean;
-  getParameters(): Observable<Field[]>;
+  getParametersSections(): Observable<Section[]>;
   handleParameters?(params: ConnectorParameters): void;
   getParametersValues(): ConnectorParameters;
   cleanAuthData(): void;
@@ -61,12 +61,20 @@ export interface ConnectorParameters {
   [key: string]: any;
 }
 
+export interface Section {
+  id: string;
+  title: string;
+  description?: string;
+  badge?: string;
+  fields: Field[];
+}
+
 export interface Field {
   id: string;
   label: string;
   help?: string;
   placeholder?: string;
-  type: 'text' | 'select' | 'folder' | 'textarea' | 'table';
+  type: 'text' | 'select' | 'textarea' | 'table';
   options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
   pattern?: string | RegExp;

@@ -36,9 +36,9 @@ import { ConnectorComponent } from './connector';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePageComponent implements OnInit, OnDestroy {
-  private syncService = inject(SyncService);
   private router = inject(Router);
   private currentRoute = inject(ActivatedRoute);
+  private syncService = inject(SyncService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -92,6 +92,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   onSelectConnector(connector: ConnectorDefinition) {
-    console.log(`Select connector`, connector);
+    this.router.navigate(['./add', connector.id], { relativeTo: this.currentRoute });
   }
 }

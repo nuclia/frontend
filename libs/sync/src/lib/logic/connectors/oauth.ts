@@ -1,4 +1,4 @@
-import { ConnectorParameters, Field, IConnector, SyncItem } from '../models';
+import { ConnectorParameters, IConnector, Section, SyncItem } from '../models';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { getURLParams } from '../../utils';
 
@@ -23,10 +23,11 @@ export class OAuthConnector implements IConnector {
     this.path = path;
   }
 
-  getParameters(): Observable<Field[]> {
+  getParametersSections(): Observable<Section[]> {
     return of([]);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleParameters(params: ConnectorParameters) {
     return;
   }

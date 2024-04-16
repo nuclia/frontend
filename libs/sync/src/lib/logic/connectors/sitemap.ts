@@ -1,6 +1,13 @@
-import { baseLogoPath, ConnectorParameters, Field, IConnector, ConnectorDefinition } from '../models';
+import {
+  baseLogoPath,
+  ConnectorDefinition,
+  ConnectorParameters,
+  FileStatus,
+  IConnector,
+  Section,
+  SyncItem,
+} from '../models';
 import { Observable, of } from 'rxjs';
-import { FileStatus, SyncItem } from '../models';
 
 export const SitemapConnector: ConnectorDefinition = {
   id: 'sitemap',
@@ -29,58 +36,81 @@ class SitemapImpl implements IConnector {
     ];
   }
 
-  getParameters(): Observable<Field[]> {
+  getParametersSections(): Observable<Section[]> {
     return of([
       {
-        id: 'sitemap',
-        label: 'connectors.sitemap.url.label',
-        type: 'text',
-        required: true,
-        pattern: /.+\.(ashx|xml)/,
-        placeholder: 'https://my-website.com/sitemap.xml',
+        id: 'url',
+        title: 'sync.connectors.sitemap.url.section-title',
+        fields: [
+          {
+            id: 'sitemap',
+            label: 'sync.connectors.sitemap.url.label',
+            type: 'text',
+            required: true,
+            pattern: /.+\.(ashx|xml)/,
+            placeholder: 'https://my-website.com/sitemap.xml',
+          },
+        ],
       },
       {
-        id: 'cssSelector',
-        label: 'connectors.common.css.label',
-        help: 'connectors.common.css.help',
-        type: 'text',
-        required: false,
-        placeholder: '.main-content',
+        id: 'restrict-indexation',
+        title: 'sync.connectors.common.restrict-indexation.title',
+        description: 'sync.connectors.common.restrict-indexation.description',
+        badge: 'generic.badge.optional',
+        fields: [
+          {
+            id: 'cssSelector',
+            label: 'sync.connectors.common.css.label',
+            help: 'sync.connectors.common.css.help',
+            type: 'text',
+            required: false,
+            placeholder: '.main-content',
+          },
+          {
+            id: 'xpathSelector',
+            label: 'sync.connectors.common.xpath.label',
+            help: 'sync.connectors.common.xpath.help',
+            type: 'text',
+            required: false,
+            placeholder: '//div[@id="main"]',
+          },
+        ],
       },
       {
-        id: 'xpathSelector',
-        label: 'connectors.common.xpath.label',
-        help: 'connectors.common.xpath.help',
-        type: 'text',
-        required: false,
-        placeholder: '//div[@id="main"]',
-      },
-      {
-        id: 'headers',
-        label: 'connectors.common.headers.label',
-        help: 'connectors.common.headers.help',
-        type: 'table',
-        required: false,
-      },
-      {
-        id: 'cookies',
-        label: 'connectors.common.cookies.label',
-        help: 'connectors.common.cookies.help',
-        type: 'table',
-        required: false,
-      },
-      {
-        id: 'localstorage',
-        label: 'connectors.common.localstorage.label',
-        help: 'connectors.common.localstorage.help',
-        type: 'table',
-        required: false,
+        id: 'web-scraping-helpers',
+        title: 'sync.connectors.common.web-scraping-helpers.title',
+        description: 'sync.connectors.common.web-scraping-helpers.description',
+        badge: 'generic.badge.advanced',
+        fields: [
+          {
+            id: 'headers',
+            label: 'sync.connectors.common.headers.label',
+            help: 'sync.connectors.common.headers.help',
+            type: 'table',
+            required: false,
+          },
+          {
+            id: 'cookies',
+            label: 'sync.connectors.common.cookies.label',
+            help: 'sync.connectors.common.cookies.help',
+            type: 'table',
+            required: false,
+          },
+          {
+            id: 'localstorage',
+            label: 'sync.connectors.common.localstorage.label',
+            help: 'sync.connectors.common.localstorage.help',
+            type: 'table',
+            required: false,
+          },
+        ],
       },
     ]);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleParameters(params: ConnectorParameters) {
-    // eslint-disable-next-line no-empty-function
+    return;
   }
 
   cleanAuthData() {

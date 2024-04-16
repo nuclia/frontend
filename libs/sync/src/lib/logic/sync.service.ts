@@ -111,6 +111,10 @@ export class SyncService {
     private notificationService: NotificationService,
   ) {}
 
+  getConnectorDefinition(connectorId: string): ConnectorDefinition {
+    return this.connectors[connectorId]?.definition;
+  }
+
   getConnector(connector: string, instance: string): Observable<IConnector> {
     const source = this.connectors[connector];
     if (!source.instances) {

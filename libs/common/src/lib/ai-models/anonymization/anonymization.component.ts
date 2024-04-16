@@ -23,7 +23,6 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
     PaButtonModule,
   ],
   templateUrl: './anonymization.component.html',
-  styleUrl: '../_common-ai-models.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnonymizationComponent extends LearningConfigurationDirective {

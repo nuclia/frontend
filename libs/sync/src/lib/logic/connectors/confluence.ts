@@ -1,4 +1,4 @@
-import { baseLogoPath, ConnectorParameters, Field, IConnector, ConnectorDefinition, SyncItem } from '../models';
+import { baseLogoPath, ConnectorDefinition, ConnectorParameters, IConnector, Section, SyncItem } from '../models';
 import { Observable, of } from 'rxjs';
 
 export const ConfluenceConnector: ConnectorDefinition = {
@@ -17,27 +17,34 @@ class ConfluenceImpl implements IConnector {
   allowToSelectFolders = true;
   canSyncSecurityGroups = false;
 
-  getParameters(): Observable<Field[]> {
+  getParametersSections(): Observable<Section[]> {
     return of([
       {
-        id: 'url',
-        label: 'connectors.confluence.url.label',
-        type: 'text',
-        placeholder: 'https://my-site.atlassian.net/wiki',
-        required: true,
-      },
-      {
-        id: 'user',
-        label: 'connectors.confluence.user.label',
-        type: 'text',
-        placeholder: 'me@mycompany.com',
-        required: true,
-      },
-      {
-        id: 'token',
-        label: 'connectors.confluence.token.label',
-        type: 'text',
-        required: true,
+        id: 'account',
+        title: 'sync.connectors.confluence.account.title',
+        description: 'sync.connectors.confluence.account.description',
+        fields: [
+          {
+            id: 'url',
+            label: 'sync.connectors.confluence.url.label',
+            type: 'text',
+            placeholder: 'https://my-site.atlassian.net/wiki',
+            required: true,
+          },
+          {
+            id: 'user',
+            label: 'sync.connectors.confluence.user.label',
+            type: 'text',
+            placeholder: 'me@mycompany.com',
+            required: true,
+          },
+          {
+            id: 'token',
+            label: 'sync.connectors.confluence.token.label',
+            type: 'text',
+            required: true,
+          },
+        ],
       },
     ]);
   }

@@ -1,6 +1,13 @@
-import { baseLogoPath, ConnectorParameters, Field, IConnector, ConnectorDefinition } from '../models';
+import {
+  baseLogoPath,
+  ConnectorDefinition,
+  ConnectorParameters,
+  FileStatus,
+  IConnector,
+  Section,
+  SyncItem,
+} from '../models';
 import { Observable, of } from 'rxjs';
-import { FileStatus, SyncItem } from '../models';
 
 type ElectronFile = File & { relativePath: string };
 
@@ -34,14 +41,21 @@ class FolderImpl implements IConnector {
       : [];
   }
 
-  getParameters(): Observable<Field[]> {
+  getParametersSections(): Observable<Section[]> {
     return of([
       {
-        id: 'path',
-        label: 'Local folder path',
-        placeholder: '/Users/alice/Documents or C:\\Users\\Alice\\Documents',
-        type: 'text',
-        required: true,
+        id: 'local-path',
+        title: 'sync.connectors.folder.local-path.title',
+        description: 'sync.connectors.folder.local-path.description',
+        fields: [
+          {
+            id: 'path',
+            label: 'sync.connectors.folder.local-path.field-label',
+            placeholder: '/Users/alice/Documents or C:\\Users\\Alice\\Documents',
+            type: 'text',
+            required: true,
+          },
+        ],
       },
     ]);
   }

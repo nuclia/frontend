@@ -36,7 +36,7 @@ export class EditSyncSettingsComponent implements OnInit {
           this.syncService.getConnector(sync.connector.name, '').pipe(
             switchMap((connector) => {
               this.canSyncSecurityGroups = connector.canSyncSecurityGroups;
-              return connector.getParameters();
+              return connector.getParametersSections();
             }),
             map((fields) => ({ sync, fields })),
           ),

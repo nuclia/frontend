@@ -4,20 +4,20 @@
     border
     columns="repeat(2, 2fr) 1fr">
     <pa-table-header>
-      <pa-table-cell header>{{ 'editable-table.headers.key' | translate }}</pa-table-cell>
-      <pa-table-cell header>{{ 'editable-table.headers.value' | translate }}</pa-table-cell>
-      <pa-table-cell header>{{ 'editable-table.headers.secret-value' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'parameters-table.headers.key' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'parameters-table.headers.value' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'parameters-table.headers.secret-value' | translate }}</pa-table-cell>
     </pa-table-header>
     @for (row of rows; track row) {
       <pa-table-row>
         <pa-table-cell>
           <pa-input
-            [placeholder]="'editable-table.headers.key' | translate"
+            [placeholder]="'parameters-table.headers.key' | translate"
             [formControl]="row.controls.key"></pa-input>
         </pa-table-cell>
         <pa-table-cell>
           <pa-input
-            [placeholder]="'editable-table.headers.value' | translate"
+            [placeholder]="'parameters-table.headers.value' | translate"
             [formControl]="row.controls.value"
             [type]="row.controls.secret.value ? 'password' : 'text'"></pa-input>
         </pa-table-cell>
@@ -34,7 +34,7 @@
         size="small"
         iconAndText
         (click)="addRow()">
-        {{ 'editable-table.headers.new' | translate }}
+        {{ 'parameters-table.headers.new' | translate }}
       </pa-button>
     </pa-table-row-header>
   </pa-table>
