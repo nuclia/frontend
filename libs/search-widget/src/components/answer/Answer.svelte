@@ -73,7 +73,7 @@
           aspect="basic"
           size="small"
           on:click={() => dispatch('openChat')}>
-          <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
+          <span class="title-s">{$_('answer.chat-action')}</span>
         </Button>
       {/if}
       {#if $hasDumpLogButton}
@@ -81,7 +81,7 @@
           aspect="basic"
           size="small"
           on:click={() => downloadDump()}>
-          <span>{$_('answer.download-log')}</span>
+          <span class="title-s">{$_('answer.download-log')}</span>
         </Button>
       {/if}
     </div>
