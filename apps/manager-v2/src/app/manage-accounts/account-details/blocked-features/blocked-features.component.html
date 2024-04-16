@@ -2,13 +2,16 @@
 <form
   [formGroup]="blockedFeatures"
   (ngSubmit)="save()">
-  <pa-checkbox
-    *ngFor="let feature of blockedFeatures.controls | keyvalue"
-    [formControlName]="feature.key"
-    [value]="feature.value">
-    {{ feature.key | featureName }}
-  </pa-checkbox>
+  @for (feature of blockedFeatures.controls | keyvalue; track feature.key) {
+    <pa-checkbox
+      [formControlName]="feature.key"
+      [value]="feature.value">
+      {{ feature.key | featureName }}
+    </pa-checkbox>
+  }
+
   <nma-form-footer
+    secondary
     [disabled]="blockedFeatures.pristine || isSaving"
     (cancel)="reset()"></nma-form-footer>
 </form>

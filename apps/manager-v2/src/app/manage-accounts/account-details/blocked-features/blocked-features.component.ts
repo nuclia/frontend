@@ -9,6 +9,7 @@ import { ManagerStore } from '../../../manager.store';
 type BlockedFeaturesForm = Record<BlockedFeature, FormControl<boolean>>;
 
 @Component({
+  selector: 'nma-blocked-features',
   templateUrl: './blocked-features.component.html',
   styleUrls: ['./blocked-features.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

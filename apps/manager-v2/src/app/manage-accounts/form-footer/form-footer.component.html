@@ -1,7 +1,7 @@
 <footer>
   <pa-button
     type="submit"
-    kind="primary"
+    [kind]="secondary ? 'secondary' : 'primary'"
     [disabled]="disabled">
     Save
   </pa-button>
