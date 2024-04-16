@@ -41,6 +41,7 @@ let prompt: string | undefined = undefined;
 let generative_model: string | undefined = undefined;
 let CITATIONS = false;
 let REPHRASE = false;
+let ASK_TO_RESOURCE = '';
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -70,6 +71,9 @@ export const initNuclia = (
   }
   CITATIONS = !!widgetOptions.features?.citations;
   REPHRASE = !!widgetOptions.features?.rephrase;
+  if (widgetOptions.ask_to_resource) {
+    ASK_TO_RESOURCE = widgetOptions.ask_to_resource;
+  }
 
   nucliaApi = new Nuclia(options);
   if (!noTracking) {
@@ -161,12 +165,18 @@ export const getAnswer = (
     citations: CITATIONS,
     rephrase: REPHRASE,
   };
-  return nucliaApi.knowledgeBox.chat(
-    query,
-    context,
-    CHAT_MODE,
-    options ? { ...options, ...defaultOptions } : defaultOptions,
-  );
+  if (ASK_TO_RESOURCE) {
+    return nucliaApi.knowledgeBox
+      .getResourceFromData({ id: '', slug: ASK_TO_RESOURCE })
+      .ask(query, context, CHAT_MODE, options ? { ...options, ...defaultOptions } : defaultOptions);
+  } else {
+    return nucliaApi.knowledgeBox.chat(
+      query,
+      context,
+      CHAT_MODE,
+      options ? { ...options, ...defaultOptions } : defaultOptions,
+    );
+  }
 };
 
 export const sendFeedback = (answer: Chat.Answer, approved: boolean) => {

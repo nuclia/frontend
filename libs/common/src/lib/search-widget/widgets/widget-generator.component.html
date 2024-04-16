@@ -344,6 +344,23 @@
                       </div>
                       <div class="toggle-and-help">
                         <pa-input
+                          formControlName="askToResource"
+                          [placeholder]="
+                            'widget.generator.advanced.generative-answer-category.ask-to-resource.placeholder'
+                              | translate
+                          "
+                          [acceptHtmlTags]="true">
+                          {{ 'widget.generator.advanced.generative-answer-category.ask-to-resource.label' | translate }}
+                        </pa-input>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="askToResourceHelp" />
+                        <pa-popover #askToResourceHelp>
+                          {{ 'widget.generator.advanced.generative-answer-category.ask-to-resource.help' | translate }}
+                        </pa-popover>
+                      </div>
+                      <div class="toggle-and-help">
+                        <pa-input
                           formControlName="notEnoughDataMessage"
                           [acceptHtmlTags]="true">
                           {{

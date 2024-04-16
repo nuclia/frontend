@@ -124,6 +124,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     relations: new FormControl<boolean>(false, { nonNullable: true }),
     knowledgeGraph: new FormControl<boolean>(false, { nonNullable: true }),
     notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    askToResource: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     generativeModelToggle: new FormControl<boolean>(false, { nonNullable: true }),
     generativeModel: new FormControl<string>('', { nonNullable: true }),
   });
@@ -138,6 +139,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     'ragCharactersCount',
     'ragPageImagesCount',
     'notEnoughDataMessage',
+    'askToResource',
     'generativeModel',
     'generativeModelToggle',
   ];
@@ -210,6 +212,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get notEnoughDataMessage() {
     return this.advancedForm.controls.notEnoughDataMessage.value;
   }
+  get askToResource() {
+    return this.advancedForm.controls.askToResource.value;
+  }
   get generativeModel() {
     return this.advancedForm.controls.generativeModel.value;
   }
@@ -271,6 +276,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
   get notEnoughDataMessageControl() {
     return this.advancedForm.controls.notEnoughDataMessage;
+  }
+  get askToResourceControl() {
+    return this.advancedForm.controls.askToResource;
   }
   get generativeModelControl() {
     return this.advancedForm.controls.generativeModel;
@@ -463,6 +471,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       this.ragCharactersCountControl.patchValue(null);
       this.ragPageImagesCountControl.patchValue(null);
       this.notEnoughDataMessageControl.patchValue('');
+      this.askToResourceControl.patchValue('');
       this.generativeModelControl.patchValue('');
     }
   }
@@ -651,6 +660,10 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         ? `
   not_enough_data_message="${this.notEnoughDataMessage.replace(/"/g, '&quot;')}"`
         : '';
+      const askToResource = !!this.askToResource
+        ? `
+  ask_to_resource="${this.askToResource.replace(/\s/g, '')}"`
+        : '';
       const generativeModel = !!this.generativeModel
         ? `
   generativemodel="${this.generativeModel}"`
@@ -659,7 +672,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
   ${zone}
-  features="${this.features}" ${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
+  features="${this.features}" ${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results ${mode}></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>

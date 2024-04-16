@@ -1,4 +1,4 @@
-import { defer, forkJoin, Observable, retry, tap } from 'rxjs';
+import { defer, forkJoin, Observable, of, retry, tap } from 'rxjs';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import type { IErrorResponse, INuclia } from '../../models';
@@ -25,9 +25,10 @@ import type {
   UserTokenAnnotation,
 } from './resource.models';
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
-import type { Search, SearchOptions } from '../search';
-import { find, search } from '../search';
+import type { Chat, ChatOptions, Search, SearchOptions } from '../search';
+import { find, search, chat } from '../search';
 import { resourceRetryConfig, setEntities, setLabels, sliceUnicode } from './resource.helpers';
+import { RagStrategyName } from '../kb';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}
@@ -372,6 +373,66 @@ export class Resource extends ReadableResource implements IResource {
       features,
       this.uuid ? { ...options, resource_filters: [this.uuid] } : options,
     );
+  }
+
+  /**
+   * Retrieves a generative answer for the given query based on
+   * the results of a search operation performed on the resource.
+   */
+  chat(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: ChatOptions,
+  ): Observable<Chat.Answer | IErrorResponse>;
+  chat(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: ChatOptions,
+    callback?: (answer: Chat.Answer | IErrorResponse) => void,
+  ): Observable<null>;
+  chat(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: ChatOptions,
+    callback?: (answer: Chat.Answer | IErrorResponse) => void,
+  ): Observable<Chat.Answer | IErrorResponse> | Observable<null> {
+    const chatRequest = chat(this.nuclia, this.kb, this.path, query, context, features, options);
+    if (callback) {
+      chatRequest.subscribe((response) => callback(response));
+      return of(null);
+    }
+    return chatRequest;
+  }
+
+  /**
+   * Retrieves a generative answer for the given query using the entire resource as context
+   * (the resource's text might be shorten if too large).
+   */
+  ask(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: ChatOptions,
+  ): Observable<Chat.Answer | IErrorResponse>;
+  ask(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: ChatOptions,
+    callback?: (answer: Chat.Answer | IErrorResponse) => void,
+  ): Observable<null>;
+  ask(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: ChatOptions,
+    callback?: (answer: Chat.Answer | IErrorResponse) => void,
+  ): Observable<Chat.Answer | IErrorResponse> | Observable<null> {
+    options = { ...(options || {}), rag_strategies: [{ name: RagStrategyName.FULL_RESOURCE }] };
+    return this.chat(query, context, features, options, callback);
   }
 
   setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {
