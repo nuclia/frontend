@@ -22,11 +22,6 @@
 
     &:not(.stack) {
       align-items: center;
-
-      &.no-indicator {
-        margin-left: calc(var(--rhythm-1) * -1);
-        padding-left: var(--rhythm-1);
-      }
     }
     &.stack {
       flex-direction: column;
