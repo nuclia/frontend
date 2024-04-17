@@ -119,7 +119,6 @@ export class UploadFilesComponent {
       if (this.processing !== 'none') {
         labelledFiles.forEach((file) => (file.contentType = `${file.type}+${this.processing}`));
       }
-      console.log(labelledFiles);
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
       this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
     } else {
