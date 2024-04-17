@@ -104,7 +104,6 @@ export function chat(
                 try {
                   relations = JSON.parse(atob(relationsBase64));
                   sources.relations = relations;
-                  console.log('relations', relations);
                 } catch (e) {
                   // block is not complete yet
                 }

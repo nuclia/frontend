@@ -6300,6 +6300,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dompurify@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "@types/dompurify@npm:3.0.5"
+  dependencies:
+    "@types/trusted-types": "*"
+  checksum: ffc34eca6a4536e1c8c16a47cce2623c5a118a9785492e71230052d92933ff096d14326ff449031e8dfaac509413222372d8f2b28786a13159de6241df716185
+  languageName: node
+  linkType: hard
+
 "@types/eslint-scope@npm:^3.7.3":
   version: 3.7.4
   resolution: "@types/eslint-scope@npm:3.7.4"
@@ -6670,6 +6679,13 @@ __metadata:
   version: 4.0.2
   resolution: "@types/tough-cookie@npm:4.0.2"
   checksum: e055556ffdaa39ad85ede0af192c93f93f986f4bd9e9426efdc2948e3e2632db3a4a584d4937dbf6d7620527419bc99e6182d3daf2b08685e710f2eda5291905
+  languageName: node
+  linkType: hard
+
+"@types/trusted-types@npm:*":
+  version: 2.0.7
+  resolution: "@types/trusted-types@npm:2.0.7"
+  checksum: 8e4202766a65877efcf5d5a41b7dd458480b36195e580a3b1085ad21e948bc417d55d6f8af1fd2a7ad008015d4117d5fdfe432731157da3c68678487174e4ba3
   languageName: node
   linkType: hard
 
@@ -10341,6 +10357,13 @@ __metadata:
   version: 2.1.6
   resolution: "domino@npm:2.1.6"
   checksum: 9b1b6d2661efd8bf942b70d5e11ac0de6a63f17e49b7eb227d9a612fa7b7c12b7775520d64f498988a8ee334ea9c59a463c84ea510b0af17dd3e13fdce120410
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "dompurify@npm:3.1.0"
+  checksum: 06fc76607cd076e394b2ea5479ab6f0407b8fedb6877ae95e94207b878365e5e1cd914055dacce152a5f419818afb8d4cd284b780246cf35363f0747c179a0ba
   languageName: node
   linkType: hard
 
@@ -14997,6 +15020,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"marked@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "marked@npm:12.0.1"
+  bin:
+    marked: bin/marked.js
+  checksum: 35ebc6c4612fcc028a1cd6419321e336be5b29d3feb68dfd5aaa7fcddb399c7873cd3291d60daf342db3eede747757e4e18515f349f0ee7b84ec24254f3a4190
+  languageName: node
+  linkType: hard
+
 "marked@npm:^4.3.0":
   version: 4.3.0
   resolution: "marked@npm:4.3.0"
@@ -16014,6 +16046,7 @@ __metadata:
     "@types/core-js": ^2.5.4
     "@types/cors": ^2.8.13
     "@types/d3": ^6.7.0
+    "@types/dompurify": ^3.0.5
     "@types/jasmine": 4.0.3
     "@types/jest": 29.5.2
     "@types/jexl": ^2.2.0
@@ -16041,6 +16074,7 @@ __metadata:
     d3: ^7.8.5
     date-fns: ^3.6.0
     deepmerge-ts: ^5.1.0
+    dompurify: ^3.1.0
     dotenv: 10.0.0
     es-dirname: ^0.1.0
     eslint: 8.57.0
@@ -16055,6 +16089,7 @@ __metadata:
     jsdom: ^22.1.0
     latinize: ^0.5.0
     localstorage-polyfill: ^1.0.1
+    marked: ^12.0.1
     mime: 3.0.0
     mrs-developer: ^1.7.1
     ng-mocks: 14.11.0

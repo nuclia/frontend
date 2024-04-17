@@ -17,6 +17,8 @@
     notEnoughDataMessage,
     type TypedResult,
   } from '../../core';
+  import DOMPurify from 'dompurify';
+  import * as marked from 'marked';
 
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
@@ -24,8 +26,8 @@
   let text = '';
 
   const dispatch = createEventDispatcher();
-  const NEWLINE = new RegExp(/\n/g);
-  $: text = answer.text?.replace(NEWLINE, '<br>') || '';
+
+  $: text = DOMPurify.sanitize(marked.parse(answer.text || ''));
   $: notEnoughData = hasNotEnoughData(answer.text || '');
 
   $: sources =
