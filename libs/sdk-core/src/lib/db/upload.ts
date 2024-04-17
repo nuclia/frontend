@@ -54,6 +54,7 @@ export interface FileWithMetadata extends File {
   lang?: string;
   md5?: string;
   payload?: ICreateResource;
+  contentType?: string;
 }
 
 export interface FileMetadata {
@@ -90,7 +91,7 @@ export const upload = (
   metadata: FileMetadata = {},
 ): Observable<UploadResponse> => {
   if (!metadata.contentType && !(data instanceof ArrayBuffer)) {
-    metadata.contentType = data?.type !== 'null' ? data?.type : undefined;
+    metadata.contentType = (data as FileWithMetadata).contentType || (data?.type !== 'null' ? data?.type : undefined);
   }
   if (!metadata.filename && !(data instanceof ArrayBuffer)) {
     metadata.filename = data?.name;

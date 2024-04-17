@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { take } from 'rxjs';
-import { DroppedFile, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
+import { map, take } from 'rxjs';
+import { DroppedFile, FeaturesService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { UploadService } from '../upload.service';
 import { StandaloneService } from '../../services';
@@ -32,6 +32,10 @@ export class UploadFilesComponent {
     nonNullable: true,
     validators: [Validators.pattern(/^[a-z]{2}$/)],
   });
+  processings = this.features.specificProcessings.pipe(
+    map((yes) => (yes ? ['none', 'table', 'aitable', 'invoice'] : ['none', 'table'])),
+  );
+  processing = 'none';
 
   standalone = this.standaloneService.standalone;
   noLimit = this.standalone;
@@ -49,6 +53,7 @@ export class UploadFilesComponent {
     private tracking: STFTrackingService,
     private sdk: SDKService,
     private standaloneService: StandaloneService,
+    private features: FeaturesService,
   ) {
     this.sdk.currentAccount.pipe(take(1)).subscribe((account) => {
       if (account.limits) {
@@ -105,12 +110,16 @@ export class UploadFilesComponent {
   startUpload(files: File[]) {
     if (files.length > 0) {
       this.upload.emit();
-      const labelledFiles = this.setLabels(files);
+      let labelledFiles = this.setLabels(files);
       if (this.langCode) {
         labelledFiles.forEach((file) => {
           file.lang = this.langCode.getRawValue();
         });
       }
+      if (this.processing !== 'none') {
+        labelledFiles.forEach((file) => (file.contentType = `${file.type}+${this.processing}`));
+      }
+      console.log(labelledFiles);
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
       this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
     } else {
