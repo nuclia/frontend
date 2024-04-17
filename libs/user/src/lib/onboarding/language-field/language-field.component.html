@@ -3,7 +3,7 @@
   @if ((isEnglishEnabled | async) || (areOpenAIModelsEnabled | async) || (isGeckoModelEnabled | async)) {
     <pa-radio-group [formControl]="multilingual">
       @if (isEnglishEnabled | async) {
-        <pa-radio value="english">{{ 'onboarding.step2.languages.english' | translate }}</pa-radio>
+        <pa-radio value="ENGLISH_BGE_LARGE">{{ 'onboarding.step2.languages.english' | translate }}</pa-radio>
       }
       @if (areOpenAIModelsEnabled | async) {
         <pa-radio value="OPENAI_3_SMALL">OpenAI 3 small</pa-radio>
