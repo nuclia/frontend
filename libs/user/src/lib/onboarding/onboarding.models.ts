@@ -3,7 +3,7 @@ export interface OnboardingPayload {
   phone: string;
   receive_updates: boolean;
   use_case?: string;
-  learn_about_us?: string;
+  role?: string;
   organization_size?: string;
 }
 

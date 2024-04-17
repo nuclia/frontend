@@ -31,7 +31,7 @@ export class Step1Component {
   onboardingForm = new FormGroup({
     company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     use_case: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    learn_about_us: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    role: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     organization_size: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     phoneInternationalCode: new FormControl<string>('', {
       nonNullable: true,
@@ -47,7 +47,7 @@ export class Step1Component {
   validationMessages = {
     company: { required: 'validation.required' },
     use_case: { required: 'validation.required' },
-    learn_about_us: { required: 'validation.required' },
+    role: { required: 'validation.required' },
     organization_size: { required: 'validation.required' },
     phoneInternationalCode: { required: 'validation.required_short', pattern: 'onboarding.step1.invalid_phone_code' },
     phoneNumber: { required: 'validation.required', pattern: 'onboarding.step1.invalid_phone_number' },
@@ -61,7 +61,7 @@ export class Step1Component {
     const data: OnboardingPayload = {
       company: formValue.company,
       use_case: formValue.use_case,
-      learn_about_us: formValue.learn_about_us,
+      role: formValue.role,
       organization_size: formValue.organization_size,
       phone: `${formValue.phoneInternationalCode} ${formValue.phoneNumber}`,
       receive_updates: formValue.getUpdates,

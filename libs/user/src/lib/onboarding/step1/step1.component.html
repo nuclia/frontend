@@ -62,19 +62,19 @@
   <div class="field">
     <label
       class="title-s"
-      for="learn_about_us">
-      {{ 'onboarding.step1.learn-about-us.label' | translate }}
+      for="role">
+      {{ 'onboarding.step1.role.label' | translate }}
     </label>
     <pa-select
-      formControlName="learn_about_us"
-      id="learn_about_us"
+      formControlName="role"
+      id="role"
       externalLabel
-      [errorMessages]="validationMessages.learn_about_us">
-      <pa-option value="Web search">{{ 'onboarding.step1.learn-about-us.web' | translate }}</pa-option>
-      <pa-option value="GitHub">{{ 'onboarding.step1.learn-about-us.github' | translate }}</pa-option>
-      <pa-option value="Article/publication">{{ 'onboarding.step1.learn-about-us.article' | translate }}</pa-option>
-      <pa-option value="Event">{{ 'onboarding.step1.learn-about-us.event' | translate }}</pa-option>
-      <pa-option value="Other">{{ 'onboarding.step1.learn-about-us.other' | translate }}</pa-option>
+      [errorMessages]="validationMessages.role">
+      <pa-option value="Business & Business Development">{{ 'onboarding.step1.role.business' | translate }}</pa-option>
+      <pa-option value="Sales & Marketing">{{ 'onboarding.step1.role.sales' | translate }}</pa-option>
+      <pa-option value="Developer or Technical role">{{ 'onboarding.step1.role.developer' | translate }}</pa-option>
+      <pa-option value="Legal & Compliance">{{ 'onboarding.step1.role.legal' | translate }}</pa-option>
+      <pa-option value="Other">{{ 'onboarding.step1.role.other' | translate }}</pa-option>
     </pa-select>
   </div>
 
