@@ -44,7 +44,7 @@ export function getSemanticModel(languageConf: KbLanguageConf, learningConfigura
     languageConf.semanticModel?.startsWith('OPENAI') || languageConf.semanticModel === 'GECKO_MULTI'
       ? languageConf.semanticModel
       : !languageConf.multilingual
-        ? 'ENGLISH'
+        ? 'ENGLISH_BGE_LARGE'
         : languageConf.languages.includes('catalan') || languageConf.languages.includes('other')
           ? 'MULTILINGUAL_ALPHA'
           : 'MULTILINGUAL';
