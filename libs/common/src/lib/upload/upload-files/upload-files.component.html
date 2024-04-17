@@ -88,15 +88,55 @@
       </div>
     }
 
+    <pa-expander [expanded]="false">
+      <pa-expander-header>{{ 'upload.advanced.title' | translate }}</pa-expander-header>
+      <pa-expander-body>
+        <div class="language-detection">
+          <pa-checkbox [(value)]="automaticLanguageDetection">
+            {{ 'upload.advanced.language-detection.checkbox-label' | translate }}
+          </pa-checkbox>
+
+          @if (!automaticLanguageDetection) {
+            <pa-input
+              minlength="2"
+              maxlength="2"
+              help="upload.advanced.language-detection.input-help"
+              [formControl]="langCode">
+              {{ 'upload.advanced.language-detection.input-label' | translate }}
+            </pa-input>
+          }
+        </div>
+        <div>
+          <label
+            class="title-s"
+            for="processing-radio-group">
+            {{ 'upload.advanced.processing.title' | translate }}
+          </label>
+          <p>{{ 'upload.advanced.processing.help' | translate }}</p>
+          <pa-radio-group
+            name="processing"
+            id="processing-radio-group"
+            [(value)]="processing">
+            <pa-radio
+              *ngFor="let processing of processings | async"
+              [value]="processing"
+              [help]="processing === 'none' ? undefined : 'upload.advanced.processing.' + processing + '.help'">
+              {{ 'upload.advanced.processing.' + processing + '.label' | translate }}
+            </pa-radio>
+          </pa-radio-group>
+        </div>
+      </pa-expander-body>
+    </pa-expander>
+
     <ncom-hint
       noMaxWidth
       learnMore="https://docs.nuclia.dev/docs/docs/getting-started/quick-start/push#push-content-using-the-api"
       label="How to upload a file with the API">
       <pre><code>curl $$KB_URL$$/upload \
-  -X POST \
-  -H "content-type: video/mp4" \
-  -H "authorization: Bearer $$AUTH_TOKEN$$" \
-  -T /path/to/your-video.mp4</code></pre>
+-X POST \
+-H "content-type: video/mp4" \
+-H "authorization: Bearer $$AUTH_TOKEN$$" \
+-T /path/to/your-video.mp4</code></pre>
       <p>
         Note: the authorization token here will expire. If you want a long-term approach, you should use a service
         access token and put it in the
@@ -104,22 +144,6 @@
         header.
       </p>
     </ncom-hint>
-
-    <div class="language-detection">
-      <pa-checkbox [(value)]="automaticLanguageDetection">
-        {{ 'upload.language-detection.checkbox-label' | translate }}
-      </pa-checkbox>
-
-      @if (!automaticLanguageDetection) {
-        <pa-input
-          minlength="2"
-          maxlength="2"
-          help="upload.language-detection.input-help"
-          [formControl]="langCode">
-          {{ 'upload.language-detection.input-label' | translate }}
-        </pa-input>
-      }
-    </div>
   </pa-modal-content>
   <pa-modal-footer>
     <pa-button
