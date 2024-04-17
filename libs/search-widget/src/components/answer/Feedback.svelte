@@ -2,14 +2,14 @@
   import { switchMap, take } from 'rxjs';
   import IconButton from '../../common/button/IconButton.svelte';
   import { _, chat, sendFeedback } from '../../core';
-  import { Button, Checkbox, Dropdown } from '../../common';
+  import { Button, Checkbox, Dropdown, isMobileViewport } from '../../common';
 
   export let rank = 0;
 
   let approved: 'good' | 'bad' | '' = '';
   let button: HTMLElement | undefined;
   let showDropdown = false;
-  let position: { top: number, left: number, width: number } | undefined = undefined;
+  let position: { top?: number, bottom?: number,  left: number, width: number } | undefined = undefined;
   let options = ['wrong-answer', 'wrong-citations', 'wrong-results'];
   let checked: { [key: string]: boolean } = {};
   let feedback = '';
@@ -40,9 +40,10 @@
   function openDropdown() {
     if (button) {
       const { top, left, height, ...rest } = button.getBoundingClientRect();
-      const width = Math.min(window.innerWidth - left, 400);
+      position = isMobileViewport(window.innerWidth)
+        ? { bottom: 0, left: 0, width: window.innerWidth }
+        : { top: top + height + 8, left, width: 400 };
       showDropdown = true;
-      position = { top: top + height + 8, left, width };
     }
   }
 
