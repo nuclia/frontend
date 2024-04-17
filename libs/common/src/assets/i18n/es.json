@@ -1158,7 +1158,7 @@
 	"upload.advanced.language-detection.checkbox-label": "Deja que Nuclia detecte automáticamente el idioma",
 	"upload.advanced.language-detection.input-help": "Utilice el lenguaje especificado al procesar los archivos cargados",
 	"upload.advanced.language-detection.input-label": "Código de idioma (formato ISO de 2 letras)",
-	"upload.advanced.processing.aitable.help": "Convierte el contenido de la tabla en textos semánticamente equivalentes que pueden ser utilizados por un LLM.",
+	"upload.advanced.processing.aitable.help": "Convierte el contenido de las tablas en MarkDown que puede ser utilizado por un LLM.",
 	"upload.advanced.processing.aitable.label": "Interpretar tablas",
 	"upload.advanced.processing.help": "El procesamiento específico de la naturaleza es más largo y genera más costos que el procesamiento regular.",
 	"upload.advanced.processing.invoice.help": "Extraer datos específicos de las facturas",

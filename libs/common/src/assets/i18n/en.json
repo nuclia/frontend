@@ -1159,7 +1159,7 @@
 	"upload.advanced.language-detection.checkbox-label": "Let Nuclia automatically detect the language",
 	"upload.advanced.language-detection.input-help": "Use specified language when processing the files uploaded",
 	"upload.advanced.language-detection.input-label": "Language code (2 letters ISO format)",
-	"upload.advanced.processing.aitable.help": "It converts table contents into semantically-equivalent texts that can be used by a LLM.",
+	"upload.advanced.processing.aitable.help": "It converts table contents into MarkDown that can be used by a LLM.",
 	"upload.advanced.processing.aitable.label": "Interpret tables",
 	"upload.advanced.processing.help": "Nature-specific processing is longer and generate more costs than regular processing.",
 	"upload.advanced.processing.invoice.help": "Extract invoice specific data",

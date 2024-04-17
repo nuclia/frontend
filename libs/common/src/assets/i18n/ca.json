@@ -1158,7 +1158,7 @@
 	"upload.advanced.language-detection.checkbox-label": "Deixa que Nuclia detecti automàticament l'idioma",
 	"upload.advanced.language-detection.input-help": "Utilitzeu l'idioma especificat quan processeu els fitxers penjats",
 	"upload.advanced.language-detection.input-label": "Codi d'idioma (format ISO de 2 lletres)",
-	"upload.advanced.processing.aitable.help": "Converteix el contingut de la taula en textos semànticament equivalents que poden ser utilitzats per un LLM.",
+	"upload.advanced.processing.aitable.help": "Converteix el contingut de les taules en MarkDown que pot ser utilitzat per un LLM.",
 	"upload.advanced.processing.aitable.label": "Interpretar taules",
 	"upload.advanced.processing.help": "El processament específic de la naturalesa és més llarg i genera més costos que el processament normal.",
 	"upload.advanced.processing.invoice.help": "Extraieu dades específiques de les factures",
