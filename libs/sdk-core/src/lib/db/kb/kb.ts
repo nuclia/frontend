@@ -50,7 +50,7 @@ import {
   LinkField,
   Origin,
   Resource,
-  resourceRetryConfig,
+  retry429Config,
   UserMetadata,
 } from '../resource';
 import type { UploadResponse } from '../upload';
@@ -903,7 +903,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   createResource(resource: ICreateResource, synchronous = true): Observable<{ uuid: string }> {
     return defer(() =>
       this.nuclia.rest.post<{ uuid: string }>(`${this.path}/resources`, resource, undefined, undefined, synchronous),
-    ).pipe(retry(resourceRetryConfig));
+    ).pipe(retry(retry429Config()));
   }
 
   /**

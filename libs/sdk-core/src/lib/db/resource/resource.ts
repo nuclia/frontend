@@ -27,7 +27,7 @@ import type {
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
 import type { Chat, ChatOptions, Search, SearchOptions } from '../search';
 import { find, search, chat } from '../search';
-import { resourceRetryConfig, setEntities, setLabels, sliceUnicode } from './resource.helpers';
+import { retry429Config, setEntities, setLabels, sliceUnicode } from './resource.helpers';
 import { RagStrategyName } from '../kb';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -241,18 +241,20 @@ export class Resource extends ReadableResource implements IResource {
    */
   modify(data: Partial<ICreateResource>, synchronous = true): Observable<void> {
     return defer(() => this.nuclia.rest.patch<void>(this.path, data, undefined, undefined, synchronous)).pipe(
-      retry(resourceRetryConfig),
+      retry(retry429Config()),
     );
   }
 
   /** Deletes the resource. */
   delete(synchronous = true): Observable<void> {
-    return this.nuclia.rest.delete(this.path, undefined, synchronous);
+    return defer(() => this.nuclia.rest.delete(this.path, undefined, synchronous)).pipe(retry(retry429Config()));
   }
 
   /** Triggers a resource reprocessing. */
   reprocess(): Observable<void> {
-    return this.nuclia.rest.post<void>(`${this.path}/reprocess`, {}, undefined, undefined, true);
+    return defer(() => this.nuclia.rest.post<void>(`${this.path}/reprocess`, {}, undefined, undefined, true)).pipe(
+      retry(retry429Config()),
+    );
   }
 
   getField(
@@ -313,7 +315,7 @@ export class Resource extends ReadableResource implements IResource {
     field: string,
     data: TextField | LinkField | FileField | KeywordSetField,
   ): Observable<void> {
-    return this.nuclia.rest.put(`${this.path}/${type}/${field}`, data);
+    return defer(() => this.nuclia.rest.put<void>(`${this.path}/${type}/${field}`, data)).pipe(retry(retry429Config()));
   }
 
   /**
