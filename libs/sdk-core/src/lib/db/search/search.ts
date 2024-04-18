@@ -12,7 +12,7 @@ export const find = (
   options?: SearchOptions,
   useGet?: boolean,
 ): Observable<Search.FindResults | IErrorResponse> => {
-  const { inTitleOnly, ...others } = options || {};
+  options = options || {};
   if (
     options?.with_synonyms &&
     (features.includes(Search.Features.VECTOR) || features.includes(Search.Features.RELATIONS))
@@ -26,23 +26,20 @@ export const find = (
     query: query || '',
     features,
   };
-  if (inTitleOnly) {
-    params['fields'] = ['a/title'];
-  }
 
   params['shards'] = nuclia.currentShards?.[kbid] || [];
   const endpoint = `${path}/find`;
   nuclia.events?.log('lastQuery', { endpoint, params, nucliaOptions: nuclia.options });
   const searchMethod = useGet
-    ? nuclia.rest.get<Response>(`${endpoint}?${serialize(params, others)}`, undefined, true)
-    : nuclia.rest.post<Response>(endpoint, { ...params, ...others }, undefined, true);
+    ? nuclia.rest.get<Response>(`${endpoint}?${serialize(params, options)}`, undefined, true)
+    : nuclia.rest.post<Response>(endpoint, { ...params, ...options }, undefined, true);
   return searchMethod.pipe(
     switchMap((res) => {
       const searchId = res.headers.get('X-Nuclia-Trace-Id') || '';
       // status 206 means we got partial results
       if (!res.ok || res.status === 206) {
         if (res.status === 206) {
-          nuclia.events?.emit<{ [key: string]: any }>('partial', { ...params, ...others });
+          nuclia.events?.emit<{ [key: string]: any }>('partial', { ...params, ...options });
         }
         return from(
           res.json().then(
@@ -88,21 +85,17 @@ export const search = (
   options?: SearchOptions,
   useGet?: boolean,
 ): Observable<Search.Results | IErrorResponse> => {
-  const { inTitleOnly, ...others } = options || {};
+  options = options || {};
   const params: { [key: string]: string | string[] } = {
     query: query || '',
     features,
   };
-  if (inTitleOnly) {
-    params['fields'] = ['a/title'];
-  }
-
   params['shards'] = nuclia.currentShards?.[kbid] || [];
 
   nuclia.events?.log('lastQuery', { endpoint: `${path}/search`, params, nucliaOptions: nuclia.options });
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/search?${serialize(params, others)}`)
-    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/search`, { ...params, ...others });
+    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/search?${serialize(params, options)}`)
+    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/search`, { ...params, ...options });
   return manageSearchRequest(nuclia, kbid, searchMethod).pipe(tap((res) => nuclia.events?.log('lastResults', res)));
 };
 

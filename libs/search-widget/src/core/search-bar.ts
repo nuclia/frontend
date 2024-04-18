@@ -9,7 +9,6 @@ import {
   hideResults,
   isAnswerEnabled,
   isEmptySearchQuery,
-  isTitleOnly,
   loadMore,
   pageNumber,
   pendingResults,
@@ -60,7 +59,6 @@ export const setupTriggerSearch = (
                 searchShow.pipe(take(1)),
                 searchFilters.pipe(take(1)),
                 preselectedFilters.pipe(take(1)),
-                isTitleOnly.pipe(take(1)),
                 autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
                 widgetRagStrategies.pipe(take(1)),
@@ -76,7 +74,6 @@ export const setupTriggerSearch = (
                     show,
                     filters,
                     preselectedFilters,
-                    inTitleOnly,
                     autoFilterDisabled,
                     isAnswerEnabled,
                     ragStrategies,
@@ -86,7 +83,6 @@ export const setupTriggerSearch = (
                       ...options,
                       show,
                       filters: filters.concat(preselectedFilters),
-                      inTitleOnly,
                       ...(autoFilterDisabled ? { autofilter: false } : {}),
                     };
                     if (isAnswerEnabled && !trigger?.more) {

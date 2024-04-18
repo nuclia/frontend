@@ -48,7 +48,6 @@ import {
   getFieldDataFromResource,
   getResultType,
   isEmptySearchQuery,
-  isTitleOnly,
   pendingResults,
   preselectedFilters,
   resultList,
@@ -132,7 +131,6 @@ export function activateTypeAheadSuggestions() {
 
 const queryKey = formatQueryKey('query');
 const filterKey = formatQueryKey('filter');
-const titleOnlyKey = formatQueryKey('titleOnly');
 const previewKey = formatQueryKey('preview');
 const creationStartKey = formatQueryKey('creationStart');
 const creationEndKey = formatQueryKey('creationEnd');
@@ -177,19 +175,15 @@ export function activatePermalinks() {
       .pipe(
         switchMap(() => isEmptySearchQuery.pipe(take(1))),
         filter((isEmptySearchQuery) => !isEmptySearchQuery),
-        switchMap(() =>
-          combineLatest([searchQuery, searchFilters, isTitleOnly, creationStart, creationEnd]).pipe(take(1)),
-        ),
+        switchMap(() => combineLatest([searchQuery, searchFilters, creationStart, creationEnd]).pipe(take(1))),
       )
-      .subscribe(([query, filters, isTitleOnly, creationStart, creationEnd]) => {
+      .subscribe(([query, filters, creationStart, creationEnd]) => {
         const urlParams = getUrlParams();
         urlParams.set(queryKey, query);
         urlParams.delete(filterKey);
-        urlParams.delete(titleOnlyKey);
         urlParams.delete(creationStartKey);
         urlParams.delete(creationEndKey);
         filters.forEach((filter) => urlParams.append(filterKey, filter));
-        urlParams.append(titleOnlyKey, `${isTitleOnly}`);
         if (creationStart) urlParams.append(creationStartKey, creationStart);
         if (creationEnd) urlParams.append(creationEndKey, creationEnd);
         updateQueryParams(urlParams);
@@ -205,7 +199,6 @@ export function activatePermalinks() {
         const urlParams = getUrlParams();
         urlParams.delete(queryKey);
         urlParams.delete(filterKey);
-        urlParams.delete(titleOnlyKey);
         urlParams.delete(creationStartKey);
         urlParams.delete(creationEndKey);
         updateQueryParams(urlParams);
@@ -246,14 +239,13 @@ function initStoreFromUrlParams() {
   const urlParams = getUrlParams();
   // Search store
   const query = urlParams.get(queryKey);
-  const titleOnly = urlParams.get(titleOnlyKey) === 'true';
   const filters = urlParams.getAll(filterKey);
   const start = urlParams.get(creationStartKey);
   const end = urlParams.get(creationEndKey);
 
   if (query || filters.length > 0 || start || end) {
     searchQuery.set(query || '');
-    searchFilters.set({ filters, titleOnly });
+    searchFilters.set({ filters });
     typeAhead.set(query || '');
     creationStart.set(start || undefined);
     creationEnd.set(end || undefined);

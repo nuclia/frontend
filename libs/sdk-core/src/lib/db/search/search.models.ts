@@ -68,10 +68,6 @@ export interface ChatOptions extends BaseSearchOptions {
 }
 
 export interface SearchOptions extends BaseSearchOptions {
-  // non API-official options
-  inTitleOnly?: boolean;
-
-  // API options
   faceted?: string[];
   sort?: SortOption;
   page_number?: number;

@@ -85,7 +85,7 @@ export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
   preselectedFilters: [],
-  options: { inTitleOnly: false, highlight: true, page_number: 0 },
+  options: { highlight: true, page_number: 0 },
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   results: NO_RESULT_LIST,
   pending: false,
@@ -191,7 +191,7 @@ export const preselectedFilters = searchState.writer<string[]>(
   }),
 );
 
-export const searchFilters = searchState.writer<string[], { filters: string[]; titleOnly: boolean }>(
+export const searchFilters = searchState.writer<string[], { filters: string[] }>(
   (state) => [
     ...(state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
     ...(state.filters.labelSets || []).map((filter) => getFilterFromLabelSet(filter.id)),
@@ -205,7 +205,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[]; t
         if (spreadFilter.length === 3) {
           const labelFilter = {
             classification: getLabelFromFilter(filter),
-            kind: data.titleOnly ? LabelSetKind.RESOURCES : LabelSetKind.PARAGRAPHS,
+            kind: LabelSetKind.PARAGRAPHS,
           };
           if (!filters.labels) {
             filters.labels = [labelFilter];
@@ -215,7 +215,7 @@ export const searchFilters = searchState.writer<string[], { filters: string[]; t
         } else {
           const labelSetFilter = {
             id: getLabelSetFromFilter(filter),
-            kind: data.titleOnly ? LabelSetKind.RESOURCES : LabelSetKind.PARAGRAPHS,
+            kind: LabelSetKind.PARAGRAPHS,
           };
           if (!filters.labelSets) {
             filters.labelSets = [labelSetFilter];
@@ -424,23 +424,6 @@ export const entityRelations = searchState.reader((state) =>
         ),
     }))
     .filter((entity) => Object.keys(entity.relations).length > 0),
-);
-
-export const isTitleOnly: Observable<boolean> = combineLatest([
-  searchQuery,
-  labelFilters,
-  labelSetFilters,
-  entityFilters,
-  hasRangeCreation,
-]).pipe(
-  map(
-    ([query, labels, labelSets, entities, hasRangeCreation]) =>
-      !query &&
-      ((labels?.length > 0 && labels.every((label) => label.kind === LabelSetKind.RESOURCES)) ||
-        (labelSets?.length > 0 && labelSets.every((labelSet) => labelSet.kind === LabelSetKind.RESOURCES)) ||
-        !!hasRangeCreation) &&
-      (entities || []).length === 0,
-  ),
 );
 
 export const triggerSearch: Subject<{ more: true } | void> = new Subject<{ more: true } | void>();
