@@ -11,9 +11,8 @@ import { PaCardModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConnectorComponent {
-  @Input() title?: string;
-  @Input() logo?: string;
-  @Input() description?: string;
+  @Input({ required: true }) title = '';
+  @Input({ required: true }) logo = '';
   @Input({ transform: booleanAttribute }) disabled = false;
 
   @Output() selectConnector: EventEmitter<MouseEvent | KeyboardEvent> = new EventEmitter<MouseEvent | KeyboardEvent>();
