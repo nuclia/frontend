@@ -55,7 +55,7 @@ export class EditSyncFiltersComponent implements OnInit {
         to: this.filtersForm.value.toDate || undefined,
       };
     }
-    this.syncService.currentSourceId
+    this.syncService.currentSyncId
       .pipe(
         take(1),
         switchMap((id) => this.syncService.updateSync(id || '', { filters }, true)),

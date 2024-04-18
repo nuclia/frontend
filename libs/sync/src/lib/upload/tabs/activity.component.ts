@@ -27,7 +27,7 @@ export class SyncActivityComponent implements OnInit, OnDestroy {
   logs: { index: number; date: string; message: string; icon: string }[] = [];
   syncing = false;
   currentSync = this.syncService.getCurrentSync();
-  canSelectFiles = this.syncService.currentSourceId.pipe(
+  canSelectFiles = this.syncService.currentSyncId.pipe(
     map((sourceId) => this.syncService.canSelectFiles(sourceId || '')),
   );
   noFolderSelected = this.currentSync.pipe(map((sync) => !sync.foldersToSync || sync.foldersToSync.length === 0));
@@ -50,7 +50,7 @@ export class SyncActivityComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         }),
         startWith(null),
-        switchMap(() => this.syncService.currentSourceId),
+        switchMap(() => this.syncService.currentSyncId),
         filter((id) => !!id),
         switchMap((id) => of(id).pipe(repeat({ delay: 10000 }))),
         switchMap((id) =>

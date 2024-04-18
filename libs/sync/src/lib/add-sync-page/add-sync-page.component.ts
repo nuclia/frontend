@@ -1,21 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { ActivatedRoute } from '@angular/router';
-import { ConnectorDefinition, IConnector, SyncService } from '../logic';
-import { filter, map, Observable, switchMap, take } from 'rxjs';
-import { PaButtonModule, PaDatePickerModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import {
-  BackButtonComponent,
-  InfoCardComponent,
-  LabelsExpanderComponent,
-  SisModalService,
-  StickyFooterComponent,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LabelModule, LabelSetFormModalComponent, LabelsService, ParametersTableComponent } from '@flaps/core';
-import { LabelSet, LabelSets } from '@nuclia/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ConnectorDefinition, IConnector, ISyncEntity, SyncService } from '../logic';
+import { filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { BackButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
+import { ConfigurationFormComponent } from './configuration-form';
+import { FolderSelectionComponent } from './folder-selection/folder-selection.component';
+import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'nsy-add-sync-page',
@@ -23,28 +16,25 @@ import { LabelSet, LabelSets } from '@nuclia/core';
   imports: [
     CommonModule,
     BackButtonComponent,
-    InfoCardComponent,
     PaButtonModule,
     PaIconModule,
-    PaTextFieldModule,
-    ReactiveFormsModule,
     StickyFooterComponent,
     TranslateModule,
-    TwoColumnsConfigurationItemComponent,
-    PaDatePickerModule,
-    ParametersTableComponent,
-    LabelsExpanderComponent,
-    LabelModule,
+    ConfigurationFormComponent,
+    FolderSelectionComponent,
   ],
   templateUrl: './add-sync-page.component.html',
   styleUrl: './add-sync-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddSyncPageComponent implements OnInit {
+  private router = inject(Router);
   private currentRoute = inject(ActivatedRoute);
+  private sdk = inject(SDKService);
   private syncService = inject(SyncService);
-  private labelService = inject(LabelsService);
   private modalService = inject(SisModalService);
+  private translate = inject(TranslateService);
+  private toaster = inject(SisToastService);
 
   connectorId = this.currentRoute.params.pipe(
     filter((params) => params['connector']),
@@ -54,52 +44,133 @@ export class AddSyncPageComponent implements OnInit {
     map((id) => this.syncService.getConnectorDefinition(id)),
   );
   connector: Observable<IConnector> = this.connectorId.pipe(switchMap((id) => this.syncService.getConnector(id, '')));
+  kbId = this.sdk.currentKb.pipe(map((kb) => kb.id));
 
-  form = new FormGroup({
-    name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    filterResources: new FormGroup({
-      extensions: new FormControl<string>(''),
-      extensionUsage: new FormControl<'include' | 'exclude'>('include', { nonNullable: true }),
-      from: new FormControl(''),
-      to: new FormControl(''),
-    }),
-    extra: new FormGroup({}),
-  });
+  syncId?: string | null;
 
-  labelSets: Observable<LabelSets | null> = this.labelService.resourceLabelSets;
-  hasLabelSet: Observable<boolean> = this.labelService.hasResourceLabelSets;
-  selectedLabelSet?: { id: string; labelSet: LabelSet };
+  steps: Observable<('configuration' | 'folder-selection')[]> = this.connector.pipe(
+    map((connector) => (connector.allowToSelectFolders ? ['configuration', 'folder-selection'] : ['configuration'])),
+  );
+  stepIndex = signal(0);
+  step = computed(() => this.stepIndex() + 1);
 
-  tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
+  validForm = false;
+  configuration?: ISyncEntity;
 
   ngOnInit() {
-    this.connector
-      .pipe(
-        take(1),
-        switchMap((connector) => connector.getParametersSections()),
-      )
-      .subscribe((sections) => {
-        sections.forEach((section) =>
-          section.fields.forEach((field) => {
-            if (field.type !== 'table') {
-              this.form.controls.extra.addControl(
-                field.id,
-                new FormControl<string>('', {
-                  nonNullable: true,
-                  validators: field.required ? [Validators.required] : [],
+    this.syncService.currentSyncId.pipe(take(1)).subscribe((syncId) => (this.syncId = syncId));
+  }
+
+  goBack() {
+    if (this.stepIndex() > 0) {
+      this.stepIndex.update((value) => value - 1);
+    }
+  }
+
+  goNext() {
+    if (!this.configuration) {
+      return;
+    }
+    const syncEntity = this.configuration;
+    if (!this.syncId) {
+      this.connectorDefinition
+        .pipe(
+          take(1),
+          switchMap(
+            (connectorDef) =>
+              this.modalService.openConfirm({
+                title: this.translate.instant('sync.add-page.confirm-authenticate.title', {
+                  connector: connectorDef.title,
                 }),
-              );
-            }
-          }),
-        );
+                description: this.translate.instant('sync.add-page.confirm-authenticate.description'),
+                confirmLabel: this.translate.instant('sync.add-page.confirm-authenticate.confirm-button'),
+              }).onClose,
+          ),
+          filter((confirmed) => !!confirmed),
+          switchMap(() => this._createSync(syncEntity)),
+        )
+        .subscribe({
+          next: (connector) => this._onSuccessfulCreation(connector, syncEntity),
+          error: (error) => {
+            console.warn(error);
+            this.toaster.error('sync.add-page.toast.generic-error');
+          },
+        });
+    } else {
+      this._goNext();
+    }
+  }
+
+  resetConfiguration() {
+    // TODO
+  }
+
+  save() {
+    if (!this.configuration) {
+      return;
+    }
+    const syncEntity = this.configuration;
+    if (!this.syncId) {
+      this._createSync(syncEntity).subscribe({
+        next: (connector) => this._onSuccessfulCreation(connector, syncEntity),
+        error: (error) => {
+          console.warn(error);
+          this.toaster.error('sync.add-page.toast.generic-error');
+        },
       });
+    } else {
+      // TODO
+    }
   }
 
-  updateTable(fieldId: string, values: { key: string; value: string; secret: boolean }[]) {
-    this.tables[fieldId] = values;
+  updateConfiguration(data: ISyncEntity) {
+    this.configuration = data;
   }
 
-  createLabelSet() {
-    this.modalService.openModal(LabelSetFormModalComponent);
+  private _goNext() {
+    this.steps.pipe(take(1)).subscribe((steps) => {
+      if (this.stepIndex() < steps.length) {
+        this.stepIndex.update((value) => value + 1);
+      }
+    });
+  }
+
+  private _createSync(syncEntity: ISyncEntity) {
+    return this.syncService.addSync(syncEntity).pipe(
+      tap(() => this.syncService.setCurrentSourceId(syncEntity.id)),
+      switchMap(() => this.syncService.getConnector(syncEntity.connector.name, syncEntity.id).pipe(take(1))),
+      switchMap((connector) => {
+        // Setup sync items from the connector itself if the source doesn't allow to select folders
+        if (!connector.allowToSelectFolders) {
+          if (typeof connector.handleParameters === 'function') {
+            connector.handleParameters(syncEntity.connector.parameters);
+          }
+          return this.syncService
+            .updateSync(syncEntity.id, {
+              foldersToSync: connector.getStaticFolders(),
+            })
+            .pipe(
+              switchMap(() => this.syncService.getConnector(syncEntity.connector.name, syncEntity.id).pipe(take(1))),
+            );
+        } else {
+          return of(connector);
+        }
+      }),
+    );
+  }
+
+  private _onSuccessfulCreation(connector: IConnector, syncEntity: ISyncEntity) {
+    if (!connector.hasServerSideAuth) {
+      this.router.navigate([`../../${syncEntity.id}`], { relativeTo: this.currentRoute });
+    } else {
+      let basePath = location.href.split('/sync/add/')[0];
+      if (this.sdk.nuclia.options.standalone) {
+        // NucliaDB admin uses hash routing but the oauth flow does not support it
+        // so we remove '#/' from the path and we will restore it in app.component after
+        // the oauth flow is completed
+        basePath = basePath.replace('#/', '');
+      }
+      connector.goToOAuth(`${basePath}/sync/${syncEntity.id}`, true);
+    }
   }
 }

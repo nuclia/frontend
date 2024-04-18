@@ -132,6 +132,10 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
   height: 1px;
   width: 100%;
 }
+.separator-word {
+  color: $color-neutral-regular;
+  text-transform: lowercase;
+}
 
 .form-container {
   display: flex;
@@ -157,9 +161,12 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
   &.small-gap {
     gap: rhythm(1);
   }
-  & > *:not(span) {
+  &.full-width > *:not(span) {
     flex: 1 0 auto;
     max-width: 50%;
+  }
+  &:not(.full-width) {
+    flex-wrap: wrap;
   }
 }
 

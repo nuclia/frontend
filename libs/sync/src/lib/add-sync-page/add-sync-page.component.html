@@ -15,133 +15,59 @@
   }
 
   @if (connector | async; as connector) {
-    <form [formGroup]="form">
-      <nsi-two-columns-configuration-item
-        itemTitle="sync.add-page.connector-name.title"
-        description="sync.add-page.connector-name.description">
-        <div class="form-container">
-          <pa-input formControlName="name">{{ 'sync.add-page.connector-name.field-label' | translate }}</pa-input>
-        </div>
-      </nsi-two-columns-configuration-item>
-
-      <ng-container formGroupName="extra">
-        @for (section of connector.getParametersSections() | async; track section.id) {
-          <nsi-two-columns-configuration-item
-            [badge]="section.badge"
-            [itemTitle]="section.title"
-            [description]="section.description || ''">
-            <div class="form-container">
-              @for (field of section.fields; track field.id) {
-                @switch (field.type) {
-                  @case ('text') {
-                    <pa-input
-                      [formControlName]="field.id"
-                      [placeholder]="field.placeholder">
-                      {{ field.label | translate }}
-                    </pa-input>
-                  }
-                  @case ('select') {
-                    <pa-select
-                      [formControlName]="field.id"
-                      [label]="field.label">
-                      @for (option of field.options; track option.value) {
-                        <pa-option
-                          [disabled]="option.disabled"
-                          [value]="option.value">
-                          {{ option.label | translate }}
-                        </pa-option>
-                      }
-                    </pa-select>
-                  }
-                  @case ('textarea') {
-                    <pa-textarea [formControlName]="field.id">{{ field.label }}</pa-textarea>
-                  }
-                  @case ('table') {
-                    <div>
-                      <label>{{ field.label | translate }}</label>
-                      <app-parameters-table
-                        [values]="tables[field.id] || []"
-                        (valuesChanges)="updateTable(field.id, $event)"></app-parameters-table>
-                    </div>
-                  }
-                }
-              }
-            </div>
-          </nsi-two-columns-configuration-item>
+    <div>
+      @switch (step()) {
+        @case (1) {
+          <nsy-configuration-form
+            [kbId]="kbId | async"
+            [connector]="connector"
+            [connectorId]="connectorId | async"
+            (configurationChange)="updateConfiguration($event)"
+            (validForm)="validForm = $event"></nsy-configuration-form>
         }
-      </ng-container>
-
-      <nsi-two-columns-configuration-item
-        badge="generic.badge.optional"
-        itemTitle="sync.add-page.add-labels.title"
-        description="sync.add-page.add-labels.description">
-        <div class="inline-form">
-          <app-label-dropdown
-            [labelSets]="labelSets | async"
-            [disabled]="(hasLabelSet | async) === false"
-            aspect="basic"
-            fullWidth>
-            {{ 'sync.add-page.add-labels.select-labels' | translate }}
-          </app-label-dropdown>
-          <span>{{ 'generic.or' | translate }}</span>
-          <pa-button
-            class="full-width"
-            icon="circle-plus"
-            aspect="basic"
-            iconAndText
-            (click)="createLabelSet()">
-            {{ 'sync.add-page.add-labels.create-labelset' | translate }}
-          </pa-button>
-        </div>
-      </nsi-two-columns-configuration-item>
-
-      <nsi-two-columns-configuration-item
-        badge="generic.badge.optional"
-        itemTitle="sync.add-page.filter-resources.title"
-        description="sync.add-page.filter-resources.description">
-        <div class="form-container">
-          <nsi-info-card>{{ 'sync.add-page.filter-resources.file-extension.info' | translate }}</nsi-info-card>
-          <div
-            class="form-container"
-            formGroupName="filterResources">
-            <div class="inline-form small-gap">
-              <pa-select formControlName="extensionUsage">
-                <pa-option value="include">
-                  {{ 'sync.add-page.filter-resources.file-extension.include' | translate }}
-                </pa-option>
-                <pa-option value="exclude">
-                  {{ 'sync.add-page.filter-resources.file-extension.exclude' | translate }}
-                </pa-option>
-              </pa-select>
-              <pa-input
-                id="extension"
-                placeholder=".pdf,.docx">
-                {{ 'sync.add-page.filter-resources.file-extension.label' | translate }}
-              </pa-input>
-            </div>
-
-            <div class="label-field-container">
-              <label>{{ 'sync.add-page.filter-resources.modification-date.label' | translate }}</label>
-              <div class="inline-form small-gap">
-                <pa-date-picker
-                  [label]="'sync.add-page.filter-resources.modification-date.from' | translate"></pa-date-picker>
-                <pa-date-picker
-                  [label]="'sync.add-page.filter-resources.modification-date.to' | translate"></pa-date-picker>
-              </div>
-            </div>
+        @case (2) {
+          <nsy-folder-selection></nsy-folder-selection>
+        }
+      }
+      @if (steps | async; as steps) {
+        <nsi-sticky-footer>
+          <div footerNote>
+            @if (steps.length > 1) {
+              {{ 'sync.add-page.footer.steps' | translate: { index: step(), total: steps.length } }}
+            }
           </div>
-        </div>
-      </nsi-two-columns-configuration-item>
-    </form>
 
-    <nsi-sticky-footer>
-      <div footerNote>TODO: steps</div>
-      <pa-button aspect="basic">{{ 'generic.cancel' | translate }}</pa-button>
-      <pa-button
-        kind="primary"
-        [disabled]="form.invalid || form.pristine">
-        {{ 'TODO' | translate }}
-      </pa-button>
-    </nsi-sticky-footer>
+          @if (step() === 1) {
+            <pa-button
+              aspect="basic"
+              (click)="resetConfiguration()">
+              {{ 'generic.cancel' | translate }}
+            </pa-button>
+          } @else {
+            <pa-button
+              aspect="basic"
+              (click)="goBack()">
+              {{ 'generic.back' | translate }}
+            </pa-button>
+          }
+
+          @if (steps.length > 1 && step() < steps.length) {
+            <pa-button
+              kind="primary"
+              [disabled]="!validForm"
+              (click)="goNext()">
+              {{ 'sync.add-page.footer.folder-selection-button' | translate }}
+            </pa-button>
+          } @else {
+            <pa-button
+              kind="primary"
+              [disabled]="!validForm"
+              (click)="save()">
+              {{ 'sync.add-page.footer.save-button' | translate }}
+            </pa-button>
+          }
+        </nsi-sticky-footer>
+      }
+    </div>
   }
 </div>

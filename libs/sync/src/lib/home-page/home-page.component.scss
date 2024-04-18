@@ -33,7 +33,7 @@ section {
       display: flex;
       flex-wrap: wrap;
       gap: rhythm(1);
-      justify-content: end;
+      justify-content: flex-end;
     }
 
     pa-input.server-url ::ng-deep .pa-field-control {

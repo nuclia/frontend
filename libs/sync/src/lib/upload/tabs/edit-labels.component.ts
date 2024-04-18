@@ -50,7 +50,7 @@ export class EditSyncLabelsComponent implements OnInit {
   }
 
   save() {
-    this.syncService.currentSourceId
+    this.syncService.currentSyncId
       .pipe(
         take(1),
         switchMap((id) => this.syncService.updateSync(id || '', { labels: this.selectedLabels })),

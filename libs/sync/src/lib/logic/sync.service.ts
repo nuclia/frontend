@@ -95,7 +95,7 @@ export class SyncService {
   private _isServerDown = new BehaviorSubject<boolean>(true);
   isServerDown = this._isServerDown.asObservable();
   private _currentSyncId = new BehaviorSubject<string | null>(null);
-  currentSourceId = this._currentSyncId.asObservable();
+  currentSyncId = this._currentSyncId.asObservable();
   private _syncCache = new BehaviorSubject<{ [id: string]: ISyncEntity }>({});
   syncCache = this._syncCache.asObservable();
   private _syncListCache = new BehaviorSubject<SyncBasicData[]>([]);
@@ -131,7 +131,7 @@ export class SyncService {
   }
 
   getCurrentSync(): Observable<ISyncEntity> {
-    return this.currentSourceId.pipe(
+    return this.currentSyncId.pipe(
       filter((id) => !!id),
       switchMap((id) => this.getSync(id!)),
     );

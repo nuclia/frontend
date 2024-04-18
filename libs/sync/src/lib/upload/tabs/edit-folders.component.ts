@@ -27,7 +27,7 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel<SyncItem>(true, []);
   triggerSearch = new Subject<void>();
   nextPage?: Observable<SearchResults>;
-  canSelectFiles = this.syncService.currentSourceId.pipe(
+  canSelectFiles = this.syncService.currentSyncId.pipe(
     map((sourceId) => this.syncService.canSelectFiles(sourceId || '')),
   );
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
@@ -112,7 +112,7 @@ export class EditSyncFoldersComponent implements OnInit, AfterViewInit {
     }, 200);
   }
   save() {
-    this.syncService.currentSourceId
+    this.syncService.currentSyncId
       .pipe(
         take(1),
         switchMap((id) => this.syncService.updateSync(id || '', { foldersToSync: this.selection.selected }, true)),

@@ -72,7 +72,7 @@ export class SyncComponent implements OnInit, OnDestroy {
   }
 
   delete() {
-    this.syncService.currentSourceId
+    this.syncService.currentSyncId
       .pipe(
         take(1),
         switchMap((id) => this.syncService.deleteSync(id || '')),
