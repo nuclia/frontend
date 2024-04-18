@@ -3,6 +3,7 @@
 ### Improvements
 
 - `ask()` method in the resource, it allows to ask questions to the resource using the entire content of the resource as context
+- Remove `inTitleOnly` search option
 
 # 1.14.6 (2024-04-12)
 

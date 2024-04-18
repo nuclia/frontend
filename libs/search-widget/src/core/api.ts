@@ -87,7 +87,6 @@ export const initNuclia = (
   }
 
   searchOptions.set({
-    inTitleOnly: false,
     highlight: widgetOptions.highlight,
     autofilter: !!widgetOptions.features?.autofilter,
   });
@@ -195,7 +194,6 @@ export const searchInResource = (
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  options.inTitleOnly = !query && (!options.filters || options.filters.length === 0);
 
   return nucliaApi.knowledgeBox
     .getResourceFromData(resource)
