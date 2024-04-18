@@ -1,0 +1,40 @@
+.sw-feedback {
+  display: flex;
+
+  .dropdown {
+    background-color: var(--color-neutral-lightest);
+    padding: var(--rhythm-3);
+  }
+
+  .close {
+    position: absolute;
+    right: var(--rhythm-1);
+    top: var(--rhythm-1);
+  }
+
+  .options {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rhythm-1);
+    margin-bottom: var(--rhythm-2);
+  }
+
+  textarea {
+    box-sizing: border-box;
+    border-color: var(--color-neutral-light);
+    font-family: inherit;
+    font-size: var(--font-size-medium);
+    padding: var(--rhythm-1);
+    width: 100%;
+    &:focus {
+      border-color: var(--color-primary-regular);
+      outline: 0;
+    }
+  }
+
+  .submit {
+    margin-top: var(--rhythm-1_5);
+    text-align: right;
+  }
+}
