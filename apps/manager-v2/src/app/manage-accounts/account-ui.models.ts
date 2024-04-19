@@ -23,10 +23,21 @@ export interface KbSummary {
   title: string;
   accountId: string;
   zone: ZoneSummary;
+  private: boolean;
+  activity: {
+    redash: string;
+    grafana: string;
+  };
 }
 
 export interface KbCounters {
-  [kbId: string]: number;
+  [kbId: string]: {
+    resources: { total: number; pending: number; error: number };
+    paragraphs: number;
+    fields: number;
+    sentences: number;
+    index_size: number;
+  };
 }
 
 export interface KbDetails extends KbSummary {

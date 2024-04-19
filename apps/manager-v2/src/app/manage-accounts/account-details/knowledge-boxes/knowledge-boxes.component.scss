@@ -1,4 +1,32 @@
-.count {
-  text-align: right;
+@import 'variables';
+
+.space-between {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: rhythm(1);
   width: 100%;
+
+  strong {
+    font-weight: $font-weight-semi-bold;
+  }
+}
+
+.id-and-lock {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+
+  pa-icon {
+    display: flex;
+  }
+  .icon-placeholder {
+    width: rhythm(2);
+  }
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
 }

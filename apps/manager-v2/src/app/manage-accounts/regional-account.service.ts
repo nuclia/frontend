@@ -6,6 +6,7 @@ import { Account, Kb } from './regional-account.models';
 import { ZoneService } from '../manage-zones/zone.service';
 import { KBRoles, Nuclia } from '@nuclia/core';
 import { ZoneSummary } from '../manage-zones/zone.models';
+import { STATUS_FACET } from '@flaps/common';
 
 const MANAGE_ACCOUNT_ENDPOINT = '/manage/@account';
 const ACCOUNT_ENDPOINT = '/account';
@@ -34,7 +35,22 @@ export class RegionalAccountService {
             const zone = zoneDict[index.zone_id];
             return this.sdk.nuclia.rest
               .get<Kb>(`${ACCOUNT_ENDPOINT}/${index.account_id}/kb/${index.kb_id}`, undefined, undefined, zone.slug)
-              .pipe(map((kb) => ({ ...kb, accountId: index.account_id, zone })));
+              .pipe(
+                map((kb) => ({
+                  ...kb,
+                  accountId: index.account_id,
+                  zone,
+                  private: kb.state === 'PRIVATE',
+                  activity: {
+                    redash: `http://redash.nuclia.com/queries/24?p_KB=${kb.id}`,
+                    grafana: `http://platform.grafana.nuclia.com/d/${
+                      index.account_id
+                    }/1-nucliadb-knowledgebox?orgId=1&var-kbid=${kb.id}&var-cluster=${
+                      zone.slug === 'europe-1' ? 'flaps' : zone.slug
+                    }&var-container=All&var-service=All&var-trace_min_duration=0s&from=now-12h&to=now`,
+                  },
+                })),
+              );
           }),
         ),
       ),
@@ -57,6 +73,30 @@ export class RegionalAccountService {
           });
           return specificNuclia.knowledgeBox.counters().pipe(
             map((counters) => ({ kbId: kb.id, counters })),
+            switchMap((partialResponse) =>
+              specificNuclia.knowledgeBox.catalog('', { faceted: [STATUS_FACET] }).pipe(
+                map((data) => {
+                  let resources = { total: partialResponse.counters.resources, pending: -1, error: -1 };
+                  if (data.type === 'searchResults') {
+                    const facet = data.fulltext?.facets?.[STATUS_FACET];
+                    resources = {
+                      ...resources,
+                      pending: facet?.[`${STATUS_FACET}/PENDING`] || 0,
+                      error: facet?.[`${STATUS_FACET}/ERROR`] || 0,
+                    };
+                  }
+
+                  return { ...partialResponse, resources };
+                }),
+                catchError((error) => {
+                  console.error(`Loading resource counters for ${kb.slug} failed`, error);
+                  return of({
+                    ...partialResponse,
+                    resources: { total: partialResponse.counters.resources, pending: -1, error: -1 },
+                  });
+                }),
+              ),
+            ),
             catchError((error) => {
               console.error(`Loading counters for ${kb.slug} failed`, error);
               return of(null);
@@ -68,7 +108,10 @@ export class RegionalAccountService {
       map((responses) =>
         (responses || []).reduce((counters, response) => {
           if (response) {
-            counters[response.kbId] = response.counters.resources;
+            counters[response.kbId] = {
+              ...response.counters,
+              resources: response.resources,
+            };
           }
           return counters;
         }, {} as KbCounters),
