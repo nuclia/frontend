@@ -7,7 +7,6 @@
   import { downloadDump, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import {
-    downloadAsJSON,
     getRAGImageStrategies,
     getRAGStrategies,
     injectCustomCss,

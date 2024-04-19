@@ -25,7 +25,7 @@ export default defineConfig({
   plugins: [
     svelte({
       include: ['libs/search-widget/src/**/*.svelte'],
-      exclude: ['libs/search-widget/src/widgets/**/*.svelte'],
+      exclude: [`libs/search-widget/src/widgets/${widgetFolder}/*.svelte`],
       preprocess: sveltePreprocess(),
       compilerOptions: {
         css: true,
@@ -45,5 +45,5 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.ts'],
-  }
+  },
 });
