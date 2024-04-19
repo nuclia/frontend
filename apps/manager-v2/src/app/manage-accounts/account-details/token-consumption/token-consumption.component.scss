@@ -1,5 +1,16 @@
 @import 'apps/manager-v2/src/variables';
 
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+
+  h3,
+  h4 {
+    margin-bottom: 0;
+  }
+}
+
 .body-s {
   display: flex;
   flex-direction: column;
@@ -35,9 +46,6 @@ pa-input.input-time ::ng-deep .pa-field {
   max-width: rhythm(10);
 }
 
-.gap-below {
-  margin-bottom: rhythm(4);
-}
 .center-text {
   text-align: center;
 }

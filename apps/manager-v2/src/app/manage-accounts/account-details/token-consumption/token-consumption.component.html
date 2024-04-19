@@ -71,6 +71,21 @@
   </pa-button>
 </div>
 
+<pa-tabs>
+  <pa-tab
+    [active]="selectedTab === 'account'"
+    (click)="changeTab('account')">
+    <small>Account</small>
+  </pa-tab>
+  @for (kb of kbList | async; track kb.id) {
+    <pa-tab
+      [active]="selectedTab === kb.id"
+      (click)="changeTab(kb.id)">
+      <small>{{ kb.slug }}</small>
+    </pa-tab>
+  }
+</pa-tabs>
+
 @if (tokenConsumption | async; as metrics) {
   <pa-table
     border

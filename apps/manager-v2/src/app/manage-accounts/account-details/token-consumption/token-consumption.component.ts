@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   PaButtonModule,
   PaDatePickerModule,
   PaDropdownModule,
   PaTableModule,
+  PaTabsModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, InfoCardComponent, SisToastService } from '@nuclia/sistema';
@@ -27,6 +28,7 @@ import { AccountDetails } from '../../account-ui.models';
     PaTextFieldModule,
     InfoCardComponent,
     PaButtonModule,
+    PaTabsModule,
   ],
   templateUrl: './token-consumption.component.html',
   styleUrl: './token-consumption.component.scss',
@@ -37,22 +39,22 @@ export class TokenConsumptionComponent implements OnInit {
   private store = inject(ManagerStore);
   private toaster = inject(SisToastService);
 
-  @Input() kbId?: string;
-
   account = this.store.accountDetails;
+  kbList = this.store.kbList;
+
   tokenConsumption = new BehaviorSubject<NucliaTokensMetric | null>(null);
+  selectedTab = 'account';
 
   toDate: string;
   toTime: number;
   fromDate: string;
   fromTime: number;
-  timezoneOffset: number;
+  kbId?: string;
 
   backup: { from: string; to: string };
 
   constructor() {
     const now = new Date();
-    this.timezoneOffset = now.getTimezoneOffset();
 
     // Range initialised with last 24h
     this.toDate = now.toISOString();
@@ -69,7 +71,7 @@ export class TokenConsumptionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadTokenConsumption();
+    // this.loadTokenConsumption();
   }
 
   loadTokenConsumption() {
@@ -87,6 +89,12 @@ export class TokenConsumptionComponent implements OnInit {
           this.tokenConsumption.next(null);
         },
       });
+  }
+
+  changeTab(tab: string) {
+    this.selectedTab = tab;
+    this.kbId = tab !== 'account' ? tab : undefined;
+    this.loadTokenConsumption();
   }
 
   get from() {
