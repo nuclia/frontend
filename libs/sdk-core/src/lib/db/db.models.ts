@@ -112,6 +112,53 @@ export interface AccountStatus {
   available: boolean;
 }
 
+export type UsageAggregation = 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
+
+export interface CommonMetricDetails {
+  identifier: {
+    [key: string]: string | null;
+  };
+  raw_usage: {
+    requests: number | null;
+    input: number | null;
+    output: number | null;
+  };
+}
+
+export interface UsageMetric {
+  name: string;
+  value: number;
+  details: CommonMetricDetails[];
+}
+
+export interface NucliaTokensDetails extends CommonMetricDetails {
+  identifier: {
+    type: string;
+    source: string;
+    version: string;
+    model: string | null;
+  };
+  nuclia_tokens: {
+    requests: number | null;
+    input: number | null;
+    output: number | null;
+  };
+}
+
+export interface NucliaTokensMetric extends UsageMetric {
+  name: 'nuclia_tokens';
+  value: number;
+  details: NucliaTokensDetails[];
+}
+
+export interface UsagePoint {
+  timestamp: string;
+  metrics: (UsageMetric | NucliaTokensMetric)[];
+}
+
+/**
+ * @deprecated
+ */
 export enum StatsPeriod {
   DAY = 'day',
   WEEK = 'week',
@@ -119,6 +166,9 @@ export enum StatsPeriod {
   YEAR = 'year',
 }
 
+/**
+ * @deprecated
+ */
 export enum StatsRange {
   anHour = '1h',
   twoHours = '2h',
@@ -129,11 +179,17 @@ export enum StatsRange {
   fortyHeightHours = '48h',
 }
 
+/**
+ * @deprecated
+ */
 export interface ProcessingStat {
   time_period: string;
   stats: number;
 }
 
+/**
+ * @deprecated
+ */
 export enum StatsType {
   PROCESSING_TIME = 'processing_time',
   SEARCHES = 'searches',

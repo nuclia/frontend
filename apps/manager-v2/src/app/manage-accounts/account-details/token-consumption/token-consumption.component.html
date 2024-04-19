@@ -1,161 +1,143 @@
 <h3>Token consumption</h3>
 
-<div class="flex-row gap-below">
-  <div class="body-m">
-    <strong>Total Nuclia tokens: 926</strong>
-  </div>
+<h4>Total Nuclia tokens: {{ tokenConsumption.value }}</h4>
+
+<div class="flex-column gap-below">
   <div class="flex-row">
-    <span class="body-m">Data aggregated for:</span>
-    <nsi-dropdown-button
-      [popupRef]="period"
-      aspect="basic">
-      Last 30 days
-    </nsi-dropdown-button>
+    <pa-date-picker
+      label="From"
+      [(value)]="fromDate"></pa-date-picker>
+    <span class="body-m">at</span>
+    <pa-input
+      class="input-time"
+      type="number"
+      min="0"
+      max="24"
+      [(value)]="fromTime"></pa-input>
+    <div class="body-m from-to">From:</div>
+    <strong>{{ from }}</strong>
+    @if (fromInFuture || invalidFromTime) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        @if (invalidFromTime) {
+          Invalid time: {{ fromTime }}
+        } @else if (fromInFuture) {
+          This date is in the future!
+        }
+      </nsi-info-card>
+    }
+  </div>
+
+  <div class="flex-row">
+    <pa-date-picker
+      label="To"
+      [(value)]="toDate"></pa-date-picker>
+    <span class="body-m">at</span>
+    <pa-input
+      class="input-time"
+      type="number"
+      min="0"
+      max="24"
+      [(value)]="toTime"></pa-input>
+    <div class="body-m from-to">To:</div>
+    <strong>{{ to }}</strong>
+    @if (toInFuture || invalidToTime) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        @if (invalidToTime) {
+          Invalid time: {{ toTime }}
+        } @else if (toInFuture) {
+          This date is in the future!
+        }
+      </nsi-info-card>
+    }
   </div>
 </div>
 
-<pa-dropdown #period>
-  <pa-option value="month">Last 7 days</pa-option>
-  <pa-option value="month">Last 30 days</pa-option>
-  <pa-option value="month">Last 12 months</pa-option>
-</pa-dropdown>
+<div class="flex-column gap-below">
+  @if (invalidRange) {
+    <nsi-info-card
+      type="warning"
+      icon="warning">
+      Invalid range: From must be before To
+    </nsi-info-card>
+  }
+  <pa-button
+    [disabled]="isNotModified || invalidForm"
+    (click)="loadTokenConsumption()">
+    Load token consumption
+  </pa-button>
+</div>
 
-<pa-table
-  border
-  columns="2fr repeat(7, 1fr)">
-  <pa-table-header>
-    <pa-table-cell
-      class="right-border"
-      header></pa-table-cell>
-    <pa-table-cell header>Raw usage input</pa-table-cell>
-    <pa-table-cell header>Raw usage output</pa-table-cell>
-    <pa-table-cell
-      header
-      class="right-border">
-      Raw usage requests
-    </pa-table-cell>
-    <pa-table-cell header>Nuclia tokens from input</pa-table-cell>
-    <pa-table-cell header>Nuclia tokens from output</pa-table-cell>
-    <pa-table-cell
-      class="right-border"
-      header>
-      Nuclia tokens from requests
-    </pa-table-cell>
-    <pa-table-cell header>Total Nuclia tokens</pa-table-cell>
-  </pa-table-header>
-  <pa-table-row>
-    <pa-table-cell class="right-border">
-      <span class="body-s">
-        <strong>summarize predict chatgpt4</strong>
-        <small>v20240409</small>
-      </span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s">10</span></pa-table-cell>
-    <pa-table-cell center><span class="body-s">20</span></pa-table-cell>
-    <pa-table-cell
-      center
-      class="right-border">
-      <span class="body-s">2</span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s">140</span></pa-table-cell>
-    <pa-table-cell center><span class="body-s">280</span></pa-table-cell>
-    <pa-table-cell
-      class="right-border"
-      center>
-      <span class="body-s"></span>
-    </pa-table-cell>
-    <pa-table-cell center><strong class="body-s">420</strong></pa-table-cell>
-  </pa-table-row>
-  <pa-table-row>
-    <pa-table-cell class="right-border">
-      <span class="body-s">
-        <strong>summarize predict chatgpt3</strong>
-        <small>v20240409</small>
-      </span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s">10</span></pa-table-cell>
-    <pa-table-cell center><span class="body-s">20</span></pa-table-cell>
-    <pa-table-cell
-      center
-      class="right-border">
-      <span class="body-s">2</span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s">140</span></pa-table-cell>
-    <pa-table-cell center><span class="body-s">280</span></pa-table-cell>
-    <pa-table-cell
-      class="right-border"
-      center>
-      <span class="body-s"></span>
-    </pa-table-cell>
-    <pa-table-cell center><strong class="body-s">420</strong></pa-table-cell>
-  </pa-table-row>
-  <pa-table-row>
-    <pa-table-cell class="right-border">
-      <span class="body-s">
-        <strong>search nucliadb</strong>
-        <small>v20240409</small>
-      </span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell center><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell
-      center
-      class="right-border">
-      <span class="body-s">40</span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell center><span class="body-s"></span></pa-table-cell>
-    <pa-table-cell
-      class="right-border"
-      center>
-      <span class="body-s">2</span>
-    </pa-table-cell>
-    <pa-table-cell center><strong class="body-s">2</strong></pa-table-cell>
-  </pa-table-row>
-  <pa-table-row>
-    <pa-table-cell class="right-border">
-      <span class="body-s">
-        <strong>extract_tables predict</strong>
-        <small>v20240409</small>
-      </span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s">4</span></pa-table-cell>
-    <pa-table-cell center><span class="body-s">2</span></pa-table-cell>
-    <pa-table-cell
-      center
-      class="right-border">
-      <span class="body-s"></span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s">8</span></pa-table-cell>
-    <pa-table-cell center><span class="body-s">4</span></pa-table-cell>
-    <pa-table-cell
-      class="right-border"
-      center>
-      <span class="body-s"></span>
-    </pa-table-cell>
-    <pa-table-cell center><strong class="body-s">12</strong></pa-table-cell>
-  </pa-table-row>
-  <pa-table-row last>
-    <pa-table-cell class="right-border">
-      <span class="body-s">
-        <strong>extract_tables processing</strong>
-        <small>v20240409</small>
-      </span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s">6</span></pa-table-cell>
-    <pa-table-cell center><span class="body-s">12</span></pa-table-cell>
-    <pa-table-cell
-      center
-      class="right-border">
-      <span class="body-s"></span>
-    </pa-table-cell>
-    <pa-table-cell center><span class="body-s">24</span></pa-table-cell>
-    <pa-table-cell center><span class="body-s">48</span></pa-table-cell>
-    <pa-table-cell
-      class="right-border"
-      center>
-      <span class="body-s"></span>
-    </pa-table-cell>
-    <pa-table-cell center><strong class="body-s">72</strong></pa-table-cell>
-  </pa-table-row>
-</pa-table>
+@if (tokenConsumption | async; as metrics) {
+  <pa-table
+    border
+    columns="2fr repeat(7, 1fr)">
+    <pa-table-header>
+      <pa-table-cell
+        borderRight
+        header></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Raw usage input</span></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Raw usage output</span></pa-table-cell>
+      <pa-table-cell
+        header
+        borderRight>
+        <span class="center-text">Raw usage requests</span>
+      </pa-table-cell>
+      <pa-table-cell header><span class="center-text">Nuclia tokens from input</span></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Nuclia tokens from output</span></pa-table-cell>
+      <pa-table-cell
+        borderRight
+        header>
+        <span class="center-text">Nuclia tokens from requests</span>
+      </pa-table-cell>
+      <pa-table-cell header><span class="center-text">Total Nuclia tokens</span></pa-table-cell>
+    </pa-table-header>
+
+    @for (row of metrics.details; track row.identifier) {
+      <pa-table-row [last]="$last">
+        <pa-table-cell borderRight>
+          <span class="body-s">
+            <strong>{{ row.identifier.type }} {{ row.identifier.source }} {{ row.identifier.model }}</strong>
+            <small>{{ row.identifier.version }}</small>
+          </span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.raw_usage.input }}</span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.raw_usage.output }}</span>
+        </pa-table-cell>
+        <pa-table-cell
+          borderRight
+          center>
+          <span class="body-s">{{ row.raw_usage.requests }}</span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.nuclia_tokens.input }}</span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.nuclia_tokens.output }}</span>
+        </pa-table-cell>
+        <pa-table-cell
+          borderRight
+          center>
+          <span class="body-s">{{ row.nuclia_tokens.requests }}</span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <strong class="body-s">
+            {{ (row.nuclia_tokens.input || 0) + (row.nuclia_tokens.output || 0) + (row.nuclia_tokens.requests || 0) }}
+          </strong>
+        </pa-table-cell>
+      </pa-table-row>
+    }
+  </pa-table>
+} @else {
+  <nsi-info-card
+    type="warning"
+    icon="warning">
+    No metrics available
+  </nsi-info-card>
+}

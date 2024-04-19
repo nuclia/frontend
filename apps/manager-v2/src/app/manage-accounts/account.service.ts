@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { GlobalAccountService } from './global-account.service';
-import { AccountLimitsPatchPayload, AccountTypes } from '@nuclia/core';
-import { forkJoin, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
+import { AccountLimitsPatchPayload, AccountTypes, NucliaTokensMetric } from '@nuclia/core';
+import { forkJoin, map, Observable, of, shareReplay, switchMap, take, tap, throwError } from 'rxjs';
 import { AccountService as CoreAccountService, AccountTypeDefaults, SDKService } from '@flaps/core';
 import { AccountUserType, KbRoles } from './global-account.models';
 import {
@@ -199,5 +199,25 @@ export class AccountService {
    */
   deleteAccount(accountId: string): Observable<void> {
     return this.globalService.deleteAccount(accountId);
+  }
+
+  /**
+   * Load Nuclia tokens consumption
+   * @param accountId
+   * @param from
+   * @param to
+   * @param kbId
+   */
+  loadTokenConsumption(accountId: string, from: string, to?: string, kbId?: string): Observable<NucliaTokensMetric> {
+    return this.sdk.nuclia.db.getUsage(accountId, from, to, kbId).pipe(
+      map((usage) => {
+        const nucliaTokensPoint = usage[0].metrics.find((metric) => metric.name === 'nuclia_tokens');
+        if (!nucliaTokensPoint) {
+          console.warn(`No nuclia_tokens found in the response`, usage);
+          throwError(() => 'No nuclia_tokens found in the response');
+        }
+        return nucliaTokensPoint as NucliaTokensMetric;
+      }),
+    );
   }
 }

@@ -1,9 +1,10 @@
-# 1.14.7 (unreleased)
+# 1.14.7 (2024-04-19)
 
 ### Improvements
 
 - `ask()` method in the resource, it allows to ask questions to the resource using the entire content of the resource as context
 - Remove `inTitleOnly` search option
+- Add new `/usage` endpoint and add deprecation note on previous `/stats` endpoint
 
 # 1.14.6 (2024-04-12)
 

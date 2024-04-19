@@ -8,17 +8,36 @@ strong.body-s {
   font-weight: 600;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}
 .flex-row {
   align-items: center;
   display: flex;
   gap: rhythm(1);
-  justify-content: space-between;
+  height: rhythm(7);
 
   .grow {
     flex: 1 0 auto;
   }
+  &.space-between {
+    justify-content: space-between;
+  }
+}
+
+.from-to {
+  min-width: rhythm(7);
+  text-align: right;
+}
+pa-input.input-time ::ng-deep .pa-field {
+  max-width: rhythm(10);
 }
 
 .gap-below {
-  margin-bottom: rhythm(1.5);
+  margin-bottom: rhythm(4);
+}
+.center-text {
+  text-align: center;
 }
