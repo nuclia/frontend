@@ -9,8 +9,8 @@ import {
   EventList,
   IKnowledgeBoxItem,
   IStandaloneKb,
-  KBRoles,
   KbIndex,
+  KBRoles,
   KnowledgeBox,
   KnowledgeBoxCreation,
   LearningConfigurations,
@@ -24,6 +24,8 @@ import {
   StatsPeriod,
   StatsRange,
   StatsType,
+  UsageAggregation,
+  UsagePoint,
   Welcome,
   WritableKnowledgeBox,
 } from './db';
@@ -135,6 +137,13 @@ export interface IDb {
     knowledgeBox: KnowledgeBoxCreation,
     zone?: string,
   ): Observable<WritableKnowledgeBox>;
+  getUsage(
+    accountId: string,
+    from: string,
+    to?: string,
+    knowledgeBox?: string,
+    aggregation?: UsageAggregation,
+  ): Observable<UsagePoint[]>;
   getStats(
     accountSlug: string,
     type: StatsType,

@@ -1,0 +1,158 @@
+<h3>Token consumption</h3>
+
+<h4>Total Nuclia tokens: {{ tokenConsumption.value }}</h4>
+
+<div class="flex-column gap-below">
+  <div class="flex-row">
+    <pa-date-picker
+      label="From"
+      [(value)]="fromDate"></pa-date-picker>
+    <span class="body-m">at</span>
+    <pa-input
+      class="input-time"
+      type="number"
+      min="0"
+      max="24"
+      [(value)]="fromTime"></pa-input>
+    <div class="body-m from-to">From:</div>
+    <strong>{{ from }}</strong>
+    @if (fromInFuture || invalidFromTime) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        @if (invalidFromTime) {
+          Invalid time: {{ fromTime }}
+        } @else if (fromInFuture) {
+          This date is in the future!
+        }
+      </nsi-info-card>
+    }
+  </div>
+
+  <div class="flex-row">
+    <pa-date-picker
+      label="To"
+      [(value)]="toDate"></pa-date-picker>
+    <span class="body-m">at</span>
+    <pa-input
+      class="input-time"
+      type="number"
+      min="0"
+      max="24"
+      [(value)]="toTime"></pa-input>
+    <div class="body-m from-to">To:</div>
+    <strong>{{ to }}</strong>
+    @if (toInFuture || invalidToTime) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        @if (invalidToTime) {
+          Invalid time: {{ toTime }}
+        } @else if (toInFuture) {
+          This date is in the future!
+        }
+      </nsi-info-card>
+    }
+  </div>
+</div>
+
+<div class="flex-column gap-below">
+  @if (invalidRange) {
+    <nsi-info-card
+      type="warning"
+      icon="warning">
+      Invalid range: From must be before To
+    </nsi-info-card>
+  }
+  <pa-button
+    [disabled]="isNotModified || invalidForm"
+    (click)="loadTokenConsumption()">
+    Load token consumption
+  </pa-button>
+</div>
+
+<pa-tabs>
+  <pa-tab
+    [active]="selectedTab === 'account'"
+    (click)="changeTab('account')">
+    <small>Account</small>
+  </pa-tab>
+  @for (kb of kbList | async; track kb.id) {
+    <pa-tab
+      [active]="selectedTab === kb.id"
+      (click)="changeTab(kb.id)">
+      <small>{{ kb.slug }}</small>
+    </pa-tab>
+  }
+</pa-tabs>
+
+@if (tokenConsumption | async; as metrics) {
+  <pa-table
+    border
+    columns="2fr repeat(7, 1fr)">
+    <pa-table-header>
+      <pa-table-cell
+        borderRight
+        header></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Raw usage input</span></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Raw usage output</span></pa-table-cell>
+      <pa-table-cell
+        header
+        borderRight>
+        <span class="center-text">Raw usage requests</span>
+      </pa-table-cell>
+      <pa-table-cell header><span class="center-text">Nuclia tokens from input</span></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Nuclia tokens from output</span></pa-table-cell>
+      <pa-table-cell
+        borderRight
+        header>
+        <span class="center-text">Nuclia tokens from requests</span>
+      </pa-table-cell>
+      <pa-table-cell header><span class="center-text">Total Nuclia tokens</span></pa-table-cell>
+    </pa-table-header>
+
+    @for (row of metrics.details; track row.identifier) {
+      <pa-table-row [last]="$last">
+        <pa-table-cell borderRight>
+          <span class="body-s">
+            <strong>{{ row.identifier.type }} {{ row.identifier.source }} {{ row.identifier.model }}</strong>
+            <small>{{ row.identifier.version }}</small>
+          </span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.raw_usage.input }}</span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.raw_usage.output }}</span>
+        </pa-table-cell>
+        <pa-table-cell
+          borderRight
+          center>
+          <span class="body-s">{{ row.raw_usage.requests }}</span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.nuclia_tokens.input }}</span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.nuclia_tokens.output }}</span>
+        </pa-table-cell>
+        <pa-table-cell
+          borderRight
+          center>
+          <span class="body-s">{{ row.nuclia_tokens.requests }}</span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <strong class="body-s">
+            {{ (row.nuclia_tokens.input || 0) + (row.nuclia_tokens.output || 0) + (row.nuclia_tokens.requests || 0) }}
+          </strong>
+        </pa-table-cell>
+      </pa-table-row>
+    }
+  </pa-table>
+} @else {
+  <nsi-info-card
+    type="warning"
+    icon="warning">
+    No metrics available
+  </nsi-info-card>
+}

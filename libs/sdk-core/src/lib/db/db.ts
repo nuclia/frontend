@@ -42,6 +42,8 @@ import {
   StatsPeriod,
   StatsRange,
   StatsType,
+  UsageAggregation,
+  UsagePoint,
   Welcome,
 } from './db.models';
 import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation } from './kb';
@@ -273,6 +275,40 @@ export class Db implements IDb {
     );
   }
 
+  /**
+   * Get usage metric for the account.
+   * @param accountId Account identifier
+   * @param from Timestamp of the moment from which we want the metrics.
+   * @param to Timestamp of the moment until which we want the metrics. When not provided, the metrics are returned "until now".
+   * @param knowledgeBoxId Knowledge Box identifier to get the metrics for a specific Knowledge Box (returns the metrics aggregated for all the Knowledge Boxes of the account by default)
+   * @param aggregation Define how the metrics are aggregated. By default, the endpoint returns only one point aggregating all the data for the specified date range. But you can have one point by:
+   * - "hour"
+   * - "day"
+   * - "week"
+   * - "month"
+   * - "quarter"
+   * - "year"
+   */
+  getUsage(
+    accountId: string,
+    from: string,
+    to?: string,
+    knowledgeBoxId?: string,
+    aggregation?: UsageAggregation,
+  ): Observable<UsagePoint[]> {
+    const params = [`from=${from}`, `to=${to}`];
+    if (knowledgeBoxId) {
+      params.push(`knowledgebox=${knowledgeBoxId}`);
+    }
+    if (aggregation) {
+      params.push(`aggregation=${aggregation}`);
+    }
+    return this.nuclia.rest.get<UsagePoint[]>(`/account/${accountId}/usage?${params.join('&')}`);
+  }
+
+  /**
+   * @deprecated: To be replaced by getUsage
+   */
   getStats(
     accountSlug: string,
     type: StatsType,

@@ -11,7 +11,6 @@ import {
 } from './global-account.models';
 import { AccountBlockingState, AccountLimitsPatchPayload } from '@nuclia/core';
 import { AccountConfigurationPayload, BlockedFeatureFormValues } from './account-ui.models';
-import { ZoneService } from '../manage-zones/zone.service';
 
 const ACCOUNTS_ENDPOINT = '/manage/@accounts';
 const ACCOUNT_ENDPOINT = '/manage/@account';
@@ -20,10 +19,7 @@ const ACCOUNT_ENDPOINT = '/manage/@account';
   providedIn: 'root',
 })
 export class GlobalAccountService {
-  constructor(
-    private sdk: SDKService,
-    private zoneService: ZoneService,
-  ) {}
+  constructor(private sdk: SDKService) {}
 
   getAccounts(): Observable<AccountSummary[]> {
     return this.sdk.nuclia.rest.get<AccountSummary[]>(ACCOUNTS_ENDPOINT);

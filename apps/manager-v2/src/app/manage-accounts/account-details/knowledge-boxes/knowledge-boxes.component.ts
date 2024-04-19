@@ -21,9 +21,4 @@ export class KnowledgeBoxesComponent {
     private store: ManagerStore,
     private accountService: AccountService,
   ) {}
-
-  openActivity(event: Event, kbId: string) {
-    event.stopPropagation();
-    window.open(`http://redash.nuclia.com/queries/24?p_KB=${kbId}`, '_blank', 'noopener,noreferrer');
-  }
 }

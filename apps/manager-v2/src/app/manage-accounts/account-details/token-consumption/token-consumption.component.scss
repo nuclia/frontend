@@ -1,0 +1,51 @@
+@import 'apps/manager-v2/src/variables';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+
+  h3,
+  h4 {
+    margin-bottom: 0;
+  }
+}
+
+.body-s {
+  display: flex;
+  flex-direction: column;
+}
+strong.body-s {
+  font-weight: 600;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}
+.flex-row {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  height: rhythm(7);
+
+  .grow {
+    flex: 1 0 auto;
+  }
+  &.space-between {
+    justify-content: space-between;
+  }
+}
+
+.from-to {
+  min-width: rhythm(7);
+  text-align: right;
+}
+pa-input.input-time ::ng-deep .pa-field {
+  max-width: rhythm(10);
+}
+
+.center-text {
+  text-align: center;
+}

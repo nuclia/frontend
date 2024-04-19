@@ -1,101 +1,110 @@
-<div class="pa-main-container">
-  <div class="pa-main-side-panel">
-    <div class="panel-header">
-      <pa-button
-        icon="arrow-left"
-        aspect="basic"
-        routerLink=".."
-        (click)="resetAccount()">
-        Back
-      </pa-button>
-      <div class="title-l">
-        {{ (account | async)?.title }}
-      </div>
-    </div>
-    <div class="account-info">
-      <div>
-        Id:
-        <small>
-          <strong>{{ (account | async)?.id }}</strong>
-        </small>
-      </div>
-      <div>
-        State:
-        <strong>{{ currentState | async }}</strong>
-      </div>
-      <div>
-        Type:
-        <strong>{{ (account | async)?.type }}</strong>
-      </div>
-      <ng-container *ngIf="(account | async)?.type === 'stash-trial'">
-        <div *ngIf="(account | async)?.trialExpirationDate as trialExpirationDate">
-          Trial expiration date:
-          <strong>{{ trialExpirationDate | date: 'yyyy-MM-dd' }}</strong>
+@if (account | async; as account) {
+  <div class="pa-main-container">
+    <div class="pa-main-side-panel">
+      <div class="panel-header">
+        <pa-button
+          icon="arrow-left"
+          aspect="basic"
+          routerLink=".."
+          (click)="resetAccount()">
+          Back
+        </pa-button>
+        <div class="title-l">
+          {{ account.title }}
         </div>
-      </ng-container>
-      <div>
-        Max KBs:
-        <strong>{{ (account | async)?.maxKbs === -1 ? 'Unlimited' : (account | async)?.maxKbs }}</strong>
       </div>
-      <div>
-        Activity:
-        <a
-          [href]="'http://redash.nuclia.com/queries/25?p_account=' + (account | async)?.id"
-          target="_blank"
-          rel="noopener noreferrer">
-          Redash
-        </a>
-        <a
-          [href]="
-            'http://europe1.grafana.nuclia.com/d/MiFMjG57z/8-messaging-nats-jetstream?orgId=1&refresh=10s&var-js_domain=All&var-server=All&var-stream=ingest&from=now-1h&to=now&var-consumer=processor-slow-' +
-            (account | async)?.id
-          "
-          target="_blank"
-          rel="noopener noreferrer">
-          Grafana
-        </a>
-      </div>
-    </div>
-    <nav>
-      <ul>
-        <li
-          routerLink="config"
-          routerLinkActive="active">
-          Configuration
-        </li>
-        <li
-          routerLink="kbs"
-          routerLinkActive="active">
-          Knowledge Boxes
-        </li>
-        @for (kb of kbList | async; track kb.id) {
-          <li
-            class="child-route"
-            [routerLink]="'zone/' + kb.zone.id + '/kb/' + kb.id"
-            routerLinkActive="active">
-            <pa-icon
-              name="knowledge-box"
-              size="small"></pa-icon>
+      <div class="account-info">
+        <div>
+          Id:
+          <small>
+            <strong>{{ account.id }}</strong>
+          </small>
+        </div>
+        <div>
+          State:
+          <strong>{{ currentState | async }}</strong>
+        </div>
+        <div>
+          Type:
+          <strong>{{ account.type }}</strong>
+        </div>
+        @if (account.type === 'stash-trial') {
+          @if (account.trialExpirationDate; as trialExpirationDate) {
             <div>
-              {{ kb.slug }}
-              <small class="zone-name">({{ kb.zone.title }})</small>
+              Trial expiration date:
+              <strong>{{ trialExpirationDate | date: 'yyyy-MM-dd' }}</strong>
             </div>
-          </li>
+          }
         }
-        <li
-          routerLink="limits"
-          routerLinkActive="active">
-          Limits
-        </li>
-        <li
-          routerLink="users"
-          routerLinkActive="active">
-          Users
-        </li>
-      </ul>
-    </nav>
+        <div>
+          Max KBs:
+          <strong>{{ account.maxKbs === -1 ? 'Unlimited' : account.maxKbs }}</strong>
+        </div>
+        <div>
+          Activity:
+          <a
+            [href]="'http://redash.nuclia.com/queries/25?p_account=' + account.id"
+            target="_blank"
+            rel="noopener noreferrer">
+            Redash
+          </a>
+          <a
+            [href]="
+              'http://europe1.grafana.nuclia.com/d/MiFMjG57z/8-messaging-nats-jetstream?orgId=1&refresh=10s&var-js_domain=All&var-server=All&var-stream=ingest&from=now-1h&to=now&var-consumer=processor-slow-' +
+              account.id
+            "
+            target="_blank"
+            rel="noopener noreferrer">
+            Grafana
+          </a>
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li
+            routerLink="config"
+            routerLinkActive="active">
+            Configuration
+          </li>
+          <li
+            routerLink="kbs"
+            routerLinkActive="active">
+            Knowledge Boxes
+          </li>
+          @for (kb of kbList | async; track kb.id) {
+            <li
+              class="child-route"
+              [routerLink]="'zone/' + kb.zone.id + '/kb/' + kb.id"
+              routerLinkActive="active">
+              <pa-icon
+                name="knowledge-box"
+                size="small"></pa-icon>
+              <div>
+                {{ kb.slug }}
+                <small class="zone-name">({{ kb.zone.title }})</small>
+              </div>
+            </li>
+          }
+          <li
+            routerLink="limits"
+            routerLinkActive="active">
+            Limits
+          </li>
+          <li
+            routerLink="tokens"
+            routerLinkActive="active">
+            Token consumption
+          </li>
+          <li
+            routerLink="users"
+            routerLinkActive="active">
+            Users
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="pa-main-container-wide">
+      <router-outlet></router-outlet>
+    </div>
   </div>
-  <div class="pa-main-container-wide">
-    <router-outlet></router-outlet>
-  </div>
-</div>
+}

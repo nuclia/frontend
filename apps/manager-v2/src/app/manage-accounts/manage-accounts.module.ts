@@ -25,6 +25,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BlockedFeaturesComponent } from './account-details/blocked-features/blocked-features.component';
 import { FormFooterComponent } from './form-footer/form-footer.component';
 import { FeatureNamePipe } from './account-details/blocked-features/feature-name.pipe';
+import { TokenConsumptionComponent } from './account-details/token-consumption/token-consumption.component';
+import { STFPipesModule } from '@flaps/core';
 
 const ROUTES: Routes = [
   {
@@ -61,6 +63,10 @@ const ROUTES: Routes = [
             component: LimitsComponent,
           },
           {
+            path: 'tokens',
+            component: TokenConsumptionComponent,
+          },
+          {
             path: 'users',
             component: UsersComponent,
           },
@@ -86,6 +92,8 @@ const ROUTES: Routes = [
     PaScrollModule,
     PaTooltipModule,
     PaDatePickerModule,
+    PaIconModule,
+    STFPipesModule,
   ],
   declarations: [
     ManageAccountsComponent,

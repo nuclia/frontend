@@ -86,6 +86,12 @@ nav {
     overflow: auto;
     padding: rhythm(2) 0;
   }
+
+  @media (min-width: $size-viewport-wide-min) {
+    .pa-main-container-wide {
+      max-width: $size-viewport-wide-min;
+    }
+  }
 }
 
 .wide-table-container {
