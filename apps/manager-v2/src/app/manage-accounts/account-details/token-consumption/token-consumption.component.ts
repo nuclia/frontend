@@ -71,7 +71,7 @@ export class TokenConsumptionComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.loadTokenConsumption();
+    this.loadTokenConsumption();
   }
 
   loadTokenConsumption() {
