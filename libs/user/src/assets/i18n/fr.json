@@ -99,7 +99,7 @@
 	"recover.recover": "Récupérer",
 	"recover.title": "Récupérer votre mot de passe",
 	"recover.verify": "Vérifiez votre email et utilisez le lien fourni pour modifier votre mot de passe.",
-	"signup.email.already_exists": "Cette adresse email existe déja. Veuillez vous connecter ou utiliser une autre adresse e-mail",
+	"signup.email.already_exists": "Cette adresse email existe déjà. Veuillez vous connecter ou utiliser une autre adresse e-mail",
 	"signup.email.help": "Champ requis. Seules les adresses e-mail d'entreprise sont autorisées.",
 	"signup.have_account_already": "Vous avez déjà un compte ?",
 	"signup.name": "Nom",
