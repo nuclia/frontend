@@ -29,7 +29,7 @@ export class SignupComponent implements OnInit {
     email: {
       required: 'validation.required',
       email: 'validation.email',
-      conflict: 'login.email_already_exists',
+      conflict: 'signup.email.already_exists',
       personalEmail: 'login.error.no_personal_email',
     } as IErrorMessages,
   };
