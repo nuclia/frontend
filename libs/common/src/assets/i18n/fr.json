@@ -1200,7 +1200,7 @@
 	"upload.size_warning_2": "Les fichiers dépassant ces tailles ne seront pas téléchargés",
 	"upload.takes_time": "Nous avons besoin d'un certain temps pour traiter les fichiers. N'hésitez pas à fermer cette boîte de dialogue et à poursuivre votre travail.",
 	"upload.toast.failed": "Erreurs lors du téléchargement",
-	"upload.toast.limit": "Votre compte a envoyé trop de demandes en peu de temps. Merci de réessayer dans quelques instants.",
+	"upload.toast.limit": "Votre compte a envoyé trop de requêtes en peu de temps. Merci de réessayer dans quelques instants.",
 	"upload.toast.successful": "Téléchargement réussi",
 	"upload.upload_from_csv": "Ajouter des ressources à partir d'un fichier CSV",
 	"upload.uploading_files": "<strong>Téléchargement des fichiers.</strong> N'hésitez pas à utiliser Nuclia en attendant.",
