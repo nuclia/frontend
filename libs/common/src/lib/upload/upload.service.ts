@@ -118,13 +118,10 @@ export class UploadService {
           this.uploadFiles(files, (progress) => {
             if (progress.completed) {
               if (progress.failed === 0 || progress.failed === progress.conflicts) {
-                this.onUploadComplete(true, (progress.conflicts || 0) < progress.files.length);
+                this.onUploadComplete(true, false, (progress.conflicts || 0) < progress.files.length);
               } else if (!hasNotifiedError) {
                 hasNotifiedError = true;
-                this.onUploadComplete(false);
-              }
-              if ((progress.limitExceeded || 0) > 0) {
-                this.tracking.logEvent('upload_limit_exceeded');
+                this.onUploadComplete(false, (progress.limitExceeded || 0) > 0);
               }
             }
           }),
@@ -311,17 +308,27 @@ export class UploadService {
             title,
             conversations,
           })
-          .pipe(tap(() => this.onUploadComplete(true))),
+          .pipe(
+            tap(() => this.onUploadComplete(true)),
+            catchError((error) => {
+              this.onUploadComplete(false, error?.status === 429);
+              throw error;
+            }),
+          ),
       ),
     );
   }
 
   bulkUpload(uploads: Observable<any>[]): Observable<{ errors: number }> {
     let errors = 0;
+    let errors429 = 0;
     uploads = uploads.map((upload) =>
       upload.pipe(
-        catchError(() => {
+        catchError((error) => {
           errors += 1;
+          if (error?.status === 429) {
+            errors429 += 1;
+          }
           return of(null);
         }),
       ),
@@ -330,7 +337,7 @@ export class UploadService {
       mergeMap((obs) => obs, 6),
       toArray(),
       tap(() => {
-        this.onUploadComplete(errors === 0);
+        this.onUploadComplete(errors === 0, errors429 > 0);
       }),
       map(() => ({ errors })),
     );
@@ -367,9 +374,13 @@ export class UploadService {
     );
   }
 
-  onUploadComplete(success: boolean, showNotification = true) {
+  onUploadComplete(success: boolean, limitExceeded = false, showNotification = true) {
     if (showNotification) {
       success ? this.toaster.success('upload.toast.successful') : this.toaster.warning('upload.toast.failed');
+    }
+    if (limitExceeded) {
+      this.toaster.error('upload.toast.limit');
+      this.tracking.logEvent('upload_limit_exceeded');
     }
     if (success) {
       localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');

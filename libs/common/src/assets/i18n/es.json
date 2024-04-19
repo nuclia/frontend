@@ -1199,6 +1199,7 @@
 	"upload.size_warning_2": "Los archivos que excedan esos tamaños no se cargarán",
 	"upload.takes_time": "Nuclia necesita un rato para procesar los archivos.",
 	"upload.toast.failed": "Errores durante la carga",
+	"upload.toast.limit": "Tu cuenta ha estado enviando demasiadas peticiones en un período corto de tiempo. Inténtalo de nuevo dentro de unos instantes.",
 	"upload.toast.successful": "Subida exitosa",
 	"upload.upload_from_csv": "Añadir recursos desde CSV",
 	"upload.uploading_files": "<strong>Subiendo archivos.</strong> Siéntase libre de usar Nuclia mientras tanto",

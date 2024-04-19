@@ -1,3 +1,9 @@
+# 1.14.8 (unreleased)
+
+### Improvements
+
+- Improve HTTP 429 errors handling on resource modification and deletion
+
 # 1.14.7 (2024-04-19)
 
 ### Improvements

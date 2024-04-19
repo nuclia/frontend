@@ -1199,6 +1199,7 @@
 	"upload.size_warning_2": "Els fitxers que superin aquestes mides no es penjaran",
 	"upload.takes_time": "Nuclia necessita una estona per a processar els fitxers.",
 	"upload.toast.failed": "Errors durant la càrrega",
+	"upload.toast.limit": "El teu compte ha enviat massa peticions durant un període curt de temps. Torna-ho a provar d'aquí uns instants.",
 	"upload.toast.successful": "Pujada correctament",
 	"upload.upload_from_csv": "Afegir recursos des de CSV",
 	"upload.uploading_files": "<strong>Càrrega de fitxers.</strong> Mentrestant, no dubteu a utilitzar Nuclia",

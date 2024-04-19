@@ -1,7 +1,6 @@
 import {
   catchError,
   concatMap,
-  delay,
   filter,
   from,
   map,
@@ -16,7 +15,7 @@ import {
   switchMap,
 } from 'rxjs';
 import type { INuclia } from '../models';
-import type { ICreateResource } from './resource';
+import { ICreateResource, retry429Config } from './resource';
 
 const CHUNK_SIZE = 5 * 1024 * 1024; // minimum size accepted by Amazon S3
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
@@ -65,23 +64,16 @@ export interface FileMetadata {
   rslug?: string;
 }
 
-const uploadRetryConfig = (maxWaitOn429: number): RetryConfig => ({
+const uploadRetryConfig: RetryConfig = {
   count: 3,
-  delay: (error, index) => {
-    const tryAfter = error?.body?.detail?.try_after;
-    if (error.status === 429 && tryAfter) {
-      const delayOn429 = Math.min(tryAfter * 1000 - Date.now(), maxWaitOn429);
-      return of(true).pipe(delay(delayOn429));
-    } else if (error.status === 429 && !tryAfter) {
-      const delays = [1000, 5000, 10000];
-      return of(true).pipe(delay(delays[index]));
-    } else if (error.status >= 500 && error.status <= 599) {
+  delay: (error) => {
+    if (error.status >= 500 && error.status <= 599) {
       return of(true);
     } else {
       throw error;
     }
   },
-});
+};
 
 export const upload = (
   nuclia: INuclia,
@@ -125,7 +117,8 @@ export const uploadFile = (
   const slug = metadata?.rslug ? `?rslug=${metadata.rslug}` : '';
   return of(true).pipe(
     switchMap(() => nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers, true)),
-    retry(uploadRetryConfig(maxWaitOn429)),
+    retry(retry429Config(maxWaitOn429)),
+    retry(uploadRetryConfig),
     switchMap((res) => {
       try {
         switch (res.status) {
@@ -187,7 +180,8 @@ export const TUSuploadFile = (
   }
   return of(true).pipe(
     switchMap(() => nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true)),
-    retry(uploadRetryConfig(maxWaitOn429)),
+    retry(retry429Config(maxWaitOn429)),
+    retry(uploadRetryConfig),
     catchError((error) => of(error)),
     concatMap((res) =>
       merge(
@@ -218,7 +212,8 @@ export const TUSuploadFile = (
                           true,
                         ),
                       ),
-                      retry(uploadRetryConfig(maxWaitOn429)),
+                      retry(retry429Config(maxWaitOn429)),
+                      retry(uploadRetryConfig),
                       map((res) => {
                         if (res.status !== 200) {
                           failed = true;
