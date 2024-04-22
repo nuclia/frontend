@@ -1235,6 +1235,8 @@
 	"widget.generator.advanced.display-category.hide-thumbnails.help": "Hide thumbnails in search results",
 	"widget.generator.advanced.display-category.hide-thumbnails.label": "Hide thumbnails",
 	"widget.generator.advanced.display-category.placeholder": "Search bar placeholder",
+	"widget.generator.advanced.display-category.popup-mode.help": "Render the search widget in a popup window.",
+	"widget.generator.advanced.display-category.popup-mode.label": "Popup mode",
 	"widget.generator.advanced.display-category.title": "Display",
 	"widget.generator.advanced.generative-answer-category.answers.help": "Generate a response to the user's questions and allow to chat with the system",
 	"widget.generator.advanced.generative-answer-category.answers.label": "Answer generation",

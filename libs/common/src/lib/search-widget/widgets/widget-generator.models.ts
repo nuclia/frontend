@@ -31,6 +31,7 @@ export type AdvancedForm = {
   displayMetadata: boolean;
   hideThumbnails: boolean;
   darkMode: boolean;
+  popupMode: boolean;
   hideLogo: boolean;
   autocompleteFromNERs: boolean;
   relations: boolean;
@@ -79,6 +80,7 @@ export const DEFAULT_CONFIGURATION: AdvancedForm = {
   displayMetadata: false,
   hideThumbnails: false,
   darkMode: false,
+  popupMode: false,
   hideLogo: false,
   autocompleteFromNERs: false,
   relations: false,

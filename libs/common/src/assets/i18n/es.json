@@ -1234,6 +1234,8 @@
 	"widget.generator.advanced.display-category.hide-thumbnails.help": "Ocultar miniaturas en los resultados de búsqueda",
 	"widget.generator.advanced.display-category.hide-thumbnails.label": "Ocultar miniaturas",
 	"widget.generator.advanced.display-category.placeholder": "Placeholder de la barra de búsqueda",
+	"widget.generator.advanced.display-category.popup-mode.help": "Representa el widget de búsqueda en una ventana popup.",
+	"widget.generator.advanced.display-category.popup-mode.label": "Modo popup",
 	"widget.generator.advanced.display-category.title": "Mostrar",
 	"widget.generator.advanced.generative-answer-category.answers.help": "Generar respuesta a las preguntas de los usuarios y permitir chatear con el sistema",
 	"widget.generator.advanced.generative-answer-category.answers.label": "Generación de respuesta",
