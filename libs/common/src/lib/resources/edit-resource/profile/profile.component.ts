@@ -71,6 +71,7 @@ export class ResourceProfileComponent implements OnInit {
       DATA: JSON.stringify(this.getValue()),
     })),
   );
+  isTrial = this.sdk.currentAccount.pipe(map((account) => account.type === 'stash-trial'));
   hasBaseDropZoneOver = false;
 
   isFormReady = false;

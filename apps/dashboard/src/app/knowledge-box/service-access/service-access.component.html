@@ -97,21 +97,23 @@
       </div>
     }
   </div>
-  <ncom-hint
-    label="How to use your API key in the API"
-    learnMore="https://docs.nuclia.dev/docs/docs/getting-started/quick-start/push#push-content-using-the-api">
-    <p>
-      The API key can be used on any call to the API. It goes in the
-      <code>X-NUCLIA-SERVICEACCOUNT</code>
-      header and replaces the
-      <code>Authorization</code>
-      header
-    </p>
-    <pre><code>curl $$KB_URL$$/upload \
+  @if (account?.type === 'stash-trial') {
+    <ncom-hint
+      label="How to use your API key in the API"
+      learnMore="https://docs.nuclia.dev/docs/docs/getting-started/quick-start/push#push-content-using-the-api">
+      <p>
+        The API key can be used on any call to the API. It goes in the
+        <code>X-NUCLIA-SERVICEACCOUNT</code>
+        header and replaces the
+        <code>Authorization</code>
+        header
+      </p>
+      <pre><code>curl $$KB_URL$$/upload \
  -X POST \
  -H "content-type: video/mp4"
  -H "x-language: fr"
  -H "X-NUCLIA-SERVICEACCOUNT: Bearer YOUR-API-KEY" \
  -T /path/to/file.mp4</code></pre>
-  </ncom-hint>
+    </ncom-hint>
+  }
 </div>
