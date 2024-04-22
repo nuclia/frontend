@@ -1235,7 +1235,7 @@
 	"widget.generator.advanced.display-category.hide-thumbnails.help": "Masquer les vignettes dans les résultats de recherche",
 	"widget.generator.advanced.display-category.hide-thumbnails.label": "Masquer les vignettes",
 	"widget.generator.advanced.display-category.placeholder": "Espace réservé dans la barre de recherche",
-	"widget.generator.advanced.display-category.popup-mode.help": "Affiche ls widget de recherche dans une fenêtre popup.",
+	"widget.generator.advanced.display-category.popup-mode.help": "Affiche la widget de recherche dans une fenêtre popup.",
 	"widget.generator.advanced.display-category.popup-mode.label": "Mode popup",
 	"widget.generator.advanced.display-category.title": "Affichage",
 	"widget.generator.advanced.generative-answer-category.answers.help": "Générer une réponse aux questions de l'utilisateur et permettre de discuter avec le système",
