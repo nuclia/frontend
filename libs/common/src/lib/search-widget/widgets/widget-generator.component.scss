@@ -151,7 +151,7 @@
         height: $content-height;
         overflow: auto;
         padding: rhythm(2) $padding-right-page rhythm(4) rhythm(1);
-        ::ng-deep a[data-nuclia='search-widget-button'] {
+        ::ng-deep div[data-nuclia='search-widget-button'] {
           cursor: pointer;
         }
       }
