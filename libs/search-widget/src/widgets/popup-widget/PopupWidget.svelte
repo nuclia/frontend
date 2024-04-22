@@ -16,7 +16,6 @@
   export let lang = '';
   export let cdn = '';
   export let apikey = '';
-  export let kbslug = ''; // TODO: kbslug not needed anymore once regional system come into service
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
@@ -106,7 +105,6 @@
             {lang}
             {cdn}
             {apikey}
-            {kbslug}
             {account}
             {client}
             {state}

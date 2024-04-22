@@ -32,7 +32,6 @@
   export let lang = '';
   export let cdn = '';
   export let apikey = '';
-  export let kbslug = '';
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
@@ -106,7 +105,6 @@
         knowledgeBox: knowledgebox,
         client,
         apiKey: apikey,
-        kbSlug: kbslug,
         account,
         accountId: account,
         standalone,
