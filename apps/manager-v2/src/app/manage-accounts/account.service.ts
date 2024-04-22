@@ -208,9 +208,17 @@ export class AccountService {
    * @param to
    * @param kbId
    */
-  loadTokenConsumption(accountId: string, from: string, to?: string, kbId?: string): Observable<NucliaTokensMetric> {
+  loadTokenConsumption(
+    accountId: string,
+    from: string,
+    to?: string,
+    kbId?: string,
+  ): Observable<NucliaTokensMetric | null> {
     return this.sdk.nuclia.db.getUsage(accountId, from, to, kbId).pipe(
       map((usage) => {
+        if (usage.length === 0) {
+          return null;
+        }
         const nucliaTokensPoint = usage[0].metrics.find((metric) => metric.name === 'nuclia_tokens');
         if (!nucliaTokensPoint) {
           console.warn(`No nuclia_tokens found in the response`, usage);
