@@ -841,6 +841,19 @@
                         {{ 'widget.generator.advanced.display-category.dark-mode.help' | translate }}
                       </pa-popover>
                     </div>
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="popupMode">
+                        {{ 'widget.generator.advanced.display-category.popup-mode.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="popupModeHelp" />
+                      <pa-popover #popupModeHelp>
+                        {{ 'widget.generator.advanced.display-category.popup-mode.help' | translate }}
+                      </pa-popover>
+                    </div>
                     @if (canHideLogo | async) {
                       <div class="toggle-and-help">
                         <pa-toggle

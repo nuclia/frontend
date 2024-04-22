@@ -7,7 +7,6 @@
   import { downloadDump, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import {
-    downloadAsJSON,
     getRAGImageStrategies,
     getRAGStrategies,
     injectCustomCss,
@@ -51,7 +50,6 @@
   export let lang = '';
   export let cdn = '';
   export let apikey = '';
-  export let kbslug = ''; // TODO: kbslug not needed anymore once regional system come into service
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
@@ -118,7 +116,6 @@
       lang,
       cdn,
       apikey,
-      kbslug,
       account,
       not_enough_data_message,
     });
@@ -173,7 +170,6 @@
         knowledgeBox: knowledgebox,
         client,
         apiKey: apikey,
-        kbSlug: kbslug,
         standalone,
         proxy,
         account,

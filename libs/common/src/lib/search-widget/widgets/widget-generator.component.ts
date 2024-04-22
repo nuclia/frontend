@@ -119,6 +119,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
     hideThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
     darkMode: new FormControl<boolean>(false, { nonNullable: true }),
+    popupMode: new FormControl<boolean>(false, { nonNullable: true }),
     hideLogo: new FormControl<boolean>(false, { nonNullable: true }),
     autocompleteFromNERs: new FormControl<boolean>(false, { nonNullable: true }),
     relations: new FormControl<boolean>(false, { nonNullable: true }),
@@ -133,6 +134,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     'userPrompt',
     'preselectedFilters',
     'darkMode',
+    'popupMode',
     'placeholder',
     'ragSpecificFieldIds',
     'ragResourcesCount',
@@ -176,6 +178,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
   get darkModeEnabled() {
     return this.advancedForm.controls.darkMode.value;
+  }
+  get popupModeEnabled() {
+    return this.advancedForm.controls.popupMode.value;
   }
   get hideLogoEnabled() {
     return this.advancedForm.controls.hideLogo.value;
@@ -669,13 +674,22 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   generativemodel="${this.generativeModel}"`
         : '';
       const mode: string = this.darkModeEnabled ? `mode="dark"` : '';
-      const baseSnippet = `<nuclia-search-bar ${mode}
+      const tagName = this.popupModeEnabled ? 'nuclia-popup' : 'nuclia-search-bar';
+      let baseSnippet = `<${tagName} ${mode}
   knowledgebox="${kb.id}"
   ${zone}
-  features="${this.features}" ${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}></nuclia-search-bar>
+  features="${this.features}" ${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}></${tagName}>`;
+      if (!this.popupModeEnabled) {
+        baseSnippet += `
 <nuclia-search-results ${mode}></nuclia-search-results>`;
+      } else {
+        baseSnippet += `
+<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
+      }
 
-      this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
+      this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-${
+        this.popupModeEnabled ? 'popup' : 'video'
+      }-widget.umd.js"></script>
 ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
       this.snippetPreview = this.sanitized.bypassSecurityTrustHtml(
         baseSnippet
@@ -730,6 +744,7 @@ ${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
     this.filters = DEFAULT_FILTERS;
     // keep the few display options which are not managed by presets
     config.darkMode = this.darkModeEnabled;
+    config.popupMode = this.popupModeEnabled;
     config.hideLogo = this.hideLogoEnabled;
     this.advancedForm.patchValue(config);
     this.cdr.detectChanges();

@@ -1235,6 +1235,8 @@
 	"widget.generator.advanced.display-category.hide-thumbnails.help": "Amaga les miniatures als resultats de la cerca",
 	"widget.generator.advanced.display-category.hide-thumbnails.label": "Amaga les miniatures",
 	"widget.generator.advanced.display-category.placeholder": "Placeholder de la barra de cerca",
+	"widget.generator.advanced.display-category.popup-mode.help": "Mostra el widget de cerca en una finestra popup.",
+	"widget.generator.advanced.display-category.popup-mode.label": "Mode popup",
 	"widget.generator.advanced.display-category.title": "Mostra",
 	"widget.generator.advanced.generative-answer-category.answers.help": "Genera resposta a les preguntes dels usuaris i permet xatejar amb el sistema",
 	"widget.generator.advanced.generative-answer-category.answers.label": "Generació de respostes",

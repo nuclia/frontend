@@ -6,6 +6,11 @@ echo "Build video widget"
 vite build -c=libs/search-widget/vite.config.mjs -- search-widget nuclia-video-widget
 mv dist/libs/search-widget/style.css dist/libs/search-widget/nuclia-video-widget.css
 
+echo "Build popup widget"
+vite build -c=libs/search-widget/vite.config.mjs -- popup-widget nuclia-popup-widget
+mv dist/libs/popup-widget/style.css dist/libs/search-widget/nuclia-popup-widget.css
+cp dist/libs/popup-widget/* dist/libs/search-widget
+
 echo "Build viewer widget"
 vite build -c=libs/search-widget/vite.config.mjs -- viewer-widget nuclia-viewer-widget
 mv dist/libs/viewer-widget/style.css dist/libs/search-widget/nuclia-viewer-widget.css

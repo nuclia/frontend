@@ -108,4 +108,11 @@ function injectWidget(cdnUrl: string) {
   viewer.defer = true;
   viewer.src = `${cdnUrl}/nuclia-viewer-widget.umd.js`;
   window.document.body.appendChild(viewer);
+
+  const popup = window.document.createElement('script');
+  popup.type = 'text/javascript';
+  popup.async = true;
+  popup.defer = true;
+  popup.src = `${cdnUrl}/nuclia-popup-widget.umd.js`;
+  window.document.body.appendChild(popup);
 }
