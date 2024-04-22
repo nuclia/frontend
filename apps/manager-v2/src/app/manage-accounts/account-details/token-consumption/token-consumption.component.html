@@ -1,6 +1,6 @@
 <h3>Token consumption</h3>
 
-<h4>Total Nuclia tokens: {{ tokenConsumption.value }}</h4>
+<h4>Total Nuclia tokens: {{ (tokenConsumption | async)?.value | number: digitsInfo }}</h4>
 
 <div class="flex-column gap-below">
   <div class="flex-row">
@@ -120,30 +120,33 @@
           </span>
         </pa-table-cell>
         <pa-table-cell center>
-          <span class="body-s">{{ row.raw_usage.input }}</span>
+          <span class="body-s">{{ row.raw_usage.input | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell center>
-          <span class="body-s">{{ row.raw_usage.output }}</span>
+          <span class="body-s">{{ row.raw_usage.output | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell
           borderRight
           center>
-          <span class="body-s">{{ row.raw_usage.requests }}</span>
+          <span class="body-s">{{ row.raw_usage.requests | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell center>
-          <span class="body-s">{{ row.nuclia_tokens.input }}</span>
+          <span class="body-s">{{ row.nuclia_tokens.input | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell center>
-          <span class="body-s">{{ row.nuclia_tokens.output }}</span>
+          <span class="body-s">{{ row.nuclia_tokens.output | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell
           borderRight
           center>
-          <span class="body-s">{{ row.nuclia_tokens.requests }}</span>
+          <span class="body-s">{{ row.nuclia_tokens.requests | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell center>
           <strong class="body-s">
-            {{ (row.nuclia_tokens.input || 0) + (row.nuclia_tokens.output || 0) + (row.nuclia_tokens.requests || 0) }}
+            {{
+              (row.nuclia_tokens.input || 0) + (row.nuclia_tokens.output || 0) + (row.nuclia_tokens.requests || 0)
+                | number: digitsInfo
+            }}
           </strong>
         </pa-table-cell>
       </pa-table-row>
