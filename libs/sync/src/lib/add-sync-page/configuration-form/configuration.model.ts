@@ -2,6 +2,7 @@ import { Classification } from '@nuclia/core';
 
 export interface ConfigurationForm {
   name: string;
+  syncSecurityGroups: boolean | null;
   filterResources: {
     extensions: string | null;
     extensionUsage: 'include' | 'exclude';

@@ -1,1 +1,52 @@
-<p>sync-details-page works!</p>
+<div class="page-spacing">
+  <nsi-back-button link="..">{{ 'sync.add-page.back-button' | translate }}</nsi-back-button>
+  @if (sync | async; as sync) {
+    @if (connectorDef | async; as connectorDef) {
+      <div class="details-header">
+        <h1 class="page-title">
+          <pa-icon
+            [path]="connectorDef.logo"
+            size="large"></pa-icon>
+          {{ sync.title }}
+        </h1>
+        <div class="cta-container">
+          <div class="toggle-container">
+            <pa-toggle
+              withBackground
+              [value]="!sync.disabled">
+              {{ (sync.disabled ? 'sync.badge.inactive' : 'sync.badge.active') | translate }}
+            </pa-toggle>
+          </div>
+
+          <pa-button aspect="basic">{{ 'sync.details.buttons.sync-now' | translate }}</pa-button>
+          <pa-button aspect="basic">{{ 'sync.details.buttons.edit-settings' | translate }}</pa-button>
+          <pa-button kind="destructive">{{ 'sync.details.buttons.delete' | translate }}</pa-button>
+        </div>
+      </div>
+    }
+
+    <pa-tabs notFullWidth>
+      <pa-tab
+        [active]="activeTab === 'settings'"
+        (click)="activeTab = 'settings'">
+        {{ 'sync.details.tabs.settings' | translate }}
+      </pa-tab>
+      @if ((connector | async)?.allowToSelectFolders) {
+        <pa-tab
+          [active]="activeTab === 'folders'"
+          (click)="activeTab = 'folders'">
+          {{ 'sync.details.tabs.folders' | translate }}
+        </pa-tab>
+      }
+    </pa-tabs>
+
+    @switch (activeTab) {
+      @case ('settings') {
+        <nsy-sync-settings
+          [sync]="sync"
+          [connector]="connector | async"></nsy-sync-settings>
+      }
+      @case ('folders') {}
+    }
+  }
+</div>

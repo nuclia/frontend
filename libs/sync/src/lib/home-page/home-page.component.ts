@@ -1,19 +1,24 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
+  HeaderCell,
   PaButtonModule,
+  PaDateTimeModule,
   PaDropdownModule,
+  PaIconModule,
+  PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { map, Subject, take, takeUntil } from 'rxjs';
-import { BadgeComponent, DropdownButtonComponent } from '@nuclia/sistema';
+import { map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { BadgeComponent, DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncServerType, SyncService } from '../logic';
+import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncBasicData, SyncServerType, SyncService } from '../logic';
 import { ConnectorComponent } from './connector';
+import { SDKService } from '@flaps/core';
 
 @Component({
   standalone: true,
@@ -30,6 +35,12 @@ import { ConnectorComponent } from './connector';
     ReactiveFormsModule,
     RouterOutlet,
     TranslateModule,
+    PaTableModule,
+    RouterLink,
+    PaIconModule,
+    PaDateTimeModule,
+    PaTogglesModule,
+    InfoCardComponent,
   ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
@@ -39,6 +50,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private currentRoute = inject(ActivatedRoute);
   private syncService = inject(SyncService);
+  private sdk = inject(SDKService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -50,10 +62,29 @@ export class HomePageComponent implements OnInit, OnDestroy {
     type: new FormControl<SyncServerType>('desktop', { nonNullable: true }),
     serverUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
-  connectors = this.syncService.connectorsObs.pipe(
+  connectors = this.syncService.connectors;
+  connectorList = this.syncService.connectorsObs.pipe(
     map((sources) => sources.sort((a, b) => a.title.localeCompare(b.title))),
   );
   serverUrlBackup = '';
+
+  syncs: Observable<SyncBasicData[]> = this.sdk.currentKb.pipe(
+    switchMap((kb) => this.syncService.getSyncsForKB(kb.id)),
+  );
+  syncTableHeader: HeaderCell[] = [
+    new HeaderCell({ id: 'name', label: 'sync.home-page.sync-list.table-columns.name' }),
+    new HeaderCell({ id: 'connector', label: 'sync.home-page.sync-list.table-columns.connector' }),
+    // new HeaderCell({ id: 'resources', label: 'sync.home-page.sync-list.table-columns.resources' }), // FIXME with https://app.shortcut.com/flaps/story/9875/resource-uploaded-and-activity-log-details-in-sync-agent
+    new HeaderCell({ id: 'sync', label: 'sync.home-page.sync-list.table-columns.sync' }),
+    /* FIXME with https://app.shortcut.com/flaps/story/9875/resource-uploaded-and-activity-log-details-in-sync-agent
+    new HeaderCell({
+      id: 'creation-date',
+      label: 'sync.home-page.sync-list.table-columns.creation-date',
+      sortable: true,
+    }), */
+    new HeaderCell({ id: 'latest-sync', label: 'sync.home-page.sync-list.table-columns.latest-sync', sortable: true }),
+    new HeaderCell({ id: 'actions', label: 'sync.home-page.sync-list.table-columns.actions' }),
+  ];
 
   get syncAgentOnServer() {
     return this.syncAgentForm.controls.type.value === 'server';

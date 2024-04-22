@@ -76,7 +76,7 @@
       <div class="page-description">{{ 'sync.home-page.add-sources.description' | translate }}</div>
     </div>
     <div class="connector-list">
-      @for (connector of connectors | async; track connector.id) {
+      @for (connector of connectorList | async; track connector.id) {
         <nsy-connector
           [paTooltip]="
             ((inactiveServer | async) ? 'sync.home-page.add-sources.disabled-source-tooltip' : '') | translate
@@ -87,5 +87,62 @@
           (selectConnector)="onSelectConnector(connector)"></nsy-connector>
       }
     </div>
+  </section>
+
+  <section>
+    <div class="section-description">
+      <div class="title-l">{{ 'sync.home-page.sync-list.title' | translate }}</div>
+      <div class="page-description">{{ 'sync.home-page.sync-list.description' | translate }}</div>
+    </div>
+
+    @if (syncs | async; as syncs) {
+      @if (syncs.length === 0) {
+        <nsi-info-card icon="info">{{ 'sync.home-page.sync-list.empty-info' | translate }}</nsi-info-card>
+      } @else {
+        <pa-table
+          border
+          columns="repeat(4, 1fr) 96px">
+          <pa-table-sortable-header [cells]="syncTableHeader"></pa-table-sortable-header>
+
+          @for (sync of syncs; track sync.id) {
+            <pa-table-row [last]="$last">
+              <pa-table-cell>
+                <a
+                  [routerLink]="'./' + sync.id"
+                  class="body-m black-link">
+                  {{ sync.title }}
+                </a>
+              </pa-table-cell>
+              <pa-table-cell>
+                @if (connectors[sync.connectorId]?.definition; as connector) {
+                  <div class="logo-title">
+                    <pa-icon
+                      size="small"
+                      [path]="connector.logo"></pa-icon>
+                    {{ connector.title }}
+                  </div>
+                }
+              </pa-table-cell>
+              <pa-table-cell>
+                <pa-toggle
+                  labelOnRight
+                  [value]="!sync.disabled">
+                  {{ sync.disabled ? 'Off' : 'On' }}
+                </pa-toggle>
+              </pa-table-cell>
+              <pa-table-cell><pa-datetime [datetime]="sync.lastSyncGMT"></pa-datetime></pa-table-cell>
+              <pa-table-cell-menu>
+                <pa-button
+                  icon="more-vertical"
+                  aspect="basic"
+                  size="small">
+                  Menu
+                </pa-button>
+              </pa-table-cell-menu>
+            </pa-table-row>
+          }
+        </pa-table>
+      }
+    }
   </section>
 </div>

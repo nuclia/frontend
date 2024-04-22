@@ -55,6 +55,20 @@
       }
     </ng-container>
 
+    @if (connector.canSyncSecurityGroups) {
+      <nsi-two-columns-configuration-item
+        itemTitle="sync.add-page.security-group.title"
+        description="sync.add-page.security-group.description"
+        badge="generic.badge.advanced">
+        <div class="form-container toggle-container">
+          <pa-toggle
+            withBackground
+            formControlName="syncSecurityGroups">
+            {{ 'sync.add-page.security-group.toggle-label' | translate }}
+          </pa-toggle>
+        </div>
+      </nsi-two-columns-configuration-item>
+    }
     <nsi-two-columns-configuration-item
       badge="generic.badge.optional"
       itemTitle="sync.add-page.add-labels.title"
@@ -121,11 +135,11 @@
 
           <div class="inline-form small-gap">
             @for (extension of extensionList; track extension) {
-              <pa-chip-closeable
-                backgroundColor="#CCCED6"
-                (closed)="removeExtension(extension)">
+              <nsi-label
+                neutral
+                (removeLabel)="removeExtension(extension)">
                 {{ extension }}
-              </pa-chip-closeable>
+              </nsi-label>
             }
           </div>
 
@@ -133,8 +147,10 @@
             <label>{{ 'sync.add-page.filter-resources.modification-date.label' | translate }}</label>
             <div class="inline-form full-width small-gap">
               <pa-date-picker
+                formControlName="from"
                 [label]="'sync.add-page.filter-resources.modification-date.from' | translate"></pa-date-picker>
               <pa-date-picker
+                formControlName="to"
                 [label]="'sync.add-page.filter-resources.modification-date.to' | translate"></pa-date-picker>
             </div>
           </div>

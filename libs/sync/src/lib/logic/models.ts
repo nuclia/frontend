@@ -116,6 +116,8 @@ export interface SyncBasicData {
   kbId: string;
   title: string;
   connectorId: string;
+  lastSyncGMT?: string;
+  disabled?: boolean;
 }
 
 export enum LogSeverityLevel {

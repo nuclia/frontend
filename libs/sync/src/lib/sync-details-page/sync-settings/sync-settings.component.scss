@@ -1,0 +1,23 @@
+@import 'apps/dashboard/src/variables';
+
+.sync-settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+
+  .settings-item {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.5);
+  }
+  .body-s + label {
+    color: $color-neutral-regular;
+    font-weight: $font-weight-semi-bold;
+  }
+  .row-container {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(1);
+  }
+}

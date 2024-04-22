@@ -1,0 +1,96 @@
+<nsi-two-columns-configuration-item
+  noTopBorder
+  itemTitle="sync.details.settings.title"
+  description="sync.details.settings.description">
+  <div class="sync-settings-container">
+    <div class="body-s settings-item">
+      <label>{{ 'sync.details.settings.name' | translate }}</label>
+      <div>{{ sync.title }}</div>
+    </div>
+    <div class="separator-line"></div>
+
+    @if (connector) {
+      @for (section of connector.getParametersSections() | async; track section.id) {
+        @for (field of section.fields; track field.id) {
+          <div class="body-s settings-item">
+            <label>{{ field.label | translate }}</label>
+            <div>{{ sync.connector.parameters[field.id] }}</div>
+          </div>
+          <div class="separator-line"></div>
+        }
+      }
+    }
+
+    <div class="body-s settings-item">
+      <label>{{ 'sync.details.settings.synchronize-security-groups' | translate }}</label>
+      <div style="text-transform: capitalize">
+        {{
+          (sync.syncSecurityGroups ? 'sync.details.settings.boolean.true' : 'sync.details.settings.boolean.false')
+            | translate
+        }}
+      </div>
+    </div>
+    <div class="separator-line"></div>
+    <div class="body-s settings-item">
+      <label>{{ 'sync.details.settings.labels' | translate }}</label>
+      <div class="row-container">
+        @for (label of coloredLabels; track label) {
+          <nsi-label
+            readonly
+            [color]="label.color">
+            {{ label.label }}
+          </nsi-label>
+        } @empty {
+          –
+        }
+      </div>
+    </div>
+
+    <div class="separator-line"></div>
+    <label>
+      {{
+        (sync.filters?.fileExtensions?.exclude
+          ? 'sync.details.settings.file-extensions.excluded'
+          : 'sync.details.settings.file-extensions.included'
+        ) | translate
+      }}
+    </label>
+    <div class="body-s settings-item">
+      @if (sync.filters?.fileExtensions; as fileExtensions) {
+        <div class="row-container">
+          @for (extension of fileExtensions.extensions.split(', '); track extension) {
+            <nsi-label
+              readonly
+              neutral>
+              {{ extension }}
+            </nsi-label>
+          } @empty {
+            –
+          }
+        </div>
+      } @else {
+        –
+      }
+    </div>
+    <div class="separator-line"></div>
+    <label>{{ 'sync.details.settings.modification-date.label' | translate }}</label>
+    <div class="body-s row-container">
+      @if (sync.filters?.modified; as dates) {
+        {{ 'sync.details.settings.modification-date.from' | translate }}
+        <pa-datetime
+          dateOnly
+          [datetime]="dates.from"></pa-datetime>
+        {{ 'sync.details.settings.modification-date.to' | translate }}
+        <pa-datetime
+          dateOnly
+          [datetime]="dates.to"></pa-datetime>
+      } @else {
+        –
+      }
+    </div>
+  </div>
+</nsi-two-columns-configuration-item>
+
+<nsi-two-columns-configuration-item
+  itemTitle="sync.details.activity-log.title"
+  description="sync.details.activity-log.description"></nsi-two-columns-configuration-item>

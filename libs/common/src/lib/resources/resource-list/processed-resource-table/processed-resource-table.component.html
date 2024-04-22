@@ -187,7 +187,7 @@
             @if (visibleColumnsId | async; as visibleColumns) {
               @if (visibleColumns.includes('classification')) {
                 <pa-table-cell class="classification-cell">
-                  <div class="label-container">
+                  <div class="row-container">
                     @for (label of row.labels; track label.labelset + label.label) {
                       <nsi-label
                         [color]="label.color"

@@ -20,7 +20,12 @@ import {
   SisModalService,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
-import { PaButtonModule, PaChipsModule, PaDatePickerModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDatePickerModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ColoredLabel } from '@flaps/common';
 import { ConfigurationForm } from './configuration.model';
@@ -42,7 +47,7 @@ const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
     TranslateModule,
     PaDatePickerModule,
     SisLabelModule,
-    PaChipsModule,
+    PaTogglesModule,
   ],
   templateUrl: './configuration-form.component.html',
   styleUrl: './configuration-form.component.scss',
@@ -62,6 +67,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
 
   form = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    syncSecurityGroups: new FormControl<boolean | null>(null),
     filterResources: new FormGroup({
       extensions: new FormControl<string>('', { updateOn: 'blur' }),
       extensionUsage: new FormControl<'include' | 'exclude'>('include', { nonNullable: true }),
@@ -175,7 +181,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       },
       {} as { [key: string]: string },
     );
-    this.configurationChange.emit({
+    const syncEntity: ISyncEntity = {
       id,
       title,
       labels: this.labelSelection,
@@ -187,6 +193,10 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
           ...extraParams,
         },
       },
-    });
+    };
+    if (config.syncSecurityGroups !== null) {
+      syncEntity.syncSecurityGroups = config.syncSecurityGroups;
+    }
+    this.configurationChange.emit(syncEntity);
   }
 }

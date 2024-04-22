@@ -175,3 +175,13 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
   border-radius: rhythm(1);
   padding: rhythm(2);
 }
+
+.black-link {
+  color: $color-dark-stronger;
+  font-weight: $font-weight-semi-bold;
+  text-decoration: underline;
+
+  &:hover {
+    color: $color-dark-stronger;
+  }
+}

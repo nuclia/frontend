@@ -54,4 +54,11 @@ section {
     flex-wrap: wrap;
     gap: rhythm(2);
   }
+
+  .logo-title {
+    @include body-s();
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
 }

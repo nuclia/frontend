@@ -1,12 +1,6 @@
 @import 'apps/dashboard/src/variables';
 @import '../common-sync';
 
-.page-title {
-  align-items: center;
-  display: flex;
-  gap: rhythm(1);
-}
-
 .inline-form {
   pa-select {
     flex: 0 0 auto;
