@@ -1229,7 +1229,7 @@
 	"widget.copilot.topic-placeholder": "Exemple : Toronto",
 	"widget.generator.advanced.display-category.dark-mode.help": "Activer le thème sombre sur le widget",
 	"widget.generator.advanced.display-category.dark-mode.label": "Mode sombre",
-	"widget.generator.advanced.display-category.display-field-list.help": "Affichez une section listant tous les champs de la ressource dans la barre latérale droite de la visionneuse. Cette section n'est visible que pour les ressources contenant plusieurs champs.",
+	"widget.generator.advanced.display-category.display-field-list.help": "Affiche une section listant tous les champs de la ressource dans la barre latérale droite de la visionneuse. Cette section n'est visible que pour les ressources contenant plusieurs champs.",
 	"widget.generator.advanced.display-category.display-field-list.label": "Afficher la liste des champs",
 	"widget.generator.advanced.display-category.display-metadata.help": "Afficher quelques métadonnées sur les résultats de recherche",
 	"widget.generator.advanced.display-category.display-metadata.label": "Afficher les métadonnées",
