@@ -200,17 +200,18 @@
       </pa-button>
     </footer>
   </div>
-
-  <div class="right-panel-container">
-    <ncom-hint
-      label="How to modify a resource with the API"
-      learnMore="https://docs.nuclia.dev/docs/api/#tag/Resources/operation/Modify_Resource__by_id__kb__kbid__resource__rid__patch"
-      [values]="hintValues | async">
-      <pre><code>curl $$RESOURCE$$ \
+  @if (isTrial | async) {
+    <div class="right-panel-container">
+      <ncom-hint
+        label="How to modify a resource with the API"
+        learnMore="https://docs.nuclia.dev/docs/api/#tag/Resources/operation/Modify_Resource__by_id__kb__kbid__resource__rid__patch"
+        [values]="hintValues | async">
+        <pre><code>curl $$RESOURCE$$ \
   -X PATCH \
   -H "authorization: Bearer $$AUTH_TOKEN$$" \
   --data-raw '$$DATA$$'</code>
-      </pre>
-    </ncom-hint>
-  </div>
+        </pre>
+      </ncom-hint>
+    </div>
+  }
 </div>

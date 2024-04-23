@@ -127,23 +127,24 @@
         </div>
       </pa-expander-body>
     </pa-expander>
-
-    <ncom-hint
-      noMaxWidth
-      learnMore="https://docs.nuclia.dev/docs/docs/getting-started/quick-start/push#push-content-using-the-api"
-      label="How to upload a file with the API">
-      <pre><code>curl $$KB_URL$$/upload \
+    @if (isTrial | async) {
+      <ncom-hint
+        noMaxWidth
+        learnMore="https://docs.nuclia.dev/docs/docs/getting-started/quick-start/push#push-content-using-the-api"
+        label="How to upload a file with the API">
+        <pre><code>curl $$KB_URL$$/upload \
 -X POST \
 -H "content-type: video/mp4" \
 -H "authorization: Bearer $$AUTH_TOKEN$$" \
 -T /path/to/your-video.mp4</code></pre>
-      <p>
-        Note: the authorization token here will expire. If you want a long-term approach, you should use a service
-        access token and put it in the
-        <code>X-NUCLIA-SERVICEACCOUNT</code>
-        header.
-      </p>
-    </ncom-hint>
+        <p>
+          Note: the authorization token here will expire. If you want a long-term approach, you should use a service
+          access token and put it in the
+          <code>X-NUCLIA-SERVICEACCOUNT</code>
+          header.
+        </p>
+      </ncom-hint>
+    }
   </pa-modal-content>
   <pa-modal-footer>
     <pa-button
