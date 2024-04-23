@@ -45,7 +45,7 @@
       </pa-select>
     </div>
   }
-  <nus-language-field (languageSelected)="updateLanguages($event)"></nus-language-field>
+  <nus-language-field (modelSelected)="updateModel($event)"></nus-language-field>
 
   @if (isAnonymizationEnabled | async) {
     <pa-toggle

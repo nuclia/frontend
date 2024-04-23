@@ -46,8 +46,6 @@ export class Step2Component {
   });
 
   semanticModel = '';
-  multilingualSelected = true;
-  languages: string[] = [];
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -56,16 +54,12 @@ export class Step2Component {
     const configuration: KbConfiguration = {
       zoneSlug: configFormValue.region,
       semanticModel: this.semanticModel,
-      multilingual: this.multilingualSelected,
-      languages: this.languages,
     };
     this.submitStep2.emit(configuration);
   }
 
-  updateLanguages(data: { semanticModel: string; multilingualSelected: boolean; languages: string[] }) {
-    this.semanticModel = data.semanticModel;
-    this.multilingualSelected = data.multilingualSelected;
-    this.languages = data.languages;
+  updateModel(semanticModel: string) {
+    this.semanticModel = semanticModel;
     this.cdr.markForCheck();
   }
 }

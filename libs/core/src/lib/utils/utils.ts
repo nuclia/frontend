@@ -1,7 +1,6 @@
 import latinize from 'latinize';
 import { of, Subject } from 'rxjs';
 import { LearningConfigurations } from '@nuclia/core';
-import { KbLanguageConf } from '../models';
 
 export const MIN_PASSWORD_LENGTH = 8;
 
@@ -37,17 +36,10 @@ export function injectScript(url: string) {
   }
 }
 
-export function getSemanticModel(languageConf: KbLanguageConf, learningConfiguration: LearningConfigurations) {
-  // temporary fix to support OpenAI models in stage
-  // but the flow will probably change when going to production
-  const semanticModelName =
-    languageConf.semanticModel?.startsWith('OPENAI') || languageConf.semanticModel === 'GECKO_MULTI'
-      ? languageConf.semanticModel
-      : !languageConf.multilingual
-        ? 'ENGLISH_BGE_LARGE'
-        : languageConf.languages.includes('catalan') || languageConf.languages.includes('other')
-          ? 'MULTILINGUAL_ALPHA'
-          : 'MULTILINGUAL';
+export function getSemanticModel(semanticModelName: string | undefined, learningConfiguration: LearningConfigurations) {
+  if (!semanticModelName) {
+    semanticModelName = 'MULTILINGUAL';
+  }
   const semanticModel = learningConfiguration['semantic_model'].options?.find(
     (model) => model.name === semanticModelName,
   );

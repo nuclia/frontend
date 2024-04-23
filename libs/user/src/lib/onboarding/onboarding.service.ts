@@ -103,7 +103,7 @@ export class OnboardingService {
             slug: 'basic',
             title: 'Basic',
             learning_configuration: {
-              semantic_model: getSemanticModel(configuration, learningConfiguration),
+              semantic_model: getSemanticModel(configuration.semanticModel, learningConfiguration),
             },
           };
           this.tracking.logEvent('kb_creation_submitted', {

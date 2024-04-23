@@ -1,14 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -40,27 +32,22 @@ const LANGUAGES = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageFieldComponent implements OnInit, OnDestroy {
-  @Output() languageSelected = new EventEmitter<{
-    multilingualSelected: boolean;
-    languages: string[];
-    semanticModel: string;
-  }>();
+  @Output() modelSelected = new EventEmitter<string>();
 
   private unsubscribeAll = new Subject<void>();
 
-  multilingual = new FormControl<'multilingual' | 'english'>('multilingual', { nonNullable: true });
+  form = new FormGroup({
+    modelType: new FormControl<'private' | 'public'>('private', { nonNullable: true }),
+    model: new FormControl<string>('GECKO_MULTI', { nonNullable: true }),
+  });
+
   languages: { id: string; label: string; selected: boolean }[];
-  isEnglishEnabled = this.features.englishModel;
+
   areOpenAIModelsEnabled = this.features.openAIModels;
   isGeckoModelEnabled = this.features.geckoModel;
 
-  get multilingualSelected() {
-    return this.multilingual.value === 'multilingual';
-  }
-
   constructor(
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     private features: FeaturesService,
   ) {
     const languages: { id: string; label: string }[] = LANGUAGES.map((language) => ({
@@ -72,14 +59,7 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.multilingual.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((language) => {
-      if (language === 'english') {
-        this.languages.forEach((language) => (language.selected = false));
-        this.cdr.markForCheck();
-      }
-
-      this.sendSelection();
-    });
+    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.sendSelection());
   }
 
   ngOnDestroy() {
@@ -88,10 +68,18 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
   }
 
   sendSelection() {
-    this.languageSelected.emit({
-      semanticModel: this.multilingual.value,
-      multilingualSelected: this.multilingualSelected,
-      languages: this.languages.filter((language) => language.selected).map((language) => language.id),
-    });
+    const data = this.form.value;
+    if (data.modelType === 'private') {
+      const lang = this.languages.filter((language) => language.selected).map((language) => language.id);
+      if (lang.includes('catalan') || lang.includes('other')) {
+        this.modelSelected.emit('MULTILINGUAL_ALPHA');
+      } else if (lang.length === 1 && lang[0] === 'english') {
+        this.modelSelected.emit('ENGLISH_BGE_LARGE');
+      } else {
+        this.modelSelected.emit('MULTILINGUAL');
+      }
+    } else {
+      this.modelSelected.emit(data.model);
+    }
   }
 }
