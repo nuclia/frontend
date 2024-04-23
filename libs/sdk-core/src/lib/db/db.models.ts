@@ -122,6 +122,7 @@ export interface CommonMetricDetails {
     requests: number | null;
     input: number | null;
     output: number | null;
+    image: number | null;
   };
 }
 
@@ -142,6 +143,7 @@ export interface NucliaTokensDetails extends CommonMetricDetails {
     requests: number | null;
     input: number | null;
     output: number | null;
+    image: number | null;
   };
 }
 
