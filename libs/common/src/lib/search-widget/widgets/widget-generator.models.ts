@@ -39,6 +39,7 @@ export type AdvancedForm = {
   notEnoughDataMessage: string;
   generativeModelToggle: boolean;
   generativeModel: string;
+  displayFieldList: boolean;
 };
 export type WidgetConfiguration = {
   features?: AdvancedForm;
@@ -88,6 +89,7 @@ export const DEFAULT_CONFIGURATION: AdvancedForm = {
   notEnoughDataMessage: '',
   generativeModelToggle: false,
   generativeModel: '',
+  displayFieldList: false,
 };
 
 export function getSearchPresetConfig(value: Partial<PresetForm>): AdvancedForm {

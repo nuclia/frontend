@@ -297,6 +297,7 @@ export interface WidgetFeatures {
   hideLogo?: boolean;
   hideResults?: boolean;
   hideThumbnails?: boolean;
+  displayFieldList?: boolean;
   knowledgeGraph?: boolean;
   useSynonyms?: boolean;
   autofilter?: boolean;

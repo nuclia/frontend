@@ -14,6 +14,7 @@
     getResultType,
     getWidgetActions,
     graphQuery,
+    displayFieldList,
     isKnowledgeGraphEnabled,
     isMediaPlayer,
     isPreviewing,
@@ -523,7 +524,7 @@
               </MetadataContainer>
             {/if}
 
-            {#if $fieldList}
+            {#if $displayFieldList && $fieldList}
               <MetadataContainer
                 sectionId="items"
                 expanded={sidePanelSectionOpen === 'items'}

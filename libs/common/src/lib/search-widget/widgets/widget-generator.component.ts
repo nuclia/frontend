@@ -128,6 +128,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     askToResource: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     generativeModelToggle: new FormControl<boolean>(false, { nonNullable: true }),
     generativeModel: new FormControl<string>('', { nonNullable: true }),
+    displayFieldList: new FormControl<boolean>(false, { nonNullable: true }),
   });
   userPromptErrors = { pattern: 'widget.generator.advanced.generative-answer-category.prompt.error' };
   private readonly notFeatures = [

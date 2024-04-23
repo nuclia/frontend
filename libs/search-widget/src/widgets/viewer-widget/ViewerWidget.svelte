@@ -16,10 +16,11 @@
     setLang,
     setWidgetActions,
     viewerData,
+    widgetFeatures
   } from '../../core';
   import type { TypedResult } from '../../core';
   import { onMount } from 'svelte';
-  import type { FieldFullId, KBStates } from '@nuclia/core';
+  import type { FieldFullId, KBStates, WidgetFeatures } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { BehaviorSubject, filter, firstValueFrom, forkJoin, Observable } from 'rxjs';
@@ -35,6 +36,7 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
+  export let features = '';
   export let standalone = false;
   export let proxy = false;
   export let cssPath = '';
@@ -92,11 +94,18 @@
 
   let svgSprite;
   let container: HTMLElement;
+  let _features: WidgetFeatures = {};
 
   onMount(() => {
     if (cdn) {
       setCDN(cdn);
     }
+
+    _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+      (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+      {},
+    );
+    widgetFeatures.set(_features);
 
     initNuclia(
       {

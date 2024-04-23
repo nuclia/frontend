@@ -1228,6 +1228,8 @@
 	"widget.copilot.topic-placeholder": "Exemple: Toronto",
 	"widget.generator.advanced.display-category.dark-mode.help": "Activa el tema fosc al giny",
 	"widget.generator.advanced.display-category.dark-mode.label": "Mode fosc",
+	"widget.generator.advanced.display-category.display-field-list.help": "Mostra una secció que enumera tots els camps del recurs a la barra lateral dreta del visor. Aquesta secció només és visible per als recursos que contenen diversos camps.",
+	"widget.generator.advanced.display-category.display-field-list.label": "Mostra la llista de camps",
 	"widget.generator.advanced.display-category.display-metadata.help": "Mostra algunes metadades als resultats de la cerca",
 	"widget.generator.advanced.display-category.display-metadata.label": "Mostra metadades",
 	"widget.generator.advanced.display-category.hide-logo.help": "Amagar el logotip de Nuclia de la barra de cerca",
