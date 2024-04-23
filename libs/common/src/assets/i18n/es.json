@@ -1228,6 +1228,8 @@
 	"widget.copilot.topic-placeholder": "Ejemplo: Toronto",
 	"widget.generator.advanced.display-category.dark-mode.help": "Habilitar tema oscuro en el widget",
 	"widget.generator.advanced.display-category.dark-mode.label": "Modo oscuro",
+	"widget.generator.advanced.display-category.display-field-list.help": "Muestre una sección que enumera todos los campos del recurso en la barra lateral derecha del visor. Esta sección solo es visible para recursos que contienen varios campos.",
+	"widget.generator.advanced.display-category.display-field-list.label": "Mostrar lista de campos",
 	"widget.generator.advanced.display-category.display-metadata.help": "Mostrar algunos metadatos en los resultados de búsqueda.",
 	"widget.generator.advanced.display-category.display-metadata.label": "Mostrar metadatos",
 	"widget.generator.advanced.display-category.hide-logo.help": "Ocultar el logotipo de Nuclia de la barra de búsqueda",

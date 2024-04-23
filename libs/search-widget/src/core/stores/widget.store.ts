@@ -39,6 +39,9 @@ export const hideResults: Observable<boolean> = combineLatest([
   isAnswerEnabled,
   widgetFeatures.pipe(map((features) => !!features?.hideResults)),
 ]).pipe(map(([answers, hideResults]) => answers && hideResults));
+export const displayFieldList: Observable<boolean> = widgetFeatures.pipe(
+  map((features) => !!features?.displayFieldList),
+);
 
 export const disableAnswers = () => {
   widgetFeatures.set({ ...(widgetFeatures.value || {}), answers: false });

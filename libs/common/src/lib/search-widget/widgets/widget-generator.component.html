@@ -869,6 +869,19 @@
                         </pa-popover>
                       </div>
                     }
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="displayFieldList">
+                        {{ 'widget.generator.advanced.display-category.display-field-list.label' | translate }}
+                      </pa-toggle>
+                      <pa-icon
+                        name="info"
+                        [paPopover]="displayFieldListHelp" />
+                      <pa-popover #displayFieldListHelp>
+                        {{ 'widget.generator.advanced.display-category.display-field-list.help' | translate }}
+                      </pa-popover>
+                    </div>
                   </div>
                 </pa-expander-body>
               </pa-expander>

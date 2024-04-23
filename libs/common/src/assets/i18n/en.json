@@ -1229,6 +1229,8 @@
 	"widget.copilot.topic-placeholder": "Example: Toronto",
 	"widget.generator.advanced.display-category.dark-mode.help": "Enable dark theme on the widget",
 	"widget.generator.advanced.display-category.dark-mode.label": "Dark mode",
+	"widget.generator.advanced.display-category.display-field-list.help": "Display a section listing all the fields of the resource in right sidebar of the viewer. This section is only visible for resources containing multiple fields.",
+	"widget.generator.advanced.display-category.display-field-list.label": "Display field list",
 	"widget.generator.advanced.display-category.display-metadata.help": "Display some metadata on the search results",
 	"widget.generator.advanced.display-category.display-metadata.label": "Display metadata",
 	"widget.generator.advanced.display-category.hide-logo.help": "Hide Nuclia logo from search bar",
