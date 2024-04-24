@@ -74,7 +74,7 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
       if (lang.includes('catalan') || lang.includes('other')) {
         this.modelSelected.emit('MULTILINGUAL_ALPHA');
       } else if (lang.length === 1 && lang[0] === 'english') {
-        this.modelSelected.emit('ENGLISH_BGE_LARGE');
+        this.modelSelected.emit('ENGLISH');
       } else {
         this.modelSelected.emit('MULTILINGUAL');
       }
