@@ -49,6 +49,7 @@
           <ParagraphResult
             resultType={source.resultType}
             paragraph={source.paragraphs[0]}
+            disabled="{!source.field}"
             ellipsis={true}
             noIndicator
             on:open={() => clickOnSource(source, source.paragraphs?.[0])}>

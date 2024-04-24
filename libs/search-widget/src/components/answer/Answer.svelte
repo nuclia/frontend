@@ -10,6 +10,7 @@
     chat,
     downloadDump,
     getFieldDataFromResource,
+    getNonGenericField,
     getResultType,
     hasDumpLogButton,
     hasNotEnoughData,
@@ -40,10 +41,17 @@
         const resource = resources[resourceId];
         const paragraph = resources[resourceId]?.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[paragraphId];
         if (resource && paragraph) {
-          const field: FieldId = {
-            field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
-            field_id: fieldId,
-          };
+          let field: FieldId;
+          if (shortFieldType === SHORT_FIELD_TYPE.generic) {
+            // we take the first other field that is not generic
+            field = getNonGenericField(resource.data || {});
+          }
+          else {
+            field = {
+              field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+              field_id: fieldId,
+            };
+          }
           const fieldData = getFieldDataFromResource(resource, field);
           const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
           return { ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] };

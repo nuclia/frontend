@@ -6,6 +6,7 @@ import type {
   IFieldData,
   IResource,
   Paragraph,
+  ResourceData,
   ResourceField,
   Search,
   SearchOptions,
@@ -533,16 +534,7 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
 
         if (shortType === SHORT_FIELD_TYPE.generic && resource.data) {
           // if matching field is generic, we take the first other field from resource data
-          fieldId = Object.entries(resource.data)
-            .filter(([, data]) => !!data)
-            .map(([dataKey, data]) => {
-              // data key is matching field type with an `s` suffix
-              const fieldType = getFieldTypeFromString(dataKey.substring(0, dataKey.length - 1));
-              return { field_type: fieldType as FIELD_TYPE, field_id: Object.keys(data)[0] };
-            })
-            .filter((fullId) => {
-              return fullId.field_type !== FIELD_TYPE.generic;
-            })[0];
+          fieldId = getNonGenericField(resource.data);
         } else {
           const field_type = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
           fieldId = { field_id, field_type };
@@ -636,4 +628,17 @@ export function getResultType(result: Search.FieldResult): { resultType: ResultT
     resultType = 'text';
   }
   return { resultType, resultIcon: icon || resultType };
+}
+
+export function getNonGenericField(data: ResourceData) {
+  return Object.entries(data)
+    .filter(([, data]) => !!data)
+    .map(([dataKey, data]) => {
+      // data key is matching field type with an `s` suffix
+      const fieldType = getFieldTypeFromString(dataKey.substring(0, dataKey.length - 1));
+      return { field_type: fieldType as FIELD_TYPE, field_id: Object.keys(data)[0] };
+    })
+    .filter((fullId) => {
+      return fullId.field_type !== FIELD_TYPE.generic;
+    })[0];
 }
