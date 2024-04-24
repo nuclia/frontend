@@ -1,12 +1,7 @@
-export type KbLanguageConf = {
-  multilingual: boolean;
-  languages: string[];
-  semanticModel?: string;
-};
-
 export type KbConfiguration = {
   zoneSlug: string;
-} & KbLanguageConf;
+  semanticModel?: string;
+};
 
 export type AccountAndKbConfiguration = {
   company: string;

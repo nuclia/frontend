@@ -75,9 +75,7 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
     }),
     anonymization: new FormControl<boolean>(false, { nonNullable: true }),
   });
-  multilingualSelected = true;
   semanticModel = '';
-  languages: string[] = [];
 
   validationMessages: { [key: string]: IErrorMessages } = {
     title: {
@@ -140,12 +138,9 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  updateLanguages(data: { semanticModel: string; multilingualSelected: boolean; languages: string[] }) {
-    this.semanticModel = data.semanticModel;
-    this.multilingualSelected = data.multilingualSelected;
-    this.languages = data.languages;
+  updateModel(semanticModel: string) {
+    this.semanticModel = semanticModel;
     this.cdr.markForCheck();
-
     this.computeAndEmitLearningConfig();
   }
 
@@ -158,14 +153,7 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
       request.subscribe((learningConfiguration) => {
         this.learningConfig.emit({
           anonymization_model: anonymization ? 'multilingual' : 'disabled',
-          semantic_model: getSemanticModel(
-            {
-              semanticModel: this.semanticModel,
-              multilingual: this.multilingualSelected,
-              languages: this.languages,
-            },
-            learningConfiguration,
-          ),
+          semantic_model: getSemanticModel(this.semanticModel, learningConfiguration),
         });
       });
     }
