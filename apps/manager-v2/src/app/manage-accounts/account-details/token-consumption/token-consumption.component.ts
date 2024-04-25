@@ -45,7 +45,7 @@ export class TokenConsumptionComponent implements OnInit {
   tokenConsumption = new BehaviorSubject<NucliaTokensMetric | null>(null);
   selectedTab = 'account';
   // digitsInfo format: {minIntegerDigits}.{minFractionDigits}-{maxFractionDigits}
-  digitsInfo = '1.0-1';
+  digitsInfo = '1.0-0';
 
   toDate: string;
   toTime: number;
