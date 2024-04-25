@@ -1,0 +1,42 @@
+@import '../../../styles/variables';
+
+.exclusive-buttons-container {
+  align-items: center;
+  background: $color-neutral-lightest;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(0.5);
+  display: flex;
+  gap: rhythm(1);
+  height: rhythm(5);
+  min-width: rhythm(40);
+  padding: rhythm(0.5);
+
+  button {
+    @include title-xs;
+    border: none;
+    background: none;
+    color: $color-neutral-regular;
+    flex: 1 0 auto;
+    height: rhythm(4);
+    transition:
+      background $transition-hint,
+      color $transition-hint;
+
+    &:not(.active) {
+      cursor: pointer;
+
+      &:hover,
+      &:active {
+        color: $color-dark-stronger;
+      }
+    }
+
+    &.active {
+      background: $color-light-stronger;
+      box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      color: $color-dark-stronger;
+    }
+  }
+}

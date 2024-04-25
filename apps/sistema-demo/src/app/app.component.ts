@@ -55,6 +55,7 @@ import {
   SistemaFolderTreeComponent,
   SistemaLabelComponent,
   SistemaPasswordInputComponent,
+  SistemaSegmentedButtonsComponent,
   SistemaSpinnerComponent,
   SistemaStickyFooterComponent,
   SistemaTwoColumnsConfigurationItemComponent,
@@ -92,6 +93,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'folder-tree', title: 'Folder tree', type: SistemaFolderTreeComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
       { view: 'password-input', title: 'Password input', type: SistemaPasswordInputComponent },
+      { view: 'segmented-buttons', title: 'Segmented buttons', type: SistemaSegmentedButtonsComponent },
       { view: 'spinner', title: 'Spinner', type: SistemaSpinnerComponent },
       { view: 'sticky-footer', title: 'Sticky footer', type: SistemaStickyFooterComponent },
       {

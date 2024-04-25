@@ -1,0 +1,14 @@
+@if (leftButton && rightButton) {
+  <div class="exclusive-buttons-container">
+    <button
+      [class.active]="active === 'left'"
+      (click)="toggleSelection('left')">
+      {{ leftButton | translate }}
+    </button>
+    <button
+      [class.active]="active === 'right'"
+      (click)="toggleSelection('right')">
+      {{ rightButton | translate }}
+    </button>
+  </div>
+}
