@@ -1,0 +1,48 @@
+<header>
+  <!-- FIXME: put back the search input once the sync-agent will support search query to load folders
+  <pa-input
+    icon="search"
+    [formControl]="searchQuery"
+    (enter)="loadFolders($event)">
+    {{ 'sync.folder-selection.search-input-label' | translate }}
+  </pa-input>-->
+  <div></div>
+  <nsi-segmented-buttons
+    [leftButton]="'sync.folder-selection.see-all' | translate: { total: totalFolders }"
+    [rightButton]="'sync.folder-selection.see-selection' | translate: { count: selectionCount }"
+    (activeChange)="updateView($event)"></nsi-segmented-buttons>
+</header>
+
+@if (loading) {
+  <nsi-spinner></nsi-spinner>
+}
+@if (folders) {
+  @if (seeAll) {
+    <nsi-folder-tree
+      [selection]="selection"
+      [folderTree]="folders"
+      (selectionChange)="updateSelection($event)"></nsi-folder-tree>
+  } @else {
+    <nsi-folder-list [folders]="selectedPaths"></nsi-folder-list>
+  }
+}
+
+<nsi-sticky-footer>
+  <div
+    footerNote
+    class="title-xs">
+    {{ 'sync.folder-selection.footer.selection-count' | translate: { count: selectionCount } }}
+  </div>
+
+  <pa-button
+    aspect="basic"
+    (click)="cancel.emit()">
+    {{ 'generic.cancel' | translate }}
+  </pa-button>
+  <pa-button
+    kind="primary"
+    [disabled]="disableSave"
+    (click)="triggerSave()">
+    {{ 'sync.folder-selection.footer.save-changes' | translate }}
+  </pa-button>
+</nsi-sticky-footer>

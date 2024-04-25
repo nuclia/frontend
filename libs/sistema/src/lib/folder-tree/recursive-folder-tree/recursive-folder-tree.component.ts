@@ -19,6 +19,7 @@ export class RecursiveFolderTreeComponent {
   @Input({ required: true }) folderTree: FolderTreeUI | null = null;
 
   toggleFolder(folder: FolderTree, selected: boolean) {
+    console.log(`toggleFolder`);
     this.state.toggleFolder(folder, selected);
   }
 

@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IConnector, ISyncEntity, SyncService } from '@nuclia/sync';
 import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { SyncSettingsComponent } from './sync-settings';
+import { FoldersTabComponent } from './folders-tab/folders-tab.component';
 
 @Component({
   selector: 'nsy-sync-details-page',
@@ -21,6 +22,7 @@ import { SyncSettingsComponent } from './sync-settings';
     PaTogglesModule,
     PaTabsModule,
     SyncSettingsComponent,
+    FoldersTabComponent,
   ],
   templateUrl: './sync-details-page.component.html',
   styleUrl: './sync-details-page.component.scss',
@@ -70,5 +72,9 @@ export class SyncDetailsPageComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  updateSync() {
+    this.sync = this.syncId.pipe(switchMap((syncId) => this.syncService.getSync(syncId)));
   }
 }

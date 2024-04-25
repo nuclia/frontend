@@ -19,8 +19,14 @@ export class FolderTreeState {
     map((tree) => tree as FolderTree),
   );
 
-  initTree(tree: FolderTree) {
+  initTree(tree: FolderTree, selection?: { id: string; path: string }[]) {
     this._tree.next(tree);
+    (selection || []).forEach((selectedItem) => {
+      const node = this.getFolder(selectedItem.path);
+      if (node) {
+        this.toggleFolder(node, true);
+      }
+    });
   }
 
   toggleFolder(folder: FolderTree, selected: boolean) {

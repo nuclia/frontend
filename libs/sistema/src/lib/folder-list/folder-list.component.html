@@ -1,0 +1,14 @@
+<ul class="folder-list">
+  @for (folder of folders; track folder) {
+    <li>
+      <pa-icon [path]="folderIcon"></pa-icon>
+      {{ folder }}
+    </li>
+  } @empty {
+    <nsi-info-card
+      type="warning"
+      icon="warning">
+      {{ 'sync.folder-selection.empty-message' | translate }}
+    </nsi-info-card>
+  }
+</ul>

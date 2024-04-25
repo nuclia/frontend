@@ -1,0 +1,16 @@
+<div class="folders-tab">
+  @if (editing) {
+    <nsy-folder-selection
+      [sync]="sync"
+      [disableSave]="saving"
+      (cancel)="editing = false"
+      (selectedSyncItems)="saveSelection($event)"></nsy-folder-selection>
+  } @else {
+    <header>
+      <pa-input icon="search">{{ 'sync.folder-selection.search-input-label' | translate }}</pa-input>
+      <pa-button (click)="editing = true">{{ 'sync.folder-selection.edit-folders-button' | translate }}</pa-button>
+    </header>
+
+    <nsi-folder-list [folders]="selectedFolders"></nsi-folder-list>
+  }
+</div>

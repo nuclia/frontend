@@ -286,6 +286,7 @@ export class SyncService {
     );
   }
 
+  // FIXME: support query
   getFolders(query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
       `${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSourceId()}/folders`,

@@ -90,9 +90,9 @@ export class SistemaFolderTreeComponent {
     },
   };
 
-  selection1: string[] = [];
-  selection2: string[] = [];
+  selection1: { id: string; path: string }[] = [];
+  selection2: { id: string; path: string }[] = [];
   code = `<nsi-folder-tree
       [folderTree]="tree"
-      (selection)="selection = $event"></nsi-folder-tree>`;
+      (selectionChange)="selection = $event"></nsi-folder-tree>`;
 }

@@ -46,7 +46,11 @@
           [sync]="sync"
           [connector]="connector | async"></nsy-sync-settings>
       }
-      @case ('folders') {}
+      @case ('folders') {
+        <nsy-folders-tab
+          [sync]="sync"
+          (syncChange)="updateSync()"></nsy-folders-tab>
+      }
     }
   }
 </div>
