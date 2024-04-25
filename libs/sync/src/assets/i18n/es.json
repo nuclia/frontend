@@ -95,6 +95,8 @@
 	"sync.connectors.sitemap.url.label": "URL del sitemap",
 	"sync.connectors.sitemap.url.section-title": "URL del sitemap",
 	"sync.details.activity-log.description": "Todas las sincronizaciones se activan automáticamente cada 60 minutos.",
+	"sync.details.activity-log.table-header.date": "Fecha",
+	"sync.details.activity-log.table-header.message": "Mensaje",
 	"sync.details.activity-log.title": "Registros de actividad de sincronización",
 	"sync.details.authentication.fail": "Autenticación fallida",
 	"sync.details.buttons.delete": "Eliminar",

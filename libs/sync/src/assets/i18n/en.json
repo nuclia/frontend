@@ -95,6 +95,8 @@
 	"sync.connectors.sitemap.url.label": "Sitemap URL",
 	"sync.connectors.sitemap.url.section-title": "Sitemap URL",
 	"sync.details.activity-log.description": "All syncs are triggered automatically every 60 minutes.",
+	"sync.details.activity-log.table-header.date": "Date",
+	"sync.details.activity-log.table-header.message": "Message",
 	"sync.details.activity-log.title": "Sync’s activity logs",
 	"sync.details.authentication.fail": "Authentication failed",
 	"sync.details.buttons.delete": "Delete",

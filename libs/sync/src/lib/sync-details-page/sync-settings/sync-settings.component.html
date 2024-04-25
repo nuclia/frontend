@@ -93,4 +93,47 @@
 
 <nsi-two-columns-configuration-item
   itemTitle="sync.details.activity-log.title"
-  description="sync.details.activity-log.description"></nsi-two-columns-configuration-item>
+  description="sync.details.activity-log.description">
+  <div class="activity-logs-container">
+    <pa-table
+      border
+      columns="2fr 1fr">
+      <pa-table-header>
+        <pa-table-cell header>{{ 'sync.details.activity-log.table-header.message' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'sync.details.activity-log.table-header.date' | translate }}</pa-table-cell>
+      </pa-table-header>
+      @for (log of logs; track log) {
+        <pa-table-row [last]="$last">
+          <pa-table-cell>
+            <div class="body-s icon-and-text">
+              @switch (log.level) {
+                @case ('high') {
+                  <pa-icon
+                    class="error"
+                    size="small"
+                    name="circle-cross"></pa-icon>
+                }
+                @case ('medium') {
+                  <pa-icon
+                    class="warning"
+                    size="small"
+                    name="warning"></pa-icon>
+                }
+                @case ('low') {
+                  <pa-icon
+                    class="success"
+                    size="small"
+                    name="circle-check"></pa-icon>
+                }
+              }
+              {{ log.message }}
+            </div>
+          </pa-table-cell>
+          <pa-table-cell>
+            <div class="body-s"><pa-datetime [datetime]="log.createdAt"></pa-datetime></div>
+          </pa-table-cell>
+        </pa-table-row>
+      }
+    </pa-table>
+  </div>
+</nsi-two-columns-configuration-item>

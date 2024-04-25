@@ -44,7 +44,8 @@
       @case ('settings') {
         <nsy-sync-settings
           [sync]="sync"
-          [connector]="connector | async"></nsy-sync-settings>
+          [connector]="connector | async"
+          [logs]="activityLogs | async"></nsy-sync-settings>
       }
       @case ('folders') {
         <nsy-folders-tab

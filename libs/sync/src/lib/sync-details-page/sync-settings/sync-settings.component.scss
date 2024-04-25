@@ -21,3 +21,24 @@
     gap: rhythm(1);
   }
 }
+
+.activity-logs-container {
+  .icon-and-text {
+    align-items: center;
+    display: flex;
+    gap: rhythm(0.5);
+
+    pa-icon {
+      display: flex;
+    }
+    .error {
+      color: $color-secondary-stronger;
+    }
+    .warning {
+      color: $color-secondary-stronger;
+    }
+    .success {
+      color: $color-success-strong;
+    }
+  }
+}

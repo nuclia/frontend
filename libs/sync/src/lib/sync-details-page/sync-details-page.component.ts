@@ -4,7 +4,7 @@ import { BackButtonComponent, SisToastService } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTabsModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IConnector, ISyncEntity, SyncService } from '@nuclia/sync';
+import { IConnector, ISyncEntity, LogEntity, SyncService } from '@nuclia/sync';
 import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { SyncSettingsComponent } from './sync-settings';
 import { FoldersTabComponent } from './folders-tab/folders-tab.component';
@@ -46,6 +46,7 @@ export class SyncDetailsPageComponent implements OnInit, OnDestroy {
   connector: Observable<IConnector> = this.connectorDef.pipe(
     switchMap((connectorDef) => this.syncService.getConnector(connectorDef.id, '')),
   );
+  activityLogs: Observable<LogEntity[]> = this.syncId.pipe(switchMap((syncId) => this.syncService.getLogs(syncId)));
 
   activeTab: 'settings' | 'folders' = 'settings';
 
