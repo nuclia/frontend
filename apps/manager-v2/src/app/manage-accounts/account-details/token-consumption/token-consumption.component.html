@@ -151,12 +151,21 @@
         </pa-table-cell>
         <pa-table-cell center>
           <strong class="body-s">
-            {{
-              (row.nuclia_tokens.input || 0) +
-                (row.nuclia_tokens.output || 0) +
-                (row.nuclia_tokens.requests || 0) +
-                (row.nuclia_tokens.image || 0) | number: digitsInfo
-            }}
+            @if (
+              row.nuclia_tokens.input === null &&
+              row.nuclia_tokens.output === null &&
+              row.nuclia_tokens.requests === null &&
+              row.nuclia_tokens.image === null
+            ) {
+              –
+            } @else {
+              {{
+                (row.nuclia_tokens.input || 0) +
+                  (row.nuclia_tokens.output || 0) +
+                  (row.nuclia_tokens.requests || 0) +
+                  (row.nuclia_tokens.image || 0) | number: digitsInfo
+              }}
+            }
           </strong>
         </pa-table-cell>
       </pa-table-row>
