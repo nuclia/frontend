@@ -62,7 +62,6 @@
 	"results.count": "Résultat {{index}} sur {{total}}",
 	"results.empty": "Aucun résultat trouvé",
 	"results.more_labels": "{{count}}  autres labels",
-	"results.semantic": "Résultats sémantiques",
 	"results.sentences": "Phrases pertinentes",
 	"results.summary": "Résumé",
 	"suggest.entities": "Saisie semi-automatique à partir des NER",

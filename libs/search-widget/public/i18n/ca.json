@@ -64,7 +64,6 @@
 	"results.count": "Resultat {{index}} de {{total}}",
 	"results.empty": "Cap resultat",
 	"results.more_labels": "{{count}} etiquetes més",
-	"results.semantic": "Resultats semàntics",
 	"results.sentences": "Frases rellevants",
 	"results.summary": "Resum",
 	"suggest.entities": "Autocompletar des de NERs",
