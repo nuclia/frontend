@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IConnector, ISyncEntity, LogEntity } from '../../logic';
 import { SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
@@ -8,6 +18,7 @@ import { LabelsService } from '@flaps/core';
 import { filter, map, take } from 'rxjs';
 import { LabelSets } from '@nuclia/core';
 import { ColoredLabel } from '@flaps/common';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'nsy-sync-settings',
@@ -26,16 +37,39 @@ import { ColoredLabel } from '@flaps/common';
   styleUrl: './sync-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SyncSettingsComponent implements OnInit {
+export class SyncSettingsComponent implements AfterViewInit, OnInit {
   private labelService = inject(LabelsService);
   private cdr = inject(ChangeDetectorRef);
+  private currentRoute = inject(ActivatedRoute);
 
   @Input({ required: true }) sync!: ISyncEntity;
   @Input({ required: true }) connector: IConnector | null = null;
   @Input() logs: LogEntity[] = [];
 
+  @ViewChild('activitySection') activitySection?: ElementRef;
+
   labelSets: LabelSets = {};
   coloredLabels: ColoredLabel[] = [];
+
+  ngAfterViewInit() {
+    this.currentRoute.queryParams
+      .pipe(
+        filter((params) => params['section']),
+        map((params) => params['section']),
+        take(1),
+      )
+      .subscribe({
+        next: (section: string) => {
+          setTimeout(() => {
+            if (section === 'activity' && this.activitySection) {
+              this.activitySection.nativeElement.scrollIntoView({
+                behavior: 'smooth',
+              });
+            }
+          }, 300);
+        },
+      });
+  }
 
   ngOnInit() {
     this.labelService.resourceLabelSets

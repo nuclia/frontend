@@ -146,9 +146,28 @@
                 <pa-button
                   icon="more-vertical"
                   aspect="basic"
-                  size="small">
+                  size="small"
+                  [paPopup]="syncMenu">
                   Menu
                 </pa-button>
+                <pa-dropdown #syncMenu>
+                  <pa-option [routerLink]="'./' + sync.id + '/edit'">
+                    {{ 'sync.home-page.sync-list.menu.edit-settings' | translate }}
+                  </pa-option>
+                  <pa-option [routerLink]="'./' + sync.id + '/edit'">
+                    {{ 'sync.home-page.sync-list.menu.edit-folders' | translate }}
+                  </pa-option>
+                  <pa-option
+                    [routerLink]="'./' + sync.id"
+                    [queryParams]="{ section: 'activity' }">
+                    {{ 'sync.home-page.sync-list.menu.activity-logs' | translate }}
+                  </pa-option>
+                  <pa-option
+                    destructive
+                    (selectOption)="deleteSync(sync)">
+                    {{ 'sync.home-page.sync-list.menu.delete' | translate }}
+                  </pa-option>
+                </pa-dropdown>
               </pa-table-cell-menu>
             </pa-table-row>
           }

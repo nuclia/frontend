@@ -8,13 +8,14 @@ import {
   PaDateTimeModule,
   PaDropdownModule,
   PaIconModule,
+  PaPopupModule,
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { BadgeComponent, DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
+import { BadgeComponent, DropdownButtonComponent, InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncBasicData, SyncServerType, SyncService } from '../logic';
 import { ConnectorComponent } from './connector';
@@ -41,6 +42,8 @@ import { SDKService } from '@flaps/core';
     PaDateTimeModule,
     PaTogglesModule,
     InfoCardComponent,
+    PaDropdownModule,
+    PaPopupModule,
   ],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
@@ -51,6 +54,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private currentRoute = inject(ActivatedRoute);
   private syncService = inject(SyncService);
   private sdk = inject(SDKService);
+  private toaster = inject(SisToastService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -124,5 +128,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   onSelectConnector(connector: ConnectorDefinition) {
     this.router.navigate(['./add', connector.id], { relativeTo: this.currentRoute });
+  }
+
+  deleteSync(sync: SyncBasicData) {
+    this.syncService.deleteSync(sync.id).subscribe({
+      error: () => this.toaster.error('sync.details.deletion-failed'),
+    });
   }
 }

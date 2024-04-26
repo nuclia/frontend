@@ -23,7 +23,7 @@ export const SYNC_ROUTES: Routes = [
       },
       {
         path: ':syncId/edit',
-        component: AddSyncPageComponent,
+        component: SyncDetailsPageComponent,
       },
       {
         path: ':syncId',

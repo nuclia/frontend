@@ -61,4 +61,8 @@ section {
     display: flex;
     gap: rhythm(1);
   }
+
+  pa-table-cell pa-toggle ::ng-deep .pa-toggle-context {
+    gap: rhythm(1);
+  }
 }

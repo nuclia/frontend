@@ -19,6 +19,7 @@ import { SharepointImpl } from './connectors/sharepoint';
 import { ConfluenceConnector } from './connectors/confluence';
 import { RSSConnector } from './connectors/rss';
 import { OAuthConnector } from './connectors/oauth';
+import { compareDesc } from 'date-fns';
 
 export type SyncServerType = 'desktop' | 'server';
 export const LOCAL_SYNC_SERVER = 'http://localhost:8090';
@@ -375,7 +376,19 @@ export class SyncService {
       .get<LogEntity[]>(
         `${this._syncServer.getValue().serverUrl}/logs${sync ? '/' + sync : ''}${since ? '/' + since : ''}`,
       )
-      .pipe(map((logs) => logs.reverse()));
+      .pipe(
+        map((logs) =>
+          logs.sort((a, b) => {
+            const dateComparison = compareDesc(a.createdAt, b.createdAt);
+            // Make sure logs about start are always displayed before logs about finished
+            if (dateComparison === 0) {
+              return a.action.startsWith('start') ? 1 : -1;
+            } else {
+              return dateComparison;
+            }
+          }),
+        ),
+      );
   }
 
   clearLogs(): Observable<void> {
