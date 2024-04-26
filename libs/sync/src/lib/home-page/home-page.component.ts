@@ -72,7 +72,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   );
   serverUrlBackup = '';
 
-  syncs: Observable<SyncBasicData[]> = this.sdk.currentKb.pipe(
+  syncs: Observable<SyncBasicData[]> = this.syncService.cacheUpdated.pipe(
+    switchMap(() => this.sdk.currentKb),
     switchMap((kb) => this.syncService.getSyncsForKB(kb.id)),
   );
   syncTableHeader: HeaderCell[] = [
@@ -133,6 +134,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
   deleteSync(sync: SyncBasicData) {
     this.syncService.deleteSync(sync.id).subscribe({
       error: () => this.toaster.error('sync.details.deletion-failed'),
+    });
+  }
+
+  toggleSync(id: string, active: boolean) {
+    this.syncService.updateSync(id, { disabled: !active }).subscribe({
+      error: () =>
+        this.toaster.error(active ? 'sync.details.toast.activating-failed' : 'sync.details.toast.disabling-failed'),
     });
   }
 }

@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ISyncEntity, SyncItem, SyncService } from '../../logic';
+import { ISyncEntity, SyncItem } from '../../logic';
 import { FolderSelectionComponent } from '../../folder-selection';
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -33,7 +33,6 @@ import { FolderListComponent, InfoCardComponent, StickyFooterComponent } from '@
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FoldersTabComponent {
-  private syncService = inject(SyncService);
   private cdr = inject(ChangeDetectorRef);
 
   @Input({ required: true }) set sync(value: ISyncEntity) {
@@ -45,13 +44,12 @@ export class FoldersTabComponent {
   }
   private _sync?: ISyncEntity;
 
-  @Output() syncChange = new EventEmitter<ISyncEntity>();
+  @Output() selectionChange = new EventEmitter<SyncItem[]>();
 
   get selectedFolders() {
     return this.selection.map((item) => item.metadata['path']) || [];
   }
   editing = false;
-  saving = false;
   selection: SyncItem[] = [];
   selectionCount = 0;
 
@@ -62,18 +60,8 @@ export class FoldersTabComponent {
   }
 
   saveSelection() {
-    if (!this.sync) {
-      return;
-    }
-    this.saving = true;
-    const sync = this.sync;
-    const selection = this.selection;
-    this.syncService.updateSync(sync.id, { foldersToSync: selection }, true).subscribe(() => {
-      this.editing = false;
-      this.saving = false;
-      this.sync = { ...sync, foldersToSync: selection };
-      this.syncChange.emit(this.sync);
-      this.cdr.detectChanges();
-    });
+    this.selectionChange.emit(this.selection);
+    this.editing = false;
+    this.cdr.markForCheck();
   }
 }

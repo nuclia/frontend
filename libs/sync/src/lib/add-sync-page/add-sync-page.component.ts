@@ -6,7 +6,7 @@ import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } f
 import { filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { BackButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
-import { ConfigurationFormComponent } from './configuration-form';
+import { ConfigurationFormComponent } from '../configuration-form';
 import { FolderSelectionComponent } from '../folder-selection';
 import { SDKService } from '@flaps/core';
 

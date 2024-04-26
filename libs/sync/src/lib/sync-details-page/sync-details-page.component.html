@@ -1,5 +1,7 @@
 <div class="page-spacing">
-  <nsi-back-button link="..">{{ 'sync.add-page.back-button' | translate }}</nsi-back-button>
+  <nsi-back-button [link]="(editMode | async) ? '../..' : '..'">
+    {{ 'sync.add-page.back-button' | translate }}
+  </nsi-back-button>
   @if (sync | async; as sync) {
     @if (connectorDef | async; as connectorDef) {
       <div class="details-header">
@@ -9,23 +11,35 @@
             size="large"></pa-icon>
           {{ sync.title }}
         </h1>
-        <div class="cta-container">
-          <div class="toggle-container">
-            <pa-toggle
-              withBackground
-              [value]="!sync.disabled">
-              {{ (sync.disabled ? 'sync.badge.inactive' : 'sync.badge.active') | translate }}
-            </pa-toggle>
-          </div>
 
-          <pa-button aspect="basic">{{ 'sync.details.buttons.sync-now' | translate }}</pa-button>
-          <pa-button aspect="basic">{{ 'sync.details.buttons.edit-settings' | translate }}</pa-button>
-          <pa-button
-            kind="destructive"
-            (click)="deleteSync()">
-            {{ 'sync.details.buttons.delete' | translate }}
-          </pa-button>
-        </div>
+        @if ((editMode | async) === false) {
+          <div class="cta-container">
+            <div class="toggle-container">
+              <pa-toggle
+                withBackground
+                [value]="!sync.disabled"
+                (valueChange)="toggleSync($event)">
+                {{ (sync.disabled ? 'sync.badge.inactive' : 'sync.badge.active') | translate }}
+              </pa-toggle>
+            </div>
+
+            <pa-button
+              aspect="basic"
+              (click)="triggerSync()">
+              {{ 'sync.details.buttons.sync-now' | translate }}
+            </pa-button>
+            <pa-button
+              aspect="basic"
+              routerLink="./edit">
+              {{ 'sync.details.buttons.edit-settings' | translate }}
+            </pa-button>
+            <pa-button
+              kind="destructive"
+              (click)="deleteSync()">
+              {{ 'sync.details.buttons.delete' | translate }}
+            </pa-button>
+          </div>
+        }
       </div>
     }
 
@@ -44,17 +58,52 @@
       }
     </pa-tabs>
 
-    @switch (activeTab) {
-      @case ('settings') {
-        <nsy-sync-settings
-          [sync]="sync"
-          [connector]="connector | async"
-          [logs]="activityLogs | async"></nsy-sync-settings>
-      }
-      @case ('folders') {
-        <nsy-folders-tab
-          [sync]="sync"
-          (syncChange)="updateSync()"></nsy-folders-tab>
+    @if (editMode | async) {
+      <div>
+        @switch (activeTab) {
+          @case ('settings') {
+            <nsy-configuration-form
+              noTopBorder
+              [sync]="sync"
+              [kbId]="kbId | async"
+              [connector]="connector | async"
+              [connectorId]="(connectorDef | async)?.id"
+              (configurationChange)="updateConfiguration($event)"
+              (validForm)="validForm = $event"></nsy-configuration-form>
+          }
+          @case ('folders') {
+            <nsy-folder-selection
+              [sync]="sync"
+              (selectedSyncItems)="updateSelection($event)"></nsy-folder-selection>
+          }
+        }
+
+        <nsi-sticky-footer>
+          <pa-button
+            aspect="basic"
+            routerLink="..">
+            {{ 'generic.cancel' | translate }}
+          </pa-button>
+          <pa-button
+            kind="primary"
+            (click)="saveChanges()">
+            {{ 'sync.details.buttons.save-changes' | translate }}
+          </pa-button>
+        </nsi-sticky-footer>
+      </div>
+    } @else {
+      @switch (activeTab) {
+        @case ('settings') {
+          <nsy-sync-settings
+            [sync]="sync"
+            [connector]="connector | async"
+            [logs]="activityLogs | async"></nsy-sync-settings>
+        }
+        @case ('folders') {
+          <nsy-folders-tab
+            [sync]="sync"
+            (selectionChange)="updateFolders($event)"></nsy-folders-tab>
+        }
       }
     }
   }

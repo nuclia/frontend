@@ -94,16 +94,19 @@ export class SyncService {
   syncServer = this._syncServer.asObservable();
 
   private _isServerDown = new BehaviorSubject<boolean>(true);
-  isServerDown = this._isServerDown.asObservable();
   private _currentSyncId = new BehaviorSubject<string | null>(null);
-  currentSyncId = this._currentSyncId.asObservable();
   private _syncCache = new BehaviorSubject<{ [id: string]: ISyncEntity }>({});
-  syncCache = this._syncCache.asObservable();
   private _syncListCache = new BehaviorSubject<SyncBasicData[]>([]);
+  private _cacheUpdated = new BehaviorSubject<string>(new Date().toISOString());
+
+  isServerDown = this._isServerDown.asObservable();
+  currentSyncId = this._currentSyncId.asObservable();
+  syncCache = this._syncCache.asObservable();
   syncListCache = this._syncListCache.asObservable();
   serverHeaders = {
     token: this.sdk.nuclia.auth.getToken(true),
   };
+  cacheUpdated = this._cacheUpdated.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -191,8 +194,16 @@ export class SyncService {
         const syncsList = this._syncListCache.getValue();
         this._syncListCache.next([
           ...syncsList,
-          { id: sync.id, title: sync.title, connectorId: sync.connector.name, kbId: sync.kb?.knowledgeBox || '' },
+          {
+            id: sync.id,
+            title: sync.title,
+            connectorId: sync.connector.name,
+            kbId: sync.kb?.knowledgeBox || '',
+            totalSyncedResources: 0,
+            disabled: false,
+          },
         ]);
+        this._cacheUpdated.next(new Date().toISOString());
       }),
     );
   }
@@ -212,11 +223,8 @@ export class SyncService {
           syncs[syncId] = { ...syncs[syncId], ...sync };
           this._syncCache.next(syncs);
           const syncsList = this._syncListCache.getValue();
-          this._syncListCache.next(
-            syncsList.map((s) => (s.id === syncId ? { ...s, title: sync.title || s.title } : s)),
-          );
-          // next is used to trigger the update of the current sync title
-          this._currentSyncId.next(syncId);
+          this._syncListCache.next(syncsList.map((item) => (item.id === syncId ? { ...item, ...sync } : item)));
+          this._cacheUpdated.next(new Date().toISOString());
         }),
       );
   }
@@ -233,6 +241,7 @@ export class SyncService {
           this._syncCache.next(syncs);
           const syncsList = this._syncListCache.getValue();
           this._syncListCache.next(syncsList.filter((sync) => sync.id !== syncId));
+          this._cacheUpdated.next(new Date().toISOString());
         }),
       );
   }

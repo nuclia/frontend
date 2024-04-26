@@ -44,7 +44,15 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
 
   @Input({ required: true }) sync!: ISyncEntity;
   @Input({ required: true }) connector: IConnector | null = null;
-  @Input() logs: LogEntity[] = [];
+  @Input() set logs(value: LogEntity[] | null | undefined) {
+    if (value) {
+      this._logs = value;
+    }
+  }
+  get logs(): LogEntity[] {
+    return this._logs;
+  }
+  private _logs: LogEntity[] = [];
 
   @ViewChild('activitySection') activitySection?: ElementRef;
 

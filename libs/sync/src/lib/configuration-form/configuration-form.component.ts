@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -9,7 +10,7 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Filters, IConnector, ISyncEntity } from '../../logic';
+import { Filters, IConnector, ISyncEntity } from '../logic';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter, map, Observable, Subject, take, takeUntil } from 'rxjs';
 import { Classification, LabelSets } from '@nuclia/core';
@@ -58,7 +59,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   private modalService = inject(SisModalService);
   private unsubscribeAll = new Subject<void>();
 
-  @Input({ required: true }) connector?: IConnector;
+  @Input({ required: true }) connector?: IConnector | null;
   @Input({ required: true }) connectorId?: string | null;
   @Input({ required: true }) kbId?: string | null;
   @Input() set sync(value: ISyncEntity | undefined | null) {
@@ -79,6 +80,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       // TODO load tables
     }
   }
+  @Input({ transform: booleanAttribute }) noTopBorder = false;
 
   @Output() validForm = new EventEmitter<boolean>();
   @Output() configurationChange = new EventEmitter<ISyncEntity>();

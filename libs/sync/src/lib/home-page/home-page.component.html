@@ -129,7 +129,8 @@
               <pa-table-cell>
                 <pa-toggle
                   labelOnRight
-                  [value]="!sync.disabled">
+                  [value]="!sync.disabled"
+                  (valueChange)="toggleSync(sync.id, $event)">
                   {{ sync.disabled ? 'Off' : 'On' }}
                 </pa-toggle>
               </pa-table-cell>

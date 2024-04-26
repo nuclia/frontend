@@ -1,6 +1,7 @@
 @if (connector) {
   <form [formGroup]="form">
     <nsi-two-columns-configuration-item
+      [noTopBorder]="noTopBorder"
       itemTitle="sync.add-page.connector-name.title"
       description="sync.add-page.connector-name.description">
       <div class="form-container">
