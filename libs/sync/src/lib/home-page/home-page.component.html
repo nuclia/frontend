@@ -101,7 +101,7 @@
       } @else {
         <pa-table
           border
-          columns="repeat(4, 1fr) 96px">
+          columns="repeat(5, 1fr) 96px">
           <pa-table-sortable-header [cells]="syncTableHeader"></pa-table-sortable-header>
 
           @for (sync of syncs; track sync.id) {
@@ -124,13 +124,24 @@
                 }
               </pa-table-cell>
               <pa-table-cell>
+                <div class="body-s">{{ sync.totalSyncedResources }}</div>
+              </pa-table-cell>
+              <pa-table-cell>
                 <pa-toggle
                   labelOnRight
                   [value]="!sync.disabled">
                   {{ sync.disabled ? 'Off' : 'On' }}
                 </pa-toggle>
               </pa-table-cell>
-              <pa-table-cell><pa-datetime [datetime]="sync.lastSyncGMT"></pa-datetime></pa-table-cell>
+              <pa-table-cell>
+                <div class="body-s">
+                  @if (sync.lastSyncGMT !== '1970-01-01') {
+                    <pa-datetime [datetime]="sync.lastSyncGMT"></pa-datetime>
+                  } @else {
+                    –
+                  }
+                </div>
+              </pa-table-cell>
               <pa-table-cell-menu>
                 <pa-button
                   icon="more-vertical"

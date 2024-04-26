@@ -12,7 +12,7 @@ import { ISyncEntity, SyncItem, SyncService } from '../../logic';
 import { FolderSelectionComponent } from '../../folder-selection';
 import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { FolderListComponent, InfoCardComponent } from '@nuclia/sistema';
+import { FolderListComponent, InfoCardComponent, StickyFooterComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsy-folders-tab',
@@ -26,6 +26,7 @@ import { FolderListComponent, InfoCardComponent } from '@nuclia/sistema';
     PaIconModule,
     InfoCardComponent,
     FolderListComponent,
+    StickyFooterComponent,
   ],
   templateUrl: './folders-tab.component.html',
   styleUrl: './folders-tab.component.scss',
@@ -35,22 +36,42 @@ export class FoldersTabComponent {
   private syncService = inject(SyncService);
   private cdr = inject(ChangeDetectorRef);
 
-  @Input({ required: true }) sync!: ISyncEntity;
+  @Input({ required: true }) set sync(value: ISyncEntity) {
+    this._sync = value;
+    this.updateSelection(value.foldersToSync || []);
+  }
+  get sync(): ISyncEntity | undefined {
+    return this._sync;
+  }
+  private _sync?: ISyncEntity;
 
   @Output() syncChange = new EventEmitter<ISyncEntity>();
 
   get selectedFolders() {
-    return this.sync ? this.sync.foldersToSync?.map((item) => item.metadata['path']) || [] : [];
+    return this.selection.map((item) => item.metadata['path']) || [];
   }
   editing = false;
   saving = false;
+  selection: SyncItem[] = [];
+  selectionCount = 0;
 
-  saveSelection(selection: SyncItem[]) {
+  updateSelection(selection: SyncItem[]) {
+    this.selection = selection;
+    this.selectionCount = this.selection.length;
+    this.cdr.detectChanges();
+  }
+
+  saveSelection() {
+    if (!this.sync) {
+      return;
+    }
     this.saving = true;
-    this.syncService.updateSync(this.sync.id, { foldersToSync: selection }, true).subscribe(() => {
+    const sync = this.sync;
+    const selection = this.selection;
+    this.syncService.updateSync(sync.id, { foldersToSync: selection }, true).subscribe(() => {
       this.editing = false;
       this.saving = false;
-      this.sync = { ...this.sync, foldersToSync: selection };
+      this.sync = { ...sync, foldersToSync: selection };
       this.syncChange.emit(this.sync);
       this.cdr.detectChanges();
     });

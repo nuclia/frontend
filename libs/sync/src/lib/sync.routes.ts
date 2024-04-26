@@ -18,6 +18,10 @@ export const SYNC_ROUTES: Routes = [
         component: AddSyncPageComponent,
       },
       {
+        path: 'add/:connector/:syncId',
+        component: AddSyncPageComponent,
+      },
+      {
         path: ':syncId/edit',
         component: AddSyncPageComponent,
       },

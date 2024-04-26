@@ -1,5 +1,6 @@
-import { Classification, NucliaOptions } from '@nuclia/core';
+import { NucliaOptions } from '@nuclia/core';
 import { Observable } from 'rxjs';
+import { ColoredLabel } from '@flaps/common';
 
 export const baseLogoPath = 'assets/connector-logos';
 
@@ -101,7 +102,7 @@ export type Connector = {
 export interface ISyncEntity {
   connector: Connector;
   kb?: NucliaOptions;
-  labels?: Classification[];
+  labels?: ColoredLabel[];
   title: string;
   id: string;
   foldersToSync?: SyncItem[];
@@ -118,6 +119,7 @@ export interface SyncBasicData {
   connectorId: string;
   lastSyncGMT?: string;
   disabled?: boolean;
+  totalSyncedResources?: number;
 }
 
 export enum LogSeverityLevel {

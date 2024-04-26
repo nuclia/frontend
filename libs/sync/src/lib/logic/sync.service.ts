@@ -237,12 +237,12 @@ export class SyncService {
   }
 
   hasCurrentSourceAuth(): Observable<boolean> {
-    const current = this.getCurrentSourceId();
+    const current = this.getCurrentSyncId();
     if (!current) {
       return of(false);
     } else {
       return this.http
-        .get<{ hasAuth: boolean }>(`${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSourceId()}/auth`)
+        .get<{ hasAuth: boolean }>(`${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSyncId()}/auth`)
         .pipe(map((res) => res.hasAuth));
     }
   }
@@ -280,7 +280,7 @@ export class SyncService {
 
   getFiles(query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
-      `${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSourceId()}/files/search${
+      `${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSyncId()}/files/search${
         query ? `?query=${query}` : ''
       }`,
     );
@@ -289,7 +289,7 @@ export class SyncService {
   // FIXME: support query
   getFolders(query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
-      `${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSourceId()}/folders`,
+      `${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSyncId()}/folders`,
       {
         headers: this.serverHeaders,
       },
@@ -347,7 +347,7 @@ export class SyncService {
       filter((authenticated) => authenticated),
       take(1),
       switchMap(() =>
-        this.updateSync(this.getCurrentSourceId() || '', {
+        this.updateSync(this.getCurrentSyncId() || '', {
           connector: { name: connectorId, parameters: connector.getParametersValues() },
         }),
       ),
@@ -358,11 +358,11 @@ export class SyncService {
     );
   }
 
-  getCurrentSourceId(): string | null {
+  getCurrentSyncId(): string | null {
     return this._currentSyncId.getValue();
   }
 
-  setCurrentSourceId(id: string) {
+  setCurrentSyncId(id: string) {
     this._currentSyncId.next(id);
   }
 

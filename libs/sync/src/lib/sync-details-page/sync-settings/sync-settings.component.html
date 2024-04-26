@@ -133,6 +133,12 @@
             <div class="body-s"><pa-datetime [datetime]="log.createdAt"></pa-datetime></div>
           </pa-table-cell>
         </pa-table-row>
+      } @empty {
+        <pa-table-row last>
+          <pa-table-cell>
+            <div class="body-s">{{ 'sync.details.activity-log.no-activity' | translate }}</div>
+          </pa-table-cell>
+        </pa-table-row>
       }
     </pa-table>
   </div>

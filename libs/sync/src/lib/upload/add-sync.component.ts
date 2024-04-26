@@ -62,7 +62,7 @@ export class AddSyncComponent implements OnInit {
             syncSecurityGroups: this.form?.value['syncSecurityGroups'],
           });
         }),
-        tap(() => this.syncService.setCurrentSourceId(id)),
+        tap(() => this.syncService.setCurrentSyncId(id)),
         switchMap(() => this.syncService.getConnector(this.connectorId, id).pipe(take(1))),
         switchMap((sourceConnector) => {
           // Setup sync items from the source itself if the source doesn't allow to select folders

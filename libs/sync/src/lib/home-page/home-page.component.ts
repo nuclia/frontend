@@ -74,7 +74,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   syncTableHeader: HeaderCell[] = [
     new HeaderCell({ id: 'name', label: 'sync.home-page.sync-list.table-columns.name' }),
     new HeaderCell({ id: 'connector', label: 'sync.home-page.sync-list.table-columns.connector' }),
-    // new HeaderCell({ id: 'resources', label: 'sync.home-page.sync-list.table-columns.resources' }), // FIXME with https://app.shortcut.com/flaps/story/9875/resource-uploaded-and-activity-log-details-in-sync-agent
+    new HeaderCell({ id: 'resources', label: 'sync.home-page.sync-list.table-columns.resources' }),
     new HeaderCell({ id: 'sync', label: 'sync.home-page.sync-list.table-columns.sync' }),
     /* FIXME with https://app.shortcut.com/flaps/story/9875/resource-uploaded-and-activity-log-details-in-sync-agent
     new HeaderCell({

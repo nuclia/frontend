@@ -1,5 +1,7 @@
 <div class="page-spacing">
-  <nsi-back-button link="../..">{{ 'sync.add-page.back-button' | translate }}</nsi-back-button>
+  <nsi-back-button [link]="syncId ? '../../..' : '../..'">
+    {{ 'sync.add-page.back-button' | translate }}
+  </nsi-back-button>
   @if (connectorId | async; as connectorId) {
     @if (connectorDefinition | async; as connectorDef) {
       <div>
@@ -19,6 +21,7 @@
       @switch (step()) {
         @case (1) {
           <nsy-configuration-form
+            [sync]="sync"
             [kbId]="kbId | async"
             [connector]="connector"
             [connectorId]="connectorId | async"
@@ -26,7 +29,11 @@
             (validForm)="validForm = $event"></nsy-configuration-form>
         }
         @case (2) {
-          <nsy-folder-selection></nsy-folder-selection>
+          @if (sync) {
+            <nsy-folder-selection
+              [sync]="sync"
+              (selectedSyncItems)="updateSelection($event)"></nsy-folder-selection>
+          }
         }
       }
       @if (steps | async; as steps) {
@@ -54,14 +61,14 @@
           @if (steps.length > 1 && step() < steps.length) {
             <pa-button
               kind="primary"
-              [disabled]="!validForm"
+              [disabled]="!validForm || saving"
               (click)="goNext()">
               {{ 'sync.add-page.footer.folder-selection-button' | translate }}
             </pa-button>
           } @else {
             <pa-button
               kind="primary"
-              [disabled]="!validForm"
+              [disabled]="!validForm || folderSelection.length === 0 || saving"
               (click)="save()">
               {{ 'sync.add-page.footer.save-button' | translate }}
             </pa-button>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BackButtonComponent, SisToastService } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
@@ -28,7 +28,7 @@ import { FoldersTabComponent } from './folders-tab/folders-tab.component';
   styleUrl: './sync-details-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SyncDetailsPageComponent implements OnInit, OnDestroy {
+export class SyncDetailsPageComponent implements OnDestroy {
   private router = inject(Router);
   private currentRoute = inject(ActivatedRoute);
   private syncService = inject(SyncService);
@@ -39,7 +39,7 @@ export class SyncDetailsPageComponent implements OnInit, OnDestroy {
   syncId: Observable<string> = this.currentRoute.params.pipe(
     filter((params) => !!params['syncId']),
     map((params) => params['syncId']),
-    tap((syncId) => this.syncService.setCurrentSourceId(syncId)),
+    tap((syncId) => this.syncService.setCurrentSyncId(syncId)),
   );
   sync: Observable<ISyncEntity> = this.syncId.pipe(switchMap((syncId) => this.syncService.getSync(syncId)));
   connectorDef = this.sync.pipe(map((sync) => this.syncService.connectors[sync.connector.name].definition));
@@ -50,32 +50,27 @@ export class SyncDetailsPageComponent implements OnInit, OnDestroy {
 
   activeTab: 'settings' | 'folders' = 'settings';
 
-  ngOnInit() {
-    this.sync
-      .pipe(
-        take(1),
-        switchMap((sync) =>
-          this.syncService.hasCurrentSourceAuth().pipe(
-            filter((hasAuth) => !hasAuth),
-            switchMap(() => this.syncService.getConnector(sync.connector.name, sync.id)),
-            switchMap((connector) => {
-              return this.syncService.authenticateToConnector(sync.connector.name, connector);
-            }),
-          ),
-        ),
-      )
-      .subscribe({
-        next: () => this.router.navigate([], { queryParams: {} }),
-        error: () => this.toaster.error('sync.details.authentication.fail'),
-      });
-  }
-
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }
 
   updateSync() {
-    this.sync = this.syncId.pipe(switchMap((syncId) => this.syncService.getSync(syncId)));
+    this.sync = this.syncId.pipe(
+      take(1),
+      switchMap((syncId) => this.syncService.getSync(syncId)),
+    );
+  }
+
+  deleteSync() {
+    this.syncId
+      .pipe(
+        take(1),
+        switchMap((syncId) => this.syncService.deleteSync(syncId)),
+      )
+      .subscribe({
+        next: () => this.router.navigate(['..'], { relativeTo: this.currentRoute }),
+        error: () => this.toaster.error('sync.details.deletion-failed'),
+      });
   }
 }

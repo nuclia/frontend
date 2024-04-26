@@ -26,23 +26,3 @@
     <nsi-folder-list [folders]="selectedPaths"></nsi-folder-list>
   }
 }
-
-<nsi-sticky-footer>
-  <div
-    footerNote
-    class="title-xs">
-    {{ 'sync.folder-selection.footer.selection-count' | translate: { count: selectionCount } }}
-  </div>
-
-  <pa-button
-    aspect="basic"
-    (click)="cancel.emit()">
-    {{ 'generic.cancel' | translate }}
-  </pa-button>
-  <pa-button
-    kind="primary"
-    [disabled]="disableSave"
-    (click)="triggerSave()">
-    {{ 'sync.folder-selection.footer.save-changes' | translate }}
-  </pa-button>
-</nsi-sticky-footer>

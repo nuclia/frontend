@@ -33,7 +33,7 @@ export class SyncComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
-      this.syncService.setCurrentSourceId(params.get('id') || '');
+      this.syncService.setCurrentSyncId(params.get('id') || '');
     });
     this.router.events
       .pipe(
@@ -42,7 +42,7 @@ export class SyncComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe((sourceId) => {
-        this.syncService.setCurrentSourceId(sourceId);
+        this.syncService.setCurrentSyncId(sourceId);
         this.selectedTab = 'activity';
         this.cdr.markForCheck();
       });

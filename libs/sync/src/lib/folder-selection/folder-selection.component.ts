@@ -1,5 +1,4 @@
 import {
-  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -18,7 +17,6 @@ import {
   SegmentedButtonsComponent,
   SisProgressModule,
   SisToastService,
-  StickyFooterComponent,
 } from '@nuclia/sistema';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -31,15 +29,14 @@ import { ISyncEntity, SyncItem, SyncService } from '../logic';
   standalone: true,
   imports: [
     CommonModule,
-    FolderTreeComponent,
-    PaTextFieldModule,
-    TranslateModule,
-    ReactiveFormsModule,
-    SisProgressModule,
-    SegmentedButtonsComponent,
     FolderListComponent,
-    StickyFooterComponent,
+    FolderTreeComponent,
     PaButtonModule,
+    PaTextFieldModule,
+    ReactiveFormsModule,
+    SegmentedButtonsComponent,
+    SisProgressModule,
+    TranslateModule,
   ],
   templateUrl: './folder-selection.component.html',
   styleUrl: './folder-selection.component.scss',
@@ -51,9 +48,7 @@ export class FolderSelectionComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   @Input({ required: true }) sync!: ISyncEntity;
-  @Input({ transform: booleanAttribute }) disableSave = false;
 
-  @Output() cancel = new EventEmitter<void>();
   @Output() selectedSyncItems = new EventEmitter<SyncItem[]>();
 
   searchQuery = new FormControl('', { nonNullable: true });
@@ -88,6 +83,7 @@ export class FolderSelectionComponent implements OnInit {
     this.selectedPaths = selection.map((item) => item.path);
     this.selectedIds = selection.map((item) => item.id);
     this.selectionCount = selection.length;
+    this.selectedSyncItems.emit(this.syncItems.filter((item) => this.selectedIds.includes(item.uuid)));
     this.cdr.markForCheck();
   }
 
@@ -124,9 +120,7 @@ export class FolderSelectionComponent implements OnInit {
       });
   }
 
-  triggerSave() {
-    this.selectedSyncItems.emit(this.syncItems.filter((item) => this.selectedIds.includes(item.uuid)));
-  }
+  triggerSave() {}
 
   private getFolderTreeFromSyncItems(items: SyncItem[]): FolderTree {
     const tree: FolderTree = {

@@ -28,7 +28,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ColoredLabel } from '@flaps/common';
-import { ConfigurationForm } from './configuration.model';
+import { ConfigurationForm, FiltersResources } from './configuration.model';
 
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
 
@@ -61,6 +61,24 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   @Input({ required: true }) connector?: IConnector;
   @Input({ required: true }) connectorId?: string | null;
   @Input({ required: true }) kbId?: string | null;
+  @Input() set sync(value: ISyncEntity | undefined | null) {
+    if (value) {
+      const filterResources: FiltersResources = {
+        extensions: value.filters?.fileExtensions?.extensions || '',
+        extensionUsage: value.filters?.fileExtensions?.exclude ? 'exclude' : 'include',
+        from: value.filters?.modified?.from || '',
+        to: value.filters?.modified?.to || '',
+      };
+      this.form.patchValue({
+        name: value.title,
+        syncSecurityGroups: value.syncSecurityGroups,
+        filterResources,
+      });
+      this.labelSelection = value.labels || [];
+      this.extensionList = filterResources.extensions?.split(', ') || [];
+      // TODO load tables
+    }
+  }
 
   @Output() validForm = new EventEmitter<boolean>();
   @Output() configurationChange = new EventEmitter<ISyncEntity>();
@@ -107,9 +125,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       });
     }
     this.extensionsControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((value) => {
-      if (value && value.length > 0) {
-        this.extensionList = value.split(',').map((extension) => extension.trim());
-      }
+      this.extensionList = value && value.length > 0 ? value.split(',').map((extension) => extension.trim()) : [];
     });
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.validForm.emit(this.form.valid);
@@ -139,6 +155,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       )
       .subscribe((labelSets) => {
         this.labelSelection = labels.map((label) => ({ ...label, color: labelSets[label.labelset]?.color }));
+        this.emitSyncEntity();
       });
   }
 
@@ -151,6 +168,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     this.labelSelection = this.labelSelection.filter(
       (item) => !(item.labelset === label.labelset && item.label === label.label),
     );
+    this.emitSyncEntity();
   }
 
   private emitSyncEntity() {

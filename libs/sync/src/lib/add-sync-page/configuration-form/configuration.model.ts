@@ -1,14 +1,16 @@
 import { Classification } from '@nuclia/core';
 
+export interface FiltersResources {
+  extensions: string | null;
+  extensionUsage: 'include' | 'exclude';
+  from: string | null;
+  to: string | null;
+}
+
 export interface ConfigurationForm {
   name: string;
   syncSecurityGroups: boolean | null;
-  filterResources: {
-    extensions: string | null;
-    extensionUsage: 'include' | 'exclude';
-    from: string | null;
-    to: string | null;
-  };
+  filterResources: FiltersResources;
   extra: {
     [sectionId: string]: {
       [fieldId: string]: string;
