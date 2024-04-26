@@ -4,6 +4,10 @@
 
 - Improve HTTP 429 errors handling on resource modification and deletion
 
+### Bug fix
+
+- Prevent `normalizeSchemaProperty` to crash when the `LearningConfigurations` contains null values.
+
 # 1.14.7 (2024-04-19)
 
 ### Improvements

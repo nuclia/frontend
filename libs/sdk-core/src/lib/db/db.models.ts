@@ -273,12 +273,14 @@ export interface LearningConfiguration {
 }
 
 export function normalizeSchemaProperty(config: LearningConfigurations): LearningConfigurations {
-  Object.values(config).forEach((item) => {
-    if (item.schemas?.['title'] && item.schemas?.['type']) {
-      item.schema = item.schemas as unknown as LearningConfigurationSchema;
-      item.schemas = undefined;
-    }
-  });
+  Object.values(config)
+    .filter((item) => !!item)
+    .forEach((item) => {
+      if (item.schemas?.['title'] && item.schemas?.['type']) {
+        item.schema = item.schemas as unknown as LearningConfigurationSchema;
+        item.schemas = undefined;
+      }
+    });
   return config;
 }
 
