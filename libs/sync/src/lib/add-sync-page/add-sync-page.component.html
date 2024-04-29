@@ -1,5 +1,5 @@
 <div class="page-spacing">
-  <nsi-back-button [link]="syncId ? '../../..' : '../..'">
+  <nsi-back-button [link]="backPath">
     {{ 'sync.add-page.back-button' | translate }}
   </nsi-back-button>
   @if (connectorId | async; as connectorId) {
@@ -47,7 +47,7 @@
           @if (step() === 1) {
             <pa-button
               aspect="basic"
-              (click)="resetConfiguration()">
+              (click)="cancel()">
               {{ 'generic.cancel' | translate }}
             </pa-button>
           } @else {

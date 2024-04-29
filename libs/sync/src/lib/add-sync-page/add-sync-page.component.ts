@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
 import { filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
@@ -22,6 +22,7 @@ import { SDKService } from '@flaps/core';
     TranslateModule,
     ConfigurationFormComponent,
     FolderSelectionComponent,
+    RouterLink,
   ],
   templateUrl: './add-sync-page.component.html',
   styleUrl: './add-sync-page.component.scss',
@@ -60,6 +61,10 @@ export class AddSyncPageComponent implements OnInit {
   configuration?: ISyncEntity;
   folderSelection: SyncItem[] = [];
   saving = false;
+
+  get backPath() {
+    return this.syncId ? '../../..' : '../..';
+  }
 
   ngOnInit() {
     this.currentRoute.params
@@ -136,8 +141,26 @@ export class AddSyncPageComponent implements OnInit {
     }
   }
 
-  resetConfiguration() {
-    // TODO
+  cancel() {
+    if (!this.syncId) {
+      this.router.navigate([this.backPath], { relativeTo: this.currentRoute });
+    } else {
+      this.modalService
+        .openConfirm({
+          title: 'sync.confirm.cancel-oauth.title',
+          description: 'sync.confirm.cancel-oauth.description',
+          isDestructive: true,
+          confirmLabel: 'sync.confirm.cancel-oauth.confirm-label',
+          cancelLabel: 'sync.confirm.cancel-oauth.cancel-label',
+        })
+        .onClose.pipe(
+          filter((confirm) => !!confirm),
+          switchMap(() => this.syncService.deleteSync(this.syncId as string)),
+        )
+        .subscribe({
+          next: () => this.router.navigate([this.backPath], { relativeTo: this.currentRoute }),
+        });
+    }
   }
 
   save() {

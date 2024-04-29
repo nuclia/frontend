@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BackButtonComponent, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
+import { BackButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTabsModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IConnector, ISyncEntity, LogEntity, SyncItem, SyncService } from '../logic';
@@ -41,7 +41,8 @@ export class SyncDetailsPageComponent implements OnDestroy {
   private syncService = inject(SyncService);
   private toaster = inject(SisToastService);
   private sdk = inject(SDKService);
-  private cdr = inject(ChangeDetectorRef);
+  private modalService = inject(SisModalService);
+  private translate = inject(TranslateService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -96,14 +97,24 @@ export class SyncDetailsPageComponent implements OnDestroy {
   }
 
   deleteSync() {
-    this.syncId
+    this.sync
       .pipe(
-        take(1),
-        switchMap((syncId) => this.syncService.deleteSync(syncId)),
+        switchMap((sync) =>
+          this.modalService
+            .openConfirm({
+              title: this.translate.instant('sync.confirm.deletion.title', { title: sync.title }),
+              description: 'sync.confirm.deletion.description',
+              isDestructive: true,
+              confirmLabel: 'generic.delete',
+            })
+            .onClose.pipe(
+              filter((confirmed) => !!confirmed),
+              switchMap((syncId) => this.syncService.deleteSync(syncId)),
+            ),
+        ),
       )
       .subscribe({
-        next: () => this.router.navigate(['..'], { relativeTo: this.currentRoute }),
-        error: () => this.toaster.error('sync.details.toast.deletion-failed'),
+        error: () => this.toaster.error('sync.details.deletion-failed'),
       });
   }
 

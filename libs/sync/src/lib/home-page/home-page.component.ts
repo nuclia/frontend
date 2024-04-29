@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   HeaderCell,
   PaButtonModule,
@@ -14,8 +14,14 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { BadgeComponent, DropdownButtonComponent, InfoCardComponent, SisToastService } from '@nuclia/sistema';
+import { filter, map, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
+import {
+  BadgeComponent,
+  DropdownButtonComponent,
+  InfoCardComponent,
+  SisModalService,
+  SisToastService,
+} from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConnectorDefinition, LOCAL_SYNC_SERVER, SyncBasicData, SyncServerType, SyncService } from '../logic';
 import { ConnectorComponent } from './connector';
@@ -55,6 +61,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private syncService = inject(SyncService);
   private sdk = inject(SDKService);
   private toaster = inject(SisToastService);
+  private modalService = inject(SisModalService);
+  private translate = inject(TranslateService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -132,9 +140,20 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   deleteSync(sync: SyncBasicData) {
-    this.syncService.deleteSync(sync.id).subscribe({
-      error: () => this.toaster.error('sync.details.deletion-failed'),
-    });
+    this.modalService
+      .openConfirm({
+        title: this.translate.instant('sync.confirm.deletion.title', { title: sync.title }),
+        description: 'sync.confirm.deletion.description',
+        isDestructive: true,
+        confirmLabel: 'generic.delete',
+      })
+      .onClose.pipe(
+        filter((confirmed) => !!confirmed),
+        switchMap(() => this.syncService.deleteSync(sync.id)),
+      )
+      .subscribe({
+        error: () => this.toaster.error('sync.details.deletion-failed'),
+      });
   }
 
   toggleSync(id: string, active: boolean) {
