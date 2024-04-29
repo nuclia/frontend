@@ -1184,6 +1184,7 @@
 	"upload.invalid_image": "El fitxer seleccionat no és una imatge vàlida",
 	"upload.labels_number": "{{num}} etiquetes",
 	"upload.limit-exceeded": "Heu enviat massa càrregues. Torna-ho a provar d'aquí a un moment.",
+	"upload.limit-warning": "El vostre compte està processant més de {{limit}} recursos simultàniament, cosa que pot provocar errors o limitacions. Si us plau, espereu que la cua disminueixi o carregueu a un ritme més lent.",
 	"upload.link": "Afegeix enllaços",
 	"upload.once_uploaded": "Un cop penjats, podeu veure l'estat dels vostres fitxers a la pàgina Recursos pendents. Quan es processin els fitxers, apareixeran a la llista de Recursos.",
 	"upload.progress-dialog-title": "Cua de pujades",

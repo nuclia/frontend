@@ -8,6 +8,7 @@ import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../csv-parser';
 import { StandaloneService } from '../../services';
+import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 
 interface Row {
   link: string;
@@ -46,6 +47,7 @@ export class CreateLinkComponent {
 
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
+  pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
 
   constructor(
     public modal: ModalRef,

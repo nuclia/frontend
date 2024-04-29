@@ -1185,6 +1185,7 @@
 	"upload.invalid_image": "Le fichier sélectionné n'est pas une image valide",
 	"upload.labels_number": "{{num}} étiquettes",
 	"upload.limit-exceeded": "Vous avez soumis trop de téléchargements. Réessayez dans un instant.",
+	"upload.limit-warning": "Votre compte traite plus de {{limit}} ressources simultanément, ce qui peut entraîner des erreurs ou des limitations. Veuillez attendre que la file d'attente diminue ou télécharger à un rythme plus lent.",
 	"upload.link": "Ajouter des liens",
 	"upload.once_uploaded": "Une fois téléchargés, vous pouvez voir l'état de vos fichiers dans la page Ressources en attente. Lorsque les fichiers seront traités, ils apparaîtront dans la liste des ressources.",
 	"upload.progress-dialog-title": "File d'attente de téléchargement",

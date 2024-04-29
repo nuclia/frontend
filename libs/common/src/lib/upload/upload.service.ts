@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LabelsService, md5, SDKService, STFTrackingService } from '@flaps/core';
+import { LabelsService, md5, NotificationService, SDKService, STFTrackingService } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -29,6 +29,7 @@ import {
   startWith,
   switchMap,
   take,
+  throttleTime,
   timer,
   toArray,
 } from 'rxjs';
@@ -36,6 +37,7 @@ import { tap } from 'rxjs/operators';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
+import { PENDING_RESOURCES_LIMIT } from './upload.utils';
 
 const REGEX_YOUTUBE_URL = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/)/;
 export const SPREADSHEET_MIMES = [
@@ -68,6 +70,7 @@ export class UploadService {
   progress = this._progress.asObservable();
   barDisabled = this._barDisabled.asObservable();
   statusCount = this._statusCount.asObservable();
+  pendingResourcesLimitExceeded = this._statusCount.pipe(map((count) => count.pending > PENDING_RESOURCES_LIMIT));
 
   constructor(
     private sdk: SDKService,
@@ -76,7 +79,15 @@ export class UploadService {
     private modal: SisModalService,
     private translate: TranslateService,
     private tracking: STFTrackingService,
-  ) {}
+    private notificationsService: NotificationService,
+  ) {
+    this.notificationsService.hasNewResourceOperationNotifications
+      .pipe(
+        throttleTime(20000, undefined, { leading: true, trailing: true }),
+        switchMap(() => this.updateStatusCount()),
+      )
+      .subscribe();
+  }
 
   checkFileTypesAndConfirm(files: File[]): Observable<boolean> {
     const spreadsheets = files.filter((file) => SPREADSHEET_MIMES.includes(file.type));

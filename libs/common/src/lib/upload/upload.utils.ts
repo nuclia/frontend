@@ -2,6 +2,7 @@ import mime from 'mime';
 
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 export const PATTERNS_TO_IGNORE = [/^~.+/, /.+\.tmp$/];
+export const PENDING_RESOURCES_LIMIT = 900;
 
 export function getFilesByType(files: File[], mediaFile: boolean): File[] {
   return files.filter((file) => {

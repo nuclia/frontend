@@ -1185,6 +1185,7 @@
 	"upload.invalid_image": "Selected file is not a valid image",
 	"upload.labels_number": "{{num}} labels",
 	"upload.limit-exceeded": "Too many uploads. Try again in a moment.",
+	"upload.limit-warning": "Your account is processing over {{limit}} resources simultaneously, which may lead to errors or limitations. Please wait for the queue to decrease or upload at a slower rate.",
 	"upload.link": "Add links",
 	"upload.once_uploaded": "Once uploaded, you can see the status of your files in the Pending resources page. When the files are processed, they will show up in the Resources list.",
 	"upload.progress-dialog-title": "Upload queue",

@@ -1184,6 +1184,7 @@
 	"upload.invalid_image": "El archivo seleccionad no es una imagen válida",
 	"upload.labels_number": "{{num}} etiquetas",
 	"upload.limit-exceeded": "Has estado enviando demasiadas cargas. Inténtalo de nuevo en un momento.",
+	"upload.limit-warning": "Tu cuenta está procesando más de {{limit}} recursos simultáneamente, lo que puede provocar errores o limitaciones. Espere a que la cola disminuye o carga a un ritmo más lento.",
 	"upload.link": "Agregar enlaces",
 	"upload.once_uploaded": "Una vez cargados, puede ver el estado de sus archivos en la página de recursos pendientes. Cuando se procesen los archivos, aparecerán en la lista de Recursos.",
 	"upload.progress-dialog-title": "Cola de subidas",

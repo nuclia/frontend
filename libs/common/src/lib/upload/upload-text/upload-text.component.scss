@@ -42,8 +42,12 @@ app-csv-select {
   margin-top: rhythm(4);
 }
 
-.warning {
+.warning-key {
   background-color: $color-secondary-regular;
   padding: rhythm(1);
+  margin-bottom: rhythm(3);
+}
+
+nsi-info-card {
   margin-bottom: rhythm(3);
 }
