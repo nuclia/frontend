@@ -178,7 +178,7 @@ export class AddSyncPageComponent implements OnInit {
       const syncId = this.syncId;
       this.syncService.updateSync(syncId, { foldersToSync: this.folderSelection }, true).subscribe({
         next: () => {
-          this._navigateToDetails(syncId);
+          this._syncCreationDone(syncId);
         },
         error: (error) => this._errorHandler(error),
       });
@@ -227,7 +227,7 @@ export class AddSyncPageComponent implements OnInit {
 
   private _onSuccessfulCreation(connector: IConnector, syncEntity: ISyncEntity) {
     if (!connector.hasServerSideAuth) {
-      this._navigateToDetails(syncEntity.id);
+      this._syncCreationDone(syncEntity.id);
     } else {
       let basePath = location.href.split('/sync/add/')[0];
       if (this.sdk.nuclia.options.standalone) {
@@ -240,9 +240,10 @@ export class AddSyncPageComponent implements OnInit {
     }
   }
 
-  private _navigateToDetails(syncId: string) {
+  private _syncCreationDone(syncId: string) {
     const path = this.syncId ? `../../../${syncId}` : `../../${syncId}`;
     this.router.navigate([path], { relativeTo: this.currentRoute });
+    this.syncService.triggerSyncs().subscribe();
   }
 
   private _errorHandler(error: string) {
