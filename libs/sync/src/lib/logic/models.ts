@@ -18,11 +18,14 @@ export interface ConnectorDefinition {
   factory: (data?: ConnectorSettings) => Observable<IConnector>;
 }
 
-export interface IConnector {
+export interface IConnectorBase {
   hasServerSideAuth: boolean;
   isExternal: boolean;
   allowToSelectFolders: boolean;
   canSyncSecurityGroups: boolean;
+}
+
+export interface IConnector extends IConnectorBase {
   getParametersSections(): Observable<Section[]>;
   handleParameters?(params: ConnectorParameters): void;
   getParametersValues(): ConnectorParameters;
@@ -117,6 +120,7 @@ export interface SyncBasicData {
   kbId: string;
   title: string;
   connectorId: string;
+  connector: IConnectorBase;
   lastSyncGMT?: string;
   disabled?: boolean;
   totalSyncedResources?: number;

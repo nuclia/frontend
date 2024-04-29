@@ -75,7 +75,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     serverUrl: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
   connectors = this.syncService.connectors;
-  connectorList = this.syncService.connectorsObs.pipe(
+  connectorList: Observable<ConnectorDefinition[]> = this.syncService.connectorsObs.pipe(
     map((sources) => sources.sort((a, b) => a.title.localeCompare(b.title))),
   );
   serverUrlBackup = '';

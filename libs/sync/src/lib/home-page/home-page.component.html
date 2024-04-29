@@ -155,9 +155,11 @@
                   <pa-option [routerLink]="'./' + sync.id + '/edit'">
                     {{ 'sync.home-page.sync-list.menu.edit-settings' | translate }}
                   </pa-option>
-                  <pa-option [routerLink]="'./' + sync.id + '/edit'">
-                    {{ 'sync.home-page.sync-list.menu.edit-folders' | translate }}
-                  </pa-option>
+                  @if (sync.connector.allowToSelectFolders) {
+                    <pa-option [routerLink]="'./' + sync.id + '/edit'">
+                      {{ 'sync.home-page.sync-list.menu.edit-folders' | translate }}
+                    </pa-option>
+                  }
                   <pa-option
                     [routerLink]="'./' + sync.id"
                     [queryParams]="{ section: 'activity' }">

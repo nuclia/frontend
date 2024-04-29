@@ -1,9 +1,20 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, filter, map, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  ReplaySubject,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import {
   baseLogoPath,
   ConnectorDefinition,
-  ConnectorSettings,
   IConnector,
   ISyncEntity,
   LogEntity,
@@ -31,7 +42,6 @@ export class SyncService {
   connectors: {
     [id: string]: {
       definition: ConnectorDefinition;
-      settings: ConnectorSettings;
       instances?: { [key: string]: ReplaySubject<IConnector> };
     };
   } = {
@@ -44,7 +54,6 @@ export class SyncService {
         permanentSyncOnly: true,
         factory: (settings) => of(new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getOAuthServer())),
       },
-      settings: {},
     },
     onedrive: {
       definition: {
@@ -55,7 +64,6 @@ export class SyncService {
         permanentSyncOnly: true,
         factory: (settings) => of(new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getOAuthServer())),
       },
-      settings: {},
     },
     sharepoint: {
       definition: {
@@ -67,7 +75,6 @@ export class SyncService {
         factory: (settings) =>
           of(new SharepointImpl('sharepoint', settings?.['id'] || '', this.config.getOAuthServer())),
       },
-      settings: {},
     },
     dropbox: {
       definition: {
@@ -78,12 +85,11 @@ export class SyncService {
         permanentSyncOnly: true,
         factory: (settings) => of(new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getOAuthServer())),
       },
-      settings: {},
     },
-    folder: { definition: FolderConnector, settings: {} },
-    sitemap: { definition: SitemapConnector, settings: {} },
-    confluence: { definition: ConfluenceConnector, settings: {} },
-    rss: { definition: RSSConnector, settings: {} },
+    folder: { definition: FolderConnector },
+    sitemap: { definition: SitemapConnector },
+    confluence: { definition: ConfluenceConnector },
+    rss: { definition: RSSConnector },
   };
 
   connectorsObs = new BehaviorSubject(Object.values(this.connectors).map((obj) => obj.definition));
@@ -127,9 +133,7 @@ export class SyncService {
     const instances = source.instances as { [key: string]: ReplaySubject<IConnector> };
     if (!instances[instance]) {
       instances[instance] = new ReplaySubject(1);
-      source.definition
-        .factory({ ...source.settings, id: instance })
-        .subscribe(instances[instance] as ReplaySubject<IConnector>);
+      source.definition.factory({ id: instance }).subscribe(instances[instance] as ReplaySubject<IConnector>);
     }
     return (instances[instance] as ReplaySubject<IConnector>).asObservable();
   }
@@ -187,7 +191,8 @@ export class SyncService {
           headers: this.serverHeaders,
         }),
       ),
-      tap(() => {
+      switchMap(() => this.getConnectors()),
+      tap((connectors) => {
         const syncs = this._syncCache.getValue();
         syncs[sync.id] = sync;
         this._syncCache.next(syncs);
@@ -198,6 +203,7 @@ export class SyncService {
             id: sync.id,
             title: sync.title,
             connectorId: sync.connector.name,
+            connector: connectors[sync.connector.name],
             kbId: sync.kb?.knowledgeBox || '',
             totalSyncedResources: 0,
             disabled: false,
@@ -205,6 +211,7 @@ export class SyncService {
         ]);
         this._cacheUpdated.next(new Date().toISOString());
       }),
+      map(() => {}),
     );
   }
 
@@ -223,7 +230,17 @@ export class SyncService {
           syncs[syncId] = { ...syncs[syncId], ...sync };
           this._syncCache.next(syncs);
           const syncsList = this._syncListCache.getValue();
-          this._syncListCache.next(syncsList.map((item) => (item.id === syncId ? { ...item, ...sync } : item)));
+          this._syncListCache.next(
+            syncsList.map((item) =>
+              item.id === syncId
+                ? {
+                    ...item,
+                    title: sync.title || item.title,
+                    disabled: typeof sync.disabled === 'boolean' ? sync.disabled : item.disabled,
+                  }
+                : item,
+            ),
+          );
           this._cacheUpdated.next(new Date().toISOString());
         }),
       );
@@ -274,10 +291,16 @@ export class SyncService {
                     }[]
                   >(`${this._syncServer.getValue().serverUrl}/sync/kb/${kbId}`)
                   .pipe(
-                    tap((data) => {
+                    switchMap((data) => this.getConnectors().pipe(map((connectors) => ({ data, connectors })))),
+                    tap(({ data, connectors }) => {
                       this._syncListCache.next([
                         ...syncs,
-                        ...data.map((sync) => ({ ...sync, kbId, connectorId: sync.connector })),
+                        ...data.map((sync) => ({
+                          ...sync,
+                          kbId,
+                          connectorId: sync.connector,
+                          connector: connectors[sync.connector],
+                        })),
                       ]);
                     }),
                   ),
@@ -297,6 +320,7 @@ export class SyncService {
   }
 
   // FIXME: support query
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getFolders(query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
       `${this._syncServer.getValue().serverUrl}/sync/${this.getCurrentSyncId()}/folders`,
@@ -425,5 +449,23 @@ export class SyncService {
 
   triggerSyncs(): Observable<void> {
     return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute`);
+  }
+
+  private getConnectors(): Observable<{ [id: string]: IConnector }> {
+    return forkJoin(
+      Object.keys(this.connectors).map((connectorId) =>
+        this.getConnector(connectorId, '').pipe(map((connector) => ({ connector, connectorId }))),
+      ),
+    ).pipe(
+      map((data) =>
+        data.reduce(
+          (connectors, { connectorId, connector }) => {
+            connectors[connectorId] = connector;
+            return connectors;
+          },
+          {} as { [id: string]: IConnector },
+        ),
+      ),
+    );
   }
 }
