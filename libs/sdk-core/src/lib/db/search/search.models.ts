@@ -65,6 +65,10 @@ export interface ChatOptions extends BaseSearchOptions {
   rag_images_strategies?: RAGImageStrategy[];
   generative_model?: string;
   rephrase?: boolean;
+  /**
+   * Defines the maximum number of tokens that the model will generate.
+   */
+  max_tokens?: number;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

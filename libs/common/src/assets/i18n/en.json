@@ -1255,6 +1255,8 @@
 	"widget.generator.advanced.generative-answer-category.generative-model.label": "Specific generative model",
 	"widget.generator.advanced.generative-answer-category.hide-results.help": "Hide the search results",
 	"widget.generator.advanced.generative-answer-category.hide-results.label": "Hide results",
+	"widget.generator.advanced.generative-answer-category.max-tokens.help": "Defines the maximum number of tokens that the model will generate.",
+	"widget.generator.advanced.generative-answer-category.max-tokens.label": "Max tokens",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help": "Full text results will not be used to generate answers",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.label": "Only semantic results",
 	"widget.generator.advanced.generative-answer-category.not-enough-data-message.help": "Customize the message displayed when there's insufficient data to generate a response to the user's question. This field allows HTML markup.",

@@ -1,8 +1,9 @@
-# 1.14.8 (unreleased)
+# 1.14.8 (2024-04-29)
 
 ### Improvements
 
 - Improve HTTP 429 errors handling on resource modification and deletion
+- Support `max_tokens` on `/chat` endpoint
 
 ### Bug fix
 

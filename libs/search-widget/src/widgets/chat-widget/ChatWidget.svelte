@@ -30,6 +30,7 @@
   export let no_tracking = false;
   export let rag_strategies = '';
   export let rag_field_ids = '';
+  export let max_tokens: number | undefined = undefined;
 
   export let layout: 'inline' | 'fullscreen' = 'fullscreen';
   export let height = '';
@@ -72,7 +73,7 @@
         proxy,
       },
       state,
-      { prompt },
+      { prompt, max_tokens },
       no_tracking,
     );
 

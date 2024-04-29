@@ -42,6 +42,7 @@ let generative_model: string | undefined = undefined;
 let CITATIONS = false;
 let REPHRASE = false;
 let ASK_TO_RESOURCE = '';
+let MAX_TOKENS: number | undefined = undefined;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -114,6 +115,9 @@ export const initNuclia = (
   if (widgetOptions.features?.noBM25forChat) {
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Chat.Features.PARAGRAPHS);
   }
+  if (widgetOptions.max_tokens) {
+    MAX_TOKENS = widgetOptions.max_tokens;
+  }
   STATE = state;
   nucliaApi.events?.log('widgetOptions', widgetOptions);
 
@@ -163,6 +167,7 @@ export const getAnswer = (
     generative_model,
     citations: CITATIONS,
     rephrase: REPHRASE,
+    max_tokens: MAX_TOKENS,
   };
   if (ASK_TO_RESOURCE) {
     return nucliaApi.knowledgeBox

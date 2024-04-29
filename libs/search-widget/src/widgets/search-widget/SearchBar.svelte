@@ -67,6 +67,7 @@
   export let rag_image_strategies = '';
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
+  export let max_tokens: number | undefined = undefined;
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -182,6 +183,7 @@
         prompt,
         generative_model: generativemodel,
         ask_to_resource,
+        max_tokens,
       },
       no_tracking,
     );
