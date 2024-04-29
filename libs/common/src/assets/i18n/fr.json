@@ -1255,6 +1255,8 @@
 	"widget.generator.advanced.generative-answer-category.generative-model.label": "Modèle génératif spécifique",
 	"widget.generator.advanced.generative-answer-category.hide-results.help": "Masquer les résultats de la recherche",
 	"widget.generator.advanced.generative-answer-category.hide-results.label": "Masquer les résultats",
+	"widget.generator.advanced.generative-answer-category.max-tokens.help": "Définit le nombre maximum de tokens que le modèle générera.",
+	"widget.generator.advanced.generative-answer-category.max-tokens.label": "Nombre maximum de tokens",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help": "Les résultats full text ne seront pas utilisés pour générer les réponses",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.label": "Uniquement les résultats sémantiques",
 	"widget.generator.advanced.generative-answer-category.not-enough-data-message.help": "Personnalisez le message affiché lorsque les données sont insuffisantes pour générer une réponse à la question de l'utilisateur. Ce champ autorise le balisage HTML.",

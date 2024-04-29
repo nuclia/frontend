@@ -41,6 +41,7 @@ export interface WidgetOptions {
   prompt?: string;
   generative_model?: string;
   ask_to_resource?: string;
+  max_tokens?: number;
 }
 
 export interface WidgetAction {

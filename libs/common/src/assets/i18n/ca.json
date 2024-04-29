@@ -1254,6 +1254,8 @@
 	"widget.generator.advanced.generative-answer-category.generative-model.label": "Model generatiu específic",
 	"widget.generator.advanced.generative-answer-category.hide-results.help": "Amagar els resultats de la cerca",
 	"widget.generator.advanced.generative-answer-category.hide-results.label": "Amagar resultats",
+	"widget.generator.advanced.generative-answer-category.max-tokens.help": "Defineix el nombre màxim de tokens que generarà el model.",
+	"widget.generator.advanced.generative-answer-category.max-tokens.label": "Màxim tokens",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.help": "Els resultats de full text no s'utilitzaran per generar respostes",
 	"widget.generator.advanced.generative-answer-category.no-bm25-for-chat.label": "Només resultats semàntics",
 	"widget.generator.advanced.generative-answer-category.not-enough-data-message.help": "Personalitza el missatge que es mostra quan no hi ha dades suficients per generar una resposta a la pregunta de l'usuari. Aquest camp admet codi HTML.",

@@ -33,6 +33,7 @@
   export let rag_image_strategies = '';
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
+  export let max_tokens: number | undefined = undefined;
 
   let searchBar: any;
   let visible = false;
@@ -121,7 +122,8 @@
             {rag_strategies}
             {rag_image_strategies}
             {not_enough_data_message}
-            {ask_to_resource} />
+            {ask_to_resource}
+            {max_tokens} />
         </div>
         <div class="search-results-container">
           <SearchResults />
