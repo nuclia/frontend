@@ -12,9 +12,7 @@ export interface ConfigurationForm {
   syncSecurityGroups: boolean | null;
   filterResources: FiltersResources;
   extra: {
-    [sectionId: string]: {
-      [fieldId: string]: string;
-    };
+    [fieldId: string]: string;
   };
 }
 

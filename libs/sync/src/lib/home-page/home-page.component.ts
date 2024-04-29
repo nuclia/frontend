@@ -152,7 +152,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         switchMap(() => this.syncService.deleteSync(sync.id)),
       )
       .subscribe({
-        error: () => this.toaster.error('sync.details.deletion-failed'),
+        error: () => this.toaster.error('sync.details.toast.deletion-failed'),
       });
   }
 

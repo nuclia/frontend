@@ -9,18 +9,6 @@
     </div>
     <div class="separator-line"></div>
 
-    @if (connector) {
-      @for (section of connector.getParametersSections() | async; track section.id) {
-        @for (field of section.fields; track field.id) {
-          <div class="body-s settings-item">
-            <label>{{ field.label | translate }}</label>
-            <div>{{ sync.connector.parameters[field.id] }}</div>
-          </div>
-          <div class="separator-line"></div>
-        }
-      }
-    }
-
     <div class="body-s settings-item">
       <label>{{ 'sync.details.settings.synchronize-security-groups' | translate }}</label>
       <div style="text-transform: capitalize">
@@ -90,6 +78,32 @@
     </div>
   </div>
 </nsi-two-columns-configuration-item>
+
+@if (connector) {
+  @for (section of connector.getParametersSections() | async; track section.id) {
+    <nsi-two-columns-configuration-item
+      [itemTitle]="section.title"
+      [description]="section.description || ''">
+      <div class="sync-settings-container">
+        @for (field of section.fields; track field.id) {
+          <div class="body-s settings-item">
+            <label>{{ field.label | translate }}</label>
+            @if (field.type !== 'table') {
+              <div>{{ sync.connector.parameters[field.id] || '_' }}</div>
+            } @else {
+              <app-parameters-table
+                readonly
+                [values]="sync.connector.parameters[field.id]"></app-parameters-table>
+            }
+          </div>
+          @if (!$last) {
+            <div class="separator-line"></div>
+          }
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+}
 
 <nsi-two-columns-configuration-item
   itemTitle="sync.details.activity-log.title"

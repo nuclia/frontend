@@ -14,7 +14,7 @@ import { IConnector, ISyncEntity, LogEntity } from '../../logic';
 import { SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaDateTimeModule, PaIconModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
-import { LabelsService } from '@flaps/core';
+import { LabelsService, ParametersTableComponent } from '@flaps/core';
 import { filter, map, take } from 'rxjs';
 import { LabelSets } from '@nuclia/core';
 import { ColoredLabel } from '@flaps/common';
@@ -32,6 +32,7 @@ import { ActivatedRoute } from '@angular/router';
     PaTableModule,
     PaDateTimeModule,
     PaIconModule,
+    ParametersTableComponent,
   ],
   templateUrl: './sync-settings.component.html',
   styleUrl: './sync-settings.component.scss',

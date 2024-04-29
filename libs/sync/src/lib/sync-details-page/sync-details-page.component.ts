@@ -114,7 +114,7 @@ export class SyncDetailsPageComponent implements OnDestroy {
         ),
       )
       .subscribe({
-        error: () => this.toaster.error('sync.details.deletion-failed'),
+        error: () => this.toaster.error('sync.details.toast.deletion-failed'),
       });
   }
 

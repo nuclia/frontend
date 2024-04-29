@@ -1,9 +1,18 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTableModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject, combineLatest, distinctUntilChanged, skip, startWith, takeUntil } from 'rxjs';
+import { combineLatest, distinctUntilChanged, startWith, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-parameters-table',
@@ -34,6 +43,7 @@ export class ParametersTableComponent implements OnInit, OnDestroy {
       this.setForm(values);
     }
   }
+  @Input({ transform: booleanAttribute }) readonly = false;
 
   @Output() valuesChanges = new EventEmitter<{ key: string; value: string; secret: boolean }[]>();
 

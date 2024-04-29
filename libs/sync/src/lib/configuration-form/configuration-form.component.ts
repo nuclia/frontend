@@ -76,8 +76,17 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
         filterResources,
       });
       this.labelSelection = value.labels || [];
-      this.extensionList = filterResources.extensions?.split(', ') || [];
-      // TODO load tables
+      this.extensionList = this.formatExtensionList(filterResources.extensions);
+
+      if (value.connector.parameters) {
+        Object.entries(value.connector.parameters).forEach(([key, value]) => {
+          if (typeof value !== 'object') {
+            this._extra[key] = value;
+          } else {
+            this.tables[key] = value;
+          }
+        });
+      }
     }
   }
   @Input({ transform: booleanAttribute }) noTopBorder = false;
@@ -104,6 +113,8 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   extensionList: string[] = [];
   tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
 
+  private _extra: { [key: string]: string } = {};
+
   get extensionsControl() {
     return this.form.controls.filterResources.controls.extensions;
   }
@@ -124,11 +135,14 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
             }
           }),
         );
+        if (Object.keys(this._extra).length > 0) {
+          this.form.patchValue({ extra: this._extra });
+        }
       });
     }
-    this.extensionsControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((value) => {
-      this.extensionList = value && value.length > 0 ? value.split(',').map((extension) => extension.trim()) : [];
-    });
+    this.extensionsControl.valueChanges
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe((value) => (this.extensionList = this.formatExtensionList(value)));
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.validForm.emit(this.form.valid);
       this.emitSyncEntity();
@@ -173,6 +187,15 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     this.emitSyncEntity();
   }
 
+  private formatExtensionList(value: string | null): string[] {
+    return value && value.length > 0
+      ? value
+          .split(',')
+          .map((extension) => extension.trim())
+          .filter((value) => !!value)
+      : [];
+  }
+
   private emitSyncEntity() {
     if (!this.connectorId) {
       return;
@@ -195,9 +218,9 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
             }
           : undefined,
     };
-    const extraParams: { [key: string]: string } = Object.values(config.extra || {}).reduce(
-      (fields, section) => {
-        return { ...fields, ...section };
+    const extraParams: { [key: string]: string } = Object.entries(config.extra || {}).reduce(
+      (fields, [key, value]) => {
+        return { ...fields, [key]: value };
       },
       {} as { [key: string]: string },
     );
