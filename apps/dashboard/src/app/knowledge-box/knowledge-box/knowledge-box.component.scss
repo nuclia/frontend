@@ -1,8 +1,0 @@
-@import 'apps/dashboard/src/variables';
-
-.upload-bar-container {
-  position: sticky;
-  top: 0;
-  padding: 0 rhythm(6) 0 var(--app-sidebar-width);
-  z-index: $z-index-popup;
-}

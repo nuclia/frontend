@@ -7,6 +7,7 @@ import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../csv-parser';
 import { StandaloneService } from '../../services';
+import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 
 const FORMATS: TextFormat[] = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];
 
@@ -29,6 +30,7 @@ export class UploadTextComponent {
 
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
+  pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
 
   constructor(
     public modal: ModalRef,

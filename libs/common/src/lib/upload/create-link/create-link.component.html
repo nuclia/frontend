@@ -11,6 +11,13 @@
     </div>
   </pa-modal-title>
   <pa-modal-content>
+    @if (csv.length > pendingResourcesLimit) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        {{ 'upload.limit-warning' | translate: { limit: pendingResourcesLimit | number } }}
+      </nsi-info-card>
+    }
     @if (standalone && (hasValidKey | async) === false) {
       <div
         class="warning body-s"

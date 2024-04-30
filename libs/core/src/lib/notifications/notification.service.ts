@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { NotificationData, NotificationUI } from './notification.model';
 import { NavigationService } from '../services';
 import { SDKService } from '../api';
@@ -13,7 +13,9 @@ import { takeUntil } from 'rxjs/operators';
 export class NotificationService {
   private _currentKb?: WritableKnowledgeBox;
   private _notifications = new BehaviorSubject<NotificationUI[]>([]);
+  private _hasNewResourceOperationNotifications = new Subject<void>();
   notifications: Observable<NotificationUI[]> = this._notifications.asObservable();
+  hasNewResourceOperationNotifications = this._hasNewResourceOperationNotifications.asObservable();
 
   unreadNotificationsCount: Observable<number> = this.notifications.pipe(
     map((messages) => messages.filter((message) => message.unread).length),
@@ -71,6 +73,9 @@ export class NotificationService {
                   }
                 });
                 this._notifications.next(newNotifications.concat(existingNotifications));
+                if (notifications.length > 0) {
+                  this._hasNewResourceOperationNotifications.next();
+                }
               }),
             ),
           ),

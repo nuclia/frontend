@@ -23,7 +23,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
+import { InfoCardComponent, ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
 import { HintModule } from '../hint/hint.module';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
@@ -59,6 +59,7 @@ import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module
     UploadBarComponent,
     CsvSelectComponent,
     ConnectorsModule,
+    InfoCardComponent,
   ],
   declarations: [
     CreateLinkComponent,

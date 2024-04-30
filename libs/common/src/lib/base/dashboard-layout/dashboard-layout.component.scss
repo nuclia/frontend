@@ -1,5 +1,7 @@
 @import 'apps/dashboard/src/variables';
 
+$height-status-bar: rhythm(9);
+
 .dashboard-layout {
   display: flex;
   position: relative;
@@ -13,7 +15,18 @@
 
   .dashboard-content {
     width: calc(100vw - #{$width-sidenav});
-    max-height: calc(100vh - var(--app-topbar-height));
-    overflow: auto;
+
+    .status-bar {
+      height: $height-status-bar;
+    }
+
+    main {
+      max-height: calc(100vh - var(--app-topbar-height));
+      overflow: auto;
+
+      &.with-status-bar {
+        --app-topbar-height: #{$height-top-bar + $height-status-bar};
+      }
+    }
   }
 }

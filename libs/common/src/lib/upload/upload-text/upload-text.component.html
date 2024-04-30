@@ -11,12 +11,18 @@
     </div>
   </pa-modal-title>
   <pa-modal-content>
-    <ng-container *ngIf="standalone">
+    @if (csv.length > pendingResourcesLimit) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        {{ 'upload.limit-warning' | translate: { limit: pendingResourcesLimit | number } }}
+      </nsi-info-card>
+    }
+    @if (standalone && (hasValidKey | async) === false) {
       <div
-        *ngIf="(hasValidKey | async) === false"
-        class="warning body-s"
+        class="warning-key body-s"
         [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
-    </ng-container>
+    }
     <app-csv-select
       [help]="['upload.csv_description', 'upload.csv_format', 'upload.csv_labels']"
       [fields]="4"

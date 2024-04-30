@@ -4,7 +4,21 @@
   </nav>
 
   <div class="dashboard-content">
-    <main>
+    @if (showStatusBar | async) {
+      <div class="status-bar">
+        @if (showProgress | async) {
+          <stf-upload-bar></stf-upload-bar>
+        }
+        @if (showLimit | async) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'upload.limit-warning' | translate: { limit: pendingResourceslimit | number } }}
+          </nsi-info-card>
+        }
+      </div>
+    }
+    <main [class.with-status-bar]="showStatusBar | async">
       <router-outlet></router-outlet>
     </main>
   </div>
