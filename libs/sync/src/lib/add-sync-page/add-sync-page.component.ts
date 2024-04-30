@@ -243,7 +243,10 @@ export class AddSyncPageComponent implements OnInit {
   private _syncCreationDone(syncId: string) {
     const path = this.syncId ? `../../../${syncId}` : `../../${syncId}`;
     this.router.navigate([path], { relativeTo: this.currentRoute });
-    this.syncService.triggerSyncs().subscribe();
+    this.syncService.triggerSync(syncId).subscribe({
+      next: () => this.toaster.success('sync.details.toast.triggering-sync-success'),
+      error: () => this.toaster.error('sync.details.toast.triggering-sync-failed'),
+    });
   }
 
   private _errorHandler(error: string) {

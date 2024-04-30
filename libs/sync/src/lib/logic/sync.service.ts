@@ -447,6 +447,10 @@ export class SyncService {
     this._isServerDown.next(isDown);
   }
 
+  triggerSync(syncId: string): Observable<void> {
+    return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute/${syncId}`);
+  }
+
   triggerSyncs(): Observable<void> {
     return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute`);
   }

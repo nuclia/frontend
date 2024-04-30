@@ -90,10 +90,15 @@ export class SyncDetailsPageComponent implements OnDestroy {
   }
 
   triggerSync() {
-    this.syncService.triggerSyncs().subscribe({
-      next: () => this.toaster.success('sync.details.toast.triggering-sync-success'),
-      error: () => this.toaster.error('sync.details.toast.triggering-sync-failed'),
-    });
+    this.syncId
+      .pipe(
+        take(1),
+        switchMap((syncId) => this.syncService.triggerSync(syncId)),
+      )
+      .subscribe({
+        next: () => this.toaster.success('sync.details.toast.triggering-sync-success'),
+        error: () => this.toaster.error('sync.details.toast.triggering-sync-failed'),
+      });
   }
 
   deleteSync() {
