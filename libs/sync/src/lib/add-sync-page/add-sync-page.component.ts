@@ -5,7 +5,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
 import { filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import { BackButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
+import {
+  BackButtonComponent,
+  SisModalService,
+  SisProgressModule,
+  SisToastService,
+  StickyFooterComponent,
+} from '@nuclia/sistema';
 import { ConfigurationFormComponent } from '../configuration-form';
 import { FolderSelectionComponent } from '../folder-selection';
 import { SDKService } from '@flaps/core';
@@ -23,6 +29,7 @@ import { SDKService } from '@flaps/core';
     ConfigurationFormComponent,
     FolderSelectionComponent,
     RouterLink,
+    SisProgressModule,
   ],
   templateUrl: './add-sync-page.component.html',
   styleUrl: './add-sync-page.component.scss',
@@ -60,6 +67,7 @@ export class AddSyncPageComponent implements OnInit {
   validForm = false;
   configuration?: ISyncEntity;
   folderSelection: SyncItem[] = [];
+  loading = false;
   saving = false;
 
   get backPath() {
@@ -72,10 +80,11 @@ export class AddSyncPageComponent implements OnInit {
         filter((params) => !!params['syncId']),
         take(1),
         tap((params) => {
+          this.loading = true;
+          this.cdr.markForCheck();
           this.syncId = params['syncId'] as string;
           this.syncService.setCurrentSyncId(this.syncId);
           this.validForm = true;
-          this._goNext();
         }),
         switchMap(() => this.syncService.getSync(this.syncId as string)),
         tap((sync) => {
@@ -87,6 +96,12 @@ export class AddSyncPageComponent implements OnInit {
         }),
         switchMap((sync) => {
           return this.syncService.hasCurrentSourceAuth().pipe(
+            tap((hasAuth) => {
+              if (hasAuth) {
+                this.loading = false;
+                this.cdr.markForCheck();
+              }
+            }),
             filter((hasAuth) => !hasAuth),
             switchMap(() => this.syncService.getConnector(sync.connector.name, sync.id)),
             switchMap((connector) => {
@@ -96,7 +111,12 @@ export class AddSyncPageComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: () => this.router.navigate([], { queryParams: {} }),
+        next: () => {
+          this._goNext();
+          this.loading = false;
+          this.cdr.markForCheck();
+          this.router.navigate([], { queryParams: {} });
+        },
         error: () => this.toaster.error('sync.details.authentication.fail'),
       });
   }

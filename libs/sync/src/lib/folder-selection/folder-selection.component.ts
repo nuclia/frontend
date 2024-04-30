@@ -65,6 +65,7 @@ export class FolderSelectionComponent implements OnInit {
   private selectedIds: string[] = [];
 
   ngOnInit(): void {
+    // We update selection before loading folders, so the selection can be applied to folders loaded
     this.updateSelection(
       (this.sync.foldersToSync || []).map((folder) => ({
         id: folder.uuid,

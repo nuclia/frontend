@@ -18,62 +18,66 @@
 
   @if (connector | async; as connector) {
     <div>
-      @switch (step()) {
-        @case (1) {
-          <nsy-configuration-form
-            [sync]="sync"
-            [kbId]="kbId | async"
-            [connector]="connector"
-            [connectorId]="connectorId | async"
-            (configurationChange)="updateConfiguration($event)"
-            (validForm)="validForm = $event"></nsy-configuration-form>
-        }
-        @case (2) {
-          @if (sync) {
-            <nsy-folder-selection
+      @if (loading) {
+        <nsi-spinner></nsi-spinner>
+      } @else {
+        @switch (step()) {
+          @case (1) {
+            <nsy-configuration-form
               [sync]="sync"
-              (selectedSyncItems)="updateSelection($event)"></nsy-folder-selection>
+              [kbId]="kbId | async"
+              [connector]="connector"
+              [connectorId]="connectorId | async"
+              (configurationChange)="updateConfiguration($event)"
+              (validForm)="validForm = $event"></nsy-configuration-form>
+          }
+          @case (2) {
+            @if (sync) {
+              <nsy-folder-selection
+                [sync]="sync"
+                (selectedSyncItems)="updateSelection($event)"></nsy-folder-selection>
+            }
           }
         }
-      }
-      @if (steps | async; as steps) {
-        <nsi-sticky-footer>
-          <div footerNote>
-            @if (steps.length > 1) {
-              {{ 'sync.add-page.footer.steps' | translate: { index: step(), total: steps.length } }}
+        @if (steps | async; as steps) {
+          <nsi-sticky-footer>
+            <div footerNote>
+              @if (steps.length > 1) {
+                {{ 'sync.add-page.footer.steps' | translate: { index: step(), total: steps.length } }}
+              }
+            </div>
+
+            @if (step() === 1) {
+              <pa-button
+                aspect="basic"
+                (click)="cancel()">
+                {{ 'generic.cancel' | translate }}
+              </pa-button>
+            } @else {
+              <pa-button
+                aspect="basic"
+                (click)="goBack()">
+                {{ 'generic.back' | translate }}
+              </pa-button>
             }
-          </div>
 
-          @if (step() === 1) {
-            <pa-button
-              aspect="basic"
-              (click)="cancel()">
-              {{ 'generic.cancel' | translate }}
-            </pa-button>
-          } @else {
-            <pa-button
-              aspect="basic"
-              (click)="goBack()">
-              {{ 'generic.back' | translate }}
-            </pa-button>
-          }
-
-          @if (steps.length > 1 && step() < steps.length) {
-            <pa-button
-              kind="primary"
-              [disabled]="!validForm || saving"
-              (click)="goNext()">
-              {{ 'sync.add-page.footer.folder-selection-button' | translate }}
-            </pa-button>
-          } @else {
-            <pa-button
-              kind="primary"
-              [disabled]="!validForm || (connector.allowToSelectFolders && folderSelection.length === 0) || saving"
-              (click)="save()">
-              {{ 'sync.add-page.footer.save-button' | translate }}
-            </pa-button>
-          }
-        </nsi-sticky-footer>
+            @if (steps.length > 1 && step() < steps.length) {
+              <pa-button
+                kind="primary"
+                [disabled]="!validForm || saving"
+                (click)="goNext()">
+                {{ 'sync.add-page.footer.folder-selection-button' | translate }}
+              </pa-button>
+            } @else {
+              <pa-button
+                kind="primary"
+                [disabled]="!validForm || (connector.allowToSelectFolders && folderSelection.length === 0) || saving"
+                (click)="save()">
+                {{ 'sync.add-page.footer.save-button' | translate }}
+              </pa-button>
+            }
+          </nsi-sticky-footer>
+        }
       }
     </div>
   }
