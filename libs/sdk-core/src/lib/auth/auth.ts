@@ -1,4 +1,4 @@
-import { from, Observable, ReplaySubject, Subscription, tap, throwError, timer } from 'rxjs';
+import { from, Observable, of, ReplaySubject, Subscription, tap, throwError, timer } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
@@ -296,7 +296,7 @@ export class Authentication implements IAuthentication {
         const timeout = expiration && expiration - now < REFRESH_DELAY ? 0 : REFRESH_DELAY;
         this.timerSubscription?.unsubscribe();
         this.timerSubscription = timer(timeout)
-          .pipe(switchMap(() => this.refresh()))
+          .pipe(switchMap(() => (this.getRefreshToken() ? this.refresh() : of(false))))
           .subscribe();
       }
     } else {

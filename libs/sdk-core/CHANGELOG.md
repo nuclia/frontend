@@ -1,3 +1,9 @@
+# 1.14.9 (2024-04-30)
+
+### Bug fix
+
+- Do not refresh auth tokens if there is no refresh token
+
 # 1.14.8 (2024-04-29)
 
 ### Improvements
