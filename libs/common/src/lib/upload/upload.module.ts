@@ -24,13 +24,12 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent, ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
-import { HintModule } from '../hint/hint.module';
+import { HintModule } from '../hint';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
 import { UploadDataComponent } from './upload-data/upload-data.component';
 import { UploadOptionComponent } from './upload-data/upload-option/upload-option.component';
 import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-sources.component';
-import { UploadLayoutComponent } from './upload-data/upload-layout.component';
 import { UploadRoutingModule } from './upload-routing.module';
 
 @NgModule({
@@ -70,7 +69,6 @@ import { UploadRoutingModule } from './upload-routing.module';
     UploadDataComponent,
     UploadOptionComponent,
     DesktopSourcesComponent,
-    UploadLayoutComponent,
   ],
   exports: [
     UploadBarComponent,
@@ -78,7 +76,6 @@ import { UploadRoutingModule } from './upload-routing.module';
     UploadDataComponent,
     DesktopSourcesComponent,
     UploadOptionComponent,
-    UploadLayoutComponent,
   ],
 })
 export class UploadModule {}
