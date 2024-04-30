@@ -22,7 +22,7 @@ export class TasksAutomationComponent implements OnDestroy {
       )
       .subscribe(() => {
         // Scroll back to top on navigation (don't know why but our scrollPositionRestoration configuration isn't working on those pages)
-        document.querySelector('.dashboard-content')?.scrollTo(0, 0);
+        document.querySelector('.dashboard-content > main')?.scrollTo(0, 0);
       });
   }
 

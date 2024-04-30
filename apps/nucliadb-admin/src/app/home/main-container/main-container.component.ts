@@ -1,22 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { combineLatest, map } from 'rxjs';
-import { UploadBarComponent, UploadService } from '@flaps/common';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'nad-main-container',
-  templateUrl: './main-container.component.html',
-  styleUrls: ['./main-container.component.scss'],
+  template: '<router-outlet></router-outlet>',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, UploadBarComponent],
+  imports: [CommonModule, RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MainContainerComponent {
-  showBar = combineLatest([this.uploadService.progress, this.uploadService.barDisabled]).pipe(
-    map(([progress, disabled]) => !progress.completed && !disabled),
-  );
-
-  constructor(private uploadService: UploadService) {}
-}
+export class MainContainerComponent {}

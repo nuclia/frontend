@@ -1,8 +1,0 @@
-@import 'apps/nucliadb-admin/src/variables';
-
-.upload-bar-container {
-  position: sticky;
-  top: var(--app-topbar-height);
-  padding: 0 rhythm(6) 0 var(--app-sidebar-width);
-  z-index: $z-index-popup;
-}
