@@ -140,7 +140,6 @@ export class SyncDetailsPageComponent implements OnDestroy {
         take(1),
         switchMap((syncId) => {
           const updatedSync: Partial<ISyncEntity> = { ...this.updatedConfig };
-          delete updatedSync.connector;
           if (this.updatedSelection) {
             updatedSync.foldersToSync = this.updatedSelection;
           }

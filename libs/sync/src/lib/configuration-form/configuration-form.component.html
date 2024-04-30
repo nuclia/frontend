@@ -42,11 +42,18 @@
                   <pa-textarea [formControlName]="field.id">{{ field.label }}</pa-textarea>
                 }
                 @case ('table') {
-                  <div>
+                  <div class="table-container">
                     <label>{{ field.label | translate }}</label>
                     <app-parameters-table
                       [values]="tables[field.id] || []"
                       (valuesChanges)="updateTable(field.id, $event)"></app-parameters-table>
+                    @if (invalidTables.includes(field.id)) {
+                      <nsi-info-card
+                        type="warning"
+                        icon="warning">
+                        {{ 'sync.form-validation.extra-parameters-incomplete' | translate }}
+                      </nsi-info-card>
+                    }
                   </div>
                 }
               }

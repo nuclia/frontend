@@ -108,6 +108,7 @@
 	"sync.folder-selection.search-input-label": "Buscar un título de carpeta",
 	"sync.folder-selection.see-all": "Ver todo ({{total}})",
 	"sync.folder-selection.see-selection": "Ver seleccionados ({{count}})",
+	"sync.form-validation.extra-parameters-incomplete": "Se ignoran las filas incompletas",
 	"sync.home-page.add-sources.description": "Envíe automáticamente contenido desde cualquier fuente a su Knowledge Box actual",
 	"sync.home-page.add-sources.disabled-source-tooltip": "Activar un servidor de sincronización",
 	"sync.home-page.add-sources.title": "Agregar fuentes",

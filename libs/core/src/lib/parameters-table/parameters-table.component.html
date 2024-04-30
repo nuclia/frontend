@@ -3,12 +3,13 @@
     class="header-above"
     formGroupName="rows"
     border
-    [columns]="readonly ? 'repeat(2, 2fr)' : 'repeat(2, 2fr) 1fr'">
+    [columns]="readonly ? 'repeat(2, 2fr)' : 'repeat(2, 2fr) 1fr 40px'">
     <pa-table-header>
       <pa-table-cell header>{{ 'parameters-table.headers.key' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'parameters-table.headers.value' | translate }}</pa-table-cell>
       @if (!readonly) {
         <pa-table-cell header>{{ 'parameters-table.headers.secret-value' | translate }}</pa-table-cell>
+        <pa-table-cell-menu header></pa-table-cell-menu>
       }
     </pa-table-header>
     @for (row of rows; track row) {
@@ -37,6 +38,16 @@
           <pa-table-cell>
             <pa-toggle [formControl]="row.controls.secret"></pa-toggle>
           </pa-table-cell>
+          <pa-table-cell-menu>
+            <pa-button
+              icon="trash"
+              kind="destructive"
+              aspect="basic"
+              size="small"
+              (click)="deleteRow($index)">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
+          </pa-table-cell-menu>
         }
       </pa-table-row>
     }

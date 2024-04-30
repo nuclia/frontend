@@ -1,6 +1,7 @@
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -57,6 +58,7 @@ const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
 export class ConfigurationFormComponent implements OnInit, OnDestroy {
   private labelService = inject(LabelsService);
   private modalService = inject(SisModalService);
+  private cdr = inject(ChangeDetectorRef);
   private unsubscribeAll = new Subject<void>();
 
   @Input({ required: true }) connector?: IConnector | null;
@@ -112,6 +114,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
 
   extensionList: string[] = [];
   tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
+  invalidTables: string[] = [];
 
   private _extra: { [key: string]: string } = {};
 
@@ -156,6 +159,15 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
 
   updateTable(fieldId: string, values: { key: string; value: string; secret: boolean }[]) {
     this.tables[fieldId] = values;
+    if (values.some((row) => (!row.value.trim() || !row.key.trim()) && !(!row.value.trim() && !row.key.trim()))) {
+      if (!this.invalidTables.includes(fieldId)) {
+        this.invalidTables.push(fieldId);
+      }
+    } else if (this.invalidTables.includes(fieldId)) {
+      this.invalidTables = this.invalidTables.filter((id) => id !== fieldId);
+    }
+    this.cdr.markForCheck();
+    this.emitSyncEntity();
   }
 
   createLabelSet() {
@@ -224,6 +236,13 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       },
       {} as { [key: string]: string },
     );
+    const tables = Object.entries(this.tables).reduce(
+      (validTables, [key, table]) => {
+        validTables[key] = table.filter((row) => !(!row.key.trim() || !row.value.trim()));
+        return validTables;
+      },
+      {} as { [tableId: string]: { key: string; value: string; secret: boolean }[] },
+    );
     const syncEntity: ISyncEntity = {
       id,
       title,
@@ -232,7 +251,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       connector: {
         name: this.connectorId,
         parameters: {
-          ...this.tables,
+          ...tables,
           ...extraParams,
         },
       },

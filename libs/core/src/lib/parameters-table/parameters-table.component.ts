@@ -28,6 +28,7 @@ import { combineLatest, distinctUntilChanged, startWith, Subject, takeUntil } fr
     PaButtonModule,
     PaTogglesModule,
     ReactiveFormsModule,
+    PaButtonModule,
   ],
 })
 export class ParametersTableComponent implements OnInit, OnDestroy {
@@ -64,6 +65,16 @@ export class ParametersTableComponent implements OnInit, OnDestroy {
   addRow() {
     this.length++;
     this.setForm([...(this.form.value.rows || []), {}]);
+  }
+
+  deleteRow(rowIndex: number) {
+    this.length--;
+    const remainingRows = (this.form.value.rows || []).filter((item, index) => index !== rowIndex);
+    this.setForm([...remainingRows]);
+    // If there is no remaining rows, add an empty one
+    if (remainingRows.length === 0) {
+      this.addRow();
+    }
   }
 
   setForm(values: { key?: string; value?: string; secret?: boolean }[] = []) {
