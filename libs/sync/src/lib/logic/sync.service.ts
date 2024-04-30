@@ -102,13 +102,10 @@ export class SyncService {
   private _isServerDown = new BehaviorSubject<boolean>(true);
   private _currentSyncId = new BehaviorSubject<string | null>(null);
   private _syncCache = new BehaviorSubject<{ [id: string]: ISyncEntity }>({});
-  private _syncListCache = new BehaviorSubject<SyncBasicData[]>([]);
   private _cacheUpdated = new BehaviorSubject<string>(new Date().toISOString());
 
   isServerDown = this._isServerDown.asObservable();
   currentSyncId = this._currentSyncId.asObservable();
-  syncCache = this._syncCache.asObservable();
-  syncListCache = this._syncListCache.asObservable();
   serverHeaders = {
     token: this.sdk.nuclia.auth.getToken(true),
   };
@@ -191,24 +188,10 @@ export class SyncService {
           headers: this.serverHeaders,
         }),
       ),
-      switchMap(() => this.getConnectors()),
-      tap((connectors) => {
+      tap(() => {
         const syncs = this._syncCache.getValue();
         syncs[sync.id] = sync;
         this._syncCache.next(syncs);
-        const syncsList = this._syncListCache.getValue();
-        this._syncListCache.next([
-          ...syncsList,
-          {
-            id: sync.id,
-            title: sync.title,
-            connectorId: sync.connector.name,
-            connector: connectors[sync.connector.name],
-            kbId: sync.kb?.knowledgeBox || '',
-            totalSyncedResources: 0,
-            disabled: false,
-          },
-        ]);
         this._cacheUpdated.next(new Date().toISOString());
       }),
       map(() => {}),
@@ -229,18 +212,6 @@ export class SyncService {
           const syncs = this._syncCache.getValue();
           syncs[syncId] = { ...syncs[syncId], ...sync };
           this._syncCache.next(syncs);
-          const syncsList = this._syncListCache.getValue();
-          this._syncListCache.next(
-            syncsList.map((item) =>
-              item.id === syncId
-                ? {
-                    ...item,
-                    title: sync.title || item.title,
-                    disabled: typeof sync.disabled === 'boolean' ? sync.disabled : item.disabled,
-                  }
-                : item,
-            ),
-          );
           this._cacheUpdated.next(new Date().toISOString());
         }),
       );
@@ -256,8 +227,6 @@ export class SyncService {
           const syncs = this._syncCache.getValue();
           delete syncs[syncId];
           this._syncCache.next(syncs);
-          const syncsList = this._syncListCache.getValue();
-          this._syncListCache.next(syncsList.filter((sync) => sync.id !== syncId));
           this._cacheUpdated.next(new Date().toISOString());
         }),
       );
@@ -275,40 +244,33 @@ export class SyncService {
   }
 
   getSyncsForKB(kbId: string): Observable<SyncBasicData[]> {
-    const syncs = this._syncListCache.getValue();
-    if (!syncs.find((sync) => sync.kbId === kbId)) {
-      this.isServerDown
-        .pipe(
-          switchMap((isDown) =>
-            isDown
-              ? of([])
-              : this.http
-                  .get<
-                    {
-                      id: string;
-                      title: string;
-                      connector: string;
-                    }[]
-                  >(`${this._syncServer.getValue().serverUrl}/sync/kb/${kbId}`)
-                  .pipe(
-                    switchMap((data) => this.getConnectors().pipe(map((connectors) => ({ data, connectors })))),
-                    tap(({ data, connectors }) => {
-                      this._syncListCache.next([
-                        ...syncs,
-                        ...data.map((sync) => ({
-                          ...sync,
-                          kbId,
-                          connectorId: sync.connector,
-                          connector: connectors[sync.connector],
-                        })),
-                      ]);
-                    }),
-                  ),
-          ),
-        )
-        .subscribe();
-    }
-    return this._syncListCache.pipe(map((syncs) => syncs.filter((sync) => sync.kbId === kbId)));
+    return this.isServerDown.pipe(
+      switchMap((isDown) =>
+        isDown
+          ? of([])
+          : this.http
+              .get<
+                {
+                  id: string;
+                  title: string;
+                  connector: string;
+                }[]
+              >(`${this._syncServer.getValue().serverUrl}/sync/kb/${kbId}`)
+              .pipe(
+                switchMap((data) => this.getConnectors().pipe(map((connectors) => ({ data, connectors })))),
+                map(({ data, connectors }) =>
+                  data
+                    .map((sync) => ({
+                      ...sync,
+                      kbId,
+                      connectorId: sync.connector,
+                      connector: connectors[sync.connector],
+                    }))
+                    .filter((sync) => sync.kbId === kbId),
+                ),
+              ),
+      ),
+    );
   }
 
   getFiles(query?: string): Observable<SearchResults> {
@@ -449,10 +411,6 @@ export class SyncService {
 
   triggerSync(syncId: string): Observable<void> {
     return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute/${syncId}`);
-  }
-
-  triggerSyncs(): Observable<void> {
-    return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute`);
   }
 
   private getConnectors(): Observable<{ [id: string]: IConnector }> {
