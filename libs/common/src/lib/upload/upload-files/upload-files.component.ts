@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { map, take } from 'rxjs';
+import { forkJoin, map, take } from 'rxjs';
 import { DroppedFile, FeaturesService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { UploadService } from '../upload.service';
@@ -32,8 +32,20 @@ export class UploadFilesComponent {
     nonNullable: true,
     validators: [Validators.pattern(/^[a-z]{2}$/)],
   });
-  processings = this.features.specificProcessings.pipe(
-    map((yes) => (yes ? ['none', 'table', 'aitable', 'invoice'] : ['none', 'table'])),
+  processings = forkJoin([
+    this.features.aiTableProcessing.pipe(take(1)),
+    this.features.invoiceProcessing.pipe(take(1)),
+  ]).pipe(
+    map(([aitable, invoice]) => {
+      const processings = ['none', 'table'];
+      if (aitable) {
+        processings.push('aitable');
+      }
+      if (invoice) {
+        processings.push('invoice');
+      }
+      return processings;
+    }),
   );
   processing = 'none';
 
