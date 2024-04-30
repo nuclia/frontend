@@ -90,6 +90,7 @@ export class SyncService {
   private _currentSyncId = new BehaviorSubject<string | null>(null);
   private _syncCache = new BehaviorSubject<{ [id: string]: ISyncEntity }>({});
   private _cacheUpdated = new BehaviorSubject<string>(new Date().toISOString());
+  private _isSyncing = new BehaviorSubject<{ [id: string]: boolean }>({});
 
   isServerDown = this._isServerDown.asObservable();
   currentSyncId = this._currentSyncId.asObservable();
@@ -97,6 +98,7 @@ export class SyncService {
     token: this.sdk.nuclia.auth.getToken(true),
   };
   cacheUpdated = this._cacheUpdated.asObservable();
+  isSyncing = this._isSyncing.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -395,6 +397,14 @@ export class SyncService {
   }
 
   triggerSync(syncId: string): Observable<void> {
-    return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute/${syncId}`);
+    this._isSyncing.next({ ...this._isSyncing.value, [syncId]: true });
+    return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute/${syncId}`).pipe(
+      tap(() => this._isSyncing.next({ ...this._isSyncing.value, [syncId]: false })),
+      catchError((error) => {
+        console.warn(`Trigger sync failed:`, error);
+        this._isSyncing.next({ ...this._isSyncing.value, [syncId]: false });
+        return of();
+      }),
+    );
   }
 }

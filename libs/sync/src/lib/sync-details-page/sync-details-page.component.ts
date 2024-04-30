@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTabsModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IConnector, ISyncEntity, LogEntity, SyncItem, SyncService } from '../logic';
-import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { SyncSettingsComponent } from './sync-settings';
 import { FoldersTabComponent } from './folders-tab/folders-tab.component';
 import { ConfigurationFormComponent } from '../configuration-form';
@@ -71,6 +71,9 @@ export class SyncDetailsPageComponent implements OnDestroy {
   validForm = false;
   updatedConfig?: ISyncEntity;
   updatedSelection?: SyncItem[];
+  isSyncing: Observable<boolean> = combineLatest([this.syncId, this.syncService.isSyncing]).pipe(
+    map(([syncId, isSyncing]) => isSyncing[syncId] || false),
+  );
 
   ngOnDestroy() {
     this.unsubscribeAll.next();

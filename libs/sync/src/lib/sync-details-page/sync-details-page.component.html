@@ -25,6 +25,7 @@
 
             <pa-button
               aspect="basic"
+              [disabled]="isSyncing | async"
               (click)="triggerSync()">
               {{ 'sync.details.buttons.sync-now' | translate }}
             </pa-button>

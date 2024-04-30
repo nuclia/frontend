@@ -266,15 +266,15 @@ export class AddSyncPageComponent implements OnInit {
         const path = this.syncId ? `../../../${syncId}` : `../../${syncId}`;
         this.router.navigate([path], { relativeTo: this.currentRoute });
       }),
-      switchMap(() =>
-        this.syncService.triggerSync(syncId).pipe(
-          tap(() => this.toaster.success('sync.details.toast.triggering-sync-success')),
+      switchMap(() => {
+        this.toaster.success('sync.details.toast.triggering-sync-success');
+        return this.syncService.triggerSync(syncId).pipe(
           catchError(() => {
             this.toaster.error('sync.details.toast.triggering-sync-failed');
             return of();
           }),
-        ),
-      ),
+        );
+      }),
     );
   }
 
