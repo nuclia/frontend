@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConnectorDefinition, IConnector, ISyncEntity, SyncItem, SyncService } from '../logic';
-import { filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import {
   BackButtonComponent,
@@ -148,9 +148,9 @@ export class AddSyncPageComponent implements OnInit {
           ),
           filter((confirmed) => !!confirmed),
           switchMap(() => this._createSync(syncEntity)),
+          switchMap((connector) => this._onSuccessfulCreation(connector, syncEntity)),
         )
         .subscribe({
-          next: (connector) => this._onSuccessfulCreation(connector, syncEntity),
           error: (error) => {
             console.warn(error);
             this.toaster.error('sync.add-page.toast.generic-error');
@@ -190,18 +190,19 @@ export class AddSyncPageComponent implements OnInit {
     this.saving = true;
     const syncEntity = this.configuration;
     if (!this.syncId) {
-      this._createSync(syncEntity).subscribe({
-        next: (connector) => this._onSuccessfulCreation(connector, syncEntity),
-        error: (error) => this._errorHandler(error),
-      });
+      this._createSync(syncEntity)
+        .pipe(switchMap((connector) => this._onSuccessfulCreation(connector, syncEntity)))
+        .subscribe({
+          error: (error) => this._errorHandler(error),
+        });
     } else if (this.folderSelection.length > 0) {
       const syncId = this.syncId;
-      this.syncService.updateSync(syncId, { foldersToSync: this.folderSelection }, true).subscribe({
-        next: () => {
-          this._syncCreationDone(syncId);
-        },
-        error: (error) => this._errorHandler(error),
-      });
+      this.syncService
+        .updateSync(syncId, { foldersToSync: this.folderSelection }, true)
+        .pipe(switchMap(() => this._syncCreationDone(syncId)))
+        .subscribe({
+          error: (error) => this._errorHandler(error),
+        });
     }
   }
 
@@ -243,9 +244,9 @@ export class AddSyncPageComponent implements OnInit {
     );
   }
 
-  private _onSuccessfulCreation(connector: IConnector, syncEntity: ISyncEntity) {
+  private _onSuccessfulCreation(connector: IConnector, syncEntity: ISyncEntity): Observable<void> {
     if (!connector.hasServerSideAuth) {
-      this._syncCreationDone(syncEntity.id);
+      return this._syncCreationDone(syncEntity.id);
     } else {
       let basePath = location.href.split('/sync/add/')[0];
       if (this.sdk.nuclia.options.standalone) {
@@ -255,16 +256,26 @@ export class AddSyncPageComponent implements OnInit {
         basePath = basePath.replace('#/', '');
       }
       connector.goToOAuth(`${basePath}/sync/add/${syncEntity.connector.name}/${syncEntity.id}`, true);
+      return of();
     }
   }
 
-  private _syncCreationDone(syncId: string) {
-    const path = this.syncId ? `../../../${syncId}` : `../../${syncId}`;
-    this.router.navigate([path], { relativeTo: this.currentRoute });
-    this.syncService.triggerSync(syncId).subscribe({
-      next: () => this.toaster.success('sync.details.toast.triggering-sync-success'),
-      error: () => this.toaster.error('sync.details.toast.triggering-sync-failed'),
-    });
+  private _syncCreationDone(syncId: string): Observable<void> {
+    return of(true).pipe(
+      tap(() => {
+        const path = this.syncId ? `../../../${syncId}` : `../../${syncId}`;
+        this.router.navigate([path], { relativeTo: this.currentRoute });
+      }),
+      switchMap(() =>
+        this.syncService.triggerSync(syncId).pipe(
+          tap(() => this.toaster.success('sync.details.toast.triggering-sync-success')),
+          catchError(() => {
+            this.toaster.error('sync.details.toast.triggering-sync-failed');
+            return of();
+          }),
+        ),
+      ),
+    );
   }
 
   private _errorHandler(error: string) {
