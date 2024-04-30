@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil, tap } from 'rxjs/operators';
-import { NavigationService, SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, STFTrackingService } from '@flaps/core';
 import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { UploadService } from '../../upload/upload.service';
@@ -53,7 +53,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   currentKb = this.sdk.currentKb;
-  isAdminOrContrib = this.sdk.isAdminOrContrib;
+  isAdminOrContrib = this.features.isKbAdminOrContrib;
 
   searchForm = new FormGroup({
     searchIn: new FormControl<'title' | 'resource'>('title'),
@@ -66,8 +66,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.emptyKb;
-  isTrial = this.sdk.currentAccount.pipe(map((account) => account.type === 'stash-trial'));
-  isAccountManager = this.sdk.currentAccount.pipe(map((account) => account.can_manage_account));
+  isTrial = this.features.isTrial;
+  isAccountManager = this.features.isAccountManager;
   upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
 
   constructor(
@@ -77,6 +77,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private navigation: NavigationService,
     private resourceListService: ResourceListService,
     private tracking: STFTrackingService,
+    private features: FeaturesService,
   ) {}
 
   ngOnInit(): void {

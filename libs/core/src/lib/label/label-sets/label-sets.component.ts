@@ -4,7 +4,7 @@ import { LabelSetKind } from '@nuclia/core';
 import { map } from 'rxjs/operators';
 import { LabelsService } from '../labels.service';
 import { LabelSetDisplay } from './model';
-import { SDKService } from '@flaps/core';
+import { FeaturesService } from '@flaps/core';
 
 @Component({
   selector: 'app-label-sets',
@@ -29,10 +29,10 @@ export class LabelSetsComponent {
     map((labelSets) => labelSets.filter((labelSet) => labelSet.kind.includes(LabelSetKind.SELECTIONS))),
   );
 
-  isAdminOrContrib = this.sdk.isAdminOrContrib;
+  isAdminOrContrib = this.features.isKbAdminOrContrib;
 
   constructor(
-    private sdk: SDKService,
     private labelsService: LabelsService,
+    private features: FeaturesService,
   ) {}
 }

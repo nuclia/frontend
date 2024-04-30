@@ -1,6 +1,6 @@
 import { combineLatest, filter, map, Observable, switchMap, take, tap } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
-import { SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -19,11 +19,12 @@ export class ResourceViewerService {
     private modalService: SisModalService,
     private trackingService: STFTrackingService,
     private zone: NgZone,
+    private features: FeaturesService,
   ) {}
 
   init(widgetId: string) {
     this.widgetId = widgetId;
-    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
+    this.features.isKbAdminOrContrib.pipe(take(1)).subscribe((isKbAdminOrContrib) => {
       const waitForWidget = window.setInterval(() => {
         const widget = document.getElementById(widgetId) as unknown as any;
         if (widget) {
@@ -34,7 +35,7 @@ export class ResourceViewerService {
               action: this.showUID.bind(this),
             },
           ];
-          if (kb.admin || kb.contrib) {
+          if (isKbAdminOrContrib) {
             actions.push(
               {
                 label: this.translation.instant('resource.menu.edit'),

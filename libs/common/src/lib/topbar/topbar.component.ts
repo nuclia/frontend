@@ -1,6 +1,6 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NavigationService, NotificationService, SDKService, UserService } from '@flaps/core';
+import { FeaturesService, NavigationService, NotificationService, SDKService, UserService } from '@flaps/core';
 import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
@@ -20,7 +20,7 @@ export class TopbarComponent {
   isStage = location.hostname === 'stashify.cloud';
   private _account = this.sdk.currentAccount.pipe(shareReplay());
   accountType = this._account.pipe(map((account) => account.type));
-  isAccountManager = this._account.pipe(map((account) => account.can_manage_account));
+  isAccountManager = this.features.isAccountManager;
   isTypeEnforced = combineLatest([this.accountType, this.route.queryParams.pipe(map((params) => params['type']))]).pipe(
     map(([currentType, nextType]) => nextType && currentType !== nextType),
   );
@@ -52,6 +52,7 @@ export class TopbarComponent {
     private route: ActivatedRoute,
     private standaloneService: StandaloneService,
     private notificationService: NotificationService,
+    private features: FeaturesService,
   ) {}
 
   goToHome(): void {

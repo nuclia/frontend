@@ -48,7 +48,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   copyButtonActive = false;
 
   isPrivateKb = this.sdk.currentKb.pipe(map((kb) => kb.state === 'PRIVATE'));
-  isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
+  isKbAdmin = this.featuresService.isKbAdmin;
 
   generativeModels: LearningConfigurationOption[] = [];
   modelsSupportingVision = MODELS_SUPPORTING_VISION;

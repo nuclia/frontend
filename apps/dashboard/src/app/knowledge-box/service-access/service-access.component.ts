@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
 import { TokenDialogComponent } from '@flaps/common';
@@ -15,6 +15,7 @@ import { SisModalService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceAccessComponent implements OnInit, OnDestroy {
+  isTrial = this.features.isTrial;
   account: Account | undefined;
   kb: KnowledgeBox | undefined;
   serviceAccess: ServiceAccount[] | undefined;
@@ -35,6 +36,7 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private modalService: SisModalService,
     private sdk: SDKService,
+    private features: FeaturesService,
   ) {}
 
   ngOnInit(): void {

@@ -52,7 +52,7 @@ export class UploadFilesComponent {
   standalone = this.standaloneService.standalone;
   noLimit = this.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
-  isTrial = this.sdk.currentAccount.pipe(map((account) => account.type === 'stash-trial'));
+  isTrial = this.features.isTrial;
 
   get allowedFiles(): File[] {
     return this.noLimit

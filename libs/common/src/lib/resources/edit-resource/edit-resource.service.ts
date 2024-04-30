@@ -33,7 +33,7 @@ import {
   UserClassification,
   UserFieldMetadata,
 } from '@nuclia/core';
-import { NavigationService, SDKService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -108,7 +108,7 @@ export class EditResourceService {
       }
     }),
   );
-  isAdminOrContrib = this.sdk.isAdminOrContrib;
+  isAdminOrContrib = this.features.isKbAdminOrContrib;
 
   constructor(
     private sdk: SDKService,
@@ -118,6 +118,7 @@ export class EditResourceService {
     private translate: TranslateService,
     private navigation: NavigationService,
     private sanitizer: DomSanitizer,
+    private features: FeaturesService,
   ) {}
 
   loadResource(resourceId: string): Observable<Resource> {

@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { AccountService, BillingService, SDKService } from '@flaps/core';
-import { UPGRADABLE_ACCOUNT_TYPES } from './billing/subscription.service';
+import { AccountService, BillingService, FeaturesService, SDKService } from '@flaps/core';
 import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { addDays, format, isFuture, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
 import { StatsPeriod, StatsType } from '@nuclia/core';
@@ -21,11 +20,12 @@ export class MetricsService {
   private sdk = inject(SDKService);
   private accountService = inject(AccountService);
   private billingService = inject(BillingService);
+  private featureService = inject(FeaturesService);
 
   account$ = this.sdk.currentAccount;
-  canUpgrade = this.account$.pipe(map((account) => UPGRADABLE_ACCOUNT_TYPES.includes(account.type)));
+  canUpgrade = this.featureService.canUpgrade;
 
-  isTrial = this.account$.pipe(map((account) => account.type === 'stash-trial'));
+  isTrial = this.featureService.isTrial;
   isSubscribed = this.billingService.isSubscribedToStripe;
   accountUsage = this.billingService.getAccountUsage().pipe(shareReplay());
   trialPeriod = combineLatest([this.account$, this.accountService.getAccountTypes()]).pipe(

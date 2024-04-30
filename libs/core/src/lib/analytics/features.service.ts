@@ -1,21 +1,43 @@
-import { Injectable } from '@angular/core';
-import { combineLatest, map } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { combineLatest, map, Observable } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
+import { AccountTypes } from '@nuclia/core';
+
+const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'stash-starter', 'v3starter'];
 
 @Injectable({
   providedIn: 'root',
 })
 export class FeaturesService {
-  isEnterpriseOrGrowth = this.sdk.currentAccount.pipe(
+  private featureFlag = inject(FeatureFlagService);
+  private sdk = inject(SDKService);
+
+  private _account = this.sdk.currentAccount;
+  private _kb = this.sdk.currentKb;
+
+  /**
+   * PERMISSIONS and ACCOUNT TYPES
+   */
+  isKbAdminOrContrib = this.sdk.isAdminOrContrib;
+  isKbAdmin = this._kb.pipe(map((kb) => !!kb.admin || kb.accountId === 'local'));
+  isKBContrib = this._kb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isAccountManager = this._account.pipe(
+    map((account) => {
+      return account.can_manage_account;
+    }),
+  );
+  isTrial: Observable<boolean> = this._account.pipe(map((account) => account.type === 'stash-trial'));
+  isEnterpriseOrGrowth: Observable<boolean> = this._account.pipe(
     map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
   );
+  canUpgrade = combineLatest([this.isAccountManager, this._account]).pipe(
+    map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.includes(account.type)),
+  );
 
-  constructor(
-    private featureFlag: FeatureFlagService,
-    private sdk: SDKService,
-  ) {}
-
+  /**
+   * FEATURES
+   */
   billing = this.featureFlag.isFeatureEnabled('billing');
   training = this.featureFlag.isFeatureEnabled('training');
   trainingNer = this.featureFlag.isFeatureEnabled('training_ner');

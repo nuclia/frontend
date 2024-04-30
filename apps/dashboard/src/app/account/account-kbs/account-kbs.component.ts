@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Subject, tap } from 'rxjs';
-import { filter, map, switchMap, take, takeUntil } from 'rxjs/operators';
+import { filter, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
-import { NavigationService, SDKService, Zone, ZoneService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, Zone, ZoneService } from '@flaps/core';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { KbAddData, KbAddModalComponent } from '@flaps/common';
@@ -20,7 +20,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   account?: Account;
   knowledgeBoxes: IKnowledgeBoxItem[] | undefined;
   maxKnowledgeBoxes: number = 1;
-  canAddKb = this.sdk.currentAccount.pipe(map((account) => account!.can_manage_account));
+  canAddKb = this.features.isAccountManager;
   unsubscribeAll = new Subject<void>();
 
   constructor(
@@ -32,6 +32,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     private toaster: SisToastService,
     private sdk: SDKService,
     private modalService: SisModalService,
+    private features: FeaturesService,
   ) {}
 
   ngOnInit(): void {

@@ -10,7 +10,7 @@ import {
 import { Router, RouterLinkActive } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, UserService } from '@flaps/core';
 import { Account, Welcome } from '@nuclia/core';
-import { map, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import {
   AvatarModel,
   PaAvatarModule,
@@ -55,7 +55,7 @@ export class UserMenuComponent implements OnDestroy {
   avatar: AvatarModel = {};
   accounts: string[] = [];
   account: Account | null = null;
-  isAccountManager = this.sdk.currentAccount.pipe(map((account) => account!.can_manage_account));
+  isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.billing;
   hasOwnAccount = this.userService.hasOwnAccount;
   standalone = this.sdk.nuclia.options.standalone;

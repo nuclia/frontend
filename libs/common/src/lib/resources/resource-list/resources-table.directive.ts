@@ -63,7 +63,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
   data = this.resourceListService.data;
   sorting = this.resourceListService.sort;
-  isAdminOrContrib = this.sdk.isAdminOrContrib;
+  isAdminOrContrib = this.features.isKbAdminOrContrib;
 
   isSummarizationEnabled = this.features.summarization;
 

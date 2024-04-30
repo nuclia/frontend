@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { combineLatest, filter, map, shareReplay, switchMap, take } from 'rxjs';
-import { BillingService, NavigationService, SDKService, SubscriptionStatus } from '@flaps/core';
+import { BillingService, FeaturesService, NavigationService, SDKService, SubscriptionStatus } from '@flaps/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
@@ -20,8 +20,8 @@ const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountStatusComponent {
+  isTrial = this.features.isTrial;
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
-  isTrial = this.accountType.pipe(map((type) => type === 'stash-trial'));
   isSubscribed = this.billingService.isSubscribedToStripe;
   subscription = this.billingService.getStripeSubscription().pipe(shareReplay());
   upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
@@ -65,6 +65,7 @@ export class AccountStatusComponent {
     private navigation: NavigationService,
     private modalService: SisModalService,
     private router: Router,
+    private features: FeaturesService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.checkIfTrialExpired();
