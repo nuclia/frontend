@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FileUploadModule, STFPipesModule, LabelModule } from '@flaps/core';
+import { FileUploadModule, LabelModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
 import { CsvSelectComponent } from './csv-select/csv-select.component';
@@ -24,15 +24,13 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent, ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
-import { HintModule } from '../hint/hint.module';
+import { HintModule } from '../hint';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
 import { UploadDataComponent } from './upload-data/upload-data.component';
 import { UploadOptionComponent } from './upload-data/upload-option/upload-option.component';
 import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-sources.component';
-import { UploadLayoutComponent } from './upload-data/upload-layout.component';
 import { UploadRoutingModule } from './upload-routing.module';
-import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module';
 
 @NgModule({
   imports: [
@@ -58,7 +56,6 @@ import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module
     UploadRoutingModule,
     UploadBarComponent,
     CsvSelectComponent,
-    ConnectorsModule,
     InfoCardComponent,
   ],
   declarations: [
@@ -72,7 +69,6 @@ import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module
     UploadDataComponent,
     UploadOptionComponent,
     DesktopSourcesComponent,
-    UploadLayoutComponent,
   ],
   exports: [
     UploadBarComponent,
@@ -80,7 +76,6 @@ import { ConnectorsModule } from 'libs/sync/src/lib/connectors/connectors.module
     UploadDataComponent,
     DesktopSourcesComponent,
     UploadOptionComponent,
-    UploadLayoutComponent,
   ],
 })
 export class UploadModule {}

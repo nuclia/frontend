@@ -1,0 +1,39 @@
+<div class="folders-tab">
+  @if (!editing) {
+    <header>
+      <pa-input
+        icon="search"
+        [formControl]="queryControl">
+        {{ 'sync.folder-selection.search-input-label' | translate }}
+      </pa-input>
+      <pa-button (click)="editing = true">{{ 'sync.folder-selection.edit-folders-button' | translate }}</pa-button>
+    </header>
+
+    <nsi-folder-list
+      [filtered]="!!query"
+      [folders]="selectedFolders"></nsi-folder-list>
+  } @else if (sync) {
+    <nsy-folder-selection
+      [sync]="sync"
+      (selectedSyncItems)="updateSelection($event)"></nsy-folder-selection>
+
+    <nsi-sticky-footer>
+      <div
+        footerNote
+        class="title-xs">
+        {{ 'sync.folder-selection.footer.selection-count' | translate: { count: selectionCount } }}
+      </div>
+
+      <pa-button
+        aspect="basic"
+        (click)="editing = false">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        (click)="saveSelection()">
+        {{ 'sync.folder-selection.footer.save-changes' | translate }}
+      </pa-button>
+    </nsi-sticky-footer>
+  }
+</div>

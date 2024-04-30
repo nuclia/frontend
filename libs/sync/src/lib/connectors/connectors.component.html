@@ -1,9 +1,0 @@
-<div class="connectors-list">
-  <nsy-connector
-    *ngFor="let connector of (connectors | async) || []"
-    [title]="connector.title"
-    [logo]="connector.logo"
-    [description]="connector.description"
-    [disabled]="disabled"
-    (selectConnector)="onSelectConnector(connector.id)"></nsy-connector>
-</div>

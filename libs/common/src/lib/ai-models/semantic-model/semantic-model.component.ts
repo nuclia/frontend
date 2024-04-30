@@ -17,7 +17,6 @@ import { TranslateModule } from '@ngx-translate/core';
     TranslateModule,
   ],
   templateUrl: './semantic-model.component.html',
-  styleUrl: '../_common-ai-models.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SemanticModelComponent extends LearningConfigurationDirective {

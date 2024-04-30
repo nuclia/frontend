@@ -27,17 +27,15 @@
             <pa-icon name="upload"></pa-icon>
             <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
           </a>
-          @if ((inUpload | async) && (isAdminOrContrib | async) && !(invalidKey | async)) {
-            @for (sync of syncs | async; track sync.id) {
-              <a
-                [routerLink]="kbUrl + '/upload/sync/' + sync.id"
-                routerLinkActive="active"
-                class="nav-link sub-item sync">
-                <img [src]="sync.logo" />
-                <span class="nav-link-title">{{ sync.title }}</span>
-              </a>
-            }
-          }
+          <a
+            [routerLink]="!(invalidKey | async) ? kbUrl + '/resources' : null"
+            routerLinkActive="active"
+            class="nav-link"
+            data-cy="go-to-resources"
+            [class.disabled]="invalidKey | async">
+            <pa-icon name="list"></pa-icon>
+            <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
+          </a>
           <a
             class="nav-link"
             data-cy="go-to-search"
@@ -48,13 +46,13 @@
             <span class="nav-link-title">{{ 'stash.search' | translate }}</span>
           </a>
           <a
-            [routerLink]="!(invalidKey | async) ? kbUrl + '/resources' : null"
+            [routerLink]="!(invalidKey | async) ? kbUrl + '/sync' : null"
             routerLinkActive="active"
             class="nav-link"
-            data-cy="go-to-resources"
+            data-cy="go-to-sync"
             [class.disabled]="invalidKey | async">
-            <pa-icon name="list"></pa-icon>
-            <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
+            <pa-icon name="connectors"></pa-icon>
+            <span class="nav-link-title">{{ 'navbar.sync' | translate }}</span>
           </a>
           <a
             [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widget-generator' : null"

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { combineLatest, map, of } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
 
@@ -30,7 +30,6 @@ export class FeaturesService {
   allowKbManagementFromNuaKey = this.featureFlag.isFeatureEnabled('allow-kb-management-from-nua-key');
   newPricing = this.featureFlag.isFeatureEnabled('new-pricing');
   pdfAnnotation = this.featureFlag.isFeatureEnabled('pdf-annotation');
-  sync = this.featureFlag.isFeatureEnabled('sync');
   promptLabEnabled = this.featureFlag.isFeatureEnabled('llm-prompt-lab');
   ragHierarchy = this.featureFlag.isFeatureEnabled('rag-hierarchy');
   ragImages = this.featureFlag.isFeatureEnabled('rag-images');

@@ -2,7 +2,7 @@
   "name": "sync",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/sync/src",
-  "prefix": "lib",
+  "prefix": "nsy",
   "tags": [],
   "projectType": "library",
   "targets": {

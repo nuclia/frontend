@@ -26,7 +26,6 @@ import { filter, of } from 'rxjs';
     PaButtonModule,
   ],
   templateUrl: './summarization.component.html',
-  styleUrl: '../_common-ai-models.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SummarizationComponent extends LearningConfigurationDirective {

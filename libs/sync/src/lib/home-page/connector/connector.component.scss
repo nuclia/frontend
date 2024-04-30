@@ -1,0 +1,9 @@
+@import '../../../../../../apps/dashboard/src/variables';
+
+.connector {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  width: rhythm(12);
+}

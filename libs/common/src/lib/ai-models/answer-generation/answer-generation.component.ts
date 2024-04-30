@@ -27,7 +27,6 @@ import { of } from 'rxjs';
     PaButtonModule,
   ],
   templateUrl: './answer-generation.component.html',
-  styleUrl: '../_common-ai-models.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnswerGenerationComponent extends LearningConfigurationDirective {

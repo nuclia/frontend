@@ -110,11 +110,6 @@ const routes: Routes = [
                 path: 'billing',
                 loadChildren: () => import('./account/billing/billing.module').then((m) => m.BillingModule),
               },
-              {
-                path: 'sync',
-                // eslint-disable-next-line @nx/enforce-module-boundaries
-                loadChildren: () => import('../../../../libs/sync/src/lib/sync.module').then((m) => m.SyncModule),
-              },
             ],
           },
           // backward compatibility with old urls
@@ -146,6 +141,11 @@ const routes: Routes = [
               {
                 path: 'search',
                 component: SearchComponent,
+              },
+              {
+                path: 'sync',
+                // eslint-disable-next-line @nx/enforce-module-boundaries
+                loadChildren: () => import('../../../../libs/sync/src/lib/sync.routes').then((m) => m.SYNC_ROUTES),
               },
               {
                 path: 'activity',

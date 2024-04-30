@@ -1,0 +1,15 @@
+@import 'apps/dashboard/src/variables';
+
+.folders-tab {
+  position: relative;
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: rhythm(2);
+
+    pa-input {
+      width: rhythm(60);
+    }
+  }
+}

@@ -25,13 +25,5 @@ header {
 }
 
 .inline-form {
-  align-items: center;
-  display: flex;
-  gap: rhythm(2);
   justify-content: space-between;
-
-  & > *:not(span) {
-    flex: 1 0 auto;
-    max-width: 50%;
-  }
 }

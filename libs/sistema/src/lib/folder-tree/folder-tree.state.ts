@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FolderTree } from './folder-tree.model';
+import { FolderTree, getAllPaths } from './folder-tree.model';
 import { BehaviorSubject, filter, map } from 'rxjs';
 
 let count = 0;
@@ -19,8 +19,14 @@ export class FolderTreeState {
     map((tree) => tree as FolderTree),
   );
 
-  initTree(tree: FolderTree) {
+  initTree(tree: FolderTree, selection?: { id: string; path: string }[]) {
     this._tree.next(tree);
+    (selection || []).forEach((selectedItem) => {
+      const node = this.getFolder(selectedItem.path);
+      if (node) {
+        this.toggleFolder(node, true);
+      }
+    });
   }
 
   toggleFolder(folder: FolderTree, selected: boolean) {
@@ -54,7 +60,7 @@ export class FolderTreeState {
       children: Object.values(folder.children || {}).reduce((children, child) => {
         return {
           ...children,
-          [child.id]: this.toggleAllChildren(child, selected),
+          [child.path]: this.toggleAllChildren(child, selected),
         };
       }, {}),
     };
@@ -71,7 +77,7 @@ export class FolderTreeState {
     }
     const children = {
       ...parent.children,
-      [folder.id]: folder,
+      [folder.path]: folder,
     };
     const updatedParent = {
       ...parent,
@@ -92,8 +98,8 @@ export class FolderTreeState {
   }
 
   private getParentPath(path: string): string {
-    const ids = path.split('/');
-    return ids.slice(0, ids.length - 1).join('/') || '/';
+    const titles = path.split('/');
+    return titles.slice(0, titles.length - 1).join('/') || '/';
   }
 
   private getFolder(path: string): FolderTree | undefined {
@@ -103,12 +109,13 @@ export class FolderTreeState {
     if (path === '/') {
       return this._tree.value;
     }
-    const ids = path.split('/').filter((id) => id);
+
+    const allPaths = getAllPaths(path);
     let parent = this._tree.value;
     let folder: FolderTree | undefined;
-    ids.forEach((id) => {
+    allPaths.forEach((part) => {
       if (parent) {
-        folder = parent.children?.[id];
+        folder = parent.children?.[part];
         if (folder) {
           parent = folder;
         }

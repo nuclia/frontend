@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { getLabelColor, LABEL_COLORS, LabelColor } from './label.utils';
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'nsi-label',
@@ -15,12 +14,12 @@ export class LabelComponent {
       this._color = labelColor;
     }
   }
-  @Input()
-  set disabled(value: any) {
-    this._disabled = coerceBooleanProperty(value);
-  }
-  get disabled() {
-    return this._disabled;
+  @Input({ transform: booleanAttribute }) disabled = false;
+  @Input({ transform: booleanAttribute }) readonly = false;
+  @Input({ transform: booleanAttribute }) set neutral(value: boolean) {
+    if (value) {
+      this._color = { ...LABEL_COLORS[3], textColor: '#000' };
+    }
   }
 
   @Output() removeLabel: EventEmitter<{ event: MouseEvent | KeyboardEvent; value: any }> = new EventEmitter<{
@@ -38,5 +37,4 @@ export class LabelComponent {
     return this._color.textColor;
   }
   private _color: LabelColor = LABEL_COLORS[0];
-  private _disabled = false;
 }

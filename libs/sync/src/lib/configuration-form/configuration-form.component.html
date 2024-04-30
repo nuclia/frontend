@@ -1,0 +1,169 @@
+@if (connector) {
+  <form [formGroup]="form">
+    <nsi-two-columns-configuration-item
+      [noTopBorder]="noTopBorder"
+      itemTitle="sync.add-page.connector-name.title"
+      description="sync.add-page.connector-name.description">
+      <div class="form-container">
+        <pa-input formControlName="name">{{ 'sync.add-page.connector-name.field-label' | translate }}</pa-input>
+      </div>
+    </nsi-two-columns-configuration-item>
+
+    <ng-container formGroupName="extra">
+      @for (section of connector.getParametersSections() | async; track section.id) {
+        <nsi-two-columns-configuration-item
+          [badge]="section.badge"
+          [itemTitle]="section.title"
+          [description]="section.description || ''">
+          <div class="form-container">
+            @for (field of section.fields; track field.id) {
+              @switch (field.type) {
+                @case ('text') {
+                  <pa-input
+                    [formControlName]="field.id"
+                    [placeholder]="field.placeholder">
+                    {{ field.label | translate }}
+                  </pa-input>
+                }
+                @case ('select') {
+                  <pa-select
+                    [formControlName]="field.id"
+                    [label]="field.label">
+                    @for (option of field.options; track option.value) {
+                      <pa-option
+                        [disabled]="option.disabled"
+                        [value]="option.value">
+                        {{ option.label | translate }}
+                      </pa-option>
+                    }
+                  </pa-select>
+                }
+                @case ('textarea') {
+                  <pa-textarea [formControlName]="field.id">{{ field.label }}</pa-textarea>
+                }
+                @case ('table') {
+                  <div class="table-container">
+                    <label>{{ field.label | translate }}</label>
+                    <app-parameters-table
+                      [values]="tables[field.id] || []"
+                      (valuesChanges)="updateTable(field.id, $event)"></app-parameters-table>
+                    @if (invalidTables.includes(field.id)) {
+                      <nsi-info-card
+                        type="warning"
+                        icon="warning">
+                        {{ 'sync.form-validation.extra-parameters-incomplete' | translate }}
+                      </nsi-info-card>
+                    }
+                  </div>
+                }
+              }
+            }
+          </div>
+        </nsi-two-columns-configuration-item>
+      }
+    </ng-container>
+
+    @if (connector.canSyncSecurityGroups) {
+      <nsi-two-columns-configuration-item
+        itemTitle="sync.add-page.security-group.title"
+        description="sync.add-page.security-group.description"
+        badge="generic.badge.advanced">
+        <div class="form-container toggle-container">
+          <pa-toggle
+            withBackground
+            formControlName="syncSecurityGroups">
+            {{ 'sync.add-page.security-group.toggle-label' | translate }}
+          </pa-toggle>
+        </div>
+      </nsi-two-columns-configuration-item>
+    }
+    <nsi-two-columns-configuration-item
+      badge="generic.badge.optional"
+      itemTitle="sync.add-page.add-labels.title"
+      description="sync.add-page.add-labels.description">
+      <div class="form-container">
+        <div class="inline-form full-width">
+          <app-label-dropdown
+            [labelSets]="labelSets | async"
+            [selection]="labelSelection"
+            [disabled]="(hasLabelSet | async) === false"
+            (selectionChange)="updateLabelSelection($event)"
+            aspect="basic"
+            fullWidth>
+            {{ 'sync.add-page.add-labels.select-labels' | translate }}
+          </app-label-dropdown>
+          <span class="separator-word body-s">{{ 'generic.or' | translate }}</span>
+          <pa-button
+            class="full-width"
+            icon="circle-plus"
+            aspect="basic"
+            iconAndText
+            (click)="createLabelSet()">
+            {{ 'sync.add-page.add-labels.create-labelset' | translate }}
+          </pa-button>
+        </div>
+
+        <div class="inline-form small-gap">
+          @for (label of labelSelection; track label) {
+            <nsi-label
+              [color]="label.color"
+              (removeLabel)="removeLabel(label)">
+              {{ label.label }}
+            </nsi-label>
+          }
+        </div>
+      </div>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-two-columns-configuration-item
+      badge="generic.badge.optional"
+      itemTitle="sync.add-page.filter-resources.title"
+      description="sync.add-page.filter-resources.description">
+      <div class="form-container">
+        <nsi-info-card>{{ 'sync.add-page.filter-resources.file-extension.info' | translate }}</nsi-info-card>
+        <div
+          class="form-container"
+          formGroupName="filterResources">
+          <div class="inline-form full-width small-gap">
+            <pa-select formControlName="extensionUsage">
+              <pa-option value="include">
+                {{ 'sync.add-page.filter-resources.file-extension.include' | translate }}
+              </pa-option>
+              <pa-option value="exclude">
+                {{ 'sync.add-page.filter-resources.file-extension.exclude' | translate }}
+              </pa-option>
+            </pa-select>
+            <pa-input
+              id="extension"
+              placeholder=".pdf,.docx"
+              formControlName="extensions">
+              {{ 'sync.add-page.filter-resources.file-extension.label' | translate }}
+            </pa-input>
+          </div>
+
+          <div class="inline-form small-gap">
+            @for (extension of extensionList; track extension) {
+              <nsi-label
+                neutral
+                (removeLabel)="removeExtension(extension)">
+                {{ extension }}
+              </nsi-label>
+            }
+          </div>
+
+          <div class="label-field-container">
+            <label>{{ 'sync.add-page.filter-resources.modification-date.label' | translate }}</label>
+            <div class="inline-form full-width small-gap">
+              <pa-date-picker
+                formControlName="from"
+                [label]="'sync.add-page.filter-resources.modification-date.from' | translate"></pa-date-picker>
+              <pa-date-picker
+                formControlName="to"
+                [label]="'sync.add-page.filter-resources.modification-date.to' | translate"></pa-date-picker>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nsi-two-columns-configuration-item>
+  </form>
+}

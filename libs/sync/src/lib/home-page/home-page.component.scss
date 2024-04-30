@@ -1,0 +1,68 @@
+@import 'apps/dashboard/src/variables';
+@import '../common-sync';
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+
+  .section-description {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.5);
+  }
+
+  .setup-sync-agent {
+    border: 1px solid $color-neutral-lighter;
+    border-radius: rhythm(1);
+    padding: rhythm(3);
+
+    .radio-config-row {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      justify-content: space-between;
+
+      pa-radio {
+        flex: 1 0 auto;
+      }
+    }
+
+    .inline-form {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: rhythm(1);
+      justify-content: flex-end;
+    }
+
+    pa-input.server-url ::ng-deep .pa-field-control {
+      width: rhythm(40);
+
+      @media (min-width: $size-viewport-xlarge-min) {
+        width: rhythm(53);
+      }
+    }
+  }
+
+  .separator-line {
+    margin: rhythm(3) 0;
+  }
+
+  .connector-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(2);
+  }
+
+  .logo-title {
+    @include body-s();
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  pa-table-cell pa-toggle ::ng-deep .pa-toggle-context {
+    gap: rhythm(1);
+  }
+}

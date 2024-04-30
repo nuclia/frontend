@@ -12,7 +12,7 @@ import { PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 })
 export class BadgeComponent {
   @Input({ transform: numberAttribute }) count?: number;
-  @Input() kind: 'tertiary' | 'neutral' = 'neutral';
+  @Input() kind: 'tertiary' | 'neutral' | 'success' = 'neutral';
 
   @HostBinding('class.overline') get overline() {
     return true;
@@ -22,5 +22,8 @@ export class BadgeComponent {
   }
   @HostBinding('class.tertiary') get tertiary() {
     return this.kind === 'tertiary';
+  }
+  @HostBinding('class.success') get success() {
+    return this.kind === 'success';
   }
 }

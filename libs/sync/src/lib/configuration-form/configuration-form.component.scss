@@ -1,0 +1,9 @@
+@import 'apps/dashboard/src/variables';
+
+.toggle-container pa-toggle ::ng-deep .pa-toggle-context {
+  justify-content: space-between;
+}
+
+.table-container nsi-info-card {
+  margin-top: rhythm(1.5);
+}

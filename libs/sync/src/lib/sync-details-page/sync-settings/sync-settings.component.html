@@ -1,0 +1,163 @@
+<nsi-two-columns-configuration-item
+  noTopBorder
+  itemTitle="sync.details.settings.title"
+  description="sync.details.settings.description">
+  <div class="sync-settings-container">
+    <div class="body-s settings-item">
+      <label>{{ 'sync.details.settings.name' | translate }}</label>
+      <div>{{ sync.title }}</div>
+    </div>
+    <div class="separator-line"></div>
+
+    <div class="body-s settings-item">
+      <label>{{ 'sync.details.settings.synchronize-security-groups' | translate }}</label>
+      <div style="text-transform: capitalize">
+        {{
+          (sync.syncSecurityGroups ? 'sync.details.settings.boolean.true' : 'sync.details.settings.boolean.false')
+            | translate
+        }}
+      </div>
+    </div>
+    <div class="separator-line"></div>
+    <div class="body-s settings-item">
+      <label>{{ 'sync.details.settings.labels' | translate }}</label>
+      <div class="row-container">
+        @for (label of coloredLabels; track label) {
+          <nsi-label
+            readonly
+            [color]="label.color">
+            {{ label.label }}
+          </nsi-label>
+        } @empty {
+          –
+        }
+      </div>
+    </div>
+
+    <div class="separator-line"></div>
+    <label>
+      {{
+        (sync.filters?.fileExtensions?.exclude
+          ? 'sync.details.settings.file-extensions.excluded'
+          : 'sync.details.settings.file-extensions.included'
+        ) | translate
+      }}
+    </label>
+    <div class="body-s settings-item">
+      @if (sync.filters?.fileExtensions; as fileExtensions) {
+        <div class="row-container">
+          @for (extension of fileExtensions.extensions.split(', '); track extension) {
+            <nsi-label
+              readonly
+              neutral>
+              {{ extension }}
+            </nsi-label>
+          } @empty {
+            –
+          }
+        </div>
+      } @else {
+        –
+      }
+    </div>
+    <div class="separator-line"></div>
+    <label>{{ 'sync.details.settings.modification-date.label' | translate }}</label>
+    <div class="body-s row-container">
+      @if (sync.filters?.modified; as dates) {
+        {{ 'sync.details.settings.modification-date.from' | translate }}
+        <pa-datetime
+          dateOnly
+          [datetime]="dates.from"></pa-datetime>
+        {{ 'sync.details.settings.modification-date.to' | translate }}
+        <pa-datetime
+          dateOnly
+          [datetime]="dates.to"></pa-datetime>
+      } @else {
+        –
+      }
+    </div>
+  </div>
+</nsi-two-columns-configuration-item>
+
+@if (connector) {
+  @for (section of connector.getParametersSections() | async; track section.id) {
+    <nsi-two-columns-configuration-item
+      [itemTitle]="section.title"
+      [description]="section.description || ''">
+      <div class="sync-settings-container">
+        @for (field of section.fields; track field.id) {
+          <div class="body-s settings-item">
+            <label>{{ field.label | translate }}</label>
+            @if (field.type !== 'table') {
+              <div>{{ sync.connector.parameters[field.id] || '_' }}</div>
+            } @else if (sync.connector.parameters[field.id].length > 0) {
+              <app-parameters-table
+                readonly
+                [values]="sync.connector.parameters[field.id]"></app-parameters-table>
+            } @else {
+              –
+            }
+          </div>
+          @if (!$last) {
+            <div class="separator-line"></div>
+          }
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+}
+
+<nsi-two-columns-configuration-item
+  itemTitle="sync.details.activity-log.title"
+  description="sync.details.activity-log.description">
+  <div
+    #activitySection
+    class="activity-logs-container">
+    <pa-table
+      border
+      columns="2fr 1fr">
+      <pa-table-header>
+        <pa-table-cell header>{{ 'sync.details.activity-log.table-header.message' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'sync.details.activity-log.table-header.date' | translate }}</pa-table-cell>
+      </pa-table-header>
+      @for (log of logs; track log) {
+        <pa-table-row [last]="$last">
+          <pa-table-cell>
+            <div class="body-s icon-and-text">
+              @switch (log.level) {
+                @case ('high') {
+                  <pa-icon
+                    class="error"
+                    size="small"
+                    name="circle-cross"></pa-icon>
+                }
+                @case ('medium') {
+                  <pa-icon
+                    class="warning"
+                    size="small"
+                    name="warning"></pa-icon>
+                }
+                @case ('low') {
+                  <pa-icon
+                    class="success"
+                    size="small"
+                    name="circle-check"></pa-icon>
+                }
+              }
+              {{ log.message }}
+            </div>
+          </pa-table-cell>
+          <pa-table-cell>
+            <div class="body-s"><pa-datetime [datetime]="log.createdAt"></pa-datetime></div>
+          </pa-table-cell>
+        </pa-table-row>
+      } @empty {
+        <pa-table-row last>
+          <pa-table-cell>
+            <div class="body-s">{{ 'sync.details.activity-log.no-activity' | translate }}</div>
+          </pa-table-cell>
+        </pa-table-row>
+      }
+    </pa-table>
+  </div>
+</nsi-two-columns-configuration-item>

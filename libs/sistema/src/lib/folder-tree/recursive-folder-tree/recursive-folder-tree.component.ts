@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { FolderTree, FolderTreeUI } from '../folder-tree.model';
+import { FOLDER_ICON_PATH, FolderTree, FolderTreeUI } from '../folder-tree.model';
 import { FolderTreeState } from '../folder-tree.state';
 
 @Component({
@@ -14,7 +14,7 @@ import { FolderTreeState } from '../folder-tree.state';
 })
 export class RecursiveFolderTreeComponent {
   private state = inject(FolderTreeState);
-  readonly folderIcon = 'assets/icons/folder.svg';
+  readonly folderIcon = FOLDER_ICON_PATH;
 
   @Input({ required: true }) folderTree: FolderTreeUI | null = null;
 

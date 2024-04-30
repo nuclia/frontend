@@ -1,0 +1,12 @@
+@import 'apps/dashboard/src/variables';
+
+.page-spacing {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+}
+.page-title {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+}

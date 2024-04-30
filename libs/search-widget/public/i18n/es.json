@@ -64,7 +64,6 @@
 	"results.count": "Resultado {{index}} de {{total}}",
 	"results.empty": "No resultado",
 	"results.more_labels": "{{count}} etiquetas más",
-	"results.semantic": "Resultados semánticos",
 	"results.sentences": "Frases relevantes",
 	"results.summary": "Resumen",
 	"suggest.entities": "Autocompletar desde NERs",

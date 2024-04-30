@@ -1,0 +1,11 @@
+@import 'apps/dashboard/src/variables';
+
+header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: rhythm(2);
+
+  pa-input {
+    width: rhythm(60);
+  }
+}

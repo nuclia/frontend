@@ -1,0 +1,44 @@
+@import 'apps/dashboard/src/variables';
+
+.sync-settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+
+  .settings-item {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.5);
+  }
+  .body-s + label {
+    color: $color-neutral-regular;
+    font-weight: $font-weight-semi-bold;
+  }
+  .row-container {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(1);
+  }
+}
+
+.activity-logs-container {
+  .icon-and-text {
+    align-items: center;
+    display: flex;
+    gap: rhythm(0.5);
+
+    pa-icon {
+      display: flex;
+    }
+    .error {
+      color: $color-secondary-stronger;
+    }
+    .warning {
+      color: $color-secondary-stronger;
+    }
+    .success {
+      color: $color-success-strong;
+    }
+  }
+}

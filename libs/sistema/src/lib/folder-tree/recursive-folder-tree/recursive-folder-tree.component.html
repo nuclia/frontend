@@ -16,7 +16,9 @@
       [indeterminate]="folder.indeterminate || false"
       [value]="folder.selected"
       (click)="toggleFolder(folder, !folder.selected)">
-      <div class="folder-checkbox">
+      <div
+        class="folder-checkbox"
+        (click)="$event.stopPropagation()">
         <pa-icon
           class="folder-icon"
           size="small"
@@ -28,7 +30,7 @@
 
   @if (folder.children && (folder.children | keyvalue).length > 0) {
     <div
-      class="pa-folder-tree-children"
+      class="folder-tree-children"
       [style.height]="folder.height + 'px'"
       [class.collapsed]="!folder.expanded">
       @for (data of folder.children | keyvalue; track data.key) {

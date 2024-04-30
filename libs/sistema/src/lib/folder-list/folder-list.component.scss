@@ -1,0 +1,15 @@
+@import '../../../styles/variables';
+
+ul.folder-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    align-items: center;
+    box-shadow: $box-shadow-border-bottom;
+    display: flex;
+    gap: rhythm(1);
+    height: rhythm(5);
+  }
+}

@@ -1,0 +1,13 @@
+@import 'apps/dashboard/src/variables';
+@import '../common-sync';
+
+.inline-form {
+  pa-select {
+    flex: 0 0 auto;
+    min-width: rhythm(16);
+    width: fit-content;
+  }
+  pa-input {
+    max-width: unset;
+  }
+}

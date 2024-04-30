@@ -27,22 +27,14 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ParametersTableComponent, LabelModule, LabelsService, SDKService } from '@flaps/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Classification, Filter, Search } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
 import { Filters, formatFiltersFromFacets, LANGUAGE_FACET, MIME_FACETS } from '../../resources';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { GenerativeModelPipe } from '../../pipes';
-
-function createHeaderRow() {
-  return new FormGroup({
-    key: new FormControl<string>('', { nonNullable: true }),
-    value: new FormControl<string>('', { nonNullable: true }),
-    secret: new FormControl<boolean>(false, { nonNullable: true }),
-  });
-}
 
 export interface TaskFormCommonConfig {
   applyTaskTo: 'automation' | 'once';

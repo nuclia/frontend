@@ -32,7 +32,7 @@
     </p>
     <nsi-folder-tree
       [folderTree]="tree1"
-      (selection)="selection1 = $event"></nsi-folder-tree>
+      (selectionChange)="selection1 = $event"></nsi-folder-tree>
 
     <h4>Another tree, showing we can have two in the same page without interferences</h4>
     <p>
@@ -41,7 +41,7 @@
     </p>
     <nsi-folder-tree
       [folderTree]="tree2"
-      (selection)="selection2 = $event"></nsi-folder-tree>
+      (selectionChange)="selection2 = $event"></nsi-folder-tree>
   </pa-demo-examples>
   <pa-demo-usage>
     <h3>Inputs</h3>

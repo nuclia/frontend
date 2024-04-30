@@ -1,3 +1,3 @@
-export * from './lib/sync/sync.service';
-export * from './lib/sync/models';
+export * from './lib/home-page';
+export * from './lib/logic';
 export * from './lib/utils';

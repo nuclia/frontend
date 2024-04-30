@@ -12,22 +12,4 @@
       }
     }
   }
-
-  footer {
-    align-items: center;
-    background-color: $color-light-stronger;
-    bottom: 0;
-    box-shadow: $box-shadow-border-top;
-    display: flex;
-    gap: rhythm(2);
-    margin-top: -1px; // To prevent the double border (one for the footer and the other for the last two-columns-configuration-item)
-    padding: rhythm(2) 0;
-    position: sticky;
-    z-index: 100;
-
-    div {
-      color: $color-neutral-regular;
-      flex: 1 1 auto;
-    }
-  }
 }

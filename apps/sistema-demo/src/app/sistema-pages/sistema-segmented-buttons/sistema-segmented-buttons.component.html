@@ -1,0 +1,62 @@
+<pa-demo-page>
+  <pa-demo-title>Segmented buttons</pa-demo-title>
+  <pa-demo-description>
+    <p>Display a group of two buttons which are exclusive: activating one will deactivate the other one.</p>
+    <p>By default, the left button is active.</p>
+  </pa-demo-description>
+  <pa-demo-examples>
+    <p>
+      <strong>Active:</strong>
+      {{ active1 }}
+    </p>
+    <nsi-segmented-buttons
+      leftButton="Left button"
+      rightButton="Right button"
+      (activeChange)="active1 = $event"></nsi-segmented-buttons>
+    <p>
+      <strong>Active:</strong>
+      {{ active2 }}
+    </p>
+    <nsi-segmented-buttons
+      leftButton="Left button"
+      rightButton="Right button"
+      [(active)]="active2"></nsi-segmented-buttons>
+  </pa-demo-examples>
+
+  <pa-demo-usage>
+    <h3>Inputs</h3>
+    <dl>
+      <dt>leftButton</dt>
+      <dd>
+        Left button’s label.
+        <small>(Mandatory)</small>
+      </dd>
+      <dt>rightButton</dt>
+      <dd>
+        Right button’s label.
+        <small>(Mandatory)</small>
+      </dd>
+      <dt>active</dt>
+      <!-- prettier-ignore -->
+      <dd>
+        Which button is active. Can be <code>left</code> or <code>right</code>.
+        <small>(left by default)</small>
+      </dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl>
+      <dt>activeChange</dt>
+      <dd>
+        Event emitted when active button is changing. Value emitted can be either
+        <code>left</code>
+        or
+        <code>right</code>
+      </dd>
+    </dl>
+  </pa-demo-usage>
+  <pa-demo-code>
+    <pre><code>{{code}}</code></pre>
+    <pre><code>{{code2}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>

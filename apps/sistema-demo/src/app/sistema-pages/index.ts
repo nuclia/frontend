@@ -4,6 +4,7 @@ export * from './sistema-dropdown-button/sistema-dropdown-button.component';
 export * from './sistema-folder-tree/sistema-folder-tree.component';
 export * from './sistema-label/sistema-label.component';
 export * from './sistema-password-input/sistema-password-input.component';
+export * from './sistema-segmented-buttons/sistema-segmented-buttons.component';
 export * from './sistema-spinner/sistema-spinner.component';
 export * from './sistema-sticky-footer/sistema-sticky-footer.component';
 export * from './sistema-two-columns-configuration-item/sistema-two-columns-configuration-item.component';

@@ -1,41 +1,68 @@
 <form [formGroup]="form">
   <pa-table
+    class="header-above"
     formGroupName="rows"
     border
-    columns="repeat(2, 2fr) 1fr">
+    [columns]="readonly ? 'repeat(2, 2fr)' : 'repeat(2, 2fr) 1fr 40px'">
     <pa-table-header>
-      <pa-table-cell header>{{ 'editable-table.headers.key' | translate }}</pa-table-cell>
-      <pa-table-cell header>{{ 'editable-table.headers.value' | translate }}</pa-table-cell>
-      <pa-table-cell header>{{ 'editable-table.headers.secret-value' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'parameters-table.headers.key' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'parameters-table.headers.value' | translate }}</pa-table-cell>
+      @if (!readonly) {
+        <pa-table-cell header>{{ 'parameters-table.headers.secret-value' | translate }}</pa-table-cell>
+        <pa-table-cell-menu header></pa-table-cell-menu>
+      }
     </pa-table-header>
     @for (row of rows; track row) {
-      <pa-table-row>
+      <pa-table-row [last]="$last">
         <pa-table-cell>
-          <pa-input
-            [placeholder]="'editable-table.headers.key' | translate"
-            [formControl]="row.controls.key"></pa-input>
+          @if (!readonly) {
+            <pa-input
+              [placeholder]="'parameters-table.headers.key' | translate"
+              [formControl]="row.controls.key"></pa-input>
+          } @else {
+            <div class="body-s">{{ row.controls.key.value }}</div>
+          }
         </pa-table-cell>
+
         <pa-table-cell>
-          <pa-input
-            [placeholder]="'editable-table.headers.value' | translate"
-            [formControl]="row.controls.value"
-            [type]="row.controls.secret.value ? 'password' : 'text'"></pa-input>
+          @if (!readonly) {
+            <pa-input
+              [placeholder]="'parameters-table.headers.value' | translate"
+              [formControl]="row.controls.value"
+              [type]="row.controls.secret.value ? 'password' : 'text'"></pa-input>
+          } @else {
+            <div class="body-s">{{ row.controls.secret.value ? '****' : row.controls.value.value }}</div>
+          }
         </pa-table-cell>
-        <pa-table-cell>
-          <pa-toggle [formControl]="row.controls.secret"></pa-toggle>
-        </pa-table-cell>
+        @if (!readonly) {
+          <pa-table-cell>
+            <pa-toggle [formControl]="row.controls.secret"></pa-toggle>
+          </pa-table-cell>
+          <pa-table-cell-menu>
+            <pa-button
+              icon="trash"
+              kind="destructive"
+              aspect="basic"
+              size="small"
+              (click)="deleteRow($index)">
+              {{ 'generic.delete' | translate }}
+            </pa-button>
+          </pa-table-cell-menu>
+        }
       </pa-table-row>
     }
-    <pa-table-row-header>
-      <pa-button
-        class="table-header-button"
-        aspect="basic"
-        icon="plus"
-        size="small"
-        iconAndText
-        (click)="addRow()">
-        {{ 'editable-table.headers.new' | translate }}
-      </pa-button>
-    </pa-table-row-header>
+    @if (!readonly) {
+      <pa-table-row-header>
+        <pa-button
+          class="table-header-button"
+          aspect="basic"
+          icon="plus"
+          size="small"
+          iconAndText
+          (click)="addRow()">
+          {{ 'parameters-table.headers.new' | translate }}
+        </pa-button>
+      </pa-table-row-header>
+    }
   </pa-table>
 </form>

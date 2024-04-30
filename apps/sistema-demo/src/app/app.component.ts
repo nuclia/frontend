@@ -23,7 +23,6 @@ import {
   InfiniteScrollPageComponent,
   InputPageComponent,
   NativeTextFieldPageComponent,
-  PalettePageComponent,
   PopoverPageComponent,
   PopupPageComponent,
   SelectPageComponent,
@@ -56,6 +55,7 @@ import {
   SistemaFolderTreeComponent,
   SistemaLabelComponent,
   SistemaPasswordInputComponent,
+  SistemaSegmentedButtonsComponent,
   SistemaSpinnerComponent,
   SistemaStickyFooterComponent,
   SistemaTwoColumnsConfigurationItemComponent,
@@ -63,13 +63,14 @@ import {
 import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
 import { SistemaInfoCardComponent } from './sistema-pages/sistema-cards/sistema-info-card.component';
 import { SistemaBadgeComponent } from './sistema-pages/sistema-badge/sistema-badge.component';
+import { SistemaPalettePageComponent } from './sistema-pages/pastanaga-pages-override/sistema-palette/sistema-palette.component';
 
 export const menu: IDemoMenuSection[] = [
   {
     title: 'Core',
     pages: [
       { view: 'icon', title: 'Icons', type: SistemaIconsComponent },
-      { view: 'palette', title: 'Palette', type: PalettePageComponent },
+      { view: 'palette', title: 'Palette', type: SistemaPalettePageComponent },
       { view: 'typography', title: 'Typography', type: TypographyPageComponent },
       { view: 'focusable', title: 'Focusable', type: FocusablePageComponent },
       { view: 'accessibility', title: 'Accessibility', type: AccessibilityPageComponent },
@@ -92,6 +93,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'folder-tree', title: 'Folder tree', type: SistemaFolderTreeComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
       { view: 'password-input', title: 'Password input', type: SistemaPasswordInputComponent },
+      { view: 'segmented-buttons', title: 'Segmented buttons', type: SistemaSegmentedButtonsComponent },
       { view: 'spinner', title: 'Spinner', type: SistemaSpinnerComponent },
       { view: 'sticky-footer', title: 'Sticky footer', type: SistemaStickyFooterComponent },
       {

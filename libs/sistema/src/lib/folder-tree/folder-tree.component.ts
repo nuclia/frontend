@@ -11,24 +11,23 @@ import { map, Observable, tap } from 'rxjs';
   standalone: true,
   imports: [CommonModule, PaTogglesModule, PaIconModule, PaButtonModule, RecursiveFolderTreeComponent],
   templateUrl: './folder-tree.component.html',
-  styleUrl: './folder-tree.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FolderTreeState],
 })
 export class FolderTreeComponent {
   private state = inject(FolderTreeState);
 
+  @Input() selection?: { id: string; path: string }[];
   @Input({ required: true }) set folderTree(value: FolderTree) {
-    this.state.initTree(value);
+    this.state.initTree(value, this.selection);
   }
-
-  @Output() selection = new EventEmitter<string[]>();
+  @Output() selectionChange = new EventEmitter<{ id: string; path: string }[]>();
 
   tree: Observable<FolderTreeUI> = this.state.tree.pipe(
     tap((value) => {
-      const selection: string[] = [];
+      const selection: { id: string; path: string }[] = [];
       this.getSelection(value, selection);
-      this.selection.emit(selection);
+      this.selectionChange.emit(selection);
     }),
     map((tree) => this.mapToFolderTreeUI(tree)),
   );
@@ -39,9 +38,9 @@ export class FolderTreeComponent {
    * @param selection
    * @private
    */
-  private getSelection(folder: FolderTree, selection: string[]) {
+  private getSelection(folder: FolderTree, selection: { id: string; path: string }[]) {
     if (folder.selected) {
-      selection.push(folder.id);
+      selection.push({ id: folder.id, path: folder.path });
     } else if (folder.children && Object.values(folder.children).length > 0) {
       Object.values(folder.children).forEach((child: FolderTree) => {
         this.getSelection(child, selection);
@@ -56,7 +55,7 @@ export class FolderTreeComponent {
       children: Object.values(folder.children || {}).reduce((childrenWithHeight, child) => {
         return {
           ...childrenWithHeight,
-          [child.id]: this.mapToFolderTreeUI(child),
+          [child.path]: this.mapToFolderTreeUI(child),
         };
       }, {}),
     };

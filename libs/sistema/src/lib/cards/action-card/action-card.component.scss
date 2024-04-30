@@ -16,6 +16,7 @@ $card-height: rhythm(24);
       flex-direction: column;
       gap: rhythm(1);
       height: calc(#{$card-height} - #{$padding-vertical-card} * 2);
+      padding: rhythm(1) rhythm(2);
       text-decoration: none;
 
       .overline {

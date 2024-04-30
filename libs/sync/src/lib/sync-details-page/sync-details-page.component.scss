@@ -1,0 +1,14 @@
+@import 'apps/dashboard/src/variables';
+@import '../common-sync';
+
+.details-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cta-container {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+}
