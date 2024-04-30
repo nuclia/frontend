@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, map, Observable } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
-import { SDKService, STFUtils } from '@flaps/core';
+import { FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import { EntitiesGroup, Entity, IKnowledgeBox, UpdateEntitiesGroupPayload } from '@nuclia/core';
 import { getNerFamilyTitle, NerFamily } from '@flaps/common';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,11 +17,12 @@ export class NerService {
     filter((entities): entities is { [key: string]: NerFamily } => !!entities),
     map((entities) => this.getNerFamilyWithTitles(entities)),
   );
-  isAdminOrContrib = this.sdk.isAdminOrContrib;
+  isAdminOrContrib = this.features.isKbAdminOrContrib;
 
   constructor(
     private sdk: SDKService,
     private translate: TranslateService,
+    private features: FeaturesService,
   ) {
     this.sdk.currentKb
       .pipe(

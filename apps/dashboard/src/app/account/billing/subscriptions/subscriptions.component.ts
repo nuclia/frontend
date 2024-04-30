@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 import { combineLatest, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
-import { AccountService, BillingService, Currency, FeaturesService } from '@flaps/core';
+import { AccountService, BillingService, Currency } from '@flaps/core';
 import { SubscriptionService, TOKENS_PER_REQUEST } from '../subscription.service';
 import { WINDOW } from '@ng-web-apis/common';
 import { AccountTypes } from '@nuclia/core';
@@ -26,7 +26,6 @@ export class SubscriptionsComponent implements OnDestroy {
     );
   tokensPerRequest = TOKENS_PER_REQUEST;
   tiers: AccountTypes[] = ['v3starter', 'v3fly', 'v3growth', 'v3enterprise'];
-  isNewPricingEnabled = this.features.newPricing;
   isSubscribedToAws = this.billing.isSubscribedToAws;
   unsubscribeAll = new Subject<void>();
 
@@ -35,7 +34,6 @@ export class SubscriptionsComponent implements OnDestroy {
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
     private subscriptionService: SubscriptionService,
-    private features: FeaturesService,
     @Inject(WINDOW) private window: Window,
   ) {
     combineLatest([this.customerCurrency, this.subscriptionService.initialCurrency])

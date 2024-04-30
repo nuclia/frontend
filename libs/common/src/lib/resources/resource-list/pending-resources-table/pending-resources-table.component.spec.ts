@@ -41,7 +41,6 @@ describe('PendingResourcesTableComponent', () => {
             catalog: jest.fn(() => of()),
             search: jest.fn(() => of()),
           } as unknown as WritableKnowledgeBox),
-          isAdminOrContrib: of(true),
           nuclia: {
             options: {},
           } as unknown as Nuclia,
@@ -49,7 +48,7 @@ describe('PendingResourcesTableComponent', () => {
         MockProvider(SisModalService),
         MockProvider(SisToastService),
         MockProvider(TranslateService),
-        MockProvider(FeaturesService),
+        MockProvider(FeaturesService, { isKbAdminOrContrib: of(true) }),
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),

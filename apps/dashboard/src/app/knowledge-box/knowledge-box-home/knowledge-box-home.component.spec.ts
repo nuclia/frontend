@@ -57,21 +57,21 @@ describe('KnowledgeBoxHomeComponent', () => {
             slug: 'kb-slug',
             state: 'PRIVATE',
             fullpath: 'http://somewhere/api',
-            admin: true,
             getConfiguration: () => of({}),
             catalog: () => of({ type: 'searchResults' }),
           } as unknown as WritableKnowledgeBox),
-          currentAccount: of({
-            type: 'stash-trial',
-            can_manage_account: true,
-          } as Account),
+          currentAccount: of({} as Account),
           nuclia: {
             options: { standalone: false },
             db: {},
           },
         } as SDKService),
         MockProvider(STFTrackingService, { logEvent: () => {} }),
-        MockProvider(FeaturesService),
+        MockProvider(FeaturesService, {
+          isTrial: of(true),
+          isAccountManager: of(true),
+          isKbAdmin: of(true),
+        }),
         MockProvider(NavigationService, {
           getKbUrl: () => 'kb-url',
         }),

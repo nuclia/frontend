@@ -49,13 +49,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   showSettings = false;
   kbUrl: string = '';
 
-  isAdminOrContrib = this.sdk.isAdminOrContrib;
-  isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || kb.accountId === 'local'));
   account = this.sdk.currentAccount;
-  isTrial = this.account.pipe(map((account) => account?.type === 'stash-trial'));
   kb = this.sdk.currentKb;
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
-  isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
+
+  isAdminOrContrib = this.features.isKbAdminOrContrib;
+  isAdmin = this.features.isKbAdmin;
+  isTrial = this.features.isTrial;
+  isAccountManager = this.features.isAccountManager;
   isEntitiesEnabled = this.features.manageEntities;
   isBillingEnabled = this.features.billing;
   isSynonymsEnabled = this.features.synonyms;

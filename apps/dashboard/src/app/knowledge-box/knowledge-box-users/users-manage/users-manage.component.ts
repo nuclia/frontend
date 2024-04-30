@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@a
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, switchMap, take, tap } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../../utils';
 import { UsersManageService } from './users-manage.service';
 import { FullKbUser, KBRoles, WritableKnowledgeBox } from '@nuclia/core';
@@ -53,7 +53,7 @@ export class UsersManageComponent {
     }),
   );
   userCount: Observable<number> = this.users.usersKb.pipe(map((users) => users.length));
-  isAccountManager = this.sdk.currentAccount.pipe(map((account) => account.can_manage_account));
+  isAccountManager = this.features.isAccountManager;
   hasSeveralOwners: Observable<boolean> = this.users.usersKb.pipe(
     map((users: FullKbUser[]) => users.filter((user) => user.role === 'SOWNER')?.length > 1),
   );
@@ -73,6 +73,7 @@ export class UsersManageComponent {
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
     private modal: SisModalService,
+    private features: FeaturesService,
   ) {}
 
   addUser() {

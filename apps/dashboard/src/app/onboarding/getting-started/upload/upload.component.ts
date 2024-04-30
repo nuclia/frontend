@@ -10,9 +10,9 @@ import {
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { getFilesGroupedByType, UploadModule } from '@flaps/common';
-import { FileUploadModule, SDKService } from '@flaps/core';
+import { FeaturesService, FileUploadModule, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { map, Observable, Subject, take } from 'rxjs';
+import { Observable, Subject, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -42,7 +42,7 @@ export class UploadComponent implements OnInit, OnDestroy {
 
   hasBaseDropZoneOver: boolean = false;
   account = this.sdk.currentAccount;
-  isTrial: Observable<boolean> = this.account.pipe(map((account) => account.type === 'stash-trial'));
+  isTrial: Observable<boolean> = this.features.isTrial;
 
   linkControl = new FormControl<string>('', {
     updateOn: 'blur',
@@ -57,6 +57,7 @@ export class UploadComponent implements OnInit, OnDestroy {
     private sdk: SDKService,
     private toaster: SisToastService,
     private translate: TranslateService,
+    private features: FeaturesService,
   ) {}
 
   ngOnInit() {

@@ -97,7 +97,7 @@
       </div>
     }
   </div>
-  @if (account?.type === 'stash-trial') {
+  @if (isTrial | async) {
     <ncom-hint
       label="How to use your API key in the API"
       learnMore="https://docs.nuclia.dev/docs/docs/getting-started/quick-start/push#push-content-using-the-api">

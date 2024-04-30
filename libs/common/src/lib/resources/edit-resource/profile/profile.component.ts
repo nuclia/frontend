@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { delay, shareReplay, takeUntil } from 'rxjs/operators';
@@ -71,7 +71,7 @@ export class ResourceProfileComponent implements OnInit {
       DATA: JSON.stringify(this.getValue()),
     })),
   );
-  isTrial = this.sdk.currentAccount.pipe(map((account) => account.type === 'stash-trial'));
+  isTrial = this.features.isTrial;
   hasBaseDropZoneOver = false;
 
   isFormReady = false;
@@ -87,6 +87,7 @@ export class ResourceProfileComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private resourceNavigation: ResourceNavigationService,
+    private features: FeaturesService,
   ) {
     this.resourceNavigation.currentRoute = this.route;
   }

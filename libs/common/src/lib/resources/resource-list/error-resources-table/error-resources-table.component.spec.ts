@@ -41,7 +41,6 @@ describe('ErrorResourcesTableComponent', () => {
             catalog: jest.fn(() => of()),
             search: jest.fn(() => of()),
           } as unknown as WritableKnowledgeBox),
-          isAdminOrContrib: of(true),
           nuclia: {
             options: {},
           } as unknown as Nuclia,
@@ -52,7 +51,7 @@ describe('ErrorResourcesTableComponent', () => {
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),
-        MockProvider(FeaturesService),
+        MockProvider(FeaturesService, { isKbAdminOrContrib: of(true) }),
       ],
     }).compileComponents();
 

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { NavigationService, SDKService, ZoneService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -26,7 +26,7 @@ export class SelectKbComponent implements OnDestroy {
   );
 
   account = this.sdk.currentAccount;
-  canManage = this.account.pipe(map((account) => account.can_manage_account));
+  canManage = this.features.isAccountManager;
   canAddKb = this.standalone
     ? of(true)
     : this.account.pipe(
@@ -49,6 +49,7 @@ export class SelectKbComponent implements OnDestroy {
     private toast: SisToastService,
     private modalService: SisModalService,
     private zoneService: ZoneService,
+    private features: FeaturesService,
   ) {}
 
   openKbForm() {

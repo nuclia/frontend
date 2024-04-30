@@ -5,7 +5,6 @@ import { MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { Counters, IResource, RESOURCE_STATUS, SortField, StatsType } from '@nuclia/core';
-import { UPGRADABLE_ACCOUNT_TYPES } from '../../account/billing/subscription.service';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
 import { takeUntil } from 'rxjs/operators';
@@ -23,13 +22,9 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   account = this.sdk.currentAccount;
   currentKb = this.sdk.currentKb;
 
-  isKbAdmin = this.currentKb.pipe(map((kb) => !!kb.admin));
-  isKbContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
-  isAccountManager = this.account.pipe(
-    map((account) => {
-      return account.can_manage_account;
-    }),
-  );
+  isKbAdmin = this.features.isKbAdmin;
+  isKbContrib = this.features.isKBContrib;
+  isAccountManager = this.features.isAccountManager;
 
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
@@ -88,9 +83,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     }),
   );
   isDownloadDesktopEnabled = this.features.downloadDesktopApp;
-  canUpgrade = combineLatest([this.isAccountManager, this.account]).pipe(
-    map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.includes(account.type)),
-  );
+  canUpgrade = this.features.canUpgrade;
 
   showLeftColumn = combineLatest([this.canUpgrade, this.isKbContrib]).pipe(
     map(([canUpgrade, canUpload]) => canUpgrade || canUpload),

@@ -24,184 +24,180 @@
 
   @if (currency) {
     @if (accountTypesDefaults | async; as defaults) {
-      @if ((isNewPricingEnabled | async) === false) {
-        <app-deprecated-subscriptions [currency]="currency"></app-deprecated-subscriptions>
-      } @else {
-        <table
-          class="subscriptions"
-          [class]="accountType | async">
-          <tr>
-            <th></th>
-            <th class="plan">
-              <div class="plan-name">Starter</div>
-              @if ((prices | async)?.['v3starter']; as starter) {
-                <div class="price">
-                  <span>{{ starter?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
-                  <span class="unit">/{{ 'billing.month' | translate }}</span>
-                </div>
-              }
-              @if ((accountType | async) === 'stash-trial') {
-                <pa-button
-                  kind="primary"
-                  routerLink="../checkout"
-                  [queryParams]="{ type: 'v3starter' }">
-                  {{ 'billing.upgrade' | translate }}
-                </pa-button>
-              } @else if ((accountType | async) === 'v3starter') {
-                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
-              } @else {
-                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
-              }
-            </th>
-            <th class="plan">
-              <div class="plan-name">Fly</div>
-              @if ((prices | async)?.['v3fly']; as fly) {
-                <div class="price">
-                  <span>{{ fly?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
-                  <span class="unit">/{{ 'billing.month' | translate }}</span>
-                </div>
-              }
-              @if ((accountType | async) === 'stash-trial') {
-                <pa-button
-                  kind="primary"
-                  routerLink="../checkout"
-                  [queryParams]="{ type: 'v3fly' }">
-                  {{ 'billing.upgrade' | translate }}
-                </pa-button>
-              } @else if ((accountType | async) === 'v3fly') {
-                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
-              } @else {
-                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
-              }
-            </th>
-            <th class="plan">
-              <div class="plan-name">Growth</div>
+      <table
+        class="subscriptions"
+        [class]="accountType | async">
+        <tr>
+          <th></th>
+          <th class="plan">
+            <div class="plan-name">Starter</div>
+            @if ((prices | async)?.['v3starter']; as starter) {
               <div class="price">
-                <span class="unit">-</span>
+                <span>{{ starter?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+                <span class="unit">/{{ 'billing.month' | translate }}</span>
               </div>
-              @if ((accountType | async) === 'v3growth') {
-                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
-              } @else {
-                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
-              }
-            </th>
-            <th class="plan">
-              <div class="plan-name">Enterprise</div>
+            }
+            @if ((accountType | async) === 'stash-trial') {
+              <pa-button
+                kind="primary"
+                routerLink="../checkout"
+                [queryParams]="{ type: 'v3starter' }">
+                {{ 'billing.upgrade' | translate }}
+              </pa-button>
+            } @else if ((accountType | async) === 'v3starter') {
+              <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+            } @else {
+              <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+            }
+          </th>
+          <th class="plan">
+            <div class="plan-name">Fly</div>
+            @if ((prices | async)?.['v3fly']; as fly) {
               <div class="price">
-                <span class="unit">-</span>
+                <span>{{ fly?.recurring?.month?.price | currency: currency : 'symbol' : '1.0-0' }}</span>
+                <span class="unit">/{{ 'billing.month' | translate }}</span>
               </div>
-              @if ((accountType | async) === 'v3enterprise') {
-                <ng-container *ngTemplateOutlet="subscribed"></ng-container>
-              } @else {
-                <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
-              }
-            </th>
-          </tr>
-          <tr>
-            <td>{{ 'billing.max-file-size' | translate }}</td>
-            @for (tier of tiers; track tier) {
-              <td>
-                @if (defaults[tier].upload_limit_max_non_media_file_size; as max) {
-                  {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
-                }
-              </td>
             }
-          </tr>
-          <tr>
-            <td>{{ 'account.knowledgeboxes' | translate }}</td>
-            @for (tier of tiers; track tier) {
-              <td>{{ defaults[tier].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults[tier].max_kbs }}</td>
+            @if ((accountType | async) === 'stash-trial') {
+              <pa-button
+                kind="primary"
+                routerLink="../checkout"
+                [queryParams]="{ type: 'v3fly' }">
+                {{ 'billing.upgrade' | translate }}
+              </pa-button>
+            } @else if ((accountType | async) === 'v3fly') {
+              <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+            } @else {
+              <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
             }
-          </tr>
-          <tr>
-            <td>{{ 'billing.usage.consumption' | translate }}*</td>
-            @for (tier of tiers; track tier) {
-              @if ((prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price; as price) {
-                <td>{{ price * tokensPerRequest | currency: currency : 'symbol' : '1.2-6' }}</td>
-              }
-            }
-          </tr>
-          <tr>
-            <td>NucliaDB</td>
-            <td>Cloud / On-Prem</td>
-            <td>Cloud / On-Prem</td>
-            <td>Cloud / On-Prem</td>
-            <td>Cloud / On-Prem</td>
-          </tr>
-          <tr>
-            <td>Nuclia preprocessing</td>
-            <td>Cloud</td>
-            <td>Cloud</td>
-            <td>Cloud</td>
-            <td>Cloud / On-Prem</td>
-          </tr>
-          <tr>
-            <td>{{ 'billing.support' | translate }}</td>
-            <td>Community</td>
-            <td>Community / Email</td>
-            <td>Slack / Email</td>
-            <td>ZenDesk + SLA</td>
-          </tr>
-          <tr>
-            <td>{{ 'billing.audit-log' | translate }}</td>
-            <td>
-              <pa-icon
-                name="cross"
-                size="small"></pa-icon>
-            </td>
-            <td>
-              <pa-icon
-                name="check"
-                size="small"></pa-icon>
-            </td>
-            <td>
-              <pa-icon
-                name="check"
-                size="small"></pa-icon>
-            </td>
-            <td>
-              <pa-icon
-                name="check"
-                size="small"></pa-icon>
-            </td>
-          </tr>
-          <tr>
-            <td>{{ 'billing.continuous-training' | translate }}</td>
-            <td>
-              <pa-icon
-                name="cross"
-                size="small"></pa-icon>
-            </td>
-            <td>
-              <pa-icon
-                name="cross"
-                size="small"></pa-icon>
-            </td>
-            <td>
-              <pa-icon
-                name="check"
-                size="small"></pa-icon>
-            </td>
-            <td>
-              <pa-icon
-                name="check"
-                size="small"></pa-icon>
-            </td>
-          </tr>
-          <ng-template #subscribed>
-            <div class="subscribed">
-              <pa-icon
-                name="circle-check"
-                size="small"></pa-icon>
-              <span class="title-s">{{ 'billing.current-plan' | translate }}</span>
+          </th>
+          <th class="plan">
+            <div class="plan-name">Growth</div>
+            <div class="price">
+              <span class="unit">-</span>
             </div>
-          </ng-template>
-        </table>
-        <div class="notes">
-          <div>* {{ 'billing.search-endpoints' | translate }}</div>
-          <div>{{ 'billing.prices_vat' | translate }}</div>
-        </div>
-      }
+            @if ((accountType | async) === 'v3growth') {
+              <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+            } @else {
+              <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+            }
+          </th>
+          <th class="plan">
+            <div class="plan-name">Enterprise</div>
+            <div class="price">
+              <span class="unit">-</span>
+            </div>
+            @if ((accountType | async) === 'v3enterprise') {
+              <ng-container *ngTemplateOutlet="subscribed"></ng-container>
+            } @else {
+              <pa-button (click)="contact()">{{ 'billing.contact' | translate }}</pa-button>
+            }
+          </th>
+        </tr>
+        <tr>
+          <td>{{ 'billing.max-file-size' | translate }}</td>
+          @for (tier of tiers; track tier) {
+            <td>
+              @if (defaults[tier].upload_limit_max_non_media_file_size; as max) {
+                {{ max === -1 ? ('billing.unlimited' | translate) : (max | size) }}
+              }
+            </td>
+          }
+        </tr>
+        <tr>
+          <td>{{ 'account.knowledgeboxes' | translate }}</td>
+          @for (tier of tiers; track tier) {
+            <td>{{ defaults[tier].max_kbs === -1 ? ('billing.unlimited' | translate) : defaults[tier].max_kbs }}</td>
+          }
+        </tr>
+        <tr>
+          <td>{{ 'billing.usage.consumption' | translate }}*</td>
+          @for (tier of tiers; track tier) {
+            @if ((prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price; as price) {
+              <td>{{ price * tokensPerRequest | currency: currency : 'symbol' : '1.2-6' }}</td>
+            }
+          }
+        </tr>
+        <tr>
+          <td>NucliaDB</td>
+          <td>Cloud / On-Prem</td>
+          <td>Cloud / On-Prem</td>
+          <td>Cloud / On-Prem</td>
+          <td>Cloud / On-Prem</td>
+        </tr>
+        <tr>
+          <td>Nuclia preprocessing</td>
+          <td>Cloud</td>
+          <td>Cloud</td>
+          <td>Cloud</td>
+          <td>Cloud / On-Prem</td>
+        </tr>
+        <tr>
+          <td>{{ 'billing.support' | translate }}</td>
+          <td>Community</td>
+          <td>Community / Email</td>
+          <td>Slack / Email</td>
+          <td>ZenDesk + SLA</td>
+        </tr>
+        <tr>
+          <td>{{ 'billing.audit-log' | translate }}</td>
+          <td>
+            <pa-icon
+              name="cross"
+              size="small"></pa-icon>
+          </td>
+          <td>
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </td>
+          <td>
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </td>
+          <td>
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </td>
+        </tr>
+        <tr>
+          <td>{{ 'billing.continuous-training' | translate }}</td>
+          <td>
+            <pa-icon
+              name="cross"
+              size="small"></pa-icon>
+          </td>
+          <td>
+            <pa-icon
+              name="cross"
+              size="small"></pa-icon>
+          </td>
+          <td>
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </td>
+          <td>
+            <pa-icon
+              name="check"
+              size="small"></pa-icon>
+          </td>
+        </tr>
+        <ng-template #subscribed>
+          <div class="subscribed">
+            <pa-icon
+              name="circle-check"
+              size="small"></pa-icon>
+            <span class="title-s">{{ 'billing.current-plan' | translate }}</span>
+          </div>
+        </ng-template>
+      </table>
+      <div class="notes">
+        <div>* {{ 'billing.search-endpoints' | translate }}</div>
+        <div>{{ 'billing.prices_vat' | translate }}</div>
+      </div>
     }
   }
 }
