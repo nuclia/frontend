@@ -15,7 +15,7 @@ export interface ConnectorDefinition {
   description: string;
   helpUrl?: string;
   permanentSyncOnly?: boolean;
-  factory: (data?: ConnectorSettings) => Observable<IConnector>;
+  factory: (data?: ConnectorSettings) => IConnector;
 }
 
 export interface IConnectorBase {

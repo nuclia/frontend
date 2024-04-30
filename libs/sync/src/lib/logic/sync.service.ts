@@ -1,17 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  catchError,
-  filter,
-  forkJoin,
-  map,
-  Observable,
-  of,
-  ReplaySubject,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import {
   baseLogoPath,
   ConnectorDefinition,
@@ -42,7 +30,7 @@ export class SyncService {
   connectors: {
     [id: string]: {
       definition: ConnectorDefinition;
-      instances?: { [key: string]: ReplaySubject<IConnector> };
+      instances?: { [key: string]: IConnector };
     };
   } = {
     gdrive: {
@@ -52,7 +40,7 @@ export class SyncService {
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
         permanentSyncOnly: true,
-        factory: (settings) => of(new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getOAuthServer())),
+        factory: (settings) => new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
     onedrive: {
@@ -62,7 +50,7 @@ export class SyncService {
         logo: `${baseLogoPath}/onedrive.svg`,
         description: 'Microsoft OneDrive file hosting service',
         permanentSyncOnly: true,
-        factory: (settings) => of(new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getOAuthServer())),
+        factory: (settings) => new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
     sharepoint: {
@@ -72,8 +60,7 @@ export class SyncService {
         logo: `${baseLogoPath}/sharepoint.svg`,
         description: 'Microsoft Sharepoint service',
         permanentSyncOnly: true,
-        factory: (settings) =>
-          of(new SharepointImpl('sharepoint', settings?.['id'] || '', this.config.getOAuthServer())),
+        factory: (settings) => new SharepointImpl('sharepoint', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
     dropbox: {
@@ -83,7 +70,7 @@ export class SyncService {
         logo: `${baseLogoPath}/dropbox.svg`,
         description: 'File storage and synchronization service developed by Dropbox',
         permanentSyncOnly: true,
-        factory: (settings) => of(new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getOAuthServer())),
+        factory: (settings) => new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
     folder: { definition: FolderConnector },
@@ -122,17 +109,16 @@ export class SyncService {
     return this.connectors[connectorId]?.definition;
   }
 
-  getConnector(connector: string, instance: string): Observable<IConnector> {
+  getConnector(connector: string, instance: string): IConnector {
     const source = this.connectors[connector];
     if (!source.instances) {
       source.instances = {};
     }
-    const instances = source.instances as { [key: string]: ReplaySubject<IConnector> };
+    const instances = source.instances as { [key: string]: IConnector };
     if (!instances[instance]) {
-      instances[instance] = new ReplaySubject(1);
-      source.definition.factory({ id: instance }).subscribe(instances[instance] as ReplaySubject<IConnector>);
+      instances[instance] = source.definition.factory({ id: instance });
     }
-    return (instances[instance] as ReplaySubject<IConnector>).asObservable();
+    return instances[instance];
   }
 
   getCurrentSync(): Observable<ISyncEntity> {
@@ -257,14 +243,13 @@ export class SyncService {
                 }[]
               >(`${this._syncServer.getValue().serverUrl}/sync/kb/${kbId}`)
               .pipe(
-                switchMap((data) => this.getConnectors().pipe(map((connectors) => ({ data, connectors })))),
-                map(({ data, connectors }) =>
-                  data
+                map((syncs) =>
+                  syncs
                     .map((sync) => ({
                       ...sync,
                       kbId,
                       connectorId: sync.connector,
-                      connector: connectors[sync.connector],
+                      connector: this.getConnector(sync.connector, ''),
                     }))
                     .filter((sync) => sync.kbId === kbId),
                 ),
@@ -281,7 +266,7 @@ export class SyncService {
     );
   }
 
-  // FIXME: support query
+  // TODO: support query
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getFolders(query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
@@ -411,23 +396,5 @@ export class SyncService {
 
   triggerSync(syncId: string): Observable<void> {
     return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute/${syncId}`);
-  }
-
-  private getConnectors(): Observable<{ [id: string]: IConnector }> {
-    return forkJoin(
-      Object.keys(this.connectors).map((connectorId) =>
-        this.getConnector(connectorId, '').pipe(map((connector) => ({ connector, connectorId }))),
-      ),
-    ).pipe(
-      map((data) =>
-        data.reduce(
-          (connectors, { connectorId, connector }) => {
-            connectors[connectorId] = connector;
-            return connectors;
-          },
-          {} as { [id: string]: IConnector },
-        ),
-      ),
-    );
   }
 }

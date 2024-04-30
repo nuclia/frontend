@@ -15,7 +15,7 @@ export const SitemapConnector: ConnectorDefinition = {
   logo: `${baseLogoPath}/sitemap.svg`,
   description: 'Upload web pages from a sitemap.xml',
   permanentSyncOnly: true,
-  factory: () => of(new SitemapImpl()),
+  factory: () => new SitemapImpl(),
 };
 
 class SitemapImpl implements IConnector {

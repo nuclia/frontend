@@ -7,7 +7,7 @@ export const ConfluenceConnector: ConnectorDefinition = {
   logo: `${baseLogoPath}/confluence.svg`,
   description: 'Collaboration platform developed by Atlassian',
   helpUrl: 'https://docs.nuclia.dev/docs/docs/using/sync-agent#confluence-connector-usage',
-  factory: () => of(new ConfluenceImpl()),
+  factory: () => new ConfluenceImpl(),
 };
 
 const TOKEN = 'CONFLUENCE_TOKEN';

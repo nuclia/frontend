@@ -15,7 +15,7 @@ export const RSSConnector: ConnectorDefinition = {
   logo: `${baseLogoPath}/rss.svg`,
   description: 'Upload web pages from a RSS feed',
   permanentSyncOnly: true,
-  factory: () => of(new RSSImpl()),
+  factory: () => new RSSImpl(),
 };
 
 class RSSImpl implements IConnector {

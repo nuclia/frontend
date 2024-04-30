@@ -52,7 +52,7 @@ export class AddSyncPageComponent implements OnInit {
   connectorDefinition: Observable<ConnectorDefinition> = this.connectorId.pipe(
     map((id) => this.syncService.getConnectorDefinition(id)),
   );
-  connector: Observable<IConnector> = this.connectorId.pipe(switchMap((id) => this.syncService.getConnector(id, '')));
+  connector: Observable<IConnector> = this.connectorId.pipe(map((id) => this.syncService.getConnector(id, '')));
   kbId = this.sdk.currentKb.pipe(map((kb) => kb.id));
 
   syncId?: string | null;
@@ -103,7 +103,7 @@ export class AddSyncPageComponent implements OnInit {
               }
             }),
             filter((hasAuth) => !hasAuth),
-            switchMap(() => this.syncService.getConnector(sync.connector.name, sync.id)),
+            map(() => this.syncService.getConnector(sync.connector.name, sync.id)),
             switchMap((connector) => {
               return this.syncService.authenticateToConnector(sync.connector.name, connector);
             }),
@@ -224,8 +224,8 @@ export class AddSyncPageComponent implements OnInit {
   private _createSync(syncEntity: ISyncEntity) {
     return this.syncService.addSync(syncEntity).pipe(
       tap(() => this.syncService.setCurrentSyncId(syncEntity.id)),
-      switchMap(() => this.syncService.getConnector(syncEntity.connector.name, syncEntity.id).pipe(take(1))),
-      switchMap((connector) => {
+      map(() => this.syncService.getConnector(syncEntity.connector.name, syncEntity.id)),
+      switchMap((connector: IConnector) => {
         // Setup sync items from the connector itself if the source doesn't allow to select folders
         if (!connector.allowToSelectFolders) {
           if (typeof connector.handleParameters === 'function') {
@@ -235,9 +235,7 @@ export class AddSyncPageComponent implements OnInit {
             .updateSync(syncEntity.id, {
               foldersToSync: connector.getStaticFolders(),
             })
-            .pipe(
-              switchMap(() => this.syncService.getConnector(syncEntity.connector.name, syncEntity.id).pipe(take(1))),
-            );
+            .pipe(map(() => this.syncService.getConnector(syncEntity.connector.name, syncEntity.id)));
         } else {
           return of(connector);
         }

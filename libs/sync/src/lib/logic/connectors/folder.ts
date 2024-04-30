@@ -16,7 +16,7 @@ export const FolderConnector: ConnectorDefinition = {
   title: 'Folder',
   logo: `${baseLogoPath}/folder.svg`,
   description: 'Upload a folder from your device',
-  factory: () => of(new FolderImpl()),
+  factory: () => new FolderImpl(),
 };
 
 class FolderImpl implements IConnector {
