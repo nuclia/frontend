@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ModalRef, PaModalModule } from '@guillotinaweb/pastanaga-angular';
 import { LabelSetFormComponent } from './label-set-form.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { LabelSetKind } from '@nuclia/core';
 
 @Component({
   selector: 'stf-label-set-form-modal',
@@ -13,5 +14,5 @@ import { TranslateModule } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelSetFormModalComponent {
-  constructor(public modal: ModalRef) {}
+  constructor(public modal: ModalRef<{ kind?: LabelSetKind }>) {}
 }

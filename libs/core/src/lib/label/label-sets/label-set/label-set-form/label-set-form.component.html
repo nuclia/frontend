@@ -14,7 +14,7 @@
             {{ 'label-set.form.name' | translate }}
           </pa-input>
 
-          @if (addNew) {
+          @if (addNew && !kind) {
             <div>
               <label class="title-xxs">
                 {{ 'label-set.form.kind' | translate }}

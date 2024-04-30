@@ -60,6 +60,7 @@ export class LabelSetFormComponent implements OnInit, OnChanges {
 
   @Input({ transform: booleanAttribute }) addNew = false;
   @Input({ transform: booleanAttribute }) inModal = false;
+  @Input() kind?: LabelSetKind;
   @Input() labelSetId?: string;
 
   @Output() cancel = new EventEmitter<void>();
@@ -121,6 +122,9 @@ export class LabelSetFormComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    if (this.kind) {
+      this.labelSetForm.patchValue({ kind: this.kind });
+    }
     this.labelSetForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       if (this.labelSet) {
         const data = this.labelSetForm.getRawValue();

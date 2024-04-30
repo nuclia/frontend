@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 import { Filters, IConnector, ISyncEntity } from '../logic';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter, map, Observable, Subject, take, takeUntil } from 'rxjs';
-import { Classification, LabelSets } from '@nuclia/core';
+import { Classification, LabelSetKind, LabelSets } from '@nuclia/core';
 import { LabelModule, LabelSetFormModalComponent, LabelsService, ParametersTableComponent } from '@flaps/core';
 import {
   InfoCardComponent,
@@ -23,6 +23,7 @@ import {
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
 import {
+  ModalConfig,
   PaButtonModule,
   PaDatePickerModule,
   PaTextFieldModule,
@@ -174,7 +175,10 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   }
 
   createLabelSet() {
-    this.modalService.openModal(LabelSetFormModalComponent);
+    this.modalService.openModal(
+      LabelSetFormModalComponent,
+      new ModalConfig({ data: { kind: LabelSetKind.RESOURCES } }),
+    );
   }
 
   updateLabelSelection(labels: Classification[]) {
