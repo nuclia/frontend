@@ -90,7 +90,7 @@
             <label>{{ field.label | translate }}</label>
             @if (field.type !== 'table') {
               <div>{{ sync.connector.parameters[field.id] || '_' }}</div>
-            } @else if (sync.connector.parameters[field.id].lenght > 0) {
+            } @else if (sync.connector.parameters[field.id].length > 0) {
               <app-parameters-table
                 readonly
                 [values]="sync.connector.parameters[field.id]"></app-parameters-table>
