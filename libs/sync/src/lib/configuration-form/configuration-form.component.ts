@@ -59,13 +59,16 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   private labelService = inject(LabelsService);
   private modalService = inject(SisModalService);
   private cdr = inject(ChangeDetectorRef);
+
   private unsubscribeAll = new Subject<void>();
+  private connectorParametersBackup?: { [key: string]: unknown };
 
   @Input({ required: true }) connector?: IConnector | null;
   @Input({ required: true }) connectorId?: string | null;
   @Input({ required: true }) kbId?: string | null;
   @Input() set sync(value: ISyncEntity | undefined | null) {
     if (value) {
+      this.connectorParametersBackup = value.connector.parameters;
       const filterResources: FiltersResources = {
         extensions: value.filters?.fileExtensions?.extensions || '',
         extensionUsage: value.filters?.fileExtensions?.exclude ? 'exclude' : 'include',
@@ -251,6 +254,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       connector: {
         name: this.connectorId,
         parameters: {
+          ...this.connectorParametersBackup,
           ...tables,
           ...extraParams,
         },
