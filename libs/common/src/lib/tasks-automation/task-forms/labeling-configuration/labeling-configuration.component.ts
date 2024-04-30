@@ -20,7 +20,7 @@ import {
 } from '@nuclia/sistema';
 import { LabelModule, LabelSetFormModalComponent, LabelsService, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { ModalConfig, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { LabelSet, LabelSetKind, LabelSets, Search } from '@nuclia/core';
 import { filter, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -118,7 +118,12 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
 
   createLabelSet() {
     this.modalService
-      .openModal(LabelSetFormModalComponent)
+      .openModal(
+        LabelSetFormModalComponent,
+        new ModalConfig({
+          data: { kind: this.type === 'resources' ? LabelSetKind.RESOURCES : LabelSetKind.PARAGRAPHS },
+        }),
+      )
       .onClose.pipe(
         filter((labelset) => !!labelset),
         map((data) => data as { id: string; labelSet: LabelSet }),

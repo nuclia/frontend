@@ -9,16 +9,19 @@
     </div>
     <div class="separator-line"></div>
 
-    <div class="body-s settings-item">
-      <label>{{ 'sync.details.settings.synchronize-security-groups' | translate }}</label>
-      <div style="text-transform: capitalize">
-        {{
-          (sync.syncSecurityGroups ? 'sync.details.settings.boolean.true' : 'sync.details.settings.boolean.false')
-            | translate
-        }}
+    @if (connector?.canSyncSecurityGroups) {
+      <div class="body-s settings-item">
+        <label>{{ 'sync.details.settings.synchronize-security-groups' | translate }}</label>
+        <div style="text-transform: capitalize">
+          {{
+            (sync.syncSecurityGroups ? 'sync.details.settings.boolean.true' : 'sync.details.settings.boolean.false')
+              | translate
+          }}
+        </div>
       </div>
-    </div>
-    <div class="separator-line"></div>
+      <div class="separator-line"></div>
+    }
+
     <div class="body-s settings-item">
       <label>{{ 'sync.details.settings.labels' | translate }}</label>
       <div class="row-container">
