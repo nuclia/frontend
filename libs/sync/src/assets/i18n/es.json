@@ -103,6 +103,7 @@
 	"sync.details.toast.triggering-sync-success": "La sincronización se activó correctamente",
 	"sync.folder-selection.edit-folders-button": "Editar selección de carpetas",
 	"sync.folder-selection.empty-message": "Aún no seleccionaste ninguna carpeta",
+	"sync.folder-selection.filtered-empty-message": "Ninguna carpeta coincide con su consulta",
 	"sync.folder-selection.footer.save-changes": "Guardar cambios",
 	"sync.folder-selection.footer.selection-count": "{{count}} carpetas seleccionadas",
 	"sync.folder-selection.search-input-label": "Buscar un título de carpeta",

@@ -1,11 +1,17 @@
 <div class="folders-tab">
   @if (!editing) {
     <header>
-      <pa-input icon="search">{{ 'sync.folder-selection.search-input-label' | translate }}</pa-input>
+      <pa-input
+        icon="search"
+        [formControl]="queryControl">
+        {{ 'sync.folder-selection.search-input-label' | translate }}
+      </pa-input>
       <pa-button (click)="editing = true">{{ 'sync.folder-selection.edit-folders-button' | translate }}</pa-button>
     </header>
 
-    <nsi-folder-list [folders]="selectedFolders"></nsi-folder-list>
+    <nsi-folder-list
+      [filtered]="!!query"
+      [folders]="selectedFolders"></nsi-folder-list>
   } @else if (sync) {
     <nsy-folder-selection
       [sync]="sync"

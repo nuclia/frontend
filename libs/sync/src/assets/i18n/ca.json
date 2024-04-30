@@ -103,6 +103,7 @@
 	"sync.details.toast.triggering-sync-success": "La sincronització s'ha activat correctament",
 	"sync.folder-selection.edit-folders-button": "Edita la selecció de carpetes",
 	"sync.folder-selection.empty-message": "Encara no has seleccionat cap carpeta",
+	"sync.folder-selection.filtered-empty-message": "Cap carpeta coincideix amb la vostra consulta",
 	"sync.folder-selection.footer.save-changes": "Guardar canvis",
 	"sync.folder-selection.footer.selection-count": "{{count}} carpetes seleccionades",
 	"sync.folder-selection.search-input-label": "Cerca el títol d'una carpeta",

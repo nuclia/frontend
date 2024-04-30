@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FOLDER_ICON_PATH } from '../folder-tree';
 import { InfoCardComponent } from '../cards';
@@ -17,4 +17,5 @@ export class FolderListComponent {
   protected readonly folderIcon = FOLDER_ICON_PATH;
 
   @Input({ required: true }) folders: string[] = [];
+  @Input({ transform: booleanAttribute }) filtered = false;
 }

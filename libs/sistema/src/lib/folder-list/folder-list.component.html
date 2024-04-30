@@ -5,10 +5,16 @@
       {{ folder }}
     </li>
   } @empty {
-    <nsi-info-card
-      type="warning"
-      icon="warning">
-      {{ 'sync.folder-selection.empty-message' | translate }}
-    </nsi-info-card>
+    @if (filtered) {
+      <nsi-info-card>
+        {{ 'sync.folder-selection.filtered-empty-message' | translate }}
+      </nsi-info-card>
+    } @else {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        {{ 'sync.folder-selection.empty-message' | translate }}
+      </nsi-info-card>
+    }
   }
 </ul>
