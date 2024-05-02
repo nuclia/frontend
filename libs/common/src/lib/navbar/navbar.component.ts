@@ -57,15 +57,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAdmin = this.features.isKbAdmin;
   isTrial = this.features.isTrial;
   isAccountManager = this.features.isAccountManager;
-  isEntitiesEnabled = this.features.manageEntities;
-  isBillingEnabled = this.features.billing;
-  isSynonymsEnabled = this.features.synonyms;
-  isTasksAutomationEnabled = this.features.taskAutomation;
-  isActivityEnabled = this.features.activityLog;
-  isPromptLabEnabled = this.features.isEnterpriseOrGrowth.pipe(
-    filter((isEnterprise) => isEnterprise),
-    switchMap(() => this.features.promptLabEnabled),
-  );
+  isBillingEnabled = this.features.unstable['billing'];
+  isTasksAutomationEnabled = this.features.unstable['taskAutomation'];
+  isSynonymsEnabled = this.features.authorized['synonyms'];
+  isActivityEnabled = this.features.authorized['activityLog'];
+  isPromptLabEnabled = this.features.authorized['promptLab'];
 
   standalone = this.standaloneService.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));

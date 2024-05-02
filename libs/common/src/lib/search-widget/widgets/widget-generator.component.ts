@@ -62,13 +62,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isDefaultPromptFromSettingsApplied = true;
 
   // FEATURES AVAILABILITY
-  isRagHierarchyEnabled = this.featuresService.ragHierarchy;
-  isRagImagesEnabled = this.featuresService.ragImages;
-  isUserPromptsEnabled = this.featuresService.userPrompts;
-  autocompleteFromNerEnabled = this.featuresService.suggestEntities;
-  isTrainingEnabled = this.featuresService.training;
-  areSynonymsEnabled = this.featuresService.synonyms;
-  isKnowledgeGraphEnabled = this.featuresService.knowledgeGraph;
+  isRagImagesEnabled = this.featuresService.unstable['ragImages'];
+  isUserPromptsEnabled = this.featuresService.authorized['userPrompts'];
+  autocompleteFromNerEnabled = this.featuresService.unstable['suggestEntities'];
+  isTrainingEnabled = this.featuresService.unstable['training'];
+  areSynonymsEnabled = this.featuresService.authorized['synonyms'];
+  isKnowledgeGraphEnabled = this.featuresService.unstable['knowledgeGraph'];
   canHideLogo = this.sdk.currentAccount.pipe(
     map((account) =>
       ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),

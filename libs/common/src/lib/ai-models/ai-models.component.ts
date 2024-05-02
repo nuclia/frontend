@@ -57,8 +57,8 @@ export class AiModelsComponent implements OnInit {
   noKbConfig = false;
   unsupportedModels: string[] = [];
 
-  isSummarizationEnabled = this.features.summarization;
-  isAnonymizationEnabled = this.features.kbAnonymization;
+  isSummarizationEnabled = this.features.authorized['summarization'];
+  isAnonymizationEnabled = this.features.unstable['kbAnonymization'];
 
   constructor(
     private sdk: SDKService,

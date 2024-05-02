@@ -83,7 +83,7 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
     },
   };
 
-  isAnonymizationEnabled = this.features.kbAnonymization;
+  isAnonymizationEnabled = this.features.unstable['kbAnonymization'];
 
   existingKbNames: string[] = [];
   existingName = false;

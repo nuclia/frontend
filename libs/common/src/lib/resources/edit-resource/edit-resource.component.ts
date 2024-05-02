@@ -7,7 +7,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
 import { take, takeUntil } from 'rxjs/operators';
@@ -51,7 +51,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         })),
     ),
   );
-  isPdfAnnotationEnabled = this.features.pdfAnnotation;
+  isPdfAnnotationEnabled = this.features.unstable['pdfAnnotation'];
   isAdminOrContrib = this.editResource.isAdminOrContrib;
 
   activeField?: FieldId | 'resource';

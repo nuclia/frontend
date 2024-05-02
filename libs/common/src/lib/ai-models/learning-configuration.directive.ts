@@ -22,8 +22,8 @@ export abstract class LearningConfigurationDirective implements OnChanges {
 
   // permissions
   isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;
-  isSummarizationEnabled = this.features.summarization;
-  isUserPromptsEnabled = this.features.userPrompts;
+  isSummarizationEnabled = this.features.authorized['summarization'];
+  isUserPromptsEnabled = this.features.authorized['userPrompts'];
 
   protected saving = false;
 

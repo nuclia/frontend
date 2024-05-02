@@ -53,7 +53,7 @@ describe('SignupComponent', () => {
           signup: jest.fn(() => signupResponse.asObservable()),
         }),
         MockProvider(FeaturesService, {
-          githubSignin: of(true),
+          unstable: { githubSignin: of(true) },
         }),
         MockProvider(BackendConfigurationService, {
           getRecaptchaKey: () => 'fake',

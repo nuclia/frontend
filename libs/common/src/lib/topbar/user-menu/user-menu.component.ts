@@ -56,7 +56,7 @@ export class UserMenuComponent implements OnDestroy {
   accounts: string[] = [];
   account: Account | null = null;
   isAccountManager = this.features.isAccountManager;
-  isBillingEnabled = this.features.billing;
+  isBillingEnabled = this.features.unstable['billing'];
   hasOwnAccount = this.userService.hasOwnAccount;
   standalone = this.sdk.nuclia.options.standalone;
 

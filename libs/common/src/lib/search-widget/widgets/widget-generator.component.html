@@ -396,49 +396,48 @@
                       <div class="title-xxs">
                         {{ 'widget.generator.advanced.generative-answer-category.rag-strategies.title' | translate }}
                       </div>
-                      @if (isRagHierarchyEnabled | async) {
+                      <div class="toggle-and-help">
+                        <pa-toggle
+                          labelOnRight
+                          [value]="ragStrategiesToggles.hierarchy"
+                          (valueChange)="updateRagStrategies('hierarchy', $event)">
+                          {{
+                            'widget.generator.advanced.generative-answer-category.rag-strategies.hierarchy.label'
+                              | translate
+                          }}
+                        </pa-toggle>
+                        <pa-icon
+                          name="info"
+                          [paPopover]="hierarchyHelp" />
+                        <pa-popover #hierarchyHelp>
+                          {{
+                            'widget.generator.advanced.generative-answer-category.rag-strategies.hierarchy.help'
+                              | translate
+                          }}
+                        </pa-popover>
+                      </div>
+                      @if (ragStrategiesToggles.hierarchy) {
                         <div class="toggle-and-help">
-                          <pa-toggle
-                            labelOnRight
-                            [value]="ragStrategiesToggles.hierarchy"
-                            (valueChange)="updateRagStrategies('hierarchy', $event)">
+                          <pa-input
+                            formControlName="ragCharactersCount"
+                            type="number">
                             {{
-                              'widget.generator.advanced.generative-answer-category.rag-strategies.hierarchy.label'
+                              'widget.generator.advanced.generative-answer-category.rag-strategies.characters-count.label'
                                 | translate
                             }}
-                          </pa-toggle>
+                          </pa-input>
                           <pa-icon
                             name="info"
-                            [paPopover]="hierarchyHelp" />
-                          <pa-popover #hierarchyHelp>
+                            [paPopover]="ragCharactersCountHelp" />
+                          <pa-popover #ragCharactersCountHelp>
                             {{
-                              'widget.generator.advanced.generative-answer-category.rag-strategies.hierarchy.help'
+                              'widget.generator.advanced.generative-answer-category.rag-strategies.characters-count.help'
                                 | translate
                             }}
                           </pa-popover>
                         </div>
-                        @if (ragStrategiesToggles.hierarchy) {
-                          <div class="toggle-and-help">
-                            <pa-input
-                              formControlName="ragCharactersCount"
-                              type="number">
-                              {{
-                                'widget.generator.advanced.generative-answer-category.rag-strategies.characters-count.label'
-                                  | translate
-                              }}
-                            </pa-input>
-                            <pa-icon
-                              name="info"
-                              [paPopover]="ragCharactersCountHelp" />
-                            <pa-popover #ragCharactersCountHelp>
-                              {{
-                                'widget.generator.advanced.generative-answer-category.rag-strategies.characters-count.help'
-                                  | translate
-                              }}
-                            </pa-popover>
-                          </div>
-                        }
                       }
+
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight

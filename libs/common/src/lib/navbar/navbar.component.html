@@ -136,17 +136,15 @@
                 <pa-icon name="label"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.classification' | translate }}</span>
               </a>
-              @if (isEntitiesEnabled | async) {
-                <a
-                  [routerLink]="!(invalidKey | async) ? kbUrl + '/entities' : null"
-                  routerLinkActive="active"
-                  class="nav-link sub-item"
-                  data-cy="go-to-ner"
-                  [class.disabled]="invalidKey | async">
-                  <pa-icon name="form"></pa-icon>
-                  <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
-                </a>
-              }
+              <a
+                [routerLink]="!(invalidKey | async) ? kbUrl + '/entities' : null"
+                routerLinkActive="active"
+                class="nav-link sub-item"
+                data-cy="go-to-ner"
+                [class.disabled]="invalidKey | async">
+                <pa-icon name="form"></pa-icon>
+                <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
+              </a>
 
               @if (!standalone) {
                 @if (isSynonymsEnabled | async) {

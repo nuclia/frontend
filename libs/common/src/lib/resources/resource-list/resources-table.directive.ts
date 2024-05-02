@@ -65,7 +65,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   sorting = this.resourceListService.sort;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
 
-  isSummarizationEnabled = this.features.summarization;
+  isSummarizationEnabled = this.features.authorized['summarization'];
 
   private _selection = new BehaviorSubject<string[]>([]);
   set selection(selection: string[]) {

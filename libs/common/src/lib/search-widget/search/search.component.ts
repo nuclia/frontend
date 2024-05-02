@@ -36,7 +36,7 @@ export class SearchComponent implements OnInit, OnDestroy {
       forkJoin([
         kb.getLabels().pipe(map((labelSets) => Object.keys(labelSets).length > 0)),
         kb.training.hasModel(TrainingType.classifier),
-        this.features.knowledgeGraph.pipe(take(1)),
+        this.features.unstable['knowledgeGraph'].pipe(take(1)),
         kb.getConfiguration(),
       ]).pipe(
         map(([hasLabels, hasClassifier, isKnowledgeGraphEnabled, config]) => ({
