@@ -1,3 +1,9 @@
+# 1.14.10 (unreleased)
+
+### Improvements
+
+- Update `Citations` model
+
 # 1.14.9 (2024-04-30)
 
 ### Bug fix

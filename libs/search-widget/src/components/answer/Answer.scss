@@ -2,6 +2,16 @@
   .answer-text {
     line-height: calc(var(--font-size-base) * 1.4);
     margin-top: var(--rhythm-1);
+    :global(.ref) {
+      background-color: var(--color-primary-lightest);
+      display: inline-block;
+      font-size: var(--font-size-medium);
+      height: var(--rhythm-3);
+      line-height: var(--rhythm-3);
+      margin: 0 var(--rhythm-0_25);
+      text-align: center;
+      width: var(--rhythm-3);
+    }
   }
   .error {
     color: var(--color-neutral-light);

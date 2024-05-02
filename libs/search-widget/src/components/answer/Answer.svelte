@@ -28,11 +28,25 @@
 
   const dispatch = createEventDispatcher();
 
-  $: text = DOMPurify.sanitize(marked.parse(answer.text || ''));
+  $: text = DOMPurify.sanitize(marked.parse(addReferences(answer.text || '', answer.citations || {})));
   $: notEnoughData = hasNotEnoughData(answer.text || '');
 
   $: sources =
     answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
+
+  function addReferences(text: string, citations: Citations) {
+    Object.values(citations)
+      .reduce(
+        (acc, curr, index) => [...acc, ...curr.map(([,end]) => ({ index, end }))],
+        [] as { index: number; end: number }[],
+      )
+      .sort((a, b) => a.end - b.end !== 0 ? a.end - b.end : a.index - b.index)
+      .reverse()
+      .forEach((ref) => {
+        text = `${text.slice(0, ref.end)}<span class="ref">${ref.index + 1}</span>${text.slice(ref.end)}`;
+      });
+    return text;
+  }
 
   function getSourcesResults(resources: { [key: string]: Search.FindResource }, citations: Citations): TypedResult[] {
     return Object.keys(citations)

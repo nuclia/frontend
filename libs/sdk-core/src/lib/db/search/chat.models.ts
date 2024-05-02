@@ -35,8 +35,5 @@ export namespace Chat {
 }
 
 export interface Citations {
-  [paragraphId: string]: {
-    start: number;
-    end: number;
-  }[];
+  [paragraphId: string]: [number, number][];
 }
