@@ -8,8 +8,6 @@ import { FeaturesService } from '@flaps/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadButtonComponent implements OnInit {
-  isQnAEnabled = this.features.uploadQAndA;
-
   constructor(
     private uploadService: UploadDialogService,
     private features: FeaturesService,

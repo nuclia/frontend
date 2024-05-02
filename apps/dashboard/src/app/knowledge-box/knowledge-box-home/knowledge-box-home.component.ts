@@ -82,7 +82,6 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
       return this.navigationService.getKbUrl(account.slug, kbSlug);
     }),
   );
-  isDownloadDesktopEnabled = this.features.downloadDesktopApp;
   canUpgrade = this.features.canUpgrade;
 
   showLeftColumn = combineLatest([this.canUpgrade, this.isKbContrib]).pipe(
