@@ -10,6 +10,7 @@
   } from '../../common';
   import {
     displayMetadata,
+    getThumbnailInfos,
     getNavigationUrl,
     goToUrl,
     hideThumbnails,
@@ -28,49 +29,20 @@
   let thumbnailLoaded = false;
   let showAllResults = false;
 
-  let fallback = '';
-  let isPlayable = false;
+  let thumbnailInfo = { fallback: '', isPlayable: false };
   let innerWidth = window.innerWidth;
   let expandedParagraphHeight: string | undefined;
   let metaKeyOn = false;
   $: isMobile = isMobileViewport(innerWidth);
   $: paragraphs = result.paragraphs || [];
-  $: {
-    switch (result.resultType) {
-      case 'audio':
-        fallback = 'audio';
-        isPlayable = true;
-        break;
-      case 'conversation':
-        fallback = 'chat';
-        break;
-      case 'image':
-        fallback = 'image';
-        break;
-      case 'pdf':
-        fallback = result.resultIcon;
-        break;
-      case 'spreadsheet':
-        fallback = 'spreadsheet';
-        break;
-      case 'text':
-        fallback = 'file';
-        break;
-      case 'video':
-        fallback = 'play';
-        isPlayable = true;
-        break;
-    }
-  }
+  $: thumbnailInfo = getThumbnailInfos(result);
 
   const url = combineLatest([navigateToFile, navigateToLink]).pipe(
     take(1),
     switchMap(([toFile, toLink]) => {
       if (result.field) {
         const resourceField: ResourceField = { ...result.field, ...result.fieldData };
-        return toFile || toLink
-          ? getNavigationUrl(toFile, toLink, result, resourceField)
-          : of(undefined);
+        return toFile || toLink ? getNavigationUrl(toFile, toLink, result, resourceField) : of(undefined);
       }
       return of(undefined);
     }),
@@ -116,10 +88,10 @@
   <div
     class="thumbnail-container"
     hidden={$hideThumbnails}>
-    {#if isPlayable}
+    {#if thumbnailInfo.isPlayable}
       <ThumbnailPlayer
         thumbnail={result.thumbnail}
-        {fallback}
+        fallback={thumbnailInfo.fallback}
         hasBackground={!result.thumbnail}
         aspectRatio="5/4"
         on:loaded={() => (thumbnailLoaded = true)}
@@ -127,7 +99,7 @@
     {:else}
       <Thumbnail
         src={result.thumbnail}
-        {fallback}
+        fallback={thumbnailInfo.fallback}
         aspectRatio="5/4"
         on:loaded={() => (thumbnailLoaded = true)} />
     {/if}
@@ -139,7 +111,7 @@
     <div class="result-title-container">
       {#if $hideThumbnails}
         <div class="result-icon">
-          <Icon name={fallback} />
+          <Icon name={thumbnailInfo.fallback} />
         </div>
       {/if}
       <div>

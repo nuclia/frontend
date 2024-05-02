@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ResourceField, Search } from '@nuclia/core';
   import { combineLatest, of, switchMap, take } from 'rxjs';
-  import { ParagraphResult } from '../../common';
+  import { ParagraphResult, Thumbnail } from '../../common';
   import {
     getNavigationUrl,
     goToUrl,
@@ -10,6 +10,8 @@
     trackingEngagement,
     type TypedResult,
     viewerData,
+    getThumbnailInfos,
+    hideThumbnails,
   } from '../../core';
 
   export let sources: TypedResult[] = [];
@@ -42,14 +44,16 @@
 
 <div class="sw-sources">
   {#each sources as source, i}
-    <div class="source">
+    <div
+      class="source"
+      class:with-thumbnail={!$hideThumbnails}>
       <div class="number body-m">{i + 1}</div>
       <div class="paragraph">
         {#if source.paragraphs?.[0]}
           <ParagraphResult
             resultType={source.resultType}
             paragraph={source.paragraphs[0]}
-            disabled="{!source.field}"
+            disabled={!source.field}
             ellipsis={true}
             noIndicator
             on:open={() => clickOnSource(source, source.paragraphs?.[0])}>
@@ -57,6 +61,21 @@
         {/if}
         <div class="resource-title body-s">{source.title}</div>
       </div>
+      {#if !$hideThumbnails}
+        <div
+          class="thumbnail-container"
+          role="link"
+          tabindex="0"
+          on:click={() => clickOnSource(source, source.paragraphs?.[0])}
+          on:keyup={(e) => {
+            if (e.key === 'Enter') clickOnSource(source, source.paragraphs?.[0]);
+          }}>
+          <Thumbnail
+            src={source.thumbnail}
+            fallback={getThumbnailInfos(source).fallback}
+            aspectRatio="5/4" />
+        </div>
+      {/if}
     </div>
   {/each}
 </div>
