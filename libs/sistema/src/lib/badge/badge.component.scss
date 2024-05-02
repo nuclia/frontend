@@ -11,8 +11,30 @@
   justify-content: space-between;
   padding: 0 rhythm(1);
 
+  .icon-and-text {
+    align-items: center;
+    display: flex;
+    gap: rhythm(0.25);
+
+    &.no-content {
+      gap: 0;
+    }
+  }
+
   &.with-count {
     padding-right: rhythm(0.25);
+  }
+  &.with-icon {
+    padding: 0 rhythm(0.5);
+
+    pa-icon {
+      display: flex;
+
+      ::ng-deep svg.pa-small {
+        height: rhythm(1.5);
+        width: rhythm(1.5);
+      }
+    }
   }
 
   &.tertiary {
@@ -27,6 +49,10 @@
 
   .text {
     max-width: rhythm(9);
+
+    &.no-content {
+      width: 0;
+    }
   }
   .count {
     background: $color-light-stronger;
