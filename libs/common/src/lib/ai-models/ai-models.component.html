@@ -29,13 +29,11 @@
         [active]="selectedTab === 'semantic-model'">
         {{ 'kb.ai-models.tabs.semantic-model' | translate }}
       </pa-tab>
-      @if (isAnonymizationEnabled | async) {
-        <pa-tab
-          (click)="selectedTab = 'anonymization'"
-          [active]="selectedTab === 'anonymization'">
-          {{ 'kb.ai-models.tabs.anonymization' | translate }}
-        </pa-tab>
-      }
+      <pa-tab
+        (click)="selectedTab = 'anonymization'"
+        [active]="selectedTab === 'anonymization'">
+        {{ 'kb.ai-models.tabs.anonymization' | translate }}
+      </pa-tab>
     </pa-tabs>
 
     @switch (selectedTab) {
@@ -62,12 +60,10 @@
           [kbConfigBackup]="kbConfigBackup"></stf-semantic-model>
       }
       @case ('anonymization') {
-        @if (isAnonymizationEnabled | async) {
-          <stf-anonymization
-            [kb]="kb"
-            [learningConfigurations]="learningConfigurations"
-            [kbConfigBackup]="kbConfigBackup"></stf-anonymization>
-        }
+        <stf-anonymization
+          [kb]="kb"
+          [learningConfigurations]="learningConfigurations"
+          [kbConfigBackup]="kbConfigBackup"></stf-anonymization>
       }
     }
   }

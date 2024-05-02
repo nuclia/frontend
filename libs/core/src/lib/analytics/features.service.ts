@@ -45,7 +45,6 @@ export class FeaturesService {
     training: this.featureFlag.isFeatureEnabled('training'),
     knowledgeGraph: this.featureFlag.isFeatureEnabled('knowledge-graph'),
     githubSignin: this.featureFlag.isFeatureEnabled('github-signin'),
-    kbAnonymization: this.featureFlag.isFeatureEnabled('kb-anonymization'),
     viewNuaActivity: this.featureFlag.isFeatureEnabled('view-nua-activity'),
     pdfAnnotation: this.featureFlag.isFeatureEnabled('pdf-annotation'),
     openAIModels: this.featureFlag.isFeatureEnabled('openai-models'),
