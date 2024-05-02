@@ -9,6 +9,7 @@
       <pa-button (click)="editing = true">{{ 'sync.folder-selection.edit-folders-button' | translate }}</pa-button>
     </header>
 
+    <div class="title-xxs">{{ 'sync.folder-selection.current-selection' | translate }}</div>
     <nsi-folder-list
       [filtered]="!!query"
       [folders]="selectedFolders"></nsi-folder-list>

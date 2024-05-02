@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTabsModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IConnector, ISyncEntity, LogEntity, SyncItem, SyncService } from '../logic';
-import { combineLatest, filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { SyncSettingsComponent } from './sync-settings';
 import { FoldersTabComponent } from './folders-tab/folders-tab.component';
 import { ConfigurationFormComponent } from '../configuration-form';
@@ -45,6 +45,7 @@ export class SyncDetailsPageComponent implements OnDestroy {
   private translate = inject(TranslateService);
 
   private unsubscribeAll = new Subject<void>();
+  private isDeleted = new Subject<void>();
 
   kbId = this.sdk.currentKb.pipe(map((kb) => kb.id));
   syncId: Observable<string> = this.currentRoute.params.pipe(
@@ -56,6 +57,7 @@ export class SyncDetailsPageComponent implements OnDestroy {
   sync: Observable<ISyncEntity> = this.syncService.cacheUpdated.pipe(
     switchMap(() => this.syncId),
     switchMap((syncId) => this.syncService.getSync(syncId)),
+    takeUntil(this.isDeleted),
   );
   connectorDef = this.sync.pipe(map((sync) => this.syncService.connectors[sync.connector.name].definition));
   connector: Observable<IConnector> = this.connectorDef.pipe(
@@ -78,6 +80,8 @@ export class SyncDetailsPageComponent implements OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.isDeleted.next();
+    this.isDeleted.complete();
   }
 
   toggleSync(active: boolean) {
@@ -117,11 +121,13 @@ export class SyncDetailsPageComponent implements OnDestroy {
             })
             .onClose.pipe(
               filter((confirmed) => !!confirmed),
-              switchMap((syncId) => this.syncService.deleteSync(syncId)),
+              tap(() => this.isDeleted.next()),
+              switchMap(() => this.syncService.deleteSync(sync.id)),
             ),
         ),
       )
       .subscribe({
+        next: () => this.router.navigate(['..'], { relativeTo: this.currentRoute }),
         error: () => this.toaster.error('sync.details.toast.deletion-failed'),
       });
   }

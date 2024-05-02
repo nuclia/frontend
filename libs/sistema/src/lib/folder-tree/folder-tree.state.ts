@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FolderTree, getAllPaths } from './folder-tree.model';
+import { FolderTree } from './folder-tree.model';
 import { BehaviorSubject, filter, map } from 'rxjs';
 
 let count = 0;
@@ -60,7 +60,7 @@ export class FolderTreeState {
       children: Object.values(folder.children || {}).reduce((children, child) => {
         return {
           ...children,
-          [child.path]: this.toggleAllChildren(child, selected),
+          [child.id]: this.toggleAllChildren(child, selected),
         };
       }, {}),
     };
@@ -77,7 +77,7 @@ export class FolderTreeState {
     }
     const children = {
       ...parent.children,
-      [folder.path]: folder,
+      [folder.id]: folder,
     };
     const updatedParent = {
       ...parent,
@@ -98,8 +98,8 @@ export class FolderTreeState {
   }
 
   private getParentPath(path: string): string {
-    const titles = path.split('/');
-    return titles.slice(0, titles.length - 1).join('/') || '/';
+    const ids = path.split('/');
+    return ids.slice(0, ids.length - 1).join('/') || '/';
   }
 
   private getFolder(path: string): FolderTree | undefined {
@@ -110,12 +110,12 @@ export class FolderTreeState {
       return this._tree.value;
     }
 
-    const allPaths = getAllPaths(path);
+    const ids = path.split('/').filter((id) => id);
     let parent = this._tree.value;
     let folder: FolderTree | undefined;
-    allPaths.forEach((part) => {
+    ids.forEach((id) => {
       if (parent) {
-        folder = parent.children?.[part];
+        folder = parent.children?.[id];
         if (folder) {
           parent = folder;
         }

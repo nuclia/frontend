@@ -55,7 +55,7 @@ export class FolderTreeComponent {
       children: Object.values(folder.children || {}).reduce((childrenWithHeight, child) => {
         return {
           ...childrenWithHeight,
-          [child.path]: this.mapToFolderTreeUI(child),
+          [child.id]: this.mapToFolderTreeUI(child),
         };
       }, {}),
     };

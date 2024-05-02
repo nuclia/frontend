@@ -3,6 +3,7 @@ export const FOLDER_ICON_PATH = 'assets/icons/folder.svg';
 export interface FolderTree {
   id: string;
   path: string;
+  displayPath?: string;
   title: string;
   children?: { [path: string]: FolderTree };
   indeterminate?: boolean;

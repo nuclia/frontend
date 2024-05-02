@@ -101,6 +101,7 @@
 	"sync.details.toast.modification-success": "Sync modified successfully",
 	"sync.details.toast.triggering-sync-failed": "Sync triggering failed",
 	"sync.details.toast.triggering-sync-success": "Sync successfully triggered",
+	"sync.folder-selection.current-selection": "Currently selected folders",
 	"sync.folder-selection.edit-folders-button": "Edit folders selection",
 	"sync.folder-selection.empty-message": "You didn't select any folder yet",
 	"sync.folder-selection.filtered-empty-message": "No folder match your query",
