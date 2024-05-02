@@ -101,6 +101,7 @@
 	"sync.details.toast.modification-success": "Sincronización modificada correctamente",
 	"sync.details.toast.triggering-sync-failed": "Error al activar la sincronización",
 	"sync.details.toast.triggering-sync-success": "La sincronización se activó correctamente",
+	"sync.folder-selection.current-selection": "Carpetas actualmente seleccionadas",
 	"sync.folder-selection.edit-folders-button": "Editar selección de carpetas",
 	"sync.folder-selection.empty-message": "Aún no seleccionaste ninguna carpeta",
 	"sync.folder-selection.filtered-empty-message": "Ninguna carpeta coincide con su consulta",

@@ -13,7 +13,6 @@ import {
   FolderListComponent,
   FolderTree,
   FolderTreeComponent,
-  getAllPaths,
   SegmentedButtonsComponent,
   SisProgressModule,
   SisToastService,
@@ -121,8 +120,6 @@ export class FolderSelectionComponent implements OnInit {
       });
   }
 
-  triggerSave() {}
-
   private getFolderTreeFromSyncItems(items: SyncItem[]): FolderTree {
     const tree: FolderTree = {
       id: 'root',
@@ -133,21 +130,23 @@ export class FolderSelectionComponent implements OnInit {
     };
     items.forEach((item) => {
       const path = item.metadata['path'];
+      const id = item.originalId;
       const node: FolderTree = {
-        id: item.uuid,
+        id,
         title: item.title,
         path,
+        displayPath: item.metadata['displayPath'] || path,
         children: {},
       };
       if (path === '/') {
-        tree.children![path] = node;
+        tree.children![id] = node;
       } else {
-        const allPaths = getAllPaths(path);
         let parent = tree;
         let folder: FolderTree | undefined;
-        allPaths.forEach((part) => {
+        const parentIds = path.split('/').slice(1, -1);
+        parentIds.forEach((parentId) => {
           if (parent) {
-            folder = parent.children?.[part];
+            folder = parent.children?.[parentId];
             if (folder) {
               parent = folder;
             }
@@ -155,13 +154,12 @@ export class FolderSelectionComponent implements OnInit {
         });
 
         if (!parent.children) {
-          parent.children = { [path]: node };
+          parent.children = { [id]: node };
         } else {
-          parent.children[path] = node;
+          parent.children[id] = node;
         }
       }
     });
-
     return tree;
   }
 }

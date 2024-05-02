@@ -40,6 +40,7 @@
       {{ selection2 | json }}
     </p>
     <nsi-folder-tree
+      [selection]="selection2"
       [folderTree]="tree2"
       (selectionChange)="selection2 = $event"></nsi-folder-tree>
   </pa-demo-examples>

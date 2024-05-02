@@ -101,6 +101,7 @@
 	"sync.details.toast.modification-success": "Synchronisation modifiée avec succès",
 	"sync.details.toast.triggering-sync-failed": "Le déclenchement de la synchronisation a échoué",
 	"sync.details.toast.triggering-sync-success": "La synchronisation a été déclenchée avec succès",
+	"sync.folder-selection.current-selection": "Dossiers actuellement sélectionnés",
 	"sync.folder-selection.edit-folders-button": "Modifier la sélection des dossiers",
 	"sync.folder-selection.empty-message": "Vous n'avez pas encore sélectionné de dossier",
 	"sync.folder-selection.filtered-empty-message": "Aucun dossier ne correspond à votre requête",

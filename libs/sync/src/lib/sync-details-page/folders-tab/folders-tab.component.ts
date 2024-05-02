@@ -52,7 +52,7 @@ export class FoldersTabComponent {
   @Output() selectionChange = new EventEmitter<SyncItem[]>();
 
   get selectedFolders() {
-    const selection = this.selection.map((item) => item.metadata['path']) || [];
+    const selection = this.selection.map((item) => item.metadata['displayPath'] || item.metadata['path']) || [];
     const query = this.query ? this.query.toLocaleLowerCase() : '';
     return query ? selection.filter((item) => item.toLocaleLowerCase().includes(query)) : selection;
   }
