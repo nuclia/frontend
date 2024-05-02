@@ -26,6 +26,7 @@ import {
   widgetRagStrategies,
 } from './stores';
 import { NO_RESULT_LIST } from './models';
+import { hasNoResultsWithAutofilter } from './utils';
 
 const subscriptions: Subscription[] = [];
 
@@ -132,7 +133,7 @@ export const setupTriggerSearch = (
         ),
       )
       .subscribe(({ results, append, hideResults, loadingMore, options }) => {
-        if (results && results.total === 0 && options.autofilter && (results.autofilters || []).length > 0) {
+        if (hasNoResultsWithAutofilter(results, options)) {
           // If autofilter is enabled and no results are found, retry without autofilters
           autofilerDisabled.set(true);
           triggerSearch.next(loadingMore ? { more: true } : undefined);

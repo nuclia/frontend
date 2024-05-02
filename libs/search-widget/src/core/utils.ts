@@ -12,6 +12,7 @@ import {
   type ResourceField,
   type RAGImageStrategy,
   RagImageStrategyName,
+  type BaseSearchOptions,
 } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from './api';
@@ -384,6 +385,13 @@ export function getRAGImageStrategies(ragImageStrategies: string): RAGImageStrat
 export function hasNotEnoughData(text: string): boolean {
   text = text.replace(/<br>/g, '').replace(/\n/g, '');
   return text === 'Not enough data to answer this.';
+}
+
+export function hasNoResultsWithAutofilter(
+  results: Search.FindResults | undefined,
+  options: BaseSearchOptions,
+): boolean {
+  return !!results && results.total === 0 && !!options.autofilter && (results.autofilters || []).length > 0;
 }
 
 export function downloadAsJSON(data: any) {

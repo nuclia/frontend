@@ -41,7 +41,14 @@ import type {
   Search,
 } from '@nuclia/core';
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
-import { formatQueryKey, getFindParagraphs, getUrlParams, updateQueryParams } from '../utils';
+import {
+  formatQueryKey,
+  getFindParagraphs,
+  getUrlParams,
+  hasNoResultsWithAutofilter,
+  hasNotEnoughData,
+  updateQueryParams,
+} from '../utils';
 import {
   creationEnd,
   creationStart,
@@ -379,6 +386,11 @@ export function askQuestion(
                     pendingResults.set(false);
                   } else {
                     if (result.incomplete) {
+                      if (hasNoResultsWithAutofilter(result.sources, options)) {
+                        // when no results with autofilter on, a secondary call is made with autofilter off,
+                        // meanwhile, we do not want to display the 'Not enough data' message
+                        result.text = '';
+                      }
                       currentAnswer.set(result);
                     } else {
                       chat.set({ question, answer: result });
