@@ -24,12 +24,26 @@
     margin-left: var(--rhythm-3);
     margin-top: var(--rhythm-0_5);
   }
+  .thumbnail-container {
+    display: none;
+    cursor: pointer;
+  }
 }
 
 @media (min-width: 599px) {
-  .sw-sources .resource-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .sw-sources {
+    .resource-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .thumbnail-container {
+      display: block;
+      flex: 0 0 auto;
+      width: var(--rhythm-28);
+    }
+    .source.with-thumbnail .paragraph {
+      width: calc(100% - var(--rhythm-3) - var(--rhythm-0_5) - var(--rhythm-28));
+    }
   }
 }

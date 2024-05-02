@@ -16,6 +16,7 @@ import {
 } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from './api';
+import type { TypedResult } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -400,4 +401,35 @@ export function downloadAsJSON(data: any) {
   element.setAttribute('download', `dump-${new Date().toISOString()}.json`);
   element.style.display = 'none';
   element.click();
+}
+
+export function getThumbnailInfos(result: TypedResult) {
+  let fallback = '';
+  let isPlayable = false;
+  switch (result.resultType) {
+    case 'audio':
+      fallback = 'audio';
+      isPlayable = true;
+      break;
+    case 'conversation':
+      fallback = 'chat';
+      break;
+    case 'image':
+      fallback = 'image';
+      break;
+    case 'pdf':
+      fallback = result.resultIcon;
+      break;
+    case 'spreadsheet':
+      fallback = 'spreadsheet';
+      break;
+    case 'text':
+      fallback = 'file';
+      break;
+    case 'video':
+      fallback = 'play';
+      isPlayable = true;
+      break;
+  }
+  return { fallback, isPlayable };
 }
