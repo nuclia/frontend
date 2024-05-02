@@ -25,7 +25,11 @@ export class SubscriptionsComponent implements OnDestroy {
       ),
     );
   tokensPerRequest = TOKENS_PER_REQUEST;
-  tiers: AccountTypes[] = ['v3starter', 'v3fly', 'v3growth', 'v3enterprise'];
+  // temporarily hiding the starter plan
+  disableStarterPlan = true;
+  tiers: AccountTypes[] = this.disableStarterPlan
+    ? ['v3fly', 'v3growth', 'v3enterprise']
+    : ['v3starter', 'v3fly', 'v3growth', 'v3enterprise'];
   isSubscribedToAws = this.billing.isSubscribedToAws;
   unsubscribeAll = new Subject<void>();
 
