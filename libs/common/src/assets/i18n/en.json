@@ -351,7 +351,7 @@
 	"features.unauthorized-modal.features.synonyms.title": "Synonyms",
 	"features.unauthorized-modal.features.task-automation.description": "Labels, summary, Q&A, global questions…",
 	"features.unauthorized-modal.features.task-automation.title": "Task automation",
-	"features.unauthorized-modal.title": "Upgrade your plan to unlock {{feature}}",
+	"features.unauthorized-modal.title": "Upgrade your plan to unlock \"{{feature}}\"",
 	"feedback.anything_else": "Anything else you want to share? (Optional)",
 	"feedback.reason.customer_service": "Customer service was less than expected",
 	"feedback.reason.low_quality": "Quality was less than expected",

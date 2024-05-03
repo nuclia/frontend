@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -37,7 +37,6 @@ export class SummarizationComponent extends LearningConfigurationDirective {
       prompt_examples: new FormControl<string>(''),
     }),
   });
-  @Input() unsupportedModels: string[] = [];
 
   get summaryPromptForm() {
     return this.configForm.controls.summary_prompt;
@@ -63,7 +62,7 @@ export class SummarizationComponent extends LearningConfigurationDirective {
     this.saving = true;
     const kbBackup = this.kb;
     const kbConfig: { [key: string]: any } = this.configForm.getRawValue();
-    this.isSummarizationEnabled
+    this.isSummarizationAuthorized
       .pipe(
         take(1),
         filter((summarization) => !!summarization),

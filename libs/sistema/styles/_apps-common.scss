@@ -185,3 +185,28 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
     color: $color-dark-stronger;
   }
 }
+
+pa-tab.unauthorized {
+  align-items: center;
+  display: flex;
+
+  li {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+pa-radio.unauthorized,
+pa-toggle.unauthorized {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  justify-content: space-between;
+
+  .pa-toggle {
+    flex: 1 0 auto;
+  }
+}
+pa-toggle.unauthorized {
+  padding-right: rhythm(1);
+}

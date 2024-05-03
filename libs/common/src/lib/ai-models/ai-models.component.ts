@@ -15,12 +15,11 @@ import { AnswerGenerationComponent } from './answer-generation/answer-generation
 import { SummarizationComponent } from './summarization/summarization.component';
 import { SemanticModelComponent } from './semantic-model/semantic-model.component';
 import { AnonymizationComponent } from './anonymization/anonymization.component';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { FeaturesService, SDKService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { forkJoin, of, Subject, take } from 'rxjs';
+import { filter, forkJoin, map, of, Subject, take } from 'rxjs';
 import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
-import { getUnsupportedGenerativeModels } from './ai-models.utils';
 
 @Component({
   selector: 'stf-ai-models',
@@ -41,6 +40,7 @@ import { getUnsupportedGenerativeModels } from './ai-models.utils';
     SemanticModelComponent,
     AnonymizationComponent,
     InfoCardComponent,
+    UnauthorizedFeatureDirective,
   ],
   templateUrl: './ai-models.component.html',
   styleUrl: './ai-models.component.scss',
@@ -56,8 +56,10 @@ export class AiModelsComponent implements OnInit {
   kbConfigBackup?: { [key: string]: any };
   noKbConfig = false;
   unsupportedModels: string[] = [];
+  unauthorizedModels: string[] = [];
 
-  isSummarizationEnabled = this.features.authorized['summarization'];
+  isSummarizationAuthorized = this.features.authorized['summarization'];
+  isAnonymizationAuthorized = this.features.authorized['anonymization'];
 
   constructor(
     private sdk: SDKService,
@@ -69,28 +71,55 @@ export class AiModelsComponent implements OnInit {
     this.sdk.currentKb
       .pipe(
         tap((kb) => (this.kb = kb)),
-        switchMap((kb) =>
-          forkJoin([
-            kb.getConfiguration().pipe(catchError(() => of(null))),
-            kb.getLearningSchema(),
-            this.sdk.currentAccount.pipe(take(1)),
-          ]),
+        switchMap((kb) => forkJoin([kb.getConfiguration().pipe(catchError(() => of(null))), kb.getLearningSchema()])),
+        filter(([kbConfig]) => {
+          if (kbConfig === null) {
+            this.noKbConfig = true;
+          }
+          return !!kbConfig;
+        }),
+        map(
+          ([kbConfig, learningSchema]) =>
+            ({ kbConfig, learningSchema }) as {
+              kbConfig: { [id: string]: any };
+              learningSchema: LearningConfigurations;
+            },
         ),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(([kbConfig, learningSchema, account]) => {
-        if (kbConfig === null) {
-          this.noKbConfig = true;
-        } else {
+        tap(({ kbConfig, learningSchema }) => {
           this.kbConfigBackup = kbConfig;
           this.learningConfigurations = learningSchema;
-          this.unsupportedModels = getUnsupportedGenerativeModels(
-            this.learningConfigurations,
-            this.kbConfigBackup['semantic_model'],
-            account.type,
+          this.unsupportedModels = this.features.getUnsupportedGenerativeModels(
+            learningSchema,
+            kbConfig['semantic_model'],
           );
-        }
+          this.cdr.markForCheck();
+        }),
+        switchMap(({ learningSchema }) => this.features.getUnauthorizedGenerativeModels(learningSchema)),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((unauthorizedModels) => {
+        this.unauthorizedModels = unauthorizedModels;
         this.cdr.markForCheck();
       });
+  }
+
+  selectTab(tab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization'): void {
+    if (tab === 'summarization') {
+      this.isSummarizationAuthorized
+        .pipe(
+          take(1),
+          filter((authorized) => authorized),
+        )
+        .subscribe(() => (this.selectedTab = tab));
+    } else if (tab === 'anonymization') {
+      this.isAnonymizationAuthorized
+        .pipe(
+          take(1),
+          filter((authorized) => authorized),
+        )
+        .subscribe(() => (this.selectedTab = tab));
+    } else {
+      this.selectedTab = tab;
+    }
   }
 }

@@ -350,7 +350,7 @@
 	"features.unauthorized-modal.features.synonyms.title": "Sinónimos",
 	"features.unauthorized-modal.features.task-automation.description": "Etiquetas, resumen, preguntas y respuestas, preguntas globales…",
 	"features.unauthorized-modal.features.task-automation.title": "Automatización de tareas",
-	"features.unauthorized-modal.title": "Actualice su plan para desbloquear {{feature}}",
+	"features.unauthorized-modal.title": "Actualice su plan para desbloquear \"{{feature}}\"",
 	"feedback.anything_else": "Alguna cosa més que vulguis compartir? (Opcional)",
 	"feedback.reason.customer_service": "El servicio al cliente fue peor de lo esperado",
 	"feedback.reason.low_quality": "La calidad fue inferior a la esperada",

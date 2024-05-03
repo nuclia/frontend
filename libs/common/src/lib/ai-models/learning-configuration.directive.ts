@@ -3,6 +3,8 @@ import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { UnauthorizedFeatureModalComponent } from '../../../../core/src/lib/unauthorized-feature/unauthorized-feature-modal.component';
+import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 
 @Directive({
   selector: '[stfLearningConfiguration]',
@@ -19,11 +21,13 @@ export abstract class LearningConfigurationDirective implements OnChanges {
   @Input() learningConfigurations?: LearningConfigurations;
   @Input() kb?: WritableKnowledgeBox;
   @Input() kbConfigBackup?: { [key: string]: any };
+  @Input() unsupportedModels: string[] = [];
+  @Input() unAuthorizedModels: string[] = [];
 
   // permissions
   isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;
-  isSummarizationEnabled = this.features.authorized['summarization'];
-  isUserPromptsEnabled = this.features.authorized['userPrompts'];
+  isSummarizationAuthorized = this.features.authorized['summarization'];
+  isUserPromptsAuthorized = this.features.authorized['userPrompts'];
 
   protected saving = false;
 
@@ -34,5 +38,12 @@ export abstract class LearningConfigurationDirective implements OnChanges {
     if (changes['learningConfigurations'] || changes['kbConfigBackup']) {
       this.resetForm();
     }
+  }
+
+  openUnauthorizedModal(feature: string) {
+    this.modal.openModal(
+      UnauthorizedFeatureModalComponent,
+      new ModalConfig({ data: { feature: this.translate.instant(feature) } }),
+    );
   }
 }

@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { combineLatest, map, Observable } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
-import { AccountTypes } from '@nuclia/core';
+import { AccountTypes, LearningConfigurations } from '@nuclia/core';
+import { take } from 'rxjs/operators';
 
 const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'stash-starter', 'v3starter'];
 
@@ -81,12 +82,39 @@ export class FeaturesService {
     activityLog: this.sdk.currentAccount.pipe(
       map((account) => !['stash-trial', 'stash-starter', 'v3starter'].includes(account.type)),
     ),
-    summarization: combineLatest([this.featureFlag.isFeatureEnabled('summarization'), this.isEnterpriseOrGrowth]).pipe(
-      map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth),
-    ),
-    userPrompts: combineLatest([this.featureFlag.isFeatureEnabled('user-prompts'), this.isEnterpriseOrGrowth]).pipe(
-      map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth),
+    summarization: combineLatest([
+      this.isEnterpriseOrGrowth,
+      this.featureFlag.isFeatureAuthorized('summarization'),
+    ]).pipe(map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized)),
+    userPrompts: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('user-prompts')]).pipe(
+      map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized),
     ),
     allowKbManagementFromNuaKey: this.featureFlag.isFeatureAuthorized('allow-kb-management-from-nua-key'),
+    anonymization: this.isTrial.pipe(map((isTrial) => !isTrial)),
   };
+
+  private readonly authorizedModelsForAll = ['chatgpt-azure', 'chatgpt-azure-3', 'generative-multilingual-2023'];
+  private readonly modelsWithLimitedMultilingualSupport = ['gemini-pro', 'gemini-1-5-pro', 'gemini-1-5-pro-vision'];
+
+  getUnauthorizedGenerativeModels(learningConfiguration: LearningConfigurations): Observable<string[]> {
+    const options = learningConfiguration['generative_model'].options || [];
+    return this._account.pipe(
+      take(1),
+      map((account) =>
+        account.type === 'v3starter' || account.type === 'stash-starter'
+          ? options.filter((model) => !this.authorizedModelsForAll.includes(model.value))
+          : [],
+      ),
+      map((models) => models.map((model) => model.value)),
+    );
+  }
+
+  getUnsupportedGenerativeModels(learningConfiguration: LearningConfigurations, semanticModel: string): string[] {
+    const options = learningConfiguration['generative_model'].options || [];
+    return (
+      semanticModel === 'multilingual-2023-08-16'
+        ? options.filter((model) => this.modelsWithLimitedMultilingualSupport.includes(model.value))
+        : []
+    ).map((model) => model.value);
+  }
 }

@@ -351,7 +351,7 @@
 	"features.unauthorized-modal.features.synonyms.title": "Synonymes",
 	"features.unauthorized-modal.features.task-automation.description": "Étiquettes, résumé, questions-réponses, questions globales…",
 	"features.unauthorized-modal.features.task-automation.title": "Automatisation des tâches",
-	"features.unauthorized-modal.title": "Mettez à niveau votre plan pour débloquer {{feature}}",
+	"features.unauthorized-modal.title": "Mettez à niveau votre plan pour débloquer \"{{feature}}\"",
 	"feedback.anything_else": "Quelque chose d'autre que vous souhaitez partager? (Facultatif)",
 	"feedback.reason.customer_service": "Le service client était moins bien que prévu",
 	"feedback.reason.low_quality": "La qualité était moins bien que prévu",

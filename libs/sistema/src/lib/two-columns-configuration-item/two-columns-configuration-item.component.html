@@ -1,12 +1,27 @@
-<div class="column">
-  <div class="title-xs title">
-    {{ itemTitle | translate }}
-    @if (badge) {
+<div
+  class="column"
+  [class.unauthorized]="unauthorized">
+  <div class="title">
+    <span class="title-xs">
+      {{ itemTitle | translate }}
+    </span>
+
+    @if (unauthorized) {
+      <nsi-badge
+        kind="tertiary"
+        icon="lock-filled"
+        style="cursor: pointer"
+        (click)="clickOnUnauthorized.emit()">
+        Pro
+      </nsi-badge>
+    } @else if (badge) {
       <nsi-badge kind="tertiary">{{ badge | translate }}</nsi-badge>
     }
   </div>
   <div class="body-m description">{{ description | translate }}</div>
 </div>
-<div class="column">
+<div
+  class="column right-column"
+  [class.unauthorized]="unauthorized">
   <ng-content></ng-content>
 </div>

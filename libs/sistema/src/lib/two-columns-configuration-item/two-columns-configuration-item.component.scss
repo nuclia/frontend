@@ -15,6 +15,16 @@
   .column {
     flex: 1;
     max-width: calc((100% - #{$gap-columns}) / 2);
+
+    &.unauthorized .title-xs,
+    &.unauthorized .description {
+      opacity: 0.5;
+    }
+  }
+  .right-column.unauthorized {
+    ::ng-deep nsi-info-card {
+      opacity: 0.5;
+    }
   }
 
   .title {

@@ -33,6 +33,7 @@ export class UnauthorizedFeatureDirective {
   get unauthorized() {
     return this._unauthorized;
   }
+  @Input({ transform: booleanAttribute }) fullProBadge = false;
 
   private _unauthorized = false;
   private _badge?: ComponentRef<BadgeComponent>;
@@ -52,6 +53,9 @@ export class UnauthorizedFeatureDirective {
     this._badge.instance.icon = 'lock-filled';
     this._badge.instance.kind = 'tertiary';
     this._badge.instance.clickable = true;
+    if (this.fullProBadge) {
+      this._badge.location.nativeElement.appendChild(document.createTextNode('pro'));
+    }
     this.renderer.appendChild(this.viewContainerRef.element.nativeElement, this._badge.location.nativeElement);
 
     this.cdr.markForCheck();

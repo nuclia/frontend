@@ -350,7 +350,7 @@
 	"features.unauthorized-modal.features.synonyms.title": "Sinònims",
 	"features.unauthorized-modal.features.task-automation.description": "Etiquetes, resum, preguntes i preguntes globals...",
 	"features.unauthorized-modal.features.task-automation.title": "Automatització de tasques",
-	"features.unauthorized-modal.title": "Actualitza el teu pla per desbloquejar {{feature}}",
+	"features.unauthorized-modal.title": "Actualitza el teu pla per desbloquejar \"{{feature}}\"",
 	"feedback.anything_else": "¿Algo más que quieras compartir? (Opcional)",
 	"feedback.reason.customer_service": "El servei al client va ser pitjor de l'esperat",
 	"feedback.reason.low_quality": "La qualitat va ser inferior a l'esperada",
