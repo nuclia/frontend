@@ -44,9 +44,11 @@ export class UnauthorizedFeatureDirective {
   }
 
   @HostListener('click', ['$event']) onClick(event: MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.openFeatureModal();
+    if (this.unauthorized) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.openFeatureModal();
+    }
   }
 
   private addBadge() {
