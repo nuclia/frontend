@@ -96,7 +96,9 @@
 
       <pa-dropdown #resourceMenu>
         <pa-option
-          [disabled]="(isAdminOrContrib | async) === false"
+          [disabled]="(isAdminOrContrib | async) === false || (summarizationAuthorized | async) === false"
+          [icon]="(summarizationAuthorized | async) === false ? unauthorizedIcon : null"
+          iconOnRight
           (selectOption)="summarizeResource()">
           {{ 'resource.menu.summarize' | translate }}
         </pa-option>

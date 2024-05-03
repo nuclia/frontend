@@ -1,4 +1,12 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BadgeComponent } from '../badge';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,6 +24,9 @@ export class TwoColumnsConfigurationItemComponent {
   @Input() description = '';
   @Input() badge?: string;
   @Input({ transform: booleanAttribute }) noTopBorder = false;
+  @Input({ transform: booleanAttribute }) unauthorized = false;
+
+  @Output() clickOnUnauthorized = new EventEmitter<void>();
 
   @HostBinding('class.no-top-border') get topBorder() {
     return this.noTopBorder;

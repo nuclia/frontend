@@ -18,7 +18,7 @@ export class AccountNUAComponent {
   clients$ = this.nua.clients;
   unsubscribeAll = new Subject<void>();
 
-  isNuaActivityEnabled = this.features.viewNuaActivity;
+  isNuaActivityEnabled = this.features.unstable.viewNuaActivity;
 
   constructor(
     private nua: AccountNUAService,

@@ -7,6 +7,8 @@ import { PaFocusableModule, PaIconModule } from '@guillotinaweb/pastanaga-angula
 
 import { NavbarComponent } from './navbar.component';
 import { SmallNavbarDirective } from './small-navbar.directive';
+import { BadgeComponent } from '@nuclia/sistema';
+import { UnauthorizedFeatureDirective } from '@flaps/core';
 
 @NgModule({
   imports: [
@@ -16,6 +18,8 @@ import { SmallNavbarDirective } from './small-navbar.directive';
     TranslateModule.forChild(),
     PaIconModule,
     PaFocusableModule,
+    BadgeComponent,
+    UnauthorizedFeatureDirective,
   ],
   declarations: [NavbarComponent, SmallNavbarDirective],
   exports: [NavbarComponent, SmallNavbarDirective],

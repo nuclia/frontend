@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { BackendConfigurationService, FeaturesService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { combineLatest, filter, forkJoin, map, Observable, of, skip, Subject, switchMap, take } from 'rxjs';
-import { TranslateService } from '@guillotinaweb/pastanaga-angular';
+import { IconModel, TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   AdvancedForm,
@@ -24,9 +24,13 @@ import {
 } from './widget-generator.models';
 import { SisModalService } from '@nuclia/sistema';
 import { CopilotData, CopilotModalComponent } from './copilot/copilot-modal.component';
-import { LearningConfigurationOption, RagImageStrategyName, RagStrategyName } from '@nuclia/core';
+import {
+  LearningConfigurationOption,
+  LearningConfigurations,
+  RagImageStrategyName,
+  RagStrategyName,
+} from '@nuclia/core';
 import { MODELS_SUPPORTING_VISION } from '../search-widget.models';
-import { getUnsupportedGenerativeModels } from '../../ai-models/ai-models.utils';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;
@@ -49,10 +53,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   isPrivateKb = this.sdk.currentKb.pipe(map((kb) => kb.state === 'PRIVATE'));
   isKbAdmin = this.featuresService.isKbAdmin;
+  unauthorizedIcon: IconModel = UNAUTHORIZED_ICON;
 
   generativeModels: LearningConfigurationOption[] = [];
   modelsSupportingVision = MODELS_SUPPORTING_VISION;
   unsupportedModels: string[] = [];
+  unauthorizedModels: string[] = [];
   snippetOverlayOpen = false;
   snippet = '';
   snippetPreview: SafeHtml = '';
@@ -62,18 +68,13 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isDefaultPromptFromSettingsApplied = true;
 
   // FEATURES AVAILABILITY
-  isRagHierarchyEnabled = this.featuresService.ragHierarchy;
-  isRagImagesEnabled = this.featuresService.ragImages;
-  isUserPromptsEnabled = this.featuresService.userPrompts;
-  autocompleteFromNerEnabled = this.featuresService.suggestEntities;
-  isTrainingEnabled = this.featuresService.training;
-  areSynonymsEnabled = this.featuresService.synonyms;
-  isKnowledgeGraphEnabled = this.featuresService.knowledgeGraph;
-  canHideLogo = this.sdk.currentAccount.pipe(
-    map((account) =>
-      ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
-    ),
-  );
+  isRagImagesEnabled = this.featuresService.unstable.ragImages;
+  autocompleteFromNerEnabled = this.featuresService.unstable.suggestEntities;
+  isTrainingEnabled = this.featuresService.unstable.training;
+  isKnowledgeGraphEnabled = this.featuresService.unstable.knowledgeGraph;
+  userPromptsAuthorized = this.featuresService.authorized.userPrompts;
+  synonymsAuthorized = this.featuresService.authorized.synonyms;
+  hideLogoAuthorized = this.featuresService.authorized.hideWidgetLogo;
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
 
   presetAccordionExpanded: PresetAccordionType = 'preset';
@@ -297,6 +298,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   get generativeModelControl() {
     return this.advancedForm.controls.generativeModel;
   }
+  get hideLogoControl() {
+    return this.advancedForm.controls.hideLogo;
+  }
 
   get currentGenerativeModel() {
     return this.generativeModelControl.getRawValue() || this.defaultModelFromSettings;
@@ -331,13 +335,30 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         takeUntil(this.unsubscribeAll),
-        switchMap((kb) =>
-          forkJoin([kb.getLearningSchema(), kb.getConfiguration(), this.sdk.currentAccount.pipe(take(1))]),
+        switchMap((kb) => forkJoin([kb.getLearningSchema(), kb.getConfiguration()])),
+        tap(([schema, config]) => {
+          this.unsupportedModels = this.featuresService.getUnsupportedGenerativeModels(
+            schema,
+            config['semantic_model'],
+          );
+        }),
+        switchMap(([schema, config]) =>
+          this.featuresService.getUnauthorizedGenerativeModels(schema).pipe(
+            tap((unauthorizedModels) => {
+              this.unauthorizedModels = unauthorizedModels;
+            }),
+            map(
+              () =>
+                ({ schema, config }) as {
+                  config: { [id: string]: any };
+                  schema: LearningConfigurations;
+                },
+            ),
+          ),
         ),
       )
-      .subscribe(([schema, config, account]) => {
+      .subscribe(({ schema, config }) => {
         this.generativeModels = schema['generative_model']?.options || [];
-        this.unsupportedModels = getUnsupportedGenerativeModels(schema, config['semantic_model'], account.type);
         this.defaultModelFromSettings = config['generative_model'] || '';
         const promptKey = this.generativeModels.find((model) => model.value === this.defaultModelFromSettings)
           ?.user_prompt;
@@ -406,19 +427,44 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
     combineLatest([
       this.presetForm.valueChanges.pipe(skip(1), debounceTime(FORM_CHANGED_DEBOUNCE_TIME)),
-      this.isUserPromptsEnabled,
+      this.userPromptsAuthorized,
     ])
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([value, copilotEnabled]) => {
+      .subscribe(([value, userPromptAuthorized]) => {
         this.updateConfigurationFromPreset(value);
         // wait for next cycle detection before changing the expanded accordion, so the actual accordion can be added to the DOM if needed
         setTimeout(() => {
-          this.updateExpandedAccordion(value, copilotEnabled);
+          this.updateExpandedAccordion(value, userPromptAuthorized);
           this.cdr.detectChanges();
         }, EXPANDER_CREATION_TIME);
       });
+
+    this.manageUnauthorizedFeatures();
   }
 
+  private manageUnauthorizedFeatures() {
+    this.userPromptsAuthorized.pipe(takeUntil(this.unsubscribeAll)).subscribe((authorized) => {
+      if (authorized) {
+        this.userPromptControl.enable();
+      } else {
+        this.userPromptControl.disable();
+      }
+    });
+    this.hideLogoAuthorized.pipe(takeUntil(this.unsubscribeAll)).subscribe((authorized) => {
+      if (authorized) {
+        this.hideLogoControl.enable();
+      } else {
+        this.hideLogoControl.disable();
+      }
+    });
+    this.synonymsAuthorized.pipe(takeUntil(this.unsubscribeAll)).subscribe((authorized) => {
+      if (authorized) {
+        this.useSynonymsControl.enable();
+      } else {
+        this.useSynonymsControl.disable();
+      }
+    });
+  }
   private setIsModified() {
     if (this.selectedPreset) {
       this.isModified =

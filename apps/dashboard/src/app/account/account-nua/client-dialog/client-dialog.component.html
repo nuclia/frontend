@@ -20,11 +20,12 @@
         {{ 'generic.email' | translate }}*
       </pa-input>
 
-      @if (isAllowKbManagementEnabled | async) {
-        <pa-checkbox formControlName="allow_kb_management">
-          {{ 'account.allow_kb_management' | translate }}
-        </pa-checkbox>
-      }
+      <pa-checkbox
+        formControlName="allow_kb_management"
+        [stfUnauthorizedFeature]="(allowKbManagementAuthorized | async) === false"
+        fullProBadge>
+        {{ 'account.allow_kb_management' | translate }}
+      </pa-checkbox>
 
       <pa-input
         formControlName="webhook"

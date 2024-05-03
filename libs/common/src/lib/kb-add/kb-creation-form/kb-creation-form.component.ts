@@ -14,7 +14,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IErrorMessages, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { FeaturesService, getSemanticModel, SDKService, Zone } from '@flaps/core';
+import { FeaturesService, getSemanticModel, SDKService, UnauthorizedFeatureDirective, Zone } from '@flaps/core';
 import { LanguageFieldComponent } from '@nuclia/user';
 import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
@@ -45,6 +45,7 @@ export interface LearningConfig {
     PaTextFieldModule,
     PaTogglesModule,
     InfoCardComponent,
+    UnauthorizedFeatureDirective,
   ],
   templateUrl: './kb-creation-form.component.html',
   styleUrl: './kb-creation-form.component.scss',
@@ -83,10 +84,14 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
     },
   };
 
-  isAnonymizationEnabled = this.features.kbAnonymization;
+  isAnonymizationAuthorized = this.features.authorized.anonymization;
 
   existingKbNames: string[] = [];
   existingName = false;
+
+  get anonymizationControl() {
+    return this.kbForm.controls.anonymization;
+  }
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -113,7 +118,7 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
     this.kbForm.controls.zone.valueChanges
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(() => this.computeAndEmitLearningConfig());
-    this.kbForm.controls.anonymization.valueChanges
+    this.anonymizationControl.valueChanges
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(() => this.computeAndEmitLearningConfig());
 
@@ -121,6 +126,14 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
     if (this.sdk.nuclia.options.standalone) {
       this.computeAndEmitLearningConfig();
     }
+
+    this.isAnonymizationAuthorized.pipe(takeUntil(this.unsubscribeAll)).subscribe((authorized) => {
+      if (authorized) {
+        this.anonymizationControl.enable();
+      } else {
+        this.anonymizationControl.disable();
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {

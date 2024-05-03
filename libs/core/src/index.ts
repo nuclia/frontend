@@ -12,4 +12,5 @@ export * from './lib/notifications';
 export * from './lib/services';
 export * from './lib/testing';
 export * from './lib/ui';
+export * from './lib/unauthorized-feature';
 export * from './lib/utils';

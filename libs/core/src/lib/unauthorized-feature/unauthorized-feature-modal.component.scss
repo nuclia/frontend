@@ -1,0 +1,36 @@
+@import 'apps/dashboard/src/variables';
+
+.title-l {
+  margin-bottom: rhythm(0.5);
+}
+.description {
+  color: $color-neutral-regular;
+}
+
+.feature-list {
+  padding: rhythm(2) 0;
+
+  ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+      align-items: center;
+      display: flex;
+      height: rhythm(5);
+      justify-content: space-between;
+
+      &:not(:last-child) {
+        box-shadow: $box-shadow-border-bottom;
+      }
+
+      pa-icon {
+        color: $color-tertiary-strong;
+        margin-right: rhythm(1);
+      }
+      span {
+        text-align: right;
+      }
+    }
+  }
+}

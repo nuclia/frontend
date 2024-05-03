@@ -36,6 +36,10 @@ export class FeatureFlagService {
     map((res) => res as FeaturesData),
     shareReplay(1),
   );
+
+  /**
+   * UNSTABLE FEATURES are under feature flag: "rollout: 0", meaning hidden in prod but can be enabled for some client using account_id_md5 variant
+   */
   private applicationRemoteFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
     map(([data, md5]) =>
       Object.entries(data)
@@ -45,6 +49,25 @@ export class FeatureFlagService {
             ...acc,
             [key.slice(FEATURE_PREFIX.length)]:
               feature?.rollout === 100 || (feature?.variants?.account_id_md5 || []).includes(md5 || ''),
+          };
+        }, {}),
+    ),
+  );
+  /**
+   * STABLE FEATURES are not under feature flag: "rollout: 100" but are restricted depending on account type.
+   * Can also be enabled for some client using account_id_md5 variant
+   */
+  private applicationAuthorizedFeatures: Observable<Features> = combineLatest([
+    this.featuresData,
+    this.accountMd5,
+  ]).pipe(
+    map(([data, md5]) =>
+      Object.entries(data)
+        .filter(([key]) => key.startsWith(FEATURE_PREFIX))
+        .reduce((acc, [key, feature]) => {
+          return {
+            ...acc,
+            [key.slice(FEATURE_PREFIX.length)]: (feature?.variants?.account_id_md5 || []).includes(md5 || ''),
           };
         }, {}),
     ),
@@ -82,6 +105,10 @@ export class FeatureFlagService {
         ? this.backendFeatures.pipe(map((features) => !!features[feature]))
         : this.applicationFeatures.pipe(map((features) => !!features[feature]));
     }
+  }
+
+  isFeatureAuthorized(feature: string): Observable<boolean> {
+    return this.applicationAuthorizedFeatures.pipe(map((features) => !!features[feature]));
   }
 
   getDisabledFeatures(): Observable<Features> {

@@ -1,8 +1,19 @@
 <span
-  paEllipsisTooltip
-  class="text">
-  <ng-content></ng-content>
+  class="icon-and-text"
+  [class.no-content]="!hasContent">
+  @if (icon) {
+    <pa-icon
+      [name]="icon"
+      size="small"></pa-icon>
+  }
+  <span
+    #content
+    paEllipsisTooltip
+    class="text">
+    <ng-content></ng-content>
+  </span>
 </span>
+
 @if (count !== undefined) {
   <span class="count">{{ count > 999 ? '999+' : count }}</span>
 }

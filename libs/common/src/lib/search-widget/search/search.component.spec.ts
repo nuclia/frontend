@@ -38,7 +38,7 @@ describe('SearchComponent', () => {
         MockProvider(BackendConfigurationService),
         MockProvider(TranslateService),
         MockProvider(ResourceViewerService),
-        MockProvider(FeaturesService, { knowledgeGraph: of(true) }),
+        MockProvider(FeaturesService, { unstable: { knowledgeGraph: of(true) } } as FeaturesService),
         MockProvider(StandaloneService),
       ],
     }).compileComponents();

@@ -1,143 +1,142 @@
 <div class="app-navbar">
   <div class="navbar-scroll-container">
-    <div
-      *ngIf="!(inAccount | async)"
-      class="navbar-content">
-      <div class="nav-group">
-        <div class="group-items">
-          <a
-            [routerLink]="kbUrl"
-            class="nav-link"
-            routerLinkActive="active"
-            data-cy="go-to-home"
-            [routerLinkActiveOptions]="{ exact: true }">
-            <pa-icon name="home"></pa-icon>
-            <span class="nav-link-title">{{ 'navbar.home' | translate }}</span>
-          </a>
-        </div>
-      </div>
-      <div class="nav-group">
-        <div class="group-items">
-          <a
-            [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/upload' : null"
-            class="nav-link"
-            routerLinkActive="active"
-            data-cy="go-to-upload"
-            [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-            <pa-icon name="upload"></pa-icon>
-            <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
-          </a>
-          <a
-            [routerLink]="!(invalidKey | async) ? kbUrl + '/resources' : null"
-            routerLinkActive="active"
-            class="nav-link"
-            data-cy="go-to-resources"
-            [class.disabled]="invalidKey | async">
-            <pa-icon name="list"></pa-icon>
-            <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
-          </a>
-          <a
-            class="nav-link"
-            data-cy="go-to-search"
-            routerLinkActive="active"
-            [routerLink]="!(invalidKey | async) ? kbUrl + '/search' : null"
-            [class.disabled]="invalidKey | async">
-            <pa-icon name="search"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.search' | translate }}</span>
-          </a>
-          <a
-            [routerLink]="!(invalidKey | async) ? kbUrl + '/sync' : null"
-            routerLinkActive="active"
-            class="nav-link"
-            data-cy="go-to-sync"
-            [class.disabled]="invalidKey | async">
-            <pa-icon name="connectors"></pa-icon>
-            <span class="nav-link-title">{{ 'navbar.sync' | translate }}</span>
-          </a>
-          <a
-            [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widget-generator' : null"
-            routerLinkActive="active"
-            class="nav-link"
-            data-cy="go-to-widget"
-            [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
-            <pa-icon name="widget"></pa-icon>
-            <span class="nav-link-title">{{ 'navbar.widgets' | translate }}</span>
-          </a>
-        </div>
-      </div>
-      <div class="nav-group">
-        <div class="group-items">
-          <a
-            (click)="toggleSettings()"
-            (keyup.enter)="toggleSettings()"
-            class="nav-link"
-            data-cy="go-to-advanced"
-            paFocusable
-            [paFocusDisabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true"
-            [class.disabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true">
-            <pa-icon
-              name="chevron-right"
-              [class.expanded]="showSettings"></pa-icon>
-            <span class="nav-link-title">{{ 'navbar.advanced' | translate }}</span>
-          </a>
-        </div>
-      </div>
-      @if (showSettings) {
+    @if (!(inAccount | async)) {
+      <div class="navbar-content">
         <div class="nav-group">
           <div class="group-items">
             <a
-              [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/manage' : null"
+              [routerLink]="kbUrl"
+              class="nav-link"
               routerLinkActive="active"
-              class="nav-link sub-item"
-              data-cy="go-to-settings"
-              [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
-              <pa-icon name="gear"></pa-icon>
-              <span class="nav-link-title">{{ 'navbar.settings' | translate }}</span>
+              data-cy="go-to-home"
+              [routerLinkActiveOptions]="{ exact: true }">
+              <pa-icon name="home"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.home' | translate }}</span>
+            </a>
+          </div>
+        </div>
+        <div class="nav-group">
+          <div class="group-items">
+            <a
+              [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/upload' : null"
+              class="nav-link"
+              routerLinkActive="active"
+              data-cy="go-to-upload"
+              [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+              <pa-icon name="upload"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.upload-data' | translate }}</span>
             </a>
             <a
-              [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/ai-models' : null"
+              [routerLink]="!(invalidKey | async) ? kbUrl + '/resources' : null"
               routerLinkActive="active"
-              class="nav-link sub-item"
-              data-cy="go-to-ai-models"
-              [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
-              <pa-icon name="settings"></pa-icon>
-              <span class="nav-link-title">{{ 'navbar.ai-models' | translate }}</span>
+              class="nav-link"
+              data-cy="go-to-resources"
+              [class.disabled]="invalidKey | async">
+              <pa-icon name="list"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
             </a>
-            @if (!standalone) {
-              @if (isActivityEnabled | async) {
+            <a
+              class="nav-link"
+              data-cy="go-to-search"
+              routerLinkActive="active"
+              [routerLink]="!(invalidKey | async) ? kbUrl + '/search' : null"
+              [class.disabled]="invalidKey | async">
+              <pa-icon name="search"></pa-icon>
+              <span class="nav-link-title">{{ 'stash.search' | translate }}</span>
+            </a>
+            <a
+              [routerLink]="!(invalidKey | async) ? kbUrl + '/sync' : null"
+              routerLinkActive="active"
+              class="nav-link"
+              data-cy="go-to-sync"
+              [class.disabled]="invalidKey | async">
+              <pa-icon name="connectors"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.sync' | translate }}</span>
+            </a>
+            <a
+              [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widget-generator' : null"
+              routerLinkActive="active"
+              class="nav-link"
+              data-cy="go-to-widget"
+              [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+              <pa-icon name="widget"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.widgets' | translate }}</span>
+            </a>
+          </div>
+        </div>
+        <div class="nav-group">
+          <div class="group-items">
+            <a
+              (click)="toggleSettings()"
+              (keyup.enter)="toggleSettings()"
+              class="nav-link"
+              data-cy="go-to-advanced"
+              paFocusable
+              [paFocusDisabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true"
+              [class.disabled]="(isAdminOrContrib | async) === false || (invalidKey | async) === true">
+              <pa-icon
+                name="chevron-right"
+                [class.expanded]="showSettings"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.advanced' | translate }}</span>
+            </a>
+          </div>
+        </div>
+        @if (showSettings) {
+          <div class="nav-group">
+            <div class="group-items">
+              <a
+                [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/manage' : null"
+                routerLinkActive="active"
+                class="nav-link sub-item"
+                data-cy="go-to-settings"
+                [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+                <pa-icon name="gear"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.settings' | translate }}</span>
+              </a>
+              <a
+                [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/ai-models' : null"
+                routerLinkActive="active"
+                class="nav-link sub-item"
+                data-cy="go-to-ai-models"
+                [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+                <pa-icon name="settings"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.ai-models' | translate }}</span>
+              </a>
+              @if (!standalone) {
                 <a
-                  [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/activity/download' : null"
+                  [routerLink]="
+                    (isAdminOrContrib | async) && (isActivityAuthorized | async) ? kbUrl + '/activity/download' : null
+                  "
                   routerLinkActive="active"
                   class="nav-link sub-item"
                   data-cy="go-to-activity-log"
-                  [class.disabled]="!(isAdminOrContrib | async)">
+                  [class.disabled]="(isAdminOrContrib | async) === false"
+                  [stfUnauthorizedFeature]="(isActivityAuthorized | async) === false">
                   <pa-icon name="activity-log"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.activity' | translate }}</span>
                 </a>
+
+                @if (isAdmin | async) {
+                  <a
+                    [routerLink]="kbUrl + '/keys'"
+                    routerLinkActive="active"
+                    data-cy="go-to-api-keys"
+                    class="nav-link sub-item">
+                    <pa-icon name="lock-off"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.api_keys' | translate }}</span>
+                  </a>
+                }
               }
 
-              @if (isAdmin | async) {
-                <a
-                  [routerLink]="kbUrl + '/keys'"
-                  routerLinkActive="active"
-                  data-cy="go-to-api-keys"
-                  class="nav-link sub-item">
-                  <pa-icon name="lock-off"></pa-icon>
-                  <span class="nav-link-title">{{ 'navbar.api_keys' | translate }}</span>
-                </a>
-              }
-            }
-
-            <a
-              [routerLink]="!(invalidKey | async) ? kbUrl + '/label-sets' : null"
-              routerLinkActive="active"
-              class="nav-link sub-item"
-              data-cy="go-to-classification"
-              [class.disabled]="invalidKey | async">
-              <pa-icon name="label"></pa-icon>
-              <span class="nav-link-title">{{ 'navbar.classification' | translate }}</span>
-            </a>
-            @if (isEntitiesEnabled | async) {
+              <a
+                [routerLink]="!(invalidKey | async) ? kbUrl + '/label-sets' : null"
+                routerLinkActive="active"
+                class="nav-link sub-item"
+                data-cy="go-to-classification"
+                [class.disabled]="invalidKey | async">
+                <pa-icon name="label"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.classification' | translate }}</span>
+              </a>
               <a
                 [routerLink]="!(invalidKey | async) ? kbUrl + '/entities' : null"
                 routerLinkActive="active"
@@ -147,57 +146,55 @@
                 <pa-icon name="form"></pa-icon>
                 <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
               </a>
-            }
 
-            @if (!standalone) {
-              @if (isSynonymsEnabled | async) {
+              @if (!standalone) {
                 <a
-                  [routerLink]="[kbUrl + '/synonyms']"
+                  [routerLink]="(isSynonymsAuthorized | async) ? kbUrl + '/synonyms' : null"
                   routerLinkActive="active"
                   data-cy="go-to-synonyms"
-                  class="nav-link sub-item">
+                  class="nav-link sub-item"
+                  [stfUnauthorizedFeature]="(isSynonymsAuthorized | async) === false">
                   <pa-icon name="synonyms"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.synonyms' | translate }}</span>
                 </a>
-              }
 
-              @if (isAdmin | async) {
-                @if (isTasksAutomationEnabled | async) {
+                @if (isAdmin | async) {
+                  @if (isTasksAutomationEnabled | async) {
+                    <a
+                      [routerLink]="kbUrl + '/tasks'"
+                      routerLinkActive="active"
+                      data-cy="go-to-tasks"
+                      class="nav-link sub-item">
+                      <pa-icon name="submenu"></pa-icon>
+                      <span class="nav-link-title">{{ 'tasks-automation.page-title' | translate }}</span>
+                    </a>
+                  }
                   <a
-                    [routerLink]="[kbUrl + '/tasks']"
-                    routerLinkActive="active"
-                    data-cy="go-to-tasks"
-                    class="nav-link sub-item">
-                    <pa-icon name="submenu"></pa-icon>
-                    <span class="nav-link-title">{{ 'tasks-automation.page-title' | translate }}</span>
-                  </a>
-                }
-                @if (isPromptLabEnabled | async) {
-                  <a
-                    [routerLink]="[kbUrl + '/prompt-lab']"
+                    [routerLink]="(isPromptLabAuthorized | async) ? kbUrl + '/prompt-lab' : null"
                     routerLinkActive="active"
                     data-cy="go-to-prompt-lab"
-                    class="nav-link sub-item">
+                    class="nav-link sub-item"
+                    [stfUnauthorizedFeature]="(isPromptLabAuthorized | async) === false">
                     <pa-icon name="lab"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.prompt-lab' | translate }}</span>
                   </a>
                 }
+                @if (isAccountManager | async) {
+                  <a
+                    [routerLink]="kbUrl + '/users'"
+                    routerLinkActive="active"
+                    data-cy="go-to-users"
+                    class="nav-link sub-item">
+                    <pa-icon name="users"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.users' | translate }}</span>
+                  </a>
+                }
               }
-              @if (isAccountManager | async) {
-                <a
-                  [routerLink]="kbUrl + '/users'"
-                  routerLinkActive="active"
-                  data-cy="go-to-users"
-                  class="nav-link sub-item">
-                  <pa-icon name="users"></pa-icon>
-                  <span class="nav-link-title">{{ 'navbar.users' | translate }}</span>
-                </a>
-              }
-            }
+            </div>
           </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
+    }
 
     @if (!standalone && (inAccount | async) && (isAccountManager | async)) {
       <div class="navbar-content dark">

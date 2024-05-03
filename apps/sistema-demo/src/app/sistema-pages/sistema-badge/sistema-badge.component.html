@@ -1,26 +1,53 @@
 <pa-demo-page>
   <pa-demo-title>Badges</pa-demo-title>
   <pa-demo-description>
-    <p>Sistema badges are allowing to display short information including or not a count.</p>
+    <p>Sistema badges are allowing to display short information including or not an icon and/or a count.</p>
   </pa-demo-description>
   <pa-demo-examples>
+    <p><strong>Basic badges</strong></p>
     <div class="flex-container">
       <nsi-badge>All resources</nsi-badge>
+      <nsi-badge>Super long text that should trigger ellipsis</nsi-badge>
+      <nsi-badge kind="tertiary">optional</nsi-badge>
+      <nsi-badge kind="success">Active</nsi-badge>
+    </div>
+    <p><strong>With count</strong></p>
+    <div class="flex-container">
       <nsi-badge count="120">Labels</nsi-badge>
       <nsi-badge count="999">Count limit</nsi-badge>
       <nsi-badge count="9999">Even more count limit</nsi-badge>
-      <nsi-badge>Super long text that should trigger ellipsis</nsi-badge>
-      <nsi-badge kind="tertiary">optional</nsi-badge>
       <nsi-badge
         kind="tertiary"
         count="1">
         optional
       </nsi-badge>
-      <nsi-badge kind="success">Active</nsi-badge>
       <nsi-badge
         kind="success"
         count="1">
         Active
+      </nsi-badge>
+    </div>
+    <p><strong>With icon</strong></p>
+    <div class="flex-container">
+      <nsi-badge icon="lock-filled">Pro</nsi-badge>
+      <nsi-badge
+        icon="lock-filled"
+        kind="tertiary">
+        Pro
+      </nsi-badge>
+      <nsi-badge
+        icon="lock-filled"
+        kind="success">
+        Pro
+      </nsi-badge>
+      <nsi-badge
+        icon="lock-filled"
+        kind="tertiary"></nsi-badge>
+      <nsi-badge icon="lock-filled">Super long text</nsi-badge>
+      <nsi-badge
+        icon="lock-filled"
+        count="33">
+        Super long text
       </nsi-badge>
     </div>
   </pa-demo-examples>
@@ -33,6 +60,8 @@
         A number to display on the right of the badge.
         <small>(optional)</small>
       </dd>
+      <dt>icon</dt>
+      <dd>Optional icon to be displayed.</dd>
       <dt>kind</dt>
       <dd>
         Define the badge’s color. Can be "neutral", "tertiary" or "success".

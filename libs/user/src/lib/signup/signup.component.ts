@@ -41,7 +41,7 @@ export class SignupComponent implements OnInit {
   get emailControl() {
     return this.signupForm.controls['email'];
   }
-  isGitHubEnabled = this.features.githubSignin;
+  isGitHubEnabled = this.features.unstable.githubSignin;
 
   constructor(
     private router: Router,

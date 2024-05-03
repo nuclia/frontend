@@ -232,11 +232,13 @@
                   <pa-option (selectOption)="triggerAction(row.resource, 'classify')">
                     {{ 'resource.menu.classify' | translate }}
                   </pa-option>
-                  @if (isSummarizationEnabled | async) {
-                    <pa-option (selectOption)="triggerAction(row.resource, 'summarize')">
-                      {{ 'resource.menu.summarize' | translate }}
-                    </pa-option>
-                  }
+                  <pa-option
+                    [disabled]="(isSummarizationAuthorized | async) === false"
+                    [icon]="(isSummarizationAuthorized | async) === false ? unauthorizedIcon : null"
+                    iconOnRight
+                    (selectOption)="triggerAction(row.resource, 'summarize')">
+                    {{ 'resource.menu.summarize' | translate }}
+                  </pa-option>
                   <pa-option (selectOption)="triggerAction(row.resource, 'reprocess')">
                     {{ 'generic.reindex' | translate }}
                   </pa-option>

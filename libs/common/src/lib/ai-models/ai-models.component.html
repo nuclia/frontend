@@ -13,29 +13,27 @@
   } @else {
     <pa-tabs notFullWidth>
       <pa-tab
-        (click)="selectedTab = 'answer-generation'"
+        (click)="selectTab('answer-generation')"
         [active]="selectedTab === 'answer-generation'">
         {{ 'kb.ai-models.tabs.answer-generation' | translate }}
       </pa-tab>
-      @if (isSummarizationEnabled | async) {
-        <pa-tab
-          (click)="selectedTab = 'summarization'"
-          [active]="selectedTab === 'summarization'">
-          {{ 'kb.ai-models.tabs.summarization' | translate }}
-        </pa-tab>
-      }
       <pa-tab
-        (click)="selectedTab = 'semantic-model'"
+        [stfUnauthorizedFeature]="(isSummarizationAuthorized | async) === false"
+        (click)="selectTab('summarization')"
+        [active]="selectedTab === 'summarization'">
+        {{ 'kb.ai-models.tabs.summarization' | translate }}
+      </pa-tab>
+      <pa-tab
+        (click)="selectTab('semantic-model')"
         [active]="selectedTab === 'semantic-model'">
         {{ 'kb.ai-models.tabs.semantic-model' | translate }}
       </pa-tab>
-      @if (isAnonymizationEnabled | async) {
-        <pa-tab
-          (click)="selectedTab = 'anonymization'"
-          [active]="selectedTab === 'anonymization'">
-          {{ 'kb.ai-models.tabs.anonymization' | translate }}
-        </pa-tab>
-      }
+      <pa-tab
+        [stfUnauthorizedFeature]="(isAnonymizationAuthorized | async) === false"
+        (click)="selectTab('anonymization')"
+        [active]="selectedTab === 'anonymization'">
+        {{ 'kb.ai-models.tabs.anonymization' | translate }}
+      </pa-tab>
     </pa-tabs>
 
     @switch (selectedTab) {
@@ -44,16 +42,16 @@
           [kb]="kb"
           [learningConfigurations]="learningConfigurations"
           [kbConfigBackup]="kbConfigBackup"
-          [unsupportedModels]="unsupportedModels"></stf-answer-generation>
+          [unsupportedModels]="unsupportedModels"
+          [unAuthorizedModels]="unauthorizedModels"></stf-answer-generation>
       }
       @case ('summarization') {
-        @if (isSummarizationEnabled | async) {
-          <stf-summarization
-            [kb]="kb"
-            [learningConfigurations]="learningConfigurations"
-            [kbConfigBackup]="kbConfigBackup"
-            [unsupportedModels]="unsupportedModels"></stf-summarization>
-        }
+        <stf-summarization
+          [kb]="kb"
+          [learningConfigurations]="learningConfigurations"
+          [kbConfigBackup]="kbConfigBackup"
+          [unsupportedModels]="unsupportedModels"
+          [unAuthorizedModels]="unauthorizedModels"></stf-summarization>
       }
       @case ('semantic-model') {
         <stf-semantic-model
@@ -62,12 +60,10 @@
           [kbConfigBackup]="kbConfigBackup"></stf-semantic-model>
       }
       @case ('anonymization') {
-        @if (isAnonymizationEnabled | async) {
-          <stf-anonymization
-            [kb]="kb"
-            [learningConfigurations]="learningConfigurations"
-            [kbConfigBackup]="kbConfigBackup"></stf-anonymization>
-        }
+        <stf-anonymization
+          [kb]="kb"
+          [learningConfigurations]="learningConfigurations"
+          [kbConfigBackup]="kbConfigBackup"></stf-anonymization>
       }
     }
   }

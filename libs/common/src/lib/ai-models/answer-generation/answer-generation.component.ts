@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InfoCardComponent, StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,7 +7,8 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { filter, of, take } from 'rxjs';
+import { UnauthorizedFeatureDirective } from '@flaps/core';
 
 @Component({
   selector: 'stf-answer-generation',
@@ -25,6 +26,7 @@ import { of } from 'rxjs';
     StickyFooterComponent,
     PaButtonModule,
     PaButtonModule,
+    UnauthorizedFeatureDirective,
   ],
   templateUrl: './answer-generation.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,7 +45,6 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
   popoverHelp: { [key: string]: string } = {
     'chatgpt-vision': 'kb.ai-models.answer-generation.select-llm.help.chatgpt-vision',
   };
-  @Input() unsupportedModels: string[] = [];
 
   configForm = new FormGroup({
     generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -75,6 +76,16 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
 
   protected resetForm(): void {
     const kbConfig = this.kbConfigBackup;
+    this.isSummarizationAuthorized
+      .pipe(
+        take(1),
+        filter((authorized) => !authorized),
+      )
+      .subscribe(() => {
+        this.userKeysGroup.disable();
+        this.userPromptForm.disable();
+      });
+
     if (kbConfig) {
       this.configForm.patchValue(kbConfig);
 

@@ -24,11 +24,9 @@
               </pa-button>
               <div>
                 {{ 'dashboard-home.upload-block.description' | translate }}
-                @if (isDownloadDesktopEnabled | async) {
-                  {{ 'dashboard-home.upload-block.description-desktop' | translate }}
-                }
+                {{ 'dashboard-home.upload-block.description-desktop' | translate }}
               </div>
-              <stf-desktop-sources *ngIf="isDownloadDesktopEnabled | async"></stf-desktop-sources>
+              <stf-desktop-sources></stf-desktop-sources>
             </div>
           </nsi-home-container>
         }

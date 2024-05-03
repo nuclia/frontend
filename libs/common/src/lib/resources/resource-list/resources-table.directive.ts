@@ -9,8 +9,8 @@ import {
 } from './resource-list.model';
 import { IResource, KnowledgeBox, Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { delay, map, switchMap } from 'rxjs/operators';
-import { FeaturesService, SDKService } from '@flaps/core';
-import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
+import { FeaturesService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
+import { HeaderCell, IconModel } from '@guillotinaweb/pastanaga-angular';
 import {
   BehaviorSubject,
   catchError,
@@ -65,7 +65,9 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   sorting = this.resourceListService.sort;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
 
-  isSummarizationEnabled = this.features.summarization;
+  isSummarizationAuthorized = this.features.authorized.summarization;
+
+  unauthorizedIcon: IconModel = UNAUTHORIZED_ICON;
 
   private _selection = new BehaviorSubject<string[]>([]);
   set selection(selection: string[]) {
@@ -181,7 +183,13 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
         this.reprocess([resource]).subscribe();
         break;
       case 'summarize':
-        this.summarize(resource).subscribe();
+        this.isSummarizationAuthorized
+          .pipe(
+            filter((authorized) => authorized),
+            take(1),
+            switchMap(() => this.summarize(resource)),
+          )
+          .subscribe();
         break;
     }
   }
