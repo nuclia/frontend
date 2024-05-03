@@ -74,11 +74,14 @@ export class FeaturesService {
     promptLab: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('llm-prompt-lab')]).pipe(
       map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
     ),
-    synonyms: this._account.pipe(
-      map((account) =>
-        ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
+    synonyms: combineLatest([
+      this._account.pipe(
+        map((account) =>
+          ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
+        ),
       ),
-    ),
+      this.featureFlag.isFeatureAuthorized('synonyms'),
+    ]).pipe(map(([isAccountTypeAuthorized, isAuthorized]) => isAccountTypeAuthorized || isAuthorized)),
     activityLog: this._account.pipe(
       map((account) => !['stash-trial', 'stash-starter', 'v3starter'].includes(account.type)),
     ),
