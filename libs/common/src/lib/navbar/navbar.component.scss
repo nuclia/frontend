@@ -67,10 +67,10 @@ $height-breakpoint: 856px;
         &.active {
           background-color: $color-light-stronger;
         }
-        &:not(.active):not(.disabled).sub-item {
+        &:not(.active).sub-item {
           background-color: $color-neutral-light;
 
-          &:hover {
+          &:not(.disabled):not(.unauthorized):hover {
             background-color: $color-neutral-lightest;
           }
         }
@@ -85,9 +85,15 @@ $height-breakpoint: 856px;
         }
 
         &.disabled {
-          color: $color-text-menu-option-disabled;
           cursor: not-allowed;
           pointer-events: none;
+        }
+        &.disabled,
+        &.unauthorized {
+          pa-icon,
+          .nav-link-title {
+            opacity: 0.5;
+          }
         }
 
         .nav-link-title {

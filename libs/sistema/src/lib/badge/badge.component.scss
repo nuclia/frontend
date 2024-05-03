@@ -21,6 +21,9 @@
     }
   }
 
+  &.clickable {
+    cursor: pointer;
+  }
   &.with-count {
     padding-right: rhythm(0.25);
   }

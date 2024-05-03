@@ -103,17 +103,18 @@
                 <span class="nav-link-title">{{ 'navbar.ai-models' | translate }}</span>
               </a>
               @if (!standalone) {
-                @if (isActivityEnabled | async) {
-                  <a
-                    [routerLink]="(isAdminOrContrib | async) ? kbUrl + '/activity/download' : null"
-                    routerLinkActive="active"
-                    class="nav-link sub-item"
-                    data-cy="go-to-activity-log"
-                    [class.disabled]="!(isAdminOrContrib | async)">
-                    <pa-icon name="activity-log"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.activity' | translate }}</span>
-                  </a>
-                }
+                <a
+                  [routerLink]="
+                    (isAdminOrContrib | async) && (isActivityAuthorized | async) ? kbUrl + '/activity/download' : null
+                  "
+                  routerLinkActive="active"
+                  class="nav-link sub-item"
+                  data-cy="go-to-activity-log"
+                  [class.disabled]="(isAdminOrContrib | async) === false"
+                  [stfUnauthorizedFeature]="(isActivityAuthorized | async) === false">
+                  <pa-icon name="activity-log"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.activity' | translate }}</span>
+                </a>
 
                 @if (isAdmin | async) {
                   <a
@@ -147,21 +148,20 @@
               </a>
 
               @if (!standalone) {
-                @if (isSynonymsEnabled | async) {
-                  <a
-                    [routerLink]="[kbUrl + '/synonyms']"
-                    routerLinkActive="active"
-                    data-cy="go-to-synonyms"
-                    class="nav-link sub-item">
-                    <pa-icon name="synonyms"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.synonyms' | translate }}</span>
-                  </a>
-                }
+                <a
+                  [routerLink]="(isSynonymsAuthorized | async) ? kbUrl + '/synonyms' : null"
+                  routerLinkActive="active"
+                  data-cy="go-to-synonyms"
+                  class="nav-link sub-item"
+                  [stfUnauthorizedFeature]="(isSynonymsAuthorized | async) === false">
+                  <pa-icon name="synonyms"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.synonyms' | translate }}</span>
+                </a>
 
                 @if (isAdmin | async) {
                   @if (isTasksAutomationEnabled | async) {
                     <a
-                      [routerLink]="[kbUrl + '/tasks']"
+                      [routerLink]="kbUrl + '/tasks'"
                       routerLinkActive="active"
                       data-cy="go-to-tasks"
                       class="nav-link sub-item">
@@ -169,16 +169,15 @@
                       <span class="nav-link-title">{{ 'tasks-automation.page-title' | translate }}</span>
                     </a>
                   }
-                  @if (isPromptLabEnabled | async) {
-                    <a
-                      [routerLink]="[kbUrl + '/prompt-lab']"
-                      routerLinkActive="active"
-                      data-cy="go-to-prompt-lab"
-                      class="nav-link sub-item">
-                      <pa-icon name="lab"></pa-icon>
-                      <span class="nav-link-title">{{ 'navbar.prompt-lab' | translate }}</span>
-                    </a>
-                  }
+                  <a
+                    [routerLink]="(isPromptLabAuthorized | async) ? kbUrl + '/prompt-lab' : null"
+                    routerLinkActive="active"
+                    data-cy="go-to-prompt-lab"
+                    class="nav-link sub-item"
+                    [stfUnauthorizedFeature]="(isPromptLabAuthorized | async) === false">
+                    <pa-icon name="lab"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.prompt-lab' | translate }}</span>
+                  </a>
                 }
                 @if (isAccountManager | async) {
                   <a

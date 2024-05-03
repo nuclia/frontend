@@ -59,9 +59,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable['billing'];
   isTasksAutomationEnabled = this.features.unstable['taskAutomation'];
-  isSynonymsEnabled = this.features.authorized['synonyms'];
-  isActivityEnabled = this.features.authorized['activityLog'];
-  isPromptLabEnabled = this.features.authorized['promptLab'];
+
+  isSynonymsAuthorized = this.features.authorized['synonyms'];
+  isActivityAuthorized = this.features.authorized['activityLog'];
+  isPromptLabAuthorized = this.features.authorized['promptLab'];
 
   standalone = this.standaloneService.standalone;
   invalidKey = this.standaloneService.hasValidKey.pipe(map((hasValidKey) => this.standalone && !hasValidKey));

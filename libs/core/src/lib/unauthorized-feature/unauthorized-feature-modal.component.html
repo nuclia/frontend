@@ -1,0 +1,48 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>
+    <nsi-badge
+      icon="lock-filled"
+      kind="tertiary">
+      pro
+    </nsi-badge>
+  </pa-modal-title>
+  <pa-modal-content>
+    <div class="title-l">{{ 'features.unauthorized-modal.title' | translate: { feature: currentFeature } }}</div>
+    <p class="body-m description">{{ 'features.unauthorized-modal.description' | translate }}</p>
+
+    <div class="feature-list">
+      <ul>
+        @for (feature of featureList; track feature.name) {
+          <li>
+            <div class="title-xxs">
+              <pa-icon [name]="feature.icon"></pa-icon>
+              {{ 'features.unauthorized-modal.features.' + feature.name + '.title' | translate }}
+            </div>
+            <span class="body-s">
+              {{ 'features.unauthorized-modal.features.' + feature.name + '.description' | translate }}
+            </span>
+          </li>
+        }
+        <li>
+          <div></div>
+          <span class="body-s">
+            {{ 'features.unauthorized-modal.features.and-more' | translate }}
+          </span>
+        </li>
+      </ul>
+    </div>
+  </pa-modal-content>
+
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      (click)="goToUpgrade()">
+      {{ 'features.unauthorized-modal.explore-button' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

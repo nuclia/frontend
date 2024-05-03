@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -26,6 +27,7 @@ export class BadgeComponent implements AfterViewInit {
 
   @Input() icon?: string;
   @Input({ transform: numberAttribute }) count?: number;
+  @Input({ transform: booleanAttribute }) clickable = false;
   @Input() kind: 'tertiary' | 'neutral' | 'success' = 'neutral';
 
   @ViewChild('content', { read: ElementRef }) content?: ElementRef;
@@ -44,6 +46,9 @@ export class BadgeComponent implements AfterViewInit {
   }
   @HostBinding('class.success') get success() {
     return this.kind === 'success';
+  }
+  @HostBinding('class.clickable') get isClickable() {
+    return this.clickable;
   }
 
   hasContent = false;

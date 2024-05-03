@@ -53,6 +53,8 @@ export class FeaturesService {
     invoiceProcessing: this.featureFlag.isFeatureEnabled('invoice-processing'),
     suggestEntities: this.featureFlag.isFeatureEnabled('suggest-entities'),
     ragImages: this.featureFlag.isFeatureEnabled('rag-images'),
+
+    // FEATURES meant to go to authorized features once stable
     taskAutomation: combineLatest([
       this.featureFlag.isFeatureEnabled('tasks-automation'),
       this.sdk.currentAccount.pipe(
@@ -62,20 +64,14 @@ export class FeaturesService {
   };
 
   /**
-   * AUTHORIZED FEATURES are not under feature flag per se, but they require certain account type to access the feature.
-   * The account type check is overriding the rollout from status (meaning the feature is visible even for rollout: 0), and we can enable it for some clients using account_id_md5
+   * AUTHORIZED FEATURES are not under feature flag anymore (rollout: 100), but they require certain account type to access the feature.
+   * We can enable the feature for some clients using account_id_md5.
    * when false, the feature is disabled with a pro badge
    * when true, the feature is visible
    */
   authorized: { [key: string]: Observable<boolean> } = {
-    promptLab: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureEnabled('llm-prompt-lab')]).pipe(
+    promptLab: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('llm-prompt-lab')]).pipe(
       map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
-    ),
-    userPrompts: combineLatest([this.featureFlag.isFeatureEnabled('user-prompts'), this.isEnterpriseOrGrowth]).pipe(
-      map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth),
-    ),
-    summarization: combineLatest([this.featureFlag.isFeatureEnabled('summarization'), this.isEnterpriseOrGrowth]).pipe(
-      map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth),
     ),
     synonyms: this.sdk.currentAccount.pipe(
       map((account) =>
@@ -85,6 +81,12 @@ export class FeaturesService {
     activityLog: this.sdk.currentAccount.pipe(
       map((account) => !['stash-trial', 'stash-starter', 'v3starter'].includes(account.type)),
     ),
-    allowKbManagementFromNuaKey: this.featureFlag.isFeatureEnabled('allow-kb-management-from-nua-key'),
+    summarization: combineLatest([this.featureFlag.isFeatureEnabled('summarization'), this.isEnterpriseOrGrowth]).pipe(
+      map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth),
+    ),
+    userPrompts: combineLatest([this.featureFlag.isFeatureEnabled('user-prompts'), this.isEnterpriseOrGrowth]).pipe(
+      map(([hasFlag, isAtLeastGrowth]) => hasFlag || isAtLeastGrowth),
+    ),
+    allowKbManagementFromNuaKey: this.featureFlag.isFeatureAuthorized('allow-kb-management-from-nua-key'),
   };
 }
