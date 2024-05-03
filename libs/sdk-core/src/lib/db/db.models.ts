@@ -119,7 +119,7 @@ export interface CommonMetricDetails {
     [key: string]: string | null;
   };
   raw_usage: {
-    requests: number | null;
+    search: number | null;
     input: number | null;
     output: number | null;
     image: number | null;
@@ -140,7 +140,7 @@ export interface NucliaTokensDetails extends CommonMetricDetails {
     model: string | null;
   };
   nuclia_tokens: {
-    requests: number | null;
+    search: number | null;
     input: number | null;
     output: number | null;
     image: number | null;

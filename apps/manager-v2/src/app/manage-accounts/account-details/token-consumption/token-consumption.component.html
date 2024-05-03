@@ -96,7 +96,7 @@
         header></pa-table-cell>
       <pa-table-cell header><span class="center-text">Raw usage input</span></pa-table-cell>
       <pa-table-cell header><span class="center-text">Raw usage output</span></pa-table-cell>
-      <pa-table-cell header><span class="center-text">Raw usage requests</span></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Raw usage search</span></pa-table-cell>
       <pa-table-cell
         header
         borderRight>
@@ -104,7 +104,7 @@
       </pa-table-cell>
       <pa-table-cell header><span class="center-text">Nuclia tokens from input</span></pa-table-cell>
       <pa-table-cell header><span class="center-text">Nuclia tokens from output</span></pa-table-cell>
-      <pa-table-cell header><span class="center-text">Nuclia tokens from requests</span></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Nuclia tokens from search</span></pa-table-cell>
       <pa-table-cell
         borderRight
         header>
@@ -128,7 +128,7 @@
           <span class="body-s">{{ row.raw_usage.output | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell center>
-          <span class="body-s">{{ row.raw_usage.requests | number: digitsInfo }}</span>
+          <span class="body-s">{{ row.raw_usage.search | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell
           borderRight
@@ -142,7 +142,7 @@
           <span class="body-s">{{ row.nuclia_tokens.output | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell center>
-          <span class="body-s">{{ row.nuclia_tokens.requests | number: digitsInfo }}</span>
+          <span class="body-s">{{ row.nuclia_tokens.search | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell
           borderRight
@@ -154,7 +154,7 @@
             @if (
               row.nuclia_tokens.input === null &&
               row.nuclia_tokens.output === null &&
-              row.nuclia_tokens.requests === null &&
+              row.nuclia_tokens.search === null &&
               row.nuclia_tokens.image === null
             ) {
               –
@@ -162,7 +162,7 @@
               {{
                 (row.nuclia_tokens.input || 0) +
                   (row.nuclia_tokens.output || 0) +
-                  (row.nuclia_tokens.requests || 0) +
+                  (row.nuclia_tokens.search || 0) +
                   (row.nuclia_tokens.image || 0) | number: digitsInfo
               }}
             }
