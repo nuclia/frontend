@@ -85,7 +85,7 @@ export class LabelSetFormComponent implements OnInit, OnChanges {
   });
 
   colors: string[] = LABEL_MAIN_COLORS;
-  kinds = this.features.unstable['pdfAnnotation'].pipe(
+  kinds = this.features.unstable.pdfAnnotation.pipe(
     map((enabled) => (enabled ? KINDS.concat({ id: LabelSetKind.SELECTIONS, name: 'label-set.selections' }) : KINDS)),
   );
   counts = this.labelsService.labelSetsCount;

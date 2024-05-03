@@ -68,13 +68,13 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   isDefaultPromptFromSettingsApplied = true;
 
   // FEATURES AVAILABILITY
-  isRagImagesEnabled = this.featuresService.unstable['ragImages'];
-  autocompleteFromNerEnabled = this.featuresService.unstable['suggestEntities'];
-  isTrainingEnabled = this.featuresService.unstable['training'];
-  isKnowledgeGraphEnabled = this.featuresService.unstable['knowledgeGraph'];
-  userPromptsAuthorized = this.featuresService.authorized['userPrompts'];
-  synonymsAuthorized = this.featuresService.authorized['synonyms'];
-  hideLogoAuthorized = this.featuresService.authorized['hideWidgetLogo'];
+  isRagImagesEnabled = this.featuresService.unstable.ragImages;
+  autocompleteFromNerEnabled = this.featuresService.unstable.suggestEntities;
+  isTrainingEnabled = this.featuresService.unstable.training;
+  isKnowledgeGraphEnabled = this.featuresService.unstable.knowledgeGraph;
+  userPromptsAuthorized = this.featuresService.authorized.userPrompts;
+  synonymsAuthorized = this.featuresService.authorized.synonyms;
+  hideLogoAuthorized = this.featuresService.authorized.hideWidgetLogo;
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
 
   presetAccordionExpanded: PresetAccordionType = 'preset';

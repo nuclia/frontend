@@ -41,7 +41,7 @@ export class FeaturesService {
    * when false, the feature is hidden
    * when true, the feature is visible
    */
-  unstable: { [key: string]: Observable<boolean> } = {
+  unstable = {
     billing: this.featureFlag.isFeatureEnabled('billing'),
     training: this.featureFlag.isFeatureEnabled('training'),
     knowledgeGraph: this.featureFlag.isFeatureEnabled('knowledge-graph'),
@@ -70,7 +70,7 @@ export class FeaturesService {
    * when false, the feature is disabled with a pro badge
    * when true, the feature is visible
    */
-  authorized: { [key: string]: Observable<boolean> } = {
+  authorized = {
     promptLab: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('llm-prompt-lab')]).pipe(
       map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
     ),

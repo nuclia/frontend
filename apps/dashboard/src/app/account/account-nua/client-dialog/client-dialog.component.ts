@@ -55,7 +55,7 @@ export class ClientDialogComponent implements OnInit {
 
   zones: Zone[] = [];
 
-  allowKbManagementAuthorized = this.features.authorized['allowKbManagementFromNuaKey'].pipe(
+  allowKbManagementAuthorized = this.features.authorized.allowKbManagementFromNuaKey.pipe(
     tap((authorized) => {
       if (authorized) {
         this.clientForm.controls.allow_kb_management.enable();

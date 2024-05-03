@@ -58,8 +58,8 @@ export class AiModelsComponent implements OnInit {
   unsupportedModels: string[] = [];
   unauthorizedModels: string[] = [];
 
-  isSummarizationAuthorized = this.features.authorized['summarization'];
-  isAnonymizationAuthorized = this.features.authorized['anonymization'];
+  isSummarizationAuthorized = this.features.authorized.summarization;
+  isAnonymizationAuthorized = this.features.authorized.anonymization;
 
   constructor(
     private sdk: SDKService,

@@ -51,9 +51,9 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         })),
     ),
   );
-  isPdfAnnotationEnabled = this.features.unstable['pdfAnnotation'];
+  isPdfAnnotationEnabled = this.features.unstable.pdfAnnotation;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
-  summarizationAuthorized = this.features.authorized['summarization'];
+  summarizationAuthorized = this.features.authorized.summarization;
 
   unauthorizedIcon = UNAUTHORIZED_ICON;
 

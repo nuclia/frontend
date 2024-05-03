@@ -65,7 +65,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   sorting = this.resourceListService.sort;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
 
-  isSummarizationAuthorized = this.features.authorized['summarization'];
+  isSummarizationAuthorized = this.features.authorized.summarization;
 
   unauthorizedIcon: IconModel = UNAUTHORIZED_ICON;
 
