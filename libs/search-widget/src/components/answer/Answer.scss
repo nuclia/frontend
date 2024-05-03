@@ -12,6 +12,9 @@
       text-align: center;
       width: var(--rhythm-3);
     }
+    :global(.ref:hover) {
+      background-color: var(--color-primary-lighter);
+    }
   }
   .error {
     color: var(--color-neutral-light);

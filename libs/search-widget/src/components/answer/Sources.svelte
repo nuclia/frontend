@@ -15,6 +15,7 @@
   } from '../../core';
 
   export let sources: TypedResult[] = [];
+  export let selected: number | undefined;
 
   function clickOnSource(result: TypedResult, paragraph?: Search.FindParagraph) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
@@ -47,7 +48,9 @@
     <div
       class="source"
       class:with-thumbnail={!$hideThumbnails}>
-      <div class="number body-m">{i + 1}</div>
+      <div
+        class="number body-m"
+        class:selected={selected === i}>{i + 1}</div>
       <div class="paragraph">
         {#if source.paragraphs?.[0]}
           <ParagraphResult
@@ -56,6 +59,7 @@
             disabled={!source.field}
             ellipsis={true}
             noIndicator
+            selected={selected === i}
             on:open={() => clickOnSource(source, source.paragraphs?.[0])}>
           </ParagraphResult>
         {/if}
