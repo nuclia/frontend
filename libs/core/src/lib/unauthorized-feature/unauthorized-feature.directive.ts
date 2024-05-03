@@ -62,7 +62,10 @@ export class UnauthorizedFeatureDirective {
   }
 
   private openFeatureModal() {
-    const feature = this.viewContainerRef.element.nativeElement.textContent.trim() || '';
+    let feature = this.viewContainerRef.element.nativeElement.textContent.trim() || '';
+    if (this.fullProBadge && feature.endsWith('pro')) {
+      feature = feature.substring(0, feature.lastIndexOf('pro')).trim();
+    }
     this.modalService.openModal(UnauthorizedFeatureModalComponent, new ModalConfig({ data: { feature } }));
   }
 }

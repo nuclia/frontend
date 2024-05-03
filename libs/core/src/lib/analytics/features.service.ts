@@ -89,7 +89,10 @@ export class FeaturesService {
     userPrompts: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('user-prompts')]).pipe(
       map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized),
     ),
-    allowKbManagementFromNuaKey: this.featureFlag.isFeatureAuthorized('allow-kb-management-from-nua-key'),
+    allowKbManagementFromNuaKey: combineLatest([
+      this.isEnterpriseOrGrowth,
+      this.featureFlag.isFeatureAuthorized('allow-kb-management-from-nua-key'),
+    ]).pipe(map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized)),
     anonymization: this.isTrial.pipe(map((isTrial) => !isTrial)),
     hideWidgetLogo: this._account.pipe(
       map((account) =>

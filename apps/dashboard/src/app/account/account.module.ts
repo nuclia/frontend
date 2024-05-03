@@ -39,6 +39,7 @@ import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
 import { AccountStatusComponent } from './account-status/account-status.component';
 import { BillingModule } from './billing/billing.module';
+import { UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
 
 const Components = [
   AccountHomeComponent,
@@ -82,6 +83,8 @@ const Components = [
     PaDateTimeModule,
     KnowledgeBoxSettingsModule,
     PaTooltipModule,
+    UnauthorizedFeatureComponent,
+    UnauthorizedFeatureDirective,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountHomeComponent, AccountManageComponent],
