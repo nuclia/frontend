@@ -51,7 +51,7 @@ describe('PendingResourcesTableComponent', () => {
         MockProvider(FeaturesService, {
           isKbAdminOrContrib: of(true),
           authorized: {},
-        }),
+        } as FeaturesService),
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),

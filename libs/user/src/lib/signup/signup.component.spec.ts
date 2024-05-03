@@ -54,7 +54,7 @@ describe('SignupComponent', () => {
         }),
         MockProvider(FeaturesService, {
           unstable: { githubSignin: of(true) },
-        }),
+        } as FeaturesService),
         MockProvider(BackendConfigurationService, {
           getRecaptchaKey: () => 'fake',
           staticConf: { client: '' } as StaticEnvironmentConfiguration,

@@ -71,7 +71,7 @@ describe('KnowledgeBoxHomeComponent', () => {
           isTrial: of(true),
           isAccountManager: of(true),
           isKbAdmin: of(true),
-        }),
+        } as FeaturesService),
         MockProvider(NavigationService, {
           getKbUrl: () => 'kb-url',
         }),

@@ -54,7 +54,7 @@ describe('ErrorResourcesTableComponent', () => {
         MockProvider(FeaturesService, {
           isKbAdminOrContrib: of(true),
           authorized: {},
-        }),
+        } as FeaturesService),
       ],
     }).compileComponents();
 
