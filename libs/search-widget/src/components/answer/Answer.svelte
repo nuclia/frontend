@@ -25,6 +25,7 @@
   export let rank = 0;
   export let initialAnswer = false;
   let text = '';
+  let selectedCitation: number | undefined;
 
   const dispatch = createEventDispatcher();
 
@@ -33,6 +34,11 @@
 
   $: sources =
     answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
+
+  $: sources && document.querySelectorAll('.sw-answer .ref').forEach((ref) => {
+    ref.addEventListener('mouseenter', onMouseEnter);
+    ref.addEventListener('mouseleave', onMouseLeave);
+  });
 
   function addReferences(text: string, citations: Citations) {
     Object.values(citations)
@@ -75,6 +81,15 @@
       .filter((source) => !!source)
       .map((source) => source as TypedResult);
   }
+
+  function onMouseEnter(event: Event) {
+    selectedCitation = parseInt((event.target as HTMLElement).textContent || '') - 1
+  }
+
+  function onMouseLeave() {
+    selectedCitation = undefined;
+  }
+
 </script>
 
 <div class="sw-answer">
@@ -115,7 +130,9 @@
           {#if initialAnswer}
             <div class="title-s">{$_('answer.sources')}</div>
             <div class="sources-list">
-              <Sources {sources} />
+              <Sources
+                {sources}
+                selected={selectedCitation}/>
             </div>
           {:else}
             <Expander>
@@ -125,7 +142,9 @@
                 {$_('answer.sources')}
               </div>
               <div class="sources-list">
-                <Sources {sources} />
+                <Sources
+                  {sources}
+                  selected={selectedCitation}/>
               </div>
             </Expander>
           {/if}
