@@ -28,4 +28,13 @@
       </div>
     </div>
   </div>
+  <nsi-info-card>
+    {{ 'stash.upload.go-to-synchronize' | translate }}
+    <pa-button
+      aspect="basic"
+      size="small"
+      (click)="goToSynchronize()">
+      {{ 'generic.go' | translate }}
+    </pa-button>
+  </nsi-info-card>
 </div>

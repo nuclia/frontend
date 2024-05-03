@@ -22,4 +22,8 @@ export class UploadDataComponent {
       .onClose.pipe(filter((data) => !data || !data.cancel))
       .subscribe(() => this.router.navigate(['../resources/pending'], { relativeTo: this.route }));
   }
+
+  goToSynchronize() {
+    this.router.navigate(['../sync'], { relativeTo: this.route });
+  }
 }
