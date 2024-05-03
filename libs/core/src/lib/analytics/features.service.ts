@@ -58,7 +58,7 @@ export class FeaturesService {
     // FEATURES meant to go to authorized features once stable
     taskAutomation: combineLatest([
       this.featureFlag.isFeatureEnabled('tasks-automation'),
-      this.sdk.currentAccount.pipe(
+      this._account.pipe(
         map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
       ),
     ]).pipe(map(([isFeatureEnabled, isAccountTypeAllowed]) => isFeatureEnabled && isAccountTypeAllowed)),
@@ -74,12 +74,12 @@ export class FeaturesService {
     promptLab: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('llm-prompt-lab')]).pipe(
       map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
     ),
-    synonyms: this.sdk.currentAccount.pipe(
+    synonyms: this._account.pipe(
       map((account) =>
         ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
       ),
     ),
-    activityLog: this.sdk.currentAccount.pipe(
+    activityLog: this._account.pipe(
       map((account) => !['stash-trial', 'stash-starter', 'v3starter'].includes(account.type)),
     ),
     summarization: combineLatest([
@@ -91,6 +91,11 @@ export class FeaturesService {
     ),
     allowKbManagementFromNuaKey: this.featureFlag.isFeatureAuthorized('allow-kb-management-from-nua-key'),
     anonymization: this.isTrial.pipe(map((isTrial) => !isTrial)),
+    hideWidgetLogo: this._account.pipe(
+      map((account) =>
+        ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
+      ),
+    ),
   };
 
   private readonly authorizedModelsForAll = ['chatgpt-azure', 'chatgpt-azure-3', 'generative-multilingual-2023'];

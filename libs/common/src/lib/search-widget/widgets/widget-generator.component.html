@@ -93,7 +93,7 @@
                     </div>
                   </pa-expander-body>
                 </pa-expander>
-                @if (isUserPromptsEnabled | async) {
+                @if (userPromptsAuthorized | async) {
                   <pa-expander
                     emitOnly
                     [expanded]="presetAccordionExpanded === 'copilot'"
@@ -223,25 +223,30 @@
                           {{ defaultPromptFromSettings }}
                         </nsi-info-card>
                       }
-                      @if (isUserPromptsEnabled | async) {
-                        <div class="toggle-and-help">
-                          <pa-textarea
-                            [rows]="2"
-                            formControlName="userPrompt"
-                            [errorMessages]="userPromptErrors"
-                            resizable
-                            (valueChange)="onUserPromptChange()"
-                            (resizing)="onResizingTextarea($event)">
-                            {{ 'widget.generator.advanced.generative-answer-category.prompt.label' | translate }}
-                          </pa-textarea>
+                      <div class="toggle-and-help">
+                        <pa-textarea
+                          [rows]="2"
+                          formControlName="userPrompt"
+                          [errorMessages]="userPromptErrors"
+                          resizable
+                          (valueChange)="onUserPromptChange()"
+                          (resizing)="onResizingTextarea($event)">
+                          {{ 'widget.generator.advanced.generative-answer-category.prompt.label' | translate }}
+                        </pa-textarea>
+                        @if (userPromptsAuthorized | async) {
                           <pa-icon
                             name="info"
                             [paPopover]="userPromptHelp" />
                           <pa-popover #userPromptHelp>
                             {{ 'widget.generator.advanced.generative-answer-category.prompt.help' | translate }}
                           </pa-popover>
-                        </div>
-                      }
+                        } @else {
+                          <stf-unauthorized-feature
+                            [feature]="
+                              'widget.generator.advanced.generative-answer-category.prompt.label' | translate
+                            "></stf-unauthorized-feature>
+                        }
+                      </div>
                       @if (generativeModels.length > 0) {
                         <div class="toggle-and-help">
                           <pa-toggle
@@ -273,7 +278,11 @@
                               @for (model of generativeModels; track model.value) {
                                 <pa-option
                                   [value]="model.value"
-                                  [disabled]="unsupportedModels.includes(model.value)">
+                                  [disabled]="
+                                    unsupportedModels.includes(model.value) || unauthorizedModels.includes(model.value)
+                                  "
+                                  [icon]="unauthorizedModels.includes(model.value) ? unauthorizedIcon : null"
+                                  iconOnRight>
                                   {{ model | learningOption: 'generative_model' }}
                                   @if (defaultModelFromSettings === model.value) {
                                     ({{
@@ -705,22 +714,27 @@
                         }}
                       </pa-popover>
                     </div>
-                    @if (areSynonymsEnabled | async) {
-                      <div class="toggle-and-help">
-                        <pa-toggle
-                          labelOnRight
-                          formControlName="useSynonyms"
-                          (valueChange)="toggleSynonyms($event)">
-                          {{ 'widget.generator.advanced.search-and-filtering-category.synonyms.label' | translate }}
-                        </pa-toggle>
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="useSynonyms"
+                        (valueChange)="toggleSynonyms($event)">
+                        {{ 'widget.generator.advanced.search-and-filtering-category.synonyms.label' | translate }}
+                      </pa-toggle>
+                      @if (synonymsAuthorized | async) {
                         <pa-icon
                           name="info"
                           [paPopover]="synonymsHelp" />
                         <pa-popover #synonymsHelp>
                           {{ 'widget.generator.advanced.search-and-filtering-category.synonyms.help' | translate }}
                         </pa-popover>
-                      </div>
-                    }
+                      } @else {
+                        <stf-unauthorized-feature
+                          [feature]="
+                            'widget.generator.advanced.search-and-filtering-category.synonyms.label' | translate
+                          "></stf-unauthorized-feature>
+                      }
+                    </div>
                     <div class="toggle-and-help">
                       <pa-toggle
                         labelOnRight
@@ -867,21 +881,26 @@
                         {{ 'widget.generator.advanced.display-category.popup-mode.help' | translate }}
                       </pa-popover>
                     </div>
-                    @if (canHideLogo | async) {
-                      <div class="toggle-and-help">
-                        <pa-toggle
-                          labelOnRight
-                          formControlName="hideLogo">
-                          {{ 'widget.generator.advanced.display-category.hide-logo.label' | translate }}
-                        </pa-toggle>
+                    <div class="toggle-and-help">
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="hideLogo">
+                        {{ 'widget.generator.advanced.display-category.hide-logo.label' | translate }}
+                      </pa-toggle>
+                      @if (hideLogoAuthorized | async) {
                         <pa-icon
                           name="info"
                           [paPopover]="hideLogoHelp" />
                         <pa-popover #hideLogoHelp>
                           {{ 'widget.generator.advanced.display-category.hide-logo.help' | translate }}
                         </pa-popover>
-                      </div>
-                    }
+                      } @else {
+                        <stf-unauthorized-feature
+                          [feature]="
+                            'widget.generator.advanced.display-category.hide-logo.label' | translate
+                          "></stf-unauthorized-feature>
+                      }
+                    </div>
                     <div class="toggle-and-help">
                       <pa-toggle
                         labelOnRight

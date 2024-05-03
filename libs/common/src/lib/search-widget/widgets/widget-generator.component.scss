@@ -8,6 +8,10 @@
 
   padding: $padding-top-page $padding-right-page 0 0;
 
+  stf-unauthorized-feature {
+    margin-left: rhythm(0.25);
+  }
+
   h1 {
     margin-bottom: $margin-bottom-title;
     margin-left: $padding-right-page;
