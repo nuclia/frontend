@@ -47,13 +47,14 @@
   }
   <nus-language-field (modelSelected)="updateModel($event)"></nus-language-field>
 
-  @if (isAnonymizationEnabled | async) {
-    <pa-toggle
-      formControlName="anonymization"
-      data-cy="new-kb-anonymization"
-      labelOnRight
-      [help]="'kb.ai-models.anonymization.toggle.help' | translate">
-      {{ 'kb.ai-models.anonymization.toggle.label' | translate }}
-    </pa-toggle>
-  }
+  <pa-toggle
+    formControlName="anonymization"
+    data-cy="new-kb-anonymization"
+    labelOnRight
+    [stfUnauthorizedFeature]="(isAnonymizationAuthorized | async) === false"
+    [featureName]="'kb.ai-models.anonymization.toggle.label' | translate"
+    fullProBadge
+    [help]="'kb.ai-models.anonymization.toggle.help' | translate">
+    {{ 'kb.ai-models.anonymization.toggle.label' | translate }}
+  </pa-toggle>
 </form>

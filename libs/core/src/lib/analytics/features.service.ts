@@ -96,7 +96,9 @@ export class FeaturesService {
       this.isEnterpriseOrGrowth,
       this.featureFlag.isFeatureAuthorized('allow-kb-management-from-nua-key'),
     ]).pipe(map(([isAtLeastGrowth, isAuthorized]) => isAtLeastGrowth || isAuthorized)),
-    anonymization: this.isTrial.pipe(map((isTrial) => !isTrial)),
+    anonymization: combineLatest([this.isTrial, this.featureFlag.isFeatureAuthorized('anonymization')]).pipe(
+      map(([isTrial, isAuthorized]) => !isTrial || isAuthorized),
+    ),
     hideWidgetLogo: this._account.pipe(
       map((account) =>
         ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),

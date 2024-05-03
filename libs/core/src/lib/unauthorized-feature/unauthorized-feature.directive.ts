@@ -34,6 +34,7 @@ export class UnauthorizedFeatureDirective {
     return this._unauthorized;
   }
   @Input({ transform: booleanAttribute }) fullProBadge = false;
+  @Input() featureName?: string;
 
   private _unauthorized = false;
   private _badge?: ComponentRef<BadgeComponent>;
@@ -62,10 +63,14 @@ export class UnauthorizedFeatureDirective {
   }
 
   private openFeatureModal() {
-    let feature = this.viewContainerRef.element.nativeElement.textContent.trim() || '';
-    if (this.fullProBadge && feature.endsWith('pro')) {
-      feature = feature.substring(0, feature.lastIndexOf('pro')).trim();
+    let feature = this.featureName || '';
+    if (!this.featureName) {
+      feature = this.viewContainerRef.element.nativeElement.textContent.trim() || '';
+      if (this.fullProBadge && feature.endsWith('pro')) {
+        feature = feature.substring(0, feature.lastIndexOf('pro')).trim();
+      }
     }
+
     this.modalService.openModal(UnauthorizedFeatureModalComponent, new ModalConfig({ data: { feature } }));
   }
 }
