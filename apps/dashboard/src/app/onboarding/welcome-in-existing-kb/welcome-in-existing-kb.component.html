@@ -1,0 +1,40 @@
+<pa-modal-dialog fitContentHeight>
+  <pa-modal-title>
+    {{ 'welcome.title' | translate: { name } }}
+  </pa-modal-title>
+  <pa-modal-content>
+    @if (isWriter | async) {
+      <div>{{ 'welcome.writer' | translate: { title: (title | async) } }}</div>
+    } @else {
+      <div>{{ 'welcome.reader' | translate: { title: (title | async) } }}</div>
+    }
+    <div class="start">{{ 'welcome.start' | translate }}</div>
+  </pa-modal-content>
+
+  <pa-modal-footer>
+    @if (isWriter | async) {
+      <pa-button
+        icon="upload"
+        iconAndText
+        aspect="basic"
+        (click)="goTo('/upload')">
+        {{ 'welcome.buttons.upload' | translate }}
+      </pa-button>
+    } @else {
+      <pa-button
+        icon="list"
+        iconAndText
+        aspect="basic"
+        (click)="goTo('/resources/processed')">
+        {{ 'welcome.buttons.resources' | translate }}
+      </pa-button>
+    }
+    <pa-button
+      icon="search"
+      iconAndText
+      aspect="basic"
+      (click)="goTo('/search')">
+      {{ 'welcome.buttons.search' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>
