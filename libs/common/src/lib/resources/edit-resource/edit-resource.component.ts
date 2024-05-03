@@ -13,7 +13,7 @@ import { EditResourceService } from './edit-resource.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { EditResourceView } from './edit-resource.helpers';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { ResourceNavigationService } from './resource-navigation.service';
 
 const PAWLS_KEY = 'pawls';
@@ -52,7 +52,10 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     ),
   );
   isPdfAnnotationEnabled = this.features.unstable['pdfAnnotation'];
-  isAdminOrContrib = this.editResource.isAdminOrContrib;
+  isAdminOrContrib = this.features.isKbAdminOrContrib;
+  summarizationAuthorized = this.features.authorized['summarization'];
+
+  unauthorizedIcon = UNAUTHORIZED_ICON;
 
   activeField?: FieldId | 'resource';
 

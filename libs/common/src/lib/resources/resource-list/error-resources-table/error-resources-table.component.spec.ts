@@ -51,7 +51,10 @@ describe('ErrorResourcesTableComponent', () => {
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),
-        MockProvider(FeaturesService, { isKbAdminOrContrib: of(true) }),
+        MockProvider(FeaturesService, {
+          isKbAdminOrContrib: of(true),
+          authorized: {},
+        }),
       ],
     }).compileComponents();
 

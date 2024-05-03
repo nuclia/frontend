@@ -51,7 +51,10 @@ describe('ResourceTableComponent', () => {
         MockProvider(SisModalService),
         MockProvider(SisToastService),
         MockProvider(TranslateService),
-        MockProvider(FeaturesService, { isKbAdminOrContrib: of(true) }),
+        MockProvider(FeaturesService, {
+          isKbAdminOrContrib: of(true),
+          authorized: {},
+        }),
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),
