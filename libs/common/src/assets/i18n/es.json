@@ -1182,7 +1182,7 @@
 	"upload.conflict": "Este es un duplicado. Descartado.",
 	"upload.csv_css_selector": "La columna <code>Selector CSS</code> es obligatoria, pero puedes mantenerla vacía si no la necesitas.",
 	"upload.csv_description": "Cree múltiples recursos seleccionando un archivo CSV con 4 columnas: <code>Título, Cuerpo, Formato, Etiquetas</code>",
-	"upload.csv_format": "La columna <code>Formato</code> puede ser uno de estos valores: <code>PLAIN / MARKDOWN / HTML / RST</code>",
+	"upload.csv_format": "La columna <code>Formato</code> puede ser uno de estos valores: <code>PLAIN / MARKDOWN / KEEP_MARKDOWN / HTML / RST</code>",
 	"upload.csv_labels": "La columna <code>Etiquetas</code>sigue este patrón:\n<code>labelset1/label1|labelset2/label2...</code>",
 	"upload.csv_links_description": "Seleccione un archivo CSV con 3 columnas: <code>URL, etiquetas, selector de CSS</code>",
 	"upload.error": "Subida fallida",

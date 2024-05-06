@@ -94,7 +94,7 @@
         <div class="text body-m external-html-content">
           {#if !message.content.format || message.content.format === 'PLAIN'}
             <PlainTextRendering text={message.content.text} />
-          {:else if message.content.format === 'MARKDOWN'}
+          {:else if ['MARKDOWN', 'KEEP_MARKDOWN'].includes(message.content.format)}
             <MarkdownRendering text={message.content.text} />
           {:else if message.content.format === 'HTML'}
             <HtmlRendering text={message.content.text} />

@@ -1183,7 +1183,7 @@
 	"upload.conflict": "This is a duplicate. Dismissed.",
 	"upload.csv_css_selector": "<code>CSS selector</code> column is mandatory, but you can keep it empty if you don't need it.",
 	"upload.csv_description": "Create multiple resources by selecting a CSV file with 4 columns: <code>Title, Body, Format, Labels</code>",
-	"upload.csv_format": "<code>Format</code> column must be one of these values: <code>PLAIN / MARKDOWN / HTML / RST</code>",
+	"upload.csv_format": "<code>Format</code> column must be one of these values: <code>PLAIN / MARKDOWN / KEEP_MARKDOWN /HTML / RST</code>",
 	"upload.csv_labels": "<code>Labels</code> column follows this pattern:\n<code>labelset1/label1|labelset2/label2...</code>",
 	"upload.csv_links_description": "Select a CSV file with 3 columns: <code>Url, Labels, CSS selector</code>",
 	"upload.error": "Upload failed",
