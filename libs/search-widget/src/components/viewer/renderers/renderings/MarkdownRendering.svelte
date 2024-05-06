@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import DOMPurify from 'dompurify';
 
   const dispatch = createEventDispatcher();
   export let text = '';
@@ -21,6 +22,6 @@
 
 {#if markedLoaded && trimmedText}
   <div bind:this={bodyElement}>
-    {@html marked.parse(trimmedText, { mangle: false, headerIds: false })}
+    {@html DOMPurify.sanitize(marked.parse(trimmedText, { mangle: false, headerIds: false }))}
   </div>
 {/if}
