@@ -5,6 +5,7 @@
   import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
   import { createEventDispatcher } from 'svelte';
   import { Button, Expander } from '../../common';
+  import { MarkdownRendering } from '../viewer';
   import Sources from './Sources.svelte';
   import {
     chat,
@@ -18,8 +19,6 @@
     notEnoughDataMessage,
     type TypedResult,
   } from '../../core';
-  import DOMPurify from 'dompurify';
-  import * as marked from 'marked';
 
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
@@ -29,7 +28,7 @@
 
   const dispatch = createEventDispatcher();
 
-  $: text = DOMPurify.sanitize(marked.parse(addReferences(answer.text || '', answer.citations || {})));
+  $: text = addReferences(answer.text || '', answer.citations || {});
   $: notEnoughData = hasNotEnoughData(answer.text || '');
 
   $: sources =
@@ -99,7 +98,7 @@
     {#if notEnoughData && $notEnoughDataMessage}
       {@html $notEnoughDataMessage}
     {:else}
-      {@html text}
+      <MarkdownRendering {text} />
     {/if}
   </div>
   {#if answer.sources && !notEnoughData}
