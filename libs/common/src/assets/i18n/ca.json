@@ -1182,7 +1182,7 @@
 	"upload.conflict": "Això és un duplicat. Descartat.",
 	"upload.csv_css_selector": "La columna <code>selector CSS</code> és obligatòria, però podeu mantenir-la buida si no la necessiteu.",
 	"upload.csv_description": "Creeu diversos recursos seleccionant un fitxer CSV amb 4 columnes: <code>Títol, Cos, Format, Etiquetes</code>",
-	"upload.csv_format": "La columna <code>Format</code> pot ser un d'aquests valors: <code>PLAIN / MARKDOWN / HTML / RST</code>",
+	"upload.csv_format": "La columna <code>Format</code> pot ser un d'aquests valors: <code>PLAIN / MARKDOWN / KEEP_MARKDOWN / HTML / RST</code>",
 	"upload.csv_labels": "La columna <code>Etiquetes</code>segueix aquest patró:\n<code>labelset1/label1|labelset2/label2...</code>",
 	"upload.csv_links_description": "Seleccioneu un fitxer CSV amb 3 columnes: <code>URL, etiquetes, selector CSS</code>",
 	"upload.error": "La càrrega ha fallat",

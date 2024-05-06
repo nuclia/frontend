@@ -3,6 +3,7 @@
 ### Improvements
 
 - Update `Citations` model
+- Add `KEEP_MARKDOWN` format to `TextFormat` type
 
 # 1.14.9 (2024-04-30)
 

@@ -9,7 +9,7 @@ import { parseCsvLabels } from '../csv-parser';
 import { StandaloneService } from '../../services';
 import { PENDING_RESOURCES_LIMIT } from '../upload.utils';
 
-const FORMATS: TextFormat[] = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];
+const FORMATS: TextFormat[] = ['PLAIN', 'MARKDOWN', 'KEEP_MARKDOWN', 'HTML', 'RST'];
 
 interface Row {
   title: string;

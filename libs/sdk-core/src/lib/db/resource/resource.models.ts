@@ -249,7 +249,7 @@ export class TextFieldData implements IFieldData {
   error?: IError;
 }
 
-export type TextFormat = 'PLAIN' | 'MARKDOWN' | 'HTML' | 'RST';
+export type TextFormat = 'PLAIN' | 'MARKDOWN' | 'KEEP_MARKDOWN' | 'HTML' | 'RST';
 
 export type TextFieldFormat = TextFormat | 'JSON';
 

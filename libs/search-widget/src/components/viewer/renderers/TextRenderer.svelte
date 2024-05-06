@@ -13,6 +13,7 @@
     map(
       (data) =>
         (data?.value as TextField)?.format === 'MARKDOWN' ||
+        (data?.value as TextField)?.format === 'KEEP_MARKDOWN' ||
         (data?.value as FileField).file?.content_type === 'text/markdown' ||
         ((data?.value as FileField).file?.content_type === 'application/octet-stream' &&
           (data?.value as FileField).file?.filename?.endsWith('.md')),
