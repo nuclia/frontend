@@ -34,6 +34,9 @@
           @if (isGeckoModelEnabled | async) {
             <pa-radio value="GECKO_MULTI">{{ 'onboarding.step2.models.gecko' | translate }}</pa-radio>
           }
+          @if (isExtraSemanticModelEnabled | async) {
+            <pa-radio value="MULTILINGUAL_EXTRA">MULTILINGUAL_EXTRA (testing on stage only)</pa-radio>
+          }
           @if (areOpenAIModelsEnabled | async) {
             <pa-radio value="OPENAI_3_SMALL">{{ 'onboarding.step2.models.openai-small' | translate }}</pa-radio>
             <pa-radio value="OPENAI_3_LARGE">{{ 'onboarding.step2.models.openai-large' | translate }}</pa-radio>
