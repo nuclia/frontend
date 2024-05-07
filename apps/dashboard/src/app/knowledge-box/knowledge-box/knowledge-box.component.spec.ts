@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { KnowledgeBoxComponent } from './knowledge-box.component';
 import { MockProvider } from 'ng-mocks';
 import { SisModalService } from '@nuclia/sistema';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
 
 describe('KnowledgeBoxComponent', () => {
@@ -18,6 +18,7 @@ describe('KnowledgeBoxComponent', () => {
       providers: [
         MockProvider(SDKService, { counters: of({ resources: 0 }) } as SDKService),
         MockProvider(SisModalService),
+        MockProvider(FeaturesService, { isKbAdmin: of(true) }),
       ],
     }).compileComponents();
   });
