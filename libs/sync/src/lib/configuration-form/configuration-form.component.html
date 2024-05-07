@@ -21,14 +21,23 @@
                 @case ('text') {
                   <pa-input
                     [formControlName]="field.id"
-                    [placeholder]="field.placeholder">
+                    [placeholder]="field.placeholder"
+                    [help]="field.help">
                     {{ field.label | translate }}
                   </pa-input>
+                }
+                @case ('boolean') {
+                  <pa-toggle
+                    [formControlName]="field.id"
+                    [help]="field.help">
+                    {{ field.label | translate }}
+                  </pa-toggle>
                 }
                 @case ('select') {
                   <pa-select
                     [formControlName]="field.id"
-                    [label]="field.label">
+                    [label]="field.label"
+                    [help]="field.help">
                     @for (option of field.options; track option.value) {
                       <pa-option
                         [disabled]="option.disabled"
@@ -39,11 +48,18 @@
                   </pa-select>
                 }
                 @case ('textarea') {
-                  <pa-textarea [formControlName]="field.id">{{ field.label }}</pa-textarea>
+                  <pa-textarea
+                    [formControlName]="field.id"
+                    [help]="field.help">
+                    {{ field.label }}
+                  </pa-textarea>
                 }
                 @case ('table') {
                   <div class="table-container">
                     <label>{{ field.label | translate }}</label>
+                    @if (field.help) {
+                      <p>{{ field.help | translate }}</p>
+                    }
                     <app-parameters-table
                       [values]="tables[field.id] || []"
                       (valuesChanges)="updateTable(field.id, $event)"></app-parameters-table>

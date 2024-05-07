@@ -49,6 +49,8 @@
 	"sync.connectors.common.css.label": "Sélecteur CSS",
 	"sync.connectors.common.headers.help": "Pour permettre au traitement Nuclia de contourner les paywalls, l'authentification ou tout affichage indésirable qui bloquerait l'accès au contenu réel de la page.",
 	"sync.connectors.common.headers.label": "En-têtes HTTP",
+	"sync.connectors.common.local-extract.help": "Chargera la page Web localement et enverra le contenu à Nuclia. Cela nécessite d'installer @nuclia/extractor, voir <a href=\"https://github.com/nuclia/sync-agent/blob/main/extractor/README.md\" target=\"_new\">la documentation</a>.",
+	"sync.connectors.common.local-extract.label": "Extracteur local",
 	"sync.connectors.common.localstorage.help": "Pour permettre au traitement Nuclia de contourner les paywalls, l'authentification ou tout affichage indésirable qui bloquerait l'accès au contenu réel de la page.",
 	"sync.connectors.common.localstorage.label": "Entrées du LocalStorage",
 	"sync.connectors.common.restrict-indexation.description": "Limitera l'indexation au contenu texte correspondant à ce sélecteur CSS ou XPath. Le sélecteur XPath est prioritaire sur le sélecteur CSS.",

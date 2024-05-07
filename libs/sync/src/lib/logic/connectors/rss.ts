@@ -82,6 +82,13 @@ class RSSImpl implements IConnector {
         badge: 'generic.badge.advanced',
         fields: [
           {
+            id: 'localExtract',
+            label: 'sync.connectors.common.local-extract.label',
+            help: 'sync.connectors.common.local-extract.help',
+            type: 'boolean',
+            required: false,
+          },
+          {
             id: 'headers',
             label: 'sync.connectors.common.headers.label',
             help: 'sync.connectors.common.headers.help',
