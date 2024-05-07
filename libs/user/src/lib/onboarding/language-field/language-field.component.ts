@@ -45,6 +45,7 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
 
   areOpenAIModelsEnabled = this.features.unstable.openAIModels;
   isGeckoModelEnabled = this.features.unstable.geckoModel;
+  isExtraSemanticModelEnabled = this.features.unstable.extraSemanticModel;
 
   constructor(
     private translate: TranslateService,

@@ -50,6 +50,7 @@ export class FeaturesService {
     pdfAnnotation: this.featureFlag.isFeatureEnabled('pdf-annotation'),
     openAIModels: this.featureFlag.isFeatureEnabled('openai-models'),
     geckoModel: this.featureFlag.isFeatureEnabled('gecko-model'),
+    extraSemanticModel: this.featureFlag.isFeatureEnabled('extra-semantic-model'),
     aiTableProcessing: this.featureFlag.isFeatureEnabled('ai-table-processing'),
     invoiceProcessing: this.featureFlag.isFeatureEnabled('invoice-processing'),
     suggestEntities: this.featureFlag.isFeatureEnabled('suggest-entities'),
