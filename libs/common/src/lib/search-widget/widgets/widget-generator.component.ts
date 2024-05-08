@@ -648,11 +648,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   placeholder="${this.placeholder}"`
       : '';
     let prompt = '';
-    let copiablePrompt = '';
     const promptValue = this.userPrompt;
     if (promptValue) {
-      prompt = `prompt="${promptValue}"`;
-      copiablePrompt = `prompt="${promptValue.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n  `;
+      prompt = `prompt="${promptValue.replace(/"/g, '&quot;').replace(/\n/g, '&#10;')}"\n  `;
     }
 
     const ragStrategies: string[] = [];
@@ -751,7 +749,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-${
         this.popupModeEnabled ? 'popup' : 'video'
       }-widget.umd.js"></script>
-${baseSnippet.replace('zone=', copiablePrompt + 'zone=')}`;
+${baseSnippet.replace('zone=', prompt + 'zone=')}`;
+
       this.snippetPreview = this.sanitized.bypassSecurityTrustHtml(
         baseSnippet
           .replace(
