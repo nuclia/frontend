@@ -6,7 +6,7 @@
   </div>
 }
 
-@if ((isReady | async) === true && (emptyKb | async) === false) {
+@if ((isReady | async) === true) {
   <div class="resource-table-header">
     @if ((isAdminOrContrib | async) && selection.length > 0) {
       <div class="resource-bulk-actions">

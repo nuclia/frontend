@@ -78,7 +78,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private resourceListService: ResourceListService,
     private tracking: STFTrackingService,
     private features: FeaturesService,
-  ) {}
+  ) {
+    this.resourceListService.updateCount().subscribe();
+  }
 
   ngOnInit(): void {
     // Reset resource list when query is empty (without forcing user to hit enter)

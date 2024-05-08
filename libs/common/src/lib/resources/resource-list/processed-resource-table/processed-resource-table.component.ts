@@ -44,7 +44,6 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   totalCount = this.uploadService.statusCount.pipe(map((statusCount) => statusCount.processed + statusCount.error));
   labelSets = this.resourceListService.labelSets;
   isReady = this.resourceListService.ready;
-  emptyKb = this.resourceListService.emptyKb;
   query = this.resourceListService.query;
 
   get initialColumns(): ColumnHeader[] {

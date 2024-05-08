@@ -109,14 +109,7 @@ export class ResourceListService {
         : this.loadResourcesFromCatalog(replaceData, updateCount);
 
     return loadRequest.pipe(
-      switchMap(() =>
-        updateCount
-          ? this.uploadService.updateStatusCount().pipe(
-              tap((count) => this._emptyKb.next(count.error === 0 && count.pending === 0 && count.processed === 0)),
-              map(() => {}),
-            )
-          : of(undefined),
-      ),
+      switchMap(() => (updateCount ? this.updateCount().pipe(map(() => {})) : of(undefined))),
       catchError((error) => {
         console.error(`Error while loading results:`, error);
         this.toastService.error(this.translate.instant('resource.error.loading-failed'));
@@ -124,6 +117,12 @@ export class ResourceListService {
         return of(undefined);
       }),
     );
+  }
+
+  updateCount() {
+    return this.uploadService
+      .updateStatusCount()
+      .pipe(tap((count) => this._emptyKb.next(count.error === 0 && count.pending === 0 && count.processed === 0)));
   }
 
   private loadPendingResources(replaceData: boolean, updateCount: boolean): Observable<void> {

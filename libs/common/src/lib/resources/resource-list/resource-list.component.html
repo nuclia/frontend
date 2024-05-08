@@ -1,117 +1,123 @@
 <div class="resource-list page-spacing">
-  <div class="resource-list-header">
-    @if (isMainView) {
-      <form
-        class="search-bar-container"
-        [formGroup]="searchForm"
-        (ngSubmit)="search()">
-        <label
-          for="search-resources"
-          class="title-xxs">
-          {{ 'stash.search' | translate }}
-        </label>
-        <pa-select
-          dim
-          formControlName="searchIn"
-          [options]="searchOptions"></pa-select>
-        <pa-input
-          id="search-resources"
-          externalLabel
-          icon="search"
-          formControlName="query"></pa-input>
-      </form>
-    } @else {
-      <pa-button
-        data-cy="back-to-processed"
-        routerLink="./processed"
-        iconAndText
-        icon="chevron-left"
-        aspect="basic"
-        size="small">
-        {{ 'resource.processed_resources' | translate }}
-      </pa-button>
-    }
-
-    @if (isPendingView && (isTrial | async)) {
-      <div class="shared-queue-container title-s">
-        <pa-icon name="info"></pa-icon>
-        {{ 'resource.shared_queue' | translate }}
-        @if (isAccountManager | async) {
-          <a [routerLink]="upgradeUrl | async">
-            {{ 'billing.upgrade_now' | translate }}
-          </a>
-        }
+  @if ((emptyKb | async) === true) {
+    <div
+      class="empty-kb"
+      data-cy="empty-kb">
+      <div class="title-m">{{ 'resource.empty.title' | translate }}</div>
+      <div class="body-m">
+        {{ 'resource.empty.description' | translate }}
       </div>
-    }
-
-    <div class="upload-container">
-      @if (isMainView && (isAdminOrContrib | async)) {
-        <stf-upload-button></stf-upload-button>
-      }
-    </div>
-    <div class="status-buttons-container">
-      <div
-        data-cy="pending-access"
-        class="status-button"
-        [class.with-margin]="(statusCount | async)?.error || 0 > 0"
-        *ngIf="(statusCount | async)?.pending || 0 > 0">
-        <pa-button
-          routerLink="./pending"
-          routerLinkActive
-          #rla="routerLinkActive"
-          icon="clock-dash"
-          size="small"
-          iconSize="medium"
-          aspect="basic"
-          iconAndText
-          #pendingPopoverDirective="paPopoverRef"
-          [paPopover]="pendingPopover"
-          paPopoverOffset="0px"
-          [active]="rla.isActive">
-          {{ (statusCount | async)?.pending }}
-        </pa-button>
-      </div>
-      <pa-popover #pendingPopover>
-        <div class="popover-content">{{ 'resource.popover.pending-resources' | translate }}</div>
-      </pa-popover>
-
-      @if ((statusCount | async)?.error || 0 > 0) {
-        <div class="status-button">
-          <pa-button
-            routerLink="./error"
-            routerLinkActive
-            #rla="routerLinkActive"
-            icon="warning"
-            size="small"
-            iconSize="medium"
-            kind="destructive"
-            aspect="basic"
-            iconAndText
-            #failedPopoverDirective="paPopoverRef"
-            [paPopover]="failedPopover"
-            paPopoverOffset="0px"
-            [active]="rla.isActive">
-            {{ (statusCount | async)?.error }}
-          </pa-button>
+      @if (isAdminOrContrib | async) {
+        <div>
+          <stf-upload-button></stf-upload-button>
         </div>
       }
-      <pa-popover #failedPopover>
-        <div class="popover-content">{{ 'resource.popover.error-resources' | translate }}</div>
-      </pa-popover>
     </div>
-  </div>
+  } @else if ((emptyKb | async) === false) {
+    <div class="resource-list-header">
+      @if (isMainView) {
+        <form
+          class="search-bar-container"
+          [formGroup]="searchForm"
+          (ngSubmit)="search()">
+          <label
+            for="search-resources"
+            class="title-xxs">
+            {{ 'stash.search' | translate }}
+          </label>
+          <pa-select
+            dim
+            formControlName="searchIn"
+            [options]="searchOptions"></pa-select>
+          <pa-input
+            id="search-resources"
+            externalLabel
+            icon="search"
+            formControlName="query"></pa-input>
+        </form>
+      } @else {
+        <pa-button
+          data-cy="back-to-processed"
+          routerLink="./processed"
+          iconAndText
+          icon="chevron-left"
+          aspect="basic"
+          size="small">
+          {{ 'resource.processed_resources' | translate }}
+        </pa-button>
+      }
 
-  <div class="resource-list-content">
-    <router-outlet></router-outlet>
+      @if (isPendingView && (isTrial | async)) {
+        <div class="shared-queue-container title-s">
+          <pa-icon name="info"></pa-icon>
+          {{ 'resource.shared_queue' | translate }}
+          @if (isAccountManager | async) {
+            <a [routerLink]="upgradeUrl | async">
+              {{ 'billing.upgrade_now' | translate }}
+            </a>
+          }
+        </div>
+      }
 
-    @if (isMainView && (emptyKb | async) === true && !standalone) {
-      <div
-        class="empty-kb"
-        data-cy="empty-kb">
-        <p>
-          <strong>{{ 'resource.empty' | translate }}</strong>
-        </p>
+      <div class="upload-container">
+        @if (isMainView && (isAdminOrContrib | async)) {
+          <stf-upload-button></stf-upload-button>
+        }
       </div>
-    }
-  </div>
+      <div class="status-buttons-container">
+        <div
+          data-cy="pending-access"
+          class="status-button"
+          [class.with-margin]="(statusCount | async)?.error || 0 > 0"
+          *ngIf="(statusCount | async)?.pending || 0 > 0">
+          <pa-button
+            routerLink="./pending"
+            routerLinkActive
+            #rla="routerLinkActive"
+            icon="clock-dash"
+            size="small"
+            iconSize="medium"
+            aspect="basic"
+            iconAndText
+            #pendingPopoverDirective="paPopoverRef"
+            [paPopover]="pendingPopover"
+            paPopoverOffset="0px"
+            [active]="rla.isActive">
+            {{ (statusCount | async)?.pending }}
+          </pa-button>
+        </div>
+        <pa-popover #pendingPopover>
+          <div class="popover-content">{{ 'resource.popover.pending-resources' | translate }}</div>
+        </pa-popover>
+
+        @if ((statusCount | async)?.error || 0 > 0) {
+          <div class="status-button">
+            <pa-button
+              routerLink="./error"
+              routerLinkActive
+              #rla="routerLinkActive"
+              icon="warning"
+              size="small"
+              iconSize="medium"
+              kind="destructive"
+              aspect="basic"
+              iconAndText
+              #failedPopoverDirective="paPopoverRef"
+              [paPopover]="failedPopover"
+              paPopoverOffset="0px"
+              [active]="rla.isActive">
+              {{ (statusCount | async)?.error }}
+            </pa-button>
+          </div>
+        }
+        <pa-popover #failedPopover>
+          <div class="popover-content">{{ 'resource.popover.error-resources' | translate }}</div>
+        </pa-popover>
+      </div>
+    </div>
+
+    <div class="resource-list-content">
+      <router-outlet></router-outlet>
+    </div>
+  }
 </div>
