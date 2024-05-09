@@ -60,7 +60,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected features = inject(FeaturesService);
 
   // status is set to processed by default, but will be overridden by each component extending this directive
-  status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
+  status?: RESOURCE_STATUS;
   data = this.resourceListService.data;
   sorting = this.resourceListService.sort;
   isAdminOrContrib = this.features.isKbAdminOrContrib;

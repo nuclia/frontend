@@ -46,7 +46,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   );
 
   get isMainView(): boolean {
-    return this.resourceListService.status === 'PROCESSED';
+    return !this.resourceListService.status;
   }
   get isPendingView(): boolean {
     return this.resourceListService.status === 'PENDING';

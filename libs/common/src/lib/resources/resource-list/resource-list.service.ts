@@ -25,11 +25,11 @@ export class ResourceListService {
   private toastService = inject(SisToastService);
   private navigationService = inject(ResourceNavigationService);
 
-  private _status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
+  private _status?: RESOURCE_STATUS;
   get status() {
     return this._status;
   }
-  set status(status: RESOURCE_STATUS) {
+  set status(status: RESOURCE_STATUS | undefined) {
     this._status = status;
   }
 

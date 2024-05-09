@@ -39,9 +39,10 @@ import { getClassificationsPayload } from '../../edit-resource';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProcessedResourceTableComponent extends ResourcesTableDirective implements OnInit, OnDestroy, OnChanges {
-  override status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
   private uploadService = inject(UploadService);
-  totalCount = this.uploadService.statusCount.pipe(map((statusCount) => statusCount.processed + statusCount.error));
+  totalCount = this.uploadService.statusCount.pipe(
+    map((statusCount) => statusCount.processed + statusCount.pending + statusCount.error),
+  );
   labelSets = this.resourceListService.labelSets;
   isReady = this.resourceListService.ready;
   query = this.resourceListService.query;

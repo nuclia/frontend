@@ -63,11 +63,6 @@ const ROUTES: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'processed',
-            pathMatch: 'full',
-          },
-          {
-            path: 'processed',
             component: ProcessedResourceTableComponent,
           },
           {
