@@ -23,7 +23,7 @@ import {
 import { UploadButtonComponent } from '../upload-button/upload-button.component';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ProcessedResourceTableComponent } from './processed-resource-table/processed-resource-table.component';
+import { ResourcesTableComponent } from './resources-table/resources-table.component';
 import { ErrorResourcesTableComponent } from './error-resources-table/error-resources-table.component';
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
 import { UploadService } from '../../upload/upload.service';
@@ -40,7 +40,7 @@ describe('ResourceListComponent', () => {
         MockComponent(UploadButtonComponent),
         MockComponent(ErrorResourcesTableComponent),
         MockComponent(PendingResourcesTableComponent),
-        MockComponent(ProcessedResourceTableComponent),
+        MockComponent(ResourcesTableComponent),
       ],
       imports: [
         RouterTestingModule,

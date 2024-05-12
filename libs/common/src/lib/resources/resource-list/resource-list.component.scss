@@ -8,68 +8,23 @@
 .resource-list-header {
   align-items: center;
   background-color: $color-light-stronger;
-  border-bottom: 1px solid $color-neutral-lighter;
-  display: flex;
-  gap: rhythm(2);
-  height: rhythm(9);
-  justify-content: space-between;
   margin-top: calc(-1 * #{rhythm(3)});
-  margin-bottom: rhythm(4);
   padding-top: rhythm(3);
   padding-bottom: rhythm(1);
   position: sticky;
   top: 0;
   z-index: 10;
 
-  .search-bar-container {
-    align-items: center;
-    display: flex;
-    gap: rhythm(1);
-
-    pa-select {
-      min-width: rhythm(16);
-    }
-  }
-
-  .shared-queue-container {
-    align-items: center;
-    display: flex;
-    flex-shrink: 0;
-    gap: rhythm(1);
-  }
-
-  .upload-container {
+  .filters {
     display: flex;
     gap: rhythm(2);
+    justify-content: space-between;
+    margin-bottom: rhythm(2);
   }
 
-  .status-buttons-container {
-    align-items: center;
+  .active-filters {
     display: flex;
-    justify-content: flex-end;
-    min-width: rhythm(24);
-
-    .status-button {
-      align-items: center;
-      display: flex;
-      gap: rhythm(0.25);
-
-      &.with-margin {
-        margin-right: rhythm(2);
-      }
-    }
-    .file-count {
-      font-size: font-size(l);
-      font-weight: $font-weight-bold;
-      line-height: line-height(m);
-    }
-  }
-}
-
-.resource-filters {
-  padding: 0 rhythm(3) 0 rhythm(1.5);
-  .title-filter {
-    max-width: 35%;
+    gap: rhythm(1);
   }
 }
 

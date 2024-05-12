@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { filter, Subject } from 'rxjs';
-import { debounceTime, map, takeUntil, tap } from 'rxjs/operators';
-import { FeaturesService, NavigationService, SDKService, STFTrackingService } from '@flaps/core';
-import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
+import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceListService } from './resource-list.service';
@@ -16,15 +15,13 @@ const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
   styleUrls: ['./resource-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResourceListComponent implements OnInit, OnDestroy {
+export class ResourceListComponent implements OnDestroy {
   @ViewChild('pendingPopoverDirective') pendingPopoverDirective?: PopoverDirective;
   @ViewChild('failedPopoverDirective') failedPopoverDirective?: PopoverDirective;
 
   private localStorage = inject(LOCAL_STORAGE);
 
   unsubscribeAll = new Subject<void>();
-
-  searchOptions: OptionModel[] = [];
 
   statusCount = this.uploadService.statusCount.pipe(
     tap((count) => {
@@ -48,66 +45,33 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   get isMainView(): boolean {
     return !this.resourceListService.status;
   }
+  get isProcessedView(): boolean {
+    return this.resourceListService.status === 'PROCESSED';
+  }
   get isPendingView(): boolean {
     return this.resourceListService.status === 'PENDING';
+  }
+  get isErrorView(): boolean {
+    return this.resourceListService.status === 'ERROR';
   }
 
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
-
-  searchForm = new FormGroup({
-    searchIn: new FormControl<'title' | 'resource'>('title'),
-    query: new FormControl<string>(''),
-  });
-
-  get query() {
-    return this.searchForm.controls.query.getRawValue();
-  }
+  query = this.resourceListService.query;
 
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.emptyKb;
-  isTrial = this.features.isTrial;
-  isAccountManager = this.features.isAccountManager;
-  upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
 
   constructor(
     private sdk: SDKService,
-    private translate: TranslateService,
     private uploadService: UploadService,
-    private navigation: NavigationService,
     private resourceListService: ResourceListService,
     private tracking: STFTrackingService,
     private features: FeaturesService,
+    private route: ActivatedRoute,
+    private router: Router,
   ) {
     this.resourceListService.updateCount().subscribe();
-  }
-
-  ngOnInit(): void {
-    // Reset resource list when query is empty (without forcing user to hit enter)
-    this.searchForm.controls.query.valueChanges
-      .pipe(
-        debounceTime(100),
-        filter((value) => !value),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(() => this.search());
-
-    // we need to wait for the translations to be loaded before setting the search options
-    // because the default value (=title) is used to fill in the select input and this value is not refreshed
-    // when the options are provided as ngContent
-    this.translate
-      .stream(['resource.search.in-title', 'resource.search.in-resource'])
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((trans) => {
-        this.searchOptions = [
-          new OptionModel({ id: 'title', label: trans['resource.search.in-title'], value: 'title' }),
-          new OptionModel({
-            id: 'resource',
-            label: trans['resource.search.in-resource'],
-            value: 'resource',
-          }),
-        ];
-      });
   }
 
   ngOnDestroy() {
@@ -115,13 +79,20 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  search() {
-    if (!this.searchForm.value.query) {
-      this.searchForm.controls.searchIn.setValue('title');
+  onQueryChange(query: string) {
+    this.resourceListService.setQuery(query);
+    // Reset resource list when query is empty (without forcing user to hit enter)
+    if (!query) {
+      this.search();
     }
-    const query = (this.searchForm.value.query || '').trim().replace('.', '\\.');
-    const titleOnly = this.searchForm.value.searchIn === 'title';
-    this.tracking.logEvent('search-in-resource-list', { searchIn: titleOnly ? 'titles' : 'resources' });
-    this.resourceListService.search(query, titleOnly);
+  }
+
+  goToView(path: '' | 'processed' | 'pending' | 'error') {
+    this.router.navigate([`./${path}`], { relativeTo: this.route });
+  }
+
+  search() {
+    this.tracking.logEvent('search-in-resource-list', { searchIn: 'titles' });
+    this.resourceListService.search();
   }
 }

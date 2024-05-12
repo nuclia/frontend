@@ -6,7 +6,7 @@
   display: flex;
   height: rhythm(8);
   position: sticky;
-  top: calc(#{rhythm(3)} + #{rhythm(6)});
+  top: calc(#{rhythm(3)} + #{rhythm(10)});
   z-index: 1;
 
   .resource-bulk-actions {

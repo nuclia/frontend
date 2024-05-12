@@ -4,9 +4,7 @@
       class="empty-kb"
       data-cy="empty-kb">
       <div class="title-m">{{ 'resource.empty.title' | translate }}</div>
-      <div class="body-m">
-        {{ 'resource.empty.description' | translate }}
-      </div>
+      <div class="body-m">{{ 'resource.empty.description' | translate }}</div>
       @if (isAdminOrContrib | async) {
         <div>
           <stf-upload-button></stf-upload-button>
@@ -15,61 +13,52 @@
     </div>
   } @else if ((emptyKb | async) === false) {
     <div class="resource-list-header">
-      @if (isMainView) {
-        <form
-          class="search-bar-container"
-          [formGroup]="searchForm"
-          (ngSubmit)="search()">
-          <label
-            for="search-resources"
-            class="title-xxs">
-            {{ 'stash.search' | translate }}
-          </label>
-          <pa-select
-            dim
-            formControlName="searchIn"
-            [options]="searchOptions"></pa-select>
-          <pa-input
-            id="search-resources"
-            externalLabel
-            icon="search"
-            formControlName="query"></pa-input>
-        </form>
-      } @else {
-        <pa-button
-          data-cy="back-to-processed"
-          routerLink="./processed"
-          iconAndText
-          icon="chevron-left"
-          aspect="basic"
-          size="small">
-          {{ 'resource.processed_resources' | translate }}
-        </pa-button>
-      }
+      <div class="filters">
+        <pa-input
+          icon="search"
+          [value]="query | async"
+          (valueChange)="onQueryChange($event)"
+          (keyup.enter)="search()"
+          [disabled]="!isMainView">
+          {{ 'stash.search' | translate }}
+        </pa-input>
 
-      @if (isPendingView && (isTrial | async)) {
-        <div class="shared-queue-container title-s">
-          <pa-icon name="info"></pa-icon>
-          {{ 'resource.shared_queue' | translate }}
-          @if (isAccountManager | async) {
-            <a [routerLink]="upgradeUrl | async">
-              {{ 'billing.upgrade_now' | translate }}
-            </a>
-          }
-        </div>
-      }
-
-      <div class="upload-container">
-        @if (isMainView && (isAdminOrContrib | async)) {
+        @if (isAdminOrContrib | async) {
           <stf-upload-button></stf-upload-button>
         }
       </div>
-      <div class="status-buttons-container">
-        <div
-          data-cy="pending-access"
-          class="status-button"
-          [class.with-margin]="(statusCount | async)?.error || 0 > 0"
-          *ngIf="(statusCount | async)?.pending || 0 > 0">
+
+      <div class="active-filters">
+        @if (((statusCount | async)?.pending || 0) + ((statusCount | async)?.error || 0) > 0) {
+          @if ((statusCount | async)?.processed || 0 > 0) {
+            <pa-chip-selectionable
+              [selected]="isProcessedView"
+              (select)="goToView(isProcessedView ? '' : 'processed')"
+              [icon]="{ name: 'circle-check' }"
+              [backgroundColor]="isProcessedView ? '#EDEBFD' : undefined">
+              {{ 'resource.processed' | translate }} ({{ (statusCount | async)?.processed }})
+            </pa-chip-selectionable>
+          }
+          @if ((statusCount | async)?.pending || 0 > 0) {
+            <pa-chip-selectionable
+              [selected]="isPendingView"
+              (select)="goToView(isPendingView ? '' : 'pending')"
+              [icon]="{ name: 'clock-dash' }"
+              [backgroundColor]="isPendingView ? '#EDEBFD' : undefined">
+              {{ 'resource.processing' | translate }} ({{ (statusCount | async)?.pending }})
+            </pa-chip-selectionable>
+          }
+          @if ((statusCount | async)?.error || 0 > 0) {
+            <pa-chip-selectionable
+              [selected]="isErrorView"
+              (select)="goToView(isErrorView ? '' : 'error')"
+              [icon]="{ name: 'warning' }"
+              [backgroundColor]="isErrorView ? '#EDEBFD' : undefined">
+              {{ 'resource.errors' | translate }} ({{ (statusCount | async)?.error }})
+            </pa-chip-selectionable>
+          }
+        }
+        <!--
           <pa-button
             routerLink="./pending"
             routerLinkActive
@@ -113,6 +102,7 @@
         <pa-popover #failedPopover>
           <div class="popover-content">{{ 'resource.popover.error-resources' | translate }}</div>
         </pa-popover>
+        -->
       </div>
     </div>
 

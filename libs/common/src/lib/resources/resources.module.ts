@@ -9,7 +9,8 @@ import { A11yModule } from '@angular/cdk/a11y';
 import {
   ErrorResourcesTableComponent,
   PendingResourcesTableComponent,
-  ProcessedResourceTableComponent,
+  ProcessedResourcesTableComponent,
+  ResourcesTableComponent,
   ResourceListComponent,
   ResourcesTableDirective,
 } from './resource-list';
@@ -41,6 +42,7 @@ import { PipesModule } from '../pipes';
 import { EditResourceModule } from './edit-resource/edit-resource.module';
 import {
   PaButtonModule,
+  PaChipsModule,
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
@@ -63,7 +65,11 @@ const ROUTES: Routes = [
         children: [
           {
             path: '',
-            component: ProcessedResourceTableComponent,
+            component: ResourcesTableComponent,
+          },
+          {
+            path: 'processed',
+            component: ProcessedResourcesTableComponent,
           },
           {
             path: 'pending',
@@ -149,6 +155,7 @@ const ROUTES: Routes = [
 
     // Pastanaga
     PaButtonModule,
+    PaChipsModule,
     PaDropdownModule,
     PaIconModule,
     PaPopupModule,
@@ -181,7 +188,8 @@ const ROUTES: Routes = [
   declarations: [
     ResourcesComponent,
     ResourceListComponent,
-    ProcessedResourceTableComponent,
+    ProcessedResourcesTableComponent,
+    ResourcesTableComponent,
     UploadButtonComponent,
     PendingResourcesTableComponent,
     ResourcesTableDirective,

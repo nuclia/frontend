@@ -73,6 +73,7 @@ export class ResourceListService {
     this._sort = DEFAULT_SORTING;
     this._query.next('');
     this._titleOnly = true;
+    this._filters.next([]);
   }
 
   get sort(): SortOption {
@@ -96,10 +97,12 @@ export class ResourceListService {
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
-  search(query: string, titleOnly: boolean) {
-    this._query.next(query);
-    this._titleOnly = titleOnly;
+  search() {
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
+  }
+
+  setQuery(query: string) {
+    this._query.next(query);
   }
 
   loadResources(replaceData = true, updateCount = true): Observable<void> {
@@ -180,7 +183,7 @@ export class ResourceListService {
       page: this._page,
       pageSize: this._pageSize,
       sort: this._sort,
-      query: this._query.value,
+      query: this._query.value.trim().replace('.', '\\.'),
       titleOnly: this._titleOnly,
       filters: this._filters.value,
     };

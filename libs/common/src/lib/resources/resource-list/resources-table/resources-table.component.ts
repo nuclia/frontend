@@ -33,13 +33,13 @@ import { UploadService } from '../../../upload';
 import { getClassificationsPayload } from '../../edit-resource';
 
 @Component({
-  selector: 'stf-processed-resource-table',
-  templateUrl: './processed-resource-table.component.html',
+  selector: 'stf-resources-table',
+  templateUrl: './resources-table.component.html',
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProcessedResourceTableComponent extends ResourcesTableDirective implements OnInit, OnDestroy, OnChanges {
-  private uploadService = inject(UploadService);
+export class ResourcesTableComponent extends ResourcesTableDirective implements OnInit, OnDestroy, OnChanges {
+  protected uploadService = inject(UploadService);
   totalCount = this.uploadService.statusCount.pipe(
     map((statusCount) => statusCount.processed + statusCount.pending + statusCount.error),
   );
