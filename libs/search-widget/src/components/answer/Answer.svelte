@@ -8,6 +8,7 @@
   import { isMobileViewport } from '../../common/utils';
   import ResultRow from '../result-row/ResultRow.svelte';
   import { hideSources } from '../../core/stores/widget.store';
+  import { MarkdownRendering } from '../viewer/renderers/renderings';
 
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
@@ -27,7 +28,7 @@
 <svelte:window bind:innerWidth />
 <div class="sw-answer">
   <div class="answer-container">
-    <div class="text">{@html text}</div>
+    <div class="text"><MarkdownRendering {text} /></div>
     {#if !isMobile && !hideFeedback}
       <Feedback {rank} />
     {/if}

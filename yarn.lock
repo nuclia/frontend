@@ -12522,6 +12522,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dompurify@npm:^3.1.3":
+  version: 3.1.3
+  resolution: "dompurify@npm:3.1.3"
+  checksum: ad8bbf8f73e44bb2b0fa1f676a248515332ac9fadc57e5f7ffc8e1f597c7cb7ecd9ecb80075f0934fa4362bef33779107ed165e3d5fa84e80eb603defdf7aed2
+  languageName: node
+  linkType: hard
+
 "domutils@npm:^3.0.1":
   version: 3.1.0
   resolution: "domutils@npm:3.1.0"
@@ -17413,6 +17420,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"marked@npm:^12.0.2":
+  version: 12.0.2
+  resolution: "marked@npm:12.0.2"
+  bin:
+    marked: bin/marked.js
+  checksum: 966422e2ba519294aa657bacb2e51784e4b641c1c8f15bdf9315878993c4ea09fe0d00ba2da761e443a3c52cc285c452644fd107ab0f356669bd5aac08d5c0bd
+  languageName: node
+  linkType: hard
+
 "matcher@npm:^3.0.0":
   version: 3.0.0
   resolution: "matcher@npm:3.0.0"
@@ -18512,6 +18528,7 @@ __metadata:
     d3: ^7.8.5
     date-fns: ^2.29.3
     deepmerge-ts: ^5.1.0
+    dompurify: ^3.1.3
     dotenv: 10.0.0
     electron: ^24.0.0
     electron-builder: 23.6.0
@@ -18531,6 +18548,7 @@ __metadata:
     jest-preset-angular: 13.1.1
     latinize: ^0.5.0
     localstorage-polyfill: ^1.0.1
+    marked: ^12.0.2
     mime: ^3.0.0
     mime-types: ^2.1.35
     mrs-developer: ^1.7.1
