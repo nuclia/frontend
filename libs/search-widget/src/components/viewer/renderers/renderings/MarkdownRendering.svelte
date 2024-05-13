@@ -21,7 +21,13 @@
 </svelte:head>
 
 {#if markedLoaded && trimmedText}
-  <div bind:this={bodyElement}>
+  <div
+    bind:this={bodyElement}
+    class="markdown">
     {@html DOMPurify.sanitize(marked.parse(trimmedText, { mangle: false, headerIds: false }))}
   </div>
 {/if}
+
+<style
+  lang="scss"
+  src="./MarkdownRendering.scss"></style>
