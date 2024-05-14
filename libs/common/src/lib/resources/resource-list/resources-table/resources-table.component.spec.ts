@@ -17,6 +17,7 @@ import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { RouterTestingModule } from '@angular/router/testing';
 import { UploadService } from '../../../upload';
+import { ResourceListService } from './../resource-list.service';
 
 describe('ResourceTableComponent', () => {
   let component: ResourcesTableComponent;
@@ -58,6 +59,7 @@ describe('ResourceTableComponent', () => {
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),
+        MockProvider(ResourceListService, { filters: of([]), loadResources: jest.fn(() => of()) }),
       ],
     }).compileComponents();
 

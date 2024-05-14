@@ -15,16 +15,27 @@
   top: 0;
   z-index: 10;
 
-  .filters {
+  .filters-container {
     display: flex;
     gap: rhythm(2);
     justify-content: space-between;
     margin-bottom: rhythm(2);
   }
 
-  .active-filters {
+  .filters {
     display: flex;
-    gap: rhythm(1);
+    gap: rhythm(2);
+  }
+
+  .active-filters {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(2);
+  }
+
+  .filtered-by {
+    color: $color-neutral-regular;
   }
 }
 

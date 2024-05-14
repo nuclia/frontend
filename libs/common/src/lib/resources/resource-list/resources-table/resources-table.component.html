@@ -44,7 +44,7 @@
             (allSelected | async) === true &&
             ((totalCount | async) || 0) > selection.length * 1.5 &&
             !bulkAction.inProgress &&
-            !isFiltering &&
+            (isFiltering | async) === false &&
             (query | async) === ''
           ) {
             <pa-button
@@ -66,85 +66,27 @@
     }
 
     <div class="table-options">
-      @if (hasFilters) {
-        @if (isFiltering) {
-          <pa-button
-            aspect="basic"
-            kind="primary"
-            (click)="clearFilters()">
-            {{ 'resource.filter.clear' | translate }}
-          </pa-button>
+      <nsi-dropdown-button
+        size="small"
+        aspect="basic"
+        data-cy="visible-columns-dropdown"
+        [popupRef]="visibleColumns">
+        {{ 'resource.visible_columns_dropdown' | translate }}
+      </nsi-dropdown-button>
+      <pa-dropdown #visibleColumns>
+        @for (column of optionalColumns; track column.id) {
+          <pa-option
+            [value]="column.id"
+            (selectOption)="selectColumn(column, $event)"
+            dontCloseOnSelect>
+            <pa-checkbox
+              [(value)]="column.visible"
+              (valueChange)="this.columnVisibilityUpdate.next($event)">
+              {{ column.label | translate }}
+            </pa-checkbox>
+          </pa-option>
         }
-
-        <div>
-          <nsi-dropdown-button
-            size="small"
-            freeWidth
-            [aspect]="isFiltering ? 'solid' : 'basic'"
-            [popupRef]="availableFilters">
-            {{ 'resource.filtered-by' | translate }}
-          </nsi-dropdown-button>
-          <pa-dropdown #availableFilters>
-            @if (filterOptions.classification.length > 0) {
-              <pa-option-header>{{ 'resource.classification-column' | translate }}</pa-option-header>
-
-              @for (option of filterOptions.classification; track option.id) {
-                <pa-option
-                  (selectOption)="onSelectFilter(option, $event)"
-                  dontCloseOnSelect>
-                  <pa-checkbox
-                    [(value)]="option.selected"
-                    (valueChange)="onToggleFilter()">
-                    {{ option.label }}
-                  </pa-checkbox>
-                </pa-option>
-              }
-            }
-            @if (filterOptions.classification.length > 0 && filterOptions.mainTypes.length > 0) {
-              <pa-separator></pa-separator>
-            }
-            @if (filterOptions.mainTypes.length > 0) {
-              <pa-option-header>{{ 'resource.filter.main-type' | translate }}</pa-option-header>
-              @for (option of filterOptions.mainTypes; track option.id) {
-                <pa-option
-                  (selectOption)="onSelectFilter(option, $event)"
-                  [paTooltip]="option.help"
-                  dontCloseOnSelect>
-                  <pa-checkbox
-                    [(value)]="option.selected"
-                    (valueChange)="onToggleFilter()">
-                    {{ option.label }}
-                  </pa-checkbox>
-                </pa-option>
-              }
-            }
-          </pa-dropdown>
-        </div>
-      }
-
-      <div>
-        <nsi-dropdown-button
-          size="small"
-          aspect="basic"
-          data-cy="visible-columns-dropdown"
-          [popupRef]="visibleColumns">
-          {{ 'resource.visible_columns_dropdown' | translate }}
-        </nsi-dropdown-button>
-        <pa-dropdown #visibleColumns>
-          @for (column of optionalColumns; track column.id) {
-            <pa-option
-              [value]="column.id"
-              (selectOption)="selectColumn(column, $event)"
-              dontCloseOnSelect>
-              <pa-checkbox
-                [(value)]="column.visible"
-                (valueChange)="this.columnVisibilityUpdate.next($event)">
-                {{ column.label | translate }}
-              </pa-checkbox>
-            </pa-option>
-          }
-        </pa-dropdown>
-      </div>
+      </pa-dropdown>
     </div>
   </div>
 

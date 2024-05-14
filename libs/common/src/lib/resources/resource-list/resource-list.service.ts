@@ -44,6 +44,7 @@ export class ResourceListService {
   emptyKb = this._emptyKb.asObservable();
   private _query = new BehaviorSubject<string>('');
   query = this._query.asObservable();
+  isShardReady = new BehaviorSubject<boolean>(false);
 
   labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
     filter((labelSets) => !!labelSets),

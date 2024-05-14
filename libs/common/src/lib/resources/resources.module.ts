@@ -65,6 +65,11 @@ const ROUTES: Routes = [
         children: [
           {
             path: '',
+            redirectTo: 'all',
+            pathMatch: 'full',
+          },
+          {
+            path: 'all',
             component: ResourcesTableComponent,
           },
           {

@@ -12,7 +12,7 @@ import {
 } from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import {
   PaDropdownModule,
   PaIconModule,
@@ -27,6 +27,7 @@ import { ResourcesTableComponent } from './resources-table/resources-table.compo
 import { ErrorResourcesTableComponent } from './error-resources-table/error-resources-table.component';
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
 import { UploadService } from '../../upload/upload.service';
+import { ResourceListService } from '@flaps/common';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -99,6 +100,11 @@ describe('ResourceListComponent', () => {
         MockProvider(NavigationService),
         MockProvider(FeaturesService),
         MockProvider(STFTrackingService),
+        MockProvider(ResourceListService, {
+          filters: of([]),
+          updateCount: jest.fn(() => of({ processed: 0, pending: 0, error: 0 })),
+          isShardReady: new BehaviorSubject(false),
+        }),
       ],
     }).compileComponents();
 

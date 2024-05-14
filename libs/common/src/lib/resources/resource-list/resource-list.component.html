@@ -13,15 +13,62 @@
     </div>
   } @else if ((emptyKb | async) === false) {
     <div class="resource-list-header">
-      <div class="filters">
-        <pa-input
-          icon="search"
-          [value]="query | async"
-          (valueChange)="onQueryChange($event)"
-          (keyup.enter)="search()"
-          [disabled]="!isMainView">
-          {{ 'stash.search' | translate }}
-        </pa-input>
+      <div class="filters-container">
+        <div class="filters">
+          <div>
+            <nsi-dropdown-button
+              freeWidth
+              aspect="basic"
+              [disabled]="!hasFilters"
+              [popupRef]="availableFilters">
+              {{ 'resource.filtered-by' | translate }}
+            </nsi-dropdown-button>
+            <pa-dropdown #availableFilters>
+              @if (filterOptions.classification.length > 0) {
+                <pa-option-header>{{ 'resource.classification-column' | translate }}</pa-option-header>
+
+                @for (option of filterOptions.classification; track option.id) {
+                  <pa-option
+                    (selectOption)="onSelectFilter(option, $event)"
+                    dontCloseOnSelect>
+                    <pa-checkbox
+                      [(value)]="option.selected"
+                      (valueChange)="onToggleFilter()">
+                      {{ option.label }}
+                    </pa-checkbox>
+                  </pa-option>
+                }
+              }
+              @if (filterOptions.classification.length > 0 && filterOptions.mainTypes.length > 0) {
+                <pa-separator></pa-separator>
+              }
+              @if (filterOptions.mainTypes.length > 0) {
+                <pa-option-header>{{ 'resource.filter.main-type' | translate }}</pa-option-header>
+                @for (option of filterOptions.mainTypes; track option.id) {
+                  <pa-option
+                    (selectOption)="onSelectFilter(option, $event)"
+                    [paTooltip]="option.help"
+                    dontCloseOnSelect>
+                    <pa-checkbox
+                      [(value)]="option.selected"
+                      (valueChange)="onToggleFilter()">
+                      {{ option.label }}
+                    </pa-checkbox>
+                  </pa-option>
+                }
+              }
+            </pa-dropdown>
+          </div>
+
+          <pa-input
+            icon="search"
+            [value]="query | async"
+            (valueChange)="onQueryChange($event)"
+            (keyup.enter)="search()"
+            [disabled]="!isMainView">
+            {{ 'stash.search' | translate }}
+          </pa-input>
+        </div>
 
         @if (isAdminOrContrib | async) {
           <stf-upload-button></stf-upload-button>
@@ -57,6 +104,23 @@
               {{ 'resource.errors' | translate }} ({{ (statusCount | async)?.error }})
             </pa-chip-selectionable>
           }
+        }
+        @if (isFiltering | async) {
+          <div class="filtered-by title-xxs">{{ 'resource.filtered-by' | translate }}</div>
+        }
+        @for (option of selectedClassifications; track option.value) {
+          <pa-chip-closeable (closed)="onCloseFilter(option)">{{ option.label }}</pa-chip-closeable>
+        }
+        @for (option of selectedMainTypes; track option.value) {
+          <pa-chip-closeable (closed)="onCloseFilter(option)">{{ option.label }}</pa-chip-closeable>
+        }
+        @if (showClearButton | async) {
+          <pa-button
+            size="small"
+            aspect="basic"
+            (click)="clearFilters()">
+            {{ 'resource.filter.clear' | translate }}
+          </pa-button>
         }
         <!--
           <pa-button
