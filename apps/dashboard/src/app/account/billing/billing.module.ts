@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import {
   PaButtonModule,
   PaDateTimeModule,
@@ -29,47 +29,13 @@ import { UnsubscribeComponent } from './my-subscription/unsubscribe.component';
 import { AwsSubscriptionComponent } from './subscriptions/aws-subscription/aws-subscription.component';
 import { BudgetComponent } from './usage/budget.component';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: BillingComponent,
-    children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        component: RedirectComponent,
-      },
-      {
-        path: 'subscriptions',
-        component: SubscriptionsComponent,
-      },
-      {
-        path: 'checkout',
-        component: CheckoutComponent,
-      },
-      {
-        path: 'my-subscription',
-        component: MySubscriptionComponent,
-      },
-      {
-        path: 'usage',
-        component: UsageComponent,
-      },
-      {
-        path: 'history',
-        component: HistoryComponent,
-      },
-    ],
-  },
-];
-
 @NgModule({
   imports: [
     CommonModule,
     TranslateModule.forChild(),
     AngularSvgIconModule,
     ReactiveFormsModule,
-    RouterModule.forChild(routes),
+    RouterModule,
     PaButtonModule,
     PaDateTimeModule,
     PaModalModule,

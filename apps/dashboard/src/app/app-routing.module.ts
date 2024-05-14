@@ -22,15 +22,8 @@ import {
   setKbGuard,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
-import { AccountManageComponent } from './account/account-manage/account-manage.component';
 import { FarewellComponent } from './farewell/farewell.component';
-
-import { AccountKbsComponent } from './account/account-kbs/account-kbs.component';
-import { AccountHomeComponent } from './account/account-home/account-home.component';
 import { RedirectComponent } from './redirect/redirect.component';
-import { AccountNUAComponent } from './account/account-nua/account-nua.component';
-import { NuaActivityComponent } from './account/account-nua/nua-activity/nua-activity.component';
-import { AccountUsersComponent } from './account/account-users/account-users.component';
 import {
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
@@ -70,53 +63,7 @@ const routes: Routes = [
           },
           {
             path: `manage`,
-            children: [
-              {
-                path: '',
-                redirectTo: 'home',
-                pathMatch: 'full',
-              },
-              {
-                path: 'settings',
-                component: AccountManageComponent,
-                canActivate: [accountOwnerGuard],
-              },
-              {
-                path: 'home',
-                component: AccountHomeComponent,
-                canActivate: [accountOwnerGuard],
-              },
-              {
-                path: 'nua',
-                component: AccountNUAComponent,
-                canActivate: [accountOwnerGuard],
-              },
-              {
-                path: 'nua/:id/activity',
-                component: NuaActivityComponent,
-                canActivate: [accountOwnerGuard],
-              },
-              {
-                path: 'kbs',
-                component: AccountKbsComponent,
-                canActivate: [accountOwnerGuard],
-              },
-              {
-                path: 'users',
-                component: AccountUsersComponent,
-                canActivate: [accountOwnerGuard],
-              },
-              {
-                path: 'billing',
-                loadChildren: () => import('./account/billing/billing.module').then((m) => m.BillingModule),
-              },
-            ],
-          },
-          // backward compatibility with old urls
-          {
-            path: ':kb',
-            redirectTo: '/select',
-            pathMatch: 'full',
+            loadChildren: () => import('./account/account.module').then((m) => m.AccountModule),
           },
           {
             path: `:zone/:kb`,
@@ -205,6 +152,13 @@ const routes: Routes = [
                   ),
               },
             ],
+          },
+
+          // backward compatibility with old urls
+          {
+            path: ':kb',
+            redirectTo: '/select',
+            pathMatch: 'full',
           },
         ],
       },
