@@ -1,6 +1,19 @@
 import { inject, Injectable } from '@angular/core';
 import { LabelsService, SDKService } from '@flaps/core';
-import { BehaviorSubject, catchError, forkJoin, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  forkJoin,
+  Observable,
+  of,
+  pairwise,
+  shareReplay,
+  startWith,
+  Subject,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import {
   DEFAULT_PAGE_SIZE,
@@ -51,6 +64,13 @@ export class ResourceListService {
     map((labelSets) => labelSets as LabelSets),
   );
 
+  prevFilters = this._filters.pipe(
+    startWith([]),
+    pairwise(),
+    map(([prev]) => prev),
+    shareReplay(1),
+  );
+
   private _page = 0;
   private _hasMore = false;
   private _pageSize = DEFAULT_PAGE_SIZE;
@@ -75,6 +95,7 @@ export class ResourceListService {
     this._query.next('');
     this._titleOnly = true;
     this._filters.next([]);
+    this.isShardReady.next(false);
   }
 
   get sort(): SortOption {

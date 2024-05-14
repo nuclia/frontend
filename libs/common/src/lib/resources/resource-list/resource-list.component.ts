@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, forkJoin, Observable, of, Subject, take } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
 import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -94,6 +94,7 @@ export class ResourceListComponent implements OnDestroy {
             return of(null);
           }
         }),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe();
   }
@@ -170,15 +171,15 @@ export class ResourceListComponent implements OnDestroy {
       this.sdk.currentKb.pipe(take(1)),
       this.labelSets.pipe(take(1)),
       this.route.queryParamMap.pipe(take(1)),
-      this.resourceListService.filters.pipe(take(1)),
+      this.resourceListService.prevFilters.pipe(take(1)),
     ]).pipe(
-      switchMap(([kb, labelSets, queryParams, filters]) => {
+      switchMap(([kb, labelSets, queryParams, prevFilters]) => {
         const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-        return kb.catalog('', { faceted }).pipe(map((results) => ({ results, queryParams, filters })));
+        return kb.catalog('', { faceted }).pipe(map((results) => ({ results, queryParams, prevFilters })));
       }),
-      map(({ results, queryParams, filters }) => {
+      map(({ results, queryParams, prevFilters }) => {
         if (results.type !== 'error') {
-          const previousFilters = queryParams.get('preserveFilters') ? filters : queryParams.getAll('filters');
+          const previousFilters = queryParams.get('preserveFilters') ? prevFilters : queryParams.getAll('filters');
           this.formatFiltersFromFacets(results.fulltext?.facets || {}, previousFilters);
           if (previousFilters.length > 0) {
             this.onToggleFilter();
