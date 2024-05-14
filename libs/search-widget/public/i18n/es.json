@@ -8,7 +8,7 @@
 	"answer.feedback.wrong-citations": "Las fuentes no son precisas",
 	"answer.feedback.wrong-results": "Los resultados no son relevantes",
 	"answer.input.label": "Entrada de chat",
-	"answer.no-citations": "El LLM no pudo indicar explícitamente las fuentes que se utilizaron para producir esta respuesta.",
+	"answer.no-citations": "El sistema no fue capaz de indicar explícitamente las fuentes que se han utilizado para elaborar esta respuesta.",
 	"answer.placeholder": "Charlemos",
 	"answer.sources": "Fuentes",
 	"answer.title": "Respuesta",
