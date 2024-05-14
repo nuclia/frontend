@@ -19,11 +19,7 @@ import {
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
-  ProcessingStat,
   QueryInfo,
-  StatsPeriod,
-  StatsRange,
-  StatsType,
   UsageAggregation,
   UsagePoint,
   Welcome,
@@ -144,15 +140,7 @@ export interface IDb {
     knowledgeBox?: string,
     aggregation?: UsageAggregation,
   ): Observable<UsagePoint[]>;
-  getStats(
-    accountSlug: string,
-    type: StatsType,
-    knowledgeBox?: string,
-    period?: StatsPeriod,
-    utctime?: string,
-  ): Observable<ProcessingStat[]>;
   upload(file: File): Observable<ProcessingPushResponse>;
-  getProcessingStats(range?: StatsRange, accountId?: string): Observable<ProcessingStat[]>;
   pull(): Observable<ProcessingPullResponse>;
   getNUAClients(accountId: string): Observable<NUAClient[]>;
   getNUAClient(accountId: string, client_id: string, zone: string): Observable<NUAClient>;

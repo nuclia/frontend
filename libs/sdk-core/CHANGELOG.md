@@ -1,9 +1,14 @@
-# 1.14.10 (unreleased)
+# 1.15.0 (unreleased)
+
+### Breaking changes
+
+- Remove methods using deprecated `/stats` endpoint and remove corresponding models. 
 
 ### Improvements
 
 - Update `Citations` model
 - Add `KEEP_MARKDOWN` format to `TextFormat` type
+- Add `creation_date` in Account model
 
 # 1.14.9 (2024-04-30)
 

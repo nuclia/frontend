@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { AccountUsage, BillingService, InvoiceItem, UsageType } from '@flaps/core';
+import { AccountUsage, BillingService, BillingUsageType, InvoiceItem } from '@flaps/core';
 import { map, Observable, ReplaySubject } from 'rxjs';
 import { TOKENS_PER_REQUEST } from '../subscription.service';
 
@@ -25,8 +25,10 @@ export class UsageTableComponent {
     map((usage) => {
       const params = this.paramsToShow;
       return Object.entries(usage.invoice_items)
-        .filter(([type]) => params.includes(type as UsageType))
-        .sort(([type1], [type2]) => params.indexOf(type1 as UsageType) - params.indexOf(type2 as UsageType));
+        .filter(([type]) => params.includes(type as BillingUsageType))
+        .sort(
+          ([type1], [type2]) => params.indexOf(type1 as BillingUsageType) - params.indexOf(type2 as BillingUsageType),
+        );
     }),
   );
   isDeprecatedAccount = this.billing.isDeprecatedAccount;

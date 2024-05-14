@@ -2,10 +2,17 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { combineLatest, filter, map, shareReplay, switchMap, take } from 'rxjs';
-import { AccountService, SDKService } from '@flaps/core';
+import {
+  AccountService,
+  BillingService,
+  BillingUsageType,
+  NavigationService,
+  RecurrentPriceInterval,
+  SDKService,
+  SubscriptionStatus,
+} from '@flaps/core';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { UnsubscribeComponent, UnsubscribeModalData } from './unsubscribe.component';
-import { BillingService, NavigationService, RecurrentPriceInterval, SubscriptionStatus, UsageType } from '@flaps/core';
 
 @Component({
   templateUrl: './my-subscription.component.html',
@@ -36,7 +43,7 @@ export class MySubscriptionComponent {
   );
   isDeprecatedAccount = this.billingService.isDeprecatedAccount;
   doNotShowPrice = ['v3growth', 'v3enterprise'];
-  params: UsageType[] = [
+  params: BillingUsageType[] = [
     'media',
     'paragraphs_processed',
     'searches',

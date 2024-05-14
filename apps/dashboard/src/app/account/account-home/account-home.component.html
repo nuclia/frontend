@@ -17,95 +17,26 @@
             aspect="basic"></pa-button>
         </div>
 
-        @for (statType of allCharts ? statsTypes : [statsTypes[0]]; track statType) {
-          <div class="chart-container">
-            <div class="chart-header">
-              <div class="title-m">{{ 'account.chart_' + statType | translate }}</div>
-              <div class="chart-legend">
-                <div class="line"></div>
-                <div class="body-xs">{{ 'account.threshold' | translate }}</div>
+        @if (charts | async; as charts) {
+          @for (usageType of allCharts ? usageTypes : [usageTypes[0]]; track usageType) {
+            <div class="chart-container">
+              <div class="chart-header">
+                <div class="title-m">{{ 'account.chart.' + usageType | translate }}</div>
               </div>
+              @if (charts[usageType]; as chart) {
+                <app-line-chart
+                  area
+                  tooltipsEnabled
+                  [data]="chart.data"
+                  [xDomain]="chart.domain"
+                  [yDomain]="{ min: 0 }"
+                  [yUnit]="chart.yUnit || '' | translate"
+                  [xAxisTickOptions]="{ modulo: 2 }"
+                  [height]="260"></app-line-chart>
+              }
             </div>
-            @if (charts[statType] | async; as chart) {
-              <app-line-chart
-                area
-                tooltipsEnabled
-                [data]="chart.data"
-                [xDomain]="chart.domain"
-                [yDomain]="{ min: 0 }"
-                [threshold]="chart.threshold"
-                [yUnit]="chart.yUnit || '' | translate"
-                [xAxisTickOptions]="{ modulo: 2 }"
-                [height]="260"></app-line-chart>
-            }
-          </div>
+          }
         }
-      </div>
-    }
-
-    @if (showPending) {
-      <div class="processing-stats">
-        <section class="chart-container">
-          <div class="chart-header">
-            <div class="range-container">
-              <nsi-dropdown-button
-                size="small"
-                kind="inverted"
-                [popupRef]="range">
-                {{ 'account.chart_range_label' | translate: { hours: pendingRange.value } }}
-              </nsi-dropdown-button>
-              <pa-dropdown #range>
-                <pa-option
-                  value="1h"
-                  [selected]="pendingRange.value === statsRange.anHour"
-                  (selectOption)="pendingRange.next(statsRange.anHour)">
-                  {{ statsRange.anHour }}
-                </pa-option>
-                <pa-option
-                  value="2h"
-                  [selected]="pendingRange.value === statsRange.twoHours"
-                  (selectOption)="pendingRange.next(statsRange.twoHours)">
-                  {{ statsRange.twoHours }}
-                </pa-option>
-                <pa-option
-                  value="3h"
-                  [selected]="pendingRange.value === statsRange.threeHours"
-                  (selectOption)="pendingRange.next(statsRange.threeHours)">
-                  {{ statsRange.threeHours }}
-                </pa-option>
-                <pa-option
-                  value="6h"
-                  [selected]="pendingRange.value === statsRange.sixHours"
-                  (selectOption)="pendingRange.next(statsRange.sixHours)">
-                  {{ statsRange.sixHours }}
-                </pa-option>
-                <pa-option
-                  value="12h"
-                  [selected]="pendingRange.value === statsRange.twelveHours"
-                  (selectOption)="pendingRange.next(statsRange.twelveHours)">
-                  {{ statsRange.twelveHours }}
-                </pa-option>
-                <pa-option
-                  value="24h"
-                  [selected]="pendingRange.value === statsRange.twentyFourHours"
-                  (selectOption)="pendingRange.next(statsRange.twentyFourHours)">
-                  {{ statsRange.twentyFourHours }}
-                </pa-option>
-                <pa-option
-                  value="48h"
-                  [selected]="pendingRange.value === statsRange.fortyHeightHours"
-                  (selectOption)="pendingRange.next(statsRange.fortyHeightHours)">
-                  {{ statsRange.fortyHeightHours }}
-                </pa-option>
-              </pa-dropdown>
-            </div>
-            <span class="chart-message">{{ 'account.chart_number_resources' | translate }}</span>
-          </div>
-          <app-line-chart
-            [data]="(pending | async) || []"
-            [xAxisTickOptions]="pendingTickOptions | async"
-            [tooltipsEnabled]="true"></app-line-chart>
-        </section>
       </div>
     }
 
@@ -123,19 +54,36 @@
                 [class.disabled]="!kb.role_on_kb"
                 (click)="kb.role_on_kb ? goToKb(account.slug, kb) : null">
                 {{ kb.title }}
-                <pa-icon
-                  *ngIf="kb.state === 'PRIVATE'"
-                  size="small"
-                  name="lock"></pa-icon>
+                @if (kb.state === 'PRIVATE') {
+                  <pa-icon
+                    size="small"
+                    name="lock"></pa-icon>
+                }
               </li>
             }
           </ul>
         }
       </div>
-      <div>
-        <div class="title-s">{{ 'account.total_queries' | translate }}</div>
-        <div class="display-m">{{ totalQueries | async | number }}</div>
-      </div>
+      @if (totalQueries | async; as count) {
+        <div class="count-container">
+          <div class="title-s">{{ 'account.total_queries' | translate }}</div>
+
+          <div>
+            <div class="title-xxs">{{ 'metrics.period.last-30-days' | translate }}</div>
+            <div class="display-s">{{ count.month | number }}</div>
+          </div>
+
+          <div>
+            <div class="title-xxs">{{ 'metrics.period.last-12-months' | translate }}</div>
+            <div class="display-s">{{ count.year | number }}</div>
+          </div>
+
+          <div>
+            <div class="title-xxs">{{ 'metrics.period.since-creation' | translate }}</div>
+            <div class="display-s">{{ count.sinceCreation | number }}</div>
+          </div>
+        </div>
+      }
     </div>
   </div>
 </div>

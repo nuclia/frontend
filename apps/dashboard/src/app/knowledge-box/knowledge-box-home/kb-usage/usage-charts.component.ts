@@ -21,6 +21,6 @@ export class UsageChartsComponent {
   @Input({ transform: booleanAttribute }) smallContainer = false;
 
   get xAxisTickOptions() {
-    return this.smallContainer ? { modulo: 4 } : null;
+    return this.smallContainer ? { modulo: 6 } : null;
   }
 }
