@@ -236,59 +236,39 @@
                   smallContainer
                   [chartHeight]="chartHeight"
                   [currentChart]="currentChart"
-                  [tokenChart]="tokenChart | async"
                   [processingChart]="processingChart | async"
                   [searchChart]="searchChart | async"></app-kb-usage-charts>
 
-                <pa-table columns="2fr minmax(80px, 1fr) minmax(80px, 1fr)">
-                  <pa-table-header>
-                    <pa-table-cell></pa-table-cell>
-                    <pa-table-cell>
-                      <span class="body-s">{{ 'metrics.period.last-30-days' | translate }}</span>
-                    </pa-table-cell>
-                    <pa-table-cell>
-                      <span class="body-s">{{ 'metrics.period.last-12-months' | translate }}</span>
-                    </pa-table-cell>
-                  </pa-table-header>
+                @if (currentChart?.id === 'search') {
                   @if (searchQueriesCounts | async; as queriesCount) {
-                    <pa-table-row>
-                      <pa-table-cell>
-                        <span class="body-s">{{ 'metrics.search.title' | translate }}</span>
-                      </pa-table-cell>
-                      @if (locale | async; as locale) {
-                        <pa-table-cell>
-                          <span class="body-s">
-                            <strong>{{ queriesCount.month | number: '1.0-0' : locale }}</strong>
-                          </span>
+                    <pa-table
+                      border
+                      columns="repeat(2, 1fr)">
+                      <pa-table-header>
+                        <pa-table-cell header>
+                          <span class="title-xxs header">{{ 'metrics.period.last-30-days' | translate }}</span>
                         </pa-table-cell>
-                        <pa-table-cell>
-                          <span class="body-s">
-                            <strong>{{ queriesCount.year | number: '1.0-0' : locale }}</strong>
-                          </span>
+                        <pa-table-cell header>
+                          <span class="title-xxs header">{{ 'metrics.period.last-12-months' | translate }}</span>
                         </pa-table-cell>
-                      }
-                    </pa-table-row>
+                      </pa-table-header>
+                      <pa-table-row last>
+                        @if (locale | async; as locale) {
+                          <pa-table-cell>
+                            <span class="body-s">
+                              <strong>{{ queriesCount.month | number: '1.0-0' : locale }}</strong>
+                            </span>
+                          </pa-table-cell>
+                          <pa-table-cell>
+                            <span class="body-s">
+                              <strong>{{ queriesCount.year | number: '1.0-0' : locale }}</strong>
+                            </span>
+                          </pa-table-cell>
+                        }
+                      </pa-table-row>
+                    </pa-table>
                   }
-                  @if (tokensCount | async; as count) {
-                    <pa-table-row>
-                      <pa-table-cell>
-                        <span class="body-s">{{ 'metrics.ai-tokens-used.title' | translate }}</span>
-                      </pa-table-cell>
-                      @if (locale | async; as locale) {
-                        <pa-table-cell>
-                          <span class="body-s">
-                            <strong>{{ count.month | number: '1.0-0' : locale }}</strong>
-                          </span>
-                        </pa-table-cell>
-                        <pa-table-cell>
-                          <span class="body-s">
-                            <strong>{{ count.year | number: '1.0-0' : locale }}</strong>
-                          </span>
-                        </pa-table-cell>
-                      }
-                    </pa-table-row>
-                  }
-                </pa-table>
+                }
               </div>
             </div>
           </nsi-home-container>

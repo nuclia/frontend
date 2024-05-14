@@ -157,8 +157,8 @@
       gap: rhythm(2);
     }
 
-    pa-table ::ng-deep .pa-table-grid--cell {
-      background-color: $color-neutral-lightest;
+    .title-xxs.header {
+      color: $color-neutral-regular;
     }
   }
 }

@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
 import { AppService, searchResources, STATUS_FACET, UploadService } from '@flaps/common';
-import { MetricsService } from '../../account/metrics.service';
+import { ChartData, MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
-import { Counters, IResource, RESOURCE_STATUS, SortField, StatsType } from '@nuclia/core';
+import { Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
 import { takeUntil } from 'rxjs/operators';
@@ -42,38 +42,22 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   );
   counters: Observable<Counters> = this.sdk.counters;
 
-  tokenChart = this.isAccountManager.pipe(
+  allChartsData: Observable<Partial<{ [key in UsageType]: ChartData }>> = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getChartData(StatsType.AI_TOKENS_USED, false, kb.id)),
+    switchMap((kb) => this.metrics.getUsageCharts(kb.id)),
     takeUntil(this.unsubscribeAll),
     shareReplay(),
   );
-  processingChart = this.isAccountManager.pipe(
-    filter((isManager) => isManager),
-    switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getChartData(StatsType.PROCESSING_TIME, false, kb.id)),
-    takeUntil(this.unsubscribeAll),
-    shareReplay(),
-  );
-  searchChart = this.isAccountManager.pipe(
-    filter((isManager) => isManager),
-    switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getChartData(StatsType.SEARCHES, false, kb.id)),
-    takeUntil(this.unsubscribeAll),
-    shareReplay(),
-  );
+  processingChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SLOW_PROCESSING_TIME]));
+  searchChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SEARCHES_PERFORMED]));
+
   searchQueriesCounts = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getSearchQueriesCountForKb(kb.id)),
+    switchMap((kb) => this.metrics.getSearchQueriesCount(kb.id)),
     takeUntil(this.unsubscribeAll),
-  );
-  tokensCount = this.isAccountManager.pipe(
-    filter((isManager) => isManager),
-    switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getTokensCountForKb(kb.id)),
-    takeUntil(this.unsubscribeAll),
+    shareReplay(),
   );
 
   kbUrl = combineLatest([this.account, this.currentKb]).pipe(
@@ -118,7 +102,6 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   chartDropdownOptions: OptionModel[] = [
     this.defaultChartOption,
     new OptionModel({ id: 'processing', label: 'metrics.processing.title', value: 'processing' }),
-    new OptionModel({ id: 'tokens', label: 'metrics.ai-tokens-used.title', value: 'tokens' }),
   ];
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = {

@@ -35,17 +35,6 @@
       margin-bottom: rhythm(3);
     }
 
-    .chart-legend {
-      align-items: center;
-      display: flex;
-      gap: rhythm(1);
-      .line {
-        border-top: 2px dashed $color-tertiary-regular;
-        height: 2px;
-        width: rhythm(3);
-      }
-    }
-
     .chart-message {
       color: $color-neutral-regular;
       font-size: font-size(xs);
@@ -80,6 +69,16 @@
 
       pa-icon {
         display: flex;
+      }
+    }
+
+    .count-container {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1.5);
+
+      .title-xxs {
+        color: $color-neutral-regular;
       }
     }
   }

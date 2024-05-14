@@ -36,6 +36,7 @@ export interface Account {
   slug: string;
   title: string;
   trial_expiration_date?: string;
+  creation_date: string;
   type: AccountTypes;
   zone: string;
 }
@@ -47,8 +48,8 @@ export interface AccountConfig {
 }
 
 export type UploadLimitsEntries = 'upload_limit_max_media_file_size' | 'upload_limit_max_non_media_file_size';
-export type UploadLimits = Record<UploadLimitsEntries, number>;
-export type NullableUploadLimits = Record<UploadLimitsEntries, number | null>;
+export type UploadLimits = { [key in UploadLimitsEntries]: number };
+export type NullableUploadLimits = { [key in UploadLimitsEntries]: number | null };
 
 export type UsageLimitsEntries =
   | 'monthly_limit_docs_no_media_processed'
@@ -59,8 +60,8 @@ export type UsageLimitsEntries =
   | 'monthly_limit_paragraphs_stored'
   | 'monthly_limit_self_hosted_answers_generated'
   | 'monthly_limit_self_hosted_searches_performed';
-export type UsageLimits = Record<UsageLimitsEntries, number>;
-export type NullableUsageLimits = Record<UsageLimitsEntries, number | null>;
+export type UsageLimits = { [key in UsageLimitsEntries]: number };
+export type NullableUsageLimits = { [key in UsageLimitsEntries]: number | null };
 
 export interface AccountLimits {
   upload: UploadLimits;
@@ -158,52 +159,21 @@ export interface UsagePoint {
   metrics: (UsageMetric | NucliaTokensMetric)[];
 }
 
-/**
- * @deprecated
- */
-export enum StatsPeriod {
-  DAY = 'day',
-  WEEK = 'week',
-  MONTH = 'month',
-  YEAR = 'year',
-}
-
-/**
- * @deprecated
- */
-export enum StatsRange {
-  anHour = '1h',
-  twoHours = '2h',
-  threeHours = '3h',
-  sixHours = '6h',
-  twelveHours = '12h',
-  twentyFourHours = '24h',
-  fortyHeightHours = '48h',
-}
-
-/**
- * @deprecated
- */
-export interface ProcessingStat {
-  time_period: string;
-  stats: number;
-}
-
-/**
- * @deprecated
- */
-export enum StatsType {
-  PROCESSING_TIME = 'processing_time',
-  SEARCHES = 'searches',
-  CHARS = 'chars',
-  MEDIA_SECONDS = 'media_seconds',
-  BYTES = 'bytes',
-  RESOURCES = 'resources',
-  PAGES = 'pages',
+export enum UsageType {
+  PRE_PROCESSING_TIME = 'pre_processing_time',
+  SLOW_PROCESSING_TIME = 'slow_processing_time',
+  RESOURCES_PROCESSED = 'resources_processed',
+  BYTES_PROCESSED = 'bytes_processed',
+  CHARS_PROCESSED = 'chars_processed',
+  MEDIA_SECONDS_PROCESSED = 'media_seconds_processed',
+  MEDIA_FILES_PROCESSED = 'media_files_processed',
+  PAGES_PROCESSED = 'pages_processed',
+  PARAGRAPHS_PROCESSED = 'paragraphs_processed',
   TRAIN_SECONDS = 'train_seconds',
-  SUGGESTIONS = 'suggestions',
-  DOCS_NO_MEDIA = 'docs_no_media',
+  SEARCHES_PERFORMED = 'searches_performed',
+  SUGGESTIONS_PERFORMED = 'suggestions_performed',
   AI_TOKENS_USED = 'ai_tokens_used',
+  NUCLIA_TOKENS = 'nuclia_tokens',
 }
 
 export interface Welcome {

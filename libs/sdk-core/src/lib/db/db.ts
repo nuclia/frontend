@@ -2,7 +2,6 @@ import {
   catchError,
   concatMap,
   defer,
-  filter,
   forkJoin,
   from,
   map,
@@ -37,11 +36,7 @@ import {
   PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
-  ProcessingStat,
   QueryInfo,
-  StatsPeriod,
-  StatsRange,
-  StatsType,
   UsageAggregation,
   UsagePoint,
   Welcome,
@@ -296,7 +291,10 @@ export class Db implements IDb {
     knowledgeBoxId?: string,
     aggregation?: UsageAggregation,
   ): Observable<UsagePoint[]> {
-    const params = [`from=${from}`, `to=${to}`];
+    const params = [`from=${from}`];
+    if (to) {
+      params.push(`to=${to}`);
+    }
     if (knowledgeBoxId) {
       params.push(`knowledgebox=${knowledgeBoxId}`);
     }
@@ -304,29 +302,6 @@ export class Db implements IDb {
       params.push(`aggregation=${aggregation}`);
     }
     return this.nuclia.rest.get<UsagePoint[]>(`/account/${accountId}/usage?${params.join('&')}`);
-  }
-
-  /**
-   * @deprecated: To be replaced by getUsage
-   */
-  getStats(
-    accountSlug: string,
-    type: StatsType,
-    knowledgeBox?: string,
-    period: StatsPeriod = StatsPeriod.DAY,
-    utctime?: string,
-  ): Observable<ProcessingStat[]> {
-    const params = [`period=${period}`, `stats=${type}`];
-    if (utctime) {
-      params.push(`utctime=${utctime}`);
-    }
-    if (knowledgeBox) {
-      params.push(`knowledgebox=${knowledgeBox}`);
-    }
-    return this.nuclia.rest.get<{ data: ProcessingStat[] }>(`/account/${accountSlug}/stats?${params.join('&')}`).pipe(
-      map((response) => response.data),
-      filter((data) => !!data),
-    );
   }
 
   /**
@@ -375,18 +350,6 @@ export class Db implements IDb {
       throw new Error('NUA key is needed to be able to call /processing');
     }
     return this.nuclia.rest.get<ProcessingPullResponse>('/processing/pull', this.getNUAHeader());
-  }
-
-  getProcessingStats(range?: StatsRange, accountId?: string): Observable<ProcessingStat[]> {
-    const hasNUAKey = this.hasNUAClient();
-    if (!accountId && !hasNUAKey) {
-      throw new Error('NUA key or account id is needed to be able to call /processing/stats');
-    }
-    const endpoint = hasNUAKey
-      ? `/processing/stats${range ? '?period=' + range : ''}`
-      : `/processing/stats?account_id=${accountId}${range ? '&period=' + range : ''}`;
-    const headers = hasNUAKey ? this.getNUAHeader() : undefined;
-    return this.nuclia.rest.get<{ data: ProcessingStat[] }>(endpoint, headers).pipe(map((res) => res.data));
   }
 
   getNUAActivity(accountId: string, client_id: string, zoneSlug: string, pageIndex = 0): Observable<EventList> {

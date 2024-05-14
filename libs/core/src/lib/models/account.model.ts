@@ -10,6 +10,7 @@ export const standaloneSimpleAccount: Account = {
   blocked_features: [] as BlockedFeature[],
   max_kbs: -1,
   max_users: null,
+  creation_date: '',
 };
 
 export interface AccountCreation {

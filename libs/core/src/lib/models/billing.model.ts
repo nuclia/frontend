@@ -1,7 +1,7 @@
 import { AccountTypes } from '@nuclia/core';
 
 export type Currency = 'USD' | 'EUR';
-export type UsageType =
+export type BillingUsageType =
   | 'ai-tokens-used'
 
   // Deprecated items
@@ -19,12 +19,13 @@ export type UsageType =
   | 'self-hosted-processed-documents'
   | 'files'; // this last one does not existing in the backend response, we calculate it from paragraphs
 
+export type BillingUsage = Partial<{ [key in BillingUsageType]: Usage }>;
 export interface Prices {
   recurring: {
     month?: { price: number };
     year?: { price: number };
   } | null;
-  usage: Partial<{ [key in UsageType]: Usage }>;
+  usage: BillingUsage;
 }
 
 export interface Usage {
@@ -138,7 +139,7 @@ export interface InvoiceItem {
 export interface AccountUsage {
   budget: number;
   currency: Currency;
-  invoice_items: { [key in UsageType]: InvoiceItem };
+  invoice_items: { [key in BillingUsageType]: InvoiceItem };
   start_billing_date: string;
   end_billing_date: string;
   over_cost: number;

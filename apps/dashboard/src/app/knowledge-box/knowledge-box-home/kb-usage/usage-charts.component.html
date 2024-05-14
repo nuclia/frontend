@@ -22,16 +22,5 @@
         <div [style]="'height:' + chartHeight + 'px'"></div>
       }
     }
-    @case ('tokens') {
-      @if (tokenChart; as chart) {
-        <app-line-chart
-          [yUnit]="chart.yUnit || '' | translate"
-          [data]="chart.data"
-          [xAxisTickOptions]="xAxisTickOptions"
-          [height]="chartHeight"></app-line-chart>
-      } @else {
-        <div [style]="'height:' + chartHeight + 'px'"></div>
-      }
-    }
   }
 }

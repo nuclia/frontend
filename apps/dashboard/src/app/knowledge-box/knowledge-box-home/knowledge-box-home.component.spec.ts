@@ -45,9 +45,9 @@ describe('KnowledgeBoxHomeComponent', () => {
         MockModule(UploadModule),
         MockComponent(DropdownButtonComponent),
         MockComponent(AccountStatusComponent),
-        HomeContainerComponent,
-        KbMetricsComponent,
-        UsageChartsComponent,
+        MockComponent(HomeContainerComponent),
+        MockComponent(KbMetricsComponent),
+        MockComponent(UsageChartsComponent),
       ],
       providers: [
         MockProvider(AppService),

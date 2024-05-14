@@ -1,10 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { AccountService, BillingService, FeaturesService, SDKService } from '@flaps/core';
+import { AccountService, BillingService, FeaturesService, Prices, SDKService } from '@flaps/core';
 import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
-import { addDays, format, isFuture, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
-import { StatsPeriod, StatsType } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
+import { format, isFuture, lastDayOfMonth, setDate, subDays, subMonths } from 'date-fns';
+import { AccountTypes, UsageMetric, UsagePoint, UsageType } from '@nuclia/core';
 
 export type ChartData = {
   data: [string, number][];
@@ -12,6 +10,10 @@ export type ChartData = {
   threshold?: number;
   yUnit?: string;
 };
+
+function defaultMapper(value: number) {
+  return value;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -43,8 +45,8 @@ export class MetricsService {
   );
   subscriptionPeriod = this.accountUsage.pipe(
     map((usage) => ({
-      start: new Date(`${usage.start_billing_date}+00:00`),
-      end: new Date(`${usage.end_billing_date}+00:00`),
+      start: new Date(usage.start_billing_date),
+      end: new Date(usage.end_billing_date),
     })),
     catchError(() => of(undefined)),
   );
@@ -61,160 +63,104 @@ export class MetricsService {
     }),
     map((period) => period || this.currentMonth),
   );
-  prices = this.billingService.getPrices().pipe(shareReplay());
+  prices: Observable<{ [key in AccountTypes]: Prices }> = this.billingService.getPrices().pipe(shareReplay());
 
-  totalSearchQueriesThisYear = this.account$.pipe(
-    switchMap((account) => this.sdk.nuclia.db.getStats(account.slug, StatsType.SEARCHES, undefined, StatsPeriod.YEAR)),
-    map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)),
-  );
-
-  mappers: { [key: string]: (value: number) => number } = {
-    [StatsType.MEDIA_SECONDS]: (value) => value / 3600,
-    [StatsType.TRAIN_SECONDS]: (value) => value / 3600,
-    [StatsType.PROCESSING_TIME]: (value) => value / 3600,
+  mappers: Partial<{ [key in UsageType]: (value: number) => number }> = {
+    [UsageType.MEDIA_SECONDS_PROCESSED]: (value) => value / 3600,
+    [UsageType.SLOW_PROCESSING_TIME]: (value) => value / 3600,
+    [UsageType.TRAIN_SECONDS]: (value) => value / 3600,
   };
-  units: { [key: string]: string } = {
-    [StatsType.MEDIA_SECONDS]: 'metrics.units.hours',
-    [StatsType.TRAIN_SECONDS]: 'metrics.units.hours',
-    [StatsType.PROCESSING_TIME]: 'metrics.units.hours',
-    [StatsType.SEARCHES]: 'metrics.units.queries',
-    [StatsType.AI_TOKENS_USED]: 'metrics.units.tokens',
+  units: Partial<{ [key in UsageType]: string }> = {
+    [UsageType.AI_TOKENS_USED]: 'metrics.units.tokens',
+    [UsageType.MEDIA_SECONDS_PROCESSED]: 'metrics.units.hours',
+    [UsageType.SEARCHES_PERFORMED]: 'metrics.units.queries',
+    [UsageType.SLOW_PROCESSING_TIME]: 'metrics.units.hours',
+    [UsageType.TRAIN_SECONDS]: 'metrics.units.hours',
   };
 
-  constructor(
-    private toastService: SisToastService,
-    private translate: TranslateService,
-  ) {}
-
-  getSearchQueriesCountForKb(kbId: string): Observable<{ year: number; month: number }> {
+  getSearchQueriesCount(kbId?: string): Observable<{ year: number; month: number; sinceCreation: number }> {
+    const now = new Date();
+    const thirtyDaysAgo = subDays(now, 30);
+    const twelveMonthsAgo = subMonths(now, 12);
     return this.account$.pipe(
       switchMap((account) =>
         forkJoin([
-          this.sdk.nuclia.db.getStats(account.slug, StatsType.SEARCHES, kbId, StatsPeriod.YEAR),
-          this.sdk.nuclia.db.getStats(account.slug, StatsType.SEARCHES, kbId, StatsPeriod.MONTH),
+          this.sdk.nuclia.db.getUsage(account.id, twelveMonthsAgo.toISOString(), now.toISOString(), kbId),
+          this.sdk.nuclia.db.getUsage(account.id, thirtyDaysAgo.toISOString(), now.toISOString(), kbId),
+          this.sdk.nuclia.db.getUsage(account.id, account.creation_date, now.toISOString(), kbId),
         ]),
       ),
-      map(([yearStats, monthStats]) => ({
-        year: yearStats.reduce((acc, stat) => acc + stat.stats, 0),
-        month: monthStats.reduce((acc, stat) => acc + stat.stats, 0),
-      })),
-    );
-  }
-
-  getTokensCountForKb(kbId: string): Observable<{ year: number; month: number }> {
-    return this.account$.pipe(
-      switchMap((account) =>
-        forkJoin([
-          this.sdk.nuclia.db.getStats(account.slug, StatsType.AI_TOKENS_USED, kbId, StatsPeriod.YEAR),
-          this.sdk.nuclia.db.getStats(account.slug, StatsType.AI_TOKENS_USED, kbId, StatsPeriod.MONTH),
-        ]),
-      ),
-      map(([yearStats, monthStats]) => ({
-        year: yearStats.reduce((acc, stat) => acc + stat.stats, 0),
-        month: monthStats.reduce((acc, stat) => acc + stat.stats, 0),
-      })),
-    );
-  }
-
-  getChartData(statsType: StatsType, cumulative = true, kbId?: string): Observable<ChartData> {
-    return combineLatest([
-      this.getStats(statsType, kbId),
-      this.isSubscribed.pipe(
-        switchMap((isSubscribed) => (isSubscribed ? this.getThreshold(statsType) : this.getLimit(statsType))),
-      ),
-      this.period,
-    ]).pipe(
-      map(
-        ([stats, threshold, period]) => ({
-          data: stats
-            .map((stat) => [new Date(stat.time_period), stat.stats] as [Date, number])
-            .reverse()
-            // Keep only points in current period
-            .reduce(
-              (currentMonthStats, point) => {
-                const currentPeriod = { start: new Date(period.start).setUTCHours(0, 0, 0, 0), end: new Date() };
-                if (isWithinInterval(point[0], currentPeriod)) {
-                  currentMonthStats.push([
-                    point[0],
-                    cumulative ? (currentMonthStats[currentMonthStats.length - 1]?.[1] || 0) + point[1] : point[1],
-                  ]);
-                }
-                return currentMonthStats;
-              },
-              [] as [Date, number][],
-            )
-            .map((stat) => [
-              format(stat[0], 'd/MM'),
-              this.mappers[statsType] ? this.mappers[statsType](stat[1]) : stat[1],
-            ]),
-          domain: stats.map((stat) => format(new Date(stat.time_period), 'd/MM')).reverse(),
-          threshold,
-          yUnit: this.units[statsType],
-        }),
-        catchError((error) => {
-          console.error(`Error while getting chart data for ${statsType}`, error);
-          return of({
-            data: [],
-            domain: [],
-          });
-        }),
-      ),
-    );
-  }
-
-  getLimit(statsType: StatsType): Observable<number | undefined> {
-    return this.account$.pipe(
-      map((account) => {
-        const limits = account.limits?.usage;
-        if (!limits) {
-          return undefined;
-        }
-        let limit;
-        let processedLimit;
-        switch (statsType) {
-          case StatsType.MEDIA_SECONDS:
-            limit = limits.monthly_limit_media_seconds_processed;
-            processedLimit = limits.monthly_limit_media_seconds_processed / 3600;
-            break;
-          case StatsType.SEARCHES:
-            limit = limits.monthly_limit_hosted_searches_performed;
-            break;
-        }
-        return limit === -1 ? undefined : processedLimit || limit;
+      map(([yearPoint, monthPoint, sinceCreationPoint]) => {
+        const yearMetric = yearPoint[0].metrics.find(
+          (metric) => metric.name === UsageType.SEARCHES_PERFORMED,
+        ) as UsageMetric;
+        const monthMetric = monthPoint[0].metrics.find(
+          (metric) => metric.name === UsageType.SEARCHES_PERFORMED,
+        ) as UsageMetric;
+        const sinceCreationMetric = sinceCreationPoint[0].metrics.find(
+          (metric) => metric.name === UsageType.SEARCHES_PERFORMED,
+        ) as UsageMetric;
+        return {
+          year: yearMetric.value,
+          month: monthMetric.value,
+          sinceCreation: sinceCreationMetric.value,
+        };
       }),
     );
   }
 
-  getStats(statsType: StatsType, kbId?: string) {
+  getUsageCharts(kbId?: string, cumulative = false): Observable<Partial<{ [key in UsageType]: ChartData }>> {
     return combineLatest([this.account$, this.period]).pipe(
-      switchMap(([account, period]) => {
-        // getStats only returns data for 30 days
-        const lastDate = addDays(period.start, 29).getTime().toString();
-        return this.sdk.nuclia.db.getStats(account.slug, statsType, kbId, StatsPeriod.MONTH, lastDate).pipe(
-          catchError(() => {
-            this.toastService.error(this.translate.instant(`account.chart_error_${statsType}`));
-            return of([]);
+      switchMap(([account, period]) =>
+        this.sdk.nuclia.db.getUsage(account.id, period.start.toISOString(), period.end.toISOString(), kbId, 'day').pipe(
+          map((usagePoints) => {
+            const charts: Partial<{ [key in UsageType]: ChartData }> = usagePoints.reduce((charts, point) => {
+              for (const usageType of Object.values(UsageType)) {
+                this.addPointToChart(point, charts, usageType, cumulative);
+              }
+              return charts;
+            }, this.getEmptyCharts());
+
+            return charts;
           }),
-        );
-      }),
+        ),
+      ),
     );
   }
 
-  getThreshold(statsType: StatsType): Observable<number | undefined> {
-    return combineLatest([this.account$, this.prices]).pipe(
-      map(([account, prices]) => {
-        const usage = prices[account.type].usage;
-        switch (statsType) {
-          case StatsType.MEDIA_SECONDS:
-            return usage?.media?.threshold;
-          case StatsType.SEARCHES:
-            return usage?.searches?.threshold;
-          case StatsType.TRAIN_SECONDS:
-            return usage?.training?.threshold;
-          default:
-            return undefined;
-        }
-      }),
-    );
+  getCumulativeUsageCharts(kbId?: string): Observable<Partial<{ [key in UsageType]: ChartData }>> {
+    return this.getUsageCharts(kbId, true);
+  }
+
+  private getEmptyCharts() {
+    const emptyCharts: Partial<{ [key in UsageType]: ChartData }> = {};
+    for (const usageType of Object.values(UsageType)) {
+      emptyCharts[usageType] = {
+        yUnit: this.units[usageType],
+        domain: [],
+        data: [],
+      };
+    }
+    return emptyCharts;
+  }
+
+  private addPointToChart(
+    point: UsagePoint,
+    charts: Partial<{ [key in UsageType]: ChartData }>,
+    type: UsageType,
+    cumulative = false,
+  ) {
+    const date = format(new Date(point.timestamp), 'd/MM');
+    const metric = point.metrics.find((metric) => metric.name === type);
+    const chart = charts[type];
+    if (metric && chart) {
+      chart.domain.push(date);
+      const mapper: (value: number) => number = this.mappers[type] || defaultMapper;
+      let value = mapper(metric.value);
+      if (cumulative && chart.data.length > 0) {
+        value += chart.data[chart.data.length - 1][1];
+      }
+      chart.data.push([date, value]);
+    }
   }
 }
