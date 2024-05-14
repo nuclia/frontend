@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import SparkMD5 from 'spark-md5';
 import { SDKService } from '../api';
@@ -40,7 +40,10 @@ export class FeatureFlagService {
   /**
    * UNSTABLE FEATURES are under feature flag: "rollout: 0", meaning hidden in prod but can be enabled for some client using account_id_md5 variant
    */
-  private applicationRemoteFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
+  private applicationRemoteFeatures: Observable<Features> = combineLatest([
+    this.featuresData,
+    this.accountMd5.pipe(startWith('')),
+  ]).pipe(
     map(([data, md5]) =>
       Object.entries(data)
         .filter(([key]) => key.startsWith(FEATURE_PREFIX))
