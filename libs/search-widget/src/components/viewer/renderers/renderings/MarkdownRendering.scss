@@ -1,0 +1,38 @@
+.markdown :global {
+  & > *:first-child {
+    margin-top: 0;
+  }
+  & > *:last-child {
+    margin-bottom: 0;
+  }
+  h1 {
+    font-size: calc(var(--font-size-base) * 1.25);
+    font-weight: var(--font-weight-bold);
+  }
+  h2 {
+    font-size: calc(var(--font-size-base) * 1.15);
+    font-weight: var(--font-weight-bold);
+  }
+  h3 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semi-bold);
+  }
+
+  table {
+    border: 1px solid var(--border-color);
+    border-radius: var(--rhythm-1);
+    border-spacing: 0;
+    border-collapse: separate;
+    tbody {
+      background-color: var(--container-background-color);
+    }
+    td,
+    th {
+      border-bottom: 1px solid var(--border-color);
+      padding: var(--rhythm-1);
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+  }
+}

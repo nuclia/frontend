@@ -17,7 +17,9 @@
     font-size: var(--font-size-medium);
     gap: var(--rhythm-1);
     line-height: var(--rhythm-3);
-    transition: background-color var(--transition-superfast), color var(--transition-superfast);
+    transition:
+      background-color var(--transition-superfast),
+      color var(--transition-superfast);
     width: calc(100% - var(--expander-width));
 
     &:not(.stack) {
@@ -38,6 +40,19 @@
 
     .paragraph-text {
       overflow-wrap: break-word;
+      &.ellipsis {
+        height: var(--rhythm-3);
+        :global(.markdown > *) {
+          // artificial ellipsis if the paragraph has several lines
+          &::after {
+            content: '…';
+          }
+          // regular ellipsis for single line that is too long
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
     }
 
     .indicator-container {

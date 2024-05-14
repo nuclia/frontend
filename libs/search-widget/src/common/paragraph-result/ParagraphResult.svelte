@@ -5,6 +5,7 @@
   import type { ResultType } from '../../core';
   import IconButton from '../button/IconButton.svelte';
   import { Search } from '@nuclia/core';
+  import MarkdownRendering from '../../components/viewer/renderers/renderings/MarkdownRendering.svelte';
 
   export let paragraph: Search.FindParagraph;
   export let resultType: ResultType;
@@ -17,6 +18,7 @@
 
   let hovering = false;
   let expanded = false;
+  let hasEllipsis = false;
 
   const dispatch = createEventDispatcher();
   const open = () => {
@@ -27,7 +29,9 @@
   $: isPdf = resultType === 'pdf';
 
   let paragraphElement: HTMLElement;
-  $: hasEllipsis = paragraphElement && paragraphElement.offsetWidth < paragraphElement.scrollWidth;
+  function checkHeight() {
+    hasEllipsis = ellipsis && paragraphElement && paragraphElement.offsetHeight > 24;
+  }
 
   function toggleExpand() {
     expanded = !expanded;
@@ -40,7 +44,7 @@
     <div
       class="expander-button-container"
       class:expanded>
-      {#if hasEllipsis && !stack}
+      {#if hasEllipsis}
         <IconButton
           icon="chevron-right"
           aspect="basic"
@@ -60,9 +64,8 @@
     on:mouseleave={() => (hovering = false)}
     on:click={disabled ? null : open}
     on:keyup={(e) => {
-      if(e.key === 'Enter' && !disabled) open()
-    }}
-  >
+      if (e.key === 'Enter' && !disabled) open();
+    }}>
     <div
       class="indicator-container"
       class:hidden={noIndicator}>
@@ -82,9 +85,11 @@
     </div>
     <div
       class="paragraph-text"
-      class:ellipsis={ellipsis && !expanded}
+      class:ellipsis={hasEllipsis && !expanded}
       bind:this={paragraphElement}>
-      {@html paragraph.text}
+      <MarkdownRendering
+        text={paragraph.text}
+        on:setElement={checkHeight} />
     </div>
   </div>
 </li>
