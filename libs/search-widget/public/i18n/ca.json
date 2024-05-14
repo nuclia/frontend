@@ -8,7 +8,7 @@
 	"answer.feedback.wrong-citations": "Les fonts no són precises",
 	"answer.feedback.wrong-results": "Els resultats no són rellevants",
 	"answer.input.label": "Entrada de xat",
-	"answer.no-citations": "El LLM no ha estat capaç d'indicar explícitament les fonts que s'han utilitzat per produir aquesta resposta.",
+	"answer.no-citations": "El sistema no ha estat capaç d'indicar explícitament les fonts que s'han utilitzat per produir aquesta resposta.",
 	"answer.placeholder": "Parlem",
 	"answer.sources": "Fonts",
 	"answer.title": "Resposta",
