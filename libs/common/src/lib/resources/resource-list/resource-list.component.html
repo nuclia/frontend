@@ -12,50 +12,55 @@
       }
     </div>
   } @else if ((emptyKb | async) === false) {
-    <div class="resource-list-header">
+    <div
+      class="resource-list-header"
+      #header>
       <div class="filters-container">
         <div class="filters">
           <div>
             <nsi-dropdown-button
               freeWidth
               aspect="basic"
-              [disabled]="!hasFilters"
-              [popupRef]="availableFilters">
-              {{ 'resource.filtered-by' | translate }}
+              [disabled]="filterOptions.mainTypes.length === 0"
+              [popupRef]="mainTypeFilters">
+              {{ 'resource.filter.resource-type' | translate }}
+              {{ selectedMainTypes.length ? '(' + selectedMainTypes.length + ')' : '' }}
             </nsi-dropdown-button>
-            <pa-dropdown #availableFilters>
-              @if (filterOptions.classification.length > 0) {
-                <pa-option-header>{{ 'resource.classification-column' | translate }}</pa-option-header>
-
-                @for (option of filterOptions.classification; track option.id) {
-                  <pa-option
-                    (selectOption)="onSelectFilter(option, $event)"
-                    dontCloseOnSelect>
-                    <pa-checkbox
-                      [(value)]="option.selected"
-                      (valueChange)="onToggleFilter()">
-                      {{ option.label }}
-                    </pa-checkbox>
-                  </pa-option>
-                }
+            <pa-dropdown #mainTypeFilters>
+              @for (option of filterOptions.mainTypes; track option.id) {
+                <pa-option
+                  (selectOption)="onSelectFilter(option, $event)"
+                  [paTooltip]="option.help"
+                  dontCloseOnSelect>
+                  <pa-checkbox
+                    [(value)]="option.selected"
+                    (valueChange)="onToggleFilter()">
+                    {{ option.label }}
+                  </pa-checkbox>
+                </pa-option>
               }
-              @if (filterOptions.classification.length > 0 && filterOptions.mainTypes.length > 0) {
-                <pa-separator></pa-separator>
-              }
-              @if (filterOptions.mainTypes.length > 0) {
-                <pa-option-header>{{ 'resource.filter.main-type' | translate }}</pa-option-header>
-                @for (option of filterOptions.mainTypes; track option.id) {
-                  <pa-option
-                    (selectOption)="onSelectFilter(option, $event)"
-                    [paTooltip]="option.help"
-                    dontCloseOnSelect>
-                    <pa-checkbox
-                      [(value)]="option.selected"
-                      (valueChange)="onToggleFilter()">
-                      {{ option.label }}
-                    </pa-checkbox>
-                  </pa-option>
-                }
+            </pa-dropdown>
+          </div>
+          <div>
+            <nsi-dropdown-button
+              freeWidth
+              aspect="basic"
+              [disabled]="filterOptions.classification.length === 0"
+              [popupRef]="classificationFilters">
+              {{ 'resource.classification-column' | translate }}
+              {{ selectedClassifications.length ? '(' + selectedClassifications.length + ')' : '' }}
+            </nsi-dropdown-button>
+            <pa-dropdown #classificationFilters>
+              @for (option of filterOptions.classification; track option.id) {
+                <pa-option
+                  (selectOption)="onSelectFilter(option, $event)"
+                  dontCloseOnSelect>
+                  <pa-checkbox
+                    [(value)]="option.selected"
+                    (valueChange)="onToggleFilter()">
+                    {{ option.label }}
+                  </pa-checkbox>
+                </pa-option>
               }
             </pa-dropdown>
           </div>
@@ -65,7 +70,7 @@
             [value]="query | async"
             (valueChange)="onQueryChange($event)"
             (keyup.enter)="search()"
-            [disabled]="!isMainView">
+            [disabled]="isErrorView || isPendingView">
             {{ 'stash.search' | translate }}
           </pa-input>
         </div>
@@ -122,51 +127,6 @@
             {{ 'resource.filter.clear' | translate }}
           </pa-button>
         }
-        <!--
-          <pa-button
-            routerLink="./pending"
-            routerLinkActive
-            #rla="routerLinkActive"
-            icon="clock-dash"
-            size="small"
-            iconSize="medium"
-            aspect="basic"
-            iconAndText
-            #pendingPopoverDirective="paPopoverRef"
-            [paPopover]="pendingPopover"
-            paPopoverOffset="0px"
-            [active]="rla.isActive">
-            {{ (statusCount | async)?.pending }}
-          </pa-button>
-        </div>
-        <pa-popover #pendingPopover>
-          <div class="popover-content">{{ 'resource.popover.pending-resources' | translate }}</div>
-        </pa-popover>
-
-        @if ((statusCount | async)?.error || 0 > 0) {
-          <div class="status-button">
-            <pa-button
-              routerLink="./error"
-              routerLinkActive
-              #rla="routerLinkActive"
-              icon="warning"
-              size="small"
-              iconSize="medium"
-              kind="destructive"
-              aspect="basic"
-              iconAndText
-              #failedPopoverDirective="paPopoverRef"
-              [paPopover]="failedPopover"
-              paPopoverOffset="0px"
-              [active]="rla.isActive">
-              {{ (statusCount | async)?.error }}
-            </pa-button>
-          </div>
-        }
-        <pa-popover #failedPopover>
-          <div class="popover-content">{{ 'resource.popover.error-resources' | translate }}</div>
-        </pa-popover>
-        -->
       </div>
     </div>
 

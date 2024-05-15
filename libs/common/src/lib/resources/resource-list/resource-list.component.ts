@@ -1,16 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, forkJoin, Observable, of, Subject, take } from 'rxjs';
-import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
 import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
-import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceListService } from './resource-list.service';
 import { Filters, formatFiltersFromFacets, MIME_FACETS } from '../resource-filters.utils';
 import { Search } from '@nuclia/core';
-
-const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
 @Component({
   templateUrl: './resource-list.component.html',
@@ -20,29 +17,10 @@ const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 export class ResourceListComponent implements OnDestroy {
   @ViewChild('pendingPopoverDirective') pendingPopoverDirective?: PopoverDirective;
   @ViewChild('failedPopoverDirective') failedPopoverDirective?: PopoverDirective;
-
-  private localStorage = inject(LOCAL_STORAGE);
+  @ViewChild('header') header?: ElementRef;
 
   unsubscribeAll = new Subject<void>();
-
-  statusCount = this.uploadService.statusCount.pipe(
-    tap((count) => {
-      if (this.localStorage.getItem(POPOVER_DISPLAYED) !== 'done' && (count.error > 0 || count.pending > 0)) {
-        // we cannot open the two popovers at the same time, so error takes priority
-        setTimeout(() => {
-          const popover = count.error > 0 ? this.failedPopoverDirective : this.pendingPopoverDirective;
-          popover?.toggle();
-          this.localStorage.setItem(POPOVER_DISPLAYED, 'done');
-          // Close after 5s if still visible
-          setTimeout(() => {
-            if (popover?.popupDirective.paPopup?.isDisplayed) {
-              popover.toggle();
-            }
-          }, 5000);
-        });
-      }
-    }),
-  );
+  statusCount = this.uploadService.statusCount;
 
   get isMainView(): boolean {
     return !this.resourceListService.status;
@@ -60,7 +38,6 @@ export class ResourceListComponent implements OnDestroy {
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   query = this.resourceListService.query;
-
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.emptyKb;
 
@@ -68,7 +45,6 @@ export class ResourceListComponent implements OnDestroy {
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
   filterOptions: Filters = { classification: [], mainTypes: [] };
-  hasFilters = false;
 
   constructor(
     private sdk: SDKService,
@@ -89,7 +65,6 @@ export class ResourceListComponent implements OnDestroy {
             return this.loadFilters();
           } else {
             this.filterOptions = { classification: [], mainTypes: [] };
-            this.hasFilters = false;
             this.cdr.markForCheck();
             return of(null);
           }
@@ -97,6 +72,12 @@ export class ResourceListComponent implements OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
+
+    merge(this.resourceListService.ready, this.resourceListService.filters)
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(() => {
+        this.resourceListService.setHeaderHeight(this.header?.nativeElement.clientHeight || 0);
+      });
   }
 
   ngOnDestroy() {
@@ -192,7 +173,6 @@ export class ResourceListComponent implements OnDestroy {
   private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[] = []) {
     const filters = formatFiltersFromFacets(allFacets, queryParamsFilters);
     this.filterOptions = filters;
-    this.hasFilters = filters.classification.length + filters.mainTypes.length > 0;
     this.cdr.markForCheck();
   }
 }

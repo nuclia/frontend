@@ -10,7 +10,6 @@
   background-color: $color-light-stronger;
   margin-top: calc(-1 * #{rhythm(3)});
   padding-top: rhythm(3);
-  padding-bottom: rhythm(1);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -37,10 +36,6 @@
   .filtered-by {
     color: $color-neutral-regular;
   }
-}
-
-.popover-content {
-  text-align: center;
 }
 
 .empty-kb {

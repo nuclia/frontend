@@ -13,13 +13,7 @@ import {
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
-import {
-  PaDropdownModule,
-  PaIconModule,
-  PaPopupModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { PaDropdownModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { UploadButtonComponent } from '../upload-button/upload-button.component';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -47,7 +41,6 @@ describe('ResourceListComponent', () => {
         RouterTestingModule,
         MockModule(PaDropdownModule),
         MockModule(PaIconModule),
-        MockModule(PaPopupModule),
         MockModule(PaTogglesModule),
         MockModule(PaTextFieldModule),
         MockModule(SisProgressModule),

@@ -57,6 +57,8 @@ export class ResourceListService {
   emptyKb = this._emptyKb.asObservable();
   private _query = new BehaviorSubject<string>('');
   query = this._query.asObservable();
+  private _headerHeight = new BehaviorSubject<number>(0);
+  headerHeight = this._headerHeight.asObservable();
   isShardReady = new BehaviorSubject<boolean>(false);
 
   labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
@@ -125,6 +127,10 @@ export class ResourceListService {
 
   setQuery(query: string) {
     this._query.next(query);
+  }
+
+  setHeaderHeight(height: number) {
+    this._headerHeight.next(height);
   }
 
   loadResources(replaceData = true, updateCount = true): Observable<void> {

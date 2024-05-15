@@ -6,7 +6,9 @@
   </div>
 }
 
-<div class="resource-table-header">
+<div
+  class="resource-table-header"
+  [style.top]="(headerHeight | async) + 'px'">
   @if ((isAdminOrContrib | async) && selection.length > 0) {
     <div class="resource-bulk-actions">
       {{ 'resource.selected_count' | translate: { num: selection.length } }}
@@ -123,5 +125,8 @@
         </pa-table-row>
       }
     </pa-table>
+    @if ((data | async)?.length === 0) {
+      <div class="no-results body-m">{{ 'resource.no-results' | translate }}</div>
+    }
   </pa-infinite-scroll>
 </div>
