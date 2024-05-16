@@ -1,0 +1,40 @@
+@import 'apps/dashboard/src/variables';
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin-bottom: rhythm(4);
+}
+
+.toggle-container {
+  background-color: $color-neutral-lightest;
+  border-radius: rhythm(1);
+  padding: rhythm(1);
+
+  pa-toggle ::ng-deep .pa-toggle-context {
+    justify-content: space-between;
+  }
+}
+
+.loader-backdrop {
+  align-items: center;
+  background-color: rgba($color-dark-stronger, 0.5);
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+
+  .spinner-container {
+    background-color: $color-light-stronger;
+    border-radius: rhythm(1);
+    position: absolute;
+    top: calc(100vh / 2);
+    transform: translateY(-50%);
+    width: rhythm(12);
+  }
+}

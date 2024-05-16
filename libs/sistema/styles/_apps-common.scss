@@ -63,6 +63,7 @@ pa-button.full-width {
   min-height: calc(100vh - var(--app-topbar-height));
   padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
     var(--app-layout-padding-left);
+  position: relative;
 
   .page-title {
     @include display-s();

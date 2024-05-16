@@ -22,6 +22,7 @@
       <div class="languages-container">
         @for (language of languages; track language.label) {
           <pa-checkbox
+            [disabled]="disabled"
             [(value)]="language.selected"
             (valueChange)="sendSelection()">
             {{ language.label }}

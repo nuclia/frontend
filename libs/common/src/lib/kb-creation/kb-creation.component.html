@@ -1,4 +1,12 @@
 <div class="page-spacing">
+  @if (saving) {
+    <div class="loader-backdrop">
+      <div class="spinner-container">
+        <nsi-spinner></nsi-spinner>
+      </div>
+    </div>
+  }
+
   <header>
     <nsi-back-button link="..">{{ 'account.kb.creation-form.back-button' | translate }}</nsi-back-button>
 
@@ -45,7 +53,9 @@
     <nsi-two-columns-configuration-item
       itemTitle="user.kb.creation-form.models.title"
       description="user.kb.creation-form.models.description">
-      <nus-language-field (modelSelected)="updateModel($event)"></nus-language-field>
+      <nus-language-field
+        [disabled]="saving"
+        (modelSelected)="updateModel($event)"></nus-language-field>
     </nsi-two-columns-configuration-item>
 
     <nsi-two-columns-configuration-item
@@ -63,7 +73,7 @@
       <pa-button
         kind="primary"
         type="submit"
-        [disabled]="form.invalid">
+        [disabled]="form.invalid || saving">
         {{ 'account.kb.create' | translate }}
       </pa-button>
     </nsi-sticky-footer>

@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { getSemanticModel, SDKService, STFUtils, ZoneService } from '@flaps/core';
 import {
   BackButtonComponent,
   SisModalService,
+  SisProgressModule,
   SisToastService,
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
@@ -30,18 +31,20 @@ import { ActivatedRoute, Router } from '@angular/router';
     PaButtonModule,
     PaTogglesModule,
     LanguageFieldComponent,
+    SisProgressModule,
   ],
   templateUrl: './kb-creation.component.html',
   styleUrl: './kb-creation.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KbCreationComponent implements OnInit, OnDestroy {
+export class KbCreationComponent {
   private sdk = inject(SDKService);
   private zoneService: ZoneService = inject(ZoneService);
   private modalService = inject(SisModalService);
   private toaster = inject(SisToastService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
 
   zones = this.zoneService.getZones().pipe(
     tap((zones) => {
@@ -68,9 +71,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   };
 
   semanticModel = '';
-
-  ngOnInit() {}
-  ngOnDestroy() {}
+  saving = false;
 
   create() {
     const { anonymization, ...kbConfig } = this.form.getRawValue();
@@ -86,6 +87,11 @@ export class KbCreationComponent implements OnInit, OnDestroy {
       : of(true);
     confirmed
       .pipe(
+        tap(() => {
+          this.form.disable();
+          this.saving = true;
+          this.cdr.markForCheck();
+        }),
         switchMap(() => this.account),
         switchMap((account) =>
           this.sdk.nuclia.db.getLearningSchema(account.id, kbConfig.zone).pipe(

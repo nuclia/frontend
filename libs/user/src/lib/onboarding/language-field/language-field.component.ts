@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -31,7 +42,9 @@ const LANGUAGES = [
   styleUrl: './language-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LanguageFieldComponent implements OnInit, OnDestroy {
+export class LanguageFieldComponent implements OnInit, OnChanges, OnDestroy {
+  @Input({ transform: booleanAttribute }) disabled = false;
+
   @Output() modelSelected = new EventEmitter<string>();
 
   private unsubscribeAll = new Subject<void>();
@@ -65,6 +78,16 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.sendSelection();
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.sendSelection());
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['disabled']) {
+      if (changes['disabled'].currentValue) {
+        this.form.disable();
+      } else {
+        this.form.enable();
+      }
+    }
   }
 
   ngOnDestroy() {

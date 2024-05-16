@@ -9,6 +9,7 @@ import {
   accountOwnerGuard,
   ChartsModule,
   HintModule,
+  KbCreationComponent,
   KnowledgeBoxSettingsModule,
   NavbarModule,
   PipesModule,
@@ -42,7 +43,6 @@ import { AccountStatusComponent } from './account-status/account-status.componen
 import { BillingModule } from './billing/billing.module';
 import { UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
 import { KbListComponent } from './account-kbs/kb-list/kb-list.component';
-import { KbCreationComponent } from './account-kbs/kb-creation/kb-creation.component';
 import { BillingComponent } from './billing/billing.component';
 import { RedirectComponent } from './billing/redirect.component';
 import { SubscriptionsComponent } from './billing/subscriptions/subscriptions.component';
