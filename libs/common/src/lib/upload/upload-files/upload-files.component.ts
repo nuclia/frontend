@@ -33,11 +33,15 @@ export class UploadFilesComponent {
     validators: [Validators.pattern(/^[a-z]{2}$/)],
   });
   processings = forkJoin([
+    this.features.unstable.tableProcessing.pipe(take(1)),
     this.features.unstable.aiTableProcessing.pipe(take(1)),
     this.features.unstable.invoiceProcessing.pipe(take(1)),
   ]).pipe(
-    map(([aitable, invoice]) => {
-      const processings = ['none', 'table'];
+    map(([table, aitable, invoice]) => {
+      const processings = ['none'];
+      if (table) {
+        processings.push('table');
+      }
       if (aitable) {
         processings.push('aitable');
       }
