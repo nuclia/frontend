@@ -52,6 +52,7 @@ export interface BaseSearchOptions {
   shards?: string[];
   autofilter?: boolean;
   highlight?: boolean;
+  rephrase?: boolean;
 }
 
 export interface ChatOptions extends BaseSearchOptions {
@@ -64,7 +65,6 @@ export interface ChatOptions extends BaseSearchOptions {
   rag_strategies?: RAGStrategy[];
   rag_images_strategies?: RAGImageStrategy[];
   generative_model?: string;
-  rephrase?: boolean;
   /**
    * Defines the maximum number of tokens that the model will generate.
    */

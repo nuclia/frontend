@@ -90,6 +90,7 @@ export const initNuclia = (
   searchOptions.set({
     highlight: widgetOptions.highlight,
     autofilter: !!widgetOptions.features?.autofilter,
+    rephrase: REPHRASE,
   });
   prompt = widgetOptions.prompt;
   generative_model = widgetOptions.generative_model;
