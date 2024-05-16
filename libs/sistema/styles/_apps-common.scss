@@ -214,3 +214,12 @@ pa-toggle.unauthorized {
 pa-option pa-icon {
   display: flex;
 }
+
+.pa-modal .pa-modal-footer.pa-dual-buttons {
+  justify-content: center;
+
+  pa-button {
+    min-width: rhythm(16);
+    width: unset;
+  }
+}

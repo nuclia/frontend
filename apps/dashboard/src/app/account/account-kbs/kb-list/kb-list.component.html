@@ -4,7 +4,7 @@
   </div>
 }
 
-@if (zones && account && knowledgeBoxes) {
+@if (account && knowledgeBoxes) {
   <div class="account-kbs page-spacing">
     <h1 class="page-title">{{ 'account.related_kbs' | translate }}</h1>
 
@@ -91,8 +91,8 @@
           size="small"
           data-cy="add-kb"
           [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes && maxKnowledgeBoxes !== -1"
-          (click)="addKb(zones, account)">
-          {{ 'account.kb.add' | translate }}
+          routerLink="./create">
+          {{ 'account.kb.create' | translate }}
         </pa-button>
       </div>
     }

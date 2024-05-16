@@ -53,13 +53,17 @@ export class LanguageFieldComponent implements OnInit, OnDestroy {
   ) {
     const languages: { id: string; label: string }[] = LANGUAGES.map((language) => ({
       id: language,
-      label: this.translate.instant(`onboarding.step2.languages.${language}`),
+      label: this.translate.instant(`user.kb.creation-form.models.nuclia-model.languages.${language}`),
     })).sort((a, b) => a.label.localeCompare(b.label));
-    languages.push({ id: 'other', label: this.translate.instant(`onboarding.step2.languages.other`) });
+    languages.push({
+      id: 'other',
+      label: this.translate.instant(`user.kb.creation-form.models.nuclia-model.languages.other`),
+    });
     this.languages = languages.map((language) => ({ ...language, selected: false }));
   }
 
   ngOnInit() {
+    this.sendSelection();
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.sendSelection());
   }
 

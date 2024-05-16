@@ -18,7 +18,9 @@
       <nsi-badge kind="tertiary">{{ badge | translate }}</nsi-badge>
     }
   </div>
-  <div class="body-m description">{{ description | translate }}</div>
+  <div
+    class="body-m description"
+    [innerHTML]="description | translate"></div>
 </div>
 <div
   class="column right-column"

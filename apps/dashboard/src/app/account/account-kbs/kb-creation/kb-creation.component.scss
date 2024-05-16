@@ -1,0 +1,18 @@
+@import 'apps/dashboard/src/variables';
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin-bottom: rhythm(4);
+}
+
+.toggle-container {
+  background-color: $color-neutral-lightest;
+  border-radius: rhythm(1);
+  padding: rhythm(1);
+
+  pa-toggle ::ng-deep .pa-toggle-context {
+    justify-content: space-between;
+  }
+}
