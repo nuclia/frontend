@@ -1,6 +1,6 @@
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
-import { Chat, Citations } from './chat.models';
+import { Ask, Citations } from './ask.models';
 import { ChatOptions, Search } from './search.models';
 
 import { ResourceProperties } from '../db.models';
@@ -13,10 +13,10 @@ export function chat(
   kbid: string,
   path: string,
   query: string,
-  context: Chat.ContextEntry[] = [],
-  features: Chat.Features[] = [Chat.Features.VECTORS, Chat.Features.PARAGRAPHS],
+  context: Ask.ContextEntry[] = [],
+  features: Ask.Features[] = [Ask.Features.VECTORS, Ask.Features.PARAGRAPHS],
   options: ChatOptions = {},
-): Observable<Chat.Answer | IErrorResponse> {
+): Observable<Ask.Answer | IErrorResponse> {
   let sourcesLength = 0;
   let sources: Search.FindResults | undefined;
   let relations: Search.Relations | undefined;
@@ -58,7 +58,7 @@ export function chat(
               citations,
               incomplete: false,
               id: '',
-            } as Chat.Answer;
+            } as Ask.Answer;
           }),
           tap((res) => nuclia.events?.log('lastResults', res)),
         )
@@ -110,7 +110,7 @@ export function chat(
               }
             }
           }
-          return { type: 'answer', text, sources, incomplete, id, citations } as Chat.Answer;
+          return { type: 'answer', text, sources, incomplete, id, citations } as Ask.Answer;
         }),
         catchError((error) =>
           of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse),

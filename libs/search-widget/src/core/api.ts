@@ -13,7 +13,7 @@ import type {
   ResourceField,
   SearchOptions,
 } from '@nuclia/core';
-import { Chat, ExtractedDataTypes, Nuclia, ResourceFieldProperties, ResourceProperties, Search } from '@nuclia/core';
+import { Ask, ExtractedDataTypes, Nuclia, ResourceFieldProperties, ResourceProperties, Search } from '@nuclia/core';
 import { filter, forkJoin, from, map, merge, Observable, of, switchMap, take, tap } from 'rxjs';
 import type { EntityGroup, WidgetOptions } from './models';
 import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
@@ -26,7 +26,7 @@ import { hasViewerSearchError } from './stores/viewer.store';
 import { reset } from './reset';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
-const DEFAULT_CHAT_MODE = [Chat.Features.VECTORS, Chat.Features.PARAGRAPHS];
+const DEFAULT_CHAT_MODE = [Ask.Features.VECTORS, Ask.Features.PARAGRAPHS];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 // IMPORTANT! do not initialise those options outside initNuclia,
 // otherwise options might be kept in memory when using the widget generator
@@ -34,7 +34,7 @@ let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE: Search.Features[];
-let CHAT_MODE: Chat.Features[];
+let CHAT_MODE: Ask.Features[];
 let SEARCH_OPTIONS: Partial<SearchOptions>;
 let SUGGEST_MODE: Search.SuggestionFeatures[];
 let prompt: string | undefined = undefined;
@@ -105,7 +105,7 @@ export const initNuclia = (
   }
   if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
     SEARCH_MODE.push(Search.Features.RELATIONS);
-    CHAT_MODE.push(Chat.Features.RELATIONS);
+    CHAT_MODE.push(Ask.Features.RELATIONS);
   }
   if (widgetOptions.features?.suggestions) {
     SUGGEST_MODE.push(Search.SuggestionFeatures.PARAGRAPH);
@@ -114,7 +114,7 @@ export const initNuclia = (
     SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
   }
   if (widgetOptions.features?.noBM25forChat) {
-    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Chat.Features.PARAGRAPHS);
+    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.PARAGRAPHS);
   }
   if (widgetOptions.max_tokens) {
     MAX_TOKENS = widgetOptions.max_tokens;
@@ -151,17 +151,17 @@ export const search = (query: string, options: SearchOptions): Observable<Search
 
 export const getAnswer = (
   query: string,
-  chat?: Chat.Entry[],
+  chat?: Ask.Entry[],
   options?: ChatOptions,
-): Observable<Chat.Answer | IErrorResponse> => {
+): Observable<Ask.Answer | IErrorResponse> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
   const context = chat?.reduce((acc, curr) => {
-    acc.push({ author: Chat.Author.USER, text: curr.question });
-    acc.push({ author: Chat.Author.NUCLIA, text: curr.answer.text });
+    acc.push({ author: Ask.Author.USER, text: curr.question });
+    acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
     return acc;
-  }, [] as Chat.ContextEntry[]);
+  }, [] as Ask.ContextEntry[]);
   const defaultOptions: ChatOptions = {
     highlight: true,
     prompt,
@@ -184,7 +184,7 @@ export const getAnswer = (
   }
 };
 
-export const sendFeedback = (answer: Chat.Answer, approved: boolean, comment?: string) => {
+export const sendFeedback = (answer: Ask.Answer, approved: boolean, comment?: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }

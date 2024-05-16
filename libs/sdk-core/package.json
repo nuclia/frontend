@@ -1,6 +1,6 @@
 {
   "name": "@nuclia/core",
-  "version": "1.14.9",
+  "version": "1.15.0",
   "description": "SDK allowing to integrate Nuclia services in your frontend application",
   "license": "MIT",
   "keywords": [

@@ -25,7 +25,7 @@ import type {
   UserTokenAnnotation,
 } from './resource.models';
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
-import type { Chat, ChatOptions, Search, SearchOptions } from '../search';
+import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
 import { find, search, chat } from '../search';
 import { retry429Config, setEntities, setLabels, sliceUnicode } from './resource.helpers';
 import { RagStrategyName } from '../kb';
@@ -383,24 +383,24 @@ export class Resource extends ReadableResource implements IResource {
    */
   chat(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-  ): Observable<Chat.Answer | IErrorResponse>;
+  ): Observable<Ask.Answer | IErrorResponse>;
   chat(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-    callback?: (answer: Chat.Answer | IErrorResponse) => void,
+    callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<null>;
   chat(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-    callback?: (answer: Chat.Answer | IErrorResponse) => void,
-  ): Observable<Chat.Answer | IErrorResponse> | Observable<null> {
+    callback?: (answer: Ask.Answer | IErrorResponse) => void,
+  ): Observable<Ask.Answer | IErrorResponse> | Observable<null> {
     const chatRequest = chat(this.nuclia, this.kb, this.path, query, context, features, options);
     if (callback) {
       chatRequest.subscribe((response) => callback(response));
@@ -415,24 +415,24 @@ export class Resource extends ReadableResource implements IResource {
    */
   ask(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-  ): Observable<Chat.Answer | IErrorResponse>;
+  ): Observable<Ask.Answer | IErrorResponse>;
   ask(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-    callback?: (answer: Chat.Answer | IErrorResponse) => void,
+    callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<null>;
   ask(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-    callback?: (answer: Chat.Answer | IErrorResponse) => void,
-  ): Observable<Chat.Answer | IErrorResponse> | Observable<null> {
+    callback?: (answer: Ask.Answer | IErrorResponse) => void,
+  ): Observable<Ask.Answer | IErrorResponse> | Observable<null> {
     options = { ...(options || {}), rag_strategies: [{ name: RagStrategyName.FULL_RESOURCE }] };
     return this.chat(query, context, features, options, callback);
   }

@@ -1,6 +1,6 @@
 import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { search } from './api';
-import type { Chat, ChatOptions, Search, SearchOptions } from '@nuclia/core';
+import type { Ask, ChatOptions, Search, SearchOptions } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
   askQuestion,
@@ -102,7 +102,7 @@ export const setupTriggerSearch = (
                           }
                         }),
                         filter((res) => res.type !== 'error'),
-                        map((res) => res as Chat.Answer),
+                        map((res) => res as Ask.Answer),
                         // Chat is emitting several times until the answer is complete, but the result sources doesn't change while answer is incomplete
                         // So we make sure to emit only when results are changing, preventing to write in the state several times while loading the answer
                         distinctUntilChanged((previous, current) => previous.sources === current.sources),

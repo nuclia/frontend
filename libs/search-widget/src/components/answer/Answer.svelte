@@ -1,7 +1,7 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
   import Feedback from './Feedback.svelte';
-  import type { Chat, Citations, FieldId, Search } from '@nuclia/core';
+  import type { Ask, Citations, FieldId, Search } from '@nuclia/core';
   import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
   import { createEventDispatcher } from 'svelte';
   import { Button, Expander } from '../../common';
@@ -20,7 +20,7 @@
     type TypedResult,
   } from '../../core';
 
-  export let answer: Partial<Chat.Answer>;
+  export let answer: Partial<Ask.Answer>;
   export let rank = 0;
   export let initialAnswer = false;
   let text = '';
@@ -34,18 +34,19 @@
   $: sources =
     answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
 
-  $: sources && document.querySelectorAll('.sw-answer .ref').forEach((ref) => {
-    ref.addEventListener('mouseenter', onMouseEnter);
-    ref.addEventListener('mouseleave', onMouseLeave);
-  });
+  $: sources &&
+    document.querySelectorAll('.sw-answer .ref').forEach((ref) => {
+      ref.addEventListener('mouseenter', onMouseEnter);
+      ref.addEventListener('mouseleave', onMouseLeave);
+    });
 
   function addReferences(text: string, citations: Citations) {
     Object.values(citations)
       .reduce(
-        (acc, curr, index) => [...acc, ...curr.map(([,end]) => ({ index, end }))],
+        (acc, curr, index) => [...acc, ...curr.map(([, end]) => ({ index, end }))],
         [] as { index: number; end: number }[],
       )
-      .sort((a, b) => a.end - b.end !== 0 ? a.end - b.end : a.index - b.index)
+      .sort((a, b) => (a.end - b.end !== 0 ? a.end - b.end : a.index - b.index))
       .reverse()
       .forEach((ref) => {
         text = `${text.slice(0, ref.end)}<span class="ref">${ref.index + 1}</span>${text.slice(ref.end)}`;
@@ -64,8 +65,7 @@
           if (shortFieldType === SHORT_FIELD_TYPE.generic) {
             // we take the first other field that is not generic
             field = getNonGenericField(resource.data || {});
-          }
-          else {
+          } else {
             field = {
               field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
               field_id: fieldId,
@@ -82,13 +82,12 @@
   }
 
   function onMouseEnter(event: Event) {
-    selectedCitation = parseInt((event.target as HTMLElement).textContent || '') - 1
+    selectedCitation = parseInt((event.target as HTMLElement).textContent || '') - 1;
   }
 
   function onMouseLeave() {
     selectedCitation = undefined;
   }
-
 </script>
 
 <div class="sw-answer">
@@ -131,7 +130,7 @@
             <div class="sources-list">
               <Sources
                 {sources}
-                selected={selectedCitation}/>
+                selected={selectedCitation} />
             </div>
           {:else}
             <Expander>
@@ -143,7 +142,7 @@
               <div class="sources-list">
                 <Sources
                   {sources}
-                  selected={selectedCitation}/>
+                  selected={selectedCitation} />
               </div>
             </Expander>
           {/if}

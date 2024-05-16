@@ -1,14 +1,16 @@
-# 1.15.0 (unreleased)
+# 1.15.0 (2024-05-16)
 
 ### Breaking changes
 
-- Remove methods using deprecated `/stats` endpoint and remove corresponding models. 
+- Remove methods using deprecated `/stats` endpoint and remove corresponding models.
+- Rename `Chat` namespace to `Ask`.
 
 ### Improvements
 
 - Update `Citations` model
 - Add `KEEP_MARKDOWN` format to `TextFormat` type
 - Add `creation_date` in Account model
+- Support the new `ask` endpoint
 
 # 1.14.9 (2024-04-30)
 

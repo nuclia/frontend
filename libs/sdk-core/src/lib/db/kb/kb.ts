@@ -55,7 +55,7 @@ import {
 } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { catalog, chat, Chat, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
+import { catalog, chat, Ask, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
 import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
@@ -278,24 +278,24 @@ export class KnowledgeBox implements IKnowledgeBox {
   */
   chat(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-  ): Observable<Chat.Answer | IErrorResponse>;
+  ): Observable<Ask.Answer | IErrorResponse>;
   chat(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-    callback?: (answer: Chat.Answer | IErrorResponse) => void,
+    callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<null>;
   chat(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-    callback?: (answer: Chat.Answer | IErrorResponse) => void,
-  ): Observable<Chat.Answer | IErrorResponse> | Observable<null> {
+    callback?: (answer: Ask.Answer | IErrorResponse) => void,
+  ): Observable<Ask.Answer | IErrorResponse> | Observable<null> {
     const chatRequest = chat(this.nuclia, this.id, this.path, query, context, features, options);
     if (callback) {
       chatRequest.subscribe((response) => callback(response));
