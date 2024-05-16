@@ -313,19 +313,6 @@
                       <div class="toggle-and-help">
                         <pa-toggle
                           labelOnRight
-                          formControlName="rephrase">
-                          {{ 'widget.generator.advanced.generative-answer-category.rephrase.label' | translate }}
-                        </pa-toggle>
-                        <pa-icon
-                          name="info"
-                          [paPopover]="rephraseHelp" />
-                        <pa-popover #rephraseHelp>
-                          {{ 'widget.generator.advanced.generative-answer-category.rephrase.help' | translate }}
-                        </pa-popover>
-                      </div>
-                      <div class="toggle-and-help">
-                        <pa-toggle
-                          labelOnRight
                           formControlName="hideResults">
                           {{ 'widget.generator.advanced.generative-answer-category.hide-results.label' | translate }}
                         </pa-toggle>
@@ -615,6 +602,33 @@
                 <pa-expander-body>
                   <div class="tab-content-body">
                     <div class="toggle-and-help">
+                      <pa-textarea
+                        resizable
+                        formControlName="preselectedFilters"
+                        help="widget.generator.advanced.search-and-filtering-category.preselected-filters.field-help"
+                        [rows]="2"
+                        [placeholder]="
+                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.placeholder'
+                            | translate
+                        "
+                        (resizing)="onResizingTextarea($event)">
+                        {{
+                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.label'
+                            | translate
+                        }}
+                      </pa-textarea>
+                      <pa-icon
+                        class="icon-for-field-with-help"
+                        name="info"
+                        [paPopover]="preselectedFiltersHelp" />
+                      <pa-popover #preselectedFiltersHelp>
+                        {{
+                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.popover-help'
+                            | translate
+                        }}
+                      </pa-popover>
+                    </div>
+                    <div class="toggle-and-help">
                       <pa-toggle
                         labelOnRight
                         formControlName="filter">
@@ -688,30 +702,16 @@
                       </pa-popover>
                     </div>
                     <div class="toggle-and-help">
-                      <pa-textarea
-                        resizable
-                        formControlName="preselectedFilters"
-                        help="widget.generator.advanced.search-and-filtering-category.preselected-filters.field-help"
-                        [rows]="2"
-                        [placeholder]="
-                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.placeholder'
-                            | translate
-                        "
-                        (resizing)="onResizingTextarea($event)">
-                        {{
-                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.label'
-                            | translate
-                        }}
-                      </pa-textarea>
+                      <pa-toggle
+                        labelOnRight
+                        formControlName="rephrase">
+                        {{ 'widget.generator.advanced.search-and-filtering-category.rephrase.label' | translate }}
+                      </pa-toggle>
                       <pa-icon
-                        class="icon-for-field-with-help"
                         name="info"
-                        [paPopover]="preselectedFiltersHelp" />
-                      <pa-popover #preselectedFiltersHelp>
-                        {{
-                          'widget.generator.advanced.search-and-filtering-category.preselected-filters.popover-help'
-                            | translate
-                        }}
+                        [paPopover]="rephraseHelp" />
+                      <pa-popover #rephraseHelp>
+                        {{ 'widget.generator.advanced.search-and-filtering-category.rephrase.help' | translate }}
                       </pa-popover>
                     </div>
                     <div class="toggle-and-help">

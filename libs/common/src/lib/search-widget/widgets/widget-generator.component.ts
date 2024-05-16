@@ -521,7 +521,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       this.userPromptControl.patchValue('');
       this.citationsControl.patchValue(false);
       this.hideResultsControl.patchValue(false);
-      this.rephraseControl.patchValue(false);
       this.noBM25forChatControl.patchValue(false);
       Object.keys(this.ragStrategiesToggles).forEach((toggle) => {
         this.ragStrategiesToggles[toggle as RagStrategyName] = false;
