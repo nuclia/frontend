@@ -53,8 +53,6 @@ export class ResourceListService {
   ready = this._ready.asObservable();
   private _data = new BehaviorSubject<ResourceWithLabels[]>([]);
   data = this._data.asObservable();
-  private _emptyKb = new Subject<boolean>();
-  emptyKb = this._emptyKb.asObservable();
   private _query = new BehaviorSubject<string>('');
   query = this._query.asObservable();
   private _headerHeight = new BehaviorSubject<number>(0);
@@ -64,6 +62,10 @@ export class ResourceListService {
   labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
     filter((labelSets) => !!labelSets),
     map((labelSets) => labelSets as LabelSets),
+  );
+
+  emptyKb = this.uploadService.statusCount.pipe(
+    map((count) => count.processed === 0 && count.pending === 0 && count.error === 0),
   );
 
   prevFilters = this._filters.pipe(
@@ -97,7 +99,6 @@ export class ResourceListService {
     this._query.next('');
     this._titleOnly = true;
     this._filters.next([]);
-    this.isShardReady.next(false);
   }
 
   get sort(): SortOption {
@@ -140,7 +141,7 @@ export class ResourceListService {
         : this.loadResourcesFromCatalog(replaceData, updateCount);
 
     return loadRequest.pipe(
-      switchMap(() => (updateCount ? this.updateCount().pipe(map(() => {})) : of(undefined))),
+      switchMap(() => (updateCount ? this.uploadService.updateStatusCount().pipe(map(() => {})) : of(undefined))),
       catchError((error) => {
         console.error(`Error while loading results:`, error);
         this.toastService.error(this.translate.instant('resource.error.loading-failed'));
@@ -148,12 +149,6 @@ export class ResourceListService {
         return of(undefined);
       }),
     );
-  }
-
-  updateCount() {
-    return this.uploadService
-      .updateStatusCount()
-      .pipe(tap((count) => this._emptyKb.next(count.error === 0 && count.pending === 0 && count.processed === 0)));
   }
 
   private loadPendingResources(replaceData: boolean, updateCount: boolean): Observable<void> {

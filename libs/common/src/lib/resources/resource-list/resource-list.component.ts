@@ -40,6 +40,8 @@ export class ResourceListComponent implements OnDestroy {
   query = this.resourceListService.query;
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.emptyKb;
+  ready = this.resourceListService.ready;
+  isShardReady = this.resourceListService.isShardReady;
 
   labelSets = this.resourceListService.labelSets;
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
@@ -56,9 +58,15 @@ export class ResourceListComponent implements OnDestroy {
     private router: Router,
     private cdr: ChangeDetectorRef,
   ) {
-    this.resourceListService.updateCount().subscribe();
-    this.resourceListService.isShardReady
+    this.uploadService.updateStatusCount().subscribe(() => {
+      // updateStatusCount is launching the first `/catalog` request which will set the shard.
+      // we need to wait for it to be done before launching other request to prevent using different shards for different requests
+      this.isShardReady.next(true);
+    });
+
+    this.ready
       .pipe(
+        distinctUntilChanged(),
         filter((ready) => ready),
         switchMap(() => {
           if (this.isMainView || this.isProcessedView) {
@@ -73,7 +81,7 @@ export class ResourceListComponent implements OnDestroy {
       )
       .subscribe();
 
-    merge(this.resourceListService.ready, this.resourceListService.filters)
+    merge(this.resourceListService.ready, this.resourceListService.filters, this.uploadService.statusCount)
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(() => {
         this.resourceListService.setHeaderHeight(this.header?.nativeElement.clientHeight || 0);
@@ -81,6 +89,7 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.isShardReady.next(false);
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }

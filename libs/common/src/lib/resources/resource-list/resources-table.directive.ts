@@ -121,11 +121,13 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.resourceListService.status = this.status;
-    this.resourceListService.loadResources().subscribe(() => {
-      // loadResources is launching the first `/catalog` request which will set the shard.
-      // we need to wait for it to be done before launching other request to prevent using different shards for different requests
-      this.resourceListService.isShardReady.next(true);
-    });
+    this.resourceListService.isShardReady
+      .pipe(
+        filter((ready) => ready),
+        take(1),
+        switchMap(() => this.resourceListService.loadResources()),
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
