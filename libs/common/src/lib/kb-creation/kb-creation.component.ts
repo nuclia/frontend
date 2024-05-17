@@ -1,6 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { getSemanticModel, SDKService, STFUtils, ZoneService } from '@flaps/core';
+import {
+  getSemanticModel,
+  NavigationService,
+  SDKService,
+  standaloneSimpleAccount,
+  STFUtils,
+  ZoneService,
+} from '@flaps/core';
 import {
   BackButtonComponent,
   SisModalService,
@@ -12,7 +19,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { filter, of, switchMap, tap, throwError } from 'rxjs';
+import { filter, map, of, switchMap, take, tap, throwError } from 'rxjs';
 import { LanguageFieldComponent } from '@nuclia/user';
 import { catchError } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -45,6 +52,7 @@ export class KbCreationComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
+  private navigationService = inject(NavigationService);
 
   zones = this.zoneService.getZones().pipe(
     tap((zones) => {
@@ -54,6 +62,7 @@ export class KbCreationComponent {
     }),
   );
   account = this.sdk.currentAccount;
+  backPath = this.sdk.nuclia.options.standalone ? `/select/${standaloneSimpleAccount.slug}` : '..';
 
   form = new FormGroup({
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -92,9 +101,12 @@ export class KbCreationComponent {
           this.saving = true;
           this.cdr.markForCheck();
         }),
-        switchMap(() => this.account),
+        switchMap(() => this.account.pipe(take(1))),
         switchMap((account) =>
-          this.sdk.nuclia.db.getLearningSchema(account.id, kbConfig.zone).pipe(
+          (this.sdk.nuclia.options.standalone
+            ? this.sdk.nuclia.db.getLearningSchema()
+            : this.sdk.nuclia.db.getLearningSchema(account.id, kbConfig.zone)
+          ).pipe(
             switchMap((learningConfiguration) => {
               const kb = {
                 ...kbConfig,
@@ -117,14 +129,19 @@ export class KbCreationComponent {
             }),
           ),
         ),
+        map((kb) =>
+          this.sdk.nuclia.options.standalone
+            ? this.navigationService.getKbUrl(standaloneSimpleAccount.slug, kb.id)
+            : this.backPath,
+        ),
       )
       .subscribe({
-        next: () => {
+        next: (nextPath) => {
           this.sdk.refreshKbList();
-          this.router.navigate(['..'], { relativeTo: this.route });
+          this.router.navigate([nextPath], { relativeTo: this.route });
         },
         error: () => {
-          this.toaster.error('stash.create.failure');
+          this.toaster.error('kb.create.error');
         },
       });
   }

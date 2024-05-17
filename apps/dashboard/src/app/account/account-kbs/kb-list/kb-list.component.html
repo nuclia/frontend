@@ -79,28 +79,31 @@
       }
     </div>
 
+    @if (knowledgeBoxes.length === 0 && !(canAddKb | async)) {
+      <div class="account-kbs-empty">
+        {{ 'stash.contact_admin' | translate }}
+      </div>
+    }
+
     @if (canAddKb | async) {
-      <div class="add-kb-container">
+      <nsi-sticky-footer>
         @if (knowledgeBoxes.length > 0 && maxKnowledgeBoxes !== -1) {
-          <div class="account-kbs-counter">
+          <div
+            footerNote
+            class="account-kbs-counter">
             {{ 'account.kb.count' | translate: { count: knowledgeBoxes.length, max: maxKnowledgeBoxes } }}
           </div>
         }
 
         <pa-button
+          aspect="basic"
           size="small"
           data-cy="add-kb"
           [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes && maxKnowledgeBoxes !== -1"
           routerLink="./create">
           {{ 'account.kb.create' | translate }}
         </pa-button>
-      </div>
-    }
-
-    @if (knowledgeBoxes.length === 0 && !(canAddKb | async)) {
-      <div class="account-kbs-empty">
-        {{ 'stash.contact_admin' | translate }}
-      </div>
+      </nsi-sticky-footer>
     }
   </div>
 }

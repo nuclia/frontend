@@ -5,7 +5,7 @@ import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuc
 import { Subject, tap } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router, RouterLink } from '@angular/router';
-import { SisModalService, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisProgressModule, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import { filter, switchMap, take, takeUntil } from 'rxjs/operators';
 import { UsersDialogComponent } from '../users-dialog/users-dialog.component';
 import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
@@ -13,7 +13,15 @@ import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angula
 @Component({
   selector: 'app-kb-list',
   standalone: true,
-  imports: [CommonModule, SisProgressModule, PaButtonModule, TranslateModule, PaTooltipModule, RouterLink],
+  imports: [
+    CommonModule,
+    SisProgressModule,
+    PaButtonModule,
+    TranslateModule,
+    PaTooltipModule,
+    RouterLink,
+    StickyFooterComponent,
+  ],
   templateUrl: './kb-list.component.html',
   styleUrl: './kb-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
