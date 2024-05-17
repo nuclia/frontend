@@ -1,12 +1,12 @@
-import type { Chat, IErrorResponse } from '@nuclia/core';
+import type { Ask, IErrorResponse } from '@nuclia/core';
 import { SvelteState } from '../state-lib';
 import { showResults } from './search.store';
 import { hasNotEnoughData } from '../utils';
 
 interface AnswerState {
-  chat: Chat.Entry[];
+  chat: Ask.Entry[];
   currentQuestion: string;
-  currentAnswer: Chat.Answer;
+  currentAnswer: Ask.Answer;
   error?: IErrorResponse;
   isStreaming: boolean;
 }
@@ -30,7 +30,7 @@ export const currentQuestion = answerState.writer<string, { question: string; re
   }),
 );
 
-export const currentAnswer = answerState.writer<Chat.Answer, Partial<Chat.Answer>>(
+export const currentAnswer = answerState.writer<Ask.Answer, Partial<Ask.Answer>>(
   (state) => state.currentAnswer,
   (state, value) => {
     showResults.set(true);
@@ -52,7 +52,7 @@ export const lastFullAnswer = answerState.reader((state) =>
   state.chat.length > 0 && !state.isStreaming ? state.chat[state.chat.length - 1].answer : undefined,
 );
 
-export const chat = answerState.writer<Chat.Entry[], { question: string; answer: Chat.Answer }>(
+export const chat = answerState.writer<Ask.Entry[], { question: string; answer: Ask.Answer }>(
   (state) =>
     state.isStreaming
       ? [...state.chat, { question: state.currentQuestion, answer: { ...state.currentAnswer, incomplete: true } }]

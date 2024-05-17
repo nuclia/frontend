@@ -33,7 +33,7 @@ import { NO_SUGGESTION_RESULTS } from '../models';
 import { widgetFeatures, widgetImageRagStrategies, widgetRagStrategies } from './widget.store';
 import type {
   BaseSearchOptions,
-  Chat,
+  Ask,
   ChatOptions,
   Classification,
   FieldFullId,
@@ -357,7 +357,7 @@ export function askQuestion(
   question: string,
   reset: boolean,
   options: BaseSearchOptions = {},
-): Observable<Chat.Answer | IErrorResponse> {
+): Observable<Ask.Answer | IErrorResponse> {
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(({ question }) =>

@@ -55,11 +55,12 @@ import {
 } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { catalog, chat, Chat, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
+import { catalog, ask, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
 import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
 import { ABORT_STREAMING_REASON } from '../../rest';
+import { Ask } from '../search/ask.models';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -269,39 +270,39 @@ export class KnowledgeBox implements IKnowledgeBox {
    * Example:
    ```ts
     nuclia.knowledgeBox
-      .chat('where does the Little Prince live')
+      .ask('where does the Little Prince live')
       .pipe(filter((answer) => !answer.incomplete))
       .subscribe((answer) => {
         console.log(answer.text);
       });
     ```
   */
-  chat(
+  ask(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-  ): Observable<Chat.Answer | IErrorResponse>;
-  chat(
+  ): Observable<Ask.Answer | IErrorResponse>;
+  ask(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-    callback?: (answer: Chat.Answer | IErrorResponse) => void,
+    callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<null>;
-  chat(
+  ask(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-    callback?: (answer: Chat.Answer | IErrorResponse) => void,
-  ): Observable<Chat.Answer | IErrorResponse> | Observable<null> {
-    const chatRequest = chat(this.nuclia, this.id, this.path, query, context, features, options);
+    callback?: (answer: Ask.Answer | IErrorResponse) => void,
+  ): Observable<Ask.Answer | IErrorResponse> | Observable<null> {
+    const askRequest = ask(this.nuclia, this.id, this.path, query, context, features, options);
     if (callback) {
-      chatRequest.subscribe((response) => callback(response));
+      askRequest.subscribe((response) => callback(response));
       return of(null);
     }
-    return chatRequest;
+    return askRequest;
   }
 
   /**

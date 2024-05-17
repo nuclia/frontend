@@ -1,7 +1,7 @@
 import type { Observable } from 'rxjs';
 import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
-import type { Chat, ChatOptions, Search, SearchOptions } from '../search';
+import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
 import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
@@ -93,19 +93,19 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getResourceBySlug(slug: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
 
-  chat(
+  ask(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-  ): Observable<Chat.Answer | IErrorResponse>;
-  chat(
+  ): Observable<Ask.Answer | IErrorResponse>;
+  ask(
     query: string,
-    context?: Chat.ContextEntry[],
-    features?: Chat.Features[],
+    context?: Ask.ContextEntry[],
+    features?: Ask.Features[],
     options?: ChatOptions,
-    callback?: (answer: Chat.Answer | IErrorResponse) => void,
-  ): Observable<Chat.Answer | IErrorResponse>;
+    callback?: (answer: Ask.Answer | IErrorResponse) => void,
+  ): Observable<Ask.Answer | IErrorResponse>;
 
   find(
     query: string,
