@@ -43,6 +43,8 @@ import { EditResourceModule } from './edit-resource/edit-resource.module';
 import {
   PaButtonModule,
   PaChipsModule,
+  PaDatePickerModule,
+  PaDateTimeModule,
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
@@ -161,6 +163,8 @@ const ROUTES: Routes = [
     // Pastanaga
     PaButtonModule,
     PaChipsModule,
+    PaDatePickerModule,
+    PaDateTimeModule,
     PaDropdownModule,
     PaIconModule,
     PaPopupModule,

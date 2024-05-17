@@ -5,10 +5,17 @@ import mime from 'mime';
 export const MIME_FACETS = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video'];
 export const LANGUAGE_FACET = ['/metadata.language'];
 
+export const CREATION_START = '/creation/start/';
+export const CREATION_END = '/creation/end/';
+
 export interface Filters {
   classification: OptionModel[];
   mainTypes: OptionModel[];
   languages?: OptionModel[];
+  creation: {
+    start?: { id: string; date: string };
+    end?: { id: string; date: string };
+  };
 }
 
 export function getOptionFromFacet(
@@ -61,6 +68,7 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
     classification: [],
     mainTypes: [],
     languages: [],
+    creation: {},
   };
   if (facetGroups.classification.length > 0) {
     facetGroups.classification.forEach((facet) => {
@@ -90,6 +98,12 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
     });
     filters.languages?.sort((a, b) => a.label.localeCompare(b.label));
   }
+  const start = queryParamsFilters.find((param) => param.startsWith(CREATION_START));
+  const end = queryParamsFilters.find((param) => param.startsWith(CREATION_END));
+  filters.creation = {
+    start: start ? { id: start, date: start.split('/').slice(-1)[0] } : undefined,
+    end: end ? { id: end, date: end.split('/').slice(-1)[0] } : undefined,
+  };
 
   return filters;
 }

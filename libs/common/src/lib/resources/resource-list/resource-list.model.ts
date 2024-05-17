@@ -13,6 +13,7 @@ import {
 import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CREATION_END, CREATION_START } from '../resource-filters.utils';
 
 export interface ColoredLabel extends Classification {
   color: string;
@@ -73,6 +74,8 @@ export function getSearchOptions(params: ResourceListParams): {
     page_number: params.page,
     page_size: params.pageSize,
     sort: params.sort,
+    range_creation_start: params.filters.find((filter) => filter.startsWith(CREATION_START)) || undefined,
+    range_creation_end: params.filters.find((filter) => filter.startsWith(CREATION_END)) || undefined,
     filters,
   };
   const searchFeatures =

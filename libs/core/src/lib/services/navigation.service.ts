@@ -22,7 +22,8 @@ export class NavigationService {
       if (account && this.inAccountManagement(location.pathname)) {
         return this.getAccountManageUrl(account.slug);
       } else if (account && kb) {
-        return this.getKbUrl(account.slug, kb.slug || '');
+        const kbSlug = this.sdk.nuclia.options.standalone ? kb.id : kb.slug;
+        return this.getKbUrl(account.slug, kbSlug);
       } else if (account) {
         return this.getKbSelectUrl(account.slug);
       } else {

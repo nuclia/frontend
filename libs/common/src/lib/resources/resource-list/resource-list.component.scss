@@ -36,6 +36,25 @@
   .filtered-by {
     color: $color-neutral-regular;
   }
+
+  .date-filters {
+    padding: rhythm(2);
+
+    pa-date-picker {
+      display: block;
+      margin-bottom: rhythm(1.5);
+    }
+
+    .date-filters-buttons {
+      display: flex;
+      gap: rhythm(1);
+      margin-top: rhythm(4);
+    }
+
+    pa-button {
+      width: 50%;
+    }
+  }
 }
 
 .empty-kb {

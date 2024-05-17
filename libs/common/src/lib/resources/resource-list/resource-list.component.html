@@ -65,14 +65,57 @@
             </pa-dropdown>
           </div>
 
-          <pa-input
-            icon="search"
-            [value]="query | async"
-            (valueChange)="onQueryChange($event)"
-            (keyup.enter)="search()"
-            [disabled]="isErrorView || isPendingView">
-            {{ 'stash.search' | translate }}
-          </pa-input>
+          @if (displayDateFilter) {
+            <div>
+              <nsi-dropdown-button
+                freeWidth
+                aspect="basic"
+                [disabled]="isPendingView || isErrorView"
+                [popupRef]="dateFilters">
+                {{ 'resource.filter.date-added' | translate }}
+                {{ selectedDates.length ? '(' + selectedDates.length + ')' : '' }}
+              </nsi-dropdown-button>
+              <pa-dropdown #dateFilters>
+                <div class="date-filters">
+                  <form
+                    [formGroup]="dateForm"
+                    (ngSubmit)="applyDates()">
+                    <pa-date-picker
+                      formControlName="start"
+                      [label]="'from' | translate"
+                      isInPopup></pa-date-picker>
+                    <pa-date-picker
+                      formControlName="end"
+                      [label]="'Until' | translate"
+                      isInPopup></pa-date-picker>
+                    <div class="date-filters-buttons">
+                      <pa-button
+                        class="full-width"
+                        aspect="basic"
+                        (click)="dateFilters.close()">
+                        {{ 'generic.cancel' | translate }}
+                      </pa-button>
+                      <pa-button
+                        type="submit"
+                        class="full-width">
+                        {{ 'resource.filter.apply' | translate }}
+                      </pa-button>
+                    </div>
+                  </form>
+                </div>
+              </pa-dropdown>
+            </div>
+          }
+
+          @if (isMainView || isProcessedView) {
+            <pa-input
+              icon="search"
+              [value]="query | async"
+              (valueChange)="onQueryChange($event)"
+              (keyup.enter)="search()">
+              {{ 'stash.search' | translate }}
+            </pa-input>
+          }
         </div>
 
         @if (isAdminOrContrib | async) {
@@ -81,7 +124,7 @@
       </div>
 
       <div class="active-filters">
-        @if (((statusCount | async)?.pending || 0) + ((statusCount | async)?.error || 0) > 0) {
+        @if (!isMainView || ((statusCount | async)?.pending || 0) + ((statusCount | async)?.error || 0) > 0) {
           @if ((statusCount | async)?.processed || 0 > 0) {
             <pa-chip-selectionable
               [selected]="isProcessedView"
@@ -114,10 +157,28 @@
           <div class="filtered-by title-xxs">{{ 'resource.filtered-by' | translate }}</div>
         }
         @for (option of selectedClassifications; track option.value) {
-          <pa-chip-closeable (closed)="onCloseFilter(option)">{{ option.label }}</pa-chip-closeable>
+          <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
         }
         @for (option of selectedMainTypes; track option.value) {
-          <pa-chip-closeable (closed)="onCloseFilter(option)">{{ option.label }}</pa-chip-closeable>
+          <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
+        }
+        @if (filterOptions.creation.start) {
+          <pa-chip-closeable (closed)="clearDate('start')">
+            {{ 'resource.filter.from' | translate }}:
+            <pa-datetime
+              [datetime]="filterOptions.creation.start.date"
+              format="numerical"
+              dateOnly></pa-datetime>
+          </pa-chip-closeable>
+        }
+        @if (filterOptions.creation.end) {
+          <pa-chip-closeable (closed)="clearDate('end')">
+            {{ 'resource.filter.until' | translate }}:
+            <pa-datetime
+              [datetime]="filterOptions.creation.end.date"
+              format="numerical"
+              dateOnly></pa-datetime>
+          </pa-chip-closeable>
         }
         @if (showClearButton | async) {
           <pa-button

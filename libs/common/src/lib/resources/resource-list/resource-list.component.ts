@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
+import { FormControl, FormGroup } from '@angular/forms';
+import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
-import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
+import { DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceListService } from './resource-list.service';
-import { Filters, formatFiltersFromFacets, MIME_FACETS } from '../resource-filters.utils';
+import { CREATION_END, CREATION_START, Filters, formatFiltersFromFacets, MIME_FACETS } from '../resource-filters.utils';
 import { Search } from '@nuclia/core';
 
 @Component({
@@ -15,8 +16,7 @@ import { Search } from '@nuclia/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceListComponent implements OnDestroy {
-  @ViewChild('pendingPopoverDirective') pendingPopoverDirective?: PopoverDirective;
-  @ViewChild('failedPopoverDirective') failedPopoverDirective?: PopoverDirective;
+  @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
   @ViewChild('header') header?: ElementRef;
 
   unsubscribeAll = new Subject<void>();
@@ -46,7 +46,14 @@ export class ResourceListComponent implements OnDestroy {
   labelSets = this.resourceListService.labelSets;
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
-  filterOptions: Filters = { classification: [], mainTypes: [] };
+  filterOptions: Filters = { classification: [], mainTypes: [], creation: {} };
+
+  displayDateFilter = false; // TODO: remove once /catalog endpoint allows filtering by date
+
+  dateForm = new FormGroup({
+    start: new FormControl<string>(''),
+    end: new FormControl<string>(''),
+  });
 
   constructor(
     private sdk: SDKService,
@@ -72,7 +79,7 @@ export class ResourceListComponent implements OnDestroy {
           if (this.isMainView || this.isProcessedView) {
             return this.loadFilters();
           } else {
-            this.filterOptions = { classification: [], mainTypes: [] };
+            this.filterOptions = { classification: [], mainTypes: [], creation: {} };
             this.cdr.markForCheck();
             return of(null);
           }
@@ -118,7 +125,26 @@ export class ResourceListComponent implements OnDestroy {
     }
   }
 
-  onCloseFilter(option: OptionModel) {
+  applyDates() {
+    this.dateDropdown?.close();
+    this.filterOptions.creation = {
+      start: this.dateForm.value.start
+        ? { id: `${CREATION_START}${this.dateForm.value.start}`, date: this.dateForm.value.start }
+        : undefined,
+      end: this.dateForm.value.end
+        ? { id: `${CREATION_END}${this.dateForm.value.end}`, date: this.dateForm.value.end }
+        : undefined,
+    };
+    this.onToggleFilter();
+  }
+
+  clearDate(type: 'start' | 'end') {
+    this.dateForm.controls[type].setValue('');
+    this.filterOptions.creation[type] = undefined;
+    this.onToggleFilter();
+  }
+
+  clearFilter(option: OptionModel) {
     option.selected = !option.selected;
     this.onToggleFilter();
   }
@@ -148,8 +174,14 @@ export class ResourceListComponent implements OnDestroy {
     return this.filterOptions.classification.filter((option) => option.selected);
   }
 
+  get selectedDates() {
+    const start = this.filterOptions.creation?.start ? [this.filterOptions.creation.start.id] : [];
+    const end = this.filterOptions.creation?.end ? [this.filterOptions.creation.end.id] : [];
+    return start.concat(end);
+  }
+
   get selectedFilters(): string[] {
-    return this.getSelectionFor('classification').concat(this.getSelectionFor('mainTypes'));
+    return this.getSelectionFor('classification').concat(this.getSelectionFor('mainTypes')).concat(this.selectedDates);
   }
 
   private getSelectionFor(type: 'classification' | 'mainTypes') {
@@ -182,6 +214,10 @@ export class ResourceListComponent implements OnDestroy {
   private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[] = []) {
     const filters = formatFiltersFromFacets(allFacets, queryParamsFilters);
     this.filterOptions = filters;
+    this.dateForm.patchValue({
+      start: filters.creation?.start?.date,
+      end: filters.creation?.end?.date,
+    });
     this.cdr.markForCheck();
   }
 }
