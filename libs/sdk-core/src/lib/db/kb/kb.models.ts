@@ -93,13 +93,13 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getResourceBySlug(slug: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
 
-  chat(
+  ask(
     query: string,
     context?: Ask.ContextEntry[],
     features?: Ask.Features[],
     options?: ChatOptions,
   ): Observable<Ask.Answer | IErrorResponse>;
-  chat(
+  ask(
     query: string,
     context?: Ask.ContextEntry[],
     features?: Ask.Features[],

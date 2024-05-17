@@ -26,7 +26,7 @@ import type {
 } from './resource.models';
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
 import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
-import { find, search, chat } from '../search';
+import { find, search, ask } from '../search';
 import { retry429Config, setEntities, setLabels, sliceUnicode } from './resource.helpers';
 import { RagStrategyName } from '../kb';
 
@@ -381,32 +381,32 @@ export class Resource extends ReadableResource implements IResource {
    * Retrieves a generative answer for the given query based on
    * the results of a search operation performed on the resource.
    */
-  chat(
+  ask(
     query: string,
     context?: Ask.ContextEntry[],
     features?: Ask.Features[],
     options?: ChatOptions,
   ): Observable<Ask.Answer | IErrorResponse>;
-  chat(
+  ask(
     query: string,
     context?: Ask.ContextEntry[],
     features?: Ask.Features[],
     options?: ChatOptions,
     callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<null>;
-  chat(
+  ask(
     query: string,
     context?: Ask.ContextEntry[],
     features?: Ask.Features[],
     options?: ChatOptions,
     callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<Ask.Answer | IErrorResponse> | Observable<null> {
-    const chatRequest = chat(this.nuclia, this.kb, this.path, query, context, features, options);
+    const askRequest = ask(this.nuclia, this.kb, this.path, query, context, features, options);
     if (callback) {
-      chatRequest.subscribe((response) => callback(response));
+      askRequest.subscribe((response) => callback(response));
       return of(null);
     }
-    return chatRequest;
+    return askRequest;
   }
 
   /**
@@ -434,7 +434,7 @@ export class Resource extends ReadableResource implements IResource {
     callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<Ask.Answer | IErrorResponse> | Observable<null> {
     options = { ...(options || {}), rag_strategies: [{ name: RagStrategyName.FULL_RESOURCE }] };
-    return this.chat(query, context, features, options, callback);
+    return this.ask(query, context, features, options, callback);
   }
 
   setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {

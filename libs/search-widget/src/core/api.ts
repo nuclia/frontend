@@ -175,7 +175,7 @@ export const getAnswer = (
       .getResourceFromData({ id: '', slug: ASK_TO_RESOURCE })
       .ask(query, context, CHAT_MODE, options ? { ...options, ...defaultOptions } : defaultOptions);
   } else {
-    return nucliaApi.knowledgeBox.chat(
+    return nucliaApi.knowledgeBox.ask(
       query,
       context,
       CHAT_MODE,
