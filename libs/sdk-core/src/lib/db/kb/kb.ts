@@ -270,7 +270,7 @@ export class KnowledgeBox implements IKnowledgeBox {
    * Example:
    ```ts
     nuclia.knowledgeBox
-      .chat('where does the Little Prince live')
+      .ask('where does the Little Prince live')
       .pipe(filter((answer) => !answer.incomplete))
       .subscribe((answer) => {
         console.log(answer.text);

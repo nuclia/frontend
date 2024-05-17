@@ -14,7 +14,7 @@ import { BehaviorSubject, forkJoin, Observable, of, Subject, switchMap, take, ta
 import { catchError, filter, map, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SDKService } from '@flaps/core';
-import { Chat, IErrorResponse, LearningConfiguration } from '@nuclia/core';
+import { Ask, IErrorResponse, LearningConfiguration } from '@nuclia/core';
 import { GenerativeModelPipe, LineBreakFormatterPipe } from '../pipes';
 import { SisModalService } from '@nuclia/sistema';
 import { LoadingDialogComponent } from './loading-dialog';
@@ -167,7 +167,7 @@ export class PromptLabComponent implements OnInit {
         forkJoin(
           requests.map(({ query, prompt, model }) =>
             kb
-              .chat(query, undefined, undefined, {
+              .ask(query, undefined, undefined, {
                 synchronous: true,
                 prompt,
                 generative_model: model,
@@ -196,7 +196,7 @@ export class PromptLabComponent implements OnInit {
     model: string;
     query: string;
     prompt: string | undefined;
-    result: Chat.Answer | IErrorResponse | string;
+    result: Ask.Answer | IErrorResponse | string;
   }) {
     const { model, query, prompt, result } = entry;
     const queryEntry = this.results.find((entry) => entry.query === query);
@@ -204,7 +204,7 @@ export class PromptLabComponent implements OnInit {
       typeof result === 'string'
         ? result
         : result.type === 'answer'
-          ? (result as Chat.Answer).text
+          ? (result as Ask.Answer).text
           : `Error: ${result.detail}`;
     if (queryEntry) {
       const promptEntry = queryEntry.data.find((entry) => entry.prompt === prompt);
