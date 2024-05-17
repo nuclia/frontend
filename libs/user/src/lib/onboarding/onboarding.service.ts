@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GETTING_STARTED_DONE_KEY, OnboardingPayload, OnboardingStatus, OnboardingStep } from './onboarding.models';
+import { GETTING_STARTED_DONE_KEY, OnboardingPayload, OnboardingStatus } from './onboarding.models';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap } from 'rxjs';
 import {
   AccountAndKbConfiguration,
@@ -18,7 +18,7 @@ import { KnowledgeBoxCreation } from '@nuclia/core';
   providedIn: 'root',
 })
 export class OnboardingService {
-  private _onboardingStep: BehaviorSubject<OnboardingStep> = new BehaviorSubject<OnboardingStep>('step1');
+  private _onboardingStep: BehaviorSubject<number> = new BehaviorSubject<number>(1);
   private _kbCreationFailureCount = 0;
   private _onboardingState = new BehaviorSubject<OnboardingStatus>({
     creating: false,
@@ -28,7 +28,7 @@ export class OnboardingService {
   });
 
   onboardingState: Observable<OnboardingStatus> = this._onboardingState.asObservable();
-  onboardingStep: Observable<OnboardingStep> = this._onboardingStep.asObservable();
+  onboardingStep: Observable<number> = this._onboardingStep.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -38,8 +38,17 @@ export class OnboardingService {
     private user: UserService,
   ) {}
 
+  nextStep() {
+    this._onboardingStep.next(this._onboardingStep.value + 1);
+  }
+  previousStep() {
+    const step = this._onboardingStep.value;
+    if (step > 1) {
+      this._onboardingStep.next(step - 1);
+    }
+  }
+
   saveOnboardingInquiry(payload: OnboardingPayload) {
-    this._onboardingStep.next('step2');
     this.sdk.nuclia.rest
       .put<void>(`/user/onboarding_inquiry`, payload)
       .pipe(
@@ -53,7 +62,6 @@ export class OnboardingService {
   }
 
   startOnboarding(configuration: AccountAndKbConfiguration) {
-    this._onboardingStep.next('setting-up');
     this._onboardingState.next({
       creating: true,
       accountCreated: false,
@@ -100,8 +108,8 @@ export class OnboardingService {
         }),
         switchMap(({ learningConfiguration, accountSlug, accountId }) => {
           const kbConfig = {
-            slug: 'basic',
-            title: 'Basic',
+            slug: STFUtils.generateSlug(configuration.kbName),
+            title: configuration.kbName,
             learning_configuration: {
               semantic_model: getSemanticModel(configuration.semanticModel, learningConfiguration),
             },

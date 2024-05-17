@@ -34,6 +34,11 @@ const LANGUAGES = [
   'swedish',
 ];
 
+export interface EmbeddingModelForm {
+  modelType: 'private' | 'public';
+  embeddingModel: string;
+}
+
 @Component({
   selector: 'nus-language-field',
   standalone: true,
@@ -44,14 +49,19 @@ const LANGUAGES = [
 })
 export class LanguageFieldComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ transform: booleanAttribute }) disabled = false;
+  @Input() set languageModel(value: EmbeddingModelForm | undefined) {
+    if (value) {
+      this.form.patchValue(value);
+    }
+  }
 
-  @Output() modelSelected = new EventEmitter<string>();
+  @Output() modelSelected = new EventEmitter<EmbeddingModelForm>();
 
   private unsubscribeAll = new Subject<void>();
 
   form = new FormGroup({
     modelType: new FormControl<'private' | 'public'>('private', { nonNullable: true }),
-    model: new FormControl<string>('GECKO_MULTI', { nonNullable: true }),
+    semanticModel: new FormControl<string>('GECKO_MULTI', { nonNullable: true }),
   });
 
   languages: { id: string; label: string; selected: boolean }[];
@@ -96,18 +106,23 @@ export class LanguageFieldComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   sendSelection() {
-    const data = this.form.value;
+    const data = this.form.getRawValue();
+    let model: string;
     if (data.modelType === 'private') {
       const lang = this.languages.filter((language) => language.selected).map((language) => language.id);
       if (lang.includes('catalan') || lang.includes('other')) {
-        this.modelSelected.emit('MULTILINGUAL_ALPHA');
+        model = 'MULTILINGUAL_ALPHA';
       } else if (lang.length === 1 && lang[0] === 'english') {
-        this.modelSelected.emit('ENGLISH');
+        model = 'ENGLISH';
       } else {
-        this.modelSelected.emit('MULTILINGUAL');
+        model = 'MULTILINGUAL';
       }
     } else {
-      this.modelSelected.emit(data.model);
+      model = data.semanticModel;
     }
+    this.modelSelected.emit({
+      embeddingModel: model,
+      modelType: data.modelType,
+    });
   }
 }

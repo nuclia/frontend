@@ -32,7 +32,7 @@
     } @else {
       <div class="title-xs">{{ 'user.kb.creation-form.models.external-model.label' | translate }}</div>
       <div class="models-container">
-        <pa-radio-group formControlName="model">
+        <pa-radio-group formControlName="semanticModel">
           @if (isGeckoModelEnabled | async) {
             <pa-radio value="GECKO_MULTI">
               {{ 'user.kb.creation-form.models.external-model.options.gecko' | translate }}

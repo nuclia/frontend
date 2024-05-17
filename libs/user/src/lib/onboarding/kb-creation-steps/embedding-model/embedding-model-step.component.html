@@ -1,0 +1,19 @@
+<div class="onboarding-form">
+  <nus-language-field
+    [languageModel]="data"
+    (modelSelected)="updateModel($event)"></nus-language-field>
+</div>
+
+<nsi-sticky-footer>
+  <pa-button
+    aspect="basic"
+    (click)="goBack()">
+    {{ 'generic.back' | translate }}
+  </pa-button>
+  <pa-button
+    kind="primary"
+    [disabled]="!model"
+    (click)="submitForm()">
+    {{ 'onboarding.final-button' | translate }}
+  </pa-button>
+</nsi-sticky-footer>

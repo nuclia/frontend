@@ -4,8 +4,7 @@
   background: $color-light-stronger;
   display: flex;
   flex-direction: column;
-  gap: rhythm(2);
-  margin-top: calc(#{rhythm(4) * -1});
+  gap: rhythm(4);
   width: rhythm(50);
   z-index: 1;
 
@@ -15,7 +14,8 @@
     h1 {
       margin-bottom: rhythm(1);
     }
-    p {
+    p.page-description {
+      color: $color-neutral-regular;
       margin-bottom: 0;
     }
   }

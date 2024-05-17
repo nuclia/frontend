@@ -1,4 +1,5 @@
 export type KbConfiguration = {
+  kbName: string;
   zoneSlug: string;
   semanticModel?: string;
 };

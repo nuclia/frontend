@@ -4,16 +4,11 @@
   display: flex;
   flex-direction: column;
   gap: rhythm(1.5);
-  margin-bottom: rhythm(2);
+  margin-bottom: rhythm(4);
 
   .field {
     display: flex;
     flex-direction: column;
     gap: rhythm(0.25);
-  }
-
-  .form-footer {
-    margin-top: rhythm(6);
-    text-align: center;
   }
 }

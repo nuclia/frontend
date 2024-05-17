@@ -1047,6 +1047,29 @@
 								</translations>
 							</concept_node>
 							<concept_node>
+								<name>final-button</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
 								<name>loading</name>
 								<description/>
 								<comment/>
@@ -1737,6 +1760,80 @@
 								<name>step2</name>
 								<children>
 									<concept_node>
+										<name>kb-name</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>subtitle</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>title</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+								</children>
+							</folder_node>
+							<folder_node>
+								<name>step3</name>
+								<children>
+									<concept_node>
 										<name>coming-soon</name>
 										<description/>
 										<comment/>
@@ -1760,7 +1857,7 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>consent</name>
+										<name>subtitle</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -1783,7 +1880,7 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>region-label</name>
+										<name>title</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -1805,6 +1902,11 @@
 											</translation>
 										</translations>
 									</concept_node>
+								</children>
+							</folder_node>
+							<folder_node>
+								<name>step4</name>
+								<children>
 									<concept_node>
 										<name>subtitle</name>
 										<description/>
@@ -2172,6 +2274,29 @@
 					<folder_node>
 						<name>user</name>
 						<children>
+							<concept_node>
+								<name>consent</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
 							<folder_node>
 								<name>kb</name>
 								<children>

@@ -31,7 +31,7 @@ import { CheckMailComponent } from './check-mail/check-mail.component';
 import { UserContainerModule } from './user-container';
 import { OnboardingComponent } from './onboarding/onboarding.component';
 import { Step1Component } from './onboarding/step1/step1.component';
-import { Step2Component } from './onboarding/step2/step2.component';
+import { EmbeddingModelStepComponent, KbNameStepComponent, ZoneStepComponent } from './onboarding/kb-creation-steps';
 import { SettingUpComponent } from './onboarding/setting-up/setting-up.component';
 
 export const userRoutes: Routes = [
@@ -107,9 +107,11 @@ export const userRoutes: Routes = [
     UserContainerModule,
     PaAvatarModule,
     Step1Component,
-    Step2Component,
+    KbNameStepComponent,
     SettingUpComponent,
     PaButtonModule,
+    ZoneStepComponent,
+    EmbeddingModelStepComponent,
   ],
   exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
 })

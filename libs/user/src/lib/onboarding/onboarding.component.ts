@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { OnboardingService } from './onboarding.service';
-import { KbConfiguration, Zone, ZoneService } from '@flaps/core';
+import { AccountAndKbConfiguration } from '@flaps/core';
 import { Observable } from 'rxjs';
-import { OnboardingPayload, OnboardingStep } from './onboarding.models';
+import { OnboardingPayload } from './onboarding.models';
+import { EmbeddingModelForm } from './language-field';
 
 @Component({
   selector: 'nus-onboarding',
@@ -11,23 +12,44 @@ import { OnboardingPayload, OnboardingStep } from './onboarding.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OnboardingComponent {
-  zones: Observable<Zone[]> = this.zoneService.getZones();
-  onboardingStep: Observable<OnboardingStep> = this.onboardingService.onboardingStep;
+  onboardingStep: Observable<number> = this.onboardingService.onboardingStep;
+  lastStep = 5;
 
-  private step1Data?: OnboardingPayload;
+  onboardingInquiryPayload?: OnboardingPayload;
+  kbName = '';
+  zone = '';
+  embeddingModel?: EmbeddingModelForm;
 
-  constructor(
-    private onboardingService: OnboardingService,
-    private zoneService: ZoneService,
-  ) {}
+  constructor(private onboardingService: OnboardingService) {}
 
-  onStep1Done(data: OnboardingPayload) {
-    this.step1Data = data;
-    this.onboardingService.saveOnboardingInquiry(data);
+  goBack(): void {
+    this.onboardingService.previousStep();
   }
-  onStep2Done(data: KbConfiguration) {
-    if (this.step1Data) {
-      this.onboardingService.startOnboarding({ ...data, company: this.step1Data.company });
+
+  storeKbNameAndGoNext($event: string) {
+    this.kbName = $event;
+    this.onboardingService.nextStep();
+  }
+
+  storeZoneAndGoNext($event: string) {
+    this.zone = $event;
+    this.onboardingService.nextStep();
+  }
+
+  finalStepDone(model: EmbeddingModelForm) {
+    this.embeddingModel = model;
+
+    if (!this.onboardingInquiryPayload) {
+      return;
     }
+    this.onboardingService.nextStep();
+    this.onboardingService.saveOnboardingInquiry(this.onboardingInquiryPayload);
+    const accountAndKb: AccountAndKbConfiguration = {
+      company: this.onboardingInquiryPayload.company,
+      kbName: this.kbName,
+      zoneSlug: this.zone,
+      semanticModel: this.embeddingModel.embeddingModel,
+    };
+    this.onboardingService.startOnboarding(accountAndKb);
   }
 }

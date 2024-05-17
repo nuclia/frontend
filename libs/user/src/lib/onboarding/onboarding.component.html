@@ -1,24 +1,44 @@
-<stf-user-container alignTopOnSmallScreens="">
+<nus-user-container>
   <div class="onboarding-container">
     @if (onboardingStep | async; as step) {
       <header>
-        <h1>{{ 'onboarding.' + step + '.title' | translate }}</h1>
-        <p>{{ 'onboarding.' + step + '.subtitle' | translate }}</p>
+        @if (step < lastStep) {
+          <h1>{{ 'onboarding.step' + step + '.title' | translate }}</h1>
+          <p class="page-description">{{ 'onboarding.step' + step + '.subtitle' | translate }}</p>
+        } @else {
+          <h1>{{ 'onboarding.setting-up.title' | translate }}</h1>
+          <p class="page-description">{{ 'onboarding.setting-up.subtitle' | translate }}</p>
+        }
       </header>
 
       @switch (step) {
-        @case ('step1') {
-          <nus-onboarding-step1 (submitStep1)="onStep1Done($event)"></nus-onboarding-step1>
+        @case (1) {
+          <nus-onboarding-step1
+            [data]="onboardingInquiryPayload"
+            (submitStep1)="onboardingInquiryPayload = $event"></nus-onboarding-step1>
         }
-        @case ('step2') {
-          <nus-onboarding-step2
-            [zones]="zones | async"
-            (submitStep2)="onStep2Done($event)"></nus-onboarding-step2>
+        @case (2) {
+          <nus-kb-name-step
+            [data]="kbName"
+            (back)="goBack()"
+            (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
         }
-        @case ('setting-up') {
+        @case (3) {
+          <nus-zone-step
+            [data]="zone"
+            (back)="goBack()"
+            (next)="storeZoneAndGoNext($event)"></nus-zone-step>
+        }
+        @case (4) {
+          <nus-embedding-model-step
+            [data]="embeddingModel"
+            (back)="goBack()"
+            (next)="finalStepDone($event)"></nus-embedding-model-step>
+        }
+        @case (5) {
           <nus-onboarding-setting-up></nus-onboarding-setting-up>
         }
       }
     }
   </div>
-</stf-user-container>
+</nus-user-container>
