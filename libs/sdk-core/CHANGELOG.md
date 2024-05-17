@@ -4,6 +4,8 @@
 
 - Remove methods using deprecated `/stats` endpoint and remove corresponding models.
 - Rename `Chat` namespace to `Ask`.
+- Rename the existing `.ask()` method in `Resource` to `.askToResource()`
+- Rename `.chat()` method in `KnowledgeBox` and in `Resource` to `.ask()`
 
 ### Improvements
 

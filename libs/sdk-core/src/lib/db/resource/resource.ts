@@ -413,20 +413,20 @@ export class Resource extends ReadableResource implements IResource {
    * Retrieves a generative answer for the given query using the entire resource as context
    * (the resource's text might be shorten if too large).
    */
-  ask(
+  askToResource(
     query: string,
     context?: Ask.ContextEntry[],
     features?: Ask.Features[],
     options?: ChatOptions,
   ): Observable<Ask.Answer | IErrorResponse>;
-  ask(
+  askToResource(
     query: string,
     context?: Ask.ContextEntry[],
     features?: Ask.Features[],
     options?: ChatOptions,
     callback?: (answer: Ask.Answer | IErrorResponse) => void,
   ): Observable<null>;
-  ask(
+  askToResource(
     query: string,
     context?: Ask.ContextEntry[],
     features?: Ask.Features[],

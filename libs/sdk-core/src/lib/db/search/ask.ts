@@ -1,6 +1,6 @@
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
-import { Ask, AskResponseItem, Citations } from './ask.models';
+import { Ask, Citations } from './ask.models';
 import { ChatOptions, Search } from './search.models';
 
 import { ResourceProperties } from '../db.models';
@@ -68,28 +68,30 @@ export function ask(
             .decode(data.buffer)
             .split('\n')
             .filter((d) => d);
-          const items: AskResponseItem[] = rows.reduce((acc, row) => {
+          const items: Ask.AskResponseItem[] = rows.reduce((acc, row) => {
             previous += row;
             try {
-              const obj = JSON.parse(previous) as AskResponseItem;
+              const obj = JSON.parse(previous) as Ask.AskResponseItem;
               acc.push(obj);
               previous = '';
             } catch (e) {
               // block is not complete yet
             }
             return acc;
-          }, [] as AskResponseItem[]);
+          }, [] as Ask.AskResponseItem[]);
 
-          const text = items
+          const answer = items
             .filter((item) => item.item.type === 'answer')
             .map((item) => (item.item as Ask.AnswerAskResponseItem).text)
             .join('');
-          const sources = items.find((item) => item.item.type === 'retrieval')?.item.results;
-          const citations = items.find((item) => item.item.type === 'citations')?.item.citations;
+          const sourcesItem = items.find((item) => item.item.type === 'retrieval');
+          const sources = sourcesItem ? (sourcesItem.item as Ask.RetrievalAskResponseItem).results : undefined;
           if (sources) {
             sources.searchId = searchId;
           }
-          return { type: 'answer', text, sources, incomplete, id, citations } as Ask.Answer;
+          const citationsItem = items.find((item) => item.item.type === 'citations');
+          const citations = citationsItem ? (citationsItem.item as Ask.CitationsAskResponseItem).citations : undefined;
+          return { type: 'answer', text: answer, sources, incomplete, id, citations } as Ask.Answer;
         }),
         catchError((error) =>
           of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse),
