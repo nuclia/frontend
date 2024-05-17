@@ -84,18 +84,14 @@ describe('ResourceListComponent', () => {
           resourceLabelSets: of({}),
         }),
         MockProvider(UploadService, {
-          statusCount: of({
-            processed: 0,
-            pending: 0,
-            error: 0,
-          }),
+          updateStatusCount: jest.fn(() => of({ processed: 0, pending: 0, error: 0 })),
         }),
         MockProvider(NavigationService),
         MockProvider(FeaturesService),
         MockProvider(STFTrackingService),
         MockProvider(ResourceListService, {
           filters: of([]),
-          updateCount: jest.fn(() => of({ processed: 0, pending: 0, error: 0 })),
+          ready: of(true),
           isShardReady: new BehaviorSubject(false),
         }),
       ],

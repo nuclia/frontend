@@ -399,13 +399,12 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     this.isLoading = true;
     let kb: KnowledgeBox;
     const getResourcesPage = (kb: KnowledgeBox, page = 0) => {
-      const { searchOptions } = getSearchOptions({
+      const searchOptions = getSearchOptions({
         page,
         pageSize: DEFAULT_PAGE_SIZE,
         sort: this.sorting || DEFAULT_SORTING,
         status: this.status,
         query: '',
-        titleOnly: true,
         filters: [],
       });
       return kb.catalog('', searchOptions);

@@ -78,7 +78,6 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
         pageSize: 6,
         sort: { field: SortField.created, order: 'desc' },
         query: '',
-        titleOnly: true,
         filters: [],
         page: 0,
         status: RESOURCE_STATUS.PROCESSED,

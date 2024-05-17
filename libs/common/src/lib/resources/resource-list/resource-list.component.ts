@@ -20,21 +20,8 @@ export class ResourceListComponent implements OnDestroy {
   @ViewChild('header') header?: ElementRef;
 
   unsubscribeAll = new Subject<void>();
+
   statusCount = this.uploadService.statusCount;
-
-  get isMainView(): boolean {
-    return !this.resourceListService.status;
-  }
-  get isProcessedView(): boolean {
-    return this.resourceListService.status === 'PROCESSED';
-  }
-  get isPendingView(): boolean {
-    return this.resourceListService.status === 'PENDING';
-  }
-  get isErrorView(): boolean {
-    return this.resourceListService.status === 'ERROR';
-  }
-
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   query = this.resourceListService.query;
@@ -54,6 +41,19 @@ export class ResourceListComponent implements OnDestroy {
     start: new FormControl<string>(''),
     end: new FormControl<string>(''),
   });
+
+  get isMainView(): boolean {
+    return !this.resourceListService.status;
+  }
+  get isProcessedView(): boolean {
+    return this.resourceListService.status === 'PROCESSED';
+  }
+  get isPendingView(): boolean {
+    return this.resourceListService.status === 'PENDING';
+  }
+  get isErrorView(): boolean {
+    return this.resourceListService.status === 'ERROR';
+  }
 
   constructor(
     private sdk: SDKService,

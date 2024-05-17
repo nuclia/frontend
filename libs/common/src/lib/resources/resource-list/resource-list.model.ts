@@ -57,20 +57,16 @@ export interface ResourceListParams {
   pageSize: number;
   sort: SortOption;
   query: string;
-  titleOnly: boolean;
   filters: string[];
 }
-export function getSearchOptions(params: ResourceListParams): {
-  searchOptions: SearchOptions;
-  searchFeatures: Search.Features[];
-} {
+export function getSearchOptions(params: ResourceListParams): SearchOptions {
   const filters: Filter[] = [
     { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/icon/')) },
     { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
     { [FilterOperator.any]: params.status ? [`/n/s/${params.status}`] : [] },
   ].filter((item) => (Object.values(item)[0] || []).length > 0);
 
-  const searchOptions: SearchOptions = {
+  return {
     page_number: params.page,
     page_size: params.pageSize,
     sort: params.sort,
@@ -78,24 +74,13 @@ export function getSearchOptions(params: ResourceListParams): {
     range_creation_end: params.filters.find((filter) => filter.startsWith(CREATION_END)) || undefined,
     filters,
   };
-  const searchFeatures =
-    params.query.length > 0
-      ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
-      : [Search.Features.DOCUMENT];
-  return {
-    searchOptions,
-    searchFeatures,
-  };
 }
 export function searchResources(
   kb: WritableKnowledgeBox,
   resourceListParams: ResourceListParams,
 ): Observable<{ results: Search.Results; kbId: string }> {
-  const { searchOptions, searchFeatures } = getSearchOptions(resourceListParams);
-  const getResults = resourceListParams.titleOnly
-    ? kb.catalog(resourceListParams.query, searchOptions)
-    : kb.search(resourceListParams.query, searchFeatures, searchOptions);
-  return getResults.pipe(
+  const searchOptions = getSearchOptions(resourceListParams);
+  return kb.catalog(resourceListParams.query, searchOptions).pipe(
     map((res) => ({
       results: (res.type === 'error' ? { type: 'searchResults' } : res) as Search.Results,
       kbId: kb.id,

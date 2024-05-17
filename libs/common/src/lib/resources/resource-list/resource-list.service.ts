@@ -12,7 +12,6 @@ import {
   Subject,
   switchMap,
   take,
-  tap,
 } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import {
@@ -22,7 +21,7 @@ import {
   ResourceWithLabels,
   searchResources,
 } from './resource-list.model';
-import { IResource, LabelSets, ProcessingStatus, Resource, RESOURCE_STATUS, Search, SortOption } from '@nuclia/core';
+import { IResource, LabelSets, ProcessingStatus, Resource, RESOURCE_STATUS, SortOption } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
 import { UploadService } from '../../upload/upload.service';
 import { SisToastService } from '@nuclia/sistema';
@@ -79,7 +78,6 @@ export class ResourceListService {
   private _hasMore = false;
   private _pageSize = DEFAULT_PAGE_SIZE;
   private _sort: SortOption = DEFAULT_SORTING;
-  private _titleOnly = true;
   private _cursor?: string;
   private formatETA: FormatETAPipe = new FormatETAPipe();
 
@@ -97,7 +95,6 @@ export class ResourceListService {
     this._pageSize = DEFAULT_PAGE_SIZE;
     this._sort = DEFAULT_SORTING;
     this._query.next('');
-    this._titleOnly = true;
     this._filters.next([]);
   }
 
@@ -207,7 +204,6 @@ export class ResourceListService {
       pageSize: this._pageSize,
       sort: this._sort,
       query: this._query.value.trim().replace('.', '\\.'),
-      titleOnly: this._titleOnly,
       filters: this._filters.value,
     };
     return forkJoin([
@@ -217,10 +213,10 @@ export class ResourceListService {
         switchMap((kb) => searchResources(kb, resourceListParams)),
       ),
     ]).pipe(
-      map(([labelSets, data]) => {
-        const newResults: ResourceWithLabels[] = this._titleOnly
-          ? this.getTitleOnlyData(data.results, data.kbId, labelSets)
-          : this.getResourceData(this._query.value, data.results, data.kbId, labelSets);
+      map(([labelSets, { results, kbId }]) => {
+        const newResults: ResourceWithLabels[] = Object.values(results.resources || {}).map((resourceData) =>
+          this.getResourceWithLabels(kbId, resourceData, labelSets),
+        );
         const newData =
           this._page === 0
             ? newResults
@@ -230,7 +226,7 @@ export class ResourceListService {
                 }
                 return deduplicatedList;
               }, [] as ResourceWithLabels[]);
-        const hasMore = !!data.results.fulltext?.next_page;
+        const hasMore = !!results.fulltext?.next_page;
         this._data.next(newData);
         this._ready.next(true);
         this._hasMore = hasMore;
@@ -241,12 +237,6 @@ export class ResourceListService {
         };
         return;
       }),
-    );
-  }
-
-  private getTitleOnlyData(results: Search.Results, kbId: string, labelSets: LabelSets): ResourceWithLabels[] {
-    return Object.values(results.resources || {}).map((resourceData) =>
-      this.getResourceWithLabels(kbId, resourceData, labelSets),
     );
   }
 
@@ -265,58 +255,6 @@ export class ResourceListService {
     }
 
     return resourceWithLabels;
-  }
-
-  private getResourceData(
-    trimmedQuery: string,
-    results: Search.Results,
-    kbId: string,
-    labelSets: LabelSets,
-  ): ResourceWithLabels[] {
-    const allResources = results.resources;
-    if (!allResources || Object.keys(allResources).length === 0) {
-      return [];
-    }
-    const fulltextOrderedResources: IResource[] =
-      results.fulltext?.results.reduce((resources, result) => {
-        const iResource: IResource = allResources[result.rid];
-        if (result && iResource && !resources.find((resource) => resource.id === result.rid)) {
-          resources.push(iResource);
-        }
-        return resources;
-      }, [] as IResource[]) || [];
-    const smartResults = fulltextOrderedResources.map((resourceData) =>
-      this.getResourceWithLabels(kbId, resourceData, labelSets),
-    );
-
-    // if not a keyword search, fill results with the 2 best semantic sentences
-    const looksLikeKeywordSearch = trimmedQuery.split(' ').length < 3;
-    if (!looksLikeKeywordSearch) {
-      const semanticResults = results.sentences?.results || [];
-      const twoBestSemantic = semanticResults.slice(0, 2);
-      twoBestSemantic.forEach((sentence) => {
-        const resourceIndex = smartResults.findIndex((result) => result.resource.id === sentence.rid);
-        if (resourceIndex > -1 && !smartResults[resourceIndex].description) {
-          smartResults[resourceIndex].description = sentence.text;
-        }
-      });
-    }
-
-    // Fill the rest of the results with first paragraph
-    const paragraphResults = results.paragraphs?.results || [];
-    smartResults.forEach((result) => {
-      if (!result.description) {
-        const paragraph = paragraphResults.find((paragraph) => paragraph.rid === result.resource.id);
-        if (paragraph) {
-          result.description = paragraph.text;
-        } else {
-          // use summary as description when no paragraph
-          result.description = result.resource.summary;
-        }
-      }
-    });
-
-    return smartResults;
   }
 
   private getPendingResourcesData(processingStatus: {

@@ -12,7 +12,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FeaturesService, SDKService } from '@flaps/core';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -59,7 +59,11 @@ describe('ResourceTableComponent', () => {
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),
-        MockProvider(ResourceListService, { filters: of([]), loadResources: jest.fn(() => of()) }),
+        MockProvider(ResourceListService, {
+          filters: of([]),
+          loadResources: jest.fn(() => of()),
+          isShardReady: new BehaviorSubject(false),
+        }),
       ],
     }).compileComponents();
 
