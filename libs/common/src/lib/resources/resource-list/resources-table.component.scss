@@ -12,8 +12,12 @@
     align-items: center;
     display: flex;
     font-weight: $font-weight-regular;
-    gap: rhythm(2);
+    gap: rhythm(1.5);
     padding-left: rhythm(0.5);
+  }
+
+  .selected-count {
+    color: $color-neutral-regular;
   }
 
   .table-options {

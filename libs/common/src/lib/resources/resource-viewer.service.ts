@@ -53,7 +53,7 @@ export class ResourceViewerService {
                 action: this.classify.bind(this),
               },
               {
-                label: this.translation.instant('generic.reindex'),
+                label: this.translation.instant('resource.reprocess'),
                 destructive: false,
                 action: this.reindex.bind(this),
               },

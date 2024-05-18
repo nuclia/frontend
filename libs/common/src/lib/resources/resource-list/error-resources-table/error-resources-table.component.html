@@ -11,10 +11,11 @@
   [style.top]="(headerHeight | async) + 'px'">
   @if ((isAdminOrContrib | async) && selection.length > 0) {
     <div class="resource-bulk-actions">
-      {{
-        'resource.selected_count' | translate: { num: allResourcesSelected ? (totalCount | async) : selection.length }
-      }}
-
+      <span class="selected-count title-xxs">
+        {{
+          'resource.selected_count' | translate: { num: allResourcesSelected ? (totalCount | async) : selection.length }
+        }}
+      </span>
       @if (selection.length > 0) {
         <pa-button
           kind="destructive"
@@ -29,7 +30,7 @@
           size="small"
           [disabled]="bulkAction.inProgress"
           (click)="bulkReprocess()">
-          {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
+          {{ 'resource.reprocess' | translate }}
         </pa-button>
 
         @if (
@@ -113,7 +114,7 @@
               </pa-button>
               <pa-dropdown #menu>
                 <pa-option (selectOption)="triggerAction(row.resource, 'reprocess')">
-                  {{ 'generic.reindex' | translate }}
+                  {{ 'resource.reprocess' | translate }}
                 </pa-option>
                 <pa-separator></pa-separator>
                 <pa-option

@@ -23,14 +23,14 @@
 
   .filters {
     display: flex;
-    gap: rhythm(2);
+    gap: rhythm(1.5);
   }
 
   .active-filters {
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: rhythm(2);
+    gap: rhythm(1.5);
   }
 
   .filtered-by {
