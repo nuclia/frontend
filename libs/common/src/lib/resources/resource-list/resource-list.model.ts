@@ -38,7 +38,8 @@ export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reproces
 export const DEFAULT_PREFERENCES = {
   columns: ['modification', 'language'],
 };
-export const DEFAULT_PAGE_SIZE = 20;
+export const DEFAULT_PAGE_SIZE = 25;
+export const PAGE_SIZES = [25, 50, 100];
 export const DEFAULT_SORTING: SortOption = { field: SortField.created, order: 'desc' };
 
 export const RESOURCE_LIST_PREFERENCES = 'NUCLIA_RESOURCE_LIST_PREFERENCES';

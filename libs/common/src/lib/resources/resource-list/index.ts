@@ -6,3 +6,5 @@ export * from './resource-list.component';
 export * from './resource-list.model';
 export * from './resource-list.service';
 export * from './resources-table.directive';
+export * from './table-pagination/table-pagination.component';
+export * from './title-cell/title-cell.component';

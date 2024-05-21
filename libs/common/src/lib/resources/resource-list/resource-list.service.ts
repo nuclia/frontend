@@ -3,7 +3,10 @@ import { LabelsService, SDKService } from '@flaps/core';
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
+  filter,
   forkJoin,
+  map,
   Observable,
   of,
   pairwise,
@@ -12,8 +15,8 @@ import {
   Subject,
   switchMap,
   take,
+  tap,
 } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORTING,
@@ -56,6 +59,16 @@ export class ResourceListService {
   query = this._query.asObservable();
   private _headerHeight = new BehaviorSubject<number>(0);
   headerHeight = this._headerHeight.asObservable();
+
+  private _page = new BehaviorSubject<number>(0);
+  page = this._page.asObservable();
+  private _pageSize = new BehaviorSubject<number>(DEFAULT_PAGE_SIZE);
+  pageSize = this._pageSize.asObservable();
+  private _totalItems = new BehaviorSubject<number>(0);
+  totalPages = combineLatest([this._totalItems, this.pageSize]).pipe(
+    map(([totalItems, pageSize]) => Math.ceil(totalItems / pageSize)),
+  );
+
   isShardReady = new BehaviorSubject<boolean>(false);
 
   labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
@@ -63,9 +76,7 @@ export class ResourceListService {
     map((labelSets) => labelSets as LabelSets),
   );
 
-  emptyKb = this.uploadService.statusCount.pipe(
-    map((count) => count.processed === 0 && count.pending === 0 && count.error === 0),
-  );
+  totalResources = this.uploadService.statusCount.pipe(map((count) => count.processed + count.pending + count.error));
 
   prevFilters = this._filters.pipe(
     startWith([]),
@@ -74,25 +85,31 @@ export class ResourceListService {
     shareReplay(1),
   );
 
-  private _page = 0;
-  private _hasMore = false;
-  private _pageSize = DEFAULT_PAGE_SIZE;
   private _sort: SortOption = DEFAULT_SORTING;
   private _cursor?: string;
   private formatETA: FormatETAPipe = new FormatETAPipe();
 
   constructor() {
     this._triggerResourceLoad
-      .pipe(switchMap(({ replaceData, updateCount }) => this.loadResources(replaceData, updateCount)))
+      .pipe(
+        switchMap(({ replaceData, updateCount }) =>
+          this.loadResources(replaceData, updateCount).pipe(
+            tap(() => {
+              if (replaceData) {
+                document.querySelector('.dashboard-content > main')?.scrollTo(0, 0);
+              }
+            }),
+          ),
+        ),
+      )
       .subscribe();
   }
 
   clear() {
     this._ready.next(false);
     this._data.next([]);
-    this._page = 0;
-    this._hasMore = false;
-    this._pageSize = DEFAULT_PAGE_SIZE;
+    this._page.next(0);
+    this._totalItems.next(0);
     this._sort = DEFAULT_SORTING;
     this._query.next('');
     this._filters.next([]);
@@ -103,23 +120,30 @@ export class ResourceListService {
   }
 
   filter(filters: string[]) {
+    this._page.next(0);
     this._filters.next(filters);
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
-  loadMore() {
-    if (this._hasMore) {
-      this._page += 1;
-      this._triggerResourceLoad.next({ replaceData: false, updateCount: false });
-    }
+  loadPage(page: number) {
+    this._page.next(page);
+    this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
   sortBy(sortOption: SortOption) {
+    this._page.next(0);
     this._sort = sortOption;
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
   search() {
+    this._page.next(0);
+    this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
+  }
+
+  setPageSize(pageSize: number) {
+    this._page.next(0);
+    this._pageSize.next(pageSize);
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
@@ -134,8 +158,8 @@ export class ResourceListService {
   loadResources(replaceData = true, updateCount = true): Observable<void> {
     const loadRequest =
       this.status === RESOURCE_STATUS.PENDING
-        ? this.loadPendingResources(replaceData, updateCount)
-        : this.loadResourcesFromCatalog(replaceData, updateCount);
+        ? this.loadPendingResources(replaceData)
+        : this.loadResourcesFromCatalog(replaceData);
 
     return loadRequest.pipe(
       switchMap(() => (updateCount ? this.uploadService.updateStatusCount().pipe(map(() => {})) : of(undefined))),
@@ -148,17 +172,17 @@ export class ResourceListService {
     );
   }
 
-  private loadPendingResources(replaceData: boolean, updateCount: boolean): Observable<void> {
+  private loadPendingResources(replaceData: boolean): Observable<void> {
     if (replaceData) {
       this._cursor = undefined;
     }
     // at the moment /processing-status does not return all the pending resources
     // so, we start by loading the resources from the catalog, and then we fetch the processing status
     // and update the status of the resources
-    return this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
+    return this.loadResourcesFromCatalog(replaceData).pipe(
       switchMap(() => this.sdk.currentKb),
       take(1),
-      switchMap((kb) => kb.processingStatus(this._cursor)),
+      switchMap((kb) => kb.processingStatus(this._cursor, undefined, (this._page.value + 1) * this._pageSize.value)),
       switchMap((processingStatus) => {
         const resourceWithLabels = this.getPendingResourcesData(processingStatus);
         const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
@@ -186,22 +210,17 @@ export class ResourceListService {
         mergedData.sort((r1, r2) => (r1.rank || -1) - (r2.rank || -1));
         this._data.next(mergedData);
         this._ready.next(true);
-        this._hasMore = !!processingStatus.cursor;
         this._cursor = processingStatus.cursor;
         return of(undefined);
       }),
     );
   }
 
-  private loadResourcesFromCatalog(replaceData: boolean, updateCount: boolean): Observable<void> {
-    if (replaceData) {
-      this._page = 0;
-    }
-
+  private loadResourcesFromCatalog(replaceData: boolean): Observable<void> {
     const resourceListParams: ResourceListParams = {
       status: this.status,
-      page: this._page,
-      pageSize: this._pageSize,
+      page: this._page.value,
+      pageSize: this._pageSize.value,
       sort: this._sort,
       query: this._query.value.trim().replace('.', '\\.'),
       filters: this._filters.value,
@@ -217,19 +236,18 @@ export class ResourceListService {
         const newResults: ResourceWithLabels[] = Object.values(results.resources || {}).map((resourceData) =>
           this.getResourceWithLabels(kbId, resourceData, labelSets),
         );
-        const newData =
-          this._page === 0
-            ? newResults
-            : this._data.value.concat(newResults).reduce((deduplicatedList, data) => {
-                if (!deduplicatedList.find((item) => item.resource.id === data.resource.id)) {
-                  deduplicatedList.push(data);
-                }
-                return deduplicatedList;
-              }, [] as ResourceWithLabels[]);
+        const newData = replaceData
+          ? newResults
+          : this._data.value.concat(newResults).reduce((deduplicatedList, data) => {
+              if (!deduplicatedList.find((item) => item.resource.id === data.resource.id)) {
+                deduplicatedList.push(data);
+              }
+              return deduplicatedList;
+            }, [] as ResourceWithLabels[]);
         const hasMore = !!results.fulltext?.next_page;
         this._data.next(newData);
         this._ready.next(true);
-        this._hasMore = hasMore;
+        this._totalItems.next(results.fulltext?.total || 0);
         this.navigationService.navigationData = {
           ...resourceListParams,
           resourceIdList: newData.map((data) => data.resource.id),

@@ -26,7 +26,7 @@ export class ResourceListComponent implements OnDestroy {
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   query = this.resourceListService.query;
   standalone = this.sdk.nuclia.options.standalone;
-  emptyKb = this.resourceListService.emptyKb;
+  emptyKb = this.resourceListService.totalResources.pipe(map((total) => total === 0));
   ready = this.resourceListService.ready;
   isShardReady = this.resourceListService.isShardReady;
 

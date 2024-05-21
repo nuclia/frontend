@@ -54,7 +54,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TitleCellComponent } from './resource-list/title-cell/title-cell.component';
+import { TablePaginationComponent, TitleCellComponent } from './resource-list';
 
 const ROUTES: Routes = [
   {
@@ -193,6 +193,7 @@ const ROUTES: Routes = [
 
     EditResourceModule,
     TitleCellComponent,
+    TablePaginationComponent,
   ],
   declarations: [
     ResourcesComponent,

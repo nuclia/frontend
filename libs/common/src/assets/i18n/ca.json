@@ -866,6 +866,8 @@
 	"resource.origin.path": "Ruta del fitxer original",
 	"resource.origin.related": "Relacionats",
 	"resource.origin.url": "URL",
+	"resource.pagination.rows-per-page": "Files per pàgina",
+	"resource.pagination.showing": "Es mostren {{items}} de {{total}}",
 	"resource.preview.general": "General",
 	"resource.preview.open-viewer": "Visor obert",
 	"resource.preview.origin": "Origen",

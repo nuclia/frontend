@@ -866,6 +866,8 @@
 	"resource.origin.path": "Chemin d'accès au fichier d'origine",
 	"resource.origin.related": "En relation",
 	"resource.origin.url": "URL",
+	"resource.pagination.rows-per-page": "Lignes par page",
+	"resource.pagination.showing": "Affichage {{items}} sur {{total}}",
 	"resource.preview.general": "Général",
 	"resource.preview.open-viewer": "Ouvrir la visionneuse",
 	"resource.preview.origin": "Origine",

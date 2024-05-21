@@ -6,6 +6,7 @@ import {
   DEFAULT_SORTING,
   getSearchOptions,
   MenuAction,
+  PAGE_SIZES,
 } from './resource-list.model';
 import { IResource, KnowledgeBox, Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { delay, map, switchMap } from 'rxjs/operators';
@@ -63,6 +64,11 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   status?: RESOURCE_STATUS;
   data = this.resourceListService.data;
   sorting = this.resourceListService.sort;
+  page = this.resourceListService.page;
+  totalPages = this.resourceListService.totalPages;
+  totalResources = this.resourceListService.totalResources;
+  pageSize = this.resourceListService.pageSize;
+  pageSizes = PAGE_SIZES;
   headerHeight = this.resourceListService.headerHeight;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
 
@@ -144,8 +150,12 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     };
   }
 
-  onLoadMore() {
-    this.resourceListService.loadMore();
+  loadPage(page: number) {
+    this.resourceListService.loadPage(page);
+  }
+
+  onPageSizeChange(pageSize: number) {
+    this.resourceListService.setPageSize(pageSize);
   }
 
   sortBy(cell: HeaderCell) {
