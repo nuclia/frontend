@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IErrorMessages, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { FeaturesService, getSemanticModel, SDKService, UnauthorizedFeatureDirective, Zone } from '@flaps/core';
-import { LanguageFieldComponent } from '@nuclia/user';
+import { EmbeddingModelForm, LanguageFieldComponent } from '@nuclia/user';
 import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { map, Subject, take } from 'rxjs';
@@ -151,8 +151,8 @@ export class KbCreationFormComponent implements OnInit, OnChanges, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  updateModel(semanticModel: string) {
-    this.semanticModel = semanticModel;
+  updateModel(semanticModel: EmbeddingModelForm) {
+    this.semanticModel = semanticModel.embeddingModel;
     this.cdr.markForCheck();
     this.computeAndEmitLearningConfig();
   }

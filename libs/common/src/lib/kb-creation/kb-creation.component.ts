@@ -20,7 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { filter, map, of, switchMap, take, tap, throwError } from 'rxjs';
-import { LanguageFieldComponent } from '@nuclia/user';
+import { EmbeddingModelForm, LanguageFieldComponent } from '@nuclia/user';
 import { catchError } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -146,7 +146,7 @@ export class KbCreationComponent {
       });
   }
 
-  updateModel(semanticModel: string) {
-    this.semanticModel = semanticModel;
+  updateModel(semanticModel: EmbeddingModelForm) {
+    this.semanticModel = semanticModel.embeddingModel;
   }
 }
