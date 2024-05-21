@@ -1,0 +1,85 @@
+<div class="page-spacing">
+  @if (saving) {
+    <div class="loader-backdrop">
+      <div class="spinner-container">
+        <nsi-spinner></nsi-spinner>
+      </div>
+    </div>
+  }
+
+  <header>
+    <nsi-back-button [link]="backPath">{{ 'account.kb.creation-form.back-button' | translate }}</nsi-back-button>
+
+    <div>
+      <h1 class="page-title">{{ 'account.kb.creation-form.title' | translate }}</h1>
+      <div class="page-description">{{ 'account.kb.creation-form.description' | translate }}</div>
+    </div>
+  </header>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="create()">
+    <nsi-two-columns-configuration-item
+      itemTitle="account.kb.creation-form.kb-info.title"
+      description="account.kb.creation-form.kb-info.description">
+      <div class="form-container">
+        <pa-input
+          id="kb-title"
+          formControlName="title"
+          data-cy="new-kb-name-input"
+          [errorMessages]="validationMessages['title']">
+          {{ 'kb.form.name' | translate }}
+        </pa-input>
+
+        <pa-textarea
+          formControlName="description"
+          data-cy="new-kb-description-input"
+          resizable>
+          {{ 'kb.form.description' | translate }}
+        </pa-textarea>
+      </div>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-two-columns-configuration-item
+      itemTitle="user.kb.creation-form.zone.title"
+      description="user.kb.creation-form.zone.description">
+      <pa-radio-group formControlName="zone">
+        @for (zone of zones | async; track zone.slug) {
+          <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
+        }
+      </pa-radio-group>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-two-columns-configuration-item
+      itemTitle="user.kb.creation-form.models.title"
+      description="user.kb.creation-form.models.description">
+      <nus-language-field
+        [disabled]="saving"
+        (modelSelected)="updateModel($event)"></nus-language-field>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-two-columns-configuration-item
+      itemTitle="account.kb.creation-form.anonymization.title"
+      description="account.kb.creation-form.anonymization.description">
+      <div class="toggle-container">
+        <pa-toggle formControlName="anonymization">
+          {{ 'account.kb.creation-form.anonymization.toggle-label' | translate }}
+        </pa-toggle>
+      </div>
+    </nsi-two-columns-configuration-item>
+
+    <nsi-sticky-footer>
+      <pa-button
+        aspect="basic"
+        (click)="cancel()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        type="submit"
+        [disabled]="form.invalid || saving">
+        {{ 'account.kb.create' | translate }}
+      </pa-button>
+    </nsi-sticky-footer>
+  </form>
+</div>

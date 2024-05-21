@@ -1,14 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { IKnowledgeBoxItem } from '@nuclia/core';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { KbAddModalComponent } from '../../kb-add';
 
 @Component({
   selector: 'app-select-kb',
@@ -35,11 +32,6 @@ export class SelectKbComponent implements OnDestroy {
             account.can_manage_account && (account.max_kbs > (account.current_kbs || 0) || account.max_kbs === -1),
         ),
       );
-  newKbForm = new FormGroup({
-    kbName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-  });
-  errorMessages: IErrorMessages = { required: 'validation.required' } as IErrorMessages;
-  creatingKb = false;
 
   constructor(
     private navigation: NavigationService,
@@ -52,34 +44,40 @@ export class SelectKbComponent implements OnDestroy {
     private features: FeaturesService,
   ) {}
 
-  openKbForm() {
-    const zones$ = this.standalone ? of([]) : this.zoneService.getZones();
-    forkJoin([this.account.pipe(take(1)), zones$])
+  createKb() {
+    this.account
       .pipe(
-        switchMap(([account, zones]) => {
-          if (!this.sdk.nuclia.options.zone) {
-            // zone must be set to get configuration schema
-            this.sdk.nuclia.options.zone = zones[0]?.slug;
-          }
-          return this.modalService.openModal(KbAddModalComponent, { dismissable: true, data: { account, zones } })
-            .onClose;
-        }),
-        filter((result) => {
-          if (result?.success === false) {
-            this.toast.error('error.creating-kb');
-          }
-          return !!result?.success;
-        }),
+        take(1),
+        switchMap((account) => this.router.navigate([this.navigation.getKbCreationUrl(account.slug)])),
       )
-      .subscribe((result) => {
-        this.sdk.refreshKbList();
-        if (!this.standalone) {
-          this.sdk.nuclia.options.zone = result.zone;
-          this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbSlug)]);
-        } else {
-          this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbId)]);
-        }
-      });
+      .subscribe();
+    // const zones$ = this.standalone ? of([]) : this.zoneService.getZones();
+    // forkJoin([this.account.pipe(take(1)), zones$])
+    //   .pipe(
+    //     switchMap(([account, zones]) => {
+    //       if (!this.sdk.nuclia.options.zone) {
+    //         // zone must be set to get configuration schema
+    //         this.sdk.nuclia.options.zone = zones[0]?.slug;
+    //       }
+    //       return this.modalService.openModal(KbAddModalComponent, { dismissable: true, data: { account, zones } })
+    //         .onClose;
+    //     }),
+    //     filter((result) => {
+    //       if (result?.success === false) {
+    //         this.toast.error('error.creating-kb');
+    //       }
+    //       return !!result?.success;
+    //     }),
+    //   )
+    //   .subscribe((result) => {
+    //     this.sdk.refreshKbList();
+    //     if (!this.standalone) {
+    //       this.sdk.nuclia.options.zone = result.zone;
+    //       this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbSlug)]);
+    //     } else {
+    //       this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbId)]);
+    //     }
+    //   });
   }
 
   goToAccountManage() {

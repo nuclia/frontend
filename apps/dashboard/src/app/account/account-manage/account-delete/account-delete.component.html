@@ -23,16 +23,18 @@
     </div>
   </pa-modal-content>
   <pa-modal-footer>
-    <pa-button
-      aspect="basic"
-      (click)="modal.close()">
-      {{ 'pastanaga.cancel' | translate }}
-    </pa-button>
-    <pa-button
-      kind="destructive"
-      [disabled]="!deleteAccount || ((canKeepUser | async) && keepUser === undefined) || loading"
-      (click)="delete()">
-      {{ 'generic.delete' | translate }}
-    </pa-button>
+    <div class="pa-modal-footer pa-dual-buttons">
+      <pa-button
+        aspect="basic"
+        (click)="modal.close()">
+        {{ 'pastanaga.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="destructive"
+        [disabled]="!deleteAccount || ((canKeepUser | async) && keepUser === undefined) || loading"
+        (click)="delete()">
+        {{ 'generic.delete' | translate }}
+      </pa-button>
+    </div>
   </pa-modal-footer>
 </pa-modal-dialog>

@@ -1,0 +1,35 @@
+<form
+  [formGroup]="form"
+  (ngSubmit)="submitForm()">
+  <div class="onboarding-form">
+    <div class="field">
+      <pa-radio-group
+        id="region"
+        formControlName="region">
+        @for (zone of zones | async; track zone.id) {
+          <pa-radio
+            [value]="zone.slug"
+            [disabled]="zone.notAvailableYet">
+            {{ zone.title || zone.slug }}
+            @if (zone.notAvailableYet) {
+              {{ 'onboarding.step2.coming-soon' | translate }}
+            }
+          </pa-radio>
+        }
+      </pa-radio-group>
+    </div>
+  </div>
+  <nsi-sticky-footer>
+    <pa-button
+      aspect="basic"
+      (click)="goBack()">
+      {{ 'generic.back' | translate }}
+    </pa-button>
+    <pa-button
+      type="submit"
+      kind="primary"
+      [disabled]="form.invalid">
+      {{ 'onboarding.next-button' | translate }}
+    </pa-button>
+  </nsi-sticky-footer>
+</form>

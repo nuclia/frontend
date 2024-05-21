@@ -7,3 +7,9 @@
     margin-right: rhythm(1);
   }
 }
+
+.consent {
+  ::ng-deep a {
+    color: inherit;
+  }
+}

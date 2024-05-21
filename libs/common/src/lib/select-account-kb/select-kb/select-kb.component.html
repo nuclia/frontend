@@ -86,7 +86,7 @@
       @if (standalone || (canAddKb | async) === true) {
         <pa-button
           data-cy="create-kb-button"
-          (click)="openKbForm()">
+          (click)="createKb()">
           {{ 'kb.create.title' | translate }}
         </pa-button>
       }

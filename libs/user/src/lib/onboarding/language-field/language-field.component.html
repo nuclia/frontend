@@ -1,26 +1,28 @@
-<div class="field">
-  <label class="title-s">{{ 'onboarding.step2.models.title' | translate }}</label>
-  <p>{{ 'onboarding.step2.models.help' | translate }}</p>
-  <form [formGroup]="form">
-    <pa-radio-group formControlName="modelType">
-      <pa-radio
-        value="private"
-        [help]="'onboarding.step2.models.private-help' | translate">
-        {{ 'onboarding.step2.models.private' | translate }}
-      </pa-radio>
-      <pa-radio
-        value="public"
-        [disabled]="(isGeckoModelEnabled | async) === false && (areOpenAIModelsEnabled | async) === false"
-        [help]="'onboarding.step2.models.public-help' | translate">
-        {{ 'onboarding.step2.models.public' | translate }}
-      </pa-radio>
-    </pa-radio-group>
+<form [formGroup]="form">
+  <pa-radio-group formControlName="modelType">
+    <pa-radio
+      value="private"
+      help="user.kb.creation-form.models.nuclia-model.radio-help">
+      {{ 'user.kb.creation-form.models.nuclia-model.radio-label' | translate }}
+    </pa-radio>
+    <pa-radio
+      value="public"
+      [disabled]="(isGeckoModelEnabled | async) === false && (areOpenAIModelsEnabled | async) === false"
+      help="user.kb.creation-form.models.external-model.radio-help">
+      {{ 'user.kb.creation-form.models.external-model.radio-label' | translate }}
+    </pa-radio>
+  </pa-radio-group>
+
+  <div class="semantic-model-choice">
     @if (form.get('modelType')?.value === 'private') {
-      <label class="title-xxs">{{ 'onboarding.step2.models.languages-title' | translate }}</label>
-      <p>{{ 'onboarding.step2.models.languages-help' | translate }}</p>
+      <div class="title-xs">{{ 'user.kb.creation-form.models.nuclia-model.languages-label' | translate }}</div>
+      <p class="body-m">
+        {{ 'user.kb.creation-form.models.nuclia-model.languages-description' | translate }}
+      </p>
       <div class="languages-container">
         @for (language of languages; track language.label) {
           <pa-checkbox
+            [disabled]="disabled"
             [(value)]="language.selected"
             (valueChange)="sendSelection()">
             {{ language.label }}
@@ -28,21 +30,27 @@
         }
       </div>
     } @else {
-      <label class="title-xxs">{{ 'onboarding.step2.models.model-title' | translate }}</label>
+      <div class="title-xs">{{ 'user.kb.creation-form.models.external-model.label' | translate }}</div>
       <div class="models-container">
-        <pa-radio-group formControlName="model">
+        <pa-radio-group formControlName="semanticModel">
           @if (isGeckoModelEnabled | async) {
-            <pa-radio value="GECKO_MULTI">{{ 'onboarding.step2.models.gecko' | translate }}</pa-radio>
+            <pa-radio value="GECKO_MULTI">
+              {{ 'user.kb.creation-form.models.external-model.options.gecko' | translate }}
+            </pa-radio>
           }
           @if (isExtraSemanticModelEnabled | async) {
             <pa-radio value="MULTILINGUAL_EXTRA">MULTILINGUAL_EXTRA (testing on stage only)</pa-radio>
           }
           @if (areOpenAIModelsEnabled | async) {
-            <pa-radio value="OPENAI_3_SMALL">{{ 'onboarding.step2.models.openai-small' | translate }}</pa-radio>
-            <pa-radio value="OPENAI_3_LARGE">{{ 'onboarding.step2.models.openai-large' | translate }}</pa-radio>
+            <pa-radio value="OPENAI_3_SMALL">
+              {{ 'user.kb.creation-form.models.external-model.options.openai-small' | translate }}
+            </pa-radio>
+            <pa-radio value="OPENAI_3_LARGE">
+              {{ 'user.kb.creation-form.models.external-model.options.openai-large' | translate }}
+            </pa-radio>
           }
         </pa-radio-group>
       </div>
     }
-  </form>
-</div>
+  </div>
+</form>

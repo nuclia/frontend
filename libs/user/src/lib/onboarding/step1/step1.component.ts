@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { OnboardingPayload } from '../onboarding.models';
+import { StickyFooterComponent } from '@nuclia/sistema';
+import { OnboardingService } from '../onboarding.service';
 
 const PHONE_INTERNATIONAL_CODE = new RegExp(/^[+][0-9s]+$/);
 const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
@@ -20,12 +22,23 @@ const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
     PaButtonModule,
     PaIconModule,
     PaTogglesModule,
+    StickyFooterComponent,
   ],
   templateUrl: './step1.component.html',
   styleUrls: ['../_common-step.scss', './step1.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Step1Component {
+  private onboardingService = inject(OnboardingService);
+
+  @Input() set data(value: OnboardingPayload | undefined) {
+    if (value) {
+      const [phoneInternationalCode, phoneNumber] = value.phone.split(' ');
+      this.onboardingForm.patchValue({ ...value, phoneInternationalCode, phoneNumber });
+      this.consent.patchValue(true);
+    }
+  }
+
   @Output() submitStep1 = new EventEmitter<OnboardingPayload>();
 
   onboardingForm = new FormGroup({
@@ -53,6 +66,8 @@ export class Step1Component {
     phoneNumber: { required: 'validation.required', pattern: 'onboarding.step1.invalid_phone_number' },
   };
 
+  consent = new FormControl<boolean>(false, [Validators.required]);
+
   submitForm() {
     if (this.onboardingForm.invalid) {
       return;
@@ -67,5 +82,6 @@ export class Step1Component {
       receive_updates: formValue.getUpdates,
     };
     this.submitStep1.emit(data);
+    this.onboardingService.nextStep();
   }
 }

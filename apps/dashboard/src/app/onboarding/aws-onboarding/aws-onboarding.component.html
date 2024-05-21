@@ -1,18 +1,44 @@
-<stf-user-container>
+<nus-user-container>
   @switch (step) {
     @case (1) {
-      <app-step1-budget (next)="setupBudget($event)"></app-step1-budget>
+      <app-step1-budget
+        [data]="budget"
+        (next)="setupBudget($event)"></app-step1-budget>
     }
     @case (2) {
       <app-step2
-        (back)="step = 1"
+        [data]="choice"
+        (back)="goBack()"
         (next)="goFrom2ToNext($event)"></app-step2>
     }
     @case (3) {
-      <app-step3-kb
-        [accountId]="(account | async)?.id"
-        (back)="step = 2"
-        (kbCreated)="goFrom3ToNext()"></app-step3-kb>
+      <div class="main-container">
+        <h1>{{ 'onboarding.aws.create-kb.title' | translate }}</h1>
+        <nus-kb-name-step
+          [data]="kbName"
+          (back)="goBack()"
+          (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
+      </div>
+    }
+    @case (4) {
+      <div class="main-container">
+        <h1>{{ 'onboarding.step3.title' | translate }}</h1>
+        <p>{{ 'onboarding.step3.subtitle' | translate }}</p>
+        <nus-zone-step
+          [data]="zone"
+          (back)="goBack()"
+          (next)="storeZoneAndGoNext($event)"></nus-zone-step>
+      </div>
+    }
+    @case (5) {
+      <div class="main-container">
+        <h1>{{ 'onboarding.step4.title' | translate }}</h1>
+        <p>{{ 'onboarding.step4.subtitle' | translate }}</p>
+        <nus-embedding-model-step
+          [data]="embeddingModel"
+          (back)="goBack()"
+          (next)="finalStepDone($event)"></nus-embedding-model-step>
+      </div>
     }
   }
-</stf-user-container>
+</nus-user-container>

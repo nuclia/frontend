@@ -4,15 +4,15 @@
 // Checkboxes and radio
 $color-background-toggle-selected: $color-dark-stronger;
 $color-background-toggle-selected-hover: $color-neutral-regular;
-$color-background-toggle-disabled: $color-neutral-light;
-$color-background-toggle-unselected-disabled: $color-light-stronger;
+$color-background-toggle-disabled: $color-neutral-lightest;
+$color-background-toggle-unselected-disabled: $color-neutral-lightest;
 $color-background-toggle-indeterminate: $color-light-stronger;
 
 $color-border-toggle-unselected: $color-dark-stronger;
 $color-border-toggle-unselected-disabled: $color-neutral-light;
 
 $color-check-toggle-indeterminate: $color-dark-stronger;
-$color-check-toggle-disabled: $color-neutral-lighter; //IMPORTANT: it must be an hsl color
+$color-check-toggle-disabled: $color-neutral-light; //IMPORTANT: it must be an hsl color
 
 // Toggles
 $height-toggle: rhythm(2);

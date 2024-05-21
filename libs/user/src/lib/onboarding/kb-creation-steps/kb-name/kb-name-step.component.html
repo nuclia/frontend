@@ -1,0 +1,31 @@
+<form
+  [formGroup]="form"
+  (ngSubmit)="submitForm()">
+  <div class="onboarding-form">
+    <div class="field">
+      <label
+        for="kbName"
+        class="title-s">
+        {{ 'onboarding.step2.kb-name' | translate }}
+      </label>
+      <pa-input
+        id="kbName"
+        formControlName="kbName"
+        help="validation.required"
+        externalLabel></pa-input>
+    </div>
+  </div>
+  <nsi-sticky-footer>
+    <pa-button
+      aspect="basic"
+      (click)="goBack()">
+      {{ 'generic.back' | translate }}
+    </pa-button>
+    <pa-button
+      type="submit"
+      kind="primary"
+      [disabled]="form.invalid">
+      {{ 'onboarding.next-button' | translate }}
+    </pa-button>
+  </nsi-sticky-footer>
+</form>

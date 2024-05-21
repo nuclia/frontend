@@ -28,7 +28,7 @@ import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
 import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
 import { find, search, ask } from '../search';
 import { retry429Config, setEntities, setLabels, sliceUnicode } from './resource.helpers';
-import { RagStrategyName } from '../kb';
+import { RagStrategyName } from '../kb/kb.models';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}

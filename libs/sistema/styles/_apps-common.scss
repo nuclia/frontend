@@ -63,6 +63,7 @@ pa-button.full-width {
   min-height: calc(100vh - var(--app-topbar-height));
   padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
     var(--app-layout-padding-left);
+  position: relative;
 
   .page-title {
     @include display-s();
@@ -213,4 +214,13 @@ pa-toggle.unauthorized {
 }
 pa-option pa-icon {
   display: flex;
+}
+
+.pa-modal .pa-modal-footer.pa-dual-buttons {
+  justify-content: center;
+
+  pa-button {
+    min-width: rhythm(16);
+    width: unset;
+  }
 }

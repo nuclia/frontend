@@ -1,18 +1,22 @@
 @import 'apps/dashboard/src/variables';
 
-label.title-s {
-  display: block;
-  line-height: line-height(m);
-  margin-bottom: rhythm(1);
+form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+
+  .semantic-model-choice .body-m {
+    color: $color-neutral-regular;
+  }
 }
 
 .languages-container {
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
-  max-height: rhythm(13);
+  max-height: rhythm(20);
   margin-top: rhythm(1);
-  padding-left: rhythm(3) + rhythm(0.5);
+  row-gap: rhythm(1);
 }
 
 .models-container {

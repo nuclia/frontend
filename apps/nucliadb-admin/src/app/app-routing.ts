@@ -7,6 +7,7 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
+  KbCreationComponent,
   KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   rootGuard,
@@ -102,6 +103,10 @@ export const routes: Routes = [
                   ),
               },
             ],
+          },
+          {
+            path: 'manage/kbs/create',
+            component: KbCreationComponent,
           },
         ],
       },

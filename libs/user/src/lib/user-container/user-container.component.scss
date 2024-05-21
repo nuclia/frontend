@@ -15,12 +15,12 @@
   }
 
   .user-container {
-    align-items: center;
     background: $color-light-stronger;
     display: flex;
     height: 100%;
     max-height: 100vh;
     overflow-y: auto;
+    padding-top: rhythm(16);
     width: 50%;
 
     &:not(.left-aligned) {
@@ -30,8 +30,7 @@
 }
 
 @media (max-height: $height-viewport-medium-max) {
-  .user-background .user-container.top-aligned-small {
-    align-items: start;
+  .user-background .user-container {
     padding-top: rhythm(12);
   }
 }

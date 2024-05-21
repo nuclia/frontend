@@ -15,7 +15,8 @@ import {
   switchMap,
 } from 'rxjs';
 import type { INuclia } from '../models';
-import { ICreateResource, retry429Config } from './resource';
+import { ICreateResource } from './resource/resource.models';
+import { retry429Config } from './resource/resource.helpers';
 
 const CHUNK_SIZE = 5 * 1024 * 1024; // minimum size accepted by Amazon S3
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);

@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { OverlayModule } from '@angular/cdk/overlay';
 import {
+  accountOwnerGuard,
   ChartsModule,
   HintModule,
+  KbCreationComponent,
   KnowledgeBoxSettingsModule,
   NavbarModule,
   PipesModule,
@@ -40,16 +42,92 @@ import { AccountDeleteComponent } from './account-manage/account-delete/account-
 import { AccountStatusComponent } from './account-status/account-status.component';
 import { BillingModule } from './billing/billing.module';
 import { UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
+import { KbListComponent } from './account-kbs/kb-list/kb-list.component';
+import { BillingComponent } from './billing/billing.component';
+import { RedirectComponent } from './billing/redirect.component';
+import { SubscriptionsComponent } from './billing/subscriptions/subscriptions.component';
+import { CheckoutComponent } from './billing/checkout/checkout.component';
+import { MySubscriptionComponent } from './billing/my-subscription/my-subscription.component';
+import { UsageComponent } from './billing/usage/usage.component';
+import { HistoryComponent } from './billing/history/history.component';
 
-const Components = [
-  AccountHomeComponent,
-  AccountManageComponent,
-  AccountKbsComponent,
-  UsersDialogComponent,
-  AccountNUAComponent,
-  ClientDialogComponent,
-  AccountUsersComponent,
-  AccountDeleteComponent,
+const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full',
+  },
+  {
+    path: 'settings',
+    component: AccountManageComponent,
+    canActivate: [accountOwnerGuard],
+  },
+  {
+    path: 'home',
+    component: AccountHomeComponent,
+    canActivate: [accountOwnerGuard],
+  },
+  {
+    path: 'nua',
+    component: AccountNUAComponent,
+    canActivate: [accountOwnerGuard],
+  },
+  {
+    path: 'nua/:id/activity',
+    component: NuaActivityComponent,
+    canActivate: [accountOwnerGuard],
+  },
+  {
+    path: 'kbs',
+    component: AccountKbsComponent,
+    canActivate: [accountOwnerGuard],
+    children: [
+      {
+        path: '',
+        component: KbListComponent,
+      },
+      {
+        path: 'create',
+        component: KbCreationComponent,
+      },
+    ],
+  },
+  {
+    path: 'users',
+    component: AccountUsersComponent,
+    canActivate: [accountOwnerGuard],
+  },
+  {
+    path: 'billing',
+    component: BillingComponent,
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        component: RedirectComponent,
+      },
+      {
+        path: 'subscriptions',
+        component: SubscriptionsComponent,
+      },
+      {
+        path: 'checkout',
+        component: CheckoutComponent,
+      },
+      {
+        path: 'my-subscription',
+        component: MySubscriptionComponent,
+      },
+      {
+        path: 'usage',
+        component: UsageComponent,
+      },
+      {
+        path: 'history',
+        component: HistoryComponent,
+      },
+    ],
+  },
 ];
 
 @NgModule({
@@ -59,7 +137,7 @@ const Components = [
     TranslateModule.forChild(),
     ReactiveFormsModule,
     FormsModule,
-    RouterModule,
+    RouterModule.forChild(routes),
     OverlayModule,
     PipesModule,
     TokenDialogModule,
@@ -86,7 +164,17 @@ const Components = [
     UnauthorizedFeatureComponent,
     UnauthorizedFeatureDirective,
   ],
-  declarations: [...Components, NuaActivityComponent],
+  declarations: [
+    AccountHomeComponent,
+    AccountManageComponent,
+    AccountKbsComponent,
+    UsersDialogComponent,
+    AccountNUAComponent,
+    ClientDialogComponent,
+    AccountUsersComponent,
+    AccountDeleteComponent,
+    NuaActivityComponent,
+  ],
   exports: [AccountHomeComponent, AccountManageComponent],
 })
 export class AccountModule {}
