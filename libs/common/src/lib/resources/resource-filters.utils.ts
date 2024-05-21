@@ -5,16 +5,16 @@ import mime from 'mime';
 export const MIME_FACETS = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video'];
 export const LANGUAGE_FACET = ['/metadata.language'];
 
-export const CREATION_START = '/creation/start/';
-export const CREATION_END = '/creation/end/';
+export const CREATION_START_PREFIX = '/creation/start/';
+export const CREATION_END_PREFIX = '/creation/end/';
 
 export interface Filters {
   classification: OptionModel[];
   mainTypes: OptionModel[];
   languages?: OptionModel[];
   creation: {
-    start?: { id: string; date: string };
-    end?: { id: string; date: string };
+    start?: { filter: string; date: string };
+    end?: { filter: string; date: string };
   };
 }
 
@@ -98,12 +98,20 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
     });
     filters.languages?.sort((a, b) => a.label.localeCompare(b.label));
   }
-  const start = queryParamsFilters.find((param) => param.startsWith(CREATION_START));
-  const end = queryParamsFilters.find((param) => param.startsWith(CREATION_END));
+  const start = queryParamsFilters.find((param) => param.startsWith(CREATION_START_PREFIX));
+  const end = queryParamsFilters.find((param) => param.startsWith(CREATION_END_PREFIX));
   filters.creation = {
-    start: start ? { id: start, date: start.split('/').slice(-1)[0] } : undefined,
-    end: end ? { id: end, date: end.split('/').slice(-1)[0] } : undefined,
+    start: start ? { filter: start, date: getDateFromFilter(start) } : undefined,
+    end: end ? { filter: end, date: getDateFromFilter(end) } : undefined,
   };
 
   return filters;
+}
+
+export function getDateFromFilter(dateFilter: string) {
+  return dateFilter.split('/').slice(-1)[0];
+}
+
+export function getFilterFromDate(date: string, type: 'start' | 'end') {
+  return `${type === 'start' ? CREATION_START_PREFIX : CREATION_END_PREFIX}${date}`;
 }

@@ -63,7 +63,7 @@
 
 <div
   class="table-container"
-  [style.--resource-list-header-height]="(headerHeight | async) + 'px'">
+  [style.--filters-header-height]="(headerHeight | async) + 'px'">
   <pa-table [columns]="tableLayout | async">
     <pa-table-sortable-header
       noBackground
@@ -137,12 +137,14 @@
     <div class="no-results body-m">{{ 'resource.no-results' | translate }}</div>
   }
 </div>
-<stf-table-pagination
-  [items]="(data | async).length"
-  [totalResources]="totalResources | async"
-  [page]="page | async"
-  [totalPages]="totalPages | async"
-  (pageChange)="loadPage($event)"
-  [pageSize]="pageSize | async"
-  [pageSizes]="pageSizes"
-  (pageSizeChange)="onPageSizeChange($event)"></stf-table-pagination>
+<nsi-sticky-footer>
+  <stf-table-pagination
+    [items]="(data | async).length"
+    [totalResources]="totalResources | async"
+    [page]="page | async"
+    [totalPages]="totalPages | async"
+    (pageChange)="loadPage($event)"
+    [pageSize]="pageSize | async"
+    [pageSizes]="pageSizes"
+    (pageSizeChange)="onPageSizeChange($event)"></stf-table-pagination>
+</nsi-sticky-footer>

@@ -68,8 +68,5 @@ table {
 }
 
 stf-table-pagination {
-  align-items: center;
-  border-top: 1px solid $color-neutral-light;
-  display: flex;
-  height: $height-pagination;
+  width: 100%;
 }

@@ -7,7 +7,7 @@ import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
 import { DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceListService } from './resource-list.service';
-import { CREATION_END, CREATION_START, Filters, formatFiltersFromFacets, MIME_FACETS } from '../resource-filters.utils';
+import { Filters, formatFiltersFromFacets, getFilterFromDate, MIME_FACETS } from '../resource-filters.utils';
 import { Search } from '@nuclia/core';
 
 @Component({
@@ -34,8 +34,6 @@ export class ResourceListComponent implements OnDestroy {
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
   filterOptions: Filters = { classification: [], mainTypes: [], creation: {} };
-
-  displayDateFilter = false; // TODO: remove once /catalog endpoint allows filtering by date
 
   dateForm = new FormGroup({
     start: new FormControl<string>(''),
@@ -129,10 +127,10 @@ export class ResourceListComponent implements OnDestroy {
     this.dateDropdown?.close();
     this.filterOptions.creation = {
       start: this.dateForm.value.start
-        ? { id: `${CREATION_START}${this.dateForm.value.start}`, date: this.dateForm.value.start }
+        ? { filter: getFilterFromDate(this.dateForm.value.start, 'start'), date: this.dateForm.value.start }
         : undefined,
       end: this.dateForm.value.end
-        ? { id: `${CREATION_END}${this.dateForm.value.end}`, date: this.dateForm.value.end }
+        ? { filter: getFilterFromDate(this.dateForm.value.end, 'end'), date: this.dateForm.value.end }
         : undefined,
     };
     this.onToggleFilter();
@@ -175,8 +173,8 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   get selectedDates() {
-    const start = this.filterOptions.creation?.start ? [this.filterOptions.creation.start.id] : [];
-    const end = this.filterOptions.creation?.end ? [this.filterOptions.creation.end.id] : [];
+    const start = this.filterOptions.creation?.start ? [this.filterOptions.creation.start.filter] : [];
+    const end = this.filterOptions.creation?.end ? [this.filterOptions.creation.end.filter] : [];
     return start.concat(end);
   }
 

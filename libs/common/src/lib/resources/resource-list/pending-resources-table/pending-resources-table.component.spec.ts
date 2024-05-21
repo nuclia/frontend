@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PendingResourcesTableComponent } from './pending-resources-table.component';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
@@ -14,8 +14,9 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import { UploadService } from '../../../upload';
+import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 
 describe('PendingResourcesTableComponent', () => {
   let component: PendingResourcesTableComponent;
@@ -32,6 +33,8 @@ describe('PendingResourcesTableComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaTogglesModule),
         MockModule(PaTooltipModule),
+        MockComponent(StickyFooterComponent),
+        MockComponent(TablePaginationComponent),
       ],
       providers: [
         MockProvider(SDKService, {

@@ -13,7 +13,7 @@ import {
 import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CREATION_END, CREATION_START } from '../resource-filters.utils';
+import { CREATION_END_PREFIX, CREATION_START_PREFIX, getDateFromFilter } from '../resource-filters.utils';
 
 export interface ColoredLabel extends Classification {
   color: string;
@@ -66,13 +66,15 @@ export function getSearchOptions(params: ResourceListParams): SearchOptions {
     { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
     { [FilterOperator.any]: params.status ? [`/n/s/${params.status}`] : [] },
   ].filter((item) => (Object.values(item)[0] || []).length > 0);
+  const start = params.filters.find((filter) => filter.startsWith(CREATION_START_PREFIX));
+  const end = params.filters.find((filter) => filter.startsWith(CREATION_END_PREFIX));
 
   return {
     page_number: params.page,
     page_size: params.pageSize,
     sort: params.sort,
-    range_creation_start: params.filters.find((filter) => filter.startsWith(CREATION_START)) || undefined,
-    range_creation_end: params.filters.find((filter) => filter.startsWith(CREATION_END)) || undefined,
+    range_creation_start: start ? getDateFromFilter(start) : undefined,
+    range_creation_end: end ? getDateFromFilter(end) : undefined,
     filters,
   };
 }

@@ -34,6 +34,7 @@ import {
   SisLabelModule,
   SisProgressModule,
   SisStatusComponent,
+  StickyFooterComponent,
 } from '@nuclia/sistema';
 import { FileUploadModule, STFPipesModule, LabelModule } from '@flaps/core';
 import { UploadButtonComponent } from './upload-button';
@@ -194,6 +195,7 @@ const ROUTES: Routes = [
     EditResourceModule,
     TitleCellComponent,
     TablePaginationComponent,
+    StickyFooterComponent,
   ],
   declarations: [
     ResourcesComponent,

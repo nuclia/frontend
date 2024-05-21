@@ -40,7 +40,7 @@ export class TablePaginationComponent {
 
   private _totalPages = 0;
   private _page = 0;
-  pages: (number | string)[] = [];
+  pages: (number | '...')[] = [];
 
   generatePagination() {
     const visiblePages = [0, 1]

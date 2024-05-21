@@ -65,28 +65,29 @@
             </pa-dropdown>
           </div>
 
-          @if (displayDateFilter) {
-            <div>
-              <nsi-dropdown-button
-                freeWidth
-                aspect="basic"
-                [disabled]="isPendingView || isErrorView"
-                [popupRef]="dateFilters">
-                {{ 'resource.filter.date-added' | translate }}
-                {{ selectedDates.length ? '(' + selectedDates.length + ')' : '' }}
-              </nsi-dropdown-button>
-              <pa-dropdown #dateFilters>
-                <div class="date-filters">
+          <div>
+            <nsi-dropdown-button
+              freeWidth
+              aspect="basic"
+              [disabled]="isPendingView || isErrorView"
+              [popupRef]="dateFilters">
+              {{ 'resource.filter.date-added' | translate }}
+              {{ selectedDates.length ? '(' + selectedDates.length + ')' : '' }}
+            </nsi-dropdown-button>
+            <pa-dropdown #dateFilters>
+              <div class="date-filters">
+                @if (dateFilters.isDisplayed) {
+                  <!-- TODO: remove above condition once date pickers can be reset programmatically -->
                   <form
                     [formGroup]="dateForm"
                     (ngSubmit)="applyDates()">
                     <pa-date-picker
                       formControlName="start"
-                      [label]="'from' | translate"
+                      [label]="'resource.filter.from' | translate"
                       isInPopup></pa-date-picker>
                     <pa-date-picker
                       formControlName="end"
-                      [label]="'Until' | translate"
+                      [label]="'resource.filter.until' | translate"
                       isInPopup></pa-date-picker>
                     <div class="date-filters-buttons">
                       <pa-button
@@ -102,10 +103,10 @@
                       </pa-button>
                     </div>
                   </form>
-                </div>
-              </pa-dropdown>
-            </div>
-          }
+                }
+              </div>
+            </pa-dropdown>
+          </div>
 
           @if (isMainView || isProcessedView) {
             <pa-input
