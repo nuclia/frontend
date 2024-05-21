@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,6 +13,12 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Step1BudgetComponent {
+  @Input() set data(value: number | null) {
+    if (typeof value === 'number') {
+      this.form.patchValue({ budget: value });
+    }
+  }
+
   @Output() next = new EventEmitter<{ budget: number | null }>();
 
   form = new FormGroup({
