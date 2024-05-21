@@ -13,7 +13,7 @@ import { Observable, of, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { Step2Component } from './step2/step2.component';
 import { Router } from '@angular/router';
-import { Step3KbComponent } from './step3-kb/step3-kb.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-aws-onboarding',
@@ -23,10 +23,10 @@ import { Step3KbComponent } from './step3-kb/step3-kb.component';
     Step1BudgetComponent,
     UserContainerModule,
     Step2Component,
-    Step3KbComponent,
     KbNameStepComponent,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
+    TranslateModule,
   ],
   templateUrl: './aws-onboarding.component.html',
   styleUrl: './aws-onboarding.component.scss',

@@ -12,22 +12,33 @@
         (next)="goFrom2ToNext($event)"></app-step2>
     }
     @case (3) {
-      <nus-kb-name-step
-        [data]="kbName"
-        (back)="goBack()"
-        (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
+      <div class="main-container">
+        <h1>{{ 'onboarding.aws.create-kb.title' | translate }}</h1>
+        <nus-kb-name-step
+          [data]="kbName"
+          (back)="goBack()"
+          (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
+      </div>
     }
     @case (4) {
-      <nus-zone-step
-        [data]="zone"
-        (back)="goBack()"
-        (next)="storeZoneAndGoNext($event)"></nus-zone-step>
+      <div class="main-container">
+        <h1>{{ 'onboarding.step3.title' | translate }}</h1>
+        <p>{{ 'onboarding.step3.subtitle' | translate }}</p>
+        <nus-zone-step
+          [data]="zone"
+          (back)="goBack()"
+          (next)="storeZoneAndGoNext($event)"></nus-zone-step>
+      </div>
     }
     @case (5) {
-      <nus-embedding-model-step
-        [data]="embeddingModel"
-        (back)="goBack()"
-        (next)="finalStepDone($event)"></nus-embedding-model-step>
+      <div class="main-container">
+        <h1>{{ 'onboarding.step4.title' | translate }}</h1>
+        <p>{{ 'onboarding.step4.subtitle' | translate }}</p>
+        <nus-embedding-model-step
+          [data]="embeddingModel"
+          (back)="goBack()"
+          (next)="finalStepDone($event)"></nus-embedding-model-step>
+      </div>
     }
   }
 </nus-user-container>
