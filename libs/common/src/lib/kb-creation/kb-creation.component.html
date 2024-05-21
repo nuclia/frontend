@@ -69,7 +69,11 @@
     </nsi-two-columns-configuration-item>
 
     <nsi-sticky-footer>
-      <pa-button aspect="basic">{{ 'generic.cancel' | translate }}</pa-button>
+      <pa-button
+        aspect="basic"
+        (click)="cancel()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
       <pa-button
         kind="primary"
         type="submit"

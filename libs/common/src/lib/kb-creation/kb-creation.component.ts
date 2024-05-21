@@ -149,4 +149,8 @@ export class KbCreationComponent {
   updateModel(semanticModel: EmbeddingModelForm) {
     this.semanticModel = semanticModel.embeddingModel;
   }
+
+  cancel() {
+    this.router.navigate([this.backPath], { relativeTo: this.route });
+  }
 }
