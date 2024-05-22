@@ -798,7 +798,7 @@
 	"resource.delete-all-pending": "Suprimeix tots els {{count}} recursos pendents",
 	"resource.description.title": "Descripció",
 	"resource.empty.description": "La llista de recursos està buida. Comença pujant alguns fitxers o sincronitzant les teves dades.",
-	"resource.empty.title": "No hi ha res a veure aquí... encara.",
+	"resource.empty.title": "No hi ha res a veure aquí… encara.",
 	"resource.entities.date": "Dates",
 	"resource.entities.event": "Esdeveniments",
 	"resource.entities.fac": "Construccions",

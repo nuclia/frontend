@@ -798,7 +798,7 @@
 	"resource.delete-all-pending": "Eliminar todos los {{count}} recursos pendientes",
 	"resource.description.title": "Descripción",
 	"resource.empty.description": "La lista de recursos está vacía. Empieza subiendo algunos archivos o sincronizando tus datos.",
-	"resource.empty.title": "No hay nada que ver aquí... todavía.",
+	"resource.empty.title": "No hay nada que ver aquí… todavía.",
 	"resource.entities.date": "Fechas",
 	"resource.entities.event": "Eventos",
 	"resource.entities.fac": "Construcciones",

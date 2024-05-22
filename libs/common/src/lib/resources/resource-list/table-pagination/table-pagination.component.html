@@ -26,11 +26,11 @@
           size="small"></pa-icon>
       </pa-button>
       @for (item of pages; track item) {
-        @if (item === '...') {
+        @if (item === '…') {
           <pa-button
             aspect="basic"
             [disabled]="true">
-            {{ '...' }}
+            {{ item }}
           </pa-button>
         } @else {
           <pa-button

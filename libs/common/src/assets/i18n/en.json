@@ -798,7 +798,7 @@
 	"resource.delete-all-pending": "Delete all {{count}} pending resources",
 	"resource.description.title": "Description",
 	"resource.empty.description": "Your resource list is empty. Start by uploading some files or synchronizing your data.",
-	"resource.empty.title": "Nothing to see here... yet.",
+	"resource.empty.title": "Nothing to see here… yet.",
 	"resource.entities.date": "Date",
 	"resource.entities.event": "Events",
 	"resource.entities.fac": "Constructions",

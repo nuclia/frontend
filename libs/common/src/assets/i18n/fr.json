@@ -798,7 +798,7 @@
 	"resource.delete-all-pending": "Supprimer toutes les {{count}}  ressources en attente",
 	"resource.description.title": "La description",
 	"resource.empty.description": "Votre liste de ressources est vide. Commencez par télécharger quelques fichiers ou synchroniser vos données.",
-	"resource.empty.title": "Rien à voir ici... pour l'instant.",
+	"resource.empty.title": "Rien à voir ici… pour l'instant.",
 	"resource.entities.date": "Rendez-vous amoureux",
 	"resource.entities.event": "Événements",
 	"resource.entities.fac": "Constructions",

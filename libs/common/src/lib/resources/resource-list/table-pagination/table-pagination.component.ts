@@ -40,7 +40,7 @@ export class TablePaginationComponent {
 
   private _totalPages = 0;
   private _page = 0;
-  pages: (number | '...')[] = [];
+  pages: (number | '…')[] = [];
 
   generatePagination() {
     const visiblePages = [0, 1]
@@ -48,7 +48,7 @@ export class TablePaginationComponent {
       .concat([this.totalPages - 1, this.totalPages]);
 
     this.pages = [...Array(this.totalPages).keys()]
-      .map((page) => (visiblePages.includes(page) ? page : '...'))
+      .map((page) => (visiblePages.includes(page) ? page : '…'))
       .filter((page, index, pages) => pages[index - 1] !== page);
   }
 
