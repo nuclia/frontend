@@ -1,30 +1,30 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProcessedResourceTableComponent } from './processed-resource-table.component';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { ProcessedResourcesTableComponent } from './processed-resources-table.component';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { FeaturesService, SDKService } from '@flaps/core';
+import { of } from 'rxjs';
+import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   PaButtonModule,
-  PaDropdownModule,
   PaScrollModule,
   PaTableModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FeaturesService, SDKService } from '@flaps/core';
-import { of } from 'rxjs';
-import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
-import { DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { RouterTestingModule } from '@angular/router/testing';
+import { SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import { UploadService } from '../../../upload';
+import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 
-describe('ResourceTableComponent', () => {
-  let component: ProcessedResourceTableComponent;
-  let fixture: ComponentFixture<ProcessedResourceTableComponent>;
+describe('ProcessedResourcesTableComponent', () => {
+  let component: ProcessedResourcesTableComponent;
+  let fixture: ComponentFixture<ProcessedResourcesTableComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ProcessedResourceTableComponent],
+      declarations: [ProcessedResourcesTableComponent],
       imports: [
         RouterTestingModule,
         MockModule(TranslateModule),
@@ -33,8 +33,8 @@ describe('ResourceTableComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaTogglesModule),
         MockModule(PaTooltipModule),
-        MockModule(PaDropdownModule),
-        DropdownButtonComponent,
+        MockComponent(StickyFooterComponent),
+        MockComponent(TablePaginationComponent),
       ],
       providers: [
         MockProvider(SDKService, {
@@ -61,7 +61,7 @@ describe('ResourceTableComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProcessedResourceTableComponent);
+    fixture = TestBed.createComponent(ProcessedResourcesTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

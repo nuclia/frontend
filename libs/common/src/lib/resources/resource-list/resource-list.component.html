@@ -1,117 +1,193 @@
 <div class="resource-list page-spacing">
-  <div class="resource-list-header">
-    @if (isMainView) {
-      <form
-        class="search-bar-container"
-        [formGroup]="searchForm"
-        (ngSubmit)="search()">
-        <label
-          for="search-resources"
-          class="title-xxs">
-          {{ 'stash.search' | translate }}
-        </label>
-        <pa-select
-          dim
-          formControlName="searchIn"
-          [options]="searchOptions"></pa-select>
-        <pa-input
-          id="search-resources"
-          externalLabel
-          icon="search"
-          formControlName="query"></pa-input>
-      </form>
-    } @else {
-      <pa-button
-        data-cy="back-to-processed"
-        routerLink="./processed"
-        iconAndText
-        icon="chevron-left"
-        aspect="basic"
-        size="small">
-        {{ 'resource.processed_resources' | translate }}
-      </pa-button>
-    }
-
-    @if (isPendingView && (isTrial | async)) {
-      <div class="shared-queue-container title-s">
-        <pa-icon name="info"></pa-icon>
-        {{ 'resource.shared_queue' | translate }}
-        @if (isAccountManager | async) {
-          <a [routerLink]="upgradeUrl | async">
-            {{ 'billing.upgrade_now' | translate }}
-          </a>
-        }
-      </div>
-    }
-
-    <div class="upload-container">
-      @if (isMainView && (isAdminOrContrib | async)) {
-        <stf-upload-button></stf-upload-button>
-      }
-    </div>
-    <div class="status-buttons-container">
-      <div
-        data-cy="pending-access"
-        class="status-button"
-        [class.with-margin]="(statusCount | async)?.error || 0 > 0"
-        *ngIf="(statusCount | async)?.pending || 0 > 0">
-        <pa-button
-          routerLink="./pending"
-          routerLinkActive
-          #rla="routerLinkActive"
-          icon="clock-dash"
-          size="small"
-          iconSize="medium"
-          aspect="basic"
-          iconAndText
-          #pendingPopoverDirective="paPopoverRef"
-          [paPopover]="pendingPopover"
-          paPopoverOffset="0px"
-          [active]="rla.isActive">
-          {{ (statusCount | async)?.pending }}
-        </pa-button>
-      </div>
-      <pa-popover #pendingPopover>
-        <div class="popover-content">{{ 'resource.popover.pending-resources' | translate }}</div>
-      </pa-popover>
-
-      @if ((statusCount | async)?.error || 0 > 0) {
-        <div class="status-button">
-          <pa-button
-            routerLink="./error"
-            routerLinkActive
-            #rla="routerLinkActive"
-            icon="warning"
-            size="small"
-            iconSize="medium"
-            kind="destructive"
-            aspect="basic"
-            iconAndText
-            #failedPopoverDirective="paPopoverRef"
-            [paPopover]="failedPopover"
-            paPopoverOffset="0px"
-            [active]="rla.isActive">
-            {{ (statusCount | async)?.error }}
-          </pa-button>
+  @if ((emptyKb | async) === true && (isShardReady | async) === true) {
+    <div
+      class="empty-kb"
+      data-cy="empty-kb">
+      <div class="title-m">{{ 'resource.empty.title' | translate }}</div>
+      <div class="body-m">{{ 'resource.empty.description' | translate }}</div>
+      @if (isAdminOrContrib | async) {
+        <div>
+          <stf-upload-button></stf-upload-button>
         </div>
       }
-      <pa-popover #failedPopover>
-        <div class="popover-content">{{ 'resource.popover.error-resources' | translate }}</div>
-      </pa-popover>
     </div>
-  </div>
+  } @else if ((emptyKb | async) === false) {
+    <div
+      class="resource-list-header"
+      #header>
+      <div class="filters-container">
+        <div class="filters">
+          <div>
+            <nsi-dropdown-button
+              freeWidth
+              aspect="basic"
+              [disabled]="filterOptions.mainTypes.length === 0"
+              [popupRef]="mainTypeFilters">
+              {{ 'resource.filter.resource-type' | translate }}
+              {{ selectedMainTypes.length ? '(' + selectedMainTypes.length + ')' : '' }}
+            </nsi-dropdown-button>
+            <pa-dropdown #mainTypeFilters>
+              @for (option of filterOptions.mainTypes; track option.id) {
+                <pa-option
+                  (selectOption)="onSelectFilter(option, $event)"
+                  [paTooltip]="option.help"
+                  dontCloseOnSelect>
+                  <pa-checkbox
+                    [(value)]="option.selected"
+                    (valueChange)="onToggleFilter()">
+                    {{ option.label }}
+                  </pa-checkbox>
+                </pa-option>
+              }
+            </pa-dropdown>
+          </div>
+          <div>
+            <nsi-dropdown-button
+              freeWidth
+              aspect="basic"
+              [disabled]="filterOptions.classification.length === 0"
+              [popupRef]="classificationFilters">
+              {{ 'resource.classification-column' | translate }}
+              {{ selectedClassifications.length ? '(' + selectedClassifications.length + ')' : '' }}
+            </nsi-dropdown-button>
+            <pa-dropdown #classificationFilters>
+              @for (option of filterOptions.classification; track option.id) {
+                <pa-option
+                  (selectOption)="onSelectFilter(option, $event)"
+                  dontCloseOnSelect>
+                  <pa-checkbox
+                    [(value)]="option.selected"
+                    (valueChange)="onToggleFilter()">
+                    {{ option.label }}
+                  </pa-checkbox>
+                </pa-option>
+              }
+            </pa-dropdown>
+          </div>
 
-  <div class="resource-list-content">
-    <router-outlet></router-outlet>
+          <div>
+            <nsi-dropdown-button
+              freeWidth
+              aspect="basic"
+              [disabled]="isPendingView || isErrorView"
+              [popupRef]="dateFilters">
+              {{ 'resource.filter.date-added' | translate }}
+              {{ selectedDates.length ? '(' + selectedDates.length + ')' : '' }}
+            </nsi-dropdown-button>
+            <pa-dropdown #dateFilters>
+              <div class="date-filters">
+                @if (dateFilters.isDisplayed) {
+                  <!-- TODO: remove above condition once date pickers can be reset programmatically -->
+                  <form
+                    [formGroup]="dateForm"
+                    (ngSubmit)="applyDates()">
+                    <pa-date-picker
+                      formControlName="start"
+                      [label]="'resource.filter.from' | translate"
+                      isInPopup></pa-date-picker>
+                    <pa-date-picker
+                      formControlName="end"
+                      [label]="'resource.filter.until' | translate"
+                      isInPopup></pa-date-picker>
+                    <div class="date-filters-buttons">
+                      <pa-button
+                        class="full-width"
+                        aspect="basic"
+                        (click)="dateFilters.close()">
+                        {{ 'generic.cancel' | translate }}
+                      </pa-button>
+                      <pa-button
+                        type="submit"
+                        class="full-width">
+                        {{ 'resource.filter.apply' | translate }}
+                      </pa-button>
+                    </div>
+                  </form>
+                }
+              </div>
+            </pa-dropdown>
+          </div>
 
-    @if (isMainView && (emptyKb | async) === true && !standalone) {
-      <div
-        class="empty-kb"
-        data-cy="empty-kb">
-        <p>
-          <strong>{{ 'resource.empty' | translate }}</strong>
-        </p>
+          @if (isMainView || isProcessedView) {
+            <pa-input
+              icon="search"
+              [value]="query | async"
+              (valueChange)="onQueryChange($event)"
+              (keyup.enter)="search()">
+              {{ 'stash.search' | translate }}
+            </pa-input>
+          }
+        </div>
+
+        @if (isAdminOrContrib | async) {
+          <stf-upload-button></stf-upload-button>
+        }
       </div>
-    }
-  </div>
+
+      <div class="active-filters">
+        @if (!isMainView || ((statusCount | async)?.pending || 0) + ((statusCount | async)?.error || 0) > 0) {
+          @if ((statusCount | async)?.processed || 0 > 0) {
+            <pa-chip-selectionable
+              [selected]="isProcessedView"
+              (select)="goToView(isProcessedView ? '' : 'processed')"
+              [icon]="{ name: 'circle-check' }"
+              [backgroundColor]="isProcessedView ? '#EDEBFD' : undefined">
+              {{ 'resource.processed' | translate }} ({{ (statusCount | async)?.processed }})
+            </pa-chip-selectionable>
+          }
+          @if ((statusCount | async)?.pending || 0 > 0) {
+            <pa-chip-selectionable
+              [selected]="isPendingView"
+              (select)="goToView(isPendingView ? '' : 'pending')"
+              [icon]="{ name: 'clock-dash' }"
+              [backgroundColor]="isPendingView ? '#EDEBFD' : undefined">
+              {{ 'resource.processing' | translate }} ({{ (statusCount | async)?.pending }})
+            </pa-chip-selectionable>
+          }
+          @if ((statusCount | async)?.error || 0 > 0) {
+            <pa-chip-selectionable
+              [selected]="isErrorView"
+              (select)="goToView(isErrorView ? '' : 'error')"
+              [icon]="{ name: 'warning' }"
+              [backgroundColor]="isErrorView ? '#EDEBFD' : undefined">
+              {{ 'resource.errors' | translate }} ({{ (statusCount | async)?.error }})
+            </pa-chip-selectionable>
+          }
+        }
+        @if (isFiltering | async) {
+          <div class="filtered-by title-xxs">{{ 'resource.filtered-by' | translate }}</div>
+        }
+        @for (option of selectedClassifications; track option.value) {
+          <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
+        }
+        @for (option of selectedMainTypes; track option.value) {
+          <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
+        }
+        @if (filterOptions.creation.start) {
+          <pa-chip-closeable (closed)="clearDate('start')">
+            {{ 'resource.filter.from' | translate }}:
+            <span>{{ filterOptions.creation.start.date | date: 'mediumDate' }}</span>
+          </pa-chip-closeable>
+        }
+        @if (filterOptions.creation.end) {
+          <pa-chip-closeable (closed)="clearDate('end')">
+            {{ 'resource.filter.until' | translate }}:
+            <span>{{ filterOptions.creation.end.date | date: 'mediumDate' }}</span>
+          </pa-chip-closeable>
+        }
+        @if (showClearButton | async) {
+          <pa-button
+            size="small"
+            aspect="basic"
+            (click)="clearFilters()">
+            {{ 'resource.filter.clear' | translate }}
+          </pa-button>
+        }
+      </div>
+    </div>
+
+    <div class="resource-list-content">
+      <router-outlet></router-outlet>
+    </div>
+  }
 </div>

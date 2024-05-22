@@ -12,21 +12,16 @@ import {
 } from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import {
-  PaDropdownModule,
-  PaIconModule,
-  PaPopupModule,
-  PaTextFieldModule,
-  PaTogglesModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { BehaviorSubject, of } from 'rxjs';
+import { PaDropdownModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { UploadButtonComponent } from '../upload-button/upload-button.component';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ProcessedResourceTableComponent } from './processed-resource-table/processed-resource-table.component';
+import { ResourcesTableComponent } from './resources-table/resources-table.component';
 import { ErrorResourcesTableComponent } from './error-resources-table/error-resources-table.component';
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
 import { UploadService } from '../../upload/upload.service';
+import { ResourceListService } from '@flaps/common';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -40,13 +35,12 @@ describe('ResourceListComponent', () => {
         MockComponent(UploadButtonComponent),
         MockComponent(ErrorResourcesTableComponent),
         MockComponent(PendingResourcesTableComponent),
-        MockComponent(ProcessedResourceTableComponent),
+        MockComponent(ResourcesTableComponent),
       ],
       imports: [
         RouterTestingModule,
         MockModule(PaDropdownModule),
         MockModule(PaIconModule),
-        MockModule(PaPopupModule),
         MockModule(PaTogglesModule),
         MockModule(PaTextFieldModule),
         MockModule(SisProgressModule),
@@ -90,15 +84,17 @@ describe('ResourceListComponent', () => {
           resourceLabelSets: of({}),
         }),
         MockProvider(UploadService, {
-          statusCount: of({
-            processed: 0,
-            pending: 0,
-            error: 0,
-          }),
+          updateStatusCount: jest.fn(() => of({ processed: 0, pending: 0, error: 0 })),
         }),
         MockProvider(NavigationService),
         MockProvider(FeaturesService),
         MockProvider(STFTrackingService),
+        MockProvider(ResourceListService, {
+          filters: of([]),
+          ready: of(true),
+          isShardReady: new BehaviorSubject(false),
+          totalKbResources: of(1),
+        }),
       ],
     }).compileComponents();
 

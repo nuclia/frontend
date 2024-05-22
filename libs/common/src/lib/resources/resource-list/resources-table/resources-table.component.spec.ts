@@ -1,30 +1,32 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PendingResourcesTableComponent } from './pending-resources-table.component';
+import { ResourcesTableComponent } from './resources-table.component';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { FeaturesService, SDKService } from '@flaps/core';
-import { of } from 'rxjs';
-import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   PaButtonModule,
+  PaDropdownModule,
   PaScrollModule,
   PaTableModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { FeaturesService, SDKService } from '@flaps/core';
+import { BehaviorSubject, of } from 'rxjs';
+import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { DropdownButtonComponent, SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import { UploadService } from '../../../upload';
+import { ResourceListService } from './../resource-list.service';
 import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 
-describe('PendingResourcesTableComponent', () => {
-  let component: PendingResourcesTableComponent;
-  let fixture: ComponentFixture<PendingResourcesTableComponent>;
+describe('ResourceTableComponent', () => {
+  let component: ResourcesTableComponent;
+  let fixture: ComponentFixture<ResourcesTableComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PendingResourcesTableComponent],
+      declarations: [ResourcesTableComponent],
       imports: [
         RouterTestingModule,
         MockModule(TranslateModule),
@@ -33,6 +35,8 @@ describe('PendingResourcesTableComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaTogglesModule),
         MockModule(PaTooltipModule),
+        MockModule(PaDropdownModule),
+        MockComponent(DropdownButtonComponent),
         MockComponent(StickyFooterComponent),
         MockComponent(TablePaginationComponent),
       ],
@@ -58,10 +62,15 @@ describe('PendingResourcesTableComponent', () => {
         MockProvider(UploadService, {
           statusCount: of({ processed: 0, pending: 0, error: 0 }),
         }),
+        MockProvider(ResourceListService, {
+          filters: of([]),
+          loadResources: jest.fn(() => of()),
+          isShardReady: new BehaviorSubject(false),
+        }),
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PendingResourcesTableComponent);
+    fixture = TestBed.createComponent(ResourcesTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

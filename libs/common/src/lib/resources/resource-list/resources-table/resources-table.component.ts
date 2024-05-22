@@ -1,51 +1,31 @@
 import { ChangeDetectionStrategy, Component, inject, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ColoredLabel, ColumnHeader, DEFAULT_PREFERENCES, RESOURCE_LIST_PREFERENCES } from '../resource-list.model';
 import { map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  filter,
-  forkJoin,
-  from,
-  Observable,
-  of,
-  skip,
-  Subject,
-  take,
-  toArray,
-} from 'rxjs';
-import { HeaderCell, OptionModel } from '@guillotinaweb/pastanaga-angular';
-import {
-  Classification,
-  deDuplicateList,
-  LabelSets,
-  Resource,
-  RESOURCE_STATUS,
-  Search,
-  UserClassification,
-} from '@nuclia/core';
+import { BehaviorSubject, catchError, combineLatest, from, Observable, of, skip, Subject, take, toArray } from 'rxjs';
+import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
+import { Classification, deDuplicateList, LabelSets, Resource, UserClassification } from '@nuclia/core';
 import { LabelsService } from '@flaps/core';
-import { Filters, formatFiltersFromFacets, MIME_FACETS } from '../../resource-filters.utils';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { ResourcesTableDirective } from '../resources-table.directive';
-import { UploadService } from '../../../upload';
+import { UploadService } from '../../../upload/upload.service';
 import { getClassificationsPayload } from '../../edit-resource';
 
 @Component({
-  selector: 'stf-processed-resource-table',
-  templateUrl: './processed-resource-table.component.html',
+  selector: 'stf-resources-table',
+  templateUrl: './resources-table.component.html',
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProcessedResourceTableComponent extends ResourcesTableDirective implements OnInit, OnDestroy, OnChanges {
-  override status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
-  private uploadService = inject(UploadService);
-  totalCount = this.uploadService.statusCount.pipe(map((statusCount) => statusCount.processed + statusCount.error));
+export class ResourcesTableComponent extends ResourcesTableDirective implements OnInit, OnDestroy, OnChanges {
+  protected uploadService = inject(UploadService);
+  totalCount = this.uploadService.statusCount.pipe(
+    map((statusCount) => statusCount.processed + statusCount.pending + statusCount.error),
+  );
   labelSets = this.resourceListService.labelSets;
   isReady = this.resourceListService.ready;
-  emptyKb = this.resourceListService.emptyKb;
-  query = this.resourceListService.query;
+  isFiltering = combineLatest([this.resourceListService.filters, this.resourceListService.query]).pipe(
+    map(([filters, query]) => filters.length > 0 || query !== ''),
+  );
 
   get initialColumns(): ColumnHeader[] {
     return [
@@ -109,13 +89,6 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     }),
   );
 
-  hasFilters = false;
-  isFiltering = false;
-  filterOptions: Filters = {
-    classification: [],
-    mainTypes: [],
-  };
-
   unsubscribeAll = new Subject<void>();
 
   private localStorage = inject(LOCAL_STORAGE);
@@ -145,14 +118,6 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
         .filter((value) => !!value);
       this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(this.userPreferences));
     });
-
-    this.isShardReady
-      .pipe(
-        filter((ready) => ready),
-        take(1),
-        switchMap(() => this.loadFilters()),
-      )
-      .subscribe();
   }
 
   override ngOnDestroy() {
@@ -286,70 +251,6 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
       column.visible = !column.visible;
       this.columnVisibilityUpdate.next(!column.visible);
     }
-  }
-
-  onSelectFilter(option: OptionModel, event: MouseEvent | KeyboardEvent) {
-    if ((event.target as HTMLElement).tagName === 'LI') {
-      option.selected = !option.selected;
-      this.onToggleFilter();
-    }
-  }
-
-  onToggleFilter() {
-    const filters = this.selectedFilters;
-    if (filters.length > 0) {
-      this.router.navigate(['./'], { relativeTo: this.route, queryParams: { filters } });
-      this.resourceListService.filter(filters);
-      this.isFiltering = filters.length > 0;
-    } else {
-      this.clearFilters();
-    }
-  }
-
-  clearFilters() {
-    this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
-    this.resourceListService.filter([]);
-    this.isFiltering = false;
-    this.filterOptions.classification.forEach((option) => (option.selected = false));
-    this.filterOptions.mainTypes.forEach((option) => (option.selected = false));
-  }
-
-  get selectedFilters(): string[] {
-    return this.getSelectionFor('classification').concat(this.getSelectionFor('mainTypes'));
-  }
-
-  private getSelectionFor(type: 'classification' | 'mainTypes') {
-    return this.filterOptions[type].filter((option) => option.selected).map((option) => option.value);
-  }
-
-  private loadFilters(): Observable<void> {
-    return forkJoin([
-      this.sdk.currentKb.pipe(take(1)),
-      this.labelSets.pipe(take(1)),
-      this.route.queryParamMap.pipe(take(1)),
-      this.resourceListService.filters.pipe(take(1)),
-    ]).pipe(
-      switchMap(([kb, labelSets, queryParams, filters]) => {
-        const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-        return kb.catalog('', { faceted }).pipe(map((results) => ({ results, queryParams, filters })));
-      }),
-      map(({ results, queryParams, filters }) => {
-        if (results.type !== 'error') {
-          const previousFilters = queryParams.get('preserveFilters') ? filters : queryParams.getAll('filters');
-          this.formatFiltersFromFacets(results.fulltext?.facets || {}, previousFilters);
-          if (previousFilters.length > 0) {
-            this.onToggleFilter();
-          }
-        }
-      }),
-    );
-  }
-
-  private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[] = []) {
-    const filters = formatFiltersFromFacets(allFacets, queryParamsFilters);
-    this.filterOptions = filters;
-    this.hasFilters = filters.classification.length > 0 || filters.mainTypes.length > 0;
-    this.cdr.markForCheck();
   }
 
   private mergeExistingAndSelectedLabels(

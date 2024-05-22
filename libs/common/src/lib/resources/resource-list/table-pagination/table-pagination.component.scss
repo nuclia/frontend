@@ -1,0 +1,34 @@
+@import 'apps/dashboard/src/variables';
+
+.table-pagination {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  width: 100%;
+
+  .counter {
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  .filtered {
+    color: $color-neutral-regular;
+  }
+
+  .page-size {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
+    margin-left: auto;
+  }
+
+  .pages {
+    align-items: center;
+    display: flex;
+
+    ::ng-deep .pa-button {
+      width: rhythm(5);
+      border-radius: 0;
+    }
+  }
+}

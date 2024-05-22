@@ -1,7 +1,22 @@
 import { inject, Injectable } from '@angular/core';
 import { LabelsService, SDKService } from '@flaps/core';
-import { BehaviorSubject, catchError, forkJoin, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  pairwise,
+  shareReplay,
+  startWith,
+  Subject,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORTING,
@@ -9,7 +24,7 @@ import {
   ResourceWithLabels,
   searchResources,
 } from './resource-list.model';
-import { IResource, LabelSets, ProcessingStatus, Resource, RESOURCE_STATUS, Search, SortOption } from '@nuclia/core';
+import { IResource, LabelSets, ProcessingStatus, Resource, RESOURCE_STATUS, SortOption } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
 import { UploadService } from '../../upload/upload.service';
 import { SisToastService } from '@nuclia/sistema';
@@ -25,11 +40,11 @@ export class ResourceListService {
   private toastService = inject(SisToastService);
   private navigationService = inject(ResourceNavigationService);
 
-  private _status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
+  private _status?: RESOURCE_STATUS;
   get status() {
     return this._status;
   }
-  set status(status: RESOURCE_STATUS) {
+  set status(status: RESOURCE_STATUS | undefined) {
     this._status = status;
   }
 
@@ -40,39 +55,65 @@ export class ResourceListService {
   ready = this._ready.asObservable();
   private _data = new BehaviorSubject<ResourceWithLabels[]>([]);
   data = this._data.asObservable();
-  private _emptyKb = new Subject<boolean>();
-  emptyKb = this._emptyKb.asObservable();
   private _query = new BehaviorSubject<string>('');
   query = this._query.asObservable();
+  private _headerHeight = new BehaviorSubject<number>(0);
+  headerHeight = this._headerHeight.asObservable();
+
+  private _page = new BehaviorSubject<number>(0);
+  page = this._page.asObservable();
+  private _pageSize = new BehaviorSubject<number>(DEFAULT_PAGE_SIZE);
+  pageSize = this._pageSize.asObservable();
+  private _totalItems = new BehaviorSubject<number>(0);
+  totalItems = this._totalItems.asObservable();
+  totalPages = combineLatest([this._totalItems, this.pageSize]).pipe(
+    map(([totalItems, pageSize]) => Math.ceil(totalItems / pageSize)),
+  );
+
+  isShardReady = new BehaviorSubject<boolean>(false);
 
   labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
     filter((labelSets) => !!labelSets),
     map((labelSets) => labelSets as LabelSets),
   );
 
-  private _page = 0;
-  private _hasMore = false;
-  private _pageSize = DEFAULT_PAGE_SIZE;
+  totalKbResources = this.uploadService.statusCount.pipe(map((count) => count.processed + count.pending + count.error));
+
+  prevFilters = this._filters.pipe(
+    startWith([]),
+    pairwise(),
+    map(([prev]) => prev),
+    shareReplay(1),
+  );
+
   private _sort: SortOption = DEFAULT_SORTING;
-  private _titleOnly = true;
   private _cursor?: string;
   private formatETA: FormatETAPipe = new FormatETAPipe();
 
   constructor() {
     this._triggerResourceLoad
-      .pipe(switchMap(({ replaceData, updateCount }) => this.loadResources(replaceData, updateCount)))
+      .pipe(
+        switchMap(({ replaceData, updateCount }) =>
+          this.loadResources(replaceData, updateCount).pipe(
+            tap(() => {
+              if (replaceData) {
+                document.querySelector('.dashboard-content > main')?.scrollTo(0, 0);
+              }
+            }),
+          ),
+        ),
+      )
       .subscribe();
   }
 
   clear() {
     this._ready.next(false);
     this._data.next([]);
-    this._page = 0;
-    this._hasMore = false;
-    this._pageSize = DEFAULT_PAGE_SIZE;
+    this._page.next(0);
+    this._totalItems.next(0);
     this._sort = DEFAULT_SORTING;
     this._query.next('');
-    this._titleOnly = true;
+    this._filters.next([]);
   }
 
   get sort(): SortOption {
@@ -80,43 +121,49 @@ export class ResourceListService {
   }
 
   filter(filters: string[]) {
+    this._page.next(0);
     this._filters.next(filters);
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
-  loadMore() {
-    if (this._hasMore) {
-      this._page += 1;
-      this._triggerResourceLoad.next({ replaceData: false, updateCount: false });
-    }
+  loadPage(page: number) {
+    this._page.next(page);
+    this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
   sortBy(sortOption: SortOption) {
+    this._page.next(0);
     this._sort = sortOption;
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
-  search(query: string, titleOnly: boolean) {
-    this._query.next(query);
-    this._titleOnly = titleOnly;
+  search() {
+    this._page.next(0);
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
+  }
+
+  setPageSize(pageSize: number) {
+    this._page.next(0);
+    this._pageSize.next(pageSize);
+    this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
+  }
+
+  setQuery(query: string) {
+    this._query.next(query);
+  }
+
+  setHeaderHeight(height: number) {
+    this._headerHeight.next(height);
   }
 
   loadResources(replaceData = true, updateCount = true): Observable<void> {
     const loadRequest =
       this.status === RESOURCE_STATUS.PENDING
-        ? this.loadPendingResources(replaceData, updateCount)
-        : this.loadResourcesFromCatalog(replaceData, updateCount);
+        ? this.loadPendingResources(replaceData)
+        : this.loadResourcesFromCatalog(replaceData);
 
     return loadRequest.pipe(
-      switchMap(() =>
-        updateCount
-          ? this.uploadService.updateStatusCount().pipe(
-              tap((count) => this._emptyKb.next(count.error === 0 && count.pending === 0 && count.processed === 0)),
-              map(() => {}),
-            )
-          : of(undefined),
-      ),
+      switchMap(() => (updateCount ? this.uploadService.updateStatusCount().pipe(map(() => {})) : of(undefined))),
       catchError((error) => {
         console.error(`Error while loading results:`, error);
         this.toastService.error(this.translate.instant('resource.error.loading-failed'));
@@ -126,17 +173,17 @@ export class ResourceListService {
     );
   }
 
-  private loadPendingResources(replaceData: boolean, updateCount: boolean): Observable<void> {
+  private loadPendingResources(replaceData: boolean): Observable<void> {
     if (replaceData) {
       this._cursor = undefined;
     }
     // at the moment /processing-status does not return all the pending resources
     // so, we start by loading the resources from the catalog, and then we fetch the processing status
     // and update the status of the resources
-    return this.loadResourcesFromCatalog(replaceData, updateCount).pipe(
+    return this.loadResourcesFromCatalog(replaceData).pipe(
       switchMap(() => this.sdk.currentKb),
       take(1),
-      switchMap((kb) => kb.processingStatus(this._cursor)),
+      switchMap((kb) => kb.processingStatus(this._cursor, undefined, (this._page.value + 1) * this._pageSize.value)),
       switchMap((processingStatus) => {
         const resourceWithLabels = this.getPendingResourcesData(processingStatus);
         const newData = this._cursor ? this._data.value.concat(resourceWithLabels) : resourceWithLabels;
@@ -164,25 +211,19 @@ export class ResourceListService {
         mergedData.sort((r1, r2) => (r1.rank || -1) - (r2.rank || -1));
         this._data.next(mergedData);
         this._ready.next(true);
-        this._hasMore = !!processingStatus.cursor;
         this._cursor = processingStatus.cursor;
         return of(undefined);
       }),
     );
   }
 
-  private loadResourcesFromCatalog(replaceData: boolean, updateCount: boolean): Observable<void> {
-    if (replaceData) {
-      this._page = 0;
-    }
-
+  private loadResourcesFromCatalog(replaceData: boolean): Observable<void> {
     const resourceListParams: ResourceListParams = {
       status: this.status,
-      page: this._page,
-      pageSize: this._pageSize,
+      page: this._page.value,
+      pageSize: this._pageSize.value,
       sort: this._sort,
-      query: this._query.value,
-      titleOnly: this._titleOnly,
+      query: this._query.value.trim().replace('.', '\\.'),
       filters: this._filters.value,
     };
     return forkJoin([
@@ -192,23 +233,22 @@ export class ResourceListService {
         switchMap((kb) => searchResources(kb, resourceListParams)),
       ),
     ]).pipe(
-      map(([labelSets, data]) => {
-        const newResults: ResourceWithLabels[] = this._titleOnly
-          ? this.getTitleOnlyData(data.results, data.kbId, labelSets)
-          : this.getResourceData(this._query.value, data.results, data.kbId, labelSets);
-        const newData =
-          this._page === 0
-            ? newResults
-            : this._data.value.concat(newResults).reduce((deduplicatedList, data) => {
-                if (!deduplicatedList.find((item) => item.resource.id === data.resource.id)) {
-                  deduplicatedList.push(data);
-                }
-                return deduplicatedList;
-              }, [] as ResourceWithLabels[]);
-        const hasMore = !!data.results.fulltext?.next_page;
+      map(([labelSets, { results, kbId }]) => {
+        const newResults: ResourceWithLabels[] = Object.values(results.resources || {}).map((resourceData) =>
+          this.getResourceWithLabels(kbId, resourceData, labelSets),
+        );
+        const newData = replaceData
+          ? newResults
+          : this._data.value.concat(newResults).reduce((deduplicatedList, data) => {
+              if (!deduplicatedList.find((item) => item.resource.id === data.resource.id)) {
+                deduplicatedList.push(data);
+              }
+              return deduplicatedList;
+            }, [] as ResourceWithLabels[]);
+        const hasMore = !!results.fulltext?.next_page;
         this._data.next(newData);
         this._ready.next(true);
-        this._hasMore = hasMore;
+        this._totalItems.next(results.fulltext?.total || 0);
         this.navigationService.navigationData = {
           ...resourceListParams,
           resourceIdList: newData.map((data) => data.resource.id),
@@ -216,12 +256,6 @@ export class ResourceListService {
         };
         return;
       }),
-    );
-  }
-
-  private getTitleOnlyData(results: Search.Results, kbId: string, labelSets: LabelSets): ResourceWithLabels[] {
-    return Object.values(results.resources || {}).map((resourceData) =>
-      this.getResourceWithLabels(kbId, resourceData, labelSets),
     );
   }
 
@@ -240,58 +274,6 @@ export class ResourceListService {
     }
 
     return resourceWithLabels;
-  }
-
-  private getResourceData(
-    trimmedQuery: string,
-    results: Search.Results,
-    kbId: string,
-    labelSets: LabelSets,
-  ): ResourceWithLabels[] {
-    const allResources = results.resources;
-    if (!allResources || Object.keys(allResources).length === 0) {
-      return [];
-    }
-    const fulltextOrderedResources: IResource[] =
-      results.fulltext?.results.reduce((resources, result) => {
-        const iResource: IResource = allResources[result.rid];
-        if (result && iResource && !resources.find((resource) => resource.id === result.rid)) {
-          resources.push(iResource);
-        }
-        return resources;
-      }, [] as IResource[]) || [];
-    const smartResults = fulltextOrderedResources.map((resourceData) =>
-      this.getResourceWithLabels(kbId, resourceData, labelSets),
-    );
-
-    // if not a keyword search, fill results with the 2 best semantic sentences
-    const looksLikeKeywordSearch = trimmedQuery.split(' ').length < 3;
-    if (!looksLikeKeywordSearch) {
-      const semanticResults = results.sentences?.results || [];
-      const twoBestSemantic = semanticResults.slice(0, 2);
-      twoBestSemantic.forEach((sentence) => {
-        const resourceIndex = smartResults.findIndex((result) => result.resource.id === sentence.rid);
-        if (resourceIndex > -1 && !smartResults[resourceIndex].description) {
-          smartResults[resourceIndex].description = sentence.text;
-        }
-      });
-    }
-
-    // Fill the rest of the results with first paragraph
-    const paragraphResults = results.paragraphs?.results || [];
-    smartResults.forEach((result) => {
-      if (!result.description) {
-        const paragraph = paragraphResults.find((paragraph) => paragraph.rid === result.resource.id);
-        if (paragraph) {
-          result.description = paragraph.text;
-        } else {
-          // use summary as description when no paragraph
-          result.description = result.resource.summary;
-        }
-      }
-    });
-
-    return smartResults;
   }
 
   private getPendingResourcesData(processingStatus: {

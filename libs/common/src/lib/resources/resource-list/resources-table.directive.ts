@@ -6,6 +6,7 @@ import {
   DEFAULT_SORTING,
   getSearchOptions,
   MenuAction,
+  PAGE_SIZES,
 } from './resource-list.model';
 import { IResource, KnowledgeBox, Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { delay, map, switchMap } from 'rxjs/operators';
@@ -60,9 +61,16 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   protected features = inject(FeaturesService);
 
   // status is set to processed by default, but will be overridden by each component extending this directive
-  status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
+  status?: RESOURCE_STATUS;
   data = this.resourceListService.data;
   sorting = this.resourceListService.sort;
+  page = this.resourceListService.page;
+  totalPages = this.resourceListService.totalPages;
+  totalItems = this.resourceListService.totalItems;
+  totalKbResources = this.resourceListService.totalKbResources;
+  pageSize = this.resourceListService.pageSize;
+  pageSizes = PAGE_SIZES;
+  headerHeight = this.resourceListService.headerHeight;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
 
   isSummarizationAuthorized = this.features.authorized.summarization;
@@ -81,7 +89,6 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     map(([data, selection]) => data.length > 0 && selection.length === data.length),
   );
   isLoading = false;
-  isShardReady = new BehaviorSubject<boolean>(false);
   allResourcesSelected = false;
 
   private _bulkAction: BulkAction = {
@@ -121,11 +128,13 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.resourceListService.status = this.status;
-    this.resourceListService.loadResources().subscribe(() => {
-      // loadResources is launching the first `/catalog` request which will set the shard.
-      // we need to wait for it to be done before launching other request to prevent using different shards for different requests
-      this.isShardReady.next(true);
-    });
+    this.resourceListService.isShardReady
+      .pipe(
+        filter((ready) => ready),
+        take(1),
+        switchMap(() => this.resourceListService.loadResources()),
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
@@ -142,8 +151,12 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     };
   }
 
-  onLoadMore() {
-    this.resourceListService.loadMore();
+  loadPage(page: number) {
+    this.resourceListService.loadPage(page);
+  }
+
+  onPageSizeChange(pageSize: number) {
+    this.resourceListService.setPageSize(pageSize);
   }
 
   sortBy(cell: HeaderCell) {
@@ -336,6 +349,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   selectAllResources() {
     this.allResourcesSelected = true;
+    this.selection = [];
   }
 
   deleteAllResources() {
@@ -397,13 +411,12 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     this.isLoading = true;
     let kb: KnowledgeBox;
     const getResourcesPage = (kb: KnowledgeBox, page = 0) => {
-      const { searchOptions } = getSearchOptions({
+      const searchOptions = getSearchOptions({
         page,
         pageSize: DEFAULT_PAGE_SIZE,
         sort: this.sorting || DEFAULT_SORTING,
         status: this.status,
         query: '',
-        titleOnly: true,
         filters: [],
       });
       return kb.catalog('', searchOptions);

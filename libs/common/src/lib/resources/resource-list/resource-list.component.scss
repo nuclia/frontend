@@ -1,85 +1,70 @@
 @import 'apps/dashboard/src/variables';
 
-$table-breakpoint: 1400px;
-
 .resource-list {
   position: relative;
   min-height: rhythm(24);
+  padding-bottom: 0;
 }
 
 .resource-list-header {
   align-items: center;
   background-color: $color-light-stronger;
-  border-bottom: 1px solid $color-neutral-lighter;
-  display: flex;
-  gap: rhythm(2);
-  height: rhythm(9);
-  justify-content: space-between;
   margin-top: calc(-1 * #{rhythm(3)});
-  margin-bottom: rhythm(4);
   padding-top: rhythm(3);
-  padding-bottom: rhythm(1);
   position: sticky;
   top: 0;
   z-index: 10;
 
-  .search-bar-container {
-    align-items: center;
-    display: flex;
-    gap: rhythm(1);
-
-    pa-select {
-      min-width: rhythm(16);
-    }
-  }
-
-  .shared-queue-container {
-    align-items: center;
-    display: flex;
-    flex-shrink: 0;
-    gap: rhythm(1);
-  }
-
-  .upload-container {
+  .filters-container {
     display: flex;
     gap: rhythm(2);
+    justify-content: space-between;
+    margin-bottom: rhythm(2);
   }
 
-  .status-buttons-container {
+  .filters {
+    display: flex;
+    gap: rhythm(1.5);
+  }
+
+  .active-filters {
     align-items: center;
     display: flex;
-    justify-content: flex-end;
-    min-width: rhythm(24);
+    flex-wrap: wrap;
+    gap: rhythm(1.5);
+  }
 
-    .status-button {
-      align-items: center;
+  .filtered-by {
+    color: $color-neutral-regular;
+  }
+
+  .date-filters {
+    padding: rhythm(2);
+
+    pa-date-picker {
+      display: block;
+      margin-bottom: rhythm(1.5);
+    }
+
+    .date-filters-buttons {
       display: flex;
-      gap: rhythm(0.25);
-
-      &.with-margin {
-        margin-right: rhythm(2);
-      }
+      gap: rhythm(1);
+      margin-top: rhythm(4);
     }
-    .file-count {
-      font-size: font-size(l);
-      font-weight: $font-weight-bold;
-      line-height: line-height(m);
+
+    pa-button {
+      width: 50%;
     }
   }
-}
-
-.resource-filters {
-  padding: 0 rhythm(3) 0 rhythm(1.5);
-  .title-filter {
-    max-width: 35%;
-  }
-}
-
-.popover-content {
-  text-align: center;
 }
 
 .empty-kb {
-  padding: rhythm(2) 0;
-  width: rhythm(60);
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+  padding-right: rhythm(12);
+  text-align: center;
+  stf-upload-button {
+    text-align: left;
+  }
 }

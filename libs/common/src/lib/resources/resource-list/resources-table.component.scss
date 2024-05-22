@@ -1,35 +1,52 @@
 @import 'apps/dashboard/src/variables';
 
+$height-table-header: rhythm(8);
+$height-pagination: rhythm(9);
+
 .resource-table-header {
-  align-items: center;
   background-color: $color-light-stronger;
-  display: flex;
-  height: rhythm(8);
   position: sticky;
-  top: calc(#{rhythm(3)} + #{rhythm(6)});
+  top: var(--filters-header-height);
   z-index: 1;
+
+  .header-container {
+    align-items: center;
+    display: flex;
+    height: $height-table-header;
+  }
 
   .resource-bulk-actions {
     align-items: center;
     display: flex;
     font-weight: $font-weight-regular;
-    gap: rhythm(2);
+    gap: rhythm(1.5);
     padding-left: rhythm(0.5);
   }
 
+  .selected-count {
+    color: $color-neutral-regular;
+  }
+
   .table-options {
-    align-items: center;
-    display: flex;
-    gap: rhythm(1);
-    justify-content: flex-end;
     margin-left: auto;
+  }
+
+  .selection-bar {
+    align-items: center;
+    background-color: $color-neutral-lightest;
+    color: $color-neutral-regular;
+    display: flex;
+    gap: rhythm(1.5);
+    height: rhythm(5);
+    justify-content: center;
+    margin-bottom: rhythm(1.5);
   }
 }
 
 .table-container {
   position: relative;
-  max-height: 100%;
-  overflow: auto;
+  // Always display pagination at the bottom, even when there are few results
+  min-height: calc(100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - var(--filters-header-height) - #{$height-table-header} - #{$height-pagination} + rhythm(3));
 }
 
 table {
@@ -52,8 +69,18 @@ table {
   bottom: 0;
   right: 0;
   background: rgba(0, 0, 0, 0.15);
-  z-index: 20;
+  z-index: $z-index-modal-backdrop;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.no-results {
+  color: $color-neutral-regular;
+  padding: rhythm(4) 0;
+  text-align: center;
+}
+
+stf-table-pagination {
+  width: 100%;
 }

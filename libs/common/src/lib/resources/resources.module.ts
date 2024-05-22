@@ -9,7 +9,8 @@ import { A11yModule } from '@angular/cdk/a11y';
 import {
   ErrorResourcesTableComponent,
   PendingResourcesTableComponent,
-  ProcessedResourceTableComponent,
+  ProcessedResourcesTableComponent,
+  ResourcesTableComponent,
   ResourceListComponent,
   ResourcesTableDirective,
 } from './resource-list';
@@ -33,6 +34,7 @@ import {
   SisLabelModule,
   SisProgressModule,
   SisStatusComponent,
+  StickyFooterComponent,
 } from '@nuclia/sistema';
 import { FileUploadModule, STFPipesModule, LabelModule } from '@flaps/core';
 import { UploadButtonComponent } from './upload-button';
@@ -41,6 +43,9 @@ import { PipesModule } from '../pipes';
 import { EditResourceModule } from './edit-resource/edit-resource.module';
 import {
   PaButtonModule,
+  PaChipsModule,
+  PaDatePickerModule,
+  PaDateTimeModule,
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
@@ -50,7 +55,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TitleCellComponent } from './resource-list/title-cell/title-cell.component';
+import { TablePaginationComponent, TitleCellComponent } from './resource-list';
 
 const ROUTES: Routes = [
   {
@@ -63,12 +68,16 @@ const ROUTES: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'processed',
+            redirectTo: 'all',
             pathMatch: 'full',
           },
           {
+            path: 'all',
+            component: ResourcesTableComponent,
+          },
+          {
             path: 'processed',
-            component: ProcessedResourceTableComponent,
+            component: ProcessedResourcesTableComponent,
           },
           {
             path: 'pending',
@@ -154,6 +163,9 @@ const ROUTES: Routes = [
 
     // Pastanaga
     PaButtonModule,
+    PaChipsModule,
+    PaDatePickerModule,
+    PaDateTimeModule,
     PaDropdownModule,
     PaIconModule,
     PaPopupModule,
@@ -182,11 +194,14 @@ const ROUTES: Routes = [
 
     EditResourceModule,
     TitleCellComponent,
+    TablePaginationComponent,
+    StickyFooterComponent,
   ],
   declarations: [
     ResourcesComponent,
     ResourceListComponent,
-    ProcessedResourceTableComponent,
+    ProcessedResourcesTableComponent,
+    ResourcesTableComponent,
     UploadButtonComponent,
     PendingResourcesTableComponent,
     ResourcesTableDirective,

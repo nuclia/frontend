@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ErrorResourcesTableComponent } from './error-resources-table.component';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   PaButtonModule,
@@ -14,8 +14,9 @@ import { FeaturesService, SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Account, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
 import { UploadService } from '../../../upload/upload.service';
+import { TablePaginationComponent } from '../table-pagination/table-pagination.component';
 
 describe('ErrorResourcesTableComponent', () => {
   let component: ErrorResourcesTableComponent;
@@ -32,6 +33,8 @@ describe('ErrorResourcesTableComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaTogglesModule),
         MockModule(PaTooltipModule),
+        MockComponent(StickyFooterComponent),
+        MockComponent(TablePaginationComponent),
       ],
       providers: [
         MockProvider(SDKService, {

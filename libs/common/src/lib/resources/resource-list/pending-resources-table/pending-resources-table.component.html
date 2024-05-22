@@ -6,12 +6,16 @@
   </div>
 }
 
-<div class="resource-table-header">
-  @if ((isAdminOrContrib | async) && selection.length > 0) {
-    <div class="resource-bulk-actions">
-      {{ 'resource.selected_count' | translate: { num: selection.length } }}
+<div
+  class="resource-table-header"
+  [style.--filters-header-height]="(headerHeight | async) + 'px'">
+  <div class="header-container">
+    @if ((isAdminOrContrib | async) && selection.length > 0) {
+      <div class="resource-bulk-actions">
+        <span class="selected-count title-xxs">
+          {{ 'resource.selected_count' | translate: { num: selection.length } }}
+        </span>
 
-      @if (selection.length > 0) {
         <pa-button
           data-cy="delete-selection"
           kind="destructive"
@@ -26,7 +30,7 @@
           size="small"
           [disabled]="bulkAction.inProgress"
           (click)="bulkReprocess()">
-          {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
+          {{ 'resource.reprocess' | translate }}
         </pa-button>
         @if (
           (allSelected | async) === true &&
@@ -36,6 +40,7 @@
           <pa-button
             aspect="basic"
             kind="destructive"
+            size="small"
             (click)="deleteAllResources()"
             [disabled]="bulkAction.inProgress">
             {{ 'resource.delete-all-pending' | translate: { count: totalCount | async } }}
@@ -47,81 +52,96 @@
             {{ bulkAction.done }} / {{ bulkAction.total }}
           </div>
         }
-      }
-    </div>
-  }
+      </div>
+    }
+  </div>
 </div>
 
-<div class="table-container">
-  <pa-infinite-scroll (reachAnchor)="onLoadMore()">
-    <pa-table [columns]="tableLayout | async">
-      <pa-table-sortable-header
-        noBackground
-        [cells]="headerCells | async"
-        (sort)="sortBy($event)">
+<div
+  class="table-container"
+  [style.--filters-header-height]="(headerHeight | async) + 'px'">
+  <pa-table [columns]="tableLayout | async">
+    <pa-table-sortable-header
+      noBackground
+      [cells]="headerCells | async"
+      (sort)="sortBy($event)">
+      @if (isAdminOrContrib | async) {
+        <pa-table-cell header>
+          <pa-checkbox
+            data-cy="select-all"
+            [value]="allSelected | async"
+            [paTooltip]="((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate"
+            [disabled]="bulkAction.inProgress"
+            (change)="toggleAll()"></pa-checkbox>
+        </pa-table-cell>
+      }
+    </pa-table-sortable-header>
+
+    @for (row of data | async; track row.resource.id) {
+      <pa-table-row [disabled]="row.resource.metadata?.status === 'DELETED'">
         @if (isAdminOrContrib | async) {
-          <pa-table-cell header>
+          <pa-table-cell>
             <pa-checkbox
-              data-cy="select-all"
-              [value]="allSelected | async"
-              [paTooltip]="((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate"
-              [disabled]="bulkAction.inProgress"
-              (change)="toggleAll()"></pa-checkbox>
+              [disabled]="row.resource.metadata?.status === 'DELETED'"
+              [value]="selection.includes(row.resource.id)"
+              (change)="toggleSelection(row.resource.id)"></pa-checkbox>
           </pa-table-cell>
         }
-      </pa-table-sortable-header>
+        <pa-table-cell
+          [clickable]="row.resource.metadata?.status !== 'DELETED'"
+          (click)="onClickTitle(row.resource)">
+          <stf-title-cell [row]="row"></stf-title-cell>
+        </pa-table-cell>
 
-      @for (row of data | async; track row.resource.id) {
-        <pa-table-row [disabled]="row.resource.metadata?.status === 'DELETED'">
-          @if (isAdminOrContrib | async) {
-            <pa-table-cell>
-              <pa-checkbox
-                [disabled]="row.resource.metadata?.status === 'DELETED'"
-                [value]="selection.includes(row.resource.id)"
-                (change)="toggleSelection(row.resource.id)"></pa-checkbox>
-            </pa-table-cell>
-          }
-          <pa-table-cell
-            [clickable]="row.resource.metadata?.status !== 'DELETED'"
-            (click)="onClickTitle(row.resource)">
-            <stf-title-cell [row]="row"></stf-title-cell>
-          </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.resource.created | date: 'mediumDate' }}</span>
+        </pa-table-cell>
+        <pa-table-cell>
+          <span
+            class="body-s"
+            [innerHTML]="row.status"></span>
+        </pa-table-cell>
 
-          <pa-table-cell center>
-            <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
-          </pa-table-cell>
-          <pa-table-cell>
-            <span
-              class="body-s"
-              [innerHTML]="row.status"></span>
-          </pa-table-cell>
-
-          @if (isAdminOrContrib | async) {
-            <pa-table-cell-menu>
-              <pa-button
-                icon="more-vertical"
-                aspect="basic"
-                size="small"
-                paTooltip="generic.actions"
-                [disabled]="bulkAction.inProgress || row.resource.metadata?.status === 'DELETED'"
-                [paPopup]="menu">
-                {{ 'generic.actions' | translate }}
-              </pa-button>
-              <pa-dropdown #menu>
-                <pa-option (selectOption)="triggerAction(row.resource, 'reprocess')">
-                  {{ 'generic.reindex' | translate }}
-                </pa-option>
-                <pa-separator></pa-separator>
-                <pa-option
-                  destructive
-                  (selectOption)="triggerAction(row.resource, 'delete')">
-                  {{ 'generic.delete' | translate }}
-                </pa-option>
-              </pa-dropdown>
-            </pa-table-cell-menu>
-          }
-        </pa-table-row>
-      }
-    </pa-table>
-  </pa-infinite-scroll>
+        @if (isAdminOrContrib | async) {
+          <pa-table-cell-menu>
+            <pa-button
+              icon="more-vertical"
+              aspect="basic"
+              size="small"
+              paTooltip="generic.actions"
+              [disabled]="bulkAction.inProgress || row.resource.metadata?.status === 'DELETED'"
+              [paPopup]="menu">
+              {{ 'generic.actions' | translate }}
+            </pa-button>
+            <pa-dropdown #menu>
+              <pa-option (selectOption)="triggerAction(row.resource, 'reprocess')">
+                {{ 'resource.reprocess' | translate }}
+              </pa-option>
+              <pa-separator></pa-separator>
+              <pa-option
+                destructive
+                (selectOption)="triggerAction(row.resource, 'delete')">
+                {{ 'generic.delete' | translate }}
+              </pa-option>
+            </pa-dropdown>
+          </pa-table-cell-menu>
+        }
+      </pa-table-row>
+    }
+  </pa-table>
+  @if ((data | async)?.length === 0) {
+    <div class="no-results body-m">{{ 'resource.no-results' | translate }}</div>
+  }
 </div>
+<nsi-sticky-footer>
+  <stf-table-pagination
+    [items]="(data | async)?.length || 0"
+    [totalItems]="totalItems | async"
+    [totalKbResources]="totalKbResources | async"
+    [page]="page | async"
+    [totalPages]="totalPages | async"
+    (pageChange)="loadPage($event)"
+    [pageSize]="pageSize | async"
+    [pageSizes]="pageSizes"
+    (pageSizeChange)="onPageSizeChange($event)"></stf-table-pagination>
+</nsi-sticky-footer>

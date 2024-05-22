@@ -13,6 +13,7 @@ import {
 import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CREATION_END_PREFIX, CREATION_START_PREFIX, getDateFromFilter } from '../resource-filters.utils';
 
 export interface ColoredLabel extends Classification {
   color: string;
@@ -37,7 +38,8 @@ export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reproces
 export const DEFAULT_PREFERENCES = {
   columns: ['modification', 'language'],
 };
-export const DEFAULT_PAGE_SIZE = 20;
+export const DEFAULT_PAGE_SIZE = 25;
+export const PAGE_SIZES = [25, 50, 100];
 export const DEFAULT_SORTING: SortOption = { field: SortField.created, order: 'desc' };
 
 export const RESOURCE_LIST_PREFERENCES = 'NUCLIA_RESOURCE_LIST_PREFERENCES';
@@ -51,49 +53,37 @@ export interface BulkAction {
 }
 
 export interface ResourceListParams {
-  status: RESOURCE_STATUS;
+  status?: RESOURCE_STATUS;
   page: number;
   pageSize: number;
   sort: SortOption;
   query: string;
-  titleOnly: boolean;
   filters: string[];
 }
-export function getSearchOptions(params: ResourceListParams): {
-  searchOptions: SearchOptions;
-  searchFeatures: Search.Features[];
-} {
+export function getSearchOptions(params: ResourceListParams): SearchOptions {
   const filters: Filter[] = [
     { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/icon/')) },
     { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
-    { [FilterOperator.any]: params.status === RESOURCE_STATUS.PROCESSED ? [] : [`/n/s/${params.status}`] },
+    { [FilterOperator.any]: params.status ? [`/n/s/${params.status}`] : [] },
   ].filter((item) => (Object.values(item)[0] || []).length > 0);
+  const start = params.filters.find((filter) => filter.startsWith(CREATION_START_PREFIX));
+  const end = params.filters.find((filter) => filter.startsWith(CREATION_END_PREFIX));
 
-  const searchOptions: SearchOptions = {
+  return {
     page_number: params.page,
     page_size: params.pageSize,
     sort: params.sort,
+    range_creation_start: start ? getDateFromFilter(start) : undefined,
+    range_creation_end: end ? getDateFromFilter(end) : undefined,
     filters,
-    with_status: params.status === RESOURCE_STATUS.PROCESSED ? params.status : undefined,
-  };
-  const searchFeatures =
-    params.query.length > 0
-      ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
-      : [Search.Features.DOCUMENT];
-  return {
-    searchOptions,
-    searchFeatures,
   };
 }
 export function searchResources(
   kb: WritableKnowledgeBox,
   resourceListParams: ResourceListParams,
 ): Observable<{ results: Search.Results; kbId: string }> {
-  const { searchOptions, searchFeatures } = getSearchOptions(resourceListParams);
-  const getResults = resourceListParams.titleOnly
-    ? kb.catalog(resourceListParams.query, searchOptions)
-    : kb.search(resourceListParams.query, searchFeatures, searchOptions);
-  return getResults.pipe(
+  const searchOptions = getSearchOptions(resourceListParams);
+  return kb.catalog(resourceListParams.query, searchOptions).pipe(
     map((res) => ({
       results: (res.type === 'error' ? { type: 'searchResults' } : res) as Search.Results,
       kbId: kb.id,

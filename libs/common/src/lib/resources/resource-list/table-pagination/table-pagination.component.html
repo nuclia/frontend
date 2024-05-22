@@ -1,0 +1,60 @@
+<div class="table-pagination">
+  <div class="counter body-m">
+    {{ 'resource.pagination.counter' | translate: { from, to, total: totalItems } }}
+    @if (totalKbResources - totalItems; as hidden) {
+      <div>•</div>
+      <div class="filtered">{{ 'resource.pagination.filtered' | translate: { num: hidden } }}</div>
+    }
+  </div>
+  <div class="page-size">
+    <div class="body-m">{{ 'resource.pagination.rows-per-page' | translate }}</div>
+    <div>
+      <nsi-dropdown-button
+        aspect="basic"
+        [popupRef]="sizeDropdown">
+        {{ pageSize }}
+      </nsi-dropdown-button>
+      <pa-dropdown #sizeDropdown>
+        @for (size of pageSizes; track size) {
+          <pa-option (selectOption)="this.pageSizeChange.emit(size)">{{ size }}</pa-option>
+        }
+      </pa-dropdown>
+    </div>
+  </div>
+  @if (pages.length > 1) {
+    <div class="pages">
+      <pa-button
+        aspect="basic"
+        [disabled]="page === 0"
+        (click)="goTo(page - 1)">
+        <pa-icon
+          name="arrow-left"
+          size="small"></pa-icon>
+      </pa-button>
+      @for (item of pages; track item) {
+        @if (item === '…') {
+          <pa-button
+            aspect="basic"
+            [disabled]="true">
+            {{ item }}
+          </pa-button>
+        } @else {
+          <pa-button
+            aspect="basic"
+            [active]="item === page"
+            (click)="goTo(item)">
+            {{ item + 1 }}
+          </pa-button>
+        }
+      }
+      <pa-button
+        aspect="basic"
+        [disabled]="page === totalPages - 1"
+        (click)="goTo(page + 1)">
+        <pa-icon
+          name="arrow-right"
+          size="small"></pa-icon>
+      </pa-button>
+    </div>
+  }
+</div>
