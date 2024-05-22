@@ -9,63 +9,36 @@
 <div
   class="resource-table-header"
   [style.--filters-header-height]="(headerHeight | async) + 'px'">
-  @if ((isAdminOrContrib | async) && selection.length > 0) {
-    <div class="resource-bulk-actions">
-      <span class="selected-count title-xxs">
-        {{
-          'resource.selected_count' | translate: { num: allResourcesSelected ? (totalCount | async) : selection.length }
-        }}
-      </span>
-      @if ((allSelected | async) === false) {
+  <div class="header-container">
+    @if ((isAdminOrContrib | async) && selection.length > 0) {
+      <div class="resource-bulk-actions">
+        <span class="selected-count title-xxs">
+          {{ 'resource.selected_count' | translate: { num: selection.length } }}
+        </span>
+        <pa-button
+          kind="destructive"
+          aspect="basic"
+          size="small"
+          [disabled]="bulkAction.inProgress"
+          (click)="bulkDelete()">
+          {{ 'generic.delete' | translate }}
+        </pa-button>
         <pa-button
           aspect="basic"
           size="small"
           [disabled]="bulkAction.inProgress"
-          (click)="toggleAll()">
-          {{ 'generic.select_all' | translate }}
+          (click)="bulkReprocess()">
+          {{ 'resource.reprocess' | translate }}
         </pa-button>
-      }
-      <pa-button
-        kind="destructive"
-        aspect="basic"
-        size="small"
-        [disabled]="bulkAction.inProgress"
-        (click)="bulkDelete()">
-        {{ 'generic.delete' | translate }}
-      </pa-button>
-      <pa-button
-        aspect="basic"
-        size="small"
-        [disabled]="bulkAction.inProgress"
-        (click)="bulkReprocess()">
-        {{ 'resource.reprocess' | translate }}
-      </pa-button>
-
-      @if ((allSelected | async) === true && ((totalCount | async) || 0) > selection.length && !bulkAction.inProgress) {
-        @if (allResourcesSelected) {
-          <pa-button
-            aspect="basic"
-            kind="primary"
-            (click)="clearSelection()">
-            {{ 'generic.clear-selection' | translate }}
-          </pa-button>
-        } @else {
-          <pa-button
-            aspect="basic"
-            kind="primary"
-            (click)="selectAllResources()">
-            {{ 'resource.select-all-failures' | translate: { count: totalCount | async } }}
-          </pa-button>
+        @if (bulkAction.inProgress) {
+          <div class="body-m">
+            {{ bulkAction.label | translate }}
+            {{ bulkAction.done }} / {{ bulkAction.total }}
+          </div>
         }
-      }
-      @if (bulkAction.inProgress) {
-        <div class="body-m">
-          {{ bulkAction.label | translate }}
-          {{ bulkAction.done }} / {{ bulkAction.total }}
-        </div>
-      }
-    </div>
-  }
+      </div>
+    }
+  </div>
 </div>
 
 <div
@@ -81,7 +54,7 @@
           <pa-checkbox
             [value]="allSelected | async"
             [paTooltip]="((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate"
-            [disabled]="bulkAction.inProgress || allResourcesSelected"
+            [disabled]="bulkAction.inProgress"
             (change)="toggleAll()"></pa-checkbox>
         </pa-table-cell>
       }
@@ -93,8 +66,7 @@
           <pa-table-cell>
             <pa-checkbox
               [value]="selection.includes(row.resource.id)"
-              (change)="toggleSelection(row.resource.id)"
-              [disabled]="allResourcesSelected"></pa-checkbox>
+              (change)="toggleSelection(row.resource.id)"></pa-checkbox>
           </pa-table-cell>
         }
 
@@ -140,7 +112,7 @@
 </div>
 <nsi-sticky-footer>
   <stf-table-pagination
-    [items]="(data | async).length"
+    [items]="(data | async)?.length || 0"
     [totalResources]="totalResources | async"
     [page]="page | async"
     [totalPages]="totalPages | async"

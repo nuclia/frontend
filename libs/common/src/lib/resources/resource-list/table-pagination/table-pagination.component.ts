@@ -33,7 +33,7 @@ export class TablePaginationComponent {
   @Input({ transform: numberAttribute }) items = 0;
   @Input({ transform: numberAttribute }) totalResources = 0;
   @Input({ transform: numberAttribute }) pageSize = 0;
-  @Input() pageSizes = [];
+  @Input() pageSizes: number[] = [];
 
   @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
   @Output() pageSizeChange: EventEmitter<number> = new EventEmitter<number>();
@@ -54,9 +54,5 @@ export class TablePaginationComponent {
 
   goTo(page: number) {
     this.pageChange.emit(page);
-  }
-
-  onPageSizeChange(value: string) {
-    this.pageSizeChange.emit(parseInt(value));
   }
 }

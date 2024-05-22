@@ -9,56 +9,52 @@
 <div
   class="resource-table-header"
   [style.--filters-header-height]="(headerHeight | async) + 'px'">
-  @if ((isAdminOrContrib | async) && selection.length > 0) {
-    <div class="resource-bulk-actions">
-      <span class="selected-count title-xxs">
-        {{ 'resource.selected_count' | translate: { num: selection.length } }}
-      </span>
+  <div class="header-container">
+    @if ((isAdminOrContrib | async) && selection.length > 0) {
+      <div class="resource-bulk-actions">
+        <span class="selected-count title-xxs">
+          {{ 'resource.selected_count' | translate: { num: selection.length } }}
+        </span>
 
-      @if ((allSelected | async) === false) {
+        <pa-button
+          data-cy="delete-selection"
+          kind="destructive"
+          aspect="basic"
+          size="small"
+          [disabled]="bulkAction.inProgress"
+          (click)="bulkDelete()">
+          {{ 'generic.delete' | translate }}
+        </pa-button>
         <pa-button
           aspect="basic"
           size="small"
           [disabled]="bulkAction.inProgress"
-          (click)="toggleAll()">
-          {{ 'generic.select_all' | translate }}
+          (click)="bulkReprocess()">
+          {{ 'resource.reprocess' | translate }}
         </pa-button>
-      }
-      <pa-button
-        data-cy="delete-selection"
-        kind="destructive"
-        aspect="basic"
-        size="small"
-        [disabled]="bulkAction.inProgress"
-        (click)="bulkDelete()">
-        {{ 'generic.delete' | translate }}
-      </pa-button>
-      <pa-button
-        aspect="basic"
-        size="small"
-        [disabled]="bulkAction.inProgress"
-        (click)="bulkReprocess()">
-        {{ 'resource.reprocess' | translate }}
-      </pa-button>
-      @if (
-        (allSelected | async) === true && ((totalCount | async) || 0) > selection.length * 1.5 && !bulkAction.inProgress
-      ) {
-        <pa-button
-          aspect="basic"
-          kind="destructive"
-          (click)="deleteAllResources()"
-          [disabled]="bulkAction.inProgress">
-          {{ 'resource.delete-all-pending' | translate: { count: totalCount | async } }}
-        </pa-button>
-      }
-      @if (bulkAction.inProgress) {
-        <div class="body-m">
-          {{ bulkAction.label | translate }}
-          {{ bulkAction.done }} / {{ bulkAction.total }}
-        </div>
-      }
-    </div>
-  }
+        @if (
+          (allSelected | async) === true &&
+          ((totalCount | async) || 0) > selection.length * 1.5 &&
+          !bulkAction.inProgress
+        ) {
+          <pa-button
+            aspect="basic"
+            kind="destructive"
+            size="small"
+            (click)="deleteAllResources()"
+            [disabled]="bulkAction.inProgress">
+            {{ 'resource.delete-all-pending' | translate: { count: totalCount | async } }}
+          </pa-button>
+        }
+        @if (bulkAction.inProgress) {
+          <div class="body-m">
+            {{ bulkAction.label | translate }}
+            {{ bulkAction.done }} / {{ bulkAction.total }}
+          </div>
+        }
+      </div>
+    }
+  </div>
 </div>
 
 <div
@@ -139,7 +135,7 @@
 </div>
 <nsi-sticky-footer>
   <stf-table-pagination
-    [items]="(data | async).length"
+    [items]="(data | async)?.length || 0"
     [totalResources]="totalResources | async"
     [page]="page | async"
     [totalPages]="totalPages | async"

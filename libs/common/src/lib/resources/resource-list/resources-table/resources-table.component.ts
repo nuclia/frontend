@@ -23,8 +23,9 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   );
   labelSets = this.resourceListService.labelSets;
   isReady = this.resourceListService.ready;
-  query = this.resourceListService.query;
-  isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
+  isFiltering = combineLatest([this.resourceListService.filters, this.resourceListService.query]).pipe(
+    map(([filters, query]) => filters.length > 0 || query !== ''),
+  );
 
   get initialColumns(): ColumnHeader[] {
     return [

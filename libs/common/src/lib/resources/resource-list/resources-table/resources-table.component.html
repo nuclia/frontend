@@ -10,94 +10,111 @@
   <div
     class="resource-table-header"
     [style.--filters-header-height]="(headerHeight | async) + 'px'">
-    @if ((isAdminOrContrib | async) && selection.length > 0) {
-      <div class="resource-bulk-actions">
-        <span class="selected-count title-xxs">
-          {{ 'resource.selected_count' | translate: { num: selection.length } }}
-        </span>
+    <div class="header-container">
+      @if ((isAdminOrContrib | async) && (selection.length > 0 || allResourcesSelected)) {
+        <div class="resource-bulk-actions">
+          <span class="selected-count title-xxs">
+            {{
+              'resource.selected_count'
+                | translate: { num: allResourcesSelected ? (totalCount | async) : selection.length }
+            }}
+          </span>
 
-        @if ((allSelected | async) === false) {
+          <pa-button
+            data-cy="delete-selection"
+            kind="destructive"
+            aspect="basic"
+            size="small"
+            [disabled]="bulkAction.inProgress"
+            (click)="bulkDelete()">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
           <pa-button
             aspect="basic"
             size="small"
             [disabled]="bulkAction.inProgress"
-            (click)="toggleAll()">
-            {{ 'generic.select_all' | translate }}
+            (click)="bulkReprocess()">
+            {{ 'resource.reprocess' | translate }}
           </pa-button>
-        }
-        <pa-button
-          data-cy="delete-selection"
-          kind="destructive"
-          aspect="basic"
+          @if (hasLabelSets | async) {
+            <app-label-dropdown
+              [labelSets]="labelSets | async"
+              (selectionChange)="updateLabelList($event)"
+              (close)="addLabelsToSelection()"
+              [disabled]="allResourcesSelected"
+              aspect="basic"
+              size="small">
+              {{ 'resource.add_labels' | translate }}
+            </app-label-dropdown>
+          }
+          @if (bulkAction.inProgress) {
+            <div class="body-m">
+              {{ bulkAction.label | translate }}
+              {{ bulkAction.done }} / {{ bulkAction.total }}
+            </div>
+          }
+        </div>
+      }
+
+      <div class="table-options">
+        <nsi-dropdown-button
           size="small"
-          [disabled]="bulkAction.inProgress"
-          (click)="bulkDelete()">
-          {{ 'generic.delete' | translate }}
-        </pa-button>
-        <pa-button
           aspect="basic"
-          size="small"
-          [disabled]="bulkAction.inProgress"
-          (click)="bulkReprocess()">
-          {{ 'resource.reprocess' | translate }}
-        </pa-button>
-        @if (hasLabelSets | async) {
-          <app-label-dropdown
-            [labelSets]="labelSets | async"
-            (selectionChange)="updateLabelList($event)"
-            (close)="addLabelsToSelection()"
-            aspect="basic"
-            size="small">
-            {{ 'resource.add_labels' | translate }}
-          </app-label-dropdown>
-        }
-        @if (
-          (allSelected | async) === true &&
-          ((totalCount | async) || 0) > selection.length * 1.5 &&
-          !bulkAction.inProgress &&
-          (isFiltering | async) === false &&
-          (query | async) === ''
-        ) {
+          data-cy="visible-columns-dropdown"
+          [popupRef]="visibleColumns">
+          {{ 'resource.visible_columns_dropdown' | translate }}
+        </nsi-dropdown-button>
+        <pa-dropdown #visibleColumns>
+          @for (column of optionalColumns; track column.id) {
+            <pa-option
+              [value]="column.id"
+              (selectOption)="selectColumn(column, $event)"
+              dontCloseOnSelect>
+              <pa-checkbox
+                [(value)]="column.visible"
+                (valueChange)="this.columnVisibilityUpdate.next($event)">
+                {{ column.label | translate }}
+              </pa-checkbox>
+            </pa-option>
+          }
+        </pa-dropdown>
+      </div>
+    </div>
+    @if (
+      allResourcesSelected ||
+      ((allSelected | async) === true &&
+        !bulkAction.inProgress &&
+        (isFiltering | async) === false &&
+        !status &&
+        (totalCount | async) > selection.length)
+    ) {
+      <div class="selection-bar">
+        <div class="title-xxs">
+          @if (allResourcesSelected) {
+            {{ 'resource.select.kb-resources-selected' | translate: { num: totalCount | async } }}
+          } @else {
+            {{ 'resource.select.page-resources-selected' | translate: { num: selection.length } }}
+          }
+        </div>
+        @if (allResourcesSelected) {
           <pa-button
             aspect="basic"
-            kind="destructive"
-            (click)="deleteAllResources()"
+            size="small"
+            (click)="clearSelection()"
             [disabled]="bulkAction.inProgress">
-            {{ 'resource.delete-all' | translate: { count: totalCount | async } }}
+            {{ 'generic.clear-selection' | translate }}
           </pa-button>
-        }
-        @if (bulkAction.inProgress) {
-          <div class="body-m">
-            {{ bulkAction.label | translate }}
-            {{ bulkAction.done }} / {{ bulkAction.total }}
-          </div>
+        } @else {
+          <pa-button
+            aspect="basic"
+            size="small"
+            (click)="selectAllResources()"
+            [disabled]="bulkAction.inProgress">
+            {{ 'resource.select.select-kb-resources' | translate: { num: totalCount | async } }}
+          </pa-button>
         }
       </div>
     }
-
-    <div class="table-options">
-      <nsi-dropdown-button
-        size="small"
-        aspect="basic"
-        data-cy="visible-columns-dropdown"
-        [popupRef]="visibleColumns">
-        {{ 'resource.visible_columns_dropdown' | translate }}
-      </nsi-dropdown-button>
-      <pa-dropdown #visibleColumns>
-        @for (column of optionalColumns; track column.id) {
-          <pa-option
-            [value]="column.id"
-            (selectOption)="selectColumn(column, $event)"
-            dontCloseOnSelect>
-            <pa-checkbox
-              [(value)]="column.visible"
-              (valueChange)="this.columnVisibilityUpdate.next($event)">
-              {{ column.label | translate }}
-            </pa-checkbox>
-          </pa-option>
-        }
-      </pa-dropdown>
-    </div>
   </div>
 
   <div
@@ -112,9 +129,9 @@
           <pa-table-cell header>
             <pa-checkbox
               data-cy="select-all"
-              [value]="allSelected | async"
+              [value]="(allSelected | async) || allResourcesSelected"
               [paTooltip]="((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate"
-              [disabled]="bulkAction.inProgress"
+              [disabled]="bulkAction.inProgress || allResourcesSelected"
               (change)="toggleAll()"></pa-checkbox>
           </pa-table-cell>
         }
@@ -125,8 +142,9 @@
           @if (isAdminOrContrib | async) {
             <pa-table-cell>
               <pa-checkbox
-                [value]="selection.includes(row.resource.id)"
-                (change)="toggleSelection(row.resource.id)"></pa-checkbox>
+                [value]="selection.includes(row.resource.id) || allResourcesSelected"
+                (change)="toggleSelection(row.resource.id)"
+                [disabled]="allResourcesSelected"></pa-checkbox>
             </pa-table-cell>
           }
           <pa-table-cell
@@ -211,7 +229,7 @@
   </div>
   <nsi-sticky-footer>
     <stf-table-pagination
-      [items]="(data | async).length"
+      [items]="(data | async)?.length || 0"
       [totalResources]="totalResources | async"
       [page]="page | async"
       [totalPages]="totalPages | async"

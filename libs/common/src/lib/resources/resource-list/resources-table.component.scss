@@ -4,13 +4,16 @@ $height-table-header: rhythm(8);
 $height-pagination: rhythm(9);
 
 .resource-table-header {
-  align-items: center;
   background-color: $color-light-stronger;
-  display: flex;
-  height: $height-table-header;
   position: sticky;
   top: var(--filters-header-height);
   z-index: 1;
+
+  .header-container {
+    align-items: center;
+    display: flex;
+    height: $height-table-header;
+  }
 
   .resource-bulk-actions {
     align-items: center;
@@ -26,6 +29,17 @@ $height-pagination: rhythm(9);
 
   .table-options {
     margin-left: auto;
+  }
+
+  .selection-bar {
+    align-items: center;
+    background-color: $color-neutral-lightest;
+    color: $color-neutral-regular;
+    display: flex;
+    gap: rhythm(1.5);
+    height: rhythm(5);
+    justify-content: center;
+    margin-bottom: rhythm(1.5);
   }
 }
 

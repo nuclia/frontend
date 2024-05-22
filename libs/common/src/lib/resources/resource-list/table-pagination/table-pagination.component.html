@@ -10,7 +10,7 @@
       </nsi-dropdown-button>
       <pa-dropdown #sizeDropdown>
         @for (size of pageSizes; track size) {
-          <pa-option (selectOption)="onPageSizeChange(size)">{{ size }}</pa-option>
+          <pa-option (selectOption)="this.pageSizeChange.emit(size)">{{ size }}</pa-option>
         }
       </pa-dropdown>
     </div>
