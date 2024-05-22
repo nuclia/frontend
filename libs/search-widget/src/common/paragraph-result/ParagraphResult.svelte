@@ -2,12 +2,12 @@
   import TimeIndicator from '../indicators/TimeIndicator.svelte';
   import { createEventDispatcher } from 'svelte';
   import PageIndicator from '../indicators/PageIndicator.svelte';
-  import type { ResultType } from '../../core';
+  import type { RankedParagraph, ResultType } from '../../core';
   import IconButton from '../button/IconButton.svelte';
   import { Search } from '@nuclia/core';
   import MarkdownRendering from '../../components/viewer/renderers/renderings/MarkdownRendering.svelte';
 
-  export let paragraph: Search.FindParagraph;
+  export let paragraph: RankedParagraph;
   export let resultType: ResultType;
   export let stack = false;
   export let ellipsis = false;

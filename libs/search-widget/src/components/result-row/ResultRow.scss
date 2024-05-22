@@ -57,6 +57,21 @@
       height: calc(var(--paragraph-height) * 4 + var(--paragraph-gap) * 3 + var(--expanded-paragraph-height));
     }
   }
+
+  .paragraph-container {
+    display: flex;
+    .number {
+      background-color: var(--color-primary-lightest);
+      flex-shrink: 0;
+      height: var(--rhythm-3);
+      line-height: var(--rhythm-3);
+      text-align: center;
+      width: var(--rhythm-3);
+      &.selected {
+        background-color: var(--color-primary-lighter);
+      }
+    }
+  }
 }
 
 @media (max-width: 647px) {
@@ -71,6 +86,9 @@
     --width-thumbnail: var(--rhythm-28);
 
     gap: var(--rhythm-2);
+    &.reversed {
+      flex-direction: row-reverse;
+    }
 
     .thumbnail-container {
       flex: 0 0 auto;

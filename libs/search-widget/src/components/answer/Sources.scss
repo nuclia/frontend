@@ -8,17 +8,6 @@
     display: flex;
     gap: var(--rhythm-0_5);
   }
-  .number {
-    background-color: var(--color-primary-lightest);
-    flex-shrink: 0;
-    height: var(--rhythm-3);
-    line-height: var(--rhythm-3);
-    text-align: center;
-    width: var(--rhythm-3);
-    &.selected {
-      background-color: var(--color-primary-lighter);
-    }
-  }
   .paragraph {
     width: calc(100% - var(--rhythm-3) - var(--rhythm-0_5));
   }

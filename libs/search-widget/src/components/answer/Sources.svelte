@@ -1,46 +1,9 @@
 <script lang="ts">
-  import type { ResourceField, Search } from '@nuclia/core';
-  import { combineLatest, of, switchMap, take } from 'rxjs';
-  import { ParagraphResult, Thumbnail } from '../../common';
-  import {
-    getNavigationUrl,
-    goToUrl,
-    navigateToFile,
-    navigateToLink,
-    trackingEngagement,
-    type TypedResult,
-    viewerData,
-    getThumbnailInfos,
-    hideThumbnails,
-  } from '../../core';
+  import { type TypedResult, hideThumbnails } from '../../core';
+  import { ResultRow } from '../result-row';
 
   export let sources: TypedResult[] = [];
   export let selected: number | undefined;
-
-  function clickOnSource(result: TypedResult, paragraph?: Search.FindParagraph) {
-    trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
-    combineLatest([navigateToFile, navigateToLink])
-      .pipe(
-        take(1),
-        switchMap(([toFile, toLink]) => {
-          if (result.field) {
-            const resourceField: ResourceField = { ...result.field, ...result.fieldData };
-            return toFile || toLink ? getNavigationUrl(toFile, toLink, result, resourceField) : of(undefined);
-          }
-          return of(undefined);
-        }),
-      )
-      .subscribe((url) => {
-        if (url) {
-          goToUrl(url, paragraph?.text);
-        } else {
-          viewerData.set({
-            result,
-            selectedParagraphIndex: 0,
-          });
-        }
-      });
-  }
 </script>
 
 <div class="sw-sources">
@@ -48,38 +11,14 @@
     <div
       class="source"
       class:with-thumbnail={!$hideThumbnails}>
-      <div
-        class="number body-m"
-        class:selected={selected === i}>{i + 1}</div>
       <div class="paragraph">
         {#if source.paragraphs?.[0]}
-          <ParagraphResult
-            resultType={source.resultType}
-            paragraph={source.paragraphs[0]}
-            disabled={!source.field}
-            ellipsis={true}
-            noIndicator
-            selected={selected === i}
-            on:open={() => clickOnSource(source, source.paragraphs?.[0])}>
-          </ParagraphResult>
+          <ResultRow
+            result={source}
+            selected={selected + 1}
+            isSource={true} />
         {/if}
-        <div class="resource-title body-s">{source.title}</div>
       </div>
-      {#if !$hideThumbnails}
-        <div
-          class="thumbnail-container"
-          role="link"
-          tabindex="0"
-          on:click={() => clickOnSource(source, source.paragraphs?.[0])}
-          on:keyup={(e) => {
-            if (e.key === 'Enter') clickOnSource(source, source.paragraphs?.[0]);
-          }}>
-          <Thumbnail
-            src={source.thumbnail}
-            fallback={getThumbnailInfos(source).fallback}
-            aspectRatio="5/4" />
-        </div>
-      {/if}
     </div>
   {/each}
 </div>
