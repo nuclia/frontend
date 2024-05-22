@@ -1,7 +1,14 @@
 import type { FieldFullId, Search, WidgetFeatures } from '@nuclia/core';
 
 export type ResultType = 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | 'conversation' | 'text';
-export interface TypedResult extends Search.FieldResult {
+
+type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
+export interface RankedParagraph extends Search.FindParagraph {
+  rank?: number;
+}
+export type RankedFieldResult = Overwrite<Search.FieldResult, { paragraphs: RankedParagraph[] }>;
+
+export interface TypedResult extends RankedFieldResult {
   resultType: ResultType;
   resultIcon: string;
 }

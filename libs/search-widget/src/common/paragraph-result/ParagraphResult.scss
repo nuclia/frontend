@@ -2,6 +2,7 @@
   --expander-width: var(--rhythm-3);
   align-items: start;
   display: flex;
+  max-width: calc(100% - var(--rhythm-1));
 
   .expander-button-container {
     transition: transform var(--transition-superfast);

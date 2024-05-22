@@ -25,6 +25,8 @@
   import { FieldMetadata } from './';
 
   export let result: TypedResult;
+  export let selected = 0;
+  export let isSource = false;
 
   let thumbnailLoaded = false;
   let showAllResults = false;
@@ -84,6 +86,7 @@
 
 <div
   class="sw-result-row"
+  class:reversed={isSource}
   data-nuclia-rid={result.id}>
   <div
     class="thumbnail-container"
@@ -150,13 +153,22 @@
         style:--paragraph-count={paragraphs.length}
         style:--expanded-paragraph-height={!!expandedParagraphHeight ? expandedParagraphHeight : undefined}>
         {#each paragraphs as paragraph, index}
-          <ParagraphResult
-            {paragraph}
-            resultType={result.resultType}
-            ellipsis={true}
-            minimized={isMobile}
-            on:open={() => clickOnResult(paragraph, index)}
-            on:paragraphHeight={(event) => (expandedParagraphHeight = event.detail)} />
+          <div class="paragraph-container">
+            {#if isSource && paragraph.rank}
+              <div
+                class="number body-m"
+                class:selected={selected === paragraph.rank}>
+                {paragraph.rank}
+              </div>
+            {/if}
+            <ParagraphResult
+              {paragraph}
+              resultType={result.resultType}
+              ellipsis={true}
+              minimized={isMobile}
+              on:open={() => clickOnResult(paragraph, index)}
+              on:paragraphHeight={(event) => (expandedParagraphHeight = event.detail)} />
+          </div>
         {/each}
       </ul>
 

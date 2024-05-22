@@ -17,6 +17,7 @@
     hasNotEnoughData,
     isCitationsEnabled,
     notEnoughDataMessage,
+    type RankedParagraph,
     type TypedResult,
   } from '../../core';
 
@@ -55,30 +56,35 @@
   }
 
   function getSourcesResults(resources: { [key: string]: Search.FindResource }, citations: Citations): TypedResult[] {
-    return Object.keys(citations)
-      .map((paragraphId) => {
-        const [resourceId, shortFieldType, fieldId] = paragraphId.split('/');
-        const resource = resources[resourceId];
-        const paragraph = resources[resourceId]?.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[paragraphId];
-        if (resource && paragraph) {
-          let field: FieldId;
-          if (shortFieldType === SHORT_FIELD_TYPE.generic) {
-            // we take the first other field that is not generic
-            field = getNonGenericField(resource.data || {});
-          } else {
-            field = {
-              field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
-              field_id: fieldId,
-            };
-          }
+    return Object.keys(citations).reduce((acc, paragraphId, index) => {
+      const [resourceId, shortFieldType, fieldId] = paragraphId.split('/');
+      const resource = resources[resourceId];
+      const paragraph = resources[resourceId]?.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[
+        paragraphId
+      ] as RankedParagraph;
+      paragraph.rank = index + 1;
+      if (resource && paragraph) {
+        let field: FieldId;
+        if (shortFieldType === SHORT_FIELD_TYPE.generic) {
+          // we take the first other field that is not generic
+          field = getNonGenericField(resource.data || {});
+        } else {
+          field = {
+            field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+            field_id: fieldId,
+          };
+        }
+        const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
+        if (!existing) {
           const fieldData = getFieldDataFromResource(resource, field);
           const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
-          return { ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] };
+          acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] });
+        } else {
+          existing.paragraphs!.push(paragraph);
         }
-        return undefined;
-      })
-      .filter((source) => !!source)
-      .map((source) => source as TypedResult);
+      }
+      return acc;
+    }, [] as TypedResult[]);
   }
 
   function onMouseEnter(event: Event) {

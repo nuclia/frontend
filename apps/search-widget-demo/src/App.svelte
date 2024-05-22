@@ -11,7 +11,7 @@
 
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
-  const askFeatures = 'answers,permalink,hideThumbnails,autocompleteFromNERs,relations';
+  const askFeatures = 'answers,permalink,autocompleteFromNERs,citations,relations';
   const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs';
   const allFeatures =
     'filter,suggestions,permalink,zrelations,zknowledgeGraph,znavigateToLink,znavigateToFile,answers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat';
