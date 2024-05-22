@@ -93,7 +93,7 @@ describe('ResourceListComponent', () => {
           filters: of([]),
           ready: of(true),
           isShardReady: new BehaviorSubject(false),
-          totalResources: of(1),
+          totalKbResources: of(1),
         }),
       ],
     }).compileComponents();

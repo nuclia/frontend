@@ -66,7 +66,8 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   sorting = this.resourceListService.sort;
   page = this.resourceListService.page;
   totalPages = this.resourceListService.totalPages;
-  totalResources = this.resourceListService.totalResources;
+  totalItems = this.resourceListService.totalItems;
+  totalKbResources = this.resourceListService.totalKbResources;
   pageSize = this.resourceListService.pageSize;
   pageSizes = PAGE_SIZES;
   headerHeight = this.resourceListService.headerHeight;

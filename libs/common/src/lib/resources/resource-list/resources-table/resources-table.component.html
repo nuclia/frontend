@@ -230,7 +230,8 @@
   <nsi-sticky-footer>
     <stf-table-pagination
       [items]="(data | async)?.length || 0"
-      [totalResources]="totalResources | async"
+      [totalItems]="totalItems | async"
+      [totalKbResources]="totalKbResources | async"
       [page]="page | async"
       [totalPages]="totalPages | async"
       (pageChange)="loadPage($event)"

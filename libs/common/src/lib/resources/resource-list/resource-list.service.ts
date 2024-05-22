@@ -65,6 +65,7 @@ export class ResourceListService {
   private _pageSize = new BehaviorSubject<number>(DEFAULT_PAGE_SIZE);
   pageSize = this._pageSize.asObservable();
   private _totalItems = new BehaviorSubject<number>(0);
+  totalItems = this._totalItems.asObservable();
   totalPages = combineLatest([this._totalItems, this.pageSize]).pipe(
     map(([totalItems, pageSize]) => Math.ceil(totalItems / pageSize)),
   );
@@ -76,7 +77,7 @@ export class ResourceListService {
     map((labelSets) => labelSets as LabelSets),
   );
 
-  totalResources = this.uploadService.statusCount.pipe(map((count) => count.processed + count.pending + count.error));
+  totalKbResources = this.uploadService.statusCount.pipe(map((count) => count.processed + count.pending + count.error));
 
   prevFilters = this._filters.pipe(
     startWith([]),

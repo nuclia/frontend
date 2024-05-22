@@ -1,5 +1,11 @@
 <div class="table-pagination">
-  <div class="body-m">{{ 'resource.pagination.showing' | translate: { items, total: totalResources } }}</div>
+  <div class="counter body-m">
+    {{ 'resource.pagination.counter' | translate: { from, to, total: totalItems } }}
+    @if (totalKbResources - totalItems; as hidden) {
+      <div>•</div>
+      <div class="filtered">{{ 'resource.pagination.filtered' | translate: { num: hidden } }}</div>
+    }
+  </div>
   <div class="page-size">
     <div class="body-m">{{ 'resource.pagination.rows-per-page' | translate }}</div>
     <div>

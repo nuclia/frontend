@@ -31,7 +31,8 @@ export class TablePaginationComponent {
   }
 
   @Input({ transform: numberAttribute }) items = 0;
-  @Input({ transform: numberAttribute }) totalResources = 0;
+  @Input({ transform: numberAttribute }) totalItems = 0;
+  @Input({ transform: numberAttribute }) totalKbResources = 0;
   @Input({ transform: numberAttribute }) pageSize = 0;
   @Input() pageSizes: number[] = [];
 
@@ -41,6 +42,14 @@ export class TablePaginationComponent {
   private _totalPages = 0;
   private _page = 0;
   pages: (number | '…')[] = [];
+
+  get from() {
+    return this.page * this.pageSize + 1;
+  }
+
+  get to() {
+    return Math.min(this.page * this.pageSize + this.pageSize, this.totalItems);
+  }
 
   generatePagination() {
     const visiblePages = [0, 1]
