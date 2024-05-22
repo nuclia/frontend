@@ -125,13 +125,11 @@ export class ResourceListComponent implements OnDestroy {
 
   applyDates() {
     this.dateDropdown?.close();
+    const start = this.dateForm.value.start;
+    const end = this.dateForm.value.end ? `${this.dateForm.value.end.slice(0, 10)}T23:59:59.000Z` : undefined;
     this.filterOptions.creation = {
-      start: this.dateForm.value.start
-        ? { filter: getFilterFromDate(this.dateForm.value.start, 'start'), date: this.dateForm.value.start }
-        : undefined,
-      end: this.dateForm.value.end
-        ? { filter: getFilterFromDate(this.dateForm.value.end, 'end'), date: this.dateForm.value.end }
-        : undefined,
+      start: start ? { filter: getFilterFromDate(start, 'start'), date: start } : undefined,
+      end: end ? { filter: getFilterFromDate(end, 'end'), date: end } : undefined,
     };
     this.onToggleFilter();
   }

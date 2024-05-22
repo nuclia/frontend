@@ -77,7 +77,7 @@
         </pa-table-cell>
 
         <pa-table-cell center>
-          <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
+          <span class="body-s">{{ row.resource.created | date: 'mediumDate' }}</span>
         </pa-table-cell>
         @if (isAdminOrContrib | async) {
           <pa-table-cell-menu>

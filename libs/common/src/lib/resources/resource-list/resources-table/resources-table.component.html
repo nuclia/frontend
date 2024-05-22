@@ -86,7 +86,7 @@
         !bulkAction.inProgress &&
         (isFiltering | async) === false &&
         !status &&
-        (totalCount | async) > selection.length)
+        ((totalCount | async) || 0) > selection.length)
     ) {
       <div class="selection-bar">
         <div class="title-xxs">
@@ -170,7 +170,7 @@
             }
             @if (visibleColumns.includes('created')) {
               <pa-table-cell center>
-                <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
+                <span class="body-s">{{ row.resource.created | date: 'mediumDate' }}</span>
               </pa-table-cell>
             }
             @if (visibleColumns.includes('language')) {

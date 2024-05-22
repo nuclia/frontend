@@ -166,19 +166,13 @@
         @if (filterOptions.creation.start) {
           <pa-chip-closeable (closed)="clearDate('start')">
             {{ 'resource.filter.from' | translate }}:
-            <pa-datetime
-              [datetime]="filterOptions.creation.start.date"
-              format="numerical"
-              dateOnly></pa-datetime>
+            <span>{{ filterOptions.creation.start.date | date: 'mediumDate' }}</span>
           </pa-chip-closeable>
         }
         @if (filterOptions.creation.end) {
           <pa-chip-closeable (closed)="clearDate('end')">
             {{ 'resource.filter.until' | translate }}:
-            <pa-datetime
-              [datetime]="filterOptions.creation.end.date"
-              format="numerical"
-              dateOnly></pa-datetime>
+            <span>{{ filterOptions.creation.end.date | date: 'mediumDate' }}</span>
           </pa-chip-closeable>
         }
         @if (showClearButton | async) {
