@@ -14,11 +14,13 @@
     @for (ner of entities; track ner.value) {
       <pa-table-row [last]="$last">
         <pa-table-cell>
-          <pa-checkbox
-            [disabled]="(isAdminOrContrib | async) === false"
-            [value]="selection.includes(ner.value)"
-            (change)="toggleSelection(ner.value)"
-            [noEllipsis]="true"></pa-checkbox>
+          @if (customNerEnabled | async) {
+            <pa-checkbox
+              [disabled]="(isAdminOrContrib | async) === false"
+              [value]="selection.includes(ner.value)"
+              (change)="toggleSelection(ner.value)"
+              [noEllipsis]="true"></pa-checkbox>
+          }
         </pa-table-cell>
         <pa-table-cell>
           {{ ner.value }}

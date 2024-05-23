@@ -109,6 +109,7 @@ export class EditResourceService {
     }),
   );
   isAdminOrContrib = this.features.isKbAdminOrContrib;
+  customNerEnabled = this.features.unstable.customNer;
 
   constructor(
     private sdk: SDKService,

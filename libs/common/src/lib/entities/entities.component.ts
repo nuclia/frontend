@@ -15,6 +15,7 @@ import { NerFamilyDialogComponent } from './ner-family-dialog/ner-family-dialog.
 import { ModalConfig, ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { AddNerDialogComponent } from './add-ner-dialog';
+import { FeaturesService } from '@flaps/core';
 
 @Component({
   selector: 'app-entities',
@@ -40,11 +41,13 @@ export class EntitiesComponent implements OnInit, OnDestroy {
   matchingEntities: Entity[] = [];
   nerQueryDebounce = new Subject<string>();
   nerQuery = '';
+  customNerEnabled = this.features.unstable.customNer;
 
   constructor(
     private translate: TranslateService,
     private nerService: NerService,
     private modalService: ModalService,
+    private features: FeaturesService,
     private cdr: ChangeDetectorRef,
   ) {}
 

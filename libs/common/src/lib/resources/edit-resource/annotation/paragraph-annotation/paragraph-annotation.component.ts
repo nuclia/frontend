@@ -8,7 +8,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { combineLatest, forkJoin, Observable, switchMap, take, tap } from 'rxjs';
+import { combineLatest, filter, forkJoin, Observable, switchMap, take, tap } from 'rxjs';
 import { Search } from '@nuclia/core';
 import { EntityGroup, ParagraphWithTextAndAnnotations } from '../../edit-resource.helpers';
 import { takeUntil } from 'rxjs/operators';
@@ -38,6 +38,7 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
   hasParagraph: Observable<boolean> = this.annotationService.hasParagraph;
   paragraphLoaded: Observable<boolean> = this.annotationService.paragraphLoaded;
   isAdminOrContrib = this.editResource.isAdminOrContrib;
+  customNerEnabled = this.editResource.customNerEnabled;
 
   entityFamilies: Observable<EntityGroup[]> = this.editResource.loadResourceEntities();
   selectedFamily: Observable<EntityGroup | null> = this.annotationService.selectedFamily;
@@ -166,40 +167,47 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
    * @param $event
    */
   onMouseUp($event: MouseEvent) {
-    const paragraph = $event.target as HTMLElement;
-    const family = this.annotationService.selectedFamilyValue;
-    const selection = window.getSelection();
-    if (paragraph && family && selection && !selection.isCollapsed) {
-      const paragraphRect = paragraph.getBoundingClientRect();
-      this.buttonPosition = {
-        top: `${$event.clientY - paragraphRect.bottom + 8}px`,
-        left: `${$event.clientX - paragraphRect.left}px`,
-      };
+    this.customNerEnabled
+      .pipe(
+        take(1),
+        filter((enabled) => enabled),
+      )
+      .subscribe(() => {
+        const paragraph = $event.target as HTMLElement;
+        const family = this.annotationService.selectedFamilyValue;
+        const selection = window.getSelection();
+        if (paragraph && family && selection && !selection.isCollapsed) {
+          const paragraphRect = paragraph.getBoundingClientRect();
+          this.buttonPosition = {
+            top: `${$event.clientY - paragraphRect.bottom + 8}px`,
+            left: `${$event.clientX - paragraphRect.left}px`,
+          };
 
-      const paragraphText = paragraph.textContent as string;
-      const selectionText = selection.toString();
-      const range = selection.getRangeAt(0);
-      let start = range.startOffset;
-      let end = range.endOffset;
-      if (selectionText !== paragraphText.slice(start, end)) {
-        const exactPosition = this.getExactPositionOfSelection(selectionText, range);
-        if (exactPosition) {
-          start = exactPosition.start;
-          end = exactPosition.end;
+          const paragraphText = paragraph.textContent as string;
+          const selectionText = selection.toString();
+          const range = selection.getRangeAt(0);
+          let start = range.startOffset;
+          let end = range.endOffset;
+          if (selectionText !== paragraphText.slice(start, end)) {
+            const exactPosition = this.getExactPositionOfSelection(selectionText, range);
+            if (exactPosition) {
+              start = exactPosition.start;
+              end = exactPosition.end;
+            }
+          }
+          const paragraphId = paragraph.getAttribute('paragraphId') as string;
+          this.userSelection = {
+            paragraphId,
+            start,
+            end,
+            klass: family.id,
+            token: selectionText.replace(/\s+/gi, ' ').trim(),
+            family: family.title,
+          };
+        } else {
+          this.cleanupSelection();
         }
-      }
-      const paragraphId = paragraph.getAttribute('paragraphId') as string;
-      this.userSelection = {
-        paragraphId,
-        start,
-        end,
-        klass: family.id,
-        token: selectionText.replace(/\s+/gi, ' ').trim(),
-        family: family.title,
-      };
-    } else {
-      this.cleanupSelection();
-    }
+      });
   }
 
   /**
@@ -245,11 +253,18 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
   }
 
   private setupMarkListener() {
-    if (this.paragraphsContainer) {
-      this.paragraphsContainer.nativeElement
-        .querySelectorAll('mark[family]')
-        .forEach((mark) => mark.addEventListener('click', this.clickOnAnnotation.bind(this)));
-    }
+    this.customNerEnabled
+      .pipe(
+        take(1),
+        filter((enabled) => enabled),
+      )
+      .subscribe(() => {
+        if (this.paragraphsContainer) {
+          this.paragraphsContainer.nativeElement
+            .querySelectorAll('mark[family]')
+            .forEach((mark) => mark.addEventListener('click', this.clickOnAnnotation.bind(this)));
+        }
+      });
   }
 
   private cleanUpMarkListener() {

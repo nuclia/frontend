@@ -6,15 +6,17 @@
 
   <div class="ner-container">
     <div class="ner-family-list-container">
-      <div class="ner-family-actions">
-        <pa-button
-          iconAndText
-          icon="circle-plus"
-          [disabled]="(isAdminOrContrib | async) === false"
-          (click)="addFamily()">
-          {{ 'ner-management.add-family' | translate }}
-        </pa-button>
-      </div>
+      @if (customNerEnabled | async) {
+        <div class="ner-family-actions">
+          <pa-button
+            iconAndText
+            icon="circle-plus"
+            [disabled]="(isAdminOrContrib | async) === false"
+            (click)="addFamily()">
+            {{ 'ner-management.add-family' | translate }}
+          </pa-button>
+        </div>
+      }
 
       <ul class="nsi-list ner-family-list">
         @for (family of nerFamilies | async; track family.key) {
@@ -29,7 +31,7 @@
               {{ family.title }}
             </div>
 
-            @if ((isAdminOrContrib | async) === true) {
+            @if ((isAdminOrContrib | async) === true && (customNerEnabled | async) === true) {
               <div class="action-buttons-container">
                 @if (family.custom) {
                   <pa-button
@@ -70,7 +72,7 @@
             </pa-input>
           </div>
 
-          @if ((isAdminOrContrib | async) === true) {
+          @if ((isAdminOrContrib | async) === true && (customNerEnabled | async) === true) {
             <div class="family-actions">
               <pa-button
                 aspect="basic"
