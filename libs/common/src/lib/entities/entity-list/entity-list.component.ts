@@ -12,6 +12,7 @@ import {
 import { Subject } from 'rxjs';
 import { Entity, NerFamily } from '../model';
 import { NerService } from '../ner.service';
+import { FeaturesService } from '@flaps/core';
 
 const COUNT_ROWS_DISPLAYED = 1000;
 
@@ -56,12 +57,14 @@ export class EntityListComponent implements OnDestroy {
 
   unsubscribeAll = new Subject<void>();
   isAdminOrContrib = this.entitiesService.isAdminOrContrib;
+  customNerEnabled = this.features.unstable.customNer;
 
   private _family: NerFamily | undefined;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private entitiesService: NerService,
+    private features: FeaturesService,
   ) {}
 
   ngOnDestroy(): void {
