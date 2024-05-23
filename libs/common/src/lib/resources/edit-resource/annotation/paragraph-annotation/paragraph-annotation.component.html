@@ -61,33 +61,36 @@
           </pa-infinite-scroll>
         </div>
 
-        <footer class="form-buttons with-right-panel">
-          <pa-button
-            kind="primary"
-            [disabled]="!isModified || isSaving"
-            (click)="save()">
-            {{ 'generic.save' | translate }}
-          </pa-button>
+        @if (customNerEnabled | async) {
+          <footer class="form-buttons with-right-panel">
+            <pa-button
+              kind="primary"
+              [disabled]="!isModified || isSaving"
+              (click)="save()">
+              {{ 'generic.save' | translate }}
+            </pa-button>
 
-          <pa-button
-            aspect="basic"
-            [disabled]="!isModified || isSaving"
-            (click)="cancel()">
-            {{ 'generic.cancel' | translate }}
-          </pa-button>
-        </footer>
+            <pa-button
+              aspect="basic"
+              [disabled]="!isModified || isSaving"
+              (click)="cancel()">
+              {{ 'generic.cancel' | translate }}
+            </pa-button>
+          </footer>
+        }
       </div>
 
       <div class="right-panel-container">
-        <div class="help">
-          <pa-icon
-            name="info"
-            size="small"></pa-icon>
-          <p>
-            {{ 'resource.field-annotation.help' | translate }}
-          </p>
-        </div>
-
+        @if (customNerEnabled | async) {
+          <div class="help">
+            <pa-icon
+              name="info"
+              size="small"></pa-icon>
+            <p>
+              {{ 'resource.field-annotation.help' | translate }}
+            </p>
+          </div>
+        }
         <div class="ner-families-container">
           @for (family of entityFamilies | async; track family.id) {
             <pa-expander

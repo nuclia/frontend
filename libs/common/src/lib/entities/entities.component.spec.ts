@@ -7,6 +7,7 @@ import { MockModule, MockProvider } from 'ng-mocks';
 import { ModalService, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { FeaturesService } from '@flaps/core';
 
 describe('EntitiesComponent', () => {
   let component: EntitiesComponent;
@@ -28,6 +29,9 @@ describe('EntitiesComponent', () => {
         MockProvider(NerService, {
           entities: of({}),
         }),
+        MockProvider(FeaturesService, {
+          unstable: { customNer: of(true) },
+        } as FeaturesService),
       ],
     }).compileComponents();
   });
