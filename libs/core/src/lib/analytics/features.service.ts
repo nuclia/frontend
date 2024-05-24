@@ -109,7 +109,12 @@ export class FeaturesService {
     ),
   };
 
-  private readonly authorizedModelsForAll = ['chatgpt-azure', 'chatgpt-azure-3', 'generative-multilingual-2023'];
+  private readonly authorizedModelsForAll = [
+    'chatgpt-azure',
+    'chatgpt-azure-3',
+    'chatgpt-azure-4-turbo',
+    'generative-multilingual-2023',
+  ];
   private readonly modelsWithLimitedMultilingualSupport = ['gemini-pro', 'gemini-1-5-pro', 'gemini-1-5-pro-vision'];
 
   getUnauthorizedGenerativeModels(learningConfiguration: LearningConfigurations): Observable<string[]> {
