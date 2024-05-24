@@ -117,32 +117,30 @@
           <Icon name={thumbnailInfo.fallback} />
         </div>
       {/if}
-      <div>
-        <h3
-          class="ellipsis title-m result-title"
-          class:no-thumbnail={$hideThumbnails}>
-          {#if $url}
-            <a
-              href={$url}
-              on:click|preventDefault={() => clickOnResult()}>
-              {result?.title}
-            </a>
-          {:else}
-            <span
-              tabindex="0"
-              on:click={() => clickOnResult()}
-              on:keyup={(e) => {
-                if (e.key === 'Enter') clickOnResult();
-              }}>
-              {result?.title}
-            </span>
-          {/if}
-        </h3>
-
-        {#if $displayMetadata}
-          <FieldMetadata {result} />
+      <h3
+        class="ellipsis title-m result-title"
+        class:no-thumbnail={$hideThumbnails}>
+        {#if $url}
+          <a
+            href={$url}
+            on:click|preventDefault={() => clickOnResult()}>
+            {result?.title}
+          </a>
+        {:else}
+          <span
+            tabindex="0"
+            on:click={() => clickOnResult()}
+            on:keyup={(e) => {
+              if (e.key === 'Enter') clickOnResult();
+            }}>
+            {result?.title}
+          </span>
         {/if}
-      </div>
+      </h3>
+
+      {#if $displayMetadata}
+        <FieldMetadata {result} />
+      {/if}
     </div>
 
     <div tabindex="-1">
