@@ -61,14 +61,14 @@
   .paragraph-container {
     display: flex;
     .number {
-      background-color: var(--color-primary-lightest);
+      background-color: var(--citation-number-background-color);
       flex-shrink: 0;
       height: var(--rhythm-3);
       line-height: var(--rhythm-3);
       text-align: center;
       width: var(--rhythm-3);
       &.selected {
-        background-color: var(--color-primary-lighter);
+        background-color: var(--citation-number-background-hover-color);
       }
     }
   }
