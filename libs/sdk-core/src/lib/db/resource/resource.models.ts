@@ -172,6 +172,9 @@ export interface FileExtractedData {
   field?: string;
   icon?: string;
   nested_position?: { [id: string]: NestedPosition };
+  nested_list_position?: {
+    [id: string]: { positions: NestedPosition[] };
+  };
 }
 
 export interface NestedPosition {

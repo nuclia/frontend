@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
+  BehaviorSubject,
   combineLatest,
   distinctUntilKeyChanged,
   filter,
@@ -14,12 +15,24 @@ import {
 } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphService } from '../paragraph.service';
-import { ConversationField, FIELD_TYPE, FieldId, IError, Paragraph, Resource, TextField } from '@nuclia/core';
+import {
+  ConversationField,
+  FIELD_TYPE,
+  FieldId,
+  FileFieldData,
+  IError,
+  Paragraph,
+  Resource,
+  TextField,
+  TypeParagraph,
+} from '@nuclia/core';
 import {
   getConversationParagraphs,
   getErrors,
   getParagraphs,
+  getParagraphsWithImages,
   ParagraphWithText,
+  ParagraphWithTextAndImage,
   Thumbnail,
 } from '../edit-resource.helpers';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
@@ -100,6 +113,36 @@ export class PreviewComponent implements OnInit, OnDestroy {
     switchMap((res) => this.editResource.getThumbnails(this.editResource.getThumbnailsAndImages(res))),
   );
   hasThumbnail: Observable<boolean> = this.thumbnails.pipe(map((thumbnails) => thumbnails.length > 0));
+
+  selectedTypes = new BehaviorSubject<TypeParagraph[]>([]);
+  paragraphTypes = this.paragraphs.pipe(
+    map((paragraphs) =>
+      paragraphs
+        .filter((paragraph) => paragraph.kind)
+        .map((paragraph) => paragraph.kind as TypeParagraph)
+        .reduce((kinds, kind) => (kinds.includes(kind) ? kinds : [...kinds, kind]), [] as TypeParagraph[]),
+    ),
+  );
+  paragraphsWithImages = combineLatest([this.paragraphs, this.fieldId, this.editResourceService.currentFieldData]).pipe(
+    map(([paragraphs, fieldType, fieldData]) => {
+      if (fieldType.field_type !== FIELD_TYPE.file) {
+        return paragraphs;
+      }
+      return getParagraphsWithImages(paragraphs, fieldData as FileFieldData);
+    }),
+    map((paragraphs) => {
+      return (paragraphs as ParagraphWithTextAndImage[]).map((paragraph) =>
+        paragraph.imagePath ? { ...paragraph, url: this.getGeneratedFileUrl(paragraph.imagePath) } : paragraph,
+      );
+    }),
+  );
+  filteredParagraphs = combineLatest([this.paragraphsWithImages, this.selectedTypes]).pipe(
+    map(([paragraphs, types]) =>
+      types.length === 0
+        ? paragraphs
+        : paragraphs.filter((paragraph) => paragraph.kind && types.includes(paragraph.kind)),
+    ),
+  );
 
   // TODO: can be removed once the "GET /resource/{rid}" endpoint returns the correct messages
   conversationField = combineLatest([this.fieldId, this.resource]).pipe(
@@ -194,5 +237,29 @@ export class PreviewComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         });
     }
+  }
+
+  onClickOption(type: TypeParagraph, event: MouseEvent | KeyboardEvent) {
+    if ((event.target as HTMLElement).tagName === 'LI') {
+      this.toggleType(type);
+    }
+  }
+
+  toggleType(type: TypeParagraph) {
+    this.selectedTypes.next(
+      this.selectedTypes.value.includes(type)
+        ? this.selectedTypes.value.filter((item) => item !== type)
+        : [...this.selectedTypes.value, type],
+    );
+  }
+
+  getGeneratedFileUrl(path: string) {
+    return this.sdk.currentKb.pipe(
+      switchMap((kb) =>
+        (kb.state === 'PUBLISHED' ? of('') : kb.getTempToken()).pipe(
+          map((token) => this.sdk.nuclia.rest.getFullUrl(path + (token ? `?eph-token=${token}` : ''))),
+        ),
+      ),
+    );
   }
 }

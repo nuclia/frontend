@@ -1,3 +1,9 @@
+# 1.15.1 (unreleased)
+
+### Improvements
+
+- Add `nested_list_position` in `FileExtractedData` model
+
 # 1.15.0 (2024-05-17)
 
 ### Breaking changes

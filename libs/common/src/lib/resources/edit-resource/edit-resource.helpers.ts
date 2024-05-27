@@ -3,6 +3,7 @@ import {
   deDuplicateList,
   EntityPositions,
   FieldId,
+  FileFieldData,
   getDataKeyFromFieldType,
   IError,
   Message,
@@ -33,6 +34,10 @@ export interface ParagraphWithTextAndClassifications extends ParagraphWithText {
 export interface ParagraphWithTextAndAnnotations extends ParagraphWithText {
   annotations: EntityAnnotation[];
   annotatedText: string;
+}
+
+export interface ParagraphWithTextAndImage extends ParagraphWithText {
+  imagePath?: string;
 }
 
 export interface EntityGroup {
@@ -325,3 +330,31 @@ export const getClassificationsPayload = (resource: Resource, labels: Classifica
     .map((label) => ({ ...label, cancelled_by_user: true }));
   return [...userClassifications, ...cancellations];
 };
+
+export function getParagraphsWithImages(
+  paragraphs: ParagraphWithText[],
+  fieldData: FileFieldData,
+): ParagraphWithTextAndImage[] {
+  const extractedData = (fieldData as FileFieldData)?.extracted?.file;
+  const imagePositions = Object.entries(extractedData?.nested_list_position || {}).filter(
+    ([filename]) => extractedData?.file_generated?.[filename]?.content_type?.startsWith('image/'),
+  );
+  if (imagePositions.length === 0) {
+    return paragraphs;
+  }
+  return paragraphs.reduce((acc, paragraph, index, all) => {
+    imagePositions.forEach(([filename, positions]) => {
+      positions.positions.forEach((position) => {
+        if ((position.start || 0) >= (paragraph.start || 0) && (position.start || 0) < (all[index + 1]?.start || 0)) {
+          acc.push({
+            text: '',
+            paragraphId: `${filename}-${position.start}-${position.end}`,
+            imagePath: extractedData?.file_generated?.[filename]?.uri || '',
+          });
+        }
+      });
+    });
+    acc.push(paragraph);
+    return acc;
+  }, [] as ParagraphWithTextAndImage[]);
+}

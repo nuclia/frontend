@@ -5,10 +5,35 @@
   display: flex;
   gap: rhythm(5);
 
+  .filters-container {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(1.5);
+    margin-bottom: rhythm(3);
+  }
+
   .paragraph-container {
     .title-m,
     .thumbnails-container {
       margin-bottom: rhythm(2);
+    }
+    .image {
+      border: 1px solid $color-neutral-light;
+      border-radius: $border-radius-default;
+      max-width: rhythm(28);
+      max-height: rhythm(24);
+    }
+    p.with-type {
+      display: flex;
+      gap: rhythm(1);
+      justify-content: space-between;
+      &:hover {
+        background-color: $color-neutral-lightest;
+      }
+      nsi-badge {
+        margin: rhythm(0.5);
+      }
     }
   }
 }
