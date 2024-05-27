@@ -123,7 +123,11 @@ export class PreviewComponent implements OnInit, OnDestroy {
         .reduce((kinds, kind) => (kinds.includes(kind) ? kinds : [...kinds, kind]), [] as TypeParagraph[]),
     ),
   );
-  paragraphsWithImages = combineLatest([this.paragraphs, this.fieldId, this.editResourceService.currentFieldData]).pipe(
+  paragraphsWithImages: Observable<(ParagraphWithTextAndImage & { url?: Observable<string> })[]> = combineLatest([
+    this.paragraphs,
+    this.fieldId,
+    this.editResourceService.currentFieldData,
+  ]).pipe(
     map(([paragraphs, fieldType, fieldData]) => {
       if (fieldType.field_type !== FIELD_TYPE.file) {
         return paragraphs;

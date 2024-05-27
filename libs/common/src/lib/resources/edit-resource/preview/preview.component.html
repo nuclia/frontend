@@ -15,7 +15,7 @@
     }
 
     @if (loaded) {
-      @if ((paragraphTypes | async)?.length > 1) {
+      @if (((paragraphTypes | async) || []).length > 1) {
         <div class="filters-container">
           <div>
             <nsi-dropdown-button
