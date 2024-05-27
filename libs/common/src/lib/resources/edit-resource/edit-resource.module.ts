@@ -15,6 +15,7 @@ import {
   SelectFirstFieldDirective,
 } from './';
 import {
+  BadgeComponent,
   DropdownButtonComponent,
   JsonViewerComponent,
   LabelsExpanderComponent,
@@ -51,6 +52,7 @@ import { PipesModule } from '@flaps/common';
     RouterModule,
     TranslateModule.forChild(),
 
+    BadgeComponent,
     DropdownButtonComponent,
     LabelModule,
     FileUploadModule,

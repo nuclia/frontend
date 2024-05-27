@@ -15,9 +15,62 @@
     }
 
     @if (loaded) {
-      @for (paragraph of paragraphs | async; track paragraph.paragraphId) {
+      @if (((paragraphTypes | async) || []).length > 1) {
+        <div class="filters-container">
+          <div>
+            <nsi-dropdown-button
+              aspect="basic"
+              freeWidth
+              [popupRef]="paragraphTypeDropdown">
+              {{ 'Paragraph type' | translate }}
+            </nsi-dropdown-button>
+            <pa-dropdown #paragraphTypeDropdown>
+              @for (type of paragraphTypes | async; track type) {
+                <pa-option
+                  [value]="type"
+                  (selectOption)="onClickOption(type, $event)"
+                  dontCloseOnSelect>
+                  <pa-checkbox
+                    [value]="((selectedTypes | async) || []).includes(type)"
+                    (change)="toggleType(type)">
+                    {{ type }}
+                  </pa-checkbox>
+                </pa-option>
+              }
+            </pa-dropdown>
+          </div>
+          @if (((selectedTypes | async)?.length || 0) > 0) {
+            <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
+          }
+          @for (type of selectedTypes | async; track type) {
+            <pa-chip-closeable (closed)="toggleType(type)">{{ type }}</pa-chip-closeable>
+          }
+        </div>
+      }
+
+      @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId) {
         <div class="paragraph-container">
-          <p>{{ paragraph.text }}</p>
+          @if (paragraph.url) {
+            <p>
+              <img
+                class="image"
+                [src]="paragraph.url | async" />
+            </p>
+          } @else if (paragraph.kind === 'TEXT') {
+            <p>{{ paragraph.text }}</p>
+          } @else {
+            <p class="with-type">
+              <span>{{ paragraph.text }}</span>
+              <span
+                [paTooltip]="
+                  paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION'
+                    ? 'resource.tooltip.' + paragraph.kind.toLowerCase()
+                    : undefined
+                ">
+                <nsi-badge kind="neutral">{{ paragraph.kind }}</nsi-badge>
+              </span>
+            </p>
+          }
         </div>
       }
 
