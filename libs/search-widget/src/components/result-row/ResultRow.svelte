@@ -33,11 +33,29 @@
 
   let thumbnailInfo = { fallback: '', isPlayable: false };
   let innerWidth = window.innerWidth;
-  let expandedParagraphHeight: string | undefined;
+  let toggledParagraphHeights: { [id: string]: number } = {};
+  let nonToggledParagraphCount = 4;
+  let toggledParagraphTotalHeight = 0;
   let metaKeyOn = false;
   $: isMobile = isMobileViewport(innerWidth);
   $: paragraphs = result.paragraphs || [];
   $: thumbnailInfo = getThumbnailInfos(result);
+  $: {
+    if (showAllResults) {
+      toggledParagraphTotalHeight = Object.values(toggledParagraphHeights).reduce((acc, height) => acc + height, 0);
+      nonToggledParagraphCount = paragraphs.length - Object.keys(toggledParagraphHeights).length;
+    } else {
+      const visibleParagraphs = paragraphs.slice(0, 4).map((p) => p.id);
+      const visibleToggledParagraphs = Object.entries(toggledParagraphHeights).filter(([id]) =>
+        visibleParagraphs.includes(id),
+      );
+      toggledParagraphTotalHeight = Object.values(visibleToggledParagraphs).reduce(
+        (acc, [id, height]) => acc + height,
+        0,
+      );
+      nonToggledParagraphCount = visibleParagraphs.length - visibleToggledParagraphs.length;
+    }
+  }
 
   const url = combineLatest([navigateToFile, navigateToLink]).pipe(
     take(1),
@@ -148,8 +166,8 @@
         class="sw-paragraphs-container"
         class:expanded={showAllResults}
         class:can-expand={paragraphs.length > 4}
-        style:--paragraph-count={paragraphs.length}
-        style:--expanded-paragraph-height={!!expandedParagraphHeight ? expandedParagraphHeight : undefined}>
+        style:--non-toggled-paragraph-count={nonToggledParagraphCount}
+        style:--toggled-paragraph-height={`${toggledParagraphTotalHeight}px`}>
         {#each paragraphs as paragraph, index}
           <div class="paragraph-container">
             {#if isSource && paragraph.rank}
@@ -165,7 +183,7 @@
               ellipsis={true}
               minimized={isMobile}
               on:open={() => clickOnResult(paragraph, index)}
-              on:paragraphHeight={(event) => (expandedParagraphHeight = event.detail)} />
+              on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
           </div>
         {/each}
       </ul>

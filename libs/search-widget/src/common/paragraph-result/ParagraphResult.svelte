@@ -35,7 +35,7 @@
 
   function toggleExpand() {
     expanded = !expanded;
-    setTimeout(() => dispatch('paragraphHeight', `${paragraphElement.offsetHeight}px`));
+    setTimeout(() => dispatch('paragraphHeight', paragraphElement.offsetHeight));
   }
 </script>
 

@@ -1,7 +1,7 @@
 .sw-result-row {
   --paragraph-height: var(--rhythm-4);
   --paragraph-gap: var(--rhythm-0_5);
-  --expanded-paragraph-height: 0px;
+  --toggled-paragraph-height: 0px;
   --title-icon-width: var(--rhythm-3);
 
   display: flex;
@@ -54,7 +54,10 @@
     transition: height var(--transition-fast);
 
     &.can-expand:not(.expanded) {
-      height: calc(var(--paragraph-height) * 4 + var(--paragraph-gap) * 3 + var(--expanded-paragraph-height));
+      height: calc(
+        var(--paragraph-height) * var(--non-toggled-paragraph-count) + var(--paragraph-gap) *
+          (var(--non-toggled-paragraph-count) - 1) + var(--toggled-paragraph-height)
+      );
     }
   }
 
