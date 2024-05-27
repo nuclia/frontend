@@ -132,6 +132,10 @@
   --search-bar-placeholder-color: var(--custom-search-bar-placeholder-color, var(--color-neutral-regular));
   --search-bar-max-width: var(--rhythm-56);
 
+  // citations
+  --citation-number-background-color: var(--color-primary-lightest);
+  --citation-number-background-hover-color: var(--color-primary-lighter);
+
   // Viewer
   --expander-header-height: var(--rhythm-5);
   --player-bar-height: var(--rhythm-5);
@@ -177,5 +181,7 @@
     --container-background-color: #1f2023;
     --filter-header-background-color: #2b2d30;
     --filter-header-background-active-color: #303136;
+    --citation-number-background-color: #303136;
+    --citation-number-background-hover-color: #1f2023;
   }
 }

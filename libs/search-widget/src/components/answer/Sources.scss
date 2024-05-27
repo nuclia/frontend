@@ -34,8 +34,5 @@
       flex: 0 0 auto;
       width: var(--rhythm-28);
     }
-    .source.with-thumbnail .paragraph {
-      width: calc(100% - var(--rhythm-3) - var(--rhythm-0_5) - var(--rhythm-28));
-    }
   }
 }
