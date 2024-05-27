@@ -345,7 +345,7 @@ export function getParagraphsWithImages(
   return paragraphs.reduce((acc, paragraph, index, all) => {
     imagePositions.forEach(([filename, positions]) => {
       positions.positions.forEach((position) => {
-        if ((position.start || 0) >= (paragraph.start || 0) && (position.start || 0) < (all[index + 1]?.start || 0)) {
+        if ((position.start || 0) > (all[index - 1]?.end || 0) && (position.start || 0) <= (paragraph.end || 0)) {
           acc.push({
             text: '',
             paragraphId: `${filename}-${position.start}-${position.end}`,
