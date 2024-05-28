@@ -65,4 +65,8 @@ section {
   pa-table-cell pa-toggle ::ng-deep .pa-toggle-context {
     gap: rhythm(1);
   }
+
+  pa-table-sortable-header ::ng-deep .pa-table-grid--header {
+    z-index: 1;
+  }
 }
