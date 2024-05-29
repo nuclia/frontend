@@ -66,7 +66,7 @@
 
   function renderingDone(node: HTMLElement) {
     if (!no_tracking) {
-      getTrackingDataAfterResultsReceived.pipe(take(1)).subscribe((tracking) => {
+      const tracking = getTrackingDataAfterResultsReceived.pipe(take(1)).subscribe((tracking) => {
         const tti = Date.now() - tracking.startTime;
         logEvent('search', {
           searchId: tracking.searchId || '',
@@ -74,6 +74,9 @@
         });
         trackingReset.set(undefined);
       });
+      return {
+        destroy: () => tracking.unsubscribe(),
+      }
     }
   }
 
