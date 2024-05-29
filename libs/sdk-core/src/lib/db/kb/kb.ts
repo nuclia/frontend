@@ -159,23 +159,10 @@ export class KnowledgeBox implements IKnowledgeBox {
   /**
    * Retrieves a resource from the Knowledge Box.
    *
-   * - `show` defines which properties are returned. Default takes all the following properties
-   * and may result in a large response:
-   *   - `ResourceProperties.BASIC`
-   *   - `ResourceProperties.ORIGIN`
-   *   - `ResourceProperties.RELATIONS`
-   *   - `ResourceProperties.VALUES`
-   *   - `ResourceProperties.EXTRACTED`
-   *   - `ResourceProperties.ERRORS`
-   *
-   *  - `extracted` defines which extracted data are returned
-   * (it is ignored if `ResourceProperties.EXTRACTED` is not in the returned properties). Default takes the following:
-   *   - `ExtractedDataTypes.TEXT`
-   *   - `ExtractedDataTypes.METADATA`
-   *   - `ExtractedDataTypes.LINK`
-   *   - `ExtractedDataTypes.FILE`
-   *
-   *   Other possible values are `ExtractedDataTypes.LARGE_METADATA` and `ExtractedDataTypes.VECTOR` (Note: they may significantly increase the response size).
+   * - `show` defines which properties are returned. Default retrieves only the basic metadata.
+   * - `extracted` defines which extracted data are returned.
+   *    It is ignored if `ResourceProperties.EXTRACTED` is not in the returned properties.
+   *    Default is an empty array.
    *
    * Example:
     ```ts
@@ -189,42 +176,57 @@ export class KnowledgeBox implements IKnowledgeBox {
    */
   getResource(
     uuid: string,
-    show: ResourceProperties[] = [
-      ResourceProperties.BASIC,
-      ResourceProperties.ORIGIN,
-      ResourceProperties.RELATIONS,
-      ResourceProperties.VALUES,
-      ResourceProperties.EXTRACTED,
-      ResourceProperties.ERRORS,
-    ],
-    extracted: ExtractedDataTypes[] = [
-      ExtractedDataTypes.TEXT,
-      ExtractedDataTypes.METADATA,
-      ExtractedDataTypes.LINK,
-      ExtractedDataTypes.FILE,
-    ],
+    show: ResourceProperties[] = [ResourceProperties.BASIC],
+    extracted: ExtractedDataTypes[] = [],
   ): Observable<Resource> {
     return this._getResource(uuid, undefined, show, extracted);
   }
 
+  /**
+   * Retrieves a resource from the Knowledge Box with all its attached metadata and content.
+   */
+  getFullResource(uuid: string): Observable<Resource> {
+    return this._getResource(
+      uuid,
+      undefined,
+      [
+        ResourceProperties.BASIC,
+        ResourceProperties.ORIGIN,
+        ResourceProperties.RELATIONS,
+        ResourceProperties.VALUES,
+        ResourceProperties.EXTRACTED,
+        ResourceProperties.ERRORS,
+        ResourceProperties.EXTRA,
+        ResourceProperties.SECURITY,
+      ],
+      [ExtractedDataTypes.TEXT, ExtractedDataTypes.METADATA, ExtractedDataTypes.LINK, ExtractedDataTypes.FILE],
+    );
+  }
+
   getResourceBySlug(
     slug: string,
-    show: ResourceProperties[] = [
-      ResourceProperties.BASIC,
-      ResourceProperties.ORIGIN,
-      ResourceProperties.RELATIONS,
-      ResourceProperties.VALUES,
-      ResourceProperties.EXTRACTED,
-      ResourceProperties.ERRORS,
-    ],
-    extracted: ExtractedDataTypes[] = [
-      ExtractedDataTypes.TEXT,
-      ExtractedDataTypes.METADATA,
-      ExtractedDataTypes.LINK,
-      ExtractedDataTypes.FILE,
-    ],
+    show: ResourceProperties[] = [ResourceProperties.BASIC],
+    extracted: ExtractedDataTypes[] = [],
   ): Observable<Resource> {
     return this._getResource(undefined, slug, show, extracted);
+  }
+
+  getFullResourceBySlug(slug: string): Observable<Resource> {
+    return this._getResource(
+      undefined,
+      slug,
+      [
+        ResourceProperties.BASIC,
+        ResourceProperties.ORIGIN,
+        ResourceProperties.RELATIONS,
+        ResourceProperties.VALUES,
+        ResourceProperties.EXTRACTED,
+        ResourceProperties.ERRORS,
+        ResourceProperties.EXTRA,
+        ResourceProperties.SECURITY,
+      ],
+      [ExtractedDataTypes.TEXT, ExtractedDataTypes.METADATA, ExtractedDataTypes.LINK, ExtractedDataTypes.FILE],
+    );
   }
 
   private _getResource(

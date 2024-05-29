@@ -242,14 +242,30 @@ export const getResource = (uid: string): Observable<Resource> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return merge(getResourceById(uid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN]), getResourceById(uid));
+  return merge(
+    getResourceById(uid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN]),
+    getResourceById(uid, [
+      ResourceProperties.BASIC,
+      ResourceProperties.BASIC,
+      ResourceProperties.ORIGIN,
+      ResourceProperties.RELATIONS,
+      ResourceProperties.VALUES,
+      ResourceProperties.EXTRACTED,
+      ResourceProperties.ERRORS,
+    ]),
+  );
 };
 
-export const getResourceById = (uid: string, show?: ResourceProperties[]): Observable<Resource> => {
+export const getResourceById = (uid: string, show: ResourceProperties[]): Observable<Resource> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.getResource(uid, show);
+  return nucliaApi.knowledgeBox.getResource(uid, show, [
+    ExtractedDataTypes.TEXT,
+    ExtractedDataTypes.METADATA,
+    ExtractedDataTypes.LINK,
+    ExtractedDataTypes.FILE,
+  ]);
 };
 
 export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): Observable<ResourceField> {

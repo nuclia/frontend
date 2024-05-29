@@ -125,18 +125,7 @@ export class EditResourceService {
   loadResource(resourceId: string): Observable<Resource> {
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) =>
-        kb.getResource(resourceId, [
-          ResourceProperties.BASIC,
-          ResourceProperties.ORIGIN,
-          ResourceProperties.RELATIONS,
-          ResourceProperties.VALUES,
-          ResourceProperties.EXTRACTED,
-          ResourceProperties.ERRORS,
-          ResourceProperties.EXTRA,
-          ResourceProperties.SECURITY,
-        ]),
-      ),
+      switchMap((kb) => kb.getFullResource(resourceId)),
       tap((resource) => this._resource.next(resource)),
     );
   }
