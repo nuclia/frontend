@@ -1,8 +1,13 @@
-# 1.15.1 (unreleased)
+# 1.16.0 (unreleased)
+
+### Breaking changes
+
+- `getResource` and `getResourceBySlug` only retrieve basic metadata by default.
 
 ### Improvements
 
 - Add `nested_list_position` in `FileExtractedData` model
+- `getFullResource` and `getFullResourceBySlug` methods to retrieve all the metadata of a resource
 
 # 1.15.0 (2024-05-17)
 

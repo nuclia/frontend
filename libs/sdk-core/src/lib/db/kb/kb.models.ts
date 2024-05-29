@@ -91,7 +91,11 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getResource(uuid: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
 
+  getFullResource(uuid: string): Observable<IResource>;
+
   getResourceBySlug(slug: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
+
+  getFullResourceBySlug(slug: string): Observable<IResource>;
 
   ask(
     query: string,

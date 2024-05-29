@@ -76,7 +76,7 @@ export class NuaActivityService {
       this._resourceNames[id] = this.sdk.currentKb.pipe(
         take(1),
         switchMap((kb) =>
-          kb.getResource(id, [ResourceProperties.BASIC], []).pipe(
+          kb.getResource(id).pipe(
             map((resource) => resource.title || id),
             catchError(() => of(id)), // In case the resource no longer exists
           ),
