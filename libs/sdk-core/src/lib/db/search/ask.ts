@@ -1,13 +1,9 @@
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
-import { Ask, Citations } from './ask.models';
-import { ChatOptions, Search } from './search.models';
+import { Ask } from './ask.models';
+import { ChatOptions } from './search.models';
 
 import { ResourceProperties } from '../db.models';
-import { chat } from './chat';
-
-const END_OF_SEARCH_RESULTS = '_END_';
-const START_OF_CITATIONS = '_CIT_';
 
 export function ask(
   nuclia: INuclia,
@@ -18,15 +14,6 @@ export function ask(
   features: Ask.Features[] = [Ask.Features.VECTORS, Ask.Features.PARAGRAPHS],
   options: ChatOptions = {},
 ): Observable<Ask.Answer | IErrorResponse> {
-  // TO BE REMOVED WHEN ask is fully deployed
-  if (nuclia.options.backend !== 'https://stashify.cloud/api') {
-    return chat(nuclia, kbid, path, query, context, features, options);
-  }
-  let sourcesLength = 0;
-  let sources: Search.FindResults | undefined;
-  let relations: Search.Relations | undefined;
-  let citations: Citations | undefined;
-  let text = '';
   const { synchronous, ...searchOptions } = options;
   const noEmptyValues = Object.entries(searchOptions).reduce((acc, [key, value]) => {
     if (value !== undefined && value !== null && value !== '') {

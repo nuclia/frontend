@@ -1,8 +1,9 @@
-# 1.16.0 (unreleased)
+# 1.16.0 (2024-05-29)
 
 ### Breaking changes
 
 - `getResource` and `getResourceBySlug` only retrieve basic metadata by default.
+- Remove `/chat` support (deprecated) and use `/ask` instead.
 
 ### Improvements
 
