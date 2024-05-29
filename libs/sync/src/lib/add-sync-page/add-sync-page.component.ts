@@ -211,7 +211,6 @@ export class AddSyncPageComponent implements OnInit {
   }
 
   updateSelection(selection: SyncItem[]) {
-    console.log('selection', selection);
     this.folderSelection = selection;
   }
 
