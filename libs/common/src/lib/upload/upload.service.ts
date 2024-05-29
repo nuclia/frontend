@@ -27,13 +27,13 @@ import {
   of,
   ReplaySubject,
   startWith,
+  Subject,
   switchMap,
   take,
-  throttleTime,
   timer,
   toArray,
 } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { debounceTime, tap } from 'rxjs/operators';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
@@ -71,6 +71,8 @@ export class UploadService {
   barDisabled = this._barDisabled.asObservable();
   statusCount = this._statusCount.asObservable();
   pendingResourcesLimitExceeded = this._statusCount.pipe(map((count) => count.pending > PENDING_RESOURCES_LIMIT));
+  private _refreshNeeded = new Subject<boolean>();
+  refreshNeeded = this._refreshNeeded.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -83,10 +85,10 @@ export class UploadService {
   ) {
     this.notificationsService.hasNewResourceOperationNotifications
       .pipe(
-        throttleTime(20000, undefined, { leading: true, trailing: true }),
+        debounceTime(2000),
         switchMap(() => this.updateStatusCount()),
       )
-      .subscribe();
+      .subscribe(() => this._refreshNeeded.next(true));
   }
 
   checkFileTypesAndConfirm(files: File[]): Observable<boolean> {

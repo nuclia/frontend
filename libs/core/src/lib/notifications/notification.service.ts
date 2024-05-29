@@ -13,7 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 export class NotificationService {
   private _currentKb?: WritableKnowledgeBox;
   private _notifications = new BehaviorSubject<NotificationUI[]>([]);
-  private _hasNewResourceOperationNotifications = new Subject<void>();
+  private _hasNewResourceOperationNotifications = new Subject<boolean>();
   notifications: Observable<NotificationUI[]> = this._notifications.asObservable();
   hasNewResourceOperationNotifications = this._hasNewResourceOperationNotifications.asObservable();
 
@@ -74,7 +74,7 @@ export class NotificationService {
                 });
                 this._notifications.next(newNotifications.concat(existingNotifications));
                 if (notifications.length > 0) {
-                  this._hasNewResourceOperationNotifications.next();
+                  this._hasNewResourceOperationNotifications.next(true);
                 }
               }),
             ),
