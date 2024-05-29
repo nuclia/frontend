@@ -13,11 +13,12 @@ import {
 import { BehaviorSubject, forkJoin, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { catchError, filter, map, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { SDKService } from '@flaps/core';
+import { SDKService, injectScript } from '@flaps/core';
 import { Ask, IErrorResponse, LearningConfiguration } from '@nuclia/core';
 import { GenerativeModelPipe, LineBreakFormatterPipe } from '../pipes';
 import { SisModalService } from '@nuclia/sistema';
 import { LoadingDialogComponent } from './loading-dialog';
+import DOMPurify from 'dompurify';
 
 const GENERATIVE_MODEL_KEY = 'generative_model';
 
@@ -61,7 +62,10 @@ export class PromptLabComponent implements OnInit {
   learningModels?: LearningConfiguration;
   loadingModal?: ModalRef;
   progress$ = new BehaviorSubject<number | null>(null);
-  results: { query: string; data: { prompt?: string; results: { model: string; answer: string }[] }[] }[] = [];
+  results: {
+    query: string;
+    data: { prompt?: string; results: { model: string; answer: string; rendered?: string }[] }[];
+  }[] = [];
   hasResults = new BehaviorSubject(false);
   queryCollapsed: { [query: string]: boolean } = {};
 
@@ -173,8 +177,14 @@ export class PromptLabComponent implements OnInit {
                 generative_model: model,
               })
               .pipe(
-                tap((answer) => {
-                  this._addResult({ model, query, prompt, result: answer });
+                switchMap((answer) => {
+                  if (answer.type === 'error') {
+                    return of(answer);
+                  } else {
+                    return this.renderMarkdown(answer.text).pipe(
+                      tap((rendered) => this._addResult({ model, query, prompt, result: answer, rendered })),
+                    );
+                  }
                 }),
                 catchError((error) => {
                   this._addResult({
@@ -197,6 +207,7 @@ export class PromptLabComponent implements OnInit {
     query: string;
     prompt: string | undefined;
     result: Ask.Answer | IErrorResponse | string;
+    rendered?: string;
   }) {
     const { model, query, prompt, result } = entry;
     const queryEntry = this.results.find((entry) => entry.query === query);
@@ -209,16 +220,23 @@ export class PromptLabComponent implements OnInit {
     if (queryEntry) {
       const promptEntry = queryEntry.data.find((entry) => entry.prompt === prompt);
       if (promptEntry) {
-        promptEntry.results.push({ model, answer });
+        promptEntry.results.push({ model, answer, rendered: entry.rendered });
       } else {
-        queryEntry.data.push({ prompt, results: [{ model, answer }] });
+        queryEntry.data.push({ prompt, results: [{ model, answer, rendered: entry.rendered }] });
       }
     } else {
-      this.results.push({ query, data: [{ prompt, results: [{ model, answer }] }] });
+      this.results.push({ query, data: [{ prompt, results: [{ model, answer, rendered: entry.rendered }] }] });
     }
 
     this.progress$.next((this.progress$.value || 0) + 1);
     this.updateResultsExpanderSize.next(result);
+  }
+
+  renderMarkdown(text: string): Observable<string> {
+    return injectScript('//cdn.jsdelivr.net/npm/marked/marked.min.js').pipe(
+      take(1),
+      map(() => DOMPurify.sanitize((window as any)['marked'].parse(text, { mangle: false, headerIds: false }))),
+    );
   }
 
   collapseAnswer(query: string) {

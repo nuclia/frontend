@@ -131,7 +131,7 @@
                         </div>
                         <div
                           class="body-s"
-                          [innerHTML]="result.answer | lineBreakFormatter"></div>
+                          [innerHTML]="result.rendered || result.answer"></div>
                       </div>
                     }
                   }
