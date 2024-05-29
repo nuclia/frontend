@@ -21,7 +21,7 @@ import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angu
 import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { catchError, map, of, scan, tap } from 'rxjs';
-import { ISyncEntity, SyncItem, SyncService } from '../logic';
+import { FileStatus, ISyncEntity, SyncItem, SyncService } from '../logic';
 
 @Component({
   selector: 'nsy-folder-selection',
@@ -104,6 +104,10 @@ export class FolderSelectionComponent implements OnInit {
           return of({ items: [], nextPage: undefined });
         }),
         scan((acc, current) => acc.concat(current.items), [] as SyncItem[]),
+        map((items) => [
+          { uuid: 'root', originalId: '/', title: '/', status: FileStatus.PENDING, metadata: { path: '/' } },
+          ...items,
+        ]),
         map((items) => items.sort((a, b) => a.metadata['path'].localeCompare(b.metadata['path']))),
         tap((items) => {
           this.totalFolders = items.length;
@@ -128,38 +132,40 @@ export class FolderSelectionComponent implements OnInit {
       expanded: true,
       children: {},
     };
-    items.forEach((item) => {
-      const path = item.metadata['path'];
-      const id = item.originalId;
-      const node: FolderTree = {
-        id,
-        title: item.title,
-        path,
-        displayPath: item.metadata['displayPath'] || path,
-        children: {},
-      };
-      if (path === '/') {
-        tree.children![id] = node;
-      } else {
-        let parent = tree;
-        let folder: FolderTree | undefined;
-        const parentIds = path.split('/').slice(1, -1);
-        parentIds.forEach((parentId) => {
-          if (parent) {
-            folder = parent.children?.[parentId];
-            if (folder) {
-              parent = folder;
-            }
-          }
-        });
-
-        if (!parent.children) {
-          parent.children = { [id]: node };
+    items
+      .filter((item) => item.uuid !== 'root')
+      .forEach((item) => {
+        const path = item.metadata['path'];
+        const id = item.originalId;
+        const node: FolderTree = {
+          id,
+          title: item.title,
+          path,
+          displayPath: item.metadata['displayPath'] || path,
+          children: {},
+        };
+        if (path === '/') {
+          tree.children![id] = node;
         } else {
-          parent.children[id] = node;
+          let parent = tree;
+          let folder: FolderTree | undefined;
+          const parentIds = path.split('/').slice(1, -1);
+          parentIds.forEach((parentId) => {
+            if (parent) {
+              folder = parent.children?.[parentId];
+              if (folder) {
+                parent = folder;
+              }
+            }
+          });
+
+          if (!parent.children) {
+            parent.children = { [id]: node };
+          } else {
+            parent.children[id] = node;
+          }
         }
-      }
-    });
+      });
     return tree;
   }
 }

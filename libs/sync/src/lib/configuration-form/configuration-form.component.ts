@@ -221,7 +221,8 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     }
     const config: ConfigurationForm = this.form.getRawValue();
     const title = config.name;
-    const id = `${this.kbId}-${title?.toLowerCase().replace(SLUGIFY, '-')}`;
+    const smallHash = (Math.random() + 1).toString(36).substring(7);
+    const id = `${this.kbId}-${title?.toLowerCase().replace(SLUGIFY, '-')}-${smallHash}`;
     const filters: Filters = {
       fileExtensions: config.filterResources.extensions
         ? {
