@@ -31,7 +31,9 @@ export class FeatureFlagService {
     map((account) => SparkMD5.hash(account.id)),
     shareReplay(1),
   );
-  private featuresData = fromFetch('https://nuclia.github.io/status/features-v2.json').pipe(
+  // features-v2.json stored in the GitHub /status repo is automatically pushed to the Nuclia CDN
+  // to avoid strict security policy issues in the customer side
+  private featuresData = fromFetch('https://cdn.nuclia.cloud/features/features-v2.json').pipe(
     switchMap((res) => res.json()),
     map((res) => res as FeaturesData),
     shareReplay(1),
