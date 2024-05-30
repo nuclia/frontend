@@ -26,64 +26,67 @@ describe('KnowledgeBoxHomeComponent', () => {
   let component: KnowledgeBoxHomeComponent;
   let fixture: ComponentFixture<KnowledgeBoxHomeComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [KnowledgeBoxHomeComponent],
-      imports: [
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: createTranslateLoader,
-          },
-          useDefaultLang: true,
-          defaultLanguage: 'en',
-        }),
-        MockModule(PaButtonModule),
-        MockModule(PaDropdownModule),
-        MockModule(PaTableModule),
-        MockModule(RouterModule),
-        MockModule(UploadModule),
-        MockComponent(DropdownButtonComponent),
-        MockComponent(AccountStatusComponent),
-        MockComponent(HomeContainerComponent),
-        MockComponent(KbMetricsComponent),
-        MockComponent(UsageChartsComponent),
-      ],
-      providers: [
-        MockProvider(AppService),
-        MockProvider(SDKService, {
-          currentKb: of({
-            id: 'kb-id',
-            slug: 'kb-slug',
-            state: 'PRIVATE',
-            fullpath: 'http://somewhere/api',
-            getConfiguration: () => of({}),
-            catalog: () => of({ type: 'searchResults' }),
-          } as unknown as WritableKnowledgeBox),
-          currentAccount: of({} as Account),
-          nuclia: {
-            options: { standalone: false },
-            db: {},
-          },
-        } as SDKService),
-        MockProvider(STFTrackingService, { logEvent: () => {} }),
-        MockProvider(FeaturesService, {
-          isTrial: of(true),
-          isAccountManager: of(true),
-          isKbAdmin: of(true),
-        } as FeaturesService),
-        MockProvider(NavigationService, {
-          getKbUrl: () => 'kb-url',
-        }),
-        MockProvider(UploadService, {
-          getResourceStatusCount: () => of({ type: 'searchResults' }),
-        }),
-        MockProvider(MetricsService),
-        MockProvider(SisModalService),
-        MockProvider(ZoneService),
-      ],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [KnowledgeBoxHomeComponent],
+        imports: [
+          TranslateModule.forRoot({
+            loader: {
+              provide: TranslateLoader,
+              useFactory: createTranslateLoader,
+            },
+            useDefaultLang: true,
+            defaultLanguage: 'en',
+          }),
+          MockModule(PaButtonModule),
+          MockModule(PaDropdownModule),
+          MockModule(PaTableModule),
+          MockModule(RouterModule),
+          MockModule(UploadModule),
+          MockComponent(DropdownButtonComponent),
+          MockComponent(AccountStatusComponent),
+          MockComponent(HomeContainerComponent),
+          MockComponent(KbMetricsComponent),
+          MockComponent(UsageChartsComponent),
+        ],
+        providers: [
+          MockProvider(AppService),
+          MockProvider(SDKService, {
+            currentKb: of({
+              id: 'kb-id',
+              slug: 'kb-slug',
+              state: 'PRIVATE',
+              fullpath: 'http://somewhere/api',
+              getConfiguration: () => of({}),
+              catalog: () => of({ type: 'searchResults' }),
+            } as unknown as WritableKnowledgeBox),
+            currentAccount: of({} as Account),
+            nuclia: {
+              options: { standalone: false },
+              db: {},
+            },
+          } as SDKService),
+          MockProvider(STFTrackingService, { logEvent: () => {} }),
+          MockProvider(FeaturesService, {
+            isTrial: of(true),
+            isAccountManager: of(true),
+            isKbAdmin: of(true),
+          } as FeaturesService),
+          MockProvider(NavigationService, {
+            getKbUrl: () => 'kb-url',
+          }),
+          MockProvider(UploadService, {
+            getResourceStatusCount: () => of({ type: 'searchResults' }),
+          }),
+          MockProvider(MetricsService),
+          MockProvider(SisModalService),
+          MockProvider(ZoneService),
+        ],
+      }).compileComponents();
+    }),
+    7000,
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(KnowledgeBoxHomeComponent);

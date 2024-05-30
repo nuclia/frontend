@@ -1,7 +1,9 @@
 <div class="ner-management page-spacing">
   <header>
     <h1 class="page-title">{{ 'ner-management.page-title' | translate }}</h1>
-    <p class="page-description">{{ 'ner-management.page-description' | translate }}</p>
+    @if (customNerEnabled | async) {
+      <p class="page-description">{{ 'ner-management.page-description' | translate }}</p>
+    }
   </header>
 
   <div class="ner-container">

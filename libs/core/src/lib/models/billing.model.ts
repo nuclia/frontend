@@ -2,7 +2,7 @@ import { AccountTypes } from '@nuclia/core';
 
 export type Currency = 'USD' | 'EUR';
 export type BillingUsageType =
-  | 'ai-tokens-used'
+  | 'nuclia-tokens'
 
   // Deprecated items
   | 'generative'

@@ -55,7 +55,7 @@ h2 {
 
   td {
     padding: rhythm(1.5) rhythm(2);
-    vertical-align: top;
+    vertical-align: center;
     &:first-child {
       font-weight: $font-weight-semi-bold;
     }
@@ -87,7 +87,6 @@ h2 {
     color: $color-neutral-regular;
     font-size: $font-size-body-s;
     font-weight: $font-weight-regular;
-    text-transform: lowercase;
   }
 
   .subscribed {
