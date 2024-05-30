@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { BehaviorSubject, combineLatest, distinctUntilKeyChanged, forkJoin, map, switchMap, take } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TrainingType } from '@nuclia/core';
-import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
+import { DEFAULT_FEATURES_LIST } from '../widgets/deprecated-widget-features';
 import { BackendConfigurationService, FeaturesService, SDKService } from '@flaps/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,11 +16,11 @@ const ENABLE_GENERATIVE_ANSWER = 'NUCLIA_ENABLE_GENERATIVE_ANSWER';
 
 @Component({
   selector: 'app-search',
-  templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss'],
+  templateUrl: './deprecated-search.component.html',
+  styleUrls: ['./deprecated-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchComponent implements OnInit, OnDestroy {
+export class DeprecatedSearchComponent implements OnInit, OnDestroy {
   enabledAnswer =
     !localStorage.getItem(ENABLE_GENERATIVE_ANSWER) || localStorage.getItem(ENABLE_GENERATIVE_ANSWER) === 'true';
   private _answerToggle = new BehaviorSubject<boolean>(this.enabledAnswer);

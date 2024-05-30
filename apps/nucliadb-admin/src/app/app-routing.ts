@@ -6,12 +6,12 @@ import {
   AiModelsComponent,
   BaseComponent,
   DashboardLayoutComponent,
+  DeprecatedSearchComponent,
   EmptyComponent,
   KbCreationComponent,
   KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   rootGuard,
-  SearchComponent,
   SelectAccountComponent,
   SelectKbComponent,
   selectKbGuard,
@@ -65,7 +65,7 @@ export const routes: Routes = [
               },
               {
                 path: 'search',
-                component: SearchComponent,
+                component: DeprecatedSearchComponent,
               },
               {
                 path: 'sync',
@@ -98,8 +98,8 @@ export const routes: Routes = [
                 path: 'widget-generator',
                 loadChildren: () =>
                   // eslint-disable-next-line @nx/enforce-module-boundaries
-                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.module').then(
-                    (m) => m.WidgetsModule,
+                  import('../../../../libs/common/src/lib/search-widget/widgets/deprecated-widgets.module').then(
+                    (m) => m.DeprecatedWidgetsModule,
                   ),
               },
             ],

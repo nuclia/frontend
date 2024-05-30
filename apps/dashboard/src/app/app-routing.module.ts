@@ -6,6 +6,7 @@ import {
   AiModelsComponent,
   BaseComponent,
   DashboardLayoutComponent,
+  DeprecatedSearchComponent,
   EmptyComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
@@ -13,7 +14,6 @@ import {
   PageNotFoundModule,
   PromptLabComponent,
   rootGuard,
-  SearchComponent,
   SelectAccountComponent,
   selectAccountGuard,
   SelectKbComponent,
@@ -87,7 +87,7 @@ const routes: Routes = [
               },
               {
                 path: 'search',
-                component: SearchComponent,
+                component: DeprecatedSearchComponent,
               },
               {
                 path: 'sync',
@@ -136,8 +136,8 @@ const routes: Routes = [
               {
                 path: 'widget-generator',
                 loadChildren: () =>
-                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.module').then(
-                    (m) => m.WidgetsModule,
+                  import('../../../../libs/common/src/lib/search-widget/widgets/deprecated-widgets.module').then(
+                    (m) => m.DeprecatedWidgetsModule,
                   ),
               },
               {

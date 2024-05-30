@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SearchComponent } from './search.component';
+import { DeprecatedSearchComponent } from './deprecated-search.component';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { BackendConfigurationService, FeaturesService, SDKService } from '@flaps/core';
 import { of } from 'rxjs';
@@ -11,12 +11,12 @@ import { ResourceViewerService } from '../../resources/resource-viewer.service';
 import { StandaloneService } from '@flaps/common';
 
 describe('SearchComponent', () => {
-  let component: SearchComponent;
-  let fixture: ComponentFixture<SearchComponent>;
+  let component: DeprecatedSearchComponent;
+  let fixture: ComponentFixture<DeprecatedSearchComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SearchComponent],
+      declarations: [DeprecatedSearchComponent],
       imports: [MockModule(PaTranslateModule), MockModule(PaTogglesModule)],
       providers: [
         MockProvider(SDKService, {
@@ -43,7 +43,7 @@ describe('SearchComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SearchComponent);
+    fixture = TestBed.createComponent(DeprecatedSearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

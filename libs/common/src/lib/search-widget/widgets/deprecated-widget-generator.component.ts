@@ -21,7 +21,7 @@ import {
   PresetType,
   WidgetConfiguration,
   WIDGETS_CONFIGURATION,
-} from './widget-generator.models';
+} from './deprecated-widget-generator.models';
 import { SisModalService } from '@nuclia/sistema';
 import { CopilotData, CopilotModalComponent } from './copilot/copilot-modal.component';
 import {
@@ -37,11 +37,11 @@ const EXPANDER_CREATION_TIME = 100;
 
 @Component({
   selector: 'app-widget-generator',
-  templateUrl: 'widget-generator.component.html',
-  styleUrls: ['./widget-generator.component.scss'],
+  templateUrl: 'deprecated-widget-generator.component.html',
+  styleUrls: ['./deprecated-widget-generator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetGeneratorComponent implements OnInit, OnDestroy {
+export class DeprecatedWidgetGeneratorComponent implements OnInit, OnDestroy {
   private localStorage = inject(LOCAL_STORAGE);
   private unsubscribeAll = new Subject<void>();
   private currentKbId = '';
