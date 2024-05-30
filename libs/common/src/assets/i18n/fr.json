@@ -242,7 +242,7 @@
 	"billing.success": "Inscription réussie",
 	"billing.support": "Soutien",
 	"billing.tier": "Étage",
-	"billing.token-help": "Nuclia Tokens sont les unités utilisées pour mesurer la consommation",
+	"billing.token-help": "Les Nuclia Tokens sont les unités utilisées pour mesurer la consommation",
 	"billing.trial.title": "{{days}} jours d'essai",
 	"billing.unit": "Unité",
 	"billing.unlimited": "Illimité",
