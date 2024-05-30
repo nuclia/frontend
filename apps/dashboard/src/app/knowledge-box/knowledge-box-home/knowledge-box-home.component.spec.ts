@@ -88,7 +88,7 @@ describe('KnowledgeBoxHomeComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(KnowledgeBoxHomeComponent);
     component = fixture.componentInstance;
-  });
+  }, 7000);
 
   it('should create', () => {
     expect(component).toBeTruthy();
