@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { AccountUsage, BillingService, BillingUsageType, InvoiceItem } from '@flaps/core';
 import { map, Observable, ReplaySubject } from 'rxjs';
-import { TOKENS_PER_REQUEST } from '../subscription.service';
 
 @Component({
   selector: 'app-usage-table',
@@ -32,7 +31,6 @@ export class UsageTableComponent {
     }),
   );
   isDeprecatedAccount = this.billing.isDeprecatedAccount;
-  tokensPerRequest = TOKENS_PER_REQUEST;
 
   constructor(private billing: BillingService) {}
 }

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
 import { combineLatest, of, shareReplay, Subject, switchMap, takeUntil } from 'rxjs';
 import { AccountService, BillingService, Currency } from '@flaps/core';
-import { SubscriptionService, TOKENS_PER_REQUEST } from '../subscription.service';
+import { SubscriptionService } from '../subscription.service';
 import { WINDOW } from '@ng-web-apis/common';
 import { AccountTypes } from '@nuclia/core';
 
@@ -24,7 +24,6 @@ export class SubscriptionsComponent implements OnDestroy {
         customer ? this.billing.getCurrency(customer.billing_details?.country || '') : of(null),
       ),
     );
-  tokensPerRequest = TOKENS_PER_REQUEST;
   // temporarily hiding the starter plan
   disableStarterPlan = true;
   tiers: AccountTypes[] = this.disableStarterPlan

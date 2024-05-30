@@ -44,22 +44,22 @@
       border
       columns="300px auto auto">
       <pa-table-header>
-        <pa-table-cell header>{{ 'billing.usage.consumables' | translate }}</pa-table-cell>
-        <pa-table-cell header>{{ 'billing.usage.requests' | translate }}</pa-table-cell>
+        <pa-table-cell header></pa-table-cell>
+        <pa-table-cell header>{{ 'billing.usage.consumption' | translate }}</pa-table-cell>
         <pa-table-cell header>
           <div class="cost">{{ 'billing.usage.cost' | translate }}</div>
         </pa-table-cell>
       </pa-table-header>
-      @if (usage.invoice_items['ai-tokens-used']; as aiTokens) {
+      @if (usage.invoice_items['nuclia-tokens']; as nucliaTokens) {
         <pa-table-row last>
-          <pa-table-cell>{{ 'billing.parameter.ai-tokens-used' | translate }}*</pa-table-cell>
-          <pa-table-cell>{{ aiTokens.current_usage / tokensPerRequest | number: '1.0-0' }}</pa-table-cell>
+          <pa-table-cell>Nuclia Tokens*</pa-table-cell>
+          <pa-table-cell>{{ nucliaTokens.current_usage | number: '1.0-0' }}</pa-table-cell>
           <pa-table-cell>
-            <div class="cost">{{ aiTokens.over_cost | currency: usage.currency }}</div>
+            <div class="cost">{{ nucliaTokens.over_cost | currency: usage.currency }}</div>
           </pa-table-cell>
         </pa-table-row>
       }
     </pa-table>
-    <div class="notes body-xs">* {{ 'billing.search-endpoints' | translate }}</div>
+    <div class="notes body-xs">* {{ 'billing.token-help' | translate }}</div>
   }
 }

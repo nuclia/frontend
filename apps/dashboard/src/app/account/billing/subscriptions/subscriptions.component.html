@@ -113,10 +113,13 @@
           }
         </tr>
         <tr>
-          <td>{{ 'billing.usage.consumption' | translate }}*</td>
+          <td>
+            <div>{{ 'billing.usage.consumption' | translate }}*</div>
+            <div class="unit">{{ 'billing.cost-per-token' | translate }}</div>
+          </td>
           @for (tier of tiers; track tier) {
-            @if ((prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price; as price) {
-              <td>{{ price * tokensPerRequest | currency: currency : 'symbol' : '1.2-6' }}</td>
+            @if ((prices | async)?.[tier]?.usage?.['nuclia-tokens']?.price; as price) {
+              <td>{{ price | currency: currency : 'symbol' : '1.2-6' }}</td>
             }
           }
         </tr>
@@ -207,7 +210,14 @@
         </ng-template>
       </table>
       <div class="notes">
-        <div>* {{ 'billing.search-endpoints' | translate }}</div>
+        <div>
+          * {{ 'billing.token-help' | translate }}
+          <a
+            href="https://nuclia.com/nuclia-token"
+            target="_blank">
+            {{ 'billing.learn-more' | translate }}
+          </a>
+        </div>
         <div>{{ 'billing.prices_vat' | translate }}</div>
       </div>
     }

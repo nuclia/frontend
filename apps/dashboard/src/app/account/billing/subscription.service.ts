@@ -3,8 +3,6 @@ import { BehaviorSubject } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
 import { Currency } from '@flaps/core';
 
-export const TOKENS_PER_REQUEST = 1000;
-
 @Injectable({ providedIn: 'root' })
 export class SubscriptionService {
   private _initialCurrency = new BehaviorSubject<Currency>('USD');
