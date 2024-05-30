@@ -180,7 +180,7 @@
 	"billing.invalid_address": "L'adresse fournie n'est pas valide",
 	"billing.invalid_card": "Nous n'avons pas pu valider votre carte.",
 	"billing.invalid_vat": "Veuillez ajouter le code du pays. par exemple : ESB000000N",
-	"billing.learn-more": "Savoir plus",
+	"billing.learn-more": "En savoir plus",
 	"billing.max-file-size": "Taille maximale du fichier",
 	"billing.modify-aws-subscription": "Si vous souhaitez modifier votre niveau d'abonnement ou vos informations de paiement, veuillez vous rendre sur votre",
 	"billing.month": "Mois",
