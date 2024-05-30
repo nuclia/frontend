@@ -1,5 +1,5 @@
 import { Nuclia } from '../core';
-import { mockFetch } from '../test.utils.spec';
+import { mockFetch, mockReadableStream } from '../test.utils.spec';
 import { Rest } from './rest';
 
 describe('Rest', () => {
@@ -104,6 +104,18 @@ describe('Rest', () => {
     rest.get('/account').subscribe(() => {
       expect(global.fetch).toHaveBeenCalledWith('http://here/v1/account', expect.anything());
       done();
+    });
+  });
+
+  it('should get readable stream', (done) => {
+    mockReadableStream(['abc', 'def'], { index: 0 });
+    rest.getStreamedResponse('/somepath', {}).subscribe((res) => {
+      if (!res.incomplete) {
+        const encoder = new TextEncoder();
+        const expected = encoder.encode('abcdef');
+        expect(res.data).toEqual(expected);
+        done();
+      }
     });
   });
 });
