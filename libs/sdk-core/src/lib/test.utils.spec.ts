@@ -28,6 +28,31 @@ export const multiMockFetch = (responses: { [url: string]: any }) => {
   }) as jest.Mock;
 };
 
+export const mockReadableStream = (rows: string[], counter: { index: number }) => {
+  const encoder = new TextEncoder();
+  global.fetch = jest.fn(() => {
+    return Promise.resolve({
+      status: 200,
+      ok: true,
+      headers: {
+        get: (key: string) => (key === 'X-Nuclia-Trace-Id' ? 'my-search-id' : ''),
+      },
+      body: {
+        getReader: () => ({
+          read: () => {
+            if (counter.index < rows.length) {
+              const result = encoder.encode(rows[counter.index]);
+              counter.index += 1;
+              return Promise.resolve({ done: false, value: result });
+            } else {
+              return Promise.resolve({ done: true });
+            }
+          },
+        }),
+      },
+    });
+  }) as jest.Mock;
+};
 export class LocalStorageMock {
   store: { [key: string]: string } = {};
 
