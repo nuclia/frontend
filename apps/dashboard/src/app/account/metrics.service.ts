@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { AccountService, BillingService, FeaturesService, Prices, SDKService } from '@flaps/core';
 import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
-import { format, isFuture, lastDayOfMonth, setDate, subDays, subMonths } from 'date-fns';
+import { format, isFuture, subDays, subMonths } from 'date-fns';
 import { AccountTypes, UsageMetric, UsagePoint, UsageType } from '@nuclia/core';
 
 export type ChartData = {
@@ -50,7 +50,7 @@ export class MetricsService {
     })),
     catchError(() => of(undefined)),
   );
-  currentMonth = { start: setDate(new Date(), 1), end: lastDayOfMonth(new Date()) };
+  last30Days = { start: subDays(new Date(), 30), end: new Date() };
   period = combineLatest([this.isTrial, this.isSubscribed]).pipe(
     switchMap(([isTrial, isSubscribed]) => {
       if (isTrial) {
@@ -58,10 +58,10 @@ export class MetricsService {
       } else if (isSubscribed) {
         return this.subscriptionPeriod;
       } else {
-        return of(this.currentMonth);
+        return of(this.last30Days);
       }
     }),
-    map((period) => period || this.currentMonth),
+    map((period) => period || this.last30Days),
   );
   prices: Observable<{ [key in AccountTypes]: Prices }> = this.billingService.getPrices().pipe(shareReplay());
 
