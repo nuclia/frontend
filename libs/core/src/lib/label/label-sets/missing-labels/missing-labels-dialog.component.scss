@@ -1,0 +1,24 @@
+@import 'apps/dashboard/src/variables';
+
+.expander-card-container {
+  border: 1px solid $color-neutral-light;
+  border-radius: $border-radius-chip;
+  margin: rhythm(2) 0;
+  padding: rhythm(1) rhythm(1.5);
+}
+
+.labels-detected {
+  margin-bottom: rhythm(3);
+}
+
+pa-expander-body {
+  padding-bottom: rhythm(2);
+}
+
+.actions {
+  justify-content: flex-end;
+}
+
+.full-width {
+  width: 100%;
+}
