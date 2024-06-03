@@ -1,0 +1,6 @@
+@import 'apps/dashboard/src/variables';
+
+.subsection-title {
+  @include title-m();
+  padding-top: rhythm(2);
+}

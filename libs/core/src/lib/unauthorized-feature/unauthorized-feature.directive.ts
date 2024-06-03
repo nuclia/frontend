@@ -44,6 +44,7 @@ export class UnauthorizedFeatureDirective {
   }
 
   @HostListener('click', ['$event']) onClick(event: MouseEvent) {
+    console.log(`click`);
     if (this.unauthorized) {
       event.preventDefault();
       event.stopPropagation();

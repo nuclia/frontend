@@ -1,0 +1,297 @@
+<form [formGroup]="form">
+  <div class="config-form-field">
+    <pa-toggle
+      formControlName="generateAnswer"
+      withBackground
+      spaceBetweenLabelAndToggle
+      (valueChange)="heightChanged.emit()">
+      <span class="toggle-label">
+        {{ 'search.configuration.generative-answer.generate-answer.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.generative-answer.generate-answer.toggle-description' | translate }}
+    </div>
+  </div>
+  @if (generateAnswerEnabled) {
+    <div class="config-form-field">
+      <div class="title-xs">{{ 'search.configuration.generative-answer.generative-model.title' | translate }}</div>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.generative-model.description' | translate }}
+      </div>
+      <div class="extra-fields visible">
+        <pa-select
+          formControlName="generativeModel"
+          [label]="'search.configuration.generative-answer.generative-model.select-label' | translate"
+          [options]="models"
+          (valueChange)="checkVisionModelSupport()"></pa-select>
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="usePrompt"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span
+          class="toggle-label"
+          [stfUnauthorizedFeature]="(userPromptsAuthorized | async) === false"
+          fullProBadge>
+          {{ 'search.configuration.generative-answer.prompt.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.prompt.toggle-description' | translate }}
+      </div>
+      @if (!!defaultPrompt) {
+        <blockquote [class.overridden]="overridingPrompt">
+          {{ defaultPrompt }}
+        </blockquote>
+      }
+      <div
+        class="extra-fields"
+        [class.visible]="usePromptEnabled">
+        <pa-textarea
+          formControlName="prompt"
+          resizable
+          rows="4"
+          (resizing)="heightChanged.emit()">
+          {{ 'search.configuration.generative-answer.prompt.textarea-label' | translate }}
+        </pa-textarea>
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="customizeNotEnoughDataMessage"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.generative-answer.customize-insufficient-data.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.customize-insufficient-data.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="customizeNotEnoughDataEnabled">
+        <pa-textarea
+          externalLabel
+          acceptHtmlTags
+          resizable
+          formControlName="notEnoughDataMessage"
+          (resizing)="heightChanged.emit()">
+          {{ 'search.configuration.generative-answer.customize-insufficient-data.input-label' | translate }}
+        </pa-textarea>
+      </div>
+    </div>
+    <div class="config-form-field">
+      <div class="title-xs">{{ 'search.configuration.generative-answer.select-results-used.title' | translate }}</div>
+      <pa-radio-group formControlName="generateAnswerWith">
+        <pa-radio value="semantic-and-full-text">
+          {{ 'search.configuration.generative-answer.select-results-used.semantic-and-full-text' | translate }}
+        </pa-radio>
+        <pa-radio value="only-semantic">
+          {{ 'search.configuration.generative-answer.select-results-used.semantic-only' | translate }}
+        </pa-radio>
+      </pa-radio-group>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="rephraseQuery"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.generative-answer.rephrase.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.rephrase.toggle-description' | translate }}
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="askSpecificResource"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.generative-answer.ask-resource.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.ask-resource.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="askSpecificResourceEnabled">
+        <pa-input
+          formControlName="specificResourceSlug"
+          pattern="[\w-]+"
+          [errorMessages]="{
+            pattern: 'search.configuration.generative-answer.ask-resource.pattern-error'
+          }">
+          {{ 'search.configuration.generative-answer.ask-resource.input-label' | translate }}
+        </pa-input>
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="limitTokenConsumption"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.generative-answer.limit-token.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.limit-token.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="limitTokenConsumptionEnabled">
+        <pa-input
+          externalLabel
+          formControlName="tokenConsumptionLimit"
+          type="number"></pa-input>
+      </div>
+    </div>
+    <ng-container formGroupName="ragStrategies">
+      <div class="subsection-title">
+        {{ 'search.configuration.generative-answer.rag-strategies.title' | translate }}
+      </div>
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="includeTextualHierarchy"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{ 'search.configuration.generative-answer.rag-strategies.textual-hierarchy.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.generative-answer.rag-strategies.textual-hierarchy.toggle-description' | translate }}
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="includeTextualHierarchyEnabled">
+          <pa-input
+            formControlName="additionalCharacters"
+            type="number">
+            {{ 'search.configuration.generative-answer.rag-strategies.textual-hierarchy.input-label' | translate }}
+          </pa-input>
+        </div>
+      </div>
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="entireResourceAsContext"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.toggle-description' | translate }}
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="entireResourceAsContextEnabled">
+          <div class="extra-label">
+            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.limit-resources' | translate }}
+          </div>
+          <pa-input
+            formControlName="maxNumberOfResources"
+            type="number">
+            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.input-label' | translate }}
+          </pa-input>
+        </div>
+      </div>
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="fieldsAsContext"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.toggle-description' | translate }}
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="fieldsAsContextEnabled">
+          <pa-textarea
+            formControlName="fieldIds"
+            resizable
+            rows="4"
+            (resizing)="heightChanged.emit()">
+            {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.textarea-label' | translate }}
+          </pa-textarea>
+          <nsi-info-card>
+            {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.info-box' | translate }}
+          </nsi-info-card>
+        </div>
+      </div>
+      @if (isRagImagesEnabled | async) {
+        <div class="config-form-field">
+          <pa-toggle
+            formControlName="includePageImages"
+            withBackground
+            spaceBetweenLabelAndToggle
+            (valueChange)="heightChanged.emit()">
+            <span class="toggle-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.page-images.toggle-label' | translate }}
+            </span>
+          </pa-toggle>
+          <div class="config-form-help">
+            {{ 'search.configuration.generative-answer.rag-strategies.page-images.toggle-description' | translate }}
+          </div>
+          <div
+            class="extra-fields"
+            [class.visible]="includePageImagesEnabled">
+            <div class="extra-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.page-images.limit-images' | translate }}
+            </div>
+            <pa-input
+              formControlName="maxNumberOfResources"
+              type="number">
+              {{ 'search.configuration.generative-answer.rag-strategies.page-images.input-label' | translate }}
+            </pa-input>
+          </div>
+          @if (notSupportingVision) {
+            <nsi-info-card type="warning">
+              {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
+            </nsi-info-card>
+          }
+        </div>
+        <div class="config-form-field">
+          <pa-toggle
+            formControlName="includeParagraphImages"
+            withBackground
+            spaceBetweenLabelAndToggle>
+            <span class="toggle-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.paragraph-images.toggle-label' | translate }}
+            </span>
+          </pa-toggle>
+          <div class="config-form-help">
+            {{
+              'search.configuration.generative-answer.rag-strategies.paragraph-images.toggle-description' | translate
+            }}
+          </div>
+          @if (notSupportingVision) {
+            <nsi-info-card type="warning">
+              {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
+            </nsi-info-card>
+          }
+        </div>
+      }
+    </ng-container>
+  }
+</form>

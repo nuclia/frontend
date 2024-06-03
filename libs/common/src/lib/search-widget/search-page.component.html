@@ -1,0 +1,70 @@
+<div class="search-page">
+  <div class="search-preview-container page-spacing">
+    <header>
+      <div class="page-title">
+        {{ 'search.title' | translate }}
+      </div>
+      <div class="page-description">{{ 'search.description' | translate }}</div>
+    </header>
+    <br />
+    <p>TODO: widget preview</p>
+  </div>
+  <div
+    #configurationContainer
+    class="search-configuration-container">
+    <section>
+      <div class="title-xs">{{ 'search.configuration.saved' | translate }}</div>
+      <pa-select
+        [formControl]="selectedConfig"
+        [options]="configurations"></pa-select>
+    </section>
+
+    <section>
+      <div class="title-xs">{{ 'search.configuration.current' | translate }}</div>
+      @if (initialised) {
+        <pa-accordion (toggleAccordion)="scrollOnTop()">
+          <pa-accordion-item
+            #searchBox
+            id="search-box"
+            [itemTitle]="'search.configuration.search-box.section-title' | translate"
+            [description]="'search.configuration.search-box.section-description' | translate">
+            <pa-accordion-item-body>
+              <stf-search-box-form
+                [config]="savedConfig.searchBox"
+                [relationsEnabled]="currentConfig?.resultDisplay.relations"
+                (configChanged)="updateSearchBoxConfig($event)"
+                (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+          <pa-accordion-item
+            #generativeAnswer
+            id="generative-answer"
+            [itemTitle]="'search.configuration.generative-answer.section-title' | translate"
+            [description]="'search.configuration.generative-answer.section-description' | translate">
+            <pa-accordion-item-body>
+              <stf-generative-answer-form
+                [config]="savedConfig.generativeAnswer"
+                [defaultPrompt]="defaultPromptFromSettings"
+                [models]="generativeModels"
+                (configChanged)="updateGenerativeAnswerConfig($event)"
+                (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+          <pa-accordion-item
+            #results
+            id="results"
+            [itemTitle]="'search.configuration.result-display.section-title' | translate"
+            [description]="'search.configuration.result-display.section-description' | translate">
+            <pa-accordion-item-body>
+              <stf-results-display-form
+                [config]="savedConfig.resultDisplay"
+                [useSynonymsEnabled]="currentConfig?.searchBox.useSynonyms"
+                (configChanged)="updateResultDisplayConfig($event)"
+                (heightChanged)="updateResultsHeight()"></stf-results-display-form>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        </pa-accordion>
+      }
+    </section>
+  </div>
+</div>

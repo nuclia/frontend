@@ -6,7 +6,6 @@ import {
   AiModelsComponent,
   BaseComponent,
   DashboardLayoutComponent,
-  DeprecatedSearchComponent,
   EmptyComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
@@ -14,6 +13,7 @@ import {
   PageNotFoundModule,
   PromptLabComponent,
   rootGuard,
+  SearchPageComponent,
   SelectAccountComponent,
   selectAccountGuard,
   SelectKbComponent,
@@ -87,7 +87,7 @@ const routes: Routes = [
               },
               {
                 path: 'search',
-                component: DeprecatedSearchComponent,
+                component: SearchPageComponent,
               },
               {
                 path: 'sync',

@@ -1,0 +1,33 @@
+@import 'apps/dashboard/src/variables';
+
+.search-page {
+  display: flex;
+
+  .search-preview-container {
+    flex: 1 0 auto;
+    height: calc(100vh - var(--app-topbar-height));
+    overflow-y: auto;
+  }
+
+  .search-configuration-container {
+    border-left: 1px solid $color-neutral-light;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
+    height: calc(100vh - var(--app-topbar-height));
+    overflow-y: auto;
+    padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom);
+    width: rhythm(60);
+
+    section {
+      & > .title-xs {
+        margin-bottom: rhythm(1.5);
+      }
+
+      & > .title-xs,
+      & > .body-s {
+        color: $color-neutral-regular;
+      }
+    }
+  }
+}
