@@ -1,9 +1,0 @@
-@import 'apps/dashboard/src/variables';
-
-.actions {
-  display: flex;
-  & > *:last-child {
-    margin-left: auto;
-  }
-  margin-top: rhythm(2);
-}

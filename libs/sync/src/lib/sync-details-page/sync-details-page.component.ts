@@ -11,7 +11,6 @@ import { FoldersTabComponent } from './folders-tab/folders-tab.component';
 import { ConfigurationFormComponent } from '../configuration-form';
 import { SDKService } from '@flaps/core';
 import { FolderSelectionComponent } from '../folder-selection';
-import { SyncModalComponent } from './sync-modal/sync-modal.component';
 
 @Component({
   selector: 'nsy-sync-details-page',
@@ -99,7 +98,12 @@ export class SyncDetailsPageComponent implements OnDestroy {
 
   triggerSync() {
     this.modalService
-      .openModal(SyncModalComponent)
+      .openConfirm({
+        title: this.translate.instant('sync.details.modal.title'),
+        description: 'sync.details.modal.description',
+        confirmLabel: 'sync.details.modal.sync-new',
+        cancelLabel: 'sync.details.modal.re-sync-all',
+      })
       .onClose.pipe(
         switchMap((res: { sync: 'new' | 'all' }) =>
           this.syncId.pipe(
