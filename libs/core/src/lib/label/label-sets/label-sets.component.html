@@ -60,6 +60,17 @@
         }
       }
     }
+    @if (isAdminOrContrib | async) {
+      <div class="missing-labels">
+        <div class="body-s">{{ 'label-set.missing.help' | translate }}</div>
+        <pa-button
+          aspect="basic"
+          (click)="checkMissingLabels()"
+          [disabled]="showingLabelSetForm | async">
+          {{ 'label-set.missing.check-missing' | translate }}
+        </pa-button>
+      </div>
+    }
   </div>
 
   <div class="label-set-form">

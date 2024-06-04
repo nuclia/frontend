@@ -33,4 +33,13 @@
     max-width: rhythm(56);
     min-width: rhythm(40);
   }
+
+  .missing-labels {
+    border-top: 1px solid $color-neutral-lighter;
+    color: $color-neutral-regular;
+    display: flex;
+    gap: rhythm(2);
+    margin-top: rhythm(3);
+    padding-top: rhythm(3);
+  }
 }

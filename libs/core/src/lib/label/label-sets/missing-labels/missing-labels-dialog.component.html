@@ -1,0 +1,46 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>
+    <div class="title-l">{{ 'label-set.missing.check-missing' | translate }}</div>
+  </pa-modal-title>
+  <pa-modal-content>
+    @if ((hasMissingLabels | async) === true) {
+      <div class="body-m labels-detected">{{ 'label-set.missing.labels-detected' | translate }}</div>
+    } @else if ((hasMissingLabels | async) === false) {
+      <div class="body-m">{{ 'label-set.missing.no-labels-detected' | translate }}</div>
+    }
+    @for (labelSet of missingLabels | async | keyvalue; track labelSet) {
+      <div class="expander-card-container">
+        <pa-expander card>
+          <pa-expander-header>
+            <div class="title-s">{{ labelSet.value.title }}</div>
+          </pa-expander-header>
+          <pa-expander-body>{{ labelSet.value.labels.join(', ') }}</pa-expander-body>
+        </pa-expander>
+      </div>
+    }
+  </pa-modal-content>
+
+  @if ((hasMissingLabels | async) === true) {
+    <pa-modal-footer class="actions">
+      <pa-button
+        aspect="basic"
+        (click)="modal.close()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        (click)="declare()">
+        {{ 'label-set.missing.declare' | translate }}
+      </pa-button>
+    </pa-modal-footer>
+  } @else if ((hasMissingLabels | async) === false) {
+    <pa-modal-footer>
+      <pa-button
+        class="full-width"
+        aspect="basic"
+        (click)="modal.close()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
+    </pa-modal-footer>
+  }
+</pa-modal-advanced>

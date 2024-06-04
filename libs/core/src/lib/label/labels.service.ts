@@ -87,10 +87,16 @@ export class LabelsService {
   }
 
   saveLabelSet(setId: string, labelSet: LabelSet) {
-    return this.sdk.currentKb.pipe(switchMap((kb) => kb.setLabelSet(setId, labelSet)));
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.setLabelSet(setId, labelSet)),
+    );
   }
 
   deleteLabelSet(setId: string) {
-    return this.sdk.currentKb.pipe(switchMap((kb) => kb.deleteLabelSet(setId)));
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.deleteLabelSet(setId)),
+    );
   }
 }
