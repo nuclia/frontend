@@ -1,0 +1,20 @@
+<pa-modal-dialog>
+  <pa-modal-title>
+    <h2>{{ 'sync.details.modal.title' | translate }}</h2>
+  </pa-modal-title>
+  <pa-modal-content>
+    <div>{{ 'sync.details.modal.description' | translate }}</div>
+    <div class="actions">
+      <pa-button
+        kind="primary"
+        (click)="sync()">
+        {{ 'sync.details.modal.sync-new' | translate }}
+      </pa-button>
+      <pa-button
+        kind="secondary"
+        (click)="resync()">
+        {{ 'sync.details.modal.re-sync-all' | translate }}
+      </pa-button>
+    </div>
+  </pa-modal-content>
+</pa-modal-dialog>
