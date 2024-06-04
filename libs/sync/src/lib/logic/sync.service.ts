@@ -396,9 +396,11 @@ export class SyncService {
     this._isServerDown.next(isDown);
   }
 
-  triggerSync(syncId: string): Observable<void> {
+  triggerSync(syncId: string, resyncAll = false): Observable<void> {
     this._isSyncing.next({ ...this._isSyncing.value, [syncId]: true });
-    return this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute/${syncId}`).pipe(
+    const resync = resyncAll ? this.updateSync(syncId, {}, true).pipe(map(() => true)) : of(true);
+    return resync.pipe(
+      switchMap(() => this.http.get<void>(`${this._syncServer.getValue().serverUrl}/sync/execute/${syncId}`)),
       tap(() => this._isSyncing.next({ ...this._isSyncing.value, [syncId]: false })),
       catchError((error) => {
         console.warn(`Trigger sync failed:`, error);

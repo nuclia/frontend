@@ -97,10 +97,20 @@ export class SyncDetailsPageComponent implements OnDestroy {
   }
 
   triggerSync() {
-    this.syncId
-      .pipe(
-        take(1),
-        switchMap((syncId) => this.syncService.triggerSync(syncId)),
+    this.modalService
+      .openConfirm({
+        title: this.translate.instant('sync.details.modal.title'),
+        description: 'sync.details.modal.description',
+        confirmLabel: 'sync.details.modal.sync-new',
+        cancelLabel: 'sync.details.modal.re-sync-all',
+      })
+      .onClose.pipe(
+        switchMap((res: { sync: 'new' | 'all' }) =>
+          this.syncId.pipe(
+            take(1),
+            switchMap((syncId) => this.syncService.triggerSync(syncId, res.sync === 'all')),
+          ),
+        ),
       )
       .subscribe({
         next: () => this.toaster.success('sync.details.toast.triggering-sync-success'),
