@@ -8,18 +8,15 @@
     } @else if ((hasMissingLabels | async) === false) {
       <div class="body-m">{{ 'label-set.missing.no-labels-detected' | translate }}</div>
     }
-    @if (hasMissingLabels | async) {
-      <div class="title-s">{{ 'label-set.type.resource-title' | translate }}</div>
-      @for (labelSet of missingLabels | async | keyvalue; track labelSet) {
-        <div class="expander-card-container">
-          <pa-expander card>
-            <pa-expander-header>
-              <div class="title-s">{{ labelSet.value.title }}</div>
-            </pa-expander-header>
-            <pa-expander-body>{{ labelSet.value.labels.join(', ') }}</pa-expander-body>
-          </pa-expander>
-        </div>
-      }
+    @for (labelSet of missingLabels | async | keyvalue; track labelSet) {
+      <div class="expander-card-container">
+        <pa-expander card>
+          <pa-expander-header>
+            <div class="title-s">{{ labelSet.value.title }}</div>
+          </pa-expander-header>
+          <pa-expander-body>{{ labelSet.value.labels.join(', ') }}</pa-expander-body>
+        </pa-expander>
+      </div>
     }
   </pa-modal-content>
 
