@@ -34,7 +34,7 @@ export class LabelSetsComponent {
   showingLabelSetForm = this.router.events.pipe(
     filter((event) => event instanceof NavigationEnd),
     startWith(() => true),
-    map(() => this.route.children.length > 0),
+    map(() => !this.router.url.endsWith('/label-sets')),
   );
 
   isAdminOrContrib = this.features.isKbAdminOrContrib;
