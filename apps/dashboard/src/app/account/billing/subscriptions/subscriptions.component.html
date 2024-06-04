@@ -120,6 +120,12 @@
           @for (tier of tiers; track tier) {
             @if ((prices | async)?.[tier]?.usage?.['nuclia-tokens']?.price; as price) {
               <td>{{ price | currency: currency : 'symbol' : '1.2-6' }}</td>
+            } @else if ((prices | async)?.[tier]?.usage?.['ai-tokens']?.price) {
+              <td>
+                {{
+                  (prices | async)?.[tier]?.usage?.['ai-tokens']?.price || 0 | currency: currency : 'symbol' : '1.2-6'
+                }}
+              </td>
             }
           }
         </tr>

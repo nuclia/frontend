@@ -5,6 +5,7 @@ export type BillingUsageType =
   | 'nuclia-tokens'
 
   // Deprecated items
+  | 'ai-tokens'
   | 'generative'
   | 'media'
   | 'searches'

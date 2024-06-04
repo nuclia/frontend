@@ -50,7 +50,7 @@
           <div class="cost">{{ 'billing.usage.cost' | translate }}</div>
         </pa-table-cell>
       </pa-table-header>
-      @if (usage.invoice_items['nuclia-tokens']; as nucliaTokens) {
+      @if (usage.invoice_items['nuclia-tokens'] || usage.invoice_items['ai-tokens']; as nucliaTokens) {
         <pa-table-row last>
           <pa-table-cell>Nuclia Tokens*</pa-table-cell>
           <pa-table-cell>{{ nucliaTokens.current_usage | number: '1.0-0' }}</pa-table-cell>
