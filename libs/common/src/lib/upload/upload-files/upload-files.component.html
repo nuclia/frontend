@@ -120,7 +120,8 @@
             <pa-radio
               *ngFor="let processing of processings | async"
               [value]="processing"
-              [help]="processing === 'none' ? undefined : 'upload.advanced.processing.' + processing + '.help'">
+              [help]="processing === 'none' ? undefined : 'upload.advanced.processing.' + processing + '.help'"
+              [stfBetaFeature]="processing !== 'none'">
               {{ 'upload.advanced.processing.' + processing + '.label' | translate }}
             </pa-radio>
           </pa-radio-group>

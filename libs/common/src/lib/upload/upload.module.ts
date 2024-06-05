@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FileUploadModule, LabelModule, STFPipesModule } from '@flaps/core';
+import { BetaFeatureDirective, FileUploadModule, LabelModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
 import { CsvSelectComponent } from './csv-select/csv-select.component';
@@ -57,6 +57,7 @@ import { UploadRoutingModule } from './upload-routing.module';
     UploadBarComponent,
     CsvSelectComponent,
     InfoCardComponent,
+    BetaFeatureDirective,
   ],
   declarations: [
     CreateLinkComponent,

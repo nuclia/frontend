@@ -4,6 +4,7 @@
 export * from './lib/analytics';
 export * from './lib/api';
 export * from './lib/auth';
+export * from './lib/beta-feature';
 export * from './lib/config';
 export * from './lib/parameters-table';
 export * from './lib/label';

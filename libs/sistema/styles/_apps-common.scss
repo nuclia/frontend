@@ -186,32 +186,39 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
     color: $color-dark-stronger;
   }
 }
+$badges: (unauthorized, beta);
+@each $badge in $badges {
+  pa-tab.#{$badge} {
+    align-items: center;
+    display: flex;
+  }
 
-pa-tab.unauthorized {
-  align-items: center;
-  display: flex;
+  pa-radio.#{$badge},
+  pa-checkbox.#{$badge},
+  pa-toggle.#{$badge} {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    justify-content: space-between;
 
+    .pa-toggle {
+      flex: 1 1 auto;
+    }
+  }
+
+  pa-toggle.#{$badge} {
+    padding-right: rhythm(1);
+  }
+}
+
+pa-tab.unauthorized{
   li {
     cursor: not-allowed;
     pointer-events: none;
     opacity: 0.5;
   }
 }
-pa-radio.unauthorized,
-pa-checkbox.unauthorized,
-pa-toggle.unauthorized {
-  align-items: center;
-  display: flex;
-  gap: rhythm(1);
-  justify-content: space-between;
 
-  .pa-toggle {
-    flex: 1 0 auto;
-  }
-}
-pa-toggle.unauthorized {
-  padding-right: rhythm(1);
-}
 pa-option pa-icon {
   display: flex;
 }
