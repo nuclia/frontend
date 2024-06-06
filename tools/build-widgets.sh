@@ -21,6 +21,12 @@ vite build -c=libs/search-widget/vite.config.mjs -- chat-widget nuclia-chat-widg
 mv dist/libs/chat-widget/style.css dist/libs/search-widget/nuclia-chat-widget.css
 cp dist/libs/chat-widget/* dist/libs/search-widget
 
+echo "Build global widget"
+vite build -c=libs/global-widget/vite.config.mjs -- global-widget nuclia-global-widget
+mv dist/libs/global-widget/style.css dist/libs/global-widget/nuclia-chat-widget.css
+cp dist/libs/global-widget/* dist/libs/search-widget
+
 echo "Post build cleanup"
 rm -rf dist/libs/viewer-widget
 rm -rf dist/libs/chat-widget
+rm -rf dist/libs/global-widget

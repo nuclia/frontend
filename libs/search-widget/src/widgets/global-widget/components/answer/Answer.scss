@@ -1,0 +1,28 @@
+.sw-answer {
+  .feedback {
+    padding-top: var(--rhythm-0_5);
+  }
+  .answer-container {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-1);
+    margin-top: var(--rhythm-1);
+
+    .text {
+      flex: 1 1 auto;
+    }
+  }
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rhythm-2);
+    width: 100%;
+  }
+}
+@media (min-width: 599px) {
+  .sw-answer {
+    .feedback {
+      display: none;
+    }
+  }
+}
