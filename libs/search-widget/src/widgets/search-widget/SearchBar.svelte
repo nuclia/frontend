@@ -249,7 +249,7 @@
   data-version="__NUCLIA_DEV_VERSION__">
   {#if $ready && !!svgSprite}
     <div class="search-box">
-      <SearchInput />
+      <SearchInput on:resetQuery={() => dispatchCustomEvent('resetQuery', '')}/>
 
       {#if $entityRelations.length > 0}
         <IconButton
