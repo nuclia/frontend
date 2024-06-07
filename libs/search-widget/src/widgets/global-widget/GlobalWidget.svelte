@@ -9,7 +9,7 @@
   import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { _, setLang } from '../../core/i18n';
   import { setupTriggerSearch } from '../../core/search-bar';
-  import globalCss from './components/_global.scss?inline';
+  import globalCss from '../../common/_global.scss?inline';
   import { isAnswerEnabled, widgetFeatures, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
