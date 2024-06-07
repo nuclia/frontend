@@ -32,22 +32,36 @@
     } @else {
       <div class="title-xs">{{ 'user.kb.creation-form.models.external-model.label' | translate }}</div>
       <div class="models-container">
-        <pa-radio-group formControlName="semanticModel">
+        <pa-radio-group
+          formControlName="semanticModel"
+          noBackground>
           @if (isGeckoModelEnabled | async) {
-            <pa-radio value="GECKO_MULTI">
-              {{ 'user.kb.creation-form.models.external-model.options.gecko' | translate }}
-            </pa-radio>
+            <div class="beta-option">
+              <pa-radio value="GECKO_MULTI">
+                {{ 'user.kb.creation-form.models.external-model.options.gecko' | translate }}
+              </pa-radio>
+              <nsi-badge kind="tertiary">BETA</nsi-badge>
+            </div>
           }
           @if (isExtraSemanticModelEnabled | async) {
-            <pa-radio value="MULTILINGUAL_EXTRA">MULTILINGUAL_EXTRA (testing on stage only)</pa-radio>
+            <div class="beta-option">
+              <pa-radio value="MULTILINGUAL_EXTRA">MULTILINGUAL_EXTRA (testing on stage only)</pa-radio>
+              <nsi-badge kind="tertiary">BETA</nsi-badge>
+            </div>
           }
           @if (areOpenAIModelsEnabled | async) {
-            <pa-radio value="OPENAI_3_SMALL">
-              {{ 'user.kb.creation-form.models.external-model.options.openai-small' | translate }}
-            </pa-radio>
-            <pa-radio value="OPENAI_3_LARGE">
-              {{ 'user.kb.creation-form.models.external-model.options.openai-large' | translate }}
-            </pa-radio>
+            <div class="beta-option">
+              <pa-radio value="OPENAI_3_SMALL">
+                {{ 'user.kb.creation-form.models.external-model.options.openai-small' | translate }}
+              </pa-radio>
+              <nsi-badge kind="tertiary">BETA</nsi-badge>
+            </div>
+            <div class="beta-option">
+              <pa-radio value="OPENAI_3_LARGE">
+                {{ 'user.kb.creation-form.models.external-model.options.openai-large' | translate }}
+              </pa-radio>
+              <nsi-badge kind="tertiary">BETA</nsi-badge>
+            </div>
           }
         </pa-radio-group>
       </div>

@@ -105,10 +105,10 @@ export class SyncDetailsPageComponent implements OnDestroy {
         cancelLabel: 'sync.details.modal.re-sync-all',
       })
       .onClose.pipe(
-        switchMap((res: { sync: 'new' | 'all' }) =>
+        switchMap((syncNew: boolean) =>
           this.syncId.pipe(
             take(1),
-            switchMap((syncId) => this.syncService.triggerSync(syncId, res.sync === 'all')),
+            switchMap((syncId) => this.syncService.triggerSync(syncId, !syncNew)),
           ),
         ),
       )

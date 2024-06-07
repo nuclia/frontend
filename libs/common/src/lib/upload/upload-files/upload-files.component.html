@@ -116,13 +116,21 @@
           <pa-radio-group
             name="processing"
             id="processing-radio-group"
-            [(value)]="processing">
-            <pa-radio
-              *ngFor="let processing of processings | async"
-              [value]="processing"
-              [help]="processing === 'none' ? undefined : 'upload.advanced.processing.' + processing + '.help'">
-              {{ 'upload.advanced.processing.' + processing + '.label' | translate }}
+            [(value)]="processing"
+            noBackground>
+            <pa-radio value="none">
+              {{ 'upload.advanced.processing.none.label' | translate }}
             </pa-radio>
+            @for (processing of processings | async; track processing) {
+              <div [class.beta-option]="processing !== 'none'">
+                <pa-radio
+                  [value]="processing"
+                  [help]="'upload.advanced.processing.' + processing + '.help'">
+                  {{ 'upload.advanced.processing.' + processing + '.label' | translate }}
+                </pa-radio>
+                <nsi-badge kind="tertiary">BETA</nsi-badge>
+              </div>
+            }
           </pa-radio-group>
         </div>
       </pa-expander-body>

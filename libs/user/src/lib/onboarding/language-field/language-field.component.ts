@@ -16,6 +16,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { FeaturesService } from '@flaps/core';
+import { BadgeComponent } from '@nuclia/sistema';
 
 const LANGUAGES = [
   'arabic',
@@ -42,7 +43,7 @@ export interface EmbeddingModelForm {
 @Component({
   selector: 'nus-language-field',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, PaTogglesModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, PaTogglesModule, BadgeComponent],
   templateUrl: './language-field.component.html',
   styleUrl: './language-field.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

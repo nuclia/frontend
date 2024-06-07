@@ -38,7 +38,7 @@ export class UploadFilesComponent {
     this.features.unstable.invoiceProcessing.pipe(take(1)),
   ]).pipe(
     map(([table, aitable, invoice]) => {
-      const processings = ['none'];
+      const processings = [];
       if (table) {
         processings.push('table');
       }

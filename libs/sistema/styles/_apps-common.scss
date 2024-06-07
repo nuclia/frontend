@@ -212,6 +212,15 @@ pa-toggle.unauthorized {
 pa-toggle.unauthorized {
   padding-right: rhythm(1);
 }
+.beta-option {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  pa-radio {
+    flex: 1 0 auto;
+    max-width: calc(100% - #{rhythm(5)} - #{rhythm(0.5)})
+  }
+}
 pa-option pa-icon {
   display: flex;
 }
