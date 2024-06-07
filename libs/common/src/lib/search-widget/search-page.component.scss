@@ -31,14 +31,46 @@
     width: rhythm(60);
 
     section {
-      & > .title-xs {
-        margin-bottom: rhythm(1.5);
-      }
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1.5);
 
-      & > .title-xs,
-      & > .body-s {
+      .section-title {
+        @include title-xs();
         color: $color-neutral-regular;
       }
+    }
+
+    .current-config-title {
+      align-items: center;
+      display: flex;
+      height: rhythm(4);
+      justify-content: space-between;
+    }
+
+    .config-selection-container {
+      position: relative;
+
+      .config-status-indicator {
+        background-color: $color-success-regular;
+        border-radius: 50%;
+        height: rhythm(1);
+        position: absolute;
+        right: rhythm(6);
+        top: 50%;
+        transform: translateY(-50%);
+        width: rhythm(1);
+
+        &.modified {
+          background-color: $color-secondary-regular;
+        }
+      }
+    }
+
+    .config-actions {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
     }
   }
 }

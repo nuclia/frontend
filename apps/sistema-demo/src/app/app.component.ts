@@ -66,6 +66,7 @@ import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects
 import { SistemaInfoCardComponent } from './sistema-pages/sistema-cards/sistema-info-card.component';
 import { SistemaBadgeComponent } from './sistema-pages/sistema-badge/sistema-badge.component';
 import { SistemaPalettePageComponent } from './sistema-pages/pastanaga-pages-override/sistema-palette/sistema-palette.component';
+import { SistemaButtonMiniComponent } from './sistema-pages/sistema-button-mini/sistema-button-mini.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -91,6 +92,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'badge', title: 'Badges', type: SistemaBadgeComponent },
       { view: 'info-card', title: 'Info card', type: SistemaInfoCardComponent },
       { view: 'back-button', title: 'Back button', type: SistemaBackButtonComponent },
+      { view: 'mini-button', title: 'Button mini', type: SistemaButtonMiniComponent },
       { view: 'dropdown-button', title: 'Dropdown button', type: SistemaDropdownButtonComponent },
       { view: 'folder-tree', title: 'Folder tree', type: SistemaFolderTreeComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },

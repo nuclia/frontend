@@ -1,4 +1,5 @@
 import { DEFAULT_FILTERS, FilterSelectionType } from './widgets';
+import { deepEqual } from '@flaps/core';
 
 export const MODELS_SUPPORTING_VISION = ['chatgpt-vision', 'gemini-1-5-pro-vision'];
 
@@ -54,10 +55,14 @@ export interface ResultDisplayConfig {
 }
 
 export interface SearchConfiguration {
+  id: string;
   searchBox: SearchBoxConfig;
   generativeAnswer: GenerativeAnswerConfig;
   resultDisplay: ResultDisplayConfig;
 }
+
+export const SAVED_CONFIG_KEY = 'NUCLIA_SELECTED_SEARCH_CONFIG';
+export const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
 
 export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   customizePlaceholder: false,
@@ -107,6 +112,10 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   relations: false,
   relationGraph: false,
 };
+
+export function isSameConfigurations(configA: SearchConfiguration, configB: SearchConfiguration): boolean {
+  return deepEqual(configA, configB);
+}
 
 export function getFeatures(config: SearchConfiguration): string {
   const widgetFeatures = {
