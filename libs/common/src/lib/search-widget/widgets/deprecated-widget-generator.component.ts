@@ -9,8 +9,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   AdvancedForm,
   DEFAULT_CONFIGURATION,
-  DEFAULT_FILTERS,
-  FilterSelectionType,
   getAskPresetConfig,
   getDiscoverConfig,
   getFindPresetConfig,
@@ -30,7 +28,7 @@ import {
   RagImageStrategyName,
   RagStrategyName,
 } from '@nuclia/core';
-import { MODELS_SUPPORTING_VISION } from '../search-widget.models';
+import { DEFAULT_FILTERS, FilterSelectionType, MODELS_SUPPORTING_VISION } from '../search-widget.models';
 
 const FORM_CHANGED_DEBOUNCE_TIME = 100;
 const EXPANDER_CREATION_TIME = 100;

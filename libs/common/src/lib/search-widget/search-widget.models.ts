@@ -1,6 +1,13 @@
-import { DEFAULT_FILTERS, FilterSelectionType } from './widgets';
 import { deepEqual } from '@flaps/core';
 
+export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
+export type FilterSelectionType = { [key in FilterType]: boolean };
+export const DEFAULT_FILTERS: FilterSelectionType = {
+  labels: true,
+  entities: true,
+  created: false,
+  labelFamilies: false,
+};
 export const MODELS_SUPPORTING_VISION = ['chatgpt-vision', 'gemini-1-5-pro-vision'];
 
 export interface SearchBoxConfig {
