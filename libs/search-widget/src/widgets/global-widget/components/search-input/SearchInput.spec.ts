@@ -1,7 +1,7 @@
 import SearchInput from './SearchInput.svelte';
 import { fireEvent, render } from '@testing-library/svelte';
 import { firstValueFrom } from 'rxjs';
-import { searchQuery } from '../../core/stores/search.store';
+import { searchQuery } from '../../../../core/stores/search.store';
 
 export async function shouldEmitQuery(searchInput: HTMLInputElement | null) {
   expect(searchInput).toBeTruthy();
