@@ -1,0 +1,43 @@
+.sw-suggestions {
+  --suggestion-side-padding: var(--rhythm-3);
+
+  background: var(--dropdown-background-color);
+
+  .error-message {
+    padding: 0 var(--rhythm-2);
+  }
+  section {
+    padding: var(--rhythm-2) var(--suggestion-side-padding);
+  }
+
+  section:not(:last-of-type) {
+    border-bottom: 1px solid var(--color-neutral-light);
+  }
+
+  h3 {
+    font-size: var(--font-size-small);
+    margin: 0;
+  }
+  .paragraph {
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-body-s);
+    margin: 0 calc(var(--suggestion-side-padding) * -1);
+    padding: var(--rhythm-1) var(--suggestion-side-padding);
+  }
+  .paragraph:hover,
+  .paragraph:focus {
+    background-color: var(--hover-background-color);
+    outline: 0;
+  }
+
+  .entities,
+  .intents {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rhythm-1);
+    list-style: none;
+    margin: var(--rhythm-1) 0;
+    padding: 0;
+  }
+}
