@@ -203,6 +203,7 @@
   function clear() {
     suggestionState.reset();
     searchQuery.set('');
+    dispatch('resetQuery');
   }
 </script>
 
