@@ -36,8 +36,8 @@
   import { typeAhead } from '../../core/stores/suggestions.store';
   import { take } from 'rxjs/operators';
   import { logEvent } from '../../core';
-  import { LoadingDots, InitialAnswer, ResultRow, SearchInput } from './components'
-  import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
+  import { InitialAnswer, ResultRow, SearchInput } from './components'
+  import { LoadingDots, InfiniteScroll } from '../../common';
   import { debounceTime } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';

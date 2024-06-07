@@ -53,6 +53,10 @@
     .search-results {
       padding: var(--vertical-spacing) 0;
     }
+
+    :global(.sw-loading-dots:not(.small)) {
+      margin: var(--rhythm-12) auto;
+    }
   }
 }
 
