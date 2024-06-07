@@ -1,19 +1,30 @@
 @import 'apps/dashboard/src/variables';
 
 .search-page {
+  $spacing: rhythm(4);
+
   display: flex;
 
   .search-preview-container {
-    flex: 1 0 auto;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: $spacing;
     height: calc(100vh - var(--app-topbar-height));
     overflow-y: auto;
+
+    .preview-content {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing;
+    }
   }
 
   .search-configuration-container {
     border-left: 1px solid $color-neutral-light;
     display: flex;
     flex-direction: column;
-    gap: rhythm(4);
+    gap: $spacing;
     height: calc(100vh - var(--app-topbar-height));
     overflow-y: auto;
     padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom);

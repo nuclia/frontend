@@ -39,6 +39,7 @@ import { forkJoin, map, Subject, switchMap } from 'rxjs';
 import { LearningConfigurations } from '@nuclia/core';
 import { LearningOptionPipe } from '../pipes';
 import { SearchWidgetService } from './search-widget.service';
+import { SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'stf-search-page',
@@ -105,6 +106,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   generativeModels: OptionModel[] = [];
   defaultPromptFromSettings = '';
 
+  snippetPreview: SafeHtml = '';
+  currentQuery = '';
   initialised = false;
 
   ngOnInit() {
@@ -174,19 +177,19 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   updateSearchBoxConfig(config: SearchBoxConfig) {
-    console.log(`new search box config:`, config);
     const currentConfig = this.currentConfig || this.savedConfig;
     this.currentConfig = { ...currentConfig, searchBox: config };
+    this.updateWidget();
   }
   updateGenerativeAnswerConfig(config: GenerativeAnswerConfig) {
-    console.log(`new generative answer config:`, config);
     const currentConfig = this.currentConfig || this.savedConfig;
     this.currentConfig = { ...currentConfig, generativeAnswer: config };
+    this.updateWidget();
   }
   updateResultDisplayConfig(config: ResultDisplayConfig) {
-    console.log(`new result display config:`, config);
     const currentConfig = this.currentConfig || this.savedConfig;
     this.currentConfig = { ...currentConfig, resultDisplay: config };
+    this.updateWidget();
   }
 
   updateSearchBoxHeight() {
@@ -201,5 +204,28 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   scrollOnTop() {
     this.configurationContainer?.nativeElement.scrollTo(0, { scrollingBehaviour: 'smooth' });
+  }
+
+  private updateWidget() {
+    if (this.currentConfig) {
+      this.searchWidgetService.generateSnippet(this.currentConfig).subscribe(({ snippet, preview }) => {
+        this.snippetPreview = preview;
+        this.cdr.detectChanges();
+
+        // Run the search with the current query if any
+        setTimeout(() => {
+          const searchWidget = document.getElementsByTagName('nuclia-search-bar')[0] as unknown as any;
+          if (this.currentQuery) {
+            searchWidget?.search(this.currentQuery);
+          }
+          searchWidget?.addEventListener('search', (event: { detail: string }) => {
+            this.currentQuery = event.detail;
+          });
+          searchWidget?.addEventListener('resetQuery', () => {
+            this.currentQuery = '';
+          });
+        }, 500);
+      });
+    }
   }
 }

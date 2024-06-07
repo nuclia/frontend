@@ -6,8 +6,10 @@
       </div>
       <div class="page-description">{{ 'search.description' | translate }}</div>
     </header>
-    <br />
-    <p>TODO: widget preview</p>
+    <div
+      id="preview"
+      class="preview-content"
+      [innerHtml]="snippetPreview"></div>
   </div>
   <div
     #configurationContainer
