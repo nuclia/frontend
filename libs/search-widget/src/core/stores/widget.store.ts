@@ -31,6 +31,7 @@ export const hasDumpLogButton: Observable<boolean> = widgetFeatures.pipe(map((fe
 export const displayMetadata: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.displayMetadata));
 export const hideThumbnails: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideThumbnails));
 export const hideLogo: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideLogo));
+export const filterByLabels: Observable<boolean> = widgetFilters.pipe(map((filters) => !!filters?.labels));
 export const filterByLabelFamilies: Observable<boolean> = widgetFilters.pipe(
   map((filters) => !!filters?.labelFamilies),
 );

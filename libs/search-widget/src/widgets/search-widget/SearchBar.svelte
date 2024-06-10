@@ -195,7 +195,7 @@
     widgetImageRagStrategies.set(_ragImageStrategies);
 
     if (_features.filter) {
-      if (_filters.labels) {
+      if (_filters.labels || _filters.labelFamilies) {
         initLabelStore();
       }
       if (_filters.entities) {

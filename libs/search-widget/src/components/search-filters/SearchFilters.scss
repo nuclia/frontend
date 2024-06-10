@@ -32,6 +32,9 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       width: calc(100% - var(--header-button-width) - var(--header-gap));
+      &.not-expandable {
+        cursor: default;
+      }
     }
   }
 

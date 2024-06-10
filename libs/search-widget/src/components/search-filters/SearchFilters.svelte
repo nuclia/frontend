@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   import { combineLatest, map, Observable, take } from 'rxjs';
-  import { type EntityGroup, type LabelSetWithId, refreshFamily } from '../../core';
+  import { type EntityGroup, filterByLabels, type LabelSetWithId, refreshFamily } from '../../core';
   import {
     _,
     addEntityFilter,
@@ -85,6 +85,12 @@
     selected ? addEntityFilter(filter) : removeEntityFilter(filter);
   }
 
+  function onClickLabelExpander(id: string, event: Event) {
+    if ((event?.target as HTMLElement).tagName === 'DIV') {
+      toggleExpander(id);
+    }
+  }
+
   onMount(() => {
     combineLatest([labelFilters, hasRangeCreation]).pipe(take(1)).subscribe(([filters, hasRangeCreation]) => {
       expanders = filters.map((filter) => filter.classification.labelset).reduce(
@@ -112,18 +118,20 @@
     <div
       class="header"
       class:expanded={expanders['created']}>
-      <div class="header-content" on:click={() => toggleExpander('created')}>
+      <div
+        class="header-content"
+        on:click={() => toggleExpander('created')}>
         <span>
           {$_('input.date_created')}
         </span>
       </div>
       <span class="header-button">
-          <IconButton
-            on:click={() => toggleExpander('created')}
-            icon="chevron-down"
-            size="small"
-            aspect="basic" />
-        </span>
+        <IconButton
+          on:click={() => toggleExpander('created')}
+          icon="chevron-down"
+          size="small"
+          aspect="basic" />
+      </span>
     </div>
     {#if expanders['created']}
       <div class="expander-content">
@@ -155,7 +163,10 @@
     <div
       class="header"
       class:expanded={expanders[labelSet.id]}>
-      <div class="header-content" on:click={() => toggleExpander(labelSet.id)}>
+      <div
+        class="header-content"
+        class:not-expandable={!$filterByLabels && $filterByLabelFamilies}
+        on:click={(event) => ($filterByLabels ? onClickLabelExpander(labelSet.id, event) : undefined)}>
         {#if $filterByLabelFamilies}
           <Checkbox
             checked={$selectedLabelSets.includes(labelSet.id)}
@@ -164,25 +175,27 @@
             {labelSet.title}
           </Checkbox>
         {:else}
-          <span title="{labelSet.title}">{labelSet.title}</span>
+          <div title="{labelSet.title}">{labelSet.title}</div>
         {/if}
       </div>
-      <span class="header-button">
-        <IconButton
-          on:click={() => toggleExpander(labelSet.id)}
-          icon="chevron-down"
-          size="small"
-          aspect="basic" />
-      </span>
+      {#if $filterByLabels}
+        <span class="header-button">
+          <IconButton
+            on:click={() => toggleExpander(labelSet.id)}
+            icon="chevron-down"
+            size="small"
+            aspect="basic" />
+        </span>
+      {/if}
     </div>
-    {#if expanders[labelSet.id]}
+    {#if $filterByLabels && expanders[labelSet.id]}
       <div
         class="expander-content"
         class:indented={$filterByLabelFamilies}>
         {#each labelSet.labels as label}
           <div>
             <Checkbox
-              checked={$selectedLabels.includes(getFilterFromLabel({labelset: labelSet.id, label: label.title}))}
+              checked={$selectedLabels.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title })) || $selectedLabelSets.includes(labelSet.id)}
               disabled={$selectedLabelSets.includes(labelSet.id) || $preselection.includes(getFilterFromLabel({labelset: labelSet.id, label: label.title}))}
               on:change={(event) => selectLabel(labelSet, label, event.detail)}>
               {label.title}
@@ -196,7 +209,7 @@
     <div
       class="header"
       class:expanded={expanders[family.id]}>
-      <div class="header-content" on:click={() => toggleExpander(family.id)}>
+      <div class="header-content" on:click={() => toggleEntitiesExpander(family.id)}>
         <span title="{family.title}">
           {family.title}
         </span>
