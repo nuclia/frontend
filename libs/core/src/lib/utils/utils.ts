@@ -51,6 +51,10 @@ export function getSemanticModel(semanticModelName: string | undefined, learning
 }
 
 export class STFUtils {
+  public static generateRandomSlugSuffix(): string {
+    return (Math.floor(Math.random() * 10000) + 4096).toString(16);
+  }
+
   // Generate a slug from arbitrary text.
   // Slugs only have alphanumeric lowercase characters (a-z, 0-9) and separators (-_)
   public static generateSlug(text: string): string {

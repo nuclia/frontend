@@ -119,7 +119,7 @@ export class KbCreationComponent {
               return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone).pipe(
                 catchError((error) => {
                   if (error.status === 409) {
-                    kb.slug = `${kb.slug}-${(Math.floor(Math.random() * 10000) + 4096).toString(16)}`;
+                    kb.slug = `${kb.slug}-${STFUtils.generateRandomSlugSuffix()}`;
                     return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone);
                   } else {
                     return throwError(() => error);

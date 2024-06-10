@@ -92,7 +92,7 @@ export class KbAddModalComponent implements OnInit {
       .pipe(
         catchError((error) => {
           if (error.status === 409) {
-            knowledgeBox.slug = `${knowledgeBox.slug}-${(Math.floor(Math.random() * 10000) + 4096).toString(16)}`;
+            knowledgeBox.slug = `${knowledgeBox.slug}-${STFUtils.generateRandomSlugSuffix()}`;
             return this.sdk.nuclia.db.createKnowledgeBox(accountId, knowledgeBox, zone);
           } else {
             return throwError(() => error);
