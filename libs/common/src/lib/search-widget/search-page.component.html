@@ -26,6 +26,9 @@
           class="config-status-indicator"
           [class.modified]="isConfigModified"></div>
       </div>
+      @if (isConfigModified) {
+        <nsi-info-card type="warning">{{ 'search.configuration.modification-warning' | translate }}</nsi-info-card>
+      }
       <div class="config-actions">
         <nsi-button-mini
           icon="widget"

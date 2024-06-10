@@ -21,7 +21,7 @@ import {
   PaPopupModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { ButtonMiniComponent, SisModalService } from '@nuclia/sistema';
+import { ButtonMiniComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -64,6 +64,7 @@ import { RouterLink } from '@angular/router';
     GenerativeAnswerFormComponent,
     ResultsDisplayFormComponent,
     RouterLink,
+    InfoCardComponent,
   ],
   providers: [LearningOptionPipe],
   templateUrl: './search-page.component.html',
