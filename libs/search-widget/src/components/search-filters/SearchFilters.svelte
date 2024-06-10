@@ -209,7 +209,7 @@
     <div
       class="header"
       class:expanded={expanders[family.id]}>
-      <div class="header-content" on:click={() => toggleExpander(family.id)}>
+      <div class="header-content" on:click={() => toggleEntitiesExpander(family.id)}>
         <span title="{family.title}">
           {family.title}
         </span>
