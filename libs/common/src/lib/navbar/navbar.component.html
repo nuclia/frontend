@@ -42,7 +42,7 @@
               [routerLink]="!(invalidKey | async) ? kbUrl + '/search' : null"
               [class.disabled]="invalidKey | async">
               <pa-icon name="search"></pa-icon>
-              <span class="nav-link-title">{{ 'stash.search' | translate }}</span>
+              <span class="nav-link-title">{{ 'search.title' | translate }}</span>
             </a>
             <a
               [routerLink]="!(invalidKey | async) ? kbUrl + '/sync' : null"

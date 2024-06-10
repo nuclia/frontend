@@ -14,7 +14,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { WidgetGeneratorComponent } from './widget-generator.component';
+import { DeprecatedWidgetGeneratorComponent } from './deprecated-widget-generator.component';
 import { CopilotModalComponent } from './copilot/copilot-modal.component';
 import { LabelModule, UnauthorizedFeatureComponent } from '@flaps/core';
 import { LearningOptionPipe } from '../../pipes/learning-option.pipe';
@@ -23,7 +23,7 @@ import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 const routes = [
   {
     path: '',
-    component: WidgetGeneratorComponent,
+    component: DeprecatedWidgetGeneratorComponent,
   },
 ];
 
@@ -49,7 +49,7 @@ const routes = [
     UnauthorizedFeatureComponent,
   ],
   exports: [],
-  declarations: [WidgetGeneratorComponent, CopilotModalComponent],
+  declarations: [DeprecatedWidgetGeneratorComponent, CopilotModalComponent],
   providers: [],
 })
-export class WidgetsModule {}
+export class DeprecatedWidgetsModule {}

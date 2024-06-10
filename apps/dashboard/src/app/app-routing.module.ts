@@ -13,7 +13,7 @@ import {
   PageNotFoundModule,
   PromptLabComponent,
   rootGuard,
-  SearchComponent,
+  SearchPageComponent,
   SelectAccountComponent,
   selectAccountGuard,
   SelectKbComponent,
@@ -87,7 +87,7 @@ const routes: Routes = [
               },
               {
                 path: 'search',
-                component: SearchComponent,
+                component: SearchPageComponent,
               },
               {
                 path: 'sync',
@@ -136,8 +136,8 @@ const routes: Routes = [
               {
                 path: 'widget-generator',
                 loadChildren: () =>
-                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.module').then(
-                    (m) => m.WidgetsModule,
+                  import('../../../../libs/common/src/lib/search-widget/widgets/deprecated-widgets.module').then(
+                    (m) => m.DeprecatedWidgetsModule,
                   ),
               },
               {

@@ -1,0 +1,9 @@
+<button class="nsi-mini-button">
+  @if (icon) {
+    <pa-icon
+      size="small"
+      [class.destructive]="destructive"
+      [name]="icon"></pa-icon>
+  }
+  <ng-content></ng-content>
+</button>

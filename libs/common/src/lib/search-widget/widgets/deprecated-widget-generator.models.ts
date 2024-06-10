@@ -1,9 +1,9 @@
 import { CopilotData } from './copilot/copilot-modal.component';
 import { RAGImageStrategy, RAGStrategy } from '@nuclia/core';
+import { FilterType } from '../search-widget.models';
 
 export type PresetType = 'search' | 'find' | 'ask' | 'discover';
-export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
-export type FilterSelectionType = { [key in FilterType]: boolean };
+
 export type PresetAccordionType = 'preset' | 'location' | 'answerOutput' | 'copilot' | '';
 export type PresetForm = {
   location: 'public' | 'application' | null;
@@ -52,12 +52,7 @@ export type WidgetConfiguration = {
   notEnoughDataMessage?: string;
 };
 export const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
-export const DEFAULT_FILTERS: FilterSelectionType = {
-  labels: true,
-  entities: true,
-  created: false,
-  labelFamilies: false,
-};
+
 // WARNING: for isModifiedConfig function to work properly, the properties in DEFAULT_CONFIGURATION must be
 // in the EXACT SAME order as the properties declared in advancedForm in widget generator page
 export const DEFAULT_CONFIGURATION: AdvancedForm = {

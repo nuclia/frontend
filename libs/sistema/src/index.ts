@@ -1,5 +1,6 @@
 export * from './lib/back-button';
 export * from './lib/badge';
+export * from './lib/button-mini';
 export * from './lib/dropdown-button';
 export * from './lib/cards';
 export * from './lib/folder-list';

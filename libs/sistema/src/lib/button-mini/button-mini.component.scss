@@ -1,0 +1,37 @@
+@import '../../../styles/variables';
+
+.nsi-mini-button {
+  @include title-xs();
+
+  align-items: center;
+  background-color: $color-neutral-lightest;
+  border: none;
+  border-radius: rhythm(0.5);
+  cursor: pointer;
+  display: flex;
+  gap: rhythm(1);
+  height: rhythm(4);
+  padding: rhythm(0.25) rhythm(1);
+  transition: background-color $transition-hint;
+
+  pa-icon {
+    color: $color-neutral-regular;
+    display: flex;
+    transition: color $transition-hint;
+
+    &.destructive {
+      color: $color-secondary-stronger;
+    }
+  }
+
+  &:hover {
+    background-color: $color-neutral-lighter;
+
+    pa-icon:not(.destructive) {
+      color: $color-dark-stronger;
+    }
+  }
+  &:active {
+    background-color: $color-neutral-light;
+  }
+}

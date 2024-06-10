@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import {
   AccessibilityPageComponent,
+  AccordionItemPageComponent,
+  AccordionPageComponent,
   AvatarPageComponent,
   AvatarPilePageComponent,
   BreakpointPageComponent,
@@ -25,6 +27,7 @@ import {
   NativeTextFieldPageComponent,
   PopoverPageComponent,
   PopupPageComponent,
+  RadioPageComponent,
   SelectPageComponent,
   SidenavPageComponent,
   TableCellPageComponent,
@@ -40,7 +43,6 @@ import {
   TranslatePageComponent,
   TypographyPageComponent,
 } from '../../../../libs/pastanaga-angular/projects/demo/src';
-import { RadioPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/radio-page/radio-page.component';
 import {
   SistemaConfirmationDialogComponent,
   SistemaIconsComponent,
@@ -64,6 +66,7 @@ import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects
 import { SistemaInfoCardComponent } from './sistema-pages/sistema-cards/sistema-info-card.component';
 import { SistemaBadgeComponent } from './sistema-pages/sistema-badge/sistema-badge.component';
 import { SistemaPalettePageComponent } from './sistema-pages/pastanaga-pages-override/sistema-palette/sistema-palette.component';
+import { SistemaButtonMiniComponent } from './sistema-pages/sistema-button-mini/sistema-button-mini.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -89,6 +92,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'badge', title: 'Badges', type: SistemaBadgeComponent },
       { view: 'info-card', title: 'Info card', type: SistemaInfoCardComponent },
       { view: 'back-button', title: 'Back button', type: SistemaBackButtonComponent },
+      { view: 'mini-button', title: 'Button mini', type: SistemaButtonMiniComponent },
       { view: 'dropdown-button', title: 'Dropdown button', type: SistemaDropdownButtonComponent },
       { view: 'folder-tree', title: 'Folder tree', type: SistemaFolderTreeComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
@@ -116,6 +120,8 @@ export const menu: IDemoMenuSection[] = [
       { view: 'datepicker', title: 'Date Picker', type: DatePickerPageComponent },
       { view: 'datetime', title: 'Date/time', type: DateTimePageComponent },
       { view: 'dropdown', title: 'Dropdown', type: DropdownPageComponent },
+      { view: 'accordion', title: 'Accordion', type: AccordionPageComponent },
+      { view: 'accordion-item', title: 'Accordion item', type: AccordionItemPageComponent },
       { view: 'expander', title: 'Expander', type: ExpanderPageComponent },
       { view: 'infinite-scroll', title: 'Infinite scroll', type: InfiniteScrollPageComponent },
       { view: 'popup', title: 'Popup', type: PopupPageComponent },
