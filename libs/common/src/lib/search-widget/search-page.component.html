@@ -82,8 +82,8 @@
             [description]="'search.configuration.search-box.section-description' | translate">
             <pa-accordion-item-body>
               <stf-search-box-form
-                [config]="savedConfig.searchBox"
-                [relationsEnabled]="currentConfig?.resultDisplay.relations"
+                [config]="savedConfig?.searchBox"
+                [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
                 (configChanged)="updateSearchBoxConfig($event)"
                 (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
             </pa-accordion-item-body>
@@ -95,7 +95,7 @@
             [description]="'search.configuration.generative-answer.section-description' | translate">
             <pa-accordion-item-body>
               <stf-generative-answer-form
-                [config]="savedConfig.generativeAnswer"
+                [config]="savedConfig?.generativeAnswer"
                 [defaultPrompt]="defaultPromptFromSettings"
                 [models]="generativeModels"
                 (configChanged)="updateGenerativeAnswerConfig($event)"
@@ -109,8 +109,8 @@
             [description]="'search.configuration.result-display.section-description' | translate">
             <pa-accordion-item-body>
               <stf-results-display-form
-                [config]="savedConfig.resultDisplay"
-                [useSynonymsEnabled]="currentConfig?.searchBox.useSynonyms"
+                [config]="savedConfig?.resultDisplay"
+                [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
                 (configChanged)="updateResultDisplayConfig($event)"
                 (heightChanged)="updateResultsHeight()"></stf-results-display-form>
             </pa-accordion-item-body>

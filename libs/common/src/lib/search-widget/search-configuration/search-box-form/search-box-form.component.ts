@@ -40,7 +40,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
 
-  @Input() set config(value: SearchBoxConfig) {
+  @Input() set config(value: SearchBoxConfig | undefined) {
     if (value) {
       this.form.patchValue(value);
     }

@@ -29,7 +29,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
 
-  @Input() set config(value: ResultDisplayConfig) {
+  @Input() set config(value: ResultDisplayConfig | undefined) {
     if (value) {
       this.form.patchValue(value);
     }

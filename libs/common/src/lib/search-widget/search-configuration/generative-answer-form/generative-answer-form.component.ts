@@ -43,7 +43,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
 
-  @Input() set config(value: GenerativeAnswerConfig) {
+  @Input() set config(value: GenerativeAnswerConfig | undefined) {
     if (value) {
       this.form.patchValue(value);
     }
