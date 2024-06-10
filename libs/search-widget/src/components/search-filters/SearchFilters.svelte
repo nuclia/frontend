@@ -175,7 +175,7 @@
             {labelSet.title}
           </Checkbox>
         {:else}
-          <span title="{labelSet.title}">{labelSet.title}</span>
+          <div title="{labelSet.title}">{labelSet.title}</div>
         {/if}
       </div>
       {#if $filterByLabels}
