@@ -18,6 +18,7 @@
               <pa-toggle
                 withBackground
                 [value]="!sync.disabled"
+                data-cy="active-toggle"
                 (valueChange)="toggleSync($event)">
                 {{ (sync.disabled ? 'sync.badge.inactive' : 'sync.badge.active') | translate }}
               </pa-toggle>
@@ -25,6 +26,7 @@
 
             <pa-button
               aspect="basic"
+              data-cy="sync-now"
               [disabled]="isSyncing | async"
               (click)="triggerSync()">
               {{ 'sync.details.buttons.sync-now' | translate }}
@@ -36,6 +38,7 @@
             </pa-button>
             <pa-button
               kind="destructive"
+              data-cy="delete"
               (click)="deleteSync()">
               {{ 'sync.details.buttons.delete' | translate }}
             </pa-button>
@@ -47,13 +50,15 @@
     <pa-tabs notFullWidth>
       <pa-tab
         [active]="activeTab === 'settings'"
-        (click)="activeTab = 'settings'">
+        (click)="activeTab = 'settings'"
+        data-cy="settings-tab">
         {{ 'sync.details.tabs.settings' | translate }}
       </pa-tab>
       @if ((connector | async)?.allowToSelectFolders) {
         <pa-tab
           [active]="activeTab === 'folders'"
-          (click)="activeTab = 'folders'">
+          (click)="activeTab = 'folders'"
+          data-cy="folders-tab">
           {{ 'sync.details.tabs.folders' | translate }}
         </pa-tab>
       }

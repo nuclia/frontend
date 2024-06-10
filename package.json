@@ -85,6 +85,7 @@
     "@angular/compiler-cli": "17.3.5",
     "@angular/language-service": "17.3.5",
     "@biesbjerg/ngx-translate-extract": "7.0.4",
+    "@ngneat/spectator": "^18.0.2",
     "@nx/angular": "18.2.2",
     "@nx/eslint": "18.2.2",
     "@nx/eslint-plugin": "18.2.2",
