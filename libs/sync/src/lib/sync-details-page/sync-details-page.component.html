@@ -26,6 +26,7 @@
 
             <pa-button
               aspect="basic"
+              qa="sync-now"
               [disabled]="isSyncing | async"
               (click)="triggerSync()">
               {{ 'sync.details.buttons.sync-now' | translate }}
@@ -37,6 +38,7 @@
             </pa-button>
             <pa-button
               kind="destructive"
+              qa="delete"
               (click)="deleteSync()">
               {{ 'sync.details.buttons.delete' | translate }}
             </pa-button>
@@ -48,13 +50,15 @@
     <pa-tabs notFullWidth>
       <pa-tab
         [active]="activeTab === 'settings'"
-        (click)="activeTab = 'settings'">
+        (click)="activeTab = 'settings'"
+        qa="settings-tab">
         {{ 'sync.details.tabs.settings' | translate }}
       </pa-tab>
       @if ((connector | async)?.allowToSelectFolders) {
         <pa-tab
           [active]="activeTab === 'folders'"
-          (click)="activeTab = 'folders'">
+          (click)="activeTab = 'folders'"
+          qa="folders-tab">
           {{ 'sync.details.tabs.folders' | translate }}
         </pa-tab>
       }
