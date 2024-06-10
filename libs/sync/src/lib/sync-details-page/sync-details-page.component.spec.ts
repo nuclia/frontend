@@ -102,11 +102,11 @@ describe('SyncDetailsPageComponent', () => {
   });
 
   it('should toggle the sync activity status', () => {
-    expect(spectator.query('[qa="active-toggle"]')?.textContent).toContain('sync.badge.active');
-    spectator.click('[qa="active-toggle"] input');
+    expect(spectator.query('[data-cy="active-toggle"]')?.textContent).toContain('sync.badge.active');
+    spectator.click('[data-cy="active-toggle"] input');
     spectator.detectChanges();
     expect(syncService.updateSync).toHaveBeenCalledWith('123', { disabled: true });
-    spectator.click('[qa="active-toggle"] input');
+    spectator.click('[data-cy="active-toggle"] input');
     spectator.detectChanges();
     expect(syncService.updateSync).toHaveBeenCalledWith('123', { disabled: false });
   });
@@ -114,7 +114,7 @@ describe('SyncDetailsPageComponent', () => {
   it('should open confirm dialog when triggering sync', () => {
     const modalService = spectator.inject(SisModalService);
     const openConfirm = jest.spyOn(modalService, 'openConfirm');
-    spectator.click('[qa="sync-now"]');
+    spectator.click('[data-cy="sync-now"]');
     spectator.detectChanges();
     expect(openConfirm).toHaveBeenCalled();
   });
@@ -122,13 +122,13 @@ describe('SyncDetailsPageComponent', () => {
   it('should open confirm dialog when deleting sync', () => {
     const modalService = spectator.inject(SisModalService);
     const openConfirm = jest.spyOn(modalService, 'openConfirm');
-    spectator.click('[qa="delete"]');
+    spectator.click('[data-cy="delete"]');
     spectator.detectChanges();
     expect(openConfirm).toHaveBeenCalled();
   });
 
   it('should display the selected folders', () => {
-    spectator.click('[qa="folders-tab"]');
+    spectator.click('[data-cy="folders-tab"]');
     spectator.detectChanges();
     expect(spectator.query('nsy-folders-tab')?.textContent).toContain('/folder1');
   });
