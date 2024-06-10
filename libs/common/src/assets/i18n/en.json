@@ -937,7 +937,7 @@
 	"search.configuration.action.save-as-new": "Save as new configuration",
 	"search.configuration.create-widget": "Create widget",
 	"search.configuration.current": "Current configuration",
-	"search.configuration.delete-config-confirm.description": "This action cannot be undone. Deleting the configuration will delete it’s record in the saved configuration dropdown.",
+	"search.configuration.delete-config-confirm.description": "This action cannot be undone. Deleting the configuration will delete its record in the saved configuration dropdown.",
 	"search.configuration.delete-config-confirm.title": "Delete {{configName}} ?",
 	"search.configuration.generative-answer.ask-resource.input-label": "Resource’s slug",
 	"search.configuration.generative-answer.ask-resource.pattern-error": "A slug contains only alphanumeric characters, dashes and underscores.",
