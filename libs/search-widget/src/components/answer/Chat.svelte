@@ -1,10 +1,10 @@
 <script lang="ts">
   import Answer from './Answer.svelte';
-  import { _, chat, chatError, isServiceOverloaded } from '../../core';
+  import { _, chat, chatError, isServiceOverloaded, isStreaming } from '../../core';
   import ChatInput from './ChatInput.svelte';
   import { createEventDispatcher, onMount } from 'svelte';
   import { delay, distinctUntilChanged, filter } from 'rxjs';
-  import { freezeBackground, Icon, IconButton, unblockBackground } from '../../common';
+  import { freezeBackground, Icon, IconButton, LoadingDots, unblockBackground } from '../../common';
 
   export let fullscreen = true;
   export let show = !fullscreen;
@@ -26,7 +26,7 @@
       .pipe(
         delay(200),
         distinctUntilChanged(),
-        filter(() => show)
+        filter(() => show),
       )
       .subscribe(() => {
         entriesContainerElement.scrollTo({ top: entriesContainerElement.scrollHeight, behavior: 'smooth' });
@@ -61,8 +61,9 @@
         bind:this={entriesContainerElement}>
         {#each $chat as entry, i}
           <div class="chat-entry">
-            <div class="question"
-                 class:error={entry.answer.inError}>
+            <div
+              class="question"
+              class:error={entry.answer.inError}>
               <div class="chat-icon">
                 <Icon name="chat" />
               </div>
@@ -81,10 +82,15 @@
           </div>
         {/each}
       </div>
+      {#if $isStreaming}
+        <LoadingDots />
+      {/if}
       <div
         class="input-container"
         class:scrolling-behind={isScrolling}>
-        <ChatInput placeholder={$_('answer.placeholder')} {fullscreen} />
+        <ChatInput
+          placeholder={$_('answer.placeholder')}
+          {fullscreen} />
       </div>
     </div>
   </div>
