@@ -24,7 +24,7 @@ export class LabelsService {
   labelSetsCount: Observable<LabelSetCounts> = this.labelSets.pipe(
     map((labelsets) => {
       if (!labelsets) {
-        return { [LabelSetKind.RESOURCES]: 0, [LabelSetKind.PARAGRAPHS]: 0, [LabelSetKind.SELECTIONS]: 0 };
+        return { [LabelSetKind.RESOURCES]: 0, [LabelSetKind.PARAGRAPHS]: 0 };
       }
       return Object.values(labelsets).reduce(
         (count, labelSet) => {
@@ -32,12 +32,10 @@ export class LabelsService {
             count[LabelSetKind.RESOURCES]++;
           } else if (labelSet.kind.includes(LabelSetKind.PARAGRAPHS)) {
             count[LabelSetKind.PARAGRAPHS]++;
-          } else if (labelSet.kind.includes(LabelSetKind.SELECTIONS)) {
-            count[LabelSetKind.SELECTIONS]++;
           }
           return count;
         },
-        { [LabelSetKind.RESOURCES]: 0, [LabelSetKind.PARAGRAPHS]: 0, [LabelSetKind.SELECTIONS]: 0 },
+        { [LabelSetKind.RESOURCES]: 0, [LabelSetKind.PARAGRAPHS]: 0 },
       );
     }),
   );

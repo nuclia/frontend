@@ -48,17 +48,6 @@
           </div>
         }
       }
-
-      @if (selectionLabelSets | async; as selectionLabels) {
-        @if (selectionLabels.length > 0) {
-          <div class="label-set-container">
-            <div class="title-s">{{ 'label-set.type.selection-title' | translate }}</div>
-            <app-label-set-list
-              [labelSets]="selectionLabels"
-              [isAdmin]="(isAdminOrContrib | async) === true"></app-label-set-list>
-          </div>
-        }
-      }
     }
     @if (isAdminOrContrib | async) {
       <div class="missing-labels">
