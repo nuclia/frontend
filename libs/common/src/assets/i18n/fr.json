@@ -958,6 +958,7 @@
 	"search.configuration.generative-answer.select-results-used.semantic-and-full-text": "Résultats de recherche vectorielle et full text",
 	"search.configuration.generative-answer.select-results-used.semantic-only": "Résultats de recherche vectorielle uniquement",
 	"search.configuration.generative-answer.select-results-used.title": "Sélectionnez les résultats qui sont utilisés pour générer la réponse",
+	"search.configuration.loading-error": "Une erreur s'est produite lors du chargement des configurations de recherche",
 	"search.configuration.modification-warning": "La configuration actuelle est différente de la configuration sélectionnée, cliquez sur enregistrer pour enregistrer une nouvelle configuration.",
 	"search.configuration.options.nuclia-image": "Meilleur pour la reconnaissance d'images - Nuclia",
 	"search.configuration.options.nuclia-standard": "Génération de réponses standard - Nuclia",

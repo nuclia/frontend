@@ -3,6 +3,7 @@ import {
   DEFAULT_GENERATIVE_ANSWER_CONFIG,
   DEFAULT_RESULT_DISPLAY_CONFIG,
   DEFAULT_SEARCH_BOX_CONFIG,
+  DEFAULT_WIDGET_CONFIG,
   getAskToResource,
   getFeatures,
   getFilters,
@@ -13,9 +14,11 @@ import {
   getPrompt,
   getQueryPrepend,
   getRagStrategies,
+  getWidgetTheme,
   SAVED_CONFIG_KEY,
   SEARCH_CONFIGS_KEY,
   SearchConfiguration,
+  WidgetConfiguration,
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
@@ -60,26 +63,26 @@ export class SearchWidgetService {
     };
   }
 
-  getSelectedConfig(kbId: string): SearchConfiguration {
+  getSelectedSearchConfig(kbId: string): SearchConfiguration {
     const standardConfiguration = this.getStandardSearchConfiguration();
     const savedConfigMap: { [kbId: string]: string } = JSON.parse(this.storage.getItem(SAVED_CONFIG_KEY) || '{}');
     const savedConfigId = savedConfigMap[kbId];
     if (!savedConfigId) {
       return standardConfiguration;
     }
-    const configs = this.getSavedConfigs(kbId);
+    const configs = this.getSavedSearchConfigs(kbId);
     const savedConfig = configs.find((config) => config.id === savedConfigId);
     return savedConfig ? savedConfig : standardConfiguration;
   }
 
-  getSavedConfigs(kbId: string): SearchConfiguration[] {
+  getSavedSearchConfigs(kbId: string): SearchConfiguration[] {
     const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
       this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
     );
     return configMap[kbId] || [];
   }
 
-  saveConfig(kbId: string, name: string, config: SearchConfiguration) {
+  saveSearchConfig(kbId: string, name: string, config: SearchConfiguration) {
     const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
       this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
     );
@@ -93,16 +96,16 @@ export class SearchWidgetService {
     }
     configMap[kbId] = storedConfigs;
     this.storage.setItem(SEARCH_CONFIGS_KEY, JSON.stringify(configMap));
-    this.saveSelectedConfig(kbId, name);
+    this.saveSelectedSearchConfig(kbId, name);
   }
 
-  saveSelectedConfig(kbId: string, name: string) {
+  saveSelectedSearchConfig(kbId: string, name: string) {
     const selectionMap: { [kbId: string]: string } = JSON.parse(this.storage.getItem(SAVED_CONFIG_KEY) || '{}');
     selectionMap[kbId] = name;
     this.storage.setItem(SAVED_CONFIG_KEY, JSON.stringify(selectionMap));
   }
 
-  deleteConfig(kbId: string, configId: string) {
+  deleteSearchConfig(kbId: string, configId: string) {
     const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
       this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
     );
@@ -115,10 +118,14 @@ export class SearchWidgetService {
     }
   }
 
-  generateSnippet(currentConfig: SearchConfiguration): Observable<{ preview: SafeHtml; snippet: string }> {
-    this.deletePreview();
+  generateWidgetSnippet(
+    currentConfig: SearchConfiguration,
+    widgetOptions: WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
+  ): Observable<{ preview: SafeHtml; snippet: string }> {
+    this.deleteWidgetPreview();
 
-    const features = getFeatures(currentConfig);
+    // Search configuration
+    const features = getFeatures(currentConfig, widgetOptions);
     const placeholder = getPlaceholder(currentConfig.searchBox);
     const prompt = getPrompt(currentConfig.generativeAnswer);
     const filters = getFilters(currentConfig.searchBox);
@@ -129,6 +136,12 @@ export class SearchWidgetService {
     const maxTokens = getMaxTokens(currentConfig.generativeAnswer);
     const generativeModel = `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`;
     const queryPrepend = getQueryPrepend(currentConfig.searchBox);
+
+    // Widget options
+    const theme = getWidgetTheme(widgetOptions);
+    const isPopupStyle = widgetOptions.popupStyle === 'popup';
+    const tagName = isPopupStyle ? 'nuclia-popup' : 'nuclia-search-bar';
+    const scriptSrc = `https://cdn.nuclia.cloud/nuclia-${isPopupStyle ? 'popup' : 'video'}-widget.umd.js`;
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([kb, account]) => {
@@ -142,11 +155,16 @@ export class SearchWidgetService {
             : '';
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
-        let baseSnippet = `<nuclia-search-bar\n  knowledgebox="${kb.id}"`;
+        let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
         baseSnippet += `\n  ${zone}${features}${prompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${queryPrepend}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}`;
-        baseSnippet += `></nuclia-search-bar>\n<nuclia-search-results></nuclia-search-results>`;
+        baseSnippet += `></${tagName}>\n`;
+        if (isPopupStyle) {
+          baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
+        } else {
+          baseSnippet += `<nuclia-search-results ${theme}></nuclia-search-results>`;
+        }
 
-        const snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>\n${baseSnippet}`;
+        const snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`;
         const preview = this.sanitizer.bypassSecurityTrustHtml(
           baseSnippet
             .replace(
@@ -182,7 +200,7 @@ export class SearchWidgetService {
     );
   }
 
-  private deletePreview() {
+  private deleteWidgetPreview() {
     const searchWidgetElement = document.querySelector('nuclia-search') as any;
     const searchBarElement = document.querySelector('nuclia-search-bar') as any;
     const searchResultsElement = document.querySelector('nuclia-search-results') as any;

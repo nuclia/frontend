@@ -4,13 +4,15 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   HostBinding,
   inject,
   Input,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonMiniComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { ButtonMiniComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { GenerativeAnswerFormComponent } from './generative-answer-form';
 import { ResultsDisplayFormComponent } from './results-display-form';
 import { SearchBoxFormComponent } from './search-box-form';
@@ -76,6 +78,7 @@ export class SearchConfigurationComponent {
   private learningOption = inject(LearningOptionPipe);
   private modalService = inject(SisModalService);
   private searchWidgetService = inject(SearchWidgetService);
+  private toaster = inject(SisToastService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -92,6 +95,8 @@ export class SearchConfigurationComponent {
   @Input({ transform: booleanAttribute }) displayWidgetButtonLine = false;
   @Input() configurationContainer?: ElementRef;
   @Input() mainTitle = '';
+
+  @Output() configUpdate = new EventEmitter<SearchConfiguration>();
 
   @ViewChild('searchBox', { read: AccordionItemComponent }) searchBoxItem?: AccordionItemComponent;
   @ViewChild('generativeAnswer', { read: AccordionItemComponent }) generativeAnswerItem?: AccordionItemComponent;
@@ -152,12 +157,15 @@ export class SearchConfigurationComponent {
           );
         }),
       )
-      .subscribe(({ kbId, schema, config }) => {
-        this.modelFromSettings = config['generative_model'] || '';
-        this.setConfigurations(kbId);
-        this.setModelsAndPrompt(schema, config);
-        this.initialised = true;
-        this.cdr.detectChanges();
+      .subscribe({
+        next: ({ kbId, schema, config }) => {
+          this.modelFromSettings = config['generative_model'] || '';
+          this.setConfigurations(kbId);
+          this.setModelsAndPrompt(schema, config);
+          this.initialised = true;
+          this.cdr.detectChanges();
+        },
+        error: () => this.toaster.error('search.configuration.loading-error'),
       });
   }
 
@@ -178,7 +186,7 @@ export class SearchConfigurationComponent {
       help: kbModel,
     });
 
-    const savedConfigs = this.searchWidgetService.getSavedConfigs(kbId);
+    const savedConfigs = this.searchWidgetService.getSavedSearchConfigs(kbId);
     const configurations: OptionType[] = [standardConfigOption];
     if (savedConfigs.length > 0) {
       configurations.push(new OptionSeparator());
@@ -202,7 +210,7 @@ export class SearchConfigurationComponent {
       ),
     );
 
-    const savedConfig = this.searchWidgetService.getSelectedConfig(kbId);
+    const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kbId);
     if (savedConfig.id === 'nuclia-standard') {
       savedConfig.generativeAnswer = { ...savedConfig.generativeAnswer, generativeModel: this.modelFromSettings };
     }
@@ -234,8 +242,8 @@ export class SearchConfigurationComponent {
 
   selectConfig(configId: string) {
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
-      this.searchWidgetService.saveSelectedConfig(kb.id, configId);
-      this.savedConfig = this.searchWidgetService.getSelectedConfig(kb.id);
+      this.searchWidgetService.saveSelectedSearchConfig(kb.id, configId);
+      this.savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id);
       this.currentConfig = { ...this.savedConfig };
       this.cdr.markForCheck();
     });
@@ -283,7 +291,7 @@ export class SearchConfigurationComponent {
           switchMap(() => this.sdk.currentKb.pipe(take(1))),
         )
         .subscribe((kb) => {
-          this.searchWidgetService.deleteConfig(kb.id, config.id);
+          this.searchWidgetService.deleteSearchConfig(kb.id, config.id);
           this.setConfigurations(kb.id);
         });
     }
@@ -293,7 +301,7 @@ export class SearchConfigurationComponent {
     if (this.currentConfig) {
       const config = this.currentConfig;
       this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
-        this.searchWidgetService.saveConfig(kb.id, configName, config);
+        this.searchWidgetService.saveSearchConfig(kb.id, configName, config);
         this.setConfigurations(kb.id);
       });
     }
@@ -343,7 +351,8 @@ export class SearchConfigurationComponent {
 
   private updateWidget() {
     if (this.currentConfig) {
-      this.searchWidgetService.generateSnippet(this.currentConfig).subscribe();
+      this.configUpdate.emit(this.currentConfig);
+      this.searchWidgetService.generateWidgetSnippet(this.currentConfig).subscribe();
     }
   }
 }

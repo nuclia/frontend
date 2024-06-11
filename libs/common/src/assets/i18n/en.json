@@ -958,6 +958,7 @@
 	"search.configuration.generative-answer.select-results-used.semantic-and-full-text": "Vector search results & full text results",
 	"search.configuration.generative-answer.select-results-used.semantic-only": "Vector search results only",
 	"search.configuration.generative-answer.select-results-used.title": "Select which results are used to generate the answer",
+	"search.configuration.loading-error": "An error occurred while loading search configurations",
 	"search.configuration.modification-warning": "The current configuration is different from the selected one, click save to save a new configuration.",
 	"search.configuration.options.nuclia-image": "Best for image recognition - Nuclia",
 	"search.configuration.options.nuclia-standard": "Standard answer generation - Nuclia",

@@ -71,10 +71,10 @@ export interface SearchConfiguration {
 }
 
 export interface WidgetConfiguration {
-  popupStyle: boolean;
-  darkMode: boolean;
+  popupStyle: 'page' | 'popup';
+  darkMode: 'light' | 'dark';
   hideLogo: boolean;
-  permalinks: boolean;
+  permalink: boolean;
   navigateToLink: boolean;
   navigateToFile: boolean;
 }
@@ -141,10 +141,10 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   relationGraph: false,
 };
 export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
-  popupStyle: false,
-  darkMode: false,
+  popupStyle: 'page',
+  darkMode: 'light',
   hideLogo: false,
-  permalinks: false,
+  permalink: false,
   navigateToLink: false,
   navigateToFile: false,
 };
@@ -153,8 +153,9 @@ export function isSameConfigurations(configA: SearchConfiguration, configB: Sear
   return deepEqual(configA, configB);
 }
 
-export function getFeatures(config: SearchConfiguration): string {
+export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetConfiguration): string {
   const widgetFeatures = {
+    // Search configuration
     answers: config.generativeAnswer.generateAnswer,
     noBM25forChat: config.generativeAnswer.generateAnswerWith === 'only-semantic',
     rephrase: config.searchBox.rephraseQuery,
@@ -171,18 +172,18 @@ export function getFeatures(config: SearchConfiguration): string {
     relations: config.resultDisplay.relations,
     knowledgeGraph: config.resultDisplay.relationGraph,
     displayFieldList: config.resultDisplay.displayFieldList,
+
+    // Widget options
+    hideLogo: widgetOptions.hideLogo,
+    permalink: widgetOptions.permalink,
+    navigateToLink: widgetOptions.navigateToLink,
+    navigateToFile: widgetOptions.navigateToFile,
   };
   const featureList = Object.entries(widgetFeatures)
     .filter(([, enabled]) => enabled)
     .map(([feature]) => feature)
     .join(',');
 
-  /* TODO: widget features
-  permalink
-navigateToLink
-navigateToFile
-hideLogo
-   */
   return `\n  features="${featureList}"`;
 }
 export function getPlaceholder(config: SearchBoxConfig): string {
@@ -259,4 +260,8 @@ export function getMaxTokens(config: GenerativeAnswerConfig): string {
 }
 export function getQueryPrepend(config: SearchBoxConfig): string {
   return config.prependTheQuery && !!config.queryPrepend.trim() ? `\n  query_prepend="${config.queryPrepend}"` : '';
+}
+
+export function getWidgetTheme(options: WidgetConfiguration): string {
+  return options.darkMode === 'dark' ? `\n  mode="dark"` : '';
 }

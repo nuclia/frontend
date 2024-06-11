@@ -68,7 +68,7 @@
             </div>
             <div class="config-form-field">
               <pa-toggle
-                formControlName="permalinks"
+                formControlName="permalink"
                 withBackground
                 spaceBetweenLabelAndToggle>
                 <span class="toggle-label">
@@ -111,11 +111,21 @@
 
       <stf-search-configuration
         mainTitle="search.widgets.form.search-config-title"
-        [configurationContainer]="configurationContainerElement"></stf-search-configuration>
+        [configurationContainer]="configurationContainerElement"
+        (configUpdate)="currentConfig = $event"></stf-search-configuration>
     </div>
 
-    <div class="widget-preview-container">
+    <div
+      class="widget-preview-container"
+      [class.dark-mode]="darkModeEnabled">
       <div class="title-xs">{{ 'search.widgets.form.preview-title' | translate }}</div>
+
+      @if (widgetPreview | async; as widgetPreview) {
+        <div
+          id="preview"
+          class="preview-content"
+          [innerHtml]="widgetPreview.preview"></div>
+      }
     </div>
   </div>
 </div>

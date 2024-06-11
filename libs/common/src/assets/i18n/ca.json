@@ -958,6 +958,7 @@
 	"search.configuration.generative-answer.select-results-used.semantic-and-full-text": "Resultats de cerca vectorial i full text",
 	"search.configuration.generative-answer.select-results-used.semantic-only": "Només resultats de cerca vectorials",
 	"search.configuration.generative-answer.select-results-used.title": "Seleccioneu quins resultats s'utilitzen per generar la resposta",
+	"search.configuration.loading-error": "S'ha produït un error en carregar les configuracions de cerca",
 	"search.configuration.modification-warning": "La configuració actual és diferent de la seleccionada, feu clic a desa per desar una nova configuració.",
 	"search.configuration.options.nuclia-image": "El millor per al reconeixement d'imatges - Nuclia",
 	"search.configuration.options.nuclia-standard": "Generació de respostes estàndard - Nuclia",
