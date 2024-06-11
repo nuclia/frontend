@@ -23,6 +23,7 @@ import { forkJoin, map, Observable, Subject, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { tap } from 'rxjs/operators';
+import { ResourceViewerService } from '../resources';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +34,7 @@ export class SearchWidgetService {
   private backendConfig = inject(BackendConfigurationService);
   private sanitizer = inject(DomSanitizer);
   private storage = inject(LOCAL_STORAGE);
+  private viewerService = inject(ResourceViewerService);
 
   private currentQuery = '';
   private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string }>();
@@ -174,6 +176,7 @@ export class SearchWidgetService {
           searchWidget?.addEventListener('resetQuery', () => {
             this.currentQuery = '';
           });
+          this.viewerService.init('nuclia-search-results');
         }, 500);
       }),
     );

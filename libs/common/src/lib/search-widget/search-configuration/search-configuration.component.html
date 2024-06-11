@@ -1,0 +1,113 @@
+<section class="configuration-header-section">
+  <div class="section-title">{{ mainTitle | translate }}</div>
+  <div class="config-selection-container">
+    <pa-select
+      [formControl]="selectedConfig"
+      [options]="configurations"
+      (valueChange)="selectConfig($event)"></pa-select>
+    <div
+      class="config-status-indicator"
+      [class.modified]="isConfigModified"></div>
+  </div>
+  @if (isConfigModified) {
+    <nsi-info-card type="warning">{{ 'search.configuration.modification-warning' | translate }}</nsi-info-card>
+  }
+  @if (displayWidgetButtonLine) {
+    <div class="config-actions">
+      <nsi-button-mini
+        icon="widget"
+        routerLink="../widgets">
+        {{ 'search.configuration.action.create-widget' | translate }}
+      </nsi-button-mini>
+      @if (!isNucliaConfig) {
+        <nsi-button-mini
+          icon="trash"
+          destructive
+          (click)="deleteConfig()"></nsi-button-mini>
+      }
+    </div>
+  }
+</section>
+
+<section>
+  @if (isConfigModified || displayWidgetButtonLine) {
+    <div class="current-config-title">
+      <span class="section-title">
+        @if (displayWidgetButtonLine) {
+          {{ 'search.configuration.current-config-title' | translate }}
+        }
+      </span>
+
+      @if (isConfigModified) {
+        <div class="config-actions">
+          <nsi-button-mini
+            icon="undo"
+            (click)="resetConfig()">
+            {{ 'search.configuration.action.reset' | translate }}
+          </nsi-button-mini>
+          <div>
+            <nsi-button-mini
+              icon="download"
+              [paPopup]="isNucliaConfig ? null : saveMenu"
+              (click)="isNucliaConfig ? saveConfig() : null">
+              {{ 'search.configuration.action.save' | translate }}
+            </nsi-button-mini>
+            <pa-dropdown #saveMenu>
+              <pa-option (selectOption)="saveConfig()">
+                {{ 'search.configuration.action.save-as-new' | translate }}
+              </pa-option>
+              <pa-option (selectOption)="overwriteConfig()">
+                {{ 'search.configuration.action.overwrite' | translate }}
+              </pa-option>
+            </pa-dropdown>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (initialised) {
+    <pa-accordion (toggleAccordion)="scrollOnTop()">
+      <pa-accordion-item
+        #searchBox
+        id="search-box"
+        [itemTitle]="'search.configuration.search-box.section-title' | translate"
+        [description]="'search.configuration.search-box.section-description' | translate">
+        <pa-accordion-item-body>
+          <stf-search-box-form
+            [config]="savedConfig?.searchBox"
+            [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
+            (configChanged)="updateSearchBoxConfig($event)"
+            (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
+        </pa-accordion-item-body>
+      </pa-accordion-item>
+      <pa-accordion-item
+        #generativeAnswer
+        id="generative-answer"
+        [itemTitle]="'search.configuration.generative-answer.section-title' | translate"
+        [description]="'search.configuration.generative-answer.section-description' | translate">
+        <pa-accordion-item-body>
+          <stf-generative-answer-form
+            [config]="savedConfig?.generativeAnswer"
+            [defaultPrompt]="defaultPromptFromSettings"
+            [models]="generativeModels"
+            (configChanged)="updateGenerativeAnswerConfig($event)"
+            (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
+        </pa-accordion-item-body>
+      </pa-accordion-item>
+      <pa-accordion-item
+        #results
+        id="results"
+        [itemTitle]="'search.configuration.result-display.section-title' | translate"
+        [description]="'search.configuration.result-display.section-description' | translate">
+        <pa-accordion-item-body>
+          <stf-results-display-form
+            [config]="savedConfig?.resultDisplay"
+            [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
+            (configChanged)="updateResultDisplayConfig($event)"
+            (heightChanged)="updateResultsHeight()"></stf-results-display-form>
+        </pa-accordion-item-body>
+      </pa-accordion-item>
+    </pa-accordion>
+  }
+</section>

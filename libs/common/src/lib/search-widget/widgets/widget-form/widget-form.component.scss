@@ -21,6 +21,9 @@
     gap: rhythm(4);
 
     .widget-form-container {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(4);
       width: rhythm(53);
     }
     .widget-preview-container {

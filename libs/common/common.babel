@@ -21972,30 +21972,7 @@
 										</children>
 									</folder_node>
 									<concept_node>
-										<name>create-widget</name>
-										<description/>
-										<comment/>
-										<translations>
-											<translation>
-												<language>ca-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>es-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
-									<concept_node>
-										<name>current</name>
+										<name>current-config-title</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -23707,7 +23684,7 @@
 										</children>
 									</folder_node>
 									<concept_node>
-										<name>saved</name>
+										<name>saved-config-title</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -24696,6 +24673,29 @@
 											</concept_node>
 											<concept_node>
 												<name>preview-title</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>search-config-title</name>
 												<description/>
 												<comment/>
 												<translations>

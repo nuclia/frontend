@@ -186,7 +186,7 @@ hideLogo
   return `\n  features="${featureList}"`;
 }
 export function getPlaceholder(config: SearchBoxConfig): string {
-  return config.placeholder ? `\n  placeholder="${config.placeholder}"` : '';
+  return config.customizePlaceholder && config.placeholder ? `\n  placeholder="${config.placeholder}"` : '';
 }
 export function getPrompt(config: GenerativeAnswerConfig): string {
   if (config.usePrompt && !!config.prompt.trim()) {

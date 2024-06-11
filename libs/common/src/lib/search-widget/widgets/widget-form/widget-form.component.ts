@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BackButtonComponent } from '@nuclia/sistema';
@@ -9,6 +9,7 @@ import {
   PaButtonModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { SearchConfigurationComponent } from '../../search-configuration';
 
 @Component({
   standalone: true,
@@ -21,12 +22,15 @@ import {
     AccordionItemComponent,
     AccordionBodyDirective,
     PaTogglesModule,
+    SearchConfigurationComponent,
   ],
   templateUrl: './widget-form.component.html',
   styleUrl: './widget-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetFormComponent {
+  @ViewChild('configurationContainer') configurationContainerElement?: ElementRef;
+
   widgetName = 'TODO';
 
   form = new FormGroup({

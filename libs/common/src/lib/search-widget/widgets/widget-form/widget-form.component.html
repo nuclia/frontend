@@ -21,7 +21,9 @@
   </div>
 
   <div class="widget-form-page-body">
-    <div class="widget-form-container">
+    <div
+      #configurationContainer
+      class="widget-form-container">
       <pa-accordion-item
         id="widget-options"
         [(expanded)]="widgetFormExpanded"
@@ -106,6 +108,10 @@
           </form>
         </pa-accordion-item-body>
       </pa-accordion-item>
+
+      <stf-search-configuration
+        mainTitle="search.widgets.form.search-config-title"
+        [configurationContainer]="configurationContainerElement"></stf-search-configuration>
     </div>
 
     <div class="widget-preview-container">
