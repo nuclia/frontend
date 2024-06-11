@@ -98,6 +98,25 @@
   </div>
   <div class="config-form-field">
     <pa-toggle
+      formControlName="prependTheQuery"
+      withBackground
+      spaceBetweenLabelAndToggle
+      (valueChange)="heightChanged.emit()">
+      <span class="toggle-label">{{ 'search.configuration.search-box.queryprepend.toggle-label' | translate }}</span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.search-box.queryprepend.toggle-description' | translate }}
+    </div>
+    <div
+      class="extra-fields"
+      [class.visible]="prependTheQuery">
+      <pa-input formControlName="queryPrepend">
+        {{ 'search.configuration.search-box.queryprepend.input-label' | translate }}
+      </pa-input>
+    </div>
+  </div>
+  <div class="config-form-field">
+    <pa-toggle
       formControlName="suggestions"
       withBackground
       spaceBetweenLabelAndToggle

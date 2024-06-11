@@ -11,6 +11,7 @@ import {
   getPlaceholder,
   getPreselectedFilters,
   getPrompt,
+  getQueryPrepend,
   getRagStrategies,
   SAVED_CONFIG_KEY,
   SEARCH_CONFIGS_KEY,
@@ -120,6 +121,7 @@ export class SearchWidgetService {
     const askToResource = getAskToResource(currentConfig.generativeAnswer);
     const maxTokens = getMaxTokens(currentConfig.generativeAnswer);
     const generativeModel = `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`;
+    const queryPrepend = getQueryPrepend(currentConfig.searchBox);
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([kb, account]) => {
@@ -134,7 +136,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<nuclia-search-bar\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${queryPrepend}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}`;
         baseSnippet += `></nuclia-search-bar>\n<nuclia-search-results></nuclia-search-results>`;
 
         const snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>\n${baseSnippet}`;
