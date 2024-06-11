@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { BackButtonComponent } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
+import { BackButtonComponent, SisToastService } from '@nuclia/sistema';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
   AccordionItemComponent,
   PaButtonModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { SearchConfigurationComponent } from '../../search-configuration';
+import { SearchConfiguration, SearchConfigurationComponent, Widget } from '../..';
 import { SearchWidgetService } from '../../search-widget.service';
 import { filter, map, Subject, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, tap } from 'rxjs/operators';
-import { SearchConfiguration } from '@flaps/common';
+import { SDKService } from '@flaps/core';
 
 @Component({
   standalone: true,
@@ -34,14 +34,19 @@ import { SearchConfiguration } from '@flaps/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetFormComponent implements OnInit, OnDestroy {
-  private searchWidgetService = inject(SearchWidgetService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private sdk = inject(SDKService);
+  private searchWidgetService = inject(SearchWidgetService);
+  private translate = inject(TranslateService);
+  private toaster = inject(SisToastService);
+
   private unsubscribeAll = new Subject<void>();
 
   @ViewChild('configurationContainer') configurationContainerElement?: ElementRef;
 
-  widgetName = 'TODO';
+  savedWidget?: Widget;
+  currentWidget?: Widget;
 
   form = new FormGroup({
     popupStyle: new FormControl<'page' | 'popup'>('page', { nonNullable: true }),
@@ -66,11 +71,22 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       .pipe(
         filter((params) => !!params['slug']),
         map((params) => params['slug'] as string),
+        switchMap((widgetSlug) =>
+          this.sdk.currentKb.pipe(
+            take(1),
+            map((kb) => ({ kbId: kb.id, widgetSlug })),
+          ),
+        ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((widgetSlug) => {
-        // FIXME: get widget from local storage
-        this.widgetName = widgetSlug;
+      .subscribe(({ kbId, widgetSlug }) => {
+        this.savedWidget = this.searchWidgetService.getSavedWidget(kbId, widgetSlug);
+        if (!this.savedWidget) {
+          this.toaster.error(this.translate.instant('search.widgets.errors.widget-not-found', { widgetSlug }));
+          this.router.navigate(['..'], { relativeTo: this.route });
+        } else {
+          this.currentWidget = { ...this.savedWidget };
+        }
       });
 
     this.form.valueChanges

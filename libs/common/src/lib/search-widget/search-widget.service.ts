@@ -1,8 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import {
-  DEFAULT_GENERATIVE_ANSWER_CONFIG,
-  DEFAULT_RESULT_DISPLAY_CONFIG,
-  DEFAULT_SEARCH_BOX_CONFIG,
   DEFAULT_WIDGET_CONFIG,
   getAskToResource,
   getFeatures,
@@ -15,13 +12,16 @@ import {
   getQueryPrepend,
   getRagStrategies,
   getWidgetTheme,
+  NUCLIA_STANDARD_SEARCH_CONFIG,
   SAVED_CONFIG_KEY,
+  SAVED_WIDGETS_KEY,
   SEARCH_CONFIGS_KEY,
   SearchConfiguration,
+  Widget,
   WidgetConfiguration,
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { BackendConfigurationService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
 import { forkJoin, map, Observable, Subject, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -43,28 +43,8 @@ export class SearchWidgetService {
   private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string }>();
   widgetPreview = this._widgetPreview.asObservable();
 
-  getStandardSearchConfiguration(): SearchConfiguration {
-    return {
-      id: 'nuclia-standard',
-      searchBox: {
-        ...DEFAULT_SEARCH_BOX_CONFIG,
-        suggestions: true,
-        autocompleteFromNERs: true,
-      },
-      generativeAnswer: {
-        ...DEFAULT_GENERATIVE_ANSWER_CONFIG,
-        generateAnswer: true,
-      },
-      resultDisplay: {
-        ...DEFAULT_RESULT_DISPLAY_CONFIG,
-        displayResults: true,
-        relations: true,
-      },
-    };
-  }
-
   getSelectedSearchConfig(kbId: string): SearchConfiguration {
-    const standardConfiguration = this.getStandardSearchConfiguration();
+    const standardConfiguration = { ...NUCLIA_STANDARD_SEARCH_CONFIG };
     const savedConfigMap: { [kbId: string]: string } = JSON.parse(this.storage.getItem(SAVED_CONFIG_KEY) || '{}');
     const savedConfigId = savedConfigMap[kbId];
     if (!savedConfigId) {
@@ -216,5 +196,39 @@ export class SearchWidgetService {
     searchWidgetElement?.remove();
     searchBarElement?.remove();
     searchResultsElement?.remove();
+  }
+
+  /**
+   * Create a widget, store it in local storage and return its slug.
+   *
+   * @param kbId
+   * @param name
+   * @param widgetConfig
+   * @param searchConfigId
+   */
+  createWidget(kbId: string, name: string, widgetConfig: WidgetConfiguration, searchConfigId: string): string {
+    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    let slug = STFUtils.generateSlug(name);
+    // if slug already exists in this KB, make it unique
+    if (storedWidgets.find((widget) => widget.slug === slug)) {
+      slug = `${slug}-${STFUtils.generateRandomSlugSuffix()}`;
+    }
+    storedWidgets.push({
+      slug,
+      name,
+      searchConfigId,
+      widgetConfig,
+    });
+    widgetsByKbMap[kbId] = storedWidgets;
+    this.storage.setItem(SAVED_WIDGETS_KEY, JSON.stringify(widgetsByKbMap));
+
+    return slug;
+  }
+
+  getSavedWidget(kbId: string, widgetSlug: string): Widget | undefined {
+    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    return storedWidgets.find((widget) => widget.slug === widgetSlug);
   }
 }

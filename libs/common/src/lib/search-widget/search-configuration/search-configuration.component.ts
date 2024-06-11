@@ -97,6 +97,7 @@ export class SearchConfigurationComponent {
   @Input() mainTitle = '';
 
   @Output() configUpdate = new EventEmitter<SearchConfiguration>();
+  @Output() createWidget = new EventEmitter<void>();
 
   @ViewChild('searchBox', { read: AccordionItemComponent }) searchBoxItem?: AccordionItemComponent;
   @ViewChild('generativeAnswer', { read: AccordionItemComponent }) generativeAnswerItem?: AccordionItemComponent;
@@ -247,6 +248,19 @@ export class SearchConfigurationComponent {
       this.currentConfig = { ...this.savedConfig };
       this.cdr.markForCheck();
     });
+  }
+
+  triggerCreateWidget() {
+    if (this.isConfigModified) {
+      this.modalService.openConfirm({
+        title: 'search.configuration.save-changes-modal.title',
+        description: 'search.configuration.save-changes-modal.description',
+        confirmLabel: 'Ok',
+        onlyConfirm: true,
+      });
+    } else {
+      this.createWidget.emit();
+    }
   }
 
   resetConfig() {

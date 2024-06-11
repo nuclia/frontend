@@ -20,6 +20,8 @@
     <stf-search-configuration
       displayWidgetButtonLine
       mainTitle="search.configuration.saved-config-title"
-      [configurationContainer]="configurationContainerElement"></stf-search-configuration>
+      [configurationContainer]="configurationContainerElement"
+      (configUpdate)="searchConfig = $event"
+      (createWidget)="createWidget()"></stf-search-configuration>
   </div>
 </div>

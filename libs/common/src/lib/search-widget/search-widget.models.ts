@@ -88,7 +88,7 @@ export interface Widget {
 
 export const SAVED_CONFIG_KEY = 'NUCLIA_SELECTED_SEARCH_CONFIG';
 export const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
-export const WIDGET_LIST_KEY = 'NUCLIA_SAVED_WIDGETS';
+export const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
 
 export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   customizePlaceholder: false,
@@ -147,6 +147,24 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   permalink: false,
   navigateToLink: false,
   navigateToFile: false,
+};
+
+export const NUCLIA_STANDARD_SEARCH_CONFIG: SearchConfiguration = {
+  id: 'nuclia-standard',
+  searchBox: {
+    ...DEFAULT_SEARCH_BOX_CONFIG,
+    suggestions: true,
+    autocompleteFromNERs: true,
+  },
+  generativeAnswer: {
+    ...DEFAULT_GENERATIVE_ANSWER_CONFIG,
+    generateAnswer: true,
+  },
+  resultDisplay: {
+    ...DEFAULT_RESULT_DISPLAY_CONFIG,
+    displayResults: true,
+    relations: true,
+  },
 };
 
 export function isSameConfigurations(configA: SearchConfiguration, configB: SearchConfiguration): boolean {

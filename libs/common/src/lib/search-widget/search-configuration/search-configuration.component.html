@@ -16,7 +16,7 @@
     <div class="config-actions">
       <nsi-button-mini
         icon="widget"
-        routerLink="../widgets">
+        (click)="triggerCreateWidget()">
         {{ 'search.configuration.action.create-widget' | translate }}
       </nsi-button-mini>
       @if (!isNucliaConfig) {
