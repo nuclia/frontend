@@ -12,7 +12,6 @@ export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
 export enum LabelSetKind {
   RESOURCES = 'RESOURCES',
   PARAGRAPHS = 'PARAGRAPHS',
-  SELECTIONS = 'SELECTIONS',
 }
 
 export enum EventType {

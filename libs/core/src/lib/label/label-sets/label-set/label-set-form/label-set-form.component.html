@@ -20,7 +20,7 @@
                 {{ 'label-set.form.kind' | translate }}
               </label>
               <pa-radio-group formControlName="kind">
-                @for (kind of kinds | async; track kind.id) {
+                @for (kind of kinds; track kind.id) {
                   <pa-radio
                     [value]="kind.id"
                     [disabled]="!addNew">

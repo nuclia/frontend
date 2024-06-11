@@ -89,25 +89,6 @@ export class EditResourceService {
   kbUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
     map(([account, kb]) => this.navigation.getKbUrl(account.slug, kb.slug!)),
   );
-  pawlsData = combineLatest([this.sdk.currentKb, this.resource, this.currentField]).pipe(
-    map(([kb, resource, fieldId]) => {
-      if (resource && fieldId !== 'resource') {
-        const fieldData = resource.getFieldData<FileFieldData>('files', fieldId.field_id);
-        if (!fieldData) {
-          return undefined;
-        }
-        return {
-          options: { ...this.sdk.nuclia.options, account: kb.accountId, kb: kb.id, kbSlug: kb.slug },
-          resId: resource?.id || '',
-          fieldId: fieldId.field_id,
-          pdf: fieldData.extracted?.file?.file_preview?.uri || fieldData.value?.file?.uri,
-          returnURL: location.href,
-        };
-      } else {
-        return undefined;
-      }
-    }),
-  );
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   customNerEnabled = this.features.unstable.customNer;
 

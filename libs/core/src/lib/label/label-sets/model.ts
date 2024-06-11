@@ -13,7 +13,6 @@ export const EMPTY_LABEL_SET: LabelSet = {
 export type LabelSetCounts = {
   [LabelSetKind.RESOURCES]: number;
   [LabelSetKind.PARAGRAPHS]: number;
-  [LabelSetKind.SELECTIONS]: number;
 };
 
 export interface LabelSetDisplay extends LabelSet {

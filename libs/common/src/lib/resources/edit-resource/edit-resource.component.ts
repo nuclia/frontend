@@ -16,8 +16,6 @@ import { SisModalService } from '@nuclia/sistema';
 import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { ResourceNavigationService } from './resource-navigation.service';
 
-const PAWLS_KEY = 'pawls';
-
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
   hasError?: boolean;
@@ -51,7 +49,6 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         })),
     ),
   );
-  isPdfAnnotationEnabled = this.features.unstable.pdfAnnotation;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   summarizationAuthorized = this.features.authorized.summarization;
 
@@ -178,13 +175,6 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         tap(() => window.removeEventListener('beforeunload', avoidTabClosing)),
       )
       .subscribe();
-  }
-
-  goToPawls() {
-    this.editResource.pawlsData.pipe(take(1)).subscribe((data) => {
-      localStorage.setItem(PAWLS_KEY, JSON.stringify(data));
-      location.href = '/pawls';
-    });
   }
 
   backToResources() {

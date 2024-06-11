@@ -28,9 +28,6 @@ export class LabelSetsComponent {
   textBlockLabelSets: Observable<LabelSetDisplay[]> = this._labelSets.pipe(
     map((labelSets) => labelSets.filter((labelSet) => labelSet.kind.includes(LabelSetKind.PARAGRAPHS))),
   );
-  selectionLabelSets: Observable<LabelSetDisplay[]> = this._labelSets.pipe(
-    map((labelSets) => labelSets.filter((labelSet) => labelSet.kind.includes(LabelSetKind.SELECTIONS))),
-  );
   showingLabelSetForm = this.router.events.pipe(
     filter((event) => event instanceof NavigationEnd),
     startWith(() => true),

@@ -1,3 +1,9 @@
+# 1.17.0 (unreleased)
+
+### Breaking changes
+
+- Remove support for visual selection labelling
+
 # 1.16.0 (2024-05-29)
 
 ### Breaking changes
