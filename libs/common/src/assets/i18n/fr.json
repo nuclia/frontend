@@ -1023,7 +1023,7 @@
 	"search.configuration.search-box.preselected-filters.toggle-description": "Définissez des filtres qui seront appliqués par défaut à toutes les requêtes.",
 	"search.configuration.search-box.preselected-filters.toggle-label": "Filtres présélectionnés",
 	"search.configuration.search-box.queryprepend.input-label": "Préfixe de requête",
-	"search.configuration.search-box.queryprepend.toggle-description": "Ce texte sera inséré avant la requête de l'utilisateur. Il permet de définir un contexte spécifique, afin que les résultats de la recherche soient précis même si l'utilisateur ne précise ce dont il parle.",
+	"search.configuration.search-box.queryprepend.toggle-description": "Ce texte sera inséré avant la requête de l'utilisateur. Il permet de définir un contexte spécifique, afin que les résultats de la recherche soient précis même si l'utilisateur ne précise pas ce dont il parle.",
 	"search.configuration.search-box.queryprepend.toggle-label": "Préfixer la requête",
 	"search.configuration.search-box.section-description": "Filtrage et suggestions",
 	"search.configuration.search-box.section-title": "Options du champ de recherche",
