@@ -43,6 +43,7 @@ let CITATIONS = false;
 let REPHRASE = false;
 let ASK_TO_RESOURCE = '';
 let MAX_TOKENS: number | undefined = undefined;
+let QUERY_PREPEND = '';
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -119,6 +120,9 @@ export const initNuclia = (
   if (widgetOptions.max_tokens) {
     MAX_TOKENS = widgetOptions.max_tokens;
   }
+  if (widgetOptions.query_prepend) {
+    QUERY_PREPEND = widgetOptions.query_prepend;
+  }
   STATE = state;
   nucliaApi.events?.log('widgetOptions', widgetOptions);
 
@@ -136,6 +140,9 @@ export const resetNuclia = () => {
 export const search = (query: string, options: SearchOptions): Observable<Search.FindResults> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
+  }
+  if (QUERY_PREPEND) {
+    query = QUERY_PREPEND + ' ' + query;
   }
 
   return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, ...options }).pipe(
@@ -170,6 +177,9 @@ export const getAnswer = (
     rephrase: REPHRASE,
     max_tokens: MAX_TOKENS,
   };
+  if (QUERY_PREPEND) {
+    query = QUERY_PREPEND + ' ' + query;
+  }
   if (ASK_TO_RESOURCE) {
     return nucliaApi.knowledgeBox
       .getResourceFromData({ id: '', slug: ASK_TO_RESOURCE })
@@ -199,6 +209,9 @@ export const searchInResource = (
 ): Observable<Search.FindResults> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
+  }
+  if (QUERY_PREPEND) {
+    query = QUERY_PREPEND + ' ' + query;
   }
 
   return nucliaApi.knowledgeBox

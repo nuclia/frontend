@@ -68,6 +68,7 @@
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
   export let max_tokens: number | undefined = undefined;
+  export let query_prepend = '';
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -184,6 +185,7 @@
         generative_model: generativemodel,
         ask_to_resource,
         max_tokens,
+        query_prepend,
       },
       no_tracking,
     );
@@ -249,7 +251,7 @@
   data-version="__NUCLIA_DEV_VERSION__">
   {#if $ready && !!svgSprite}
     <div class="search-box">
-      <SearchInput on:resetQuery={() => dispatchCustomEvent('resetQuery', '')}/>
+      <SearchInput on:resetQuery={() => dispatchCustomEvent('resetQuery', '')} />
 
       {#if $entityRelations.length > 0}
         <IconButton
