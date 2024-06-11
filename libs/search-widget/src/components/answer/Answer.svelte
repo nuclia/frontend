@@ -26,6 +26,7 @@
   export let initialAnswer = false;
   let text = '';
   let selectedCitation: number | undefined;
+  let element: HTMLElement | undefined;
 
   const dispatch = createEventDispatcher();
 
@@ -36,7 +37,7 @@
     answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
 
   $: sources &&
-    document.querySelectorAll('.sw-answer .ref').forEach((ref) => {
+    (element?.querySelectorAll('.sw-answer .ref') || []).forEach((ref) => {
       ref.addEventListener('mouseenter', onMouseEnter);
       ref.addEventListener('mouseleave', onMouseLeave);
     });
@@ -96,7 +97,9 @@
   }
 </script>
 
-<div class="sw-answer">
+<div
+  class="sw-answer"
+  bind:this={element}>
   <div
     class="answer-text"
     class:error={answer.inError}>
