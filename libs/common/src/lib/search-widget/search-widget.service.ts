@@ -19,9 +19,10 @@ import {
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
-import { forkJoin, map, Observable, take } from 'rxjs';
+import { forkJoin, map, Observable, Subject, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +33,10 @@ export class SearchWidgetService {
   private backendConfig = inject(BackendConfigurationService);
   private sanitizer = inject(DomSanitizer);
   private storage = inject(LOCAL_STORAGE);
+
+  private currentQuery = '';
+  private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string }>();
+  widgetPreview = this._widgetPreview.asObservable();
 
   getStandardSearchConfiguration(): SearchConfiguration {
     return {
@@ -153,7 +158,23 @@ export class SearchWidgetService {
             .replace('<nuclia-search-results', '<nuclia-search-results scrollableContainerSelector=".preview-content"'),
         );
 
+        this._widgetPreview.next({ snippet, preview });
         return { snippet, preview };
+      }),
+      tap(() => {
+        // Run the search with the current query if any
+        setTimeout(() => {
+          const searchWidget = document.getElementsByTagName('nuclia-search-bar')[0] as unknown as any;
+          if (this.currentQuery) {
+            searchWidget?.search(this.currentQuery);
+          }
+          searchWidget?.addEventListener('search', (event: { detail: string }) => {
+            this.currentQuery = event.detail;
+          });
+          searchWidget?.addEventListener('resetQuery', () => {
+            this.currentQuery = '';
+          });
+        }, 500);
       }),
     );
   }

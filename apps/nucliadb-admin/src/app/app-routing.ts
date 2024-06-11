@@ -95,11 +95,11 @@ export const routes: Routes = [
                   import('../../../../libs/common/src/lib/entities/entities.module').then((m) => m.EntitiesModule),
               },
               {
-                path: 'widget-generator',
+                path: 'widgets',
                 loadChildren: () =>
                   // eslint-disable-next-line @nx/enforce-module-boundaries
-                  import('../../../../libs/common/src/lib/search-widget/widgets/deprecated-widgets.module').then(
-                    (m) => m.DeprecatedWidgetsModule,
+                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.routes').then(
+                    (m) => m.WIDGETS_ROUTES,
                   ),
               },
             ],

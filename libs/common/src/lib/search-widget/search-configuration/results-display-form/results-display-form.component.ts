@@ -22,7 +22,6 @@ import { takeUntil } from 'rxjs/operators';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, PaTogglesModule],
   templateUrl: './results-display-form.component.html',
-  styleUrl: './results-display-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResultsDisplayFormComponent implements OnInit, OnDestroy {

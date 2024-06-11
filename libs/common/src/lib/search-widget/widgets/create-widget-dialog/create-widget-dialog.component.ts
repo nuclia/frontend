@@ -1,17 +1,17 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, PaModalModule, TranslateModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule],
-  templateUrl: './save-config-modal.component.html',
-  styleUrl: './save-config-modal.component.scss',
+  imports: [CommonModule, PaModalModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule, TranslateModule],
+  templateUrl: './create-widget-dialog.component.html',
+  styleUrl: './create-widget-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SaveConfigModalComponent implements AfterViewInit {
+export class CreateWidgetDialogComponent implements AfterViewInit {
   name = new FormControl<string>('', { validators: [Validators.required], nonNullable: true });
   initialized = false;
 

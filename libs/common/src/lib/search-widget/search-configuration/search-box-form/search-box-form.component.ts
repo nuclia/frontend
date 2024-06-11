@@ -33,7 +33,6 @@ import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
     UnauthorizedFeatureDirective,
   ],
   templateUrl: './search-box-form.component.html',
-  styleUrl: './search-box-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchBoxFormComponent implements OnInit, OnDestroy {

@@ -1,0 +1,36 @@
+@import 'apps/dashboard/src/variables';
+@import '../../common-form';
+
+.widget-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .action-container {
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  .widget-form-page-body {
+    display: flex;
+    gap: rhythm(4);
+
+    .widget-form-container {
+      width: rhythm(53);
+    }
+    .widget-preview-container {
+      flex: 1;
+    }
+  }
+
+  .widget-preview-container {
+    .title-xs {
+      color: $color-neutral-regular;
+    }
+  }
+}

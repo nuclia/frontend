@@ -1,0 +1,13 @@
+<div class="widget-list-page page-spacing">
+  <header>
+    <div>
+      <div class="page-title">
+        {{ 'search.widgets.title' | translate }}
+      </div>
+      <div class="page-description">{{ 'search.widgets.page-description' | translate }}</div>
+    </div>
+    <pa-button (click)="createWidget()">{{ 'search.widgets.action.create-widget-button' | translate }}</pa-button>
+  </header>
+
+  <nsi-info-card>{{ 'search.widgets.page-empty-message' | translate }}</nsi-info-card>
+</div>

@@ -1,0 +1,9 @@
+@import 'apps/dashboard/src/variables';
+
+.widget-list-page {
+  header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: rhythm(4);
+  }
+}

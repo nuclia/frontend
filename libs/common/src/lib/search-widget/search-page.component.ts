@@ -162,7 +162,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     const standardConfigOption = new OptionModel({
       id: 'nuclia-standard',
       value: 'nuclia-standard',
-      label: this.translate.instant('search.configuration.options.standard'),
+      label: this.translate.instant('search.configuration.options.nuclia-standard'),
       help: this.modelNames[this.modelFromSettings] || this.modelFromSettings,
     });
 
