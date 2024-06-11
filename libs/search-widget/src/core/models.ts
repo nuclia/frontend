@@ -49,6 +49,7 @@ export interface WidgetOptions {
   generative_model?: string;
   ask_to_resource?: string;
   max_tokens?: number;
+  query_prepend?: string;
 }
 
 export interface WidgetAction {

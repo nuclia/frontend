@@ -74,6 +74,8 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     preselectedFilters: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     useSynonyms: new FormControl<boolean>(false, { nonNullable: true }),
+    prependTheQuery: new FormControl<boolean>(false, { nonNullable: true }),
+    queryPrepend: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
   });
 
   synonymsAuthorized = this.featuresService.authorized.synonyms.pipe(
@@ -97,6 +99,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   }
   get suggestionsEnabled() {
     return this.form.controls.suggestions.value;
+  }
+  get prependTheQuery() {
+    return this.form.controls.prependTheQuery.value;
   }
 
   ngOnInit() {

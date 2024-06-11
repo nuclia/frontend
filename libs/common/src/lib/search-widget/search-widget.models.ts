@@ -23,6 +23,8 @@ export interface SearchBoxConfig {
   placeholder: string;
   preselectedFilters: string;
   filters: FilterSelectionType;
+  prependTheQuery: boolean;
+  queryPrepend: string;
 }
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
@@ -84,6 +86,8 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   suggestLabels: false,
   autocompleteFromNERs: false,
   useSynonyms: false,
+  prependTheQuery: false,
+  queryPrepend: '',
 };
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generateAnswer: false,
@@ -227,4 +231,7 @@ export function getMaxTokens(config: GenerativeAnswerConfig): string {
   return config.limitTokenConsumption && !!config.tokenConsumptionLimit
     ? `\n  max_tokens="${config.tokenConsumptionLimit}"`
     : '';
+}
+export function getQueryPrepend(config: SearchBoxConfig): string {
+  return config.prependTheQuery && !!config.queryPrepend.trim() ? `\n  query_prepend="${config.queryPrepend}"` : '';
 }
