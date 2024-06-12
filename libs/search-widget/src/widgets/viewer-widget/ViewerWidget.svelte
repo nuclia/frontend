@@ -14,9 +14,10 @@
     resetNuclia,
     setCDN,
     setLang,
-    setWidgetActions,
     viewerData,
-    widgetFeatures
+    type WidgetAction,
+    widgetActions,
+    widgetFeatures,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import { onMount } from 'svelte';
@@ -58,7 +59,10 @@
     closePreview();
   }
 
-  export const setViewerMenu = setWidgetActions;
+  widgetActions.set([]);
+  export function setViewerMenu(actions: WidgetAction[]) {
+    widgetActions.set(actions);
+  }
 
   export function openPreview(fullId: FieldFullId): Observable<boolean> {
     forkJoin([
