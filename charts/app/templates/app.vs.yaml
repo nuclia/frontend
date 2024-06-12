@@ -19,10 +19,8 @@ spec:
     - uri:
         regex: ^/.{0,2}
     - uri:
-        # original regex to avoid only /api
-        # regex: ^/([^a]|a[^p]|ap[^i]|api[^/]).*
-        # updated regex to avoid /api
-        regex: ^/([^a|p]|a[^p]|ap[^i]|api[^/]).*
+        # avoid only /api
+        regex: ^/([^a]|a[^p]|ap[^i]|api[^/]).*
     retries:
       attempts: 3
       retryOn: connect-failure
