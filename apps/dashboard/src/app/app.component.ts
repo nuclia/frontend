@@ -36,8 +36,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private tracking: STFTrackingService,
     private config: BackendConfigurationService,
     private sdk: SDKService,
-    private modalService: SisModalService,
     private paTranslate: PaTranslateService,
+    private modalService: SisModalService,
     @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();
