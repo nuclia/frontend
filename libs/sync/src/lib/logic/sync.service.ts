@@ -40,6 +40,7 @@ export class SyncService {
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
         permanentSyncOnly: true,
+        deprecated: true,
         factory: (settings) => new OAuthConnector('gdrive', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
@@ -50,6 +51,7 @@ export class SyncService {
         logo: `${baseLogoPath}/onedrive.svg`,
         description: 'Microsoft OneDrive file hosting service',
         permanentSyncOnly: true,
+        deprecated: true,
         factory: (settings) => new OAuthConnector('onedrive', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
@@ -60,6 +62,7 @@ export class SyncService {
         logo: `${baseLogoPath}/sharepoint.svg`,
         description: 'Microsoft Sharepoint service',
         permanentSyncOnly: true,
+        deprecated: true,
         factory: (settings) => new SharepointImpl('sharepoint', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
@@ -70,6 +73,7 @@ export class SyncService {
         logo: `${baseLogoPath}/dropbox.svg`,
         description: 'File storage and synchronization service developed by Dropbox',
         permanentSyncOnly: true,
+        deprecated: true,
         factory: (settings) => new OAuthConnector('dropbox', settings?.['id'] || '', this.config.getOAuthServer()),
       },
     },
@@ -79,7 +83,11 @@ export class SyncService {
     rss: { definition: RSSConnector },
   };
 
-  connectorsObs = new BehaviorSubject(Object.values(this.connectors).map((obj) => obj.definition));
+  connectorsObs = new BehaviorSubject(
+    Object.values(this.connectors)
+      .map((obj) => obj.definition)
+      .filter((def) => !def.deprecated),
+  );
   private _syncServer = new BehaviorSubject<{ serverUrl: string; type: SyncServerType }>({
     serverUrl: localStorage.getItem(SYNC_SERVER_KEY) || LOCAL_SYNC_SERVER,
     type: (localStorage.getItem(SYNC_SERVER_TYPE_KEY) as SyncServerType) || 'desktop',
