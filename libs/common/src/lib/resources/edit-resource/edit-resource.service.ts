@@ -21,7 +21,6 @@ import {
   FileFieldData,
   getDataKeyFromFieldType,
   IFieldData,
-  KeywordSetField,
   LinkField,
   longToShortFieldType,
   Paragraph,
@@ -223,7 +222,7 @@ export class EditResourceService {
   addField(
     fieldType: FIELD_TYPE,
     fieldId: string,
-    fieldData: TextField | LinkField | KeywordSetField,
+    fieldData: TextField | LinkField,
   ): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
@@ -282,7 +281,7 @@ export class EditResourceService {
   updateField(
     fieldType: FIELD_TYPE,
     fieldId: string,
-    fieldData: TextField | LinkField | KeywordSetField,
+    fieldData: TextField | LinkField,
   ): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
@@ -313,7 +312,7 @@ export class EditResourceService {
     currentResource: Resource,
     fieldType: FIELD_TYPE,
     fieldId: string,
-    fieldData: TextField | LinkField | KeywordSetField,
+    fieldData: TextField | LinkField,
     resourceData: ResourceData,
     successMessage: string,
   ) {
