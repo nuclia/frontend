@@ -36,11 +36,10 @@ import {
   SearchBoxConfig,
   SearchConfiguration,
 } from './search-widget.models';
-import { FeaturesService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { takeUntil, tap } from 'rxjs/operators';
 import { filter, forkJoin, map, Subject, switchMap, take } from 'rxjs';
 import { LearningConfigurations } from '@nuclia/core';
-import { LearningOptionPipe } from '../pipes';
 import { SearchWidgetService } from './search-widget.service';
 import { SafeHtml } from '@angular/platform-browser';
 import { SaveConfigModalComponent } from './search-configuration/save-config-modal/save-config-modal.component';
@@ -66,7 +65,6 @@ import { RouterLink } from '@angular/router';
     RouterLink,
     InfoCardComponent,
   ],
-  providers: [LearningOptionPipe],
   templateUrl: './search-page.component.html',
   styleUrls: ['./search-page.component.scss', './_common-form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -77,7 +75,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   private sdk = inject(SDKService);
   private featuresService = inject(FeaturesService);
   private translate = inject(TranslateService);
-  private learningOption = inject(LearningOptionPipe);
   private modalService = inject(SisModalService);
   private searchWidgetService = inject(SearchWidgetService);
 
@@ -106,8 +103,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   currentConfig?: SearchConfiguration;
 
   modelFromSettings = '';
-  unsupportedModels: string[] = [];
-  unauthorizedModels: string[] = [];
+  modelNames: { [key: string]: string } = {};
   generativeModels: OptionModel[] = [];
   defaultPromptFromSettings = '';
 
@@ -125,34 +121,29 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         takeUntil(this.unsubscribeAll),
-        switchMap((kb) => {
-          return forkJoin([kb.getLearningSchema(), kb.getConfiguration()]).pipe(
-            tap(([schema, config]) => {
-              this.unsupportedModels = this.featuresService.getUnsupportedGenerativeModels(
-                schema,
-                config['semantic_model'],
-              );
-            }),
-            switchMap(([schema, config]) =>
-              this.featuresService.getUnauthorizedGenerativeModels(schema).pipe(
-                tap((unauthorizedModels) => {
-                  this.unauthorizedModels = unauthorizedModels;
-                }),
-                map(
-                  () =>
-                    ({ schema, config, kbId: kb.id }) as {
-                      config: { [id: string]: any };
-                      schema: LearningConfigurations;
-                      kbId: string;
-                    },
-                ),
-              ),
+        switchMap((kb) =>
+          forkJoin([kb.getLearningSchema(), kb.getConfiguration()]).pipe(
+            map(
+              ([schema, config]) =>
+                ({ schema, config, kbId: kb.id }) as {
+                  config: { [id: string]: any };
+                  schema: LearningConfigurations;
+                  kbId: string;
+                },
             ),
-          );
-        }),
+          ),
+        ),
       )
       .subscribe(({ kbId, schema, config }) => {
         this.modelFromSettings = config['generative_model'] || '';
+        this.modelNames =
+          schema['generative_model']?.options?.reduce(
+            (acc, model) => {
+              acc[model.value] = model.name;
+              return acc;
+            },
+            {} as { [key: string]: string },
+          ) || {};
         this.setConfigurations(kbId);
         this.setModelsAndPrompt(schema, config);
         this.initialised = true;
@@ -166,15 +157,11 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   private setConfigurations(kbId: string) {
-    const kbModel = this.learningOption.transform(
-      { value: this.modelFromSettings, name: this.modelFromSettings },
-      'generative_model',
-    );
     const standardConfigOption = new OptionModel({
       id: 'nuclia-standard',
       value: 'nuclia-standard',
       label: this.translate.instant('search.configuration.options.standard'),
-      help: kbModel,
+      help: this.modelNames[this.modelFromSettings] || this.modelFromSettings,
     });
 
     const savedConfigs = this.searchWidgetService.getSavedConfigs(kbId);
@@ -189,14 +176,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
             id: item.id,
             value: item.id,
             label: item.id,
-            help:
-              this.learningOption.transform(
-                {
-                  value: item.generativeAnswer.generativeModel,
-                  name: item.generativeAnswer.generativeModel,
-                },
-                'generative_model',
-              ) || kbModel,
+            help: this.modelNames[item.generativeAnswer?.generativeModel] || item.generativeAnswer?.generativeModel,
           }),
       ),
     );
@@ -217,9 +197,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         new OptionModel({
           id: model.value,
           value: model.value,
-          label: this.learningOption.transform(model, 'generative_model'),
-          disabled: this.unsupportedModels.includes(model.value) || this.unauthorizedModels.includes(model.value),
-          iconModel: this.unauthorizedModels.includes(model.value) ? UNAUTHORIZED_ICON : undefined,
+          label: model.name,
           iconOnRight: true,
           help:
             this.modelFromSettings === model.value

@@ -231,6 +231,7 @@ export interface LearningConfigurationOption {
   name: string;
   user_key?: string;
   user_prompt?: string;
+  provider?: string;
 }
 
 export interface LearningConfiguration {

@@ -17,7 +17,6 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { DeprecatedWidgetGeneratorComponent } from './deprecated-widget-generator.component';
 import { CopilotModalComponent } from './copilot/copilot-modal.component';
 import { LabelModule, UnauthorizedFeatureComponent } from '@flaps/core';
-import { LearningOptionPipe } from '../../pipes/learning-option.pipe';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 
 const routes = [
@@ -43,7 +42,6 @@ const routes = [
     PaTogglesModule,
     PaPopupModule,
     LabelModule,
-    LearningOptionPipe,
     InfoCardComponent,
     BadgeComponent,
     UnauthorizedFeatureComponent,

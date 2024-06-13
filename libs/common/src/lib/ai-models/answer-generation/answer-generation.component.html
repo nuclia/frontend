@@ -15,17 +15,15 @@
             @for (option of options; track option.value) {
               <pa-radio
                 [value]="option.value"
-                [disabled]="unsupportedModels.includes(option.value) || unAuthorizedModels.includes(option.value)"
-                [stfUnauthorizedFeature]="unAuthorizedModels.includes(option.value)"
                 fullProBadge
                 [popoverHelp]="popoverHelp[option.value] | translate">
-                {{ option | learningOption: 'generative_model' }}
+                {{ option.name }}
               </pa-radio>
             }
           </pa-radio-group>
 
-          @if (currentGenerativeModelPrompt) {
-            @if (learningConfig['user_keys'].schemas?.[currentGenerativeModelPrompt]; as userKeys) {
+          @if (currentGenerativeModel?.user_prompt) {
+            @if (learningConfig['user_keys'].schemas?.[currentGenerativeModel?.user_prompt]; as userKeys) {
               <div class="separator"></div>
 
               <pa-toggle
@@ -37,7 +35,7 @@
                 (valueChange)="onOwnKeyToggle()">
                 {{
                   'kb.ai-models.answer-generation.select-llm.own-key.label'
-                    | translate: { provider: keyProviders[currentGenerativeModelPrompt] }
+                    | translate: { provider: keyProviders[currentGenerativeModel?.user_prompt] }
                 }}
               </pa-toggle>
 
@@ -70,9 +68,9 @@
       </div>
     </nsi-two-columns-configuration-item>
 
-    @if (currentGenerativeModelPrompt) {
+    @if (currentGenerativeModel?.user_prompt) {
       <ng-container [formGroup]="userPromptForm">
-        @if (learningConfig['user_prompts'].schemas?.[currentGenerativeModelPrompt]; as userPrompt) {
+        @if (learningConfig['user_prompts'].schemas?.[currentGenerativeModel?.user_prompt]; as userPrompt) {
           @if (userPrompt.properties['prompt']; as prompt) {
             <nsi-two-columns-configuration-item
               badge="generic.badge.optional"

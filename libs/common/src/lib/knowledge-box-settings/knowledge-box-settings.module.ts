@@ -4,7 +4,6 @@ import { KnowledgeBoxSettingsComponent } from './knowledge-box-settings.componen
 import { ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaExpanderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { LearningOptionPipe } from '../pipes';
 
 @NgModule({
   declarations: [KnowledgeBoxSettingsComponent],
@@ -17,7 +16,6 @@ import { LearningOptionPipe } from '../pipes';
     PaTextFieldModule,
     PaTogglesModule,
     PaExpanderModule,
-    LearningOptionPipe,
   ],
 })
 export class KnowledgeBoxSettingsModule {}

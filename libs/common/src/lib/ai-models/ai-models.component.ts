@@ -10,7 +10,6 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LearningOptionPipe } from '../pipes';
 import { AnswerGenerationComponent } from './answer-generation/answer-generation.component';
 import { SummarizationComponent } from './summarization/summarization.component';
 import { SemanticModelComponent } from './semantic-model/semantic-model.component';
@@ -26,7 +25,6 @@ import { InfoCardComponent } from '@nuclia/sistema';
   standalone: true,
   imports: [
     CommonModule,
-    LearningOptionPipe,
     PaButtonModule,
     PaExpanderModule,
     PaTextFieldModule,
@@ -55,8 +53,6 @@ export class AiModelsComponent implements OnInit {
   learningConfigurations?: LearningConfigurations;
   kbConfigBackup?: { [key: string]: any };
   noKbConfig = false;
-  unsupportedModels: string[] = [];
-  unauthorizedModels: string[] = [];
 
   isSummarizationAuthorized = this.features.authorized.summarization;
   isAnonymizationAuthorized = this.features.authorized.anonymization;
@@ -88,17 +84,11 @@ export class AiModelsComponent implements OnInit {
         tap(({ kbConfig, learningSchema }) => {
           this.kbConfigBackup = kbConfig;
           this.learningConfigurations = learningSchema;
-          this.unsupportedModels = this.features.getUnsupportedGenerativeModels(
-            learningSchema,
-            kbConfig['semantic_model'],
-          );
           this.cdr.markForCheck();
         }),
-        switchMap(({ learningSchema }) => this.features.getUnauthorizedGenerativeModels(learningSchema)),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((unauthorizedModels) => {
-        this.unauthorizedModels = unauthorizedModels;
+      .subscribe(() => {
         this.cdr.markForCheck();
       });
   }
