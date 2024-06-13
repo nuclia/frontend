@@ -76,6 +76,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     useSynonyms: new FormControl<boolean>(false, { nonNullable: true }),
     prependTheQuery: new FormControl<boolean>(false, { nonNullable: true }),
     queryPrepend: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    rephraseQuery: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   synonymsAuthorized = this.featuresService.authorized.synonyms.pipe(
