@@ -23,7 +23,7 @@
           </pa-radio-group>
 
           @if (currentGenerativeModel?.user_prompt) {
-            @if (learningConfig['user_keys'].schemas?.[currentGenerativeModel?.user_prompt]; as userKeys) {
+            @if (learningConfig['user_keys'].schemas?.[currentGenerativeModel?.user_prompt || '']; as userKeys) {
               <div class="separator"></div>
 
               <pa-toggle
@@ -35,7 +35,7 @@
                 (valueChange)="onOwnKeyToggle()">
                 {{
                   'kb.ai-models.answer-generation.select-llm.own-key.label'
-                    | translate: { provider: keyProviders[currentGenerativeModel?.user_prompt] }
+                    | translate: { provider: keyProviders[currentGenerativeModel?.user_prompt || ''] }
                 }}
               </pa-toggle>
 
@@ -70,7 +70,11 @@
 
     @if (currentGenerativeModel?.user_prompt) {
       <ng-container [formGroup]="userPromptForm">
-        @if (learningConfig['user_prompts'].schemas?.[currentGenerativeModel?.user_prompt]; as userPrompt) {
+        @if (
+          currentGenerativeModel?.user_prompt &&
+            learningConfig['user_prompts'].schemas?.[currentGenerativeModel?.user_prompt || ''];
+          as userPrompt
+        ) {
           @if (userPrompt.properties['prompt']; as prompt) {
             <nsi-two-columns-configuration-item
               badge="generic.badge.optional"
