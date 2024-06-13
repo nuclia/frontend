@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { LearningConfigurationOption } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
 
+// TODO: renove
 @Pipe({
   name: 'learningOption',
   standalone: true,

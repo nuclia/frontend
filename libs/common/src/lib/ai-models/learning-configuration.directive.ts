@@ -1,9 +1,8 @@
 import { ChangeDetectorRef, Directive, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { FeaturesService, SDKService, UnauthorizedFeatureModalComponent } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { UnauthorizedFeatureModalComponent } from '../../../../core/src/lib/unauthorized-feature/unauthorized-feature-modal.component';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 
 @Directive({
@@ -21,8 +20,6 @@ export abstract class LearningConfigurationDirective implements OnChanges {
   @Input() learningConfigurations?: LearningConfigurations;
   @Input() kb?: WritableKnowledgeBox;
   @Input() kbConfigBackup?: { [key: string]: any };
-  @Input() unsupportedModels: string[] = [];
-  @Input() unAuthorizedModels: string[] = [];
 
   // permissions
   isEnterpriseOrGrowth = this.features.isEnterpriseOrGrowth;

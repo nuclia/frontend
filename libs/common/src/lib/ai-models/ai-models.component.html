@@ -41,17 +41,13 @@
         <stf-answer-generation
           [kb]="kb"
           [learningConfigurations]="learningConfigurations"
-          [kbConfigBackup]="kbConfigBackup"
-          [unsupportedModels]="unsupportedModels"
-          [unAuthorizedModels]="unauthorizedModels"></stf-answer-generation>
+          [kbConfigBackup]="kbConfigBackup"></stf-answer-generation>
       }
       @case ('summarization') {
         <stf-summarization
           [kb]="kb"
           [learningConfigurations]="learningConfigurations"
-          [kbConfigBackup]="kbConfigBackup"
-          [unsupportedModels]="unsupportedModels"
-          [unAuthorizedModels]="unauthorizedModels"></stf-summarization>
+          [kbConfigBackup]="kbConfigBackup"></stf-summarization>
       }
       @case ('semantic-model') {
         <stf-semantic-model

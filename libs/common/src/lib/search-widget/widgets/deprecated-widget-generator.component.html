@@ -276,14 +276,8 @@
                               "
                               (valueChange)="changeLLM()">
                               @for (model of generativeModels; track model.value) {
-                                <pa-option
-                                  [value]="model.value"
-                                  [disabled]="
-                                    unsupportedModels.includes(model.value) || unauthorizedModels.includes(model.value)
-                                  "
-                                  [icon]="unauthorizedModels.includes(model.value) ? unauthorizedIcon : null"
-                                  iconOnRight>
-                                  {{ model | learningOption: 'generative_model' }}
+                                <pa-option [value]="model.value">
+                                  {{ model.name }}
                                   @if (defaultModelFromSettings === model.value) {
                                     ({{
                                       'widget.generator.advanced.generative-answer-category.generative-model.default'

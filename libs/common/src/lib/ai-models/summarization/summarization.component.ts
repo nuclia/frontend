@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InfoCardComponent, StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { LearningOptionPipe } from '../../pipes';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, switchMap, take, tap } from 'rxjs/operators';
@@ -14,7 +13,6 @@ import { filter, of } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
-    LearningOptionPipe,
     PaTogglesModule,
     ReactiveFormsModule,
     TwoColumnsConfigurationItemComponent,

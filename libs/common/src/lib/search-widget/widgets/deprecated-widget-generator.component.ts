@@ -55,8 +55,6 @@ export class DeprecatedWidgetGeneratorComponent implements OnInit, OnDestroy {
 
   generativeModels: LearningConfigurationOption[] = [];
   modelsSupportingVision = MODELS_SUPPORTING_VISION;
-  unsupportedModels: string[] = [];
-  unauthorizedModels: string[] = [];
   snippetOverlayOpen = false;
   snippet = '';
   snippetPreview: SafeHtml = '';
@@ -334,25 +332,12 @@ export class DeprecatedWidgetGeneratorComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.unsubscribeAll),
         switchMap((kb) => forkJoin([kb.getLearningSchema(), kb.getConfiguration()])),
-        tap(([schema, config]) => {
-          this.unsupportedModels = this.featuresService.getUnsupportedGenerativeModels(
-            schema,
-            config['semantic_model'],
-          );
-        }),
-        switchMap(([schema, config]) =>
-          this.featuresService.getUnauthorizedGenerativeModels(schema).pipe(
-            tap((unauthorizedModels) => {
-              this.unauthorizedModels = unauthorizedModels;
-            }),
-            map(
-              () =>
-                ({ schema, config }) as {
-                  config: { [id: string]: any };
-                  schema: LearningConfigurations;
-                },
-            ),
-          ),
+        map(
+          ([schema, config]) =>
+            ({ schema, config }) as {
+              config: { [id: string]: any };
+              schema: LearningConfigurations;
+            },
         ),
       )
       .subscribe(({ schema, config }) => {

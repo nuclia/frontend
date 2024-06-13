@@ -2,13 +2,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InfoCardComponent, StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LearningOptionPipe } from '../../pipes';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { filter, of, take } from 'rxjs';
 import { UnauthorizedFeatureDirective } from '@flaps/core';
+import { LearningConfigurationOption } from '@nuclia/core';
 
 @Component({
   selector: 'stf-answer-generation',
@@ -17,7 +17,6 @@ import { UnauthorizedFeatureDirective } from '@flaps/core';
     CommonModule,
     FormsModule,
     InfoCardComponent,
-    LearningOptionPipe,
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
@@ -56,8 +55,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
       system_examples: new FormControl<string>(''),
     }),
   });
-  currentGenerativeModelPrompt?: string;
-  currentGenerativeModelKey?: string;
+  currentGenerativeModel?: LearningConfigurationOption;
   hasOwnKey = false;
 
   get generativeModelValue() {
@@ -90,16 +88,16 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
       this.configForm.patchValue(kbConfig);
 
       this.updateCurrentGenerativeModel();
-      if (this.currentGenerativeModelPrompt) {
+      if (this.currentGenerativeModel?.user_prompt) {
         if (kbConfig['user_prompts']) {
-          this.userPromptForm.patchValue(kbConfig['user_prompts'][this.currentGenerativeModelPrompt]);
+          this.userPromptForm.patchValue(kbConfig['user_prompts'][this.currentGenerativeModel?.user_prompt]);
         }
       }
-      if (this.currentGenerativeModelKey) {
+      if (this.currentGenerativeModel?.user_key) {
         if (kbConfig['user_keys']) {
-          const ownKey = !!kbConfig['user_keys'][this.currentGenerativeModelKey];
+          const ownKey = !!kbConfig['user_keys'][this.currentGenerativeModel?.user_key];
           this.hasOwnKey = ownKey;
-          this.userKeysGroup.patchValue(kbConfig['user_keys'][this.currentGenerativeModelKey]);
+          this.userKeysGroup.patchValue(kbConfig['user_keys'][this.currentGenerativeModel?.user_key]);
         }
       }
 
@@ -119,12 +117,12 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
     const kbBackup = this.kb;
     const kbConfig: { [key: string]: any } = this.configForm.getRawValue();
     kbConfig['user_keys'] =
-      this.currentGenerativeModelKey && this.hasOwnKey
-        ? { [this.currentGenerativeModelKey]: kbConfig['user_keys'] }
+      this.currentGenerativeModel?.user_key && this.hasOwnKey
+        ? { [this.currentGenerativeModel?.user_key]: kbConfig['user_keys'] }
         : {};
-    kbConfig['user_prompts'] = this.currentGenerativeModelPrompt
+    kbConfig['user_prompts'] = this.currentGenerativeModel?.user_prompt
       ? {
-          [this.currentGenerativeModelPrompt]: {
+          [this.currentGenerativeModel?.user_prompt]: {
             ...kbConfig['user_prompts'],
             prompt: kbConfig['user_prompts'].prompt?.trim(),
             system: kbConfig['user_prompts'].system?.trim(),
@@ -164,17 +162,16 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
       (option) => option.value === (modelValue || this.generativeModelValue),
     );
     if (generativeOption) {
-      this.currentGenerativeModelPrompt = generativeOption.user_prompt;
-      this.currentGenerativeModelKey = generativeOption.user_key;
+      this.currentGenerativeModel = generativeOption;
       this.userPromptForm.patchValue({
         prompt: '',
         system: '',
       });
     }
-    if (this.currentGenerativeModelKey) {
+    if (this.currentGenerativeModel?.user_key) {
       // add user_keys controls corresponding to generative model if any
       const newUserKeys = Object.keys(
-        this.learningConfigurations['user_keys'].schemas?.[this.currentGenerativeModelKey]?.properties || {},
+        this.learningConfigurations['user_keys'].schemas?.[this.currentGenerativeModel?.user_key]?.properties || {},
       );
       Object.keys(this.userKeysGroup.controls).forEach((oldKey) => {
         if (newUserKeys.includes(oldKey)) {

@@ -17,7 +17,6 @@ import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
-import { LearningOptionPipe } from '../../../pipes';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -30,7 +29,6 @@ import { RouterLink } from '@angular/router';
     ReactiveFormsModule,
     TranslateModule,
     InfoCardComponent,
-    LearningOptionPipe,
     UnauthorizedFeatureDirective,
     RouterLink,
     PaTextFieldModule,
