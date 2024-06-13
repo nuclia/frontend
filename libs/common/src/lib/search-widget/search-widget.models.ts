@@ -25,6 +25,7 @@ export interface SearchBoxConfig {
   filters: FilterSelectionType;
   prependTheQuery: boolean;
   queryPrepend: string;
+  rephraseQuery: boolean;
 }
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
@@ -45,7 +46,6 @@ export interface GenerativeAnswerConfig {
   customizeNotEnoughDataMessage: boolean;
   notEnoughDataMessage: string;
   generateAnswerWith: 'only-semantic' | 'semantic-and-full-text';
-  rephraseQuery: boolean;
   askSpecificResource: boolean;
   specificResourceSlug: string;
   limitTokenConsumption: boolean;
@@ -88,6 +88,7 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   useSynonyms: false,
   prependTheQuery: false,
   queryPrepend: '',
+  rephraseQuery: false,
 };
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generateAnswer: false,
@@ -97,7 +98,6 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   customizeNotEnoughDataMessage: false,
   notEnoughDataMessage: '',
   generateAnswerWith: 'semantic-and-full-text',
-  rephraseQuery: false,
   askSpecificResource: false,
   specificResourceSlug: '',
   limitTokenConsumption: false,
@@ -131,8 +131,8 @@ export function isSameConfigurations(configA: SearchConfiguration, configB: Sear
 export function getFeatures(config: SearchConfiguration): string {
   const widgetFeatures = {
     answers: config.generativeAnswer.generateAnswer,
-    rephrase: config.generativeAnswer.rephraseQuery,
     noBM25forChat: config.generativeAnswer.generateAnswerWith === 'only-semantic',
+    rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,
     autofilter: config.searchBox.autofilter,
     useSynonyms: config.searchBox.useSynonyms,

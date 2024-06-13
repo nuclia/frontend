@@ -64,7 +64,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     generateAnswerWith: new FormControl<'only-semantic' | 'semantic-and-full-text'>('semantic-and-full-text', {
       nonNullable: true,
     }),
-    rephraseQuery: new FormControl<boolean>(false, { nonNullable: true }),
     askSpecificResource: new FormControl<boolean>(false, { nonNullable: true }),
     specificResourceSlug: new FormControl<string>('', {
       nonNullable: true,
