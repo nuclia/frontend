@@ -1,8 +1,9 @@
 import { ChangeDetectorRef, Directive, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
-import { FeaturesService, SDKService } from '@flaps/core';
+import { FeaturesService, SDKService, UnauthorizedFeatureModalComponent } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 
 @Directive({
   selector: '[stfLearningConfiguration]',
@@ -34,5 +35,12 @@ export abstract class LearningConfigurationDirective implements OnChanges {
     if (changes['learningConfigurations'] || changes['kbConfigBackup']) {
       this.resetForm();
     }
+  }
+
+  openUnauthorizedModal(feature: string) {
+    this.modal.openModal(
+      UnauthorizedFeatureModalComponent,
+      new ModalConfig({ data: { feature: this.translate.instant(feature) } }),
+    );
   }
 }

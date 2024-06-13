@@ -81,14 +81,11 @@ export class AiModelsComponent implements OnInit {
               learningSchema: LearningConfigurations;
             },
         ),
-        tap(({ kbConfig, learningSchema }) => {
-          this.kbConfigBackup = kbConfig;
-          this.learningConfigurations = learningSchema;
-          this.cdr.markForCheck();
-        }),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(() => {
+      .subscribe(({ kbConfig, learningSchema }) => {
+        this.kbConfigBackup = kbConfig;
+        this.learningConfigurations = learningSchema;
         this.cdr.markForCheck();
       });
   }
