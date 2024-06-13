@@ -317,6 +317,7 @@ export class SearchConfigurationComponent {
       this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
         this.searchWidgetService.saveSearchConfig(kb.id, configName, config);
         this.setConfigurations(kb.id);
+        this.isConfigModified = false;
       });
     }
   }

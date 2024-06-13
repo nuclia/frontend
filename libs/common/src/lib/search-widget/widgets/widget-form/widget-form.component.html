@@ -6,17 +6,38 @@
       <div class="page-description">{{ 'search.widgets.form.description' | translate }}</div>
     </div>
     <div class="action-container">
-      <pa-button kind="primary">{{ 'search.widgets.form.actions.save' | translate }}</pa-button>
+      <pa-button
+        kind="primary"
+        [disabled]="isNotModified"
+        (click)="saveChanges()">
+        {{ 'search.widgets.form.actions.save' | translate }}
+      </pa-button>
       <pa-button
         icon="code"
         iconAndText>
         {{ 'search.widgets.form.actions.embed-widget' | translate }}
       </pa-button>
-      <pa-button
-        icon="more-vertical"
-        aspect="basic">
-        {{ 'search.widgets.form.actions.more' | translate }}
-      </pa-button>
+      <div>
+        <pa-button
+          icon="more-vertical"
+          aspect="basic"
+          [paPopup]="menu">
+          {{ 'search.widgets.form.actions.more' | translate }}
+        </pa-button>
+        <pa-dropdown #menu>
+          <pa-option (selectOption)="rename()">
+            {{ 'search.widgets.action.rename' | translate }}
+          </pa-option>
+          <pa-option (selectOption)="duplicateAsNew()">
+            {{ 'search.widgets.action.duplicate' | translate }}
+          </pa-option>
+          <pa-option
+            destructive
+            (selectOption)="delete()">
+            {{ 'search.widgets.action.delete' | translate }}
+          </pa-option>
+        </pa-dropdown>
+      </div>
     </div>
   </div>
 
@@ -112,7 +133,7 @@
       <stf-search-configuration
         mainTitle="search.widgets.form.search-config-title"
         [configurationContainer]="configurationContainerElement"
-        (configUpdate)="currentConfig = $event"></stf-search-configuration>
+        (configUpdate)="updateSearchConfig($event)"></stf-search-configuration>
     </div>
 
     <div

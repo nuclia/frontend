@@ -22,11 +22,15 @@ import {
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
-import { BehaviorSubject, forkJoin, map, Observable, Subject, take } from 'rxjs';
+import { BehaviorSubject, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { tap } from 'rxjs/operators';
 import { ResourceViewerService } from '../resources';
+import { RenameWidgetDialogComponent } from './widgets';
+import { SisModalService } from '@nuclia/sistema';
+import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import { DuplicateWidgetDialogComponent } from './widgets/dialogs/duplicate-widget-dialog/duplicate-widget-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +41,7 @@ export class SearchWidgetService {
   private backendConfig = inject(BackendConfigurationService);
   private sanitizer = inject(DomSanitizer);
   private storage = inject(LOCAL_STORAGE);
+  private modalService = inject(SisModalService);
   private viewerService = inject(ResourceViewerService);
 
   private currentQuery = '';
@@ -235,7 +240,84 @@ export class SearchWidgetService {
     return slug;
   }
 
-  duplicateWidget(kbId: string, widget: Widget, newName: string): string {
+  getSavedWidget(kbId: string, widgetSlug: string): Widget | undefined {
+    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    return storedWidgets.find((widget) => widget.slug === widgetSlug);
+  }
+
+  initWidgetList(kbId: string) {
+    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+    this._widgetList.next(widgetsByKbMap[kbId] || []);
+  }
+
+  renameWidget(slug: string, name: string): Observable<string> {
+    return this.modalService.openModal(RenameWidgetDialogComponent, new ModalConfig({ data: { name } })).onClose.pipe(
+      filter((newName) => !!newName),
+      map((newName) => newName as string),
+      switchMap((newName) =>
+        this.sdk.currentKb.pipe(
+          take(1),
+          map((kb) => {
+            this._renameWidget(kb.id, slug, newName);
+            return newName;
+          }),
+        ),
+      ),
+    );
+  }
+
+  duplicateWidget(widget: Widget): Observable<string> {
+    return this.modalService
+      .openModal(DuplicateWidgetDialogComponent, new ModalConfig({ data: { name: widget.name } }))
+      .onClose.pipe(
+        filter((newName) => !!newName),
+        map((newName) => newName as string),
+        switchMap((newName) =>
+          this.sdk.currentKb.pipe(
+            take(1),
+            map((kb) => this._duplicateWidget(kb.id, widget, newName)),
+          ),
+        ),
+      );
+  }
+
+  deleteWidget(slug: string, name: string): Observable<void> {
+    return this.modalService
+      .openConfirm({
+        title: this.translate.instant('search.widgets.dialog.delete-widget.title', { name }),
+        description: 'search.widgets.dialog.delete-widget.description',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirmed) => !!confirmed),
+        switchMap(() => this.sdk.currentKb.pipe(take(1))),
+        map((kb) => this._deleteWidget(kb.id, slug)),
+      );
+  }
+
+  private _deleteWidget(kbId: string, slug: string) {
+    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    const widgetIndex = storedWidgets.findIndex((widget) => widget.slug === slug);
+    if (widgetIndex > -1) {
+      storedWidgets.splice(widgetIndex, 1);
+    }
+    this.updateWidgetInStorage(widgetsByKbMap, kbId, storedWidgets);
+  }
+
+  private _renameWidget(kbId: any, slug: string, newName: string) {
+    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    const widget = storedWidgets.find((widget) => widget.slug === slug);
+    if (widget) {
+      widget.name = newName;
+    }
+    this.updateWidgetInStorage(widgetsByKbMap, kbId, storedWidgets);
+  }
+
+  private _duplicateWidget(kbId: string, widget: Widget, newName: string): string {
     const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
     const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
     let slug = STFUtils.generateSlug(newName);
@@ -251,37 +333,6 @@ export class SearchWidgetService {
     });
     this.updateWidgetInStorage(widgetsByKbMap, kbId, storedWidgets);
     return slug;
-  }
-
-  getSavedWidget(kbId: string, widgetSlug: string): Widget | undefined {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
-    return storedWidgets.find((widget) => widget.slug === widgetSlug);
-  }
-
-  initWidgetList(kbId: string) {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    this._widgetList.next(widgetsByKbMap[kbId] || []);
-  }
-
-  deleteWidget(kbId: string, slug: string) {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
-    const widgetIndex = storedWidgets.findIndex((widget) => widget.slug === slug);
-    if (widgetIndex > -1) {
-      storedWidgets.splice(widgetIndex, 1);
-    }
-    this.updateWidgetInStorage(widgetsByKbMap, kbId, storedWidgets);
-  }
-
-  renameWidget(kbId: any, slug: string, newName: string) {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
-    const widget = storedWidgets.find((widget) => widget.slug === slug);
-    if (widget) {
-      widget.name = newName;
-    }
-    this.updateWidgetInStorage(widgetsByKbMap, kbId, storedWidgets);
   }
 
   private updateWidgetInStorage(widgetsByKbMap: { [p: string]: Widget[] }, kbId: string, updatedWidgets: Widget[]) {

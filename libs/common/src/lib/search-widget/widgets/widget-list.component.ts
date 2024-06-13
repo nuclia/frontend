@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  ModalConfig,
   PaButtonModule,
   PaDateTimeModule,
   PaDropdownModule,
@@ -10,13 +9,12 @@ import {
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
-import { CreateWidgetDialogComponent, RenameWidgetDialogComponent } from './dialogs';
+import { CreateWidgetDialogComponent } from './dialogs';
 import { filter, map, Observable, switchMap, take } from 'rxjs';
 import { DEFAULT_WIDGET_CONFIG, NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '../search-widget.models';
 import { SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../search-widget.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DuplicateWidgetDialogComponent } from './dialogs/duplicate-widget-dialog/duplicate-widget-dialog.component';
 
 @Component({
   selector: 'stf-widget-list',
@@ -87,52 +85,16 @@ export class WidgetListComponent implements OnInit {
   }
 
   rename(slug: string, name: string) {
-    this.modalService
-      .openModal(RenameWidgetDialogComponent, new ModalConfig({ data: { name } }))
-      .onClose.pipe(
-        filter((newName) => !!newName),
-        map((newName) => newName as string),
-        switchMap((newName) =>
-          this.sdk.currentKb.pipe(
-            take(1),
-            map((kb) => ({ kbId: kb.id, newName })),
-          ),
-        ),
-      )
-      .subscribe(({ kbId, newName }) => this.searchWidgetService.renameWidget(kbId, slug, newName));
+    this.searchWidgetService.renameWidget(slug, name).subscribe();
   }
 
   duplicateAsNew(widget: Widget) {
-    this.modalService
-      .openModal(DuplicateWidgetDialogComponent, new ModalConfig({ data: { name: widget.name } }))
-      .onClose.pipe(
-        filter((newName) => !!newName),
-        map((newName) => newName as string),
-        switchMap((newName) =>
-          this.sdk.currentKb.pipe(
-            take(1),
-            map((kb) => ({ kbId: kb.id, newName })),
-          ),
-        ),
-      )
-      .subscribe(({ kbId, newName }) => {
-        const slug = this.searchWidgetService.duplicateWidget(kbId, widget, newName);
-        this.router.navigate(['./', slug], { relativeTo: this.route });
-      });
+    this.searchWidgetService
+      .duplicateWidget(widget)
+      .subscribe((slug) => this.router.navigate(['./', slug], { relativeTo: this.route }));
   }
 
   delete(slug: string, name: string) {
-    this.modalService
-      .openConfirm({
-        title: this.translate.instant('search.widgets.dialog.delete-widget.title', { name }),
-        description: 'search.widgets.dialog.delete-widget.description',
-        confirmLabel: 'generic.delete',
-        isDestructive: true,
-      })
-      .onClose.pipe(
-        filter((confirmed) => !!confirmed),
-        switchMap(() => this.sdk.currentKb.pipe(take(1))),
-      )
-      .subscribe((kb) => this.searchWidgetService.deleteWidget(kb.id, slug));
+    this.searchWidgetService.deleteWidget(slug, name).subscribe();
   }
 }

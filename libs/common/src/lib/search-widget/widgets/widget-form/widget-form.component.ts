@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BackButtonComponent, SisToastService } from '@nuclia/sistema';
@@ -7,6 +17,8 @@ import {
   AccordionBodyDirective,
   AccordionItemComponent,
   PaButtonModule,
+  PaDropdownModule,
+  PaPopupModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { SearchConfiguration, SearchConfigurationComponent, Widget } from '../..';
@@ -14,7 +26,7 @@ import { SearchWidgetService } from '../../search-widget.service';
 import { filter, map, Subject, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, tap } from 'rxjs/operators';
-import { SDKService } from '@flaps/core';
+import { deepEqual, SDKService } from '@flaps/core';
 
 @Component({
   standalone: true,
@@ -28,12 +40,16 @@ import { SDKService } from '@flaps/core';
     AccordionBodyDirective,
     PaTogglesModule,
     SearchConfigurationComponent,
+    PaDropdownModule,
+    PaPopupModule,
   ],
   templateUrl: './widget-form.component.html',
   styleUrl: './widget-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export class WidgetFormComponent implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private sdk = inject(SDKService);
@@ -47,6 +63,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   savedWidget?: Widget;
   currentWidget?: Widget;
+  isNotModified = true;
 
   form = new FormGroup({
     popupStyle: new FormControl<'page' | 'popup'>('page', { nonNullable: true }),
@@ -87,6 +104,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         } else {
           this.currentWidget = { ...this.savedWidget };
         }
+        this.cdr.detectChanges();
       });
 
     this.form.valueChanges
@@ -94,6 +112,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         filter(() => !!this.currentConfig),
         map((newValue) => ({ searchConfig: this.currentConfig as SearchConfiguration, widgetConfig: newValue })),
         tap(({ widgetConfig }) => {
+          if (this.currentWidget) {
+            this.currentWidget.widgetConfig = this.form.getRawValue();
+          }
           if (!widgetConfig.permalink) {
             this.removeQueryParams();
           }
@@ -103,12 +124,45 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(() => {});
+      .subscribe(() => this.checkIsModified());
   }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  saveChanges() {
+    //TODO
+  }
+
+  rename() {
+    if (this.savedWidget) {
+      const widget = this.savedWidget;
+      this.searchWidgetService.renameWidget(this.savedWidget.slug, this.savedWidget.name).subscribe((newName) => {
+        widget.name = newName;
+        if (this.currentWidget) {
+          this.currentWidget.name = newName;
+        }
+        this.cdr.markForCheck();
+      });
+    }
+  }
+
+  duplicateAsNew() {
+    if (this.savedWidget) {
+      this.searchWidgetService
+        .duplicateWidget(this.savedWidget)
+        .subscribe((slug) => this.router.navigate(['..', slug], { relativeTo: this.route }));
+    }
+  }
+
+  delete() {
+    if (this.savedWidget) {
+      this.searchWidgetService
+        .deleteWidget(this.savedWidget.slug, this.savedWidget.name)
+        .subscribe(() => this.router.navigate(['..'], { relativeTo: this.route }));
+    }
   }
 
   private removeQueryParams() {
@@ -118,5 +172,18 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         filter((params) => Object.keys(params).length > 0),
       )
       .subscribe(() => this.router.navigate([]));
+  }
+
+  private checkIsModified() {
+    if (this.savedWidget && this.currentWidget) {
+      this.isNotModified = deepEqual(this.savedWidget, this.currentWidget);
+      this.cdr.markForCheck();
+    }
+  }
+
+  updateSearchConfig(searchConfig: SearchConfiguration) {
+    this.currentConfig = searchConfig;
+    this.isNotModified = searchConfig.id === this.savedWidget?.searchConfigId;
+    this.cdr.markForCheck();
   }
 }
