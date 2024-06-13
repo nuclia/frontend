@@ -163,20 +163,22 @@
       }
     </div>
   </div>
-  <div class="config-form-field">
-    <pa-toggle
-      formControlName="useSynonyms"
-      withBackground
-      spaceBetweenLabelAndToggle>
-      <span
-        class="toggle-label"
-        [stfUnauthorizedFeature]="(synonymsAuthorized | async) === false"
-        fullProBadge>
-        {{ 'search.configuration.search-box.synonyms.toggle-label' | translate }}
-      </span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.search-box.synonyms.toggle-description' | translate }}
+  @if (synonymsEnabled | async) {
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="useSynonyms"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span
+          class="toggle-label"
+          [stfUnauthorizedFeature]="(synonymsAuthorized | async) === false"
+          fullProBadge>
+          {{ 'search.configuration.search-box.synonyms.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.synonyms.toggle-description' | translate }}
+      </div>
     </div>
-  </div>
+  }
 </form>
