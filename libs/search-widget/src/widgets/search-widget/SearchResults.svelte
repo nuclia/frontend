@@ -25,9 +25,10 @@
     pendingResults,
     resultList,
     searchError,
-    setWidgetActions,
     showResults,
     trackingReset,
+    type WidgetAction,
+    widgetActions,
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
@@ -42,7 +43,10 @@
 
   const showLoading = pendingResults.pipe(debounceTime(1500));
 
-  export const setViewerMenu = setWidgetActions;
+  widgetActions.set([]);
+  export function setViewerMenu(actions: WidgetAction[]) {
+    widgetActions.set(actions);
+  }
 
   export function closePreview() {
     onClosePreview();

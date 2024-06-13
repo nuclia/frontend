@@ -1,6 +1,6 @@
-import { combineLatest, filter, map, Observable, switchMap, take, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, STFTrackingService } from '@flaps/core';
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { FieldFullId } from '@nuclia/core';
   providedIn: 'root',
 })
 export class ResourceViewerService {
-  private widgetId?: string;
+  private widgetSelector?: string;
 
   constructor(
     private router: Router,
@@ -20,13 +20,14 @@ export class ResourceViewerService {
     private trackingService: STFTrackingService,
     private zone: NgZone,
     private features: FeaturesService,
+    private navigationService: NavigationService,
   ) {}
 
-  init(widgetId: string) {
-    this.widgetId = widgetId;
+  init(widgetSelector: string) {
+    this.widgetSelector = widgetSelector;
     this.features.isKbAdminOrContrib.pipe(take(1)).subscribe((isKbAdminOrContrib) => {
       const waitForWidget = window.setInterval(() => {
-        const widget = document.getElementById(widgetId) as unknown as any;
+        const widget = document.querySelector(widgetSelector) as unknown as any;
         if (widget) {
           const actions = [
             {
@@ -43,16 +44,6 @@ export class ResourceViewerService {
                 action: this.edit.bind(this),
               },
               {
-                label: this.translation.instant('resource.menu.annotate'),
-                destructive: false,
-                action: this.annotate.bind(this),
-              },
-              {
-                label: this.translation.instant('resource.menu.classify'),
-                destructive: false,
-                action: this.classify.bind(this),
-              },
-              {
                 label: this.translation.instant('resource.reprocess'),
                 destructive: false,
                 action: this.reindex.bind(this),
@@ -65,7 +56,6 @@ export class ResourceViewerService {
             );
           }
           widget.setViewerMenu(actions);
-          widget.addEventListener('search', () => this.trackingService.logEvent('search'));
           clearInterval(waitForWidget);
         }
       }, 500);
@@ -82,6 +72,7 @@ export class ResourceViewerService {
   }
 
   delete(fullId: FieldFullId) {
+    this.closeViewer();
     this.modalService
       .openConfirm({
         title: 'resource.confirm-delete.title',
@@ -91,7 +82,6 @@ export class ResourceViewerService {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        tap(() => this.closeViewer()),
         switchMap(() => this.sdk.currentKb),
         take(1),
         switchMap((kb) => kb.getResource(fullId.resourceId)),
@@ -112,21 +102,8 @@ export class ResourceViewerService {
     });
   }
 
-  annotate(fullId: FieldFullId) {
-    this.getResourcesBasePath().subscribe((basePath) => {
-      this.closeViewer();
-      this.navigateTo(`${basePath}/${fullId.resourceId}/edit/annotation`);
-    });
-  }
-
-  classify(fullId: FieldFullId) {
-    this.getResourcesBasePath().subscribe((basePath) => {
-      this.closeViewer();
-      this.navigateTo(`${basePath}/${fullId.resourceId}/edit/classification`);
-    });
-  }
-
   reindex(fullId: FieldFullId) {
+    this.closeViewer();
     this.modalService
       .openConfirm({
         title: 'resource.confirm-reprocess.title',
@@ -134,7 +111,6 @@ export class ResourceViewerService {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        tap(() => this.closeViewer()),
         switchMap(() => this.sdk.currentKb),
         take(1),
         switchMap((kb) => kb.getResource(fullId.resourceId)),
@@ -144,6 +120,7 @@ export class ResourceViewerService {
   }
 
   showUID(fullId: FieldFullId) {
+    this.closeViewer();
     this.sdk.currentKb
       .pipe(
         take(1),
@@ -167,8 +144,8 @@ export class ResourceViewerService {
   }
 
   closeViewer() {
-    if (this.widgetId) {
-      (document.getElementById(this.widgetId) as unknown as any)?.closePreview();
+    if (this.widgetSelector) {
+      (document.querySelector(this.widgetSelector) as unknown as any)?.closePreview();
     }
   }
 
@@ -182,8 +159,10 @@ export class ResourceViewerService {
   private getResourcesBasePath(): Observable<string> {
     return combineLatest([this.sdk.currentKb, this.sdk.currentAccount]).pipe(
       take(1),
-      filter(([kb]) => !!kb.admin || !!kb.contrib),
-      map(([kb, account]) => `/at/${account.slug}/${kb.slug}/resources`),
+      map(([kb, account]) => {
+        const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
+        return `${this.navigationService.getKbUrl(account.slug, kbSlug)}/resources`;
+      })
     );
   }
   private navigateTo(path: string) {

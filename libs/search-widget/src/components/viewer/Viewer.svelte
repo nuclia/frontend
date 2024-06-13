@@ -12,7 +12,6 @@
     getFindParagraphs,
     getResourceMetadata,
     getResultType,
-    getWidgetActions,
     graphQuery,
     displayFieldList,
     isKnowledgeGraphEnabled,
@@ -31,6 +30,7 @@
     transcripts,
     viewerData,
     viewerState,
+    widgetActions,
   } from '../../core';
     import type {TypedResult,
       ViewerState,
@@ -60,7 +60,6 @@
   $: isMobile = isMobileViewport(innerWidth);
 
   // Header and menu
-  let menuItems: WidgetAction[] = [];
   let menuButton: HTMLElement | undefined;
   let menuPosition: { left: number; top: number } | undefined;
   let displayMenu = false;
@@ -69,8 +68,9 @@
   let resultNavigatorWidth = 0;
   let headerActionsWidth = 0;
   const buttonWidth = 40;
-  $: hasMenu = menuItems.length > 0;
-  $: actionsWidth = headerActionsWidth + (hasMenu ? buttonWidth * 2 : buttonWidth);
+  const separatorWidth = 30;
+  let hasMenu = false;
+  $: actionsWidth = headerActionsWidth + (hasMenu ? buttonWidth * 2 + separatorWidth : buttonWidth);
 
   // Side panel
   const isSearchingInResource = new BehaviorSubject(false);
@@ -108,8 +108,12 @@
 
   const unsubscribeOnClose: Subject<void> = new Subject();
   onMount(() => {
-    resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
-    menuItems = getWidgetActions();
+    const resize = resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
+    const menu = widgetActions.subscribe((actions) => hasMenu = actions.length > 0 );
+    return () => {
+      resize.unsubscribe();
+      menu.unsubscribe();
+    };
   });
 
   onDestroy(() => {
@@ -337,7 +341,7 @@
               position={menuPosition}
               on:close={() => (displayMenu = false)}>
               <ul class="viewer-menu">
-                {#each menuItems as item}
+                {#each $widgetActions as item}
                   <li on:click={() => clickOnMenu(item)}>{item.label}</li>
                 {/each}
               </ul>

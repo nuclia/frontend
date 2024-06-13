@@ -44,6 +44,7 @@ import { SearchWidgetService } from './search-widget.service';
 import { SafeHtml } from '@angular/platform-browser';
 import { SaveConfigModalComponent } from './search-configuration/save-config-modal/save-config-modal.component';
 import { RouterLink } from '@angular/router';
+import { ResourceViewerService } from '../resources';
 
 @Component({
   selector: 'stf-search-page',
@@ -77,6 +78,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private modalService = inject(SisModalService);
   private searchWidgetService = inject(SearchWidgetService);
+  private viewerService = inject(ResourceViewerService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -336,6 +338,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
           searchWidget?.addEventListener('resetQuery', () => {
             this.currentQuery = '';
           });
+          this.viewerService.init('nuclia-search-results');
         }, 500);
       });
     }
