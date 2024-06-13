@@ -19,18 +19,12 @@ export interface IResource {
   queue?: 'private' | 'shared';
 
   data?: ResourceData;
-
-  // layouts: Dict[str, models.InputLayoutField] = {}
-  // conversations: Dict[str, models.InputConversationField] = {}
-  // keywordsets: Dict[str, models.FieldKeywordset] = {}
-  // datetimes: Dict[str, models.FieldDatetime] = {}
 }
 
 export type ResourceData = {
   files?: { [key: string]: FileFieldData };
   links?: { [key: string]: LinkFieldData };
   texts?: { [key: string]: TextFieldData };
-  keywordsets?: { [key: string]: KeywordSetFieldData };
   conversations?: { [key: string]: ConversationFieldData };
 };
 
@@ -47,7 +41,6 @@ export interface ICreateResource {
   files?: { [key: string]: FileField };
   links?: { [key: string]: LinkField };
   texts?: { [key: string]: TextField };
-  keywordsets?: { [key: string]: KeywordSetField };
   conversations?: { [key: string]: ConversationField };
   security?: Security;
 }
@@ -56,10 +49,7 @@ export enum FIELD_TYPE {
   text = 'text',
   file = 'file',
   link = 'link',
-  layout = 'layout',
   conversation = 'conversation',
-  keywordset = 'keywordset',
-  datetime = 'datetime',
   generic = 'generic',
 }
 
@@ -125,7 +115,7 @@ export interface IError {
 }
 
 export interface IFieldData {
-  value?: TextField | FileField | LinkField | KeywordSetField | ConversationField;
+  value?: TextField | FileField | LinkField | ConversationField;
   extracted?: ExtractedData;
   error?: IError;
 }
@@ -337,16 +327,6 @@ export interface UserTokenAnnotation extends TokenAnnotation {
 export interface ParagraphClassification {
   classifications: Classification[];
   key: string;
-}
-
-export class KeywordSetFieldData implements IFieldData {
-  value?: KeywordSetField;
-  extracted?: ExtractedData;
-  error?: IError;
-}
-
-export interface KeywordSetField {
-  keywords: { value: string }[];
 }
 
 export interface Classification {
