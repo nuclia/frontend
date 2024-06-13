@@ -9,5 +9,68 @@
     <pa-button (click)="createWidget()">{{ 'search.widgets.action.create-widget-button' | translate }}</pa-button>
   </header>
 
-  <nsi-info-card>{{ 'search.widgets.page-empty-message' | translate }}</nsi-info-card>
+  @if (emptyList | async) {
+    <nsi-info-card>{{ 'search.widgets.page-empty-message' | translate }}</nsi-info-card>
+  } @else {
+    <pa-table
+      border
+      columns="repeat(4, 1fr) 96px">
+      <pa-table-header>
+        <pa-table-cell header>
+          <span class="title-xxs">{{ 'search.widgets.table-columns.name' | translate }}</span>
+        </pa-table-cell>
+        <pa-table-cell header>
+          <span class="title-xxs">{{ 'search.widgets.table-columns.search-config' | translate }}</span>
+        </pa-table-cell>
+        <pa-table-cell header>
+          <span class="title-xxs">{{ 'search.widgets.table-columns.model' | translate }}</span>
+        </pa-table-cell>
+        <pa-table-cell header>
+          <span class="title-xxs">{{ 'search.widgets.table-columns.date' | translate }}</span>
+        </pa-table-cell>
+        <pa-table-cell header>
+          <span class="title-xxs">{{ 'search.widgets.table-columns.actions' | translate }}</span>
+        </pa-table-cell>
+      </pa-table-header>
+
+      @for (widget of widgetList | async; track widget.slug) {
+        <pa-table-row [last]="$last">
+          <pa-table-cell>
+            <a
+              class="table-link"
+              [routerLink]="'./' + widget.slug">
+              {{ widget.name }}
+            </a>
+          </pa-table-cell>
+          <pa-table-cell>{{ widget.searchConfigId }}</pa-table-cell>
+          <pa-table-cell>{{ widget.generativeModel }}</pa-table-cell>
+          <pa-table-cell><pa-datetime [datetime]="widget.creationDate"></pa-datetime></pa-table-cell>
+          <pa-table-cell-menu>
+            <pa-button
+              icon="more-vertical"
+              aspect="basic"
+              [paPopup]="itemMenu">
+              {{ 'search.widgets.action.list-item-menu' | translate }}
+            </pa-button>
+            <pa-dropdown #itemMenu>
+              <pa-option (selectOption)="openPreview(widget.slug)">
+                {{ 'search.widgets.action.preview' | translate }}
+              </pa-option>
+              <pa-option (selectOption)="rename(widget.slug, widget.name)">
+                {{ 'search.widgets.action.rename' | translate }}
+              </pa-option>
+              <pa-option (selectOption)="duplicateAsNew(widget)">
+                {{ 'search.widgets.action.duplicate' | translate }}
+              </pa-option>
+              <pa-option
+                destructive
+                (selectOption)="delete(widget.slug, widget.name)">
+                {{ 'search.widgets.action.delete' | translate }}
+              </pa-option>
+            </pa-dropdown>
+          </pa-table-cell-menu>
+        </pa-table-row>
+      }
+    </pa-table>
+  }
 </div>

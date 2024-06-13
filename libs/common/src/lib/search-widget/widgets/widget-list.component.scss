@@ -6,4 +6,15 @@
     justify-content: space-between;
     margin-bottom: rhythm(4);
   }
+
+  .table-link {
+    @include body-s();
+    color: $color-dark-stronger;
+    font-weight: $font-weight-semi-bold;
+    text-decoration: underline;
+  }
+
+  pa-table .title-xxs {
+    color: $color-neutral-regular;
+  }
 }

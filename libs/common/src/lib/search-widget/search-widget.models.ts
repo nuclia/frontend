@@ -82,7 +82,9 @@ export interface WidgetConfiguration {
 export interface Widget {
   slug: string;
   name: string;
+  creationDate: string;
   searchConfigId: string;
+  generativeModel: string;
   widgetConfig: WidgetConfiguration;
 }
 

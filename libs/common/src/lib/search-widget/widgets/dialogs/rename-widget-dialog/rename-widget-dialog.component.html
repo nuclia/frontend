@@ -1,0 +1,29 @@
+<pa-modal-dialog>
+  <pa-modal-title>{{ 'search.widgets.dialog.rename-widget.title' | translate }}</pa-modal-title>
+  <pa-modal-description>
+    {{ 'search.widgets.dialog.rename-widget.description' | translate: { name: modal.config?.data?.name || '' } }}
+  </pa-modal-description>
+
+  <pa-modal-content>
+    <div class="form-container">
+      <pa-input
+        [hasFocus]="initialized"
+        [formControl]="name"
+        (enter)="submitName()">
+        {{ 'generic.name' | translate }}
+      </pa-input>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      (click)="submitName()">
+      {{ 'search.widgets.dialog.rename-widget.confirm-button' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

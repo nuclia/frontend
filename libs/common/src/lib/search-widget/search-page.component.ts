@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SearchConfigurationComponent } from './search-configuration';
 import { SearchWidgetService } from './search-widget.service';
 import { SisModalService } from '@nuclia/sistema';
-import { CreateWidgetDialogComponent } from './widgets/create-widget-dialog/create-widget-dialog.component';
+import { CreateWidgetDialogComponent } from './widgets';
 import { filter, map, switchMap, take } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { DEFAULT_WIDGET_CONFIG, SearchConfiguration } from './search-widget.models';
@@ -33,6 +33,7 @@ export class SearchPageComponent {
   createWidget() {
     if (this.searchConfig) {
       const searchConfigId = this.searchConfig.id;
+      const generativeModel = this.searchConfig.generativeAnswer.generativeModel;
       this.modalService
         .openModal(CreateWidgetDialogComponent)
         .onClose.pipe(
@@ -42,7 +43,13 @@ export class SearchPageComponent {
             this.sdk.currentKb.pipe(
               take(1),
               map((kb) =>
-                this.searchWidgetService.createWidget(kb.id, widgetName, DEFAULT_WIDGET_CONFIG, searchConfigId),
+                this.searchWidgetService.createWidget(
+                  kb.id,
+                  widgetName,
+                  DEFAULT_WIDGET_CONFIG,
+                  searchConfigId,
+                  generativeModel,
+                ),
               ),
               switchMap((widgetSlug) => this.router.navigate(['../widgets', widgetSlug], { relativeTo: this.route })),
             ),
