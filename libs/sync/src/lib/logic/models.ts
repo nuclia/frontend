@@ -15,6 +15,7 @@ export interface ConnectorDefinition {
   description: string;
   helpUrl?: string;
   permanentSyncOnly?: boolean;
+  deprecated?: boolean;
   factory: (data?: ConnectorSettings) => IConnector;
 }
 
