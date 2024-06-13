@@ -31,6 +31,7 @@ import { RenameWidgetDialogComponent } from './widgets';
 import { SisModalService } from '@nuclia/sistema';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { DuplicateWidgetDialogComponent } from './widgets/dialogs/duplicate-widget-dialog/duplicate-widget-dialog.component';
+import { compareDesc } from 'date-fns';
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +49,9 @@ export class SearchWidgetService {
   private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string }>();
   private _widgetList = new BehaviorSubject<Widget[]>([]);
   widgetPreview = this._widgetPreview.asObservable();
-  widgetList: Observable<Widget[]> = this._widgetList.asObservable();
+  widgetList: Observable<Widget[]> = this._widgetList
+    .asObservable()
+    .pipe(map((widgets) => widgets.sort((a, b) => compareDesc(a.creationDate, b.creationDate))));
 
   getSelectedSearchConfig(kbId: string): SearchConfiguration {
     const standardConfiguration = { ...NUCLIA_STANDARD_SEARCH_CONFIG };

@@ -44,9 +44,25 @@ export class WidgetListComponent implements OnInit {
 
   widgetList = this.searchWidgetService.widgetList;
   emptyList: Observable<boolean> = this.widgetList.pipe(map((list) => list.length === 0));
+  modelNames: { [key: string]: string } = {};
 
   ngOnInit() {
-    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => this.searchWidgetService.initWidgetList(kb.id));
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) => kb.getLearningSchema().pipe(map((schema) => ({ kb, schema })))),
+      )
+      .subscribe(({ kb, schema }) => {
+        this.modelNames =
+          schema['generative_model']?.options?.reduce(
+            (acc, model) => {
+              acc[model.value] = model.name;
+              return acc;
+            },
+            {} as { [key: string]: string },
+          ) || {};
+        this.searchWidgetService.initWidgetList(kb.id);
+      });
   }
 
   createWidget() {

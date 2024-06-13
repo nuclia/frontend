@@ -29,8 +29,7 @@ import {
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { RouterLink } from '@angular/router';
-import { FeaturesService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
-import { LearningOptionPipe } from '../../pipes';
+import { SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../search-widget.service';
 import { filter, forkJoin, map, Subject, switchMap, take } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -41,7 +40,7 @@ import {
   SearchBoxConfig,
   SearchConfiguration,
 } from '../search-widget.models';
-import { takeUntil, tap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { LearningConfigurations } from '@nuclia/core';
 import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
 
@@ -65,7 +64,6 @@ import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.
     RouterLink,
     TranslateModule,
   ],
-  providers: [LearningOptionPipe],
   templateUrl: './search-configuration.component.html',
   styleUrl: './search-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,9 +71,7 @@ import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.
 export class SearchConfigurationComponent {
   private cdr = inject(ChangeDetectorRef);
   private sdk = inject(SDKService);
-  private featuresService = inject(FeaturesService);
   private translate = inject(TranslateService);
-  private learningOption = inject(LearningOptionPipe);
   private modalService = inject(SisModalService);
   private searchWidgetService = inject(SearchWidgetService);
   private toaster = inject(SisToastService);
@@ -115,8 +111,7 @@ export class SearchConfigurationComponent {
   currentConfig?: SearchConfiguration;
 
   modelFromSettings = '';
-  unsupportedModels: string[] = [];
-  unauthorizedModels: string[] = [];
+  modelNames: { [key: string]: string } = {};
   generativeModels: OptionModel[] = [];
   defaultPromptFromSettings = '';
 
@@ -134,26 +129,13 @@ export class SearchConfigurationComponent {
         takeUntil(this.unsubscribeAll),
         switchMap((kb) => {
           return forkJoin([kb.getLearningSchema(), kb.getConfiguration()]).pipe(
-            tap(([schema, config]) => {
-              this.unsupportedModels = this.featuresService.getUnsupportedGenerativeModels(
-                schema,
-                config['semantic_model'],
-              );
-            }),
-            switchMap(([schema, config]) =>
-              this.featuresService.getUnauthorizedGenerativeModels(schema).pipe(
-                tap((unauthorizedModels) => {
-                  this.unauthorizedModels = unauthorizedModels;
-                }),
-                map(
-                  () =>
-                    ({ schema, config, kbId: kb.id }) as {
-                      config: { [id: string]: any };
-                      schema: LearningConfigurations;
-                      kbId: string;
-                    },
-                ),
-              ),
+            map(
+              ([schema, config]) =>
+                ({ schema, config, kbId: kb.id }) as {
+                  config: { [id: string]: any };
+                  schema: LearningConfigurations;
+                  kbId: string;
+                },
             ),
           );
         }),
@@ -161,6 +143,14 @@ export class SearchConfigurationComponent {
       .subscribe({
         next: ({ kbId, schema, config }) => {
           this.modelFromSettings = config['generative_model'] || '';
+          this.modelNames =
+            schema['generative_model']?.options?.reduce(
+              (acc, model) => {
+                acc[model.value] = model.name;
+                return acc;
+              },
+              {} as { [key: string]: string },
+            ) || {};
           this.setConfigurations(kbId);
           this.setModelsAndPrompt(schema, config);
           this.initialised = true;
@@ -176,15 +166,11 @@ export class SearchConfigurationComponent {
   }
 
   private setConfigurations(kbId: string) {
-    const kbModel = this.learningOption.transform(
-      { value: this.modelFromSettings, name: this.modelFromSettings },
-      'generative_model',
-    );
     const standardConfigOption = new OptionModel({
       id: 'nuclia-standard',
       value: 'nuclia-standard',
       label: this.translate.instant('search.configuration.options.nuclia-standard'),
-      help: kbModel,
+      help: this.modelNames[this.modelFromSettings] || this.modelFromSettings,
     });
 
     const savedConfigs = this.searchWidgetService.getSavedSearchConfigs(kbId);
@@ -199,14 +185,7 @@ export class SearchConfigurationComponent {
             id: item.id,
             value: item.id,
             label: item.id,
-            help:
-              this.learningOption.transform(
-                {
-                  value: item.generativeAnswer.generativeModel,
-                  name: item.generativeAnswer.generativeModel,
-                },
-                'generative_model',
-              ) || kbModel,
+            help: this.modelNames[item.generativeAnswer?.generativeModel] || item.generativeAnswer?.generativeModel,
           }),
       ),
     );
@@ -227,10 +206,7 @@ export class SearchConfigurationComponent {
         new OptionModel({
           id: model.value,
           value: model.value,
-          label: this.learningOption.transform(model, 'generative_model'),
-          disabled: this.unsupportedModels.includes(model.value) || this.unauthorizedModels.includes(model.value),
-          iconModel: this.unauthorizedModels.includes(model.value) ? UNAUTHORIZED_ICON : undefined,
-          iconOnRight: true,
+          label: model.name,
           help:
             this.modelFromSettings === model.value
               ? this.translate.instant('search.configuration.generative-answer.generative-model.kb-settings')

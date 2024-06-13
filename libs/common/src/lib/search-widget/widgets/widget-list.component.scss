@@ -14,7 +14,10 @@
     text-decoration: underline;
   }
 
-  pa-table .title-xxs {
-    color: $color-neutral-regular;
+  pa-table {
+    .title-xxs,
+    pa-button ::ng-deep svg {
+      color: $color-neutral-regular;
+    }
   }
 }
