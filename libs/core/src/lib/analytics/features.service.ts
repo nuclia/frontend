@@ -55,6 +55,7 @@ export class FeaturesService {
     suggestEntities: this.featureFlag.isFeatureEnabled('suggest-entities'),
     ragImages: this.featureFlag.isFeatureEnabled('rag-images'),
     customNer: this.featureFlag.isFeatureEnabled('custom-ner'),
+    synonyms: this.featureFlag.isFeatureEnabled('synonyms-enabled'),
 
     // FEATURES meant to go to authorized features once stable
     taskAutomation: combineLatest([
@@ -81,7 +82,7 @@ export class FeaturesService {
           ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
         ),
       ),
-      this.featureFlag.isFeatureAuthorized('synonyms'),
+      this.featureFlag.isFeatureAuthorized('synonyms-authorized'),
     ]).pipe(map(([isAccountTypeAuthorized, isAuthorized]) => isAccountTypeAuthorized || isAuthorized)),
     activityLog: this._account.pipe(
       map((account) => !['stash-trial', 'stash-starter', 'v3starter'].includes(account.type)),

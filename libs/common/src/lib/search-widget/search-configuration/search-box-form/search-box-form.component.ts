@@ -79,6 +79,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     rephraseQuery: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
+  synonymsEnabled = this.featuresService.unstable.synonyms;
   synonymsAuthorized = this.featuresService.authorized.synonyms.pipe(
     tap((authorized) => {
       if (!authorized) {
