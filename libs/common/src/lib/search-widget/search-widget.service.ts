@@ -27,10 +27,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { tap } from 'rxjs/operators';
 import { ResourceViewerService } from '../resources';
-import { RenameWidgetDialogComponent } from './widgets';
+import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from './widgets/dialogs';
 import { SisModalService } from '@nuclia/sistema';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
-import { DuplicateWidgetDialogComponent } from './widgets/dialogs/duplicate-widget-dialog/duplicate-widget-dialog.component';
 import { compareDesc } from 'date-fns';
 
 @Injectable({

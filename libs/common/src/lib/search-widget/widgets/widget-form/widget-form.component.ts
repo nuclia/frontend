@@ -21,12 +21,13 @@ import {
   PaPopupModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { SearchConfiguration, SearchConfigurationComponent, Widget } from '../..';
+import { SearchConfiguration, Widget } from '../../search-widget.models';
 import { SearchWidgetService } from '../../search-widget.service';
 import { filter, map, Subject, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, tap } from 'rxjs/operators';
 import { deepEqual, SDKService } from '@flaps/core';
+import { SearchConfigurationComponent } from '../../search-configuration';
 
 @Component({
   standalone: true,
@@ -39,9 +40,9 @@ import { deepEqual, SDKService } from '@flaps/core';
     AccordionItemComponent,
     AccordionBodyDirective,
     PaTogglesModule,
-    SearchConfigurationComponent,
     PaDropdownModule,
     PaPopupModule,
+    SearchConfigurationComponent,
   ],
   templateUrl: './widget-form.component.html',
   styleUrl: './widget-form.component.scss',
