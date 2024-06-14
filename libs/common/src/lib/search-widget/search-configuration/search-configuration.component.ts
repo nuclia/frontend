@@ -78,16 +78,6 @@ export class SearchConfigurationComponent {
 
   private unsubscribeAll = new Subject<void>();
 
-  /* To be defined
- // FIXME which vision model should we use?
-  private visionConfigOption: OptionModel = new OptionModel({
-    id: 'nuclia-image',
-    value: 'image',
-    label: this.translate.instant('search.configuration.options.image'),
-    help: 'Vision',
-  });
-  */
-
   @Input({ transform: booleanAttribute }) displayWidgetButtonLine = false;
   @Input() configurationContainer?: ElementRef;
   @Input() mainTitle = '';

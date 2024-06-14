@@ -104,6 +104,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
           this.router.navigate(['..'], { relativeTo: this.route });
         } else {
           this.currentWidget = { ...this.savedWidget };
+          this.searchWidgetService.saveSelectedSearchConfig(kbId, this.savedWidget?.searchConfigId);
         }
         this.cdr.detectChanges();
       });
