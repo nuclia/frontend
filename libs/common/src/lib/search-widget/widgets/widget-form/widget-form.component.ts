@@ -114,6 +114,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         } else {
           this.currentWidget = { ...this.savedWidget };
           this.searchWidgetService.saveSelectedSearchConfig(kbId, this.savedWidget?.searchConfigId);
+          this.form.patchValue(this.currentWidget.widgetConfig);
         }
         this.cdr.detectChanges();
       });
@@ -144,8 +145,14 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
 
   saveChanges() {
-    //TODO
+    const current = this.currentWidget;
+    if (current) {
+      this.sdk.currentKb
+        .pipe(take(1))
+        .subscribe((kb) => this.searchWidgetService.updateWidget(kb.id, current.slug, current.widgetConfig));
+    }
   }
+
   embedWidget() {
     this.modalService.openModal(EmbedWidgetDialogComponent, new ModalConfig({ data: { code: this.snippet } }));
   }

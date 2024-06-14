@@ -223,8 +223,7 @@ export class SearchWidgetService {
     searchConfigId: string,
     generativeModel: string,
   ): string {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    const storedWidgets = this.getKBWidgets(kbId);
     let slug = STFUtils.generateSlug(name);
     // if slug already exists in this KB, make it unique
     if (storedWidgets.find((widget) => widget.slug === slug)) {
@@ -238,13 +237,21 @@ export class SearchWidgetService {
       widgetConfig,
       creationDate: new Date().toISOString(),
     });
-    this.updateWidgetInStorage(widgetsByKbMap, kbId, storedWidgets);
+    this.storeKBWidgets(kbId, storedWidgets);
     return slug;
   }
 
+  updateWidget(kbId: string, widgetSlug: string, widgetConfig: WidgetConfiguration) {
+    const storedWidgets = this.getKBWidgets(kbId);
+    const widget = storedWidgets.find((widget) => widget.slug === widgetSlug);
+    if (widget) {
+      widget.widgetConfig = widgetConfig;
+    }
+    this.storeKBWidgets(kbId, storedWidgets);
+  }
+
   getSavedWidget(kbId: string, widgetSlug: string): Widget | undefined {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    const storedWidgets = this.getKBWidgets(kbId);
     return storedWidgets.find((widget) => widget.slug === widgetSlug);
   }
 
@@ -300,28 +307,25 @@ export class SearchWidgetService {
   }
 
   private _deleteWidget(kbId: string, slug: string) {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    const storedWidgets = this.getKBWidgets(kbId);
     const widgetIndex = storedWidgets.findIndex((widget) => widget.slug === slug);
     if (widgetIndex > -1) {
       storedWidgets.splice(widgetIndex, 1);
     }
-    this.updateWidgetInStorage(widgetsByKbMap, kbId, storedWidgets);
+    this.storeKBWidgets(kbId, storedWidgets);
   }
 
   private _renameWidget(kbId: any, slug: string, newName: string) {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    const storedWidgets = this.getKBWidgets(kbId);
     const widget = storedWidgets.find((widget) => widget.slug === slug);
     if (widget) {
       widget.name = newName;
     }
-    this.updateWidgetInStorage(widgetsByKbMap, kbId, storedWidgets);
+    this.storeKBWidgets(kbId, storedWidgets);
   }
 
   private _duplicateWidget(kbId: string, widget: Widget, newName: string): string {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    const storedWidgets: Widget[] = widgetsByKbMap[kbId] || [];
+    const storedWidgets = this.getKBWidgets(kbId);
     let slug = STFUtils.generateSlug(newName);
     // if slug already exists in this KB, make it unique
     if (storedWidgets.find((widget) => widget.slug === slug)) {
@@ -333,11 +337,17 @@ export class SearchWidgetService {
       name: newName,
       creationDate: new Date().toISOString(),
     });
-    this.updateWidgetInStorage(widgetsByKbMap, kbId, storedWidgets);
+    this.storeKBWidgets(kbId, storedWidgets);
     return slug;
   }
 
-  private updateWidgetInStorage(widgetsByKbMap: { [p: string]: Widget[] }, kbId: string, updatedWidgets: Widget[]) {
+  private getKBWidgets(kbId: string): Widget[] {
+    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+    return widgetsByKbMap[kbId] || [];
+  }
+
+  private storeKBWidgets(kbId: string, updatedWidgets: Widget[]) {
+    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
     widgetsByKbMap[kbId] = updatedWidgets;
     this.storage.setItem(SAVED_WIDGETS_KEY, JSON.stringify(widgetsByKbMap));
     this._widgetList.next(updatedWidgets);
