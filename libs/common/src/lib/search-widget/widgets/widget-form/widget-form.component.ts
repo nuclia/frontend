@@ -11,11 +11,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { BackButtonComponent, SisToastService } from '@nuclia/sistema';
+import { BackButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
   AccordionItemComponent,
+  ModalConfig,
   PaButtonModule,
   PaDropdownModule,
   PaPopupModule,
@@ -28,6 +29,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, tap } from 'rxjs/operators';
 import { deepEqual, SDKService } from '@flaps/core';
 import { SearchConfigurationComponent } from '../../search-configuration';
+import { EmbedWidgetDialogComponent } from '../dialogs';
 
 @Component({
   standalone: true,
@@ -57,6 +59,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   private searchWidgetService = inject(SearchWidgetService);
   private translate = inject(TranslateService);
   private toaster = inject(SisToastService);
+  private modalService = inject(SisModalService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -77,7 +80,13 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   widgetFormExpanded = true;
 
-  widgetPreview = this.searchWidgetService.widgetPreview;
+  snippet = '';
+  widgetPreview = this.searchWidgetService.widgetPreview.pipe(
+    tap((data) => {
+      this.snippet = data.snippet;
+      this.cdr.markForCheck();
+    }),
+  );
   currentConfig?: SearchConfiguration;
 
   get darkModeEnabled() {
@@ -136,6 +145,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   saveChanges() {
     //TODO
+  }
+  embedWidget() {
+    this.modalService.openModal(EmbedWidgetDialogComponent, new ModalConfig({ data: { code: this.snippet } }));
   }
 
   rename() {
