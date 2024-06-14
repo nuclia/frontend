@@ -12,7 +12,6 @@ import type {
   ICreateResource,
   IFieldData,
   IResource,
-  KeywordSetField,
   LinkField,
   LinkFieldData,
   Paragraph,
@@ -55,7 +54,7 @@ export class ReadableResource implements IResource {
     Object.assign(this, { ...data, title: this.formatTitle(data.title) });
   }
 
-  getFields<T = IFieldData>(types: (keyof ResourceData)[] = ['files', 'links', 'texts', 'keywordsets']): T[] {
+  getFields<T = IFieldData>(types: (keyof ResourceData)[] = ['files', 'links', 'texts']): T[] {
     return Object.entries(this.data)
       .filter(([key]) => types.includes(key as keyof ResourceData))
       .map(([, value]) => value)
@@ -313,7 +312,7 @@ export class Resource extends ReadableResource implements IResource {
   setField(
     type: FIELD_TYPE,
     field: string,
-    data: TextField | LinkField | FileField | KeywordSetField,
+    data: TextField | LinkField | FileField,
   ): Observable<void> {
     return defer(() => this.nuclia.rest.put<void>(`${this.path}/${type}/${field}`, data)).pipe(retry(retry429Config()));
   }

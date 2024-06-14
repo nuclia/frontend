@@ -82,12 +82,9 @@ export interface SearchOptions extends BaseSearchOptions {
 }
 
 export enum SHORT_FIELD_TYPE {
-  layout = 'l',
   text = 't',
   file = 'f',
   link = 'u',
-  datetime = 'd',
-  keywordset = 'k',
   generic = 'a',
   conversation = 'c',
 }
