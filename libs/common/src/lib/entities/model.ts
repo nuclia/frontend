@@ -1,4 +1,4 @@
-import { BaseEntitiesGroup, EntitiesGroup } from '@nuclia/core';
+import { BaseEntitiesGroup } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
 
 export const generatedEntitiesColor: { [key: string]: string } = {

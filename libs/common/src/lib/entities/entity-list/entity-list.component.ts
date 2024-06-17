@@ -1,18 +1,13 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnDestroy,
-  Output,
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Entity, NerFamily } from '../model';
-import { NerService } from '../ner.service';
-import { FeaturesService } from '@flaps/core';
 
 const COUNT_ROWS_DISPLAYED = 1000;
 
@@ -50,40 +45,17 @@ export class EntityListComponent implements OnDestroy {
     return nerList.slice(0, COUNT_ROWS_DISPLAYED);
   }
 
-  @Input() selection: string[] = [];
   @Input() filterQuery = '';
-  @Output() selectionChange: EventEmitter<string[]> = new EventEmitter();
   @ViewChild('listContainer') listContainer?: ElementRef;
 
   unsubscribeAll = new Subject<void>();
-  isAdminOrContrib = this.entitiesService.isAdminOrContrib;
-  customNerEnabled = this.features.unstable.customNer;
 
   private _family: NerFamily | undefined;
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private entitiesService: NerService,
-    private features: FeaturesService,
-  ) {}
+  constructor() {}
 
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  removeDuplicate(ner: Entity, duplicate: string) {
-    if (this.family) {
-      this.entitiesService.removeDuplicate(this.family.key, ner, duplicate).subscribe(() => this.cdr.markForCheck());
-    }
-  }
-
-  toggleSelection(ner: string) {
-    if (this.selection.includes(ner)) {
-      this.selection = this.selection.filter((id) => id !== ner);
-    } else {
-      this.selection = this.selection.concat([ner]);
-    }
-    this.selectionChange.emit(this.selection);
   }
 }
