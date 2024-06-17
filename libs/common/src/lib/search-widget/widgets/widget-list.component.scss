@@ -1,0 +1,23 @@
+@import 'apps/dashboard/src/variables';
+
+.widget-list-page {
+  header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: rhythm(4);
+  }
+
+  .table-link {
+    @include body-s();
+    color: $color-dark-stronger;
+    font-weight: $font-weight-semi-bold;
+    text-decoration: underline;
+  }
+
+  pa-table {
+    .title-xxs,
+    pa-button ::ng-deep svg {
+      color: $color-neutral-regular;
+    }
+  }
+}

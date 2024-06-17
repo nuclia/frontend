@@ -70,8 +70,27 @@ export interface SearchConfiguration {
   resultDisplay: ResultDisplayConfig;
 }
 
+export interface WidgetConfiguration {
+  popupStyle: 'page' | 'popup';
+  darkMode: 'light' | 'dark';
+  hideLogo: boolean;
+  permalink: boolean;
+  navigateToLink: boolean;
+  navigateToFile: boolean;
+}
+
+export interface Widget {
+  slug: string;
+  name: string;
+  creationDate: string;
+  searchConfigId: string;
+  generativeModel: string;
+  widgetConfig: WidgetConfiguration;
+}
+
 export const SAVED_CONFIG_KEY = 'NUCLIA_SELECTED_SEARCH_CONFIG';
 export const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
+export const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
 
 export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   customizePlaceholder: false,
@@ -123,13 +142,40 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   relations: false,
   relationGraph: false,
 };
+export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
+  popupStyle: 'page',
+  darkMode: 'light',
+  hideLogo: false,
+  permalink: false,
+  navigateToLink: false,
+  navigateToFile: false,
+};
+
+export const NUCLIA_STANDARD_SEARCH_CONFIG: SearchConfiguration = {
+  id: 'nuclia-standard',
+  searchBox: {
+    ...DEFAULT_SEARCH_BOX_CONFIG,
+    suggestions: true,
+    autocompleteFromNERs: true,
+  },
+  generativeAnswer: {
+    ...DEFAULT_GENERATIVE_ANSWER_CONFIG,
+    generateAnswer: true,
+  },
+  resultDisplay: {
+    ...DEFAULT_RESULT_DISPLAY_CONFIG,
+    displayResults: true,
+    relations: true,
+  },
+};
 
 export function isSameConfigurations(configA: SearchConfiguration, configB: SearchConfiguration): boolean {
   return deepEqual(configA, configB);
 }
 
-export function getFeatures(config: SearchConfiguration): string {
+export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetConfiguration): string {
   const widgetFeatures = {
+    // Search configuration
     answers: config.generativeAnswer.generateAnswer,
     noBM25forChat: config.generativeAnswer.generateAnswerWith === 'only-semantic',
     rephrase: config.searchBox.rephraseQuery,
@@ -146,22 +192,22 @@ export function getFeatures(config: SearchConfiguration): string {
     relations: config.resultDisplay.relations,
     knowledgeGraph: config.resultDisplay.relationGraph,
     displayFieldList: config.resultDisplay.displayFieldList,
+
+    // Widget options
+    hideLogo: widgetOptions.hideLogo,
+    permalink: widgetOptions.permalink,
+    navigateToLink: widgetOptions.navigateToLink,
+    navigateToFile: widgetOptions.navigateToFile,
   };
   const featureList = Object.entries(widgetFeatures)
     .filter(([, enabled]) => enabled)
     .map(([feature]) => feature)
     .join(',');
 
-  /* TODO: widget features
-  permalink
-navigateToLink
-navigateToFile
-hideLogo
-   */
   return `\n  features="${featureList}"`;
 }
 export function getPlaceholder(config: SearchBoxConfig): string {
-  return config.placeholder ? `\n  placeholder="${config.placeholder}"` : '';
+  return config.customizePlaceholder && config.placeholder ? `\n  placeholder="${config.placeholder}"` : '';
 }
 export function getPrompt(config: GenerativeAnswerConfig): string {
   if (config.usePrompt && !!config.prompt.trim()) {
@@ -234,4 +280,8 @@ export function getMaxTokens(config: GenerativeAnswerConfig): string {
 }
 export function getQueryPrepend(config: SearchBoxConfig): string {
   return config.prependTheQuery && !!config.queryPrepend.trim() ? `\n  query_prepend="${config.queryPrepend}"` : '';
+}
+
+export function getWidgetTheme(options: WidgetConfiguration): string {
+  return options.darkMode === 'dark' ? `\n  mode="dark"` : '';
 }

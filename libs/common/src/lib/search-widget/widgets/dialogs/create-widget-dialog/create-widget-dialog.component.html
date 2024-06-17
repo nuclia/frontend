@@ -1,11 +1,11 @@
 <pa-modal-dialog>
-  <pa-modal-title>{{ 'search.configuration.save-config-modal.title' | translate }}</pa-modal-title>
-  <pa-modal-description>{{ 'search.configuration.save-config-modal.description' | translate }}</pa-modal-description>
+  <pa-modal-title>{{ 'search.widgets.dialog.create-widget.title' | translate }}</pa-modal-title>
+  <pa-modal-description>{{ 'search.widgets.dialog.create-widget.description' | translate }}</pa-modal-description>
 
   <pa-modal-content>
     <div class="form-container">
       <pa-input
-        hasFocus
+        [hasFocus]="initialized"
         [formControl]="name"
         (enter)="submitName()">
         {{ 'generic.name' | translate }}
@@ -21,7 +21,7 @@
     <pa-button
       kind="primary"
       (click)="submitName()">
-      {{ 'search.configuration.action.continue' | translate }}
+      {{ 'search.widgets.dialog.create-widget.confirm-button' | translate }}
     </pa-button>
   </pa-modal-footer>
 </pa-modal-dialog>

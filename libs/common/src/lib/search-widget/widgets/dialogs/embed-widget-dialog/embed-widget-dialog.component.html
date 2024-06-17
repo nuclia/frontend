@@ -1,0 +1,14 @@
+<pa-modal-dialog>
+  <pa-modal-title>{{ 'search.widgets.dialog.code-snippet.title' | translate }}</pa-modal-title>
+  <pa-modal-description>{{ 'search.widgets.dialog.code-snippet.description' | translate }}</pa-modal-description>
+  <pa-modal-content>
+    <pre><code>{{modal.config?.data?.code}}</code></pre>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="copyAndClose()">
+      {{ 'search.widgets.dialog.code-snippet.copy-button' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

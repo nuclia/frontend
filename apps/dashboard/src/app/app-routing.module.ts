@@ -134,10 +134,10 @@ const routes: Routes = [
                 canActivate: [knowledgeBoxOwnerGuard],
               },
               {
-                path: 'widget-generator',
+                path: 'widgets',
                 loadChildren: () =>
-                  import('../../../../libs/common/src/lib/search-widget/widgets/deprecated-widgets.module').then(
-                    (m) => m.DeprecatedWidgetsModule,
+                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.routes').then(
+                    (m) => m.WIDGETS_ROUTES,
                   ),
               },
               {

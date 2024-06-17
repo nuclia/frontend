@@ -1,0 +1,8 @@
+@import 'apps/dashboard/src/variables';
+
+pre {
+  background-color: $color-neutral-lightest;
+  border: 1px solid $color-neutral-lighter;
+  border-radius: rhythm(0.5);
+  padding: rhythm(1);
+}

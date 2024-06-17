@@ -1,0 +1,57 @@
+@import 'apps/dashboard/src/variables';
+@import '../../common-form';
+
+.widget-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .action-container {
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  .widget-form-page-body {
+    display: flex;
+    gap: rhythm(2);
+
+    .widget-form-container {
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 auto;
+      gap: rhythm(4);
+      width: rhythm(53);
+    }
+    .widget-preview-container {
+      flex: 1;
+    }
+  }
+
+  .widget-preview-container {
+    padding-left: rhythm(2);
+
+    .title-xs {
+      color: $color-neutral-regular;
+      margin-bottom: rhythm(2);
+    }
+
+    &.dark-mode {
+      background: #1f2023;
+      .title-xs {
+        color: $color-neutral-light;
+      }
+    }
+
+    .preview-content {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: rhythm(4);
+    }
+  }
+}

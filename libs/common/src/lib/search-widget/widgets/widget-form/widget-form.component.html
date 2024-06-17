@@ -1,0 +1,153 @@
+<div class="page-spacing widget-form-page">
+  <nsi-back-button link="..">{{ 'search.widgets.form.actions.back' | translate }}</nsi-back-button>
+  <div class="page-header">
+    <div>
+      <div class="page-title">{{ savedWidget?.name }}</div>
+      <div class="page-description">{{ 'search.widgets.form.description' | translate }}</div>
+    </div>
+    <div class="action-container">
+      <pa-button
+        kind="primary"
+        [disabled]="isNotModified"
+        (click)="saveChanges()">
+        {{ 'search.widgets.form.actions.save' | translate }}
+      </pa-button>
+      <pa-button
+        icon="code"
+        iconAndText
+        (click)="embedWidget()">
+        {{ 'search.widgets.form.actions.embed-widget' | translate }}
+      </pa-button>
+      <div>
+        <pa-button
+          icon="more-vertical"
+          aspect="basic"
+          [paPopup]="menu">
+          {{ 'search.widgets.form.actions.more' | translate }}
+        </pa-button>
+        <pa-dropdown #menu>
+          <pa-option (selectOption)="rename()">
+            {{ 'search.widgets.action.rename' | translate }}
+          </pa-option>
+          <pa-option (selectOption)="duplicateAsNew()">
+            {{ 'search.widgets.action.duplicate' | translate }}
+          </pa-option>
+          <pa-option
+            destructive
+            (selectOption)="delete()">
+            {{ 'search.widgets.action.delete' | translate }}
+          </pa-option>
+        </pa-dropdown>
+      </div>
+    </div>
+  </div>
+
+  <div class="widget-form-page-body">
+    <div
+      #configurationContainer
+      class="widget-form-container">
+      <pa-accordion-item
+        id="widget-options"
+        [(expanded)]="widgetFormExpanded"
+        [itemTitle]="'search.widgets.form.widget-options.section-title' | translate"
+        [description]="'search.widgets.form.widget-options.section-description' | translate">
+        <pa-accordion-item-body>
+          <form [formGroup]="form">
+            <div class="config-form-field">
+              <div class="title-xs">{{ 'search.widgets.form.widget-options.style.title' | translate }}</div>
+              <pa-radio-group formControlName="popupStyle">
+                <pa-radio value="page">
+                  {{ 'search.widgets.form.widget-options.style.page' | translate }}
+                </pa-radio>
+                <pa-radio value="popup">
+                  {{ 'search.widgets.form.widget-options.style.popup' | translate }}
+                </pa-radio>
+              </pa-radio-group>
+            </div>
+            <div class="config-form-field">
+              <div class="title-xs">{{ 'search.widgets.form.widget-options.theme.title' | translate }}</div>
+              <pa-radio-group formControlName="darkMode">
+                <pa-radio value="light">
+                  {{ 'search.widgets.form.widget-options.theme.light' | translate }}
+                </pa-radio>
+                <pa-radio value="dark">
+                  {{ 'search.widgets.form.widget-options.theme.dark' | translate }}
+                </pa-radio>
+              </pa-radio-group>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="hideLogo"
+                withBackground
+                spaceBetweenLabelAndToggle>
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.hide-logo.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.hide-logo.toggle-description' | translate }}
+              </div>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="permalink"
+                withBackground
+                spaceBetweenLabelAndToggle>
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.permalinks.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.permalinks.toggle-description' | translate }}
+              </div>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="navigateToLink"
+                withBackground
+                spaceBetweenLabelAndToggle>
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.navigate-to-link.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.navigate-to-link.toggle-description' | translate }}
+              </div>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="navigateToFile"
+                withBackground
+                spaceBetweenLabelAndToggle>
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-description' | translate }}
+              </div>
+            </div>
+          </form>
+        </pa-accordion-item-body>
+      </pa-accordion-item>
+
+      <stf-search-configuration
+        mainTitle="search.widgets.form.search-config-title"
+        [configurationContainer]="configurationContainerElement"
+        (configUpdate)="updateSearchConfig($event)"></stf-search-configuration>
+    </div>
+
+    <div
+      class="widget-preview-container"
+      [class.dark-mode]="darkModeEnabled">
+      <div class="title-xs">{{ 'search.widgets.form.preview-title' | translate }}</div>
+
+      @if (widgetPreview | async; as widgetPreview) {
+        <div
+          id="preview"
+          class="preview-content"
+          [innerHtml]="widgetPreview.preview"></div>
+      }
+    </div>
+  </div>
+</div>
