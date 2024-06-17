@@ -25,7 +25,7 @@ import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
 import { BehaviorSubject, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { tap } from 'rxjs/operators';
+import { debounceTime, tap } from 'rxjs/operators';
 import { ResourceViewerService } from '../resources';
 import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from './widgets/dialogs';
 import { SisModalService } from '@nuclia/sistema';
@@ -51,6 +51,11 @@ export class SearchWidgetService {
   widgetList: Observable<Widget[]> = this._widgetList
     .asObservable()
     .pipe(map((widgets) => widgets.sort((a, b) => compareDesc(a.creationDate, b.creationDate))));
+  private _reinitWidgetPreview = new Subject<void>();
+
+  constructor() {
+    this._reinitWidgetPreview.pipe(debounceTime(500)).subscribe(() => this.reinitWidgetPreview());
+  }
 
   getSelectedSearchConfig(kbId: string): SearchConfiguration {
     const standardConfiguration = { ...NUCLIA_STANDARD_SEARCH_CONFIG };
@@ -170,23 +175,22 @@ export class SearchWidgetService {
         this._widgetPreview.next({ snippet, preview });
         return { snippet, preview };
       }),
-      tap(() => {
-        // Run the search with the current query if any
-        setTimeout(() => {
-          const searchWidget = document.getElementsByTagName('nuclia-search-bar')[0] as unknown as any;
-          if (this.currentQuery) {
-            searchWidget?.search(this.currentQuery);
-          }
-          searchWidget?.addEventListener('search', (event: { detail: string }) => {
-            this.currentQuery = event.detail;
-          });
-          searchWidget?.addEventListener('resetQuery', () => {
-            this.currentQuery = '';
-          });
-          this.viewerService.init('nuclia-search-results');
-        }, 500);
-      }),
+      tap(() => this._reinitWidgetPreview.next()),
     );
+  }
+
+  private reinitWidgetPreview() {
+    const searchWidget = document.getElementsByTagName('nuclia-search-bar')[0] as unknown as any;
+    if (this.currentQuery) {
+      searchWidget?.search(this.currentQuery);
+    }
+    searchWidget?.addEventListener('search', (event: { detail: string }) => {
+      this.currentQuery = event.detail;
+    });
+    searchWidget?.addEventListener('resetQuery', () => {
+      this.currentQuery = '';
+    });
+    this.viewerService.init('nuclia-search-results');
   }
 
   private deleteWidgetPreview() {
