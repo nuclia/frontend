@@ -54,7 +54,6 @@ export class FeaturesService {
     invoiceProcessing: this.featureFlag.isFeatureEnabled('invoice-processing'),
     suggestEntities: this.featureFlag.isFeatureEnabled('suggest-entities'),
     ragImages: this.featureFlag.isFeatureEnabled('rag-images'),
-    customNer: this.featureFlag.isFeatureEnabled('custom-ner'),
     synonyms: this.featureFlag.isFeatureEnabled('synonyms-enabled'),
 
     // FEATURES meant to go to authorized features once stable

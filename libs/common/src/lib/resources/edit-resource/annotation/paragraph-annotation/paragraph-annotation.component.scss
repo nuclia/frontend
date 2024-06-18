@@ -2,7 +2,6 @@
 @import '../../edit-resource.tokens';
 
 .paragraph-container {
-  position: relative;
 
   p {
     margin-bottom: 0;
@@ -11,44 +10,6 @@
       background: $color-neutral-lighter;
       cursor: default;
       padding: 0 rhythm(0.25);
-    }
-
-    &.family-selected ::ng-deep mark {
-      cursor: pointer;
-    }
-  }
-
-  .annotation-buttons-container {
-    display: inline-flex;
-    height: rhythm(2);
-    position: relative;
-
-    .annotation-button {
-      align-items: center;
-      border: none;
-      color: $color-light-stronger;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      height: rhythm(2);
-      width: rhythm(2);
-
-      pa-icon {
-        display: flex;
-      }
-
-      &.remove {
-        background: $color-dark-stronger;
-        &:hover {
-          background: lighten($color-dark-stronger, 25%);
-        }
-      }
-      &.confirm {
-        background: $color-primary-regular;
-        &:hover {
-          background: $color-primary-light;
-        }
-      }
     }
   }
 }
