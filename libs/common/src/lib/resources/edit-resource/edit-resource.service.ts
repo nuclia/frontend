@@ -168,19 +168,6 @@ export class EditResourceService {
     );
   }
 
-  saveClassifications(field: FieldId, paragraphs: ParagraphWithTextAndClassifications[]): Observable<void | null> {
-    const currentResource = this._resource.value;
-    if (!currentResource) {
-      return of(null);
-    }
-    const fieldMetadata: UserFieldMetadata[] = getFieldMetadataForClassifications(
-      field,
-      paragraphs,
-      currentResource.fieldmetadata || [],
-    );
-    return this.savePartialResource({ fieldmetadata: fieldMetadata });
-  }
-
   setCurrentView(view: EditResourceView) {
     this._currentView.next(view);
   }

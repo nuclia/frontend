@@ -1,113 +1,42 @@
 @if (hasParagraph | async) {
   @if (paragraphLoaded | async) {
     <div class="main-container">
-      @if ((hasLabels | async) === true) {
-        <div>
-          <div class="search-box-container">
-            <pa-input
-              [icon]="searchQuery ? 'cross' : 'search'"
-              [class.can-reset]="!!searchQuery"
-              [(ngModel)]="searchQuery"
-              (click)="onSearchInputClick($event)"
-              (keyup.enter)="triggerSearch()">
-              {{ 'resource.field.search' | translate }}
-            </pa-input>
-          </div>
-          <div
-            class="scrollable-area with-search-and-footer with-right-panel paragraphs-container"
-            [class.disabled]="currentLabels.value.length === 0">
-            <pa-infinite-scroll (reachAnchor)="loadMore()">
-              <div
-                class="paragraph-container"
-                *ngFor="let paragraph of paragraphs | async">
-                <p (click)="addLabelsOnParagraph(paragraph)">{{ paragraph.text }}</p>
-                <div class="labels-container">
-                  <ng-container *ngFor="let label of paragraph.generatedClassifications">
-                    @if ((isAdminOrContrib | async) === false) {
-                      <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
-                        {{ label.label }}
-                      </pa-chip>
-                    } @else {
-                      <pa-chip-closeable
-                        [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
-                        (closed)="cancelGeneratedLabel(paragraph, label)">
-                        {{ label.label }}
-                      </pa-chip-closeable>
-                    }
-                  </ng-container>
+      <div>
+        <div class="search-box-container">
+          <pa-input
+            [icon]="searchQuery ? 'cross' : 'search'"
+            [class.can-reset]="!!searchQuery"
+            [(ngModel)]="searchQuery"
+            (click)="onSearchInputClick($event)"
+            (keyup.enter)="triggerSearch()">
+            {{ 'resource.field.search' | translate }}
+          </pa-input>
+        </div>
+        <div class="scrollable-area with-search-and-footer paragraphs-container">
+          <pa-infinite-scroll (reachAnchor)="loadMore()">
+            <div
+              class="paragraph-container"
+              *ngFor="let paragraph of paragraphs | async">
+              <p>{{ paragraph.text }}</p>
+              <div class="labels-container">
+                <ng-container *ngFor="let label of paragraph.generatedClassifications">
+                  <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
+                    {{ label.label }}
+                  </pa-chip>
+                </ng-container>
 
-                  <ng-container *ngFor="let label of paragraph.userClassifications">
-                    @if (!label.cancelled_by_user) {
-                      @if ((isAdminOrContrib | async) === false) {
-                        <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
-                          {{ label.label }}
-                        </pa-chip>
-                      } @else {
-                        <pa-chip-closeable
-                          [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
-                          (closed)="removeUserLabel(paragraph, label)">
-                          {{ label.label }}
-                        </pa-chip-closeable>
-                      }
-                    }
-                  </ng-container>
-                </div>
+                <ng-container *ngFor="let label of paragraph.userClassifications">
+                  @if (!label.cancelled_by_user) {
+                    <pa-chip [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color">
+                      {{ label.label }}
+                    </pa-chip>
+                  }
+                </ng-container>
               </div>
-            </pa-infinite-scroll>
-          </div>
-
-          <footer class="form-buttons with-right-panel">
-            <pa-button
-              kind="primary"
-              [disabled]="!isModified || isSaving"
-              (click)="save()">
-              {{ 'generic.save' | translate }}
-            </pa-button>
-
-            <pa-button
-              aspect="basic"
-              [disabled]="!isModified || isSaving"
-              (click)="cancel()">
-              {{ 'generic.cancel' | translate }}
-            </pa-button>
-          </footer>
+            </div>
+          </pa-infinite-scroll>
         </div>
-      } @else if (labelLoaded) {
-        <p>
-          {{ 'resource.classification.no-paragraph-labelset' | translate }}
-          <a [routerLink]="(kbUrl | async) + '/label-sets'">
-            {{ 'resource.classification-page-link' | translate }}
-          </a>
-        </p>
-      }
-
-      @if ((hasLabels | async) === true && (isAdminOrContrib | async) === true) {
-        <div class="right-panel-container">
-          <div class="help">
-            <pa-icon
-              name="info"
-              size="small"></pa-icon>
-            <p>
-              {{ 'resource.field-classification.help' | translate }}
-            </p>
-          </div>
-          <div class="label-selection-container">
-            <pa-button
-              aspect="basic"
-              kind="destructive"
-              size="small"
-              [disabled]="(emptyLabelSelection | async) === true"
-              (click)="cleanUpLabels()">
-              {{ 'resource.classification.clean-up' | translate }}
-            </pa-button>
-
-            <nsi-labels-expander
-              [labelSets]="availableLabels | async"
-              [currentSelection]="currentSelection"
-              (updateSelection)="updateSelection($event)"></nsi-labels-expander>
-          </div>
-        </div>
-      }
+      </div>
     </div>
   } @else {
     <div class="main-container">

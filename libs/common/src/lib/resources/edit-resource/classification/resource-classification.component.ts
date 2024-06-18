@@ -1,21 +1,22 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Classification, LabelSetKind, LabelSets, Resource } from '@nuclia/core';
-import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
-import { SelectFirstFieldDirective } from '../select-first-field/select-first-field.directive';
+import { BehaviorSubject, combineLatest, map, Observable, Subject, tap } from 'rxjs';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { LabelsService } from '@flaps/core';
 import { getClassificationFromSelection, getSelectionFromClassification } from '@nuclia/sistema';
+import { EditResourceService } from '../edit-resource.service';
 
 @Component({
   templateUrl: './resource-classification.component.html',
   styleUrls: ['../common-page-layout.scss', './resource-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResourceClassificationComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {
+export class ResourceClassificationComponent implements OnInit, OnDestroy {
   backupLabels: Classification[] = [];
   isModified = false;
   kbUrl = this.editResource.kbUrl;
   isAdminOrContrib = this.editResource.isAdminOrContrib;
+  unsubscribeAll = new Subject<void>();
 
   currentSelection: { [id: string]: boolean } = {};
 
@@ -62,9 +63,8 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
   constructor(
     private cdr: ChangeDetectorRef,
     private labelsService: LabelsService,
-  ) {
-    super();
-  }
+    private editResource: EditResourceService,
+  ) {}
 
   ngOnInit(): void {
     this.editResource.setCurrentView('classification');
@@ -90,6 +90,11 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   updateLabels(labels: Classification[]) {
