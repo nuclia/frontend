@@ -118,49 +118,6 @@ export function getFieldMetadataForClassifications(
   return newEntries;
 }
 
-export function getFieldMetadataForAnnotations(
-  field: FieldId,
-  paragraphs: ParagraphWithTextAndAnnotations[],
-  existingEntries: UserFieldMetadata[],
-): UserFieldMetadata[] {
-  const userToken: UserTokenAnnotation[] = paragraphs
-    .filter((paragraph) => paragraph.annotations.length > 0)
-    .reduce((tokens, paragraph) => {
-      return tokens.concat(
-        paragraph.annotations
-          .filter((annotation) => !annotation.immutable)
-          .map((entityAnnotation) => ({
-            token: entityAnnotation.token,
-            klass: entityAnnotation.klass,
-            start: entityAnnotation.start + (paragraph.start || 0),
-            end: entityAnnotation.end + (paragraph.start || 0),
-            cancelled_by_user: entityAnnotation.cancelled_by_user,
-          })),
-      );
-    }, [] as UserTokenAnnotation[]);
-
-  let existingField = false;
-  const newEntries = existingEntries.map((entry) => {
-    if (entry.field.field === field.field_id && entry.field.field_type === field.field_type) {
-      existingField = true;
-      return {
-        ...entry,
-        token: userToken,
-      };
-    } else {
-      return entry;
-    }
-  });
-
-  if (!existingField) {
-    newEntries.push({
-      field: { field: field.field_id, field_type: field.field_type },
-      token: userToken,
-    });
-  }
-  return newEntries;
-}
-
 export function addEntitiesToGroups(allGroups: EntityGroup[], entitiesMap: { [key: string]: string[] }) {
   Object.entries(entitiesMap).forEach(([groupId, entities]) => {
     const group = allGroups.find((g) => g.id === groupId);

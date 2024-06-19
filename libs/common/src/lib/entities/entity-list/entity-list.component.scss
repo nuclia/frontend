@@ -7,24 +7,6 @@
     overflow: auto;
     padding-right: $scrollbar-width;
   }
-  pa-table ::ng-deep {
-    .pa-table-grid--row:hover .table-row-action,
-    .pa-table-grid--row:hover .table-row-actions {
-      opacity: 1;
-    }
-  }
-
-  .whitespace {
-    background: $color-light-stronger;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
-  }
-
-  .table-row-action {
-    opacity: 0;
-    transition: opacity $transition-hint;
-  }
 
   .duplicate-list {
     display: flex;

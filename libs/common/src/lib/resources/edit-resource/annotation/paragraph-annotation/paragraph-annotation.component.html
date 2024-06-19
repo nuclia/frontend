@@ -13,9 +13,7 @@
       </div>
 
       <div class="scrollable-area with-search-and-footer with-right-panel">
-        <div
-          #paragraphsContainer
-          class="paragraphs-container">
+        <div class="paragraphs-container">
           <pa-infinite-scroll (reachAnchor)="loadMore()">
             <div
               class="paragraph-container"
@@ -23,74 +21,21 @@
               <p
                 [attr.paragraphId]="paragraph.paragraphId"
                 [class.family-selected]="(selectedFamily | async) !== null"
-                [innerHTML]="paragraph.annotatedText | safeHtml"
-                (mouseup)="onMouseUp($event)"></p>
-
-              <div
-                class="annotation-buttons-container"
-                [style]="buttonPosition">
-                <ng-container
-                  *ngIf="
-                    (selectedFamily | async) !== null &&
-                    (userSelection?.paragraphId === paragraph.paragraphId ||
-                      selectedEntity?.paragraphId === paragraph.paragraphId)
-                  ">
-                  <button
-                    *ngIf="!!selectedEntity && (isAdminOrContrib | async) === true"
-                    class="annotation-button remove"
-                    (click)="removeEntityFromParagraph(paragraph)">
-                    <pa-icon
-                      size="small"
-                      name="cross"></pa-icon>
-                  </button>
-                  <button
-                    class="annotation-button confirm"
-                    *ngIf="
-                      (isAdminOrContrib | async) === true &&
-                      (userSelection?.paragraphId === paragraph.paragraphId ||
-                        selectedEntity?.klass !== (selectedFamily | async)?.id)
-                    "
-                    (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
-                    <pa-icon
-                      size="small"
-                      [name]="userSelection ? 'check' : 'pencil'"></pa-icon>
-                  </button>
-                </ng-container>
-              </div>
+                [innerHTML]="paragraph.annotatedText | safeHtml"></p>
             </div>
           </pa-infinite-scroll>
         </div>
-
-        @if (customNerEnabled | async) {
-          <footer class="form-buttons with-right-panel">
-            <pa-button
-              kind="primary"
-              [disabled]="!isModified || isSaving"
-              (click)="save()">
-              {{ 'generic.save' | translate }}
-            </pa-button>
-
-            <pa-button
-              aspect="basic"
-              [disabled]="!isModified || isSaving"
-              (click)="cancel()">
-              {{ 'generic.cancel' | translate }}
-            </pa-button>
-          </footer>
-        }
       </div>
 
       <div class="right-panel-container">
-        @if (customNerEnabled | async) {
-          <div class="help">
-            <pa-icon
-              name="info"
-              size="small"></pa-icon>
-            <p>
-              {{ 'resource.field-annotation.help' | translate }}
-            </p>
-          </div>
-        }
+        <div class="help">
+          <pa-icon
+            name="info"
+            size="small"></pa-icon>
+          <p>
+            {{ 'resource.field-annotation.help' | translate }}
+          </p>
+        </div>
         <div class="ner-families-container">
           @for (family of entityFamilies | async; track family.id) {
             <pa-expander

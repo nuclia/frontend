@@ -28,19 +28,6 @@ $gap-family-selection: rhythm(7);
     overflow: auto;
     width: calc(#{$family-list-width} + #{$scrollbar-width});
 
-    .ner-family-actions {
-      align-items: center;
-      background: $color-light-stronger;
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: rhythm(2);
-      padding-top: rhythm(1);
-      padding-bottom: rhythm(1);
-      padding-right: $scrollbar-width;
-      position: sticky;
-      top: 0;
-    }
-
     .ner-family-list {
       width: $family-list-width;
 
@@ -58,6 +45,7 @@ $gap-family-selection: rhythm(7);
   .selected-family-container {
     overflow: hidden;
     padding-top: rhythm(1);
+    width: 100%;
 
     .family-toolbar {
       align-items: center;
@@ -71,27 +59,6 @@ $gap-family-selection: rhythm(7);
       width: 100%;
       z-index: 1;
 
-      .family-actions {
-        display: flex;
-        gap: rhythm(1);
-      }
-    }
-  }
-
-  .duplicate-of-popup {
-    display: flex;
-    flex-direction: column;
-
-    .entity-input {
-      border: none;
-      border-bottom: 1px solid $color-neutral-regular;
-      margin-bottom: rhythm(1);
-    }
-
-    .suggested-entities {
-      list-style: none;
-      margin: 0;
-      padding: 0;
     }
   }
 }

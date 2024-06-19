@@ -26,62 +26,6 @@ export class ParagraphClassificationService extends ParagraphService {
     this.setupParagraphs(paragraphs);
   }
 
-  /**
-   * Add label on paragraph
-   * If same generated classification exists and was cancelled by the user, we remove the cancellation
-   * If no generated nor user classification exists, we add classification
-   * @param classification
-   * @param paragraph
-   * @param multiple
-   */
-  classifyParagraph(classification: Classification, paragraph: ParagraphWithTextAndClassifications, multiple: boolean) {
-    if (!multiple) {
-      this.removeAndCancelLabelsByLabelSet(classification.labelset, paragraph);
-    }
-
-    let existingIndex = -1;
-    const existing = paragraph.userClassifications.find((label, index) => {
-      const found = label.label === classification.label && label.labelset === classification.labelset;
-      if (found) {
-        existingIndex = index;
-      }
-      return found;
-    });
-    if (existing && existing.cancelled_by_user) {
-      paragraph.userClassifications.splice(existingIndex, 1);
-      paragraph.generatedClassifications = this.getGeneratedClassification(paragraph, paragraph.userClassifications);
-    }
-    if (
-      !existing &&
-      !paragraph.generatedClassifications.find(
-        (label) => label.label === classification.label && label.labelset === classification.labelset,
-      )
-    ) {
-      paragraph.userClassifications.push(classification);
-    }
-  }
-
-  /**
-   * Cancel generated label by adding a similar user label with `cancelled_by_user: true`
-   * @param paragraph
-   * @param labelToCancel
-   */
-  cancelGeneratedLabel(paragraph: ParagraphWithTextAndClassifications, labelToCancel: Classification) {
-    paragraph.userClassifications.push({ ...labelToCancel, cancelled_by_user: true });
-    paragraph.generatedClassifications = this.getGeneratedClassification(paragraph, paragraph.userClassifications);
-  }
-
-  /**
-   * Remove user label from user classification
-   * @param paragraph
-   * @param labelToRemove
-   */
-  removeUserLabel(paragraph: ParagraphWithTextAndClassifications, labelToRemove: Classification) {
-    paragraph.userClassifications = paragraph.userClassifications.filter(
-      (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
-    );
-  }
-
   private getEnhancedParagraphs(fieldId: FieldId, resource: Resource): ParagraphWithTextAndClassifications[] {
     this._paragraphClassificationMap = this.getParagraphClassificationMap(resource, fieldId);
     const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
@@ -115,21 +59,6 @@ export class ParagraphClassificationService extends ParagraphService {
       }
       return annotationMap;
     }, {} as ParagraphClassificationMap);
-  }
-
-  /**
-   * Remove/cancel all labels belonging to a label set
-   */
-  private removeAndCancelLabelsByLabelSet(labelSet: string, paragraph: ParagraphWithTextAndClassifications) {
-    paragraph.userClassifications = paragraph.userClassifications.filter(
-      (label) => !(label.labelset === labelSet && !label.cancelled_by_user),
-    );
-    paragraph.userClassifications.push(
-      ...paragraph.generatedClassifications
-        .filter((label) => label.labelset === labelSet)
-        .map((label) => ({ ...label, cancelled_by_user: true })),
-    );
-    paragraph.generatedClassifications = this.getGeneratedClassification(paragraph, paragraph.userClassifications);
   }
 
   /**

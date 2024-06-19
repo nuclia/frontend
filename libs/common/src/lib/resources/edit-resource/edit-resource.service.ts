@@ -27,7 +27,6 @@ import {
   Resource,
   ResourceData,
   ResourceField,
-  ResourceProperties,
   TextField,
   UserClassification,
   UserFieldMetadata,
@@ -41,9 +40,7 @@ import {
   EditResourceView,
   EntityGroup,
   getClassificationsPayload,
-  getFieldMetadataForAnnotations,
   getFieldMetadataForClassifications,
-  ParagraphWithTextAndAnnotations,
   ParagraphWithTextAndClassifications,
   Thumbnail,
 } from './edit-resource.helpers';
@@ -89,7 +86,6 @@ export class EditResourceService {
     map(([account, kb]) => this.navigation.getKbUrl(account.slug, kb.slug!)),
   );
   isAdminOrContrib = this.features.isKbAdminOrContrib;
-  customNerEnabled = this.features.unstable.customNer;
 
   constructor(
     private sdk: SDKService,
@@ -170,32 +166,6 @@ export class EditResourceService {
         }
       }),
     );
-  }
-
-  saveClassifications(field: FieldId, paragraphs: ParagraphWithTextAndClassifications[]): Observable<void | null> {
-    const currentResource = this._resource.value;
-    if (!currentResource) {
-      return of(null);
-    }
-    const fieldMetadata: UserFieldMetadata[] = getFieldMetadataForClassifications(
-      field,
-      paragraphs,
-      currentResource.fieldmetadata || [],
-    );
-    return this.savePartialResource({ fieldmetadata: fieldMetadata });
-  }
-
-  saveAnnotations(field: FieldId, paragraphs: ParagraphWithTextAndAnnotations[]): Observable<void | null> {
-    const currentResource = this._resource.value;
-    if (!currentResource) {
-      return of(null);
-    }
-    const fieldMetadata: UserFieldMetadata[] = getFieldMetadataForAnnotations(
-      field,
-      paragraphs,
-      currentResource.fieldmetadata || [],
-    );
-    return this.savePartialResource({ fieldmetadata: fieldMetadata });
   }
 
   setCurrentView(view: EditResourceView) {

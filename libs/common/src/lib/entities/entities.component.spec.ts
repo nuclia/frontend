@@ -4,10 +4,9 @@ import { NerService } from './ner.service';
 
 import { EntitiesComponent } from './entities.component';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { ModalService, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { FeaturesService } from '@flaps/core';
 
 describe('EntitiesComponent', () => {
   let component: EntitiesComponent;
@@ -17,7 +16,6 @@ describe('EntitiesComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         MockModule(TranslateModule),
-        MockModule(PaModalModule),
         MockModule(PaTextFieldModule),
         MockModule(PaButtonModule),
         MockModule(ReactiveFormsModule),
@@ -25,13 +23,9 @@ describe('EntitiesComponent', () => {
       declarations: [EntitiesComponent],
       providers: [
         MockProvider(TranslateService),
-        MockProvider(ModalService),
         MockProvider(NerService, {
           entities: of({}),
         }),
-        MockProvider(FeaturesService, {
-          unstable: { customNer: of(true) },
-        } as FeaturesService),
       ],
     }).compileComponents();
   });

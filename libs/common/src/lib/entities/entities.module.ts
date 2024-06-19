@@ -8,14 +8,9 @@ import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
 import {
   PaButtonModule,
-  PaExpanderModule,
-  PaFocusableModule,
   PaIconModule,
-  PaModalModule,
-  PaPopupModule,
   PaTableModule,
   PaTextFieldModule,
-  PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { HintModule } from '../hint';
@@ -32,15 +27,10 @@ import { SisProgressModule } from '@nuclia/sistema';
     PaButtonModule,
     PaIconModule,
     PaTooltipModule,
-    PaModalModule,
-    PaExpanderModule,
     HintModule,
     CsvSelectComponent,
     SisProgressModule,
     PaTableModule,
-    PaPopupModule,
-    PaFocusableModule,
-    PaTogglesModule,
   ],
   declarations: [EntitiesComponent, EntityListComponent],
   exports: [],

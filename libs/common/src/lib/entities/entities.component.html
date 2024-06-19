@@ -1,25 +1,10 @@
 <div class="ner-management page-spacing">
   <header>
-    <h1 class="page-title">{{ 'ner-management.page-title' | translate }}</h1>
-    @if (customNerEnabled | async) {
-      <p class="page-description">{{ 'ner-management.page-description' | translate }}</p>
-    }
+    <h1 class="page-title">{{ 'generic.named-entities' | translate }}</h1>
   </header>
 
   <div class="ner-container">
     <div class="ner-family-list-container">
-      @if (customNerEnabled | async) {
-        <div class="ner-family-actions">
-          <pa-button
-            iconAndText
-            icon="circle-plus"
-            [disabled]="(isAdminOrContrib | async) === false"
-            (click)="addFamily()">
-            {{ 'ner-management.add-family' | translate }}
-          </pa-button>
-        </div>
-      }
-
       <ul class="nsi-list ner-family-list">
         @for (family of nerFamilies | async; track family.key) {
           <li
@@ -32,31 +17,6 @@
             <div class="family-name">
               {{ family.title }}
             </div>
-
-            @if ((isAdminOrContrib | async) === true && (customNerEnabled | async) === true) {
-              <div class="action-buttons-container">
-                @if (family.custom) {
-                  <pa-button
-                    aspect="basic"
-                    size="small"
-                    icon="edit"
-                    [kind]="family.key === selectedFamily?.key ? 'inverted' : 'secondary'"
-                    paTooltip="ner-family-toolbar.edit-button"
-                    (click)="updateFamily(family)">
-                    {{ 'ner-family-toolbar.edit-button' | translate }}
-                  </pa-button>
-                }
-                <pa-button
-                  aspect="basic"
-                  size="small"
-                  icon="trash"
-                  kind="destructive"
-                  paTooltip="ner-family-toolbar.remove-button"
-                  (click)="removeFamily(family)">
-                  {{ 'ner-family-toolbar.remove-button' | translate }}
-                </pa-button>
-              </div>
-            }
           </li>
         }
       </ul>
@@ -73,68 +33,11 @@
               {{ 'stash.search' | translate }}
             </pa-input>
           </div>
-
-          @if ((isAdminOrContrib | async) === true && (customNerEnabled | async) === true) {
-            <div class="family-actions">
-              <pa-button
-                aspect="basic"
-                icon="plus"
-                paTooltip="ner-family-toolbar.add-button"
-                (click)="addEntity()">
-                {{ 'ner-family-toolbar.add-button' | translate }}
-              </pa-button>
-              <pa-button
-                icon="trash"
-                kind="destructive"
-                aspect="basic"
-                paTooltip="ner-list.delete-entity-tooltip"
-                [disabled]="selectedNer.length === 0"
-                (click)="deleteEntities()">
-                {{ 'ner-list.delete-entity-tooltip' | translate }}
-              </pa-button>
-              <pa-button
-                icon="arrows-related"
-                aspect="basic"
-                paTooltip="ner-list.add-duplicate-tooltip"
-                [paPopup]="duplicateOf"
-                [disabled]="selectedNer.length === 0">
-                {{ 'ner-list.add-duplicate-tooltip' | translate }}
-              </pa-button>
-              <pa-popup
-                #duplicateOf
-                (onClose)="selectEntities([])"
-                (onOpen)="openDuplicatesOfPopup()">
-                <div class="duplicate-of-popup">
-                  <label
-                    for="entityInput"
-                    class="body-xs">
-                    {{ 'ner-list.duplicates-of' | translate }}
-                  </label>
-                  <input
-                    #entityInput
-                    id="entityInput"
-                    class="entity-input"
-                    paFocusable
-                    (keyup)="getMatchingEntities($event)" />
-                  <ul class="suggested-entities">
-                    <pa-option
-                      *ngFor="let entity of matchingEntities"
-                      [value]="entity.value"
-                      (selectOption)="addDuplicateOf(entity)">
-                      {{ entity.value }}
-                    </pa-option>
-                  </ul>
-                </div>
-              </pa-popup>
-            </div>
-          }
         </div>
 
         <app-entity-list
           [family]="selectedFamily"
-          [selection]="selectedIds"
-          [filterQuery]="nerQuery"
-          (selectionChange)="selectEntities($event)"></app-entity-list>
+          [filterQuery]="nerQuery"></app-entity-list>
       </div>
     }
   </div>
