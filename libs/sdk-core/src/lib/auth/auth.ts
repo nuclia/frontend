@@ -75,7 +75,7 @@ export class Authentication implements IAuthentication {
       path?.endsWith('/search') ||
       path?.endsWith('/find') ||
       path?.endsWith('/catalog') ||
-      path?.endsWith('/chat')
+      path?.endsWith('/ask')
     ) {
       nucliaDbRole = 'READER';
     }
