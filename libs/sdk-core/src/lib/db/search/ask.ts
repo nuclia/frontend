@@ -31,7 +31,12 @@ export function ask(
     ...noEmptyValues,
   };
   body['shards'] = nuclia.currentShards?.[kbid] || [];
-  nuclia.events?.log('lastQuery', { endpoint, params: body, nucliaOptions: nuclia.options });
+  nuclia.events?.log('lastQuery', {
+    endpoint,
+    params: body,
+    headers: nuclia.rest.getHeaders('POST', path, {}, synchronous),
+    nucliaOptions: nuclia.options,
+  });
   return synchronous
     ? nuclia.rest.post<Ask.AskResponse>(endpoint, body, undefined, undefined, true).pipe(
         map(({ answer, relations, retrieval_results, citations, learning_id }) => {

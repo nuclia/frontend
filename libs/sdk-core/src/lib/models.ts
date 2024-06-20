@@ -110,8 +110,16 @@ export interface IRest {
 
   getStreamMessages(path: string, controller: AbortController): Observable<{ data: Uint8Array; headers: Headers }>;
   checkAuthorization(path: string): Observable<{ allowed: boolean; roles: (KBRoles | NucliaDBRole)[] }>;
-}
 
+  getHeaders(
+    method: string,
+    path: string,
+    extraHeaders?: { [key: string]: string },
+    synchronous?: boolean,
+  ): {
+    [key: string]: string;
+  };
+}
 export interface IDb {
   getAccounts(): Observable<Account[]>;
   getKbIndexes(accountSlug: string): Observable<KbIndex[]>;

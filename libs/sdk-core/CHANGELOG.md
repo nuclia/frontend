@@ -5,6 +5,10 @@
 - Remove support for visual selection labelling
 - Remove support for `keywordset`, `datetime` and `layout` field types
 
+### Improvements
+
+- Add HTTP headers to the `lastQuery` events
+
 # 1.16.0 (2024-05-29)
 
 ### Breaking changes
