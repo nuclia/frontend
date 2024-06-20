@@ -47,10 +47,12 @@ export class SearchWidgetService {
   private currentQuery = '';
   private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string }>();
   private _widgetList = new BehaviorSubject<Widget[]>([]);
+  private _logs = new Subject<any>();
   widgetPreview = this._widgetPreview.asObservable();
   widgetList: Observable<Widget[]> = this._widgetList
     .asObservable()
     .pipe(map((widgets) => widgets.sort((a, b) => compareDesc(a.creationDate, b.creationDate))));
+  logs = this._logs.asObservable();
   private _reinitWidgetPreview = new Subject<void>();
 
   constructor() {
@@ -189,6 +191,9 @@ export class SearchWidgetService {
     });
     searchWidget?.addEventListener('resetQuery', () => {
       this.currentQuery = '';
+    });
+    searchWidget?.addEventListener('logs', (event: { detail: any }) => {
+      this._logs.next(event.detail);
     });
     this.viewerService.init('nuclia-search-results');
   }

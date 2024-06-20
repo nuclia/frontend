@@ -21,6 +21,7 @@ import {
   AccordionBodyDirective,
   AccordionComponent,
   AccordionItemComponent,
+  ModalConfig,
   OptionModel,
   OptionSeparator,
   OptionType,
@@ -43,6 +44,7 @@ import {
 import { takeUntil } from 'rxjs/operators';
 import { LearningConfigurations } from '@nuclia/core';
 import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
+import { SearchRequestModalComponent } from './search-request-modal';
 
 @Component({
   selector: 'stf-search-configuration',
@@ -104,6 +106,7 @@ export class SearchConfigurationComponent {
   modelNames: { [key: string]: string } = {};
   generativeModels: OptionModel[] = [];
   defaultPromptFromSettings = '';
+  lastQuery?: { [key: string]: any };
 
   initialised = false;
 
@@ -147,6 +150,16 @@ export class SearchConfigurationComponent {
           this.cdr.detectChanges();
         },
         error: () => this.toaster.error('search.configuration.loading-error'),
+      });
+    this.searchWidgetService.logs
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        filter((logs) => !!logs['lastQuery']),
+        map((logs) => logs['lastQuery']),
+      )
+      .subscribe((lastQuery) => {
+        this.lastQuery = lastQuery;
+        this.cdr.markForCheck();
       });
   }
 
@@ -328,6 +341,15 @@ export class SearchConfigurationComponent {
 
   scrollOnTop() {
     this.configurationContainer?.nativeElement.scrollTo(0, { scrollingBehaviour: 'smooth' });
+  }
+
+  showLastRequest() {
+    if (this.lastQuery) {
+      this.modalService.openModal(
+        SearchRequestModalComponent,
+        new ModalConfig({ dismissable: true, data: this.lastQuery }),
+      );
+    }
   }
 
   private updateWidget() {

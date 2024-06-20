@@ -1,0 +1,106 @@
+<pa-modal-advanced fitContent>
+  <pa-modal-title>
+    <div class="title-l">{{ 'search.configuration.search-request-modal.title' | translate }}</div>
+  </pa-modal-title>
+
+  <pa-modal-content>
+    <div class="request-details body-s">
+      <div class="url">
+        <nsi-badge kind="tertiary">POST</nsi-badge>
+        <code>{{ url }}</code>
+      </div>
+      <div>
+        <h2>Payload</h2>
+        <pa-tabs
+          noSlider
+          notFullWidth>
+          <pa-tab
+            (click)="payloadFormat = 'tabular'"
+            [active]="payloadFormat === 'tabular'">
+            <span class="body-m">{{ 'search.configuration.search-request-modal.parameters' | translate }}</span>
+          </pa-tab>
+          <pa-tab
+            (click)="payloadFormat = 'json'"
+            [active]="payloadFormat === 'json'">
+            <span class="body-m">JSON</span>
+          </pa-tab>
+        </pa-tabs>
+        @if (payloadFormat === 'tabular') {
+          <div>
+            <pa-table
+              columns="1fr 2fr"
+              border>
+              @for (param of payload | keyvalue; track param.key) {
+                <pa-table-row>
+                  <pa-table-cell>
+                    <span class="body-s">
+                      <strong>{{ param.key }}</strong>
+                    </span>
+                  </pa-table-cell>
+                  <pa-table-cell>
+                    <code class="body-s">{{ param.value }}</code>
+                  </pa-table-cell>
+                </pa-table-row>
+              }
+            </pa-table>
+          </div>
+        } @else {
+          <nsi-info-card>
+            <pre><code class="body-s">{{ payloadJson }}</code></pre>
+          </nsi-info-card>
+        }
+      </div>
+
+      <div>
+        <h2>Headers</h2>
+        <pa-tabs
+          noSlider
+          notFullWidth>
+          <pa-tab
+            (click)="headersFormat = 'tabular'"
+            [active]="headersFormat === 'tabular'">
+            <span class="body-m">Parameters</span>
+          </pa-tab>
+          <pa-tab
+            (click)="headersFormat = 'json'"
+            [active]="headersFormat === 'json'">
+            <span class="body-m">JSON</span>
+          </pa-tab>
+        </pa-tabs>
+
+        @if (headersFormat === 'tabular') {
+          <div>
+            <pa-table
+              columns="1fr 2fr"
+              border>
+              @for (param of headers | keyvalue; track param.key) {
+                <pa-table-row>
+                  <pa-table-cell>
+                    <span class="body-s">
+                      <strong>{{ param.key }}</strong>
+                    </span>
+                  </pa-table-cell>
+                  <pa-table-cell>
+                    <code class="body-s">{{ param.value }}</code>
+                  </pa-table-cell>
+                </pa-table-row>
+              }
+            </pa-table>
+          </div>
+        } @else {
+          <nsi-info-card>
+            <pre><code class="body-s">{{ headersJson }}</code></pre>
+          </nsi-info-card>
+        }
+      </div>
+      <div class="help">
+        {{ 'search.configuration.search-request-modal.authentication' | translate }}
+        <a
+          href="https://docs.nuclia.dev/docs/guides/using/authentication/"
+          target="_blank">
+          {{ 'search.configuration.search-request-modal.learn-more' | translate }}
+        </a>
+      </div>
+    </div>
+  </pa-modal-content>
+</pa-modal-advanced>
