@@ -91,7 +91,7 @@ export class Rest implements IRest {
     return this.fetch('HEAD', path, undefined, extraHeaders, true);
   }
 
-  private getHeaders(
+  getHeaders(
     method: string,
     path: string,
     extraHeaders?: { [key: string]: string },

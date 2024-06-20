@@ -144,6 +144,11 @@
     if (_features.permalink) {
       activatePermalinks();
     }
+    if (_features.dumpLog) {
+      nucliaAPI.events.dump().subscribe((data) => {
+        dispatchCustomEvent('logs', data);
+      });
+    }
   });
 
   onMount(() => {

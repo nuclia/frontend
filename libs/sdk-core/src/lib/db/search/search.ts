@@ -29,7 +29,12 @@ export const find = (
 
   params['shards'] = nuclia.currentShards?.[kbid] || [];
   const endpoint = `${path}/find`;
-  nuclia.events?.log('lastQuery', { endpoint, params, nucliaOptions: nuclia.options });
+  nuclia.events?.log('lastQuery', {
+    endpoint,
+    params: { ...params, ...options },
+    headers: nuclia.rest.getHeaders(useGet ? 'GET' : 'POST', endpoint),
+    nucliaOptions: nuclia.options,
+  });
   const searchMethod = useGet
     ? nuclia.rest.get<Response>(`${endpoint}?${serialize(params, options)}`, undefined, true)
     : nuclia.rest.post<Response>(endpoint, { ...params, ...options }, undefined, true);
@@ -91,11 +96,16 @@ export const search = (
     features,
   };
   params['shards'] = nuclia.currentShards?.[kbid] || [];
-
-  nuclia.events?.log('lastQuery', { endpoint: `${path}/search`, params, nucliaOptions: nuclia.options });
+  const endpoint = `${path}/search`;
+  nuclia.events?.log('lastQuery', {
+    endpoint,
+    headers: nuclia.rest.getHeaders(useGet ? 'GET' : 'POST', endpoint),
+    params: { ...params, ...options },
+    nucliaOptions: nuclia.options,
+  });
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/search?${serialize(params, options)}`)
-    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/search`, { ...params, ...options });
+    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${endpoint}?${serialize(params, options)}`)
+    : nuclia.rest.post<Search.Results | IErrorResponse>(endpoint, { ...params, ...options });
   return manageSearchRequest(nuclia, kbid, searchMethod).pipe(tap((res) => nuclia.events?.log('lastResults', res)));
 };
 

@@ -1,0 +1,27 @@
+@import 'apps/dashboard/src/variables';
+
+.request-details {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  max-width: rhythm(90);
+  padding-bottom: rhythm(4);
+}
+
+.url {
+  display: flex;
+  gap: rhythm(1.5);
+  margin: 0 rhythm(6) rhythm(2) 0;
+}
+
+h2 {
+  margin-bottom: rhythm(2);
+}
+
+pre {
+  margin: 0;
+}
+
+.help {
+  color: $color-neutral-regular;
+}
