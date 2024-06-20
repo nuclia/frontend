@@ -34,7 +34,7 @@ export function ask(
   nuclia.events?.log('lastQuery', {
     endpoint,
     params: body,
-    headers: nuclia.rest.getHeaders('POST', path, {}, synchronous),
+    headers: nuclia.rest.getHeaders('POST', endpoint, {}, synchronous),
     nucliaOptions: nuclia.options,
   });
   return synchronous
