@@ -13,4 +13,5 @@ import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 export class ButtonMiniComponent {
   @Input() icon?: string;
   @Input({ transform: booleanAttribute }) destructive = false;
+  @Input({ transform: booleanAttribute }) disabled = false;
 }

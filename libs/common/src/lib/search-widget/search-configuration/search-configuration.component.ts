@@ -28,6 +28,7 @@ import {
   PaDropdownModule,
   PaPopupModule,
   PaTextFieldModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
@@ -59,6 +60,7 @@ import { SearchRequestModalComponent } from './search-request-modal';
     PaDropdownModule,
     PaPopupModule,
     PaTextFieldModule,
+    PaTooltipModule,
     ReactiveFormsModule,
     SearchBoxFormComponent,
     GenerativeAnswerFormComponent,
