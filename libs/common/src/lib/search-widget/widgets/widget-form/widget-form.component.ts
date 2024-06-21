@@ -92,6 +92,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   get darkModeEnabled() {
     return this.form.controls.darkMode.value === 'dark';
   }
+  get popupStyleEnabled() {
+    return this.form.controls.popupStyle.value === 'popup';
+  }
 
   ngOnInit() {
     this.route.params
@@ -206,5 +209,11 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     this.currentConfig = searchConfig;
     this.isNotModified = searchConfig.id === this.savedWidget?.searchConfigId;
     this.cdr.markForCheck();
+  }
+
+  onStyleChange(value: string) {
+    if (value === 'popup') {
+      this.form.controls.darkMode.setValue('light');
+    }
   }
 }

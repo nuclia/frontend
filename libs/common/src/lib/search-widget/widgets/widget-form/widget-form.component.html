@@ -55,7 +55,9 @@
           <form [formGroup]="form">
             <div class="config-form-field">
               <div class="title-xs">{{ 'search.widgets.form.widget-options.style.title' | translate }}</div>
-              <pa-radio-group formControlName="popupStyle">
+              <pa-radio-group
+                formControlName="popupStyle"
+                (valueChange)="onStyleChange($event)">
                 <pa-radio value="page">
                   {{ 'search.widgets.form.widget-options.style.page' | translate }}
                 </pa-radio>
@@ -70,7 +72,9 @@
                 <pa-radio value="light">
                   {{ 'search.widgets.form.widget-options.theme.light' | translate }}
                 </pa-radio>
-                <pa-radio value="dark">
+                <pa-radio
+                  value="dark"
+                  [hidden]="popupStyleEnabled">
                   {{ 'search.widgets.form.widget-options.theme.dark' | translate }}
                 </pa-radio>
               </pa-radio-group>

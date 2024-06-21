@@ -22,7 +22,6 @@
   export let features = '';
   export let standalone = false;
   export let proxy = false;
-  export let mode = '';
   export let filters = '';
   export let preselected_filters = '';
   export let cssPath = '';
@@ -112,7 +111,6 @@
             {features}
             {standalone}
             {proxy}
-            {mode}
             {filters}
             {preselected_filters}
             {cssPath}
