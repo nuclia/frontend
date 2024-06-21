@@ -880,6 +880,7 @@
 	"search.configuration.action.continue": "Continue",
 	"search.configuration.action.create-widget": "Create widget",
 	"search.configuration.action.get-code": "Get code",
+	"search.configuration.action.get-code-tooltip": "Make a search to view the API request details",
 	"search.configuration.action.overwrite": "Overwrite selected configuration",
 	"search.configuration.action.reset": "Reset",
 	"search.configuration.action.save": "Save",

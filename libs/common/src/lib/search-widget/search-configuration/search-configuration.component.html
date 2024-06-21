@@ -19,13 +19,13 @@
         (click)="triggerCreateWidget()">
         {{ 'search.configuration.action.create-widget' | translate }}
       </nsi-button-mini>
-      @if (lastQuery) {
-        <nsi-button-mini
-          icon="code"
-          (click)="showLastRequest()">
-          {{ 'search.configuration.action.get-code' | translate }}
-        </nsi-button-mini>
-      }
+      <nsi-button-mini
+        icon="code"
+        [disabled]="!lastQuery"
+        [paTooltip]="!lastQuery ? 'search.configuration.action.get-code-tooltip' : undefined"
+        (click)="showLastRequest()">
+        {{ 'search.configuration.action.get-code' | translate }}
+      </nsi-button-mini>
       @if (!isNucliaConfig) {
         <nsi-button-mini
           icon="trash"

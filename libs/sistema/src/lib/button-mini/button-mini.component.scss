@@ -7,7 +7,6 @@
   background-color: $color-neutral-lightest;
   border: none;
   border-radius: rhythm(0.5);
-  cursor: pointer;
   display: flex;
   gap: rhythm(1);
   height: rhythm(4);
@@ -15,23 +14,33 @@
   transition: background-color $transition-hint;
 
   pa-icon {
-    color: $color-neutral-regular;
     display: flex;
     transition: color $transition-hint;
+  }
 
-    &.destructive {
-      color: $color-secondary-stronger;
+  &:not(:disabled) {
+    cursor: pointer;
+
+    pa-icon {
+      color: $color-neutral-regular;
+      &.destructive {
+        color: $color-secondary-stronger;
+      }
+    }
+
+    &:hover {
+      background-color: $color-neutral-lighter;
+
+      pa-icon:not(.destructive) {
+        color: $color-dark-stronger;
+      }
+    }
+    &:active {
+      background-color: $color-neutral-light;
     }
   }
 
-  &:hover {
-    background-color: $color-neutral-lighter;
-
-    pa-icon:not(.destructive) {
-      color: $color-dark-stronger;
-    }
-  }
-  &:active {
-    background-color: $color-neutral-light;
+  &:disabled {
+    color: $color-neutral-light;
   }
 }
