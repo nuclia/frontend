@@ -224,14 +224,14 @@ export function getFilters(config: SearchBoxConfig): string {
     .filter(([, value]) => value)
     .map(([key]) => key)
     .join(',');
-  return `\n  filters=${value}`;
+  return `\n  filters="${value}"`;
 }
 export function getPreselectedFilters(config: SearchBoxConfig): string {
   const value = config.preselectedFilters
     .split('\n')
     .map((filter) => filter.trim())
     .join(',');
-  return value ? `\n  preselected_filters=${value}` : '';
+  return value ? `\n  preselected_filters="${value}"` : '';
 }
 export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
   const ragStrategies: string[] = [];
