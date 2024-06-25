@@ -45,9 +45,33 @@ export class SearchRequestModalComponent {
 
   payloadFormat: 'tabular' | 'json' = 'tabular';
   headersFormat: 'tabular' | 'json' = 'tabular';
+  codeType: 'api' | 'python' = 'api';
+  pythonCode = this.getPythonCode(this.url, this.modal.config?.data?.['params'] || {});
 
   constructor(
     public modal: ModalRef<{ [key: string]: any }>,
     private sdk: SDKService,
   ) {}
+
+  private getPythonCode(endpoint: string, params: { [key: string]: any }): string {
+    const method = endpoint.endsWith('/ask') ? 'ask' : endpoint.endsWith('/find') ? 'find' : '';
+    if (!method) {
+      return 'Unknown method';
+    }
+    const { query, filters, ...others } = params;
+    const otherParams = Object.entries(others).reduce((acc, [key, value]) => {
+      let str = '';
+      if (typeof value === 'boolean') {
+        str = value ? 'True' : 'False';
+      } else {
+        str = JSON.stringify(value);
+      }
+      return `${acc}\n  ${key}=${str},`;
+    }, '');
+    return `import sdk from nuclia
+search = sdk.NucliaSearch()
+search.${method}(
+  query="${query || ''}",${otherParams}
+)`;
+  }
 }
