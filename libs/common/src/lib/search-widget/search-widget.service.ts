@@ -130,7 +130,9 @@ export class SearchWidgetService {
     const notEnoughDataMessage = getNotEnoughDataMessage(currentConfig.generativeAnswer);
     const askToResource = getAskToResource(currentConfig.generativeAnswer);
     const maxTokens = getMaxTokens(currentConfig.generativeAnswer);
-    const generativeModel = `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`;
+    const generativeModel = currentConfig.generativeAnswer.generativeModel
+      ? `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`
+      : '';
     const queryPrepend = getQueryPrepend(currentConfig.searchBox);
 
     // Widget options

@@ -89,6 +89,7 @@
         <span [innerHTML]="'search.configuration.search-box.preselected-filters.info-box' | translate"></span>
       </nsi-info-card>
       <pa-textarea
+        formControlName="preselectedFilters"
         resizable
         rows="4"
         (resizing)="heightChanged.emit()">
