@@ -50,7 +50,7 @@ spec:
         imagePullPolicy: Always
 {{ with .Values.env }}
         env:
-{{ toYaml . | trim | nindent 8 }}
+{{ toYaml . | indent 8 }}
 {{ end }}
         envFrom:
         - configMapRef:

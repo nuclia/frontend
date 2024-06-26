@@ -46,7 +46,7 @@ spec:
 {{ toYaml .Values.resources | indent 10 }}
 {{ with .Values.env }}
         env:
-{{ toYaml . | trim | nindent 8 }}
+{{ toYaml . | indent 8 }}
 {{ end }}
         envFrom:
         - configMapRef:
