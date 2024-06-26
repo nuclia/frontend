@@ -44,6 +44,10 @@ spec:
         image: "{{ .Values.containerRegistry }}/{{ .Values.image }}"
         resources:
 {{ toYaml .Values.resources | indent 10 }}
+{{ with .Values.env }}
+        env:
+{{ toYaml . | trim | nindent 8 }}
+{{ end }}
         envFrom:
         - configMapRef:
             name: "{{ .Release.Name }}-config"
