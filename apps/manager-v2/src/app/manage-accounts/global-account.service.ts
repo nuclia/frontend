@@ -5,11 +5,14 @@ import {
   AccountPatchPayload,
   AccountSummary,
   AccountUserType,
+  BillingFormula,
   BlockedFeature,
   BlockedFeaturesPayload,
   ExtendedAccount,
+  PaymentLinkPayload,
+  SearchPrice,
 } from './global-account.models';
-import { AccountBlockingState, AccountLimitsPatchPayload } from '@nuclia/core';
+import { AccountBlockingState, AccountLimitsPatchPayload, AccountTypes } from '@nuclia/core';
 import { AccountConfigurationPayload, BlockedFeatureFormValues } from './account-ui.models';
 
 const ACCOUNTS_ENDPOINT = '/manage/@accounts';
@@ -72,5 +75,16 @@ export class GlobalAccountService {
 
   removeAccountUser(accountId: string, userId: string): Observable<void> {
     return this.sdk.nuclia.rest.delete(`${ACCOUNT_ENDPOINT}/${accountId}/${userId}`);
+  }
+
+  getSearchPrice(usageType: 'licensed' | 'metered', accountType?: AccountTypes) {
+    const params = `usage_type=${usageType}`+ (accountType ? `&account_type=${accountType}` : '');
+    return this.sdk.nuclia.rest.get<SearchPrice[]>(`/billing/stripe/search_prices?${params}`);
+  }
+  getBillingFormulas() {
+    return this.sdk.nuclia.rest.get<BillingFormula[]>(`/billing/formula`);
+  }
+  createPaymentLink(data: PaymentLinkPayload) {
+    return this.sdk.nuclia.rest.post<{ id: string; url: string }>(`/billing/stripe/payment_links`, data);
   }
 }

@@ -1,0 +1,48 @@
+<h3>Payment links</h3>
+<form
+  [formGroup]="paymentLinkForm"
+  (ngSubmit)="create()">
+  <pa-select
+    label="Account type"
+    formControlName="accountType">
+    @for (type of accountTypes; track type) {
+      <pa-option [value]="type">{{ type }}</pa-option>
+    }
+  </pa-select>
+
+  <pa-select
+    label="Licensed price"
+    formControlName="licensedPrice">
+    @for (price of (licensedPrices | async)?.[accountTypeValue] || []; track price.id) {
+      <pa-option [value]="price.id">{{ price.nickname }}</pa-option>
+    }
+  </pa-select>
+
+  <div>
+    <h4>Metered Prices</h4>
+    @for (price of meteredPrices | async; track price.id) {
+      <pa-checkbox
+        [value]="selectedMeteredPrices.includes(price.id)"
+        (valueChange)="toggleMeteredPrice(price.id)">
+        {{ price.nickname }}
+      </pa-checkbox>
+    }
+  </div>
+
+  <pa-select
+    label="Billing formula"
+    formControlName="formula"
+    [options]="formulasOptions | async"></pa-select>
+
+  <div>
+    <pa-button
+      type="submit"
+      [disabled]="paymentLinkForm.pristine || paymentLinkForm.invalid || isSaving">
+      Create link
+    </pa-button>
+  </div>
+
+  @if (paymentLink) {
+    <nsi-info-card>{{ paymentLink }}</nsi-info-card>
+  }
+</form>

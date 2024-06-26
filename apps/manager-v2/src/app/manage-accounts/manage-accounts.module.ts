@@ -26,7 +26,10 @@ import { BlockedFeaturesComponent } from './account-details/blocked-features/blo
 import { FormFooterComponent } from './form-footer/form-footer.component';
 import { FeatureNamePipe } from './account-details/blocked-features/feature-name.pipe';
 import { TokenConsumptionComponent } from './account-details/token-consumption/token-consumption.component';
+import { PaymentLinksComponent } from './account-details/payment-links/payment-links.component';
 import { STFPipesModule } from '@flaps/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { InfoCardComponent } from '@nuclia/sistema';
 
 const ROUTES: Routes = [
   {
@@ -70,6 +73,10 @@ const ROUTES: Routes = [
             path: 'users',
             component: UsersComponent,
           },
+          {
+            path: 'payment-links',
+            component: PaymentLinksComponent,
+          },
         ],
       },
     ],
@@ -94,6 +101,8 @@ const ROUTES: Routes = [
     PaDatePickerModule,
     PaIconModule,
     STFPipesModule,
+    TranslateModule,
+    InfoCardComponent,
   ],
   declarations: [
     ManageAccountsComponent,
@@ -107,6 +116,7 @@ const ROUTES: Routes = [
     BlockedFeaturesComponent,
     FormFooterComponent,
     FeatureNamePipe,
+    PaymentLinksComponent,
   ],
 })
 export class ManageAccountsModule {}

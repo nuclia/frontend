@@ -1,0 +1,107 @@
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { SisToastService } from '@nuclia/sistema';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { forkJoin, map, of, shareReplay, Subject, switchMap } from 'rxjs';
+import { ManagerStore } from '../../../manager.store';
+import { AccountTypes } from '@nuclia/core';
+import { GlobalAccountService } from '../../global-account.service';
+import { takeUntil } from 'rxjs/operators';
+import { OptionModel } from '@guillotinaweb/pastanaga-angular';
+import { SearchPrice } from '../../global-account.models';
+
+@Component({
+  templateUrl: './payment-links.component.html',
+  styleUrls: ['./payment-links.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class PaymentLinksComponent implements OnDestroy {
+  private unsubscribeAll = new Subject<void>();
+
+  paymentLinkForm = new FormGroup({
+    accountType: new FormControl('v3growth', { nonNullable: true, validators: [Validators.required] }),
+    licensedPrice: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    formula: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+  });
+
+  isSaving = false;
+  accountTypes: AccountTypes[] = ['v3growth', 'v3enterprise'];
+  selectedMeteredPrices: string[] = [];
+  paymentLink?: string;
+
+  licensedPrices = of(this.accountTypes).pipe(
+    switchMap((accountTypes) =>
+      forkJoin(accountTypes.map((accountType) => this.globalService.getSearchPrice('licensed', accountType))),
+    ),
+    map((prices) =>
+      prices.reduce(
+        (acc, curr, index) => ({ ...acc, [this.accountTypes[index]]: curr }),
+        {} as { [id in AccountTypes]: SearchPrice },
+      ),
+    ),
+    shareReplay(1),
+  );
+  meteredPrices = this.globalService.getSearchPrice('metered').pipe(shareReplay(1));
+  formulasOptions = this.globalService.getBillingFormulas().pipe(
+    map((formulas) =>
+      formulas.map(
+        (formula) =>
+          new OptionModel({ id: formula.id, value: formula.id, label: formula.title, help: formula.description }),
+      ),
+    ),
+    shareReplay(1),
+  );
+
+  get accountTypeValue() {
+    return this.paymentLinkForm.controls.accountType.value as AccountTypes;
+  }
+
+  constructor(
+    private store: ManagerStore,
+    private globalService: GlobalAccountService,
+    private toast: SisToastService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    this.paymentLinkForm.controls.accountType.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      this.paymentLinkForm.controls.licensedPrice.reset();
+    });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+
+  toggleMeteredPrice(id: string) {
+    if (this.selectedMeteredPrices.includes(id)) {
+      this.selectedMeteredPrices = this.selectedMeteredPrices.filter((price) => price !== id);
+    } else {
+      this.selectedMeteredPrices = [...this.selectedMeteredPrices, id];
+    }
+    this.cdr.markForCheck();
+  }
+
+  create() {
+    this.isSaving = true;
+    this.cdr.markForCheck();
+    const formValues = this.paymentLinkForm.getRawValue();
+    this.globalService
+      .createPaymentLink({
+        account_id: this.store.getAccountId() || '',
+        account_type: formValues.accountType as AccountTypes,
+        price_ids: [formValues.licensedPrice, ...this.selectedMeteredPrices],
+        billing_formula_id: formValues.formula,
+      })
+      .subscribe({
+        next: (result) => {
+          this.isSaving = false;
+          this.paymentLink = result.url;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.isSaving = false;
+          this.toast.error(error?.body?.detail || 'Creating the payment link');
+          this.cdr.markForCheck();
+        },
+      });
+  }
+}
