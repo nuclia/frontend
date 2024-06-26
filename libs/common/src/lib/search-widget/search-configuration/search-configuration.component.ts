@@ -357,7 +357,6 @@ export class SearchConfigurationComponent {
   private updateWidget() {
     if (this.currentConfig) {
       this.configUpdate.emit(this.currentConfig);
-      this.searchWidgetService.generateWidgetSnippet(this.currentConfig).subscribe();
     }
   }
 }

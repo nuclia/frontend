@@ -21,7 +21,7 @@
       displayWidgetButtonLine
       mainTitle="search.configuration.saved-config-title"
       [configurationContainer]="configurationContainerElement"
-      (configUpdate)="searchConfig = $event"
+      (configUpdate)="updateConfig($event)"
       (createWidget)="createWidget()"></stf-search-configuration>
   </div>
 </div>
