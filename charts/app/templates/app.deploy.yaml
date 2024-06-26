@@ -48,6 +48,10 @@ spec:
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         imagePullPolicy: Always
+{{ with .Values.env }}
+        env:
+{{ toYaml . | indent 8 }}
+{{ end }}
         envFrom:
         - configMapRef:
             name: "{{ .Release.Name }}-config"
