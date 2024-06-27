@@ -34,192 +34,194 @@
     </div>
   }
 
-  <div>
-    <div class="section-header">
-      <div class="section-title">
-        <pa-icon [name]="customer && !editCustomer ? 'circle-check' : 'circle-dash'"></pa-icon>
-        {{ 'billing.billing_details' | translate }}
+  @if (billingDetailsEnabled) {
+    <div>
+      <div class="section-header">
+        <div class="section-title">
+          <pa-icon [name]="customer && !editCustomer ? 'circle-check' : 'circle-dash'"></pa-icon>
+          {{ 'billing.billing_details' | translate }}
+        </div>
+        @if (!editCustomer) {
+          <pa-button
+            (click)="showCustomerForm()"
+            icon="edit"
+            aspect="basic"></pa-button>
+        }
       </div>
-      @if (!editCustomer) {
-        <pa-button
-          (click)="showCustomerForm()"
-          icon="edit"
-          aspect="basic"></pa-button>
-      }
-    </div>
-    <div class="section-body">
-      @if (editCustomer) {
-        <form
-          [formGroup]="customerForm"
-          class="customer-form">
-          <div class="not-company">
-            <pa-checkbox formControlName="not_company">{{ 'billing.not_company' | translate }}</pa-checkbox>
-          </div>
-          @if (isCompany) {
+      <div class="section-body">
+        @if (editCustomer) {
+          <form
+            [formGroup]="customerForm"
+            class="customer-form">
+            <div class="not-company">
+              <pa-checkbox formControlName="not_company">{{ 'billing.not_company' | translate }}</pa-checkbox>
+            </div>
+            @if (isCompany) {
+              <div class="field-line">
+                <div class="field-block long">
+                  <label
+                    class="title-s"
+                    for="company">
+                    {{ 'billing.company' | translate }} *
+                  </label>
+                  <pa-input
+                    id="company"
+                    formControlName="company"
+                    [errorMessages]="errors"
+                    externalLabel></pa-input>
+                </div>
+                <div class="field-block">
+                  <label
+                    class="title-s"
+                    for="vat">
+                    {{ 'billing.vat_id' | translate }}
+                    @if (vatRequired) {
+                      <span>*</span>
+                    }
+                  </label>
+                  <pa-input
+                    id="vat"
+                    formControlName="vat"
+                    [errorMessages]="errors"
+                    externalLabel></pa-input>
+                </div>
+              </div>
+            }
             <div class="field-line">
-              <div class="field-block long">
+              <div class="field-block">
                 <label
                   class="title-s"
-                  for="company">
-                  {{ 'billing.company' | translate }} *
+                  for="name">
+                  {{ (isCompany ? 'billing.contact_name' : 'generic.name') | translate }} *
                 </label>
                 <pa-input
-                  id="company"
-                  formControlName="company"
+                  id="name"
+                  formControlName="name"
                   [errorMessages]="errors"
                   externalLabel></pa-input>
               </div>
               <div class="field-block">
                 <label
                   class="title-s"
-                  for="vat">
-                  {{ 'billing.vat_id' | translate }}
-                  @if (vatRequired) {
-                    <span>*</span>
-                  }
+                  for="email">
+                  {{ 'billing.email' | translate }} *
                 </label>
                 <pa-input
-                  id="vat"
-                  formControlName="vat"
+                  id="email"
+                  formControlName="email"
+                  [errorMessages]="errors"
+                  externalLabel></pa-input>
+              </div>
+              <div class="field-block">
+                <label
+                  class="title-s"
+                  for="phone">
+                  {{ 'billing.phone' | translate }} *
+                </label>
+                <pa-input
+                  id="phone"
+                  formControlName="phone"
+                  [placeholder]="'billing.phone_placeholder' | translate"
                   [errorMessages]="errors"
                   externalLabel></pa-input>
               </div>
             </div>
-          }
-          <div class="field-line">
-            <div class="field-block">
-              <label
-                class="title-s"
-                for="name">
-                {{ (isCompany ? 'billing.contact_name' : 'generic.name') | translate }} *
-              </label>
-              <pa-input
-                id="name"
-                formControlName="name"
-                [errorMessages]="errors"
-                externalLabel></pa-input>
+            <div class="field-line">
+              <div class="field-block long">
+                <label
+                  class="title-s"
+                  for="address">
+                  {{ (isCompany ? 'billing.company_address' : 'billing.address') | translate }} *
+                </label>
+                <pa-input
+                  id="address"
+                  formControlName="address"
+                  [errorMessages]="errors"
+                  externalLabel></pa-input>
+              </div>
+              <div class="field-block">
+                <label
+                  class="title-s"
+                  for="country">
+                  {{ 'billing.country' | translate }} *
+                </label>
+                <pa-typeahead-select
+                  id="country"
+                  formControlName="country"
+                  [readonly]="!!customer"
+                  [errorMessages]="errors"
+                  externalLabel>
+                  @for (country of countryList; track country) {
+                    <pa-option [value]="country.code">
+                      {{ country.name }}
+                    </pa-option>
+                  }
+                </pa-typeahead-select>
+              </div>
             </div>
-            <div class="field-block">
-              <label
-                class="title-s"
-                for="email">
-                {{ 'billing.email' | translate }} *
-              </label>
-              <pa-input
-                id="email"
-                formControlName="email"
-                [errorMessages]="errors"
-                externalLabel></pa-input>
+            <div class="field-line">
+              <div class="field-block">
+                <label
+                  class="title-s"
+                  for="state">
+                  {{ 'billing.state' | translate }}
+                </label>
+                <pa-input
+                  id="state"
+                  formControlName="state"
+                  externalLabel></pa-input>
+              </div>
+              <div class="field-block">
+                <label
+                  class="title-s"
+                  for="city">
+                  {{ 'billing.city' | translate }} *
+                </label>
+                <pa-input
+                  id="city"
+                  formControlName="city"
+                  [errorMessages]="errors"
+                  externalLabel></pa-input>
+              </div>
+              <div class="field-block">
+                <label
+                  class="title-s"
+                  for="postal_code">
+                  {{ 'billing.postal_code' | translate }} *
+                </label>
+                <pa-input
+                  id="postal_code"
+                  formControlName="postal_code"
+                  [errorMessages]="errors"
+                  externalLabel></pa-input>
+              </div>
             </div>
-            <div class="field-block">
-              <label
-                class="title-s"
-                for="phone">
-                {{ 'billing.phone' | translate }} *
-              </label>
-              <pa-input
-                id="phone"
-                formControlName="phone"
-                [placeholder]="'billing.phone_placeholder' | translate"
-                [errorMessages]="errors"
-                externalLabel></pa-input>
-            </div>
+            <pa-button
+              (click)="saveCustomer()"
+              [disabled]="!customerForm.valid"
+              kind="primary">
+              {{ ((subscribeMode | async) ? 'billing.save_continue' : 'generic.save') | translate }}
+            </pa-button>
+          </form>
+        } @else if (!editCustomer && customer) {
+          <div class="body-m">
+            @if (customer.billing_details.is_company && customer.billing_details.company) {
+              <div>{{ customer.billing_details.company }}</div>
+            }
+            @if (customer.billing_details.is_company && customer.billing_details.vat) {
+              <div>{{ customer.billing_details.vat }}</div>
+            }
+            <div>{{ customer.billing_details.name }}</div>
+            <div>{{ customer.billing_details.email }}</div>
+            <div>{{ customer.billing_details.phone }}</div>
+            <div>{{ customer.billing_details.address }}</div>
+            <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
+            <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>
           </div>
-          <div class="field-line">
-            <div class="field-block long">
-              <label
-                class="title-s"
-                for="address">
-                {{ (isCompany ? 'billing.company_address' : 'billing.address') | translate }} *
-              </label>
-              <pa-input
-                id="address"
-                formControlName="address"
-                [errorMessages]="errors"
-                externalLabel></pa-input>
-            </div>
-            <div class="field-block">
-              <label
-                class="title-s"
-                for="country">
-                {{ 'billing.country' | translate }} *
-              </label>
-              <pa-typeahead-select
-                id="country"
-                formControlName="country"
-                [readonly]="!!customer"
-                [errorMessages]="errors"
-                externalLabel>
-                @for (country of countryList; track country) {
-                  <pa-option [value]="country.code">
-                    {{ country.name }}
-                  </pa-option>
-                }
-              </pa-typeahead-select>
-            </div>
-          </div>
-          <div class="field-line">
-            <div class="field-block">
-              <label
-                class="title-s"
-                for="state">
-                {{ 'billing.state' | translate }}
-              </label>
-              <pa-input
-                id="state"
-                formControlName="state"
-                externalLabel></pa-input>
-            </div>
-            <div class="field-block">
-              <label
-                class="title-s"
-                for="city">
-                {{ 'billing.city' | translate }} *
-              </label>
-              <pa-input
-                id="city"
-                formControlName="city"
-                [errorMessages]="errors"
-                externalLabel></pa-input>
-            </div>
-            <div class="field-block">
-              <label
-                class="title-s"
-                for="postal_code">
-                {{ 'billing.postal_code' | translate }} *
-              </label>
-              <pa-input
-                id="postal_code"
-                formControlName="postal_code"
-                [errorMessages]="errors"
-                externalLabel></pa-input>
-            </div>
-          </div>
-          <pa-button
-            (click)="saveCustomer()"
-            [disabled]="!customerForm.valid"
-            kind="primary">
-            {{ ((subscribeMode | async) ? 'billing.save_continue' : 'generic.save') | translate }}
-          </pa-button>
-        </form>
-      } @else if (!editCustomer && customer) {
-        <div class="body-m">
-          @if (customer.billing_details.is_company && customer.billing_details.company) {
-            <div>{{ customer.billing_details.company }}</div>
-          }
-          @if (customer.billing_details.is_company && customer.billing_details.vat) {
-            <div>{{ customer.billing_details.vat }}</div>
-          }
-          <div>{{ customer.billing_details.name }}</div>
-          <div>{{ customer.billing_details.email }}</div>
-          <div>{{ customer.billing_details.phone }}</div>
-          <div>{{ customer.billing_details.address }}</div>
-          <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
-          <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>
-        </div>
-      }
+        }
+      </div>
     </div>
-  </div>
+  }
 
   <div>
     <div class="section-header">

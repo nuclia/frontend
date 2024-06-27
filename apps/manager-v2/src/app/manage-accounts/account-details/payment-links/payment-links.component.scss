@@ -1,0 +1,11 @@
+@import 'apps/manager-v2/src/variables';
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+}
+
+h4 {
+  margin-bottom: rhythm(1);
+}

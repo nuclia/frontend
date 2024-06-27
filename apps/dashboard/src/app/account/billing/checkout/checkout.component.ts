@@ -106,6 +106,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     ),
   ).pipe(shareReplay(1));
 
+  billingDetailsEnabled = true;
   editCustomer = true;
   private _customer?: StripeCustomer;
   get customer() {
@@ -171,23 +172,27 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   initCustomer() {
     forkJoin([
+      this.subscribeMode.pipe(take(1)),
       this.billingService.getCustomer(),
       this.userService.userPrefs.pipe(
         filter((user) => !!user),
         take(1),
       ),
-    ]).subscribe(([customer, user]) => {
+    ]).subscribe(([subscribeMode, customer, user]) => {
       if (customer) {
         this.customer = customer;
         this.updateCustomerForm(customer);
         this.editCustomer = false;
         this.editCard = true;
-        this.cdr?.markForCheck();
-      } else {
+      } else if (subscribeMode && !customer) {
         if (user?.email) {
           this.customerForm.patchValue({ email: user.email });
         }
+      } else if (!subscribeMode && !customer) {
+        // Accounts subscribed through payment links do not have billing details
+        this.billingDetailsEnabled = false;
       }
+      this.cdr?.markForCheck();
     });
   }
 

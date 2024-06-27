@@ -1,4 +1,11 @@
-import { Account, AccountBlockingState, AccountConfig, AccountLimitsPatchPayload, WelcomeUser } from '@nuclia/core';
+import {
+  Account,
+  AccountBlockingState,
+  AccountConfig,
+  AccountLimitsPatchPayload,
+  AccountTypes,
+  WelcomeUser,
+} from '@nuclia/core';
 import { Language, UserType } from '@flaps/core';
 import { DedicatedProcessorsState } from './regional-account.models';
 
@@ -108,4 +115,25 @@ export enum BlockedFeature {
 export interface BlockedFeaturesPayload {
   blocking_state: AccountBlockingState;
   blocked_features: BlockedFeature[];
+}
+
+export interface SearchPrice {
+  id: string;
+  nickname: string;
+  product: string;
+}
+
+export interface BillingFormula {
+  id: string;
+  title: string;
+  description: string;
+  created: string;
+  formula: string[];
+}
+
+export interface PaymentLinkPayload {
+  account_id: string;
+  account_type: AccountTypes;
+  price_ids: string[];
+  billing_formula_id: string;
 }
