@@ -231,7 +231,7 @@ export function getPreselectedFilters(config: SearchBoxConfig): string {
     .split('\n')
     .map((filter) => filter.trim())
     .join(',');
-  return value ? `\n  preselected_filters="${value}"` : '';
+  return config.setPreselectedFilters && value ? `\n  preselected_filters="${value}"` : '';
 }
 export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
   const ragStrategies: string[] = [];

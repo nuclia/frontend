@@ -24,7 +24,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { SearchConfiguration, Widget } from '../../search-widget.models';
 import { SearchWidgetService } from '../../search-widget.service';
-import { filter, map, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, filter, map, startWith, Subject, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, tap } from 'rxjs/operators';
 import { deepEqual, SDKService } from '@flaps/core';
@@ -87,7 +87,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       this.cdr.markForCheck();
     }),
   );
-  currentConfig?: SearchConfiguration;
+  configChanges = new Subject<SearchConfiguration>();
 
   get darkModeEnabled() {
     return this.form.controls.darkMode.value === 'dark';
@@ -122,10 +122,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
 
-    this.form.valueChanges
+    combineLatest([this.form.valueChanges.pipe(startWith(this.form.getRawValue())), this.configChanges])
       .pipe(
-        filter(() => !!this.currentConfig),
-        map((newValue) => ({ searchConfig: this.currentConfig as SearchConfiguration, widgetConfig: newValue })),
+        map(([newValue, searchConfig]) => ({ widgetConfig: newValue, searchConfig })),
         tap(({ widgetConfig }) => {
           if (this.currentWidget) {
             this.currentWidget.widgetConfig = this.form.getRawValue();
@@ -206,7 +205,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
 
   updateSearchConfig(searchConfig: SearchConfiguration) {
-    this.currentConfig = searchConfig;
+    this.configChanges.next(searchConfig);
     this.isNotModified = searchConfig.id === this.savedWidget?.searchConfigId;
     this.cdr.markForCheck();
   }

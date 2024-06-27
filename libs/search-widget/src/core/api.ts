@@ -73,9 +73,7 @@ export const initNuclia = (
   }
   CITATIONS = !!widgetOptions.features?.citations;
   REPHRASE = !!widgetOptions.features?.rephrase;
-  if (widgetOptions.ask_to_resource) {
-    ASK_TO_RESOURCE = widgetOptions.ask_to_resource;
-  }
+  ASK_TO_RESOURCE = widgetOptions.ask_to_resource || '';
 
   nucliaApi = new Nuclia(options);
   if (!noTracking) {
@@ -117,12 +115,8 @@ export const initNuclia = (
   if (widgetOptions.features?.noBM25forChat) {
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.PARAGRAPHS);
   }
-  if (widgetOptions.max_tokens) {
-    MAX_TOKENS = widgetOptions.max_tokens;
-  }
-  if (widgetOptions.query_prepend) {
-    QUERY_PREPEND = widgetOptions.query_prepend;
-  }
+  MAX_TOKENS = widgetOptions.max_tokens || undefined;
+  QUERY_PREPEND = widgetOptions.query_prepend || '';
   STATE = state;
   nucliaApi.events?.log('widgetOptions', widgetOptions);
 
