@@ -43,9 +43,7 @@
   </div>
 
   <div class="widget-form-page-body">
-    <div
-      #configurationContainer
-      class="widget-form-container">
+    <div class="widget-form-container">
       <pa-accordion-item
         id="widget-options"
         [(expanded)]="widgetFormExpanded"
@@ -137,7 +135,6 @@
 
       <stf-search-configuration
         mainTitle="search.widgets.form.search-config-title"
-        [configurationContainer]="configurationContainerElement"
         (configUpdate)="updateSearchConfig($event)"></stf-search-configuration>
     </div>
 

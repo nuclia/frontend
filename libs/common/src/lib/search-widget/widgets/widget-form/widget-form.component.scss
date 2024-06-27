@@ -1,10 +1,15 @@
 @import 'apps/dashboard/src/variables';
 @import '../../common-form';
 
+$vertical-gap: rhythm(4);
+$header-height: rhythm(10) + rhythm(1) + $vertical-gap * 2;
+
 .widget-form-page {
   display: flex;
   flex-direction: column;
-  gap: rhythm(4);
+  gap: $vertical-gap;
+  padding-bottom: 0;
+  padding-right: 0;
 
   .page-header {
     display: flex;
@@ -18,22 +23,28 @@
 
   .widget-form-page-body {
     display: flex;
-    gap: rhythm(2);
+    gap: rhythm(6);
 
     .widget-form-container {
       display: flex;
       flex-direction: column;
       flex: 0 0 auto;
       gap: rhythm(4);
+      padding-right: rhythm(4);
       width: rhythm(53);
     }
     .widget-preview-container {
       flex: 1;
     }
+    .widget-form-container,
+    .widget-preview-container {
+      height: calc(100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - #{$header-height});
+      overflow-y: auto;
+    }
   }
 
   .widget-preview-container {
-    padding-left: rhythm(2);
+    padding-bottom: rhythm(6);
 
     .title-xs {
       color: $color-neutral-regular;

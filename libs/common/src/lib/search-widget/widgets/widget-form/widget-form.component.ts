@@ -2,11 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   inject,
   OnDestroy,
   OnInit,
-  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -62,8 +60,6 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   private modalService = inject(SisModalService);
 
   private unsubscribeAll = new Subject<void>();
-
-  @ViewChild('configurationContainer') configurationContainerElement?: ElementRef;
 
   savedWidget?: Widget;
   currentWidget?: Widget;
