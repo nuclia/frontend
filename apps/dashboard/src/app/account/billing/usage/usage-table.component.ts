@@ -30,7 +30,9 @@ export class UsageTableComponent {
         );
     }),
   );
-  isDeprecatedAccount = this.billing.isDeprecatedAccount;
+  isDeprecatedAccount = this.usageData.pipe(
+    map((items) => !items.invoice_items['nuclia-tokens'] && !items.invoice_items['ai-tokens-used']),
+  );
 
   constructor(private billing: BillingService) {}
 }

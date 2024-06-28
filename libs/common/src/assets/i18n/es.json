@@ -261,6 +261,7 @@
 	"billing.usage.requests": "Peticiones",
 	"billing.usage.tier_included": "Incluido en el nivel",
 	"billing.usage.title": "Consumo actual mensual",
+	"billing.usage.total": "Total para el período de facturación actual",
 	"billing.vat_id": "VAT ID",
 	"billing.without_vat": "Precios sin IVA",
 	"billing.year": "Año",

@@ -261,6 +261,7 @@
 	"billing.usage.requests": "Peticions",
 	"billing.usage.tier_included": "Inclòs al nivell",
 	"billing.usage.title": "Consum actual mensual",
+	"billing.usage.total": "Total per al període de facturació actual",
 	"billing.vat_id": "VAT ID",
 	"billing.without_vat": "Preus sense IVA",
 	"billing.year": "Any",
