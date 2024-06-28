@@ -261,6 +261,7 @@
 	"billing.usage.requests": "Requests",
 	"billing.usage.tier_included": "Tier included",
 	"billing.usage.title": "Monthly current consumption",
+	"billing.usage.total": "Total for current billing period",
 	"billing.vat_id": "VAT ID",
 	"billing.without_vat": "Prices without VAT",
 	"billing.year": "Year",
