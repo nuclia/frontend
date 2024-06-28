@@ -45,6 +45,7 @@ export class SearchWidgetService {
   private viewerService = inject(ResourceViewerService);
 
   private currentQuery = '';
+  private currentFilters: string[] = [];
   private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string }>();
   private _widgetList = new BehaviorSubject<Widget[]>([]);
   private _logs = new Subject<any>();
@@ -186,13 +187,15 @@ export class SearchWidgetService {
   private reinitWidgetPreview() {
     const searchWidget = document.getElementsByTagName('nuclia-search-bar')[0] as unknown as any;
     if (this.currentQuery) {
-      searchWidget?.search(this.currentQuery);
+      searchWidget?.search(this.currentQuery, this.currentFilters);
     }
-    searchWidget?.addEventListener('search', (event: { detail: string }) => {
-      this.currentQuery = event.detail;
+    searchWidget?.addEventListener('search', (event: { detail: { query: string, filters: string[] } }) => {
+      this.currentQuery = event.detail.query;
+      this.currentFilters = event.detail.filters;
     });
     searchWidget?.addEventListener('resetQuery', () => {
       this.currentQuery = '';
+      this.currentFilters = [];
     });
     searchWidget?.addEventListener('logs', (event: { detail: any }) => {
       this._logs.next(event.detail);

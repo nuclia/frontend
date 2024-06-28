@@ -35,7 +35,7 @@ export function unsubscribeTriggerSearch() {
 }
 
 export const setupTriggerSearch = (
-  dispatch: (event: string, details: string | Search.Results | Search.FindResults) => void | undefined,
+  dispatch: (event: string, details: { query: string; filters: string[] } | Search.FindResults) => void | undefined,
 ): void => {
   subscriptions.push(
     triggerSearch
@@ -45,7 +45,6 @@ export const setupTriggerSearch = (
             take(1),
             filter((isEmptySearchQuery) => !isEmptySearchQuery),
             switchMap(() => searchQuery.pipe(take(1))),
-            tap((query) => (dispatch ? dispatch('search', query) : undefined)),
             tap(() => {
               if (!trigger?.more) {
                 pageNumber.set(0);
@@ -80,6 +79,7 @@ export const setupTriggerSearch = (
                     ragStrategies,
                     ragImageStrategies,
                   ]) => {
+                    dispatch('search', { query, filters });
                     const currentOptions: SearchOptions = {
                       ...options,
                       show,
