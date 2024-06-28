@@ -36,7 +36,13 @@
     initViewer,
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
-  import { entityRelations, preselectedFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
+  import {
+    entityRelations,
+    preselectedFilters,
+    searchFilters,
+    searchQuery,
+    triggerSearch,
+  } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
   import type { WidgetFilters } from '../../core';
   import { InfoCard } from '../../components';
@@ -89,8 +95,11 @@
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
 
-  export function search(query: string) {
+  export function search(query: string, filters?: string[]) {
     searchQuery.set(query);
+    if (filters) {
+      searchFilters.set({filters});
+    }
     typeAhead.set(query || '');
     triggerSearch.next();
   }

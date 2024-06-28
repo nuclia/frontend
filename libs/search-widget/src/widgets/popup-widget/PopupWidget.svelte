@@ -37,9 +37,9 @@
   let searchBar: any;
   let visible = false;
 
-  export function search(query: string) {
+  export function search(query: string, filters?: string[]) {
     visible = true;
-    setTimeout(() => searchBar?.search(query), 0);
+    setTimeout(() => searchBar?.search(query, filters), 0);
   }
 
   function enablePopupTrigger() {
