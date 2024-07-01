@@ -11,7 +11,7 @@
       </pa-table-row>
     </pa-table-header>
     @for (ner of entities; track ner.value) {
-      <pa-table-row [last]="$last">
+      <pa-table-row>
         <pa-table-cell>
           {{ ner.value }}
         </pa-table-cell>

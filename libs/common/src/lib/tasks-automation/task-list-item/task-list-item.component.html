@@ -33,7 +33,7 @@
       <pa-table-cell header>{{ 'tasks-automation.table.header.actions' | translate }}</pa-table-cell>
     </pa-table-header>
     @for (task of taskList; track task) {
-      <pa-table-row [last]="$last">
+      <pa-table-row>
         <pa-table-cell>
           <span class="body-s">{{ task[firstColumn.field] }}</span>
         </pa-table-cell>

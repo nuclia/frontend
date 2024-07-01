@@ -52,16 +52,18 @@ export class UnauthorizedFeatureDirective {
   }
 
   private addBadge() {
-    this._badge = this.viewContainerRef.createComponent(BadgeComponent);
-    this._badge.instance.icon = 'lock-filled';
-    this._badge.instance.kind = 'tertiary';
-    this._badge.instance.clickable = true;
-    if (this.fullProBadge) {
-      this._badge.location.nativeElement.appendChild(document.createTextNode('pro'));
-    }
-    this.renderer.appendChild(this.viewContainerRef.element.nativeElement, this._badge.location.nativeElement);
+    setTimeout(() => {
+      this._badge = this.viewContainerRef.createComponent(BadgeComponent);
+      this._badge.instance.icon = 'lock-filled';
+      this._badge.instance.kind = 'tertiary';
+      this._badge.instance.clickable = true;
+      if (this.fullProBadge) {
+        this._badge.location.nativeElement.appendChild(document.createTextNode('pro'));
+      }
+      this.renderer.appendChild(this.viewContainerRef.element.nativeElement, this._badge.location.nativeElement);
 
-    this.cdr.markForCheck();
+      this.cdr.detectChanges();
+    });
   }
 
   private openFeatureModal() {

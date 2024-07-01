@@ -105,7 +105,7 @@
           <pa-table-sortable-header [cells]="syncTableHeader"></pa-table-sortable-header>
 
           @for (sync of syncs; track sync.id) {
-            <pa-table-row [last]="$last">
+            <pa-table-row>
               <pa-table-cell>
                 <a
                   [routerLink]="'./' + sync.id"

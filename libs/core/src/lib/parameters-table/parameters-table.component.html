@@ -13,7 +13,7 @@
       }
     </pa-table-header>
     @for (row of rows; track row) {
-      <pa-table-row [last]="$last">
+      <pa-table-row>
         <pa-table-cell>
           @if (!readonly) {
             <pa-input

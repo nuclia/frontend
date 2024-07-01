@@ -23,7 +23,7 @@
         <pa-table-cell header>{{ 'activity.actor' | translate }}</pa-table-cell>
       </pa-table-header>
       @for (activity of activityLogs | async; track activity) {
-        <pa-table-row [last]="$last">
+        <pa-table-row>
           <pa-table-cell>{{ activity.resourceId | async }}</pa-table-cell>
           <pa-table-cell>
             <pa-datetime [datetime]="activity.timestamp"></pa-datetime>

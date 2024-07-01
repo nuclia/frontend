@@ -30,7 +30,6 @@
   </pa-table-header>
   @for (user of users | async; track user.id) {
     <pa-table-row
-      [last]="$last"
       [routerLink]="'/users/' + user.id"
       clickable>
       <pa-table-cell>

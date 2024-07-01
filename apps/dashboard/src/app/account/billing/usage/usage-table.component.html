@@ -28,7 +28,7 @@
         </pa-table-cell>
       </pa-table-header>
       @for (item of invoiceItems | async; track item) {
-        <pa-table-row [last]="$last">
+        <pa-table-row>
           <pa-table-cell>{{ 'billing.parameter.' + item[0] | translate }}</pa-table-cell>
           <pa-table-cell>{{ item[1].threshold | number }}</pa-table-cell>
           <pa-table-cell>{{ item[1].current_usage | number }}</pa-table-cell>
