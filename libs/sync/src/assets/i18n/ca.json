@@ -33,7 +33,7 @@
 	"sync.add-page.security-group.description": "Els recursos de Nuclia emmagatzemaran els noms dels grups de seguretat en un atribut específic. Aquesta funció és útil si voleu crear el vostre propi servidor intermediari de seguretat a sobre de Nuclia mitjançant l'API per filtrar aquest atribut.",
 	"sync.add-page.security-group.title": "Sincronitzar els grups de seguretat",
 	"sync.add-page.security-group.toggle-label": "Sincronitzar grups de seguretat",
-	"sync.add-page.title": "Connector {{connector}} nou",
+	"sync.add-page.title": "Creeu un connector {{connector}} nou",
 	"sync.add-page.toast.generic-error": "S'ha produït un error en desar el connector",
 	"sync.badge.active": "Actiu",
 	"sync.badge.inactive": "Inactiu",

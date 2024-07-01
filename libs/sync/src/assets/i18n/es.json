@@ -33,7 +33,7 @@
 	"sync.add-page.security-group.description": "Los recursos de Nuclia almacenarán los nombres de los grupos de seguridad en un atributo específico. Esta característica es útil si desea crear su propio proxy de seguridad sobre Nuclia utilizando la API para filtrar este atributo.",
 	"sync.add-page.security-group.title": "Sincronizar los grupos de seguridad",
 	"sync.add-page.security-group.toggle-label": "Sincronizar grupos de seguridad",
-	"sync.add-page.title": "Nuevo conector {{connector}} ",
+	"sync.add-page.title": "Crear nuevo conector {{connector}} ",
 	"sync.add-page.toast.generic-error": "Se produjo un error al guardar su conector.",
 	"sync.badge.active": "Activo",
 	"sync.badge.inactive": "Inactivo",
