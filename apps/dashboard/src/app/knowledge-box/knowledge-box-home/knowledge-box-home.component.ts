@@ -51,11 +51,19 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   );
   processingChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SLOW_PROCESSING_TIME]));
   searchChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SEARCHES_PERFORMED]));
+  nucliaTokenChart = this.allChartsData.pipe(map((charts) => charts[UsageType.NUCLIA_TOKENS]));
 
   searchQueriesCounts = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getSearchQueriesCount(kb.id)),
+    switchMap((kb) => this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED, kb.id)),
+    takeUntil(this.unsubscribeAll),
+    shareReplay(),
+  );
+  nucliaTokensCounts = this.isAccountManager.pipe(
+    filter((isManager) => isManager),
+    switchMap(() => this.currentKb),
+    switchMap((kb) => this.metrics.getUsageCount(UsageType.NUCLIA_TOKENS, kb.id)),
     takeUntil(this.unsubscribeAll),
     shareReplay(),
   );
@@ -101,6 +109,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   chartDropdownOptions: OptionModel[] = [
     this.defaultChartOption,
     new OptionModel({ id: 'processing', label: 'metrics.processing.title', value: 'processing' }),
+    new OptionModel({ id: 'token', label: 'metrics.nuclia-tokens.title', value: 'token' }),
   ];
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = {

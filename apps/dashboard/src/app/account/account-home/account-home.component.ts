@@ -19,7 +19,7 @@ export class AccountHomeComponent implements OnInit {
   canUpgrade = this.metrics.canUpgrade;
   isSubscribed = this.metrics.isSubscribed;
   usage = this.metrics.accountUsage;
-  totalQueries = this.metrics.getSearchQueriesCount();
+  totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
 
   kbs = this.sdk.kbList;
   usageTypes = [UsageType.SEARCHES_PERFORMED, UsageType.SLOW_PROCESSING_TIME];

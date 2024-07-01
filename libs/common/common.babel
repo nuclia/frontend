@@ -14418,7 +14418,7 @@
 						<name>metrics</name>
 						<children>
 							<folder_node>
-								<name>ai-tokens-used</name>
+								<name>answers</name>
 								<children>
 									<concept_node>
 										<name>title</name>
@@ -14446,7 +14446,7 @@
 								</children>
 							</folder_node>
 							<folder_node>
-								<name>answers</name>
+								<name>nuclia-tokens</name>
 								<children>
 									<concept_node>
 										<name>title</name>

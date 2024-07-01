@@ -71,14 +71,14 @@ export class MetricsService {
     [UsageType.TRAIN_SECONDS]: (value) => value / 3600,
   };
   units: Partial<{ [key in UsageType]: string }> = {
-    [UsageType.AI_TOKENS_USED]: 'metrics.units.tokens',
+    [UsageType.NUCLIA_TOKENS]: 'metrics.units.tokens',
     [UsageType.MEDIA_SECONDS_PROCESSED]: 'metrics.units.hours',
     [UsageType.SEARCHES_PERFORMED]: 'metrics.units.queries',
     [UsageType.SLOW_PROCESSING_TIME]: 'metrics.units.hours',
     [UsageType.TRAIN_SECONDS]: 'metrics.units.hours',
   };
 
-  getSearchQueriesCount(kbId?: string): Observable<{ year: number; month: number; sinceCreation: number }> {
+  getUsageCount(usage: UsageType, kbId?: string): Observable<{ year: number; month: number; sinceCreation: number }> {
     const now = new Date();
     const thirtyDaysAgo = subDays(now, 30);
     const twelveMonthsAgo = subMonths(now, 12);
@@ -91,14 +91,10 @@ export class MetricsService {
         ]),
       ),
       map(([yearPoint, monthPoint, sinceCreationPoint]) => {
-        const yearMetric = yearPoint[0].metrics.find(
-          (metric) => metric.name === UsageType.SEARCHES_PERFORMED,
-        ) as UsageMetric;
-        const monthMetric = monthPoint[0].metrics.find(
-          (metric) => metric.name === UsageType.SEARCHES_PERFORMED,
-        ) as UsageMetric;
+        const yearMetric = yearPoint[0].metrics.find((metric) => metric.name === usage) as UsageMetric;
+        const monthMetric = monthPoint[0].metrics.find((metric) => metric.name === usage) as UsageMetric;
         const sinceCreationMetric = sinceCreationPoint[0].metrics.find(
-          (metric) => metric.name === UsageType.SEARCHES_PERFORMED,
+          (metric) => metric.name === usage,
         ) as UsageMetric;
         return {
           year: yearMetric.value,
