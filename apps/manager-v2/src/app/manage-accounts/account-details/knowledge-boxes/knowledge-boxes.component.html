@@ -19,7 +19,6 @@
 
   @for (kb of kbList | async; track kb.id) {
     <pa-table-row
-      [last]="$last"
       clickable
       [routerLink]="'../zone/' + kb.zone.id + '/kb/' + kb.id">
       <pa-table-cell>

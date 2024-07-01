@@ -114,7 +114,7 @@
     </pa-table-header>
 
     @for (row of metrics.details; track row.identifier) {
-      <pa-table-row [last]="$last">
+      <pa-table-row>
         <pa-table-cell borderRight>
           <span class="body-s">
             <strong>{{ row.identifier.type }} {{ row.identifier.source }} {{ row.identifier.model }}</strong>

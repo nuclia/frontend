@@ -59,7 +59,7 @@
       <pa-table-cell-menu header></pa-table-cell-menu>
     </pa-table-header>
     @for (owner of kb.owners; track owner.id) {
-      <pa-table-row [last]="$last">
+      <pa-table-row>
         <pa-table-cell>
           <small>{{ owner.id }}</small>
         </pa-table-cell>

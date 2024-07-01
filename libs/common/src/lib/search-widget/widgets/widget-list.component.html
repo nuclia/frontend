@@ -34,7 +34,7 @@
       </pa-table-header>
 
       @for (widget of widgetList | async; track widget.slug) {
-        <pa-table-row [last]="$last">
+        <pa-table-row>
           <pa-table-cell>
             <a
               class="table-link"

@@ -72,7 +72,7 @@
   </pa-table-header>
 
   @for (user of userRows | async; track user.id) {
-    <pa-table-row [last]="$last">
+    <pa-table-row>
       <pa-table-cell>
         <span class="title-s">{{ user.name }}</span>
       </pa-table-cell>

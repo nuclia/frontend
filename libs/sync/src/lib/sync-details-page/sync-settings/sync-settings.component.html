@@ -124,7 +124,7 @@
         <pa-table-cell header>{{ 'sync.details.activity-log.table-header.date' | translate }}</pa-table-cell>
       </pa-table-header>
       @for (log of logs; track log) {
-        <pa-table-row [last]="$last">
+        <pa-table-row>
           <pa-table-cell>
             <div class="body-s icon-and-text">
               @switch (log.level) {

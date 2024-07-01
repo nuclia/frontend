@@ -12,7 +12,7 @@
       <pa-table-cell header></pa-table-cell>
     </pa-table-header>
     @for (invoice of invoices.items; track invoice.id) {
-      <pa-table-row [last]="$last">
+      <pa-table-row>
         <pa-table-cell>
           {{ invoice.period_start | date: 'YYYY-MM-dd' }} - {{ invoice.period_end | date: 'YYYY-MM-dd' }}
         </pa-table-cell>

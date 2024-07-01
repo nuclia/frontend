@@ -45,7 +45,6 @@
         @for (row of synonyms | async | keyvalue; track row) {
           <pa-table-row
             hoverable
-            [last]="$last"
             [class.pa-selected]="editing === row.key"
             (mouseenter)="hoverOn = row.key"
             (mouseleave)="hoverOn = ''">
