@@ -972,6 +972,7 @@
 	"search.configuration.search-box.placeholder.toggle-description": "Canvieu el text que voleu que aparegui a la barra de cerca quan no estigui actiu. El text predeterminat és \"Escriu la teva pregunta aquí\".",
 	"search.configuration.search-box.placeholder.toggle-label": "Personalitza el placeholder de la barra de cerca",
 	"search.configuration.search-box.preselected-filters.info-box": "Format de filtre <a href=\"https://docs.nuclia.dev/docs/guides/using/search/#filters\" target=\"_blank\">documentat aquí</a>. Aquests filtres s'aplicaran a qualsevol consulta de cerca sense ser visibles per als usuaris finals. ",
+	"search.configuration.search-box.preselected-filters.textarea-help": "Una expressió de filtre per línia",
 	"search.configuration.search-box.preselected-filters.textarea-label": "Filtres preseleccionats",
 	"search.configuration.search-box.preselected-filters.toggle-description": "Definiu filtres que s'aplicaran per defecte a qualsevol consulta.",
 	"search.configuration.search-box.preselected-filters.toggle-label": "Filtres preseleccionats",

@@ -972,6 +972,7 @@
 	"search.configuration.search-box.placeholder.toggle-description": "Modifiez le texte que vous souhaitez afficher dans la barre de recherche lorsqu'elle n'est pas active. Le texte par défaut est « Tapez votre question ici ».",
 	"search.configuration.search-box.placeholder.toggle-label": "Personnaliser le placeholder de la barre de recherche",
 	"search.configuration.search-box.preselected-filters.info-box": "Format de filtre <a href=\"https://docs.nuclia.dev/docs/guides/using/search/#filters\" target=\"_blank\">documenté ici</a>. Ces filtres seront appliqués à toutes les requêtes de recherche sans être visibles pour les utilisateurs finaux. ",
+	"search.configuration.search-box.preselected-filters.textarea-help": "Une expression de filtre par ligne",
 	"search.configuration.search-box.preselected-filters.textarea-label": "Filtres présélectionnés",
 	"search.configuration.search-box.preselected-filters.toggle-description": "Définissez des filtres qui seront appliqués par défaut à toutes les requêtes.",
 	"search.configuration.search-box.preselected-filters.toggle-label": "Filtres présélectionnés",
