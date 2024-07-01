@@ -219,7 +219,7 @@
       }
     }
     if (preselected_filters) {
-      preselectedFilters.set(preselected_filters.split(','));
+      preselectedFilters.set(preselected_filters);
     }
     if (_features.answers) {
       initAnswer();
