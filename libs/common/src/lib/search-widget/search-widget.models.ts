@@ -229,9 +229,18 @@ export function getFilters(config: SearchBoxConfig): string {
 export function getPreselectedFilters(config: SearchBoxConfig): string {
   const value = config.preselectedFilters
     .split('\n')
-    .map((filter) => filter.trim())
+    .map((filter) => {
+      let formattedFilter = filter.trim();
+      try {
+        formattedFilter = JSON.stringify(JSON.parse(formattedFilter));
+      } catch (e) {
+        // do nothing more if the filter wasn't in JSON format
+      }
+      return formattedFilter;
+    })
     .join(',');
-  return config.setPreselectedFilters && value ? `\n  preselected_filters="${value}"` : '';
+  const quote = value.includes('"') ? `'` : `"`;
+  return config.setPreselectedFilters && value ? `\n  preselected_filters=${quote}${value}${quote}` : '';
 }
 export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
   const ragStrategies: string[] = [];

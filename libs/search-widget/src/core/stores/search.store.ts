@@ -2,6 +2,7 @@ import { SvelteState } from '../state-lib';
 import type {
   Classification,
   FieldId,
+  Filter,
   IErrorResponse,
   IFieldData,
   IResource,
@@ -32,7 +33,7 @@ import {
 } from '@nuclia/core';
 import type { FindResultsAsList, ResultType, TypedResult } from '../models';
 import { NO_RESULT_LIST } from '../models';
-import { combineLatest, filter, map, Observable, Subject } from 'rxjs';
+import { combineLatest, filter, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
 
 interface SearchFilters {
@@ -66,7 +67,7 @@ interface Engagement {
 interface SearchState {
   query: string;
   filters: SearchFilters;
-  preselectedFilters: string[];
+  preselectedFilters: string[] | Filter[];
   options: SearchOptions;
   show: ResourceProperties[];
   results: FindResultsAsList;
@@ -184,12 +185,26 @@ export const searchShow = searchState.writer<ResourceProperties[]>(
   }),
 );
 
-export const preselectedFilters = searchState.writer<string[]>(
+const advancedFilterRE = /({[^{}]+})/g;
+export const preselectedFilters = searchState.writer<string[] | Filter[], string>(
   (state) => state.preselectedFilters,
-  (state, preselectedFilters) => ({
-    ...state,
-    preselectedFilters,
-  }),
+  (state, preselectedFilters) => {
+    const advancedFilters = preselectedFilters.match(advancedFilterRE);
+    const filters: string[] = !!advancedFilters
+      ? advancedFilters.map((filter) => {
+          try {
+            return JSON.parse(filter);
+          } catch (e) {
+            console.warn('Malformed advanced filter: wrong JSON syntax.', filter);
+            return filter;
+          }
+        })
+      : preselectedFilters.split(',');
+    return {
+      ...state,
+      preselectedFilters: filters,
+    };
+  },
 );
 
 export const searchFilters = searchState.writer<string[], { filters: string[] }>(

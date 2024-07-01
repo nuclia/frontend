@@ -79,7 +79,7 @@
     );
 
     if (preselected_filters) {
-      preselectedFilters.set(preselected_filters.split(','));
+      preselectedFilters.set(preselected_filters);
     }
 
     _ragStrategies = getRAGStrategies(rag_strategies, rag_field_ids);
