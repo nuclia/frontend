@@ -33,7 +33,7 @@
 	"sync.add-page.security-group.description": "Nuclia resources will store the security group names in a specific attribute. This feature is useful if you want to build your own security proxy on top of Nuclia using the API to filter this attribute.",
 	"sync.add-page.security-group.title": "Synchronize the security groups",
 	"sync.add-page.security-group.toggle-label": "Synchronize security groups",
-	"sync.add-page.title": "New {{connector}} connector",
+	"sync.add-page.title": "Create new {{connector}} connector",
 	"sync.add-page.toast.generic-error": "An error occurred while saving your connector",
 	"sync.badge.active": "Active",
 	"sync.badge.inactive": "Inactive",
