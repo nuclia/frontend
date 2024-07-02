@@ -904,6 +904,8 @@
 	"search.configuration.generative-answer.generative-model.title": "Modèle génératif spécifique",
 	"search.configuration.generative-answer.limit-token.toggle-description": "Définit le nombre maximum de jetons que le modèle générera. Un nombre faible peut empêcher vos utilisateurs de voir les résultats.",
 	"search.configuration.generative-answer.limit-token.toggle-label": "Limiter la consommation de jetons",
+	"search.configuration.generative-answer.prefer-markdown.toggle-description": "Générer la réponse en utilisant le format markdown",
+	"search.configuration.generative-answer.prefer-markdown.toggle-label": "Préférer le format markdown",
 	"search.configuration.generative-answer.prompt.textarea-label": "Votre prompt",
 	"search.configuration.generative-answer.prompt.toggle-description": "Elle aura priorité sur l'invite utilisateur définie dans les paramètres de la Knowledge Box. Remarque : la stratégie de prompt peut changer en fonction du modèle génératif.",
 	"search.configuration.generative-answer.prompt.toggle-label": "Utiliser un prompt spécifique",
