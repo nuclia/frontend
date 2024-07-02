@@ -237,7 +237,11 @@
                 <div class="column-container growing-container">
                   <div>
                     <div class="title-xxs">{{ 'dashboard-home.kb-storage.total.resources' | translate }}</div>
-                    <div class="title-m">{{ storage.resources | number: '1.0-0' : locale }}</div>
+                    <div
+                      class="title-m"
+                      data-cy="total-resources">
+                      {{ storage.resources | number: '1.0-0' : locale }}
+                    </div>
                   </div>
                   <div>
                     <div class="title-xxs">{{ 'dashboard-home.kb-storage.total.text-blocks' | translate }}</div>
