@@ -19,7 +19,11 @@
           </div>
 
           <div>
-            <div class="title-xxs">{{ 'dashboard-home.kb-details.endpoint' | translate }}</div>
+            <div
+              data-cy="nucliadb-endpoint"
+              class="title-xxs">
+              {{ 'dashboard-home.kb-details.endpoint' | translate }}
+            </div>
             <div class="details-block">
               @if (clipboardSupported) {
                 <pa-button

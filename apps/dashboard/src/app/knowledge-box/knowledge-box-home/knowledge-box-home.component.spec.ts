@@ -10,7 +10,13 @@ import { FeaturesService, NavigationService, SDKService, STFTrackingService, Zon
 import { MetricsService } from '../../account/metrics.service';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
-import { PaButtonModule, PaDropdownModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaTableModule,
+  PaTabsModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { UsageChartsComponent } from './kb-usage/usage-charts.component';
 import { AccountStatusComponent } from '../../account/account-status/account-status.component';
 import { RouterModule } from '@angular/router';
@@ -40,7 +46,9 @@ describe('KnowledgeBoxHomeComponent', () => {
           }),
           MockModule(PaButtonModule),
           MockModule(PaDropdownModule),
+          MockModule(PaIconModule),
           MockModule(PaTableModule),
+          MockModule(PaTabsModule),
           MockModule(RouterModule),
           MockModule(UploadModule),
           MockComponent(DropdownButtonComponent),
@@ -98,6 +106,6 @@ describe('KnowledgeBoxHomeComponent', () => {
   it('should translate properly', () => {
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.kb-details .title-xxs').textContent).toContain('NucliaDB API endpoint');
+    expect(compiled.querySelector('[data-cy="nucliadb-endpoint"]').textContent).toContain('NucliaDB API endpoint');
   });
 });
