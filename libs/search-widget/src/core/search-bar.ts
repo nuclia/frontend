@@ -12,6 +12,7 @@ import {
   loadMore,
   pageNumber,
   pendingResults,
+  preferMarkdown,
   preselectedFilters,
   searchFilters,
   searchOptions,
@@ -63,6 +64,7 @@ export const setupTriggerSearch = (
                 isAnswerEnabled.pipe(take(1)),
                 widgetRagStrategies.pipe(take(1)),
                 widgetImageRagStrategies.pipe(take(1)),
+                preferMarkdown.pipe(take(1)),
               ]).pipe(
                 tap(() => {
                   pendingResults.set(true);
@@ -78,6 +80,7 @@ export const setupTriggerSearch = (
                     isAnswerEnabled,
                     ragStrategies,
                     ragImageStrategies,
+                    preferMarkdown,
                   ]) => {
                     dispatch('search', { query, filters });
                     const currentOptions: SearchOptions = {
@@ -93,6 +96,9 @@ export const setupTriggerSearch = (
                       }
                       if (ragImageStrategies.length > 0) {
                         chatOptions.rag_images_strategies = ragImageStrategies;
+                      }
+                      if (preferMarkdown) {
+                        chatOptions.prefer_markdown = preferMarkdown;
                       }
                       return askQuestion(query, true, chatOptions).pipe(
                         tap((res) => {

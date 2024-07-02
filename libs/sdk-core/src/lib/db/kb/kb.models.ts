@@ -308,6 +308,7 @@ export interface WidgetFeatures {
   citations?: boolean;
   rephrase?: boolean;
   dumpLog?: boolean;
+  preferMarkdown?: boolean;
 }
 
 export enum RagStrategyName {

@@ -38,6 +38,7 @@ export const hideResults: Observable<boolean> = combineLatest([
 export const displayFieldList: Observable<boolean> = widgetFeatures.pipe(
   map((features) => !!features?.displayFieldList),
 );
+export const preferMarkdown: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.preferMarkdown));
 
 export const disableAnswers = () => {
   widgetFeatures.set({ ...(widgetFeatures.value || {}), answers: false });
