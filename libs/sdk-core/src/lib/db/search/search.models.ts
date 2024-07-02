@@ -69,6 +69,7 @@ export interface ChatOptions extends BaseSearchOptions {
    * Defines the maximum number of tokens that the model will generate.
    */
   max_tokens?: number;
+  prefer_markdown?: boolean;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

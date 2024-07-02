@@ -1,4 +1,4 @@
-# 1.17.0 (unreleased)
+# 1.17.0 (2024-07-02)
 
 ### Breaking changes
 
@@ -8,6 +8,7 @@
 ### Improvements
 
 - Add HTTP headers to the `lastQuery` events
+- Add support for `prefer_markdown` option on `/ask` endpoint
 
 # 1.16.0 (2024-05-29)
 
