@@ -6441,159 +6441,6 @@
 								</children>
 							</folder_node>
 							<folder_node>
-								<name>kb-content</name>
-								<children>
-									<folder_node>
-										<name>latest-resources</name>
-										<children>
-											<concept_node>
-												<name>no-upload</name>
-												<description/>
-												<comment/>
-												<translations>
-													<translation>
-														<language>ca-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>en-US</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>es-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>fr-FR</language>
-														<approved>false</approved>
-													</translation>
-												</translations>
-											</concept_node>
-											<concept_node>
-												<name>title</name>
-												<description/>
-												<comment/>
-												<translations>
-													<translation>
-														<language>ca-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>en-US</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>es-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>fr-FR</language>
-														<approved>false</approved>
-													</translation>
-												</translations>
-											</concept_node>
-										</children>
-									</folder_node>
-									<folder_node>
-										<name>processing-queue</name>
-										<children>
-											<concept_node>
-												<name>no-pending</name>
-												<description/>
-												<comment/>
-												<translations>
-													<translation>
-														<language>ca-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>en-US</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>es-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>fr-FR</language>
-														<approved>false</approved>
-													</translation>
-												</translations>
-											</concept_node>
-											<concept_node>
-												<name>pending</name>
-												<description/>
-												<comment/>
-												<translations>
-													<translation>
-														<language>ca-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>en-US</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>es-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>fr-FR</language>
-														<approved>false</approved>
-													</translation>
-												</translations>
-											</concept_node>
-											<concept_node>
-												<name>pendings</name>
-												<description/>
-												<comment/>
-												<translations>
-													<translation>
-														<language>ca-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>en-US</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>es-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>fr-FR</language>
-														<approved>false</approved>
-													</translation>
-												</translations>
-											</concept_node>
-											<concept_node>
-												<name>title</name>
-												<description/>
-												<comment/>
-												<translations>
-													<translation>
-														<language>ca-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>en-US</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>es-ES</language>
-														<approved>false</approved>
-													</translation>
-													<translation>
-														<language>fr-FR</language>
-														<approved>false</approved>
-													</translation>
-												</translations>
-											</concept_node>
-										</children>
-									</folder_node>
-								</children>
-							</folder_node>
-							<folder_node>
 								<name>kb-details</name>
 								<children>
 									<concept_node>
@@ -6666,6 +6513,29 @@
 										</translations>
 									</concept_node>
 									<concept_node>
+										<name>status</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
 										<name>title</name>
 										<description/>
 										<comment/>
@@ -6714,7 +6584,7 @@
 								</children>
 							</folder_node>
 							<folder_node>
-								<name>kb-metrics</name>
+								<name>kb-storage</name>
 								<children>
 									<concept_node>
 										<name>title</name>
@@ -6789,7 +6659,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>paragraphs</name>
+												<name>resources</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -6812,7 +6682,63 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>sentences</name>
+												<name>text-blocks</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>vectors</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+										</children>
+									</folder_node>
+								</children>
+							</folder_node>
+							<folder_node>
+								<name>resources</name>
+								<children>
+									<folder_node>
+										<name>latest-processed</name>
+										<children>
+											<concept_node>
+												<name>empty</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -6859,6 +6785,80 @@
 											</concept_node>
 										</children>
 									</folder_node>
+									<folder_node>
+										<name>processing-queue</name>
+										<children>
+											<concept_node>
+												<name>empty</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>title</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>ca-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>es-ES</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+										</children>
+									</folder_node>
+									<concept_node>
+										<name>title</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
 								</children>
 							</folder_node>
 							<folder_node>
@@ -14418,7 +14418,7 @@
 						<name>metrics</name>
 						<children>
 							<folder_node>
-								<name>ai-tokens-used</name>
+								<name>answers</name>
 								<children>
 									<concept_node>
 										<name>title</name>
@@ -14446,7 +14446,7 @@
 								</children>
 							</folder_node>
 							<folder_node>
-								<name>answers</name>
+								<name>nuclia-tokens</name>
 								<children>
 									<concept_node>
 										<name>title</name>

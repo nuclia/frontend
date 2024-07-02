@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
-import { AppService, searchResources, STATUS_FACET, UploadService } from '@flaps/common';
+import { AppService, searchResources, UploadService } from '@flaps/common';
 import { ChartData, MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
@@ -51,11 +51,19 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   );
   processingChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SLOW_PROCESSING_TIME]));
   searchChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SEARCHES_PERFORMED]));
+  nucliaTokenChart = this.allChartsData.pipe(map((charts) => charts[UsageType.NUCLIA_TOKENS]));
 
   searchQueriesCounts = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getSearchQueriesCount(kb.id)),
+    switchMap((kb) => this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED, kb.id)),
+    takeUntil(this.unsubscribeAll),
+    shareReplay(),
+  );
+  nucliaTokensCounts = this.isAccountManager.pipe(
+    filter((isManager) => isManager),
+    switchMap(() => this.currentKb),
+    switchMap((kb) => this.metrics.getUsageCount(UsageType.NUCLIA_TOKENS, kb.id)),
     takeUntil(this.unsubscribeAll),
     shareReplay(),
   );
@@ -68,11 +76,8 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   );
   canUpgrade = this.features.canUpgrade;
 
-  showLeftColumn = combineLatest([this.canUpgrade, this.isKbContrib]).pipe(
-    map(([canUpgrade, canUpload]) => canUpgrade || canUpload),
-  );
-
-  lastUploadedResources: Observable<IResource[]> = this.currentKb.pipe(
+  selectedResourcesTab: 'processed' | 'pending' = 'processed';
+  latestProcessedResources: Observable<IResource[]> = this.currentKb.pipe(
     switchMap((kb) =>
       searchResources(kb, {
         pageSize: 6,
@@ -85,9 +90,18 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     ),
     map((data) => Object.values(data.results.resources || {})),
   );
-  pendingResourceCount: Observable<number> = this.currentKb.pipe(
-    switchMap(() => this.uploadService.getResourceStatusCount()),
-    map((data) => data.fulltext?.facets?.[STATUS_FACET]?.[`${STATUS_FACET}/PENDING`] || 0),
+  processingQueue: Observable<IResource[]> = this.currentKb.pipe(
+    switchMap((kb) =>
+      searchResources(kb, {
+        pageSize: 6,
+        sort: { field: SortField.created, order: 'desc' },
+        query: '',
+        filters: [],
+        page: 0,
+        status: RESOURCE_STATUS.PENDING,
+      }),
+    ),
+    map((data) => Object.values(data.results.resources || {})),
   );
   isChartDropdownOpen = false;
 
@@ -101,6 +115,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   chartDropdownOptions: OptionModel[] = [
     this.defaultChartOption,
     new OptionModel({ id: 'processing', label: 'metrics.processing.title', value: 'processing' }),
+    new OptionModel({ id: 'token', label: 'metrics.nuclia-tokens.title', value: 'token' }),
   ];
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = {
