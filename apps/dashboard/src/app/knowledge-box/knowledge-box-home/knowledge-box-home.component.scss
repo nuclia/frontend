@@ -1,24 +1,11 @@
 @import 'apps/dashboard/src/variables';
 
 .knowledge-box-home {
-  --width-small-column: #{rhythm(47)};
-  --gap-size: #{rhythm(3)};
+  --width-small-column: #{rhythm(48)};
+  --gap-size: #{rhythm(2)};
 
   display: flex;
   gap: var(--gap-size);
-
-  .small-container {
-    flex: 0 1 auto;
-    min-width: rhythm(35);
-    max-width: var(--width-small-column);
-  }
-  .account-type-container {
-    width: var(--width-small-column);
-  }
-
-  .fit-content {
-    height: fit-content;
-  }
 
   .column-container {
     display: flex;
@@ -26,24 +13,9 @@
     gap: var(--gap-size);
 
     &.wide-column {
-      container-type: size;
       flex: 1 1 auto;
-      margin-right: calc(-1 * #{var(--app-layout-padding-right)});
       max-width: calc(var(--width-small-column) * 2 + var(--gap-size));
       min-width: var(--width-small-column);
-      padding-right: var(--app-layout-padding-right);
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    @container (width < 43rem) {
-      .row-container {
-        flex-direction: column;
-
-        .growing-container {
-          width: 100%;
-        }
-      }
     }
   }
   .row-container {
@@ -54,6 +26,16 @@
     .growing-container {
       flex: 1 1 auto;
       width: calc(100% / 2);
+    }
+  }
+
+  .title-with-icon {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    pa-icon {
+      display: flex;
     }
   }
 
@@ -91,13 +73,19 @@
     }
   }
 
-  .kb-details {
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(1);
+  .kb-details,
+  .kb-storage {
+    div.title-xxs {
+      color: $color-neutral-regular;
+    }
+  }
 
+  .kb-details {
     .details-block {
       align-items: center;
+      background-color: $color-neutral-lightest;
+      border: 1px solid $color-neutral-light;
+      border-radius: rhythm(0.5);
       display: flex;
       gap: rhythm(0.5);
       margin-top: calc(-1 * #{rhythm(0.25)});
@@ -109,54 +97,29 @@
     }
   }
 
-  .kb-content {
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(2);
+  .kb-storage {
+    .index-size-container {
+      align-items: center;
+      background-color: $color-neutral-lightest;
+      border: 1px solid $color-neutral-lighter;
+      border-radius: rhythm(0.5);
+      display: flex;
+      justify-content: space-between;
+      padding: rhythm(0.5) rhythm(1);
+    }
+  }
 
-    .title-m {
-      margin-bottom: rhythm(1);
+  .resources-container {
+    pa-tab ::ng-deep .pa-tabs-link {
+      font-size: font-size(s);
     }
 
-    .no-content {
-      font-style: italic;
-    }
-
-    .latest-uploaded-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-
-      li {
-        background-color: $color-neutral-lightest;
-        box-shadow: $box-shadow-border-bottom;
-        cursor: pointer;
-        line-height: rhythm(5);
-        transition: background-color $transition-hint;
-
-        &:hover {
-          background-color: $color-neutral-lighter;
-        }
-
-        pa-icon {
-          color: $color-neutral-regular;
-          margin-right: rhythm(0.5);
-        }
-      }
+    pa-table a {
+      color: $color-dark-stronger;
     }
   }
 
   .usage-charts {
-    .title-m {
-      margin-bottom: rhythm(1);
-    }
-
-    .chart-container {
-      display: flex;
-      flex-direction: column;
-      gap: rhythm(2);
-    }
-
     .title-xxs.header {
       color: $color-neutral-regular;
     }

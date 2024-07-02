@@ -1,57 +1,20 @@
 <div class="knowledge-box-home page-spacing">
-  @if (kbUrl | async; as kbUrl) {
-    @if (showLeftColumn | async) {
-      <div class="column-container">
-        @if (canUpgrade | async) {
-          <nsi-home-container class="small-container account-type-container">
-            <app-account-status></app-account-status>
-          </nsi-home-container>
-        }
-
-        @if (isKbContrib | async) {
-          <nsi-home-container class="small-container">
-            <div class="upload-data">
-              <div class="title-m">{{ 'dashboard-home.upload-block.title' | translate }}</div>
-              <pa-button
-                [routerLink]="kbUrl + '/upload'"
-                class="full-width"
-                aspect="solid"
-                kind="primary"
-                iconAndText
-                icon="upload"
-                (click)="trackNavigationFromHome('upload')">
-                {{ 'stash.upload_data' | translate }}
-              </pa-button>
-              <div>
-                {{ 'dashboard-home.upload-block.description' | translate }}
-                {{ 'dashboard-home.upload-block.description-desktop' | translate }}
-              </div>
-              <stf-desktop-sources></stf-desktop-sources>
-            </div>
-          </nsi-home-container>
-        }
-
-        <nsi-home-container class="small-container">
-          <app-kb-metrics
-            [locale]="locale | async"
-            [metrics]="counters | async"></app-kb-metrics>
-        </nsi-home-container>
-      </div>
-    }
-
-    <div class="column-container wide-column">
-      <nsi-home-container>
-        <div class="kb-details">
+  @if (currentKb | async; as kb) {
+    @if (kbUrl | async; as kbUrl) {
+      <div class="column-container wide-column">
+        <nsi-home-container class="kb-details">
           <div class="title-m title-with-action">
-            {{ 'dashboard-home.kb-details.title' | translate }}
+            <div class="title-with-icon">
+              <pa-icon name="knowledge-box"></pa-icon>
+              {{ 'dashboard-home.kb-details.title' | translate: { name: kb.title } }}
+            </div>
             @if (isKbAdmin | async) {
-              <pa-button
+              <a
+                class="title-xxs"
                 [routerLink]="kbUrl + '/manage'"
-                icon="gear"
-                aspect="basic"
                 (click)="trackNavigationFromHome('KB settings')">
                 {{ 'dashboard-home.go-to.kb-settings' | translate }}
-              </pa-button>
+              </a>
             }
           </div>
 
@@ -86,217 +49,313 @@
             </div>
           </div>
 
-          <div>
-            <div class="title-xxs">{{ 'dashboard-home.kb-details.region' | translate }}</div>
-            <div class="body-s">
-              {{ zone | async }}
-            </div>
-          </div>
           @if (configuration | async; as config) {
-            @if (config['generative_model']; as model) {
-              <div>
-                <div class="title-xxs">{{ 'dashboard-home.kb-details.generative-model' | translate }}</div>
-                <div class="body-s">
-                  {{ model | generativeModel }}
+            <div class="row-container">
+              <div class="column-container growing-container">
+                <div>
+                  <div class="title-xxs">{{ 'dashboard-home.kb-details.region' | translate }}</div>
+                  <div class="body-s">
+                    {{ zone | async }}
+                  </div>
+                </div>
+                @if (config['semantic_model']; as semanticModel) {
+                  <div>
+                    <div class="title-xxs">{{ 'kb.ai-models.semantic-model.label' | translate }}</div>
+                    <div class="body-s">
+                      {{ semanticModel }}
+                    </div>
+                  </div>
+                }
+              </div>
+              <div class="column-container growing-container">
+                @if (config['generative_model']; as model) {
+                  <div>
+                    <div class="title-xxs">{{ 'dashboard-home.kb-details.generative-model' | translate }}</div>
+                    <div class="body-s">
+                      {{ model | generativeModel }}
+                    </div>
+                  </div>
+                }
+                <div>
+                  <div class="title-xxs">{{ 'dashboard-home.kb-details.status' | translate }}</div>
+                  <div class="body-s">
+                    {{ (stateLabel | async) || '' | translate }}
+                  </div>
                 </div>
               </div>
-            }
-            @if (config['semantic_model']; as semanticModel) {
-              <div>
-                <div class="title-xxs">{{ 'kb.ai-models.semantic-model.label' | translate }}</div>
-                <div class="body-s">
-                  {{ semanticModel }}
-                </div>
-              </div>
-            }
+            </div>
           }
-          <div class="title-xxs">
-            {{ (stateLabel | async) || '' | translate }}
-          </div>
-        </div>
-      </nsi-home-container>
+        </nsi-home-container>
 
-      <div class="row-container">
-        @if ((showLeftColumn | async) === false) {
-          <nsi-home-container class="small-container fit-content">
-            <app-kb-metrics
-              [locale]="locale | async"
-              [metrics]="counters | async"></app-kb-metrics>
+        @if (
+          {
+            latestProcessed: latestProcessedResources | async,
+            processingQueue: processingQueue | async
+          };
+          as data
+        ) {
+          <nsi-home-container class="resources-container">
+            <div class="title-m title-with-action">
+              <div class="title-with-icon">
+                <pa-icon name="list"></pa-icon>
+                {{ 'dashboard-home.resources.title' | translate }}
+              </div>
+
+              <a
+                class="title-xxs"
+                [routerLink]="kbUrl + '/resources'"
+                (click)="trackNavigationFromHome('resource list')">
+                {{ 'dashboard-home.go-to.resource-list' | translate }}
+              </a>
+            </div>
+
+            <pa-tabs notFullWidth>
+              <pa-tab
+                [active]="selectedResourcesTab === 'processed'"
+                (click)="selectedResourcesTab = 'processed'">
+                {{ 'dashboard-home.resources.latest-processed.title' | translate }}
+              </pa-tab>
+              <pa-tab
+                [active]="selectedResourcesTab === 'pending'"
+                (click)="selectedResourcesTab = 'pending'">
+                {{ 'dashboard-home.resources.processing-queue.title' | translate }}
+              </pa-tab>
+            </pa-tabs>
+
+            <pa-table
+              border
+              columns="1fr 120px">
+              <pa-table-header>
+                <pa-table-cell header>
+                  <span class="title-xxs">{{ 'resource.title' | translate }}</span>
+                </pa-table-cell>
+                <pa-table-cell header>
+                  <span class="title-xxs">{{ 'generic.date' | translate }}</span>
+                </pa-table-cell>
+              </pa-table-header>
+
+              @switch (selectedResourcesTab) {
+                @case ('processed') {
+                  @for (resource of data.latestProcessed; track resource.id) {
+                    <pa-table-row>
+                      <pa-table-cell>
+                        <span
+                          class="title-with-icon title-xxs"
+                          paEllipsisTooltip>
+                          @if (resource.icon | mimeIcon; as icon) {
+                            <pa-icon [name]="icon"></pa-icon>
+                          }
+                          <a [routerLink]="kbUrl + '/resources/' + resource.id + '/edit/preview'">
+                            {{ resource.title }}
+                          </a>
+                        </span>
+                      </pa-table-cell>
+                      <pa-table-cell>
+                        <span class="body-s">
+                          <pa-datetime
+                            [datetime]="resource.created"
+                            dateOnly></pa-datetime>
+                        </span>
+                      </pa-table-cell>
+                    </pa-table-row>
+                  } @empty {
+                    <pa-table-row>
+                      <pa-table-cell>
+                        <span class="title-xxs">
+                          {{ 'dashboard-home.resources.latest-processed.empty' | translate }}
+                        </span>
+                      </pa-table-cell>
+                      <pa-table-cell></pa-table-cell>
+                    </pa-table-row>
+                  }
+                }
+                @case ('pending') {
+                  @for (resource of data.processingQueue; track resource.id) {
+                    <pa-table-row>
+                      <pa-table-cell>
+                        <span
+                          class="title-with-icon title-xxs"
+                          paEllipsisTooltip>
+                          @if (resource.icon | mimeIcon; as icon) {
+                            <pa-icon [name]="icon"></pa-icon>
+                          }
+                          <a [routerLink]="kbUrl + '/resources/' + resource.id + '/edit/preview'">
+                            {{ resource.title }}
+                          </a>
+                        </span>
+                      </pa-table-cell>
+                      <pa-table-cell>
+                        <span class="body-s">
+                          <pa-datetime
+                            [datetime]="resource.created"
+                            dateOnly></pa-datetime>
+                        </span>
+                      </pa-table-cell>
+                    </pa-table-row>
+                  } @empty {
+                    <pa-table-row>
+                      <pa-table-cell>
+                        <span class="title-xxs">
+                          {{ 'dashboard-home.resources.processing-queue.empty' | translate }}
+                        </span>
+                      </pa-table-cell>
+                      <pa-table-cell></pa-table-cell>
+                    </pa-table-row>
+                  }
+                }
+              }
+            </pa-table>
+          </nsi-home-container>
+        }
+      </div>
+
+      <div class="column-container">
+        @if (canUpgrade | async) {
+          <nsi-home-container>
+            <app-account-status></app-account-status>
           </nsi-home-container>
         }
 
-        @if ({ lastUploads: lastUploadedResources | async }; as data) {
-          <nsi-home-container
-            class="growing-container"
-            [class.fit-content]="!data.lastUploads || data.lastUploads.length < 6">
-            <div class="kb-content">
-              <section>
-                <div class="title-m title-with-action">
-                  {{ 'dashboard-home.kb-content.latest-resources.title' | translate }}
-                  <pa-button
-                    icon="list"
-                    aspect="basic"
-                    [routerLink]="kbUrl + '/resources'"
-                    (click)="trackNavigationFromHome('resource list')">
-                    {{ 'dashboard-home.go-to.resource-list' | translate }}
-                  </pa-button>
-                </div>
-                @if (data.lastUploads && data.lastUploads.length === 0) {
-                  <p class="no-content">
-                    {{ 'dashboard-home.kb-content.latest-resources.no-upload' | translate }}
-                  </p>
-                } @else if (data.lastUploads && data.lastUploads.length > 0) {
-                  <ul class="latest-uploaded-list">
-                    @for (resource of data.lastUploads; track resource.id) {
-                      <li
-                        paEllipsisTooltip
-                        [routerLink]="kbUrl + '/resources/' + resource.id + '/edit/preview'">
-                        @if (resource.icon | mimeIcon; as icon) {
-                          <pa-icon [name]="icon"></pa-icon>
-                        }
-                        {{ resource.title }}
-                      </li>
-                    }
-                  </ul>
-                }
-              </section>
-
-              <section>
-                <div class="title-m title-with-action">
-                  {{ 'dashboard-home.kb-content.processing-queue.title' | translate }}
-                  <pa-button
-                    icon="clock-dash"
-                    aspect="basic"
-                    [routerLink]="kbUrl + '/resources/pending'"
-                    (click)="trackNavigationFromHome('pending resources')">
-                    {{ 'dashboard-home.go-to.pending-list' | translate }}
-                  </pa-button>
-                </div>
-
-                @if ({ pendingCount: pendingResourceCount | async }; as data) {
-                  @if (data.pendingCount === 0) {
-                    <p class="no-content">
-                      {{ 'dashboard-home.kb-content.processing-queue.no-pending' | translate }}
-                    </p>
-                  } @else if (data.pendingCount === 1) {
-                    <p class="body-m">
-                      {{ 'dashboard-home.kb-content.processing-queue.pending' | translate }}
-                    </p>
-                  } @else {
-                    <p class="body-m">
-                      {{
-                        'dashboard-home.kb-content.processing-queue.pendings' | translate: { count: data.pendingCount }
-                      }}
-                    </p>
-                  }
-                }
-              </section>
+        @if (counters | async; as storage) {
+          <nsi-home-container class="kb-storage">
+            <div class="title-with-icon title-m">
+              <pa-icon name="database"></pa-icon>
+              {{ 'dashboard-home.kb-storage.title' | translate }}
             </div>
+
+            <div class="index-size-container row-container">
+              <div class="title-xxs">{{ 'dashboard-home.kb-storage.total.index-size' | translate }}</div>
+              <div class="title-m">{{ storage.index_size | size }}</div>
+            </div>
+
+            @if (locale | async; as locale) {
+              <div class="row-container">
+                <div class="column-container growing-container">
+                  <div>
+                    <div class="title-xxs">{{ 'dashboard-home.kb-storage.total.resources' | translate }}</div>
+                    <div class="title-m">{{ storage.resources | number: '1.0-0' : locale }}</div>
+                  </div>
+                  <div>
+                    <div class="title-xxs">{{ 'dashboard-home.kb-storage.total.text-blocks' | translate }}</div>
+                    <div class="title-m">{{ storage.paragraphs | number: '1.0-0' : locale }}</div>
+                  </div>
+                </div>
+                <div class="column-container growing-container">
+                  <div>
+                    <div class="title-xxs">{{ 'dashboard-home.kb-storage.total.fields' | translate }}</div>
+                    <div class="title-m">{{ storage.fields | number: '1.0-0' : locale }}</div>
+                  </div>
+                  <div>
+                    <div class="title-xxs">{{ 'dashboard-home.kb-storage.total.vectors' | translate }}</div>
+                    <div class="title-m">{{ storage.sentences | number: '1.0-0' : locale }}</div>
+                  </div>
+                </div>
+              </div>
+            }
           </nsi-home-container>
         }
 
         @if ((isKbContrib | async) && (isAccountManager | async)) {
-          <nsi-home-container class="growing-container">
-            <div class="usage-charts">
-              <div class="title-m title-with-action">
+          <nsi-home-container class="usage-charts">
+            <div class="title-m title-with-action">
+              <div class="title-with-icon">
+                <pa-icon name="chart"></pa-icon>
                 {{ 'dashboard-home.usage.title' | translate }}
-
-                <pa-button
-                  aspect="basic"
-                  icon="fullscreen"
-                  (click)="openFullscreen()">
-                  {{ 'dashboard-home.usage.fullscreen' | translate }}
-                </pa-button>
               </div>
-
-              <div class="chart-container">
-                <pa-table
-                  border
-                  columns="repeat(3, 1fr)">
-                  <pa-table-header>
-                    <pa-table-cell header></pa-table-cell>
-                    <pa-table-cell header>
-                      <span class="title-xxs header">{{ 'metrics.period.last-30-days' | translate }}</span>
-                    </pa-table-cell>
-                    <pa-table-cell header>
-                      <span class="title-xxs header">{{ 'metrics.period.last-12-months' | translate }}</span>
-                    </pa-table-cell>
-                  </pa-table-header>
-                  @if (searchQueriesCounts | async; as queriesCount) {
-                    <pa-table-row last>
-                      <pa-table-cell>
-                        <span class="body-s">{{ 'metrics.search.title' | translate }}</span>
-                      </pa-table-cell>
-                      @if (locale | async; as locale) {
-                        <pa-table-cell>
-                          <span class="body-s">
-                            <strong>{{ queriesCount.month | number: '1.0-0' : locale }}</strong>
-                          </span>
-                        </pa-table-cell>
-                        <pa-table-cell>
-                          <span class="body-s">
-                            <strong>{{ queriesCount.year | number: '1.0-0' : locale }}</strong>
-                          </span>
-                        </pa-table-cell>
-                      }
-                    </pa-table-row>
-                  }
-                  @if (nucliaTokensCounts | async; as tokenCount) {
-                    <pa-table-row last>
-                      <pa-table-cell>
-                        <span class="body-s">{{ 'metrics.nuclia-tokens.title' | translate }}</span>
-                      </pa-table-cell>
-                      @if (locale | async; as locale) {
-                        <pa-table-cell>
-                          <span class="body-s">
-                            <strong>{{ tokenCount.month | number: '1.0-0' : locale }}</strong>
-                          </span>
-                        </pa-table-cell>
-                        <pa-table-cell>
-                          <span class="body-s">
-                            <strong>{{ tokenCount.year | number: '1.0-0' : locale }}</strong>
-                          </span>
-                        </pa-table-cell>
-                      }
-                    </pa-table-row>
-                  }
-                </pa-table>
-                <div>
-                  <nsi-dropdown-button
-                    fullWidth
-                    aspect="basic"
-                    [popupRef]="chartDropdown"
-                    [open]="isChartDropdownOpen">
-                    {{ currentChart.label | translate }}
-                  </nsi-dropdown-button>
-
-                  <pa-dropdown
-                    #chartDropdown
-                    (onClose)="isChartDropdownOpen = false"
-                    (onOpen)="isChartDropdownOpen = true">
-                    @for (option of chartDropdownOptions; track option.id) {
-                      <pa-option
-                        [value]="option.value"
-                        (selectOption)="selectChart(option)">
-                        {{ option.label | translate }}
-                      </pa-option>
-                    }
-                  </pa-dropdown>
-                </div>
-
-                <app-kb-usage-charts
-                  smallContainer
-                  [chartHeight]="chartHeight"
-                  [currentChart]="currentChart"
-                  [processingChart]="processingChart | async"
-                  [tokenChart]="nucliaTokenChart | async"
-                  [searchChart]="searchChart | async"></app-kb-usage-charts>
-              </div>
+              <pa-button
+                aspect="basic"
+                icon="fullscreen"
+                (click)="openFullscreen()">
+                {{ 'dashboard-home.usage.fullscreen' | translate }}
+              </pa-button>
             </div>
+
+            <pa-table
+              border
+              columns="repeat(3, 1fr)">
+              <pa-table-header>
+                <pa-table-cell header></pa-table-cell>
+                <pa-table-cell header>
+                  <span class="title-xxs header">{{ 'metrics.period.last-30-days' | translate }}</span>
+                </pa-table-cell>
+                <pa-table-cell header>
+                  <span class="title-xxs header">{{ 'metrics.period.last-12-months' | translate }}</span>
+                </pa-table-cell>
+              </pa-table-header>
+              @if (searchQueriesCounts | async; as queriesCount) {
+                <pa-table-row last>
+                  <pa-table-cell>
+                    <span class="body-s">{{ 'metrics.search.title' | translate }}</span>
+                  </pa-table-cell>
+                  @if (locale | async; as locale) {
+                    <pa-table-cell>
+                      <span class="title-xxs">
+                        {{ queriesCount.month | number: '1.0-0' : locale }}
+                      </span>
+                    </pa-table-cell>
+                    <pa-table-cell>
+                      <span class="title-xxs">
+                        {{ queriesCount.year | number: '1.0-0' : locale }}
+                      </span>
+                    </pa-table-cell>
+                  }
+                </pa-table-row>
+              }
+              @if (nucliaTokensCounts | async; as tokenCount) {
+                <pa-table-row last>
+                  <pa-table-cell>
+                    <span class="body-s">{{ 'metrics.nuclia-tokens.title' | translate }}</span>
+                  </pa-table-cell>
+                  @if (locale | async; as locale) {
+                    <pa-table-cell>
+                      <span class="title-xxs">
+                        {{ tokenCount.month | number: '1.0-0' : locale }}
+                      </span>
+                    </pa-table-cell>
+                    <pa-table-cell>
+                      <span class="title-xxs">
+                        {{ tokenCount.year | number: '1.0-0' : locale }}
+                      </span>
+                    </pa-table-cell>
+                  }
+                </pa-table-row>
+              }
+            </pa-table>
+
+            <div>
+              <nsi-dropdown-button
+                fullWidth
+                aspect="basic"
+                [popupRef]="chartDropdown"
+                [open]="isChartDropdownOpen">
+                {{ currentChart.label | translate }}
+              </nsi-dropdown-button>
+
+              <pa-dropdown
+                #chartDropdown
+                (onClose)="isChartDropdownOpen = false"
+                (onOpen)="isChartDropdownOpen = true">
+                @for (option of chartDropdownOptions; track option.id) {
+                  <pa-option
+                    [value]="option.value"
+                    (selectOption)="selectChart(option)">
+                    {{ option.label | translate }}
+                  </pa-option>
+                }
+              </pa-dropdown>
+            </div>
+
+            <app-kb-usage-charts
+              smallContainer
+              [chartHeight]="chartHeight"
+              [currentChart]="currentChart"
+              [processingChart]="processingChart | async"
+              [tokenChart]="nucliaTokenChart | async"
+              [searchChart]="searchChart | async"></app-kb-usage-charts>
           </nsi-home-container>
         }
       </div>
-    </div>
+    }
   }
 </div>
 

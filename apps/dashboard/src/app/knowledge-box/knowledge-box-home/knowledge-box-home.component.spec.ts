@@ -10,7 +10,6 @@ import { FeaturesService, NavigationService, SDKService, STFTrackingService, Zon
 import { MetricsService } from '../../account/metrics.service';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
-import { KbMetricsComponent } from './kb-metrics/kb-metrics.component';
 import { PaButtonModule, PaDropdownModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { UsageChartsComponent } from './kb-usage/usage-charts.component';
 import { AccountStatusComponent } from '../../account/account-status/account-status.component';
@@ -47,7 +46,6 @@ describe('KnowledgeBoxHomeComponent', () => {
           MockComponent(DropdownButtonComponent),
           MockComponent(AccountStatusComponent),
           MockComponent(HomeContainerComponent),
-          MockComponent(KbMetricsComponent),
           MockComponent(UsageChartsComponent),
         ],
         providers: [

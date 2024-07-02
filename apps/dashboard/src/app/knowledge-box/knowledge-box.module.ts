@@ -19,11 +19,12 @@ import {
   PaIconModule,
   PaPopupModule,
   PaTableModule,
+  PaTabsModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent, HomeContainerComponent, SisIconsModule } from '@nuclia/sistema';
+import { DropdownButtonComponent, HomeContainerComponent, InfoCardComponent, SisIconsModule } from '@nuclia/sistema';
 import {
   ChartsModule,
   GenerativeModelPipe,
@@ -33,8 +34,8 @@ import {
   TokenDialogModule,
   UploadModule,
 } from '@flaps/common';
-import { KbMetricsComponent } from './knowledge-box-home/kb-metrics/kb-metrics.component';
 import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts.component';
+import { STFPipesModule } from '@flaps/core';
 
 @NgModule({
   imports: [
@@ -62,7 +63,6 @@ import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts
     PaDateTimeModule,
     HomeContainerComponent,
     KnowledgeBoxSettingsModule,
-    KbMetricsComponent,
     PaTooltipModule,
     SisIconsModule,
     PaButtonModule,
@@ -70,6 +70,10 @@ import { UsageChartsComponent } from './knowledge-box-home/kb-usage/usage-charts
     PaTableModule,
     UsageChartsComponent,
     GenerativeModelPipe,
+    InfoCardComponent,
+    PaTabsModule,
+    PaTableModule,
+    STFPipesModule,
   ],
   declarations: [
     KnowledgeBoxComponent,
