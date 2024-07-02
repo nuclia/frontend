@@ -274,7 +274,7 @@
 	"dashboard-home.kb-details.generative-model": "Modèle génératif",
 	"dashboard-home.kb-details.region": "Région",
 	"dashboard-home.kb-details.status": "Statut de la Knowledge Box",
-	"dashboard-home.kb-details.title": "Knowledge Box: {{name}}",
+	"dashboard-home.kb-details.title": "Knowledge Box : {{name}}",
 	"dashboard-home.kb-details.uid": "Knowledge Box UID",
 	"dashboard-home.kb-storage.title": "Stockage",
 	"dashboard-home.kb-storage.total.fields": "Champs",
