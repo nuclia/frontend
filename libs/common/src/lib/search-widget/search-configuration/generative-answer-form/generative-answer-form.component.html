@@ -145,6 +145,20 @@
           type="number"></pa-input>
       </div>
     </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="preferMarkdown"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.generative-answer.prefer-markdown.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.prefer-markdown.toggle-description' | translate }}
+      </div>
+    </div>
     <ng-container formGroupName="ragStrategies">
       <div class="subsection-title">
         {{ 'search.configuration.generative-answer.rag-strategies.title' | translate }}

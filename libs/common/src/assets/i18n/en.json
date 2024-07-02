@@ -904,6 +904,8 @@
 	"search.configuration.generative-answer.generative-model.title": "Specific generative model",
 	"search.configuration.generative-answer.limit-token.toggle-description": "Defines the maximum number of tokens that the model will generate. A low number may prevent your users to see results.",
 	"search.configuration.generative-answer.limit-token.toggle-label": "Limit token consumption",
+	"search.configuration.generative-answer.prefer-markdown.toggle-description": "Generate the answer using markdown format",
+	"search.configuration.generative-answer.prefer-markdown.toggle-label": "Prefer markdown format",
 	"search.configuration.generative-answer.prompt.textarea-label": "Your prompt",
 	"search.configuration.generative-answer.prompt.toggle-description": "It will take precedence over the user prompt defined in the Knowledge Box settings. Note: the prompt strategy might change depending on the generative model.",
 	"search.configuration.generative-answer.prompt.toggle-label": "Use a specific prompt",

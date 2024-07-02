@@ -50,6 +50,7 @@ export interface GenerativeAnswerConfig {
   specificResourceSlug: string;
   limitTokenConsumption: boolean;
   tokenConsumptionLimit: number | null;
+  preferMarkdown: boolean;
   ragStrategies: RagStrategiesConfig;
 }
 
@@ -121,6 +122,7 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   specificResourceSlug: '',
   limitTokenConsumption: false,
   tokenConsumptionLimit: null,
+  preferMarkdown: false,
   ragStrategies: {
     includeTextualHierarchy: false,
     additionalCharacters: null,
@@ -177,6 +179,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
   const widgetFeatures = {
     // Search configuration
     answers: config.generativeAnswer.generateAnswer,
+    preferMarkdown: config.generativeAnswer.generateAnswer && config.generativeAnswer.preferMarkdown,
     noBM25forChat: config.generativeAnswer.generateAnswerWith === 'only-semantic',
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,
