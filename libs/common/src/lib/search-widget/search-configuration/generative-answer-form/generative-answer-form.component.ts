@@ -48,6 +48,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   @Input({ required: true }) models: OptionModel[] = [];
   @Input() defaultPrompt = '';
+  @Input() promptInfos: { [model: string]: string } = {};
 
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<GenerativeAnswerConfig>();
@@ -87,10 +88,15 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       }
     }),
   );
+  userPromptInfo = '';
+  userPromptOverridden = false;
   isRagImagesEnabled = this.featuresService.unstable.ragImages;
 
   get generateAnswerEnabled() {
     return this.form.controls.generateAnswer.value;
+  }
+  getGenerativeModel() {
+    return this.form.controls.generativeModel.value;
   }
   get usePromptEnabled() {
     return this.form.controls.usePrompt.value;
@@ -113,10 +119,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   get includePageImagesEnabled() {
     return this.form.controls.ragStrategies.controls.includePageImages.value;
   }
-  get overridingPrompt() {
-    const currentPrompt = this.form.controls.prompt.value.trim();
-    return !!currentPrompt && currentPrompt !== this.defaultPrompt;
-  }
   get includePageImagesControl() {
     return this.form.controls.ragStrategies.controls.includePageImages;
   }
@@ -132,6 +134,11 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((value) => {
+      const currentPrompt = this.form.controls.prompt.value.trim();
+      this.userPromptOverridden = !!currentPrompt && currentPrompt !== this.defaultPrompt;
+      if (value.generativeModel && this.promptInfos[value.generativeModel]) {
+        this.userPromptInfo = this.promptInfos[value.generativeModel];
+      }
       this.configChanged.emit({ ...this.form.getRawValue() });
     });
   }

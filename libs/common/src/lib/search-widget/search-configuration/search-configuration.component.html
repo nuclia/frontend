@@ -97,6 +97,7 @@
           <stf-generative-answer-form
             [config]="savedConfig?.generativeAnswer"
             [defaultPrompt]="defaultPromptFromSettings"
+            [promptInfos]="promptInfos"
             [models]="generativeModels"
             (configChanged)="updateGenerativeAnswerConfig($event)"
             (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
