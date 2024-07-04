@@ -1,25 +1,6 @@
 <form [formGroup]="form">
   <div class="config-form-field">
     <pa-toggle
-      formControlName="customizePlaceholder"
-      withBackground
-      spaceBetweenLabelAndToggle
-      (valueChange)="heightChanged.emit()">
-      <span class="toggle-label">{{ 'search.configuration.search-box.placeholder.toggle-label' | translate }}</span>
-    </pa-toggle>
-    <div class="config-form-help">
-      {{ 'search.configuration.search-box.placeholder.toggle-description' | translate }}
-    </div>
-    <div
-      class="extra-fields"
-      [class.visible]="customizePlaceholderEnabled">
-      <pa-input formControlName="placeholder">
-        {{ 'search.configuration.search-box.placeholder.input-label' | translate }}
-      </pa-input>
-    </div>
-  </div>
-  <div class="config-form-field">
-    <pa-toggle
       formControlName="filter"
       withBackground
       spaceBetweenLabelAndToggle
@@ -104,11 +85,11 @@
       withBackground
       spaceBetweenLabelAndToggle>
       <span class="toggle-label">
-        {{ 'search.configuration.generative-answer.rephrase.toggle-label' | translate }}
+        {{ 'search.configuration.search-box.rephrase.toggle-label' | translate }}
       </span>
     </pa-toggle>
     <div class="config-form-help">
-      {{ 'search.configuration.generative-answer.rephrase.toggle-description' | translate }}
+      {{ 'search.configuration.search-box.rephrase.toggle-description' | translate }}
     </div>
   </div>
   <div class="config-form-field">
@@ -164,6 +145,17 @@
         </pa-checkbox>
       }
     </div>
+  </div>
+  <div class="config-form-field">
+    <div class="title-xs">{{ 'search.configuration.search-box.select-results-used.title' | translate }}</div>
+    <pa-radio-group formControlName="generateAnswerWith">
+      <pa-radio value="semantic-and-full-text">
+        {{ 'search.configuration.search-box.select-results-used.semantic-and-full-text' | translate }}
+      </pa-radio>
+      <pa-radio value="only-semantic">
+        {{ 'search.configuration.search-box.select-results-used.semantic-only' | translate }}
+      </pa-radio>
+    </pa-radio-group>
   </div>
   @if (synonymsEnabled | async) {
     <div class="config-form-field">

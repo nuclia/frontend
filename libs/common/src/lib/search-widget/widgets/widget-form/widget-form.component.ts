@@ -5,6 +5,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -18,6 +19,7 @@ import {
   PaButtonModule,
   PaDropdownModule,
   PaPopupModule,
+  PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { SearchConfiguration, Widget } from '../../search-widget.models';
@@ -36,12 +38,13 @@ import { EmbedWidgetDialogComponent } from '../dialogs';
     ReactiveFormsModule,
     BackButtonComponent,
     TranslateModule,
-    PaButtonModule,
     AccordionItemComponent,
     AccordionBodyDirective,
-    PaTogglesModule,
+    PaButtonModule,
     PaDropdownModule,
     PaPopupModule,
+    PaTextFieldModule,
+    PaTogglesModule,
     SearchConfigurationComponent,
   ],
   templateUrl: './widget-form.component.html',
@@ -61,6 +64,8 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   private unsubscribeAll = new Subject<void>();
 
+  @ViewChild('widgetOptions', { read: AccordionItemComponent }) widgetOptionsItem?: AccordionItemComponent;
+
   savedWidget?: Widget;
   currentWidget?: Widget;
   isNotModified = true;
@@ -68,6 +73,10 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   form = new FormGroup({
     popupStyle: new FormControl<'page' | 'popup'>('page', { nonNullable: true }),
     darkMode: new FormControl<'light' | 'dark'>('light', { nonNullable: true }),
+    customizePlaceholder: new FormControl<boolean>(false, { nonNullable: true }),
+    placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    customizeNotEnoughDataMessage: new FormControl<boolean>(false, { nonNullable: true }),
+    notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     hideLogo: new FormControl<boolean>(false, { nonNullable: true }),
     permalink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
@@ -85,6 +94,12 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   );
   configChanges = new Subject<SearchConfiguration>();
 
+  get customizePlaceholderEnabled() {
+    return this.form.controls.customizePlaceholder.value;
+  }
+  get customizeNotEnoughDataEnabled() {
+    return this.form.controls.customizeNotEnoughDataMessage.value;
+  }
   get darkModeEnabled() {
     return this.form.controls.darkMode.value === 'dark';
   }
@@ -140,6 +155,10 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  updateWidgetOptionsHeight() {
+    this.widgetOptionsItem?.updateContentHeight();
   }
 
   saveChanges() {

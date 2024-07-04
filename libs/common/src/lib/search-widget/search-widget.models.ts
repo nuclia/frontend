@@ -11,7 +11,6 @@ export const DEFAULT_FILTERS: FilterSelectionType = {
 export const MODELS_SUPPORTING_VISION = ['chatgpt-vision', 'gemini-1-5-pro-vision'];
 
 export interface SearchBoxConfig {
-  customizePlaceholder: boolean;
   filter: boolean;
   autofilter: boolean;
   setPreselectedFilters: boolean;
@@ -20,12 +19,12 @@ export interface SearchBoxConfig {
   suggestResults: boolean;
   suggestLabels: boolean;
   autocompleteFromNERs: boolean;
-  placeholder: string;
   preselectedFilters: string;
   filters: FilterSelectionType;
   prependTheQuery: boolean;
   queryPrepend: string;
   rephraseQuery: boolean;
+  generateAnswerWith: 'only-semantic' | 'semantic-and-full-text';
 }
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
@@ -43,9 +42,6 @@ export interface GenerativeAnswerConfig {
   generativeModel: string;
   usePrompt: boolean;
   prompt: string;
-  customizeNotEnoughDataMessage: boolean;
-  notEnoughDataMessage: string;
-  generateAnswerWith: 'only-semantic' | 'semantic-and-full-text';
   askSpecificResource: boolean;
   specificResourceSlug: string;
   limitTokenConsumption: boolean;
@@ -74,6 +70,10 @@ export interface SearchConfiguration {
 export interface WidgetConfiguration {
   popupStyle: 'page' | 'popup';
   darkMode: 'light' | 'dark';
+  customizePlaceholder: boolean;
+  placeholder: string;
+  customizeNotEnoughDataMessage: boolean;
+  notEnoughDataMessage: string;
   hideLogo: boolean;
   permalink: boolean;
   navigateToLink: boolean;
@@ -94,8 +94,6 @@ export const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
 export const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
 
 export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
-  customizePlaceholder: false,
-  placeholder: '',
   filter: false,
   filters: DEFAULT_FILTERS,
   autofilter: false,
@@ -109,15 +107,13 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   prependTheQuery: false,
   queryPrepend: '',
   rephraseQuery: false,
+  generateAnswerWith: 'semantic-and-full-text',
 };
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generateAnswer: false,
   generativeModel: '',
   usePrompt: false,
   prompt: '',
-  customizeNotEnoughDataMessage: false,
-  notEnoughDataMessage: '',
-  generateAnswerWith: 'semantic-and-full-text',
   askSpecificResource: false,
   specificResourceSlug: '',
   limitTokenConsumption: false,
@@ -147,6 +143,10 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
 export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   popupStyle: 'page',
   darkMode: 'light',
+  customizePlaceholder: false,
+  placeholder: '',
+  customizeNotEnoughDataMessage: false,
+  notEnoughDataMessage: '',
   hideLogo: false,
   permalink: false,
   navigateToLink: false,
@@ -180,7 +180,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     // Search configuration
     answers: config.generativeAnswer.generateAnswer,
     preferMarkdown: config.generativeAnswer.generateAnswer && config.generativeAnswer.preferMarkdown,
-    noBM25forChat: config.generativeAnswer.generateAnswerWith === 'only-semantic',
+    noBM25forChat: config.searchBox.generateAnswerWith === 'only-semantic',
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,
     autofilter: config.searchBox.autofilter,
@@ -209,7 +209,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
 
   return `\n  features="${featureList}"`;
 }
-export function getPlaceholder(config: SearchBoxConfig): string {
+export function getPlaceholder(config: WidgetConfiguration): string {
   return config.customizePlaceholder && config.placeholder ? `\n  placeholder="${config.placeholder}"` : '';
 }
 export function getPrompt(config: GenerativeAnswerConfig): string {
@@ -275,7 +275,7 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
 
   return { ragProperties, ragImagesProperties };
 }
-export function getNotEnoughDataMessage(config: GenerativeAnswerConfig): string {
+export function getNotEnoughDataMessage(config: WidgetConfiguration): string {
   return config.customizeNotEnoughDataMessage && !!config.notEnoughDataMessage.trim()
     ? `\n  not_enough_data_message="${config.notEnoughDataMessage.trim().replace(/"/g, '&quot;')}"`
     : '';

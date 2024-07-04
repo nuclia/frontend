@@ -45,12 +45,60 @@
   <div class="widget-form-page-body">
     <div class="widget-form-container">
       <pa-accordion-item
+        #widgetOptions
         id="widget-options"
         [(expanded)]="widgetFormExpanded"
         [itemTitle]="'search.widgets.form.widget-options.section-title' | translate"
         [description]="'search.widgets.form.widget-options.section-description' | translate">
         <pa-accordion-item-body>
           <form [formGroup]="form">
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="customizePlaceholder"
+                withBackground
+                spaceBetweenLabelAndToggle
+                (valueChange)="updateWidgetOptionsHeight()">
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.placeholder.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.placeholder.toggle-description' | translate }}
+              </div>
+              <div
+                class="extra-fields"
+                [class.visible]="customizePlaceholderEnabled">
+                <pa-input formControlName="placeholder">
+                  {{ 'search.widgets.form.widget-options.placeholder.input-label' | translate }}
+                </pa-input>
+              </div>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="customizeNotEnoughDataMessage"
+                withBackground
+                spaceBetweenLabelAndToggle
+                (valueChange)="updateWidgetOptionsHeight()">
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.customize-insufficient-data.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.customize-insufficient-data.toggle-description' | translate }}
+              </div>
+              <div
+                class="extra-fields"
+                [class.visible]="customizeNotEnoughDataEnabled">
+                <pa-textarea
+                  externalLabel
+                  acceptHtmlTags
+                  resizable
+                  formControlName="notEnoughDataMessage"
+                  (resizing)="updateWidgetOptionsHeight()">
+                  {{ 'search.widgets.form.widget-options.customize-insufficient-data.input-label' | translate }}
+                </pa-textarea>
+              </div>
+            </div>
             <div class="config-form-field">
               <div class="title-xs">{{ 'search.widgets.form.widget-options.style.title' | translate }}</div>
               <pa-radio-group

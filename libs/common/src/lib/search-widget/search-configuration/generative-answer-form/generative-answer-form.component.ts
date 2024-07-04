@@ -57,11 +57,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     generativeModel: new FormControl<string>('', { nonNullable: true }),
     usePrompt: new FormControl<boolean>(false, { nonNullable: true }),
     prompt: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
-    customizeNotEnoughDataMessage: new FormControl<boolean>(false, { nonNullable: true }),
-    notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
-    generateAnswerWith: new FormControl<'only-semantic' | 'semantic-and-full-text'>('semantic-and-full-text', {
-      nonNullable: true,
-    }),
     askSpecificResource: new FormControl<boolean>(false, { nonNullable: true }),
     specificResourceSlug: new FormControl<string>('', {
       nonNullable: true,
@@ -99,9 +94,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   get usePromptEnabled() {
     return this.form.controls.usePrompt.value;
-  }
-  get customizeNotEnoughDataEnabled() {
-    return this.form.controls.customizeNotEnoughDataMessage.value;
   }
   get askSpecificResourceEnabled() {
     return this.form.controls.askSpecificResource.value;
