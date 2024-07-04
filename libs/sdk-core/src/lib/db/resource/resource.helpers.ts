@@ -18,6 +18,7 @@ export const setLabels: (
   labels: Classification[],
   allEntries: UserFieldMetadata[],
 ) => {
+  // FIXME don't keep tokens when updating labels (see https://app.shortcut.com/flaps/story/10477/remove-annotation-related-methods-in-js-sdk)
   // collect all tokens for the field
   const tokens = deDuplicateList(
     allEntries
@@ -54,6 +55,9 @@ export const setLabels: (
   }
 };
 
+/**
+ * @deprecated Will be removed in version 1.18.0
+ */
 export const setEntities: (
   fieldId: string,
   fieldType: string,

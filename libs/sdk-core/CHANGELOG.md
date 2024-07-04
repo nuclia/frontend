@@ -1,4 +1,10 @@
-# 1.17.1 (unreleased)
+# 1.17.1 (2024-07-08)
+
+### Deprecation
+
+- Annotation related methods are deprecated and will be removed in next minor version:
+  - entity management
+  - synonyms management
 
 ### Beta feature
 

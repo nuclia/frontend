@@ -55,7 +55,7 @@ import {
 } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { catalog, ask, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
+import { ask, catalog, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
 import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
@@ -849,17 +849,26 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.modify({ state: published ? 'PUBLISHED' : 'PRIVATE' });
   }
 
-  /** Creates a new NER family. */
+  /**
+   * @deprecated Will be removed in version 1.18.0
+   * Creates a new NER family.
+   */
   createEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void> {
     return this.nuclia.rest.post<void>(`${this.path}/entitiesgroups`, { ...group, group: groupId });
   }
 
-  /** Updates a NER family. */
+  /**
+   * @deprecated Will be removed in version 1.18.0
+   * Updates a NER family.
+   */
   updateEntitiesGroup(groupId: string, payload: UpdateEntitiesGroupPayload): Observable<void> {
     return this.nuclia.rest.patch<void>(`${this.path}/entitiesgroup/${groupId}`, payload);
   }
 
-  /** Deletes a NER family. */
+  /**
+   * @deprecated Will be removed in version 1.18.0
+   * Deletes a NER family.
+   */
   deleteEntitiesGroup(groupId: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/entitiesgroup/${groupId}`);
   }
@@ -894,10 +903,17 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.delete(`${this.path}/labelset/${setId}`);
   }
 
+  /**
+   * @deprecated
+   * @param synonyms
+   */
   setSynonyms(synonyms: Synonyms): Observable<void> {
     return this.nuclia.rest.put<void>(`${this.path}/custom-synonyms`, { synonyms });
   }
 
+  /**
+   * @deprecated
+   */
   deleteAllSynonyms(): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/custom-synonyms`);
   }
