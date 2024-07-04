@@ -8,8 +8,6 @@ $header-height: rhythm(10) + rhythm(1) + $vertical-gap * 2;
   display: flex;
   flex-direction: column;
   gap: $vertical-gap;
-  padding-bottom: 0;
-  padding-right: 0;
 
   .page-header {
     display: flex;
@@ -38,7 +36,9 @@ $header-height: rhythm(10) + rhythm(1) + $vertical-gap * 2;
     }
     .widget-form-container,
     .widget-preview-container {
-      height: calc(100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - #{$header-height});
+      max-height: calc(
+        100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - var(--app-layout-padding-bottom) - #{$header-height}
+      );
       overflow-y: auto;
     }
   }
