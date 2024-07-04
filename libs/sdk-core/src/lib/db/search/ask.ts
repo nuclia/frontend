@@ -39,7 +39,7 @@ export function ask(
   });
   return synchronous
     ? nuclia.rest.post<Ask.AskResponse>(endpoint, body, undefined, undefined, true).pipe(
-        map(({ answer, relations, retrieval_results, citations, learning_id }) => {
+        map(({ answer, relations, retrieval_results, citations, learning_id, answer_json }) => {
           return {
             type: 'answer',
             text: answer,
@@ -47,6 +47,7 @@ export function ask(
             citations,
             incomplete: false,
             id: learning_id,
+            jsonAnswer: answer_json,
           } as Ask.Answer;
         }),
         tap((res) => nuclia.events?.log('lastResults', res)),
@@ -72,7 +73,7 @@ export function ask(
             return acc;
           }, [] as Ask.AskResponseItem[]);
 
-          const answer = items
+          let answer = items
             .filter((item) => item.item.type === 'answer')
             .map((item) => (item.item as Ask.AnswerAskResponseItem).text)
             .join('');
@@ -83,7 +84,24 @@ export function ask(
           }
           const citationsItem = items.find((item) => item.item.type === 'citations');
           const citations = citationsItem ? (citationsItem.item as Ask.CitationsAskResponseItem).citations : undefined;
-          return { type: 'answer', text: answer, sources, incomplete, id, citations } as Ask.Answer;
+          const jsonAnswerItem = items.find((response) => response.item.type === 'answer_json');
+          let jsonAnswer: Ask.AnswerJsonResponseItem | undefined;
+          if (jsonAnswerItem) {
+            jsonAnswer = jsonAnswerItem.item as Ask.AnswerJsonResponseItem;
+            if (!answer && typeof jsonAnswer.object['answer'] === 'string') {
+              answer = jsonAnswer.object['answer'];
+            }
+          }
+
+          return {
+            type: 'answer',
+            text: answer,
+            sources,
+            incomplete,
+            id,
+            citations,
+            jsonAnswer: jsonAnswer?.object,
+          } as Ask.Answer;
         }),
         catchError((error) =>
           of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse),

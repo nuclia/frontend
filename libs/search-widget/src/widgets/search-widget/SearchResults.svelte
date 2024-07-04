@@ -7,7 +7,7 @@
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import globalCss from '../../common/_global.scss?inline';
   import {
-    _,
+    _, chat, currentAnswer,
     downloadDump,
     getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
@@ -17,7 +17,7 @@
     hasSearchError,
     hideResults,
     isAnswerEnabled,
-    isEmptySearchQuery,
+    isEmptySearchQuery, jsonAnswer, jsonSchemaEnabled,
     loadFonts,
     loadMore,
     loadSvgSprite,
@@ -28,10 +28,10 @@
     showResults,
     trackingReset,
     type WidgetAction,
-    widgetActions,
+    widgetActions, widgetJsonSchema
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
-  import { InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
+  import { InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
   import { Button } from '../../common';
 
@@ -118,6 +118,9 @@
         <div class="results">
           {#if $isAnswerEnabled}
             <InitialAnswer />
+            {#if $jsonSchemaEnabled && $jsonAnswer}
+              <JsonAnswer jsonAnswer={$jsonAnswer} jsonSchema={$widgetJsonSchema} />
+            {/if}
           {/if}
           {#if !$isAnswerEnabled && $hasDumpLogButton}
             <div>

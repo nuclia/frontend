@@ -19,6 +19,7 @@ export namespace Ask {
     id: string;
     sources?: Search.FindResults;
     citations?: Citations;
+    jsonAnswer?: any;
     incomplete?: boolean;
     inError?: boolean;
   }
@@ -36,6 +37,7 @@ export namespace Ask {
     item:
       | RetrievalAskResponseItem
       | AnswerAskResponseItem
+      | AnswerJsonResponseItem
       | MetadataAskResponseItem
       | CitationsAskResponseItem
       | StatusAskResponseItem
@@ -52,6 +54,11 @@ export namespace Ask {
   export interface AnswerAskResponseItem {
     type: 'answer';
     text: string;
+  }
+
+  export interface AnswerJsonResponseItem {
+    type: 'answer_json';
+    object: any;
   }
 
   export interface MetadataAskResponseItem {
@@ -106,6 +113,7 @@ export namespace Ask {
     citations: Citations;
     prompt_context?: string[];
     metadata: MetadataAskResponseItem;
+    answer_json?: any;
   }
 }
 

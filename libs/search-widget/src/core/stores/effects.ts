@@ -32,8 +32,8 @@ import type { TypedResult } from '../models';
 import { NO_SUGGESTION_RESULTS } from '../models';
 import { widgetFeatures, widgetImageRagStrategies, widgetRagStrategies } from './widget.store';
 import type {
-  BaseSearchOptions,
   Ask,
+  BaseSearchOptions,
   ChatOptions,
   Classification,
   FieldFullId,
@@ -46,7 +46,6 @@ import {
   getFindParagraphs,
   getUrlParams,
   hasNoResultsWithAutofilter,
-  hasNotEnoughData,
   updateQueryParams,
 } from '../utils';
 import {

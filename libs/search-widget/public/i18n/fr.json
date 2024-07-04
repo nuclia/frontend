@@ -8,6 +8,7 @@
 	"answer.feedback.wrong-citations": "Les sources ne sont pas exactes",
 	"answer.feedback.wrong-results": "Les résultats ne sont pas pertinents",
 	"answer.input.label": "Champ de saisie du chat",
+	"answer.json-answer.title": "Réponse JSON",
 	"answer.no-citations": "Le système n'a pas été en mesure d'indiquer explicitement les sources utilisées pour produire cette réponse.",
 	"answer.placeholder": "Discutons",
 	"answer.sources": "Sources",

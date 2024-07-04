@@ -73,3 +73,29 @@ export interface WidgetFilters {
   created?: boolean;
   labelFamilies?: boolean;
 }
+
+export interface JsonSchema {
+  name: string;
+  description: string;
+  parameters: JsonSchemaObject;
+}
+export type JsonSchemaType = 'object' | 'string' | 'array' | 'number' | 'boolean';
+
+export interface JsonSchemaBase {
+  type: JsonSchemaType;
+  description?: string;
+}
+
+export interface JsonSchemaObject extends JsonSchemaBase {
+  type: 'object';
+  properties: {
+    [key: string]: JsonSchemaBase;
+  };
+  required?: string[];
+}
+export interface JsonSchemaArray extends JsonSchemaBase {
+  type: 'array';
+  items: {
+    type: JsonSchemaType;
+  };
+}

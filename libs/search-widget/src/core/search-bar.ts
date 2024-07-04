@@ -24,6 +24,7 @@ import {
   trackingStartTime,
   triggerSearch,
   widgetImageRagStrategies,
+  widgetJsonSchema,
   widgetRagStrategies,
 } from './stores';
 import { NO_RESULT_LIST } from './models';
@@ -65,6 +66,7 @@ export const setupTriggerSearch = (
                 widgetRagStrategies.pipe(take(1)),
                 widgetImageRagStrategies.pipe(take(1)),
                 preferMarkdown.pipe(take(1)),
+                widgetJsonSchema.pipe(take(1)),
               ]).pipe(
                 tap(() => {
                   pendingResults.set(true);
@@ -81,6 +83,7 @@ export const setupTriggerSearch = (
                     ragStrategies,
                     ragImageStrategies,
                     preferMarkdown,
+                    jsonSchema,
                   ]) => {
                     dispatch('search', { query, filters });
                     const currentOptions: SearchOptions = {
@@ -99,6 +102,9 @@ export const setupTriggerSearch = (
                       }
                       if (preferMarkdown) {
                         chatOptions.prefer_markdown = preferMarkdown;
+                      }
+                      if (jsonSchema) {
+                        chatOptions.answer_json_schema = jsonSchema;
                       }
                       return askQuestion(query, true, chatOptions).pipe(
                         tap((res) => {
