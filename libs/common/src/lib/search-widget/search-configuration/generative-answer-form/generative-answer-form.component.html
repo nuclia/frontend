@@ -44,7 +44,7 @@
         {{ 'search.configuration.generative-answer.prompt.toggle-description' | translate }}
       </div>
       @if (!!defaultPrompt) {
-        <blockquote [class.overridden]="overridingPrompt">
+        <blockquote [class.overridden]="userPromptOverridden">
           {{ defaultPrompt }}
         </blockquote>
       }

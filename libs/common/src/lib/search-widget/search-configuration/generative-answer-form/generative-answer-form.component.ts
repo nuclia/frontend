@@ -87,6 +87,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       }
     }),
   );
+  userPromptOverridden = false;
   isRagImagesEnabled = this.featuresService.unstable.ragImages;
 
   get generateAnswerEnabled() {
@@ -113,10 +114,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   get includePageImagesEnabled() {
     return this.form.controls.ragStrategies.controls.includePageImages.value;
   }
-  get overridingPrompt() {
-    const currentPrompt = this.form.controls.prompt.value.trim();
-    return !!currentPrompt && currentPrompt !== this.defaultPrompt;
-  }
   get includePageImagesControl() {
     return this.form.controls.ragStrategies.controls.includePageImages;
   }
@@ -132,6 +129,8 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((value) => {
+      const currentPrompt = this.form.controls.prompt.value.trim();
+      this.userPromptOverridden = !!currentPrompt && currentPrompt !== this.defaultPrompt;
       this.configChanged.emit({ ...this.form.getRawValue() });
     });
   }
