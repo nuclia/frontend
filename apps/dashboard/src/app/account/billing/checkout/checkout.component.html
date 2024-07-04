@@ -302,35 +302,33 @@
     <div class="section-body">
       <div class="budget-form">
         <div [innerHTML]="'billing.budget_description' | translate"></div>
-        <div class="budget-input">
-          <pa-input
-            type="number"
-            externalLabel
-            [formControl]="budget"
-            [errorMessages]="errors"></pa-input>
-          @if (currency$ | async; as currency) {
-            <span class="title-m">
-              {{ currency === 'USD' ? '$' : '€' }}
-            </span>
-          }
-        </div>
         @if (subscribeMode | async) {
-          <pa-button
-            (click)="doSubscribe()"
-            [disabled]="editCustomer || editCard || budget.invalid || loading"
-            kind="primary">
-            {{ 'billing.review_confirm' | translate }}
-          </pa-button>
+          <app-budget
+            [currency]="currency$ | async"
+            (budgetChange)="budget = $event"></app-budget>
+          <div class="submit">
+            <pa-button
+              (click)="doSubscribe()"
+              [disabled]="editCustomer || editCard || !budget || loading"
+              kind="primary">
+              {{ 'billing.review_confirm' | translate }}
+            </pa-button>
+            @if (loading) {
+              <nsi-spinner></nsi-spinner>
+            }
+          </div>
         } @else {
-          <pa-button
-            (click)="saveBudget()"
-            [disabled]="budget.pristine || budget.invalid"
-            kind="primary">
-            {{ 'generic.save' | translate }}
-          </pa-button>
-        }
-        @if (loading) {
-          <nsi-spinner></nsi-spinner>
+          <app-budget
+            [currency]="(usage | async)?.currency"
+            (budgetChange)="budget = $event"></app-budget>
+          <div class="submit">
+            <pa-button
+              kind="primary"
+              [disabled]="!budget"
+              (click)="modifyBudget()">
+              {{ 'generic.save' | translate }}
+            </pa-button>
+          </div>
         }
       </div>
     </div>

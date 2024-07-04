@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from './sdk.service';
-import { catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
 import {
   AccountSubscription,
@@ -143,7 +143,7 @@ export class BillingService {
     );
   }
 
-  modifySubscription(data: { on_demand_budget: number }, isAws = false) {
+  modifySubscription(data: { on_demand_budget: number | null }, isAws = false) {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
@@ -249,6 +249,26 @@ export class BillingService {
       switchMap((account) =>
         this.sdk.nuclia.rest.get<InvoicesList>(
           `/billing/account/${account.id}/invoices?limit=${limit}` + (lastId ? `&starting_after=${lastId}` : ''),
+        ),
+      ),
+    );
+  }
+
+  saveBudget(budget: number | null) {
+    return this.isSubscribedToAws.pipe(
+      switchMap((isAws) =>
+        this.modifySubscription({ on_demand_budget: budget }, isAws).pipe(
+          switchMap(() =>
+            isAws
+              ? of([0, 0])
+              : forkJoin([
+                  this.getAccountUsage().pipe(map((usage) => usage.over_cost)),
+                  this.getSubscription().pipe(
+                    map((subscription) => subscription?.subscription?.on_demand_budget || null),
+                  ),
+                ]),
+          ),
+          map(([cost, budget]) => ({ budgetBelowTotal: (budget || 0) < cost })),
         ),
       ),
     );

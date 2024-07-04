@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
-import { AccountUsage, BillingService } from '@flaps/core';
-import { catchError, map, switchMap } from 'rxjs';
-import { FormControl, Validators } from '@angular/forms';
-import { SisToastService } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { BillingService, Currency } from '@flaps/core';
+import { filter, map, startWith, Subject, takeUntil } from 'rxjs';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-budget',
@@ -10,47 +9,57 @@ import { SisToastService } from '@nuclia/sistema';
   styleUrls: ['./budget.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BudgetComponent {
-  isSubscribedToAws = this.billing.isSubscribedToAws;
-  budget = new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.min(0)] });
-  @Input() usage: AccountUsage | undefined;
+export class BudgetComponent implements OnDestroy {
+  budgetValidators = [Validators.required, Validators.min(1)];
+  form = new FormGroup({
+    budget: new FormControl<number | null>(null, { validators: this.budgetValidators }),
+    type: new FormControl<'unlimited' | 'limited' | null>(null, { validators: [Validators.required] }),
+  });
+  unsubscribeAll = new Subject<void>();
 
-  constructor(
-    private billing: BillingService,
-    private cdr: ChangeDetectorRef,
-    private toaster: SisToastService,
-  ) {
-    this.getBudget().subscribe((budget) => {
-      this.budget.setValue(budget.toString());
-    });
-  }
+  @Input() currency: Currency | undefined;
+  @Output() budgetChange = new EventEmitter<{ value: number | null } | undefined>();
 
-  saveBudget() {
-    this.isSubscribedToAws
+  constructor(private billing: BillingService) {
+    this.billing
+      .getSubscription()
       .pipe(
-        switchMap((isAws) =>
-          this.billing.modifySubscription({ on_demand_budget: parseInt(this.budget.value) }, isAws).pipe(
-            switchMap(() => this.getBudget()),
-            catchError((error) => {
-              this.toaster.error('generic.error.oops');
-              throw error;
-            }),
-          ),
-        ),
+        filter((subscription) => !!subscription),
+        map((subscription) => {
+          const budget = subscription?.subscription?.on_demand_budget;
+          return typeof budget === 'number' ? budget : null;
+        }),
       )
       .subscribe((budget) => {
-        this.budget.setValue(budget.toString());
-        this.budget.markAsPristine();
-        if (this.usage && budget < this.usage.over_cost) {
-          this.toaster.warning('billing.budget_warning');
-        }
-        this.cdr?.markForCheck();
+        const type = typeof budget === 'number' ? 'limited' : 'unlimited';
+        this.form.controls.budget.setValue(budget);
+        this.form.controls.type.setValue(type);
+        this.updateValidation(type);
+        this.budgetChange.emit({ value: budget });
       });
+
+    this.form.valueChanges
+      .pipe(
+        startWith(this.form.getRawValue()),
+        map((values) => {
+          this.budgetChange.emit(
+            this.form.valid ? { value: values.type === 'limited' ? (values.budget as number) : null } : undefined,
+          );
+        }),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe();
   }
 
-  getBudget() {
-    return this.billing
-      .getSubscription()
-      .pipe(map((subscription) => subscription?.subscription?.on_demand_budget || 0));
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+
+  updateValidation(type: 'limited' | 'unlimited') {
+    type === 'limited'
+      ? this.form.controls.budget.addValidators(this.budgetValidators)
+      : this.form.controls.budget.removeValidators(this.budgetValidators);
+    this.form.controls.budget.updateValueAndValidity();
   }
 }

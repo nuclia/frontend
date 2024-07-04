@@ -10,7 +10,7 @@
       @if (prices && currency) {
         <div class="body-m">
           {{
-            'billing.review.cost'
+            (budget ? 'billing.review.cost' : 'billing.review.cost-without-limit')
               | translate
                 : {
                     cost: monthly
