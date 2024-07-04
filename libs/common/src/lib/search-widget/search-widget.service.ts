@@ -123,12 +123,12 @@ export class SearchWidgetService {
 
     // Search configuration
     const features = getFeatures(currentConfig, widgetOptions);
-    const placeholder = getPlaceholder(currentConfig.searchBox);
+    const placeholder = getPlaceholder(widgetOptions);
     const prompt = getPrompt(currentConfig.generativeAnswer);
     const filters = getFilters(currentConfig.searchBox);
     const preselectedFilters = getPreselectedFilters(currentConfig.searchBox);
     const { ragProperties, ragImagesProperties } = getRagStrategies(currentConfig.generativeAnswer.ragStrategies);
-    const notEnoughDataMessage = getNotEnoughDataMessage(currentConfig.generativeAnswer);
+    const notEnoughDataMessage = getNotEnoughDataMessage(widgetOptions);
     const askToResource = getAskToResource(currentConfig.generativeAnswer);
     const maxTokens = getMaxTokens(currentConfig.generativeAnswer);
     const generativeModel = currentConfig.generativeAnswer.generativeModel
@@ -189,7 +189,7 @@ export class SearchWidgetService {
     if (this.currentQuery) {
       searchWidget?.search(this.currentQuery, this.currentFilters);
     }
-    searchWidget?.addEventListener('search', (event: { detail: { query: string, filters: string[] } }) => {
+    searchWidget?.addEventListener('search', (event: { detail: { query: string; filters: string[] } }) => {
       this.currentQuery = event.detail.query;
       this.currentFilters = event.detail.filters;
     });

@@ -56,7 +56,6 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   @Output() configChanged = new EventEmitter<SearchBoxConfig>();
 
   form = new FormGroup({
-    customizePlaceholder: new FormControl<boolean>(false, { nonNullable: true }),
     filter: new FormControl<boolean>(false, { nonNullable: true }),
     setPreselectedFilters: new FormControl<boolean>(false, { nonNullable: true }),
     suggestions: new FormControl<boolean>(false, { nonNullable: true }),
@@ -70,12 +69,14 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     suggestResults: new FormControl<boolean>(false, { nonNullable: true }),
     suggestLabels: new FormControl<boolean>(false, { nonNullable: true }),
     autocompleteFromNERs: new FormControl<boolean>(false, { nonNullable: true }),
-    placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     preselectedFilters: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     useSynonyms: new FormControl<boolean>(false, { nonNullable: true }),
     prependTheQuery: new FormControl<boolean>(false, { nonNullable: true }),
     queryPrepend: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     rephraseQuery: new FormControl<boolean>(false, { nonNullable: true }),
+    generateAnswerWith: new FormControl<'only-semantic' | 'semantic-and-full-text'>('semantic-and-full-text', {
+      nonNullable: true,
+    }),
   });
 
   synonymsEnabled = this.featuresService.unstable.synonyms;
@@ -89,9 +90,6 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   autocompleteFromNerEnabled = this.featuresService.unstable.suggestEntities;
   isTrainingEnabled = this.featuresService.unstable.training;
 
-  get customizePlaceholderEnabled() {
-    return this.form.controls.customizePlaceholder.value;
-  }
   get filterEnabled() {
     return this.form.controls.filter.value;
   }

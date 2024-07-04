@@ -62,43 +62,6 @@
     </div>
     <div class="config-form-field">
       <pa-toggle
-        formControlName="customizeNotEnoughDataMessage"
-        withBackground
-        spaceBetweenLabelAndToggle
-        (valueChange)="heightChanged.emit()">
-        <span class="toggle-label">
-          {{ 'search.configuration.generative-answer.customize-insufficient-data.toggle-label' | translate }}
-        </span>
-      </pa-toggle>
-      <div class="config-form-help">
-        {{ 'search.configuration.generative-answer.customize-insufficient-data.toggle-description' | translate }}
-      </div>
-      <div
-        class="extra-fields"
-        [class.visible]="customizeNotEnoughDataEnabled">
-        <pa-textarea
-          externalLabel
-          acceptHtmlTags
-          resizable
-          formControlName="notEnoughDataMessage"
-          (resizing)="heightChanged.emit()">
-          {{ 'search.configuration.generative-answer.customize-insufficient-data.input-label' | translate }}
-        </pa-textarea>
-      </div>
-    </div>
-    <div class="config-form-field">
-      <div class="title-xs">{{ 'search.configuration.generative-answer.select-results-used.title' | translate }}</div>
-      <pa-radio-group formControlName="generateAnswerWith">
-        <pa-radio value="semantic-and-full-text">
-          {{ 'search.configuration.generative-answer.select-results-used.semantic-and-full-text' | translate }}
-        </pa-radio>
-        <pa-radio value="only-semantic">
-          {{ 'search.configuration.generative-answer.select-results-used.semantic-only' | translate }}
-        </pa-radio>
-      </pa-radio-group>
-    </div>
-    <div class="config-form-field">
-      <pa-toggle
         formControlName="askSpecificResource"
         withBackground
         spaceBetweenLabelAndToggle
