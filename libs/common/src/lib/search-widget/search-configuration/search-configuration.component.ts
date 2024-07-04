@@ -107,6 +107,7 @@ export class SearchConfigurationComponent {
   modelFromSettings = '';
   modelNames: { [key: string]: string } = {};
   generativeModels: OptionModel[] = [];
+  promptInfos: { [model: string]: string } = {};
   defaultPromptFromSettings = '';
   lastQuery?: { [key: string]: any };
 
@@ -218,6 +219,24 @@ export class SearchConfigurationComponent {
               : null,
         }),
     );
+    const promptInfos = Object.entries(schema['user_prompts']?.schemas || {}).reduce(
+      (infos, [prompt, schema]) => {
+        if (schema.properties['prompt']?.info) {
+          infos[prompt] = schema.properties['prompt']?.info;
+        }
+        return infos;
+      },
+      {} as { [prompt: string]: string },
+    );
+    this.promptInfos = generativeModels
+      .filter((model) => !!model.user_prompt && model.user_prompt !== 'none')
+      .reduce(
+        (infoByModel, model) => {
+          infoByModel[model.value] = promptInfos[model.user_prompt as string];
+          return infoByModel;
+        },
+        {} as { [model: string]: string },
+      );
     const promptKey = generativeModels.find((model) => model.value === this.modelFromSettings)?.user_prompt;
     this.defaultPromptFromSettings = promptKey ? config['user_prompts']?.[promptKey]?.['prompt'] || '' : '';
   }

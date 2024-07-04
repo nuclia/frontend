@@ -51,6 +51,9 @@
       <div
         class="extra-fields"
         [class.visible]="usePromptEnabled">
+        @if (userPromptInfo) {
+          <nsi-info-card>{{ userPromptInfo }}</nsi-info-card>
+        }
         <pa-textarea
           formControlName="prompt"
           resizable
