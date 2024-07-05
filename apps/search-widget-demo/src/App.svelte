@@ -18,6 +18,41 @@
   const allFeatures =
     'filter,suggestions,permalink,zrelations,zknowledgeGraph,znavigateToLink,znavigateToFile,answers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat';
 
+  const jsonSchema2 = JSON.stringify({
+    name: 'book_list',
+    description: 'List of books',
+    parameters: {
+      type: 'object',
+      properties: {
+        answer: {
+          type: 'string',
+          description: `Text responding to the user's query with the given context.`
+        },
+        books: {
+          type: 'array',
+          description: 'List of books answering the question',
+          items: {
+            type: 'object',
+            properties: {
+              title: {
+                type: 'string',
+                description: 'Title of the book'
+              },
+              author: {
+                type: 'string',
+                description: 'The author of the book'
+              },
+              ref_num: {
+                type: 'string',
+                description: 'The ISBN of the book'
+              },
+            }
+          }
+        }
+      }
+    }
+  });
+
   const jsonSchema = JSON.stringify({
     name: 'book_ordering',
     description: 'Structured answer for a book to order',
@@ -96,7 +131,7 @@
     lang="en"
     no_tracking
     features={askFeatures}
-    json_schema={jsonSchema}
+    json_schema={jsonSchema2}
   />
   <NucliaSearchResults no_tracking />
 </main>
