@@ -1,17 +1,22 @@
-<div class="budget">
-  <pa-input
-    type="number"
-    [formControl]="budget">
-    @if (usage) {
-      {{ usage.currency === 'USD' ? '$' : '€' }}
-    } @else if (isSubscribedToAws | async) {
-      $
-    }
-  </pa-input>
-</div>
-<pa-button
-  kind="primary"
-  [disabled]="budget.pristine || budget.invalid"
-  (click)="saveBudget()">
-  {{ 'generic.save' | translate }}
-</pa-button>
+<form [formGroup]="form">
+  <pa-radio-group
+    formControlName="type"
+    (valueChange)="updateValidation($event)">
+    <pa-radio value="unlimited">{{ 'billing.unlimited' | translate }}</pa-radio>
+    <div>
+      <pa-radio value="limited">{{ 'billing.limited' | translate }}</pa-radio>
+      @if (form.value.type === 'limited') {
+        <div class="budget-input">
+          <pa-input
+            type="number"
+            formControlName="budget">
+            @if (currency) {
+              {{ currency === 'USD' ? '$' : '€' }}
+            }
+          </pa-input>
+          <span>/ {{ 'billing.month' | translate }}</span>
+        </div>
+      }
+    </div>
+  </pa-radio-group>
+</form>

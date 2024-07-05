@@ -62,7 +62,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   });
 
   cardName = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
-  budget = new FormControl<string>('0', { nonNullable: true, validators: [Validators.required, Validators.min(0)] });
+  budget?: { value: number | null };
 
   errors: IErrorMessages = {
     required: 'validation.required',
@@ -88,6 +88,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     shareReplay(),
   );
   subscribeMode = this.accountType.pipe(map((type) => !!type));
+  usage = this.billingService.getAccountUsage().pipe(shareReplay(1));
 
   prices$ = this.billingService.getPrices().pipe(shareReplay());
   monthly = combineLatest([
@@ -151,7 +152,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   ) {
     this.initCustomer();
     this.initStripe();
-    this.initBudget();
   }
 
   ngOnInit() {
@@ -194,18 +194,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
       }
       this.cdr?.markForCheck();
     });
-  }
-
-  initBudget() {
-    this.subscribeMode
-      .pipe(
-        switchMap((subscribeMode) => {
-          return subscribeMode ? of(0) : this.billingService.getAccountUsage().pipe(map((usage) => usage.budget));
-        }),
-      )
-      .subscribe((budget) => {
-        this.budget.setValue(budget.toString());
-      });
   }
 
   updateCustomerForm(customer: StripeCustomer) {
@@ -354,7 +342,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.billingService
             .createSubscription({
               payment_method_id: this.paymentMethodId || '',
-              on_demand_budget: parseInt(this.budget.value),
+              on_demand_budget: this.budget?.value || null,
               account_type: accountType,
               billing_interval: monthly ? RecurrentPriceInterval.MONTH : RecurrentPriceInterval.YEAR,
             })
@@ -447,26 +435,12 @@ export class CheckoutComponent implements OnDestroy, OnInit {
               customer: this.customer,
               token: this.token,
               prices: prices[accountType],
-              budget: this.budget.value,
+              budget: this.budget?.value || null,
               currency,
             },
           }).onClose,
       ),
     );
-  }
-
-  saveBudget() {
-    this.billingService
-      .modifySubscription({ on_demand_budget: parseInt(this.budget.value) })
-      .pipe(switchMap(() => this.billingService.getAccountUsage()))
-      .subscribe((usage) => {
-        this.budget.setValue(usage.budget.toString());
-        this.budget.markAsPristine();
-        if (usage.budget < Object.values(usage.invoice_items).reduce((acc, curr) => acc + curr.over_cost, 0)) {
-          this.toaster.warning('billing.budget_warning');
-        }
-        this.cdr?.markForCheck();
-      });
   }
 
   updatePaymentMethod() {
@@ -478,5 +452,20 @@ export class CheckoutComponent implements OnDestroy, OnInit {
       'blank',
       'noreferrer',
     );
+  }
+
+  modifyBudget() {
+    this.billingService.saveBudget(this.budget?.value || null).subscribe({
+      next: ({ budgetBelowTotal }) => {
+        if (budgetBelowTotal) {
+          this.toaster.warning('billing.budget-warning');
+        } else {
+          this.toaster.success('billing.budget-modified');
+        }
+      },
+      error: () => {
+        this.toaster.error('generic.error.oops');
+      },
+    });
   }
 }

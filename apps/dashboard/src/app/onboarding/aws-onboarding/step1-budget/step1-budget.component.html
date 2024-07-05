@@ -18,7 +18,8 @@
   <pa-button
     class="budget-button"
     kind="primary"
-    type="submit">
+    type="submit"
+    [disabled]="form.invalid">
     {{ 'onboarding.aws.monthly-budget.set-up-account-button' | translate }}
   </pa-button>
 </form>

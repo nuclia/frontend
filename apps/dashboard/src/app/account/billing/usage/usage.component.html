@@ -7,7 +7,17 @@
       <div [innerHTML]="'billing.budget_description' | translate"></div>
     </div>
     @if (usage | async; as usage) {
-      <app-budget [usage]="usage"></app-budget>
+      <app-budget
+        [currency]="usage.currency"
+        (budgetChange)="budget = $event"></app-budget>
+      <div class="submit">
+        <pa-button
+          kind="primary"
+          [disabled]="!budget"
+          (click)="modifyBudget()">
+          {{ 'generic.save' | translate }}
+        </pa-button>
+      </div>
     }
   </div>
 </div>

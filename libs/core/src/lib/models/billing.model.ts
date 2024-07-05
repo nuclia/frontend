@@ -90,7 +90,7 @@ export interface AccountSubscription {
 
 interface BaseAccountSubscription {
   status: SubscriptionStatus;
-  on_demand_budget: number;
+  on_demand_budget: number | null ;
 }
 
 export interface StripeAccountSubscription extends BaseAccountSubscription {
@@ -105,7 +105,7 @@ export interface AwsAccountSubscription extends BaseAccountSubscription {
 
 export interface StripeSubscriptionCreation {
   payment_method_id: string;
-  on_demand_budget: number;
+  on_demand_budget: number | null;
   billing_interval?: RecurrentPriceInterval;
   account_type: AccountTypes;
 }
@@ -138,7 +138,7 @@ export interface InvoiceItem {
 }
 
 export interface AccountUsage {
-  budget: number;
+  budget: number | null;
   currency: Currency;
   invoice_items: { [key in BillingUsageType]: InvoiceItem };
   start_billing_date: string;

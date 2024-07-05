@@ -18,16 +18,13 @@
     }
   </pa-select>
 
-  <div>
-    <h4>Metered Prices</h4>
+  <pa-select
+    label="Metered price"
+    formControlName="meteredPrice">
     @for (price of meteredPrices | async; track price.id) {
-      <pa-checkbox
-        [value]="selectedMeteredPrices.includes(price.id)"
-        (valueChange)="toggleMeteredPrice(price.id)">
-        {{ price.nickname }}
-      </pa-checkbox>
+      <pa-option [value]="price.id">{{ price.nickname }}</pa-option>
     }
-  </div>
+  </pa-select>
 
   <pa-select
     label="Billing formula"

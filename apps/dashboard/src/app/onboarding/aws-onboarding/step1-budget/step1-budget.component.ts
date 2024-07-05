@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-step1-budget',
@@ -22,10 +22,10 @@ export class Step1BudgetComponent {
   @Output() next = new EventEmitter<{ budget: number | null }>();
 
   form = new FormGroup({
-    budget: new FormControl<number | null>(null),
+    budget: new FormControl<number | ''>('', { validators: [Validators.min(1)] }),
   });
 
   submitBudget() {
-    this.next.emit(this.form.getRawValue());
+    this.next.emit({ budget: this.form.value.budget || null });
   }
 }

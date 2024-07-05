@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="aws-subscription.component.scss">
 <div class="aws-subscription">
   <div>
     <h2>{{ 'navbar.subscription' | translate }}</h2>
@@ -20,6 +19,14 @@
         class="body-m"
         [innerHTML]="'billing.budget_description' | translate"></div>
     </div>
-    <app-budget></app-budget>
+    <app-budget
+      currency="USD"
+      (budgetChange)="budget = $event"></app-budget>
+    <pa-button
+      kind="primary"
+      [disabled]="!budget"
+      (click)="modifyBudget()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
   </div>
 </div>

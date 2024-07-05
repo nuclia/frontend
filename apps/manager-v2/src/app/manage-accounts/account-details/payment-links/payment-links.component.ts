@@ -20,12 +20,12 @@ export class PaymentLinksComponent implements OnDestroy {
   paymentLinkForm = new FormGroup({
     accountType: new FormControl('v3growth', { nonNullable: true, validators: [Validators.required] }),
     licensedPrice: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    meteredPrice: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     formula: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   isSaving = false;
   accountTypes: AccountTypes[] = ['v3growth', 'v3enterprise'];
-  selectedMeteredPrices: string[] = [];
   paymentLink?: string;
 
   licensedPrices = of(this.accountTypes).pipe(
@@ -71,15 +71,6 @@ export class PaymentLinksComponent implements OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  toggleMeteredPrice(id: string) {
-    if (this.selectedMeteredPrices.includes(id)) {
-      this.selectedMeteredPrices = this.selectedMeteredPrices.filter((price) => price !== id);
-    } else {
-      this.selectedMeteredPrices = [...this.selectedMeteredPrices, id];
-    }
-    this.cdr.markForCheck();
-  }
-
   create() {
     this.isSaving = true;
     this.cdr.markForCheck();
@@ -88,7 +79,7 @@ export class PaymentLinksComponent implements OnDestroy {
       .createPaymentLink({
         account_id: this.store.getAccountId() || '',
         account_type: formValues.accountType as AccountTypes,
-        price_ids: [formValues.licensedPrice, ...this.selectedMeteredPrices],
+        price_ids: [formValues.licensedPrice, formValues.meteredPrice],
         billing_formula_id: formValues.formula,
       })
       .subscribe({
