@@ -3207,7 +3207,7 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>budget_description</name>
+								<name>budget-warning</name>
 								<description/>
 								<comment/>
 								<translations>
@@ -3230,7 +3230,7 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>budget_warning</name>
+								<name>budget_description</name>
 								<description/>
 								<comment/>
 								<translations>

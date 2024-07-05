@@ -458,7 +458,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.billingService.saveBudget(this.budget?.value || null).subscribe({
       next: ({ budgetBelowTotal }) => {
         if (budgetBelowTotal) {
-          this.toaster.warning('billing.budget_warning');
+          this.toaster.warning('billing.budget-warning');
         } else {
           this.toaster.success('billing.budget-modified');
         }
