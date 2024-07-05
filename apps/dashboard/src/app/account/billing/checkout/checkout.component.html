@@ -303,20 +303,22 @@
       <div class="budget-form">
         <div [innerHTML]="'billing.budget_description' | translate"></div>
         @if (subscribeMode | async) {
-          <app-budget
-            [currency]="currency$ | async"
-            (budgetChange)="budget = $event"></app-budget>
-          <div class="submit">
-            <pa-button
-              (click)="doSubscribe()"
-              [disabled]="editCustomer || editCard || !budget || loading"
-              kind="primary">
-              {{ 'billing.review_confirm' | translate }}
-            </pa-button>
-            @if (loading) {
-              <nsi-spinner></nsi-spinner>
-            }
-          </div>
+          @if (currency$ | async; as currency) {
+            <app-budget
+              [currency]="currency"
+              (budgetChange)="budget = $event"></app-budget>
+            <div class="submit">
+              <pa-button
+                (click)="doSubscribe()"
+                [disabled]="editCustomer || editCard || !budget || loading"
+                kind="primary">
+                {{ 'billing.review_confirm' | translate }}
+              </pa-button>
+              @if (loading) {
+                <nsi-spinner></nsi-spinner>
+              }
+            </div>
+          }
         } @else {
           <app-budget
             [currency]="(usage | async)?.currency"
