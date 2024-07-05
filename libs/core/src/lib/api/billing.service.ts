@@ -259,16 +259,15 @@ export class BillingService {
       switchMap((isAws) =>
         this.modifySubscription({ on_demand_budget: budget }, isAws).pipe(
           switchMap(() =>
-            isAws
-              ? of([0, 0])
+            budget === null || isAws
+              ? of({ budgetBelowTotal: false })
               : forkJoin([
                   this.getAccountUsage().pipe(map((usage) => usage.over_cost)),
                   this.getSubscription().pipe(
                     map((subscription) => subscription?.subscription?.on_demand_budget || null),
                   ),
-                ]),
+                ]).pipe(map(([cost, budget]) => ({ budgetBelowTotal: (budget || 0) < cost }))),
           ),
-          map(([cost, budget]) => ({ budgetBelowTotal: (budget || 0) < cost })),
         ),
       ),
     );
