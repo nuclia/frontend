@@ -21,6 +21,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   configForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    created: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     type: new FormControl<AccountTypes>('stash-trial', { nonNullable: true, validators: [Validators.required] }),
     kbs: new FormGroup({
       kbs_radio: new FormControl<'limit' | 'unlimited'>('limit', {
@@ -30,8 +31,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       maxKbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
     zone: new FormControl<string>(''),
-    // restore the validation when the zone is not readonly anymore
-    // zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     trialExpirationDate: new FormControl<string>(''),
   });
   isSaving = false;

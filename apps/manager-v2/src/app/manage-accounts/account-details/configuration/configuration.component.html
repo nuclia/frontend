@@ -4,6 +4,11 @@
   (ngSubmit)="save()">
   <pa-input formControlName="email">Email</pa-input>
   <pa-input formControlName="slug">Slug</pa-input>
+  <pa-input
+    formControlName="created"
+    readonly>
+    Creation date
+  </pa-input>
   <div class="account-type-container">
     <pa-select
       readonly
