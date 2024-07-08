@@ -112,6 +112,8 @@
           <stf-results-display-form
             [config]="savedConfig?.resultDisplay"
             [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
+            [modelNames]="modelNames"
+            [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
             (configChanged)="updateResultDisplayConfig($event)"
             (heightChanged)="updateResultsHeight()"></stf-results-display-form>
         </pa-accordion-item-body>

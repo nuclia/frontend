@@ -95,9 +95,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   get generateAnswerEnabled() {
     return this.form.controls.generateAnswer.value;
   }
-  getGenerativeModel() {
-    return this.form.controls.generativeModel.value;
-  }
   get usePromptEnabled() {
     return this.form.controls.usePrompt.value;
   }
