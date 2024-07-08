@@ -29,7 +29,6 @@ import {
   ResourceField,
   TextField,
   UserClassification,
-  UserFieldMetadata,
 } from '@nuclia/core';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -40,8 +39,6 @@ import {
   EditResourceView,
   EntityGroup,
   getClassificationsPayload,
-  getFieldMetadataForClassifications,
-  ParagraphWithTextAndClassifications,
   Thumbnail,
 } from './edit-resource.helpers';
 import { generatedEntitiesColor, getNerFamilyTitle } from '../../entities/model';
@@ -129,7 +126,6 @@ export class EditResourceService {
           .sort((a, b) => a.title.localeCompare(b.title));
 
         addEntitiesToGroups(allGroups, resource.getNamedEntities());
-        addEntitiesToGroups(allGroups, resource.getAnnotatedEntities());
         allGroups.forEach((group) => group.entities.sort((a, b) => a.localeCompare(b)));
         return allGroups;
       }),
@@ -189,11 +185,7 @@ export class EditResourceService {
     return getClassificationsPayload(this._resource.value, labels);
   }
 
-  addField(
-    fieldType: FIELD_TYPE,
-    fieldId: string,
-    fieldData: TextField | LinkField,
-  ): Observable<void | null> {
+  addField(fieldType: FIELD_TYPE, fieldId: string, fieldData: TextField | LinkField): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
       return of(null);
@@ -248,11 +240,7 @@ export class EditResourceService {
     );
   }
 
-  updateField(
-    fieldType: FIELD_TYPE,
-    fieldId: string,
-    fieldData: TextField | LinkField,
-  ): Observable<void | null> {
+  updateField(fieldType: FIELD_TYPE, fieldId: string, fieldData: TextField | LinkField): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
       return of(null);
