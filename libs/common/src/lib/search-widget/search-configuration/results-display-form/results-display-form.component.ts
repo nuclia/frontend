@@ -19,6 +19,19 @@ import { takeUntil } from 'rxjs/operators';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 import { JsonValidator } from '../../../validators';
 
+// TODO remove when all LLMs support JSON output
+const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
+  'chatgpt-azure',
+  'chatgpt-azure-4-turbo',
+  'chatgpt-azure-4o',
+  'claude-3',
+  'claude-3-fast',
+  'claude-3-5-fast',
+  'chatgpt-vision',
+  'chatgpt4',
+  'chatgpt4o',
+];
+
 @Component({
   selector: 'stf-results-display-form',
   standalone: true,
@@ -50,6 +63,25 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
       this.form.controls.relations.enable();
     }
   }
+  // TODO remove when all LLMs support JSON output
+  @Input() modelNames: { [key: string]: string } = {};
+  @Input() set generativeModel(model: string | undefined) {
+    if (model) {
+      this._generativeModel = model;
+      if (!LLM_WITH_JSON_OUTPUT_SUPPORT.includes(model)) {
+        this.jsonOutputControl.patchValue(false);
+        this.jsonOutputControl.disable();
+        this.isJsonOutputDisabled = true;
+      } else {
+        this.jsonOutputControl.enable();
+        this.isJsonOutputDisabled = false;
+      }
+    }
+  }
+  get generativeModel() {
+    return this._generativeModel;
+  }
+  private _generativeModel = '';
 
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<ResultDisplayConfig>();
@@ -67,6 +99,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   });
 
   isKnowledgeGraphEnabled = this.featuresService.unstable.knowledgeGraph;
+  isJsonOutputDisabled = false;
 
   get displayResultsEnabled() {
     return this.form.controls.displayResults.value;
@@ -74,8 +107,11 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   get showResultTypeControl() {
     return this.form.controls.showResultType;
   }
+  get jsonOutputControl() {
+    return this.form.controls.jsonOutput;
+  }
   get jsonOutputEnabled() {
-    return this.form.controls.jsonOutput.value;
+    return this.jsonOutputControl.value;
   }
 
   ngOnInit() {

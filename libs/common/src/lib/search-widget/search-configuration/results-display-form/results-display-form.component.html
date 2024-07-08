@@ -93,7 +93,14 @@
     <div class="config-form-help">
       {{ 'search.configuration.result-display.json-schema.toggle-description' | translate }}
     </div>
-
+    @if (generativeModel && isJsonOutputDisabled) {
+      <nsi-info-card type="warning">
+        {{
+          'search.configuration.result-display.json-schema.unsupported-model-warning'
+            | translate: { model: modelNames[generativeModel] }
+        }}
+      </nsi-info-card>
+    }
     <div
       class="extra-fields"
       [class.visible]="jsonOutputEnabled">
