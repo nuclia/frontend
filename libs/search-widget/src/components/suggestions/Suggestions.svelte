@@ -8,7 +8,6 @@
   import {
     _,
     addLabelFilter,
-    autocomplete,
     autocompleteFromNERs,
     getFieldDataFromResource,
     getFirstResourceField,
@@ -28,15 +27,10 @@
   import { createEventDispatcher } from 'svelte';
 
   export let paragraphs: Search.Paragraph[] = [];
-  export let entities: string[] = [];
+  export let entities: { family: string; value: string }[] = [];
   export let labels: Classification[] = [];
 
   const dispatch = createEventDispatcher();
-
-  const onClickEntity = (suggestion) => {
-    autocomplete(suggestion);
-    dispatch('search');
-  };
 
   const goToResource = (paragraph: Search.Paragraph) => {
     getResourceById(paragraph.rid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN, ResourceProperties.VALUES])
@@ -120,10 +114,12 @@
           {#each entities as entity}
             <li>
               <Chip
-                color={$selectedEntity === entity ? 'var(--color-neutral-lighter)' : 'var(--color-neutral-lightest)'}
+                color={$selectedEntity?.family === entity.family && $selectedEntity?.value === entity.value
+                  ? 'var(--color-neutral-lighter)'
+                  : 'var(--color-neutral-lightest)'}
                 clickable
-                on:click={() => onClickEntity(entity)}>
-                {entity}
+                on:click={() => dispatch('autocomplete', entity)}>
+                {entity.value}
               </Chip>
             </li>
           {/each}

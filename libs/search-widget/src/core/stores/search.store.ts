@@ -489,7 +489,7 @@ export const removeLabelSetFilter = (id: string) => {
 
 export const addEntityFilter = (entity: EntityFilter) => {
   const currentFilters = entityFilters.getValue();
-  if (!currentFilters.includes(entity)) {
+  if (!currentFilters.find((filter) => filter.family === entity.family && filter.entity === entity.entity)) {
     entityFilters.set(currentFilters.concat([entity]));
   }
 };
