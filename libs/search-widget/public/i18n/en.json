@@ -8,6 +8,7 @@
 	"answer.feedback.wrong-citations": "Citations are not accurate",
 	"answer.feedback.wrong-results": "The results are not relevant",
 	"answer.input.label": "Chat input",
+	"answer.json-answer.title": "JSON answer",
 	"answer.no-citations": "The system was not able to indicate explicitly the sources that have been used to produce this answer.",
 	"answer.placeholder": "Let's chat",
 	"answer.sources": "Sources",

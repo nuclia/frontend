@@ -4,6 +4,7 @@ import {
   getAskToResource,
   getFeatures,
   getFilters,
+  getJsonSchema,
   getMaxTokens,
   getNotEnoughDataMessage,
   getPlaceholder,
@@ -135,6 +136,7 @@ export class SearchWidgetService {
       ? `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`
       : '';
     const queryPrepend = getQueryPrepend(currentConfig.searchBox);
+    const jsonSchema = getJsonSchema(currentConfig.resultDisplay);
 
     // Widget options
     const theme = getWidgetTheme(widgetOptions);
@@ -155,7 +157,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${queryPrepend}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${queryPrepend}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;

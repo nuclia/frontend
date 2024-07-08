@@ -22,9 +22,9 @@
     notEnoughDataMessage,
     widgetFeatures,
     widgetFilters,
-    widgetImageRagStrategies,
+    widgetImageRagStrategies, widgetJsonSchema,
     widgetPlaceholder,
-    widgetRagStrategies,
+    widgetRagStrategies
   } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
@@ -75,6 +75,7 @@
   export let ask_to_resource = '';
   export let max_tokens: number | undefined = undefined;
   export let query_prepend = '';
+  export let json_schema = '';
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -92,6 +93,7 @@
 
   let _features: WidgetFeatures = {};
   let _filters: WidgetFilters = {};
+  let _jsonSchema: object | null = null;
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
 
@@ -178,6 +180,11 @@
     }
     _ragStrategies = getRAGStrategies(rag_strategies);
     _ragImageStrategies = getRAGImageStrategies(rag_image_strategies);
+    try {
+      _jsonSchema = json_schema ? JSON.parse(json_schema) : null;
+    } catch (e) {
+      _jsonSchema = null;
+    }
 
     nucliaAPI = initNuclia(
       {
@@ -209,6 +216,7 @@
     widgetFilters.set(_filters);
     widgetRagStrategies.set(_ragStrategies);
     widgetImageRagStrategies.set(_ragImageStrategies);
+    widgetJsonSchema.set(_jsonSchema);
 
     if (_features.filter) {
       if (_filters.labels || _filters.labelFamilies) {

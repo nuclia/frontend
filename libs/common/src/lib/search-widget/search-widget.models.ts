@@ -58,6 +58,8 @@ export interface ResultDisplayConfig {
   displayFieldList: boolean;
   relations: boolean;
   relationGraph: boolean;
+  jsonOutput: boolean;
+  jsonSchema: string;
 }
 
 export interface SearchConfiguration {
@@ -139,6 +141,8 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   displayFieldList: false,
   relations: false,
   relationGraph: false,
+  jsonOutput: false,
+  jsonSchema: '',
 };
 export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   popupStyle: 'page',
@@ -293,7 +297,17 @@ export function getMaxTokens(config: GenerativeAnswerConfig): string {
 export function getQueryPrepend(config: SearchBoxConfig): string {
   return config.prependTheQuery && !!config.queryPrepend.trim() ? `\n  query_prepend="${config.queryPrepend}"` : '';
 }
-
+export function getJsonSchema(config: ResultDisplayConfig): string {
+  let schema = '';
+  if (config.jsonOutput && !!config.jsonSchema.trim()) {
+    try {
+      schema = JSON.stringify(JSON.parse(config.jsonSchema.trim())).replace(/'/g, '’');
+    } catch (e) {
+      console.warn(`Malformed JSON schema`, config.jsonSchema.trim());
+    }
+  }
+  return !!schema ? `\n  json_schema='${schema}'` : '';
+}
 export function getWidgetTheme(options: WidgetConfiguration): string {
   return options.darkMode === 'dark' ? `\n  mode="dark"` : '';
 }

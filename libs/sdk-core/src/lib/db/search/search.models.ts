@@ -70,6 +70,7 @@ export interface ChatOptions extends BaseSearchOptions {
    */
   max_tokens?: number;
   prefer_markdown?: boolean;
+  answer_json_schema?: object;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

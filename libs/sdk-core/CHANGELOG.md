@@ -1,3 +1,9 @@
+# 1.17.1 (unreleased)
+
+### Beta feature
+
+- Support `answer_json_schema` in `/ask` endpoint
+
 # 1.17.0 (2024-07-02)
 
 ### Breaking changes

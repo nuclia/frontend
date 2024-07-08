@@ -75,6 +75,15 @@ export const chat = answerState.writer<Ask.Entry[], { question: string; answer: 
   }),
 );
 
+export const jsonAnswer = answerState.reader<any>((state) => {
+  const schema = state.chat[0]?.answer.jsonAnswer;
+  // if the schema contains a property "answer", it will be displayed as the answer, so we don't return it in the jsonAnswer schema
+  if (typeof schema?.['answer'] === 'string') {
+    delete schema['answer'];
+  }
+  return schema;
+});
+
 export const resetChat = answerState.writer<void, void>(
   () => undefined,
   (state) => ({ ...state, chat: state.chat.slice(0, 1) }),

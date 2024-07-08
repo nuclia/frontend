@@ -79,6 +79,36 @@
       {{ 'search.configuration.result-display.relations.toggle-description' | translate }}
     </div>
   </div>
+  <div class="config-form-field">
+    <pa-toggle
+      formControlName="jsonOutput"
+      withBackground
+      spaceBetweenLabelAndToggle
+      (valueChange)="disableCitations($event)">
+      <span class="toggle-label">
+        {{ 'search.configuration.result-display.json-schema.toggle-label' | translate }}
+        <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.result-display.json-schema.toggle-description' | translate }}
+    </div>
+
+    <div
+      class="extra-fields"
+      [class.visible]="jsonOutputEnabled">
+      <nsi-info-card>
+        {{ 'search.configuration.result-display.json-schema.info' | translate }}
+      </nsi-info-card>
+      <pa-textarea
+        formControlName="jsonSchema"
+        resizable
+        rows="4"
+        (resizing)="heightChanged.emit()">
+        {{ 'search.configuration.result-display.json-schema.textarea-label' | translate }}
+      </pa-textarea>
+    </div>
+  </div>
 
   @if (isKnowledgeGraphEnabled | async) {
     <div class="config-form-field">

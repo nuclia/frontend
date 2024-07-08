@@ -8,6 +8,7 @@ export const widgetPlaceholder = writableSubject<string>('input.placeholder');
 export const widgetFilters = writableSubject<WidgetFilters>({});
 export const widgetRagStrategies = writableSubject<RAGStrategy[]>([]);
 export const widgetImageRagStrategies = writableSubject<RAGImageStrategy[]>([]);
+export const widgetJsonSchema = writableSubject<object | null>(null);
 export const notEnoughDataMessage = writableSubject<string>('');
 export const widgetActions = writableSubject<WidgetAction[]>([]);
 
@@ -39,7 +40,7 @@ export const displayFieldList: Observable<boolean> = widgetFeatures.pipe(
   map((features) => !!features?.displayFieldList),
 );
 export const preferMarkdown: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.preferMarkdown));
-
+export const jsonSchemaEnabled: Observable<boolean> = widgetJsonSchema.pipe(map((schema) => !!schema));
 export const disableAnswers = () => {
   widgetFeatures.set({ ...(widgetFeatures.value || {}), answers: false });
 };
