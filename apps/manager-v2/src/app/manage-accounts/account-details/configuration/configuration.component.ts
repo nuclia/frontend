@@ -31,14 +31,11 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       maxKbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     }),
     zone: new FormControl<string>(''),
-    // restore the validation when the zone is not readonly anymore
-    // zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     trialExpirationDate: new FormControl<string>(''),
   });
   isSaving = false;
 
   defaultLimits?: AccountTypeDefaults;
-  created = '';
 
   get isTrial() {
     return this.configForm.controls.type.value === 'stash-trial';
@@ -63,7 +60,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         tap((accountDetails) => {
           this.accountBackup = { ...accountDetails };
           this.patchConfigForm(accountDetails);
-          this.created = accountDetails.created;
         }),
         switchMap((accountDetails) => this.accountService.getDefaultLimits(accountDetails.type)),
         takeUntil(this.unsubscribeAll),
