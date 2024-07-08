@@ -112,6 +112,10 @@ const routes: Routes = [
                   ),
               },
               {
+                path: 'synonyms',
+                loadChildren: () => import('./synonyms/synonyms.module').then((m) => m.SynonymsModule),
+              },
+              {
                 path: 'manage',
                 component: KnowledgeBoxSettingsComponent,
               },
