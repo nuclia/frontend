@@ -25,7 +25,7 @@ import type {
 } from './resource.models';
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
 import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
-import { find, search, ask } from '../search';
+import { ask, find, search } from '../search';
 import { retry429Config, setEntities, setLabels, sliceUnicode } from './resource.helpers';
 import { RagStrategyName } from '../kb/kb.models';
 
@@ -97,6 +97,9 @@ export class ReadableResource implements IResource {
       .filter((thumb) => !!thumb) as CloudLink[];
   }
 
+  /**
+   * @deprecated
+   */
   getAnnotatedEntities(): { [key: string]: string[] } {
     const entities = (this.fieldmetadata || [])
       .filter((entry) => entry.token && entry.token.length > 0)
@@ -309,11 +312,7 @@ export class Resource extends ReadableResource implements IResource {
       });
     ```
   */
-  setField(
-    type: FIELD_TYPE,
-    field: string,
-    data: TextField | LinkField | FileField,
-  ): Observable<void> {
+  setField(type: FIELD_TYPE, field: string, data: TextField | LinkField | FileField): Observable<void> {
     return defer(() => this.nuclia.rest.put<void>(`${this.path}/${type}/${field}`, data)).pipe(retry(retry429Config()));
   }
 
@@ -441,6 +440,9 @@ export class Resource extends ReadableResource implements IResource {
     return this.modify({ fieldmetadata }).pipe(tap(() => (this.fieldmetadata = fieldmetadata)));
   }
 
+  /**
+   * @deprecated Will be removed in version 1.18.0
+   */
   setEntities(fieldId: string, fieldType: string, entities: TokenAnnotation[]): Observable<void> {
     const fieldmetadata = setEntities(fieldId, fieldType, entities, this.fieldmetadata || []);
     return this.modify({ fieldmetadata }).pipe(tap(() => (this.fieldmetadata = fieldmetadata)));
