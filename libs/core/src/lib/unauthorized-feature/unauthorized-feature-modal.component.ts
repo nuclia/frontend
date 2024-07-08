@@ -29,7 +29,6 @@ export class UnauthorizedFeatureModalComponent {
     { name: 'llm', icon: 'settings' },
     { name: 'prompt', icon: 'prompt' },
     { name: 'summarization', icon: 'summary' },
-    { name: 'synonyms', icon: 'synonyms' },
     { name: 'task-automation', icon: 'submenu' },
     { name: 'activity-log', icon: 'activity-log' },
     { name: 'indexed-size', icon: 'database' },

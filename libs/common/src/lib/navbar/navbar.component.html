@@ -148,18 +148,6 @@
               </a>
 
               @if (!standalone) {
-                @if (isSynonymsEnabled | async) {
-                  <a
-                    [routerLink]="(isSynonymsAuthorized | async) ? kbUrl + '/synonyms' : null"
-                    routerLinkActive="active"
-                    data-cy="go-to-synonyms"
-                    class="nav-link sub-item"
-                    [stfUnauthorizedFeature]="(isSynonymsAuthorized | async) === false">
-                    <pa-icon name="synonyms"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.synonyms' | translate }}</span>
-                  </a>
-                }
-
                 @if (isAdmin | async) {
                   @if (isTasksAutomationEnabled | async) {
                     <a
