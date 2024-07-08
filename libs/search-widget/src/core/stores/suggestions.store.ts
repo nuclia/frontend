@@ -61,8 +61,8 @@ export const suggestedLabels: Observable<Classification[]> = suggestionState.rea
   (state) => state.suggestions.labels || [],
 );
 
-export const suggestedEntities = suggestionState.reader<string[]>((state) =>
-  (state.suggestions.results.entities?.entities || []).slice(0, MAX_ENTITIES).map((suggestion) => suggestion.value),
+export const suggestedEntities = suggestionState.reader<{ family: string; value: string }[]>((state) =>
+  (state.suggestions.results.entities?.entities || []).slice(0, MAX_ENTITIES),
 );
 
 export const hasSuggestions: Observable<boolean> = combineLatest([
@@ -76,8 +76,10 @@ export const hasSuggestions: Observable<boolean> = combineLatest([
   ),
 );
 
-export const selectedEntity = suggestionState.reader<string>(
-  (state) => state.suggestions.results.entities?.entities?.[state.selectedEntity]?.value || '',
+export const selectedEntity = suggestionState.reader<{ family: string; value: string } | undefined>((state) =>
+  typeof state.selectedEntity === 'number'
+    ? state.suggestions.results.entities?.entities?.[state.selectedEntity]
+    : undefined,
 );
 
 export const selectNextEntity = suggestionState.action((state) => {

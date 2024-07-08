@@ -3,7 +3,7 @@
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
   import Suggestions from '../suggestions/Suggestions.svelte';
-  import type { EntityFilter } from '../../core';
+  import { addEntityFilter, type EntityFilter, searchOptions } from '../../core';
   import {
     _,
     autocomplete,
@@ -42,7 +42,7 @@
   import Label from '../../common/label/Label.svelte';
   import Chip from '../../common/chip/Chip.svelte';
   import type { Observable } from 'rxjs';
-  import { combineLatest, map } from 'rxjs';
+  import { combineLatest, map, take } from 'rxjs';
   import IconButton from '../../common/button/IconButton.svelte';
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
   import SearchFilters from '../search-filters/SearchFilters.svelte';
@@ -156,8 +156,9 @@
   const onKeyPress = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      if (showSuggestions && selectedEntity.getValue()) {
-        autocomplete(selectedEntity.getValue());
+      const entity = selectedEntity.getValue();
+      if (showSuggestions && entity) {
+        autocompleteEntity(entity);
       } else {
         search();
       }
@@ -177,6 +178,17 @@
       }
     }
   };
+
+  const autocompleteEntity = (entity: { family: string; value: string; }) => {
+    searchOptions.pipe(take(1)).subscribe((options) => {
+      autocomplete(entity.value);
+      if (options.autofilter) {
+        // The filter is added manually because autofilter option is not always reliable detecting it
+        addEntityFilter({ family: entity.family, entity: entity.value });
+      }
+      search();
+    });
+  }
 
   const closeSuggestions = () => {
     showSuggestions = false;
@@ -330,7 +342,7 @@
   on:close={closeSuggestions}>
   <div class="sw-suggestions-container">
     <Suggestions
-      on:search={() => search()}
+      on:autocomplete={(event) => autocompleteEntity(event.detail)}
       paragraphs={$suggestedParagraphs}
       entities={$suggestedEntities}
       labels={$suggestedLabels} />
