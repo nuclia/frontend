@@ -210,6 +210,7 @@ export class RegionalAccountService {
       maxKbs: account.stashes.max_stashes,
       trialExpirationDate: account.trial_expiration_date,
       users: account.users,
+      created: account.created,
     };
   }
 

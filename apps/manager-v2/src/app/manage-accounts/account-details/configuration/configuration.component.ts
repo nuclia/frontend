@@ -21,6 +21,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   configForm = new FormGroup({
     slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    created: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     type: new FormControl<AccountTypes>('stash-trial', { nonNullable: true, validators: [Validators.required] }),
     kbs: new FormGroup({
       kbs_radio: new FormControl<'limit' | 'unlimited'>('limit', {
@@ -37,6 +38,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   isSaving = false;
 
   defaultLimits?: AccountTypeDefaults;
+  created = '';
 
   get isTrial() {
     return this.configForm.controls.type.value === 'stash-trial';
@@ -61,6 +63,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         tap((accountDetails) => {
           this.accountBackup = { ...accountDetails };
           this.patchConfigForm(accountDetails);
+          this.created = accountDetails.created;
         }),
         switchMap((accountDetails) => this.accountService.getDefaultLimits(accountDetails.type)),
         takeUntil(this.unsubscribeAll),

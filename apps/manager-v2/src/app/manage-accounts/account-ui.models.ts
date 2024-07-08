@@ -10,6 +10,7 @@ export interface AccountSummary {
 
 export interface AccountDetails extends AccountSummary {
   blockingState?: AccountBlockingState;
+  created: string;
   email: string;
   limits: AccountLimits;
   maxKbs: number;
