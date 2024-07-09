@@ -57,13 +57,16 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   private unsubscribeAll = new Subject<void>();
 
-  zones = this.zoneService.getZones().pipe(
-    tap((zones) => {
-      if (zones && zones.length > 0) {
-        this.form.patchValue({ zone: zones[0].slug });
-      }
-    }),
-  );
+  standalone = this.sdk.nuclia.options.standalone;
+  zones = this.standalone
+    ? of([])
+    : this.zoneService.getZones().pipe(
+        tap((zones) => {
+          if (zones && zones.length > 0) {
+            this.form.patchValue({ zone: zones[0].slug });
+          }
+        }),
+      );
   account = this.sdk.currentAccount;
   backPath = this.sdk.nuclia.options.standalone ? `/select/${standaloneSimpleAccount.slug}` : '..';
 
