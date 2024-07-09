@@ -258,18 +258,21 @@ export function normalizeSchemaProperty(config: LearningConfigurations): Learnin
 export const USER_PROMPTS = 'user_prompts';
 export const SUMMARY_PROMPT = 'summary_prompt';
 
+export interface LearningConfigurationProperty {
+  title: string;
+  type: string;
+  widget?: string;
+  info?: string;
+  examples?: string[];
+  // used in hf_embedding
+  default?: any;
+  description?: string;
+}
+
 export interface LearningConfigurationSchema {
   title: string;
   type: string;
-  properties: {
-    [key: string]: {
-      title: string;
-      type: string;
-      widget?: string;
-      info?: string;
-      examples?: string[];
-    };
-  };
+  properties: { [key: string]: LearningConfigurationProperty };
   required: string[];
 }
 

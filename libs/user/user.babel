@@ -2332,6 +2332,57 @@
 													<folder_node>
 														<name>external-model</name>
 														<children>
+															<folder_node>
+																<name>hugging-face</name>
+																<children>
+																	<concept_node>
+																		<name>advanced-config</name>
+																		<description/>
+																		<comment/>
+																		<translations>
+																			<translation>
+																				<language>ca-ES</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>en-US</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>es-ES</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>fr-FR</language>
+																				<approved>false</approved>
+																			</translation>
+																		</translations>
+																	</concept_node>
+																	<concept_node>
+																		<name>form-title</name>
+																		<description/>
+																		<comment/>
+																		<translations>
+																			<translation>
+																				<language>ca-ES</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>en-US</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>es-ES</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>fr-FR</language>
+																				<approved>false</approved>
+																			</translation>
+																		</translations>
+																	</concept_node>
+																</children>
+															</folder_node>
 															<concept_node>
 																<name>label</name>
 																<description/>
@@ -2360,6 +2411,29 @@
 																<children>
 																	<concept_node>
 																		<name>gecko</name>
+																		<description/>
+																		<comment/>
+																		<translations>
+																			<translation>
+																				<language>ca-ES</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>en-US</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>es-ES</language>
+																				<approved>false</approved>
+																			</translation>
+																			<translation>
+																				<language>fr-FR</language>
+																				<approved>false</approved>
+																			</translation>
+																		</translations>
+																	</concept_node>
+																	<concept_node>
+																		<name>hugging-face</name>
 																		<description/>
 																		<comment/>
 																		<translations>

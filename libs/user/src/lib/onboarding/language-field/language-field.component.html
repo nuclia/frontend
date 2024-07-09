@@ -13,8 +13,8 @@
     </pa-radio>
   </pa-radio-group>
 
-  <div class="semantic-model-choice">
-    @if (form.get('modelType')?.value === 'private') {
+  @if (form.get('modelType')?.value === 'private') {
+    <div class="semantic-model-choice">
       <div class="title-xs">{{ 'user.kb.creation-form.models.nuclia-model.languages-label' | translate }}</div>
       <p class="body-m">
         {{ 'user.kb.creation-form.models.nuclia-model.languages-description' | translate }}
@@ -29,7 +29,9 @@
           </pa-checkbox>
         }
       </div>
-    } @else {
+    </div>
+  } @else {
+    <div class="semantic-model-choice">
       <div class="title-xs">{{ 'user.kb.creation-form.models.external-model.label' | translate }}</div>
       <div class="models-container">
         <pa-radio-group
@@ -63,8 +65,36 @@
               <nsi-badge kind="tertiary">BETA</nsi-badge>
             </div>
           }
+          @if (isHuggingFaceSemanticModelEnabled | async) {
+            <div class="beta-option">
+              <pa-radio value="HF">
+                {{ 'user.kb.creation-form.models.external-model.options.hugging-face' | translate }}
+              </pa-radio>
+              <nsi-badge kind="tertiary">BETA</nsi-badge>
+            </div>
+          }
         </pa-radio-group>
       </div>
+    </div>
+    @if (semanticModelValue === HUGGING_FACE_MODEL && huggingFaceForm) {
+      <div class="title-xs">
+        {{ 'user.kb.creation-form.models.external-model.hugging-face.form-title' | translate }}
+      </div>
+      <nus-dynamic-fields
+        [form]="huggingFaceForm"
+        [fields]="huggingFaceRequiredFields"></nus-dynamic-fields>
+
+      <pa-expander expanded="false">
+        <pa-expander-header>
+          {{ 'user.kb.creation-form.models.external-model.hugging-face.advanced-config' | translate }}
+        </pa-expander-header>
+        <pa-expander-body>
+          <br />
+          <nus-dynamic-fields
+            [form]="huggingFaceForm"
+            [fields]="huggingFaceOptionalFields"></nus-dynamic-fields>
+        </pa-expander-body>
+      </pa-expander>
     }
-  </div>
+  }
 </form>

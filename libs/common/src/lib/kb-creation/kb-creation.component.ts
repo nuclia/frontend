@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   getSemanticModel,
@@ -19,10 +19,11 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { filter, map, of, switchMap, take, tap, throwError } from 'rxjs';
+import { filter, map, of, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import { EmbeddingModelForm, LanguageFieldComponent } from '@nuclia/user';
-import { catchError } from 'rxjs/operators';
+import { catchError, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LearningConfigurations } from '@nuclia/core';
 
 @Component({
   selector: 'app-kb-creation',
@@ -44,7 +45,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './kb-creation.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KbCreationComponent {
+export class KbCreationComponent implements OnInit, OnDestroy {
   private sdk = inject(SDKService);
   private zoneService: ZoneService = inject(ZoneService);
   private modalService = inject(SisModalService);
@@ -53,6 +54,8 @@ export class KbCreationComponent {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private navigationService = inject(NavigationService);
+
+  private unsubscribeAll = new Subject<void>();
 
   zones = this.zoneService.getZones().pipe(
     tap((zones) => {
@@ -79,8 +82,53 @@ export class KbCreationComponent {
     },
   };
 
-  semanticModel = '';
   saving = false;
+  semanticModel = '';
+  userKeys?: { [key: string]: any };
+
+  learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
+  learningSchema: LearningConfigurations = {};
+
+  ngOnInit() {
+    if (this.sdk.nuclia.options.standalone) {
+      this.sdk.nuclia.db.getLearningSchema().subscribe((schema) => {
+        this.learningSchema = schema;
+        this.cdr.markForCheck();
+      });
+    } else {
+      // update learning schema when zone changes
+      this.form.controls.zone.valueChanges
+        .pipe(
+          switchMap((zone) =>
+            this.learningSchemasByZone[zone]
+              ? of(this.learningSchemasByZone[zone])
+              : this.getLearningSchemaForZone(zone),
+          ),
+          takeUntil(this.unsubscribeAll),
+        )
+        .subscribe((schema) => {
+          this.learningSchema = schema;
+          this.cdr.markForCheck();
+        });
+    }
+  }
+
+  private getLearningSchemaForZone(zone: string) {
+    return this.account.pipe(
+      filter((account) => !!account),
+      take(1),
+      switchMap((account) => {
+        return this.sdk.nuclia.db
+          .getLearningSchema(account.id, zone)
+          .pipe(tap((schema) => (this.learningSchemasByZone[zone] = schema)));
+      }),
+    );
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
 
   create() {
     const { anonymization, ...kbConfig } = this.form.getRawValue();
@@ -102,33 +150,31 @@ export class KbCreationComponent {
           this.cdr.markForCheck();
         }),
         switchMap(() => this.account.pipe(take(1))),
-        switchMap((account) =>
-          (this.sdk.nuclia.options.standalone
-            ? this.sdk.nuclia.db.getLearningSchema()
-            : this.sdk.nuclia.db.getLearningSchema(account.id, kbConfig.zone)
-          ).pipe(
-            switchMap((learningConfiguration) => {
-              const kb = {
-                ...kbConfig,
-                slug: STFUtils.generateSlug(kbConfig.title),
-                learning_configuration: {
-                  anonymization_model: anonymization ? 'multilingual' : 'disabled',
-                  semantic_model: getSemanticModel(this.semanticModel, learningConfiguration),
-                },
-              };
-              return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone).pipe(
-                catchError((error) => {
-                  if (error.status === 409) {
-                    kb.slug = `${kb.slug}-${STFUtils.generateRandomSlugSuffix()}`;
-                    return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone);
-                  } else {
-                    return throwError(() => error);
-                  }
-                }),
-              );
+        switchMap((account) => {
+          let user_keys;
+          if (this.userKeys) {
+            user_keys = this.userKeys;
+          }
+          const kb = {
+            ...kbConfig,
+            slug: STFUtils.generateSlug(kbConfig.title),
+            learning_configuration: {
+              anonymization_model: anonymization ? 'multilingual' : 'disabled',
+              semantic_model: getSemanticModel(this.semanticModel, this.learningSchema),
+              user_keys,
+            },
+          };
+          return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone).pipe(
+            catchError((error) => {
+              if (error.status === 409) {
+                kb.slug = `${kb.slug}-${STFUtils.generateRandomSlugSuffix()}`;
+                return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone);
+              } else {
+                return throwError(() => error);
+              }
             }),
-          ),
-        ),
+          );
+        }),
         map((kb) =>
           this.sdk.nuclia.options.standalone
             ? this.navigationService.getKbUrl(standaloneSimpleAccount.slug, kb.id)
@@ -146,8 +192,9 @@ export class KbCreationComponent {
       });
   }
 
-  updateModel(semanticModel: EmbeddingModelForm) {
-    this.semanticModel = semanticModel.embeddingModel;
+  updateModel(modelForm: EmbeddingModelForm) {
+    this.semanticModel = modelForm.embeddingModel;
+    this.userKeys = modelForm.userKeys;
   }
 
   cancel() {

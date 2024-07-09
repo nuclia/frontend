@@ -33,6 +33,7 @@ import { LearningConfigurationOption } from '@nuclia/core';
 export class AnswerGenerationComponent extends LearningConfigurationDirective {
   keyProviders: { [key: string]: string } = {
     azure_openai: 'Azure OpenAI',
+    openai: 'OpenAI',
     anthropic: 'Anthropic',
     claude3: 'Anthropic',
     palm: 'Google',
@@ -40,6 +41,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
     azure_mistral: 'Azure Mistral',
     'chatgpt-vision': 'ChatGPT Vision',
     chatgpt4: 'ChatGPT 4',
+    hf_llm: 'Hugging Face',
   };
   popoverHelp: { [key: string]: string } = {
     'chatgpt-vision': 'kb.ai-models.answer-generation.select-llm.help.chatgpt-vision',

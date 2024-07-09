@@ -1,3 +1,10 @@
+# 1.17.2 (unreleased)
+
+### Improvements
+
+- Create interface for `LearningConfigurationSchema` properties field: `LearningConfigurationProperty`
+- Update `LearningConfigurationProperty` with options used in Hugging Face schema: `default` and `description`
+
 # 1.17.1 (2024-07-08)
 
 ### Deprecation
