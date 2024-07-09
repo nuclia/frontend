@@ -65,7 +65,7 @@
               <nsi-badge kind="tertiary">BETA</nsi-badge>
             </div>
           }
-          @if (isHuggingFaceSemanticModelEnabled | async) {
+          @if ((isHuggingFaceSemanticModelEnabled | async) && !!huggingFaceForm) {
             <div class="beta-option">
               <pa-radio value="HF">
                 {{ 'user.kb.creation-form.models.external-model.options.hugging-face' | translate }}
