@@ -35,7 +35,12 @@
                 (valueChange)="onOwnKeyToggle()">
                 {{
                   'kb.ai-models.answer-generation.select-llm.own-key.label'
-                    | translate: { provider: keyProviders[currentGenerativeModel?.user_prompt || ''] }
+                    | translate
+                      : {
+                          provider:
+                            keyProviders[currentGenerativeModel?.user_prompt || ''] ||
+                            currentGenerativeModel?.user_prompt
+                        }
                 }}
               </pa-toggle>
 

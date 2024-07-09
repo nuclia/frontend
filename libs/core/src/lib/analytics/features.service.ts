@@ -49,6 +49,7 @@ export class FeaturesService {
     openAIModels: this.featureFlag.isFeatureEnabled('openai-models'),
     geckoModel: this.featureFlag.isFeatureEnabled('gecko-model'),
     extraSemanticModel: this.featureFlag.isFeatureEnabled('extra-semantic-model'),
+    huggingFaceSemanticModel: this.featureFlag.isFeatureEnabled('hugging-face-semantic'),
     tableProcessing: this.featureFlag.isFeatureEnabled('table-processing'),
     aiTableProcessing: this.featureFlag.isFeatureEnabled('ai-table-processing'),
     invoiceProcessing: this.featureFlag.isFeatureEnabled('invoice-processing'),

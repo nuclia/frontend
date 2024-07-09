@@ -40,20 +40,23 @@
       </div>
     </nsi-two-columns-configuration-item>
 
-    <nsi-two-columns-configuration-item
-      itemTitle="user.kb.creation-form.zone.title"
-      description="user.kb.creation-form.zone.description">
-      <pa-radio-group formControlName="zone">
-        @for (zone of zones | async; track zone.slug) {
-          <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
-        }
-      </pa-radio-group>
-    </nsi-two-columns-configuration-item>
+    @if (!standalone) {
+      <nsi-two-columns-configuration-item
+        itemTitle="user.kb.creation-form.zone.title"
+        description="user.kb.creation-form.zone.description">
+        <pa-radio-group formControlName="zone">
+          @for (zone of zones | async; track zone.slug) {
+            <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
+          }
+        </pa-radio-group>
+      </nsi-two-columns-configuration-item>
+    }
 
     <nsi-two-columns-configuration-item
       itemTitle="user.kb.creation-form.models.title"
       description="user.kb.creation-form.models.description">
       <nus-language-field
+        [learningSchema]="learningSchema"
         [disabled]="saving"
         (modelSelected)="updateModel($event)"></nus-language-field>
     </nsi-two-columns-configuration-item>
