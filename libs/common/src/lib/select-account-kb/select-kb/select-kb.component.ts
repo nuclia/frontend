@@ -51,33 +51,6 @@ export class SelectKbComponent implements OnDestroy {
         switchMap((account) => this.router.navigate([this.navigation.getKbCreationUrl(account.slug)])),
       )
       .subscribe();
-    // const zones$ = this.standalone ? of([]) : this.zoneService.getZones();
-    // forkJoin([this.account.pipe(take(1)), zones$])
-    //   .pipe(
-    //     switchMap(([account, zones]) => {
-    //       if (!this.sdk.nuclia.options.zone) {
-    //         // zone must be set to get configuration schema
-    //         this.sdk.nuclia.options.zone = zones[0]?.slug;
-    //       }
-    //       return this.modalService.openModal(KbAddModalComponent, { dismissable: true, data: { account, zones } })
-    //         .onClose;
-    //     }),
-    //     filter((result) => {
-    //       if (result?.success === false) {
-    //         this.toast.error('error.creating-kb');
-    //       }
-    //       return !!result?.success;
-    //     }),
-    //   )
-    //   .subscribe((result) => {
-    //     this.sdk.refreshKbList();
-    //     if (!this.standalone) {
-    //       this.sdk.nuclia.options.zone = result.zone;
-    //       this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbSlug)]);
-    //     } else {
-    //       this.router.navigate([this.navigation.getKbUrl(result.accountSlug, result.kbId)]);
-    //     }
-    //   });
   }
 
   goToAccountManage() {
