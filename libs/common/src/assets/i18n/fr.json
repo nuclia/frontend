@@ -971,6 +971,8 @@
 	"search.configuration.generative-answer.semantic-model.description": "Utiliser un modèle d'embeddings différent de celui par défaut défini dans les paramètres Knowledge Box AI",
 	"search.configuration.generative-answer.semantic-model.select-label": "Modèle d'embeddings actuel",
 	"search.configuration.generative-answer.semantic-model.title": "Modèle d'embeddings spécifique",
+	"search.configuration.generative-answer.system-prompt.toggle-description": "Elle aura priorité sur system prompt définie dans les paramètres de la Knowledge Box. Remarque : la stratégie de prompt peut changer en fonction du modèle génératif.",
+	"search.configuration.generative-answer.system-prompt.toggle-label": "Utiliser un system prompt spécifique",
 	"search.configuration.loading-error": "Une erreur s'est produite lors du chargement des configurations de recherche",
 	"search.configuration.modification-warning": "La configuration actuelle est différente de la configuration sélectionnée, cliquez sur enregistrer pour enregistrer une nouvelle configuration.",
 	"search.configuration.options.nuclia-image": "Meilleur pour la reconnaissance d'images - Nuclia",

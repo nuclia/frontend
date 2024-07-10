@@ -82,6 +82,39 @@
     </div>
     <div class="config-form-field">
       <pa-toggle
+        formControlName="useSystemPrompt"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span
+          class="toggle-label"
+          [stfUnauthorizedFeature]="(userPromptsAuthorized | async) === false"
+          fullProBadge>
+          {{ 'search.configuration.generative-answer.system-prompt.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.system-prompt.toggle-description' | translate }}
+      </div>
+      @if (!!defaultSystemPrompt) {
+        <blockquote [class.overridden]="systemPromptOverridden">
+          {{ defaultSystemPrompt }}
+        </blockquote>
+      }
+      <div
+        class="extra-fields"
+        [class.visible]="useSystemPromptEnabled">
+        <pa-textarea
+          formControlName="systemPrompt"
+          resizable
+          rows="4"
+          (resizing)="heightChanged.emit()">
+          System prompt
+        </pa-textarea>
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
         formControlName="askSpecificResource"
         withBackground
         spaceBetweenLabelAndToggle
