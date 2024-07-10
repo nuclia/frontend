@@ -1,4 +1,10 @@
-# 1.18.0 (unreleased)
+# 1.18.1 (unreleased)
+
+### Improvements
+
+- Update `ChatOptions` model to support passing a system prompt to `/ask` endpoint
+
+# 1.18.0 (2024-07-25)
 
 ### Breaking changes
 
