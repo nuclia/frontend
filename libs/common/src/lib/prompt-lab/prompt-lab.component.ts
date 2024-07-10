@@ -14,8 +14,8 @@ import { BehaviorSubject, forkJoin, Observable, of, Subject, switchMap, take, ta
 import { catchError, filter, map, takeUntil } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SDKService, injectScript } from '@flaps/core';
-import { Ask, IErrorResponse, LearningConfiguration } from '@nuclia/core';
-import { GenerativeModelPipe, LineBreakFormatterPipe } from '../pipes';
+import { Ask, IErrorResponse, LearningConfiguration, Prompts } from '@nuclia/core';
+import { LineBreakFormatterPipe } from '../pipes';
 import { SisModalService } from '@nuclia/sistema';
 import { LoadingDialogComponent } from './loading-dialog';
 import DOMPurify from 'dompurify';
@@ -27,7 +27,6 @@ const GENERATIVE_MODEL_KEY = 'generative_model';
   standalone: true,
   imports: [
     CommonModule,
-    GenerativeModelPipe,
     LineBreakFormatterPipe,
     PaButtonModule,
     PaExpanderModule,
@@ -37,7 +36,6 @@ const GENERATIVE_MODEL_KEY = 'generative_model';
     TranslateModule,
     PaCardModule,
   ],
-  providers: [GenerativeModelPipe],
   templateUrl: './prompt-lab.component.html',
   styleUrl: './prompt-lab.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,11 +49,17 @@ export class PromptLabComponent implements OnInit {
   form = new FormGroup({});
   currentQuery = '';
   currentPrompt = '';
+  currentSystemPrompt = '';
   queries: string[] = [];
   promptExamples = [
-    this.translate.instant('prompt-lab.configuration.prompts.examples.first-example'),
-    this.translate.instant('prompt-lab.configuration.prompts.examples.second-example'),
-    this.translate.instant('prompt-lab.configuration.prompts.examples.third-example'),
+    this.translate.instant('prompt-lab.configuration.prompt.examples.first-example'),
+    this.translate.instant('prompt-lab.configuration.prompt.examples.second-example'),
+    this.translate.instant('prompt-lab.configuration.prompt.examples.third-example'),
+  ];
+  systemPromptExamples = [
+    this.translate.instant('prompt-lab.configuration.system-prompt.examples.first-example'),
+    this.translate.instant('prompt-lab.configuration.system-prompt.examples.second-example'),
+    this.translate.instant('prompt-lab.configuration.system-prompt.examples.third-example'),
   ];
 
   configBackup?: { [id: string]: any };
@@ -64,7 +68,8 @@ export class PromptLabComponent implements OnInit {
   progress$ = new BehaviorSubject<number | null>(null);
   results: {
     query: string;
-    data: { prompt?: string; results: { model: string; answer: string; rendered?: string }[] }[];
+    prompt?: Prompts;
+    results: { model: string; modelName: string; answer: string; rendered?: string }[];
   }[] = [];
   hasResults = new BehaviorSubject(false);
   queryCollapsed: { [query: string]: boolean } = {};
@@ -83,7 +88,6 @@ export class PromptLabComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
     private modalService: SisModalService,
-    private generativeModelPipe: GenerativeModelPipe,
     private translate: TranslateService,
   ) {}
 
@@ -104,7 +108,7 @@ export class PromptLabComponent implements OnInit {
         this.learningModels = {
           ...schema[GENERATIVE_MODEL_KEY],
           options: [
-            ...(schema[GENERATIVE_MODEL_KEY]?.options?.filter((model) => model.name !== 'NO_GENERATION') || []),
+            ...(schema[GENERATIVE_MODEL_KEY]?.options?.filter((model) => model.name !== 'Do not generate answers') || []),
           ],
         };
         this.learningModels.options?.forEach((model) => {
@@ -155,14 +159,15 @@ export class PromptLabComponent implements OnInit {
       this.loadingModal?.close();
       this.hasResults.next(this.results.length > 0);
     });
-
-    this._generateResults(this.queries, this.currentPrompt).subscribe();
+    this._generateResults(this.queries, this.currentPrompt, this.currentSystemPrompt).subscribe();
   }
 
-  private _generateResults(queries: string[], prompt: string): Observable<any> {
-    const requests: { query: string; prompt: string; model: string }[] = queries.reduce(
+  private _generateResults(queries: string[], userPrompt: string, systemPrompt: string): Observable<any> {
+    const prompt =
+      userPrompt || systemPrompt ? { user: userPrompt || undefined, system: systemPrompt || undefined } : undefined;
+    const requests: { query: string; prompt?: Prompts; model: string }[] = queries.reduce(
       (requests, query) => requests.concat(this.selectedModels.map((model) => ({ query, prompt, model }))),
-      [] as { query: string; prompt: string; model: string }[],
+      [] as { query: string; prompt?: Prompts; model: string }[],
     );
 
     return this.sdk.currentKb.pipe(
@@ -205,11 +210,12 @@ export class PromptLabComponent implements OnInit {
   private _addResult(entry: {
     model: string;
     query: string;
-    prompt: string | undefined;
+    prompt?: Prompts;
     result: Ask.Answer | IErrorResponse | string;
     rendered?: string;
   }) {
     const { model, query, prompt, result } = entry;
+    const modelName = this.getModelName(model);
     const queryEntry = this.results.find((entry) => entry.query === query);
     const answer =
       typeof result === 'string'
@@ -218,14 +224,9 @@ export class PromptLabComponent implements OnInit {
           ? (result as Ask.Answer).text
           : `Error: ${result.detail}`;
     if (queryEntry) {
-      const promptEntry = queryEntry.data.find((entry) => entry.prompt === prompt);
-      if (promptEntry) {
-        promptEntry.results.push({ model, answer, rendered: entry.rendered });
-      } else {
-        queryEntry.data.push({ prompt, results: [{ model, answer, rendered: entry.rendered }] });
-      }
+      queryEntry.results.push({ model, modelName, answer, rendered: entry.rendered });
     } else {
-      this.results.push({ query, data: [{ prompt, results: [{ model, answer, rendered: entry.rendered }] }] });
+      this.results.push({ query, prompt, results: [{ model, modelName, answer, rendered: entry.rendered }] });
     }
 
     this.progress$.next((this.progress$.value || 0) + 1);
@@ -247,19 +248,18 @@ export class PromptLabComponent implements OnInit {
     if (this.results.length === 0) {
       return;
     }
-    let csv = `Query,${this.selectedModels.map((model) => this.generativeModelPipe.transform(model)).join(',')}`;
-    this.results.forEach((item) => {
-      item.data.forEach(({ prompt, results }) => {
-        const answers = this.selectedModels
-          .map((model) => {
-            const modelResult = results.find((result) => result.model === model);
-            return `"${this.formatCellValue(modelResult?.answer || 'No answer')}"`;
-          })
-          .join(',');
-        csv += `\n"Query: ${this.formatCellValue(item.query)}${
-          prompt ? '\nPrompt: ' + this.formatCellValue(prompt) : ''
-        }",${answers}`;
-      });
+    let csv = `Query,${this.selectedModels.map((model) => this.getModelName(model)).join(',')}`;
+    this.results.forEach(({ query, prompt, results }) => {
+      const answers = this.selectedModels
+        .map((model) => {
+          const modelResult = results.find((result) => result.model === model);
+          return `"${this.formatCellValue(modelResult?.answer || 'No answer')}"`;
+        })
+        .join(',');
+      csv += `\n"Query: ${this.formatCellValue(query)}${
+        (prompt?.user ? '\nPrompt: ' + this.formatCellValue(prompt.user) : '') +
+        (prompt?.system ? '\nSystem prompt: ' + this.formatCellValue(prompt.system) : '')
+      }",${answers}`;
     });
     const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_models_comparison.csv`;
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
@@ -277,9 +277,19 @@ export class PromptLabComponent implements OnInit {
     return value.trim().replace(/"/g, '""');
   }
 
+  private getModelName(model: string) {
+    return this.learningModels?.options?.find((option) => option.value === model)?.name || model;
+  }
+
   setPrompt(value: string) {
     if (value) {
       this.currentPrompt = value;
+      this.cdr.markForCheck();
+    }
+  }
+  setSystemPrompt(value: string) {
+    if (value) {
+      this.currentSystemPrompt = value;
       this.cdr.markForCheck();
     }
   }
