@@ -42,6 +42,8 @@ export interface GenerativeAnswerConfig {
   generativeModel: string;
   usePrompt: boolean;
   prompt: string;
+  useSystemPrompt: boolean;
+  systemPrompt: string;
   askSpecificResource: boolean;
   specificResourceSlug: string;
   limitTokenConsumption: boolean;
@@ -117,6 +119,8 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generativeModel: '',
   usePrompt: false,
   prompt: '',
+  useSystemPrompt: false,
+  systemPrompt: '',
   askSpecificResource: false,
   specificResourceSlug: '',
   limitTokenConsumption: false,
@@ -221,10 +225,18 @@ export function getPlaceholder(config: WidgetConfiguration): string {
 }
 export function getPrompt(config: GenerativeAnswerConfig): string {
   if (config.usePrompt && !!config.prompt.trim()) {
-    const prompt = config.prompt.trim().replace(/"/g, '&quot;').replace(/\n/g, '&#10;');
-    return `\n  prompt="${prompt}"`;
+    return `\n  prompt="${escapePrompt(config.prompt)}"`;
   }
   return '';
+}
+export function getSystemPrompt(config: GenerativeAnswerConfig): string {
+  if (config.useSystemPrompt && !!config.systemPrompt.trim()) {
+    return `\n  system_prompt="${escapePrompt(config.systemPrompt)}"`;
+  }
+  return '';
+}
+function escapePrompt(prompt: string) {
+  return prompt.trim().replace(/"/g, '&quot;').replace(/\n/g, '&#10;');
 }
 export function getFilters(config: SearchBoxConfig): string {
   if (!config.filter) {

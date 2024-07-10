@@ -939,6 +939,8 @@
 	"search.configuration.generative-answer.rag-strategies.title": "RAG strategies",
 	"search.configuration.generative-answer.section-description": "Options to produce the answer.",
 	"search.configuration.generative-answer.section-title": "Generative answer and RAG",
+	"search.configuration.generative-answer.system-prompt.toggle-description": "It will take precedence over the system prompt defined in the Knowledge Box settings. Note: the prompt strategy might change depending on the generative model.",
+	"search.configuration.generative-answer.system-prompt.toggle-label": "Use a specific system prompt",
 	"search.configuration.loading-error": "An error occurred while loading search configurations",
 	"search.configuration.modification-warning": "The current configuration is different from the selected one, click save to save a new configuration.",
 	"search.configuration.options.nuclia-image": "Best for image recognition - Nuclia",
