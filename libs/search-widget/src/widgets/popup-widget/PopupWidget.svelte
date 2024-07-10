@@ -26,6 +26,7 @@
   export let preselected_filters = '';
   export let cssPath = '';
   export let prompt = '';
+  export let system_prompt = '';
   export let generativemodel = '';
   export let no_tracking = false;
   export let rag_strategies = '';
@@ -118,6 +119,7 @@
             {preselected_filters}
             {cssPath}
             {prompt}
+            {system_prompt}
             {generativemodel}
             {no_tracking}
             {rag_strategies}

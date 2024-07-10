@@ -38,6 +38,7 @@ let CHAT_MODE: Ask.Features[];
 let SEARCH_OPTIONS: Partial<SearchOptions>;
 let SUGGEST_MODE: Search.SuggestionFeatures[];
 let prompt: string | undefined = undefined;
+let systemPrompt: string | undefined = undefined;
 let generative_model: string | undefined = undefined;
 let vectorset: string | undefined = undefined;
 let CITATIONS = false;
@@ -57,6 +58,7 @@ export const initNuclia = (
   SEARCH_OPTIONS = { ...DEFAULT_SEARCH_OPTIONS };
   SUGGEST_MODE = [];
   prompt = undefined;
+  systemPrompt = undefined;
   generative_model = undefined;
   vectorset = undefined;
 
@@ -94,6 +96,7 @@ export const initNuclia = (
     rephrase: REPHRASE,
   });
   prompt = widgetOptions.prompt;
+  systemPrompt = widgetOptions.system_prompt;
   generative_model = widgetOptions.generative_model;
   vectorset = widgetOptions.vectorset;
 
@@ -168,13 +171,15 @@ export const getAnswer = (
   }, [] as Ask.ContextEntry[]);
   const defaultOptions: ChatOptions = {
     highlight: true,
-    prompt,
     generative_model,
     vectorset,
     citations: CITATIONS,
     rephrase: REPHRASE,
     max_tokens: MAX_TOKENS,
   };
+  if (prompt || systemPrompt) {
+    defaultOptions.prompt = { user: prompt || undefined, system: systemPrompt || undefined };
+  }
   if (QUERY_PREPEND) {
     query = QUERY_PREPEND + ' ' + query;
   }
