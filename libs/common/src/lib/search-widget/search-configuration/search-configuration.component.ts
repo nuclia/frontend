@@ -197,9 +197,6 @@ export class SearchConfigurationComponent {
     );
 
     const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kbId);
-    if (savedConfig.id === 'nuclia-standard') {
-      savedConfig.generativeAnswer = { ...savedConfig.generativeAnswer, generativeModel: this.modelFromSettings };
-    }
     this.savedConfig = savedConfig;
     // config selection must be done in next check detection cycle for selection options to be there
     setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
