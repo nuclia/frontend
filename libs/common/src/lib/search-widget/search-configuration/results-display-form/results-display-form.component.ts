@@ -31,6 +31,7 @@ const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
   'chatgpt4',
   'chatgpt4o',
   'gemini-1-5-pro',
+  'azure-mistral'
 ];
 
 @Component({
