@@ -61,6 +61,6 @@ export class SearchPageComponent {
 
   updateConfig(config: SearchConfiguration) {
     this.searchConfig = config;
-    this.searchWidgetService.generateWidgetSnippet(this.searchConfig).subscribe();
+    this.searchWidgetService.generateWidgetSnippet(this.searchConfig);
   }
 }
