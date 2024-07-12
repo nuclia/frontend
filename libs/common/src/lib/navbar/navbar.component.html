@@ -36,15 +36,6 @@
               <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
             </a>
             <a
-              class="nav-link"
-              data-cy="go-to-search"
-              routerLinkActive="active"
-              [routerLink]="!(invalidKey | async) ? kbUrl + '/search' : null"
-              [class.disabled]="invalidKey | async">
-              <pa-icon name="search"></pa-icon>
-              <span class="nav-link-title">{{ 'search.title' | translate }}</span>
-            </a>
-            <a
               [routerLink]="!(invalidKey | async) ? kbUrl + '/sync' : null"
               routerLinkActive="active"
               class="nav-link"
@@ -52,6 +43,15 @@
               [class.disabled]="invalidKey | async">
               <pa-icon name="connectors"></pa-icon>
               <span class="nav-link-title">{{ 'navbar.sync' | translate }}</span>
+            </a>
+            <a
+              class="nav-link"
+              data-cy="go-to-search"
+              routerLinkActive="active"
+              [routerLink]="!(invalidKey | async) ? kbUrl + '/search' : null"
+              [class.disabled]="invalidKey | async">
+              <pa-icon name="search"></pa-icon>
+              <span class="nav-link-title">{{ 'search.title' | translate }}</span>
             </a>
             <a
               [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widgets' : null"

@@ -62,14 +62,12 @@
                     {{ zone | async }}
                   </div>
                 </div>
-                @if (config['semantic_model']; as semanticModel) {
-                  <div>
-                    <div class="title-xxs">{{ 'kb.ai-models.semantic-model.label' | translate }}</div>
-                    <div class="body-s">
-                      {{ semanticModel }}
-                    </div>
+                <div>
+                  <div class="title-xxs">{{ 'dashboard-home.kb-details.status' | translate }}</div>
+                  <div class="body-s">
+                    {{ (stateLabel | async) || '' | translate }}
                   </div>
-                }
+                </div>
               </div>
               <div class="column-container growing-container">
                 @if (config['generative_model']; as model) {
@@ -80,12 +78,14 @@
                     </div>
                   </div>
                 }
-                <div>
-                  <div class="title-xxs">{{ 'dashboard-home.kb-details.status' | translate }}</div>
-                  <div class="body-s">
-                    {{ (stateLabel | async) || '' | translate }}
+                @if (config['semantic_model']; as semanticModel) {
+                  <div>
+                    <div class="title-xxs">{{ 'kb.ai-models.semantic-model.label' | translate }}</div>
+                    <div class="body-s">
+                      {{ semanticModel }}
+                    </div>
                   </div>
-                </div>
+                }
               </div>
             </div>
           }
