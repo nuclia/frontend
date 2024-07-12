@@ -23,7 +23,7 @@ import {
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
-import { BehaviorSubject, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
+import { BehaviorSubject, delay, filter, forkJoin, map, Observable, of, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -55,10 +55,20 @@ export class SearchWidgetService {
     .asObservable()
     .pipe(map((widgets) => widgets.sort((a, b) => compareDesc(a.creationDate, b.creationDate))));
   logs = this._logs.asObservable();
-  private _reinitWidgetPreview = new Subject<void>();
+  private _generateWidgetSnippetSubject = new Subject<{
+    currentConfig: SearchConfiguration;
+    widgetOptions: WidgetConfiguration;
+  }>();
 
   constructor() {
-    this._reinitWidgetPreview.pipe(debounceTime(500)).subscribe(() => this.reinitWidgetPreview());
+    this._generateWidgetSnippetSubject
+      .pipe(
+        debounceTime(300),
+        switchMap(({ currentConfig, widgetOptions }) => this._generateWidgetSnippet(currentConfig, widgetOptions)),
+        delay(100), // wait for the widget to render
+        tap(() => this.reinitWidgetPreview()),
+      )
+      .subscribe();
   }
 
   getSelectedSearchConfig(kbId: string): SearchConfiguration {
@@ -119,6 +129,13 @@ export class SearchWidgetService {
   generateWidgetSnippet(
     currentConfig: SearchConfiguration,
     widgetOptions: WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
+  ) {
+    this._generateWidgetSnippetSubject.next({ currentConfig, widgetOptions });
+  }
+
+  private _generateWidgetSnippet(
+    currentConfig: SearchConfiguration,
+    widgetOptions: WidgetConfiguration,
   ): Observable<{ preview: SafeHtml; snippet: string }> {
     this.deleteWidgetPreview();
 
@@ -182,7 +199,6 @@ export class SearchWidgetService {
         this._widgetPreview.next({ snippet, preview });
         return { snippet, preview };
       }),
-      tap(() => this._reinitWidgetPreview.next()),
     );
   }
 

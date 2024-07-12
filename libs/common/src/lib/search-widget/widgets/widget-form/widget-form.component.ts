@@ -134,22 +134,17 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       });
 
     combineLatest([this.form.valueChanges.pipe(startWith(this.form.getRawValue())), this.configChanges])
-      .pipe(
-        map(([newValue, searchConfig]) => ({ widgetConfig: newValue, searchConfig })),
-        tap(({ widgetConfig }) => {
-          if (this.currentWidget) {
-            this.currentWidget.widgetConfig = this.form.getRawValue();
-          }
-          if (!widgetConfig.permalink) {
-            this.removeQueryParams();
-          }
-        }),
-        switchMap(({ searchConfig }) =>
-          this.searchWidgetService.generateWidgetSnippet(searchConfig, this.form.getRawValue()),
-        ),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(() => this.checkIsModified());
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(([widgetConfig, searchConfig]) => {
+        if (this.currentWidget) {
+          this.currentWidget.widgetConfig = this.form.getRawValue();
+        }
+        if (!widgetConfig.permalink) {
+          this.removeQueryParams();
+        }
+        this.checkIsModified();
+        this.searchWidgetService.generateWidgetSnippet(searchConfig, this.form.getRawValue());
+      });
   }
 
   ngOnDestroy() {
