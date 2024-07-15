@@ -22,8 +22,14 @@
   .actions {
     align-items: center;
     display: flex;
-    gap: var(--rhythm-2);
+    gap: var(--rhythm-1);
     padding-top: var(--rhythm-1);
+  }
+  .copy {
+    position: relative;
+    :global(svg) {
+      transform: scale(0.8);
+    }
   }
   .sources-container {
     margin-top: var(--rhythm-2_5);
