@@ -295,10 +295,6 @@ export interface EntityPosition {
 export interface UserFieldMetadata {
   field: { field: string; field_type: string };
   paragraphs?: ParagraphClassification[];
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   */
-  token?: UserTokenAnnotation[];
   selections?: PageSelections[];
 }
 
@@ -321,13 +317,6 @@ export interface TokenAnnotation {
   klass: string;
   start: number;
   end: number;
-}
-
-/**
- * @deprecated
- */
-export interface UserTokenAnnotation extends TokenAnnotation {
-  cancelled_by_user?: boolean;
 }
 
 export interface ParagraphClassification {

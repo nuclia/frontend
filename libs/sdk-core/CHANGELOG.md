@@ -1,4 +1,9 @@
-# 1.17.2 (unreleased)
+# 1.18.0 (unreleased)
+
+### Breaking changes
+
+- Remove support for entity management
+- Remove support for entity annotation
 
 ### Improvements
 

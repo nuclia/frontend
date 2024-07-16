@@ -178,26 +178,6 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   delete(): Observable<void>;
 
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   * @param groupId
-   * @param group
-   */
-  createEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void>;
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   * @param groupId
-   * @param payload
-   */
-  updateEntitiesGroup(groupId: string, payload: UpdateEntitiesGroupPayload): Observable<void>;
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   * @param groupId
-   */
-  deleteEntitiesGroup(groupId: string): Observable<void>;
-
   setLabelSet(setId: string, labelSet: LabelSet): Observable<void>;
 
   deleteLabelSet(setId: string): Observable<void>;
@@ -275,17 +255,6 @@ export interface BaseEntitiesGroup {
 
 export interface EntitiesGroup extends BaseEntitiesGroup {
   entities: { [key: string]: Entity };
-}
-
-/**
- * @deprecated
- */
-export interface UpdateEntitiesGroupPayload {
-  title?: string;
-  color?: string;
-  add: { [key: string]: Entity };
-  update: { [key: string]: Entity };
-  delete: string[];
 }
 
 export interface Label {

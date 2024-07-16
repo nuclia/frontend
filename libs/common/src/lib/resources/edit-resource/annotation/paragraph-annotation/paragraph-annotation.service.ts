@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
   EntityGroup,
-  getAllAnnotations,
   getAnnotatedText,
+  getGeneratedFieldAnnotations,
   getHighlightedAnnotations,
   getParagraphAnnotations,
   getParagraphs,
@@ -48,11 +48,11 @@ export class ParagraphAnnotationService extends ParagraphService {
     resource: Resource,
     families: EntityGroup[],
   ): ParagraphWithTextAndAnnotations[] {
-    const allAnnotations = getAllAnnotations(resource, fieldId, families);
+    const annotations = getGeneratedFieldAnnotations(resource, fieldId, families);
     const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
     return paragraphs.map((paragraph) => {
       const paragraphId = this.editResource.getParagraphId(fieldId, paragraph);
-      const allParagraphAnnotations = getParagraphAnnotations(allAnnotations, paragraph, families);
+      const allParagraphAnnotations = getParagraphAnnotations(annotations, paragraph, families);
       const highlightedAnnotation = getHighlightedAnnotations(allParagraphAnnotations);
       const paragraphText = resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph);
       const enhancedParagraph: ParagraphWithTextAndAnnotations = {

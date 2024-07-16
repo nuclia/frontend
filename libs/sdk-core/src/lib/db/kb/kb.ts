@@ -40,7 +40,6 @@ import {
   ServiceAccountCreation,
   Synonyms,
   SynonymsPayload,
-  UpdateEntitiesGroupPayload,
 } from './kb.models';
 import type { IErrorResponse, INuclia } from '../../models';
 import {
@@ -847,30 +846,6 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   /** Publishes or unpublishes the Knowledge Box. */
   publish(published: boolean): Observable<void> {
     return this.modify({ state: published ? 'PUBLISHED' : 'PRIVATE' });
-  }
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   * Creates a new NER family.
-   */
-  createEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void> {
-    return this.nuclia.rest.post<void>(`${this.path}/entitiesgroups`, { ...group, group: groupId });
-  }
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   * Updates a NER family.
-   */
-  updateEntitiesGroup(groupId: string, payload: UpdateEntitiesGroupPayload): Observable<void> {
-    return this.nuclia.rest.patch<void>(`${this.path}/entitiesgroup/${groupId}`, payload);
-  }
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   * Deletes a NER family.
-   */
-  deleteEntitiesGroup(groupId: string): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/entitiesgroup/${groupId}`);
   }
 
   /**
