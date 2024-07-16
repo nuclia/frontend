@@ -4,7 +4,7 @@
   import type { Ask, Citations, FieldId, Search } from '@nuclia/core';
   import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
   import { createEventDispatcher } from 'svelte';
-  import { Button, Expander } from '../../common';
+  import { Button, Expander, IconButton, Tooltip } from '../../common';
   import { MarkdownRendering } from '../viewer';
   import Sources from './Sources.svelte';
   import {
@@ -27,6 +27,7 @@
   let text = '';
   let selectedCitation: number | undefined;
   let element: HTMLElement | undefined;
+  let copied = false;
 
   const dispatch = createEventDispatcher();
 
@@ -95,6 +96,23 @@
   function onMouseLeave() {
     selectedCitation = undefined;
   }
+
+  function copyAnwser() {
+    let copy = answer.text || '';
+    const paragraphs = sources.reduce(
+      (acc, result) => acc.concat(result.paragraphs.map((paragraph) => paragraph.text)),
+      [] as string[]
+    );
+    if (paragraphs.length > 0) {
+      copy += `\n\n${$_('answer.sources')}:\n` + paragraphs.join("\n\n");
+    }
+    navigator.clipboard.writeText(copy).then(() => {
+      copied = true;
+      setTimeout(() => {
+        copied = false;
+      }, 2000);
+    });
+  }
 </script>
 
 <div
@@ -111,6 +129,21 @@
   </div>
   {#if answer.sources && !notEnoughData}
     <div class="actions">
+      {#if !$chat[rank]?.answer.incomplete}
+        <div class="copy">
+          <IconButton
+            aspect="basic"
+            icon={copied ? 'check' : 'copy' }
+            size="small"
+            kind="secondary"
+            on:click={() => copyAnwser()} />
+          <Tooltip
+            visible={copied}
+            title={$_('answer.copied')}
+            x="0"
+            y="34" />
+        </div>
+      {/if}
       <div>
         <Feedback {rank} />
       </div>

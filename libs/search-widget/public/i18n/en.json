@@ -1,5 +1,6 @@
 {
 	"answer.chat-action": "Ask more",
+	"answer.copied": "Copied",
 	"answer.download-log": "Download log",
 	"answer.error.rephrasing": "Sorry, I cannot process this question, maybe rephrasing it would help.",
 	"answer.feedback.comments": "Additional feedback. How could it be improved?",
