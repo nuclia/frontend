@@ -1,14 +1,6 @@
 import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angular/core';
-import {
-  BulkAction,
-  ColumnHeader,
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_SORTING,
-  getSearchOptions,
-  MenuAction,
-  PAGE_SIZES,
-} from './resource-list.model';
-import { IResource, KnowledgeBox, Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
+import { BulkAction, ColumnHeader, MenuAction, PAGE_SIZES } from './resource-list.model';
+import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { delay, map, switchMap } from 'rxjs/operators';
 import { FeaturesService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { HeaderCell, IconModel } from '@guillotinaweb/pastanaga-angular';
@@ -17,15 +9,12 @@ import {
   catchError,
   combineLatest,
   defer,
-  EMPTY,
-  expand,
   filter,
   forkJoin,
   from,
   mergeMap,
   Observable,
   of,
-  reduce,
   take,
   tap,
   toArray,
@@ -409,38 +398,11 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   private getAllResources(): Observable<Resource[]> {
     this.isLoading = true;
-    let kb: KnowledgeBox;
-    const getResourcesPage = (kb: KnowledgeBox, page = 0) => {
-      const searchOptions = getSearchOptions({
-        page,
-        pageSize: DEFAULT_PAGE_SIZE,
-        sort: this.sorting || DEFAULT_SORTING,
-        status: this.status,
-        query: '',
-        filters: [],
-      });
-      return kb.catalog('', searchOptions);
-    };
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((current) => {
-        kb = current;
-        return getResourcesPage(kb);
-      }),
-      expand((results) =>
-        results.type !== 'error' && results.fulltext?.next_page
-          ? getResourcesPage(kb, results.fulltext?.page_number + 1)
-          : EMPTY,
-      ),
-      map((results) => {
-        return results.type === 'error'
-          ? []
-          : Object.values(results.resources || {}).map(
-              (resourceData: IResource) => new Resource(this.sdk.nuclia, kb.id, resourceData),
-            );
-      }),
-      reduce((accData, data) => accData.concat(data), [] as Resource[]),
-      tap(() => (this.isLoading = false)),
-    );
+    return this.resourceListService
+      .getAllResources(this.sorting, this.status)
+      .pipe(tap(() => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      }));
   }
 }

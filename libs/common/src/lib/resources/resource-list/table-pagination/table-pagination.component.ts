@@ -1,8 +1,18 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, numberAttribute, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  numberAttribute,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PaButtonModule, PaDropdownModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaDropdownModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
+import { ResourceListService } from '../resource-list.service';
 
 @Component({
   selector: 'stf-table-pagination',
@@ -13,6 +23,9 @@ import { DropdownButtonComponent } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TablePaginationComponent {
+  private resourceListService = inject(ResourceListService);
+  private cdr = inject(ChangeDetectorRef);
+
   @Input({ transform: numberAttribute })
   set totalPages(value: number) {
     this._totalPages = value;
@@ -42,6 +55,7 @@ export class TablePaginationComponent {
   private _totalPages = 0;
   private _page = 0;
   pages: (number | '…')[] = [];
+  loading = false;
 
   get from() {
     return this.page * this.pageSize + 1;
@@ -63,5 +77,13 @@ export class TablePaginationComponent {
 
   goTo(page: number) {
     this.pageChange.emit(page);
+  }
+
+  download() {
+    this.loading = true;
+    this.resourceListService.downloadResources().subscribe(() => {
+      this.loading = false;
+      this.cdr.markForCheck();
+    });
   }
 }

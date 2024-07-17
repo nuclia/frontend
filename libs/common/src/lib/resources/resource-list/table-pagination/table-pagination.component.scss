@@ -15,11 +15,15 @@
     color: $color-neutral-regular;
   }
 
+  .download {
+    margin-left: auto;
+    margin-right: rhythm(2);
+  }
+
   .page-size {
     align-items: center;
     display: flex;
     gap: rhythm(2);
-    margin-left: auto;
   }
 
   .pages {
