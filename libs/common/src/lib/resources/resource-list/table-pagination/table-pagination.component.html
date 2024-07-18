@@ -6,6 +6,16 @@
       <div class="filtered">{{ 'resource.pagination.filtered' | translate: { num: hidden } }}</div>
     }
   </div>
+  <div class="download">
+    <pa-button
+      aspect="basic"
+      iconAndText
+      icon="download"
+      [disabled]="loading"
+      (click)="download()">
+      {{ (loading ? 'resource.pagination.downloading' : 'resource.pagination.download') | translate }}
+    </pa-button>
+  </div>
   <div class="page-size">
     <div class="body-m">{{ 'resource.pagination.rows-per-page' | translate }}</div>
     <div>

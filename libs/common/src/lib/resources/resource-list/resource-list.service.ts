@@ -4,12 +4,15 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  EMPTY,
+  expand,
   filter,
   forkJoin,
   map,
   Observable,
   of,
   pairwise,
+  reduce,
   shareReplay,
   startWith,
   Subject,
@@ -20,11 +23,20 @@ import {
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORTING,
+  getSearchOptions,
   ResourceListParams,
   ResourceWithLabels,
   searchResources,
 } from './resource-list.model';
-import { IResource, LabelSets, ProcessingStatus, Resource, RESOURCE_STATUS, SortOption } from '@nuclia/core';
+import {
+  IResource,
+  KnowledgeBox,
+  LabelSets,
+  ProcessingStatus,
+  Resource,
+  RESOURCE_STATUS,
+  SortOption,
+} from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
 import { UploadService } from '../../upload/upload.service';
 import { SisToastService } from '@nuclia/sistema';
@@ -302,5 +314,61 @@ export class ResourceListService {
         rank: data.schedule_order,
       };
     });
+  }
+
+  getAllResources(sort: SortOption = DEFAULT_SORTING, status?: RESOURCE_STATUS): Observable<Resource[]> {
+    let kb: KnowledgeBox;
+    const getResourcesPage = (kb: KnowledgeBox, page = 0) => {
+      const searchOptions = getSearchOptions({ page, sort, status, pageSize: 200, query: '', filters: [] });
+      return kb.catalog('', searchOptions);
+    };
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((current) => {
+        kb = current;
+        return getResourcesPage(kb);
+      }),
+      expand((results) =>
+        results.type !== 'error' && results.fulltext?.next_page
+          ? getResourcesPage(kb, results.fulltext?.page_number + 1)
+          : EMPTY,
+      ),
+      map((results) => {
+        return results.type === 'error'
+          ? []
+          : Object.values(results.resources || {}).map(
+              (resourceData: IResource) => new Resource(this.sdk.nuclia, kb.id, resourceData),
+            );
+      }),
+      reduce((accData, data) => accData.concat(data), [] as Resource[]),
+    );
+  }
+
+  downloadResources() {
+    return this.getAllResources().pipe(
+      tap((resources) => {
+        const header = 'Id,Title,Labels,Date';
+        const rows = resources.map((resource) => {
+          const labels = resource.getClassifications().map((label) => `${label.labelset}/${label.label}`);
+          const date = resource.created ? new Date(`${resource.created}Z`).toISOString() : '';
+          return `${resource.id},"${this.formatCellValue(resource.title || '')}","${this.formatCellValue(
+            labels.join(','),
+          )}",${date}`;
+        });
+        const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_resource_list.csv`;
+        const content = `${header}\n${rows.join('\n')}`;
+        const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        link.click();
+        URL.revokeObjectURL(url);
+      }),
+    );
+  }
+
+  private formatCellValue(value: string) {
+    return value.replace(/"/g, '""');
   }
 }
