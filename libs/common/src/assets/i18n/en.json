@@ -828,7 +828,7 @@
 	"resource.origin.related": "Related",
 	"resource.origin.url": "URL",
 	"resource.pagination.counter": "{{from}}-{{to}} of {{total}}",
-	"resource.pagination.download": "Download list",
+	"resource.pagination.download": "Download entire list",
 	"resource.pagination.downloading": "Downloading…",
 	"resource.pagination.filtered": "{{num}} resources hidden by filters",
 	"resource.pagination.rows-per-page": "Rows per page",

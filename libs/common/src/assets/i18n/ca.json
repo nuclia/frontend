@@ -828,7 +828,7 @@
 	"resource.origin.related": "Relacionats",
 	"resource.origin.url": "URL",
 	"resource.pagination.counter": "{{from}}-{{to}} de {{total}}",
-	"resource.pagination.download": "Descarregar llista",
+	"resource.pagination.download": "Descarrega la llista sencera",
 	"resource.pagination.downloading": "S'està baixant...",
 	"resource.pagination.filtered": "{{num}} recursos amagats per filtres",
 	"resource.pagination.rows-per-page": "Files per pàgina",
