@@ -25,7 +25,7 @@ describe('Edit resource helpers', () => {
     ]);
   });
 
-  it('should update labels and keep tokens as well as other fields', () => {
+  it('should update labels and keep other fields', () => {
     const all = getFieldMetadataForClassifications(
       field,
       [
@@ -58,7 +58,6 @@ describe('Edit resource helpers', () => {
             { key: 'p1', classifications: [{ labelset: 'heroes', label: 'batman' }] },
             { key: 'p3', classifications: [{ labelset: 'heroes', label: 'batman' }] },
           ],
-          token: [{ token: 'Joker', klass: 'villain', start: 0, end: 4 }],
         },
         {
           field: { field: 'f2', field_type: FIELD_TYPE.text },
@@ -82,7 +81,6 @@ describe('Edit resource helpers', () => {
             classifications: [{ labelset: 'heroes', label: 'catwoman' }],
           },
         ],
-        token: [{ token: 'Joker', klass: 'villain', start: 0, end: 4 }],
       },
       {
         field: { field: 'f2', field_type: FIELD_TYPE.text },

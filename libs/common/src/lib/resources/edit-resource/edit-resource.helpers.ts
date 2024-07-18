@@ -12,7 +12,7 @@ import {
   Resource,
   UserClassification,
   UserFieldMetadata,
-  UserTokenAnnotation,
+  TokenAnnotation,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
 
@@ -48,9 +48,8 @@ export interface EntityGroup {
   entities: string[];
 }
 
-export interface EntityAnnotation extends UserTokenAnnotation {
+export interface EntityAnnotation extends TokenAnnotation {
   family: string;
-  immutable?: boolean;
 }
 
 export const getParagraphs = (fieldId: FieldId, resource: Resource): Paragraph[] => {
@@ -131,7 +130,7 @@ export function addEntitiesToGroups(allGroups: EntityGroup[], entitiesMap: { [ke
   });
 }
 
-function getGeneratedFieldAnnotations(
+export function getGeneratedFieldAnnotations(
   resource: Resource,
   fieldId: FieldId,
   families: EntityGroup[],
@@ -151,31 +150,11 @@ function getGeneratedFieldAnnotations(
           token: entityPosition.entity,
           start: position.start,
           end: position.end,
-          immutable: true,
         }),
       );
     });
   }
   return annotations;
-}
-
-function getUserAnnotations(resource: Resource, fieldId: FieldId, families: EntityGroup[]): EntityAnnotation[] {
-  const userFieldMetadata = (resource.fieldmetadata || []).find(
-    (userFieldMetadata) =>
-      userFieldMetadata.field.field === fieldId.field_id && userFieldMetadata.field.field_type === fieldId.field_type,
-  );
-
-  return (userFieldMetadata?.token || []).map((tokenAnnotation) => ({
-    ...tokenAnnotation,
-    family: families.find((group) => group.id === tokenAnnotation.klass)?.title || '',
-  }));
-}
-
-export function getAllAnnotations(resource: Resource, fieldId: FieldId, families: EntityGroup[]): EntityAnnotation[] {
-  const generatedAnnotations: EntityAnnotation[] = getGeneratedFieldAnnotations(resource, fieldId, families);
-  const userAnnotations: EntityAnnotation[] = getUserAnnotations(resource, fieldId, families);
-
-  return userAnnotations.concat(generatedAnnotations);
 }
 
 export function isSameAnnotation(a: EntityAnnotation, b: EntityAnnotation) {
@@ -214,13 +193,8 @@ export function sortByPosition(a: EntityAnnotation, b: EntityAnnotation): number
 }
 
 export function getHighlightedAnnotations(allAnnotations: EntityAnnotation[]): EntityAnnotation[] {
-  const cancelledAnnotations: EntityAnnotation[] = allAnnotations.filter((annotation) => annotation.cancelled_by_user);
   return allAnnotations.reduce((list, annotation) => {
-    if (
-      !annotation.cancelled_by_user &&
-      !cancelledAnnotations.find((cancelledAnnotation) => isSameAnnotation(annotation, cancelledAnnotation)) &&
-      !list.find((item) => isSameAnnotation(annotation, item))
-    ) {
+    if (!list.find((item) => isSameAnnotation(annotation, item))) {
       list.push(annotation);
     }
     return list;
@@ -244,7 +218,7 @@ export function getAnnotatedText(
       annotation.family
     }" family="${annotation.klass}" start="${annotation.start}" end="${annotation.end}" token="${
       annotation.token
-    }" immutable="${annotation.immutable}" ${highlightedStyle} >${sliceUnicode(
+    }" ${highlightedStyle} >${sliceUnicode(
       paragraphText,
       annotation.start,
       annotation.end,

@@ -20,13 +20,11 @@ import type {
   ResourceField,
   Sentence,
   TextField,
-  TokenAnnotation,
-  UserTokenAnnotation,
 } from './resource.models';
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
 import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
 import { ask, find, search } from '../search';
-import { retry429Config, setEntities, setLabels, sliceUnicode } from './resource.helpers';
+import { retry429Config, setLabels, sliceUnicode } from './resource.helpers';
 import { RagStrategyName } from '../kb/kb.models';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -95,29 +93,6 @@ export class ReadableResource implements IResource {
       .map((field) => field.extracted?.file?.file_thumbnail)
       .concat(this.getFields<LinkFieldData>(['links']).map((field) => field.extracted?.link?.link_thumbnail))
       .filter((thumb) => !!thumb) as CloudLink[];
-  }
-
-  /**
-   * @deprecated
-   */
-  getAnnotatedEntities(): { [key: string]: string[] } {
-    const entities = (this.fieldmetadata || [])
-      .filter((entry) => entry.token && entry.token.length > 0)
-      .map((entry) => entry.token as UserTokenAnnotation[]);
-    return entities.reduce(
-      (acc, val) => {
-        val
-          .filter((token) => !token.cancelled_by_user)
-          .forEach((token) => {
-            if (!acc[token.klass]) {
-              acc[token.klass] = [];
-            }
-            acc[token.klass].push(token.token);
-          });
-        return acc;
-      },
-      {} as { [key: string]: string[] },
-    );
   }
 
   /** Returns the entities extracted from the resource. */
@@ -437,14 +412,6 @@ export class Resource extends ReadableResource implements IResource {
 
   setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {
     const fieldmetadata = setLabels(fieldId, fieldType, paragraphId, labels, this.fieldmetadata || []);
-    return this.modify({ fieldmetadata }).pipe(tap(() => (this.fieldmetadata = fieldmetadata)));
-  }
-
-  /**
-   * @deprecated Will be removed in version 1.18.0
-   */
-  setEntities(fieldId: string, fieldType: string, entities: TokenAnnotation[]): Observable<void> {
-    const fieldmetadata = setEntities(fieldId, fieldType, entities, this.fieldmetadata || []);
     return this.modify({ fieldmetadata }).pipe(tap(() => (this.fieldmetadata = fieldmetadata)));
   }
 }
