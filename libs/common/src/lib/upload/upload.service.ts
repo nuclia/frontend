@@ -99,7 +99,7 @@ export class UploadService {
         ? this.modal.openConfirm({
             title: this.translate.instant('upload.warning-spreadsheet-title', { num: spreadsheets.length }),
             description: this.translate.instant('upload.warning-spreadsheets-description', {
-              url: 'https://docs.nuclia.dev/docs/guides/using/indexing/#structured-text',
+              url: 'https://docs.nuclia.dev/docs/ingestion/indexing#structured-text',
             }),
             confirmLabel: 'generic.upload',
           }).onClose
