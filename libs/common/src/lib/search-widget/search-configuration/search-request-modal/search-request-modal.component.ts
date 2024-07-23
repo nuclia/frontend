@@ -68,10 +68,20 @@ export class SearchRequestModalComponent {
       }
       return `${acc}\n  ${key}=${str},`;
     }, '');
-    return `import sdk from nuclia
+    if (endpoint.includes('/slug/')) {
+      const slug = endpoint.split('/slug/')[1].split('/')[0];
+      return `import sdk from nuclia
+resource = sdk.NucliaResource()
+resource.get(slug='${slug}')
+resource.${method}(
+  query="${query || ''}",${otherParams}
+)`;
+    } else {
+      return `import sdk from nuclia
 search = sdk.NucliaSearch()
 search.${method}(
   query="${query || ''}",${otherParams}
 )`;
+    }
   }
 }
