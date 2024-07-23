@@ -25,8 +25,8 @@ import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { reset } from './reset';
 
-const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
-const DEFAULT_CHAT_MODE = [Ask.Features.VECTORS, Ask.Features.PARAGRAPHS];
+const DEFAULT_SEARCH_MODE = [Search.Features.KEYWORD, Search.Features.SEMANTIC];
+const DEFAULT_CHAT_MODE = [Ask.Features.KEYWORD, Ask.Features.SEMANTIC];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 // IMPORTANT! do not initialise those options outside initNuclia,
 // otherwise options might be kept in memory when using the widget generator
@@ -66,7 +66,7 @@ export const initNuclia = (
     throw new Error('Cannot use synonyms and relations at the same time');
   }
   if (widgetOptions.fuzzyOnly || widgetOptions.features?.useSynonyms) {
-    SEARCH_MODE = [Search.Features.PARAGRAPH];
+    SEARCH_MODE = [Search.Features.KEYWORD];
   }
   if (widgetOptions.features?.useSynonyms) {
     SEARCH_OPTIONS.with_synonyms = true;
@@ -113,7 +113,7 @@ export const initNuclia = (
     SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
   }
   if (widgetOptions.features?.noBM25forChat) {
-    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.PARAGRAPHS);
+    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.PARAGRAPHS && feature !== Ask.Features.KEYWORD);
   }
   MAX_TOKENS = widgetOptions.max_tokens || undefined;
   QUERY_PREPEND = widgetOptions.query_prepend || '';
@@ -199,7 +199,7 @@ export const searchInResource = (
   query: string,
   resource: IResource,
   options: SearchOptions,
-  features: Search.ResourceFeatures[] = [Search.ResourceFeatures.PARAGRAPH],
+  features: Search.ResourceFeatures[] = [Search.ResourceFeatures.KEYWORD],
 ): Observable<Search.FindResults> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');

@@ -71,7 +71,7 @@ export class ParagraphService {
 
   searchInField(query: string, resource: Resource, field: FieldId, pageNumber = 0): Observable<Search.Results> {
     return resource
-      .search(query, [Search.ResourceFeatures.PARAGRAPH], {
+      .search(query, [Search.ResourceFeatures.KEYWORD], {
         fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
         page_number: pageNumber,
       })

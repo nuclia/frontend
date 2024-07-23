@@ -11,7 +11,7 @@ export function ask(
   path: string,
   query: string,
   context: Ask.ContextEntry[] = [],
-  features: Ask.Features[] = [Ask.Features.VECTORS, Ask.Features.PARAGRAPHS],
+  features: Ask.Features[] = [Ask.Features.SEMANTIC, Ask.Features.KEYWORD],
   options: ChatOptions = {},
 ): Observable<Ask.Answer | IErrorResponse> {
   const { synchronous, ...searchOptions } = options;

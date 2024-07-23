@@ -8,9 +8,14 @@ export namespace Ask {
   }
 
   export enum Features {
-    PARAGRAPHS = 'paragraphs',
+    KEYWORD = 'keyword',
+    SEMANTIC = 'semantic',
     RELATIONS = 'relations',
-    VECTORS = 'vectors',
+
+    /** @deprecated use KEYWORD */
+    PARAGRAPHS = 'paragraphs',
+    /** @deprecated use SEMANTIC */
+    VECTORS = 'vectors'
   }
 
   export interface Answer {
