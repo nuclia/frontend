@@ -9,6 +9,11 @@
 
 - Create interface for `LearningConfigurationSchema` properties field: `LearningConfigurationProperty`
 - Update `LearningConfigurationProperty` with options used in Hugging Face schema: `default` and `description`
+- Add new value aliases to `Search.Features` and `Ask.Features` enums:
+  - `KEYWORD` alias for `PARAGRAPH/PARAGRAPHS`
+  - `SEMANTIC` alias for `VECTOR/VECTORS`
+  - `FULLTEXT` alias for `DOCUMENT`
+  - Original values are marked as deprecated
 
 # 1.17.1 (2024-07-08)
 
