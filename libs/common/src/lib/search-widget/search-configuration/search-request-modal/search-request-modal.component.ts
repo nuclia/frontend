@@ -66,12 +66,22 @@ export class SearchRequestModalComponent {
       } else {
         str = JSON.stringify(value);
       }
-      return `${acc}\n  ${key}=${str},`;
+      return `${acc}\n    ${key}=${str},`;
     }, '');
-    return `import sdk from nuclia
+    if (endpoint.includes('/slug/')) {
+      const slug = endpoint.split('/slug/')[1].split('/')[0];
+      return `from nuclia import sdk
+resource = sdk.NucliaResource()
+resource.get(slug='${slug}')
+resource.${method}(
+    query="${query || ''}",${otherParams}
+)`;
+    } else {
+      return `from nuclia import sdk
 search = sdk.NucliaSearch()
 search.${method}(
-  query="${query || ''}",${otherParams}
+    query="${query || ''}",${otherParams}
 )`;
+    }
   }
 }
