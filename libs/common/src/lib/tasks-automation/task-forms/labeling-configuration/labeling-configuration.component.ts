@@ -149,7 +149,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
         switchMap((kb) =>
           this.type === 'resources'
             ? kb.catalog('', { faceted: [facetId] })
-            : kb.search('', [Search.Features.PARAGRAPH], { faceted: [facetId] }),
+            : kb.search('', [Search.Features.KEYWORD], { faceted: [facetId] }),
         ),
       )
       .subscribe({

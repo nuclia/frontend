@@ -334,7 +334,7 @@ export class KnowledgeBox implements IKnowledgeBox {
    * Example:
     ```ts
     nuclia.knowledgeBox
-      .search('where does the Little Prince live', [Search.Features.PARAGRAPH])
+      .search('where does the Little Prince live', [Search.Features.KEYWORD])
       .subscribe((searchResult) => {
         console.log('search result', searchResult);
       });

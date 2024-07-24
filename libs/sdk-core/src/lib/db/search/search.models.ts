@@ -94,15 +94,27 @@ export enum SHORT_FIELD_TYPE {
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Search {
   export enum Features {
-    PARAGRAPH = 'paragraph',
-    DOCUMENT = 'document',
+    KEYWORD = 'keyword',
+    SEMANTIC = 'semantic',
+    FULLTEXT = 'fulltext',
     RELATIONS = 'relations',
+
+    /** @deprecated use KEYWORD */
+    PARAGRAPH = 'paragraph',
+    /** @deprecated use FULLTEXT */
+    DOCUMENT = 'document',
+    /** @deprecated use SEMANTIC */
     VECTOR = 'vector',
   }
 
   export enum ResourceFeatures {
-    PARAGRAPH = 'paragraph',
+    KEYWORD = 'keyword',
+    SEMANTIC = 'semantic',
     RELATIONS = 'relations',
+
+    /** @deprecated use KEYWORD */
+    PARAGRAPH = 'paragraph',
+    /** @deprecated use SEMANTIC */
     VECTOR = 'vector',
   }
 
