@@ -14,6 +14,7 @@
   - `SEMANTIC` alias for `VECTOR/VECTORS`
   - `FULLTEXT` alias for `DOCUMENT`
   - Original values are marked as deprecated
+- Support `extra_context` on `/ask`
 
 # 1.17.1 (2024-07-08)
 
