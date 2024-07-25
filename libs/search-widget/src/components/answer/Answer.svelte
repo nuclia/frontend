@@ -59,30 +59,36 @@
 
   function getSourcesResults(resources: { [key: string]: Search.FindResource }, citations: Citations): TypedResult[] {
     return Object.keys(citations).reduce((acc, paragraphId, index) => {
-      const [resourceId, shortFieldType, fieldId] = paragraphId.split('/');
-      const resource = resources[resourceId];
-      const paragraph = resources[resourceId]?.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[
-        paragraphId
-      ] as RankedParagraph;
-      paragraph.rank = index + 1;
-      if (resource && paragraph) {
-        let field: FieldId;
-        if (shortFieldType === SHORT_FIELD_TYPE.generic) {
-          // we take the first other field that is not generic
-          field = getNonGenericField(resource.data || {});
-        } else {
-          field = {
-            field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
-            field_id: fieldId,
-          };
-        }
-        const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
-        if (!existing) {
-          const fieldData = getFieldDataFromResource(resource, field);
-          const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
-          acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] });
-        } else {
-          existing.paragraphs!.push(paragraph);
+      // When using extra_context, the paragraphId is fake, like USER_CONTEXT_0
+      // Note: the widget does not support extra_context, but a proxy could be injecting some
+      // and it must not break the widget. The objective is not to display the citations properly in this case
+      // (as customer should implement their own widget to handle this case), but just to not break the widget.
+      if (paragraphId.includes('/')) {
+        const [resourceId, shortFieldType, fieldId] = paragraphId.split('/');
+        const resource = resources[resourceId];
+        const paragraph = resources[resourceId]?.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[
+          paragraphId
+        ] as RankedParagraph;
+        paragraph.rank = index + 1;
+        if (resource && paragraph) {
+          let field: FieldId;
+          if (shortFieldType === SHORT_FIELD_TYPE.generic) {
+            // we take the first other field that is not generic
+            field = getNonGenericField(resource.data || {});
+          } else {
+            field = {
+              field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+              field_id: fieldId,
+            };
+          }
+          const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
+          if (!existing) {
+            const fieldData = getFieldDataFromResource(resource, field);
+            const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
+            acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] });
+          } else {
+            existing.paragraphs!.push(paragraph);
+          }
         }
       }
       return acc;
@@ -101,10 +107,10 @@
     let copy = answer.text || '';
     const paragraphs = sources.reduce(
       (acc, result) => acc.concat(result.paragraphs.map((paragraph) => paragraph.text)),
-      [] as string[]
+      [] as string[],
     );
     if (paragraphs.length > 0) {
-      copy += `\n\n${$_('answer.sources')}:\n` + paragraphs.join("\n\n");
+      copy += `\n\n${$_('answer.sources')}:\n` + paragraphs.join('\n\n');
     }
     navigator.clipboard.writeText(copy).then(() => {
       copied = true;
@@ -133,7 +139,7 @@
         <div class="copy">
           <IconButton
             aspect="basic"
-            icon={copied ? 'check' : 'copy' }
+            icon={copied ? 'check' : 'copy'}
             size="small"
             kind="secondary"
             on:click={() => copyAnwser()} />
