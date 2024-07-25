@@ -19,7 +19,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { filter, map, of, Subject, switchMap, take, tap, throwError } from 'rxjs';
+import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import { EmbeddingModelForm, LanguageFieldComponent } from '@nuclia/user';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -90,13 +90,12 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   userKeys?: { [key: string]: any };
 
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
-  learningSchema: LearningConfigurations = {};
+  learningSchema = new ReplaySubject<LearningConfigurations>(1);
 
   ngOnInit() {
     if (this.sdk.nuclia.options.standalone) {
       this.sdk.nuclia.db.getLearningSchema().subscribe((schema) => {
-        this.learningSchema = schema;
-        this.cdr.markForCheck();
+        this.learningSchema.next(schema);
       });
     } else {
       // update learning schema when zone changes
@@ -110,8 +109,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
           takeUntil(this.unsubscribeAll),
         )
         .subscribe((schema) => {
-          this.learningSchema = schema;
-          this.cdr.markForCheck();
+          this.learningSchema.next(schema);
         });
     }
   }
@@ -152,8 +150,8 @@ export class KbCreationComponent implements OnInit, OnDestroy {
           this.saving = true;
           this.cdr.markForCheck();
         }),
-        switchMap(() => this.account.pipe(take(1))),
-        switchMap((account) => {
+        switchMap(() => forkJoin([this.account.pipe(take(1)), this.learningSchema.pipe(take(1))])),
+        switchMap(([account, learningSchema]) => {
           let user_keys;
           if (this.userKeys) {
             user_keys = this.userKeys;
@@ -163,7 +161,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
             slug: STFUtils.generateSlug(kbConfig.title),
             learning_configuration: {
               anonymization_model: anonymization ? 'multilingual' : 'disabled',
-              semantic_model: getSemanticModel(this.semanticModel, this.learningSchema),
+              semantic_model: getSemanticModel(this.semanticModel, learningSchema),
               user_keys,
             },
           };
