@@ -403,6 +403,8 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
       .pipe(tap(() => {
         this.isLoading = false;
         this.cdr.markForCheck();
-      }));
+      }),
+      map((result) => result.resources)
+    );
   }
 }
