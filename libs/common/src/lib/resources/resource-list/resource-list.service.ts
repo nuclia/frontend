@@ -316,8 +316,12 @@ export class ResourceListService {
     });
   }
 
-  getAllResources(sort: SortOption = DEFAULT_SORTING, status?: RESOURCE_STATUS): Observable<Resource[]> {
+  getAllResources(
+    sort: SortOption = DEFAULT_SORTING,
+    status?: RESOURCE_STATUS,
+  ): Observable<{ resources: Resource[]; incomplete: boolean }> {
     let kb: KnowledgeBox;
+    let errors = 0;
     const getResourcesPage = (kb: KnowledgeBox, page = 0) => {
       const searchOptions = getSearchOptions({ page, sort, status, pageSize: 200, query: '', filters: [] });
       return kb.catalog('', searchOptions);
@@ -334,21 +338,25 @@ export class ResourceListService {
           : EMPTY,
       ),
       map((results) => {
-        return results.type === 'error'
-          ? []
-          : Object.values(results.resources || {}).map(
-              (resourceData: IResource) => new Resource(this.sdk.nuclia, kb.id, resourceData),
-            );
+        if (results.type === 'error') {
+          errors++;
+          return [];
+        } else {
+          return Object.values(results.resources || {}).map(
+            (resourceData: IResource) => new Resource(this.sdk.nuclia, kb.id, resourceData),
+          );
+        }
       }),
       reduce((accData, data) => accData.concat(data), [] as Resource[]),
+      map((resources) => ({ resources, incomplete: errors > 0 })),
     );
   }
 
   downloadResources() {
     return this.getAllResources().pipe(
-      tap((resources) => {
+      tap((result) => {
         const header = 'Id,Title,Labels,Date';
-        const rows = resources.map((resource) => {
+        const rows = result.resources.map((resource) => {
           const labels = resource.getClassifications().map((label) => `${label.labelset}/${label.label}`);
           const date = resource.created ? new Date(`${resource.created}Z`).toISOString() : '';
           return `${resource.id},"${this.formatCellValue(resource.title || '')}","${this.formatCellValue(
@@ -364,6 +372,9 @@ export class ResourceListService {
         link.setAttribute('download', filename);
         link.click();
         URL.revokeObjectURL(url);
+        if (result.incomplete) {
+          this.toastService.warning('resource.pagination.download-incomplete');
+        }
       }),
     );
   }
