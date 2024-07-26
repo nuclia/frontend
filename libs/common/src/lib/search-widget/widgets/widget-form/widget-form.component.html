@@ -155,7 +155,8 @@
               <pa-toggle
                 formControlName="navigateToLink"
                 withBackground
-                spaceBetweenLabelAndToggle>
+                spaceBetweenLabelAndToggle
+                (valueChange)="updateWidgetOptionsHeight()">
                 <span class="toggle-label">
                   {{ 'search.widgets.form.widget-options.navigate-to-link.toggle-label' | translate }}
                 </span>
@@ -168,7 +169,8 @@
               <pa-toggle
                 formControlName="navigateToFile"
                 withBackground
-                spaceBetweenLabelAndToggle>
+                spaceBetweenLabelAndToggle
+                (valueChange)="updateWidgetOptionsHeight()">
                 <span class="toggle-label">
                   {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-label' | translate }}
                 </span>
@@ -177,6 +179,21 @@
                 {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-description' | translate }}
               </div>
             </div>
+            @if (navigateToLinkOrFileEnabled) {
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="openNewTab"
+                  withBackground
+                  spaceBetweenLabelAndToggle>
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.open-new-tab.toggle-label' | translate }}
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.open-new-tabs.toggle-description' | translate }}
+                </div>
+              </div>
+            }
           </form>
         </pa-accordion-item-body>
       </pa-accordion-item>

@@ -81,6 +81,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     permalink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),
+    openNewTab: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   widgetFormExpanded = true;
@@ -105,6 +106,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
   get popupStyleEnabled() {
     return this.form.controls.popupStyle.value === 'popup';
+  }
+  get navigateToLinkOrFileEnabled() {
+    return this.form.controls.navigateToFile.value || this.form.controls.navigateToLink.value;
   }
 
   ngOnInit() {

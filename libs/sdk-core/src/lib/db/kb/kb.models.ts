@@ -302,6 +302,7 @@ export interface WidgetFeatures {
   rephrase?: boolean;
   dumpLog?: boolean;
   preferMarkdown?: boolean;
+  openNewTab?: boolean;
 }
 
 export enum RagStrategyName {
