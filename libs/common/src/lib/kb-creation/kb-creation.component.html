@@ -73,6 +73,37 @@
       </div>
     </nsi-two-columns-configuration-item>
 
+    @if (!standalone && (isExternalIndexEnabled | async)) {
+      <nsi-two-columns-configuration-item
+        itemTitle="account.kb.creation-form.vector-database.title"
+        description="account.kb.creation-form.vector-database.description">
+        <ng-container formGroupName="vectorDatabase">
+          <div class="form-container">
+            <div class="toggle-container">
+              <pa-toggle formControlName="external">
+                {{ 'account.kb.creation-form.vector-database.pinecone.toggle-label' | translate }}
+              </pa-toggle>
+            </div>
+
+            @if (externalVectorDatabase) {
+              <nsi-info-card
+                type="warning"
+                icon="warning">
+                {{ 'account.kb.creation-form.vector-database.pinecone.warning' | translate }}
+              </nsi-info-card>
+
+              <pa-input formControlName="apiKey">
+                {{ 'account.kb.creation-form.vector-database.input-label' | translate }}
+              </pa-input>
+              <nsi-info-card>
+                <div [innerHTML]="'account.kb.creation-form.vector-database.pinecone.api-info' | translate"></div>
+              </nsi-info-card>
+            }
+          </div>
+        </ng-container>
+      </nsi-two-columns-configuration-item>
+    }
+
     <nsi-sticky-footer>
       <pa-button
         aspect="basic"

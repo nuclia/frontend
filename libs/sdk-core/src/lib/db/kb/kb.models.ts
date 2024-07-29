@@ -233,8 +233,13 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 export interface KnowledgeBoxCreation {
   slug: string;
   title: string;
+  zone?: string;
   description?: string;
   learning_configuration?: { [configId: string]: any };
+  external_index_provider?: {
+    type: 'pinecone';
+    api_key: string;
+  };
 }
 
 export interface Entities {

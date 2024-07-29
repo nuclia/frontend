@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  FeaturesService,
   getSemanticModel,
   NavigationService,
   SDKService,
@@ -10,6 +11,7 @@ import {
 } from '@flaps/core';
 import {
   BackButtonComponent,
+  InfoCardComponent,
   SisModalService,
   SisProgressModule,
   SisToastService,
@@ -23,7 +25,7 @@ import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap
 import { EmbeddingModelForm, LanguageFieldComponent } from '@nuclia/user';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LearningConfigurations } from '@nuclia/core';
+import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 
 @Component({
   selector: 'app-kb-creation',
@@ -31,15 +33,16 @@ import { LearningConfigurations } from '@nuclia/core';
   imports: [
     CommonModule,
     BackButtonComponent,
-    PaTextFieldModule,
     ReactiveFormsModule,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     StickyFooterComponent,
     PaButtonModule,
+    PaTextFieldModule,
     PaTogglesModule,
     LanguageFieldComponent,
     SisProgressModule,
+    InfoCardComponent,
   ],
   templateUrl: './kb-creation.component.html',
   styleUrl: './kb-creation.component.scss',
@@ -54,6 +57,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private navigationService = inject(NavigationService);
+  private featureService = inject(FeaturesService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -78,6 +82,11 @@ export class KbCreationComponent implements OnInit, OnDestroy {
       validators: this.sdk.nuclia.options.standalone ? [] : [Validators.required],
     }),
     anonymization: new FormControl<boolean>(false, { nonNullable: true }),
+    vectorDatabase: new FormGroup({
+      external: new FormControl<boolean>(false),
+      type: new FormControl<'pinecone'>('pinecone', { nonNullable: true }),
+      apiKey: new FormControl<string>('', { nonNullable: true }),
+    }),
   });
   validationMessages: { [key: string]: IErrorMessages } = {
     title: {
@@ -91,6 +100,12 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
   learningSchema = new ReplaySubject<LearningConfigurations>(1);
+
+  isExternalIndexEnabled = this.featureService.unstable.externalIndex;
+
+  get externalVectorDatabase() {
+    return this.form.controls.vectorDatabase.controls.external.value;
+  }
 
   ngOnInit() {
     if (this.sdk.nuclia.options.standalone) {
@@ -132,7 +147,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   }
 
   create() {
-    const { anonymization, ...kbConfig } = this.form.getRawValue();
+    const { anonymization, vectorDatabase, ...kbConfig } = this.form.getRawValue();
 
     const confirmed = anonymization
       ? this.modalService
@@ -150,13 +165,19 @@ export class KbCreationComponent implements OnInit, OnDestroy {
           this.saving = true;
           this.cdr.markForCheck();
         }),
-        switchMap(() => forkJoin([this.account.pipe(take(1)), this.learningSchema.pipe(take(1))])),
-        switchMap(([account, learningSchema]) => {
+        switchMap(() =>
+          forkJoin([
+            this.account.pipe(take(1)),
+            this.learningSchema.pipe(take(1)),
+            this.isExternalIndexEnabled.pipe(take(1)),
+          ]),
+        ),
+        switchMap(([account, learningSchema, isExternalIndexEnabled]) => {
           let user_keys;
           if (this.userKeys) {
             user_keys = this.userKeys;
           }
-          const kb = {
+          const kb: KnowledgeBoxCreation = {
             ...kbConfig,
             slug: STFUtils.generateSlug(kbConfig.title),
             learning_configuration: {
@@ -165,6 +186,12 @@ export class KbCreationComponent implements OnInit, OnDestroy {
               user_keys,
             },
           };
+          if (isExternalIndexEnabled && this.externalVectorDatabase) {
+            kb.external_index_provider = {
+              type: vectorDatabase.type,
+              api_key: vectorDatabase.apiKey,
+            };
+          }
           return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone).pipe(
             catchError((error) => {
               if (error.status === 409) {
@@ -189,6 +216,8 @@ export class KbCreationComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.toaster.error('kb.create.error');
+          this.form.enable();
+          this.saving = false;
         },
       });
   }
