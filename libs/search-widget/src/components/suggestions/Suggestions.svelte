@@ -18,11 +18,12 @@
     navigateToFile,
     navigateToLink,
     NO_SUGGESTION_RESULTS,
+    openNewTab,
     selectedEntity,
     suggestionError,
     suggestions,
     suggestionsHasError,
-    viewerData
+    viewerData,
   } from '../../core';
   import { createEventDispatcher } from 'svelte';
 
@@ -39,29 +40,31 @@
           const firstResourceField = getFirstResourceField(resource);
           return combineLatest([navigateToFile, navigateToLink]).pipe(
             take(1),
-            switchMap(([navigateToFile, navigateToLink]) => iif(
-              () => (navigateToFile || navigateToLink) && !!firstResourceField,
-              getNavigationUrl(
-                navigateToFile,
-                navigateToLink,
-                resource,
-                firstResourceField as ResourceField
+            switchMap(([navigateToFile, navigateToLink]) =>
+              iif(
+                () => (navigateToFile || navigateToLink) && !!firstResourceField,
+                getNavigationUrl(navigateToFile, navigateToLink, resource, firstResourceField as ResourceField),
+                of(false),
               ),
-              of(false)
-            )),
-            map((url) => ({ url, resource }))
-          ).pipe(
-            tap(({ url, resource }) => {
+            ),
+            switchMap((url) =>
+              openNewTab.pipe(
+                take(1),
+                map((openNewTab) => ({ url, resource, openNewTab })),
+              ),
+            ),
+            tap(({ url, resource, openNewTab }) => {
               if (url) {
-                goToUrl(url);
+                goToUrl(url, undefined, openNewTab);
               } else {
                 openViewer(resource, firstResourceField);
               }
               suggestions.set({ results: NO_SUGGESTION_RESULTS });
-            })
+            }),
           );
-        })
-      ).subscribe();
+        }),
+      )
+      .subscribe();
   };
 
   function openViewer(resource: IResource, field?: ResourceField) {

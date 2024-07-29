@@ -18,10 +18,11 @@
     navigateToLink,
     trackingEngagement,
     viewerData,
+    openNewTab,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
-  import { combineLatest, map, of, switchMap, take } from 'rxjs';
+  import { combineLatest, forkJoin, map, of, switchMap, take } from 'rxjs';
   import { FieldMetadata } from './';
 
   export let result: TypedResult;
@@ -71,9 +72,9 @@
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
-      url.subscribe((url) => {
+      forkJoin([url, openNewTab.pipe(take(1))]).subscribe(([url, openNewTab]) => {
         if (url) {
-          goToUrl(url, paragraph?.text, metaKeyOn);
+          goToUrl(url, paragraph?.text, metaKeyOn || openNewTab);
         } else {
           viewerData.set({
             result,

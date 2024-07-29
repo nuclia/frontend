@@ -1040,6 +1040,8 @@
 	"search.widgets.form.widget-options.navigate-to-files.toggle-label": "Navegar a archivos de origen",
 	"search.widgets.form.widget-options.navigate-to-link.toggle-description": "Cuando se utiliza Nuclia para buscar páginas web, al hacer clic en un resultado se abrirá la página original en lugar de mostrarla en el visor.",
 	"search.widgets.form.widget-options.navigate-to-link.toggle-label": "Navegar al origen de los enlaces",
+	"search.widgets.form.widget-options.open-new-tab.toggle-label": "Abrir en una nueva pestaña",
+	"search.widgets.form.widget-options.open-new-tabs.toggle-description": "Abrir enlaces y/o archivos en una nueva pestaña",
 	"search.widgets.form.widget-options.permalinks.toggle-description": "Agrega parámetros adicionales a la URL para que los usuarios puedan copiar y compartir un enlace directo a un recurso o resultados de búsqueda específicos.",
 	"search.widgets.form.widget-options.permalinks.toggle-label": "Enlaces permanentes",
 	"search.widgets.form.widget-options.placeholder.input-label": "Placeholder",
