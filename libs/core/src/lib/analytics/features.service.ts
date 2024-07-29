@@ -56,6 +56,7 @@ export class FeaturesService {
     suggestEntities: this.featureFlag.isFeatureEnabled('suggest-entities'),
     ragImages: this.featureFlag.isFeatureEnabled('rag-images'),
     synonyms: this.featureFlag.isFeatureEnabled('synonyms-enabled'),
+    externalIndex: this.featureFlag.isFeatureEnabled('external-index-provider'),
 
     // FEATURES meant to go to authorized features once stable
     taskAutomation: combineLatest([
