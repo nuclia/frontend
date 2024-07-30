@@ -141,6 +141,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([widgetConfig, searchConfig]) => {
         if (this.currentWidget) {
+          this.currentWidget.searchConfigId = searchConfig.id;
           this.currentWidget.widgetConfig = this.form.getRawValue();
         }
         if (!widgetConfig.permalink) {
@@ -164,8 +165,18 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     const current = this.currentWidget;
     if (current) {
       this.sdk.currentKb
-        .pipe(take(1))
-        .subscribe((kb) => this.searchWidgetService.updateWidget(kb.id, current.slug, current.widgetConfig));
+        .pipe(
+          take(1),
+          tap((kb) =>
+            this.searchWidgetService.updateWidget(kb.id, current.slug, current.widgetConfig, current.searchConfigId),
+          ),
+        )
+        .subscribe({
+          next: (kb) => {
+            this.savedWidget = this.searchWidgetService.getSavedWidget(kb.id, current.slug);
+            this.checkIsModified();
+          },
+        });
     }
   }
 
@@ -220,6 +231,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   updateSearchConfig(searchConfig: SearchConfiguration) {
     this.configChanges.next(searchConfig);
+
     this.isNotModified = searchConfig.id === this.savedWidget?.searchConfigId;
     this.cdr.markForCheck();
   }

@@ -23,7 +23,7 @@ import {
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
-import { BehaviorSubject, delay, filter, forkJoin, map, Observable, of, Subject, switchMap, take } from 'rxjs';
+import { BehaviorSubject, delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -273,10 +273,11 @@ export class SearchWidgetService {
     return slug;
   }
 
-  updateWidget(kbId: string, widgetSlug: string, widgetConfig: WidgetConfiguration) {
+  updateWidget(kbId: string, widgetSlug: string, widgetConfig: WidgetConfiguration, searchConfigId: string) {
     const storedWidgets = this.getKBWidgets(kbId);
     const widget = storedWidgets.find((widget) => widget.slug === widgetSlug);
     if (widget) {
+      widget.searchConfigId = searchConfigId;
       widget.widgetConfig = widgetConfig;
     }
     this.storeKBWidgets(kbId, storedWidgets);
