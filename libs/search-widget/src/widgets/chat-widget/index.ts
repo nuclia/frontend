@@ -1,1 +1,1 @@
-export { default as NucliaChatWidget } from './ChatWidget.svelte';
+export { default as NucliaChat } from './ChatWidget.svelte';

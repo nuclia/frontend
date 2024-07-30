@@ -33,7 +33,7 @@
   export let max_tokens: number | undefined = undefined;
   export let query_prepend = '';
 
-  export let layout: 'inline' | 'fullscreen' = 'fullscreen';
+  export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
   let _ragStrategies: RAGStrategy[] = [];
 
@@ -82,7 +82,7 @@
       preselectedFilters.set(preselected_filters);
     }
 
-    _ragStrategies = getRAGStrategies(rag_strategies, rag_field_ids);
+    _ragStrategies = getRAGStrategies(rag_strategies);
     widgetRagStrategies.set(_ragStrategies);
 
     initAnswer();
