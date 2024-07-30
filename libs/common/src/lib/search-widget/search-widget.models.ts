@@ -70,7 +70,7 @@ export interface SearchConfiguration {
 }
 
 export interface WidgetConfiguration {
-  popupStyle: 'page' | 'popup';
+  widgetMode: 'page' | 'popup' | 'chat';
   darkMode: 'light' | 'dark';
   customizePlaceholder: boolean;
   placeholder: string;
@@ -146,7 +146,7 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   jsonSchema: '',
 };
 export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
-  popupStyle: 'page',
+  widgetMode: 'page',
   darkMode: 'light',
   customizePlaceholder: false,
   placeholder: '',
@@ -207,7 +207,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     permalink: widgetOptions.permalink,
     navigateToLink: widgetOptions.navigateToLink,
     navigateToFile: widgetOptions.navigateToFile,
-    openNewTab: (widgetOptions.navigateToLink || widgetOptions.navigateToFile) && widgetOptions.openNewTab
+    openNewTab: (widgetOptions.navigateToLink || widgetOptions.navigateToFile) && widgetOptions.openNewTab,
   };
   const featureList = Object.entries(widgetFeatures)
     .filter(([, enabled]) => enabled)

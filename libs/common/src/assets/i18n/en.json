@@ -1055,6 +1055,7 @@
 	"search.widgets.form.widget-options.placeholder.toggle-label": "Customize search bar placeholder",
 	"search.widgets.form.widget-options.section-description": "Define the look and behavior of the widget.",
 	"search.widgets.form.widget-options.section-title": "Widget options",
+	"search.widgets.form.widget-options.style.chat": "Chat mode",
 	"search.widgets.form.widget-options.style.page": "Embedded in page",
 	"search.widgets.form.widget-options.style.popup": "Popup modal style (opens above your content)",
 	"search.widgets.form.widget-options.style.title": "Widget style",

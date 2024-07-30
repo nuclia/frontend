@@ -23,7 +23,7 @@ import {
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
-import { BehaviorSubject, delay, filter, forkJoin, map, Observable, of, Subject, switchMap, take } from 'rxjs';
+import { BehaviorSubject, delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -157,9 +157,24 @@ export class SearchWidgetService {
 
     // Widget options
     const theme = getWidgetTheme(widgetOptions);
-    const isPopupStyle = widgetOptions.popupStyle === 'popup';
-    const tagName = isPopupStyle ? 'nuclia-popup' : 'nuclia-search-bar';
-    const scriptSrc = `https://cdn.nuclia.cloud/nuclia-${isPopupStyle ? 'popup' : 'video'}-widget.umd.js`;
+    let tagName;
+    let widgetFileName;
+    switch (widgetOptions.widgetMode) {
+      case 'popup':
+        tagName = 'nuclia-popup';
+        widgetFileName = 'nuclia-popup-widget';
+        break;
+      case 'chat':
+        tagName = 'nuclia-chat';
+        widgetFileName = 'nuclia-chat-widget';
+        break;
+      default:
+        tagName = 'nuclia-search-bar';
+        widgetFileName = 'nuclia-video-widget';
+    }
+    const isPopupStyle = widgetOptions.widgetMode === 'popup';
+    const isSearchMode = widgetOptions.widgetMode === 'page';
+    const scriptSrc = `https://cdn.nuclia.cloud/${widgetFileName}.umd.js`;
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([kb, account]) => {
@@ -178,7 +193,7 @@ export class SearchWidgetService {
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
-        } else {
+        } else if (isSearchMode) {
           baseSnippet += `<nuclia-search-results ${theme}></nuclia-search-results>`;
         }
 
@@ -273,10 +288,11 @@ export class SearchWidgetService {
     return slug;
   }
 
-  updateWidget(kbId: string, widgetSlug: string, widgetConfig: WidgetConfiguration) {
+  updateWidget(kbId: string, widgetSlug: string, widgetConfig: WidgetConfiguration, searchConfigId: string) {
     const storedWidgets = this.getKBWidgets(kbId);
     const widget = storedWidgets.find((widget) => widget.slug === widgetSlug);
     if (widget) {
+      widget.searchConfigId = searchConfigId;
       widget.widgetConfig = widgetConfig;
     }
     this.storeKBWidgets(kbId, storedWidgets);

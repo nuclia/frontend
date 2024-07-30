@@ -71,7 +71,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   isNotModified = true;
 
   form = new FormGroup({
-    popupStyle: new FormControl<'page' | 'popup'>('page', { nonNullable: true }),
+    widgetMode: new FormControl<'page' | 'popup' | 'chat'>('page', { nonNullable: true }),
     darkMode: new FormControl<'light' | 'dark'>('light', { nonNullable: true }),
     customizePlaceholder: new FormControl<boolean>(false, { nonNullable: true }),
     placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
@@ -105,7 +105,10 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     return this.form.controls.darkMode.value === 'dark';
   }
   get popupStyleEnabled() {
-    return this.form.controls.popupStyle.value === 'popup';
+    return this.form.controls.widgetMode.value === 'popup';
+  }
+  get chatModeEnabled() {
+    return this.form.controls.widgetMode.value === 'chat';
   }
   get navigateToLinkOrFileEnabled() {
     return this.form.controls.navigateToFile.value || this.form.controls.navigateToLink.value;
@@ -141,6 +144,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([widgetConfig, searchConfig]) => {
         if (this.currentWidget) {
+          this.currentWidget.searchConfigId = searchConfig.id;
           this.currentWidget.widgetConfig = this.form.getRawValue();
         }
         if (!widgetConfig.permalink) {
@@ -164,8 +168,18 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     const current = this.currentWidget;
     if (current) {
       this.sdk.currentKb
-        .pipe(take(1))
-        .subscribe((kb) => this.searchWidgetService.updateWidget(kb.id, current.slug, current.widgetConfig));
+        .pipe(
+          take(1),
+          tap((kb) =>
+            this.searchWidgetService.updateWidget(kb.id, current.slug, current.widgetConfig, current.searchConfigId),
+          ),
+        )
+        .subscribe({
+          next: (kb) => {
+            this.savedWidget = this.searchWidgetService.getSavedWidget(kb.id, current.slug);
+            this.checkIsModified();
+          },
+        });
     }
   }
 
@@ -220,11 +234,12 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   updateSearchConfig(searchConfig: SearchConfiguration) {
     this.configChanges.next(searchConfig);
+
     this.isNotModified = searchConfig.id === this.savedWidget?.searchConfigId;
     this.cdr.markForCheck();
   }
 
-  onStyleChange(value: string) {
+  onWidgetModeChange(value: string) {
     if (value === 'popup') {
       this.form.controls.darkMode.setValue('light');
     }

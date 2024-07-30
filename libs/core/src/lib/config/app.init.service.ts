@@ -115,4 +115,11 @@ function injectWidget(cdnUrl: string) {
   popup.defer = true;
   popup.src = `${cdnUrl}/nuclia-popup-widget.umd.js`;
   window.document.body.appendChild(popup);
+
+  const chat = window.document.createElement('script');
+  chat.type = 'text/javascript';
+  chat.async = true;
+  chat.defer = true;
+  chat.src = `${cdnUrl}/nuclia-chat-widget.umd.js`;
+  window.document.body.appendChild(chat);
 }
