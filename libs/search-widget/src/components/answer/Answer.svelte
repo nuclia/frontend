@@ -153,21 +153,23 @@
       <div>
         <Feedback {rank} />
       </div>
-      {#if initialAnswer && !$chat[rank]?.answer.incomplete}
-        <Button
-          aspect="basic"
-          size="small"
-          on:click={() => dispatch('openChat')}>
-          <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
-        </Button>
-      {/if}
-      {#if $hasDumpLogButton}
-        <Button
-          aspect="basic"
-          size="small"
-          on:click={() => downloadDump()}>
-          <span class="title-s">{$_('answer.download-log')}</span>
-        </Button>
+      {#if !$chat[rank]?.answer.incomplete}
+        {#if initialAnswer}
+          <Button
+            aspect="basic"
+            size="small"
+            on:click={() => dispatch('openChat')}>
+            <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
+          </Button>
+        {/if}
+        {#if $hasDumpLogButton}
+          <Button
+            aspect="basic"
+            size="small"
+            on:click={() => downloadDump()}>
+            <span class="title-s">{$_('answer.download-log')}</span>
+          </Button>
+        {/if}
       {/if}
     </div>
     {#if $isCitationsEnabled}
