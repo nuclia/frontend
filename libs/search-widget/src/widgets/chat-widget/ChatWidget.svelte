@@ -17,6 +17,7 @@
     widgetRagStrategies
   } from '../../core';
   import { BehaviorSubject, delay, filter, firstValueFrom } from 'rxjs';
+  import { Viewer } from '../../components';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -149,6 +150,8 @@
       height={height || undefined}
       on:close={closeChat} />
   {/if}
+
+  <Viewer />
 
   <div
     id="nuclia-glyphs-sprite"
