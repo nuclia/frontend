@@ -44,8 +44,6 @@ $header-height: rhythm(10) + rhythm(1) + $vertical-gap * 2;
   }
 
   .widget-preview-container {
-    padding-bottom: rhythm(6);
-
     .title-xs {
       color: $color-neutral-regular;
       margin-bottom: rhythm(2);
@@ -59,6 +57,12 @@ $header-height: rhythm(10) + rhythm(1) + $vertical-gap * 2;
     }
 
     .preview-content {
+      --custom-height-container: calc(
+        100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - var(--app-layout-padding-bottom) - #{rhythm(
+            24
+          )}
+      );
+
       display: flex;
       flex: 1;
       flex-direction: column;

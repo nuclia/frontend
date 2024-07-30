@@ -157,9 +157,24 @@ export class SearchWidgetService {
 
     // Widget options
     const theme = getWidgetTheme(widgetOptions);
-    const isPopupStyle = widgetOptions.popupStyle === 'popup';
-    const tagName = isPopupStyle ? 'nuclia-popup' : 'nuclia-search-bar';
-    const scriptSrc = `https://cdn.nuclia.cloud/nuclia-${isPopupStyle ? 'popup' : 'video'}-widget.umd.js`;
+    let tagName;
+    let widgetFileName;
+    switch (widgetOptions.widgetMode) {
+      case 'popup':
+        tagName = 'nuclia-popup';
+        widgetFileName = 'nuclia-popup-widget';
+        break;
+      case 'chat':
+        tagName = 'nuclia-chat';
+        widgetFileName = 'nuclia-chat-widget';
+        break;
+      default:
+        tagName = 'nuclia-search-bar';
+        widgetFileName = 'nuclia-video-widget';
+    }
+    const isPopupStyle = widgetOptions.widgetMode === 'popup';
+    const isSearchMode = widgetOptions.widgetMode === 'page';
+    const scriptSrc = `https://cdn.nuclia.cloud/${widgetFileName}.umd.js`;
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([kb, account]) => {
@@ -178,7 +193,7 @@ export class SearchWidgetService {
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
-        } else {
+        } else if (isSearchMode) {
           baseSnippet += `<nuclia-search-results ${theme}></nuclia-search-results>`;
         }
 

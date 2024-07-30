@@ -71,7 +71,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   isNotModified = true;
 
   form = new FormGroup({
-    popupStyle: new FormControl<'page' | 'popup'>('page', { nonNullable: true }),
+    widgetMode: new FormControl<'page' | 'popup' | 'chat'>('page', { nonNullable: true }),
     darkMode: new FormControl<'light' | 'dark'>('light', { nonNullable: true }),
     customizePlaceholder: new FormControl<boolean>(false, { nonNullable: true }),
     placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
@@ -105,7 +105,10 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     return this.form.controls.darkMode.value === 'dark';
   }
   get popupStyleEnabled() {
-    return this.form.controls.popupStyle.value === 'popup';
+    return this.form.controls.widgetMode.value === 'popup';
+  }
+  get chatModeEnabled() {
+    return this.form.controls.widgetMode.value === 'chat';
   }
   get navigateToLinkOrFileEnabled() {
     return this.form.controls.navigateToFile.value || this.form.controls.navigateToLink.value;
@@ -236,7 +239,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  onStyleChange(value: string) {
+  onWidgetModeChange(value: string) {
     if (value === 'popup') {
       this.form.controls.darkMode.setValue('light');
     }

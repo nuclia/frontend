@@ -102,10 +102,13 @@
             <div class="config-form-field">
               <div class="title-xs">{{ 'search.widgets.form.widget-options.style.title' | translate }}</div>
               <pa-radio-group
-                formControlName="popupStyle"
-                (valueChange)="onStyleChange($event)">
+                formControlName="widgetMode"
+                (valueChange)="onWidgetModeChange($event)">
                 <pa-radio value="page">
                   {{ 'search.widgets.form.widget-options.style.page' | translate }}
+                </pa-radio>
+                <pa-radio value="chat">
+                  {{ 'search.widgets.form.widget-options.style.chat' | translate }}
                 </pa-radio>
                 <pa-radio value="popup">
                   {{ 'search.widgets.form.widget-options.style.popup' | translate }}
