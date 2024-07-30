@@ -103,7 +103,7 @@
     selectedCitation = undefined;
   }
 
-  function copyAnwser() {
+  function copyAnswer() {
     let copy = answer.text || '';
     const paragraphs = sources.reduce(
       (acc, result) => acc.concat(result.paragraphs.map((paragraph) => paragraph.text)),
@@ -142,7 +142,7 @@
             icon={copied ? 'check' : 'copy'}
             size="small"
             kind="secondary"
-            on:click={() => copyAnwser()} />
+            on:click={() => copyAnswer()} />
           <Tooltip
             visible={copied}
             title={$_('answer.copied')}

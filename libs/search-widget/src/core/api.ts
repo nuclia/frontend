@@ -177,13 +177,13 @@ export const getAnswer = (
   if (ASK_TO_RESOURCE) {
     return nucliaApi.knowledgeBox
       .getResourceFromData({ id: '', slug: ASK_TO_RESOURCE })
-      .ask(query, context, CHAT_MODE, options ? { ...options, ...defaultOptions } : defaultOptions);
+      .ask(query, context, CHAT_MODE, options ? { ...defaultOptions, ...options } : defaultOptions);
   } else {
     return nucliaApi.knowledgeBox.ask(
       query,
       context,
       CHAT_MODE,
-      options ? { ...options, ...defaultOptions } : defaultOptions,
+      options ? { ...defaultOptions, ...options } : defaultOptions,
     );
   }
 };

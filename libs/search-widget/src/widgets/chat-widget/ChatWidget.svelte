@@ -2,16 +2,21 @@
 
 <script lang="ts">
   import { initNuclia, resetNuclia } from '../../core/api';
-  import { onMount } from 'svelte';
-  import { getRAGStrategies, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
+  import { createEventDispatcher, onMount } from 'svelte';
+  import { getRAGImageStrategies, getRAGStrategies, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
-  import type { KBStates, RAGStrategy } from '@nuclia/core';
+  import type { KBStates, Nuclia, RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
-  import { preselectedFilters, widgetRagStrategies } from '../../core';
-  import { BehaviorSubject, filter, firstValueFrom } from 'rxjs';
+  import {
+    preselectedFilters,
+    widgetFeatures,
+    widgetImageRagStrategies,
+    widgetRagStrategies
+  } from '../../core';
+  import { BehaviorSubject, delay, filter, firstValueFrom } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -22,6 +27,7 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
+  export let features = '';
   export let standalone = false;
   export let proxy = false;
   export let cssPath = '';
@@ -29,13 +35,15 @@
   export let preselected_filters = '';
   export let no_tracking = false;
   export let rag_strategies = '';
-  export let rag_field_ids = '';
+  export let rag_image_strategies = '';
   export let max_tokens: number | undefined = undefined;
   export let query_prepend = '';
 
   export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
+  let _jsonSchema: object | null = null;
   let _ragStrategies: RAGStrategy[] = [];
+  let _ragImageStrategies: RAGImageStrategy[] = [];
 
   let showChat = layout === 'inline';
 
@@ -52,16 +60,40 @@
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
+  let nucliaAPI: Nuclia;
+
+  let _features: WidgetFeatures = {};
+
+  const dispatch = createEventDispatcher();
+  const dispatchCustomEvent = (name: string, detail: any) => {
+    dispatch(name, detail);
+  };
 
   let svgSprite: string;
   let container: HTMLElement;
+
+  ready.pipe(delay(200)).subscribe(() => {
+    // any feature that calls the Nuclia API immediately at init time must be done here
+    if (_features.dumpLog) {
+      nucliaAPI.events.dump().subscribe((data) => {
+        dispatchCustomEvent('logs', data);
+      });
+    }
+  });
 
   onMount(() => {
     if (cdn) {
       setCDN(cdn);
     }
+    _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+      (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+      {},
+    );
 
-    initNuclia(
+    _ragStrategies = getRAGStrategies(rag_strategies);
+    _ragImageStrategies = getRAGImageStrategies(rag_image_strategies);
+
+    nucliaAPI = initNuclia(
       {
         backend,
         zone,
@@ -78,12 +110,14 @@
       no_tracking,
     );
 
+    // Setup widget in the store
+    widgetFeatures.set(_features);
+    widgetRagStrategies.set(_ragStrategies);
+    widgetImageRagStrategies.set(_ragImageStrategies);
+
     if (preselected_filters) {
       preselectedFilters.set(preselected_filters);
     }
-
-    _ragStrategies = getRAGStrategies(rag_strategies);
-    widgetRagStrategies.set(_ragStrategies);
 
     initAnswer();
     initViewer();

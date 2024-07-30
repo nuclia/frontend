@@ -30,7 +30,7 @@ import {
 } from 'rxjs';
 import type { TypedResult } from '../models';
 import { NO_SUGGESTION_RESULTS } from '../models';
-import { widgetFeatures, widgetImageRagStrategies, widgetRagStrategies } from './widget.store';
+import { isCitationsEnabled, widgetFeatures, widgetImageRagStrategies, widgetRagStrategies } from './widget.store';
 import type {
   Ask,
   BaseSearchOptions,
@@ -153,12 +153,19 @@ export function initAnswer() {
       .pipe(
         distinctUntilChanged(),
         switchMap(({ question, reset }) =>
-          forkJoin([widgetRagStrategies.pipe(take(1)), widgetImageRagStrategies.pipe(take(1))]).pipe(
-            switchMap(([ragStrategies, ragImageStrategies]) => {
+          forkJoin([
+            widgetRagStrategies.pipe(take(1)),
+            widgetImageRagStrategies.pipe(take(1)),
+            isCitationsEnabled.pipe(take(1)),
+          ]).pipe(
+            switchMap(([ragStrategies, ragImageStrategies, isCitationsEnabled]) => {
               const chatOptions: ChatOptions = {};
               if (ragStrategies.length > 0) {
                 chatOptions.rag_strategies = ragStrategies;
                 chatOptions.rag_images_strategies = ragImageStrategies;
+              }
+              if (isCitationsEnabled) {
+                chatOptions.citations = true;
               }
               return askQuestion(question, reset, chatOptions);
             }),
