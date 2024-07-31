@@ -26,6 +26,7 @@
   export let preselected_filters = '';
   export let cssPath = '';
   export let prompt = '';
+  export let system_prompt = '';
   export let generativemodel = '';
   export let no_tracking = false;
   export let rag_strategies = '';
@@ -33,6 +34,8 @@
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
   export let max_tokens: number | undefined = undefined;
+  export let query_prepend = '';
+  export let json_schema = '';
 
   let searchBar: any;
   let visible = false;
@@ -115,13 +118,16 @@
             {preselected_filters}
             {cssPath}
             {prompt}
+            {system_prompt}
             {generativemodel}
             {no_tracking}
             {rag_strategies}
             {rag_image_strategies}
             {not_enough_data_message}
             {ask_to_resource}
-            {max_tokens} />
+            {max_tokens}
+            {query_prepend}
+            {json_schema} />
         </div>
         <div class="search-results-container">
           <SearchResults />

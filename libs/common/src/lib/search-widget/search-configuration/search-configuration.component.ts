@@ -109,6 +109,7 @@ export class SearchConfigurationComponent {
   generativeModels: OptionModel[] = [];
   promptInfos: { [model: string]: string } = {};
   defaultPromptFromSettings = '';
+  defaultSystemPromptFromSettings = '';
   lastQuery?: { [key: string]: any };
 
   initialised = false;
@@ -236,6 +237,7 @@ export class SearchConfigurationComponent {
       );
     const promptKey = generativeModels.find((model) => model.value === this.modelFromSettings)?.user_prompt;
     this.defaultPromptFromSettings = promptKey ? config['user_prompts']?.[promptKey]?.['prompt'] || '' : '';
+    this.defaultSystemPromptFromSettings = promptKey ? config['user_prompts']?.[promptKey]?.['system'] || '' : '';
   }
 
   selectConfig(configId: string) {
