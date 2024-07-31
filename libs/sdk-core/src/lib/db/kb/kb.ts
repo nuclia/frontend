@@ -60,6 +60,7 @@ import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } f
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
 import { ABORT_STREAMING_REASON } from '../../rest';
 import { Ask } from '../search/ask.models';
+import { Agentic } from '../search/agentic';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -260,6 +261,10 @@ export class KnowledgeBox implements IKnowledgeBox {
     return new Resource(this.nuclia, this.id, data);
   }
 
+  createAgenticRAGPipeline(steps: Agentic.Steps): Agentic.Pipeline {
+    return new Agentic.Pipeline(this, steps);
+  }
+
   /**
    * Retrieves a generative answer for the given query.
    *
@@ -438,6 +443,80 @@ export class KnowledgeBox implements IKnowledgeBox {
             answer: text.slice(0, -1),
             cannotAnswer,
           };
+        }),
+      );
+  }
+
+  /**
+   * Performs a question answering operation using a JSON schema.
+   *
+   * Example:
+    ```ts
+    nuclia.knowledgeBox
+      .generateJSON(
+        'Who is Eric from Toronto?',
+        {
+          name: 'info',
+          parameters: {
+            properties: {
+              location: {
+                title: 'Location',
+                description: 'The location of the person',
+                type: 'string',
+              },
+              name: {
+                title: 'Name',
+                description: 'The name of the person',
+                type: 'string',
+              },
+            },
+            required: ['name', 'location'],
+          },
+        },
+        [
+          'Eric is a taxi driver',
+          'Eric was born in France',
+          'Eric lives in Toronto',
+        ],
+      )).subscribe((answer) => {
+        console.log('location', answer.answer.location);
+      });
+    ```
+  */
+  generateJSON(
+    question: string,
+    json_schema: object,
+    context: string[] = [],
+  ): Observable<{ answer: object; success: boolean }> {
+    return this.nuclia.rest
+      .post<Response>(
+        `${this.path}/predict/chat`,
+        {
+          question,
+          query_context: context,
+          user_id: 'USER',
+          json_schema,
+        },
+        undefined,
+        true,
+      )
+      .pipe(
+        switchMap((res) => from(res.text())),
+        map((ndjson) => {
+          const rows = ndjson.split('\n').filter((d) => d);
+          return rows.reduce(
+            (acc, row) => {
+              const obj = JSON.parse(row).chunk;
+              if (obj.type === 'object') {
+                acc.answer = obj.object;
+              }
+              if (obj.type === 'status') {
+                acc.success = obj.code === '0';
+              }
+              return acc;
+            },
+            {} as { answer: object; success: boolean },
+          );
         }),
       );
   }
