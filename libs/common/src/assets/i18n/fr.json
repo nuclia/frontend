@@ -60,7 +60,7 @@
 	"account.kb.creation-form.kb-info.description": "Définir le nom et la description de la Knowledge Box.",
 	"account.kb.creation-form.kb-info.title": "Informations de la Knowledge Box",
 	"account.kb.creation-form.title": "Créer une Knowledge Box",
-	"account.kb.creation-form.vector-database.description": "Par défaut, Nuclia utilise sa propre base de données vectorielle pour stocker vos données, ce qui vous permet de profiter pleinement de toutes les fonctionnalités offertes par Nuclia.<br>Vous pouvez choisir d'utiliser une base de données vectorielle externe, mais cela s'accompagnera de certaines limitations.",
+	"account.kb.creation-form.vector-database.description": "Nuclia utilise <a href=\"https://github.com/nuclia/nucliadb\">NucliaDB</a> un framework open-source de données open-source spécialement conçu pour les applications RAG. NucliaDB inclut sa propre implémentation de base de données vectorielle pour gérer efficacement vos données.\n<br>\nBien que vous ayez la possibilité d'utiliser une base de données vectorielle externe, veuillez noter que cela peut entraîner certaines limitations de fonctionnalités.",
 	"account.kb.creation-form.vector-database.input-label": "Clé API",
 	"account.kb.creation-form.vector-database.pinecone.api-info": "Les clés api de Pinecone peuvent être obtenues en suivant <a href=\"https://docs.pinecone.io/guides/projects/understanding-projects#api-keys\" target=\"_blank\">cette documentation</a>",
 	"account.kb.creation-form.vector-database.pinecone.aws-region": "Région AWS",
