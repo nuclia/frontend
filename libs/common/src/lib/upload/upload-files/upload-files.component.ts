@@ -32,6 +32,7 @@ export class UploadFilesComponent {
     nonNullable: true,
     validators: [Validators.pattern(/^[a-z]{2}$/)],
   });
+  betaProcessings = ['table', 'invoice'];
   processings = forkJoin([
     this.features.unstable.tableProcessing.pipe(take(1)),
     this.features.unstable.aiTableProcessing.pipe(take(1)),
