@@ -122,13 +122,15 @@
               {{ 'upload.advanced.processing.none.label' | translate }}
             </pa-radio>
             @for (processing of processings | async; track processing) {
-              <div [class.beta-option]="processing !== 'none'">
+              <div [class.beta-option]="betaProcessings.includes(processing)">
                 <pa-radio
                   [value]="processing"
                   [help]="'upload.advanced.processing.' + processing + '.help'">
                   {{ 'upload.advanced.processing.' + processing + '.label' | translate }}
                 </pa-radio>
-                <nsi-badge kind="tertiary">BETA</nsi-badge>
+                @if (betaProcessings.includes(processing)) {
+                  <nsi-badge kind="tertiary">BETA</nsi-badge>
+                }
               </div>
             }
           </pa-radio-group>
