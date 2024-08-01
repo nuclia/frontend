@@ -25,7 +25,7 @@ import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap
 import { EmbeddingModelForm, LanguageFieldComponent } from '@nuclia/user';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
+import { KnowledgeBoxCreation, LearningConfigurations, PINECONE_REGIONS } from '@nuclia/core';
 
 @Component({
   selector: 'app-kb-creation',
@@ -86,6 +86,12 @@ export class KbCreationComponent implements OnInit, OnDestroy {
       external: new FormControl<boolean>(false),
       type: new FormControl<'pinecone'>('pinecone', { nonNullable: true }),
       apiKey: new FormControl<string>('', { nonNullable: true }),
+      pinecone: new FormGroup({
+        cloud: new FormControl<'aws' | 'gcp_us_central1' | 'azure_eastus2'>('gcp_us_central1', { nonNullable: true }),
+        awsRegion: new FormControl<'aws_us_east_1' | 'aws_us_west_2' | 'aws_eu_west_1'>('aws_us_east_1', {
+          nonNullable: true,
+        }),
+      }),
     }),
   });
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -105,6 +111,15 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   get externalVectorDatabase() {
     return this.form.controls.vectorDatabase.controls.external.value;
+  }
+  get pineconeCloudControl() {
+    return this.form.controls.vectorDatabase.controls.pinecone.controls.cloud;
+  }
+  get pineconeAwsRegionControl() {
+    return this.form.controls.vectorDatabase.controls.pinecone.controls.awsRegion;
+  }
+  get pineconeCloudValue() {
+    return this.pineconeCloudControl.value;
   }
 
   ngOnInit() {
@@ -187,9 +202,15 @@ export class KbCreationComponent implements OnInit, OnDestroy {
             },
           };
           if (isExternalIndexEnabled && this.externalVectorDatabase) {
+            let serverless_cloud: 'aws' | PINECONE_REGIONS = vectorDatabase.pinecone.cloud;
+            if (serverless_cloud === 'aws') {
+              serverless_cloud = vectorDatabase.pinecone.awsRegion;
+            }
+
             kb.external_index_provider = {
               type: vectorDatabase.type,
               api_key: vectorDatabase.apiKey,
+              serverless_cloud,
             };
           }
           return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone).pipe(
@@ -229,5 +250,14 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   cancel() {
     this.router.navigate([this.backPath], { relativeTo: this.route });
+  }
+
+  updatePineconeCloud(zone: string) {
+    if (zone.startsWith('europe')) {
+      this.pineconeCloudControl.patchValue('gcp_us_central1');
+    } else if (zone.startsWith('aws')) {
+      this.pineconeCloudControl.patchValue('aws');
+      this.pineconeAwsRegionControl.patchValue('aws_us_east_1');
+    }
   }
 }

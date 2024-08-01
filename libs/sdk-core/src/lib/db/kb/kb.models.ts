@@ -230,6 +230,13 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   inviteToKb(data: InviteKbData): Observable<void>;
 }
 
+export type PINECONE_REGIONS =
+  | 'aws_us_east_1'
+  | 'aws_us_west_2'
+  | 'aws_eu_west_1'
+  | 'gcp_us_central1'
+  | 'azure_eastus2';
+
 export interface KnowledgeBoxCreation {
   slug: string;
   title: string;
@@ -239,6 +246,7 @@ export interface KnowledgeBoxCreation {
   external_index_provider?: {
     type: 'pinecone';
     api_key: string;
+    serverless_cloud: PINECONE_REGIONS;
   };
 }
 

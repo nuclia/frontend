@@ -63,6 +63,8 @@
 	"account.kb.creation-form.vector-database.description": "By default, Nuclia is using its own propertary vector database to store your data, allowing you to take full advantage of every features Nuclia has to offer.<br>\nYou can choose to use an external vector database, but that will come with some features limitations.",
 	"account.kb.creation-form.vector-database.input-label": "API key",
 	"account.kb.creation-form.vector-database.pinecone.api-info": "Pinecone api keys can be obtained following <a href=\"https://docs.pinecone.io/guides/projects/understanding-projects#api-keys\" target=\"_blank\">this documentation</a>",
+	"account.kb.creation-form.vector-database.pinecone.aws-region": "AWS region",
+	"account.kb.creation-form.vector-database.pinecone.could-provider": "Pinecone Cloud provider",
 	"account.kb.creation-form.vector-database.pinecone.toggle-label": "Use external Pinecone vector database",
 	"account.kb.creation-form.vector-database.pinecone.warning": "When using Pinecone vector database, some Nuclia features like keyword and full text search won't be available. ",
 	"account.kb.creation-form.vector-database.title": "Third party vector database ",

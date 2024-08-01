@@ -63,6 +63,8 @@
 	"account.kb.creation-form.vector-database.description": "Por defecto, Nuclia utiliza su propia base de datos vectorial para almacenar sus datos, lo que le permite aprovechar al máximo todas las características que Nuclia le ofrece.<br>Puede elegir utilizar una base de datos vectorial externa, pero esto tendrá algunas limitaciones.",
 	"account.kb.creation-form.vector-database.input-label": "Clave API",
 	"account.kb.creation-form.vector-database.pinecone.api-info": "Las claves api de Pinecone pueden obtenerse siguiendo <a href=\"https://docs.pinecone.io/guides/projects/understanding-projects#api-keys\" target=\"_blank\">esta documentación</a>",
+	"account.kb.creation-form.vector-database.pinecone.aws-region": "Región AWS",
+	"account.kb.creation-form.vector-database.pinecone.could-provider": "Proveedor de nube Pinecone",
 	"account.kb.creation-form.vector-database.pinecone.toggle-label": "Utilizar una base de datos de vectores Pinecone externa",
 	"account.kb.creation-form.vector-database.pinecone.warning": "Al utilizar la base de datos vectorial Pinecone, algunas funciones de Nuclia, como la búsqueda por palabra clave o por texto completo, no estarán disponibles.",
 	"account.kb.creation-form.vector-database.title": "Base de datos de vectores de terceros",
