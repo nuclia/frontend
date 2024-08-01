@@ -60,7 +60,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
   });
   currentGenerativeModel?: LearningConfigurationOption;
   userKeyToggle = new FormControl<boolean>(false);
-  required = this.translate.stream('kb.ai-models.common.required');
+  required = this.translate.instant('kb.ai-models.common.required');
   unsubscribeAll = new Subject<void>();
 
   get hasOwnKey() {

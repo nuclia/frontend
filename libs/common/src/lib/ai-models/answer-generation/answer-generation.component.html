@@ -64,8 +64,7 @@
                         [formControlName]="field.key"
                         [rows]="2"
                         [help]="
-                          (userKeys.required.includes(field.key) ? (required | async) + ' ' : '') +
-                          (field.value.info || '')
+                          (userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')
                         ">
                         {{ field.value.title }}
                       </pa-textarea>
@@ -73,8 +72,7 @@
                       <pa-input
                         [formControlName]="field.key"
                         [help]="
-                          (userKeys.required.includes(field.key) ? (required | async) + ' ' : '') +
-                          (field.value.info || '')
+                          (userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')
                         ">
                         {{ field.value.title }}
                       </pa-input>
