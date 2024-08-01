@@ -16,107 +16,109 @@
     </div>
   </header>
 
-  <form
-    [formGroup]="form"
-    (ngSubmit)="create()">
-    <nsi-two-columns-configuration-item
-      itemTitle="account.kb.creation-form.kb-info.title"
-      description="account.kb.creation-form.kb-info.description">
-      <div class="form-container">
-        <pa-input
-          id="kb-title"
-          formControlName="title"
-          data-cy="new-kb-name-input"
-          [errorMessages]="validationMessages['title']">
-          {{ 'kb.form.name' | translate }}
-        </pa-input>
-
-        <pa-textarea
-          formControlName="description"
-          data-cy="new-kb-description-input"
-          resizable>
-          {{ 'kb.form.description' | translate }}
-        </pa-textarea>
-      </div>
-    </nsi-two-columns-configuration-item>
-
-    @if (!standalone) {
+  @if (standalone || (zones | async)) {
+    <form
+      [formGroup]="form"
+      (ngSubmit)="create()">
       <nsi-two-columns-configuration-item
-        itemTitle="user.kb.creation-form.zone.title"
-        description="user.kb.creation-form.zone.description">
-        <pa-radio-group formControlName="zone">
-          @for (zone of zones | async; track zone.slug) {
-            <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
-          }
-        </pa-radio-group>
+        itemTitle="account.kb.creation-form.kb-info.title"
+        description="account.kb.creation-form.kb-info.description">
+        <div class="form-container">
+          <pa-input
+            id="kb-title"
+            formControlName="title"
+            data-cy="new-kb-name-input"
+            [errorMessages]="validationMessages['title']">
+            {{ 'kb.form.name' | translate }}
+          </pa-input>
+
+          <pa-textarea
+            formControlName="description"
+            data-cy="new-kb-description-input"
+            resizable>
+            {{ 'kb.form.description' | translate }}
+          </pa-textarea>
+        </div>
       </nsi-two-columns-configuration-item>
-    }
 
-    <nsi-two-columns-configuration-item
-      itemTitle="user.kb.creation-form.models.title"
-      description="user.kb.creation-form.models.description">
-      @if (learningSchema | async; as learningSchema) {
-        <nus-language-field
-          [learningSchema]="learningSchema"
-          [disabled]="saving"
-          (modelSelected)="updateModel($event)"></nus-language-field>
-      }
-    </nsi-two-columns-configuration-item>
-
-    <nsi-two-columns-configuration-item
-      itemTitle="account.kb.creation-form.anonymization.title"
-      description="account.kb.creation-form.anonymization.description">
-      <div class="toggle-container">
-        <pa-toggle formControlName="anonymization">
-          {{ 'account.kb.creation-form.anonymization.toggle-label' | translate }}
-        </pa-toggle>
-      </div>
-    </nsi-two-columns-configuration-item>
-
-    @if (!standalone && (isExternalIndexEnabled | async)) {
-      <nsi-two-columns-configuration-item
-        itemTitle="account.kb.creation-form.vector-database.title"
-        description="account.kb.creation-form.vector-database.description">
-        <ng-container formGroupName="vectorDatabase">
-          <div class="form-container">
-            <div class="toggle-container">
-              <pa-toggle formControlName="external">
-                {{ 'account.kb.creation-form.vector-database.pinecone.toggle-label' | translate }}
-              </pa-toggle>
-            </div>
-
-            @if (externalVectorDatabase) {
-              <nsi-info-card
-                type="warning"
-                icon="warning">
-                {{ 'account.kb.creation-form.vector-database.pinecone.warning' | translate }}
-              </nsi-info-card>
-
-              <pa-input formControlName="apiKey">
-                {{ 'account.kb.creation-form.vector-database.input-label' | translate }}
-              </pa-input>
-              <nsi-info-card>
-                <div [innerHTML]="'account.kb.creation-form.vector-database.pinecone.api-info' | translate"></div>
-              </nsi-info-card>
+      @if (!standalone) {
+        <nsi-two-columns-configuration-item
+          itemTitle="user.kb.creation-form.zone.title"
+          description="user.kb.creation-form.zone.description">
+          <pa-radio-group formControlName="zone">
+            @for (zone of zones | async; track zone.slug) {
+              <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
             }
-          </div>
-        </ng-container>
-      </nsi-two-columns-configuration-item>
-    }
+          </pa-radio-group>
+        </nsi-two-columns-configuration-item>
+      }
 
-    <nsi-sticky-footer>
-      <pa-button
-        aspect="basic"
-        (click)="cancel()">
-        {{ 'generic.cancel' | translate }}
-      </pa-button>
-      <pa-button
-        data-cy="new-kb-save-button"
-        kind="primary"
-        type="submit"
-        [disabled]="form.invalid || !semanticModel || saving">
-        {{ 'account.kb.create' | translate }}
-      </pa-button>
-    </nsi-sticky-footer>
-  </form>
+      <nsi-two-columns-configuration-item
+        itemTitle="user.kb.creation-form.models.title"
+        description="user.kb.creation-form.models.description">
+        @if (learningSchema | async; as learningSchema) {
+          <nus-language-field
+            [learningSchema]="learningSchema"
+            [disabled]="saving"
+            (modelSelected)="updateModel($event)"></nus-language-field>
+        }
+      </nsi-two-columns-configuration-item>
+
+      <nsi-two-columns-configuration-item
+        itemTitle="account.kb.creation-form.anonymization.title"
+        description="account.kb.creation-form.anonymization.description">
+        <div class="toggle-container">
+          <pa-toggle formControlName="anonymization">
+            {{ 'account.kb.creation-form.anonymization.toggle-label' | translate }}
+          </pa-toggle>
+        </div>
+      </nsi-two-columns-configuration-item>
+
+      @if (!standalone && (isExternalIndexEnabled | async)) {
+        <nsi-two-columns-configuration-item
+          itemTitle="account.kb.creation-form.vector-database.title"
+          description="account.kb.creation-form.vector-database.description">
+          <ng-container formGroupName="vectorDatabase">
+            <div class="form-container">
+              <div class="toggle-container">
+                <pa-toggle formControlName="external">
+                  {{ 'account.kb.creation-form.vector-database.pinecone.toggle-label' | translate }}
+                </pa-toggle>
+              </div>
+
+              @if (externalVectorDatabase) {
+                <nsi-info-card
+                  type="warning"
+                  icon="warning">
+                  {{ 'account.kb.creation-form.vector-database.pinecone.warning' | translate }}
+                </nsi-info-card>
+
+                <pa-input formControlName="apiKey">
+                  {{ 'account.kb.creation-form.vector-database.input-label' | translate }}
+                </pa-input>
+                <nsi-info-card>
+                  <div [innerHTML]="'account.kb.creation-form.vector-database.pinecone.api-info' | translate"></div>
+                </nsi-info-card>
+              }
+            </div>
+          </ng-container>
+        </nsi-two-columns-configuration-item>
+      }
+
+      <nsi-sticky-footer>
+        <pa-button
+          aspect="basic"
+          (click)="cancel()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+        <pa-button
+          data-cy="new-kb-save-button"
+          kind="primary"
+          type="submit"
+          [disabled]="form.invalid || !semanticModel || saving">
+          {{ 'account.kb.create' | translate }}
+        </pa-button>
+      </nsi-sticky-footer>
+    </form>
+  }
 </div>
