@@ -22,28 +22,37 @@
             }
           </pa-radio-group>
 
-          @if (currentGenerativeModel?.user_prompt) {
-            @if (learningConfig['user_keys'].schemas?.[currentGenerativeModel?.user_prompt || '']; as userKeys) {
+          @if (currentGenerativeModel?.user_key) {
+            @if (learningConfig['user_keys'].schemas?.[currentGenerativeModel?.user_key || '']; as userKeys) {
               <div class="separator"></div>
-
-              <pa-toggle
-                labelOnRight
-                [stfUnauthorizedFeature]="(isEnterpriseOrGrowth | async) === false"
-                fullProBadge
-                [disabled]="(isEnterpriseOrGrowth | async) === false"
-                [(value)]="hasOwnKey"
-                (valueChange)="onOwnKeyToggle()">
-                {{
-                  'kb.ai-models.answer-generation.select-llm.own-key.label'
-                    | translate
-                      : {
-                          provider:
-                            keyProviders[currentGenerativeModel?.user_prompt || ''] ||
-                            currentGenerativeModel?.user_prompt
-                        }
-                }}
-              </pa-toggle>
-
+              @if (modelsRequiringUserKey.includes(generativeModelValue)) {
+                <div class="title-s">
+                  {{
+                    'kb.ai-models.answer-generation.select-llm.own-key.title'
+                      | translate
+                        : {
+                            provider:
+                              keyProviders[currentGenerativeModel?.user_key || ''] || currentGenerativeModel?.user_key
+                          }
+                  }}
+                </div>
+              } @else {
+                <pa-toggle
+                  labelOnRight
+                  [stfUnauthorizedFeature]="(isSummarizationAuthorized | async) === false"
+                  fullProBadge
+                  [formControl]="userKeyToggle"
+                  (valueChange)="onOwnKeyToggle()">
+                  {{
+                    'kb.ai-models.answer-generation.select-llm.own-key.label'
+                      | translate
+                        : {
+                            provider:
+                              keyProviders[currentGenerativeModel?.user_key || ''] || currentGenerativeModel?.user_key
+                          }
+                  }}
+                </pa-toggle>
+              }
               @if (hasOwnKey) {
                 <div
                   class="form-container"
@@ -54,13 +63,17 @@
                         resizable
                         [formControlName]="field.key"
                         [rows]="2"
-                        [help]="field.value.info">
+                        [help]="
+                          (userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')
+                        ">
                         {{ field.value.title }}
                       </pa-textarea>
                     } @else {
                       <pa-input
                         [formControlName]="field.key"
-                        [help]="field.value.info">
+                        [help]="
+                          (userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')
+                        ">
                         {{ field.value.title }}
                       </pa-input>
                     }

@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InfoCardComponent, StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, switchMap, tap } from 'rxjs/operators';
-import { filter, of, take } from 'rxjs';
+import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, of, Subject, take } from 'rxjs';
 import { UnauthorizedFeatureDirective } from '@flaps/core';
 import { LearningConfigurationOption } from '@nuclia/core';
 
@@ -30,7 +30,7 @@ import { LearningConfigurationOption } from '@nuclia/core';
   templateUrl: './answer-generation.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnswerGenerationComponent extends LearningConfigurationDirective {
+export class AnswerGenerationComponent extends LearningConfigurationDirective implements OnDestroy {
   keyProviders: { [key: string]: string } = {
     azure_openai: 'Azure OpenAI',
     openai: 'OpenAI',
@@ -46,6 +46,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
   popoverHelp: { [key: string]: string } = {
     'chatgpt-vision': 'kb.ai-models.answer-generation.select-llm.help.chatgpt-vision',
   };
+  modelsRequiringUserKey = ['huggingface'];
 
   configForm = new FormGroup({
     generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -58,8 +59,13 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
     }),
   });
   currentGenerativeModel?: LearningConfigurationOption;
-  hasOwnKey = false;
+  userKeyToggle = new FormControl<boolean>(false);
+  required = this.translate.instant('kb.ai-models.common.required');
+  unsubscribeAll = new Subject<void>();
 
+  get hasOwnKey() {
+    return !!this.userKeyToggle.value;
+  }
   get generativeModelValue() {
     return this.configForm.controls.generative_model.value;
   }
@@ -68,6 +74,18 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
   }
   get userPromptForm() {
     return this.configForm.controls.user_prompts;
+  }
+
+  constructor() {
+    super();
+    this.userKeyToggle.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      this.updateValidators();
+    })
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   onOwnKeyToggle() {
@@ -82,7 +100,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
         filter((authorized) => !authorized),
       )
       .subscribe(() => {
-        this.userKeysGroup.disable();
+        this.userKeyToggle.disable();
         this.userPromptForm.disable();
       });
 
@@ -98,7 +116,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
       if (this.currentGenerativeModel?.user_key) {
         if (kbConfig['user_keys']) {
           const ownKey = !!kbConfig['user_keys'][this.currentGenerativeModel?.user_key];
-          this.hasOwnKey = ownKey;
+          this.userKeyToggle.patchValue(ownKey);
           this.userKeysGroup.patchValue(kbConfig['user_keys'][this.currentGenerativeModel?.user_key]);
         }
       }
@@ -189,7 +207,22 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective {
           this.userKeysGroup.addControl(key, new FormControl<string>(''));
         }
       });
+      this.updateValidators();
     }
+    this.userKeyToggle.patchValue(this.modelsRequiringUserKey.includes(this.currentGenerativeModel?.value || ''));
+  }
+
+  updateValidators() {
+    if (!this.learningConfigurations || !this.currentGenerativeModel?.user_key) {
+      return;
+    }
+    const required =
+      this.learningConfigurations['user_keys'].schemas?.[this.currentGenerativeModel?.user_key]?.required || [];
+    Object.keys(this.userKeysGroup.controls).forEach((key) => {
+      this.userKeysGroup.get(key)?.setValidators(this.hasOwnKey && required.includes(key) ? [Validators.required] : []);
+      this.userKeysGroup.get(key)?.markAsPristine();
+      this.userKeysGroup.get(key)?.updateValueAndValidity();
+    });
   }
 
   setPrompt(field: string, value: string) {
