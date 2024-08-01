@@ -30,6 +30,7 @@ const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
   'chatgpt-vision',
   'chatgpt4',
   'chatgpt4o',
+  'chatgpt4o-mini',
   'gemini-1-5-pro',
   'azure-mistral'
 ];
