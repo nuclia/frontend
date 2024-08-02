@@ -15,7 +15,6 @@
     hasMore,
     hasPartialResults,
     hasSearchError,
-    hideResults,
     isAnswerEnabled,
     isEmptySearchQuery, jsonAnswer, jsonSchemaEnabled,
     loadFonts,
@@ -103,7 +102,7 @@
           <strong>{$_('error.search')}</strong>
         {/if}
       </div>
-    {:else if !$pendingResults && $resultList.length === 0 && !$hideResults}
+    {:else if !$pendingResults && $resultList.length === 0 && !$isAnswerEnabled}
       <strong>{$_('results.empty')}</strong>
       <div
         class="results-end"

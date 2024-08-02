@@ -20,13 +20,15 @@
 {#if $firstAnswer.text || $chatError}
   <div class="sw-initial-answer">
     {#if $chatError}
-      {#if $isServiceOverloaded}
-        {$_('error.service-overloaded')}
-      {:else if $chatError.status === 402}
-        {$_('error.answer-feature-blocked')}
-      {:else}
-        {$_('error.search')}
-      {/if}
+      <strong>
+        {#if $isServiceOverloaded}
+          {$_('error.service-overloaded')}
+        {:else if $chatError.status === 402}
+          {$_('error.answer-feature-blocked')}
+        {:else}
+          {$_('error.search')}
+        {/if}
+      </strong>
     {:else}
       <h3 class="title-s">{$_('answer.title')}</h3>
       <Answer
