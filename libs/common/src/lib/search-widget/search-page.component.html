@@ -14,9 +14,26 @@
     }
   </div>
 
+  <pa-button
+    class="toggle-panel-button"
+    icon="chevrons-left"
+    [class.visible]="configPanelCollapsed"
+    (click)="configPanelCollapsed = !configPanelCollapsed">
+    {{ 'search.configuration.action.open-panel' | translate }}
+  </pa-button>
+
   <div
     #configurationContainer
-    class="search-configuration-container">
+    class="search-configuration-container"
+    [class.collapsed]="configPanelCollapsed">
+    <pa-button
+      class="close-button"
+      icon="cross"
+      aspect="basic"
+      (click)="configPanelCollapsed = !configPanelCollapsed">
+      {{ 'generic.close' | translate }}
+    </pa-button>
+
     <stf-search-configuration
       displayWidgetButtonLine
       mainTitle="search.configuration.saved-config-title"

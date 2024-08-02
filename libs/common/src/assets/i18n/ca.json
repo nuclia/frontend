@@ -898,6 +898,7 @@
 	"search.configuration.action.create-widget": "Crea un giny",
 	"search.configuration.action.get-code": "Obtenir codi",
 	"search.configuration.action.get-code-tooltip": "Feu una cerca per veure els detalls de la sol·licitud a l'API",
+	"search.configuration.action.open-panel": "Obriu el tauler de configuració",
 	"search.configuration.action.overwrite": "Sobreescriu la configuració seleccionada",
 	"search.configuration.action.reset": "Restablir",
 	"search.configuration.action.save": "Desar",
