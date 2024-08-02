@@ -898,6 +898,7 @@
 	"search.configuration.action.create-widget": "Créer un widget",
 	"search.configuration.action.get-code": "Obtenir le code",
 	"search.configuration.action.get-code-tooltip": "Effectuez une recherche pour afficher les détails de la demande d'API",
+	"search.configuration.action.open-panel": "Ouvrir le panneau de configuration",
 	"search.configuration.action.overwrite": "Écraser la configuration sélectionnée",
 	"search.configuration.action.reset": "Réinitialiser",
 	"search.configuration.action.save": "Enregistrer",

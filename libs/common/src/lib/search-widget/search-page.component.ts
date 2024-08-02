@@ -9,11 +9,12 @@ import { filter, map, switchMap, take } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { DEFAULT_WIDGET_CONFIG, SearchConfiguration } from './search-widget.models';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-search-page',
   standalone: true,
-  imports: [CommonModule, TranslateModule, SearchConfigurationComponent],
+  imports: [CommonModule, TranslateModule, SearchConfigurationComponent, PaIconModule, PaButtonModule],
   templateUrl: './search-page.component.html',
   styleUrls: ['./search-page.component.scss', '_common-form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +30,8 @@ export class SearchPageComponent {
   @ViewChild('configurationContainer') configurationContainerElement?: ElementRef;
   widgetPreview = this.searchWidgetService.widgetPreview;
   searchConfig?: SearchConfiguration;
+
+  configPanelCollapsed = false;
 
   createWidget() {
     if (this.searchConfig) {
