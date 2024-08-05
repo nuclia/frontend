@@ -61,19 +61,24 @@
     }
   }
 
+  .rank-container {
+    display: flex;
+    gap: var(--rhythm-0_5);
+  }
+
+  .number {
+    background-color: var(--citation-number-background-color);
+    flex-shrink: 0;
+    height: var(--rhythm-3);
+    line-height: var(--rhythm-3);
+    text-align: center;
+    width: var(--rhythm-3);
+    &.selected {
+      background-color: var(--citation-number-background-hover-color);
+    }
+  }
   .paragraph-container {
     display: flex;
-    .number {
-      background-color: var(--citation-number-background-color);
-      flex-shrink: 0;
-      height: var(--rhythm-3);
-      line-height: var(--rhythm-3);
-      text-align: center;
-      width: var(--rhythm-3);
-      &.selected {
-        background-color: var(--citation-number-background-hover-color);
-      }
-    }
   }
 }
 

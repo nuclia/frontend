@@ -6,7 +6,7 @@ type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 export interface RankedParagraph extends Search.FindParagraph {
   rank?: number;
 }
-export type RankedFieldResult = Overwrite<Search.FieldResult, { paragraphs: RankedParagraph[] }>;
+export type RankedFieldResult = Overwrite<Search.FieldResult, { paragraphs: RankedParagraph[] }> & { ranks?: number[] };
 
 export interface TypedResult extends RankedFieldResult {
   resultType: ResultType;
