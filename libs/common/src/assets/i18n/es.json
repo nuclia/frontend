@@ -1310,6 +1310,7 @@
 	"upload.advanced.language-detection.input-label": "Código de idioma (formato ISO de 2 letras)",
 	"upload.advanced.processing.aitable.help": "Convierte el contenido de las tablas en MarkDown que puede ser utilizado por un LLM.",
 	"upload.advanced.processing.aitable.label": "Interpretar tablas",
+	"upload.advanced.processing.aitable.warning": "Tenga en cuenta que el uso de esta función conlleva el consumo de tokens Nuclia.<br/>\n<ul>\n<li>Solo se recomienda para archivos PDF con tablas complejas que son difíciles de leer, no tienen delineaciones visuales o están divididas en varias páginas.</li>\n<li>No es necesario para archivos CSV o Excel.</li>\n</ul>",
 	"upload.advanced.processing.help": "El procesamiento específico de la naturaleza es más largo y genera más costos que el procesamiento regular.",
 	"upload.advanced.processing.invoice.help": "Extraer datos específicos de las facturas",
 	"upload.advanced.processing.invoice.label": "Procesar facturas",

@@ -1310,6 +1310,7 @@
 	"upload.advanced.language-detection.input-label": "Codi d'idioma (format ISO de 2 lletres)",
 	"upload.advanced.processing.aitable.help": "Converteix el contingut de les taules en MarkDown que pot ser utilitzat per un LLM.",
 	"upload.advanced.processing.aitable.label": "Interpretar taules",
+	"upload.advanced.processing.aitable.warning": "Tingueu en compte que l'ús d'aquesta funció comporta el consum de fitxes Nuclia.<br/>\n<ul>\n<li>Només s'aconsella per a PDF amb taules complexes difícils de llegir, sense delimitació visual o dividides en diverses pàgines.</li>\n<li>No és necessari per als fitxers CSV o Excel.</li>\n</ul>",
 	"upload.advanced.processing.help": "El processament específic de la naturalesa és més llarg i genera més costos que el processament normal.",
 	"upload.advanced.processing.invoice.help": "Extraieu dades específiques de les factures",
 	"upload.advanced.processing.invoice.label": "Tramitar factures",
