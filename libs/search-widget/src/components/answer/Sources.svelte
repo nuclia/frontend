@@ -12,10 +12,10 @@
       class="source"
       class:with-thumbnail={!$hideThumbnails}>
       <div class="paragraph">
-        {#if source.paragraphs?.[0]}
+        {#if source.paragraphs?.[0] || (source.ranks && source.ranks.length > 0)}
           <ResultRow
             result={source}
-            selected={selected + 1}
+            selected={selected !== undefined ? selected + 1 : undefined}
             isSource={true} />
         {/if}
       </div>

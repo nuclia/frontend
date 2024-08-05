@@ -169,6 +169,17 @@
         class:can-expand={paragraphs.length > 4}
         style:--non-toggled-paragraph-count={nonToggledParagraphCount}
         style:--toggled-paragraph-height={`${toggledParagraphTotalHeight}px`}>
+        {#if isSource && paragraphs.length === 0 && result.ranks}
+          <div class="rank-container">
+            {#each result.ranks as rank}
+              <div
+                class="number body-m"
+                class:selected={selected === rank}>
+                {rank}
+              </div>
+            {/each}
+          </div>
+        {/if}
         {#each paragraphs as paragraph, index}
           <div class="paragraph-container">
             {#if isSource && paragraph.rank}
