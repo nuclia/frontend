@@ -121,17 +121,24 @@
             <pa-radio value="none">
               {{ 'upload.advanced.processing.none.label' | translate }}
             </pa-radio>
-            @for (processing of processings | async; track processing) {
-              <div [class.beta-option]="betaProcessings.includes(processing)">
+            @for (processingId of processings | async; track processingId) {
+              <div [class.beta-option]="betaProcessings.includes(processingId)">
                 <pa-radio
-                  [value]="processing"
-                  [help]="'upload.advanced.processing.' + processing + '.help'">
-                  {{ 'upload.advanced.processing.' + processing + '.label' | translate }}
+                  [value]="processingId"
+                  [help]="'upload.advanced.processing.' + processingId + '.help'">
+                  {{ 'upload.advanced.processing.' + processingId + '.label' | translate }}
                 </pa-radio>
-                @if (betaProcessings.includes(processing)) {
+                @if (betaProcessings.includes(processingId)) {
                   <nsi-badge kind="tertiary">BETA</nsi-badge>
                 }
               </div>
+              @if (processingId === 'aitable' && processing === 'aitable') {
+                <nsi-info-card
+                  type="warning"
+                  icon="warning">
+                  <div [innerHTML]="'upload.advanced.processing.aitable.warning' | translate"></div>
+                </nsi-info-card>
+              }
             }
           </pa-radio-group>
         </div>
