@@ -13,7 +13,7 @@ import { RouterModule, TitleStrategy } from '@angular/router';
 import { routerOptions, routes } from './app-routing';
 import { HomePageComponent } from './home/home-page.component';
 import { MainContainerComponent } from './home/main-container/main-container.component';
-import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 
 // Load locales
 import localeEn from '@angular/common/locales/en';
@@ -53,9 +53,10 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
     }),
     RouterModule.forRoot(routes, routerOptions),
     PaIconModule,
-    PaIconModule,
     HomeContainerComponent,
     MainContainerComponent,
+    // PaTranslateModule needs to be imported in the root module for pa-datetime to work
+    PaTranslateModule,
   ],
   providers: [
     TranslatePipe,
