@@ -150,11 +150,10 @@
               @if (!standalone) {
                 @if (isSynonymsEnabled | async) {
                   <a
-                    [routerLink]="(isSynonymsAuthorized | async) ? kbUrl + '/synonyms' : null"
+                    [routerLink]="kbUrl + '/synonyms'"
                     routerLinkActive="active"
                     data-cy="go-to-synonyms"
-                    class="nav-link sub-item"
-                    [stfUnauthorizedFeature]="(isSynonymsAuthorized | async) === false">
+                    class="nav-link sub-item">
                     <pa-icon name="synonyms"></pa-icon>
                     <span class="nav-link-title">{{ 'navbar.synonyms' | translate }}</span>
                   </a>

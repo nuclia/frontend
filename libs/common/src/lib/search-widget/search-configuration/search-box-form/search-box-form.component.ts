@@ -80,13 +80,6 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   });
 
   synonymsEnabled = this.featuresService.unstable.synonyms;
-  synonymsAuthorized = this.featuresService.authorized.synonyms.pipe(
-    tap((authorized) => {
-      if (!authorized) {
-        this.form.controls.useSynonyms.disable();
-      }
-    }),
-  );
   autocompleteFromNerEnabled = this.featuresService.unstable.suggestEntities;
   isTrainingEnabled = this.featuresService.unstable.training;
 
