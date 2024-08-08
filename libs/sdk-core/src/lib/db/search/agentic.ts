@@ -26,7 +26,7 @@ const VARIABLES = new RegExp(/{{([^}]+)}}/g);
         outputs: {
           reference: {
             type: 'string',
-            description: 'The name of the reference document if any, and just am empty string if none.',
+            description: 'The name of the reference document if any, and just an empty string if none.',
           },
         },
       },
