@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import SparkMD5 from 'spark-md5';
 import { SDKService } from '../api';
@@ -27,9 +27,15 @@ const stageFeatures: Features = {};
 
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {
-  private accountMd5 = this.sdk.currentAccount.pipe(
-    map((account) => SparkMD5.hash(account.id)),
-    shareReplay(1),
+  private accountMd5 = this.sdk.hasAccount.pipe(
+    switchMap((hasAccount) =>
+      hasAccount
+        ? this.sdk.currentAccount.pipe(
+            map((account) => SparkMD5.hash(account.id)),
+            shareReplay(1),
+          )
+        : of(''),
+    ),
   );
   // features-v2.json stored in the GitHub /status repo is automatically pushed to the Nuclia CDN
   // to avoid strict security policy issues in the customer side
@@ -42,10 +48,7 @@ export class FeatureFlagService {
   /**
    * UNSTABLE FEATURES are under feature flag: "rollout: 0", meaning hidden in prod but can be enabled for some client using account_id_md5 variant
    */
-  private applicationRemoteFeatures: Observable<Features> = combineLatest([
-    this.featuresData,
-    this.accountMd5.pipe(startWith('')),
-  ]).pipe(
+  private applicationRemoteFeatures: Observable<Features> = combineLatest([this.featuresData, this.accountMd5]).pipe(
     map(([data, md5]) =>
       Object.entries(data)
         .filter(([key]) => key.startsWith(FEATURE_PREFIX))
@@ -53,7 +56,7 @@ export class FeatureFlagService {
           return {
             ...acc,
             [key.slice(FEATURE_PREFIX.length)]:
-              feature?.rollout === 100 || (feature?.variants?.account_id_md5 || []).includes(md5 || ''),
+              feature?.rollout === 100 || (feature?.variants?.account_id_md5 || []).includes(md5),
           };
         }, {}),
     ),
@@ -72,7 +75,7 @@ export class FeatureFlagService {
         .reduce((acc, [key, feature]) => {
           return {
             ...acc,
-            [key.slice(FEATURE_PREFIX.length)]: (feature?.variants?.account_id_md5 || []).includes(md5 || ''),
+            [key.slice(FEATURE_PREFIX.length)]: (feature?.variants?.account_id_md5 || []).includes(md5),
           };
         }, {}),
     ),
@@ -84,7 +87,7 @@ export class FeatureFlagService {
         .reduce((acc, [key, feature]) => {
           return {
             ...acc,
-            [key]: feature?.rollout === 100 || (feature?.variants?.account_id_md5 || []).includes(md5 || ''),
+            [key]: feature?.rollout === 100 || (feature?.variants?.account_id_md5 || []).includes(md5),
           };
         }, {}),
     ),
