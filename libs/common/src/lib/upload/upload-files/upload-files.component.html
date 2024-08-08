@@ -4,27 +4,33 @@
   </pa-modal-title>
   <pa-modal-content>
     @if (standalone && (hasValidKey | async) === false) {
-      <div
-        class="warning body-s"
-        [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        <div
+          class="body-s"
+          [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
+      </nsi-info-card>
+      <br />
     }
     @if (limitsExceeded) {
-      <div class="size warning body-s">
-        <pa-icon name="warning"></pa-icon>
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        <div class="title-xs">{{ 'upload.warning.size-limit.title' | translate }}</div>
         <div>
-          <strong>
-            {{
-              'upload.size_warning_1'
-                | translate
-                  : {
-                      maxMedia: (maxMediaFileSize | size),
-                      max: (maxFileSize | size)
-                    }
-            }}
-          </strong>
-          <div>{{ 'upload.size_warning_2' | translate }}</div>
+          {{
+            'upload.warning.size-limit.limit-details'
+              | translate
+                : {
+                    maxMedia: (maxMediaFileSize | size),
+                    max: (maxFileSize | size)
+                  }
+          }}
         </div>
-      </div>
+        <div>{{ 'upload.warning.size-limit.description' | translate }}</div>
+      </nsi-info-card>
+      <br />
     }
 
     <div

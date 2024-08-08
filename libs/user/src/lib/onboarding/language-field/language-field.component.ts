@@ -22,7 +22,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FeaturesService } from '@flaps/core';
-import { BadgeComponent } from '@nuclia/sistema';
+import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 import { LearningConfigurationProperty, LearningConfigurations } from '@nuclia/core';
 import { DynamicFieldComponent } from './dynamic-field.component';
 
@@ -62,6 +62,7 @@ export interface EmbeddingModelForm {
     DynamicFieldComponent,
     AccordionItemComponent,
     PaExpanderModule,
+    InfoCardComponent,
   ],
   templateUrl: './language-field.component.html',
   styleUrl: './language-field.component.scss',

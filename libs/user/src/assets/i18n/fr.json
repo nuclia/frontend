@@ -98,6 +98,7 @@
 	"user.kb.creation-form.models.external-model.hugging-face.advanced-config": "Configuration avancée",
 	"user.kb.creation-form.models.external-model.hugging-face.form-title": "Configuration du modèle Hugging Face",
 	"user.kb.creation-form.models.external-model.label": "Sélectionnez le modèle de partenaire que vous souhaitez utiliser",
+	"user.kb.creation-form.models.external-model.nuclia-token-warning": "Veuillez garder à l'esprit que l'utilisation de cette fonctionnalité entraîne la consommation de tokens Nuclia.",
 	"user.kb.creation-form.models.external-model.options.gecko": "Google Gecko",
 	"user.kb.creation-form.models.external-model.options.hugging-face": "Hugging Face",
 	"user.kb.creation-form.models.external-model.options.openai-large": "OpenAI 3 large",
