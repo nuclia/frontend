@@ -5,7 +5,7 @@ form.language-field-form {
   flex-direction: column;
   gap: rhythm(2);
 
-  .semantic-model-choice .body-m {
+  .semantic-model-choice > .body-m {
     color: $color-neutral-regular;
   }
 }
