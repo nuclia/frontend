@@ -11,12 +11,9 @@ import { PaToastModule, SPRITE_CACHE_VERSION } from '@guillotinaweb/pastanaga-an
 import { BackendConfigurationService, LabelSetsModule, STFConfigModule, STFPipesModule } from '@flaps/core';
 import { environment } from '../environments/environment';
 
-// App modules
 import { AppRoutingModule } from './app-routing.module';
 import { FarewellModule } from './farewell/farewell.module';
 import { AccountModule } from './account/account.module';
-
-// Components
 import { AppComponent } from './app.component';
 
 // Load locales
