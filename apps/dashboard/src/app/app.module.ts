@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HTTP_INTERCEPTORS, HttpBackend, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpBackend, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
@@ -68,11 +68,11 @@ const appModules = [
 
 @NgModule({
   declarations: [...components],
+  bootstrap: [AppComponent],
   imports: [
     BaseModule,
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     ReactiveFormsModule,
     AngularSvgIconModule.forRoot(),
     STFConfigModule.forRoot(environment),
@@ -98,7 +98,7 @@ const appModules = [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     TranslatePipe,
     { provide: TitleStrategy, useClass: AppTitleStrategy },
+    provideHttpClient(withInterceptorsFromDi()),
   ],
-  bootstrap: [AppComponent],
 })
 export class AppModule {}
