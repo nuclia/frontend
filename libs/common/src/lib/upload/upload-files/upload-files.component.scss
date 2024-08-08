@@ -1,17 +1,5 @@
 @import 'apps/dashboard/src/variables';
 
-.warning {
-  background-color: $color-secondary-regular;
-  padding: rhythm(1);
-  margin-bottom: rhythm(3);
-
-  &.size {
-    align-items: center;
-    display: flex;
-    gap: rhythm(1);
-  }
-}
-
 .dropzone {
   align-items: center;
   display: flex;
