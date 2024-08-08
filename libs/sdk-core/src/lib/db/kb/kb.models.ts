@@ -5,6 +5,7 @@ import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
 import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
+import { Agentic } from '../search/agentic';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -96,6 +97,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getFullResourceBySlug(slug: string): Observable<IResource>;
 
+  createAgenticRAGPipeline(steps: Agentic.Steps): Agentic.Pipeline;
+
   ask(
     query: string,
     context?: Ask.ContextEntry[],
@@ -127,6 +130,12 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   tokens(text: string): Observable<SentenceToken[]>;
 
   generate(question: string, context: string[]): Observable<{ answer: string; cannotAnswer: boolean }>;
+
+  generateJSON(
+    question: string,
+    json_schema: object,
+    context: string[],
+  ): Observable<{ answer: object; success: boolean }>;
 
   rephrase(question: string): Observable<string>;
 

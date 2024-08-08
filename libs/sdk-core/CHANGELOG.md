@@ -1,3 +1,9 @@
+# 1.19.0 (unreleased)
+
+### Beta feature
+
+- Advanced agentic RAG pipeline support
+
 # 1.18.0 (2024-07-25)
 
 ### Breaking changes
