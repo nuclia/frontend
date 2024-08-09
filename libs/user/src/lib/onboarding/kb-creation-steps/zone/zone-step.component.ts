@@ -4,7 +4,6 @@ import { ZoneService } from '@flaps/core';
 import { PaButtonModule, PaIconModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LanguageFieldComponent } from '../../language-field/language-field.component';
 import { StickyFooterComponent } from '@nuclia/sistema';
 import { tap } from 'rxjs';
 
@@ -13,7 +12,6 @@ import { tap } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
-    LanguageFieldComponent,
     PaButtonModule,
     PaIconModule,
     PaTogglesModule,

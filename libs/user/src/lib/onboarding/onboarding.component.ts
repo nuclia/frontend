@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { OnboardingService } from './onboarding.service';
-import { AccountAndKbConfiguration } from '@flaps/core';
-import { Observable } from 'rxjs';
+import { AccountAndKbConfiguration, FeaturesService } from '@flaps/core';
+import { filter, map, Observable, take } from 'rxjs';
 import { OnboardingPayload } from './onboarding.models';
-import { EmbeddingModelForm } from './language-field';
+import { EmbeddingModelForm } from './embeddings-model-form';
+import { ExternalIndexProvider } from '@nuclia/core';
 
 @Component({
   selector: 'nus-onboarding',
@@ -12,15 +13,22 @@ import { EmbeddingModelForm } from './language-field';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OnboardingComponent {
+  isExternalIndexEnabled = this.featureService.unstable.externalIndex;
   onboardingStep: Observable<number> = this.onboardingService.onboardingStep;
-  lastStep = 5;
+  lastStep: Observable<number> = this.isExternalIndexEnabled.pipe(
+    map((isExternalIndexEnabled) => (isExternalIndexEnabled ? 6 : 5)),
+  );
 
   onboardingInquiryPayload?: OnboardingPayload;
   kbName = '';
   zone = '';
   embeddingModel?: EmbeddingModelForm;
+  externalIndexProvider?: ExternalIndexProvider | null;
 
-  constructor(private onboardingService: OnboardingService) {}
+  constructor(
+    private onboardingService: OnboardingService,
+    private featureService: FeaturesService,
+  ) {}
 
   goBack(): void {
     this.onboardingService.previousStep();
@@ -36,19 +44,36 @@ export class OnboardingComponent {
     this.onboardingService.nextStep();
   }
 
-  finalStepDone(model: EmbeddingModelForm) {
+  storeEmbeddingModelAndGoNext(model: EmbeddingModelForm) {
     this.embeddingModel = model;
+    this.onboardingService.nextStep();
 
-    if (!this.onboardingInquiryPayload) {
+    // there is one more step only if external index is enabled
+    this.isExternalIndexEnabled
+      .pipe(
+        take(1),
+        filter((isEnabled) => !isEnabled),
+      )
+      .subscribe(() => this.finalStepDone());
+  }
+
+  storeVectorDbStep(indexProvider: ExternalIndexProvider | null) {
+    this.externalIndexProvider = indexProvider;
+    this.onboardingService.nextStep();
+    this.finalStepDone();
+  }
+
+  private finalStepDone() {
+    if (!this.onboardingInquiryPayload || !this.embeddingModel) {
       return;
     }
-    this.onboardingService.nextStep();
     this.onboardingService.saveOnboardingInquiry(this.onboardingInquiryPayload);
     const accountAndKb: AccountAndKbConfiguration = {
       company: this.onboardingInquiryPayload.company,
       kbName: this.kbName,
       zoneSlug: this.zone,
       semanticModel: this.embeddingModel.embeddingModel,
+      externalIndexProvider: this.externalIndexProvider,
     };
     this.onboardingService.startOnboarding(accountAndKb);
   }

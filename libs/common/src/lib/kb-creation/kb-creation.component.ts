@@ -22,10 +22,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
-import { EmbeddingModelForm, LanguageFieldComponent } from '@nuclia/user';
+import {
+  EmbeddingModelForm,
+  EmbeddingsModelFormComponent,
+  VectorDatabaseFormComponent,
+  VectorDbModel,
+} from '@nuclia/user';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { KnowledgeBoxCreation, LearningConfigurations, PINECONE_REGIONS } from '@nuclia/core';
+import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 
 @Component({
   selector: 'app-kb-creation',
@@ -40,9 +45,10 @@ import { KnowledgeBoxCreation, LearningConfigurations, PINECONE_REGIONS } from '
     PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,
-    LanguageFieldComponent,
+    EmbeddingsModelFormComponent,
     SisProgressModule,
     InfoCardComponent,
+    VectorDatabaseFormComponent,
   ],
   templateUrl: './kb-creation.component.html',
   styleUrl: './kb-creation.component.scss',
@@ -82,17 +88,6 @@ export class KbCreationComponent implements OnInit, OnDestroy {
       validators: this.sdk.nuclia.options.standalone ? [] : [Validators.required],
     }),
     anonymization: new FormControl<boolean>(false, { nonNullable: true }),
-    vectorDatabase: new FormGroup({
-      external: new FormControl<boolean>(false),
-      type: new FormControl<'pinecone'>('pinecone', { nonNullable: true }),
-      apiKey: new FormControl<string>('', { nonNullable: true }),
-      pinecone: new FormGroup({
-        cloud: new FormControl<'aws' | 'gcp_us_central1' | 'azure_eastus2'>('gcp_us_central1', { nonNullable: true }),
-        awsRegion: new FormControl<'aws_us_east_1' | 'aws_us_west_2' | 'aws_eu_west_1'>('aws_us_east_1', {
-          nonNullable: true,
-        }),
-      }),
-    }),
   });
   validationMessages: { [key: string]: IErrorMessages } = {
     title: {
@@ -108,19 +103,16 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   learningSchema = new ReplaySubject<LearningConfigurations>(1);
 
   isExternalIndexEnabled = this.featureService.unstable.externalIndex;
-
-  get externalVectorDatabase() {
-    return this.form.controls.vectorDatabase.controls.external.value;
-  }
-  get pineconeCloudControl() {
-    return this.form.controls.vectorDatabase.controls.pinecone.controls.cloud;
-  }
-  get pineconeAwsRegionControl() {
-    return this.form.controls.vectorDatabase.controls.pinecone.controls.awsRegion;
-  }
-  get pineconeCloudValue() {
-    return this.pineconeCloudControl.value;
-  }
+  vectorDbModel: VectorDbModel = {
+    external: false,
+    type: 'pinecone',
+    apiKey: '',
+    pinecone: {
+      cloud: 'gcp_us_central1',
+      awsRegion: 'aws_us_east_1',
+    },
+  };
+  externalIndexProvider: ExternalIndexProvider | null = null;
 
   ngOnInit() {
     if (this.sdk.nuclia.options.standalone) {
@@ -162,7 +154,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   }
 
   create() {
-    const { anonymization, vectorDatabase, ...kbConfig } = this.form.getRawValue();
+    const { anonymization, ...kbConfig } = this.form.getRawValue();
 
     const confirmed = anonymization
       ? this.modalService
@@ -201,17 +193,8 @@ export class KbCreationComponent implements OnInit, OnDestroy {
               user_keys,
             },
           };
-          if (isExternalIndexEnabled && this.externalVectorDatabase) {
-            let serverless_cloud: 'aws' | PINECONE_REGIONS = vectorDatabase.pinecone.cloud;
-            if (serverless_cloud === 'aws') {
-              serverless_cloud = vectorDatabase.pinecone.awsRegion;
-            }
-
-            kb.external_index_provider = {
-              type: vectorDatabase.type,
-              api_key: vectorDatabase.apiKey,
-              serverless_cloud,
-            };
+          if (isExternalIndexEnabled && this.externalIndexProvider) {
+            kb.external_index_provider = this.externalIndexProvider;
           }
           return this.sdk.nuclia.db.createKnowledgeBox(account.id, kb, kb.zone).pipe(
             catchError((error) => {
@@ -254,10 +237,22 @@ export class KbCreationComponent implements OnInit, OnDestroy {
 
   updatePineconeCloud(zone: string) {
     if (zone.startsWith('europe')) {
-      this.pineconeCloudControl.patchValue('gcp_us_central1');
+      this.vectorDbModel = {
+        ...this.vectorDbModel,
+        pinecone: {
+          ...this.vectorDbModel.pinecone,
+          cloud: 'gcp_us_central1',
+        },
+      };
     } else if (zone.startsWith('aws')) {
-      this.pineconeCloudControl.patchValue('aws');
-      this.pineconeAwsRegionControl.patchValue('aws_us_east_1');
+      this.vectorDbModel = {
+        ...this.vectorDbModel,
+        pinecone: {
+          ...this.vectorDbModel.pinecone,
+          cloud: 'aws',
+          awsRegion: 'aws_us_east_1',
+        },
+      };
     }
   }
 }

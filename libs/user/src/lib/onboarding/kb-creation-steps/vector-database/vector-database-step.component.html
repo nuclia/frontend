@@ -1,7 +1,7 @@
 <div class="onboarding-form">
-  <nus-embeddings-model-form
-    [languageModel]="data"
-    (modelSelected)="updateModel($event)"></nus-embeddings-model-form>
+  <nus-vector-database-form
+    [vectorDb]="vectorDbModel"
+    (indexProviderUpdated)="indexProvider = $event"></nus-vector-database-form>
 </div>
 
 <nsi-sticky-footer>
@@ -12,8 +12,7 @@
   </pa-button>
   <pa-button
     kind="primary"
-    [disabled]="!model"
     (click)="submitForm()">
-    {{ (isLastStep ? 'onboarding.final-button' : 'onboarding.next-button') | translate }}
+    {{ 'onboarding.final-button' | translate }}
   </pa-button>
 </nsi-sticky-footer>

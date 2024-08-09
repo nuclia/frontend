@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { EmbeddingModelForm, LanguageFieldComponent } from '../../language-field';
+import { EmbeddingModelForm, EmbeddingsModelFormComponent } from '../../embeddings-model-form';
 import { StickyFooterComponent } from '@nuclia/sistema';
 
 @Component({
@@ -16,7 +16,7 @@ import { StickyFooterComponent } from '@nuclia/sistema';
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
-    LanguageFieldComponent,
+    EmbeddingsModelFormComponent,
     PaTextFieldModule,
     StickyFooterComponent,
     PaButtonModule,
@@ -27,6 +27,7 @@ import { StickyFooterComponent } from '@nuclia/sistema';
 })
 export class EmbeddingModelStepComponent {
   @Input() data?: EmbeddingModelForm;
+  @Input() isLastStep = true;
 
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<EmbeddingModelForm>();

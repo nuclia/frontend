@@ -1,0 +1,68 @@
+<form [formGroup]="form">
+  <div class="form-container">
+    <div class="toggle-container">
+      <pa-toggle formControlName="external">
+        {{ 'user.kb.creation-form.vector-database.pinecone.toggle-label' | translate }}
+      </pa-toggle>
+    </div>
+
+    @if (externalVectorDatabase) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        {{ 'user.kb.creation-form.vector-database.pinecone.warning' | translate }}
+      </nsi-info-card>
+
+      <pa-input formControlName="apiKey">
+        {{ 'user.kb.creation-form.vector-database.input-label' | translate }}
+      </pa-input>
+      <nsi-info-card>
+        <div [innerHTML]="'user.kb.creation-form.vector-database.pinecone.api-info' | translate"></div>
+      </nsi-info-card>
+
+      <ng-container formGroupName="pinecone">
+        <div>
+          <label
+            for="cloud"
+            class="title-xs">
+            {{ 'user.kb.creation-form.vector-database.pinecone.could-provider' | translate }}
+          </label>
+          <pa-radio-group
+            id="cloud"
+            formControlName="cloud">
+            <pa-radio value="aws">Amazon Web Services</pa-radio>
+            <pa-radio value="gcp_us_central1">Google Cloud Provider</pa-radio>
+            <pa-radio value="azure_eastus2">Azure</pa-radio>
+          </pa-radio-group>
+        </div>
+
+        @if (pineconeCloudValue === 'aws') {
+          <div>
+            <label for="aws_region">
+              {{ 'user.kb.creation-form.vector-database.pinecone.aws-region' | translate }}
+            </label>
+            <pa-radio-group
+              id="aws_region"
+              formControlName="awsRegion">
+              <pa-radio
+                value="aws_us_east_1"
+                help="aws_us_east_1">
+                US East
+              </pa-radio>
+              <pa-radio
+                value="aws_us_west_2"
+                help="aws_us_west_2">
+                US West
+              </pa-radio>
+              <pa-radio
+                value="aws_eu_west_1"
+                help="aws_eu_west_1">
+                EU West
+              </pa-radio>
+            </pa-radio-group>
+          </div>
+        }
+      </ng-container>
+    }
+  </div>
+</form>
