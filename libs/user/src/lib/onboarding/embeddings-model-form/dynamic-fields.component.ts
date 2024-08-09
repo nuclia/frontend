@@ -41,7 +41,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, PaTextFieldModule, ReactiveFormsModule],
 })
-export class DynamicFieldComponent {
+export class DynamicFieldsComponent {
   @Input() form: FormGroup = new FormGroup({});
   @Input() fields: { key: string; value: LearningConfigurationProperty }[] = [];
 }
