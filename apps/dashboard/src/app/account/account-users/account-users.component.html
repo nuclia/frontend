@@ -16,14 +16,24 @@
     </div>
 
     @if (canAddUsers | async) {
-      <div class="add-user">
+      <div
+        class="add-user"
+        [formGroup]="form">
         <pa-input
           type="email"
-          [formControl]="email">
+          formControlName="email">
           {{ 'accounts.add_user_input' | translate }}
         </pa-input>
+        <pa-select
+          formControlName="role"
+          label="{{ 'generic.role' | translate }}"
+          dim>
+          @for (role of roles; track role) {
+            <pa-option [value]="role">{{ roleTranslations[role] | translate }}</pa-option>
+          }
+        </pa-select>
         <pa-button
-          [disabled]="email.invalid"
+          [disabled]="form.invalid"
           (click)="addUser()">
           {{ 'account.add_user' | translate }}
         </pa-button>
