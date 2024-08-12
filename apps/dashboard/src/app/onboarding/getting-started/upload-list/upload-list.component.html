@@ -43,7 +43,7 @@
                   <span class="body-s">
                     {{
                       'getting-started.processing.status.estimated-time'
-                        | translate: { estimation: formatETA.transform(item.estimation || 1) }
+                        | translate: { estimation: formatETA.transform(item.estimation || 60) }
                     }}
                   </span>
                 }
