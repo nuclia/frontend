@@ -246,17 +246,19 @@ export type PINECONE_REGIONS =
   | 'gcp_us_central1'
   | 'azure_eastus2';
 
+export interface ExternalIndexProvider {
+  type: 'pinecone';
+  api_key: string;
+  serverless_cloud: PINECONE_REGIONS;
+}
+
 export interface KnowledgeBoxCreation {
   slug: string;
   title: string;
   zone?: string;
   description?: string;
   learning_configuration?: { [configId: string]: any };
-  external_index_provider?: {
-    type: 'pinecone';
-    api_key: string;
-    serverless_cloud: PINECONE_REGIONS;
-  };
+  external_index_provider?: ExternalIndexProvider;
 }
 
 export interface Entities {

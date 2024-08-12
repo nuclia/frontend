@@ -107,17 +107,22 @@ export class OnboardingService {
             .pipe(map((learningConfiguration) => ({ learningConfiguration, accountSlug, accountId })));
         }),
         switchMap(({ learningConfiguration, accountSlug, accountId }) => {
-          const kbConfig = {
+          const kbConfig: KnowledgeBoxCreation = {
             slug: STFUtils.generateSlug(configuration.kbName),
             title: configuration.kbName,
             learning_configuration: {
               semantic_model: getSemanticModel(configuration.semanticModel, learningConfiguration),
             },
           };
-          this.tracking.logEvent('kb_creation_submitted', {
+          const kbCreationEvent: { [key: string]: string } = {
             region: configuration.zoneSlug,
             learningConfiguration: kbConfig.learning_configuration?.['semantic_model'] || '',
-          });
+          };
+          if (configuration.externalIndexProvider) {
+            kbConfig.external_index_provider = configuration.externalIndexProvider;
+            kbCreationEvent['externalIndexProvider'] = configuration.externalIndexProvider.type;
+          }
+          this.tracking.logEvent('kb_creation_submitted', kbCreationEvent);
           this._onboardingState.next({
             creating: true,
             accountCreated: true,
@@ -148,25 +153,41 @@ export class OnboardingService {
     zone: string,
   ): Observable<{ accountSlug: string; kbSlug: string }> {
     return this.sdk.nuclia.db.createKnowledgeBox(accountId, kbConfig, zone).pipe(
-      map(() => ({ accountSlug: accountSlug, kbSlug: kbConfig.slug })),
+      map(() => ({ accountSlug, kbSlug: kbConfig.slug })),
       catchError((error) => {
         this.tracking.logEvent('account_creation_kb_failed');
-        this._kbCreationFailureCount += 1;
-        if (this._kbCreationFailureCount < 5) {
-          return this.createKb(accountSlug, accountId, kbConfig, zone);
-        } else {
-          Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
-          this.toaster.error('stash.create.failure');
-          this._onboardingState.next({
-            creating: false,
-            accountCreated: true,
-            kbCreated: false,
-            creationFailed: true,
-          });
+        if (error.status >= 400 && error.status < 500) {
+          this.manageKbCreationError(
+            accountSlug,
+            `KB creation failed: ${error.status} ${error.body?.detail || 'Bad request'}`,
+          );
           throw error;
+        } else {
+          this._kbCreationFailureCount += 1;
+          if (this._kbCreationFailureCount < 5) {
+            return this.createKb(accountSlug, accountId, kbConfig, zone);
+          } else {
+            this.manageKbCreationError(accountSlug, `KB creation failed`);
+            throw error;
+          }
         }
       }),
     );
+  }
+
+  private manageKbCreationError(accountSlug: string, message: string) {
+    Sentry.captureMessage(message, { tags: { host: location.hostname } });
+    this.toaster.error('onboarding.kb-creation.failed');
+    this._onboardingState.next({
+      creating: false,
+      accountCreated: true,
+      kbCreated: false,
+      creationFailed: true,
+    });
+    // KB creation failed but account creation worked, so we redirect to account management page to unblock people
+    const path = `/at/${accountSlug}`;
+    localStorage.setItem(GETTING_STARTED_DONE_KEY, 'false');
+    this.router.navigate([path]);
   }
 
   private getAvailableAccountSlug(slug: string): Observable<string> {

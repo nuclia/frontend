@@ -29,10 +29,15 @@ import { SignupComponent } from './signup/signup.component';
 import { SsoButtonComponent } from './sso/sso-button.component';
 import { CheckMailComponent } from './check-mail/check-mail.component';
 import { UserContainerModule } from './user-container';
-import { OnboardingComponent } from './onboarding/onboarding.component';
-import { Step1Component } from './onboarding/step1/step1.component';
-import { EmbeddingModelStepComponent, KbNameStepComponent, ZoneStepComponent } from './onboarding/kb-creation-steps';
-import { SettingUpComponent } from './onboarding/setting-up/setting-up.component';
+import {
+  EmbeddingModelStepComponent,
+  KbNameStepComponent,
+  OnboardingComponent,
+  SettingUpComponent,
+  Step1Component,
+  VectorDatabaseStepComponent,
+  ZoneStepComponent,
+} from './onboarding';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -112,6 +117,7 @@ export const userRoutes: Routes = [
     PaButtonModule,
     ZoneStepComponent,
     EmbeddingModelStepComponent,
+    VectorDatabaseStepComponent,
   ],
   exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
 })

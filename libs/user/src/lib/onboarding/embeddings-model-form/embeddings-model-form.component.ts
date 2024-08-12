@@ -24,7 +24,7 @@ import {
 import { FeaturesService } from '@flaps/core';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 import { LearningConfigurationProperty, LearningConfigurations } from '@nuclia/core';
-import { DynamicFieldComponent } from './dynamic-field.component';
+import { DynamicFieldsComponent } from './dynamic-fields.component';
 
 const LANGUAGES = [
   'arabic',
@@ -50,7 +50,7 @@ export interface EmbeddingModelForm {
 }
 
 @Component({
-  selector: 'nus-language-field',
+  selector: 'nus-embeddings-model-form',
   standalone: true,
   imports: [
     CommonModule,
@@ -59,17 +59,17 @@ export interface EmbeddingModelForm {
     PaTogglesModule,
     BadgeComponent,
     PaTextFieldModule,
-    DynamicFieldComponent,
+    DynamicFieldsComponent,
     AccordionItemComponent,
     PaExpanderModule,
     InfoCardComponent,
   ],
-  templateUrl: './language-field.component.html',
-  styleUrl: './language-field.component.scss',
+  templateUrl: './embeddings-model-form.component.html',
+  styleUrl: './embeddings-model-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class LanguageFieldComponent implements OnInit, OnChanges, OnDestroy {
+export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input() set languageModel(value: EmbeddingModelForm | undefined) {
     if (value) {

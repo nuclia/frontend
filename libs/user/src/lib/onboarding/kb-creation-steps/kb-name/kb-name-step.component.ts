@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LanguageFieldComponent } from '../../language-field/language-field.component';
 import { StickyFooterComponent } from '@nuclia/sistema';
 
 @Component({
@@ -16,7 +15,6 @@ import { StickyFooterComponent } from '@nuclia/sistema';
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
-    LanguageFieldComponent,
     PaTextFieldModule,
     StickyFooterComponent,
     PaButtonModule,
