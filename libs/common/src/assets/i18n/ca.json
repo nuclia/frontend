@@ -470,7 +470,7 @@
 	"getting-started.intro.title": "Comença amb només 3 passos senzills",
 	"getting-started.processing.description": "Depenent del contingut, pot trigar uns minuts a processar les vostres dades a la base de dades vectorial NucliaDB.",
 	"getting-started.processing.estimated-time": "Temps de processament estimat: {{estimation}}",
-	"getting-started.processing.status.estimated-time": "Queden {{estimation}} min",
+	"getting-started.processing.status.estimated-time": "Queden {{estimation}}",
 	"getting-started.processing.status.failed": "Ha fallat",
 	"getting-started.processing.status.processed": "Processament completat",
 	"getting-started.processing.status.processing": "Processament",
