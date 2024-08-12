@@ -26,8 +26,6 @@ export class VectorDatabaseStepComponent {
   }
 
   submitForm() {
-    if (this.indexProvider) {
-      this.next.emit(this.indexProvider);
-    }
+    this.next.emit(this.indexProvider);
   }
 }
