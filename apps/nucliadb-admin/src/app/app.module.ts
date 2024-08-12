@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
-import { HttpBackend, HttpClientModule } from '@angular/common/http';
+import { HttpBackend, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BackendConfigurationService, STFConfigModule } from '@flaps/core';
 import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -38,10 +38,10 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
 
 @NgModule({
   declarations: [AppComponent, HomePageComponent],
+  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     AngularSvgIconModule.forRoot(),
     STFConfigModule.forRoot(environment),
     TranslateModule.forRoot({
@@ -62,7 +62,7 @@ export function createTranslateLoader(http: HttpBackend, config: BackendConfigur
     TranslatePipe,
     { provide: APP_BASE_HREF, useValue: '/admin' },
     { provide: TitleStrategy, useClass: AppTitleStrategy },
+    provideHttpClient(withInterceptorsFromDi()),
   ],
-  bootstrap: [AppComponent],
 })
 export class AppModule {}
