@@ -199,7 +199,7 @@ export class GettingStartedComponent implements OnDestroy {
                       item.processed = resource.metadata?.status === RESOURCE_STATUS.PROCESSED;
                       if (!item.processed && status) {
                         item.processing = status.schedule_order === -1;
-                        item.estimation = status.schedule_eta === -1 ? 1 : status.schedule_eta;
+                        item.estimation = status.schedule_eta === -1 ? 60 : status.schedule_eta;
                         item.rank = status.schedule_order;
                       }
                     }

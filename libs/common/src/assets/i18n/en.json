@@ -470,7 +470,7 @@
 	"getting-started.intro.title": "Get started in just 3 simple steps",
 	"getting-started.processing.description": "Depending on the contents, it can take a few minutes to process your data into the NucliaDB vector database.",
 	"getting-started.processing.estimated-time": "Estimated processing time: {{estimation}}",
-	"getting-started.processing.status.estimated-time": "{{estimation}} min left",
+	"getting-started.processing.status.estimated-time": "{{estimation}} left",
 	"getting-started.processing.status.failed": "Failed",
 	"getting-started.processing.status.processed": "Processing completed",
 	"getting-started.processing.status.processing": "Processing",
