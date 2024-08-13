@@ -1148,6 +1148,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   deleteInvite(email: string): Observable<void> {
     const { endpoint, zone } = this.getKbEndpointAndZone();
-    return this.nuclia.rest.delete(`${endpoint}/invite?email=${email}`, undefined, undefined, zone);
+    const encodedEmail = encodeURIComponent(email);
+    return this.nuclia.rest.delete(`${endpoint}/invite?email=${encodedEmail}`, undefined, undefined, zone);
   }
 }
