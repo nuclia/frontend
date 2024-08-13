@@ -77,6 +77,8 @@ export interface KbInvite {
 }
 
 export interface IKnowledgeBox extends IKnowledgeBoxCreation {
+  external_index_provider?: 'pinecone';
+
   get path(): string;
 
   get fullpath(): string;

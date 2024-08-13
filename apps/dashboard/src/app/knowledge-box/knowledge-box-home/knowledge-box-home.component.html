@@ -245,6 +245,14 @@
                     <div class="title-xxs">{{ 'dashboard-home.kb-storage.total.text-blocks' | translate }}</div>
                     <div class="title-m">{{ storage.paragraphs | number: '1.0-0' : locale }}</div>
                   </div>
+                  @if (kb.external_index_provider) {
+                    <div>
+                      <div class="title-xxs">{{ 'dashboard-home.kb-storage.external-db.title' | translate }}</div>
+                      <div class="title-m">
+                        {{ 'dashboard-home.kb-storage.external-db.' + kb.external_index_provider | translate }}
+                      </div>
+                    </div>
+                  }
                 </div>
                 <div class="column-container growing-container">
                   <div>

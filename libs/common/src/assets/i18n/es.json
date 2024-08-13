@@ -287,6 +287,8 @@
 	"dashboard-home.kb-details.status": "Estado de Knowledge Box",
 	"dashboard-home.kb-details.title": "Knowledge Box: {{name}}",
 	"dashboard-home.kb-details.uid": "Knowledge Box UID",
+	"dashboard-home.kb-storage.external-db.pinecone": "Pinecone",
+	"dashboard-home.kb-storage.external-db.title": "Base de datos vectorial externa",
 	"dashboard-home.kb-storage.title": "Almacenamiento",
 	"dashboard-home.kb-storage.total.fields": "Campos",
 	"dashboard-home.kb-storage.total.index-size": "Tamaño del índice",
