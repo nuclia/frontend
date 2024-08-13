@@ -203,103 +203,21 @@ export namespace Agentic {
       if (!step) {
         return of(false);
       }
-      if (step.action.type === 'predict') {
-        return this.runPredictAction(stepId, step.action);
-      } else if (step.action.type === 'find') {
-        return this.runFindAction(stepId, step.action);
-      } else if (step.action.type === 'ask') {
-        return this.runAskAction(stepId, step.action);
-      } else if (step.action.type === 'web') {
-        return this.runWebAction(stepId, step.action);
-      } else if (step.action.type === 'api') {
-        return this.runAPIAction(stepId, step.action);
-      } else if (step.action.type === 'user') {
-        return this.runUserAction(stepId, step.action);
-      }
-      return of(true);
-    }
-
-    private getObjectValue(obj: object, path: string): any {
-      if (!obj) {
-        return undefined;
-      }
-      const keys = path.split('.');
-      return keys.reduce((acc, key) => {
-        if (!acc) {
-          return undefined;
-        }
-        if (key.startsWith('[')) {
-          key = key.replace('[', '').replace(']', '');
-          if (Array.isArray(acc)) {
-            try {
-              const index = parseInt(key, 10);
-              return acc[index];
-            } catch (e) {
-              return undefined;
-            }
-          } else {
-            if (acc[key]) {
-              return acc[key];
-            } else {
-              try {
-                const index = parseInt(key, 10);
-                return Object.values(acc)[index];
-              } catch (e) {
-                return undefined;
-              }
-            }
-          }
-        } else if (acc[key]) {
-          return acc[key];
-        } else {
-          return undefined;
-        }
-      }, obj as any);
-    }
-
-    private format(expression: string, skipMissing = true): string | undefined {
-      console.log('format', expression);
-      let missing = false;
-      const formatted = expression.replace(VARIABLES, (match, p1) => {
-        const value = this.getObjectValue(this.context, p1 as string);
-        if (value === undefined) {
-          missing = true;
-        }
-        return value !== undefined ? `${value}` : '';
-      });
-      return missing && skipMissing ? undefined : formatted;
-    }
-
-    private eval<T>(expression: string): T | undefined {
-      const expr = this.format(expression, false);
-      if (!expr) {
-        return undefined;
-      }
-      try {
-        return eval(expr) as T;
-      } catch (e) {
-        console.error(expr);
-        console.error(e);
-        return undefined;
-      }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private formatObject(obj: any): any {
-      if (typeof obj === 'string') {
-        return this.format(obj);
-      } else if (Array.isArray(obj)) {
-        const arr = obj.map((item) => this.formatObject(item)).filter((item) => item !== undefined);
-        return arr.length > 0 ? arr : undefined;
-      } else if (typeof obj === 'object') {
-        return Object.entries(obj).reduce((acc, [key, value]) => {
-          const formatted = this.formatObject(value);
-          acc[key] = formatted;
-
-          return acc;
-        }, obj);
-      } else {
-        return obj;
+      switch (step.action.type) {
+        case 'predict':
+          return this.runPredictAction(stepId, step.action);
+        case 'find':
+          return this.runFindAction(stepId, step.action);
+        case 'ask':
+          return this.runAskAction(stepId, step.action);
+        case 'web':
+          return this.runWebAction(stepId, step.action);
+        case 'api':
+          return this.runAPIAction(stepId, step.action);
+        case 'user':
+          return this.runUserAction(stepId, step.action);
+        default:
+          return of(false);
       }
     }
 
@@ -434,6 +352,119 @@ export namespace Agentic {
           return true;
         }),
       );
+    }
+
+    /*
+    Return the value of a nested object property according a given path.
+    Example:
+    const obj = { a: { b: { c: 1 }, d: [23, 78, 'abc'] } };
+    getObjectValue(obj, 'a.b') // { c: 1 }
+    getObjectValue(obj, 'a.b.c') // 1
+    getObjectValue(obj, 'a.d.[2]') // 'abc'
+    Indexes can also be used on dictionaries, getting the n-th value of the dictionary:
+    getObjectValue(obj, 'a.[0]') // { c: 1 }
+    */
+    private getObjectValue(obj: object, path: string): any {
+      if (!obj) {
+        return undefined;
+      }
+      const keys = path.split('.');
+      return keys.reduce((acc, key) => {
+        if (!acc) {
+          return undefined;
+        }
+        if (key.startsWith('[')) {
+          key = key.replace('[', '').replace(']', '');
+          if (Array.isArray(acc)) {
+            try {
+              const index = parseInt(key, 10);
+              return acc[index];
+            } catch (e) {
+              return undefined;
+            }
+          } else {
+            if (acc[key]) {
+              return acc[key];
+            } else {
+              try {
+                const index = parseInt(key, 10);
+                return Object.values(acc)[index];
+              } catch (e) {
+                return undefined;
+              }
+            }
+          }
+        } else if (acc[key]) {
+          return acc[key];
+        } else {
+          return undefined;
+        }
+      }, obj as any);
+    }
+
+    /*
+    Format a string expression by replacing {{variables}} with their values.
+    The variables are evaluated as path on the global context.
+    It is used to inject context data in the steps parameters.
+    Example:
+    this.context = {step1: {movie: 'The Matrix'}, step2: {actor: 'Keanu Reeves'}};
+    format('The main actor of {{step1.movie}} is {{step2.actor}}') // 'The main actor of The Matrix is Keanu Reeves'
+    */
+    private format(expression: string, skipMissing = true): string | undefined {
+      let missing = false;
+      const formatted = expression.replace(VARIABLES, (match, p1) => {
+        const value = this.getObjectValue(this.context, p1 as string);
+        if (value === undefined) {
+          missing = true;
+        }
+        return value !== undefined ? `${value}` : '';
+      });
+      return missing && skipMissing ? undefined : formatted;
+    }
+
+    /*
+    Format an object by replacing {{variables}} with their values recursively in all the object properties.
+    Applied to steps properties that are objects or arrays.
+    */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private formatObject(obj: any): any {
+      if (typeof obj === 'string') {
+        return this.format(obj);
+      } else if (Array.isArray(obj)) {
+        const arr = obj.map((item) => this.formatObject(item)).filter((item) => item !== undefined);
+        return arr.length > 0 ? arr : undefined;
+      } else if (typeof obj === 'object') {
+        return Object.entries(obj).reduce((acc, [key, value]) => {
+          const formatted = this.formatObject(value);
+          acc[key] = formatted;
+
+          return acc;
+        }, obj);
+      } else {
+        return obj;
+      }
+    }
+
+    /*
+    Evaluate a string expression as a JavaScript code.
+    The string might contain {{variables}}.
+    It is used to evaluate conditions in the steps next property.
+    Example:
+    this.context = {step1: {movie: 'The Matrix'}, step2: {actor: 'Keanu Reeves'}};
+    eval('"{{step1.movie}}" === "The Matrix"') // true
+    */
+    private eval<T>(expression: string): T | undefined {
+      const expr = this.format(expression, false);
+      if (!expr) {
+        return undefined;
+      }
+      try {
+        return eval(expr) as T;
+      } catch (e) {
+        console.error(expr);
+        console.error(e);
+        return undefined;
+      }
     }
   }
 }
