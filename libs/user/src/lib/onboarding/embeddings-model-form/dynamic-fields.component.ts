@@ -7,7 +7,9 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'nus-dynamic-fields',
   template: `
-    <form [formGroup]="form">
+    <form
+      class="dynamic-fields"
+      [formGroup]="form">
       @for (field of fields; track field.key) {
         @switch (field.value.type) {
           @case ('number') {
@@ -38,6 +40,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
       }
     </form>
   `,
+  styleUrl: './dynamic-fields.component.scss',
   standalone: true,
   imports: [CommonModule, PaTextFieldModule, ReactiveFormsModule],
 })
