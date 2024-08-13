@@ -5,20 +5,24 @@
       [formControl]="selectedConfig"
       [options]="configurations"
       (valueChange)="selectConfig($event)"></pa-select>
-    <div
-      class="config-status-indicator"
-      [class.modified]="isConfigModified"></div>
+    @if (canModifyConfig | async) {
+      <div
+        class="config-status-indicator"
+        [class.modified]="isConfigModified"></div>
+    }
   </div>
-  @if (isConfigModified) {
+  @if (isConfigModified && (canModifyConfig | async)) {
     <nsi-info-card type="warning">{{ 'search.configuration.modification-warning' | translate }}</nsi-info-card>
   }
   @if (displayWidgetButtonLine) {
     <div class="config-actions">
-      <nsi-button-mini
-        icon="widget"
-        (click)="triggerCreateWidget()">
-        {{ 'search.configuration.action.create-widget' | translate }}
-      </nsi-button-mini>
+      @if (canModifyConfig | async) {
+        <nsi-button-mini
+          icon="widget"
+          (click)="triggerCreateWidget()">
+          {{ 'search.configuration.action.create-widget' | translate }}
+        </nsi-button-mini>
+      }
       <nsi-button-mini
         icon="code"
         [disabled]="!lastQuery"
@@ -26,7 +30,7 @@
         (click)="showLastRequest()">
         {{ 'search.configuration.action.get-code' | translate }}
       </nsi-button-mini>
-      @if (!isNucliaConfig) {
+      @if (!isNucliaConfig && (canModifyConfig | async)) {
         <nsi-button-mini
           icon="trash"
           destructive
@@ -52,28 +56,30 @@
             (click)="resetConfig()">
             {{ 'search.configuration.action.reset' | translate }}
           </nsi-button-mini>
-          <div>
-            <nsi-button-mini
-              icon="download"
-              [paPopup]="isNucliaConfig ? null : saveMenu"
-              (click)="isNucliaConfig ? saveConfig() : null">
-              {{ 'search.configuration.action.save' | translate }}
-            </nsi-button-mini>
-            <pa-dropdown #saveMenu>
-              <pa-option (selectOption)="saveConfig()">
-                {{ 'search.configuration.action.save-as-new' | translate }}
-              </pa-option>
-              <pa-option (selectOption)="overwriteConfig()">
-                {{ 'search.configuration.action.overwrite' | translate }}
-              </pa-option>
-            </pa-dropdown>
-          </div>
+          @if (canModifyConfig | async) {
+            <div>
+              <nsi-button-mini
+                icon="download"
+                [paPopup]="isNucliaConfig ? null : saveMenu"
+                (click)="isNucliaConfig ? saveConfig() : null">
+                {{ 'search.configuration.action.save' | translate }}
+              </nsi-button-mini>
+              <pa-dropdown #saveMenu>
+                <pa-option (selectOption)="saveConfig()">
+                  {{ 'search.configuration.action.save-as-new' | translate }}
+                </pa-option>
+                <pa-option (selectOption)="overwriteConfig()">
+                  {{ 'search.configuration.action.overwrite' | translate }}
+                </pa-option>
+              </pa-dropdown>
+            </div>
+          }
         </div>
       }
     </div>
   }
 
-  @if (initialised) {
+  @if (initialised | async) {
     <pa-accordion (toggleAccordion)="scrollOnTop()">
       <pa-accordion-item
         #searchBox

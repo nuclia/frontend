@@ -16,7 +16,7 @@ import {
   NUCLIA_STANDARD_SEARCH_CONFIG,
   SAVED_CONFIG_KEY,
   SAVED_WIDGETS_KEY,
-  SEARCH_CONFIGS_KEY,
+  SearchAndWidgets,
   SearchConfiguration,
   Widget,
   WidgetConfiguration,
@@ -59,6 +59,8 @@ export class SearchWidgetService {
     currentConfig: SearchConfiguration;
     widgetOptions: WidgetConfiguration;
   }>();
+  searchAndWidgets = this.sdk.currentKb.pipe(map((kb) => kb.search_configs as SearchAndWidgets));
+  searchConfigurations = this.searchAndWidgets.pipe(map((configs) => configs.searchConfigurations || []));
 
   constructor() {
     this._generateWidgetSnippetSubject
@@ -71,40 +73,39 @@ export class SearchWidgetService {
       .subscribe();
   }
 
-  getSelectedSearchConfig(kbId: string): SearchConfiguration {
+  getSelectedSearchConfig(kbId: string, configs: SearchConfiguration[]): SearchConfiguration {
     const standardConfiguration = { ...NUCLIA_STANDARD_SEARCH_CONFIG };
     const savedConfigMap: { [kbId: string]: string } = JSON.parse(this.storage.getItem(SAVED_CONFIG_KEY) || '{}');
     const savedConfigId = savedConfigMap[kbId];
     if (!savedConfigId) {
       return standardConfiguration;
     }
-    const configs = this.getSavedSearchConfigs(kbId);
     const savedConfig = configs.find((config) => config.id === savedConfigId);
     return savedConfig ? savedConfig : standardConfiguration;
   }
 
-  getSavedSearchConfigs(kbId: string): SearchConfiguration[] {
-    const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
-      this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
-    );
-    return configMap[kbId] || [];
-  }
-
   saveSearchConfig(kbId: string, name: string, config: SearchConfiguration) {
-    const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
-      this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
+    return this.searchAndWidgets.pipe(
+      take(1),
+      switchMap((data) => {
+        // Override the config if it exists, add it otherwise
+        const searchConfigs = [...(data?.searchConfigurations || [])];
+        const itemIndex = searchConfigs.findIndex((item) => item.id === name);
+        if (itemIndex > -1) {
+          searchConfigs[itemIndex] = config;
+        } else {
+          searchConfigs.push({ ...config, id: name });
+        }
+        return this.sdk.currentKb.pipe(
+          take(1),
+          switchMap((kb) => kb.modify({ search_configs: { ...data, searchConfigurations: searchConfigs } })),
+        );
+      }),
+      tap(() => {
+        this.saveSelectedSearchConfig(kbId, name);
+        this.sdk.refreshKbList(true);
+      }),
     );
-    const storedConfigs: SearchConfiguration[] = configMap[kbId] || [];
-    // Override the config if it exists, add it otherwise
-    const itemIndex = storedConfigs.findIndex((item) => item.id === name);
-    if (itemIndex > -1) {
-      storedConfigs[itemIndex] = config;
-    } else {
-      storedConfigs.push({ ...config, id: name });
-    }
-    configMap[kbId] = storedConfigs;
-    this.storage.setItem(SEARCH_CONFIGS_KEY, JSON.stringify(configMap));
-    this.saveSelectedSearchConfig(kbId, name);
   }
 
   saveSelectedSearchConfig(kbId: string, name: string) {
@@ -113,17 +114,24 @@ export class SearchWidgetService {
     this.storage.setItem(SAVED_CONFIG_KEY, JSON.stringify(selectionMap));
   }
 
-  deleteSearchConfig(kbId: string, configId: string) {
-    const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
-      this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
+  deleteSearchConfig(configId: string) {
+    return this.searchAndWidgets.pipe(
+      take(1),
+      switchMap((data) => {
+        const searchConfigs = [...(data?.searchConfigurations || [])];
+        const itemIndex = searchConfigs.findIndex((item) => item.id === configId);
+        if (itemIndex > -1) {
+          searchConfigs.splice(itemIndex, 1);
+        }
+        return this.sdk.currentKb.pipe(
+          take(1),
+          switchMap((kb) => kb.modify({ search_configs: { ...data, searchConfigurations: searchConfigs } })),
+        );
+      }),
+      tap(() => {
+        this.sdk.refreshKbList(true);
+      }),
     );
-    const storedConfigs: SearchConfiguration[] = configMap[kbId] || [];
-    const itemIndex = storedConfigs.findIndex((item) => item.id === configId);
-    if (itemIndex > -1) {
-      storedConfigs.splice(itemIndex, 1);
-      configMap[kbId] = storedConfigs;
-      this.storage.setItem(SEARCH_CONFIGS_KEY, JSON.stringify(configMap));
-    }
   }
 
   generateWidgetSnippet(
