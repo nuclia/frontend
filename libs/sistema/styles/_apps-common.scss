@@ -177,13 +177,11 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
   padding: rhythm(2);
 }
 
-.black-link {
-  color: $color-dark-stronger;
-  font-weight: $font-weight-semi-bold;
-  text-decoration: underline;
+a.accent-link {
+  color: $color-text-link-accent;
 
   &:hover {
-    color: $color-dark-stronger;
+    color: $color-text-link-accent-hover;
   }
 }
 
@@ -218,7 +216,7 @@ pa-toggle.unauthorized {
   gap: rhythm(1);
   pa-radio {
     flex: 1 0 auto;
-    max-width: calc(100% - #{rhythm(5)} - #{rhythm(0.5)})
+    max-width: calc(100% - #{rhythm(5)} - #{rhythm(0.5)});
   }
 }
 pa-option pa-icon {

@@ -2,6 +2,9 @@
 
 @import 'mixins';
 
+$color-text-link-accent: $color-primary-regular;
+$color-text-link-accent-hover: $color-primary-strong;
+
 $height-top-bar: rhythm(9);
 $padding-top-page: rhythm(4);
 $padding-bottom-page: rhythm(4);

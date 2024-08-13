@@ -34,9 +34,6 @@
 
 .login_policy {
   color: $color-neutral-regular;
-  ::ng-deep a {
-    color: inherit;
-  }
 }
 
 .login_submit,
@@ -77,7 +74,4 @@
 .login_sso {
   margin: -#{rhythm(1)} 0 rhythm(2);
   text-align: right;
-  a {
-    text-decoration: none;
-  }
 }

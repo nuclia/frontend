@@ -59,7 +59,11 @@
 
     <p class="existing-account">
       {{ 'signup.have_account_already' | translate }}
-      <a routerLink="../login">{{ 'login.login' | translate }}</a>
+      <a
+        routerLink="../login"
+        class="accent-link">
+        {{ 'login.login' | translate }}
+      </a>
     </p>
   </div>
 </nus-user-container>

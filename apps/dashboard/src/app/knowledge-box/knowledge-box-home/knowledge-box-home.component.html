@@ -10,7 +10,7 @@
             </div>
             @if (isKbAdmin | async) {
               <a
-                class="title-xxs"
+                class="title-xxs accent-link"
                 [routerLink]="kbUrl + '/manage'"
                 (click)="trackNavigationFromHome('KB settings')">
                 {{ 'dashboard-home.go-to.kb-settings' | translate }}
@@ -106,7 +106,7 @@
               </div>
 
               <a
-                class="title-xxs"
+                class="title-xxs accent-link"
                 [routerLink]="kbUrl + '/resources'"
                 (click)="trackNavigationFromHome('resource list')">
                 {{ 'dashboard-home.go-to.resource-list' | translate }}
