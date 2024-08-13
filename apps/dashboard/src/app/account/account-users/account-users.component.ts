@@ -1,10 +1,17 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of, Subject, take } from 'rxjs';
 import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
-import { Account, AccountRoles, AccountUsersPayload, FullAccountUser, PendingInvitation } from '@nuclia/core';
+import {
+  Account,
+  AccountRoles,
+  AccountUsersPayload,
+  FullAccountUser,
+  InviteAccountUserPayload,
+  PendingInvitation,
+} from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
@@ -17,8 +24,12 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
   account?: Account;
   users: FullAccountUser[] = [];
   invitations: PendingInvitation[] = [];
-  email = new UntypedFormControl([''], [Validators.required, Validators.email]);
+  form = new FormGroup({
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    role: new FormControl<AccountRoles>('AMEMBER', { nonNullable: true, validators: [Validators.required] }),
+  });
 
+  roles: AccountRoles[] = ['AMEMBER', 'AOWNER'];
   roleTranslations: { [role: string]: string } = {
     AOWNER: 'generic.owner',
     AMEMBER: 'generic.member',
@@ -30,6 +41,10 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
   );
 
   unsubscribeAll = new Subject<void>();
+
+  get email() {
+    return this.form.controls.email.value;
+  }
 
   constructor(
     private translate: TranslateService,
@@ -69,10 +84,11 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
   }
 
   addUser() {
-    const data = { email: this.email.value };
+    const data: InviteAccountUserPayload = this.form.getRawValue();
     this.sdk.nuclia.db.inviteToAccount(this.account!.slug, data).subscribe(() => {
-      this.toaster.success(this.translate.instant('account.invited_user', { user: this.email.value }));
-      this.email.patchValue('');
+      this.toaster.success(this.translate.instant('account.invited_user', { user: this.email }));
+      this.form.patchValue({ email: '', role: 'AMEMBER' });
+      this.form.markAsPristine();
       this.cdr.markForCheck();
     });
   }

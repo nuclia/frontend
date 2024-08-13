@@ -13,7 +13,7 @@
       formControlName="role"
       label="{{ 'generic.role' | translate }}"
       dim>
-      @for (role of initialRoles; track role) {
+      @for (role of roles; track role) {
         <pa-option [value]="role">
           {{ roleTitles[role] | translate }}
         </pa-option>

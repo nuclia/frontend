@@ -4,6 +4,10 @@
 
 - Advanced agentic RAG pipeline support
 
+### Bug fix
+
+- KB invitation deletion: encode email before sending it as URL parameter
+
 # 1.18.0 (2024-07-25)
 
 ### Breaking changes

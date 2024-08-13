@@ -62,7 +62,6 @@ export class UsersManageComponent {
   );
 
   roles = SORTED_KB_ROLES;
-  initialRoles = SORTED_KB_ROLES.filter((role) => role !== 'SOWNER');
   roleTitles = KB_ROLE_TITLES;
 
   constructor(
