@@ -1,0 +1,7 @@
+@import 'apps/dashboard/src/variables';
+
+.dynamic-fields {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
