@@ -1,3 +1,9 @@
+# 1.19.1 (2024-08-14)
+
+### Bug fix
+
+- Remove wrong `exports` path in package.json
+
 # 1.19.0 (2024-08-14)
 
 ### Beta feature
