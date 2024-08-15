@@ -61,7 +61,6 @@ export class WidgetListComponent implements OnInit {
             },
             {} as { [key: string]: string },
           ) || {};
-        this.searchWidgetService.initWidgetList(kb.id);
       });
   }
 
@@ -74,21 +73,15 @@ export class WidgetListComponent implements OnInit {
         switchMap((widgetName) =>
           this.sdk.currentKb.pipe(
             take(1),
-            switchMap((kb) =>
-              kb
-                .getConfiguration()
-                .pipe(
-                  map((configuration) =>
-                    this.searchWidgetService.createWidget(
-                      kb.id,
-                      widgetName,
-                      DEFAULT_WIDGET_CONFIG,
-                      NUCLIA_STANDARD_SEARCH_CONFIG.id,
-                      configuration['generative_model'] || '',
-                      configuration['semantic_model'] || '',
-                    ),
-                  ),
-                ),
+            switchMap((kb) => kb.getConfiguration()),
+            switchMap((configuration) =>
+              this.searchWidgetService.createWidget(
+                widgetName,
+                DEFAULT_WIDGET_CONFIG,
+                NUCLIA_STANDARD_SEARCH_CONFIG.id,
+                configuration['generative_model'] || '',
+                configuration['semantic_model'] || '',
+              ),
             ),
             switchMap((widgetSlug) => this.router.navigate(['.', widgetSlug], { relativeTo: this.route })),
           ),

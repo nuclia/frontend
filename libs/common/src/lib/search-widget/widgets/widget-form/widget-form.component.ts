@@ -115,20 +115,22 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.route.params
+    const slugParam = this.route.params.pipe(
+      filter((params) => !!params['slug']),
+      map((params) => params['slug'] as string),
+    );
+    combineLatest([slugParam, this.searchWidgetService.widgetList])
       .pipe(
-        filter((params) => !!params['slug']),
-        map((params) => params['slug'] as string),
-        switchMap((widgetSlug) =>
+        switchMap(([widgetSlug, widgets]) =>
           this.sdk.currentKb.pipe(
             take(1),
-            map((kb) => ({ kbId: kb.id, widgetSlug })),
+            map((kb) => ({ kbId: kb.id, widgetSlug, widget: widgets.find((widget) => widget.slug === widgetSlug) })),
           ),
         ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(({ kbId, widgetSlug }) => {
-        this.savedWidget = this.searchWidgetService.getSavedWidget(kbId, widgetSlug);
+      .subscribe(({ kbId, widget, widgetSlug }) => {
+        this.savedWidget = widget;
         if (!this.savedWidget) {
           this.toaster.error(this.translate.instant('search.widgets.errors.widget-not-found', { widgetSlug }));
           this.router.navigate(['..'], { relativeTo: this.route });
@@ -167,19 +169,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   saveChanges() {
     const current = this.currentWidget;
     if (current) {
-      this.sdk.currentKb
-        .pipe(
-          take(1),
-          tap((kb) =>
-            this.searchWidgetService.updateWidget(kb.id, current.slug, current.widgetConfig, current.searchConfigId),
-          ),
-        )
-        .subscribe({
-          next: (kb) => {
-            this.savedWidget = this.searchWidgetService.getSavedWidget(kb.id, current.slug);
-            this.checkIsModified();
-          },
-        });
+      this.searchWidgetService.updateWidget(current.slug, current.widgetConfig, current.searchConfigId).subscribe();
     }
   }
 
@@ -189,14 +179,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   rename() {
     if (this.savedWidget) {
-      const widget = this.savedWidget;
-      this.searchWidgetService.renameWidget(this.savedWidget.slug, this.savedWidget.name).subscribe((newName) => {
-        widget.name = newName;
-        if (this.currentWidget) {
-          this.currentWidget.name = newName;
-        }
-        this.cdr.markForCheck();
-      });
+      this.searchWidgetService.renameWidget(this.savedWidget.slug, this.savedWidget.name).subscribe();
     }
   }
 
