@@ -4,5 +4,6 @@ export * from './kb';
 export * from './notifications';
 export * from './resource';
 export * from './search';
+export * from './task';
 export * from './training';
 export * from './upload';

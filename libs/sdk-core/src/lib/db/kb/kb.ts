@@ -60,6 +60,7 @@ import { ABORT_STREAMING_REASON } from '../../rest';
 import { Ask } from '../search/ask.models';
 import { Agentic } from '../search/agentic';
 import { ActivityMonitor } from './activity';
+import { TaskManager } from '../task';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -861,7 +862,21 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   contrib?: boolean;
   private _training?: Training;
   private _activityMonitor?: ActivityMonitor;
+  private _taskManager?: TaskManager;
 
+  /**
+   * Entry point to task manager
+   */
+  get taskManager(): TaskManager {
+    if (!this._taskManager) {
+      this._taskManager = new TaskManager(this, this.nuclia);
+    }
+    return this._taskManager;
+  }
+
+  /**
+   * @deprecated
+   */
   get training(): Training {
     if (!this._training) {
       this._training = new Training(this, this.nuclia);

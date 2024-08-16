@@ -38,6 +38,10 @@
 - Add `activityMonitor` property to `IWritableKnowledgeBox`, which allows to request REMi metrics on the Knowledge Box
 - Support `top_k` on `/ask` endpoint
 
+### Beta feature
+
+- KB Task management
+
 ### Improvement
 
 - Update `UsageAggregation` type to match the backend one
