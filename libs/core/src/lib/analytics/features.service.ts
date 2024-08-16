@@ -46,8 +46,6 @@ export class FeaturesService {
     knowledgeGraph: this.featureFlag.isFeatureEnabled('knowledge-graph'),
     githubSignin: this.featureFlag.isFeatureEnabled('github-signin'),
     viewNuaActivity: this.featureFlag.isFeatureEnabled('view-nua-activity'),
-    openAIModels: this.featureFlag.isFeatureEnabled('openai-models'),
-    geckoModel: this.featureFlag.isFeatureEnabled('gecko-model'),
     extraSemanticModel: this.featureFlag.isFeatureEnabled('extra-semantic-model'),
     huggingFaceSemanticModel: this.featureFlag.isFeatureEnabled('hugging-face-semantic'),
     tableProcessing: this.featureFlag.isFeatureEnabled('table-processing'),
