@@ -212,8 +212,9 @@ export class SearchConfigurationComponent {
       ),
     );
 
-    // config selection must be done in next check detection cycle for selection options to be there
     const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kbId, savedConfigs);
+    this.savedConfig = savedConfig;
+    // config selection must be done in next check detection cycle for selection options to be there
     setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
   }
 
@@ -284,6 +285,7 @@ export class SearchConfigurationComponent {
         this.savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, configs);
         this.currentConfig = { ...this.savedConfig };
         this.isConfigModified = false;
+        this.updateWidget();
         this.cdr.markForCheck();
       },
     );

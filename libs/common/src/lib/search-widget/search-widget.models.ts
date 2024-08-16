@@ -100,6 +100,8 @@ export interface SearchAndWidgets {
 }
 
 export const SAVED_CONFIG_KEY = 'NUCLIA_SELECTED_SEARCH_CONFIG';
+export const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
+export const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
 
 export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   filter: false,

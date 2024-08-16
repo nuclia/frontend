@@ -15,13 +15,15 @@ import {
   getWidgetTheme,
   NUCLIA_STANDARD_SEARCH_CONFIG,
   SAVED_CONFIG_KEY,
+  SAVED_WIDGETS_KEY,
+  SEARCH_CONFIGS_KEY,
   SearchAndWidgets,
   SearchConfiguration,
   Widget,
   WidgetConfiguration,
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { BackendConfigurationService, deepEqual, SDKService, STFUtils } from '@flaps/core';
+import { BackendConfigurationService, deepEqual, FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import { delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -31,6 +33,7 @@ import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from './w
 import { SisModalService } from '@nuclia/sistema';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { compareDesc } from 'date-fns';
+import { WritableKnowledgeBox } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +46,7 @@ export class SearchWidgetService {
   private storage = inject(LOCAL_STORAGE);
   private modalService = inject(SisModalService);
   private viewerService = inject(ResourceViewerService);
+  private features = inject(FeaturesService);
 
   private currentQuery = '';
   private currentFilters: string[] = [];
@@ -57,11 +61,11 @@ export class SearchWidgetService {
   searchAndWidgets = this.sdk.currentKb.pipe(map((kb) => kb.search_configs as SearchAndWidgets));
   searchConfigurations = this.searchAndWidgets.pipe(
     map((data) => data.searchConfigurations || []),
-    distinctUntilChanged((curr, prev) => deepEqual(prev, curr)),
+    distinctUntilChanged((prev, curr) => deepEqual(prev, curr)),
   );
   widgetList = this.searchAndWidgets.pipe(
     map((data) => (data.widgets || []).sort((a, b) => compareDesc(a.creationDate, b.creationDate))),
-    distinctUntilChanged((curr, prev) => deepEqual(prev, curr)),
+    distinctUntilChanged((prev, curr) => deepEqual(prev, curr)),
   );
 
   constructor() {
@@ -87,25 +91,20 @@ export class SearchWidgetService {
   }
 
   saveSearchConfig(kbId: string, name: string, config: SearchConfiguration) {
-    return this.searchAndWidgets.pipe(
+    return this.searchConfigurations.pipe(
       take(1),
-      switchMap((data) => {
+      switchMap((searchConfigs) => {
         // Override the config if it exists, add it otherwise
-        const searchConfigs = [...(data?.searchConfigurations || [])];
         const itemIndex = searchConfigs.findIndex((item) => item.id === name);
         if (itemIndex > -1) {
           searchConfigs[itemIndex] = config;
         } else {
           searchConfigs.push({ ...config, id: name });
         }
-        return this.sdk.currentKb.pipe(
-          take(1),
-          switchMap((kb) => kb.modify({ search_configs: { ...data, searchConfigurations: searchConfigs } })),
-        );
+        return this.storeConfigs(searchConfigs);
       }),
       tap(() => {
         this.saveSelectedSearchConfig(kbId, name);
-        this.sdk.refreshKbList(true);
       }),
     );
   }
@@ -117,17 +116,25 @@ export class SearchWidgetService {
   }
 
   deleteSearchConfig(configId: string) {
-    return this.searchAndWidgets.pipe(
+    return this.searchConfigurations.pipe(
       take(1),
-      switchMap((data) => {
-        const searchConfigs = [...(data?.searchConfigurations || [])];
+      switchMap((searchConfigs) => {
         const itemIndex = searchConfigs.findIndex((item) => item.id === configId);
         if (itemIndex > -1) {
           searchConfigs.splice(itemIndex, 1);
         }
+        return this.storeConfigs(searchConfigs);
+      }),
+    );
+  }
+
+  private storeConfigs(updatedConfigs: SearchConfiguration[]) {
+    return this.searchAndWidgets.pipe(
+      take(1),
+      switchMap((data) => {
         return this.sdk.currentKb.pipe(
           take(1),
-          switchMap((kb) => kb.modify({ search_configs: { ...data, searchConfigurations: searchConfigs } })),
+          switchMap((kb) => kb.modify({ search_configs: { ...data, searchConfigurations: updatedConfigs } })),
         );
       }),
       tap(() => {
@@ -410,5 +417,69 @@ export class SearchWidgetService {
         this.sdk.refreshKbList(true);
       }),
     );
+  }
+
+  migrateConfigsAndWidgets = (kb: WritableKnowledgeBox) => {
+    return this.features.isKbAdmin.pipe(
+      take(1),
+      filter((isAdmin) => isAdmin),
+      switchMap(() =>
+        forkJoin([this.searchAndWidgets.pipe(take(1)), this.configsToMigrate(kb.id), this.widgetsToMigrate(kb.id)]),
+      ),
+      filter(([, newConfigs, newWidgets]) => newConfigs.length > 0 || newWidgets.length > 0),
+      switchMap(([data, newConfigs, newWidgets]) =>
+        kb.modify({
+          search_configs: {
+            ...data,
+            searchConfigurations: (data.searchConfigurations || []).concat(newConfigs),
+            widgets: (data.widgets || []).concat(newWidgets),
+          },
+        }),
+      ),
+      tap(() => {
+        this.clearMigrated(kb.id);
+        this.sdk.refreshKbList(true);
+      }),
+    );
+  };
+
+  private configsToMigrate(kbId: string) {
+    const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
+      this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
+    );
+    const oldConfigs = configMap[kbId] || [];
+    return this.searchConfigurations.pipe(
+      take(1),
+      map((storedConfigs) =>
+        oldConfigs.filter((oldConfig) => !storedConfigs.find((config) => config.id === oldConfig.id)),
+      ),
+    );
+  }
+
+  private widgetsToMigrate(kbId: string) {
+    const widgetsMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+    const oldWidgets = widgetsMap[kbId] || [];
+    return this.widgetList.pipe(
+      take(1),
+      map((storedWidgets) =>
+        oldWidgets.map((oldWidget) => {
+          let slug = oldWidget.slug;
+          // if slug already exists in this KB, make it unique
+          if (storedWidgets.find((widget) => widget.slug === oldWidget.slug)) {
+            slug = `${slug}-${STFUtils.generateRandomSlugSuffix()}`;
+          }
+          return { ...oldWidget, slug };
+        }),
+      ),
+    );
+  }
+
+  private clearMigrated(kbId: string) {
+    const configMap = JSON.parse(this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}');
+    delete configMap[kbId];
+    this.storage.setItem(SEARCH_CONFIGS_KEY, JSON.stringify(configMap));
+    const widgetsMap = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+    delete widgetsMap[kbId];
+    this.storage.setItem(SAVED_WIDGETS_KEY, JSON.stringify(widgetsMap));
   }
 }
