@@ -29,10 +29,10 @@ app-label-field {
 }
 
 .file-list {
-  @include scrollbar-style(6px, var(--stf-gray-background), var(--stf-gray-background), #000, #000, 0, 0);
   max-height: 13vh;
   overflow-y: auto;
   margin-bottom: rhythm(3);
+  @include scrollbar-style(6px, var(--stf-gray-background), var(--stf-gray-background), #000, #000, 0, 0);
 }
 
 .file-item {
