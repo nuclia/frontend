@@ -11,11 +11,13 @@
         {{ 'tasks-automation.cta.see-archive' | translate }}
       </pa-button>
     }
-    <pa-button
-      aspect="basic"
-      (click)="newTask.emit()">
-      {{ 'tasks-automation.cta.new-task' | translate }}
-    </pa-button>
+    @if (newTaskFormReady) {
+      <pa-button
+        aspect="basic"
+        (click)="newTask.emit()">
+        {{ 'tasks-automation.cta.new-task' | translate }}
+      </pa-button>
+    }
   </div>
 </header>
 
@@ -49,15 +51,17 @@
           </div>
         </pa-table-cell>
         <pa-table-cell>
-          <span class="body-s">
-            {{
-              'tasks-automation.table.processed'
-                | translate
-                  : (task.count.processed === task.count.total
-                      ? { count: task.count.total }
-                      : { count: task.count.processed + '/' + task.count.total })
-            }}
-          </span>
+          @if (task.count; as count) {
+            <span class="body-s">
+              {{
+                'tasks-automation.table.processed'
+                  | translate
+                    : (count.processed === count.total
+                        ? { count: count.total }
+                        : { count: count.processed + '/' + count.total })
+              }}
+            </span>
+          }
         </pa-table-cell>
         <pa-table-cell>
           @if (task.type === 'automated') {
@@ -83,9 +87,21 @@
           <pa-button
             aspect="basic"
             icon="more-vertical"
-            size="small"></pa-button>
+            size="small"
+            [paPopup]="cellMenu"></pa-button>
+
+          <pa-dropdown #cellMenu>
+            <pa-option (selectOption)="stop.emit(task.id)">Stop</pa-option>
+            <pa-option
+              (selectOption)="delete.emit(task.id)"
+              destructive>
+              Delete
+            </pa-option>
+          </pa-dropdown>
         </pa-table-cell-menu>
       </pa-table-row>
     }
   </pa-table>
+} @else {
+  <nsi-info-card>{{ 'tasks-automation.table.empty' | translate: { task: (taskTitle | translate) } }}</nsi-info-card>
 }

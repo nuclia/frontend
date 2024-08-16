@@ -1,8 +1,13 @@
 @import 'apps/dashboard/src/variables';
 
+.page-spacing {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+}
+
 .task-list {
   display: flex;
   flex-direction: column;
   gap: rhythm(1.5);
-  margin-top: rhythm(4);
 }

@@ -1,10 +1,22 @@
 <div class="page-spacing">
   <div>
     <h1 class="page-title">{{ 'tasks-automation.page-title' | translate }}</h1>
-    <p class="page-description">{{ 'tasks-automation.page-description' | translate }}</p>
+    <div class="page-description">{{ 'tasks-automation.page-description' | translate }}</div>
   </div>
 
+  <nsi-info-card type="highlight">
+    <div [innerHTML]="'tasks-automation.task-creation-info' | translate"></div>
+  </nsi-info-card>
+
   <div class="task-list">
+    <app-task-list-item
+      taskType="label-text-blocks"
+      taskTitle="tasks-automation.label-text-blocks.title"
+      taskDescription="tasks-automation.label-text-blocks.description"
+      [taskList]="textBlocksLabelerTasks | async"
+      (newTask)="createTask('label-text-blocks')"></app-task-list-item>
+
+    <!--
     <app-task-list-item
       taskType="summarize"
       taskTitle="tasks-automation.summarize-resources.title"
@@ -21,11 +33,6 @@
       taskDescription="tasks-automation.label-resources.description"
       (newTask)="createTask('label-resources')"></app-task-list-item>
     <app-task-list-item
-      taskType="label-text-blocks"
-      taskTitle="tasks-automation.label-text-blocks.title"
-      taskDescription="tasks-automation.label-text-blocks.description"
-      (newTask)="createTask('label-text-blocks')"></app-task-list-item>
-    <app-task-list-item
       taskType="label-ners"
       taskTitle="tasks-automation.label-ners.title"
       taskDescription="tasks-automation.label-ners.description"
@@ -35,5 +42,6 @@
       taskTitle="tasks-automation.question-answer.title"
       taskDescription="tasks-automation.question-answer.description"
       (newTask)="createTask('question-answer')"></app-task-list-item>
+      -->
   </div>
 </div>
