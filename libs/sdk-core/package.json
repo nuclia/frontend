@@ -1,6 +1,6 @@
 {
   "name": "@nuclia/core",
-  "version": "1.19.0",
+  "version": "1.19.1",
   "description": "SDK allowing to integrate Nuclia services in your frontend application",
   "license": "MIT",
   "keywords": [
@@ -9,12 +9,6 @@
   ],
   "main": "umd/index.js",
   "module": "esm/index.js",
-  "exports": {
-    ".": {
-      "import": "./esm/index.js",
-      "require": "./umd/index.js"
-    }
-  },
   "types": "types/index.d.ts",
   "peerDependencies": {
     "rxjs": "^7.8.0"
