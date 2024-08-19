@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 
 import { KnowledgeBoxComponent } from './knowledge-box.component';
 import { MockProvider } from 'ng-mocks';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
+import { SearchWidgetService } from '@flaps/common';
 
 describe('KnowledgeBoxComponent', () => {
   let component: KnowledgeBoxComponent;
@@ -16,9 +17,10 @@ describe('KnowledgeBoxComponent', () => {
       imports: [RouterTestingModule],
       declarations: [KnowledgeBoxComponent],
       providers: [
-        MockProvider(SDKService, { counters: of({ resources: 0 }) } as SDKService),
+        MockProvider(SDKService, { counters: of({ resources: 0 }), currentKb: of({}) } as SDKService),
         MockProvider(SisModalService),
         MockProvider(FeaturesService, { isKbAdmin: of(true) }),
+        MockProvider(SearchWidgetService, { migrateConfigsAndWidgets: () => of() }),
       ],
     }).compileComponents();
   });

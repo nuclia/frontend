@@ -116,7 +116,7 @@ export class SearchConfigurationComponent {
   defaultPromptFromSettings = '';
   lastQuery?: { [key: string]: any };
 
-  initialised = new Subject<boolean>();
+  initialised = false;
 
   isConfigModified = false;
   canModifyConfig = this.features.isKbAdmin;
@@ -140,9 +140,7 @@ export class SearchConfigurationComponent {
             ),
           );
         }),
-      )
-      .subscribe({
-        next: ({ schema, config }) => {
+        tap(({ schema, config }) => {
           this.generativeModelFromSettings = config['generative_model'] || '';
           this.semanticModelFromSettings = config['semantic_model'] || '';
           this.generativeModelNames =
@@ -154,9 +152,12 @@ export class SearchConfigurationComponent {
               {} as { [key: string]: string },
             ) || {};
           this.setModelsAndPrompt(schema, config);
-          this.initialised.next(true);
+          this.initialised = true;
           this.cdr.detectChanges();
-        },
+        }),
+        switchMap(() => this.setConfigurations()),
+      )
+      .subscribe({
         error: () => this.toaster.error('search.configuration.loading-error'),
       });
     this.searchWidgetService.logs
@@ -169,16 +170,6 @@ export class SearchConfigurationComponent {
         this.lastQuery = lastQuery;
         this.cdr.markForCheck();
       });
-    this.initialised
-      .pipe(
-        switchMap(() =>
-          combineLatest([this.searchWidgetService.searchConfigurations, this.sdk.currentKb.pipe(take(1))]),
-        ),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(([configs, kb]) => {
-        this.setConfigurations(kb.id, configs);
-      });
   }
 
   ngOnDestroy() {
@@ -186,36 +177,43 @@ export class SearchConfigurationComponent {
     this.unsubscribeAll.complete();
   }
 
-  private setConfigurations(kbId: string, savedConfigs: SearchConfiguration[]) {
-    const standardConfigOption = new OptionModel({
-      id: 'nuclia-standard',
-      value: 'nuclia-standard',
-      label: this.translate.instant('search.configuration.options.nuclia-standard'),
-      help: this.generativeModelNames[this.generativeModelFromSettings] || this.generativeModelFromSettings,
-    });
+  private setConfigurations() {
+    return forkJoin([
+      this.sdk.currentKb.pipe(take(1)),
+      this.searchWidgetService.searchConfigurations.pipe(take(1)),
+    ]).pipe(
+      tap(([kb, savedConfigs]) => {
+        const standardConfigOption = new OptionModel({
+          id: 'nuclia-standard',
+          value: 'nuclia-standard',
+          label: this.translate.instant('search.configuration.options.nuclia-standard'),
+          help: this.generativeModelNames[this.generativeModelFromSettings] || this.generativeModelFromSettings,
+        });
 
-    const configurations: OptionType[] = [standardConfigOption];
-    if (savedConfigs.length > 0) {
-      configurations.push(new OptionSeparator());
-    }
-    this.configurations = configurations.concat(
-      savedConfigs.map(
-        (item) =>
-          new OptionModel({
-            id: item.id,
-            value: item.id,
-            label: item.id,
-            help:
-              this.generativeModelNames[item.generativeAnswer?.generativeModel] ||
-              item.generativeAnswer?.generativeModel,
-          }),
-      ),
+        const configurations: OptionType[] = [standardConfigOption];
+        if (savedConfigs.length > 0) {
+          configurations.push(new OptionSeparator());
+        }
+        this.configurations = configurations.concat(
+          savedConfigs.map(
+            (item) =>
+              new OptionModel({
+                id: item.id,
+                value: item.id,
+                label: item.id,
+                help:
+                  this.generativeModelNames[item.generativeAnswer?.generativeModel] ||
+                  item.generativeAnswer?.generativeModel,
+              }),
+          ),
+        );
+
+        const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, savedConfigs);
+        this.savedConfig = savedConfig;
+        // config selection must be done in next check detection cycle for selection options to be there
+        setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
+      }),
     );
-
-    const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kbId, savedConfigs);
-    this.savedConfig = savedConfig;
-    // config selection must be done in next check detection cycle for selection options to be there
-    setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
   }
 
   private setModelsAndPrompt(schema: LearningConfigurations, config: { [key: string]: any }) {
@@ -323,6 +321,7 @@ export class SearchConfigurationComponent {
         .onClose.pipe(
           filter((confirm) => !!confirm),
           switchMap((configName) => this._saveConfig(configName)),
+          switchMap(() => this.setConfigurations()),
         )
         .subscribe();
     }
@@ -347,6 +346,7 @@ export class SearchConfigurationComponent {
         .onClose.pipe(
           filter((confirm) => !!confirm),
           switchMap(() => this.searchWidgetService.deleteSearchConfig(config.id)),
+          switchMap(() => this.setConfigurations()),
         )
         .subscribe();
     }

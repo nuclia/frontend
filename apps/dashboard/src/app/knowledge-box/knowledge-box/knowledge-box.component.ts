@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { forkJoin, switchMap, take } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { distinctUntilKeyChanged, forkJoin, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
@@ -10,7 +10,9 @@ import { SearchWidgetService } from '@flaps/common';
 @Component({
   template: '<router-outlet></router-outlet>',
 })
-export class KnowledgeBoxComponent implements OnInit {
+export class KnowledgeBoxComponent implements OnInit, OnDestroy {
+  unsubscribeAll = new Subject<void>();
+
   constructor(
     private sdk: SDKService,
     private features: FeaturesService,
@@ -19,7 +21,13 @@ export class KnowledgeBoxComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.sdk.currentKb.pipe(switchMap((kb) => this.searchWidgetService.migrateConfigsAndWidgets(kb))).subscribe();
+    this.sdk.currentKb
+      .pipe(
+        distinctUntilKeyChanged('id'),
+        switchMap((kb) => this.searchWidgetService.migrateConfigsAndWidgets(kb)),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe();
 
     const gettingStartedDone = localStorage.getItem(GETTING_STARTED_DONE_KEY) === 'true';
     if (!gettingStartedDone) {
@@ -33,5 +41,10 @@ export class KnowledgeBoxComponent implements OnInit {
         },
       );
     }
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 }

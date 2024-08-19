@@ -23,11 +23,11 @@ import {
   WidgetConfiguration,
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { BackendConfigurationService, deepEqual, FeaturesService, SDKService, STFUtils } from '@flaps/core';
+import { BackendConfigurationService, FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import { delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import { debounceTime, tap } from 'rxjs/operators';
 import { ResourceViewerService } from '../resources';
 import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from './widgets/dialogs';
 import { SisModalService } from '@nuclia/sistema';
@@ -59,13 +59,9 @@ export class SearchWidgetService {
     widgetOptions: WidgetConfiguration;
   }>();
   searchAndWidgets = this.sdk.currentKb.pipe(map((kb) => kb.search_configs as SearchAndWidgets));
-  searchConfigurations = this.searchAndWidgets.pipe(
-    map((data) => data.searchConfigurations || []),
-    distinctUntilChanged((prev, curr) => deepEqual(prev, curr)),
-  );
+  searchConfigurations = this.searchAndWidgets.pipe(map((data) => data.searchConfigurations || []));
   widgetList = this.searchAndWidgets.pipe(
     map((data) => (data.widgets || []).sort((a, b) => compareDesc(a.creationDate, b.creationDate))),
-    distinctUntilChanged((prev, curr) => deepEqual(prev, curr)),
   );
 
   constructor() {
@@ -131,15 +127,13 @@ export class SearchWidgetService {
   private storeConfigs(updatedConfigs: SearchConfiguration[]) {
     return this.searchAndWidgets.pipe(
       take(1),
-      switchMap((data) => {
-        return this.sdk.currentKb.pipe(
+      switchMap((data) =>
+        this.sdk.currentKb.pipe(
           take(1),
           switchMap((kb) => kb.modify({ search_configs: { ...data, searchConfigurations: updatedConfigs } })),
-        );
-      }),
-      tap(() => {
-        this.sdk.refreshKbList(true);
-      }),
+        ),
+      ),
+      switchMap(() => this.sdk.refreshCurrentKb()),
     );
   }
 
@@ -344,7 +338,7 @@ export class SearchWidgetService {
       );
   }
 
-  deleteWidget(slug: string, name: string): Observable<void> {
+  deleteWidget(slug: string, name: string) {
     return this.modalService
       .openConfirm({
         title: this.translate.instant('search.widgets.dialog.delete-widget.title', { name }),
@@ -413,9 +407,7 @@ export class SearchWidgetService {
           switchMap((kb) => kb.modify({ search_configs: { ...data, widgets: updatedWidgets } })),
         ),
       ),
-      tap(() => {
-        this.sdk.refreshKbList(true);
-      }),
+      switchMap(() => this.sdk.refreshCurrentKb()),
     );
   }
 
@@ -436,10 +428,8 @@ export class SearchWidgetService {
           },
         }),
       ),
-      tap(() => {
-        this.clearMigrated(kb.id);
-        this.sdk.refreshKbList(true);
-      }),
+      tap(() => this.clearMigrated(kb.id)),
+      switchMap(() => this.sdk.refreshCurrentKb()),
     );
   };
 
