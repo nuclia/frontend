@@ -1,3 +1,9 @@
+# 1.19.2 (2024-08-19)
+
+### Bug fix
+
+- Fix RAG pipeline variable replacement
+
 # 1.19.1 (2024-08-14)
 
 ### Bug fix
