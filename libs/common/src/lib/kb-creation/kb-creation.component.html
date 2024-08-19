@@ -58,7 +58,7 @@
       <nsi-two-columns-configuration-item
         itemTitle="user.kb.creation-form.models.title"
         description="user.kb.creation-form.models.description">
-        @if (learningSchema | async; as learningSchema) {
+        @if (learningSchema) {
           <nus-embeddings-model-form
             [learningSchema]="learningSchema"
             [disabled]="saving"
