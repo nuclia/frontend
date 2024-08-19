@@ -182,7 +182,7 @@ export namespace Agentic {
             const message = step.statusMessage ? this.format(step.statusMessage) : '';
             this._status.next({ stepId, status: 'done', message });
             const nextSteps = (step.next || [])
-              .filter((step) => !step.if || this.eval<boolean>(step.if))
+              .filter((step) => !step.if || evaluateExpression<boolean>(step.if, this.context))
               .map((next) => next.stepId);
 
             return nextSteps.length === 0
@@ -331,7 +331,7 @@ export namespace Agentic {
               (acc, [key, path]) => {
                 path = this.format(path) || '';
                 if (path) {
-                  acc[key] = this.getObjectValue(data, path);
+                  acc[key] = getObjectValue(data, path);
                 }
                 return acc;
               },
@@ -354,55 +354,68 @@ export namespace Agentic {
       );
     }
 
-    /*
-    Return the value of a nested object property according a given path.
-    Example:
-    const obj = { a: { b: { c: 1 }, d: [23, 78, 'abc'] } };
-    getObjectValue(obj, 'a.b') // { c: 1 }
-    getObjectValue(obj, 'a.b.c') // 1
-    getObjectValue(obj, 'a.d.[2]') // 'abc'
-    Indexes can also be used on dictionaries, getting the n-th value of the dictionary:
-    getObjectValue(obj, 'a.[0]') // { c: 1 }
-    */
-    private getObjectValue(obj: object, path: string): any {
-      if (!obj) {
-        return undefined;
-      }
-      const keys = path.split('.');
-      return keys.reduce((acc, key) => {
-        if (!acc) {
-          return undefined;
-        }
-        if (key.startsWith('[')) {
-          key = key.replace('[', '').replace(']', '');
-          if (Array.isArray(acc)) {
-            try {
-              const index = parseInt(key, 10);
-              return acc[index];
-            } catch (e) {
-              return undefined;
-            }
-          } else {
-            if (acc[key]) {
-              return acc[key];
-            } else {
-              try {
-                const index = parseInt(key, 10);
-                return Object.values(acc)[index];
-              } catch (e) {
-                return undefined;
-              }
-            }
-          }
-        } else if (acc[key]) {
-          return acc[key];
-        } else {
-          return undefined;
-        }
-      }, obj as any);
+    private format(expression: string): string | undefined {
+      return format(expression, this.context);
     }
 
-    /*
+    private formatObject(obj: any): any {
+      return formatObject(obj, this.context);
+    }
+  }
+}
+
+/*
+Return the value of a nested object property according a given path.
+Example:
+const obj = { a: { b: { c: 1 }, d: [23, 78, 'abc'] } };
+getObjectValue(obj, 'a.b') // { c: 1 }
+getObjectValue(obj, 'a.b.c') // 1
+getObjectValue(obj, 'a.d.[2]') // 'abc'
+Indexes can also be used on dictionaries, getting the n-th value of the dictionary:
+getObjectValue(obj, 'a.[0]') // { c: 1 }
+*/
+export function getObjectValue(obj: object, path: string): any {
+  if (!path) {
+    return obj;
+  }
+  if (!obj) {
+    return undefined;
+  }
+  const keys = path.split('.');
+  return keys.reduce((acc, key) => {
+    if (!acc) {
+      return undefined;
+    }
+    if (key.startsWith('[')) {
+      key = key.replace('[', '').replace(']', '');
+      if (Array.isArray(acc)) {
+        try {
+          const index = parseInt(key, 10);
+          return acc[index];
+        } catch (e) {
+          return undefined;
+        }
+      } else {
+        if (acc[key]) {
+          return acc[key];
+        } else {
+          try {
+            const index = parseInt(key, 10);
+            return Object.values(acc)[index];
+          } catch (e) {
+            return undefined;
+          }
+        }
+      }
+    } else if (acc[key]) {
+      return acc[key];
+    } else {
+      return undefined;
+    }
+  }, obj as any);
+}
+
+/*
     Format a string expression by replacing {{variables}} with their values.
     The variables are evaluated as path on the global context.
     It is used to inject context data in the steps parameters.
@@ -410,42 +423,46 @@ export namespace Agentic {
     this.context = {step1: {movie: 'The Matrix'}, step2: {actor: 'Keanu Reeves'}};
     format('The main actor of {{step1.movie}} is {{step2.actor}}') // 'The main actor of The Matrix is Keanu Reeves'
     */
-    private format(expression: string, skipMissing = true): string | undefined {
-      let missing = false;
-      const formatted = expression.replace(VARIABLES, (match, p1) => {
-        const value = this.getObjectValue(this.context, p1 as string);
-        if (value === undefined) {
-          missing = true;
-        }
-        return value !== undefined ? `${value}` : '';
-      });
-      return missing && skipMissing ? undefined : formatted;
+export function format(expression: string, context: any, skipMissing = true): string | undefined {
+  let missing = false;
+  const formatted = expression.replace(VARIABLES, (match, p1) => {
+    const value = getObjectValue(context, p1 as string);
+    if (value === undefined) {
+      missing = true;
+      return '';
+    } else if (typeof value === 'string') {
+      return value;
+    } else {
+      return JSON.stringify(value);
     }
+  });
+  return missing && skipMissing ? undefined : formatted;
+}
 
-    /*
+/*
     Format an object by replacing {{variables}} with their values recursively in all the object properties.
     Applied to steps properties that are objects or arrays.
     */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private formatObject(obj: any): any {
-      if (typeof obj === 'string') {
-        return this.format(obj);
-      } else if (Array.isArray(obj)) {
-        const arr = obj.map((item) => this.formatObject(item)).filter((item) => item !== undefined);
-        return arr.length > 0 ? arr : undefined;
-      } else if (typeof obj === 'object') {
-        return Object.entries(obj).reduce((acc, [key, value]) => {
-          const formatted = this.formatObject(value);
-          acc[key] = formatted;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function formatObject(obj: any, context: any): any {
+  if (typeof obj === 'string') {
+    return format(obj, context);
+  } else if (Array.isArray(obj)) {
+    const arr = obj.map((item) => formatObject(item, context)).filter((item) => item !== undefined);
+    return arr.length > 0 ? arr : undefined;
+  } else if (typeof obj === 'object') {
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+      const formatted = formatObject(value, context);
+      acc[key] = formatted;
 
-          return acc;
-        }, obj);
-      } else {
-        return obj;
-      }
-    }
+      return acc;
+    }, obj);
+  } else {
+    return obj;
+  }
+}
 
-    /*
+/*
     Evaluate a string expression as a JavaScript code.
     The string might contain {{variables}}.
     It is used to evaluate conditions in the steps next property.
@@ -453,18 +470,16 @@ export namespace Agentic {
     this.context = {step1: {movie: 'The Matrix'}, step2: {actor: 'Keanu Reeves'}};
     eval('"{{step1.movie}}" === "The Matrix"') // true
     */
-    private eval<T>(expression: string): T | undefined {
-      const expr = this.format(expression, false);
-      if (!expr) {
-        return undefined;
-      }
-      try {
-        return eval(expr) as T;
-      } catch (e) {
-        console.error(expr);
-        console.error(e);
-        return undefined;
-      }
-    }
+export function evaluateExpression<T>(expression: string, context: any): T | undefined {
+  const expr = format(expression, context, false);
+  if (!expr) {
+    return undefined;
+  }
+  try {
+    return eval(expr) as T;
+  } catch (e) {
+    console.error(expr);
+    console.error(e);
+    return undefined;
   }
 }
