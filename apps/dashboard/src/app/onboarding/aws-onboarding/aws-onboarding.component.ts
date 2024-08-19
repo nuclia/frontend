@@ -11,14 +11,13 @@ import {
 import { BillingService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
 import { filter, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
-import { SisToastService } from '@nuclia/sistema';
+import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { Step2Component } from './step2/step2.component';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 
 @Component({
-  selector: 'app-aws-onboarding',
   standalone: true,
   imports: [
     CommonModule,
@@ -30,6 +29,7 @@ import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } f
     EmbeddingModelStepComponent,
     TranslateModule,
     VectorDatabaseStepComponent,
+    SisProgressModule,
   ],
   templateUrl: './aws-onboarding.component.html',
   styleUrl: './aws-onboarding.component.scss',
@@ -120,6 +120,7 @@ export class AwsOnboardingComponent {
       .subscribe((schema) => {
         this.learningSchema.next(schema);
         this.step++;
+        this.cdr.markForCheck();
       });
   }
 
@@ -158,13 +159,15 @@ export class AwsOnboardingComponent {
           if (this.externalIndexProvider) {
             kbConfig.external_index_provider = this.externalIndexProvider;
           }
-          return this.sdk.nuclia.db.createKnowledgeBox(account.id, kbConfig, this.zone);
+          return this.sdk.nuclia.db.createKnowledgeBox(account.id, kbConfig, this.zone).pipe(
+            tap(() =>
+              this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
+                queryParams: { setup: 'invite-collaborators' },
+              }),
+            ),
+          );
         }),
       )
-      .subscribe((account) =>
-        this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
-          queryParams: { setup: 'invite-collaborators' },
-        }),
-      );
+      .subscribe();
   }
 }

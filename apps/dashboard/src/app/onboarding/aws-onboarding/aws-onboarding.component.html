@@ -22,7 +22,9 @@
     @case (4) {
       <div class="main-container">
         <h1>{{ 'onboarding.step3.title' | translate }}</h1>
-        <p>{{ 'onboarding.step3.subtitle' | translate }}</p>
+        <p
+          class="page-description"
+          [innerHTML]="'onboarding.step3.subtitle' | translate"></p>
         <nus-zone-step
           [data]="zone"
           (back)="goBack()"
@@ -32,7 +34,9 @@
     @case (5) {
       <div class="main-container">
         <h1>{{ 'onboarding.step4.title' | translate }}</h1>
-        <p>{{ 'onboarding.step4.subtitle' | translate }}</p>
+        <p
+          class="page-description"
+          [innerHTML]="'onboarding.step4.subtitle' | translate"></p>
         <nus-embedding-model-step
           [schema]="learningSchema | async"
           [data]="learningConfig"
@@ -42,10 +46,25 @@
     }
     @case (6) {
       @if (isExternalIndexEnabled | async) {
-        <nus-vector-database-step
-          (back)="goBack()"
-          (next)="storeVectorDbStep($event)"></nus-vector-database-step>
+        <div class="main-container">
+          <h1>{{ 'onboarding.step5.title' | translate }}</h1>
+          <p
+            class="page-description"
+            [innerHTML]="'onboarding.step5.subtitle' | translate"></p>
+          <nus-vector-database-step
+            (back)="goBack()"
+            (next)="storeVectorDbStep($event)"></nus-vector-database-step>
+        </div>
+      } @else {
+        <div class="main-container">
+          <nsi-spinner></nsi-spinner>
+        </div>
       }
+    }
+    @case (7) {
+      <div class="main-container">
+        <nsi-spinner></nsi-spinner>
+      </div>
     }
   }
 </nus-user-container>

@@ -13,6 +13,8 @@
   p.page-description {
     color: $color-neutral-regular;
     margin-bottom: 0;
+
+    @include body-m();
   }
 
   nsi-info-card {
@@ -25,7 +27,6 @@
   }
 
   footer {
-    border-top: 1px solid $color-neutral-lighter;
     display: flex;
     gap: rhythm(3);
     justify-content: right;
