@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { OnboardingPayload } from '../onboarding.models';
 import { StickyFooterComponent } from '@nuclia/sistema';
-import { OnboardingService } from '../onboarding.service';
 
 const PHONE_INTERNATIONAL_CODE = new RegExp(/^[+][0-9s]+$/);
 const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
@@ -29,8 +28,6 @@ const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Step1Component {
-  private onboardingService = inject(OnboardingService);
-
   @Input() set data(value: OnboardingPayload | undefined) {
     if (value) {
       const [phoneInternationalCode, phoneNumber] = value.phone.split(' ');
@@ -82,6 +79,5 @@ export class Step1Component {
       receive_updates: formValue.getUpdates,
     };
     this.submitStep1.emit(data);
-    this.onboardingService.nextStep();
   }
 }

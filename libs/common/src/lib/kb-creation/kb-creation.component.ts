@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestro
 import { CommonModule } from '@angular/common';
 import {
   FeaturesService,
-  getSemanticModel,
+  getSemanticModels,
   NavigationService,
   SDKService,
   standaloneSimpleAccount,
@@ -23,8 +23,8 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import {
-  EmbeddingModelForm,
   EmbeddingsModelFormComponent,
+  LearningConfigurationForm,
   VectorDatabaseFormComponent,
   VectorDbModel,
 } from '@nuclia/user';
@@ -96,7 +96,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   };
 
   saving = false;
-  semanticModel = '';
+  semanticModels: string[] = [];
   userKeys?: { [key: string]: any };
 
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
@@ -189,7 +189,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
             slug: STFUtils.generateSlug(kbConfig.title),
             learning_configuration: {
               anonymization_model: anonymization ? 'multilingual' : 'disabled',
-              semantic_model: getSemanticModel(this.semanticModel, learningSchema),
+              semantic_models: getSemanticModels(this.semanticModels, learningSchema),
               user_keys,
             },
           };
@@ -226,9 +226,9 @@ export class KbCreationComponent implements OnInit, OnDestroy {
       });
   }
 
-  updateModel(modelForm: EmbeddingModelForm) {
-    this.semanticModel = modelForm.embeddingModel;
-    this.userKeys = modelForm.userKeys;
+  updateModel(learningConfig: LearningConfigurationForm) {
+    this.semanticModels = learningConfig.semantic_models;
+    this.userKeys = learningConfig.user_keys;
   }
 
   cancel() {

@@ -16,7 +16,6 @@
         <h1>{{ 'onboarding.aws.create-kb.title' | translate }}</h1>
         <nus-kb-name-step
           [data]="kbName"
-          (back)="goBack()"
           (next)="storeKbNameAndGoNext($event)"></nus-kb-name-step>
       </div>
     }
@@ -35,10 +34,18 @@
         <h1>{{ 'onboarding.step4.title' | translate }}</h1>
         <p>{{ 'onboarding.step4.subtitle' | translate }}</p>
         <nus-embedding-model-step
-          [data]="embeddingModel"
+          [schema]="learningSchema | async"
+          [data]="learningConfig"
           (back)="goBack()"
-          (next)="finalStepDone($event)"></nus-embedding-model-step>
+          (next)="storeLearningConfigAndGoNext($event)"></nus-embedding-model-step>
       </div>
+    }
+    @case (6) {
+      @if (isExternalIndexEnabled | async) {
+        <nus-vector-database-step
+          (back)="goBack()"
+          (next)="storeVectorDbStep($event)"></nus-vector-database-step>
+      }
     }
   }
 </nus-user-container>

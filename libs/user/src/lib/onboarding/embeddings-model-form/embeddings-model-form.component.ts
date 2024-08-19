@@ -1,27 +1,35 @@
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import {
+  AccordionBodyDirective,
+  AccordionComponent,
   AccordionItemComponent,
   PaExpanderModule,
+  PaIconModule,
+  PaPopupModule,
   PaTextFieldModule,
   PaTogglesModule,
+  transitionDuration,
 } from '@guillotinaweb/pastanaga-angular';
-import { FeaturesService } from '@flaps/core';
+import { FeaturesService, getSemanticModels } from '@flaps/core';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 import { LearningConfigurationProperty, LearningConfigurations } from '@nuclia/core';
 import { DynamicFieldsComponent } from './dynamic-fields.component';
@@ -43,10 +51,9 @@ const LANGUAGES = [
   'swedish',
 ];
 
-export interface EmbeddingModelForm {
-  modelType: 'private' | 'public';
-  embeddingModel: string;
-  userKeys?: { [key: string]: any };
+export interface LearningConfigurationForm {
+  semantic_models: string[];
+  user_keys?: { [key: string]: unknown };
 }
 
 @Component({
@@ -63,6 +70,11 @@ export interface EmbeddingModelForm {
     AccordionItemComponent,
     PaExpanderModule,
     InfoCardComponent,
+    AccordionComponent,
+    AccordionItemComponent,
+    AccordionBodyDirective,
+    PaIconModule,
+    PaPopupModule,
   ],
   templateUrl: './embeddings-model-form.component.html',
   styleUrl: './embeddings-model-form.component.scss',
@@ -70,13 +82,47 @@ export interface EmbeddingModelForm {
   encapsulation: ViewEncapsulation.None,
 })
 export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+  private unsubscribeAll = new Subject<void>();
+  private unsubscribeHuggingFace = new Subject<void>();
+  private _learningSchema?: LearningConfigurations;
+
+  @Input({ transform: booleanAttribute }) standalone = false;
   @Input({ transform: booleanAttribute }) disabled = false;
-  @Input() set languageModel(value: EmbeddingModelForm | undefined) {
-    if (value) {
-      this.form.patchValue(value);
-    }
+  @Input()
+  get learningSchema(): LearningConfigurations | undefined {
+    return this._learningSchema;
   }
-  @Input() set learningSchema(schema: LearningConfigurations) {
+  set learningSchema(schema: LearningConfigurations | null) {
+    if (!schema) {
+      return;
+    }
+    this._learningSchema = schema;
+    this.isHuggingFaceSemanticModelEnabled.pipe(take(1)).subscribe((huggingFaceEnabled) => {
+      this.semanticModels = (schema['semantic_models']?.options || []).reduce(
+        (modelMap, model) => {
+          if (!huggingFaceEnabled && model.name === this.HUGGING_FACE_MODEL) {
+            return modelMap;
+          }
+          modelMap[model.name] = model.value;
+          if (
+            !Object.keys(this.nucliaModelControls).includes(model.name) &&
+            !Object.keys(this.stageOnlyModelControls).includes(model.name)
+          ) {
+            // Currently schema endpoint on NucliaDB Admin doesn't support user_keys, so we can't provide HuggingFace
+            if (model.name !== this.HUGGING_FACE_MODEL || !this.standalone) {
+              this.form.controls.external.addControl(
+                model.name,
+                new FormControl<boolean>(false, { nonNullable: true }),
+              );
+            }
+          }
+          return modelMap;
+        },
+        {} as { [modelName: string]: string },
+      );
+    });
+
     const embeddingsSchema = schema['user_keys']?.schemas?.['hf_embedding'];
     // If hugging face form is already set, we stop listening to its changes before updating it
     if (this.huggingFaceForm) {
@@ -120,34 +166,55 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
       this.huggingFaceForm = form;
       this.huggingFaceForm.valueChanges
         .pipe(takeUntil(this.unsubscribeHuggingFace))
-        .subscribe(() => this.sendSelection());
+        .subscribe(() => this.validateModelSelection());
     }
   }
 
-  @Output() modelSelected = new EventEmitter<EmbeddingModelForm>();
+  @Output() learningConfiguration = new EventEmitter<LearningConfigurationForm>();
 
-  private unsubscribeAll = new Subject<void>();
-  private unsubscribeHuggingFace = new Subject<void>();
+  @ViewChild('externalModelsContainer', { read: AccordionItemComponent })
+  externalModelsContainer?: AccordionItemComponent;
 
   form = new FormGroup({
-    modelType: new FormControl<'private' | 'public'>('private', { nonNullable: true }),
-    semanticModel: new FormControl<string>('GECKO_MULTI', { nonNullable: true }),
+    nuclia: new FormGroup({
+      ENGLISH: new FormControl<boolean>(false),
+      MULTILINGUAL: new FormControl<boolean>(true),
+      MULTILINGUAL_ALPHA: new FormControl<boolean>(false),
+    }),
+    external: new FormGroup<{ [key: string]: AbstractControl<boolean> }>({}),
+    stageOnly: new FormGroup({
+      MULTILINGUAL_EXTRA: new FormControl<boolean>(false, { nonNullable: true }),
+    }),
   });
 
+  semanticModels: { [modelName: string]: string } = {};
+
   readonly HUGGING_FACE_MODEL = 'HF';
+  readonly MODEL_SELECTION_LIMIT = 5;
+
   huggingFaceForm?: FormGroup;
   huggingFaceRequiredFields: { key: string; value: LearningConfigurationProperty }[] = [];
   huggingFaceOptionalFields: { key: string; value: LearningConfigurationProperty }[] = [];
 
   languages: { id: string; label: string; selected: boolean }[];
 
-  areOpenAIModelsEnabled = this.features.unstable.openAIModels;
-  isGeckoModelEnabled = this.features.unstable.geckoModel;
   isExtraSemanticModelEnabled = this.features.unstable.extraSemanticModel;
   isHuggingFaceSemanticModelEnabled = this.features.unstable.huggingFaceSemanticModel;
 
-  get semanticModelValue() {
-    return this.form.controls.semanticModel.value;
+  get nucliaModelControls() {
+    return this.form.controls.nuclia.controls;
+  }
+  get externalModelControls() {
+    return this.form.controls.external.controls;
+  }
+  get stageOnlyModelControls() {
+    return this.form.controls.stageOnly.controls;
+  }
+  get huggingFaceControl() {
+    return this.externalModelControls[this.HUGGING_FACE_MODEL];
+  }
+  get isHuggingFaceSelected() {
+    return this.huggingFaceControl?.value;
   }
 
   constructor(
@@ -166,8 +233,11 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
   }
 
   ngOnInit() {
-    this.sendSelection();
-    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.sendSelection());
+    this.validateModelSelection();
+    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.validateModelSelection());
+    this.huggingFaceControl?.valueChanges
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(() => this.updateExternalAccordionHeight());
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -187,23 +257,33 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
     this.unsubscribeAll.complete();
   }
 
+  updateExternalAccordionHeight() {
+    this.externalModelsContainer?.updateContentHeight();
+    // Advanced hugging face form is in an expander, so we need to take expander animation time into account
+    setTimeout(() => {
+      this.externalModelsContainer?.updateContentHeight();
+      this.cdr.detectChanges();
+    }, transitionDuration + 10);
+  }
+
   sendSelection() {
-    const data = this.form.getRawValue();
-    let model: string;
-    if (data.modelType === 'private') {
-      const lang = this.languages.filter((language) => language.selected).map((language) => language.id);
-      if (lang.includes('catalan') || lang.includes('other')) {
-        model = 'MULTILINGUAL_ALPHA';
-      } else if (lang.length === 1 && lang[0] === 'english') {
-        model = 'ENGLISH';
-      } else {
-        model = 'MULTILINGUAL';
-      }
-    } else {
-      model = data.semanticModel;
+    if (!this.learningSchema) {
+      return;
     }
+    const data = this.form.getRawValue();
+    const embeddingModels = Object.values(data).reduce((modelList, group) => {
+      return modelList.concat(
+        Object.entries(group).reduce((models, [key, selected]) => {
+          if (selected) {
+            models.push(key);
+          }
+          return models;
+        }, [] as string[]),
+      );
+    }, [] as string[]);
+
     let userKeys;
-    if (data.semanticModel === this.HUGGING_FACE_MODEL) {
+    if (embeddingModels.includes(this.HUGGING_FACE_MODEL)) {
       const extraFields = this.huggingFaceForm?.getRawValue();
 
       // Matryoshka is supposed to be an array of integers, but it's hard to make it a generic dynamical field with the current schema,
@@ -218,10 +298,55 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
         hf_embedding: extraFields,
       };
     }
-    this.modelSelected.emit({
-      embeddingModel: model,
-      modelType: data.modelType,
-      userKeys,
+    this.learningConfiguration.emit({
+      semantic_models: getSemanticModels(embeddingModels, this.learningSchema),
+      user_keys: userKeys,
     });
+  }
+
+  /**
+   * Backend is restricting the number of models that can be selected for one KB
+   */
+  private validateModelSelection() {
+    const data = this.form.getRawValue();
+    const selectionCount = Object.values(data).reduce((count, group) => {
+      return (
+        count +
+        Object.values(group).reduce((subCount, selected) => {
+          if (selected) {
+            subCount += 1;
+          }
+          return subCount;
+        }, 0)
+      );
+    }, 0);
+
+    if (selectionCount >= this.MODEL_SELECTION_LIMIT) {
+      this.disableUnselectedModels();
+    } else {
+      this.enableAllModels();
+    }
+    this.sendSelection();
+  }
+
+  private disableUnselectedModels() {
+    Object.values(this.nucliaModelControls).forEach((control) => {
+      if (!control.value) {
+        control.disable({ emitEvent: false, onlySelf: true });
+      }
+    });
+    Object.values(this.externalModelControls).forEach((control) => {
+      if (!control.value) {
+        control.disable({ emitEvent: false, onlySelf: true });
+      }
+    });
+    Object.values(this.stageOnlyModelControls).forEach((control) => {
+      if (!control.value) {
+        control.disable({ emitEvent: false, onlySelf: true });
+      }
+    });
+  }
+  private enableAllModels() {
+    this.form.enable({ emitEvent: false, onlySelf: true });
   }
 }

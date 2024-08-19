@@ -28,16 +28,11 @@ export class KbNameStepComponent {
     this.form.patchValue({ kbName: value });
   }
 
-  @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<string>();
 
   form = new FormGroup({
     kbName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
-
-  goBack() {
-    this.back.emit();
-  }
 
   submitForm() {
     this.next.emit(this.form.getRawValue().kbName);

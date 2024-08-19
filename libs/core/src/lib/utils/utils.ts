@@ -36,18 +36,26 @@ export function injectScript(url: string) {
   }
 }
 
-export function getSemanticModel(semanticModelName: string | undefined, learningConfiguration: LearningConfigurations) {
-  if (!semanticModelName) {
-    semanticModelName = 'MULTILINGUAL';
+export function getSemanticModels(
+  semanticModelNames: string[],
+  learningConfiguration: LearningConfigurations,
+): string[] {
+  if (!semanticModelNames || semanticModelNames.length === 0) {
+    const defaultSemanticModel = learningConfiguration['semantic_model'].default;
+    return [defaultSemanticModel];
   }
-  const semanticModel = learningConfiguration['semantic_model'].options?.find(
-    (model) => model.name === semanticModelName,
-  );
-  const defaultSemanticModel = learningConfiguration['semantic_model'].default;
-  if (!semanticModel) {
-    console.warn(`Semantic model ${semanticModelName} not found, using default model ${defaultSemanticModel}.`);
-  }
-  return semanticModel?.value || defaultSemanticModel;
+  const semanticModels: string[] = [];
+  semanticModelNames.forEach((name) => {
+    const semanticModel = learningConfiguration['semantic_model'].options?.find((model) => model.name === name);
+
+    if (!semanticModel) {
+      console.warn(`Semantic model ${name} not found.`);
+    } else {
+      semanticModels.push(semanticModel.value);
+    }
+  });
+
+  return semanticModels;
 }
 
 export class STFUtils {

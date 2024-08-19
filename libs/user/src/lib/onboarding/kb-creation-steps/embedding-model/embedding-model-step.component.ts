@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { EmbeddingModelForm, EmbeddingsModelFormComponent } from '../../embeddings-model-form';
+import { EmbeddingsModelFormComponent, LearningConfigurationForm } from '../../embeddings-model-form';
 import { StickyFooterComponent } from '@nuclia/sistema';
+import { LearningConfigurations } from '@nuclia/core';
 
 @Component({
   selector: 'nus-embedding-model-step',
@@ -26,16 +27,17 @@ import { StickyFooterComponent } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmbeddingModelStepComponent {
-  @Input() data?: EmbeddingModelForm;
+  @Input({ required: true }) schema: LearningConfigurations | null = null;
+  @Input() data?: LearningConfigurationForm;
   @Input() isLastStep = true;
 
   @Output() back = new EventEmitter<void>();
-  @Output() next = new EventEmitter<EmbeddingModelForm>();
+  @Output() next = new EventEmitter<LearningConfigurationForm>();
 
-  model?: EmbeddingModelForm;
+  learningConfig?: LearningConfigurationForm;
 
-  updateModel(model: EmbeddingModelForm) {
-    this.model = model;
+  updateModel(config: LearningConfigurationForm) {
+    this.learningConfig = config;
   }
 
   goBack() {
@@ -43,6 +45,6 @@ export class EmbeddingModelStepComponent {
   }
 
   submitForm() {
-    this.next.emit(this.model);
+    this.next.emit(this.learningConfig);
   }
 }
