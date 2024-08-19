@@ -100,7 +100,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   userKeys?: { [key: string]: any };
 
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
-  learningSchema = new ReplaySubject<LearningConfigurations>(1);
+  learningSchema: LearningConfigurations | undefined = undefined;
 
   isExternalIndexEnabled = this.featureService.unstable.externalIndex;
   vectorDbModel: VectorDbModel = {
@@ -117,7 +117,8 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.sdk.nuclia.options.standalone) {
       this.sdk.nuclia.db.getLearningSchema().subscribe((schema) => {
-        this.learningSchema.next(schema);
+        this.learningSchema = schema;
+        this.cdr.markForCheck();
       });
     } else {
       // update learning schema when zone changes
@@ -131,7 +132,8 @@ export class KbCreationComponent implements OnInit, OnDestroy {
           takeUntil(this.unsubscribeAll),
         )
         .subscribe((schema) => {
-          this.learningSchema.next(schema);
+          this.learningSchema = schema;
+          this.cdr.markForCheck();
         });
     }
   }
@@ -172,14 +174,11 @@ export class KbCreationComponent implements OnInit, OnDestroy {
           this.saving = true;
           this.cdr.markForCheck();
         }),
-        switchMap(() =>
-          forkJoin([
-            this.account.pipe(take(1)),
-            this.learningSchema.pipe(take(1)),
-            this.isExternalIndexEnabled.pipe(take(1)),
-          ]),
-        ),
-        switchMap(([account, learningSchema, isExternalIndexEnabled]) => {
+        switchMap(() => forkJoin([this.account.pipe(take(1)), this.isExternalIndexEnabled.pipe(take(1))])),
+        switchMap(([account, isExternalIndexEnabled]) => {
+          if (!this.learningSchema) {
+            return throwError(() => new Error('Learning schema not available'));
+          }
           let user_keys;
           if (this.userKeys) {
             user_keys = this.userKeys;
@@ -189,7 +188,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
             slug: STFUtils.generateSlug(kbConfig.title),
             learning_configuration: {
               anonymization_model: anonymization ? 'multilingual' : 'disabled',
-              semantic_model: getSemanticModel(this.semanticModel, learningSchema),
+              semantic_model: getSemanticModel(this.semanticModel, this.learningSchema),
               user_keys,
             },
           };
