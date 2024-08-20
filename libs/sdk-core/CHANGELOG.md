@@ -3,6 +3,7 @@
 ### Improvement
 
 - Add `vectorset` option to Search
+- Add `search_configs` property to `IKnowledgeBoxCreation` interface
 
 # 1.19.2 (2024-08-19)
 
@@ -25,10 +26,6 @@
 ### Bug fix
 
 - KB invitation deletion: encode email before sending it as URL parameter
-
-### Improvements
-
-- Add `search_configs` property to `IKnowledgeBoxCreation` interface
 
 # 1.18.0 (2024-07-25)
 

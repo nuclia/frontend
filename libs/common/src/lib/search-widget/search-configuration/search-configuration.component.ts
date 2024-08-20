@@ -33,7 +33,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../search-widget.service';
-import { combineLatest, filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
+import { filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   GenerativeAnswerConfig,
