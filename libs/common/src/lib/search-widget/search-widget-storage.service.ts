@@ -103,7 +103,6 @@ export class SearchWidgetStorageService {
       return of(undefined);
     }
     return this.features.isKbAdmin.pipe(
-      switchMap(() => this.features.isKbAdmin),
       take(1),
       filter((isAdmin) => isAdmin),
       switchMap(() => this.sdk.currentKb),
