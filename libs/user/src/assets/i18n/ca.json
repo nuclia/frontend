@@ -115,7 +115,7 @@
 	"user.kb.creation-form.models.nuclia-model.help.MULTILINGUAL": "Funciona millor per a la majoria de les llengües europees, així com per a l'àrab, el xinès i el japonès. ",
 	"user.kb.creation-form.models.nuclia-model.help.multilingual-language-list": "Us recomanem que utilitzeu aquest model quan el vostre contingut faci servir un o diversos idiomes de la llista següent: <br>\n- Àrab <br>\n- Xinès <br>\n- Danès <br>\n- Anglès <br>\n- Finès <br>\n- Francès <br>\n- Alemany <br>\n- Italià <br>\n- Japonès <br>\n- Noruec <br>\n- Portuguès <br>\n- Espanyol <br>\n- Suec",
 	"user.kb.creation-form.models.nuclia-model.help.MULTILINGUAL_ALPHA": "Funciona millor per a tots els altres idiomes. ",
-	"user.kb.creation-form.models.nuclia-model.help.see-documentation": "<br>Vegeu detalls sobre el model <a href=\"https://docs.nuclia.dev/docs/rag/intro\" target=\"_blank\">\"{{model}}\"</a>.",
+	"user.kb.creation-form.models.nuclia-model.help.see-documentation": "<br>Vegeu detalls sobre el model <a href=\"https://docs.nuclia.dev/docs/rag/advanced/models#{{model}}\" target=\"_blank\">\"{{model}}\"</a>.",
 	"user.kb.creation-form.models.nuclia-model.options.ENGLISH": "Només anglès",
 	"user.kb.creation-form.models.nuclia-model.options.MULTILINGUAL": "Idiomes comuns",
 	"user.kb.creation-form.models.nuclia-model.options.MULTILINGUAL_ALPHA": "Altres idiomes",

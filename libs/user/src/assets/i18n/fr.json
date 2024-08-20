@@ -115,7 +115,7 @@
 	"user.kb.creation-form.models.nuclia-model.help.MULTILINGUAL": "Fonctionne le mieux pour la plupart des langues européennes ainsi que pour l'arabe, le chinois et le japonais. ",
 	"user.kb.creation-form.models.nuclia-model.help.multilingual-language-list": "Nous conseillons d'utiliser ce modèle lorsque votre contenu utilise une ou plusieurs langues de la liste suivante : <br>- Arabe <br>- Chinois <br>- Danois <br>- Anglais <br>- Finlandais <br>- Français <br>- Allemand <br>- Italien <br>- Japonais <br>- Norvégien <br>- Portugais <br>- Espagnol <br>- Suédois",
 	"user.kb.creation-form.models.nuclia-model.help.MULTILINGUAL_ALPHA": "Fonctionne mieux pour toutes les autres langues. ",
-	"user.kb.creation-form.models.nuclia-model.help.see-documentation": "<br>Voir les détails du modèle <a href=\"https://docs.nuclia.dev/docs/rag/intro\" target=\"_blank\">\"{{model}}\"</a>.",
+	"user.kb.creation-form.models.nuclia-model.help.see-documentation": "<br>Voir les détails du modèle <a href=\"https://docs.nuclia.dev/docs/rag/advanced/models#{{model}}\" target=\"_blank\">\"{{model}}\"</a>.",
 	"user.kb.creation-form.models.nuclia-model.options.ENGLISH": "Anglais uniquement",
 	"user.kb.creation-form.models.nuclia-model.options.MULTILINGUAL": "Langues communes",
 	"user.kb.creation-form.models.nuclia-model.options.MULTILINGUAL_ALPHA": "Autres langues",
