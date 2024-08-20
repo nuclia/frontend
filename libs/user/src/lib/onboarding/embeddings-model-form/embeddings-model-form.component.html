@@ -32,7 +32,7 @@
                   ('user.kb.creation-form.models.nuclia-model.help.see-documentation'
                     | translate: { model: semanticModels[model.key] })
                 ">
-                {{ 'user.kb.creation-form.models.nuclia-model.options.' + model.key | translate }}
+                {{ 'user.kb.creation-form.models.options.' + model.key | translate }}
               </pa-checkbox>
               @if (model.key === 'MULTILINGUAL') {
                 <pa-icon
@@ -65,7 +65,7 @@
               <div class="beta-option">
                 <div class="checkbox-container">
                   <pa-checkbox [formControlName]="model.key">
-                    {{ 'user.kb.creation-form.models.external-model.options.' + model.key | translate }}
+                    {{ 'user.kb.creation-form.models.options.' + model.key | translate }}
                   </pa-checkbox>
                 </div>
                 @if (model.key === HUGGING_FACE_MODEL) {
