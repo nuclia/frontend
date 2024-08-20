@@ -5,7 +5,7 @@ import { FeaturesService, SDKService } from '@flaps/core';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
 import { GettingStartedComponent } from '../../onboarding/getting-started/getting-started.component';
 import { WelcomeInExistingKBComponent } from '../../onboarding/welcome-in-existing-kb/welcome-in-existing-kb.component';
-import { SearchWidgetService } from '@flaps/common';
+import { SearchWidgetStorageService } from '@flaps/common';
 
 @Component({
   template: '<router-outlet></router-outlet>',
@@ -17,14 +17,14 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
     private sdk: SDKService,
     private features: FeaturesService,
     private modalService: SisModalService,
-    private searchWidgetService: SearchWidgetService,
+    private searchWidgetStorage: SearchWidgetStorageService,
   ) {}
 
   ngOnInit() {
     this.sdk.currentKb
       .pipe(
         distinctUntilKeyChanged('id'),
-        switchMap((kb) => this.searchWidgetService.migrateConfigsAndWidgets(kb)),
+        switchMap(() => this.searchWidgetStorage.migrateConfigsAndWidgets()),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
