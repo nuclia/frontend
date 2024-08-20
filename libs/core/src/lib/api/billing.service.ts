@@ -128,8 +128,10 @@ export class BillingService {
         this._accountSubscriptionCache.next(subscription);
         return subscription;
       }),
-      catchError(() => {
-        if (fromCache) {
+      catchError((error) => {
+        // 404 status is not considered an error here: it just means the client doesn't have a paid subscription,
+        // so we put this result in the cache as well
+        if (error.status === 404 && fromCache) {
           this._accountSubscriptionInit = true;
         }
         return of(null);
