@@ -1,6 +1,17 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from './sdk.service';
-import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  switchMap,
+  take,
+} from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
 import {
   AccountSubscription,
@@ -20,6 +31,9 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
+  private _accountSubscriptionCache = new BehaviorSubject<AccountSubscription | null>(null);
+  private _accountSubscriptionInit = false;
+
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
   isDeprecatedAccount = this.type.pipe(map((type) => type.startsWith('stash-')));
 
@@ -86,7 +100,11 @@ export class BillingService {
     );
   }
 
-  getSubscription(): Observable<AccountSubscription | null> {
+  getSubscription(fromCache = false): Observable<AccountSubscription | null> {
+    if (fromCache && this._accountSubscriptionInit) {
+      return this._accountSubscriptionCache.asObservable();
+    }
+
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
@@ -95,17 +113,29 @@ export class BillingService {
         ),
       ),
       map((data) => {
+        let subscription: AccountSubscription;
         if (!data.hasOwnProperty('provider')) {
           // Backward compatibility: when there is no provider, it's an old STRIPE subscription
-          return {
+          subscription = {
             provider: 'STRIPE',
             subscription: data,
           } as AccountSubscription;
         } else {
-          return data as AccountSubscription;
+          subscription = data as AccountSubscription;
         }
+
+        this._accountSubscriptionInit = true;
+        this._accountSubscriptionCache.next(subscription);
+        return subscription;
       }),
-      catchError(() => of(null)),
+      catchError((error) => {
+        // 404 status is not considered an error here: it just means the client doesn't have a paid subscription,
+        // so we put this result in the cache as well
+        if (error.status === 404 && fromCache) {
+          this._accountSubscriptionInit = true;
+        }
+        return of(null);
+      }),
     );
   }
 
