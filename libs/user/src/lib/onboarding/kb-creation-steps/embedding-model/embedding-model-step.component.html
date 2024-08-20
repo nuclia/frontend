@@ -12,7 +12,7 @@
   </pa-button>
   <pa-button
     kind="primary"
-    [disabled]="!learningConfig"
+    [disabled]="!learningConfig || learningConfig.semantic_models.length < 1"
     (click)="submitForm()">
     {{ (isLastStep ? 'onboarding.final-button' : 'onboarding.next-button') | translate }}
   </pa-button>
