@@ -12,7 +12,6 @@ export * from './lib/hint';
 export * from './lib/kb-creation';
 export * from './lib/knowledge-box-settings';
 export * from './lib/prompt-lab';
-export * from './lib/messages';
 export * from './lib/navbar';
 export * from './lib/page-not-found';
 export * from './lib/pagination';

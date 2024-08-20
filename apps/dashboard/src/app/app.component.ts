@@ -10,11 +10,11 @@ import {
   UserService,
 } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, Subject, take } from 'rxjs';
-import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { filter, Subject } from 'rxjs';
+import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesModalComponent, MessageModalComponent } from '@flaps/common';
+import { FeaturesModalComponent } from '@flaps/common';
 
 @Component({
   selector: 'app-root',
@@ -65,8 +65,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.config.getVersion()) {
       this.version = this.config.getVersion();
     }
-    this.displayAlert();
-    this.displayAnnounce();
     this.preventDragAndDropOnWindow();
     this.listenFeatureFlagCode();
   }
@@ -96,34 +94,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.ngxTranslate.onLangChange
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((event) => this.paTranslate.initTranslationsAndUse(event.lang, event.translations));
-  }
-
-  private displayAlert() {
-    this.checkMessages(true);
-  }
-
-  private displayAnnounce() {
-    this.checkMessages(false);
-  }
-
-  private checkMessages(alert: boolean) {
-    this.tracking
-      .getStatusMessage(alert)
-      .pipe(
-        take(1),
-        filter((message) => !!message),
-      )
-      .subscribe((message) => {
-        this.modalService.openModal(
-          MessageModalComponent,
-          new ModalConfig<{ title: string; message: string }>({
-            data: {
-              title: alert ? 'generic.alert' : 'generic.announce',
-              message,
-            },
-          }),
-        );
-      });
   }
 
   private preventDefault(e: DragEvent) {

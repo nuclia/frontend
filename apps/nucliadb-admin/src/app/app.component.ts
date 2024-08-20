@@ -2,10 +2,8 @@ import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angu
 import { BackendConfigurationService, STFTrackingService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, Subject, take } from 'rxjs';
-import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService } from '@nuclia/sistema';
-import { MessageModalComponent } from '@flaps/common';
+import { filter, Subject } from 'rxjs';
+import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { NavigationEnd, Router } from '@angular/router';
 
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
@@ -26,7 +24,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private config: BackendConfigurationService,
     private paTranslate: PaTranslateService,
     private tracking: STFTrackingService,
-    private modalService: SisModalService,
     private router: Router,
   ) {
     if (location.href.includes('/admin/admin/')) {
@@ -45,8 +42,6 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.config.getVersion()) {
       this.version = this.config.getVersion();
     }
-    this.displayAlert();
-    this.displayAnnounce();
     this.preventDragAndDropOnWindow();
   }
 
@@ -86,33 +81,5 @@ export class AppComponent implements OnInit, OnDestroy {
   private cleanUpEventListener() {
     window.removeEventListener('dragover', this.preventDefault);
     window.removeEventListener('drop', this.preventDefault);
-  }
-
-  private displayAlert() {
-    this.checkMessages(true);
-  }
-
-  private displayAnnounce() {
-    this.checkMessages(false);
-  }
-
-  private checkMessages(alert: boolean) {
-    this.tracking
-      .getStatusMessage(alert)
-      .pipe(
-        take(1),
-        filter((message) => !!message),
-      )
-      .subscribe((message) => {
-        this.modalService.openModal(
-          MessageModalComponent,
-          new ModalConfig<{ title: string; message: string }>({
-            data: {
-              title: alert ? 'generic.alert' : 'generic.announce',
-              message,
-            },
-          }),
-        );
-      });
   }
 }
