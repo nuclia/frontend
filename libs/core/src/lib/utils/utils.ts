@@ -40,10 +40,6 @@ export function getSemanticModels(
   semanticModelNames: string[],
   learningConfiguration: LearningConfigurations,
 ): string[] {
-  if (!semanticModelNames || semanticModelNames.length === 0) {
-    const defaultSemanticModel = learningConfiguration['semantic_model'].default;
-    return [defaultSemanticModel];
-  }
   const semanticModels: string[] = [];
   semanticModelNames.forEach((name) => {
     const semanticModel = learningConfiguration['semantic_model'].options?.find((model) => model.name === name);

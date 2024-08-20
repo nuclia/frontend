@@ -153,6 +153,9 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   }
 
   create() {
+    if (this.semanticModels.length < 1) {
+      return;
+    }
     const { anonymization, ...kbConfig } = this.form.getRawValue();
 
     const confirmed = anonymization

@@ -99,7 +99,7 @@
           data-cy="new-kb-save-button"
           kind="primary"
           type="submit"
-          [disabled]="form.invalid || !semanticModels || saving">
+          [disabled]="form.invalid || semanticModels.length < 1 || saving">
           {{ 'account.kb.create' | translate }}
         </pa-button>
       </nsi-sticky-footer>
