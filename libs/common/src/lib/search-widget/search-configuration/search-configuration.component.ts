@@ -47,6 +47,8 @@ import { LearningConfigurations } from '@nuclia/core';
 import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
 import { SearchRequestModalComponent } from './search-request-modal';
 
+const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
+
 @Component({
   selector: 'stf-search-configuration',
   standalone: true,
@@ -104,9 +106,11 @@ export class SearchConfigurationComponent {
   savedConfig?: SearchConfiguration;
   currentConfig?: SearchConfiguration;
 
-  modelFromSettings = '';
-  modelNames: { [key: string]: string } = {};
+  generativeModelFromSettings = '';
+  semanticModelFromSettings = '';
+  generativeModelNames: { [key: string]: string } = {};
   generativeModels: OptionModel[] = [];
+  semanticModels: OptionModel[] = [];
   promptInfos: { [model: string]: string } = {};
   defaultPromptFromSettings = '';
   lastQuery?: { [key: string]: any };
@@ -138,8 +142,9 @@ export class SearchConfigurationComponent {
       )
       .subscribe({
         next: ({ kbId, schema, config }) => {
-          this.modelFromSettings = config['generative_model'] || '';
-          this.modelNames =
+          this.generativeModelFromSettings = config['generative_model'] || '';
+          this.semanticModelFromSettings = config['semantic_model'] || '';
+          this.generativeModelNames =
             schema['generative_model']?.options?.reduce(
               (acc, model) => {
                 acc[model.value] = model.name;
@@ -176,7 +181,7 @@ export class SearchConfigurationComponent {
       id: 'nuclia-standard',
       value: 'nuclia-standard',
       label: this.translate.instant('search.configuration.options.nuclia-standard'),
-      help: this.modelNames[this.modelFromSettings] || this.modelFromSettings,
+      help: this.generativeModelNames[this.generativeModelFromSettings] || this.generativeModelFromSettings,
     });
 
     const savedConfigs = this.searchWidgetService.getSavedSearchConfigs(kbId);
@@ -191,7 +196,9 @@ export class SearchConfigurationComponent {
             id: item.id,
             value: item.id,
             label: item.id,
-            help: this.modelNames[item.generativeAnswer?.generativeModel] || item.generativeAnswer?.generativeModel,
+            help:
+              this.generativeModelNames[item.generativeAnswer?.generativeModel] ||
+              item.generativeAnswer?.generativeModel,
           }),
       ),
     );
@@ -211,11 +218,35 @@ export class SearchConfigurationComponent {
           value: model.value,
           label: model.name,
           help:
-            this.modelFromSettings === model.value
+            this.generativeModelFromSettings === model.value
               ? this.translate.instant('search.configuration.generative-answer.generative-model.kb-settings')
               : null,
         }),
     );
+    const semanticModelsName = (schema['semantic_models'].options || []).reduce(
+      (names, model) => {
+        names[model.value] = model.name;
+        return names;
+      },
+      {} as { [value: string]: string },
+    );
+    this.semanticModels = (config['semantic_models'] || []).map((model: string) => {
+      const isNucliaModel = NUCLIA_SEMANTIC_MODELS.includes(semanticModelsName[model]);
+      const help = isNucliaModel
+        ? this.translate.instant('user.kb.creation-form.models.options.' + semanticModelsName[model])
+        : model;
+      return new OptionModel({
+        id: model,
+        value: model,
+        label: isNucliaModel
+          ? `Nuclia ${model}`
+          : this.translate.instant('user.kb.creation-form.models.options.' + semanticModelsName[model]),
+        help:
+          this.semanticModelFromSettings === model
+            ? `${help} ${this.translate.instant('search.configuration.generative-answer.generative-model.kb-settings')}`
+            : help,
+      });
+    });
     const promptInfos = Object.entries(schema['user_prompts']?.schemas || {}).reduce(
       (infos, [prompt, schema]) => {
         if (schema.properties['prompt']?.info) {
@@ -234,7 +265,7 @@ export class SearchConfigurationComponent {
         },
         {} as { [model: string]: string },
       );
-    const promptKey = generativeModels.find((model) => model.value === this.modelFromSettings)?.user_prompt;
+    const promptKey = generativeModels.find((model) => model.value === this.generativeModelFromSettings)?.user_prompt;
     this.defaultPromptFromSettings = promptKey ? config['user_prompts']?.[promptKey]?.['prompt'] || '' : '';
   }
 

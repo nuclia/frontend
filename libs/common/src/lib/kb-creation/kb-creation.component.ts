@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestro
 import { CommonModule } from '@angular/common';
 import {
   FeaturesService,
-  getSemanticModel,
   NavigationService,
   SDKService,
   standaloneSimpleAccount,
@@ -23,8 +22,8 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import {
-  EmbeddingModelForm,
   EmbeddingsModelFormComponent,
+  LearningConfigurationForm,
   VectorDatabaseFormComponent,
   VectorDbModel,
 } from '@nuclia/user';
@@ -96,7 +95,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   };
 
   saving = false;
-  semanticModel = '';
+  semanticModels: string[] = [];
   userKeys?: { [key: string]: any };
 
   learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
@@ -154,6 +153,9 @@ export class KbCreationComponent implements OnInit, OnDestroy {
   }
 
   create() {
+    if (this.semanticModels.length < 1) {
+      return;
+    }
     const { anonymization, ...kbConfig } = this.form.getRawValue();
 
     const confirmed = anonymization
@@ -172,14 +174,8 @@ export class KbCreationComponent implements OnInit, OnDestroy {
           this.saving = true;
           this.cdr.markForCheck();
         }),
-        switchMap(() =>
-          forkJoin([
-            this.account.pipe(take(1)),
-            this.learningSchema.pipe(take(1)),
-            this.isExternalIndexEnabled.pipe(take(1)),
-          ]),
-        ),
-        switchMap(([account, learningSchema, isExternalIndexEnabled]) => {
+        switchMap(() => forkJoin([this.account.pipe(take(1)), this.isExternalIndexEnabled.pipe(take(1))])),
+        switchMap(([account, isExternalIndexEnabled]) => {
           let user_keys;
           if (this.userKeys) {
             user_keys = this.userKeys;
@@ -189,7 +185,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
             slug: STFUtils.generateSlug(kbConfig.title),
             learning_configuration: {
               anonymization_model: anonymization ? 'multilingual' : 'disabled',
-              semantic_model: getSemanticModel(this.semanticModel, learningSchema),
+              semantic_models: this.semanticModels,
               user_keys,
             },
           };
@@ -226,9 +222,9 @@ export class KbCreationComponent implements OnInit, OnDestroy {
       });
   }
 
-  updateModel(modelForm: EmbeddingModelForm) {
-    this.semanticModel = modelForm.embeddingModel;
-    this.userKeys = modelForm.userKeys;
+  updateModel(learningConfig: LearningConfigurationForm) {
+    this.semanticModels = learningConfig.semantic_models;
+    this.userKeys = learningConfig.user_keys;
   }
 
   cancel() {

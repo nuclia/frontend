@@ -1,102 +1,119 @@
 <form
-  class="language-field-form"
+  class="embeddings-model-form"
   [formGroup]="form">
-  <pa-radio-group formControlName="modelType">
-    <pa-radio
-      value="private"
-      help="user.kb.creation-form.models.nuclia-model.radio-help">
-      {{ 'user.kb.creation-form.models.nuclia-model.radio-label' | translate }}
-    </pa-radio>
-    <pa-radio
-      value="public"
-      [disabled]="(isGeckoModelEnabled | async) === false && (areOpenAIModelsEnabled | async) === false"
-      help="user.kb.creation-form.models.external-model.radio-help">
-      {{ 'user.kb.creation-form.models.external-model.radio-label' | translate }}
-    </pa-radio>
-  </pa-radio-group>
+  <div class="title-xs">{{ 'user.kb.creation-form.models.form-title' | translate }}</div>
 
-  @if (form.get('modelType')?.value === 'private') {
-    <div class="semantic-model-choice">
-      <div class="title-xs">{{ 'user.kb.creation-form.models.nuclia-model.languages-label' | translate }}</div>
-      <p class="body-m">
-        {{ 'user.kb.creation-form.models.nuclia-model.languages-description' | translate }}
-      </p>
-      <div class="languages-container">
-        @for (language of languages; track language.label) {
-          <pa-checkbox
-            [disabled]="disabled"
-            [(value)]="language.selected"
-            (valueChange)="sendSelection()">
-            {{ language.label }}
-          </pa-checkbox>
-        }
-      </div>
-    </div>
-  } @else {
-    <div class="semantic-model-choice">
-      <div class="title-xs">{{ 'user.kb.creation-form.models.external-model.label' | translate }}</div>
-      <div class="models-container">
-        <pa-radio-group
-          formControlName="semanticModel"
-          noBackground>
-          @if (isGeckoModelEnabled | async) {
-            <div class="beta-option">
-              <pa-radio value="GECKO_MULTI">
-                {{ 'user.kb.creation-form.models.external-model.options.gecko' | translate }}
-              </pa-radio>
+  <nsi-info-card
+    type="warning"
+    icon="warning">
+    {{ 'user.kb.creation-form.models.warning.no-change-after-creation' | translate }}
+  </nsi-info-card>
+
+  <nsi-info-card>
+    <div [innerHTML]="'user.kb.creation-form.models.warning.limit' | translate: { limit: MODEL_SELECTION_LIMIT }"></div>
+  </nsi-info-card>
+
+  <pa-accordion allowMultipleExpanded>
+    <pa-accordion-item
+      expanded
+      id="nuclia-models"
+      [itemTitle]="'user.kb.creation-form.models.nuclia-model.accordion-label' | translate"
+      [description]="'user.kb.creation-form.models.nuclia-model.accordion-help' | translate">
+      <pa-accordion-item-body>
+        <div
+          class="checkbox-group"
+          formGroupName="nuclia">
+          @for (model of nucliaModelControls | keyvalue; track model.key) {
+            <div class="checkbox-container">
+              <pa-checkbox
+                [formControlName]="model.key"
+                [help]="
+                  ('user.kb.creation-form.models.nuclia-model.help.' + model.key | translate) +
+                  ('user.kb.creation-form.models.nuclia-model.help.see-documentation'
+                    | translate: { model: semanticModels[model.key] })
+                ">
+                {{ 'user.kb.creation-form.models.options.' + model.key | translate }}
+              </pa-checkbox>
+              @if (model.key === 'MULTILINGUAL') {
+                <pa-icon
+                  name="info"
+                  [paPopover]="languageList"></pa-icon>
+                <pa-popover #languageList>
+                  <div
+                    [innerHtml]="
+                      'user.kb.creation-form.models.nuclia-model.help.multilingual-language-list' | translate
+                    "></div>
+                </pa-popover>
+              }
             </div>
           }
+        </div>
+      </pa-accordion-item-body>
+    </pa-accordion-item>
+
+    <pa-accordion-item
+      #externalModelsContainer
+      id="external-models"
+      [itemTitle]="'user.kb.creation-form.models.external-model.accordion-label' | translate"
+      [description]="'user.kb.creation-form.models.external-model.accordion-help' | translate">
+      <pa-accordion-item-body>
+        <div class="fields-container">
+          <div
+            class="checkbox-group"
+            formGroupName="external">
+            @for (model of externalModelControls | keyvalue; track model.key) {
+              <div class="beta-option">
+                <div class="checkbox-container">
+                  <pa-checkbox [formControlName]="model.key">
+                    {{ 'user.kb.creation-form.models.options.' + model.key | translate }}
+                  </pa-checkbox>
+                </div>
+                @if (model.key === HUGGING_FACE_MODEL) {
+                  <nsi-badge kind="tertiary">BETA</nsi-badge>
+                }
+              </div>
+            }
+          </div>
           @if (isExtraSemanticModelEnabled | async) {
-            <div class="beta-option">
-              <pa-radio value="MULTILINGUAL_EXTRA">MULTILINGUAL_EXTRA (testing on stage only)</pa-radio>
+            <div
+              class="checkbox-group"
+              formGroupName="stageOnly">
+              <div class="beta-option">
+                <pa-checkbox formControlName="MULTILINGUAL_EXTRA">
+                  MULTILINGUAL_EXTRA (testing on stage only)
+                </pa-checkbox>
+              </div>
             </div>
           }
-          @if (areOpenAIModelsEnabled | async) {
-            <div class="beta-option">
-              <pa-radio value="OPENAI_3_SMALL">
-                {{ 'user.kb.creation-form.models.external-model.options.openai-small' | translate }}
-              </pa-radio>
-            </div>
-            <div class="beta-option">
-              <pa-radio value="OPENAI_3_LARGE">
-                {{ 'user.kb.creation-form.models.external-model.options.openai-large' | translate }}
-              </pa-radio>
-            </div>
-          }
-          @if ((isHuggingFaceSemanticModelEnabled | async) && !!huggingFaceForm) {
-            <div class="beta-option">
-              <pa-radio value="HF">
-                {{ 'user.kb.creation-form.models.external-model.options.hugging-face' | translate }}
-              </pa-radio>
-              <nsi-badge kind="tertiary">BETA</nsi-badge>
-            </div>
-          }
-        </pa-radio-group>
-        <br />
-        <nsi-info-card type="warning">
-          {{ 'user.kb.creation-form.models.external-model.nuclia-token-warning' | translate }}
-        </nsi-info-card>
-      </div>
-    </div>
-    @if (semanticModelValue === HUGGING_FACE_MODEL && huggingFaceForm) {
-      <div class="title-xs">
-        {{ 'user.kb.creation-form.models.external-model.hugging-face.form-title' | translate }}
-      </div>
-      <nus-dynamic-fields
-        [form]="huggingFaceForm"
-        [fields]="huggingFaceRequiredFields"></nus-dynamic-fields>
 
-      <pa-expander expanded="false">
-        <pa-expander-header>
-          {{ 'user.kb.creation-form.models.external-model.hugging-face.advanced-config' | translate }}
-        </pa-expander-header>
-        <pa-expander-body>
-          <br />
-          <nus-dynamic-fields
-            [form]="huggingFaceForm"
-            [fields]="huggingFaceOptionalFields"></nus-dynamic-fields>
-        </pa-expander-body>
-      </pa-expander>
-    }
-  }
+          <nsi-info-card type="warning">
+            {{ 'user.kb.creation-form.models.external-model.nuclia-token-warning' | translate }}
+          </nsi-info-card>
+
+          @if (isHuggingFaceSelected && huggingFaceForm) {
+            <div class="title-xs">
+              {{ 'user.kb.creation-form.models.external-model.hugging-face.form-title' | translate }}
+            </div>
+            <nus-dynamic-fields
+              [form]="huggingFaceForm"
+              [fields]="huggingFaceRequiredFields"></nus-dynamic-fields>
+
+            <pa-expander
+              expanded="false"
+              (toggleExpander)="updateExternalAccordionHeight()">
+              <pa-expander-header>
+                {{ 'user.kb.creation-form.models.external-model.hugging-face.advanced-config' | translate }}
+              </pa-expander-header>
+              <pa-expander-body>
+                <br />
+                <nus-dynamic-fields
+                  [form]="huggingFaceForm"
+                  [fields]="huggingFaceOptionalFields"></nus-dynamic-fields>
+              </pa-expander-body>
+            </pa-expander>
+          }
+        </div>
+      </pa-accordion-item-body>
+    </pa-accordion-item>
+  </pa-accordion>
 </form>

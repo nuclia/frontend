@@ -49,10 +49,11 @@
     max-height: calc(#{$height-page-container} - #{$vertical-padding} * 4 - #{rhythm(5)});
     overflow-y: auto;
     overflow-x: hidden;
-    @include scrollbar-black();
     // Move scrollbar to the edge
     padding: 0 rhythm(2);
     margin: 0 -#{rhythm(2)};
+
+    @include scrollbar-black();
   }
 
   .select-account-footer {

@@ -53,6 +53,7 @@ export interface BaseSearchOptions {
   autofilter?: boolean;
   highlight?: boolean;
   rephrase?: boolean;
+  vectorset?: string;
 }
 
 export interface ChatOptions extends BaseSearchOptions {

@@ -1,7 +1,7 @@
 <div class="onboarding-form">
   <nus-embeddings-model-form
-    [languageModel]="data"
-    (modelSelected)="updateModel($event)"></nus-embeddings-model-form>
+    [learningSchema]="schema"
+    (learningConfiguration)="updateModel($event)"></nus-embeddings-model-form>
 </div>
 
 <nsi-sticky-footer>
@@ -12,7 +12,7 @@
   </pa-button>
   <pa-button
     kind="primary"
-    [disabled]="!model"
+    [disabled]="!learningConfig || learningConfig.semantic_models.length < 1"
     (click)="submitForm()">
     {{ (isLastStep ? 'onboarding.final-button' : 'onboarding.next-button') | translate }}
   </pa-button>

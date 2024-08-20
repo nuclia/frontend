@@ -46,7 +46,8 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       this.form.patchValue(value);
     }
   }
-  @Input({ required: true }) models: OptionModel[] = [];
+  @Input({ required: true }) generativeModels: OptionModel[] = [];
+  @Input({ required: true }) semanticModels: OptionModel[] = [];
   @Input() defaultPrompt = '';
   @Input() promptInfos: { [model: string]: string } = {};
 
@@ -56,6 +57,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   form = new FormGroup({
     generateAnswer: new FormControl<boolean>(false, { nonNullable: true }),
     generativeModel: new FormControl<string>('', { nonNullable: true }),
+    vectorset: new FormControl<string>('', { nonNullable: true }),
     usePrompt: new FormControl<boolean>(false, { nonNullable: true }),
     prompt: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     askSpecificResource: new FormControl<boolean>(false, { nonNullable: true }),

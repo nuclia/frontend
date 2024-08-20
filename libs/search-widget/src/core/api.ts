@@ -39,6 +39,7 @@ let SEARCH_OPTIONS: Partial<SearchOptions>;
 let SUGGEST_MODE: Search.SuggestionFeatures[];
 let prompt: string | undefined = undefined;
 let generative_model: string | undefined = undefined;
+let vectorset: string | undefined = undefined;
 let CITATIONS = false;
 let REPHRASE = false;
 let ASK_TO_RESOURCE = '';
@@ -57,6 +58,7 @@ export const initNuclia = (
   SUGGEST_MODE = [];
   prompt = undefined;
   generative_model = undefined;
+  vectorset = undefined;
 
   if (nucliaApi) {
     console.error('Cannot exist more than one Nuclia widget at the same time. Cancelling the first instance.');
@@ -93,6 +95,7 @@ export const initNuclia = (
   });
   prompt = widgetOptions.prompt;
   generative_model = widgetOptions.generative_model;
+  vectorset = widgetOptions.vectorset;
 
   if (widgetOptions.features?.suggestLabels) {
     const kbPath = nucliaApi?.knowledgeBox.fullpath;
@@ -167,6 +170,7 @@ export const getAnswer = (
     highlight: true,
     prompt,
     generative_model,
+    vectorset,
     citations: CITATIONS,
     rephrase: REPHRASE,
     max_tokens: MAX_TOKENS,

@@ -3,7 +3,7 @@ import { ExternalIndexProvider } from '@nuclia/core';
 export type KbConfiguration = {
   kbName: string;
   zoneSlug: string;
-  semanticModel?: string;
+  semanticModels: string[];
 };
 
 export type AccountAndKbConfiguration = {

@@ -1,22 +1,23 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  EmbeddingModelForm,
   EmbeddingModelStepComponent,
   KbNameStepComponent,
+  LearningConfigurationForm,
   UserContainerModule,
+  VectorDatabaseStepComponent,
   ZoneStepComponent,
 } from '@nuclia/user';
-import { BillingService, getSemanticModel, NavigationService, SDKService, STFUtils } from '@flaps/core';
+import { BillingService, FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import { Step1BudgetComponent } from './step1-budget/step1-budget.component';
-import { Observable, of, switchMap, take } from 'rxjs';
-import { SisToastService } from '@nuclia/sistema';
+import { filter, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
+import { SisProgressModule, SisToastService } from '@nuclia/sistema';
 import { Step2Component } from './step2/step2.component';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 
 @Component({
-  selector: 'app-aws-onboarding',
   standalone: true,
   imports: [
     CommonModule,
@@ -27,6 +28,8 @@ import { TranslateModule } from '@ngx-translate/core';
     ZoneStepComponent,
     EmbeddingModelStepComponent,
     TranslateModule,
+    VectorDatabaseStepComponent,
+    SisProgressModule,
   ],
   templateUrl: './aws-onboarding.component.html',
   styleUrl: './aws-onboarding.component.scss',
@@ -43,7 +46,12 @@ export class AwsOnboardingComponent {
 
   kbName = '';
   zone = '';
-  embeddingModel?: EmbeddingModelForm;
+  learningSchemasByZone: { [zone: string]: LearningConfigurations } = {};
+  learningSchema = new ReplaySubject<LearningConfigurations>(1);
+  learningConfig?: LearningConfigurationForm;
+  externalIndexProvider?: ExternalIndexProvider | null;
+
+  isExternalIndexEnabled = this.featureService.unstable.externalIndex;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -52,6 +60,7 @@ export class AwsOnboardingComponent {
     private toast: SisToastService,
     private router: Router,
     private navigation: NavigationService,
+    private featureService: FeaturesService,
   ) {}
 
   goBack() {
@@ -95,36 +104,70 @@ export class AwsOnboardingComponent {
     this.step++;
   }
 
-  storeZoneAndGoNext($event: string) {
-    this.zone = $event;
-    this.step++;
-  }
-
-  finalStepDone(model: EmbeddingModelForm) {
-    this.embeddingModel = model;
-
+  storeZoneAndGoNext(zone: string) {
+    this.zone = zone;
     this.account
       .pipe(
         take(1),
         switchMap((account) =>
-          this.sdk.nuclia.db.getLearningSchema(account.id, this.zone).pipe(
-            switchMap((learningConfiguration) => {
-              const kbConfig = {
-                slug: STFUtils.generateSlug(this.kbName),
-                title: this.kbName,
-                learning_configuration: {
-                  semantic_model: getSemanticModel(model.embeddingModel, learningConfiguration),
-                },
-              };
-              return this.sdk.nuclia.db.createKnowledgeBox(account.id, kbConfig, this.zone);
-            }),
-          ),
+          this.learningSchemasByZone[zone]
+            ? of(this.learningSchemasByZone[zone])
+            : this.sdk.nuclia.db
+                .getLearningSchema(account.id, zone)
+                .pipe(tap((schema) => (this.learningSchemasByZone[zone] = schema))),
         ),
       )
-      .subscribe((account) =>
-        this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
-          queryParams: { setup: 'invite-collaborators' },
+      .subscribe((schema) => {
+        this.learningSchema.next(schema);
+        this.step++;
+        this.cdr.markForCheck();
+      });
+  }
+
+  storeLearningConfigAndGoNext(config: LearningConfigurationForm) {
+    this.learningConfig = config;
+    this.step++;
+
+    // there is one more step only if external index is enabled
+    this.isExternalIndexEnabled
+      .pipe(
+        take(1),
+        filter((isEnabled) => !isEnabled),
+      )
+      .subscribe(() => this.finalStepDone());
+  }
+
+  storeVectorDbStep(indexProvider: ExternalIndexProvider | null) {
+    this.externalIndexProvider = indexProvider;
+    this.step++;
+    this.finalStepDone();
+  }
+
+  finalStepDone() {
+    if (!this.learningConfig) {
+      return;
+    }
+    this.account
+      .pipe(
+        take(1),
+        switchMap((account) => {
+          const kbConfig: KnowledgeBoxCreation = {
+            slug: STFUtils.generateSlug(this.kbName),
+            title: this.kbName,
+            learning_configuration: this.learningConfig,
+          };
+          if (this.externalIndexProvider) {
+            kbConfig.external_index_provider = this.externalIndexProvider;
+          }
+          return this.sdk.nuclia.db.createKnowledgeBox(account.id, kbConfig, this.zone).pipe(
+            tap(() =>
+              this.router.navigate([this.navigation.getAccountManageUrl(account.slug)], {
+                queryParams: { setup: 'invite-collaborators' },
+              }),
+            ),
+          );
         }),
-      );
+      )
+      .subscribe();
   }
 }

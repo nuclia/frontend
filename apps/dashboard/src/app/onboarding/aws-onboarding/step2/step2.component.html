@@ -4,7 +4,9 @@
   (ngSubmit)="submitChoice()">
   <h1>{{ 'onboarding.aws.get-started.title' | translate }}</h1>
   <div>
-    <div [innerHTML]="'onboarding.aws.get-started.kb-required' | translate"></div>
+    <div
+      class="body-m"
+      [innerHTML]="'onboarding.aws.get-started.kb-required' | translate"></div>
     <nsi-info-card>
       {{ 'onboarding.aws.get-started.kb-help' | translate }}
     </nsi-info-card>

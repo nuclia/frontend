@@ -82,7 +82,9 @@
     </div>
     <div class="login_recover body-s">
       <span>{{ 'login.recover_help' | translate }}</span>
-      <a routerLink="../recover">
+      <a
+        routerLink="../recover"
+        class="accent-link">
         {{ 'login.recover' | translate }}
       </a>
     </div>
@@ -102,6 +104,7 @@
       <span>{{ 'login.have_account' | translate }}</span>
       <a
         [routerLink]="['../signup']"
+        class="accent-link"
         data-cy="create-account"
         queryParamsHandling="merge">
         {{ 'login.create_one' | translate }}

@@ -60,9 +60,10 @@
         description="user.kb.creation-form.models.description">
         @if (learningSchema | async; as learningSchema) {
           <nus-embeddings-model-form
+            [standalone]="standalone"
             [learningSchema]="learningSchema"
             [disabled]="saving"
-            (modelSelected)="updateModel($event)"></nus-embeddings-model-form>
+            (learningConfiguration)="updateModel($event)"></nus-embeddings-model-form>
         }
       </nsi-two-columns-configuration-item>
 
@@ -72,6 +73,8 @@
         <div class="toggle-container">
           <pa-toggle formControlName="anonymization">
             {{ 'account.kb.creation-form.anonymization.toggle-label' | translate }}
+            <!-- Weirdly enough, the translation didn't show up on NucliaDB Admin until we put something else in here, adding an hidden dot was enough to fix this problem -->
+            <span style="display: none">.</span>
           </pa-toggle>
         </div>
       </nsi-two-columns-configuration-item>
@@ -96,7 +99,7 @@
           data-cy="new-kb-save-button"
           kind="primary"
           type="submit"
-          [disabled]="form.invalid || !semanticModel || saving">
+          [disabled]="form.invalid || semanticModels.length < 1 || saving">
           {{ 'account.kb.create' | translate }}
         </pa-button>
       </nsi-sticky-footer>
