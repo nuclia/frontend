@@ -39,7 +39,8 @@ export class ZoneService {
           take(1),
           switchMap((hasAccount) =>
             hasAccount
-              ? this.billingService.getSubscription().pipe(
+              ? this.billingService.getSubscription(true).pipe(
+                  take(1),
                   map((subscription) =>
                     subscription && subscription.provider === 'AWS_MARKETPLACE' && !this.featureFlagService.isStageOrDev
                       ? zones.filter((zone) => zone.cloud_provider === 'AWS')
