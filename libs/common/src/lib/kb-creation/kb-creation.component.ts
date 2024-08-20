@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestro
 import { CommonModule } from '@angular/common';
 import {
   FeaturesService,
-  getSemanticModels,
   NavigationService,
   SDKService,
   standaloneSimpleAccount,
@@ -172,14 +171,8 @@ export class KbCreationComponent implements OnInit, OnDestroy {
           this.saving = true;
           this.cdr.markForCheck();
         }),
-        switchMap(() =>
-          forkJoin([
-            this.account.pipe(take(1)),
-            this.learningSchema.pipe(take(1)),
-            this.isExternalIndexEnabled.pipe(take(1)),
-          ]),
-        ),
-        switchMap(([account, learningSchema, isExternalIndexEnabled]) => {
+        switchMap(() => forkJoin([this.account.pipe(take(1)), this.isExternalIndexEnabled.pipe(take(1))])),
+        switchMap(([account, isExternalIndexEnabled]) => {
           let user_keys;
           if (this.userKeys) {
             user_keys = this.userKeys;
@@ -189,7 +182,7 @@ export class KbCreationComponent implements OnInit, OnDestroy {
             slug: STFUtils.generateSlug(kbConfig.title),
             learning_configuration: {
               anonymization_model: anonymization ? 'multilingual' : 'disabled',
-              semantic_models: getSemanticModels(this.semanticModels, learningSchema),
+              semantic_models: this.semanticModels,
               user_keys,
             },
           };

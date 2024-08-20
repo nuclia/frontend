@@ -298,6 +298,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
         hf_embedding: extraFields,
       };
     }
+
     this.learningConfiguration.emit({
       semantic_models: getSemanticModels(embeddingModels, this.learningSchema),
       user_keys: userKeys,
