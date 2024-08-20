@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Zone } from '../models';
-import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { SDKService } from './sdk.service';
-import { UserService } from './user.service';
 import { take } from 'rxjs/operators';
 import { BillingService } from './billing.service';
 
@@ -16,27 +15,20 @@ export class ZoneService {
   constructor(
     private sdk: SDKService,
     private featureFlagService: FeatureFlagService,
-    private userService: UserService,
     private billingService: BillingService,
   ) {}
 
   getZones(includeZonesBlocked = false): Observable<Zone[]> {
-    let isNucliaBetaTester = false;
-    return forkJoin([this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`), this.userService.userInfo.pipe(take(1))]).pipe(
-      switchMap(([zones, userInfo]) => {
-        isNucliaBetaTester = !!userInfo?.preferences.email.includes('@nuclia.com');
+    return this.sdk.nuclia.rest.get<Zone[]>(`/${ZONES}`).pipe(
+      switchMap((zones) => {
         return this.featureFlagService.getFeatureBlocklist('zones').pipe(
           map((blocklist) => {
-            if (isNucliaBetaTester) {
-              return zones;
-            } else {
-              return includeZonesBlocked
-                ? zones.map((zone) => ({
-                    ...zone,
-                    notAvailableYet: blocklist.includes(zone.slug),
-                  }))
-                : zones.filter((zone) => !blocklist.includes(zone.slug));
-            }
+            return includeZonesBlocked
+              ? zones.map((zone) => ({
+                  ...zone,
+                  notAvailableYet: blocklist.includes(zone.slug),
+                }))
+              : zones.filter((zone) => !blocklist.includes(zone.slug));
           }),
         );
       }),
