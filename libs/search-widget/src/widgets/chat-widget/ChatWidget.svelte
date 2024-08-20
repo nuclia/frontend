@@ -7,15 +7,10 @@
   import { setLang } from '../../core/i18n';
   import type { KBStates, Nuclia, RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
-  import { initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
+  import { askQuestion, initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
-  import {
-    preselectedFilters,
-    widgetFeatures,
-    widgetImageRagStrategies,
-    widgetRagStrategies
-  } from '../../core';
+  import { preselectedFilters, widgetFeatures, widgetImageRagStrategies, widgetRagStrategies } from '../../core';
   import { BehaviorSubject, delay, filter, firstValueFrom } from 'rxjs';
   import { Viewer } from '../../components';
 
@@ -42,7 +37,6 @@
 
   export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
-  let _jsonSchema: object | null = null;
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
 
@@ -54,6 +48,10 @@
 
   export function closeChat() {
     showChat = false;
+  }
+
+  export function ask(question: string, reset = true) {
+    askQuestion(question, reset).subscribe();
   }
 
   export const reset = () => resetNuclia();
