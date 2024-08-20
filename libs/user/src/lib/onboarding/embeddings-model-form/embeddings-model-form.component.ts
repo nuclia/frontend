@@ -83,6 +83,7 @@ export interface LearningConfigurationForm {
 })
 export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
+
   private unsubscribeAll = new Subject<void>();
   private unsubscribeHuggingFace = new Subject<void>();
   private _learningSchema?: LearningConfigurations;
@@ -190,7 +191,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
   semanticModels: { [modelName: string]: string } = {};
 
   readonly HUGGING_FACE_MODEL = 'HF';
-  readonly MODEL_SELECTION_LIMIT = 5;
+  MODEL_SELECTION_LIMIT = 5;
 
   huggingFaceForm?: FormGroup;
   huggingFaceRequiredFields: { key: string; value: LearningConfigurationProperty }[] = [];
@@ -230,6 +231,11 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
       label: this.translate.instant(`user.kb.creation-form.models.nuclia-model.languages.other`),
     });
     this.languages = languages.map((language) => ({ ...language, selected: false }));
+
+    this.features.unstable.vectorset.pipe(take(1)).subscribe((vectorsetEnabled) => {
+      this.MODEL_SELECTION_LIMIT = vectorsetEnabled ? 5 : 1;
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnInit() {

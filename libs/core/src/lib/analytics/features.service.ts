@@ -47,6 +47,7 @@ export class FeaturesService {
     githubSignin: this.featureFlag.isFeatureEnabled('github-signin'),
     viewNuaActivity: this.featureFlag.isFeatureEnabled('view-nua-activity'),
     extraSemanticModel: this.featureFlag.isFeatureEnabled('extra-semantic-model'),
+    vectorset: this.featureFlag.isFeatureEnabled('vectorset'),
     huggingFaceSemanticModel: this.featureFlag.isFeatureEnabled('hugging-face-semantic'),
     tableProcessing: this.featureFlag.isFeatureEnabled('table-processing'),
     aiTableProcessing: this.featureFlag.isFeatureEnabled('ai-table-processing'),
