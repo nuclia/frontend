@@ -353,7 +353,8 @@ export class SearchConfigurationComponent {
   }
 
   private _saveConfig(configName: string) {
-    return this.sdk.currentKb.pipe(take(1)).pipe(
+    return this.sdk.currentKb.pipe(
+      take(1),
       switchMap((kb) =>
         this.currentConfig
           ? this.searchWidgetService.saveSearchConfig(kb.id, configName, this.currentConfig)
