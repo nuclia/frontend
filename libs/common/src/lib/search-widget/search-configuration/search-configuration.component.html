@@ -98,7 +98,8 @@
             [config]="savedConfig?.generativeAnswer"
             [defaultPrompt]="defaultPromptFromSettings"
             [promptInfos]="promptInfos"
-            [models]="generativeModels"
+            [generativeModels]="generativeModels"
+            [semanticModels]="semanticModels"
             (configChanged)="updateGenerativeAnswerConfig($event)"
             (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
         </pa-accordion-item-body>
@@ -112,7 +113,7 @@
           <stf-results-display-form
             [config]="savedConfig?.resultDisplay"
             [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
-            [modelNames]="modelNames"
+            [modelNames]="generativeModelNames"
             [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
             (configChanged)="updateResultDisplayConfig($event)"
             (heightChanged)="updateResultsHeight()"></stf-results-display-form>

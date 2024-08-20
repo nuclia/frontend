@@ -152,6 +152,9 @@ export class SearchWidgetService {
     const generativeModel = currentConfig.generativeAnswer.generativeModel
       ? `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`
       : '';
+    const vectorset = currentConfig.generativeAnswer.vectorset
+      ? `\n  vectorset="${currentConfig.generativeAnswer.vectorset}"`
+      : '';
     const queryPrepend = getQueryPrepend(currentConfig.searchBox);
     const jsonSchema = getJsonSchema(currentConfig.resultDisplay);
 
@@ -189,7 +192,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${queryPrepend}${generativeModel}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
@@ -261,7 +264,8 @@ export class SearchWidgetService {
    * @param name
    * @param widgetConfig
    * @param searchConfigId
-   * @param generativeModel
+   * @param generativeModel Generative model to be used for answering the query
+   * @param vectorset Semantic model to be used for answering the query
    */
   createWidget(
     kbId: string,
@@ -269,6 +273,7 @@ export class SearchWidgetService {
     widgetConfig: WidgetConfiguration,
     searchConfigId: string,
     generativeModel: string,
+    vectorset: string,
   ): string {
     const storedWidgets = this.getKBWidgets(kbId);
     let slug = STFUtils.generateSlug(name);
@@ -282,6 +287,7 @@ export class SearchWidgetService {
       searchConfigId,
       generativeModel,
       widgetConfig,
+      vectorset,
       creationDate: new Date().toISOString(),
     });
     this.storeKBWidgets(kbId, storedWidgets);

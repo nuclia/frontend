@@ -39,6 +39,7 @@
   export let rag_image_strategies = '';
   export let max_tokens: number | undefined = undefined;
   export let query_prepend = '';
+  export let vectorset = '';
 
   export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
@@ -107,7 +108,7 @@
         proxy,
       },
       state,
-      { prompt, max_tokens, query_prepend },
+      { prompt, max_tokens, query_prepend, vectorset, },
       no_tracking,
     );
 

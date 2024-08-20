@@ -76,6 +76,7 @@
   export let max_tokens: number | undefined = undefined;
   export let query_prepend = '';
   export let json_schema = '';
+  export let vectorset = '';
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -131,6 +132,7 @@
       apikey,
       account,
       not_enough_data_message,
+      vectorset,
     });
   }
 
@@ -207,6 +209,7 @@
         ask_to_resource,
         max_tokens,
         query_prepend,
+        vectorset,
       },
       no_tracking,
     );

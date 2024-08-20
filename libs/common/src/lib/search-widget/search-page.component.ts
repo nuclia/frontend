@@ -37,6 +37,7 @@ export class SearchPageComponent {
     if (this.searchConfig) {
       const searchConfigId = this.searchConfig.id;
       const generativeModel = this.searchConfig.generativeAnswer.generativeModel;
+      const vectorset = this.searchConfig.generativeAnswer.vectorset;
       this.modalService
         .openModal(CreateWidgetDialogComponent)
         .onClose.pipe(
@@ -52,6 +53,7 @@ export class SearchPageComponent {
                   DEFAULT_WIDGET_CONFIG,
                   searchConfigId,
                   generativeModel,
+                  vectorset,
                 ),
               ),
               switchMap((widgetSlug) => this.router.navigate(['../widgets', widgetSlug], { relativeTo: this.route })),

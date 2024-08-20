@@ -33,6 +33,9 @@
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
   export let max_tokens: number | undefined = undefined;
+  export let query_prepend = '';
+  export let json_schema = '';
+  export let vectorset = '';
 
   let searchBar: any;
   let visible = false;
@@ -121,7 +124,11 @@
             {rag_image_strategies}
             {not_enough_data_message}
             {ask_to_resource}
-            {max_tokens} />
+            {max_tokens}
+            {query_prepend}
+            {json_schema}
+            {vectorset}
+          />
         </div>
         <div class="search-results-container">
           <SearchResults />

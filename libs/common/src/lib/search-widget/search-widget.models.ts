@@ -40,6 +40,7 @@ export interface RagStrategiesConfig {
 export interface GenerativeAnswerConfig {
   generateAnswer: boolean;
   generativeModel: string;
+  vectorset: string; // aka semantic model
   usePrompt: boolean;
   prompt: string;
   askSpecificResource: boolean;
@@ -89,6 +90,7 @@ export interface Widget {
   creationDate: string;
   searchConfigId: string;
   generativeModel: string;
+  vectorset: string;
   widgetConfig: WidgetConfiguration;
 }
 
@@ -115,6 +117,7 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generateAnswer: false,
   generativeModel: '',
+  vectorset: '',
   usePrompt: false,
   prompt: '',
   askSpecificResource: false,

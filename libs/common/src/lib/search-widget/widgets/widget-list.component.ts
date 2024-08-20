@@ -85,6 +85,7 @@ export class WidgetListComponent implements OnInit {
                       DEFAULT_WIDGET_CONFIG,
                       NUCLIA_STANDARD_SEARCH_CONFIG.id,
                       configuration['generative_model'] || '',
+                      configuration['semantic_model'] || '',
                     ),
                   ),
                 ),

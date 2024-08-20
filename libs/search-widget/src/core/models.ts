@@ -47,6 +47,7 @@ export interface WidgetOptions {
   features?: WidgetFeatures;
   prompt?: string;
   generative_model?: string;
+  vectorset?: string;
   ask_to_resource?: string;
   max_tokens?: number;
   query_prepend?: string;

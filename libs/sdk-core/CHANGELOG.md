@@ -1,3 +1,9 @@
+# 1.19.3 (unreleased)
+
+### Improvement
+
+- Add `vectorset` option to Search
+
 # 1.19.2 (2024-08-19)
 
 ### Bug fix
