@@ -2,11 +2,9 @@ import { Injectable } from '@angular/core';
 import { NavigationEnd, NavigationStart } from '@angular/router';
 import { SDKService } from '../api';
 import { BackendConfigurationService } from '../config';
-import { filter, Observable } from 'rxjs';
+import { filter } from 'rxjs';
 import { PostHogService } from './post-hog.service';
 
-const STATUS_ALERT = 'NUCLIA_STATUS_ALERT';
-const ANNOUNCE = 'NUCLIA_ANNOUNCE';
 @Injectable({
   providedIn: 'root',
 })
@@ -61,23 +59,5 @@ export class STFTrackingService {
 
   logout() {
     this.postHogService.reset();
-  }
-
-  getStatusMessage(alert: boolean): Observable<string> {
-    const localStorageKey = alert ? STATUS_ALERT : ANNOUNCE;
-    const path = `https://nuclia.github.io/status/${alert ? 'status' : 'announce'}.json`;
-    return new Observable<string>((observer) => {
-      const lastMessage = parseInt(localStorage.getItem(localStorageKey) || '0', 10);
-      fetch(path)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.active && data.id > lastMessage) {
-            observer.next(data.message);
-            localStorage.setItem(localStorageKey, data.id.toString());
-          } else {
-            observer.next('');
-          }
-        });
-    });
   }
 }
