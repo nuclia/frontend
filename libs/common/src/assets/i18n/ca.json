@@ -921,6 +921,7 @@
 	"search.configuration.generative-answer.limit-token.toggle-label": "Limiteu el consum de fitxes",
 	"search.configuration.generative-answer.prefer-markdown.toggle-description": "Genereu la resposta utilitzant el format de markdown",
 	"search.configuration.generative-answer.prefer-markdown.toggle-label": "Preferiu el format de markdown",
+	"search.configuration.generative-answer.prompt.textarea-help": "Consulteu la <a href=\"https://docs.nuclia.dev/docs/rag/prompt\" target=\"_new\">documentació</a>.",
 	"search.configuration.generative-answer.prompt.textarea-label": "La teva prompt",
 	"search.configuration.generative-answer.prompt.toggle-description": "Tindrà prioritat sobre el missatge de l'usuari definit a la configuració del quadre de coneixement. Nota: l'estratègia del prompt pot canviar en funció del model generatiu.",
 	"search.configuration.generative-answer.prompt.toggle-label": "Utilitzeu una prompt específica",
