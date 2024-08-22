@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Textarea from '../../common/textarea/Textarea.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import { _ } from '../../core/i18n';
   import { ask } from '../../core/stores/effects';
@@ -6,7 +7,7 @@
   export let placeholder = '';
   export let fullscreen;
 
-  let inputElement: HTMLInputElement;
+  let inputElement: Textarea;
   let question = '';
   let isListening = false;
 
@@ -19,9 +20,9 @@
     }
   };
 
-  const onKeyPress = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
+  const onKeyPress = (event: { detail: KeyboardEvent }) => {
+    if (event.detail.key === 'Enter') {
+      event.detail.preventDefault();
       askQuestion();
     }
   };
@@ -34,15 +35,11 @@
   <div class="icon">
     <Icon name="chat" />
   </div>
-  <input
+  <Textarea
     name="nuclia-chat-field"
     bind:this={inputElement}
     {placeholder}
-    tabindex="0"
-    autocomplete="off"
-    autocapitalize="off"
-    spellcheck="false"
-    aria-label={$_('answer.input.label')}
+    ariaLabel={$_('answer.input.label')}
     bind:value={question}
     on:keypress={onKeyPress} />
 </div>

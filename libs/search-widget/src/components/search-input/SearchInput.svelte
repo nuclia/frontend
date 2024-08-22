@@ -47,15 +47,16 @@
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
   import SearchFilters from '../search-filters/SearchFilters.svelte';
   import type { Classification } from '@nuclia/core';
+  import Textarea from '../../common/textarea/Textarea.svelte';
 
-  let searchInputElement: HTMLInputElement;
+  let searchInputElement: Textarea;
   const dispatch = createEventDispatcher();
 
   let inputContainerElement: HTMLElement | undefined;
   let filterButtonElement: HTMLElement | undefined;
   let filterContainerElement: HTMLElement | undefined;
   let position: DOMRect | undefined;
-  let filterDropdownPosition: { top: number, left: number, width: number } | undefined;
+  let filterDropdownPosition: { top: number; left: number; width: number } | undefined;
   let showSuggestions = false;
   let showFilterDropdowns = false;
   let hasFilters = false;
@@ -76,32 +77,34 @@
     autofilters,
   ]).pipe(
     map(([rangeCreation, labels, labelSets, entities, autofilters]) => [
-      ...Object.entries(rangeCreation).filter(([,value]) => !!value).map(([key, value]) => ({
-        type: `creation-${key}`,
-        key,
-        value: new Intl.DateTimeFormat(navigator.language, { timeZone: 'UTC' }).format(new Date(value)),
-      })),
+      ...Object.entries(rangeCreation)
+        .filter(([, value]) => !!value)
+        .map(([key, value]) => ({
+          type: `creation-${key}`,
+          key,
+          value: new Intl.DateTimeFormat(navigator.language, { timeZone: 'UTC' }).format(new Date(value)),
+        })),
       ...labels.map((value) => ({
         type: 'label',
         key: value.classification.label + value.classification.labelset,
-        value: value.classification
+        value: value.classification,
       })),
       ...labelSets.map((value) => ({
         type: 'labelset',
         key: `labelset-${value.id}`,
-        value: value.id
+        value: value.id,
       })),
       ...entities.map((value) => ({
         type: 'entity',
         key: value.family + value.entity,
-        value
+        value,
       })),
       ...autofilters.map((value) => ({
         type: 'entity',
         key: value.family + value.entity,
         value,
-        autofilter: true
-      }))
+        autofilter: true,
+      })),
     ]),
     tap((filters) => {
       // search box size changes when there are filters or not
@@ -110,8 +113,10 @@
         hasFilters = hasFiltersNow;
         setTimeout(() => setInputPosition());
       }
-      setTimeout(() => filterHeight = filterContainerElement ? `${filterContainerElement.offsetHeight}px` : undefined);
-    })
+      setTimeout(
+        () => (filterHeight = filterContainerElement ? `${filterContainerElement.offsetHeight}px` : undefined),
+      );
+    }),
   );
 
   const suggestionModalMinWidth = 384;
@@ -143,7 +148,7 @@
     } else if (filter.type === 'creation-end') {
       creationEnd.set(undefined);
     } else if (filter.type === 'label') {
-      removeLabelFilter((filter.value as Classification));
+      removeLabelFilter(filter.value as Classification);
     } else if (filter.type === 'labelset') {
       removeLabelSetFilter(filter.value as string);
     } else if (filter.type === 'entity') {
@@ -153,9 +158,9 @@
     }
   };
 
-  const onKeyPress = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
+  const onKeyPress = (event: { detail: KeyboardEvent }) => {
+    if (event.detail.key === 'Enter') {
+      event.detail.preventDefault();
       const entity = selectedEntity.getValue();
       if (showSuggestions && entity) {
         autocompleteEntity(entity);
@@ -169,17 +174,17 @@
     }
   };
 
-  const onKeyUp = (event: KeyboardEvent) => {
+  const onKeyUp = (event: { detail: KeyboardEvent }) => {
     if (showSuggestions && suggestedEntities.getValue().length > 0) {
-      if (event.key === 'ArrowDown') {
+      if (event.detail.key === 'ArrowDown') {
         selectNextEntity.do();
-      } else if (event.key === 'ArrowUp') {
+      } else if (event.detail.key === 'ArrowUp') {
         selectPrevEntity.do();
       }
     }
   };
 
-  const autocompleteEntity = (entity: { family: string; value: string; }) => {
+  const autocompleteEntity = (entity: { family: string; value: string }) => {
     searchOptions.pipe(take(1)).subscribe((options) => {
       autocomplete(entity.value);
       if (options.autofilter) {
@@ -188,7 +193,7 @@
       }
       search();
     });
-  }
+  };
 
   const closeSuggestions = () => {
     showSuggestions = false;
@@ -205,12 +210,11 @@
       const buttonPosition = filterButtonElement.getBoundingClientRect();
       if (buttonPosition.left + width < window.innerWidth) {
         filterDropdownPosition = { top: buttonPosition.top - 5, left: buttonPosition.right + 16, width };
-      }
-      else {
+      } else {
         filterDropdownPosition = { top: buttonPosition.bottom + 4, left: buttonPosition.right - width, width };
       }
     }
-  }
+  };
 
   function clear() {
     suggestionState.reset();
@@ -227,8 +231,7 @@
   class:has-filters={$filters.length > 0}
   class:has-logo={!$hideLogo}
   bind:this={inputContainerElement}
-  style:--filters-height={filterHeight}
->
+  style:--filters-height={filterHeight}>
   {#if !$hideLogo}
     <img
       src={`${getCDN()}logos/nuclia-grey.svg`}
@@ -236,7 +239,9 @@
       alt="Nuclia" />
   {/if}
   <div class="input-container">
-    <div class="search-icon-container">
+    <div
+      class="search-icon-container"
+      class:has-cross={$typeAhead.length > 0}>
       {#if $typeAhead.length > 0}
         <IconButton
           aspect="basic"
@@ -251,20 +256,15 @@
         </div>
       {/if}
     </div>
-    <input
-      bind:this={searchInputElement}
-      class="search-field"
+    <Textarea
       name="nuclia-search-field"
+      ariaLabel="Search input"
       placeholder={$_($widgetPlaceholder)}
-      tabindex="0"
-      autocomplete="off"
-      autocapitalize="off"
-      spellcheck="false"
-      aria-label="Search input"
+      bind:this={searchInputElement}
       bind:value={$typeAhead}
       on:input={() => triggerSuggestions.next()}
       on:keypress={onKeyPress}
-      on:keyup={onKeyUp}/>
+      on:keyup={onKeyUp}></Textarea>
 
     {#if $hasFilterButton}
       <div bind:this={filterButtonElement}>

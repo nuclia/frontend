@@ -15,6 +15,7 @@
   import IconButton from '../../../../common/button/IconButton.svelte';
   import { widgetPlaceholder } from '../../../../core/stores/widget.store';
   import { searchQuery, triggerSearch } from '../../../../core/stores/search.store';
+  import Textarea from '../../../../common/textarea/Textarea.svelte';
 
   let searchInputElement: HTMLInputElement;
   const dispatch = createEventDispatcher();
@@ -48,9 +49,9 @@
     searchInputElement.blur();
   };
 
-  const onKeyPress = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
+  const onKeyPress = (event: { detail: KeyboardEvent }) => {
+    if (event.detail.key === 'Enter') {
+      event.detail.preventDefault();
       search();
       showSuggestions = false;
     } else {
@@ -75,7 +76,6 @@
   autocomplete="off"
   class="sw-search-input search-bar-widget"
   bind:this={inputContainerElement}>
-
   <div class="input-container">
     <div class="search-icon-container">
       {#if $typeAhead.length > 0}
@@ -92,22 +92,17 @@
         </div>
       {/if}
     </div>
-    <input
+    <Textarea
       bind:this={searchInputElement}
-      class="search-field"
       name="nuclia-search-field"
       placeholder={$_($widgetPlaceholder)}
       tabindex="0"
-      autocomplete="off"
-      autocapitalize="off"
-      spellcheck="false"
-      aria-label="Search input"
+      ariaLabel="Search input"
       bind:value={$typeAhead}
       on:input={() => triggerSuggestions.next()}
       on:keypress={onKeyPress} />
   </div>
 </form>
-
 
 <Modal
   show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
