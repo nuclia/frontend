@@ -643,6 +643,7 @@
 	"metrics.processing.title": "Temps de processament",
 	"metrics.search.title": "Consultes de cerca",
 	"metrics.units.hours": "Hores",
+	"metrics.units.percent": "Per cent",
 	"metrics.units.queries": "Consultes",
 	"metrics.units.tokens": "Tokens",
 	"modal.create_link.css-selector.label": "Selector CSS",

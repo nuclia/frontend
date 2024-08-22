@@ -643,6 +643,7 @@
 	"metrics.processing.title": "Temps de traitement",
 	"metrics.search.title": "Requêtes de recherche",
 	"metrics.units.hours": "Heures",
+	"metrics.units.percent": "Pourcentage",
 	"metrics.units.queries": "Requêtes",
 	"metrics.units.tokens": "Tokens",
 	"modal.create_link.css-selector.label": "Sélecteur CSS",
