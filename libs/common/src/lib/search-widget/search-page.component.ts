@@ -44,21 +44,15 @@ export class SearchPageComponent {
           filter((widgetName) => !!widgetName),
           map((widgetName) => widgetName as string),
           switchMap((widgetName) =>
-            this.sdk.currentKb.pipe(
-              take(1),
-              map((kb) =>
-                this.searchWidgetService.createWidget(
-                  kb.id,
-                  widgetName,
-                  DEFAULT_WIDGET_CONFIG,
-                  searchConfigId,
-                  generativeModel,
-                  vectorset,
-                ),
-              ),
-              switchMap((widgetSlug) => this.router.navigate(['../widgets', widgetSlug], { relativeTo: this.route })),
+            this.searchWidgetService.createWidget(
+              widgetName,
+              DEFAULT_WIDGET_CONFIG,
+              searchConfigId,
+              generativeModel,
+              vectorset,
             ),
           ),
+          switchMap((widgetSlug) => this.router.navigate(['../widgets', widgetSlug], { relativeTo: this.route })),
         )
         .subscribe();
     }

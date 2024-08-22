@@ -36,6 +36,7 @@ export interface IKnowledgeBoxCreation {
   zone: string;
   uuid?: string;
   allowed_origins?: string[] | null;
+  search_configs?: { [key: string]: any };
 }
 
 export interface IKnowledgeBoxItem extends IKnowledgeBoxCreation {

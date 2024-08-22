@@ -208,16 +208,19 @@ export class SDKService {
     });
 
     if (refreshCurrentKb) {
-      forkJoin([this.currentAccount.pipe(take(1)), this.currentKb.pipe(take(1))])
-        .pipe(
-          switchMap(([account, kb]) =>
-            this.nuclia.db
-              .getKnowledgeBox(account.id, kb.id, kb.zone)
-              .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug || account.id, data))),
-          ),
-        )
-        .subscribe((kb) => this._currentKB.next(kb));
+      this.refreshCurrentKb().subscribe();
     }
+  }
+
+  refreshCurrentKb() {
+    return forkJoin([this.currentAccount.pipe(take(1)), this.currentKb.pipe(take(1))]).pipe(
+      switchMap(([account, kb]) =>
+        this.nuclia.db.getKnowledgeBox(account.id, kb.id, kb.zone).pipe(
+          map((data) => new WritableKnowledgeBox(this.nuclia, account.slug || account.id, data)),
+          tap((newKb) => this._currentKB.next(newKb)),
+        ),
+      ),
+    );
   }
 
   private countersRefreshSubscriptions() {

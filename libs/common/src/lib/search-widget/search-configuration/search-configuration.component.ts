@@ -31,9 +31,9 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { RouterLink } from '@angular/router';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { SearchWidgetService } from '../search-widget.service';
-import { filter, forkJoin, map, Subject, switchMap, take } from 'rxjs';
+import { filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   GenerativeAnswerConfig,
@@ -81,6 +81,7 @@ export class SearchConfigurationComponent {
   private modalService = inject(SisModalService);
   private searchWidgetService = inject(SearchWidgetService);
   private toaster = inject(SisToastService);
+  private features = inject(FeaturesService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -118,6 +119,7 @@ export class SearchConfigurationComponent {
   initialised = false;
 
   isConfigModified = false;
+  canModifyConfig = this.features.isKbAdmin;
 
   get isNucliaConfig() {
     return this.selectedConfig.value?.startsWith('nuclia-');
@@ -126,22 +128,19 @@ export class SearchConfigurationComponent {
   ngOnInit() {
     this.sdk.currentKb
       .pipe(
-        takeUntil(this.unsubscribeAll),
+        take(1),
         switchMap((kb) => {
           return forkJoin([kb.getLearningSchema(), kb.getConfiguration()]).pipe(
             map(
               ([schema, config]) =>
-                ({ schema, config, kbId: kb.id }) as {
+                ({ schema, config }) as {
                   config: { [id: string]: any };
                   schema: LearningConfigurations;
-                  kbId: string;
                 },
             ),
           );
         }),
-      )
-      .subscribe({
-        next: ({ kbId, schema, config }) => {
+        tap(({ schema, config }) => {
           this.generativeModelFromSettings = config['generative_model'] || '';
           this.semanticModelFromSettings = config['semantic_model'] || '';
           this.generativeModelNames =
@@ -152,11 +151,13 @@ export class SearchConfigurationComponent {
               },
               {} as { [key: string]: string },
             ) || {};
-          this.setConfigurations(kbId);
           this.setModelsAndPrompt(schema, config);
           this.initialised = true;
           this.cdr.detectChanges();
-        },
+        }),
+        switchMap(() => this.setConfigurations()),
+      )
+      .subscribe({
         error: () => this.toaster.error('search.configuration.loading-error'),
       });
     this.searchWidgetService.logs
@@ -176,37 +177,43 @@ export class SearchConfigurationComponent {
     this.unsubscribeAll.complete();
   }
 
-  private setConfigurations(kbId: string) {
-    const standardConfigOption = new OptionModel({
-      id: 'nuclia-standard',
-      value: 'nuclia-standard',
-      label: this.translate.instant('search.configuration.options.nuclia-standard'),
-      help: this.generativeModelNames[this.generativeModelFromSettings] || this.generativeModelFromSettings,
-    });
+  private setConfigurations() {
+    return forkJoin([
+      this.sdk.currentKb.pipe(take(1)),
+      this.searchWidgetService.searchConfigurations.pipe(take(1)),
+    ]).pipe(
+      tap(([kb, savedConfigs]) => {
+        const standardConfigOption = new OptionModel({
+          id: 'nuclia-standard',
+          value: 'nuclia-standard',
+          label: this.translate.instant('search.configuration.options.nuclia-standard'),
+          help: this.generativeModelNames[this.generativeModelFromSettings] || this.generativeModelFromSettings,
+        });
 
-    const savedConfigs = this.searchWidgetService.getSavedSearchConfigs(kbId);
-    const configurations: OptionType[] = [standardConfigOption];
-    if (savedConfigs.length > 0) {
-      configurations.push(new OptionSeparator());
-    }
-    this.configurations = configurations.concat(
-      savedConfigs.map(
-        (item) =>
-          new OptionModel({
-            id: item.id,
-            value: item.id,
-            label: item.id,
-            help:
-              this.generativeModelNames[item.generativeAnswer?.generativeModel] ||
-              item.generativeAnswer?.generativeModel,
-          }),
-      ),
+        const configurations: OptionType[] = [standardConfigOption];
+        if (savedConfigs.length > 0) {
+          configurations.push(new OptionSeparator());
+        }
+        this.configurations = configurations.concat(
+          savedConfigs.map(
+            (item) =>
+              new OptionModel({
+                id: item.id,
+                value: item.id,
+                label: item.id,
+                help:
+                  this.generativeModelNames[item.generativeAnswer?.generativeModel] ||
+                  item.generativeAnswer?.generativeModel,
+              }),
+          ),
+        );
+
+        const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, savedConfigs);
+        this.savedConfig = savedConfig;
+        // config selection must be done in next check detection cycle for selection options to be there
+        setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
+      }),
     );
-
-    const savedConfig = this.searchWidgetService.getSelectedSearchConfig(kbId);
-    this.savedConfig = savedConfig;
-    // config selection must be done in next check detection cycle for selection options to be there
-    setTimeout(() => this.selectedConfig.patchValue(savedConfig.id));
   }
 
   private setModelsAndPrompt(schema: LearningConfigurations, config: { [key: string]: any }) {
@@ -270,12 +277,16 @@ export class SearchConfigurationComponent {
   }
 
   selectConfig(configId: string) {
-    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
-      this.searchWidgetService.saveSelectedSearchConfig(kb.id, configId);
-      this.savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id);
-      this.currentConfig = { ...this.savedConfig };
-      this.cdr.markForCheck();
-    });
+    forkJoin([this.searchWidgetService.searchConfigurations.pipe(take(1)), this.sdk.currentKb.pipe(take(1))]).subscribe(
+      ([configs, kb]) => {
+        this.searchWidgetService.saveSelectedSearchConfig(kb.id, configId);
+        this.savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, configs);
+        this.currentConfig = { ...this.savedConfig };
+        this.isConfigModified = false;
+        this.updateWidget();
+        this.cdr.markForCheck();
+      },
+    );
   }
 
   triggerCreateWidget() {
@@ -307,14 +318,18 @@ export class SearchConfigurationComponent {
     if (this.isConfigModified) {
       this.modalService
         .openModal(SaveConfigModalComponent)
-        .onClose.pipe(filter((confirm) => !!confirm))
-        .subscribe((configName) => this._saveConfig(configName));
+        .onClose.pipe(
+          filter((confirm) => !!confirm),
+          switchMap((configName) => this._saveConfig(configName)),
+          switchMap(() => this.setConfigurations()),
+        )
+        .subscribe();
     }
   }
 
   overwriteConfig() {
     if (this.isConfigModified && this.currentConfig) {
-      this._saveConfig(this.currentConfig.id);
+      this._saveConfig(this.currentConfig.id).subscribe();
     }
   }
 
@@ -330,24 +345,25 @@ export class SearchConfigurationComponent {
         })
         .onClose.pipe(
           filter((confirm) => !!confirm),
-          switchMap(() => this.sdk.currentKb.pipe(take(1))),
+          switchMap(() => this.searchWidgetService.deleteSearchConfig(config.id)),
+          switchMap(() => this.setConfigurations()),
         )
-        .subscribe((kb) => {
-          this.searchWidgetService.deleteSearchConfig(kb.id, config.id);
-          this.setConfigurations(kb.id);
-        });
+        .subscribe();
     }
   }
 
   private _saveConfig(configName: string) {
-    if (this.currentConfig) {
-      const config = this.currentConfig;
-      this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
-        this.searchWidgetService.saveSearchConfig(kb.id, configName, config);
-        this.setConfigurations(kb.id);
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        this.currentConfig
+          ? this.searchWidgetService.saveSearchConfig(kb.id, configName, this.currentConfig)
+          : of(undefined),
+      ),
+      tap(() => {
         this.isConfigModified = false;
-      });
-    }
+      }),
+    );
   }
 
   updateSearchBoxConfig(config: SearchBoxConfig) {

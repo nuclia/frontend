@@ -24,7 +24,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { SearchConfiguration, Widget } from '../../search-widget.models';
 import { SearchWidgetService } from '../../search-widget.service';
-import { combineLatest, filter, map, startWith, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, startWith, Subject, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, tap } from 'rxjs/operators';
 import { deepEqual, SDKService } from '@flaps/core';
@@ -115,29 +115,25 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.route.params
-      .pipe(
+      this.route.params.pipe(
         filter((params) => !!params['slug']),
         map((params) => params['slug'] as string),
+      ).pipe(
         switchMap((widgetSlug) =>
-          this.sdk.currentKb.pipe(
-            take(1),
-            map((kb) => ({ kbId: kb.id, widgetSlug })),
-          ),
+          forkJoin([this.sdk.currentKb.pipe(take(1)), this.searchWidgetService.widgetList.pipe(take(1))]).pipe(
+            map(([kb, widgets]) => ({ kbId: kb.id, widgetSlug, widget: widgets.find((widget) => widget.slug === widgetSlug) }))
+          )
         ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(({ kbId, widgetSlug }) => {
-        this.savedWidget = this.searchWidgetService.getSavedWidget(kbId, widgetSlug);
-        if (!this.savedWidget) {
+      .subscribe(({ kbId, widget, widgetSlug }) => {
+        if (!widget) {
           this.toaster.error(this.translate.instant('search.widgets.errors.widget-not-found', { widgetSlug }));
           this.router.navigate(['..'], { relativeTo: this.route });
         } else {
-          this.currentWidget = { ...this.savedWidget };
-          this.searchWidgetService.saveSelectedSearchConfig(kbId, this.savedWidget?.searchConfigId);
-          this.form.patchValue(this.currentWidget.widgetConfig);
+          this.searchWidgetService.saveSelectedSearchConfig(kbId, widget?.searchConfigId);
+          this.initWidget(widget);
         }
-        this.cdr.detectChanges();
       });
 
     combineLatest([this.form.valueChanges.pipe(startWith(this.form.getRawValue())), this.configChanges])
@@ -160,6 +156,13 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
+  private initWidget(widget: Widget) {
+    this.savedWidget = widget;
+    this.currentWidget = { ...this.savedWidget };
+    this.form.patchValue(this.currentWidget.widgetConfig);
+    this.cdr.detectChanges();
+  }
+
   updateWidgetOptionsHeight() {
     this.widgetOptionsItem?.updateContentHeight();
   }
@@ -167,19 +170,14 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   saveChanges() {
     const current = this.currentWidget;
     if (current) {
-      this.sdk.currentKb
-        .pipe(
-          take(1),
-          tap((kb) =>
-            this.searchWidgetService.updateWidget(kb.id, current.slug, current.widgetConfig, current.searchConfigId),
-          ),
-        )
-        .subscribe({
-          next: (kb) => {
-            this.savedWidget = this.searchWidgetService.getSavedWidget(kb.id, current.slug);
-            this.checkIsModified();
-          },
-        });
+      this.searchWidgetService.updateWidget(current.slug, current.widgetConfig, current.searchConfigId).pipe(
+        switchMap(() => this.searchWidgetService.widgetList.pipe(take(1))),
+      ).subscribe((widgets) => {
+        const widget = widgets.find((widget) => widget.slug === current.slug);
+        if (widget) {
+          this.initWidget(widget);
+        }
+      });
     }
   }
 
@@ -188,14 +186,15 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
 
   rename() {
-    if (this.savedWidget) {
-      const widget = this.savedWidget;
-      this.searchWidgetService.renameWidget(this.savedWidget.slug, this.savedWidget.name).subscribe((newName) => {
-        widget.name = newName;
-        if (this.currentWidget) {
-          this.currentWidget.name = newName;
+    const current = this.currentWidget;
+    if (current) {
+      this.searchWidgetService.renameWidget(current.slug, current.name).pipe(
+        switchMap(() => this.searchWidgetService.widgetList.pipe(take(1))),
+      ).subscribe((widgets) => {
+        const widget = widgets.find((widget) => widget.slug === current.slug);
+        if (widget) {
+          this.initWidget(widget);
         }
-        this.cdr.markForCheck();
       });
     }
   }

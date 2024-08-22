@@ -94,6 +94,11 @@ export interface Widget {
   widgetConfig: WidgetConfiguration;
 }
 
+export interface SearchAndWidgets {
+  searchConfigurations?: SearchConfiguration[];
+  widgets?: Widget[];
+}
+
 export const SAVED_CONFIG_KEY = 'NUCLIA_SELECTED_SEARCH_CONFIG';
 export const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
 export const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';

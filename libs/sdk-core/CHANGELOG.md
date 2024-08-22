@@ -3,6 +3,7 @@
 ### Improvement
 
 - Add `vectorset` option to Search
+- Add `search_configs` property to `IKnowledgeBoxCreation` interface
 
 # 1.19.2 (2024-08-19)
 

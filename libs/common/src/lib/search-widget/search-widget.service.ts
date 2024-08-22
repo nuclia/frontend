@@ -15,15 +15,13 @@ import {
   getWidgetTheme,
   NUCLIA_STANDARD_SEARCH_CONFIG,
   SAVED_CONFIG_KEY,
-  SAVED_WIDGETS_KEY,
-  SEARCH_CONFIGS_KEY,
   SearchConfiguration,
   Widget,
   WidgetConfiguration,
 } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
-import { BehaviorSubject, delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
+import { delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -31,7 +29,7 @@ import { ResourceViewerService } from '../resources';
 import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from './widgets/dialogs';
 import { SisModalService } from '@nuclia/sistema';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
-import { compareDesc } from 'date-fns';
+import { SearchWidgetStorageService } from './search-widget-storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -44,21 +42,20 @@ export class SearchWidgetService {
   private storage = inject(LOCAL_STORAGE);
   private modalService = inject(SisModalService);
   private viewerService = inject(ResourceViewerService);
+  private searchWidgetStorage = inject(SearchWidgetStorageService)
 
   private currentQuery = '';
   private currentFilters: string[] = [];
   private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string }>();
-  private _widgetList = new BehaviorSubject<Widget[]>([]);
   private _logs = new Subject<any>();
   widgetPreview = this._widgetPreview.asObservable();
-  widgetList: Observable<Widget[]> = this._widgetList
-    .asObservable()
-    .pipe(map((widgets) => widgets.sort((a, b) => compareDesc(a.creationDate, b.creationDate))));
   logs = this._logs.asObservable();
   private _generateWidgetSnippetSubject = new Subject<{
     currentConfig: SearchConfiguration;
     widgetOptions: WidgetConfiguration;
   }>();
+  searchConfigurations = this.searchWidgetStorage.searchConfigurations;
+  widgetList = this.searchWidgetStorage.widgetList;
 
   constructor() {
     this._generateWidgetSnippetSubject
@@ -71,40 +68,34 @@ export class SearchWidgetService {
       .subscribe();
   }
 
-  getSelectedSearchConfig(kbId: string): SearchConfiguration {
+  getSelectedSearchConfig(kbId: string, configs: SearchConfiguration[]): SearchConfiguration {
     const standardConfiguration = { ...NUCLIA_STANDARD_SEARCH_CONFIG };
     const savedConfigMap: { [kbId: string]: string } = JSON.parse(this.storage.getItem(SAVED_CONFIG_KEY) || '{}');
     const savedConfigId = savedConfigMap[kbId];
     if (!savedConfigId) {
       return standardConfiguration;
     }
-    const configs = this.getSavedSearchConfigs(kbId);
     const savedConfig = configs.find((config) => config.id === savedConfigId);
     return savedConfig ? savedConfig : standardConfiguration;
   }
 
-  getSavedSearchConfigs(kbId: string): SearchConfiguration[] {
-    const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
-      this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
-    );
-    return configMap[kbId] || [];
-  }
-
   saveSearchConfig(kbId: string, name: string, config: SearchConfiguration) {
-    const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
-      this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
+    return this.searchConfigurations.pipe(
+      take(1),
+      switchMap((searchConfigs) => {
+        // Override the config if it exists, add it otherwise
+        const itemIndex = searchConfigs.findIndex((item) => item.id === name);
+        if (itemIndex > -1) {
+          searchConfigs[itemIndex] = config;
+        } else {
+          searchConfigs.push({ ...config, id: name });
+        }
+        return this.searchWidgetStorage.storeConfigs(searchConfigs);
+      }),
+      tap(() => {
+        this.saveSelectedSearchConfig(kbId, name);
+      }),
     );
-    const storedConfigs: SearchConfiguration[] = configMap[kbId] || [];
-    // Override the config if it exists, add it otherwise
-    const itemIndex = storedConfigs.findIndex((item) => item.id === name);
-    if (itemIndex > -1) {
-      storedConfigs[itemIndex] = config;
-    } else {
-      storedConfigs.push({ ...config, id: name });
-    }
-    configMap[kbId] = storedConfigs;
-    this.storage.setItem(SEARCH_CONFIGS_KEY, JSON.stringify(configMap));
-    this.saveSelectedSearchConfig(kbId, name);
   }
 
   saveSelectedSearchConfig(kbId: string, name: string) {
@@ -113,17 +104,17 @@ export class SearchWidgetService {
     this.storage.setItem(SAVED_CONFIG_KEY, JSON.stringify(selectionMap));
   }
 
-  deleteSearchConfig(kbId: string, configId: string) {
-    const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
-      this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
+  deleteSearchConfig(configId: string) {
+    return this.searchConfigurations.pipe(
+      take(1),
+      switchMap((searchConfigs) => {
+        const itemIndex = searchConfigs.findIndex((item) => item.id === configId);
+        if (itemIndex > -1) {
+          searchConfigs.splice(itemIndex, 1);
+        }
+        return this.searchWidgetStorage.storeConfigs(searchConfigs);
+      }),
     );
-    const storedConfigs: SearchConfiguration[] = configMap[kbId] || [];
-    const itemIndex = storedConfigs.findIndex((item) => item.id === configId);
-    if (itemIndex > -1) {
-      storedConfigs.splice(itemIndex, 1);
-      configMap[kbId] = storedConfigs;
-      this.storage.setItem(SEARCH_CONFIGS_KEY, JSON.stringify(configMap));
-    }
   }
 
   generateWidgetSnippet(
@@ -258,9 +249,8 @@ export class SearchWidgetService {
   }
 
   /**
-   * Create a widget, store it in local storage and return its slug.
+   * Create a widget and return its slug.
    *
-   * @param kbId
    * @param name
    * @param widgetConfig
    * @param searchConfigId
@@ -268,65 +258,53 @@ export class SearchWidgetService {
    * @param vectorset Semantic model to be used for answering the query
    */
   createWidget(
-    kbId: string,
     name: string,
     widgetConfig: WidgetConfiguration,
     searchConfigId: string,
     generativeModel: string,
     vectorset: string,
-  ): string {
-    const storedWidgets = this.getKBWidgets(kbId);
-    let slug = STFUtils.generateSlug(name);
-    // if slug already exists in this KB, make it unique
-    if (storedWidgets.find((widget) => widget.slug === slug)) {
-      slug = `${slug}-${STFUtils.generateRandomSlugSuffix()}`;
-    }
-    storedWidgets.push({
-      slug,
-      name,
-      searchConfigId,
-      generativeModel,
-      widgetConfig,
-      vectorset,
-      creationDate: new Date().toISOString(),
-    });
-    this.storeKBWidgets(kbId, storedWidgets);
-    return slug;
+  ): Observable<string> {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) => {
+        let slug = STFUtils.generateSlug(name);
+        // if slug already exists in this KB, make it unique
+        if (storedWidgets.find((widget) => widget.slug === slug)) {
+          slug = `${slug}-${STFUtils.generateRandomSlugSuffix()}`;
+        }
+        storedWidgets.push({
+          slug,
+          name,
+          searchConfigId,
+          generativeModel,
+          widgetConfig,
+          vectorset,
+          creationDate: new Date().toISOString(),
+        });
+        return this.searchWidgetStorage.storeWidgets(storedWidgets).pipe(map(() => slug));
+      }),
+    );
   }
 
-  updateWidget(kbId: string, widgetSlug: string, widgetConfig: WidgetConfiguration, searchConfigId: string) {
-    const storedWidgets = this.getKBWidgets(kbId);
-    const widget = storedWidgets.find((widget) => widget.slug === widgetSlug);
-    if (widget) {
-      widget.searchConfigId = searchConfigId;
-      widget.widgetConfig = widgetConfig;
-    }
-    this.storeKBWidgets(kbId, storedWidgets);
-  }
-
-  getSavedWidget(kbId: string, widgetSlug: string): Widget | undefined {
-    const storedWidgets = this.getKBWidgets(kbId);
-    return storedWidgets.find((widget) => widget.slug === widgetSlug);
-  }
-
-  initWidgetList(kbId: string) {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    this._widgetList.next(widgetsByKbMap[kbId] || []);
+  updateWidget(widgetSlug: string, widgetConfig: WidgetConfiguration, searchConfigId: string) {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) => {
+        const widget = storedWidgets.find((widget) => widget.slug === widgetSlug);
+        if (widget) {
+          widget.searchConfigId = searchConfigId;
+          widget.widgetConfig = widgetConfig;
+        }
+        return this.searchWidgetStorage.storeWidgets(storedWidgets);
+      }),
+    );
   }
 
   renameWidget(slug: string, name: string): Observable<string> {
     return this.modalService.openModal(RenameWidgetDialogComponent, new ModalConfig({ data: { name } })).onClose.pipe(
       filter((newName) => !!newName),
       map((newName) => newName as string),
-      switchMap((newName) =>
-        this.sdk.currentKb.pipe(
-          take(1),
-          map((kb) => {
-            this._renameWidget(kb.id, slug, newName);
-            return newName;
-          }),
-        ),
-      ),
+      switchMap((newName) => this._renameWidget(slug, newName).pipe(map(() => newName))),
     );
   }
 
@@ -336,16 +314,11 @@ export class SearchWidgetService {
       .onClose.pipe(
         filter((newName) => !!newName),
         map((newName) => newName as string),
-        switchMap((newName) =>
-          this.sdk.currentKb.pipe(
-            take(1),
-            map((kb) => this._duplicateWidget(kb.id, widget, newName)),
-          ),
-        ),
+        switchMap((newName) => this._duplicateWidget(widget, newName)),
       );
   }
 
-  deleteWidget(slug: string, name: string): Observable<void> {
+  deleteWidget(slug: string, name: string) {
     return this.modalService
       .openConfirm({
         title: this.translate.instant('search.widgets.dialog.delete-widget.title', { name }),
@@ -355,55 +328,53 @@ export class SearchWidgetService {
       })
       .onClose.pipe(
         filter((confirmed) => !!confirmed),
-        switchMap(() => this.sdk.currentKb.pipe(take(1))),
-        map((kb) => this._deleteWidget(kb.id, slug)),
+        switchMap(() => this._deleteWidget(slug)),
       );
   }
 
-  private _deleteWidget(kbId: string, slug: string) {
-    const storedWidgets = this.getKBWidgets(kbId);
-    const widgetIndex = storedWidgets.findIndex((widget) => widget.slug === slug);
-    if (widgetIndex > -1) {
-      storedWidgets.splice(widgetIndex, 1);
-    }
-    this.storeKBWidgets(kbId, storedWidgets);
+  private _deleteWidget(slug: string) {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) => {
+        const widgetIndex = storedWidgets.findIndex((widget) => widget.slug === slug);
+        if (widgetIndex > -1) {
+          storedWidgets.splice(widgetIndex, 1);
+        }
+        return this.searchWidgetStorage.storeWidgets(storedWidgets);
+      }),
+    );
   }
 
-  private _renameWidget(kbId: any, slug: string, newName: string) {
-    const storedWidgets = this.getKBWidgets(kbId);
-    const widget = storedWidgets.find((widget) => widget.slug === slug);
-    if (widget) {
-      widget.name = newName;
-    }
-    this.storeKBWidgets(kbId, storedWidgets);
+  private _renameWidget(slug: string, newName: string) {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) => {
+        const widget = storedWidgets.find((widget) => widget.slug === slug);
+        if (widget) {
+          widget.name = newName;
+        }
+        return this.searchWidgetStorage.storeWidgets(storedWidgets);
+      }),
+    );
   }
 
-  private _duplicateWidget(kbId: string, widget: Widget, newName: string): string {
-    const storedWidgets = this.getKBWidgets(kbId);
-    let slug = STFUtils.generateSlug(newName);
-    // if slug already exists in this KB, make it unique
-    if (storedWidgets.find((widget) => widget.slug === slug)) {
-      slug = `${slug}-${STFUtils.generateRandomSlugSuffix()}`;
-    }
-    storedWidgets.push({
-      ...widget,
-      slug,
-      name: newName,
-      creationDate: new Date().toISOString(),
-    });
-    this.storeKBWidgets(kbId, storedWidgets);
-    return slug;
-  }
-
-  private getKBWidgets(kbId: string): Widget[] {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    return widgetsByKbMap[kbId] || [];
-  }
-
-  private storeKBWidgets(kbId: string, updatedWidgets: Widget[]) {
-    const widgetsByKbMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
-    widgetsByKbMap[kbId] = updatedWidgets;
-    this.storage.setItem(SAVED_WIDGETS_KEY, JSON.stringify(widgetsByKbMap));
-    this._widgetList.next(updatedWidgets);
+  private _duplicateWidget(widget: Widget, newName: string): Observable<string> {
+    return this.widgetList.pipe(
+      take(1),
+      switchMap((storedWidgets) => {
+        let slug = STFUtils.generateSlug(newName);
+        // if slug already exists in this KB, make it unique
+        if (storedWidgets.find((widget) => widget.slug === slug)) {
+          slug = `${slug}-${STFUtils.generateRandomSlugSuffix()}`;
+        }
+        storedWidgets.push({
+          ...widget,
+          slug,
+          name: newName,
+          creationDate: new Date().toISOString(),
+        });
+        return this.searchWidgetStorage.storeWidgets(storedWidgets).pipe(map(() => slug));
+      }),
+    );
   }
 }
