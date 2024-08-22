@@ -16,7 +16,7 @@ export async function shouldEmitQuery(searchInput: HTMLInputElement | null) {
 describe('Search input', () => {
   it('should emit query', async () => {
     const { container } = render(SearchInput);
-    const searchInput = container.querySelector('input');
+    const searchInput = container.querySelector('textarea');
     await shouldEmitQuery(searchInput);
   });
 });
