@@ -1,48 +1,23 @@
 .sw-search-input {
-  --search-input-height: var(--rhythm-6);
-
   border: var(--search-bar-border);
   border-radius: var(--search-bar-border-radius);
   display: flex;
   flex-direction: column;
-  height: var(--search-input-height);
   max-width: var(--search-bar-max-width);
+  width: 100%;
   position: relative;
   transition:
     height var(--transition-fast),
     border-color var(--transition-superfast);
 
   .input-container {
-    align-items: center;
+    align-items: flex-start;
     box-sizing: border-box;
     display: flex;
     flex: 0 0 auto;
     padding-left: var(--rhythm-5);
     padding-right: var(--rhythm-1);
     position: relative;
-    height: var(--search-input-height);
-  }
-
-  input {
-    background-color: inherit;
-    border: 0;
-    box-sizing: border-box;
-    color: inherit;
-    font-family: inherit;
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-body);
-    line-height: calc(var(--line-height-body) * 1.5);
-    outline: none;
-    text-overflow: ellipsis;
-    width: calc(100% - var(--rhythm-0_25));
-
-    -webkit-appearance: none;
-  }
-
-  input::placeholder {
-    color: var(--search-bar-placeholder-color);
-    opacity: 1;
-    transition: all 0s ease;
   }
 
   &:hover {
@@ -109,32 +84,22 @@
     gap: var(--rhythm-1);
   }
 
-  &.has-filters .input-container:after {
-    background: var(--color-neutral-light);
-    content: '';
-    height: 1px;
-    left: var(--rhythm-1);
-    position: absolute;
-    right: var(--rhythm-1);
-    top: var(--rhythm-6);
-  }
-
   &.has-filters .filters-container {
-    padding: var(--rhythm-1);
-  }
-  &.has-filters {
-    height: calc(var(--search-input-height) + var(--filters-height));
+    padding: var(--rhythm-1) 0;
+    margin: 0 var(--rhythm-1);
+    border-top: 1px solid var(--color-neutral-light);
   }
 
   .search-icon-container {
     left: var(--rhythm-0_5);
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
 
     .search-icon {
       display: flex;
-      padding: var(--rhythm-1_5) var(--rhythm-0_5);
+      padding: var(--rhythm-1) var(--rhythm-0_5);
+    }
+    &.has-cross {
+      margin-top: var(--rhythm-0_5);
     }
   }
 }

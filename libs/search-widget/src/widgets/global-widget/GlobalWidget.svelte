@@ -36,7 +36,7 @@
   import { typeAhead } from '../../core/stores/suggestions.store';
   import { take } from 'rxjs/operators';
   import { logEvent } from '../../core';
-  import { InitialAnswer, ResultRow, SearchInput } from './components'
+  import { InitialAnswer, ResultRow, SearchInput } from './components';
   import { LoadingDots, InfiniteScroll } from '../../common';
   import { debounceTime } from 'rxjs';
 
@@ -135,9 +135,11 @@
 
     const globalSearchButtons = document.querySelectorAll('[data-nuclia="global-search-button"]');
     if (globalSearchButtons.length > 0) {
-      globalSearchButtons.forEach((button) => button.addEventListener('click', toggleSearchVisibility))
+      globalSearchButtons.forEach((button) => button.addEventListener('click', toggleSearchVisibility));
     } else {
-      console.error(`No button found to open Nuclia’s global search. Make sure you added 'data-nuclia="global-search-button"' to your search button.`);
+      console.error(
+        `No button found to open Nuclia’s global search. Make sure you added 'data-nuclia="global-search-button"' to your search button.`,
+      );
     }
 
     ready = true;
@@ -164,7 +166,7 @@
     });
     return {
       destroy: () => tracking.unsubscribe(),
-    }
+    };
   }
   function toggleSearchVisibility() {
     visible = !visible;
@@ -193,11 +195,13 @@
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready && !!svgSprite && visible}
-    <div class="backdrop"
-         on:keyup={onBackdropKeyup}
-         on:click={onBackdropClick}>
-      <div class="search-container"
-           class:with-results={$showResults && !$isEmptySearchQuery}>
+    <div
+      class="backdrop"
+      on:keyup={onBackdropKeyup}
+      on:click={onBackdropClick}>
+      <div
+        class="search-container"
+        class:with-results={$showResults && !$isEmptySearchQuery}>
         <div class="search-bar-container">
           <SearchInput />
         </div>
@@ -224,8 +228,7 @@
                 </div>
               {/if}
               <div class="results-container">
-                <div
-                  class="results">
+                <div class="results">
                   {#if $isAnswerEnabled}
                     <div bind:offsetHeight={answerHeight}>
                       <InitialAnswer />
@@ -256,7 +259,6 @@
         </div>
       </div>
     </div>
-
   {/if}
   <div
     id="nuclia-glyphs-sprite"

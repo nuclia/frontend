@@ -1,11 +1,10 @@
 .sw-chat-input {
-  align-items: center;
+  align-items: flex-start;
   box-sizing: border-box;
   display: flex;
   flex: 1 0 auto;
   position: relative;
   border: 1px solid var(--border-color);
-  height: var(--rhythm-6);
 
   &.highlight {
     background-color: var(--color-tertiary-lighter);
@@ -13,32 +12,11 @@
 
   .icon {
     display: flex;
-    margin: 0 var(--rhythm-2);
+    margin: var(--rhythm-1) var(--rhythm-2);
   }
   .microphone {
     display: flex;
     margin: 0 var(--rhythm-1);
-  }
-
-  input {
-    background-color: inherit;
-    border: 0;
-    box-sizing: border-box;
-    color: inherit;
-    font-family: inherit;
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-body);
-    line-height: calc(var(--line-height-body) * 1.5);
-    outline: none;
-    text-overflow: ellipsis;
-    width: calc(100% - var(--rhythm-0_25));
-
-    -webkit-appearance: none;
-  }
-
-  input::placeholder {
-    color: var(--color-neutral-regular);
-    transition: all 0s ease;
   }
 }
 @media (max-width: 598px) {
