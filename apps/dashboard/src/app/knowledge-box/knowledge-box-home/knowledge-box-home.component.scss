@@ -37,6 +37,10 @@
     pa-icon {
       display: flex;
     }
+
+    .body-s {
+      color: $color-neutral-regular;
+    }
   }
 
   .title-with-action {
@@ -46,6 +50,16 @@
 
     pa-button {
       margin-right: calc(-1 * #{rhythm(1)});
+    }
+  }
+
+  .select-container {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    pa-select {
+      min-width: 50%;
     }
   }
 

@@ -9,6 +9,7 @@ import {
   EmptyComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
+  MetricsPageComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   PromptLabComponent,
@@ -131,6 +132,11 @@ const routes: Routes = [
               {
                 path: 'keys',
                 component: KnowledgeBoxKeysComponent,
+                canActivate: [knowledgeBoxOwnerGuard],
+              },
+              {
+                path: 'metrics',
+                component: MetricsPageComponent,
                 canActivate: [knowledgeBoxOwnerGuard],
               },
               {

@@ -12,15 +12,9 @@ import { CommonModule } from '@angular/common';
 import * as d3 from 'd3';
 import { BaseChartDirective } from '../base-chart.directive';
 import { TranslateService } from '@ngx-translate/core';
+import { RangeChartData } from './range.models';
 
 let nextUniqueId = 0;
-
-export interface RangeChartData {
-  category: string;
-  average: number;
-  min: number;
-  max: number;
-}
 
 @Component({
   selector: 'stf-range-chart',

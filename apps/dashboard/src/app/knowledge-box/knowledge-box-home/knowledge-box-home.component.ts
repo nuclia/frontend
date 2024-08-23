@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
-import { AppService, searchResources, UploadService } from '@flaps/common';
+import { AppService, RangeChartData, RemiMetricsService, searchResources } from '@flaps/common';
 import { ChartData, MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
@@ -25,6 +25,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   isKbAdmin = this.features.isKbAdmin;
   isKbContrib = this.features.isKBContrib;
   isAccountManager = this.features.isAccountManager;
+  isRemiMetricsEnabled = this.features.unstable.remiMetrics;
 
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
@@ -124,6 +125,8 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     slug: 'copy',
   };
 
+  healthCheckData: Observable<RangeChartData[]> = this.remiMetrics.healthCheckData;
+
   constructor(
     private app: AppService,
     private sdk: SDKService,
@@ -131,10 +134,10 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     private tracking: STFTrackingService,
     private features: FeaturesService,
     private navigationService: NavigationService,
-    private uploadService: UploadService,
     private metrics: MetricsService,
     private modal: SisModalService,
     private zoneService: ZoneService,
+    private remiMetrics: RemiMetricsService,
   ) {}
 
   ngOnDestroy() {

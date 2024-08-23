@@ -56,6 +56,7 @@ export class FeaturesService {
     ragImages: this.featureFlag.isFeatureEnabled('rag-images'),
     synonyms: this.featureFlag.isFeatureEnabled('synonyms-enabled'),
     externalIndex: this.featureFlag.isFeatureEnabled('external-index-provider'),
+    remiMetrics: this.featureFlag.isFeatureEnabled('remi-metrics'),
 
     // FEATURES meant to go to authorized features once stable
     taskAutomation: combineLatest([

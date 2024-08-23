@@ -1,0 +1,44 @@
+@import 'apps/dashboard/src/variables';
+
+.remi-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+
+  .period-container {
+    align-items: baseline;
+    background: $color-light-stronger;
+    display: flex;
+    gap: rhythm(0.5);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    label {
+      @include font-size(m);
+      @include line-height(l);
+      font-weight: $font-weight-regular;
+    }
+  }
+
+  .chart-container {
+    display: inline-block;
+    text-align: center;
+    width: calc((100% - #{rhythm(2)}* 2) / 3);
+    max-width: rhythm(60);
+
+    &:not(:last-child) {
+      margin-right: rhythm(2);
+    }
+  }
+
+  section:not(.period-container) {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+  }
+
+  .context-list {
+    margin: 0;
+  }
+}
