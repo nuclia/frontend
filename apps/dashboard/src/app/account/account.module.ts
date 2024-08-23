@@ -50,7 +50,8 @@ import { CheckoutComponent } from './billing/checkout/checkout.component';
 import { MySubscriptionComponent } from './billing/my-subscription/my-subscription.component';
 import { UsageComponent } from './billing/usage/usage.component';
 import { HistoryComponent } from './billing/history/history.component';
-
+import { NucliaTokensComponent } from './nuclia-tokens';
+ 
 const routes: Routes = [
   {
     path: '',
@@ -163,6 +164,7 @@ const routes: Routes = [
     PaTooltipModule,
     UnauthorizedFeatureComponent,
     UnauthorizedFeatureDirective,
+    NucliaTokensComponent,
   ],
   declarations: [
     AccountHomeComponent,

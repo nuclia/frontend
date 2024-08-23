@@ -139,6 +139,7 @@ export interface NucliaTokensDetails extends CommonMetricDetails {
     source: string;
     version: string;
     model: string | null;
+    service: string;
   };
   nuclia_tokens: {
     search: number | null;

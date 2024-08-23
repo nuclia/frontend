@@ -1,10 +1,20 @@
 <div class="account-home page-spacing">
   <div class="container-row">
-    @if (isSubscribed | async) {
-      <div class="processing-stats">
-        <app-usage-table [usage]="usage | async"></app-usage-table>
+    <div class="consumption-stats">
+      <div>
+        <h2 class="page-title">{{ 'account.consumption' | translate }}</h2>
+          <div class="page-description">
+            @if (isSubscribed | async) {
+              {{ 'account.consumption-since' | translate: { since: (period | async)?.start || '' | date: 'YYYY-MM-dd' } }}
+            } @else {
+              {{ 'account.consumption-description' | translate }}
+            }
+          </div>
       </div>
-    } @else {
+      <app-nuclia-tokens></app-nuclia-tokens>
+    </div>
+
+    <!--
       <div class="processing-stats">
         <div class="consumption-header">
           <div>
@@ -38,7 +48,7 @@
           }
         }
       </div>
-    }
+      -->
 
     <div class="right-column">
       @if (canUpgrade | async) {

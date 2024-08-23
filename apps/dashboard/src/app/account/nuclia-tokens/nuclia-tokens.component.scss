@@ -1,0 +1,28 @@
+@import 'apps/dashboard/src/variables';
+
+.total {
+  margin-bottom: rhythm(4);
+  strong {
+    color: $color-primary-regular;
+  }
+}
+
+.header {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: rhythm(3);
+  pa-icon {
+    margin-right: rhythm(1);
+  }
+}
+
+.select-kb {
+  width: rhythm(35);
+}
+
+.type {
+  align-items: center;
+  display: flex;
+  gap: rhythm(0.5);
+}

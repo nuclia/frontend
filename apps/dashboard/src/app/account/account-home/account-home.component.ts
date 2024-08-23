@@ -20,6 +20,7 @@ export class AccountHomeComponent implements OnInit {
   isSubscribed = this.metrics.isSubscribed;
   usage = this.metrics.accountUsage;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
+  period = this.metrics.subscriptionPeriod;
 
   kbs = this.sdk.kbList;
   usageTypes = [UsageType.SEARCHES_PERFORMED, UsageType.SLOW_PROCESSING_TIME];
