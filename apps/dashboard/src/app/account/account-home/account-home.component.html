@@ -4,8 +4,8 @@
       <div>
         <h2 class="page-title">{{ 'account.consumption' | translate }}</h2>
         <div class="page-description">
-          @if (isSubscribed | async) {
-            {{ 'account.consumption-since' | translate: { since: (period | async)?.start || '' | date: 'YYYY-MM-dd' } }}
+          @if ((isSubscribed | async) && (period | async)) {
+            {{ 'account.consumption-since' | translate: { since: (period | async)?.start | date: 'YYYY-MM-dd' } }}
           } @else {
             {{ 'account.consumption-description' | translate }}
           }
