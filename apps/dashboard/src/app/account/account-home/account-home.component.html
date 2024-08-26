@@ -3,53 +3,16 @@
     <div class="consumption-stats">
       <div>
         <h2 class="page-title">{{ 'account.consumption' | translate }}</h2>
-          <div class="page-description">
-            @if (isSubscribed | async) {
-              {{ 'account.consumption-since' | translate: { since: (period | async)?.start || '' | date: 'YYYY-MM-dd' } }}
-            } @else {
-              {{ 'account.consumption-description' | translate }}
-            }
-          </div>
+        <div class="page-description">
+          @if (isSubscribed | async) {
+            {{ 'account.consumption-since' | translate: { since: (period | async)?.start || '' | date: 'YYYY-MM-dd' } }}
+          } @else {
+            {{ 'account.consumption-description' | translate }}
+          }
+        </div>
       </div>
       <app-nuclia-tokens></app-nuclia-tokens>
     </div>
-
-    <!--
-      <div class="processing-stats">
-        <div class="consumption-header">
-          <div>
-            <h2 class="page-title">{{ 'account.monthly_consumables' | translate }}</h2>
-            <div class="page-description">{{ 'account.accumulated_consumption' | translate }}</div>
-          </div>
-          <pa-button
-            (click)="toggleCharts()"
-            [icon]="allCharts ? 'chevron-up' : 'chevron-down'"
-            aspect="basic"></pa-button>
-        </div>
-
-        @if (charts | async; as charts) {
-          @for (usageType of allCharts ? usageTypes : [usageTypes[0]]; track usageType) {
-            <div class="chart-container">
-              <div class="chart-header">
-                <div class="title-m">{{ 'account.chart.' + usageType | translate }}</div>
-              </div>
-              @if (charts[usageType]; as chart) {
-                <app-line-chart
-                  area
-                  tooltipsEnabled
-                  [data]="chart.data"
-                  [xDomain]="chart.domain"
-                  [yDomain]="{ min: 0 }"
-                  [yUnit]="chart.yUnit || '' | translate"
-                  [xAxisTickOptions]="{ modulo: 2 }"
-                  [height]="260"></app-line-chart>
-              }
-            </div>
-          }
-        }
-      </div>
-      -->
-
     <div class="right-column">
       @if (canUpgrade | async) {
         <app-account-status></app-account-status>
