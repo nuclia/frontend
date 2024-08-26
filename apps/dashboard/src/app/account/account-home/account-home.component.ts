@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { IKnowledgeBoxItem, UsageType } from '@nuclia/core';
-import { filter, Observable, switchMap, take } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
-import { ChartData, MetricsService } from '../metrics.service';
+import { MetricsService } from '../metrics.service';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { InviteCollaboratorsModalComponent } from '../invite-collaborators-modal';
 
@@ -18,14 +18,10 @@ export class AccountHomeComponent implements OnInit {
   account$ = this.metrics.account$;
   canUpgrade = this.metrics.canUpgrade;
   isSubscribed = this.metrics.isSubscribed;
-  usage = this.metrics.accountUsage;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
+  period = this.metrics.subscriptionPeriod;
 
   kbs = this.sdk.kbList;
-  usageTypes = [UsageType.SEARCHES_PERFORMED, UsageType.SLOW_PROCESSING_TIME];
-
-  allCharts = true;
-  charts: Observable<Partial<{ [key in UsageType]: ChartData }>> = this.metrics.getCumulativeUsageCharts();
 
   constructor(
     private sdk: SDKService,
@@ -50,11 +46,6 @@ export class AccountHomeComponent implements OnInit {
           new ModalConfig({ dismissable: false, data: { accountSlug: params['account'] } }),
         );
       });
-  }
-
-  toggleCharts() {
-    this.allCharts = !this.allCharts;
-    this.cdr.markForCheck();
   }
 
   goToKb(account: string, kb: IKnowledgeBoxItem) {
