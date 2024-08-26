@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, QueryList, OnDestroy, ViewChildren } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  QueryList,
+  OnDestroy,
+  ViewChildren,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SDKService } from '@flaps/core';
 import {
@@ -13,8 +20,9 @@ import {
   switchMap,
   take,
   takeUntil,
+  tap,
 } from 'rxjs';
-import { NucliaTokensDetails } from '@nuclia/core';
+import { KnowledgeBox, LearningConfigurations, NucliaTokensDetails } from '@nuclia/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
@@ -24,7 +32,7 @@ import {
   PaIconModule,
   PaTableModule,
   PaTextFieldModule,
-  PaTooltipModule,
+  PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { MetricsService } from '../metrics.service';
 import { InfoCardComponent } from '@nuclia/sistema';
@@ -40,6 +48,7 @@ const groups = {
 interface NucliaTokensDetailsEnhanced extends NucliaTokensDetails {
   total: number;
   counters: { [key: string]: number };
+  modelName?: string;
   help?: string;
 }
 
@@ -59,7 +68,7 @@ interface NucliaTokensDetailsEnhanced extends NucliaTokensDetails {
     PaIconModule,
     PaTableModule,
     PaTextFieldModule,
-    PaTooltipModule,
+    PaPopupModule,
     TranslateModule,
   ],
 })
@@ -68,7 +77,7 @@ export class NucliaTokensComponent implements OnDestroy {
 
   @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
 
-  initialized = false;
+  loading = true;
   digitsInfo = '1.0-0';
   kbList = this.sdk.kbList;
   selectedKb = new BehaviorSubject<string>('all');
@@ -81,6 +90,9 @@ export class NucliaTokensComponent implements OnDestroy {
   );
 
   usage = combineLatest([this.sdk.currentAccount.pipe(take(1)), this.period.pipe(take(1)), this.selectedKb]).pipe(
+    tap(() => {
+      this.loading = true;
+    }),
     switchMap(([account, period, selectedKb]) => {
       const to = new Date();
       const kb = selectedKb === 'all' ? undefined : selectedKb;
@@ -89,29 +101,43 @@ export class NucliaTokensComponent implements OnDestroy {
     shareReplay(1),
   );
 
-  details: Observable<NucliaTokensDetailsEnhanced[]> = this.usage.pipe(
-    map(
-      (data) =>
-        (data[0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.details || []) as NucliaTokensDetails[],
-    ),
-    map(
-      (details) =>
-        details
-          .map((detail) => {
-            const helpTextKey = 'account.nuclia-tokens.help.' + detail.identifier.type;
-            return {
-              ...detail,
-              total: Object.values(detail.nuclia_tokens).reduce((acc: number, curr) => (acc || 0) + (curr || 0), 0),
-              counters: Object.entries(detail.nuclia_tokens)
-                .filter(([, value]) => value !== null && value !== 0)
-                .map((data) => data as [string, number])
-                .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as { [key: string]: number }),
-              help:
-                this.translate.instant(helpTextKey) !== helpTextKey ? this.translate.instant(helpTextKey) : undefined,
-            };
-          })
-          .filter((detail) => detail.total >= 1), // Hide details having less than 1 token
-    ),
+  schema = this.sdk.currentAccount.pipe(
+    switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
+    switchMap((kbs) => {
+      if (kbs.length === 0) {
+        return of({} as LearningConfigurations);
+      }
+      const kb = new KnowledgeBox(this.sdk.nuclia, '', kbs[0]);
+      this.sdk.nuclia.options.zone = kb.zone;
+      return kb.getLearningSchema();
+    }),
+    shareReplay(1),
+  );
+
+  details: Observable<NucliaTokensDetailsEnhanced[]> = combineLatest([this.usage, this.schema]).pipe(
+    map(([usage, schema]) => {
+      const details = (usage[0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.details ||
+        []) as NucliaTokensDetails[];
+      const models = schema['generative_model']?.options || [];
+      return details
+        .map((detail) => {
+          const helpTextKey = 'account.nuclia-tokens.help.' + detail.identifier.type;
+          return {
+            ...detail,
+            total: Object.values(detail.nuclia_tokens).reduce((acc: number, curr) => (acc || 0) + (curr || 0), 0),
+            counters: Object.entries(detail.nuclia_tokens)
+              .filter(([, value]) => value !== null && value !== 0)
+              .map((data) => data as [string, number])
+              .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as { [key: string]: number }),
+            modelName:
+              models.find((model) => model.value === detail.identifier.model)?.name ||
+              detail.identifier.model ||
+              undefined,
+            help: this.translate.instant(helpTextKey) !== helpTextKey ? this.translate.instant(helpTextKey) : undefined,
+          };
+        })
+        .filter((detail) => detail.total >= 1); // Hide details having less than 1 token
+    }),
   );
 
   visibleGroups = this.details.pipe(
@@ -127,6 +153,7 @@ export class NucliaTokensComponent implements OnDestroy {
           return {
             title: key,
             details: groupDetails,
+            displayModel: groupDetails.some((detail) => !!detail.identifier.model),
             total: groupDetails.reduce((acc, curr) => acc + curr.total, 0),
           };
         })
@@ -134,6 +161,7 @@ export class NucliaTokensComponent implements OnDestroy {
           {
             title: 'other',
             details: otherDetails,
+            displayModel: otherDetails.some((detail) => !!detail.identifier.model),
             total: otherDetails.reduce((acc, curr) => acc + curr.total, 0),
           },
         ])
@@ -150,12 +178,14 @@ export class NucliaTokensComponent implements OnDestroy {
     private sdk: SDKService,
     private metricsService: MetricsService,
     private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.visibleGroups.pipe(takeUntil(this.unsubscribeAll), delay(10)).subscribe(() => {
       this.accordionItems?.forEach((item) => {
         item.updateContentHeight();
       });
-      this.initialized = true;
+      this.loading = false;
+      this.cdr.markForCheck();
     });
   }
 
