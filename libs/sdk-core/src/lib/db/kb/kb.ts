@@ -533,9 +533,9 @@ export class KnowledgeBox implements IKnowledgeBox {
     });
     ```
   */
-  rephrase(question: string): Observable<string> {
+  rephrase(question: string, user_context?: string[]): Observable<string> {
     return this.nuclia.rest
-      .post<string>(`${this.path}/predict/rephrase`, { question, user_id: 'USER' })
+      .post<string>(`${this.path}/predict/rephrase`, { question, user_id: 'USER', user_context })
       .pipe(map((res) => res.slice(0, -1)));
   }
 
