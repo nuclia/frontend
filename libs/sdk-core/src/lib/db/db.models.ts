@@ -124,6 +124,7 @@ export interface CommonMetricDetails {
     input: number | null;
     output: number | null;
     image: number | null;
+    storage: number | null;
   };
 }
 
@@ -145,6 +146,7 @@ export interface NucliaTokensDetails extends CommonMetricDetails {
     input: number | null;
     output: number | null;
     image: number | null;
+    storage: number | null;
   };
 }
 
@@ -173,7 +175,7 @@ export enum UsageType {
   SEARCHES_PERFORMED = 'searches_performed',
   SUGGESTIONS_PERFORMED = 'suggestions_performed',
   AI_TOKENS_USED = 'ai_tokens_used',
-  NUCLIA_TOKENS = 'nuclia_tokens',
+  NUCLIA_TOKENS = 'nuclia_tokens_billed',
 }
 
 export interface Welcome {
