@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
 import { AppService, RangeChartData, RemiMetricsService, searchResources } from '@flaps/common';
 import { ChartData, MetricsService } from '../../account/metrics.service';
@@ -15,7 +15,7 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./knowledge-box-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KnowledgeBoxHomeComponent implements OnDestroy {
+export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   locale: Observable<string> = this.app.currentLocale;
@@ -139,6 +139,11 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     private zoneService: ZoneService,
     private remiMetrics: RemiMetricsService,
   ) {}
+
+  ngOnInit() {
+    // We want the health status on the last 7 days
+    this.remiMetrics.updatePeriod('7d');
+  }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();

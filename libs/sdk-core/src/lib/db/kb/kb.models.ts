@@ -6,6 +6,7 @@ import type { IErrorResponse } from '../../models';
 import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
 import { Agentic } from '../search/agentic';
+import { ActivityMonitor } from './activity';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -183,6 +184,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
   admin?: boolean;
   contrib?: boolean;
+  activityMonitor?: ActivityMonitor;
 
   modify(data: Partial<IKnowledgeBox>): Observable<void>;
 

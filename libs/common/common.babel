@@ -13762,6 +13762,85 @@
 									<folder_node>
 										<name>missing-knowledge</name>
 										<children>
+											<folder_node>
+												<name>criteria</name>
+												<children>
+													<concept_node>
+														<name>context-lower-than-label</name>
+														<description/>
+														<comment/>
+														<translations>
+															<translation>
+																<language>ca-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>en-US</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>es-ES</language>
+																<approved>false</approved>
+															</translation>
+															<translation>
+																<language>fr-FR</language>
+																<approved>false</approved>
+															</translation>
+														</translations>
+													</concept_node>
+													<folder_node>
+														<name>month</name>
+														<children>
+															<concept_node>
+																<name>format</name>
+																<description/>
+																<comment/>
+																<translations>
+																	<translation>
+																		<language>ca-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>en-US</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>es-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>fr-FR</language>
+																		<approved>false</approved>
+																	</translation>
+																</translations>
+															</concept_node>
+															<concept_node>
+																<name>label</name>
+																<description/>
+																<comment/>
+																<translations>
+																	<translation>
+																		<language>ca-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>en-US</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>es-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>fr-FR</language>
+																		<approved>false</approved>
+																	</translation>
+																</translations>
+															</concept_node>
+														</children>
+													</folder_node>
+												</children>
+											</folder_node>
 											<concept_node>
 												<name>description</name>
 												<description/>
@@ -15787,7 +15866,7 @@
 										<name>category-full</name>
 										<children>
 											<concept_node>
-												<name>answer-relevance</name>
+												<name>answer_relevance</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -15810,7 +15889,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>context-relevance</name>
+												<name>context_relevance</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -15861,7 +15940,7 @@
 										<name>category-short</name>
 										<children>
 											<concept_node>
-												<name>answer-relevance</name>
+												<name>answer_relevance</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -15884,7 +15963,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>context-relevance</name>
+												<name>context_relevance</name>
 												<description/>
 												<comment/>
 												<translations>

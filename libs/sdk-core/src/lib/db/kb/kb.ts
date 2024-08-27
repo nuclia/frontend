@@ -61,6 +61,7 @@ import { getAllNotifications, NotificationMessage, NotificationOperation, Notifi
 import { ABORT_STREAMING_REASON } from '../../rest';
 import { Ask } from '../search/ask.models';
 import { Agentic } from '../search/agentic';
+import { ActivityMonitor } from './activity';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -877,12 +878,19 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   /** True if the current user is a contributor of the Knowledge Box. */
   contrib?: boolean;
   private _training?: Training;
+  private _activityMonitor?: ActivityMonitor;
 
   get training(): Training {
     if (!this._training) {
       this._training = new Training(this, this.nuclia);
     }
     return this._training;
+  }
+  get activityMonitor(): ActivityMonitor {
+    if (!this._activityMonitor) {
+      this._activityMonitor = new ActivityMonitor(this, this.nuclia);
+    }
+    return this._activityMonitor;
   }
 
   /**

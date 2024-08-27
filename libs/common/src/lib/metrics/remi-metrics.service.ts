@@ -1,317 +1,155 @@
 import { inject, Injectable } from '@angular/core';
-import { delay, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { DatedRangeChartData, RangeChartData } from '../charts';
 import { TranslateService } from '@ngx-translate/core';
-import { format } from 'date-fns';
-import { RemiQueryResponseContextDetails, RemiQueryResponseItem } from './remi.models';
+import { format, subDays, subHours } from 'date-fns';
+import {
+  RemiQueryCriteria,
+  RemiQueryResponseContextDetails,
+  RemiQueryResponseItem,
+  RemiScoresResponseItem,
+  UsageAggregation,
+} from '@nuclia/core';
+import { SDKService } from '@flaps/core';
+import { catchError } from 'rxjs/operators';
+
+export type RemiPeriods = '24h' | '7d' | '14d' | '30d';
+
+interface RangeParameters {
+  aggregation: UsageAggregation;
+  from: string;
+}
+
+interface RawEvolutionResults {
+  results: RemiScoresResponseItem[];
+  parameters: RangeParameters;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class RemiMetricsService {
   private translate = inject(TranslateService);
+  private sdk = inject(SDKService);
 
-  healthCheckData: Observable<RangeChartData[]> = of([
-    { category: this.translate.instant('metrics.remi.category-short.answer-relevance'), average: 4.25, min: 4, max: 5 },
-    { category: this.translate.instant('metrics.remi.category-short.context-relevance'), average: 2.5, min: 0, max: 5 },
-    { category: this.translate.instant('metrics.remi.category-short.groundedness'), average: 5, min: 5, max: 5 },
-  ]).pipe(
-    map((data) =>
-      data.map((item) => ({
-        ...item,
+  private _period = new BehaviorSubject<RemiPeriods>('7d');
+  period = this._period.asObservable();
+
+  private today = new Date();
+  private scoreParameters: Observable<RangeParameters> = this.period.pipe(
+    map((period) => {
+      let aggregation: UsageAggregation = 'day';
+      let from;
+      if (period === '24h') {
+        aggregation = 'hour';
+        from = subHours(this.today.toISOString(), 24).toISOString();
+      } else {
+        const days = parseInt(period.substring(0, period.indexOf('d')), 10);
+        from = subDays(this.today.toISOString(), days).toISOString();
+      }
+
+      return {
+        aggregation,
+        from,
+      };
+    }),
+  );
+  private _queryCriteria = new BehaviorSubject<RemiQueryCriteria | null>(null);
+  queryCriteria = this._queryCriteria.asObservable();
+
+  updatePeriod(value: RemiPeriods) {
+    this._period.next(value);
+  }
+
+  updateCriteria(value: RemiQueryCriteria) {
+    this._queryCriteria.next(value);
+  }
+
+  healthCheckData: Observable<RangeChartData[]> = combineLatest([this.sdk.currentKb, this.scoreParameters]).pipe(
+    switchMap(([kb, parameters]) =>
+      kb.activityMonitor.getRemiScores(parameters.from).pipe(
+        catchError((err) => {
+          console.error(err);
+          return of([]);
+        }),
+      ),
+    ),
+    map((data) => {
+      if (data.length !== 1) {
+        console.error(`Health check data: One point expected but got ${data.length}`, data);
+        return [];
+      }
+      return data[0].metrics.map((item) => ({
+        category: this.translate.instant(`metrics.remi.category-short.${item.name}`),
         average: (item.average * 100) / 5,
         min: (item.min * 100) / 5,
         max: (item.max * 100) / 5,
-      })),
-    ),
+      }));
+    }),
   );
 
-  missingKnowledgeData: Observable<RemiQueryResponseItem[]> = of([
-    {
-      id: 'unique_id_1',
-      question: 'Who was Hedy Lamarr?',
-      answer:
-        'Hedy Lamarr was an Austrian-American actress and inventor, known for developing a radio guidance system for Allied torpedoes during World War II.',
-      remi: {
-        answer_relevance: {
-          score: 5,
-          reason:
-            "The answer is highly relevant, accurately capturing Hedy Lamarr's contributions as both an actress and an inventor.",
-        },
-        context_relevance: [4, 5],
-        groundedness: [5, 5],
-      },
-    },
-    {
-      id: 'unique_id_2',
-      question: 'What is frequency hopping?',
-      answer:
-        'Frequency hopping is a method of transmitting radio signals by rapidly switching a carrier among many frequency channels, minimizing the risk of interception and jamming.',
-      remi: {
-        answer_relevance: {
-          score: 4,
-          reason:
-            'The answer is relevant but could include more details about how frequency hopping is used in modern technology.',
-        },
-        context_relevance: [3],
-        groundedness: [4],
-      },
-    },
-  ]);
-
-  private rawEvolutionData = of([
-    {
-      timestamp: '2024-08-11T14:00:00.000Z',
-      metrics: [
-        {
-          name: 'groundedness',
-          average: 4.5,
-          max: 5,
-          min: 3,
-        },
-        {
-          name: 'answer_relevance',
-          average: 3,
-          max: 4,
-          min: 2,
-        },
-        {
-          name: 'context_relevance',
-          average: 3.2,
-          max: 4,
-          min: 0,
-        },
-      ],
-    },
-    {
-      timestamp: '2024-08-12T14:00:00.000Z',
-      metrics: [
-        {
-          name: 'groundedness',
-          average: 4.5,
-          max: 5,
-          min: 3,
-        },
-        {
-          name: 'answer_relevance',
-          average: 4,
-          max: 4.9,
-          min: 2.9,
-        },
-        {
-          name: 'context_relevance',
-          average: 3.2,
-          max: 4,
-          min: 0,
-        },
-      ],
-    },
-    {
-      timestamp: '2024-08-13T14:00:00.000Z',
-      metrics: [
-        {
-          name: 'groundedness',
-          average: 4.5,
-          max: 5,
-          min: 3,
-        },
-        {
-          name: 'answer_relevance',
-          average: 4.2,
-          max: 4.9,
-          min: 3,
-        },
-        {
-          name: 'context_relevance',
-          average: 3.2,
-          max: 4,
-          min: 0,
-        },
-      ],
-    },
-    {
-      timestamp: '2024-08-14T14:00:00.000Z',
-      metrics: [
-        {
-          name: 'groundedness',
-          average: 4.5,
-          max: 5,
-          min: 3,
-        },
-        {
-          name: 'answer_relevance',
-          average: 4.2,
-          max: 4.8,
-          min: 3.8,
-        },
-        {
-          name: 'context_relevance',
-          average: 3.2,
-          max: 4,
-          min: 0,
-        },
-      ],
-    },
-    {
-      timestamp: '2024-08-15T14:00:00.000Z',
-      metrics: [
-        {
-          name: 'groundedness',
-          average: 4.5,
-          max: 5,
-          min: 4,
-        },
-        {
-          name: 'answer_relevance',
-          average: 4,
-          max: 4.8,
-          min: 2,
-        },
-        {
-          name: 'context_relevance',
-          average: 3,
-          max: 4,
-          min: 1,
-        },
-      ],
-    },
-    {
-      timestamp: '2024-08-16T14:00:00.000Z',
-      metrics: [
-        {
-          name: 'groundedness',
-          average: 4.9,
-          max: 5,
-          min: 4,
-        },
-        {
-          name: 'answer_relevance',
-          average: 4.3,
-          max: 4.8,
-          min: 3,
-        },
-        {
-          name: 'context_relevance',
-          average: 3,
-          max: 4,
-          min: 1,
-        },
-      ],
-    },
-    {
-      timestamp: '2024-08-17T14:00:00.000Z',
-      metrics: [
-        {
-          name: 'groundedness',
-          average: 5.0,
-          max: 5,
-          min: 5,
-        },
-        {
-          name: 'answer_relevance',
-          average: 4.5,
-          max: 5,
-          min: 4,
-        },
-        {
-          name: 'context_relevance',
-          average: 3.5,
-          max: 5,
-          min: 2,
-        },
-      ],
-    },
-  ]);
-  groundednessEvolution: Observable<DatedRangeChartData[]> = this.rawEvolutionData.pipe(
-    map((data) =>
-      data.map((item) => {
-        const groundedness = item.metrics.find((metric) => metric.name === 'groundedness');
-        return {
-          timestamp: format(new Date(item.timestamp), 'd/MM'),
-          min: (groundedness!.min * 100) / 5,
-          max: (groundedness!.max * 100) / 5,
-          average: (groundedness!.average * 100) / 5,
-        };
-      }),
+  private rawEvolutionData: Observable<RawEvolutionResults> = combineLatest([
+    this.sdk.currentKb,
+    this.scoreParameters,
+  ]).pipe(
+    switchMap(([kb, parameters]) =>
+      kb.activityMonitor.getRemiScores(parameters.from, this.today.toISOString(), parameters.aggregation).pipe(
+        map((data) => ({
+          parameters,
+          results: data.map((item) => (item.metrics.length > 0 ? item : null)).filter((item) => !!item),
+        })),
+        catchError((err) => {
+          console.error(err);
+          return of({ results: [], parameters });
+        }),
+      ),
     ),
+    shareReplay(1),
+  );
+
+  groundednessEvolution: Observable<DatedRangeChartData[]> = this.rawEvolutionData.pipe(
+    map((data) => this.getEvolutionForMetric(data, 'groundedness')),
   );
   answerEvolution: Observable<DatedRangeChartData[]> = this.rawEvolutionData.pipe(
-    map((data) =>
-      data.map((item) => {
-        const answerRelevance = item.metrics.find((metric) => metric.name === 'answer_relevance');
-        return {
-          timestamp: format(new Date(item.timestamp), 'd/MM'),
-          min: (answerRelevance!.min * 100) / 5,
-          max: (answerRelevance!.max * 100) / 5,
-          average: (answerRelevance!.average * 100) / 5,
-        };
-      }),
-    ),
+    map((data) => this.getEvolutionForMetric(data, 'answer_relevance')),
   );
   contextEvolution: Observable<DatedRangeChartData[]> = this.rawEvolutionData.pipe(
-    map((data) =>
-      data.map((item) => {
-        const contextRelevance = item.metrics.find((metric) => metric.name === 'context_relevance');
-        return {
-          timestamp: format(new Date(item.timestamp), 'd/MM'),
-          min: (contextRelevance!.min * 100) / 5,
-          max: (contextRelevance!.max * 100) / 5,
-          average: (contextRelevance!.average * 100) / 5,
-        };
-      }),
+    map((data) => this.getEvolutionForMetric(data, 'context_relevance')),
+  );
+
+  missingKnowledgeData: Observable<RemiQueryResponseItem[]> = combineLatest([
+    this.sdk.currentKb,
+    this.queryCriteria.pipe(filter((criteria) => !!criteria)),
+  ]).pipe(
+    switchMap(([kb, criteria]) =>
+      kb.activityMonitor.queryRemiScores(criteria).pipe(
+        catchError((err) => {
+          console.error(err);
+          return of([]);
+        }),
+      ),
     ),
   );
 
-  getMissingKnowledgeDetails(id: string): Observable<RemiQueryResponseContextDetails> {
-    const request =
-      id === 'unique_id_1'
-        ? of({
-            id: 'unique_id_1',
-            question: 'Who was Hedy Lamarr?',
-            answer:
-              'Hedy Lamarr was an Austrian-American actress and inventor, known for developing a radio guidance system for Allied torpedoes during World War II.',
-            context: [
-              {
-                text: 'Hedy Lamarr was more than just a Hollywood star. She co-invented an early technique for spread spectrum communications and frequency hopping, technologies that are now incorporated into modern Wi-Fi and Bluetooth.',
-                text_block_id: '57900998c2dc45c19216b157e125b656/t/body--0/2597-3085',
-              },
-              {
-                text: "Lamarr's invention of frequency hopping was a critical contribution to modern wireless communication. She worked with composer George Antheil to create a system that would later be used in secure military communications.",
-                text_block_id: '41d67efab57f45d2b616b6fdec6d7032/t/body--0/0-939',
-              },
-            ],
-            remi: {
-              answer_relevance: {
-                score: 5,
-                reason:
-                  "The answer is highly relevant, accurately capturing Hedy Lamarr's contributions as both an actress and an inventor.",
-              },
-              context_relevance: [4, 5],
-              groundedness: [5, 5],
-            },
-          })
-        : of({
-            id: 'unique_id_2',
-            question: 'What is frequency hopping?',
-            answer:
-              'Frequency hopping is a method of transmitting radio signals by rapidly switching a carrier among many frequency channels, minimizing the risk of interception and jamming.',
-            context: [
-              {
-                text: 'The concept of frequency hopping was revolutionary in the 1940s and laid the groundwork for modern wireless communication technologies, including Wi-Fi and Bluetooth.',
-                text_block_id: '167356da54524c039e81685655a32624/t/body--0/4499-5102',
-              },
-            ],
-            remi: {
-              answer_relevance: {
-                score: 4,
-                reason:
-                  'The answer is relevant but could include more details about how frequency hopping is used in modern technology.',
-              },
-              context_relevance: [3],
-              groundedness: [4],
-            },
-          });
+  getMissingKnowledgeDetails(id: number): Observable<RemiQueryResponseContextDetails> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.activityMonitor.getFullContexts(id)),
+    );
+  }
 
-    return request.pipe(delay(1000));
+  private getEvolutionForMetric(
+    data: RawEvolutionResults,
+    category: 'groundedness' | 'answer_relevance' | 'context_relevance',
+  ): DatedRangeChartData[] {
+    return data.results.map((item) => {
+      const groundedness = item.metrics.find((metric) => metric.name === category);
+      return {
+        timestamp: format(new Date(item.timestamp), data.parameters.aggregation === 'hour' ? 'HH' : 'd/MM'),
+        min: (groundedness!.min * 100) / 5,
+        max: (groundedness!.max * 100) / 5,
+        average: (groundedness!.average * 100) / 5,
+      };
+    });
   }
 }
