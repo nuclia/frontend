@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { DatedRangeChartData, RangeChartData } from '../charts';
 import { TranslateService } from '@ngx-translate/core';
-import { format, subDays, subHours } from 'date-fns';
+import { endOfDay, format, startOfDay, subDays, subHours } from 'date-fns';
 import {
   RemiQueryCriteria,
   RemiQueryResponseContextDetails,
@@ -18,6 +18,7 @@ export type RemiPeriods = '24h' | '7d' | '14d' | '30d';
 interface RangeParameters {
   aggregation: UsageAggregation;
   from: string;
+  to?: string;
 }
 
 interface RawEvolutionResults {
@@ -38,19 +39,22 @@ export class RemiMetricsService {
   private scoreParameters: Observable<RangeParameters> = this.period.pipe(
     map((period) => {
       let aggregation: UsageAggregation = 'day';
-      let from;
+      let from, to;
       const today = new Date();
       if (period === '24h') {
         aggregation = 'hour';
         from = subHours(today.toISOString(), 24).toISOString();
+        to = today.toISOString();
       } else {
         const days = parseInt(period.substring(0, period.indexOf('d')), 10);
-        from = subDays(today.toISOString(), days).toISOString();
+        from = startOfDay(subDays(today.toISOString(), days)).toISOString();
+        to = endOfDay(today).toISOString();
       }
 
       return {
         aggregation,
         from,
+        to,
       };
     }),
   );
@@ -93,7 +97,7 @@ export class RemiMetricsService {
     this.scoreParameters,
   ]).pipe(
     switchMap(([kb, parameters]) =>
-      kb.activityMonitor.getRemiScores(parameters.from, new Date().toISOString(), parameters.aggregation).pipe(
+      kb.activityMonitor.getRemiScores(parameters.from, parameters.to, parameters.aggregation).pipe(
         map((data) => ({
           parameters,
           results: data.map((item) => (item.metrics.length > 0 ? item : null)).filter((item) => !!item),
