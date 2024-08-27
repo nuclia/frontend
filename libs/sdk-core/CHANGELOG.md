@@ -1,3 +1,13 @@
+# 1.20.0 (unreleased)
+
+### Feature
+
+- Add `activityMonitor` property to `IWritableKnowledgeBox`, which allows to request REMi metrics on the Knowledge Box
+
+### Improvement
+
+- Update `UsageAggregation` type to match the backend one
+
 # 1.19.3 (2024-08-27)
 
 ### Improvement

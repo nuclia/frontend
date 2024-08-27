@@ -283,6 +283,7 @@ export class Db implements IDb {
    * - "month"
    * - "quarter"
    * - "year"
+   * - "millennium" (used by default)
    */
   getUsage(
     accountId: string,

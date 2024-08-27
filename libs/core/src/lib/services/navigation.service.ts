@@ -44,7 +44,7 @@ export class NavigationService {
   }
   inKbSettings(path: string, kbUrl: string): boolean {
     // pages common to NucliaDB admin and Dashboard
-    const commonPages = ['ai-models', 'entities', 'label-sets', 'manage'];
+    const commonPages = ['ai-models', 'entities', 'label-sets', 'manage', 'metrics'];
 
     if (path.startsWith('#')) {
       const pattern = `/(${commonPages.join('|')})$`;

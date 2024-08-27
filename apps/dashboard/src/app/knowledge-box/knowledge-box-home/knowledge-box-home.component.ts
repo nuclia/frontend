@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
-import { AppService, searchResources, UploadService } from '@flaps/common';
+import { AppService, RangeChartData, RemiMetricsService, searchResources } from '@flaps/common';
 import { ChartData, MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
@@ -15,7 +15,7 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./knowledge-box-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KnowledgeBoxHomeComponent implements OnDestroy {
+export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   locale: Observable<string> = this.app.currentLocale;
@@ -25,6 +25,7 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
   isKbAdmin = this.features.isKbAdmin;
   isKbContrib = this.features.isKBContrib;
   isAccountManager = this.features.isAccountManager;
+  isRemiMetricsEnabled = this.features.unstable.remiMetrics;
 
   configuration = this.currentKb.pipe(switchMap((kb) => kb.getConfiguration()));
   endpoint = this.currentKb.pipe(map((kb) => kb.fullpath));
@@ -124,6 +125,8 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     slug: 'copy',
   };
 
+  healthCheckData: Observable<RangeChartData[]> = this.remiMetrics.healthCheckData;
+
   constructor(
     private app: AppService,
     private sdk: SDKService,
@@ -131,11 +134,16 @@ export class KnowledgeBoxHomeComponent implements OnDestroy {
     private tracking: STFTrackingService,
     private features: FeaturesService,
     private navigationService: NavigationService,
-    private uploadService: UploadService,
     private metrics: MetricsService,
     private modal: SisModalService,
     private zoneService: ZoneService,
+    private remiMetrics: RemiMetricsService,
   ) {}
+
+  ngOnInit() {
+    // We want the health status on the last 7 days
+    this.remiMetrics.updatePeriod('7d');
+  }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();

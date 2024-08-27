@@ -1,0 +1,68 @@
+@import 'apps/dashboard/src/variables';
+
+.remi-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+
+  .period-container {
+    align-items: baseline;
+    display: flex;
+    gap: rhythm(0.5);
+  }
+
+  label {
+    @include font-size(m);
+    @include line-height(l);
+    font-weight: $font-weight-regular;
+  }
+
+  .chart-container {
+    display: inline-block;
+    text-align: center;
+    width: calc((100% - #{rhythm(2)}* 2) / 3);
+    max-width: rhythm(60);
+
+    &:not(:last-child) {
+      margin-right: rhythm(2);
+    }
+  }
+
+  section:not(.period-container),
+  .criteria-container form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+  }
+
+  .criteria-container {
+    padding: rhythm(2) 0;
+    max-width: rhythm(50);
+
+    form .field-container {
+      align-items: baseline;
+      display: flex;
+      gap: rhythm(1);
+
+      label {
+        flex: 1 0 auto;
+        text-align: right;
+      }
+      pa-select,
+      pa-input {
+        width: rhythm(14);
+      }
+    }
+  }
+
+  .context-list {
+    margin: 0;
+  }
+
+  .sticky-section {
+    background: $color-light-stronger;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+}

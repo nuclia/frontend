@@ -1,0 +1,18 @@
+@import '../charts-common';
+
+.range-chart {
+  @include chart();
+
+  .domain,
+  .tick line {
+    stroke: $chart-line-color;
+  }
+
+  .range-point {
+    fill: $color-primary-regular;
+    stroke: $color-primary-regular;
+  }
+  .range-line {
+    stroke: $color-dark-stronger;
+  }
+}

@@ -31,6 +31,7 @@ import {
   HintModule,
   KnowledgeBoxSettingsModule,
   PipesModule,
+  RangeChartComponent,
   TokenDialogModule,
   UploadModule,
 } from '@flaps/common';
@@ -74,6 +75,7 @@ import { STFPipesModule } from '@flaps/core';
     PaTabsModule,
     PaTableModule,
     STFPipesModule,
+    RangeChartComponent,
   ],
   declarations: [
     KnowledgeBoxComponent,

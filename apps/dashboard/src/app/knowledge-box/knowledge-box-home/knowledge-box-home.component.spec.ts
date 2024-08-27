@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
-import { AppService, UploadModule, UploadService } from '@flaps/common';
+import { AppService, RemiMetricsService, UploadModule, UploadService } from '@flaps/common';
 import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
 import { MetricsService } from '../../account/metrics.service';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
@@ -78,6 +78,9 @@ describe('KnowledgeBoxHomeComponent', () => {
             isTrial: of(true),
             isAccountManager: of(true),
             isKbAdmin: of(true),
+            unstable: {
+              remiMetrics: of(false),
+            },
           } as FeaturesService),
           MockProvider(NavigationService, {
             getKbUrl: () => 'kb-url',
@@ -88,6 +91,7 @@ describe('KnowledgeBoxHomeComponent', () => {
           MockProvider(MetricsService),
           MockProvider(SisModalService),
           MockProvider(ZoneService),
+          MockProvider(RemiMetricsService),
         ],
       }).compileComponents();
     }),

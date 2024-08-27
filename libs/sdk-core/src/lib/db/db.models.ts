@@ -113,7 +113,7 @@ export interface AccountStatus {
   available: boolean;
 }
 
-export type UsageAggregation = 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year';
+export type UsageAggregation = 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year' | 'millennium';
 
 export interface CommonMetricDetails {
   identifier: {
