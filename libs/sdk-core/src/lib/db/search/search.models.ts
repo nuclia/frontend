@@ -37,6 +37,11 @@ export type Filter = {
   [operator in FilterOperator]?: string[];
 };
 
+export interface Prompts {
+  system?: string;
+  user?: string;
+}
+
 export interface BaseSearchOptions {
   fields?: string[];
   filters?: string[] | Filter[];
@@ -58,7 +63,7 @@ export interface BaseSearchOptions {
 
 export interface ChatOptions extends BaseSearchOptions {
   synchronous?: boolean;
-  prompt?: string;
+  prompt?: string | Prompts;
   /**
    * It will return the text blocks that have been effectively used to build each section of the answer.
    */

@@ -50,6 +50,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   @Input({ required: true }) semanticModels: OptionModel[] = [];
   @Input() defaultPrompt = '';
   @Input() promptInfos: { [model: string]: string } = {};
+  @Input() defaultSystemPrompt = '';
 
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<GenerativeAnswerConfig>();
@@ -60,6 +61,8 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     vectorset: new FormControl<string>('', { nonNullable: true }),
     usePrompt: new FormControl<boolean>(false, { nonNullable: true }),
     prompt: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    useSystemPrompt: new FormControl<boolean>(false, { nonNullable: true }),
+    systemPrompt: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     askSpecificResource: new FormControl<boolean>(false, { nonNullable: true }),
     specificResourceSlug: new FormControl<string>('', {
       nonNullable: true,
@@ -85,13 +88,16 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     tap((authorized) => {
       if (authorized) {
         this.form.controls.usePrompt.enable();
+        this.form.controls.useSystemPrompt.enable();
       } else {
         this.form.controls.usePrompt.disable();
+        this.form.controls.useSystemPrompt.disable();
       }
     }),
   );
   userPromptInfo = '';
   userPromptOverridden = false;
+  systemPromptOverridden = false;
   isRagImagesEnabled = this.featuresService.unstable.ragImages;
 
   get generateAnswerEnabled() {
@@ -99,6 +105,9 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   get usePromptEnabled() {
     return this.form.controls.usePrompt.value;
+  }
+  get useSystemPromptEnabled() {
+    return this.form.controls.useSystemPrompt.value;
   }
   get askSpecificResourceEnabled() {
     return this.form.controls.askSpecificResource.value;
@@ -134,10 +143,13 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((value) => {
       const currentPrompt = this.form.controls.prompt.value.trim();
-      this.userPromptOverridden = !!currentPrompt && currentPrompt !== this.defaultPrompt;
+      this.userPromptOverridden = !!currentPrompt && currentPrompt !== this.defaultPrompt && !!value.usePrompt;
       if (value.generativeModel && this.promptInfos[value.generativeModel]) {
         this.userPromptInfo = this.promptInfos[value.generativeModel];
       }
+      const currentSystemPrompt = this.form.controls.systemPrompt.value.trim();
+      this.systemPromptOverridden =
+        !!currentSystemPrompt && currentSystemPrompt !== this.defaultSystemPrompt && !!value.useSystemPrompt;
       this.configChanged.emit({ ...this.form.getRawValue() });
     });
   }

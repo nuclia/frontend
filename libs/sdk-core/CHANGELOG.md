@@ -4,6 +4,7 @@
 
 - Add `vectorset` option to Search
 - Add `search_configs` property to `IKnowledgeBoxCreation` interface
+- Update `ChatOptions` model to support passing a system prompt to `/ask` endpoint
 
 # 1.19.2 (2024-08-19)
 

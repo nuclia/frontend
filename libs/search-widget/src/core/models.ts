@@ -46,6 +46,7 @@ export interface WidgetOptions {
   highlight?: boolean;
   features?: WidgetFeatures;
   prompt?: string;
+  system_prompt?: string;
   generative_model?: string;
   vectorset?: string;
   ask_to_resource?: string;

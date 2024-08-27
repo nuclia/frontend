@@ -28,6 +28,7 @@
   export let proxy = false;
   export let cssPath = '';
   export let prompt = '';
+  export let system_prompt = '';
   export let preselected_filters = '';
   export let no_tracking = false;
   export let rag_strategies = '';
@@ -106,7 +107,7 @@
         proxy,
       },
       state,
-      { prompt, max_tokens, query_prepend, vectorset, },
+      { prompt, system_prompt, max_tokens, query_prepend, vectorset, },
       no_tracking,
     );
 
