@@ -35,17 +35,17 @@ export class RemiMetricsService {
   private _period = new BehaviorSubject<RemiPeriods>('7d');
   period = this._period.asObservable();
 
-  private today = new Date();
   private scoreParameters: Observable<RangeParameters> = this.period.pipe(
     map((period) => {
       let aggregation: UsageAggregation = 'day';
       let from;
+      const today = new Date();
       if (period === '24h') {
         aggregation = 'hour';
-        from = subHours(this.today.toISOString(), 24).toISOString();
+        from = subHours(today.toISOString(), 24).toISOString();
       } else {
         const days = parseInt(period.substring(0, period.indexOf('d')), 10);
-        from = subDays(this.today.toISOString(), days).toISOString();
+        from = subDays(today.toISOString(), days).toISOString();
       }
 
       return {
@@ -93,7 +93,7 @@ export class RemiMetricsService {
     this.scoreParameters,
   ]).pipe(
     switchMap(([kb, parameters]) =>
-      kb.activityMonitor.getRemiScores(parameters.from, this.today.toISOString(), parameters.aggregation).pipe(
+      kb.activityMonitor.getRemiScores(parameters.from, new Date().toISOString(), parameters.aggregation).pipe(
         map((data) => ({
           parameters,
           results: data.map((item) => (item.metrics.length > 0 ? item : null)).filter((item) => !!item),

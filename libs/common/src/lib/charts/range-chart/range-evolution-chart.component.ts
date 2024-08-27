@@ -44,7 +44,7 @@ export class RangeEvolutionChartComponent extends BaseChartDirective implements 
   protected draw(): void {
     // Set the dimensions and margins
     const availableWidth = this.container?.nativeElement.offsetWidth;
-    const margin = { top: 16, left: 56, bottom: 16, right: 16 };
+    const margin = { top: 16, left: 56, bottom: 40, right: 16 };
     const width = availableWidth - margin.left - margin.right;
     const height = (this.height || this.defaultHeight) - margin.top - margin.bottom;
 
@@ -69,6 +69,7 @@ export class RangeEvolutionChartComponent extends BaseChartDirective implements 
       .attr('class', 'x-axis')
       .call(d3.axisBottom(x).tickSize(4))
       .selectAll('text')
+      .attr('transform', `${this.data.length > 6 ? 'rotate(-45)' : ''}`)
       .style('text-anchor', 'end');
 
     // Add y axis
