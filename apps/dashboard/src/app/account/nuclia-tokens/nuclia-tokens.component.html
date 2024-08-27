@@ -1,0 +1,99 @@
+<div>
+  <div class="total title-m">
+    <span>{{ 'account.nuclia-tokens.tokens-consumed' | translate }}:&nbsp;</span>
+    <strong>{{ totalTokens | async | number: digitsInfo }}</strong>
+  </div>
+  <div class="header">
+    <div class="title-m">
+      <pa-icon name="chart"></pa-icon>
+      {{ 'account.nuclia-tokens.details' | translate }}
+    </div>
+    @if (((kbList | async) || []).length > 1) {
+      <div class="select-kb">
+        <pa-select
+          [value]="selectedKb | async"
+          (valueChange)="selectedKb.next($event)">
+          <pa-option value="all">{{ 'account.nuclia-tokens.account' | translate }}</pa-option>
+          <pa-separator></pa-separator>
+          @for (kb of kbList | async; track kb.id) {
+            <pa-option [value]="kb.id">{{ kb.title }}</pa-option>
+          }
+        </pa-select>
+      </div>
+    }
+  </div>
+  @if (!loading) {
+    @let groups = visibleGroups | async;
+    @if ((groups || []).length > 0) {
+      <pa-accordion [allowMultipleExpanded]="true">
+        @for (group of groups; track group.title) {
+          <pa-accordion-item
+            [id]="group.title"
+            [itemTitle]="'account.nuclia-tokens.service.' + group.title | translate"
+            [description]="(group.total | number: digitsInfo) + ' tokens'">
+            <pa-accordion-item-body>
+              <pa-table
+                [columns]="group.displayModel ? '1fr 1fr 1fr' : '2fr 1fr'"
+                [border]="true">
+                <pa-table-header>
+                  <pa-table-row>
+                    <pa-table-cell header>{{ 'account.nuclia-tokens.description' | translate }}</pa-table-cell>
+                    @if (group.displayModel) {
+                      <pa-table-cell header>{{ 'account.nuclia-tokens.model' | translate }}</pa-table-cell>
+                    }
+                    <pa-table-cell header>Tokens</pa-table-cell>
+                  </pa-table-row>
+                </pa-table-header>
+                @for (
+                  item of group.details;
+                  track item.identifier.type +
+                    (item.identifier.model || '') +
+                    item.identifier.version +
+                    item.identifier.service
+                ) {
+                  <pa-table-row>
+                    <pa-table-cell>
+                      <div class="type body-m">
+                        {{ item.identifier.type }}
+                        @if (item.help) {
+                          <pa-icon
+                            name="info"
+                            size="small"
+                            [paPopover]="help"></pa-icon>
+                        }
+                      </div>
+                      <pa-popover #help>
+                        <div class="body-s">{{ item.help }}</div>
+                      </pa-popover>
+                    </pa-table-cell>
+                    @if (group.displayModel) {
+                      <pa-table-cell>
+                        <span class="body-m">{{ item.modelName }}</span>
+                      </pa-table-cell>
+                    }
+                    <pa-table-cell>
+                      <div class="body-s">
+                        @if ((item.counters | keyvalue).length > 1) {
+                          @for (counter of item.counters | keyvalue; track counter.key; let first = $first) {
+                            @if (first) {
+                              <strong>{{ 'account.nuclia-tokens.total' | translate }}: {{ item.total | number: digitsInfo }}</strong>
+                            }
+                            <div>{{ counter.key }}: {{ counter.value | number: digitsInfo }}</div>
+                          }
+                        } @else {
+                          <div class="body-m">{{ item.total | number: digitsInfo }}</div>
+                        }
+                      </div>
+                    </pa-table-cell>
+                  </pa-table-row>
+                }
+              </pa-table>
+            </pa-accordion-item-body>
+          </pa-accordion-item>
+        }
+      </pa-accordion>
+    } @else {
+      <nsi-info-card>{{ 'account.nuclia-tokens.no-consumption' | translate }}</nsi-info-card>
+    }
+  }
+</div>

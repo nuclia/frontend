@@ -8,37 +8,13 @@
     gap: rhythm(5);
   }
 
-  .processing-stats {
+  .consumption-stats {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
     gap: rhythm(3);
     h2 {
       margin-bottom: 0;
-    }
-  }
-
-  .consumption-header {
-    align-items: flex-end;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .chart-container {
-    background-color: $color-neutral-lightest;
-    padding: rhythm(3);
-
-    .chart-header {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: rhythm(3);
-    }
-
-    .chart-message {
-      color: $color-neutral-regular;
-      font-size: font-size(xs);
-      font-style: italic;
     }
   }
 
