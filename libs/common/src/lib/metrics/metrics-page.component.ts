@@ -19,15 +19,11 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { DatedRangeChartData, RangeChartComponent, RangeChartData, RangeEvolutionChartComponent } from '../charts';
 import { RemiMetricsService, RemiPeriods } from './remi-metrics.service';
-import {
-  RemiQueryCriteria,
-  RemiQueryResponseContextDetails,
-  RemiQueryResponseItem,
-} from '../../../../sdk-core/src/lib/db/kb/activity/remi.models';
 import { SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
+import { RemiQueryCriteria, RemiQueryResponseContextDetails, RemiQueryResponseItem } from '@nuclia/core';
 
 @Component({
   standalone: true,
