@@ -104,11 +104,11 @@
               </a>
               @if (isRemiMetricsEnabled | async) {
                 <a
-                  [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/metrics' : null"
+                  [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics' : null"
                   routerLinkActive="active"
                   class="nav-link sub-item"
                   data-cy="go-to-metrics"
-                  [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+                  [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
                   <pa-icon name="chart"></pa-icon>
                   <span class="nav-link-title">{{ 'navbar.metrics' | translate }}</span>
                 </a>
