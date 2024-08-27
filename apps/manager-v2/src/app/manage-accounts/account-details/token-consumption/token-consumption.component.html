@@ -89,7 +89,7 @@
 @if (tokenConsumption | async; as metrics) {
   <pa-table
     border
-    columns="2fr repeat(9, 1fr)">
+    columns="2fr repeat(11, 1fr)">
     <pa-table-header>
       <pa-table-cell
         borderRight
@@ -97,18 +97,20 @@
       <pa-table-cell header><span class="center-text">Raw usage input</span></pa-table-cell>
       <pa-table-cell header><span class="center-text">Raw usage output</span></pa-table-cell>
       <pa-table-cell header><span class="center-text">Raw usage search</span></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Raw usage images</span></pa-table-cell>
       <pa-table-cell
         header
         borderRight>
-        <span class="center-text">Raw usage images</span>
+        <span class="center-text">Raw usage storage</span>
       </pa-table-cell>
       <pa-table-cell header><span class="center-text">Nuclia tokens from input</span></pa-table-cell>
       <pa-table-cell header><span class="center-text">Nuclia tokens from output</span></pa-table-cell>
       <pa-table-cell header><span class="center-text">Nuclia tokens from search</span></pa-table-cell>
+      <pa-table-cell header><span class="center-text">Nuclia tokens from images</span></pa-table-cell>
       <pa-table-cell
         borderRight
         header>
-        <span class="center-text">Nuclia tokens from images</span>
+        <span class="center-text">Nuclia tokens from storage</span>
       </pa-table-cell>
       <pa-table-cell header><span class="center-text">Total Nuclia tokens</span></pa-table-cell>
     </pa-table-header>
@@ -130,10 +132,13 @@
         <pa-table-cell center>
           <span class="body-s">{{ row.raw_usage.search | number: digitsInfo }}</span>
         </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.raw_usage.image | number: digitsInfo }}</span>
+        </pa-table-cell>
         <pa-table-cell
           borderRight
           center>
-          <span class="body-s">{{ row.raw_usage.image | number: digitsInfo }}</span>
+          <span class="body-s">{{ row.raw_usage.storage | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell center>
           <span class="body-s">{{ row.nuclia_tokens.input | number: digitsInfo }}</span>
@@ -144,10 +149,13 @@
         <pa-table-cell center>
           <span class="body-s">{{ row.nuclia_tokens.search | number: digitsInfo }}</span>
         </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.nuclia_tokens.image | number: digitsInfo }}</span>
+        </pa-table-cell>
         <pa-table-cell
           borderRight
           center>
-          <span class="body-s">{{ row.nuclia_tokens.image | number: digitsInfo }}</span>
+          <span class="body-s">{{ row.nuclia_tokens.storage | number: digitsInfo }}</span>
         </pa-table-cell>
         <pa-table-cell center>
           <strong class="body-s">
@@ -155,7 +163,8 @@
               row.nuclia_tokens.input === null &&
               row.nuclia_tokens.output === null &&
               row.nuclia_tokens.search === null &&
-              row.nuclia_tokens.image === null
+              row.nuclia_tokens.image === null &&
+              row.nuclia_tokens.storage === null
             ) {
               –
             } @else {
@@ -163,7 +172,8 @@
                 (row.nuclia_tokens.input || 0) +
                   (row.nuclia_tokens.output || 0) +
                   (row.nuclia_tokens.search || 0) +
-                  (row.nuclia_tokens.image || 0) | number: digitsInfo
+                  (row.nuclia_tokens.image || 0) +
+                  (row.nuclia_tokens.storage || 0) | number: digitsInfo
               }}
             }
           </strong>
