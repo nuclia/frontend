@@ -758,8 +758,6 @@
 	"prompt-lab.configuration.system-prompt.label": "System prompt",
 	"prompt-lab.configuration.system-prompt.placeholder": "Define los rasgos de personalidad del asistente.",
 	"prompt-lab.configuration.title": "Configuración",
-	"prompt-lab.generate.confirmation.inconsistency-warning": "Tenga en cuenta que durante la prueba, los usuarios que puedan estar utilizando su Knowledge Box podrían experimentar respuestas inconsistentes.\n<br><br>Realice las pruebas mientras esté en desarrollo o cuando esté seguro de que ningún usuario se verá afectado por estos cambios.",
-	"prompt-lab.generate.confirmation.title": "Antes de continuar...",
 	"prompt-lab.generate.loading.description": "Estamos generando tus resultados. Por favor no abandones la página.",
 	"prompt-lab.generate.loading.title": "Sólo un momento…",
 	"prompt-lab.page-description": "Pruebe los LLM y los prompts, vea cómo funcionan juntos, elija qué configuraciones desea aplicar a su Knowledge Box.",

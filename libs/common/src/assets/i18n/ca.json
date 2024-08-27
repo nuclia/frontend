@@ -758,8 +758,6 @@
 	"prompt-lab.configuration.system-prompt.label": "System prompt",
 	"prompt-lab.configuration.system-prompt.placeholder": "Defineix els trets de personalitat de l'assistent.",
 	"prompt-lab.configuration.title": "Configuració",
-	"prompt-lab.generate.confirmation.inconsistency-warning": "Tingueu en compte que durant la prova, els usuaris que podrien estar utilitzant el vostre Knowledge Box podrien experimentar respostes inconsistents.\n<br><br>Si us plau, feu la prova durant el desenvolupament o quan estigueu segur que cap usuari es veurà afectat per aquests canvis.",
-	"prompt-lab.generate.confirmation.title": "Abans de continuar...",
 	"prompt-lab.generate.loading.description": "Estem generant els teus resultats. Si us plau, no abandonis la pàgina.",
 	"prompt-lab.generate.loading.title": "Només un moment…",
 	"prompt-lab.page-description": "Proveu els LLM i les prompts, mireu com funcionen junts, trieu quina configuració voleu aplicar al vostre Knowledge Box.",
