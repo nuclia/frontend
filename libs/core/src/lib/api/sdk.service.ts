@@ -79,9 +79,9 @@ export class SDKService {
 
     combineLatest([this._kb, this._account])
       .pipe(
+        distinctUntilChanged(([previous], [current]) => previous?.id === current?.id && previous?.slug === current?.slug),
         filter(([kb, account]) => !!kb && !!kb.slug && !!account),
         map(([kb, account]) => [kb, account] as [KnowledgeBox, Account]),
-        distinctUntilChanged(([previous], [current]) => previous.id === current.id && previous.slug === current.slug),
         switchMap(([kb, account]) =>
           this.nuclia.db
             .getKnowledgeBox(account.id, kb.id, kb.zone)
