@@ -17,7 +17,11 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((error) => {
         // 440 on requests to external APIs (like connectors)
         // or to local NucliaDB should not redirect to login
-        if (request.url.startsWith('https://nuclia.cloud') || request.url.startsWith('https://stashify.cloud')) {
+        if (
+          request.url.startsWith('https://nuclia.cloud') ||
+          request.url.startsWith('https://stashify.cloud') ||
+          request.url.startsWith('https://gcp-global-dev-1.nuclia.io')
+        ) {
           this.handle400Error(error);
         }
         return throwError(error);
