@@ -1,12 +1,19 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { SearchConfigurationComponent } from './search-configuration';
 import { SearchWidgetService } from './search-widget.service';
 import { SisModalService } from '@nuclia/sistema';
 import { CreateWidgetDialogComponent } from './widgets';
-import { filter, map, switchMap, take } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { filter, map, switchMap } from 'rxjs';
 import { DEFAULT_WIDGET_CONFIG, SearchConfiguration } from './search-widget.models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
@@ -20,8 +27,7 @@ import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class SearchPageComponent {
-  private sdk = inject(SDKService);
+export class SearchPageComponent implements OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private searchWidgetService = inject(SearchWidgetService);
@@ -32,6 +38,10 @@ export class SearchPageComponent {
   searchConfig?: SearchConfiguration;
 
   configPanelCollapsed = false;
+
+  ngOnDestroy() {
+    this.searchWidgetService.resetSearchQuery();
+  }
 
   createWidget() {
     if (this.searchConfig) {
