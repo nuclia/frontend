@@ -215,6 +215,7 @@ export class SearchWidgetService {
 
   resetSearchQuery() {
     this.currentQuery = '';
+    this.currentFilters = [];
   }
 
   private reinitWidgetPreview() {
