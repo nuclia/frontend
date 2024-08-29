@@ -179,6 +179,15 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   selectChart(option: OptionModel) {
     this.tracking.logEvent('select_home_chart', { chart: option.value });
     this.currentChart = option;
+    // when selecting another chart, first the chart is removed from the DOM causing the page height to be reduced
+    // then the new chart is added to the DOM increasing again the page height, but the scroll position is lost in the process
+    // so we scroll back to the bottom of the page
+    setTimeout(() => {
+      const mainElement = document.querySelector('main');
+      if (mainElement) {
+        mainElement.scrollTo({ top: mainElement.offsetHeight, behavior: 'smooth' });
+      }
+    }, 100);
   }
 
   openFullscreen() {
