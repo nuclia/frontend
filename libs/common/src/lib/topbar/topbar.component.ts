@@ -1,6 +1,13 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FeaturesService, NavigationService, NotificationService, SDKService, UserService } from '@flaps/core';
+import {
+  FeatureFlagService,
+  FeaturesService,
+  NavigationService,
+  NotificationService,
+  SDKService,
+  UserService,
+} from '@flaps/core';
 import { combineLatest, map, Observable, shareReplay, take } from 'rxjs';
 import { StandaloneService } from '../services/standalone.service';
 
@@ -17,7 +24,7 @@ export class TopbarComponent {
   userInfo = this.userService.userInfo;
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
-  isStage = location.hostname === 'stashify.cloud' || location.hostname === 'gcp-global-dev-1.nuclia.io';
+  isStageOrDev = this.featureFlagService.isStageOrDev;
   private _account = this.sdk.currentAccount.pipe(shareReplay());
   accountType = this._account.pipe(map((account) => account.type));
   isAccountManager = this.features.isAccountManager;
@@ -53,6 +60,7 @@ export class TopbarComponent {
     private standaloneService: StandaloneService,
     private notificationService: NotificationService,
     private features: FeaturesService,
+    private featureFlagService: FeatureFlagService,
   ) {}
 
   goToHome(): void {

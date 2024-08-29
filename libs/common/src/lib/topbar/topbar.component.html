@@ -6,7 +6,7 @@
       class="topbar-logo-expanded"
       [src]="!standalone ? 'assets/logos/logo.svg' : 'assets/logos/nucliadb.svg'"
       [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
-    @if (isStage) {
+    @if (isStageOrDev | async) {
       <img
         src="assets/logos/stage-icon.svg"
         class="is-stage"
