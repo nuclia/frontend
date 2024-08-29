@@ -97,7 +97,10 @@ export class FeatureFlagService {
     map((features) => ({ ...features, ...this.getCustomFeatures() })),
   );
 
-  isStageOrDev = location.hostname === 'stashify.cloud' || !this.environment.production;
+  isStageOrDev =
+    location.hostname === 'stashify.cloud' ||
+    location.hostname === 'gcp-global-dev-1.nuclia.io' ||
+    !this.environment.production;
 
   constructor(
     private sdk: SDKService,

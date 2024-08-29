@@ -164,6 +164,50 @@
             }
           ]
         },
+        "local-dev": {
+          "aot": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/dashboard/src/favicon.ico",
+            "apps/dashboard/src/assets",
+            "apps/dashboard/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/user/src/assets/i18n",
+              "output": "assets/i18n/user"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sync/src/assets/i18n",
+              "output": "assets/i18n/sync"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/dashboard/src/environments_config/local-dev",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
         "local-prod": {
           "aot": false,
           "buildOptimizer": false,
@@ -223,6 +267,9 @@
         },
         "local-stage": {
           "buildTarget": "dashboard:build:local-stage"
+        },
+        "local-dev": {
+          "buildTarget": "dashboard:build:local-dev"
         },
         "local-prod": {
           "buildTarget": "dashboard:build:local-prod"

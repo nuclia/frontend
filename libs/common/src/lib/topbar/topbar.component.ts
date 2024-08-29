@@ -17,7 +17,7 @@ export class TopbarComponent {
   userInfo = this.userService.userInfo;
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
-  isStage = location.hostname === 'stashify.cloud';
+  isStage = location.hostname === 'stashify.cloud' || location.hostname === 'gcp-global-dev-1.nuclia.io';
   private _account = this.sdk.currentAccount.pipe(shareReplay());
   accountType = this._account.pipe(map((account) => account.type));
   isAccountManager = this.features.isAccountManager;
