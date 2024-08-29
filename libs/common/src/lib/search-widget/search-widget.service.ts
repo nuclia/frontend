@@ -43,7 +43,7 @@ export class SearchWidgetService {
   private storage = inject(LOCAL_STORAGE);
   private modalService = inject(SisModalService);
   private viewerService = inject(ResourceViewerService);
-  private searchWidgetStorage = inject(SearchWidgetStorageService)
+  private searchWidgetStorage = inject(SearchWidgetStorageService);
 
   private currentQuery = '';
   private currentFilters: string[] = [];
@@ -211,6 +211,11 @@ export class SearchWidgetService {
         return { snippet, preview };
       }),
     );
+  }
+
+  resetSearchQuery() {
+    this.currentQuery = '';
+    this.currentFilters = [];
   }
 
   private reinitWidgetPreview() {

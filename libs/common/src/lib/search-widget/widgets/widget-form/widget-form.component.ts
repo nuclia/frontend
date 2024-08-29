@@ -107,22 +107,25 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   get popupStyleEnabled() {
     return this.form.controls.widgetMode.value === 'popup';
   }
-  get chatModeEnabled() {
-    return this.form.controls.widgetMode.value === 'chat';
-  }
   get navigateToLinkOrFileEnabled() {
     return this.form.controls.navigateToFile.value || this.form.controls.navigateToLink.value;
   }
 
   ngOnInit() {
-      this.route.params.pipe(
+    this.route.params
+      .pipe(
         filter((params) => !!params['slug']),
         map((params) => params['slug'] as string),
-      ).pipe(
+      )
+      .pipe(
         switchMap((widgetSlug) =>
           forkJoin([this.sdk.currentKb.pipe(take(1)), this.searchWidgetService.widgetList.pipe(take(1))]).pipe(
-            map(([kb, widgets]) => ({ kbId: kb.id, widgetSlug, widget: widgets.find((widget) => widget.slug === widgetSlug) }))
-          )
+            map(([kb, widgets]) => ({
+              kbId: kb.id,
+              widgetSlug,
+              widget: widgets.find((widget) => widget.slug === widgetSlug),
+            })),
+          ),
         ),
         takeUntil(this.unsubscribeAll),
       )
@@ -154,6 +157,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.searchWidgetService.resetSearchQuery();
   }
 
   private initWidget(widget: Widget) {
@@ -170,14 +174,15 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   saveChanges() {
     const current = this.currentWidget;
     if (current) {
-      this.searchWidgetService.updateWidget(current.slug, current.widgetConfig, current.searchConfigId).pipe(
-        switchMap(() => this.searchWidgetService.widgetList.pipe(take(1))),
-      ).subscribe((widgets) => {
-        const widget = widgets.find((widget) => widget.slug === current.slug);
-        if (widget) {
-          this.initWidget(widget);
-        }
-      });
+      this.searchWidgetService
+        .updateWidget(current.slug, current.widgetConfig, current.searchConfigId)
+        .pipe(switchMap(() => this.searchWidgetService.widgetList.pipe(take(1))))
+        .subscribe((widgets) => {
+          const widget = widgets.find((widget) => widget.slug === current.slug);
+          if (widget) {
+            this.initWidget(widget);
+          }
+        });
     }
   }
 
@@ -188,14 +193,15 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   rename() {
     const current = this.currentWidget;
     if (current) {
-      this.searchWidgetService.renameWidget(current.slug, current.name).pipe(
-        switchMap(() => this.searchWidgetService.widgetList.pipe(take(1))),
-      ).subscribe((widgets) => {
-        const widget = widgets.find((widget) => widget.slug === current.slug);
-        if (widget) {
-          this.initWidget(widget);
-        }
-      });
+      this.searchWidgetService
+        .renameWidget(current.slug, current.name)
+        .pipe(switchMap(() => this.searchWidgetService.widgetList.pipe(take(1))))
+        .subscribe((widgets) => {
+          const widget = widgets.find((widget) => widget.slug === current.slug);
+          if (widget) {
+            this.initWidget(widget);
+          }
+        });
     }
   }
 
