@@ -75,8 +75,8 @@
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
   export let max_tokens: number | undefined = undefined;
-  export let query_prepend = '';
   export let json_schema = '';
+  export let query_prepend = '';  
   export let vectorset = '';
 
   let _ready = new BehaviorSubject(false);
