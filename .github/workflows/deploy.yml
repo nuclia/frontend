@@ -218,11 +218,12 @@ jobs:
 
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v2
+
         with:
           token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/frontend_deploy
           event-type: promote
-          client-payload: '{"component": "app", "chart-version": "${{ steps.version_step.outputs.version_number }}", "environment": "$DEPLOYMENT_ENVIRONMENT" }'
+          client-payload: '{"component": "app", "chart-version": "${{ steps.version_step.outputs.version_number }}", "{{ env.DEPLOYMENT_ENVIRONMENT }}" }'
 
   deploy-manager:
     name: Deploy manager
@@ -279,4 +280,4 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/frontend_deploy
           event-type: promote
-          client-payload: '{"component": "manager", "chart-version": "${{ steps.version_step.outputs.version_number }}", "environment": "$DEPLOYMENT_ENVIRONMENT" }'
+          client-payload: '{"component": "manager", "chart-version": "${{ steps.version_step.outputs.version_number }}", "environment": "{{ env.DEPLOYMENT_ENVIRONMENT }}" }'
