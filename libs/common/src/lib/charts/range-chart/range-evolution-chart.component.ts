@@ -30,6 +30,11 @@ export class RangeEvolutionChartComponent extends BaseChartDirective implements 
 
   id = `range-evolution-chart-${nextUniqueId++}`;
 
+  showTooltip = false;
+  tooltipContent?: DatedRangeChartData;
+  tooltipLeft = 0;
+  tooltipBottom = 0;
+
   @Input({ transform: numberAttribute }) height = this.defaultHeight;
   @Input()
   set data(values: DatedRangeChartData[]) {
@@ -48,6 +53,25 @@ export class RangeEvolutionChartComponent extends BaseChartDirective implements 
     const width = availableWidth - margin.left - margin.right;
     const height = (this.height || this.defaultHeight) - margin.top - margin.bottom;
 
+    // Tooltip event handlers
+    const mousemove = (event: MouseEvent) => {
+      const [mouseX] = d3.pointer(event);
+      let index = Math.round((mouseX - margin.left) / x.step());
+      index = Math.max(Math.min(index, this._data.length - 1), 0);
+      const left = x.step() * index + margin.left;
+      const top = y(this._data[index].average);
+      this.tooltipLeft = left - 4;
+      this.tooltipBottom = this.container?.nativeElement.clientHeight - margin.top - top + 8;
+      this.tooltipContent = this._data[index];
+      this.showTooltip = true;
+      this.cdr.markForCheck();
+    };
+
+    const mouseleave = () => {
+      this.showTooltip = false;
+      this.cdr.markForCheck();
+    };
+
     // Append the svg object to the page
     d3.select(`.${this.id} svg`).remove();
     const svg = d3
@@ -55,6 +79,8 @@ export class RangeEvolutionChartComponent extends BaseChartDirective implements 
       .append('svg')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
+      .on('mouseover mousemove', mousemove)
+      .on('mouseleave', mouseleave)
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 

@@ -13,17 +13,28 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
   AccordionComponent,
+  AccordionExtraDescriptionDirective,
   AccordionItemComponent,
+  PaExpanderModule,
+  PaTableModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { Observable, Subject } from 'rxjs';
-import { DatedRangeChartData, RangeChartComponent, RangeChartData, RangeEvolutionChartComponent } from '../charts';
+import {
+  DatedRangeChartData,
+  GroupedBarChartComponent,
+  GroupedBarChartData,
+  RangeChartComponent,
+  RangeChartData,
+  RangeEvolutionChartComponent,
+} from '../charts';
 import { RemiMetricsService, RemiPeriods } from './remi-metrics.service';
-import { SisProgressModule } from '@nuclia/sistema';
+import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { format } from 'date-fns';
 import { takeUntil } from 'rxjs/operators';
 import { RemiQueryCriteria, RemiQueryResponseContextDetails, RemiQueryResponseItem } from '@nuclia/core';
+import { DateAfter } from '../validators';
 
 @Component({
   standalone: true,
@@ -38,6 +49,11 @@ import { RemiQueryCriteria, RemiQueryResponseContextDetails, RemiQueryResponseIt
     AccordionBodyDirective,
     SisProgressModule,
     ReactiveFormsModule,
+    InfoCardComponent,
+    PaTableModule,
+    GroupedBarChartComponent,
+    PaExpanderModule,
+    AccordionExtraDescriptionDirective,
   ],
   templateUrl: './metrics-page.component.html',
   styleUrl: './metrics-page.component.scss',
@@ -60,6 +76,8 @@ export class MetricsPageComponent implements OnInit, OnDestroy {
   answerEvolution: Observable<DatedRangeChartData[]> = this.remiMetrics.answerEvolution;
   contextEvolution: Observable<DatedRangeChartData[]> = this.remiMetrics.contextEvolution;
   missingKnowledgeData: Observable<RemiQueryResponseItem[]> = this.remiMetrics.missingKnowledgeData;
+  missingKnowledgeBarPlotData: Observable<{ [id: number]: GroupedBarChartData[] }> =
+    this.remiMetrics.missingKnowledgeBarPlotData;
 
   missingKnowledgeDetails: { [id: number]: RemiQueryResponseContextDetails } = {};
 
@@ -67,9 +85,24 @@ export class MetricsPageComponent implements OnInit, OnDestroy {
     value: new FormControl<'1' | '2' | '3' | '4' | '5'>('3', { nonNullable: true }),
     month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}')],
+      validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
     }),
   });
+
+  noEvolutionData: Observable<boolean> = this.remiMetrics.noEvolutionData;
+  healthStatusOnError: Observable<boolean> = this.remiMetrics.healthStatusOnError;
+  evolutionDataOnError: Observable<boolean> = this.remiMetrics.evolutionDataOnError;
+  missingKnowledgeOnError: Observable<boolean> = this.remiMetrics.missingKnowledgeOnError;
+
+  get monthControl() {
+    return this.missingKnowledgeCriteria.controls.month;
+  }
+  get monthValue() {
+    return this.monthControl.value;
+  }
+  get criteriaPercentValue() {
+    return parseInt(this.missingKnowledgeCriteria.controls.value.getRawValue(), 10) * 20 + '%';
+  }
 
   ngOnInit() {
     this.loadMissingKnowledge();

@@ -27,8 +27,34 @@
       </div>
     </div>
 
-    <div class="chart-container">
-      <stf-range-chart [data]="(healthCheckData | async) || []"></stf-range-chart>
+    <div class="chart-and-definitions">
+      <div class="chart-container">
+        @if (healthStatusOnError | async) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'kb.metrics.error.health-status-not-loaded' | translate }}
+          </nsi-info-card>
+        } @else {
+          @if (healthCheckData | async; as healthStatus) {
+            @if (healthStatus.length > 0) {
+              <stf-range-chart [data]="(healthCheckData | async) || []"></stf-range-chart>
+            } @else {
+              <nsi-info-card>{{ 'kb.metrics.error.no-data-on-period' | translate }}</nsi-info-card>
+            }
+          }
+        }
+      </div>
+      <div>
+        <dl class="definitions">
+          <dt>{{ 'metrics.remi.category-short.answer_relevance' | translate }}:</dt>
+          <dd>{{ 'kb.metrics.definition.answer-relevance' | translate }}</dd>
+          <dt>{{ 'metrics.remi.category-short.context_relevance' | translate }}:</dt>
+          <dd>{{ 'kb.metrics.definition.context-relevance' | translate }}</dd>
+          <dt>{{ 'metrics.remi.category-short.groundedness' | translate }}:</dt>
+          <dd>{{ 'kb.metrics.definition.groundedness' | translate }}</dd>
+        </dl>
+      </div>
     </div>
   </section>
   <section>
@@ -37,90 +63,167 @@
       <div class="page-description">{{ 'kb.metrics.performance-evolution.description' | translate }}</div>
     </div>
     <div>
-      <div class="chart-container">
-        <stf-range-evolution-chart [data]="(answerEvolution | async) || []"></stf-range-evolution-chart>
-        <div class="title-s">{{ 'metrics.remi.category-full.answer_relevance' | translate }}</div>
-      </div>
-      <div class="chart-container">
-        <stf-range-evolution-chart [data]="(contextEvolution | async) || []"></stf-range-evolution-chart>
-        <div class="title-s">{{ 'metrics.remi.category-full.context_relevance' | translate }}</div>
-      </div>
-      <div class="chart-container">
-        <stf-range-evolution-chart [data]="(groundednessEvolution | async) || []"></stf-range-evolution-chart>
-        <div class="title-s">{{ 'metrics.remi.category-full.groundedness' | translate }}</div>
-      </div>
+      @if (evolutionDataOnError | async) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'kb.metrics.error.evolution-not-loaded' | translate }}
+        </nsi-info-card>
+      } @else if (noEvolutionData | async) {
+        <nsi-info-card>{{ 'kb.metrics.error.no-data-on-period' | translate }}</nsi-info-card>
+      } @else {
+        <div class="evolution-chart-legend">
+          <div class="legend-item">
+            {{ 'metrics.legend.average' | translate }}
+            <div class="average-line"></div>
+          </div>
+          <div class="legend-item">
+            {{ 'metrics.legend.min-max-range' | translate }}
+            <div class="range-area"></div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <stf-range-evolution-chart [data]="(answerEvolution | async) || []"></stf-range-evolution-chart>
+          <div class="title-s">{{ 'metrics.remi.category-full.answer_relevance' | translate }}</div>
+        </div>
+        <div class="chart-container">
+          <stf-range-evolution-chart [data]="(contextEvolution | async) || []"></stf-range-evolution-chart>
+          <div class="title-s">{{ 'metrics.remi.category-full.context_relevance' | translate }}</div>
+        </div>
+        <div class="chart-container">
+          <stf-range-evolution-chart [data]="(groundednessEvolution | async) || []"></stf-range-evolution-chart>
+          <div class="title-s">{{ 'metrics.remi.category-full.groundedness' | translate }}</div>
+        </div>
+      }
     </div>
   </section>
   <section>
     <div class="sticky-section">
       <div class="title-l">{{ 'kb.metrics.missing-knowledge.title' | translate }}</div>
       <div class="page-description">{{ 'kb.metrics.missing-knowledge.description' | translate }}</div>
-      <div class="criteria-container">
-        <form [formGroup]="missingKnowledgeCriteria">
-          <div class="field-container">
-            <label for="value">
-              {{ 'kb.metrics.missing-knowledge.criteria.context-lower-than-label' | translate }}
-            </label>
-            <pa-select
-              id="value"
-              formControlName="value"
-              externalLabel>
-              <pa-option value="1">20%</pa-option>
-              <pa-option value="2">40%</pa-option>
-              <pa-option value="3">60%</pa-option>
-              <pa-option value="4">80%</pa-option>
-              <pa-option value="5">100%</pa-option>
-            </pa-select>
-          </div>
-          <div class="field-container">
-            <label for="month">{{ 'kb.metrics.missing-knowledge.criteria.month.label' | translate }}</label>
-            <pa-input
-              id="month"
-              externalLabel
-              formControlName="month"
-              help="kb.metrics.missing-knowledge.criteria.month.format"></pa-input>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div>
-      <pa-accordion #missingKnowledgeAccordion>
-        @for (item of missingKnowledgeData | async; track item.id) {
-          <pa-accordion-item
-            [id]="'' + item.id"
-            [itemTitle]="item.question"
-            [description]="
-              item.answer +
-              '<br><strong>' +
-              ('metrics.remi.category-short.answer_relevance' | translate) +
-              ': ' +
-              item.remi.answer_relevance.score +
-              '</strong> – ' +
-              item.remi.answer_relevance.reason +
-              '<br><strong>' +
-              ('metrics.remi.category-short.context_relevance' | translate) +
-              ':</strong> ' +
-              (item.remi.context_relevance | json)
-            "
-            (expandedChange)="loadMissingKnowledgeDetails(item.id)">
-            <pa-accordion-item-body>
-              @if (missingKnowledgeDetails[item.id]; as details) {
-                <ul class="context-list">
-                  @for (context of details.context; track context) {
-                    <li>
-                      <strong>{{ item.remi.context_relevance[$index] }}</strong>
-                      –
-                      <span [innerHTML]="context.text"></span>
-                    </li>
-                  }
-                </ul>
-              } @else {
-                <nsi-spinner></nsi-spinner>
+      <br />
+      <pa-expander [expanded]="false">
+        <pa-expander-header>
+          <span class="title-xxs">
+            {{
+              'kb.metrics.missing-knowledge.criteria.summary'
+                | translate: { value: criteriaPercentValue, month: monthValue }
+            }}
+          </span>
+        </pa-expander-header>
+        <pa-expander-body>
+          <div class="criteria-container">
+            <form [formGroup]="missingKnowledgeCriteria">
+              <div class="field-container">
+                <label for="value">
+                  {{ 'kb.metrics.missing-knowledge.criteria.context-lower-than-label' | translate }}
+                </label>
+                <pa-select
+                  id="value"
+                  formControlName="value"
+                  externalLabel>
+                  <pa-option value="1">20%</pa-option>
+                  <pa-option value="2">40%</pa-option>
+                  <pa-option value="3">60%</pa-option>
+                  <pa-option value="4">80%</pa-option>
+                  <pa-option value="4">80%</pa-option>
+                  <pa-option value="5">100%</pa-option>
+                </pa-select>
+              </div>
+              <div class="field-container">
+                <label for="month">{{ 'kb.metrics.missing-knowledge.criteria.month.label' | translate }}</label>
+                <pa-input
+                  id="month"
+                  externalLabel
+                  formControlName="month"
+                  help="kb.metrics.missing-knowledge.criteria.month.format"></pa-input>
+              </div>
+              @if (monthControl.errors?.['dateBefore']) {
+                <nsi-info-card type="warning">
+                  {{ 'kb.metrics.missing-knowledge.criteria.month.limit' | translate }}
+                </nsi-info-card>
               }
-            </pa-accordion-item-body>
-          </pa-accordion-item>
-        }
-      </pa-accordion>
+            </form>
+          </div>
+        </pa-expander-body>
+      </pa-expander>
     </div>
+
+    @if (missingKnowledgeOnError | async) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
+      </nsi-info-card>
+    } @else if (!monthControl.errors) {
+      @if (missingKnowledgeData | async; as missingKnowledge) {
+        @if (missingKnowledge.length === 0) {
+          <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
+        } @else {
+          <pa-accordion #missingKnowledgeAccordion>
+            @for (item of missingKnowledgeData | async; track item.id) {
+              <pa-accordion-item
+                [id]="'' + item.id"
+                [itemTitle]="item.question"
+                [description]="
+                  '<strong>' +
+                  ('kb.metrics.missing-knowledge.summary.answer' | translate) +
+                  '</strong>' +
+                  item.answer +
+                  '<br><strong>' +
+                  ('kb.metrics.missing-knowledge.summary.relevance' | translate) +
+                  item.remi.answer_relevance.score * 20 +
+                  '%</strong> – ' +
+                  item.remi.answer_relevance.reason +
+                  '<br>' +
+                  ('kb.metrics.missing-knowledge.summary.context-count'
+                    | translate: { count: item.remi.context_relevance.length })
+                "
+                (expandedChange)="loadMissingKnowledgeDetails(item.id)">
+                <pa-accordion-item-extra-description>
+                  @if (missingKnowledgeBarPlotData | async; as data) {
+                    <div class="chart-container">
+                      <stf-grouped-bar-chart
+                        [data]="data[item.id]"
+                        height="144"></stf-grouped-bar-chart>
+                      <h6>Text blocks scores distribution</h6>
+                    </div>
+                  }
+                </pa-accordion-item-extra-description>
+
+                <pa-accordion-item-body>
+                  @if (missingKnowledgeDetails[item.id]; as details) {
+                    <pa-table
+                      border
+                      columns="repeat(2, 112px) 1fr">
+                      <pa-table-header>
+                        <pa-table-cell header>
+                          {{ 'metrics.remi.category-short.context_relevance' | translate }}
+                        </pa-table-cell>
+                        <pa-table-cell header>
+                          {{ 'metrics.remi.category-short.groundedness' | translate }}
+                        </pa-table-cell>
+                        <pa-table-cell header>
+                          {{ 'kb.metrics.missing-knowledge.table.context-header' | translate }}
+                        </pa-table-cell>
+                      </pa-table-header>
+                      @for (context of details.context; track context) {
+                        <pa-table-row>
+                          <pa-table-cell center>{{ item.remi.context_relevance[$index] * 20 }}%</pa-table-cell>
+                          <pa-table-cell center>{{ item.remi.groundedness[$index] * 20 }}%</pa-table-cell>
+                          <pa-table-cell><span [innerHTML]="context.text"></span></pa-table-cell>
+                        </pa-table-row>
+                      }
+                    </pa-table>
+                  } @else {
+                    <nsi-spinner></nsi-spinner>
+                  }
+                </pa-accordion-item-body>
+              </pa-accordion-item>
+            }
+          </pa-accordion>
+        }
+      }
+    }
   </section>
 </div>

@@ -1,4 +1,19 @@
 <div
   class="range-chart"
   #container
-  [ngClass]="id"></div>
+  [ngClass]="id">
+  <div
+    class="tooltip"
+    [style.opacity]="showTooltip ? '1' : '0'"
+    [style.bottom.px]="tooltipBottom"
+    [style.left.px]="tooltipLeft">
+    @if (tooltipContent) {
+      <strong>{{ tooltipContent.timestamp }}</strong>
+      <ul>
+        <li>Average: {{ tooltipContent.average | number: '1.0-0' }}%</li>
+        <li>Min: {{ tooltipContent.min | number: '1.0-0' }}%</li>
+        <li>Max: {{ tooltipContent.max | number: '1.0-0' }}%</li>
+      </ul>
+    }
+  </div>
+</div>
