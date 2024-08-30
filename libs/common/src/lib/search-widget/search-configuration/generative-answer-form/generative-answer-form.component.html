@@ -230,6 +230,30 @@
       </div>
       <div class="config-form-field">
         <pa-toggle
+          formControlName="metadatasRagStrategy"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{ 'search.configuration.generative-answer.rag-strategies.metadatas.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.generative-answer.rag-strategies.metadatas.toggle-description' | translate }}
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="metadatasEnabled"
+          formGroupName="metadatas">
+          @for (metadata of metadataIds; track metadata) {
+            <pa-checkbox [formControlName]="metadata">
+              <code>{{ metadata }}</code>
+            </pa-checkbox>
+          }
+        </div>
+      </div>
+      <div class="config-form-field">
+        <pa-toggle
           formControlName="fieldsAsContext"
           withBackground
           spaceBetweenLabelAndToggle

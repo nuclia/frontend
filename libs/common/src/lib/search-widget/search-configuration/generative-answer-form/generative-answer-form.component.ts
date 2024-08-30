@@ -18,6 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { RouterLink } from '@angular/router';
+import { RAG_METADATAS } from '@nuclia/core';
 
 @Component({
   selector: 'stf-generative-answer-form',
@@ -75,6 +76,16 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       includeTextualHierarchy: new FormControl<boolean>(false, { nonNullable: true }),
       additionalCharacters: new FormControl<number | null>(null),
       entireResourceAsContext: new FormControl<boolean>(false, { nonNullable: true }),
+      metadatasRagStrategy: new FormControl<boolean>(false, { nonNullable: true }),
+      metadatas: new FormGroup(
+        Object.values(RAG_METADATAS).reduce(
+          (controls, metadata) => {
+            controls[metadata] = new FormControl<boolean>(false, { nonNullable: true });
+            return controls;
+          },
+          {} as Record<RAG_METADATAS, FormControl<boolean>>,
+        ),
+      ),
       maxNumberOfResources: new FormControl<number | null>(null),
       fieldsAsContext: new FormControl<boolean>(false, { nonNullable: true }),
       fieldIds: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
@@ -99,6 +110,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   userPromptOverridden = false;
   systemPromptOverridden = false;
   isRagImagesEnabled = this.featuresService.unstable.ragImages;
+  metadataIds = Object.values(RAG_METADATAS);
 
   get generateAnswerEnabled() {
     return this.form.controls.generateAnswer.value;
@@ -117,6 +129,9 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   get entireResourceAsContextEnabled() {
     return this.form.controls.ragStrategies.controls.entireResourceAsContext.value;
+  }
+  get metadatasEnabled() {
+    return this.form.controls.ragStrategies.controls.metadatasRagStrategy.value;
   }
   get fieldsAsContextEnabled() {
     return this.form.controls.ragStrategies.controls.fieldsAsContext.value;
