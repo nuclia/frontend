@@ -890,6 +890,7 @@
 	"resource.origin.url": "URL",
 	"resource.pagination.counter": "{{from}}-{{to}} de {{total}}",
 	"resource.pagination.download": "Descarrega la llista sencera",
+	"resource.pagination.download-errors": "Baixar la llista d'errors",
 	"resource.pagination.download-incomplete": "S'ha produït un error en descarregar la llista. La descàrrega pot contenir dades incompletes. Siusplau torna-ho a provar.",
 	"resource.pagination.downloading": "S'està baixant...",
 	"resource.pagination.filtered": "{{num}} recursos amagats per filtres",

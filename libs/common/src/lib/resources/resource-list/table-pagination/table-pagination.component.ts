@@ -6,6 +6,7 @@ import {
   inject,
   Input,
   numberAttribute,
+  OnInit,
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -13,6 +14,7 @@ import { PaButtonModule, PaDropdownModule, PaIconModule } from '@guillotinaweb/p
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { ResourceListService } from '../resource-list.service';
+import { RESOURCE_STATUS } from '@nuclia/core';
 
 @Component({
   selector: 'stf-table-pagination',
@@ -22,7 +24,7 @@ import { ResourceListService } from '../resource-list.service';
   styleUrl: './table-pagination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TablePaginationComponent {
+export class TablePaginationComponent implements OnInit {
   private resourceListService = inject(ResourceListService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -56,6 +58,7 @@ export class TablePaginationComponent {
   private _page = 0;
   pages: (number | '…')[] = [];
   loading = false;
+  isErrorsView = false;
 
   get from() {
     return this.page * this.pageSize + 1;
@@ -63,6 +66,10 @@ export class TablePaginationComponent {
 
   get to() {
     return Math.min(this.page * this.pageSize + this.pageSize, this.totalItems);
+  }
+
+  ngOnInit() {
+    this.isErrorsView = this.resourceListService.status === RESOURCE_STATUS.ERROR;
   }
 
   generatePagination() {
@@ -79,9 +86,9 @@ export class TablePaginationComponent {
     this.pageChange.emit(page);
   }
 
-  download() {
+  download(errors = false) {
     this.loading = true;
-    this.resourceListService.downloadResources().subscribe(() => {
+    this.resourceListService.downloadResources(errors ? RESOURCE_STATUS.ERROR : undefined).subscribe(() => {
       this.loading = false;
       this.cdr.markForCheck();
     });
