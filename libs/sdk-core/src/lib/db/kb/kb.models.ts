@@ -332,6 +332,7 @@ export interface WidgetFeatures {
   dumpLog?: boolean;
   preferMarkdown?: boolean;
   openNewTab?: boolean;
+  orFilterLogic?: boolean;
 }
 
 export enum RagStrategyName {

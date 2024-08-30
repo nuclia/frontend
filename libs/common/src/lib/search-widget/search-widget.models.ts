@@ -12,6 +12,7 @@ export const MODELS_SUPPORTING_VISION = ['chatgpt-vision', 'gemini-1-5-pro-visio
 
 export interface SearchBoxConfig {
   filter: boolean;
+  filterLogic: 'and' | 'or',
   autofilter: boolean;
   setPreselectedFilters: boolean;
   suggestions: boolean;
@@ -108,6 +109,7 @@ export const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
 export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   filter: false,
   filters: DEFAULT_FILTERS,
+  filterLogic: 'and',
   autofilter: false,
   setPreselectedFilters: false,
   preselectedFilters: '',
@@ -201,6 +203,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     noBM25forChat: config.searchBox.generateAnswerWith === 'only-semantic',
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,
+    orFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'or',
     autofilter: config.searchBox.autofilter,
     useSynonyms: config.searchBox.useSynonyms,
     suggestions: config.searchBox.suggestions,

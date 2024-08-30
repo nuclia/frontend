@@ -15,6 +15,7 @@ import type {
 import {
   FIELD_TYPE,
   FileFieldData,
+  FilterOperator,
   getDataKeyFromFieldType,
   getEntityFromFilter,
   getFieldTypeFromString,
@@ -35,6 +36,7 @@ import type { FindResultsAsList, ResultType, TypedResult } from '../models';
 import { NO_RESULT_LIST } from '../models';
 import { combineLatest, filter, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
+import { orFilterLogic } from './widget.store';
 
 interface SearchFilters {
   labels?: LabelFilter[];
@@ -253,6 +255,19 @@ export const searchFilters = searchState.writer<string[], { filters: string[] }>
       filters,
     };
   },
+);
+
+export const combinedFilters = combineLatest([searchFilters, preselectedFilters, orFilterLogic]).pipe(
+  map(([searchFilters, preselectedFilters, orFilterLogic]) => {
+    const filterOperator = orFilterLogic ? FilterOperator.any : FilterOperator.all;
+    const filters: Filter[] = searchFilters.length > 0 ? [{ [filterOperator]: searchFilters }] : [];
+    if (preselectedFilters.length === 0) {
+      return filters;
+    } else {
+      const isAdvancedFilters = preselectedFilters.every((filter) => typeof filter === 'object');
+      return isAdvancedFilters ? filters.concat(preselectedFilters) : filters.concat([{ all: preselectedFilters }]);
+    }
+  }),
 );
 
 export const labelFilters = searchState.writer<LabelFilter[]>(
