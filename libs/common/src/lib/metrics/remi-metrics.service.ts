@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
-import { DatedRangeChartData, RangeChartData } from '../charts';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
+import { DatedRangeChartData, GroupedBarChartData, RangeChartData } from '../charts';
 import { TranslateService } from '@ngx-translate/core';
 import { endOfDay, format, startOfDay, subDays, subHours } from 'date-fns';
 import {
@@ -33,8 +33,15 @@ export class RemiMetricsService {
   private translate = inject(TranslateService);
   private sdk = inject(SDKService);
 
+  private _healthStatusOnError = new BehaviorSubject(false);
+  private _evolutionDataOnError = new BehaviorSubject(false);
+  private _missingKnowledgeOnError = new BehaviorSubject(false);
   private _period = new BehaviorSubject<RemiPeriods>('7d');
+
   period = this._period.asObservable();
+  healthStatusOnError = this._healthStatusOnError.asObservable();
+  evolutionDataOnError = this._evolutionDataOnError.asObservable();
+  missingKnowledgeOnError = this._missingKnowledgeOnError.asObservable();
 
   private scoreParameters: Observable<RangeParameters> = this.period.pipe(
     map((period) => {
@@ -47,8 +54,8 @@ export class RemiMetricsService {
         to = today.toISOString();
       } else {
         const days = parseInt(period.substring(0, period.indexOf('d')), 10);
-        from = startOfDay(subDays(today.toISOString(), days)).toISOString();
-        to = endOfDay(today).toISOString();
+        from = startOfDay(subDays(today.toISOString(), days).toISOString()).toISOString();
+        to = endOfDay(today.toISOString()).toISOString();
       }
 
       return {
@@ -74,6 +81,7 @@ export class RemiMetricsService {
       kb.activityMonitor.getRemiScores(parameters.from).pipe(
         catchError((err) => {
           console.error(err);
+          this._healthStatusOnError.next(true);
           return of([]);
         }),
       ),
@@ -81,8 +89,10 @@ export class RemiMetricsService {
     map((data) => {
       if (data.length !== 1) {
         console.error(`Health check data: One point expected but got ${data.length}`, data);
+        this._healthStatusOnError.next(true);
         return [];
       }
+      this._healthStatusOnError.next(false);
       return data[0].metrics.map((item) => ({
         category: this.translate.instant(`metrics.remi.category-short.${item.name}`),
         average: (item.average * 100) / 5,
@@ -98,18 +108,22 @@ export class RemiMetricsService {
   ]).pipe(
     switchMap(([kb, parameters]) =>
       kb.activityMonitor.getRemiScores(parameters.from, parameters.to, parameters.aggregation).pipe(
-        map((data) => ({
-          parameters,
-          results: data.map((item) => (item.metrics.length > 0 ? item : null)).filter((item) => !!item),
-        })),
-        catchError((err) => {
-          console.error(err);
+        map((data) => {
+          this._evolutionDataOnError.next(false);
+          return {
+            parameters,
+            results: data.map((item) => (item.metrics.length > 0 ? item : null)).filter((item) => !!item),
+          };
+        }),
+        catchError(() => {
+          this._evolutionDataOnError.next(true);
           return of({ results: [], parameters });
         }),
       ),
     ),
     shareReplay(1),
   );
+  noEvolutionData: Observable<boolean> = this.rawEvolutionData.pipe(map((data) => data.results.length === 0));
 
   groundednessEvolution: Observable<DatedRangeChartData[]> = this.rawEvolutionData.pipe(
     map((data) => this.getEvolutionForMetric(data, 'groundedness')),
@@ -127,10 +141,47 @@ export class RemiMetricsService {
   ]).pipe(
     switchMap(([kb, criteria]) =>
       kb.activityMonitor.queryRemiScores(criteria).pipe(
+        tap(() => this._missingKnowledgeOnError.next(false)),
         catchError((err) => {
           console.error(err);
+          this._missingKnowledgeOnError.next(true);
           return of([]);
         }),
+      ),
+    ),
+  );
+  missingKnowledgeBarPlotData: Observable<{ [id: number]: GroupedBarChartData[] }> = this.missingKnowledgeData.pipe(
+    map((items) =>
+      items.reduce(
+        (plotData, item) => {
+          const contextDistribution: { [score: string]: number } = this.getDistribution(item.remi.context_relevance);
+          const groundednessDistribution: { [score: string]: number } = this.getDistribution(item.remi.groundedness);
+          const groups: string[] = Object.keys(contextDistribution)
+            .concat(Object.keys(groundednessDistribution))
+            .reduce((deduplicatedGroups, key) => {
+              if (!deduplicatedGroups.includes(key)) {
+                deduplicatedGroups.push(key);
+              }
+              return deduplicatedGroups;
+            }, [] as string[]);
+          plotData[item.id] = groups
+            .sort((a, b) => {
+              const aValue = parseInt(a.slice(0, -1), 10);
+              const bValue = parseInt(b.slice(0, -1), 10);
+              return aValue > bValue ? 1 : -1;
+            })
+            .map((group) => ({
+              group,
+              values: {
+                [this.translate.instant('metrics.remi.category-short.context_relevance')]:
+                  contextDistribution[group] || 0,
+                [this.translate.instant('metrics.remi.category-short.groundedness')]:
+                  groundednessDistribution[group] || 0,
+              },
+            }));
+          return plotData;
+        },
+        {} as { [id: number]: GroupedBarChartData[] },
       ),
     ),
   );
@@ -155,5 +206,20 @@ export class RemiMetricsService {
         average: (groundedness!.average * 100) / 5,
       };
     });
+  }
+
+  private getDistribution(scores: number[]): { [score: string]: number } {
+    return scores.reduce(
+      (distribution, score) => {
+        const key = `${score * 20}%`;
+        if (distribution[key]) {
+          distribution[key]++;
+        } else {
+          distribution[key] = 1;
+        }
+        return distribution;
+      },
+      {} as { [score: string]: number },
+    );
   }
 }

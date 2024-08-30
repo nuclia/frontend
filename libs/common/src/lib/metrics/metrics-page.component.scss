@@ -28,6 +28,29 @@
     }
   }
 
+  .evolution-chart-legend {
+    align-items: center;
+    display: flex;
+    gap: rhythm(3);
+
+    .legend-item {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+    }
+
+    .average-line {
+      background: $color-primary-regular;
+      height: rhythm(0.25);
+      width: rhythm(2);
+    }
+    .range-area {
+      background: $color-primary-lightest;
+      height: rhythm(2);
+      width: rhythm(2);
+    }
+  }
+
   section:not(.period-container),
   .criteria-container form {
     display: flex;
@@ -37,7 +60,7 @@
 
   .criteria-container {
     padding: rhythm(2) 0;
-    max-width: rhythm(50);
+    max-width: rhythm(64);
 
     form .field-container {
       align-items: baseline;
@@ -55,8 +78,17 @@
     }
   }
 
+  pa-expander ::ng-deep .pa-expander:not(.pa-expander-card).pa-collapsed .pa-expander-header {
+    box-shadow: none;
+  }
+
   .context-list {
     margin: 0;
+
+    .score {
+      color: $color-neutral-regular;
+      font-weight: $font-weight-semi-bold;
+    }
   }
 
   .sticky-section {
@@ -64,5 +96,15 @@
     position: sticky;
     top: 0;
     z-index: 10;
+  }
+
+  .chart-and-definitions {
+    display: flex;
+    gap: rhythm(4);
+  }
+  .definitions {
+    dt {
+      @include title-xxs();
+    }
   }
 }
