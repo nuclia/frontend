@@ -13,17 +13,9 @@
         iconAndText
         icon="download"
         [disabled]="loading"
-        [paPopup]="menu">
-        {{ (loading ? 'resource.pagination.downloading' : 'generic.download') | translate }}
+        (click)="download(true)">
+        {{ (loading ? 'resource.pagination.downloading' : 'resource.pagination.download-errors') | translate }}
       </pa-button>
-      <pa-dropdown #menu>
-        <pa-option (selectOption)="download()">
-          {{ 'resource.pagination.download' | translate }}
-        </pa-option>
-        <pa-option (selectOption)="download(true)">
-          {{ 'resource.pagination.download-errors' | translate }}
-        </pa-option>
-      </pa-dropdown>
     } @else {
       <pa-button
         aspect="basic"

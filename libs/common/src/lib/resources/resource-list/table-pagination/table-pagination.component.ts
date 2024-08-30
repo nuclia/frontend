@@ -10,7 +10,7 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PaButtonModule, PaDropdownModule, PaIconModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaDropdownModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { ResourceListService } from '../resource-list.service';
@@ -19,15 +19,7 @@ import { RESOURCE_STATUS } from '@nuclia/core';
 @Component({
   selector: 'stf-table-pagination',
   standalone: true,
-  imports: [
-    CommonModule,
-    PaButtonModule,
-    PaIconModule,
-    PaPopupModule,
-    TranslateModule,
-    DropdownButtonComponent,
-    PaDropdownModule,
-  ],
+  imports: [CommonModule, PaButtonModule, PaIconModule, TranslateModule, DropdownButtonComponent, PaDropdownModule],
   templateUrl: './table-pagination.component.html',
   styleUrl: './table-pagination.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
