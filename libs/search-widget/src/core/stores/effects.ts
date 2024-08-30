@@ -49,13 +49,13 @@ import {
   updateQueryParams,
 } from '../utils';
 import {
+  combinedFilters,
   creationEnd,
   creationStart,
   getFieldDataFromResource,
   getResultType,
   isEmptySearchQuery,
   pendingResults,
-  preselectedFilters,
   resultList,
   searchFilters,
   searchQuery,
@@ -371,9 +371,10 @@ export function askQuestion(
         take(1),
         map((chat) => chat.filter((chat) => !chat.answer.incomplete && !chat.answer.inError)),
         switchMap((entries) =>
-          combineLatest([searchFilters.pipe(take(1)), preselectedFilters.pipe(take(1))]).pipe(
-            switchMap(([filters, preselectedFilters]) =>
-              getAnswer(question, entries, { ...options, filters: filters.concat(preselectedFilters) }).pipe(
+          combinedFilters.pipe(
+            take(1),
+            switchMap((filters) =>
+              getAnswer(question, entries, { ...options, filters }).pipe(
                 tap((result) => {
                   if (result.type === 'error') {
                     if ([412, 529].includes(result.status)) {
