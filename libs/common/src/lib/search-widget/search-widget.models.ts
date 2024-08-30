@@ -30,6 +30,7 @@ export interface SearchBoxConfig {
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
   additionalCharacters: number | null;
+  metadatasRagStrategy: boolean;
   metadatas: { [key in RAG_METADATAS]: boolean } | undefined;
   entireResourceAsContext: boolean;
   maxNumberOfResources: number | null;
@@ -139,6 +140,7 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   ragStrategies: {
     includeTextualHierarchy: false,
     additionalCharacters: null,
+    metadatasRagStrategy: false,
     metadatas: undefined,
     entireResourceAsContext: false,
     maxNumberOfResources: null,
@@ -291,7 +293,7 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
       ragStrategies.push(`hierarchy|${ragStrategiesConfig.additionalCharacters || 1000}`);
     }
   }
-  if (ragStrategiesConfig.metadatas) {
+  if (ragStrategiesConfig.metadatasRagStrategy && ragStrategiesConfig.metadatas) {
     const metadatas = Object.entries(ragStrategiesConfig.metadatas)
       .filter(([, value]) => value)
       .map(([key]) => key);
