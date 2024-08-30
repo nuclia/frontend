@@ -890,6 +890,7 @@
 	"resource.origin.url": "URL",
 	"resource.pagination.counter": "{{from}}-{{to}} de {{total}}",
 	"resource.pagination.download": "Descargar lista completa",
+	"resource.pagination.download-errors": "Descargar lista de errores",
 	"resource.pagination.download-incomplete": "Se produjo un error al descargar la lista. Es posible que la descarga contenga datos incompletos. Por favor Inténtelo de nuevo.",
 	"resource.pagination.downloading": "Descargando...",
 	"resource.pagination.filtered": "{{num}} recursos ocultos por filtros",

@@ -352,8 +352,8 @@ export class ResourceListService {
     );
   }
 
-  downloadResources() {
-    return this.getAllResources().pipe(
+  downloadResources(status?: RESOURCE_STATUS) {
+    return this.getAllResources(undefined, status).pipe(
       tap((result) => {
         const header = 'Id,Title,Labels,Date';
         const rows = result.resources.map((resource) => {
@@ -363,7 +363,9 @@ export class ResourceListService {
             labels.join(','),
           )}",${date}`;
         });
-        const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_resource_list.csv`;
+        const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_resource_list${
+          status ? '_' + status.toLowerCase() : ''
+        }.csv`;
         const content = `${header}\n${rows.join('\n')}`;
         const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
