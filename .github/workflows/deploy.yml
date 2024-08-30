@@ -4,14 +4,16 @@ on:
   push:
     branches:
       - main
+      - dev
 
 env:
   APP_IMAGE_NAME: app
   MANAGER_IMAGE_NAME: manager
-  CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
-  DOCS_STORAGE: ${{ secrets.DOCS_STORAGE }}
+  CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.CDN_STORAGE || secrets.CDN_STORAGE_DEV }}
+  DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.DOCS_STORAGE || secrets.DOCS_STORAGE_DEV }}
   GCP_WORKLOAD_IDENTITY_PROVIDER: 'projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider'
   GCP_SERVICE_ACCOUNT: 'github-actions@nuclia-internal.iam.gserviceaccount.com'
+  DEPLOYMENT_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
 
 permissions:
   id-token: write
@@ -77,6 +79,7 @@ jobs:
 
       - name: Tag if new version
         uses: pkgdeps/git-tag-action@v2.0.5
+        if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_repo: ${{ github.repository }}
@@ -103,14 +106,14 @@ jobs:
           gsutil copy -r libs/search-widget/public/* gs://$CDN_STORAGE
 
       - name: Publish SDK
-        if: steps.check-deploy.outputs.deploy-sdk == 'yes'
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
           package: ./dist/sdk-core/package.json
 
       - name: Generate and push SDK docs
-        if: steps.check-deploy.outputs.deploy-sdk == 'yes'
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         run: |-
           sh ./tools/build-sdk-docs.sh
           gsutil -m rsync -r ./libs/sdk-core/docs gs://$DOCS_STORAGE/js-sdk
@@ -126,7 +129,7 @@ jobs:
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
 
       - name: Publish NucliaDB admin app
-        if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes'
+        if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes' && github.ref == 'refs/heads/main'
         run: |-
           sed -i.bak "s,STF_DOCKER_CONFIG_VERSION,$GITHUB_SHA,g" dist/apps/nucliadb-admin/assets/deployment/app-config.json
           cp -r dist/apps/nucliadb-admin/* tools/python-nucliadb-admin-dist/nucliadb_admin_assets/
@@ -146,18 +149,19 @@ jobs:
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
 
       - name: Create 404 page for gh-pages
-        if: steps.check-deploy.outputs.deploy-sistema == 'yes'
+        if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
         run: |-
           cp dist/apps/sistema-demo/index.html dist/apps/sistema-demo/404.html
 
       - name: Deploy sistema-demo to GH pages
-        if: steps.check-deploy.outputs.deploy-sistema == 'yes'
+        if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist/apps/sistema-demo
 
       - name: Upload sourcemaps to Sentry
         uses: getsentry/action-release@v1.0.0
+        if: github.ref == 'refs/heads/main'
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: nuclia
@@ -218,7 +222,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/frontend_deploy
           event-type: promote
-          client-payload: '{"component": "app", "chart-version": "${{ steps.version_step.outputs.version_number }}" }'
+          client-payload: '{"component": "manager", "chart-version": "${{ steps.version_step.outputs.version_number }}", "environment": "$DEPLOYMENT_ENVIRONMENT" }'
 
   deploy-manager:
     name: Deploy manager
@@ -275,4 +279,4 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/frontend_deploy
           event-type: promote
-          client-payload: '{"component": "manager", "chart-version": "${{ steps.version_step.outputs.version_number }}" }'
+          client-payload: '{"component": "manager", "chart-version": "${{ steps.version_step.outputs.version_number }}", "environment": "$DEPLOYMENT_ENVIRONMENT" }'
