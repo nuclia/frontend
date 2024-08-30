@@ -5,6 +5,7 @@ import { forkJoin, Subscription } from 'rxjs';
 import {
   askQuestion,
   autofilerDisabled,
+  combinedFilters,
   disableAnswers,
   hideResults,
   isAnswerEnabled,
@@ -13,7 +14,6 @@ import {
   pageNumber,
   pendingResults,
   preferMarkdown,
-  preselectedFilters,
   searchFilters,
   searchOptions,
   searchQuery,
@@ -60,7 +60,7 @@ export const setupTriggerSearch = (
                 searchOptions.pipe(take(1)),
                 searchShow.pipe(take(1)),
                 searchFilters.pipe(take(1)),
-                preselectedFilters.pipe(take(1)),
+                combinedFilters.pipe(take(1)),
                 autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
                 widgetRagStrategies.pipe(take(1)),
@@ -77,7 +77,7 @@ export const setupTriggerSearch = (
                     options,
                     show,
                     filters,
-                    preselectedFilters,
+                    combinedFilters,
                     autoFilterDisabled,
                     isAnswerEnabled,
                     ragStrategies,
@@ -89,7 +89,7 @@ export const setupTriggerSearch = (
                     const currentOptions: SearchOptions = {
                       ...options,
                       show,
-                      filters: filters.concat(preselectedFilters),
+                      filters: combinedFilters,
                       ...(autoFilterDisabled ? { autofilter: false } : {}),
                     };
                     if (isAnswerEnabled && !trigger?.more) {

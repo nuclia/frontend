@@ -37,6 +37,26 @@
       </div>
     </div>
   </div>
+  @if (filterEnabled) {
+    <div class="config-form-field">
+      <div class="title-xs">{{ 'search.configuration.search-box.filter-logic.title' | translate }}</div>
+      <pa-radio-group formControlName="filterLogic">
+        <pa-radio
+          value="and"
+          help="search.configuration.search-box.filter-logic.and-logic">
+          AND
+        </pa-radio>
+        <pa-radio
+          value="or"
+          help="search.configuration.search-box.filter-logic.or-logic">
+          OR
+        </pa-radio>
+      </pa-radio-group>
+    </div>
+    @if (createdFilterEnabled && orLogicEnabled) {
+      <nsi-info-card>{{ 'search.configuration.search-box.filter-logic.warning' | translate }}</nsi-info-card>
+    }
+  }
   <div class="config-form-field">
     <pa-toggle
       formControlName="autofilter"

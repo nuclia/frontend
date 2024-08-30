@@ -57,6 +57,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   form = new FormGroup({
     filter: new FormControl<boolean>(false, { nonNullable: true }),
+    filterLogic: new FormControl<'and' | 'or'>('and', { nonNullable: true }),
     setPreselectedFilters: new FormControl<boolean>(false, { nonNullable: true }),
     suggestions: new FormControl<boolean>(false, { nonNullable: true }),
     autofilter: new FormControl<boolean>(false, { nonNullable: true }),
@@ -85,6 +86,12 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   get filterEnabled() {
     return this.form.controls.filter.value;
+  }
+  get createdFilterEnabled() {
+    return this.form.controls.filters.controls.created.value;
+  }
+  get orLogicEnabled() {
+    return this.form.controls.filterLogic.value === 'or';
   }
   get preselectedFiltersEnabled() {
     return this.form.controls.setPreselectedFilters.value;
