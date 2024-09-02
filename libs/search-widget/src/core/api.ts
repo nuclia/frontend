@@ -45,6 +45,7 @@ let CITATIONS = false;
 let REPHRASE = false;
 let ASK_TO_RESOURCE = '';
 let MAX_TOKENS: number | undefined = undefined;
+let MAX_PARAGRAPHS: number | undefined = undefined;
 let QUERY_PREPEND = '';
 
 export const initNuclia = (
@@ -122,6 +123,7 @@ export const initNuclia = (
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.PARAGRAPHS && feature !== Ask.Features.KEYWORD);
   }
   MAX_TOKENS = widgetOptions.max_tokens || undefined;
+  MAX_PARAGRAPHS = widgetOptions.max_paragraphs || undefined;
   QUERY_PREPEND = widgetOptions.query_prepend || '';
   STATE = state;
   nucliaApi.events?.log('widgetOptions', widgetOptions);
@@ -176,6 +178,7 @@ export const getAnswer = (
     citations: CITATIONS,
     rephrase: REPHRASE,
     max_tokens: MAX_TOKENS,
+    top_k: MAX_PARAGRAPHS,
   };
   if (prompt || systemPrompt) {
     defaultOptions.prompt = { user: prompt || undefined, system: systemPrompt || undefined };

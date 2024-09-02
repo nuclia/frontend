@@ -5,6 +5,7 @@ import {
   getFeatures,
   getFilters,
   getJsonSchema,
+  getMaxParagraphs,
   getMaxTokens,
   getNotEnoughDataMessage,
   getPlaceholder,
@@ -142,6 +143,7 @@ export class SearchWidgetService {
     const notEnoughDataMessage = getNotEnoughDataMessage(widgetOptions);
     const askToResource = getAskToResource(currentConfig.generativeAnswer);
     const maxTokens = getMaxTokens(currentConfig.generativeAnswer);
+    const maxParagraphs = getMaxParagraphs(currentConfig.generativeAnswer);
     const generativeModel = currentConfig.generativeAnswer.generativeModel
       ? `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`
       : '';
@@ -185,7 +187,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;

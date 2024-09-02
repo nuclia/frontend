@@ -71,6 +71,8 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     }),
     limitTokenConsumption: new FormControl<boolean>(false, { nonNullable: true }),
     tokenConsumptionLimit: new FormControl<number | null>(null),
+    limitParagraphs: new FormControl<boolean>(false, { nonNullable: true }),
+    paragraphsLimit: new FormControl<number | null>(null),
     preferMarkdown: new FormControl<boolean>(false, { nonNullable: true }),
     ragStrategies: new FormGroup({
       includeTextualHierarchy: new FormControl<boolean>(false, { nonNullable: true }),
@@ -126,6 +128,9 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   get limitTokenConsumptionEnabled() {
     return this.form.controls.limitTokenConsumption.value;
+  }
+  get limitParagraphsEnabled() {
+    return this.form.controls.limitParagraphs.value;
   }
   get entireResourceAsContextEnabled() {
     return this.form.controls.ragStrategies.controls.entireResourceAsContext.value;

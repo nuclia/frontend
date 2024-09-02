@@ -1,8 +1,9 @@
-# 1.20.0 (unreleased)
+# 1.20.0 (2024-09-02)
 
 ### Feature
 
 - Add `activityMonitor` property to `IWritableKnowledgeBox`, which allows to request REMi metrics on the Knowledge Box
+- Support `top_k` on `/ask` endpoint
 
 ### Improvement
 

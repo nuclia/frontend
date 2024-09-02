@@ -984,6 +984,8 @@
 	"search.configuration.generative-answer.generative-model.kb-settings": "(à partir des paramètres de la KB)",
 	"search.configuration.generative-answer.generative-model.select-label": "Modèle génératif actuel",
 	"search.configuration.generative-answer.generative-model.title": "Modèle génératif spécifique",
+	"search.configuration.generative-answer.limit-paragraphs.toggle-description": "Pour contrôler le nombre de paragraphes les plus pertinents transmis au LLM pour générer la réponse. Valeur par défaut : 20.",
+	"search.configuration.generative-answer.limit-paragraphs.toggle-label": "Meilleurs résultats",
 	"search.configuration.generative-answer.limit-token.toggle-description": "Définit le nombre maximum de jetons que le modèle générera. Un nombre faible peut empêcher vos utilisateurs de voir les résultats.",
 	"search.configuration.generative-answer.limit-token.toggle-label": "Limiter la consommation de jetons",
 	"search.configuration.generative-answer.prefer-markdown.toggle-description": "Générer la réponse en utilisant le format markdown",

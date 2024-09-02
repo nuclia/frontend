@@ -75,6 +75,10 @@ export interface ChatOptions extends BaseSearchOptions {
    * Defines the maximum number of tokens that the model will generate.
    */
   max_tokens?: number;
+  /**
+   * Defines the maximum number of the most relevant paragraphs to pass to the LLM.
+   */
+  top_k?: number;
   prefer_markdown?: boolean;
   answer_json_schema?: object;
   extra_context?: string[];

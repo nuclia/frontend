@@ -984,6 +984,8 @@
 	"search.configuration.generative-answer.generative-model.kb-settings": "(desde la configuración de KB)",
 	"search.configuration.generative-answer.generative-model.select-label": "Modelo generativo actual",
 	"search.configuration.generative-answer.generative-model.title": "Modelo generativo específico",
+	"search.configuration.generative-answer.limit-paragraphs.toggle-description": "Para controlar cuántos de los párrafos más relevantes se pasan al LLM para generar la respuesta. Valor predeterminado: 20.",
+	"search.configuration.generative-answer.limit-paragraphs.toggle-label": "Mejores resultados",
 	"search.configuration.generative-answer.limit-token.toggle-description": "Define la cantidad máxima de tokens que generará el modelo. Un número bajo puede impedir que los usuarios vean los resultados.",
 	"search.configuration.generative-answer.limit-token.toggle-label": "Limitar el consumo de tokens",
 	"search.configuration.generative-answer.prefer-markdown.toggle-description": "Generar la respuesta utilizando el formato markdown",

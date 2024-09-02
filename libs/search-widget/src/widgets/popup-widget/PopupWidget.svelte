@@ -34,6 +34,7 @@
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
   export let max_tokens: number | undefined = undefined;
+  export let max_paragraphs: number | undefined = undefined;
   export let query_prepend = '';
   export let json_schema = '';
   export let vectorset = '';
@@ -127,10 +128,10 @@
             {not_enough_data_message}
             {ask_to_resource}
             {max_tokens}
+            {max_paragraphs}
             {query_prepend}
             {json_schema}
-            {vectorset}
-          />
+            {vectorset} />
         </div>
         <div class="search-results-container">
           <SearchResults />
