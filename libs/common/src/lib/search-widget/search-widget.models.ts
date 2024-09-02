@@ -13,7 +13,7 @@ export const MODELS_SUPPORTING_VISION = ['chatgpt-vision', 'gemini-1-5-pro-visio
 
 export interface SearchBoxConfig {
   filter: boolean;
-  filterLogic: 'and' | 'or',
+  filterLogic: 'and' | 'or';
   autofilter: boolean;
   setPreselectedFilters: boolean;
   suggestions: boolean;
@@ -192,7 +192,6 @@ export const NUCLIA_STANDARD_SEARCH_CONFIG: SearchConfiguration = {
   resultDisplay: {
     ...DEFAULT_RESULT_DISPLAY_CONFIG,
     displayResults: true,
-    relations: true,
   },
 };
 
