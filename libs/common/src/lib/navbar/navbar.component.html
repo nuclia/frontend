@@ -182,13 +182,13 @@
                     </a>
                   }
                   <a
-                    [routerLink]="(isPromptLabAuthorized | async) ? kbUrl + '/prompt-lab' : null"
+                    [routerLink]="(isPromptLabAuthorized | async) ? kbUrl + '/rag-lab' : null"
                     routerLinkActive="active"
                     data-cy="go-to-prompt-lab"
                     class="nav-link sub-item"
                     [stfUnauthorizedFeature]="(isPromptLabAuthorized | async) === false">
                     <pa-icon name="lab"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.prompt-lab' | translate }}</span>
+                    <span class="nav-link-title">{{ 'navbar.rag-lab' | translate }}</span>
                   </a>
                 }
                 @if (isAccountManager | async) {

@@ -1,0 +1,36 @@
+<div class="field-spacing">
+  <div class="title-s">{{ 'rag-lab.common.question.title' | translate }}</div>
+  <div class="field-and-button">
+    <pa-input
+      [disabled]="questionsLimitReached"
+      [help]="'rag-lab.common.question.help' | translate"
+      [(value)]="currentQuery"
+      (enter)="addQuestion()">
+      {{ 'rag-lab.common.question.label' | translate }}
+    </pa-input>
+    <pa-button
+      size="small"
+      icon="plus"
+      [disabled]="questionsLimitReached"
+      (click)="addQuestion()"></pa-button>
+  </div>
+</div>
+<div class="field-spacing">
+  <ol class="body-m">
+    @for (question of queries; track question) {
+      <li>
+        <div class="list-item">
+          <span>{{ question }}</span>
+          <pa-button
+            aspect="basic"
+            icon="trash"
+            size="small"
+            kind="destructive"
+            (click)="deleteQuestion($index)">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
+        </div>
+      </li>
+    }
+  </ol>
+</div>

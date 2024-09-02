@@ -1,0 +1,67 @@
+<stf-lab-layout
+  #labLayout
+  class="lab-container"
+  formTitle="rag-lab.rag-tab.description"
+  type="rag"
+  (queriesChange)="onQueriesChange($event)"
+  (downloadCsv)="downloadCsv()">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="generate()">
+    <stf-question-block (queriesChange)="onQueriesChange($event)"></stf-question-block>
+    <div class="field-spacing">
+      <div class="title-s">{{ 'rag-lab.rag-tab.configuration.search-config-label' | translate }}</div>
+      <div class="checkbox-container">
+        @if (generativeModelMap | async; as generativeModelMap) {
+          @for (config of searchConfigurations | async; track config.id) {
+            <pa-checkbox
+              [formControlName]="config.id"
+              [help]="
+                generativeModelMap[config.generativeAnswer.generativeModel] ||
+                config.generativeAnswer.generativeModel ||
+                ('rag-lab.rag-tab.generatie-model-from-kb'
+                  | translate: { model: generativeModelMap[defaultGenerativeModel | async] })
+              ">
+              {{ config.id }}
+            </pa-checkbox>
+          } @empty {
+            <nsi-info-card
+              type="warning"
+              icon="warning">
+              {{ 'rag-lab.rag-tab.no-search-config' | translate }}
+              <a routerLink="../search">{{ 'search.title' | translate }}</a>
+            </nsi-info-card>
+          }
+        }
+
+        <nsi-info-card>
+          {{ 'rag-lab.rag-tab.configuration.search-page-navigation' | translate }}
+          <a routerLink="../search">{{ 'search.title' | translate }}</a>
+        </nsi-info-card>
+      </div>
+    </div>
+
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="queries.length < 1 || selectedConfigs.length < 1">
+      {{ 'rag-lab.common.generate-button' | translate }}
+    </pa-button>
+  </form>
+</stf-lab-layout>
+
+<!--<div class="lab-container">-->
+<!--  <pa-accordion>-->
+<!--    <pa-accordion-item-->
+<!--      #formContainer-->
+<!--      expanded-->
+<!--      [itemTitle]="'rag-lab.rag-tab.description' | translate">-->
+<!--      <pa-accordion-item-body>-->
+<!--        -->
+<!--      </pa-accordion-item-body>-->
+<!--    </pa-accordion-item>-->
+<!--    <pa-accordion-item-->
+<!--      #resultsContainer-->
+<!--      [itemTitle]="'rag-lab.common.results.title' | translate"></pa-accordion-item>-->
+<!--  </pa-accordion>-->
+<!--</div>-->

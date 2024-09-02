@@ -69,6 +69,7 @@ const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA']
     ResultsDisplayFormComponent,
     RouterLink,
     TranslateModule,
+    PaTooltipModule,
   ],
   templateUrl: './search-configuration.component.html',
   styleUrl: './search-configuration.component.scss',

@@ -1,31 +1,20 @@
 @import 'apps/dashboard/src/variables';
 
-.prompt-lab {
-  h1 {
-    margin-bottom: rhythm(1);
-  }
+.lab-container {
+  padding: rhythm(3) 0;
 
-  .expander-padding {
-    padding: rhythm(3) 0;
-  }
-  .field-spacing {
+  .page-description {
     margin-bottom: rhythm(3);
-    max-width: rhythm(80);
-
-    ol {
-      padding: 0 0 0 rhythm(2);
-
-      .list-item {
-        align-items: center;
-        display: flex;
-        justify-content: space-between;
-
-        pre > code {
-          white-space: break-spaces;
-        }
-      }
-    }
   }
+
+  .form-container,
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(3);
+    max-width: rhythm(80);
+  }
+
   .field-and-button {
     align-items: center;
     display: flex;
@@ -40,7 +29,7 @@
       margin-top: calc(-1 * #{rhythm(2) + rhythm(0.5)});
     }
   }
-  .models-container {
+  .checkbox-container {
     display: flex;
     flex-direction: column;
     gap: rhythm(1);

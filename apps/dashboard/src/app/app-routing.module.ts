@@ -12,7 +12,7 @@ import {
   MetricsPageComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
-  PromptLabComponent,
+  RagLabPageComponent,
   rootGuard,
   SearchPageComponent,
   SelectAccountComponent,
@@ -147,8 +147,12 @@ const routes: Routes = [
                   ),
               },
               {
+                path: 'rag-lab',
+                component: RagLabPageComponent,
+              },
+              {
                 path: 'prompt-lab',
-                component: PromptLabComponent,
+                redirectTo: 'rag-lab',
               },
               {
                 path: 'tasks',

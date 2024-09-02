@@ -56,7 +56,7 @@ export class NavigationService {
         'training',
         'users',
         'keys',
-        'prompt-lab',
+        'rag-lab',
         'tasks',
       ]);
       const pattern = `${kbUrl}/(${settingsPages.join('|')})`;

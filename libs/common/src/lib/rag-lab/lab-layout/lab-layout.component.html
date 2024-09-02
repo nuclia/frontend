@@ -1,0 +1,65 @@
+<div class="lab-container">
+  <pa-accordion>
+    <pa-accordion-item
+      #formContainer
+      [itemTitle]="formTitle | translate"
+      [expanded]="(hasResults | async) === false">
+      <pa-accordion-item-body>
+        <div class="form-container">
+          <stf-question-block (queriesChange)="onQueriesChange($event)"></stf-question-block>
+
+          <ng-content></ng-content>
+        </div>
+      </pa-accordion-item-body>
+    </pa-accordion-item>
+
+    <pa-accordion-item
+      #resultsContainer
+      [expanded]="hasResults | async"
+      [itemTitle]="'rag-lab.common.results.title' | translate">
+      <pa-accordion-item-body>
+        <div class="expander-padding">
+          <pa-button
+            size="small"
+            icon="download"
+            iconAndText
+            (click)="downloadCsv.emit()">
+            {{ 'rag-lab.common.results.download-csv' | translate }}
+          </pa-button>
+
+          @for (entry of results | async; track entry.query) {
+            <div class="expander-card-container">
+              <pa-expander
+                card
+                expanded
+                [contentLoaded]="updateResultsExpanderSize | async"
+                (toggleExpander)="updateResultHeight()">
+                <pa-expander-header>
+                  <div class="title-s">
+                    {{ 'rag-lab.common.results.question' | translate: { query: entry.query } }}
+                  </div>
+                </pa-expander-header>
+                <pa-expander-body>
+                  <div class="answers">
+                    @for (result of entry.results; track result) {
+                      <div
+                        class="answer-container"
+                        [class.collapsed]="queryCollapsed[entry.query]">
+                        <div>
+                          <strong>{{ result.modelName }}</strong>
+                        </div>
+                        <div
+                          class="body-s"
+                          [innerHTML]="result.rendered || result.answer"></div>
+                      </div>
+                    }
+                  </div>
+                </pa-expander-body>
+              </pa-expander>
+            </div>
+          }
+        </div>
+      </pa-accordion-item-body>
+    </pa-accordion-item>
+  </pa-accordion>
+</div>
