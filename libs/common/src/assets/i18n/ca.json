@@ -997,6 +997,8 @@
 	"search.configuration.generative-answer.rag-strategies.entire-resource.toggle-description": "Passa tot el recurs com a context quan es generen respostes (en lloc de només els paràgrafs recuperats per la consulta de cerca)",
 	"search.configuration.generative-answer.rag-strategies.entire-resource.toggle-label": "Passeu recursos sencers com a context",
 	"search.configuration.generative-answer.rag-strategies.image-warning-box": "Requereix utilitzar OpenAI ChatGPT-Vision o Google Gemini Pro Vision.",
+	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-description": "Cada paràgraf anirà seguit de diferents conjunts de metadades.",
+	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-label": "Afegeix metadades",
 	"search.configuration.generative-answer.rag-strategies.page-images.input-label": "Quantitat màxima d'imatges",
 	"search.configuration.generative-answer.rag-strategies.page-images.limit-images": "Limiteu la quantitat d'imatges passades al context des de cada pàgina",
 	"search.configuration.generative-answer.rag-strategies.page-images.toggle-description": "Les imatges extretes de les pàgines que contenen els paràgrafs coincidents s'afegiran al context.",

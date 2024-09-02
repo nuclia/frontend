@@ -997,6 +997,8 @@
 	"search.configuration.generative-answer.rag-strategies.entire-resource.toggle-description": "Transmet la ressource entière comme contexte lors de la génération de réponses (au lieu des seuls paragraphes récupérés par la requête de recherche)",
 	"search.configuration.generative-answer.rag-strategies.entire-resource.toggle-label": "Transmettre les ressources entières comme contexte",
 	"search.configuration.generative-answer.rag-strategies.image-warning-box": "Nécessite l'utilisation d'OpenAI ChatGPT-Vision ou Google Gemini Pro Vision.",
+	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-description": "Chaque paragraphe sera suivi de différents ensembles de métadonnées.",
+	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-label": "Ajouter des métadonnées",
 	"search.configuration.generative-answer.rag-strategies.page-images.input-label": "Nombre maximum d'images",
 	"search.configuration.generative-answer.rag-strategies.page-images.limit-images": "Limiter la quantité d'images transmises au contexte depuis chaque page",
 	"search.configuration.generative-answer.rag-strategies.page-images.toggle-description": "Les images extraites des pages contenant les paragraphes correspondants seront ajoutées au contexte.",

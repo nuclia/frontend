@@ -997,6 +997,8 @@
 	"search.configuration.generative-answer.rag-strategies.entire-resource.toggle-description": "Pasa el recurso completo como contexto al generar respuestas (en lugar de solo los párrafos recuperados por la consulta de búsqueda)",
 	"search.configuration.generative-answer.rag-strategies.entire-resource.toggle-label": "Pasar recursos completos como contexto",
 	"search.configuration.generative-answer.rag-strategies.image-warning-box": "Requiere el uso de OpenAI ChatGPT-Vision o Google Gemini Pro Vision.",
+	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-description": "Cada párrafo será seguido por diferentes conjuntos de metadatos.",
+	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-label": "Añadir metadatos",
 	"search.configuration.generative-answer.rag-strategies.page-images.input-label": "Cantidad máxima de imágenes",
 	"search.configuration.generative-answer.rag-strategies.page-images.limit-images": "Limitar la cantidad de imágenes pasadas al contexto desde cada página.",
 	"search.configuration.generative-answer.rag-strategies.page-images.toggle-description": "Las imágenes extraídas de las páginas que contienen los párrafos coincidentes se agregarán al contexto.",

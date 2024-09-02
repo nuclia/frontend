@@ -343,6 +343,8 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
         return { name, count: parseInt(rest[0], 10) };
       } else if (name === RagStrategyName.FIELD_EXTENSION) {
         return { name, fields: rest };
+      } else if (name === RagStrategyName.METADATAS) {
+        return { name, types: rest };
       } else {
         console.error(`Unknown RAG strategy: ${name}`);
         return undefined;
@@ -355,7 +357,9 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
       strategiesNames.includes(RagStrategyName.HIERARCHY)) &&
     strategiesNames.includes(RagStrategyName.FULL_RESOURCE)
   ) {
-    console.error(`Incompatible RAG strategies: if 'full_resource' strategy is chosen, it must be the only strategy`);
+    console.error(
+      `Incompatible RAG strategies: 'full_resource' strategy is not compatible with 'field_extension' or 'hierarchy'`,
+    );
     return [];
   }
   return strategies;

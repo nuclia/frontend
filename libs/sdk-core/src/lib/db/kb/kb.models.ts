@@ -335,10 +335,18 @@ export interface WidgetFeatures {
   orFilterLogic?: boolean;
 }
 
+export enum RAG_METADATAS {
+  ORIGIN = 'origin',
+  LABELS = 'classification_labels',
+  NERS = 'ners',
+  EXTRA = 'extra_metadata',
+}
+
 export enum RagStrategyName {
   FIELD_EXTENSION = 'field_extension',
   FULL_RESOURCE = 'full_resource',
   HIERARCHY = 'hierarchy',
+  METADATAS = 'metadata_extension',
 }
 export interface FieldExtensionStrategy {
   name: RagStrategyName.FIELD_EXTENSION;
@@ -352,7 +360,11 @@ export interface HierarchyStrategy {
   name: RagStrategyName.HIERARCHY;
   count?: number;
 }
-export type RAGStrategy = FieldExtensionStrategy | FullResourceStrategy | HierarchyStrategy;
+export interface MetadatasStrategy {
+  name: RagStrategyName.METADATAS;
+  types: RAG_METADATAS[];
+}
+export type RAGStrategy = FieldExtensionStrategy | FullResourceStrategy | HierarchyStrategy | MetadatasStrategy;
 
 export enum RagImageStrategyName {
   PAGE_IMAGE = 'page_image',

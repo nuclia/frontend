@@ -1,4 +1,5 @@
 import { deepEqual } from '@flaps/core';
+import { RAG_METADATAS, RagStrategyName } from '@nuclia/core';
 
 export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
 export type FilterSelectionType = { [key in FilterType]: boolean };
@@ -30,6 +31,8 @@ export interface SearchBoxConfig {
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
   additionalCharacters: number | null;
+  metadatasRagStrategy: boolean;
+  metadatas: { [key in RAG_METADATAS]: boolean } | undefined;
   entireResourceAsContext: boolean;
   maxNumberOfResources: number | null;
   fieldsAsContext: boolean;
@@ -139,6 +142,8 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   ragStrategies: {
     includeTextualHierarchy: false,
     additionalCharacters: null,
+    metadatasRagStrategy: false,
+    metadatas: undefined,
     entireResourceAsContext: false,
     maxNumberOfResources: null,
     fieldsAsContext: false,
@@ -289,6 +294,14 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
     }
     if (ragStrategiesConfig.includeTextualHierarchy) {
       ragStrategies.push(`hierarchy|${ragStrategiesConfig.additionalCharacters || 1000}`);
+    }
+  }
+  if (ragStrategiesConfig.metadatasRagStrategy && ragStrategiesConfig.metadatas) {
+    const metadatas = Object.entries(ragStrategiesConfig.metadatas)
+      .filter(([, value]) => value)
+      .map(([key]) => key);
+    if (metadatas.length > 0) {
+      ragStrategies.push(`${RagStrategyName.METADATAS}|${metadatas.join('|')}`);
     }
   }
   const ragImagesStrategies: string[] = [];
