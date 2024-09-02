@@ -984,6 +984,8 @@
 	"search.configuration.generative-answer.generative-model.kb-settings": "(des de la configuració de la KB)",
 	"search.configuration.generative-answer.generative-model.select-label": "Model generatiu actual",
 	"search.configuration.generative-answer.generative-model.title": "Model generatiu específic",
+	"search.configuration.generative-answer.limit-paragraphs.toggle-description": "Controlar quants dels paràgrafs més rellevants es passen al LLM per generar la resposta. Per defecte: 20.",
+	"search.configuration.generative-answer.limit-paragraphs.toggle-label": "Millors resultats",
 	"search.configuration.generative-answer.limit-token.toggle-description": "Defineix el nombre màxim de fitxes que generarà el model. Un nombre baix pot impedir que els usuaris vegin resultats.",
 	"search.configuration.generative-answer.limit-token.toggle-label": "Limiteu el consum de fitxes",
 	"search.configuration.generative-answer.prefer-markdown.toggle-description": "Genereu la resposta utilitzant el format de markdown",

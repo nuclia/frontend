@@ -3,6 +3,7 @@
 ### Feature
 
 - Add `activityMonitor` property to `IWritableKnowledgeBox`, which allows to request REMi metrics on the Knowledge Box
+- Support `max_paragraphs` on `/ask` endpoint
 
 ### Improvement
 

@@ -34,6 +34,7 @@
   export let rag_strategies = '';
   export let rag_image_strategies = '';
   export let max_tokens: number | undefined = undefined;
+  export let max_paragraphs: number | undefined = undefined;
   export let query_prepend = '';
   export let vectorset = '';
 
@@ -107,7 +108,7 @@
         proxy,
       },
       state,
-      { prompt, system_prompt, max_tokens, query_prepend, vectorset, },
+      { prompt, system_prompt, max_tokens, max_paragraphs, query_prepend, vectorset },
       no_tracking,
     );
 

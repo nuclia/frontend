@@ -53,6 +53,8 @@ export interface GenerativeAnswerConfig {
   specificResourceSlug: string;
   limitTokenConsumption: boolean;
   tokenConsumptionLimit: number | null;
+  limitParagraphs: boolean;
+  paragraphsLimit: number | null;
   preferMarkdown: boolean;
   ragStrategies: RagStrategiesConfig;
 }
@@ -138,6 +140,8 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   specificResourceSlug: '',
   limitTokenConsumption: false,
   tokenConsumptionLimit: null,
+  limitParagraphs: false,
+  paragraphsLimit: null,
   preferMarkdown: false,
   ragStrategies: {
     includeTextualHierarchy: false,
@@ -331,6 +335,9 @@ export function getMaxTokens(config: GenerativeAnswerConfig): string {
   return config.limitTokenConsumption && !!config.tokenConsumptionLimit
     ? `\n  max_tokens="${config.tokenConsumptionLimit}"`
     : '';
+}
+export function getMaxParagraphs(config: GenerativeAnswerConfig): string {
+  return config.limitParagraphs && !!config.paragraphsLimit ? `\n  max_paragraphs="${config.paragraphsLimit}"` : '';
 }
 export function getQueryPrepend(config: SearchBoxConfig): string {
   return config.prependTheQuery && !!config.queryPrepend.trim() ? `\n  query_prepend="${config.queryPrepend}"` : '';
