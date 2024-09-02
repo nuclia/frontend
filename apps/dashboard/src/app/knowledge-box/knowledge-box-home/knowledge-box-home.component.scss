@@ -33,6 +33,7 @@
     align-items: center;
     display: flex;
     gap: rhythm(1);
+    overflow-wrap: anywhere;
 
     pa-icon {
       display: flex;
