@@ -2,12 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { injectScript, SDKService } from '@flaps/core';
 import { ModalConfig, ModalRef, ModalService } from '@guillotinaweb/pastanaga-angular';
 import { BehaviorSubject, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
-import { Ask, IErrorResponse, LearningConfiguration, Prompts } from '@nuclia/core';
+import { Ask, ChatOptions, IErrorResponse, LearningConfiguration, Prompts } from '@nuclia/core';
 import { LoadingDialogComponent } from './loading-dialog';
 import { catchError, filter, map } from 'rxjs/operators';
 import DOMPurify from 'dompurify';
 import { SearchAndWidgets, SearchConfiguration } from '../search-widget';
-import { GENERATIVE_MODEL_KEY, RequestConfig, ResultEntry } from './rag-lab.models';
+import { GENERATIVE_MODEL_KEY, RequestConfig, RequestConfigAndQueries, ResultEntry } from './rag-lab.models';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
@@ -79,9 +79,11 @@ export class RagLabService {
     );
   }
 
-  generate(queries: string[], chatOptions: RequestConfig[], forTab: 'prompt' | 'rag') {
+  generate(requestConfigs: RequestConfigAndQueries[], forTab: 'prompt' | 'rag') {
     this._progress$.next(null);
-    const requestCount = queries.length * chatOptions.length;
+    const requestCount = requestConfigs.reduce((count, requestConfig) => {
+      return count + requestConfig.queries.length;
+    }, 0);
     this._promptLabResults.next([]);
 
     this._loadingModal = this.modalService.openModal(
@@ -99,13 +101,16 @@ export class RagLabService {
     );
     this._progress$.pipe(filter((progress) => progress === requestCount)).subscribe(() => this._loadingModal?.close());
 
-    return this._generateResults(queries, chatOptions, forTab);
+    return this._generateResults(requestConfigs, forTab);
   }
 
-  private _generateResults(queries: string[], chatOptions: RequestConfig[], forTab: 'prompt' | 'rag') {
-    const requests: { query: string; options: RequestConfig }[] = queries.reduce(
-      (requests, query) => requests.concat(chatOptions.map((options) => ({ query, options }))),
-      [] as { query: string; options: RequestConfig }[],
+  private _generateResults(requestConfigs: RequestConfigAndQueries[], forTab: 'prompt' | 'rag') {
+    const requests: { query: string; options: ChatOptions }[] = requestConfigs.reduce(
+      (requests, config) => {
+        const { queries, ...options } = config;
+        return requests.concat(queries.map((query) => ({ query, options })));
+      },
+      [] as { query: string; options: ChatOptions }[],
     );
 
     return this.sdk.currentKb.pipe(

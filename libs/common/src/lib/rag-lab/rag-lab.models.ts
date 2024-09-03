@@ -6,6 +6,10 @@ export interface RequestConfig extends ChatOptions {
   searchConfigId?: string;
 }
 
+export interface RequestConfigAndQueries extends RequestConfig {
+  queries: string[];
+}
+
 export interface ResultEntry {
   model: string;
   modelName: string;

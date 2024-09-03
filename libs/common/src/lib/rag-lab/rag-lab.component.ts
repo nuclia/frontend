@@ -16,7 +16,7 @@ import { RouterLink } from '@angular/router';
 import { RagLabService } from './rag-lab.service';
 import { forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 import { LabLayoutComponent } from './lab-layout/lab-layout.component';
-import { RequestConfig } from './rag-lab.models';
+import { RequestConfigAndQueries } from './rag-lab.models';
 import { getPreselectedFilterList, getRagStrategies, SearchConfiguration } from '../search-widget';
 import { getRAGImageStrategies, getRAGStrategies } from '@nuclia/core';
 
@@ -93,10 +93,8 @@ export class RagLabComponent implements OnChanges {
     forkJoin([this.searchConfigurations.pipe(take(1)), this.defaultGenerativeModel.pipe(take(1))])
       .pipe(
         switchMap(([configurations, defaultGenerativeModel]) => {
-          const options: RequestConfig[] = this.getRequestConfigList(configurations, defaultGenerativeModel);
-          const queries: string[] = this.queries;
-          // TODO refactoring for queryPrepend option
-          return this.ragLabService.generate(queries, options, 'rag');
+          const options: RequestConfigAndQueries[] = this.getRequestConfigList(configurations, defaultGenerativeModel);
+          return this.ragLabService.generate(options, 'rag');
         }),
       )
       .subscribe();
@@ -107,15 +105,24 @@ export class RagLabComponent implements OnChanges {
     // this.ragLabService.downloadCsv(this.selectedModels);
   }
 
-  private getRequestConfigList(configurations: SearchConfiguration[], defaultGenerativeModel: string): RequestConfig[] {
+  private getRequestConfigList(
+    configurations: SearchConfiguration[],
+    defaultGenerativeModel: string,
+  ): RequestConfigAndQueries[] {
     return this.selectedConfigs
       .map((configId) => {
         const searchConfig = configurations.find((conf) => conf.id === configId);
         if (!searchConfig) {
           return null;
         }
-        const requestConfig: RequestConfig = {
+        let queries: string[] = this.queries;
+        if (searchConfig.searchBox.prependTheQuery && searchConfig.searchBox.queryPrepend) {
+          queries = this.queries.map((query) => `${searchConfig.searchBox.queryPrepend} ${query}`);
+        }
+
+        const requestConfig: RequestConfigAndQueries = {
           searchConfigId: configId,
+          queries,
           generative_model: searchConfig.generativeAnswer.generativeModel || defaultGenerativeModel,
           vectorset: searchConfig.generativeAnswer.vectorset || undefined,
           highlight: true, // highlight is set to true by default on the widget, so we do the same here

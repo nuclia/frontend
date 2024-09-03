@@ -14,11 +14,12 @@ import {
 import { Observable, tap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ChatOptions, LearningConfiguration, Prompts } from '@nuclia/core';
+import { LearningConfiguration, Prompts } from '@nuclia/core';
 import { LineBreakFormatterPipe } from '../../pipes';
 import { QuestionBlockComponent } from '../question-block';
 import { RagLabService } from '../rag-lab.service';
 import { LabLayoutComponent } from '../lab-layout/lab-layout.component';
+import { RequestConfigAndQueries } from '../rag-lab.models';
 
 @Component({
   selector: 'stf-prompt-lab',
@@ -104,8 +105,12 @@ export class PromptLabComponent {
         system: this.currentSystemPrompt || undefined,
       };
     }
-    const options: ChatOptions[] = this.selectedModels.map((model) => ({ generative_model: model, prompt }));
-    this.ragLabService.generate(this.queries, options, 'prompt').subscribe();
+    const options: RequestConfigAndQueries[] = this.selectedModels.map((model) => ({
+      queries: this.queries,
+      generative_model: model,
+      prompt,
+    }));
+    this.ragLabService.generate(options, 'prompt').subscribe();
   }
 
   downloadCsv() {
