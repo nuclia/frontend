@@ -101,8 +101,18 @@ export class RagLabComponent implements OnChanges {
   }
 
   downloadCsv() {
-    //TODO
-    // this.ragLabService.downloadCsv(this.selectedModels);
+    forkJoin([this.searchConfigurations.pipe(take(1)), this.defaultGenerativeModel.pipe(take(1))])
+      .pipe(
+        map(([configurations, defaultGenerativeModel]) =>
+          this.ragLabService.downloadRagLabCsv(
+            configurations.map((config) => ({
+              configId: config.id,
+              generativeModel: config.generativeAnswer.generativeModel || defaultGenerativeModel,
+            })),
+          ),
+        ),
+      )
+      .subscribe();
   }
 
   private getRequestConfigList(

@@ -210,7 +210,7 @@ export class RagLabService {
     );
   }
 
-  downloadCsv(generativeModels: string[]) {
+  downloadPromptLabCsv(generativeModels: string[]) {
     if (this._promptLabResults.value.length === 0) {
       return;
     }
@@ -228,6 +228,31 @@ export class RagLabService {
       }",${answers}`;
     });
     const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_models_comparison.csv`;
+    this.generateCsv(csv, filename);
+  }
+
+  downloadRagLabCsv(configs: { configId: string; generativeModel: string }[]) {
+    if (this._ragLabResults.value.length === 0) {
+      return;
+    }
+    let csv = `Query,${configs.map((config) => `${config.configId} (${config.generativeModel})`).join(',')}`;
+    this._ragLabResults.value.forEach(({ query, prompt, results }) => {
+      const answers = configs
+        .map((config) => {
+          const modelResult = results.find((result) => result.configId === config.configId);
+          return `"${this.formatCellValue(modelResult?.answer || 'No answer')}"`;
+        })
+        .join(',');
+      csv += `\n"Query: ${this.formatCellValue(query)}${
+        (prompt?.user ? '\nPrompt: ' + this.formatCellValue(prompt.user) : '') +
+        (prompt?.system ? '\nSystem prompt: ' + this.formatCellValue(prompt.system) : '')
+      }",${answers}`;
+    });
+    const filename = `${new Date().toISOString().split('T')[0]}_Nuclia_RAG_comparison.csv`;
+    this.generateCsv(csv, filename);
+  }
+
+  private generateCsv(csv: string, filename: string) {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const link = document.createElement('a');
     if (link.download !== undefined) {

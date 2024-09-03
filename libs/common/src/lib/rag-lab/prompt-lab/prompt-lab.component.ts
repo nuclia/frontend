@@ -114,7 +114,7 @@ export class PromptLabComponent {
   }
 
   downloadCsv() {
-    this.ragLabService.downloadCsv(this.selectedModels);
+    this.ragLabService.downloadPromptLabCsv(this.selectedModels);
   }
 
   setPrompt(value: string) {
