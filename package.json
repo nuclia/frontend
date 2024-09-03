@@ -150,7 +150,7 @@
     "rollup-plugin-generate-package-json": "^3.2.0",
     "rollup-plugin-local-resolve": "^1.0.7",
     "rollup-plugin-peer-deps-external": "^2.2.4",
-    "svelte": "4.2.18",
+    "svelte": "4.2.19",
     "svelte-check": "^3.8.0",
     "svelte-preprocess": "^5.1.4",
     "ts-jest": "29.1.1",
