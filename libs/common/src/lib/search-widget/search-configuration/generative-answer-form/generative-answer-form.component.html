@@ -236,6 +236,44 @@
       </div>
       <div class="config-form-field">
         <pa-toggle
+          formControlName="includeNeighbouringParagraphs"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{
+              'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.toggle-label' | translate
+            }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{
+            'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.toggle-description'
+              | translate
+          }}
+        </div>
+        @if (includeNeighbouringParagraphsEnabled && includeTextualHierarchyEnabled) {
+          <nsi-info-card type="warning">
+            {{ 'search.configuration.generative-answer.rag-strategies.incompatible-strategies' | translate }}
+          </nsi-info-card>
+        }
+        <div
+          class="extra-fields"
+          [class.visible]="includeNeighbouringParagraphsEnabled && !includeTextualHierarchyEnabled">
+          <pa-input
+            formControlName="precedingParagraphs"
+            type="number">
+            {{ 'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.preceding' | translate }}
+          </pa-input>
+          <pa-input
+            formControlName="succeedingParagraphs"
+            type="number">
+            {{ 'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.succeeding' | translate }}
+          </pa-input>
+        </div>
+      </div>
+      <div class="config-form-field">
+        <pa-toggle
           formControlName="entireResourceAsContext"
           withBackground
           spaceBetweenLabelAndToggle

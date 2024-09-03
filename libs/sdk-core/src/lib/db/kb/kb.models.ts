@@ -317,6 +317,7 @@ export enum RagStrategyName {
   FULL_RESOURCE = 'full_resource',
   HIERARCHY = 'hierarchy',
   METADATAS = 'metadata_extension',
+  NEIGHBOURING_PARAGRAPHS = 'neighbouring_paragraphs',
 }
 export interface FieldExtensionStrategy {
   name: RagStrategyName.FIELD_EXTENSION;
@@ -334,7 +335,17 @@ export interface MetadatasStrategy {
   name: RagStrategyName.METADATAS;
   types: RAG_METADATAS[];
 }
-export type RAGStrategy = FieldExtensionStrategy | FullResourceStrategy | HierarchyStrategy | MetadatasStrategy;
+export interface NeighbouringParagraphsStrategy {
+  name: RagStrategyName.NEIGHBOURING_PARAGRAPHS;
+  before: number;
+  after: number;
+}
+export type RAGStrategy =
+  | FieldExtensionStrategy
+  | FullResourceStrategy
+  | HierarchyStrategy
+  | MetadatasStrategy
+  | NeighbouringParagraphsStrategy;
 
 export enum RagImageStrategyName {
   PAGE_IMAGE = 'page_image',
