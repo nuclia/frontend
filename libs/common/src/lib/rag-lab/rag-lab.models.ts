@@ -1,1 +1,15 @@
+import { ChatOptions } from '@nuclia/core';
+
 export const GENERATIVE_MODEL_KEY = 'generative_model';
+
+export interface RequestConfig extends ChatOptions {
+  searchConfigId?: string;
+}
+
+export interface ResultEntry {
+  model: string;
+  modelName: string;
+  answer: string;
+  configId?: string;
+  rendered?: string;
+}

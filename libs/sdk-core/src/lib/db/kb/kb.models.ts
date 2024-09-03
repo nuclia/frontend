@@ -305,36 +305,6 @@ export interface LabelSets {
   [id: string]: LabelSet;
 }
 
-export interface WidgetFeatures {
-  editLabels?: boolean;
-  entityAnnotation?: boolean;
-  filter?: boolean;
-  navigateToFile?: boolean;
-  navigateToLink?: boolean;
-  notPublic?: boolean;
-  permalink?: boolean;
-  relations?: boolean;
-  suggestions?: boolean;
-  suggestLabels?: boolean;
-  autocompleteFromNERs?: boolean;
-  displayMetadata?: boolean;
-  answers?: boolean;
-  hideLogo?: boolean;
-  hideResults?: boolean;
-  hideThumbnails?: boolean;
-  displayFieldList?: boolean;
-  knowledgeGraph?: boolean;
-  useSynonyms?: boolean;
-  autofilter?: boolean;
-  noBM25forChat?: boolean;
-  citations?: boolean;
-  rephrase?: boolean;
-  dumpLog?: boolean;
-  preferMarkdown?: boolean;
-  openNewTab?: boolean;
-  orFilterLogic?: boolean;
-}
-
 export enum RAG_METADATAS {
   ORIGIN = 'origin',
   LABELS = 'classification_labels',

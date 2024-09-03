@@ -2,19 +2,19 @@ import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from, map, Observable, of } from 'rxjs';
 import {
-  RagStrategyName,
+  type BaseSearchOptions,
+  FIELD_TYPE,
   type FieldFullId,
   type FileField,
+  FileFieldData,
   type IFieldData,
   type IResource,
   type LinkField,
-  type RAGStrategy,
+  longToShortFieldType,
   type ResourceField,
-  type RAGImageStrategy,
-  RagImageStrategyName,
-  type BaseSearchOptions,
+  Search,
+  sliceUnicode,
 } from '@nuclia/core';
-import { FIELD_TYPE, FileFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from './api';
 import type { TypedResult } from './models';
 
@@ -328,63 +328,6 @@ export function injectCustomCss(cssPath: string, element: HTMLElement) {
         element.getRootNode().appendChild(style);
       });
   }
-}
-
-export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
-  // ragStrategies format example: 'full_resource|3,field_extension|t/field1|f/field2,hierarchy|2'
-  if (!ragStrategies) {
-    return [];
-  }
-  const strategies: RAGStrategy[] = ragStrategies
-    .split(',')
-    .map((strategy) => {
-      const [name, ...rest] = strategy.split('|');
-      if (name === RagStrategyName.FULL_RESOURCE || name === RagStrategyName.HIERARCHY) {
-        return { name, count: parseInt(rest[0], 10) };
-      } else if (name === RagStrategyName.FIELD_EXTENSION) {
-        return { name, fields: rest };
-      } else if (name === RagStrategyName.METADATAS) {
-        return { name, types: rest };
-      } else {
-        console.error(`Unknown RAG strategy: ${name}`);
-        return undefined;
-      }
-    })
-    .filter((s) => s) as RAGStrategy[];
-  const strategiesNames = strategies.map((s) => s.name);
-  if (
-    (strategiesNames.includes(RagStrategyName.FIELD_EXTENSION) ||
-      strategiesNames.includes(RagStrategyName.HIERARCHY)) &&
-    strategiesNames.includes(RagStrategyName.FULL_RESOURCE)
-  ) {
-    console.error(
-      `Incompatible RAG strategies: 'full_resource' strategy is not compatible with 'field_extension' or 'hierarchy'`,
-    );
-    return [];
-  }
-  return strategies;
-}
-
-export function getRAGImageStrategies(ragImageStrategies: string): RAGImageStrategy[] {
-  // ragImageStrategies format example: 'page_image|3,paragraph_image'
-  if (!ragImageStrategies) {
-    return [];
-  }
-  const strategies: RAGImageStrategy[] = ragImageStrategies
-    .split(',')
-    .map((strategy) => {
-      const [name, ...rest] = strategy.split('|');
-      if (name === RagImageStrategyName.PAGE_IMAGE) {
-        return { name, count: parseInt(rest[0], 10) };
-      } else if (name === RagImageStrategyName.PARAGRAPH_IMAGE) {
-        return { name };
-      } else {
-        console.error(`Unknown RAG image strategy: ${name}`);
-        return undefined;
-      }
-    })
-    .filter((s) => s) as RAGImageStrategy[];
-  return strategies as RAGImageStrategy[];
 }
 
 export function hasNotEnoughData(text: string): boolean {

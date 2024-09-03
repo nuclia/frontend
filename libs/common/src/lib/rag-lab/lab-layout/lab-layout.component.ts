@@ -25,6 +25,7 @@ import { Prompts } from '@nuclia/core';
 import { QuestionBlockComponent } from '../question-block';
 import { RagLabService } from '../rag-lab.service';
 import { map, takeUntil } from 'rxjs/operators';
+import { ResultEntry } from '../rag-lab.models';
 
 @Component({
   selector: 'stf-lab-layout',
@@ -62,7 +63,7 @@ export class LabLayoutComponent implements OnInit, OnDestroy {
     {
       query: string;
       prompt?: Prompts;
-      results: { model: string; modelName: string; answer: string; rendered?: string }[];
+      results: ResultEntry[];
     }[]
   >([]);
 
@@ -71,7 +72,7 @@ export class LabLayoutComponent implements OnInit, OnDestroy {
     {
       query: string;
       prompt?: Prompts;
-      results: { model: string; modelName: string; answer: string; rendered?: string }[];
+      results: ResultEntry[];
     }[]
   > = this._results.pipe(
     tap((result) => {

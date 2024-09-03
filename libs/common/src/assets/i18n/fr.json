@@ -814,6 +814,7 @@
 	"rag-lab.rag-tab.description": "Comparez différentes options de recherche et de RAG en sélectionnant certaines des configurations de recherche que vous avez enregistrées.",
 	"rag-lab.rag-tab.generatie-model-from-kb": "Modèle génératif issu des paramètres de la KB ({{model}})",
 	"rag-lab.rag-tab.no-search-config": "Vous n'avez pas encore de configuration de recherche sauvegardée. Vous pouvez en créer dans la page",
+	"rag-lab.rag-tab.warning.ask-to-resource-ignored": "L'option \"Demander à une ressource spécifique\" est activée dans cette configuration mais sera ignorée lors de la génération des réponses.",
 	"redirect.chrome-extension": "Redirection vers l'extension Nuclia Chrome…",
 	"redirect.marketplace.connect": "Connecter",
 	"redirect.marketplace.error": "Échec de la configuration d'Amazon Marketplace",

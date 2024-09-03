@@ -14,7 +14,7 @@ import {
 import { Observable, tap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { LearningConfiguration } from '@nuclia/core';
+import { ChatOptions, LearningConfiguration, Prompts } from '@nuclia/core';
 import { LineBreakFormatterPipe } from '../../pipes';
 import { QuestionBlockComponent } from '../question-block';
 import { RagLabService } from '../rag-lab.service';
@@ -97,12 +97,15 @@ export class PromptLabComponent {
       return;
     }
 
-    this.ragLabService
-      .generate(this.queries, this.selectedModels, {
-        userPrompt: this.currentPrompt,
-        systemPrompt: this.currentSystemPrompt,
-      })
-      .subscribe();
+    let prompt: Prompts | undefined;
+    if (this.currentPrompt || this.currentSystemPrompt) {
+      prompt = {
+        user: this.currentPrompt || undefined,
+        system: this.currentSystemPrompt || undefined,
+      };
+    }
+    const options: ChatOptions[] = this.selectedModels.map((model) => ({ generative_model: model, prompt }));
+    this.ragLabService.generate(this.queries, options, 'prompt').subscribe();
   }
 
   downloadCsv() {

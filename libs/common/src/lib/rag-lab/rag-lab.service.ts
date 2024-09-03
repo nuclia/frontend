@@ -7,7 +7,7 @@ import { LoadingDialogComponent } from './loading-dialog';
 import { catchError, filter, map } from 'rxjs/operators';
 import DOMPurify from 'dompurify';
 import { SearchAndWidgets, SearchConfiguration } from '../search-widget';
-import { GENERATIVE_MODEL_KEY } from './rag-lab.models';
+import { GENERATIVE_MODEL_KEY, RequestConfig, ResultEntry } from './rag-lab.models';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
@@ -24,14 +24,14 @@ export class RagLabService {
     {
       query: string;
       prompt?: Prompts;
-      results: { model: string; modelName: string; answer: string; rendered?: string }[];
+      results: ResultEntry[];
     }[]
   >([]);
   private _ragLabResults = new BehaviorSubject<
     {
       query: string;
       prompt?: Prompts;
-      results: { model: string; modelName: string; answer: string; rendered?: string }[];
+      results: ResultEntry[];
     }[]
   >([]);
 
@@ -79,9 +79,9 @@ export class RagLabService {
     );
   }
 
-  generate(queries: string[], generativeModels: string[], prompts?: { userPrompt: string; systemPrompt: string }) {
+  generate(queries: string[], chatOptions: RequestConfig[], forTab: 'prompt' | 'rag') {
     this._progress$.next(null);
-    const requestCount = queries.length * generativeModels.length;
+    const requestCount = queries.length * chatOptions.length;
     this._promptLabResults.next([]);
 
     this._loadingModal = this.modalService.openModal(
@@ -99,32 +99,24 @@ export class RagLabService {
     );
     this._progress$.pipe(filter((progress) => progress === requestCount)).subscribe(() => this._loadingModal?.close());
 
-    return this._generateResults(queries, generativeModels, prompts);
+    return this._generateResults(queries, chatOptions, forTab);
   }
 
-  private _generateResults(
-    queries: string[],
-    generativeModels: string[],
-    prompts?: { userPrompt: string; systemPrompt: string },
-  ) {
-    const prompt = prompts
-      ? { user: prompts.userPrompt || undefined, system: prompts.systemPrompt || undefined }
-      : undefined;
-    const requests: { query: string; prompt?: Prompts; model: string }[] = queries.reduce(
-      (requests, query) => requests.concat(generativeModels.map((model) => ({ query, prompt, model }))),
-      [] as { query: string; prompt?: Prompts; model: string }[],
+  private _generateResults(queries: string[], chatOptions: RequestConfig[], forTab: 'prompt' | 'rag') {
+    const requests: { query: string; options: RequestConfig }[] = queries.reduce(
+      (requests, query) => requests.concat(chatOptions.map((options) => ({ query, options }))),
+      [] as { query: string; options: RequestConfig }[],
     );
 
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
         forkJoin(
-          requests.map(({ query, prompt, model }) =>
+          requests.map(({ query, options }) =>
             kb
               .ask(query, undefined, undefined, {
+                ...options,
                 synchronous: true,
-                prompt,
-                generative_model: model,
               })
               .pipe(
                 switchMap((answer) => {
@@ -132,17 +124,29 @@ export class RagLabService {
                     return of(answer);
                   } else {
                     return this.renderMarkdown(answer.text).pipe(
-                      tap((rendered) => this._addResult({ model, query, prompt, result: answer, rendered })),
+                      tap((rendered) =>
+                        this._addResult(
+                          {
+                            query,
+                            result: answer,
+                            options,
+                            rendered,
+                          },
+                          forTab,
+                        ),
+                      ),
                     );
                   }
                 }),
-                catchError((error) => {
-                  this._addResult({
-                    model,
-                    query,
-                    prompt,
-                    result: this.translate.instant('prompt-lab.results.error'),
-                  });
+                catchError(() => {
+                  this._addResult(
+                    {
+                      query,
+                      options,
+                      result: this.translate.instant('rag-lab.common.results.error'),
+                    },
+                    forTab,
+                  );
                   return of(null);
                 }),
               ),
@@ -152,18 +156,23 @@ export class RagLabService {
     );
   }
 
-  private _addResult(entry: {
-    model: string;
-    query: string;
-    prompt?: Prompts;
-    result: Ask.Answer | IErrorResponse | string;
-    rendered?: string;
-  }) {
-    const { model, query, prompt, result } = entry;
+  private _addResult(
+    entry: {
+      query: string;
+      result: Ask.Answer | IErrorResponse | string;
+      options: RequestConfig;
+      rendered?: string;
+    },
+    forTab: 'prompt' | 'rag',
+  ) {
+    const { query, options, result } = entry;
+    const configId = options.searchConfigId;
+    const model = options.generative_model as string;
     const modelName = this.getModelName(model);
-    const entries = this._promptLabResults.value;
+    const results = forTab === 'prompt' ? this._promptLabResults : this._ragLabResults;
+    const entries = results.value;
     const entryIndex = entries.findIndex((entry) => entry.query === query);
-    const queryEntry = entryIndex > -1 ? this._promptLabResults.value[entryIndex] : null;
+    const queryEntry = entryIndex > -1 ? entries[entryIndex] : null;
     const answer =
       typeof result === 'string'
         ? result
@@ -171,13 +180,17 @@ export class RagLabService {
           ? (result as Ask.Answer).text
           : `Error: ${result.detail}`;
     if (queryEntry) {
-      queryEntry.results.push({ model, modelName, answer, rendered: entry.rendered });
+      queryEntry.results.push({ configId, model, modelName, answer, rendered: entry.rendered });
       entries.splice(entryIndex, 1, queryEntry);
-      this._promptLabResults.next([...entries]);
+      results.next([...entries]);
     } else {
-      this._promptLabResults.next(
-        this._promptLabResults.value.concat([
-          { query, prompt, results: [{ model, modelName, answer, rendered: entry.rendered }] },
+      results.next(
+        entries.concat([
+          {
+            query,
+            prompt: options.prompt as Prompts,
+            results: [{ configId, model, modelName, answer, rendered: entry.rendered }],
+          },
         ]),
       );
     }

@@ -8,7 +8,6 @@
   <form
     [formGroup]="form"
     (ngSubmit)="generate()">
-    <stf-question-block (queriesChange)="onQueriesChange($event)"></stf-question-block>
     <div class="field-spacing">
       <div class="title-s">{{ 'rag-lab.rag-tab.configuration.search-config-label' | translate }}</div>
       <div class="checkbox-container">
@@ -24,6 +23,14 @@
               ">
               {{ config.id }}
             </pa-checkbox>
+
+            @if (config.generativeAnswer.askSpecificResource) {
+              <nsi-info-card
+                type="warning"
+                icon="warning">
+                {{ 'rag-lab.rag-tab.warning.ask-to-resource-ignored' | translate }}
+              </nsi-info-card>
+            }
           } @empty {
             <nsi-info-card
               type="warning"

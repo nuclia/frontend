@@ -46,7 +46,12 @@
                         class="answer-container"
                         [class.collapsed]="queryCollapsed[entry.query]">
                         <div>
-                          <strong>{{ result.modelName }}</strong>
+                          @if (result.configId) {
+                            <strong>{{ result.configId }}</strong>
+                            ({{ result.modelName }})
+                          } @else {
+                            <strong>{{ result.modelName }}</strong>
+                          }
                         </div>
                         <div
                           class="body-s"

@@ -267,36 +267,39 @@ export function getFilters(config: SearchBoxConfig): string {
     .join(',');
   return `\n  filters="${value}"`;
 }
+
+export function getPreselectedFilterList(config: SearchBoxConfig): string[] {
+  return config.preselectedFilters.split('\n').map((filter) => {
+    let formattedFilter = filter.trim();
+    try {
+      formattedFilter = JSON.stringify(JSON.parse(formattedFilter));
+    } catch (e) {
+      // do nothing more if the filter wasn't in JSON format
+    }
+    return formattedFilter;
+  });
+}
+
 export function getPreselectedFilters(config: SearchBoxConfig): string {
-  const value = config.preselectedFilters
-    .split('\n')
-    .map((filter) => {
-      let formattedFilter = filter.trim();
-      try {
-        formattedFilter = JSON.stringify(JSON.parse(formattedFilter));
-      } catch (e) {
-        // do nothing more if the filter wasn't in JSON format
-      }
-      return formattedFilter;
-    })
-    .join(',');
+  const value = getPreselectedFilterList(config).join(',');
   const quote = value.includes('"') ? `'` : `"`;
   return config.setPreselectedFilters && value ? `\n  preselected_filters=${quote}${value}${quote}` : '';
 }
+
 export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
   const ragStrategies: string[] = [];
   if (ragStrategiesConfig.entireResourceAsContext) {
-    ragStrategies.push(`full_resource|${ragStrategiesConfig.maxNumberOfResources || 5}`);
+    ragStrategies.push(`${RagStrategyName.FULL_RESOURCE}|${ragStrategiesConfig.maxNumberOfResources || 5}`);
   } else {
     if (ragStrategiesConfig.fieldsAsContext && ragStrategiesConfig.fieldIds) {
       const fieldIds = ragStrategiesConfig.fieldIds
         .split(`\n`)
         .map((id) => id.trim())
         .join('|');
-      ragStrategies.push(`field_extension|${fieldIds}`);
+      ragStrategies.push(`${RagStrategyName.FIELD_EXTENSION}|${fieldIds}`);
     }
     if (ragStrategiesConfig.includeTextualHierarchy) {
-      ragStrategies.push(`hierarchy|${ragStrategiesConfig.additionalCharacters || 1000}`);
+      ragStrategies.push(`${RagStrategyName.HIERARCHY}|${ragStrategiesConfig.additionalCharacters || 1000}`);
     }
   }
   if (ragStrategiesConfig.metadatasRagStrategy && ragStrategiesConfig.metadatas) {
@@ -315,9 +318,16 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
     ragImagesStrategies.push('paragraph_image');
   }
 
-  const ragProperties = ragStrategies.length > 0 ? `\n  rag_strategies="${ragStrategies.join(',')}"` : '';
+  return {
+    ragStrategies: ragStrategies.join(','),
+    ragImagesStrategies: ragImagesStrategies.join(','),
+  };
+}
+export function getRagStrategiesProperties(ragStrategiesConfig: RagStrategiesConfig) {
+  const { ragStrategies, ragImagesStrategies } = getRagStrategies(ragStrategiesConfig);
+  const ragProperties = ragStrategies.length > 0 ? `\n  rag_strategies="${ragStrategies}"` : '';
   const ragImagesProperties =
-    ragImagesStrategies.length > 0 ? `\n  rag_images_strategies="${ragImagesStrategies.join(',')}"` : '';
+    ragImagesStrategies.length > 0 ? `\n  rag_images_strategies="${ragImagesStrategies}"` : '';
 
   return { ragProperties, ragImagesProperties };
 }

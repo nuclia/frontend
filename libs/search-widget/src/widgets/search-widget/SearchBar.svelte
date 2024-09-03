@@ -3,12 +3,18 @@
   accessors />
 
 <script lang="ts">
-  import type { KBStates, Nuclia, RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
-  import { downloadDump, initNuclia, resetNuclia } from '../../core/api';
-  import { createEventDispatcher, onMount } from 'svelte';
   import {
     getRAGImageStrategies,
     getRAGStrategies,
+    type KBStates,
+    type Nuclia,
+    type RAGImageStrategy,
+    type RAGStrategy,
+    type WidgetFeatures
+  } from '@nuclia/core';
+  import { downloadDump, initNuclia, resetNuclia } from '../../core/api';
+  import { createEventDispatcher, onMount } from 'svelte';
+  import {
     injectCustomCss,
     loadFonts,
     loadSvgSprite,
