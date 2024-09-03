@@ -21,7 +21,7 @@ export class RagLabPageComponent implements OnInit, OnDestroy {
 
   private unsubscribeAll = new Subject<void>();
 
-  selectedTab: 'prompt' | 'rag' = 'rag';
+  selectedTab: 'prompt' | 'rag' = 'prompt';
 
   ngOnInit() {
     this.ragLabService
