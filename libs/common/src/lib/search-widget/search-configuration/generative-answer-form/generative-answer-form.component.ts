@@ -71,6 +71,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     }),
     limitTokenConsumption: new FormControl<boolean>(false, { nonNullable: true }),
     tokenConsumptionLimit: new FormControl<number | null>(null),
+    outputTokenConsumptionLimit: new FormControl<number | null>(null),
     limitParagraphs: new FormControl<boolean>(false, { nonNullable: true }),
     paragraphsLimit: new FormControl<number | null>(null),
     preferMarkdown: new FormControl<boolean>(false, { nonNullable: true }),

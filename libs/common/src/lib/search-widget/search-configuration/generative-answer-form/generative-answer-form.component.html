@@ -178,9 +178,19 @@
         class="extra-fields"
         [class.visible]="limitTokenConsumptionEnabled">
         <pa-input
-          externalLabel
           formControlName="tokenConsumptionLimit"
-          type="number"></pa-input>
+          type="number">
+          {{ 'search.configuration.generative-answer.limit-token.max-input' | translate }}
+        </pa-input>
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="limitTokenConsumptionEnabled">
+        <pa-input
+          formControlName="outputTokenConsumptionLimit"
+          type="number">
+          {{ 'search.configuration.generative-answer.limit-token.max-output' | translate }}
+        </pa-input>
       </div>
     </div>
     <div class="config-form-field">

@@ -53,6 +53,7 @@ export interface GenerativeAnswerConfig {
   specificResourceSlug: string;
   limitTokenConsumption: boolean;
   tokenConsumptionLimit: number | null;
+  outputTokenConsumptionLimit: number | null;
   limitParagraphs: boolean;
   paragraphsLimit: number | null;
   preferMarkdown: boolean;
@@ -140,6 +141,7 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   specificResourceSlug: '',
   limitTokenConsumption: false,
   tokenConsumptionLimit: null,
+  outputTokenConsumptionLimit: null,
   limitParagraphs: false,
   paragraphsLimit: null,
   preferMarkdown: false,
@@ -332,9 +334,17 @@ export function getAskToResource(config: GenerativeAnswerConfig): string {
     : '';
 }
 export function getMaxTokens(config: GenerativeAnswerConfig): string {
-  return config.limitTokenConsumption && !!config.tokenConsumptionLimit
-    ? `\n  max_tokens="${config.tokenConsumptionLimit}"`
-    : '';
+  if (!config.limitTokenConsumption) {
+    return '';
+  }
+  let code = '';
+  if (!!config.tokenConsumptionLimit) {
+    code += `\n  max_tokens="${config.tokenConsumptionLimit}"`;
+  }
+  if (!!config.outputTokenConsumptionLimit) {
+    code += `\n  max_output_tokens="${config.outputTokenConsumptionLimit}"`;
+  }
+  return code;
 }
 export function getMaxParagraphs(config: GenerativeAnswerConfig): string {
   return config.limitParagraphs && !!config.paragraphsLimit ? `\n  max_paragraphs="${config.paragraphsLimit}"` : '';
