@@ -153,34 +153,34 @@
       <MarkdownRendering {text} />
     {/if}
   </div>
-  {#if answer.sources && !notEnoughData}
+  {#if answer.sources}
     <div class="actions">
       {#if !$chat[rank]?.answer.incomplete}
-        <div class="copy">
-          <IconButton
-            aspect="basic"
-            icon={copied ? 'check' : 'copy'}
-            size="small"
-            kind="secondary"
-            on:click={() => copyAnswer()} />
-          <Tooltip
-            visible={copied}
-            title={$_('answer.copied')}
-            x="0"
-            y="34" />
-        </div>
-      {/if}
-      <div>
-        <Feedback {rank} />
-      </div>
-      {#if !$chat[rank]?.answer.incomplete}
-        {#if initialAnswer}
-          <Button
-            aspect="basic"
-            size="small"
-            on:click={() => dispatch('openChat')}>
-            <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
-          </Button>
+        {#if !notEnoughData}
+          <div class="copy">
+            <IconButton
+              aspect="basic"
+              icon={copied ? 'check' : 'copy'}
+              size="small"
+              kind="secondary"
+              on:click={() => copyAnswer()} />
+            <Tooltip
+              visible={copied}
+              title={$_('answer.copied')}
+              x="0"
+              y="34" />
+          </div>
+          <div>
+            <Feedback {rank} />
+          </div>
+          {#if initialAnswer}
+            <Button
+              aspect="basic"
+              size="small"
+              on:click={() => dispatch('openChat')}>
+              <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
+            </Button>
+          {/if}
         {/if}
         {#if $hasDumpLogButton}
           <Button
@@ -192,7 +192,7 @@
         {/if}
       {/if}
     </div>
-    {#if $isCitationsEnabled}
+    {#if $isCitationsEnabled && !notEnoughData}
       <div class="sources-container">
         {#if sources.length > 0}
           {#if initialAnswer}
