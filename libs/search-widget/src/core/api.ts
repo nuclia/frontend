@@ -44,7 +44,7 @@ let vectorset: string | undefined = undefined;
 let CITATIONS = false;
 let REPHRASE = false;
 let ASK_TO_RESOURCE = '';
-let MAX_TOKENS: number | undefined = undefined;
+let MAX_TOKENS: number | { context?: number; answer?: number } | undefined = undefined;
 let MAX_PARAGRAPHS: number | undefined = undefined;
 let QUERY_PREPEND = '';
 
@@ -122,7 +122,9 @@ export const initNuclia = (
   if (widgetOptions.features?.noBM25forChat) {
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.PARAGRAPHS && feature !== Ask.Features.KEYWORD);
   }
-  MAX_TOKENS = widgetOptions.max_tokens || undefined;
+  MAX_TOKENS = !widgetOptions.max_output_tokens
+    ? widgetOptions.max_tokens
+    : { context: widgetOptions.max_tokens, answer: widgetOptions.max_output_tokens };
   MAX_PARAGRAPHS = widgetOptions.max_paragraphs || undefined;
   QUERY_PREPEND = widgetOptions.query_prepend || '';
   STATE = state;

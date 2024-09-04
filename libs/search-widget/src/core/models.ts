@@ -51,6 +51,7 @@ export interface WidgetOptions {
   vectorset?: string;
   ask_to_resource?: string;
   max_tokens?: number;
+  max_output_tokens?: number;
   max_paragraphs?: number;
   query_prepend?: string;
 }

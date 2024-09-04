@@ -72,9 +72,9 @@ export interface ChatOptions extends BaseSearchOptions {
   rag_images_strategies?: RAGImageStrategy[];
   generative_model?: string;
   /**
-   * Defines the maximum number of tokens that the model will generate.
+   * Defines the maximum number of tokens that the model will take as context.
    */
-  max_tokens?: number;
+  max_tokens?: number | { context?: number; answer?: number };
   /**
    * Defines the maximum number of the most relevant paragraphs to pass to the LLM.
    */

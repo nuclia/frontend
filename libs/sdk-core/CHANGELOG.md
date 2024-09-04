@@ -1,3 +1,9 @@
+# 1.21.0 (unreleased)
+
+### Improvement
+
+- Support input/output max tokens on `/ask` endpoint
+
 # 1.20.0 (2024-09-02)
 
 ### Feature
