@@ -330,6 +330,7 @@
 	"dashboard-home.upload-block.description-desktop": " o elige una fuente para trabajar con Nuclia con tu propia base de datos.",
 	"dashboard-home.upload-block.title": "Trabaja con tus datos",
 	"dashboard-home.usage.fullscreen": "Mostrar gráfico en pantalla completa",
+	"dashboard-home.usage.search-queries-explanation": "El recuento de consultas de búsqueda se refiere a todas las búsquedas realizadas en el Knowledge Box, incluidas (aunque no exclusivamente) las respuestas generativas.",
 	"dashboard-home.usage.title": "Uso",
 	"dataset.delete": "Eliminar muestra",
 	"dataset.delete_failed": "Error al eliminar el conjunto de datos de muestra",
