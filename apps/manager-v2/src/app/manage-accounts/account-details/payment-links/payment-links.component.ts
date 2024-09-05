@@ -25,7 +25,7 @@ export class PaymentLinksComponent implements OnDestroy {
   });
 
   isSaving = false;
-  accountTypes: AccountTypes[] = ['v3growth', 'v3enterprise'];
+  accountTypes: AccountTypes[] = ['v3growth', 'v3enterprise', 'v3fly'];
   paymentLink?: string;
 
   licensedPrices = of(this.accountTypes).pipe(
@@ -40,7 +40,18 @@ export class PaymentLinksComponent implements OnDestroy {
     ),
     shareReplay(1),
   );
-  meteredPrices = this.globalService.getSearchPrice('metered').pipe(shareReplay(1));
+  meteredPrices = this.globalService.getSearchPrice('metered').pipe(
+    map((prices) =>
+      [
+        {
+          id: 'opt-out',
+          nickname: 'I don’t want to bill consumption for this client',
+          product: 'opt-out',
+        },
+      ].concat(prices),
+    ),
+    shareReplay(1),
+  );
   formulasOptions = this.globalService.getBillingFormulas().pipe(
     map((formulas) =>
       formulas.map(
@@ -79,7 +90,7 @@ export class PaymentLinksComponent implements OnDestroy {
       .createPaymentLink({
         account_id: this.store.getAccountId() || '',
         account_type: formValues.accountType as AccountTypes,
-        price_ids: [formValues.licensedPrice, formValues.meteredPrice],
+        price_ids: [formValues.licensedPrice, formValues.meteredPrice].filter((price) => price !== 'opt-out'),
         billing_formula_id: formValues.formula,
       })
       .subscribe({
