@@ -811,6 +811,8 @@
 	"rag-lab.prompt-lab.configuration.title": "Configuració",
 	"rag-lab.prompt-lab.page-description": "Proveu els LLM i les prompts i mireu com funcionen junts.",
 	"rag-lab.prompt-lab.page-title": "Prompt lab",
+	"rag-lab.rag-tab.configuration.details.no-options": "No s'ha activat cap opció específica",
+	"rag-lab.rag-tab.configuration.details.options-enabled": "Opcions de cerca activades:",
 	"rag-lab.rag-tab.configuration.search-config-label": "Seleccioneu les configuracions de cerca que voleu provar",
 	"rag-lab.rag-tab.configuration.search-page-navigation": "Podeu crear més configuracions de cerca a la pàgina",
 	"rag-lab.rag-tab.description": "Compareu diferents opcions de cerca i RAG seleccionant algunes de les vostres configuracions de cerca desades.",

@@ -811,6 +811,8 @@
 	"rag-lab.prompt-lab.configuration.title": "Configuration",
 	"rag-lab.prompt-lab.page-description": "Test LLMs and prompts and see how they work together.",
 	"rag-lab.prompt-lab.page-title": "Prompt lab",
+	"rag-lab.rag-tab.configuration.details.no-options": "No specific option enabled",
+	"rag-lab.rag-tab.configuration.details.options-enabled": "Search options enabled:",
 	"rag-lab.rag-tab.configuration.search-config-label": "Select the search configurations you would like to test",
 	"rag-lab.rag-tab.configuration.search-page-navigation": "You can create more search configurations in the page",
 	"rag-lab.rag-tab.description": "Compare different search and RAG options by selecting some of your saved search configurations.",
