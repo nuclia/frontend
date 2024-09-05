@@ -7,9 +7,9 @@
     [style.opacity]="showTooltip ? '1' : '0'"
     [style.bottom.px]="tooltipBottom"
     [style.left.px]="tooltipLeft">
-    @if (tooltipContent) {
-      <strong>{{ tooltipContent?.[0] }}</strong>
-      <div>{{ tooltipContent?.[1] }}</div>
+    @if (tooltipContent; as tooltip) {
+      <strong>{{ tooltip[0] }}</strong>
+      <div>{{ tooltip[1] }}</div>
     }
   </div>
 </div>

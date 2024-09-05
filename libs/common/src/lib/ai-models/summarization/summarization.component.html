@@ -6,7 +6,7 @@
       noTopBorder
       itemTitle="kb.ai-models.summarization.select-llm.title"
       description="kb.ai-models.summarization.select-llm.description">
-      @if (learningConfig['summary_model']?.options; as options) {
+      @if (learningConfig['summary_model'].options; as options) {
         <pa-radio-group
           formControlName="summary_model"
           id="summary_model">
@@ -22,7 +22,7 @@
     <nsi-two-columns-configuration-item
       itemTitle="kb.ai-models.summarization.summary-options.title"
       description="kb.ai-models.summarization.summary-options.description">
-      @if (learningConfig['summary']?.options; as options) {
+      @if (learningConfig['summary'].options; as options) {
         <pa-radio-group
           formControlName="summary"
           id="summary">
