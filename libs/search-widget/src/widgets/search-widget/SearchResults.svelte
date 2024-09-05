@@ -96,6 +96,7 @@
   {#if $showResults && !$isEmptySearchQuery}
     {#if $hasSearchError && !$hasPartialResults}
       <div class="error">
+        {@debug $searchError}
         {#if $searchError?.status === 402}
           <strong>{$_('error.feature-blocked')}</strong>
         {:else}

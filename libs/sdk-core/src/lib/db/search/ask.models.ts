@@ -15,7 +15,7 @@ export namespace Ask {
     /** @deprecated use KEYWORD */
     PARAGRAPHS = 'paragraphs',
     /** @deprecated use SEMANTIC */
-    VECTORS = 'vectors'
+    VECTORS = 'vectors',
   }
 
   export interface Answer {
@@ -119,6 +119,7 @@ export namespace Ask {
     prompt_context?: string[];
     metadata: MetadataAskResponseItem;
     answer_json?: any;
+    error_details?: string;
   }
 }
 

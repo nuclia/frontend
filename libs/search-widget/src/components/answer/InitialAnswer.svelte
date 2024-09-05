@@ -25,6 +25,8 @@
           {$_('error.service-overloaded')}
         {:else if $chatError.status === 402}
           {$_('error.answer-feature-blocked')}
+        {:else if $chatError?.status === -1}
+          {$_('error.llm-blocked')}
         {:else}
           {$_('error.search')}
         {/if}

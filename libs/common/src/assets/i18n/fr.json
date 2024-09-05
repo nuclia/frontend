@@ -789,6 +789,7 @@
 	"rag-lab.common.question.title": "Écrivez jusqu’à trois questions avec lesquelles vous souhaitez tester",
 	"rag-lab.common.results.download-csv": "Télécharger CSV",
 	"rag-lab.common.results.error": "Une erreur s’est produite lors de l’obtention de la réponse, veuillez réessayer plus tard.",
+	"rag-lab.common.results.error-llm": "La tierce partie LLM n'est actuellement pas en mesure de fournir une réponse.",
 	"rag-lab.common.results.prompt": "Prompt : ",
 	"rag-lab.common.results.question": "Question : {{query}}",
 	"rag-lab.common.results.title": "Résultats",
