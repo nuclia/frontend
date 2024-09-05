@@ -175,7 +175,7 @@
           @if (resource.security) {
             <div class="title-m">{{ 'resource.security.label' | translate }}</div>
             <div class="title-xxs">{{ 'resource.security.access-groups.label' | translate }}</div>
-            <p [innerHTML]="resource.security.access_groups?.join('<br>') || '–'"></p>
+            <p [innerHTML]="resource.security.access_groups.join('<br>') || '–'"></p>
           }
         </div>
       } @else if (noField | async) {

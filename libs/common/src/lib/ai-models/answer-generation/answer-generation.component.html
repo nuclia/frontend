@@ -7,7 +7,7 @@
       itemTitle="kb.ai-models.answer-generation.select-llm.title"
       description="kb.ai-models.answer-generation.select-llm.description">
       <div class="form-container">
-        @if (learningConfig['generative_model']?.options; as options) {
+        @if (learningConfig['generative_model'].options; as options) {
           <pa-radio-group
             formControlName="generative_model"
             id="generative"

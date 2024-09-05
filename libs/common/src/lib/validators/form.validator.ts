@@ -9,6 +9,15 @@ export function Sluggable(kbSlug = false): ValidatorFn {
   };
 }
 
+// This is the regexp used by the backend to validate zone’s slug (and probably other ones too)
+const validSlugPattern = new RegExp(/^[.a-z0-9_-]+$/);
+export function ValidSlug(): ValidatorFn {
+  return (control: AbstractControl) => {
+    const valid = control.value.match(validSlugPattern) !== null;
+    return valid ? null : { invalid: 'validation.invalid-slug' };
+  };
+}
+
 export function JsonValidator(): ValidatorFn {
   return (control: AbstractControl) => {
     if (control.value) {
