@@ -101,6 +101,7 @@ export class SearchConfigurationComponent {
     return this.displayWidgetButtonLine;
   }
 
+  isRagLabAuthorized = this.features.authorized.promptLab;
   configurations: OptionType[] = [];
 
   selectedConfig = new FormControl<string>('');

@@ -2,6 +2,7 @@
   <pa-accordion>
     <pa-accordion-item
       #formContainer
+      id="form"
       [itemTitle]="formTitle | translate"
       [expanded]="(hasResults | async) === false">
       <pa-accordion-item-body>
@@ -15,6 +16,7 @@
 
     <pa-accordion-item
       #resultsContainer
+      id="results"
       [expanded]="hasResults | async"
       [itemTitle]="'rag-lab.common.results.title' | translate">
       <pa-accordion-item-body>
@@ -42,9 +44,7 @@
                 <pa-expander-body>
                   <div class="answers">
                     @for (result of entry.results; track result) {
-                      <div
-                        class="answer-container"
-                        [class.collapsed]="queryCollapsed[entry.query]">
+                      <div class="answer-container">
                         <div>
                           @if (result.configId) {
                             <strong>{{ result.configId }}</strong>

@@ -30,13 +30,15 @@
         (click)="showLastRequest()">
         {{ 'search.configuration.action.get-code' | translate }}
       </nsi-button-mini>
-      <nsi-button-mini
-        icon="lab"
-        routerLink="../rag-lab"
-        [disabled]="configurations.length <= 1"
-        paTooltip="search.configuration.action.rag-lab-tooltip">
-        {{ 'search.configuration.action.rag-lab' | translate }}
-      </nsi-button-mini>
+      @if (isRagLabAuthorized | async) {
+        <nsi-button-mini
+          icon="lab"
+          routerLink="../rag-lab"
+          [disabled]="configurations.length <= 1"
+          paTooltip="search.configuration.action.rag-lab-tooltip">
+          {{ 'search.configuration.action.rag-lab' | translate }}
+        </nsi-button-mini>
+      }
       @if (!isNucliaConfig && (canModifyConfig | async)) {
         <nsi-button-mini
           icon="trash"

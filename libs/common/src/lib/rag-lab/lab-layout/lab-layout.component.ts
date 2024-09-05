@@ -82,7 +82,6 @@ export class LabLayoutComponent implements OnInit, OnDestroy {
     }),
   );
   hasResults = this._results.pipe(map((results) => results.length > 0));
-  queryCollapsed: { [query: string]: boolean } = {};
 
   ngOnInit() {
     if (this.type === 'prompt') {
