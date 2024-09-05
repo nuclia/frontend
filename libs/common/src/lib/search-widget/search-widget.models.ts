@@ -309,11 +309,11 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
     if (ragStrategiesConfig.includeTextualHierarchy) {
       ragStrategies.push(`${RagStrategyName.HIERARCHY}|${ragStrategiesConfig.additionalCharacters || 1000}`);
     } else if (ragStrategiesConfig.includeNeighbouringParagraphs) {
-      ragStrategies.push(
-        `${RagStrategyName.NEIGHBOURING_PARAGRAPHS}|${ragStrategiesConfig.precedingParagraphs || 2}|${
-          ragStrategiesConfig.succeedingParagraphs || 2
-        }`,
-      );
+      const preceding =
+        typeof ragStrategiesConfig.precedingParagraphs === 'number' ? ragStrategiesConfig.precedingParagraphs : 2;
+      const succeeding =
+        typeof ragStrategiesConfig.succeedingParagraphs === 'number' ? ragStrategiesConfig.succeedingParagraphs : 2;
+      ragStrategies.push(`${RagStrategyName.NEIGHBOURING_PARAGRAPHS}|${preceding}|${succeeding}`);
     }
   }
   if (ragStrategiesConfig.metadatasRagStrategy && ragStrategiesConfig.metadatas) {
