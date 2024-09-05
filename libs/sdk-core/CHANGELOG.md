@@ -1,5 +1,9 @@
 # 1.21.0 (unreleased)
 
+### Feature
+
+- Support the `prequeries` RAG strategy on `/ask` endpoint
+
 ### Improvement
 
 - Support input/output max tokens on `/ask` endpoint

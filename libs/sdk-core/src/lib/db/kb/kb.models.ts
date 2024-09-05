@@ -318,7 +318,15 @@ export enum RagStrategyName {
   HIERARCHY = 'hierarchy',
   METADATAS = 'metadata_extension',
   NEIGHBOURING_PARAGRAPHS = 'neighbouring_paragraphs',
+  PREQUERIES = 'prequeries',
 }
+
+export interface Prequery {
+  request: SearchOptions & { query: string; features?: Search.Features[] };
+  weight?: number;
+  id?: string;
+}
+
 export interface FieldExtensionStrategy {
   name: RagStrategyName.FIELD_EXTENSION;
   fields: string[];
@@ -340,12 +348,17 @@ export interface NeighbouringParagraphsStrategy {
   before: number;
   after: number;
 }
+export interface PrequeriesStrategy {
+  name: RagStrategyName.PREQUERIES;
+  queries: Prequery[];
+}
 export type RAGStrategy =
   | FieldExtensionStrategy
   | FullResourceStrategy
   | HierarchyStrategy
   | MetadatasStrategy
-  | NeighbouringParagraphsStrategy;
+  | NeighbouringParagraphsStrategy
+  | PrequeriesStrategy;
 
 export enum RagImageStrategyName {
   PAGE_IMAGE = 'page_image',
