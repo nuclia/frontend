@@ -85,7 +85,12 @@ export class RagLabService {
     const requestCount = requestConfigs.reduce((count, requestConfig) => {
       return count + requestConfig.queries.length;
     }, 0);
-    this._promptLabResults.next([]);
+
+    if (forTab === 'prompt') {
+      this._promptLabResults.next([]);
+    } else if (forTab === 'rag') {
+      this._ragLabResults.next([]);
+    }
 
     this._loadingModal = this.modalService.openModal(
       LoadingDialogComponent,

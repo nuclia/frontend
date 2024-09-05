@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnChanges, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnChanges,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -42,7 +50,7 @@ import { getRAGImageStrategies, getRAGStrategies } from '@nuclia/core';
   styleUrl: './_common-lab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RagLabComponent implements OnChanges {
+export class RagLabComponent implements OnChanges, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private ragLabService = inject(RagLabService);
 
@@ -74,6 +82,10 @@ export class RagLabComponent implements OnChanges {
 
   ngOnChanges(): void {
     setTimeout(() => this.updateFormContent());
+  }
+
+  ngOnDestroy() {
+    this.queries = [];
   }
 
   onQueriesChange(queries: string[]) {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -44,7 +44,7 @@ import { RequestConfigAndQueries } from '../rag-lab.models';
   styleUrl: '../_common-lab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PromptLabComponent {
+export class PromptLabComponent implements OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private ragLabService = inject(RagLabService);
@@ -82,6 +82,12 @@ export class PromptLabComponent {
     return Object.entries(this.form.getRawValue())
       .filter(([, value]) => value)
       .map(([key]) => key);
+  }
+
+  ngOnDestroy() {
+    this.currentPrompt = '';
+    this.currentSystemPrompt = '';
+    this.queries = [];
   }
 
   updateFormContent() {

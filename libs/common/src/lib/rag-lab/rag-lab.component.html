@@ -11,40 +11,46 @@
     <div class="field-spacing">
       <div class="title-s">{{ 'rag-lab.rag-tab.configuration.search-config-label' | translate }}</div>
       <div class="checkbox-container">
-        @if (generativeModelMap | async; as generativeModelMap) {
-          @for (config of searchConfigurations | async; track config.id) {
-            <pa-checkbox
-              [formControlName]="config.id"
-              [help]="
-                generativeModelMap[config.generativeAnswer.generativeModel] ||
-                config.generativeAnswer.generativeModel ||
-                ('rag-lab.rag-tab.generatie-model-from-kb'
-                  | translate: { model: generativeModelMap[(defaultGenerativeModel | async) || ''] })
-              ">
-              {{ config.id }}
-            </pa-checkbox>
+        @if (searchConfigurations | async; as searchConfigurations) {
+          @if (generativeModelMap | async; as generativeModelMap) {
+            @for (config of searchConfigurations; track config.id) {
+              <pa-checkbox
+                [formControlName]="config.id"
+                [help]="
+                  generativeModelMap[config.generativeAnswer.generativeModel] ||
+                  config.generativeAnswer.generativeModel ||
+                  ('rag-lab.rag-tab.generatie-model-from-kb'
+                    | translate: { model: generativeModelMap[(defaultGenerativeModel | async) || ''] })
+                ">
+                {{
+                  (config.id === 'nuclia-standard' ? 'search.configuration.options.nuclia-standard' : config.id)
+                    | translate
+                }}
+              </pa-checkbox>
 
-            @if (config.generativeAnswer.askSpecificResource) {
-              <nsi-info-card
-                type="warning"
-                icon="warning">
-                {{ 'rag-lab.rag-tab.warning.ask-to-resource-ignored' | translate }}
-              </nsi-info-card>
+              @if (config.generativeAnswer.askSpecificResource) {
+                <nsi-info-card
+                  type="warning"
+                  icon="warning">
+                  {{ 'rag-lab.rag-tab.warning.ask-to-resource-ignored' | translate }}
+                </nsi-info-card>
+              }
             }
-          } @empty {
+          }
+          @if (searchConfigurations.length === 1) {
             <nsi-info-card
               type="warning"
               icon="warning">
               {{ 'rag-lab.rag-tab.no-search-config' | translate }}
               <a routerLink="../search">{{ 'search.title' | translate }}</a>
             </nsi-info-card>
+          } @else {
+            <nsi-info-card>
+              {{ 'rag-lab.rag-tab.configuration.search-page-navigation' | translate }}
+              <a routerLink="../search">{{ 'search.title' | translate }}</a>
+            </nsi-info-card>
           }
         }
-
-        <nsi-info-card>
-          {{ 'rag-lab.rag-tab.configuration.search-page-navigation' | translate }}
-          <a routerLink="../search">{{ 'search.title' | translate }}</a>
-        </nsi-info-card>
       </div>
     </div>
 

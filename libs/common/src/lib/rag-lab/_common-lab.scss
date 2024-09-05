@@ -92,8 +92,10 @@
       margin-bottom $transition-hint,
       opacity $transition-hint;
 
-    &.collapsed {
-      display: none;
+    .config-container {
+      background: $color-neutral-lighter;
+      padding: rhythm(0.5) rhythm(1.5);
+      margin: 0 calc(#{rhythm(1.5) * -1});
     }
   }
 
