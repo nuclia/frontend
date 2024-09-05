@@ -1,7 +1,7 @@
 import { type RAGImageStrategy, RagImageStrategyName, RAGStrategy, RagStrategyName } from '../kb';
 
 export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
-  // ragStrategies format example: 'full_resource|3,field_extension|t/field1|f/field2,hierarchy|2'
+  // ragStrategies format example: 'full_resource|3,field_extension|t/field1|f/field2,hierarchy|2,neighbouring_paragraphs|2|2'
   if (!ragStrategies) {
     return [];
   }
@@ -15,6 +15,8 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
         return { name, fields: rest };
       } else if (name === RagStrategyName.METADATAS) {
         return { name, types: rest };
+      } else if (name === RagStrategyName.NEIGHBOURING_PARAGRAPHS) {
+        return { name, before: parseInt(rest[0]) || 0, after: parseInt(rest[1]) || 0 };
       } else {
         console.error(`Unknown RAG strategy: ${name}`);
         return undefined;
@@ -24,11 +26,21 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
   const strategiesNames = strategies.map((s) => s.name);
   if (
     (strategiesNames.includes(RagStrategyName.FIELD_EXTENSION) ||
-      strategiesNames.includes(RagStrategyName.HIERARCHY)) &&
+      strategiesNames.includes(RagStrategyName.HIERARCHY) ||
+      strategiesNames.includes(RagStrategyName.NEIGHBOURING_PARAGRAPHS)) &&
     strategiesNames.includes(RagStrategyName.FULL_RESOURCE)
   ) {
     console.error(
-      `Incompatible RAG strategies: 'full_resource' strategy is not compatible with 'field_extension' or 'hierarchy'`,
+      `Incompatible RAG strategies: 'full_resource' strategy is not compatible with 'field_extension', 'hierarchy' or 'neighbouring_paragraphs'`,
+    );
+    return [];
+  }
+  if (
+    strategiesNames.includes(RagStrategyName.HIERARCHY) &&
+    strategiesNames.includes(RagStrategyName.NEIGHBOURING_PARAGRAPHS)
+  ) {
+    console.error(
+      `Incompatible RAG strategies: 'hierarchy' and 'neighbouring_paragraphs' strategies cannot be used simultaneously`,
     );
     return [];
   }

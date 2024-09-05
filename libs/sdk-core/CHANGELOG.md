@@ -3,6 +3,7 @@
 ### Improvement
 
 - Support input/output max tokens on `/ask` endpoint
+- Add support for `neighbouring_paragraphs` RAG strategy
 
 # 1.20.0 (2024-09-02)
 

@@ -33,6 +33,9 @@ export interface RagStrategiesConfig {
   additionalCharacters: number | null;
   metadatasRagStrategy: boolean;
   metadatas: { [key in RAG_METADATAS]: boolean } | undefined;
+  includeNeighbouringParagraphs: boolean;
+  precedingParagraphs: number | null;
+  succeedingParagraphs: number | null;
   entireResourceAsContext: boolean;
   maxNumberOfResources: number | null;
   fieldsAsContext: boolean;
@@ -150,6 +153,9 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
     additionalCharacters: null,
     metadatasRagStrategy: false,
     metadatas: undefined,
+    includeNeighbouringParagraphs: false,
+    precedingParagraphs: null,
+    succeedingParagraphs: null,
     entireResourceAsContext: false,
     maxNumberOfResources: null,
     fieldsAsContext: false,
@@ -302,6 +308,12 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
     }
     if (ragStrategiesConfig.includeTextualHierarchy) {
       ragStrategies.push(`${RagStrategyName.HIERARCHY}|${ragStrategiesConfig.additionalCharacters || 1000}`);
+    } else if (ragStrategiesConfig.includeNeighbouringParagraphs) {
+      const preceding =
+        typeof ragStrategiesConfig.precedingParagraphs === 'number' ? ragStrategiesConfig.precedingParagraphs : 2;
+      const succeeding =
+        typeof ragStrategiesConfig.succeedingParagraphs === 'number' ? ragStrategiesConfig.succeedingParagraphs : 2;
+      ragStrategies.push(`${RagStrategyName.NEIGHBOURING_PARAGRAPHS}|${preceding}|${succeeding}`);
     }
   }
   if (ragStrategiesConfig.metadatasRagStrategy && ragStrategiesConfig.metadatas) {
