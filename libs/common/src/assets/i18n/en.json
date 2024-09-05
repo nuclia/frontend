@@ -330,6 +330,7 @@
 	"dashboard-home.upload-block.description-desktop": " or choose a source to work with Nuclia with your own database.",
 	"dashboard-home.upload-block.title": "Work with your data",
 	"dashboard-home.usage.fullscreen": "Display chart in full screen",
+	"dashboard-home.usage.search-queries-explanation": "The count of search queries refers to all searches done to the Knowledge Box, including (but not restricted to) generative answers.",
 	"dashboard-home.usage.title": "Usage",
 	"dataset.delete": "Delete sample dataset",
 	"dataset.delete_failed": "Failed to delete sample dataset",

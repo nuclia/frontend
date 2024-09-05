@@ -286,7 +286,7 @@
 
             <pa-table
               border
-              columns="repeat(3, 1fr)">
+              columns="1.2fr repeat(2, 1fr)">
               <pa-table-header>
                 <pa-table-cell header></pa-table-cell>
                 <pa-table-cell header>
@@ -299,7 +299,15 @@
               @if (searchQueriesCounts | async; as queriesCount) {
                 <pa-table-row last>
                   <pa-table-cell>
-                    <span class="body-s">{{ 'metrics.search.title' | translate }}</span>
+                    <div class="cell-with-icon">
+                      <span class="body-s">
+                        {{ 'metrics.search.title' | translate }}
+                      </span>
+                      <pa-icon
+                        [paPopover]="searchQueriesLegend"
+                        size="small"
+                        name="info"></pa-icon>
+                    </div>
                   </pa-table-cell>
                   @if (locale | async; as locale) {
                     <pa-table-cell>
@@ -335,6 +343,9 @@
                 </pa-table-row>
               }
             </pa-table>
+            <pa-popover #searchQueriesLegend>
+              {{ 'dashboard-home.usage.search-queries-explanation' | translate }}
+            </pa-popover>
 
             <div>
               <nsi-dropdown-button

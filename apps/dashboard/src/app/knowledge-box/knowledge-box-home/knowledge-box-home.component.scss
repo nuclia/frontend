@@ -29,18 +29,30 @@
     }
   }
 
+  .cell-with-icon {
+    align-items: center;
+    display: flex;
+    gap: rhythm(0.5);
+
+    pa-icon {
+      cursor: pointer;
+    }
+  }
   .title-with-icon {
     align-items: center;
     display: flex;
     gap: rhythm(1);
     overflow-wrap: anywhere;
 
-    pa-icon {
-      display: flex;
-    }
-
     .body-s {
       color: $color-neutral-regular;
+    }
+  }
+
+  .cell-with-icon,
+  .title-with-icon {
+    pa-icon {
+      display: flex;
     }
   }
 

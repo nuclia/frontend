@@ -330,6 +330,7 @@
 	"dashboard-home.upload-block.description-desktop": " o trieu una font per treballar amb Nuclia amb la vostra pròpia base de dades.",
 	"dashboard-home.upload-block.title": "Treballa amb les teves dades",
 	"dashboard-home.usage.fullscreen": "Mostra el gràfic a pantalla completa",
+	"dashboard-home.usage.search-queries-explanation": "El recompte de consultes de cerca es refereix a totes les cerques realitzades al Knowledge Box, incloses (però no limitades a) les respostes generatives.",
 	"dashboard-home.usage.title": "Ús",
 	"dataset.delete": "Suprimeix la mostra",
 	"dataset.delete_failed": "No s'ha pogut suprimir el conjunt de dades de mostra",

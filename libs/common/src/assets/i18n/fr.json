@@ -330,6 +330,7 @@
 	"dashboard-home.upload-block.description-desktop": " ou choisissez une source pour travailler avec Nuclia avec votre propre base de données.",
 	"dashboard-home.upload-block.title": "Travaillez avec vos données",
 	"dashboard-home.usage.fullscreen": "Afficher le graphique en plein écran",
+	"dashboard-home.usage.search-queries-explanation": "Le nombre de requêtes de recherche se réfère à toutes les recherches effectuées dans la Knowledge Box, y compris (mais sans s'y limiter) les réponses génératives.",
 	"dashboard-home.usage.title": "Usage",
 	"dataset.delete": "Supprimer un exemple d'ensemble de données",
 	"dataset.delete_failed": "Échec de la suppression de l'exemple d'ensemble de données",
