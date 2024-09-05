@@ -7,21 +7,25 @@ import { registerLocaleData } from '@angular/common';
 import localeEn from '@angular/common/locales/en';
 import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
-import { HttpClient } from '@angular/common/http';
+import { HttpBackend } from '@angular/common/http';
 import { BackendConfigurationService, STFConfigModule } from '@flaps/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { environment } from '../environments/environment';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
+import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
 registerLocaleData(localeCa);
 
-export function createTranslateLoader(http: HttpClient, config: BackendConfigurationService) {
-  return new TranslateHttpLoader(http, 'assets/i18n/', `.json?version=${config.getVersion()}`);
+export function createTranslateLoader(http: HttpBackend, config: BackendConfigurationService) {
+  const suffix = `.json?version=${config.getVersion()}`;
+  return new MultiTranslateHttpLoader(http, [
+    { prefix: 'assets/i18n/user/', suffix },
+    { prefix: 'assets/i18n/common/', suffix },
+  ]);
 }
 
 @NgModule({
@@ -34,7 +38,7 @@ export function createTranslateLoader(http: HttpClient, config: BackendConfigura
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
-        deps: [HttpClient, BackendConfigurationService],
+        deps: [HttpBackend, BackendConfigurationService],
       },
     }),
     AngularSvgIconModule.forRoot(),

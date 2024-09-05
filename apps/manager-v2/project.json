@@ -32,8 +32,13 @@
           },
           {
             "glob": "**/*",
+            "input": "libs/common/src/assets/i18n",
+            "output": "assets/i18n/common"
+          },
+          {
+            "glob": "**/*",
             "input": "libs/user/src/assets/i18n",
-            "output": "assets/i18n"
+            "output": "assets/i18n/user"
           },
           {
             "glob": "**/*",
@@ -83,8 +88,13 @@
             },
             {
               "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
               "input": "libs/user/src/assets/i18n",
-              "output": "assets/i18n"
+              "output": "assets/i18n/user"
             },
             {
               "glob": "**/*",
@@ -115,8 +125,13 @@
             },
             {
               "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n/common"
+            },
+            {
+              "glob": "**/*",
               "input": "libs/user/src/assets/i18n",
-              "output": "assets/i18n"
+              "output": "assets/i18n/user"
             },
             {
               "glob": "**/*",
