@@ -12,7 +12,7 @@ import {
   getPreselectedFilters,
   getPrompt,
   getQueryPrepend,
-  getRagStrategies,
+  getRagStrategiesProperties,
   getSystemPrompt,
   getWidgetTheme,
   NUCLIA_STANDARD_SEARCH_CONFIG,
@@ -139,7 +139,9 @@ export class SearchWidgetService {
     const systemPrompt = getSystemPrompt(currentConfig.generativeAnswer);
     const filters = getFilters(currentConfig.searchBox);
     const preselectedFilters = getPreselectedFilters(currentConfig.searchBox);
-    const { ragProperties, ragImagesProperties } = getRagStrategies(currentConfig.generativeAnswer.ragStrategies);
+    const { ragProperties, ragImagesProperties } = getRagStrategiesProperties(
+      currentConfig.generativeAnswer.ragStrategies,
+    );
     const notEnoughDataMessage = getNotEnoughDataMessage(widgetOptions);
     const askToResource = getAskToResource(currentConfig.generativeAnswer);
     const maxTokens = getMaxTokens(currentConfig.generativeAnswer);

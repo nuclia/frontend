@@ -69,6 +69,7 @@ const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA']
     ResultsDisplayFormComponent,
     RouterLink,
     TranslateModule,
+    PaTooltipModule,
   ],
   templateUrl: './search-configuration.component.html',
   styleUrl: './search-configuration.component.scss',
@@ -100,6 +101,7 @@ export class SearchConfigurationComponent {
     return this.displayWidgetButtonLine;
   }
 
+  isRagLabAuthorized = this.features.authorized.promptLab;
   configurations: OptionType[] = [];
 
   selectedConfig = new FormControl<string>('');

@@ -3,9 +3,17 @@
 <script lang="ts">
   import { initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { getRAGImageStrategies, getRAGStrategies, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
+  import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
-  import type { KBStates, Nuclia, RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
+  import {
+    getRAGImageStrategies,
+    getRAGStrategies,
+    type KBStates,
+    type Nuclia,
+    type RAGImageStrategy,
+    type RAGStrategy,
+    type WidgetFeatures
+  } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { askQuestion, initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';

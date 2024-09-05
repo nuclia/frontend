@@ -1,0 +1,80 @@
+<stf-lab-layout
+  #labLayout
+  class="lab-container"
+  formTitle="rag-lab.prompt-lab.page-description"
+  type="prompt"
+  (queriesChange)="onQueriesChange($event)"
+  (downloadCsv)="downloadCsv()">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="generate()">
+    <div class="field-spacing">
+      <div class="title-s">{{ 'rag-lab.prompt-lab.configuration.prompt.title' | translate }}</div>
+      <pa-select
+        dim
+        class="select-with-background"
+        [label]="'rag-lab.prompt-lab.configuration.prompt.example' | translate"
+        (valueChange)="setPrompt($event)">
+        @for (option of promptExamples || []; track option) {
+          <pa-option [value]="option">
+            {{ option }}
+          </pa-option>
+        }
+      </pa-select>
+      <div class="field-and-button">
+        <pa-textarea
+          resizable
+          acceptHtmlTags
+          rows="3"
+          [(value)]="currentPrompt"
+          [help]="'rag-lab.prompt-lab.configuration.prompt.placeholder' | translate"
+          (resizing)="updateFormContent()">
+          {{ 'rag-lab.prompt-lab.configuration.prompt.label' | translate }}
+        </pa-textarea>
+      </div>
+    </div>
+    <div class="field-spacing">
+      <pa-select
+        dim
+        class="select-with-background"
+        [label]="'rag-lab.prompt-lab.configuration.prompt.example' | translate"
+        (valueChange)="setSystemPrompt($event)">
+        @for (option of systemPromptExamples || []; track option) {
+          <pa-option [value]="option">
+            {{ option }}
+          </pa-option>
+        }
+      </pa-select>
+      <div class="field-and-button">
+        <pa-textarea
+          resizable
+          acceptHtmlTags
+          rows="3"
+          [(value)]="currentSystemPrompt"
+          [help]="'rag-lab.prompt-lab.configuration.system-prompt.placeholder' | translate"
+          (resizing)="updateFormContent()">
+          {{ 'rag-lab.prompt-lab.configuration.system-prompt.label' | translate }}
+        </pa-textarea>
+      </div>
+    </div>
+
+    <div class="field-spacing">
+      <div class="title-s">{{ 'rag-lab.prompt-lab.configuration.models.title' | translate }}</div>
+      <div class="checkbox-container">
+        @if (generativeModels | async; as generativeModels) {
+          @for (model of generativeModels.options; track model.name) {
+            <pa-checkbox [formControlName]="model.value">
+              {{ model.name }}
+            </pa-checkbox>
+          }
+        }
+      </div>
+    </div>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="queries.length < 1 || selectedModels.length < 1">
+      {{ 'rag-lab.common.generate-button' | translate }}
+    </pa-button>
+  </form>
+</stf-lab-layout>
