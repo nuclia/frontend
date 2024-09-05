@@ -7,7 +7,13 @@ import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
 import { DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceListService } from './resource-list.service';
-import { Filters, formatFiltersFromFacets, getFilterFromDate, MIME_FACETS } from '../resource-filters.utils';
+import {
+  Filters,
+  formatFiltersFromFacets,
+  getFilterFromDate,
+  MAX_FACETS_PER_REQUEST,
+  MIME_FACETS,
+} from '../resource-filters.utils';
 import { Search } from '@nuclia/core';
 
 @Component({
@@ -192,24 +198,42 @@ export class ResourceListComponent implements OnDestroy {
 
   private loadFilters(): Observable<void> {
     return forkJoin([
-      this.sdk.currentKb.pipe(take(1)),
       this.labelSets.pipe(take(1)),
       this.route.queryParamMap.pipe(take(1)),
       this.resourceListService.prevFilters.pipe(take(1)),
     ]).pipe(
-      switchMap(([kb, labelSets, queryParams, prevFilters]) => {
+      switchMap(([labelSets, queryParams, prevFilters]) => {
         const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-        return kb.catalog('', { faceted }).pipe(map((results) => ({ results, queryParams, prevFilters })));
+        return this.getFacets(faceted).pipe(map((facets) => ({ facets, queryParams, prevFilters })));
       }),
-      map(({ results, queryParams, prevFilters }) => {
-        if (results.type !== 'error') {
-          const previousFilters = queryParams.get('preserveFilters') ? prevFilters : queryParams.getAll('filters');
-          this.formatFiltersFromFacets(results.fulltext?.facets || {}, previousFilters);
-          if (previousFilters.length > 0) {
-            this.onToggleFilter();
-          }
+      map(({ facets, queryParams, prevFilters }) => {
+        const previousFilters = queryParams.get('preserveFilters') ? prevFilters : queryParams.getAll('filters');
+        this.formatFiltersFromFacets(facets, previousFilters);
+        if (previousFilters.length > 0) {
+          this.onToggleFilter();
         }
       }),
+    );
+  }
+
+  private getFacets(facets: string[]) {
+    // catalog endpoint has a limit on the number of facets that can be retrieved per request
+    const facetChunks = facets.reduce(
+      (chunks, curr) => {
+        const lastChunk = chunks[chunks.length - 1];
+        lastChunk.length < MAX_FACETS_PER_REQUEST ? lastChunk.push(curr) : chunks.push([curr]);
+        return chunks;
+      },
+      [[]] as string[][],
+    );
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => forkJoin(facetChunks.map((faceted) => kb.catalog('', { faceted })))),
+      map((results) =>
+        results
+          .filter((result) => result.type !== 'error')
+          .reduce((acc, curr) => ({ ...acc, ...(curr.fulltext?.facets || {}) }), {}),
+      ),
     );
   }
 
