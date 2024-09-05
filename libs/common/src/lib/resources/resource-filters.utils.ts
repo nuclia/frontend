@@ -4,6 +4,7 @@ import mime from 'mime';
 
 export const MIME_FACETS = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video'];
 export const LANGUAGE_FACET = ['/metadata.language'];
+export const MAX_FACETS_PER_REQUEST = 50;
 
 export const CREATION_START_PREFIX = '/creation/start/';
 export const CREATION_END_PREFIX = '/creation/end/';
