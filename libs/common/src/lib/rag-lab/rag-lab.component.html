@@ -19,7 +19,7 @@
                 generativeModelMap[config.generativeAnswer.generativeModel] ||
                 config.generativeAnswer.generativeModel ||
                 ('rag-lab.rag-tab.generatie-model-from-kb'
-                  | translate: { model: generativeModelMap[defaultGenerativeModel | async] })
+                  | translate: { model: generativeModelMap[(defaultGenerativeModel | async) || ''] })
               ">
               {{ config.id }}
             </pa-checkbox>
