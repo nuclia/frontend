@@ -51,7 +51,7 @@
     }
   }
 
-  section:not(.period-container),
+  section:not(.period-container):not(.missing-knowledge),
   .criteria-container form {
     display: flex;
     flex-direction: column;
@@ -96,6 +96,12 @@
     position: sticky;
     top: 0;
     z-index: 10;
+
+    &.sub-section {
+      padding-top: rhythm(2);
+      margin-bottom: rhythm(2);
+      top: rhythm(8);
+    }
   }
 
   .chart-and-definitions {

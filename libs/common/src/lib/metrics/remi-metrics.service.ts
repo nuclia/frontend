@@ -35,13 +35,15 @@ export class RemiMetricsService {
 
   private _healthStatusOnError = new BehaviorSubject(false);
   private _evolutionDataOnError = new BehaviorSubject(false);
-  private _missingKnowledgeOnError = new BehaviorSubject(false);
+  private _lowContextOnError = new BehaviorSubject(false);
+  private _noAnswerOnError = new BehaviorSubject(false);
   private _period = new BehaviorSubject<RemiPeriods>('7d');
 
   period = this._period.asObservable();
   healthStatusOnError = this._healthStatusOnError.asObservable();
   evolutionDataOnError = this._evolutionDataOnError.asObservable();
-  missingKnowledgeOnError = this._missingKnowledgeOnError.asObservable();
+  lowContextOnError = this._lowContextOnError.asObservable();
+  noAnswerOnError = this._noAnswerOnError.asObservable();
 
   private scoreParameters: Observable<RangeParameters> = this.period.pipe(
     map((period) => {
@@ -65,15 +67,21 @@ export class RemiMetricsService {
       };
     }),
   );
-  private _queryCriteria = new BehaviorSubject<RemiQueryCriteria | null>(null);
-  queryCriteria = this._queryCriteria.asObservable();
+  private _lowContextCriteria = new BehaviorSubject<RemiQueryCriteria | null>(null);
+  private _noAnswerMonth = new BehaviorSubject<string | null>(null);
+
+  lowContextCriteria = this._lowContextCriteria.asObservable();
+  noAnswerMonth = this._noAnswerMonth.asObservable();
 
   updatePeriod(value: RemiPeriods) {
     this._period.next(value);
   }
 
-  updateCriteria(value: RemiQueryCriteria) {
-    this._queryCriteria.next(value);
+  updateLowContextCriteria(value: RemiQueryCriteria) {
+    this._lowContextCriteria.next(value);
+  }
+  updateNoAnswerMonth(month: string) {
+    this._noAnswerMonth.next(month);
   }
 
   healthCheckData: Observable<RangeChartData[]> = combineLatest([this.sdk.currentKb, this.scoreParameters]).pipe(
@@ -135,56 +143,78 @@ export class RemiMetricsService {
     map((data) => this.getEvolutionForMetric(data, 'context_relevance')),
   );
 
-  missingKnowledgeData: Observable<RemiQueryResponseItem[]> = combineLatest([
+  missingKnowledgeNoAnswer: Observable<RemiQueryResponseItem[]> = combineLatest([
     this.sdk.currentKb,
-    this.queryCriteria.pipe(filter((criteria) => !!criteria)),
+    this.lowContextCriteria.pipe(filter((criteria) => !!criteria)),
+  ]).pipe(
+    switchMap(([kb, criteria]) =>
+      kb.activityMonitor
+        .queryRemiScores({
+          status: 'NO_CONTEXT',
+          month: criteria.month,
+        })
+        .pipe(
+          tap(() => this._noAnswerOnError.next(false)),
+          catchError((err) => {
+            console.error(err);
+            this._noAnswerOnError.next(true);
+            return of([]);
+          }),
+        ),
+    ),
+  );
+
+  missingKnowledgeLowContext: Observable<RemiQueryResponseItem[]> = combineLatest([
+    this.sdk.currentKb,
+    this.lowContextCriteria.pipe(filter((criteria) => !!criteria)),
   ]).pipe(
     switchMap(([kb, criteria]) =>
       kb.activityMonitor.queryRemiScores(criteria).pipe(
-        tap(() => this._missingKnowledgeOnError.next(false)),
+        tap(() => this._lowContextOnError.next(false)),
         catchError((err) => {
           console.error(err);
-          this._missingKnowledgeOnError.next(true);
+          this._lowContextOnError.next(true);
           return of([]);
         }),
       ),
     ),
   );
-  missingKnowledgeBarPlotData: Observable<{ [id: number]: GroupedBarChartData[] }> = this.missingKnowledgeData.pipe(
-    map((items) =>
-      items.reduce(
-        (plotData, item) => {
-          const contextDistribution: { [score: string]: number } = this.getDistribution(item.remi.context_relevance);
-          const groundednessDistribution: { [score: string]: number } = this.getDistribution(item.remi.groundedness);
-          const groups: string[] = Object.keys(contextDistribution)
-            .concat(Object.keys(groundednessDistribution))
-            .reduce((deduplicatedGroups, key) => {
-              if (!deduplicatedGroups.includes(key)) {
-                deduplicatedGroups.push(key);
-              }
-              return deduplicatedGroups;
-            }, [] as string[]);
-          plotData[item.id] = groups
-            .sort((a, b) => {
-              const aValue = parseInt(a.slice(0, -1), 10);
-              const bValue = parseInt(b.slice(0, -1), 10);
-              return aValue > bValue ? 1 : -1;
-            })
-            .map((group) => ({
-              group,
-              values: {
-                [this.translate.instant('metrics.remi.category-short.context_relevance')]:
-                  contextDistribution[group] || 0,
-                [this.translate.instant('metrics.remi.category-short.groundedness')]:
-                  groundednessDistribution[group] || 0,
-              },
-            }));
-          return plotData;
-        },
-        {} as { [id: number]: GroupedBarChartData[] },
+  missingKnowledgeBarPlotData: Observable<{ [id: number]: GroupedBarChartData[] }> =
+    this.missingKnowledgeLowContext.pipe(
+      map((items) =>
+        items.reduce(
+          (plotData, item) => {
+            const contextDistribution: { [score: string]: number } = this.getDistribution(item.remi.context_relevance);
+            const groundednessDistribution: { [score: string]: number } = this.getDistribution(item.remi.groundedness);
+            const groups: string[] = Object.keys(contextDistribution)
+              .concat(Object.keys(groundednessDistribution))
+              .reduce((deduplicatedGroups, key) => {
+                if (!deduplicatedGroups.includes(key)) {
+                  deduplicatedGroups.push(key);
+                }
+                return deduplicatedGroups;
+              }, [] as string[]);
+            plotData[item.id] = groups
+              .sort((a, b) => {
+                const aValue = parseInt(a.slice(0, -1), 10);
+                const bValue = parseInt(b.slice(0, -1), 10);
+                return aValue > bValue ? 1 : -1;
+              })
+              .map((group) => ({
+                group,
+                values: {
+                  [this.translate.instant('metrics.remi.category-short.context_relevance')]:
+                    contextDistribution[group] || 0,
+                  [this.translate.instant('metrics.remi.category-short.groundedness')]:
+                    groundednessDistribution[group] || 0,
+                },
+              }));
+            return plotData;
+          },
+          {} as { [id: number]: GroupedBarChartData[] },
+        ),
       ),
-    ),
-  );
+    );
 
   getMissingKnowledgeDetails(id: number): Observable<RemiQueryResponseContextDetails> {
     return this.sdk.currentKb.pipe(

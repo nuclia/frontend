@@ -1,5 +1,9 @@
 # 1.21.1 (unreleased)
 
+### Improvement
+
+- Update `RemiQueryCriteria` model allowing now to query either on `context_relevance` or on answer `status`. 
+
 ### Bug fix
 
 - Return `IErrorResponse` when ask request is successful but its response contains an error
