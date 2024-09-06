@@ -25,7 +25,7 @@ export class PaymentLinksComponent implements OnDestroy {
   });
 
   isSaving = false;
-  accountTypes: AccountTypes[] = ['v3growth', 'v3enterprise', 'v3fly'];
+  accountTypes: AccountTypes[] = ['v3growth', 'v3enterprise', 'v3fly', 'v3starter'];
   paymentLink?: string;
 
   licensedPrices = of(this.accountTypes).pipe(
