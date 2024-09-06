@@ -35,7 +35,7 @@
 	"error.answer-feature-blocked": "La fonctionnalité de réponses n'est pas autorisée pour le moment.",
 	"error.audio-loading": "Une erreur s'est produite lors du chargement du fichier audio.",
 	"error.feature-blocked": "La fonction de recherche n'est pas autorisée pour le moment.",
-	"error.llm-blocked": "La tierce partie LLM n'est actuellement pas en mesure de fournir une réponse.",
+	"error.llm-blocked": "La tierce partie LLM n’est actuellement pas en mesure de fournir une réponse.",
 	"error.partial-results": "Désolé, le système est surchargé et n'a pu fournir qu'un résultat partiel.",
 	"error.processing": "Le traitement de cette ressource n'est pas complet",
 	"error.search": "Oups! quelque chose ne va pas. Nous y travaillons.",
