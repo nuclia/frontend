@@ -97,23 +97,86 @@
       }
     </div>
   </section>
-  <section>
+  <section class="missing-knowledge">
     <div class="sticky-section">
       <div class="title-l">{{ 'kb.metrics.missing-knowledge.title' | translate }}</div>
       <div class="page-description">{{ 'kb.metrics.missing-knowledge.description' | translate }}</div>
-      <br />
+    </div>
+
+    <div class="sticky-section sub-section">
+      <pa-expander
+        [expanded]="false"
+        [contentLoaded]="noAnswerMonthControl.errors?.['dateBefore']">
+        <pa-expander-header>
+          <span class="title-xxs">
+            {{ 'kb.metrics.missing-knowledge.status.summary' | translate: { month: noAnswerMonthValue } }}
+          </span>
+        </pa-expander-header>
+        <pa-expander-body>
+          <div class="criteria-container">
+            <form [formGroup]="noAnswerCriteria">
+              <div class="field-container">
+                <label for="monthNoAnswer">{{ 'kb.metrics.missing-knowledge.criteria.month.label' | translate }}</label>
+                <pa-input
+                  id="monthNoAnswer"
+                  externalLabel
+                  formControlName="month"
+                  help="kb.metrics.missing-knowledge.criteria.month.format"></pa-input>
+              </div>
+              @if (noAnswerMonthControl.errors?.['dateBefore']) {
+                <nsi-info-card type="warning">
+                  {{ 'kb.metrics.missing-knowledge.criteria.month.limit' | translate }}
+                </nsi-info-card>
+              }
+            </form>
+          </div>
+        </pa-expander-body>
+      </pa-expander>
+    </div>
+
+    @if (noAnswerOnError | async) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
+      </nsi-info-card>
+    } @else if (!noAnswerMonthControl.errors) {
+      @if (noAnswerData | async; as noAnswers) {
+        @if (noAnswers.length === 0) {
+          <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
+        } @else {
+          <pa-accordion>
+            @for (item of noAnswers; track item.id) {
+              <pa-accordion-item
+                [id]="'' + item.id"
+                [itemTitle]="item.question"
+                (expandedChange)="loadMissingKnowledgeDetails(item.id)">
+                <pa-accordion-item-body>
+                  <stf-missing-knowledge-details
+                    [item]="item"
+                    [missingKnowledgeDetails]="missingKnowledgeDetails"
+                    [missingKnowledgeError]="missingKnowledgeError"></stf-missing-knowledge-details>
+                </pa-accordion-item-body>
+              </pa-accordion-item>
+            }
+          </pa-accordion>
+        }
+      }
+    }
+
+    <div class="sticky-section sub-section">
       <pa-expander [expanded]="false">
         <pa-expander-header>
           <span class="title-xxs">
             {{
               'kb.metrics.missing-knowledge.criteria.summary'
-                | translate: { value: criteriaPercentValue, month: monthValue }
+                | translate: { value: criteriaPercentValue, month: lowControlMonthValue }
             }}
           </span>
         </pa-expander-header>
         <pa-expander-body>
           <div class="criteria-container">
-            <form [formGroup]="missingKnowledgeCriteria">
+            <form [formGroup]="lowContextCriteria">
               <div class="field-container">
                 <label for="value">
                   {{ 'kb.metrics.missing-knowledge.criteria.context-lower-than-label' | translate }}
@@ -138,7 +201,7 @@
                   formControlName="month"
                   help="kb.metrics.missing-knowledge.criteria.month.format"></pa-input>
               </div>
-              @if (monthControl.errors?.['dateBefore']) {
+              @if (lowContextMonthControl.errors?.['dateBefore']) {
                 <nsi-info-card type="warning">
                   {{ 'kb.metrics.missing-knowledge.criteria.month.limit' | translate }}
                 </nsi-info-card>
@@ -149,19 +212,19 @@
       </pa-expander>
     </div>
 
-    @if (missingKnowledgeOnError | async) {
+    @if (lowContextOnError | async) {
       <nsi-info-card
         type="warning"
         icon="warning">
         {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
       </nsi-info-card>
-    } @else if (!monthControl.errors) {
-      @if (missingKnowledgeData | async; as missingKnowledge) {
+    } @else if (!lowContextMonthControl.errors) {
+      @if (lowContextData | async; as missingKnowledge) {
         @if (missingKnowledge.length === 0) {
           <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
         } @else {
           <pa-accordion #missingKnowledgeAccordion>
-            @for (item of missingKnowledgeData | async; track item.id) {
+            @for (item of missingKnowledge; track item.id) {
               <pa-accordion-item
                 [id]="'' + item.id"
                 [itemTitle]="item.question"
@@ -192,32 +255,10 @@
                 </pa-accordion-item-extra-description>
 
                 <pa-accordion-item-body>
-                  @if (missingKnowledgeDetails[item.id]; as details) {
-                    <pa-table
-                      border
-                      columns="repeat(2, 112px) 1fr">
-                      <pa-table-header>
-                        <pa-table-cell header>
-                          {{ 'metrics.remi.category-short.context_relevance' | translate }}
-                        </pa-table-cell>
-                        <pa-table-cell header>
-                          {{ 'metrics.remi.category-short.groundedness' | translate }}
-                        </pa-table-cell>
-                        <pa-table-cell header>
-                          {{ 'kb.metrics.missing-knowledge.table.context-header' | translate }}
-                        </pa-table-cell>
-                      </pa-table-header>
-                      @for (context of details.context; track context) {
-                        <pa-table-row>
-                          <pa-table-cell center>{{ item.remi.context_relevance[$index] * 20 }}%</pa-table-cell>
-                          <pa-table-cell center>{{ item.remi.groundedness[$index] * 20 }}%</pa-table-cell>
-                          <pa-table-cell><span [innerHTML]="context.text"></span></pa-table-cell>
-                        </pa-table-row>
-                      }
-                    </pa-table>
-                  } @else {
-                    <nsi-spinner></nsi-spinner>
-                  }
+                  <stf-missing-knowledge-details
+                    [item]="item"
+                    [missingKnowledgeDetails]="missingKnowledgeDetails"
+                    [missingKnowledgeError]="missingKnowledgeError"></stf-missing-knowledge-details>
                 </pa-accordion-item-body>
               </pa-accordion-item>
             }

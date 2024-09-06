@@ -44,9 +44,9 @@ export class ActivityMonitor {
   }
 
   /**
-   * Get a list of RAG requests and their scores that matches a REMi scores query.
+   * Get a list of RAG requests and their scores (if any) that matches a REMi scores query or a status.
    *
-   * @param criteria Object representing the query to be done. It currently supports querying on context relevance only.
+   * @param criteria Object representing the query to be done. It currently supports querying on context relevance or on answer status.
    */
   queryRemiScores(criteria: RemiQueryCriteria): Observable<RemiQueryResponseItem[]> {
     return this.nuclia.rest

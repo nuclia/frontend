@@ -27,11 +27,17 @@ export interface RemiQueryResponseContextDetails extends RemiQueryResponseItem {
   context: { text: string; text_block_id: string | null }[];
 }
 
+/**
+ * NO_CONTEXT means there was no answer to the query
+ */
+export type RemiAnswerStatus = 'SUCCESS' | 'ERROR' | 'NO_CONTEXT';
+
 export interface RemiQueryCriteria {
-  context_relevance: {
+  context_relevance?: {
     value: number;
     operation: 'gt' | 'lt' | 'eq';
     aggregation: 'average' | 'min' | 'max';
   };
+  status?: RemiAnswerStatus;
   month: string;
 }

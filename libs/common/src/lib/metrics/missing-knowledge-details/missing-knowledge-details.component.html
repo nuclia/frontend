@@ -1,0 +1,32 @@
+@if (missingKnowledgeDetails[item.id]; as details) {
+  <pa-table
+    border
+    columns="repeat(2, 112px) 1fr">
+    <pa-table-header>
+      <pa-table-cell header>
+        {{ 'metrics.remi.category-short.context_relevance' | translate }}
+      </pa-table-cell>
+      <pa-table-cell header>
+        {{ 'metrics.remi.category-short.groundedness' | translate }}
+      </pa-table-cell>
+      <pa-table-cell header>
+        {{ 'kb.metrics.missing-knowledge.table.context-header' | translate }}
+      </pa-table-cell>
+    </pa-table-header>
+    @for (context of details.context; track context) {
+      <pa-table-row>
+        <pa-table-cell center>{{ item.remi.context_relevance[$index] * 20 }}%</pa-table-cell>
+        <pa-table-cell center>{{ item.remi.groundedness[$index] * 20 }}%</pa-table-cell>
+        <pa-table-cell><span [innerHTML]="context.text"></span></pa-table-cell>
+      </pa-table-row>
+    }
+  </pa-table>
+} @else if (missingKnowledgeError[item.id]) {
+  <nsi-info-card
+    icon="warning"
+    type="warning">
+    An error occurred while loading the contexts, please try again later.
+  </nsi-info-card>
+} @else {
+  <nsi-spinner></nsi-spinner>
+}
