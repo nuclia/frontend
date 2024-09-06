@@ -188,8 +188,12 @@ export class RemiMetricsService {
       map((items) =>
         items.reduce(
           (plotData, item) => {
-            const contextDistribution: { [score: string]: number } = this.getDistribution(item.remi.context_relevance);
-            const groundednessDistribution: { [score: string]: number } = this.getDistribution(item.remi.groundedness);
+            const contextDistribution: { [score: string]: number } = this.getDistribution(
+              item.remi?.context_relevance || [],
+            );
+            const groundednessDistribution: { [score: string]: number } = this.getDistribution(
+              item.remi?.groundedness || [],
+            );
             const groups: string[] = Object.keys(contextDistribution)
               .concat(Object.keys(groundednessDistribution))
               .reduce((deduplicatedGroups, key) => {

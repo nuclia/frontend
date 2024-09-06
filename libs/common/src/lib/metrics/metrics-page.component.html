@@ -97,8 +97,12 @@
       }
     </div>
   </section>
-  <section class="missing-knowledge">
-    <div class="sticky-section">
+  <section
+    class="missing-knowledge"
+    [style]="missingKnowledgeHeaderHeight">
+    <div
+      class="sticky-section"
+      #missingKnowledgeHeader>
       <div class="title-l">{{ 'kb.metrics.missing-knowledge.title' | translate }}</div>
       <div class="page-description">{{ 'kb.metrics.missing-knowledge.description' | translate }}</div>
     </div>
@@ -153,6 +157,7 @@
                 (expandedChange)="loadMissingKnowledgeDetails(item.id)">
                 <pa-accordion-item-body>
                   <stf-missing-knowledge-details
+                    noScore
                     [item]="item"
                     [missingKnowledgeDetails]="missingKnowledgeDetails"
                     [missingKnowledgeError]="missingKnowledgeError"></stf-missing-knowledge-details>
@@ -223,7 +228,7 @@
         @if (missingKnowledge.length === 0) {
           <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
         } @else {
-          <pa-accordion #missingKnowledgeAccordion>
+          <pa-accordion>
             @for (item of missingKnowledge; track item.id) {
               <pa-accordion-item
                 [id]="'' + item.id"

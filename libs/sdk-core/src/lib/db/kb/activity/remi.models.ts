@@ -20,7 +20,7 @@ export interface RemiQueryResponseItem {
   id: number;
   question: string;
   answer: string;
-  remi: RemiScore;
+  remi?: RemiScore;
 }
 
 export interface RemiQueryResponseContextDetails extends RemiQueryResponseItem {

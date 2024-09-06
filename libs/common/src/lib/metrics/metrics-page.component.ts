@@ -1,10 +1,13 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   inject,
   OnDestroy,
   OnInit,
+  ViewChild,
   ViewChildren,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -18,7 +21,8 @@ import {
   PaTableModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { Observable, Subject } from 'rxjs';
+import { fromEvent, Observable, Subject } from 'rxjs';
+import { auditTime, takeUntil } from 'rxjs/operators';
 import {
   DatedRangeChartData,
   GroupedBarChartComponent,
@@ -31,10 +35,17 @@ import { RemiMetricsService, RemiPeriods } from './remi-metrics.service';
 import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { format } from 'date-fns';
-import { takeUntil } from 'rxjs/operators';
-import { RemiQueryCriteria, RemiQueryResponseContextDetails, RemiQueryResponseItem } from '@nuclia/core';
+import {
+  RemiQueryCriteria,
+  RemiQueryResponseContextDetails,
+  RemiQueryResponseItem,
+  SHORT_FIELD_TYPE,
+  shortToLongFieldType,
+} from '@nuclia/core';
 import { DateAfter } from '../validators';
 import { MissingKnowledgeDetailsComponent } from './missing-knowledge-details/missing-knowledge-details.component';
+import { PreviewService } from '../resources';
+import { SafeHtml } from '@angular/platform-browser';
 
 @Component({
   standalone: true,
@@ -60,12 +71,13 @@ import { MissingKnowledgeDetailsComponent } from './missing-knowledge-details/mi
   styleUrl: './metrics-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MetricsPageComponent implements OnInit, OnDestroy {
+export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   private remiMetrics = inject(RemiMetricsService);
   private cdr = inject(ChangeDetectorRef);
 
   private unsubscribeAll: Subject<void> = new Subject();
 
+  @ViewChild('missingKnowledgeHeader', { read: ElementRef }) missingKnowledgeHeader?: ElementRef;
   @ViewChildren(AccordionItemComponent) accordionItems?: AccordionItemComponent[];
 
   period: Observable<RemiPeriods> = this.remiMetrics.period;
@@ -117,6 +129,22 @@ export class MetricsPageComponent implements OnInit, OnDestroy {
   }
   get noAnswerMonthValue() {
     return this.noAnswerMonthControl.value;
+  }
+
+  missingKnowledgeHeaderHeight = '';
+
+  ngAfterViewInit() {
+    if (this.missingKnowledgeHeader) {
+      this.missingKnowledgeHeaderHeight = `--header-height:${this.missingKnowledgeHeader.nativeElement.offsetHeight}px`;
+      fromEvent(window, 'resize')
+        .pipe(auditTime(200), takeUntil(this.unsubscribeAll))
+        .subscribe(() => {
+          if (this.missingKnowledgeHeader) {
+            this.missingKnowledgeHeaderHeight = `--header-height:${this.missingKnowledgeHeader.nativeElement.offsetHeight}px`;
+            this.cdr.detectChanges();
+          }
+        });
+    }
   }
 
   ngOnInit() {
