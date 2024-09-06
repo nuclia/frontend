@@ -34,6 +34,15 @@
     flex-direction: column;
     gap: rhythm(1);
     margin-top: rhythm(1);
+
+    .checkbox-and-help {
+      display: flex;
+      justify-content: space-between;
+    }
+    .config-details-list {
+      margin: 0 0 0 rhythm(1);
+      padding: 0;
+    }
   }
 
   .prompt-container {
@@ -92,8 +101,10 @@
       margin-bottom $transition-hint,
       opacity $transition-hint;
 
-    &.collapsed {
-      display: none;
+    .config-container {
+      background: $color-neutral-lighter;
+      padding: rhythm(0.5) rhythm(1.5);
+      margin: 0 calc(#{rhythm(1.5) * -1});
     }
   }
 

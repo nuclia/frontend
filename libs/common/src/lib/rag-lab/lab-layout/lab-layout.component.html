@@ -45,12 +45,12 @@
                   <div class="answers">
                     @for (result of entry.results; track result) {
                       <div class="answer-container">
-                        <div>
+                        <div class="config-container">
                           @if (result.configId) {
-                            <strong>{{ result.configId }}</strong>
+                            <span class="title-xxs">{{ result.configId }}</span>
                             ({{ result.modelName }})
                           } @else {
-                            <strong>{{ result.modelName }}</strong>
+                            <span class="title-xxs">{{ result.modelName }}</span>
                           }
                         </div>
                         <div

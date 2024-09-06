@@ -6,7 +6,7 @@ import { Ask, ChatOptions, IErrorResponse, LearningConfiguration, Prompts } from
 import { LoadingDialogComponent } from './loading-dialog';
 import { catchError, filter, map } from 'rxjs/operators';
 import DOMPurify from 'dompurify';
-import { SearchAndWidgets, SearchConfiguration } from '../search-widget';
+import { NUCLIA_STANDARD_SEARCH_CONFIG, SearchAndWidgets, SearchConfiguration } from '../search-widget';
 import { GENERATIVE_MODEL_KEY, RequestConfig, RequestConfigAndQueries, ResultEntry } from './rag-lab.models';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -54,7 +54,8 @@ export class RagLabService {
   loadKbConfigAndModels(): Observable<void> {
     return this.sdk.currentKb.pipe(
       tap((kb) => {
-        this._searchConfigurations.next((kb.search_configs as SearchAndWidgets)?.searchConfigurations || []);
+        const savedConfigurations = (kb.search_configs as SearchAndWidgets)?.searchConfigurations || [];
+        this._searchConfigurations.next([{ ...NUCLIA_STANDARD_SEARCH_CONFIG }].concat(savedConfigurations));
       }),
       switchMap((kb) => forkJoin([kb.getConfiguration(), kb.getLearningSchema()])),
       map(([config, schema]) => {
@@ -84,7 +85,12 @@ export class RagLabService {
     const requestCount = requestConfigs.reduce((count, requestConfig) => {
       return count + requestConfig.queries.length;
     }, 0);
-    this._promptLabResults.next([]);
+
+    if (forTab === 'prompt') {
+      this._promptLabResults.next([]);
+    } else if (forTab === 'rag') {
+      this._ragLabResults.next([]);
+    }
 
     this._loadingModal = this.modalService.openModal(
       LoadingDialogComponent,
@@ -126,7 +132,18 @@ export class RagLabService {
               .pipe(
                 switchMap((answer) => {
                   if (answer.type === 'error') {
-                    return of(answer);
+                    this._addResult(
+                      {
+                        query,
+                        options,
+                        result:
+                          answer.status === -1
+                            ? this.translate.instant('rag-lab.common.results.error-llm')
+                            : this.translate.instant('rag-lab.common.results.error'),
+                      },
+                      forTab,
+                    );
+                    return of(null);
                   } else {
                     return this.renderMarkdown(answer.text).pipe(
                       tap((rendered) =>

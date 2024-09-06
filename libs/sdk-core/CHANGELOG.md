@@ -1,4 +1,10 @@
-# 1.21.0 (unreleased)
+# 1.21.1 (unreleased)
+
+### Bug fix
+
+- Return `IErrorResponse` when ask request is successful but its response contains an error
+
+# 1.21.0 (2024-09-05)
 
 ### Feature
 

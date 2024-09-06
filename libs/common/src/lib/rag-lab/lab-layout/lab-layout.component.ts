@@ -111,7 +111,7 @@ export class LabLayoutComponent implements OnInit, OnDestroy {
 
   updateResultHeight() {
     // expanders inside the accordion has an animation during 160ms,
-    // so final expander height is available after this delay, we add 10ms as a safe gap
-    setTimeout(() => this.resultsContainer?.updateContentHeight(), 170);
+    // so final expander height is available after this delay, we add 40ms as a safe gap
+    setTimeout(() => this.resultsContainer?.updateContentHeight(), 200);
   }
 }

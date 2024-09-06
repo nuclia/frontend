@@ -1,12 +1,22 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnChanges, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnChanges,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   AccordionBodyDirective,
   AccordionComponent,
   AccordionItemComponent,
   PaButtonModule,
+  PaIconModule,
+  PaPopupModule,
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
@@ -37,20 +47,23 @@ import { getRAGImageStrategies, getRAGStrategies } from '@nuclia/core';
     RouterLink,
     PaButtonModule,
     LabLayoutComponent,
+    PaPopupModule,
+    PaIconModule,
   ],
   templateUrl: './rag-lab.component.html',
   styleUrl: './_common-lab.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RagLabComponent implements OnChanges {
+export class RagLabComponent implements OnChanges, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private ragLabService = inject(RagLabService);
+  private translate = inject(TranslateService);
 
   defaultGenerativeModel: Observable<string> = this.ragLabService.kbConfigBackup.pipe(
     map((kbConfig) => kbConfig?.['generative_model'] || ''),
   );
   generativeModelMap = this.ragLabService.generativeModelMap;
-  searchConfigurations = this.ragLabService.searchConfigurations.pipe(
+  searchConfigurations: Observable<SearchConfiguration[]> = this.ragLabService.searchConfigurations.pipe(
     tap((configs) => {
       configs.forEach((config) =>
         this.form.addControl(config.id, new FormControl<boolean>(false, { nonNullable: true })),
@@ -59,6 +72,81 @@ export class RagLabComponent implements OnChanges {
       this.cdr.detectChanges();
     }),
   );
+
+  searchConfigDetails: Observable<{ vectorset?: string; features: string[]; ragStrategies: string[] }[]> =
+    this.searchConfigurations.pipe(
+      map((configs) =>
+        configs.map((config) => {
+          const features: string[] = [];
+          if (config.searchBox.rephraseQuery) {
+            features.push(this.translate.instant('search.configuration.search-box.rephrase.toggle-label'));
+          }
+          if (config.searchBox.autofilter) {
+            features.push(this.translate.instant('search.configuration.search-box.automatic-filtering.toggle-label'));
+          }
+          if (config.searchBox.setPreselectedFilters && config.searchBox.preselectedFilters) {
+            features.push(this.translate.instant('search.configuration.search-box.preselected-filters.toggle-label'));
+          }
+          if (config.generativeAnswer.preferMarkdown) {
+            features.push(
+              this.translate.instant('search.configuration.generative-answer.prefer-markdown.toggle-label'),
+            );
+          }
+          if (config.generativeAnswer.prompt || config.generativeAnswer.systemPrompt) {
+            features.push(this.translate.instant('search.configuration.generative-answer.prompt.toggle-label'));
+          }
+          if (config.generativeAnswer.limitTokenConsumption && config.generativeAnswer.tokenConsumptionLimit) {
+            features.push(this.translate.instant('search.configuration.generative-answer.limit-token.toggle-label'));
+          }
+          if (config.generativeAnswer.limitParagraphs && !!config.generativeAnswer.paragraphsLimit) {
+            features.push(
+              this.translate.instant('search.configuration.generative-answer.limit-paragraphs.toggle-label'),
+            );
+          }
+          if (config.generativeAnswer.askSpecificResource && config.generativeAnswer.specificResourceSlug) {
+            features.push(this.translate.instant('search.configuration.generative-answer.ask-resource.toggle-label'));
+          }
+          const ragStrategiesList: string[] = [];
+          const ragStrategies = config.generativeAnswer.ragStrategies;
+          if (ragStrategies.includeTextualHierarchy) {
+            ragStrategiesList.push(
+              this.translate.instant(
+                'search.configuration.generative-answer.rag-strategies.textual-hierarchy.toggle-label',
+              ),
+            );
+          }
+          if (ragStrategies.includeParagraphImages) {
+            ragStrategiesList.push(
+              this.translate.instant(
+                'search.configuration.generative-answer.rag-strategies.paragraph-images.toggle-label',
+              ),
+            );
+          }
+          if (ragStrategies.includePageImages) {
+            ragStrategiesList.push(
+              this.translate.instant('search.configuration.generative-answer.rag-strategies.page-images.toggle-label'),
+            );
+          }
+          if (ragStrategies.metadatasRagStrategy && ragStrategies.metadatas) {
+            ragStrategiesList.push(
+              this.translate.instant('search.configuration.generative-answer.rag-strategies.metadatas.toggle-label'),
+            );
+          }
+          if (ragStrategies.fieldsAsContext && ragStrategies.fieldIds) {
+            ragStrategiesList.push(
+              this.translate.instant(
+                'search.configuration.generative-answer.rag-strategies.specific-fields.toggle-label',
+              ),
+            );
+          }
+          return {
+            vectorset: config.generativeAnswer.vectorset,
+            features,
+            ragStrategies: ragStrategiesList,
+          };
+        }),
+      ),
+    );
 
   @ViewChild('labLayout', { read: LabLayoutComponent }) labLayoutComponent?: LabLayoutComponent;
 
@@ -74,6 +162,10 @@ export class RagLabComponent implements OnChanges {
 
   ngOnChanges(): void {
     setTimeout(() => this.updateFormContent());
+  }
+
+  ngOnDestroy() {
+    this.queries = [];
   }
 
   onQueriesChange(queries: string[]) {
@@ -147,7 +239,7 @@ export class RagLabComponent implements OnChanges {
             system: searchConfig.generativeAnswer.systemPrompt || undefined,
           };
         }
-        if (searchConfig.searchBox.setPreselectedFilters) {
+        if (searchConfig.searchBox.setPreselectedFilters && searchConfig.searchBox.preselectedFilters) {
           requestConfig.filters = getPreselectedFilterList(searchConfig.searchBox);
         }
         if (searchConfig.generativeAnswer.ragStrategies) {

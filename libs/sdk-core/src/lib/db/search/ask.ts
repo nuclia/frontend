@@ -39,7 +39,10 @@ export function ask(
   });
   return synchronous
     ? nuclia.rest.post<Ask.AskResponse>(endpoint, body, undefined, undefined, true).pipe(
-        map(({ answer, relations, retrieval_results, citations, learning_id, answer_json }) => {
+        map(({ answer, relations, retrieval_results, citations, learning_id, answer_json, status, error_details }) => {
+          if (status === 'error') {
+            return { type: 'error', status: -1, detail: error_details || '' } as IErrorResponse;
+          }
           return {
             type: 'answer',
             text: answer,
@@ -73,6 +76,13 @@ export function ask(
             return acc;
           }, [] as Ask.AskResponseItem[]);
 
+          const statusItem = items.find((item) => item.item.type === 'status');
+          if (statusItem) {
+            const item = statusItem.item as Ask.StatusAskResponseItem;
+            if (item.status === 'error') {
+              return { type: 'error', status: -1, detail: item.details || '' } as IErrorResponse;
+            }
+          }
           let answer = items
             .filter((item) => item.item.type === 'answer')
             .map((item) => (item.item as Ask.AnswerAskResponseItem).text)
