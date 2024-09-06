@@ -145,13 +145,16 @@ export class RemiMetricsService {
 
   missingKnowledgeNoAnswer: Observable<RemiQueryResponseItem[]> = combineLatest([
     this.sdk.currentKb,
-    this.lowContextCriteria.pipe(filter((criteria) => !!criteria)),
+    this.noAnswerMonth.pipe(
+      filter((month) => !!month),
+      map((month) => month as string),
+    ),
   ]).pipe(
-    switchMap(([kb, criteria]) =>
+    switchMap(([kb, month]) =>
       kb.activityMonitor
         .queryRemiScores({
           status: 'NO_CONTEXT',
-          month: criteria.month,
+          month,
         })
         .pipe(
           tap(() => this._noAnswerOnError.next(false)),
@@ -178,6 +181,7 @@ export class RemiMetricsService {
         }),
       ),
     ),
+    shareReplay(1),
   );
   missingKnowledgeBarPlotData: Observable<{ [id: number]: GroupedBarChartData[] }> =
     this.missingKnowledgeLowContext.pipe(
