@@ -1,4 +1,10 @@
-# 1.21.0 (unreleased)
+# 1.21.1 (unreleased)
+
+### Bug fix
+
+- Return `IErrorResponse` when ask request is successful but its response contains an error
+
+# 1.21.0 (2024-09-05)
 
 ### Feature
 
@@ -8,10 +14,6 @@
 
 - Support input/output max tokens on `/ask` endpoint
 - Add support for `neighbouring_paragraphs` RAG strategy
-
-### Bug fix
-
-- Return `IErrorResponse` when ask request is successful but its response contains an error   
 
 # 1.20.0 (2024-09-02)
 
