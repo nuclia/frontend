@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestro
 import {
   BehaviorSubject,
   combineLatest,
-  distinctUntilKeyChanged,
   filter,
   map,
   Observable,
@@ -11,7 +10,6 @@ import {
   Subject,
   switchMap,
   take,
-  tap,
 } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphService } from '../paragraph.service';
@@ -35,12 +33,12 @@ import {
   ParagraphWithTextAndImage,
   Thumbnail,
 } from '../edit-resource.helpers';
-import { BackendConfigurationService, SDKService } from '@flaps/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { TranslateService } from '@ngx-translate/core';
+import { SDKService } from '@flaps/core';
+import { SafeHtml } from '@angular/platform-browser';
 import { EditResourceService } from '../edit-resource.service';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceNavigationService } from '../resource-navigation.service';
+import { PreviewService } from './preview.service';
 
 const viewerId = 'viewer-widget';
 
@@ -62,26 +60,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
     ),
   );
 
-  viewerWidget: Observable<SafeHtml> = combineLatest([
-    this.sdk.currentKb.pipe(distinctUntilKeyChanged('id')),
-    this.sdk.currentAccount,
-  ]).pipe(
-    tap(() => document.getElementById(viewerId)?.remove()),
-    map(([kb, account]) => {
-      return this.sanitizer.bypassSecurityTrustHtml(`<nuclia-viewer id="viewer-widget"
-        knowledgebox="${kb.id}"
-        zone="${this.sdk.nuclia.options.zone}"
-        client="dashboard"
-        cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
-        backend="${this.backendConfig.getAPIURL()}"
-        state="${kb.state || ''}"
-        kbslug="${kb.slug || ''}"
-        account="${account.id}"
-        lang="${this.translate.currentLang}"
-        ${this.sdk.nuclia.options.standalone ? 'standalone="true"' : ''}
-        ></nuclia-viewer>`);
-    }),
-  );
+  viewerWidget: Observable<SafeHtml> = this.previewService.viewerWidget.pipe(takeUntil(this.unsubscribeAll));
 
   loaded = false;
   loadingPreview = false;
@@ -164,11 +143,9 @@ export class PreviewComponent implements OnInit, OnDestroy {
     private paragraphService: ParagraphService,
     private editResourceService: EditResourceService,
     private sdk: SDKService,
-    private sanitizer: DomSanitizer,
-    private backendConfig: BackendConfigurationService,
-    private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private resourceNavigation: ResourceNavigationService,
+    private previewService: PreviewService,
   ) {
     this.resourceNavigation.currentRoute = this.route;
   }
@@ -226,13 +203,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       this.resource
         .pipe(
           take(1),
-          switchMap(
-            (resource) =>
-              (document.getElementById(viewerId) as unknown as any)?.openPreview(
-                { ...fieldId, resourceId: resource.id },
-                resource.title,
-              ),
-          ),
+          switchMap((resource) => this.previewService.openViewer({ ...fieldId, resourceId: resource.id })),
           filter((isPreviewing) => !!isPreviewing),
           take(1),
         )

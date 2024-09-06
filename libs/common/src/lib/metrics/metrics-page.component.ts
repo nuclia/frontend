@@ -73,6 +73,7 @@ import { SafeHtml } from '@angular/platform-browser';
 })
 export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   private remiMetrics = inject(RemiMetricsService);
+  private previewService = inject(PreviewService);
   private cdr = inject(ChangeDetectorRef);
 
   private unsubscribeAll: Subject<void> = new Subject();
@@ -114,6 +115,8 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   evolutionDataOnError: Observable<boolean> = this.remiMetrics.evolutionDataOnError;
   lowContextOnError: Observable<boolean> = this.remiMetrics.lowContextOnError;
   noAnswerOnError: Observable<boolean> = this.remiMetrics.noAnswerOnError;
+
+  viewerWidget: Observable<SafeHtml> = this.previewService.viewerWidget.pipe(takeUntil(this.unsubscribeAll));
 
   get lowContextMonthControl() {
     return this.lowContextCriteria.controls.month;
@@ -184,6 +187,26 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  openViewer(contextId: string) {
+    const [resourceId, fieldType, fieldId] = contextId.split('/');
+    if (!resourceId || !fieldType || !fieldId) {
+      console.error(`Malformed context id ${contextId}:`, resourceId, fieldType, fieldId);
+      return;
+    }
+    const longFieldType = shortToLongFieldType(fieldType as SHORT_FIELD_TYPE);
+    if (!longFieldType) {
+      console.error(`Unknown field type ${fieldType}`);
+      return;
+    }
+    this.previewService
+      .openViewer({
+        resourceId: resourceId,
+        field_type: longFieldType,
+        field_id: fieldId,
+      })
+      .subscribe();
   }
 
   private loadLowContext() {

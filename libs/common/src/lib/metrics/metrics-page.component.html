@@ -160,7 +160,8 @@
                     noScore
                     [item]="item"
                     [missingKnowledgeDetails]="missingKnowledgeDetails"
-                    [missingKnowledgeError]="missingKnowledgeError"></stf-missing-knowledge-details>
+                    [missingKnowledgeError]="missingKnowledgeError"
+                    (openViewer)="openViewer($event)"></stf-missing-knowledge-details>
                 </pa-accordion-item-body>
               </pa-accordion-item>
             }
@@ -263,7 +264,8 @@
                   <stf-missing-knowledge-details
                     [item]="item"
                     [missingKnowledgeDetails]="missingKnowledgeDetails"
-                    [missingKnowledgeError]="missingKnowledgeError"></stf-missing-knowledge-details>
+                    [missingKnowledgeError]="missingKnowledgeError"
+                    (openViewer)="openViewer($event)"></stf-missing-knowledge-details>
                 </pa-accordion-item-body>
               </pa-accordion-item>
             }
@@ -272,4 +274,8 @@
       }
     }
   </section>
+</div>
+
+<div class="viewer-container">
+  <div [innerHTML]="viewerWidget | async"></div>
 </div>
