@@ -41,8 +41,8 @@
   export let no_tracking = false;
   export let rag_strategies = '';
   export let rag_image_strategies = '';
-  export let max_tokens: number | undefined = undefined;
-  export let max_output_tokens: number | undefined = undefined;
+  export let max_tokens: number | string | undefined = undefined;
+  export let max_output_tokens: number | string | undefined = undefined;
   export let max_paragraphs: number | undefined = undefined;
   export let query_prepend = '';
   export let vectorset = '';
@@ -51,6 +51,8 @@
   export let height = '';
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
+  let _max_tokens: number | undefined;
+  let _max_output_tokens: number | undefined;
 
   let showChat = layout === 'inline';
 
@@ -103,6 +105,8 @@
 
     _ragStrategies = getRAGStrategies(rag_strategies);
     _ragImageStrategies = getRAGImageStrategies(rag_image_strategies);
+    _max_tokens = typeof max_tokens === 'string' ? parseInt(max_tokens, 10) : max_tokens;
+    _max_output_tokens = typeof max_output_tokens === 'string' ? parseInt(max_output_tokens, 10) : max_output_tokens;
 
     nucliaAPI = initNuclia(
       {
@@ -117,7 +121,15 @@
         proxy,
       },
       state,
-      { prompt, system_prompt, max_tokens, max_output_tokens, max_paragraphs, query_prepend, vectorset },
+      {
+        prompt,
+        system_prompt,
+        max_tokens: _max_tokens,
+        max_output_tokens: _max_output_tokens,
+        max_paragraphs,
+        query_prepend,
+        vectorset,
+      },
       no_tracking,
     );
 
