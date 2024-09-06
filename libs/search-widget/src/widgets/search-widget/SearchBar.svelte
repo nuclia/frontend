@@ -81,8 +81,8 @@
   export let rag_image_strategies = '';
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
-  export let max_tokens: number | undefined = undefined;
-  export let max_output_tokens: number | undefined = undefined;
+  export let max_tokens: number | string | undefined = undefined;
+  export let max_output_tokens: number | string | undefined = undefined;
   export let max_paragraphs: number | undefined = undefined;
   export let query_prepend = '';
   export let json_schema = '';
@@ -107,6 +107,8 @@
   let _jsonSchema: object | null = null;
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
+  let _max_tokens: number | undefined;
+  let _max_output_tokens: number | undefined;
 
   export function search(query: string, filters?: string[]) {
     searchQuery.set(query);
@@ -198,6 +200,8 @@
     } catch (e) {
       _jsonSchema = null;
     }
+    _max_tokens = typeof max_tokens === 'string' ? parseInt(max_tokens, 10) : max_tokens;
+    _max_output_tokens = typeof max_output_tokens === 'string' ? parseInt(max_output_tokens, 10) : max_output_tokens;
 
     nucliaAPI = initNuclia(
       {
@@ -219,8 +223,8 @@
         system_prompt,
         generative_model: generativemodel,
         ask_to_resource,
-        max_tokens,
-        max_output_tokens,
+        max_tokens: _max_tokens,
+        max_output_tokens: _max_output_tokens,
         max_paragraphs,
         query_prepend,
         vectorset,
