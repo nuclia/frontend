@@ -574,7 +574,7 @@
 	"kb.form.required-name": "Camp necessari",
 	"kb.metrics.definition.answer-relevance": "Rellevància de la resposta generada a la consulta de l'usuari.",
 	"kb.metrics.definition.context-relevance": "Rellevància del context recuperat per a la consulta de l'usuari.",
-	"kb.metrics.definition.groundedness": "Grau en què la resposta generada està recolzada pel context recuperat.",
+	"kb.metrics.definition.groundedness": "Mesura fins a quin punt la resposta es basa en el context.",
 	"kb.metrics.error.evolution-not-loaded": "S'ha produït un error en carregar les dades d'evolució del rendiment. Torneu-ho a provar més tard.",
 	"kb.metrics.error.health-status-not-loaded": "S'ha produït un error en carregar l'estat de salut. Torneu-ho a provar més tard.",
 	"kb.metrics.error.missing-knowledge-not-loaded": "S'ha produït un error en carregar els coneixements que faltaven. Torneu-ho a provar més tard.",

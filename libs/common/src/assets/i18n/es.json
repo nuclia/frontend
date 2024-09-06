@@ -574,7 +574,7 @@
 	"kb.form.required-name": "Campo requerido",
 	"kb.metrics.definition.answer-relevance": "Relevancia de la respuesta generada para la consulta del usuario.",
 	"kb.metrics.definition.context-relevance": "Relevancia del contexto recuperado para la consulta del usuario.",
-	"kb.metrics.definition.groundedness": "Grado en que la respuesta generada se apoya en el contexto recuperado.",
+	"kb.metrics.definition.groundedness": "Mide hasta qué punto la respuesta se basa en el contexto.",
 	"kb.metrics.error.evolution-not-loaded": "Se ha producido un error al cargar los datos de evolución del rendimiento, inténtelo de nuevo más tarde.",
 	"kb.metrics.error.health-status-not-loaded": "Algo ha ido mal al cargar el estado de salud, por favor inténtelo de nuevo más tarde.",
 	"kb.metrics.error.missing-knowledge-not-loaded": "Algo ha ido mal al cargar los conocimientos que faltaban, por favor inténtelo de nuevo más tarde.",
