@@ -97,8 +97,12 @@
       }
     </div>
   </section>
-  <section class="missing-knowledge">
-    <div class="sticky-section">
+  <section
+    class="missing-knowledge"
+    [style]="missingKnowledgeHeaderHeight">
+    <div
+      class="sticky-section"
+      #missingKnowledgeHeader>
       <div class="title-l">{{ 'kb.metrics.missing-knowledge.title' | translate }}</div>
       <div class="page-description">{{ 'kb.metrics.missing-knowledge.description' | translate }}</div>
     </div>
@@ -153,9 +157,11 @@
                 (expandedChange)="loadMissingKnowledgeDetails(item.id)">
                 <pa-accordion-item-body>
                   <stf-missing-knowledge-details
+                    noScore
                     [item]="item"
                     [missingKnowledgeDetails]="missingKnowledgeDetails"
-                    [missingKnowledgeError]="missingKnowledgeError"></stf-missing-knowledge-details>
+                    [missingKnowledgeError]="missingKnowledgeError"
+                    (openViewer)="openViewer($event)"></stf-missing-knowledge-details>
                 </pa-accordion-item-body>
               </pa-accordion-item>
             }
@@ -223,48 +229,55 @@
         @if (missingKnowledge.length === 0) {
           <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
         } @else {
-          <pa-accordion #missingKnowledgeAccordion>
+          <pa-accordion>
             @for (item of missingKnowledge; track item.id) {
-              <pa-accordion-item
-                [id]="'' + item.id"
-                [itemTitle]="item.question"
-                [description]="
-                  '<strong>' +
-                  ('kb.metrics.missing-knowledge.summary.answer' | translate) +
-                  '</strong>' +
-                  item.answer +
-                  '<br><strong>' +
-                  ('kb.metrics.missing-knowledge.summary.relevance' | translate) +
-                  item.remi.answer_relevance.score * 20 +
-                  '%</strong> – ' +
-                  item.remi.answer_relevance.reason +
-                  '<br>' +
-                  ('kb.metrics.missing-knowledge.summary.context-count'
-                    | translate: { count: item.remi.context_relevance.length })
-                "
-                (expandedChange)="loadMissingKnowledgeDetails(item.id)">
-                <pa-accordion-item-extra-description>
-                  @if (missingKnowledgeBarPlotData | async; as data) {
-                    <div class="chart-container">
-                      <stf-grouped-bar-chart
-                        [data]="data[item.id]"
-                        height="144"></stf-grouped-bar-chart>
-                      <h6>Text blocks scores distribution</h6>
-                    </div>
-                  }
-                </pa-accordion-item-extra-description>
+              @if (item.remi) {
+                <pa-accordion-item
+                  [id]="'' + item.id"
+                  [itemTitle]="item.question"
+                  [description]="
+                    '<strong>' +
+                    ('kb.metrics.missing-knowledge.summary.answer' | translate) +
+                    '</strong>' +
+                    item.answer +
+                    '<br><strong>' +
+                    ('kb.metrics.missing-knowledge.summary.relevance' | translate) +
+                    item.remi.answer_relevance.score * 20 +
+                    '%</strong> – ' +
+                    item.remi.answer_relevance.reason +
+                    '<br>' +
+                    ('kb.metrics.missing-knowledge.summary.context-count'
+                      | translate: { count: item.remi.context_relevance.length })
+                  "
+                  (expandedChange)="loadMissingKnowledgeDetails(item.id)">
+                  <pa-accordion-item-extra-description>
+                    @if (missingKnowledgeBarPlotData | async; as data) {
+                      <div class="chart-container">
+                        <stf-grouped-bar-chart
+                          [data]="data[item.id]"
+                          height="144"></stf-grouped-bar-chart>
+                        <h6>Text blocks scores distribution</h6>
+                      </div>
+                    }
+                  </pa-accordion-item-extra-description>
 
-                <pa-accordion-item-body>
-                  <stf-missing-knowledge-details
-                    [item]="item"
-                    [missingKnowledgeDetails]="missingKnowledgeDetails"
-                    [missingKnowledgeError]="missingKnowledgeError"></stf-missing-knowledge-details>
-                </pa-accordion-item-body>
-              </pa-accordion-item>
+                  <pa-accordion-item-body>
+                    <stf-missing-knowledge-details
+                      [item]="item"
+                      [missingKnowledgeDetails]="missingKnowledgeDetails"
+                      [missingKnowledgeError]="missingKnowledgeError"
+                      (openViewer)="openViewer($event)"></stf-missing-knowledge-details>
+                  </pa-accordion-item-body>
+                </pa-accordion-item>
+              }
             }
           </pa-accordion>
         }
       }
     }
   </section>
+</div>
+
+<div class="viewer-container">
+  <div [innerHTML]="viewerWidget | async"></div>
 </div>

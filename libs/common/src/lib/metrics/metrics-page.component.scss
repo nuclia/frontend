@@ -100,7 +100,7 @@
     &.sub-section {
       padding-top: rhythm(2);
       margin-bottom: rhythm(2);
-      top: rhythm(8);
+      top: var(--header-height);
     }
   }
 

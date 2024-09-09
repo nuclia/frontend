@@ -2,7 +2,9 @@
 
 ### Improvement
 
-- Update `RemiQueryCriteria` model allowing now to query either on `context_relevance` or on answer `status`. 
+- Update `RemiQueryCriteria` model allowing now to query either on `context_relevance` or on answer `status`.
+- Update `RemiQueryResponseItem` as REMi score is actually optional
+- Remove Algolia mappers
 
 ### Bug fix
 
