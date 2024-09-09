@@ -54,7 +54,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
 
   isAdminOrContrib = this.features.isKbAdminOrContrib;
-  isAdmin = this.features.isKbAdmin;
+  isKbAdmin = this.features.isKbAdmin;
   isTrial = this.features.isTrial;
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;

@@ -54,11 +54,11 @@
               <span class="nav-link-title">{{ 'search.title' | translate }}</span>
             </a>
             <a
-              [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/widgets' : null"
+              [routerLink]="(isKbAdmin | async) && !(invalidKey | async) ? kbUrl + '/widgets' : null"
               routerLinkActive="active"
               class="nav-link"
               data-cy="go-to-widget"
-              [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+              [class.disabled]="!(isKbAdmin | async) || (invalidKey | async)">
               <pa-icon name="widget"></pa-icon>
               <span class="nav-link-title">{{ 'search.widgets.title' | translate }}</span>
             </a>
@@ -85,20 +85,20 @@
           <div class="nav-group">
             <div class="group-items">
               <a
-                [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/manage' : null"
+                [routerLink]="(isKbAdmin | async) && !(invalidKey | async) ? kbUrl + '/manage' : null"
                 routerLinkActive="active"
                 class="nav-link sub-item"
                 data-cy="go-to-settings"
-                [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+                [class.disabled]="!(isKbAdmin | async) || (invalidKey | async)">
                 <pa-icon name="gear"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.settings' | translate }}</span>
               </a>
               <a
-                [routerLink]="(isAdmin | async) && !(invalidKey | async) ? kbUrl + '/ai-models' : null"
+                [routerLink]="(isKbAdmin | async) && !(invalidKey | async) ? kbUrl + '/ai-models' : null"
                 routerLinkActive="active"
                 class="nav-link sub-item"
                 data-cy="go-to-ai-models"
-                [class.disabled]="!(isAdmin | async) || (invalidKey | async)">
+                [class.disabled]="!(isKbAdmin | async) || (invalidKey | async)">
                 <pa-icon name="settings"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.ai-models' | translate }}</span>
               </a>
@@ -127,7 +127,7 @@
                   <span class="nav-link-title">{{ 'navbar.activity' | translate }}</span>
                 </a>
 
-                @if (isAdmin | async) {
+                @if (isKbAdmin | async) {
                   <a
                     [routerLink]="kbUrl + '/keys'"
                     routerLinkActive="active"
@@ -170,7 +170,7 @@
                   </a>
                 }
 
-                @if (isAdmin | async) {
+                @if (isKbAdmin | async) {
                   @if (isTasksAutomationEnabled | async) {
                     <a
                       [routerLink]="kbUrl + '/tasks'"
@@ -191,16 +191,14 @@
                     <span class="nav-link-title">{{ 'navbar.rag-lab' | translate }}</span>
                   </a>
                 }
-                @if (isAccountManager | async) {
-                  <a
-                    [routerLink]="kbUrl + '/users'"
-                    routerLinkActive="active"
-                    data-cy="go-to-users"
-                    class="nav-link sub-item">
-                    <pa-icon name="users"></pa-icon>
-                    <span class="nav-link-title">{{ 'navbar.users' | translate }}</span>
-                  </a>
-                }
+                <a
+                  [routerLink]="kbUrl + '/users'"
+                  routerLinkActive="active"
+                  data-cy="go-to-users"
+                  class="nav-link sub-item">
+                  <pa-icon name="users"></pa-icon>
+                  <span class="nav-link-title">{{ 'navbar.users' | translate }}</span>
+                </a>
               }
             </div>
           </div>
