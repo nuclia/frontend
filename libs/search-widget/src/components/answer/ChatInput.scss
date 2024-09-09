@@ -10,9 +10,12 @@
     background-color: var(--color-tertiary-lighter);
   }
 
-  .icon {
+  .chat-icon {
     display: flex;
-    margin: var(--rhythm-1) var(--rhythm-2);
+    padding: var(--rhythm-1) var(--rhythm-2);
+  }
+  .clear {
+    padding: var(--rhythm-0_5) var(--rhythm-1_5);
   }
   .microphone {
     display: flex;
