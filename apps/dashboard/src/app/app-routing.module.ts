@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
-  accountOwnerGuard,
   AiModelsComponent,
   BaseComponent,
   DashboardLayoutComponent,
@@ -127,7 +126,7 @@ const routes: Routes = [
               {
                 path: 'users',
                 component: KnowledgeBoxUsersComponent,
-                canActivate: [accountOwnerGuard],
+                canActivate: [knowledgeBoxOwnerGuard],
               },
               {
                 path: 'keys',

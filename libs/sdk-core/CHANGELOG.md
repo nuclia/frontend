@@ -1,14 +1,15 @@
-# 1.21.1 (unreleased)
+# 1.21.1 (2024-09-12)
 
 ### Improvement
 
 - Update `RemiQueryCriteria` model allowing now to query either on `context_relevance` or on answer `status`.
 - Update `RemiQueryResponseItem` as REMi score is actually optional
 - Remove Algolia mappers
+- Refactor `getUsers` to call only KB users endpoint now it returns all the information we need
 
 ### Bug fix
 
-- Return `IErrorResponse` when ask request is successful but its response contains an error
+- Return `IErrorResponse` when ask request is successful but its response contains an error 
 
 # 1.21.0 (2024-09-05)
 
