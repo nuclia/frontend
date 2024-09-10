@@ -136,4 +136,5 @@ export interface PaymentLinkPayload {
   account_type: AccountTypes;
   price_ids: string[];
   billing_formula_id: string;
+  allow_promotion_codes?: boolean;
 }

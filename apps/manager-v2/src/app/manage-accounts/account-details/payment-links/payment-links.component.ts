@@ -22,6 +22,7 @@ export class PaymentLinksComponent implements OnDestroy {
     licensedPrice: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     meteredPrice: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     formula: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    allowPromotionCode: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   isSaving = false;
@@ -92,6 +93,7 @@ export class PaymentLinksComponent implements OnDestroy {
         account_type: formValues.accountType as AccountTypes,
         price_ids: [formValues.licensedPrice, formValues.meteredPrice].filter((price) => price !== 'opt-out'),
         billing_formula_id: formValues.formula,
+        allow_promotion_codes: formValues.allowPromotionCode,
       })
       .subscribe({
         next: (result) => {

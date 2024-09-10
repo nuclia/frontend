@@ -103,6 +103,7 @@ const ROUTES: Routes = [
     STFPipesModule,
     TranslateModule,
     InfoCardComponent,
+    PaTogglesModule,
   ],
   declarations: [
     ManageAccountsComponent,
