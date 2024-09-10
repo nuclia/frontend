@@ -1,0 +1,30 @@
+<ng-container>
+  <pa-select
+    [formControl]="filteringExpression"
+    [options]="filteringExpressionOptions"></pa-select>
+
+  @for (filter of filters; track filter.id) {
+    <div class="expression-container">
+      <stf-filter-type-and-value
+        class="fields-container"
+        (filterChange)="updateFilter($index, $event)"></stf-filter-type-and-value>
+      <div>
+        <pa-button
+          icon="plus"
+          [disabled]="!filter?.value"
+          (click)="addFilter()">
+          {{ 'generic.add' | translate }}
+        </pa-button>
+        @if (filters.length > 1) {
+          <pa-button
+            icon="trash"
+            kind="destructive"
+            aspect="basic"
+            (click)="removeFilter($index)">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
+        }
+      </div>
+    </div>
+  }
+</ng-container>

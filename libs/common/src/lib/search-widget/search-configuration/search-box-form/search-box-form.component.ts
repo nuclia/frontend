@@ -10,13 +10,20 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { PaIconModule, PaPopupModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { SearchBoxConfig } from '../../search-widget.models';
 import { Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
+import { FilterAssistantModalComponent } from '../filter-assistant';
 
 @Component({
   selector: 'stf-search-box-form',
@@ -31,6 +38,7 @@ import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
     PaPopupModule,
     InfoCardComponent,
     UnauthorizedFeatureDirective,
+    PaButtonModule,
   ],
   templateUrl: './search-box-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +46,7 @@ import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 export class SearchBoxFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
+  private modalService = inject(SisModalService);
 
   @Input() set config(value: SearchBoxConfig | undefined) {
     if (value) {
@@ -112,5 +121,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  openFiltersAssistant() {
+    this.modalService.openModal(FilterAssistantModalComponent);
   }
 }

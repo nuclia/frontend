@@ -41,6 +41,10 @@
     }
   }
 
+  .align-on-right {
+    align-self: flex-end;
+  }
+
   &:not(:first-child) {
     padding-top: rhythm(2);
   }

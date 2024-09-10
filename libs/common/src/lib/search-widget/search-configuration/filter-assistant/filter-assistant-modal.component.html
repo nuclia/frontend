@@ -1,0 +1,64 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>
+    {{ 'search.configuration.search-box.preselected-filters.assistant.modal-title' | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <pa-tabs>
+      <pa-tab
+        [active]="activeTab === 'simple'"
+        (click)="changeTab('simple')">
+        {{ 'search.configuration.search-box.preselected-filters.assistant.tab.simple' | translate }}
+      </pa-tab>
+      <pa-tab
+        [active]="activeTab === 'advanced'"
+        (click)="changeTab('advanced')">
+        {{ 'search.configuration.search-box.preselected-filters.assistant.tab.advanced' | translate }}
+      </pa-tab>
+    </pa-tabs>
+    <div class="tab-content">
+      @if (activeTab === 'simple') {
+        <stf-filter-type-and-value
+          class="fields-container"
+          (filterChange)="simpleFilter = $event"></stf-filter-type-and-value>
+
+        <nsi-info-card>
+          {{ 'search.configuration.search-box.preselected-filters.assistant.resulting-filter' | translate }}
+          @if (simpleFilter; as filter) {
+            /{{ filter.type }}/{{ filter.value }}
+          }
+        </nsi-info-card>
+      } @else {
+        @for (expression of filterExpressions; track expression.id) {
+          <stf-filter-expression
+            class="fields-container"
+            (expressionChange)="updateExpressions($index, $event)"></stf-filter-expression>
+        }
+
+        @if (advancedFiltersPreview) {
+          <pa-button (click)="addExpression()">
+            {{ 'search.configuration.search-box.preselected-filters.assistant.add-expression-button' | translate }}
+          </pa-button>
+        }
+        <nsi-info-card>
+          {{ 'search.configuration.search-box.preselected-filters.assistant.resulting-filters' | translate }}
+          @if (advancedFiltersPreview) {
+            <pre><code>{{advancedFiltersPreview}}</code></pre>
+          }
+        </nsi-info-card>
+      }
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      kind="secondary"
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

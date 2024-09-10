@@ -1,0 +1,49 @@
+<ng-container [formGroup]="simpleForm">
+  <pa-select
+    formControlName="type"
+    [label]="'search.configuration.search-box.preselected-filters.assistant.filter-on' | translate"
+    (valueChange)="resetSimpleValue()">
+    <pa-option value="icon">Mime type</pa-option>
+    <pa-option value="classification.labels">Labels</pa-option>
+    <pa-option value="entities">NERs</pa-option>
+    <pa-option value="metadata.status">Processing status</pa-option>
+    <pa-option value="metadata.language">Primary language</pa-option>
+    <pa-option value="metadata.languages">Other detected languages</pa-option>
+    <pa-option value="creation_date">Create date</pa-option>
+    <pa-option value="modification_date">Modification date</pa-option>
+    <pa-option value="origin.metadata">Metadata</pa-option>
+    <pa-option value="origin.path">Path</pa-option>
+    <pa-option value="origin.tags">Tags</pa-option>
+  </pa-select>
+
+  @switch (simpleTypeValue) {
+    @case ('icon') {
+      <pa-select
+        formControlName="value"
+        [label]="'search.configuration.search-box.preselected-filters.assistant.filter-value' | translate">
+        <pa-option value="application/pdf">PDF</pa-option>
+        <pa-option value="application/mp4">MP4</pa-option>
+        <pa-option value="application/mp3">MP3</pa-option>
+        <pa-option value="plain/text">Plain text</pa-option>
+      </pa-select>
+    }
+    @case ('classification.labels') {}
+    @case ('entities') {}
+    @case ('metadata.status') {
+      <pa-select
+        formControlName="value"
+        [label]="'search.configuration.search-box.preselected-filters.assistant.filter-value' | translate">
+        <pa-option value="PROCESSED">Processed</pa-option>
+        <pa-option value="PENDING">Pending</pa-option>
+        <pa-option value="ERROR">Error</pa-option>
+      </pa-select>
+    }
+    @case ('metadata.language') {}
+    @case ('metadata.languages') {}
+    @case ('creation_date') {}
+    @case ('modification_date') {}
+    @case ('origin.metadata') {}
+    @case ('origin.path') {}
+    @case ('origin.tags') {}
+  }
+</ng-container>

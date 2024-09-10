@@ -97,6 +97,11 @@
         (resizing)="heightChanged.emit()">
         {{ 'search.configuration.search-box.preselected-filters.textarea-label' | translate }}
       </pa-textarea>
+      <pa-button
+        class="align-on-right"
+        (click)="openFiltersAssistant()">
+        {{ 'search.configuration.search-box.preselected-filters.assistant-button-label' | translate }}
+      </pa-button>
     </div>
   </div>
   <div class="config-form-field">
