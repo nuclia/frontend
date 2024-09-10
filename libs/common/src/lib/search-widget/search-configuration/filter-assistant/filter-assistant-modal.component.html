@@ -6,12 +6,12 @@
     <pa-tabs>
       <pa-tab
         [active]="activeTab === 'simple'"
-        (click)="activeTab = 'simple'">
+        (click)="changeTab('simple')">
         {{ 'search.configuration.search-box.preselected-filters.assistant.tab.simple' | translate }}
       </pa-tab>
       <pa-tab
         [active]="activeTab === 'advanced'"
-        (click)="activeTab = 'advanced'">
+        (click)="changeTab('advanced')">
         {{ 'search.configuration.search-box.preselected-filters.assistant.tab.advanced' | translate }}
       </pa-tab>
     </pa-tabs>
@@ -20,7 +20,7 @@
         <stf-filter-type-and-value
           class="fields-container"
           [filter]="simpleFilter"
-          (filterChange)="simpleFilter = $event"></stf-filter-type-and-value>
+          (filterChange)="updateSimpleFilter($event)"></stf-filter-type-and-value>
 
         <nsi-info-card>
           {{ 'search.configuration.search-box.preselected-filters.assistant.resulting-filter' | translate }}
@@ -98,8 +98,9 @@
     </pa-button>
     <pa-button
       kind="primary"
+      [disabled]="invalidFilters"
       (click)="save()">
-      {{ 'generic.save' | translate }}
+      {{ 'search.configuration.search-box.preselected-filters.assistant.primary-button' | translate }}
     </pa-button>
   </pa-modal-footer>
 </pa-modal-advanced>

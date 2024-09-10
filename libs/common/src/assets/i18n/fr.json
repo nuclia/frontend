@@ -1112,6 +1112,7 @@
 	"search.configuration.search-box.preselected-filters.assistant.filter-value": "Valeur du filtre",
 	"search.configuration.search-box.preselected-filters.assistant.modal-title": "Assistant de construction de filtres",
 	"search.configuration.search-box.preselected-filters.assistant.new-expression-title": "Création d’une expression de filtre",
+	"search.configuration.search-box.preselected-filters.assistant.primary-button": "Définir comme filtres présélectionnés",
 	"search.configuration.search-box.preselected-filters.assistant.resulting-filter": "Filtre résultant :",
 	"search.configuration.search-box.preselected-filters.assistant.resulting-filters": "Filtres résultants :",
 	"search.configuration.search-box.preselected-filters.assistant.tab.advanced": "Filtrage avancé",

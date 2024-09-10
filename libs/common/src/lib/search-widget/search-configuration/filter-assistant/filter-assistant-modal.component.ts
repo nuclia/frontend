@@ -17,7 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { FilterTypeAndValueComponent } from './filter-type-and-value';
 import { FilterExpressionComponent, FilterExpressionPipe } from './filter-expression';
-import { FilterExpression } from './filter-assistant.models';
+import { FilterExpression, SimpleFilter } from './filter-assistant.models';
 
 let id = 0;
 
@@ -59,17 +59,32 @@ export class FilterAssistantModalComponent {
 
   filterExpressions: (FilterExpression & { id: number })[] = [this.getNewExpression()];
   advancedFiltersPreview = '';
+  filterListPreviews: string[] = [];
+
+  invalidFilters = true;
 
   constructor(public modal: ModalRef) {}
 
+  changeTab(tab: 'simple' | 'advanced') {
+    this.activeTab = tab;
+    this.checkFiltersValidity();
+  }
+
+  updateSimpleFilter($event: SimpleFilter) {
+    this.simpleFilter = $event;
+    this.checkFiltersValidity();
+  }
+
   addExpression() {
     this.filterExpressions = this.filterExpressions.concat([this.getNewExpression()]);
+    this.checkFiltersValidity();
   }
 
   removeExpression($index: number) {
     this.filterExpressions.splice($index, 1);
     this.filterExpressions = [...this.filterExpressions];
     this.updatePreview();
+    this.checkFiltersValidity();
   }
 
   updateExpressions($index: number, expression: FilterExpression) {
@@ -77,10 +92,19 @@ export class FilterAssistantModalComponent {
     this.filterExpressions.splice($index, 1, { ...expression, id: this.filterExpressions[$index].id });
     this.filterExpressions = [...this.filterExpressions];
     this.updatePreview();
+    this.checkFiltersValidity();
   }
 
   save() {
-    // TODO
+    if (this.activeTab === 'simple' && this.simpleFilter) {
+      this.modal.close(`/${this.simpleFilter.type}/${this.simpleFilter.value}`);
+    } else if (this.activeTab === 'advanced') {
+      this.modal.close(this.filterListPreviews.join('\n'));
+    }
+  }
+
+  updateAccordionHeight($index: number) {
+    this.accordionItems?.get($index)?.updateContentHeight();
   }
 
   private getNewExpression(): FilterExpression & { id: number } {
@@ -88,7 +112,7 @@ export class FilterAssistantModalComponent {
   }
 
   private updatePreview() {
-    const filterListPreviews: string[] = this.filterExpressions.reduce((previews, expression) => {
+    this.filterListPreviews = this.filterExpressions.reduce((previews, expression) => {
       if (expression.filters.length > 0) {
         previews.push(this.filterExpressionPipe.transform(expression));
       }
@@ -97,12 +121,22 @@ export class FilterAssistantModalComponent {
 
     this.advancedFiltersPreview = `{
   "filters": [
-    ${filterListPreviews.join(',\n    ')}
+    ${this.filterListPreviews.join(',\n    ')}
   ]
 }`;
   }
 
-  updateAccordionHeight($index: number) {
-    this.accordionItems?.get($index)?.updateContentHeight();
+  private checkFiltersValidity() {
+    if (this.activeTab === 'simple') {
+      this.invalidFilters = !this.simpleFilter || !this.simpleFilter.type || !this.simpleFilter.value;
+    } else if (this.activeTab === 'advanced') {
+      this.invalidFilters =
+        this.filterExpressions.length === 0 ||
+        this.filterExpressions.some(
+          (expression) =>
+            expression.filters.length === 0 || expression.filters.some((filter) => !filter.type || !filter.value),
+        );
+    }
+    this.cdr.markForCheck();
   }
 }

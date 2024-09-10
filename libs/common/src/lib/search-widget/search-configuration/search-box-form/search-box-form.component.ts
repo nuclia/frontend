@@ -20,7 +20,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { SearchBoxConfig } from '../../search-widget.models';
-import { Subject } from 'rxjs';
+import { filter, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { FilterAssistantModalComponent } from '../filter-assistant';
@@ -105,6 +105,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   get preselectedFiltersEnabled() {
     return this.form.controls.setPreselectedFilters.value;
   }
+  get preselectedFiltersControl() {
+    return this.form.controls.preselectedFilters;
+  }
   get suggestionsEnabled() {
     return this.form.controls.suggestions.value;
   }
@@ -124,6 +127,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   }
 
   openFiltersAssistant() {
-    this.modalService.openModal(FilterAssistantModalComponent);
+    this.modalService
+      .openModal(FilterAssistantModalComponent)
+      .onClose.pipe(filter((filters) => !!filters))
+      .subscribe((filters: string) => this.preselectedFiltersControl.patchValue(filters));
   }
 }

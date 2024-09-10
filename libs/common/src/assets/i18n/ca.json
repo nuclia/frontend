@@ -1112,6 +1112,7 @@
 	"search.configuration.search-box.preselected-filters.assistant.filter-value": "Valor del filtre",
 	"search.configuration.search-box.preselected-filters.assistant.modal-title": "Assistent de construcció de filtres",
 	"search.configuration.search-box.preselected-filters.assistant.new-expression-title": "Creació d'expressions de filtre",
+	"search.configuration.search-box.preselected-filters.assistant.primary-button": "Estableix com a filtres preseleccionats",
 	"search.configuration.search-box.preselected-filters.assistant.resulting-filter": "Filtre resultant:",
 	"search.configuration.search-box.preselected-filters.assistant.resulting-filters": "Filtres resultants:",
 	"search.configuration.search-box.preselected-filters.assistant.tab.advanced": "Filtrat avançat",
