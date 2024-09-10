@@ -1,0 +1,30 @@
+@switch (filterType) {
+  @case ('icon') {
+    <pa-select
+      [formControl]="valueControl"
+      [label]="'search.configuration.search-box.preselected-filters.assistant.filter-value' | translate">
+      <pa-option value="application/pdf">PDF</pa-option>
+      <pa-option value="application/mp4">MP4</pa-option>
+      <pa-option value="application/mp3">MP3</pa-option>
+      <pa-option value="plain/text">Plain text</pa-option>
+    </pa-select>
+  }
+  @case ('classification.labels') {}
+  @case ('entities') {}
+  @case ('metadata.status') {
+    <pa-select
+      [formControl]="valueControl"
+      [label]="'search.configuration.search-box.preselected-filters.assistant.filter-value' | translate">
+      <pa-option value="PROCESSED">Processed</pa-option>
+      <pa-option value="PENDING">Pending</pa-option>
+      <pa-option value="ERROR">Error</pa-option>
+    </pa-select>
+  }
+  @case ('metadata.language') {}
+  @case ('metadata.languages') {}
+  @case ('creation_date') {}
+  @case ('modification_date') {}
+  @case ('origin.metadata') {}
+  @case ('origin.path') {}
+  @case ('origin.tags') {}
+}

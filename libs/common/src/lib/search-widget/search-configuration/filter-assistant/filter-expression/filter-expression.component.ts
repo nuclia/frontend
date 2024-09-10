@@ -1,11 +1,29 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OptionModel, PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  OptionModel,
+  PaButtonModule,
+  PaDropdownModule,
+  PaPopupModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FilterTypeAndValueComponent } from '../filter-type-and-value/filter-type-and-value.component';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { ButtonMiniComponent, InfoCardComponent } from '@nuclia/sistema';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { FilterCombiner, FilterExpression, SimpleFilter } from '../filter-assistant.models';
+import { FilterCombiner, FilterExpression, filterTypeList, SimpleFilter } from '../filter-assistant.models';
+import { FilterTypePipe, FilterValueComponent } from '../filter-type-and-value';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 let id = 0;
 
@@ -21,14 +39,21 @@ let id = 0;
     PaTextFieldModule,
     PaButtonModule,
     TranslateModule,
+    ButtonMiniComponent,
+    PaPopupModule,
+    PaDropdownModule,
+    FilterValueComponent,
+    FilterTypePipe,
   ],
   templateUrl: './filter-expression.component.html',
   styleUrl: './filter-expression.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class FilterExpressionComponent {
+export class FilterExpressionComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
+  private unsubscribeAll = new Subject<void>();
+  protected readonly filterTypeList: OptionModel[] = filterTypeList;
 
   @Output() expressionChange = new EventEmitter<FilterExpression>();
 
@@ -37,7 +62,8 @@ export class FilterExpressionComponent {
     nonNullable: true,
   });
 
-  filters: (SimpleFilter & { id: number })[] = [{ id: id++, type: '', value: '' }];
+  filters: (SimpleFilter & { id: number })[] = [];
+  filterValueControls: FormControl[] = [];
 
   filteringExpressionOptions: OptionModel[] = [
     new OptionModel({
@@ -70,29 +96,44 @@ export class FilterExpressionComponent {
     }),
   ];
 
-  addFilter() {
-    this.filters = this.filters.concat([{ id: id++, type: '', value: '' }]);
+  get invalidControls() {
+    return this.filterValueControls.some((control) => control.invalid);
+  }
+
+  ngOnInit(): void {
+    this.filteringExpression.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.emitFilters());
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+
+  addFilter(type: string) {
+    this.filterValueControls.push(new FormControl<string>('', [Validators.required]));
+    this.filters = this.filters.concat([{ id: id++, type, value: '' }]);
+    this.emitFilters();
   }
 
   removeFilter($index: number) {
     this.filters.splice($index, 1);
+    this.filterValueControls.splice($index, 1);
     this.filters = [...this.filters];
-    this.emitValidFilters();
+    this.emitFilters();
   }
 
-  updateFilter($index: number, filter: { type: string; value: string }) {
-    this.filters.splice($index, 1, { ...filter, id: this.filters[$index].id });
+  updateFilter($index: number, value: string) {
+    const currentFilter = this.filters[$index];
+    this.filters.splice($index, 1, { ...currentFilter, id: currentFilter.id, value });
     this.filters = [...this.filters];
-    this.emitValidFilters();
+    this.emitFilters();
   }
 
-  private emitValidFilters() {
+  private emitFilters() {
     const validFilters = this.filters.filter((filter) => !!filter.type && !!filter.value);
-    if (validFilters.length > 0) {
-      this.expressionChange.emit({
-        combine: this.filteringExpression.getRawValue(),
-        filters: validFilters,
-      });
-    }
+    this.expressionChange.emit({
+      combine: this.filteringExpression.getRawValue(),
+      filters: validFilters,
+    });
   }
 }

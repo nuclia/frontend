@@ -4,27 +4,44 @@
     [options]="filteringExpressionOptions"></pa-select>
 
   @for (filter of filters; track filter.id) {
-    <div class="expression-container">
-      <stf-filter-type-and-value
-        class="fields-container"
-        (filterChange)="updateFilter($index, $event)"></stf-filter-type-and-value>
-      <div>
-        <pa-button
-          icon="plus"
-          [disabled]="!filter?.value"
-          (click)="addFilter()">
-          {{ 'generic.add' | translate }}
-        </pa-button>
-        @if (filters.length > 1) {
-          <pa-button
-            icon="trash"
-            kind="destructive"
-            aspect="basic"
-            (click)="removeFilter($index)">
-            {{ 'generic.delete' | translate }}
-          </pa-button>
-        }
-      </div>
+    <div
+      class="expression-container"
+      [class.last]="$last">
+      <span class="body-m">
+        {{ filter.type | filterType | translate }}
+      </span>
+
+      <stf-filter-value
+        [filterType]="filter.type"
+        [valueControl]="filterValueControls[$index]"
+        (valueChange)="updateFilter($index, $event)"></stf-filter-value>
+
+      <pa-button
+        icon="trash"
+        kind="destructive"
+        aspect="basic"
+        [disabled]="filters.length <= 1"
+        (click)="removeFilter($index)">
+        {{ 'generic.delete' | translate }}
+      </pa-button>
     </div>
   }
+
+  <div class="align-center">
+    <nsi-button-mini
+      icon="plus"
+      [disabled]="invalidControls"
+      [paPopup]="filterTypes">
+      {{ 'search.configuration.search-box.preselected-filters.assistant.add-filter' | translate }}
+    </nsi-button-mini>
+    <pa-dropdown #filterTypes>
+      @for (option of filterTypeList; track option.id) {
+        <pa-option
+          [value]="option.value"
+          (selectOption)="addFilter(option.value)">
+          {{ option.label | translate }}
+        </pa-option>
+      }
+    </pa-dropdown>
+  </div>
 </ng-container>

@@ -6,14 +6,15 @@
   gap: rhythm(2);
   padding-bottom: rhythm(2);
 
-  & > :first-child {
-    display: flex;
+  stf-filter-value {
     flex: 1 0 auto;
-    flex-direction: column;
-    gap: rhythm(2);
   }
 
-  &:not(:last-child) {
+  &:not(.last) {
     box-shadow: $box-shadow-border-bottom;
   }
+}
+
+.align-center {
+  align-self: center;
 }

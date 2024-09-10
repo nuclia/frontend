@@ -28,11 +28,49 @@
           }
         </nsi-info-card>
       } @else {
-        @for (expression of filterExpressions; track expression.id) {
-          <stf-filter-expression
-            class="fields-container"
-            (expressionChange)="updateExpressions($index, $event)"></stf-filter-expression>
-        }
+        <pa-accordion>
+          @for (expression of filterExpressions; track expression.id) {
+            <pa-accordion-item
+              [expanded]="$last"
+              [id]="expression.id">
+              <pa-accordion-item-extra-description>
+                <div class="accordion-title-action">
+                  <div class="title-m">
+                    @if (expression | filterExpression) {
+                      {{
+                        'search.configuration.search-box.preselected-filters.assistant.expression.' + expression.combine
+                          | translate
+                      }}
+                      ({{ expression.filters.length }})
+                    } @else {
+                      {{
+                        'search.configuration.search-box.preselected-filters.assistant.new-expression-title' | translate
+                      }}
+                    }
+                  </div>
+
+                  @if (filterExpressions.length > 1) {
+                    <pa-button
+                      aspect="basic"
+                      icon="trash"
+                      kind="destructive"
+                      (click)="removeExpression($index)">
+                      {{
+                        'search.configuration.search-box.preselected-filters.assistant.delete-expression-button'
+                          | translate
+                      }}
+                    </pa-button>
+                  }
+                </div>
+              </pa-accordion-item-extra-description>
+              <pa-accordion-item-body>
+                <stf-filter-expression
+                  class="fields-container"
+                  (expressionChange)="updateExpressions($index, $event)"></stf-filter-expression>
+              </pa-accordion-item-body>
+            </pa-accordion-item>
+          }
+        </pa-accordion>
 
         @if (advancedFiltersPreview) {
           <pa-button (click)="addExpression()">

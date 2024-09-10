@@ -1,6 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, QueryList, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  AccordionBodyDirective,
+  AccordionComponent,
+  AccordionExtraDescriptionDirective,
+  AccordionItemComponent,
   ModalRef,
   PaButtonModule,
   PaDropdownModule,
@@ -12,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { FilterTypeAndValueComponent } from './filter-type-and-value';
-import { FilterExpressionComponent } from './filter-expression';
+import { FilterExpressionComponent, FilterExpressionPipe } from './filter-expression';
 import { FilterExpression } from './filter-assistant.models';
 
 let id = 0;
@@ -32,13 +36,22 @@ let id = 0;
     PaTextFieldModule,
     FilterTypeAndValueComponent,
     FilterExpressionComponent,
+    AccordionComponent,
+    AccordionItemComponent,
+    AccordionBodyDirective,
+    FilterExpressionPipe,
+    AccordionExtraDescriptionDirective,
   ],
+  providers: [FilterExpressionPipe],
   templateUrl: './filter-assistant-modal.component.html',
   styleUrl: './filter-assistant-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterAssistantModalComponent {
   private cdr = inject(ChangeDetectorRef);
+  private filterExpressionPipe = inject(FilterExpressionPipe);
+
+  @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
 
   activeTab: 'simple' | 'advanced' = 'simple';
 
@@ -49,7 +62,7 @@ export class FilterAssistantModalComponent {
 
   constructor(public modal: ModalRef) {}
 
-  // For now, we reset the form when changing tab
+  // TODO: For now, we reset the form when changing tab, we should keep the values
   changeTab(newTab: 'simple' | 'advanced') {
     this.activeTab = newTab;
     this.simpleFilter = undefined;
@@ -64,17 +77,28 @@ export class FilterAssistantModalComponent {
   removeExpression($index: number) {
     this.filterExpressions.splice($index, 1);
     this.filterExpressions = [...this.filterExpressions];
+    this.updatePreview();
   }
 
   updateExpressions($index: number, expression: FilterExpression) {
+    this.accordionItems?.get($index)?.updateContentHeight();
     this.filterExpressions.splice($index, 1, { ...expression, id: this.filterExpressions[$index].id });
+    this.filterExpressions = [...this.filterExpressions];
+    this.updatePreview();
+  }
+
+  save() {
+    // TODO
+  }
+
+  private getNewExpression(): FilterExpression & { id: number } {
+    return { id: id++, combine: 'all', filters: [] };
+  }
+
+  private updatePreview() {
     const filterListPreviews: string[] = this.filterExpressions.reduce((previews, expression) => {
       if (expression.filters.length > 0) {
-        previews.push(
-          `{"${expression.combine}": ${JSON.stringify(
-            expression.filters.map((filter) => `/${filter.type}/${filter.value}`),
-          )}}`,
-        );
+        previews.push(this.filterExpressionPipe.transform(expression));
       }
       return previews;
     }, [] as string[]);
@@ -84,15 +108,5 @@ export class FilterAssistantModalComponent {
     ${filterListPreviews.join(',\n    ')}
   ]
 }`;
-    this.filterExpressions = [...this.filterExpressions];
-    this.cdr.detectChanges();
-  }
-
-  save() {
-    // TODO
-  }
-
-  private getNewExpression(): FilterExpression & { id: number } {
-    return { id: id++, combine: 'all', filters: [] };
   }
 }
