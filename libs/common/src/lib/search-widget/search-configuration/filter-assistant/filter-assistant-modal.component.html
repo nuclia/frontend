@@ -32,8 +32,9 @@
         <pa-accordion>
           @for (expression of filterExpressions; track expression.id) {
             <pa-accordion-item
+              itemTitle=""
               [expanded]="$last"
-              [id]="expression.id">
+              [id]="expression.id + ''">
               <pa-accordion-item-extra-description>
                 <div class="accordion-title-action">
                   <div class="title-m">

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, QueryList, ViewChildren } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AccordionBodyDirective,
@@ -12,12 +20,18 @@ import {
   PaTabsModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { FilterTypeAndValueComponent } from './filter-type-and-value';
 import { FilterExpressionComponent, FilterExpressionPipe } from './filter-expression';
-import { FilterExpression, SimpleFilter } from './filter-assistant.models';
+import {
+  FilterExpression,
+  getCombineKey,
+  getFiltersFromExpression,
+  mapToSimpleFilter,
+  SimpleFilter,
+} from './filter-assistant.models';
 
 let id = 0;
 
@@ -47,9 +61,11 @@ let id = 0;
   styleUrl: './filter-assistant-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterAssistantModalComponent {
+export class FilterAssistantModalComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private filterExpressionPipe = inject(FilterExpressionPipe);
+  private toaster = inject(SisToastService);
+  private translate = inject(TranslateService);
 
   @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
 
@@ -64,6 +80,51 @@ export class FilterAssistantModalComponent {
   invalidFilters = true;
 
   constructor(public modal: ModalRef) {}
+
+  ngOnInit() {
+    if (typeof this.modal.config.data === 'string' && !!this.modal.config.data) {
+      const value: string = this.modal.config.data;
+      if (value.startsWith('/')) {
+        this.simpleFilter = mapToSimpleFilter(value);
+      } else if (value.startsWith('{')) {
+        this.activeTab = 'advanced';
+        const rawExpressions = value.split('\n');
+        const expressionList = rawExpressions.reduce(
+          (expressions, expressionString) => {
+            try {
+              const expression = JSON.parse(expressionString);
+              const combine = getCombineKey(expression);
+              if (combine) {
+                const filters = getFiltersFromExpression(expression, combine);
+                if (filters && filters.length > 0) {
+                  expressions.push({ id: id++, combine, filters });
+                }
+              }
+            } catch (e) {
+              // if the JSON is malformed, we just ignore the entry
+            }
+            return expressions;
+          },
+          [] as (FilterExpression & { id: number })[],
+        );
+        if (expressionList.length > 0) {
+          this.filterExpressions = expressionList;
+          this.updatePreview();
+        }
+        if (expressionList.length !== rawExpressions.length) {
+          const count = rawExpressions.length - expressionList.length;
+          this.toaster.warning(
+            this.translate.instant(
+              count > 1
+                ? 'search.configuration.search-box.preselected-filters.assistant.warning.malformed-expressions'
+                : 'search.configuration.search-box.preselected-filters.assistant.warning.malformed-expression',
+              { count },
+            ),
+          );
+        }
+      }
+    }
+  }
 
   changeTab(tab: 'simple' | 'advanced') {
     this.activeTab = tab;

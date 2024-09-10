@@ -1117,6 +1117,8 @@
 	"search.configuration.search-box.preselected-filters.assistant.resulting-filters": "Filtres résultants :",
 	"search.configuration.search-box.preselected-filters.assistant.tab.advanced": "Filtrage avancé",
 	"search.configuration.search-box.preselected-filters.assistant.tab.simple": "Filtre simple",
+	"search.configuration.search-box.preselected-filters.assistant.warning.malformed-expression": "Une expression de l'entrée des filtres présélectionnés est mal formée",
+	"search.configuration.search-box.preselected-filters.assistant.warning.malformed-expressions": "{{count}} expressions provenant de l'entrée des filtres présélectionnés sont mal formées",
 	"search.configuration.search-box.preselected-filters.assistant-button-label": "Utiliser l'assistant",
 	"search.configuration.search-box.preselected-filters.info-box": "Format de filtre <a href=\"https://docs.nuclia.dev/docs/rag/search-strategy#filters\" target=\"_blank\">documenté ici</a>. Ces filtres seront appliqués à toutes les requêtes de recherche sans être visibles pour les utilisateurs finaux. ",
 	"search.configuration.search-box.preselected-filters.textarea-help": "Une expression de filtre par ligne",

@@ -11,6 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
+  ModalConfig,
   PaButtonModule,
   PaIconModule,
   PaPopupModule,
@@ -118,7 +119,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.form.valueChanges
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((value) => this.configChanged.emit({ ...this.form.getRawValue() }));
+      .subscribe(() => this.configChanged.emit({ ...this.form.getRawValue() }));
   }
 
   ngOnDestroy() {
@@ -128,7 +129,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   openFiltersAssistant() {
     this.modalService
-      .openModal(FilterAssistantModalComponent)
+      .openModal(FilterAssistantModalComponent, new ModalConfig({ data: this.preselectedFiltersControl.value }))
       .onClose.pipe(filter((filters) => !!filters))
       .subscribe((filters: string) => this.preselectedFiltersControl.patchValue(filters));
   }
