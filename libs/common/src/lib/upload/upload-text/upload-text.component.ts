@@ -57,7 +57,7 @@ export class UploadTextComponent {
       this.csv = csv as Row[];
       markForCheck(this.cdr);
     } else {
-      this.toaster.error('upload.invalid_csv');
+      this.toaster.error('upload.invalid-csv-labels');
     }
   }
 
