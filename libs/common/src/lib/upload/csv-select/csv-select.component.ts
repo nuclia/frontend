@@ -5,7 +5,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { ConfirmationData, Kind, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { HintModule } from '../../hint';
 
 @Component({
@@ -52,7 +52,11 @@ export class CsvSelectComponent<T> {
   private _confirmData?: ConfirmationData;
   private _fields = 0;
 
-  constructor(private toaster: SisToastService, private modalService: SisModalService) {}
+  constructor(
+    private toaster: SisToastService,
+    private modalService: SisModalService,
+    private translate: TranslateService,
+  ) {}
 
   onUpload() {
     if (this.confirmData) {
@@ -75,11 +79,11 @@ export class CsvSelectComponent<T> {
         if (isValid) {
           this.select.emit(csv);
         } else {
-          this.toaster.error('upload.invalid_csv');
+          this.toaster.error(this.translate.instant('upload.invalid_csv', { num: this.fields }));
         }
       };
       reader.onerror = () => {
-        this.toaster.error('upload.invalid_csv');
+        this.toaster.error(this.translate.instant('upload.invalid_csv', { num: this.fields }));
       };
       reader.readAsText(file, 'UTF-8');
     }

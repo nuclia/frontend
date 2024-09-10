@@ -137,7 +137,7 @@ export class CreateLinkComponent {
       this.csv = csv as Row[];
       this.cdr?.markForCheck();
     } else {
-      this.toaster.error('upload.invalid_csv');
+      this.toaster.error('upload.invalid-csv-labels');
     }
   }
 
