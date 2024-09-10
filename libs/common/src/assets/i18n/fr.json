@@ -1434,7 +1434,7 @@
 	"upload.error": "Échec du téléchargement",
 	"upload.files": "Téléchargement de fichiers",
 	"upload.folder": "Télécharger un dossier",
-	"upload.invalid-csv-labels": "CSV non valide: le format de la colonne <strong>Libellés</strong> est incorrect.",
+	"upload.invalid-csv-labels": "CSV non valide: le format de la colonne <strong>Étiquettes</strong> est incorrect.",
 	"upload.invalid_csv": "CSV non valide: assurez-vous que chaque ligne contient exactement {{num}} colonnes.",
 	"upload.invalid_image": "Le fichier sélectionné n'est pas une image valide",
 	"upload.labels_number": "{{num}} étiquettes",
