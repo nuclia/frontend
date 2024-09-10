@@ -62,14 +62,6 @@ export class FilterAssistantModalComponent {
 
   constructor(public modal: ModalRef) {}
 
-  // TODO: For now, we reset the form when changing tab, we should keep the values
-  changeTab(newTab: 'simple' | 'advanced') {
-    this.activeTab = newTab;
-    this.simpleFilter = undefined;
-    this.filterExpressions = [this.getNewExpression()];
-    this.advancedFiltersPreview = '';
-  }
-
   addExpression() {
     this.filterExpressions = this.filterExpressions.concat([this.getNewExpression()]);
   }
@@ -81,7 +73,7 @@ export class FilterAssistantModalComponent {
   }
 
   updateExpressions($index: number, expression: FilterExpression) {
-    this.accordionItems?.get($index)?.updateContentHeight();
+    this.updateAccordionHeight($index);
     this.filterExpressions.splice($index, 1, { ...expression, id: this.filterExpressions[$index].id });
     this.filterExpressions = [...this.filterExpressions];
     this.updatePreview();
@@ -108,5 +100,9 @@ export class FilterAssistantModalComponent {
     ${filterListPreviews.join(',\n    ')}
   ]
 }`;
+  }
+
+  updateAccordionHeight($index: number) {
+    this.accordionItems?.get($index)?.updateContentHeight();
   }
 }

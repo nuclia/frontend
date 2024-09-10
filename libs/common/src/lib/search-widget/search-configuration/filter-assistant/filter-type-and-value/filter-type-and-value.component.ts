@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   inject,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -42,6 +43,12 @@ export class FilterTypeAndValueComponent implements OnInit, OnDestroy {
     ...option,
     label: this.translate.instant(option.label),
   }));
+
+  @Input() set filter(filter: SimpleFilter | undefined) {
+    if (filter) {
+      this.simpleForm.patchValue(filter);
+    }
+  }
 
   @Output() filterChange = new EventEmitter<SimpleFilter>();
 

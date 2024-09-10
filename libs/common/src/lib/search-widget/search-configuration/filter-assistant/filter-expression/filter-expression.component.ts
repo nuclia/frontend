@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   inject,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -55,7 +56,22 @@ export class FilterExpressionComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   protected readonly filterTypeList: OptionModel[] = filterTypeList;
 
+  @Input() set expression(expression: (FilterExpression & { id: number }) | undefined) {
+    if (expression) {
+      if (this.filteringExpression.getRawValue() !== expression.combine) {
+        this.filteringExpression.patchValue(expression.combine);
+      }
+      if (expression.filters.length !== this.filters.length) {
+        this.filterValueControls = expression.filters.map(
+          (filter) => new FormControl<string>(filter.value, [Validators.required]),
+        );
+        this.filters = expression.filters.map((filter) => ({ ...filter, id: id++ }));
+      }
+    }
+  }
+
   @Output() expressionChange = new EventEmitter<FilterExpression>();
+  @Output() filterAdded = new EventEmitter<void>();
 
   filteringExpression = new FormControl<FilterCombiner>('all', {
     validators: [Validators.required],
@@ -112,7 +128,7 @@ export class FilterExpressionComponent implements OnInit, OnDestroy {
   addFilter(type: string) {
     this.filterValueControls.push(new FormControl<string>('', [Validators.required]));
     this.filters = this.filters.concat([{ id: id++, type, value: '' }]);
-    this.emitFilters();
+    this.filterAdded.emit();
   }
 
   removeFilter($index: number) {

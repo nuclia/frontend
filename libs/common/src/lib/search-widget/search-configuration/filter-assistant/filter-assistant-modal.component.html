@@ -6,12 +6,12 @@
     <pa-tabs>
       <pa-tab
         [active]="activeTab === 'simple'"
-        (click)="changeTab('simple')">
+        (click)="activeTab = 'simple'">
         {{ 'search.configuration.search-box.preselected-filters.assistant.tab.simple' | translate }}
       </pa-tab>
       <pa-tab
         [active]="activeTab === 'advanced'"
-        (click)="changeTab('advanced')">
+        (click)="activeTab = 'advanced'">
         {{ 'search.configuration.search-box.preselected-filters.assistant.tab.advanced' | translate }}
       </pa-tab>
     </pa-tabs>
@@ -19,6 +19,7 @@
       @if (activeTab === 'simple') {
         <stf-filter-type-and-value
           class="fields-container"
+          [filter]="simpleFilter"
           (filterChange)="simpleFilter = $event"></stf-filter-type-and-value>
 
         <nsi-info-card>
@@ -66,7 +67,9 @@
               <pa-accordion-item-body>
                 <stf-filter-expression
                   class="fields-container"
-                  (expressionChange)="updateExpressions($index, $event)"></stf-filter-expression>
+                  [expression]="expression"
+                  (expressionChange)="updateExpressions($index, $event)"
+                  (filterAdded)="updateAccordionHeight($index)"></stf-filter-expression>
               </pa-accordion-item-body>
             </pa-accordion-item>
           }
