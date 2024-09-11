@@ -6,7 +6,7 @@
   import { onMount } from 'svelte';
   import SearchBar from '../search-widget/SearchBar.svelte';
   import SearchResults from '../search-widget/SearchResults.svelte';
-  import { isEmptySearchQuery, pendingResults, showResults } from '../../core';
+  import { getApiErrors, isEmptySearchQuery, pendingResults, showResults } from '../../core';
   import type { KBStates } from '@nuclia/core';
 
   export let backend = 'https://nuclia.cloud/api';
@@ -47,6 +47,8 @@
     visible = true;
     setTimeout(() => searchBar?.search(query, filters), 0);
   }
+
+  export const onError = getApiErrors();
 
   function enablePopupTrigger() {
     const searchButtons = document.querySelectorAll('[data-nuclia="search-widget-button"]');

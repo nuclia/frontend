@@ -24,6 +24,7 @@ import { searchError, searchOptions } from './stores/search.store';
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { reset } from './reset';
+import { chatError } from './stores/answers.store';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.KEYWORD, Search.Features.SEMANTIC];
 const DEFAULT_CHAT_MODE = [Ask.Features.KEYWORD, Ask.Features.SEMANTIC];
@@ -446,4 +447,14 @@ export function downloadDump() {
     ?.dump()
     .pipe(take(1))
     .subscribe((data) => downloadAsJSON(data));
+}
+
+export function getApiErrors() {
+  return merge(searchError, suggestionError, chatError).pipe(
+    filter((error) => !!error?.status),
+    map((error) => ({
+      status: error?.status,
+      detail: error?.detail,
+    })),
+  );
 }

@@ -4,7 +4,7 @@
 
 <script lang="ts">
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
-  import { initNuclia, resetNuclia } from '../../core/api';
+  import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { _, setLang } from '../../core/i18n';
@@ -69,6 +69,8 @@
     console.log(`reloadSearch`);
     triggerSearch.next();
   }
+
+  export const onError = getApiErrors();
 
   const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Answer from './Answer.svelte';
-  import { _, chat, chatError, isServiceOverloaded, isStreaming } from '../../core';
+  import { _, chat, isStreaming } from '../../core';
   import ChatInput from './ChatInput.svelte';
   import { createEventDispatcher, onMount } from 'svelte';
   import { delay, distinctUntilChanged, filter } from 'rxjs';
