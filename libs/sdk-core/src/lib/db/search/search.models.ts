@@ -45,6 +45,7 @@ export interface Prompts {
 export interface BaseSearchOptions {
   fields?: string[];
   filters?: string[] | Filter[];
+  keyword_filters?: string[] | Filter[];
   min_score?: number;
   range_creation_start?: string;
   range_creation_end?: string;

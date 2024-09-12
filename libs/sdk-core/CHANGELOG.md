@@ -1,3 +1,9 @@
+# 1.21.2 (unreleased)
+
+### Improvement
+
+- Support `keyword_filters` on `/ask` and `/find` endpoints
+
 # 1.21.1 (2024-09-12)
 
 ### Improvement
@@ -9,7 +15,7 @@
 
 ### Bug fix
 
-- Return `IErrorResponse` when ask request is successful but its response contains an error 
+- Return `IErrorResponse` when ask request is successful but its response contains an error
 
 # 1.21.0 (2024-09-05)
 
