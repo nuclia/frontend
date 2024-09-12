@@ -10,16 +10,11 @@
     type Nuclia,
     type RAGImageStrategy,
     type RAGStrategy,
-    type WidgetFeatures
+    type WidgetFeatures,
   } from '@nuclia/core';
-  import { downloadDump, initNuclia, resetNuclia } from '../../core/api';
+  import { downloadDump, getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
-  import {
-    injectCustomCss,
-    loadFonts,
-    loadSvgSprite,
-    setCDN,
-  } from '../../core/utils';
+  import { injectCustomCss, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
@@ -51,10 +46,10 @@
     triggerSearch,
   } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
-  import type { WidgetFilters } from '../../core';
+  import { chatError, type WidgetFilters } from '../../core';
   import { InfoCard } from '../../components';
   import { IconButton, Modal } from '../../common';
-  import { BehaviorSubject, delay, filter, firstValueFrom, map, take } from 'rxjs';
+  import { BehaviorSubject, delay, filter, firstValueFrom } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -91,6 +86,8 @@
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
+  export const onError = getApiErrors();
+
   let nucliaAPI: Nuclia;
   export let initHook: (n: Nuclia) => void = () => {};
 

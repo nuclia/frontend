@@ -1,7 +1,7 @@
 <svelte:options customElement="nuclia-chat" />
 
 <script lang="ts">
-  import { initNuclia, resetNuclia } from '../../core/api';
+  import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
@@ -12,7 +12,7 @@
     type Nuclia,
     type RAGImageStrategy,
     type RAGStrategy,
-    type WidgetFeatures
+    type WidgetFeatures,
   } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { askQuestion, initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
@@ -67,6 +67,8 @@
   export function ask(question: string, reset = true) {
     askQuestion(question, reset).subscribe();
   }
+
+  export const onError = getApiErrors();
 
   export const reset = () => resetNuclia();
 

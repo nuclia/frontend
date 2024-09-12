@@ -7,7 +7,7 @@
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import globalCss from '../../common/_global.scss?inline';
   import {
-    _, chat, currentAnswer,
+    _,
     downloadDump,
     getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
@@ -16,7 +16,9 @@
     hasPartialResults,
     hasSearchError,
     isAnswerEnabled,
-    isEmptySearchQuery, jsonAnswer, jsonSchemaEnabled,
+    isEmptySearchQuery,
+    jsonAnswer,
+    jsonSchemaEnabled,
     loadFonts,
     loadMore,
     loadSvgSprite,
@@ -27,7 +29,8 @@
     showResults,
     trackingReset,
     type WidgetAction,
-    widgetActions, widgetJsonSchema
+    widgetActions,
+    widgetJsonSchema,
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
@@ -79,7 +82,7 @@
       });
       return {
         destroy: () => tracking.unsubscribe(),
-      }
+      };
     }
   }
 
@@ -119,7 +122,9 @@
           {#if $isAnswerEnabled}
             <InitialAnswer />
             {#if $jsonSchemaEnabled && $jsonAnswer}
-              <JsonAnswer jsonAnswer={$jsonAnswer} jsonSchema={$widgetJsonSchema} />
+              <JsonAnswer
+                jsonAnswer={$jsonAnswer}
+                jsonSchema={$widgetJsonSchema} />
             {/if}
           {/if}
           {#if !$isAnswerEnabled && $hasDumpLogButton}
