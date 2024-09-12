@@ -14,6 +14,7 @@ import {
   type ResourceField,
   Search,
   sliceUnicode,
+  type TextFieldFormat,
 } from '@nuclia/core';
 import { getFileUrls } from './api';
 import type { TypedResult } from './models';
@@ -343,11 +344,43 @@ export function hasNoResultsWithAutofilter(
 }
 
 export function downloadAsJSON(data: any) {
+  downloadFile(`dump-${new Date().toISOString()}.json`, 'application/json', JSON.stringify(data));
+}
+
+export function downloadFile(filename: string, mime: string, data: string) {
   const element = document.createElement('a');
-  element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data)));
-  element.setAttribute('download', `dump-${new Date().toISOString()}.json`);
+  element.setAttribute('href', `data:${mime};charset=utf-8,` + encodeURIComponent(data));
+  element.setAttribute('download', filename);
   element.style.display = 'none';
   element.click();
+}
+
+export function getFormatInfos(format: TextFieldFormat) {
+  let mime;
+  let ext;
+  switch (format) {
+    case 'MARKDOWN':
+    case 'KEEP_MARKDOWN':
+      mime = 'text/markdown';
+      ext = 'md';
+      break;
+    case 'HTML':
+      mime = 'text/html';
+      ext = 'html';
+      break;
+    case 'RST':
+      mime = 'text/x-rst';
+      ext = 'rst';
+      break;
+    case 'JSON':
+      mime ='	application/json';
+      ext = 'json';
+      break;
+    default:
+      mime = 'text/plain';
+      ext = 'txt';
+  } 
+  return { mime, ext };
 }
 
 export function getThumbnailInfos(result: TypedResult) {
