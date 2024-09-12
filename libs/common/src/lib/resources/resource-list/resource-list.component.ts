@@ -228,7 +228,16 @@ export class ResourceListComponent implements OnDestroy {
     );
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) => forkJoin(facetChunks.map((faceted) => kb.catalog('', { faceted })))),
+      switchMap((kb) =>
+        forkJoin(
+          facetChunks.map((faceted) => {
+            return kb.catalog('', {
+              faceted,
+              page_size: 0, // Search results are excluded to improve performance
+            });
+          }),
+        ),
+      ),
       map((results) =>
         results
           .filter((result) => result.type !== 'error')
