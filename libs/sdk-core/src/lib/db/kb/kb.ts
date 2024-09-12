@@ -1,7 +1,6 @@
 import {
   catchError,
   defer,
-  forkJoin,
   from,
   map,
   Observable,
@@ -26,7 +25,6 @@ import {
   InviteKbData,
   IWritableKnowledgeBox,
   KbInvite,
-  KbUser,
   KbUserPayload,
   LabelSet,
   LabelSets,
@@ -694,28 +692,12 @@ export class KnowledgeBox implements IKnowledgeBox {
       .pipe(map((config) => normalizeSchemaProperty(config)));
   }
 
-  getUsers(accountSlug: string): Observable<FullKbUser[]> {
-    return forkJoin([
-      this.nuclia.db.getAccountUsers(accountSlug),
-      this.nuclia.rest.get<KbUser[]>(
-        `/account/${this.nuclia.options.accountId}/kb/${this.id}/users`,
-        undefined,
-        undefined,
-        this.nuclia.options.zone,
-      ),
-    ]).pipe(
-      map(([accountUsers, kbUsers]) => {
-        return kbUsers.reduce((fullKbUsers, kbUser) => {
-          const accountUser = accountUsers.find((accountUser) => accountUser.id === kbUser.id);
-          if (accountUser) {
-            fullKbUsers.push({
-              ...accountUser,
-              role: kbUser.role,
-            });
-          }
-          return fullKbUsers;
-        }, [] as FullKbUser[]);
-      }),
+  getUsers(): Observable<FullKbUser[]> {
+    return this.nuclia.rest.get<FullKbUser[]>(
+      `/account/${this.nuclia.options.accountId}/kb/${this.id}/users?include_user_detail=true`,
+      undefined,
+      undefined,
+      this.nuclia.options.zone,
     );
   }
 
