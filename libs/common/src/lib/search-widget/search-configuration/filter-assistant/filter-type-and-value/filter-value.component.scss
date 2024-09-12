@@ -1,0 +1,18 @@
+@import 'apps/dashboard/src/variables';
+
+.fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.labels-container {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+
+  nsi-info-card {
+    // Remove 1px from vertical padding for taking borders into account
+    padding: calc(#{rhythm(1)} - 1px) rhythm(1);
+  }
+}

@@ -58,6 +58,13 @@ export class NerService {
     );
   }
 
+  getEntities(familyId: string): Observable<EntitiesGroup> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.getEntitiesGroup(familyId)),
+    );
+  }
+
   private _refreshFamily(kb: IKnowledgeBox, familyId: string): Observable<EntitiesGroup> {
     return kb.getEntitiesGroup(familyId).pipe(
       catchError(() => {

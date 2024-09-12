@@ -10,13 +10,21 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { PaIconModule, PaPopupModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  ModalConfig,
+  PaButtonModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { SearchBoxConfig } from '../../search-widget.models';
-import { Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
+import { filter, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
+import { FilterAssistantModalComponent } from '../filter-assistant';
 
 @Component({
   selector: 'stf-search-box-form',
@@ -31,6 +39,7 @@ import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
     PaPopupModule,
     InfoCardComponent,
     UnauthorizedFeatureDirective,
+    PaButtonModule,
   ],
   templateUrl: './search-box-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +47,7 @@ import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 export class SearchBoxFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
+  private modalService = inject(SisModalService);
 
   @Input() set config(value: SearchBoxConfig | undefined) {
     if (value) {
@@ -96,6 +106,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   get preselectedFiltersEnabled() {
     return this.form.controls.setPreselectedFilters.value;
   }
+  get preselectedFiltersControl() {
+    return this.form.controls.preselectedFilters;
+  }
   get suggestionsEnabled() {
     return this.form.controls.suggestions.value;
   }
@@ -106,11 +119,18 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.form.valueChanges
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((value) => this.configChanged.emit({ ...this.form.getRawValue() }));
+      .subscribe(() => this.configChanged.emit({ ...this.form.getRawValue() }));
   }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  openFiltersAssistant() {
+    this.modalService
+      .openModal(FilterAssistantModalComponent, new ModalConfig({ data: this.preselectedFiltersControl.value }))
+      .onClose.pipe(filter((filters) => !!filters))
+      .subscribe((filters: string) => this.preselectedFiltersControl.patchValue(filters));
   }
 }

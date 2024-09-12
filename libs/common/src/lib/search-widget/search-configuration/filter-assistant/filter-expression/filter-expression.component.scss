@@ -1,0 +1,20 @@
+@import 'apps/dashboard/src/variables';
+
+.expression-container {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  padding-bottom: rhythm(2);
+
+  stf-filter-value {
+    flex: 1 1 auto;
+  }
+
+  &:not(.last) {
+    box-shadow: $box-shadow-border-bottom;
+  }
+}
+
+.align-center {
+  align-self: center;
+}

@@ -1,0 +1,107 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>
+    {{ 'search.configuration.search-box.preselected-filters.assistant.modal-title' | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <pa-tabs>
+      <pa-tab
+        [active]="activeTab === 'simple'"
+        (click)="changeTab('simple')">
+        {{ 'search.configuration.search-box.preselected-filters.assistant.tab.simple' | translate }}
+      </pa-tab>
+      <pa-tab
+        [active]="activeTab === 'advanced'"
+        (click)="changeTab('advanced')">
+        {{ 'search.configuration.search-box.preselected-filters.assistant.tab.advanced' | translate }}
+      </pa-tab>
+    </pa-tabs>
+    <div class="tab-content">
+      @if (activeTab === 'simple') {
+        <stf-filter-type-and-value
+          class="fields-container"
+          [filter]="simpleFilter"
+          (filterChange)="updateSimpleFilter($event)"></stf-filter-type-and-value>
+
+        <nsi-info-card>
+          {{ 'search.configuration.search-box.preselected-filters.assistant.resulting-filter' | translate }}
+          @if (simpleFilter; as filter) {
+            /{{ filter.type }}/{{ filter.value }}
+          }
+        </nsi-info-card>
+      } @else {
+        <pa-accordion>
+          @for (expression of filterExpressions; track expression.id) {
+            <pa-accordion-item
+              itemTitle=""
+              [expanded]="$last"
+              [id]="expression.id + ''">
+              <pa-accordion-item-extra-description>
+                <div class="accordion-title-action">
+                  <div class="title-m">
+                    @if (expression | filterExpression) {
+                      {{
+                        'search.configuration.search-box.preselected-filters.assistant.expression.' + expression.combine
+                          | translate
+                      }}
+                      ({{ expression.filters.length }})
+                    } @else {
+                      {{
+                        'search.configuration.search-box.preselected-filters.assistant.new-expression-title' | translate
+                      }}
+                    }
+                  </div>
+
+                  @if (filterExpressions.length > 1) {
+                    <pa-button
+                      aspect="basic"
+                      icon="trash"
+                      kind="destructive"
+                      (click)="removeExpression($index)">
+                      {{
+                        'search.configuration.search-box.preselected-filters.assistant.delete-expression-button'
+                          | translate
+                      }}
+                    </pa-button>
+                  }
+                </div>
+              </pa-accordion-item-extra-description>
+              <pa-accordion-item-body>
+                <stf-filter-expression
+                  class="fields-container"
+                  [expression]="expression"
+                  (expressionChange)="updateExpressions($index, $event)"
+                  (filterAdded)="updateAccordionHeight($index)"></stf-filter-expression>
+              </pa-accordion-item-body>
+            </pa-accordion-item>
+          }
+        </pa-accordion>
+
+        @if (advancedFiltersPreview) {
+          <pa-button (click)="addExpression()">
+            {{ 'search.configuration.search-box.preselected-filters.assistant.add-expression-button' | translate }}
+          </pa-button>
+        }
+        <nsi-info-card>
+          {{ 'search.configuration.search-box.preselected-filters.assistant.resulting-filters' | translate }}
+          @if (advancedFiltersPreview) {
+            <pre><code>{{advancedFiltersPreview}}</code></pre>
+          }
+        </nsi-info-card>
+      }
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      kind="secondary"
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="invalidFilters"
+      (click)="save()">
+      {{ 'search.configuration.search-box.preselected-filters.assistant.primary-button' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

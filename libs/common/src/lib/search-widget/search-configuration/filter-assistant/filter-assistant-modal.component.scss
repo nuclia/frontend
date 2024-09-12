@@ -1,0 +1,30 @@
+@import 'apps/dashboard/src/variables';
+
+:host {
+  .tab-content {
+    padding: rhythm(2) 0;
+  }
+
+  form,
+  .tab-content,
+  .fields-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
+  }
+
+  stf-filter-expression:not(:last-of-type) {
+    box-shadow: inset 0 -2px 0 $color-neutral-lighter;
+  }
+
+  pre {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+  .accordion-title-action {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+}
