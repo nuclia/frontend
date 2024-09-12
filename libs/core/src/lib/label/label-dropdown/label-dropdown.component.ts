@@ -19,7 +19,7 @@ import { Aspect, PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
 })
 export class LabelDropdownComponent {
   @Input() aspect: Aspect = 'solid';
-  @Input() labelSets?: LabelSets | null;
+  @Input({ required: true }) labelSets?: LabelSets | null;
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input({ transform: booleanAttribute }) labelSetSelection = false;
   @Input({ transform: booleanAttribute }) single = false;

@@ -38,16 +38,6 @@ export const filterTypeList: OptionModel[] = [
     label: 'search.configuration.search-box.preselected-filters.assistant.filter-type.language',
   }),
   new OptionModel({
-    id: 'creation_date',
-    value: 'creation_date',
-    label: 'search.configuration.search-box.preselected-filters.assistant.filter-type.creation-date',
-  }),
-  new OptionModel({
-    id: 'modification_date',
-    value: 'modification_date',
-    label: 'search.configuration.search-box.preselected-filters.assistant.filter-type.modification-date',
-  }),
-  new OptionModel({
     id: 'origin.metadata',
     value: 'origin.metadata',
     label: 'search.configuration.search-box.preselected-filters.assistant.filter-type.metadata',
