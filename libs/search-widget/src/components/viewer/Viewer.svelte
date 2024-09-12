@@ -31,11 +31,12 @@
     viewerData,
     viewerState,
     widgetActions,
+    fieldData,
+    getFormatInfos,
+    slugify,
+    downloadFile,
   } from '../../core';
-    import type {TypedResult,
-      ViewerState,
-      WidgetAction,
-  } from '../../core';
+  import type { TypedResult, ViewerState, WidgetAction } from '../../core';
   import {
     DocTypeIndicator,
     Dropdown,
@@ -48,8 +49,8 @@
     unblockBackground,
   } from '../../common';
   import { onDestroy, onMount } from 'svelte';
-  import type { FieldFullId, FieldMetadata, SearchOptions } from '@nuclia/core';
-  import { FIELD_TYPE,  Search, } from '@nuclia/core';
+  import type { FieldFullId, FieldMetadata, SearchOptions, TextField } from '@nuclia/core';
+  import { FIELD_TYPE, Search } from '@nuclia/core';
   import { BehaviorSubject, debounceTime, filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
   import { MetadataContainer, SearchResultNavigator, ViewerContent } from './';
   import { D3Loader, KnowledgeGraphPanel } from '../knowledge-graph';
@@ -145,6 +146,15 @@
         filter((url) => !!url),
       )
       .subscribe((url) => window.open(url, 'blank', 'noreferrer'));
+  }
+
+  function downloadTextField() {
+    fieldData.pipe(take(1)).subscribe((fieldData) => {
+      const { mime, ext } = getFormatInfos((fieldData?.value as TextField)?.format || 'PLAIN');
+      const filename = `${slugify(result?.title || result?.id || '')}.${ext}`;
+      const content = (fieldData?.value as TextField)?.body || '';
+      downloadFile(filename, mime, content);
+    });
   }
 
   function openMenu(event) {
@@ -312,6 +322,12 @@
             ariaLabel={$_('resource.source')}
             aspect="basic"
             on:click={openOrigin} />
+        {:else if state.fieldFullId?.field_type === FIELD_TYPE.text}
+          <IconButton
+            icon="download"
+            ariaLabel={$_('resource.source')}
+            aspect="basic"
+            on:click={downloadTextField} />
         {/if}
       </div>
 
