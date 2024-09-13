@@ -3,6 +3,7 @@
 ### Improvement
 
 - Support `keyword_filters` on `/ask` and `/find` endpoints
+- Fix: do not override `show` parameter when calling `ask()`
 
 # 1.21.1 (2024-09-12)
 

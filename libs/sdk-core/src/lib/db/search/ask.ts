@@ -26,7 +26,7 @@ export function ask(
   const body = {
     query,
     context,
-    show: [ResourceProperties.BASIC, ResourceProperties.VALUES],
+    show: searchOptions.show || [ResourceProperties.BASIC, ResourceProperties.VALUES],
     features: features.length > 0 ? features : undefined,
     ...noEmptyValues,
   };

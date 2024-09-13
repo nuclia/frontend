@@ -176,6 +176,7 @@ export const getAnswer = (
   }, [] as Ask.ContextEntry[]);
   const defaultOptions: ChatOptions = {
     highlight: true,
+    show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
     generative_model,
     vectorset,
     citations: CITATIONS,
