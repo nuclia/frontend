@@ -114,7 +114,7 @@ export function ask(
           } as Ask.Answer;
         }),
         catchError((error) =>
-          of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse),
+          of({ type: 'error', status: error.status, detail: error.detail || error.details || '' } as IErrorResponse),
         ),
         tap((res) => {
           nuclia.events?.log('lastResults', res);
