@@ -124,6 +124,7 @@
       },
       state,
       {
+        features: _features,
         prompt,
         system_prompt,
         max_tokens: _max_tokens,
