@@ -78,6 +78,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     customizeNotEnoughDataMessage: new FormControl<boolean>(false, { nonNullable: true }),
     notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     hideLogo: new FormControl<boolean>(false, { nonNullable: true }),
+    noChatHistory: new FormControl<boolean>(false, { nonNullable: true }),
     permalink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),

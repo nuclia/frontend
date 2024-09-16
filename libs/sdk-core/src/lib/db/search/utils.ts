@@ -97,4 +97,5 @@ export interface WidgetFeatures {
   preferMarkdown?: boolean;
   openNewTab?: boolean;
   orFilterLogic?: boolean;
+  noChatHistory?: boolean;
 }

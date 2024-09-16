@@ -1198,6 +1198,8 @@
 	"search.widgets.form.widget-options.navigate-to-files.toggle-label": "Accéder aux fichiers d’origine",
 	"search.widgets.form.widget-options.navigate-to-link.toggle-description": "Lorsque vous utilisez Nuclia pour rechercher des pages Web, cliquer sur un résultat ouvrira la page d’origine plutôt que de l’afficher dans la visionneuse.",
 	"search.widgets.form.widget-options.navigate-to-link.toggle-label": "Naviguer vers l’origine des liens",
+	"search.widgets.form.widget-options.no-chat-history.toggle-description": "Les questions et réponses précédentes en mode chat ne sont pas transmises comme contexte lors de la génération d'une nouvelle réponse.",
+	"search.widgets.form.widget-options.no-chat-history.toggle-label": "Pas d'historique de discussion",
 	"search.widgets.form.widget-options.open-new-tab.toggle-label": "Ouvrir dans un nouvel onglet",
 	"search.widgets.form.widget-options.open-new-tabs.toggle-description": "Ouvrir des liens et/ou des fichiers dans un nouvel onglet",
 	"search.widgets.form.widget-options.permalinks.toggle-description": "Ajoute des paramètres supplémentaires à l’URL afin que les utilisateurs puissent copier et partager un lien direct vers une ressource spécifique ou des résultats de recherche.",
