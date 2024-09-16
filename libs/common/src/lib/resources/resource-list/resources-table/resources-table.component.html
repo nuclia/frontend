@@ -57,6 +57,18 @@
       }
 
       <div class="table-options">
+        @if (visibleColumnsId | async; as visibleColumns) {
+          @if (visibleColumns.includes('classification')) {
+            <pa-button
+              size="small"
+              aspect="basic"
+              iconAndText
+              [icon]="fullLabels ? 'collapse' : 'expand'"
+              (click)="fullLabels = !fullLabels">
+              {{ (fullLabels ? 'resource.collapse-labels' : 'resource.expand-labels') | translate }}
+            </pa-button>
+          }
+        }
         <nsi-dropdown-button
           size="small"
           aspect="basic"
@@ -161,8 +173,13 @@
                     <nsi-label
                       [color]="label.color"
                       [disabled]="deletingLabel"
-                      (removeLabel)="onRemoveLabel(row.resource, label, $event)">
-                      {{ label.label }}
+                      (removeLabel)="onRemoveLabel(row.resource, label, $event)"
+                      [paTooltip]="!fullLabels && label.label.length > 7 ? label.label : undefined">
+                      @if (!fullLabels && label.label.length > 7) {
+                        {{ label.label.substring(0, 7) }}…
+                      } @else {
+                        {{ label.label }}
+                      }
                     </nsi-label>
                   }
                 </div>
