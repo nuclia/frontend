@@ -28,6 +28,8 @@ $height-pagination: rhythm(9);
   }
 
   .table-options {
+    display: flex;
+    gap: rhythm(1);
     margin-left: auto;
   }
 

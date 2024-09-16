@@ -66,6 +66,7 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   hasLabelSets = inject(LabelsService).hasResourceLabelSets;
   currentLabelList: Classification[] = [];
   deletingLabel = false;
+  fullLabels = false;
 
   private _visibleColumnDef: Observable<ColumnHeader[]> = combineLatest([
     this.isAdminOrContrib,
