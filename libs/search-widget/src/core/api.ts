@@ -48,6 +48,7 @@ let ASK_TO_RESOURCE = '';
 let MAX_TOKENS: number | { context?: number; answer?: number } | undefined = undefined;
 let MAX_PARAGRAPHS: number | undefined = undefined;
 let QUERY_PREPEND = '';
+let NO_CHAT_HISTORY = false;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -80,6 +81,7 @@ export const initNuclia = (
   CITATIONS = !!widgetOptions.features?.citations;
   REPHRASE = !!widgetOptions.features?.rephrase;
   ASK_TO_RESOURCE = widgetOptions.ask_to_resource || '';
+  NO_CHAT_HISTORY = !!widgetOptions.features?.noChatHistory;
 
   nucliaApi = new Nuclia(options);
   if (!noTracking) {
@@ -169,11 +171,13 @@ export const getAnswer = (
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  const context = chat?.reduce((acc, curr) => {
-    acc.push({ author: Ask.Author.USER, text: curr.question });
-    acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
-    return acc;
-  }, [] as Ask.ContextEntry[]);
+  const context = NO_CHAT_HISTORY
+    ? undefined
+    : chat?.reduce((acc, curr) => {
+        acc.push({ author: Ask.Author.USER, text: curr.question });
+        acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
+        return acc;
+      }, [] as Ask.ContextEntry[]);
   const defaultOptions: ChatOptions = {
     highlight: true,
     show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],

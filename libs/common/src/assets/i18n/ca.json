@@ -1198,6 +1198,8 @@
 	"search.widgets.form.widget-options.navigate-to-files.toggle-label": "Navegueu als fitxers d’origen",
 	"search.widgets.form.widget-options.navigate-to-link.toggle-description": "Quan utilitzeu Nuclia per cercar pàgines web, fer clic a un resultat obrirà la pàgina original en lloc de mostrar-la al visor.",
 	"search.widgets.form.widget-options.navigate-to-link.toggle-label": "Navegueu a l’origen dels enllaços",
+	"search.widgets.form.widget-options.no-chat-history.toggle-description": "Les preguntes i respostes anteriors en el mode de xat no es passen com a context quan es genera una resposta nova.",
+	"search.widgets.form.widget-options.no-chat-history.toggle-label": "No hi ha historial de xat",
 	"search.widgets.form.widget-options.open-new-tab.toggle-label": "Obre en una pestanya nova",
 	"search.widgets.form.widget-options.open-new-tabs.toggle-description": "Obriu enllaços i/o fitxers en una pestanya nova",
 	"search.widgets.form.widget-options.permalinks.toggle-description": "Afegeix paràmetres addicionals a l’URL perquè els usuaris puguin copiar i compartir un enllaç directe a un recurs específic o als resultats de la cerca.",

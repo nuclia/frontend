@@ -94,6 +94,7 @@ export interface WidgetConfiguration {
   navigateToLink: boolean;
   navigateToFile: boolean;
   openNewTab: boolean;
+  noChatHistory: boolean;
 }
 
 export interface Widget {
@@ -188,6 +189,7 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   navigateToLink: false,
   navigateToFile: false,
   openNewTab: false,
+  noChatHistory: false,
 };
 
 export const NUCLIA_STANDARD_SEARCH_CONFIG: SearchConfiguration = {
@@ -239,6 +241,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     navigateToLink: widgetOptions.navigateToLink,
     navigateToFile: widgetOptions.navigateToFile,
     openNewTab: (widgetOptions.navigateToLink || widgetOptions.navigateToFile) && widgetOptions.openNewTab,
+    noChatHistory: widgetOptions.noChatHistory,
   };
   const featureList = Object.entries(widgetFeatures)
     .filter(([, enabled]) => enabled)
