@@ -56,6 +56,9 @@
   .backdrop {
     max-height: calc(100vh - var(--top-spacing) * 2 - var(--rhythm-2));
   }
+  .search-container .search-bar-container {
+    width: calc(100% - var(--rhythm-4));
+  }
 }
 @media (min-width: 640px) {
   .backdrop {
