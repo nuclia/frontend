@@ -19,7 +19,7 @@ export class TaskManager {
    */
   getTasks(count?: number): Observable<TaskListResponse> {
     return this.nuclia.rest.get<TaskListResponse>(
-      `${this.kb.path}/task${typeof count === 'number' ? '?count=' + count : ''}`,
+      `${this.kb.path}/tasks${typeof count === 'number' ? '?count=' + count : ''}`,
     );
   }
 
