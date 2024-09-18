@@ -4,6 +4,8 @@
 
 - Support `keyword_filters` on `/ask` and `/find` endpoints
 - Fix: do not override `show` parameter when calling `ask()`
+- Support `debug` parameter on `/ask` endpoint
+- Add `metadata` and `promptContext` to `Ask.Answer` model
 
 # 1.21.1 (2024-09-12)
 

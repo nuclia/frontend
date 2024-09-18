@@ -27,6 +27,8 @@ export namespace Ask {
     jsonAnswer?: any;
     incomplete?: boolean;
     inError?: boolean;
+    metadata?: { tokens?: AskTokens; timings?: AskTimings };
+    promptContext?: string[];
   }
 
   export enum Author {
@@ -96,7 +98,7 @@ export namespace Ask {
 
   export interface DebugAskResponseItem {
     type: 'debug';
-    debug: { [key: string]: any };
+    metadata: { [key: string]: any };
   }
 
   export interface AskTokens {

@@ -93,7 +93,7 @@ export interface WidgetFeatures {
   noBM25forChat?: boolean;
   citations?: boolean;
   rephrase?: boolean;
-  dumpLog?: boolean;
+  debug?: boolean;
   preferMarkdown?: boolean;
   openNewTab?: boolean;
   orFilterLogic?: boolean;
