@@ -87,6 +87,7 @@
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
   export const onError = getApiErrors();
+  export const reset = () => resetNuclia();
 
   let nucliaAPI: Nuclia;
   export let initHook: (n: Nuclia) => void = () => {};
