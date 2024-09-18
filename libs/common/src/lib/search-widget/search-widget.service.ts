@@ -198,15 +198,16 @@ export class SearchWidgetService {
         }
 
         const snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`;
+        const cdn = this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : '';
         const preview = this.sanitizer.bypassSecurityTrustHtml(
           baseSnippet
             .replace(
               'zone=',
-              `client="dashboard" backend="${this.backendConfig.getAPIURL()}" lang="${
+              `client="dashboard" backend="${this.backendConfig.getAPIURL()}" cdn="${cdn}" lang="${
                 this.translate.currentLang
               }" zone=`,
             )
-            .replace('features="', `features="dumpLog,`)
+            .replace('features="', `features="debug,`)
             .replace(apiKey, '')
             .replace('<nuclia-search-results', '<nuclia-search-results scrollableContainerSelector=".preview-content"'),
         );

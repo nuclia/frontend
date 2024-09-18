@@ -39,20 +39,35 @@ export function ask(
   });
   return synchronous
     ? nuclia.rest.post<Ask.AskResponse>(endpoint, body, undefined, undefined, true).pipe(
-        map(({ answer, relations, retrieval_results, citations, learning_id, answer_json, status, error_details }) => {
-          if (status === 'error') {
-            return { type: 'error', status: -1, detail: error_details || '' } as IErrorResponse;
-          }
-          return {
-            type: 'answer',
-            text: answer,
-            sources: { ...retrieval_results, relations },
+        map(
+          ({
+            answer,
+            relations,
+            retrieval_results,
             citations,
-            incomplete: false,
-            id: learning_id,
-            jsonAnswer: answer_json,
-          } as Ask.Answer;
-        }),
+            learning_id,
+            answer_json,
+            status,
+            error_details,
+            metadata,
+            prompt_context,
+          }) => {
+            if (status === 'error') {
+              return { type: 'error', status: -1, detail: error_details || '' } as IErrorResponse;
+            }
+            return {
+              type: 'answer',
+              text: answer,
+              sources: { ...retrieval_results, relations },
+              citations,
+              incomplete: false,
+              id: learning_id,
+              jsonAnswer: answer_json,
+              metadata,
+              promptContext: prompt_context,
+            } as Ask.Answer;
+          },
+        ),
         tap((res) => nuclia.events?.log('lastResults', res)),
       )
     : nuclia.rest.getStreamedResponse(endpoint, body).pipe(
@@ -102,6 +117,17 @@ export function ask(
               answer = jsonAnswer.object['answer'];
             }
           }
+          const metadataItem = items.find((item) => item.item.type === 'metadata');
+          const metadata = metadataItem
+            ? {
+                timings: (metadataItem.item as Ask.MetadataAskResponseItem).timings,
+                tokens: (metadataItem.item as Ask.MetadataAskResponseItem).tokens,
+              }
+            : undefined;
+          const debugItem = items.find((item) => item.item.type === 'debug');
+          const promptContext = debugItem
+            ? (debugItem.item as Ask.DebugAskResponseItem).metadata?.['prompt_context']
+            : undefined;
 
           return {
             type: 'answer',
@@ -111,6 +137,8 @@ export function ask(
             id,
             citations,
             jsonAnswer: jsonAnswer?.object,
+            metadata,
+            promptContext,
           } as Ask.Answer;
         }),
         catchError((error) =>

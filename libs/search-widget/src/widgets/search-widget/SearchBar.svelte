@@ -168,7 +168,7 @@
     if (_features.permalink) {
       activatePermalinks();
     }
-    if (_features.dumpLog) {
+    if (_features.debug) {
       nucliaAPI.events.dump().subscribe((data) => {
         dispatchCustomEvent('logs', data);
       });

@@ -60,6 +60,7 @@ export interface BaseSearchOptions {
   highlight?: boolean;
   rephrase?: boolean;
   vectorset?: string;
+  debug?: boolean;
 }
 
 export interface ChatOptions extends BaseSearchOptions {

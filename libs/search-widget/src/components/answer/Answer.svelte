@@ -7,13 +7,14 @@
   import { Button, Expander, IconButton, Tooltip } from '../../common';
   import { MarkdownRendering } from '../viewer';
   import Sources from './Sources.svelte';
+  import AnswerMetadata from './AnswerMetadata.svelte';
   import {
     chat,
+    debug,
     downloadDump,
     getFieldDataFromResource,
     getNonGenericField,
     getResultType,
-    hasDumpLogButton,
     hasNotEnoughData,
     isCitationsEnabled,
     notEnoughDataMessage,
@@ -28,6 +29,7 @@
   let selectedCitation: number | undefined;
   let element: HTMLElement | undefined;
   let copied = false;
+  let showMetadata = false;
 
   const dispatch = createEventDispatcher();
 
@@ -160,7 +162,7 @@
     <div class="actions">
       {#if !$chat[rank]?.answer.incomplete}
         {#if !notEnoughData}
-          <div class="copy">
+          <div class="copy smaller">
             <IconButton
               aspect="basic"
               icon={copied ? 'check' : 'copy'}
@@ -176,6 +178,21 @@
           <div>
             <Feedback {rank} />
           </div>
+          {#if $debug}
+            <div class="smaller">
+              <IconButton
+                aspect="basic"
+                icon="info"
+                size="small"
+                kind="secondary"
+                on:click={() => (showMetadata = true)} />
+              {#if answer}
+                <AnswerMetadata
+                  {answer}
+                  bind:show={showMetadata} />
+              {/if}
+            </div>
+          {/if}
           {#if initialAnswer}
             <Button
               aspect="basic"
@@ -185,7 +202,7 @@
             </Button>
           {/if}
         {/if}
-        {#if $hasDumpLogButton}
+        {#if $debug}
           <Button
             aspect="basic"
             size="small"
