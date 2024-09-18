@@ -1,0 +1,44 @@
+.sw-answer-metadata {
+  .dialog-content {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rhythm-4);
+    max-height: 80vh;
+    padding: var(--rhythm-4);
+  }
+  .close-button {
+    position: absolute;
+    right: var(--rhythm-1);
+    top: var(--rhythm-1);
+  }
+  .title-m {
+    margin-bottom: var(--rhythm-2);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    td {
+      border: 1px solid var(--color-neutral-lighter);
+      padding: var(--rhythm-0_5) var(--rhythm-1);
+      width: 50%;
+    }
+  }
+  .expander-container {
+    background-color: var(--color-neutral-lighter);
+  }
+  .context-list {
+    border: 1px solid var(--color-neutral-light);
+    background-color: var(--color-light-stronger);
+  }
+  .context-item {
+    border-bottom: 1px solid var(--color-neutral-light);
+    padding: var(--rhythm-2);
+  }
+
+  @media (min-width: 599px) {
+    .dialog-content {
+      width: var(--rhythm-80);
+    }
+  }
+}

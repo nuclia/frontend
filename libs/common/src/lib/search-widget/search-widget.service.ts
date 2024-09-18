@@ -206,7 +206,7 @@ export class SearchWidgetService {
                 this.translate.currentLang
               }" zone=`,
             )
-            .replace('features="', `features="dumpLog,`)
+            .replace('features="', `features="debug,`)
             .replace(apiKey, '')
             .replace('<nuclia-search-results', '<nuclia-search-results scrollableContainerSelector=".preview-content"'),
         );

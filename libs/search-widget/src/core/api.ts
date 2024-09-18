@@ -49,6 +49,7 @@ let MAX_TOKENS: number | { context?: number; answer?: number } | undefined = und
 let MAX_PARAGRAPHS: number | undefined = undefined;
 let QUERY_PREPEND = '';
 let NO_CHAT_HISTORY = false;
+let DEBUG = false;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -82,6 +83,7 @@ export const initNuclia = (
   REPHRASE = !!widgetOptions.features?.rephrase;
   ASK_TO_RESOURCE = widgetOptions.ask_to_resource || '';
   NO_CHAT_HISTORY = !!widgetOptions.features?.noChatHistory;
+  DEBUG = !!widgetOptions.features?.debug;
 
   nucliaApi = new Nuclia(options);
   if (!noTracking) {
@@ -187,6 +189,7 @@ export const getAnswer = (
     rephrase: REPHRASE,
     max_tokens: MAX_TOKENS,
     top_k: MAX_PARAGRAPHS,
+    debug: DEBUG,
   };
   if (prompt || systemPrompt) {
     defaultOptions.prompt = { user: prompt || undefined, system: systemPrompt || undefined };

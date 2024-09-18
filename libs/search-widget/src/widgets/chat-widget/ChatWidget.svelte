@@ -89,7 +89,7 @@
 
   ready.pipe(delay(200)).subscribe(() => {
     // any feature that calls the Nuclia API immediately at init time must be done here
-    if (_features.dumpLog) {
+    if (_features.debug) {
       nucliaAPI.events.dump().subscribe((data) => {
         dispatchCustomEvent('logs', data);
       });

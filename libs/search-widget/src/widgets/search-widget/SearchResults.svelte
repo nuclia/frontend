@@ -8,10 +8,10 @@
   import globalCss from '../../common/_global.scss?inline';
   import {
     _,
+    debug,
     downloadDump,
     getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
-    hasDumpLogButton,
     hasMore,
     hasPartialResults,
     hasSearchError,
@@ -99,7 +99,6 @@
   {#if $showResults && !$isEmptySearchQuery}
     {#if $hasSearchError && !$hasPartialResults}
       <div class="error">
-        {@debug $searchError}
         {#if $searchError?.status === 402}
           <strong>{$_('error.feature-blocked')}</strong>
         {:else}
@@ -127,7 +126,7 @@
                 jsonSchema={$widgetJsonSchema} />
             {/if}
           {/if}
-          {#if !$isAnswerEnabled && $hasDumpLogButton}
+          {#if !$isAnswerEnabled && $debug}
             <div>
               <Button
                 aspect="basic"

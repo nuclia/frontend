@@ -27,6 +27,8 @@
   }
   .copy {
     position: relative;
+  }
+  .smaller {
     :global(svg) {
       transform: scale(0.8);
     }
