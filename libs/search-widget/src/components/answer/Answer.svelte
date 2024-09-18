@@ -2,7 +2,7 @@
   import { _ } from '../../core/i18n';
   import Feedback from './Feedback.svelte';
   import type { Ask, Citations, FieldId, Search } from '@nuclia/core';
-  import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
+  import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType, sliceUnicode } from '@nuclia/core';
   import { createEventDispatcher } from 'svelte';
   import { Button, Expander, IconButton, Tooltip } from '../../common';
   import { MarkdownRendering } from '../viewer';
@@ -52,7 +52,10 @@
       .sort((a, b) => (a.end - b.end !== 0 ? a.end - b.end : a.index - b.index))
       .reverse()
       .forEach((ref) => {
-        text = `${text.slice(0, ref.end)}<span class="ref">${ref.index + 1}</span>${text.slice(ref.end)}`;
+        text = `${sliceUnicode(text, 0, ref.end)}<span class="ref">${ref.index + 1}</span>${sliceUnicode(
+          text,
+          ref.end,
+        )}`;
       });
     return text;
   }
