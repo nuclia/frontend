@@ -597,6 +597,7 @@
 	"kb.metrics.page-title": "RAG Evaluation Metrics (REMi)",
 	"kb.metrics.performance-evolution.description": "Track the evolution of your RAG pipeline performances",
 	"kb.metrics.performance-evolution.title": "Performance evolution",
+	"kb.metrics.period.current-billing-period": "Current billing period",
 	"kb.metrics.period.label": "Show metrics on the",
 	"kb.metrics.period.last-7d": "Last 7 days",
 	"kb.metrics.period.last-14d": "Last 14 days",
