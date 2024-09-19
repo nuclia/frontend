@@ -68,6 +68,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     takeUntil(this.unsubscribeAll),
     shareReplay(),
   );
+  isSubscribed = this.metrics.isSubscribed;
 
   kbUrl = combineLatest([this.account, this.currentKb]).pipe(
     map(([account, kb]) => {

@@ -275,6 +275,13 @@
               <div class="title-with-icon">
                 <pa-icon name="chart"></pa-icon>
                 {{ 'dashboard-home.usage.title' | translate }}
+                <small class="body-s">
+                  @if (isSubscribed | async) {
+                    ({{ 'kb.metrics.period.current-billing-period' | translate }})
+                  } @else {
+                    ({{ 'kb.metrics.period.last-30d' | translate }})
+                  }
+                </small>
               </div>
               <pa-button
                 aspect="basic"
