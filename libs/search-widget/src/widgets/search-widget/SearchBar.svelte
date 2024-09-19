@@ -20,6 +20,7 @@
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
   import {
+  chatPlaceholder,
     notEnoughDataMessage,
     widgetFeatures,
     widgetFilters,
@@ -82,6 +83,7 @@
   export let query_prepend = '';
   export let json_schema = '';
   export let vectorset = '';
+  export let chat_placeholder = '';
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -95,6 +97,9 @@
   $: darkMode = mode === 'dark';
   $: {
     widgetPlaceholder.set(placeholder || 'input.placeholder');
+  }
+  $: {
+    chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
   }
   $: {
     notEnoughDataMessage.set(not_enough_data_message);

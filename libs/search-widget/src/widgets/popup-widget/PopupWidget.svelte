@@ -39,6 +39,7 @@
   export let query_prepend = '';
   export let json_schema = '';
   export let vectorset = '';
+  export let chat_placeholder = '';
 
   let searchBar: any;
   let visible = false;
@@ -135,7 +136,8 @@
             {max_paragraphs}
             {query_prepend}
             {json_schema}
-            {vectorset} />
+            {vectorset}
+            {chat_placeholder} />
         </div>
         <div class="search-results-container">
           <SearchResults />

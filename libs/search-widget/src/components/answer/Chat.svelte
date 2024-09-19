@@ -1,6 +1,6 @@
 <script lang="ts">
   import Answer from './Answer.svelte';
-  import { _, chat, isStreaming } from '../../core';
+  import { _, chat, chatPlaceholder, isStreaming } from '../../core';
   import ChatInput from './ChatInput.svelte';
   import { createEventDispatcher, onMount } from 'svelte';
   import { delay, distinctUntilChanged, filter } from 'rxjs';
@@ -89,7 +89,7 @@
         class="input-container"
         class:scrolling-behind={isScrolling}>
         <ChatInput
-          placeholder={$_('answer.placeholder')}
+          placeholder={$_($chatPlaceholder)}
           {fullscreen} />
       </div>
     </div>

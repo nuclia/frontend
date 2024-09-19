@@ -87,6 +87,8 @@ export interface WidgetConfiguration {
   darkMode: 'light' | 'dark';
   customizePlaceholder: boolean;
   placeholder: string;
+  customizeChatPlaceholder: boolean;
+  chatPlaceholder: string;
   customizeNotEnoughDataMessage: boolean;
   notEnoughDataMessage: string;
   hideLogo: boolean;
@@ -182,6 +184,8 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   darkMode: 'light',
   customizePlaceholder: false,
   placeholder: '',
+  customizeChatPlaceholder: false,
+  chatPlaceholder: '',
   customizeNotEnoughDataMessage: false,
   notEnoughDataMessage: '',
   hideLogo: false,
@@ -252,6 +256,11 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
 }
 export function getPlaceholder(config: WidgetConfiguration): string {
   return config.customizePlaceholder && config.placeholder ? `\n  placeholder="${config.placeholder}"` : '';
+}
+export function getChatPlaceholder(config: WidgetConfiguration): string {
+  return config.customizeChatPlaceholder && config.chatPlaceholder
+    ? `\n  chat_placeholder="${config.chatPlaceholder}"`
+    : '';
 }
 export function getPrompt(config: GenerativeAnswerConfig): string {
   if (config.usePrompt && !!config.prompt.trim()) {
