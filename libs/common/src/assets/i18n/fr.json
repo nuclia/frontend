@@ -1190,6 +1190,8 @@
 	"search.widgets.form.description": "Le widget intégré reflétera la configuration de recherche et les options du widget définies ci-dessous.",
 	"search.widgets.form.preview-title": "Testez le widget",
 	"search.widgets.form.search-config-title": "Configuration de la recherche",
+	"search.widgets.form.widget-options.chat-placeholder.toggle-description": "Modifiez le texte que vous souhaitez voir apparaître dans la barre de discussion lorsque vous n'êtes pas actif. Le texte par défaut est « Discutons ».",
+	"search.widgets.form.widget-options.chat-placeholder.toggle-label": "Personnaliser le placeholder de la barre de discussion",
 	"search.widgets.form.widget-options.customize-insufficient-data.input-label": "Message de données insuffisantes",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-description": "Personnalisez le message affiché lorsque les données sont insuffisantes pour générer une réponse à la question de l’utilisateur. Ce champ autorise les balises HTML.",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-label": "Personnaliser le message de données insuffisantes",

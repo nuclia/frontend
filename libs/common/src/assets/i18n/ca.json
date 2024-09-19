@@ -1190,6 +1190,8 @@
 	"search.widgets.form.description": "El giny incrustat reflectirà la configuració de cerca i les opcions del giny establertes a continuació.",
 	"search.widgets.form.preview-title": "Prova el giny",
 	"search.widgets.form.search-config-title": "Configuració de cerca",
+	"search.widgets.form.widget-options.chat-placeholder.toggle-description": "Canvieu el text que voleu que aparegui a la barra de xat quan no estigui actiu. El text predeterminat és \"Parlem\".",
+	"search.widgets.form.widget-options.chat-placeholder.toggle-label": "Personalitza el placeholder de la barra de xat",
 	"search.widgets.form.widget-options.customize-insufficient-data.input-label": "Missatge de dades insuficient",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-description": "Personalitza el missatge que es mostra quan no hi ha dades suficients per generar una resposta a la pregunta de l’usuari. Aquest camp admet codi HTML.",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-label": "Personalitza el missatge de dades insuficients",

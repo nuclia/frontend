@@ -5,6 +5,7 @@ import type { RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core
 
 export const widgetFeatures = writableSubject<WidgetFeatures | null>(null);
 export const widgetPlaceholder = writableSubject<string>('input.placeholder');
+export const chatPlaceholder = writableSubject<string>('answer.placeholder');
 export const widgetFilters = writableSubject<WidgetFilters>({});
 export const widgetRagStrategies = writableSubject<RAGStrategy[]>([]);
 export const widgetImageRagStrategies = writableSubject<RAGImageStrategy[]>([]);

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import {
   DEFAULT_WIDGET_CONFIG,
   getAskToResource,
+  getChatPlaceholder,
   getFeatures,
   getFilters,
   getJsonSchema,
@@ -135,6 +136,7 @@ export class SearchWidgetService {
     // Search configuration
     const features = getFeatures(currentConfig, widgetOptions);
     const placeholder = getPlaceholder(widgetOptions);
+    const chatPlaceholder = getChatPlaceholder(widgetOptions);
     const prompt = getPrompt(currentConfig.generativeAnswer);
     const systemPrompt = getSystemPrompt(currentConfig.generativeAnswer);
     const filters = getFilters(currentConfig.searchBox);
@@ -189,7 +191,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${ragProperties}${ragImagesProperties}${placeholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;

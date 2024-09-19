@@ -75,6 +75,27 @@
             </div>
             <div class="config-form-field">
               <pa-toggle
+                formControlName="customizeChatPlaceholder"
+                withBackground
+                spaceBetweenLabelAndToggle
+                (valueChange)="updateWidgetOptionsHeight()">
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.chat-placeholder.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.chat-placeholder.toggle-description' | translate }}
+              </div>
+              <div
+                class="extra-fields"
+                [class.visible]="customizeChatPlaceholderEnabled">
+                <pa-input formControlName="chatPlaceholder">
+                  {{ 'search.widgets.form.widget-options.placeholder.input-label' | translate }}
+                </pa-input>
+              </div>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
                 formControlName="customizeNotEnoughDataMessage"
                 withBackground
                 spaceBetweenLabelAndToggle

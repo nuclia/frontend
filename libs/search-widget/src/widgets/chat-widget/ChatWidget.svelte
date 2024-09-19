@@ -18,7 +18,13 @@
   import { askQuestion, initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
-  import { preselectedFilters, widgetFeatures, widgetImageRagStrategies, widgetRagStrategies } from '../../core';
+  import {
+    chatPlaceholder,
+    preselectedFilters,
+    widgetFeatures,
+    widgetImageRagStrategies,
+    widgetRagStrategies,
+  } from '../../core';
   import { BehaviorSubject, delay, filter, firstValueFrom } from 'rxjs';
   import { Viewer } from '../../components';
 
@@ -46,6 +52,7 @@
   export let max_paragraphs: number | undefined = undefined;
   export let query_prepend = '';
   export let vectorset = '';
+  export let chat_placeholder = '';
 
   export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
@@ -53,6 +60,10 @@
   let _ragImageStrategies: RAGImageStrategy[] = [];
   let _max_tokens: number | undefined;
   let _max_output_tokens: number | undefined;
+
+  $: {
+    chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
+  }
 
   let showChat = layout === 'inline';
 

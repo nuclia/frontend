@@ -28820,6 +28820,57 @@
 												<name>widget-options</name>
 												<children>
 													<folder_node>
+														<name>chat-placeholder</name>
+														<children>
+															<concept_node>
+																<name>toggle-description</name>
+																<description/>
+																<comment/>
+																<translations>
+																	<translation>
+																		<language>ca-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>en-US</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>es-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>fr-FR</language>
+																		<approved>false</approved>
+																	</translation>
+																</translations>
+															</concept_node>
+															<concept_node>
+																<name>toggle-label</name>
+																<description/>
+																<comment/>
+																<translations>
+																	<translation>
+																		<language>ca-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>en-US</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>es-ES</language>
+																		<approved>false</approved>
+																	</translation>
+																	<translation>
+																		<language>fr-FR</language>
+																		<approved>false</approved>
+																	</translation>
+																</translations>
+															</concept_node>
+														</children>
+													</folder_node>
+													<folder_node>
 														<name>customize-insufficient-data</name>
 														<children>
 															<concept_node>

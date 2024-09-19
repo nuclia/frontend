@@ -186,11 +186,9 @@
                 size="small"
                 kind="secondary"
                 on:click={() => (showMetadata = true)} />
-              {#if answer}
-                <AnswerMetadata
-                  {answer}
-                  bind:show={showMetadata} />
-              {/if}
+              <AnswerMetadata
+                {answer}
+                bind:show={showMetadata} />
             </div>
           {/if}
           {#if initialAnswer}

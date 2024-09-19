@@ -75,6 +75,8 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     darkMode: new FormControl<'light' | 'dark'>('light', { nonNullable: true }),
     customizePlaceholder: new FormControl<boolean>(false, { nonNullable: true }),
     placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    customizeChatPlaceholder: new FormControl<boolean>(false, { nonNullable: true }),
+    chatPlaceholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     customizeNotEnoughDataMessage: new FormControl<boolean>(false, { nonNullable: true }),
     notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     hideLogo: new FormControl<boolean>(false, { nonNullable: true }),
@@ -98,6 +100,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   get customizePlaceholderEnabled() {
     return this.form.controls.customizePlaceholder.value;
+  }
+  get customizeChatPlaceholderEnabled() {
+    return this.form.controls.customizeChatPlaceholder.value;
   }
   get customizeNotEnoughDataEnabled() {
     return this.form.controls.customizeNotEnoughDataMessage.value;
