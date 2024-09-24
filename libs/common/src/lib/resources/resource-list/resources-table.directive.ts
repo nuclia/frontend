@@ -193,6 +193,12 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
           )
           .subscribe();
         break;
+      case 'hide':
+        this.changeVisibility([resource], true).subscribe();
+        break;
+      case 'unhide':
+        this.changeVisibility([resource], false).subscribe();
+        break;
     }
   }
 

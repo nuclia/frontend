@@ -36,7 +36,7 @@
               {{ 'resource.summary' | translate }}
             </pa-textarea>
 
-            @if (hiddenResources | async) {
+            @if (hiddenResourcesEnabled | async) {
               <pa-toggle
                 formControlName="hidden"
                 labelOnRight

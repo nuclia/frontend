@@ -47,7 +47,7 @@
               {{ 'resource.add_labels' | translate }}
             </app-label-dropdown>
           }
-          @if (hiddenResources | async) {
+          @if (hiddenResourcesEnabled | async) {
             <div>
               <nsi-dropdown-button
                 size="small"
@@ -251,6 +251,11 @@
                 <pa-option (selectOption)="triggerAction(row.resource, 'reprocess')">
                   {{ 'resource.reprocess' | translate }}
                 </pa-option>
+                @if (hiddenResourcesEnabled | async) {
+                  <pa-option (selectOption)="triggerAction(row.resource, row.resource.hidden ? 'unhide' : 'hide')">
+                    {{ (row.resource.hidden ? 'resource.unhide' : 'resource.hide') | translate }}
+                  </pa-option>
+                }
                 <pa-separator></pa-separator>
                 <pa-option
                   destructive

@@ -26,7 +26,7 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
   isFiltering = combineLatest([this.resourceListService.filters, this.resourceListService.query]).pipe(
     map(([filters, query]) => filters.length > 0 || query !== ''),
   );
-  hiddenResources = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources));
+  hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
 
   get initialColumns(): ColumnHeader[] {
     return [
@@ -71,13 +71,13 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
 
   private _visibleColumnDef: Observable<ColumnHeader[]> = combineLatest([
     this.isAdminOrContrib,
-    this.hiddenResources,
+    this.hiddenResourcesEnabled,
     this.columnVisibilityUpdate,
   ]).pipe(
-    map(([canEdit, hiddenResources]) => {
+    map(([canEdit, hiddenResourcesEnabled]) => {
       const visibleColumns = this.defaultColumns.map(this.getApplySortingMapper()).filter((column) => column.visible);
       const extraColumns: ColumnHeader[] = [];
-      if (hiddenResources) {
+      if (hiddenResourcesEnabled) {
         extraColumns.push({ id: 'visibility', label: 'resource.visibility', size: '96px', visible: true });
       }
       if (canEdit) {
