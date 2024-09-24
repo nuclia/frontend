@@ -1,4 +1,8 @@
-# 1.21.2 (unreleased)
+# 1.22.0 (unreleased)
+
+### Beta feature
+
+- KB Task management
 
 ### Improvement
 

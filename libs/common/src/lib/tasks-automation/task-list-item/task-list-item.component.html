@@ -11,11 +11,13 @@
         {{ 'tasks-automation.cta.see-archive' | translate }}
       </pa-button>
     }
-    <pa-button
-      aspect="basic"
-      (click)="newTask.emit()">
-      {{ 'tasks-automation.cta.new-task' | translate }}
-    </pa-button>
+    @if (newTaskFormReady) {
+      <pa-button
+        aspect="basic"
+        (click)="newTask.emit()">
+        {{ 'tasks-automation.cta.new-task' | translate }}
+      </pa-button>
+    }
   </div>
 </header>
 
@@ -35,13 +37,17 @@
     @for (task of taskList; track task) {
       <pa-table-row>
         <pa-table-cell>
-          <span class="body-s">{{ task[firstColumn.field] }}</span>
+          <span class="body-s">{{ task[firstColumn.field] || '–' }}</span>
         </pa-table-cell>
         <pa-table-cell>
           <div class="badge-container">
             @if (task.filters.length > 0) {
               @for (filter of task.filters; track filter) {
-                <nsi-badge [count]="filter.count">{{ filter.label }}</nsi-badge>
+                @if (!!filter && !!filter.count && filter.count > 0) {
+                  <nsi-badge [count]="filter.count">
+                    {{ 'tasks-automation.table.' + filter.label | translate }}
+                  </nsi-badge>
+                }
               }
             } @else {
               <nsi-badge>{{ 'tasks-automation.filters.all-resources' | translate }}</nsi-badge>
@@ -49,20 +55,23 @@
           </div>
         </pa-table-cell>
         <pa-table-cell>
-          <span class="body-s">
-            {{
-              'tasks-automation.table.processed'
-                | translate
-                  : (task.count.processed === task.count.total
-                      ? { count: task.count.total }
-                      : { count: task.count.processed + '/' + task.count.total })
-            }}
-          </span>
+          @if (task.count; as count) {
+            <span class="body-s">
+              {{
+                'tasks-automation.table.processed'
+                  | translate
+                    : (count.processed === count.total
+                        ? { count: count.total }
+                        : { count: count.processed + '/' + count.total })
+              }}
+            </span>
+          }
         </pa-table-cell>
         <pa-table-cell>
           @if (task.type === 'automated') {
             <pa-toggle
               [(value)]="task.running"
+              (valueChange)="toggleAction(task.id, $event)"
               labelOnRight>
               {{ task.running ? 'On' : 'Off' }}
             </pa-toggle>
@@ -83,9 +92,31 @@
           <pa-button
             aspect="basic"
             icon="more-vertical"
-            size="small"></pa-button>
+            size="small"
+            [paPopup]="cellMenu"></pa-button>
+
+          <pa-dropdown #cellMenu>
+            @if (task.type === 'one-time') {
+              @if (task.status === 'stopped') {
+                <pa-option (selectOption)="restart.emit(task.id)">
+                  {{ 'tasks-automation.actions.restart' | translate }}
+                </pa-option>
+              } @else {
+                <pa-option (selectOption)="stop.emit(task.id)">
+                  {{ 'tasks-automation.actions.stop' | translate }}
+                </pa-option>
+              }
+            }
+            <pa-option
+              (selectOption)="delete.emit(task.id)"
+              destructive>
+              {{ 'tasks-automation.actions.delete' | translate }}
+            </pa-option>
+          </pa-dropdown>
         </pa-table-cell-menu>
       </pa-table-row>
     }
   </pa-table>
+} @else {
+  <nsi-info-card>{{ 'tasks-automation.table.empty' | translate: { task: (taskTitle | translate) } }}</nsi-info-card>
 }

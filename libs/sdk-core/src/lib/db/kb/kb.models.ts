@@ -7,6 +7,7 @@ import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
 import { Agentic } from '../search/agentic';
 import { ActivityMonitor } from './activity';
+import { TaskManager } from '../task';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -185,6 +186,7 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   admin?: boolean;
   contrib?: boolean;
   activityMonitor?: ActivityMonitor;
+  taskManager: TaskManager;
 
   modify(data: Partial<IKnowledgeBox>): Observable<void>;
 

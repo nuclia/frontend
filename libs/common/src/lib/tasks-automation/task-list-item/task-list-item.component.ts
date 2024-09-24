@@ -1,29 +1,16 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PaButtonModule, PaDateTimeModule, PaTableModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDateTimeModule,
+  PaDropdownModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { BadgeComponent } from '@nuclia/sistema';
-
-interface BaseTask {
-  count: { total: number; processed: number };
-  creationDate: string;
-  filters: { label: string; count?: number }[];
-  hasPrompt?: boolean;
-  type: 'automated' | 'one-time';
-  fieldName?: string;
-  labelSet?: string;
-  nerFamily?: string;
-}
-
-interface AutomatedTask extends BaseTask {
-  running: boolean;
-  type: 'automated';
-}
-
-interface OneTimeTask extends BaseTask {
-  status: 'completed' | 'progress' | 'error';
-  type: 'one-time';
-}
+import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
+import { AutomatedTask, OneTimeTask } from '../tasks-automation.models';
 
 @Component({
   selector: 'app-task-list-item',
@@ -38,6 +25,9 @@ interface OneTimeTask extends BaseTask {
     BadgeComponent,
     PaTogglesModule,
     PaTogglesModule,
+    InfoCardComponent,
+    PaDropdownModule,
+    PaPopupModule,
   ],
   templateUrl: './task-list-item.component.html',
   styleUrl: './task-list-item.component.scss',
@@ -53,63 +43,30 @@ export class TaskListItemComponent {
     | 'label-ners' = 'summarize';
   @Input() taskTitle = '';
   @Input() taskDescription = '';
-  @Input() taskList: (AutomatedTask | OneTimeTask)[] = [
-    {
-      count: { total: 258, processed: 258 },
-      creationDate: new Date().toISOString(),
-      filters: [
-        { label: 'file type', count: 1 },
-        { label: 'language', count: 1 },
-      ],
-      running: true,
-      type: 'automated',
-      fieldName: 'summary_pdf',
-    },
-    {
-      count: { total: 85, processed: 85 },
-      creationDate: new Date().toISOString(),
-      filters: [{ label: 'labels', count: 120 }],
-      running: true,
-      type: 'automated',
-      fieldName: 'summary_contracts',
-    },
-    {
-      count: { total: 12, processed: 12 },
-      creationDate: new Date().toISOString(),
-      filters: [],
-      hasPrompt: true,
-      running: false,
-      type: 'automated',
-      fieldName: 'summary_test',
-    },
-    {
-      count: { total: 128, processed: 1 },
-      creationDate: new Date().toISOString(),
-      filters: [],
-      status: 'progress',
-      type: 'one-time',
-    },
-    {
-      count: { total: 12, processed: 12 },
-      creationDate: new Date().toISOString(),
-      filters: [],
-      status: 'completed',
-      type: 'one-time',
-    },
-    {
-      count: { total: 128, processed: 1 },
-      creationDate: new Date().toISOString(),
-      filters: [],
-      status: 'error',
-      type: 'one-time',
-    },
-  ];
+  @Input()
+  set taskList(list: (AutomatedTask | OneTimeTask)[] | null) {
+    if (list) {
+      this._taskList = list;
+    }
+  }
+  get taskList(): (AutomatedTask | OneTimeTask)[] {
+    return this._taskList;
+  }
   @Input({ transform: booleanAttribute }) hasArchive = false;
+  /**
+   * Temporary input allowing to display or hide the "new" button
+   */
+  @Input({ transform: booleanAttribute }) newTaskFormReady = false;
 
   @Output() newTask = new EventEmitter<void>();
   @Output() seeArchive = new EventEmitter<void>();
+  @Output() stop = new EventEmitter<string>();
+  @Output() delete = new EventEmitter<string>();
+  @Output() restart = new EventEmitter<string>();
 
-  get firstColumn(): { field: 'fieldName' | 'labelSet' | 'nerFamily'; header: string } {
+  private _taskList: (AutomatedTask | OneTimeTask)[] = [];
+
+  get firstColumn(): { field: 'fieldName' | 'labelSets' | 'nerFamily'; header: string } {
     switch (this.taskType) {
       case 'summarize':
       case 'global-question':
@@ -117,9 +74,17 @@ export class TaskListItemComponent {
         return { field: 'fieldName', header: 'tasks-automation.table.header.field-name' };
       case 'label-resources':
       case 'label-text-blocks':
-        return { field: 'labelSet', header: 'tasks-automation.table.header.label-set' };
+        return { field: 'labelSets', header: 'tasks-automation.table.header.label-sets' };
       case 'label-ners':
         return { field: 'nerFamily', header: 'tasks-automation.table.header.ner-family' };
+    }
+  }
+
+  toggleAction(taskId: string, activate: boolean) {
+    if (activate) {
+      this.restart.emit(taskId);
+    } else {
+      this.stop.emit(taskId);
     }
   }
 }
