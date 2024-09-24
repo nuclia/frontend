@@ -39,6 +39,8 @@ export interface IKnowledgeBoxCreation {
   uuid?: string;
   allowed_origins?: string[] | null;
   search_configs?: { [key: string]: any };
+  hidden_resources?: boolean;
+  hide_new_resources?: boolean;
 }
 
 export interface IKnowledgeBoxItem extends IKnowledgeBoxCreation {

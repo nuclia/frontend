@@ -321,6 +321,42 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     });
   }
 
+  changeVisibility(resources: Resource[], hide: boolean) {
+    this.isLoading = true;
+    if (resources.length > 1) {
+      this.bulkAction = {
+        inProgress: true,
+        done: 0,
+        errors: 0,
+        total: resources.length,
+        label: hide ? 'resource.hiding' : 'resource.unhiding',
+      };
+      this.cdr.markForCheck();
+    }
+    const bulkActionItems = resources.map((resource) =>
+      this.updateBulkAction(defer(() => resource.modify({ hidden: hide }))),
+    );
+    return from(bulkActionItems).pipe(
+      mergeMap((obs) => obs, 6),
+      toArray(),
+      delay(1000),
+      switchMap(() => this.resourceListService.loadResources()),
+      tap(() => {
+        this.manageBulkActionResults(hide ? 'hiding' : 'unhiding');
+        this.sdk.refreshCounter(true);
+        this.cdr.markForCheck();
+      }),
+    );
+  }
+
+  bulkChangeVisibility(hide: boolean) {
+    const resourcesObs = this.allResourcesSelected ? this.getAllResources() : this.getSelectedResources();
+    resourcesObs.pipe(switchMap((resources) => this.changeVisibility(resources, hide))).subscribe();
+    if (this.allResourcesSelected) {
+      this.allResourcesSelected = false;
+    }
+  }
+
   toggleAll() {
     forkJoin([this.allSelected.pipe(take(1)), this.data.pipe(take(1))]).subscribe(([allSelected, rows]) => {
       this.selection = allSelected ? [] : rows.map((row) => row.resource.id);
@@ -377,7 +413,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     );
   }
 
-  private manageBulkActionResults(action: 'reprocessing' | 'deleting') {
+  private manageBulkActionResults(action: 'reprocessing' | 'deleting' | 'hiding' | 'unhiding') {
     if (this.bulkAction.errors > 0) {
       const message = this.translate.instant(
         this.bulkAction.errors > 1 ? `error.${action}-resources` : `error.${action}-resource`,

@@ -34,6 +34,7 @@ export class ResourceProfileComponent implements OnInit {
     slug: new FormControl<string>('', { nonNullable: true }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     summary: new FormControl<string>('', { nonNullable: true }),
+    hidden: new FormControl<boolean>(false, { nonNullable: true }),
     origin: new FormGroup({
       collaborators: new FormControl<string>('', { nonNullable: true }),
       url: new FormControl<string>('', { nonNullable: true }),
@@ -73,6 +74,7 @@ export class ResourceProfileComponent implements OnInit {
   );
   isTrial = this.features.isTrial;
   hasBaseDropZoneOver = false;
+  hiddenResources = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources));
 
   isFormReady = false;
   isSaving = false;
@@ -114,6 +116,7 @@ export class ResourceProfileComponent implements OnInit {
       slug: data.slug,
       title: data.title,
       summary: data.summary,
+      hidden: data.hidden,
       origin: {
         collaborators: (data.origin?.collaborators || []).join(', '),
         url: data.origin?.url || '',
@@ -173,6 +176,7 @@ export class ResourceProfileComponent implements OnInit {
           slug: value.slug,
           title: value.title,
           summary: value.summary,
+          hidden: value.hidden,
           origin: {
             ...this.currentValue.origin,
             collaborators: value.origin.collaborators.split(',').map((s) => s.trim()),
@@ -285,5 +289,11 @@ export class ResourceProfileComponent implements OnInit {
 
   onResizingTextarea($event: DOMRect) {
     this.updateGeneralExpanderSize.next($event);
+  }
+
+  onToggleChange() {
+    // TODO: Toggles do not properly set the form control to dirty
+    this.form.markAsDirty();
+    this.cdr.markForCheck();
   }
 }

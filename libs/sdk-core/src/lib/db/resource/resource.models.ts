@@ -17,6 +17,7 @@ export interface IResource {
   last_seqid?: number;
   last_account_seq?: number;
   queue?: 'private' | 'shared';
+  hidden?: boolean;
 
   data?: ResourceData;
 }
@@ -43,6 +44,7 @@ export interface ICreateResource {
   texts?: { [key: string]: TextField };
   conversations?: { [key: string]: ConversationField };
   security?: Security;
+  hidden?: boolean;
 }
 
 export enum FIELD_TYPE {

@@ -38,6 +38,22 @@
             {{ 'generic.description' | translate }}
           </pa-textarea>
 
+          <pa-toggle
+            formControlName="hidden_resources"
+            (valueChange)="onToggleChange()"
+            labelOnRight>
+            {{ 'kb.form.hidden_resources' | translate }}
+          </pa-toggle>
+
+          @if (hiddenResourcesEnabled) {
+            <pa-toggle
+              formControlName="hide_new_resources"
+              (valueChange)="onToggleChange()"
+              labelOnRight>
+              {{ 'kb.form.hide-new-resources' | translate }}
+            </pa-toggle>
+          }
+
           <pa-textarea
             formControlName="allowed_origins"
             help="kb.form.allowed_origins.help"

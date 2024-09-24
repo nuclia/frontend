@@ -47,6 +47,21 @@
               {{ 'resource.add_labels' | translate }}
             </app-label-dropdown>
           }
+          @if (hiddenResources | async) {
+            <div>
+              <nsi-dropdown-button
+                size="small"
+                aspect="basic"
+                [popupRef]="visibilityActions"
+                freeWidth>
+                {{ 'resource.change-visibility' | translate }}
+              </nsi-dropdown-button>
+              <pa-dropdown #visibilityActions>
+                <pa-option (selectOption)="bulkChangeVisibility(true)">{{ 'resource.hide' | translate }}</pa-option>
+                <pa-option (selectOption)="bulkChangeVisibility(false)">{{ 'resource.unhide' | translate }}</pa-option>
+              </pa-dropdown>
+            </div>
+          }
           @if (bulkAction.inProgress) {
             <div class="body-m">
               {{ bulkAction.label | translate }}
@@ -193,6 +208,17 @@
             @if (visibleColumns.includes('language')) {
               <pa-table-cell center>
                 <span class="body-s">{{ row.resource.metadata?.language || '–' }}</span>
+              </pa-table-cell>
+            }
+            @if (visibleColumns.includes('visibility')) {
+              <pa-table-cell center>
+                @if (row.resource.hidden) {
+                  <pa-icon
+                    class="hidden"
+                    name="eye-closed"
+                    size="small"
+                    paTooltip="resource.hidden"></pa-icon>
+                }
               </pa-table-cell>
             }
           }
