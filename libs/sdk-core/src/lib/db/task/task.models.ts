@@ -41,6 +41,8 @@ export interface Operation {
       examples: string[];
       description?: string;
     }[];
+    ident?: string;
+    description?: string;
   };
   // TODO: other kinds of operation
   graph?: null;
@@ -64,13 +66,14 @@ export interface LLMConfig {
  * Parameters used to configure tasks
  */
 export interface TaskParameters {
+  name: string;
   filter: {
     contains: string[];
     resource_type: string[];
   };
   llm: LLMConfig;
   on?: TaskApplyTo;
-  operation?: Operation[];
+  operations?: Operation[];
 }
 
 export interface TaskStatus {

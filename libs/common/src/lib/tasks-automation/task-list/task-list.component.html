@@ -10,38 +10,54 @@
 
   <div class="task-list">
     <app-task-list-item
+      taskType="label-resources"
+      taskTitle="tasks-automation.label-resources.title"
+      taskDescription="tasks-automation.label-resources.description"
+      [taskList]="resourceLabelerTasks | async"
+      (newTask)="createTask('label-resources')"
+      (delete)="deleteTask($event)"
+      (restart)="restartTask($event)"
+      (stop)="stopTask($event)"></app-task-list-item>
+    <app-task-list-item
       taskType="label-text-blocks"
       taskTitle="tasks-automation.label-text-blocks.title"
       taskDescription="tasks-automation.label-text-blocks.description"
       [taskList]="textBlocksLabelerTasks | async"
-      (newTask)="createTask('label-text-blocks')"></app-task-list-item>
-
-    <!--
+      (newTask)="createTask('label-text-blocks')"
+      (delete)="deleteTask($event)"
+      (restart)="restartTask($event)"
+      (stop)="stopTask($event)"></app-task-list-item>
     <app-task-list-item
       taskType="summarize"
       taskTitle="tasks-automation.summarize-resources.title"
       taskDescription="tasks-automation.summarize-resources.description"
-      (newTask)="createTask('summarize-resources')"></app-task-list-item>
+      (newTask)="createTask('summarize-resources')"
+      (delete)="deleteTask($event)"
+      (restart)="restartTask($event)"
+      (stop)="stopTask($event)"></app-task-list-item>
     <app-task-list-item
       taskType="global-question"
       taskTitle="tasks-automation.global-question.title"
       taskDescription="tasks-automation.global-question.description"
-      (newTask)="createTask('global-question')"></app-task-list-item>
-    <app-task-list-item
-      taskType="label-resources"
-      taskTitle="tasks-automation.label-resources.title"
-      taskDescription="tasks-automation.label-resources.description"
-      (newTask)="createTask('label-resources')"></app-task-list-item>
+      (newTask)="createTask('global-question')"
+      (delete)="deleteTask($event)"
+      (restart)="restartTask($event)"
+      (stop)="stopTask($event)"></app-task-list-item>
     <app-task-list-item
       taskType="label-ners"
       taskTitle="tasks-automation.label-ners.title"
       taskDescription="tasks-automation.label-ners.description"
-      (newTask)="createTask('label-ners')"></app-task-list-item>
+      (newTask)="createTask('label-ners')"
+      (delete)="deleteTask($event)"
+      (restart)="restartTask($event)"
+      (stop)="stopTask($event)"></app-task-list-item>
     <app-task-list-item
       taskType="question-answer"
       taskTitle="tasks-automation.question-answer.title"
       taskDescription="tasks-automation.question-answer.description"
-      (newTask)="createTask('question-answer')"></app-task-list-item>
-      -->
+      (newTask)="createTask('question-answer')"
+      (delete)="deleteTask($event)"
+      (restart)="restartTask($event)"
+      (stop)="stopTask($event)"></app-task-list-item>
   </div>
 </div>

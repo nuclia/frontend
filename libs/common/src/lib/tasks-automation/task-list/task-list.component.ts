@@ -22,6 +22,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   textBlocksLabelerTasks = this.taskAutomation.textBlocksLabelerTasks;
+  resourceLabelerTasks = this.taskAutomation.resourceLabelerTasks;
 
   ngOnInit() {
     this.taskAutomation.initTaskList();
@@ -34,5 +35,17 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
   createTask(taskPath: string) {
     this.router.navigate([`./${taskPath}`], { relativeTo: this.activeRoute });
+  }
+
+  deleteTask(taskId: string) {
+    this.taskAutomation.deleteTask(taskId);
+  }
+
+  stopTask(taskId: string) {
+    this.taskAutomation.stopTask(taskId);
+  }
+
+  restartTask(taskId: string) {
+    this.taskAutomation.restartTask(taskId);
   }
 }

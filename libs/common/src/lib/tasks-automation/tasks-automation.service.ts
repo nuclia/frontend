@@ -21,6 +21,9 @@ export class TasksAutomationService {
   textBlocksLabelerTasks: Observable<(AutomatedTask | OneTimeTask)[]> = this._taskList.pipe(
     map((taskList) => taskList.filter((task) => task.taskName === 'text-blocs-labeler')),
   );
+  resourceLabelerTasks: Observable<(AutomatedTask | OneTimeTask)[]> = this._taskList.pipe(
+    map((taskList) => taskList.filter((task) => task.taskName === 'resource-labeler')),
+  );
 
   initTaskList() {
     this._currentKb
@@ -38,10 +41,35 @@ export class TasksAutomationService {
         take(1),
         switchMap((kb) =>
           kb.taskManager.stopTask(taskId).pipe(
-            switchMap((response) => {
-              console.log(response);
-              return kb.taskManager.getTasks();
-            }),
+            switchMap((response) => kb.taskManager.getTasks()),
+            map((response: TaskListResponse) => this.mapTaskList(response)),
+          ),
+        ),
+      )
+      .subscribe((taskList) => this._taskList.next(taskList));
+  }
+
+  deleteTask(taskId: string) {
+    this._currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          kb.taskManager.deleteTask(taskId).pipe(
+            switchMap((response) => kb.taskManager.getTasks()),
+            map((response: TaskListResponse) => this.mapTaskList(response)),
+          ),
+        ),
+      )
+      .subscribe((taskList) => this._taskList.next(taskList));
+  }
+
+  restartTask(taskId: string) {
+    this._currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          kb.taskManager.restartTask(taskId).pipe(
+            switchMap((response) => kb.taskManager.getTasks()),
             map((response: TaskListResponse) => this.mapTaskList(response)),
           ),
         ),

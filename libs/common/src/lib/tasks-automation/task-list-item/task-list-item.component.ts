@@ -48,70 +48,6 @@ export class TaskListItemComponent {
     if (list) {
       this._taskList = list;
     }
-    // FIXME: cleanup
-    this._taskList = [
-      {
-        id: 'id1',
-        taskName: 'text-blocs-labeler',
-        count: { total: 258, processed: 258 },
-        creationDate: new Date().toISOString(),
-        filters: [
-          { label: 'file type', count: 1 },
-          { label: 'language', count: 1 },
-        ],
-        running: true,
-        type: 'automated',
-        fieldName: 'summary_pdf',
-      },
-      {
-        id: 'id2',
-        taskName: 'text-blocs-labeler',
-        count: { total: 85, processed: 85 },
-        creationDate: new Date().toISOString(),
-        filters: [{ label: 'labels', count: 120 }],
-        running: true,
-        type: 'automated',
-        fieldName: 'summary_contracts',
-      },
-      {
-        id: 'id3',
-        taskName: 'text-blocs-labeler',
-        count: { total: 12, processed: 12 },
-        creationDate: new Date().toISOString(),
-        filters: [],
-        hasPrompt: true,
-        running: false,
-        type: 'automated',
-        fieldName: 'summary_test',
-      },
-      {
-        id: 'id4',
-        taskName: 'text-blocs-labeler',
-        count: { total: 128, processed: 1 },
-        creationDate: new Date().toISOString(),
-        filters: [],
-        status: 'progress',
-        type: 'one-time',
-      },
-      {
-        id: 'id5',
-        taskName: 'text-blocs-labeler',
-        count: { total: 12, processed: 12 },
-        creationDate: new Date().toISOString(),
-        filters: [],
-        status: 'completed',
-        type: 'one-time',
-      },
-      {
-        id: 'id6',
-        taskName: 'text-blocs-labeler',
-        count: { total: 128, processed: 1 },
-        creationDate: new Date().toISOString(),
-        filters: [],
-        status: 'error',
-        type: 'one-time',
-      },
-    ];
   }
   get taskList(): (AutomatedTask | OneTimeTask)[] {
     return this._taskList;
@@ -126,10 +62,11 @@ export class TaskListItemComponent {
   @Output() seeArchive = new EventEmitter<void>();
   @Output() stop = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
+  @Output() restart = new EventEmitter<string>();
 
   private _taskList: (AutomatedTask | OneTimeTask)[] = [];
 
-  get firstColumn(): { field: 'fieldName' | 'labelSet' | 'nerFamily'; header: string } {
+  get firstColumn(): { field: 'fieldName' | 'labelSets' | 'nerFamily'; header: string } {
     switch (this.taskType) {
       case 'summarize':
       case 'global-question':
@@ -137,9 +74,17 @@ export class TaskListItemComponent {
         return { field: 'fieldName', header: 'tasks-automation.table.header.field-name' };
       case 'label-resources':
       case 'label-text-blocks':
-        return { field: 'labelSet', header: 'tasks-automation.table.header.label-set' };
+        return { field: 'labelSets', header: 'tasks-automation.table.header.label-sets' };
       case 'label-ners':
         return { field: 'nerFamily', header: 'tasks-automation.table.header.ner-family' };
+    }
+  }
+
+  toggleAction(taskId: string, activate: boolean) {
+    if (activate) {
+      this.restart.emit(taskId);
+    } else {
+      this.stop.emit(taskId);
     }
   }
 }

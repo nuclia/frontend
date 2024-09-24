@@ -57,5 +57,11 @@ export class TaskManager {
     return this.nuclia.rest.post(`${this.kb.path}/task/${taskId}/stop`, {});
   }
 
-  // TODO retry and restart task
+  /**
+   * Restart a running task.
+   * @param taskId
+   */
+  restartTask(taskId: string): Observable<StartStopTaskResponse> {
+    return this.nuclia.rest.post(`${this.kb.path}/task/${taskId}/restart`, {});
+  }
 }

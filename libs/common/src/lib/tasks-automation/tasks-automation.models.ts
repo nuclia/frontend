@@ -4,7 +4,7 @@ export interface TaskConfiguration {
   filters: { label: string; count?: number }[];
   hasPrompt?: boolean;
   fieldName?: string;
-  labelSet?: string;
+  labelSets?: string;
   nerFamily?: string;
 }
 
@@ -22,7 +22,7 @@ export interface AutomatedTask extends BaseTask {
 }
 
 export interface OneTimeTask extends BaseTask {
-  status: 'completed' | 'progress' | 'error';
+  status: 'completed' | 'progress' | 'stopped' | 'error';
   type: 'one-time';
 }
 
@@ -31,7 +31,7 @@ export function mapBatchToOneTimeTask(task: TaskOnBatch): OneTimeTask {
     id: task.id,
     taskName: task.task.name,
     type: 'one-time',
-    status: task.completed ? 'completed' : task.failed ? 'error' : 'progress',
+    status: task.completed ? 'completed' : task.failed ? 'error' : task.stopped ? 'stopped' : 'progress',
     creationDate: task.scheduled_at,
     ...mapParameters(task.parameters),
   };
@@ -50,8 +50,14 @@ export function mapOnGoingToAutomatedTask(task: TaskOnGoing): AutomatedTask {
 
 function mapParameters(parameters: TaskParameters): TaskConfiguration {
   return {
-    filters: [], // TODO: extract filters from parameters
+    filters: [
+      { label: 'contains', count: parameters.filter.contains.length },
+      { label: 'resource_type', count: parameters.filter.resource_type.length },
+    ],
     hasPrompt: false, // TODO: extract prompt from parameters
-    labelSet: '', // TODO extract label set from parameters
+    labelSets: (parameters.operations || [])
+      .map((operation) => operation.label?.ident)
+      .filter((l) => !!l)
+      .join(', '),
   };
 }
