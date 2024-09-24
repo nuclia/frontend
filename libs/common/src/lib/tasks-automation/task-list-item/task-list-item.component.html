@@ -43,7 +43,7 @@
           <div class="badge-container">
             @if (task.filters.length > 0) {
               @for (filter of task.filters; track filter) {
-                @if (filter.count > 0) {
+                @if (filter?.count > 0) {
                   <nsi-badge [count]="filter.count">
                     {{ 'tasks-automation.table.' + filter.label | translate }}
                   </nsi-badge>
@@ -96,14 +96,16 @@
             [paPopup]="cellMenu"></pa-button>
 
           <pa-dropdown #cellMenu>
-            @if (task.status === 'stopped') {
-              <pa-option (selectOption)="restart.emit(task.id)">
-                {{ 'tasks-automation.actions.restart' | translate }}
-              </pa-option>
-            } @else {
-              <pa-option (selectOption)="stop.emit(task.id)">
-                {{ 'tasks-automation.actions.stop' | translate }}
-              </pa-option>
+            @if (task.type === 'one-time') {
+              @if (task.status === 'stopped') {
+                <pa-option (selectOption)="restart.emit(task.id)">
+                  {{ 'tasks-automation.actions.restart' | translate }}
+                </pa-option>
+              } @else {
+                <pa-option (selectOption)="stop.emit(task.id)">
+                  {{ 'tasks-automation.actions.stop' | translate }}
+                </pa-option>
+              }
             }
             <pa-option
               (selectOption)="delete.emit(task.id)"
