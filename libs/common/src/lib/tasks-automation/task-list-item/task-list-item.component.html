@@ -43,7 +43,7 @@
           <div class="badge-container">
             @if (task.filters.length > 0) {
               @for (filter of task.filters; track filter) {
-                @if (filter?.count > 0) {
+                @if (!!filter && !!filter.count && filter.count > 0) {
                   <nsi-badge [count]="filter.count">
                     {{ 'tasks-automation.table.' + filter.label | translate }}
                   </nsi-badge>
