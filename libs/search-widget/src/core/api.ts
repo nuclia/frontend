@@ -50,6 +50,7 @@ let MAX_PARAGRAPHS: number | undefined = undefined;
 let QUERY_PREPEND = '';
 let NO_CHAT_HISTORY = false;
 let DEBUG = false;
+let SHOW_HIDDEN = false;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -79,11 +80,15 @@ export const initNuclia = (
   if (widgetOptions.features?.useSynonyms) {
     SEARCH_OPTIONS.with_synonyms = true;
   }
+  if (widgetOptions.features?.showHidden) {
+    SEARCH_OPTIONS.show_hidden = true;
+  }
   CITATIONS = !!widgetOptions.features?.citations;
   REPHRASE = !!widgetOptions.features?.rephrase;
   ASK_TO_RESOURCE = widgetOptions.ask_to_resource || '';
   NO_CHAT_HISTORY = !!widgetOptions.features?.noChatHistory;
   DEBUG = !!widgetOptions.features?.debug;
+  SHOW_HIDDEN = !!widgetOptions.features?.showHidden;
 
   nucliaApi = new Nuclia(options);
   if (!noTracking) {
@@ -190,6 +195,7 @@ export const getAnswer = (
     max_tokens: MAX_TOKENS,
     top_k: MAX_PARAGRAPHS,
     debug: DEBUG,
+    show_hidden: SHOW_HIDDEN,
   };
   if (prompt || systemPrompt) {
     defaultOptions.prompt = { user: prompt || undefined, system: systemPrompt || undefined };
