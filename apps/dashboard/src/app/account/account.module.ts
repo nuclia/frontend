@@ -41,7 +41,7 @@ import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
 import { AccountStatusComponent } from './account-status/account-status.component';
 import { BillingModule } from './billing/billing.module';
-import { UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
+import { LowerCaseInputDirective, UnauthorizedFeatureComponent, UnauthorizedFeatureDirective } from '@flaps/core';
 import { KbListComponent } from './account-kbs/kb-list/kb-list.component';
 import { BillingComponent } from './billing/billing.component';
 import { RedirectComponent } from './billing/redirect.component';
@@ -165,6 +165,7 @@ const routes: Routes = [
     UnauthorizedFeatureComponent,
     UnauthorizedFeatureDirective,
     NucliaTokensComponent,
+    LowerCaseInputDirective,
   ],
   declarations: [
     AccountHomeComponent,

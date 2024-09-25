@@ -25,7 +25,8 @@
             name="username"
             type="email"
             [errorMessages]="loginValidationMessages.email"
-            (enter)="onEnterPressed('email')">
+            (enter)="onEnterPressed('email')"
+            stfLowerCaseInput>
             {{ 'login.email' | translate }}
           </pa-input>
         </div>

@@ -28,7 +28,8 @@
           type="email"
           help="account.invite-collaborators.add-users.email.help"
           [formControl]="email"
-          (enter)="addUser()">
+          (enter)="addUser()"
+          stfLowerCaseInput>
           {{ 'account.invite-collaborators.add-users.email.label' | translate }}
         </pa-input>
       </div>
