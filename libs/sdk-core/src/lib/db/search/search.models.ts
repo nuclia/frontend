@@ -61,6 +61,7 @@ export interface BaseSearchOptions {
   rephrase?: boolean;
   vectorset?: string;
   debug?: boolean;
+  show_hidden?: boolean;
 }
 
 export interface ChatOptions extends BaseSearchOptions {
@@ -94,6 +95,10 @@ export interface SearchOptions extends BaseSearchOptions {
   with_status?: ResourceStatus;
   with_duplicates?: boolean;
   with_synonyms?: boolean;
+}
+
+export interface CatalogOptions extends SearchOptions {
+  hidden?: boolean;
 }
 
 export enum SHORT_FIELD_TYPE {

@@ -26,6 +26,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl<string>('', { nonNullable: true }),
     allowed_origins: new FormControl<string | null>(null),
+    hidden_resources_enabled: new FormControl<boolean>(false, { nonNullable: true }),
+    hidden_resources_hide_on_creation: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -37,6 +39,9 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   // accessors
   get zoneValue() {
     return this.kbForm.controls.zone.value;
+  }
+  get hiddenResourcesEnabled() {
+    return this.kbForm.controls.hidden_resources_enabled.value;
   }
 
   saving = false;
@@ -71,6 +76,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         title: this.kb.title,
         description: this.kb.description || '',
         allowed_origins: (this.kb.allowed_origins || []).join('\n'),
+        hidden_resources_enabled: this.kb.hidden_resources_enabled || false,
+        hidden_resources_hide_on_creation: this.kb.hidden_resources_hide_on_creation || false,
       });
       this.kbForm.markAsPristine();
       this.cdr.markForCheck();
@@ -100,6 +107,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         description: kbDetails.description,
         slug: newSlug,
         allowed_origins: !!origins && origins.length > 0 ? origins : null,
+        hidden_resources_enabled: kbDetails.hidden_resources_enabled,
+        hidden_resources_hide_on_creation: kbDetails.hidden_resources_enabled
+          ? kbDetails.hidden_resources_hide_on_creation
+          : false,
       })
       .pipe(
         tap(() => this.toast.success(this.translate.instant('kb.settings.toasts.success'))),
@@ -148,5 +159,11 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         next: () => this.cdr.markForCheck(),
         error: () => this.toast.error(`stash.${label}.error`),
       });
+  }
+
+  onToggleChange() {
+    // TODO: Toggles do not properly set the form control to dirty
+    this.kbForm.markAsDirty();
+    this.cdr.markForCheck();
   }
 }

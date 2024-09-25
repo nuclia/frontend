@@ -361,12 +361,13 @@ export class UploadService {
    * Those results contain the facets in `fulltext` property,
    * but they also return the first page of resources the KB contains with their status and seqid.
    */
-  getResourceStatusCount(): Observable<Search.Results> {
+  getResourceStatusCount(includeResources = false): Observable<Search.Results> {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
         kb.catalog('', {
           faceted: [STATUS_FACET],
+          page_size: includeResources ? undefined: 0,
         }),
       ),
       filter((results) => results.type !== 'error' && !!results.fulltext?.facets),

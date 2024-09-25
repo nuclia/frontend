@@ -22,8 +22,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { SearchBoxConfig } from '../../search-widget.models';
 import { filter, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
+import { map, takeUntil } from 'rxjs/operators';
+import { FeaturesService, SDKService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { FilterAssistantModalComponent } from '../filter-assistant';
 
 @Component({
@@ -48,6 +48,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
   private modalService = inject(SisModalService);
+  private sdk = inject(SDKService);
 
   @Input() set config(value: SearchBoxConfig | undefined) {
     if (value) {
@@ -88,11 +89,13 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     generateAnswerWith: new FormControl<'only-semantic' | 'semantic-and-full-text'>('semantic-and-full-text', {
       nonNullable: true,
     }),
+    showHiddenResources: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   synonymsEnabled = this.featuresService.unstable.synonyms;
   autocompleteFromNerEnabled = this.featuresService.unstable.suggestEntities;
   isTrainingEnabled = this.featuresService.unstable.training;
+  hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled ));
 
   get filterEnabled() {
     return this.form.controls.filter.value;

@@ -36,6 +36,14 @@
               {{ 'resource.summary' | translate }}
             </pa-textarea>
 
+            @if (hiddenResourcesEnabled | async) {
+              <pa-toggle
+                formControlName="hidden"
+                labelOnRight
+                (valueChange)="onToggleChange()">
+                {{ 'resource.hidden' | translate }}
+              </pa-toggle>
+            }
             <div>
               <div>
                 <label class="title-s">

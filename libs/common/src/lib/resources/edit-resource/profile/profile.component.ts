@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
-import { delay, shareReplay, takeUntil } from 'rxjs/operators';
+import { delay, shareReplay, take, takeUntil } from 'rxjs/operators';
 import { EditResourceService } from '../edit-resource.service';
 import { JsonValidator } from '../../../validators';
 import { ActivatedRoute } from '@angular/router';
@@ -34,6 +34,7 @@ export class ResourceProfileComponent implements OnInit {
     slug: new FormControl<string>('', { nonNullable: true }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     summary: new FormControl<string>('', { nonNullable: true }),
+    hidden: new FormControl<boolean>(false, { nonNullable: true }),
     origin: new FormGroup({
       collaborators: new FormControl<string>('', { nonNullable: true }),
       url: new FormControl<string>('', { nonNullable: true }),
@@ -73,6 +74,7 @@ export class ResourceProfileComponent implements OnInit {
   );
   isTrial = this.features.isTrial;
   hasBaseDropZoneOver = false;
+  hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
 
   isFormReady = false;
   isSaving = false;
@@ -114,6 +116,7 @@ export class ResourceProfileComponent implements OnInit {
       slug: data.slug,
       title: data.title,
       summary: data.summary,
+      hidden: data.hidden,
       origin: {
         collaborators: (data.origin?.collaborators || []).join(', '),
         url: data.origin?.url || '',
@@ -136,24 +139,34 @@ export class ResourceProfileComponent implements OnInit {
 
   save() {
     this.isSaving = true;
-    const data: Partial<Resource> = this.getValue();
-    if (!this.newThumbnail) {
-      data.thumbnail = this.selectedThumbnail;
-    }
+    this.hiddenResourcesEnabled
+      .pipe(
+        take(1),
+        switchMap((enabled) => {
+          const data: Partial<Resource> = this.getValue(enabled);
+          if (!this.newThumbnail) {
+            data.thumbnail = this.selectedThumbnail;
+          }
 
-    const request: Observable<void | null> = this.newThumbnail
-      ? this.saveNewThumbnailAndPartialResource(data)
-      : this.editResource.savePartialResource(data);
+          const request: Observable<void | null> = this.newThumbnail
+            ? this.saveNewThumbnailAndPartialResource(data)
+            : this.editResource.savePartialResource(data);
 
-    request.pipe(switchMap(() => this.deleteOldThumbnails())).subscribe(() => {
-      this.form.markAsPristine();
-      this.thumbnailsToBeDeleted.next([]);
-      this.newThumbnail = undefined;
-      this.extraMetadata = data.extra?.metadata;
-      this.editExtraMetadata = false;
-      this.isSaving = false;
-      this.cdr.markForCheck();
-    });
+          return request.pipe(
+            switchMap(() => this.deleteOldThumbnails()),
+            tap(() => {
+              this.form.markAsPristine();
+              this.thumbnailsToBeDeleted.next([]);
+              this.newThumbnail = undefined;
+              this.extraMetadata = data.extra?.metadata;
+              this.editExtraMetadata = false;
+              this.isSaving = false;
+              this.cdr.markForCheck();
+            }),
+          );
+        }),
+      )
+      .subscribe();
   }
 
   cancel() {
@@ -166,13 +179,14 @@ export class ResourceProfileComponent implements OnInit {
     }
   }
 
-  getValue(): Partial<Resource> {
+  getValue(hiddenResources = false): Partial<Resource> {
     const value = this.form.getRawValue();
     return this.currentValue
       ? {
           slug: value.slug,
           title: value.title,
           summary: value.summary,
+          hidden: hiddenResources ? value.hidden : undefined,
           origin: {
             ...this.currentValue.origin,
             collaborators: value.origin.collaborators.split(',').map((s) => s.trim()),
@@ -285,5 +299,11 @@ export class ResourceProfileComponent implements OnInit {
 
   onResizingTextarea($event: DOMRect) {
     this.updateGeneralExpanderSize.next($event);
+  }
+
+  onToggleChange() {
+    // TODO: Toggles do not properly set the form control to dirty
+    this.form.markAsDirty();
+    this.cdr.markForCheck();
   }
 }

@@ -1,11 +1,11 @@
 import {
+  CatalogOptions,
   Classification,
   Filter,
   FilterOperator,
   Resource,
   RESOURCE_STATUS,
   Search,
-  SearchOptions,
   SortField,
   SortOption,
   WritableKnowledgeBox,
@@ -13,7 +13,7 @@ import {
 import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CREATION_END_PREFIX, CREATION_START_PREFIX, getDateFromFilter } from '../resource-filters.utils';
+import { CREATION_END_PREFIX, CREATION_START_PREFIX, getDateFromFilter, getVisibilityFromFilter, HIDDEN_PREFIX } from '../resource-filters.utils';
 
 export interface ColoredLabel extends Classification {
   color: string;
@@ -33,7 +33,7 @@ export interface ColumnHeader extends IHeaderCell {
   visible?: boolean;
 }
 
-export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reprocess' | 'summarize';
+export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reprocess' | 'summarize' | 'hide' | 'unhide';
 
 export const DEFAULT_PREFERENCES = {
   columns: ['modification', 'language'],
@@ -60,7 +60,7 @@ export interface ResourceListParams {
   query: string;
   filters: string[];
 }
-export function getSearchOptions(params: ResourceListParams): SearchOptions {
+export function getSearchOptions(params: ResourceListParams): CatalogOptions {
   const filters: Filter[] = [
     { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/icon/')) },
     { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
@@ -68,6 +68,7 @@ export function getSearchOptions(params: ResourceListParams): SearchOptions {
   ].filter((item) => (Object.values(item)[0] || []).length > 0);
   const start = params.filters.find((filter) => filter.startsWith(CREATION_START_PREFIX));
   const end = params.filters.find((filter) => filter.startsWith(CREATION_END_PREFIX));
+  const hiddenFilter = params.filters.find((filter) => filter.startsWith(HIDDEN_PREFIX));
 
   return {
     page_number: params.page,
@@ -75,6 +76,7 @@ export function getSearchOptions(params: ResourceListParams): SearchOptions {
     sort: params.sort,
     range_creation_start: start ? getDateFromFilter(start) : undefined,
     range_creation_end: end ? getDateFromFilter(end) : undefined,
+    hidden: hiddenFilter ? getVisibilityFromFilter(hiddenFilter) : undefined,
     filters,
   };
 }

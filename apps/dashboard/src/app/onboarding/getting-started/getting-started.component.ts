@@ -176,7 +176,7 @@ export class GettingStartedComponent implements OnDestroy {
           return this.sdk.currentKb.pipe(
             take(1),
             switchMap((kb) =>
-              this.uploadService.getResourceStatusCount().pipe(
+              this.uploadService.getResourceStatusCount(true).pipe(
                 // repeat until allProcessed but with a step-back increasing by 3s at every step but maxing out at POLLING_DELAY
                 repeat({ delay: (count) => timer(Math.min(POLLING_DELAY, count * 3000)) }),
                 takeUntil(this.allProcessed),

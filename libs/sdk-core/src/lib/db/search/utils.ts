@@ -98,4 +98,5 @@ export interface WidgetFeatures {
   openNewTab?: boolean;
   orFilterLogic?: boolean;
   noChatHistory?: boolean;
+  showHidden?: boolean;
 }

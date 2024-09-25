@@ -8,6 +8,7 @@ export const MAX_FACETS_PER_REQUEST = 50;
 
 export const CREATION_START_PREFIX = '/creation/start/';
 export const CREATION_END_PREFIX = '/creation/end/';
+export const HIDDEN_PREFIX = '/hidden/';
 
 export interface Filters {
   classification: OptionModel[];
@@ -17,6 +18,7 @@ export interface Filters {
     start?: { filter: string; date: string };
     end?: { filter: string; date: string };
   };
+  hidden?: boolean;
 }
 
 export function getOptionFromFacet(
@@ -105,6 +107,8 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
     start: start ? { filter: start, date: getDateFromFilter(start) } : undefined,
     end: end ? { filter: end, date: getDateFromFilter(end) } : undefined,
   };
+  const hidden = queryParamsFilters.find((param) => param.startsWith(HIDDEN_PREFIX));
+  filters.hidden = hidden ? getVisibilityFromFilter(hidden) : undefined;
 
   return filters;
 }
@@ -115,4 +119,12 @@ export function getDateFromFilter(dateFilter: string) {
 
 export function getFilterFromDate(date: string, type: 'start' | 'end') {
   return `${type === 'start' ? CREATION_START_PREFIX : CREATION_END_PREFIX}${date}`;
+}
+
+export function getVisibilityFromFilter(filter: string) {
+  return filter.split('/').slice(-1)[0] === 'true';
+}
+
+export function getFilterFromVisibility(hidden: boolean) {
+  return `${HIDDEN_PREFIX}/${hidden ? 'true' : 'false'}`
 }

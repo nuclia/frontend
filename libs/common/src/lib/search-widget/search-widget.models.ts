@@ -27,6 +27,7 @@ export interface SearchBoxConfig {
   queryPrepend: string;
   rephraseQuery: boolean;
   generateAnswerWith: 'only-semantic' | 'semantic-and-full-text';
+  showHiddenResources: boolean;
 }
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
@@ -134,6 +135,7 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   queryPrepend: '',
   rephraseQuery: false,
   generateAnswerWith: 'semantic-and-full-text',
+  showHiddenResources: false,
 };
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generateAnswer: false,
@@ -231,6 +233,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     suggestions: config.searchBox.suggestions,
     suggestLabels: config.searchBox.suggestLabels,
     autocompleteFromNERs: config.searchBox.suggestions && config.searchBox.autocompleteFromNERs,
+    showHidden: config.searchBox.showHiddenResources,
     citations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'citations',
     hideResults: !config.resultDisplay.displayResults || config.resultDisplay.showResultType === 'citations',
     displayMetadata: config.resultDisplay.displayMetadata,

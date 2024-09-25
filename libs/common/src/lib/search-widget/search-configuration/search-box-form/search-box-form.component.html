@@ -136,6 +136,21 @@
       </pa-input>
     </div>
   </div>
+  @if (hiddenResourcesEnabled) {
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="showHiddenResources"
+        withBackground
+        spaceBetweenLabelAndToggle>
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.show-hidden-resources.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.show-hidden-resources.toggle-description' | translate }}
+      </div>
+    </div>
+  }
   <div class="config-form-field">
     <pa-toggle
       formControlName="suggestions"

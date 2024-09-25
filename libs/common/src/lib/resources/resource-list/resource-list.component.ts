@@ -11,6 +11,7 @@ import {
   Filters,
   formatFiltersFromFacets,
   getFilterFromDate,
+  getFilterFromVisibility,
   MAX_FACETS_PER_REQUEST,
   MIME_FACETS,
 } from '../resource-filters.utils';
@@ -35,11 +36,12 @@ export class ResourceListComponent implements OnDestroy {
   emptyKb = this.resourceListService.totalKbResources.pipe(map((total) => total === 0));
   ready = this.resourceListService.ready;
   isShardReady = this.resourceListService.isShardReady;
+  hiddenResourcesEnabled = this.resourceListService.hiddenResourcesEnabled;
 
   labelSets = this.resourceListService.labelSets;
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
-  filterOptions: Filters = { classification: [], mainTypes: [], creation: {} };
+  filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
 
   dateForm = new FormGroup({
     start: new FormControl<string>(''),
@@ -89,7 +91,7 @@ export class ResourceListComponent implements OnDestroy {
           if (this.isMainView || this.isProcessedView) {
             return this.loadFilters();
           } else {
-            this.filterOptions = { classification: [], mainTypes: [], creation: {} };
+            this.filterOptions = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
             this.cdr.markForCheck();
             return of(null);
           }
@@ -152,6 +154,16 @@ export class ResourceListComponent implements OnDestroy {
     this.onToggleFilter();
   }
 
+  onHiddenChange(hidden: boolean) {
+    this.filterOptions.hidden = this.filterOptions.hidden === hidden ? undefined : hidden;
+    this.onToggleFilter();
+  }
+
+  clearHidden() {
+    this.filterOptions.hidden = undefined;
+    this.onToggleFilter();
+  }
+
   clearFilter(option: OptionModel) {
     option.selected = !option.selected;
     this.onToggleFilter();
@@ -172,6 +184,7 @@ export class ResourceListComponent implements OnDestroy {
     this.resourceListService.filter([]);
     this.filterOptions.classification.forEach((option) => (option.selected = false));
     this.filterOptions.mainTypes.forEach((option) => (option.selected = false));
+    this.filterOptions.hidden = undefined;
   }
 
   get selectedMainTypes() {
@@ -182,6 +195,10 @@ export class ResourceListComponent implements OnDestroy {
     return this.filterOptions.classification.filter((option) => option.selected);
   }
 
+  get selectedVisibility() {
+    return this.filterOptions.hidden !== undefined ? getFilterFromVisibility(this.filterOptions.hidden) : [];
+  }
+
   get selectedDates() {
     const start = this.filterOptions.creation?.start ? [this.filterOptions.creation.start.filter] : [];
     const end = this.filterOptions.creation?.end ? [this.filterOptions.creation.end.filter] : [];
@@ -189,7 +206,10 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   get selectedFilters(): string[] {
-    return this.getSelectionFor('classification').concat(this.getSelectionFor('mainTypes')).concat(this.selectedDates);
+    return this.getSelectionFor('classification')
+      .concat(this.getSelectionFor('mainTypes'))
+      .concat(this.selectedDates)
+      .concat(this.selectedVisibility);
   }
 
   private getSelectionFor(type: 'classification' | 'mainTypes') {
