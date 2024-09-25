@@ -921,6 +921,7 @@
 	"resource.menu.label": "More",
 	"resource.menu.summarize": "Summarize",
 	"resource.no-results": "No results",
+	"resource.non-hidden": "Non-hidden",
 	"resource.origin.collaborators": "Collaborators",
 	"resource.origin.collaborators-helper": "Comma-separated list of collaborators",
 	"resource.origin.created": "Created",

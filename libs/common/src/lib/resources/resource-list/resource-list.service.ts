@@ -90,6 +90,7 @@ export class ResourceListService {
   );
 
   totalKbResources = this.uploadService.statusCount.pipe(map((count) => count.processed + count.pending + count.error));
+  hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
 
   prevFilters = this._filters.pipe(
     startWith([]),

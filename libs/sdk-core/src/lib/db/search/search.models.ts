@@ -97,6 +97,10 @@ export interface SearchOptions extends BaseSearchOptions {
   with_synonyms?: boolean;
 }
 
+export interface CatalogOptions extends SearchOptions {
+  hidden?: boolean;
+}
+
 export enum SHORT_FIELD_TYPE {
   text = 't',
   file = 'f',

@@ -108,6 +108,34 @@
             </pa-dropdown>
           </div>
 
+          @if (hiddenResourcesEnabled | async) {
+            <div>
+              <nsi-dropdown-button
+                freeWidth
+                aspect="basic"
+                [popupRef]="visibilityFilters">
+                {{ 'resource.visibility' | translate }}
+                {{ filterOptions.hidden !== undefined ? '(1)' : '' }}
+              </nsi-dropdown-button>
+              <pa-dropdown #visibilityFilters>
+                <pa-option dontCloseOnSelect>
+                  <pa-checkbox
+                    [value]="filterOptions.hidden === true"
+                    (change)="onHiddenChange(true)">
+                    {{ 'resource.hidden' | translate }}
+                  </pa-checkbox>
+                </pa-option>
+                <pa-option dontCloseOnSelect>
+                  <pa-checkbox
+                    [value]="filterOptions.hidden === false"
+                    (change)="onHiddenChange(false)">
+                    {{ 'resource.non-hidden' | translate }}
+                  </pa-checkbox>
+                </pa-option>
+              </pa-dropdown>
+            </div>
+          }
+
           @if (isMainView || isProcessedView) {
             <pa-input
               icon="search"
@@ -174,6 +202,12 @@
             {{ 'resource.filter.until' | translate }}:
             <span>{{ filterOptions.creation.end.date | date: 'mediumDate' }}</span>
           </pa-chip-closeable>
+        }
+        @if (filterOptions.hidden === true) {
+          <pa-chip-closeable (closed)="clearHidden()">{{ 'resource.hidden' | translate }}</pa-chip-closeable>
+        }
+        @if (filterOptions.hidden === false) {
+          <pa-chip-closeable (closed)="clearHidden()">{{ 'resource.non-hidden' | translate }}</pa-chip-closeable>
         }
         @if (showClearButton | async) {
           <pa-button
