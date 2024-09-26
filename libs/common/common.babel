@@ -13169,7 +13169,7 @@
 										<name>semantic-model</name>
 										<children>
 											<folder_node>
-												<name>available-models</name>
+												<name>default-model</name>
 												<children>
 													<concept_node>
 														<name>description</name>
