@@ -5,8 +5,9 @@
       <div class="label-selector">
         @for (label of labelset.value.labels; track label) {
           <pa-checkbox
+            [noEllipsis]="true"
             [value]="currentSelection[labelset.key + LABEL_SEPARATOR + label.title]"
-            (valueChange)="onSelection({ selected: $event, labelset: labelset.key, label: label.title })">
+            (change)="onSelection({ selected: $event, labelset: labelset.key, label: label.title })">
             {{ label.title }}
           </pa-checkbox>
         }
