@@ -8,7 +8,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { Router, RouterLink } from '@angular/router';
-import { NavigationService, SDKService } from '@flaps/core';
+import { LowerCaseInputDirective, NavigationService, SDKService } from '@flaps/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SisToastService } from '@nuclia/sistema';
@@ -27,6 +27,7 @@ import { catchError } from 'rxjs/operators';
     PaTogglesModule,
     TranslateModule,
     ReactiveFormsModule,
+    LowerCaseInputDirective,
   ],
   templateUrl: './invite-collaborators-modal.component.html',
   styleUrl: './invite-collaborators-modal.component.scss',

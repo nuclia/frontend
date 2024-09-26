@@ -25,7 +25,8 @@
         type="email"
         [help]="'signup.email.help' | translate"
         formControlName="email"
-        [errorMessages]="validationMessages.email">
+        [errorMessages]="validationMessages.email"
+        stfLowerCaseInput>
         {{ 'login.email' | translate }}
       </pa-input>
       <nsi-password-input

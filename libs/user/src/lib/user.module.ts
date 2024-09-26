@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { authGuard } from '@flaps/core';
+import { authGuard, LowerCaseInputDirective } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { NgxCaptchaModule } from 'ngx-captcha';
@@ -118,6 +118,7 @@ export const userRoutes: Routes = [
     ZoneStepComponent,
     EmbeddingModelStepComponent,
     VectorDatabaseStepComponent,
+    LowerCaseInputDirective,
   ],
   exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
 })
