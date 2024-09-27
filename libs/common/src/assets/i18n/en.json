@@ -627,6 +627,7 @@
 	"label-set.delete.confirm-title": "Are you sure you want to delete \"{{labelset}}\" label set?",
 	"label-set.delete.label": "Delete label set",
 	"label-set.edit": "Edit label set",
+	"label-set.filter": "Filter",
 	"label-set.form.exclusive.checkbox": "Add only one label by label set",
 	"label-set.form.exclusive.description": "By default, a resource / text block can have several labels from a same label set.",
 	"label-set.form.exclusive.label": "Exclusive label",

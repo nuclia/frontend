@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { LabelSets } from '@nuclia/core';
-import { PaExpanderModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { Label, LabelSets } from '@nuclia/core';
+import { PaExpanderModule, PaTogglesModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { CommonModule } from '@angular/common';
 import { getLabelFromSelectionKey, getSelectionKey, LABEL_SEPARATOR } from './classification.helpers';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
-  imports: [PaExpanderModule, CommonModule, PaTogglesModule],
+  imports: [PaExpanderModule, CommonModule, PaTextFieldModule, PaTogglesModule, TranslateModule],
   selector: 'nsi-labels-expander',
   templateUrl: './labels-expander.component.html',
   styleUrls: ['./labels-expander.component.scss'],
@@ -18,6 +19,21 @@ export class LabelsExpanderComponent {
 
   @Output() updateSelection = new EventEmitter<{ [id: string]: boolean }>();
   LABEL_SEPARATOR = LABEL_SEPARATOR;
+  maxLabels = 100;
+  filters: { [key: string]: string | undefined } = {};
+  filteredLabels: { [key: string]: Label[] | undefined } = {};
+
+  onFilter(labelSet: string, filter: string) {
+    this.filters[labelSet] = filter;
+    if (filter.length < 2) {
+      this.filteredLabels[labelSet] = undefined;
+    } else {
+      const lowercaseFilter = filter.toLowerCase();
+      this.filteredLabels[labelSet] = this.labelSets?.[labelSet].labels.filter(
+        (label) => label.title.toLocaleLowerCase().includes(lowercaseFilter),
+      );
+    }
+  }
 
   onSelection(data: { labelset: string; label: string; selected: boolean }) {
     if (!data.selected) {
