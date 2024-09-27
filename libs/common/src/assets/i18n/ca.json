@@ -627,6 +627,7 @@
 	"label-set.delete.confirm-title": "Esteu segur que voleu suprimir el conjunt d’etiquetes \"{{labelset}}\"?",
 	"label-set.delete.label": "Suprimeix el conjunt d’etiquetes",
 	"label-set.edit": "Edita el conjunt d’etiquetes",
+	"label-set.filter": "Filtrar",
 	"label-set.form.exclusive.checkbox": "Afegiu només una etiqueta per conjunt d’etiquetes",
 	"label-set.form.exclusive.description": "Per defecte, un recurs/bloc de text pot tenir diverses etiquetes d’un mateix conjunt d’etiquetes.",
 	"label-set.form.exclusive.label": "Etiqueta exclusiva",

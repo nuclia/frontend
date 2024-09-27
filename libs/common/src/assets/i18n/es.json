@@ -627,6 +627,7 @@
 	"label-set.delete.confirm-title": "¿Está seguro de que desea eliminar el conjunto de etiquetas \"{{labelset}}\"?",
 	"label-set.delete.label": "Eliminar conjunto de etiquetas",
 	"label-set.edit": "Editar conjunto de etiquetas",
+	"label-set.filter": "Filtrar",
 	"label-set.form.exclusive.checkbox": "Agregar solo una etiqueta por conjunto de etiquetas",
 	"label-set.form.exclusive.description": "Por defecto, un recurso / bloque de texto puede tener varias etiquetas de un mismo conjunto de etiquetas.",
 	"label-set.form.exclusive.label": "Etiqueta exclusiva",

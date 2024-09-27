@@ -627,6 +627,7 @@
 	"label-set.delete.confirm-title": "Êtes-vous sûr de vouloir supprimer le jeu d’étiquettes « {{labelset}} » ?",
 	"label-set.delete.label": "Supprimer le jeu d’étiquettes",
 	"label-set.edit": "Modifier le jeu d’étiquettes",
+	"label-set.filter": "Filtre",
 	"label-set.form.exclusive.checkbox": "Ajouter une seule étiquette par jeu d’étiquettes",
 	"label-set.form.exclusive.description": "Par défaut, une ressource / un bloc de texte peut avoir plusieurs étiquettes issues d’un même jeu d’étiquettes.",
 	"label-set.form.exclusive.label": "Étiquette exclusive",

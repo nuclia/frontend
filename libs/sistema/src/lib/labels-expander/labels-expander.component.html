@@ -1,12 +1,30 @@
 @for (labelset of labelSets | keyvalue; track labelset) {
-  <pa-expander>
+  <pa-expander #expander>
     <pa-expander-header>{{ labelset.value.title }}</pa-expander-header>
     <pa-expander-body>
       <div class="label-selector">
-        @for (label of labelset.value.labels; track label) {
+        @if (labelset.value.labels.length > maxLabels) {
+          <div class="filter">
+            <pa-input
+              [value]="filters[labelset.key] || ''"
+              (valueChange)="onFilter(labelset.key, $event); expander.contentLoaded = true">
+              {{ 'label-set.filter' | translate }}
+            </pa-input>
+          </div>
+        }
+        @for (
+          label of filteredLabels[labelset.key]?.slice(0, maxLabels) || labelset.value.labels.slice(0, maxLabels);
+          track label
+        ) {
           <pa-checkbox
             [value]="currentSelection[labelset.key + LABEL_SEPARATOR + label.title]"
-            (valueChange)="onSelection({ selected: $event, labelset: labelset.key, label: label.title })">
+            (change)="
+              onSelection({
+                selected: !currentSelection[labelset.key + LABEL_SEPARATOR + label.title],
+                labelset: labelset.key,
+                label: label.title
+              })
+            ">
             {{ label.title }}
           </pa-checkbox>
         }
