@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
-import { Observable, switchMap } from 'rxjs';
+import { catchError, defer, from, map, Observable, of, switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
@@ -16,6 +16,8 @@ interface Row {
   css_selector?: string;
   xpath?: string;
 }
+
+type UploadOption = 'one' | 'multiple' | 'csv' | 'sitemap';
 
 @Component({
   selector: 'app-create-link',
@@ -31,7 +33,7 @@ export class CreateLinkComponent {
       validators: [Validators.pattern(/^([\r\n]*http(s?):\/\/.*?)+$/)],
     }),
     linkTo: new FormControl<'web' | 'file'>('web', { nonNullable: true }),
-    type: new FormControl<'one' | 'multiple' | 'csv'>('one', { nonNullable: true }),
+    type: new FormControl<UploadOption>('one', { nonNullable: true }),
     css_selector: new FormControl<string | null>(null),
     xpath: new FormControl<string | null>(null),
   });
@@ -44,10 +46,19 @@ export class CreateLinkComponent {
   pending = false;
   selectedLabels: Classification[] = [];
   csv: Row[] = [];
+  sitemapLinks: string[] = [];
 
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
+
+  get invalid() {
+    return (
+      (this.linkForm.value.type === 'csv' && this.csv.length === 0) ||
+      (this.linkForm.value.type === 'sitemap' && this.sitemapLinks.length === 0) ||
+      (['one', 'multiple'].includes(this.linkForm.value.type || '') && this.linkForm.invalid)
+    );
+  }
 
   constructor(
     public modal: ModalRef,
@@ -58,6 +69,10 @@ export class CreateLinkComponent {
     private cdr: ChangeDetectorRef,
     private standaloneService: StandaloneService,
   ) {}
+
+  onTypeChange(type: UploadOption) {
+    type === 'sitemap' ? this.linkForm.controls.linkTo.disable() : this.linkForm.controls.linkTo.enable();
+  }
 
   add() {
     if (this.linkForm.valid) {
@@ -112,6 +127,25 @@ export class CreateLinkComponent {
               ),
             );
           break;
+        case 'sitemap':
+          this.tracking.logEvent('link_upload_from_sitemap');
+          obs = this.uploadService.bulkUpload(
+            this.sitemapLinks.map((link) =>
+              defer(() => from(fetch(link, { method: 'HEAD' }))).pipe(
+                map((response) => (response.headers.get('content-type') || 'text/html').split(';')[0]),
+                catchError(() => of('text/html')),
+                switchMap((mime) =>
+                  this.getResourceCreationObs(
+                    !mime.startsWith('text/html'),
+                    link,
+                    this.selectedLabels,
+                    formValue.css_selector,
+                    formValue.xpath,
+                  ),
+                ),
+              ),
+            ),
+          );
       }
 
       obs.subscribe((res) => {
