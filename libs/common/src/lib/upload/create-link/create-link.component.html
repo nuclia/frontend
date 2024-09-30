@@ -85,7 +85,7 @@
           }
         }
         @if (
-          (linkForm.value.linkTo === 'web' && ['one', 'multiple'].includes(linkForm.value.type)) ||
+          (linkForm.value.linkTo === 'web' && ['one', 'multiple'].includes(linkForm.value.type || '')) ||
           linkForm.value.type == 'sitemap'
         ) {
           <pa-expander [expanded]="false">
