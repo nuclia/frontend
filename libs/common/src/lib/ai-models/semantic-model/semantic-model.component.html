@@ -8,7 +8,7 @@
     <div
       class="form-container"
       [formGroup]="configForm">
-      <pa-radio-group formControlName="semanticModel">
+      <pa-radio-group formControlName="default_semantic_model">
         @for (model of semanticModels; track model) {
           <pa-radio [value]="model">
             {{ 'user.kb.creation-form.models.options.' + semanticModelsName[model] | translate }}
@@ -18,4 +18,19 @@
       </pa-radio-group>
     </div>
   </nsi-two-columns-configuration-item>
+
+  <nsi-sticky-footer>
+    <pa-button
+      aspect="basic"
+      [disabled]="defaultModelBackup === defaultModel || saving"
+      (click)="resetForm()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="defaultModelBackup === defaultModel || saving">
+      {{ 'kb.ai-models.common.save' | translate }}
+    </pa-button>
+  </nsi-sticky-footer>
 </form>
