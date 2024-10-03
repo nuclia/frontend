@@ -55,6 +55,19 @@
   </div>
   <div class="config-form-field">
     <pa-toggle
+      formControlName="showAttachedImages"
+      withBackground
+      spaceBetweenLabelAndToggle>
+      <span class="toggle-label">
+        {{ 'search.configuration.result-display.show-attached-images.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.result-display.show-attached-images.toggle-description' | translate }}
+    </div>
+  </div>
+  <div class="config-form-field">
+    <pa-toggle
       formControlName="displayFieldList"
       withBackground
       spaceBetweenLabelAndToggle>

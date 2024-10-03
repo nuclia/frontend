@@ -1087,6 +1087,8 @@
 	"search.configuration.result-display.relations-graph.toggle-label": "Graphe de relations",
 	"search.configuration.result-display.section-description": "Choisissez ce que vous souhaitez afficher dans les résultats.",
 	"search.configuration.result-display.section-title": "Options d’affichage des résultats",
+	"search.configuration.result-display.show-attached-images.toggle-description": "Afficher les images associées aux paragraphes récupérés dans les résultats.",
+	"search.configuration.result-display.show-attached-images.toggle-label": "Afficher les images jointes",
 	"search.configuration.save-changes-modal.description": "Veuillez enregistrer ou réinitialiser la configuration de recherche avant de créer un widget.",
 	"search.configuration.save-changes-modal.title": "Configuration de recherche modifiée",
 	"search.configuration.save-config-modal.description": "Donnez un nom à votre configuration de recherche pour la retrouver.",
