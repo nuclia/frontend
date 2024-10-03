@@ -77,6 +77,7 @@ interface SearchState {
   pending: boolean;
   autofilerDisabled?: boolean;
   showResults: boolean;
+  showAttachedImages: boolean;
   tracking: {
     startTime: number;
     resultsReceived: boolean;
@@ -94,6 +95,7 @@ export const searchState = new SvelteState<SearchState>({
   results: NO_RESULT_LIST,
   pending: false,
   showResults: false,
+  showAttachedImages: false,
   tracking: {
     startTime: 0,
     resultsReceived: false,
@@ -184,6 +186,14 @@ export const searchShow = searchState.writer<ResourceProperties[]>(
   (state, show) => ({
     ...state,
     show,
+  }),
+);
+
+export const showAttachedImages = searchState.writer<boolean>(
+  (state) => state.showAttachedImages,
+  (state, showAttachedImages) => ({
+    ...state,
+    showAttachedImages,
   }),
 );
 

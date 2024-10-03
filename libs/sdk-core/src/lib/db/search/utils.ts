@@ -99,4 +99,5 @@ export interface WidgetFeatures {
   orFilterLogic?: boolean;
   noChatHistory?: boolean;
   showHidden?: boolean;
+  showAttachedImages?: boolean;
 }

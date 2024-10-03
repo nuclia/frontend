@@ -32,7 +32,7 @@ const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
   'chatgpt4o',
   'chatgpt4o-mini',
   'gemini-1-5-pro',
-  'azure-mistral'
+  'azure-mistral',
 ];
 
 @Component({
@@ -94,6 +94,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
     showResultType: new FormControl<'citations' | 'all-resources'>('all-resources', { nonNullable: true }),
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
     displayThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
+    showAttachedImages: new FormControl<boolean>(false, { nonNullable: true }),
     displayFieldList: new FormControl<boolean>(false, { nonNullable: true }),
     relations: new FormControl<boolean>(false, { nonNullable: true }),
     relationGraph: new FormControl<boolean>(false, { nonNullable: true }),

@@ -20,7 +20,7 @@ import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, getCDN } 
 import { _, translateInstant } from './i18n';
 import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
-import { searchError, searchOptions } from './stores/search.store';
+import { searchError, searchOptions, showAttachedImages } from './stores/search.store';
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { reset } from './reset';
@@ -51,6 +51,7 @@ let QUERY_PREPEND = '';
 let NO_CHAT_HISTORY = false;
 let DEBUG = false;
 let SHOW_HIDDEN = false;
+let SHOW_ATTACHED_IMAGES = false;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -132,6 +133,9 @@ export const initNuclia = (
   if (widgetOptions.features?.noBM25forChat) {
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.PARAGRAPHS && feature !== Ask.Features.KEYWORD);
   }
+  SHOW_ATTACHED_IMAGES = !!widgetOptions.features?.showAttachedImages;
+  showAttachedImages.set(SHOW_ATTACHED_IMAGES);
+
   MAX_TOKENS = !widgetOptions.max_output_tokens
     ? widgetOptions.max_tokens
     : { context: widgetOptions.max_tokens, answer: widgetOptions.max_output_tokens };
@@ -185,6 +189,7 @@ export const getAnswer = (
         acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
         return acc;
       }, [] as Ask.ContextEntry[]);
+
   const defaultOptions: ChatOptions = {
     highlight: true,
     show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
@@ -203,17 +208,13 @@ export const getAnswer = (
   if (QUERY_PREPEND) {
     query = QUERY_PREPEND + ' ' + query;
   }
+  options = options ? { ...defaultOptions, ...options } : defaultOptions;
   if (ASK_TO_RESOURCE) {
     return nucliaApi.knowledgeBox
       .getResourceFromData({ id: '', slug: ASK_TO_RESOURCE })
-      .ask(query, context, CHAT_MODE, options ? { ...defaultOptions, ...options } : defaultOptions);
+      .ask(query, context, CHAT_MODE, options);
   } else {
-    return nucliaApi.knowledgeBox.ask(
-      query,
-      context,
-      CHAT_MODE,
-      options ? { ...defaultOptions, ...options } : defaultOptions,
-    );
+    return nucliaApi.knowledgeBox.ask(query, context, CHAT_MODE, options);
   }
 };
 
@@ -471,4 +472,8 @@ export function getApiErrors() {
       detail: error?.detail,
     })),
   );
+}
+
+export function getAttachedImage(resourceId: string, fieldType: string, fieldId: string, fileId: string): string {
+  return `${nucliaApi?.knowledgeBox.fullpath}/resource/${resourceId}/${fieldType}/${fieldId}/download/extracted/generated/${fileId}`;
 }

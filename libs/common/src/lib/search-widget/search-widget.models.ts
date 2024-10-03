@@ -69,6 +69,7 @@ export interface ResultDisplayConfig {
   showResultType: 'citations' | 'all-resources';
   displayMetadata: boolean;
   displayThumbnails: boolean;
+  showAttachedImages: boolean;
   displayFieldList: boolean;
   relations: boolean;
   relationGraph: boolean;
@@ -175,6 +176,7 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   showResultType: 'all-resources',
   displayMetadata: false,
   displayThumbnails: false,
+  showAttachedImages: false,
   displayFieldList: false,
   relations: false,
   relationGraph: false,
@@ -238,6 +240,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     hideResults: !config.resultDisplay.displayResults || config.resultDisplay.showResultType === 'citations',
     displayMetadata: config.resultDisplay.displayMetadata,
     hideThumbnails: !config.resultDisplay.displayThumbnails,
+    showAttachedImages: config.resultDisplay.showAttachedImages,
     relations: config.resultDisplay.relations,
     knowledgeGraph: config.resultDisplay.relationGraph,
     displayFieldList: config.resultDisplay.displayFieldList,
