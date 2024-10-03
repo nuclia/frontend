@@ -185,6 +185,10 @@ export namespace Search {
       end_seconds?: number[];
       page_number?: number;
     };
+    fuzzy_result: boolean;
+    page_with_visual: boolean;
+    is_a_table: boolean;
+    reference: string;
   }
 
   export interface Results {

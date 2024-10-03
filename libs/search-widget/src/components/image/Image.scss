@@ -1,0 +1,26 @@
+.image {
+  display: inline-block;
+  img {
+    cursor: pointer;
+    max-height: var(--rhythm-20);
+    max-width: var(--rhythm-20);
+  }
+  &.expose {
+    background: var(--modal-background-color);
+    bottom: 0;
+    display: flex;
+    left: 0;
+    justify-content: center;
+    padding: var(--main-padding-top) var(--main-padding-side) 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: var(--z-index-modal);
+    background-color: var(--);
+    img {
+      margin: auto;
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+}

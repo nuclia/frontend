@@ -19,11 +19,14 @@
     trackingEngagement,
     viewerData,
     openNewTab,
+    getAttachedImage,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
-  import { combineLatest, forkJoin, map, of, switchMap, take } from 'rxjs';
+  import { combineLatest, forkJoin, of, switchMap, take } from 'rxjs';
   import { FieldMetadata } from './';
+  import { showAttachedImages } from '../../core/stores/search.store';
+  import Image from '../image/Image.svelte';
 
   export let result: TypedResult;
   export let selected = 0;
@@ -95,6 +98,12 @@
     if (event.key === 'Meta' || event.key === 'Control') {
       metaKeyOn = false;
     }
+  }
+
+  function _getAttachedImage(fileId: string): string {
+    return result && result.field?.field_type && result.field?.field_id && fileId
+      ? getAttachedImage(result.id, result.field.field_type, result.field.field_id, fileId)
+      : '';
   }
 </script>
 
@@ -196,6 +205,9 @@
               minimized={isMobile}
               on:open={() => clickOnResult(paragraph, index)}
               on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
+            {#if $showAttachedImages}
+              <Image path={_getAttachedImage(paragraph.reference)} />
+            {/if}
           </div>
         {/each}
       </ul>
