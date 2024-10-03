@@ -15,7 +15,6 @@
     activateButtonLabel="tasks-automation.global-question.footer.activate-button-label"
     footerNoteAutomation="tasks-automation.global-question.footer.apply-automation"
     footerNoteOneTime="tasks-automation.global-question.footer.apply-one-time"
-    [availableLLMs]="generativeModels"
     [validFormInside]="globalQuestionForm.valid"
     (cancel)="backToTaskList()"
     (activate)="activateTask($event)">

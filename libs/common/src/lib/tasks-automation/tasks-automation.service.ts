@@ -6,8 +6,9 @@ import {
   mapBatchToOneTimeTask,
   mapOnGoingToAutomatedTask,
   OneTimeTask,
+  resolveSchemaReferences,
 } from './tasks-automation.models';
-import { TaskListResponse } from '@nuclia/core';
+import { ApplyOption, TaskFullDefinition, TaskListResponse, TaskName } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class TasksAutomationService {
 
   private _currentKb = this.sdk.currentKb;
   private _taskList = new BehaviorSubject<(AutomatedTask | OneTimeTask)[]>([]);
+  private _taskDefinitions = new BehaviorSubject<TaskFullDefinition[]>([]);
 
   textBlocksLabelerTasks: Observable<(AutomatedTask | OneTimeTask)[]> = this._taskList.pipe(
     map((taskList) => taskList.filter((task) => task.taskName === 'text-blocs-labeler')),
@@ -24,13 +26,30 @@ export class TasksAutomationService {
   resourceLabelerTasks: Observable<(AutomatedTask | OneTimeTask)[]> = this._taskList.pipe(
     map((taskList) => taskList.filter((task) => task.taskName === 'resource-labeler')),
   );
+  taskDefinitions = this._taskDefinitions.asObservable();
 
   initTaskList() {
     this._currentKb
       .pipe(
         take(1),
         switchMap((kb) => kb.taskManager.getTasks()),
-        map((response: TaskListResponse) => this.mapTaskList(response)),
+      )
+      .subscribe((taskList) => {
+        this._taskList.next(this.mapTaskList(taskList));
+        this._taskDefinitions.next(this.resolveReferences(taskList.tasks));
+      });
+  }
+
+  startTask(taskName: TaskName, parameters: any, apply: ApplyOption) {
+    this._currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          kb.taskManager.startTask(taskName, parameters, apply).pipe(
+            switchMap((response) => kb.taskManager.getTasks()),
+            map((response: TaskListResponse) => this.mapTaskList(response)),
+          ),
+        ),
       )
       .subscribe((taskList) => this._taskList.next(taskList));
   }
@@ -85,5 +104,17 @@ export class TasksAutomationService {
     response.configs.forEach((task) => taskList.push(mapOnGoingToAutomatedTask(task)));
 
     return taskList;
+  }
+
+  private resolveReferences(tasks: TaskFullDefinition[]) {
+    return tasks.map((task) => {
+      return {
+        ...task,
+        validation: {
+          ...task.validation,
+          properties: resolveSchemaReferences(task.validation.properties, task.validation.$defs),
+        },
+      };
+    });
   }
 }

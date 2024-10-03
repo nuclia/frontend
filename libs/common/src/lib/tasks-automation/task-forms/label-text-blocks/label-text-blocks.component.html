@@ -11,18 +11,18 @@
   </header>
 
   <app-task-form
+    type="text-blocs-labeler"
     triggerDescription="tasks-automation.label-text-blocks.trigger-description"
     activateButtonLabel="tasks-automation.label-text-blocks.footer.activate-button-label"
     footerNoteAutomation="tasks-automation.label-text-blocks.footer.apply-automation"
     footerNoteOneTime="tasks-automation.label-text-blocks.footer.apply-one-time"
-    [availableLLMs]="generativeModels"
     [validFormInside]="labelingConfig?.valid"
     (activate)="activateTask($event)"
     (cancel)="backToTaskList()">
     <stf-labeling-configuration
       type="text-blocks"
       (configurationChange)="onConfigurationChange($event)"></stf-labeling-configuration>
-
+    <!--
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.label-text-blocks.find-labels.title"
       description="tasks-automation.label-text-blocks.find-labels.description">
@@ -35,5 +35,6 @@
         </nsi-info-card>
       </div>
     </nsi-two-columns-configuration-item>
+    -->
   </app-task-form>
 </div>

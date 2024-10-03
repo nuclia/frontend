@@ -1,3 +1,4 @@
+import { isObject } from '@flaps/core';
 import { TaskName, TaskOnBatch, TaskOnGoing, TaskParameters } from '@nuclia/core';
 
 export interface TaskConfiguration {
@@ -60,4 +61,23 @@ function mapParameters(parameters: TaskParameters): TaskConfiguration {
       .filter((l) => !!l)
       .join(', '),
   };
+}
+
+export function resolveSchemaReferences(schema: { [key: string]: any }, defs: { [key: string]: any }): any {
+  return Object.entries(schema).reduce(
+    (acc, [key, value]) => {
+      if (key === '$ref') {
+        const id = (value as string).split('#/$defs/')[1];
+        acc = { ...acc, ...resolveSchemaReferences(defs[id] || {}, defs) };
+      } else if (Array.isArray(value)) {
+        acc[key] = value.map((item) => (isObject(item) ? resolveSchemaReferences(item, defs) : item));
+      } else if (isObject(value)) {
+        acc[key] = resolveSchemaReferences(value, defs);
+      } else {
+        acc[key] = value;
+      }
+      return acc;
+    },
+    {} as { [key: string]: any },
+  );
 }

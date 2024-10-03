@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskRouteDirective } from '../task-route.directive';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
@@ -9,6 +9,7 @@ import {
   LabelingConfiguration,
   LabelingConfigurationComponent,
 } from '../labeling-configuration/labeling-configuration.component';
+import { TasksAutomationService } from '../../tasks-automation.service';
 
 @Component({
   standalone: true,
@@ -28,7 +29,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelTextBlocksComponent extends TaskRouteDirective {
-  generativeModels = ['nuclia-everest-v1', 'chatgpt-azure-3'];
+  taskAutomation = inject(TasksAutomationService);
+
   labelingConfig?: LabelingConfiguration;
 
   onConfigurationChange(configuration: LabelingConfiguration) {
@@ -36,7 +38,17 @@ export class LabelTextBlocksComponent extends TaskRouteDirective {
   }
 
   activateTask(commonConfig: TaskFormCommonConfig) {
-    // TODO
-    console.log(`Activate label text blocks task with`, commonConfig, this.labelingConfig);
+    this.taskAutomation.startTask(
+      'text-blocs-labeler',
+      {
+        name: commonConfig.name,
+        filter: commonConfig.filter,
+        llm: commonConfig.llm,
+        operations: {
+          label: this.labelingConfig?.label,
+        },
+      },
+      commonConfig.applyTaskTo,
+    );
   }
 }

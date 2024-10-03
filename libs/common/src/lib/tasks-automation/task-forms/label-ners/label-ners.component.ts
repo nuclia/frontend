@@ -51,8 +51,6 @@ export class LabelNersComponent extends TaskRouteDirective implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private toaster = inject(SisToastService);
 
-  generativeModels = ['nuclia-everest-v1', 'chatgpt-azure-3', 'chatgpt-azure', 'anthropic'];
-
   detectionOptionsForm = new FormGroup({
     annotatedBy: new FormControl<'manually-added' | 'prompt'>('manually-added'),
     prompt: new FormControl<string>(''),
