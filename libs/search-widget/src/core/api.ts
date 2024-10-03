@@ -162,10 +162,6 @@ export const search = (query: string, options: SearchOptions): Observable<Search
   if (QUERY_PREPEND) {
     query = QUERY_PREPEND + ' ' + query;
   }
-  if (SHOW_ATTACHED_IMAGES) {
-    options.show = [...(options.show || []), ResourceProperties.EXTRACTED];
-    options.extracted = [...(options.extracted || []), ExtractedDataTypes.FILE];
-  }
 
   return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, ...options }).pipe(
     filter((res) => {
@@ -213,10 +209,6 @@ export const getAnswer = (
     query = QUERY_PREPEND + ' ' + query;
   }
   options = options ? { ...defaultOptions, ...options } : defaultOptions;
-  if (SHOW_ATTACHED_IMAGES) {
-    options.show = [...(options.show || []), ResourceProperties.EXTRACTED];
-    options.extracted = [...(options.extracted || []), ExtractedDataTypes.FILE];
-  }
   if (ASK_TO_RESOURCE) {
     return nucliaApi.knowledgeBox
       .getResourceFromData({ id: '', slug: ASK_TO_RESOURCE })
