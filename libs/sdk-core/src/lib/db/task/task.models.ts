@@ -15,8 +15,8 @@ export interface TaskDefinition {
  */
 export interface TaskFullDefinition extends TaskDefinition {
   validation: {
-    $defs: { [property: string]: unknown };
-    properties: { [property: string]: unknown };
+    $defs: { [property: string]: any };
+    properties: { [property: string]: any };
     required: string[];
     title: string;
     type: 'object';
@@ -35,20 +35,22 @@ export enum TaskApplyTo {
  * Definition of the operation done by the task
  */
 export interface Operation {
-  label?: {
-    labels: {
-      label: string;
-      examples: string[];
-      description?: string;
-    }[];
-    ident?: string;
-    description?: string;
-  };
+  label?: LabelOperation;
   // TODO: other kinds of operation
   graph?: null;
   ask?: null;
   qa?: null;
   extract?: null;
+}
+
+export interface LabelOperation {
+  labels: {
+    label: string;
+    examples?: string[];
+    description?: string;
+  }[];
+  ident?: string;
+  description?: string;
 }
 
 /**

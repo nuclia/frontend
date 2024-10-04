@@ -11,18 +11,18 @@
   </header>
 
   <app-task-form
+    type="resource-labeler"
     triggerDescription="tasks-automation.label-resources.trigger-description"
     activateButtonLabel="tasks-automation.label-resources.footer.activate-button-label"
     footerNoteAutomation="tasks-automation.label-resources.footer.apply-automation"
     footerNoteOneTime="tasks-automation.label-resources.footer.apply-one-time"
-    [availableLLMs]="generativeModels"
     [validFormInside]="labelingConfig?.valid"
     (activate)="activateTask($event)"
     (cancel)="backToTaskList()">
     <stf-labeling-configuration
       type="resources"
       (configurationChange)="onConfigurationChange($event)"></stf-labeling-configuration>
-
+    <!--
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.label-resources.find-labels.title"
       description="tasks-automation.label-resources.find-labels.description">
@@ -33,5 +33,6 @@
         </nsi-info-card>
       </div>
     </nsi-two-columns-configuration-item>
+    -->
   </app-task-form>
 </div>

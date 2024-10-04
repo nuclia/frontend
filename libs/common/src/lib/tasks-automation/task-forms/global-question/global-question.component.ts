@@ -24,8 +24,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalQuestionComponent extends TaskRouteDirective {
-  generativeModels = ['nuclia-everest-v1', 'chatgpt-azure-3', 'chatgpt-azure', 'anthropic'];
-
   globalQuestionForm = new FormGroup({
     question: new FormControl<string>('', [Validators.required]),
     fieldName: new FormControl<string>('', [Validators.required]),

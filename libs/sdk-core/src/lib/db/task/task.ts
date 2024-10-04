@@ -43,7 +43,7 @@ export class TaskManager {
    */
   startTask(
     taskName: TaskName,
-    parameters: unknown,
+    parameters: any,
     apply: ApplyOption = 'EXISTING',
   ): Observable<StartStopTaskResponse> {
     return this.nuclia.rest.post(`${this.kb.path}/task/${taskName}`, { parameters, apply });

@@ -1,14 +1,35 @@
 @import 'apps/dashboard/src/variables';
 @import '../task-form.common';
 
-.separator {
-  @include body-s();
-  color: $color-neutral-regular;
-  text-transform: lowercase;
+
+.labelset,
+.labels-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
 }
 
-.option-with-badge {
+.input-with-help {
   align-items: center;
   display: flex;
   gap: rhythm(1);
+  pa-input {
+    flex-grow: 1;
+  }
+}
+
+.title-s {
+  margin-top: rhythm(2);
+}
+
+.label {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  pa-select {
+    width: rhythm(24);
+  }
+  pa-input {
+    flex-grow: 1;
+  }
 }

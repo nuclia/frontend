@@ -25,8 +25,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SummarizeResourcesComponent extends TaskRouteDirective {
-  generativeModels = ['nuclia-everest-v1', 'chatgpt-azure-3', 'chatgpt-azure', 'anthropic'];
-
   summaryForm = new FormGroup({
     summary: new FormControl<'simple' | 'extended'>('simple'),
     prompt: new FormControl<string>(''),

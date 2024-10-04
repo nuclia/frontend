@@ -17,7 +17,8 @@
       (newTask)="createTask('label-resources')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
-      (stop)="stopTask($event)"></app-task-list-item>
+      (stop)="stopTask($event)"
+      [newTaskFormReady]="true"></app-task-list-item>
     <app-task-list-item
       taskType="label-text-blocks"
       taskTitle="tasks-automation.label-text-blocks.title"
@@ -26,7 +27,8 @@
       (newTask)="createTask('label-text-blocks')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
-      (stop)="stopTask($event)"></app-task-list-item>
+      (stop)="stopTask($event)"
+      [newTaskFormReady]="true"></app-task-list-item>
     <app-task-list-item
       taskType="summarize"
       taskTitle="tasks-automation.summarize-resources.title"

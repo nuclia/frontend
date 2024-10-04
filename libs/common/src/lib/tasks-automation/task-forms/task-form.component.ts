@@ -30,20 +30,31 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { Classification, Filter, Search } from '@nuclia/core';
+import {
+  ApplyOption,
+  Classification,
+  Filter,
+  LearningConfigurationOption,
+  LLMConfig,
+  Search,
+  TaskFullDefinition,
+  TaskName,
+} from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
 import { Filters, formatFiltersFromFacets, LANGUAGE_FACET, MIME_FACETS } from '../../resources';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { GenerativeModelPipe } from '../../pipes';
+import { TasksAutomationService } from '../tasks-automation.service';
 
 export interface TaskFormCommonConfig {
-  applyTaskTo: 'automation' | 'once';
-  filters: {
-    searchIn: 'titleOrContent' | 'title' | 'content';
-    searchQuery: string;
-    selectedFilters: string[] | Filter[];
+  name: string;
+  applyTaskTo: ApplyOption;
+  filter: {
+    //searchIn: 'titleOrContent' | 'title' | 'content';
+    contain: string;
+    resource_type: string[] | Filter[];
   };
-  llm: string;
+  llm: LLMConfig;
   webhook: {
     url: string;
     headers: { key: string; value: string; secret: boolean }[];
@@ -80,11 +91,12 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   private toaster = inject(SisToastService);
   private sdk = inject(SDKService);
   private cdr = inject(ChangeDetectorRef);
+  private tasksAutomation = inject(TasksAutomationService);
 
   private unsubscribeAll = new Subject<void>();
 
-  // List of LLMs available for this task
-  @Input() availableLLMs: string[] = [];
+  // Task type
+  @Input() type: TaskName = 'resource-labeler';
   // Text displayed in the info card below Trigger label on the right column
   @Input() triggerDescription = '';
   // Label displayed on the submit button
@@ -100,12 +112,15 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Output() activate = new EventEmitter<TaskFormCommonConfig>();
 
   form = new FormGroup({
-    applyTaskTo: new FormControl<'automation' | 'once'>('automation', { nonNullable: true }),
-    filters: new FormGroup({
-      searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent', { nonNullable: true }),
-      searchQuery: new FormControl<string>('', { nonNullable: true }),
+    name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    applyTaskTo: new FormControl<ApplyOption>('ALL', { nonNullable: true }),
+    filter: new FormGroup({
+      //searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent', { nonNullable: true }),
+      contain: new FormControl<string>('', { nonNullable: true }),
     }),
-    llm: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    llm: new FormGroup({
+      model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    }),
     webhook: new FormGroup({
       url: new FormControl<string>('', { nonNullable: true }),
     }),
@@ -165,9 +180,38 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   get labelSelectionCount(): number {
     return this.labelFilters.length;
   }
+  taskDefinition?: TaskFullDefinition;
+  availableLLMs: LearningConfigurationOption[] = [];
+  unsupportedLLMs = ['generative-multilingual-2023'];
+
+  get properties() {
+    return this.taskDefinition?.validation.properties;
+  }
 
   ngOnInit() {
-    this.form.patchValue({ llm: this.availableLLMs[0] });
+    this.tasksAutomation.initTaskList();
+    this.tasksAutomation.taskDefinitions
+      .pipe(
+        map((tasks) => tasks.find((task) => task.name === this.type)),
+        filter((task) => !!task),
+        take(1),
+      )
+      .subscribe((task) => {
+        this.taskDefinition = task;
+        this.cdr.markForCheck();
+      });
+
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) => kb.getLearningSchema()),
+      )
+      .subscribe((data) => {
+        this.availableLLMs = (data?.['generative_model'].options || []).filter(
+          (option) => !this.unsupportedLLMs.includes(option.value),
+        );
+        this.form.controls.llm.patchValue({ model: data?.['generative_model'].default });
+      });
 
     this.sdk.currentKb
       .pipe(
@@ -192,10 +236,10 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
     combineLatest([this.form.valueChanges, this.selectedFilters])
       .pipe(
-        filter(([data]) => data.applyTaskTo === 'once'),
+        filter(([data]) => data.applyTaskTo === 'EXISTING'),
         debounceTime(300),
         switchMap(([data, filters]) =>
-          this.sdk.currentKb.pipe(switchMap((kb) => kb.catalog(data.filters?.searchQuery || '', { filters }))),
+          this.sdk.currentKb.pipe(switchMap((kb) => kb.catalog(data.filter?.contain || '', { filters }))),
         ),
         takeUntil(this.unsubscribeAll),
       )
@@ -266,7 +310,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.activate.emit({
       ...rawValue,
       webhook: { ...rawValue.webhook, headers: this.headers },
-      filters: { ...rawValue.filters, selectedFilters: this.selectedFilters.value },
+      filter: { ...rawValue.filter, resource_type: this.selectedFilters.value },
     });
   }
 
