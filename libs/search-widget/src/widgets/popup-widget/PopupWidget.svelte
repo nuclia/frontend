@@ -30,7 +30,7 @@
   export let generativemodel = '';
   export let no_tracking = false;
   export let rag_strategies = '';
-  export let rag_image_strategies = '';
+  export let rag_images_strategies = '';
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
   export let max_tokens: number | undefined = undefined;
@@ -128,7 +128,7 @@
             {generativemodel}
             {no_tracking}
             {rag_strategies}
-            {rag_image_strategies}
+            {rag_images_strategies}
             {not_enough_data_message}
             {ask_to_resource}
             {max_tokens}

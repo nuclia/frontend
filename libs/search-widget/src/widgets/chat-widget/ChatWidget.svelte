@@ -46,7 +46,7 @@
   export let preselected_filters = '';
   export let no_tracking = false;
   export let rag_strategies = '';
-  export let rag_image_strategies = '';
+  export let rag_images_strategies = '';
   export let max_tokens: number | string | undefined = undefined;
   export let max_output_tokens: number | string | undefined = undefined;
   export let max_paragraphs: number | undefined = undefined;
@@ -117,7 +117,7 @@
     );
 
     _ragStrategies = getRAGStrategies(rag_strategies);
-    _ragImageStrategies = getRAGImageStrategies(rag_image_strategies);
+    _ragImageStrategies = getRAGImageStrategies(rag_images_strategies);
     _max_tokens = typeof max_tokens === 'string' ? parseInt(max_tokens, 10) : max_tokens;
     _max_output_tokens = typeof max_output_tokens === 'string' ? parseInt(max_output_tokens, 10) : max_output_tokens;
 
