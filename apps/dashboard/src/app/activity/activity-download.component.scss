@@ -17,7 +17,7 @@
 
 .activity-container {
   background-color: $color-neutral-lightest;
-  width: rhythm(90);
+  width: calc(rhythm(90) + rhythm(24));
 }
 
 .download-list {

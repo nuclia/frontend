@@ -144,6 +144,7 @@
 	"activity.type.feedback": "User feedback",
 	"activity.type.modified": "Edited",
 	"activity.type.new": "Created",
+	"activity.type.no-answer": "Questions without answer",
 	"activity.type.processed": "Processed",
 	"activity.type.search": "Queries",
 	"api-key-management.create-key.button": "Create a new API key",

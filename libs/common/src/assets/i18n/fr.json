@@ -144,6 +144,7 @@
 	"activity.type.feedback": "Commentaires des utilisateurs",
 	"activity.type.modified": "Édite",
 	"activity.type.new": "Créé",
+	"activity.type.no-answer": "Questions sans réponse",
 	"activity.type.processed": "Traité",
 	"activity.type.search": "Requêtes",
 	"api-key-management.create-key.button": "Créer une nouvelle clé API",
