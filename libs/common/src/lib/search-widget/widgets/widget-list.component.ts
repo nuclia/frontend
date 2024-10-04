@@ -80,7 +80,7 @@ export class WidgetListComponent implements OnInit {
                 DEFAULT_WIDGET_CONFIG,
                 NUCLIA_STANDARD_SEARCH_CONFIG.id,
                 configuration['generative_model'] || '',
-                configuration['semantic_model'] || '',
+                configuration['default_semantic_model'] || '',
               ),
             ),
             switchMap((widgetSlug) => this.router.navigate(['.', widgetSlug], { relativeTo: this.route })),

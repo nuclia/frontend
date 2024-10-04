@@ -145,7 +145,7 @@ export class SearchConfigurationComponent {
         }),
         tap(({ schema, config }) => {
           this.generativeModelFromSettings = config['generative_model'] || '';
-          this.semanticModelFromSettings = config['semantic_model'] || '';
+          this.semanticModelFromSettings = config['default_semantic_model'] || '';
           this.generativeModelNames =
             schema['generative_model']?.options?.reduce(
               (acc, model) => {
