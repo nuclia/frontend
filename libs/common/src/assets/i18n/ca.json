@@ -144,6 +144,7 @@
 	"activity.type.feedback": "Valoració dels usuaris",
 	"activity.type.modified": "Modificats",
 	"activity.type.new": "Creats",
+	"activity.type.no-answer": "Preguntes sense resposta",
 	"activity.type.processed": "Processats",
 	"activity.type.search": "Consultes",
 	"api-key-management.create-key.button": "Creeu una nova clau d’API",

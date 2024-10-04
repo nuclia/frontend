@@ -144,6 +144,7 @@
 	"activity.type.feedback": "Valoración de los usuarios",
 	"activity.type.modified": "Modificados",
 	"activity.type.new": "Creados",
+	"activity.type.no-answer": "Preguntas sin respuesta",
 	"activity.type.processed": "Procesados",
 	"activity.type.search": "Consultas",
 	"api-key-management.create-key.button": "Crear una nueva clave API",
