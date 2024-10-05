@@ -20,7 +20,7 @@
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
   import {
-  chatPlaceholder,
+    chatPlaceholder,
     notEnoughDataMessage,
     widgetFeatures,
     widgetFilters,
@@ -74,7 +74,7 @@
   export let generativemodel = '';
   export let no_tracking = false;
   export let rag_strategies = '';
-  export let rag_image_strategies = '';
+  export let rag_images_strategies = '';
   export let not_enough_data_message = '';
   export let ask_to_resource = '';
   export let max_tokens: number | string | undefined = undefined;
@@ -99,7 +99,7 @@
     widgetPlaceholder.set(placeholder || 'input.placeholder');
   }
   $: {
-    chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
+    chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
   }
   $: {
     notEnoughDataMessage.set(not_enough_data_message);
@@ -109,7 +109,7 @@
   let _filters: WidgetFilters = {};
   let _jsonSchema: object | null = null;
   let _ragStrategies: RAGStrategy[] = [];
-  let _ragImageStrategies: RAGImageStrategy[] = [];
+  let _ragImagesStrategies: RAGImageStrategy[] = [];
   let _max_tokens: number | undefined;
   let _max_output_tokens: number | undefined;
 
@@ -197,7 +197,7 @@
       _filters.entities = true;
     }
     _ragStrategies = getRAGStrategies(rag_strategies);
-    _ragImageStrategies = getRAGImageStrategies(rag_image_strategies);
+    _ragImagesStrategies = getRAGImageStrategies(rag_images_strategies);
     try {
       _jsonSchema = json_schema ? JSON.parse(json_schema) : null;
     } catch (e) {
@@ -239,7 +239,7 @@
     widgetFeatures.set(_features);
     widgetFilters.set(_filters);
     widgetRagStrategies.set(_ragStrategies);
-    widgetImageRagStrategies.set(_ragImageStrategies);
+    widgetImageRagStrategies.set(_ragImagesStrategies);
     widgetJsonSchema.set(_jsonSchema);
 
     if (_features.filter) {
