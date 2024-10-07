@@ -166,7 +166,7 @@
       </pa-input>
     </div>
   </div>
-  @if (hiddenResourcesEnabled) {
+  @if (hiddenResourcesEnabled | async) {
     <div class="config-form-field">
       <pa-toggle
         formControlName="showHiddenResources"
