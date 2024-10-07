@@ -144,7 +144,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
     context: string[],
   ): Observable<{ answer: object; success: boolean }>;
 
-  rephrase(question: string): Observable<string>;
+  rephrase(question: string, user_context?: string[], rephrase_prompt?: string): Observable<string>;
 
   generateRandomQuestionAboutResource(resource: Resource): Observable<string>;
 

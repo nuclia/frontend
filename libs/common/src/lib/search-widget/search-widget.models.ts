@@ -26,6 +26,8 @@ export interface SearchBoxConfig {
   prependTheQuery: boolean;
   queryPrepend: string;
   rephraseQuery: boolean;
+  useRephrasePrompt: boolean;
+  rephrasePrompt: string;
   generateAnswerWith: 'only-semantic' | 'semantic-and-full-text';
   showHiddenResources: boolean;
 }
@@ -135,6 +137,8 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   prependTheQuery: false,
   queryPrepend: '',
   rephraseQuery: false,
+  useRephrasePrompt: false,
+  rephrasePrompt: '',
   generateAnswerWith: 'semantic-and-full-text',
   showHiddenResources: false,
 };
@@ -277,6 +281,12 @@ export function getPrompt(config: GenerativeAnswerConfig): string {
 export function getSystemPrompt(config: GenerativeAnswerConfig): string {
   if (config.useSystemPrompt && !!config.systemPrompt.trim()) {
     return `\n  system_prompt="${escapePrompt(config.systemPrompt)}"`;
+  }
+  return '';
+}
+export function getRephrasePrompt(config: SearchBoxConfig): string {
+  if (config.rephraseQuery && config.useRephrasePrompt && !!config.rephrasePrompt.trim()) {
+    return `\n  rephrase_prompt="${escapePrompt(config.rephrasePrompt)}"`;
   }
   return '';
 }

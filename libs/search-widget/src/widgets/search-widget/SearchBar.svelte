@@ -71,6 +71,7 @@
   export let cssPath = '';
   export let prompt = '';
   export let system_prompt = '';
+  export let rephrase_prompt = '';
   export let generativemodel = '';
   export let no_tracking = false;
   export let rag_strategies = '';
@@ -134,6 +135,7 @@
       _ragStrategies,
       prompt,
       system_prompt,
+      rephrase_prompt,
       generativemodel,
       preselected_filters,
       mode,
@@ -224,6 +226,7 @@
         features: _features,
         prompt,
         system_prompt,
+        rephrase_prompt,
         generative_model: generativemodel,
         ask_to_resource,
         max_tokens: _max_tokens,

@@ -59,6 +59,7 @@ export interface BaseSearchOptions {
   autofilter?: boolean;
   highlight?: boolean;
   rephrase?: boolean;
+  rephrase_prompt?: string;
   vectorset?: string;
   debug?: boolean;
   show_hidden?: boolean;

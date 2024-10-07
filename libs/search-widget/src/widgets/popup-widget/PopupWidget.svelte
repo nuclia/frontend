@@ -27,6 +27,7 @@
   export let cssPath = '';
   export let prompt = '';
   export let system_prompt = '';
+  export let rephrase_prompt = '';
   export let generativemodel = '';
   export let no_tracking = false;
   export let rag_strategies = '';
@@ -125,6 +126,7 @@
             {cssPath}
             {prompt}
             {system_prompt}
+            {rephrase_prompt}
             {generativemodel}
             {no_tracking}
             {rag_strategies}

@@ -551,13 +551,16 @@ export class Db implements IDb {
   /**
    * Analyse a sentence, returning the language, the entities intent and the embeddings.
    */
-  predictQuery(text: string, rephrase?: boolean, model?: string): Observable<QueryInfo> {
+  predictQuery(text: string, rephrase?: boolean, model?: string, rephrase_prompt?: string): Observable<QueryInfo> {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /predict');
     }
     let queryParams = `?text=${encodeURIComponent(text)}`;
     if (rephrase) {
       queryParams += `&rephrase=true`;
+      if (rephrase_prompt) {
+        queryParams += `&rephrase_prompt=${encodeURIComponent(rephrase_prompt)}`;
+      }
     }
     if (model) {
       queryParams += `&generative_model=${encodeURIComponent(model)}`;
