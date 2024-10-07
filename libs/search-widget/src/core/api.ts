@@ -44,6 +44,7 @@ let generative_model: string | undefined = undefined;
 let vectorset: string | undefined = undefined;
 let CITATIONS = false;
 let REPHRASE = false;
+let REPHRASE_PROMPT: string | undefined = undefined;
 let ASK_TO_RESOURCE = '';
 let MAX_TOKENS: number | { context?: number; answer?: number } | undefined = undefined;
 let MAX_PARAGRAPHS: number | undefined = undefined;
@@ -86,6 +87,10 @@ export const initNuclia = (
   }
   CITATIONS = !!widgetOptions.features?.citations;
   REPHRASE = !!widgetOptions.features?.rephrase;
+  REPHRASE_PROMPT = widgetOptions.rephrase_prompt;
+  if (REPHRASE && REPHRASE_PROMPT) {
+    SEARCH_OPTIONS.rephrase_prompt = REPHRASE_PROMPT;
+  }
   ASK_TO_RESOURCE = widgetOptions.ask_to_resource || '';
   NO_CHAT_HISTORY = !!widgetOptions.features?.noChatHistory;
   DEBUG = !!widgetOptions.features?.debug;
@@ -204,6 +209,9 @@ export const getAnswer = (
   };
   if (prompt || systemPrompt) {
     defaultOptions.prompt = { user: prompt || undefined, system: systemPrompt || undefined };
+  }
+  if (REPHRASE && REPHRASE_PROMPT) {
+    defaultOptions.rephrase_prompt = REPHRASE_PROMPT;
   }
   if (QUERY_PREPEND) {
     query = QUERY_PREPEND + ' ' + query;

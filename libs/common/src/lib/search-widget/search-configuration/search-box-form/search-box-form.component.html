@@ -108,7 +108,8 @@
     <pa-toggle
       formControlName="rephraseQuery"
       withBackground
-      spaceBetweenLabelAndToggle>
+      spaceBetweenLabelAndToggle
+      (valueChange)="heightChanged.emit()">
       <span class="toggle-label">
         {{ 'search.configuration.search-box.rephrase.toggle-label' | translate }}
       </span>
@@ -117,6 +118,35 @@
       {{ 'search.configuration.search-box.rephrase.toggle-description' | translate }}
     </div>
   </div>
+  @if (rephraseQueryEnabled) {
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="useRephrasePrompt"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span
+          class="toggle-label"
+          fullProBadge>
+          {{ 'search.configuration.search-box.rephrase-prompt.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.rephrase-prompt.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="useRephrasePromptEnabled">
+        <pa-textarea
+          formControlName="rephrasePrompt"
+          resizable
+          rows="4"
+          (resizing)="heightChanged.emit()">
+          {{ 'search.configuration.search-box.rephrase-prompt.textarea-label' | translate }}
+        </pa-textarea>
+      </div>
+    </div>
+  }
   <div class="config-form-field">
     <pa-toggle
       formControlName="prependTheQuery"
@@ -136,7 +166,7 @@
       </pa-input>
     </div>
   </div>
-  @if (hiddenResourcesEnabled) {
+  @if (hiddenResourcesEnabled | async) {
     <div class="config-form-field">
       <pa-toggle
         formControlName="showHiddenResources"

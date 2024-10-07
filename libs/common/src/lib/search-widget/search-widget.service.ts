@@ -14,6 +14,7 @@ import {
   getPrompt,
   getQueryPrepend,
   getRagStrategiesProperties,
+  getRephrasePrompt,
   getSystemPrompt,
   getWidgetTheme,
   NUCLIA_STANDARD_SEARCH_CONFIG,
@@ -139,6 +140,7 @@ export class SearchWidgetService {
     const chatPlaceholder = getChatPlaceholder(widgetOptions);
     const prompt = getPrompt(currentConfig.generativeAnswer);
     const systemPrompt = getSystemPrompt(currentConfig.generativeAnswer);
+    const rephrasePrompt = getRephrasePrompt(currentConfig.searchBox);
     const filters = getFilters(currentConfig.searchBox);
     const preselectedFilters = getPreselectedFilters(currentConfig.searchBox);
     const { ragProperties, ragImagesProperties } = getRagStrategiesProperties(
@@ -191,7 +193,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;

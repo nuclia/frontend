@@ -47,6 +47,7 @@ export interface WidgetOptions {
   features?: WidgetFeatures;
   prompt?: string;
   system_prompt?: string;
+  rephrase_prompt?: string;
   generative_model?: string;
   vectorset?: string;
   ask_to_resource?: string;

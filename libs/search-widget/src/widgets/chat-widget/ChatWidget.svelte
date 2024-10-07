@@ -43,6 +43,7 @@
   export let cssPath = '';
   export let prompt = '';
   export let system_prompt = '';
+  export let rephrase_prompt = '';
   export let preselected_filters = '';
   export let no_tracking = false;
   export let rag_strategies = '';
@@ -138,6 +139,7 @@
         features: _features,
         prompt,
         system_prompt,
+        rephrase_prompt,
         max_tokens: _max_tokens,
         max_output_tokens: _max_output_tokens,
         max_paragraphs,

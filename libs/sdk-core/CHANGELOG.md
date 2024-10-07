@@ -11,6 +11,7 @@
 - Support `debug` parameter on `/ask` endpoint
 - Add `metadata` and `promptContext` to `Ask.Answer` model
 - Add support for hidden resources
+- Add support for rephrase prompt
 
 # 1.21.1 (2024-09-12)
 
