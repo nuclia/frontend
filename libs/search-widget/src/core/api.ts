@@ -482,6 +482,12 @@ export function getApiErrors() {
   );
 }
 
-export function getAttachedImage(resourceId: string, fieldType: string, fieldId: string, fileId: string): string {
-  return `${nucliaApi?.knowledgeBox.fullpath}/resource/${resourceId}/${fieldType}/${fieldId}/download/extracted/generated/${fileId}`;
+export function getAttachedImageTemplate(
+  resourceId: string,
+  fieldType: string,
+  fieldId: string,
+  placeholder: string,
+): Observable<string> {
+  const path = `${nucliaApi?.knowledgeBox.path}/resource/${resourceId}/${fieldType}/${fieldId}/download/extracted/generated/${placeholder}`;
+  return getFileUrl(path);
 }

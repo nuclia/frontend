@@ -19,7 +19,7 @@
     trackingEngagement,
     viewerData,
     openNewTab,
-    getAttachedImage,
+    getAttachedImageTemplate,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
@@ -72,6 +72,19 @@
     }),
   );
 
+  const IMAGE_PLACEHOLDER = '__IMAGE_FILE__';
+  let imageTemplate = of('');
+  $: {
+    if (result && result.field?.field_type && result.field?.field_id) {
+      imageTemplate = getAttachedImageTemplate(
+        result.id,
+        result.field?.field_type,
+        result.field?.field_id,
+        IMAGE_PLACEHOLDER,
+      );
+    }
+  }
+
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
@@ -98,12 +111,6 @@
     if (event.key === 'Meta' || event.key === 'Control') {
       metaKeyOn = false;
     }
-  }
-
-  function _getAttachedImage(fileId: string): string {
-    return result && result.field?.field_type && result.field?.field_id && fileId
-      ? getAttachedImage(result.id, result.field.field_type, result.field.field_id, fileId)
-      : '';
   }
 </script>
 
@@ -206,7 +213,7 @@
               on:open={() => clickOnResult(paragraph, index)}
               on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
             {#if $showAttachedImages}
-              <Image path={_getAttachedImage(paragraph.reference)} />
+              <Image path={$imageTemplate.replace(IMAGE_PLACEHOLDER, paragraph.reference)} />
             {/if}
           </div>
         {/each}

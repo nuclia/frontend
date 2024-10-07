@@ -7,6 +7,7 @@ import {
   of,
   retry,
   RetryConfig,
+  shareReplay,
   switchMap,
   tap,
   throwError,
@@ -75,7 +76,8 @@ export interface KnowledgeBox extends IKnowledgeBox {}
 export class KnowledgeBox implements IKnowledgeBox {
   accountId: string;
   protected nuclia: INuclia;
-  private tempToken?: { token: string; expiration: number };
+  private tempTokenReplay: Observable<string> | undefined;
+  private tempTokenExpiration = 0;
   private notifications?: Observable<NotificationMessage[]>;
   private notificationsController?: AbortController;
 
@@ -636,17 +638,23 @@ export class KnowledgeBox implements IKnowledgeBox {
     ```
    */
   getTempToken(): Observable<string> {
-    if (this.tempToken && this.tempToken.expiration > Date.now()) {
-      return of(this.tempToken.token);
+    if (!this.tempTokenReplay || this.tempTokenExpiration < Date.now()) {
+      this.tempTokenReplay = this._getTempToken().pipe(
+        map((res) => res.token),
+        shareReplay(1),
+      );
+      this.tempTokenExpiration = Date.now() + TEMP_TOKEN_DURATION;
     }
-    let request: Observable<{ token: string }> | undefined;
+    return this.tempTokenReplay;
+  }
+  private _getTempToken(): Observable<{ token: string }> {
     if (!this.nuclia.options.standalone) {
       const accountId = this.nuclia.options.accountId;
       const zone = this.nuclia.options.zone;
       if (!accountId || !zone) {
         throw new Error('Account id and zone are required to get a temp token');
       }
-      request = this.nuclia.rest.post<{ token: string }>(
+      return this.nuclia.rest.post<{ token: string }>(
         `/account/${accountId}/kb/${this.id}/ephemeral_tokens`,
         {},
         undefined,
@@ -655,12 +663,8 @@ export class KnowledgeBox implements IKnowledgeBox {
         zone,
       );
     } else {
-      request = this.nuclia.rest.get<{ token: string }>('/temp-access-token');
+      return this.nuclia.rest.get<{ token: string }>('/temp-access-token');
     }
-    return request.pipe(
-      map((res) => res.token),
-      tap((token) => (this.tempToken = { token, expiration: Date.now() + TEMP_TOKEN_DURATION })),
-    );
   }
 
   /**
