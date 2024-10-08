@@ -9,6 +9,7 @@ interface AnswerState {
   currentAnswer: Ask.Answer;
   error?: IErrorResponse;
   isStreaming: boolean;
+  isSpeechOn: boolean;
 }
 
 const EMPTY_ANSWER = { type: 'answer' as const, text: '', id: '' };
@@ -17,6 +18,7 @@ export const answerState = new SvelteState<AnswerState>({
   currentQuestion: '',
   currentAnswer: EMPTY_ANSWER,
   isStreaming: false,
+  isSpeechOn: false,
 });
 
 export const currentQuestion = answerState.writer<string, { question: string; reset: boolean }>(
@@ -50,6 +52,12 @@ export const firstAnswer = answerState.reader((state) =>
 
 export const lastFullAnswer = answerState.reader((state) =>
   state.chat.length > 0 && !state.isStreaming ? state.chat[state.chat.length - 1].answer : undefined,
+);
+
+export const lastSpeakableFullAnswer = answerState.reader((state) =>
+  state.chat.length > 0 && !state.isStreaming && state.isSpeechOn
+    ? state.chat[state.chat.length - 1].answer
+    : undefined,
 );
 
 export const chat = answerState.writer<Ask.Entry[], { question: string; answer: Ask.Answer }>(
@@ -90,6 +98,11 @@ export const resetChat = answerState.writer<void, void>(
 );
 
 export const isStreaming = answerState.reader((state) => state.isStreaming);
+
+export const isSpeechOn = answerState.writer<boolean, { value?: boolean; toggle?: boolean }>(
+  (state) => state.isSpeechOn,
+  (state, params) => ({ ...state, isSpeechOn: params.toggle ? !state.isSpeechOn : !!params.value }),
+);
 
 export const isServiceOverloaded = answerState.reader<boolean>((state) => !!state.error && state.error.status === 529);
 export const chatError = answerState.writer<IErrorResponse | undefined>(

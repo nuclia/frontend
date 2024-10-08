@@ -28,9 +28,16 @@ import {
   take,
   tap,
 } from 'rxjs';
+import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 import type { TypedResult } from '../models';
 import { NO_SUGGESTION_RESULTS } from '../models';
-import { isCitationsEnabled, widgetFeatures, widgetImageRagStrategies, widgetRagStrategies } from './widget.store';
+import {
+  isCitationsEnabled,
+  isSpeechEnabled,
+  widgetFeatures,
+  widgetImageRagStrategies,
+  widgetRagStrategies,
+} from './widget.store';
 import type {
   Ask,
   BaseSearchOptions,
@@ -64,7 +71,15 @@ import {
   triggerSearch,
 } from './search.store';
 import { fieldData, fieldFullId, viewerData, viewerState } from './viewer.store';
-import { answerState, chat, chatError, currentAnswer, currentQuestion } from './answers.store';
+import {
+  answerState,
+  chat,
+  chatError,
+  currentAnswer,
+  currentQuestion,
+  isSpeechOn,
+  lastSpeakableFullAnswer,
+} from './answers.store';
 import { graphSearchResults, graphSelection, graphState } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
 import { entities, entitiesState } from './entities.store';
@@ -173,6 +188,34 @@ export function initAnswer() {
         ),
       )
       .subscribe(),
+  );
+  subscriptions.push(
+    isSpeechEnabled
+      .pipe(
+        filter((isSpeechEnabled) => isSpeechEnabled),
+        take(1),
+      )
+      .subscribe(() => SpeechSettings.init()),
+  );
+  subscriptions.push(
+    combineLatest([isSpeechOn, SpeechStore.isStarted])
+      .pipe(distinctUntilChanged())
+      .subscribe(([on, started]) => {
+        if (on && !started) {
+          SpeechSettings.start();
+        } else if (!on && started) {
+          SpeechSettings.stop();
+        }
+      }),
+  );
+  subscriptions.push(
+    lastSpeakableFullAnswer
+      .pipe(
+        filter((answer) => !!answer),
+        map((answer) => (answer as Ask.Answer).text),
+        distinctUntilChanged(),
+      )
+      .subscribe((text) => speak(text, 'en-GB')),
   );
 }
 

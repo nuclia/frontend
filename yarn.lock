@@ -18437,6 +18437,7 @@ __metadata:
     svelte: 4.2.19
     svelte-check: ^3.8.0
     svelte-preprocess: ^5.1.4
+    talk2svelte: ^0.1.1
     ts-jest: 29.1.1
     ts-node: 10.9.1
     tslib: ^2.6.2
@@ -22508,6 +22509,15 @@ __metadata:
   version: 3.2.4
   resolution: "symbol-tree@npm:3.2.4"
   checksum: 6e8fc7e1486b8b54bea91199d9535bb72f10842e40c79e882fc94fb7b14b89866adf2fd79efa5ebb5b658bc07fb459ccce5ac0e99ef3d72f474e74aaf284029d
+  languageName: node
+  linkType: hard
+
+"talk2svelte@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "talk2svelte@npm:0.1.1"
+  peerDependencies:
+    rxjs: ^7.8.0
+  checksum: a3f7204f8f570921db6d2404930783356763cbd24ec08da60259a08c593361f45e71257eeb601111394dc6a21200738e532834dc2d9713e96075ab2f31412861
   languageName: node
   linkType: hard
 
