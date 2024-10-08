@@ -47,6 +47,15 @@
               {{ 'resource.add_labels' | translate }}
             </app-label-dropdown>
           }
+          @if (isSummarizationAuthorized | async) {
+            <pa-button
+              aspect="basic"
+              size="small"
+              [disabled]="allResourcesSelected"
+              (click)="bulkSummarize()">
+              {{ 'resource.menu.summarize' | translate }}
+            </pa-button>
+          }
           @if (hiddenResourcesEnabled | async) {
             <div>
               <nsi-dropdown-button
