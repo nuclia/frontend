@@ -232,7 +232,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
     });
     this.languages = languages.map((language) => ({ ...language, selected: false }));
 
-    this.features.unstable.vectorset.pipe(take(1)).subscribe((vectorsetEnabled) => {
+    this.features.authorized.vectorset.pipe(take(1)).subscribe((vectorsetEnabled) => {
       this.MODEL_SELECTION_LIMIT = vectorsetEnabled ? 5 : 1;
       this.cdr.markForCheck();
     });
