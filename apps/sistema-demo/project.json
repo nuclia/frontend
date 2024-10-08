@@ -27,6 +27,11 @@
             "glob": "**/*",
             "input": "apps/sistema-demo/src/e2e",
             "output": "/e2e/"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/sistema-demo/src/demos",
+            "output": "/demos/"
           }
         ],
         "styles": ["apps/sistema-demo/src/styles.scss"],
