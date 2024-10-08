@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Nuclia - Speech</title>
+    <script src="https://cdn.nuclia.cloud/nuclia-chat-widget.umd.js"></script>
+  </head>
+  <body style="padding: 32px; font-family: Arial, Helvetica, sans-serif">
+    <p>This is a demo of the Nuclia Chat widget with the speech feature enabled.</p>
+    <p><strong>It's more likely to work with Chrome than with other web browsers.</strong></p>
+    <ol>
+      <li>Click the microphone icon to start speaking.</li>
+      <li>Say "question" to let the widget knows you want to ask a question.</li>
+      <li>Ask your question (this Knowledge Box contains information about market outlook in 2024, so ask )</li>
+      <li>Say "search" to trigger the search.</li>
+    </ol>
+    <nuclia-chat
+      knowledgebox="0a461f58-6ee4-4845-8942-1404c0e6f108"
+      zone="europe-1"
+      prompt="You answer my questions like an economist, based only in this context: {context}&#10;&#10;This is my question: {question}&#10;&#10;Keep the answer concise and as short as possible."
+      features="answers,permalink,hideThumbnails,speech"></nuclia-chat>
+  </body>
+</html>
