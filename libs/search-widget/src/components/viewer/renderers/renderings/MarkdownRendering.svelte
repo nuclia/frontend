@@ -1,11 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import DOMPurify from 'dompurify';
+  import { isRightToLeft } from '../../../../common';
 
   const dispatch = createEventDispatcher();
   export let text = '';
 
   $: trimmedText = text.trim();
+  $: isRTL = isRightToLeft(trimmedText);
   let bodyElement: HTMLElement;
   let markedLoaded = false;
   const onMarkedLoaded = () => {
@@ -23,7 +25,8 @@
 {#if markedLoaded && trimmedText}
   <div
     bind:this={bodyElement}
-    class="markdown">
+    class="markdown"
+    style:direction={isRTL ? 'rtl' : 'ltr'}>
     {@html DOMPurify.sanitize(marked.parse(trimmedText, { mangle: false, headerIds: false }))}
   </div>
 {/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import { isRightToLeft } from '../utils';
 
   export let value = '';
   export let name = '';
@@ -7,6 +8,7 @@
   export let ariaLabel = '';
 
   let element: HTMLTextAreaElement;
+  $: isRTL = isRightToLeft(value);
 
   const dispatch = createEventDispatcher();
 
@@ -40,6 +42,7 @@
     autocapitalize="off"
     spellcheck="false"
     aria-label={ariaLabel}
+    style:direction={isRTL ? 'rtl' : 'ltr'}
     bind:value
     on:input
     on:keypress={onKeyPress}

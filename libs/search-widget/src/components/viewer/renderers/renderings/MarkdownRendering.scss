@@ -1,4 +1,5 @@
 .markdown :global {
+  text-align: start;
   & > *:first-child,
   & > *:first-child > *:first-child,
   & > *:first-child > *:first-child > *:first-child {
