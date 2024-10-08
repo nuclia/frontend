@@ -189,7 +189,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
           .pipe(
             filter((authorized) => authorized),
             take(1),
-            switchMap(() => this.summarize(resource)),
+            switchMap(() => this.summarize([resource])),
           )
           .subscribe();
         break;
@@ -202,22 +202,54 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     }
   }
 
-  summarize(resource: Resource) {
+  bulkSummarize() {
+    this.getSelectedResources()
+      .pipe(switchMap((resources) => this.summarize(resources)))
+      .subscribe();
+  }
+
+  summarize(resources: Resource[]) {
+    let errors = 0;
     const avoidTabClosing = (event: BeforeUnloadEvent) => event.preventDefault();
-    return this.modalService
-      .openConfirm({
-        title: 'resource.confirm-summarize.title',
-        description: 'resource.confirm-summarize.description',
-      })
-      .onClose.pipe(
-        filter((confirm) => !!confirm),
-        switchMap(() => this.sdk.currentKb),
-        take(1),
-        tap(() => window.addEventListener('beforeunload', avoidTabClosing)),
-        switchMap((kb) => kb.summarize([resource.id])),
-        switchMap((summary) => resource.modify({ summary })),
-        tap(() => window.removeEventListener('beforeunload', avoidTabClosing)),
-      );
+    const title = resources.length > 1 ? 'resource.confirm-summarize.plural-title' : 'resource.confirm-summarize.title';
+    const description =
+      resources.length > 1 ? 'resource.confirm-summarize.plural-description' : 'resource.confirm-summarize.description';
+    return this.modalService.openConfirm({ title, description }).onClose.pipe(
+      filter((yes) => !!yes),
+      tap(() => {
+        window.addEventListener('beforeunload', avoidTabClosing);
+        this.selection = [];
+        this.cdr.markForCheck();
+      }),
+      switchMap(() => this.sdk.currentKb),
+      take(1),
+      switchMap((kb) => {
+        const bulkActionItems = resources.map((resource) =>
+          defer(() =>
+            kb.summarize([resource.id]).pipe(
+              switchMap((summary) => resource.modify({ summary })),
+              catchError(() => {
+                errors++;
+                return of(null);
+              }),
+            ),
+          ),
+        );
+        return from(bulkActionItems);
+      }),
+      mergeMap((obs) => obs, 20),
+      toArray(),
+      tap((count) => {
+        if (count.length > 0) {
+          window.removeEventListener('beforeunload', avoidTabClosing);
+          if (errors === 0) {
+            this.toaster.success('resource.summarization-completed');
+          } else {
+            this.toaster.error(this.translate.instant('resource.summarization-errors', { count: errors }));
+          }
+        }
+      }),
+    );
   }
 
   delete(resources: Resource[]) {
