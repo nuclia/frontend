@@ -47,7 +47,6 @@ export class FeaturesService {
     githubSignin: this.featureFlag.isFeatureEnabled('github-signin'),
     viewNuaActivity: this.featureFlag.isFeatureEnabled('view-nua-activity'),
     extraSemanticModel: this.featureFlag.isFeatureEnabled('extra-semantic-model'),
-    vectorset: this.featureFlag.isFeatureEnabled('vectorset'),
     huggingFaceSemanticModel: this.featureFlag.isFeatureEnabled('hugging-face-semantic'),
     tableProcessing: this.featureFlag.isFeatureEnabled('table-processing'),
     aiTableProcessing: this.featureFlag.isFeatureEnabled('ai-table-processing'),
@@ -98,6 +97,9 @@ export class FeaturesService {
       map((account) =>
         ['stash-growth', 'stash-startup', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type),
       ),
+    ),
+    vectorset: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('vectorset')]).pipe(
+      map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
     ),
   };
 }

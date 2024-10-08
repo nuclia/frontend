@@ -3,6 +3,10 @@
   import { Icon, IconButton } from '../../common';
   import { _ } from '../../core/i18n';
   import { ask } from '../../core/stores/effects';
+  import { isSpeechEnabled, isSpeechOn } from '../../core';
+  import { SpeechSettings, SpeechStore } from 'talk2svelte';
+  import { Subscription, filter } from 'rxjs';
+  import { onMount } from 'svelte';
 
   export let placeholder = '';
   export let fullscreen;
@@ -10,6 +14,41 @@
   let inputElement: Textarea;
   let question = '';
   let isListening = false;
+
+  const subs: Subscription[] = [];
+  const isSpeechStarted = SpeechStore.isStarted;
+
+  function toggleSpeech() {
+    isSpeechOn.set({ toggle: true });
+  }
+
+  onMount(() => {
+    subs.push(
+      isSpeechEnabled.subscribe((enabled) => {
+        if (enabled) {
+          SpeechSettings.declareCommand('question');
+          SpeechSettings.declareCommand('search');
+        }
+      }),
+    );
+    subs.push(
+      SpeechStore.currentCommand
+        .pipe(filter((command) => command === 'question'))
+        .subscribe(() => (isListening = true)),
+    );
+    subs.push(
+      SpeechStore.currentCommand.pipe(filter((command) => command === 'search')).subscribe(() => {
+        isListening = false;
+        askQuestion();
+      }),
+    );
+    subs.push(SpeechStore.message.pipe(filter(() => isListening)).subscribe((message: string) => (question = message)));
+    return () => {
+      SpeechSettings.removeCommand('question');
+      SpeechSettings.removeCommand('search');
+      subs.map((sub) => sub.unsubscribe());
+    };
+  });
 
   const askQuestion = () => {
     ask.next({ question, reset: false });
@@ -57,6 +96,15 @@
     ariaLabel={$_('answer.input.label')}
     bind:value={question}
     on:keypress={onKeyPress} />
+  {#if $isSpeechEnabled}
+    <div class="microphone">
+      <IconButton
+        icon="microphone"
+        active={$isSpeechStarted}
+        aspect="basic"
+        on:click={toggleSpeech} />
+    </div>
+  {/if}
 </div>
 
 <style

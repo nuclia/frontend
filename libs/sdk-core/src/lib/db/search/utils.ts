@@ -100,4 +100,5 @@ export interface WidgetFeatures {
   noChatHistory?: boolean;
   showHidden?: boolean;
   showAttachedImages?: boolean;
+  speech?: boolean;
 }
