@@ -14,6 +14,7 @@ env:
   GCP_WORKLOAD_IDENTITY_PROVIDER: 'projects/224545243904/locations/global/workloadIdentityPools/gh-nuclia/providers/gh-nuclia-provider'
   GCP_SERVICE_ACCOUNT: 'github-actions@nuclia-internal.iam.gserviceaccount.com'
   DEPLOYMENT_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
+  PROMO_PRODUCTION: false
 
 permissions:
   id-token: write
@@ -172,18 +173,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.deploy-app == 'yes'
+    outputs:
+      json-summary: |
+        {
+          "components": [
+            {
+              "component": "app",
+              "chart-version": "${{ steps.version_step.outputs.version_number }}",
+              "component-type": "global"
+            }
+          ]
+        }
 
     steps:
-      - name: Generate a token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
-          owner: nuclia
-
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Calculate short sha
         run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
@@ -200,11 +204,6 @@ jobs:
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/app/Chart.yaml
           echo "version_number=$VERSION_SHA" >> $GITHUB_OUTPUT
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
       - name: Install Helm
         uses: azure/setup-helm@v3
         with:
@@ -216,32 +215,26 @@ jobs:
           helm package charts/app
           curl --data-binary "@app-${{ steps.version_step.outputs.version_number }}.tgz" ${{ secrets.HELM_CHART_URL }}/api/charts
 
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v2
-
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          repository: nuclia/frontend_deploy
-          event-type: promote
-          client-payload: '{"component": "app", "chart-version": "${{ steps.version_step.outputs.version_number }}", "environment": "${{ env.DEPLOYMENT_ENVIRONMENT }}" }'
-
   deploy-manager:
     name: Deploy manager
     runs-on: ubuntu-latest
     needs: build
     if: needs.build.outputs.deploy-manager == 'yes'
+    outputs:
+      json-summary: |
+        {
+          "components": [
+            {
+              "component": "manager",
+              "chart-version": "${{ steps.version_step.outputs.version_number }}",
+              "component-type": "global"
+            }
+          ]
+        }
 
     steps:
-      - name: Generate a token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
-          owner: nuclia
-
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Calculate short sha
         run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
@@ -258,11 +251,6 @@ jobs:
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/manager/Chart.yaml
           echo "version_number=$VERSION_SHA" >> $GITHUB_OUTPUT
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
       - name: Install Helm
         uses: azure/setup-helm@v3
         with:
@@ -274,10 +262,69 @@ jobs:
           helm package charts/manager
           curl --data-binary "@manager-${{ steps.version_step.outputs.version_number }}.tgz" ${{ secrets.HELM_CHART_URL }}/api/charts
 
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v2
+  send-to-promotion:
+    runs-on: ubuntu-latest
+    needs: [ deploy-manager, deploy-app ]
+    if: |
+      !failure() && !cancelled() && github.event_name == 'push' &&
+      ( needs.deploy-manager.result != 'skipped' ||
+        needs.deploy-app.result != 'skipped' )
+    steps:
+
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+
+      - name: Create components promotion summary. Trigger1
+        env:
+          SKIP_QUEUE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-promo-queue') }}
+          ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
+          PROMO_PRODUCTION: ${{ env.PROMO_PRODUCTION }}
+          TEAM: ${{ secrets.TEAM_NAME }} 
+          SLACK_TEAM: ${{ secrets.SLACK_TEAM }}
+        run: |
+          MERGED_JSON=$(jq -cs \
+            --arg environment "$ENVIRONMENT" \
+            --arg skip_queue "$SKIP_QUEUE" \
+            --arg promo_production "$PROMO_PRODUCTION" \
+            --arg team "$TEAM" \
+            --arg slack_team "$SLACK_TEAM" \
+            --arg commit_sha "${{ github.sha }}" \
+            '{
+              components: map(.components) | add
+            } + {
+              skip_promo_queue: ($skip_queue == "true")
+            } + {
+              environment: $environment
+            } + {
+              promo_production: ($promo_production == "true")
+            } + {
+              team: $team
+            } + {
+              slack_team: $slack_team
+            } + {
+              tests: {
+                "run-e2e": true,
+                "run-nua-e2e": false
+              }
+            } + {
+              "commit-sha": $commit_sha
+            }' \
+            <(echo '${{ needs.deploy-manager.outputs.json-summary }}') \
+            <(echo '${{ needs.deploy-app.outputs.json-summary }}')
+          )
+
+          echo "JSON_PROMO_SUMMARY=$MERGED_JSON" >> $GITHUB_ENV
+
+      - name: Send to promotion queue
+        id: send-to-promo
+        uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ steps.app-token.outputs.token }}
-          repository: nuclia/frontend_deploy
-          event-type: promote
-          client-payload: '{"component": "manager", "chart-version": "${{ steps.version_step.outputs.version_number }}", "environment": "${{ env.DEPLOYMENT_ENVIRONMENT }}" }'
+          repository: nuclia/core-apps
+          event-type: test-new-promotions
+          client-payload: '${{ env.JSON_PROMO_SUMMARY }}'
