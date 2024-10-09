@@ -282,6 +282,7 @@ jobs:
       - name: Create components promotion summary. Trigger1
         env:
           SKIP_QUEUE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-promo-queue') }}
+          SKIP_ARGO_HEALTH: false
           ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
           PROMO_PRODUCTION: ${{ env.PROMO_PRODUCTION }}
           TEAM: ${{ secrets.TEAM_NAME }} 
@@ -293,11 +294,14 @@ jobs:
             --arg promo_production "$PROMO_PRODUCTION" \
             --arg team "$TEAM" \
             --arg slack_team "$SLACK_TEAM" \
+            --arg skip_argo_health "$SKIP_ARGO_HEALTH" \
             --arg commit_sha "${{ github.sha }}" \
             '{
               components: map(.components) | add
             } + {
               skip_promo_queue: ($skip_queue == "true")
+            } + {
+              skip_argo_health: ($skip_argo_health == "true")
             } + {
               environment: $environment
             } + {
