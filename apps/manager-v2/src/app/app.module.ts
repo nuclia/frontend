@@ -13,8 +13,8 @@ import { environment } from '../environments/environment';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
-import { AppLayoutComponent } from './app-layout/app-layout.component';
 import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
+import { AppLayoutComponent } from './app-layout/app-layout.component';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);

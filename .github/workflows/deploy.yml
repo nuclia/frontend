@@ -308,6 +308,11 @@ jobs:
           private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
           owner: nuclia
 
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
       - name: Create components promotion summary. Trigger1
         env:
           SKIP_QUEUE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-promo-queue') }}
