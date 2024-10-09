@@ -194,7 +194,6 @@ export class SearchWidgetService {
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
         baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
-        baseSnippet += `\n  audit_metadata="{\\"config\\":\\"${currentConfig.id}\\"}"`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
@@ -202,7 +201,10 @@ export class SearchWidgetService {
           baseSnippet += `<nuclia-search-results ${theme}></nuclia-search-results>`;
         }
 
-        const snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`;
+        const snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`.replace(
+          /knowledgebox=/g,
+          `audit_metadata="{\\"config\\":\\"${currentConfig.id}\\"}"\n  knowledgebox=`,
+        );
         const cdn = this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : '';
         const preview = this.sanitizer.bypassSecurityTrustHtml(
           baseSnippet
