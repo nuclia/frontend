@@ -54,6 +54,7 @@
   export let query_prepend = '';
   export let vectorset = '';
   export let chat_placeholder = '';
+  export let audit_metadata = '';
 
   export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
@@ -145,6 +146,7 @@
         max_paragraphs,
         query_prepend,
         vectorset,
+        audit_metadata,
       },
       no_tracking,
     );

@@ -41,6 +41,7 @@
   export let json_schema = '';
   export let vectorset = '';
   export let chat_placeholder = '';
+  export let audit_metadata = '';
 
   let searchBar: any;
   let visible = false;
@@ -139,7 +140,8 @@
             {query_prepend}
             {json_schema}
             {vectorset}
-            {chat_placeholder} />
+            {chat_placeholder}
+            {audit_metadata} />
         </div>
         <div class="search-results-container">
           <SearchResults />
