@@ -55,6 +55,7 @@ export interface WidgetOptions {
   max_output_tokens?: number;
   max_paragraphs?: number;
   query_prepend?: string;
+  audit_metadata?: string;
 }
 
 export interface WidgetAction {

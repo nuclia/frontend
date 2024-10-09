@@ -63,6 +63,7 @@ export interface BaseSearchOptions {
   vectorset?: string;
   debug?: boolean;
   show_hidden?: boolean;
+  audit_metadata?: { [key: string]: string };
 }
 
 export interface ChatOptions extends BaseSearchOptions {

@@ -54,6 +54,7 @@
   export let standalone = false;
   export let mode = '';
   export let vectorset = '';
+  export let audit_metadata = '';
 
   $: darkMode = mode === 'dark';
 
@@ -107,6 +108,7 @@
         highlight: true,
         features: _features,
         vectorset,
+        audit_metadata,
       },
     );
 
