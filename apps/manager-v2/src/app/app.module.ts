@@ -12,9 +12,9 @@ import { BackendConfigurationService, STFConfigModule } from '@flaps/core';
 import { environment } from '../environments/environment';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
-import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 import { AppLayoutComponent } from './app-layout/app-layout.component';
+import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
+import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
