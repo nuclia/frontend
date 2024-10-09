@@ -53,6 +53,7 @@ let NO_CHAT_HISTORY = false;
 let DEBUG = false;
 let SHOW_HIDDEN = false;
 let SHOW_ATTACHED_IMAGES = false;
+let AUDIT_METADATA: { [key: string]: string } | undefined = undefined;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -95,6 +96,13 @@ export const initNuclia = (
   NO_CHAT_HISTORY = !!widgetOptions.features?.noChatHistory;
   DEBUG = !!widgetOptions.features?.debug;
   SHOW_HIDDEN = !!widgetOptions.features?.showHidden;
+  try {
+    const metadata = widgetOptions.audit_metadata ? JSON.parse(widgetOptions.audit_metadata) : undefined;
+    AUDIT_METADATA = metadata;
+    SEARCH_OPTIONS.audit_metadata = metadata;
+  } catch (e) {
+    console.error('Invalid audit metadata');
+  }
 
   nucliaApi = new Nuclia(options);
   if (!noTracking) {
@@ -206,6 +214,7 @@ export const getAnswer = (
     top_k: MAX_PARAGRAPHS,
     debug: DEBUG,
     show_hidden: SHOW_HIDDEN,
+    audit_metadata: AUDIT_METADATA,
   };
   if (prompt || systemPrompt) {
     defaultOptions.prompt = { user: prompt || undefined, system: systemPrompt || undefined };

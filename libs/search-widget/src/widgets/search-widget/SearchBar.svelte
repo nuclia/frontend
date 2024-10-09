@@ -85,6 +85,7 @@
   export let json_schema = '';
   export let vectorset = '';
   export let chat_placeholder = '';
+  export let audit_metadata = '';
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -234,6 +235,7 @@
         max_paragraphs,
         query_prepend,
         vectorset,
+        audit_metadata,
       },
       no_tracking,
     );
