@@ -203,7 +203,7 @@ export class SearchWidgetService {
 
         const snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`.replace(
           /knowledgebox=/g,
-          `audit_metadata="{\\"config\\":\\"${currentConfig.id}\\"}"\n  knowledgebox=`,
+          `audit_metadata='{"config":"${currentConfig.id}"}'\n  knowledgebox=`,
         );
         const cdn = this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : '';
         const preview = this.sanitizer.bypassSecurityTrustHtml(
