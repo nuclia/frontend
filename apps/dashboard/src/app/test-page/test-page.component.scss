@@ -1,0 +1,60 @@
+@import 'apps/dashboard/src/variables';
+
+.topbar {
+  background-color: $color-light-stronger;
+  border-bottom: 1px solid $color-neutral-light;
+  height: var(--app-topbar-height);
+  left: 0;
+  padding-left: var(--app-layout-padding-left);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  .logo {
+    margin-top: rhythm(2);
+    width: rhythm(14);
+  }
+}
+
+.container {
+  background-color: $color-neutral-lightest;
+  padding-top: var(--app-topbar-height);
+}
+
+.test-page {
+  background-color: $color-light-stronger;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  margin: 0 auto;
+  max-width: calc(rhythm(90) + rhythm(26));
+}
+
+pa-select {
+  display: block;
+  max-width: rhythm(40);
+}
+
+.dark-mode {
+  background: #1f2023;
+  color: $color-neutral-light;
+  padding: rhythm(2);
+}
+
+h3 {
+  margin-bottom: rhythm(2);
+}
+
+.preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (max-width: $size-viewport-medium-max) {
+  .topbar,
+  .test-page {
+    padding-left: rhythm(3);
+    padding-right: rhythm(3);
+  }
+}

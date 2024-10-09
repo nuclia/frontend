@@ -35,6 +35,7 @@ import { InviteComponent } from './onboarding/invite/invite.component';
 import { FeedbackComponent } from './farewell/feedback.component';
 import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
 import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
+import { TestPageComponent } from './test-page/test-page.component';
 
 const routes: Routes = [
   {
@@ -182,6 +183,23 @@ const routes: Routes = [
         path: ':account',
         component: SelectKbComponent,
         canActivate: [selectKbGuard],
+      },
+    ],
+  },
+  {
+    path: 'test/:account/:zone/:kb',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        canActivate: [setAccountGuard],
+        children: [
+          {
+            path: '',
+            canActivate: [setKbGuard],
+            component: TestPageComponent,
+          },
+        ],
       },
     ],
   },

@@ -209,4 +209,16 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   trackNavigationFromHome(destination: string) {
     this.tracking.logEvent('navigate_from_home_page', { destination });
   }
+
+  navigateToTestPage() {
+    combineLatest([this.account, this.currentKb])
+      .pipe(
+        take(1),
+        map(([account, kb]) => this.navigationService.getTestPageUrl(account.slug, kb.slug)),
+      )
+      .subscribe((url) => {
+        this.trackNavigationFromHome('test-page');
+        window.open(url, 'blank', 'noreferrer');
+      });
+  }
 }
