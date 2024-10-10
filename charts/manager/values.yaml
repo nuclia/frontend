@@ -29,6 +29,9 @@ virtualService:
   gateway: XXX
   host: XXX
 
+podDisruptionBudget:
+  enabled: false
+
 # annotations:
 #   what: "add annotations"
 #   where: "in the pods"
