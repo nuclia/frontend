@@ -42,6 +42,8 @@ export class ResourceListComponent implements OnDestroy {
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
   filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
+  displayedClassifications: OptionModel[] = [];
+  filterLabels = '';
 
   dateForm = new FormGroup({
     start: new FormControl<string>(''),
@@ -92,6 +94,7 @@ export class ResourceListComponent implements OnDestroy {
             return this.loadFilters();
           } else {
             this.filterOptions = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
+            this.displayedClassifications = [];
             this.cdr.markForCheck();
             return of(null);
           }
@@ -183,8 +186,19 @@ export class ResourceListComponent implements OnDestroy {
     this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
     this.resourceListService.filter([]);
     this.filterOptions.classification.forEach((option) => (option.selected = false));
+    this.filterLabels = '';
+    this.setDisplayedClassifications();
     this.filterOptions.mainTypes.forEach((option) => (option.selected = false));
     this.filterOptions.hidden = undefined;
+  }
+
+  setDisplayedClassifications(refresh = false) {
+    this.displayedClassifications = this.filterOptions.classification
+      .filter((option) => !this.filterLabels || option.label.includes(this.filterLabels))
+      .slice(0, 100);
+    if (refresh) {
+      this.cdr.markForCheck();
+    }
   }
 
   get selectedMainTypes() {
@@ -269,6 +283,7 @@ export class ResourceListComponent implements OnDestroy {
   private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[] = []) {
     const filters = formatFiltersFromFacets(allFacets, queryParamsFilters);
     this.filterOptions = filters;
+    this.setDisplayedClassifications();
     this.dateForm.patchValue({
       start: filters.creation?.start?.date,
       end: filters.creation?.end?.date,

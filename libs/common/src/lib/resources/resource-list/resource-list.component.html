@@ -51,7 +51,17 @@
               {{ selectedClassifications.length ? '(' + selectedClassifications.length + ')' : '' }}
             </nsi-dropdown-button>
             <pa-dropdown #classificationFilters>
-              @for (option of filterOptions.classification; track option.id) {
+              @if (filterOptions.classification.length > 100) {
+                <pa-option dontCloseOnSelect>
+                  <pa-input
+                    icon="search"
+                    [(value)]="filterLabels"
+                    (keyUp)="setDisplayedClassifications()">
+                    {{ 'stash.search' | translate }}
+                  </pa-input>
+                </pa-option>
+              }
+              @for (option of displayedClassifications; track option.id) {
                 <pa-option
                   (selectOption)="onSelectFilter(option, $event)"
                   dontCloseOnSelect>
