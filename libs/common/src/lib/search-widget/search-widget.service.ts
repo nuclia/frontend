@@ -177,7 +177,7 @@ export class SearchWidgetService {
         widgetFileName = 'nuclia-video-widget';
     }
     const isPopupStyle = widgetOptions.widgetMode === 'popup';
-    const isSearchMode = widgetOptions.widgetMode === 'page';
+    const isSearchMode = !widgetOptions.widgetMode || widgetOptions.widgetMode === 'page';
     const scriptSrc = `https://cdn.nuclia.cloud/${widgetFileName}.umd.js`;
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
