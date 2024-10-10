@@ -216,11 +216,12 @@ export const getAnswer = (
     show_hidden: SHOW_HIDDEN,
     audit_metadata: AUDIT_METADATA,
   };
-  if (prompt || systemPrompt) {
-    defaultOptions.prompt = { user: prompt || undefined, system: systemPrompt || undefined };
-  }
-  if (REPHRASE && REPHRASE_PROMPT) {
-    defaultOptions.rephrase_prompt = REPHRASE_PROMPT;
+  if (prompt || systemPrompt || REPHRASE_PROMPT) {
+    defaultOptions.prompt = {
+      user: prompt || undefined,
+      system: systemPrompt || undefined,
+      rephrase: REPHRASE_PROMPT || undefined,
+    };
   }
   if (QUERY_PREPEND) {
     query = QUERY_PREPEND + ' ' + query;
