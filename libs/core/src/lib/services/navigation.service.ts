@@ -126,6 +126,9 @@ export class NavigationService {
   getSearchUrl(accountSlug: string, kbSlug: string): string {
     return `${this.getKbUrl(accountSlug, kbSlug)}/search`;
   }
+  getTestPageUrl(accountSlug: string, kbSlug: string): string {
+    return `/test/${accountSlug}/${this.sdk.nuclia.options.zone}/${kbSlug}`;
+  }
   // Redirect authenticated users to the landing page.
   goToLandingPage(): void {
     const goToUrl = this.authService.getNextUrl();

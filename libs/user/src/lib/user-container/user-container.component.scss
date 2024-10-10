@@ -20,12 +20,18 @@
     height: 100%;
     max-height: 100vh;
     overflow-y: auto;
-    padding-top: rhythm(16);
+    padding: rhythm(16) rhythm(4) 0;
     width: 50%;
 
     &:not(.left-aligned) {
       justify-content: center;
     }
+  }
+}
+
+@media (max-width: $size-viewport-medium-max) {
+  .user-background .user-container {
+    width: auto;
   }
 }
 

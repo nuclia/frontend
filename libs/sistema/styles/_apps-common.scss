@@ -1,7 +1,6 @@
 @import 'variables';
 
 :root {
-  --app-min-width: 1024px;
   --app-background-color: $color-light-stronger;
   --app-topbar-height: #{$height-top-bar};
   --app-layout-padding-bottom: #{$padding-bottom-page};
@@ -19,8 +18,6 @@ body {
 }
 
 body {
-  min-width: var(--app-min-width);
-  overflow-x: auto;
   background-color: var(--app-background-color);
 }
 
