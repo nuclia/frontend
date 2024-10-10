@@ -1,0 +1,15 @@
+{{- if .Values.podDisruptionBudget.enabled -}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  maxUnavailable: 1
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - {{ .Release.Name }}
+{{- end -}}
