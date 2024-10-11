@@ -57,6 +57,8 @@ export interface LabelSetFilter {
 
 type EngagementType = 'CHAT' | 'RESULT';
 
+const EXTENDED_RESULTS = 100;
+
 interface Engagement {
   type?: EngagementType;
   searchId?: string;
@@ -90,7 +92,7 @@ export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
   preselectedFilters: [],
-  options: { highlight: true, page_number: 0 },
+  options: { highlight: true },
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   results: NO_RESULT_LIST,
   pending: false,
@@ -135,7 +137,9 @@ export const searchResults = searchState.writer<
       ...state,
       results: {
         ...results,
-        resultList: params.append ? state.results.resultList.concat(sortedResults) : sortedResults,
+        resultList: params.append
+          ? state.results.resultList.concat(excludeResults(sortedResults, state.results.resultList))
+          : sortedResults,
       },
       pending: false,
       showResults: true,
@@ -366,20 +370,20 @@ export const isEmptySearchQuery = searchState.reader<boolean>(
     !state.options.range_creation_end,
 );
 
-export const hasMore = searchState.reader<boolean>((state) => state.results.next_page);
+export const hasMore = searchState.reader<boolean>((state) => state.options.top_k !== EXTENDED_RESULTS);
 export const loadMore = searchState.writer<number, void>(
-  (state) => state.options.page_number || 0,
+  (state) => (state.options.top_k === EXTENDED_RESULTS ? 1 : 0),
   (state) => ({
     ...state,
-    options: { ...state.options, page_number: (state.options.page_number || 0) + 1 },
+    options: { ...state.options, top_k: EXTENDED_RESULTS },
   }),
 );
 
 export const pageNumber = searchState.writer<number>(
-  (state) => state.options.page_number || 0,
-  (state, pageNumber) => ({
+  (state) => (state.options.top_k === EXTENDED_RESULTS ? 1 : 0),
+  (state, page) => ({
     ...state,
-    options: { ...state.options, page_number: pageNumber },
+    options: { ...state.options, top_k: page === 0 ? undefined : EXTENDED_RESULTS },
   }),
 );
 
@@ -607,6 +611,21 @@ export function getSortedResults(resources?: Search.FindResource[]): TypedResult
     resultList = resultList.concat(fieldEntries);
     return resultList;
   }, [] as TypedResult[]);
+}
+
+function excludeResults(results: TypedResult[], excluded: TypedResult[]): TypedResult[] {
+  const excludedParagraphsIds = excluded.reduce(
+    (acc, curr) => acc.concat(curr.paragraphs.map((p) => p.id)),
+    [] as string[],
+  );
+  return results
+    .map((result) => {
+      return {
+        ...result,
+        paragraphs: result.paragraphs.filter((paragraph) => !excludedParagraphsIds.includes(paragraph.id)),
+      };
+    })
+    .filter((result) => result.paragraphs.length > 0);
 }
 
 export function getFieldDataFromResource(resource: IResource, field: FieldId): IFieldData | undefined {
