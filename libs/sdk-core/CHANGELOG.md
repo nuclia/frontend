@@ -13,6 +13,10 @@
 - Add support for hidden resources
 - Add support for rephrase prompt
 
+### Deprecation
+
+- The `page_number` and `page_size` parameters are deprecated for `/search`, `/find` and `/ask` endpoints. `top_k` should be used instead.
+
 # 1.21.1 (2024-09-12)
 
 ### Improvement
