@@ -1,11 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { injectScript, SDKService } from '@flaps/core';
+import { injectScript, renderMarkdown, SDKService } from '@flaps/core';
 import { ModalConfig, ModalRef, ModalService } from '@guillotinaweb/pastanaga-angular';
 import { BehaviorSubject, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
 import { Ask, ChatOptions, IErrorResponse, LearningConfiguration, Prompts } from '@nuclia/core';
 import { LoadingDialogComponent } from './loading-dialog';
 import { catchError, filter, map } from 'rxjs/operators';
-import DOMPurify from 'dompurify';
 import { NUCLIA_STANDARD_SEARCH_CONFIG, SearchAndWidgets, SearchConfiguration } from '../search-widget';
 import { GENERATIVE_MODEL_KEY, RequestConfig, RequestConfigAndQueries, ResultEntry } from './rag-lab.models';
 import { TranslateService } from '@ngx-translate/core';
@@ -145,7 +144,7 @@ export class RagLabService {
                     );
                     return of(null);
                   } else {
-                    return this.renderMarkdown(answer.text).pipe(
+                    return renderMarkdown(answer.text).pipe(
                       tap((rendered) =>
                         this._addResult(
                           {
@@ -218,13 +217,6 @@ export class RagLabService {
     }
 
     this._progress$.next((this._progress$.value || 0) + 1);
-  }
-
-  renderMarkdown(text: string): Observable<string> {
-    return injectScript('//cdn.jsdelivr.net/npm/marked/marked.min.js').pipe(
-      take(1),
-      map(() => DOMPurify.sanitize((window as any)['marked'].parse(text, { mangle: false, headerIds: false }))),
-    );
   }
 
   downloadPromptLabCsv(generativeModels: string[]) {

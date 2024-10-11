@@ -60,7 +60,11 @@
             <p>{{ paragraph.text }}</p>
           } @else {
             <p class="with-type">
-              <span>{{ paragraph.text }}</span>
+              @if (paragraph.kind === 'TABLE') {
+                <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
+              } @else {
+                <span>{{ paragraph.text }}</span>
+              }
               <span
                 [paTooltip]="
                   paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION'
