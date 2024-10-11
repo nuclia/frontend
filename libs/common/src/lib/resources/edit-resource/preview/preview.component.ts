@@ -102,7 +102,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
         .reduce((kinds, kind) => (kinds.includes(kind) ? kinds : [...kinds, kind]), [] as TypeParagraph[]),
     ),
   );
-  paragraphsWithImages: Observable<(ParagraphWithTextAndImage & { url?: Observable<string> })[]> = combineLatest([
+  renderedParagraphs: Observable<(ParagraphWithTextAndImage & { url?: Observable<string> })[]> = combineLatest([
     this.paragraphs,
     this.fieldId,
     this.editResourceService.currentFieldData,
@@ -110,16 +110,21 @@ export class PreviewComponent implements OnInit, OnDestroy {
     map(([paragraphs, fieldType, fieldData]) => {
       if (fieldType.field_type !== FIELD_TYPE.file) {
         return paragraphs;
+      } else {
+        return getParagraphsWithImages(paragraphs, fieldData as FileFieldData);
       }
-      return getParagraphsWithImages(paragraphs, fieldData as FileFieldData);
     }),
     map((paragraphs) => {
-      return (paragraphs as ParagraphWithTextAndImage[]).map((paragraph) =>
-        paragraph.imagePath ? { ...paragraph, url: this.getGeneratedFileUrl(paragraph.imagePath) } : paragraph,
-      );
+      return (paragraphs as ParagraphWithTextAndImage[]).map((paragraph) => {
+        if (paragraph.imagePath) {
+          return { ...paragraph, url: this.getGeneratedFileUrl(paragraph.imagePath) };
+        } else {
+          return paragraph;
+        }
+      });
     }),
   );
-  filteredParagraphs = combineLatest([this.paragraphsWithImages, this.selectedTypes]).pipe(
+  filteredParagraphs = combineLatest([this.renderedParagraphs, this.selectedTypes]).pipe(
     map(([paragraphs, types]) =>
       types.length === 0
         ? paragraphs

@@ -336,7 +336,7 @@ export interface UserClassification extends Classification {
   cancelled_by_user?: boolean;
 }
 
-export type TypeParagraph = 'TEXT' | 'OCR' | 'INCEPTION' | 'DESCRIPTION' | 'TRANSCRIPT';
+export type TypeParagraph = 'TEXT' | 'OCR' | 'INCEPTION' | 'DESCRIPTION' | 'TRANSCRIPT' | 'TABLE';
 
 export interface Paragraph {
   start?: number;

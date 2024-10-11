@@ -43,6 +43,7 @@ import { RouterModule } from '@angular/router';
 import { HintModule } from '../../hint/hint.module';
 import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
 import { PipesModule } from '../../pipes';
+import { PreviewTableComponent } from './preview/preview-table.component';
 
 @NgModule({
   imports: [
@@ -87,6 +88,7 @@ import { PipesModule } from '../../pipes';
     ParagraphAnnotationComponent,
     ParagraphClassificationComponent,
     PreviewComponent,
+    PreviewTableComponent,
     ResourceClassificationComponent,
     ResourceFileComponent,
     ResourceLinkComponent,
