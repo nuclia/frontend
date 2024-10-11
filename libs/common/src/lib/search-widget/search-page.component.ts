@@ -70,6 +70,6 @@ export class SearchPageComponent implements OnDestroy {
 
   updateConfig(config: SearchConfiguration) {
     this.searchConfig = config;
-    this.searchWidgetService.generateWidgetSnippet(this.searchConfig);
+    this.searchWidgetService.generateWidgetSnippet(this.searchConfig, undefined, '.search-preview-container');
   }
 }

@@ -156,7 +156,11 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
           this.removeQueryParams();
         }
         this.checkIsModified();
-        this.searchWidgetService.generateWidgetSnippet(searchConfig, this.form.getRawValue());
+        this.searchWidgetService.generateWidgetSnippet(
+          searchConfig,
+          this.form.getRawValue(),
+          '.widget-preview-container',
+        );
       });
   }
 

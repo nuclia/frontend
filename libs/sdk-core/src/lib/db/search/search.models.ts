@@ -64,6 +64,7 @@ export interface BaseSearchOptions {
   debug?: boolean;
   show_hidden?: boolean;
   audit_metadata?: { [key: string]: string };
+  top_k?: number;
 }
 
 export interface ChatOptions extends BaseSearchOptions {
@@ -80,10 +81,6 @@ export interface ChatOptions extends BaseSearchOptions {
    * Defines the maximum number of tokens that the model will take as context.
    */
   max_tokens?: number | { context?: number; answer?: number };
-  /**
-   * Defines the maximum number of the most relevant paragraphs to pass to the LLM.
-   */
-  top_k?: number;
   prefer_markdown?: boolean;
   answer_json_schema?: object;
   extra_context?: string[];
@@ -92,7 +89,13 @@ export interface ChatOptions extends BaseSearchOptions {
 export interface SearchOptions extends BaseSearchOptions {
   faceted?: string[];
   sort?: SortOption;
+  /**
+   * @deprecated use top_k
+   */
   page_number?: number;
+  /**
+   * @deprecated use top_k
+   */
   page_size?: number;
   with_status?: ResourceStatus;
   with_duplicates?: boolean;
@@ -102,6 +105,8 @@ export interface SearchOptions extends BaseSearchOptions {
 
 export interface CatalogOptions extends SearchOptions {
   hidden?: boolean;
+  page_number?: number;
+  page_size?: number;
 }
 
 export enum SHORT_FIELD_TYPE {

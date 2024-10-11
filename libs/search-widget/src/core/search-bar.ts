@@ -178,8 +178,8 @@ export const setupTriggerSearch = (
   subscriptions.push(
     loadMore
       .pipe(
-        filter((page) => !!page),
         distinctUntilChanged(),
+        filter((page) => page > 0),
       )
       .subscribe(() => {
         triggerSearch.next({ more: true });
