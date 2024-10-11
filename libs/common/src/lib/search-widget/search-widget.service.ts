@@ -57,6 +57,7 @@ export class SearchWidgetService {
   private _generateWidgetSnippetSubject = new Subject<{
     currentConfig: SearchConfiguration;
     widgetOptions: WidgetConfiguration;
+    scrollContainer?: string;
   }>();
   searchConfigurations = this.searchWidgetStorage.searchConfigurations;
   widgetList = this.searchWidgetStorage.widgetList;
@@ -65,7 +66,7 @@ export class SearchWidgetService {
     this._generateWidgetSnippetSubject
       .pipe(
         debounceTime(300),
-        switchMap(({ currentConfig, widgetOptions }) => this._generateWidgetSnippet(currentConfig, widgetOptions)),
+        switchMap(({ currentConfig, widgetOptions, scrollContainer }) => this._generateWidgetSnippet(currentConfig, widgetOptions, scrollContainer)),
         delay(100), // wait for the widget to render
         tap(() => this.reinitWidgetPreview()),
       )
@@ -124,13 +125,15 @@ export class SearchWidgetService {
   generateWidgetSnippet(
     currentConfig: SearchConfiguration,
     widgetOptions: WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
+    scrollContainer?: string,
   ) {
-    this._generateWidgetSnippetSubject.next({ currentConfig, widgetOptions });
+    this._generateWidgetSnippetSubject.next({ currentConfig, widgetOptions, scrollContainer });
   }
 
   private _generateWidgetSnippet(
     currentConfig: SearchConfiguration,
     widgetOptions: WidgetConfiguration,
+    scrollContainer?: string,
   ): Observable<{ preview: SafeHtml; snippet: string }> {
     this.deleteWidgetPreview();
 
@@ -216,7 +219,7 @@ export class SearchWidgetService {
             )
             .replace('features="', `features="debug,`)
             .replace(apiKey, '')
-            .replace('<nuclia-search-results', '<nuclia-search-results scrollableContainerSelector=".preview-content"'),
+            .replace('<nuclia-search-results', `<nuclia-search-results scrollableContainerSelector="${scrollContainer}"`),
         );
 
         this._widgetPreview.next({ snippet, preview });
