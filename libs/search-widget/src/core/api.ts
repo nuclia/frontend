@@ -19,7 +19,6 @@ import type { EntityGroup, WidgetOptions } from './models';
 import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
 import { _, translateInstant } from './i18n';
 import { suggestionError } from './stores/suggestions.store';
-import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions, showAttachedImages } from './stores/search.store';
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
@@ -32,7 +31,6 @@ const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 // IMPORTANT! do not initialise those options outside initNuclia,
 // otherwise options might be kept in memory when using the widget generator
 let nucliaApi: Nuclia | null;
-let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE: Search.Features[];
 let CHAT_MODE: Ask.Features[];
@@ -125,14 +123,6 @@ export const initNuclia = (
   generative_model = widgetOptions.generative_model;
   vectorset = widgetOptions.vectorset;
 
-  if (widgetOptions.features?.suggestLabels) {
-    const kbPath = nucliaApi?.knowledgeBox.fullpath;
-    if (kbPath) {
-      nucliaPrediction = new NucliaPrediction(getCDN());
-      const authHeaders = state === 'PRIVATE' ? nucliaApi.auth.getAuthHeaders() : {};
-      nucliaPrediction.loadModels(kbPath, authHeaders);
-    }
-  }
   if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
     SEARCH_MODE.push(Search.Features.RELATIONS);
     CHAT_MODE.push(Ask.Features.RELATIONS);
@@ -283,14 +273,6 @@ export const suggest = (query: string) => {
       return res.type === 'suggestions';
     }),
   );
-};
-
-export const predict = (query: string): Observable<Classification[]> => {
-  if (!nucliaPrediction) {
-    throw new Error('Nuclia prediction not initialized');
-  }
-
-  return nucliaPrediction.predict(query);
 };
 
 export const getResource = (uid: string): Observable<Resource> => {

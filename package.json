@@ -15,7 +15,6 @@
     "update": "nx migrate latest",
     "help": "nx help",
     "missdev": "npx missdev --output=../libs --https --default-to-master",
-    "prediction-build": "rimraf ./dist/prediction && cd ./libs/prediction && rollup -c && cd ../..",
     "sdk-build": "run-script-os",
     "sdk-build:win32": "echo 'NO WIN32 BUILD'",
     "sdk-build:default": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cd ../..",

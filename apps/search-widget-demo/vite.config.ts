@@ -8,7 +8,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@nuclia/core': path.resolve(__dirname, '../../libs/sdk-core/src/index.ts'),
-      '@nuclia/prediction': path.resolve(__dirname, '../../libs/prediction/src/index.ts'),
     },
   },
   plugins: [

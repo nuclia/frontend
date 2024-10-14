@@ -19,7 +19,6 @@ export interface SearchBoxConfig {
   suggestions: boolean;
   useSynonyms: boolean;
   suggestResults: boolean;
-  suggestLabels: boolean;
   autocompleteFromNERs: boolean;
   preselectedFilters: string;
   filters: FilterSelectionType;
@@ -131,7 +130,6 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   preselectedFilters: '',
   suggestions: false,
   suggestResults: false,
-  suggestLabels: false,
   autocompleteFromNERs: false,
   useSynonyms: false,
   prependTheQuery: false,
@@ -237,7 +235,6 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     autofilter: config.searchBox.autofilter,
     useSynonyms: config.searchBox.useSynonyms,
     suggestions: config.searchBox.suggestions,
-    suggestLabels: config.searchBox.suggestLabels,
     autocompleteFromNERs: config.searchBox.suggestions && config.searchBox.autocompleteFromNERs,
     showHidden: config.searchBox.showHiddenResources,
     citations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'citations',

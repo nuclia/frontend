@@ -1175,7 +1175,6 @@
 	"search.configuration.search-box.select-results-used.title": "Sélectionnez les résultats qui sont utilisés pour générer la réponse",
 	"search.configuration.search-box.show-hidden-resources.toggle-description": "Les ressources cachées ne seront pas exclues de la recherche et de la génération de réponses.",
 	"search.configuration.search-box.show-hidden-resources.toggle-label": "Inclure des ressources cachées",
-	"search.configuration.search-box.suggestions.suggest-labels": "Proposer des étiquettes en fonction de la requête",
 	"search.configuration.search-box.suggestions.suggest-ners": "Suggérer des NERs pour compléter automatiquement la requête de recherche",
 	"search.configuration.search-box.suggestions.suggest-results": "Suggérer des résultats lors de la saisie",
 	"search.configuration.search-box.suggestions.toggle-description": "Elles seront visibles sous le champ de recherche.",

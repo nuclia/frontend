@@ -79,7 +79,6 @@ export interface WidgetFeatures {
   permalink?: boolean;
   relations?: boolean;
   suggestions?: boolean;
-  suggestLabels?: boolean;
   autocompleteFromNERs?: boolean;
   displayMetadata?: boolean;
   answers?: boolean;

@@ -1175,7 +1175,6 @@
 	"search.configuration.search-box.select-results-used.title": "Seleccione qué resultados se utilizan para generar la respuesta.",
 	"search.configuration.search-box.show-hidden-resources.toggle-description": "Los recursos ocultos no se excluirán de la búsqueda y la generación de respuestas.",
 	"search.configuration.search-box.show-hidden-resources.toggle-label": "Incluir recursos ocultos",
-	"search.configuration.search-box.suggestions.suggest-labels": "Sugerir etiquetas basadas en la consulta",
 	"search.configuration.search-box.suggestions.suggest-ners": "Sugerir NER para autocompletar la consulta de búsqueda",
 	"search.configuration.search-box.suggestions.suggest-results": "Sugerir resultados mientras escribe",
 	"search.configuration.search-box.suggestions.toggle-description": "Serán visibles debajo del cuadro de búsqueda.",

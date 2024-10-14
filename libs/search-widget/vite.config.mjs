@@ -9,10 +9,7 @@ const fileName = process.argv[6] || 'nuclia-widget';
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    alias: [
-      { find: '@nuclia/core', replacement: path.resolve(__dirname, '../sdk-core/src/index.ts') },
-      { find: '@nuclia/prediction', replacement: path.resolve(__dirname, '../prediction/src/index.ts') },
-    ],
+    alias: [{ find: '@nuclia/core', replacement: path.resolve(__dirname, '../sdk-core/src/index.ts') }],
   },
   build: {
     outDir: `dist/libs/${widgetFolder}`,
