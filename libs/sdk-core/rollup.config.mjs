@@ -56,7 +56,7 @@ export default [
     ],
   },
   {
-    input: '../../dist/sdk-core/esm/libs/sdk-core/src/index.d.ts',
+    input: '../../dist/sdk-core/esm/types/libs/sdk-core/src/index.d.ts',
     output: [{ file: '../../dist/sdk-core/types/index.d.ts', format: 'esm' }],
     external: [/\.css$/],
     plugins: [dts()],
