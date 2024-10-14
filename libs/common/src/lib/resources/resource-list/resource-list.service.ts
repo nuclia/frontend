@@ -248,7 +248,7 @@ export class ResourceListService {
     ]).pipe(
       map(([labelSets, { results, kbId }]) => {
         const newResults: ResourceWithLabels[] = Object.values(results.resources || {}).map((resourceData) =>
-          this.getResourceWithLabels(kbId, resourceData, labelSets),
+          this.getResourceWithLabelsAndErrors(kbId, resourceData, labelSets),
         );
         const newData = replaceData
           ? newResults
@@ -272,7 +272,11 @@ export class ResourceListService {
     );
   }
 
-  private getResourceWithLabels(kbId: string, resourceData: IResource, labelSets: LabelSets): ResourceWithLabels {
+  private getResourceWithLabelsAndErrors(
+    kbId: string,
+    resourceData: IResource,
+    labelSets: LabelSets,
+  ): ResourceWithLabels {
     const resource = new Resource(this.sdk.nuclia, kbId, resourceData);
     const resourceWithLabels: ResourceWithLabels = {
       resource,
@@ -284,6 +288,13 @@ export class ResourceListService {
         ...label,
         color: labelSets[label.labelset]?.color || '#ffffff',
       }));
+    }
+    const errors = resource
+      .getFields()
+      .map((field) => field.error?.body || '')
+      .filter((error) => !!error);
+    if (errors.length > 0) {
+      resourceWithLabels.errors = errors.join('. ');
     }
 
     return resourceWithLabels;

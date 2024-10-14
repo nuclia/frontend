@@ -79,6 +79,18 @@
         <pa-table-cell center>
           <span class="body-s">{{ row.resource.created | date: 'mediumDate' }}</span>
         </pa-table-cell>
+        <pa-table-cell>
+          <div class="body-s errors-cell">
+            @if ((row.errors || '').length > 120) {
+              <div [paPopover]="error">{{ row.errors.substring(0, 120) }}…</div>
+              <pa-popover #error>
+                {{ row.errors }}
+              </pa-popover>
+            } @else {
+              {{ row.errors }}
+            }
+          </div>
+        </pa-table-cell>
         @if (isAdminOrContrib | async) {
           <pa-table-cell-menu>
             <pa-button
