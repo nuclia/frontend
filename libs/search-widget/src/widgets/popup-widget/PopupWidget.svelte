@@ -42,7 +42,7 @@
   export let vectorset = '';
   export let chat_placeholder = '';
   export let audit_metadata = '';
-  export let reranker: '';
+  export let reranker = '';
 
   let searchBar: any;
   let visible = false;

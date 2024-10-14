@@ -86,7 +86,7 @@
   export let vectorset = '';
   export let chat_placeholder = '';
   export let audit_metadata = '';
-  export let reranker: '';
+  export let reranker = '';
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
