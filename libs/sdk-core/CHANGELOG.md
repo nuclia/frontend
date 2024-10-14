@@ -1,4 +1,4 @@
-# 1.22.0 (unreleased)
+# 1.22.0 (2024-10-14)
 
 ### Beta feature
 
