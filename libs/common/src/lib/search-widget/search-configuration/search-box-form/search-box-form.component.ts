@@ -79,14 +79,13 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
       labelFamilies: new FormControl<boolean>(false, { nonNullable: true }),
     }),
     suggestResults: new FormControl<boolean>(false, { nonNullable: true }),
-    suggestLabels: new FormControl<boolean>(false, { nonNullable: true }),
     autocompleteFromNERs: new FormControl<boolean>(false, { nonNullable: true }),
     preselectedFilters: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     useSynonyms: new FormControl<boolean>(false, { nonNullable: true }),
     prependTheQuery: new FormControl<boolean>(false, { nonNullable: true }),
     queryPrepend: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     rephraseQuery: new FormControl<boolean>(false, { nonNullable: true }),
-    useRephrasePrompt:  new FormControl<boolean>(false, { nonNullable: true }),
+    useRephrasePrompt: new FormControl<boolean>(false, { nonNullable: true }),
     rephrasePrompt: new FormControl<string>('', { nonNullable: true }),
     generateAnswerWith: new FormControl<'only-semantic' | 'semantic-and-full-text'>('semantic-and-full-text', {
       nonNullable: true,
@@ -97,8 +96,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
 
   synonymsEnabled = this.featuresService.unstable.synonyms;
   autocompleteFromNerEnabled = this.featuresService.unstable.suggestEntities;
-  isTrainingEnabled = this.featuresService.unstable.training;
-  hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled ));
+  hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
 
   get filterEnabled() {
     return this.form.controls.filter.value;

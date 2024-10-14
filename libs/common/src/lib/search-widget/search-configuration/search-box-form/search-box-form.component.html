@@ -220,13 +220,6 @@
           {{ 'search.configuration.search-box.suggestions.suggest-ners' | translate }}
         </pa-checkbox>
       }
-      @if (isTrainingEnabled | async) {
-        <pa-checkbox
-          noEllipsis
-          formControlName="suggestLabels">
-          {{ 'search.configuration.search-box.suggestions.suggest-labels' | translate }}
-        </pa-checkbox>
-      }
     </div>
   </div>
   <div class="config-form-field">

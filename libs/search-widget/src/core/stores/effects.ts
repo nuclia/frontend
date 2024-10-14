@@ -4,7 +4,6 @@ import {
   getLabelSets,
   getResourceById,
   getResourceField,
-  predict,
   searchInResource,
   suggest,
 } from '../api';
@@ -135,12 +134,9 @@ export function activateTypeAheadSuggestions() {
             results: NO_SUGGESTION_RESULTS,
           } as Suggestions);
         }
-        const requests: [Observable<Search.Suggestions | IErrorResponse>, Observable<Classification[]>] =
-          widgetFeatures.getValue()?.suggestLabels ? [suggest(query), predict(query)] : [suggest(query), of([])];
-        return forkJoin(requests).pipe(
-          map(([results, predictions]) => ({
-            results: results.type !== 'error' ? results : NO_SUGGESTION_RESULTS,
-            labels: predictions,
+        return suggest(query).pipe(
+          map((results) => ({
+            results,
           })),
         );
       }),

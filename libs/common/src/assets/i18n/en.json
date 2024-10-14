@@ -1177,7 +1177,6 @@
 	"search.configuration.search-box.semantic-reranking.toggle-label": "Semantic re-ranking",
 	"search.configuration.search-box.show-hidden-resources.toggle-description": "Hidden resources will not be excluded from search and answer generation.",
 	"search.configuration.search-box.show-hidden-resources.toggle-label": "Include hidden resources",
-	"search.configuration.search-box.suggestions.suggest-labels": "Suggest labels based on the query",
 	"search.configuration.search-box.suggestions.suggest-ners": "Suggest NERs to autocompleting the search query",
 	"search.configuration.search-box.suggestions.suggest-results": "Suggest results while typing",
 	"search.configuration.search-box.suggestions.toggle-description": "They’ll be visible under the search box.",

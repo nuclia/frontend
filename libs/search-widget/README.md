@@ -21,7 +21,7 @@ Copy/paste the following snippet in your HTML code:
 You need to install the following dependencies:
 
 ```bash
-npm install @nuclia/widget @nuclia/core @nuclia/prediction rxjs@^7.5.2 date-fns sass
+npm install @nuclia/widget @nuclia/core rxjs@^7.5.2 date-fns sass
 ```
 
 Then, you can use the components in your Svelte code:
