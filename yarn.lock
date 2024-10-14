@@ -7137,150 +7137,108 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry-internal/tracing@npm:7.46.0":
-  version: 7.46.0
-  resolution: "@sentry-internal/tracing@npm:7.46.0"
+"@sentry-internal/browser-utils@npm:8.34.0":
+  version: 8.34.0
+  resolution: "@sentry-internal/browser-utils@npm:8.34.0"
   dependencies:
-    "@sentry/core": 7.46.0
-    "@sentry/types": 7.46.0
-    "@sentry/utils": 7.46.0
-    tslib: ^1.9.3
-  checksum: 727f32da229db307391f174e98d819db8cf97e58149e5dea1bfe9b4ab0efc44eec6ad8d93c62051d56f202d5be7895180f4711ca44bf2986714ce8cf8015ab17
+    "@sentry/core": 8.34.0
+    "@sentry/types": 8.34.0
+    "@sentry/utils": 8.34.0
+  checksum: eceae689c38105af796a18cef2ef15ba1fc371e0fdaecc174b36565fa818925e7de0a3aea657142651ea62b1dfc4a78180a07a616b3c57922347d49c7bc6fe74
   languageName: node
   linkType: hard
 
-"@sentry-internal/tracing@npm:7.60.0":
-  version: 7.60.0
-  resolution: "@sentry-internal/tracing@npm:7.60.0"
+"@sentry-internal/feedback@npm:8.34.0":
+  version: 8.34.0
+  resolution: "@sentry-internal/feedback@npm:8.34.0"
   dependencies:
-    "@sentry/core": 7.60.0
-    "@sentry/types": 7.60.0
-    "@sentry/utils": 7.60.0
-    tslib: ^2.4.1 || ^1.9.3
-  checksum: ebd60aea46ca4317303ddb6ee4d6d440fd1b6c936a7c30081944d6197406a13465c7211a1490f199f2b5c51c2de51e5e6471a082990891150fcbeedc28c6464e
+    "@sentry/core": 8.34.0
+    "@sentry/types": 8.34.0
+    "@sentry/utils": 8.34.0
+  checksum: 56e7f4b45ba37467aa3d3b7baeda9a4fa152cc6cc536691af7de9040dc637d7b8ae668f63936da7d991c3dfe5dc2492e2a1b19f28932209b474653a67acb870a
   languageName: node
   linkType: hard
 
-"@sentry/angular@npm:7.60.0":
-  version: 7.60.0
-  resolution: "@sentry/angular@npm:7.60.0"
+"@sentry-internal/replay-canvas@npm:8.34.0":
+  version: 8.34.0
+  resolution: "@sentry-internal/replay-canvas@npm:8.34.0"
   dependencies:
-    "@sentry/browser": 7.60.0
-    "@sentry/types": 7.60.0
-    "@sentry/utils": 7.60.0
+    "@sentry-internal/replay": 8.34.0
+    "@sentry/core": 8.34.0
+    "@sentry/types": 8.34.0
+    "@sentry/utils": 8.34.0
+  checksum: ae31e3b2a8b4e016c660a8de6769c3ed705ac9ea480daa34d2b95eeb6d96db63daf009c42e230f60ab77f453caf1bc40cb6a44d2929f132d327dfd9f30de0b52
+  languageName: node
+  linkType: hard
+
+"@sentry-internal/replay@npm:8.34.0":
+  version: 8.34.0
+  resolution: "@sentry-internal/replay@npm:8.34.0"
+  dependencies:
+    "@sentry-internal/browser-utils": 8.34.0
+    "@sentry/core": 8.34.0
+    "@sentry/types": 8.34.0
+    "@sentry/utils": 8.34.0
+  checksum: 5218e464005a7653cbca52047923baa09d3986914e88e06fe73263b7e514f48f99e3f56b587126f4072611cbd2b8bc18f26df97eed09280f3465eadeabec3a52
+  languageName: node
+  linkType: hard
+
+"@sentry/angular@npm:8.34.0":
+  version: 8.34.0
+  resolution: "@sentry/angular@npm:8.34.0"
+  dependencies:
+    "@sentry/browser": 8.34.0
+    "@sentry/core": 8.34.0
+    "@sentry/types": 8.34.0
+    "@sentry/utils": 8.34.0
     tslib: ^2.4.1
   peerDependencies:
-    "@angular/common": ">= 10.x <= 15.x"
-    "@angular/core": ">= 10.x <= 15.x"
-    "@angular/router": ">= 10.x <= 15.x"
+    "@angular/common": ">= 14.x <= 18.x"
+    "@angular/core": ">= 14.x <= 18.x"
+    "@angular/router": ">= 14.x <= 18.x"
     rxjs: ^6.5.5 || ^7.x
-  checksum: 9ce11f8cabb4b13760bdb8967a3ac0d837e5c7ee82e4b347b6cf003f0ef1a484cf320ca5f4933aaa286f60da28e6db018b3650cdda97d390e264214d0f481667
+  checksum: 0a6ea3f926b7136004ef141fe40490c03683879b576160291b838b5374b6906b07fbebb100ac456ac9f4c0fd5ab8c63dcbf7c4e8523b0d0816f129126d53b935
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.60.0":
-  version: 7.60.0
-  resolution: "@sentry/browser@npm:7.60.0"
+"@sentry/browser@npm:8.34.0":
+  version: 8.34.0
+  resolution: "@sentry/browser@npm:8.34.0"
   dependencies:
-    "@sentry-internal/tracing": 7.60.0
-    "@sentry/core": 7.60.0
-    "@sentry/replay": 7.60.0
-    "@sentry/types": 7.60.0
-    "@sentry/utils": 7.60.0
-    tslib: ^2.4.1 || ^1.9.3
-  checksum: 3017e5ff2300ef376a4c46c6853683bfbf1a1e5ba7be8c2229816ec7fd6723d0846d57777d178c17f00ca98fc26e73a8e318a74e6f82b536793afb282203a85c
+    "@sentry-internal/browser-utils": 8.34.0
+    "@sentry-internal/feedback": 8.34.0
+    "@sentry-internal/replay": 8.34.0
+    "@sentry-internal/replay-canvas": 8.34.0
+    "@sentry/core": 8.34.0
+    "@sentry/types": 8.34.0
+    "@sentry/utils": 8.34.0
+  checksum: 165271cde160364405da16d5f3d48a66f4091511c37ff90944382caec7f8887f8677fec8253b8ddccc4ad99c3dab8ddd8577d306106946488fe910645a39b690
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.46.0":
-  version: 7.46.0
-  resolution: "@sentry/core@npm:7.46.0"
+"@sentry/core@npm:8.34.0":
+  version: 8.34.0
+  resolution: "@sentry/core@npm:8.34.0"
   dependencies:
-    "@sentry/types": 7.46.0
-    "@sentry/utils": 7.46.0
-    tslib: ^1.9.3
-  checksum: af9733781f1ca9091d42363bf67b23999eebe8a2ea15178d93d942788e2adc2c0ed0709d7553cd03b94e19d6b0376066f4e1c367b4a6855c65114ddc864f26f3
+    "@sentry/types": 8.34.0
+    "@sentry/utils": 8.34.0
+  checksum: e3fabe4788f19115177a85c5238d5c29204cc8252637550bf75fa31a3502c6ac44fe87a0d3c6c7cebb410e3b64c9971a6ed7bf18bd8f9e2e0e148045e86b8933
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.60.0":
-  version: 7.60.0
-  resolution: "@sentry/core@npm:7.60.0"
+"@sentry/types@npm:8.34.0":
+  version: 8.34.0
+  resolution: "@sentry/types@npm:8.34.0"
+  checksum: ab5c8fbd81eafd66292cfcb6bcbfcc2d222ccbb83af662d4412ccecc1cd2cc3a7d254f285ff1aa7d7da072c7f85d3fc44e9585fbb3a1b2bff260086af4bbf909
+  languageName: node
+  linkType: hard
+
+"@sentry/utils@npm:8.34.0":
+  version: 8.34.0
+  resolution: "@sentry/utils@npm:8.34.0"
   dependencies:
-    "@sentry/types": 7.60.0
-    "@sentry/utils": 7.60.0
-    tslib: ^2.4.1 || ^1.9.3
-  checksum: 33d5c69f9507a49ac22d36bfe772625b328cd75a4b5c9d64af8b2d8635b3e502e1e98e0eaab51458e4d8b55739daa1c34294aa4179eeb6fe4f285c03b08e6328
-  languageName: node
-  linkType: hard
-
-"@sentry/node@npm:^7.60.0":
-  version: 7.60.0
-  resolution: "@sentry/node@npm:7.60.0"
-  dependencies:
-    "@sentry-internal/tracing": 7.60.0
-    "@sentry/core": 7.60.0
-    "@sentry/types": 7.60.0
-    "@sentry/utils": 7.60.0
-    cookie: ^0.4.1
-    https-proxy-agent: ^5.0.0
-    lru_map: ^0.3.3
-    tslib: ^2.4.1 || ^1.9.3
-  checksum: 3ec42ea5d95a204c5ad8ed360c4d2d6c1583780b4879e752856a418289889b8a9e18e6d1ebe721a141b2b0fd3275e22c7ca3661fb6db471e343067c2caf29218
-  languageName: node
-  linkType: hard
-
-"@sentry/replay@npm:7.60.0":
-  version: 7.60.0
-  resolution: "@sentry/replay@npm:7.60.0"
-  dependencies:
-    "@sentry/core": 7.60.0
-    "@sentry/types": 7.60.0
-    "@sentry/utils": 7.60.0
-  checksum: c88ddbeb046e77300598154f0be6e70ecce393da11517893d06ab2734e2436631cd47f96916f2457ceac755099afc11e992e8eadb0ff49fb7b7881fd00247425
-  languageName: node
-  linkType: hard
-
-"@sentry/tracing@npm:^7.2.0":
-  version: 7.46.0
-  resolution: "@sentry/tracing@npm:7.46.0"
-  dependencies:
-    "@sentry-internal/tracing": 7.46.0
-  checksum: 6a3812feff7536688c07094ff531fcfb017f2394f56fe32ea5e9788d04a25de8882a3cdb0624945ee8ec572140e89db7d7e85d92e90e5ffdf3ffa13205489811
-  languageName: node
-  linkType: hard
-
-"@sentry/types@npm:7.46.0":
-  version: 7.46.0
-  resolution: "@sentry/types@npm:7.46.0"
-  checksum: a61a525e425db76fce792c83677b0be6a9b6311cefe6590cc146cfde17870f02918785cef6af3a345c5b2e8631ef1c76785b5b270d4428d612b1cfe30d07a946
-  languageName: node
-  linkType: hard
-
-"@sentry/types@npm:7.60.0":
-  version: 7.60.0
-  resolution: "@sentry/types@npm:7.60.0"
-  checksum: c145704ef188121df0f19e195026b6be22840f56c92e914b54063a2c2241ab09e7c3863530efd70bbb6d1152237b3b99f22a3d9cded06ac25e089121c2890dd7
-  languageName: node
-  linkType: hard
-
-"@sentry/utils@npm:7.46.0":
-  version: 7.46.0
-  resolution: "@sentry/utils@npm:7.46.0"
-  dependencies:
-    "@sentry/types": 7.46.0
-    tslib: ^1.9.3
-  checksum: cc550dac9105e68e28b770879426e12b52953468f3f34df7ff0f5352cdcc4b8a8af2144fe1a20f0a23d3f0afdbba14661951765e3d9f81335acafc35ffd632f1
-  languageName: node
-  linkType: hard
-
-"@sentry/utils@npm:7.60.0":
-  version: 7.60.0
-  resolution: "@sentry/utils@npm:7.60.0"
-  dependencies:
-    "@sentry/types": 7.60.0
-    tslib: ^2.4.1 || ^1.9.3
-  checksum: 3dd3dd2d7c33e011db700032d1a81f8c7c95f6b212f9685fd614e976fae1ff259dd98340e5ccca52bf251387e7f02949850edb5879a35da842e1b71a1e975331
+    "@sentry/types": 8.34.0
+  checksum: 6d21fa7aadcf598da61d37e9dd1ed1ce53fac604e23924c0ab7d581160969f0d94734758477dcf487c3a7931416255bda70a2e1bde9e76650fef5efa45ee8ad7
   languageName: node
   linkType: hard
 
@@ -10875,13 +10833,6 @@ __metadata:
   version: 0.6.0
   resolution: "cookie@npm:0.6.0"
   checksum: f56a7d32a07db5458e79c726b77e3c2eff655c36792f2b6c58d351fb5f61531e5b1ab7f46987150136e366c65213cbe31729e02a3eaed630c3bf7334635fb410
-  languageName: node
-  linkType: hard
-
-"cookie@npm:^0.4.1":
-  version: 0.4.2
-  resolution: "cookie@npm:0.4.2"
-  checksum: a00833c998bedf8e787b4c342defe5fa419abd96b32f4464f718b91022586b8f1bafbddd499288e75c037642493c83083da426c6a9080d309e3bd90fd11baa9b
   languageName: node
   linkType: hard
 
@@ -17196,13 +17147,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru_map@npm:^0.3.3":
-  version: 0.3.3
-  resolution: "lru_map@npm:0.3.3"
-  checksum: ca9dd43c65ed7a4f117c548028101c5b6855e10923ea9d1f635af53ad20c5868ff428c364d454a7b57fe391b89c704982275410c3c5099cca5aeee00d76e169a
-  languageName: node
-  linkType: hard
-
 "lunr@npm:^2.3.9":
   version: 2.3.9
   resolution: "lunr@npm:2.3.9"
@@ -17948,15 +17892,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ng-mocks@npm:14.11.0":
-  version: 14.11.0
-  resolution: "ng-mocks@npm:14.11.0"
+"ng-mocks@npm:14.13.1":
+  version: 14.13.1
+  resolution: "ng-mocks@npm:14.13.1"
   peerDependencies:
-    "@angular/common": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16
-    "@angular/core": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16
-    "@angular/forms": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16
-    "@angular/platform-browser": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16
-  checksum: 7dc4542886254f50bc5103d968d098ebfdba136a3cb0309a4f8bae32f17a7c024fc06bf7b94a69454f670d793f7bbb595f81fd3516c95f1bcf04994bafcb1a20
+    "@angular/common": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18
+    "@angular/core": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18
+    "@angular/forms": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18
+    "@angular/platform-browser": 5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18
+  checksum: 80dfcc04a70575fa749fa42dbcacbf3b3052b98339b84f6e289154a86ffe55efc67b6e114717378079adbf28038d7cadf183304f0b36583e3659d11a77cee612
   languageName: node
   linkType: hard
 
@@ -18004,30 +17948,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ngx-captcha@npm:^12.0.2":
-  version: 12.0.2
-  resolution: "ngx-captcha@npm:12.0.2"
+"ngx-captcha@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "ngx-captcha@npm:13.0.0"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
-    "@angular/common": ^13.0.0 || ^14.0.0
-    "@angular/core": ^13.0.0 || ^14.0.0
-  checksum: 837eac44c8109c38e4f23e220b2ff3e55607e10664230f1738c652796e437b2694b9ab588af6ace09fd9bff29167de0f3f71d17ece22192bb558c00db5964eaf
+    "@angular/common": ">= 15.0.0"
+    "@angular/core": ">= 15.0.0"
+  checksum: 71d1f0803e1c528318c8ba2adca88c1cf67633083605fafe26fe5f457152e2c264337170be1b1084804bfd277b016e37cfa8fad286fc7cc14c926733058049eb
   languageName: node
   linkType: hard
 
-"ngx-translate-multi-http-loader@npm:^16.0.1":
-  version: 16.0.1
-  resolution: "ngx-translate-multi-http-loader@npm:16.0.1"
+"ngx-translate-multi-http-loader@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "ngx-translate-multi-http-loader@npm:18.2.0"
   dependencies:
-    tslib: ^2.6.0
+    tslib: ^2.6.3
   peerDependencies:
     "@angular/common": ">=13.0.0"
     "@angular/core": ">=13.0.0"
     "@ngx-translate/core": ">=15.0.0"
-    deepmerge-ts: ^5.1.0
     rxjs: ^7.8.1
-  checksum: 28701c4584f8e3d0b538fe4f81abcb1bfd527b5280eb3defc8d3a6363d9f859a66fa5a04a3c7319ac38696f85c12c2df45e78ed3390d55ed4b9bba1c3cc692d0
+  checksum: 247c164b1fec32f731280ec1d24fe1ed3e40de64bc3145b8d0a52281225b95fbaeaff3d530d34896afe1b1716fbd798b52ce15f9bc68cd24893879cf4a61ab2e
   languageName: node
   linkType: hard
 
@@ -18486,10 +18429,7 @@ __metadata:
     "@rollup/plugin-terser": ^0.4.4
     "@rollup/plugin-typescript": ^12.1.0
     "@schematics/angular": 18.2.0
-    "@sentry/angular": 7.60.0
-    "@sentry/node": ^7.60.0
-    "@sentry/tracing": ^7.2.0
-    "@sentry/utils": 7.60.0
+    "@sentry/angular": 8.34.0
     "@sveltejs/package": ^2.3.1
     "@sveltejs/vite-plugin-svelte": ^3.1.1
     "@testing-library/svelte": ^5.1.0
@@ -18543,10 +18483,10 @@ __metadata:
     localstorage-polyfill: ^1.0.1
     mime: 3.0.0
     mrs-developer: ^1.7.1
-    ng-mocks: 14.11.0
+    ng-mocks: 14.13.1
     ng-packagr: 18.2.0
-    ngx-captcha: ^12.0.2
-    ngx-translate-multi-http-loader: ^16.0.1
+    ngx-captcha: ^13.0.0
+    ngx-translate-multi-http-loader: ^18.2.0
     node-fetch: ^3.3.1
     nodemon: ^2.0.22
     nx: 20.0.0
@@ -23110,7 +23050,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^1.10.0, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
+"tslib@npm:^1.10.0, tslib@npm:^1.9.0":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
@@ -23124,17 +23064,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.4.1 || ^1.9.3, tslib@npm:^2.6.0":
-  version: 2.6.1
-  resolution: "tslib@npm:2.6.1"
-  checksum: b0d176d176487905b66ae4d5856647df50e37beea7571c53b8d10ba9222c074b81f1410fb91da13debaf2cbc970663609068bdebafa844ea9d69b146527c38fe
-  languageName: node
-  linkType: hard
-
 "tslib@npm:^2.4.1, tslib@npm:^2.6.2":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.6.3":
+  version: 2.7.0
+  resolution: "tslib@npm:2.7.0"
+  checksum: 1606d5c89f88d466889def78653f3aab0f88692e80bb2066d090ca6112ae250ec1cfa9dbfaab0d17b60da15a4186e8ec4d893801c67896b277c17374e36e1d28
   languageName: node
   linkType: hard
 
