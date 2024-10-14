@@ -113,7 +113,7 @@ export class OnboardingService {
     });
     const kbCreationEvent: { [key: string]: string } = {
       region: zone,
-      learningConfiguration: kbConfig.learning_configuration?.['semantic_model'] || '',
+      learningConfiguration: kbConfig.learning_configuration?.['semantic_models']?.join(',') || '',
     };
     if (kbConfig.external_index_provider) {
       kbCreationEvent['externalIndexProvider'] = kbConfig.external_index_provider.type;
