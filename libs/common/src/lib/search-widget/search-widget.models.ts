@@ -30,6 +30,7 @@ export interface SearchBoxConfig {
   rephrasePrompt: string;
   generateAnswerWith: 'only-semantic' | 'semantic-and-full-text';
   showHiddenResources: boolean;
+  semanticReranking: boolean;
 }
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
@@ -141,6 +142,7 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   rephrasePrompt: '',
   generateAnswerWith: 'semantic-and-full-text',
   showHiddenResources: false,
+  semanticReranking: false,
 };
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generateAnswer: false,
@@ -415,4 +417,7 @@ export function getJsonSchema(config: ResultDisplayConfig): string {
 }
 export function getWidgetTheme(options: WidgetConfiguration): string {
   return options.darkMode === 'dark' ? `\n  mode="dark"` : '';
+}
+export function getReranker(config: SearchBoxConfig): string {
+  return config.semanticReranking ? `\n  reranker="predict"` : '';
 }

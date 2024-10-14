@@ -42,6 +42,7 @@
   export let vectorset = '';
   export let chat_placeholder = '';
   export let audit_metadata = '';
+  export let reranker: '';
 
   let searchBar: any;
   let visible = false;
@@ -141,7 +142,8 @@
             {json_schema}
             {vectorset}
             {chat_placeholder}
-            {audit_metadata} />
+            {audit_metadata}
+            {reranker} />
         </div>
         <div class="search-results-container">
           <SearchResults />

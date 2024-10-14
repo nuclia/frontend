@@ -12,6 +12,7 @@
 - Add `metadata` and `promptContext` to `Ask.Answer` model
 - Add support for hidden resources
 - Add support for rephrase prompt
+- Support `reranker` on `/ask` and `/find` endpoints
 
 ### Deprecation
 

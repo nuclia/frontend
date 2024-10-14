@@ -9,6 +9,7 @@ import type {
   KBStates,
   LabelSets,
   NucliaOptions,
+  Reranker,
   Resource,
   ResourceField,
   SearchOptions,
@@ -54,6 +55,7 @@ let DEBUG = false;
 let SHOW_HIDDEN = false;
 let SHOW_ATTACHED_IMAGES = false;
 let AUDIT_METADATA: { [key: string]: string } | undefined = undefined;
+let RERANKER: string | undefined = undefined;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -96,6 +98,10 @@ export const initNuclia = (
   NO_CHAT_HISTORY = !!widgetOptions.features?.noChatHistory;
   DEBUG = !!widgetOptions.features?.debug;
   SHOW_HIDDEN = !!widgetOptions.features?.showHidden;
+  RERANKER = widgetOptions.reranker;
+  if (RERANKER) {
+    SEARCH_OPTIONS.reranker = RERANKER as Reranker;
+  }
   try {
     const metadata = widgetOptions.audit_metadata ? JSON.parse(widgetOptions.audit_metadata) : undefined;
     AUDIT_METADATA = metadata;
@@ -215,6 +221,7 @@ export const getAnswer = (
     debug: DEBUG,
     show_hidden: SHOW_HIDDEN,
     audit_metadata: AUDIT_METADATA,
+    reranker: RERANKER,
   };
   if (prompt || systemPrompt || REPHRASE_PROMPT) {
     defaultOptions.prompt = {
