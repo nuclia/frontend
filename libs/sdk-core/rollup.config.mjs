@@ -5,7 +5,7 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import generatePackageJson from 'rollup-plugin-generate-package-json';
 import dts from 'rollup-plugin-dts';
 import copy from 'rollup-plugin-copy';
-import packageJson from './package.json' assert {type: 'json'};
+import packageJson from './package.json' assert { type: 'json' };
 
 export default [
   {
@@ -51,7 +51,7 @@ export default [
         packageJsonPath: 'libs/sdk-core/package.json',
       }),
       resolve(),
-      typescript({ tsconfig: './tsconfig.lib.json' }),
+      typescript({ tsconfig: './tsconfig.lib.umd.json' }),
       terser({ format: { comments: false } }),
     ],
   },
