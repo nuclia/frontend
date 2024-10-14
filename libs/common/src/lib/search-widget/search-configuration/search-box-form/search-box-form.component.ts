@@ -92,6 +92,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
       nonNullable: true,
     }),
     showHiddenResources: new FormControl<boolean>(false, { nonNullable: true }),
+    semanticReranking: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   synonymsEnabled = this.featuresService.unstable.synonyms;

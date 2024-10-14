@@ -86,6 +86,7 @@
   export let vectorset = '';
   export let chat_placeholder = '';
   export let audit_metadata = '';
+  export let reranker = '';
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -152,6 +153,7 @@
       account,
       not_enough_data_message,
       vectorset,
+      reranker,
     });
   }
 
@@ -236,6 +238,7 @@
         query_prepend,
         vectorset,
         audit_metadata,
+        reranker,
       },
       no_tracking,
     );

@@ -65,6 +65,7 @@ export interface BaseSearchOptions {
   show_hidden?: boolean;
   audit_metadata?: { [key: string]: string };
   top_k?: number;
+  reranker?: Reranker;
 }
 
 export interface ChatOptions extends BaseSearchOptions {
@@ -115,6 +116,11 @@ export enum SHORT_FIELD_TYPE {
   link = 'u',
   generic = 'a',
   conversation = 'c',
+}
+
+export enum Reranker {
+  MULTI_MATCH_BOOSTER = 'multi_match_booster',
+  PREDICT = 'predict',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -176,6 +182,7 @@ export namespace Search {
     VECTOR = 'VECTOR',
     BM25 = 'BM25',
     BOTH = 'BOTH',
+    RERANKER = 'RERANKER',
   }
 
   export interface FindParagraph {

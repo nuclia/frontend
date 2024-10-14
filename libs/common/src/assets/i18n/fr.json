@@ -1173,6 +1173,8 @@
 	"search.configuration.search-box.select-results-used.semantic-and-full-text": "Résultats de recherche vectorielle et full text",
 	"search.configuration.search-box.select-results-used.semantic-only": "Résultats de recherche vectorielle uniquement",
 	"search.configuration.search-box.select-results-used.title": "Sélectionnez les résultats qui sont utilisés pour générer la réponse",
+	"search.configuration.search-box.semantic-reranking.toggle-description": "Récupère initiallement une plus grande quantité de résultats de recherche sémantique et par mots-clés, puis les filtre pour obtenir les correspondances les plus précises en fonction du contexte à l'aide d'un modèle de reclassement. Le résultat est une liste de résultats plus précise et mieux ordonnée.",
+	"search.configuration.search-box.semantic-reranking.toggle-label": "Re-ranking sémantique",
 	"search.configuration.search-box.show-hidden-resources.toggle-description": "Les ressources cachées ne seront pas exclues de la recherche et de la génération de réponses.",
 	"search.configuration.search-box.show-hidden-resources.toggle-label": "Inclure des ressources cachées",
 	"search.configuration.search-box.suggestions.suggest-labels": "Proposer des étiquettes en fonction de la requête",

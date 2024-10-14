@@ -149,6 +149,19 @@
   }
   <div class="config-form-field">
     <pa-toggle
+      formControlName="semanticReranking"
+      withBackground
+      spaceBetweenLabelAndToggle>
+      <span class="toggle-label">
+        {{ 'search.configuration.search-box.semantic-reranking.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.search-box.semantic-reranking.toggle-description' | translate }}
+    </div>
+  </div>
+  <div class="config-form-field">
+    <pa-toggle
       formControlName="prependTheQuery"
       withBackground
       spaceBetweenLabelAndToggle

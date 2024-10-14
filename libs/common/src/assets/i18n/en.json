@@ -1173,6 +1173,8 @@
 	"search.configuration.search-box.select-results-used.semantic-and-full-text": "Vector search results & full text results",
 	"search.configuration.search-box.select-results-used.semantic-only": "Vector search results only",
 	"search.configuration.search-box.select-results-used.title": "Select which results are used to generate the answer",
+	"search.configuration.search-box.semantic-reranking.toggle-description": "Initially retrieve a larger amount of semantic and keyword search results and then filter them down to the most contextually accurate matches using a re-ranking model. The result is a more accurate and better ordered list of results.",
+	"search.configuration.search-box.semantic-reranking.toggle-label": "Semantic re-ranking",
 	"search.configuration.search-box.show-hidden-resources.toggle-description": "Hidden resources will not be excluded from search and answer generation.",
 	"search.configuration.search-box.show-hidden-resources.toggle-label": "Include hidden resources",
 	"search.configuration.search-box.suggestions.suggest-labels": "Suggest labels based on the query",

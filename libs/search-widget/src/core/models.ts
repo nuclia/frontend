@@ -56,6 +56,7 @@ export interface WidgetOptions {
   max_paragraphs?: number;
   query_prepend?: string;
   audit_metadata?: string;
+  reranker?: string;
 }
 
 export interface WidgetAction {

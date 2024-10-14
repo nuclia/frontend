@@ -1173,6 +1173,8 @@
 	"search.configuration.search-box.select-results-used.semantic-and-full-text": "Resultats de cerca vectorial i full text",
 	"search.configuration.search-box.select-results-used.semantic-only": "Només resultats de cerca vectorials",
 	"search.configuration.search-box.select-results-used.title": "Seleccioneu quins resultats s’utilitzen per generar la resposta",
+	"search.configuration.search-box.semantic-reranking.toggle-description": "Inicialment, es recupera una quantitat més gran de resultats de cerca semàntics i per paraules clau i, a continuació, es filtren fins a obtenir les concordances més precises mitjançant un model de re-ranking. El resultat és una llista de resultats més precisa i millor ordenada.",
+	"search.configuration.search-box.semantic-reranking.toggle-label": "Re-ranking semàntic",
 	"search.configuration.search-box.show-hidden-resources.toggle-description": "Els recursos ocults no s'exclouran de les cerques i de la generació de respostes.",
 	"search.configuration.search-box.show-hidden-resources.toggle-label": "Incloure recursos ocults",
 	"search.configuration.search-box.suggestions.suggest-labels": "Suggereix etiquetes en funció de la consulta",

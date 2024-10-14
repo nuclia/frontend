@@ -15,6 +15,7 @@ import {
   getQueryPrepend,
   getRagStrategiesProperties,
   getRephrasePrompt,
+  getReranker,
   getSystemPrompt,
   getWidgetTheme,
   NUCLIA_STANDARD_SEARCH_CONFIG,
@@ -66,7 +67,9 @@ export class SearchWidgetService {
     this._generateWidgetSnippetSubject
       .pipe(
         debounceTime(300),
-        switchMap(({ currentConfig, widgetOptions, scrollContainer }) => this._generateWidgetSnippet(currentConfig, widgetOptions, scrollContainer)),
+        switchMap(({ currentConfig, widgetOptions, scrollContainer }) =>
+          this._generateWidgetSnippet(currentConfig, widgetOptions, scrollContainer),
+        ),
         delay(100), // wait for the widget to render
         tap(() => this.reinitWidgetPreview()),
       )
@@ -161,6 +164,7 @@ export class SearchWidgetService {
       : '';
     const queryPrepend = getQueryPrepend(currentConfig.searchBox);
     const jsonSchema = getJsonSchema(currentConfig.resultDisplay);
+    const reranker = getReranker(currentConfig.searchBox);
 
     // Widget options
     const theme = getWidgetTheme(widgetOptions);
@@ -196,7 +200,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}${reranker}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
@@ -219,7 +223,10 @@ export class SearchWidgetService {
             )
             .replace('features="', `features="debug,`)
             .replace(apiKey, '')
-            .replace('<nuclia-search-results', `<nuclia-search-results scrollableContainerSelector="${scrollContainer}"`),
+            .replace(
+              '<nuclia-search-results',
+              `<nuclia-search-results scrollableContainerSelector="${scrollContainer}"`,
+            ),
         );
 
         this._widgetPreview.next({ snippet, preview });

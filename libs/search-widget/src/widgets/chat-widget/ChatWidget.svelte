@@ -55,6 +55,7 @@
   export let vectorset = '';
   export let chat_placeholder = '';
   export let audit_metadata = '';
+  export let reranker = '';
 
   export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
@@ -147,6 +148,7 @@
         query_prepend,
         vectorset,
         audit_metadata,
+        reranker,
       },
       no_tracking,
     );
