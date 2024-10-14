@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { firstValueFrom, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as Sentry from '@sentry/angular';
+import { browserTracingIntegration } from '@sentry/angular';
 
 export type EnvironmentConfiguration = {
   version: string;
@@ -52,15 +53,10 @@ export class AppInitService {
           if (config.production) {
             Sentry.init({
               dsn: config.backend.sentry_url,
-              integrations: [
-                new Sentry.BrowserTracing({
-                  tracingOrigins: [config.backend.sentry_backend],
-                  routingInstrumentation: Sentry.routingInstrumentation,
-                }),
-              ],
+              integrations: [browserTracingIntegration()],
               tracesSampleRate: 5.0,
             });
-            Sentry.configureScope((scope) => {
+            Sentry.withScope((scope) => {
               scope.addEventProcessor((event) => {
                 event.environment = config.backend.sentry_environment;
                 event.release = config.version;
