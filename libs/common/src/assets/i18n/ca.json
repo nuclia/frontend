@@ -1499,6 +1499,8 @@
 	"upload.advanced.processing.aitable.help": "Converteix el contingut de les taules en MarkDown que pot ser utilitzat per un LLM.",
 	"upload.advanced.processing.aitable.label": "Interpretar taules",
 	"upload.advanced.processing.aitable.warning": "Tingueu en compte que l’ús d’aquesta funció comporta el consum de tokens Nuclia.<br/>\n<ul>\n<li>Només s’aconsella per a documents amb taules complexes que són difícils de llegir, no tenen delimitació visual o estan dividits en diverses pàgines.</li>\n<li>No és necessari per als fitxers CSV ni Excel.</li>\n</ul>",
+	"upload.advanced.processing.blankline.help": "Dividirà els blocs de text segons línies en blanc. Nota: només s'aplica als fitxers .txt.",
+	"upload.advanced.processing.blankline.label": "Divisor de línia en blanc",
 	"upload.advanced.processing.help": "El processament específic de la naturalesa és més llarg i genera més costos que el processament normal.",
 	"upload.advanced.processing.invoice.help": "Extraieu dades específiques de les factures",
 	"upload.advanced.processing.invoice.label": "Tramitar factures",

@@ -37,9 +37,10 @@ export class UploadFilesComponent {
     this.features.unstable.tableProcessing.pipe(take(1)),
     this.features.unstable.aiTableProcessing.pipe(take(1)),
     this.features.unstable.invoiceProcessing.pipe(take(1)),
+    this.features.unstable.blanklineSplitter.pipe(take(1)),
   ]).pipe(
-    map(([table, aitable, invoice]) => {
-      const processings = [];
+    map(([table, aitable, invoice, blankline]) => {
+      const processings: string[] = [];
       if (table) {
         processings.push('table');
       }
@@ -48,6 +49,9 @@ export class UploadFilesComponent {
       }
       if (invoice) {
         processings.push('invoice');
+      }
+      if (blankline) {
+        processings.push('blankline');
       }
       return processings;
     }),
@@ -135,7 +139,11 @@ export class UploadFilesComponent {
         });
       }
       if (this.processing !== 'none') {
-        labelledFiles.forEach((file) => (file.contentType = `${file.type}+${this.processing}`));
+        labelledFiles.forEach((file) => {
+          if (this.processing !== 'blankline' || file.type === 'text/plain') {
+            file.contentType = `${file.type}+${this.processing}`;
+          }
+        });
       }
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
       this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');

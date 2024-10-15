@@ -48,6 +48,7 @@ export class FeaturesService {
     viewNuaActivity: this.featureFlag.isFeatureEnabled('view-nua-activity'),
     extraSemanticModel: this.featureFlag.isFeatureEnabled('extra-semantic-model'),
     huggingFaceSemanticModel: this.featureFlag.isFeatureEnabled('hugging-face-semantic'),
+    blanklineSplitter: this.featureFlag.isFeatureEnabled('blankline-splitter'),
     tableProcessing: this.featureFlag.isFeatureEnabled('table-processing'),
     aiTableProcessing: this.featureFlag.isFeatureEnabled('ai-table-processing'),
     invoiceProcessing: this.featureFlag.isFeatureEnabled('invoice-processing'),
