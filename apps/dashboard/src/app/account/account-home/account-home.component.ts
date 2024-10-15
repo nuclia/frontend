@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
-import { IKnowledgeBoxItem, UsageType } from '@nuclia/core';
-import { filter, switchMap, take } from 'rxjs';
+import { IKnowledgeBoxItem, UsagePoint, UsageType } from '@nuclia/core';
+import { filter, forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 import { MetricsService } from '../metrics.service';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
@@ -18,10 +18,51 @@ export class AccountHomeComponent implements OnInit {
   account$ = this.metrics.account$;
   canUpgrade = this.metrics.canUpgrade;
   isSubscribed = this.metrics.isSubscribed;
+  isTrial = this.metrics.isTrial;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
-  period = this.metrics.subscriptionPeriod;
+  period = this.metrics.period;
 
   kbs = this.sdk.kbList;
+
+  usage = forkJoin([this.account$.pipe(take(1)), this.period.pipe(take(1)), this.kbs.pipe(take(1))]).pipe(
+    switchMap(([account, period, kbs]) => {
+      const to = new Date();
+      const requests = kbs
+        .map((kb) =>
+          this.sdk.nuclia.db
+            .getUsage(account.id, period?.start.toISOString() || '', to.toISOString(), kb.id)
+            .pipe(map((usage) => ({ key: kb.id, usage }))),
+        )
+        .concat([
+          this.sdk.nuclia.db
+            .getUsage(account.id, period?.start.toISOString() || '', to.toISOString())
+            .pipe(map((usage) => ({ key: 'account', usage }))),
+        ]);
+      return forkJoin(requests);
+    }),
+    map((usage) =>
+      usage.reduce(
+        (acc, curr) => {
+          acc[curr.key] = curr.usage;
+          return acc;
+        },
+        {} as { [key: string]: UsagePoint[] },
+      ),
+    ),
+    shareReplay(1),
+  );
+
+  tokensCount = this.usage.pipe(
+    map((usage) =>
+      Object.entries(usage).reduce(
+        (acc, [key, value]) => {
+          acc[key] = value[0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.value || 0;
+          return acc;
+        },
+        {} as { [key: string]: number },
+      ),
+    ),
+  );
 
   constructor(
     private sdk: SDKService,

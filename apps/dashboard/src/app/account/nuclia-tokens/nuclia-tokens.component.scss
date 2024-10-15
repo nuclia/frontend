@@ -24,5 +24,14 @@
 .type {
   align-items: center;
   display: flex;
-  gap: rhythm(0.5);
+  gap: rhythm(1);
+}
+
+.model {
+  color: $color-neutral-regular;
+}
+
+.unit {
+  color: $color-neutral-regular;
+  font-weight: $font-weight-regular;
 }

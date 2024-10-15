@@ -2125,6 +2125,29 @@
 										</translations>
 									</concept_node>
 									<concept_node>
+										<name>average-cost</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
 										<name>description</name>
 										<description/>
 										<comment/>
@@ -2406,7 +2429,7 @@
 										</children>
 									</folder_node>
 									<concept_node>
-										<name>model</name>
+										<name>no-consumption</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -2429,7 +2452,7 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>no-consumption</name>
+										<name>operations</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -2596,6 +2619,29 @@
 									</folder_node>
 									<concept_node>
 										<name>tokens-consumed</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>tokens-per-operation</name>
 										<description/>
 										<comment/>
 										<translations>

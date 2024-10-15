@@ -46,6 +46,11 @@
       pa-icon {
         display: flex;
       }
+
+      .tokens {
+        flex: 0 0 auto;
+        color: $color-neutral-regular;
+      }
     }
 
     .count-container {
