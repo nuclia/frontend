@@ -9,6 +9,6 @@ export class MimeIconPipe implements PipeTransform {
     if (!mime) {
       return;
     }
-    return getMimeIcon(mime.toLowerCase());
+    return getMimeIcon(mime.split('+')[0].toLowerCase());
   }
 }
