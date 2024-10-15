@@ -5,6 +5,7 @@ import {
   BehaviorSubject,
   combineLatest,
   delay,
+  filter,
   map,
   Observable,
   of,
@@ -69,7 +70,7 @@ interface NucliaTokensDetailsEnhanced extends NucliaTokensDetails {
 export class NucliaTokensComponent implements OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
-  @Input() set usage(value: { [key: string]: UsagePoint[] }) {
+  @Input() set usage(value: { [key: string]: UsagePoint[] } | undefined) {
     if (value) {
       this.usageSubject.next(value);
       this.loading = false;
@@ -102,6 +103,7 @@ export class NucliaTokensComponent implements OnDestroy {
     this.usageSubject,
     this.schema,
   ]).pipe(
+    filter(([kb, usage]) => !!usage[kb]),
     map(([kb, usage, schema]) => {
       const details = (usage[kb][0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.details ||
         []) as NucliaTokensDetails[];

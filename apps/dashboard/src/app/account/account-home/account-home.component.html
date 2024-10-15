@@ -11,7 +11,7 @@
           }
         </div>
       </div>
-      <app-nuclia-tokens [usage]="usage | async"></app-nuclia-tokens>
+      <app-nuclia-tokens [usage]="usage"></app-nuclia-tokens>
     </div>
     <div class="right-column">
       @if (canUpgrade | async) {
@@ -32,7 +32,7 @@
                     size="small"
                     name="lock"></pa-icon>
                 }
-                @if ((tokensCount | async)?.[kb.id]; as tokens) {
+                @if (tokensCount?.[kb.id]; as tokens) {
                   @if (tokens > 1) {
                     <span class="tokens">({{ tokens | number: '1.0-0' }} tokens)</span>
                   }

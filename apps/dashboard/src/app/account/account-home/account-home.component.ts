@@ -23,46 +23,8 @@ export class AccountHomeComponent implements OnInit {
   period = this.metrics.period;
 
   kbs = this.sdk.kbList;
-
-  usage = forkJoin([this.account$.pipe(take(1)), this.period.pipe(take(1)), this.kbs.pipe(take(1))]).pipe(
-    switchMap(([account, period, kbs]) => {
-      const to = new Date();
-      const requests = kbs
-        .map((kb) =>
-          this.sdk.nuclia.db
-            .getUsage(account.id, period?.start.toISOString() || '', to.toISOString(), kb.id)
-            .pipe(map((usage) => ({ key: kb.id, usage }))),
-        )
-        .concat([
-          this.sdk.nuclia.db
-            .getUsage(account.id, period?.start.toISOString() || '', to.toISOString())
-            .pipe(map((usage) => ({ key: 'account', usage }))),
-        ]);
-      return forkJoin(requests);
-    }),
-    map((usage) =>
-      usage.reduce(
-        (acc, curr) => {
-          acc[curr.key] = curr.usage;
-          return acc;
-        },
-        {} as { [key: string]: UsagePoint[] },
-      ),
-    ),
-    shareReplay(1),
-  );
-
-  tokensCount = this.usage.pipe(
-    map((usage) =>
-      Object.entries(usage).reduce(
-        (acc, [key, value]) => {
-          acc[key] = value[0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.value || 0;
-          return acc;
-        },
-        {} as { [key: string]: number },
-      ),
-    ),
-  );
+  usage?: { [key: string]: UsagePoint[] };
+  tokensCount?: { [key: string]: number };
 
   constructor(
     private sdk: SDKService,
@@ -87,6 +49,48 @@ export class AccountHomeComponent implements OnInit {
           new ModalConfig({ dismissable: false, data: { accountSlug: params['account'] } }),
         );
       });
+
+    this.getUsageMap().subscribe((usage) => {
+      this.usage = usage;
+      this.tokensCount = Object.entries(usage).reduce(
+        (acc, [key, value]) => {
+          acc[key] = value[0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.value || 0;
+          return acc;
+        },
+        {} as { [key: string]: number },
+      );
+      this.cdr.markForCheck();
+    });
+  }
+
+  getUsageMap() {
+    return forkJoin([this.account$.pipe(take(1)), this.period.pipe(take(1)), this.kbs.pipe(take(1))]).pipe(
+      switchMap(([account, period, kbs]) => {
+        const to = new Date();
+        const requests = kbs
+          .map((kb) =>
+            this.sdk.nuclia.db
+              .getUsage(account.id, period?.start.toISOString() || '', to.toISOString(), kb.id)
+              .pipe(map((usage) => ({ key: kb.id, usage }))),
+          )
+          .concat([
+            this.sdk.nuclia.db
+              .getUsage(account.id, period?.start.toISOString() || '', to.toISOString())
+              .pipe(map((usage) => ({ key: 'account', usage }))),
+          ]);
+        return forkJoin(requests);
+      }),
+      map((usage) =>
+        usage.reduce(
+          (acc, curr) => {
+            acc[curr.key] = curr.usage;
+            return acc;
+          },
+          {} as { [key: string]: UsagePoint[] },
+        ),
+      ),
+      shareReplay(1),
+    );
   }
 
   goToKb(account: string, kb: IKnowledgeBoxItem) {
