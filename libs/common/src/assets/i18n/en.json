@@ -1499,6 +1499,8 @@
 	"upload.advanced.processing.aitable.help": "It converts table contents into MarkDown that can be used by a LLM.",
 	"upload.advanced.processing.aitable.label": "Interpret tables",
 	"upload.advanced.processing.aitable.warning": "Please keep in mind that the use of this feature carries Nuclia token consumption.<br/>\n<ul>\n<li>It is only advised for documents with complex tables that are hard to read, have no visual delineations, or are split across several pages.</li>\n<li>It’s not needed for CSVs nor Excel files.</li>\n</ul>",
+	"upload.advanced.processing.blankline.help": "Will split text blocks according blank lines. Note: it only applies to .txt files.",
+	"upload.advanced.processing.blankline.label": "Blankline splitter",
 	"upload.advanced.processing.help": "Nature-specific processing is longer and generate more costs than regular processing.",
 	"upload.advanced.processing.invoice.help": "Extract invoice specific data",
 	"upload.advanced.processing.invoice.label": "Process invoices",
