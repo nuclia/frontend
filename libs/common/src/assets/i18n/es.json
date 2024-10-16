@@ -708,6 +708,7 @@
 	"modal.create_link.single-link.label": "Enlace único",
 	"modal.create_link.single-link.placeholder": "Escribe o pega el enlace",
 	"modal.create_link.sitemap-file": "Enlaces de un sitemap",
+	"modal.create_link.sitemap-filter.label": "Filtrar enlaces que comiencen con",
 	"modal.create_link.title": "Añadir enlaces",
 	"modal.create_link.upload": "Subir:",
 	"modal.create_link.upload-summary": "Se cargarán {{count}} enlaces",

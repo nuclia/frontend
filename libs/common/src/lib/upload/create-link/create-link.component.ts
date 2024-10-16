@@ -36,6 +36,7 @@ export class CreateLinkComponent {
     type: new FormControl<UploadOption>('one', { nonNullable: true }),
     css_selector: new FormControl<string | null>(null),
     xpath: new FormControl<string | null>(null),
+    sitemapFilter: new FormControl<string | null>(null),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -47,6 +48,7 @@ export class CreateLinkComponent {
   selectedLabels: Classification[] = [];
   csv: Row[] = [];
   sitemapLinks: string[] = [];
+  filteredSitemapLinks: string[] = [];
 
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
@@ -55,7 +57,7 @@ export class CreateLinkComponent {
   get invalid() {
     return (
       (this.linkForm.value.type === 'csv' && this.csv.length === 0) ||
-      (this.linkForm.value.type === 'sitemap' && this.sitemapLinks.length === 0) ||
+      (this.linkForm.value.type === 'sitemap' && this.filteredSitemapLinks.length === 0) ||
       (['one', 'multiple'].includes(this.linkForm.value.type || '') && this.linkForm.invalid)
     );
   }
@@ -130,7 +132,7 @@ export class CreateLinkComponent {
         case 'sitemap':
           this.tracking.logEvent('link_upload_from_sitemap');
           obs = this.uploadService.bulkUpload(
-            this.sitemapLinks.map((link) =>
+            this.filteredSitemapLinks.map((link) =>
               defer(() => from(fetch(link, { method: 'HEAD' }))).pipe(
                 map((response) => (response.headers.get('content-type') || 'text/html').split(';')[0]),
                 catchError(() => of('text/html')),
@@ -177,6 +179,17 @@ export class CreateLinkComponent {
 
   close(): void {
     this.modal.close({ cancel: true });
+  }
+
+  setSitemapLinks(links: string[]) {
+    this.sitemapLinks = links;
+    this.filterSitemapLinks();
+  }
+
+  filterSitemapLinks() {
+    this.filteredSitemapLinks = this.sitemapLinks.filter((link) =>
+      link.startsWith(this.linkForm.value.sitemapFilter || ''),
+    );
   }
 
   private getResourceCreationObs(

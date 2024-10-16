@@ -77,10 +77,16 @@
           </pa-textarea>
         }
         @if (linkForm.value.type === 'sitemap') {
-          <app-sitemap-select (select)="sitemapLinks = $event"></app-sitemap-select>
+          <app-sitemap-select (select)="setSitemapLinks($event)"></app-sitemap-select>
+          <pa-input
+            formControlName="sitemapFilter"
+            placeholder="https://example.com/news/2024/"
+            (change)="filterSitemapLinks()">
+            {{ 'modal.create_link.sitemap-filter.label' | translate }}
+          </pa-input>
           @if (sitemapLinks.length > 0) {
             <nsi-info-card>
-              {{ 'modal.create_link.upload-summary' | translate: { count: sitemapLinks.length } }}
+              {{ 'modal.create_link.upload-summary' | translate: { count: filteredSitemapLinks.length } }}
             </nsi-info-card>
           }
         }

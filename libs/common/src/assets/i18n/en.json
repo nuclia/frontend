@@ -708,6 +708,7 @@
 	"modal.create_link.single-link.label": "Single link",
 	"modal.create_link.single-link.placeholder": "Type or paste the link",
 	"modal.create_link.sitemap-file": "Links from a sitemap",
+	"modal.create_link.sitemap-filter.label": "Filter links starting with",
 	"modal.create_link.title": "Add links",
 	"modal.create_link.upload": "Upload:",
 	"modal.create_link.upload-summary": "{{count}} links will be uploaded",
