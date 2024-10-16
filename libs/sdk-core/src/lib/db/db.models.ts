@@ -149,6 +149,15 @@ export interface NucliaTokensDetails extends CommonMetricDetails {
     image: number | null;
     storage: number | null;
   };
+  requests: {
+    api: number | null;
+    chrome_extension: number | null;
+    dashboard: number | null;
+    desktop: number | null;
+    internal: number | null;
+    web: number | null;
+    widget: number | null;
+  };
 }
 
 export interface NucliaTokensMetric extends UsageMetric {

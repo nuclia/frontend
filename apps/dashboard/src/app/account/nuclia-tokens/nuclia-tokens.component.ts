@@ -1,28 +1,22 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  QueryList,
-  OnDestroy,
-  ViewChildren,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, QueryList, OnDestroy, ViewChildren, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SDKService } from '@flaps/core';
 import {
   BehaviorSubject,
   combineLatest,
   delay,
+  filter,
   map,
   Observable,
   of,
+  ReplaySubject,
   shareReplay,
   Subject,
   switchMap,
   take,
   takeUntil,
-  tap,
 } from 'rxjs';
-import { KnowledgeBox, LearningConfigurations, NucliaTokensDetails } from '@nuclia/core';
+import { KnowledgeBox, LearningConfigurations, NucliaTokensDetails, UsagePoint } from '@nuclia/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
@@ -34,7 +28,6 @@ import {
   PaTextFieldModule,
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { MetricsService } from '../metrics.service';
 import { InfoCardComponent } from '@nuclia/sistema';
 
 const groups = {
@@ -49,6 +42,8 @@ interface NucliaTokensDetailsEnhanced extends NucliaTokensDetails {
   total: number;
   counters: { [key: string]: number };
   modelName?: string;
+  totalRequests: number;
+  average: number;
   help?: string;
 }
 
@@ -75,31 +70,20 @@ interface NucliaTokensDetailsEnhanced extends NucliaTokensDetails {
 export class NucliaTokensComponent implements OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
+  @Input() set usage(value: { [key: string]: UsagePoint[] } | undefined) {
+    if (value) {
+      this.usageSubject.next(value);
+      this.loading = false;
+    }
+  }
+
   @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
 
   loading = true;
   digitsInfo = '1.0-0';
   kbList = this.sdk.kbList;
-  selectedKb = new BehaviorSubject<string>('all');
-
-  period = this.metricsService.isSubscribed.pipe(
-    switchMap((isSubscribed) =>
-      isSubscribed ? this.metricsService.subscriptionPeriod : of(this.metricsService.last30Days),
-    ),
-    map((period) => period || this.metricsService.last30Days),
-  );
-
-  usage = combineLatest([this.sdk.currentAccount.pipe(take(1)), this.period.pipe(take(1)), this.selectedKb]).pipe(
-    tap(() => {
-      this.loading = true;
-    }),
-    switchMap(([account, period, selectedKb]) => {
-      const to = new Date();
-      const kb = selectedKb === 'all' ? undefined : selectedKb;
-      return this.sdk.nuclia.db.getUsage(account.id, period.start.toISOString(), to.toISOString(), kb);
-    }),
-    shareReplay(1),
-  );
+  selectedKb = new BehaviorSubject<string>('account');
+  usageSubject = new ReplaySubject<{ [key: string]: UsagePoint[] }>(1);
 
   schema = this.sdk.currentAccount.pipe(
     switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
@@ -114,15 +98,20 @@ export class NucliaTokensComponent implements OnDestroy {
     shareReplay(1),
   );
 
-  details: Observable<NucliaTokensDetailsEnhanced[]> = combineLatest([this.usage, this.schema]).pipe(
-    map(([usage, schema]) => {
-      const details = (usage[0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.details ||
+  details: Observable<NucliaTokensDetailsEnhanced[]> = combineLatest([
+    this.selectedKb,
+    this.usageSubject,
+    this.schema,
+  ]).pipe(
+    filter(([kb, usage]) => !!usage[kb]),
+    map(([kb, usage, schema]) => {
+      const details = (usage[kb][0].metrics.find((metric) => metric.name === 'nuclia_tokens')?.details ||
         []) as NucliaTokensDetails[];
       const models = schema['generative_model']?.options || [];
       return details
         .map((detail) => {
           const helpTextKey = 'account.nuclia-tokens.help.' + detail.identifier.type;
-          return {
+          const enhancedDetail = {
             ...detail,
             total: Object.values(detail.nuclia_tokens).reduce((acc: number, curr) => (acc || 0) + (curr || 0), 0),
             counters: Object.entries(detail.nuclia_tokens)
@@ -133,10 +122,17 @@ export class NucliaTokensComponent implements OnDestroy {
               models.find((model) => model.value === detail.identifier.model)?.name ||
               detail.identifier.model ||
               undefined,
+            totalRequests: Object.values(detail.requests).reduce((acc: number, curr) => acc + (curr || 0), 0),
+            average: 0,
             help: this.translate.instant(helpTextKey) !== helpTextKey ? this.translate.instant(helpTextKey) : undefined,
           };
+          if (enhancedDetail.totalRequests > 0) {
+            enhancedDetail.average = enhancedDetail.total / enhancedDetail.totalRequests;
+          }
+          return enhancedDetail;
         })
-        .filter((detail) => detail.total >= 1); // Hide details having less than 1 token
+        .filter((detail) => detail.total >= 1) // Hide details having less than 1 token
+        .filter((detail) => this.isBilledDetail(detail));
     }),
   );
 
@@ -153,7 +149,6 @@ export class NucliaTokensComponent implements OnDestroy {
           return {
             title: key,
             details: groupDetails,
-            displayModel: groupDetails.some((detail) => !!detail.identifier.model),
             total: groupDetails.reduce((acc, curr) => acc + curr.total, 0),
           };
         })
@@ -161,7 +156,6 @@ export class NucliaTokensComponent implements OnDestroy {
           {
             title: 'other',
             details: otherDetails,
-            displayModel: otherDetails.some((detail) => !!detail.identifier.model),
             total: otherDetails.reduce((acc, curr) => acc + curr.total, 0),
           },
         ])
@@ -169,28 +163,36 @@ export class NucliaTokensComponent implements OnDestroy {
     }),
   );
 
-  totalTokens = this.details.pipe(
+  totalTokens = this.usageSubject.pipe(
     take(1),
-    map((details) => details.reduce((acc, curr) => acc + (curr.total || 0), 0)),
+    map((usage) => usage['account'][0].metrics.find((metric) => metric.name === 'nuclia_tokens_billed')?.value || 0),
   );
 
   constructor(
     private sdk: SDKService,
-    private metricsService: MetricsService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
   ) {
     this.visibleGroups.pipe(takeUntil(this.unsubscribeAll), delay(10)).subscribe(() => {
       this.accordionItems?.forEach((item) => {
         item.updateContentHeight();
       });
-      this.loading = false;
-      this.cdr.markForCheck();
     });
   }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  // TODO: In the future, this method will no longer be needed because the endpoint will define which details are billed
+  isBilledDetail(detail: NucliaTokensDetailsEnhanced) {
+    const billedModels = ['gecko-embeddings-multi', 'text-embedding-3-large', 'text-embedding-3-small'];
+    return (
+      detail.identifier.service === 'predict' ||
+      (detail.identifier.service === 'processing' && detail.identifier.type === 'extract_tables') ||
+      (detail.identifier.service === 'processing' &&
+        detail.identifier.type === 'sentence' &&
+        billedModels.includes(detail.identifier.model || ''))
+    );
   }
 }
