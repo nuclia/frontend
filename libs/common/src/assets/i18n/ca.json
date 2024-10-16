@@ -708,6 +708,7 @@
 	"modal.create_link.single-link.label": "Enllaç únic",
 	"modal.create_link.single-link.placeholder": "Escriviu o enganxeu l’enllaç",
 	"modal.create_link.sitemap-file": "Enllaços d'un sitemap",
+	"modal.create_link.sitemap-filter.label": "Filtra els enllaços que comencen per",
 	"modal.create_link.title": "Afegeix enllaços",
 	"modal.create_link.upload": "Carrega:",
 	"modal.create_link.upload-summary": "Es penjaran {{count}} enllaços",

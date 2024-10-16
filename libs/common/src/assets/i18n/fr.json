@@ -708,6 +708,7 @@
 	"modal.create_link.single-link.label": "Lien unique",
 	"modal.create_link.single-link.placeholder": "Tapez ou collez le lien",
 	"modal.create_link.sitemap-file": "Liens depuis un sitemap",
+	"modal.create_link.sitemap-filter.label": "Filtrer les liens commençant par",
 	"modal.create_link.title": "Ajouter des liens",
 	"modal.create_link.upload": "Télécharger:",
 	"modal.create_link.upload-summary": "{{count}} liens seront téléchargés",
