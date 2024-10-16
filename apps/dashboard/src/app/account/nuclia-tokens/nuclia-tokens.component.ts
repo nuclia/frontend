@@ -131,7 +131,8 @@ export class NucliaTokensComponent implements OnDestroy {
           }
           return enhancedDetail;
         })
-        .filter((detail) => detail.total >= 1); // Hide details having less than 1 token
+        .filter((detail) => detail.total >= 1) // Hide details having less than 1 token
+        .filter((detail) => this.isBilledDetail(detail));
     }),
   );
 
@@ -162,9 +163,9 @@ export class NucliaTokensComponent implements OnDestroy {
     }),
   );
 
-  totalTokens = this.details.pipe(
+  totalTokens = this.usageSubject.pipe(
     take(1),
-    map((details) => details.reduce((acc, curr) => acc + (curr.total || 0), 0)),
+    map((usage) => usage['account'][0].metrics.find((metric) => metric.name === 'nuclia_tokens_billed')?.value || 0),
   );
 
   constructor(
@@ -181,5 +182,17 @@ export class NucliaTokensComponent implements OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  // TODO: In the future, this method will no longer be needed because the endpoint will define which details are billed
+  isBilledDetail(detail: NucliaTokensDetailsEnhanced) {
+    const billedModels = ['gecko-embeddings-multi', 'text-embedding-3-large', 'text-embedding-3-small'];
+    return (
+      detail.identifier.service === 'predict' ||
+      (detail.identifier.service === 'processing' && detail.identifier.type === 'extract_tables') ||
+      (detail.identifier.service === 'processing' &&
+        detail.identifier.type === 'sentence' &&
+        billedModels.includes(detail.identifier.model || ''))
+    );
   }
 }
