@@ -19,6 +19,8 @@
 .container {
   background-color: $color-neutral-lightest;
   padding-top: var(--app-topbar-height);
+  position: absolute;
+  width: 100%;
 }
 
 .test-page {
