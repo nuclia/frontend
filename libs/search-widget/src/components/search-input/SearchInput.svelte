@@ -119,14 +119,6 @@
     }),
   );
 
-  const suggestionModalMinWidth = 384;
-  let suggestionModalWidth: string;
-  $: {
-    if (inputContainerElement) {
-      suggestionModalWidth = `${Math.max(inputContainerElement.offsetWidth, suggestionModalMinWidth)}px`;
-    }
-  }
-
   const setInputPosition = () => {
     if (inputContainerElement) {
       position = inputContainerElement.getBoundingClientRect();
@@ -338,7 +330,6 @@
   show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
   popup={true}
   parentPosition={position}
-  modalWidth={suggestionModalWidth}
   on:close={closeSuggestions}>
   <div class="sw-suggestions-container">
     <Suggestions
