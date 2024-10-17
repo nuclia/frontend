@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BillingService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
+import { shareReplay } from 'rxjs';
 
 @Component({
   selector: 'app-manual-subscription',
@@ -9,7 +10,7 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManualSubscriptionComponent {
-  usage = this.billing.getManualAccountUsage();
+  usage = this.billing.getManualAccountUsage().pipe(shareReplay(1));
   budget?: { value: number | null };
 
   constructor(

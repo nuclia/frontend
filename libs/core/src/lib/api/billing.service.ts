@@ -274,7 +274,7 @@ export class BillingService {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
-        this.sdk.nuclia.rest.get<ManualAccountUsage>(`/billing/account/${account.id}/current_usage`),
+        this.sdk.nuclia.rest.get<ManualAccountUsage>(`/billing/account/${account.id}/nuclia/current_usage`),
       ),
     );
   }
