@@ -4,12 +4,12 @@
   background-color: $color-light-stronger;
   border-bottom: 1px solid $color-neutral-light;
   height: var(--app-topbar-height);
-  left: 0;
+  // left: 0;
   padding-left: var(--app-layout-padding-left);
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1;
+  // position: fixed;
+  // top: 0;
+  // width: 100%;
+  // z-index: 1;
   .logo {
     margin-top: rhythm(2);
     width: rhythm(14);
@@ -18,7 +18,6 @@
 
 .container {
   background-color: $color-neutral-lightest;
-  padding-top: var(--app-topbar-height);
   position: absolute;
   width: 100%;
 }
