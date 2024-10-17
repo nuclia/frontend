@@ -20,6 +20,7 @@ import {
   BillingDetails,
   Currency,
   InvoicesList,
+  ManualAccountUsage,
   PaymentMethod,
   Prices,
   StripeAccountSubscription,
@@ -37,23 +38,19 @@ export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
   isDeprecatedAccount = this.type.pipe(map((type) => type.startsWith('stash-')));
 
-  isSubscribedToStripe = this.sdk.nuclia.options.standalone
-    ? of(false)
-    : combineLatest([this.type, this.getPrices()]).pipe(
-        switchMap(([type, prices]) => {
-          if (type === 'stash-enterprise' || type === 'v3growth' || type === 'v3enterprise') {
-            // Not all enterprise accounts are subscribed
-            return this.getStripeSubscription().pipe(map((subscription) => !!subscription));
-          } else {
-            return of(Object.keys(prices).includes(type as string));
-          }
+  private subscriptionProvider = this.sdk.nuclia.options.standalone
+    ? of(null)
+    : this.sdk.currentAccount.pipe(
+        switchMap((account) => {
+          return account.type === 'stash-trial' ? of(null) : this.getSubscription();
         }),
+        map((subscription) => subscription?.provider || null),
         shareReplay(1),
       );
 
-  isSubscribedToAws = this.sdk.nuclia.options.standalone
-    ? of(false)
-    : this.getSubscription().pipe(map((subs) => subs?.provider === 'AWS_MARKETPLACE'));
+  isSubscribedToStripe = this.subscriptionProvider.pipe(map((provider) => provider === 'STRIPE'));
+  isSubscribedToAws = this.subscriptionProvider.pipe(map((provider) => provider === 'AWS_MARKETPLACE'));
+  isManuallySubscribed = this.subscriptionProvider.pipe(map((provider) => provider === 'NO_SUBSCRIPTION'));
 
   constructor(private sdk: SDKService) {}
 
@@ -273,6 +270,15 @@ export class BillingService {
     );
   }
 
+  getManualAccountUsage() {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.get<ManualAccountUsage>(`/billing/account/${account.id}/current_usage`),
+      ),
+    );
+  }
+
   getInvoices(limit = 50, lastId?: string): Observable<InvoicesList> {
     return this.sdk.currentAccount.pipe(
       take(1),
@@ -285,18 +291,19 @@ export class BillingService {
   }
 
   saveBudget(budget: number | null) {
-    return this.isSubscribedToAws.pipe(
-      switchMap((isAws) =>
+    return combineLatest([this.isSubscribedToAws, this.isSubscribedToStripe]).pipe(
+      take(1),
+      switchMap(([isAws, isStripe]) =>
         this.modifySubscription({ on_demand_budget: budget }, isAws).pipe(
           switchMap(() =>
-            budget === null || isAws
-              ? of({ budgetBelowTotal: false })
-              : forkJoin([
+            budget !== null && isStripe
+              ? forkJoin([
                   this.getAccountUsage().pipe(map((usage) => usage.over_cost)),
                   this.getSubscription().pipe(
                     map((subscription) => subscription?.subscription?.on_demand_budget || null),
                   ),
-                ]).pipe(map(([cost, budget]) => ({ budgetBelowTotal: (budget || 0) < cost }))),
+                ]).pipe(map(([cost, budget]) => ({ budgetBelowTotal: (budget || 0) < cost })))
+              : of({ budgetBelowTotal: false }),
           ),
         ),
       ),

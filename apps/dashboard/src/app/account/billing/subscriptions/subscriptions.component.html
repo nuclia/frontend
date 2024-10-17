@@ -1,5 +1,7 @@
 @if ((isSubscribedToAws | async) === true) {
   <app-aws-subscription></app-aws-subscription>
+} @else if ((isManuallySubscribed | async) === true) {
+  <app-manual-subscription></app-manual-subscription>
 } @else {
   <div class="header">
     <h2>{{ 'billing.subscription.title' | translate }}</h2>

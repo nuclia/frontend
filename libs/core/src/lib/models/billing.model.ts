@@ -84,22 +84,23 @@ export enum CancellationFeedback {
 }
 
 export interface AccountSubscription {
-  provider: 'STRIPE' | 'AWS_MARKETPLACE';
-  subscription: StripeAccountSubscription | AwsAccountSubscription;
+  provider: 'STRIPE' | 'AWS_MARKETPLACE' | 'NO_SUBSCRIPTION';
+  subscription: StripeAccountSubscription | AwsAccountSubscription | BaseAccountSubscription;
 }
 
 interface BaseAccountSubscription {
-  status: SubscriptionStatus;
-  on_demand_budget: number | null ;
+  on_demand_budget: number | null;
 }
 
 export interface StripeAccountSubscription extends BaseAccountSubscription {
+  status: SubscriptionStatus;
   billing_interval: RecurrentPriceInterval;
   start_billing_period: string;
   end_billing_period: string;
 }
 
 export interface AwsAccountSubscription extends BaseAccountSubscription {
+  status: SubscriptionStatus;
   aws_product_code: string;
 }
 
@@ -144,6 +145,14 @@ export interface AccountUsage {
   start_billing_date: string;
   end_billing_date: string;
   over_cost: number;
+}
+
+export interface ManualAccountUsage {
+  budget: number | null;
+  start_billing_date: string;
+  end_billing_date: string;
+  nuclia_tokens: number;
+  nuclia_tokens_price: number;
 }
 
 export interface InvoicesListPagination {
