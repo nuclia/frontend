@@ -15,6 +15,7 @@
     hasMore,
     hasPartialResults,
     hasSearchError,
+    hideResults,
     isAnswerEnabled,
     isEmptySearchQuery,
     jsonAnswer,
@@ -145,7 +146,7 @@
                   use:renderingDone />
               {/if}
             {/each}
-            {#if $hasMore}
+            {#if $hasMore && !$hideResults}
               <InfiniteScroll
                 hasMore={$hasMore}
                 {scrollableContainerSelector}
