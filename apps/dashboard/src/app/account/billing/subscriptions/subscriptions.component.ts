@@ -30,6 +30,7 @@ export class SubscriptionsComponent implements OnDestroy {
     ? ['v3fly', 'v3growth', 'v3enterprise']
     : ['v3starter', 'v3fly', 'v3growth', 'v3enterprise'];
   isSubscribedToAws = this.billing.isSubscribedToAws;
+  isManuallySubscribed = this.billing.isManuallySubscribed;
   unsubscribeAll = new Subject<void>();
 
   constructor(

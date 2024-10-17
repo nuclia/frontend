@@ -27,6 +27,7 @@ import { RedirectComponent } from './redirect.component';
 import { MySubscriptionComponent } from './my-subscription/my-subscription.component';
 import { UnsubscribeComponent } from './my-subscription/unsubscribe.component';
 import { AwsSubscriptionComponent } from './subscriptions/aws-subscription/aws-subscription.component';
+import { ManualSubscriptionComponent } from './subscriptions/manual-subscription/manual-subscription.component';
 import { BudgetComponent } from './usage/budget.component';
 
 @NgModule({
@@ -59,6 +60,7 @@ import { BudgetComponent } from './usage/budget.component';
     MySubscriptionComponent,
     UnsubscribeComponent,
     AwsSubscriptionComponent,
+    ManualSubscriptionComponent,
     BudgetComponent,
   ],
   exports: [UsageTableComponent],
