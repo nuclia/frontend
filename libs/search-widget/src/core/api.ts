@@ -53,7 +53,8 @@ let DEBUG = false;
 let SHOW_HIDDEN = false;
 let SHOW_ATTACHED_IMAGES = false;
 let AUDIT_METADATA: { [key: string]: string } | undefined = undefined;
-let RERANKER: string | undefined = undefined;
+let RERANKER: Reranker | undefined = undefined;
+let CITATION_THRESHOLD: number | undefined = undefined;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -98,7 +99,7 @@ export const initNuclia = (
   SHOW_HIDDEN = !!widgetOptions.features?.showHidden;
   RERANKER = widgetOptions.reranker;
   if (RERANKER) {
-    SEARCH_OPTIONS.reranker = RERANKER as Reranker;
+    SEARCH_OPTIONS.reranker = RERANKER;
   }
   try {
     const metadata = widgetOptions.audit_metadata ? JSON.parse(widgetOptions.audit_metadata) : undefined;
@@ -150,6 +151,7 @@ export const initNuclia = (
     : { context: widgetOptions.max_tokens, answer: widgetOptions.max_output_tokens };
   MAX_PARAGRAPHS = widgetOptions.max_paragraphs || undefined;
   QUERY_PREPEND = widgetOptions.query_prepend || '';
+  CITATION_THRESHOLD = widgetOptions.citation_threshold;
   STATE = state;
   nucliaApi.events?.log('widgetOptions', widgetOptions);
 
@@ -212,6 +214,7 @@ export const getAnswer = (
     show_hidden: SHOW_HIDDEN,
     audit_metadata: AUDIT_METADATA,
     reranker: RERANKER,
+    citation_threshold: CITATION_THRESHOLD,
   };
   if (prompt || systemPrompt || REPHRASE_PROMPT) {
     defaultOptions.prompt = {

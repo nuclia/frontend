@@ -85,6 +85,7 @@ export interface ChatOptions extends BaseSearchOptions {
   prefer_markdown?: boolean;
   answer_json_schema?: object;
   extra_context?: string[];
+  citation_threshold?: number;
 }
 
 export interface SearchOptions extends BaseSearchOptions {
