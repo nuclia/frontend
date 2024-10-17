@@ -24,13 +24,6 @@
   let position: DOMRect | undefined;
   let showSuggestions = false;
 
-  let suggestionModalWidth: string;
-  $: {
-    if (inputContainerElement) {
-      suggestionModalWidth = `${inputContainerElement.offsetWidth}px`;
-    }
-  }
-
   onMount(() => {
     searchInputElement?.focus();
   });
@@ -108,7 +101,6 @@
   show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
   popup={true}
   parentPosition={position}
-  modalWidth={suggestionModalWidth}
   on:close={closeSuggestions}>
   <div class="sw-suggestions-container">
     <Suggestions
