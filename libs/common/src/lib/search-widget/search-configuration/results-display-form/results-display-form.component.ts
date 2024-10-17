@@ -11,8 +11,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { ResultDisplayConfig } from '../../search-widget.models';
+import { PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { INITIAL_CITATION_THRESHOLD, ResultDisplayConfig } from '../../search-widget.models';
 import { Subject } from 'rxjs';
 import { FeaturesService } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
@@ -46,6 +46,7 @@ const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
     PaTextFieldModule,
     InfoCardComponent,
     BadgeComponent,
+    PaSliderModule,
   ],
   templateUrl: './results-display-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -100,6 +101,8 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
     relationGraph: new FormControl<boolean>(false, { nonNullable: true }),
     jsonOutput: new FormControl<boolean>(false, { nonNullable: true }),
     jsonSchema: new FormControl<string>('', { nonNullable: true, validators: [JsonValidator()] }),
+    customizeThreshold: new FormControl<boolean>(false, { nonNullable: true }),
+    citationThreshold: new FormControl<number>(INITIAL_CITATION_THRESHOLD, { nonNullable: true }),
   });
 
   isKnowledgeGraphEnabled = this.featuresService.unstable.knowledgeGraph;
@@ -116,6 +119,12 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   }
   get jsonOutputEnabled() {
     return this.jsonOutputControl.value;
+  }
+  get citationsEnabled() {
+    return this.showResultTypeControl.value === 'citations';
+  }
+  get customizeThresholdEnabled() {
+    return this.form.controls.customizeThreshold.value;
   }
 
   ngOnInit() {

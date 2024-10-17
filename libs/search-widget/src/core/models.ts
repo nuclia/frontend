@@ -1,4 +1,4 @@
-import type { FieldFullId, Search, WidgetFeatures } from '@nuclia/core';
+import type { FieldFullId, Reranker, Search, WidgetFeatures } from '@nuclia/core';
 
 export type ResultType = 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | 'conversation' | 'text';
 
@@ -56,7 +56,8 @@ export interface WidgetOptions {
   max_paragraphs?: number;
   query_prepend?: string;
   audit_metadata?: string;
-  reranker?: string;
+  reranker?: Reranker;
+  citation_threshold?: number;
 }
 
 export interface WidgetAction {

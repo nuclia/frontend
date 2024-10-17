@@ -1,3 +1,9 @@
+# 1.22.1 (unreleased)
+
+### Improvement
+
+- Support `citation_threshold` on `/ask` endpoint
+
 # 1.22.0 (2024-10-14)
 
 ### Beta feature

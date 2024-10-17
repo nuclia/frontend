@@ -3,6 +3,7 @@ import {
   DEFAULT_WIDGET_CONFIG,
   getAskToResource,
   getChatPlaceholder,
+  getCitationThreshold,
   getFeatures,
   getFilters,
   getJsonSchema,
@@ -165,6 +166,7 @@ export class SearchWidgetService {
     const queryPrepend = getQueryPrepend(currentConfig.searchBox);
     const jsonSchema = getJsonSchema(currentConfig.resultDisplay);
     const reranker = getReranker(currentConfig.searchBox);
+    const citationThreshold = getCitationThreshold(currentConfig.resultDisplay);
 
     // Widget options
     const theme = getWidgetTheme(widgetOptions);
@@ -200,7 +202,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}${reranker}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}${reranker}${citationThreshold}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;

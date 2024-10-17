@@ -1074,6 +1074,8 @@
 	"search.configuration.modification-warning": "The current configuration is different from the selected one, click save to save a new configuration.",
 	"search.configuration.options.nuclia-image": "Best for image recognition - Nuclia",
 	"search.configuration.options.nuclia-standard": "Standard answer generation - Nuclia",
+	"search.configuration.result-display.citation-threshold.toggle-description": "Specifies the minimum similarity score required to assign a citation to the generated answer. Note: high threshold may result in no citations being shown, and low threshold may result in improper citations.",
+	"search.configuration.result-display.citation-threshold.toggle-label": "Customize citation threshold",
 	"search.configuration.result-display.display-field-list.toggle-description": "Display a section listing all the fields of the resource in the right sidebar of the viewer. This section is only visible for resources containing multiple fields.",
 	"search.configuration.result-display.display-field-list.toggle-label": "Display field list",
 	"search.configuration.result-display.display-metadata.toggle-description": "Metadata are displayed under the title of each resource.",

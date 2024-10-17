@@ -1074,6 +1074,8 @@
 	"search.configuration.modification-warning": "La configuració actual és diferent de la seleccionada, feu clic a desa per desar una nova configuració.",
 	"search.configuration.options.nuclia-image": "El millor per al reconeixement d’imatges - Nuclia",
 	"search.configuration.options.nuclia-standard": "Generació de respostes estàndard - Nuclia",
+	"search.configuration.result-display.citation-threshold.toggle-description": "Especifica el nivell mínim de semblança necessària per assignar una citació a la resposta generada. Nota: un llindar alt pot provocar que no es mostrin citacions, i un llindar baix pot provocar citacions inadequades.",
+	"search.configuration.result-display.citation-threshold.toggle-label": "Personalitzar el llindar de les citacions",
 	"search.configuration.result-display.display-field-list.toggle-description": "Mostra una secció que enumera tots els camps del recurs a la barra lateral dreta del visor. Aquesta secció només és visible per als recursos que contenen diversos camps.",
 	"search.configuration.result-display.display-field-list.toggle-label": "Mostra la llista de camps",
 	"search.configuration.result-display.display-metadata.toggle-description": "Les metadades es mostren sota el títol de cada recurs.",
