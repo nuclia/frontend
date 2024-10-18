@@ -84,7 +84,8 @@ export enum CancellationFeedback {
 }
 
 export interface AccountSubscription {
-  provider: 'STRIPE' | 'AWS_MARKETPLACE' | 'NO_SUBSCRIPTION';
+  // TODO: 'NO_SUBSCRIPTION' will be replaced by 'MANUAL'. The old value can be removed once it's removed from backend.
+  provider: 'STRIPE' | 'AWS_MARKETPLACE' | 'NO_SUBSCRIPTION' | 'MANUAL';
   subscription: StripeAccountSubscription | AwsAccountSubscription | AccountBudget;
 }
 

@@ -51,7 +51,7 @@ export class BillingService {
 
   isSubscribedToStripe = this.subscriptionProvider.pipe(map((provider) => provider === 'STRIPE'));
   isSubscribedToAws = this.subscriptionProvider.pipe(map((provider) => provider === 'AWS_MARKETPLACE'));
-  isManuallySubscribed = this.subscriptionProvider.pipe(map((provider) => provider === 'NO_SUBSCRIPTION'));
+  isManuallySubscribed = this.subscriptionProvider.pipe(map((provider) => provider === 'NO_SUBSCRIPTION' || provider === 'MANUAL'));
 
   constructor(private sdk: SDKService) {}
 
