@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
-import { BillingService, Currency } from '@flaps/core';
+import { AccountBudget, BillingService, Currency } from '@flaps/core';
 import { filter, map, startWith, Subject, takeUntil } from 'rxjs';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
@@ -14,11 +14,15 @@ export class BudgetComponent implements OnDestroy {
   form = new FormGroup({
     budget: new FormControl<number | null>(null, { validators: this.budgetValidators }),
     type: new FormControl<'unlimited' | 'limited' | null>(null, { validators: [Validators.required] }),
+    action: new FormControl<'BLOCK_ACCOUNT' | 'WARN_ACCOUNT_OWNER'>('BLOCK_ACCOUNT', {
+      validators: [Validators.required],
+    }),
   });
   unsubscribeAll = new Subject<void>();
 
   @Input() currency: Currency | undefined;
-  @Output() budgetChange = new EventEmitter<{ value: number | null } | undefined>();
+  @Input() showActions: boolean = true;
+  @Output() budgetChange = new EventEmitter<Partial<AccountBudget> | undefined>();
 
   constructor(private billing: BillingService) {
     this.billing
@@ -27,15 +31,20 @@ export class BudgetComponent implements OnDestroy {
         filter((subscription) => !!subscription),
         map((subscription) => {
           const budget = subscription?.subscription?.on_demand_budget;
-          return typeof budget === 'number' ? budget : null;
+          return {
+            budget: typeof budget === 'number' ? budget : null,
+            action: subscription?.subscription?.action_on_budget_exhausted || 'BLOCK_ACCOUNT',
+          };
         }),
       )
-      .subscribe((budget) => {
+      .subscribe(({ budget, action }) => {
         const type = typeof budget === 'number' ? 'limited' : 'unlimited';
-        this.form.controls.budget.setValue(budget);
-        this.form.controls.type.setValue(type);
+        this.form.patchValue({ budget, action, type });
         this.updateValidation(type);
-        this.budgetChange.emit({ value: budget });
+        this.budgetChange.emit({
+          on_demand_budget: budget,
+          action_on_budget_exhausted: this.showActions ? action : undefined,
+        });
       });
 
     this.form.valueChanges
@@ -43,7 +52,12 @@ export class BudgetComponent implements OnDestroy {
         startWith(this.form.getRawValue()),
         map((values) => {
           this.budgetChange.emit(
-            this.form.valid ? { value: values.type === 'limited' ? (values.budget as number) : null } : undefined,
+            this.form.valid
+              ? {
+                  on_demand_budget: values.type === 'limited' ? (values.budget as number) : null,
+                  action_on_budget_exhausted: this.showActions && values.type === 'limited' ? values.action : undefined,
+                }
+              : undefined,
           );
         }),
         takeUntil(this.unsubscribeAll),

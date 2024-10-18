@@ -25,6 +25,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import {
+  AccountBudget,
   BillingService,
   injectScript,
   NavigationService,
@@ -62,7 +63,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   });
 
   cardName = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
-  budget?: { value: number | null };
+  budget?: Partial<AccountBudget>;
 
   errors: IErrorMessages = {
     required: 'validation.required',
@@ -342,7 +343,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.billingService
             .createSubscription({
               payment_method_id: this.paymentMethodId || '',
-              on_demand_budget: this.budget?.value || null,
+              on_demand_budget: this.budget?.on_demand_budget || null,
               account_type: accountType,
               billing_interval: monthly ? RecurrentPriceInterval.MONTH : RecurrentPriceInterval.YEAR,
             })
@@ -435,7 +436,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
               customer: this.customer,
               token: this.token,
               prices: prices[accountType],
-              budget: this.budget?.value || null,
+              budget: this.budget?.on_demand_budget || null,
               currency,
             },
           }).onClose,
@@ -455,7 +456,10 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   modifyBudget() {
-    this.billingService.saveBudget(this.budget?.value || null).subscribe({
+    if (!this.budget) {
+      return;
+    }
+    this.billingService.saveBudget(this.budget).subscribe({
       next: ({ budgetBelowTotal }) => {
         if (budgetBelowTotal) {
           this.toaster.warning('billing.budget-warning');

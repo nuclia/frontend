@@ -306,6 +306,7 @@
           @if (currency$ | async; as currency) {
             <app-budget
               [currency]="currency"
+              [showActions]="false"
               (budgetChange)="budget = $event"></app-budget>
             <div class="submit">
               <pa-button
