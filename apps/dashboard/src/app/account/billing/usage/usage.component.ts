@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { shareReplay } from 'rxjs';
-import { BillingService } from '@flaps/core';
+import { AccountBudget, BillingService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 
 @Component({
@@ -11,16 +11,22 @@ import { SisToastService } from '@nuclia/sistema';
 })
 export class UsageComponent {
   usage = this.billing.getAccountUsage().pipe(shareReplay());
-  budget?: { value: number | null };
+  budget?: Partial<AccountBudget>;
 
   constructor(
     private billing: BillingService,
     private toaster: SisToastService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   modifyBudget() {
-    this.billing.saveBudget(this.budget?.value || null).subscribe({
+    if (!this.budget) {
+      return;
+    }
+    this.billing.saveBudget(this.budget).subscribe({
       next: ({ budgetBelowTotal }) => {
+        this.budget = undefined;
+        this.cdr.markForCheck();
         if (budgetBelowTotal) {
           this.toaster.warning('billing.budget-warning');
         } else {

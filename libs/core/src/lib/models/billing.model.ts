@@ -85,21 +85,22 @@ export enum CancellationFeedback {
 
 export interface AccountSubscription {
   provider: 'STRIPE' | 'AWS_MARKETPLACE' | 'NO_SUBSCRIPTION';
-  subscription: StripeAccountSubscription | AwsAccountSubscription | BaseAccountSubscription;
+  subscription: StripeAccountSubscription | AwsAccountSubscription | AccountBudget;
 }
 
-interface BaseAccountSubscription {
+export interface AccountBudget {
   on_demand_budget: number | null;
+  action_on_budget_exhausted: 'BLOCK_ACCOUNT' | 'WARN_ACCOUNT_OWNER' | null;
 }
 
-export interface StripeAccountSubscription extends BaseAccountSubscription {
+export interface StripeAccountSubscription extends AccountBudget {
   status: SubscriptionStatus;
   billing_interval: RecurrentPriceInterval;
   start_billing_period: string;
   end_billing_period: string;
 }
 
-export interface AwsAccountSubscription extends BaseAccountSubscription {
+export interface AwsAccountSubscription extends AccountBudget {
   status: SubscriptionStatus;
   aws_product_code: string;
 }

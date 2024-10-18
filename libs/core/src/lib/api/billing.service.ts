@@ -14,6 +14,7 @@ import {
 } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
 import {
+  AccountBudget,
   AccountSubscription,
   AccountUsage,
   AwsAccountSubscription,
@@ -170,7 +171,7 @@ export class BillingService {
     );
   }
 
-  modifySubscription(data: { on_demand_budget: number | null }, isAws = false) {
+  modifySubscription(data: Partial<AccountBudget>, isAws = false) {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) =>
@@ -290,11 +291,11 @@ export class BillingService {
     );
   }
 
-  saveBudget(budget: number | null) {
+  saveBudget(budget: Partial<AccountBudget>) {
     return combineLatest([this.isSubscribedToAws, this.isSubscribedToStripe]).pipe(
       take(1),
       switchMap(([isAws, isStripe]) =>
-        this.modifySubscription({ on_demand_budget: budget }, isAws).pipe(
+        this.modifySubscription(budget, isAws).pipe(
           switchMap(() =>
             budget !== null && isStripe
               ? forkJoin([
