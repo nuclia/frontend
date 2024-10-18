@@ -27,6 +27,30 @@
       </pa-radio-group>
     </div>
   </div>
+  @if (citationsEnabled) {
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="customizeThreshold"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.result-display.citation-threshold.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.result-display.citation-threshold.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="customizeThresholdEnabled">
+        <pa-slider
+          formControlName="citationThreshold"
+          step="0.01"
+          max="1"></pa-slider>
+      </div>
+    </div>
+  }
   <div class="config-form-field">
     <pa-toggle
       formControlName="displayMetadata"

@@ -6,6 +6,7 @@
   import {
     getRAGImageStrategies,
     getRAGStrategies,
+    Reranker,
     type KBStates,
     type Nuclia,
     type RAGImageStrategy,
@@ -86,7 +87,8 @@
   export let vectorset = '';
   export let chat_placeholder = '';
   export let audit_metadata = '';
-  export let reranker = '';
+  export let reranker: Reranker | undefined = undefined;
+  export let citation_threshold: number | string | undefined = undefined;
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -115,6 +117,7 @@
   let _ragImagesStrategies: RAGImageStrategy[] = [];
   let _max_tokens: number | undefined;
   let _max_output_tokens: number | undefined;
+  let _citation_threshold: number | undefined;
 
   export function search(query: string, filters?: string[]) {
     searchQuery.set(query);
@@ -154,6 +157,7 @@
       not_enough_data_message,
       vectorset,
       reranker,
+      citation_threshold,
     });
   }
 
@@ -210,6 +214,7 @@
     }
     _max_tokens = typeof max_tokens === 'string' ? parseInt(max_tokens, 10) : max_tokens;
     _max_output_tokens = typeof max_output_tokens === 'string' ? parseInt(max_output_tokens, 10) : max_output_tokens;
+    _citation_threshold = typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
 
     nucliaAPI = initNuclia(
       {
@@ -239,6 +244,7 @@
         vectorset,
         audit_metadata,
         reranker,
+        citation_threshold: _citation_threshold,
       },
       no_tracking,
     );

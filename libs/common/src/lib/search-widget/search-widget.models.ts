@@ -9,6 +9,7 @@ export const DEFAULT_FILTERS: FilterSelectionType = {
   created: false,
   labelFamilies: false,
 };
+export const INITIAL_CITATION_THRESHOLD = 0.7;
 export const MODELS_SUPPORTING_VISION = ['chatgpt-vision', 'gemini-1-5-pro-vision'];
 
 export interface SearchBoxConfig {
@@ -77,6 +78,8 @@ export interface ResultDisplayConfig {
   relationGraph: boolean;
   jsonOutput: boolean;
   jsonSchema: string;
+  customizeThreshold: boolean;
+  citationThreshold: number;
 }
 
 export interface SearchConfiguration {
@@ -186,6 +189,8 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   relationGraph: false,
   jsonOutput: false,
   jsonSchema: '',
+  customizeThreshold: false,
+  citationThreshold: INITIAL_CITATION_THRESHOLD,
 };
 export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   widgetMode: 'page',
@@ -417,4 +422,9 @@ export function getWidgetTheme(options: WidgetConfiguration): string {
 }
 export function getReranker(config: SearchBoxConfig): string {
   return config.semanticReranking ? `\n  reranker="predict"` : '';
+}
+export function getCitationThreshold(config: ResultDisplayConfig): string {
+  return config.showResultType === 'citations' && config.customizeThreshold
+    ? `\n  citation_threshold="${config.citationThreshold}"`
+    : '';
 }
