@@ -16,13 +16,23 @@
   }
 }
 
-.container {
+.main {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  left: 0;
+  height: 100%;
   background-color: $color-neutral-lightest;
+}
+.container {
   position: absolute;
   width: 100%;
+  height: 100%;
 }
 
 .test-page {
+  overflow: auto;
+  height: 100%;
   background-color: $color-light-stronger;
   display: flex;
   flex-direction: column;
