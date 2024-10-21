@@ -138,12 +138,12 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   useSynonyms: false,
   prependTheQuery: false,
   queryPrepend: '',
-  rephraseQuery: false,
+  rephraseQuery: true,
   useRephrasePrompt: false,
   rephrasePrompt: '',
   generateAnswerWith: 'semantic-and-full-text',
   showHiddenResources: false,
-  semanticReranking: false,
+  semanticReranking: true,
 };
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generateAnswer: false,
@@ -180,7 +180,7 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
 };
 export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   displayResults: false,
-  showResultType: 'all-resources',
+  showResultType: 'citations',
   displayMetadata: false,
   displayThumbnails: false,
   showAttachedImages: false,
