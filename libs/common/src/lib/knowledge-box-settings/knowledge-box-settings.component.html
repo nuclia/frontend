@@ -40,7 +40,6 @@
 
           <pa-toggle
             formControlName="hidden_resources_enabled"
-            (valueChange)="onToggleChange()"
             labelOnRight>
             {{ 'kb.form.hidden-resources' | translate }}
           </pa-toggle>
@@ -48,7 +47,6 @@
           @if (hiddenResourcesEnabled) {
             <pa-toggle
               formControlName="hidden_resources_hide_on_creation"
-              (valueChange)="onToggleChange()"
               labelOnRight>
               {{ 'kb.form.hide-new-resources' | translate }}
             </pa-toggle>

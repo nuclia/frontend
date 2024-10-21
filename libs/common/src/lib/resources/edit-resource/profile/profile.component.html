@@ -39,8 +39,7 @@
             @if (hiddenResourcesEnabled | async) {
               <pa-toggle
                 formControlName="hidden"
-                labelOnRight
-                (valueChange)="onToggleChange()">
+                labelOnRight>
                 {{ 'resource.hidden' | translate }}
               </pa-toggle>
             }
