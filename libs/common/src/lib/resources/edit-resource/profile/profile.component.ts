@@ -300,10 +300,4 @@ export class ResourceProfileComponent implements OnInit {
   onResizingTextarea($event: DOMRect) {
     this.updateGeneralExpanderSize.next($event);
   }
-
-  onToggleChange() {
-    // TODO: Toggles do not properly set the form control to dirty
-    this.form.markAsDirty();
-    this.cdr.markForCheck();
-  }
 }

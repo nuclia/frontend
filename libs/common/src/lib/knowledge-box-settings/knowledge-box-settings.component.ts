@@ -160,10 +160,4 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         error: () => this.toast.error(`stash.${label}.error`),
       });
   }
-
-  onToggleChange() {
-    // TODO: Toggles do not properly set the form control to dirty
-    this.kbForm.markAsDirty();
-    this.cdr.markForCheck();
-  }
 }
