@@ -124,7 +124,7 @@ jobs:
         env:
           CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/private
         run: |-
-          docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=dashboard .
+          docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=dashboard --build-arg noRelativeCss=true .
           docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
@@ -144,7 +144,7 @@ jobs:
         env:
           CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/private
         run: |-
-          docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager-v2 .
+          docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager-v2 --build-arg noRelativeCss=true .
           docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA}
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
@@ -264,13 +264,12 @@ jobs:
 
   send-to-promotion:
     runs-on: ubuntu-latest
-    needs: [ deploy-manager, deploy-app ]
+    needs: [deploy-manager, deploy-app]
     if: |
       !failure() && !cancelled() && github.event_name == 'push' &&
       ( needs.deploy-manager.result != 'skipped' ||
         needs.deploy-app.result != 'skipped' )
     steps:
-
       - name: Generate a token
         id: app-token
         uses: actions/create-github-app-token@v1
@@ -285,7 +284,7 @@ jobs:
           SKIP_ARGO_HEALTH: false
           ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'stage' || 'dev' }}
           PROMO_PRODUCTION: ${{ env.PROMO_PRODUCTION }}
-          TEAM: ${{ secrets.TEAM_NAME }} 
+          TEAM: ${{ secrets.TEAM_NAME }}
           SLACK_TEAM: ${{ secrets.SLACK_TEAM }}
         run: |
           MERGED_JSON=$(jq -cs \
