@@ -125,7 +125,8 @@
             } @else if ((prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price) {
               <td>
                 {{
-                  (prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price || 0 | currency: currency : 'symbol' : '1.2-6'
+                  (prices | async)?.[tier]?.usage?.['ai-tokens-used']?.price || 0
+                    | currency: currency : 'symbol' : '1.2-6'
                 }}
               </td>
             }
@@ -222,7 +223,8 @@
           * {{ 'billing.token-help' | translate }}
           <a
             href="https://nuclia.com/nuclia-token"
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer">
             {{ 'billing.learn-more' | translate }}
           </a>
         </div>
