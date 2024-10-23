@@ -1,4 +1,12 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {
   PaButtonModule,
@@ -6,7 +14,6 @@ import {
   PaDropdownModule,
   PaPopupModule,
   PaTableModule,
-  PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
@@ -17,14 +24,13 @@ import { AutomatedTask, OneTimeTask } from '../tasks-automation.models';
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     PaButtonModule,
     TranslateModule,
     PaTableModule,
     PaButtonModule,
     PaDateTimeModule,
     BadgeComponent,
-    PaTogglesModule,
-    PaTogglesModule,
     InfoCardComponent,
     PaDropdownModule,
     PaPopupModule,
@@ -57,6 +63,10 @@ export class TaskListItemComponent {
    * Temporary input allowing to display or hide the "new" button
    */
   @Input({ transform: booleanAttribute }) newTaskFormReady = false;
+    /**
+   * Temporary input allowing to display a beta or coming soon badge 
+   */
+  @Input() badge = '';
 
   @Output() newTask = new EventEmitter<void>();
   @Output() seeArchive = new EventEmitter<void>();
@@ -77,14 +87,6 @@ export class TaskListItemComponent {
         return { field: 'labelSets', header: 'tasks-automation.table.header.label-sets' };
       case 'label-ners':
         return { field: 'nerFamily', header: 'tasks-automation.table.header.ner-family' };
-    }
-  }
-
-  toggleAction(taskId: string, activate: boolean) {
-    if (activate) {
-      this.restart.emit(taskId);
-    } else {
-      this.stop.emit(taskId);
     }
   }
 }

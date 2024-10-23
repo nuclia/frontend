@@ -5,8 +5,12 @@
     </nsi-back-button>
 
     <div>
-      <h1 class="page-title">{{ 'tasks-automation.label-text-blocks.title' | translate }}</h1>
-      <p class="page-description">{{ 'tasks-automation.label-text-blocks.description' | translate }}</p>
+      @if (task) {
+        <h1 class="page-title">{{ task.parameters.name }}</h1>
+      } @else {
+        <h1 class="page-title">{{ 'tasks-automation.label-text-blocks.title' | translate }}</h1>
+        <p class="page-description">{{ 'tasks-automation.label-text-blocks.description' | translate }}</p>
+      }
     </div>
   </header>
 
@@ -17,10 +21,12 @@
     footerNoteAutomation="tasks-automation.label-text-blocks.footer.apply-automation"
     footerNoteOneTime="tasks-automation.label-text-blocks.footer.apply-one-time"
     [validFormInside]="labelingConfig?.valid"
+    [task]="task"
     (activate)="activateTask($event)"
     (cancel)="backToTaskList()">
     <stf-labeling-configuration
       type="text-blocks"
+      [task]="task"
       (configurationChange)="onConfigurationChange($event)"></stf-labeling-configuration>
     <!--
     <nsi-two-columns-configuration-item

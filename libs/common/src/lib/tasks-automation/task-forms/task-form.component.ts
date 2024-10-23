@@ -33,26 +33,26 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   ApplyOption,
   Classification,
-  Filter,
   LearningConfigurationOption,
   LLMConfig,
   Search,
   TaskFullDefinition,
   TaskName,
 } from '@nuclia/core';
-import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, ReplaySubject, Subject, switchMap, tap } from 'rxjs';
 import { Filters, formatFiltersFromFacets, LANGUAGE_FACET, MIME_FACETS } from '../../resources';
 import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { GenerativeModelPipe } from '../../pipes';
 import { TasksAutomationService } from '../tasks-automation.service';
+import { TaskWithApplyOption } from './task-route.directive';
 
 export interface TaskFormCommonConfig {
   name: string;
   applyTaskTo: ApplyOption;
   filter: {
     //searchIn: 'titleOrContent' | 'title' | 'content';
-    contain: string;
-    resource_type: string[] | Filter[];
+    contains: string[];
+    resource_type: string[];
   };
   llm: LLMConfig;
   webhook: {
@@ -107,6 +107,17 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input() footerNoteOneTime = '';
   // Flag indicating if the form inside ng-content is valid
   @Input({ transform: booleanAttribute }) validFormInside = false;
+  // Task whose data is displayed in the form
+  @Input() set task(value: TaskWithApplyOption | undefined) {
+    if (value) {
+      this._task = value;
+      this.initForm(value);
+    }
+  }
+  get task() {
+    return this._task;
+  }
+  private _task?: TaskWithApplyOption;
 
   @Output() cancel = new EventEmitter<void>();
   @Output() activate = new EventEmitter<TaskFormCommonConfig>();
@@ -116,7 +127,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     applyTaskTo: new FormControl<ApplyOption>('ALL', { nonNullable: true }),
     filter: new FormGroup({
       //searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent', { nonNullable: true }),
-      contain: new FormControl<string>('', { nonNullable: true }),
+      contains: new FormControl<string>('', { nonNullable: true }),
     }),
     llm: new FormGroup({
       model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -125,9 +136,10 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       url: new FormControl<string>('', { nonNullable: true }),
     }),
   });
+  formReady = new ReplaySubject<boolean>(1);
   headers: { key: string; value: string; secret: boolean }[] = [];
 
-  selectedFilters = new BehaviorSubject<string[] | Filter[]>([]);
+  selectedFilters = new BehaviorSubject<string[]>([]);
 
   get applyTaskValue() {
     return this.form.controls.applyTaskTo.value;
@@ -211,6 +223,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
           (option) => !this.unsupportedLLMs.includes(option.value),
         );
         this.form.controls.llm.patchValue({ model: data?.['generative_model'].default });
+        this.formReady.next(true);
       });
 
     this.sdk.currentKb
@@ -239,7 +252,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         filter(([data]) => data.applyTaskTo === 'EXISTING'),
         debounceTime(300),
         switchMap(([data, filters]) =>
-          this.sdk.currentKb.pipe(switchMap((kb) => kb.catalog(data.filter?.contain || '', { filters }))),
+          this.sdk.currentKb.pipe(switchMap((kb) => kb.catalog(data.filter?.contains || '', { filters }))),
         ),
         takeUntil(this.unsubscribeAll),
       )
@@ -251,6 +264,22 @@ export class TaskFormComponent implements OnInit, OnDestroy {
           }
         },
         error: () => this.toaster.error('tasks-automation.errors.counting-resources'),
+      });
+  }
+
+  initForm(task: TaskWithApplyOption) {
+    this.formReady
+      .pipe(
+        filter((ready) => ready),
+        take(1),
+      )
+      .subscribe(() => {
+        this.form.patchValue({
+          ...task.parameters,
+          filter: { ...task.parameters.filter, contains: task.parameters.filter.contains[0] || '' },
+          applyTaskTo: task.applyOption,
+        });
+        this.form.disable();
       });
   }
 
@@ -298,11 +327,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       .filter((option) => option.selected)
       .map((option) => option.value);
     const selectedLanguages = this.languageFilters.filter((option) => option.selected).map((option) => option.value);
-
-    const resourceTypesFilters: Filter[] = selectedResourceTypes.length > 0 ? [{ any: selectedResourceTypes }] : [];
-    const languageFilters: Filter[] = selectedLanguages.length > 0 ? [{ any: selectedLanguages }] : [];
-    const selectedLabels: Filter[] = this.labelFilters.length > 0 ? [{ any: this.labelFilters }] : [];
-    this.selectedFilters.next(resourceTypesFilters.concat(languageFilters).concat(selectedLabels));
+    this.selectedFilters.next(selectedResourceTypes.concat(selectedLanguages).concat(this.labelFilters));
   }
 
   activateTask() {
@@ -310,7 +335,10 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.activate.emit({
       ...rawValue,
       webhook: { ...rawValue.webhook, headers: this.headers },
-      filter: { ...rawValue.filter, resource_type: this.selectedFilters.value },
+      filter: {
+        contains: rawValue.filter.contains ? [rawValue.filter.contains] : [],
+        resource_type: this.selectedFilters.value,
+      },
     });
   }
 

@@ -27,14 +27,13 @@ import {
   PaPopupModule,
   PaIconModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LabelOperation, LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
+import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskStatus } from '@nuclia/core';
 import { filter, map, Observable, Subject } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 
-
 export interface LabelingConfiguration {
-  label: LabelOperation,
+  label: LabelOperation;
   valid: boolean;
 }
 
@@ -76,6 +75,16 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   get type() {
     return this._type;
   }
+  private _task?: TaskStatus;
+  @Input() set task(value: TaskStatus | undefined) {
+    if (value) {
+      this._task = value;
+      this.initForm(value);
+    }
+  }
+  get task() {
+    return this._task;
+  }
 
   @Output() configurationChange = new EventEmitter<LabelingConfiguration>();
 
@@ -89,7 +98,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
       new FormGroup({
         label: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
         description: new FormControl('', { nonNullable: true }),
-        examples: new FormArray([]),
+        examples: new FormArray<FormControl<string>>([]),
       }),
     ]),
   });
@@ -111,12 +120,22 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
     });
   }
 
+  initForm(task: TaskStatus) {
+    const labelOperation = task.parameters.operations?.find((operation) => !!operation.label)?.label;
+    if (labelOperation) {
+      this.labelingForm.controls.labels.clear();
+      labelOperation.labels.forEach(() => this.addLabel());
+      this.labelingForm.patchValue(labelOperation);
+      this.labelingForm.disable();
+    }
+  }
+
   addLabel() {
     this.labelingForm.controls.labels.push(
       new FormGroup({
         label: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
         description: new FormControl('', { nonNullable: true }),
-        examples: new FormArray([]),
+        examples: new FormArray<FormControl<string>>([]),
       }),
     );
   }

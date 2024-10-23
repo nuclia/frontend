@@ -4,8 +4,8 @@ import { TaskListItemComponent } from '../task-list-item/task-list-item.componen
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
-import { Subject } from 'rxjs';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { map, of, Subject, switchMap } from 'rxjs';
+import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-task-list',
@@ -19,10 +19,15 @@ export class TaskListComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private activeRoute = inject(ActivatedRoute);
   private taskAutomation = inject(TasksAutomationService);
+  private toaster = inject(SisToastService);
   private unsubscribeAll = new Subject<void>();
 
-  textBlocksLabelerTasks = this.taskAutomation.textBlocksLabelerTasks;
-  resourceLabelerTasks = this.taskAutomation.resourceLabelerTasks;
+  textBlocksLabelerTasks = this.taskAutomation.taskList.pipe(
+    map((taskList) => taskList.filter((task) => task.taskName === 'text-blocs-labeler')),
+  );
+  resourceLabelerTasks = this.taskAutomation.taskList.pipe(
+    map((taskList) => taskList.filter((task) => task.taskName === 'resource-labeler')),
+  );
 
   ngOnInit() {
     this.taskAutomation.initTaskList();
@@ -38,14 +43,28 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   deleteTask(taskId: string) {
-    this.taskAutomation.deleteTask(taskId);
+    this.taskAutomation
+      .getTask(taskId)
+      .pipe(
+        switchMap((response) => {
+          const inProgress =
+            response.request && !response.request.completed && !response.request.stopped && !response.request.failed;
+          if (inProgress) {
+            this.toaster.error('tasks-automation.errors.deleting');
+            return of(null);
+          } else {
+            return this.taskAutomation.deleteTask(taskId);
+          }
+        }),
+      )
+      .subscribe();
   }
 
   stopTask(taskId: string) {
-    this.taskAutomation.stopTask(taskId);
+    this.taskAutomation.stopTask(taskId).subscribe();
   }
 
   restartTask(taskId: string) {
-    this.taskAutomation.restartTask(taskId);
+    this.taskAutomation.restartTask(taskId).subscribe();
   }
 }

@@ -5,8 +5,12 @@
     </nsi-back-button>
 
     <div>
-      <h1 class="page-title">{{ 'tasks-automation.global-question.title' | translate }}</h1>
-      <p class="page-description">{{ 'tasks-automation.global-question.description' | translate }}</p>
+      @if (task) {
+        <h1 class="page-title">{{ task.parameters.name }}</h1>
+      } @else {
+        <h1 class="page-title">{{ 'tasks-automation.global-question.title' | translate }}</h1>
+        <p class="page-description">{{ 'tasks-automation.global-question.description' | translate }}</p>
+      }
     </div>
   </header>
 
