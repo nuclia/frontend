@@ -96,7 +96,7 @@
 	"signup.sign-up-with": "Registra't amb {{provider}}",
 	"signup.signup-button-label": "Registra't!",
 	"signup.title": "Comença gratuïtament",
-	"user.consent": "En utilitzar Nuclia, accepteu els <a href=\"https://nuclia.com/terms-and-conditions/\" target=\"_blank\">Termes i condicions</a> i la <a href=\"https://nuclia.com/privacy-policy/\" target=\"_blank\">Política de privadesa</a>. (obligatori)",
+	"user.consent": "En utilitzar Nuclia, accepteu els <a href=\"https://nuclia.com/terms-and-conditions/\" target=\"_blank\" rel=\"noopener noreferrer\">Termes i condicions</a> i la <a href=\"https://nuclia.com/privacy-policy/\" target=\"_blank\" rel=\"noopener noreferrer\">Política de privadesa</a>. (obligatori)",
 	"user.kb.creation-form.models.description": "Les embeddings són com les empremtes dactilars de paraules o dades. Ajuden els ordinadors a entendre les semblances i diferències entre ells, facilitant tasques com la comprensió del llenguatge o el reconeixement de patrons per a les màquines.",
 	"user.kb.creation-form.models.external-model.accordion-help": "El model de embeddings funciona a la infraestructura dels nostres socis",
 	"user.kb.creation-form.models.external-model.accordion-label": "Models de socis de confiança externs",

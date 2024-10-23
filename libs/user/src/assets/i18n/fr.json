@@ -96,7 +96,7 @@
 	"signup.sign-up-with": "S'inscrire avec {{provider}}",
 	"signup.signup-button-label": "S'inscrire",
 	"signup.title": "Commencez gratuitement",
-	"user.consent": "En utilisant Nuclia, vous acceptez les <a href=\"https://nuclia.com/terms-and-conditions/\" target=\"_blank\">Conditions générales</a> et les <a href=\"https://nuclia.com/privacy-policy/\" target=\"_blank\">Politique de confidentialité</a>. (Requis)",
+	"user.consent": "En utilisant Nuclia, vous acceptez les <a href=\"https://nuclia.com/terms-and-conditions/\" target=\"_blank\" rel=\"noopener noreferrer\">Conditions générales</a> et les <a href=\"https://nuclia.com/privacy-policy/\" target=\"_blank\" rel=\"noopener noreferrer\">Politique de confidentialité</a>. (Requis)",
 	"user.kb.creation-form.models.description": "Les embeddings sont comme des empreintes digitales pour des mots ou des données. Ils aident les ordinateurs à comprendre les similitudes et les différences entre eux, facilitant ainsi les tâches telles que la compréhension du langage ou la reconnaissance de modèles pour les machines.",
 	"user.kb.creation-form.models.external-model.accordion-help": "Le modèle d'embeddings s'exécute dans l'infrastructure de nos partenaires",
 	"user.kb.creation-form.models.external-model.accordion-label": "Modèles de partenaires externes de confiance",
