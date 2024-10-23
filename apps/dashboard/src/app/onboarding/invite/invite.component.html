@@ -14,6 +14,7 @@
       <pa-input
         formControlName="password"
         type="password"
+        [noAutoComplete]="true"
         [errorMessages]="validationMessages['password']">
         {{ 'login.password' | translate }}
       </pa-input>

@@ -29,6 +29,7 @@
             <pa-input
               [placeholder]="'parameters-table.headers.value' | translate"
               [formControl]="row.controls.value"
+              [noAutoComplete]="row.controls.secret.value"
               [type]="row.controls.secret.value ? 'password' : 'text'"></pa-input>
           } @else {
             <div class="body-s">{{ row.controls.secret.value ? '****' : row.controls.value.value }}</div>
