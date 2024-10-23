@@ -60,7 +60,7 @@
             kind="destructive"
             aspect="basic"
             icon="trash"
-            [disabled]="labelsControls.length < 2"
+            [disabled]="labelsControls.length < 2 || task"
             (click)="removeLabel($index)"></pa-button>
         </div>
       }
@@ -68,7 +68,7 @@
         size="small"
         icon="plus"
         iconAndText
-        [disabled]="!selectedLabelset"
+        [disabled]="!selectedLabelset || task"
         (click)="addLabel()">
         {{ 'tasks-automation.form.labels-selection.label-list.add-label' | translate }}
       </pa-button>

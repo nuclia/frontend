@@ -37,17 +37,19 @@ export class LabelResourcesComponent extends TaskRouteDirective {
   }
 
   activateTask(commonConfig: TaskFormCommonConfig) {
-    this.taskAutomation.startTask(
-      'resource-labeler',
-      {
-        name: commonConfig.name,
-        filter: commonConfig.filter,
-        llm: commonConfig.llm,
-        operations: {
-          label: this.labelingConfig?.label,
+    this.taskAutomation
+      .startTask(
+        'resource-labeler',
+        {
+          name: commonConfig.name,
+          filter: commonConfig.filter,
+          llm: commonConfig.llm,
+          operations: [{ label: this.labelingConfig?.label }],
         },
-      },
-      commonConfig.applyTaskTo,
-    );
+        commonConfig.applyTaskTo,
+      )
+      .subscribe(() => {
+        this.backToTaskList();
+      });
   }
 }

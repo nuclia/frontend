@@ -40,7 +40,7 @@
             </pa-select>
             -->
             <div class="title-s">{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</div>
-            <pa-input formControlName="contain">
+            <pa-input formControlName="contains">
               {{ 'tasks-automation.form.filter.search-input-label' | translate }}
             </pa-input>
           </div>
@@ -50,6 +50,7 @@
             <nsi-dropdown-button
               fullWidth
               aspect="basic"
+              [disabled]="task"
               [popupRef]="resourceTypesDropdown">
               {{ 'tasks-automation.form.filter.resource-type.button-label' | translate }}
 
@@ -200,26 +201,28 @@
   </nsi-two-columns-configuration-item>
   -->
 
-  <nsi-sticky-footer>
-    <!--
-    <span footerNote>
-      @if (applyTaskValue === 'ALL' || applyTaskValue === 'NEW') {
-        {{ footerNoteAutomation | translate }}
-      } @else if (resourceCount !== undefined) {
-        {{ footerNoteOneTime | translate: { count: resourceCount } }}
-      }
-    </span>
-    -->
-    <pa-button
-      aspect="basic"
-      (click)="cancel.emit()">
-      {{ 'generic.cancel' | translate }}
-    </pa-button>
-    <pa-button
-      kind="primary"
-      type="submit"
-      [disabled]="form.invalid || !validFormInside">
-      {{ activateButtonLabel | translate }}
-    </pa-button>
-  </nsi-sticky-footer>
+  @if (!task) {
+    <nsi-sticky-footer>
+      <!--
+      <span footerNote>
+        @if (applyTaskValue === 'ALL' || applyTaskValue === 'NEW') {
+          {{ footerNoteAutomation | translate }}
+        } @else if (resourceCount !== undefined) {
+          {{ footerNoteOneTime | translate: { count: resourceCount } }}
+        }
+      </span>
+      -->
+      <pa-button
+        aspect="basic"
+        (click)="cancel.emit()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        type="submit"
+        [disabled]="form.invalid || !validFormInside">
+        {{ activateButtonLabel | translate }}
+      </pa-button>
+    </nsi-sticky-footer>
+  }
 </form>

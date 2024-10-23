@@ -18,6 +18,9 @@
         {{ 'tasks-automation.cta.new-task' | translate }}
       </pa-button>
     }
+    @if (badge) {
+      <nsi-badge kind="tertiary">{{ badge }}</nsi-badge>
+    }
   </div>
 </header>
 
@@ -25,17 +28,25 @@
   <pa-table
     class="task-list-table header-above"
     border
-    columns="1fr 2fr repeat(3, 1fr) 80px">
+    columns="repeat(6, 1fr) 80px">
     <pa-table-header>
+      <pa-table-cell header>{{ 'tasks-automation.table.header.name' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ firstColumn.header | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'tasks-automation.table.header.filters' | translate }}</pa-table-cell>
-      <pa-table-cell header>{{ 'tasks-automation.table.header.activity' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'tasks-automation.table.header.applies-on' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'tasks-automation.table.header.status' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'tasks-automation.table.header.creation-date' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'tasks-automation.table.header.actions' | translate }}</pa-table-cell>
     </pa-table-header>
     @for (task of taskList; track task) {
       <pa-table-row>
+        <pa-table-cell>
+          <a
+            class="body-s"
+            [routerLink]="taskType + '/' + task.id">
+            {{ task.title }}
+          </a>
+        </pa-table-cell>
         <pa-table-cell>
           <span class="body-s">{{ task[firstColumn.field] || '–' }}</span>
         </pa-table-cell>
@@ -55,26 +66,17 @@
           </div>
         </pa-table-cell>
         <pa-table-cell>
-          @if (task.count; as count) {
-            <span class="body-s">
-              {{
-                'tasks-automation.table.processed'
-                  | translate
-                    : (count.processed === count.total
-                        ? { count: count.total }
-                        : { count: count.processed + '/' + count.total })
-              }}
-            </span>
+          @if (task.type === 'automated') {
+            <span class="body-s">{{ 'tasks-automation.applies-on.new-resources' | translate }}</span>
+          } @else {
+            <span class="body-s">{{ 'tasks-automation.applies-on.existing-resources' | translate }}</span>
           }
         </pa-table-cell>
         <pa-table-cell>
           @if (task.type === 'automated') {
-            <pa-toggle
-              [(value)]="task.running"
-              (valueChange)="toggleAction(task.id, $event)"
-              labelOnRight>
-              {{ task.running ? 'On' : 'Off' }}
-            </pa-toggle>
+            <span class="task-status body-s progress">
+              {{ 'tasks-automation.status.watching' | translate }}
+            </span>
           } @else {
             <span
               class="task-status body-s"

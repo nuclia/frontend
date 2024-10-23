@@ -4,10 +4,6 @@
     <div class="page-description">{{ 'tasks-automation.page-description' | translate }}</div>
   </div>
 
-  <nsi-info-card type="highlight">
-    <div [innerHTML]="'tasks-automation.task-creation-info' | translate"></div>
-  </nsi-info-card>
-
   <div class="task-list">
     <app-task-list-item
       taskType="label-resources"
@@ -33,6 +29,7 @@
       taskType="summarize"
       taskTitle="tasks-automation.summarize-resources.title"
       taskDescription="tasks-automation.summarize-resources.description"
+      badge="Coming soon"
       (newTask)="createTask('summarize-resources')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
@@ -41,6 +38,7 @@
       taskType="global-question"
       taskTitle="tasks-automation.global-question.title"
       taskDescription="tasks-automation.global-question.description"
+      badge="Coming soon"
       (newTask)="createTask('global-question')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
@@ -49,6 +47,7 @@
       taskType="label-ners"
       taskTitle="tasks-automation.label-ners.title"
       taskDescription="tasks-automation.label-ners.description"
+      badge="Coming soon"
       (newTask)="createTask('label-ners')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
@@ -57,6 +56,7 @@
       taskType="question-answer"
       taskTitle="tasks-automation.question-answer.title"
       taskDescription="tasks-automation.question-answer.description"
+      badge="Coming soon"
       (newTask)="createTask('question-answer')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"

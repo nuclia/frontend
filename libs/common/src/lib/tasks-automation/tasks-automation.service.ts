@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { BehaviorSubject, map, Observable, switchMap, take } from 'rxjs';
+import { map, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import {
   AutomatedTask,
   mapBatchToOneTimeTask,
@@ -17,16 +17,9 @@ export class TasksAutomationService {
   private sdk = inject(SDKService);
 
   private _currentKb = this.sdk.currentKb;
-  private _taskList = new BehaviorSubject<(AutomatedTask | OneTimeTask)[]>([]);
-  private _taskDefinitions = new BehaviorSubject<TaskFullDefinition[]>([]);
-
-  textBlocksLabelerTasks: Observable<(AutomatedTask | OneTimeTask)[]> = this._taskList.pipe(
-    map((taskList) => taskList.filter((task) => task.taskName === 'text-blocs-labeler')),
-  );
-  resourceLabelerTasks: Observable<(AutomatedTask | OneTimeTask)[]> = this._taskList.pipe(
-    map((taskList) => taskList.filter((task) => task.taskName === 'resource-labeler')),
-  );
-  taskDefinitions = this._taskDefinitions.asObservable();
+  private _tasksData = new ReplaySubject<TaskListResponse>(1);
+  taskList = this._tasksData.pipe(map((data) => this.mapTaskList(data)));
+  taskDefinitions = this._tasksData.pipe(map((data) => this.resolveReferences(data.tasks)));
 
   initTaskList() {
     this._currentKb
@@ -35,65 +28,49 @@ export class TasksAutomationService {
         switchMap((kb) => kb.taskManager.getTasks()),
       )
       .subscribe((taskList) => {
-        this._taskList.next(this.mapTaskList(taskList));
-        this._taskDefinitions.next(this.resolveReferences(taskList.tasks));
+        this._tasksData.next(taskList);
       });
   }
 
   startTask(taskName: TaskName, parameters: any, apply: ApplyOption) {
-    this._currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) =>
-          kb.taskManager.startTask(taskName, parameters, apply).pipe(
-            switchMap((response) => kb.taskManager.getTasks()),
-            map((response: TaskListResponse) => this.mapTaskList(response)),
-          ),
-        ),
-      )
-      .subscribe((taskList) => this._taskList.next(taskList));
+    return this._currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.taskManager.startTask(taskName, parameters, apply).pipe(switchMap(() => kb.taskManager.getTasks())),
+      ),
+      tap((response) => this._tasksData.next(response)),
+    );
   }
 
   stopTask(taskId: string) {
-    this._currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) =>
-          kb.taskManager.stopTask(taskId).pipe(
-            switchMap((response) => kb.taskManager.getTasks()),
-            map((response: TaskListResponse) => this.mapTaskList(response)),
-          ),
-        ),
-      )
-      .subscribe((taskList) => this._taskList.next(taskList));
+    return this._currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.taskManager.stopTask(taskId).pipe(switchMap(() => kb.taskManager.getTasks()))),
+      tap((response) => this._tasksData.next(response)),
+    );
   }
 
   deleteTask(taskId: string) {
-    this._currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) =>
-          kb.taskManager.deleteTask(taskId).pipe(
-            switchMap((response) => kb.taskManager.getTasks()),
-            map((response: TaskListResponse) => this.mapTaskList(response)),
-          ),
-        ),
-      )
-      .subscribe((taskList) => this._taskList.next(taskList));
+    return this._currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.taskManager.deleteTask(taskId).pipe(switchMap(() => kb.taskManager.getTasks()))),
+      tap((response) => this._tasksData.next(response)),
+    );
   }
 
   restartTask(taskId: string) {
-    this._currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) =>
-          kb.taskManager.restartTask(taskId).pipe(
-            switchMap((response) => kb.taskManager.getTasks()),
-            map((response: TaskListResponse) => this.mapTaskList(response)),
-          ),
-        ),
-      )
-      .subscribe((taskList) => this._taskList.next(taskList));
+    return this._currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.taskManager.restartTask(taskId).pipe(switchMap(() => kb.taskManager.getTasks()))),
+      tap((response) => this._tasksData.next(response)),
+    );
+  }
+
+  getTask(taskId: string) {
+    return this._currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.taskManager.getTask(taskId)),
+    );
   }
 
   private mapTaskList(response: TaskListResponse) {
