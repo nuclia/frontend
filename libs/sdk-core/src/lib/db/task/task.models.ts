@@ -136,3 +136,11 @@ export interface StartStopTaskResponse {
   status: string;
   id: string;
 }
+
+/**
+ * Response from inspect endpoint.
+ */
+export interface InspectTaskResponse {
+  request?: TaskOnBatch;
+  config?: TaskOnGoing;
+}

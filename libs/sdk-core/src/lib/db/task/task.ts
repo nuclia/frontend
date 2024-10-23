@@ -1,7 +1,7 @@
 import type { WritableKnowledgeBox } from '../kb';
 import type { INuclia } from '../../models';
 import { Observable } from 'rxjs';
-import { ApplyOption, StartStopTaskResponse, TaskListResponse, TaskName } from './task.models';
+import { ApplyOption, InspectTaskResponse, StartStopTaskResponse, TaskListResponse, TaskName } from './task.models';
 
 export class TaskManager {
   kb: WritableKnowledgeBox;
@@ -46,7 +46,7 @@ export class TaskManager {
     parameters: any,
     apply: ApplyOption = 'EXISTING',
   ): Observable<StartStopTaskResponse> {
-    return this.nuclia.rest.post(`${this.kb.path}/task/${taskName}`, { parameters, apply });
+    return this.nuclia.rest.post(`${this.kb.path}/task/${taskName}/start`, { parameters, apply });
   }
 
   /**
@@ -64,4 +64,15 @@ export class TaskManager {
   restartTask(taskId: string): Observable<StartStopTaskResponse> {
     return this.nuclia.rest.post(`${this.kb.path}/task/${taskId}/restart`, {});
   }
+
+  /**
+   * Get the status of a tasks
+   *
+   * @param taskId
+   */
+    getTask(taskId: string): Observable<InspectTaskResponse> {
+      return this.nuclia.rest.get<InspectTaskResponse>(
+        `${this.kb.path}/task/${taskId}/inspect`,
+      );
+    }
 }
