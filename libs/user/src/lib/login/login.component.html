@@ -13,7 +13,7 @@
       <form
         #form
         [formGroup]="loginForm"
-        [method]="oauth ? 'POST' : null"
+        method="POST"
         [action]="oauth ? oAuthLoginUrl() : null"
         (ngSubmit)="login()">
         <div class="login_field">
