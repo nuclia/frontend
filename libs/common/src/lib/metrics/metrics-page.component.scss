@@ -58,6 +58,19 @@
     gap: rhythm(2);
   }
 
+  .criteria-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: rhythm(0.5) 0;
+  }
+
+  .pagination {
+    display: flex;
+    gap: rhythm(1);
+    padding-right: rhythm(2);
+  }
+
   .criteria-container {
     padding: rhythm(2) 0;
     max-width: rhythm(64);

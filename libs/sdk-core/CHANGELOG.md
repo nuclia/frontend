@@ -3,6 +3,7 @@
 ### Improvement
 
 - Support `citation_threshold` on `/ask` endpoint
+- Update `queryRemiScores` method to support pagination and filtering by answer feedback
 
 # 1.22.0 (2024-10-14)
 

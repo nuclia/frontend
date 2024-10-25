@@ -5,8 +5,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { endOfDay, format, startOfDay, subDays, subHours } from 'date-fns';
 import {
   RemiQueryCriteria,
+  RemiQueryResponse,
   RemiQueryResponseContextDetails,
-  RemiQueryResponseItem,
   RemiScoresResponseItem,
   UsageAggregation,
 } from '@nuclia/core';
@@ -26,6 +26,8 @@ interface RawEvolutionResults {
   parameters: RangeParameters;
 }
 
+const PAGE_SIZE = 10;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -37,6 +39,7 @@ export class RemiMetricsService {
   private _evolutionDataOnError = new BehaviorSubject(false);
   private _lowContextOnError = new BehaviorSubject(false);
   private _noAnswerOnError = new BehaviorSubject(false);
+  private _badFeedbackOnError = new BehaviorSubject(false);
   private _period = new BehaviorSubject<RemiPeriods>('7d');
 
   period = this._period.asObservable();
@@ -44,6 +47,7 @@ export class RemiMetricsService {
   evolutionDataOnError = this._evolutionDataOnError.asObservable();
   lowContextOnError = this._lowContextOnError.asObservable();
   noAnswerOnError = this._noAnswerOnError.asObservable();
+  badFeedbackOnError = this._badFeedbackOnError.asObservable();
 
   private scoreParameters: Observable<RangeParameters> = this.period.pipe(
     map((period) => {
@@ -68,20 +72,56 @@ export class RemiMetricsService {
     }),
   );
   private _lowContextCriteria = new BehaviorSubject<RemiQueryCriteria | null>(null);
-  private _noAnswerMonth = new BehaviorSubject<string | null>(null);
+  private _noAnswerCriteria = new BehaviorSubject<RemiQueryCriteria | null>(null);
+  private _badFeedbackCriteria = new BehaviorSubject<RemiQueryCriteria | null>(null);
 
   lowContextCriteria = this._lowContextCriteria.asObservable();
-  noAnswerMonth = this._noAnswerMonth.asObservable();
+  noAnswerCriteria = this._noAnswerCriteria.asObservable();
+  badFeedbackCriteria = this._badFeedbackCriteria.asObservable();
+
+  lowContextPage = this._lowContextCriteria.pipe(
+    map((criteria) => (criteria?.pagination?.starting_after || 0) / PAGE_SIZE),
+  );
+  noAnswerPage = this._noAnswerCriteria.pipe(
+    map((criteria) => (criteria?.pagination?.starting_after || 0) / PAGE_SIZE),
+  );
+  badFeedbackPage = this._badFeedbackCriteria.pipe(
+    map((criteria) => (criteria?.pagination?.starting_after || 0) / PAGE_SIZE),
+  );
 
   updatePeriod(value: RemiPeriods) {
     this._period.next(value);
   }
 
-  updateLowContextCriteria(value: RemiQueryCriteria) {
-    this._lowContextCriteria.next(value);
+  updateLowContextCriteria(value: RemiQueryCriteria, page: number) {
+    this._lowContextCriteria.next({
+      ...value,
+      pagination: {
+        limit: PAGE_SIZE,
+        starting_after: PAGE_SIZE * page,
+      },
+    });
   }
-  updateNoAnswerMonth(month: string) {
-    this._noAnswerMonth.next(month);
+  updateNoAnswerCriteria(month: string, page: number) {
+    this._noAnswerCriteria.next({
+      status: 'NO_CONTEXT',
+      month,
+      pagination: {
+        limit: PAGE_SIZE,
+        starting_after: PAGE_SIZE * page,
+      },
+    });
+  }
+
+  updateBadFeedbackCriteria(month: string, page: number) {
+    this._badFeedbackCriteria.next({
+      feedback_good: false,
+      month,
+      pagination: {
+        limit: PAGE_SIZE,
+        starting_after: PAGE_SIZE * page,
+      },
+    });
   }
 
   healthCheckData: Observable<RangeChartData[]> = combineLatest([this.sdk.currentKb, this.scoreParameters]).pipe(
@@ -143,31 +183,24 @@ export class RemiMetricsService {
     map((data) => this.getEvolutionForMetric(data, 'context_relevance')),
   );
 
-  missingKnowledgeNoAnswer: Observable<RemiQueryResponseItem[]> = combineLatest([
+  missingKnowledgeNoAnswer = combineLatest([
     this.sdk.currentKb,
-    this.noAnswerMonth.pipe(
-      filter((month) => !!month),
-      map((month) => month as string),
-    ),
+    this.noAnswerCriteria.pipe(filter((criteria) => !!criteria)),
   ]).pipe(
-    switchMap(([kb, month]) =>
-      kb.activityMonitor
-        .queryRemiScores({
-          status: 'NO_CONTEXT',
-          month,
-        })
-        .pipe(
-          tap(() => this._noAnswerOnError.next(false)),
-          catchError((err) => {
-            console.error(err);
-            this._noAnswerOnError.next(true);
-            return of([]);
-          }),
-        ),
+    switchMap(([kb, criteria]) =>
+      kb.activityMonitor.queryRemiScores(criteria).pipe(
+        tap(() => this._noAnswerOnError.next(false)),
+        catchError((err) => {
+          console.error(err);
+          this._noAnswerOnError.next(true);
+          return of({ data: [], has_more: false });
+        }),
+      ),
     ),
+    shareReplay(1),
   );
 
-  missingKnowledgeLowContext: Observable<RemiQueryResponseItem[]> = combineLatest([
+  missingKnowledgeLowContext: Observable<RemiQueryResponse> = combineLatest([
     this.sdk.currentKb,
     this.lowContextCriteria.pipe(filter((criteria) => !!criteria)),
   ]).pipe(
@@ -177,7 +210,7 @@ export class RemiMetricsService {
         catchError((err) => {
           console.error(err);
           this._lowContextOnError.next(true);
-          return of([]);
+          return of({ data: [], has_more: false });
         }),
       ),
     ),
@@ -185,8 +218,8 @@ export class RemiMetricsService {
   );
   missingKnowledgeBarPlotData: Observable<{ [id: number]: GroupedBarChartData[] }> =
     this.missingKnowledgeLowContext.pipe(
-      map((items) =>
-        items.reduce(
+      map((response) =>
+        response.data.reduce(
           (plotData, item) => {
             const contextDistribution: { [score: string]: number } = this.getDistribution(
               item.remi?.context_relevance || [],
@@ -223,6 +256,22 @@ export class RemiMetricsService {
         ),
       ),
     );
+
+  missingKnowledgeBadFeedback: Observable<RemiQueryResponse> = combineLatest([
+    this.sdk.currentKb,
+    this.badFeedbackCriteria.pipe(filter((criteria) => !!criteria)),
+  ]).pipe(
+    switchMap(([kb, criteria]) =>
+      kb.activityMonitor.queryRemiScores(criteria).pipe(
+        tap(() => this._badFeedbackOnError.next(false)),
+        catchError(() => {
+          this._badFeedbackOnError.next(true);
+          return of({ data: [], has_more: false });
+        }),
+      ),
+    ),
+    shareReplay(1),
+  );
 
   getMissingKnowledgeDetails(id: number): Observable<RemiQueryResponseContextDetails> {
     return this.sdk.currentKb.pipe(

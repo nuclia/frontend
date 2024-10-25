@@ -17,12 +17,13 @@ import {
   AccordionComponent,
   AccordionExtraDescriptionDirective,
   AccordionItemComponent,
+  PaButtonModule,
   PaExpanderModule,
   PaTableModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { fromEvent, Observable, Subject } from 'rxjs';
-import { auditTime, takeUntil } from 'rxjs/operators';
+import { auditTime, take, takeUntil } from 'rxjs/operators';
 import {
   DatedRangeChartData,
   GroupedBarChartComponent,
@@ -37,8 +38,8 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { format } from 'date-fns';
 import {
   RemiQueryCriteria,
+  RemiQueryResponse,
   RemiQueryResponseContextDetails,
-  RemiQueryResponseItem,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
@@ -66,6 +67,7 @@ import { SafeHtml } from '@angular/platform-browser';
     PaExpanderModule,
     AccordionExtraDescriptionDirective,
     MissingKnowledgeDetailsComponent,
+    PaButtonModule,
   ],
   templateUrl: './metrics-page.component.html',
   styleUrl: './metrics-page.component.scss',
@@ -88,13 +90,18 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   groundednessEvolution: Observable<DatedRangeChartData[]> = this.remiMetrics.groundednessEvolution;
   answerEvolution: Observable<DatedRangeChartData[]> = this.remiMetrics.answerEvolution;
   contextEvolution: Observable<DatedRangeChartData[]> = this.remiMetrics.contextEvolution;
-  lowContextData: Observable<RemiQueryResponseItem[]> = this.remiMetrics.missingKnowledgeLowContext;
-  noAnswerData: Observable<RemiQueryResponseItem[]> = this.remiMetrics.missingKnowledgeNoAnswer;
+  lowContextData: Observable<RemiQueryResponse> = this.remiMetrics.missingKnowledgeLowContext;
+  noAnswerData: Observable<RemiQueryResponse> = this.remiMetrics.missingKnowledgeNoAnswer;
+  badFeedbackData: Observable<RemiQueryResponse> = this.remiMetrics.missingKnowledgeBadFeedback;
   missingKnowledgeBarPlotData: Observable<{ [id: number]: GroupedBarChartData[] }> =
     this.remiMetrics.missingKnowledgeBarPlotData;
 
   missingKnowledgeDetails: { [id: number]: RemiQueryResponseContextDetails } = {};
   missingKnowledgeError: { [id: number]: boolean } = {};
+
+  lowContextPage: Observable<number> = this.remiMetrics.lowContextPage;
+  noAnswerPage: Observable<number> = this.remiMetrics.noAnswerPage;
+  badFeedbackPage: Observable<number> = this.remiMetrics.badFeedbackPage;
 
   lowContextCriteria = new FormGroup({
     value: new FormControl<'1' | '2' | '3' | '4' | '5'>('3', { nonNullable: true }),
@@ -109,12 +116,19 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
       validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
     }),
   });
+  badFeedbackCriteria = new FormGroup({
+    month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern('\\d{4}-\\d{2}'), DateAfter('2024-08')],
+    }),
+  });
 
   noEvolutionData: Observable<boolean> = this.remiMetrics.noEvolutionData;
   healthStatusOnError: Observable<boolean> = this.remiMetrics.healthStatusOnError;
   evolutionDataOnError: Observable<boolean> = this.remiMetrics.evolutionDataOnError;
   lowContextOnError: Observable<boolean> = this.remiMetrics.lowContextOnError;
   noAnswerOnError: Observable<boolean> = this.remiMetrics.noAnswerOnError;
+  badFeedbackOnError: Observable<boolean> = this.remiMetrics.badFeedbackOnError;
 
   viewerWidget: Observable<SafeHtml> = this.previewService.viewerWidget.pipe(takeUntil(this.unsubscribeAll));
 
@@ -132,6 +146,12 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   get noAnswerMonthValue() {
     return this.noAnswerMonthControl.value;
+  }
+  get badFeedbackMonthControl() {
+    return this.badFeedbackCriteria.controls.month;
+  }
+  get badFeedbackMonthValue() {
+    return this.badFeedbackMonthControl.value;
   }
 
   missingKnowledgeHeaderHeight = '';
@@ -153,8 +173,10 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit() {
     this.loadNoAnswers();
     this.loadLowContext();
+    this.loadBadFeedback();
     this.noAnswerCriteria.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.loadNoAnswers());
     this.lowContextCriteria.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.loadLowContext());
+    this.badFeedbackCriteria.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => this.loadBadFeedback());
   }
 
   ngOnDestroy() {
@@ -209,7 +231,7 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
       .subscribe();
   }
 
-  private loadLowContext() {
+  private loadLowContext(page = 0) {
     if (this.lowContextCriteria.valid) {
       const data = this.lowContextCriteria.getRawValue();
       const criteria: RemiQueryCriteria = {
@@ -220,14 +242,42 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
           aggregation: 'max',
         },
       };
-      this.remiMetrics.updateLowContextCriteria(criteria);
+      this.remiMetrics.updateLowContextCriteria(criteria, page);
     }
   }
 
-  private loadNoAnswers() {
+  private loadNoAnswers(page = 0) {
     if (this.noAnswerCriteria.valid) {
       const month = this.noAnswerCriteria.getRawValue().month;
-      this.remiMetrics.updateNoAnswerMonth(month);
+      this.remiMetrics.updateNoAnswerCriteria(month, page);
     }
+  }
+
+  private loadBadFeedback(page = 0) {
+    if (this.badFeedbackCriteria.valid) {
+      const month = this.badFeedbackCriteria.getRawValue().month;
+      this.remiMetrics.updateBadFeedbackCriteria(month, page);
+    }
+  }
+
+  changeNoAnswerPage(event: MouseEvent, increment: number) {
+    event.stopPropagation();
+    this.noAnswerPage.pipe(take(1)).subscribe((page) => {
+      this.loadNoAnswers(page + increment);
+    });
+  }
+
+  changeLowContextPage(event: MouseEvent, increment: number) {
+    event.stopPropagation();
+    this.lowContextPage.pipe(take(1)).subscribe((page) => {
+      this.loadLowContext(page + increment);
+    });
+  }
+
+  changeBadFeedbackPage(event: MouseEvent, increment: number) {
+    event.stopPropagation();
+    this.badFeedbackPage.pipe(take(1)).subscribe((page) => {
+      this.loadBadFeedback(page + increment);
+    });
   }
 }
