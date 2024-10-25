@@ -484,12 +484,7 @@ export function getApiErrors() {
   );
 }
 
-export function getAttachedImageTemplate(
-  resourceId: string,
-  fieldType: string,
-  fieldId: string,
-  placeholder: string,
-): Observable<string> {
-  const path = `${nucliaApi?.knowledgeBox.path}/resource/${resourceId}/${fieldType}/${fieldId}/download/extracted/generated/${placeholder}`;
+export function getAttachedImageTemplate(placeholder: string): Observable<string> {
+  const path = `${nucliaApi?.knowledgeBox.path}/resource/${placeholder}`;
   return getFileUrl(path);
 }

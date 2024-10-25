@@ -8,10 +8,12 @@
   import { MarkdownRendering } from '../viewer';
   import Sources from './Sources.svelte';
   import AnswerMetadata from './AnswerMetadata.svelte';
+  import Image from '../image/Image.svelte';
   import {
     chat,
     debug,
     downloadDump,
+    getAttachedImageTemplate,
     getFieldDataFromResource,
     getNonGenericField,
     getResultType,
@@ -33,6 +35,9 @@
 
   const dispatch = createEventDispatcher();
 
+  const IMAGE_PLACEHOLDER = '__IMAGE_PATH__';
+  const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
+
   $: text = addReferences(answer.text || '', answer.citations || {});
   $: notEnoughData = hasNotEnoughData(answer.text || '');
 
@@ -44,6 +49,20 @@
       ref.addEventListener('mouseenter', onMouseEnter);
       ref.addEventListener('mouseleave', onMouseLeave);
     });
+
+  $: images =
+    answer.citations && sources
+      ? sources.reduce(
+          (all, source) =>
+            all.concat(
+              source.paragraphs.map(
+                (paragraph) =>
+                  `${source.id}/${source.field?.field_type}/${source.field?.field_id}/download/extracted/generated/${paragraph.reference}`,
+              ),
+            ),
+          [] as string[],
+        )
+      : [];
 
   function addReferences(text: string, citations: Citations) {
     Object.values(citations)
@@ -158,6 +177,13 @@
       <MarkdownRendering {text} />
     {/if}
   </div>
+  {#if images.length > 0}
+    <div class="images">
+      {#each images as image}
+        <Image path={$imageTemplate.replace(IMAGE_PLACEHOLDER, image)} />
+      {/each}
+    </div>
+  {/if}
   {#if answer.sources}
     <div class="actions">
       {#if !$chat[rank]?.answer.incomplete}

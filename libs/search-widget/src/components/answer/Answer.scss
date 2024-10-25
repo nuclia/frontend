@@ -43,4 +43,11 @@
     color: var(--color-neutral-light);
     margin-top: var(--rhythm-1);
   }
+  .images {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+  }
 }
