@@ -72,18 +72,8 @@
     }),
   );
 
-  const IMAGE_PLACEHOLDER = '__IMAGE_FILE__';
-  let imageTemplate = of('');
-  $: {
-    if (result && result.field?.field_type && result.field?.field_id) {
-      imageTemplate = getAttachedImageTemplate(
-        result.id,
-        result.field?.field_type,
-        result.field?.field_id,
-        IMAGE_PLACEHOLDER,
-      );
-    }
-  }
+  const IMAGE_PLACEHOLDER = '__IMAGE_PATH__';
+  const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
 
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
@@ -213,7 +203,11 @@
               on:open={() => clickOnResult(paragraph, index)}
               on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
             {#if $showAttachedImages}
-              <Image path={$imageTemplate.replace(IMAGE_PLACEHOLDER, paragraph.reference)} />
+              <Image
+                path={$imageTemplate.replace(
+                  IMAGE_PLACEHOLDER,
+                  `${result.id}/${result.field?.field_type}/${result.field?.field_id}/download/extracted/generated/${paragraph.reference}`,
+                )} />
             {/if}
           </div>
         {/each}
