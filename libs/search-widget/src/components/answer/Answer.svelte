@@ -20,6 +20,7 @@
     hasNotEnoughData,
     isCitationsEnabled,
     notEnoughDataMessage,
+    showAttachedImages,
     type RankedParagraph,
     type TypedResult,
   } from '../../core';
@@ -177,7 +178,7 @@
       <MarkdownRendering {text} />
     {/if}
   </div>
-  {#if images.length > 0}
+  {#if $showAttachedImages && images.length > 0}
     <div class="images">
       {#each images as image}
         <Image path={$imageTemplate.replace(IMAGE_PLACEHOLDER, image)} />
