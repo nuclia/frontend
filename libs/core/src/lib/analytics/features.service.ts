@@ -57,6 +57,7 @@ export class FeaturesService {
     synonyms: this.featureFlag.isFeatureEnabled('synonyms-enabled'),
     externalIndex: this.featureFlag.isFeatureEnabled('external-index-provider'),
     remiMetrics: this.featureFlag.isFeatureEnabled('remi-metrics'),
+    speech: this.featureFlag.isFeatureEnabled('speech'),
 
     // FEATURES meant to go to authorized features once stable
     taskAutomation: combineLatest([

@@ -231,6 +231,22 @@
                 </div>
               </div>
             }
+            @if (isSpeechEnabled | async) {
+              <div class="config-form-field">
+                <pa-toggle
+                  formControlName="speech"
+                  withBackground
+                  spaceBetweenLabelAndToggle>
+                  <span class="toggle-label">
+                    {{ 'search.widgets.form.widget-options.speech.toggle-label' | translate }}
+                    <nsi-badge kind="tertiary">EXPERIMENTAL</nsi-badge>
+                  </span>
+                </pa-toggle>
+                <div class="config-form-help">
+                  {{ 'search.widgets.form.widget-options.speech.toggle-description' | translate }}
+                </div>
+              </div>
+            }
           </form>
         </pa-accordion-item-body>
       </pa-accordion-item>

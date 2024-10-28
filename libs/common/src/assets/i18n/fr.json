@@ -1249,6 +1249,8 @@
 	"search.widgets.form.widget-options.placeholder.toggle-label": "Personnaliser le placeholder de la barre de recherche",
 	"search.widgets.form.widget-options.section-description": "Définissez l’apparence et le comportement du widget.",
 	"search.widgets.form.widget-options.section-title": "Options du widget",
+	"search.widgets.form.widget-options.speech.toggle-description": "Activer la reconnaissance vocale et la synthèse vocale.",
+	"search.widgets.form.widget-options.speech.toggle-label": "Assistance vocale",
 	"search.widgets.form.widget-options.style.chat": "Mode chat",
 	"search.widgets.form.widget-options.style.page": "Intégré à la page",
 	"search.widgets.form.widget-options.style.popup": "Style modal popup (s’ouvre au-dessus de votre contenu)",
