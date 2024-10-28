@@ -601,6 +601,7 @@
 	"kb.metrics.missing-knowledge.criteria.summary": "Score maximal de pertinence du contexte inférieur à {{value}} courant {{month}}.",
 	"kb.metrics.missing-knowledge.description": "Découvrez les connaissances manquantes dans votre boîte à connaissances en examinant les questions pour lesquelles il n’y a pas de réponse ou pour lesquelles le score de pertinence du contexte est mauvais.",
 	"kb.metrics.missing-knowledge.next": "Page suivante",
+	"kb.metrics.missing-knowledge.page": "Page {{page}}",
 	"kb.metrics.missing-knowledge.previous": "Page précédente",
 	"kb.metrics.missing-knowledge.status.summary": "Questions sans réponse courant {{month}}.",
 	"kb.metrics.missing-knowledge.summary.answer": "Réponse : ",

@@ -120,15 +120,20 @@
               <pa-button
                 size="small"
                 aspect="basic"
-                (click)="changeNoAnswerPage($event, -1)"
-                [disabled]="!(noAnswerPage | async) || noAnswerMonthControl.invalid">
+                icon="chevron-left"
+                (click)="updateNoAnswerPage($event, false)"
+                [disabled]="!(noAnswerPage | async) || noAnswerMonthControl.invalid || (noAnswerLoading | async)">
                 {{ 'kb.metrics.missing-knowledge.previous' | translate }}
               </pa-button>
+              <div>{{ 'kb.metrics.missing-knowledge.page' | translate: { page: (noAnswerPage | async) + 1 } }}</div>
               <pa-button
                 size="small"
                 aspect="basic"
-                (click)="changeNoAnswerPage($event, 1)"
-                [disabled]="!(noAnswerData | async)?.has_more || noAnswerMonthControl.invalid">
+                icon="chevron-right"
+                (click)="updateNoAnswerPage($event, true)"
+                [disabled]="
+                  !(noAnswerData | async)?.has_more || noAnswerMonthControl.invalid || (noAnswerLoading | async)
+                ">
                 {{ 'kb.metrics.missing-knowledge.next' | translate }}
               </pa-button>
             </div>
@@ -202,15 +207,20 @@
               <pa-button
                 size="small"
                 aspect="basic"
-                (click)="changeLowContextPage($event, -1)"
-                [disabled]="!(lowContextPage | async) || lowContextCriteria.invalid">
+                icon="chevron-left"
+                (click)="updateLowContextPage($event, false)"
+                [disabled]="!(lowContextPage | async) || lowContextCriteria.invalid || (lowContextLoading | async)">
                 {{ 'kb.metrics.missing-knowledge.previous' | translate }}
               </pa-button>
+              <div>{{ 'kb.metrics.missing-knowledge.page' | translate: { page: (lowContextPage | async) + 1 } }}</div>
               <pa-button
                 size="small"
                 aspect="basic"
-                (click)="changeLowContextPage($event, 1)"
-                [disabled]="!(lowContextData | async)?.has_more || lowContextCriteria.invalid">
+                icon="chevron-right"
+                (click)="updateLowContextPage($event, true)"
+                [disabled]="
+                  !(lowContextData | async)?.has_more || lowContextCriteria.invalid || (lowContextLoading | async)
+                ">
                 {{ 'kb.metrics.missing-knowledge.next' | translate }}
               </pa-button>
             </div>
@@ -325,15 +335,24 @@
               <pa-button
                 size="small"
                 aspect="basic"
-                (click)="changeBadFeedbackPage($event, -1)"
-                [disabled]="!(badFeedbackPage | async) || badFeedbackMonthControl.invalid">
+                icon="chevron-left"
+                (click)="updateBadFeedbackPage($event, false)"
+                [disabled]="
+                  !(badFeedbackPage | async) || badFeedbackMonthControl.invalid || (badFeedbackLoading | async)
+                ">
                 {{ 'kb.metrics.missing-knowledge.previous' | translate }}
               </pa-button>
+              <div>{{ 'kb.metrics.missing-knowledge.page' | translate: { page: (lowContextPage | async) + 1 } }}</div>
               <pa-button
                 size="small"
                 aspect="basic"
-                (click)="changeBadFeedbackPage($event, 1)"
-                [disabled]="!(badFeedbackData | async)?.has_more || badFeedbackMonthControl.invalid">
+                icon="chevron-right"
+                (click)="updateBadFeedbackPage($event, true)"
+                [disabled]="
+                  !(badFeedbackData | async)?.has_more ||
+                  badFeedbackMonthControl.invalid ||
+                  (badFeedbackLoading | async)
+                ">
                 {{ 'kb.metrics.missing-knowledge.next' | translate }}
               </pa-button>
             </div>

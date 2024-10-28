@@ -26,7 +26,6 @@ interface RawEvolutionResults {
   parameters: RangeParameters;
 }
 
-const PAGE_SIZE = 10;
 
 @Injectable({
   providedIn: 'root',
@@ -79,48 +78,85 @@ export class RemiMetricsService {
   noAnswerCriteria = this._noAnswerCriteria.asObservable();
   badFeedbackCriteria = this._badFeedbackCriteria.asObservable();
 
-  lowContextPage = this._lowContextCriteria.pipe(
-    map((criteria) => (criteria?.pagination?.starting_after || 0) / PAGE_SIZE),
-  );
-  noAnswerPage = this._noAnswerCriteria.pipe(
-    map((criteria) => (criteria?.pagination?.starting_after || 0) / PAGE_SIZE),
-  );
-  badFeedbackPage = this._badFeedbackCriteria.pipe(
-    map((criteria) => (criteria?.pagination?.starting_after || 0) / PAGE_SIZE),
-  );
+  private _lowContextPage = new BehaviorSubject<number>(0);
+  private _noAnswerPage = new BehaviorSubject<number>(0);
+  private _badFeedbackPage = new BehaviorSubject<number>(0);
+
+  private _lowContextPageIds = new BehaviorSubject<number[]>([0]);
+  private _noAnswerPageIds = new BehaviorSubject<number[]>([0]);
+  private _badFeedbackPageIds = new BehaviorSubject<number[]>([0]);
+  
+  private _lowContextLoading = new BehaviorSubject<boolean>(false);
+  private _noAnswerLoading = new BehaviorSubject<boolean>(false);
+  private _badFeedbackLoading = new BehaviorSubject<boolean>(false);
+
+  lowContextPage = this._lowContextPage.asObservable();
+  noAnswerPage = this._noAnswerPage.asObservable();
+  badFeedbackPage = this._badFeedbackPage.asObservable();
+  lowContextLoading = this._lowContextLoading.asObservable();
+  noAnswerLoading = this._noAnswerLoading.asObservable();
+  badFeedbackLoading = this._badFeedbackLoading.asObservable();
 
   updatePeriod(value: RemiPeriods) {
     this._period.next(value);
   }
 
-  updateLowContextCriteria(value: RemiQueryCriteria, page: number) {
-    this._lowContextCriteria.next({
-      ...value,
-      pagination: {
-        limit: PAGE_SIZE,
-        starting_after: PAGE_SIZE * page,
-      },
-    });
+  updateLowContextCriteria(value: RemiQueryCriteria) {
+    this._lowContextPage.next(0);
+    this._lowContextPageIds.next([0]);
+    this._lowContextCriteria.next({ ...value, pagination: undefined });
   }
-  updateNoAnswerCriteria(month: string, page: number) {
-    this._noAnswerCriteria.next({
-      status: 'NO_CONTEXT',
-      month,
-      pagination: {
-        limit: PAGE_SIZE,
-        starting_after: PAGE_SIZE * page,
-      },
+  updateLowContextPage(next: boolean) {
+    this.missingKnowledgeLowContext.pipe(take(1)).subscribe((data) => {
+      const newPage = this._lowContextPage.value + (next ? 1 : -1);
+      const starting_after = next ? data.data[data.data.length - 1].id : this._lowContextPageIds.value[newPage];
+      this._lowContextPage.next(newPage);
+      if (this._lowContextPageIds.value[newPage] === undefined) {
+        this._lowContextPageIds.next(this._lowContextPageIds.value.concat([starting_after]));
+      }
+      this._lowContextCriteria.next({
+        ...(this._lowContextCriteria.value as RemiQueryCriteria),
+        pagination: { starting_after },
+      });
     });
   }
 
-  updateBadFeedbackCriteria(month: string, page: number) {
-    this._badFeedbackCriteria.next({
-      feedback_good: false,
-      month,
-      pagination: {
-        limit: PAGE_SIZE,
-        starting_after: PAGE_SIZE * page,
-      },
+  updateNoAnswerMonth(month: string) {
+    this._noAnswerPage.next(0);
+    this._noAnswerPageIds.next([0]);
+    this._noAnswerCriteria.next({ month, pagination: undefined });
+  }
+  updateNoAnswerPage(next: boolean) {
+    this.missingKnowledgeNoAnswer.pipe(take(1)).subscribe((data) => {
+      const newPage = this._noAnswerPage.value + (next ? 1 : -1);
+      const starting_after = next ? data.data[data.data.length - 1].id : this._noAnswerPageIds.value[newPage];
+      this._noAnswerPage.next(newPage);
+      if (this._noAnswerPageIds.value[newPage] === undefined) {
+        this._noAnswerPageIds.next(this._noAnswerPageIds.value.concat([starting_after]));
+      }
+      this._noAnswerCriteria.next({
+        ...(this._noAnswerCriteria.value as RemiQueryCriteria),
+        pagination: { starting_after },
+      });
+    });
+  }
+
+  updateBadFeedbackMonth(month: string) {
+    this._badFeedbackPage.next(0);
+    this._badFeedbackCriteria.next({ month, pagination: undefined });
+  }
+  updateBadFeedbackPage(next: boolean) {
+    this.missingKnowledgeBadFeedback.pipe(take(1)).subscribe((data) => {
+      const newPage = this._badFeedbackPage.value + (next ? 1 : -1);
+      const starting_after = next ? data.data[data.data.length - 1].id : this._badFeedbackPageIds.value[newPage];
+      this._noAnswerPage.next(newPage);
+      if (this._badFeedbackPageIds.value[newPage] === undefined) {
+        this._badFeedbackPageIds.next(this._badFeedbackPageIds.value.concat([starting_after]));
+      }
+      this._badFeedbackCriteria.next({
+        ...(this._badFeedbackCriteria.value as RemiQueryCriteria),
+        pagination: { starting_after },
+      });
     });
   }
 
@@ -187,15 +223,27 @@ export class RemiMetricsService {
     this.sdk.currentKb,
     this.noAnswerCriteria.pipe(filter((criteria) => !!criteria)),
   ]).pipe(
+    tap(() => {
+      this._noAnswerLoading.next(true);
+    }),
     switchMap(([kb, criteria]) =>
-      kb.activityMonitor.queryRemiScores(criteria).pipe(
-        tap(() => this._noAnswerOnError.next(false)),
-        catchError((err) => {
-          console.error(err);
-          this._noAnswerOnError.next(true);
-          return of({ data: [], has_more: false });
-        }),
-      ),
+      kb.activityMonitor
+        .queryRemiScores({
+          status: 'NO_CONTEXT',
+          ...criteria,
+        })
+        .pipe(
+          tap(() => {
+            this._noAnswerOnError.next(false);
+            this._noAnswerLoading.next(false);
+          }),
+          catchError((err) => {
+            console.error(err);
+            this._noAnswerOnError.next(true);
+            this._noAnswerLoading.next(false);
+            return of({ data: [], has_more: false });
+          }),
+        ),
     ),
     shareReplay(1),
   );
@@ -204,12 +252,19 @@ export class RemiMetricsService {
     this.sdk.currentKb,
     this.lowContextCriteria.pipe(filter((criteria) => !!criteria)),
   ]).pipe(
+    tap(() => {
+      this._lowContextLoading.next(true);
+    }),
     switchMap(([kb, criteria]) =>
       kb.activityMonitor.queryRemiScores(criteria).pipe(
-        tap(() => this._lowContextOnError.next(false)),
+        tap(() => {
+          this._lowContextOnError.next(false);
+          this._lowContextLoading.next(false);
+        }),
         catchError((err) => {
           console.error(err);
           this._lowContextOnError.next(true);
+          this._lowContextLoading.next(false);
           return of({ data: [], has_more: false });
         }),
       ),
@@ -261,14 +316,26 @@ export class RemiMetricsService {
     this.sdk.currentKb,
     this.badFeedbackCriteria.pipe(filter((criteria) => !!criteria)),
   ]).pipe(
+    tap(() => {
+      this._badFeedbackLoading.next(true);
+    }),
     switchMap(([kb, criteria]) =>
-      kb.activityMonitor.queryRemiScores(criteria).pipe(
-        tap(() => this._badFeedbackOnError.next(false)),
-        catchError(() => {
-          this._badFeedbackOnError.next(true);
-          return of({ data: [], has_more: false });
-        }),
-      ),
+      kb.activityMonitor
+        .queryRemiScores({
+          feedback_good: false,
+          ...criteria,
+        })
+        .pipe(
+          tap(() => {
+            this._badFeedbackOnError.next(false);
+            this._badFeedbackLoading.next(false);
+          }),
+          catchError(() => {
+            this._badFeedbackOnError.next(true);
+            this._badFeedbackLoading.next(false);
+            return of({ data: [], has_more: false });
+          }),
+        ),
     ),
     shareReplay(1),
   );

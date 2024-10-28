@@ -66,8 +66,10 @@
   }
 
   .pagination {
+    align-items: center;
     display: flex;
     gap: rhythm(1);
+    line-height: $line-height-body;
     padding-right: rhythm(2);
   }
 

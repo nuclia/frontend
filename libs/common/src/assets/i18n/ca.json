@@ -601,6 +601,7 @@
 	"kb.metrics.missing-knowledge.criteria.summary": "Puntuació màxima de rellevància del context inferior a {{value}} a {{month}}.",
 	"kb.metrics.missing-knowledge.description": "Esbrineu quins coneixements falten al vostre Knowledge Box revisant les preguntes per a les quals no hi va haver resposta o amb una mala puntuació de rellevància del context.",
 	"kb.metrics.missing-knowledge.next": "Pàgina següent",
+	"kb.metrics.missing-knowledge.page": "Pàgina {{page}}",
 	"kb.metrics.missing-knowledge.previous": "Pàgina anterior",
 	"kb.metrics.missing-knowledge.status.summary": "Preguntes sense resposta a {{month}}.",
 	"kb.metrics.missing-knowledge.summary.answer": "Resposta: ",

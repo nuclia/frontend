@@ -601,6 +601,7 @@
 	"kb.metrics.missing-knowledge.criteria.summary": "Max context relevance score lower than {{value}} in {{month}}.",
 	"kb.metrics.missing-knowledge.description": "Find out what knowledge is missing in your Knowledge Box by reviewing the questions for which there was no answer or a bad context relevance score.",
 	"kb.metrics.missing-knowledge.next": "Next page",
+	"kb.metrics.missing-knowledge.page": "Page {{page}}",
 	"kb.metrics.missing-knowledge.previous": "Previous page",
 	"kb.metrics.missing-knowledge.status.summary": "Questions without answer in {{month}}.",
 	"kb.metrics.missing-knowledge.summary.answer": "Answer: ",

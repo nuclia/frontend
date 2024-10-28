@@ -23,7 +23,7 @@ import {
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { fromEvent, Observable, Subject } from 'rxjs';
-import { auditTime, take, takeUntil } from 'rxjs/operators';
+import { auditTime, takeUntil } from 'rxjs/operators';
 import {
   DatedRangeChartData,
   GroupedBarChartComponent,
@@ -99,10 +99,6 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   missingKnowledgeDetails: { [id: number]: RemiQueryResponseContextDetails } = {};
   missingKnowledgeError: { [id: number]: boolean } = {};
 
-  lowContextPage: Observable<number> = this.remiMetrics.lowContextPage;
-  noAnswerPage: Observable<number> = this.remiMetrics.noAnswerPage;
-  badFeedbackPage: Observable<number> = this.remiMetrics.badFeedbackPage;
-
   lowContextCriteria = new FormGroup({
     value: new FormControl<'1' | '2' | '3' | '4' | '5'>('3', { nonNullable: true }),
     month: new FormControl<string>(format(new Date(), 'yyyy-MM'), {
@@ -129,6 +125,14 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   lowContextOnError: Observable<boolean> = this.remiMetrics.lowContextOnError;
   noAnswerOnError: Observable<boolean> = this.remiMetrics.noAnswerOnError;
   badFeedbackOnError: Observable<boolean> = this.remiMetrics.badFeedbackOnError;
+  
+  lowContextPage: Observable<number> = this.remiMetrics.lowContextPage;
+  noAnswerPage: Observable<number> = this.remiMetrics.noAnswerPage;
+  badFeedbackPage: Observable<number> = this.remiMetrics.badFeedbackPage;
+
+  lowContextLoading: Observable<boolean> = this.remiMetrics.lowContextLoading;
+  noAnswerLoading: Observable<boolean> = this.remiMetrics.noAnswerLoading;
+  badFeedbackLoading: Observable<boolean> = this.remiMetrics.badFeedbackLoading;
 
   viewerWidget: Observable<SafeHtml> = this.previewService.viewerWidget.pipe(takeUntil(this.unsubscribeAll));
 
@@ -231,7 +235,7 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
       .subscribe();
   }
 
-  private loadLowContext(page = 0) {
+  private loadLowContext() {
     if (this.lowContextCriteria.valid) {
       const data = this.lowContextCriteria.getRawValue();
       const criteria: RemiQueryCriteria = {
@@ -242,42 +246,36 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
           aggregation: 'max',
         },
       };
-      this.remiMetrics.updateLowContextCriteria(criteria, page);
+      this.remiMetrics.updateLowContextCriteria(criteria);
     }
   }
 
-  private loadNoAnswers(page = 0) {
+  private loadNoAnswers() {
     if (this.noAnswerCriteria.valid) {
       const month = this.noAnswerCriteria.getRawValue().month;
-      this.remiMetrics.updateNoAnswerCriteria(month, page);
+      this.remiMetrics.updateNoAnswerMonth(month);
     }
   }
 
-  private loadBadFeedback(page = 0) {
+  private loadBadFeedback() {
     if (this.badFeedbackCriteria.valid) {
       const month = this.badFeedbackCriteria.getRawValue().month;
-      this.remiMetrics.updateBadFeedbackCriteria(month, page);
+      this.remiMetrics.updateBadFeedbackMonth(month);
     }
   }
 
-  changeNoAnswerPage(event: MouseEvent, increment: number) {
+  updateNoAnswerPage(event: MouseEvent, next: boolean) {
     event.stopPropagation();
-    this.noAnswerPage.pipe(take(1)).subscribe((page) => {
-      this.loadNoAnswers(page + increment);
-    });
+    this.remiMetrics.updateNoAnswerPage(next);
   }
 
-  changeLowContextPage(event: MouseEvent, increment: number) {
+  updateLowContextPage(event: MouseEvent, next: boolean) {
     event.stopPropagation();
-    this.lowContextPage.pipe(take(1)).subscribe((page) => {
-      this.loadLowContext(page + increment);
-    });
+    this.remiMetrics.updateLowContextPage(next);
   }
 
-  changeBadFeedbackPage(event: MouseEvent, increment: number) {
+  updateBadFeedbackPage(event: MouseEvent, next: boolean) {
     event.stopPropagation();
-    this.badFeedbackPage.pipe(take(1)).subscribe((page) => {
-      this.loadBadFeedback(page + increment);
-    });
+    this.remiMetrics.updateBadFeedbackPage(next);
   }
 }
