@@ -90,6 +90,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),
     openNewTab: new FormControl<boolean>(false, { nonNullable: true }),
     speech: new FormControl<boolean>(false, { nonNullable: true }),
+    speechSynthesis: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   widgetFormExpanded = true;
@@ -120,6 +121,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
   get navigateToLinkOrFileEnabled() {
     return this.form.controls.navigateToFile.value || this.form.controls.navigateToLink.value;
+  }
+  get speechOn() {
+    return this.form.controls.speech.value;
   }
 
   ngOnInit() {
@@ -262,6 +266,12 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   onWidgetModeChange(value: string) {
     if (value === 'popup') {
       this.form.controls.darkMode.setValue('light');
+    }
+  }
+
+  updateSpeechSynthesis(speechOn: boolean) {
+    if (!speechOn) {
+      this.form.controls.speechSynthesis.setValue(false);
     }
   }
 }
