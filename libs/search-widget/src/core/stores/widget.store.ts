@@ -48,3 +48,4 @@ export const disableAnswers = () => {
   widgetFeatures.set({ ...(widgetFeatures.value || {}), answers: false });
 };
 export const isSpeechEnabled = widgetFeatures.pipe(map((features) => !!features?.speech));
+export const isSpeechSynthesisEnabled = widgetFeatures.pipe(map((features) => !!features?.speechSynthesis));

@@ -2,6 +2,8 @@ import type { Observable } from 'rxjs';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { getCDN } from './utils';
 
+const _lang = 'en';
+
 interface Translations {
   [lang: string]: TranslationEntries;
 }
@@ -10,7 +12,7 @@ interface TranslationEntries {
   [key: string]: string;
 }
 
-const currentLanguage = new BehaviorSubject<string>('en');
+export const currentLanguage = new BehaviorSubject<string>('en');
 
 const locales = new BehaviorSubject<Translations>({});
 
@@ -19,10 +21,12 @@ const addTranslations = (lang: string, entries: TranslationEntries) => {
   locales.next({ ...current, [lang]: { ...(current[lang] || {}), ...entries } });
 };
 
-const loadTranslations = (lang: string) =>
-  fetch(`${getCDN()}i18n/${lang}.json`)
+const loadTranslations = (lang: string) => {
+  lang = lang.split('-')[0];
+  return fetch(`${getCDN()}i18n/${lang}.json`)
     .then((res) => res.json())
     .then((entries) => addTranslations(lang, entries));
+};
 
 export const setLang = (lang: string) => {
   loadTranslations(lang).then(
@@ -42,6 +46,7 @@ const translate = (
   key: string,
   args?: { [key: string]: string | number },
 ) => {
+  lang = lang.split('-')[0];
   let value = translations[lang]?.[key] || translations['en']?.[key];
   if (value && args) {
     Object.keys(args).forEach((param) => {

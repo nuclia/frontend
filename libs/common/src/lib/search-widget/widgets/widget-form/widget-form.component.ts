@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { BackButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
+import { BackButtonComponent, BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
@@ -27,7 +27,7 @@ import { SearchWidgetService } from '../../search-widget.service';
 import { combineLatest, filter, forkJoin, map, startWith, Subject, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntil, tap } from 'rxjs/operators';
-import { deepEqual, SDKService } from '@flaps/core';
+import { deepEqual, FeaturesService, SDKService } from '@flaps/core';
 import { SearchConfigurationComponent } from '../../search-configuration';
 import { EmbedWidgetDialogComponent } from '../dialogs';
 
@@ -46,6 +46,7 @@ import { EmbedWidgetDialogComponent } from '../dialogs';
     PaTextFieldModule,
     PaTogglesModule,
     SearchConfigurationComponent,
+    BadgeComponent,
   ],
   templateUrl: './widget-form.component.html',
   styleUrl: './widget-form.component.scss',
@@ -61,6 +62,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private toaster = inject(SisToastService);
   private modalService = inject(SisModalService);
+  private featureService = inject(FeaturesService);
+
+  isSpeechEnabled = this.featureService.unstable.speech;
 
   private unsubscribeAll = new Subject<void>();
 
@@ -85,6 +89,8 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),
     openNewTab: new FormControl<boolean>(false, { nonNullable: true }),
+    speech: new FormControl<boolean>(false, { nonNullable: true }),
+    speechSynthesis: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   widgetFormExpanded = true;
@@ -115,6 +121,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
   get navigateToLinkOrFileEnabled() {
     return this.form.controls.navigateToFile.value || this.form.controls.navigateToLink.value;
+  }
+  get speechOn() {
+    return this.form.controls.speech.value;
   }
 
   ngOnInit() {
@@ -257,6 +266,12 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   onWidgetModeChange(value: string) {
     if (value === 'popup') {
       this.form.controls.darkMode.setValue('light');
+    }
+  }
+
+  updateSpeechSynthesis(speechOn: boolean) {
+    if (!speechOn) {
+      this.form.controls.speechSynthesis.setValue(false);
     }
   }
 }
