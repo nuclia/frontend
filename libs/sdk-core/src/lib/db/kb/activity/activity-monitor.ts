@@ -2,11 +2,11 @@ import type { WritableKnowledgeBox } from '../kb';
 import type { INuclia } from '../../../models';
 import {
   RemiQueryCriteria,
+  RemiQueryResponse,
   RemiQueryResponseContextDetails,
-  RemiQueryResponseItem,
   RemiScoresResponseItem,
 } from './remi.models';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { UsageAggregation } from '../../db.models';
 
 export class ActivityMonitor {
@@ -46,12 +46,10 @@ export class ActivityMonitor {
   /**
    * Get a list of RAG requests and their scores (if any) that matches a REMi scores query or a status.
    *
-   * @param criteria Object representing the query to be done. It currently supports querying on context relevance or on answer status.
+   * @param criteria Object representing the query to be done. It currently supports querying on context relevance, answer status or answer feedback.
    */
-  queryRemiScores(criteria: RemiQueryCriteria): Observable<RemiQueryResponseItem[]> {
-    return this.nuclia.rest
-      .post<{ data: RemiQueryResponseItem[] }>(`${this.kb.path}/remi/query`, criteria)
-      .pipe(map((response) => response.data as RemiQueryResponseItem[]));
+  queryRemiScores(criteria: RemiQueryCriteria): Observable<RemiQueryResponse> {
+    return this.nuclia.rest.post<RemiQueryResponse>(`${this.kb.path}/remi/query`, criteria);
   }
 
   /**

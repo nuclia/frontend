@@ -112,9 +112,34 @@
         [expanded]="false"
         [contentLoaded]="noAnswerMonthControl.errors?.['dateBefore']">
         <pa-expander-header>
-          <span class="title-xxs">
-            {{ 'kb.metrics.missing-knowledge.status.summary' | translate: { month: noAnswerMonthValue } }}
-          </span>
+          <div class="criteria-header">
+            <span class="title-xxs">
+              {{ 'kb.metrics.missing-knowledge.status.summary' | translate: { month: noAnswerMonthValue } }}
+            </span>
+            <div class="pagination">
+              <pa-button
+                size="small"
+                aspect="basic"
+                icon="chevron-left"
+                (click)="updateNoAnswerPage($event, false)"
+                [disabled]="!(noAnswerPage | async) || noAnswerMonthControl.invalid || (noAnswerLoading | async)">
+                {{ 'kb.metrics.missing-knowledge.previous' | translate }}
+              </pa-button>
+              <div>
+                {{ 'kb.metrics.missing-knowledge.page' | translate: { page: ((noAnswerPage | async) || 0) + 1 } }}
+              </div>
+              <pa-button
+                size="small"
+                aspect="basic"
+                icon="chevron-right"
+                (click)="updateNoAnswerPage($event, true)"
+                [disabled]="
+                  !(noAnswerData | async)?.has_more || noAnswerMonthControl.invalid || (noAnswerLoading | async)
+                ">
+                {{ 'kb.metrics.missing-knowledge.next' | translate }}
+              </pa-button>
+            </div>
+          </div>
         </pa-expander-header>
         <pa-expander-body>
           <div class="criteria-container">
@@ -146,11 +171,11 @@
       </nsi-info-card>
     } @else if (!noAnswerMonthControl.errors) {
       @if (noAnswerData | async; as noAnswers) {
-        @if (noAnswers.length === 0) {
+        @if (noAnswers.data.length === 0) {
           <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
         } @else {
           <pa-accordion>
-            @for (item of noAnswers; track item.id) {
+            @for (item of noAnswers.data; track item.id) {
               <pa-accordion-item
                 [id]="'' + item.id"
                 [itemTitle]="item.question"
@@ -173,12 +198,37 @@
     <div class="sticky-section sub-section">
       <pa-expander [expanded]="false">
         <pa-expander-header>
-          <span class="title-xxs">
-            {{
-              'kb.metrics.missing-knowledge.criteria.summary'
-                | translate: { value: criteriaPercentValue, month: lowControlMonthValue }
-            }}
-          </span>
+          <div class="criteria-header">
+            <span class="title-xxs">
+              {{
+                'kb.metrics.missing-knowledge.criteria.summary'
+                  | translate: { value: criteriaPercentValue, month: lowControlMonthValue }
+              }}
+            </span>
+            <div class="pagination">
+              <pa-button
+                size="small"
+                aspect="basic"
+                icon="chevron-left"
+                (click)="updateLowContextPage($event, false)"
+                [disabled]="!(lowContextPage | async) || lowContextCriteria.invalid || (lowContextLoading | async)">
+                {{ 'kb.metrics.missing-knowledge.previous' | translate }}
+              </pa-button>
+              <div>
+                {{ 'kb.metrics.missing-knowledge.page' | translate: { page: ((lowContextPage | async) || 0) + 1 } }}
+              </div>
+              <pa-button
+                size="small"
+                aspect="basic"
+                icon="chevron-right"
+                (click)="updateLowContextPage($event, true)"
+                [disabled]="
+                  !(lowContextData | async)?.has_more || lowContextCriteria.invalid || (lowContextLoading | async)
+                ">
+                {{ 'kb.metrics.missing-knowledge.next' | translate }}
+              </pa-button>
+            </div>
+          </div>
         </pa-expander-header>
         <pa-expander-body>
           <div class="criteria-container">
@@ -226,11 +276,11 @@
       </nsi-info-card>
     } @else if (!lowContextMonthControl.errors) {
       @if (lowContextData | async; as missingKnowledge) {
-        @if (missingKnowledge.length === 0) {
+        @if (missingKnowledge.data.length === 0) {
           <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
         } @else {
           <pa-accordion>
-            @for (item of missingKnowledge; track item.id) {
+            @for (item of missingKnowledge.data; track item.id) {
               @if (item.remi) {
                 <pa-accordion-item
                   [id]="'' + item.id"
@@ -270,6 +320,95 @@
                   </pa-accordion-item-body>
                 </pa-accordion-item>
               }
+            }
+          </pa-accordion>
+        }
+      }
+    }
+
+    <div class="sticky-section sub-section">
+      <pa-expander
+        [expanded]="false"
+        [contentLoaded]="badFeedbackMonthControl.errors?.['dateBefore']">
+        <pa-expander-header>
+          <div class="criteria-header">
+            <span class="title-xxs">
+              {{ 'kb.metrics.missing-knowledge.bad-feedback.title' | translate: { month: badFeedbackMonthValue } }}
+            </span>
+            <div class="pagination">
+              <pa-button
+                size="small"
+                aspect="basic"
+                icon="chevron-left"
+                (click)="updateBadFeedbackPage($event, false)"
+                [disabled]="
+                  !(badFeedbackPage | async) || badFeedbackMonthControl.invalid || (badFeedbackLoading | async)
+                ">
+                {{ 'kb.metrics.missing-knowledge.previous' | translate }}
+              </pa-button>
+              <div>
+                {{ 'kb.metrics.missing-knowledge.page' | translate: { page: ((lowContextPage | async) || 0) + 1 } }}
+              </div>
+              <pa-button
+                size="small"
+                aspect="basic"
+                icon="chevron-right"
+                (click)="updateBadFeedbackPage($event, true)"
+                [disabled]="
+                  !(badFeedbackData | async)?.has_more ||
+                  badFeedbackMonthControl.invalid ||
+                  (badFeedbackLoading | async)
+                ">
+                {{ 'kb.metrics.missing-knowledge.next' | translate }}
+              </pa-button>
+            </div>
+          </div>
+        </pa-expander-header>
+        <pa-expander-body>
+          <div class="criteria-container">
+            <form [formGroup]="badFeedbackCriteria">
+              <div class="field-container">
+                <label for="monthBadFeedback">
+                  {{ 'kb.metrics.missing-knowledge.criteria.month.label' | translate }}
+                </label>
+                <pa-input
+                  id="monthBadFeedback"
+                  externalLabel
+                  formControlName="month"
+                  help="kb.metrics.missing-knowledge.criteria.month.format"></pa-input>
+              </div>
+              @if (badFeedbackMonthControl.errors?.['dateBefore']) {
+                <nsi-info-card type="warning">
+                  {{ 'kb.metrics.missing-knowledge.criteria.month.limit' | translate }}
+                </nsi-info-card>
+              }
+            </form>
+          </div>
+        </pa-expander-body>
+      </pa-expander>
+    </div>
+
+    @if (badFeedbackOnError | async) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        {{ 'kb.metrics.error.missing-knowledge-not-loaded' | translate }}
+      </nsi-info-card>
+    } @else if (!badFeedbackMonthControl.errors) {
+      @if (badFeedbackData | async; as badFeedback) {
+        @if (badFeedback.data.length === 0) {
+          <nsi-info-card>{{ 'kb.metrics.error.no-data-for-criteria' | translate }}</nsi-info-card>
+        } @else {
+          <pa-accordion>
+            @for (item of badFeedback.data; track item.id) {
+              <pa-accordion-item
+                [id]="'' + item.id"
+                [itemTitle]="item.question">
+                <pa-accordion-item-body>
+                  <div class="title-s">{{ 'kb.metrics.missing-knowledge.summary.answer' | translate }}</div>
+                  <div>{{ item.answer }}</div>
+                </pa-accordion-item-body>
+              </pa-accordion-item>
             }
           </pa-accordion>
         }

@@ -16,6 +16,11 @@ export interface RemiScore {
   groundedness: number[];
 }
 
+export interface RemiQueryResponse {
+  data: RemiQueryResponseItem[],
+  has_more: boolean;
+}
+
 export interface RemiQueryResponseItem {
   id: number;
   question: string;
@@ -38,6 +43,12 @@ export interface RemiQueryCriteria {
     operation: 'gt' | 'lt' | 'eq';
     aggregation: 'average' | 'min' | 'max';
   };
+  feedback_good?: boolean;
   status?: RemiAnswerStatus;
   month: string;
+  pagination?: {
+    limit?: number;
+    starting_after?: number;
+    ending_before?: number;
+  };
 }

@@ -100,6 +100,9 @@ export class ActivityDownloadComponent {
             .queryRemiScores({
               status: 'NO_CONTEXT',
               month,
+              pagination: {
+                limit: 1000,
+              },
             })
             .pipe(map((data) => ({ data, kb }))),
         ),
@@ -107,7 +110,7 @@ export class ActivityDownloadComponent {
       .subscribe(({ data, kb }) => {
         const filename = `activity_${kb.id}_no-answer_${month}.csv`;
         const header = 'Question without answer\n';
-        const rows = data.map((item) => this.formatCsvRow(item.question)).join('\n');
+        const rows = data.data.map((item) => this.formatCsvRow(item.question)).join('\n');
         this.downloadFile(filename, header + rows, 'text/csv');
       });
   }
