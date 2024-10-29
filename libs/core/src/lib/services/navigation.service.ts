@@ -70,6 +70,10 @@ export class NavigationService {
   inAccountBilling(path: string): boolean {
     return path.match(IN_ACCOUNT_BILLING) !== null;
   }
+  inResourcesPage(): Observable<boolean> {
+    const path = this.sdk.nuclia.options.standalone ? location.hash : location.pathname;
+    return this.getResourceListUrl().pipe(map((url) => path.startsWith(url)));
+  }
 
   getAccountUrl(accountSlug: string): string {
     return `/at/${accountSlug}`;

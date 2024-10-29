@@ -169,14 +169,14 @@ export class ResourceListService {
     this._headerHeight.next(height);
   }
 
-  loadResources(replaceData = true, updateCount = true): Observable<void> {
-    const loadRequest =
+  loadResources(replaceData = true, updateCount = true) {
+    return forkJoin([
       this.status === RESOURCE_STATUS.PENDING
         ? this.loadPendingResources(replaceData)
-        : this.loadResourcesFromCatalog(replaceData);
-
-    return loadRequest.pipe(
-      switchMap(() => (updateCount ? this.uploadService.updateStatusCount().pipe(map(() => {})) : of(undefined))),
+        : this.loadResourcesFromCatalog(replaceData),
+      updateCount ? this.uploadService.updateStatusCount() : of(undefined),
+    ]).pipe(
+      map(() => undefined),
       catchError((error) => {
         console.error(`Error while loading results:`, error);
         this.toastService.error(this.translate.instant('resource.error.loading-failed'));

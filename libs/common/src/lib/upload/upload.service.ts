@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { LabelsService, md5, NotificationService, SDKService, STFTrackingService } from '@flaps/core';
+import {
+  LabelsService,
+  md5,
+  NavigationService,
+  NotificationService,
+  SDKService,
+  STFTrackingService,
+} from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -71,8 +78,8 @@ export class UploadService {
   barDisabled = this._barDisabled.asObservable();
   statusCount = this._statusCount.asObservable();
   pendingResourcesLimitExceeded = this._statusCount.pipe(map((count) => count.pending > PENDING_RESOURCES_LIMIT));
-  private _refreshNeeded = new Subject<boolean>();
-  refreshNeeded = this._refreshNeeded.asObservable();
+  private _updateResourceList = new Subject<boolean>();
+  updateResourceList = this._updateResourceList.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -82,13 +89,14 @@ export class UploadService {
     private translate: TranslateService,
     private tracking: STFTrackingService,
     private notificationsService: NotificationService,
+    private navigation: NavigationService,
   ) {
     this.notificationsService.hasNewResourceOperationNotifications
       .pipe(
         debounceTime(2000),
-        switchMap(() => this.updateStatusCount()),
+        switchMap(() => this.updateAfterUploads()),
       )
-      .subscribe(() => this._refreshNeeded.next(true));
+      .subscribe();
   }
 
   checkFileTypesAndConfirm(files: File[]): Observable<boolean> {
@@ -400,7 +408,20 @@ export class UploadService {
       localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');
     }
     timer(1000)
-      .pipe(switchMap(() => this.updateStatusCount()))
+      .pipe(switchMap(() => this.updateAfterUploads()))
       .subscribe();
+  }
+
+  updateAfterUploads() {
+    return this.navigation.inResourcesPage().pipe(
+      switchMap((inResourcesPage) => {
+        if (inResourcesPage) {
+          this._updateResourceList.next(true);
+          return of(undefined);
+        } else {
+          return this.updateStatusCount();
+        }
+      }),
+    );
   }
 }
