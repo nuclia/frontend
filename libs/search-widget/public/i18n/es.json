@@ -85,5 +85,8 @@
 	"viewer.full-transcripts": "Transcripción completa",
 	"viewer.items": "Elementos",
 	"viewer.search-results": "{{count}} resultados de búsqueda",
-	"viewer.summary": "Resumen"
+	"viewer.summary": "Resumen",
+	"voice.commands.answer": "respuesta",
+	"voice.commands.question": "pregunta",
+	"voice.help": "Diga \"Pregunta\" para hacer una pregunta, luego diga \"Respuesta\" para obtener la respuesta."
 }

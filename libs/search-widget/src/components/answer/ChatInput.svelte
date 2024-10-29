@@ -1,7 +1,7 @@
 <script lang="ts">
   import Textarea from '../../common/textarea/Textarea.svelte';
   import { Icon, IconButton } from '../../common';
-  import { _ } from '../../core/i18n';
+  import { _, currentLanguage, translateInstant } from '../../core/i18n';
   import { ask } from '../../core/stores/effects';
   import { isSpeechEnabled, isSpeechOn } from '../../core';
   import { SpeechSettings, SpeechStore } from 'talk2svelte';
@@ -17,6 +17,8 @@
 
   const subs: Subscription[] = [];
   const isSpeechStarted = SpeechStore.isStarted;
+  const questionCommand = translateInstant('voice.commands.question');
+  const answerCommand = translateInstant('voice.commands.answer');
 
   function toggleSpeech() {
     isSpeechOn.set({ toggle: true });
@@ -26,26 +28,27 @@
     subs.push(
       isSpeechEnabled.subscribe((enabled) => {
         if (enabled) {
-          SpeechSettings.declareCommand('question');
-          SpeechSettings.declareCommand('search');
+          SpeechSettings.declareCommand(questionCommand);
+          SpeechSettings.declareCommand(answerCommand);
+          SpeechSettings.setLang(currentLanguage.getValue(), false);
         }
       }),
     );
     subs.push(
       SpeechStore.currentCommand
-        .pipe(filter((command) => command === 'question'))
+        .pipe(filter((command) => command === questionCommand))
         .subscribe(() => (isListening = true)),
     );
     subs.push(
-      SpeechStore.currentCommand.pipe(filter((command) => command === 'search')).subscribe(() => {
+      SpeechStore.currentCommand.pipe(filter((command) => command === answerCommand)).subscribe(() => {
         isListening = false;
         askQuestion();
       }),
     );
     subs.push(SpeechStore.message.pipe(filter(() => isListening)).subscribe((message: string) => (question = message)));
     return () => {
-      SpeechSettings.removeCommand('question');
-      SpeechSettings.removeCommand('search');
+      SpeechSettings.removeCommand(questionCommand);
+      SpeechSettings.removeCommand(answerCommand);
       subs.map((sub) => sub.unsubscribe());
     };
   });
@@ -106,6 +109,11 @@
     </div>
   {/if}
 </div>
+{#if $isSpeechStarted}
+  <div class="body-xs">
+    {$_('voice.help')}
+  </div>
+{/if}
 
 <style
   lang="scss"

@@ -100,4 +100,5 @@ export interface WidgetFeatures {
   showHidden?: boolean;
   showAttachedImages?: boolean;
   speech?: boolean;
+  speechSynthesis?: boolean;
 }

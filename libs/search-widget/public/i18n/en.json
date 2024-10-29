@@ -86,5 +86,8 @@
 	"viewer.full-transcripts": "Full transcript",
 	"viewer.items": "Items",
 	"viewer.search-results": "{{count}} search results",
-	"viewer.summary": "Summary"
+	"viewer.summary": "Summary",
+	"voice.commands.answer": "answer",
+	"voice.commands.question": "question",
+	"voice.help": "Say \"Question\" to ask a question, then say \"Answer\" to get the answer."
 }

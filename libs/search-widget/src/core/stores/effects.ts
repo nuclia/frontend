@@ -33,6 +33,7 @@ import { NO_SUGGESTION_RESULTS } from '../models';
 import {
   isCitationsEnabled,
   isSpeechEnabled,
+  isSpeechSynthesisEnabled,
   widgetFeatures,
   widgetImageRagStrategies,
   widgetRagStrategies,
@@ -84,7 +85,7 @@ import type { NerNode } from '../knowledge-graph.models';
 import { entities, entitiesState } from './entities.store';
 import { unsubscribeTriggerSearch } from '../search-bar';
 import { logEvent } from '../tracking';
-import { translateInstant } from '../i18n';
+import { currentLanguage, translateInstant } from '../i18n';
 import { reset } from '../reset';
 
 const subscriptions: Subscription[] = [];
@@ -205,13 +206,16 @@ export function initAnswer() {
       }),
   );
   subscriptions.push(
-    lastSpeakableFullAnswer
+    combineLatest([lastSpeakableFullAnswer, isSpeechSynthesisEnabled])
       .pipe(
-        filter((answer) => !!answer),
-        map((answer) => (answer as Ask.Answer).text),
+        filter(([answer, enabled]) => !!answer && !!enabled),
+        map(([answer]) => (answer as Ask.Answer).text),
         distinctUntilChanged(),
       )
-      .subscribe((text) => speak(text, 'en-GB')),
+      .subscribe((text) => {
+        let lang = currentLanguage.getValue();
+        speak(text, lang);
+      }),
   );
 }
 
