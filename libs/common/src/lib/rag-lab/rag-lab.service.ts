@@ -52,6 +52,7 @@ export class RagLabService {
 
   loadKbConfigAndModels(): Observable<void> {
     return this.sdk.currentKb.pipe(
+      take(1),
       tap((kb) => {
         const savedConfigurations = (kb.search_configs as SearchAndWidgets)?.searchConfigurations || [];
         this._searchConfigurations.next([{ ...NUCLIA_STANDARD_SEARCH_CONFIG }].concat(savedConfigurations));

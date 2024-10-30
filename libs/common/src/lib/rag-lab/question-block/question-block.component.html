@@ -2,7 +2,7 @@
   <div class="title-s">{{ 'rag-lab.common.question.title' | translate }}</div>
   <div class="field-and-button">
     <pa-input
-      [disabled]="questionsLimitReached"
+      [disabled]="questionsLimitReached | async"
       [help]="'rag-lab.common.question.help' | translate"
       [(value)]="currentQuery"
       (enter)="addQuestion()">
@@ -11,13 +11,13 @@
     <pa-button
       size="small"
       icon="plus"
-      [disabled]="questionsLimitReached"
+      [disabled]="questionsLimitReached | async"
       (click)="addQuestion()"></pa-button>
   </div>
 </div>
 <div class="field-spacing">
   <ol class="body-m">
-    @for (question of queries; track question) {
+    @for (question of queries | async; track question) {
       <li>
         <div class="list-item">
           <span>{{ question }}</span>
