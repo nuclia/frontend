@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   ModalConfig,
+  OptionModel,
   PaButtonModule,
   PaIconModule,
   PaPopupModule,
@@ -62,6 +63,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
       this.form.controls.useSynonyms.enable();
     }
   }
+  @Input({ required: true }) semanticModels: OptionModel[] = [];
 
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<SearchBoxConfig>();
@@ -92,6 +94,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     }),
     showHiddenResources: new FormControl<boolean>(false, { nonNullable: true }),
     semanticReranking: new FormControl<boolean>(false, { nonNullable: true }),
+    vectorset: new FormControl<string>('', { nonNullable: true }),
   });
 
   synonymsEnabled = this.featuresService.unstable.synonyms;

@@ -160,8 +160,8 @@ export class SearchWidgetService {
     const generativeModel = currentConfig.generativeAnswer.generativeModel
       ? `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`
       : '';
-    const vectorset = currentConfig.generativeAnswer.vectorset
-      ? `\n  vectorset="${currentConfig.generativeAnswer.vectorset}"`
+    const vectorset = currentConfig.searchBox.vectorset
+      ? `\n  vectorset="${currentConfig.searchBox.vectorset}"`
       : '';
     const queryPrepend = getQueryPrepend(currentConfig.searchBox);
     const jsonSchema = getJsonSchema(currentConfig.resultDisplay);

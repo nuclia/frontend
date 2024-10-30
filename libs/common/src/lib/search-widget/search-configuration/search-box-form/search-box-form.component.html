@@ -147,6 +147,20 @@
       </div>
     </div>
   }
+  @if (semanticModels.length > 1) {
+    <div class="config-form-field">
+      <div class="title-xs">{{ 'search.configuration.search-box.semantic-model.title' | translate }}</div>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.semantic-model.description' | translate }}
+      </div>
+      <div class="extra-fields visible">
+        <pa-select
+          formControlName="vectorset"
+          [label]="'search.configuration.search-box.semantic-model.select-label' | translate"
+          [options]="semanticModels"></pa-select>
+      </div>
+    </div>
+  }
   <div class="config-form-field">
     <pa-toggle
       formControlName="semanticReranking"

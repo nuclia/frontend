@@ -31,6 +31,7 @@ export interface SearchBoxConfig {
   generateAnswerWith: 'only-semantic' | 'semantic-and-full-text';
   showHiddenResources: boolean;
   semanticReranking: boolean;
+  vectorset: string; // aka semantic model
 }
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
@@ -51,7 +52,6 @@ export interface RagStrategiesConfig {
 export interface GenerativeAnswerConfig {
   generateAnswer: boolean;
   generativeModel: string;
-  vectorset: string; // aka semantic model
   usePrompt: boolean;
   prompt: string;
   useSystemPrompt: boolean;
@@ -146,11 +146,11 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   generateAnswerWith: 'semantic-and-full-text',
   showHiddenResources: false,
   semanticReranking: true,
+  vectorset: '',
 };
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generateAnswer: false,
   generativeModel: '',
-  vectorset: '',
   usePrompt: false,
   prompt: '',
   useSystemPrompt: false,

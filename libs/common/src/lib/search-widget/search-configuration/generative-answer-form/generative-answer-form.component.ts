@@ -48,7 +48,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     }
   }
   @Input({ required: true }) generativeModels: OptionModel[] = [];
-  @Input({ required: true }) semanticModels: OptionModel[] = [];
   @Input() defaultPrompt = '';
   @Input() promptInfos: { [model: string]: string } = {};
   @Input() defaultSystemPrompt = '';
@@ -59,7 +58,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   form = new FormGroup({
     generateAnswer: new FormControl<boolean>(false, { nonNullable: true }),
     generativeModel: new FormControl<string>('', { nonNullable: true }),
-    vectorset: new FormControl<string>('', { nonNullable: true }),
     usePrompt: new FormControl<boolean>(false, { nonNullable: true }),
     prompt: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     useSystemPrompt: new FormControl<boolean>(false, { nonNullable: true }),

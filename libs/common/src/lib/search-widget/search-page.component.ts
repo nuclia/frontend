@@ -47,7 +47,7 @@ export class SearchPageComponent implements OnDestroy {
     if (this.searchConfig) {
       const searchConfigId = this.searchConfig.id;
       const generativeModel = this.searchConfig.generativeAnswer.generativeModel;
-      const vectorset = this.searchConfig.generativeAnswer.vectorset;
+      const vectorset = this.searchConfig.searchBox.vectorset;
       this.modalService
         .openModal(CreateWidgetDialogComponent)
         .onClose.pipe(
