@@ -20,7 +20,7 @@ import { forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 import { LabLayoutComponent } from './lab-layout/lab-layout.component';
 import { RequestConfigAndQueries } from './rag-lab.models';
 import { getPreselectedFilterList, getRagStrategies, SearchConfiguration } from '../search-widget';
-import { getRAGImageStrategies, getRAGStrategies } from '@nuclia/core';
+import { getRAGImageStrategies, getRAGStrategies, Reranker } from '@nuclia/core';
 
 @Component({
   selector: 'stf-rag-lab',
@@ -79,12 +79,18 @@ export class RagLabComponent implements OnChanges {
           if (config.searchBox.setPreselectedFilters && config.searchBox.preselectedFilters) {
             features.push(this.translate.instant('search.configuration.search-box.preselected-filters.toggle-label'));
           }
+          if (config.searchBox.showHiddenResources) {
+            features.push(this.translate.instant('search.configuration.search-box.show-hidden-resources.toggle-label'));
+          }
+          if (config.searchBox.semanticReranking) {
+            features.push(this.translate.instant('search.configuration.search-box.semantic-reranking.toggle-label'));
+          }
           if (config.generativeAnswer.preferMarkdown) {
             features.push(
               this.translate.instant('search.configuration.generative-answer.prefer-markdown.toggle-label'),
             );
           }
-          if (config.generativeAnswer.prompt || config.generativeAnswer.systemPrompt) {
+          if (config.generativeAnswer.prompt || config.generativeAnswer.systemPrompt || config.searchBox.rephrasePrompt) {
             features.push(this.translate.instant('search.configuration.generative-answer.prompt.toggle-label'));
           }
           if (config.generativeAnswer.limitTokenConsumption && config.generativeAnswer.tokenConsumptionLimit) {
@@ -122,6 +128,11 @@ export class RagLabComponent implements OnChanges {
           if (ragStrategies.metadatasRagStrategy && ragStrategies.metadatas) {
             ragStrategiesList.push(
               this.translate.instant('search.configuration.generative-answer.rag-strategies.metadatas.toggle-label'),
+            );
+          }
+          if (ragStrategies.includeNeighbouringParagraphs) {
+            ragStrategiesList.push(
+              this.translate.instant('search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.toggle-label'),
             );
           }
           if (ragStrategies.fieldsAsContext && ragStrategies.fieldIds) {
@@ -220,11 +231,20 @@ export class RagLabComponent implements OnChanges {
           autofilter: searchConfig.searchBox.autofilter,
           prefer_markdown: searchConfig.generativeAnswer.preferMarkdown,
           citations: searchConfig.resultDisplay.showResultType === 'citations',
+          show_hidden: searchConfig.searchBox.showHiddenResources,
         };
-        if (searchConfig.generativeAnswer.prompt || searchConfig.generativeAnswer.systemPrompt) {
+        if (searchConfig.searchBox.semanticReranking) {
+          requestConfig.reranker = Reranker.PREDICT;
+        }
+        if (
+          searchConfig.generativeAnswer.prompt ||
+          searchConfig.generativeAnswer.systemPrompt ||
+          searchConfig.searchBox.rephrasePrompt
+        ) {
           requestConfig.prompt = {
             user: searchConfig.generativeAnswer.prompt || undefined,
             system: searchConfig.generativeAnswer.systemPrompt || undefined,
+            rephrase: searchConfig.searchBox.rephrasePrompt || undefined,
           };
         }
         if (searchConfig.searchBox.setPreselectedFilters && searchConfig.searchBox.preselectedFilters) {
