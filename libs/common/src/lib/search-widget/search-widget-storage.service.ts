@@ -1,17 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import {
-  SAVED_WIDGETS_KEY,
-  SEARCH_CONFIGS_KEY,
-  SearchAndWidgets,
-  SearchConfiguration,
-  Widget,
-} from './search-widget.models';
+import { SearchAndWidgets, SearchConfiguration, Widget } from './search-widget.models';
 import { FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import { filter, map, Observable, of, Subject, switchMap, take } from 'rxjs';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { concatMap, startWith, tap } from 'rxjs/operators';
 import { compareDesc } from 'date-fns';
 import { StandaloneService } from '../services';
+
+const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
+const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +20,9 @@ export class SearchWidgetStorageService {
   private standaloneService = inject(StandaloneService);
 
   private storageUpdated = new Subject<void>();
-  private searchAndWidgets = this.sdk.currentKb.pipe(map((kb) => kb.search_configs as SearchAndWidgets));
+  private searchAndWidgets = this.sdk.currentKb.pipe(map((kb) => kb.search_configs as SearchAndWidgets | undefined));
+
+  ragLabQuestions: Observable<string[]> = this.searchAndWidgets.pipe(map((data) => data?.ragLabQuestions || []));
 
   searchConfigurations: Observable<SearchConfiguration[]> = this.storageUpdated.pipe(
     startWith(true),
@@ -53,6 +52,17 @@ export class SearchWidgetStorageService {
     }),
     map((widgets) => widgets.sort((a, b) => compareDesc(a.creationDate, b.creationDate))),
   );
+
+  storeRagLabQuestions(updatedQuestions: string[]) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.modify({ search_configs: { ...(kb.search_configs || {}), ragLabQuestions: updatedQuestions } }),
+      ),
+      switchMap(() => this.sdk.refreshCurrentKb()),
+      tap(() => this.storageUpdated.next()),
+    );
+  }
 
   storeConfigs(updatedConfigs: SearchConfiguration[]) {
     return this.sdk.currentKb.pipe(

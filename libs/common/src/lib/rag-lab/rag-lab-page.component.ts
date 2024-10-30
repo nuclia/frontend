@@ -5,7 +5,6 @@ import { PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 import { PromptLabComponent } from './prompt-lab';
 import { RagLabComponent } from './rag-lab.component';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { RagLabService } from './rag-lab.service';
 
 @Component({
@@ -15,7 +14,7 @@ import { RagLabService } from './rag-lab.service';
   styleUrl: './rag-lab-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RagLabPageComponent implements OnInit, OnDestroy {
+export class RagLabPageComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private ragLabService = inject(RagLabService);
 
@@ -24,14 +23,6 @@ export class RagLabPageComponent implements OnInit, OnDestroy {
   selectedTab: 'prompt' | 'rag' = 'prompt';
 
   ngOnInit() {
-    this.ragLabService
-      .loadKbConfigAndModels()
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(() => this.cdr.markForCheck());
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+    this.ragLabService.loadKbConfigAndModels().subscribe(() => this.cdr.markForCheck());
   }
 }

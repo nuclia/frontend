@@ -87,7 +87,6 @@ export class PromptLabComponent implements OnDestroy {
   ngOnDestroy() {
     this.currentPrompt = '';
     this.currentSystemPrompt = '';
-    this.queries = [];
   }
 
   updateFormContent() {
