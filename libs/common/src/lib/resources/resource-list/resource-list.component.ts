@@ -80,7 +80,7 @@ export class ResourceListComponent implements OnDestroy {
     });
     this.uploadService.refreshNeeded
       .pipe(
-        switchMap(() => this.resourceListService.loadResources()),
+        switchMap(() => this.resourceListService.loadResources(true, false)),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
