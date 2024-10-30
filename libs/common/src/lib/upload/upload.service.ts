@@ -78,8 +78,8 @@ export class UploadService {
   barDisabled = this._barDisabled.asObservable();
   statusCount = this._statusCount.asObservable();
   pendingResourcesLimitExceeded = this._statusCount.pipe(map((count) => count.pending > PENDING_RESOURCES_LIMIT));
-  private _updateResourceList = new Subject<boolean>();
-  updateResourceList = this._updateResourceList.asObservable();
+  private _refreshNeeded = new Subject<boolean>();
+  refreshNeeded = this._refreshNeeded.asObservable();
 
   constructor(
     private sdk: SDKService,
@@ -375,7 +375,7 @@ export class UploadService {
       switchMap((kb) =>
         kb.catalog('', {
           faceted: [STATUS_FACET],
-          page_size: includeResources ? undefined: 0,
+          page_size: includeResources ? undefined : 0,
         }),
       ),
       filter((results) => results.type !== 'error' && !!results.fulltext?.facets),
@@ -413,15 +413,7 @@ export class UploadService {
   }
 
   updateAfterUploads() {
-    return this.navigation.inResourcesPage().pipe(
-      switchMap((inResourcesPage) => {
-        if (inResourcesPage) {
-          this._updateResourceList.next(true);
-          return of(undefined);
-        } else {
-          return this.updateStatusCount();
-        }
-      }),
-    );
+    this._refreshNeeded.next(true);
+    return this.updateStatusCount();
   }
 }

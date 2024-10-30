@@ -85,7 +85,7 @@ describe('ResourceListComponent', () => {
         }),
         MockProvider(UploadService, {
           updateStatusCount: jest.fn(() => of({ processed: 0, pending: 0, error: 0 })),
-          updateResourceList: of(false),
+          refreshNeeded: of(false),
         }),
         MockProvider(NavigationService),
         MockProvider(FeaturesService),

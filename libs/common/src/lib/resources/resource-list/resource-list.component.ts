@@ -78,9 +78,9 @@ export class ResourceListComponent implements OnDestroy {
       // we need to wait for it to be done before launching other request to prevent using different shards for different requests
       this.isShardReady.next(true);
     });
-    this.uploadService.updateResourceList
+    this.uploadService.refreshNeeded
       .pipe(
-        switchMap(() => this.resourceListService.loadResources()),
+        switchMap(() => this.resourceListService.loadResources(true, false)),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
