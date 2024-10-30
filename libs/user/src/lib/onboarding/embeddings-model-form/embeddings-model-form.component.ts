@@ -181,6 +181,7 @@ export class EmbeddingsModelFormComponent implements OnInit, OnChanges, OnDestro
       ENGLISH: new FormControl<boolean>(false),
       MULTILINGUAL: new FormControl<boolean>(true),
       MULTILINGUAL_ALPHA: new FormControl<boolean>(false),
+      MULTILINGUAL_BETA: new FormControl<boolean>(false),
     }),
     external: new FormGroup<{ [key: string]: AbstractControl<boolean> }>({}),
     stageOnly: new FormGroup({
