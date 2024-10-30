@@ -99,6 +99,7 @@
           <stf-search-box-form
             [config]="savedConfig?.searchBox"
             [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
+            [semanticModels]="semanticModels"
             (configChanged)="updateSearchBoxConfig($event)"
             (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
         </pa-accordion-item-body>
@@ -115,7 +116,6 @@
             [defaultSystemPrompt]="defaultSystemPromptFromSettings"
             [promptInfos]="promptInfos"
             [generativeModels]="generativeModels"
-            [semanticModels]="semanticModels"
             (configChanged)="updateGenerativeAnswerConfig($event)"
             (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
         </pa-accordion-item-body>

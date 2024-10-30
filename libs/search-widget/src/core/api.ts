@@ -69,7 +69,6 @@ export const initNuclia = (
   prompt = undefined;
   systemPrompt = undefined;
   generative_model = undefined;
-  vectorset = undefined;
 
   if (nucliaApi) {
     console.error('Cannot exist more than one Nuclia widget at the same time. Cancelling the first instance.');
@@ -129,6 +128,9 @@ export const initNuclia = (
   systemPrompt = widgetOptions.system_prompt;
   generative_model = widgetOptions.generative_model;
   vectorset = widgetOptions.vectorset;
+  if (vectorset) {
+    SEARCH_OPTIONS.vectorset = vectorset;
+  }
 
   if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
     SEARCH_MODE.push(Search.Features.RELATIONS);

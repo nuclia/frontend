@@ -140,7 +140,7 @@ export class RagLabComponent implements OnChanges, OnDestroy {
             );
           }
           return {
-            vectorset: config.generativeAnswer.vectorset,
+            vectorset: config.searchBox.vectorset,
             features,
             ragStrategies: ragStrategiesList,
           };
@@ -226,7 +226,7 @@ export class RagLabComponent implements OnChanges, OnDestroy {
           searchConfigId: configId,
           queries,
           generative_model: searchConfig.generativeAnswer.generativeModel || defaultGenerativeModel,
-          vectorset: searchConfig.generativeAnswer.vectorset || undefined,
+          vectorset: searchConfig.searchBox.vectorset || undefined,
           highlight: true, // highlight is set to true by default on the widget, so we do the same here
           rephrase: searchConfig.searchBox.rephraseQuery,
           autofilter: searchConfig.searchBox.autofilter,
