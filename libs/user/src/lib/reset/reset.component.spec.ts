@@ -31,7 +31,7 @@ describe('ResetComponent', () => {
       providers: [
         {
           provide: BackendConfigurationService,
-          useValue: { getRecaptchaKey: () => 'key', getOAuthLogin: () => false },
+          useValue: { getRecaptchaKey: () => 'key'},
         },
         {
           provide: LoginService,

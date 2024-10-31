@@ -15,7 +15,6 @@ import { SamePassword } from '../password.validator';
 })
 export class ResetComponent {
   magicToken: string | undefined;
-  oauth: boolean = this.config.getOAuthLogin();
   resetForm = new FormGroup({
     password: new FormControl<string>('', {
       nonNullable: true,
@@ -74,10 +73,8 @@ export class ResetComponent {
         complete: () => {
           this.toaster.success('reset.password_reset');
           this.resetting = false;
-          if (!this.oauth) {
-            this.goLogin();
-          }
-        },
+          this.goLogin();
+         },
         error: () => {
           this.resetting = false;
         },

@@ -72,7 +72,8 @@ export class LoginComponent {
     this.route.queryParams.subscribe((params) => {
       this.message = params['message'];
       this.loginChallenge = params['login_challenge'];
-      this.oauth = this.config.getOAuthLogin();
+      this.oauth = !!this.loginChallenge; // Only set to true if loginChallenge is present
+
       if (this.oauth && !this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
@@ -81,7 +82,6 @@ export class LoginComponent {
       }
     });
   }
-
   onEnterPressed(formField: string) {
     if (formField === 'email') {
       this.password!.hasFocus = true;

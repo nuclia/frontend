@@ -65,10 +65,6 @@ export class BackendConfigurationService {
     return !!this.staticConf.backend.new_api;
   }
 
-  getOAuthLogin(): boolean {
-    return !!this.staticConf.backend.oauth_login;
-  }
-
   getLocales(): string[] {
     return this.staticConf.locales || [];
   }
