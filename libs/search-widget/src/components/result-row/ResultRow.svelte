@@ -202,7 +202,7 @@
               minimized={isMobile}
               on:open={() => clickOnResult(paragraph, index)}
               on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
-            {#if $showAttachedImages}
+            {#if $showAttachedImages && paragraph.reference}
               <Image
                 path={$imageTemplate.replace(
                   IMAGE_PLACEHOLDER,
