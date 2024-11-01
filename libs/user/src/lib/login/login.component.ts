@@ -43,6 +43,12 @@ export class LoginComponent {
     }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
+  get emailControl() {
+    return this.loginForm.controls.email;
+  }
+  get passwordControl() {
+    return this.loginForm.controls.password;
+  }
   isLoggingIn = false;
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(

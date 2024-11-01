@@ -12,14 +12,13 @@
     <div class="login_form">
       <form
         #form
-        [formGroup]="loginForm"
         method="POST"
         [action]="oauth ? oAuthLoginUrl() : null"
         (ngSubmit)="login()">
         <div class="login_field">
           <pa-input
             #email
-            formControlName="email"
+            [formControl]="emailControl"
             required
             autocapitalize="off"
             name="username"
@@ -34,7 +33,7 @@
           <nsi-password-input
             #password
             data-cy="password"
-            formControlName="password"
+            [formControl]="passwordControl"
             name="password"
             [errorMessages]="loginValidationMessages.password">
             {{ 'login.password' | translate }}
