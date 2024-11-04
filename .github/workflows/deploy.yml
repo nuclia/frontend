@@ -216,7 +216,7 @@ jobs:
           sed -i.bak "s#IMAGE_TO_REPLACE#$APP_IMAGE_NAME:${SHORT_SHA}#" ./charts/app/values.yaml
           sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/app/values.yaml
           VERSION=`cat apps/dashboard/VERSION`
-          VERSION_SHA=$VERSION+${SHORT_SHA}
+          VERSION_SHA=$VERSION-${SHORT_SHA}
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/app/Chart.yaml
           echo "version_number=$VERSION_SHA" >> $GITHUB_OUTPUT
 
@@ -279,7 +279,7 @@ jobs:
           sed -i.bak "s#IMAGE_TO_REPLACE#$MANAGER_IMAGE_NAME:${SHORT_SHA}#" ./charts/manager/values.yaml
           sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/manager/values.yaml
           VERSION=`cat apps/manager-v2/VERSION`
-          VERSION_SHA=$VERSION+$SHORT_SHA
+          VERSION_SHA=$VERSION-$SHORT_SHA
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/manager/Chart.yaml
           echo "version_number=$VERSION_SHA" >> $GITHUB_OUTPUT
 
