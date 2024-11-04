@@ -46,6 +46,7 @@ import { takeUntil } from 'rxjs/operators';
 import { LearningConfigurations } from '@nuclia/core';
 import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
 import { SearchRequestModalComponent } from './search-request-modal';
+import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 
 const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
 
@@ -136,7 +137,7 @@ export class SearchConfigurationComponent {
           return forkJoin([kb.getLearningSchema(), kb.getConfiguration()]).pipe(
             map(
               ([schema, config]) =>
-                ({ schema, config }) as {
+                ({ schema: removeDeprecatedModels(schema), config }) as {
                   config: { [id: string]: any };
                   schema: LearningConfigurations;
                 },

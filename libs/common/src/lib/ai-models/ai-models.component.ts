@@ -19,6 +19,7 @@ import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { filter, forkJoin, map, of, Subject, take } from 'rxjs';
 import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { removeDeprecatedModels } from './ai-models.utils';
 
 @Component({
   selector: 'stf-ai-models',
@@ -85,7 +86,7 @@ export class AiModelsComponent implements OnInit {
       )
       .subscribe(({ kbConfig, learningSchema }) => {
         this.kbConfigBackup = kbConfig;
-        this.learningConfigurations = learningSchema;
+        this.learningConfigurations = removeDeprecatedModels(learningSchema);
         this.cdr.markForCheck();
       });
   }
