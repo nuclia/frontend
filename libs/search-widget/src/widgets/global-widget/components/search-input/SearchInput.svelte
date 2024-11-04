@@ -21,18 +21,11 @@
   const dispatch = createEventDispatcher();
 
   let inputContainerElement: HTMLElement | undefined;
-  let position: DOMRect | undefined;
   let showSuggestions = false;
 
   onMount(() => {
     searchInputElement?.focus();
   });
-
-  const setInputPosition = () => {
-    if (inputContainerElement) {
-      position = inputContainerElement.getBoundingClientRect();
-    }
-  };
 
   const search = () => {
     searchQuery.set(typeAhead.getValue());
@@ -49,7 +42,6 @@
       showSuggestions = false;
     } else {
       showSuggestions = true;
-      setInputPosition();
     }
   };
 
@@ -63,7 +55,6 @@
   }
 </script>
 
-<svelte:window on:resize={setInputPosition} />
 <form
   role="search"
   autocomplete="off"
@@ -100,7 +91,7 @@
 <Modal
   show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
   popup={true}
-  parentPosition={position}
+  parentElement={inputContainerElement}
   on:close={closeSuggestions}>
   <div class="sw-suggestions-container">
     <Suggestions

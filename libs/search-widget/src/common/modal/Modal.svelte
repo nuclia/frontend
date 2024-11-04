@@ -1,12 +1,15 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
-  import { freezeBackground, unblockBackground } from './modal.utils';
+  import { freezeBackground, getFixedRootParent, getFixedRootParentIfAny, unblockBackground } from './modal.utils';
 
   export let show = false;
   export let popup = false;
-  export let parentPosition: DOMRect | undefined = undefined;
+  export let parentElement: HTMLElement | undefined = undefined;
+  export let fixedRootParent: HTMLElement | undefined = undefined;
   export let alignTo = '';
   export let modalWidth = '';
+  let top: number | undefined = undefined;
+  let left: number | undefined = undefined;
 
   $: {
     if (!popup) {
@@ -16,6 +19,27 @@
         unblockBackground();
       }
     }
+  }
+
+  function refreshPosition() {
+    console.log('refreshPosition');
+    if (parentElement) {
+      const parentPosition = parentElement?.getBoundingClientRect();
+      if (fixedRootParent) {
+        const containerRect = fixedRootParent.getBoundingClientRect();
+        console.log('containerRect', containerRect);
+        const scrollTop = fixedRootParent.scrollTop;
+        top = parentPosition.bottom - containerRect.top + scrollTop;
+        left = (alignTo === 'right' ? parentPosition?.right : parentPosition?.left) - containerRect.left;
+      } else {
+        top = parentPosition.bottom;
+        left = alignTo === 'right' ? parentPosition?.right : parentPosition?.left;
+      }
+    }
+  }
+
+  $: if (show) {
+    refreshPosition();
   }
 
   const dispatch = createEventDispatcher();
@@ -30,6 +54,13 @@
 
   onMount(() => {
     setModalContentHeight();
+    if (parentElement) {
+      fixedRootParent = getFixedRootParentIfAny(parentElement);
+      console.log('fixedRootParent', fixedRootParent);
+    }
+    setTimeout(() => {
+      refreshPosition();
+    });
   });
 
   const close = () => {
@@ -65,8 +96,8 @@
     <dialog
       class="modal"
       on:click={insideClick}
-      style:--popup-top="{parentPosition?.bottom || 0}px"
-      style:--popup-left="{(alignTo === 'right' ? parentPosition?.right : parentPosition?.left) || 0}px"
+      style:--popup-top="{top || 0}px"
+      style:--popup-left="{left || 0}px"
       style:--modal-width={modalWidth ? modalWidth : ''}>
       <div
         class="modal-content"

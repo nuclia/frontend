@@ -12,13 +12,14 @@
 
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
-  const askFeatures = 'answers,permalink,autocompleteFromNERs,zcitations,relations';
+  const askFeatures = 'answers,permalink,autocompleteFromNERs,zcitations,filter';
   const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs';
   const allFeatures =
     'filter,suggestions,permalink,zrelations,zknowledgeGraph,znavigateToLink,znavigateToFile,answers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat';
 </script>
 
 <main>
+  <h1>TEST</h1>
   <NucliaSearchBar
     zone="europe-1"
     {backend}
@@ -26,9 +27,25 @@
     knowledgebox={kb}
     lang="en"
     no_tracking
-    features={askFeatures}
-  />
+    features={askFeatures} />
   <NucliaSearchResults no_tracking />
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
+  <h1>TEST</h1>
 </main>
 
 <style lang="scss">

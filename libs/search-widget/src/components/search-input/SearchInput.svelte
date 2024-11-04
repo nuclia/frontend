@@ -55,7 +55,6 @@
   let inputContainerElement: HTMLElement | undefined;
   let filterButtonElement: HTMLElement | undefined;
   let filterContainerElement: HTMLElement | undefined;
-  let position: DOMRect | undefined;
   let filterDropdownPosition: { top: number; left: number; width: number } | undefined;
   let showSuggestions = false;
   let showFilterDropdowns = false;
@@ -111,19 +110,12 @@
       const hasFiltersNow = filters.length > 0;
       if (hasFilters !== hasFiltersNow) {
         hasFilters = hasFiltersNow;
-        setTimeout(() => setInputPosition());
       }
       setTimeout(
         () => (filterHeight = filterContainerElement ? `${filterContainerElement.offsetHeight}px` : undefined),
       );
     }),
   );
-
-  const setInputPosition = () => {
-    if (inputContainerElement) {
-      position = inputContainerElement.getBoundingClientRect();
-    }
-  };
 
   const search = (filter?: Filter) => {
     if (filter) removeFilter(filter);
@@ -162,7 +154,6 @@
       showSuggestions = false;
     } else {
       showSuggestions = true;
-      setInputPosition();
     }
   };
 
@@ -215,7 +206,6 @@
   }
 </script>
 
-<svelte:window on:resize={setInputPosition} />
 <form
   role="search"
   autocomplete="off"
@@ -329,7 +319,7 @@
 <Modal
   show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
   popup={true}
-  parentPosition={position}
+  parentElement={inputContainerElement}
   on:close={closeSuggestions}>
   <div class="sw-suggestions-container">
     <Suggestions
