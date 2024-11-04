@@ -25,7 +25,7 @@ function scrollBackTo(scrollY: string) {
   window.scrollTo(0, parseInt(scrollY || '0') * -1);
 }
 
-export function getFixedRootParent(element: HTMLElement): HTMLElement {
+function getFixedRootParent(element: HTMLElement): HTMLElement {
   if (element.tagName === 'BODY') {
     return element;
   }
@@ -58,4 +58,10 @@ export function getFixedRootParent(element: HTMLElement): HTMLElement {
 export function getFixedRootParentIfAny(element: HTMLElement): HTMLElement | undefined {
   const fixedRoot = getFixedRootParent(element);
   return fixedRoot.tagName === 'BODY' ? undefined : fixedRoot;
+}
+
+export function isIOS() {
+  return ['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(
+    navigator.platform,
+  );
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
-  import { freezeBackground, getFixedRootParent, getFixedRootParentIfAny, unblockBackground } from './modal.utils';
+  import { freezeBackground, iOSDevice, getFixedRootParentIfAny, unblockBackground } from './modal.utils';
 
   export let show = false;
   export let popup = false;
@@ -11,6 +11,8 @@
   let top: number | undefined = undefined;
   let left: number | undefined = undefined;
   let fixedRootParentChecked = false;
+
+  const isIOS = iOSDevice();
 
   $: {
     if (!popup) {
@@ -40,6 +42,9 @@
       } else {
         top = parentPosition.bottom;
         left = alignTo === 'right' ? parentPosition?.right : parentPosition?.left;
+      }
+      if (isIOS) {
+        top += window.scrollY;
       }
     }
   }
