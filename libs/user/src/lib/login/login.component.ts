@@ -43,6 +43,12 @@ export class LoginComponent {
     }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
+  get emailControl() {
+    return this.loginForm.controls.email;
+  }
+  get passwordControl() {
+    return this.loginForm.controls.password;
+  }
   isLoggingIn = false;
 
   ssoUrl = this.loginForm.controls.email.valueChanges.pipe(
@@ -72,7 +78,8 @@ export class LoginComponent {
     this.route.queryParams.subscribe((params) => {
       this.message = params['message'];
       this.loginChallenge = params['login_challenge'];
-      this.oauth = this.config.getOAuthLogin();
+      this.oauth = !!this.loginChallenge; // Only set to true if loginChallenge is present
+
       if (this.oauth && !this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
@@ -81,7 +88,6 @@ export class LoginComponent {
       }
     });
   }
-
   onEnterPressed(formField: string) {
     if (formField === 'email') {
       this.password!.hasFocus = true;
