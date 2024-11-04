@@ -42,7 +42,16 @@ export function getFixedRootParent(element: HTMLElement): HTMLElement {
     return element;
   } else {
     const parent = element.parentElement;
-    return parent ? getFixedRootParent(parent) : element;
+    if (parent) {
+      return getFixedRootParent(parent);
+    } else {
+      const parentNode = element.parentNode;
+      if (parentNode && parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+        return getFixedRootParent((parentNode as ShadowRoot).host as HTMLElement);
+      } else {
+        return element;
+      }
+    }
   }
 }
 
