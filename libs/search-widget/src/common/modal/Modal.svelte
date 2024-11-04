@@ -10,6 +10,7 @@
   export let modalWidth = '';
   let top: number | undefined = undefined;
   let left: number | undefined = undefined;
+  let fixedRootParentChecked = false;
 
   $: {
     if (!popup) {
@@ -24,6 +25,11 @@
   function refreshPosition() {
     console.log('refreshPosition');
     if (parentElement) {
+      if (!fixedRootParentChecked) {
+        fixedRootParent = getFixedRootParentIfAny(parentElement);
+        fixedRootParentChecked = true;
+        console.log('fixedRootParent', fixedRootParent);
+      }
       const parentPosition = parentElement?.getBoundingClientRect();
       if (fixedRootParent) {
         const containerRect = fixedRootParent.getBoundingClientRect();
@@ -54,10 +60,6 @@
 
   onMount(() => {
     setModalContentHeight();
-    if (parentElement) {
-      fixedRootParent = getFixedRootParentIfAny(parentElement);
-      console.log('fixedRootParent', fixedRootParent);
-    }
     setTimeout(() => {
       refreshPosition();
     });
