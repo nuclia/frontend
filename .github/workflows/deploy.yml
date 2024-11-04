@@ -230,7 +230,7 @@ jobs:
           helm lint charts/app
           helm package charts/app
           curl --data-binary "@app-${{ steps.version_step.outputs.version_number }}.tgz" ${{ secrets.HELM_CHART_URL }}/api/charts
-          helm push app-${{ matrix.component }}-${{ steps.version_step.outputs.version_number }}.tgz ${{ env.ARTIFACT_REGISTRY_URL }}
+          helm push app-${{ steps.version_step.outputs.version_number }}.tgz ${{ env.ARTIFACT_REGISTRY_URL }}
 
   deploy-manager:
     name: Deploy manager
@@ -293,7 +293,7 @@ jobs:
           helm lint charts/manager
           helm package charts/manager
           curl --data-binary "@manager-${{ steps.version_step.outputs.version_number }}.tgz" ${{ secrets.HELM_CHART_URL }}/api/charts
-          helm push manager-${{ matrix.component }}-${{ steps.version_step.outputs.version_number }}.tgz ${{ env.ARTIFACT_REGISTRY_URL }}
+          helm push manager-${{ steps.version_step.outputs.version_number }}.tgz ${{ env.ARTIFACT_REGISTRY_URL }}
 
   send-to-promotion:
     runs-on: ubuntu-latest
