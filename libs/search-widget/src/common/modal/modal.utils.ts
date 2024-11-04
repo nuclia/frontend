@@ -60,7 +60,7 @@ export function getFixedRootParentIfAny(element: HTMLElement): HTMLElement | und
   return fixedRoot.tagName === 'BODY' ? undefined : fixedRoot;
 }
 
-export function isIOS() {
+export function iOSDevice() {
   return ['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(
     navigator.platform,
   );
