@@ -578,7 +578,7 @@ export class Db implements IDb {
   predictSummarize(
     text: string,
     user_prompt?: string,
-    model = 'chatgpt-azure-3',
+    model = 'chatgpt-azure-4o',
     summary_kind: 'simple' | 'extended' = 'simple',
   ): Observable<string> {
     if (!this.hasNUAClient()) {

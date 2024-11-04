@@ -45,6 +45,7 @@ import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { GenerativeModelPipe } from '../../pipes';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { TaskWithApplyOption } from './task-route.directive';
+import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 
 export interface TaskFormCommonConfig {
   name: string;
@@ -218,11 +219,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         take(1),
         switchMap((kb) => kb.getLearningSchema()),
       )
-      .subscribe((data) => {
-        this.availableLLMs = (data?.['generative_model'].options || []).filter(
+      .subscribe((schema) => {
+        this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || []).filter(
           (option) => !this.unsupportedLLMs.includes(option.value),
         );
-        this.form.controls.llm.patchValue({ model: data?.['generative_model'].default });
+        this.form.controls.llm.patchValue({ model: schema?.['generative_model'].default });
         this.formReady.next(true);
       });
 
