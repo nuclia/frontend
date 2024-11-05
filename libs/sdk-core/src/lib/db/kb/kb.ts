@@ -14,12 +14,9 @@ import {
   timer,
 } from 'rxjs';
 import {
-  ActivityDownloadList,
   Counters,
   Entities,
   EntitiesGroup,
-  EventList,
-  EventType,
   FullKbUser,
   IKnowledgeBox,
   IKnowledgeBoxCreation,
@@ -596,14 +593,6 @@ export class KnowledgeBox implements IKnowledgeBox {
     return suggest(this.nuclia, this.id, this.path, query, inTitleOnly, features);
   }
 
-  feedback(answerId: string, good: boolean, feedback = ''): Observable<void> {
-    return this.nuclia.rest.post(`${this.path}/feedback`, { ident: answerId, good, task: 'CHAT', feedback });
-  }
-
-  listFeedback(): Observable<string[]> {
-    return this.nuclia.rest.get<string[]>(`${this.path}/feedback`);
-  }
-
   /** Returns totals for each kind of contents stored in the Knowledge Box (resources, fields, paragraphs, vectors) */
   counters(): Observable<Counters> {
     return this.nuclia.rest.get<Counters>(`/kb/${this.id}/counters`);
@@ -665,26 +654,6 @@ export class KnowledgeBox implements IKnowledgeBox {
     } else {
       return this.nuclia.rest.get<{ token: string }>('/temp-access-token');
     }
-  }
-
-  /**
-   * @deprecated
-   */
-  listActivity(type?: EventType, page?: number, size?: number): Observable<EventList> {
-    const params = [type ? `type=${type}` : '', page ? `page=${page}` : '', size ? `size=${size}` : '']
-      .filter((p) => p)
-      .join('&');
-    return this.nuclia.rest.get<EventList>(`/kb/${this.id}/activity${params ? '?' + params : ''}`);
-  }
-
-  listActivityDownloads(type: EventType): Observable<ActivityDownloadList> {
-    return this.nuclia.rest.get<ActivityDownloadList>(`/kb/${this.id}/activity/downloads?type=${type}`);
-  }
-
-  downloadActivity(type: EventType, month: string): Observable<Blob> {
-    return this.nuclia.rest
-      .get<Response>(`/kb/${this.id}/activity/download?type=${type}&month=${month}`, {}, true)
-      .pipe(switchMap((res) => from(res.blob())));
   }
 
   getConfiguration(): Observable<{ [id: string]: any }> {

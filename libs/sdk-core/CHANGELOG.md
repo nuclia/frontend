@@ -1,9 +1,14 @@
-# 1.22.1 (unreleased)
+# 1.23.0 (unreleased)
 
 ### Improvement
 
 - Support `citation_threshold` on `/ask` endpoint
 - Update `queryRemiScores` method to support pagination and filtering by answer feedback
+- Support new endpoints to download activity log data
+
+### Breaking changes
+
+- Remove support for old activity log endpoints: `/feedback`, `/activity/download` and `activity/downloads`
 
 # 1.22.0 (2024-10-14)
 
