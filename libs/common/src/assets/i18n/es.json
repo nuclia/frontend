@@ -139,6 +139,7 @@
 	"account.users_left": "Licencias disponibles",
 	"accounts.add_user_input": "Correo del usuario",
 	"activity.actor": "Actor",
+	"activity.email-sent": "Se ha enviado un enlace de descarga a {{email}}",
 	"activity.load-more": "Cargar más",
 	"activity.resource": "Recurso",
 	"activity.timestamp": "Sello de tiempo",

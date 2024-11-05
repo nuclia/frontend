@@ -139,6 +139,7 @@
 	"account.users_left": "Total des licences restantes",
 	"accounts.add_user_input": "Email de l’utilisateur",
 	"activity.actor": "Acteur",
+	"activity.email-sent": "Un lien de téléchargement a été envoyé à {{email}}",
 	"activity.load-more": "Charger plus",
 	"activity.resource": "Ressource",
 	"activity.timestamp": "Horodatage",

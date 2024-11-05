@@ -139,6 +139,7 @@
 	"account.users_left": "Total licenses left",
 	"accounts.add_user_input": "User’s email",
 	"activity.actor": "Actor",
+	"activity.email-sent": "A download link has been sent to {{email}}",
 	"activity.load-more": "Load more",
 	"activity.resource": "Resource",
 	"activity.timestamp": "Time stamp",
