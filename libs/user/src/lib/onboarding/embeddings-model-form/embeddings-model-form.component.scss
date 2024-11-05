@@ -5,6 +5,11 @@ form.embeddings-model-form {
   flex-direction: column;
   gap: rhythm(2);
 
+  .models-limit {
+    display: flex;
+    gap: rhythm(1);
+  }
+
   .semantic-model-choice > .body-m {
     color: $color-neutral-regular;
   }

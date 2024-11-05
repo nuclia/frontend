@@ -149,7 +149,10 @@
   }
   @if (semanticModels.length > 1) {
     <div class="config-form-field">
-      <div class="title-xs">{{ 'search.configuration.search-box.semantic-model.title' | translate }}</div>
+      <div class="title-xs title-with-badge">
+        {{ 'search.configuration.search-box.semantic-model.title' | translate }}
+        <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+      </div>
       <div class="config-form-help">
         {{ 'search.configuration.search-box.semantic-model.description' | translate }}
       </div>

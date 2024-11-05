@@ -4,7 +4,8 @@
   <nsi-two-columns-configuration-item
     noTopBorder
     itemTitle="kb.ai-models.semantic-model.default-model.title"
-    description="kb.ai-models.semantic-model.default-model.description">
+    description="kb.ai-models.semantic-model.default-model.description"
+    [badge]="semanticModels.length > 1 ? 'generic.badge.beta' : ''">
     <div
       class="form-container"
       [formGroup]="configForm">
