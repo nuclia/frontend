@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { RouterModule } from '@angular/router';
 
-import { PaButtonModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaPopupModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 import { ActivityDownloadComponent } from './activity-download.component';
 
 const ROUTES = [
@@ -22,6 +22,8 @@ const ROUTES = [
     RouterModule.forChild(ROUTES),
     PaButtonModule,
     PaTabsModule,
+    PaIconModule,
+    PaPopupModule,
   ],
   declarations: [ActivityDownloadComponent],
   exports: [],

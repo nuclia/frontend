@@ -1,11 +1,15 @@
 import type { WritableKnowledgeBox } from '../kb';
 import type { INuclia } from '../../../models';
 import {
+  ActivityLogDownload,
+  ActivityLogDownloadQuery,
+  DownloadFormat,
+  EventType,
   RemiQueryCriteria,
   RemiQueryResponse,
   RemiQueryResponseContextDetails,
   RemiScoresResponseItem,
-} from './remi.models';
+} from './activity.models';
 import { Observable } from 'rxjs';
 import { UsageAggregation } from '../../db.models';
 
@@ -59,5 +63,44 @@ export class ActivityMonitor {
    */
   getFullContexts(eventId: number): Observable<RemiQueryResponseContextDetails> {
     return this.nuclia.rest.get<RemiQueryResponseContextDetails>(`${this.kb.path}/remi/events/${eventId}`);
+  }
+
+  /**
+   * Create a URL to download activity log data
+   *
+   * @param eventType
+   * @param query
+   * @param format
+   */
+  createActivityLogDownload(
+    eventType: EventType,
+    query: ActivityLogDownloadQuery,
+    format: DownloadFormat,
+  ): Observable<ActivityLogDownload> {
+    return this.nuclia.rest.post<ActivityLogDownload>(
+      `${this.kb.path}/activity/${eventType}/query/download`,
+      query,
+      {
+        accept: format,
+      },
+    );
+  }
+
+  /**
+   * Get the status of a download request
+   *
+   * @param requestId
+   */
+  getDownloadStatus(requestId: string): Observable<ActivityLogDownload> {
+    return this.nuclia.rest.get<ActivityLogDownload>(`${this.kb.path}/activity/download_request/${requestId}`);
+  }
+
+  /**
+   * Get the list of months with available activity log data for a specific event type
+   *
+   * @param eventType
+   */
+  getMonthsWithActivity(eventType: EventType): Observable<{ downloads: string[] }> {
+    return this.nuclia.rest.get<{ downloads: string[] }>(`${this.kb.path}/activity/${eventType}/months`);
   }
 }

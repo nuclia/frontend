@@ -23,7 +23,7 @@
         <pa-tab
           [active]="tab === selectedActivityTab"
           (click)="selectedActivityTab = tab">
-          {{ 'activity.type.' + tab.toLowerCase() | translate }}
+          {{ 'activity.type.' + tab | translate }}
         </pa-tab>
       }
     </pa-tabs>
@@ -31,10 +31,21 @@
       @for (item of activity[selectedActivityTab] | async; track item.month) {
         <div class="download-item">
           <div class="body-m">{{ item.formatted }}</div>
-          <pa-button
-            icon="download"
-            aspect="basic"
-            (click)="download(item.month)"></pa-button>
+          @if (completedDownloads[selectedActivityTab + '-' + item.month]) {
+            <div class="email-sent">
+              <pa-icon
+                name="check"
+                [paPopover]="help"></pa-icon>
+              <pa-popover #help>
+                {{ 'activity.email-sent' | translate: { email: email | async } }}
+              </pa-popover>
+            </div>
+          } @else {
+            <pa-button
+              icon="download"
+              aspect="basic"
+              (click)="download(selectedActivityTab, item.month)"></pa-button>
+          }
         </div>
       }
     </div>

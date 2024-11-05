@@ -139,6 +139,7 @@
 	"account.users_left": "Llicències disponibles",
 	"accounts.add_user_input": "Correu de l’usuari",
 	"activity.actor": "Actor",
+	"activity.email-sent": "S'ha enviat un enllaç de baixada a {{email}}",
 	"activity.load-more": "Carrega més",
 	"activity.resource": "Recurs",
 	"activity.timestamp": "Segell de temps",
