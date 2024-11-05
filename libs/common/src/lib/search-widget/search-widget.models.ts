@@ -5,7 +5,7 @@ export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
 export type FilterSelectionType = { [key in FilterType]: boolean };
 export const DEFAULT_FILTERS: FilterSelectionType = {
   labels: true,
-  entities: true,
+  entities: false,
   created: false,
   labelFamilies: false,
 };

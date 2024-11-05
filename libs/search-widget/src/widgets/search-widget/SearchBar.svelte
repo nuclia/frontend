@@ -203,7 +203,6 @@
     );
     if (Object.keys(_filters).length === 0) {
       _filters.labels = true;
-      _filters.entities = true;
     }
     _ragStrategies = getRAGStrategies(rag_strategies);
     _ragImagesStrategies = getRAGImageStrategies(rag_images_strategies);
