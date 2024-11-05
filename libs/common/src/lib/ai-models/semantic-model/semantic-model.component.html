@@ -12,8 +12,12 @@
       <pa-radio-group formControlName="default_semantic_model">
         @for (model of semanticModels; track model) {
           <pa-radio [value]="model">
-            {{ 'user.kb.creation-form.models.options.' + semanticModelsName[model] | translate }}
-            <small>({{ model }})</small>
+            @if (semanticModelsName[model]) {
+              {{ 'user.kb.creation-form.models.options.' + semanticModelsName[model] | translate }}
+              <small>({{ model }})</small>
+            } @else {
+              {{ model }}
+            }
           </pa-radio>
         }
       </pa-radio-group>
