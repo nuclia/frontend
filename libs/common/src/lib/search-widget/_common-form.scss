@@ -78,6 +78,12 @@
       width: $border-left-width;
     }
   }
+
+  .title-with-badge {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
 }
 
 .toggle-and-help {
