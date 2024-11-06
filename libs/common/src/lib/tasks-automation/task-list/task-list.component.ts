@@ -22,11 +22,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
   private toaster = inject(SisToastService);
   private unsubscribeAll = new Subject<void>();
 
-  textBlocksLabelerTasks = this.taskAutomation.taskList.pipe(
-    map((taskList) => taskList.filter((task) => task.taskName === 'text-blocs-labeler')),
-  );
-  resourceLabelerTasks = this.taskAutomation.taskList.pipe(
-    map((taskList) => taskList.filter((task) => task.taskName === 'resource-labeler')),
+  labelerTasks = this.taskAutomation.taskList.pipe(
+    map((taskList) => taskList.filter((task) => task.taskName === 'labeler')),
   );
 
   ngOnInit() {

@@ -4,12 +4,13 @@ import { TaskRouteDirective } from '../task-route.directive';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import {
   LabelingConfiguration,
   LabelingConfigurationComponent,
 } from '../labeling-configuration/labeling-configuration.component';
 import { TasksAutomationService } from '../../tasks-automation.service';
+import { TaskApplyTo } from '@nuclia/core';
 
 @Component({
   standalone: true,
@@ -22,13 +23,14 @@ import { TasksAutomationService } from '../../tasks-automation.service';
     TwoColumnsConfigurationItemComponent,
     PaTextFieldModule,
     LabelingConfigurationComponent,
+    PaIconModule,
   ],
-  templateUrl: './label-resources.component.html',
+  templateUrl: './labeler.component.html',
   styleUrl: '../_task-form.common.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LabelResourcesComponent extends TaskRouteDirective {
-  private taskAutomation = inject(TasksAutomationService);
+export class LabelerComponent extends TaskRouteDirective {
+  taskAutomation = inject(TasksAutomationService);
 
   labelingConfig?: LabelingConfiguration;
 
@@ -39,12 +41,13 @@ export class LabelResourcesComponent extends TaskRouteDirective {
   activateTask(commonConfig: TaskFormCommonConfig) {
     this.taskAutomation
       .startTask(
-        'resource-labeler',
+        'labeler',
         {
           name: commonConfig.name,
           filter: commonConfig.filter,
           llm: commonConfig.llm,
           operations: [{ label: this.labelingConfig?.label }],
+          on: this.labelingConfig?.on || TaskApplyTo.FULL_FIELD,
         },
         commonConfig.applyTaskTo,
       )

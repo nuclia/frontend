@@ -1,4 +1,4 @@
-export type TaskName = 'text-blocs-labeler' | 'resource-labeler';
+export type TaskName = 'labeler' | 'llm-graph' | 'synthetic-questions' | 'ask' | 'llm-align';
 export type ApplyOption = 'ALL' | 'EXISTING' | 'NEW';
 
 /**

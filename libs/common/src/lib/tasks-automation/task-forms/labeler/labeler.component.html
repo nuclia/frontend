@@ -8,39 +8,37 @@
       @if (task) {
         <h1 class="page-title">{{ task.parameters.name }}</h1>
       } @else {
-        <h1 class="page-title">{{ 'tasks-automation.label-text-blocks.title' | translate }}</h1>
-        <p class="page-description">{{ 'tasks-automation.label-text-blocks.description' | translate }}</p>
+        <h1 class="page-title">{{ 'tasks-automation.labeler.title' | translate }}</h1>
+        <p class="page-description">{{ 'tasks-automation.labeler.description' | translate }}</p>
       }
     </div>
   </header>
 
   <app-task-form
-    type="text-blocs-labeler"
-    triggerDescription="tasks-automation.label-text-blocks.trigger-description"
-    activateButtonLabel="tasks-automation.label-text-blocks.footer.activate-button-label"
-    footerNoteAutomation="tasks-automation.label-text-blocks.footer.apply-automation"
-    footerNoteOneTime="tasks-automation.label-text-blocks.footer.apply-one-time"
+    type="labeler"
+    triggerDescription="tasks-automation.labeler.trigger-description"
+    activateButtonLabel="tasks-automation.labeler.footer.activate-button-label"
+    footerNoteAutomation="tasks-automation.labeler.footer.apply-automation"
+    footerNoteOneTime="tasks-automation.labeler.footer.apply-one-time"
     [validFormInside]="labelingConfig?.valid"
     [task]="task"
     (activate)="activateTask($event)"
     (cancel)="backToTaskList()">
     <stf-labeling-configuration
-      type="text-blocks"
       [task]="task"
       (configurationChange)="onConfigurationChange($event)"></stf-labeling-configuration>
-    <!--
+
     <nsi-two-columns-configuration-item
-      itemTitle="tasks-automation.label-text-blocks.find-labels.title"
-      description="tasks-automation.label-text-blocks.find-labels.description">
+      itemTitle="tasks-automation.labeler.find-labels.title"
+      description="tasks-automation.labeler.find-labels.description">
       <div class="form-container">
         <nsi-info-card>
           <div class="info-card-content-with-icon">
-            <span [innerHTML]="'tasks-automation.label-text-blocks.find-labels.info' | translate"></span>
+            <span [innerHTML]="'tasks-automation.labeler.find-labels.info' | translate"></span>
             <pa-icon name="label"></pa-icon>
           </div>
         </nsi-info-card>
       </div>
     </nsi-two-columns-configuration-item>
-    -->
   </app-task-form>
 </div>
