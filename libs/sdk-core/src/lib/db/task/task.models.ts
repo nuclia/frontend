@@ -1,4 +1,4 @@
-export type TaskName = 'labeler' | 'llm-graph' | 'synthetic-questions' | 'ask' | 'llm-align';
+export type TaskName = 'labeler' | 'llm-graph' | 'synthetic-questions' | 'ask';
 export type ApplyOption = 'ALL' | 'EXISTING' | 'NEW';
 
 /**
