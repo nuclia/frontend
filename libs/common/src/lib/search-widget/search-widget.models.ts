@@ -166,7 +166,12 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
     includeTextualHierarchy: false,
     additionalCharacters: null,
     metadatasRagStrategy: false,
-    metadatas: undefined,
+    metadatas: {
+      origin: false,
+      classification_labels: false,
+      ners: false,
+      extra_metadata: false,
+    },
     includeNeighbouringParagraphs: true,
     precedingParagraphs: 2,
     succeedingParagraphs: 2,
