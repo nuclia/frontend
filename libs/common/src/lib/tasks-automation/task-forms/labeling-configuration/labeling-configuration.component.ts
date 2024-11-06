@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -27,14 +28,15 @@ import {
   PaPopupModule,
   PaIconModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskStatus } from '@nuclia/core';
-import { filter, map, Observable, Subject } from 'rxjs';
+import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo, TaskStatus } from '@nuclia/core';
+import { filter, forkJoin, map, Observable, Subject } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 
 export interface LabelingConfiguration {
   label: LabelOperation;
   valid: boolean;
+  on: TaskApplyTo;
 }
 
 @Component({
@@ -61,17 +63,13 @@ export interface LabelingConfiguration {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelingConfigurationComponent implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+
   private labelService = inject(LabelsService);
   private modalService = inject(SisModalService);
 
   private unsubscribeAll = new Subject<void>();
   private _type: 'resources' | 'text-blocks' = 'resources';
-  @Input() set type(value: 'resources' | 'text-blocks') {
-    this._type = value;
-    this.labelSets = value === 'resources' ? this.labelService.resourceLabelSets : this.labelService.textBlockLabelSets;
-    this.hasLabelSet =
-      value === 'resources' ? this.labelService.hasResourceLabelSets : this.labelService.hasTextBlockLabelSets;
-  }
   get type() {
     return this._type;
   }
@@ -88,10 +86,11 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
 
   @Output() configurationChange = new EventEmitter<LabelingConfiguration>();
 
-  labelSets?: Observable<LabelSets | null>;
-  hasLabelSet?: Observable<boolean>;
+  labelSets: LabelSets | null = null;
+  hasLabelSet = false;
 
   labelingForm = new FormGroup({
+    on: new FormControl('resources', { nonNullable: true }),
     ident: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl('', { nonNullable: true }),
     labels: new FormArray([
@@ -116,8 +115,10 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
       this.configurationChange.emit({
         label: this.labelingForm.getRawValue(),
         valid: this.labelingForm.valid,
+        on: this.type === 'resources' ? TaskApplyTo.FULL_FIELD : TaskApplyTo.TEXT_BLOCKS,
       });
     });
+    this.updateLabelsets();
   }
 
   initForm(task: TaskStatus) {
@@ -174,5 +175,28 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
           this.labelingForm.controls.ident.setValue(data.id);
         }
       });
+  }
+
+  updateLabelsets(type: 'resources' | 'text-blocks' = 'resources') {
+    this._type = type === 'resources' ? 'resources' : 'text-blocks';
+    if (this._type === 'resources') {
+      forkJoin([
+        this.labelService.resourceLabelSets.pipe(take(1)),
+        this.labelService.hasResourceLabelSets.pipe(take(1)),
+      ]).subscribe(([labelSets, hasLabelSet]) => {
+        this.labelSets = labelSets;
+        this.hasLabelSet = hasLabelSet;
+        this.cdr.markForCheck();
+      });
+    } else {
+      forkJoin([
+        this.labelService.textBlockLabelSets.pipe(take(1)),
+        this.labelService.hasTextBlockLabelSets.pipe(take(1)),
+      ]).subscribe(([labelSets, hasLabelSet]) => {
+        this.labelSets = labelSets;
+        this.hasLabelSet = hasLabelSet;
+        this.cdr.markForCheck();
+      });
+    }
   }
 }

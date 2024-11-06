@@ -1,11 +1,4 @@
-import {
-  booleanAttribute,
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {
@@ -18,6 +11,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 import { AutomatedTask, OneTimeTask } from '../tasks-automation.models';
+import { TaskName } from '@nuclia/core';
 
 @Component({
   selector: 'app-task-list-item',
@@ -40,13 +34,7 @@ import { AutomatedTask, OneTimeTask } from '../tasks-automation.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskListItemComponent {
-  @Input() taskType:
-    | 'summarize'
-    | 'global-question'
-    | 'question-answer'
-    | 'label-resources'
-    | 'label-text-blocks'
-    | 'label-ners' = 'summarize';
+  @Input() taskType: TaskName = 'labeler';
   @Input() taskTitle = '';
   @Input() taskDescription = '';
   @Input()
@@ -63,8 +51,8 @@ export class TaskListItemComponent {
    * Temporary input allowing to display or hide the "new" button
    */
   @Input({ transform: booleanAttribute }) newTaskFormReady = false;
-    /**
-   * Temporary input allowing to display a beta or coming soon badge 
+  /**
+   * Temporary input allowing to display a beta or coming soon badge
    */
   @Input() badge = '';
 
@@ -78,15 +66,12 @@ export class TaskListItemComponent {
 
   get firstColumn(): { field: 'fieldName' | 'labelSets' | 'nerFamily'; header: string } {
     switch (this.taskType) {
-      case 'summarize':
-      case 'global-question':
-      case 'question-answer':
+      case 'llm-graph':
+      case 'synthetic-questions':
+      case 'ask':
         return { field: 'fieldName', header: 'tasks-automation.table.header.field-name' };
-      case 'label-resources':
-      case 'label-text-blocks':
+      case 'labeler':
         return { field: 'labelSets', header: 'tasks-automation.table.header.label-sets' };
-      case 'label-ners':
-        return { field: 'nerFamily', header: 'tasks-automation.table.header.ner-family' };
     }
   }
 }

@@ -97,7 +97,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   // Task type
-  @Input() type: TaskName = 'resource-labeler';
+  @Input() type: TaskName = 'labeler';
   // Text displayed in the info card below Trigger label on the right column
   @Input() triggerDescription = '';
   // Label displayed on the submit button

@@ -6,27 +6,17 @@
 
   <div class="task-list">
     <app-task-list-item
-      taskType="label-resources"
-      taskTitle="tasks-automation.label-resources.title"
-      taskDescription="tasks-automation.label-resources.description"
-      [taskList]="resourceLabelerTasks | async"
-      (newTask)="createTask('label-resources')"
+      taskType="labeler"
+      taskTitle="tasks-automation.labeler.title"
+      taskDescription="tasks-automation.labeler.description"
+      [taskList]="labelerTasks | async"
+      (newTask)="createTask('labeler')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"
       [newTaskFormReady]="true"></app-task-list-item>
     <app-task-list-item
-      taskType="label-text-blocks"
-      taskTitle="tasks-automation.label-text-blocks.title"
-      taskDescription="tasks-automation.label-text-blocks.description"
-      [taskList]="textBlocksLabelerTasks | async"
-      (newTask)="createTask('label-text-blocks')"
-      (delete)="deleteTask($event)"
-      (restart)="restartTask($event)"
-      (stop)="stopTask($event)"
-      [newTaskFormReady]="true"></app-task-list-item>
-    <app-task-list-item
-      taskType="summarize"
+      taskType="ask"
       taskTitle="tasks-automation.summarize-resources.title"
       taskDescription="tasks-automation.summarize-resources.description"
       badge="Coming soon"
@@ -35,29 +25,29 @@
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"></app-task-list-item>
     <app-task-list-item
-      taskType="global-question"
+      taskType="ask"
       taskTitle="tasks-automation.global-question.title"
       taskDescription="tasks-automation.global-question.description"
       badge="Coming soon"
-      (newTask)="createTask('global-question')"
+      (newTask)="createTask('ask')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"></app-task-list-item>
     <app-task-list-item
-      taskType="label-ners"
+      taskType="llm-graph"
       taskTitle="tasks-automation.label-ners.title"
       taskDescription="tasks-automation.label-ners.description"
       badge="Coming soon"
-      (newTask)="createTask('label-ners')"
+      (newTask)="createTask('llm-graph')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"></app-task-list-item>
     <app-task-list-item
-      taskType="question-answer"
+      taskType="synthetic-questions"
       taskTitle="tasks-automation.question-answer.title"
       taskDescription="tasks-automation.question-answer.description"
       badge="Coming soon"
-      (newTask)="createTask('question-answer')"
+      (newTask)="createTask('synthetic-questions')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"></app-task-list-item>

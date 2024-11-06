@@ -1,17 +1,29 @@
 <nsi-two-columns-configuration-item
   noTopBorder
   itemTitle="tasks-automation.form.labels-selection.title"
-  [description]="'tasks-automation.form.labels-selection.description-' + type">
+  description="tasks-automation.form.labels-selection.description">
   <div
     class="form-container"
     [formGroup]="labelingForm">
-    @if (hasLabelSet | async) {
+    <div>
+      <pa-radio-group
+        formControlName="on"
+        (valueChange)="updateLabelsets($event)">
+        <pa-radio value="resources">
+          <span [innerHTML]="'tasks-automation.form.on.resources' | translate"></span>
+        </pa-radio>
+        <pa-radio value="text-blocks">
+          <span [innerHTML]="'tasks-automation.form.on.text-blocks' | translate"></span>
+        </pa-radio>
+      </pa-radio-group>
+    </div>
+    @if (hasLabelSet) {
       <div class="labelset">
         <pa-select
           formControlName="ident"
           [label]="'tasks-automation.form.labels-selection.labelset' | translate"
           (change)="clearLabels()">
-          @for (labelset of labelSets | async | keyvalue; track labelset.key) {
+          @for (labelset of labelSets | keyvalue; track labelset.key) {
             <pa-option [value]="labelset.key">{{ labelset.value.title }}</pa-option>
           }
         </pa-select>
@@ -49,7 +61,7 @@
           <pa-select
             formControlName="label"
             [label]="'tasks-automation.form.labels-selection.label-list.label' | translate">
-            @for (label of (labelSets | async)?.[selectedLabelset || '']?.labels || []; track label.title) {
+            @for (label of labelSets?.[selectedLabelset || '']?.labels || []; track label.title) {
               <pa-option [value]="label.title">{{ label.title }}</pa-option>
             }
           </pa-select>

@@ -2,8 +2,7 @@ import { Routes } from '@angular/router';
 import {
   GlobalQuestionComponent,
   LabelNersComponent,
-  LabelResourcesComponent,
-  LabelTextBlocksComponent,
+  LabelerComponent,
   QuestionAnswerComponent,
   SummarizeResourcesComponent,
 } from './task-forms';
@@ -44,20 +43,12 @@ export const TASK_AUTOMATION_ROUTES: Routes = [
         component: QuestionAnswerComponent,
       },
       {
-        path: 'label-resources',
-        component: LabelResourcesComponent,
+        path: 'labeler',
+        component: LabelerComponent,
       },
       {
-        path: 'label-resources/:taskId',
-        component: LabelResourcesComponent,
-      },
-      {
-        path: 'label-text-blocks',
-        component: LabelTextBlocksComponent,
-      },
-      {
-        path: 'label-text-blocks/:taskId',
-        component: LabelTextBlocksComponent,
+        path: 'labeler/:taskId',
+        component: LabelerComponent,
       },
       {
         path: 'label-ners',
