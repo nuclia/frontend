@@ -1,34 +1,24 @@
 <form [formGroup]="form">
-  <pa-radio-group
-    formControlName="type"
-    (valueChange)="updateValidation($event)">
-    <pa-radio value="unlimited">{{ 'billing.unlimited' | translate }}</pa-radio>
-    <pa-radio value="limited">{{ 'billing.limited' | translate }}</pa-radio>
-  </pa-radio-group>
-  @if (form.value.type === 'limited') {
-    <div class="limited">
-      <div class="budget-input">
-        <pa-input
-          type="number"
-          formControlName="budget">
-          @if (currency) {
-            {{ currency === 'USD' ? '$' : '€' }}
-          }
-        </pa-input>
-        <span>/ {{ 'billing.month' | translate }}</span>
-      </div>
-      @if (showActions) {
-        <div class="action">
-          <pa-radio-group formControlName="action">
-            <pa-radio value="BLOCK_ACCOUNT">{{ 'billing.action.block-account' | translate }}</pa-radio>
-            <pa-radio
-              [help]="'billing.action.no-block' | translate"
-              value="WARN_ACCOUNT_OWNER">
-              {{ 'billing.action.send-warning' | translate }}
-            </pa-radio>
-          </pa-radio-group>
-        </div>
+  <div class="budget-input">
+    <pa-input
+      type="number"
+      formControlName="budget">
+      @if (currency) {
+        {{ currency === 'USD' ? '$' : '€' }}
       }
+    </pa-input>
+    <span>/ {{ 'billing.month' | translate }}</span>
+  </div>
+  @if (showActions) {
+    <div class="action">
+      <pa-radio-group formControlName="action">
+        <pa-radio value="BLOCK_ACCOUNT">{{ 'billing.action.block-account' | translate }}</pa-radio>
+        <pa-radio
+          [help]="'billing.action.no-block' | translate"
+          value="WARN_ACCOUNT_OWNER">
+          {{ 'billing.action.send-warning' | translate }}
+        </pa-radio>
+      </pa-radio-group>
     </div>
   }
 </form>

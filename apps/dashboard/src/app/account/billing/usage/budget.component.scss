@@ -1,22 +1,12 @@
 @import 'apps/dashboard/src/variables';
-
-pa-radio-group {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(1);
-}
 .budget-input {
   align-items: center;
   color: $color-neutral-regular;
   display: flex;
   gap: rhythm(1);
-  margin-top: rhythm(2);
 }
 pa-input {
   width: rhythm(14);
-}
-.limited {
-  margin-top: rhythm(4);
 }
 .action {
   margin-top: rhythm(2);
