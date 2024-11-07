@@ -5,6 +5,7 @@
 - Support `citation_threshold` on `/ask` endpoint
 - Update `queryRemiScores` method to support pagination and filtering by answer feedback
 - Support new endpoints to download activity log data
+- Updated `feedback` method to allow feedback on specific text blocks
 
 ### Breaking changes
 

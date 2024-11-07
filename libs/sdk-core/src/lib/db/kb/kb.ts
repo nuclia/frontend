@@ -593,8 +593,14 @@ export class KnowledgeBox implements IKnowledgeBox {
     return suggest(this.nuclia, this.id, this.path, query, inTitleOnly, features);
   }
 
-  feedback(answerId: string, good: boolean, feedback = ''): Observable<void> {
-    return this.nuclia.rest.post(`${this.path}/feedback`, { ident: answerId, good, task: 'CHAT', feedback });
+  feedback(answerId: string, good: boolean, feedback = '', text_block_id?: string): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/feedback`, {
+      ident: answerId,
+      good,
+      task: 'CHAT',
+      feedback,
+      text_block_id,
+    });
   }
 
   /** Returns totals for each kind of contents stored in the Knowledge Box (resources, fields, paragraphs, vectors) */
