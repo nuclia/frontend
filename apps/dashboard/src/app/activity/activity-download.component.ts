@@ -18,6 +18,7 @@ const chatColumns = [
   'answer',
   'feedback_good',
   'feedback_comment',
+  'feedback',
   'model',
   'rag_strategies_names',
   'status',
