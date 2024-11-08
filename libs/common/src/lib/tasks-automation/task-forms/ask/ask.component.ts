@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,6 +6,8 @@ import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component'
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TasksAutomationService } from '../../tasks-automation.service';
+import { TaskApplyTo } from '@nuclia/core';
 
 @Component({
   standalone: true,
@@ -19,18 +21,32 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
   ],
-  templateUrl: './global-question.component.html',
+  templateUrl: './ask.component.html',
   styleUrl: '../_task-form.common.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GlobalQuestionComponent extends TaskRouteDirective {
-  globalQuestionForm = new FormGroup({
+export class AskComponent extends TaskRouteDirective {
+  taskAutomation = inject(TasksAutomationService);
+  askForm = new FormGroup({
     question: new FormControl<string>('', [Validators.required]),
     fieldName: new FormControl<string>('', [Validators.required]),
   });
 
   activateTask(commonConfig: TaskFormCommonConfig) {
-    // TODO
-    console.log(`Activate global question with`, commonConfig, this.globalQuestionForm.getRawValue());
+    this.taskAutomation
+      .startTask(
+        'ask',
+        {
+          name: commonConfig.name,
+          filter: commonConfig.filter,
+          llm: commonConfig.llm,
+          on: TaskApplyTo.FULL_FIELD,
+          operations: [{ ask: { ...this.askForm.getRawValue() } }],
+        },
+        commonConfig.applyTaskTo,
+      )
+      .subscribe(() => {
+        this.backToTaskList();
+      });
   }
 }
