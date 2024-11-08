@@ -45,25 +45,6 @@
             }
 
             @if (kb.role_on_kb === 'SOWNER' || account.can_manage_account) {
-              @if (kb.state === 'PUBLISHED') {
-                <pa-button
-                  size="small"
-                  icon="lock"
-                  aspect="basic"
-                  iconAndText
-                  (click)="retireKb(kb)">
-                  {{ 'account.kb.retire' | translate }}
-                </pa-button>
-              } @else {
-                <pa-button
-                  size="small"
-                  icon="unlock"
-                  iconAndText
-                  (click)="publishKb(kb)">
-                  {{ 'account.kb.publish' | translate }}
-                </pa-button>
-              }
-
               <pa-button
                 size="small"
                 icon="trash"

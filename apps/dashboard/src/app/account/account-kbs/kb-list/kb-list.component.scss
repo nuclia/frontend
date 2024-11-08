@@ -8,24 +8,6 @@
   .account-kbs-list {
     margin-top: rhythm(5);
     max-width: 1024px;
-
-    pa-button:not(:last-child) {
-      margin-right: rhythm(2);
-
-      &.icon-button {
-        margin-right: rhythm(1);
-      }
-    }
-    app-button-action {
-      margin-right: 20px;
-    }
-
-    stf-button {
-      margin-right: 30px;
-      &:last-child {
-        margin-right: 0;
-      }
-    }
   }
 
   .account-kb {
@@ -49,6 +31,7 @@
     .actions {
       align-items: center;
       display: flex;
+      gap: rhythm(2);
     }
   }
 
