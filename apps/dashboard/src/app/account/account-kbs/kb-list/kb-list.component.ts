@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
-import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
-import { Subject, tap } from 'rxjs';
+import { Account, IKnowledgeBoxItem, WritableKnowledgeBox } from '@nuclia/core';
+import { Subject } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router, RouterLink } from '@angular/router';
 import { SisModalService, SisProgressModule, SisToastService, StickyFooterComponent } from '@nuclia/sistema';
@@ -82,43 +82,6 @@ export class KbListComponent implements OnInit, OnDestroy {
   goToKb(kb: IKnowledgeBoxItem) {
     this.sdk.nuclia.options.zone = kb.zone;
     this.router.navigate([this.navigation.getKbUrl(this.account?.slug || '', kb.slug || '')]);
-  }
-
-  publishKb(kb: IKnowledgeBoxItem) {
-    this.changeState(kb, 'publish', 'PUBLISHED');
-  }
-
-  retireKb(kb: IKnowledgeBoxItem) {
-    this.changeState(kb, 'retire', 'PRIVATE');
-  }
-
-  private changeState(kb: IKnowledgeBoxItem, actionLabel: string, state: KBStates): void {
-    this.translate
-      .get(`stash.${actionLabel}.warning`, { kb: kb.title })
-      .pipe(
-        switchMap(
-          (message) =>
-            this.modalService.openConfirm({
-              title: `stash.${actionLabel}.title`,
-              description: message,
-            }).onClose,
-        ),
-        filter((confirm) => !!confirm),
-        switchMap(() => {
-          this.setLoading(true);
-          this.sdk.nuclia.options.zone = kb.zone;
-          return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).modify({ state });
-        }),
-        tap(() => this.sdk.refreshKbList()),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe({
-        next: () => this.setLoading(false),
-        error: () => {
-          this.setLoading(false);
-          this.toaster.error(`stash.${actionLabel}.error`);
-        },
-      });
   }
 
   deleteKb(kb: IKnowledgeBoxItem) {
