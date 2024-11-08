@@ -20,6 +20,7 @@
     footerNoteAutomation="tasks-automation.generator.footer.apply-automation"
     footerNoteOneTime="tasks-automation.generator.footer.apply-one-time"
     [validFormInside]="askForm.valid"
+    [task]="task"
     (cancel)="backToTaskList()"
     (activate)="activateTask($event)">
     <div [formGroup]="askForm">
@@ -27,7 +28,26 @@
         itemTitle="tasks-automation.generator.your-question.title"
         description="tasks-automation.generator.your-question.description">
         <div class="form-container">
-          <nsi-info-card>{{ 'tasks-automation.generator.your-question.info' | translate }}</nsi-info-card>
+          <pa-toggle
+            formControlName="isJSON"
+            labelOnRight>
+            {{ 'tasks-automation.generator.your-question.use-json' | translate }}
+          </pa-toggle>
+          <nsi-info-card>
+            {{
+              (!!askForm.get('isJSON')?.value
+                ? 'tasks-automation.generator.your-question.info-json'
+                : 'tasks-automation.generator.your-question.info-text'
+              ) | translate
+            }}
+            @if (askForm.get('isJSON')?.value) {
+              <blockquote>
+                <code>
+                  {{ jsonExample | json }}
+                </code>
+              </blockquote>
+            }
+          </nsi-info-card>
           <pa-textarea
             rows="4"
             formControlName="question"
