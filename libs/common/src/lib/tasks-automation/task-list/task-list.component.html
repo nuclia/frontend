@@ -17,22 +17,14 @@
       [newTaskFormReady]="true"></app-task-list-item>
     <app-task-list-item
       taskType="ask"
-      taskTitle="tasks-automation.summarize-resources.title"
-      taskDescription="tasks-automation.summarize-resources.description"
-      badge="Coming soon"
-      (newTask)="createTask('summarize-resources')"
-      (delete)="deleteTask($event)"
-      (restart)="restartTask($event)"
-      (stop)="stopTask($event)"></app-task-list-item>
-    <app-task-list-item
-      taskType="ask"
-      taskTitle="tasks-automation.global-question.title"
-      taskDescription="tasks-automation.global-question.description"
-      badge="Coming soon"
+      taskTitle="tasks-automation.generator.title"
+      taskDescription="tasks-automation.generator.description"
+      [taskList]="askTasks | async"
       (newTask)="createTask('ask')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
-      (stop)="stopTask($event)"></app-task-list-item>
+      (stop)="stopTask($event)"
+      [newTaskFormReady]="true"></app-task-list-item>
     <app-task-list-item
       taskType="llm-graph"
       taskTitle="tasks-automation.label-ners.title"

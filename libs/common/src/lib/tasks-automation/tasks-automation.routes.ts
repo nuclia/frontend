@@ -1,11 +1,5 @@
 import { Routes } from '@angular/router';
-import {
-  GlobalQuestionComponent,
-  LabelNersComponent,
-  LabelerComponent,
-  QuestionAnswerComponent,
-  SummarizeResourcesComponent,
-} from './task-forms';
+import { AskComponent, LabelNersComponent, LabelerComponent, QuestionAnswerComponent } from './task-forms';
 import { TasksAutomationComponent } from './tasks-automation.component';
 import { TaskListComponent } from './task-list';
 
@@ -19,20 +13,12 @@ export const TASK_AUTOMATION_ROUTES: Routes = [
         component: TaskListComponent,
       },
       {
-        path: 'global-question',
-        component: GlobalQuestionComponent,
+        path: 'ask',
+        component: AskComponent,
       },
       {
-        path: 'global-question/:taskId',
-        component: GlobalQuestionComponent,
-      },
-      {
-        path: 'summarize-resources',
-        component: SummarizeResourcesComponent,
-      },
-      {
-        path: 'summarize-resources/:taskId',
-        component: SummarizeResourcesComponent,
+        path: 'ask/:taskId',
+        component: AskComponent,
       },
       {
         path: 'question-answer',

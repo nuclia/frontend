@@ -25,6 +25,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   labelerTasks = this.taskAutomation.taskList.pipe(
     map((taskList) => taskList.filter((task) => task.taskName === 'labeler')),
   );
+  askTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'ask')));
 
   ngOnInit() {
     this.taskAutomation.initTaskList();
