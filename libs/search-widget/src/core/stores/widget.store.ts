@@ -12,6 +12,7 @@ export const widgetImageRagStrategies = writableSubject<RAGImageStrategy[]>([]);
 export const widgetJsonSchema = writableSubject<object | null>(null);
 export const notEnoughDataMessage = writableSubject<string>('');
 export const widgetActions = writableSubject<WidgetAction[]>([]);
+export const widgetFeedback = writableSubject<WidgetFeedback>('answer');
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));
@@ -49,3 +50,6 @@ export const disableAnswers = () => {
 };
 export const isSpeechEnabled = widgetFeatures.pipe(map((features) => !!features?.speech));
 export const isSpeechSynthesisEnabled = widgetFeatures.pipe(map((features) => !!features?.speechSynthesis));
+
+export const feedbackOnAnswer = widgetFeedback.pipe(map((feedback) => feedback !== "none"));
+export const feedbackOnResults = widgetFeedback.pipe(map((feedback) => feedback === "answerAndResults"));

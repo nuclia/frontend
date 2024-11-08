@@ -30,6 +30,7 @@ import { takeUntil, tap } from 'rxjs/operators';
 import { deepEqual, FeaturesService, SDKService } from '@flaps/core';
 import { SearchConfigurationComponent } from '../../search-configuration';
 import { EmbedWidgetDialogComponent } from '../dialogs';
+import { WidgetFeedback } from '@nuclia/core';
 
 @Component({
   standalone: true,
@@ -91,6 +92,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     openNewTab: new FormControl<boolean>(false, { nonNullable: true }),
     speech: new FormControl<boolean>(false, { nonNullable: true }),
     speechSynthesis: new FormControl<boolean>(false, { nonNullable: true }),
+    feedback: new FormControl<WidgetFeedback>('none', { nonNullable: true }),
   });
 
   widgetFormExpanded = true;

@@ -263,6 +263,27 @@
                 </div>
               </div>
             }
+            <div class="config-form-field">
+              <div class="title-xs">{{ 'search.widgets.form.widget-options.feedback.title' | translate }}</div>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.feedback.description' | translate }}
+              </div>
+              <pa-radio-group formControlName="feedback">
+                <pa-radio value="none">
+                  {{ 'search.widgets.form.widget-options.feedback.none' | translate }}
+                </pa-radio>
+                <pa-radio
+                  value="answer"
+                  noEllipsis="true">
+                  {{ 'search.widgets.form.widget-options.feedback.answer' | translate }}
+                </pa-radio>
+                <pa-radio
+                  value="answerAndResults"
+                  noEllipsis="true">
+                  {{ 'search.widgets.form.widget-options.feedback.answer-and-results' | translate }}
+                </pa-radio>
+              </pa-radio-group>
+            </div>
           </form>
         </pa-accordion-item-body>
       </pa-accordion-item>

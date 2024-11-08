@@ -140,7 +140,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   suggest(query: string): Observable<Search.Suggestions | IErrorResponse>;
 
-  feedback(answerId: string, good: boolean): Observable<void>;
+  feedback(answerId: string, good: boolean, feedback?: string, text_block_id?: string): Observable<void>;
 
   counters(): Observable<Counters>;
 

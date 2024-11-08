@@ -3,6 +3,7 @@
   --paragraph-gap: var(--rhythm-0_5);
   --toggled-paragraph-height: 0px;
   --title-icon-width: var(--rhythm-3);
+  --paragraph-image-width: var(--rhythm-20);
 
   display: flex;
 
@@ -79,6 +80,15 @@
   }
   .paragraph-container {
     display: flex;
+    flex-direction: column;
+  }
+  .paragraph-result-container {
+    align-items: flex-start;
+    display: flex;
+    width: 100%;
+  }
+  .feedback-container {
+    margin-left: auto;
   }
 }
 
@@ -115,6 +125,13 @@
           max-width: calc(100vw - var(--rhythm-4) - var(--width-thumbnail) - var(--rhythm-2));
         }
       }
+    }
+
+    .paragraph-container {
+      flex-direction: row;
+    }
+    .paragraph-result-container.with-image {
+      width: calc(100% - var(--paragraph-image-width));
     }
   }
 }

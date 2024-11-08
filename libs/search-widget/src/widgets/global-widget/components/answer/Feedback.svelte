@@ -15,7 +15,7 @@
     chat
       .pipe(
         take(1),
-        switchMap((chat) => sendFeedback(chat[rank].answer, good)),
+        switchMap((chat) => sendFeedback(chat[rank].answer.id, good)),
       )
       .subscribe(() => (approved = good ? 'good' : 'bad'));
   }

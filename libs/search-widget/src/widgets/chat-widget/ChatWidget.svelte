@@ -14,6 +14,7 @@
     type RAGImageStrategy,
     type RAGStrategy,
     type WidgetFeatures,
+    type WidgetFeedback,
   } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { askQuestion, initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
@@ -23,6 +24,7 @@
     chatPlaceholder,
     preselectedFilters,
     widgetFeatures,
+    widgetFeedback,
     widgetImageRagStrategies,
     widgetRagStrategies,
   } from '../../core';
@@ -58,6 +60,7 @@
   export let audit_metadata = '';
   export let reranker: Reranker | undefined = undefined;
   export let citation_threshold: number | string | undefined = undefined;
+  export let feedback: WidgetFeedback = 'answer';
 
   export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
@@ -154,6 +157,7 @@
         audit_metadata,
         reranker,
         citation_threshold: _citation_threshold,
+        feedback,
       },
       no_tracking,
     );
@@ -162,6 +166,7 @@
     widgetFeatures.set(_features);
     widgetRagStrategies.set(_ragStrategies);
     widgetImageRagStrategies.set(_ragImageStrategies);
+    widgetFeedback.set(feedback);
 
     if (preselected_filters) {
       preselectedFilters.set(preselected_filters);

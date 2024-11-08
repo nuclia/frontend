@@ -4,6 +4,7 @@
 
   export let sources: TypedResult[] = [];
   export let selected: number | undefined;
+  export let answerRank: number | undefined;
 </script>
 
 <div class="sw-sources">
@@ -16,7 +17,8 @@
           <ResultRow
             result={source}
             selected={selected !== undefined ? selected + 1 : undefined}
-            isSource={true} />
+            isSource={true}
+            {answerRank} />
         {/if}
       </div>
     </div>

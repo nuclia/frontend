@@ -17,7 +17,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--rhythm-1);
-    margin-bottom: var(--rhythm-2);
   }
 
   textarea {
@@ -25,6 +24,7 @@
     border-color: var(--color-neutral-light);
     font-family: inherit;
     font-size: var(--font-size-medium);
+    margin-top: var(--rhythm-3);
     padding: var(--rhythm-1);
     width: 100%;
     &:focus {
