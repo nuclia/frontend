@@ -238,11 +238,11 @@ export const getAnswer = (
   }
 };
 
-export const sendFeedback = (answer: Ask.Answer, approved: boolean, comment?: string) => {
+export const sendFeedback = (answerId: string, approved: boolean, comment?: string, textBlockId?: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.feedback(answer.id, approved, comment);
+  return nucliaApi.knowledgeBox.feedback(answerId, approved, comment, textBlockId);
 };
 
 export const searchInResource = (

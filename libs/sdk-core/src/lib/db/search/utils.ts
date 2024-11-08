@@ -102,3 +102,5 @@ export interface WidgetFeatures {
   speech?: boolean;
   speechSynthesis?: boolean;
 }
+
+export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';

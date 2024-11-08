@@ -139,7 +139,9 @@
           {/if}
           <div class="search-results">
             {#each $resultList as result, i (getResultUniqueKey(result))}
-              <ResultRow {result} />
+              <ResultRow
+                {result}
+                answerRank={0} />
               {#if i === $resultList.length - 1}
                 <div
                   class="results-end"

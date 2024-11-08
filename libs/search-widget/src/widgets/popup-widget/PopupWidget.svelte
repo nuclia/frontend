@@ -7,7 +7,7 @@
   import SearchBar from '../search-widget/SearchBar.svelte';
   import SearchResults from '../search-widget/SearchResults.svelte';
   import { getApiErrors, isEmptySearchQuery, pendingResults, showResults } from '../../core';
-  import type { KBStates, Reranker } from '@nuclia/core';
+  import type { KBStates, Reranker, WidgetFeedback } from '@nuclia/core';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -44,6 +44,7 @@
   export let audit_metadata = '';
   export let reranker: Reranker | undefined = undefined;
   export let citation_threshold: number | string | undefined = undefined;
+  export let feedback: WidgetFeedback = 'answer';
 
   let searchBar: any;
   let visible = false;
@@ -145,7 +146,8 @@
             {chat_placeholder}
             {audit_metadata}
             {reranker}
-            {citation_threshold} />
+            {citation_threshold}
+            {feedback} />
         </div>
         <div class="search-results-container">
           <SearchResults />

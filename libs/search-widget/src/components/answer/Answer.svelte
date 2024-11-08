@@ -13,6 +13,7 @@
     chat,
     debug,
     downloadDump,
+    feedbackOnAnswer,
     getAttachedImageTemplate,
     getFieldDataFromResource,
     getNonGenericField,
@@ -202,9 +203,11 @@
               x="0"
               y="34" />
           </div>
-          <div>
-            <Feedback {rank} />
-          </div>
+          {#if $feedbackOnAnswer}
+            <div>
+              <Feedback {rank} />
+            </div>
+          {/if}
           {#if $debug}
             <div class="smaller">
               <IconButton
@@ -245,6 +248,7 @@
             <div class="sources-list">
               <Sources
                 {sources}
+                answerRank={rank}
                 selected={selectedCitation} />
             </div>
           {:else}
@@ -257,6 +261,7 @@
               <div class="sources-list">
                 <Sources
                   {sources}
+                  answerRank={rank}
                   selected={selectedCitation} />
               </div>
             </Expander>

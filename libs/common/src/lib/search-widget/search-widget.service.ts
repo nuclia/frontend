@@ -170,6 +170,7 @@ export class SearchWidgetService {
 
     // Widget options
     const theme = getWidgetTheme(widgetOptions);
+    const feedback = `\n  feedback="${widgetOptions.feedback}"`;
     let tagName;
     let widgetFileName;
     switch (widgetOptions.widgetMode) {
@@ -202,7 +203,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}${reranker}${citationThreshold}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}${reranker}${citationThreshold}${feedback}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;

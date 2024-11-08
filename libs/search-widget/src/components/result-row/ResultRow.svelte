@@ -20,6 +20,8 @@
     viewerData,
     openNewTab,
     getAttachedImageTemplate,
+    feedbackOnResults,
+    isAnswerEnabled,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
@@ -27,10 +29,12 @@
   import { FieldMetadata } from './';
   import { showAttachedImages } from '../../core/stores/search.store';
   import Image from '../image/Image.svelte';
+  import Feedback from '../answer/Feedback.svelte';
 
   export let result: TypedResult;
   export let selected = 0;
   export let isSource = false;
+  export let answerRank: number | undefined;
 
   let thumbnailLoaded = false;
   let showAllResults = false;
@@ -188,20 +192,32 @@
         {/if}
         {#each paragraphs as paragraph, index}
           <div class="paragraph-container">
-            {#if isSource && paragraph.rank}
-              <div
-                class="number body-m"
-                class:selected={selected === paragraph.rank}>
-                {paragraph.rank}
-              </div>
-            {/if}
-            <ParagraphResult
-              {paragraph}
-              resultType={result.resultType}
-              ellipsis={true}
-              minimized={isMobile}
-              on:open={() => clickOnResult(paragraph, index)}
-              on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
+            <div
+              class="paragraph-result-container"
+              class:with-image={$showAttachedImages && paragraph.reference}>
+              {#if isSource && paragraph.rank}
+                <div
+                  class="number body-m"
+                  class:selected={selected === paragraph.rank}>
+                  {paragraph.rank}
+                </div>
+              {/if}
+              <ParagraphResult
+                {paragraph}
+                resultType={result.resultType}
+                ellipsis={true}
+                minimized={isMobile}
+                on:open={() => clickOnResult(paragraph, index)}
+                on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
+              {#if answerRank !== undefined && $isAnswerEnabled && $feedbackOnResults}
+                <div class="feedback-container">
+                  <Feedback
+                    size="xsmall"
+                    rank={answerRank}
+                    {paragraph} />
+                </div>
+              {/if}
+            </div>
             {#if $showAttachedImages && paragraph.reference}
               <Image
                 path={$imageTemplate.replace(

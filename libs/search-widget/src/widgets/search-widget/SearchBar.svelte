@@ -12,6 +12,7 @@
     type RAGImageStrategy,
     type RAGStrategy,
     type WidgetFeatures,
+    type WidgetFeedback,
   } from '@nuclia/core';
   import { downloadDump, getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
@@ -24,6 +25,7 @@
     chatPlaceholder,
     notEnoughDataMessage,
     widgetFeatures,
+    widgetFeedback,
     widgetFilters,
     widgetImageRagStrategies,
     widgetJsonSchema,
@@ -89,6 +91,7 @@
   export let audit_metadata = '';
   export let reranker: Reranker | undefined = undefined;
   export let citation_threshold: number | string | undefined = undefined;
+  export let feedback: WidgetFeedback = 'answer';
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -158,6 +161,7 @@
       vectorset,
       reranker,
       citation_threshold,
+      feedback,
     });
   }
 
@@ -244,6 +248,7 @@
         audit_metadata,
         reranker,
         citation_threshold: _citation_threshold,
+        feedback,
       },
       no_tracking,
     );
@@ -254,6 +259,7 @@
     widgetRagStrategies.set(_ragStrategies);
     widgetImageRagStrategies.set(_ragImagesStrategies);
     widgetJsonSchema.set(_jsonSchema);
+    widgetFeedback.set(feedback);
 
     if (_features.filter) {
       if (_filters.labels || _filters.labelFamilies) {

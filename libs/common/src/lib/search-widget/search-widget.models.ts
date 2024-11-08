@@ -1,5 +1,5 @@
 import { deepEqual } from '@flaps/core';
-import { RAG_METADATAS, RagStrategyName } from '@nuclia/core';
+import { RAG_METADATAS, RagStrategyName, WidgetFeedback } from '@nuclia/core';
 
 export type FilterType = 'labels' | 'entities' | 'created' | 'labelFamilies';
 export type FilterSelectionType = { [key in FilterType]: boolean };
@@ -106,6 +106,7 @@ export interface WidgetConfiguration {
   noChatHistory: boolean;
   speech: boolean;
   speechSynthesis: boolean;
+  feedback: WidgetFeedback;
 }
 
 export interface Widget {
@@ -215,6 +216,7 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   noChatHistory: false,
   speech: false,
   speechSynthesis: false,
+  feedback: 'none',
 };
 
 export const NUCLIA_STANDARD_SEARCH_CONFIG: SearchConfiguration = {
