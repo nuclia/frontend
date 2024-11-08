@@ -41,7 +41,14 @@ export class AskComponent extends TaskRouteDirective {
           filter: commonConfig.filter,
           llm: commonConfig.llm,
           on: TaskApplyTo.FULL_FIELD,
-          operations: [{ ask: { ...this.askForm.getRawValue() } }],
+          operations: [
+            {
+              ask: {
+                question: this.askForm.get('question')?.value,
+                destination: this.askForm.get('fieldName')?.value,
+              },
+            },
+          ],
         },
         commonConfig.applyTaskTo,
       )
