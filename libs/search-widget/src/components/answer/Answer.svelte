@@ -57,10 +57,12 @@
       ? sources.reduce(
           (all, source) =>
             all.concat(
-              source.paragraphs.map(
-                (paragraph) =>
-                  `${source.id}/${source.field?.field_type}/${source.field?.field_id}/download/extracted/generated/${paragraph.reference}`,
-              ),
+              source.paragraphs
+                .filter((paragraph) => paragraph.reference)
+                .map(
+                  (paragraph) =>
+                    `${source.id}/${source.field?.field_type}/${source.field?.field_id}/download/extracted/generated/${paragraph.reference}`,
+                ),
             ),
           [] as string[],
         )
