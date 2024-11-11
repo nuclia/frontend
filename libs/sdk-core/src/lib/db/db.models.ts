@@ -59,7 +59,10 @@ export type UsageLimitsEntries =
   | 'monthly_limit_paragraphs_processed'
   | 'monthly_limit_paragraphs_stored'
   | 'monthly_limit_self_hosted_answers_generated'
-  | 'monthly_limit_self_hosted_searches_performed';
+  | 'monthly_limit_self_hosted_searches_performed'
+  | 'storage_limit_max_bytes_per_kb'
+  | 'storage_limit_max_resources_per_kb';
+
 export type UsageLimits = { [key in UsageLimitsEntries]: number };
 export type NullableUsageLimits = { [key in UsageLimitsEntries]: number | null };
 
