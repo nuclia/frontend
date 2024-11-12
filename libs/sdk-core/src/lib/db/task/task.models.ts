@@ -36,8 +36,8 @@ export enum TaskApplyTo {
  */
 export interface Operation {
   label?: LabelOperation;
+  graph?: GraphOperation;
   // TODO: other kinds of operation
-  graph?: null;
   ask?: null;
   qa?: null;
   extract?: null;
@@ -51,6 +51,31 @@ export interface LabelOperation {
   }[];
   ident?: string;
   description?: string;
+}
+
+export interface GraphOperation {
+  ident?: string;
+  entity_defs?: EntityDefinition[];
+  entity_examples?: EntityExample[];
+  relation_examples?: RelationExample[];
+}
+
+export interface EntityDefinition {
+  label: string;
+  description?: string;
+}
+
+export interface EntityExample {
+  name: string;
+  label: string;
+  example?: string;
+}
+
+export interface RelationExample {
+  source: string;
+  target: string;
+  label: string;
+  example?: string;
 }
 
 /**

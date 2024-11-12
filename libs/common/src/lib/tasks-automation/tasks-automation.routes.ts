@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { AskComponent, LabelNersComponent, LabelerComponent, QuestionAnswerComponent } from './task-forms';
+import { AskComponent, GraphExtractionComponent, LabelerComponent, QuestionAnswerComponent } from './task-forms';
 import { TasksAutomationComponent } from './tasks-automation.component';
 import { TaskListComponent } from './task-list';
 
@@ -37,12 +37,12 @@ export const TASK_AUTOMATION_ROUTES: Routes = [
         component: LabelerComponent,
       },
       {
-        path: 'label-ners',
-        component: LabelNersComponent,
+        path: 'llm-graph',
+        component: GraphExtractionComponent,
       },
       {
-        path: 'label-ners/:taskId',
-        component: LabelNersComponent,
+        path: 'llm-graph/:taskId',
+        component: GraphExtractionComponent,
       },
     ],
   },

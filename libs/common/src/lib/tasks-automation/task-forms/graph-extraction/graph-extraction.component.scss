@@ -1,0 +1,43 @@
+@import 'apps/dashboard/src/variables';
+@import '../task-form.common';
+
+.input-with-help {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  pa-input {
+    flex-grow: 1;
+  }
+}
+
+.inline-inputs {
+  display: flex;
+  gap: rhythm(1);
+  & > * {
+    width: 50%;
+  }
+}
+
+.form-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+.form-group {
+  border: 1px solid $color-neutral-lighter;
+  border-radius: $border-radius-default;
+  padding-bottom: rhythm(2);
+  .form-container {
+    padding: 0 rhythm(2);
+  }
+}
+
+.form-group-header {
+  align-items: center;
+  background-color: $color-neutral-lighter;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 rhythm(1.5);
+  margin-bottom: rhythm(2);
+}

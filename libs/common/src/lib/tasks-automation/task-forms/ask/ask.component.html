@@ -5,7 +5,7 @@
     </nsi-back-button>
 
     <div>
-      @if (task) {
+      @if (task | async; as task) {
         <h1 class="page-title">{{ task.parameters.name }}</h1>
       } @else {
         <h1 class="page-title">{{ 'tasks-automation.generator.title' | translate }}</h1>
@@ -20,7 +20,7 @@
     footerNoteAutomation="tasks-automation.generator.footer.apply-automation"
     footerNoteOneTime="tasks-automation.generator.footer.apply-one-time"
     [validFormInside]="askForm.valid"
-    [task]="task"
+    [task]="task | async"
     (cancel)="backToTaskList()"
     (activate)="activateTask($event)">
     <div [formGroup]="askForm">

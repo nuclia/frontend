@@ -1,5 +1,5 @@
 import { Directive, inject } from '@angular/core';
-import { filter, map, switchMap, take } from 'rxjs';
+import { filter, map, shareReplay, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { ApplyOption, TaskStatus } from '@nuclia/core';
@@ -21,27 +21,22 @@ export class TaskRouteDirective {
     filter((params) => !!params['taskId']),
     map((params) => params['taskId'] as string),
   );
-  task?: TaskWithApplyOption;
+  task = this.taskId.pipe(
+    switchMap((taskId) => this.tasksAutomation.getTask(taskId)),
+    map((response) => {
+      const applyOption: ApplyOption =
+        response.config && response.request ? 'ALL' : response.request ? 'EXISTING' : 'NEW';
+      const task = response.config || response.request;
+      return task ? { ...task, applyOption } : undefined;
+    }),
+    shareReplay(1),
+  );
 
   backRoute = this.activeRoute.params.pipe(map((params) => (!params['taskId'] ? '..' : '../..')));
 
   errorMessages = {
     required: 'validation.required',
   };
-
-  constructor() {
-    this.taskId
-      .pipe(
-        switchMap((taskId) => this.tasksAutomation.getTask(taskId)),
-        take(1),
-      )
-      .subscribe((response) => {
-        const applyOption: ApplyOption =
-          response.config && response.request ? 'ALL' : response.request ? 'EXISTING' : 'NEW';
-        const task = response.config || response.request;
-        this.task = task ? { ...task, applyOption } : undefined;
-      });
-  }
 
   backToTaskList() {
     this.backRoute
