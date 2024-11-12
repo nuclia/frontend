@@ -47,7 +47,7 @@ export class LabelerComponent extends TaskRouteDirective {
           filter: commonConfig.filter,
           llm: commonConfig.llm,
           operations: [{ label: this.labelingConfig?.label }],
-          on: this.labelingConfig?.on || TaskApplyTo.FULL_FIELD,
+          on: this.labelingConfig?.on !== undefined ? this.labelingConfig.on : TaskApplyTo.FULL_FIELD,
         },
         commonConfig.applyTaskTo,
       )
