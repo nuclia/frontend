@@ -87,32 +87,32 @@
             </pa-dropdown>
           </div>
         }
-        <!--
         <div>
           <nsi-dropdown-button
             fullWidth
             aspect="basic"
-            [popupRef]="languagesDropdown">
-            {{ 'tasks-automation.form.filter.languages.button-label' | translate }}
+            [disabled]="task"
+            [popupRef]="fieldTypesDropdown">
+            {{ 'tasks-automation.form.filter.fields.button-label' | translate }}
 
-            @if (languageSelectionCount > 0) {
+            @if (fieldTypeSelectionCount > 0) {
               ({{
-                languageSelectionCount === languageTotalCount
+                fieldTypeSelectionCount === fieldTypesTotalCount
                   ? ('tasks-automation.form.filter.all' | translate)
-                  : languageSelectionCount
+                  : fieldTypeSelectionCount
               }})
             }
           </nsi-dropdown-button>
-          <pa-dropdown #languagesDropdown>
+          <pa-dropdown #fieldTypesDropdown>
             <pa-option
               dontCloseOnSelect
-              (selectOption)="toggleAll('languages', $event)">
-              <pa-checkbox [value]="allLanguagesSelected">
-                {{ 'tasks-automation.form.filter.languages.all-languages' | translate }}
+              (selectOption)="toggleAll('fieldTypes', $event)">
+              <pa-checkbox [value]="allFieldTypesSelected">
+                {{ 'tasks-automation.form.filter.fields.all-types' | translate }}
               </pa-checkbox>
             </pa-option>
             <pa-separator></pa-separator>
-            @for (option of languageFilters; track option.id) {
+            @for (option of fieldTypeFilters; track option.id) {
               <pa-option
                 [paTooltip]="option.help"
                 (selectOption)="onSelectFilter(option, $event)"
@@ -126,7 +126,7 @@
             }
           </pa-dropdown>
         </div>
-
+        <!--
         @if (hasLabelSets | async) {
           <app-label-dropdown
             fullWidth
