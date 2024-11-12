@@ -144,6 +144,7 @@
       </div>
     </nsi-two-columns-configuration-item>
   }
+  <ng-content></ng-content>
   @if (properties?.['llm']; as llm) {
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.form.llm-selection.title"
@@ -170,8 +171,6 @@
       </div>
     </nsi-two-columns-configuration-item>
   }
-
-  <ng-content></ng-content>
 
   <!--
   <nsi-two-columns-configuration-item
