@@ -93,6 +93,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     speech: new FormControl<boolean>(false, { nonNullable: true }),
     speechSynthesis: new FormControl<boolean>(false, { nonNullable: true }),
     feedback: new FormControl<WidgetFeedback>('none', { nonNullable: true }),
+    lang: new FormControl<string>('', { nonNullable: true }),
   });
 
   widgetFormExpanded = true;

@@ -107,6 +107,7 @@ export interface WidgetConfiguration {
   speech: boolean;
   speechSynthesis: boolean;
   feedback: WidgetFeedback;
+  lang: string;
 }
 
 export interface Widget {
@@ -217,6 +218,7 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   speech: false,
   speechSynthesis: false,
   feedback: 'none',
+  lang: '',
 };
 
 export const NUCLIA_STANDARD_SEARCH_CONFIG: SearchConfiguration = {
@@ -287,6 +289,9 @@ export function getChatPlaceholder(config: WidgetConfiguration): string {
   return config.customizeChatPlaceholder && config.chatPlaceholder
     ? `\n  chat_placeholder="${config.chatPlaceholder}"`
     : '';
+}
+export function getLang(config: WidgetConfiguration): string {
+  return config.lang ? `\n  lang="${config.lang}"` : '';
 }
 export function getPrompt(config: GenerativeAnswerConfig): string {
   if (config.usePrompt && !!config.prompt.trim()) {
