@@ -7,6 +7,7 @@ import {
   getFeatures,
   getFilters,
   getJsonSchema,
+  getLang,
   getMaxParagraphs,
   getMaxTokens,
   getNotEnoughDataMessage,
@@ -145,6 +146,7 @@ export class SearchWidgetService {
     const features = getFeatures(currentConfig, widgetOptions);
     const placeholder = getPlaceholder(widgetOptions);
     const chatPlaceholder = getChatPlaceholder(widgetOptions);
+    const lang = getLang(widgetOptions);
     const prompt = getPrompt(currentConfig.generativeAnswer);
     const systemPrompt = getSystemPrompt(currentConfig.generativeAnswer);
     const rephrasePrompt = getRephrasePrompt(currentConfig.searchBox);
@@ -160,9 +162,7 @@ export class SearchWidgetService {
     const generativeModel = currentConfig.generativeAnswer.generativeModel
       ? `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`
       : '';
-    const vectorset = currentConfig.searchBox.vectorset
-      ? `\n  vectorset="${currentConfig.searchBox.vectorset}"`
-      : '';
+    const vectorset = currentConfig.searchBox.vectorset ? `\n  vectorset="${currentConfig.searchBox.vectorset}"` : '';
     const queryPrepend = getQueryPrepend(currentConfig.searchBox);
     const jsonSchema = getJsonSchema(currentConfig.resultDisplay);
     const reranker = getReranker(currentConfig.searchBox);
@@ -203,7 +203,7 @@ export class SearchWidgetService {
         const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
 
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}${reranker}${citationThreshold}${feedback}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${lang}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}${reranker}${citationThreshold}${feedback}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;

@@ -1241,6 +1241,8 @@
 	"search.widgets.form.widget-options.feedback.title": "Feedback",
 	"search.widgets.form.widget-options.hide-logo.toggle-description": "Solo disponible para planes growth y enterprise.",
 	"search.widgets.form.widget-options.hide-logo.toggle-label": "Ocultar el logotipo de Nuclia de la barra de búsqueda",
+	"search.widgets.form.widget-options.lang.help": "De forma predeterminada, el widget utiliza el idioma definido en la configuración regional del navegador. La interfaz de usuario admite \"en\", \"ca\", \"es\" y \"fr\", pero puede ingresar cualquier idioma (como un código de 2 caracteres).",
+	"search.widgets.form.widget-options.lang.label": "Idioma",
 	"search.widgets.form.widget-options.navigate-to-files.toggle-description": "Cuando se utiliza Nuclia para buscar archivos web, al hacer clic en un resultado se abrirá el archivo original en lugar de mostrarlo en el visor. ",
 	"search.widgets.form.widget-options.navigate-to-files.toggle-label": "Navegar a archivos de origen",
 	"search.widgets.form.widget-options.navigate-to-link.toggle-description": "Cuando se utiliza Nuclia para buscar páginas web, al hacer clic en un resultado se abrirá la página original en lugar de mostrarla en el visor.",

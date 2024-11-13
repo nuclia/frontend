@@ -231,6 +231,13 @@
                 </div>
               </div>
             }
+            <div class="config-form-field">
+              <pa-input
+                formControlName="lang"
+                [help]="'search.widgets.form.widget-options.lang.help' | translate">
+                {{ 'search.widgets.form.widget-options.lang.label' | translate }}
+              </pa-input>
+            </div>
             @if (isSpeechEnabled | async) {
               <div class="config-form-field">
                 <pa-toggle

@@ -1241,6 +1241,8 @@
 	"search.widgets.form.widget-options.feedback.title": "Feedack",
 	"search.widgets.form.widget-options.hide-logo.toggle-description": "Només disponible per a plans growth i enterprise.",
 	"search.widgets.form.widget-options.hide-logo.toggle-label": "Amaga el logotip de Nuclia a la barra de cerca",
+	"search.widgets.form.widget-options.lang.help": "Per defecte, el giny utilitza l'idioma definit a les configuracions regionals del navegador. La interfície d'usuari admet \"en\", \"ca\", \"es\" i \"fr\", però podeu introduir qualsevol idioma (com a codi de 2 caràcters).",
+	"search.widgets.form.widget-options.lang.label": "Llenguatge",
 	"search.widgets.form.widget-options.navigate-to-files.toggle-description": "Quan utilitzeu Nuclia per cercar fitxers web, fer clic a un resultat obrirà el fitxer original en lloc de mostrar-lo al visor. ",
 	"search.widgets.form.widget-options.navigate-to-files.toggle-label": "Navegueu als fitxers d’origen",
 	"search.widgets.form.widget-options.navigate-to-link.toggle-description": "Quan utilitzeu Nuclia per cercar pàgines web, fer clic a un resultat obrirà la pàgina original en lloc de mostrar-la al visor.",
