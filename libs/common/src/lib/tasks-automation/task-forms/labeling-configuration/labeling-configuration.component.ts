@@ -74,7 +74,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
     return this._type;
   }
   private _task?: TaskStatus;
-  @Input() set task(value: TaskStatus | undefined) {
+  @Input() set task(value: TaskStatus | undefined | null) {
     if (value) {
       this._task = value;
       this._type = value.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks';
