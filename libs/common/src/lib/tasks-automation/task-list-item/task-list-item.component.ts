@@ -13,6 +13,8 @@ import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 import { AutomatedTask, OneTimeTask } from '../tasks-automation.models';
 import { TaskName } from '@nuclia/core';
 
+type TaskWithFilters = (AutomatedTask | OneTimeTask) & { hasFilters: boolean };
+
 @Component({
   selector: 'app-task-list-item',
   standalone: true,
@@ -40,10 +42,13 @@ export class TaskListItemComponent {
   @Input()
   set taskList(list: (AutomatedTask | OneTimeTask)[] | null) {
     if (list) {
-      this._taskList = list;
+      this._taskList = list.map((task) => ({
+        ...task,
+        hasFilters: task.filters.some((filter) => filter.count && filter.count > 0),
+      }));
     }
   }
-  get taskList(): (AutomatedTask | OneTimeTask)[] {
+  get taskList(): TaskWithFilters[] {
     return this._taskList;
   }
   @Input({ transform: booleanAttribute }) hasArchive = false;
@@ -62,7 +67,7 @@ export class TaskListItemComponent {
   @Output() delete = new EventEmitter<string>();
   @Output() restart = new EventEmitter<string>();
 
-  private _taskList: (AutomatedTask | OneTimeTask)[] = [];
+  private _taskList: TaskWithFilters[] = [];
 
   get firstColumn(): { field: 'fieldName' | 'labelSets' | 'nerFamily'; header: string } {
     switch (this.taskType) {

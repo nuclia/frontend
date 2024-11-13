@@ -33123,6 +33123,29 @@
 									</concept_node>
 								</children>
 							</folder_node>
+							<concept_node>
+								<name>data-augmentation-section</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
 							<folder_node>
 								<name>errors</name>
 								<children>
@@ -33449,10 +33472,10 @@
 												</translations>
 											</concept_node>
 											<folder_node>
-												<name>languages</name>
+												<name>fields</name>
 												<children>
 													<concept_node>
-														<name>all-languages</name>
+														<name>all-types</name>
 														<description/>
 														<comment/>
 														<translations>
@@ -35758,7 +35781,7 @@
 								<name>table</name>
 								<children>
 									<concept_node>
-										<name>contains</name>
+										<name>empty</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -35781,7 +35804,7 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>empty</name>
+										<name>has-filters</name>
 										<description/>
 										<comment/>
 										<translations>
@@ -36040,29 +36063,6 @@
 									</folder_node>
 									<concept_node>
 										<name>processed</name>
-										<description/>
-										<comment/>
-										<translations>
-											<translation>
-												<language>ca-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>es-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
-									<concept_node>
-										<name>resource_type</name>
 										<description/>
 										<comment/>
 										<translations>

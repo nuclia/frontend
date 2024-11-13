@@ -33,6 +33,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   ApplyOption,
   Classification,
+  FIELD_TYPE,
   LearningConfigurationOption,
   LLMConfig,
   Search,
@@ -40,7 +41,7 @@ import {
   TaskName,
 } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, map, ReplaySubject, Subject, switchMap, tap } from 'rxjs';
-import { Filters, formatFiltersFromFacets, LANGUAGE_FACET, MIME_FACETS } from '../../resources';
+import { Filters, formatFiltersFromFacets, MIME_FACETS } from '../../resources';
 import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { GenerativeModelPipe } from '../../pipes';
 import { TasksAutomationService } from '../tasks-automation.service';
@@ -160,13 +161,15 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     return this.resourceTypeFilters.length;
   }
 
-  languageFilters: OptionModel[] = [];
-  allLanguagesSelected = false;
-  get languageSelectionCount(): number {
-    return this.languageFilters.filter((option) => option.selected).length;
+  fieldTypeFilters: OptionModel[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text, FIELD_TYPE.conversation].map(
+    (t) => new OptionModel({ id: t, value: t, label: t }),
+  );
+  allFieldTypesSelected = false;
+  get fieldTypeSelectionCount(): number {
+    return this.fieldTypeFilters.filter((option) => option.selected).length;
   }
-  get languageTotalCount(): number {
-    return this.languageFilters.length;
+  get fieldTypesTotalCount(): number {
+    return this.fieldTypeFilters.length;
   }
 
   hasLabelSets = this.labelService.hasResourceLabelSets;
@@ -223,13 +226,13 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || []).filter(
           (option) => !this.unsupportedLLMs.includes(option.value),
         );
-        this.form.controls.llm.patchValue({ model: schema?.['generative_model'].default });
+        this.form.controls.llm.patchValue({ model: 'chatgpt-azure-4o-mini' });
         this.formReady.next(true);
       });
 
     this.sdk.currentKb
       .pipe(
-        switchMap((kb) => kb.catalog('', { faceted: MIME_FACETS.concat(LANGUAGE_FACET) })),
+        switchMap((kb) => kb.catalog('', { faceted: MIME_FACETS })),
         map((results) => {
           if (results.type === 'error') {
             return;
@@ -242,9 +245,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       )
       .subscribe((filters) => {
         this.resourceTypeFilters = filters.mainTypes;
-        if (filters.languages) {
-          this.languageFilters = filters.languages;
-        }
         this.cdr.detectChanges();
       });
 
@@ -289,7 +289,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  toggleAll(filter: 'types' | 'languages', event: MouseEvent | KeyboardEvent) {
+  toggleAll(filter: 'types' | 'fieldTypes', event: MouseEvent | KeyboardEvent) {
     const tagName = (event.target as HTMLElement).tagName;
     if (tagName === 'LI' || tagName === 'INPUT') {
       switch (filter) {
@@ -298,9 +298,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
             (option) => new OptionModel({ ...option, selected: !this.allResourceTypesSelected }),
           );
           break;
-        case 'languages':
-          this.languageFilters = this.languageFilters.map(
-            (option) => new OptionModel({ ...option, selected: !this.allLanguagesSelected }),
+        case 'fieldTypes':
+          this.fieldTypeFilters = this.fieldTypeFilters.map(
+            (option) => new OptionModel({ ...option, selected: !this.allFieldTypesSelected }),
           );
           break;
       }
@@ -322,13 +322,13 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   onToggleFilter() {
     this.allResourceTypesSelected = this.resourceTypeFilters.every((option) => option.selected);
-    this.allLanguagesSelected = this.languageFilters.every((option) => option.selected);
+    this.allFieldTypesSelected = this.fieldTypeFilters.every((option) => option.selected);
 
     const selectedResourceTypes = this.resourceTypeFilters
       .filter((option) => option.selected)
       .map((option) => option.value);
-    const selectedLanguages = this.languageFilters.filter((option) => option.selected).map((option) => option.value);
-    this.selectedFilters.next(selectedResourceTypes.concat(selectedLanguages).concat(this.labelFilters));
+    const selectedFieldTypes = this.fieldTypeFilters.filter((option) => option.selected).map((option) => option.value);
+    this.selectedFilters.next(selectedResourceTypes.concat(selectedFieldTypes).concat(this.labelFilters));
   }
 
   activateTask() {

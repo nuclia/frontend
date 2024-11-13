@@ -77,6 +77,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   @Input() set task(value: TaskStatus | undefined) {
     if (value) {
       this._task = value;
+      this._type = value.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks';
       this.initForm(value);
     }
   }
@@ -122,13 +123,18 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   }
 
   initForm(task: TaskStatus) {
-    const labelOperation = task.parameters.operations?.find((operation) => !!operation.label)?.label;
-    if (labelOperation) {
-      this.labelingForm.controls.labels.clear();
-      labelOperation.labels.forEach(() => this.addLabel());
-      this.labelingForm.patchValue(labelOperation);
-      this.labelingForm.disable();
-    }
+    this._updateLabelsets().subscribe(() => {
+      const labelOperation = task.parameters.operations?.find((operation) => !!operation.label)?.label;
+      if (labelOperation) {
+        this.labelingForm.controls.labels.clear();
+        labelOperation.labels.forEach(() => this.addLabel());
+        this.labelingForm.patchValue({
+          ...labelOperation,
+          on: task.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks',
+        });
+        this.labelingForm.disable();
+      }
+    });
   }
 
   addLabel() {
@@ -177,26 +183,35 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
       });
   }
 
-  updateLabelsets(type: 'resources' | 'text-blocks' = 'resources') {
-    this._type = type === 'resources' ? 'resources' : 'text-blocks';
+  private _updateLabelsets(type: 'resources' | 'text-blocks' = 'resources'): Observable<void> {
+    if (type) {
+      this._type = type === 'resources' ? 'resources' : 'text-blocks';
+    }
     if (this._type === 'resources') {
-      forkJoin([
+      return forkJoin([
         this.labelService.resourceLabelSets.pipe(take(1)),
         this.labelService.hasResourceLabelSets.pipe(take(1)),
-      ]).subscribe(([labelSets, hasLabelSet]) => {
-        this.labelSets = labelSets;
-        this.hasLabelSet = hasLabelSet;
-        this.cdr.markForCheck();
-      });
+      ]).pipe(
+        map(([labelSets, hasLabelSet]) => {
+          this.labelSets = labelSets;
+          this.hasLabelSet = hasLabelSet;
+          return undefined;
+        }),
+      );
     } else {
-      forkJoin([
+      return forkJoin([
         this.labelService.textBlockLabelSets.pipe(take(1)),
         this.labelService.hasTextBlockLabelSets.pipe(take(1)),
-      ]).subscribe(([labelSets, hasLabelSet]) => {
-        this.labelSets = labelSets;
-        this.hasLabelSet = hasLabelSet;
-        this.cdr.markForCheck();
-      });
+      ]).pipe(
+        map(([labelSets, hasLabelSet]) => {
+          this.labelSets = labelSets;
+          this.hasLabelSet = hasLabelSet;
+          return undefined;
+        }),
+      );
     }
+  }
+  updateLabelsets(type: 'resources' | 'text-blocks' = 'resources') {
+    this._updateLabelsets(type).subscribe(() => this.cdr.markForCheck());
   }
 }

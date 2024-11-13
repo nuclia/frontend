@@ -52,17 +52,12 @@
         </pa-table-cell>
         <pa-table-cell>
           <div class="badge-container">
-            @if (task.filters.length > 0) {
-              @for (filter of task.filters; track filter) {
-                @if (!!filter && !!filter.count && filter.count > 0) {
-                  <nsi-badge [count]="filter.count">
-                    {{ 'tasks-automation.table.' + filter.label | translate }}
-                  </nsi-badge>
-                }
-              }
-            } @else {
-              <nsi-badge>{{ 'tasks-automation.filters.all-resources' | translate }}</nsi-badge>
-            }
+            <nsi-badge>
+              {{
+                (task.hasFilters ? 'tasks-automation.table.has-filters' : 'tasks-automation.filters.all-resources')
+                  | translate
+              }}
+            </nsi-badge>
           </div>
         </pa-table-cell>
         <pa-table-cell>
@@ -103,7 +98,8 @@
                 <pa-option (selectOption)="restart.emit(task.id)">
                   {{ 'tasks-automation.actions.restart' | translate }}
                 </pa-option>
-              } @else {
+              }
+              @if (task.status === 'progress') {
                 <pa-option (selectOption)="stop.emit(task.id)">
                   {{ 'tasks-automation.actions.stop' | translate }}
                 </pa-option>
