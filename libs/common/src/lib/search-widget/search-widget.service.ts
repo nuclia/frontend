@@ -218,12 +218,7 @@ export class SearchWidgetService {
         const cdn = this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : '';
         const preview = this.sanitizer.bypassSecurityTrustHtml(
           baseSnippet
-            .replace(
-              'zone=',
-              `client="dashboard" backend="${this.backendConfig.getAPIURL()}" cdn="${cdn}" lang="${
-                this.translate.currentLang
-              }" zone=`,
-            )
+            .replace('zone=', `client="dashboard" backend="${this.backendConfig.getAPIURL()}" cdn="${cdn}" zone=`)
             .replace('features="', `features="debug,`)
             .replace(apiKey, '')
             .replace(
