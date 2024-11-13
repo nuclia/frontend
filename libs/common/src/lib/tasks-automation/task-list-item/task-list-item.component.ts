@@ -48,7 +48,7 @@ export class TaskListItemComponent {
       }));
     }
   }
-  get taskList(): (AutomatedTask | OneTimeTask)[] {
+  get taskList(): TaskWithFilters[] {
     return this._taskList;
   }
   @Input({ transform: booleanAttribute }) hasArchive = false;
