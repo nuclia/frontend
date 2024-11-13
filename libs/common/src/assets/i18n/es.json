@@ -1442,7 +1442,7 @@
 	"tasks-automation.graph-extraction.ner-examples.example-placeholder": "Ejemplo de texto donde está presente el NER",
 	"tasks-automation.graph-extraction.ner-examples.ner": "NER",
 	"tasks-automation.graph-extraction.ner-examples.ner-example": "Ejemplo de NER",
-	"tasks-automation.graph-extraction.ner-examples.title": "Ejemplos de entidades",
+	"tasks-automation.graph-extraction.ner-examples.title": "Ejemplos de NER",
 	"tasks-automation.graph-extraction.ner-types.add": "Añadir tipo de NER",
 	"tasks-automation.graph-extraction.ner-types.description": "Tipos de NERs que se considerarán para la extracción.",
 	"tasks-automation.graph-extraction.ner-types.ner-type": "Tipo de NER",
