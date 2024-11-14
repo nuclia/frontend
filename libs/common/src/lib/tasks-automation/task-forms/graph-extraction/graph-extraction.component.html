@@ -93,9 +93,13 @@
                   <pa-input formControlName="name">
                     {{ 'tasks-automation.graph-extraction.ner-examples.ner' | translate }}
                   </pa-input>
-                  <pa-input formControlName="label">
-                    {{ 'tasks-automation.graph-extraction.ner-types.ner-type' | translate }}
-                  </pa-input>
+                  <pa-select formControlName="label" [label]="'tasks-automation.graph-extraction.ner-types.ner-type' | translate">
+                    @for (nerType of nerTypes || []; track nerType) {
+                      <pa-option [value]="nerType">
+                        {{ nerType }}
+                      </pa-option>
+                    }
+                  </pa-select>
                 </div>
                 <pa-textarea
                   formControlName="example"

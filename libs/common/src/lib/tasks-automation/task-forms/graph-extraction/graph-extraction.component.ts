@@ -60,6 +60,10 @@ export class GraphExtractionComponent extends TaskRouteDirective implements OnIn
     return this.graphForm.valid;
   }
 
+  get nerTypes() {
+    return this.entityTypeControls.map((formGroup) => formGroup.controls.label.value);
+  }
+
   get entityTypeControls() {
     return this.graphForm.controls.entity_defs.controls;
   }
