@@ -13,6 +13,7 @@ import {
   UserClassification,
   UserFieldMetadata,
   TokenAnnotation,
+  DEFAULT_NER_KEY,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
 
@@ -153,6 +154,21 @@ export function getGeneratedFieldAnnotations(
         }),
       );
     });
+    Object.entries(resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata?.metadata.entities || {})
+      .filter(([key]) => key !== DEFAULT_NER_KEY)
+      .forEach(([, entities]) => {
+        entities.entities.forEach((entity) => {
+          entity.positions.forEach((position) => {
+            annotations.push({
+              klass: entity.label,
+              family: entity.label,
+              token: entity.text,
+              start: position.start,
+              end: position.end,
+            });
+          });
+        });
+      });
   }
   return annotations;
 }
@@ -218,11 +234,7 @@ export function getAnnotatedText(
       annotation.family
     }" family="${annotation.klass}" start="${annotation.start}" end="${annotation.end}" token="${
       annotation.token
-    }" ${highlightedStyle} >${sliceUnicode(
-      paragraphText,
-      annotation.start,
-      annotation.end,
-    )}</mark>`;
+    }" ${highlightedStyle} >${sliceUnicode(paragraphText, annotation.start, annotation.end)}</mark>`;
     currentIndex = annotation.end;
   });
   textWithMarks += sliceUnicode(paragraphText, currentIndex);
@@ -288,4 +300,31 @@ export function getParagraphsWithImages(
     acc.push(paragraph);
     return acc;
   }, [] as ParagraphWithTextAndImage[]);
+}
+
+export function getCustomEntities(resource: Resource): { [key: string]: string[] } {
+  return resource
+    .getFields()
+    .map((field) => {
+      return Object.entries(field.extracted?.metadata?.metadata?.entities || {})
+        .filter(([key]) => key !== DEFAULT_NER_KEY)
+        .reduce(
+          (acc, [, entities]) => {
+            entities.entities.forEach((entity) => {
+              acc[entity.label] = (acc[entity.label] || []).concat([entity.text]);
+            });
+            return acc;
+          },
+          {} as { [key: string]: string[] },
+        );
+    })
+    .reduce(
+      (acc, val) => {
+        Object.entries(val).forEach(([key, value]) => {
+          acc[key] = (acc[key] || []).concat(value);
+        });
+        return acc;
+      },
+      {} as { [key: string]: string[] },
+    );
 }

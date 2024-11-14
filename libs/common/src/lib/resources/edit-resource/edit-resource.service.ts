@@ -39,6 +39,7 @@ import {
   EditResourceView,
   EntityGroup,
   getClassificationsPayload,
+  getCustomEntities,
   Thumbnail,
 } from './edit-resource.helpers';
 import { generatedEntitiesColor, getNerFamilyTitle } from '../../entities/model';
@@ -126,6 +127,7 @@ export class EditResourceService {
           .sort((a, b) => a.title.localeCompare(b.title));
 
         addEntitiesToGroups(allGroups, resource.getNamedEntities());
+        addEntitiesToGroups(allGroups, getCustomEntities(resource));
         allGroups.forEach((group) => group.entities.sort((a, b) => a.localeCompare(b)));
         return allGroups;
       }),

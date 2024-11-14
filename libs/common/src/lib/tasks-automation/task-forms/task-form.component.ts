@@ -110,7 +110,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   // Flag indicating if the form inside ng-content is valid
   @Input({ transform: booleanAttribute }) validFormInside = false;
   // Task whose data is displayed in the form
-  @Input() set task(value: TaskWithApplyOption | undefined) {
+  @Input() set task(value: TaskWithApplyOption | undefined | null) {
     if (value) {
       this._task = value;
       this.initForm(value);

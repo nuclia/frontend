@@ -282,6 +282,7 @@ export interface FieldMetadata {
   language?: string;
   summary?: string;
   positions?: EntityPositions;
+  entities: FieldEntities;
   relations?: Relation[];
 }
 
@@ -293,6 +294,18 @@ export interface EntityPosition {
   entity: string;
   position: { start: number; end: number }[];
 }
+
+export interface FieldEntities {
+  [key: string]: { entities: FieldEntity[] };
+}
+
+export interface FieldEntity {
+  text: string;
+  label: string;
+  positions: { start: number; end: number }[];
+}
+
+export const DEFAULT_NER_KEY = 'processor';
 
 export interface UserFieldMetadata {
   field: { field: string; field_type: string };

@@ -5,7 +5,7 @@
     </nsi-back-button>
 
     <div>
-      @if (task) {
+      @if (task | async; as task) {
         <h1 class="page-title">{{ task.parameters.name }}</h1>
       } @else {
         <h1 class="page-title">{{ 'tasks-automation.labeler.title' | translate }}</h1>
@@ -21,11 +21,11 @@
     footerNoteAutomation="tasks-automation.labeler.footer.apply-automation"
     footerNoteOneTime="tasks-automation.labeler.footer.apply-one-time"
     [validFormInside]="labelingConfig?.valid"
-    [task]="task"
+    [task]="task | async"
     (activate)="activateTask($event)"
     (cancel)="backToTaskList()">
     <stf-labeling-configuration
-      [task]="task"
+      [task]="task | async"
       (configurationChange)="onConfigurationChange($event)"></stf-labeling-configuration>
 
     <nsi-two-columns-configuration-item

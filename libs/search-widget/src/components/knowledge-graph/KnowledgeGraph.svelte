@@ -6,7 +6,7 @@
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { map, Subject, takeUntil } from 'rxjs';
   import { filter } from 'rxjs/operators';
-  import type { FieldMetadata } from '@nuclia/core';
+  import { DEFAULT_NER_KEY, type EntityPositions, type FieldMetadata } from '@nuclia/core';
 
   export let rightPanelOpen = false;
 
@@ -81,7 +81,8 @@
     return (
       Object.keys(positions)
         .reduce((list, id) => {
-          const [family, ner] = id.split('/');
+          const family = id.split('/')[0];
+          const ner = id.substring(family.length + 1);
           const relevance = positions[id].relevance || 0;
           list.push({
             id,
@@ -130,8 +131,20 @@
     relations: RelationWithRelevance[];
     positions: PositionWithRelevance;
   } {
+    const customNerPositions = Object.entries(metadata.entities)
+      .filter(([key]) => key !== DEFAULT_NER_KEY)
+      .reduce((acc, [, value]) => {
+        value.entities.forEach((entity) => {
+          acc[`${entity.label}/${entity.text}`] = { position: entity.positions, entity: entity.text };
+        });
+        return acc;
+      }, {} as EntityPositions);
     const relations = metadata.relations || [];
-    const positions = JSON.parse(JSON.stringify(metadata.positions || {}));
+    const positions = {
+      ...JSON.parse(JSON.stringify(metadata.positions || {})),
+      ...customNerPositions,
+    };
+
     relations.forEach((relation) => {
       if (relation.from) {
         const from: PositionWithRelevance = positions[`${relation.from.group}/${relation.from.value}`];

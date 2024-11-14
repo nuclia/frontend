@@ -28,9 +28,10 @@
       [newTaskFormReady]="true"></app-task-list-item>
     <app-task-list-item
       taskType="llm-graph"
-      taskTitle="tasks-automation.label-ners.title"
-      taskDescription="tasks-automation.label-ners.description"
-      badge="Coming soon"
+      taskTitle="tasks-automation.graph-extraction.title"
+      taskDescription="tasks-automation.graph-extraction.description"
+      [taskList]="graphTasks | async"
+      [newTaskFormReady]="true"
       (newTask)="createTask('llm-graph')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
