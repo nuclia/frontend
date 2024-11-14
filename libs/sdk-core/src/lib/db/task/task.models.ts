@@ -37,9 +37,9 @@ export enum TaskApplyTo {
 export interface Operation {
   label?: LabelOperation;
   graph?: GraphOperation;
+  qa?: QAOperation;
   // TODO: other kinds of operation
   ask?: null;
-  qa?: null;
   extract?: null;
 }
 
@@ -76,6 +76,13 @@ export interface RelationExample {
   target: string;
   label: string;
   example?: string;
+}
+
+export interface QAOperation {
+  generate_answers_prompt?: string;
+  question_generator_prompt?: string;
+  summary_prompt?: string;
+  system_question_generator_prompt?: string;
 }
 
 /**

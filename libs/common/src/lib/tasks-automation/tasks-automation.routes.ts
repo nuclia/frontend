@@ -21,11 +21,11 @@ export const TASK_AUTOMATION_ROUTES: Routes = [
         component: AskComponent,
       },
       {
-        path: 'question-answer',
+        path: 'synthetic-questions',
         component: QuestionAnswerComponent,
       },
       {
-        path: 'question-answer/:taskId',
+        path: 'synthetic-questions/:taskId',
         component: QuestionAnswerComponent,
       },
       {
