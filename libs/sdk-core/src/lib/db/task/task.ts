@@ -34,7 +34,7 @@ export class TaskManager {
 
   /**
    * Start a new task
-   * @param taskName Name of the task
+   * @param name Name of the task
    * @param parameters Parameters configuring the task
    * @param apply Apply the task to:
    *  - EXISTING: only the resources already existing in the KB.
@@ -42,11 +42,11 @@ export class TaskManager {
    *  - ALL: all the existing and new resources of the KB
    */
   startTask(
-    taskName: TaskName,
+    name: TaskName,
     parameters: any,
     apply: ApplyOption = 'EXISTING',
   ): Observable<StartStopTaskResponse> {
-    return this.nuclia.rest.post(`${this.kb.path}/task/${taskName}/start`, { parameters, apply });
+    return this.nuclia.rest.post(`${this.kb.path}/task/start`, { name, parameters, apply });
   }
 
   /**
