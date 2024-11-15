@@ -1,0 +1,43 @@
+<div class="page-spacing">
+  <header>
+    <nsi-back-button [link]="backRoute | async">
+      {{ 'tasks-automation.bach-to-tasks' | translate }}
+    </nsi-back-button>
+
+    <div>
+      @if (task | async; as task) {
+        <h1 class="page-title">{{ task.parameters.name }}</h1>
+      } @else {
+        <h1 class="page-title">{{ 'tasks-automation.content-safety.title' | translate }}</h1>
+        <p class="page-description">{{ 'tasks-automation.content-safety.description' | translate }}</p>
+      }
+    </div>
+  </header>
+
+  <app-task-form
+    triggerDescription="tasks-automation.content-safety.trigger-description"
+    activateButtonLabel="tasks-automation.content-safety.footer.activate-button-label"
+    footerNoteAutomation="tasks-automation.content-safety.footer.apply-automation"
+    footerNoteOneTime="tasks-automation.content-safety.footer.apply-one-time"
+    [validFormInside]="form.valid"
+    [task]="task | async"
+    (cancel)="backToTaskList()"
+    (activate)="activateTask($event)">
+    <div [formGroup]="form">
+      <nsi-two-columns-configuration-item
+        itemTitle="tasks-automation.content-safety.labeling.title"
+        description="tasks-automation.content-safety.labeling.description">
+        <div class="form-container">
+          <pa-radio-group formControlName="on">
+            <pa-radio value="resources">
+              {{ 'tasks-automation.form.on.resources' | translate }}
+            </pa-radio>
+            <pa-radio value="text-blocks">
+              {{ 'tasks-automation.form.on.text-blocks' | translate }}
+            </pa-radio>
+          </pa-radio-group>
+        </div>
+      </nsi-two-columns-configuration-item>
+    </div>
+  </app-task-form>
+</div>
