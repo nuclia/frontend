@@ -2,7 +2,7 @@ import { OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { Search } from '@nuclia/core';
 import mime from 'mime';
 
-export const MIME_FACETS = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video'];
+export const MIME_FACETS = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video', '/icon/message'];
 export const LANGUAGE_FACET = ['/metadata.language'];
 export const MAX_FACETS_PER_REQUEST = 50;
 
