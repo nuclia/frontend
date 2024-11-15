@@ -9,7 +9,7 @@ export const DEFAULT_FILTERS: FilterSelectionType = {
   created: false,
   labelFamilies: false,
 };
-export const INITIAL_CITATION_THRESHOLD = 0.7;
+export const INITIAL_CITATION_THRESHOLD = 0.4;
 export const MODELS_SUPPORTING_VISION = ['chatgpt-vision', 'gemini-1-5-pro-vision'];
 
 export interface SearchBoxConfig {
