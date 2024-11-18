@@ -12,6 +12,7 @@
 ### Breaking changes
 
 - Remove support for old activity log endpoints: `/feedback`, `/activity/download` and `activity/downloads`
+- Remove `PARAGRAPH/S`, `VECTOR/S` and `DOCUMENT` values from `Search.Features` and `Ask.Features` enums
 
 # 1.22.0 (2024-10-14)
 

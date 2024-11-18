@@ -11,11 +11,6 @@ export namespace Ask {
     KEYWORD = 'keyword',
     SEMANTIC = 'semantic',
     RELATIONS = 'relations',
-
-    /** @deprecated use KEYWORD */
-    PARAGRAPHS = 'paragraphs',
-    /** @deprecated use SEMANTIC */
-    VECTORS = 'vectors',
   }
 
   export interface Answer {

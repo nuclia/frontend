@@ -132,24 +132,12 @@ export namespace Search {
     SEMANTIC = 'semantic',
     FULLTEXT = 'fulltext',
     RELATIONS = 'relations',
-
-    /** @deprecated use KEYWORD */
-    PARAGRAPH = 'paragraph',
-    /** @deprecated use FULLTEXT */
-    DOCUMENT = 'document',
-    /** @deprecated use SEMANTIC */
-    VECTOR = 'vector',
   }
 
   export enum ResourceFeatures {
     KEYWORD = 'keyword',
     SEMANTIC = 'semantic',
     RELATIONS = 'relations',
-
-    /** @deprecated use KEYWORD */
-    PARAGRAPH = 'paragraph',
-    /** @deprecated use SEMANTIC */
-    VECTOR = 'vector',
   }
 
   export enum SuggestionFeatures {

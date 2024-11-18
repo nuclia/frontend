@@ -143,7 +143,7 @@ export const initNuclia = (
     SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
   }
   if (widgetOptions.features?.noBM25forChat) {
-    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.PARAGRAPHS && feature !== Ask.Features.KEYWORD);
+    CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.KEYWORD);
   }
   SHOW_ATTACHED_IMAGES = !!widgetOptions.features?.showAttachedImages;
   showAttachedImages.set(SHOW_ATTACHED_IMAGES);
