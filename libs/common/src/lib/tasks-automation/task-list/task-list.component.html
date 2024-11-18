@@ -46,5 +46,17 @@
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"></app-task-list-item>
+      @if(safetyTasksEnabled | async) {
+        <app-task-list-item
+        taskType="llm-align"
+        taskTitle="tasks-automation.content-safety.title"
+        taskDescription="tasks-automation.content-safety.description"
+        [taskList]="safetyTasks | async"
+        [newTaskFormReady]="true"
+        (newTask)="createTask('llm-align')"
+        (delete)="deleteTask($event)"
+        (restart)="restartTask($event)"
+        (stop)="stopTask($event)"></app-task-list-item>
+      }
   </div>
 </div>

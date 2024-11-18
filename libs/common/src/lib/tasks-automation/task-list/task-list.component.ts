@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { map, of, Subject, switchMap } from 'rxjs';
 import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
+import { FeaturesService } from '@flaps/core';
 
 @Component({
   selector: 'app-task-list',
@@ -20,6 +21,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   private activeRoute = inject(ActivatedRoute);
   private taskAutomation = inject(TasksAutomationService);
   private toaster = inject(SisToastService);
+  private features = inject(FeaturesService);
   private unsubscribeAll = new Subject<void>();
 
   labelerTasks = this.taskAutomation.taskList.pipe(
@@ -28,6 +30,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
   askTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'ask')));
   graphTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'llm-graph')));
   questionAnswerTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'synthetic-questions')));
+  safetyTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'llm-align')));
+  safetyTasksEnabled = this.features.unstable.safetyTasks;
 
   ngOnInit() {
     this.taskAutomation.initTaskList();

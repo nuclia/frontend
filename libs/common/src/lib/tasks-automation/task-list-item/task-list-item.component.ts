@@ -74,6 +74,7 @@ export class TaskListItemComponent {
       case 'llm-graph':
       case 'synthetic-questions':
       case 'ask':
+      case 'llm-align':
         return { field: 'fieldName', header: 'tasks-automation.table.header.field-name' };
       case 'labeler':
         return { field: 'labelSets', header: 'tasks-automation.table.header.label-sets' };

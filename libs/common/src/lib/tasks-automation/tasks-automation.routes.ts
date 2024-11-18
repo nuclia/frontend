@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AskComponent, GraphExtractionComponent, LabelerComponent, QuestionAnswerComponent } from './task-forms';
 import { TasksAutomationComponent } from './tasks-automation.component';
 import { TaskListComponent } from './task-list';
+import { ContentSafetyComponent } from './task-forms/content-safety/content-safety.component';
 
 export const TASK_AUTOMATION_ROUTES: Routes = [
   {
@@ -43,6 +44,14 @@ export const TASK_AUTOMATION_ROUTES: Routes = [
       {
         path: 'llm-graph/:taskId',
         component: GraphExtractionComponent,
+      },
+      {
+        path: 'llm-align',
+        component: ContentSafetyComponent,
+      },
+      {
+        path: 'llm-align/:taskId',
+        component: ContentSafetyComponent,
       },
     ],
   },

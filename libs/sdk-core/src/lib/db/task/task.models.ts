@@ -1,4 +1,4 @@
-export type TaskName = 'labeler' | 'llm-graph' | 'synthetic-questions' | 'ask';
+export type TaskName = 'labeler' | 'llm-graph' | 'synthetic-questions' | 'ask' | 'llm-align';
 export type ApplyOption = 'ALL' | 'EXISTING' | 'NEW';
 
 /**
@@ -38,6 +38,7 @@ export interface Operation {
   label?: LabelOperation;
   graph?: GraphOperation;
   qa?: QAOperation;
+  prompt_guard?: boolean; 
   // TODO: other kinds of operation
   ask?: null;
   extract?: null;
