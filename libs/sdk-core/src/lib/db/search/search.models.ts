@@ -53,6 +53,7 @@ export interface BaseSearchOptions {
   range_modification_start?: string;
   range_modification_end?: string;
   show?: ResourceProperties[];
+  /** @deprecated */
   extracted?: ExtractedDataTypes[];
   field_type_filter?: FIELD_TYPE[];
   resource_filters?: string[];

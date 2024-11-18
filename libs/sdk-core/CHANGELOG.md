@@ -7,6 +7,7 @@
 - Support new endpoints to download activity log data
 - Updated `feedback` method to allow feedback on specific text blocks
 - Add `entities` property to `FieldMetadata` interface
+- Deprecate `extracted` parameter from `/search`, `/find` and `/ask` endpoints
 
 ### Breaking changes
 
