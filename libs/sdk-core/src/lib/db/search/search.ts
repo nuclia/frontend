@@ -15,16 +15,11 @@ export const find = (
   options = options || {};
   if (
     options?.with_synonyms &&
-    (features.includes(Search.Features.VECTOR) ||
-      features.includes(Search.Features.SEMANTIC) ||
-      features.includes(Search.Features.RELATIONS))
+    (features.includes(Search.Features.SEMANTIC) || features.includes(Search.Features.RELATIONS))
   ) {
     console.warn(`with_synonyms option cannot work with SEMANTIC and RELATIONS features`);
     features = features.filter(
-      (feature) =>
-        feature !== Search.Features.VECTOR &&
-        feature !== Search.Features.SEMANTIC &&
-        feature !== Search.Features.RELATIONS,
+      (feature) => feature !== Search.Features.SEMANTIC && feature !== Search.Features.RELATIONS,
     );
   }
   const params: { [key: string]: string | string[] } = {

@@ -53,6 +53,7 @@ export interface BaseSearchOptions {
   range_modification_start?: string;
   range_modification_end?: string;
   show?: ResourceProperties[];
+  /** @deprecated */
   extracted?: ExtractedDataTypes[];
   field_type_filter?: FIELD_TYPE[];
   resource_filters?: string[];
@@ -131,24 +132,12 @@ export namespace Search {
     SEMANTIC = 'semantic',
     FULLTEXT = 'fulltext',
     RELATIONS = 'relations',
-
-    /** @deprecated use KEYWORD */
-    PARAGRAPH = 'paragraph',
-    /** @deprecated use FULLTEXT */
-    DOCUMENT = 'document',
-    /** @deprecated use SEMANTIC */
-    VECTOR = 'vector',
   }
 
   export enum ResourceFeatures {
     KEYWORD = 'keyword',
     SEMANTIC = 'semantic',
     RELATIONS = 'relations',
-
-    /** @deprecated use KEYWORD */
-    PARAGRAPH = 'paragraph',
-    /** @deprecated use SEMANTIC */
-    VECTOR = 'vector',
   }
 
   export enum SuggestionFeatures {
