@@ -98,45 +98,46 @@
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults && !$isEmptySearchQuery}
-    {#if $hasSearchError && !$hasPartialResults}
-      <div class="error">
-        {#if $searchError?.status === 402}
-          <strong>{$_('error.feature-blocked')}</strong>
-        {:else}
-          <strong>{$_('error.search')}</strong>
-        {/if}
+    {#if $hasPartialResults}
+      <div class="partial-results-warning">
+        <strong>{$_('error.partial-results')}</strong>
       </div>
-    {:else if !$pendingResults && $resultList.length === 0 && !$isAnswerEnabled}
-      <strong>{$_('results.empty')}</strong>
-      <div
-        class="results-end"
-        use:renderingDone />
-    {:else}
-      {#if $hasPartialResults}
-        <div class="partial-results-warning">
-          <strong>{$_('error.partial-results')}</strong>
-        </div>
-      {/if}
-      <div class="results-container">
-        <div class="results">
-          {#if $isAnswerEnabled}
-            <InitialAnswer />
-            {#if $jsonSchemaEnabled && $jsonAnswer}
-              <JsonAnswer
-                jsonAnswer={$jsonAnswer}
-                jsonSchema={$widgetJsonSchema} />
+    {/if}
+    <div class="results-container">
+      <div class="results">
+        {#if $isAnswerEnabled}
+          <InitialAnswer />
+          {#if $jsonSchemaEnabled && $jsonAnswer}
+            <JsonAnswer
+              jsonAnswer={$jsonAnswer}
+              jsonSchema={$widgetJsonSchema} />
+          {/if}
+        {/if}
+        {#if !$isAnswerEnabled && $debug}
+          <div>
+            <Button
+              aspect="basic"
+              size="small"
+              on:click={() => downloadDump()}>
+              <span>{$_('answer.download-log')}</span>
+            </Button>
+          </div>
+        {/if}
+
+        {#if $hasSearchError && !$hasPartialResults}
+          <div class="error">
+            {#if $searchError?.status === 402}
+              <strong>{$_('error.feature-blocked')}</strong>
+            {:else}
+              <strong>{$_('error.search')}</strong>
             {/if}
-          {/if}
-          {#if !$isAnswerEnabled && $debug}
-            <div>
-              <Button
-                aspect="basic"
-                size="small"
-                on:click={() => downloadDump()}>
-                <span>{$_('answer.download-log')}</span>
-              </Button>
-            </div>
-          {/if}
+          </div>
+        {:else if !$pendingResults && $resultList.length === 0 && !$isAnswerEnabled}
+          <strong>{$_('results.empty')}</strong>
+          <div
+            class="results-end"
+            use:renderingDone />
+        {:else}
           <div class="search-results">
             {#each $resultList as result, i (getResultUniqueKey(result))}
               <ResultRow
@@ -155,11 +156,11 @@
                 on:loadMore={onLoadMore} />
             {/if}
           </div>
-        </div>
+        {/if}
       </div>
-      {#if $showLoading}
-        <LoadingDots />
-      {/if}
+    </div>
+    {#if $showLoading}
+      <LoadingDots />
     {/if}
   {/if}
 
