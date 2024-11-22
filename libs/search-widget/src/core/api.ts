@@ -142,8 +142,11 @@ export const initNuclia = (
   if (widgetOptions.features?.autocompleteFromNERs) {
     SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
   }
-  if (widgetOptions.features?.noBM25forChat) {
+  if (widgetOptions.features?.noBM25forChat || widgetOptions.features?.semanticOnly) {
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Ask.Features.KEYWORD);
+  }
+  if (widgetOptions.features?.semanticOnly) {
+    SEARCH_MODE = SEARCH_MODE.filter((feature) => feature !== Search.Features.KEYWORD);
   }
   SHOW_ATTACHED_IMAGES = !!widgetOptions.features?.showAttachedImages;
   showAttachedImages.set(SHOW_ATTACHED_IMAGES);

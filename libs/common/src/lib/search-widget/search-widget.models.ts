@@ -247,7 +247,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     // Search configuration
     answers: config.generativeAnswer.generateAnswer,
     preferMarkdown: config.generativeAnswer.generateAnswer && config.generativeAnswer.preferMarkdown,
-    noBM25forChat: config.searchBox.generateAnswerWith === 'only-semantic',
+    semanticOnly: config.searchBox.generateAnswerWith === 'only-semantic',
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,
     orFilterLogic: config.searchBox.filter && config.searchBox.filterLogic === 'or',
