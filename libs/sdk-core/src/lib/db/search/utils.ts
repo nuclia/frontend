@@ -89,6 +89,9 @@ export interface WidgetFeatures {
   knowledgeGraph?: boolean;
   useSynonyms?: boolean;
   autofilter?: boolean;
+  /**
+   * @deprecated use semanticOnly
+   */
   noBM25forChat?: boolean;
   citations?: boolean;
   rephrase?: boolean;
@@ -101,6 +104,7 @@ export interface WidgetFeatures {
   showAttachedImages?: boolean;
   speech?: boolean;
   speechSynthesis?: boolean;
+  semanticOnly?: boolean;
 }
 
 export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';
