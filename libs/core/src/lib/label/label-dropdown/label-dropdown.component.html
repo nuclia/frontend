@@ -40,7 +40,19 @@
     #level2
     dontAdjustPosition
     keepOthersOpen>
-    @for (labelValue of labelValues; track labelValue) {
+    @if (labelValues.length > maxLabels) {
+      <pa-option
+        class="filter"
+        dontCloseOnSelect>
+        <pa-input
+          icon="search"
+          [(value)]="filter"
+          (keyUp)="filterLabels(labelSetExpanded)">
+          {{ 'stash.search' | translate }}
+        </pa-input>
+      </pa-option>
+    }
+    @for (labelValue of filteredLabels || labelValues | slice: 0 : maxLabels; track labelValue) {
       <pa-option
         class="level2-option"
         [disabled]="labelSetSelection"
