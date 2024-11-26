@@ -1,6 +1,9 @@
 <div class="page-spacing">
   <div>
-    <h1 class="page-title">{{ 'tasks-automation.page-title' | translate }}</h1>
+    <h1 class="page-title with-badge">
+      {{ 'tasks-automation.page-title' | translate }}
+      <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+    </h1>
     <div class="page-description">{{ 'tasks-automation.page-description' | translate }}</div>
   </div>
 
@@ -15,6 +18,7 @@
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"
+      [badge]="'generic.badge.beta' | translate"
       [newTaskFormReady]="true"></app-task-list-item>
     <app-task-list-item
       taskType="ask"
@@ -25,6 +29,7 @@
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"
+      [badge]="'generic.badge.beta' | translate"
       [newTaskFormReady]="true"></app-task-list-item>
     <app-task-list-item
       taskType="llm-graph"
@@ -35,6 +40,7 @@
       (newTask)="createTask('llm-graph')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
+      [badge]="'generic.badge.beta' | translate"
       (stop)="stopTask($event)"></app-task-list-item>
     <app-task-list-item
       taskType="synthetic-questions"
@@ -45,9 +51,10 @@
       (newTask)="createTask('synthetic-questions')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
+      [badge]="'generic.badge.beta' | translate"
       (stop)="stopTask($event)"></app-task-list-item>
-      @if(safetyTasksEnabled | async) {
-        <app-task-list-item
+    @if (safetyTasksEnabled | async) {
+      <app-task-list-item
         taskType="llm-align"
         taskTitle="tasks-automation.content-safety.title"
         taskDescription="tasks-automation.content-safety.description"
@@ -56,7 +63,8 @@
         (newTask)="createTask('llm-align')"
         (delete)="deleteTask($event)"
         (restart)="restartTask($event)"
+        [badge]="'generic.badge.beta' | translate"
         (stop)="stopTask($event)"></app-task-list-item>
-      }
+    }
   </div>
 </div>

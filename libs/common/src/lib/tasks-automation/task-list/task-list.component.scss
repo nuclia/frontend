@@ -6,6 +6,12 @@
   gap: rhythm(4);
 }
 
+.with-badge {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+}
+
 .task-list {
   display: flex;
   flex-direction: column;

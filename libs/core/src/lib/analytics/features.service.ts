@@ -59,14 +59,7 @@ export class FeaturesService {
     remiMetrics: this.featureFlag.isFeatureEnabled('remi-metrics'),
     speech: this.featureFlag.isFeatureEnabled('speech'),
     safetyTasks: this.featureFlag.isFeatureEnabled('safety-tasks'),
-
-    // FEATURES meant to go to authorized features once stable
-    taskAutomation: combineLatest([
-      this.featureFlag.isFeatureEnabled('tasks-automation'),
-      this._account.pipe(
-        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
-      ),
-    ]).pipe(map(([isFeatureEnabled, isAccountTypeAllowed]) => isFeatureEnabled && isAccountTypeAllowed)),
+    taskAutomation: this.featureFlag.isFeatureEnabled('tasks-automation'),
   };
 
   /**
@@ -104,5 +97,11 @@ export class FeaturesService {
     vectorset: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('vectorset')]).pipe(
       map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
     ),
+    taskAutomation: combineLatest([
+      this.featureFlag.isFeatureAuthorized('tasks-automation-authorized'),
+      this._account.pipe(
+        map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
+      ),
+    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed))
   };
 }

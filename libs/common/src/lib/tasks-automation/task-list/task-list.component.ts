@@ -5,13 +5,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { map, of, Subject, switchMap } from 'rxjs';
-import { InfoCardComponent, SisToastService } from '@nuclia/sistema';
+import { BadgeComponent, InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { FeaturesService } from '@flaps/core';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, TaskListItemComponent, TranslateModule, InfoCardComponent],
+  imports: [BadgeComponent, CommonModule, TaskListItemComponent, TranslateModule, InfoCardComponent],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

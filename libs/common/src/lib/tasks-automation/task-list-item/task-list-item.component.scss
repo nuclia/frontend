@@ -16,6 +16,11 @@
     .title-m {
       line-height: line-height(m);
     }
+    .with-badge {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+    }
     .description {
       color: $color-neutral-regular;
     }
