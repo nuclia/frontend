@@ -23,6 +23,7 @@ export class LabelDropdownComponent {
   @Input({ transform: booleanAttribute }) disabled = false;
   @Input({ transform: booleanAttribute }) labelSetSelection = false;
   @Input({ transform: booleanAttribute }) single = false;
+  @Input({ transform: booleanAttribute }) multiple = false;
   @Input({ transform: booleanAttribute }) fullWidth = false;
   @Input() size: Size = 'medium';
   @Input()
@@ -47,6 +48,9 @@ export class LabelDropdownComponent {
   labelValues: Classification[] = [];
   open = false;
   checkboxSelection: string[] = [];
+  filter = '';
+  filteredLabels?: Classification[];
+  maxLabels = 100;
 
   onLevel1Selection(labelSetType: string, labelSet: LabelSet) {
     if (this.labelSetSelection && this.single) {
@@ -56,6 +60,8 @@ export class LabelDropdownComponent {
       this.level2Popup?.close();
       this.labelValues = labelSet.labels.map((label) => ({ labelset: labelSetType, label: label.title }));
     }
+    this.filter = '';
+    this.filteredLabels = undefined;
   }
 
   closeDropdowns() {
@@ -74,7 +80,7 @@ export class LabelDropdownComponent {
     let newSelectedLabels;
 
     if (!this.checkboxSelection.includes(checkboxValue)) {
-      const isMultiple = this.labelSets[labelValue.labelset]?.multiple;
+      const isMultiple = this.labelSets[labelValue.labelset]?.multiple || this.multiple;
       newSelectedLabels = isMultiple
         ? this.selection.concat([labelValue])
         : this.selection.filter((item) => item.labelset !== labelValue.labelset).concat([labelValue]);
@@ -93,6 +99,16 @@ export class LabelDropdownComponent {
       this.selectionChange.emit(this.selection);
     } else if ((event.target as HTMLElement).tagName === 'LI') {
       this.toggleLabel(labelValue);
+    }
+  }
+
+  filterLabels(labelset: string) {
+    if (this.filter.length <= 2) {
+      this.filteredLabels = undefined;
+    } else {
+      this.filteredLabels = (this.labelSets?.[labelset].labels || [])
+        .filter((label) => label.title.toLowerCase().includes(this.filter.toLowerCase()))
+        .map((label) => ({ labelset, label: label.title }));
     }
   }
 }

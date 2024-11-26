@@ -15,7 +15,7 @@ import {
   MAX_FACETS_PER_REQUEST,
   MIME_FACETS,
 } from '../resource-filters.utils';
-import { Search } from '@nuclia/core';
+import { Classification, getFilterFromLabel, getLabelFromFilter, LabelSets, Search } from '@nuclia/core';
 
 @Component({
   templateUrl: './resource-list.component.html',
@@ -42,8 +42,7 @@ export class ResourceListComponent implements OnDestroy {
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
   filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
-  displayedClassifications: OptionModel[] = [];
-  filterLabels = '';
+  displayedLabelSets: LabelSets = {};
 
   dateForm = new FormGroup({
     start: new FormControl<string>(''),
@@ -94,7 +93,6 @@ export class ResourceListComponent implements OnDestroy {
             return this.loadFilters();
           } else {
             this.filterOptions = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
-            this.displayedClassifications = [];
             this.cdr.markForCheck();
             return of(null);
           }
@@ -138,6 +136,15 @@ export class ResourceListComponent implements OnDestroy {
       option.selected = !option.selected;
       this.onToggleFilter();
     }
+  }
+
+  updateClassifications(selection: Classification[]) {
+    const filters = selection.map((label) => getFilterFromLabel(label));
+    this.filterOptions.classification.forEach((option) => {
+      option.selected = filters.includes(option.id);
+    });
+    this.cdr.markForCheck();
+    this.onToggleFilter();
   }
 
   applyDates() {
@@ -186,27 +193,20 @@ export class ResourceListComponent implements OnDestroy {
     this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
     this.resourceListService.filter([]);
     this.filterOptions.classification.forEach((option) => (option.selected = false));
-    this.filterLabels = '';
-    this.setDisplayedClassifications();
     this.filterOptions.mainTypes.forEach((option) => (option.selected = false));
     this.filterOptions.hidden = undefined;
   }
 
-  setDisplayedClassifications(refresh = false) {
-    this.displayedClassifications = this.filterOptions.classification
-      .filter((option) => !this.filterLabels || option.label.includes(this.filterLabels))
-      .slice(0, 100);
-    if (refresh) {
-      this.cdr.markForCheck();
-    }
-  }
-
-  get selectedMainTypes() {
+  get selectedMainTypeOptions() {
     return this.filterOptions.mainTypes.filter((option) => option.selected);
   }
 
-  get selectedClassifications() {
+  get selectedClassificationOptions() {
     return this.filterOptions.classification.filter((option) => option.selected);
+  }
+
+  get selectedClassifications() {
+    return this.selectedClassificationOptions.map((option) => getLabelFromFilter(option.id));
   }
 
   get selectedVisibility() {
@@ -238,11 +238,11 @@ export class ResourceListComponent implements OnDestroy {
     ]).pipe(
       switchMap(([labelSets, queryParams, prevFilters]) => {
         const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-        return this.getFacets(faceted).pipe(map((facets) => ({ facets, queryParams, prevFilters })));
+        return this.getFacets(faceted).pipe(map((facets) => ({ facets, labelSets, queryParams, prevFilters })));
       }),
-      map(({ facets, queryParams, prevFilters }) => {
+      map(({ facets, labelSets, queryParams, prevFilters }) => {
         const previousFilters = queryParams.get('preserveFilters') ? prevFilters : queryParams.getAll('filters');
-        this.formatFiltersFromFacets(facets, previousFilters);
+        this.formatFiltersFromFacets(facets, labelSets, previousFilters);
         if (previousFilters.length > 0) {
           this.onToggleFilter();
         }
@@ -280,14 +280,37 @@ export class ResourceListComponent implements OnDestroy {
     );
   }
 
-  private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[] = []) {
+  private formatFiltersFromFacets(
+    allFacets: Search.FacetsResult,
+    labelSets: LabelSets,
+    queryParamsFilters: string[] = [],
+  ) {
     const filters = formatFiltersFromFacets(allFacets, queryParamsFilters);
     this.filterOptions = filters;
-    this.setDisplayedClassifications();
     this.dateForm.patchValue({
       start: filters.creation?.start?.date,
       end: filters.creation?.end?.date,
     });
+    this.setDisplayedLabelSets(labelSets);
+  }
+
+  private setDisplayedLabelSets(labelSets: LabelSets) {
+    const filters = this.filterOptions.classification.map((option) => option.id);
+    this.displayedLabelSets = Object.entries(labelSets)
+      .map(([key, value]) => {
+        const labelSet = {
+          ...value,
+          labels: value.labels.filter((label) =>
+            filters.includes(getFilterFromLabel({ labelset: key, label: label.title })),
+          ),
+        };
+        return { key, labelSet };
+      })
+      .filter(({ labelSet }) => labelSet.labels.length > 0)
+      .reduce((acc, { key, labelSet }) => {
+        acc[key] = labelSet;
+        return acc;
+      }, {} as LabelSets);
     this.cdr.markForCheck();
   }
 }

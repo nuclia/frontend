@@ -4,4 +4,10 @@
   .level2-option ::ng-deep .pa-option {
     height: rhythm(5);
   }
+  .filter {
+    background-color: $color-light-stronger;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 }

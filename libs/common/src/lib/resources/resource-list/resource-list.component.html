@@ -24,7 +24,7 @@
               [disabled]="filterOptions.mainTypes.length === 0"
               [popupRef]="mainTypeFilters">
               {{ 'resource.filter.resource-type' | translate }}
-              {{ selectedMainTypes.length ? '(' + selectedMainTypes.length + ')' : '' }}
+              {{ selectedMainTypeOptions.length ? '(' + selectedMainTypeOptions.length + ')' : '' }}
             </nsi-dropdown-button>
             <pa-dropdown #mainTypeFilters>
               @for (option of filterOptions.mainTypes; track option.id) {
@@ -42,37 +42,17 @@
             </pa-dropdown>
           </div>
           <div>
-            <nsi-dropdown-button
-              freeWidth
-              aspect="basic"
+            <app-label-dropdown
+              [labelSets]="displayedLabelSets"
+              [selection]="selectedClassifications"
+              (selectionChange)="updateClassifications($event)"
               [disabled]="filterOptions.classification.length === 0"
-              [popupRef]="classificationFilters">
+              [fullWidth]="true"
+              [multiple]="true"
+              aspect="basic">
               {{ 'resource.classification-column' | translate }}
               {{ selectedClassifications.length ? '(' + selectedClassifications.length + ')' : '' }}
-            </nsi-dropdown-button>
-            <pa-dropdown #classificationFilters>
-              @if (filterOptions.classification.length > 100) {
-                <pa-option dontCloseOnSelect>
-                  <pa-input
-                    icon="search"
-                    [(value)]="filterLabels"
-                    (keyUp)="setDisplayedClassifications()">
-                    {{ 'stash.search' | translate }}
-                  </pa-input>
-                </pa-option>
-              }
-              @for (option of displayedClassifications; track option.id) {
-                <pa-option
-                  (selectOption)="onSelectFilter(option, $event)"
-                  dontCloseOnSelect>
-                  <pa-checkbox
-                    [(value)]="option.selected"
-                    (valueChange)="onToggleFilter()">
-                    {{ option.label }}
-                  </pa-checkbox>
-                </pa-option>
-              }
-            </pa-dropdown>
+            </app-label-dropdown>
           </div>
 
           <div>
@@ -195,10 +175,10 @@
         @if (isFiltering | async) {
           <div class="filtered-by title-xxs">{{ 'resource.filtered-by' | translate }}</div>
         }
-        @for (option of selectedClassifications; track option.value) {
+        @for (option of selectedClassificationOptions; track option.value) {
           <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
         }
-        @for (option of selectedMainTypes; track option.value) {
+        @for (option of selectedMainTypeOptions; track option.value) {
           <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
         }
         @if (filterOptions.creation.start) {
