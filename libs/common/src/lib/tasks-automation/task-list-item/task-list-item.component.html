@@ -1,6 +1,13 @@
 <header>
   <div>
-    <div class="title-m">{{ taskTitle | translate }}</div>
+    <div
+      class="title-m"
+      [class.with-badge]="badge">
+      {{ taskTitle | translate }}
+      @if (badge) {
+        <nsi-badge kind="tertiary">{{ badge }}</nsi-badge>
+      }
+    </div>
     <div class="description body-s">{{ taskDescription | translate }}</div>
   </div>
   <div class="actions">
@@ -17,9 +24,6 @@
         (click)="newTask.emit()">
         {{ 'tasks-automation.cta.new-task' | translate }}
       </pa-button>
-    }
-    @if (badge) {
-      <nsi-badge kind="tertiary">{{ badge }}</nsi-badge>
     }
   </div>
 </header>

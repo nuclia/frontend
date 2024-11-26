@@ -36,11 +36,11 @@
               <span class="nav-link-title">{{ 'navbar.list' | translate }}</span>
             </a>
             <a
-              [routerLink]="!(invalidKey | async) ? kbUrl + '/sync' : null"
+              [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/sync' : null"
               routerLinkActive="active"
               class="nav-link"
               data-cy="go-to-sync"
-              [class.disabled]="invalidKey | async">
+              [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
               <pa-icon name="connectors"></pa-icon>
               <span class="nav-link-title">{{ 'navbar.sync' | translate }}</span>
             </a>
@@ -102,18 +102,35 @@
                 <pa-icon name="settings"></pa-icon>
                 <span class="nav-link-title">{{ 'navbar.ai-models' | translate }}</span>
               </a>
-              @if (isRemiMetricsEnabled | async) {
-                <a
-                  [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics' : null"
-                  routerLinkActive="active"
-                  class="nav-link sub-item"
-                  data-cy="go-to-metrics"
-                  [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
-                  <pa-icon name="chart"></pa-icon>
-                  <span class="nav-link-title">{{ 'navbar.metrics' | translate }}</span>
-                </a>
-              }
               @if (!standalone) {
+                @if (isTasksAutomationEnabled | async) {
+                  <a
+                    [routerLink]="
+                      (isAdminOrContrib | async) && (isTasksAutomationAuthorized | async) ? kbUrl + '/tasks' : null
+                    "
+                    routerLinkActive="active"
+                    data-cy="go-to-tasks"
+                    class="nav-link sub-item"
+                    [class.disabled]="!(isAdminOrContrib | async)"
+                    [stfUnauthorizedFeature]="(isTasksAutomationAuthorized | async) === false">
+                    <pa-icon name="submenu"></pa-icon>
+                    <span class="nav-link-title">{{ 'tasks-automation.page-title' | translate }}</span>
+                    @if (isTasksAutomationAuthorized | async) {
+                      <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+                    }
+                  </a>
+                }
+                @if (isRemiMetricsEnabled | async) {
+                  <a
+                    [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics' : null"
+                    routerLinkActive="active"
+                    class="nav-link sub-item"
+                    data-cy="go-to-metrics"
+                    [class.disabled]="!(isAdminOrContrib | async) || (invalidKey | async)">
+                    <pa-icon name="chart"></pa-icon>
+                    <span class="nav-link-title">{{ 'navbar.metrics' | translate }}</span>
+                  </a>
+                }
                 <a
                   [routerLink]="
                     (isAdminOrContrib | async) && (isActivityAuthorized | async) ? kbUrl + '/activity/download' : null
@@ -171,16 +188,6 @@
                 }
 
                 @if (isKbAdmin | async) {
-                  @if (isTasksAutomationEnabled | async) {
-                    <a
-                      [routerLink]="kbUrl + '/tasks'"
-                      routerLinkActive="active"
-                      data-cy="go-to-tasks"
-                      class="nav-link sub-item">
-                      <pa-icon name="submenu"></pa-icon>
-                      <span class="nav-link-title">{{ 'tasks-automation.page-title' | translate }}</span>
-                    </a>
-                  }
                   <a
                     [routerLink]="(isPromptLabAuthorized | async) ? kbUrl + '/rag-lab' : null"
                     routerLinkActive="active"
