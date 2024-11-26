@@ -18,6 +18,7 @@ export namespace Ask {
     text: string;
     id: string;
     sources?: Search.FindResults;
+    prequeries?: { [key: string]: Omit<Search.FindResults, 'type'> };
     citations?: Citations;
     jsonAnswer?: any;
     incomplete?: boolean;
@@ -42,6 +43,7 @@ export namespace Ask {
       | AnswerJsonResponseItem
       | MetadataAskResponseItem
       | CitationsAskResponseItem
+      | PrequeriesResponseItem
       | StatusAskResponseItem
       | ErrorAskResponseItem
       | RelationsAskResponseItem
@@ -72,6 +74,11 @@ export namespace Ask {
   export interface CitationsAskResponseItem {
     type: 'citations';
     citations: Citations;
+  }
+
+  export interface PrequeriesResponseItem {
+    type: 'prequeries';
+    results: { [key: string]: Omit<Search.FindResults, 'type'> };
   }
 
   export interface StatusAskResponseItem {
@@ -110,6 +117,8 @@ export namespace Ask {
     answer: string;
     status: string;
     retrieval_results: Search.FindResults;
+    retrieval_best_matches: string[];
+    prequeries: { [key: string]: Omit<Search.FindResults, 'type'> };
     learning_id: string;
     relations: Search.Relations;
     citations: Citations;
