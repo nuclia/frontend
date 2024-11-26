@@ -1,7 +1,7 @@
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
 import { Ask } from './ask.models';
-import { ChatOptions } from './search.models';
+import { ChatOptions, Search } from './search.models';
 
 import { ResourceProperties } from '../db.models';
 
@@ -109,6 +109,11 @@ export function ask(
           }
           const citationsItem = items.find((item) => item.item.type === 'citations');
           const citations = citationsItem ? (citationsItem.item as Ask.CitationsAskResponseItem).citations : undefined;
+          const prequeriesItem = items.find((item) => item.item.type === 'prequeries');
+          const prequeries: { [key: string]: Omit<Search.FindResults, 'type'> } | undefined = prequeriesItem
+            ? (prequeriesItem.item as Ask.PrequeriesResponseItem).results
+            : undefined;
+
           const jsonAnswerItem = items.find((response) => response.item.type === 'answer_json');
           let jsonAnswer: Ask.AnswerJsonResponseItem | undefined;
           if (jsonAnswerItem) {
@@ -136,6 +141,7 @@ export function ask(
             incomplete,
             id,
             citations,
+            prequeries,
             jsonAnswer: jsonAnswer?.object,
             metadata,
             promptContext,

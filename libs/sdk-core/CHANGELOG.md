@@ -8,6 +8,7 @@
 - Updated `feedback` method to allow feedback on specific text blocks
 - Add `entities` property to `FieldMetadata` interface
 - Deprecate `extracted` parameter from `/search`, `/find` and `/ask` endpoints
+- Support prequeries results in `/ask` endpoint
 
 ### Breaking changes
 
