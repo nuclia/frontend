@@ -20,6 +20,7 @@ import {
   FullKbUser,
   IKnowledgeBox,
   IKnowledgeBoxCreation,
+  IKnowledgeBoxStandalone,
   InviteKbData,
   IWritableKnowledgeBox,
   KbInvite,
@@ -121,15 +122,21 @@ export class KnowledgeBox implements IKnowledgeBox {
     return `${this.nuclia.regionalBackend}/v1/kb/${this.id}`;
   }
 
-  constructor(nuclia: INuclia, account: string, data: IKnowledgeBoxCreation) {
+  constructor(nuclia: INuclia, account: string, data: IKnowledgeBoxCreation | IKnowledgeBoxStandalone) {
     this.nuclia = nuclia;
     this.accountId = account;
-    Object.assign(this, data);
-    if (!data.id && data.uuid) {
+    if ('uuid' in data) {
       this.id = data.uuid;
+      this.slug = data.slug;
+      this.title = data.config?.title || '';
+      this.description = data.config?.description;
+      this.hidden_resources_enabled = data.config?.hidden_resources_enabled;
+      this.hidden_resources_hide_on_creation = data.config?.hidden_resources_hide_on_creation;
+    } else {
+      Object.assign(this, data);
     }
-    if (!data.title && data.slug) {
-      this.title = data.slug;
+    if (!this.title && this.slug) {
+      this.title = this.slug;
     }
   }
 

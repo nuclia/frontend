@@ -41,7 +41,13 @@ import {
   UsagePoint,
   Welcome,
 } from './db.models';
-import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation } from './kb';
+import type {
+  EventList,
+  IKnowledgeBoxCreation,
+  IKnowledgeBoxItem,
+  IKnowledgeBoxStandalone,
+  KnowledgeBoxCreation,
+} from './kb';
 import { IStandaloneKb, WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
@@ -202,16 +208,16 @@ export class Db implements IDb {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
 
-      const kbEndpoint = this.nuclia.options.standalone ? `/kb/${kbId}` : `/account/${accountID}/kb/${kbId}`;
+      const request: Observable<IKnowledgeBoxCreation | IKnowledgeBoxStandalone> = this.nuclia.options.standalone
+        ? this.nuclia.rest.get<IKnowledgeBoxStandalone>(`/kb/${kbId}`)
+        : this.nuclia.rest.get<IKnowledgeBoxCreation>(
+            `/account/${accountID}/kb/${kbId}`,
+            undefined,
+            undefined,
+            this.nuclia.options.proxy ? undefined : zoneSlug,
+          );
 
-      return this.nuclia.rest
-        .get<IKnowledgeBox>(
-          kbEndpoint,
-          undefined,
-          undefined,
-          this.nuclia.options.standalone || this.nuclia.options.proxy ? undefined : zoneSlug,
-        )
-        .pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));
+      return request.pipe(map((kb) => new WritableKnowledgeBox(this.nuclia, accountID as string, kb)));
     } else {
       if ((!this.nuclia.options.knowledgeBox && !kbId) || (!this.nuclia.options.zone && !zone)) {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
@@ -246,22 +252,16 @@ export class Db implements IDb {
     knowledgeBox: KnowledgeBoxCreation,
     zone?: string,
   ): Observable<WritableKnowledgeBox> {
-    let creation: Observable<IKnowledgeBox>;
+    let creation: Observable<string>;
     if (this.nuclia.options.standalone) {
-      creation = this.nuclia.rest.post<IKnowledgeBox>('/kbs', knowledgeBox);
+      creation = this.nuclia.rest.post<IKnowledgeBoxStandalone>('/kbs', knowledgeBox).pipe(map((res) => res.uuid));
     } else {
-      creation = this.nuclia.rest.post<IKnowledgeBox>(
-        `/account/${accountId}/kbs`,
-        knowledgeBox,
-        undefined,
-        undefined,
-        undefined,
-        zone,
-      );
+      creation = this.nuclia.rest
+        .post<IKnowledgeBoxCreation>(`/account/${accountId}/kbs`, knowledgeBox, undefined, undefined, undefined, zone)
+        .pipe(map((res) => res.id));
     }
     return creation.pipe(
-      switchMap((res) => {
-        const id = res.id || res.uuid;
+      switchMap((id) => {
         if (!id) {
           throw 'Knowledge Box creation failed';
         }
