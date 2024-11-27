@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { Sluggable } from '../validators';
+import { StandaloneService } from '../services';
 
 @Component({
   templateUrl: './knowledge-box-settings.component.html',
@@ -21,7 +22,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   kb?: WritableKnowledgeBox;
   kbForm = new FormGroup({
     uid: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    zone: new FormControl<string>('', { nonNullable: true }),
     slug: new FormControl<string>('', { nonNullable: true, validators: [Sluggable(true)] }),
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl<string>('', { nonNullable: true }),
@@ -45,6 +46,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
 
   saving = false;
+  standalone = this.standaloneService.standalone;
 
   constructor(
     private sdk: SDKService,
@@ -53,6 +55,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private router: Router,
     private toast: SisToastService,
     private modal: SisModalService,
+    private standaloneService: StandaloneService,
   ) {}
 
   ngOnInit(): void {

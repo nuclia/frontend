@@ -24,11 +24,22 @@ export interface IKnowledgeBoxCreation {
   state?: KBStates;
   description?: string;
   zone: string;
-  uuid?: string;
   allowed_origins?: string[] | null;
   search_configs?: { [key: string]: any };
   hidden_resources_enabled?: boolean;
   hidden_resources_hide_on_creation?: boolean;
+}
+
+export interface IKnowledgeBoxStandalone {
+  slug: string;
+  uuid: string;
+  config?: {
+    slug?: string;
+    title?: string;
+    description?: string;
+    hidden_resources_enabled?: boolean;
+    hidden_resources_hide_on_creation?: boolean;
+  };
 }
 
 export interface IKnowledgeBoxItem extends IKnowledgeBoxCreation {

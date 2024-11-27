@@ -52,13 +52,15 @@
             </pa-toggle>
           }
 
-          <pa-textarea
-            formControlName="allowed_origins"
-            help="kb.form.allowed_origins.help"
-            rows="3"
-            resizable>
-            {{ 'kb.form.allowed_origins.label' | translate }}
-          </pa-textarea>
+          @if (!standalone) {
+            <pa-textarea
+              formControlName="allowed_origins"
+              help="kb.form.allowed_origins.help"
+              rows="3"
+              resizable>
+              {{ 'kb.form.allowed_origins.label' | translate }}
+            </pa-textarea>
+          }
 
           @if (kb.state?.toLowerCase(); as state) {
             <div class="kb-status">

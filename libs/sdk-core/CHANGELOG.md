@@ -1,4 +1,10 @@
-# 1.23.0 (unreleased)
+# 1.23.1 (unreleased)
+
+### Bug fix
+
+- Correct the data returned by `getKnowledgeBox` and `createKnowledgeBox` methods in standalone mode
+
+# 1.23.0 (2024-11-26)
 
 ### Improvement
 
