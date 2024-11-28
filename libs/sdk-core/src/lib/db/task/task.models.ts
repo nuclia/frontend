@@ -1,4 +1,4 @@
-export type TaskName = 'labeler' | 'llm-graph' | 'synthetic-questions' | 'ask' | 'llm-align';
+export type TaskName = 'labeler' | 'llm-graph' | 'synthetic-questions' | 'ask' | 'llama-guard' | 'prompt-guard';
 export type ApplyOption = 'ALL' | 'EXISTING' | 'NEW';
 
 /**
@@ -38,9 +38,10 @@ export interface Operation {
   label?: LabelOperation;
   graph?: GraphOperation;
   qa?: QAOperation;
-  prompt_guard?: boolean; 
+  prompt_guard?: boolean;
+  llama_guard?: boolean;
+  ask?: AskOperation;
   // TODO: other kinds of operation
-  ask?: null;
   extract?: null;
 }
 
@@ -84,6 +85,12 @@ export interface QAOperation {
   question_generator_prompt?: string;
   summary_prompt?: string;
   system_question_generator_prompt?: string;
+}
+
+export interface AskOperation {
+  question?: string;
+  destination?: string;
+  json?: boolean;
 }
 
 /**

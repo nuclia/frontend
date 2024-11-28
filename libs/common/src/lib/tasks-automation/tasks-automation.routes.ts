@@ -3,6 +3,7 @@ import { AskComponent, GraphExtractionComponent, LabelerComponent, QuestionAnswe
 import { TasksAutomationComponent } from './tasks-automation.component';
 import { TaskListComponent } from './task-list';
 import { ContentSafetyComponent } from './task-forms/content-safety/content-safety.component';
+import { LLMSecurityComponent } from './task-forms/llm-security/llm-security.component';
 
 export const TASK_AUTOMATION_ROUTES: Routes = [
   {
@@ -46,11 +47,19 @@ export const TASK_AUTOMATION_ROUTES: Routes = [
         component: GraphExtractionComponent,
       },
       {
-        path: 'llm-align',
+        path: 'prompt-guard',
+        component: LLMSecurityComponent,
+      },
+      {
+        path: 'prompt-guard/:taskId',
+        component: LLMSecurityComponent,
+      },
+      {
+        path: 'llama-guard',
         component: ContentSafetyComponent,
       },
       {
-        path: 'llm-align/:taskId',
+        path: 'llama-guard/:taskId',
         component: ContentSafetyComponent,
       },
     ],

@@ -30,7 +30,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
   askTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'ask')));
   graphTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'llm-graph')));
   questionAnswerTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'synthetic-questions')));
-  safetyTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'llm-align')));
+  contentSafetyTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'llama-guard')));
+  llmSecurityTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'prompt-guard')));
   safetyTasksEnabled = this.features.unstable.safetyTasks;
 
   ngOnInit() {
