@@ -5,7 +5,7 @@ import { standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { selectAnimations } from '../utils';
 import { Account } from '@nuclia/core';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-select-account',
@@ -15,7 +15,9 @@ import { takeUntil } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectAccountComponent implements OnInit, OnDestroy {
-  accounts: Observable<Account[] | null> = this.selectService.accounts;
+  accounts: Observable<Account[] | null> = this.selectService.accounts.pipe(
+    map((accounts) => (accounts || []).sort((a, b) => a.title.localeCompare(b.title))),
+  );
   selectKb: boolean = false;
   unsubscribeAll = new Subject<void>();
 
