@@ -36,9 +36,9 @@ export class AskComponent extends TaskRouteDirective {
   taskAutomation = inject(TasksAutomationService);
   toaster = inject(SisToastService);
   askForm = new FormGroup({
-    isJSON: new FormControl<boolean>(false),
-    question: new FormControl<string>('', [Validators.required]),
-    fieldName: new FormControl<string>('', [Validators.required]),
+    isJSON: new FormControl<boolean>(false, { nonNullable: true }),
+    question: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    fieldName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   jsonExample = {

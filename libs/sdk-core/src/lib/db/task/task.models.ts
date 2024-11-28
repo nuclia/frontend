@@ -38,8 +38,8 @@ export interface Operation {
   label?: LabelOperation;
   graph?: GraphOperation;
   qa?: QAOperation;
-  prompt_guard?: boolean;
-  llama_guard?: boolean;
+  prompt_guard?: { enabled: boolean };
+  llama_guard?: { enabled: boolean };
   ask?: AskOperation;
   // TODO: other kinds of operation
   extract?: null;
@@ -110,8 +110,8 @@ export interface LLMConfig {
 export interface TaskParameters {
   name: string;
   filter: {
-    contains: string[];
-    resource_type: string[];
+    contains?: string[];
+    resource_type?: string[];
   };
   llm: LLMConfig;
   on?: TaskApplyTo;

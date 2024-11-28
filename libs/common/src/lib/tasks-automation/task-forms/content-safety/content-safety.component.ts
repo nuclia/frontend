@@ -26,7 +26,7 @@ export class ContentSafetyComponent extends TaskRouteDirective {
           filter: commonConfig.filter,
           llm: commonConfig.llm,
           on: TaskApplyTo.FULL_FIELD,
-          operations: [{ llama_guard: true }],
+          operations: [{ llama_guard: { enabled: true } }],
         },
         commonConfig.applyTaskTo,
       )

@@ -277,7 +277,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.form.patchValue({
           ...task.parameters,
-          filter: { ...task.parameters.filter, contains: task.parameters.filter.contains[0] || '' },
+          filter: { ...task.parameters.filter, contains: task.parameters.filter.contains?.[0] || '' },
           applyTaskTo: task.applyOption,
         });
         this.form.disable();

@@ -8,7 +8,7 @@ import {
   OneTimeTask,
   resolveSchemaReferences,
 } from './tasks-automation.models';
-import { ApplyOption, TaskFullDefinition, TaskListResponse, TaskName } from '@nuclia/core';
+import { ApplyOption, TaskFullDefinition, TaskListResponse, TaskName, TaskParameters } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +32,7 @@ export class TasksAutomationService {
       });
   }
 
-  startTask(taskName: TaskName, parameters: any, apply: ApplyOption) {
+  startTask(taskName: TaskName, parameters: TaskParameters, apply: ApplyOption) {
     return this._currentKb.pipe(
       take(1),
       switchMap((kb) =>
