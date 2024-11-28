@@ -7,6 +7,7 @@ import { SelectAccountComponent } from './select-account.component';
 import { TranslatePipeMock } from '@flaps/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { of } from 'rxjs';
 
 describe('SelectComponent', () => {
   let component: SelectAccountComponent;
@@ -22,6 +23,7 @@ describe('SelectComponent', () => {
           useValue: {
             getAccounts: () => [],
             getKbs: () => ({}),
+            accounts: of([]),
           },
         },
         MockProvider('staticEnvironmentConfiguration', { standalone: false }),
