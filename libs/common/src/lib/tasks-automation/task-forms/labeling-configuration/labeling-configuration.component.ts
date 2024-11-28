@@ -31,7 +31,7 @@ import {
 import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo, TaskStatus } from '@nuclia/core';
 import { filter, forkJoin, map, Observable, Subject } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { take, takeUntil } from 'rxjs/operators';
+import { switchMap, take, takeUntil } from 'rxjs/operators';
 
 export interface LabelingConfiguration {
   label: LabelOperation;
@@ -172,6 +172,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
       .onClose.pipe(
         filter((labelset) => !!labelset),
         map((data) => data as { id: string; labelSet: LabelSet }),
+        switchMap((data) => this._updateLabelsets(this.type).pipe(map(() => data))),
       )
       .subscribe((data) => {
         if (
