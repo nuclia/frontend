@@ -20,7 +20,7 @@ export class AccountListComponent {
           )
         : accounts,
     ),
-    map((accounts) => accounts.sort((a, b) => a.title.localeCompare(b.title))),
+    map((accounts) => accounts.sort((a, b) => `${a.type}-${a.title}`.localeCompare(`${b.type}-${b.title}`))),
   );
 
   lastIndex = 100;
