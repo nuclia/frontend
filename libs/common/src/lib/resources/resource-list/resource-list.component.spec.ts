@@ -5,6 +5,7 @@ import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
 import {
   BackendConfigurationService,
   FeaturesService,
+  LabelDropdownComponent,
   LabelsService,
   NavigationService,
   SDKService,
@@ -36,6 +37,7 @@ describe('ResourceListComponent', () => {
         MockComponent(ErrorResourcesTableComponent),
         MockComponent(PendingResourcesTableComponent),
         MockComponent(ResourcesTableComponent),
+        MockComponent(LabelDropdownComponent),
       ],
       imports: [
         RouterTestingModule,
