@@ -20,6 +20,7 @@
     footerNoteAutomation="tasks-automation.content-safety.footer.apply-automation"
     footerNoteOneTime="tasks-automation.content-safety.footer.apply-one-time"
     [validFormInside]="form.valid"
+    [modelsHidden]="true"
     [task]="task | async"
     (cancel)="backToTaskList()"
     (activate)="activateTask($event)">

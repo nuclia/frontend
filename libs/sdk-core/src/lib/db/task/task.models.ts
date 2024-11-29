@@ -97,7 +97,7 @@ export interface AskOperation {
  * Configuration of the LLM used for the task
  */
 export interface LLMConfig {
-  model: string;
+  model?: string;
   keys?: { [model: string]: any };
   prompts?: {
     [model: string]: { prompt: string; system?: string } | null;

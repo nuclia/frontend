@@ -109,6 +109,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input() footerNoteOneTime = '';
   // Flag indicating if the form inside ng-content is valid
   @Input({ transform: booleanAttribute }) validFormInside = false;
+  // Flag indicating if the model selection is hidden
+  @Input({ transform: booleanAttribute }) modelsHidden = false;
   // Task whose data is displayed in the form
   @Input() set task(value: TaskWithApplyOption | undefined | null) {
     if (value) {
