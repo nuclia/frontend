@@ -1366,6 +1366,7 @@
 	"tasks-automation.applies-on.existing-resources": "Recursos existents",
 	"tasks-automation.applies-on.new-resources": "Nous recursos",
 	"tasks-automation.bach-to-tasks": "Tornar a les tasques",
+	"tasks-automation.coming-soon": "Aviat",
 	"tasks-automation.content-safety.description": "Aquest agent marca contingut inadequat. L'etiquetatge es fa mitjançant un conjunt d'etiquetes anomenat \"safety\".",
 	"tasks-automation.content-safety.footer.activate-button-label": "Activa l'agent",
 	"tasks-automation.content-safety.title": "Seguretat dels continguts",

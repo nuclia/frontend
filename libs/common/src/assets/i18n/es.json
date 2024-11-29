@@ -1366,6 +1366,7 @@
 	"tasks-automation.applies-on.existing-resources": "Recursos existentes",
 	"tasks-automation.applies-on.new-resources": "Nuevos recursos",
 	"tasks-automation.bach-to-tasks": "Volver a Tareas",
+	"tasks-automation.coming-soon": "Pronto",
 	"tasks-automation.content-safety.description": "Este agente marca contenidos inapropiados. La señalización se realiza mediante un conjunto de etiquetas denominado \"safety\".",
 	"tasks-automation.content-safety.footer.activate-button-label": "Activar agente",
 	"tasks-automation.content-safety.title": "Seguridad del contenido",

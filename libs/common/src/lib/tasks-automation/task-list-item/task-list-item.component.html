@@ -1,12 +1,10 @@
 <header>
   <div>
-    <div
-      class="title-m"
-      [class.with-badge]="badge">
+    <div class="title-m with-badge">
       {{ taskTitle | translate }}
-      @if (badge) {
-        <nsi-badge kind="tertiary">{{ badge }}</nsi-badge>
-      }
+      <nsi-badge kind="tertiary">
+        {{ (readyForBeta ? 'generic.badge.beta' : 'tasks-automation.coming-soon') | translate }}
+      </nsi-badge>
     </div>
     <div class="description body-s">{{ taskDescription | translate }}</div>
   </div>
@@ -18,7 +16,7 @@
         {{ 'tasks-automation.cta.see-archive' | translate }}
       </pa-button>
     }
-    @if (newTaskFormReady) {
+    @if (readyForBeta) {
       <pa-button
         aspect="basic"
         (click)="newTask.emit()">
