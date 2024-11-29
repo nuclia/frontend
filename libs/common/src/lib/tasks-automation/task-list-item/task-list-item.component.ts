@@ -55,11 +55,7 @@ export class TaskListItemComponent {
   /**
    * Temporary input allowing to display or hide the "new" button
    */
-  @Input({ transform: booleanAttribute }) newTaskFormReady = false;
-  /**
-   * Temporary input allowing to display a beta or coming soon badge
-   */
-  @Input() badge = '';
+  @Input({ transform: booleanAttribute }) readyForBeta = false;
 
   @Output() newTask = new EventEmitter<void>();
   @Output() seeArchive = new EventEmitter<void>();

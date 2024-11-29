@@ -28,11 +28,24 @@ export class TaskListComponent implements OnInit, OnDestroy {
     map((taskList) => taskList.filter((task) => task.taskName === 'labeler')),
   );
   askTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'ask')));
-  graphTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'llm-graph')));
-  questionAnswerTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'synthetic-questions')));
-  contentSafetyTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'llama-guard')));
-  llmSecurityTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'prompt-guard')));
-  safetyTasksEnabled = this.features.unstable.safetyTasks;
+  graphTasks = this.taskAutomation.taskList.pipe(
+    map((taskList) => taskList.filter((task) => task.taskName === 'llm-graph')),
+  );
+  questionAnswerTasks = this.taskAutomation.taskList.pipe(
+    map((taskList) => taskList.filter((task) => task.taskName === 'synthetic-questions')),
+  );
+  contentSafetyTasks = this.taskAutomation.taskList.pipe(
+    map((taskList) => taskList.filter((task) => task.taskName === 'llama-guard')),
+  );
+  llmSecurityTasks = this.taskAutomation.taskList.pipe(
+    map((taskList) => taskList.filter((task) => task.taskName === 'prompt-guard')),
+  );
+  labelerTaskEnabled = this.features.unstable.labelerTask;
+  askTaskEnabled = this.features.unstable.askTask;
+  graphTaskEnabled = this.features.unstable.graphTask;
+  questionsTaskEnabled = this.features.unstable.questionsTask;
+  promptSafetyTaskEnabled = this.features.unstable.promptSafetyTask;
+  contentSafetyTaskEnabled = this.features.unstable.contentSafetyTask;
 
   ngOnInit() {
     this.taskAutomation.initTaskList();

@@ -58,7 +58,12 @@ export class FeaturesService {
     externalIndex: this.featureFlag.isFeatureEnabled('external-index-provider'),
     remiMetrics: this.featureFlag.isFeatureEnabled('remi-metrics'),
     speech: this.featureFlag.isFeatureEnabled('speech'),
-    safetyTasks: this.featureFlag.isFeatureEnabled('safety-tasks'),
+    labelerTask: this.featureFlag.isFeatureEnabled('labeller-task'),
+    askTask: this.featureFlag.isFeatureEnabled('ask-task'),
+    graphTask: this.featureFlag.isFeatureEnabled('graph-task'),
+    questionsTask: this.featureFlag.isFeatureEnabled('questions-task'),
+    promptSafetyTask: this.featureFlag.isFeatureEnabled('prompt-safety-task'),
+    contentSafetyTask: this.featureFlag.isFeatureEnabled('content-safety-task'),
     taskAutomation: this.featureFlag.isFeatureEnabled('tasks-automation'),
   };
 
@@ -102,6 +107,6 @@ export class FeaturesService {
       this._account.pipe(
         map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
       ),
-    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed))
+    ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
   };
 }

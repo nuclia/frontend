@@ -1366,6 +1366,7 @@
 	"tasks-automation.applies-on.existing-resources": "Existing resources",
 	"tasks-automation.applies-on.new-resources": "New resources",
 	"tasks-automation.bach-to-tasks": "Back to tasks",
+	"tasks-automation.coming-soon": "Soon",
 	"tasks-automation.content-safety.description": "This agent flags inappropriate contents. Flagging is done using a label set named \"safety\".",
 	"tasks-automation.content-safety.footer.activate-button-label": "Activate agent",
 	"tasks-automation.content-safety.title": "Content safety",

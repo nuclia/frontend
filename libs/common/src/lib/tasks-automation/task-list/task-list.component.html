@@ -18,8 +18,7 @@
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"
-      [badge]="'generic.badge.beta' | translate"
-      [newTaskFormReady]="true"></app-task-list-item>
+      [readyForBeta]="labelerTaskEnabled | async"></app-task-list-item>
     <app-task-list-item
       taskType="ask"
       taskTitle="tasks-automation.generator.title"
@@ -29,53 +28,46 @@
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
       (stop)="stopTask($event)"
-      [badge]="'generic.badge.beta' | translate"
-      [newTaskFormReady]="true"></app-task-list-item>
+      [readyForBeta]="askTaskEnabled | async"></app-task-list-item>
     <app-task-list-item
       taskType="llm-graph"
       taskTitle="tasks-automation.graph-extraction.title"
       taskDescription="tasks-automation.graph-extraction.description"
       [taskList]="graphTasks | async"
-      [newTaskFormReady]="true"
       (newTask)="createTask('llm-graph')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
-      [badge]="'generic.badge.beta' | translate"
+      [readyForBeta]="graphTaskEnabled | async"
       (stop)="stopTask($event)"></app-task-list-item>
     <app-task-list-item
       taskType="synthetic-questions"
       taskTitle="tasks-automation.question-answer.title"
       taskDescription="tasks-automation.question-answer.description"
       [taskList]="questionAnswerTasks | async"
-      [newTaskFormReady]="true"
       (newTask)="createTask('synthetic-questions')"
       (delete)="deleteTask($event)"
       (restart)="restartTask($event)"
-      [badge]="'generic.badge.beta' | translate"
+      [readyForBeta]="questionsTaskEnabled | async"
       (stop)="stopTask($event)"></app-task-list-item>
-    @if (safetyTasksEnabled | async) {
-      <app-task-list-item
-        taskType="prompt-guard"
-        taskTitle="tasks-automation.llm-security.title"
-        taskDescription="tasks-automation.llm-security.description"
-        [taskList]="llmSecurityTasks | async"
-        [newTaskFormReady]="true"
-        (newTask)="createTask('prompt-guard')"
-        (delete)="deleteTask($event)"
-        (restart)="restartTask($event)"
-        [badge]="'generic.badge.beta' | translate"
-        (stop)="stopTask($event)"></app-task-list-item>
-      <app-task-list-item
-        taskType="llama-guard"
-        taskTitle="tasks-automation.content-safety.title"
-        taskDescription="tasks-automation.content-safety.description"
-        [taskList]="contentSafetyTasks | async"
-        [newTaskFormReady]="true"
-        (newTask)="createTask('llama-guard')"
-        (delete)="deleteTask($event)"
-        (restart)="restartTask($event)"
-        [badge]="'generic.badge.beta' | translate"
-        (stop)="stopTask($event)"></app-task-list-item>
-    }
+    <app-task-list-item
+      taskType="prompt-guard"
+      taskTitle="tasks-automation.llm-security.title"
+      taskDescription="tasks-automation.llm-security.description"
+      [taskList]="llmSecurityTasks | async"
+      (newTask)="createTask('prompt-guard')"
+      (delete)="deleteTask($event)"
+      (restart)="restartTask($event)"
+      [readyForBeta]="promptSafetyTaskEnabled | async"
+      (stop)="stopTask($event)"></app-task-list-item>
+    <app-task-list-item
+      taskType="llama-guard"
+      taskTitle="tasks-automation.content-safety.title"
+      taskDescription="tasks-automation.content-safety.description"
+      [taskList]="contentSafetyTasks | async"
+      (newTask)="createTask('llama-guard')"
+      (delete)="deleteTask($event)"
+      (restart)="restartTask($event)"
+      [readyForBeta]="contentSafetyTaskEnabled | async"
+      (stop)="stopTask($event)"></app-task-list-item>
   </div>
 </div>
