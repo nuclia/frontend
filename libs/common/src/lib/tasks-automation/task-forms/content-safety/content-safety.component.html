@@ -19,8 +19,27 @@
     activateButtonLabel="tasks-automation.content-safety.footer.activate-button-label"
     footerNoteAutomation="tasks-automation.content-safety.footer.apply-automation"
     footerNoteOneTime="tasks-automation.content-safety.footer.apply-one-time"
-    [validFormInside]="true"
+    [validFormInside]="form.valid"
     [task]="task | async"
     (cancel)="backToTaskList()"
-    (activate)="activateTask($event)"></app-task-form>
+    (activate)="activateTask($event)">
+  
+    <div [formGroup]="form">
+      <nsi-two-columns-configuration-item
+        itemTitle="tasks-automation.llm-security.labeling.title"
+        description="tasks-automation.llm-security.labeling.description">
+        <div class="form-container">
+          <pa-radio-group formControlName="on">
+            <pa-radio value="resources">
+              {{ 'tasks-automation.form.on.resources' | translate }}
+            </pa-radio>
+            <pa-radio value="text-blocks">
+              {{ 'tasks-automation.form.on.text-blocks' | translate }}
+            </pa-radio>
+          </pa-radio-group>
+        </div>
+      </nsi-two-columns-configuration-item>
+    </div>
+  
+  </app-task-form>
 </div>
