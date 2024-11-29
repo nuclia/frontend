@@ -145,7 +145,7 @@
     </nsi-two-columns-configuration-item>
   }
   <ng-content></ng-content>
-  @if (properties?.['llm']; as llm) {
+  @if (!modelsHidden) {
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.form.llm-selection.title"
       description="tasks-automation.form.llm-selection.description">

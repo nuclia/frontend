@@ -109,6 +109,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input() footerNoteOneTime = '';
   // Flag indicating if the form inside ng-content is valid
   @Input({ transform: booleanAttribute }) validFormInside = false;
+  // Flag indicating if the model selection is hidden
+  @Input({ transform: booleanAttribute }) modelsHidden = false;
   // Task whose data is displayed in the form
   @Input() set task(value: TaskWithApplyOption | undefined | null) {
     if (value) {
@@ -277,7 +279,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.form.patchValue({
           ...task.parameters,
-          filter: { ...task.parameters.filter, contains: task.parameters.filter.contains[0] || '' },
+          filter: { ...task.parameters.filter, contains: task.parameters.filter.contains?.[0] || '' },
           applyTaskTo: task.applyOption,
         });
         this.form.disable();
