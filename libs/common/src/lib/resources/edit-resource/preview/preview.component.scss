@@ -5,6 +5,11 @@
   display: flex;
   gap: rhythm(5);
 
+  pa-tabs {
+    display: block;
+    margin-bottom: rhythm(3);
+  }
+
   .filters-container {
     align-items: center;
     display: flex;
@@ -36,6 +41,12 @@
       }
     }
   }
+
+  .question-answer {
+    padding-bottom: rhythm(1);
+    border-bottom: 1px solid $color-neutral-light;
+    margin-bottom: rhythm(1.5);
+  }  
 }
 
 .viewer-button-container {

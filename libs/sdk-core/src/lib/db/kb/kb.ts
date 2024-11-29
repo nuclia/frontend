@@ -205,7 +205,13 @@ export class KnowledgeBox implements IKnowledgeBox {
         ResourceProperties.EXTRA,
         ResourceProperties.SECURITY,
       ],
-      [ExtractedDataTypes.TEXT, ExtractedDataTypes.METADATA, ExtractedDataTypes.LINK, ExtractedDataTypes.FILE],
+      [
+        ExtractedDataTypes.TEXT,
+        ExtractedDataTypes.METADATA,
+        ExtractedDataTypes.LINK,
+        ExtractedDataTypes.FILE,
+        ExtractedDataTypes.QUESTION_ANSWERS,
+      ],
     );
   }
 
@@ -231,7 +237,13 @@ export class KnowledgeBox implements IKnowledgeBox {
         ResourceProperties.EXTRA,
         ResourceProperties.SECURITY,
       ],
-      [ExtractedDataTypes.TEXT, ExtractedDataTypes.METADATA, ExtractedDataTypes.LINK, ExtractedDataTypes.FILE],
+      [
+        ExtractedDataTypes.TEXT,
+        ExtractedDataTypes.METADATA,
+        ExtractedDataTypes.LINK,
+        ExtractedDataTypes.FILE,
+        ExtractedDataTypes.QUESTION_ANSWERS,
+      ],
     );
   }
 

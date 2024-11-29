@@ -256,6 +256,7 @@ export interface TextField {
 export interface ExtractedData {
   text?: ExtractedText;
   metadata?: FieldComputedMetadata;
+  question_answers?: QuestionAnswers;
 }
 export interface ExtractedText {
   text?: string;
@@ -304,6 +305,30 @@ export interface FieldEntity {
   label: string;
   positions: { start: number; end: number }[];
 }
+
+export interface QuestionAnswers {
+  question_answers: {
+    question_answer: QuestionAnswer[];
+  };
+  split_question_answers?: {
+    [key: string]: {
+      question_answer: QuestionAnswer[];
+    };
+  };
+  deleted_splits?: string[];
+}
+
+export interface QuestionAnswer {
+  question: Question;
+  answers: Answer[];
+}
+
+export interface Question {
+  text: string;
+  language?: string;
+  ids_paragraphs: string[];
+}
+export type Answer = Question;
 
 export const DEFAULT_NER_KEY = 'processor';
 
@@ -464,4 +489,5 @@ export enum ExtractedDataTypes {
   VECTOR = 'vectors',
   LINK = 'link',
   FILE = 'file',
+  QUESTION_ANSWERS = 'question_answers',
 }

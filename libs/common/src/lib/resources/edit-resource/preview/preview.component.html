@@ -15,79 +15,109 @@
     }
 
     @if (loaded) {
-      @if (((paragraphTypes | async) || []).length > 1) {
-        <div class="filters-container">
-          <div>
-            <nsi-dropdown-button
-              aspect="basic"
-              freeWidth
-              [popupRef]="paragraphTypeDropdown">
-              {{ 'Paragraph type' | translate }}
-            </nsi-dropdown-button>
-            <pa-dropdown #paragraphTypeDropdown>
-              @for (type of paragraphTypes | async; track type) {
-                <pa-option
-                  [value]="type"
-                  (selectOption)="onClickOption(type, $event)"
-                  dontCloseOnSelect>
-                  <pa-checkbox
-                    [value]="((selectedTypes | async) || []).includes(type)"
-                    (change)="toggleType(type)">
-                    {{ type }}
-                  </pa-checkbox>
-                </pa-option>
-              }
-            </pa-dropdown>
+      @if ((questionsAnswers | async)?.length > 0) {
+        <pa-tabs notFullWidth>
+          <pa-tab
+            (click)="selectedTab = 'content'"
+            [active]="selectedTab === 'content'">
+            <span class="body-m">{{ 'resource.preview.content' | translate }}</span>
+          </pa-tab>
+          <pa-tab
+            (click)="selectedTab = 'questions-answers'"
+            [active]="selectedTab === 'questions-answers'">
+            <span class="body-m">{{ 'resource.preview.questions-answers' | translate }}</span>
+          </pa-tab>
+        </pa-tabs>
+      }
+
+      @if (selectedTab === 'content') {
+        @if (((paragraphTypes | async) || []).length > 1) {
+          <div class="filters-container">
+            <div>
+              <nsi-dropdown-button
+                aspect="basic"
+                freeWidth
+                [popupRef]="paragraphTypeDropdown">
+                {{ 'Paragraph type' | translate }}
+              </nsi-dropdown-button>
+              <pa-dropdown #paragraphTypeDropdown>
+                @for (type of paragraphTypes | async; track type) {
+                  <pa-option
+                    [value]="type"
+                    (selectOption)="onClickOption(type, $event)"
+                    dontCloseOnSelect>
+                    <pa-checkbox
+                      [value]="((selectedTypes | async) || []).includes(type)"
+                      (change)="toggleType(type)">
+                      {{ type }}
+                    </pa-checkbox>
+                  </pa-option>
+                }
+              </pa-dropdown>
+            </div>
+            @if (((selectedTypes | async)?.length || 0) > 0) {
+              <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
+            }
+            @for (type of selectedTypes | async; track type) {
+              <pa-chip-closeable (closed)="toggleType(type)">{{ type }}</pa-chip-closeable>
+            }
           </div>
-          @if (((selectedTypes | async)?.length || 0) > 0) {
-            <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
-          }
-          @for (type of selectedTypes | async; track type) {
-            <pa-chip-closeable (closed)="toggleType(type)">{{ type }}</pa-chip-closeable>
-          }
-        </div>
-      }
+        }
 
-      @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId) {
-        <div class="paragraph-container">
-          @if (paragraph.url) {
-            <p>
-              <img
-                class="image"
-                [src]="paragraph.url | async" />
-            </p>
-          } @else if (paragraph.kind === 'TEXT') {
-            <p>{{ paragraph.text }}</p>
-          } @else {
-            <p class="with-type">
-              @if (paragraph.kind === 'TABLE') {
-                <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
-              } @else {
-                <span>{{ paragraph.text }}</span>
+        @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId) {
+          <div class="paragraph-container">
+            @if (paragraph.url) {
+              <p>
+                <img
+                  class="image"
+                  [src]="paragraph.url | async" />
+              </p>
+            } @else if (paragraph.kind === 'TEXT') {
+              <p>{{ paragraph.text }}</p>
+            } @else {
+              <p class="with-type">
+                @if (paragraph.kind === 'TABLE') {
+                  <stf-preview-table [markdown]="paragraph.text"></stf-preview-table>
+                } @else {
+                  <span>{{ paragraph.text }}</span>
+                }
+                <span
+                  [paTooltip]="
+                    paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION'
+                      ? 'resource.tooltip.' + paragraph.kind.toLowerCase()
+                      : undefined
+                  ">
+                  <nsi-badge kind="neutral">{{ paragraph.kind }}</nsi-badge>
+                </span>
+              </p>
+            }
+          </div>
+        }
+
+        @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async)) {
+          <div class="paragraph-container">
+            <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+          </div>
+        }
+
+        @if (jsonTextField | async) {
+          <div class="paragraph-container">
+            <pre><code>{{ jsonTextField | async }}</code></pre>
+          </div>
+        }
+      } @else {
+        @if (questionsAnswers | async; as questionsAnswers) {
+          @for (item of questionsAnswers; track item.question.text) {
+            <div class="question-answer">
+              <div class="title-xxs">Question</div>
+              <p>{{ item.question.text }}</p>
+              <div class="title-xxs">Answers</div>
+              @for (answer of item.answers; track answer.text) {
+                <p>{{ answer.text }}</p>
               }
-              <span
-                [paTooltip]="
-                  paragraph.kind === 'OCR' || paragraph.kind === 'INCEPTION'
-                    ? 'resource.tooltip.' + paragraph.kind.toLowerCase()
-                    : undefined
-                ">
-                <nsi-badge kind="neutral">{{ paragraph.kind }}</nsi-badge>
-              </span>
-            </p>
+            </div>
           }
-        </div>
-      }
-
-      @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async)) {
-        <div class="paragraph-container">
-          <p>{{ 'resource.field-no-paragraph' | translate }}</p>
-        </div>
-      }
-
-      @if (jsonTextField | async) {
-        <div class="paragraph-container">
-          <pre><code>{{ jsonTextField | async }}</code></pre>
-        </div>
+        }
       }
     } @else {
       @if (resource | async; as resource) {
