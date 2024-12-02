@@ -15,7 +15,7 @@
     }
 
     @if (loaded) {
-      @if ((questionsAnswers | async)?.length > 0) {
+      @if (((questionsAnswers | async) || []).length > 0) {
         <pa-tabs notFullWidth>
           <pa-tab
             (click)="selectedTab = 'content'"
