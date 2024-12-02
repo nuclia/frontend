@@ -1,5 +1,12 @@
 # 1.23.1 (unreleased)
 
+### Improvements
+
+- Support generated questions and answers:
+  - Add `question_answers` property to `ExtractedData` interface
+  - Add `QUESTION_ANSWERS` type to `ExtractedDataTypes`
+  - `getFullResource` and `getFullResourceBySlug` methods now also retrieve generated questions and answers
+
 ### Bug fix
 
 - Correct the data returned by `getKnowledgeBox` and `createKnowledgeBox` methods in standalone mode

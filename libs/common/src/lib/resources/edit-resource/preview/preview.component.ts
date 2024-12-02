@@ -141,6 +141,11 @@ export class PreviewComponent implements OnInit, OnDestroy {
     ),
   );
 
+  questionsAnswers = this.editResourceService.currentFieldData.pipe(
+    map((field) => field?.extracted?.question_answers?.question_answers.question_answer),
+  );
+  selectedTab: 'content' | 'questions-answers' = 'content';
+
   currentFieldId?: FieldId;
 
   constructor(
