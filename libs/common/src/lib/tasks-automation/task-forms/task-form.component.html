@@ -20,17 +20,15 @@
     </pa-radio-group>
   </nsi-two-columns-configuration-item>
 
-  @if (properties?.['filter']; as filters) {
-    <nsi-two-columns-configuration-item
-      itemTitle="tasks-automation.form.filter.title"
-      description="tasks-automation.form.filter.description"
-      badge="generic.badge.optional">
-      <div
-        class="form-container filter-form-container"
-        formGroupName="filter">
-        @if (filters['properties']?.['contains']) {
-          <div class="filter-row">
-            <!--
+  <nsi-two-columns-configuration-item
+    itemTitle="tasks-automation.form.filter.title"
+    description="tasks-automation.form.filter.description"
+    badge="generic.badge.optional">
+    <div
+      class="form-container filter-form-container"
+      formGroupName="filter">
+      <div class="filter-row">
+        <!--
             <pa-select formControlName="searchIn">
               <pa-option value="titleOrContent">
                 {{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}
@@ -39,94 +37,92 @@
               <pa-option value="content">{{ 'tasks-automation.form.filter.search-in.content' | translate }}</pa-option>
             </pa-select>
             -->
-            <div class="title-s">{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</div>
-            <pa-input formControlName="contains">
-              {{ 'tasks-automation.form.filter.search-input-label' | translate }}
-            </pa-input>
-          </div>
-        }
-        @if (filters['properties']?.['resource_type']) {
-          <div>
-            <nsi-dropdown-button
-              fullWidth
-              aspect="basic"
-              [disabled]="task"
-              [popupRef]="resourceTypesDropdown">
-              {{ 'tasks-automation.form.filter.resource-type.button-label' | translate }}
+        <div class="title-s">{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</div>
+        <pa-input formControlName="contains">
+          {{ 'tasks-automation.form.filter.search-input-label' | translate }}
+        </pa-input>
+      </div>
+      <div>
+        <nsi-dropdown-button
+          fullWidth
+          aspect="basic"
+          [disabled]="task"
+          [popupRef]="resourceTypesDropdown">
+          {{ 'tasks-automation.form.filter.resource-type.button-label' | translate }}
 
-              @if (resourceTypeSelectionCount > 0) {
-                ({{
-                  resourceTypeSelectionCount === resourceTypeTotalCount
-                    ? ('tasks-automation.form.filter.all' | translate)
-                    : resourceTypeSelectionCount
-                }})
-              }
-            </nsi-dropdown-button>
+          @if (resourceTypeSelectionCount > 0) {
+            ({{
+              resourceTypeSelectionCount === resourceTypeTotalCount
+                ? ('tasks-automation.form.filter.all' | translate)
+                : resourceTypeSelectionCount
+            }})
+          }
+        </nsi-dropdown-button>
 
-            <pa-dropdown #resourceTypesDropdown>
-              <pa-option
-                dontCloseOnSelect
-                (selectOption)="toggleAll('types', $event)">
-                <pa-checkbox [value]="allResourceTypesSelected">
-                  {{ 'tasks-automation.form.filter.resource-type.all-types' | translate }}
-                </pa-checkbox>
-              </pa-option>
-              <pa-separator></pa-separator>
-              @for (option of resourceTypeFilters; track option.id) {
-                <pa-option
-                  [paTooltip]="option.help"
-                  (selectOption)="onSelectFilter(option, $event)"
-                  dontCloseOnSelect>
-                  <pa-checkbox
-                    [(value)]="option.selected"
-                    (valueChange)="onToggleFilter()">
-                    {{ option.label }}
-                  </pa-checkbox>
-                </pa-option>
-              }
-            </pa-dropdown>
-          </div>
-        }
-        <div>
-          <nsi-dropdown-button
-            fullWidth
-            aspect="basic"
-            [disabled]="task"
-            [popupRef]="fieldTypesDropdown">
-            {{ 'tasks-automation.form.filter.fields.button-label' | translate }}
-
-            @if (fieldTypeSelectionCount > 0) {
-              ({{
-                fieldTypeSelectionCount === fieldTypesTotalCount
-                  ? ('tasks-automation.form.filter.all' | translate)
-                  : fieldTypeSelectionCount
-              }})
-            }
-          </nsi-dropdown-button>
-          <pa-dropdown #fieldTypesDropdown>
+        <pa-dropdown #resourceTypesDropdown>
+          <pa-option
+            dontCloseOnSelect
+            (selectOption)="toggleAll('types', $event)">
+            <pa-checkbox [value]="allResourceTypesSelected">
+              {{ 'tasks-automation.form.filter.resource-type.all-types' | translate }}
+            </pa-checkbox>
+          </pa-option>
+          <pa-separator></pa-separator>
+          @for (option of resourceTypeFilters; track option.id) {
             <pa-option
-              dontCloseOnSelect
-              (selectOption)="toggleAll('fieldTypes', $event)">
-              <pa-checkbox [value]="allFieldTypesSelected">
-                {{ 'tasks-automation.form.filter.fields.all-types' | translate }}
+              [paTooltip]="option.help"
+              (selectOption)="onSelectFilter(option, $event)"
+              dontCloseOnSelect>
+              <pa-checkbox
+                [(value)]="option.selected"
+                (valueChange)="onToggleFilter()">
+                {{ option.label }}
               </pa-checkbox>
             </pa-option>
-            <pa-separator></pa-separator>
-            @for (option of fieldTypeFilters; track option.id) {
-              <pa-option
-                [paTooltip]="option.help"
-                (selectOption)="onSelectFilter(option, $event)"
-                dontCloseOnSelect>
-                <pa-checkbox
-                  [(value)]="option.selected"
-                  (valueChange)="onToggleFilter()">
-                  {{ option.label }}
-                </pa-checkbox>
-              </pa-option>
-            }
-          </pa-dropdown>
-        </div>
-        <!--
+          }
+        </pa-dropdown>
+      </div>
+
+      <div>
+        <nsi-dropdown-button
+          fullWidth
+          aspect="basic"
+          [disabled]="task"
+          [popupRef]="fieldTypesDropdown">
+          {{ 'tasks-automation.form.filter.fields.button-label' | translate }}
+
+          @if (fieldTypeSelectionCount > 0) {
+            ({{
+              fieldTypeSelectionCount === fieldTypesTotalCount
+                ? ('tasks-automation.form.filter.all' | translate)
+                : fieldTypeSelectionCount
+            }})
+          }
+        </nsi-dropdown-button>
+        <pa-dropdown #fieldTypesDropdown>
+          <pa-option
+            dontCloseOnSelect
+            (selectOption)="toggleAll('fieldTypes', $event)">
+            <pa-checkbox [value]="allFieldTypesSelected">
+              {{ 'tasks-automation.form.filter.fields.all-types' | translate }}
+            </pa-checkbox>
+          </pa-option>
+          <pa-separator></pa-separator>
+          @for (option of fieldTypeFilters; track option.id) {
+            <pa-option
+              [paTooltip]="option.help"
+              (selectOption)="onSelectFilter(option, $event)"
+              dontCloseOnSelect>
+              <pa-checkbox
+                [(value)]="option.selected"
+                (valueChange)="onToggleFilter()">
+                {{ option.label }}
+              </pa-checkbox>
+            </pa-option>
+          }
+        </pa-dropdown>
+      </div>
+      <!--
         @if (hasLabelSets | async) {
           <app-label-dropdown
             fullWidth
@@ -141,9 +137,9 @@
           </app-label-dropdown>
         }
         -->
-      </div>
-    </nsi-two-columns-configuration-item>
-  }
+    </div>
+  </nsi-two-columns-configuration-item>
+
   <ng-content></ng-content>
   @if (!modelsHidden) {
     <nsi-two-columns-configuration-item
