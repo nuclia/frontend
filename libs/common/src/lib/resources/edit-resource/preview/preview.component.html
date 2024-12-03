@@ -93,6 +93,15 @@
             }
           </div>
         }
+        @if (totalMessagePages > 0 && totalMessagePages > currentMessagePage) {
+          <div>
+            <pa-button
+              aspect="basic"
+              (click)="loadMoreMessages()">
+              {{ 'generic.show_more' | translate }}
+            </pa-button>
+          </div>
+        }
 
         @if ((paragraphs | async)?.length === 0 && !(jsonTextField | async)) {
           <div class="paragraph-container">

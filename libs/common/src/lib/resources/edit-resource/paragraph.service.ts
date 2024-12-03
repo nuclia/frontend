@@ -83,4 +83,8 @@ export class ParagraphService {
     this._allParagraphs.next(cloneDeep(paragraphs));
     this._paragraphLoaded.next(true);
   }
+
+  appendParagraphs(paragraphs: ParagraphWithText[]) {
+    this.setupParagraphs(this._allParagraphs.value.concat(paragraphs));
+  }
 }

@@ -244,8 +244,12 @@ export class Resource extends ReadableResource implements IResource {
       ExtractedDataTypes.LINK,
       ExtractedDataTypes.FILE,
     ],
+    page: number | 'last' | undefined = undefined,
   ): Observable<ResourceField> {
     const params = [...show.map((s) => `show=${s}`), ...extracted.map((e) => `extracted=${e}`)];
+    if (page !== undefined) {
+      params.push(`page=${page}`);
+    }
     return this.nuclia.rest.get<ResourceField>(`${this.path}/${type}/${field}?${params.join('&')}`);
   }
 

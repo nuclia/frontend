@@ -117,7 +117,7 @@ export interface IError {
 }
 
 export interface IFieldData {
-  value?: TextField | FileField | LinkField | ConversationField;
+  value?: TextField | FileField | LinkField | ConversationField | ConversationFieldPages;
   extracted?: ExtractedData;
   error?: IError;
 }
@@ -444,13 +444,19 @@ export interface FieldClassification {
 }
 
 export class ConversationFieldData implements IFieldData {
-  value?: ConversationField;
+  value?: ConversationField | ConversationFieldPages;
   extracted?: ExtractedData;
   error?: IError;
 }
 
 export interface ConversationField {
   messages: Message[];
+}
+
+export interface ConversationFieldPages {
+  pages?: number;
+  size?: number;
+  total?: number;
 }
 
 export interface Message {
