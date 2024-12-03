@@ -19,6 +19,10 @@
     display: flex;
     gap: var(--rhythm-2);
   }
+  .show-more {
+    margin: var(--rhythm-2) 0;
+    text-align: center;
+  }
 
   @media (min-width: 648px) {
     --message-width: var(--rhythm-75);

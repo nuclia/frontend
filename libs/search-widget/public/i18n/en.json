@@ -86,6 +86,7 @@
 	"viewer.full-transcripts": "Full transcript",
 	"viewer.items": "Items",
 	"viewer.search-results": "{{count}} search results",
+	"viewer.show-more": "Show more",
 	"viewer.summary": "Summary",
 	"voice.commands.answer": "answer",
 	"voice.commands.question": "question",

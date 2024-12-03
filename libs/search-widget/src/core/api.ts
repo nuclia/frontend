@@ -320,7 +320,7 @@ export const getResourceById = (uid: string, show: ResourceProperties[]): Observ
   ]);
 };
 
-export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): Observable<ResourceField> {
+export function getResourceField(fullFieldId: FieldFullId, valueOnly = false, page = 1): Observable<ResourceField> {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
@@ -330,6 +330,8 @@ export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): O
       fullFieldId.field_type,
       fullFieldId.field_id,
       valueOnly ? [ResourceFieldProperties.VALUE] : [ResourceFieldProperties.VALUE, ResourceFieldProperties.EXTRACTED],
+      undefined,
+      page,
     );
 }
 

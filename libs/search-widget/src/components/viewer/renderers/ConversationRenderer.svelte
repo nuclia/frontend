@@ -1,15 +1,28 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
-  import { combineLatest, filter, interval, map, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
-  import { fieldData, fieldFullId, selectedParagraph } from '../../../core';
+  import {
+    combineLatest,
+    distinctUntilChanged,
+    filter,
+    interval,
+    map,
+    Observable,
+    Subject,
+    switchMap,
+    takeUntil,
+    tap,
+  } from 'rxjs';
+  import { _, fieldData, fieldFullId, loadMessagePage, selectedParagraph, totalMessagePages } from '../../../core';
   import type { ConversationFieldData, FieldFullId, Message, Paragraph, Search } from '@nuclia/core';
-  import  { longToShortFieldType } from '@nuclia/core';
+  import { longToShortFieldType } from '@nuclia/core';
   import { lightFormat } from 'date-fns';
   import { HtmlRendering, MarkdownRendering, PlainTextRendering, RstRendering } from './renderings';
+  import { Button } from '../../../common';
 
   let viewerElement: HTMLElement;
   let stopHighlight: Subject<void> = new Subject<void>();
   let selectedId: string | undefined;
+  let page = 1;
 
   $: !!viewerElement && highlightSelection();
 
@@ -18,17 +31,19 @@
     filter(([fieldId, field]) => !!fieldId && !!field && !!field.value),
     map(([fieldId, field]) => [fieldId, field] as [string, ConversationFieldData]),
     map(([fieldId, field]) => {
-      return field.value.messages.map((message) => ({
-        ...message,
-        paragraphIds:
-          field.extracted?.metadata?.split_metadata?.[message.ident].paragraphs.map((paragraph) =>
-            getParagraphId(fieldId, message.ident, paragraph)
-          ) || []
-      }));
+      return 'messages' in field.value
+        ? field.value.messages.map((message) => ({
+            ...message,
+            paragraphIds:
+              field.extracted?.metadata?.split_metadata?.[message.ident].paragraphs.map((paragraph) =>
+                getParagraphId(fieldId, message.ident, paragraph),
+              ) || [],
+          }))
+        : [];
     }),
   );
   const hasMetadata = messages.pipe(
-    map((messages) => messages.some((message) => !!message.who || !!message.timestamp))
+    map((messages) => messages.some((message) => !!message.who || !!message.timestamp)),
   );
 
   function getParagraphId(fieldId: FieldFullId, splitId: string, paragraph: Paragraph) {
@@ -39,6 +54,7 @@
 
   function highlightSelection() {
     selectedParagraph.pipe(
+      distinctUntilChanged(),
       tap(paragraph => selectedId = paragraph?.id),
       filter(paragraph => !!paragraph),
       map(paragraph => paragraph as Search.FindParagraph),
@@ -104,6 +120,13 @@
         </div>
       </div>
     {/each}
+    {#if $totalMessagePages > 0 && page < $totalMessagePages}
+      <div class="show-more">
+        <Button on:click={() => loadMessagePage(++page)}>
+          {$_('viewer.show-more')}
+        </Button>
+      </div>
+    {/if}
   {/if}
 </div>
 
