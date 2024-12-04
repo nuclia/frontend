@@ -44,7 +44,7 @@
   export let no_tracking = false;
   $: darkMode = mode === 'dark';
 
-  const showLoading = pendingResults.pipe(debounceTime(1500));
+  const showLoading = pendingResults.pipe(debounceTime(500));
 
   widgetActions.set([]);
   export function setViewerMenu(actions: WidgetAction[]) {

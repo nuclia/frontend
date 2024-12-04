@@ -78,7 +78,7 @@
     dispatch(name, detail);
   };
 
-  const showLoading = pendingResults.pipe(debounceTime(1500));
+  const showLoading = pendingResults.pipe(debounceTime(500));
   let svgSprite: string;
   let ready = false;
   let visible = false;
