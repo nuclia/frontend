@@ -60,10 +60,12 @@
 
   let _features: WidgetFeatures = {};
 
-  export function search(query: string) {
+  export function search(query: string, doNotTriggerSearch = false) {
     searchQuery.set(query);
     typeAhead.set(query || '');
-    triggerSearch.next();
+    if (!doNotTriggerSearch) {
+      triggerSearch.next();
+    }
   }
 
   export function reloadSearch() {

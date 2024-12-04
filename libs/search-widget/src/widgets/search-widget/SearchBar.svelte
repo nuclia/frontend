@@ -122,13 +122,15 @@
   let _max_output_tokens: number | undefined;
   let _citation_threshold: number | undefined;
 
-  export function search(query: string, filters?: string[]) {
+  export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
     searchQuery.set(query);
     if (filters) {
       searchFilters.set({ filters });
     }
     typeAhead.set(query || '');
-    triggerSearch.next();
+    if (!doNotTriggerSearch) {
+      triggerSearch.next();
+    }
   }
 
   export function reloadSearch() {
