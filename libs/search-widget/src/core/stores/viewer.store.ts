@@ -1,6 +1,13 @@
 import type { ResultType, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
-import type { CloudLink, FieldFullId, IFieldData, FieldMetadata } from '@nuclia/core';
+import type {
+  CloudLink,
+  FieldFullId,
+  IFieldData,
+  FieldMetadata,
+  ConversationField,
+  ConversationFieldPages,
+} from '@nuclia/core';
 import {
   FIELD_TYPE,
   FileFieldData,
@@ -10,7 +17,7 @@ import {
   Search,
   sliceUnicode,
 } from '@nuclia/core';
-import { getFileUrls } from '../api';
+import { getFileUrls, getResourceField } from '../api';
 import type { Observable } from 'rxjs';
 import { filter, map, of, switchMap, take } from 'rxjs';
 
@@ -383,4 +390,30 @@ export function getPlayableVideo(): Observable<CloudLink | undefined> {
       return data?.extracted?.file?.file_generated?.['video.mpd'] || data?.value?.file;
     }),
   );
+}
+
+export const totalMessagePages = viewerState.reader<number>(
+  (state) =>
+    (state.currentResult?.data?.['conversations']?.[state.fieldFullId?.field_id || '']?.value as ConversationFieldPages)
+      ?.pages || 0,
+);
+
+export function loadMessagePage(page: number) {
+  fieldFullId
+    .pipe(
+      take(1),
+      filter((field) => !!field),
+      switchMap((field) => getResourceField(field, undefined, page)),
+    )
+    .subscribe((field) => {
+      const fieldDataValue = fieldData.getValue();
+      fieldData.set({
+        ...fieldDataValue,
+        value: {
+          messages: ((fieldDataValue?.value as ConversationField)?.messages || []).concat(
+            (field.value as ConversationField).messages,
+          ),
+        },
+      });
+    });
 }

@@ -14,7 +14,6 @@ import {
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphService } from '../paragraph.service';
 import {
-  ConversationField,
   FIELD_TYPE,
   FieldId,
   FileFieldData,
@@ -27,8 +26,10 @@ import {
 import {
   getConversationParagraphs,
   getErrors,
+  getMessages,
   getParagraphs,
   getParagraphsWithImages,
+  getTotalMessagePages,
   ParagraphWithText,
   ParagraphWithTextAndImage,
   Thumbnail,
@@ -132,21 +133,14 @@ export class PreviewComponent implements OnInit, OnDestroy {
     ),
   );
 
-  // TODO: can be removed once the "GET /resource/{rid}" endpoint returns the correct messages
-  conversationField = combineLatest([this.fieldId, this.resource]).pipe(
-    switchMap(([fieldId, resource]) =>
-      fieldId.field_type === FIELD_TYPE.conversation
-        ? resource.getField(fieldId.field_type, fieldId.field_id).pipe(map((field) => field.value as ConversationField))
-        : of(null),
-    ),
-  );
-
   questionsAnswers = this.editResourceService.currentFieldData.pipe(
     map((field) => field?.extracted?.question_answers?.question_answers.question_answer),
   );
   selectedTab: 'content' | 'questions-answers' = 'content';
 
   currentFieldId?: FieldId;
+  messagePage = 0;
+  totalMessagePages = 0;
 
   constructor(
     private editResource: EditResourceService,
@@ -163,13 +157,26 @@ export class PreviewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.editResource.setCurrentView('preview');
 
-    combineLatest([this.fieldId, this.resource, this.conversationField])
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([fieldId, resource, conversation]) => {
+    combineLatest([this.fieldId, this.resource])
+      .pipe(
+        switchMap(([fieldId, resource]) => {
+          if (fieldId.field_type === FIELD_TYPE.conversation) {
+            this.totalMessagePages = getTotalMessagePages(fieldId, resource);
+            this.messagePage = 1;
+            return getMessages(fieldId, resource, this.messagePage).pipe(
+              map((messages) => ({ fieldId, resource, messages })),
+            );
+          } else {
+            return of({ fieldId, resource, messages: null });
+          }
+        }),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(({ fieldId, resource, messages }) => {
         this.currentFieldId = fieldId;
         this.errors = getErrors(fieldId, resource);
-        const paragraphs: Paragraph[] = conversation
-          ? getConversationParagraphs(fieldId, resource, conversation.messages)
+        const paragraphs: Paragraph[] = messages
+          ? getConversationParagraphs(fieldId, resource, messages)
           : getParagraphs(fieldId, resource);
         const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
           ...paragraph,
@@ -246,5 +253,26 @@ export class PreviewComponent implements OnInit, OnDestroy {
         ),
       ),
     );
+  }
+
+  loadMoreMessages() {
+    this.messagePage++;
+    combineLatest([this.fieldId, this.resource])
+      .pipe(
+        take(1),
+        switchMap(([fieldId, resource]) =>
+          getMessages(fieldId, resource, this.messagePage).pipe(map((messages) => ({ fieldId, resource, messages }))),
+        ),
+      )
+      .subscribe(({ fieldId, resource, messages }) => {
+        const paragraphs: Paragraph[] = getConversationParagraphs(fieldId, resource, messages || []);
+        const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
+          ...paragraph,
+          paragraphId: this.editResource.getParagraphId(fieldId, paragraph),
+          text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
+        }));
+        this.paragraphService.appendParagraphs(enhancedParagraphs);
+        this.cdr.markForCheck();
+      });
   }
 }

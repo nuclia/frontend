@@ -14,8 +14,12 @@ import {
   UserFieldMetadata,
   TokenAnnotation,
   DEFAULT_NER_KEY,
+  ConversationField,
+  FIELD_TYPE,
+  ConversationFieldPages,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
+import { forkJoin, map, Observable, of } from 'rxjs';
 
 export type Thumbnail = { uri: string; blob: SafeUrl };
 export type EditResourceView = 'preview' | 'resource' | 'classification' | 'annotation' | 'add-field';
@@ -68,6 +72,7 @@ export const getConversationParagraphs = (fieldId: FieldId, resource: Resource, 
   }
   const metadata = resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata;
   return Object.keys(metadata?.split_metadata || {})
+    .filter((split) => messages.findIndex((item) => item.ident === split) >= 0)
     .sort((a, b) => messages.findIndex((item) => item.ident === a) - messages.findIndex((item) => item.ident === b))
     .reduce((acc, split) => [...acc, ...(metadata?.split_metadata?.[split]?.paragraphs || [])], [] as Paragraph[]);
 };
@@ -327,4 +332,26 @@ export function getCustomEntities(resource: Resource): { [key: string]: string[]
       },
       {} as { [key: string]: string[] },
     );
+}
+
+export function getTotalMessagePages(fieldId: FieldId, resource: Resource): number {
+  return (resource.data['conversations']?.[fieldId.field_id]?.value as ConversationFieldPages)?.pages || 0;
+}
+
+export function getMessages(fieldId: FieldId, resource: Resource, pageStart: number, pageEnd?: number): Observable<Message[] | null> {
+  let pages = [pageStart]
+  if (pageEnd !== undefined && pageEnd > pageStart) {
+    for (let i = pageStart + 1; i<=pageEnd; i++) {
+      pages.push(i);
+    }
+  }
+  return fieldId.field_type === FIELD_TYPE.conversation
+    ? forkJoin(
+        pages.map((page) =>
+          resource
+            .getField(fieldId.field_type, fieldId.field_id, undefined, undefined, page)
+            .pipe(map((field) => (field.value as ConversationField).messages)),
+        ),
+      ).pipe(map((data) => data.reduce((acc, curr) => acc.concat(curr), [] as Message[])))
+    : of(null);
 }
