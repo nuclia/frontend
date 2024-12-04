@@ -49,9 +49,9 @@
   let searchBar: any;
   let visible = false;
 
-  export function search(query: string, filters?: string[]) {
+  export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
     visible = true;
-    setTimeout(() => searchBar?.search(query, filters), 0);
+    setTimeout(() => searchBar?.search(query, filters, doNotTriggerSearch), 0);
   }
 
   export const onError = getApiErrors();
