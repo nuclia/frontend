@@ -199,6 +199,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
         data: {
           processingChart: this.processingChart,
           searchChart: this.searchChart,
+          tokenChart: this.nucliaTokenChart,
           currentChart: this.currentChart,
           chartDropdownOptions: this.chartDropdownOptions,
         },
