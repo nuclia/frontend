@@ -142,6 +142,13 @@ export class RagLabComponent implements OnChanges {
               ),
             );
           }
+          if (ragStrategies.conversationalRagStrategy) {
+            ragStrategiesList.push(
+              this.translate.instant(
+                'search.configuration.generative-answer.rag-strategies.conversational.toggle-label',
+              ),
+            );
+          }
           return {
             vectorset: config.searchBox.vectorset,
             features,

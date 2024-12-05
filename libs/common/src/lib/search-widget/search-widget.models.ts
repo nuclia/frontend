@@ -45,6 +45,13 @@ export interface RagStrategiesConfig {
   maxNumberOfResources: number | null;
   fieldsAsContext: boolean;
   fieldIds: string;
+  conversationalRagStrategy: boolean;
+  conversationOptions: {
+    attachmentsText: boolean;
+    attachmentsImages: boolean;
+    full: boolean;
+  };
+  maxMessages: number | null;
   includePageImages: boolean;
   maxNumberOfImages: number | null;
   includeParagraphImages: boolean;
@@ -181,6 +188,13 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
     maxNumberOfResources: null,
     fieldsAsContext: false,
     fieldIds: '',
+    conversationalRagStrategy: false,
+    conversationOptions: {
+      attachmentsText: false,
+      attachmentsImages: false,
+      full: false,
+    },
+    maxMessages: null,
     includePageImages: false,
     maxNumberOfImages: null,
     includeParagraphImages: false,
@@ -372,6 +386,14 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
     if (metadatas.length > 0) {
       ragStrategies.push(`${RagStrategyName.METADATAS}|${metadatas.join('|')}`);
     }
+  }
+  if (ragStrategiesConfig.conversationalRagStrategy) {
+    const options = ragStrategiesConfig.conversationOptions;
+    const maxMessages =
+      !options.full && typeof ragStrategiesConfig.maxMessages === 'number' ? `|${ragStrategiesConfig.maxMessages}` : '';
+    ragStrategies.push(
+      `${RagStrategyName.CONVERSATION}${options.attachmentsText ? '|attachments_text' : ''}${options.attachmentsImages ? '|attachments_images' : ''}${options.full ? '|full' : ''}${maxMessages}`,
+    );
   }
   const ragImagesStrategies: string[] = [];
   if (ragStrategiesConfig.includePageImages) {

@@ -1,7 +1,7 @@
 import { type RAGImageStrategy, RagImageStrategyName, RAGStrategy, RagStrategyName } from '../kb';
 
 export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
-  // ragStrategies format example: 'full_resource|3,field_extension|t/field1|f/field2,hierarchy|2,neighbouring_paragraphs|2|2'
+  // ragStrategies format example: 'full_resource|3,field_extension|t/field1|f/field2,hierarchy|2,neighbouring_paragraphs|2|2,conversation|attachments_text|15'
   if (!ragStrategies) {
     return [];
   }
@@ -17,6 +17,15 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
         return { name, types: rest };
       } else if (name === RagStrategyName.NEIGHBOURING_PARAGRAPHS) {
         return { name, before: parseInt(rest[0]) || 0, after: parseInt(rest[1]) || 0 };
+      } else if (name === RagStrategyName.CONVERSATION) {
+        const maxMessages = parseInt(rest[rest.length - 1], 10);
+        return {
+          name,
+          attachments_text: rest.includes('attachments_text'),
+          attachments_images: rest.includes('attachments_images'),
+          full: rest.includes('full'),
+          max_messages: rest.includes('full') || isNaN(maxMessages) ? undefined : maxMessages,
+        };
       } else {
         console.error(`Unknown RAG strategy: ${name}`);
         return undefined;
