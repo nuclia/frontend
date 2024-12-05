@@ -336,6 +336,57 @@
           </nsi-info-card>
         </div>
       </div>
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="conversationalRagStrategy"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{ 'search.configuration.generative-answer.rag-strategies.conversational.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.generative-answer.rag-strategies.conversational.toggle-description' | translate }}
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="conversationalStrategyEnabled"
+          formGroupName="conversationOptions">
+          <pa-checkbox formControlName="attachmentsText">
+            {{
+              'search.configuration.generative-answer.rag-strategies.conversational.option.attachments_text' | translate
+            }}
+          </pa-checkbox>
+          <pa-checkbox formControlName="attachmentsImages">
+            {{
+              'search.configuration.generative-answer.rag-strategies.conversational.option.attachments_images'
+                | translate
+            }}
+          </pa-checkbox>
+          @if (attachmentsImagesEnabled && notSupportingVision) {
+            <nsi-info-card type="warning">
+              {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
+            </nsi-info-card>
+          }
+          <pa-checkbox formControlName="full">
+            {{ 'search.configuration.generative-answer.rag-strategies.conversational.option.full' | translate }}
+          </pa-checkbox>
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="conversationalStrategyEnabled && !fullMessagesEnabled">
+          <div class="extra-label">
+            {{ 'search.configuration.generative-answer.rag-strategies.conversational.max-messages' | translate }}
+          </div>
+          <pa-input
+            formControlName="maxMessages"
+            type="number">
+            {{ 'search.configuration.generative-answer.rag-strategies.conversational.input-label' | translate }}
+          </pa-input>
+        </div>
+        <div></div>
+      </div>
       @if (isRagImagesEnabled | async) {
         <div class="config-form-field">
           <pa-toggle

@@ -90,6 +90,13 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
           {} as Record<RAG_METADATAS, FormControl<boolean>>,
         ),
       ),
+      conversationalRagStrategy: new FormControl<boolean>(false, { nonNullable: true }),
+      conversationOptions: new FormGroup({
+        attachmentsText: new FormControl<boolean>(false, { nonNullable: true }),
+        attachmentsImages: new FormControl<boolean>(false, { nonNullable: true }),
+        full: new FormControl<boolean>(false, { nonNullable: true }),
+      }),
+      maxMessages: new FormControl<number | null>(null),
       maxNumberOfResources: new FormControl<number | null>(null),
       fieldsAsContext: new FormControl<boolean>(false, { nonNullable: true }),
       fieldIds: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
@@ -139,6 +146,15 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   get metadatasEnabled() {
     return this.form.controls.ragStrategies.controls.metadatasRagStrategy.value;
+  }
+  get conversationalStrategyEnabled() {
+    return this.form.controls.ragStrategies.controls.conversationalRagStrategy.value;
+  }
+  get attachmentsImagesEnabled() {
+    return this.form.controls.ragStrategies.controls.conversationOptions.controls.attachmentsImages.value;
+  }
+  get fullMessagesEnabled() {
+    return this.form.controls.ragStrategies.controls.conversationOptions.controls.full.value;
   }
   get fieldsAsContextEnabled() {
     return this.form.controls.ragStrategies.controls.fieldsAsContext.value;
