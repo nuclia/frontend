@@ -10,6 +10,7 @@ import { UsageChartsComponent } from './usage-charts.component';
 export interface UsageModalConfig {
   processingChart: Observable<ChartData>;
   searchChart: Observable<ChartData>;
+  tokenChart: Observable<ChartData>;
   currentChart: OptionModel;
   chartDropdownOptions: OptionModel[];
 }
