@@ -3,7 +3,7 @@
   import { Icon, IconButton } from '../../common';
   import { _, currentLanguage, translateInstant } from '../../core/i18n';
   import { ask } from '../../core/stores/effects';
-  import { isSpeechEnabled, isSpeechOn } from '../../core';
+  import { chatInput, isSpeechEnabled, isSpeechOn } from '../../core';
   import { SpeechSettings, SpeechStore } from 'talk2svelte';
   import { Subscription, filter } from 'rxjs';
   import { onMount } from 'svelte';
@@ -46,6 +46,7 @@
       }),
     );
     subs.push(SpeechStore.message.pipe(filter(() => isListening)).subscribe((message: string) => (question = message)));
+    subs.push(chatInput.subscribe((input: string) => (question = input)));
     return () => {
       SpeechSettings.removeCommand(questionCommand);
       SpeechSettings.removeCommand(answerCommand);
