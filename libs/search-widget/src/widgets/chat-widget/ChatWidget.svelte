@@ -22,6 +22,7 @@
   import { injectCustomCss } from '../../core/utils';
   import {
     chatPlaceholder,
+    chatInput,
     preselectedFilters,
     widgetFeatures,
     widgetFeedback,
@@ -84,8 +85,12 @@
     showChat = false;
   }
 
-  export function ask(question: string, reset = true) {
-    askQuestion(question, reset).subscribe();
+  export function ask(question: string, reset = true, doNotTriggerSearch = false) {
+    if (doNotTriggerSearch) {
+      chatInput.set(question);
+    } else {
+      askQuestion(question, reset).subscribe();
+    }
   }
 
   export const onError = getApiErrors();
