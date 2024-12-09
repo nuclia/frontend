@@ -15,6 +15,8 @@ export interface AccountSummary {
   slug: string;
   title: string;
   type: string;
+  created: string;
+  email: string;
 }
 
 export interface AccountUser {

@@ -16,7 +16,12 @@ export class AccountListComponent {
     map(([accounts, filter]) =>
       filter
         ? accounts.filter(
-            (account) => account.id.includes(filter) || account.title.includes(filter) || account.slug.includes(filter),
+            (account) =>
+              account.id.includes(filter) ||
+              account.title.includes(filter) ||
+              account.slug.includes(filter) ||
+              account.email.includes(filter) ||
+              account.type.includes(filter),
           )
         : accounts,
     ),

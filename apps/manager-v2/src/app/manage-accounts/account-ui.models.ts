@@ -6,12 +6,12 @@ export interface AccountSummary {
   slug: string;
   title: string;
   type: AccountTypes;
+  created: string;
+  email: string;
 }
 
 export interface AccountDetails extends AccountSummary {
   blockingState?: AccountBlockingState;
-  created: string;
-  email: string;
   limits: AccountLimits;
   maxKbs: number;
   trialExpirationDate?: string;

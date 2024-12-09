@@ -4,6 +4,7 @@ import { ManageAccountsComponent } from './manage-accounts.component';
 import { RouterModule, Routes } from '@angular/router';
 import {
   PaButtonModule,
+  PaDateTimeModule,
   PaDatePickerModule,
   PaDropdownModule,
   PaIconModule,
@@ -99,6 +100,7 @@ const ROUTES: Routes = [
     PaScrollModule,
     PaTooltipModule,
     PaIconModule,
+    PaDateTimeModule,
     PaDatePickerModule,
     STFPipesModule,
     TranslateModule,
