@@ -10,6 +10,7 @@ interface AnswerState {
   error?: IErrorResponse;
   isStreaming: boolean;
   isSpeechOn: boolean;
+  input: string;
 }
 
 const EMPTY_ANSWER = { type: 'answer' as const, text: '', id: '' };
@@ -19,7 +20,13 @@ export const answerState = new SvelteState<AnswerState>({
   currentAnswer: EMPTY_ANSWER,
   isStreaming: false,
   isSpeechOn: false,
+  input: '',
 });
+
+export const chatInput = answerState.writer<string, string>(
+  (state) => state.input,
+  (state, value) => ({ ...state, input: value }),
+);
 
 export const currentQuestion = answerState.writer<string, { question: string; reset: boolean }>(
   (state) => state.currentQuestion,
@@ -29,6 +36,7 @@ export const currentQuestion = answerState.writer<string, { question: string; re
     chat: value.reset ? [] : state.chat,
     isStreaming: true,
     error: undefined,
+    input: '',
   }),
 );
 
