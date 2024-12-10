@@ -850,6 +850,7 @@
 	"resource.add_labels_error": "Se produjo un error al agregar etiquetas en {{count}} recursos",
 	"resource.add_labels_success": "Etiquetas añadidas correctamente en {{count}} recursos",
 	"resource.adding_labels": "Agregando etiquetas",
+	"resource.attachments": "Attachments",
 	"resource.change-visibility": "Cambiar visibilidad",
 	"resource.classification.no-paragraph-labelset": "No hay ninguna etiqueta establecida para los bloques de texto. Puedes agregar algunos en",
 	"resource.classification.no-resource-labelset": "No hay ninguna etiqueta establecida para los recursos. Puedes agregar algunos en",

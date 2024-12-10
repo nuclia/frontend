@@ -471,14 +471,13 @@ export interface Message {
 export interface MessageContent {
   text: string;
   format?: TextFormat;
-  attachments?: MessageAttachment[];
+  attachments_fields?: MessageAttachment[];
 }
 
 export interface MessageAttachment {
-  filename: string;
-  content_type?: string;
-  payload: string;
-  md5: string;
+  field_id: string;
+  field_type: string;
+  split?: string;
 }
 
 export enum ResourceFieldProperties {
