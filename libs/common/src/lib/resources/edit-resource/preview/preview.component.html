@@ -86,7 +86,9 @@
                     </nsi-dropdown-button>
                     <pa-dropdown #attachmentsDropdown>
                       @for (attachment of attachments; track attachment) {
-                        <pa-option (selectOption)="navigateToField(attachment.field_type + attachment.field_Id)">
+                        <pa-option
+                          (selectOption)="navigateToField(attachment)"
+                          [description]="attachment.field_id">
                           {{ 'resource.field-' + attachment.field_type | translate }}
                         </pa-option>
                       }
