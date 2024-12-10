@@ -360,5 +360,5 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
           repository: nuclia/core-apps
-          event-type: test-new-promotions
+          event-type: promotions
           client-payload: '${{ env.JSON_PROMO_SUMMARY }}'
