@@ -203,6 +203,7 @@
   {#if $ready && !!svgSprite}
     <Chat
       show={showChat}
+      standaloneChat={true}
       fullscreen={layout === 'fullscreen'}
       height={height || undefined}
       on:close={closeChat} />

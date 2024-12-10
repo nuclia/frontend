@@ -100,9 +100,14 @@ export const jsonAnswer = answerState.reader<any>((state) => {
   return schema;
 });
 
-export const resetChat = answerState.writer<void, void>(
+export const reinitChat = answerState.writer<void, void>(
   () => undefined,
   (state) => ({ ...state, chat: state.chat.slice(0, 1) }),
+);
+
+export const resetChat = answerState.writer<void, void>(
+  () => undefined,
+  (state) => ({ ...state, chat: [] }),
 );
 
 export const isStreaming = answerState.reader((state) => state.isStreaming);
@@ -123,3 +128,5 @@ export const chatError = answerState.writer<IErrorResponse | undefined>(
     };
   },
 );
+
+export const hasChatEntries = answerState.reader<boolean>((state) => state.chat.length > 0);

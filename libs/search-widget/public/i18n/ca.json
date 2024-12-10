@@ -18,6 +18,7 @@
 	"answer.metadata.total-time": "Temps total",
 	"answer.no-citations": "El sistema no ha estat capaç d'indicar explícitament les fonts que s'han utilitzat per produir aquesta resposta.",
 	"answer.placeholder": "Parlem",
+	"answer.reset": "Restableix la conversa",
 	"answer.sources": "Fonts",
 	"answer.title": "Resposta",
 	"entities.annotated": "Anotacions",

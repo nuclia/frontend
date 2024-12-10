@@ -18,6 +18,7 @@
 	"answer.metadata.total-time": "Tiempo total",
 	"answer.no-citations": "El sistema no fue capaz de indicar explícitamente las fuentes que se han utilizado para elaborar esta respuesta.",
 	"answer.placeholder": "Charlemos",
+	"answer.reset": "Reiniciar la conversación",
 	"answer.sources": "Fuentes",
 	"answer.title": "Respuesta",
 	"entities.annotated": "Anotaciones",
