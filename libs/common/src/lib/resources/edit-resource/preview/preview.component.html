@@ -64,7 +64,7 @@
           </div>
         }
 
-        @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId) {
+        @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId + paragraph.key) {
           <div class="paragraph-container">
             @if (paragraph.url) {
               <p>
@@ -73,7 +73,31 @@
                   [src]="paragraph.url | async" />
               </p>
             } @else if (paragraph.kind === 'TEXT') {
-              <p>{{ paragraph.text }}</p>
+              @if (((attachments | async) || {})[paragraph.key || '']; as attachments) {
+                <p class="with-attachments">
+                  <span>{{ paragraph.text }}</span>
+                  <span>
+                    <nsi-dropdown-button
+                      aspect="basic"
+                      size="small"
+                      freeWidth
+                      [popupRef]="attachmentsDropdown">
+                      {{ 'resource.attachments' | translate }}
+                    </nsi-dropdown-button>
+                    <pa-dropdown #attachmentsDropdown>
+                      @for (attachment of attachments; track attachment) {
+                        <pa-option
+                          (selectOption)="navigateToField(attachment)"
+                          [description]="attachment.field_id">
+                          {{ 'resource.field-' + attachment.field_type | translate }}
+                        </pa-option>
+                      }
+                    </pa-dropdown>
+                  </span>
+                </p>
+              } @else {
+                <p>{{ paragraph.text }}</p>
+              }
             } @else {
               <p class="with-type">
                 @if (paragraph.kind === 'TABLE') {
@@ -93,7 +117,7 @@
             }
           </div>
         }
-        @if (totalMessagePages > 0 && totalMessagePages > messagePage) {
+        @if (hasMoreMessages | async) {
           <div>
             <pa-button
               aspect="basic"

@@ -7,6 +7,7 @@
   - Add `QUESTION_ANSWERS` type to `ExtractedDataTypes`
   - `getFullResource` and `getFullResourceBySlug` methods now also retrieve generated questions and answers
 - Support the `conversation` RAG strategy
+- Support `attachments_fields` in conversation fields
 
 ### Bug fix
 

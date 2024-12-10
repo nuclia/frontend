@@ -29,6 +29,11 @@
       max-width: rhythm(28);
       max-height: rhythm(24);
     }
+    p.with-attachments {
+      display: flex;
+      gap: rhythm(2);
+      justify-content: space-between;
+    }
     p.with-type {
       display: flex;
       gap: rhythm(1);

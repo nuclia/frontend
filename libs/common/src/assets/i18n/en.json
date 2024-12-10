@@ -850,6 +850,7 @@
 	"resource.add_labels_error": "An error occurred while adding labels on {{count}} resources",
 	"resource.add_labels_success": "Labels successfully added on {{count}} resources",
 	"resource.adding_labels": "Adding labels",
+	"resource.attachments": "Attachments",
 	"resource.change-visibility": "Change visibility",
 	"resource.classification.no-paragraph-labelset": "There is no label set for text blocks. You can add some in",
 	"resource.classification.no-resource-labelset": "There is no label set for resources. You can add some in",

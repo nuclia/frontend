@@ -18,6 +18,8 @@ import {
   FieldId,
   FileFieldData,
   IError,
+  Message,
+  MessageAttachment,
   Paragraph,
   Resource,
   TextField,
@@ -37,7 +39,7 @@ import {
 import { SDKService } from '@flaps/core';
 import { SafeHtml } from '@angular/platform-browser';
 import { EditResourceService } from '../edit-resource.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceNavigationService } from '../resource-navigation.service';
 import { PreviewService } from './preview.service';
 
@@ -50,6 +52,7 @@ const viewerId = 'viewer-widget';
 })
 export class PreviewComponent implements OnInit, OnDestroy {
   private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
 
   unsubscribeAll = new Subject<void>();
   paragraphs: Observable<ParagraphWithText[]> = this.paragraphService.paragraphList;
@@ -139,8 +142,24 @@ export class PreviewComponent implements OnInit, OnDestroy {
   selectedTab: 'content' | 'questions-answers' = 'content';
 
   currentFieldId?: FieldId;
-  messagePage = 0;
-  totalMessagePages = 0;
+
+  messages = new BehaviorSubject<Message[] | null>(null);
+  messagePage = new BehaviorSubject<number>(1);
+  hasMoreMessages = combineLatest([this.fieldId, this.resource, this.messagePage]).pipe(
+    map(([fieldId, resource, messagePage]) => getTotalMessagePages(fieldId, resource) > messagePage),
+  );
+  attachments = this.messages.pipe(
+    map((messages) =>
+      (messages || []).reduce(
+        (acc, curr) => {
+          acc[curr.ident] =
+            (curr.content.attachments_fields || []).length > 0 ? curr.content.attachments_fields : undefined;
+          return acc;
+        },
+        {} as { [key: string]: MessageAttachment[] | undefined },
+      ),
+    ),
+  );
 
   constructor(
     private editResource: EditResourceService,
@@ -161,11 +180,8 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap(([fieldId, resource]) => {
           if (fieldId.field_type === FIELD_TYPE.conversation) {
-            this.totalMessagePages = getTotalMessagePages(fieldId, resource);
-            this.messagePage = 1;
-            return getMessages(fieldId, resource, this.messagePage).pipe(
-              map((messages) => ({ fieldId, resource, messages })),
-            );
+            this.messagePage.next(1);
+            return getMessages(fieldId, resource, 1).pipe(map((messages) => ({ fieldId, resource, messages })));
           } else {
             return of({ fieldId, resource, messages: null });
           }
@@ -173,17 +189,10 @@ export class PreviewComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(({ fieldId, resource, messages }) => {
+        this.messages.next(messages);
         this.currentFieldId = fieldId;
         this.errors = getErrors(fieldId, resource);
-        const paragraphs: Paragraph[] = messages
-          ? getConversationParagraphs(fieldId, resource, messages)
-          : getParagraphs(fieldId, resource);
-        const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
-          ...paragraph,
-          paragraphId: this.editResource.getParagraphId(fieldId, paragraph),
-          text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
-        }));
-        this.paragraphService.setupParagraphs(enhancedParagraphs);
+        this.initParagraphs(fieldId, resource, messages);
         this.loaded = true;
         this.cdr.markForCheck();
       });
@@ -211,6 +220,19 @@ export class PreviewComponent implements OnInit, OnDestroy {
     if (typeof viewerElement?.$$c?.$destroy === 'function') {
       viewerElement.$$c.$destroy();
     }
+  }
+
+  initParagraphs(fieldId: FieldId, resource: Resource, messages: Message[] | null) {
+    const paragraphs: Paragraph[] = messages
+      ? getConversationParagraphs(fieldId, resource, messages)
+      : getParagraphs(fieldId, resource);
+    const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
+      ...paragraph,
+      paragraphId: this.editResource.getParagraphId(fieldId, paragraph),
+      text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
+    }));
+    this.paragraphService.setupParagraphs(enhancedParagraphs);
+    this.cdr.markForCheck();
   }
 
   openViewer() {
@@ -256,23 +278,24 @@ export class PreviewComponent implements OnInit, OnDestroy {
   }
 
   loadMoreMessages() {
-    this.messagePage++;
+    const nextPage = this.messagePage.getValue() + 1;
+    this.messagePage.next(nextPage);
     combineLatest([this.fieldId, this.resource])
       .pipe(
         take(1),
         switchMap(([fieldId, resource]) =>
-          getMessages(fieldId, resource, this.messagePage).pipe(map((messages) => ({ fieldId, resource, messages }))),
+          getMessages(fieldId, resource, nextPage).pipe(map((messages) => ({ fieldId, resource, messages }))),
         ),
       )
       .subscribe(({ fieldId, resource, messages }) => {
-        const paragraphs: Paragraph[] = getConversationParagraphs(fieldId, resource, messages || []);
-        const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
-          ...paragraph,
-          paragraphId: this.editResource.getParagraphId(fieldId, paragraph),
-          text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
-        }));
-        this.paragraphService.appendParagraphs(enhancedParagraphs);
-        this.cdr.markForCheck();
+        const newMessages = (this.messages.getValue() || []).concat(messages || []);
+        this.messages.next(newMessages);
+        this.initParagraphs(fieldId, resource, newMessages);
       });
+  }
+
+  navigateToField(attachment: MessageAttachment) {
+    const path = `../../${attachment.field_type}/${attachment.field_id}`;
+    this.router.navigate([path], { relativeTo: this.route });
   }
 }
