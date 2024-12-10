@@ -77,6 +77,10 @@
         }
       }
     }
+    .reset-button {
+      margin-top: var(--rhythm-0_5);
+      text-align: right;
+    }
 
     .input-container {
       flex: 0 0 auto;
@@ -95,7 +99,7 @@
     .chat-container {
       &.fullscreen {
         --padding-top-input-container: var(--rhythm-2);
-        --padding-bottom-input-container: var(--rhythm-4);
+        --padding-bottom-input-container: var(--rhythm-2);
         --padding-side-input-container: var(--rhythm-4);
       }
       .input-container.scrolling-behind {
@@ -115,7 +119,7 @@
     .chat-container {
       &.fullscreen {
         --max-width-container: calc(var(--rhythm-64) * 2);
-        --padding-bottom-input-container: var(--rhythm-9);
+        --padding-bottom-input-container: var(--rhythm-6);
         --padding-side-input-container: var(--rhythm-10);
       }
 

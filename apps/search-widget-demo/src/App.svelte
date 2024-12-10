@@ -1,8 +1,8 @@
 <script lang="ts">
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
 
-  const kb = '1f4e4651-580c-40db-8d20-c8dfdfffa530'; // books
-  // const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
+  // const kb = '1f4e4651-580c-40db-8d20-c8dfdfffa530'; // books
+  const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // const kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
   // const kb = '096d9070-f7be-40c8-a24c-19c89072e3ff'; // e2e permanent
 
@@ -26,8 +26,7 @@
     knowledgebox={kb}
     lang="en"
     no_tracking
-    features={askFeatures}
-  />
+    features={askFeatures} />
   <NucliaSearchResults no_tracking />
 </main>
 

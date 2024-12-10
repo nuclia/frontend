@@ -18,6 +18,7 @@
 	"answer.metadata.total-time": "Total time",
 	"answer.no-citations": "The system was not able to indicate explicitly the sources that have been used to produce this answer.",
 	"answer.placeholder": "Let's chat",
+	"answer.reset": "Reset the conversation",
 	"answer.sources": "Sources",
 	"answer.title": "Answer",
 	"entities.annotated": "Annotated",

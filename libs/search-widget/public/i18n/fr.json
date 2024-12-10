@@ -18,6 +18,7 @@
 	"answer.metadata.total-time": "Durée totale",
 	"answer.no-citations": "Le système n'a pas été en mesure d'indiquer explicitement les sources utilisées pour produire cette réponse.",
 	"answer.placeholder": "Discutons",
+	"answer.reset": "Réinitialiser la conversation",
 	"answer.sources": "Sources",
 	"answer.title": "Réponse",
 	"entities.annotated": "Annotations",

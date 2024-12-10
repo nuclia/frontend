@@ -1,6 +1,6 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
-  import { chatError, firstAnswer, isServiceOverloaded, resetChat } from '../../core/stores/answers.store';
+  import { chatError, firstAnswer, isServiceOverloaded, reinitChat } from '../../core/stores/answers.store';
   import Answer from './Answer.svelte';
   import Chat from './Chat.svelte';
   import { trackingEngagement } from '../../core/stores/search.store';
@@ -13,7 +13,7 @@
   }
   function onClose() {
     showChat = false;
-    resetChat.set();
+    reinitChat.set();
   }
 </script>
 

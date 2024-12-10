@@ -1,14 +1,16 @@
 <script lang="ts">
   import Answer from './Answer.svelte';
-  import { _, chat, chatPlaceholder, isStreaming } from '../../core';
+  import { _, chat, chatPlaceholder, hasChatEntries, isStreaming, resetChat } from '../../core';
   import ChatInput from './ChatInput.svelte';
   import { createEventDispatcher, onMount } from 'svelte';
   import { delay, distinctUntilChanged, filter } from 'rxjs';
   import { freezeBackground, Icon, IconButton, LoadingDots, unblockBackground } from '../../common';
+  import Button from '../../common/button/Button.svelte';
 
   export let fullscreen = true;
   export let show = !fullscreen;
   export let height;
+  export let standaloneChat = false;
 
   $: {
     if (fullscreen) {
@@ -37,6 +39,10 @@
   function checkIfScrolling() {
     isScrolling =
       !!entriesContainerElement && entriesContainerElement.offsetHeight < entriesContainerElement.scrollHeight;
+  }
+
+  function resetConversation() {
+    resetChat.set();
   }
 </script>
 
@@ -91,6 +97,17 @@
         <ChatInput
           placeholder={$_($chatPlaceholder)}
           {fullscreen} />
+        {#if standaloneChat}
+          <div class="reset-button">
+            <Button
+              aspect="basic"
+              disabled={!$hasChatEntries}
+              size="small"
+              on:click={resetConversation}>
+              {$_('answer.reset')}
+            </Button>
+          </div>
+        {/if}
       </div>
     </div>
   </div>
