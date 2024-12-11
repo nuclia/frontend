@@ -159,7 +159,7 @@
           </li>
         }
       </ul>
-      @if ((generatedFields | async).length > 0) {
+      @if (((generatedFields | async) || []).length > 0) {
         <h4>{{ 'resource.generated-fields' | translate }}</h4>
         @for (field of generatedFields | async; track field.field_id) {
           <li
