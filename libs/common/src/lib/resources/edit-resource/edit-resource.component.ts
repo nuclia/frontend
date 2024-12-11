@@ -19,6 +19,7 @@ import { ResourceNavigationService } from './resource-navigation.service';
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
   hasError?: boolean;
+  title?: string;
 }
 
 @Component({
@@ -47,6 +48,16 @@ export class EditResourceComponent implements OnInit, OnDestroy {
                 : field.field_type,
           hasError: !!field.error,
         })),
+    ),
+  );
+  originalFields: Observable<ResourceFieldWithIcon[]> = this.fields.pipe(
+    map((fields) => fields.filter((field) => !field.field_id.startsWith('da-'))),
+  );
+  generatedFields: Observable<ResourceFieldWithIcon[]> = this.fields.pipe(
+    map((fields) =>
+      fields
+        .filter((field) => field.field_id.startsWith('da-'))
+        .map((field) => ({ ...field, title: field.field_id.split('-')[1] })),
     ),
   );
   isAdminOrContrib = this.features.isKbAdminOrContrib;

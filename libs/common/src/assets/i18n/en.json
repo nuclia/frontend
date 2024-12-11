@@ -927,6 +927,7 @@
 	"resource.filter.resource-type": "Resource type",
 	"resource.filter.until": "Until",
 	"resource.filtered-by": "Filtered by",
+	"resource.generated-fields": "Generated fields",
 	"resource.hidden": "Hidden",
 	"resource.hide": "Hide",
 	"resource.hiding": "Hiding",

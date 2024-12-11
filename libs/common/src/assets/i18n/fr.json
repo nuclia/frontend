@@ -927,6 +927,7 @@
 	"resource.filter.resource-type": "Type de ressource",
 	"resource.filter.until": "Jusqu’à",
 	"resource.filtered-by": "Filtre par",
+	"resource.generated-fields": "Champs générés",
 	"resource.hidden": "Caché",
 	"resource.hide": "Cacher",
 	"resource.hiding": "Dissimulation",
