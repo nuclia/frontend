@@ -4,19 +4,12 @@ import {
   Component,
   EventEmitter,
   inject,
-  Input,
   OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  BadgeComponent,
-  DropdownButtonComponent,
-  InfoCardComponent,
-  SisModalService,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
+import { InfoCardComponent, SisModalService, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { LabelModule, LabelSetFormModalComponent, LabelsService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -28,7 +21,7 @@ import {
   PaPopupModule,
   PaIconModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo, TaskStatus } from '@nuclia/core';
+import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo } from '@nuclia/core';
 import { filter, forkJoin, map, Observable, Subject } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { switchMap, take, takeUntil } from 'rxjs/operators';
@@ -44,7 +37,6 @@ export interface LabelingConfiguration {
   standalone: true,
   imports: [
     CommonModule,
-    DropdownButtonComponent,
     InfoCardComponent,
     LabelModule,
     PaButtonModule,
@@ -56,7 +48,6 @@ export interface LabelingConfiguration {
     ReactiveFormsModule,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
-    BadgeComponent,
   ],
   templateUrl: './labeling-configuration.component.html',
   styleUrl: './labeling-configuration.component.scss',
@@ -72,17 +63,6 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   private _type: 'resources' | 'text-blocks' = 'resources';
   get type() {
     return this._type;
-  }
-  private _task?: TaskStatus;
-  @Input() set task(value: TaskStatus | undefined | null) {
-    if (value) {
-      this._task = value;
-      this._type = value.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks';
-      this.initForm(value);
-    }
-  }
-  get task() {
-    return this._task;
   }
 
   @Output() configurationChange = new EventEmitter<LabelingConfiguration>();
@@ -120,21 +100,6 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
       });
     });
     this.updateLabelsets();
-  }
-
-  initForm(task: TaskStatus) {
-    this._updateLabelsets().subscribe(() => {
-      const labelOperation = task.parameters.operations?.find((operation) => !!operation.label)?.label;
-      if (labelOperation) {
-        this.labelingForm.controls.labels.clear();
-        labelOperation.labels.forEach(() => this.addLabel());
-        this.labelingForm.patchValue({
-          ...labelOperation,
-          on: task.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks',
-        });
-        this.labelingForm.disable();
-      }
-    });
   }
 
   addLabel() {

@@ -14,37 +14,56 @@
     </div>
   </header>
 
-  <app-task-form
-    triggerDescription="tasks-automation.question-answer.trigger-description"
-    activateButtonLabel="tasks-automation.question-answer.footer.activate-button-label"
-    footerNoteAutomation="tasks-automation.question-answer.footer.apply-automation"
-    footerNoteOneTime="tasks-automation.question-answer.footer.apply-one-time"
-    [task]="task | async"
-    [validFormInside]="questionAnswerForm.valid"
-    (activate)="activateTask($event)"
-    (cancel)="backToTaskList()">
-    <div>
-      <nsi-two-columns-configuration-item
-        itemTitle="tasks-automation.question-answer.prompts.title"
-        description="tasks-automation.question-answer.prompts.description"
-        badge="generic.badge.optional">
-        <div class="form-container">
-          <div [formGroup]="questionAnswerForm">
-            <div class="form-container">
-              <pa-textarea
-                formControlName="question_generator_prompt"
-                rows="3">
-                {{ 'tasks-automation.form.prompts.question-prompt' | translate }}
-              </pa-textarea>
-              <pa-textarea
-                formControlName="generate_answers_prompt"
-                rows="3">
-                {{ 'tasks-automation.form.prompts.answer-prompt' | translate }}
-              </pa-textarea>
+  @if (task | async; as task) {
+    <app-task-settings [task]="task">
+      @if (qaOperation | async; as qaOperation) {
+        <nsi-two-columns-configuration-item itemTitle="tasks-automation.question-answer.prompts.title">
+          <div class="settings-container">
+            <div class="setting">
+              <label>{{ 'tasks-automation.form.prompts.question-prompt' | translate }}</label>
+              <div>{{ qaOperation.question_generator_prompt || '-' }}</div>
+            </div>
+            <div class="separator-line"></div>
+            <div class="setting">
+              <label>{{ 'tasks-automation.form.prompts.answer-prompt' | translate }}</label>
+              <div>{{ qaOperation.generate_answers_prompt || '-' }}</div>
             </div>
           </div>
-        </div>
-      </nsi-two-columns-configuration-item>
-    </div>
-  </app-task-form>
+        </nsi-two-columns-configuration-item>
+      }
+    </app-task-settings>
+  } @else {
+    <app-task-form
+      triggerDescription="tasks-automation.question-answer.trigger-description"
+      activateButtonLabel="tasks-automation.question-answer.footer.activate-button-label"
+      footerNoteAutomation="tasks-automation.question-answer.footer.apply-automation"
+      footerNoteOneTime="tasks-automation.question-answer.footer.apply-one-time"
+      [validFormInside]="questionAnswerForm.valid"
+      (activate)="activateTask($event)"
+      (cancel)="backToTaskList()">
+      <div>
+        <nsi-two-columns-configuration-item
+          itemTitle="tasks-automation.question-answer.prompts.title"
+          description="tasks-automation.question-answer.prompts.description"
+          badge="generic.badge.optional">
+          <div class="form-container">
+            <div [formGroup]="questionAnswerForm">
+              <div class="form-container">
+                <pa-textarea
+                  formControlName="question_generator_prompt"
+                  rows="3">
+                  {{ 'tasks-automation.form.prompts.question-prompt' | translate }}
+                </pa-textarea>
+                <pa-textarea
+                  formControlName="generate_answers_prompt"
+                  rows="3">
+                  {{ 'tasks-automation.form.prompts.answer-prompt' | translate }}
+                </pa-textarea>
+              </div>
+            </div>
+          </div>
+        </nsi-two-columns-configuration-item>
+      </div>
+    </app-task-form>
+  }
 </div>

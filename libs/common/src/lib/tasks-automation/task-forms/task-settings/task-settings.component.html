@@ -1,0 +1,63 @@
+@if (task) {
+  <nsi-two-columns-configuration-item
+    itemTitle="tasks-automation.settings.title"
+    description="tasks-automation.settings.description">
+    <div class="settings-container">
+      <div class="setting">
+        <label>{{ 'tasks-automation.form.task-name.input-label' | translate }}</label>
+        <div>{{ task.parameters.name }}</div>
+      </div>
+      @if (task.parameters.llm.model; as model) {
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>LLM</label>
+          <div>{{ (modelNames | async)?.[model] }}</div>
+        </div>
+      }
+      <div class="separator-line"></div>
+      <div class="setting">
+        <label>{{ 'tasks-automation.table.header.applies-on' | translate }}</label>
+        <div [innerHTML]="'tasks-automation.form.apply-task-to.' + task.applyOption.toLowerCase() | translate"></div>
+      </div>
+    </div>
+  </nsi-two-columns-configuration-item>
+  @if (task.parameters.filter; as filter) {
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.settings.filter.title"
+      description="tasks-automation.settings.filter.description">
+      <div class="settings-container">
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</label>
+          <div>{{ filter.contains?.[0] || '-' }}</div>
+        </div>
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.filter.resource-type.button-label' | translate }}</label>
+          <div class="filters">
+            @if (filter.resource_type?.length) {
+              @for (type of filter.resource_type; track type) {
+                <nsi-badge>{{ type }}</nsi-badge>
+              }
+            } @else {
+              <nsi-badge>{{ 'generic.all' | translate }}</nsi-badge>
+            }
+          </div>
+        </div>
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</label>
+          <div class="filters">
+            @if (filter.field_types?.length) {
+              @for (type of filter.field_types; track type) {
+                <nsi-badge>{{ type }}</nsi-badge>
+              }
+            } @else {
+              <nsi-badge>{{ 'generic.all' | translate }}</nsi-badge>
+            }
+          </div>
+        </div>
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+  <ng-content></ng-content>
+}

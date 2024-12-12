@@ -45,7 +45,6 @@ import { Filters, formatFiltersFromFacets, MIME_FACETS } from '../../resources';
 import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { GenerativeModelPipe } from '../../pipes';
 import { TasksAutomationService } from '../tasks-automation.service';
-import { TaskWithApplyOption } from './task-route.directive';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 
 export interface TaskFormCommonConfig {
@@ -111,17 +110,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input({ transform: booleanAttribute }) validFormInside = false;
   // Flag indicating if the model selection is hidden
   @Input({ transform: booleanAttribute }) modelsHidden = false;
-  // Task whose data is displayed in the form
-  @Input() set task(value: TaskWithApplyOption | undefined | null) {
-    if (value) {
-      this._task = value;
-      this.initForm(value);
-    }
-  }
-  get task() {
-    return this._task;
-  }
-  private _task?: TaskWithApplyOption;
 
   @Output() cancel = new EventEmitter<void>();
   @Output() activate = new EventEmitter<TaskFormCommonConfig>();
@@ -267,22 +255,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
           }
         },
         error: () => this.toaster.error('tasks-automation.errors.counting-resources'),
-      });
-  }
-
-  initForm(task: TaskWithApplyOption) {
-    this.formReady
-      .pipe(
-        filter((ready) => ready),
-        take(1),
-      )
-      .subscribe(() => {
-        this.form.patchValue({
-          ...task.parameters,
-          filter: { ...task.parameters.filter, contains: task.parameters.filter.contains?.[0] || '' },
-          applyTaskTo: task.applyOption,
-        });
-        this.form.disable();
       });
   }
 

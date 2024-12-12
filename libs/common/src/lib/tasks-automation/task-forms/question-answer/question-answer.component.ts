@@ -1,22 +1,23 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { BackButtonComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
+import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TasksAutomationService } from '../../tasks-automation.service';
 import { QAOperation, TaskApplyTo } from '@nuclia/core';
-import { take } from 'rxjs';
+import { map } from 'rxjs';
 
 @Component({
   standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,
-    InfoCardComponent,
     TaskFormComponent,
+    TaskSettingsComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     PaTextFieldModule,
@@ -34,16 +35,7 @@ export class QuestionAnswerComponent extends TaskRouteDirective {
     question_generator_prompt: new FormControl<string>('', { nonNullable: true }),
   });
 
-  constructor() {
-    super();
-    this.task?.pipe(take(1)).subscribe((task) => {
-      const qaOperation = task?.parameters.operations?.find((operation) => !!operation.qa)?.qa;
-      if (qaOperation) {
-        this.questionAnswerForm.patchValue(qaOperation);
-        this.questionAnswerForm.disable();
-      }
-    });
-  }
+  qaOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.qa)?.qa));
 
   activateTask(commonConfig: TaskFormCommonConfig) {
     const operation: QAOperation =
