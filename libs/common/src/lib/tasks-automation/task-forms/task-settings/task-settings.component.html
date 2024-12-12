@@ -47,8 +47,8 @@
         <div class="setting">
           <label>{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</label>
           <div class="filters">
-            @if (filter.field_types?.length) {
-              @for (type of filter.field_types; track type) {
+            @if (fieldTypes.length > 0) {
+              @for (type of fieldTypes; track type) {
                 <nsi-badge>{{ type }}</nsi-badge>
               }
             } @else {

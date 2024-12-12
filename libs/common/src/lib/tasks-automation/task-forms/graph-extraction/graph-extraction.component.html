@@ -47,7 +47,7 @@
                 }
               </pa-table>
             </div>
-            @if (graphOperation.entity_examples.length > 0) {
+            @if ((graphOperation.entity_examples || []).length > 0) {
               <div class="separator-line"></div>
               <div class="setting">
                 <label>{{ 'tasks-automation.graph-extraction.ner-examples.title' | translate }}</label>
@@ -81,7 +81,7 @@
                 </pa-table>
               </div>
             }
-            @if (graphOperation.relation_examples.length > 0) {
+            @if ((graphOperation.relation_examples || []).length > 0) {
               <div class="separator-line"></div>
               <div class="setting">
                 <label>{{ 'tasks-automation.graph-extraction.relation-examples.title' | translate }}</label>

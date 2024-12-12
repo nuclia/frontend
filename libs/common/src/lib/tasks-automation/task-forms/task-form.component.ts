@@ -36,6 +36,7 @@ import {
   FIELD_TYPE,
   LearningConfigurationOption,
   LLMConfig,
+  longToShortFieldType,
   Search,
   TaskFullDefinition,
   TaskName,
@@ -54,6 +55,7 @@ export interface TaskFormCommonConfig {
     //searchIn: 'titleOrContent' | 'title' | 'content';
     contains: string[];
     resource_type: string[];
+    field_types: string[];
   };
   llm: LLMConfig;
   webhook: {
@@ -150,9 +152,12 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   get resourceTypeTotalCount(): number {
     return this.resourceTypeFilters.length;
   }
+  get selectedResourceTypes() {
+    return this.resourceTypeFilters.filter((option) => option.selected).map((option) => option.value);
+  }
 
   fieldTypeFilters: OptionModel[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text, FIELD_TYPE.conversation].map(
-    (t) => new OptionModel({ id: t, value: t, label: t }),
+    (t) => new OptionModel({ id: longToShortFieldType(t), value: longToShortFieldType(t), label: t }),
   );
   allFieldTypesSelected = false;
   get fieldTypeSelectionCount(): number {
@@ -160,6 +165,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
   get fieldTypesTotalCount(): number {
     return this.fieldTypeFilters.length;
+  }
+  get selectedFieldTypes() {
+    return this.fieldTypeFilters.filter((option) => option.selected).map((option) => option.value);
   }
 
   hasLabelSets = this.labelService.hasResourceLabelSets;
@@ -297,12 +305,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   onToggleFilter() {
     this.allResourceTypesSelected = this.resourceTypeFilters.every((option) => option.selected);
     this.allFieldTypesSelected = this.fieldTypeFilters.every((option) => option.selected);
-
-    const selectedResourceTypes = this.resourceTypeFilters
-      .filter((option) => option.selected)
-      .map((option) => option.value);
-    const selectedFieldTypes = this.fieldTypeFilters.filter((option) => option.selected).map((option) => option.value);
-    this.selectedFilters.next(selectedResourceTypes.concat(selectedFieldTypes).concat(this.labelFilters));
+    this.selectedFilters.next(this.selectedResourceTypes.concat(this.selectedFieldTypes).concat(this.labelFilters));
   }
 
   activateTask() {
@@ -312,7 +315,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       webhook: { ...rawValue.webhook, headers: this.headers },
       filter: {
         contains: rawValue.filter.contains ? [rawValue.filter.contains] : [],
-        resource_type: this.selectedFilters.value,
+        resource_type: this.selectedResourceTypes,
+        field_types: this.selectedFieldTypes,
       },
     });
   }

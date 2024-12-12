@@ -6,6 +6,7 @@ import { LabelModule, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskWithApplyOption } from '../task-route.directive';
 import { map, switchMap, take } from 'rxjs';
+import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
 
 @Component({
   selector: 'app-task-settings',
@@ -35,6 +36,19 @@ export class TaskSettingsComponent {
       ),
     ),
   );
+  fieldTypes: FIELD_TYPE[] = [];
 
-  @Input({ required: true }) task: TaskWithApplyOption | undefined;
+  @Input()
+  set task(value: TaskWithApplyOption | undefined) {
+    this._task = value;
+    if (value?.parameters.filter.field_types?.length) {
+      this.fieldTypes = value.parameters.filter.field_types
+        .map((type) => shortToLongFieldType(type as SHORT_FIELD_TYPE))
+        .filter((type) => !!type);
+    }
+  }
+  get task() {
+    return this._task;
+  }
+  private _task: TaskWithApplyOption | undefined;
 }
