@@ -1579,6 +1579,7 @@
 	"upload.select_file": "Arrossegueu els fitxers o feu clic aquí",
 	"upload.takes_time": "Nuclia necessita una estona per a processar els fitxers.",
 	"upload.texts": "Afegir recursos de text",
+	"upload.toast.blocked": "S'ha esgotat la quota de pujada, necessites actualitzar el teu compte.",
 	"upload.toast.failed": "Errors durant la càrrega",
 	"upload.toast.limit": "El teu compte ha enviat massa peticions durant un període curt de temps. Torna-ho a provar d’aquí uns instants.",
 	"upload.toast.successful": "Pujada correctament",
