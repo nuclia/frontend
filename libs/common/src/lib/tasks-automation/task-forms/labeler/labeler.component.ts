@@ -4,13 +4,15 @@ import { TaskRouteDirective } from '../task-route.directive';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaIconModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import {
   LabelingConfiguration,
   LabelingConfigurationComponent,
 } from '../labeling-configuration/labeling-configuration.component';
 import { TasksAutomationService } from '../../tasks-automation.service';
 import { TaskApplyTo } from '@nuclia/core';
+import { TaskSettingsComponent } from '../task-settings/task-settings.component';
+import { map } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -19,11 +21,13 @@ import { TaskApplyTo } from '@nuclia/core';
     BackButtonComponent,
     InfoCardComponent,
     TaskFormComponent,
+    TaskSettingsComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     PaTextFieldModule,
     LabelingConfigurationComponent,
     PaIconModule,
+    PaTableModule,
   ],
   templateUrl: './labeler.component.html',
   styleUrl: '../_task-form.common.scss',
@@ -31,8 +35,10 @@ import { TaskApplyTo } from '@nuclia/core';
 })
 export class LabelerComponent extends TaskRouteDirective {
   taskAutomation = inject(TasksAutomationService);
+  TaskApplyTo = TaskApplyTo;
 
   labelingConfig?: LabelingConfiguration;
+  labelOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.label)?.label));
 
   onConfigurationChange(configuration: LabelingConfiguration) {
     this.labelingConfig = configuration;

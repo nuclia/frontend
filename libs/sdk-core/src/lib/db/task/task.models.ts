@@ -112,6 +112,7 @@ export interface TaskParameters {
   filter: {
     contains?: string[];
     resource_type?: string[];
+    field_types?: string[];
   };
   llm: LLMConfig;
   on?: TaskApplyTo;

@@ -1,0 +1,7 @@
+@import 'apps/dashboard/src/variables';
+@import '../task-form.common';
+
+.filters {
+  display: flex;
+  gap: rhythm(1);
+}

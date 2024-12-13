@@ -50,7 +50,6 @@
             <nsi-dropdown-button
               fullWidth
               aspect="basic"
-              [disabled]="task"
               [popupRef]="resourceTypesDropdown">
               {{ 'tasks-automation.form.filter.resource-type.button-label' | translate }}
 
@@ -91,7 +90,6 @@
           <nsi-dropdown-button
             fullWidth
             aspect="basic"
-            [disabled]="task"
             [popupRef]="fieldTypesDropdown">
             {{ 'tasks-automation.form.filter.fields.button-label' | translate }}
 
@@ -200,9 +198,8 @@
   </nsi-two-columns-configuration-item>
   -->
 
-  @if (!task) {
-    <nsi-sticky-footer>
-      <!--
+  <nsi-sticky-footer>
+    <!--
       <span footerNote>
         @if (applyTaskValue === 'ALL' || applyTaskValue === 'NEW') {
           {{ footerNoteAutomation | translate }}
@@ -211,17 +208,16 @@
         }
       </span>
       -->
-      <pa-button
-        aspect="basic"
-        (click)="cancel.emit()">
-        {{ 'generic.cancel' | translate }}
-      </pa-button>
-      <pa-button
-        kind="primary"
-        type="submit"
-        [disabled]="form.invalid || !validFormInside">
-        {{ activateButtonLabel | translate }}
-      </pa-button>
-    </nsi-sticky-footer>
-  }
+    <pa-button
+      aspect="basic"
+      (click)="cancel.emit()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="form.invalid || !validFormInside">
+      {{ activateButtonLabel | translate }}
+    </pa-button>
+  </nsi-sticky-footer>
 </form>

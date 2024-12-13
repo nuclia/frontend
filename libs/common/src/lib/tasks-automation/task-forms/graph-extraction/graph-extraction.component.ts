@@ -1,16 +1,16 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
-import { LabelingConfigurationComponent } from '../labeling-configuration/labeling-configuration.component';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
+import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskRouteDirective } from '../task-route.directive';
-import { PaButtonModule, PaIconModule, PaPopupModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaPopupModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GraphOperation, TaskApplyTo } from '@nuclia/core';
 import { TasksAutomationService } from '../../tasks-automation.service';
-import { take } from 'rxjs';
 import { STFUtils } from '@flaps/core';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'stf-graph-extraction',
@@ -19,8 +19,8 @@ import { STFUtils } from '@flaps/core';
     CommonModule,
     BackButtonComponent,
     InfoCardComponent,
-    LabelingConfigurationComponent,
     TaskFormComponent,
+    TaskSettingsComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     PaIconModule,
@@ -28,13 +28,16 @@ import { STFUtils } from '@flaps/core';
     PaButtonModule,
     PaTextFieldModule,
     PaPopupModule,
+    PaTableModule,
   ],
   templateUrl: './graph-extraction.component.html',
   styleUrl: './graph-extraction.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GraphExtractionComponent extends TaskRouteDirective implements OnInit {
+export class GraphExtractionComponent extends TaskRouteDirective {
   private taskAutomation = inject(TasksAutomationService);
+
+  graphOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.graph)?.graph));
 
   graphForm = new FormGroup({
     entity_defs: new FormArray<FormGroup<{ label: FormControl<string>; description: FormControl<string> }>>([
@@ -138,21 +141,5 @@ export class GraphExtractionComponent extends TaskRouteDirective implements OnIn
       .subscribe(() => {
         this.backToTaskList();
       });
-  }
-
-  ngOnInit() {
-    this.task?.pipe(take(1)).subscribe((task) => {
-      const graphOperation = task?.parameters.operations?.find((operation) => !!operation.graph)?.graph;
-      if (graphOperation) {
-        this.graphForm.controls.entity_defs.clear();
-        this.graphForm.controls.entity_examples.clear();
-        this.graphForm.controls.relation_examples.clear();
-        graphOperation.entity_defs?.forEach(() => this.addNerType());
-        graphOperation.entity_examples?.forEach(() => this.addExample());
-        graphOperation.relation_examples?.forEach(() => this.addRelationExample());
-        this.graphForm.patchValue(graphOperation);
-        this.graphForm.disable();
-      }
-    });
   }
 }

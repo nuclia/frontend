@@ -8,12 +8,13 @@ import {
 } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
+import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TasksAutomationService } from '../../tasks-automation.service';
 import { TaskApplyTo } from '@nuclia/core';
-import { json } from 'd3';
+import { map } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -24,6 +25,7 @@ import { json } from 'd3';
     PaTextFieldModule,
     ReactiveFormsModule,
     TaskFormComponent,
+    TaskSettingsComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     PaTogglesModule,
@@ -40,6 +42,7 @@ export class AskComponent extends TaskRouteDirective {
     question: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     fieldName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
+  askOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.ask)?.ask));
 
   jsonExample = {
     name: 'book',

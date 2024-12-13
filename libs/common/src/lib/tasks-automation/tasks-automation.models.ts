@@ -51,8 +51,9 @@ function mapParameters(parameters: TaskParameters): TaskConfiguration {
   return {
     title: parameters.name,
     filters: [
-      { label: 'contains', count: parameters.filter.contains?.length || 0 },
+      { label: 'contains', count: parameters.filter.contains?.length || 0 },
       { label: 'resource_type', count: parameters.filter.resource_type?.length || 0 },
+      { label: 'field_types', count: parameters.filter.field_types?.length || 0 },
     ],
     hasPrompt: false, // TODO: extract prompt from parameters
     labelSets: (parameters.operations || [])
