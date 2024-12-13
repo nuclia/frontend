@@ -242,7 +242,10 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         map((filters) => filters as Filters),
       )
       .subscribe((filters) => {
-        this.resourceTypeFilters = filters.mainTypes;
+        this.resourceTypeFilters = filters.mainTypes.map((filter) => ({
+          ...filter,
+          value: filter.value.split('/').slice(2).join('/'),
+        }));
         this.cdr.detectChanges();
       });
 

@@ -192,6 +192,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
         this.messages.next(messages);
         this.currentFieldId = fieldId;
         this.errors = getErrors(fieldId, resource);
+        this.selectedTab = 'content';
         this.initParagraphs(fieldId, resource, messages);
         this.loaded = true;
         this.cdr.markForCheck();
