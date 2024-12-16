@@ -1,4 +1,4 @@
-# 1.23.1 (unreleased)
+# 1.24.0 (2024-12-16)
 
 ### Improvements
 
@@ -8,6 +8,7 @@
   - `getFullResource` and `getFullResourceBySlug` methods now also retrieve generated questions and answers
 - Support the `conversation` RAG strategy
 - Support `attachments_fields` in conversation fields
+- Support rank fusion boosting
 
 ### Bug fix
 

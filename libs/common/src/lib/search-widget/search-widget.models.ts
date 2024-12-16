@@ -31,6 +31,8 @@ export interface SearchBoxConfig {
   generateAnswerWith: 'only-semantic' | 'semantic-and-full-text';
   showHiddenResources: boolean;
   semanticReranking: boolean;
+  rrfBoosting: boolean;
+  rrfSemanticBoosting?: number;
   vectorset: string; // aka semantic model
 }
 export interface RagStrategiesConfig {
@@ -154,6 +156,7 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   generateAnswerWith: 'semantic-and-full-text',
   showHiddenResources: false,
   semanticReranking: true,
+  rrfBoosting: false,
   vectorset: '',
 };
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
@@ -392,7 +395,9 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
     const maxMessages =
       !options.full && typeof ragStrategiesConfig.maxMessages === 'number' ? `|${ragStrategiesConfig.maxMessages}` : '';
     ragStrategies.push(
-      `${RagStrategyName.CONVERSATION}${options.attachmentsText ? '|attachments_text' : ''}${options.attachmentsImages ? '|attachments_images' : ''}${options.full ? '|full' : ''}${maxMessages}`,
+      `${RagStrategyName.CONVERSATION}${options.attachmentsText ? '|attachments_text' : ''}${
+        options.attachmentsImages ? '|attachments_images' : ''
+      }${options.full ? '|full' : ''}${maxMessages}`,
     );
   }
   const ragImagesStrategies: string[] = [];
@@ -461,6 +466,11 @@ export function getWidgetTheme(options: WidgetConfiguration): string {
 }
 export function getReranker(config: SearchBoxConfig): string {
   return config.semanticReranking ? `\n  reranker="predict"` : '';
+}
+export function getRrfBoosting(config: SearchBoxConfig): string {
+  return config.rrfBoosting && config.rrfSemanticBoosting !== undefined
+    ? `\n  rrf_boosting="${config.rrfSemanticBoosting}"`
+    : '';
 }
 export function getCitationThreshold(config: ResultDisplayConfig): string {
   return config.showResultType === 'citations' && config.customizeThreshold

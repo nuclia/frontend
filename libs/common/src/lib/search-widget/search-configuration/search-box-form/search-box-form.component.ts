@@ -95,6 +95,8 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     }),
     showHiddenResources: new FormControl<boolean>(false, { nonNullable: true }),
     semanticReranking: new FormControl<boolean>(false, { nonNullable: true }),
+    rrfBoosting: new FormControl<boolean>(false, { nonNullable: true }),
+    rrfSemanticBoosting: new FormControl<number>(1, { nonNullable: true }),
     vectorset: new FormControl<string>('', { nonNullable: true }),
   });
 
@@ -128,6 +130,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   }
   get useRephrasePromptEnabled() {
     return this.form.controls.useRephrasePrompt.value;
+  }
+  get rrfBoostingEnabled() {
+    return this.form.controls.rrfBoosting.value;
   }
 
   ngOnInit() {

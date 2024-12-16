@@ -55,6 +55,7 @@ let SHOW_ATTACHED_IMAGES = false;
 let AUDIT_METADATA: { [key: string]: string } | undefined = undefined;
 let RERANKER: Reranker | undefined = undefined;
 let CITATION_THRESHOLD: number | undefined = undefined;
+let RRF_BOOSTING: number | undefined = undefined;
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -85,6 +86,9 @@ export const initNuclia = (
   }
   if (widgetOptions.features?.showHidden) {
     SEARCH_OPTIONS.show_hidden = true;
+  }
+  if (widgetOptions.rrf_boosting) {
+    SEARCH_OPTIONS.rank_fusion = { name: 'rrf', boosting: { semantic: widgetOptions.rrf_boosting } };
   }
   CITATIONS = !!widgetOptions.features?.citations;
   REPHRASE = !!widgetOptions.features?.rephrase;
@@ -157,6 +161,7 @@ export const initNuclia = (
   MAX_PARAGRAPHS = widgetOptions.max_paragraphs || undefined;
   QUERY_PREPEND = widgetOptions.query_prepend || '';
   CITATION_THRESHOLD = widgetOptions.citation_threshold;
+  RRF_BOOSTING = widgetOptions.rrf_boosting;
   STATE = state;
   nucliaApi.events?.log('widgetOptions', widgetOptions);
 
@@ -220,6 +225,7 @@ export const getAnswer = (
     audit_metadata: AUDIT_METADATA,
     reranker: RERANKER,
     citation_threshold: CITATION_THRESHOLD,
+    rank_fusion: RRF_BOOSTING ? { name: 'rrf', boosting: { semantic: RRF_BOOSTING } } : undefined,
   };
   if (prompt || systemPrompt || REPHRASE_PROMPT) {
     defaultOptions.prompt = {

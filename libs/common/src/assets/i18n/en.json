@@ -1187,6 +1187,8 @@
 	"search.configuration.search-box.rephrase-prompt.textarea-label": "Rephrase prompt",
 	"search.configuration.search-box.rephrase-prompt.toggle-description": "This prompt will be used to rephrase the user query to optimize search results. Note: the original user query will be preserve when passing it to the LLM to obtain an answer.",
 	"search.configuration.search-box.rephrase-prompt.toggle-label": "Custom rephrase prompt",
+	"search.configuration.search-box.rrf-boosting.toggle-description": "Will merge the semantic and keyword results with the Reciprocal Rank Fusion algorithm. Optionally, you can boost the semantic results compare to the keyword results.",
+	"search.configuration.search-box.rrf-boosting.toggle-label": "Reciprocal Rank Fusion",
 	"search.configuration.search-box.section-description": "Queries, filtering and suggestions",
 	"search.configuration.search-box.section-title": "Search options",
 	"search.configuration.search-box.select-results-used.semantic-and-full-text": "Semantic and full text results",

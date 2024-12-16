@@ -43,6 +43,13 @@ export interface Prompts {
   rephrase?: string;
 }
 
+export interface RankFusion {
+  name: 'rrf';
+  boosting: {
+    semantic: number;
+  };
+}
+
 export interface BaseSearchOptions {
   fields?: string[];
   filters?: string[] | Filter[];
@@ -67,6 +74,7 @@ export interface BaseSearchOptions {
   audit_metadata?: { [key: string]: string };
   top_k?: number;
   reranker?: Reranker;
+  rank_fusion?: RankFusion;
 }
 
 export interface ChatOptions extends BaseSearchOptions {
