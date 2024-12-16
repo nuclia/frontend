@@ -138,8 +138,9 @@ export class GraphExtractionComponent extends TaskRouteDirective {
         },
         commonConfig.applyTaskTo,
       )
-      .subscribe(() => {
-        this.backToTaskList();
+      .subscribe({
+        complete: () => this.backToTaskList(),
+        error: (error) => this.showError(error),
       });
   }
 }

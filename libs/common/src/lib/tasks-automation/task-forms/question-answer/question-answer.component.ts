@@ -55,8 +55,9 @@ export class QuestionAnswerComponent extends TaskRouteDirective {
         },
         commonConfig.applyTaskTo,
       )
-      .subscribe(() => {
-        this.backToTaskList();
+      .subscribe({
+        complete: () => this.backToTaskList(),
+        error: (error) => this.showError(error),
       });
   }
 }

@@ -1,11 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  BackButtonComponent,
-  InfoCardComponent,
-  SisToastService,
-  TwoColumnsConfigurationItemComponent,
-} from '@nuclia/sistema';
+import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TaskSettingsComponent } from '../task-settings/task-settings.component';
@@ -36,16 +31,18 @@ import { map } from 'rxjs';
 })
 export class AskComponent extends TaskRouteDirective {
   taskAutomation = inject(TasksAutomationService);
-  toaster = inject(SisToastService);
   askForm = new FormGroup({
     isJSON: new FormControl<boolean>(false, { nonNullable: true }),
     question: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    fieldName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.pattern('[^-]*')] }),
+    fieldName: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.pattern('[^-]*')],
+    }),
   });
   override errorMessages = {
     required: 'validation.required',
-    pattern: 'tasks-automation.generator.field-name.invalid'
-  }
+    pattern: 'tasks-automation.generator.field-name.invalid',
+  };
 
   askOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.ask)?.ask));
 
@@ -101,8 +98,9 @@ export class AskComponent extends TaskRouteDirective {
         },
         commonConfig.applyTaskTo,
       )
-      .subscribe(() => {
-        this.backToTaskList();
+      .subscribe({
+        complete: () => this.backToTaskList(),
+        error: (error) => this.showError(error),
       });
   }
 }

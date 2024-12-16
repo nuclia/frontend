@@ -3,6 +3,7 @@ import { filter, map, shareReplay, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { ApplyOption, TaskStatus } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
 
 export interface TaskWithApplyOption extends TaskStatus {
   applyOption: ApplyOption;
@@ -16,6 +17,7 @@ export class TaskRouteDirective {
   protected activeRoute = inject(ActivatedRoute);
   protected router = inject(Router);
   protected tasksAutomation = inject(TasksAutomationService);
+  protected toaster = inject(SisToastService);
 
   taskId = this.activeRoute.params.pipe(
     filter((params) => !!params['taskId']),
@@ -45,5 +47,12 @@ export class TaskRouteDirective {
         switchMap((backRoute) => this.router.navigate([backRoute], { relativeTo: this.activeRoute })),
       )
       .subscribe();
+  }
+
+  showError(error: any) {
+    const detail = error?.body?.detail;
+    if (detail) {
+      this.toaster.error(typeof detail === 'string' ? detail : detail?.[0]?.msg);
+    }
   }
 }
