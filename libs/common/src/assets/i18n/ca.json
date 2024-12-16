@@ -1187,6 +1187,7 @@
 	"search.configuration.search-box.rephrase-prompt.textarea-label": "Prompt de reformulació",
 	"search.configuration.search-box.rephrase-prompt.toggle-description": "Aquest prompt s'utilitzarà per reformular la consulta de l'usuari per optimitzar els resultats de la cerca. Nota: la consulta original de l'usuari es conservarà en passar-la al LLM per obtenir una resposta.",
 	"search.configuration.search-box.rephrase-prompt.toggle-label": "Prompt de reformulació personalitzat",
+	"search.configuration.search-box.rrf-boosting.help": "El factor de millora dels resultats semàntics es compara amb els resultats de les paraules clau",
 	"search.configuration.search-box.rrf-boosting.toggle-description": "Combinarà els resultats semàntics i de paraules clau amb l'algoritme de fusió de rang recíproc. Opcionalment, podeu augmentar els resultats semàntics en comparació amb els resultats de les paraules clau.",
 	"search.configuration.search-box.rrf-boosting.toggle-label": "Fusió de rang recíproc",
 	"search.configuration.search-box.section-description": "Consultes, filtratge i suggeriments",
