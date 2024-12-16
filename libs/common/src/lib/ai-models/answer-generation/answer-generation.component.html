@@ -86,26 +86,27 @@
       </div>
     </nsi-two-columns-configuration-item>
 
-    @if (currentGenerativeModel?.user_prompt) {
-      <ng-container [formGroup]="userPromptForm">
-        @if (
-          currentGenerativeModel?.user_prompt &&
-            learningConfig['user_prompts'].schemas?.[currentGenerativeModel?.user_prompt || ''];
-          as userPrompt
-        ) {
-          @if (userPrompt.properties['prompt']; as prompt) {
+    <ng-container [formGroup]="userPromptForm">
+      @for (userPrompt of userPromptSchemas || {} | keyvalue; track userPrompt.key) {
+        <div
+          [formGroupName]="userPrompt.key"
+          [hidden]="userPrompt.key !== currentGenerativeModel?.user_prompt">
+          @if (userPrompt.value.properties['prompt']; as prompt) {
             <nsi-two-columns-configuration-item
               badge="generic.badge.optional"
-              itemTitle="kb.ai-models.answer-generation.prompt.title"
+              [itemTitle]="
+                'kb.ai-models.answer-generation.prompt.title'
+                  | translate: { provider: keyProviders[userPrompt.key] || userPrompt.key }
+              "
               description="kb.ai-models.answer-generation.prompt.description"
               [unauthorized]="(isUserPromptsAuthorized | async) === false"
-              (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.prompt.title')">
+              (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.set-prompt')">
               <div class="form-container small-gap">
                 <nsi-info-card>{{ prompt.info }}</nsi-info-card>
                 <pa-select
                   formControlName="prompt_examples"
                   [label]="'kb.ai-models.common.examples' | translate"
-                  (valueChange)="setPrompt('prompt', $event)">
+                  (valueChange)="setPrompt(userPrompt.key, 'prompt', $event)">
                   @for (option of prompt.examples || []; track option) {
                     <pa-option [value]="option">
                       {{ option }}
@@ -129,18 +130,21 @@
               </div>
             </nsi-two-columns-configuration-item>
           }
-          @if (userPrompt.properties['system']; as system) {
+          @if (userPrompt.value.properties['system']; as system) {
             <nsi-two-columns-configuration-item
               badge="generic.badge.optional"
-              itemTitle="kb.ai-models.answer-generation.behavior.title"
+              [itemTitle]="
+                'kb.ai-models.answer-generation.behavior.title'
+                  | translate: { provider: keyProviders[userPrompt.key] || userPrompt.key }
+              "
               description="kb.ai-models.answer-generation.behavior.description"
               [unauthorized]="(isUserPromptsAuthorized | async) === false"
-              (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.behavior.title')">
+              (clickOnUnauthorized)="openUnauthorizedModal('kb.ai-models.answer-generation.set-prompt')">
               <div class="form-container small-gap">
                 <pa-select
                   formControlName="system_examples"
                   [label]="'kb.ai-models.common.examples' | translate"
-                  (valueChange)="setPrompt('system', $event)">
+                  (valueChange)="setPrompt(userPrompt.key, 'system', $event)">
                   @for (option of system.examples || []; track option) {
                     <pa-option [value]="option">
                       {{ option }}
@@ -158,9 +162,9 @@
               </div>
             </nsi-two-columns-configuration-item>
           }
-        }
-      </ng-container>
-    }
+        </div>
+      }
+    </ng-container>
     <nsi-sticky-footer>
       <pa-button
         aspect="basic"

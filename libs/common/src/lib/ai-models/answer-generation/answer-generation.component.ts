@@ -51,12 +51,7 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
   configForm = new FormGroup({
     generative_model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     user_keys: new FormGroup({}),
-    user_prompts: new FormGroup({
-      prompt: new FormControl<string>(''),
-      prompt_examples: new FormControl<string>(''),
-      system: new FormControl<string>(''),
-      system_examples: new FormControl<string>(''),
-    }),
+    user_prompts: new FormGroup({}),
   });
   currentGenerativeModel?: LearningConfigurationOption;
   userKeyToggle = new FormControl<boolean>(false);
@@ -75,12 +70,15 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
   get userPromptForm() {
     return this.configForm.controls.user_prompts;
   }
+  get userPromptSchemas() {
+    return this.learningConfigurations?.['user_prompts']?.schemas;
+  }
 
   constructor() {
     super();
     this.userKeyToggle.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.updateValidators();
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -104,15 +102,23 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
         this.userPromptForm.disable();
       });
 
+    if (this.learningConfigurations && Object.keys(this.userPromptForm.controls).length === 0) {
+      Object.keys(this.userPromptSchemas || {}).forEach((key) => {
+        this.userPromptForm.addControl(
+          key,
+          new FormGroup({
+            prompt: new FormControl<string>(''),
+            prompt_examples: new FormControl<string>(''),
+            system: new FormControl<string>(''),
+            system_examples: new FormControl<string>(''),
+          }),
+        );
+      });
+    }
+
     if (kbConfig) {
       this.configForm.patchValue(kbConfig);
-
       this.updateCurrentGenerativeModel();
-      if (this.currentGenerativeModel?.user_prompt) {
-        if (kbConfig['user_prompts']) {
-          this.userPromptForm.patchValue(kbConfig['user_prompts'][this.currentGenerativeModel?.user_prompt]);
-        }
-      }
       if (this.currentGenerativeModel?.user_key) {
         if (kbConfig['user_keys']) {
           const ownKey = !!kbConfig['user_keys'][this.currentGenerativeModel?.user_key];
@@ -140,15 +146,18 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
       this.currentGenerativeModel?.user_key && this.hasOwnKey
         ? { [this.currentGenerativeModel?.user_key]: kbConfig['user_keys'] }
         : {};
-    kbConfig['user_prompts'] = this.currentGenerativeModel?.user_prompt
-      ? {
-          [this.currentGenerativeModel?.user_prompt]: {
-            ...kbConfig['user_prompts'],
-            prompt: kbConfig['user_prompts'].prompt?.trim(),
-            system: kbConfig['user_prompts'].system?.trim(),
-          },
-        }
-      : {};
+
+    kbConfig['user_prompts'] = Object.entries(kbConfig['user_prompts']).reduce(
+      (acc, curr: [string, any]) => {
+        const prompts = {
+          prompt: curr[1].prompt?.trim(),
+          system: curr[1].system?.trim(),
+        };
+        acc[curr[0]] = prompts.prompt || prompts.system ? prompts : undefined;
+        return acc;
+      },
+      {} as { [key: string]: any },
+    );
 
     this.kb
       .setConfiguration(kbConfig)
@@ -183,10 +192,6 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
     );
     if (generativeOption) {
       this.currentGenerativeModel = generativeOption;
-      this.userPromptForm.patchValue({
-        prompt: '',
-        system: '',
-      });
     }
     if (this.currentGenerativeModel?.user_key) {
       // add user_keys controls corresponding to generative model if any
@@ -225,9 +230,9 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
     });
   }
 
-  setPrompt(field: string, value: string) {
+  setPrompt(key: string, promptType: string, value: string) {
     if (value) {
-      const formValue = { [field]: value, [`${field}_examples`]: '' };
+      const formValue = { [key]: { [promptType]: value, [`${promptType}_examples`]: '' } };
       this.userPromptForm.patchValue(formValue);
       this.cdr.markForCheck();
     }
