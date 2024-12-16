@@ -1433,6 +1433,7 @@
 	"tasks-automation.generator.description": "Enrich your resources by generating extra text (like a summary) or metadata associated to the chosen resources.",
 	"tasks-automation.generator.field-name.description": "Prefix the id of the new field where the generated data will be stored.",
 	"tasks-automation.generator.field-name.info": "In each resource, a new field will be created containing the generated content corresponding to your query.",
+	"tasks-automation.generator.field-name.invalid": "The field name cannot contain hyphens",
 	"tasks-automation.generator.field-name.title": "Where to store the generated content?",
 	"tasks-automation.generator.footer.activate-button-label": "Activate generator",
 	"tasks-automation.generator.footer.apply-automation": "Apply your query to all existing and future resources matching the selection.",

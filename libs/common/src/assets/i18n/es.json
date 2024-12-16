@@ -1433,6 +1433,7 @@
 	"tasks-automation.generator.description": "Enriquezca sus recursos generando texto adicional (como un resumen) o metadatos asociados a los recursos elegidos.",
 	"tasks-automation.generator.field-name.description": "Anteponga el id del nuevo campo donde se almacenarán los datos generados.",
 	"tasks-automation.generator.field-name.info": "En cada recurso se creará un nuevo campo que contendrá el contenido generado correspondiente a su consulta.",
+	"tasks-automation.generator.field-name.invalid": "El nombre del campo no puede contener guiones",
 	"tasks-automation.generator.field-name.title": "¿Dónde almacenar el contenido generado?",
 	"tasks-automation.generator.footer.activate-button-label": "Activar generador",
 	"tasks-automation.generator.footer.apply-automation": "Aplique su consulta a todos los recursos existentes y futuros que coincidan con la selección.",

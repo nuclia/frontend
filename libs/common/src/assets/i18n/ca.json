@@ -1433,6 +1433,7 @@
 	"tasks-automation.generator.description": "Enriquiu els vostres recursos generant text addicional (com un resum) o metadades associades als recursos escollits.",
 	"tasks-automation.generator.field-name.description": "Prefixeu l'identificador del nou camp on s'emmagatzemaran les dades generades.",
 	"tasks-automation.generator.field-name.info": "En cada recurs, es crearà un camp nou amb el contingut generat corresponent a la vostra consulta.",
+	"tasks-automation.generator.field-name.invalid": "El nom del camp no pot contenir guions",
 	"tasks-automation.generator.field-name.title": "On emmagatzemar el contingut generat?",
 	"tasks-automation.generator.footer.activate-button-label": "Activa el generador",
 	"tasks-automation.generator.footer.apply-automation": "Apliqueu la vostra consulta a tots els recursos existents i futurs que coincideixin amb la selecció.",
