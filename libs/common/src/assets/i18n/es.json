@@ -1187,6 +1187,8 @@
 	"search.configuration.search-box.rephrase-prompt.textarea-label": "Prompt de reformulación",
 	"search.configuration.search-box.rephrase-prompt.toggle-description": "Este prompt se utilizará para reformular la consulta del usuario y optimizar los resultados de la búsqueda. Nota: la consulta original del usuario se conservará al pasarla al LLM para obtener una respuesta.",
 	"search.configuration.search-box.rephrase-prompt.toggle-label": "Prompt de reformulación personalizado",
+	"search.configuration.search-box.rrf-boosting.toggle-description": "Fusionará los resultados semánticos y de palabras clave con el algoritmo Reciprocal Rank Fusion. Opcionalmente, puede mejorar los resultados semánticos en comparación con los resultados de palabras clave.",
+	"search.configuration.search-box.rrf-boosting.toggle-label": "Fusión de rangos recíprocos",
 	"search.configuration.search-box.section-description": "Consultas, filtros y sugerencias",
 	"search.configuration.search-box.section-title": "Opciones de búsqueda",
 	"search.configuration.search-box.select-results-used.semantic-and-full-text": "Resultados semánticos y full text",

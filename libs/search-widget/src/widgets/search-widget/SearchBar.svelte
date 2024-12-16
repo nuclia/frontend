@@ -91,6 +91,7 @@
   export let audit_metadata = '';
   export let reranker: Reranker | undefined = undefined;
   export let citation_threshold: number | string | undefined = undefined;
+  export let rrf_boosting: number | string | undefined = undefined;
   export let feedback: WidgetFeedback = 'answer';
 
   let _ready = new BehaviorSubject(false);
@@ -121,6 +122,7 @@
   let _max_tokens: number | undefined;
   let _max_output_tokens: number | undefined;
   let _citation_threshold: number | undefined;
+  let _rrf_boosting: number | undefined;
 
   export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
     searchQuery.set(query);
@@ -163,6 +165,7 @@
       vectorset,
       reranker,
       citation_threshold,
+      rrf_boosting,
       feedback,
     });
   }
@@ -220,6 +223,7 @@
     _max_tokens = typeof max_tokens === 'string' ? parseInt(max_tokens, 10) : max_tokens;
     _max_output_tokens = typeof max_output_tokens === 'string' ? parseInt(max_output_tokens, 10) : max_output_tokens;
     _citation_threshold = typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
+    _rrf_boosting = typeof rrf_boosting === 'string' ? parseFloat(rrf_boosting) : rrf_boosting;
 
     nucliaAPI = initNuclia(
       {
@@ -250,6 +254,7 @@
         audit_metadata,
         reranker,
         citation_threshold: _citation_threshold,
+        rrf_boosting: _rrf_boosting,
         feedback,
       },
       no_tracking,

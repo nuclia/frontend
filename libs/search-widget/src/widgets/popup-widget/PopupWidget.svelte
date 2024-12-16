@@ -44,6 +44,7 @@
   export let audit_metadata = '';
   export let reranker: Reranker | undefined = undefined;
   export let citation_threshold: number | string | undefined = undefined;
+  export let rrf_boosting: number | string | undefined = undefined;
   export let feedback: WidgetFeedback = 'answer';
 
   let searchBar: any;
@@ -147,6 +148,7 @@
             {audit_metadata}
             {reranker}
             {citation_threshold}
+            {rrf_boosting}
             {feedback} />
         </div>
         <div class="search-results-container">

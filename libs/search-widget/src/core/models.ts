@@ -58,6 +58,7 @@ export interface WidgetOptions {
   audit_metadata?: string;
   reranker?: Reranker;
   citation_threshold?: number;
+  rrf_boosting?: number;
   feedback?: WidgetFeedback;
 }
 

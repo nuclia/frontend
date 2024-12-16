@@ -179,6 +179,27 @@
   </div>
   <div class="config-form-field">
     <pa-toggle
+      formControlName="rrfBoosting"
+      withBackground
+      spaceBetweenLabelAndToggle>
+      <span class="toggle-label">
+        {{ 'search.configuration.search-box.rrf-boosting.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.search-box.rrf-boosting.toggle-description' | translate }}
+    </div>
+    <div
+      class="extra-fields"
+      [class.visible]="rrfBoostingEnabled">
+      <pa-input
+        formControlName="rrfSemanticBoosting"
+        type="number"
+        step="0.1"></pa-input>
+    </div>
+  </div>
+  <div class="config-form-field">
+    <pa-toggle
       formControlName="prependTheQuery"
       withBackground
       spaceBetweenLabelAndToggle
