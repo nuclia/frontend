@@ -246,7 +246,7 @@ export class TextFieldData implements IFieldData {
 
 export type TextFormat = 'PLAIN' | 'MARKDOWN' | 'KEEP_MARKDOWN' | 'HTML' | 'RST';
 
-export type TextFieldFormat = TextFormat | 'JSON';
+export type TextFieldFormat = TextFormat | 'JSON' | 'JSONL';
 
 export interface TextField {
   body: string;
