@@ -40,8 +40,13 @@ export class AskComponent extends TaskRouteDirective {
   askForm = new FormGroup({
     isJSON: new FormControl<boolean>(false, { nonNullable: true }),
     question: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    fieldName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    fieldName: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.pattern('[^-]*')] }),
   });
+  override errorMessages = {
+    required: 'validation.required',
+    pattern: 'tasks-automation.generator.field-name.invalid'
+  }
+
   askOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.ask)?.ask));
 
   jsonExample = {
