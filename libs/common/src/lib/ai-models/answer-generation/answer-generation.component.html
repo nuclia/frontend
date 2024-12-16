@@ -89,7 +89,7 @@
     <ng-container [formGroup]="userPromptForm">
       @for (userPrompt of userPromptSchemas || {} | keyvalue; track userPrompt.key) {
         <div
-          [formGroup]="userPromptForm.controls[userPrompt.key]"
+          [formGroupName]="userPrompt.key"
           [hidden]="userPrompt.key !== currentGenerativeModel?.user_prompt">
           @if (userPrompt.value.properties['prompt']; as prompt) {
             <nsi-two-columns-configuration-item
