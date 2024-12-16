@@ -1,10 +1,10 @@
 <script lang="ts">
   import { Observable, of, switchMap } from 'rxjs';
-  import { fieldData , getTextFile} from '../../../../core';
+  import { fieldData, getTextFile } from '../../../../core';
   import type { FileField, Search, TextField } from '@nuclia/core';
   import MarkdownRenderer from './MarkdownRendering.svelte';
   import HtmlRenderer from './HtmlRendering.svelte';
-  import { getUnMarked } from "../../utils";
+  import { getUnMarked } from '../../utils';
 
   export let selectedParagraph: Search.FindParagraph | undefined;
   export let isHtml: boolean;
@@ -20,7 +20,7 @@
       if (uri) {
         return getTextFile(uri);
       } else {
-        return of((data?.value as TextField).body || '');
+        return of((data?.value as TextField).body || data?.extracted?.text?.text || '');
       }
     }),
   );
