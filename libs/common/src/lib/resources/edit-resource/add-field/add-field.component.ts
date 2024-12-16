@@ -13,7 +13,7 @@ import { ResourceNavigationService } from '../resource-navigation.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddFieldComponent implements OnInit, OnDestroy {
-  availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN', 'KEEP_MARKDOWN', 'JSON'];
+  availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN', 'KEEP_MARKDOWN', 'JSON', 'JSONL'];
   availableTypes: FIELD_TYPE[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text];
 
   unsubscribeAll = new Subject<void>();
