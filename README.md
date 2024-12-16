@@ -190,5 +190,5 @@ The maintenance page is in `./maintenance`.
 It is deployed manually to stage using the following command:
 
 ```sh
-gsutil cp -r ./maintenance gs://stashify-cdn
+gsutil cp -r ./maintenance gs://ncl-cdn-gcp-global-stage-1
 ```
