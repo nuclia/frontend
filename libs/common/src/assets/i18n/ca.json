@@ -1403,6 +1403,7 @@
 	"tasks-automation.form.field-name.placeholder": "Nom del camp",
 	"tasks-automation.form.filter.all": "tots",
 	"tasks-automation.form.filter.description": "L’acció només s’aplicarà als recursos que coincideixin amb la selecció.",
+	"tasks-automation.form.filter.excluded-fields.button-label": "Tipus de camps exclosos",
 	"tasks-automation.form.filter.fields.all-types": "Tots els tipus de camp",
 	"tasks-automation.form.filter.fields.button-label": "Tipus de camp",
 	"tasks-automation.form.filter.resource-labels.button-label": "Etiquetes de recursos",

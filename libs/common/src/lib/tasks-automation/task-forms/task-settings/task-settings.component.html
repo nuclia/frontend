@@ -43,19 +43,28 @@
             }
           </div>
         </div>
-        <div class="separator-line"></div>
-        <div class="setting">
-          <label>{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</label>
-          <div class="filters">
-            @if (fieldTypes.length > 0) {
+        @if (fieldTypes.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</label>
+            <div class="filters">
               @for (type of fieldTypes; track type) {
                 <nsi-badge>{{ type }}</nsi-badge>
               }
-            } @else {
-              <nsi-badge>{{ 'generic.all' | translate }}</nsi-badge>
-            }
+            </div>
           </div>
-        </div>
+        }
+        @if (notFieldTypes.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.filter.excluded-fields.button-label' | translate }}</label>
+            <div class="filters">
+              @for (type of notFieldTypes; track type) {
+                <nsi-badge>{{ type }}</nsi-badge>
+              }
+            </div>
+          </div>
+        }
       </div>
     </nsi-two-columns-configuration-item>
   }

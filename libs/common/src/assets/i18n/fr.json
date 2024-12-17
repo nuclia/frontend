@@ -1403,6 +1403,7 @@
 	"tasks-automation.form.field-name.placeholder": "Nom du champs",
 	"tasks-automation.form.filter.all": "tout",
 	"tasks-automation.form.filter.description": "L’action ne s’appliquera qu’aux ressources correspondant à la sélection.",
+	"tasks-automation.form.filter.excluded-fields.button-label": "Types de champs exclus",
 	"tasks-automation.form.filter.fields.all-types": "Tous types de champs",
 	"tasks-automation.form.filter.fields.button-label": "Types de champs",
 	"tasks-automation.form.filter.resource-labels.button-label": "Étiquettes de ressources",
