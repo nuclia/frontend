@@ -60,6 +60,7 @@ export interface WidgetOptions {
   citation_threshold?: number;
   rrf_boosting?: number;
   feedback?: WidgetFeedback;
+  copy_paste_disclaimer?: string;
 }
 
 export interface WidgetAction {

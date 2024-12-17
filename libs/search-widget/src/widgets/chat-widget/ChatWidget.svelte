@@ -63,6 +63,7 @@
   export let citation_threshold: number | string | undefined = undefined;
   export let rrf_boosting: number | string | undefined = undefined;
   export let feedback: WidgetFeedback = 'answer';
+  export let copy_paste_disclaimer: string | undefined = undefined;
 
   export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
@@ -167,6 +168,7 @@
         citation_threshold: _citation_threshold,
         rrf_boosting: _rrf_boosting,
         feedback,
+        copy_paste_disclaimer,
       },
       no_tracking,
     );

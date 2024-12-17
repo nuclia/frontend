@@ -12,6 +12,7 @@
   import {
     chat,
     debug,
+    disclaimer,
     downloadDump,
     feedbackOnAnswer,
     getAttachedImageTemplate,
@@ -25,6 +26,7 @@
     type RankedParagraph,
     type TypedResult,
   } from '../../core';
+  import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
 
   export let answer: Partial<Ask.Answer>;
   export let rank = 0;
@@ -34,6 +36,7 @@
   let element: HTMLElement | undefined;
   let copied = false;
   let showMetadata = false;
+  let showDisclaimer = false;
 
   const dispatch = createEventDispatcher();
 
@@ -152,6 +155,21 @@
   }
 
   function copyAnswer() {
+    disclaimer.subscribe((message) => {
+      if (message) {
+        showDisclaimer = true;
+      } else {
+        _copyAnswer();
+      }
+    });
+  }
+
+  function copyAfterConfirm() {
+    _copyAnswer();
+    showDisclaimer = false;
+  }
+
+  function _copyAnswer() {
     let copy = answer.text || '';
     const paragraphs = sources.reduce(
       (acc, result) => acc.concat(result.paragraphs.map((paragraph) => paragraph.text)),
@@ -275,6 +293,13 @@
       </div>
     {/if}
   {/if}
+  <ConfirmDialog
+    show={showDisclaimer}
+    closeable={true}
+    on:cancel={() => (showDisclaimer = false)}
+    on:confirm={copyAfterConfirm}>
+    {$disclaimer}
+  </ConfirmDialog>
 </div>
 
 <style

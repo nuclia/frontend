@@ -11,6 +11,7 @@ interface AnswerState {
   isStreaming: boolean;
   isSpeechOn: boolean;
   input: string;
+  disclaimer?: string;
 }
 
 const EMPTY_ANSWER = { type: 'answer' as const, text: '', id: '' };
@@ -130,3 +131,8 @@ export const chatError = answerState.writer<IErrorResponse | undefined>(
 );
 
 export const hasChatEntries = answerState.reader<boolean>((state) => state.chat.length > 0);
+
+export const disclaimer = answerState.writer<string | undefined, string | undefined>(
+  (state) => state.disclaimer,
+  (state, value) => ({ ...state, disclaimer: value }),
+);
