@@ -222,6 +222,25 @@
       </div>
 
       <div class="column-container">
+        @if (isAccountManager | async) {
+          @if ((uploadBlocked | async) || (generativeBlocked | async)) {
+            <nsi-info-card type="warning">
+              <div class="blocked-features">
+                <div class="title-m title-with-icon">
+                  <pa-icon name="warning"></pa-icon>
+                  {{ 'dashboard-home.blocked.title' | translate }}
+                </div>
+                @if (uploadBlocked | async) {
+                  <div class="body-s">{{ 'dashboard-home.blocked.upload' | translate }}</div>
+                }
+                @if (generativeBlocked | async) {
+                  <div class="body-s">{{ 'dashboard-home.blocked.generative' | translate }}</div>
+                }
+              </div>
+            </nsi-info-card>
+          }
+        }
+
         @if (canUpgrade | async) {
           <nsi-home-container>
             <app-account-status></app-account-status>
