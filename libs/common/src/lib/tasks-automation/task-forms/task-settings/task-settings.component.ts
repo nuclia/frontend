@@ -37,18 +37,24 @@ export class TaskSettingsComponent {
     ),
   );
   fieldTypes: FIELD_TYPE[] = [];
+  notFieldTypes: FIELD_TYPE[] = [];
 
   @Input()
   set task(value: TaskWithApplyOption | undefined) {
     this._task = value;
     if (value?.parameters.filter.field_types?.length) {
-      this.fieldTypes = value.parameters.filter.field_types
-        .map((type) => shortToLongFieldType(type as SHORT_FIELD_TYPE))
-        .filter((type) => !!type);
+      this.fieldTypes = this.mapFieldTypes(value.parameters.filter.field_types);
+    }
+    if (value?.parameters.filter.not_field_types?.length) {
+      this.notFieldTypes = this.mapFieldTypes(value.parameters.filter.not_field_types);
     }
   }
   get task() {
     return this._task;
   }
   private _task: TaskWithApplyOption | undefined;
+
+  private mapFieldTypes(fieldTypes: string[]) {
+    return fieldTypes.map((type) => shortToLongFieldType(type as SHORT_FIELD_TYPE)).filter((type) => !!type);
+  }
 }

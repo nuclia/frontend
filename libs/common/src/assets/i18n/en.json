@@ -1396,6 +1396,7 @@
 	"tasks-automation.form.field-name.placeholder": "Field name",
 	"tasks-automation.form.filter.all": "all",
 	"tasks-automation.form.filter.description": "The action will apply only to resources matching the selection.",
+	"tasks-automation.form.filter.excluded-fields.button-label": "Excluded field types",
 	"tasks-automation.form.filter.fields.all-types": "All field types",
 	"tasks-automation.form.filter.fields.button-label": "Field types",
 	"tasks-automation.form.filter.resource-labels.button-label": "Resource labels",
