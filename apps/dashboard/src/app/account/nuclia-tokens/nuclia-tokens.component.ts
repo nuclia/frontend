@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, QueryList, OnDestroy, ViewChildren, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  QueryList,
+  OnDestroy,
+  ViewChildren,
+  Input,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SDKService } from '@flaps/core';
 import {
@@ -13,7 +22,6 @@ import {
   shareReplay,
   Subject,
   switchMap,
-  take,
   takeUntil,
 } from 'rxjs';
 import { KnowledgeBox, LearningConfigurations, NucliaTokensDetails, UsagePoint } from '@nuclia/core';
@@ -76,6 +84,10 @@ export class NucliaTokensComponent implements OnDestroy {
       this.loading = false;
     }
   }
+
+  @Input() periods: { start: Date; end: Date }[] = [];
+  @Input() selectedPeriod: { start: Date; end: Date } | null = null;
+  @Output() selectPeriod = new EventEmitter<{ start: Date; end: Date }>();
 
   @ViewChildren(AccordionItemComponent) accordionItems?: QueryList<AccordionItemComponent>;
 
@@ -164,7 +176,6 @@ export class NucliaTokensComponent implements OnDestroy {
   );
 
   totalTokens = this.usageSubject.pipe(
-    take(1),
     map((usage) => usage['account'][0].metrics.find((metric) => metric.name === 'nuclia_tokens_billed')?.value || 0),
   );
 
