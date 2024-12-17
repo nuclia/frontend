@@ -17,8 +17,6 @@ import { InviteCollaboratorsModalComponent } from '../invite-collaborators-modal
 export class AccountHomeComponent implements OnInit {
   account$ = this.metrics.account$;
   canUpgrade = this.metrics.canUpgrade;
-  isSubscribed = this.metrics.isSubscribed;
-  isTrial = this.metrics.isTrial;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
   period = this.metrics.period;
 

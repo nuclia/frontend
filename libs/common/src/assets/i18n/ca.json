@@ -616,6 +616,7 @@
 	"kb.metrics.performance-evolution.description": "Feu un seguiment de l’evolució del rendiment del vostre pipeline RAG",
 	"kb.metrics.performance-evolution.title": "Evolució del rendiment",
 	"kb.metrics.period.current-billing-period": "Període de facturació actual",
+	"kb.metrics.period.current-month": "Mes actual",
 	"kb.metrics.period.label": "Mostra mètriques a",
 	"kb.metrics.period.last-7d": "Últims 7 dies",
 	"kb.metrics.period.last-14d": "Últims 14 dies",

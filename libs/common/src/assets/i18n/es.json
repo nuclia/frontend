@@ -616,6 +616,7 @@
 	"kb.metrics.performance-evolution.description": "Siga la evolución de los resultados de sus proyectos RAG",
 	"kb.metrics.performance-evolution.title": "Evolución del rendimiento",
 	"kb.metrics.period.current-billing-period": "Período de facturación actual",
+	"kb.metrics.period.current-month": "Mes Actual",
 	"kb.metrics.period.label": "Mostrar métricas en el",
 	"kb.metrics.period.last-7d": "Últimos 7 días",
 	"kb.metrics.period.last-14d": "Últimos 14 días",
