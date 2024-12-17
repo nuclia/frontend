@@ -24,7 +24,7 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
   previousQuery?: string;
   searchQuery = '';
   hasMoreResults = false;
-  nextPageNumber = 0;
+  extendedResults = false;
 
   constructor(
     private annotationService: ParagraphAnnotationService,
@@ -50,7 +50,7 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
     // Reset pagination on new query
     if (this.previousQuery !== this.searchQuery) {
       this.previousQuery = this.searchQuery;
-      this.nextPageNumber = 0;
+      this.extendedResults = false;
     }
     this._triggerSearch(this.searchQuery).subscribe((results) => {
       this.annotationService.setSearchResults(results);
@@ -67,16 +67,17 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
       this.searchQuery = '';
       this.annotationService.setSearchResults(null);
       this.hasMoreResults = false;
-      this.nextPageNumber = 0;
+      this.extendedResults = false;
       this.cdr.markForCheck();
     }
   }
 
   loadMore() {
-    if (this.hasMoreResults && this.searchQuery) {
-      this._triggerSearch(this.searchQuery).subscribe((results) => {
-        this.annotationService.appendSearchResults(results);
+    if (this.hasMoreResults && !this.extendedResults && this.searchQuery) {
+      this._triggerSearch(this.searchQuery, true).subscribe((results) => {
+        this.annotationService.setSearchResults(results);
         this.updatePagination(results);
+        this.extendedResults = true;
       });
     }
   }
@@ -87,16 +88,13 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
 
   private updatePagination(results: Search.Results) {
     if (results.paragraphs) {
-      this.hasMoreResults = results.paragraphs.next_page;
-      this.nextPageNumber = results.paragraphs.page_number + 1;
+      this.hasMoreResults = results.paragraphs.results.length < results.paragraphs.total;
     }
   }
 
-  private _triggerSearch(query: string) {
+  private _triggerSearch(query: string, extendedResults: boolean = false) {
     return forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))]).pipe(
-      switchMap(([field, resource]) =>
-        this.annotationService.searchInField(query, resource, field, this.nextPageNumber),
-      ),
+      switchMap(([field, resource]) => this.annotationService.searchInField(query, resource, field, extendedResults)),
     );
   }
 }
