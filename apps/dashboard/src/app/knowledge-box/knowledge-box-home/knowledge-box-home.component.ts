@@ -4,7 +4,7 @@ import { AppService, RangeChartData, RemiMetricsService, searchResources } from 
 import { ChartData, MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
-import { Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
+import { BlockedFeature, Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UsageModalComponent } from './kb-usage/usage-modal.component';
 import { takeUntil } from 'rxjs/operators';
@@ -127,6 +127,15 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   };
 
   healthCheckData: Observable<RangeChartData[]> = this.remiMetrics.healthCheckData;
+
+  uploadBlocked = this.account.pipe(
+    map(
+      (account) =>
+        account.blocked_features.includes(BlockedFeature.UPLOAD) ||
+        account.blocked_features.includes(BlockedFeature.PROCESSING),
+    ),
+  );
+  generativeBlocked = this.account.pipe(map((account) => account.blocked_features.includes(BlockedFeature.GENERATIVE)));
 
   constructor(
     private app: AppService,
