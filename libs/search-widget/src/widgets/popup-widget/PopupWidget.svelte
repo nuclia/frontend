@@ -46,6 +46,7 @@
   export let citation_threshold: number | string | undefined = undefined;
   export let rrf_boosting: number | string | undefined = undefined;
   export let feedback: WidgetFeedback = 'answer';
+  export let copy_disclaimer: string | undefined = undefined;
 
   let searchBar: any;
   let visible = false;
@@ -149,7 +150,8 @@
             {reranker}
             {citation_threshold}
             {rrf_boosting}
-            {feedback} />
+            {feedback}
+            {copy_disclaimer} />
         </div>
         <div class="search-results-container">
           <SearchResults />

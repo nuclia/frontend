@@ -24,7 +24,7 @@ import { searchError, searchOptions, showAttachedImages } from './stores/search.
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { reset } from './reset';
-import { chatError } from './stores/answers.store';
+import { chatError, disclaimer } from './stores/answers.store';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.KEYWORD, Search.Features.SEMANTIC];
 const DEFAULT_CHAT_MODE = [Ask.Features.KEYWORD, Ask.Features.SEMANTIC];
@@ -110,6 +110,9 @@ export const initNuclia = (
     SEARCH_OPTIONS.audit_metadata = metadata;
   } catch (e) {
     console.error('Invalid audit metadata');
+  }
+  if (widgetOptions.copy_disclaimer) {
+    disclaimer.set(widgetOptions.copy_disclaimer);
   }
 
   nucliaApi = new Nuclia(options);
