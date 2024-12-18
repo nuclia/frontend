@@ -71,6 +71,10 @@
         gap: rhythm(1);
         padding: rhythm(1) rhythm(1.5);
 
+        &.generated-fields {
+          display: block;
+        }
+
         pa-icon {
           display: flex;
         }

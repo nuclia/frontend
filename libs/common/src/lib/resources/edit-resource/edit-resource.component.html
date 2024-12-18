@@ -158,32 +158,36 @@
             {{ 'resource.tooltip.add-field' | translate }}
           </li>
         }
-      </ul>
-      @if (((generatedFields | async) || []).length > 0) {
-        <h4>{{ 'resource.generated-fields' | translate }}</h4>
-        @for (field of generatedFields | async; track field.field_id) {
-          <li
-            [class.active]="
-              activeField !== 'resource' &&
-              activeField?.field_id === field.field_id &&
-              activeField?.field_type === field.field_type
-            "
-            (click)="navigateToField(field)">
-            <pa-icon
-              [name]="field.icon"
-              size="small"></pa-icon>
-            {{ field.title }}
+        @if (((generatedFields | async) || []).length > 0) {
+          <li class="generated-fields">
+            <h4>{{ 'resource.generated-fields' | translate }}</h4>
+            <ul>
+              @for (field of generatedFields | async; track field.field_id) {
+                <li
+                  [class.active]="
+                    activeField !== 'resource' &&
+                    activeField?.field_id === field.field_id &&
+                    activeField?.field_type === field.field_type
+                  "
+                  (click)="navigateToField(field)">
+                  <pa-icon
+                    [name]="field.icon"
+                    size="small"></pa-icon>
+                  {{ field.title }}
 
-            <span
-              class="error-marker"
-              *ngIf="field.hasError">
-              <pa-icon
-                name="warning"
-                size="small"></pa-icon>
-            </span>
+                  <span
+                    class="error-marker"
+                    *ngIf="field.hasError">
+                    <pa-icon
+                      name="warning"
+                      size="small"></pa-icon>
+                  </span>
+                </li>
+              }
+            </ul>
           </li>
         }
-      }
+      </ul>
     </nav>
     <div class="page-content">
       <router-outlet></router-outlet>
