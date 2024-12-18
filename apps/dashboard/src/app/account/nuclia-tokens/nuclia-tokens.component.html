@@ -8,19 +8,37 @@
       <pa-icon name="chart"></pa-icon>
       {{ 'account.nuclia-tokens.details' | translate }}
     </div>
-    @if (((kbList | async) || []).length > 1) {
-      <div class="select-kb">
-        <pa-select
-          [value]="selectedKb | async"
-          (valueChange)="selectedKb.next($event)">
-          <pa-option value="account">{{ 'account.nuclia-tokens.account' | translate }}</pa-option>
-          <pa-separator></pa-separator>
-          @for (kb of kbList | async; track kb.id) {
-            <pa-option [value]="kb.id">{{ kb.title }}</pa-option>
-          }
-        </pa-select>
-      </div>
-    }
+    <div class="selectors">
+      @if (periods.length > 0 && selectedPeriod) {
+        <div class="select">
+          <pa-select
+            [value]="selectedPeriod.start.toString()">
+            @for (period of periods; track period.start.toString()) {
+              <pa-option
+                [value]="period.start.toString()"
+                (selectOption)="selectPeriod.emit(period); loading = true"
+                >
+                {{ period.start | date: 'MMMM y' }}
+              </pa-option>
+            }
+          </pa-select>
+        </div>
+      }
+      @if (((kbList | async) || []).length > 1) {
+        <div class="select">
+          <pa-select
+            [value]="selectedKb | async"
+            (valueChange)="selectedKb.next($event)">
+            <pa-option value="account">{{ 'account.nuclia-tokens.account' | translate }}</pa-option>
+            <pa-separator></pa-separator>
+            @for (kb of kbList | async; track kb.id) {
+              <pa-option [value]="kb.id">{{ kb.title }}</pa-option>
+            }
+          </pa-select>
+        </div>
+      }
+    </div>
+
   </div>
   @if (!loading) {
     @let groups = visibleGroups | async;
@@ -39,7 +57,7 @@
                   <pa-table-row>
                     <pa-table-cell header>{{ 'account.nuclia-tokens.description' | translate }}</pa-table-cell>
                     <pa-table-cell header>{{ 'account.nuclia-tokens.operations' | translate }}</pa-table-cell>
-                    <pa-table-cell header>Tokens</pa-table-cell>
+                    <pa-table-cell header>Nuclia tokens</pa-table-cell>
                     <pa-table-cell header>
                       <div>
                         <div>{{ 'account.nuclia-tokens.average-cost' | translate }}</div>

@@ -17,8 +17,12 @@
   }
 }
 
-.select-kb {
-  width: rhythm(35);
+.selectors {
+  display: flex;
+  gap: rhythm(1);
+}
+.select {
+  width: rhythm(24);
 }
 
 .type {

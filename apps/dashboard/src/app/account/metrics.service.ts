@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { AccountService, BillingService, FeaturesService, Prices, SDKService } from '@flaps/core';
 import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
-import { format, isFuture, subDays, subMonths } from 'date-fns';
+import { format, getDaysInMonth, isFuture, subDays, subMonths } from 'date-fns';
 import { AccountTypes, UsageMetric, UsagePoint, UsageType } from '@nuclia/core';
 
 export type ChartData = {
@@ -51,17 +51,24 @@ export class MetricsService {
     catchError(() => of(undefined)),
   );
   last30Days = { start: subDays(new Date(), 30), end: new Date() };
-  period = combineLatest([this.isTrial, this.isSubscribed]).pipe(
-    switchMap(([isTrial, isSubscribed]) => {
-      if (isTrial) {
-        return this.trialPeriod;
-      } else if (isSubscribed) {
+  get currentMonth() {
+    const start = new Date();
+    start.setUTCDate(1);
+    start.setUTCHours(0, 0, 0, 0);
+    const end = new Date();
+    end.setUTCDate(getDaysInMonth(end));
+    end.setUTCHours(23, 59, 59, 999);
+    return { start, end };
+  }
+  period = this.isSubscribed.pipe(
+    switchMap((isSubscribed) => {
+      if (isSubscribed) {
         return this.subscriptionPeriod;
       } else {
-        return of(this.last30Days);
+        return of(this.currentMonth);
       }
     }),
-    map((period) => period || this.last30Days),
+    map((period) => period || this.currentMonth),
   );
   prices: Observable<{ [key in AccountTypes]: Prices }> = this.billingService.getPrices().pipe(shareReplay());
 
