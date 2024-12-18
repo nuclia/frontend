@@ -26,7 +26,6 @@
     knowledgebox={kb}
     lang="en"
     no_tracking
-    rrf_boosting={0.3}
     features={askFeatures} />
   <NucliaSearchResults no_tracking />
 </main>

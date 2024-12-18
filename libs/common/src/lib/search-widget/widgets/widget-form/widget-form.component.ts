@@ -82,6 +82,8 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     placeholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     customizeChatPlaceholder: new FormControl<boolean>(false, { nonNullable: true }),
     chatPlaceholder: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    customizeCopyDisclaimer: new FormControl<boolean>(false, { nonNullable: true }),
+    copyDisclaimer: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     customizeNotEnoughDataMessage: new FormControl<boolean>(false, { nonNullable: true }),
     notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     hideLogo: new FormControl<boolean>(false, { nonNullable: true }),
@@ -112,6 +114,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
   get customizeChatPlaceholderEnabled() {
     return this.form.controls.customizeChatPlaceholder.value;
+  }
+  get customizeCopyDisclaimerEnabled() {
+    return this.form.controls.customizeCopyDisclaimer.value;
   }
   get customizeNotEnoughDataEnabled() {
     return this.form.controls.customizeNotEnoughDataMessage.value;

@@ -105,6 +105,8 @@ export interface WidgetConfiguration {
   placeholder: string;
   customizeChatPlaceholder: boolean;
   chatPlaceholder: string;
+  customizeCopyDisclaimer: boolean;
+  copyDisclaimer: string;
   customizeNotEnoughDataMessage: boolean;
   notEnoughDataMessage: string;
   hideLogo: boolean;
@@ -224,6 +226,8 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   placeholder: '',
   customizeChatPlaceholder: false,
   chatPlaceholder: '',
+  customizeCopyDisclaimer: false,
+  copyDisclaimer: '',
   customizeNotEnoughDataMessage: false,
   notEnoughDataMessage: '',
   hideLogo: false,
@@ -305,6 +309,11 @@ export function getPlaceholder(config: WidgetConfiguration): string {
 export function getChatPlaceholder(config: WidgetConfiguration): string {
   return config.customizeChatPlaceholder && config.chatPlaceholder
     ? `\n  chat_placeholder="${config.chatPlaceholder}"`
+    : '';
+}
+export function getCopyDisclaimer(config: WidgetConfiguration): string {
+  return config.customizeCopyDisclaimer && config.copyDisclaimer
+    ? `\n  copy_disclaimer="${config.copyDisclaimer}"`
     : '';
 }
 export function getLang(config: WidgetConfiguration): string {

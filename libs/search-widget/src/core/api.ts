@@ -111,8 +111,8 @@ export const initNuclia = (
   } catch (e) {
     console.error('Invalid audit metadata');
   }
-  if (widgetOptions.copy_paste_disclaimer) {
-    disclaimer.set(widgetOptions.copy_paste_disclaimer);
+  if (widgetOptions.copy_disclaimer) {
+    disclaimer.set(widgetOptions.copy_disclaimer);
   }
 
   nucliaApi = new Nuclia(options);

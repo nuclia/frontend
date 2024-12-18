@@ -291,6 +291,27 @@
                 </pa-radio>
               </pa-radio-group>
             </div>
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="customizeCopyDisclaimer"
+                withBackground
+                spaceBetweenLabelAndToggle
+                (valueChange)="updateWidgetOptionsHeight()">
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.copy-disclaimer.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.copy-disclaimer.toggle-description' | translate }}
+              </div>
+              <div
+                class="extra-fields"
+                [class.visible]="customizeCopyDisclaimerEnabled">
+                <pa-input formControlName="copyDisclaimer">
+                  {{ 'search.widgets.form.widget-options.copy-disclaimer.input-label' | translate }}
+                </pa-input>
+              </div>
+            </div>
           </form>
         </pa-accordion-item-body>
       </pa-accordion-item>
