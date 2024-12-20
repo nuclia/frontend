@@ -283,6 +283,30 @@
             {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.input-label' | translate }}
           </pa-input>
         </div>
+        <div
+          class="extra-fields"
+          [class.visible]="entireResourceAsContextEnabled">
+          <pa-toggle
+            formControlName="includeRemaining"
+            spaceBetweenLabelAndToggle>
+            <span class="toggle-label">
+              {{
+                'search.configuration.generative-answer.rag-strategies.entire-resource.include-remaining-label'
+                  | translate
+              }}
+            </span>
+          </pa-toggle>
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="entireResourceAsContextEnabled">
+          <div class="extra-label">
+            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.exclude' | translate }}
+          </div>
+          <pa-input formControlName="excludeFilter">
+            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.exclude-label' | translate }}
+          </pa-input>
+        </div>
       </div>
       <div class="config-form-field">
         <pa-toggle
