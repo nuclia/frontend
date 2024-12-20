@@ -331,6 +331,10 @@ export interface FieldExtensionStrategy {
 export interface FullResourceStrategy {
   name: RagStrategyName.FULL_RESOURCE;
   count?: number;
+  include_remaining_text_blocks?: boolean;
+  apply_to?: {
+    exclude: string[];
+  };
 }
 export interface HierarchyStrategy {
   name: RagStrategyName.HIERARCHY;

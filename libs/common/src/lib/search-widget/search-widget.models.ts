@@ -45,6 +45,8 @@ export interface RagStrategiesConfig {
   succeedingParagraphs: number | null;
   entireResourceAsContext: boolean;
   maxNumberOfResources: number | null;
+  excludeFilter: string;
+  includeRemaining: boolean;
   fieldsAsContext: boolean;
   fieldIds: string;
   conversationalRagStrategy: boolean;
@@ -191,6 +193,8 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
     succeedingParagraphs: 2,
     entireResourceAsContext: false,
     maxNumberOfResources: null,
+    includeRemaining: false,
+    excludeFilter: '',
     fieldsAsContext: false,
     fieldIds: '',
     conversationalRagStrategy: false,
@@ -372,7 +376,16 @@ export function getPreselectedFilters(config: SearchBoxConfig): string {
 export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
   const ragStrategies: string[] = [];
   if (ragStrategiesConfig.entireResourceAsContext) {
-    ragStrategies.push(`${RagStrategyName.FULL_RESOURCE}|${ragStrategiesConfig.maxNumberOfResources || 5}`);
+    let entireResourceAsContext = `${RagStrategyName.FULL_RESOURCE}|${ragStrategiesConfig.maxNumberOfResources || 5}|${
+      ragStrategiesConfig.includeRemaining
+    }`;
+    if (ragStrategiesConfig.excludeFilter) {
+      entireResourceAsContext += `|${ragStrategiesConfig.excludeFilter
+        .split(',')
+        .map((f) => f.trim())
+        .join('#')}`;
+    }
+    ragStrategies.push(entireResourceAsContext);
   } else {
     if (ragStrategiesConfig.fieldsAsContext && ragStrategiesConfig.fieldIds) {
       const fieldIds = ragStrategiesConfig.fieldIds

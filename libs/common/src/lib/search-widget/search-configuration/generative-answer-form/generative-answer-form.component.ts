@@ -98,6 +98,8 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       }),
       maxMessages: new FormControl<number | null>(null),
       maxNumberOfResources: new FormControl<number | null>(null),
+      includeRemaining: new FormControl<boolean>(false, { nonNullable: true }),
+      excludeFilter: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
       fieldsAsContext: new FormControl<boolean>(false, { nonNullable: true }),
       fieldIds: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
       includePageImages: new FormControl<boolean>(false, { nonNullable: true }),
