@@ -106,6 +106,8 @@ export namespace Ask {
   export interface AskTokens {
     input: number;
     output: number;
+    input_nuclia: number;
+    output_nuclia: number;
   }
 
   export interface AskTimings {

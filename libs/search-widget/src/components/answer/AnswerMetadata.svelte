@@ -28,12 +28,12 @@
         <table class="body-m">
           {#if answer?.metadata?.tokens}
             <tr>
-              <td>Input tokens</td>
-              <td class="title-s">{answer.metadata.tokens.input}</td>
+              <td>Input Nuclia tokens</td>
+              <td class="title-s">{answer.metadata.tokens.input_nuclia}</td>
             </tr>
             <tr>
-              <td>Output tokens</td>
-              <td class="title-s">{answer.metadata.tokens.output}</td>
+              <td>Output Nuclia tokens</td>
+              <td class="title-s">{answer.metadata.tokens.output_nuclia}</td>
             </tr>
           {/if}
           {#if answer?.metadata?.timings}
