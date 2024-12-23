@@ -1,7 +1,7 @@
-import { type RAGImageStrategy, RagImageStrategyName, RAGStrategy, RagStrategyName } from '../kb';
+import { FullResourceStrategy, type RAGImageStrategy, RagImageStrategyName, RAGStrategy, RagStrategyName } from '../kb';
 
 export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
-  // ragStrategies format example: 'full_resource|3,field_extension|t/field1|f/field2,hierarchy|2,neighbouring_paragraphs|2|2,conversation|attachments_text|15'
+  // ragStrategies format example: 'full_resource|3|true|/classification.labels/doctype/product_manuals#/icon/image,field_extension|t/field1|f/field2,hierarchy|2,neighbouring_paragraphs|2|2,conversation|attachments_text|15'
   if (!ragStrategies) {
     return [];
   }
@@ -9,7 +9,19 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
     .split(',')
     .map((strategy) => {
       const [name, ...rest] = strategy.split('|');
-      if (name === RagStrategyName.FULL_RESOURCE || name === RagStrategyName.HIERARCHY) {
+      if (name === RagStrategyName.FULL_RESOURCE) {
+        const fullResourceStartegy: FullResourceStrategy = { name };
+        if (rest.length >= 1) {
+          fullResourceStartegy.count = parseInt(rest[0], 10);
+        }
+        if (rest.length >= 2) {
+          fullResourceStartegy.include_remaining_text_blocks = rest[1] === 'true';
+        }
+        if (rest.length === 3) {
+          fullResourceStartegy.apply_to = { exclude: rest[2].split('#') };
+        }
+        return fullResourceStartegy;
+      } else if (name === RagStrategyName.HIERARCHY) {
         return { name, count: parseInt(rest[0], 10) };
       } else if (name === RagStrategyName.FIELD_EXTENSION) {
         return { name, fields: rest };
