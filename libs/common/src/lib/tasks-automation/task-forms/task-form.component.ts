@@ -199,6 +199,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   get properties() {
     return this.taskDefinition?.validation.properties;
   }
+  get filterProperties() {
+    return this.properties?.['filter']?.['anyOf']?.[0]?.properties;
+  }
 
   ngOnInit() {
     this.tasksAutomation.initTaskList();

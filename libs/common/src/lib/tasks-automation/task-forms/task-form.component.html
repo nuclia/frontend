@@ -20,7 +20,7 @@
     </pa-radio-group>
   </nsi-two-columns-configuration-item>
 
-  @if (properties?.['filter']; as filters) {
+  @if (filterProperties; as filters) {
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.form.filter.title"
       description="tasks-automation.form.filter.description"
@@ -28,7 +28,7 @@
       <div
         class="form-container filter-form-container"
         formGroupName="filter">
-        @if (filters['properties']?.['contains']) {
+        @if (filters?.['contains']) {
           <div class="filter-row">
             <!--
             <pa-select formControlName="searchIn">
@@ -45,7 +45,7 @@
             </pa-input>
           </div>
         }
-        @if (filters['properties']?.['resource_type']) {
+        @if (filters?.['resource_type']) {
           <div>
             <nsi-dropdown-button
               fullWidth
