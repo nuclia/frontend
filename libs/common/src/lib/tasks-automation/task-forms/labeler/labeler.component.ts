@@ -10,7 +10,7 @@ import {
   LabelingConfigurationComponent,
 } from '../labeling-configuration/labeling-configuration.component';
 import { TasksAutomationService } from '../../tasks-automation.service';
-import { TaskApplyTo } from '@nuclia/core';
+import { LabelOperation, TaskApplyTo } from '@nuclia/core';
 import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 import { map } from 'rxjs';
 
@@ -38,13 +38,19 @@ export class LabelerComponent extends TaskRouteDirective {
   TaskApplyTo = TaskApplyTo;
 
   labelingConfig?: LabelingConfiguration;
-  labelOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.label)?.label));
+  labelOperation = this.task.pipe(
+    map((task) => task?.parameters?.operations?.find((operation) => operation.label)?.label),
+  );
 
   onConfigurationChange(configuration: LabelingConfiguration) {
     this.labelingConfig = configuration;
   }
 
   activateTask(commonConfig: TaskFormCommonConfig) {
+    const labelOperation: LabelOperation = {
+      ...this.labelingConfig?.label,
+      triggers: commonConfig.webhook && [commonConfig.webhook],
+    };
     this.taskAutomation
       .startTask(
         'labeler',
@@ -52,7 +58,7 @@ export class LabelerComponent extends TaskRouteDirective {
           name: commonConfig.name,
           filter: commonConfig.filter,
           llm: commonConfig.llm,
-          operations: [{ label: this.labelingConfig?.label }],
+          operations: [{ label: labelOperation }],
           on: this.labelingConfig?.on !== undefined ? this.labelingConfig.on : TaskApplyTo.FULL_FIELD,
         },
         commonConfig.applyTaskTo,

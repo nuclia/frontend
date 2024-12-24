@@ -2,11 +2,17 @@ import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { BadgeComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LabelModule, SDKService } from '@flaps/core';
+import { LabelModule, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskWithApplyOption } from '../task-route.directive';
 import { map, switchMap, take } from 'rxjs';
-import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
+import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType, TaskTrigger } from '@nuclia/core';
+
+interface Trigger {
+  url: string;
+  headers: { key: string; value: string }[];
+  params: { key: string; value: string }[];
+}
 
 @Component({
   selector: 'app-task-settings',
@@ -18,6 +24,7 @@ import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core
     TwoColumnsConfigurationItemComponent,
     TranslateModule,
     BadgeComponent,
+    ParametersTableComponent,
   ],
   templateUrl: './task-settings.component.html',
   styleUrl: './task-settings.component.scss',
@@ -38,6 +45,7 @@ export class TaskSettingsComponent {
   );
   fieldTypes: FIELD_TYPE[] = [];
   notFieldTypes: FIELD_TYPE[] = [];
+  triggers: Trigger[] = [];
 
   @Input()
   set task(value: TaskWithApplyOption | undefined) {
@@ -48,6 +56,9 @@ export class TaskSettingsComponent {
     if (value?.parameters.filter.not_field_types?.length) {
       this.notFieldTypes = this.mapFieldTypes(value.parameters.filter.not_field_types);
     }
+    if (value) {
+      this.triggers = this.mapTriggers(value);
+    }
   }
   get task() {
     return this._task;
@@ -56,5 +67,19 @@ export class TaskSettingsComponent {
 
   private mapFieldTypes(fieldTypes: string[]) {
     return fieldTypes.map((type) => shortToLongFieldType(type as SHORT_FIELD_TYPE)).filter((type) => !!type);
+  }
+
+  private mapTriggers(task: TaskWithApplyOption) {
+    return (task.parameters.operations || []).reduce((acc, curr) => {
+      Object.entries(curr).forEach(([, operation]) => {
+        const triggers = (operation?.triggers || []).map((trigger: TaskTrigger) => ({
+          ...trigger,
+          headers: Object.entries(trigger.headers || {}).map(([key, value]) => ({ key, value })),
+          params: Object.entries(trigger.params || {}).map(([key, value]) => ({ key, value })),
+        }));
+        acc = acc.concat(triggers);
+      });
+      return acc;
+    }, [] as Trigger[]);
   }
 }

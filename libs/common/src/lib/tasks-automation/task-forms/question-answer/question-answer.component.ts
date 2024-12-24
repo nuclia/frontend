@@ -43,6 +43,7 @@ export class QuestionAnswerComponent extends TaskRouteDirective {
       !!this.questionAnswerForm.value.question_generator_prompt?.trim()
         ? this.questionAnswerForm.getRawValue()
         : {};
+    operation.triggers = commonConfig.webhook && [commonConfig.webhook];
     this.taskAutomation
       .startTask(
         'synthetic-questions',

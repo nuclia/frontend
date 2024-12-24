@@ -69,4 +69,36 @@
     </nsi-two-columns-configuration-item>
   }
   <ng-content></ng-content>
+  @for (trigger of triggers; track trigger) {
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.form.webhook.title"
+      description="tasks-automation.form.webhook.description">
+      <div class="settings-container">
+        <div class="setting">
+          <label>URL</label>
+          <div>{{ trigger.url }}</div>
+        </div>
+        @if (trigger.headers.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
+            <app-parameters-table
+              readonly
+              secretDisabled
+              [values]="trigger.headers"></app-parameters-table>
+          </div>
+        }
+        @if (trigger.params.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.webhook.params.label' | translate }}</label>
+            <app-parameters-table
+              readonly
+              secretDisabled
+              [values]="trigger.params"></app-parameters-table>
+          </div>
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
 }

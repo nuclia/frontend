@@ -38,13 +38,14 @@ export class ParametersTableComponent implements OnInit, OnDestroy {
   length = 0;
 
   @Input()
-  set values(values: { key: string; value: string; secret: boolean }[]) {
+  set values(values: { key: string; value: string; secret?: boolean }[]) {
     if (values.length !== this.length) {
       this.length = values.length;
       this.setForm(values);
     }
   }
   @Input({ transform: booleanAttribute }) readonly = false;
+  @Input({ transform: booleanAttribute }) secretDisabled = false;
 
   @Output() valuesChanges = new EventEmitter<{ key: string; value: string; secret: boolean }[]>();
 
@@ -97,7 +98,7 @@ export class ParametersTableComponent implements OnInit, OnDestroy {
     return (rows || []).map((row) => ({
       key: row?.key || '',
       value: row?.value || '',
-      secret: row?.secret || false,
+      secret: this.secretDisabled ? false : !!row?.secret,
     }));
   }
 

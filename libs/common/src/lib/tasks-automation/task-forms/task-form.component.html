@@ -20,7 +20,7 @@
     </pa-radio-group>
   </nsi-two-columns-configuration-item>
 
-  @if (properties?.['filter']; as filters) {
+  @if (filterProperties; as filters) {
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.form.filter.title"
       description="tasks-automation.form.filter.description"
@@ -28,7 +28,7 @@
       <div
         class="form-container filter-form-container"
         formGroupName="filter">
-        @if (filters['properties']?.['contains']) {
+        @if (filters?.['contains']) {
           <div class="filter-row">
             <!--
             <pa-select formControlName="searchIn">
@@ -45,7 +45,7 @@
             </pa-input>
           </div>
         }
-        @if (filters['properties']?.['resource_type']) {
+        @if (filters?.['resource_type']) {
           <div>
             <nsi-dropdown-button
               fullWidth
@@ -172,7 +172,8 @@
 
   <nsi-two-columns-configuration-item
     itemTitle="tasks-automation.form.webhook.title"
-    description="tasks-automation.form.webhook.description">
+    description="tasks-automation.form.webhook.description"
+    badge="generic.badge.optional">
     <div
       class="form-container"
       formGroupName="webhook">
@@ -181,18 +182,42 @@
         <nsi-info-card id="trigger_description">{{ triggerDescription | translate }}</nsi-info-card>
       </div>
       <div>
-        <label for="url">URL</label>
         <pa-input
-          id="url"
           externalLabel
-          formControlName="url"></pa-input>
+          formControlName="url">
+          URL
+        </pa-input>
       </div>
-      <div>
-        <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
-        <app-parameters-table
-          [values]="headers"
-          (valuesChanges)="setHeaders($event)"></app-parameters-table>
-      </div>
+      <pa-expander
+        [expanded]="false"
+        [contentLoaded]="headers">
+        <pa-expander-header>
+          <label>{{ 'tasks-automation.form.webhook.headers.label' | translate }}</label>
+        </pa-expander-header>
+        <pa-expander-body>
+          <div>
+            <app-parameters-table
+              secretDisabled
+              [values]="headers"
+              (valuesChanges)="setHeaders($event)"></app-parameters-table>
+          </div>
+        </pa-expander-body>
+      </pa-expander>
+      <pa-expander
+        [expanded]="false"
+        [contentLoaded]="parameters">
+        <pa-expander-header>
+          <label>{{ 'tasks-automation.form.webhook.params.label' | translate }}</label>
+        </pa-expander-header>
+        <pa-expander-body>
+          <div>
+            <app-parameters-table
+              secretDisabled
+              [values]="parameters"
+              (valuesChanges)="setParameters($event)"></app-parameters-table>
+          </div>
+        </pa-expander-body>
+      </pa-expander>
     </div>
   </nsi-two-columns-configuration-item>
 

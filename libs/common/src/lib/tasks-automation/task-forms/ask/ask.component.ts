@@ -92,6 +92,7 @@ export class AskComponent extends TaskRouteDirective {
                 json: this.askForm.get('isJSON')?.value,
                 question: this.askForm.get('question')?.value,
                 destination: this.askForm.get('fieldName')?.value,
+                triggers: commonConfig.webhook && [commonConfig.webhook],
               },
             },
           ],

@@ -38,15 +38,19 @@ export interface Operation {
   label?: LabelOperation;
   graph?: GraphOperation;
   qa?: QAOperation;
-  prompt_guard?: { enabled: boolean };
-  llama_guard?: { enabled: boolean };
+  prompt_guard?: GuardOperation;
+  llama_guard?: GuardOperation;
   ask?: AskOperation;
   // TODO: other kinds of operation
   extract?: null;
 }
 
-export interface LabelOperation {
-  labels: {
+interface BaseOperation {
+  triggers?: TaskTrigger[];
+}
+
+export interface LabelOperation extends BaseOperation {
+  labels?: {
     label: string;
     examples?: string[];
     description?: string;
@@ -55,7 +59,7 @@ export interface LabelOperation {
   description?: string;
 }
 
-export interface GraphOperation {
+export interface GraphOperation extends BaseOperation {
   ident?: string;
   entity_defs?: EntityDefinition[];
   entity_examples?: EntityExample[];
@@ -80,17 +84,27 @@ export interface RelationExample {
   example?: string;
 }
 
-export interface QAOperation {
+export interface QAOperation extends BaseOperation {
   generate_answers_prompt?: string;
   question_generator_prompt?: string;
   summary_prompt?: string;
   system_question_generator_prompt?: string;
 }
 
-export interface AskOperation {
+export interface AskOperation extends BaseOperation {
   question?: string;
   destination?: string;
   json?: boolean;
+}
+
+export interface GuardOperation extends BaseOperation {
+  enabled?: boolean;
+}
+
+export interface TaskTrigger {
+  url?: string;
+  headers?: { [key: string]: string };
+  params?: { [key: string]: string };
 }
 
 /**

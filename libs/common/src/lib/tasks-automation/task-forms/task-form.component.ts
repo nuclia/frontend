@@ -22,6 +22,7 @@ import {
   OptionModel,
   PaButtonModule,
   PaDropdownModule,
+  PaExpanderModule,
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -40,11 +41,11 @@ import {
   Search,
   TaskFullDefinition,
   TaskName,
+  TaskTrigger,
 } from '@nuclia/core';
-import { BehaviorSubject, combineLatest, filter, map, ReplaySubject, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
 import { Filters, formatFiltersFromFacets, MIME_FACETS } from '../../resources';
 import { debounceTime, take, takeUntil } from 'rxjs/operators';
-import { GenerativeModelPipe } from '../../pipes';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 
@@ -58,10 +59,7 @@ export interface TaskFormCommonConfig {
     field_types: string[];
   };
   llm: LLMConfig;
-  webhook: {
-    url: string;
-    headers: { key: string; value: string; secret: boolean }[];
-  };
+  webhook?: TaskTrigger;
 }
 
 @Component({
@@ -73,6 +71,8 @@ export interface TaskFormCommonConfig {
     InfoCardComponent,
     LabelModule,
     PaDropdownModule,
+    PaExpanderModule,
+    ParametersTableComponent,
     PaTextFieldModule,
     PaTogglesModule,
     PaTooltipModule,
@@ -81,9 +81,7 @@ export interface TaskFormCommonConfig {
     TranslateModule,
     PaTableModule,
     PaButtonModule,
-    GenerativeModelPipe,
     StickyFooterComponent,
-    ParametersTableComponent,
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss',
@@ -130,8 +128,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       url: new FormControl<string>('', { nonNullable: true }),
     }),
   });
-  formReady = new ReplaySubject<boolean>(1);
-  headers: { key: string; value: string; secret: boolean }[] = [];
+  headers: { key: string; value: string }[] = [];
+  parameters: { key: string; value: string }[] = [];
 
   selectedFilters = new BehaviorSubject<string[]>([]);
 
@@ -201,6 +199,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   get properties() {
     return this.taskDefinition?.validation.properties;
   }
+  get filterProperties() {
+    return this.properties?.['filter']?.['anyOf']?.[0]?.properties;
+  }
 
   ngOnInit() {
     this.tasksAutomation.initTaskList();
@@ -225,7 +226,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
           (option) => !this.unsupportedLLMs.includes(option.value),
         );
         this.form.controls.llm.patchValue({ model: 'chatgpt-azure-4o-mini' });
-        this.formReady.next(true);
       });
 
     this.sdk.currentKb
@@ -315,7 +315,17 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     const rawValue = this.form.getRawValue();
     this.activate.emit({
       ...rawValue,
-      webhook: { ...rawValue.webhook, headers: this.headers },
+      webhook: rawValue.webhook.url.trim()
+        ? {
+            ...rawValue.webhook,
+            headers: this.headers
+              .filter((header) => header.key.trim() && header.value.trim())
+              .reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {}),
+            params: this.parameters
+              .filter((header) => header.key.trim() && header.value.trim())
+              .reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {}),
+          }
+        : undefined,
       filter: {
         contains: rawValue.filter.contains ? [rawValue.filter.contains] : [],
         resource_type: this.selectedResourceTypes,
@@ -324,7 +334,10 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  setHeaders(headers: { key: string; value: string; secret: boolean }[]) {
+  setHeaders(headers: { key: string; value: string }[]) {
     this.headers = headers;
+  }
+  setParameters(parameters: { key: string; value: string }[]) {
+    this.parameters = parameters;
   }
 }
