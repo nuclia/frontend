@@ -3,12 +3,14 @@
     class="header-above"
     formGroupName="rows"
     border
-    [columns]="readonly ? 'repeat(2, 2fr)' : 'repeat(2, 2fr) 1fr 40px'">
+    [columns]="readonly ? 'repeat(2, 2fr)' : secretDisabled ? 'repeat(2, 2fr) 40px' : 'repeat(2, 2fr) 1fr 40px'">
     <pa-table-header>
       <pa-table-cell header>{{ 'parameters-table.headers.key' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'parameters-table.headers.value' | translate }}</pa-table-cell>
-      @if (!readonly) {
+      @if (!readonly && !secretDisabled) {
         <pa-table-cell header>{{ 'parameters-table.headers.secret-value' | translate }}</pa-table-cell>
+      }
+      @if (!readonly) {
         <pa-table-cell-menu header></pa-table-cell-menu>
       }
     </pa-table-header>
@@ -29,16 +31,20 @@
             <pa-input
               [placeholder]="'parameters-table.headers.value' | translate"
               [formControl]="row.controls.value"
-              [noAutoComplete]="row.controls.secret.value"
+              [noAutoComplete]="true"
               [type]="row.controls.secret.value ? 'password' : 'text'"></pa-input>
           } @else {
-            <div class="body-s">{{ row.controls.secret.value ? '****' : row.controls.value.value }}</div>
+            <div class="body-s">
+              {{ row.controls.secret.value ? '****' : row.controls.value.value }}
+            </div>
           }
         </pa-table-cell>
-        @if (!readonly) {
+        @if (!readonly && !secretDisabled) {
           <pa-table-cell>
             <pa-toggle [formControl]="row.controls.secret"></pa-toggle>
           </pa-table-cell>
+        }
+        @if (!readonly) {
           <pa-table-cell-menu>
             <pa-button
               icon="trash"

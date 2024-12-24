@@ -45,7 +45,7 @@ export class LLMSecurityComponent extends TaskRouteDirective {
           filter: commonConfig.filter,
           llm: {},
           on: this.form.value.on === 'resources' ? TaskApplyTo.FULL_FIELD : TaskApplyTo.TEXT_BLOCKS,
-          operations: [{ prompt_guard: { enabled: true } }],
+          operations: [{ prompt_guard: { enabled: true, triggers: commonConfig.webhook && [commonConfig.webhook] } }],
         },
         commonConfig.applyTaskTo,
       )
