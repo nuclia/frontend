@@ -14,6 +14,7 @@
     debug,
     disclaimer,
     downloadDump,
+    expandedCitations,
     feedbackOnAnswer,
     getAttachedImageTemplate,
     getFieldDataFromResource,
@@ -263,29 +264,19 @@
     {#if $isCitationsEnabled && !notEnoughData}
       <div class="sources-container">
         {#if sources.length > 0}
-          {#if initialAnswer}
-            <div class="title-s">{$_('answer.sources')}</div>
+          <Expander expanded={$expandedCitations === undefined ? initialAnswer : $expandedCitations}>
+            <div
+              class="title-s"
+              slot="header">
+              {$_('answer.sources')}
+            </div>
             <div class="sources-list">
               <Sources
                 {sources}
                 answerRank={rank}
                 selected={selectedCitation} />
             </div>
-          {:else}
-            <Expander>
-              <div
-                class="title-s"
-                slot="header">
-                {$_('answer.sources')}
-              </div>
-              <div class="sources-list">
-                <Sources
-                  {sources}
-                  answerRank={rank}
-                  selected={selectedCitation} />
-              </div>
-            </Expander>
-          {/if}
+          </Expander>
         {:else if !answer.incomplete}
           <div class="title-s">{$_('answer.sources')}</div>
           <div class="no-citations">{$_('answer.no-citations')}</div>

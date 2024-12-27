@@ -121,6 +121,8 @@ export interface WidgetConfiguration {
   speechSynthesis: boolean;
   feedback: WidgetFeedback;
   lang: string;
+  customizeCitationVisibility: boolean;
+  citationVisibility: 'expanded' | 'collapsed';
 }
 
 export interface Widget {
@@ -244,6 +246,8 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   speechSynthesis: false,
   feedback: 'none',
   lang: '',
+  customizeCitationVisibility: false,
+  citationVisibility: 'expanded',
 };
 
 export const NUCLIA_STANDARD_SEARCH_CONFIG: SearchConfiguration = {
@@ -299,6 +303,8 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     noChatHistory: widgetOptions.noChatHistory,
     speech: widgetOptions.speech,
     speechSynthesis: widgetOptions.speechSynthesis,
+    expandCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'expanded',
+    collapseCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'collapsed',
   };
   const featureList = Object.entries(widgetFeatures)
     .filter(([, enabled]) => enabled)

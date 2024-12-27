@@ -312,6 +312,32 @@
                 </pa-input>
               </div>
             </div>
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="customizeCitationVisibility"
+                withBackground
+                spaceBetweenLabelAndToggle
+                (valueChange)="updateWidgetOptionsHeight()">
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.customize-citation-visibility.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.customize-citation-visibility.toggle-description' | translate }}
+              </div>
+              <div
+                class="extra-fields"
+                [class.visible]="customizeCitationVisibilityEnabled">
+                <pa-radio-group formControlName="citationVisibility">
+                  <pa-radio value="expanded">
+                    {{ 'search.widgets.form.widget-options.customize-citation-visibility.expanded' | translate }}
+                  </pa-radio>
+                  <pa-radio value="collapsed">
+                    {{ 'search.widgets.form.widget-options.customize-citation-visibility.collapsed' | translate }}
+                  </pa-radio>
+                </pa-radio-group>
+              </div>
+            </div>
           </form>
         </pa-accordion-item-body>
       </pa-accordion-item>

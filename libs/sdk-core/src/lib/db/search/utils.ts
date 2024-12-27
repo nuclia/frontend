@@ -126,6 +126,8 @@ export interface WidgetFeatures {
   speech?: boolean;
   speechSynthesis?: boolean;
   semanticOnly?: boolean;
+  expandCitations?: boolean;
+  collapseCitations?: boolean;
 }
 
 export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';

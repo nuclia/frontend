@@ -1,7 +1,7 @@
 import { writableSubject } from '../state-lib';
 import { combineLatest, map, Observable } from 'rxjs';
 import type { WidgetAction, WidgetFilters } from '../models';
-import type { RAGImageStrategy, RAGStrategy, WidgetFeatures } from '@nuclia/core';
+import type { RAGImageStrategy, RAGStrategy, WidgetFeatures, WidgetFeedback } from '@nuclia/core';
 
 export const widgetFeatures = writableSubject<WidgetFeatures | null>(null);
 export const widgetPlaceholder = writableSubject<string>('input.placeholder');
@@ -51,5 +51,9 @@ export const disableAnswers = () => {
 export const isSpeechEnabled = widgetFeatures.pipe(map((features) => !!features?.speech));
 export const isSpeechSynthesisEnabled = widgetFeatures.pipe(map((features) => !!features?.speechSynthesis));
 
-export const feedbackOnAnswer = widgetFeedback.pipe(map((feedback) => feedback !== "none"));
-export const feedbackOnResults = widgetFeedback.pipe(map((feedback) => feedback === "answerAndResults"));
+export const feedbackOnAnswer = widgetFeedback.pipe(map((feedback) => feedback !== 'none'));
+export const feedbackOnResults = widgetFeedback.pipe(map((feedback) => feedback === 'answerAndResults'));
+
+export const expandedCitations: Observable<boolean | undefined> = widgetFeatures.pipe(
+  map((features) => (features?.expandCitations ? true : features?.collapseCitations ? false : undefined)),
+);
