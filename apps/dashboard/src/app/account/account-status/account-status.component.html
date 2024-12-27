@@ -38,7 +38,9 @@
         {{ 'billing.reactivate' | translate }}
       </pa-button>
     } @else if (!((isSubscribed | async) && (isCancelScheduled | async))) {
-      <pa-button [routerLink]="upgradeUrl | async">
+      <pa-button
+        [routerLink]="upgradeUrl | async"
+        [class.full-width]="canExtendTrial | async">
         {{ 'billing.upgrade' | translate }}
       </pa-button>
     }
