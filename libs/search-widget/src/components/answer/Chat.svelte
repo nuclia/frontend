@@ -31,7 +31,10 @@
         filter(() => show),
       )
       .subscribe(() => {
-        entriesContainerElement.scrollTo({ top: entriesContainerElement.scrollHeight, behavior: 'smooth' });
+        entriesContainerElement.scrollTo({
+          top: (entriesContainerElement.lastElementChild as HTMLElement)?.offsetTop,
+          behavior: 'smooth',
+        });
       });
     return () => sub.unsubscribe();
   });
