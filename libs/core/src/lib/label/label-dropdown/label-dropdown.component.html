@@ -22,7 +22,7 @@
           icon="chevron-right"
           iconOnRight
           popupOnRight
-          [dontCloseOnSelect]="!labelSetSelection"
+          dontCloseOnSelect
           [paPopup]="level2"
           [popupVerticalOffset]="-40"
           [selected]="selectedLabelSet === labelSet.key || labelSetExpanded === labelSet.key"
@@ -52,13 +52,26 @@
         </pa-input>
       </pa-option>
     }
+    @if (
+      selectAll && (labelSets?.[labelSetExpanded]?.multiple || forceMultiple) && labelValues.length > 1 && !forceSingle
+    ) {
+      <pa-option
+        class="level2-option"
+        dontCloseOnSelect>
+        <pa-checkbox
+          [value]="selectedLabelSets[labelSetExpanded]"
+          (change)="toggleLabelSet(labelSetExpanded)">
+          {{ 'generic.select_all' | translate }}
+        </pa-checkbox>
+      </pa-option>
+      <pa-separator></pa-separator>
+    }
     @for (labelValue of filteredLabels || labelValues | slice: 0 : maxLabels; track labelValue) {
       <pa-option
         class="level2-option"
-        [disabled]="labelSetSelection"
-        [dontCloseOnSelect]="!single"
+        [dontCloseOnSelect]="!forceSingle"
         (selectOption)="onOptionSelection(labelValue, $event)">
-        @if (single) {
+        @if (forceSingle) {
           {{ labelValue.label }}
         } @else {
           <pa-checkbox

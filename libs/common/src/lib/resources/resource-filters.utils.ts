@@ -1,5 +1,5 @@
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { Classification, LabelSets, Search } from '@nuclia/core';
+import { Classification, getLabelSetFromFilter, LabelSets, Search } from '@nuclia/core';
 import mime from 'mime';
 
 export const MIME_FACETS = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video', '/icon/message'];
@@ -12,6 +12,7 @@ export const HIDDEN_PREFIX = '/hidden/';
 
 export interface Filters {
   classification: OptionModel[];
+  labelSets: OptionModel[];
   mainTypes: OptionModel[];
   languages?: OptionModel[];
   creation: {
@@ -22,7 +23,7 @@ export interface Filters {
 }
 
 export function getOptionFromFacet(
-  facet: { key: string; count: number },
+  facet: { key: string; count?: number },
   label: string,
   selected: boolean,
   help?: string,
@@ -30,7 +31,7 @@ export function getOptionFromFacet(
   return new OptionModel({
     id: facet.key,
     value: facet.key,
-    label: `${label} (${facet.count})`,
+    label: facet.count ? `${label} (${facet.count})` : label,
     help,
     selected,
   });
@@ -40,11 +41,13 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
   // Group facets by types
   const facetGroups: {
     classification: { key: string; count: number }[];
+    labelSets: { key: string }[];
     mainTypes: { key: string; count: number }[];
     languages: { key: string; count: number }[];
   } = Object.entries(allFacets).reduce(
     (groups, [facetId, values]) => {
       if (facetId.startsWith('/classification.labels/')) {
+        groups.labelSets.push({ key: facetId });
         Object.entries(values).forEach(([key, count]) => {
           groups.classification.push({ key, count });
         });
@@ -61,6 +64,7 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
     },
     {
       classification: [] as { key: string; count: number }[],
+      labelSets: [] as { key: string }[],
       mainTypes: [] as { key: string; count: number }[],
       languages: [] as { key: string; count: number }[],
     },
@@ -69,6 +73,7 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
   // Create corresponding filter options
   const filters: Filters = {
     classification: [],
+    labelSets: [],
     mainTypes: [],
     languages: [],
     creation: {},
@@ -79,6 +84,12 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
       filters.classification.push(getOptionFromFacet(facet, label, queryParamsFilters.includes(facet.key)));
     });
     filters.classification.sort((a, b) => a.label.localeCompare(b.label));
+  }
+  if (facetGroups.labelSets.length > 0) {
+    facetGroups.labelSets.forEach((facet) => {
+      const label = getLabelSetFromFilter(facet.key);
+      filters.labelSets.push(getOptionFromFacet(facet, label, queryParamsFilters.includes(facet.key)));
+    });
   }
   if (facetGroups.mainTypes.length > 0) {
     facetGroups.mainTypes.forEach((facet) => {

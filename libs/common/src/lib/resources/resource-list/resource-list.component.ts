@@ -16,7 +16,15 @@ import {
   MIME_FACETS,
   trimLabelSets,
 } from '../resource-filters.utils';
-import { Classification, getFilterFromLabel, getLabelFromFilter, LabelSets, Search } from '@nuclia/core';
+import {
+  Classification,
+  getFilterFromLabel,
+  getFilterFromLabelSet,
+  getLabelFromFilter,
+  getLabelSetFromFilter,
+  LabelSets,
+  Search,
+} from '@nuclia/core';
 
 @Component({
   templateUrl: './resource-list.component.html',
@@ -43,7 +51,7 @@ export class ResourceListComponent implements OnDestroy {
   labelSets = this.resourceListService.labelSets;
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
-  filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
+  filterOptions: Filters = { classification: [], labelSets: [], mainTypes: [], creation: {}, hidden: undefined };
   displayedLabelSets: LabelSets = {};
 
   dateForm = new FormGroup({
@@ -93,7 +101,7 @@ export class ResourceListComponent implements OnDestroy {
           if (this.isMainView || this.isProcessedView) {
             return this.loadFilters();
           } else {
-            this.filterOptions = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
+            this.filterOptions = { classification: [], labelSets: [], mainTypes: [], creation: {}, hidden: undefined };
             this.cdr.markForCheck();
             return of(null);
           }
@@ -139,9 +147,23 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   updateClassifications(selection: Classification[]) {
-    const filters = selection.map((label) => getFilterFromLabel(label));
+    // If all labels from a label set are selected, a label set filter will be used
+    const labelSetFilters: string[] = [];
+    Object.entries(this.displayedLabelSets).forEach(([key, labelSet]) => {
+      const allSelected = labelSet.labels.every((label) =>
+        selection.some((item) => item.labelset === key && item.label === label.title),
+      );
+      if (allSelected) {
+        labelSetFilters.push(getFilterFromLabelSet(key));
+        selection = selection.filter((item) => item.labelset !== key);
+      }
+    });
+    this.filterOptions.labelSets.forEach((option) => {
+      option.selected = labelSetFilters.includes(option.id);
+    });
+    const labelFilters = selection.map((label) => getFilterFromLabel(label));
     this.filterOptions.classification.forEach((option) => {
-      option.selected = filters.includes(option.id);
+      option.selected = labelFilters.includes(option.id);
     });
     this.cdr.markForCheck();
     this.onToggleFilter();
@@ -193,6 +215,7 @@ export class ResourceListComponent implements OnDestroy {
     this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
     this.resourceListService.filter([]);
     this.filterOptions.classification.forEach((option) => (option.selected = false));
+    this.filterOptions.labelSets.forEach((option) => (option.selected = false));
     this.filterOptions.mainTypes.forEach((option) => (option.selected = false));
     this.filterOptions.hidden = undefined;
   }
@@ -205,8 +228,23 @@ export class ResourceListComponent implements OnDestroy {
     return this.filterOptions.classification.filter((option) => option.selected);
   }
 
-  get selectedClassifications() {
-    return this.selectedClassificationOptions.map((option) => getLabelFromFilter(option.id));
+  get selectedLabelSetsOptions() {
+    return this.filterOptions.labelSets.filter((option) => option.selected);
+  }
+
+  get selectedClassifications(): Classification[] {
+    const selectedLabels = this.selectedClassificationOptions.map((option) => getLabelFromFilter(option.id));
+    const selectedLabelsets = this.selectedLabelSetsOptions.reduce((acc, curr) => {
+      const labelSet = getLabelSetFromFilter(curr.id);
+      acc = acc.concat(
+        (this.displayedLabelSets?.[labelSet]?.labels || []).map((label) => ({
+          labelset: labelSet,
+          label: label.title,
+        })),
+      );
+      return acc;
+    }, [] as Classification[]);
+    return selectedLabels.concat(selectedLabelsets);
   }
 
   get selectedVisibility() {
@@ -221,12 +259,13 @@ export class ResourceListComponent implements OnDestroy {
 
   get selectedFilters(): string[] {
     return this.getSelectionFor('classification')
+      .concat(this.getSelectionFor('labelSets'))
       .concat(this.getSelectionFor('mainTypes'))
       .concat(this.selectedDates)
       .concat(this.selectedVisibility);
   }
 
-  private getSelectionFor(type: 'classification' | 'mainTypes') {
+  private getSelectionFor(type: 'classification' | 'mainTypes' | 'labelSets') {
     return this.filterOptions[type].filter((option) => option.selected).map((option) => option.value);
   }
 

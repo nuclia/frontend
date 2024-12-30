@@ -12,7 +12,7 @@
     <div class="labels-container">
       <app-label-dropdown
         aspect="basic"
-        single
+        forceSingle
         [labelSets]="labelSets | async"
         (selectionChange)="updateValueWithLabels($event)">
         {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}

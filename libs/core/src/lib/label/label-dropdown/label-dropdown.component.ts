@@ -22,15 +22,18 @@ export class LabelDropdownComponent {
   @Input() aspect: Aspect = 'solid';
   @Input({ required: true }) labelSets?: LabelSets | null;
   @Input({ transform: booleanAttribute }) disabled = false;
-  @Input({ transform: booleanAttribute }) labelSetSelection = false;
-  @Input({ transform: booleanAttribute }) single = false;
-  @Input({ transform: booleanAttribute }) multiple = false;
+  @Input({ transform: booleanAttribute }) forceSingle = false;
+  @Input({ transform: booleanAttribute }) forceMultiple = false;
+  @Input({ transform: booleanAttribute }) selectAll = false;
   @Input({ transform: booleanAttribute }) fullWidth = false;
   @Input() size: Size = 'medium';
   @Input()
   set selection(value: Classification[]) {
     this._selection = [...value];
     this.checkboxSelection = this._selection.map((labelValue) => `${labelValue.labelset}${labelValue.label}`);
+    if (this.selectAll) {
+      this.selectedLabelSets = this.getSelectedLabelSets();
+    }
   }
   get selection() {
     return this._selection;
@@ -39,7 +42,6 @@ export class LabelDropdownComponent {
   @Input() selectedLabelSet?: string;
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
-  @Output() labelSetSelected = new EventEmitter<{ id: string; labelSet: LabelSet }>();
   @Output() close = new EventEmitter<void>();
 
   @ViewChild('level2', { read: ElementRef }) level2Element?: ElementRef;
@@ -49,18 +51,15 @@ export class LabelDropdownComponent {
   labelValues: Classification[] = [];
   open = false;
   checkboxSelection: string[] = [];
+  selectedLabelSets: { [key: string]: boolean } = {};
   filter = '';
   filteredLabels?: Classification[];
   maxLabels = 100;
 
   onLevel1Selection(labelSetType: string, labelSet: LabelSet) {
-    if (this.labelSetSelection && this.single) {
-      this.labelSetSelected.emit({ id: labelSetType, labelSet });
-    } else {
-      this.labelSetExpanded = labelSetType;
-      this.level2Popup?.close();
-      this.labelValues = labelSet.labels.map((label) => ({ labelset: labelSetType, label: label.title }));
-    }
+    this.labelSetExpanded = labelSetType;
+    this.level2Popup?.close();
+    this.labelValues = labelSet.labels.map((label) => ({ labelset: labelSetType, label: label.title }));
     this.filter = '';
     this.filteredLabels = undefined;
   }
@@ -81,7 +80,7 @@ export class LabelDropdownComponent {
     let newSelectedLabels;
 
     if (!this.checkboxSelection.includes(checkboxValue)) {
-      const isMultiple = this.labelSets[labelValue.labelset]?.multiple || this.multiple;
+      const isMultiple = this.labelSets[labelValue.labelset]?.multiple || this.forceMultiple;
       newSelectedLabels = isMultiple
         ? this.selection.concat([labelValue])
         : this.selection.filter((item) => item.labelset !== labelValue.labelset).concat([labelValue]);
@@ -95,7 +94,7 @@ export class LabelDropdownComponent {
   }
 
   onOptionSelection(labelValue: Classification, event: MouseEvent | KeyboardEvent) {
-    if (this.single) {
+    if (this.forceSingle) {
       this.selection = [labelValue];
       this.selectionChange.emit(this.selection);
     } else if ((event.target as HTMLElement).tagName === 'LI') {
@@ -111,5 +110,30 @@ export class LabelDropdownComponent {
         .filter((label) => label.title.toLowerCase().includes(this.filter.toLowerCase()))
         .map((label) => ({ labelset, label: label.title }));
     }
+  }
+
+  getSelectedLabelSets() {
+    return Object.entries(this.labelSets || {}).reduce(
+      (acc, [key, labelSet]) => {
+        acc[key] = labelSet.labels.every((label) => this.checkboxSelection.includes(`${key}${label.title}`));
+        return acc;
+      },
+      {} as { [key: string]: boolean },
+    );
+  }
+
+  toggleLabelSet(labelSet: string) {
+    if (!this.selectedLabelSets[labelSet]) {
+      let newLabels: Classification[] = [];
+      (this.labelSets?.[labelSet].labels || []).forEach((label) => {
+        if (!this.checkboxSelection.includes(`${labelSet}${label.title}`)) {
+          newLabels.push({ labelset: labelSet, label: label.title });
+        }
+      });
+      this.selection = this.selection.concat(newLabels);
+    } else {
+      this.selection = this.selection.filter((label) => label.labelset !== labelSet);
+    }
+    this.selectionChange.emit(this.selection);
   }
 }

@@ -48,7 +48,8 @@
               (selectionChange)="updateClassifications($event)"
               [disabled]="filterOptions.classification.length === 0"
               [fullWidth]="true"
-              [multiple]="true"
+              [forceMultiple]="true"
+              [selectAll]="true"
               aspect="basic">
               {{ 'resource.classification-column' | translate }}
               {{ selectedClassifications.length ? '(' + selectedClassifications.length + ')' : '' }}
@@ -174,6 +175,9 @@
         }
         @if (isFiltering | async) {
           <div class="filtered-by title-xxs">{{ 'resource.filtered-by' | translate }}</div>
+        }
+        @for (option of selectedLabelSetsOptions; track option.value) {
+          <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
         }
         @for (option of selectedClassificationOptions; track option.value) {
           <pa-chip-closeable (closed)="clearFilter(option)">{{ option.label }}</pa-chip-closeable>
