@@ -19,7 +19,7 @@
 
   onMount(() => {
     const resizeObserver = new ResizeObserver((entries) => {
-      if (entries[0].contentRect.height !== contentHeight) {
+      if (expanded && entries[0].contentRect.height !== contentHeight) {
         contentHeight = entries[0].contentRect.height;
       }
     });
@@ -68,7 +68,7 @@
   <div
     class="expander-content"
     style:height="{contentHeight}px"
-    style:display={showContent ? 'block' : 'none'}
+    style:visibility={showContent ? 'visible' : 'hidden'}
     style:transition={`height ${duration}ms`}>
     <div bind:this={content}>
       <slot />

@@ -91,12 +91,9 @@ export function getRAGImageStrategies(ragImageStrategies: string): RAGImageStrat
 }
 
 export interface WidgetFeatures {
-  editLabels?: boolean;
-  entityAnnotation?: boolean;
   filter?: boolean;
   navigateToFile?: boolean;
   navigateToLink?: boolean;
-  notPublic?: boolean;
   permalink?: boolean;
   relations?: boolean;
   suggestions?: boolean;
@@ -126,6 +123,8 @@ export interface WidgetFeatures {
   speech?: boolean;
   speechSynthesis?: boolean;
   semanticOnly?: boolean;
+  expandCitations?: boolean;
+  collapseCitations?: boolean;
 }
 
 export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';

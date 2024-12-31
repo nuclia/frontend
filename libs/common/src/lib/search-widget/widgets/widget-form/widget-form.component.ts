@@ -96,6 +96,8 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     speechSynthesis: new FormControl<boolean>(false, { nonNullable: true }),
     feedback: new FormControl<WidgetFeedback>('none', { nonNullable: true }),
     lang: new FormControl<string>('', { nonNullable: true }),
+    customizeCitationVisibility: new FormControl<boolean>(false, { nonNullable: true }),
+    citationVisibility: new FormControl<'expanded' | 'collapsed'>('expanded', { nonNullable: true }),
   });
 
   widgetFormExpanded = true;
@@ -132,6 +134,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
   get speechOn() {
     return this.form.controls.speech.value;
+  }
+  get customizeCitationVisibilityEnabled() {
+    return this.form.controls.customizeCitationVisibility.value;
   }
 
   ngOnInit() {
