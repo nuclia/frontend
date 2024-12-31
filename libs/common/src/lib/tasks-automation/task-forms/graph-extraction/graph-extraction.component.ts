@@ -5,7 +5,13 @@ import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component'
 import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskRouteDirective } from '../task-route.directive';
-import { PaButtonModule, PaIconModule, PaPopupModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTableModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GraphOperation, TaskApplyTo } from '@nuclia/core';
 import { TasksAutomationService } from '../../tasks-automation.service';
@@ -37,7 +43,9 @@ import { map } from 'rxjs';
 export class GraphExtractionComponent extends TaskRouteDirective {
   private taskAutomation = inject(TasksAutomationService);
 
-  graphOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.graph)?.graph));
+  graphOperation = this.task.pipe(
+    map((task) => task?.parameters?.operations?.find((operation) => operation.graph)?.graph),
+  );
 
   graphForm = new FormGroup({
     entity_defs: new FormArray<FormGroup<{ label: FormControl<string>; description: FormControl<string> }>>([
@@ -125,6 +133,7 @@ export class GraphExtractionComponent extends TaskRouteDirective {
     const graphOperation: GraphOperation = {
       ...this.graphForm.getRawValue(),
       ident: `${STFUtils.generateSlug(commonConfig.name)}_${STFUtils.generateRandomSlugSuffix()}`,
+      triggers: commonConfig.webhook && [commonConfig.webhook],
     };
     this.taskAutomation
       .startTask(
