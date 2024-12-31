@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { inject } from '@angular/core';
-import { map, of, switchMap } from 'rxjs';
+import { filter, map, of, switchMap, take } from 'rxjs';
 
 export const setKbGuard = (route: ActivatedRouteSnapshot) => {
   const sdk: SDKService = inject(SDKService);
@@ -28,6 +28,10 @@ export const setKbGuard = (route: ActivatedRouteSnapshot) => {
         }),
       );
     }),
+    // Wait until currentKb is updated
+    switchMap(() => sdk.currentKb),
+    filter((kb) => kb.slug === kbSlug),
+    take(1),
     map(() => true),
   );
 };
