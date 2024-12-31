@@ -6,6 +6,7 @@ import { UserListComponent } from './user-list/user-list.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import {
   PaButtonModule,
+  PaDateTimeModule,
   PaIconModule,
   PaScrollModule,
   PaTableModule,
@@ -35,6 +36,7 @@ const ROUTES: Routes = [
     CommonModule,
     RouterModule.forChild(ROUTES),
     PaButtonModule,
+    PaDateTimeModule,
     PaTableModule,
     PaTextFieldModule,
     PaIconModule,

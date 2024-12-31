@@ -8,11 +8,12 @@
   </div>
 
   <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
-    <pa-table columns="repeat(3, 1fr) 96px">
+    <pa-table columns="repeat(4, 1fr) 96px">
       <pa-table-header noBackground>
         <pa-table-cell header>Id</pa-table-cell>
         <pa-table-cell header>Name</pa-table-cell>
         <pa-table-cell header>Email</pa-table-cell>
+        <pa-table-cell header>Last login</pa-table-cell>
         <pa-table-cell-menu header></pa-table-cell-menu>
       </pa-table-header>
       <pa-table-row
@@ -24,6 +25,12 @@
         </pa-table-cell>
         <pa-table-cell>{{ user.name }}</pa-table-cell>
         <pa-table-cell>{{ user.email }}</pa-table-cell>
+        <pa-table-cell>
+          <pa-datetime
+            [datetime]="user.last_login"
+            format="numerical"
+            dateOnly></pa-datetime>
+        </pa-table-cell>
         <pa-table-cell-menu>
           <pa-button
             icon="trash"
