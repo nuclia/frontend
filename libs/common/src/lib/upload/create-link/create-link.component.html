@@ -51,12 +51,10 @@
           </label>
           <pa-radio-group
             id="uploadType"
-            formControlName="type"
-            (valueChange)="onTypeChange($event)">
+            formControlName="type">
             <pa-radio value="one">{{ 'modal.create_link.single-link.label' | translate }}</pa-radio>
             <pa-radio value="multiple">{{ 'modal.create_link.multiple-links.label' | translate }}</pa-radio>
             <pa-radio value="csv">{{ 'modal.create_link.csv-file' | translate }}</pa-radio>
-            <pa-radio value="sitemap">{{ 'modal.create_link.sitemap-file' | translate }}</pa-radio>
           </pa-radio-group>
         </div>
         @if (linkForm.value.type === 'one') {
@@ -76,24 +74,7 @@
             {{ 'modal.create_link.multiple-links.label' | translate }}
           </pa-textarea>
         }
-        @if (linkForm.value.type === 'sitemap') {
-          <app-sitemap-select (select)="setSitemapLinks($event)"></app-sitemap-select>
-          <pa-input
-            formControlName="sitemapFilter"
-            placeholder="https://example.com/news/2024/"
-            (change)="filterSitemapLinks()">
-            {{ 'modal.create_link.sitemap-filter.label' | translate }}
-          </pa-input>
-          @if (sitemapLinks.length > 0) {
-            <nsi-info-card>
-              {{ 'modal.create_link.upload-summary' | translate: { count: filteredSitemapLinks.length } }}
-            </nsi-info-card>
-          }
-        }
-        @if (
-          (linkForm.value.linkTo === 'web' && ['one', 'multiple'].includes(linkForm.value.type || '')) ||
-          linkForm.value.type == 'sitemap'
-        ) {
+        @if (linkForm.value.linkTo === 'web' && ['one', 'multiple'].includes(linkForm.value.type || '')) {
           <pa-expander [expanded]="false">
             <pa-expander-header>{{ 'modal.create_link.restrict' | translate }}</pa-expander-header>
             <pa-expander-body>

@@ -28,6 +28,11 @@
     {{ 'upload.texts' | translate }}
   </pa-option>
   <pa-option
+    icon="connectors"
+    (selectOption)="upload('sitemap')">
+    {{ 'upload.sitemap.title' | translate }}
+  </pa-option>
+  <pa-option
     icon="chat"
     (selectOption)="upload('qna')">
     {{ 'upload.q_and_a' | translate }}
