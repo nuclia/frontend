@@ -62,7 +62,7 @@
                     }
                     <app-parameters-table
                       [values]="tables[field.id] || []"
-                      (valuesChanges)="updateTable(field.id, $event)"></app-parameters-table>
+                      (valuesChange)="updateTable(field.id, $event)"></app-parameters-table>
                     @if (invalidTables.includes(field.id)) {
                       <nsi-info-card
                         type="warning"

@@ -47,7 +47,7 @@ export class ParametersTableComponent implements OnInit, OnDestroy {
   @Input({ transform: booleanAttribute }) readonly = false;
   @Input({ transform: booleanAttribute }) secretDisabled = false;
 
-  @Output() valuesChanges = new EventEmitter<{ key: string; value: string; secret: boolean }[]>();
+  @Output() valuesChange = new EventEmitter<{ key: string; value: string; secret: boolean }[]>();
 
   get rows() {
     return this.form.controls.rows.controls;
@@ -91,7 +91,7 @@ export class ParametersTableComponent implements OnInit, OnDestroy {
     const current = this.form.value.rows || [];
     combineLatest(this.rows.map((r, i) => r.valueChanges.pipe(startWith(current[i] || {}), distinctUntilChanged())))
       .pipe(takeUntil(this.unsubscribe), distinctUntilChanged())
-      .subscribe((data) => this.valuesChanges.emit(this.normalize(data)));
+      .subscribe((data) => this.valuesChange.emit(this.normalize(data)));
   }
 
   private normalize(rows?: Partial<{ key?: string; value?: string; secret?: boolean }[]>) {
