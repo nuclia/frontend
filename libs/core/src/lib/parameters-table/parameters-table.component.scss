@@ -1,5 +1,10 @@
 @import 'apps/dashboard/src/variables';
 
 .table-header-button {
-  padding: 0 rhythm(1);
+  padding: rhythm(1);
+}
+
+pa-input  {
+  padding: rhythm(1) 0;
+  width: 100%;
 }
