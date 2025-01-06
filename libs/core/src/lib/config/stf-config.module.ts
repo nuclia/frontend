@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ModuleWithProviders, NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule, inject, provideAppInitializer } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
@@ -24,12 +24,12 @@ export class STFConfigModule {
           useValue: environment,
         },
         AppInitService,
-        {
-          provide: APP_INITIALIZER,
-          useFactory: (loadService: AppInitService) => init_app(loadService, environment),
-          deps: [AppInitService],
-          multi: true,
-        },
+        provideAppInitializer(() => {
+          const initializerFn = ((loadService: AppInitService) => init_app(loadService, environment))(
+            inject(AppInitService),
+          );
+          return initializerFn();
+        }),
       ],
     };
   }
