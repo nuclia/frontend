@@ -23,7 +23,6 @@ import { RequestConfigAndQueries } from '../rag-lab.models';
 
 @Component({
   selector: 'stf-prompt-lab',
-  standalone: true,
   imports: [
     CommonModule,
     LineBreakFormatterPipe,

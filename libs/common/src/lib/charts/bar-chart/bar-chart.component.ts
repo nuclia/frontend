@@ -13,6 +13,7 @@ const NUM_TICKS = 3;
   styleUrls: ['./bar-chart.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class BarChartComponent extends BaseChartDirective implements AfterViewInit, OnDestroy {
   id = `bar-chart-${nextUniqueId++}`;

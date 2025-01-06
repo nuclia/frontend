@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { PaCardModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
-  standalone: true,
   selector: 'nsy-connector',
   imports: [CommonModule, PaCardModule, PaIconModule, PaIconModule],
   templateUrl: './connector.component.html',

@@ -6,7 +6,6 @@ import { getLabelFromSelectionKey, getSelectionKey, LABEL_SEPARATOR } from './cl
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-  standalone: true,
   imports: [PaExpanderModule, CommonModule, PaTextFieldModule, PaTogglesModule, TranslateModule],
   selector: 'nsi-labels-expander',
   templateUrl: './labels-expander.component.html',

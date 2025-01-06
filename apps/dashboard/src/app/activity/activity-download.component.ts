@@ -29,6 +29,7 @@ const chatColumns = [
   templateUrl: './activity-download.component.html',
   styleUrls: ['./activity-download.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ActivityDownloadComponent {
   activityTabs: { [tab in Tab]: ActivityTab[] } = {

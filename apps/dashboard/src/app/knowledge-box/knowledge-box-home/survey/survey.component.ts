@@ -8,6 +8,7 @@ const SURVEY_NEXT_OCCURRENCE_KEY = 'survey_next_occurrence';
   selector: 'app-knowledge-box-survey',
   templateUrl: 'survey.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SurveyComponent implements OnInit, OnDestroy {
   @Input() totalSearch?: number | null;

@@ -13,6 +13,7 @@ import { TokenDialogComponent } from '@flaps/common';
   templateUrl: './account-nua.component.html',
   styleUrls: ['./account-nua.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AccountNUAComponent {
   clients$ = this.nua.clients;

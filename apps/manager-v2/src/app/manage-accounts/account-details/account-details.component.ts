@@ -9,6 +9,7 @@ import { ManagerStore } from '../../manager.store';
   templateUrl: './account-details.component.html',
   styleUrls: ['./account-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AccountDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

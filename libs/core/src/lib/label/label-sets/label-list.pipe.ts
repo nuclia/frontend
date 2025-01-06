@@ -3,6 +3,7 @@ import { Label } from '@nuclia/core';
 
 @Pipe({
   name: 'labelList',
+  standalone: false,
 })
 export class LabelListPipe implements PipeTransform {
   transform(value: Label[], ...args: unknown[]): string {

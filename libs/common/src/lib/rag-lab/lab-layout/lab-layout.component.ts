@@ -29,7 +29,6 @@ import { ResultEntry } from '../rag-lab.models';
 
 @Component({
   selector: 'stf-lab-layout',
-  standalone: true,
   imports: [
     CommonModule,
     AccordionComponent,

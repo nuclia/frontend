@@ -21,7 +21,8 @@
             "prefix": "nad",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "@angular-eslint/prefer-standalone": "off"
       }
     },
     {

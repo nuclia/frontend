@@ -11,6 +11,7 @@ const userLocaleKey = 'NUCLIA_USER_LOCALE';
   selector: 'nma-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  standalone: false,
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;

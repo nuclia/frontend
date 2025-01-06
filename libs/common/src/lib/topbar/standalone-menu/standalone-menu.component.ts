@@ -7,7 +7,6 @@ import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'app-standalone-menu',
-  standalone: true,
   imports: [CommonModule, PaButtonModule, PaDropdownModule, PaPopupModule, RouterModule, TranslateModule],
   templateUrl: './standalone-menu.component.html',
   styleUrl: './standalone-menu.component.scss',

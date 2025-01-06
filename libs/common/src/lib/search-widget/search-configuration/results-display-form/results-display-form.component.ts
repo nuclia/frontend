@@ -37,7 +37,6 @@ const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
 
 @Component({
   selector: 'stf-results-display-form',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

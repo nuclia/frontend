@@ -7,7 +7,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 @Component({
   selector: 'app-step1-budget',
-  standalone: true,
   imports: [CommonModule, InfoCardComponent, TranslateModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule],
   templateUrl: './step1-budget.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

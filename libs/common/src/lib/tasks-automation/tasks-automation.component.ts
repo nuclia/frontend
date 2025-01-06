@@ -6,7 +6,6 @@ import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tasks-automation',
-  standalone: true,
   imports: [CommonModule, RouterOutlet],
   template: '<router-outlet></router-outlet>',
   changeDetection: ChangeDetectionStrategy.OnPush,

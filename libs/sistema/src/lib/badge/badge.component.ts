@@ -16,7 +16,6 @@ import { PaIconModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular'
 
 @Component({
   selector: 'nsi-badge',
-  standalone: true,
   imports: [CommonModule, PaTooltipModule, PaIconModule],
   templateUrl: './badge.component.html',
   styleUrl: './badge.component.scss',

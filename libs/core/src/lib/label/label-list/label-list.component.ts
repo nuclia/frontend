@@ -6,6 +6,7 @@ import { Classification, LabelSets } from '@nuclia/core';
   templateUrl: './label-list.component.html',
   styleUrls: ['./label-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LabelListComponent {
   @Input() labelSelection: Classification[] = [];

@@ -18,7 +18,6 @@ import { AccountDetails } from '../../account-ui.models';
 
 @Component({
   selector: 'nma-token-consumption',
-  standalone: true,
   imports: [
     CommonModule,
     PaTableModule,

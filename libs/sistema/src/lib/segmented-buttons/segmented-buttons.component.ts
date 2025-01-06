@@ -4,7 +4,6 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'nsi-segmented-buttons',
-  standalone: true,
   imports: [CommonModule, TranslateModule],
   templateUrl: './segmented-buttons.component.html',
   styleUrl: './segmented-buttons.component.scss',

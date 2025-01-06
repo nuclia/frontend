@@ -9,6 +9,7 @@ import { MutableLabelSet } from '../model';
   templateUrl: './label-set.component.html',
   styleUrls: ['./label-set.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LabelSetComponent implements OnInit, OnDestroy {
   labelSet?: MutableLabelSet;

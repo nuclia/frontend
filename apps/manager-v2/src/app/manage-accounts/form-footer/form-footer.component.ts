@@ -5,6 +5,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Inp
   templateUrl: './form-footer.component.html',
   styleUrls: ['./form-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FormFooterComponent {
   @Input({ transform: booleanAttribute }) disabled = false;

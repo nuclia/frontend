@@ -8,6 +8,7 @@ import { SisToastService } from '@nuclia/sistema';
   templateUrl: './usage.component.html',
   styleUrls: ['./usage.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UsageComponent {
   usage = this.billing.getAccountUsage().pipe(shareReplay());

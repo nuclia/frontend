@@ -8,6 +8,7 @@ import { COUNTRIES } from '../utils';
   templateUrl: './review.component.html',
   styleUrls: ['./review.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ReviewComponent {
   account = this.modal.config.data?.account || '';

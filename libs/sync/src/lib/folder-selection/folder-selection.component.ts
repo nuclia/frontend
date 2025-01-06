@@ -25,7 +25,6 @@ import { FileStatus, ISyncEntity, SyncItem, SyncService } from '../logic';
 
 @Component({
   selector: 'nsy-folder-selection',
-  standalone: true,
   imports: [
     CommonModule,
     FolderListComponent,

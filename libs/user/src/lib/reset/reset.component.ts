@@ -12,6 +12,7 @@ import { SamePassword } from '../password.validator';
   templateUrl: './reset.component.html',
   styleUrls: ['./reset.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResetComponent {
   magicToken: string | undefined;

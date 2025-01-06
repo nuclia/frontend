@@ -21,7 +21,6 @@ import { UploadListComponent } from '../upload-list/upload-list.component';
 
 @Component({
   selector: 'app-getting-started-upload',
-  standalone: true,
   imports: [
     CommonModule,
     TranslateModule,

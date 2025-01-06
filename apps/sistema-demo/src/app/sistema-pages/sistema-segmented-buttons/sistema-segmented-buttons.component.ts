@@ -5,7 +5,6 @@ import { SegmentedButtonsComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-segmented-buttons',
-  standalone: true,
   imports: [CommonModule, PaDemoModule, SegmentedButtonsComponent],
   templateUrl: './sistema-segmented-buttons.component.html',
   styleUrl: './sistema-segmented-buttons.component.scss',

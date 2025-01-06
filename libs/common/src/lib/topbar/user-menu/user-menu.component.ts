@@ -23,7 +23,6 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-menu',
-  standalone: true,
   imports: [
     CommonModule,
     TranslateModule,

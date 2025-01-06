@@ -11,6 +11,7 @@ type Provider = 'google' | 'github';
   templateUrl: './sso-button.component.html',
   styleUrls: ['./sso-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SsoButtonComponent {
   @Input()

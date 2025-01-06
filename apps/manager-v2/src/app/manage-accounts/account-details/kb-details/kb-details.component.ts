@@ -14,6 +14,7 @@ import { AccountDetails, KbDetails, KbSummary, KbUser } from '../../account-ui.m
   templateUrl: './kb-details.component.html',
   styleUrls: ['./kb-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class KbDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

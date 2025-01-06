@@ -11,6 +11,7 @@ import { TextFormat } from '@nuclia/core';
   templateUrl: './upload-qna.component.html',
   styleUrls: ['./upload-qna.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadQnaComponent {
   standalone = this.standaloneService.standalone;

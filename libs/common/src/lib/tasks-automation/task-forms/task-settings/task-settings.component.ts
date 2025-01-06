@@ -16,7 +16,6 @@ interface Trigger {
 
 @Component({
   selector: 'app-task-settings',
-  standalone: true,
   imports: [
     CommonModule,
     LabelModule,

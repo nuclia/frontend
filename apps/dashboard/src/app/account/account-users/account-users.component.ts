@@ -19,6 +19,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
   templateUrl: './account-users.component.html',
   styleUrls: ['./account-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AccountUsersComponent implements OnDestroy, OnInit {
   account?: Account;

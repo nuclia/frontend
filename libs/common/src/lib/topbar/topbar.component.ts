@@ -16,6 +16,7 @@ import { StandaloneService } from '../services/standalone.service';
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class TopbarComponent {
   @Input({ transform: booleanAttribute }) isNotificationPanelOpen = false;

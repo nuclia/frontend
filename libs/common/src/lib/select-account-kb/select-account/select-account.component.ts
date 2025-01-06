@@ -13,6 +13,7 @@ import { map, takeUntil } from 'rxjs/operators';
   styleUrls: ['./select-account.component.scss'],
   animations: [selectAnimations],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SelectAccountComponent implements OnInit, OnDestroy {
   accounts: Observable<Account[] | null> = this.selectService.accounts.pipe(

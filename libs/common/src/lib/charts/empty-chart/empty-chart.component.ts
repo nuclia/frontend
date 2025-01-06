@@ -4,6 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
   selector: 'app-empty-chart',
   templateUrl: './empty-chart.component.html',
   styleUrls: ['./empty-chart.component.scss'],
+  standalone: false,
 })
 export class EmptyChartComponent implements OnInit {
   @Input()

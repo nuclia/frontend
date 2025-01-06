@@ -20,6 +20,7 @@ interface UserRow extends FullKbUser {
   styleUrls: ['./users-manage.component.scss'],
   providers: [UsersManageService],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UsersManageComponent {
   @Input() set kb(value: WritableKnowledgeBox | undefined) {

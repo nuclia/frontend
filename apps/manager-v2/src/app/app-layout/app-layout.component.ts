@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
   templateUrl: './app-layout.component.html',
   styleUrls: ['./app-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AppLayoutComponent implements OnInit {
   userInfo = this.userService.userInfo;

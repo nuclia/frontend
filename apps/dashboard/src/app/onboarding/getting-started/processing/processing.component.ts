@@ -7,7 +7,6 @@ import { FormatDurationPipe } from '@flaps/common';
 
 @Component({
   selector: 'app-getting-started-processing',
-  standalone: true,
   imports: [CommonModule, TranslateModule, UploadListComponent, FormatDurationPipe],
   templateUrl: './processing.component.html',
   styleUrl: './processing.component.scss',

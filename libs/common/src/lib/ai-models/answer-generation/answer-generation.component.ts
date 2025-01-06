@@ -12,7 +12,6 @@ import { LearningConfigurationOption } from '@nuclia/core';
 
 @Component({
   selector: 'stf-answer-generation',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

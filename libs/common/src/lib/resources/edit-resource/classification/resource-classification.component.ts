@@ -10,6 +10,7 @@ import { EditResourceService } from '../edit-resource.service';
   templateUrl: './resource-classification.component.html',
   styleUrls: ['../common-page-layout.scss', './resource-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceClassificationComponent implements OnInit, OnDestroy {
   backupLabels: Classification[] = [];

@@ -6,6 +6,7 @@ import { SafeUrl } from '@angular/platform-browser';
   templateUrl: './thumbnail.component.html',
   styleUrls: ['./thumbnail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ThumbnailComponent {
   @Input() url: SafeUrl | string | undefined;

@@ -27,6 +27,7 @@ interface ResourceFieldWithIcon extends ResourceField {
   styleUrls: ['edit-resource.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
 export class EditResourceComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

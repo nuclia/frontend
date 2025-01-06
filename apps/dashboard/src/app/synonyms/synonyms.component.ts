@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './synonyms.component.html',
   styleUrls: ['./synonyms.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SynonymsComponent {
   synonyms: Observable<Synonyms> = this.synonymsService.synonyms;

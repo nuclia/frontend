@@ -60,7 +60,6 @@ interface NucliaTokensDetailsEnhanced extends NucliaTokensDetails {
   templateUrl: './nuclia-tokens.component.html',
   styleUrls: ['./nuclia-tokens.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     AccordionComponent,
     AccordionBodyDirective,

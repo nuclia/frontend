@@ -23,7 +23,6 @@ import { removeDeprecatedModels } from './ai-models.utils';
 
 @Component({
   selector: 'stf-ai-models',
-  standalone: true,
   imports: [
     CommonModule,
     PaButtonModule,

@@ -6,7 +6,6 @@ import { FolderTreeState } from '../folder-tree.state';
 
 @Component({
   selector: 'nsi-recursive-folder-tree',
-  standalone: true,
   imports: [CommonModule, PaTogglesModule, PaButtonModule, PaIconModule],
   templateUrl: './recursive-folder-tree.component.html',
   styleUrl: './recursive-folder-tree.component.scss',

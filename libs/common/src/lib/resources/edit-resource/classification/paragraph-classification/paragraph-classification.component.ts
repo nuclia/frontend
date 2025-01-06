@@ -12,6 +12,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './paragraph-classification.component.html',
   styleUrls: ['../../common-page-layout.scss', './paragraph-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

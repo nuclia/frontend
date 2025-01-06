@@ -11,7 +11,6 @@ import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
   selector: 'stf-upload-bar',
   templateUrl: './upload-bar.component.html',
   styleUrls: ['./upload-bar.component.scss'],
-  standalone: true,
   imports: [CommonModule, PaButtonModule, ProgressBarComponent, TranslateModule],
 })
 export class UploadBarComponent {

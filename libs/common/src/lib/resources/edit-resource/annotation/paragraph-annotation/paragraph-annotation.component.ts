@@ -10,6 +10,7 @@ import { SelectFirstFieldDirective } from '../../select-first-field/select-first
   templateUrl: './paragraph-annotation.component.html',
   styleUrls: ['../../common-page-layout.scss', './paragraph-annotation.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ParagraphAnnotationComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {
   paragraphs: Observable<ParagraphWithTextAndAnnotations[]> = this.annotationService.paragraphs;

@@ -7,7 +7,6 @@ import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angula
 
 @Component({
   selector: 'app-step2',
-  standalone: true,
   imports: [CommonModule, InfoCardComponent, ReactiveFormsModule, TranslateModule, PaButtonModule, PaTogglesModule],
   templateUrl: './step2.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

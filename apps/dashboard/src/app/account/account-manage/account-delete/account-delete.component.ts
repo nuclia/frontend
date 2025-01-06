@@ -10,6 +10,7 @@ import { SisToastService } from '@nuclia/sistema';
   templateUrl: './account-delete.component.html',
   styleUrls: ['./account-delete.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AccountDeleteComponent {
   loading = false;

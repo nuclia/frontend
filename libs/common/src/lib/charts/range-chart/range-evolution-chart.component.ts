@@ -18,7 +18,6 @@ let nextUniqueId = 0;
 
 @Component({
   selector: 'stf-range-evolution-chart',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './range-evolution-chart.component.html',
   styleUrl: './range-evolution-chart.component.scss',

@@ -5,6 +5,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@an
   templateUrl: './user-container.component.html',
   styleUrls: ['./user-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UserContainerComponent {
   @Input({ transform: booleanAttribute }) alignLeft = false;

@@ -11,6 +11,7 @@ import { switchMap } from 'rxjs/operators';
   templateUrl: './invite.component.html',
   styleUrls: ['./invite.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class InviteComponent {
   validationMessages: { [key: string]: IErrorMessages } = {

@@ -8,6 +8,7 @@ import { EditResourceService } from '../../edit-resource.service';
   templateUrl: 'file.component.html',
   styleUrls: ['../../common-page-layout.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceFileComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

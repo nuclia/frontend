@@ -11,6 +11,7 @@ import { ResourceNavigationService } from '../resource-navigation.service';
   templateUrl: './add-field.component.html',
   styleUrls: ['../common-page-layout.scss', './add-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AddFieldComponent implements OnInit, OnDestroy {
   availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN', 'KEEP_MARKDOWN', 'JSON', 'JSONL'];

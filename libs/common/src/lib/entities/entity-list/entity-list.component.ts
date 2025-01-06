@@ -16,6 +16,7 @@ const COUNT_ROWS_DISPLAYED = 1000;
   templateUrl: './entity-list.component.html',
   styleUrls: ['./entity-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class EntityListComponent implements OnDestroy {
   @Input()

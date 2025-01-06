@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'stf-missing-knowledge-details',
-  standalone: true,
   imports: [CommonModule, PaTableModule, InfoCardComponent, SisProgressModule, TranslateModule, PaButtonModule],
   templateUrl: './missing-knowledge-details.component.html',
   styleUrl: './missing-knowledge-details.component.scss',

@@ -6,7 +6,6 @@ import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsd-sistema-sticky-footer',
-  standalone: true,
   imports: [CommonModule, PaDemoModule, StickyFooterComponent, PaButtonModule],
   templateUrl: './sistema-sticky-footer.component.html',
   styleUrl: './sistema-sticky-footer.component.scss',

@@ -13,6 +13,7 @@ import { AccountDeleteComponent } from './account-delete/account-delete.componen
   templateUrl: './account-manage.component.html',
   styleUrls: ['./account-manage.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AccountManageComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

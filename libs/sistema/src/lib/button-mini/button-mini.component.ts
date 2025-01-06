@@ -4,7 +4,6 @@ import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsi-button-mini',
-  standalone: true,
   imports: [CommonModule, PaIconModule],
   templateUrl: './button-mini.component.html',
   styleUrl: './button-mini.component.scss',

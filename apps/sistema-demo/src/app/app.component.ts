@@ -177,6 +177,7 @@ export const menu: IDemoMenuSection[] = [
       [logo]="logo"></pa-demo>
   `,
   styles: [],
+  standalone: false,
 })
 export class AppComponent {
   logo = './assets/logos/logo.svg';

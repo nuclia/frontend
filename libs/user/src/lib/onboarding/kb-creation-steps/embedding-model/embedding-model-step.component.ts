@@ -9,7 +9,6 @@ import { LearningConfigurations } from '@nuclia/core';
 
 @Component({
   selector: 'nus-embedding-model-step',
-  standalone: true,
   imports: [
     CommonModule,
     PaButtonModule,

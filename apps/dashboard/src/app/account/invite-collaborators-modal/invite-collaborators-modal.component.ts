@@ -17,7 +17,6 @@ import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-invite-collaborators-modal',
-  standalone: true,
   imports: [
     CommonModule,
     PaModalModule,

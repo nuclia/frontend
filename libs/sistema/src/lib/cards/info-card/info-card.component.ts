@@ -4,7 +4,6 @@ import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsi-info-card',
-  standalone: true,
   imports: [CommonModule, PaIconModule],
   templateUrl: './info-card.component.html',
   styleUrl: './info-card.component.scss',

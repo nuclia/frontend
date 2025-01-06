@@ -13,7 +13,6 @@ import { HintModule } from '../../hint';
   templateUrl: './csv-select.component.html',
   styleUrls: ['./csv-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CommonModule, HintModule, PaButtonModule, TranslateModule],
 })
 export class CsvSelectComponent<T> {

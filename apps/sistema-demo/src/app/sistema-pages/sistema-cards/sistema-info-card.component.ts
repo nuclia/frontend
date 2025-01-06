@@ -5,7 +5,6 @@ import { InfoCardComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-info-card',
-  standalone: true,
   imports: [CommonModule, PaDemoModule, InfoCardComponent],
   templateUrl: './sistema-info-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

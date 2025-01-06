@@ -12,6 +12,7 @@ import { Activity, NuaActivityService } from './nua-activity.service';
   templateUrl: './nua-activity.component.html',
   styleUrls: ['./nua-activity.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class NuaActivityComponent implements OnInit, OnDestroy {
   private _terminator = new Subject<void>();

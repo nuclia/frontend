@@ -18,7 +18,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     Step1BudgetComponent,

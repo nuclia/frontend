@@ -34,7 +34,6 @@ export interface LabelingConfiguration {
 
 @Component({
   selector: 'stf-labeling-configuration',
-  standalone: true,
   imports: [
     CommonModule,
     InfoCardComponent,

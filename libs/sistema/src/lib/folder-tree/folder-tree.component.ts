@@ -8,7 +8,6 @@ import { map, Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'nsi-folder-tree',
-  standalone: true,
   imports: [CommonModule, PaTogglesModule, PaIconModule, PaButtonModule, RecursiveFolderTreeComponent],
   templateUrl: './folder-tree.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

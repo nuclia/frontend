@@ -10,6 +10,7 @@ import { AccountTypes } from '@nuclia/core';
   templateUrl: './subscriptions.component.html',
   styleUrls: ['./subscriptions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SubscriptionsComponent implements OnDestroy {
   accountType = this.billing.type.pipe(shareReplay());

@@ -17,7 +17,6 @@ export interface UsageModalConfig {
 
 @Component({
   selector: 'app-usage-modal',
-  standalone: true,
   imports: [
     CommonModule,
     PaModalModule,

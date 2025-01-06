@@ -9,6 +9,7 @@ const PAGE_SIZE = 25;
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class HistoryComponent implements OnDestroy {
   invoices: InvoicesList = { items: [], pagination: { has_more: true } };

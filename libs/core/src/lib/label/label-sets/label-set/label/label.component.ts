@@ -8,6 +8,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
   templateUrl: './label.component.html',
   styleUrls: ['./label.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LabelComponent {
   @Input()

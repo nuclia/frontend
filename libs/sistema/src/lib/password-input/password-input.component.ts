@@ -20,6 +20,7 @@ import { NgControl } from '@angular/forms';
   templateUrl: './password-input.component.html',
   styleUrls: ['./password-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PasswordInputComponent
   extends NativeTextFieldDirective

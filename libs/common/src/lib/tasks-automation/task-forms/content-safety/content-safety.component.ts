@@ -11,7 +11,6 @@ import { TaskApplyTo } from '@nuclia/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,

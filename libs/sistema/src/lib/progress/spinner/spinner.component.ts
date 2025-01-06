@@ -6,6 +6,7 @@ import { Size } from '@guillotinaweb/pastanaga-angular';
   templateUrl: './spinner.component.html',
   styleUrls: ['./spinner.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SpinnerComponent {
   @Input()

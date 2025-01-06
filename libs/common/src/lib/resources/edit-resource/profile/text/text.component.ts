@@ -10,6 +10,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: 'text.component.html',
   styleUrls: ['../../common-page-layout.scss', './text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceTextComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

@@ -15,7 +15,6 @@ import { TaskSettingsComponent } from '../task-settings/task-settings.component'
 import { map } from 'rxjs';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,

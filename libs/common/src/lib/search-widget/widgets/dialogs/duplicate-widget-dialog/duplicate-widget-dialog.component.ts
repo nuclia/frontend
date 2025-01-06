@@ -5,7 +5,6 @@ import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@gui
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-  standalone: true,
   imports: [CommonModule, PaModalModule, PaTextFieldModule, PaButtonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './duplicate-widget-dialog.component.html',
   styleUrl: './duplicate-widget-dialog.component.scss',

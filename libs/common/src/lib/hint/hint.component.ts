@@ -20,6 +20,7 @@ import { delay, map, take } from 'rxjs';
   styleUrls: ['hint.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
 export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges {
   @Input() learnMore?: string;

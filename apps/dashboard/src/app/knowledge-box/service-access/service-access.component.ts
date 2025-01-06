@@ -13,6 +13,7 @@ import { SisModalService } from '@nuclia/sistema';
   templateUrl: './service-access.component.html',
   styleUrls: ['./service-access.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ServiceAccessComponent implements OnInit, OnDestroy {
   isTrial = this.features.isTrial;

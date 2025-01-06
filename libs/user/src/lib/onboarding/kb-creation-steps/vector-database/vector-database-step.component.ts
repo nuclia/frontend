@@ -8,7 +8,6 @@ import { ExternalIndexProvider } from '@nuclia/core';
 
 @Component({
   selector: 'nus-vector-database-step',
-  standalone: true,
   imports: [CommonModule, StickyFooterComponent, TranslateModule, PaButtonModule, VectorDatabaseFormComponent],
   templateUrl: './vector-database-step.component.html',
   styleUrls: ['../../_common-step.scss'],

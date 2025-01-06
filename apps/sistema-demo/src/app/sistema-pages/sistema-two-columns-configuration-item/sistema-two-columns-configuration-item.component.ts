@@ -6,7 +6,6 @@ import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsd-sistema-two-columns-configuration-item',
-  standalone: true,
   imports: [CommonModule, PaDemoModule, TwoColumnsConfigurationItemComponent, PaTogglesModule],
   templateUrl: './sistema-two-columns-configuration-item.component.html',
   styleUrl: './sistema-two-columns-configuration-item.component.scss',

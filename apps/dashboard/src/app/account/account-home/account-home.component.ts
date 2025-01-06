@@ -25,6 +25,7 @@ import { getDaysInMonth } from 'date-fns';
   templateUrl: './account-home.component.html',
   styleUrls: ['./account-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AccountHomeComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

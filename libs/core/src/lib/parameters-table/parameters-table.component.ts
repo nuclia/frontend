@@ -19,7 +19,6 @@ import { combineLatest, distinctUntilChanged, startWith, Subject, takeUntil } fr
   templateUrl: 'parameters-table.component.html',
   styleUrls: ['parameters-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     TranslateModule,

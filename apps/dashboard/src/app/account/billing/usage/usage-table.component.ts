@@ -7,6 +7,7 @@ import { map, Observable, ReplaySubject } from 'rxjs';
   templateUrl: './usage-table.component.html',
   styleUrls: ['./usage-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UsageTableComponent {
   paramsToShow = ['media', 'paragraphs_processed', 'searches', 'predict', 'generative', 'paragraphs', 'training'];

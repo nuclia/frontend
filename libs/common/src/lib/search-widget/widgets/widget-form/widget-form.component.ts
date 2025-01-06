@@ -33,7 +33,6 @@ import { EmbedWidgetDialogComponent } from '../dialogs';
 import { WidgetFeedback } from '@nuclia/core';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

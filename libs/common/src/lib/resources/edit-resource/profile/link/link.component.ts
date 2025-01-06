@@ -10,6 +10,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: 'link.component.html',
   styleUrls: ['../../common-page-layout.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceLinkComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

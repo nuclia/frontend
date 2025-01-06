@@ -8,7 +8,6 @@ import { map, switchMap, take } from 'rxjs';
 
 @Component({
   selector: 'app-test-page',
-  standalone: true,
   imports: [CommonModule, TranslateModule, PaButtonModule, PaTextFieldModule],
   templateUrl: './test-page.component.html',
   styleUrl: './test-page.component.scss',

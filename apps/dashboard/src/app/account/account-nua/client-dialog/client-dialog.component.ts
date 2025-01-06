@@ -14,6 +14,7 @@ export interface ClientDialogData {
   templateUrl: './client-dialog.component.html',
   styleUrls: ['./client-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ClientDialogComponent implements OnInit {
   account = this.sdkService.currentAccount.pipe(take(1));

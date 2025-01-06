@@ -5,7 +5,6 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'stf-embed-widget-dialog',
-  standalone: true,
   imports: [CommonModule, PaModalModule, TranslateModule, PaButtonModule],
   templateUrl: './embed-widget-dialog.component.html',
   styleUrl: './embed-widget-dialog.component.scss',

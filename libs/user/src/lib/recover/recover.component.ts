@@ -14,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './recover.component.html',
   styleUrls: ['./recover.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class RecoverComponent {
   recoverForm = new FormGroup({

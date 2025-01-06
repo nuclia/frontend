@@ -7,6 +7,7 @@ import { ModalExampleComponent } from './modal-example/modal-example.component';
   templateUrl: './sistema-modal.component.html',
   styleUrls: ['./sistema-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SistemaModalComponent {
   dialogTemplate = `<pa-modal-dialog>

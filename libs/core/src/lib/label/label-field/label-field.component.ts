@@ -9,6 +9,7 @@ import { Size } from '@guillotinaweb/pastanaga-angular';
   templateUrl: './label-field.component.html',
   styleUrls: ['./label-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LabelFieldComponent {
   @Input()

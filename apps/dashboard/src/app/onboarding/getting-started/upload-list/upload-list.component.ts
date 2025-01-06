@@ -8,7 +8,6 @@ import { FormatETAPipe } from '@flaps/common';
 
 @Component({
   selector: 'app-getting-started-upload-list',
-  standalone: true,
   imports: [CommonModule, TranslateModule, PaButtonModule, PaTooltipModule, ProgressBarComponent],
   templateUrl: './upload-list.component.html',
   styleUrl: './upload-list.component.scss',

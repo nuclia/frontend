@@ -37,7 +37,6 @@ let id = 0;
 
 @Component({
   selector: 'stf-filter-assistant-modal',
-  standalone: true,
   imports: [
     CommonModule,
     PaModalModule,

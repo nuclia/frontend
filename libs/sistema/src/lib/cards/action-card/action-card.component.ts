@@ -5,7 +5,6 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'nsi-action-card',
-  standalone: true,
   imports: [CommonModule, PaCardModule, RouterLink, PaIconModule],
   templateUrl: './action-card.component.html',
   styleUrl: './action-card.component.scss',

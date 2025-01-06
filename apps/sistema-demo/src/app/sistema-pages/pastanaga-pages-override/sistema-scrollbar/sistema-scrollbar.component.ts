@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './sistema-scrollbar.component.html',
   styleUrls: ['sistema-scrollbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SistemaScrollbarComponent {
   code = `<div paScrollableContainer>dynamic scrollbar styling</div>

@@ -14,6 +14,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './knowledge-box-home.component.html',
   styleUrls: ['./knowledge-box-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

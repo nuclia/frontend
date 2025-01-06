@@ -23,6 +23,7 @@ interface Row {
   templateUrl: './upload-text.component.html',
   styleUrls: ['./upload-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadTextComponent {
   isUploading = false;

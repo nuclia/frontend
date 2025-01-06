@@ -46,6 +46,7 @@ import { SubscriptionService } from '../subscription.service';
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CheckoutComponent implements OnDestroy, OnInit {
   customerForm = new FormGroup({

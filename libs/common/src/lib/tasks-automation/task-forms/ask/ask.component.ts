@@ -12,7 +12,6 @@ import { TaskApplyTo } from '@nuclia/core';
 import { map } from 'rxjs';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,

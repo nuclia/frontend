@@ -13,6 +13,7 @@ import { AccountDetails } from '../../account-ui.models';
   templateUrl: './limits.component.html',
   styleUrls: ['./limits.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LimitsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

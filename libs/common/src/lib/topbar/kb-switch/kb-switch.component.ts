@@ -9,6 +9,7 @@ import { Account, IKnowledgeBoxItem } from '@nuclia/core';
   templateUrl: './kb-switch.component.html',
   styleUrls: ['./kb-switch.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class KbSwitchComponent {
   @Output() close = new EventEmitter<void>();

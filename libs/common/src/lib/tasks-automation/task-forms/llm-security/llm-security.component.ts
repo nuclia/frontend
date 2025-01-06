@@ -11,7 +11,6 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,

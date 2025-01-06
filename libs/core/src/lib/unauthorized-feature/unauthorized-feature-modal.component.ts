@@ -9,7 +9,6 @@ import { switchMap, take } from 'rxjs/operators';
 import { map } from 'rxjs';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     PaModalModule,

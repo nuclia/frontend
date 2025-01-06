@@ -18,7 +18,6 @@ import { NotificationService } from '../notification.service';
 
 @Component({
   selector: 'stf-notifications-panel',
-  standalone: true,
   imports: [CommonModule, TranslateModule, PaButtonModule, NotificationComponent],
   templateUrl: './notifications-panel.component.html',
   styleUrl: './notifications-panel.component.scss',

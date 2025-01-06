@@ -5,7 +5,6 @@ import { RouterLink } from '@angular/router';
 import { ActionCardComponent } from '@nuclia/sistema';
 
 @Component({
-  standalone: true,
   imports: [CommonModule, PaDemoModule, RouterLink, ActionCardComponent],
   templateUrl: './sistema-action-card.component.html',
   styleUrl: './sistema-action-card.component.scss',

@@ -9,6 +9,7 @@ import { BillingService, NavigationService, CancellationFeedback, SDKService } f
   templateUrl: './feedback.component.html',
   styleUrls: ['./feedback.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FeedbackComponent {
   feedback?: CancellationFeedback;
