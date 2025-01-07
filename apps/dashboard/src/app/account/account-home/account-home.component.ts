@@ -129,12 +129,10 @@ export class AccountHomeComponent implements OnInit, OnDestroy {
     const currentMonth = new Date().getMonth();
     for (let i = 0; i < num; i++) {
       const start = new Date();
-      const month = currentMonth - i >= 0 ? currentMonth - i : currentMonth - i + 12;
-      start.setUTCMonth(month);
       start.setUTCDate(1);
       start.setUTCHours(0, 0, 0, 0);
-      const end = new Date();
-      end.setUTCMonth(month);
+      start.setUTCMonth(currentMonth - i);
+      const end = new Date(start); 
       end.setUTCDate(getDaysInMonth(end));
       end.setUTCHours(23, 59, 59, 999);
       periods.push({ start, end });
