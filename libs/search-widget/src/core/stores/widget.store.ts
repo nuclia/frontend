@@ -57,3 +57,4 @@ export const feedbackOnResults = widgetFeedback.pipe(map((feedback) => feedback 
 export const expandedCitations: Observable<boolean | undefined> = widgetFeatures.pipe(
   map((features) => (features?.expandCitations ? true : features?.collapseCitations ? false : undefined)),
 );
+export const hasSearchButton = widgetFeatures.pipe(map((features) => !!features?.displaySearchButton));

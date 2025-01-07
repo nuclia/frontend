@@ -1263,6 +1263,7 @@
 	"search.widgets.form.widget-options.customize-insufficient-data.input-label": "Missatge de dades insuficient",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-description": "Personalitza el missatge que es mostra quan no hi ha dades suficients per generar una resposta a la pregunta de l’usuari. Aquest camp admet codi HTML.",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-label": "Personalitza el missatge de dades insuficients",
+	"search.widgets.form.widget-options.displaySearchButton.toggle-label": "Mostra el botó de cerca",
 	"search.widgets.form.widget-options.feedback.answer": "Feedback global sobre la resposta generada",
 	"search.widgets.form.widget-options.feedback.answer-and-results": "Feedback detallat sobre respostes i resultats de cerca",
 	"search.widgets.form.widget-options.feedback.description": "Indiqueu el tipus de feedback que els usuaris poden proporcionar",

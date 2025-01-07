@@ -1263,6 +1263,7 @@
 	"search.widgets.form.widget-options.customize-insufficient-data.input-label": "Insufficient data message",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-description": "Customize the message displayed when there’s insufficient data to generate a response to the user’s question. This field allows HTML markup. ",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-label": "Customize insufficient data message",
+	"search.widgets.form.widget-options.displaySearchButton.toggle-label": "Display search button",
 	"search.widgets.form.widget-options.feedback.answer": "Global feedback on the generated answer",
 	"search.widgets.form.widget-options.feedback.answer-and-results": "Detailed feedback on answer and search results",
 	"search.widgets.form.widget-options.feedback.description": "Select the type of feedback that users can provide",

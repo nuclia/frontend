@@ -125,6 +125,7 @@ export interface WidgetFeatures {
   semanticOnly?: boolean;
   expandCitations?: boolean;
   collapseCitations?: boolean;
+  displaySearchButton?: boolean;
 }
 
 export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';

@@ -88,6 +88,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     hideLogo: new FormControl<boolean>(false, { nonNullable: true }),
     noChatHistory: new FormControl<boolean>(false, { nonNullable: true }),
     permalink: new FormControl<boolean>(false, { nonNullable: true }),
+    displaySearchButton: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),
     openNewTab: new FormControl<boolean>(false, { nonNullable: true }),
