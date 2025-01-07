@@ -8,7 +8,6 @@ import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 const OMITTED_HEADERS = ['Authorization', 'x-ndb-client'];
 
 @Component({
-  standalone: true,
   imports: [
     BadgeComponent,
     CommonModule,

@@ -17,7 +17,6 @@ type TaskWithFilters = (AutomatedTask | OneTimeTask) & { hasFilters: boolean };
 
 @Component({
   selector: 'app-task-list-item',
-  standalone: true,
   imports: [
     CommonModule,
     RouterModule,

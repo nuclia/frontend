@@ -13,6 +13,7 @@ import { SearchPrice } from '../../global-account.models';
   templateUrl: './payment-links.component.html',
   styleUrls: ['./payment-links.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PaymentLinksComponent implements OnDestroy {
   private unsubscribeAll = new Subject<void>();

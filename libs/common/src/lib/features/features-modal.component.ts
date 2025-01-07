@@ -7,7 +7,6 @@ import { map, take } from 'rxjs';
 
 @Component({
   templateUrl: './features-modal.component.html',
-  standalone: true,
   imports: [PaModalModule, TranslateModule, CommonModule, PaButtonModule, PaTogglesModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

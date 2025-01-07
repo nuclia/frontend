@@ -33,7 +33,6 @@ import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } f
 
 @Component({
   selector: 'app-kb-creation',
-  standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,

@@ -9,6 +9,7 @@ import { SearchWidgetStorageService } from '@flaps/common';
 
 @Component({
   template: '<router-outlet></router-outlet>',
+  standalone: false,
 })
 export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

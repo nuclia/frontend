@@ -7,7 +7,6 @@ import { StickyFooterComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nus-kb-name-step',
-  standalone: true,
   imports: [
     CommonModule,
     PaButtonModule,

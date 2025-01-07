@@ -15,6 +15,7 @@ import { getClassificationsPayload } from '../../edit-resource';
   templateUrl: './resources-table.component.html',
   styleUrls: ['../resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourcesTableComponent extends ResourcesTableDirective implements OnInit, OnDestroy, OnChanges {
   protected uploadService = inject(UploadService);

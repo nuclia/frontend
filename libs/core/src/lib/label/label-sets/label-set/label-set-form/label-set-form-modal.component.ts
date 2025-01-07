@@ -7,7 +7,6 @@ import { LabelSetKind } from '@nuclia/core';
 
 @Component({
   selector: 'stf-label-set-form-modal',
-  standalone: true,
   imports: [CommonModule, PaModalModule, LabelSetFormComponent, TranslateModule],
   templateUrl: './label-set-form-modal.component.html',
   styleUrl: './label-set-form-modal.component.scss',

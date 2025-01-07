@@ -6,6 +6,7 @@ import { coerceNumberProperty } from '@angular/cdk/coercion';
   selector: 'nsi-delayed-spinner',
   templateUrl: './delayed-spinner.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class DelayedSpinnerComponent implements OnInit {
   @Input()

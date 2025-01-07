@@ -20,7 +20,6 @@ import { map } from 'rxjs';
 
 @Component({
   selector: 'stf-graph-extraction',
-  standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,

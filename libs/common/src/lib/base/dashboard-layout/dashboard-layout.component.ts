@@ -7,6 +7,7 @@ import { combineLatest, map, startWith } from 'rxjs';
   templateUrl: './dashboard-layout.component.html',
   styleUrls: ['./dashboard-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class DashboardLayoutComponent {
   showProgress = combineLatest([this.uploadService.progress, this.uploadService.barDisabled]).pipe(

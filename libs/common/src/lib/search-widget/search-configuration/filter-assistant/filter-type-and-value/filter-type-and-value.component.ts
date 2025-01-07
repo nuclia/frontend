@@ -21,7 +21,6 @@ import { FilterValueComponent } from './filter-value.component';
 
 @Component({
   selector: 'stf-filter-type-and-value',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

@@ -16,6 +16,7 @@ import { Aspect, PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
   templateUrl: './label-dropdown.component.html',
   styleUrls: ['./label-dropdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LabelDropdownComponent {
   @Input() aspect: Aspect = 'solid';
@@ -28,7 +29,7 @@ export class LabelDropdownComponent {
   @Input() size: Size = 'medium';
   @Input()
   set selection(value: Classification[]) {
-    this._selection = [...value] || [];
+    this._selection = [...value];
     this.checkboxSelection = this._selection.map((labelValue) => `${labelValue.labelset}${labelValue.label}`);
   }
   get selection() {

@@ -7,7 +7,6 @@ import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsi-folder-list',
-  standalone: true,
   imports: [CommonModule, InfoCardComponent, TranslateModule, PaIconModule],
   templateUrl: './folder-list.component.html',
   styleUrl: './folder-list.component.scss',

@@ -30,7 +30,6 @@ let id = 0;
 
 @Component({
   selector: 'stf-filter-expression',
-  standalone: true,
   imports: [
     CommonModule,
     FilterTypeAndValueComponent,

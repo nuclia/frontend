@@ -6,6 +6,7 @@ import { trimString } from '@guillotinaweb/pastanaga-angular';
   templateUrl: './upload-option.component.html',
   styleUrls: ['./upload-option.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadOptionComponent {
   @Input({ transform: trimString }) icon = '';

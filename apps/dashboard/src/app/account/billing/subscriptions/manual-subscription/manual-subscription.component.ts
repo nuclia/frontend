@@ -8,6 +8,7 @@ import { shareReplay } from 'rxjs';
   templateUrl: './manual-subscription.component.html',
   styleUrls: ['./manual-subscription.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ManualSubscriptionComponent {
   usage = this.billing.getManualAccountUsage().pipe(shareReplay(1));

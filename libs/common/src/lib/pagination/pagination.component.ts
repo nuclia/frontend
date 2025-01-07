@@ -5,6 +5,7 @@ import { coerceNumberProperty } from '@angular/cdk/coercion';
   selector: 'stf-pagination',
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss'],
+  standalone: false,
 })
 export class PaginationComponent implements OnInit {
   @Input()

@@ -12,6 +12,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UsersComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

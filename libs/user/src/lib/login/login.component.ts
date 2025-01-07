@@ -12,6 +12,7 @@ import { PasswordInputComponent } from '@nuclia/sistema';
   selector: 'stf-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
+  standalone: false,
 })
 export class LoginComponent {
   @ViewChild('email', { static: false }) email: InputComponent | undefined;

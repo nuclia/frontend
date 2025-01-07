@@ -10,6 +10,7 @@ import { Location } from '@angular/common';
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

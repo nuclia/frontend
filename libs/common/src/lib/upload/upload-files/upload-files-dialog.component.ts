@@ -14,6 +14,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
       (close)="close()"></app-upload-progress>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadFilesDialogComponent {
   showProgress: boolean = false;

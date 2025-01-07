@@ -14,6 +14,7 @@ const GENERAL_LABELSET = 'General';
   templateUrl: './upload-files.component.html',
   styleUrls: ['./upload-files.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadFilesComponent {
   @Input() folderMode: boolean = false;

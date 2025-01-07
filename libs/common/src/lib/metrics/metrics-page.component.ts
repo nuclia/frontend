@@ -49,7 +49,6 @@ import { PreviewService } from '../resources';
 import { SafeHtml } from '@angular/platform-browser';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     TranslateModule,

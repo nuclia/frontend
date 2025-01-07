@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './sistema-dropdown-button.component.html',
   styleUrls: ['./sistema-dropdown-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SistemaDropdownButtonComponent {
   options = [

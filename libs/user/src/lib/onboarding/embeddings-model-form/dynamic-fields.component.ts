@@ -41,7 +41,6 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
     </form>
   `,
   styleUrl: './dynamic-fields.component.scss',
-  standalone: true,
   imports: [CommonModule, PaTextFieldModule, ReactiveFormsModule],
 })
 export class DynamicFieldsComponent {

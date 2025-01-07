@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'nsi-progress-bar',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './progress-bar.component.html',
   styleUrl: './progress-bar.component.scss',

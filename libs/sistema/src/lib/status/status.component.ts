@@ -3,7 +3,6 @@ import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nsi-status',
-  standalone: true,
   imports: [PaIconModule],
   templateUrl: './status.component.html',
   styleUrls: ['./status.component.scss'],

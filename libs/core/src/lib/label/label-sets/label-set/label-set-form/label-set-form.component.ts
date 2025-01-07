@@ -35,7 +35,6 @@ const KINDS = [
 
 @Component({
   selector: 'stf-label-set-form',
-  standalone: true,
   imports: [
     CommonModule,
     PaButtonModule,

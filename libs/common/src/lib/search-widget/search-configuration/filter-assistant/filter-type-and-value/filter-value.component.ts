@@ -23,7 +23,6 @@ import { InfoCardComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-filter-value',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, PaTextFieldModule, TranslateModule, LabelModule, InfoCardComponent],
   styleUrl: 'filter-value.component.scss',
   templateUrl: './filter-value.component.html',

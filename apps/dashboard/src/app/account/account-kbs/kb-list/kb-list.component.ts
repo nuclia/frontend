@@ -12,7 +12,6 @@ import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angula
 
 @Component({
   selector: 'app-kb-list',
-  standalone: true,
   imports: [
     CommonModule,
     SisProgressModule,

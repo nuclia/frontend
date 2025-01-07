@@ -12,6 +12,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
   templateUrl: './select-kb.component.html',
   styleUrls: ['./select-kb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SelectKbComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();

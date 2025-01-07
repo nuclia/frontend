@@ -8,6 +8,7 @@ import { ResourceNavigationService } from '../resource-navigation.service';
 
 @Directive({
   selector: '[appSelectFirstField]',
+  standalone: false,
 })
 export class SelectFirstFieldDirective implements OnDestroy {
   private navigationService = inject(ResourceNavigationService);

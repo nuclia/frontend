@@ -29,7 +29,6 @@ import { FilterAssistantModalComponent } from '../filter-assistant';
 
 @Component({
   selector: 'stf-search-box-form',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

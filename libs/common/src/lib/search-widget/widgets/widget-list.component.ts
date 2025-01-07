@@ -18,7 +18,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'stf-widget-list',
-  standalone: true,
   imports: [
     CommonModule,
     TranslateModule,

@@ -5,7 +5,6 @@ import { FolderTree, FolderTreeComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-folder-tree',
-  standalone: true,
   imports: [CommonModule, PaDemoModule, FolderTreeComponent],
   templateUrl: './sistema-folder-tree.component.html',
   styleUrl: './sistema-folder-tree.component.scss',

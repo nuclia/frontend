@@ -21,6 +21,7 @@ import { Classification, getFilterFromLabel, getLabelFromFilter, LabelSets, Sear
   templateUrl: './resource-list.component.html',
   styleUrls: ['./resource-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceListComponent implements OnDestroy {
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;

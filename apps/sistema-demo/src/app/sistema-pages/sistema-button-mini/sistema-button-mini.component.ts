@@ -5,7 +5,6 @@ import { ButtonMiniComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-button-mini',
-  standalone: true,
   imports: [CommonModule, PaDemoModule, ButtonMiniComponent],
   templateUrl: './sistema-button-mini.component.html',
   styleUrl: './sistema-button-mini.component.scss',

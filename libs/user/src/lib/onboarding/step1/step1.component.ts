@@ -11,7 +11,6 @@ const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
 
 @Component({
   selector: 'nus-onboarding-step1',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

@@ -16,6 +16,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
   templateUrl: './dropzone.component.html',
   styleUrls: ['./dropzone.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class DropzoneComponent implements OnInit {
   @Input()

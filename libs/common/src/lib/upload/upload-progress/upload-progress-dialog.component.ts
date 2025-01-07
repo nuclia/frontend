@@ -8,6 +8,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
   `,
   styleUrls: ['./upload-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadProgressDialogComponent {
   constructor(public modal: ModalRef) {}

@@ -10,7 +10,6 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'stf-anonymization',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

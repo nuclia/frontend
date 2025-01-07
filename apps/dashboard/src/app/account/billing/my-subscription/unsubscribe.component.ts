@@ -12,6 +12,7 @@ export interface UnsubscribeModalData {
   templateUrl: './unsubscribe.component.html',
   styleUrls: ['./unsubscribe.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UnsubscribeComponent {
   data = this.modal.config.data;

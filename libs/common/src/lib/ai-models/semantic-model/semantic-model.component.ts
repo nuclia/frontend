@@ -9,7 +9,6 @@ import { catchError, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'stf-semantic-model',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

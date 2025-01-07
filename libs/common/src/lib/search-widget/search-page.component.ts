@@ -20,7 +20,6 @@ import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-search-page',
-  standalone: true,
   imports: [CommonModule, TranslateModule, SearchConfigurationComponent, PaIconModule, PaButtonModule],
   templateUrl: './search-page.component.html',
   styleUrls: ['./search-page.component.scss', '_common-form.scss'],

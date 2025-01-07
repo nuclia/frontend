@@ -6,7 +6,6 @@ import { ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsi-loading-dialog',
-  standalone: true,
   imports: [CommonModule, PaButtonModule, TranslateModule, SisProgressModule, ProgressBarComponent],
   templateUrl: './loading-dialog.component.html',
   styleUrl: './loading-dialog.component.scss',

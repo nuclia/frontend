@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './sistema-password-input.component.html',
   styleUrls: ['./sistema-password-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SistemaPasswordInputComponent {
   disabled = false;

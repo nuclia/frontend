@@ -28,7 +28,6 @@ import { ConnectorComponent } from './connector';
 import { SDKService } from '@flaps/core';
 
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     BadgeComponent,

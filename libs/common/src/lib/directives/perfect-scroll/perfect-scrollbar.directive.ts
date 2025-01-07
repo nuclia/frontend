@@ -7,6 +7,7 @@ import PerfectScrollbar from 'perfect-scrollbar';
 
 @Directive({
   selector: '[stfPerfectScrollbar]',
+  standalone: false,
 })
 export class STFPerfectScrollbarDirective implements AfterViewInit, OnDestroy {
   isInitialized: boolean;

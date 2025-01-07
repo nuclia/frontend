@@ -9,6 +9,7 @@ import { FileUploadStatus } from '@nuclia/core';
   templateUrl: './upload-progress.component.html',
   styleUrls: ['./upload-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class UploadProgressComponent {
   @Output() close = new EventEmitter<void>();

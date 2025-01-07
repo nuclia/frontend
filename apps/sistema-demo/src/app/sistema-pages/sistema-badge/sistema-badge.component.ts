@@ -5,7 +5,6 @@ import { BadgeComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'nsd-sistema-badge',
-  standalone: true,
   imports: [CommonModule, PaDemoModule, BadgeComponent],
   templateUrl: './sistema-badge.component.html',
   styleUrl: './sistema-badge.component.scss',

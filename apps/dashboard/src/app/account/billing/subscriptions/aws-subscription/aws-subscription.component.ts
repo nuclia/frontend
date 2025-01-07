@@ -8,6 +8,7 @@ import { SisToastService } from '@nuclia/sistema';
   templateUrl: './aws-subscription.component.html',
   styleUrls: ['./aws-subscription.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AwsSubscriptionComponent {
   budget?: Partial<AccountBudget>;

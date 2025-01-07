@@ -5,7 +5,6 @@ import { filter, Subject, switchMap, takeUntil, timer } from 'rxjs';
 import { SyncService } from './logic';
 
 @Component({
-  standalone: true,
   imports: [CommonModule, RouterOutlet],
   template: `
     <router-outlet></router-outlet>

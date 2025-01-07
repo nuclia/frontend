@@ -8,7 +8,6 @@ import { OnboardingStatus } from '../onboarding.models';
 
 @Component({
   selector: 'nus-onboarding-setting-up',
-  standalone: true,
   imports: [CommonModule, TranslateModule, PaIconModule],
   templateUrl: './setting-up.component.html',
   styleUrl: './setting-up.component.scss',

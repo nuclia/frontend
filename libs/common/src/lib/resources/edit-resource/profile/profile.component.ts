@@ -14,6 +14,7 @@ import { Thumbnail } from '../edit-resource.helpers';
   templateUrl: 'profile.component.html',
   styleUrls: ['../common-page-layout.scss', 'profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ResourceProfileComponent implements OnInit {
   @ViewChild('thumbnailFileInput') thumbnailFileInput?: ElementRef;

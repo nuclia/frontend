@@ -8,7 +8,6 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-sitemap-select',
   templateUrl: './sitemap-select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CommonModule, PaButtonModule, TranslateModule],
 })
 export class SitemapSelectComponent {

@@ -22,7 +22,6 @@ import { RAG_METADATAS } from '@nuclia/core';
 
 @Component({
   selector: 'stf-generative-answer-form',
-  standalone: true,
   imports: [
     CommonModule,
     PaTextFieldModule,

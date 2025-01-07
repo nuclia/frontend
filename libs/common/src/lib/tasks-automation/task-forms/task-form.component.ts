@@ -64,7 +64,6 @@ export interface TaskFormCommonConfig {
 
 @Component({
   selector: 'app-task-form',
-  standalone: true,
   imports: [
     CommonModule,
     DropdownButtonComponent,

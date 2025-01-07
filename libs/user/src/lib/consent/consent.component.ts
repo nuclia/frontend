@@ -8,6 +8,7 @@ const INVISIBLE_SCOPES = ['offline'];
   selector: 'stf-consent',
   templateUrl: './consent.component.html',
   styleUrls: ['./consent.component.scss'],
+  standalone: false,
 })
 export class ConsentComponent implements OnInit {
   consentChallenge: string | null = null;

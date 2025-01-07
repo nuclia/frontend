@@ -13,6 +13,7 @@ import { AccountConfigurationPayload, AccountDetails } from '../../account-ui.mo
   templateUrl: './configuration.component.html',
   styleUrls: ['configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ConfigurationComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

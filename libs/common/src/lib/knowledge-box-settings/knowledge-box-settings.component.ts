@@ -15,6 +15,7 @@ import { StandaloneService } from '../services';
   templateUrl: './knowledge-box-settings.component.html',
   styleUrls: ['./knowledge-box-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

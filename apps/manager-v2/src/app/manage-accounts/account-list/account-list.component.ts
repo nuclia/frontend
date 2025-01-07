@@ -7,6 +7,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 @Component({
   templateUrl: './account-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class AccountListComponent {
   private _allAccounts: BehaviorSubject<AccountSummary[]> = new BehaviorSubject<AccountSummary[]>([]);

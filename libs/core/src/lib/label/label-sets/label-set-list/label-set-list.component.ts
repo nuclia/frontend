@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './label-set-list.component.html',
   styleUrls: ['./label-set-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LabelSetListComponent {
   @Input() labelSets: LabelSetDisplay[] = [];

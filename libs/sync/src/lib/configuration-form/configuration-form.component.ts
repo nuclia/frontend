@@ -37,7 +37,6 @@ const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
 
 @Component({
   selector: 'nsy-configuration-form',
-  standalone: true,
   imports: [
     CommonModule,
     InfoCardComponent,

@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'nsi-back-button',
-  standalone: true,
   imports: [CommonModule, RouterModule, PaTranslateModule, PaButtonModule, PaIconModule],
   templateUrl: './back-button.component.html',
   styleUrls: ['./back-button.component.scss'],

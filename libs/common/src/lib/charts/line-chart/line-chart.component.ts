@@ -19,6 +19,7 @@ const NUM_TICKS = 7;
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
 export class LineChartComponent extends BaseChartDirective implements AfterViewInit, OnDestroy {
   id = `line-chart-${nextUniqueId++}`;

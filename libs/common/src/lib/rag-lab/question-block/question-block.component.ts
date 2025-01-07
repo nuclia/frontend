@@ -7,7 +7,6 @@ import { map, switchMap, take, tap } from 'rxjs';
 
 @Component({
   selector: 'stf-question-block',
-  standalone: true,
   imports: [CommonModule, TranslateModule, PaTextFieldModule, PaButtonModule],
   templateUrl: './question-block.component.html',
   styleUrl: './question-block.component.scss',

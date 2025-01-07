@@ -11,6 +11,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SignupComponent implements OnInit {
   signupForm = new FormGroup({

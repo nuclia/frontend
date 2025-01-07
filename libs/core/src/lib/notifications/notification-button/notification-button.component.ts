@@ -5,7 +5,6 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'stf-notification-button',
-  standalone: true,
   imports: [CommonModule, PaButtonModule, TranslateModule],
   templateUrl: './notification-button.component.html',
   styleUrl: './notification-button.component.scss',

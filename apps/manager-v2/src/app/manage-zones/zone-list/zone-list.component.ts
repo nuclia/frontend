@@ -7,6 +7,7 @@ import { ZoneService } from '../zone.service';
 @Component({
   templateUrl: './zone-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ZoneListComponent {
   private _allZones: Observable<ZoneSummary[]> = this.zoneService.zones;

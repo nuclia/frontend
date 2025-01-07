@@ -7,6 +7,7 @@ import { getLabelColor, isHexColor, isSameHexColor } from '@nuclia/sistema';
   templateUrl: './color-picker.component.html',
   styleUrls: ['./color-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ColorPickerComponent {
   @Input() hexColors: string[] = [];

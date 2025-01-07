@@ -24,7 +24,6 @@ import { getRAGImageStrategies, getRAGStrategies, Reranker } from '@nuclia/core'
 
 @Component({
   selector: 'stf-rag-lab',
-  standalone: true,
   imports: [
     CommonModule,
     TranslateModule,

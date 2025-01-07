@@ -7,7 +7,6 @@ import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'stf-title-cell',
-  standalone: true,
   imports: [CommonModule, RouterModule, PaIconModule, SisIconsModule],
   templateUrl: './title-cell.component.html',
   styleUrl: './title-cell.component.scss',

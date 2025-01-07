@@ -3,6 +3,7 @@ import { getMimeIcon } from './icons';
 
 @Pipe({
   name: 'mimeIcon',
+  standalone: false,
 })
 export class MimeIconPipe implements PipeTransform {
   transform(mime: string | undefined): string | undefined {

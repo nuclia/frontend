@@ -9,7 +9,6 @@ import { tap } from 'rxjs';
 
 @Component({
   selector: 'nus-zone-step',
-  standalone: true,
   imports: [
     CommonModule,
     PaButtonModule,

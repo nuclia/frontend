@@ -35,7 +35,6 @@ export function vectorDbToIndexProvider(vectorDatabase: VectorDbModel): External
 
 @Component({
   selector: 'nus-vector-database-form',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, InfoCardComponent, TranslateModule, PaTogglesModule, PaTextFieldModule],
   templateUrl: './vector-database-form.component.html',
   styleUrl: './vector-database-form.component.scss',

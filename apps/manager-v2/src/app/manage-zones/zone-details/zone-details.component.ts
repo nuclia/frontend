@@ -12,6 +12,7 @@ import { TokenDialogComponent, ValidSlug } from '@flaps/common';
 @Component({
   templateUrl: './zone-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ZoneDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();

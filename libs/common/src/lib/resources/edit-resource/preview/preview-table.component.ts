@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
   templateUrl: 'preview-table.component.html',
   styleUrls: ['preview-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PreviewTableComponent {
   @Input() set markdown(value: string) {

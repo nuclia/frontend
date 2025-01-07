@@ -7,7 +7,6 @@ import { RagLabComponent } from './rag-lab.component';
 import { RagLabService } from './rag-lab.service';
 
 @Component({
-  standalone: true,
   imports: [CommonModule, TranslateModule, PaTabsModule, PromptLabComponent, RagLabComponent],
   templateUrl: './rag-lab-page.component.html',
   styleUrl: './rag-lab-page.component.scss',

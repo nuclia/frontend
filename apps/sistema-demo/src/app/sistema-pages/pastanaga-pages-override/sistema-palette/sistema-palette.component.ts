@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { PaDemoModule } from '../../../../../../../libs/pastanaga-angular/projects/demo/src';
 
 @Component({
-  standalone: true,
   imports: [CommonModule, PaDemoModule],
   templateUrl: './sistema-palette.component.html',
   styleUrls: [

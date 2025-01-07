@@ -31,7 +31,6 @@ const POLLING_DELAY = 30000; // in milliseconds, so 30s
 
 @Component({
   selector: 'app-getting-started',
-  standalone: true,
   imports: [
     CommonModule,
     PaModalModule,

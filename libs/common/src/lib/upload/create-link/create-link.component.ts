@@ -24,6 +24,7 @@ type UploadOption = 'one' | 'multiple' | 'csv' | 'sitemap';
   templateUrl: './create-link.component.html',
   styleUrls: ['./create-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class CreateLinkComponent {
   linkForm = new FormGroup({

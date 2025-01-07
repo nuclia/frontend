@@ -10,7 +10,6 @@ import { FeaturesService } from '@flaps/core';
 
 @Component({
   selector: 'app-task-list',
-  standalone: true,
   imports: [BadgeComponent, CommonModule, TaskListItemComponent, TranslateModule, InfoCardComponent],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss',

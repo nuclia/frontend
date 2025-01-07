@@ -9,7 +9,6 @@ import { map, take } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
 
 @Component({
-  standalone: true,
   imports: [CommonModule, PaModalModule, TranslateModule, PaButtonModule, PaIconModule],
   templateUrl: './welcome-in-existing-kb.component.html',
   styleUrl: './welcome-in-existing-kb.component.scss',

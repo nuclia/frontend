@@ -14,7 +14,6 @@ export interface GroupedBarChartData {
 
 @Component({
   selector: 'stf-grouped-bar-chart',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './grouped-bar-chart.component.html',
   styleUrl: './grouped-bar-chart.component.scss',

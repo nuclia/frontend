@@ -9,6 +9,7 @@ import { NavigationEnd, Router } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();

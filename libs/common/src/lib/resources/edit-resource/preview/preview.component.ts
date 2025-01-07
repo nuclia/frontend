@@ -49,6 +49,7 @@ const viewerId = 'viewer-widget';
   templateUrl: './preview.component.html',
   styleUrls: ['../common-page-layout.scss', './preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class PreviewComponent implements OnInit, OnDestroy {
   private route: ActivatedRoute = inject(ActivatedRoute);

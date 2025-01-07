@@ -10,7 +10,6 @@ import { filter, of } from 'rxjs';
 
 @Component({
   selector: 'stf-summarization',
-  standalone: true,
   imports: [
     CommonModule,
     PaTogglesModule,

@@ -18,7 +18,6 @@ import { Subject } from 'rxjs';
 
 @Component({
   selector: 'nsy-folders-tab',
-  standalone: true,
   imports: [
     CommonModule,
     FolderSelectionComponent,

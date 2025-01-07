@@ -18,6 +18,7 @@ import { UnsubscribeComponent, UnsubscribeModalData } from './unsubscribe.compon
   templateUrl: './my-subscription.component.html',
   styleUrls: ['./my-subscription.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class MySubscriptionComponent {
   type = this.billingService.type;

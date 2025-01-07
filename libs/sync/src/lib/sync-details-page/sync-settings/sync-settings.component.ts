@@ -22,7 +22,6 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'nsy-sync-settings',
-  standalone: true,
   imports: [
     CommonModule,
     TwoColumnsConfigurationItemComponent,

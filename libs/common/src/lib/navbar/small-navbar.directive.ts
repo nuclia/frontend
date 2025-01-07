@@ -6,6 +6,7 @@ export const heightMediaQuery = '(max-height: 856px)';
 
 @Directive({
   selector: '[appSmallNavbar]',
+  standalone: false,
 })
 export class SmallNavbarDirective {
   private mediaQueryList;

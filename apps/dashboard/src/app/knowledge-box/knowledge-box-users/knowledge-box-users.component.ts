@@ -13,6 +13,7 @@ import { SDKService } from '@flaps/core';
   `,
   styleUrls: ['./knowledge-box-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class KnowledgeBoxUsersComponent {
   kb = this.sdk.currentKb;

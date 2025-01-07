@@ -18,7 +18,6 @@ import {
 @Component({
   templateUrl: './missing-labels-dialog.component.html',
   styleUrl: './missing-labels-dialog.component.scss',
-  standalone: true,
   imports: [PaModalModule, TranslateModule, CommonModule, PaButtonModule, PaExpanderModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

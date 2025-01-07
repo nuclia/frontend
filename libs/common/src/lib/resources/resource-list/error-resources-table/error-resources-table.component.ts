@@ -10,6 +10,7 @@ import { ColumnHeader } from '../resource-list.model';
   templateUrl: './error-resources-table.component.html',
   styleUrls: ['../resources-table.component.scss', './error-resources-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ErrorResourcesTableComponent extends ResourcesTableDirective {
   override status: RESOURCE_STATUS = RESOURCE_STATUS.ERROR;

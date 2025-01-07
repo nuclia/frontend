@@ -9,6 +9,7 @@ import { BaseIconPageComponent } from '../../../../../../../libs/pastanaga-angul
     '../../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/icon-page/icon-page.component.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SistemaIconsComponent extends BaseIconPageComponent implements OnInit {
   ngOnInit(): void {

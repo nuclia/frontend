@@ -5,7 +5,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
-  standalone: true,
   imports: [CommonModule, PaModalModule, TranslateModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule],
   templateUrl: './save-config-modal.component.html',
   styleUrl: './save-config-modal.component.scss',

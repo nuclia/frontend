@@ -7,6 +7,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
   templateUrl: './desktop-sources.component.html',
   styleUrls: ['./desktop-sources.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class DesktopSourcesComponent {
   @Input()

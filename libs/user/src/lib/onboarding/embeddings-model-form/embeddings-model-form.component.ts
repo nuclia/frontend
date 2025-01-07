@@ -58,7 +58,6 @@ export interface LearningConfigurationForm {
 
 @Component({
   selector: 'nus-embeddings-model-form',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

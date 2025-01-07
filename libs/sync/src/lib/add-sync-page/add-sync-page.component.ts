@@ -18,7 +18,6 @@ import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'nsy-add-sync-page',
-  standalone: true,
   imports: [
     CommonModule,
     BackButtonComponent,

@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'nsd-sistema-spinner',
   templateUrl: './sistema-spinner.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SistemaSpinnerComponent {
   codeSmall = `<nsi-spinner size="small"></nsi-spinner>`;

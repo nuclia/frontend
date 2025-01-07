@@ -52,7 +52,6 @@ const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA']
 
 @Component({
   selector: 'stf-search-configuration',
-  standalone: true,
   imports: [
     CommonModule,
     AccordionComponent,

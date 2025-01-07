@@ -6,6 +6,7 @@ import { getLabelColor, LABEL_COLORS, LabelColor } from './label.utils';
   templateUrl: './label.component.html',
   styleUrls: ['./label.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class LabelComponent {
   @Input() set color(value: string) {
