@@ -232,12 +232,15 @@ export class UploadService {
     classifications: Classification[],
     css_selector?: string | null,
     xpath?: string | null,
+    headers?: { [id: string]: string },
+    cookies?: { [id: string]: string },
+    localstorage?: { [id: string]: string },
   ) {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
         kb.createLinkResource(
-          { uri, css_selector: css_selector || null, xpath: xpath || null },
+          { uri, css_selector: css_selector || null, xpath: xpath || null, headers, cookies, localstorage },
           { classifications },
           true,
           REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },

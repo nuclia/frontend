@@ -7,6 +7,7 @@ export * from './upload-files/upload-files.component';
 export * from './upload-files/upload-files-dialog.component';
 export * from './upload-progress/upload-progress.component';
 export * from './upload-progress/upload-progress-dialog.component';
+export * from './upload-sitemap/upload-sitemap.component';
 export * from './upload-text/upload-text.component';
 export * from './upload.module';
 export * from './upload.service';

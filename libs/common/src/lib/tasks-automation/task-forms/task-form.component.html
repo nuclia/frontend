@@ -199,7 +199,7 @@
             <app-parameters-table
               secretDisabled
               [values]="headers"
-              (valuesChanges)="setHeaders($event)"></app-parameters-table>
+              (valuesChange)="setHeaders($event)"></app-parameters-table>
           </div>
         </pa-expander-body>
       </pa-expander>
@@ -214,7 +214,7 @@
             <app-parameters-table
               secretDisabled
               [values]="parameters"
-              (valuesChanges)="setParameters($event)"></app-parameters-table>
+              (valuesChange)="setParameters($event)"></app-parameters-table>
           </div>
         </pa-expander-body>
       </pa-expander>

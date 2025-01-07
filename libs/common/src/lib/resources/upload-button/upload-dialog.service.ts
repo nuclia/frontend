@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CreateLinkComponent, UploadFilesDialogComponent, UploadTextComponent } from '@flaps/common';
+import { CreateLinkComponent, UploadFilesDialogComponent, UploadSitemapComponent, UploadTextComponent } from '../../upload';
 import { SisModalService } from '@nuclia/sistema';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadQnaComponent } from '../../upload/upload-qna/upload-qna.component';
 
-export type UploadType = 'files' | 'folder' | 'link' | 'csv' | 'qna';
+export type UploadType = 'files' | 'folder' | 'link' | 'csv' | 'sitemap' | 'qna';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +21,8 @@ export class UploadDialogService {
         return this.uploadLink();
       case 'csv':
         return this.uploadCsv();
+      case 'sitemap':
+        return this.uploadSitemap();
       case 'qna':
         return this.uploadQnA();
     }
@@ -39,6 +41,10 @@ export class UploadDialogService {
 
   private uploadCsv(): ModalRef {
     return this.modal.openModal(UploadTextComponent);
+  }
+
+  private uploadSitemap(): ModalRef {
+    return this.modal.openModal(UploadSitemapComponent)
   }
 
   private uploadQnA(): ModalRef {

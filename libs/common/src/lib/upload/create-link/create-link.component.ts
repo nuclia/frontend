@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SDKService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
-import { catchError, defer, from, map, Observable, of, switchMap } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
@@ -17,7 +17,7 @@ interface Row {
   xpath?: string;
 }
 
-type UploadOption = 'one' | 'multiple' | 'csv' | 'sitemap';
+type UploadOption = 'one' | 'multiple' | 'csv';
 
 @Component({
   selector: 'app-create-link',
@@ -37,7 +37,6 @@ export class CreateLinkComponent {
     type: new FormControl<UploadOption>('one', { nonNullable: true }),
     css_selector: new FormControl<string | null>(null),
     xpath: new FormControl<string | null>(null),
-    sitemapFilter: new FormControl<string | null>(null),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -48,8 +47,6 @@ export class CreateLinkComponent {
   pending = false;
   selectedLabels: Classification[] = [];
   csv: Row[] = [];
-  sitemapLinks: string[] = [];
-  filteredSitemapLinks: string[] = [];
 
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
@@ -58,7 +55,6 @@ export class CreateLinkComponent {
   get invalid() {
     return (
       (this.linkForm.value.type === 'csv' && this.csv.length === 0) ||
-      (this.linkForm.value.type === 'sitemap' && this.filteredSitemapLinks.length === 0) ||
       (['one', 'multiple'].includes(this.linkForm.value.type || '') && this.linkForm.invalid)
     );
   }
@@ -71,10 +67,6 @@ export class CreateLinkComponent {
     private cdr: ChangeDetectorRef,
     private standaloneService: StandaloneService,
   ) {}
-
-  onTypeChange(type: UploadOption) {
-    type === 'sitemap' ? this.linkForm.controls.linkTo.disable() : this.linkForm.controls.linkTo.enable();
-  }
 
   add() {
     if (this.linkForm.valid) {
@@ -126,24 +118,6 @@ export class CreateLinkComponent {
               ),
             );
           break;
-        case 'sitemap':
-          obs = this.uploadService.bulkUpload(
-            this.filteredSitemapLinks.map((link) =>
-              defer(() => from(fetch(link, { method: 'HEAD' }))).pipe(
-                map((response) => (response.headers.get('content-type') || 'text/html').split(';')[0]),
-                catchError(() => of('text/html')),
-                switchMap((mime) =>
-                  this.getResourceCreationObs(
-                    !mime.startsWith('text/html'),
-                    link,
-                    this.selectedLabels,
-                    formValue.css_selector,
-                    formValue.xpath,
-                  ),
-                ),
-              ),
-            ),
-          );
       }
 
       obs.subscribe((res) => {
@@ -175,17 +149,6 @@ export class CreateLinkComponent {
 
   close(): void {
     this.modal.close({ cancel: true });
-  }
-
-  setSitemapLinks(links: string[]) {
-    this.sitemapLinks = links;
-    this.filterSitemapLinks();
-  }
-
-  filterSitemapLinks() {
-    this.filteredSitemapLinks = this.sitemapLinks.filter((link) =>
-      link.startsWith(this.linkForm.value.sitemapFilter || ''),
-    );
   }
 
   private getResourceCreationObs(
