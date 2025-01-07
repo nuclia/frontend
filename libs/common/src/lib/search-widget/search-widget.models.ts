@@ -113,6 +113,7 @@ export interface WidgetConfiguration {
   notEnoughDataMessage: string;
   hideLogo: boolean;
   permalink: boolean;
+  displaySearchButton: boolean;
   navigateToLink: boolean;
   navigateToFile: boolean;
   openNewTab: boolean;
@@ -238,6 +239,7 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   notEnoughDataMessage: '',
   hideLogo: false,
   permalink: false,
+  displaySearchButton: false,
   navigateToLink: false,
   navigateToFile: false,
   openNewTab: false,
@@ -297,6 +299,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     // Widget options
     hideLogo: widgetOptions.hideLogo,
     permalink: widgetOptions.permalink,
+    displaySearchButton: widgetOptions.displaySearchButton,
     navigateToLink: widgetOptions.navigateToLink,
     navigateToFile: widgetOptions.navigateToFile,
     openNewTab: (widgetOptions.navigateToLink || widgetOptions.navigateToFile) && widgetOptions.openNewTab,

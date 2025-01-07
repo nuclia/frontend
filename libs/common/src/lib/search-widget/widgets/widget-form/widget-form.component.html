@@ -190,6 +190,16 @@
             </div>
             <div class="config-form-field">
               <pa-toggle
+                formControlName="displaySearchButton"
+                withBackground
+                spaceBetweenLabelAndToggle>
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.displaySearchButton.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
                 formControlName="navigateToLink"
                 withBackground
                 spaceBetweenLabelAndToggle

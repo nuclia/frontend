@@ -1263,6 +1263,7 @@
 	"search.widgets.form.widget-options.customize-insufficient-data.input-label": "Mensaje de datos insuficientes",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-description": "Personaliza el mensaje que se muestra cuando no hay datos suficientes para generar una respuesta a la pregunta del usuario. Este campo admite código HTML.",
 	"search.widgets.form.widget-options.customize-insufficient-data.toggle-label": "Personalizar mensaje de datos insuficientes",
+	"search.widgets.form.widget-options.displaySearchButton.toggle-label": "Mostrar botón de búsqueda",
 	"search.widgets.form.widget-options.feedback.answer": "Feedback global sobre la respuesta generada",
 	"search.widgets.form.widget-options.feedback.answer-and-results": "Feedback detallado sobre las respuestas y los resultados de la búsqueda",
 	"search.widgets.form.widget-options.feedback.description": "Indique el tipo de feedback que pueden proporcionar los usuarios",
