@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { forkJoin, map, take } from 'rxjs';
-import { DroppedFile, FeaturesService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
+import { DroppedFile, FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { UploadService } from '../upload.service';
 import { StandaloneService } from '../../services';
@@ -73,7 +73,6 @@ export class UploadFilesComponent {
   constructor(
     private cdr: ChangeDetectorRef,
     private uploadService: UploadService,
-    private tracking: STFTrackingService,
     private sdk: SDKService,
     private standaloneService: StandaloneService,
     private features: FeaturesService,
@@ -147,7 +146,6 @@ export class UploadFilesComponent {
         });
       }
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
-      this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
     } else {
       this.close.emit();
     }

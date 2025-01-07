@@ -6,7 +6,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { AppService, RemiMetricsService, UploadModule, UploadService } from '@flaps/common';
-import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { MetricsService } from '../../account/metrics.service';
 import { DropdownButtonComponent, HomeContainerComponent, SisModalService } from '@nuclia/sistema';
 import { Account, WritableKnowledgeBox } from '@nuclia/core';
@@ -73,7 +73,6 @@ describe('KnowledgeBoxHomeComponent', () => {
               db: {},
             },
           } as SDKService),
-          MockProvider(STFTrackingService, { logEvent: () => {} }),
           MockProvider(FeaturesService, {
             isTrial: of(true),
             isAccountManager: of(true),

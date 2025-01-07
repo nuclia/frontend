@@ -11,10 +11,7 @@ describe('BackendConfigurationService', () => {
           provide: AppInitService,
           useValue: {
             getConfig: () => ({
-              backend: {
-                posthog_key: '',
-                posthog_host: '',
-              },
+              backend: {},
             }),
           },
         },

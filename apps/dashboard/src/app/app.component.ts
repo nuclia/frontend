@@ -1,14 +1,7 @@
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BackendConfigurationService,
-  SDKService,
-  STFSplashScreenService,
-  STFTrackingService,
-  STFUtils,
-  UserService,
-} from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, Subject } from 'rxjs';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
@@ -34,7 +27,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private user: UserService,
     private splashScreenService: STFSplashScreenService,
     private ngxTranslate: TranslateService,
-    private tracking: STFTrackingService,
     private config: BackendConfigurationService,
     private sdk: SDKService,
     private modalService: SisModalService,
@@ -43,16 +35,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   ) {
     this.unsubscribeAll = new Subject();
 
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event) => this.tracking.navigation(event as NavigationEnd));
-
     this.initTranslate(undefined);
     this.user.userPrefs.subscribe((prefs) => {
       this.initTranslate(prefs?.language?.toLowerCase());
     });
     this.sdk.nuclia.auth.hasLoggedOut().subscribe(() => {
-      this.tracking.logout();
       this.router.navigate(['/user/login']);
       this.sdk.cleanAccount();
     });

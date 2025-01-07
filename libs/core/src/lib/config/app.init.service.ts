@@ -16,8 +16,6 @@ export type EnvironmentConfiguration = {
     sentry_environment?: string;
     sentry_url?: string;
     sentry_backend?: string;
-    posthog_key?: string;
-    posthog_host?: string;
     cdn?: string;
     allowed_hosts_redirect?: string[];
   };

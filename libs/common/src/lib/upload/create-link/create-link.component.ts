@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SDKService, STFTrackingService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
 import { catchError, defer, from, map, Observable, of, switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
@@ -67,7 +67,6 @@ export class CreateLinkComponent {
     public modal: ModalRef,
     private uploadService: UploadService,
     private sdk: SDKService,
-    private tracking: STFTrackingService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private standaloneService: StandaloneService,
@@ -86,7 +85,6 @@ export class CreateLinkComponent {
       let obs: Observable<{ errors: number }>;
       switch (formValue.type) {
         case 'multiple':
-          this.tracking.logEvent('multiple_links_upload');
           const links: string[] = formValue.links
             .split('\n')
             .map((link: string) => link.trim())
@@ -104,7 +102,6 @@ export class CreateLinkComponent {
           );
           break;
         case 'one':
-          this.tracking.logEvent('link_upload');
           obs = this.uploadService.bulkUpload([
             this.getResourceCreationObs(
               isCloudFile,
@@ -116,7 +113,6 @@ export class CreateLinkComponent {
           ]);
           break;
         case 'csv':
-          this.tracking.logEvent('link_upload_from_csv');
           const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
           obs = this.uploadService
             .createMissingLabels(allLabels)
@@ -131,7 +127,6 @@ export class CreateLinkComponent {
             );
           break;
         case 'sitemap':
-          this.tracking.logEvent('link_upload_from_sitemap');
           obs = this.uploadService.bulkUpload(
             this.filteredSitemapLinks.map((link) =>
               defer(() => from(fetch(link, { method: 'HEAD' }))).pipe(

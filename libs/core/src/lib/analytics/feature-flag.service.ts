@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import SparkMD5 from 'spark-md5';
-import { SDKService } from '../api';
 import { StaticEnvironmentConfiguration } from '../config';
+import { SDKService } from '../api/sdk.service';
 
 export interface Features {
   [key: string]: boolean | undefined;
