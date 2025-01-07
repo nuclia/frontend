@@ -18,10 +18,6 @@ function apply_path {
     test -n "$STF_VERSION"
     echo "Check that we have EMAIL_DOMAIN vars"
     test -n "$EMAIL_DOMAIN"
-    echo "Check that we have POSTHOG_HOST vars"
-    test -n "$POSTHOG_HOST"
-    echo "Check that we have POSTHOG_KEY vars"
-    test -n "$POSTHOG_KEY"
     echo "Check that we have SAML_ENABLED vars"
     test -n "$SAML_ENABLED"
 
@@ -46,12 +42,6 @@ function apply_path {
 
     echo "Configuring EMAIL_DOMAIN vars"
     sed -i "s#STF_DOCKER_CONFIG_EMAIL_DOMAIN#${EMAIL_DOMAIN}#g" $jsonFile
-
-    echo "Configuring POSTHOG_HOST vars"
-    sed -i "s#STF_DOCKER_CONFIG_POSTHOG_HOST#${POSTHOG_HOST}#g" $jsonFile
-
-    echo "Configuring POSTHOG_KEY vars"
-    sed -i "s#STF_DOCKER_CONFIG_POSTHOG_KEY#${POSTHOG_KEY}#g" $jsonFile
 
     echo "Configuring SAML_ENABLED vars"
     sed -i "s#STF_DOCKER_CONFIG_SAML_ENABLED#${SAML_ENABLED}#g" $jsonFile

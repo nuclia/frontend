@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FeaturesService, NavigationService, SDKService, STFTrackingService, ZoneService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { AppService, RangeChartData, RemiMetricsService, searchResources } from '@flaps/common';
 import { ChartData, MetricsService } from '../../account/metrics.service';
 import { SisModalService } from '@nuclia/sistema';
@@ -142,7 +142,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     private app: AppService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
-    private tracking: STFTrackingService,
     private features: FeaturesService,
     private navigationService: NavigationService,
     private metrics: MetricsService,
@@ -162,12 +161,10 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   }
 
   copyEndpoint() {
-    this.tracking.logEvent('home_page_copy', { data: 'endpoint' });
     this.endpoint.pipe(take(1)).subscribe((endpoint) => this.copyToClipboard('endpoint', endpoint));
   }
 
   copyUid() {
-    this.tracking.logEvent('home_page_copy', { data: 'uid' });
     this.uid.pipe(take(1)).subscribe((uid) => this.copyToClipboard('uid', uid));
   }
 
@@ -188,7 +185,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   }
 
   selectChart(option: OptionModel) {
-    this.tracking.logEvent('select_home_chart', { chart: option.value });
     this.currentChart = option;
     // when selecting another chart, first the chart is removed from the DOM causing the page height to be reduced
     // then the new chart is added to the DOM increasing again the page height, but the scroll position is lost in the process
@@ -202,7 +198,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   }
 
   openFullscreen() {
-    this.tracking.logEvent('open_home_chart_fullscreen');
     this.modal.openModal(
       UsageModalComponent,
       new ModalConfig({
@@ -217,10 +212,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  trackNavigationFromHome(destination: string) {
-    this.tracking.logEvent('navigate_from_home_page', { destination });
-  }
-
   navigateToTestPage() {
     combineLatest([this.account, this.currentKb])
       .pipe(
@@ -228,7 +219,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
         map(([account, kb]) => this.navigationService.getTestPageUrl(account.slug, kb.slug)),
       )
       .subscribe((url) => {
-        this.trackNavigationFromHome('test-page');
         window.open(url, 'blank', 'noreferrer');
       });
   }

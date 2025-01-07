@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification, TextFieldFormat, TextFormat } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { forkJoin, switchMap, take, tap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../csv-parser';
@@ -35,9 +34,7 @@ export class UploadTextComponent {
 
   constructor(
     public modal: ModalRef,
-    private sdk: SDKService,
     private uploadService: UploadService,
-    private tracking: STFTrackingService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private standaloneService: StandaloneService,
@@ -63,7 +60,6 @@ export class UploadTextComponent {
   }
 
   upload() {
-    this.tracking.logEvent('upload_text_from_csv');
     this.isUploading = true;
     markForCheck(this.cdr);
     const allLabels = this.csv.reduce((acc, current) => acc.concat(current.labels), [] as Classification[]);

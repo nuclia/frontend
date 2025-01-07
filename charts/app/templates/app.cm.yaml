@@ -16,6 +16,4 @@ data:
   EDITOR_URL: "{{ .Values.editor_url }}"
   STF_VERSION: "{{ .Chart.Version }}"
   EMAIL_DOMAIN: "{{ .Values.email_domain }}"
-  POSTHOG_HOST: "{{ .Values.posthog_host }}"
-  POSTHOG_KEY: "{{ .Values.posthog_key }}"
   SAML_ENABLED: "{{ .Values.saml_enabled }}"

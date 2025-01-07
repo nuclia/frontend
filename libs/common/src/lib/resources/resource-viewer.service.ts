@@ -1,6 +1,6 @@
 import { combineLatest, filter, map, Observable, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService, NavigationService, SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -17,7 +17,6 @@ export class ResourceViewerService {
     private sdk: SDKService,
     private translation: TranslateService,
     private modalService: SisModalService,
-    private trackingService: STFTrackingService,
     private zone: NgZone,
     private features: FeaturesService,
     private navigationService: NavigationService,
@@ -162,7 +161,7 @@ export class ResourceViewerService {
       map(([kb, account]) => {
         const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
         return `${this.navigationService.getKbUrl(account.slug, kbSlug)}/resources`;
-      })
+      }),
     );
   }
   private navigateTo(path: string) {

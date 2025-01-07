@@ -3,7 +3,7 @@ import { AppComponent } from './app.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockProvider } from 'ng-mocks';
 import { SisModalService } from '@nuclia/sistema';
-import { BackendConfigurationService, NavigationService, SDKService, STFTrackingService } from '@flaps/core';
+import { BackendConfigurationService, NavigationService, SDKService } from '@flaps/core';
 import { Title } from '@angular/platform-browser';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
@@ -18,7 +18,6 @@ describe('AppComponent', () => {
         MockProvider(SisModalService),
         MockProvider(BackendConfigurationService),
         MockProvider(SDKService),
-        MockProvider(STFTrackingService),
         MockProvider(Title),
         MockProvider(NavigationService),
         MockProvider(TranslateService, { onLangChange: new EventEmitter<LangChangeEvent>() }),

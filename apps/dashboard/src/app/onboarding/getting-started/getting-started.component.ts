@@ -22,7 +22,7 @@ import {
   timer,
 } from 'rxjs';
 import { ExtractedDataTypes, Resource, RESOURCE_STATUS, ResourceProperties, Search, UploadStatus } from '@nuclia/core';
-import { NavigationService, PostHogService, SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
@@ -67,7 +67,6 @@ export class GettingStartedComponent implements OnDestroy {
     private sdk: SDKService,
     private router: Router,
     private navigationService: NavigationService,
-    private postHog: PostHogService,
   ) {}
 
   ngOnDestroy() {
@@ -87,11 +86,9 @@ export class GettingStartedComponent implements OnDestroy {
         this.uploadAndProcess();
         break;
       case 'processing':
-        this.postHog.logEvent('getting_started_processing_done');
         this.step = 'search';
         break;
       case 'search':
-        this.postHog.logEvent('getting_started_fully_done');
         forkJoin([this.kbUrl.pipe(take(1)), this.generateExampleQuestion().pipe(take(1))]).subscribe(
           ([url, question]) => {
             this.router.navigate([`${url}/search`], { queryParams: { __nuclia_query__: question } });
@@ -114,12 +111,7 @@ export class GettingStartedComponent implements OnDestroy {
     this.uploadService
       .checkFileTypesAndConfirm(files)
       .pipe(
-        filter((confirmed) => {
-          if (!confirmed) {
-            this.postHog.logEvent('getting_started_closed');
-          }
-          return confirmed;
-        }),
+        filter((confirmed) => confirmed),
         tap(() => {
           this.step = 'processing';
           this.nextDisabled = true;
@@ -136,10 +128,6 @@ export class GettingStartedComponent implements OnDestroy {
             },
             { fileCount: 0, linkCount: 0 },
           );
-          this.postHog.logEvent('getting_started_upload', {
-            fileCount: `${counts.fileCount}`,
-            linkCount: `${counts.linkCount}`,
-          });
         }),
         switchMap((): Observable<ItemToUpload[]> => {
           const linkList: ItemToUpload[] = this.itemsToUpload.filter((item) => !!item.link);

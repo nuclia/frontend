@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GETTING_STARTED_DONE_KEY, OnboardingPayload, OnboardingStatus } from './onboarding.models';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap } from 'rxjs';
-import { SDKService, STFTrackingService, STFUtils, UserService } from '@flaps/core';
+import { SDKService, STFUtils, UserService } from '@flaps/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
@@ -26,7 +26,6 @@ export class OnboardingService {
   constructor(
     private sdk: SDKService,
     private router: Router,
-    private tracking: STFTrackingService,
     private toaster: SisToastService,
     private user: UserService,
   ) {}
@@ -56,7 +55,6 @@ export class OnboardingService {
 
   createAccount(company: string): Observable<Account> {
     const accountSlugRequested = STFUtils.generateSlug(company);
-    this.tracking.logEvent('account_creation_submitted');
     this._onboardingState.next({
       creating: true,
       accountCreated: false,
@@ -72,7 +70,6 @@ export class OnboardingService {
           })
           .pipe(
             catchError((error) => {
-              this.tracking.logEvent('account_creation_failed');
               this._onboardingState.next({
                 creating: false,
                 accountCreated: false,
@@ -88,7 +85,6 @@ export class OnboardingService {
       switchMap((account) => this.user.updateWelcome().pipe(map(() => account))),
       switchMap((account) => this.sdk.nuclia.db.getAccount(account.id)),
       tap(() => {
-        this.tracking.logEvent('account_creation_success');
         this._onboardingState.next({
           creating: false,
           accountCreated: true,
@@ -118,11 +114,9 @@ export class OnboardingService {
     if (kbConfig.external_index_provider) {
       kbCreationEvent['externalIndexProvider'] = kbConfig.external_index_provider.type;
     }
-    this.tracking.logEvent('kb_creation_submitted', kbCreationEvent);
     return this.sdk.nuclia.db.createKnowledgeBox(accountId, kbConfig, zone).pipe(
       map(() => ({ accountSlug, kbSlug: kbConfig.slug })),
       catchError((error) => {
-        this.tracking.logEvent('account_creation_kb_failed');
         if (error.status >= 400 && error.status < 500) {
           this.manageKbCreationError(
             accountSlug,
@@ -146,7 +140,6 @@ export class OnboardingService {
           kbCreated: true,
           creationFailed: false,
         });
-        this.tracking.logEvent('kb_creation_success');
         const path = `/at/${accountSlug}/${kbConfig.zone}/${kbSlug}`;
         localStorage.setItem(GETTING_STARTED_DONE_KEY, 'false');
         this.router.navigate([path]);

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { NavigationService, SDKService, STFTrackingService, UserService } from '@flaps/core';
+import { NavigationService, SDKService, UserService } from '@flaps/core';
 import { map, shareReplay, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -28,7 +28,6 @@ export class AccountDeleteComponent {
     private toaster: SisToastService,
     private router: Router,
     private navigation: NavigationService,
-    private tracking: STFTrackingService,
     private user: UserService,
   ) {}
 
@@ -38,14 +37,7 @@ export class AccountDeleteComponent {
     this.account
       .pipe(
         take(1),
-        switchMap((account) => {
-          this.tracking.logEvent(`delete account`, {
-            accountId: account.id,
-            accountSlug: account.slug,
-            accountTitle: account.title,
-          });
-          return this.sdk.nuclia.db.deleteAccount(account.slug);
-        }),
+        switchMap((account) => this.sdk.nuclia.db.deleteAccount(account.slug)),
         switchMap(() => (keepUser ? this.user.updateWelcome() : this.sdk.nuclia.auth.deleteAuthenticatedUser())),
       )
       .subscribe({

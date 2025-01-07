@@ -1,12 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  LabelsService,
-  md5,
-  NavigationService,
-  NotificationService,
-  SDKService,
-  STFTrackingService,
-} from '@flaps/core';
+import { LabelsService, md5, NavigationService, NotificationService, SDKService } from '@flaps/core';
 import {
   Classification,
   ConversationField,
@@ -87,9 +80,7 @@ export class UploadService {
     private toaster: SisToastService,
     private modal: SisModalService,
     private translate: TranslateService,
-    private tracking: STFTrackingService,
     private notificationsService: NotificationService,
-    private navigation: NavigationService,
   ) {
     this.notificationsService.hasNewResourceOperationNotifications
       .pipe(
@@ -409,7 +400,6 @@ export class UploadService {
     }
     if (limitExceeded) {
       this.toaster.error('upload.toast.limit');
-      this.tracking.logEvent('upload_limit_exceeded');
     }
     if (success) {
       localStorage.setItem(GETTING_STARTED_DONE_KEY, 'true');

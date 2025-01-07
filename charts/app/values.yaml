@@ -24,8 +24,6 @@ sentry_environment: stage
 sentry_url: XXX
 editor_url: XXX
 email_domain: XXX
-posthog_host: XXX
-posthog_key: XXX
 saml_enabled: XXX
 
 virtualService:

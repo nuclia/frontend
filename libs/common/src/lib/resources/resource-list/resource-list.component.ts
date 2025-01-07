@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { FeaturesService, SDKService, STFTrackingService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceListService } from './resource-list.service';
@@ -67,7 +67,6 @@ export class ResourceListComponent implements OnDestroy {
     private sdk: SDKService,
     private uploadService: UploadService,
     private resourceListService: ResourceListService,
-    private tracking: STFTrackingService,
     private features: FeaturesService,
     private route: ActivatedRoute,
     private router: Router,
@@ -128,7 +127,6 @@ export class ResourceListComponent implements OnDestroy {
   }
 
   search() {
-    this.tracking.logEvent('search-in-resource-list', { searchIn: 'titles' });
     this.resourceListService.search();
   }
 

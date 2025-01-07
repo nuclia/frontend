@@ -9,7 +9,6 @@ import {
   LabelsService,
   NavigationService,
   SDKService,
-  STFTrackingService,
 } from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -91,7 +90,6 @@ describe('ResourceListComponent', () => {
         }),
         MockProvider(NavigationService),
         MockProvider(FeaturesService),
-        MockProvider(STFTrackingService),
         MockProvider(ResourceListService, {
           filters: of([]),
           ready: of(true),
