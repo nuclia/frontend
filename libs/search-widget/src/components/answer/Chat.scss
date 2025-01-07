@@ -54,6 +54,10 @@
       overflow: auto;
       flex: 1 0 0;
 
+      &.hidden {
+        display: none;
+      }
+
       .chat-entry {
         padding: var(--chat-padding);
 
