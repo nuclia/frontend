@@ -3,7 +3,7 @@
   import { Icon, IconButton } from '../../common';
   import { _, currentLanguage, translateInstant } from '../../core/i18n';
   import { ask } from '../../core/stores/effects';
-  import { chatInput, isSpeechEnabled, isSpeechOn } from '../../core';
+  import { chatInput, hasSearchButton, isSpeechEnabled, isSpeechOn } from '../../core';
   import { SpeechSettings, SpeechStore } from 'talk2svelte';
   import { Subscription, filter } from 'rxjs';
   import { onMount } from 'svelte';
@@ -100,13 +100,21 @@
     ariaLabel={$_('answer.input.label')}
     bind:value={question}
     on:keypress={onKeyPress} />
-  {#if $isSpeechEnabled}
-    <div class="microphone">
-      <IconButton
-        icon="microphone"
-        active={$isSpeechStarted}
-        aspect="basic"
-        on:click={toggleSpeech} />
+  {#if $isSpeechEnabled || $hasSearchButton}
+    <div class="buttons">
+      {#if $isSpeechEnabled}
+        <IconButton
+          icon="microphone"
+          active={$isSpeechStarted}
+          aspect="basic"
+          on:click={toggleSpeech} />
+      {/if}
+      {#if $hasSearchButton}
+        <IconButton
+          icon="search"
+          aspect="basic"
+          on:click={askQuestion} />
+      {/if}
     </div>
   {/if}
 </div>

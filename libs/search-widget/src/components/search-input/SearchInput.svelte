@@ -3,7 +3,7 @@
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
   import Suggestions from '../suggestions/Suggestions.svelte';
-  import { addEntityFilter, type EntityFilter, searchOptions } from '../../core';
+  import { addEntityFilter, type EntityFilter, hasSearchButton, searchOptions } from '../../core';
   import {
     _,
     autocomplete,
@@ -248,6 +248,12 @@
       on:keypress={onKeyPress}
       on:keyup={onKeyUp}></Textarea>
 
+    {#if $hasSearchButton && $typeAhead.length > 0}
+      <IconButton
+        icon="search"
+        aspect="basic"
+        on:click={search} />
+    {/if}
     {#if $hasFilterButton}
       <div bind:this={filterButtonElement}>
         <IconButton
