@@ -65,32 +65,34 @@
       class="chat-container"
       class:fullscreen
       style={!fullscreen && height ? '--custom-height-container:' + height : undefined}>
-      <div
-        class="entries-container"
-        bind:this={entriesContainerElement}>
-        {#each $chat as entry, i}
-          <div class="chat-entry">
-            <div
-              class="question"
-              class:error={entry.answer.inError}>
-              <div class="chat-icon">
-                <Icon name="chat" />
+      {#if $chat.length > 0}
+        <div
+          class="entries-container"
+          bind:this={entriesContainerElement}>
+          {#each $chat as entry, i}
+            <div class="chat-entry">
+              <div
+                class="question"
+                class:error={entry.answer.inError}>
+                <div class="chat-icon">
+                  <Icon name="chat" />
+                </div>
+                <div class="title-m">{entry.question}</div>
               </div>
-              <div class="title-m">{entry.question}</div>
+              <div class="answer">
+                {#if entry.answer.text}
+                  <Answer
+                    answer={entry.answer}
+                    rank={i}
+                    on:toggleExpander={checkIfScrolling} />
+                {:else}
+                  …
+                {/if}
+              </div>
             </div>
-            <div class="answer">
-              {#if entry.answer.text}
-                <Answer
-                  answer={entry.answer}
-                  rank={i}
-                  on:toggleExpander={checkIfScrolling} />
-              {:else}
-                …
-              {/if}
-            </div>
-          </div>
-        {/each}
-      </div>
+          {/each}
+        </div>
+      {/if}
       {#if $isStreaming}
         <LoadingDots />
       {/if}
