@@ -9,6 +9,7 @@ import {
   RemiQueryResponse,
   RemiQueryResponseContextDetails,
   RemiScoresResponseItem,
+  SearchMetricsItem,
 } from './activity.models';
 import { Observable } from 'rxjs';
 import { UsageAggregation } from '../../db.models';
@@ -102,5 +103,23 @@ export class ActivityMonitor {
    */
   getMonthsWithActivity(eventType: EventType): Observable<{ downloads: string[] }> {
     return this.nuclia.rest.get<{ downloads: string[] }>(`${this.kb.path}/activity/${eventType}/months`);
+  }
+
+  /**
+   * Retrieve statistics for search and ask requests
+   *
+   * @param from Timestamp of the moment from which we want the metrics.
+   * @param to Timestamp of the moment until which we want the metrics. When not provided, the metrics are returned "until now".
+   * @param aggregation Define how the metrics are aggregated. By default, the endpoint returns only one point aggregating all the data for the specified date range.
+   */
+  getSearchMetrics(from: string, to?: string, aggregation?: UsageAggregation): Observable<SearchMetricsItem[]> {
+    const params = [`from=${from}`];
+    if (to) {
+      params.push(`to=${to}`);
+    }
+    if (aggregation) {
+      params.push(`aggregation=${aggregation}`);
+    }
+    return this.nuclia.rest.get<SearchMetricsItem[]>(`${this.kb.path}/activity/metrics?${params.join('&')}`);
   }
 }

@@ -1,3 +1,9 @@
+# 1.24.1 (unreleased)
+
+### Improvements
+
+- Add support for `/activity/metrics` endpoint
+
 # 1.24.0 (2024-12-16)
 
 ### Improvements

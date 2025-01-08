@@ -53,6 +53,12 @@ export interface RemiQueryCriteria {
   };
 }
 
+export interface SearchMetricsItem {
+  timestamp: string;
+  search: number;
+  chat: number;
+}
+
 export enum EventType {
   VISITED = 'visited',
   MODIFIED = 'modified',
