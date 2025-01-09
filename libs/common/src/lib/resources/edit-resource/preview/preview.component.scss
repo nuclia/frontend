@@ -1,5 +1,5 @@
-@import 'apps/dashboard/src/variables';
-@import '../edit-resource.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use '../edit-resource.tokens' as tokens;
 
 .main-container {
   display: flex;
@@ -51,7 +51,7 @@
     padding-bottom: rhythm(1);
     border-bottom: 1px solid $color-neutral-light;
     margin-bottom: rhythm(1.5);
-  }  
+  }
 }
 
 .viewer-button-container {
@@ -59,7 +59,7 @@
 
   pa-button {
     position: sticky;
-    top: calc(#{$height-header} + var(--app-layout-padding-top));
+    top: calc(#{tokens.$height-header} + var(--app-layout-padding-top));
   }
 }
 

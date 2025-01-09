@@ -1,5 +1,5 @@
-@import 'palette.tokens';
-@import 'spacing.tokens';
+@use 'palette.tokens' as palette;
+@forward 'spacing.tokens';
 
-$color-background-popover: $color-dark-stronger;
-$color-text-popover: $color-neutral-lightest;
+$color-background-popover: palette.$color-dark-stronger;
+$color-text-popover: palette.$color-neutral-lightest;

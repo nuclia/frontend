@@ -1,15 +1,15 @@
-@import '../../pastanaga-angular/projects/pastanaga-angular/src/styles/variables';
+@use '../../pastanaga-angular/projects/pastanaga-angular/src/styles/variables';
+@use '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
+@forward 'mixins';
 
-@import 'mixins';
+$color-text-link-accent: variables.$color-primary-regular;
+$color-text-link-accent-hover: variables.$color-primary-strong;
 
-$color-text-link-accent: $color-primary-regular;
-$color-text-link-accent-hover: $color-primary-strong;
+$height-top-bar: spacing.rhythm(9);
+$padding-top-page: spacing.rhythm(4);
+$padding-bottom-page: spacing.rhythm(4);
+$padding-right-page: spacing.rhythm(4);
+$padding-left-page: spacing.rhythm(6);
 
-$height-top-bar: rhythm(9);
-$padding-top-page: rhythm(4);
-$padding-bottom-page: rhythm(4);
-$padding-right-page: rhythm(4);
-$padding-left-page: rhythm(6);
-
-$width-sidenav: rhythm(26);
-$scrollbar-width: rhythm(2);
+$width-sidenav: spacing.rhythm(26);
+$scrollbar-width: spacing.rhythm(2);

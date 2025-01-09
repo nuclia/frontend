@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 $header-height: rhythm(16);
 $header-margin-bottom: rhythm(3);
@@ -58,7 +58,6 @@ $gap-family-selection: rhythm(7);
       top: 0;
       width: 100%;
       z-index: 1;
-
     }
   }
 }

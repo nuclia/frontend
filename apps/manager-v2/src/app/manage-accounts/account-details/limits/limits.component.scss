@@ -1,4 +1,4 @@
-@import 'apps/manager-v2/src/variables';
+@use 'apps/manager-v2/src/variables' as *;
 
 .limit-form {
   position: relative;

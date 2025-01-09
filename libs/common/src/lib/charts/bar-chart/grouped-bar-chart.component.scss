@@ -1,5 +1,5 @@
-@import '../charts-common';
+@use '../charts-common' as charts;
 
 .range-chart {
-  @include chart();
+  @include charts.chart();
 }

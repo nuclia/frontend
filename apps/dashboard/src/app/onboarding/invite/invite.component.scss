@@ -1,4 +1,4 @@
-@import '../../../variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .setup-invite {
   display: flex;

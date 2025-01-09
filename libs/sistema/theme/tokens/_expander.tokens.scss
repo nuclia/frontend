@@ -1,19 +1,19 @@
-@import './palette.tokens';
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
+@use './palette.tokens' as palette;
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
 
-$box-shadow-border-bottom: inset 0 -1px 0 $color-neutral-lighter;
-$box-shadow-border-top: inset 0 1px 0 $color-neutral-light;
+$box-shadow-border-bottom: inset 0 -1px 0 palette.$color-neutral-lighter;
+$box-shadow-border-top: inset 0 1px 0 palette.$color-neutral-light;
 
 // Collapsed theme
-$background-color-collapsed-expander-header: $color-neutral-lightest;
-$background-color-collapsed-expander-header-hover: $color-neutral-lighter;
+$background-color-collapsed-expander-header: palette.$color-neutral-lightest;
+$background-color-collapsed-expander-header-hover: palette.$color-neutral-lighter;
 $box-shadow-collapsed-expander-header: $box-shadow-border-bottom;
-$color-collapsed-expander-header-title: $color-dark-stronger;
-$color-collapsed-expander-header-icon: $color-dark-stronger;
+$color-collapsed-expander-header-title: palette.$color-dark-stronger;
+$color-collapsed-expander-header-icon: palette.$color-dark-stronger;
 
 // Expanded theme
-$background-color-expanded-expander-header: $color-neutral-lighter;
-$background-color-expanded-expander-header-hover: $color-neutral-lighter;
+$background-color-expanded-expander-header: palette.$color-neutral-lighter;
+$background-color-expanded-expander-header-hover: palette.$color-neutral-lighter;
 $box-shadow-expanded-expander-header: none;
-$color-expanded-expander-header-title: $color-dark-stronger;
-$color-expanded-expander-header-icon: $color-dark-stronger;
+$color-expanded-expander-header-title: palette.$color-dark-stronger;
+$color-expanded-expander-header-icon: palette.$color-dark-stronger;

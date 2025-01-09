@@ -1,33 +1,33 @@
-@import './palette.tokens';
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
+@use './palette.tokens' as palette;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
 
 //=====================================
 // COLORS
 //=====================================
-$background-toast-error: $color-secondary-regular;
-$color-toast-error: $color-dark-stronger;
+$background-toast-error: palette.$color-secondary-regular;
+$color-toast-error: palette.$color-dark-stronger;
 
-$background-toast-warning: $color-dark-stronger;
-$color-toast-warning: $color-light-stronger;
+$background-toast-warning: palette.$color-dark-stronger;
+$color-toast-warning: palette.$color-light-stronger;
 
-$background-toast-info: $color-neutral-lighter;
-$color-toast-info: $color-dark-stronger;
+$background-toast-info: palette.$color-neutral-lighter;
+$color-toast-info: palette.$color-dark-stronger;
 
-$background-toast-success: $color-neutral-lighter;
-$color-toast-success: $color-dark-stronger;
+$background-toast-success: palette.$color-neutral-lighter;
+$color-toast-success: palette.$color-dark-stronger;
 
-$background-toast-button-info-hover: rgba($color-dark-stronger, 0.15);
-$background-toast-button-success-hover: rgba($color-dark-stronger, 0.15);
-$background-toast-button-error-hover: rgba($color-dark-stronger, 0.15);
+$background-toast-button-info-hover: rgba(palette.$color-dark-stronger, 0.15);
+$background-toast-button-success-hover: rgba(palette.$color-dark-stronger, 0.15);
+$background-toast-button-error-hover: rgba(palette.$color-dark-stronger, 0.15);
 
-$background-toast-button-info-active: rgba($color-dark-stronger, 0.25);
-$background-toast-button-success-active: rgba($color-dark-stronger, 0.25);
-$background-toast-button-error-active: rgba($color-dark-stronger, 0.25);
+$background-toast-button-info-active: rgba(palette.$color-dark-stronger, 0.25);
+$background-toast-button-success-active: rgba(palette.$color-dark-stronger, 0.25);
+$background-toast-button-error-active: rgba(palette.$color-dark-stronger, 0.25);
 
 //=====================================
 // SPACING
 //=====================================
-$min-width-toast: rhythm(56);
+$min-width-toast: spacing.rhythm(56);
 
-$padding-toast: rhythm(1.5) rhythm(2);
-$padding-toast-with-button: rhythm(1) rhythm(1) rhythm(1) rhythm(2);
+$padding-toast: spacing.rhythm(1.5) spacing.rhythm(2);
+$padding-toast-with-button: spacing.rhythm(1) spacing.rhythm(1) spacing.rhythm(1) spacing.rhythm(2);

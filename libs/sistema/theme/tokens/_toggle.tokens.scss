@@ -1,24 +1,24 @@
-@import './palette.tokens';
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
+@use './palette.tokens' as palette;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
 
 // Checkboxes and radio
-$color-background-toggle-selected: $color-dark-stronger;
-$color-background-toggle-selected-hover: $color-neutral-regular;
-$color-background-toggle-disabled: $color-neutral-lightest;
-$color-background-toggle-unselected-disabled: $color-neutral-lightest;
-$color-background-toggle-indeterminate: $color-light-stronger;
+$color-background-toggle-selected: palette.$color-dark-stronger;
+$color-background-toggle-selected-hover: palette.$color-neutral-regular;
+$color-background-toggle-disabled: palette.$color-neutral-lightest;
+$color-background-toggle-unselected-disabled: palette.$color-neutral-lightest;
+$color-background-toggle-indeterminate: palette.$color-light-stronger;
 
-$color-border-toggle-unselected: $color-dark-stronger;
-$color-border-toggle-unselected-disabled: $color-neutral-light;
+$color-border-toggle-unselected: palette.$color-dark-stronger;
+$color-border-toggle-unselected-disabled: palette.$color-neutral-light;
 
-$color-check-toggle-indeterminate: $color-dark-stronger;
-$color-check-toggle-disabled: $color-neutral-light; //IMPORTANT: it must be an hsl color
+$color-check-toggle-indeterminate: palette.$color-dark-stronger;
+$color-check-toggle-disabled: palette.$color-neutral-light; //IMPORTANT: it must be an hsl color
 
 // Toggles
-$height-toggle: rhythm(2);
-$width-toggle: rhythm(4);
-$margin-toggle-container: rhythm(0.5) 0;
+$height-toggle: spacing.rhythm(2);
+$width-toggle: spacing.rhythm(4);
+$margin-toggle-container: spacing.rhythm(0.5) 0;
 $margin-top-toggle-with-help-label: 0;
 
-$color-background-toggle-slider-selected: $color-success-regular;
-$color-background-toggle-slider-selected-hover: $color-success-strong;
+$color-background-toggle-slider-selected: palette.$color-success-regular;
+$color-background-toggle-slider-selected-hover: palette.$color-success-strong;

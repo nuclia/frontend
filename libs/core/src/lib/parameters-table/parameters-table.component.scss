@@ -1,10 +1,10 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .table-header-button {
   padding: rhythm(1);
 }
 
-pa-input  {
+pa-input {
   padding: rhythm(1) 0;
   width: 100%;
 }

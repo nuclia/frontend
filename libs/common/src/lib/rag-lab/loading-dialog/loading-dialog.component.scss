@@ -1,4 +1,5 @@
-@import 'libs/pastanaga-angular/projects/pastanaga-angular/src/lib/modal/confirmation-dialog/confirmation-dialog.component';
+@use 'libs/pastanaga-angular/projects/pastanaga-angular/src/lib/modal/confirmation-dialog/confirmation-dialog.component';
+@use 'apps/dashboard/src/variables' as *;
 
 .pa-confirmation-dialog {
   padding: rhythm(3);

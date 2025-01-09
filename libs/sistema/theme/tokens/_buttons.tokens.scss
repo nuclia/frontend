@@ -1,47 +1,48 @@
-@import './palette.tokens';
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/typography.tokens';
+@use './palette.tokens' as palette;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/_palette.tokens' as pastanaga-palette;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/typography.tokens';
 
 //=====================================
 // BUTTONS
 //=====================================
-$border-radius-button: $border-radius-default;
+$border-radius-button: spacing.$border-radius-default;
 
 // Borders
-$border-button-primary-basic: 1px solid $color-primary-light;
-$border-button-primary-basic-hover: 1px solid $color-primary-light;
-$border-button-primary-basic-active: 1px solid $color-primary-light;
+$border-button-primary-basic: 1px solid palette.$color-primary-light;
+$border-button-primary-basic-hover: 1px solid palette.$color-primary-light;
+$border-button-primary-basic-active: 1px solid palette.$color-primary-light;
 
-$border-button-secondary-basic: 1px solid $color-neutral-light;
-$border-button-secondary-basic-hover: 1px solid $color-neutral-light;
-$border-button-secondary-basic-active: 1px solid $color-neutral-light;
+$border-button-secondary-basic: 1px solid palette.$color-neutral-light;
+$border-button-secondary-basic-hover: 1px solid palette.$color-neutral-light;
+$border-button-secondary-basic-active: 1px solid palette.$color-neutral-light;
 
-$border-button-inverted-basic: 1px solid $color-neutral-light;
-$border-button-inverted-basic-hover: 1px solid $color-neutral-light;
-$border-button-inverted-basic-active: 1px solid $color-neutral-light;
+$border-button-inverted-basic: 1px solid palette.$color-neutral-light;
+$border-button-inverted-basic-hover: 1px solid palette.$color-neutral-light;
+$border-button-inverted-basic-active: 1px solid palette.$color-neutral-light;
 
-$border-button-destructive-basic: 1px solid $color-secondary-strong;
-$border-button-destructive-basic-hover: 1px solid $color-secondary-strong;
-$border-button-destructive-basic-active: 1px solid $color-secondary-strong;
+$border-button-destructive-basic: 1px solid palette.$color-secondary-strong;
+$border-button-destructive-basic-hover: 1px solid palette.$color-secondary-strong;
+$border-button-destructive-basic-active: 1px solid palette.$color-secondary-strong;
 
-$border-button-basic-disabled: 1px solid $color-neutral-lighter;
-$border-button-inverted-basic-disabled: 1px solid $color-neutral-inverted-lighter;
+$border-button-basic-disabled: 1px solid palette.$color-neutral-lighter;
+$border-button-inverted-basic-disabled: 1px solid pastanaga-palette.$color-neutral-inverted-lighter;
 
 // Sizes
-$padding-sides-button-large: rhythm(2);
+$padding-sides-button-large: spacing.rhythm(2);
 
-$padding-left-button-icon-text-large: rhythm(1.5);
-$padding-right-button-icon-text-large: rhythm(2);
+$padding-left-button-icon-text-large: spacing.rhythm(1.5);
+$padding-right-button-icon-text-large: spacing.rhythm(2);
 
-$padding-button-icon-medium: rhythm(1);
-$padding-button-icon-large: rhythm(1);
+$padding-button-icon-medium: spacing.rhythm(1);
+$padding-button-icon-large: spacing.rhythm(1);
 
-$font-size-button-medium: font-size(s);
-$font-size-button-large: font-size(s);
+$font-size-button-medium: typography.font-size(s);
+$font-size-button-large: typography.font-size(s);
 
-$height-button-small: rhythm(4);
-$height-button-medium: rhythm(5);
-$height-button-large: rhythm(6);
+$height-button-small: spacing.rhythm(4);
+$height-button-medium: spacing.rhythm(5);
+$height-button-large: spacing.rhythm(6);
 
 // Shadows
 $shadow-button-solid-hover: none;
@@ -51,65 +52,65 @@ $shadow-button-basic-hover: none;
 // PRIMARY
 //---------------------------------------------------------------
 
-$color-background-button-primary-solid-hover: $color-primary-strong;
-$color-background-button-primary-solid-active: $color-primary-stronger;
+$color-background-button-primary-solid-hover: palette.$color-primary-strong;
+$color-background-button-primary-solid-active: palette.$color-primary-stronger;
 
-$color-text-button-primary-basic: $color-primary-regular;
-$color-text-button-primary-basic-hover: $color-primary-regular;
-$color-text-button-primary-basic-active: $color-primary-regular;
+$color-text-button-primary-basic: palette.$color-primary-regular;
+$color-text-button-primary-basic-hover: palette.$color-primary-regular;
+$color-text-button-primary-basic-active: palette.$color-primary-regular;
 
 //---------------------------------------------------------------
 // SECONDARY
 //---------------------------------------------------------------
 // solid
-$color-text-button-secondary-solid: $color-light-stronger;
-$color-text-button-secondary-solid-hover: $color-light-stronger;
-$color-text-button-secondary-solid-active: $color-light-stronger;
+$color-text-button-secondary-solid: palette.$color-light-stronger;
+$color-text-button-secondary-solid-hover: palette.$color-light-stronger;
+$color-text-button-secondary-solid-active: palette.$color-light-stronger;
 
-$color-background-button-secondary-solid: $color-dark-stronger;
-$color-background-button-secondary-solid-hover: $color-dark-stronger;
-$color-background-button-secondary-solid-active: $color-neutral-regular;
+$color-background-button-secondary-solid: palette.$color-dark-stronger;
+$color-background-button-secondary-solid-hover: palette.$color-dark-stronger;
+$color-background-button-secondary-solid-active: palette.$color-neutral-regular;
 
 //basic
-$color-background-button-secondary-basic-hover: $color-neutral-light;
-$color-background-button-secondary-basic-active: $color-neutral-regular;
-$color-text-button-secondary-basic-active: $color-light-stronger;
+$color-background-button-secondary-basic-hover: palette.$color-neutral-light;
+$color-background-button-secondary-basic-active: palette.$color-neutral-regular;
+$color-text-button-secondary-basic-active: palette.$color-light-stronger;
 
 //---------------------------------------------------------------
 // DESTRUCTIVE
 //---------------------------------------------------------------
 // solid
-$color-text-button-destructive-solid: $color-dark-stronger;
-$color-text-button-destructive-solid-hover: $color-light-stronger;
-$color-text-button-destructive-solid-active: $color-light-stronger;
+$color-text-button-destructive-solid: palette.$color-dark-stronger;
+$color-text-button-destructive-solid-hover: palette.$color-light-stronger;
+$color-text-button-destructive-solid-active: palette.$color-light-stronger;
 
-$color-background-button-destructive-solid: $color-secondary-regular;
-$color-background-button-destructive-solid-hover: $color-secondary-strong;
-$color-background-button-destructive-solid-active: $color-secondary-stronger;
+$color-background-button-destructive-solid: palette.$color-secondary-regular;
+$color-background-button-destructive-solid-hover: palette.$color-secondary-strong;
+$color-background-button-destructive-solid-active: palette.$color-secondary-stronger;
 
 // basic
-$color-text-button-destructive-basic: $color-secondary-strong;
-$color-text-button-destructive-basic-hover: $color-secondary-stronger;
-$color-text-button-destructive-basic-active: $color-secondary-stronger;
+$color-text-button-destructive-basic: palette.$color-secondary-strong;
+$color-text-button-destructive-basic-hover: palette.$color-secondary-stronger;
+$color-text-button-destructive-basic-active: palette.$color-secondary-stronger;
 
-$color-background-button-destructive-basic-hover: $color-secondary-lightest;
-$color-background-button-destructive-basic-active: $color-secondary-lighter;
+$color-background-button-destructive-basic-hover: palette.$color-secondary-lightest;
+$color-background-button-destructive-basic-active: palette.$color-secondary-lighter;
 
 //---------------------------------------------------------------
 // INVERTED
 //---------------------------------------------------------------
-$color-text-button-inverted-solid: $color-neutral-regular;
-$color-text-button-inverted-solid-hover: $color-dark-stronger;
-$color-text-button-inverted-solid-active: $color-light-stronger;
+$color-text-button-inverted-solid: palette.$color-neutral-regular;
+$color-text-button-inverted-solid-hover: palette.$color-dark-stronger;
+$color-text-button-inverted-solid-active: palette.$color-light-stronger;
 
-$color-background-button-inverted-solid: $color-neutral-lightest;
-$color-background-button-inverted-solid-hover: $color-neutral-lightest;
-$color-background-button-inverted-solid-active: $color-neutral-regular;
+$color-background-button-inverted-solid: palette.$color-neutral-lightest;
+$color-background-button-inverted-solid-hover: palette.$color-neutral-lightest;
+$color-background-button-inverted-solid-active: palette.$color-neutral-regular;
 
 //---------------------------------------------------------------
 // DISABLED
 //---------------------------------------------------------------
-$color-text-button-solid-disabled: $color-light-stronger;
-$color-text-button-basic-disabled: $color-neutral-lighter;
+$color-text-button-solid-disabled: palette.$color-light-stronger;
+$color-text-button-basic-disabled: palette.$color-neutral-lighter;
 
-$color-background-button-solid-disabled: $color-neutral-lighter;
+$color-background-button-solid-disabled: palette.$color-neutral-lighter;

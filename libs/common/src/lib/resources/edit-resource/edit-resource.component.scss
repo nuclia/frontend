@@ -1,5 +1,5 @@
-@import 'apps/dashboard/src/variables';
-@import 'edit-resource.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use 'edit-resource.tokens' as tokens;
 
 .edit-resource {
   header {
@@ -9,7 +9,7 @@
     align-items: center;
     background: $color-neutral-lightest;
     display: flex;
-    height: $height-header;
+    height: tokens.$height-header;
     justify-content: space-between;
     padding: 0 calc(var(--app-layout-padding-right) - #{rhythm(1)}) 0 var(--app-layout-padding-left);
     position: sticky;
@@ -44,7 +44,7 @@
   .page-container {
     display: flex;
     gap: rhythm(0.5);
-    min-height: calc(100vh - var(--app-topbar-height) - #{$height-header});
+    min-height: calc(100vh - var(--app-topbar-height) - #{tokens.$height-header});
     padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
       var(--app-layout-padding-left);
 
@@ -61,7 +61,7 @@
       ul {
         padding: 0;
         position: sticky;
-        top: $sticky-top;
+        top: tokens.$sticky-top;
       }
 
       li {
@@ -100,10 +100,10 @@
       footer {
         background: $color-light-stronger;
         bottom: 0;
-        box-shadow: $footer-separator;
+        box-shadow: tokens.$footer-separator;
         display: flex;
-        max-width: $width-page-content;
-        padding: $padding-vertical-footer 0;
+        max-width: tokens.$width-page-content;
+        padding: tokens.$padding-vertical-footer 0;
         position: sticky;
         z-index: 100;
 

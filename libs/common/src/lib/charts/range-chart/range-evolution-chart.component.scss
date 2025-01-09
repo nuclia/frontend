@@ -1,7 +1,8 @@
-@import '../charts-common';
+@use '../charts-common' as charts;
+@use 'apps/dashboard/src/variables' as *;
 
 .range-chart {
-  @include chart();
+  @include charts.chart();
 
   .range-area {
     fill: $color-primary-lightest;

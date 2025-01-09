@@ -1,20 +1,20 @@
-@import './palette.tokens';
-@import './typography.tokens';
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
+@use './palette.tokens' as palette;
+@use './typography.tokens' as typography;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
 
-$color-text-tab-link: $color-dark-stronger;
+$color-text-tab-link: palette.$color-dark-stronger;
 
-$color-background-tab-link: $color-light-stronger;
-$color-background-tab-link-active: $color-neutral-lightest;
+$color-background-tab-link: palette.$color-light-stronger;
+$color-background-tab-link-active: palette.$color-neutral-lightest;
 
-$color-tab-slider: $color-neutral-lighter;
+$color-tab-slider: palette.$color-neutral-lighter;
 
-$font-size-tab-item: font-size(m);
-$font-weight-tab-item: $font-weight-regular;
-$font-weight-tab-item-active: $font-weight-semi-bold;
+$font-size-tab-item: typography.font-size(m);
+$font-weight-tab-item: typography.$font-weight-regular;
+$font-weight-tab-item-active: typography.$font-weight-semi-bold;
 
-$gap-between-tabs: rhythm(0.25);
+$gap-between-tabs: spacing.rhythm(0.25);
 
-$padding-tab-item-medium: rhythm(1.5) rhythm(3);
+$padding-tab-item-medium: spacing.rhythm(1.5) spacing.rhythm(3);
 
 $text-transform-tab-item: none;

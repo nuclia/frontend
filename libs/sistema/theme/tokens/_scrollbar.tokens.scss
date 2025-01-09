@@ -1,13 +1,13 @@
-@import './palette.tokens';
-@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
+@use './palette.tokens' as palette;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
 
 $scrollbar-border-radius: 0;
 
 $scrollbar-padding-desktop: 0;
-$scrollbar-width-desktop: rhythm(1);
+$scrollbar-width-desktop: spacing.rhythm(1);
 
-$color-scrollbar-thumb: $color-dark-stronger;
-$color-scrollbar-thumb-active: $color-dark-stronger;
+$color-scrollbar-thumb: palette.$color-dark-stronger;
+$color-scrollbar-thumb-active: palette.$color-dark-stronger;
 
 $color-scrollbar-thumb-border: transparent;
 $color-scrollbar-thumb-border-active: transparent;

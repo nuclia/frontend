@@ -1,5 +1,6 @@
-@import './palette.tokens';
-@import './spacing.tokens';
+@use 'sass:map';
+@use './palette.tokens' as palette;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
 
 // =================================================
 // TYPOGRAPHY
@@ -59,10 +60,10 @@ $font-size: (
   d3-md:  ($font-size-base * 3),      // 48px - 3 rem
 );
 @function font-size($t-shirt-size) {
-  @return map-get($font-size, $t-shirt-size);
+  @return map.get($font-size, $t-shirt-size);
 }
 
-$font-size-overline: rhythm(1);
+$font-size-overline: spacing.rhythm(1);
 $font-size-body-xs: font-size(xxs);
 $font-size-body-s: font-size(xs);
 $font-size-title-xxs: font-size(xs);
@@ -97,7 +98,7 @@ $line-height: (
   d3-md:  ($font-size-base * 2.75),   // 44px - 2.75 rem
 );
 @function line-height($t-shirt-size) {
-  @return map-get($line-height, $t-shirt-size);
+  @return map.get($line-height, $t-shirt-size);
 }
 
 $line-height-body: 1.4;
@@ -142,6 +143,14 @@ $letter-spacing-display-m-md: 0;
 // =================================================
 // SHADOWS
 // =================================================
-$shadow-small: 1px 1px 2px rgba($color-dark-stronger, 0.3);
+$shadow-small: 1px 1px 2px rgba(palette.$color-dark-stronger, 0.3);
 
-$color-text-disabled: $color-neutral-regular;
+$color-text-disabled: palette.$color-neutral-regular;
+
+@mixin overline {
+  font-size: $font-size-overline;
+  line-height: $line-height-overline;
+  letter-spacing: $letter-spacing-overline;
+  font-weight: $font-weight-overline;
+  text-transform: uppercase;
+}

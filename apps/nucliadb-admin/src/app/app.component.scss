@@ -1,4 +1,4 @@
-@import 'apps/nucliadb-admin/src/variables';
+@use 'apps/nucliadb-admin/src/variables' as *;
 
 .version {
   position: fixed;
