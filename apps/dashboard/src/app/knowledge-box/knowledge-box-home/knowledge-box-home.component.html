@@ -302,13 +302,6 @@
               <div class="title-with-icon">
                 <pa-icon name="chart"></pa-icon>
                 {{ 'dashboard-home.usage.title' | translate }}
-                <small class="body-s">
-                  @if (isSubscribed | async) {
-                    ({{ 'kb.metrics.period.current-billing-period' | translate }})
-                  } @else {
-                    ({{ 'kb.metrics.period.current-month' | translate }})
-                  }
-                </small>
               </div>
               <pa-button
                 aspect="basic"
@@ -333,25 +326,36 @@
               @if (searchQueriesCounts | async; as queriesCount) {
                 <pa-table-row last>
                   <pa-table-cell>
-                    <div class="cell-with-icon">
-                      <span class="body-s">
-                        {{ 'metrics.search.title' | translate }}
-                      </span>
-                      <pa-icon
-                        [paPopover]="searchQueriesLegend"
-                        size="small"
-                        name="info"></pa-icon>
-                    </div>
+                    <span class="body-s">{{ 'metrics.search.title' | translate }}</span>
                   </pa-table-cell>
                   @if (locale | async; as locale) {
                     <pa-table-cell>
                       <span class="title-xxs">
-                        {{ queriesCount.month | number: '1.0-0' : locale }}
+                        {{ queriesCount.month.search | number: '1.0-0' : locale }}
                       </span>
                     </pa-table-cell>
                     <pa-table-cell>
                       <span class="title-xxs">
-                        {{ queriesCount.year | number: '1.0-0' : locale }}
+                        {{ queriesCount.year.search | number: '1.0-0' : locale }}
+                      </span>
+                    </pa-table-cell>
+                  }
+                </pa-table-row>
+              }
+              @if (searchQueriesCounts | async; as queriesCount) {
+                <pa-table-row last>
+                  <pa-table-cell>
+                    <span class="body-s">{{ 'metrics.ask.title' | translate }}</span>
+                  </pa-table-cell>
+                  @if (locale | async; as locale) {
+                    <pa-table-cell>
+                      <span class="title-xxs">
+                        {{ queriesCount.month.chat | number: '1.0-0' : locale }}
+                      </span>
+                    </pa-table-cell>
+                    <pa-table-cell>
+                      <span class="title-xxs">
+                        {{ queriesCount.year.chat | number: '1.0-0' : locale }}
                       </span>
                     </pa-table-cell>
                   }
@@ -377,9 +381,6 @@
                 </pa-table-row>
               }
             </pa-table>
-            <pa-popover #searchQueriesLegend>
-              {{ 'dashboard-home.usage.search-queries-explanation' | translate }}
-            </pa-popover>
 
             <div>
               <nsi-dropdown-button
@@ -387,7 +388,16 @@
                 aspect="basic"
                 [popupRef]="chartDropdown"
                 [open]="isChartDropdownOpen">
-                {{ currentChart.label | translate }}
+                <span class="title-with-icon">
+                  {{ currentChart.label | translate }}
+                  <span class="body-s period">
+                    @if (isSubscribed | async) {
+                      ({{ 'kb.metrics.period.current-billing-period' | translate }})
+                    } @else {
+                      ({{ 'kb.metrics.period.current-month' | translate }})
+                    }
+                  </span>
+                </span>
               </nsi-dropdown-button>
 
               <pa-dropdown
@@ -410,7 +420,8 @@
               [currentChart]="currentChart"
               [processingChart]="processingChart | async"
               [tokenChart]="nucliaTokenChart | async"
-              [searchChart]="searchChart | async"></app-kb-usage-charts>
+              [searchChart]="searchChart | async"
+              [askChart]="askChart | async"></app-kb-usage-charts>
           </nsi-home-container>
         }
 
@@ -421,7 +432,7 @@
                 <div class="title-with-icon title-m">
                   <pa-icon name="heart"></pa-icon>
                   {{ 'dashboard-home.health-status.title' | translate }}
-                  <small class="body-s">({{ 'kb.metrics.period.last-7d' | translate }})</small>
+                  <small class="body-s period">({{ 'kb.metrics.period.last-7d' | translate }})</small>
                 </div>
                 <a
                   class="accent-link"
@@ -438,6 +449,6 @@
   }
 </div>
 
-@if ((searchQueriesCounts | async)?.year; as yearCount) {
-  <app-knowledge-box-survey [totalSearch]="yearCount"></app-knowledge-box-survey>
+@if ((searchQueriesCounts | async)?.sinceCreation; as sinceCreation) {
+  <app-knowledge-box-survey [totalSearch]="sinceCreation.search + sinceCreation.chat"></app-knowledge-box-survey>
 }
