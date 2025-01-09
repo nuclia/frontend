@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AccountService, BillingService, FeaturesService, Prices, SDKService } from '@flaps/core';
-import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap } from 'rxjs';
+import { catchError, combineLatest, forkJoin, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { format, getDaysInMonth, isFuture, subDays, subMonths } from 'date-fns';
 import { AccountTypes, UsageMetric, UsagePoint, UsageType } from '@nuclia/core';
 
@@ -112,6 +112,24 @@ export class MetricsService {
     );
   }
 
+  getSearchCount() {
+    const now = new Date();
+    const thirtyDaysAgo = subDays(now, 30);
+    const twelveMonthsAgo = subMonths(now, 12);
+    return forkJoin([this.account$.pipe(take(1)), this.sdk.currentKb.pipe(take(1))]).pipe(
+      switchMap(([account, kb]) =>
+        forkJoin([
+          kb.activityMonitor.getSearchMetrics(twelveMonthsAgo.toISOString(), now.toISOString()),
+          kb.activityMonitor.getSearchMetrics(thirtyDaysAgo.toISOString(), now.toISOString()),
+          kb.activityMonitor.getSearchMetrics(account.creation_date, now.toISOString()),
+        ]),
+      ),
+      map(([year, month, sinceCreation]) => {
+        return { year: year[0], month: month[0], sinceCreation: sinceCreation[0] };
+      }),
+    );
+  }
+
   getUsageCharts(kbId?: string, cumulative = false): Observable<Partial<{ [key in UsageType]: ChartData }>> {
     return combineLatest([this.account$, this.period]).pipe(
       switchMap(([account, period]) =>
@@ -125,6 +143,29 @@ export class MetricsService {
             }, this.getEmptyCharts());
 
             return charts;
+          }),
+        ),
+      ),
+    );
+  }
+
+  getSearchCharts(): Observable<{ search: ChartData; ask: ChartData }> {
+    return forkJoin([this.sdk.currentKb.pipe(take(1)), this.period.pipe(take(1))]).pipe(
+      switchMap(([kb, period]) =>
+        kb.activityMonitor.getSearchMetrics(period.start.toISOString(), period.end.toISOString(), 'day').pipe(
+          map((items) => {
+            return {
+              search: {
+                data: items.map((item) => [format(new Date(item.timestamp), 'd/MM'), item.search] as [string, number]),
+                domain: items.map((item) => format(new Date(item.timestamp), 'd/MM')),
+                yUnit: 'metrics.units.queries',
+              },
+              ask: {
+                data: items.map((item) => [format(new Date(item.timestamp), 'd/MM'), item.chat] as [string, number]),
+                domain: items.map((item) => format(new Date(item.timestamp), 'd/MM')),
+                yUnit: 'metrics.units.queries',
+              },
+            };
           }),
         ),
       ),

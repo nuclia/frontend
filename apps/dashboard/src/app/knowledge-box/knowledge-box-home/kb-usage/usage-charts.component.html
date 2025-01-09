@@ -11,6 +11,17 @@
         <div [style]="'height:' + chartHeight + 'px'"></div>
       }
     }
+    @case ('ask') {
+      @if (askChart; as chart) {
+        <app-line-chart
+          [yUnit]="chart.yUnit || '' | translate"
+          [data]="chart.data"
+          [xAxisTickOptions]="xAxisTickOptions"
+          [height]="chartHeight"></app-line-chart>
+      } @else {
+        <div [style]="'height:' + chartHeight + 'px'"></div>
+      }
+    }
     @case ('processing') {
       @if (processingChart; as chart) {
         <app-line-chart

@@ -29,27 +29,13 @@
     }
   }
 
-  .cell-with-icon {
-    align-items: center;
-    display: flex;
-    gap: rhythm(0.5);
-
-    pa-icon {
-      cursor: pointer;
-    }
-  }
   .title-with-icon {
     align-items: center;
     display: flex;
     gap: rhythm(1);
     overflow-wrap: anywhere;
-
-    .body-s {
-      color: $color-neutral-regular;
-    }
   }
 
-  .cell-with-icon,
   .title-with-icon {
     pa-icon {
       display: flex;
@@ -156,5 +142,9 @@
     .title-with-icon {
       margin-bottom: rhythm(1);
     }
+  }
+
+  .period {
+    color: $color-neutral-regular;
   }
 }

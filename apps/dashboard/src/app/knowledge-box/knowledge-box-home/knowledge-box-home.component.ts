@@ -49,25 +49,34 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     switchMap(() => this.currentKb),
     switchMap((kb) => this.metrics.getUsageCharts(kb.id)),
     takeUntil(this.unsubscribeAll),
-    shareReplay(),
+    shareReplay(1),
   );
   processingChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SLOW_PROCESSING_TIME]));
-  searchChart = this.allChartsData.pipe(map((charts) => charts[UsageType.SEARCHES_PERFORMED]));
   nucliaTokenChart = this.allChartsData.pipe(map((charts) => charts[UsageType.NUCLIA_TOKENS]));
 
-  searchQueriesCounts = this.isAccountManager.pipe(
+  searchChartsData = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
-    switchMap((kb) => this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED, kb.id)),
+    switchMap(() => this.metrics.getSearchCharts()),
     takeUntil(this.unsubscribeAll),
-    shareReplay(),
+    shareReplay(1),
   );
+  searchChart = this.searchChartsData.pipe(map((charts) => charts.search));
+  askChart = this.searchChartsData.pipe(map((charts) => charts.ask));
+
   nucliaTokensCounts = this.isAccountManager.pipe(
     filter((isManager) => isManager),
     switchMap(() => this.currentKb),
     switchMap((kb) => this.metrics.getUsageCount(UsageType.NUCLIA_TOKENS, kb.id)),
     takeUntil(this.unsubscribeAll),
-    shareReplay(),
+    shareReplay(1),
+  );
+  searchQueriesCounts = this.isAccountManager.pipe(
+    filter((isManager) => isManager),
+    switchMap(() => this.currentKb),
+    switchMap(() => this.metrics.getSearchCount()),
+    takeUntil(this.unsubscribeAll),
+    shareReplay(1),
   );
   isSubscribed = this.metrics.isSubscribed;
 
@@ -117,6 +126,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
   currentChart: OptionModel = this.defaultChartOption;
   chartDropdownOptions: OptionModel[] = [
     this.defaultChartOption,
+    new OptionModel({ id: 'ask', label: 'metrics.ask.title', value: 'ask' }),
     new OptionModel({ id: 'processing', label: 'metrics.processing.title', value: 'processing' }),
     new OptionModel({ id: 'token', label: 'metrics.nuclia-tokens.title', value: 'token' }),
   ];
@@ -204,6 +214,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
         data: {
           processingChart: this.processingChart,
           searchChart: this.searchChart,
+          askChart: this.askChart,
           tokenChart: this.nucliaTokenChart,
           currentChart: this.currentChart,
           chartDropdownOptions: this.chartDropdownOptions,

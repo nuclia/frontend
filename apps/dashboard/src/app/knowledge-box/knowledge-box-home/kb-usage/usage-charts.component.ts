@@ -16,6 +16,7 @@ export class UsageChartsComponent {
   @Input() tokenChart?: ChartData | null;
   @Input() processingChart?: ChartData | null;
   @Input() searchChart?: ChartData | null;
+  @Input() askChart?: ChartData | null;
   @Input() currentChart?: OptionModel | null;
   @Input({ transform: numberAttribute }) chartHeight?: number;
   @Input({ transform: booleanAttribute }) smallContainer = false;
