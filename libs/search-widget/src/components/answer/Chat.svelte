@@ -67,7 +67,7 @@
       style={!fullscreen && height ? '--custom-height-container:' + height : undefined}>
       <div
         class="entries-container"
-        class:hidden={!$hasChatEntries}
+        class:hidden={$chat.length === 0}
         bind:this={entriesContainerElement}>
         {#each $chat as entry, i}
           <div class="chat-entry">
