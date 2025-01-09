@@ -115,7 +115,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   form = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    applyTaskTo: new FormControl<ApplyOption>('ALL', { nonNullable: true }),
+    applyTaskTo: new FormControl<ApplyOption>('NEW', { nonNullable: true }),
     filter: new FormGroup({
       //searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent', { nonNullable: true }),
       contains: new FormControl<string>('', { nonNullable: true }),
