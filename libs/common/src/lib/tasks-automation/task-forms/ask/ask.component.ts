@@ -35,7 +35,7 @@ export class AskComponent extends TaskRouteDirective {
     question: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     fieldName: new FormControl<string>('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern('[^-]*')],
+      validators: [Validators.required, Validators.pattern('[0-9a-zA-Z_]+')],
     }),
   });
   override errorMessages = {
