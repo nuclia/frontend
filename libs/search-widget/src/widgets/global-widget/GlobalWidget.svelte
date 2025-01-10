@@ -108,7 +108,6 @@
       },
       state,
       {
-        highlight: true,
         features: _features,
         vectorset,
         audit_metadata,

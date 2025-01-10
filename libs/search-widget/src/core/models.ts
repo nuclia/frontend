@@ -43,7 +43,6 @@ export const NO_SUGGESTION_RESULTS: Search.Suggestions = {
 
 export interface WidgetOptions {
   fuzzyOnly?: boolean;
-  highlight?: boolean;
   features?: WidgetFeatures;
   prompt?: string;
   system_prompt?: string;

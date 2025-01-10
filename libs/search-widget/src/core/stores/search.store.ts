@@ -92,7 +92,7 @@ export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
   preselectedFilters: [],
-  options: { highlight: true },
+  options: {},
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   results: NO_RESULT_LIST,
   pending: false,

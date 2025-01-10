@@ -50,6 +50,7 @@ let MAX_PARAGRAPHS: number | undefined = undefined;
 let QUERY_PREPEND = '';
 let NO_CHAT_HISTORY = false;
 let DEBUG = false;
+let HIGHLIGHT = false;
 let SHOW_HIDDEN = false;
 let SHOW_ATTACHED_IMAGES = false;
 let AUDIT_METADATA: { [key: string]: string } | undefined = undefined;
@@ -91,6 +92,7 @@ export const initNuclia = (
     SEARCH_OPTIONS.rank_fusion = { name: 'rrf', boosting: { semantic: widgetOptions.rrf_boosting } };
   }
   CITATIONS = !!widgetOptions.features?.citations;
+  HIGHLIGHT = !!widgetOptions.features?.highlight;
   REPHRASE = !!widgetOptions.features?.rephrase;
   REPHRASE_PROMPT = widgetOptions.rephrase_prompt;
   if (REPHRASE && REPHRASE_PROMPT) {
@@ -127,7 +129,7 @@ export const initNuclia = (
   }
 
   searchOptions.set({
-    highlight: widgetOptions.highlight,
+    highlight: HIGHLIGHT,
     autofilter: !!widgetOptions.features?.autofilter,
     rephrase: REPHRASE,
   });
@@ -215,7 +217,7 @@ export const getAnswer = (
       }, [] as Ask.ContextEntry[]);
 
   const defaultOptions: ChatOptions = {
-    highlight: true,
+    highlight: HIGHLIGHT,
     show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
     generative_model,
     vectorset,
