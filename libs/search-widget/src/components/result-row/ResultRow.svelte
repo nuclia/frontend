@@ -3,6 +3,7 @@
     AllResultsToggle,
     DocTypeIndicator,
     Icon,
+    IconButton,
     isMobileViewport,
     ParagraphResult,
     Thumbnail,
@@ -22,6 +23,7 @@
     getAttachedImageTemplate,
     feedbackOnResults,
     isAnswerEnabled,
+    collapseTextBlocks,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
@@ -30,6 +32,7 @@
   import { showAttachedImages } from '../../core/stores/search.store';
   import Image from '../image/Image.svelte';
   import Feedback from '../answer/Feedback.svelte';
+  import Expander from '../../common/expander/Expander.svelte';
 
   export let result: TypedResult;
   export let selected = 0;
@@ -45,6 +48,7 @@
   let nonToggledParagraphCount = 4;
   let toggledParagraphTotalHeight = 0;
   let metaKeyOn = false;
+  let expanded = !$collapseTextBlocks;
   $: isMobile = isMobileViewport(innerWidth);
   $: paragraphs = result.paragraphs || [];
   $: thumbnailInfo = getThumbnailInfos(result);
@@ -115,11 +119,10 @@
 
 <div
   class="sw-result-row"
-  class:reversed={isSource}
   data-nuclia-rid={result.id}>
   <div
     class="thumbnail-container"
-    hidden={$hideThumbnails}>
+    hidden={$hideThumbnails || !expanded}>
     {#if thumbnailInfo.isPlayable}
       <ThumbnailPlayer
         thumbnail={result.thumbnail}
@@ -141,11 +144,19 @@
   </div>
   <div class="result-container">
     <div class="result-title-container">
-      {#if $hideThumbnails}
-        <div class="result-icon">
-          <Icon name={thumbnailInfo.fallback} />
-        </div>
+      {#if $collapseTextBlocks}
+        <IconButton
+          aspect="basic"
+          size="small"
+          icon={expanded ? 'chevron-down' : 'chevron-right'}
+          ariaLabel={expanded ? 'collapse' : 'expand'}
+          on:click={() => {
+            expanded = !expanded;
+          }} />
       {/if}
+      <div class="result-icon">
+        <Icon name={thumbnailInfo.fallback} />
+      </div>
       <h3
         class="ellipsis title-m result-title"
         class:no-thumbnail={$hideThumbnails}>
@@ -172,69 +183,73 @@
       {/if}
     </div>
 
-    <div tabindex="-1">
-      <ul
-        class="sw-paragraphs-container"
-        class:expanded={showAllResults}
-        class:can-expand={paragraphs.length > 4}
-        style:--non-toggled-paragraph-count={nonToggledParagraphCount}
-        style:--toggled-paragraph-height={`${toggledParagraphTotalHeight}px`}>
-        {#if isSource && paragraphs.length === 0 && result.ranks}
-          <div class="rank-container">
-            {#each result.ranks as rank}
-              <div
-                class="number body-m"
-                class:selected={selected === rank}>
-                {rank}
-              </div>
-            {/each}
-          </div>
-        {/if}
-        {#each paragraphs as paragraph, index}
-          <div class="paragraph-container">
-            <div
-              class="paragraph-result-container"
-              class:with-image={$showAttachedImages && paragraph.reference}>
-              {#if isSource && paragraph.rank}
+    <Expander
+      {expanded}
+      duration={0}>
+      <div tabindex="-1">
+        <ul
+          class="sw-paragraphs-container"
+          class:expanded={showAllResults}
+          class:can-expand={paragraphs.length > 4}
+          style:--non-toggled-paragraph-count={nonToggledParagraphCount}
+          style:--toggled-paragraph-height={`${toggledParagraphTotalHeight}px`}>
+          {#if isSource && paragraphs.length === 0 && result.ranks}
+            <div class="rank-container">
+              {#each result.ranks as rank}
                 <div
                   class="number body-m"
-                  class:selected={selected === paragraph.rank}>
-                  {paragraph.rank}
+                  class:selected={selected === rank}>
+                  {rank}
                 </div>
-              {/if}
-              <ParagraphResult
-                {paragraph}
-                resultType={result.resultType}
-                ellipsis={true}
-                minimized={isMobile}
-                on:open={() => clickOnResult(paragraph, index)}
-                on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
-              {#if answerRank !== undefined && $isAnswerEnabled && $feedbackOnResults}
-                <div class="feedback-container">
-                  <Feedback
-                    size="xsmall"
-                    rank={answerRank}
-                    {paragraph} />
-                </div>
+              {/each}
+            </div>
+          {/if}
+          {#each paragraphs as paragraph, index}
+            <div class="paragraph-container">
+              <div
+                class="paragraph-result-container"
+                class:with-image={$showAttachedImages && paragraph.reference}>
+                {#if isSource && paragraph.rank}
+                  <div
+                    class="number body-m"
+                    class:selected={selected === paragraph.rank}>
+                    {paragraph.rank}
+                  </div>
+                {/if}
+                <ParagraphResult
+                  {paragraph}
+                  resultType={result.resultType}
+                  ellipsis={true}
+                  minimized={isMobile}
+                  on:open={() => clickOnResult(paragraph, index)}
+                  on:paragraphHeight={(event) => (toggledParagraphHeights[paragraph.id] = event.detail)} />
+                {#if answerRank !== undefined && $isAnswerEnabled && $feedbackOnResults}
+                  <div class="feedback-container">
+                    <Feedback
+                      size="xsmall"
+                      rank={answerRank}
+                      {paragraph} />
+                  </div>
+                {/if}
+              </div>
+              {#if $showAttachedImages && paragraph.reference}
+                <Image
+                  path={$imageTemplate.replace(
+                    IMAGE_PLACEHOLDER,
+                    `${result.id}/${result.field?.field_type}/${result.field?.field_id}/download/extracted/generated/${paragraph.reference}`,
+                  )} />
               {/if}
             </div>
-            {#if $showAttachedImages && paragraph.reference}
-              <Image
-                path={$imageTemplate.replace(
-                  IMAGE_PLACEHOLDER,
-                  `${result.id}/${result.field?.field_type}/${result.field?.field_id}/download/extracted/generated/${paragraph.reference}`,
-                )} />
-            {/if}
-          </div>
-        {/each}
-      </ul>
+          {/each}
+        </ul>
 
-      {#if paragraphs.length > 4}
-        <AllResultsToggle
-          {showAllResults}
-          on:toggle={() => (showAllResults = !showAllResults)} />
-      {/if}
-    </div>
+        {#if paragraphs.length > 4}
+          <AllResultsToggle
+            {showAllResults}
+            on:toggle={() => (showAllResults = !showAllResults)} />
+        {/if}
+      </div>
+    </Expander>
   </div>
 </div>
 

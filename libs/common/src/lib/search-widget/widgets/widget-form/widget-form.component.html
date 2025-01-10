@@ -324,6 +324,19 @@
             </div>
             <div class="config-form-field">
               <pa-toggle
+                formControlName="collapseTextBlocks"
+                withBackground
+                spaceBetweenLabelAndToggle>
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.collapse-text-blocks.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.collapse-text-blocks.toggle-description' | translate }}
+              </div>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
                 formControlName="customizeCitationVisibility"
                 withBackground
                 spaceBetweenLabelAndToggle

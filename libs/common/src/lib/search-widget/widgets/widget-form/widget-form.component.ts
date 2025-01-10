@@ -97,6 +97,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     feedback: new FormControl<WidgetFeedback>('none', { nonNullable: true }),
     lang: new FormControl<string>('', { nonNullable: true }),
     customizeCitationVisibility: new FormControl<boolean>(false, { nonNullable: true }),
+    collapseTextBlocks: new FormControl<boolean>(false, { nonNullable: true }),
     citationVisibility: new FormControl<'expanded' | 'collapsed'>('expanded', { nonNullable: true }),
   });
 

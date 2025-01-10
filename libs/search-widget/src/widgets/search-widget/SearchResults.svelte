@@ -9,6 +9,7 @@
   import {
     _,
     debug,
+    collapseTextBlocks,
     downloadDump,
     getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
@@ -137,24 +138,29 @@
           <div
             class="results-end"
             use:renderingDone />
-        {:else}
-          <div class="search-results">
-            {#each $resultList as result, i (getResultUniqueKey(result))}
-              <ResultRow
-                {result}
-                answerRank={0} />
-              {#if i === $resultList.length - 1}
-                <div
-                  class="results-end"
-                  use:renderingDone />
+        {:else if $resultList.length > 0}
+          <div>
+            <h3 class="title-s">{$_('results.title')}</h3>
+            <div
+              class="search-results"
+              class:collapsed={$collapseTextBlocks}>
+              {#each $resultList as result, i (getResultUniqueKey(result))}
+                <ResultRow
+                  {result}
+                  answerRank={0} />
+                {#if i === $resultList.length - 1}
+                  <div
+                    class="results-end"
+                    use:renderingDone />
+                {/if}
+              {/each}
+              {#if $hasMore && !$hideResults}
+                <InfiniteScroll
+                  hasMore={$hasMore}
+                  {scrollableContainerSelector}
+                  on:loadMore={onLoadMore} />
               {/if}
-            {/each}
-            {#if $hasMore && !$hideResults}
-              <InfiniteScroll
-                hasMore={$hasMore}
-                {scrollableContainerSelector}
-                on:loadMore={onLoadMore} />
-            {/if}
+            </div>
           </div>
         {/if}
       </div>

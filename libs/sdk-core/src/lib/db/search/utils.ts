@@ -126,6 +126,7 @@ export interface WidgetFeatures {
   semanticOnly?: boolean;
   expandCitations?: boolean;
   collapseCitations?: boolean;
+  collapseTextBlocks?: boolean;
   displaySearchButton?: boolean;
 }
 
