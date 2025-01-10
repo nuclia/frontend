@@ -265,6 +265,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
 
   onToggleFilter() {
+    this.allFieldTypesSelected = this.fieldTypeFilters.every((option) => option.selected);
     this.selectedFilters.next(this.selectedFieldTypes.concat(this.labelFilters));
   }
 
