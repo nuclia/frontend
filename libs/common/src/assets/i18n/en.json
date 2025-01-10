@@ -1420,8 +1420,6 @@
 	"tasks-automation.form.filter.fields.all-types": "All field types",
 	"tasks-automation.form.filter.fields.button-label": "Field types",
 	"tasks-automation.form.filter.resource-labels.button-label": "Resource labels",
-	"tasks-automation.form.filter.resource-type.all-types": "All resource types",
-	"tasks-automation.form.filter.resource-type.button-label": "Resource types",
 	"tasks-automation.form.filter.search-in.content": "Content contains",
 	"tasks-automation.form.filter.search-in.title": "Title contains",
 	"tasks-automation.form.filter.search-in.title-or-content": "Title or content contains",

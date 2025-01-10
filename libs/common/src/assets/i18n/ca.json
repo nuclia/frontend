@@ -1420,8 +1420,6 @@
 	"tasks-automation.form.filter.fields.all-types": "Tots els tipus de camp",
 	"tasks-automation.form.filter.fields.button-label": "Tipus de camp",
 	"tasks-automation.form.filter.resource-labels.button-label": "Etiquetes de recursos",
-	"tasks-automation.form.filter.resource-type.all-types": "Tots els tipus de recursos",
-	"tasks-automation.form.filter.resource-type.button-label": "Tipus de Recursos",
 	"tasks-automation.form.filter.search-in.content": "El contingut conté",
 	"tasks-automation.form.filter.search-in.title": "El títol conté",
 	"tasks-automation.form.filter.search-in.title-or-content": "El títol o el contingut conté",

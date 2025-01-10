@@ -44,7 +44,6 @@ import {
   TaskTrigger,
 } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
-import { Filters, formatFiltersFromFacets, MIME_FACETS } from '../../resources';
 import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
@@ -55,7 +54,6 @@ export interface TaskFormCommonConfig {
   filter: {
     //searchIn: 'titleOrContent' | 'title' | 'content';
     contains: string[];
-    resource_type: string[];
     field_types: string[];
   };
   llm: LLMConfig;
@@ -141,18 +139,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   resourceCount?: number;
 
-  resourceTypeFilters: OptionModel[] = [];
-  allResourceTypesSelected = false;
-  get resourceTypeSelectionCount(): number {
-    return this.resourceTypeFilters.filter((option) => option.selected).length;
-  }
-  get resourceTypeTotalCount(): number {
-    return this.resourceTypeFilters.length;
-  }
-  get selectedResourceTypes() {
-    return this.resourceTypeFilters.filter((option) => option.selected).map((option) => option.value);
-  }
-
   fieldTypeFilters: OptionModel[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text, FIELD_TYPE.conversation].map(
     (t) => new OptionModel({ id: longToShortFieldType(t), value: longToShortFieldType(t), label: t }),
   );
@@ -227,27 +213,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         this.form.controls.llm.patchValue({ model: 'chatgpt-azure-4o-mini' });
       });
 
-    this.sdk.currentKb
-      .pipe(
-        switchMap((kb) => kb.catalog('', { faceted: MIME_FACETS })),
-        map((results) => {
-          if (results.type === 'error') {
-            return;
-          }
-          const facets: Search.FacetsResult = results.fulltext?.facets || {};
-          return formatFiltersFromFacets(facets);
-        }),
-        filter((filters) => !!filters),
-        map((filters) => filters as Filters),
-      )
-      .subscribe((filters) => {
-        this.resourceTypeFilters = filters.mainTypes.map((filter) => ({
-          ...filter,
-          value: filter.value.split('/').slice(2).join('/'),
-        }));
-        this.cdr.detectChanges();
-      });
-
     combineLatest([this.form.valueChanges, this.selectedFilters])
       .pipe(
         filter(([data]) => data.applyTaskTo === 'EXISTING'),
@@ -277,11 +242,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     const tagName = (event.target as HTMLElement).tagName;
     if (tagName === 'LI' || tagName === 'INPUT') {
       switch (filter) {
-        case 'types':
-          this.resourceTypeFilters = this.resourceTypeFilters.map(
-            (option) => new OptionModel({ ...option, selected: !this.allResourceTypesSelected }),
-          );
-          break;
         case 'fieldTypes':
           this.fieldTypeFilters = this.fieldTypeFilters.map(
             (option) => new OptionModel({ ...option, selected: !this.allFieldTypesSelected }),
@@ -305,9 +265,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
 
   onToggleFilter() {
-    this.allResourceTypesSelected = this.resourceTypeFilters.every((option) => option.selected);
-    this.allFieldTypesSelected = this.fieldTypeFilters.every((option) => option.selected);
-    this.selectedFilters.next(this.selectedResourceTypes.concat(this.selectedFieldTypes).concat(this.labelFilters));
+    this.selectedFilters.next(this.selectedFieldTypes.concat(this.labelFilters));
   }
 
   activateTask() {
@@ -327,7 +285,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         : undefined,
       filter: {
         contains: rawValue.filter.contains ? [rawValue.filter.contains] : [],
-        resource_type: this.selectedResourceTypes,
         field_types: this.selectedFieldTypes,
       },
     });

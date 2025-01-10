@@ -31,18 +31,6 @@
           <div>{{ filter.contains?.[0] || '-' }}</div>
         </div>
         <div class="separator-line"></div>
-        <div class="setting">
-          <label>{{ 'tasks-automation.form.filter.resource-type.button-label' | translate }}</label>
-          <div class="filters">
-            @if (filter.resource_type?.length) {
-              @for (type of filter.resource_type; track type) {
-                <nsi-badge>{{ type }}</nsi-badge>
-              }
-            } @else {
-              <nsi-badge>{{ 'generic.all' | translate }}</nsi-badge>
-            }
-          </div>
-        </div>
         @if (fieldTypes.length > 0) {
           <div class="separator-line"></div>
           <div class="setting">
