@@ -28,6 +28,7 @@
     type TypedResult,
   } from '../../core';
   import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
+  import { take } from 'rxjs';
 
   export let answer: Partial<Ask.Answer>;
   export let rank = 0;
@@ -156,7 +157,7 @@
   }
 
   function copyAnswer() {
-    disclaimer.subscribe((message) => {
+    disclaimer.pipe(take(1)).subscribe((message) => {
       if (message) {
         showDisclaimer = true;
       } else {
