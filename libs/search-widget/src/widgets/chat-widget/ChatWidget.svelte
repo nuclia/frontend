@@ -132,7 +132,6 @@
       (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
       {},
     );
-    console.log('features', _features);
 
     _ragStrategies = getRAGStrategies(rag_strategies);
     _ragImageStrategies = getRAGImageStrategies(rag_images_strategies);
