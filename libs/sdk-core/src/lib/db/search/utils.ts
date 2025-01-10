@@ -92,6 +92,7 @@ export function getRAGImageStrategies(ragImageStrategies: string): RAGImageStrat
 
 export interface WidgetFeatures {
   filter?: boolean;
+  highlight?: boolean;
   navigateToFile?: boolean;
   navigateToLink?: boolean;
   permalink?: boolean;

@@ -240,7 +240,6 @@
       },
       state,
       {
-        highlight: true,
         features: _features,
         prompt,
         system_prompt,

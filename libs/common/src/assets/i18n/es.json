@@ -1137,6 +1137,8 @@
 	"search.configuration.search-box.filters.filter-by-labels": "Filtrar per etiquetas",
 	"search.configuration.search-box.filters.toggle-description": "El usuario podrá aplicar filtros a la búsqueda.",
 	"search.configuration.search-box.filters.toggle-label": "Mostrar botón para filtrar",
+	"search.configuration.search-box.highlight.toggle-description": "Resaltar las palabras clave encontradas.",
+	"search.configuration.search-box.highlight.toggle-label": "Destacar",
 	"search.configuration.search-box.preselected-filters.assistant.add-expression-button": "Añadir expresión",
 	"search.configuration.search-box.preselected-filters.assistant.add-filter": "Añadir filtro",
 	"search.configuration.search-box.preselected-filters.assistant.delete-expression-button": "Eliminar expresión",
