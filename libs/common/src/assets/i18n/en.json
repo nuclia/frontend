@@ -1253,6 +1253,8 @@
 	"search.widgets.form.search-config-title": "Search configuration",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-description": "Change the text that you want to appear in the chat bar when not active. The default text is “Let's talk”.",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-label": "Customize chat bar placeholder",
+	"search.widgets.form.widget-options.collapse-text-blocks.toggle-description": "Text blocks from citations and results will be initially collapsed.",
+	"search.widgets.form.widget-options.collapse-text-blocks.toggle-label": "Collapse text blocks by default",
 	"search.widgets.form.widget-options.copy-disclaimer.input-label": "Message to display",
 	"search.widgets.form.widget-options.copy-disclaimer.toggle-description": "Display a message when the user use the Copy button to copy the answer",
 	"search.widgets.form.widget-options.copy-disclaimer.toggle-label": "Copy button disclaimer",

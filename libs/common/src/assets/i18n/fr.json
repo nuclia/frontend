@@ -1253,6 +1253,8 @@
 	"search.widgets.form.search-config-title": "Configuration de la recherche",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-description": "Modifier le texte que vous souhaitez voir apparaître dans la barre de discussion lorsqu'il n'est pas actif. Le texte par défaut est « Discutons ».",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-label": "Personnaliser le placeholder de la barre de discussion",
+	"search.widgets.form.widget-options.collapse-text-blocks.toggle-description": "Les blocs de texte provenant de citations et de résultats seront initialement réduits.",
+	"search.widgets.form.widget-options.collapse-text-blocks.toggle-label": "Réduire les blocs de texte par défaut",
 	"search.widgets.form.widget-options.copy-disclaimer.input-label": "Message à afficher",
 	"search.widgets.form.widget-options.copy-disclaimer.toggle-description": "Afficher un message lorsque l'utilisateur utilise le bouton Copier pour copier la réponse",
 	"search.widgets.form.widget-options.copy-disclaimer.toggle-label": "Avertissement sur le bouton Copier",

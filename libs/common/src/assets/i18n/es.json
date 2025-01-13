@@ -1253,6 +1253,8 @@
 	"search.widgets.form.search-config-title": "Configuración de búsqueda",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-description": "Cambia el texto que quieres que aparezca en la barra de chat cuando no esté activa. El texto predeterminado es “Charlemos”.",
 	"search.widgets.form.widget-options.chat-placeholder.toggle-label": "Personalizar el placeholder de la barra de chat",
+	"search.widgets.form.widget-options.collapse-text-blocks.toggle-description": "Los bloques de texto de citas y resultados estarán  inicialmente contraídos.",
+	"search.widgets.form.widget-options.collapse-text-blocks.toggle-label": "Contraer bloques de texto de forma predeterminada",
 	"search.widgets.form.widget-options.copy-disclaimer.input-label": "Mensaje para mostrar",
 	"search.widgets.form.widget-options.copy-disclaimer.toggle-description": "Mostrar un mensaje cuando el usuario utiliza el botón Copiar para copiar la respuesta",
 	"search.widgets.form.widget-options.copy-disclaimer.toggle-label": "Advertencia del botón Copiar",

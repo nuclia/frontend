@@ -123,6 +123,7 @@ export interface WidgetConfiguration {
   speechSynthesis: boolean;
   feedback: WidgetFeedback;
   lang: string;
+  collapseTextBlocks: boolean;
   customizeCitationVisibility: boolean;
   citationVisibility: 'expanded' | 'collapsed';
 }
@@ -250,6 +251,7 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   speechSynthesis: false,
   feedback: 'none',
   lang: '',
+  collapseTextBlocks: false,
   customizeCitationVisibility: false,
   citationVisibility: 'expanded',
 };
@@ -309,6 +311,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     noChatHistory: widgetOptions.noChatHistory,
     speech: widgetOptions.speech,
     speechSynthesis: widgetOptions.speechSynthesis,
+    collapseTextBlocks: widgetOptions.collapseTextBlocks,
     expandCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'expanded',
     collapseCitations: widgetOptions.customizeCitationVisibility && widgetOptions.citationVisibility === 'collapsed',
   };

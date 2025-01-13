@@ -48,23 +48,25 @@
 </script>
 
 <div class="sw-expander">
-  <div
-    on:click={() => (expanded = !expanded)}
-    on:keypress={(e) => {
-      if (e.key === 'Enter') {
-        expanded = !expanded;
-      }
-    }}
-    class="header"
-    class:expanded>
-    <span class="expander-icon">
-      <IconButton
-        icon="chevron-right"
-        size="small"
-        aspect="basic" />
-    </span>
-    <slot name="header" />
-  </div>
+  {#if $$slots.header}
+    <div
+      on:click={() => (expanded = !expanded)}
+      on:keypress={(e) => {
+        if (e.key === 'Enter') {
+          expanded = !expanded;
+        }
+      }}
+      class="header"
+      class:expanded>
+      <span class="expander-icon">
+        <IconButton
+          icon="chevron-right"
+          size="small"
+          aspect="basic" />
+      </span>
+      <slot name="header" />
+    </div>
+  {/if}
   <div
     class="expander-content"
     style:height="{contentHeight}px"

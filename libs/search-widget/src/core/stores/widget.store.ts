@@ -58,3 +58,4 @@ export const expandedCitations: Observable<boolean | undefined> = widgetFeatures
   map((features) => (features?.expandCitations ? true : features?.collapseCitations ? false : undefined)),
 );
 export const hasSearchButton = widgetFeatures.pipe(map((features) => !!features?.displaySearchButton));
+export const collapseTextBlocks = widgetFeatures.pipe(map((features) => !!features?.collapseTextBlocks));

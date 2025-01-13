@@ -74,6 +74,7 @@
 	"results.more_labels": "{{count}}  autres labels",
 	"results.sentences": "Phrases pertinentes",
 	"results.summary": "Résumé",
+	"results.title": "Résultats",
 	"suggest.entities": "Saisie semi-automatique à partir des NER",
 	"suggest.intents": "Labels",
 	"suggest.titles": "Titres suggérés",

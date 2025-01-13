@@ -76,6 +76,7 @@
 	"results.more_labels": "{{count}} etiquetes més",
 	"results.sentences": "Frases rellevants",
 	"results.summary": "Resum",
+	"results.title": "Resultats",
 	"suggest.entities": "Autocompletar des de NERs",
 	"suggest.intents": "Etiquetes",
 	"suggest.titles": "Títols suggerits",
