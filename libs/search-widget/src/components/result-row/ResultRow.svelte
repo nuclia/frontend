@@ -40,7 +40,7 @@
   export let answerRank: number | undefined;
 
   let thumbnailLoaded = false;
-  let showAllResults = false;
+  let showAllResults = $collapseTextBlocks;
 
   let thumbnailInfo = { fallback: '', isPlayable: false };
   let innerWidth = window.innerWidth;
@@ -219,6 +219,7 @@
                 <ParagraphResult
                   {paragraph}
                   resultType={result.resultType}
+                  expanded={$collapseTextBlocks}
                   ellipsis={true}
                   minimized={isMobile}
                   on:open={() => clickOnResult(paragraph, index)}
@@ -243,7 +244,7 @@
           {/each}
         </ul>
 
-        {#if paragraphs.length > 4}
+        {#if paragraphs.length > 4 && !$collapseTextBlocks}
           <AllResultsToggle
             {showAllResults}
             on:toggle={() => (showAllResults = !showAllResults)} />

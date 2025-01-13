@@ -15,9 +15,9 @@
   export let minimized = false;
   export let noIndicator = false;
   export let disabled = false;
+  export let expanded = false;
 
   let hovering = false;
-  let expanded = false;
   let hasEllipsis = false;
 
   const dispatch = createEventDispatcher();
