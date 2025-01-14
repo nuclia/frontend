@@ -223,27 +223,63 @@ export function getHighlightedAnnotations(allAnnotations: EntityAnnotation[]): E
 }
 
 export function getAnnotatedText(
-  paragraphId: string,
   paragraphText: string,
   annotations: EntityAnnotation[],
   selectedFamily?: EntityGroup | null,
 ): string {
   let textWithMarks = '';
   let currentIndex = 0;
-  annotations.forEach((annotation) => {
-    let highlightedStyle = '';
-    if (selectedFamily?.id === annotation.klass) {
-      highlightedStyle = `style="background-color:${selectedFamily.color}"`;
+  // Annotations might overlap each other
+  const markPositions = combineOverlaps(annotations);
+
+  markPositions.forEach((position) => {
+    let markText = sliceUnicode(paragraphText, position.start, position.end);
+    if (selectedFamily) {
+      const selectedAnnotations = annotations
+        .filter((annotation) => annotation.klass === selectedFamily?.id)
+        .filter((annotation) => annotation.start >= position.start && annotation.start < position.end);
+      markText = getMarkWithSelectedAnnotations(paragraphText, position, selectedAnnotations, selectedFamily?.color);
     }
-    textWithMarks += `${sliceUnicode(paragraphText, currentIndex, annotation.start)}<mark title="${
-      annotation.family
-    }" family="${annotation.klass}" start="${annotation.start}" end="${annotation.end}" token="${
-      annotation.token
-    }" ${highlightedStyle} >${sliceUnicode(paragraphText, annotation.start, annotation.end)}</mark>`;
-    currentIndex = annotation.end;
+    textWithMarks += `${sliceUnicode(paragraphText, currentIndex, position.start)}<mark>${markText}</mark>`;
+    currentIndex = position.end;
   });
   textWithMarks += sliceUnicode(paragraphText, currentIndex);
   return textWithMarks;
+}
+
+function getMarkWithSelectedAnnotations(
+  paragraphText: string,
+  position: { start: number; end: number },
+  selectedAnnotations: EntityAnnotation[],
+  color: string,
+) {
+  let text = '';
+  let index = position.start;
+  const highlightedStyle = `style="background-color:${color}"`;
+
+  combineOverlaps(selectedAnnotations).forEach((selected) => {
+    const selectedText = sliceUnicode(paragraphText, selected.start, selected.end);
+    text += `${sliceUnicode(paragraphText, index, selected.start)}<span ${highlightedStyle}>${selectedText}</span>`;
+    index = selected.end;
+  });
+  text += sliceUnicode(paragraphText, index, position.end);
+  return text;
+}
+
+function combineOverlaps(annotations: EntityAnnotation[]) {
+  return annotations.sort(sortByPosition).reduce(
+    (acc, curr) => {
+      const previous = acc[acc.length - 1];
+      const isOverlapping = curr.start >= previous?.start && curr.start <= previous?.end;
+      if (isOverlapping) {
+        acc[acc.length - 1] = { start: previous.start, end: Math.max(previous.end, curr.end) };
+      } else {
+        acc.push({ start: curr.start, end: curr.end });
+      }
+      return acc;
+    },
+    [] as { start: number; end: number }[],
+  );
 }
 
 /**

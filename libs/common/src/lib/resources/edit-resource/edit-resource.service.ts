@@ -119,7 +119,7 @@ export class EditResourceService {
             return {
               id: groupId,
               title: getNerFamilyTitle(groupId, group, this.translate),
-              color: group.color || generatedColor,
+              color: group.color || generatedColor || '#c4c4c4',
               entities: [],
               custom: group.custom,
             };

@@ -59,7 +59,7 @@ export class ParagraphAnnotationService extends ParagraphService {
         ...paragraph,
         paragraphId,
         text: paragraphText,
-        annotatedText: getAnnotatedText(paragraphId, paragraphText, highlightedAnnotation),
+        annotatedText: getAnnotatedText(paragraphText, highlightedAnnotation),
         annotations: allParagraphAnnotations,
       };
       return enhancedParagraph;
@@ -73,7 +73,6 @@ export class ParagraphAnnotationService extends ParagraphService {
         return {
           ...paragraph,
           annotatedText: getAnnotatedText(
-            paragraph.paragraphId,
             paragraph.text,
             highlightedAnnotations,
             this.selectedFamilyValue,
