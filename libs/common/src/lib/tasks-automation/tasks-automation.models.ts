@@ -40,7 +40,7 @@ export function mapBatchToOneTimeTask(task: TaskOnBatch): OneTimeTask {
 export function mapOnGoingToAutomatedTask(task: TaskOnGoing): AutomatedTask {
   return {
     id: task.id,
-    taskName: task.task.name,
+    taskName: task.task.name || '',
     type: 'automated',
     creationDate: task.defined_at ? `${task.defined_at}+00:00` : '',
     ...mapParameters(task.parameters),
@@ -49,10 +49,10 @@ export function mapOnGoingToAutomatedTask(task: TaskOnGoing): AutomatedTask {
 
 function mapParameters(parameters: TaskParameters): TaskConfiguration {
   return {
-    title: parameters.name,
+    title: parameters.name || '',
     filters: [
-      { label: 'contains', count: parameters.filter.contains?.length || 0 },
-      { label: 'field_types', count: parameters.filter.field_types?.length || 0 },
+      { label: 'contains', count: parameters.filter?.contains?.length || 0 },
+      { label: 'field_types', count: parameters.filter?.field_types?.length || 0 },
     ],
     hasPrompt: false, // TODO: extract prompt from parameters
     labelSets: (parameters.operations || [])
