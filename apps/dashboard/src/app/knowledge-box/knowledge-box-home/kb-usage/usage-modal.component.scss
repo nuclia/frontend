@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .usage-modal-chart-container {
   margin-left: calc(-1 * #{rhythm(2)});

@@ -1,5 +1,5 @@
-@import 'apps/dashboard/src/variables';
-@import '../select-account.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use '../select-account.tokens' as tokens;
 
 :host {
   height: 100%;
@@ -47,7 +47,7 @@
     // Move scrollbar to the edge
     padding: 0 rhythm(2);
     margin: 0 -#{rhythm(2)};
-    max-height: calc(#{$height-page-container} - #{$vertical-padding} * 4 - #{rhythm(9)});
+    max-height: calc(#{tokens.$height-page-container} - #{tokens.$vertical-padding} * 4 - #{rhythm(9)});
     @include scrollbar-black();
   }
 

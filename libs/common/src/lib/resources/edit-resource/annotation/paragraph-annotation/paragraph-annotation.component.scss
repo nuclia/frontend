@@ -1,8 +1,7 @@
-@import 'apps/dashboard/src/variables';
-@import '../../edit-resource.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use '../../edit-resource.tokens' as tokens;
 
 .paragraph-container {
-
   p {
     margin-bottom: 0;
 
@@ -22,11 +21,11 @@
 
   .ner-families-container {
     max-height: calc(
-      100vh - var(--app-topbar-height) - #{$height-header} - var(--app-layout-padding-top) - #{$height-help-container}
+      100vh - var(--app-topbar-height) - #{tokens.$height-header} - var(--app-layout-padding-top) - #{tokens.$height-help-container}
     );
     position: sticky;
     overflow: auto;
-    top: calc(#{$sticky-top} + #{$height-help-container});
+    top: calc(#{tokens.$sticky-top} + #{tokens.$height-help-container});
   }
 
   pa-expander ::ng-deep .pa-expander-header {

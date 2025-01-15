@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .onboarding-container {
   background: $color-light-stronger;

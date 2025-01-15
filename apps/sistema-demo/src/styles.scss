@@ -1,7 +1,8 @@
-@import '../../../libs/sistema/theme/fonts';
-@import '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
-@import '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/grid';
-@import 'libs/sistema/styles/apps-common';
+@use '../../../libs/sistema/theme/fonts';
+@use '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
+@use 'apps/sistema-demo/src/variables' as *;
+@use '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/grid';
+@use 'libs/sistema/styles/apps-common';
 
 .form-field-config {
   .state-option {

@@ -1,8 +1,8 @@
-@import 'apps/dashboard/src/variables';
-@import '../edit-resource.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use '../edit-resource.tokens' as tokens;
 
 .markdown-table {
-  max-width: calc($width-page-content - rhythm(3));
+  max-width: calc(tokens.$width-page-content - rhythm(3));
   overflow-x: auto;
   ::ng-deep table {
     td,

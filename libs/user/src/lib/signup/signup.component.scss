@@ -1,5 +1,5 @@
-@import 'apps/dashboard/src/variables';
-@import '../user-layout';
+@use 'apps/dashboard/src/variables' as *;
+@use '../user-layout';
 
 .main-container {
   gap: rhythm(4);

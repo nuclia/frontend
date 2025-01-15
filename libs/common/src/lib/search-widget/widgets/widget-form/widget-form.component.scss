@@ -1,5 +1,5 @@
-@import 'apps/dashboard/src/variables';
-@import '../../common-form';
+@use 'apps/dashboard/src/variables' as *;
+@use '../../common-form';
 
 $vertical-gap: rhythm(4);
 $header-height: rhythm(10) + rhythm(1) + $vertical-gap * 2;

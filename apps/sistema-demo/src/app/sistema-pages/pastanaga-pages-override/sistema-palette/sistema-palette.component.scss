@@ -1,4 +1,4 @@
-@import '../../../../variables';
+@use 'apps/sistema-demo/src/variables' as *;
 
 .color-success-stronger {
   background-color: $color-success-stronger;

@@ -1,4 +1,4 @@
-@import 'variables';
+@use '../../../../styles/variables' as *;
 
 $inner-size-small: rhythm(4);
 $inner-size-medium: rhythm(6);

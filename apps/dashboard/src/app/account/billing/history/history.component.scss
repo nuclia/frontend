@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .history {
   max-width: calc(rhythm(90) + rhythm(24));

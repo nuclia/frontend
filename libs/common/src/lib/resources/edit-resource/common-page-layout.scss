@@ -1,4 +1,5 @@
-@import 'edit-resource.tokens';
+@use 'edit-resource.tokens' as tokens;
+@use 'apps/dashboard/src/variables' as *;
 
 .main-container {
   display: flex;
@@ -14,7 +15,7 @@
   position: absolute;
   background: white;
   top: 0;
-  padding: #{$sticky-top} calc(#{$width-page-content} - #{$width-search-input}) #{rhythm(2)} 0;
+  padding: #{tokens.$sticky-top} calc(#{tokens.$width-page-content} - #{$width-search-input}) #{rhythm(2)} 0;
   z-index: 1;
 
   pa-input {
@@ -28,10 +29,10 @@
 .scrollable-area {
   flex: 1 1 auto;
   padding: 0 0 0 rhythm(1.5);
-  max-width: $width-page-content;
+  max-width: tokens.$width-page-content;
 
   &.with-search-and-footer {
-    margin-top: $annotation-header-height;
+    margin-top: tokens.$annotation-header-height;
   }
 }
 
@@ -43,7 +44,7 @@
 
   > :first-child {
     position: sticky;
-    top: $sticky-top;
+    top: tokens.$sticky-top;
   }
 }
 
@@ -74,10 +75,10 @@
       display: flex;
       flex: 1 0 auto;
       justify-content: center;
-      height: $thumbnail-height;
+      height: tokens.$thumbnail-height;
       text-align: center;
       transition: background-color $transition-hint;
-      width: $thumbnail-width;
+      width: tokens.$thumbnail-width;
 
       &.file-over {
         background-color: $color-neutral-lightest;

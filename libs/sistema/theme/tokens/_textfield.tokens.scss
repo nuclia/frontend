@@ -1,5 +1,6 @@
-@import './palette.tokens';
-@import './typography.tokens';
+@use './palette.tokens' as palette;
+@use './typography.tokens' as typography;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
 
 //=====================================
 // SPACING
@@ -9,29 +10,29 @@ $margin-bottom-field: 0;
 //=====================================
 // FONTS
 //=====================================
-$font-weight-label: $font-weight-regular;
+$font-weight-label: typography.$font-weight-regular;
 
 //=====================================
 // COLORS
 //=====================================
-$color-text-field-label-error: $color-secondary-stronger;
-$color-caret-field-control-error: $color-secondary-strong;
+$color-text-field-label-error: palette.$color-secondary-stronger;
+$color-caret-field-control-error: palette.$color-secondary-strong;
 
-$color-background-field-regular: $color-light-stronger;
-$color-background-field-error: $color-secondary-lightest;
+$color-background-field-regular: palette.$color-light-stronger;
+$color-background-field-error: palette.$color-secondary-lightest;
 
 //=====================================
 // BORDERS
 //=====================================
-$border-color-field-regular: $color-neutral-light;
-$border-color-field-regular-hover: $color-neutral-regular;
-$border-color-field-error: $color-secondary-regular;
+$border-color-field-regular: palette.$color-neutral-light;
+$border-color-field-regular-hover: palette.$color-neutral-regular;
+$border-color-field-error: palette.$color-secondary-regular;
 
 //=====================================
 // SPACING and SHADOWS
 //=====================================
-$padding-field-control-top: rhythm(1);
-$height-field-control: calc(#{rhythm(5)} - #{rhythm(0.25)});
+$padding-field-control-top: spacing.rhythm(1);
+$height-field-control: calc(#{spacing.rhythm(5)} - #{spacing.rhythm(0.25)});
 $top-control-label: $padding-field-control-top;
-$translateY-text-field-label: rhythm(3);
-$top-select-chevron: rhythm(1);
+$translateY-text-field-label: spacing.rhythm(3);
+$top-select-chevron: spacing.rhythm(1);

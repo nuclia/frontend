@@ -1,5 +1,7 @@
-@import './palette.tokens';
-@import './spacing.tokens';
+@use 'sass:map';
+@use './palette.tokens' as palette;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/typography.tokens' as typography;
+@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
 
 // =================================================
 // TYPOGRAPHY
@@ -59,10 +61,10 @@ $font-size: (
   d3-md:  ($font-size-base * 3),      // 48px - 3 rem
 );
 @function font-size($t-shirt-size) {
-  @return map-get($font-size, $t-shirt-size);
+  @return map.get($font-size, $t-shirt-size);
 }
 
-$font-size-overline: rhythm(1);
+$font-size-overline: spacing.rhythm(1);
 $font-size-body-xs: font-size(xxs);
 $font-size-body-s: font-size(xs);
 $font-size-title-xxs: font-size(xs);
@@ -97,7 +99,7 @@ $line-height: (
   d3-md:  ($font-size-base * 2.75),   // 44px - 2.75 rem
 );
 @function line-height($t-shirt-size) {
-  @return map-get($line-height, $t-shirt-size);
+  @return map.get($line-height, $t-shirt-size);
 }
 
 $line-height-body: 1.4;
@@ -142,6 +144,104 @@ $letter-spacing-display-m-md: 0;
 // =================================================
 // SHADOWS
 // =================================================
-$shadow-small: 1px 1px 2px rgba($color-dark-stronger, 0.3);
+$shadow-small: 1px 1px 2px rgba(palette.$color-dark-stronger, 0.3);
 
-$color-text-disabled: $color-neutral-regular;
+$color-text-disabled: palette.$color-neutral-regular;
+
+@mixin overline {
+  font-size: $font-size-overline;
+  line-height: $line-height-overline;
+  letter-spacing: $letter-spacing-overline;
+  font-weight: $font-weight-overline;
+  text-transform: uppercase;
+}
+@mixin body-xs {
+  font-size: $font-size-body-xs;
+  line-height: $line-height-body-xs;
+  letter-spacing: $letter-spacing-body-xs;
+  font-weight: $font-weight-body-xs;
+}
+@mixin body-s {
+  font-size: $font-size-body-s;
+  line-height: $line-height-body-s;
+  letter-spacing: $letter-spacing-body-s;
+  font-weight: $font-weight-body-s;
+}
+@mixin body-m {
+  font-size: typography.$font-size-body-m;
+  line-height: $line-height-body-m;
+  letter-spacing: $letter-spacing-body-m;
+  font-weight: $font-weight-body-m;
+}
+@mixin title-xxs {
+  font-size: $font-size-title-xxs;
+  line-height: $line-height-title-xxs;
+  letter-spacing: $letter-spacing-title-xxs;
+  font-weight: $font-weight-title-xxs;
+}
+@mixin title-xs {
+  font-size: $font-size-title-xs;
+  line-height: $line-height-title-xs;
+  letter-spacing: $letter-spacing-title-xs;
+  font-weight: $font-weight-title-xs;
+}
+@mixin title-s-mobile {
+  font-size: $font-size-title-s;
+  line-height: $line-height-title-s;
+  letter-spacing: $letter-spacing-title-s;
+  font-weight: $font-weight-title-s;
+}
+@mixin title-s {
+  font-size: $font-size-title-s-md;
+  line-height: $line-height-title-s-md;
+  letter-spacing: $letter-spacing-title-s-md;
+  font-weight: $font-weight-title-s;
+}
+@mixin title-m-mobile {
+  font-size: $font-size-title-m;
+  line-height: $line-height-title-m;
+  letter-spacing: $letter-spacing-title-m;
+  font-weight: $font-weight-title-m;
+}
+@mixin title-m {
+  font-size: $font-size-title-m-md;
+  line-height: $line-height-title-m-md;
+  letter-spacing: $letter-spacing-title-m-md;
+  font-weight: $font-weight-title-m;
+}
+@mixin title-l-mobile {
+  font-size: $font-size-title-l;
+  line-height: $line-height-title-l;
+  letter-spacing: $letter-spacing-title-l;
+  font-weight: $font-weight-title-l;
+}
+@mixin title-l {
+  font-size: $font-size-title-l-md;
+  line-height: $line-height-title-l-md;
+  letter-spacing: $letter-spacing-title-l-md;
+  font-weight: $font-weight-title-l;
+}
+@mixin display-s-mobile {
+  font-size: $font-size-display-s;
+  line-height: $line-height-display-s;
+  letter-spacing: $letter-spacing-display-s;
+  font-weight: $font-weight-display-s;
+}
+@mixin display-s {
+  font-size: $font-size-display-s-md;
+  line-height: $line-height-display-s-md;
+  letter-spacing: $letter-spacing-display-s-md;
+  font-weight: $font-weight-display-s;
+}
+@mixin display-m-mobile {
+  font-size: $font-size-display-m;
+  line-height: $line-height-display-m;
+  letter-spacing: $letter-spacing-display-m;
+  font-weight: $font-weight-display-m;
+}
+@mixin display-m {
+  font-size: $font-size-display-m-md;
+  line-height: $line-height-display-m-md;
+  letter-spacing: $letter-spacing-display-m-md;
+  font-weight: $font-weight-display-m;
+}

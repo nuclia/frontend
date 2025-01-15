@@ -1,5 +1,5 @@
-@import 'apps/dashboard/src/variables';
-@import '../common-sync';
+@use 'apps/dashboard/src/variables' as *;
+@use '../common-sync';
 
 .inline-form {
   pa-select {

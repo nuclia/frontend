@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .topbar {
   background-color: $color-light-stronger;

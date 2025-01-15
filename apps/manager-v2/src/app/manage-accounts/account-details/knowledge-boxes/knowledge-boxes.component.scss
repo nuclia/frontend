@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'apps/manager-v2/src/variables' as *;
 
 .space-between {
   align-items: center;

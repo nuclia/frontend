@@ -1,5 +1,5 @@
-@import 'apps/dashboard/src/variables';
-@import 'task-form.common';
+@use 'apps/dashboard/src/variables' as *;
+@use 'task-form.common';
 
 :host {
   .filter-form-container {

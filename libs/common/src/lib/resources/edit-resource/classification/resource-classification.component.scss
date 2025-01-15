@@ -1,5 +1,5 @@
-@import 'apps/dashboard/src/variables';
-@import '../edit-resource.tokens';
+@use 'apps/dashboard/src/variables' as *;
+@use '../edit-resource.tokens' as tokens;
 
 .classification-container {
   display: flex;
@@ -17,6 +17,6 @@
 .label-selector-container {
   padding-right: rhythm(2);
   position: sticky;
-  top: calc(#{$sticky-top} + #{rhythm(6)});
+  top: calc(#{tokens.$sticky-top} + #{rhythm(6)});
   width: rhythm(32);
 }

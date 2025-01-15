@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .usage-container {
   max-width: calc(rhythm(90) + rhythm(6));

@@ -1,7 +1,8 @@
-@import '../charts-common';
+@use '../charts-common' as charts;
+@use 'apps/dashboard/src/variables' as *;
 
 .line-chart {
-  @include chart();
+  @include charts.chart();
 
   .data-line {
     stroke: $color-primary-regular;

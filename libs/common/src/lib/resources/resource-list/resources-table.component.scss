@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 $height-table-header: rhythm(8);
 $height-pagination: rhythm(9);
@@ -49,7 +49,10 @@ $height-pagination: rhythm(9);
 .table-container {
   position: relative;
   // Always display pagination at the bottom, even when there are few results
-  min-height: calc(100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - var(--filters-header-height) - #{$height-table-header} - #{$height-pagination} + rhythm(3));
+  min-height: calc(
+    100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - var(--filters-header-height) - #{$height-table-header} -
+      #{$height-pagination} + rhythm(3)
+  );
 }
 
 table {

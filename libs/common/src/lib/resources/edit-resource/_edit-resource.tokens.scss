@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 $height-header: rhythm(7);
 $padding-vertical-footer: rhythm(3);
@@ -7,7 +7,6 @@ $footer-margin: rhythm(5);
 
 $width-page-content: rhythm(80);
 
-$header-separator: inset 0 -1px 0 $color-neutral-light;
 $footer-separator: inset 0 1px 0 $color-neutral-light;
 
 $annotation-header-height: rhythm(9);

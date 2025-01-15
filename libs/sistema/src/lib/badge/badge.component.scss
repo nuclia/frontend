@@ -1,4 +1,5 @@
-@import '../../../styles/variables';
+@use '../../../styles/variables' as *;
+@use '../../../theme/tokens/_typography.tokens.scss' as typography;
 
 :host {
   align-items: center;
@@ -10,6 +11,10 @@
   height: rhythm(2.5);
   justify-content: space-between;
   padding: 0 rhythm(1);
+
+  &.overline {
+    @include typography.overline();
+  }
 
   .icon-and-text {
     align-items: center;

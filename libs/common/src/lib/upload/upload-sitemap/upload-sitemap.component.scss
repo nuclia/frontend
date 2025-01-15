@@ -1,4 +1,4 @@
-@import 'apps/dashboard/src/variables';
+@use 'apps/dashboard/src/variables' as *;
 
 .sitemap-form {
   display: flex;
@@ -22,7 +22,7 @@ nsi-info-card {
   flex-direction: column;
   gap: rhythm(2);
   margin: rhythm(2) 0;
-  
+
   .table-title {
     align-items: center;
     display: flex;
