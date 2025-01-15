@@ -51,7 +51,7 @@ export class SelectFirstFieldDirective implements OnDestroy {
           if (a.value && b.value && 'added' in a.value && 'added' in b.value) {
             return (a.value.added || '').localeCompare(b.value?.added || '');
           } else {
-            return 0;
+            return a.field_id.startsWith('da-') ? 1 : b.field_id.startsWith('da-') ? -1 : 0;
           }
         });
         const field: ResourceField = notGenericFields[0];

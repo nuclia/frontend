@@ -18,16 +18,23 @@
     margin-bottom: rhythm(3);
   }
 
-  .paragraph-container {
+  .resource-container {
     .title-m,
     .thumbnails-container {
       margin-bottom: rhythm(2);
     }
+  }
+
+  .paragraph-container {
+    margin-bottom: rhythm(2);
     .image {
       border: 1px solid $color-neutral-light;
       border-radius: $border-radius-default;
       max-width: rhythm(28);
       max-height: rhythm(24);
+    }
+    p {
+      margin: 0;
     }
     p.with-attachments {
       display: flex;
@@ -44,6 +51,12 @@
       nsi-badge {
         margin: rhythm(0.5);
       }
+    }
+    .labels-container {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      margin-top: rhythm(1);
     }
   }
 

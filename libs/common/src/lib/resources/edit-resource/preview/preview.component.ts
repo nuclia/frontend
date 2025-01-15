@@ -20,19 +20,16 @@ import {
   IError,
   Message,
   MessageAttachment,
-  Paragraph,
   Resource,
   TextField,
   TypeParagraph,
 } from '@nuclia/core';
 import {
-  getConversationParagraphs,
   getErrors,
   getMessages,
-  getParagraphs,
   getParagraphsWithImages,
   getTotalMessagePages,
-  ParagraphWithText,
+  ParagraphWithTextAndClassifications,
   ParagraphWithTextAndImage,
   Thumbnail,
 } from '../edit-resource.helpers';
@@ -56,7 +53,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   private router: Router = inject(Router);
 
   unsubscribeAll = new Subject<void>();
-  paragraphs: Observable<ParagraphWithText[]> = this.paragraphService.paragraphList;
+  paragraphs = this.paragraphService.paragraphList as Observable<ParagraphWithTextAndClassifications[]>;
   jsonTextField = this.editResourceService.currentFieldData.pipe(
     map((field) =>
       !!field && !!field.value && (field.value as TextField).format === 'JSON'
@@ -194,7 +191,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
         this.currentFieldId = fieldId;
         this.errors = getErrors(fieldId, resource);
         this.selectedTab = 'content';
-        this.initParagraphs(fieldId, resource, messages);
+        this.paragraphService.initParagraphs(fieldId, resource, messages || undefined);
         this.loaded = true;
         this.cdr.markForCheck();
       });
@@ -222,19 +219,6 @@ export class PreviewComponent implements OnInit, OnDestroy {
     if (typeof viewerElement?.$$c?.$destroy === 'function') {
       viewerElement.$$c.$destroy();
     }
-  }
-
-  initParagraphs(fieldId: FieldId, resource: Resource, messages: Message[] | null) {
-    const paragraphs: Paragraph[] = messages
-      ? getConversationParagraphs(fieldId, resource, messages)
-      : getParagraphs(fieldId, resource);
-    const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
-      ...paragraph,
-      paragraphId: this.editResource.getParagraphId(fieldId, paragraph),
-      text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
-    }));
-    this.paragraphService.setupParagraphs(enhancedParagraphs);
-    this.cdr.markForCheck();
   }
 
   openViewer() {
@@ -292,7 +276,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .subscribe(({ fieldId, resource, messages }) => {
         const newMessages = (this.messages.getValue() || []).concat(messages || []);
         this.messages.next(newMessages);
-        this.initParagraphs(fieldId, resource, newMessages);
+        this.paragraphService.initParagraphs(fieldId, resource, newMessages);
       });
   }
 

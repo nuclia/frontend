@@ -957,6 +957,7 @@
 	"resource.pagination.rows-per-page": "Files per pàgina",
 	"resource.preview.content": "Contingut del camp",
 	"resource.preview.general": "General",
+	"resource.preview.labels": "Etiquetes",
 	"resource.preview.open-viewer": "Visor obert",
 	"resource.preview.origin": "Origen",
 	"resource.preview.questions-answers": "Preguntes i respostes",

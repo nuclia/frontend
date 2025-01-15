@@ -39,7 +39,9 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
 
     combineLatest([this.fieldId, this.resource, this.entityFamilies])
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([fieldId, resource, families]) => this.annotationService.initParagraphs(fieldId, resource, families));
+      .subscribe(([fieldId, resource, families]) =>
+        this.annotationService.initParagraphsWithAnnotations(fieldId, resource, families),
+      );
   }
 
   override ngOnDestroy() {

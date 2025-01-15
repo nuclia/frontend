@@ -115,6 +115,19 @@
                 </span>
               </p>
             }
+            @if (paragraph.generatedClassifications?.length || paragraph.userClassifications?.length) {
+              <div class="labels-container">
+                <span class="title-xxs">{{ 'resource.preview.labels' | translate }}</span>
+                @for (label of paragraph.generatedClassifications; track label) {
+                  <nsi-badge>{{ label.label }}</nsi-badge>
+                }
+                @for (label of paragraph.userClassifications; track label) {
+                  @if (!label.cancelled_by_user) {
+                    <nsi-badge>{{ label.label }}</nsi-badge>
+                  }
+                }
+              </div>
+            }
           </div>
         }
         @if (hasMoreMessages | async) {
@@ -154,7 +167,7 @@
       }
     } @else {
       @if (resource | async; as resource) {
-        <div class="paragraph-container">
+        <div class="resource-container">
           <div class="title-m">{{ 'resource.preview.general' | translate }}</div>
 
           <div class="title-xxs">{{ 'generic.uid' | translate }}</div>
@@ -246,7 +259,7 @@
           }
         </div>
       } @else if (noField | async) {
-        <div class="paragraph-container">
+        <div class="resource-container">
           <p>{{ 'resource.error.no-field' | translate }}</p>
         </div>
       } @else {

@@ -957,6 +957,7 @@
 	"resource.pagination.rows-per-page": "Filas por página",
 	"resource.preview.content": "Contenido del campo",
 	"resource.preview.general": "General",
+	"resource.preview.labels": "Etiquetas",
 	"resource.preview.open-viewer": "Visor abierto",
 	"resource.preview.origin": "Origen",
 	"resource.preview.questions-answers": "Preguntas y respuestas",

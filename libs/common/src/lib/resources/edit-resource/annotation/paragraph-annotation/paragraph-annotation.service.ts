@@ -32,7 +32,7 @@ export class ParagraphAnnotationService extends ParagraphService {
     super();
   }
 
-  initParagraphs(fieldId: FieldId, resource: Resource, families: EntityGroup[]) {
+  initParagraphsWithAnnotations(fieldId: FieldId, resource: Resource, families: EntityGroup[]) {
     const paragraphs: ParagraphWithTextAndAnnotations[] = this.getEnhancedParagraphs(fieldId, resource, families);
     this.setupParagraphs(paragraphs);
   }
@@ -72,11 +72,7 @@ export class ParagraphAnnotationService extends ParagraphService {
         const highlightedAnnotations = getHighlightedAnnotations(paragraph.annotations);
         return {
           ...paragraph,
-          annotatedText: getAnnotatedText(
-            paragraph.text,
-            highlightedAnnotations,
-            this.selectedFamilyValue,
-          ),
+          annotatedText: getAnnotatedText(paragraph.text, highlightedAnnotations, this.selectedFamilyValue),
         };
       }),
     );
