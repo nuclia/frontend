@@ -1,6 +1,6 @@
 @use 'variables';
 @use '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
-@use '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/typography.tokens' as typography;
+@use '../../sistema/theme/tokens/_typography.tokens.scss' as typography;
 
 :root {
   --app-background-color: variables.$color-light-stronger;
