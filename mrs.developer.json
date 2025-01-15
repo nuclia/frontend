@@ -4,6 +4,6 @@
     "https": "https://github.com/plone/pastanaga-angular.git",
     "path": "/projects/pastanaga-angular/src",
     "package": "@guillotinaweb/pastanaga-angular",
-    "branch": "update-angular-19"
+    "tag": "2.68.0"
   }
 }
