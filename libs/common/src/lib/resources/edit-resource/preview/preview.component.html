@@ -58,11 +58,11 @@
                   </pa-dropdown>
                 </div>
               }
-              @if ((labelSets | async | keyvalue).length > 0) {
+              @if (((labelSets | async | keyvalue) || []).length > 0) {
                 <div>
                   <app-label-dropdown
                     [labelSets]="labelSets | async"
-                    [selection]="selectedLabels | async"
+                    [selection]="(selectedLabels | async) || []"
                     (selectionChange)="updateSelectedLabels($event)"
                     [fullWidth]="true"
                     [multiple]="true"
