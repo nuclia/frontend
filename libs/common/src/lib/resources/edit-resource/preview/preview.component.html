@@ -178,9 +178,9 @@
         @if (questionsAnswers | async; as questionsAnswers) {
           @for (item of questionsAnswers; track item.question.text) {
             <div class="question-answer">
-              <div class="title-xxs">Question</div>
+              <div class="title-xxs">{{ 'resource.preview.question' | translate }}</div>
               <p>{{ item.question.text }}</p>
-              <div class="title-xxs">Answers</div>
+              <div class="title-xxs">{{ 'resource.preview.answers' | translate }}</div>
               @for (answer of item.answers; track answer.text) {
                 <p>{{ answer.text }}</p>
               }
