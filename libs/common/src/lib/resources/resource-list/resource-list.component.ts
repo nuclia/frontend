@@ -14,6 +14,7 @@ import {
   getFilterFromVisibility,
   MAX_FACETS_PER_REQUEST,
   MIME_FACETS,
+  trimLabelSets,
 } from '../resource-filters.utils';
 import { Classification, getFilterFromLabel, getLabelFromFilter, LabelSets, Search } from '@nuclia/core';
 
@@ -290,26 +291,8 @@ export class ResourceListComponent implements OnDestroy {
       start: filters.creation?.start?.date,
       end: filters.creation?.end?.date,
     });
-    this.setDisplayedLabelSets(labelSets);
-  }
-
-  private setDisplayedLabelSets(labelSets: LabelSets) {
-    const filters = this.filterOptions.classification.map((option) => option.id);
-    this.displayedLabelSets = Object.entries(labelSets)
-      .map(([key, value]) => {
-        const labelSet = {
-          ...value,
-          labels: value.labels.filter((label) =>
-            filters.includes(getFilterFromLabel({ labelset: key, label: label.title })),
-          ),
-        };
-        return { key, labelSet };
-      })
-      .filter(({ labelSet }) => labelSet.labels.length > 0)
-      .reduce((acc, { key, labelSet }) => {
-        acc[key] = labelSet;
-        return acc;
-      }, {} as LabelSets);
+    const labels = filters.classification.map((option) => getLabelFromFilter(option.id));
+    this.displayedLabelSets = trimLabelSets(labelSets, labels);
     this.cdr.markForCheck();
   }
 }

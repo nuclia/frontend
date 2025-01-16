@@ -11,11 +11,17 @@
   }
 
   .filters-container {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: rhythm(1.5);
-    margin-bottom: rhythm(3);
+    margin-bottom: rhythm(4);
+    .selected-filters,
+    .filters {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: rhythm(1.5);
+    }
+    .selected-filters {
+      margin-top: rhythm(1.5);
+    }
   }
 
   .resource-container {
@@ -26,7 +32,7 @@
   }
 
   .paragraph-container {
-    margin-bottom: rhythm(2);
+    margin-bottom: rhythm(2.5);
     .image {
       border: 1px solid $color-neutral-light;
       border-radius: $border-radius-default;

@@ -1,5 +1,5 @@
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { Search } from '@nuclia/core';
+import { Classification, LabelSets, Search } from '@nuclia/core';
 import mime from 'mime';
 
 export const MIME_FACETS = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video', '/icon/message'];
@@ -127,4 +127,24 @@ export function getVisibilityFromFilter(filter: string) {
 
 export function getFilterFromVisibility(hidden: boolean) {
   return `${HIDDEN_PREFIX}/${hidden ? 'true' : 'false'}`
+}
+
+export function trimLabelSets(labelSets: LabelSets, classifications: Classification[]) {
+  return Object.entries(labelSets)
+    .map(([key, value]) => {
+      const labelSet = {
+        ...value,
+        labels: value.labels.filter((label) =>
+          classifications.some(
+            (classification) => classification.labelset === key && classification.label === label.title,
+          ),
+        ),
+      };
+      return { key, labelSet };
+    })
+    .filter(({ labelSet }) => labelSet.labels.length > 0)
+    .reduce((acc, { key, labelSet }) => {
+      acc[key] = labelSet;
+      return acc;
+    }, {} as LabelSets);
 }
