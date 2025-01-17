@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
-import { ParagraphWithText } from './edit-resource.helpers';
-import { FieldId, longToShortFieldType, Resource, Search } from '@nuclia/core';
+import {
+  getConversationParagraphs,
+  getParagraphs,
+  getParagraphsWithClassifications,
+  ParagraphWithText,
+} from './edit-resource.helpers';
+import { FieldId, longToShortFieldType, Message, Paragraph, Resource, Search } from '@nuclia/core';
 import { cloneDeep } from '@flaps/core';
 
 @Injectable({
@@ -38,6 +43,14 @@ export class ParagraphService {
     map(([paragraphs, loaded]) => !loaded || paragraphs.length > 0),
   );
   paragraphLoaded: Observable<boolean> = this._paragraphLoaded.asObservable();
+
+  initParagraphs(fieldId: FieldId, resource: Resource, messages?: Message[]) {
+    const paragraphs: Paragraph[] = messages
+      ? getConversationParagraphs(fieldId, resource, messages)
+      : getParagraphs(fieldId, resource);
+    const enhancedParagraphs = getParagraphsWithClassifications(paragraphs, fieldId, resource);
+    this.setupParagraphs(enhancedParagraphs);
+  }
 
   hasModifications(): boolean {
     return JSON.stringify(this._paragraphsBackup.value) !== JSON.stringify(this._allParagraphs.value);

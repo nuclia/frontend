@@ -31,35 +31,61 @@
       }
 
       @if (selectedTab === 'content') {
-        @if (((paragraphTypes | async) || []).length > 1) {
+        @if (hasFilters | async) {
           <div class="filters-container">
-            <div>
-              <nsi-dropdown-button
-                aspect="basic"
-                freeWidth
-                [popupRef]="paragraphTypeDropdown">
-                {{ 'Paragraph type' | translate }}
-              </nsi-dropdown-button>
-              <pa-dropdown #paragraphTypeDropdown>
-                @for (type of paragraphTypes | async; track type) {
-                  <pa-option
-                    [value]="type"
-                    (selectOption)="onClickOption(type, $event)"
-                    dontCloseOnSelect>
-                    <pa-checkbox
-                      [value]="((selectedTypes | async) || []).includes(type)"
-                      (change)="toggleType(type)">
-                      {{ type }}
-                    </pa-checkbox>
-                  </pa-option>
-                }
-              </pa-dropdown>
+            <div class="filters">
+              @if (((paragraphTypes | async) || []).length > 1) {
+                <div>
+                  <nsi-dropdown-button
+                    aspect="basic"
+                    freeWidth
+                    [popupRef]="paragraphTypeDropdown">
+                    {{ 'Paragraph type' | translate }}
+                  </nsi-dropdown-button>
+                  <pa-dropdown #paragraphTypeDropdown>
+                    @for (type of paragraphTypes | async; track type) {
+                      <pa-option
+                        [value]="type"
+                        (selectOption)="onClickOption(type, $event)"
+                        dontCloseOnSelect>
+                        <pa-checkbox
+                          [value]="((selectedTypes | async) || []).includes(type)"
+                          (change)="toggleType(type)">
+                          {{ type }}
+                        </pa-checkbox>
+                      </pa-option>
+                    }
+                  </pa-dropdown>
+                </div>
+              }
+              @if (((labelSets | async | keyvalue) || []).length > 0) {
+                <div>
+                  <app-label-dropdown
+                    [labelSets]="labelSets | async"
+                    [selection]="(selectedLabels | async) || []"
+                    (selectionChange)="updateSelectedLabels($event)"
+                    [fullWidth]="true"
+                    [multiple]="true"
+                    aspect="basic">
+                    {{ 'resource.classification-column' | translate }}
+                  </app-label-dropdown>
+                </div>
+              }
             </div>
-            @if (((selectedTypes | async)?.length || 0) > 0) {
-              <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
-            }
-            @for (type of selectedTypes | async; track type) {
-              <pa-chip-closeable (closed)="toggleType(type)">{{ type }}</pa-chip-closeable>
+            @if (hasSelectedFilters | async) {
+              <div class="selected-filters">
+                <div class="title-xxs">{{ 'resource.filtered-by' | translate }}</div>
+                @for (type of selectedTypes | async; track type) {
+                  <pa-chip-closeable (closed)="toggleType(type)">
+                    {{ type }}
+                  </pa-chip-closeable>
+                }
+                @for (label of selectedLabels | async; track label.labelset + label.label) {
+                  <pa-chip-closeable (closed)="removeLabel(label)">
+                    {{ label.labelset + '/' + label.label }}
+                  </pa-chip-closeable>
+                }
+              </div>
             }
           </div>
         }
@@ -115,6 +141,16 @@
                 </span>
               </p>
             }
+            @if (paragraph.activeClassifications.length > 0) {
+              <div class="labels-container">
+                <span class="title-xxs">{{ 'resource.preview.labels' | translate }}</span>
+                @for (label of paragraph.activeClassifications; track label.labelset + label.label) {
+                  <pa-chip [backgroundColor]="((labelSets | async) || {})[label.labelset]?.color">
+                    {{ label.label }}
+                  </pa-chip>
+                }
+              </div>
+            }
           </div>
         }
         @if (hasMoreMessages | async) {
@@ -142,9 +178,9 @@
         @if (questionsAnswers | async; as questionsAnswers) {
           @for (item of questionsAnswers; track item.question.text) {
             <div class="question-answer">
-              <div class="title-xxs">Question</div>
+              <div class="title-xxs">{{ 'resource.preview.question' | translate }}</div>
               <p>{{ item.question.text }}</p>
-              <div class="title-xxs">Answers</div>
+              <div class="title-xxs">{{ 'resource.preview.answers' | translate }}</div>
               @for (answer of item.answers; track answer.text) {
                 <p>{{ answer.text }}</p>
               }
@@ -154,7 +190,7 @@
       }
     } @else {
       @if (resource | async; as resource) {
-        <div class="paragraph-container">
+        <div class="resource-container">
           <div class="title-m">{{ 'resource.preview.general' | translate }}</div>
 
           <div class="title-xxs">{{ 'generic.uid' | translate }}</div>
@@ -246,7 +282,7 @@
           }
         </div>
       } @else if (noField | async) {
-        <div class="paragraph-container">
+        <div class="resource-container">
           <p>{{ 'resource.error.no-field' | translate }}</p>
         </div>
       } @else {

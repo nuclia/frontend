@@ -5,8 +5,8 @@ import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, t
 import { FieldId, LabelSets, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '@flaps/core';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
-import { ParagraphClassificationService } from './paragraph-classification.service';
 import { takeUntil } from 'rxjs/operators';
+import { ParagraphService } from '../../paragraph.service';
 
 @Component({
   templateUrl: './paragraph-classification.component.html',
@@ -32,9 +32,9 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
 
   availableLabels: Observable<LabelSets | null> = this.labelsService.textBlockLabelSets;
 
-  paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this.classificationService.paragraphs;
-  hasParagraph: Observable<boolean> = this.classificationService.hasParagraph;
-  paragraphLoaded: Observable<boolean> = this.classificationService.paragraphLoaded;
+  paragraphs = this.paragraphService.paragraphList as Observable<ParagraphWithTextAndClassifications[]>;
+  hasParagraph: Observable<boolean> = this.paragraphService.hasParagraph;
+  paragraphLoaded: Observable<boolean> = this.paragraphService.paragraphLoaded;
 
   previousQuery?: string;
   searchQuery = '';
@@ -45,7 +45,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private editResource: EditResourceService,
-    private classificationService: ParagraphClassificationService,
+    private paragraphService: ParagraphService,
     private labelsService: LabelsService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -55,13 +55,13 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
 
     combineLatest([this.fieldId, this.resource])
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([fieldId, resource]) => this.classificationService.initParagraphs(fieldId, resource));
+      .subscribe(([fieldId, resource]) => this.paragraphService.initParagraphs(fieldId, resource));
   }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-    this.classificationService.cleanup();
+    this.paragraphService.cleanup();
   }
 
   triggerSearch() {
@@ -71,7 +71,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
       this.extendedResults = false;
     }
     this._triggerSearch(this.searchQuery).subscribe((results) => {
-      this.classificationService.setSearchResults(results);
+      this.paragraphService.setSearchResults(results);
       this.updatePagination(results);
     });
   }
@@ -83,7 +83,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
       $event.stopPropagation();
       $event.preventDefault();
       this.searchQuery = '';
-      this.classificationService.setSearchResults(null);
+      this.paragraphService.setSearchResults(null);
       this.hasMoreResults = false;
       this.extendedResults = false;
       this.cdr.markForCheck();
@@ -93,7 +93,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   loadMore() {
     if (this.hasMoreResults && !this.extendedResults && this.searchQuery) {
       this._triggerSearch(this.searchQuery, true).subscribe((results) => {
-        this.classificationService.setSearchResults(results);
+        this.paragraphService.setSearchResults(results);
         this.updatePagination(results);
         this.extendedResults = true;
       });
@@ -109,7 +109,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   private _triggerSearch(query: string, extendedResults = false) {
     return forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))]).pipe(
       switchMap(([field, resource]) =>
-        this.classificationService.searchInField(query, resource, field, extendedResults),
+        this.paragraphService.searchInField(query, resource, field, extendedResults),
       ),
     );
   }

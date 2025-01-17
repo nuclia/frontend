@@ -14,36 +14,33 @@ import {
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphService } from '../paragraph.service';
 import {
+  Classification,
   FIELD_TYPE,
   FieldId,
   FileFieldData,
   IError,
   Message,
   MessageAttachment,
-  Paragraph,
   Resource,
   TextField,
   TypeParagraph,
 } from '@nuclia/core';
 import {
-  getConversationParagraphs,
   getErrors,
   getMessages,
-  getParagraphs,
   getParagraphsWithImages,
   getTotalMessagePages,
-  ParagraphWithText,
+  ParagraphWithTextAndClassifications,
   ParagraphWithTextAndImage,
   Thumbnail,
 } from '../edit-resource.helpers';
-import { SDKService } from '@flaps/core';
+import { LabelsService, SDKService } from '@flaps/core';
 import { SafeHtml } from '@angular/platform-browser';
 import { EditResourceService } from '../edit-resource.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceNavigationService } from '../resource-navigation.service';
 import { PreviewService } from './preview.service';
-
-const viewerId = 'viewer-widget';
+import { trimLabelSets } from '../../resource-filters.utils';
 
 @Component({
   templateUrl: './preview.component.html',
@@ -54,9 +51,10 @@ const viewerId = 'viewer-widget';
 export class PreviewComponent implements OnInit, OnDestroy {
   private route: ActivatedRoute = inject(ActivatedRoute);
   private router: Router = inject(Router);
+  private labelsService = inject(LabelsService);
 
   unsubscribeAll = new Subject<void>();
-  paragraphs: Observable<ParagraphWithText[]> = this.paragraphService.paragraphList;
+  paragraphs = this.paragraphService.paragraphList as Observable<ParagraphWithTextAndClassifications[]>;
   jsonTextField = this.editResourceService.currentFieldData.pipe(
     map((field) =>
       !!field && !!field.value && (field.value as TextField).format === 'JSON'
@@ -107,6 +105,25 @@ export class PreviewComponent implements OnInit, OnDestroy {
         .reduce((kinds, kind) => (kinds.includes(kind) ? kinds : [...kinds, kind]), [] as TypeParagraph[]),
     ),
   );
+  selectedLabels = new BehaviorSubject<Classification[]>([]);
+  labelSets = combineLatest([this.paragraphs, this.labelsService.textBlockLabelSets]).pipe(
+    map(([paragraphs, labelSets]) => {
+      const pararaphsLabels = paragraphs.reduce((acc, paragraph) => {
+        const paragraphLabels = paragraph.activeClassifications.filter(
+          (label) => !acc.some((item) => item.labelset === label.labelset && item.label === label.label),
+        );
+        return acc.concat(paragraphLabels);
+      }, [] as Classification[]);
+      return trimLabelSets(labelSets || {}, pararaphsLabels);
+    }),
+  );
+  hasFilters = combineLatest([this.labelSets, this.paragraphTypes]).pipe(
+    map(([labelSets, types]) => Object.keys(labelSets).length > 0 || types.length > 1),
+  );
+  hasSelectedFilters = combineLatest([this.selectedLabels, this.selectedTypes]).pipe(
+    map(([labels, types]) => labels.length > 0 || types.length > 0),
+  );
+
   renderedParagraphs: Observable<(ParagraphWithTextAndImage & { url?: Observable<string> })[]> = combineLatest([
     this.paragraphs,
     this.fieldId,
@@ -129,12 +146,20 @@ export class PreviewComponent implements OnInit, OnDestroy {
       });
     }),
   );
-  filteredParagraphs = combineLatest([this.renderedParagraphs, this.selectedTypes]).pipe(
-    map(([paragraphs, types]) =>
-      types.length === 0
-        ? paragraphs
-        : paragraphs.filter((paragraph) => paragraph.kind && types.includes(paragraph.kind)),
-    ),
+  filteredParagraphs = combineLatest([this.renderedParagraphs, this.selectedTypes, this.selectedLabels]).pipe(
+    map(([paragraphs, types, labels]) => {
+      if (types.length > 0) {
+        paragraphs = paragraphs.filter((paragraph) => paragraph.kind && types.includes(paragraph.kind));
+      }
+      if (labels.length > 0) {
+        paragraphs = paragraphs.filter((paragraph) =>
+          paragraph.activeClassifications.some((classification) =>
+            labels.some((label) => label.labelset === classification.labelset && label.label === classification.label),
+          ),
+        );
+      }
+      return paragraphs;
+    }),
   );
 
   questionsAnswers = this.editResourceService.currentFieldData.pipe(
@@ -194,7 +219,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
         this.currentFieldId = fieldId;
         this.errors = getErrors(fieldId, resource);
         this.selectedTab = 'content';
-        this.initParagraphs(fieldId, resource, messages);
+        this.paragraphService.initParagraphs(fieldId, resource, messages || undefined);
         this.loaded = true;
         this.cdr.markForCheck();
       });
@@ -222,19 +247,6 @@ export class PreviewComponent implements OnInit, OnDestroy {
     if (typeof viewerElement?.$$c?.$destroy === 'function') {
       viewerElement.$$c.$destroy();
     }
-  }
-
-  initParagraphs(fieldId: FieldId, resource: Resource, messages: Message[] | null) {
-    const paragraphs: Paragraph[] = messages
-      ? getConversationParagraphs(fieldId, resource, messages)
-      : getParagraphs(fieldId, resource);
-    const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
-      ...paragraph,
-      paragraphId: this.editResource.getParagraphId(fieldId, paragraph),
-      text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
-    }));
-    this.paragraphService.setupParagraphs(enhancedParagraphs);
-    this.cdr.markForCheck();
   }
 
   openViewer() {
@@ -269,6 +281,16 @@ export class PreviewComponent implements OnInit, OnDestroy {
     );
   }
 
+  updateSelectedLabels(labels: Classification[]) {
+    this.selectedLabels.next(labels);
+  }
+
+  removeLabel(label: Classification) {
+    this.selectedLabels.next(
+      this.selectedLabels.value.filter((item) => !(item.labelset === label.labelset && item.label === label.label)),
+    );
+  }
+
   getGeneratedFileUrl(path: string) {
     return this.sdk.currentKb.pipe(
       switchMap((kb) =>
@@ -292,7 +314,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .subscribe(({ fieldId, resource, messages }) => {
         const newMessages = (this.messages.getValue() || []).concat(messages || []);
         this.messages.next(newMessages);
-        this.initParagraphs(fieldId, resource, newMessages);
+        this.paragraphService.initParagraphs(fieldId, resource, newMessages);
       });
   }
 

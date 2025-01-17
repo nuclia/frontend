@@ -40,6 +40,7 @@ import {
   EntityGroup,
   getClassificationsPayload,
   getCustomEntities,
+  getParagraphId,
   Thumbnail,
 } from './edit-resource.helpers';
 import { generatedEntitiesColor, getNerFamilyTitle } from '../../entities/model';
@@ -346,8 +347,7 @@ export class EditResourceService {
 
   getParagraphId(field: FieldId, paragraph: Paragraph): string {
     const resource = this._resource.getValue();
-    const typeAbbreviation = longToShortFieldType(field.field_type);
-    return resource ? `${resource.id}/${typeAbbreviation}/${field.field_id}/${paragraph.start}-${paragraph.end}` : '';
+    return resource ? getParagraphId(resource.id, field, paragraph) : '';
   }
 
   private deleteField(fieldType: FIELD_TYPE, fieldId: string): Observable<void | null> {
