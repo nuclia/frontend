@@ -423,6 +423,7 @@ export class SearchConfigurationComponent {
 
   private updateWidget() {
     if (this.currentConfig) {
+      this.lastQuery = undefined;
       this.configUpdate.emit(this.currentConfig);
     }
   }
