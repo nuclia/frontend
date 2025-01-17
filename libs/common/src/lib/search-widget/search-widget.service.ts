@@ -245,7 +245,7 @@ export class SearchWidgetService {
   private reinitWidgetPreview() {
     const searchWidget = document.getElementsByTagName('nuclia-search-bar')[0] as unknown as any;
     if (this.currentQuery) {
-      searchWidget?.search(this.currentQuery, this.currentFilters);
+      searchWidget?.search(this.currentQuery, this.currentFilters, true);
     }
     searchWidget?.addEventListener('search', (event: { detail: { query: string; filters: string[] } }) => {
       this.currentQuery = event.detail.query;
