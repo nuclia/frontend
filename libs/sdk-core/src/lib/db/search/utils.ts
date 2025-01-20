@@ -38,6 +38,8 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
           full: rest.includes('full'),
           max_messages: rest.includes('full') || isNaN(maxMessages) ? undefined : maxMessages,
         };
+      } else if (name === RagStrategyName.GRAPH) {
+        return { name, hops: parseInt(rest[0], 10), top_k: parseInt(rest[1], 10) };
       } else {
         console.error(`Unknown RAG strategy: ${name}`);
         return undefined;

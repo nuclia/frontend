@@ -316,6 +316,7 @@ export enum RagStrategyName {
   NEIGHBOURING_PARAGRAPHS = 'neighbouring_paragraphs',
   PREQUERIES = 'prequeries',
   CONVERSATION = 'conversation',
+  GRAPH = 'graph',
 }
 
 export interface Prequery {
@@ -360,6 +361,15 @@ export interface ConversationalStrategy {
   full: boolean;
   max_messages?: number;
 }
+export interface GraphStrategy {
+  name: RagStrategyName.GRAPH;
+  hops: number;
+  top_k: number;
+  agentic_graph_only?: boolean;
+  relation_ranking?: 'generative' | 'reranker';
+  relation_text_as_paragraphs?: boolean;
+  query_entity_detection?: 'predict' | 'suggest';
+}
 export type RAGStrategy =
   | FieldExtensionStrategy
   | FullResourceStrategy
@@ -367,7 +377,8 @@ export type RAGStrategy =
   | MetadatasStrategy
   | NeighbouringParagraphsStrategy
   | PrequeriesStrategy
-  | ConversationalStrategy;
+  | ConversationalStrategy
+  | GraphStrategy;
 
 export enum RagImageStrategyName {
   PAGE_IMAGE = 'page_image',

@@ -332,6 +332,43 @@
           }
         </div>
       </div>
+      @if (isGraphSearchEnabled | async) {
+        <div class="config-form-field">
+          <pa-toggle
+            formControlName="graphRagStrategy"
+            withBackground
+            spaceBetweenLabelAndToggle
+            (valueChange)="heightChanged.emit()">
+            <span class="toggle-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.graph.toggle-label' | translate }}
+            </span>
+          </pa-toggle>
+          <div class="config-form-help">
+            {{ 'search.configuration.generative-answer.rag-strategies.graph.toggle-description' | translate }}
+          </div>
+          <div
+            class="extra-fields"
+            [class.visible]="graphEnabled"
+            formGroupName="graph">
+            <div class="extra-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.graph.hops-description' | translate }}
+            </div>
+            <pa-input
+              formControlName="hops"
+              type="number">
+              {{ 'search.configuration.generative-answer.rag-strategies.graph.hops' | translate }}
+            </pa-input>
+            <div class="extra-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.graph.top_k-description' | translate }}
+            </div>
+            <pa-input
+              formControlName="top_k"
+              type="number">
+              {{ 'search.configuration.generative-answer.rag-strategies.graph.top_k' | translate }}
+            </pa-input>
+          </div>
+        </div>
+      }
       <div class="config-form-field">
         <pa-toggle
           formControlName="fieldsAsContext"
