@@ -65,6 +65,7 @@ export class FeaturesService {
     promptSafetyTask: this.featureFlag.isFeatureEnabled('prompt-safety-task'),
     contentSafetyTask: this.featureFlag.isFeatureEnabled('content-safety-task'),
     taskAutomation: this.featureFlag.isFeatureEnabled('tasks-automation'),
+    graphSearch: this.featureFlag.isFeatureEnabled('graph-search'),
   };
 
   /**

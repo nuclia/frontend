@@ -89,7 +89,11 @@ export class RagLabComponent implements OnChanges {
               this.translate.instant('search.configuration.generative-answer.prefer-markdown.toggle-label'),
             );
           }
-          if (config.generativeAnswer.prompt || config.generativeAnswer.systemPrompt || config.searchBox.rephrasePrompt) {
+          if (
+            config.generativeAnswer.prompt ||
+            config.generativeAnswer.systemPrompt ||
+            config.searchBox.rephrasePrompt
+          ) {
             features.push(this.translate.instant('search.configuration.generative-answer.prompt.toggle-label'));
           }
           if (config.generativeAnswer.limitTokenConsumption && config.generativeAnswer.tokenConsumptionLimit) {
@@ -129,9 +133,16 @@ export class RagLabComponent implements OnChanges {
               this.translate.instant('search.configuration.generative-answer.rag-strategies.metadatas.toggle-label'),
             );
           }
+          if (ragStrategies.graphRagStrategy && ragStrategies.graph) {
+            ragStrategiesList.push(
+              this.translate.instant('search.configuration.generative-answer.rag-strategies.graph.toggle-label'),
+            );
+          }
           if (ragStrategies.includeNeighbouringParagraphs) {
             ragStrategiesList.push(
-              this.translate.instant('search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.toggle-label'),
+              this.translate.instant(
+                'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.toggle-label',
+              ),
             );
           }
           if (ragStrategies.fieldsAsContext && ragStrategies.fieldIds) {

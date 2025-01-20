@@ -89,6 +89,11 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
           {} as Record<RAG_METADATAS, FormControl<boolean>>,
         ),
       ),
+      graphRagStrategy: new FormControl<boolean>(false, { nonNullable: true }),
+      graph: new FormGroup({
+        hops: new FormControl<number | null>(3),
+        top_k: new FormControl<number | null>(50),
+      }),
       conversationalRagStrategy: new FormControl<boolean>(false, { nonNullable: true }),
       conversationOptions: new FormGroup({
         attachmentsText: new FormControl<boolean>(false, { nonNullable: true }),
@@ -123,6 +128,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   systemPromptOverridden = false;
   isRagImagesEnabled = this.featuresService.unstable.ragImages;
   metadataIds = Object.values(RAG_METADATAS);
+  isGraphSearchEnabled = this.featuresService.unstable.graphSearch;
 
   get generateAnswerEnabled() {
     return this.form.controls.generateAnswer.value;
@@ -147,6 +153,9 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   get metadatasEnabled() {
     return this.form.controls.ragStrategies.controls.metadatasRagStrategy.value;
+  }
+  get graphEnabled() {
+    return this.form.controls.ragStrategies.controls.graphRagStrategy.value;
   }
   get conversationalStrategyEnabled() {
     return this.form.controls.ragStrategies.controls.conversationalRagStrategy.value;

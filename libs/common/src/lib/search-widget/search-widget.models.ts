@@ -41,6 +41,13 @@ export interface RagStrategiesConfig {
   additionalCharacters: number | null;
   metadatasRagStrategy: boolean;
   metadatas: { [key in RAG_METADATAS]: boolean } | undefined;
+  graphRagStrategy: boolean;
+  graph:
+    | {
+        hops: number | null;
+        top_k: number | null;
+      }
+    | undefined;
   includeNeighbouringParagraphs: boolean;
   precedingParagraphs: number | null;
   succeedingParagraphs: number | null;
@@ -194,6 +201,8 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
       ners: false,
       extra_metadata: false,
     },
+    graphRagStrategy: false,
+    graph: undefined,
     includeNeighbouringParagraphs: true,
     precedingParagraphs: 2,
     succeedingParagraphs: 2,
@@ -426,6 +435,11 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
     if (metadatas.length > 0) {
       ragStrategies.push(`${RagStrategyName.METADATAS}|${metadatas.join('|')}`);
     }
+  }
+  if (ragStrategiesConfig.graphRagStrategy && ragStrategiesConfig.graph) {
+    ragStrategies.push(
+      `${RagStrategyName.GRAPH}|${ragStrategiesConfig.graph.hops || 3}|${ragStrategiesConfig.graph.top_k || 50}`,
+    );
   }
   if (ragStrategiesConfig.conversationalRagStrategy) {
     const options = ragStrategiesConfig.conversationOptions;
