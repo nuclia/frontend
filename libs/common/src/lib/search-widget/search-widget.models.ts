@@ -46,6 +46,10 @@ export interface RagStrategiesConfig {
     | {
         hops: number | null;
         top_k: number | null;
+        agentic_graph_only: boolean;
+        relation_text_as_paragraphs: boolean;
+        generative_relation_ranking: boolean;
+        suggest_query_entity_detection: boolean;
       }
     | undefined;
   includeNeighbouringParagraphs: boolean;
@@ -437,9 +441,14 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
     }
   }
   if (ragStrategiesConfig.graphRagStrategy && ragStrategiesConfig.graph) {
-    ragStrategies.push(
-      `${RagStrategyName.GRAPH}|${ragStrategiesConfig.graph.hops || 3}|${ragStrategiesConfig.graph.top_k || 50}`,
-    );
+    let strategy = `${RagStrategyName.GRAPH}`;
+    strategy += `|${ragStrategiesConfig.graph.hops || 3}`;
+    strategy += `|${ragStrategiesConfig.graph.top_k || 50}`;
+    strategy += `|${ragStrategiesConfig.graph.agentic_graph_only}`;
+    strategy += `|${ragStrategiesConfig.graph.relation_text_as_paragraphs}`;
+    strategy += `|${ragStrategiesConfig.graph.generative_relation_ranking}`;
+    strategy += `|${ragStrategiesConfig.graph.suggest_query_entity_detection}`;
+    ragStrategies.push(strategy);
   }
   if (ragStrategiesConfig.conversationalRagStrategy) {
     const options = ragStrategiesConfig.conversationOptions;

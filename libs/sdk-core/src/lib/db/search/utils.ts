@@ -1,4 +1,11 @@
-import { FullResourceStrategy, type RAGImageStrategy, RagImageStrategyName, RAGStrategy, RagStrategyName } from '../kb';
+import {
+  FullResourceStrategy,
+  GraphStrategy,
+  type RAGImageStrategy,
+  RagImageStrategyName,
+  RAGStrategy,
+  RagStrategyName,
+} from '../kb';
 
 export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
   // ragStrategies format example: 'full_resource|3|true|/classification.labels/doctype/product_manuals#/icon/image,field_extension|t/field1|f/field2,hierarchy|2,neighbouring_paragraphs|2|2,conversation|attachments_text|15'
@@ -39,7 +46,20 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
           max_messages: rest.includes('full') || isNaN(maxMessages) ? undefined : maxMessages,
         };
       } else if (name === RagStrategyName.GRAPH) {
-        return { name, hops: parseInt(rest[0], 10), top_k: parseInt(rest[1], 10) };
+        const strategy: Partial<GraphStrategy> = { name, hops: parseInt(rest[0], 10), top_k: parseInt(rest[1], 10) };
+        if (rest.length > 2) {
+          strategy.agentic_graph_only = rest[2] === 'true';
+        }
+        if (rest.length > 3) {
+          strategy.relation_text_as_paragraphs = rest[3] === 'true';
+        }
+        if (rest.length > 4) {
+          strategy.relation_ranking = rest[4] === 'true' ? 'generative' : 'reranker';
+        }
+        if (rest.length > 5) {
+          strategy.query_entity_detection = rest[5] === 'true' ? 'suggest' : 'predict';
+        }
+        return strategy;
       } else {
         console.error(`Unknown RAG strategy: ${name}`);
         return undefined;

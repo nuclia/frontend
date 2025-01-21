@@ -350,22 +350,55 @@
             class="extra-fields"
             [class.visible]="graphEnabled"
             formGroupName="graph">
-            <div class="extra-label">
-              {{ 'search.configuration.generative-answer.rag-strategies.graph.hops-description' | translate }}
-            </div>
             <pa-input
               formControlName="hops"
-              type="number">
+              type="number"
+              [help]="'search.configuration.generative-answer.rag-strategies.graph.hops-description' | translate">
               {{ 'search.configuration.generative-answer.rag-strategies.graph.hops' | translate }}
             </pa-input>
-            <div class="extra-label">
-              {{ 'search.configuration.generative-answer.rag-strategies.graph.top_k-description' | translate }}
-            </div>
             <pa-input
               formControlName="top_k"
-              type="number">
+              type="number"
+              [help]="'search.configuration.generative-answer.rag-strategies.graph.top_k-description' | translate">
               {{ 'search.configuration.generative-answer.rag-strategies.graph.top_k' | translate }}
             </pa-input>
+            <pa-checkbox
+              formControlName="agentic_graph_only"
+              [help]="
+                'search.configuration.generative-answer.rag-strategies.graph.agentic_graph_only_help' | translate
+              ">
+              {{ 'search.configuration.generative-answer.rag-strategies.graph.agentic_graph_only' | translate }}
+            </pa-checkbox>
+            <pa-checkbox
+              formControlName="relation_text_as_paragraphs"
+              [help]="
+                'search.configuration.generative-answer.rag-strategies.graph.relation_text_as_paragraphs_help'
+                  | translate
+              ">
+              {{
+                'search.configuration.generative-answer.rag-strategies.graph.relation_text_as_paragraphs' | translate
+              }}
+            </pa-checkbox>
+            <pa-checkbox
+              formControlName="generative_relation_ranking"
+              [help]="
+                'search.configuration.generative-answer.rag-strategies.graph.generative_relation_ranking_help'
+                  | translate
+              ">
+              {{
+                'search.configuration.generative-answer.rag-strategies.graph.generative_relation_ranking' | translate
+              }}
+            </pa-checkbox>
+            <pa-checkbox
+              formControlName="suggest_query_entity_detection"
+              [help]="
+                'search.configuration.generative-answer.rag-strategies.graph.suggest_query_entity_detection_help'
+                  | translate
+              ">
+              {{
+                'search.configuration.generative-answer.rag-strategies.graph.suggest_query_entity_detection' | translate
+              }}
+            </pa-checkbox>
           </div>
         </div>
       }
