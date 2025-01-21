@@ -93,6 +93,10 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       graph: new FormGroup({
         hops: new FormControl<number | null>(3),
         top_k: new FormControl<number | null>(50),
+        agentic_graph_only: new FormControl<boolean>(false, { nonNullable: true }),
+        relation_text_as_paragraphs: new FormControl<boolean>(false, { nonNullable: true }),
+        generative_relation_ranking: new FormControl<boolean>(false, { nonNullable: true }),
+        suggest_query_entity_detection: new FormControl<boolean>(false, { nonNullable: true }),
       }),
       conversationalRagStrategy: new FormControl<boolean>(false, { nonNullable: true }),
       conversationOptions: new FormGroup({
