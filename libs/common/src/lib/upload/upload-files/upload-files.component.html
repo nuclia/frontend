@@ -138,11 +138,14 @@
                   <nsi-badge kind="tertiary">BETA</nsi-badge>
                 }
               </div>
-              @if (processingId === 'aitable' && processing === 'aitable') {
+              @if (
+                (processingId === 'aitable' && processing === 'aitable') ||
+                (processingId === 'visual-llm' && processing === 'visual-llm')
+              ) {
                 <nsi-info-card
                   type="warning"
                   icon="warning">
-                  <div [innerHTML]="'upload.advanced.processing.aitable.warning' | translate"></div>
+                  <div [innerHTML]="'upload.advanced.processing.' + processingId + '.warning' | translate"></div>
                 </nsi-info-card>
               }
             }

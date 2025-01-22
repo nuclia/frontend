@@ -58,6 +58,7 @@ export interface FileWithMetadata extends File {
   md5?: string;
   payload?: ICreateResource;
   contentType?: string;
+  processing?: string;
 }
 
 export interface FileMetadata {
@@ -66,6 +67,7 @@ export interface FileMetadata {
   filename?: string;
   md5?: string;
   rslug?: string;
+  processing?: string;
 }
 
 const uploadRetryConfig: RetryConfig = {
@@ -97,6 +99,11 @@ export const upload = (
   }
   if (!metadata.md5 && !(data instanceof ArrayBuffer)) {
     metadata.md5 = (data as FileWithMetadata).md5;
+  }
+  if ((data as FileWithMetadata).processing) {
+    metadata.processing = (data as FileWithMetadata).processing;
+    // TUS is not supported for visual-llm processing
+    TUS = false;
   }
   return (data instanceof ArrayBuffer ? of(data) : from(data.arrayBuffer())).pipe(
     switchMap((buff) =>
@@ -346,6 +353,9 @@ export const getFileMetadata = (metadata: FileMetadata | undefined): { [key: str
   }
   if (metadata?.lang) {
     headers['x-language'] = metadata.lang;
+  }
+  if (metadata?.processing) {
+    headers['x-extract-strategy'] = metadata.processing;
   }
   return headers;
 };

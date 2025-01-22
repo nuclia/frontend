@@ -52,6 +52,7 @@ export class FeaturesService {
     tableProcessing: this.featureFlag.isFeatureEnabled('table-processing'),
     aiTableProcessing: this.featureFlag.isFeatureEnabled('ai-table-processing'),
     invoiceProcessing: this.featureFlag.isFeatureEnabled('invoice-processing'),
+    visualLLMProcessing: this.featureFlag.isFeatureEnabled('visual-llm-processing'),
     suggestEntities: this.featureFlag.isFeatureEnabled('suggest-entities'),
     ragImages: this.featureFlag.isFeatureEnabled('rag-images'),
     synonyms: this.featureFlag.isFeatureEnabled('synonyms-enabled'),
