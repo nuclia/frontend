@@ -92,6 +92,7 @@
 
         @for (paragraph of filteredParagraphs | async; track paragraph.paragraphId + paragraph.key) {
           <div class="paragraph-container">
+            {{ paragraph.start }}
             @if (paragraph.url) {
               <p>
                 <img
