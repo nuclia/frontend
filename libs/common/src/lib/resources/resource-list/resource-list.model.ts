@@ -43,6 +43,9 @@ export const DEFAULT_PAGE_SIZE = 25;
 export const PAGE_SIZES = [25, 50, 100];
 export const DEFAULT_SORTING: SortOption = { field: SortField.created, order: 'desc' };
 
+export type LabelsLogic = 'OR' | 'AND';
+export const DEFAULT_LABELS_LOGIC = 'OR';
+
 export const RESOURCE_LIST_PREFERENCES = 'NUCLIA_RESOURCE_LIST_PREFERENCES';
 
 export interface BulkAction {
@@ -60,11 +63,13 @@ export interface ResourceListParams {
   sort: SortOption;
   query: string;
   filters: string[];
+  labelsLogic?: LabelsLogic;
 }
 export function getSearchOptions(params: ResourceListParams): CatalogOptions {
+  const labelsOperator = params.labelsLogic === 'AND' ? FilterOperator.all : FilterOperator.any;
   const filters: Filter[] = [
     { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/icon/')) },
-    { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
+    { [labelsOperator]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
     { [FilterOperator.any]: params.status ? [`/n/s/${params.status}`] : [] },
   ].filter((item) => (Object.values(item)[0] || []).length > 0);
   const start = params.filters.find((filter) => filter.startsWith(CREATION_START_PREFIX));

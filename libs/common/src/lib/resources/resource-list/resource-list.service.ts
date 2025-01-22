@@ -21,9 +21,11 @@ import {
   tap,
 } from 'rxjs';
 import {
+  DEFAULT_LABELS_LOGIC,
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORTING,
   getSearchOptions,
+  LabelsLogic,
   ResourceListParams,
   ResourceWithLabels,
   searchResources,
@@ -71,6 +73,7 @@ export class ResourceListService {
   query = this._query.asObservable();
   private _headerHeight = new BehaviorSubject<number>(0);
   headerHeight = this._headerHeight.asObservable();
+  private _labelsLogic = new BehaviorSubject<LabelsLogic>(DEFAULT_LABELS_LOGIC);
 
   private _page = new BehaviorSubject<number>(0);
   page = this._page.asObservable();
@@ -94,6 +97,12 @@ export class ResourceListService {
 
   prevFilters = this._filters.pipe(
     startWith([]),
+    pairwise(),
+    map(([prev]) => prev),
+    shareReplay(1),
+  );
+  prevLabelsLogic = this._labelsLogic.pipe(
+    startWith(DEFAULT_LABELS_LOGIC),
     pairwise(),
     map(([prev]) => prev),
     shareReplay(1),
@@ -127,15 +136,17 @@ export class ResourceListService {
     this._sort = DEFAULT_SORTING;
     this._query.next('');
     this._filters.next([]);
+    this._labelsLogic.next(DEFAULT_LABELS_LOGIC);
   }
 
   get sort(): SortOption {
     return this._sort;
   }
 
-  filter(filters: string[]) {
+  filter(filters: string[], labelsLogic: LabelsLogic = DEFAULT_LABELS_LOGIC) {
     this._page.next(0);
     this._filters.next(filters);
+    this._labelsLogic.next(labelsLogic);
     this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
@@ -238,6 +249,7 @@ export class ResourceListService {
       sort: this._sort,
       query: this._query.value.trim().replace('.', '\\.'),
       filters: this._filters.value,
+      labelsLogic: this._labelsLogic.value,
     };
     return forkJoin([
       this.labelSets.pipe(take(1)),

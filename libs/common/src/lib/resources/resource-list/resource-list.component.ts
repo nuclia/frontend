@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
@@ -44,6 +44,7 @@ export class ResourceListComponent implements OnDestroy {
   isFiltering = this.resourceListService.filters.pipe(map((filters) => filters.length > 0));
   showClearButton = this.resourceListService.filters.pipe(map((filters) => filters.length > 2));
   filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
+  andLogicForLabels: boolean = false;
   displayedLabelSets: LabelSets = {};
 
   dateForm = new FormGroup({
@@ -174,6 +175,11 @@ export class ResourceListComponent implements OnDestroy {
     this.onToggleFilter();
   }
 
+  updateLabelsLogic(value: boolean) {
+    this.andLogicForLabels = value;
+    this.onToggleFilter();
+  }
+
   clearFilter(option: OptionModel) {
     option.selected = !option.selected;
     this.onToggleFilter();
@@ -182,8 +188,12 @@ export class ResourceListComponent implements OnDestroy {
   onToggleFilter() {
     const filters = this.selectedFilters;
     if (filters.length > 0) {
-      this.router.navigate(['./'], { relativeTo: this.route, queryParams: { filters } });
-      this.resourceListService.filter(filters);
+      const queryParams: Params = { filters };
+      if (this.andLogicForLabels) {
+        queryParams['labelsLogic'] = 'AND';
+      }
+      this.router.navigate(['./'], { relativeTo: this.route, queryParams });
+      this.resourceListService.filter(filters, this.andLogicForLabels ? 'AND' : 'OR');
     } else {
       this.clearFilters();
     }
@@ -235,13 +245,19 @@ export class ResourceListComponent implements OnDestroy {
       this.labelSets.pipe(take(1)),
       this.route.queryParamMap.pipe(take(1)),
       this.resourceListService.prevFilters.pipe(take(1)),
+      this.resourceListService.prevLabelsLogic.pipe(take(1)),
     ]).pipe(
-      switchMap(([labelSets, queryParams, prevFilters]) => {
+      switchMap(([labelSets, queryParams, prevFilters, prevLabelsLogic]) => {
         const faceted = MIME_FACETS.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-        return this.getFacets(faceted).pipe(map((facets) => ({ facets, labelSets, queryParams, prevFilters })));
+        return this.getFacets(faceted).pipe(
+          map((facets) => ({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic })),
+        );
       }),
-      map(({ facets, labelSets, queryParams, prevFilters }) => {
+      map(({ facets, labelSets, queryParams, prevFilters, prevLabelsLogic }) => {
         const previousFilters = queryParams.get('preserveFilters') ? prevFilters : queryParams.getAll('filters');
+        this.andLogicForLabels = queryParams.get('preserveFilters')
+          ? prevLabelsLogic === 'AND'
+          : queryParams.get('labelsLogic') === 'AND';
         this.formatFiltersFromFacets(facets, labelSets, previousFilters);
         if (previousFilters.length > 0) {
           this.onToggleFilter();

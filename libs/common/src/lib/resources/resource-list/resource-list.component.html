@@ -41,7 +41,7 @@
               }
             </pa-dropdown>
           </div>
-          <div>
+          <div class="label-filters">
             <app-label-dropdown
               [labelSets]="displayedLabelSets"
               [selection]="selectedClassifications"
@@ -53,6 +53,20 @@
               {{ 'resource.classification-column' | translate }}
               {{ selectedClassifications.length ? '(' + selectedClassifications.length + ')' : '' }}
             </app-label-dropdown>
+            @if (selectedClassificationOptions.length > 1) {
+              <div class="labels-logic">
+                <pa-toggle
+                  labelOnRight
+                  [value]="andLogicForLabels"
+                  (valueChange)="updateLabelsLogic($event)"
+                  [paPopover]="labelsLogic">
+                  {{ andLogicForLabels ? 'AND' : 'OR' }}
+                </pa-toggle>
+                <pa-popover #labelsLogic>
+                  {{ (andLogicForLabels ? 'resource.filter.and' : 'resource.filter.or') | translate }}
+                </pa-popover>
+              </div>
+            }
           </div>
 
           <div>
