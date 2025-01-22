@@ -158,7 +158,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
           ),
         );
       }
-      return paragraphs;
+      return paragraphs.sort((a, b) => (a.start || 0) - (b.start || 0));
     }),
   );
 
