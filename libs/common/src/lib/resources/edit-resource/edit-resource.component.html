@@ -115,6 +115,7 @@
         @if (currentView !== 'add-field') {
           @if (currentView !== 'annotation') {
             <li
+              class="nav-item"
               [class.active]="(currentField | async) === 'resource'"
               (click)="navigateToField('resource')">
               <pa-icon
@@ -125,6 +126,7 @@
           }
           @for (field of originalFields | async; track field.field_id) {
             <li
+              class="nav-item"
               [class.active]="
                 activeField !== 'resource' &&
                 activeField?.field_id === field.field_id &&
@@ -136,19 +138,20 @@
                 size="small"></pa-icon>
               {{ 'resource.field-' + field.field_type | translate }}
 
-              <span
-                class="error-marker"
-                *ngIf="field.hasError">
-                <pa-icon
-                  name="warning"
-                  size="small"></pa-icon>
-              </span>
+              @if (field.hasError) {
+                <span class="error-marker">
+                  <pa-icon
+                    name="warning"
+                    size="small"></pa-icon>
+                </span>
+              }
             </li>
           }
         }
 
         @if ((isAdminOrContrib | async) === true) {
           <li
+            class="nav-item"
             routerLink="add-field"
             routerLinkActive="active"
             (click)="onViewChange()">
@@ -164,6 +167,7 @@
             <ul>
               @for (field of generatedFields | async; track field.field_id) {
                 <li
+                  class="nav-item"
                   [class.active]="
                     activeField !== 'resource' &&
                     activeField?.field_id === field.field_id &&
@@ -174,14 +178,13 @@
                     [name]="field.icon"
                     size="small"></pa-icon>
                   {{ field.title }}
-
-                  <span
-                    class="error-marker"
-                    *ngIf="field.hasError">
-                    <pa-icon
-                      name="warning"
-                      size="small"></pa-icon>
-                  </span>
+                  @if (field.hasError) {
+                    <span class="error-marker">
+                      <pa-icon
+                        name="warning"
+                        size="small"></pa-icon>
+                    </span>
+                  }
                 </li>
               }
             </ul>

@@ -114,12 +114,15 @@ export interface Security {
 export interface IError {
   body: string;
   code: number;
+  code_str?: string;
+  created?: string;
 }
 
 export interface IFieldData {
   value?: TextField | FileField | LinkField | ConversationField | ConversationFieldPages;
   extracted?: ExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export interface FieldId {
@@ -137,6 +140,7 @@ export class FileFieldData implements IFieldData {
   value?: FileField;
   extracted?: FileFieldExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export interface FileField {
@@ -242,6 +246,7 @@ export class TextFieldData implements IFieldData {
   value?: TextField;
   extracted?: ExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export type TextFormat = 'PLAIN' | 'MARKDOWN' | 'KEEP_MARKDOWN' | 'HTML' | 'RST';
@@ -407,6 +412,7 @@ export class LinkFieldData implements IFieldData {
   value?: LinkField;
   extracted?: LinkFieldExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export interface LinkFieldExtractedData extends ExtractedData {
@@ -447,6 +453,7 @@ export class ConversationFieldData implements IFieldData {
   value?: ConversationField | ConversationFieldPages;
   extracted?: ExtractedData;
   error?: IError;
+  errors?: IError[];
 }
 
 export interface ConversationField {

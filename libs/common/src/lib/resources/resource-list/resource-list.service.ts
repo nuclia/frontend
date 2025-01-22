@@ -31,6 +31,7 @@ import {
   searchResources,
 } from './resource-list.model';
 import {
+  IError,
   IResource,
   KnowledgeBox,
   LabelSets,
@@ -303,7 +304,8 @@ export class ResourceListService {
     }
     const errors = resource
       .getFields()
-      .map((field) => field.error?.body || '')
+      .reduce((errors, field) => errors.concat(field.errors || field.error || []), [] as IError[])
+      .map((error) => error?.body || '')
       .filter((error) => !!error);
     if (errors.length > 0) {
       resourceWithLabels.errors = errors.join('. ');

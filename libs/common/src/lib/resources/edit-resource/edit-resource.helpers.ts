@@ -18,6 +18,7 @@ import {
   FIELD_TYPE,
   ConversationFieldPages,
   longToShortFieldType,
+  IFieldData,
 } from '@nuclia/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { forkJoin, map, Observable, of } from 'rxjs';
@@ -60,6 +61,8 @@ export interface EntityAnnotation extends TokenAnnotation {
   family: string;
 }
 
+export const DATA_AUGMENTATION_ERROR = 'DATAAUGMENTATION';
+
 type ParagraphClassificationMap = { [paragraphId: string]: UserClassification[] };
 
 export const getParagraphs = (fieldId: FieldId, resource: Resource): Paragraph[] => {
@@ -82,12 +85,13 @@ export const getConversationParagraphs = (fieldId: FieldId, resource: Resource, 
     .reduce((acc, split) => [...acc, ...(metadata?.split_metadata?.[split]?.paragraphs || [])], [] as Paragraph[]);
 };
 
-export function getErrors(fieldId: FieldId, resource: Resource): IError | null {
+export function getErrors(fieldId: FieldId, resource: Resource): IError[] {
   const dataKey = getDataKeyFromFieldType(fieldId.field_type);
   if (!dataKey || !resource.data[dataKey]) {
-    return null;
+    return [];
   }
-  return resource.data[dataKey]?.[fieldId.field_id]?.error || null;
+  const fieldData = resource.data[dataKey]?.[fieldId.field_id];
+  return fieldData.errors || (fieldData.error ? [fieldData.error] : []);
 }
 
 export function getFieldMetadataForClassifications(

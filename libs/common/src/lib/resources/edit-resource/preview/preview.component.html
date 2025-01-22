@@ -3,13 +3,13 @@
 }
 <div class="main-container">
   <div class="scrollable-area">
-    @if (errors) {
+    @for (error of errors; track error.body) {
       <div class="error-container">
         <p>
           <pa-icon
             name="warning"
             size="small"></pa-icon>
-          {{ errors.body }}
+          {{ error.body }}
         </p>
       </div>
     }
@@ -290,14 +290,27 @@
       }
     }
   </div>
-  <div class="viewer-button-container">
-    @if (currentFieldId) {
-      <pa-button
-        [disabled]="loadingPreview"
-        (click)="openViewer()">
-        {{ 'resource.preview.open-viewer' | translate }}
-      </pa-button>
-    }
+  <div class="buttons-container">
+    <div class="buttons">
+      @if (currentFieldId) {
+        <pa-button
+          [disabled]="loadingPreview"
+          (click)="openViewer()">
+          {{ 'resource.preview.open-viewer' | translate }}
+        </pa-button>
+      }
+      @if (dataAugmentationErrors.length > 0) {
+        <pa-button
+          aspect="basic"
+          kind="destructive"
+          (click)="openWarnings()">
+          {{ dataAugmentationErrors.length }}
+          {{
+            (dataAugmentationErrors.length === 1 ? 'resource.warning.warning' : 'resource.warning.warnings') | translate
+          }}
+        </pa-button>
+      }
+    </div>
   </div>
 </div>
 

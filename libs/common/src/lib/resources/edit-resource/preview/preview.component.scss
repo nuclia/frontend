@@ -73,10 +73,12 @@
   }
 }
 
-.viewer-button-container {
+.buttons-container {
   position: relative;
-
-  pa-button {
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
     position: sticky;
     top: calc(#{tokens.$height-header} + var(--app-layout-padding-top));
   }

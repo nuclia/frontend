@@ -26,6 +26,7 @@ import {
   TypeParagraph,
 } from '@nuclia/core';
 import {
+  DATA_AUGMENTATION_ERROR,
   getErrors,
   getMessages,
   getParagraphsWithImages,
@@ -41,6 +42,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceNavigationService } from '../resource-navigation.service';
 import { PreviewService } from './preview.service';
 import { trimLabelSets } from '../../resource-filters.utils';
+import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import { WarningModalComponent } from './warning-modal/warning-modal.component';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './preview.component.html',
@@ -52,6 +56,7 @@ export class PreviewComponent implements OnInit, OnDestroy {
   private route: ActivatedRoute = inject(ActivatedRoute);
   private router: Router = inject(Router);
   private labelsService = inject(LabelsService);
+  private modalService = inject(SisModalService);
 
   unsubscribeAll = new Subject<void>();
   paragraphs = this.paragraphService.paragraphList as Observable<ParagraphWithTextAndClassifications[]>;
@@ -67,7 +72,8 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   loaded = false;
   loadingPreview = false;
-  errors?: IError | null;
+  errors: IError[] = [];
+  dataAugmentationErrors: IError[] = [];
 
   resource: Observable<Resource> = this.editResource.resource.pipe(
     filter((resource) => !!resource),
@@ -218,7 +224,10 @@ export class PreviewComponent implements OnInit, OnDestroy {
       .subscribe(({ fieldId, resource, messages }) => {
         this.messages.next(messages);
         this.currentFieldId = fieldId;
-        this.errors = getErrors(fieldId, resource);
+        this.errors = getErrors(fieldId, resource).filter((error) => error.code_str !== DATA_AUGMENTATION_ERROR);
+        this.dataAugmentationErrors = getErrors(fieldId, resource).filter(
+          (error) => error.code_str === DATA_AUGMENTATION_ERROR,
+        );
         this.selectedTab = 'content';
         this.paragraphService.initParagraphs(fieldId, resource, messages || undefined);
         this.loaded = true;
@@ -322,5 +331,12 @@ export class PreviewComponent implements OnInit, OnDestroy {
   navigateToField(attachment: MessageAttachment) {
     const path = `../../${attachment.field_type}/${attachment.field_id}`;
     this.router.navigate([path], { relativeTo: this.route });
+  }
+
+  openWarnings() {
+    return this.modalService.openModal(
+      WarningModalComponent,
+      new ModalConfig({ data: { errors: this.dataAugmentationErrors } }),
+    );
   }
 }
