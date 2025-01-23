@@ -1081,7 +1081,7 @@
 	"search.configuration.generative-answer.rag-strategies.graph.toggle-description": "Collecte des éléments de contexte en explorant le Knowledge Graph, à partir des NER présents dans la requête. Cela fonctionne mieux si la Knowledge Box dispose d'un agent d'extraction de graphes défini par l'utilisateur activé.",
 	"search.configuration.generative-answer.rag-strategies.graph.toggle-label": "Graphe de connaissances",
 	"search.configuration.generative-answer.rag-strategies.graph.top_k": "Top K",
-	"search.configuration.generative-answer.rag-strategies.graph.top_k-description": "Quantité maximale de résultats à récupérer.",
+	"search.configuration.generative-answer.rag-strategies.graph.top_k-description": "Nombre maximal de relations pertinentes à utiliser",
 	"search.configuration.generative-answer.rag-strategies.image-warning-box": "Nécessite l’utilisation d’OpenAI ChatGPT-Vision ou Google Gemini Pro Vision.",
 	"search.configuration.generative-answer.rag-strategies.incompatible-strategies": "Les paragraphes adjacents ne peuvent pas être inclus dans la hiérarchie textuelle.",
 	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-description": "Chaque paragraphe sera suivi de différents ensembles de métadonnées.",
