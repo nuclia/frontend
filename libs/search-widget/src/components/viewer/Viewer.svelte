@@ -35,6 +35,7 @@
     getFormatInfos,
     slugify,
     downloadFile,
+    hideDownload,
   } from '../../core';
   import type { TypedResult, ViewerState, WidgetAction } from '../../core';
   import {
@@ -110,7 +111,7 @@
   const unsubscribeOnClose: Subject<void> = new Subject();
   onMount(() => {
     const resize = resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
-    const menu = widgetActions.subscribe((actions) => hasMenu = actions.length > 0 );
+    const menu = widgetActions.subscribe((actions) => (hasMenu = actions.length > 0));
     return () => {
       resize.unsubscribe();
       menu.unsubscribe();
@@ -316,18 +317,20 @@
         <h3 class="ellipsis title-m">
           {result?.title}
         </h3>
-        {#if state.fieldFullId?.field_type === FIELD_TYPE.file || state.fieldFullId?.field_type === FIELD_TYPE.link}
-          <IconButton
-            icon={state.fieldFullId.field_type === FIELD_TYPE.file ? 'download' : 'square-arrow'}
-            ariaLabel={$_('resource.source')}
-            aspect="basic"
-            on:click={openOrigin} />
-        {:else if state.fieldFullId?.field_type === FIELD_TYPE.text}
-          <IconButton
-            icon="download"
-            ariaLabel={$_('resource.source')}
-            aspect="basic"
-            on:click={downloadTextField} />
+        {#if state.fieldFullId?.field_type === FIELD_TYPE.link || !$hideDownload}
+          {#if state.fieldFullId?.field_type === FIELD_TYPE.file || state.fieldFullId?.field_type === FIELD_TYPE.link}
+            <IconButton
+              icon={state.fieldFullId.field_type === FIELD_TYPE.file ? 'download' : 'square-arrow'}
+              ariaLabel={$_('resource.source')}
+              aspect="basic"
+              on:click={openOrigin} />
+          {:else if state.fieldFullId?.field_type === FIELD_TYPE.text}
+            <IconButton
+              icon="download"
+              ariaLabel={$_('resource.source')}
+              aspect="basic"
+              on:click={downloadTextField} />
+          {/if}
         {/if}
       </div>
 
@@ -563,8 +566,8 @@
                           name={item.field_type === 'conversation'
                             ? 'chat'
                             : item.field_type === 'text'
-                            ? 'file'
-                            : item.field_type} />
+                              ? 'file'
+                              : item.field_type} />
                       </div>
                       <div class="field-item">
                         <span class={item.field_id === $fieldFullId.field_id ? 'title-xxs' : 'body-s'}>
