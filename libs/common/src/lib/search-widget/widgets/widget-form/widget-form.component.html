@@ -226,6 +226,17 @@
                 {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-description' | translate }}
               </div>
             </div>
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="hideDownload"
+                withBackground
+                spaceBetweenLabelAndToggle
+                (valueChange)="updateWidgetOptionsHeight()">
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.hide-download.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+            </div>
             @if (navigateToLinkOrFileEnabled) {
               <div class="config-form-field">
                 <pa-toggle

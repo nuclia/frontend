@@ -150,6 +150,7 @@ export interface WidgetFeatures {
   collapseCitations?: boolean;
   collapseTextBlocks?: boolean;
   displaySearchButton?: boolean;
+  hideDownload?: boolean;
 }
 
 export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';

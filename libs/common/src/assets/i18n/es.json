@@ -1290,6 +1290,7 @@
 	"search.widgets.form.widget-options.feedback.description": "Indique el tipo de feedback que pueden proporcionar los usuarios",
 	"search.widgets.form.widget-options.feedback.none": "Sin feedback",
 	"search.widgets.form.widget-options.feedback.title": "Feedback",
+	"search.widgets.form.widget-options.hide-download.toggle-label": "Ocultar el botón de descarga",
 	"search.widgets.form.widget-options.hide-logo.toggle-description": "Solo disponible para planes growth y enterprise.",
 	"search.widgets.form.widget-options.hide-logo.toggle-label": "Ocultar el logotipo de Nuclia de la barra de búsqueda",
 	"search.widgets.form.widget-options.lang.help": "De forma predeterminada, el widget utiliza el idioma definido en la configuración regional del navegador. La interfaz de usuario admite \"en\", \"ca\", \"es\" y \"fr\", pero puede ingresar cualquier idioma (como un código de 2 caracteres).",
