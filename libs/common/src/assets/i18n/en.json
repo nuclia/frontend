@@ -1081,7 +1081,7 @@
 	"search.configuration.generative-answer.rag-strategies.graph.toggle-description": "Collect context pieces by exploring the Knowledge Graph, starting from the NERs present in the query. It works best if the Knowledge Box has a user-defined Graph Extraction agent enabled.",
 	"search.configuration.generative-answer.rag-strategies.graph.toggle-label": "Knowledge graph",
 	"search.configuration.generative-answer.rag-strategies.graph.top_k": "Top K",
-	"search.configuration.generative-answer.rag-strategies.graph.top_k-description": "Maximum amount of results to retrieve.",
+	"search.configuration.generative-answer.rag-strategies.graph.top_k-description": "Maximum amount of relevant relationships to use",
 	"search.configuration.generative-answer.rag-strategies.image-warning-box": "Requires using OpenAI ChatGPT-Vision or Google Gemini Pro Vision.",
 	"search.configuration.generative-answer.rag-strategies.incompatible-strategies": "Neighbouring paragraphs cannot be included along with textual hierarchy.",
 	"search.configuration.generative-answer.rag-strategies.metadatas.toggle-description": "Each paragraph will be followed by different sets of metadata.",
