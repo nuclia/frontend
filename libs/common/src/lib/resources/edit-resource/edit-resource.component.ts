@@ -7,11 +7,11 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
 import { take, takeUntil } from 'rxjs/operators';
-import { EditResourceView } from './edit-resource.helpers';
+import { DATA_AUGMENTATION_ERROR, EditResourceView, getErrors } from './edit-resource.helpers';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { ResourceNavigationService } from './resource-navigation.service';
@@ -35,8 +35,11 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   currentView: EditResourceView | null = null;
   currentField: Observable<FieldId | 'resource'> = this.editResource.currentField;
   resource: Observable<Resource | null> = this.editResource.resource;
-  fields: Observable<ResourceFieldWithIcon[]> = this.editResource.fields.pipe(
-    map((fields) =>
+  fields: Observable<ResourceFieldWithIcon[]> = combineLatest([
+    this.editResource.resource,
+    this.editResource.fields,
+  ]).pipe(
+    map(([resource, fields]) =>
       fields
         .filter((field) => field.field_type !== FIELD_TYPE.generic)
         .map((field) => ({
@@ -47,7 +50,9 @@ export class EditResourceComponent implements OnInit, OnDestroy {
               : field.field_type === FIELD_TYPE.conversation
                 ? 'chat'
                 : field.field_type,
-          hasError: !!field.error,
+          hasError:
+            !!resource &&
+            getErrors(field, resource).filter((error) => error.code_str !== DATA_AUGMENTATION_ERROR).length > 0,
         })),
     ),
   );

@@ -3,6 +3,7 @@
 ### Improvements
 
 - Add support for `/activity/metrics` endpoint
+- Resource fields can now include multiple errors along with additional error details
 
 # 1.24.0 (2024-12-16)
 
