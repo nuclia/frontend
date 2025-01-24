@@ -82,10 +82,14 @@
       .sort((a, b) => (a.end - b.end !== 0 ? a.end - b.end : a.index - b.index))
       .reverse()
       .forEach((ref) => {
-        text = `${sliceUnicode(text, 0, ref.end)}<span class="ref">${ref.index + 1}</span>${sliceUnicode(
-          text,
-          ref.end,
-        )}`;
+        let before = sliceUnicode(text, 0, ref.end);
+        let after = sliceUnicode(text, ref.end);
+        const lastChar = before.slice(-1);
+        if (lastChar === '|' || lastChar === '<') {
+          before = before.slice(0, -1);
+          after = `${lastChar}${after}`;
+        }
+        text = `${before}<span class="ref">${ref.index + 1}</span>${after}`;
       });
     return text;
   }
