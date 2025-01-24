@@ -31,7 +31,7 @@ export class CreateLinkComponent {
     link: new FormControl<string>('', { nonNullable: true, validators: [Validators.pattern(/^http(s?):\/\//)] }),
     links: new FormControl<string>('', {
       nonNullable: true,
-      validators: [Validators.pattern(/^([\r\n]*http(s?):\/\/.*?)+$/)],
+      validators: [Validators.pattern(/^(([\r\n]*http(s?):\/\/.*?)|\n)+$/)],
     }),
     linkTo: new FormControl<'web' | 'file'>('web', { nonNullable: true }),
     type: new FormControl<UploadOption>('one', { nonNullable: true }),
