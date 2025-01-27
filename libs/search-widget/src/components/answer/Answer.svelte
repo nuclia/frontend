@@ -44,6 +44,7 @@
 
   const IMAGE_PLACEHOLDER = '__IMAGE_PATH__';
   const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
+  const TABLE_BORDER = new RegExp(/^[-|]+$/g);
 
   $: text = addReferences(answer.text || '', answer.citations || {});
   $: notEnoughData = hasNotEnoughData(answer.text || '');
@@ -84,7 +85,18 @@
       .forEach((ref) => {
         let before = sliceUnicode(text, 0, ref.end);
         let after = sliceUnicode(text, ref.end);
+        const lines = before.split('\n');
+        const lastLine = lines[lines.length - 1];
+        const lastLineIsTableBorder = TABLE_BORDER.test(lastLine);
+        // if the citation marker has been positioned on a table border, we need to move it to the previous line
+        // so it does not break the table
+        if (lastLineIsTableBorder) {
+          before = lines.slice(0, -1).join('\n');
+          after = `\n${lastLine}${after}`;
+        }
         const lastChar = before.slice(-1);
+        // if the citation marker has been positioned after a cell, we need to move it into the cell
+        // so it does not break the table
         if (lastChar === '|' || lastChar === '<') {
           before = before.slice(0, -1);
           after = `${lastChar}${after}`;
