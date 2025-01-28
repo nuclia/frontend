@@ -44,7 +44,7 @@
 
   const IMAGE_PLACEHOLDER = '__IMAGE_PATH__';
   const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
-  const TABLE_BORDER = new RegExp(/^[-|]+$/g);
+  const TABLE_BORDER = new RegExp(/^[-|]+$/);
 
   $: text = addReferences(answer.text || '', answer.citations || {});
   $: notEnoughData = hasNotEnoughData(answer.text || '');
