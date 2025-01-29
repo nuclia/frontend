@@ -33,7 +33,7 @@ import {
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import {
   addEntitiesToGroups,
   EditResourceView,
@@ -88,7 +88,6 @@ export class EditResourceService {
 
   constructor(
     private sdk: SDKService,
-    private router: Router,
     private toaster: SisToastService,
     private modalService: SisModalService,
     private translate: TranslateService,
@@ -322,7 +321,7 @@ export class EditResourceService {
     );
   }
 
-  confirmAndDelete(fieldType: FIELD_TYPE, fieldId: string, route: ActivatedRoute): Observable<void | null> {
+  confirmAndDelete(fieldType: FIELD_TYPE, fieldId: string): Observable<boolean> {
     return this.modalService
       .openConfirm({
         title: this.translate.instant('resource.field.delete-confirm-title', {
@@ -337,11 +336,7 @@ export class EditResourceService {
       .onClose.pipe(
         filter((confirm) => !!confirm),
         switchMap(() => this.deleteField(fieldType, fieldId)),
-        tap((done) => {
-          if (done !== null) {
-            this.router.navigate(['../../resource'], { relativeTo: route });
-          }
-        }),
+        map((done) => done !== null),
       );
   }
 

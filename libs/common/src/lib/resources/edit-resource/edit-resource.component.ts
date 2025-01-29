@@ -206,4 +206,12 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   nextResource() {
     this.resourceNavigationService.goToNext();
   }
+
+  deleteField(field: FieldId) {
+    this.editResource.confirmAndDelete(field.field_type, field.field_id).subscribe((success) => {
+      if (success) {
+        this.navigateToField('resource');
+      }
+    });
+  }
 }

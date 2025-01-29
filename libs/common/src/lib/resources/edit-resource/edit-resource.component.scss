@@ -78,6 +78,7 @@
         &.active {
           cursor: default;
           font-weight: $font-weight-semi-bold;
+          padding-right: rhythm(5);
         }
 
         &:not(.active):hover {
@@ -86,6 +87,11 @@
 
         .error-marker {
           color: $color-secondary-strong;
+        }
+
+        .field-menu {
+          position: absolute;
+          right: rhythm(1);
         }
       }
 

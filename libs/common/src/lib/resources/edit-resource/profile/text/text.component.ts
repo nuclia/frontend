@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EditResourceService } from '../../edit-resource.service';
 import { FIELD_TYPE, TextField, TextFieldData } from '@nuclia/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -37,7 +37,11 @@ export class ResourceTextComponent implements OnInit, OnDestroy {
   textBackup?: string;
   isReady = false;
 
-  constructor(private route: ActivatedRoute, private editResource: EditResourceService) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private editResource: EditResourceService,
+  ) {}
 
   ngOnInit() {
     this.editResource.setCurrentView('resource');
@@ -85,8 +89,12 @@ export class ResourceTextComponent implements OnInit, OnDestroy {
     this.fieldId
       .pipe(
         take(1),
-        switchMap((fieldId) => this.editResource.confirmAndDelete(FIELD_TYPE.text, fieldId, this.route)),
+        switchMap((fieldId) => this.editResource.confirmAndDelete(FIELD_TYPE.text, fieldId)),
       )
-      .subscribe();
+      .subscribe((success) => {
+        if (success) {
+          this.router.navigate(['../../resource'], { relativeTo: this.route });
+        }
+      });
   }
 }
