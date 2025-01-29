@@ -145,6 +145,29 @@
                     size="small"></pa-icon>
                 </span>
               }
+              @if (
+                (isAdminOrContrib | async) === true &&
+                activeField !== 'resource' &&
+                activeField?.field_id === field.field_id &&
+                activeField?.field_type === field.field_type
+              ) {
+                <div class="field-menu">
+                  <pa-button
+                    icon="more-vertical"
+                    aspect="basic"
+                    size="small"
+                    [paPopup]="fieldMenu">
+                    {{ 'resource.menu.label' | translate }}
+                  </pa-button>
+                  <pa-dropdown #fieldMenu>
+                    <pa-option
+                      destructive
+                      (selectOption)="deleteField(field)">
+                      {{ 'resource.tooltip.delete' | translate }}
+                    </pa-option>
+                  </pa-dropdown>
+                </div>
+              }
             </li>
           }
         }
@@ -184,6 +207,29 @@
                         name="warning"
                         size="small"></pa-icon>
                     </span>
+                  }
+                  @if (
+                    (isAdminOrContrib | async) === true &&
+                    activeField !== 'resource' &&
+                    activeField?.field_id === field.field_id &&
+                    activeField?.field_type === field.field_type
+                  ) {
+                    <div class="field-menu">
+                      <pa-button
+                        icon="more-vertical"
+                        aspect="basic"
+                        size="small"
+                        [paPopup]="fieldMenu">
+                        {{ 'resource.menu.label' | translate }}
+                      </pa-button>
+                      <pa-dropdown #fieldMenu>
+                        <pa-option
+                          destructive
+                          (selectOption)="deleteField(field)">
+                          {{ 'resource.tooltip.delete' | translate }}
+                        </pa-option>
+                      </pa-dropdown>
+                    </div>
                   }
                 </li>
               }

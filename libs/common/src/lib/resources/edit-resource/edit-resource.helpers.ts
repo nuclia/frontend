@@ -91,7 +91,7 @@ export function getErrors(fieldId: FieldId, resource: Resource): IError[] {
     return [];
   }
   const fieldData = resource.data[dataKey]?.[fieldId.field_id];
-  return fieldData.errors || (fieldData.error ? [fieldData.error] : []);
+  return fieldData?.errors || (fieldData?.error ? [fieldData.error] : []);
 }
 
 export function getFieldMetadataForClassifications(
