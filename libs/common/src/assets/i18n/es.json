@@ -825,6 +825,7 @@
 	"rag-lab.prompt-lab.configuration.prompt.label": "Prompt",
 	"rag-lab.prompt-lab.configuration.prompt.placeholder": "Ingrese su prompt con los términos {question} y {context} entre corchetes donde desea que se coloque la pregunta y el contexto.",
 	"rag-lab.prompt-lab.configuration.prompt.title": "Defina los prompts que influirán en la forma en que se comporta el sistema cuando haga una pregunta (opcional)",
+	"rag-lab.prompt-lab.configuration.search-config.title": "Seleccione una configuración de búsqueda",
 	"rag-lab.prompt-lab.configuration.system-prompt.examples.first-example": "Eres asistente médico, utiliza terminología médica.",
 	"rag-lab.prompt-lab.configuration.system-prompt.examples.second-example": "Eres un asistente de atención al cliente muy amigable, sé educado.",
 	"rag-lab.prompt-lab.configuration.system-prompt.examples.third-example": "Eres un experto financiero, utiliza términos correctos.",

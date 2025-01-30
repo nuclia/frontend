@@ -8,6 +8,20 @@
   <form
     [formGroup]="form"
     (ngSubmit)="generate()">
+    <div class="field-spacing search-config">
+      <div class="title-s">{{ 'rag-lab.prompt-lab.configuration.search-config.title' | translate }}</div>
+      <pa-select [(value)]="currentConfig">
+        @for (config of (searchConfigurations | async) || []; track config.id) {
+          <pa-option [value]="config.id">
+            @if (config.id === 'nuclia-standard') {
+              {{ 'search.configuration.options.nuclia-standard' | translate }}
+            } @else {
+              {{ config.id }}
+            }
+          </pa-option>
+        }
+      </pa-select>
+    </div>
     <div class="field-spacing">
       <div class="title-s">{{ 'rag-lab.prompt-lab.configuration.prompt.title' | translate }}</div>
       <pa-select
