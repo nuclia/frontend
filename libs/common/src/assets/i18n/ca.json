@@ -825,6 +825,7 @@
 	"rag-lab.prompt-lab.configuration.prompt.label": "Prompt",
 	"rag-lab.prompt-lab.configuration.prompt.placeholder": "Introduïu el prompt amb els termes {question} i {context} entre parèntesis on voleu que es col·loquin la pregunta i el context.",
 	"rag-lab.prompt-lab.configuration.prompt.title": "Definiu les prompts que influiran en la manera com es comporta el sistema quan feu una pregunta (opcional)",
+	"rag-lab.prompt-lab.configuration.search-config.title": "Selecciona una configuració de cerca",
 	"rag-lab.prompt-lab.configuration.system-prompt.examples.first-example": "Sou assistent mèdic, utilitzeu terminologia mèdica",
 	"rag-lab.prompt-lab.configuration.system-prompt.examples.second-example": "Ets un assistent d’atenció al client molt amable, sigues educat",
 	"rag-lab.prompt-lab.configuration.system-prompt.examples.third-example": "Sou un expert financer, feu servir termes correctes",

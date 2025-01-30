@@ -3,22 +3,18 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
-  AccordionBodyDirective,
-  AccordionComponent,
-  AccordionItemComponent,
   PaButtonModule,
   PaIconModule,
   PaPopupModule,
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { QuestionBlockComponent } from './question-block';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { RouterLink } from '@angular/router';
 import { RagLabService } from './rag-lab.service';
 import { forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 import { LabLayoutComponent } from './lab-layout/lab-layout.component';
-import { RequestConfigAndQueries } from './rag-lab.models';
+import { getRequestOptions, RequestConfigAndQueries } from './rag-lab.models';
 import { getPreselectedFilterList, getRagStrategies, SearchConfiguration } from '../search-widget';
 import { getRAGImageStrategies, getRAGStrategies, Reranker } from '@nuclia/core';
 
@@ -29,10 +25,6 @@ import { getRAGImageStrategies, getRAGStrategies, Reranker } from '@nuclia/core'
     TranslateModule,
     ReactiveFormsModule,
     PaTextFieldModule,
-    QuestionBlockComponent,
-    AccordionComponent,
-    AccordionItemComponent,
-    AccordionBodyDirective,
     PaTogglesModule,
     InfoCardComponent,
     RouterLink,
@@ -241,46 +233,8 @@ export class RagLabComponent implements OnChanges {
         const requestConfig: RequestConfigAndQueries = {
           searchConfigId: configId,
           queries,
-          generative_model: searchConfig.generativeAnswer.generativeModel || defaultGenerativeModel,
-          vectorset: searchConfig.searchBox.vectorset || undefined,
-          highlight: true, // highlight is set to true by default on the widget, so we do the same here
-          rephrase: searchConfig.searchBox.rephraseQuery,
-          autofilter: searchConfig.searchBox.autofilter,
-          prefer_markdown: searchConfig.generativeAnswer.preferMarkdown,
-          citations: searchConfig.resultDisplay.showResultType === 'citations',
-          show_hidden: searchConfig.searchBox.showHiddenResources,
+          ...getRequestOptions(searchConfig, defaultGenerativeModel),
         };
-        if (searchConfig.searchBox.semanticReranking) {
-          requestConfig.reranker = Reranker.PREDICT;
-        }
-        if (
-          searchConfig.generativeAnswer.prompt ||
-          searchConfig.generativeAnswer.systemPrompt ||
-          searchConfig.searchBox.rephrasePrompt
-        ) {
-          requestConfig.prompt = {
-            user: searchConfig.generativeAnswer.prompt || undefined,
-            system: searchConfig.generativeAnswer.systemPrompt || undefined,
-            rephrase: searchConfig.searchBox.rephrasePrompt || undefined,
-          };
-        }
-        if (searchConfig.searchBox.setPreselectedFilters && searchConfig.searchBox.preselectedFilters) {
-          requestConfig.filters = getPreselectedFilterList(searchConfig.searchBox);
-        }
-        if (searchConfig.generativeAnswer.ragStrategies) {
-          const { ragStrategies, ragImagesStrategies } = getRagStrategies(searchConfig.generativeAnswer.ragStrategies);
-          requestConfig.rag_strategies = getRAGStrategies(ragStrategies);
-          requestConfig.rag_images_strategies = getRAGImageStrategies(ragImagesStrategies);
-        }
-        if (
-          searchConfig.generativeAnswer.limitTokenConsumption &&
-          searchConfig.generativeAnswer.tokenConsumptionLimit
-        ) {
-          requestConfig.max_tokens = searchConfig.generativeAnswer.tokenConsumptionLimit;
-        }
-        if (searchConfig.generativeAnswer.limitParagraphs && !!searchConfig.generativeAnswer.paragraphsLimit) {
-          requestConfig.top_k = searchConfig.generativeAnswer.paragraphsLimit;
-        }
         return requestConfig;
       })
       .filter((config) => !!config);
