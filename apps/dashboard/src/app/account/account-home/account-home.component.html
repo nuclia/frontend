@@ -4,16 +4,11 @@
       <div>
         <h2 class="page-title">{{ 'account.consumption' | translate }}</h2>
         <div class="page-description">
-          @if (isSubscribedToStripe | async) {
-            {{ 'account.consumption-since' | translate: { since: (selectedPeriod | async)?.start | date: 'YYYY-MM-dd' } }}
-          } @else {
-            {{ 'account.consumption-description' | translate }}
-          }
+          {{ 'account.consumption-description' | translate }}
         </div>
       </div>
       <app-nuclia-tokens
         [usage]="usage"
-        [periods]="(periods | async) || []"
         [selectedPeriod]="selectedPeriod | async"
         (selectPeriod)="selectedPeriod.next($event)"></app-nuclia-tokens>
     </div>

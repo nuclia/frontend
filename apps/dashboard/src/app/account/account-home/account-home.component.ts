@@ -18,7 +18,6 @@ import { SisModalService } from '@nuclia/sistema';
 import { MetricsService } from '../metrics.service';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { InviteCollaboratorsModalComponent } from '../invite-collaborators-modal';
-import { getDaysInMonth } from 'date-fns';
 
 @Component({
   selector: 'app-account-home',
@@ -32,8 +31,6 @@ export class AccountHomeComponent implements OnInit, OnDestroy {
   account$ = this.metrics.account$;
   canUpgrade = this.metrics.canUpgrade;
   totalQueries = this.metrics.getUsageCount(UsageType.SEARCHES_PERFORMED);
-  isSubscribedToStripe = this.metrics.isSubscribed;
-  periods = this.isSubscribedToStripe.pipe(map((isSubscribed) => (isSubscribed ? [] : this.getLastMonths(6))));
   selectedPeriod = new ReplaySubject<{ start: Date; end: Date }>(1);
 
   kbs = this.sdk.kbList;
@@ -78,11 +75,9 @@ export class AccountHomeComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       });
 
-    combineLatest([this.isSubscribedToStripe, this.metrics.period])
-      .pipe(take(1))
-      .subscribe(([isSubscribedToStripe, period]) => {
-        this.selectedPeriod.next(isSubscribedToStripe ? period : this.getLastMonths(6)[0]);
-      });
+    this.metrics.period.pipe(take(1)).subscribe((period) => {
+      this.selectedPeriod.next(period);
+    });
   }
 
   ngOnDestroy(): void {
@@ -122,21 +117,5 @@ export class AccountHomeComponent implements OnInit, OnDestroy {
   goToKb(account: string, kb: IKnowledgeBoxItem) {
     this.sdk.nuclia.options.zone = kb.zone;
     this.router.navigate([this.navigation.getKbUrl(account, kb.slug || '')]);
-  }
-
-  getLastMonths(num: number) {
-    const periods: { start: Date; end: Date }[] = [];
-    const currentMonth = new Date().getMonth();
-    for (let i = 0; i < num; i++) {
-      const start = new Date();
-      start.setUTCDate(1);
-      start.setUTCHours(0, 0, 0, 0);
-      start.setUTCMonth(currentMonth - i);
-      const end = new Date(start); 
-      end.setUTCDate(getDaysInMonth(end));
-      end.setUTCHours(23, 59, 59, 999);
-      periods.push({ start, end });
-    }
-    return periods;
   }
 }

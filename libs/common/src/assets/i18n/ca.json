@@ -7,7 +7,6 @@
 	"account.billing": "Pagament i subscripció",
 	"account.consumption": "Consum",
 	"account.consumption-description": "Consum basat en la teva activitat.",
-	"account.consumption-since": "Consum basat en activitats des del dia {{since}}",
 	"account.create_nua_key": "Creeu una nova clau Nuclia Understanding API",
 	"account.day_left": "Queda 1 dia",
 	"account.days_left": "Queden {{days}} dies",

@@ -37,6 +37,7 @@ import {
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { MetricsService } from '../metrics.service';
 
 const groups = {
   processing: ['sentence', 'extract_tables', 'token', 'relations'],
@@ -84,7 +85,6 @@ export class NucliaTokensComponent implements OnDestroy {
     }
   }
 
-  @Input() periods: { start: Date; end: Date }[] = [];
   @Input() selectedPeriod: { start: Date; end: Date } | null = null;
   @Output() selectPeriod = new EventEmitter<{ start: Date; end: Date }>();
 
@@ -95,6 +95,12 @@ export class NucliaTokensComponent implements OnDestroy {
   kbList = this.sdk.kbList;
   selectedKb = new BehaviorSubject<string>('account');
   usageSubject = new ReplaySubject<{ [key: string]: UsagePoint[] }>(1);
+  isSubscribedToStripe = this.metrics.isSubscribedToStripe;
+  periods = combineLatest([this.isSubscribedToStripe, this.metrics.period]).pipe(
+    map(([isSubscribed, period]) =>
+      isSubscribed ? this.metrics.getLastStripePeriods(period, 6) : this.metrics.getLastMonths(6),
+    ),
+  );
 
   schema = this.sdk.currentAccount.pipe(
     switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
@@ -124,8 +130,11 @@ export class NucliaTokensComponent implements OnDestroy {
           const helpTextKey = 'account.nuclia-tokens.help.' + detail.identifier.type;
           const enhancedDetail = {
             ...detail,
-            total: Object.values(detail.nuclia_tokens).reduce((acc: number, curr) => (acc || 0) + (curr || 0), 0),
-            counters: Object.entries(detail.nuclia_tokens)
+            total: Object.values(detail.nuclia_tokens_billed).reduce(
+              (acc: number, curr) => (acc || 0) + (curr || 0),
+              0,
+            ),
+            counters: Object.entries(detail.nuclia_tokens_billed)
               .filter(([, value]) => value !== null && value !== 0)
               .map((data) => data as [string, number])
               .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as { [key: string]: number }),
@@ -142,8 +151,7 @@ export class NucliaTokensComponent implements OnDestroy {
           }
           return enhancedDetail;
         })
-        .filter((detail) => detail.total >= 1) // Hide details having less than 1 token
-        .filter((detail) => this.isBilledDetail(detail));
+        .filter((detail) => detail.total >= 1); // Hide details having less than 1 token
     }),
   );
 
@@ -180,6 +188,7 @@ export class NucliaTokensComponent implements OnDestroy {
 
   constructor(
     private sdk: SDKService,
+    private metrics: MetricsService,
     private translate: TranslateService,
   ) {
     this.visibleGroups.pipe(takeUntil(this.unsubscribeAll), delay(10)).subscribe(() => {
@@ -192,17 +201,5 @@ export class NucliaTokensComponent implements OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  // TODO: In the future, this method will no longer be needed because the endpoint will define which details are billed
-  isBilledDetail(detail: NucliaTokensDetailsEnhanced) {
-    const billedModels = ['gecko-embeddings-multi', 'text-embedding-3-large', 'text-embedding-3-small'];
-    return (
-      detail.identifier.service === 'predict' ||
-      (detail.identifier.service === 'processing' && detail.identifier.type === 'extract_tables') ||
-      (detail.identifier.service === 'processing' &&
-        detail.identifier.type === 'sentence' &&
-        billedModels.includes(detail.identifier.model || ''))
-    );
   }
 }
