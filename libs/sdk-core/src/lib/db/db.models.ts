@@ -152,6 +152,13 @@ export interface NucliaTokensDetails extends CommonMetricDetails {
     image: number | null;
     storage: number | null;
   };
+  nuclia_tokens_billed: {
+    search: number | null;
+    input: number | null;
+    output: number | null;
+    image: number | null;
+    storage: number | null;
+  };
   requests: {
     api: number | null;
     chrome_extension: number | null;

@@ -130,8 +130,11 @@ export class NucliaTokensComponent implements OnDestroy {
           const helpTextKey = 'account.nuclia-tokens.help.' + detail.identifier.type;
           const enhancedDetail = {
             ...detail,
-            total: Object.values(detail.nuclia_tokens).reduce((acc: number, curr) => (acc || 0) + (curr || 0), 0),
-            counters: Object.entries(detail.nuclia_tokens)
+            total: Object.values(detail.nuclia_tokens_billed).reduce(
+              (acc: number, curr) => (acc || 0) + (curr || 0),
+              0,
+            ),
+            counters: Object.entries(detail.nuclia_tokens_billed)
               .filter(([, value]) => value !== null && value !== 0)
               .map((data) => data as [string, number])
               .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {} as { [key: string]: number }),
@@ -148,8 +151,7 @@ export class NucliaTokensComponent implements OnDestroy {
           }
           return enhancedDetail;
         })
-        .filter((detail) => detail.total >= 1) // Hide details having less than 1 token
-        .filter((detail) => this.isBilledDetail(detail));
+        .filter((detail) => detail.total >= 1); // Hide details having less than 1 token
     }),
   );
 
@@ -199,17 +201,5 @@ export class NucliaTokensComponent implements OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  // TODO: In the future, this method will no longer be needed because the endpoint will define which details are billed
-  isBilledDetail(detail: NucliaTokensDetailsEnhanced) {
-    const billedModels = ['gecko-embeddings-multi', 'text-embedding-3-large', 'text-embedding-3-small'];
-    return (
-      detail.identifier.service === 'predict' ||
-      (detail.identifier.service === 'processing' && detail.identifier.type === 'extract_tables') ||
-      (detail.identifier.service === 'processing' &&
-        detail.identifier.type === 'sentence' &&
-        billedModels.includes(detail.identifier.model || ''))
-    );
   }
 }
