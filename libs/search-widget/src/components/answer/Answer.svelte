@@ -47,7 +47,6 @@
   const TABLE_BORDER = new RegExp(/^[-|]+$/);
 
   $: text = addReferences(answer.text || '', answer.citations || {});
-  $: notEnoughData = hasNotEnoughData(answer.text || '');
 
   $: sources =
     answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
@@ -211,7 +210,7 @@
   <div
     class="answer-text"
     class:error={answer.inError}>
-    {#if notEnoughData && $notEnoughDataMessage}
+    {#if $hasNotEnoughData && $notEnoughDataMessage}
       {@html $notEnoughDataMessage}
     {:else}
       <MarkdownRendering {text} />
@@ -227,7 +226,7 @@
   {#if answer.sources}
     <div class="actions">
       {#if !$chat[rank]?.answer.incomplete}
-        {#if !notEnoughData}
+        {#if !$hasNotEnoughData}
           <div class="copy smaller">
             <IconButton
               aspect="basic"
@@ -278,7 +277,7 @@
         {/if}
       {/if}
     </div>
-    {#if $isCitationsEnabled && !notEnoughData}
+    {#if $isCitationsEnabled && !$hasNotEnoughData}
       <div class="sources-container">
         {#if sources.length > 0}
           <Expander expanded={$expandedCitations === undefined ? initialAnswer : $expandedCitations}>

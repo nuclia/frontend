@@ -77,6 +77,7 @@ import {
   chatError,
   currentAnswer,
   currentQuestion,
+  hasNotEnoughData,
   isSpeechOn,
   lastSpeakableFullAnswer,
 } from './answers.store';
@@ -419,13 +420,21 @@ export function askQuestion(
             switchMap((filters) =>
               getAnswer(question, entries, { ...options, filters }).pipe(
                 tap((result) => {
+                  hasNotEnoughData.set(result.type === 'error' && result.status === -2);
                   if (result.type === 'error') {
-                    if ([412, 529].includes(result.status)) {
+                    if ([-3, -2, -1, 412, 529].includes(result.status)) {
+                      const messages: { [key: string]: string } = {
+                        '-3': 'answer.error.no_retrieval_data',
+                        '-2': 'answer.error.llm_cannot_answer',
+                        '-1': 'answer.error.llm_error',
+                        '412': 'answer.error.rephrasing',
+                        '529': 'answer.error.rephrasing',
+                      };
                       chat.set({
                         question,
                         answer: {
                           inError: true,
-                          text: translateInstant('answer.error.rephrasing'),
+                          text: translateInstant(messages[`${result.status}`]),
                           type: 'answer',
                           id: '',
                         },
