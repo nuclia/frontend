@@ -7,7 +7,6 @@
 	"account.billing": "Paiement et abonnement",
 	"account.consumption": "Consommation",
 	"account.consumption-description": "Consommation en fonction de votre activité.",
-	"account.consumption-since": "Consommation basée sur les activités depuis {{since}}",
 	"account.create_nua_key": "Créer une nouvelle clé Nuclia Understanding API",
 	"account.day_left": "1 jour restant",
 	"account.days_left": " Il reste{{days}} jours",

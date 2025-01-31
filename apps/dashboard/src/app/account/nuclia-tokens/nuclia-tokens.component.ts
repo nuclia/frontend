@@ -37,6 +37,7 @@ import {
   PaPopupModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { MetricsService } from '../metrics.service';
 
 const groups = {
   processing: ['sentence', 'extract_tables', 'token', 'relations'],
@@ -84,7 +85,6 @@ export class NucliaTokensComponent implements OnDestroy {
     }
   }
 
-  @Input() periods: { start: Date; end: Date }[] = [];
   @Input() selectedPeriod: { start: Date; end: Date } | null = null;
   @Output() selectPeriod = new EventEmitter<{ start: Date; end: Date }>();
 
@@ -95,6 +95,12 @@ export class NucliaTokensComponent implements OnDestroy {
   kbList = this.sdk.kbList;
   selectedKb = new BehaviorSubject<string>('account');
   usageSubject = new ReplaySubject<{ [key: string]: UsagePoint[] }>(1);
+  isSubscribedToStripe = this.metrics.isSubscribedToStripe;
+  periods = combineLatest([this.isSubscribedToStripe, this.metrics.period]).pipe(
+    map(([isSubscribed, period]) =>
+      isSubscribed ? this.metrics.getLastStripePeriods(period, 6) : this.metrics.getLastMonths(6),
+    ),
+  );
 
   schema = this.sdk.currentAccount.pipe(
     switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
@@ -180,6 +186,7 @@ export class NucliaTokensComponent implements OnDestroy {
 
   constructor(
     private sdk: SDKService,
+    private metrics: MetricsService,
     private translate: TranslateService,
   ) {
     this.visibleGroups.pipe(takeUntil(this.unsubscribeAll), delay(10)).subscribe(() => {

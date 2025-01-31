@@ -28,8 +28,8 @@ export class MetricsService {
   canUpgrade = this.featureService.canUpgrade;
 
   isTrial = this.featureService.isTrial;
-  isSubscribed = this.billingService.isSubscribedToStripe;
-  accountUsage = this.billingService.getAccountUsage().pipe(shareReplay());
+  isSubscribedToStripe = this.billingService.isSubscribedToStripe;
+  accountUsage = this.billingService.getAccountUsage().pipe(shareReplay(1));
   trialPeriod = combineLatest([this.account$, this.accountService.getAccountTypes()]).pipe(
     map(([account, defaults]) => {
       const expiration = account.trial_expiration_date ? new Date(`${account.trial_expiration_date}+00:00`) : undefined;
@@ -45,30 +45,21 @@ export class MetricsService {
   );
   subscriptionPeriod = this.accountUsage.pipe(
     map((usage) => ({
-      start: new Date(usage.start_billing_date),
-      end: new Date(usage.end_billing_date),
+      start: new Date(`${usage.start_billing_date}Z`),
+      end: new Date(`${usage.end_billing_date}Z`),
     })),
     catchError(() => of(undefined)),
   );
   last30Days = { start: subDays(new Date(), 30), end: new Date() };
-  get currentMonth() {
-    const start = new Date();
-    start.setUTCDate(1);
-    start.setUTCHours(0, 0, 0, 0);
-    const end = new Date();
-    end.setUTCDate(getDaysInMonth(end));
-    end.setUTCHours(23, 59, 59, 999);
-    return { start, end };
-  }
-  period = this.isSubscribed.pipe(
+  period = this.isSubscribedToStripe.pipe(
     switchMap((isSubscribed) => {
       if (isSubscribed) {
         return this.subscriptionPeriod;
       } else {
-        return of(this.currentMonth);
+        return of(this.getCurrentMonth());
       }
     }),
-    map((period) => period || this.currentMonth),
+    map((period) => period || this.getCurrentMonth()),
   );
   prices: Observable<{ [key in AccountTypes]: Prices }> = this.billingService.getPrices().pipe(shareReplay());
 
@@ -206,5 +197,47 @@ export class MetricsService {
       }
       chart.data.push([date, value]);
     }
+  }
+
+  getCurrentMonth() {
+    return this.getLastMonths(1)[0];
+  }
+
+  getLastMonths(num: number) {
+    const periods: { start: Date; end: Date }[] = [];
+    const currentMonth = new Date().getMonth();
+    for (let i = 0; i < num; i++) {
+      const start = new Date();
+      start.setUTCDate(1);
+      start.setUTCHours(0, 0, 0, 0);
+      start.setUTCMonth(currentMonth - i);
+      const end = new Date(start);
+      end.setUTCDate(getDaysInMonth(end));
+      end.setUTCHours(23, 59, 59, 999);
+      periods.push({ start, end });
+    }
+    return periods;
+  }
+
+  getLastStripePeriods(period: { start: Date; end: Date }, num: number) {
+    const periods: { start: Date; end: Date }[] = [period];
+    const isLastDayOfMonth =
+      period.start.getUTCDate() === getDaysInMonth(period.start) &&
+      period.end.getUTCDate() === getDaysInMonth(period.end);
+    for (let i = 0; i < num - 1; i++) {
+      const end = new Date(periods[periods.length - 1].start);
+      const start = new Date(end);
+      if (isLastDayOfMonth) {
+        const prevMonth = new Date(start);
+        prevMonth.setUTCDate(1);
+        prevMonth.setUTCMonth(prevMonth.getUTCMonth() - 1);
+        start.setUTCFullYear(prevMonth.getUTCFullYear());
+        start.setUTCMonth(prevMonth.getUTCMonth(), getDaysInMonth(prevMonth));
+      } else {
+        start.setUTCMonth(start.getUTCMonth() - 1);
+      }
+      periods.push({ start, end });
+    }
+    return periods;
   }
 }

@@ -9,16 +9,21 @@
       {{ 'account.nuclia-tokens.details' | translate }}
     </div>
     <div class="selectors">
-      @if (periods.length > 0 && selectedPeriod) {
+      @if (((periods | async) || []).length > 0 && selectedPeriod) {
         <div class="select">
           <pa-select
             [value]="selectedPeriod.start.toString()">
-            @for (period of periods; track period.start.toString()) {
+            @for (period of ((periods | async) || []); track period.start.toString()) {
               <pa-option
                 [value]="period.start.toString()"
                 (selectOption)="selectPeriod.emit(period); loading = true"
                 >
-                {{ period.start | date: 'MMMM y' }}
+                @if (isSubscribedToStripe | async) {
+                  {{ period.start | date: 'MMM d, y' }} - {{ period.end | date: 'MMM d, y' }}
+                }
+                @else {
+                  {{ period.start | date: 'MMMM y' }} 
+                }
               </pa-option>
             }
           </pa-select>
