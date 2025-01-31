@@ -79,8 +79,8 @@ export class FeaturesService {
     promptLab: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('llm-prompt-lab')]).pipe(
       map(([isEnterprise, isAuthorized]) => isEnterprise || isAuthorized),
     ),
-    activityLog: this._account.pipe(
-      map((account) => !['stash-trial', 'stash-starter', 'v3starter'].includes(account.type)),
+    activityLog: combineLatest([this.isEnterpriseOrGrowth, this.featureFlag.isFeatureAuthorized('activity-log')]).pipe(
+      map((isEnterprise, isAuthorized) => isEnterprise || isAuthorized),
     ),
     summarization: combineLatest([
       this.isEnterpriseOrGrowth,
