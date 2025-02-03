@@ -408,6 +408,7 @@ export function askQuestion(
   reset: boolean,
   options: BaseSearchOptions = {},
 ): Observable<Ask.Answer | IErrorResponse> {
+  let hasError = false;
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(({ question }) =>
@@ -430,15 +431,19 @@ export function askQuestion(
                         '412': 'answer.error.rephrasing',
                         '529': 'answer.error.rephrasing',
                       };
-                      chat.set({
-                        question,
-                        answer: {
-                          inError: true,
-                          text: translateInstant(messages[`${result.status}`]),
-                          type: 'answer',
-                          id: '',
-                        },
-                      });
+                      if (!hasError) {
+                        // error is set only once
+                        hasError = true;
+                        chat.set({
+                          question,
+                          answer: {
+                            inError: true,
+                            text: translateInstant(messages[`${result.status}`]),
+                            type: 'answer',
+                            id: '',
+                          },
+                        });
+                      }
                     } else {
                       chatError.set(result);
                     }
