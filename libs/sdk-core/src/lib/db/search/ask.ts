@@ -106,7 +106,7 @@ export function ask(
           if (statusItem) {
             const item = statusItem.item as Ask.StatusAskResponseItem;
             const status = parseInt(item.code, 10);
-            if (!Number.isNaN(status) && status < 1) {
+            if (!Number.isNaN(status) && status !== 0) {
               return { type: 'error', status, detail: item.details || '' } as IErrorResponse;
             }
           }
