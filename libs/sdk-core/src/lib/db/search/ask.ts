@@ -5,6 +5,13 @@ import { ChatOptions, Search } from './search.models';
 
 import { ResourceProperties } from '../db.models';
 
+const ERROR_CODES: { [key: string]: number } = {
+  success: 0,
+  error: -1,
+  no_context: -2,
+  no_retrieval_data: -3,
+};
+
 export function ask(
   nuclia: INuclia,
   kbid: string,
@@ -52,8 +59,12 @@ export function ask(
             metadata,
             prompt_context,
           }) => {
-            if (status === 'error') {
-              return { type: 'error', status: -1, detail: error_details || '' } as IErrorResponse;
+            if (status !== 'success') {
+              return {
+                type: 'error',
+                status: ERROR_CODES[status] || -1,
+                detail: error_details || '',
+              } as IErrorResponse;
             }
             return {
               type: 'answer',
@@ -94,8 +105,9 @@ export function ask(
           const statusItem = items.find((item) => item.item.type === 'status');
           if (statusItem) {
             const item = statusItem.item as Ask.StatusAskResponseItem;
-            if (item.status === 'error') {
-              return { type: 'error', status: -1, detail: item.details || '' } as IErrorResponse;
+            const status = parseInt(item.code, 10);
+            if (!Number.isNaN(status) && status !== 0) {
+              return { type: 'error', status, detail: item.details || '' } as IErrorResponse;
             }
           }
           let answer = items

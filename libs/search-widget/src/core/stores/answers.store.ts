@@ -1,7 +1,6 @@
 import type { Ask, IErrorResponse } from '@nuclia/core';
 import { SvelteState } from '../state-lib';
 import { showResults } from './search.store';
-import { hasNotEnoughData } from '../utils';
 
 interface AnswerState {
   chat: Ask.Entry[];
@@ -12,6 +11,7 @@ interface AnswerState {
   isSpeechOn: boolean;
   input: string;
   disclaimer?: string;
+  notEnoughData: boolean;
 }
 
 const EMPTY_ANSWER = { type: 'answer' as const, text: '', id: '' };
@@ -22,6 +22,7 @@ export const answerState = new SvelteState<AnswerState>({
   isStreaming: false,
   isSpeechOn: false,
   input: '',
+  notEnoughData: false,
 });
 
 export const chatInput = answerState.writer<string, string>(
@@ -82,7 +83,7 @@ export const chat = answerState.writer<Ask.Entry[], { question: string; answer: 
         question: params.question,
         answer: {
           ...params.answer,
-          inError: params.answer.inError || hasNotEnoughData(params.answer.text),
+          inError: params.answer.inError,
         },
       },
     ],
@@ -135,4 +136,9 @@ export const hasChatEntries = answerState.reader<boolean>((state) => state.chat.
 export const disclaimer = answerState.writer<string | undefined, string | undefined>(
   (state) => state.disclaimer,
   (state, value) => ({ ...state, disclaimer: value }),
+);
+
+export const hasNotEnoughData = answerState.writer<boolean, boolean>(
+  (state) => state.notEnoughData,
+  (state, param) => ({ ...state, notEnoughData: param }),
 );

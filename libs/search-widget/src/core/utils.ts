@@ -331,11 +331,6 @@ export function injectCustomCss(cssPath: string, element: HTMLElement) {
   }
 }
 
-export function hasNotEnoughData(text: string): boolean {
-  text = text.replace(/<br>/g, '').replace(/\n/g, '');
-  return text === 'Not enough data to answer this.';
-}
-
 export function hasNoResultsWithAutofilter(
   results: Search.FindResults | undefined,
   options: BaseSearchOptions,
@@ -373,13 +368,13 @@ export function getFormatInfos(format: TextFieldFormat) {
       ext = 'rst';
       break;
     case 'JSON':
-      mime ='	application/json';
+      mime = '	application/json';
       ext = 'json';
       break;
     default:
       mime = 'text/plain';
       ext = 'txt';
-  } 
+  }
   return { mime, ext };
 }
 

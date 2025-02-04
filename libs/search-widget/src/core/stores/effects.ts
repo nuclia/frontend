@@ -2,6 +2,7 @@ import {
   getAnswer,
   getEntities,
   getLabelSets,
+  getNotEngoughDataMessage,
   getResourceById,
   getResourceField,
   searchInResource,
@@ -34,19 +35,10 @@ import {
   isCitationsEnabled,
   isSpeechEnabled,
   isSpeechSynthesisEnabled,
-  widgetFeatures,
   widgetImageRagStrategies,
   widgetRagStrategies,
 } from './widget.store';
-import type {
-  Ask,
-  BaseSearchOptions,
-  ChatOptions,
-  Classification,
-  FieldFullId,
-  IErrorResponse,
-  Search,
-} from '@nuclia/core';
+import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse } from '@nuclia/core';
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import {
   formatQueryKey,
@@ -77,6 +69,7 @@ import {
   chatError,
   currentAnswer,
   currentQuestion,
+  hasNotEnoughData,
   isSpeechOn,
   lastSpeakableFullAnswer,
 } from './answers.store';
@@ -407,6 +400,7 @@ export function askQuestion(
   reset: boolean,
   options: BaseSearchOptions = {},
 ): Observable<Ask.Answer | IErrorResponse> {
+  let hasError = false;
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(({ question }) =>
@@ -419,17 +413,30 @@ export function askQuestion(
             switchMap((filters) =>
               getAnswer(question, entries, { ...options, filters }).pipe(
                 tap((result) => {
+                  hasNotEnoughData.set(result.type === 'error' && result.status === -2);
                   if (result.type === 'error') {
-                    if ([412, 529].includes(result.status)) {
-                      chat.set({
-                        question,
-                        answer: {
-                          inError: true,
-                          text: translateInstant('answer.error.rephrasing'),
-                          type: 'answer',
-                          id: '',
-                        },
-                      });
+                    if ([-3, -2, -1, 412, 529].includes(result.status)) {
+                      const messages: { [key: string]: string } = {
+                        '-3': 'answer.error.no_retrieval_data',
+                        '-2': 'answer.error.llm_cannot_answer',
+                        '-1': 'answer.error.llm_error',
+                        '412': 'answer.error.rephrasing',
+                        '529': 'answer.error.rephrasing',
+                      };
+                      if (!hasError) {
+                        // error is set only once
+                        hasError = true;
+                        const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
+                        chat.set({
+                          question,
+                          answer: {
+                            inError: true,
+                            text: translateInstant(text),
+                            type: 'answer',
+                            id: '',
+                          },
+                        });
+                      }
                     } else {
                       chatError.set(result);
                     }

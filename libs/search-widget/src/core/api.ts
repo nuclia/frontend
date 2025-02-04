@@ -1,6 +1,5 @@
 import type {
   ChatOptions,
-  Classification,
   FieldFullId,
   FieldMetadata,
   IErrorResponse,
@@ -48,6 +47,7 @@ let ASK_TO_RESOURCE = '';
 let MAX_TOKENS: number | { context?: number; answer?: number } | undefined = undefined;
 let MAX_PARAGRAPHS: number | undefined = undefined;
 let QUERY_PREPEND = '';
+let NOT_ENOUGH_DATA_MESSAGE = '';
 let NO_CHAT_HISTORY = false;
 let DEBUG = false;
 let HIGHLIGHT = false;
@@ -90,6 +90,9 @@ export const initNuclia = (
   }
   if (widgetOptions.rrf_boosting) {
     SEARCH_OPTIONS.rank_fusion = { name: 'rrf', boosting: { semantic: widgetOptions.rrf_boosting } };
+  }
+  if (widgetOptions.not_enough_data_message) {
+    NOT_ENOUGH_DATA_MESSAGE = widgetOptions.not_enough_data_message;
   }
   CITATIONS = !!widgetOptions.features?.citations;
   HIGHLIGHT = !!widgetOptions.features?.highlight;
@@ -505,4 +508,8 @@ export function getApiErrors() {
 export function getAttachedImageTemplate(placeholder: string): Observable<string> {
   const path = `${nucliaApi?.knowledgeBox.path}/resource/${placeholder}`;
   return getFileUrl(path);
+}
+
+export function getNotEngoughDataMessage() {
+  return NOT_ENOUGH_DATA_MESSAGE || 'answer.error.llm_cannot_answer';
 }
