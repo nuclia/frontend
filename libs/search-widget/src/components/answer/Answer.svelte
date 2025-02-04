@@ -22,7 +22,6 @@
     getResultType,
     hasNotEnoughData,
     isCitationsEnabled,
-    notEnoughDataMessage,
     showAttachedImages,
     type RankedParagraph,
     type TypedResult,
@@ -210,11 +209,7 @@
   <div
     class="answer-text"
     class:error={answer.inError}>
-    {#if $hasNotEnoughData && $notEnoughDataMessage}
-      {@html $notEnoughDataMessage}
-    {:else}
-      <MarkdownRendering {text} />
-    {/if}
+    <MarkdownRendering {text} />
   </div>
   {#if $showAttachedImages && images.length > 0}
     <div class="images">

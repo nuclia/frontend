@@ -52,6 +52,7 @@
   export let no_tracking = false;
   export let rag_strategies = '';
   export let rag_images_strategies = '';
+  export let not_enough_data_message = '';
   export let max_tokens: number | string | undefined = undefined;
   export let max_output_tokens: number | string | undefined = undefined;
   export let max_paragraphs: number | undefined = undefined;
@@ -169,6 +170,7 @@
         rrf_boosting: _rrf_boosting,
         feedback,
         copy_disclaimer,
+        not_enough_data_message,
       },
       no_tracking,
     );

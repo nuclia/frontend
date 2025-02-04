@@ -60,6 +60,7 @@ export interface WidgetOptions {
   rrf_boosting?: number;
   feedback?: WidgetFeedback;
   copy_disclaimer?: string;
+  not_enough_data_message?: string;
 }
 
 export interface WidgetAction {

@@ -10,7 +10,6 @@ export const widgetFilters = writableSubject<WidgetFilters>({});
 export const widgetRagStrategies = writableSubject<RAGStrategy[]>([]);
 export const widgetImageRagStrategies = writableSubject<RAGImageStrategy[]>([]);
 export const widgetJsonSchema = writableSubject<object | null>(null);
-export const notEnoughDataMessage = writableSubject<string>('');
 export const widgetActions = writableSubject<WidgetAction[]>([]);
 export const widgetFeedback = writableSubject<WidgetFeedback>('answer');
 

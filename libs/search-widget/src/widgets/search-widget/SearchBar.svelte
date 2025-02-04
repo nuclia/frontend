@@ -23,7 +23,6 @@
   import globalCss from '../../common/_global.scss?inline';
   import {
     chatPlaceholder,
-    notEnoughDataMessage,
     widgetFeatures,
     widgetFeedback,
     widgetFilters,
@@ -110,9 +109,6 @@
   }
   $: {
     chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
-  }
-  $: {
-    notEnoughDataMessage.set(not_enough_data_message);
   }
 
   let _features: WidgetFeatures = {};
@@ -257,6 +253,7 @@
         rrf_boosting: _rrf_boosting,
         feedback,
         copy_disclaimer,
+        not_enough_data_message,
       },
       no_tracking,
     );

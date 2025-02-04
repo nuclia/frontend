@@ -2,6 +2,7 @@ import {
   getAnswer,
   getEntities,
   getLabelSets,
+  getNotEngoughDataMessage,
   getResourceById,
   getResourceField,
   searchInResource,
@@ -34,19 +35,10 @@ import {
   isCitationsEnabled,
   isSpeechEnabled,
   isSpeechSynthesisEnabled,
-  widgetFeatures,
   widgetImageRagStrategies,
   widgetRagStrategies,
 } from './widget.store';
-import type {
-  Ask,
-  BaseSearchOptions,
-  ChatOptions,
-  Classification,
-  FieldFullId,
-  IErrorResponse,
-  Search,
-} from '@nuclia/core';
+import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse } from '@nuclia/core';
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import {
   formatQueryKey,
@@ -434,11 +426,12 @@ export function askQuestion(
                       if (!hasError) {
                         // error is set only once
                         hasError = true;
+                        const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
                         chat.set({
                           question,
                           answer: {
                             inError: true,
-                            text: translateInstant(messages[`${result.status}`]),
+                            text: translateInstant(text),
                             type: 'answer',
                             id: '',
                           },
