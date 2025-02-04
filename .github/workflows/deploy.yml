@@ -343,7 +343,7 @@ jobs:
             } + {
               tests: {
                 "run-e2e": true,
-                "run-nua-e2e": false
+                "run-nuclia-e2e": false
               }
             } + {
               "commit-sha": $commit_sha
