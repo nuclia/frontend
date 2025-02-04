@@ -1,4 +1,5 @@
 ![CI](https://github.com/nuclia/frontend/actions/workflows/deploy.yml/badge.svg)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend?ref=badge_shield)
 
 # Nuclia frontend apps and libraries
 
@@ -192,3 +193,7 @@ It is deployed manually to stage using the following command:
 ```sh
 gsutil cp -r ./maintenance gs://ncl-cdn-gcp-global-stage-1
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnuclia%2Ffrontend?ref=badge_large)
