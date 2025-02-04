@@ -316,7 +316,7 @@ export enum RagStrategyName {
   NEIGHBOURING_PARAGRAPHS = 'neighbouring_paragraphs',
   PREQUERIES = 'prequeries',
   CONVERSATION = 'conversation',
-  GRAPH = 'graph',
+  GRAPH = 'graph_beta',
 }
 
 export interface Prequery {
