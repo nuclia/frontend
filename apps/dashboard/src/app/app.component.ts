@@ -28,8 +28,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private splashScreenService: STFSplashScreenService,
     private ngxTranslate: TranslateService,
     private config: BackendConfigurationService,
-    private modalService: SisModalService,
     private sdk: SDKService,
+    private modalService: SisModalService,
     private paTranslate: PaTranslateService,
     @Inject(DOCUMENT) private document: any,
   ) {
