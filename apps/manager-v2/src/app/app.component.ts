@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { Subject } from 'rxjs';
 import { BackendConfigurationService, STFUtils } from '@flaps/core';
-import { TranslateService } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 
 const userLocaleKey = 'NUCLIA_USER_LOCALE';

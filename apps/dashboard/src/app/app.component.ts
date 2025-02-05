@@ -24,8 +24,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private splashScreenService: STFSplashScreenService,
     private user: UserService,
+    private splashScreenService: STFSplashScreenService,
     private config: BackendConfigurationService,
     private ngxTranslate: TranslateService,
     private sdk: SDKService,
