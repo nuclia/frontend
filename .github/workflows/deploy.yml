@@ -166,6 +166,7 @@ jobs:
           image-name: ${{ env.MANAGER_IMAGE_NAME }}
           image-version: ${{ env.SHORT_SHA }}
           skip-ecr-push: true
+          skip-context-creation: true
           push: true
           tag-latest: main
 
