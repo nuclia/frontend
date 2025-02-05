@@ -28,25 +28,40 @@
       }
     </pa-tabs>
     <div class="download-list">
-      @for (item of activity[selectedActivityTab] | async; track item.month) {
-        <div class="download-item">
-          <div class="body-m">{{ item.formatted }}</div>
-          @if (completedDownloads[selectedActivityTab + '-' + item.month]) {
-            <div class="email-sent">
-              <pa-icon
-                name="check"
-                [paPopover]="help"></pa-icon>
-              <pa-popover #help>
-                {{ 'activity.email-sent' | translate: { email: email | async } }}
-              </pa-popover>
+      @for (item of activity[selectedActivityTab] | async; track selectedActivityTab + item.month) {
+        <pa-expander
+          [disabled]="
+            !downloads[selectedActivityTab + '-' + item.month] ||
+            !downloads[selectedActivityTab + '-' + item.month].rows
+          "
+          card
+          buttonOnlyToggle>
+          <pa-expander-header>
+            <div class="download-item">
+              <div class="body-m">{{ item.formatted }}</div>
+              @if (!!downloads[selectedActivityTab + '-' + item.month]) {
+                <div class="email-sent">
+                  @if (downloads[selectedActivityTab + '-' + item.month].status === 'pending') {
+                    <pa-icon name="clock-dash"></pa-icon>
+                  }
+                </div>
+              } @else {
+                <pa-button
+                  icon="download"
+                  aspect="basic"
+                  (click)="download(selectedActivityTab, item.month)"></pa-button>
+              }
             </div>
-          } @else {
-            <pa-button
-              icon="download"
-              aspect="basic"
-              (click)="download(selectedActivityTab, item.month)"></pa-button>
-          }
-        </div>
+          </pa-expander-header>
+          <pa-expander-body>
+            <app-log-table
+              [rows]="
+                !!downloads[selectedActivityTab + '-' + item.month]
+                  ? downloads[selectedActivityTab + '-' + item.month].rows || []
+                  : []
+              "></app-log-table>
+          </pa-expander-body>
+        </pa-expander>
       }
     </div>
   </div>

@@ -17,7 +17,6 @@
 
 .activity-container {
   background-color: $color-neutral-lightest;
-  width: calc(rhythm(90) + rhythm(24));
 }
 
 .download-list {
@@ -37,4 +36,8 @@
 
 .email-sent {
   padding: rhythm(1);
+}
+
+:host ::ng-deep button[disabled] pa-icon {
+  opacity: 0.3;
 }

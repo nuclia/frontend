@@ -78,13 +78,9 @@ export class ActivityMonitor {
     query: ActivityLogDownloadQuery,
     format: DownloadFormat,
   ): Observable<ActivityLogDownload> {
-    return this.nuclia.rest.post<ActivityLogDownload>(
-      `${this.kb.path}/activity/${eventType}/query/download`,
-      query,
-      {
-        accept: format,
-      },
-    );
+    return this.nuclia.rest.post<ActivityLogDownload>(`${this.kb.path}/activity/${eventType}/query/download`, query, {
+      accept: format,
+    });
   }
 
   /**

@@ -1,0 +1,14 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.container {
+  width: auto;
+  overflow: scroll;
+  pa-input {
+    display: block;
+    margin: rhythm(1) 0;
+    width: 50%;
+  }
+}
+.table {
+  width: 5000px;
+}

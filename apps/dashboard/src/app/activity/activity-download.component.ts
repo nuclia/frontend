@@ -1,10 +1,25 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { map, Observable, shareReplay, switchMap, take } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import {
+  concatMap,
+  filter,
+  from,
+  map,
+  Observable,
+  of,
+  repeat,
+  shareReplay,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { SDKService, UserService } from '@flaps/core';
 import { EventType } from '@nuclia/core';
 import { format } from 'date-fns';
 import { SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
+import { LogEntry } from './log.models';
 
 type Tab = 'resources' | 'searches';
 type ActivityTab = EventType;
@@ -31,12 +46,21 @@ const chatColumns = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class ActivityDownloadComponent {
+export class ActivityDownloadComponent implements OnDestroy {
+  unsubscribeAll = new Subject<void>();
   activityTabs: { [tab in Tab]: ActivityTab[] } = {
     searches: [EventType.CHAT, EventType.SEARCH],
     resources: [EventType.PROCESSED, EventType.NEW, EventType.MODIFIED],
   };
-  completedDownloads: { [key: string]: boolean } = {};
+  downloads: {
+    [key: string]: {
+      status: 'pending' | 'completed';
+      requestId?: string;
+      url?: string;
+      rows?: LogEntry[];
+    };
+  } = {};
+  watchList = new Subject<{ key: string; requestId: string }>();
   email = this.user.userPrefs.pipe(map((user) => user?.email || ''));
   selectedTab: Tab = 'resources';
   selectedActivityTab: ActivityTab = this.activityTabs[this.selectedTab][0];
@@ -63,25 +87,81 @@ export class ActivityDownloadComponent {
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
     private translate: TranslateService,
-  ) {}
+  ) {
+    this.watchList
+      .pipe(
+        switchMap(({ key, requestId }) =>
+          this.sdk.currentKb.pipe(
+            switchMap((kb) =>
+              of(null).pipe(
+                repeat({ delay: 5000 }),
+                takeUntil(this.unsubscribeAll),
+                switchMap(() => kb.activityMonitor.getDownloadStatus(requestId)),
+                filter((data) => {
+                  if (data.download_url) {
+                    this.downloads[key].status = 'completed';
+                    this.downloads[key].url = data.download_url;
+                    this.cdr?.markForCheck();
+                    return true;
+                  }
+                  return false;
+                }),
+                take(1),
+              ),
+            ),
+            concatMap(() => {
+              const url = this.downloads[key].url;
+              if (!url) {
+                return of(null);
+              } else {
+                return from(fetch(url).then((res) => res.text()));
+              }
+            }),
+            tap((ndjson) => {
+              if (ndjson) {
+                this.downloads[key].rows = ndjson
+                  .split('\n')
+                  .filter((s) => !!s)
+                  .map((row) => new LogEntry(row));
+                this.cdr?.markForCheck();
+              }
+            }),
+          ),
+        ),
+      )
+      .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
 
   download(eventType: EventType, month: string) {
     let show =
       eventType === EventType.SEARCH ? searchColumns : eventType === EventType.CHAT ? chatColumns : resourceColumns;
-    this.completedDownloads[`${eventType}-${month}`] = true;
     this.sdk.currentKb
       .pipe(
         switchMap((kb) =>
-          kb.activityMonitor.createActivityLogDownload(
-            eventType,
-            {
-              year_month: month,
-              filters: {},
-              notify_via_email: true,
-              show,
-            },
-            'application/x-ndjson',
-          ),
+          kb.activityMonitor
+            .createActivityLogDownload(
+              eventType,
+              {
+                year_month: month,
+                filters: {},
+                notify_via_email: true,
+                show,
+              },
+              'application/x-ndjson',
+            )
+            .pipe(
+              tap((res) => {
+                const key = `${eventType}-${month}`;
+                this.downloads[key] = { status: 'pending', requestId: res.request_id };
+                this.watchList.next({ key: key, requestId: res.request_id });
+                this.cdr?.markForCheck();
+              }),
+            ),
         ),
         switchMap(() => this.email),
         take(1),

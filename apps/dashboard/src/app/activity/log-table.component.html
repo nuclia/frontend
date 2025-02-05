@@ -1,0 +1,43 @@
+<div class="container">
+  <pa-input (valueChange)="search($event)">{{ 'activity.filter' | translate }}</pa-input>
+  <div class="table">
+    <pa-table [columns]="'repeat(' + (headers.length || 1) + ', fit-content(400px))'">
+      @if (displayedRows.length === 0) {
+        <pa-table-row>
+          <pa-table-cell>N/A</pa-table-cell>
+        </pa-table-row>
+      } @else {
+        <pa-table-header>
+          @for (title of headers; track title) {
+            <pa-table-cell>{{ title }}</pa-table-cell>
+          }
+        </pa-table-header>
+      }
+      @for (row of displayedRows; track row.id) {
+        <pa-table-row>
+          <pa-table-cell>
+            <div class="body-s">
+              <pa-datetime [datetime]="row.date"></pa-datetime>
+            </div>
+          </pa-table-cell>
+          <pa-table-cell>
+            <div class="body-s">
+              {{ row.id }}
+            </div>
+          </pa-table-cell>
+          @for (cell of row.data; track cell[0]) {
+            <pa-table-cell>
+              <div class="body-s">
+                @if (cell[1].type === 'object') {
+                  <pre>{{ cell[1].value | json }}</pre>
+                } @else {
+                  {{ cell[1].value }}
+                }
+              </div>
+            </pa-table-cell>
+          }
+        </pa-table-row>
+      }
+    </pa-table>
+  </div>
+</div>
