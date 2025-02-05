@@ -8,7 +8,6 @@ on:
 
 env:
   APP_IMAGE_NAME: app
-  ARTIFACT_REGISTRY_URL: oci://europe-west4-docker.pkg.dev/nuclia-internal/charts
   MANAGER_IMAGE_NAME: manager
   CDN_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.CDN_STORAGE || secrets.CDN_STORAGE_DEV }}
   DOCS_STORAGE: ${{ github.ref == 'refs/heads/main' && secrets.DOCS_STORAGE || secrets.DOCS_STORAGE_DEV }}
@@ -23,7 +22,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: nuclia-base
 
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
@@ -120,15 +119,36 @@ jobs:
           sh ./tools/build-sdk-docs.sh
           gsutil -m rsync -r ./libs/sdk-core/docs gs://$DOCS_STORAGE/js-sdk
 
-      - name: Build dashboard image for Artifact Repository
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
+
+      - name: Checkout tooling repository
+        uses: actions/checkout@v4
+        with:
+          repository: nuclia/tooling
+          ref: main
+          path: tooling
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Push image to registries
+        uses: ./tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-app == 'yes'
-        env:
-          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/private
-        run: |-
-          docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=dashboard --build-arg noRelativeCss=true .
-          docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
-          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
-          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
+        with:
+          build-arg: |
+            appId=app 
+            appFolder=dashboard 
+            noRelativeCss=true
+          file: docker/Dockerfile
+          image-name: ${{ env.APP_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          skip-ecr-push: true
+          push: true
+          tag-latest: main
 
       - name: Publish NucliaDB admin app
         if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes' && github.ref == 'refs/heads/main'
@@ -140,15 +160,21 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
-      - name: Build manager image for Artifact Repository
+      - name: Push image to registries
+        uses: ./tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-manager == 'yes'
-        env:
-          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/private
-        run: |-
-          docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager-v2 --build-arg noRelativeCss=true .
-          docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
-          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA}
-          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
+        with:
+          build-arg: |
+            appId=manager 
+            appFolder=manager-v2 
+            noRelativeCss=true
+          file: docker/Dockerfile
+          image-name: ${{ env.MANAGER_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          skip-ecr-push: true
+          skip-context-creation: true
+          push: true
+          tag-latest: main
 
       - name: Create 404 page for gh-pages
         if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
@@ -180,7 +206,7 @@ jobs:
           "components": [
             {
               "component": "app",
-              "chart-version": "${{ steps.version_step.outputs.version_number }}",
+              "chart-version": "${{ steps.chart-version-app.outputs.chart-version }}",
               "component-type": "global"
             }
           ]
@@ -208,28 +234,40 @@ jobs:
       - name: Calculate short sha
         run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
 
-      - name: Set helm package image
-        id: version_step
-        env:
-          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/nuclia
-        run: |-
-          sed -i.bak "s#IMAGE_TO_REPLACE#$APP_IMAGE_NAME:${SHORT_SHA}#" ./charts/app/values.yaml
-          sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/app/values.yaml
-          VERSION=`cat apps/dashboard/VERSION`
-          VERSION_SHA=$VERSION-${SHORT_SHA}
-          sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/app/Chart.yaml
-          echo "version_number=$VERSION_SHA" >> $GITHUB_OUTPUT
-
-      - name: Install Helm
-        uses: azure/setup-helm@v3
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v1
         with:
-          version: v3.15.3
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
 
-      - name: Push helm package
-        run: |-
-          helm lint charts/app
-          helm package charts/app
-          helm push app-${{ steps.version_step.outputs.version_number }}.tgz ${{ env.ARTIFACT_REGISTRY_URL }}
+      - name: Checkout tooling repository
+        uses: actions/checkout@v4
+        with:
+          repository: nuclia/tooling
+          ref: main
+          path: tooling
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Get chart version
+        id: chart-version-app
+        run: |
+          VERSION=`cat apps/dashboard/VERSION`
+          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+
+      - name: Build and push helm chart
+        uses: ./tooling/.github/actions/build-helm-chart
+        with:
+          component: ${{ env.APP_IMAGE_NAME }}
+          chart-version: ${{ steps.chart-version-app.outputs.chart-version }}
+          image-name: ${{ env.APP_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          hash: ${{ env.SHORT_SHA }}
+          helm-chart-url: ${{ secrets.HELM_CHART_URL }}
+          chart-dir: "./charts/${{ env.APP_IMAGE_NAME }}"
+          helm-version: v3.15.3
+          push-to-artifact-registry: true
 
   deploy-manager:
     name: Deploy manager
@@ -242,7 +280,7 @@ jobs:
           "components": [
             {
               "component": "manager",
-              "chart-version": "${{ steps.version_step.outputs.version_number }}",
+              "chart-version": "${{ steps.chart-version-manager.outputs.chart-version }}",
               "component-type": "global"
             }
           ]
@@ -270,28 +308,40 @@ jobs:
       - name: Calculate short sha
         run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
 
-      - name: Set helm package image
-        id: version_step
-        env:
-          CONTAINER_REGISTRY: europe-west4-docker.pkg.dev/nuclia-internal/nuclia
-        run: |-
-          sed -i.bak "s#IMAGE_TO_REPLACE#$MANAGER_IMAGE_NAME:${SHORT_SHA}#" ./charts/manager/values.yaml
-          sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/manager/values.yaml
-          VERSION=`cat apps/manager-v2/VERSION`
-          VERSION_SHA=$VERSION-$SHORT_SHA
-          sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/manager/Chart.yaml
-          echo "version_number=$VERSION_SHA" >> $GITHUB_OUTPUT
-
-      - name: Install Helm
-        uses: azure/setup-helm@v3
+      - name: Generate a token
+        id: app-token
+        uses: actions/create-github-app-token@v1
         with:
-          version: v3.15.3
+          app-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          private-key: ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          owner: nuclia
 
-      - name: Push helm package
-        run: |-
-          helm lint charts/manager
-          helm package charts/manager
-          helm push manager-${{ steps.version_step.outputs.version_number }}.tgz ${{ env.ARTIFACT_REGISTRY_URL }}
+      - name: Checkout tooling repository
+        uses: actions/checkout@v4
+        with:
+          repository: nuclia/tooling
+          ref: main
+          path: tooling
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Get chart version
+        id: chart-version-manager
+        run: |
+          VERSION=`cat apps/manager-v2/VERSION`
+          echo "chart-version=$VERSION-${{ env.SHORT_SHA }}" >> $GITHUB_OUTPUT
+
+      - name: Build and push helm chart
+        uses: ./tooling/.github/actions/build-helm-chart
+        with:
+          component: ${{ env.MANAGER_IMAGE_NAME }}
+          chart-version: ${{ steps.chart-version-manager.outputs.chart-version }}
+          image-name: ${{ env.MANAGER_IMAGE_NAME }}
+          image-version: ${{ env.SHORT_SHA }}
+          hash: ${{ env.SHORT_SHA }}
+          helm-chart-url: ${{ secrets.HELM_CHART_URL }}
+          chart-dir: "./charts/${{ env.MANAGER_IMAGE_NAME }}"
+          helm-version: v3.15.3
+          push-to-artifact-registry: true
 
   send-to-promotion:
     runs-on: ubuntu-latest
