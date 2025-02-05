@@ -20,6 +20,11 @@
               <pa-datetime [datetime]="row.date"></pa-datetime>
             </div>
           </pa-table-cell>
+          <pa-table-cell>
+            <div class="body-s">
+              {{ row.id }}
+            </div>
+          </pa-table-cell>
           @for (cell of row.data; track cell[0]) {
             <pa-table-cell>
               <div class="body-s">

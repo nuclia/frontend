@@ -18,7 +18,7 @@ export class ActivityLogTableComponent {
     this._rows = v;
     this.displayedRows = v;
     if (this._rows.length > 0) {
-      this.headers = ['Date'].concat(this._rows[0].data.map(([key, _]) => key));
+      this.headers = ['Date', 'ID'].concat(this._rows[0].data.map(([key, _]) => key));
     }
   }
   get rows(): LogEntry[] {
