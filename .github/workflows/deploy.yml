@@ -54,17 +54,12 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.gcp-auth.outputs.access_token }}
 
-      - name: Run install
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: install
+      - uses: nrwl/nx-set-shas@v3
 
       - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: 'yarn'
-
-      - uses: nrwl/nx-set-shas@v3
 
       - name: Calculate short sha
         run: echo "SHORT_SHA=`echo hash${GITHUB_SHA} | cut -c1-12`" >> $GITHUB_ENV
