@@ -139,7 +139,10 @@ jobs:
         uses: ./tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-app == 'yes'
         with:
-          build-arg: appId=app appFolder=dashboard noRelativeCss=true
+          build-arg: |
+            appId=app 
+            appFolder=dashboard 
+            noRelativeCss=true
           file: docker/Dockerfile
           image-name: ${{ env.APP_IMAGE_NAME }}
           image-version: ${{ env.SHORT_SHA }}
