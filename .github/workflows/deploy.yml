@@ -131,7 +131,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nuclia/tooling
-          ref: main
+          ref: fix-multiple-build-args
           path: tooling
           token: ${{ steps.app-token.outputs.token }}
 

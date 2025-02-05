@@ -2,8 +2,8 @@ import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewCon
 import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
-import { NavigationEnd, Router } from '@angular/router';
 import { filter, Subject } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
