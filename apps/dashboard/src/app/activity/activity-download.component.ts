@@ -182,12 +182,4 @@ export class ActivityDownloadComponent implements OnDestroy {
     const date = new Date(parseInt(year), parseInt(month) - 1, 2);
     return format(date, 'MMMM yyyy');
   }
-
-  toggle(url?: string) {
-    if (url) {
-      from(fetch(url).then((res) => res.text())).subscribe((ndjson) => {
-        console.log(ndjson);
-      });
-    }
-  }
 }

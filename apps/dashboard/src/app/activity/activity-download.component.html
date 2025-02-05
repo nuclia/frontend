@@ -28,7 +28,7 @@
       }
     </pa-tabs>
     <div class="download-list">
-      @for (item of activity[selectedActivityTab] | async; track item.month) {
+      @for (item of activity[selectedActivityTab] | async; track selectedActivityTab + item.month) {
         <pa-expander
           [disabled]="
             !downloads[selectedActivityTab + '-' + item.month] ||
