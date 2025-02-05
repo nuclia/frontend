@@ -65,7 +65,6 @@ describe('ResourceTableComponent', () => {
         MockProvider(ResourceListService, {
           filters: of([]),
           loadResources: jest.fn(() => of()),
-          isShardReady: new BehaviorSubject(false),
         }),
       ],
     }).compileComponents();

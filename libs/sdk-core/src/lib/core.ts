@@ -13,7 +13,6 @@ export class Nuclia implements INuclia {
   rest: IRest;
   /** Allows you to access and query the Nuclia database. */
   db: IDb;
-  currentShards?: { [kb: string]: string[] } = {};
   events = new Events();
   private readKb?: KnowledgeBox;
 

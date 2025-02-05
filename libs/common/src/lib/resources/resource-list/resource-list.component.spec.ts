@@ -93,7 +93,6 @@ describe('ResourceListComponent', () => {
         MockProvider(ResourceListService, {
           filters: of([]),
           ready: of(true),
-          isShardReady: new BehaviorSubject(false),
           totalKbResources: of(1),
         }),
       ],

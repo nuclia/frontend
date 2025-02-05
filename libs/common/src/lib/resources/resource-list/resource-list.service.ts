@@ -86,8 +86,6 @@ export class ResourceListService {
     map(([totalItems, pageSize]) => Math.ceil(totalItems / pageSize)),
   );
 
-  isShardReady = new BehaviorSubject<boolean>(false);
-
   labelSets: Observable<LabelSets> = this.labelService.resourceLabelSets.pipe(
     filter((labelSets) => !!labelSets),
     map((labelSets) => labelSets as LabelSets),

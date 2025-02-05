@@ -64,7 +64,6 @@ export interface BaseSearchOptions {
   extracted?: ExtractedDataTypes[];
   field_type_filter?: FIELD_TYPE[];
   resource_filters?: string[];
-  shards?: string[];
   autofilter?: boolean;
   highlight?: boolean;
   rephrase?: boolean;
@@ -157,7 +156,6 @@ export namespace Search {
   export interface FindResults {
     type: 'findResults';
     resources?: { [id: string]: FindResource };
-    shards?: string[];
     next_page: boolean;
     page_number: number;
     page_size: number;
@@ -211,7 +209,6 @@ export namespace Search {
     paragraphs?: Paragraphs;
     fulltext?: Fulltext;
     relations?: Relations;
-    shards?: string[];
   }
 
   export interface Pagination {

@@ -27,7 +27,6 @@ export const find = (
     features,
   };
 
-  params['shards'] = nuclia.currentShards?.[kbid] || [];
   const endpoint = `${path}/find`;
   nuclia.events?.log('lastQuery', {
     endpoint,
@@ -74,9 +73,6 @@ export const find = (
     map((res) => (res.type === 'error' ? res : ({ ...res, type: 'findResults' } as Search.FindResults))),
     tap((res) => {
       nuclia.events?.log('lastResults', res);
-      if (res.type === 'findResults' && res.shards) {
-        nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
-      }
     }),
   );
 };
@@ -95,7 +91,6 @@ export const search = (
     query: query || '',
     features,
   };
-  params['shards'] = nuclia.currentShards?.[kbid] || [];
   const endpoint = `${path}/search`;
   nuclia.events?.log('lastQuery', {
     endpoint,
@@ -112,7 +107,6 @@ export const search = (
 export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: CatalogOptions, useGet?: boolean) => {
   const params: { [key: string]: string | string[] } = {};
   params['query'] = query || '';
-  params['shards'] = nuclia.currentShards?.[kbid] || [];
   const path = `/kb/${kbid}`;
   const searchMethod = useGet
     ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/catalog?${options ? serialize(params, options) : ''}`)
@@ -149,11 +143,6 @@ function manageSearchRequest(
   return searchMethod.pipe(
     catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
     map((res) => (res.type === 'error' ? res : ({ ...res, type: 'searchResults' } as Search.Results))),
-    tap((res) => {
-      if (res.type === 'searchResults' && res.shards) {
-        nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
-      }
-    }),
   );
 }
 

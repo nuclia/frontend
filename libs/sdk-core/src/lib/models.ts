@@ -32,7 +32,6 @@ export interface INuclia {
   rest: IRest;
   db: IDb;
   events?: IEvents;
-  currentShards?: { [kb: string]: string[] };
   get backend(): string;
   get regionalBackend(): string;
   get knowledgeBox(): KnowledgeBox;
