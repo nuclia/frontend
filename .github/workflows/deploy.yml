@@ -139,7 +139,10 @@ jobs:
         uses: ./tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-app == 'yes'
         with:
-          build-arg: appId=app appFolder=dashboard noRelativeCss=true
+          build-arg: |
+            appId=app 
+            appFolder=dashboard 
+            noRelativeCss=true
           file: docker/Dockerfile
           image-name: ${{ env.APP_IMAGE_NAME }}
           image-version: ${{ env.SHORT_SHA }}
@@ -161,7 +164,10 @@ jobs:
         uses: ./tooling/.github/actions/build-img-regcache
         if: steps.check-deploy.outputs.deploy-manager == 'yes'
         with:
-          build-arg: appId=manager appFolder=manager-v2 noRelativeCss=true
+          build-arg: |
+            appId=manager 
+            appFolder=manager-v2 
+            noRelativeCss=true
           file: docker/Dockerfile
           image-name: ${{ env.MANAGER_IMAGE_NAME }}
           image-version: ${{ env.SHORT_SHA }}
