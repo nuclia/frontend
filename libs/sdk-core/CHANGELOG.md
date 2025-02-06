@@ -1,9 +1,10 @@
-# 1.24.1 (unreleased)
+# 1.24.1 (2025-02-05)
 
 ### Improvements
 
 - Add support for `/activity/metrics` endpoint
 - Resource fields can now include multiple errors along with additional error details
+- Remove the `shards` parameter (obsolete)
 
 # 1.24.0 (2024-12-16)
 

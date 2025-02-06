@@ -37,7 +37,6 @@ export function ask(
     features: features.length > 0 ? features : undefined,
     ...noEmptyValues,
   };
-  body['shards'] = nuclia.currentShards?.[kbid] || [];
   nuclia.events?.log('lastQuery', {
     endpoint,
     params: body,
@@ -164,9 +163,6 @@ export function ask(
         ),
         tap((res) => {
           nuclia.events?.log('lastResults', res);
-          if (res.type === 'answer' && res.sources) {
-            nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.sources.shards || [] };
-          }
         }),
       );
 }

@@ -118,13 +118,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.resourceListService.status = this.status;
-    this.resourceListService.isShardReady
-      .pipe(
-        filter((ready) => ready),
-        take(1),
-        switchMap(() => this.resourceListService.loadResources()),
-      )
-      .subscribe();
+    this.resourceListService.loadResources().subscribe();
   }
 
   ngOnDestroy() {
@@ -473,13 +467,12 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   private getAllResources(): Observable<Resource[]> {
     this.isLoading = true;
-    return this.resourceListService
-      .getAllResources(this.sorting, this.status)
-      .pipe(tap(() => {
+    return this.resourceListService.getAllResources(this.sorting, this.status).pipe(
+      tap(() => {
         this.isLoading = false;
         this.cdr.markForCheck();
       }),
-      map((result) => result.resources)
+      map((result) => result.resources),
     );
   }
 }
