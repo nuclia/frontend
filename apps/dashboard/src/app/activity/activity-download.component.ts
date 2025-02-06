@@ -4,6 +4,7 @@ import {
   filter,
   from,
   map,
+  mergeMap,
   Observable,
   of,
   repeat,
@@ -90,9 +91,9 @@ export class ActivityDownloadComponent implements OnDestroy {
   ) {
     this.watchList
       .pipe(
-        switchMap(({ key, requestId }) =>
+        mergeMap(({ key, requestId }) =>
           this.sdk.currentKb.pipe(
-            switchMap((kb) =>
+            concatMap((kb) =>
               of(null).pipe(
                 repeat({ delay: 5000 }),
                 takeUntil(this.unsubscribeAll),
