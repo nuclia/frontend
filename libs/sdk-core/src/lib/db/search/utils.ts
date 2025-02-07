@@ -151,6 +151,7 @@ export interface WidgetFeatures {
   collapseTextBlocks?: boolean;
   displaySearchButton?: boolean;
   hideDownload?: boolean;
+  disableRAG?: boolean;
 }
 
 export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';

@@ -8,6 +8,7 @@ import type {
   KBStates,
   LabelSets,
   NucliaOptions,
+  PredictAnswerOptions,
   Reranker,
   Resource,
   ResourceField,
@@ -253,6 +254,37 @@ export const getAnswer = (
   } else {
     return nucliaApi.knowledgeBox.ask(query, context, CHAT_MODE, options);
   }
+};
+
+export const getAnswerWithoutRAG = (
+  question: string,
+  chat?: Ask.Entry[],
+  options?: ChatOptions,
+): Observable<Ask.Answer | IErrorResponse> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+
+  const context = NO_CHAT_HISTORY
+    ? undefined
+    : chat?.reduce((acc, curr) => {
+        acc.push({ author: Ask.Author.USER, text: curr.question });
+        acc.push({ author: Ask.Author.NUCLIA, text: curr.answer.text });
+        return acc;
+      }, [] as Ask.ContextEntry[]);
+
+  const defaultPrompt = '{question}';
+  const predictOptions: PredictAnswerOptions = {
+    generative_model: generative_model || undefined,
+    user_prompt: { prompt: prompt || defaultPrompt },
+    system: systemPrompt || undefined,
+    retrieval: false,
+    chat_history: context && context.length > 0 ? context : undefined,
+    max_tokens: typeof MAX_TOKENS === 'number' ? MAX_TOKENS : MAX_TOKENS?.answer,
+    prefer_markdown: options?.prefer_markdown,
+    json_schema: options?.answer_json_schema,
+  };
+  return nucliaApi.knowledgeBox.predictAnswer(question, predictOptions);
 };
 
 export const sendFeedback = (answerId: string, approved: boolean, comment?: string, textBlockId?: string) => {

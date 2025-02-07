@@ -1,5 +1,6 @@
 import {
   getAnswer,
+  getAnswerWithoutRAG,
   getEntities,
   getLabelSets,
   getNotEngoughDataMessage,
@@ -32,6 +33,7 @@ import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 import type { TypedResult } from '../models';
 import { NO_SUGGESTION_RESULTS } from '../models';
 import {
+  disableRAG,
   isCitationsEnabled,
   isSpeechEnabled,
   isSpeechSynthesisEnabled,
@@ -404,61 +406,63 @@ export function askQuestion(
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(({ question }) =>
-      chat.pipe(
-        take(1),
-        map((chat) => chat.filter((chat) => !chat.answer.incomplete && !chat.answer.inError)),
-        switchMap((entries) =>
-          combinedFilters.pipe(
-            take(1),
-            switchMap((filters) =>
-              getAnswer(question, entries, { ...options, filters }).pipe(
-                tap((result) => {
-                  hasNotEnoughData.set(result.type === 'error' && result.status === -2);
-                  if (result.type === 'error') {
-                    if ([-3, -2, -1, 412, 529].includes(result.status)) {
-                      const messages: { [key: string]: string } = {
-                        '-3': 'answer.error.no_retrieval_data',
-                        '-2': 'answer.error.llm_cannot_answer',
-                        '-1': 'answer.error.llm_error',
-                        '412': 'answer.error.rephrasing',
-                        '529': 'answer.error.rephrasing',
-                      };
-                      if (!hasError) {
-                        // error is set only once
-                        hasError = true;
-                        const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
-                        chat.set({
-                          question,
-                          answer: {
-                            inError: true,
-                            text: translateInstant(text),
-                            type: 'answer',
-                            id: '',
-                          },
-                        });
-                      }
-                    } else {
-                      chatError.set(result);
-                    }
-                    pendingResults.set(false);
-                  } else {
-                    if (result.incomplete) {
-                      if (hasNoResultsWithAutofilter(result.sources, options)) {
-                        // when no results with autofilter on, a secondary call is made with autofilter off,
-                        // meanwhile, we do not want to display the 'Not enough data' message
-                        result.text = '';
-                      }
-                      currentAnswer.set(result);
-                    } else {
-                      chat.set({ question, answer: result });
-                      pendingResults.set(false);
-                    }
-                  }
-                }),
-              ),
-            ),
-          ),
+      forkJoin([
+        chat.pipe(
+          take(1),
+          map((chat) => chat.filter((chat) => !chat.answer.incomplete && !chat.answer.inError)),
         ),
+        combinedFilters.pipe(take(1)),
+        disableRAG.pipe(take(1)),
+      ]),
+    ),
+    switchMap(([entries, filters, disableRAG]) =>
+      (disableRAG
+        ? getAnswerWithoutRAG(question, entries, options)
+        : getAnswer(question, entries, { ...options, filters })
+      ).pipe(
+        tap((result) => {
+          hasNotEnoughData.set(result.type === 'error' && result.status === -2);
+          if (result.type === 'error') {
+            if ([-3, -2, -1, 412, 529].includes(result.status)) {
+              const messages: { [key: string]: string } = {
+                '-3': 'answer.error.no_retrieval_data',
+                '-2': 'answer.error.llm_cannot_answer',
+                '-1': 'answer.error.llm_error',
+                '412': 'answer.error.rephrasing',
+                '529': 'answer.error.rephrasing',
+              };
+              if (!hasError) {
+                // error is set only once
+                hasError = true;
+                const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
+                chat.set({
+                  question,
+                  answer: {
+                    inError: true,
+                    text: translateInstant(text),
+                    type: 'answer',
+                    id: '',
+                  },
+                });
+              }
+            } else {
+              chatError.set(result);
+            }
+            pendingResults.set(false);
+          } else {
+            if (result.incomplete) {
+              if (hasNoResultsWithAutofilter(result.sources, options)) {
+                // when no results with autofilter on, a secondary call is made with autofilter off,
+                // meanwhile, we do not want to display the 'Not enough data' message
+                result.text = '';
+              }
+              currentAnswer.set(result);
+            } else {
+              chat.set({ question, answer: result });
+              pendingResults.set(false);
+            }
+          }
+        }),
       ),
     ),
   );

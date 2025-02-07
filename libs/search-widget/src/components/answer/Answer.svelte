@@ -12,6 +12,7 @@
   import {
     chat,
     debug,
+    disableRAG,
     disclaimer,
     downloadDump,
     expandedCitations,
@@ -218,7 +219,7 @@
       {/each}
     </div>
   {/if}
-  {#if answer.sources}
+  {#if !answer.inError}
     <div class="actions">
       {#if !$chat[rank]?.answer.incomplete}
         {#if !$hasNotEnoughData}
@@ -272,7 +273,7 @@
         {/if}
       {/if}
     </div>
-    {#if $isCitationsEnabled && !$hasNotEnoughData}
+    {#if $isCitationsEnabled && !$hasNotEnoughData && !$disableRAG}
       <div class="sources-container">
         {#if sources.length > 0}
           <Expander expanded={$expandedCitations === undefined ? initialAnswer : $expandedCitations}>
