@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -85,6 +86,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
     return this._generativeModel;
   }
   private _generativeModel = '';
+  @Input() useSearchResults = true;
 
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<ResultDisplayConfig>();
