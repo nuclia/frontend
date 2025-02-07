@@ -98,11 +98,16 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     rrfBoosting: new FormControl<boolean>(false, { nonNullable: true }),
     rrfSemanticBoosting: new FormControl<number>(1, { nonNullable: true }),
     vectorset: new FormControl<string>('', { nonNullable: true }),
+    useSearchResults: new FormControl<boolean>(true, { nonNullable: true }),
   });
 
   synonymsEnabled = this.featuresService.unstable.synonyms;
   autocompleteFromNerEnabled = this.featuresService.unstable.suggestEntities;
   hiddenResourcesEnabled = this.sdk.currentKb.pipe(map((kb) => !!kb.hidden_resources_enabled));
+
+  get useSearchResults() {
+    return this.form.controls.useSearchResults.value;
+  }
 
   get filterEnabled() {
     return this.form.controls.filter.value;

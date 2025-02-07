@@ -1,6 +1,6 @@
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
-import { Ask } from './ask.models';
+import { Ask, PredictAnswerOptions } from './ask.models';
 import { ChatOptions, Search } from './search.models';
 
 import { ResourceProperties } from '../db.models';
@@ -165,4 +165,62 @@ export function ask(
           nuclia.events?.log('lastResults', res);
         }),
       );
+}
+
+export function predictAnswer(
+  nuclia: INuclia,
+  path: string,
+  question: string,
+  options?: PredictAnswerOptions,
+): Observable<Ask.Answer | IErrorResponse> {
+  const endpoint = `${path}/predict/chat`;
+  const body = { question, user_id: Ask.Author.USER, ...options };
+  nuclia.events?.log('lastQuery', {
+    endpoint,
+    params: body,
+    headers: nuclia.rest.getHeaders('POST', endpoint, {}, true),
+    nucliaOptions: nuclia.options,
+  });
+  return nuclia.rest.post<Response>(endpoint, body, undefined, true).pipe(
+    switchMap((res) => {
+      const id = res.headers.get('nuclia-learning-id') || '';
+      return from(res.text()).pipe(
+        map((text) => {
+          if (options?.json_schema) {
+            const rows = text.split('\n').filter((d) => d);
+            return rows.reduce(
+              (acc, row) => {
+                const obj = JSON.parse(row).chunk;
+                if (obj.type === 'object') {
+                  acc.jsonAnswer = obj.object;
+                }
+                if (obj.type === 'status') {
+                  acc.status = parseInt(obj.code);
+                }
+                return acc;
+              },
+              { id, answer: '' } as { id: string; answer: string; jsonAnswer: object; status: number },
+            );
+          } else {
+            return { id, answer: text.slice(0, -1), jsonAnswer: undefined, status: parseInt(text.slice(-1)) };
+          }
+        }),
+      );
+    }),
+    map(({ id, answer, jsonAnswer, status }) => {
+      if (!Number.isNaN(status) && status !== 0) {
+        return { type: 'error', status, detail: answer } as IErrorResponse;
+      }
+      return {
+        type: 'answer',
+        id,
+        text: answer,
+        jsonAnswer,
+        incomplete: false,
+        inError: false,
+      } as Ask.Answer;
+    }),
+    catchError((error) => of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse)),
+    tap((res) => nuclia.events?.log('lastResults', res)),
+  );
 }

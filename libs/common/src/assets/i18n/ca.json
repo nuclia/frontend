@@ -1239,6 +1239,8 @@
 	"search.configuration.search-box.suggestions.toggle-label": "Proporcioneu suggeriments mentre escriviu",
 	"search.configuration.search-box.synonyms.toggle-description": "Relaciona sinònims a la cerca difusa. Aquesta funció no es pot utilitzar amb l’opció \"Relacions\". ",
 	"search.configuration.search-box.synonyms.toggle-label": "Relaciona sinònims",
+	"search.configuration.search-box.use-search-results.toggle-description": "Si està desactivat, els resultats de la cerca no s'utilitzaran per generar la resposta. El LLM generarà respostes basades únicament en la seva pròpia base de coneixement.",
+	"search.configuration.search-box.use-search-results.toggle-label": "Utilitzar els resultats de la cerca",
 	"search.configuration.search-request-modal.api-tab": "API",
 	"search.configuration.search-request-modal.authentication": "Si la Knowledge Box és privada, s’han de proporcionar capçaleres d’autenticació.",
 	"search.configuration.search-request-modal.learn-more": "Saber-ne més",

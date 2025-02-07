@@ -134,3 +134,26 @@ export namespace Ask {
 export interface Citations {
   [paragraphId: string]: [number, number][];
 }
+
+export interface PredictAnswerOptions {
+  retrieval?: boolean;
+  system?: string;
+  chat_history?: Ask.ContextEntry[];
+  context?: Ask.ContextEntry[];
+  query_context?: string[] | { [key: string]: string };
+  query_context_order?: { [key: string]: number };
+  truncate?: boolean;
+  user_prompt?: { prompt: string };
+  citations?: boolean;
+  citation_threshold?: number;
+  generative_model?: string;
+  max_tokens?: number;
+  query_context_images?: {
+    content_type: string;
+    b64encoded: string;
+  };
+  prefer_markdown?: boolean;
+  json_schema?: object;
+  format_prompt?: boolean;
+  rerank_context?: boolean;
+}

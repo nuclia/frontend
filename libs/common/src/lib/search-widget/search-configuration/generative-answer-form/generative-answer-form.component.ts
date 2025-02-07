@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -50,6 +51,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   @Input() defaultPrompt = '';
   @Input() promptInfos: { [model: string]: string } = {};
   @Input() defaultSystemPrompt = '';
+  @Input() useSearchResults = true;
 
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<GenerativeAnswerConfig>();

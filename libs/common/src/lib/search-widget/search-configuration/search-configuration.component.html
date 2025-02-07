@@ -94,7 +94,8 @@
         #searchBox
         id="search-box"
         [itemTitle]="'search.configuration.search-box.section-title' | translate"
-        [description]="'search.configuration.search-box.section-description' | translate">
+        [description]="'search.configuration.search-box.section-description' | translate"
+        (expandedChange)="updateSearchBoxHeight()">
         <pa-accordion-item-body>
           <stf-search-box-form
             [config]="savedConfig?.searchBox"
@@ -108,7 +109,8 @@
         #generativeAnswer
         id="generative-answer"
         [itemTitle]="'search.configuration.generative-answer.section-title' | translate"
-        [description]="'search.configuration.generative-answer.section-description' | translate">
+        [description]="'search.configuration.generative-answer.section-description' | translate"
+        (expandedChange)="updateGenerativeAnswerHeight()">
         <pa-accordion-item-body>
           <stf-generative-answer-form
             [config]="savedConfig?.generativeAnswer"
@@ -116,6 +118,7 @@
             [defaultSystemPrompt]="defaultSystemPromptFromSettings"
             [promptInfos]="promptInfos"
             [generativeModels]="generativeModels"
+            [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
             (configChanged)="updateGenerativeAnswerConfig($event)"
             (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
         </pa-accordion-item-body>
@@ -124,13 +127,15 @@
         #results
         id="results"
         [itemTitle]="'search.configuration.result-display.section-title' | translate"
-        [description]="'search.configuration.result-display.section-description' | translate">
+        [description]="'search.configuration.result-display.section-description' | translate"
+        (expandedChange)="updateResultsHeight()">
         <pa-accordion-item-body>
           <stf-results-display-form
             [config]="savedConfig?.resultDisplay"
             [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
             [modelNames]="generativeModelNames"
             [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
+            [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
             (configChanged)="updateResultDisplayConfig($event)"
             (heightChanged)="updateResultsHeight()"></stf-results-display-form>
         </pa-accordion-item-body>

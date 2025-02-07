@@ -1239,6 +1239,8 @@
 	"search.configuration.search-box.suggestions.toggle-label": "Proporcionar sugerencias mientras escribe",
 	"search.configuration.search-box.synonyms.toggle-description": "Coincidencia de sinónimos en búsqueda difusa. Esta característica no se puede utilizar con la opción \"Relaciones\". ",
 	"search.configuration.search-box.synonyms.toggle-label": "Coincidir sinónimos",
+	"search.configuration.search-box.use-search-results.toggle-description": "Si está deshabilitada, los resultados de la búsqueda no se utilizarán para generar la respuesta. El LLM generará respuestas basándose únicamente en su propia base de conocimientos.",
+	"search.configuration.search-box.use-search-results.toggle-label": "Utilizar resultados de búsqueda",
 	"search.configuration.search-request-modal.api-tab": "API",
 	"search.configuration.search-request-modal.authentication": "Si la Knowledge Box es privada, se deben proporcionar encabezados de autenticación.",
 	"search.configuration.search-request-modal.learn-more": "Saber más",

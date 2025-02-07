@@ -99,54 +99,56 @@
         </pa-textarea>
       </div>
     </div>
-    <div class="config-form-field">
-      <pa-toggle
-        formControlName="askSpecificResource"
-        withBackground
-        spaceBetweenLabelAndToggle
-        (valueChange)="heightChanged.emit()">
-        <span class="toggle-label">
-          {{ 'search.configuration.generative-answer.ask-resource.toggle-label' | translate }}
-        </span>
-      </pa-toggle>
-      <div class="config-form-help">
-        {{ 'search.configuration.generative-answer.ask-resource.toggle-description' | translate }}
+    @if (useSearchResults) {
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="askSpecificResource"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{ 'search.configuration.generative-answer.ask-resource.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.generative-answer.ask-resource.toggle-description' | translate }}
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="askSpecificResourceEnabled">
+          <pa-input
+            formControlName="specificResourceSlug"
+            pattern="[\w-]+"
+            [errorMessages]="{
+              pattern: 'search.configuration.generative-answer.ask-resource.pattern-error'
+            }">
+            {{ 'search.configuration.generative-answer.ask-resource.input-label' | translate }}
+          </pa-input>
+        </div>
       </div>
-      <div
-        class="extra-fields"
-        [class.visible]="askSpecificResourceEnabled">
-        <pa-input
-          formControlName="specificResourceSlug"
-          pattern="[\w-]+"
-          [errorMessages]="{
-            pattern: 'search.configuration.generative-answer.ask-resource.pattern-error'
-          }">
-          {{ 'search.configuration.generative-answer.ask-resource.input-label' | translate }}
-        </pa-input>
+      <div class="config-form-field">
+        <pa-toggle
+          formControlName="limitParagraphs"
+          withBackground
+          spaceBetweenLabelAndToggle
+          (valueChange)="heightChanged.emit()">
+          <span class="toggle-label">
+            {{ 'search.configuration.generative-answer.limit-paragraphs.toggle-label' | translate }}
+          </span>
+        </pa-toggle>
+        <div class="config-form-help">
+          {{ 'search.configuration.generative-answer.limit-paragraphs.toggle-description' | translate }}
+        </div>
+        <div
+          class="extra-fields"
+          [class.visible]="limitParagraphsEnabled">
+          <pa-input
+            externalLabel
+            formControlName="paragraphsLimit"
+            type="number"></pa-input>
+        </div>
       </div>
-    </div>
-    <div class="config-form-field">
-      <pa-toggle
-        formControlName="limitParagraphs"
-        withBackground
-        spaceBetweenLabelAndToggle
-        (valueChange)="heightChanged.emit()">
-        <span class="toggle-label">
-          {{ 'search.configuration.generative-answer.limit-paragraphs.toggle-label' | translate }}
-        </span>
-      </pa-toggle>
-      <div class="config-form-help">
-        {{ 'search.configuration.generative-answer.limit-paragraphs.toggle-description' | translate }}
-      </div>
-      <div
-        class="extra-fields"
-        [class.visible]="limitParagraphsEnabled">
-        <pa-input
-          externalLabel
-          formControlName="paragraphsLimit"
-          type="number"></pa-input>
-      </div>
-    </div>
+    }
     <div class="config-form-field">
       <pa-toggle
         formControlName="limitTokenConsumption"
@@ -193,347 +195,357 @@
         {{ 'search.configuration.generative-answer.prefer-markdown.toggle-description' | translate }}
       </div>
     </div>
-    <ng-container formGroupName="ragStrategies">
-      <div class="subsection-title">
-        {{ 'search.configuration.generative-answer.rag-strategies.title' | translate }}
-      </div>
-      <div class="config-form-field">
-        <pa-toggle
-          formControlName="includeTextualHierarchy"
-          withBackground
-          spaceBetweenLabelAndToggle
-          (valueChange)="heightChanged.emit()">
-          <span class="toggle-label">
-            {{ 'search.configuration.generative-answer.rag-strategies.textual-hierarchy.toggle-label' | translate }}
-          </span>
-        </pa-toggle>
-        <div class="config-form-help">
-          {{ 'search.configuration.generative-answer.rag-strategies.textual-hierarchy.toggle-description' | translate }}
+    @if (useSearchResults) {
+      <ng-container formGroupName="ragStrategies">
+        <div class="subsection-title">
+          {{ 'search.configuration.generative-answer.rag-strategies.title' | translate }}
         </div>
-        <div
-          class="extra-fields"
-          [class.visible]="includeTextualHierarchyEnabled">
-          <pa-input
-            formControlName="additionalCharacters"
-            type="number">
-            {{ 'search.configuration.generative-answer.rag-strategies.textual-hierarchy.input-label' | translate }}
-          </pa-input>
-        </div>
-      </div>
-      <div class="config-form-field">
-        <pa-toggle
-          formControlName="includeNeighbouringParagraphs"
-          withBackground
-          spaceBetweenLabelAndToggle
-          (valueChange)="heightChanged.emit()">
-          <span class="toggle-label">
-            {{
-              'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.toggle-label' | translate
-            }}
-          </span>
-        </pa-toggle>
-        <div class="config-form-help">
-          {{
-            'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.toggle-description'
-              | translate
-          }}
-        </div>
-        @if (includeNeighbouringParagraphsEnabled && includeTextualHierarchyEnabled) {
-          <nsi-info-card type="warning">
-            {{ 'search.configuration.generative-answer.rag-strategies.incompatible-strategies' | translate }}
-          </nsi-info-card>
-        }
-        <div
-          class="extra-fields"
-          [class.visible]="includeNeighbouringParagraphsEnabled && !includeTextualHierarchyEnabled">
-          <pa-input
-            formControlName="precedingParagraphs"
-            type="number">
-            {{ 'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.preceding' | translate }}
-          </pa-input>
-          <pa-input
-            formControlName="succeedingParagraphs"
-            type="number">
-            {{ 'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.succeeding' | translate }}
-          </pa-input>
-        </div>
-      </div>
-      <div class="config-form-field">
-        <pa-toggle
-          formControlName="entireResourceAsContext"
-          withBackground
-          spaceBetweenLabelAndToggle
-          (valueChange)="heightChanged.emit()">
-          <span class="toggle-label">
-            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.toggle-label' | translate }}
-          </span>
-        </pa-toggle>
-        <div class="config-form-help">
-          {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.toggle-description' | translate }}
-        </div>
-        <div
-          class="extra-fields"
-          [class.visible]="entireResourceAsContextEnabled">
-          <div class="extra-label">
-            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.limit-resources' | translate }}
-          </div>
-          <pa-input
-            formControlName="maxNumberOfResources"
-            type="number">
-            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.input-label' | translate }}
-          </pa-input>
-        </div>
-        <div
-          class="extra-fields"
-          [class.visible]="entireResourceAsContextEnabled">
-          <pa-toggle
-            formControlName="includeRemaining"
-            spaceBetweenLabelAndToggle>
-            <span class="toggle-label">
-              {{
-                'search.configuration.generative-answer.rag-strategies.entire-resource.include-remaining-label'
-                  | translate
-              }}
-            </span>
-          </pa-toggle>
-        </div>
-        <div
-          class="extra-fields"
-          [class.visible]="entireResourceAsContextEnabled">
-          <div class="extra-label">
-            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.exclude' | translate }}
-          </div>
-          <pa-input formControlName="excludeFilter">
-            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.exclude-label' | translate }}
-          </pa-input>
-        </div>
-      </div>
-      <div class="config-form-field">
-        <pa-toggle
-          formControlName="metadatasRagStrategy"
-          withBackground
-          spaceBetweenLabelAndToggle
-          (valueChange)="heightChanged.emit()">
-          <span class="toggle-label">
-            {{ 'search.configuration.generative-answer.rag-strategies.metadatas.toggle-label' | translate }}
-          </span>
-        </pa-toggle>
-        <div class="config-form-help">
-          {{ 'search.configuration.generative-answer.rag-strategies.metadatas.toggle-description' | translate }}
-        </div>
-        <div
-          class="extra-fields"
-          [class.visible]="metadatasEnabled"
-          formGroupName="metadatas">
-          @for (metadata of metadataIds; track metadata) {
-            <pa-checkbox [formControlName]="metadata">
-              <code>{{ metadata }}</code>
-            </pa-checkbox>
-          }
-        </div>
-      </div>
-      @if (isGraphSearchEnabled | async) {
         <div class="config-form-field">
           <pa-toggle
-            formControlName="graphRagStrategy"
+            formControlName="includeTextualHierarchy"
             withBackground
             spaceBetweenLabelAndToggle
             (valueChange)="heightChanged.emit()">
             <span class="toggle-label">
-              {{ 'search.configuration.generative-answer.rag-strategies.graph.toggle-label' | translate }}
+              {{ 'search.configuration.generative-answer.rag-strategies.textual-hierarchy.toggle-label' | translate }}
             </span>
           </pa-toggle>
           <div class="config-form-help">
-            {{ 'search.configuration.generative-answer.rag-strategies.graph.toggle-description' | translate }}
+            {{
+              'search.configuration.generative-answer.rag-strategies.textual-hierarchy.toggle-description' | translate
+            }}
           </div>
           <div
             class="extra-fields"
-            [class.visible]="graphEnabled"
-            formGroupName="graph">
+            [class.visible]="includeTextualHierarchyEnabled">
             <pa-input
-              formControlName="hops"
-              type="number"
-              [help]="'search.configuration.generative-answer.rag-strategies.graph.hops-description' | translate">
-              {{ 'search.configuration.generative-answer.rag-strategies.graph.hops' | translate }}
+              formControlName="additionalCharacters"
+              type="number">
+              {{ 'search.configuration.generative-answer.rag-strategies.textual-hierarchy.input-label' | translate }}
             </pa-input>
-            <pa-input
-              formControlName="top_k"
-              type="number"
-              [help]="'search.configuration.generative-answer.rag-strategies.graph.top_k-description' | translate">
-              {{ 'search.configuration.generative-answer.rag-strategies.graph.top_k' | translate }}
-            </pa-input>
-            <pa-checkbox
-              formControlName="agentic_graph_only"
-              [help]="
-                'search.configuration.generative-answer.rag-strategies.graph.agentic_graph_only_help' | translate
-              ">
-              {{ 'search.configuration.generative-answer.rag-strategies.graph.agentic_graph_only' | translate }}
-            </pa-checkbox>
-            <pa-checkbox
-              formControlName="relation_text_as_paragraphs"
-              [help]="
-                'search.configuration.generative-answer.rag-strategies.graph.relation_text_as_paragraphs_help'
-                  | translate
-              ">
-              {{
-                'search.configuration.generative-answer.rag-strategies.graph.relation_text_as_paragraphs' | translate
-              }}
-            </pa-checkbox>
-            <pa-checkbox
-              formControlName="generative_relation_ranking"
-              [help]="
-                'search.configuration.generative-answer.rag-strategies.graph.generative_relation_ranking_help'
-                  | translate
-              ">
-              {{
-                'search.configuration.generative-answer.rag-strategies.graph.generative_relation_ranking' | translate
-              }}
-            </pa-checkbox>
-            <pa-checkbox
-              formControlName="suggest_query_entity_detection"
-              [help]="
-                'search.configuration.generative-answer.rag-strategies.graph.suggest_query_entity_detection_help'
-                  | translate
-              ">
-              {{
-                'search.configuration.generative-answer.rag-strategies.graph.suggest_query_entity_detection' | translate
-              }}
-            </pa-checkbox>
           </div>
         </div>
-      }
-      <div class="config-form-field">
-        <pa-toggle
-          formControlName="fieldsAsContext"
-          withBackground
-          spaceBetweenLabelAndToggle
-          (valueChange)="heightChanged.emit()">
-          <span class="toggle-label">
-            {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.toggle-label' | translate }}
-          </span>
-        </pa-toggle>
-        <div class="config-form-help">
-          {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.toggle-description' | translate }}
-        </div>
-        <div
-          class="extra-fields"
-          [class.visible]="fieldsAsContextEnabled">
-          <pa-textarea
-            formControlName="fieldIds"
-            resizable
-            rows="4"
-            (resizing)="heightChanged.emit()">
-            {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.textarea-label' | translate }}
-          </pa-textarea>
-          <nsi-info-card>
-            {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.info-box' | translate }}
-          </nsi-info-card>
-        </div>
-      </div>
-      <div class="config-form-field">
-        <pa-toggle
-          formControlName="conversationalRagStrategy"
-          withBackground
-          spaceBetweenLabelAndToggle
-          (valueChange)="heightChanged.emit()">
-          <span class="toggle-label">
-            {{ 'search.configuration.generative-answer.rag-strategies.conversational.toggle-label' | translate }}
-          </span>
-        </pa-toggle>
-        <div class="config-form-help">
-          {{ 'search.configuration.generative-answer.rag-strategies.conversational.toggle-description' | translate }}
-        </div>
-        <div
-          class="extra-fields"
-          [class.visible]="conversationalStrategyEnabled"
-          formGroupName="conversationOptions">
-          <pa-checkbox formControlName="attachmentsText">
+        <div class="config-form-field">
+          <pa-toggle
+            formControlName="includeNeighbouringParagraphs"
+            withBackground
+            spaceBetweenLabelAndToggle
+            (valueChange)="heightChanged.emit()">
+            <span class="toggle-label">
+              {{
+                'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.toggle-label' | translate
+              }}
+            </span>
+          </pa-toggle>
+          <div class="config-form-help">
             {{
-              'search.configuration.generative-answer.rag-strategies.conversational.option.attachments_text' | translate
-            }}
-          </pa-checkbox>
-          <pa-checkbox formControlName="attachmentsImages">
-            {{
-              'search.configuration.generative-answer.rag-strategies.conversational.option.attachments_images'
+              'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.toggle-description'
                 | translate
             }}
-          </pa-checkbox>
-          @if (attachmentsImagesEnabled && notSupportingVision) {
+          </div>
+          @if (includeNeighbouringParagraphsEnabled && includeTextualHierarchyEnabled) {
             <nsi-info-card type="warning">
-              {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
+              {{ 'search.configuration.generative-answer.rag-strategies.incompatible-strategies' | translate }}
             </nsi-info-card>
           }
-          <pa-checkbox formControlName="full">
-            {{ 'search.configuration.generative-answer.rag-strategies.conversational.option.full' | translate }}
-          </pa-checkbox>
-        </div>
-        <div
-          class="extra-fields"
-          [class.visible]="conversationalStrategyEnabled && !fullMessagesEnabled">
-          <div class="extra-label">
-            {{ 'search.configuration.generative-answer.rag-strategies.conversational.max-messages' | translate }}
+          <div
+            class="extra-fields"
+            [class.visible]="includeNeighbouringParagraphsEnabled && !includeTextualHierarchyEnabled">
+            <pa-input
+              formControlName="precedingParagraphs"
+              type="number">
+              {{
+                'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.preceding' | translate
+              }}
+            </pa-input>
+            <pa-input
+              formControlName="succeedingParagraphs"
+              type="number">
+              {{
+                'search.configuration.generative-answer.rag-strategies.neighbouring-paragraphs.succeeding' | translate
+              }}
+            </pa-input>
           </div>
-          <pa-input
-            formControlName="maxMessages"
-            type="number">
-            {{ 'search.configuration.generative-answer.rag-strategies.conversational.input-label' | translate }}
-          </pa-input>
         </div>
-        <div></div>
-      </div>
-      @if (isRagImagesEnabled | async) {
         <div class="config-form-field">
           <pa-toggle
-            formControlName="includePageImages"
+            formControlName="entireResourceAsContext"
             withBackground
             spaceBetweenLabelAndToggle
             (valueChange)="heightChanged.emit()">
             <span class="toggle-label">
-              {{ 'search.configuration.generative-answer.rag-strategies.page-images.toggle-label' | translate }}
+              {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.toggle-label' | translate }}
             </span>
           </pa-toggle>
           <div class="config-form-help">
-            {{ 'search.configuration.generative-answer.rag-strategies.page-images.toggle-description' | translate }}
+            {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.toggle-description' | translate }}
           </div>
           <div
             class="extra-fields"
-            [class.visible]="includePageImagesEnabled">
+            [class.visible]="entireResourceAsContextEnabled">
             <div class="extra-label">
-              {{ 'search.configuration.generative-answer.rag-strategies.page-images.limit-images' | translate }}
+              {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.limit-resources' | translate }}
             </div>
             <pa-input
-              formControlName="maxNumberOfImages"
+              formControlName="maxNumberOfResources"
               type="number">
-              {{ 'search.configuration.generative-answer.rag-strategies.page-images.input-label' | translate }}
+              {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.input-label' | translate }}
             </pa-input>
           </div>
-          @if (notSupportingVision) {
-            <nsi-info-card type="warning">
-              {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
-            </nsi-info-card>
-          }
+          <div
+            class="extra-fields"
+            [class.visible]="entireResourceAsContextEnabled">
+            <pa-toggle
+              formControlName="includeRemaining"
+              spaceBetweenLabelAndToggle>
+              <span class="toggle-label">
+                {{
+                  'search.configuration.generative-answer.rag-strategies.entire-resource.include-remaining-label'
+                    | translate
+                }}
+              </span>
+            </pa-toggle>
+          </div>
+          <div
+            class="extra-fields"
+            [class.visible]="entireResourceAsContextEnabled">
+            <div class="extra-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.exclude' | translate }}
+            </div>
+            <pa-input formControlName="excludeFilter">
+              {{ 'search.configuration.generative-answer.rag-strategies.entire-resource.exclude-label' | translate }}
+            </pa-input>
+          </div>
         </div>
         <div class="config-form-field">
           <pa-toggle
-            formControlName="includeParagraphImages"
+            formControlName="metadatasRagStrategy"
             withBackground
-            spaceBetweenLabelAndToggle>
+            spaceBetweenLabelAndToggle
+            (valueChange)="heightChanged.emit()">
             <span class="toggle-label">
-              {{ 'search.configuration.generative-answer.rag-strategies.paragraph-images.toggle-label' | translate }}
+              {{ 'search.configuration.generative-answer.rag-strategies.metadatas.toggle-label' | translate }}
             </span>
           </pa-toggle>
           <div class="config-form-help">
-            {{
-              'search.configuration.generative-answer.rag-strategies.paragraph-images.toggle-description' | translate
-            }}
+            {{ 'search.configuration.generative-answer.rag-strategies.metadatas.toggle-description' | translate }}
           </div>
-          @if (notSupportingVision) {
-            <nsi-info-card type="warning">
-              {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
-            </nsi-info-card>
-          }
+          <div
+            class="extra-fields"
+            [class.visible]="metadatasEnabled"
+            formGroupName="metadatas">
+            @for (metadata of metadataIds; track metadata) {
+              <pa-checkbox [formControlName]="metadata">
+                <code>{{ metadata }}</code>
+              </pa-checkbox>
+            }
+          </div>
         </div>
-      }
-    </ng-container>
+        @if (isGraphSearchEnabled | async) {
+          <div class="config-form-field">
+            <pa-toggle
+              formControlName="graphRagStrategy"
+              withBackground
+              spaceBetweenLabelAndToggle
+              (valueChange)="heightChanged.emit()">
+              <span class="toggle-label">
+                {{ 'search.configuration.generative-answer.rag-strategies.graph.toggle-label' | translate }}
+              </span>
+            </pa-toggle>
+            <div class="config-form-help">
+              {{ 'search.configuration.generative-answer.rag-strategies.graph.toggle-description' | translate }}
+            </div>
+            <div
+              class="extra-fields"
+              [class.visible]="graphEnabled"
+              formGroupName="graph">
+              <pa-input
+                formControlName="hops"
+                type="number"
+                [help]="'search.configuration.generative-answer.rag-strategies.graph.hops-description' | translate">
+                {{ 'search.configuration.generative-answer.rag-strategies.graph.hops' | translate }}
+              </pa-input>
+              <pa-input
+                formControlName="top_k"
+                type="number"
+                [help]="'search.configuration.generative-answer.rag-strategies.graph.top_k-description' | translate">
+                {{ 'search.configuration.generative-answer.rag-strategies.graph.top_k' | translate }}
+              </pa-input>
+              <pa-checkbox
+                formControlName="agentic_graph_only"
+                [help]="
+                  'search.configuration.generative-answer.rag-strategies.graph.agentic_graph_only_help' | translate
+                ">
+                {{ 'search.configuration.generative-answer.rag-strategies.graph.agentic_graph_only' | translate }}
+              </pa-checkbox>
+              <pa-checkbox
+                formControlName="relation_text_as_paragraphs"
+                [help]="
+                  'search.configuration.generative-answer.rag-strategies.graph.relation_text_as_paragraphs_help'
+                    | translate
+                ">
+                {{
+                  'search.configuration.generative-answer.rag-strategies.graph.relation_text_as_paragraphs' | translate
+                }}
+              </pa-checkbox>
+              <pa-checkbox
+                formControlName="generative_relation_ranking"
+                [help]="
+                  'search.configuration.generative-answer.rag-strategies.graph.generative_relation_ranking_help'
+                    | translate
+                ">
+                {{
+                  'search.configuration.generative-answer.rag-strategies.graph.generative_relation_ranking' | translate
+                }}
+              </pa-checkbox>
+              <pa-checkbox
+                formControlName="suggest_query_entity_detection"
+                [help]="
+                  'search.configuration.generative-answer.rag-strategies.graph.suggest_query_entity_detection_help'
+                    | translate
+                ">
+                {{
+                  'search.configuration.generative-answer.rag-strategies.graph.suggest_query_entity_detection'
+                    | translate
+                }}
+              </pa-checkbox>
+            </div>
+          </div>
+        }
+        <div class="config-form-field">
+          <pa-toggle
+            formControlName="fieldsAsContext"
+            withBackground
+            spaceBetweenLabelAndToggle
+            (valueChange)="heightChanged.emit()">
+            <span class="toggle-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.toggle-label' | translate }}
+            </span>
+          </pa-toggle>
+          <div class="config-form-help">
+            {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.toggle-description' | translate }}
+          </div>
+          <div
+            class="extra-fields"
+            [class.visible]="fieldsAsContextEnabled">
+            <pa-textarea
+              formControlName="fieldIds"
+              resizable
+              rows="4"
+              (resizing)="heightChanged.emit()">
+              {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.textarea-label' | translate }}
+            </pa-textarea>
+            <nsi-info-card>
+              {{ 'search.configuration.generative-answer.rag-strategies.specific-fields.info-box' | translate }}
+            </nsi-info-card>
+          </div>
+        </div>
+        <div class="config-form-field">
+          <pa-toggle
+            formControlName="conversationalRagStrategy"
+            withBackground
+            spaceBetweenLabelAndToggle
+            (valueChange)="heightChanged.emit()">
+            <span class="toggle-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.conversational.toggle-label' | translate }}
+            </span>
+          </pa-toggle>
+          <div class="config-form-help">
+            {{ 'search.configuration.generative-answer.rag-strategies.conversational.toggle-description' | translate }}
+          </div>
+          <div
+            class="extra-fields"
+            [class.visible]="conversationalStrategyEnabled"
+            formGroupName="conversationOptions">
+            <pa-checkbox formControlName="attachmentsText">
+              {{
+                'search.configuration.generative-answer.rag-strategies.conversational.option.attachments_text'
+                  | translate
+              }}
+            </pa-checkbox>
+            <pa-checkbox formControlName="attachmentsImages">
+              {{
+                'search.configuration.generative-answer.rag-strategies.conversational.option.attachments_images'
+                  | translate
+              }}
+            </pa-checkbox>
+            @if (attachmentsImagesEnabled && notSupportingVision) {
+              <nsi-info-card type="warning">
+                {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
+              </nsi-info-card>
+            }
+            <pa-checkbox formControlName="full">
+              {{ 'search.configuration.generative-answer.rag-strategies.conversational.option.full' | translate }}
+            </pa-checkbox>
+          </div>
+          <div
+            class="extra-fields"
+            [class.visible]="conversationalStrategyEnabled && !fullMessagesEnabled">
+            <div class="extra-label">
+              {{ 'search.configuration.generative-answer.rag-strategies.conversational.max-messages' | translate }}
+            </div>
+            <pa-input
+              formControlName="maxMessages"
+              type="number">
+              {{ 'search.configuration.generative-answer.rag-strategies.conversational.input-label' | translate }}
+            </pa-input>
+          </div>
+          <div></div>
+        </div>
+        @if (isRagImagesEnabled | async) {
+          <div class="config-form-field">
+            <pa-toggle
+              formControlName="includePageImages"
+              withBackground
+              spaceBetweenLabelAndToggle
+              (valueChange)="heightChanged.emit()">
+              <span class="toggle-label">
+                {{ 'search.configuration.generative-answer.rag-strategies.page-images.toggle-label' | translate }}
+              </span>
+            </pa-toggle>
+            <div class="config-form-help">
+              {{ 'search.configuration.generative-answer.rag-strategies.page-images.toggle-description' | translate }}
+            </div>
+            <div
+              class="extra-fields"
+              [class.visible]="includePageImagesEnabled">
+              <div class="extra-label">
+                {{ 'search.configuration.generative-answer.rag-strategies.page-images.limit-images' | translate }}
+              </div>
+              <pa-input
+                formControlName="maxNumberOfImages"
+                type="number">
+                {{ 'search.configuration.generative-answer.rag-strategies.page-images.input-label' | translate }}
+              </pa-input>
+            </div>
+            @if (notSupportingVision) {
+              <nsi-info-card type="warning">
+                {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
+              </nsi-info-card>
+            }
+          </div>
+          <div class="config-form-field">
+            <pa-toggle
+              formControlName="includeParagraphImages"
+              withBackground
+              spaceBetweenLabelAndToggle>
+              <span class="toggle-label">
+                {{ 'search.configuration.generative-answer.rag-strategies.paragraph-images.toggle-label' | translate }}
+              </span>
+            </pa-toggle>
+            <div class="config-form-help">
+              {{
+                'search.configuration.generative-answer.rag-strategies.paragraph-images.toggle-description' | translate
+              }}
+            </div>
+            @if (notSupportingVision) {
+              <nsi-info-card type="warning">
+                {{ 'search.configuration.generative-answer.rag-strategies.image-warning-box' | translate }}
+              </nsi-info-card>
+            }
+          </div>
+        }
+      </ng-container>
+    }
   }
 </form>

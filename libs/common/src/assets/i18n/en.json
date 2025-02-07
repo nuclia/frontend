@@ -1239,6 +1239,8 @@
 	"search.configuration.search-box.suggestions.toggle-label": "Provide suggestions while typing",
 	"search.configuration.search-box.synonyms.toggle-description": "Match synonyms in fuzzy search. This feature cannot be used with the \"Relations\" option. ",
 	"search.configuration.search-box.synonyms.toggle-label": "Match synonyms",
+	"search.configuration.search-box.use-search-results.toggle-description": "If disabled, the search results will not be used to generate the answer. The LLM will generate responses based solely on its own knowledge base.",
+	"search.configuration.search-box.use-search-results.toggle-label": "Use search results",
 	"search.configuration.search-request-modal.api-tab": "API",
 	"search.configuration.search-request-modal.authentication": "If the Knowledge Box is private, authentication headers need to be provided.",
 	"search.configuration.search-request-modal.learn-more": "Learn more",

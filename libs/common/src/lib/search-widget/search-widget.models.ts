@@ -35,6 +35,7 @@ export interface SearchBoxConfig {
   rrfBoosting: boolean;
   rrfSemanticBoosting?: number;
   vectorset: string; // aka semantic model
+  useSearchResults: boolean;
 }
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
@@ -180,6 +181,7 @@ export const DEFAULT_SEARCH_BOX_CONFIG: SearchBoxConfig = {
   semanticReranking: true,
   rrfBoosting: false,
   vectorset: '',
+  useSearchResults: true,
 };
 export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   generateAnswer: false,
@@ -315,6 +317,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     relations: config.resultDisplay.relations,
     knowledgeGraph: config.resultDisplay.relationGraph,
     displayFieldList: config.resultDisplay.displayFieldList,
+    disableRAG: !config.searchBox.useSearchResults,
 
     // Widget options
     hideLogo: widgetOptions.hideLogo,

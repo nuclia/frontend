@@ -1239,6 +1239,8 @@
 	"search.configuration.search-box.suggestions.toggle-label": "Fournir des suggestions lors de la saisie",
 	"search.configuration.search-box.synonyms.toggle-description": "Faites correspondre les synonymes dans la recherche floue. Cette fonctionnalité n’est pas utilisable avec l’option \"Relations\". ",
 	"search.configuration.search-box.synonyms.toggle-label": "Faire correspondre les synonymes",
+	"search.configuration.search-box.use-search-results.toggle-description": "Si cette option est désactivée, les résultats de la recherche ne seront pas utilisés pour générer la réponse. Le LLM générera des réponses basées uniquement sur sa propre base de connaissances.",
+	"search.configuration.search-box.use-search-results.toggle-label": "Utiliser les résultats de la recherche",
 	"search.configuration.search-request-modal.api-tab": "API",
 	"search.configuration.search-request-modal.authentication": "Si la Knowledge Box est privée, des en-têtes d’authentification doivent être fournis.",
 	"search.configuration.search-request-modal.learn-more": "En savoir plus",
