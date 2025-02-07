@@ -62,8 +62,7 @@ export interface LabelOperation extends BaseOperation {
 export interface GraphOperation extends BaseOperation {
   ident?: string;
   entity_defs?: EntityDefinition[];
-  entity_examples?: EntityExample[];
-  relation_examples?: RelationExample[];
+  examples?: GraphExtractionExample[];
 }
 
 export interface EntityDefinition {
@@ -71,17 +70,21 @@ export interface EntityDefinition {
   description?: string;
 }
 
+export interface GraphExtractionExample {
+  entities: EntityExample[];
+  relations: RelationExample[];
+  text: string;
+}
+
 export interface EntityExample {
   name: string;
   label: string;
-  example?: string;
 }
 
 export interface RelationExample {
   source: string;
   target: string;
   label: string;
-  example?: string;
 }
 
 export interface QAOperation extends BaseOperation {

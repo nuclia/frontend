@@ -12,6 +12,7 @@
 
 .inline-inputs {
   display: flex;
+  align-items: center;
   gap: rhythm(1);
   & > * {
     width: 50%;
@@ -22,6 +23,7 @@
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
+  margin-top: rhythm(2);
 }
 
 .form-group {
@@ -40,4 +42,13 @@
   justify-content: space-between;
   padding: 0 rhythm(1.5);
   margin-bottom: rhythm(2);
+}
+
+pa-textarea {
+  display: block;
+  padding: 0 rhythm(2);
+}
+
+:host ::ng-deep pa-table-cell h4 {
+  margin: 0;
 }

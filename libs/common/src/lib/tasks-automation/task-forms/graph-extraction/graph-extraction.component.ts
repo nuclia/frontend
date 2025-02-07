@@ -53,15 +53,22 @@ export class GraphExtractionComponent extends TaskRouteDirective {
         description: new FormControl<string>('', { nonNullable: true }),
       }),
     ]),
-    entity_examples: new FormArray<
-      FormGroup<{ name: FormControl<string>; label: FormControl<string>; example: FormControl<string> }>
-    >([]),
-    relation_examples: new FormArray<
+    examples: new FormArray<
       FormGroup<{
-        source: FormControl<string>;
-        target: FormControl<string>;
-        label: FormControl<string>;
-        example: FormControl<string>;
+        entities: FormArray<
+          FormGroup<{
+            name: FormControl<string>;
+            label: FormControl<string>;
+          }>
+        >;
+        relations: FormArray<
+          FormGroup<{
+            source: FormControl<string>;
+            target: FormControl<string>;
+            label: FormControl<string>;
+          }>
+        >;
+        text: FormControl<string>;
       }>
     >([]),
   });
@@ -78,12 +85,16 @@ export class GraphExtractionComponent extends TaskRouteDirective {
     return this.graphForm.controls.entity_defs.controls;
   }
 
-  get exampleControls() {
-    return this.graphForm.controls.entity_examples.controls;
+  get examplesControls() {
+    return this.graphForm.controls.examples.controls;
   }
 
-  get relationExampleControls() {
-    return this.graphForm.controls.relation_examples.controls;
+  getEntitiesControls(index: number) {
+    return this.examplesControls[index].controls.entities.controls;
+  }
+
+  getRelationsControls(index: number) {
+    return this.examplesControls[index].controls.relations.controls;
   }
 
   addNerType() {
@@ -100,32 +111,38 @@ export class GraphExtractionComponent extends TaskRouteDirective {
   }
 
   addExample() {
-    this.graphForm.controls.entity_examples.push(
+    this.graphForm.controls.examples.push(this.initExampleGroup());
+  }
+
+  removeExample(index: number) {
+    this.graphForm.controls.examples.removeAt(index);
+  }
+
+  addEntity(index: number) {
+    this.getEntitiesControls(index).push(
       new FormGroup({
         name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
         label: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-        example: new FormControl<string>('', { nonNullable: true }),
       }),
     );
   }
 
-  removeExample(index: number) {
-    this.graphForm.controls.entity_examples.removeAt(index);
+  removeEntity(exampleIndex: number, entityIndex: number) {
+    this.examplesControls[exampleIndex].controls.entities.removeAt(entityIndex);
   }
 
-  addRelationExample() {
-    this.graphForm.controls.relation_examples.push(
+  addRelation(index: number) {
+    this.getRelationsControls(index).push(
       new FormGroup({
         source: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
         target: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
         label: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-        example: new FormControl<string>('', { nonNullable: true }),
       }),
     );
   }
 
-  removeRelationExample(index: number) {
-    this.graphForm.controls.relation_examples.removeAt(index);
+  removeRelation(exampleIndex: number, relationIndex: number) {
+    this.examplesControls[exampleIndex].controls.relations.removeAt(relationIndex);
   }
 
   activateTask(commonConfig: TaskFormCommonConfig) {
@@ -150,5 +167,30 @@ export class GraphExtractionComponent extends TaskRouteDirective {
         complete: () => this.backToTaskList(),
         error: (error) => this.showError(error),
       });
+  }
+
+  private initExampleGroup() {
+    return new FormGroup({
+      entities: new FormArray<FormGroup<{ name: FormControl<string>; label: FormControl<string> }>>([
+        new FormGroup({
+          name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+          label: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+        }),
+      ]),
+      relations: new FormArray<
+        FormGroup<{
+          source: FormControl<string>;
+          target: FormControl<string>;
+          label: FormControl<string>;
+        }>
+      >([
+        new FormGroup({
+          source: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+          target: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+          label: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+        }),
+      ]),
+      text: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    });
   }
 }

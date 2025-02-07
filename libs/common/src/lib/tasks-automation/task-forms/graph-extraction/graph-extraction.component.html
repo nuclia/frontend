@@ -47,84 +47,41 @@
                 }
               </pa-table>
             </div>
-            @if ((graphOperation.entity_examples || []).length > 0) {
+            @if ((graphOperation.examples || []).length > 0) {
               <div class="separator-line"></div>
               <div class="setting">
                 <label>{{ 'tasks-automation.graph-extraction.ner-examples.title' | translate }}</label>
                 <pa-table
                   border
-                  columns="1fr 1fr 2fr">
+                  columns="1fr 1fr">
                   <pa-table-header>
                     <pa-table-cell header>
-                      {{ 'tasks-automation.graph-extraction.ner-examples.ner' | translate }}
-                    </pa-table-cell>
-                    <pa-table-cell header>
-                      {{ 'tasks-automation.graph-extraction.ner-types.ner-type' | translate }}
+                      {{ 'tasks-automation.graph-extraction.ner-examples.ners' | translate }}
                     </pa-table-cell>
                     <pa-table-cell header>
                       {{ 'tasks-automation.graph-extraction.example-text' | translate }}
                     </pa-table-cell>
                   </pa-table-header>
-                  @for (entity of graphOperation.entity_examples; track entity) {
+                  @for (example of graphOperation.examples; track example) {
                     <pa-table-row>
                       <pa-table-cell>
-                        <span class="body-s">{{ entity.name }}</span>
+                        <div>
+                          <h4>{{ 'tasks-automation.graph-extraction.ner-examples.ners' | translate }}</h4>
+                          <ul class="body-s">
+                            @for (entity of example.entities; track entity) {
+                              <li>{{ entity.name }} ({{ entity.label }})</li>
+                            }
+                          </ul>
+                          <h4>{{ 'tasks-automation.graph-extraction.ner-examples.relations' | translate }}</h4>
+                          <ul class="body-s">
+                            @for (relation of example.relations; track relation) {
+                              <li>{{ relation.source }} &mdash; {{ relation.target }} ({{ relation.label }})</li>
+                            }
+                          </ul>
+                        </div>
                       </pa-table-cell>
                       <pa-table-cell>
-                        <span class="body-s">{{ entity.label }}</span>
-                      </pa-table-cell>
-                      <pa-table-cell>
-                        <span class="body-s">{{ entity.example || '-' }}</span>
-                      </pa-table-cell>
-                    </pa-table-row>
-                  }
-                </pa-table>
-              </div>
-            }
-            @if ((graphOperation.relation_examples || []).length > 0) {
-              <div class="separator-line"></div>
-              <div class="setting">
-                <label>{{ 'tasks-automation.graph-extraction.relation-examples.title' | translate }}</label>
-                <pa-table
-                  border
-                  columns="1fr 1fr 1fr 1fr">
-                  <pa-table-header>
-                    <pa-table-cell header>
-                      {{ 'tasks-automation.graph-extraction.relation-examples.source' | translate }}
-                    </pa-table-cell>
-                    <pa-table-cell header>
-                      {{ 'tasks-automation.graph-extraction.relation-examples.target' | translate }}
-                    </pa-table-cell>
-                    <pa-table-cell header>
-                      {{ 'tasks-automation.graph-extraction.relation-examples.relation' | translate }}
-                    </pa-table-cell>
-                    <pa-table-cell header>
-                      {{ 'tasks-automation.graph-extraction.example-text' | translate }}
-                    </pa-table-cell>
-                  </pa-table-header>
-                  @for (entity of graphOperation.relation_examples; track entity) {
-                    <pa-table-row>
-                      <pa-table-cell>
-                        <span class="body-s">{{ entity.source }}</span>
-                      </pa-table-cell>
-                      <pa-table-cell>
-                        <span class="body-s">{{ entity.target }}</span>
-                      </pa-table-cell>
-                      <pa-table-cell>
-                        <span class="body-s">{{ entity.label }}</span>
-                      </pa-table-cell>
-                      <pa-table-cell>
-                        @if (entity.example) {
-                          <pa-icon
-                            name="eye"
-                            size="small"
-                            [paPopover]="example"></pa-icon>
-                          <pa-popover #example>
-                            <span class="body-s">{{ entity.example }}</span>
-                          </pa-popover>
-                        } @else {
-                          <span class="body-s">-</span>
-                        }
+                        <span class="body-s">{{ example?.text || 'Some stuff' }}</span>
                       </pa-table-cell>
                     </pa-table-row>
                   }
@@ -191,8 +148,8 @@
         <div [formGroup]="graphForm">
           <div
             class="form-group-list"
-            formArrayName="entity_examples">
-            @for (example of exampleControls; track example) {
+            formArrayName="examples">
+            @for (example of examplesControls; track example; let exampleIndex = $index) {
               <div
                 class="form-group"
                 [formGroup]="example">
@@ -204,29 +161,108 @@
                     aspect="basic"
                     size="small"
                     icon="trash"
-                    (click)="removeExample($index)"></pa-button>
+                    (click)="removeExample(exampleIndex)"></pa-button>
                 </div>
-                <div class="form-container">
-                  <div class="inline-inputs">
-                    <pa-input formControlName="name">
-                      {{ 'tasks-automation.graph-extraction.ner-examples.ner' | translate }}
-                    </pa-input>
-                    <pa-select
-                      formControlName="label"
-                      [label]="'tasks-automation.graph-extraction.ner-types.ner-type' | translate">
-                      @for (nerType of nerTypes || []; track nerType) {
-                        <pa-option [value]="nerType">
-                          {{ nerType }}
-                        </pa-option>
-                      }
-                    </pa-select>
+                <pa-textarea
+                  formControlName="text"
+                  [placeholder]="'tasks-automation.graph-extraction.ner-examples.example-placeholder' | translate"
+                  rows="2">
+                  {{ 'tasks-automation.graph-extraction.example-text' | translate }}
+                </pa-textarea>
+                <div
+                  class="form-group-list"
+                  formArrayName="entities">
+                  @for (entity of getEntitiesControls(exampleIndex); track entity) {
+                    <div
+                      class="form-container"
+                      [formGroup]="entity">
+                      <div class="inline-inputs">
+                        <pa-input formControlName="name">
+                          {{ 'tasks-automation.graph-extraction.ner-examples.ner' | translate }}
+                        </pa-input>
+                        <pa-select
+                          formControlName="label"
+                          [label]="'tasks-automation.graph-extraction.ner-types.ner-type' | translate">
+                          @for (nerType of nerTypes || []; track nerType) {
+                            <pa-option [value]="nerType">
+                              {{ nerType }}
+                            </pa-option>
+                          }
+                        </pa-select>
+                        <pa-button
+                          aspect="basic"
+                          size="small"
+                          icon="trash"
+                          (click)="removeEntity(exampleIndex, $index)"></pa-button>
+                      </div>
+                    </div>
+                  }
+                  <div class="form-container">
+                    <pa-button
+                      size="small"
+                      icon="plus"
+                      iconAndText
+                      (click)="addEntity($index)">
+                      {{ 'tasks-automation.graph-extraction.ner-examples.add-ner' | translate }}
+                    </pa-button>
                   </div>
-                  <pa-textarea
-                    formControlName="example"
-                    [placeholder]="'tasks-automation.graph-extraction.ner-examples.example-placeholder' | translate"
-                    rows="2">
-                    {{ 'tasks-automation.graph-extraction.example-text' | translate }}
-                  </pa-textarea>
+                </div>
+                <div
+                  class="form-group-list"
+                  formArrayName="relations">
+                  @for (relation of getRelationsControls(exampleIndex); track relation) {
+                    <div
+                      class="form-container"
+                      [formGroup]="relation">
+                      <div class="inline-inputs">
+                        <div class="input-with-help">
+                          <pa-input formControlName="source">
+                            {{ 'tasks-automation.graph-extraction.relation-examples.source' | translate }}
+                          </pa-input>
+                          <pa-icon
+                            name="info"
+                            [paPopover]="sourceHelp"></pa-icon>
+                          <pa-popover #sourceHelp>
+                            <div>
+                              {{ 'tasks-automation.graph-extraction.relation-examples.source-help' | translate }}
+                            </div>
+                          </pa-popover>
+                        </div>
+                        <div class="input-with-help">
+                          <pa-input formControlName="target">
+                            {{ 'tasks-automation.graph-extraction.relation-examples.target' | translate }}
+                          </pa-input>
+                          <pa-icon
+                            name="info"
+                            [paPopover]="targetHelp"></pa-icon>
+                          <pa-popover #targetHelp>
+                            <div>
+                              {{ 'tasks-automation.graph-extraction.relation-examples.target-help' | translate }}
+                            </div>
+                          </pa-popover>
+                        </div>
+                      </div>
+                      <div class="inline-inputs">
+                        <pa-input formControlName="label">
+                          {{ 'tasks-automation.graph-extraction.relation-examples.relation' | translate }}
+                        </pa-input>
+                        <pa-button
+                          aspect="basic"
+                          size="small"
+                          icon="trash"
+                          (click)="removeRelation(exampleIndex, $index)"></pa-button>
+                      </div>
+                    </div>
+                  }
+                  <div class="form-container">
+                    <pa-button
+                      size="small"
+                      icon="plus"
+                      iconAndText
+                      (click)="addRelation($index)">
+                      {{ 'tasks-automation.graph-extraction.ner-examples.add-relation' | translate }}
+                    </pa-button>
+                  </div>
                 </div>
               </div>
             }
@@ -238,91 +274,6 @@
               {{ 'tasks-automation.graph-extraction.ner-examples.add' | translate }}
             </pa-button>
           </div>
-        </div>
-      </nsi-two-columns-configuration-item>
-
-      <nsi-two-columns-configuration-item
-        itemTitle="tasks-automation.graph-extraction.relation-examples.title"
-        description="tasks-automation.graph-extraction.relation-examples.description"
-        badge="generic.badge.optional">
-        <div [formGroup]="graphForm">
-          <div
-            class="form-group-list"
-            formArrayName="relation_examples">
-            @for (example of relationExampleControls; track example) {
-              <div
-                class="form-group"
-                [formGroup]="example">
-                <div class="form-group-header">
-                  <div class="title-s">
-                    {{ 'tasks-automation.graph-extraction.relation-examples.relation-example' | translate }}
-                  </div>
-                  <pa-button
-                    aspect="basic"
-                    size="small"
-                    icon="trash"
-                    (click)="removeRelationExample($index)"></pa-button>
-                </div>
-                <div class="form-container">
-                  <div class="inline-inputs">
-                    <div class="input-with-help">
-                      <pa-input formControlName="source">
-                        {{ 'tasks-automation.graph-extraction.relation-examples.source' | translate }}
-                      </pa-input>
-                      <pa-icon
-                        name="info"
-                        [paPopover]="sourceHelp"></pa-icon>
-                      <pa-popover #sourceHelp>
-                        <div>{{ 'tasks-automation.graph-extraction.relation-examples.source-help' | translate }}</div>
-                      </pa-popover>
-                    </div>
-                    <div class="input-with-help">
-                      <pa-input formControlName="target">
-                        {{ 'tasks-automation.graph-extraction.relation-examples.target' | translate }}
-                      </pa-input>
-                      <pa-icon
-                        name="info"
-                        [paPopover]="targetHelp"></pa-icon>
-                      <pa-popover #targetHelp>
-                        <div>{{ 'tasks-automation.graph-extraction.relation-examples.target-help' | translate }}</div>
-                      </pa-popover>
-                    </div>
-                  </div>
-                  <pa-input formControlName="label">
-                    {{ 'tasks-automation.graph-extraction.relation-examples.relation' | translate }}
-                  </pa-input>
-                  <pa-textarea
-                    formControlName="example"
-                    [placeholder]="
-                      'tasks-automation.graph-extraction.relation-examples.example-placeholder' | translate
-                    "
-                    rows="2">
-                    {{ 'tasks-automation.graph-extraction.example-text' | translate }}
-                  </pa-textarea>
-                </div>
-              </div>
-            }
-            <pa-button
-              size="small"
-              icon="plus"
-              iconAndText
-              (click)="addRelationExample()">
-              {{ 'tasks-automation.graph-extraction.ner-examples.add' | translate }}
-            </pa-button>
-          </div>
-        </div>
-      </nsi-two-columns-configuration-item>
-
-      <nsi-two-columns-configuration-item
-        itemTitle="tasks-automation.graph-extraction.find-ners.title"
-        description="tasks-automation.graph-extraction.find-ners.description">
-        <div class="form-container">
-          <nsi-info-card>
-            <div class="info-card-content-with-icon">
-              <span [innerHTML]="'tasks-automation.graph-extraction.find-ners.info' | translate"></span>
-              <pa-icon name="form"></pa-icon>
-            </div>
-          </nsi-info-card>
         </div>
       </nsi-two-columns-configuration-item>
     </app-task-form>
