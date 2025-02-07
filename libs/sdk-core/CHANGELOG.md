@@ -1,3 +1,9 @@
+# 1.24.2 (unreleased)
+
+### Improvements
+
+- Add `predictAnswer` method to `KnowledgeBox` class
+
 # 1.24.1 (2025-02-05)
 
 ### Improvements

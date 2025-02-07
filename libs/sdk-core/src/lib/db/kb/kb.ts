@@ -51,12 +51,12 @@ import {
 } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { ask, catalog, ChatOptions, find, search, Search, SearchOptions, suggest } from '../search';
+import { ask, catalog, ChatOptions, find, predictAnswer, search, Search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
 import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
 import { ABORT_STREAMING_REASON } from '../../rest';
-import { Ask } from '../search/ask.models';
+import { Ask, PredictAnswerOptions } from '../search/ask.models';
 import { Agentic } from '../search/agentic';
 import { ActivityMonitor } from './activity';
 import { TaskManager } from '../task';
@@ -426,6 +426,24 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   /**
+   * Performs a question answering operation
+   * 
+   * Example:
+    ```ts
+    nuclia.knowledgeBox
+      .predictAnswer('Who is Eric from Toronto?'))
+      .subscribe((answer) => {
+        if (answer.type !== 'error') {
+          console.log('answer', answer.text);
+        }
+      });
+    ```
+   */
+  predictAnswer(question: string, options?: PredictAnswerOptions): Observable<Ask.Answer | IErrorResponse> {
+    return predictAnswer(this.nuclia, this.path, question, options);
+  }
+
+  /**
    * Performs a question answering operation based on a given context.
    *
    * Example:
@@ -436,33 +454,17 @@ export class KnowledgeBox implements IKnowledgeBox {
         'Eric was born in France',
         'Eric lives in Toronto',
       ]))
-      .subscribe((answer) => {
+      .subscribe(({ answer }) => {
         console.log('answer', answer);
       });
     ```
   */
   generate(question: string, context: string[] = []): Observable<{ answer: string; cannotAnswer: boolean }> {
-    return this.nuclia.rest
-      .post<Response>(
-        `${this.path}/predict/chat`,
-        {
-          question,
-          query_context: context,
-          user_id: 'USER',
-        },
-        undefined,
-        true,
-      )
-      .pipe(
-        switchMap((res) => from(res.text())),
-        map((text) => {
-          const cannotAnswer = text.slice(-1) !== '0';
-          return {
-            answer: text.slice(0, -1),
-            cannotAnswer,
-          };
-        }),
-      );
+    return this.predictAnswer(question, { query_context: context }).pipe(
+      map((res) =>
+        res.type === 'answer' ? { answer: res.text, cannotAnswer: false } : { answer: res.detail, cannotAnswer: true },
+      ),
+    );
   }
 
   /**
@@ -506,37 +508,11 @@ export class KnowledgeBox implements IKnowledgeBox {
     json_schema: object,
     context: string[] = [],
   ): Observable<{ answer: object; success: boolean }> {
-    return this.nuclia.rest
-      .post<Response>(
-        `${this.path}/predict/chat`,
-        {
-          question,
-          query_context: context,
-          user_id: 'USER',
-          json_schema,
-        },
-        undefined,
-        true,
-      )
-      .pipe(
-        switchMap((res) => from(res.text())),
-        map((ndjson) => {
-          const rows = ndjson.split('\n').filter((d) => d);
-          return rows.reduce(
-            (acc, row) => {
-              const obj = JSON.parse(row).chunk;
-              if (obj.type === 'object') {
-                acc.answer = obj.object;
-              }
-              if (obj.type === 'status') {
-                acc.success = obj.code === '0';
-              }
-              return acc;
-            },
-            {} as { answer: object; success: boolean },
-          );
-        }),
-      );
+    return this.predictAnswer(question, { query_context: context, json_schema }).pipe(
+      map((res) =>
+        res.type === 'answer' ? { answer: res.jsonAnswer, success: true } : { answer: {}, success: false },
+      ),
+    );
   }
 
   /**

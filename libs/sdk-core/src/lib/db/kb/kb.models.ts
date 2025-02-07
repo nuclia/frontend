@@ -1,7 +1,7 @@
 import type { Observable } from 'rxjs';
 import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
-import type { Ask, ChatOptions, Search, SearchOptions } from '../search';
+import type { Ask, ChatOptions, PredictAnswerOptions, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
 import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
@@ -134,6 +134,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   summarize(ressourceIds: string[]): Observable<string>;
 
   tokens(text: string): Observable<SentenceToken[]>;
+
+  predictAnswer(question: string, options?: PredictAnswerOptions): Observable<Ask.Answer | IErrorResponse>;
 
   generate(question: string, context: string[]): Observable<{ answer: string; cannotAnswer: boolean }>;
 
