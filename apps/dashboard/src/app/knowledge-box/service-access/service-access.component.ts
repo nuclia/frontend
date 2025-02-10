@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
 import { TokenDialogComponent } from '@flaps/common';
 import { SisModalService } from '@nuclia/sistema';
+import { ExpirationModalComponent } from './expiration-modal.component';
 
 @Component({
   selector: 'app-service-access',
@@ -80,13 +81,12 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
           this.addForm.get('title')?.reset();
           this.cdr?.markForCheck();
         }),
+        switchMap((serviceAccounts) => {
+          const sa = serviceAccounts.find((service) => service.title === data.title);
+          return this._createKey(sa?.id || '');
+        }),
       )
-      .subscribe((serviceAccounts) => {
-        const sa = serviceAccounts.find((service) => service.title === data.title);
-        if (sa) {
-          this.createKey(sa);
-        }
-      });
+      .subscribe();
   }
 
   deleteServiceAccess(sa: ServiceAccount) {
@@ -101,20 +101,28 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
       });
   }
 
-  createKey(sa: ServiceAccount) {
-    this.sdk.currentKb
-      .pipe(
-        switchMap((kb) => kb.createKey(sa.id, this.getExpirationDate())),
-        tap((data) => this.showToken(data.token)),
-        switchMap(() => this.updateServiceAccess()),
-        take(1),
-      )
-      .subscribe(() => {
-        if (!this.isExpanded(sa.id)) {
-          this.toggleSA(sa.id);
+  createKey(id: string) {
+    this._createKey(id).subscribe();
+  }
+
+  private _createKey(id: string) {
+    return this.modalService.openModal(ExpirationModalComponent).onClose.pipe(
+      filter((expiration) => !!expiration),
+      switchMap(({ expiration }) =>
+        this.sdk.currentKb.pipe(
+          take(1),
+          switchMap((kb) => kb.createKey(id, this.getTimestamp(expiration))),
+          tap((data) => this.showToken(data.token)),
+          switchMap(() => this.updateServiceAccess()),
+        ),
+      ),
+      tap(() => {
+        if (!this.isExpanded(id)) {
+          this.toggleSA(id);
         }
         this.cdr?.markForCheck();
-      });
+      }),
+    );
   }
 
   deleteKey(sa: ServiceAccount, saKey: { id: string }) {
@@ -149,9 +157,7 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
     return this.expandedSAs.includes(id);
   }
 
-  private getExpirationDate(): string {
-    const date = new Date();
-    date.setFullYear(date.getFullYear() + 1);
-    return Math.floor(date.getTime() / 1000).toString();
+  private getTimestamp(date: string): string {
+    return Math.floor(new Date(date).getTime() / 1000).toString();
   }
 }

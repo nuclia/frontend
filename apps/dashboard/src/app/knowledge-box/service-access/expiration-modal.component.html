@@ -1,0 +1,21 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>{{ 'api-key-management.expiration-date' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <pa-date-picker
+      [(value)]="expiration"
+      [label]="'generic.date' | translate"></pa-date-picker>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="!expiration"
+      (click)="add()">
+      {{ 'generic.add' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>
