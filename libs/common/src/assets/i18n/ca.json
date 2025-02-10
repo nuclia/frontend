@@ -151,6 +151,7 @@
 	"api-key-management.create-key.button": "Creeu una nova clau d’API",
 	"api-key-management.create-key.title": "Crea una clau d’API nova",
 	"api-key-management.description": "Important! Copieu i deseu la clau de l’API. Desapareixerà un cop afegit.",
+	"api-key-management.expiration-date": "Data de caducitat de la clau API",
 	"api-key-management.key-roles.manager": "Administrador",
 	"api-key-management.key-roles.reader": "Lector",
 	"api-key-management.key-roles.writer": "Escriptor",
