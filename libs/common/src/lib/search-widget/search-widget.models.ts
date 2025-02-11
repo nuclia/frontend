@@ -317,7 +317,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     relations: config.resultDisplay.relations,
     knowledgeGraph: config.resultDisplay.relationGraph,
     displayFieldList: config.resultDisplay.displayFieldList,
-    disableRAG: !config.searchBox.useSearchResults,
+    disableRAG: config.searchBox.useSearchResults === undefined ? false : !config.searchBox.useSearchResults,
 
     // Widget options
     hideLogo: widgetOptions.hideLogo,
