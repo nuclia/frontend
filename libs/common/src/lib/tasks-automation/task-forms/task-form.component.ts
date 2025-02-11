@@ -210,7 +210,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || []).filter(
           (option) => !this.unsupportedLLMs.includes(option.value),
         );
-        this.form.controls.llm.patchValue({ model: 'chatgpt-azure-4o-mini' });
+        this.form.controls.llm.patchValue({ model: 'gemini-1-5-flash' });
       });
 
     combineLatest([this.form.valueChanges, this.selectedFilters])
