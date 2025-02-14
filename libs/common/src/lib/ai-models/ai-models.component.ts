@@ -20,6 +20,7 @@ import { filter, forkJoin, map, of, Subject, take } from 'rxjs';
 import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { removeDeprecatedModels } from './ai-models.utils';
+import { ExtractionComponent } from './extraction/extraction.component';
 
 @Component({
   selector: 'stf-ai-models',
@@ -37,6 +38,7 @@ import { removeDeprecatedModels } from './ai-models.utils';
     SummarizationComponent,
     SemanticModelComponent,
     AnonymizationComponent,
+    ExtractionComponent,
     InfoCardComponent,
     UnauthorizedFeatureDirective,
   ],
@@ -47,7 +49,8 @@ import { removeDeprecatedModels } from './ai-models.utils';
 export class AiModelsComponent implements OnInit {
   private unsubscribeAll = new Subject<void>();
 
-  selectedTab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization' = 'answer-generation';
+  selectedTab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization' | 'extraction' =
+    'answer-generation';
 
   kb?: WritableKnowledgeBox;
   learningConfigurations?: LearningConfigurations;
@@ -90,7 +93,7 @@ export class AiModelsComponent implements OnInit {
       });
   }
 
-  selectTab(tab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization'): void {
+  selectTab(tab: 'anonymization' | 'answer-generation' | 'semantic-model' | 'summarization' | 'extraction'): void {
     if (tab === 'summarization') {
       this.isSummarizationAuthorized
         .pipe(

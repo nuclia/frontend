@@ -3,6 +3,7 @@
 ### Improvements
 
 - Add `predictAnswer` method to `KnowledgeBox` class
+- Add support for extract strategies
 
 # 1.24.1 (2025-02-05)
 

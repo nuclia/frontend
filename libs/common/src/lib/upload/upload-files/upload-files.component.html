@@ -98,9 +98,11 @@
       <pa-expander-header>{{ 'upload.advanced.title' | translate }}</pa-expander-header>
       <pa-expander-body>
         <div class="language-detection">
-          <pa-checkbox [(value)]="automaticLanguageDetection">
+          <pa-toggle
+            labelOnRight
+            [(value)]="automaticLanguageDetection">
             {{ 'upload.advanced.language-detection.checkbox-label' | translate }}
-          </pa-checkbox>
+          </pa-toggle>
 
           @if (!automaticLanguageDetection) {
             <pa-input
@@ -112,7 +114,12 @@
             </pa-input>
           }
         </div>
+
+        <app-extraction-select
+          [(configId)]="configId"
+          (close)="cancel()"></app-extraction-select>
         <div>
+          <!--
           <label
             class="title-s"
             for="processing-radio-group">
@@ -150,6 +157,7 @@
               }
             }
           </pa-radio-group>
+          -->
         </div>
       </pa-expander-body>
     </pa-expander>
