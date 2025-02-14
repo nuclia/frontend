@@ -51,6 +51,8 @@ export class CreateLinkComponent {
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
+  configId?: string;
+  updateOptionsExpander = 0;
 
   get invalid() {
     return (

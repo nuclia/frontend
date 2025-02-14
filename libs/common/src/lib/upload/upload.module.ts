@@ -31,6 +31,7 @@ import { UploadDataComponent } from './upload-data/upload-data.component';
 import { UploadOptionComponent } from './upload-data/upload-option/upload-option.component';
 import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-sources.component';
 import { UploadRoutingModule } from './upload-routing.module';
+import { ExtractionSelectComponent } from './extraction-select/extraction-select.component';
 
 @NgModule({
   imports: [
@@ -58,6 +59,7 @@ import { UploadRoutingModule } from './upload-routing.module';
     CsvSelectComponent,
     InfoCardComponent,
     BadgeComponent,
+    ExtractionSelectComponent,
   ],
   declarations: [
     CreateLinkComponent,

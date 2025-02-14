@@ -30,6 +30,11 @@
         {{ 'kb.ai-models.tabs.semantic-model' | translate }}
       </pa-tab>
       <pa-tab
+        (click)="selectTab('extraction')"
+        [active]="selectedTab === 'extraction'">
+        {{ 'kb.ai-models.tabs.extraction' | translate }}
+      </pa-tab>
+      <pa-tab
         [stfUnauthorizedFeature]="(isAnonymizationAuthorized | async) === false"
         (click)="selectTab('anonymization')"
         [active]="selectedTab === 'anonymization'">
@@ -55,6 +60,9 @@
           [kb]="kb"
           [learningConfigurations]="learningConfigurations"
           [kbConfigBackup]="kbConfigBackup"></stf-semantic-model>
+      }
+      @case ('extraction') {
+        <stf-extraction [learningConfigurations]="learningConfigurations"></stf-extraction>
       }
       @case ('anonymization') {
         <stf-anonymization

@@ -18,14 +18,15 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { SitemapSelectComponent } from './sitemap-select/sitemap-select.component';
 import { catchError, defer, from, map, of, switchMap } from 'rxjs';
+import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
 
 @Component({
   selector: 'app-upload-sitemap',
-  standalone: true,
   imports: [
     CommonModule,
     InfoCardComponent,
     LabelModule,
+    ExtractionSelectComponent,
     PaButtonModule,
     PaExpanderModule,
     PaIconModule,
@@ -57,6 +58,7 @@ export class UploadSitemapComponent {
   headers: { key: string; value: string }[] = [];
   cookies: { key: string; value: string }[] = [];
   localstorage: { key: string; value: string }[] = [];
+  configId?: string;
 
   constructor(
     public modal: ModalRef,

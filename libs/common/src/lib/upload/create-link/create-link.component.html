@@ -92,6 +92,19 @@
             </pa-expander-body>
           </pa-expander>
         }
+        @if (linkForm.value.type !== 'csv') {
+          <pa-expander
+            [contentLoaded]="updateOptionsExpander"
+            [expanded]="false">
+            <pa-expander-header>{{ 'upload.advanced.title' | translate }}</pa-expander-header>
+            <pa-expander-body>
+              <app-extraction-select
+                [(configId)]="configId"
+                (heightChange)="updateOptionsExpander = updateOptionsExpander + 1"
+                (close)="close()"></app-extraction-select>
+            </pa-expander-body>
+          </pa-expander>
+        }
 
         @if (linkForm.value.type === 'csv') {
           <div class="csv-container">

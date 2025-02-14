@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { forkJoin, map, take } from 'rxjs';
+import { forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
 import { DroppedFile, FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { UploadService } from '../upload.service';
@@ -33,6 +33,8 @@ export class UploadFilesComponent {
     nonNullable: true,
     validators: [Validators.pattern(/^[a-z]{2}$/)],
   });
+
+  /*
   betaProcessings = ['table', 'invoice', 'visual-llm'];
   processings = forkJoin([
     this.features.unstable.tableProcessing.pipe(take(1)),
@@ -62,11 +64,13 @@ export class UploadFilesComponent {
     }),
   );
   processing = 'none';
+  */
 
   standalone = this.standaloneService.standalone;
   noLimit = this.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   isTrial = this.features.isTrial;
+  configId: string | undefined;
 
   get allowedFiles(): File[] {
     return this.noLimit
@@ -142,6 +146,7 @@ export class UploadFilesComponent {
           file.lang = this.langCode.getRawValue();
         });
       }
+      /*
       if (this.processing !== 'none') {
         labelledFiles.forEach((file) => {
           if ((this.processing !== 'blankline' || file.type === 'text/plain') && this.processing !== 'visual-llm') {
@@ -154,6 +159,7 @@ export class UploadFilesComponent {
           }
         });
       }
+      */
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
     } else {
       this.close.emit();
