@@ -13,7 +13,13 @@ import {
 import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CREATION_END_PREFIX, CREATION_START_PREFIX, getDateFromFilter, getVisibilityFromFilter, HIDDEN_PREFIX } from '../resource-filters.utils';
+import {
+  CREATION_END_PREFIX,
+  CREATION_START_PREFIX,
+  getDateFromFilter,
+  getVisibilityFromFilter,
+  HIDDEN_PREFIX,
+} from '../resource-filters.utils';
 
 export interface ColoredLabel extends Classification {
   color: string;
@@ -97,4 +103,8 @@ export function searchResources(
       kbId: kb.id,
     })),
   );
+}
+
+export function formatQuery(query: string) {
+  return query.trim().replace('.', '\\.');
 }
