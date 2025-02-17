@@ -74,9 +74,7 @@
                     {{ key.id }}
                   </div>
                   <div>
-                    <pa-datetime
-                      [datetime]="key.expires"
-                      dateOnly></pa-datetime>
+                    {{ key.expires | date: 'mediumDate' }}
                   </div>
                   <div class="service-access-key-actions">
                     <pa-button
