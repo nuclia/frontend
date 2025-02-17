@@ -20,6 +20,7 @@ interface FeaturesData {
 }
 
 const CUSTOM_FEATURE_FLAGS = 'NUCLIA_CUSTOM_FEATURE_FLAGS';
+const ENABLE_BLOCKED_ZONES = 'NUCLIA_ENABLE_BLOCKED_ZONES';
 const FEATURE_PREFIX = 'application_';
 const BACKEND_PREFIXES = ['nucliadb_', 'nua_'];
 
@@ -175,5 +176,13 @@ export class FeatureFlagService {
         return featureData?.variants?.blocklist || [];
       }),
     );
+  }
+
+  showBlockedZones(): boolean {
+    return JSON.parse(localStorage.getItem(ENABLE_BLOCKED_ZONES) || 'false');
+  }
+
+  changeBlockedZones(show: boolean) {
+    localStorage.setItem(ENABLE_BLOCKED_ZONES, JSON.stringify(show));
   }
 }
