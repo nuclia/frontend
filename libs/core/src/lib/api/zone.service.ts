@@ -23,12 +23,7 @@ export class ZoneService {
       switchMap((zones) => {
         return this.featureFlagService.getFeatureBlocklist('zones').pipe(
           map((blocklist) => {
-            return includeZonesBlocked
-              ? zones.map((zone) => ({
-                  ...zone,
-                  notAvailableYet: blocklist.includes(zone.slug),
-                }))
-              : zones.filter((zone) => !blocklist.includes(zone.slug));
+            return includeZonesBlocked ? zones : zones.filter((zone) => !blocklist.includes(zone.slug));
           }),
         );
       }),
