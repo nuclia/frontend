@@ -13,6 +13,7 @@ import { map, take } from 'rxjs';
 export class FeaturesModalComponent {
   hasCustomFeatures = Object.keys(this.featureFlag.getCustomFeatures()).length > 0;
   features?: Features;
+  showBlockedZones = this.featureFlag.showBlockedZones();
 
   constructor(
     public modal: ModalRef,
@@ -29,6 +30,7 @@ export class FeaturesModalComponent {
   }
 
   save() {
+    this.featureFlag.changeBlockedZones(this.showBlockedZones);
     this.featureFlag
       .getDefaultFeatures()
       .pipe(

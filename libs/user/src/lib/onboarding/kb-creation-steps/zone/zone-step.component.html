@@ -7,13 +7,8 @@
         id="region"
         formControlName="region">
         @for (zone of zones | async; track zone.id) {
-          <pa-radio
-            [value]="zone.slug"
-            [disabled]="zone.notAvailableYet">
+          <pa-radio [value]="zone.slug">
             {{ zone.title || zone.slug }}
-            @if (zone.notAvailableYet) {
-              {{ 'onboarding.step2.coming-soon' | translate }}
-            }
           </pa-radio>
         }
       </pa-radio-group>
