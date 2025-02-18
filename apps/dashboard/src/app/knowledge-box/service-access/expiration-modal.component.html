@@ -2,7 +2,7 @@
   <pa-modal-title>{{ 'api-key-management.expiration-date' | translate }}</pa-modal-title>
   <pa-modal-content>
     <pa-date-picker
-      [(value)]="expiration"
+      [formControl]="expiration"
       [label]="'generic.date' | translate"></pa-date-picker>
   </pa-modal-content>
   <pa-modal-footer>
@@ -13,7 +13,7 @@
     </pa-button>
     <pa-button
       kind="primary"
-      [disabled]="!expiration"
+      [disabled]="expiration.invalid"
       (click)="add()">
       {{ 'generic.add' | translate }}
     </pa-button>
