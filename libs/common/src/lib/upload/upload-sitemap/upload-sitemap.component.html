@@ -55,7 +55,11 @@
         </pa-expander-header>
         <pa-expander-body>
           <div class="options">
-            <div class="table-title title-s">
+            <app-extraction-select
+              [(configId)]="configId"
+              (close)="close()"></app-extraction-select>
+
+            <div class="table-title title-xs">
               {{ 'upload.sitemap.headers' | translate }}
               <pa-icon
                 size="small"
@@ -68,7 +72,7 @@
             <app-parameters-table
               secretDisabled
               [(values)]="headers"></app-parameters-table>
-            <div class="table-title title-s">
+            <div class="table-title title-xs">
               {{ 'upload.sitemap.cookies' | translate }}
               <pa-icon
                 size="small"
@@ -81,7 +85,7 @@
             <app-parameters-table
               secretDisabled
               [(values)]="cookies"></app-parameters-table>
-            <div class="table-title title-s">
+            <div class="table-title title-xs">
               {{ 'upload.sitemap.localstorage' | translate }}
               <pa-icon
                 size="small"
