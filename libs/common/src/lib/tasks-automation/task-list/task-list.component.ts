@@ -39,8 +39,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
   llmSecurityTasks = this.taskAutomation.taskList.pipe(
     map((taskList) => taskList.filter((task) => task.taskName === 'prompt-guard')),
   );
-  labelerTaskEnabled = this.features.unstable.labelerTask;
-  askTaskEnabled = this.features.unstable.askTask;
+  labelerTaskEnabled = this.features.authorized.labelerTask;
+  askTaskEnabled = this.features.authorized.askTask;
   graphTaskEnabled = this.features.unstable.graphTask;
   questionsTaskEnabled = this.features.unstable.questionsTask;
   promptSafetyTaskEnabled = this.features.unstable.promptSafetyTask;

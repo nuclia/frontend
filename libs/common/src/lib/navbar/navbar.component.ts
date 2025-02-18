@@ -59,7 +59,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isTrial = this.features.isTrial;
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
-  isTasksAutomationEnabled = this.features.unstable.taskAutomation;
   isTasksAutomationAuthorized = this.features.authorized.taskAutomation;
   isSynonymsEnabled = this.features.unstable.synonyms;
   isRemiMetricsEnabled = this.features.unstable.remiMetrics;
