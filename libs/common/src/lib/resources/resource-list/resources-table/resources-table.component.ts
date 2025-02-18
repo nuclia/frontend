@@ -98,8 +98,6 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
     }),
   );
 
-  unsubscribeAll = new Subject<void>();
-
   private localStorage = inject(LOCAL_STORAGE);
 
   constructor() {

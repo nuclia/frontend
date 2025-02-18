@@ -16,7 +16,7 @@
           <span class="selected-count title-xxs">
             {{
               'resource.selected_count'
-                | translate: { num: allResourcesSelected ? (totalCount | async) : selection.length }
+                | translate: { num: allResourcesSelected ? (totalItems | async) : selection.length }
             }}
           </span>
 
@@ -120,14 +120,17 @@
       allResourcesSelected ||
       ((allSelected | async) === true &&
         !bulkAction.inProgress &&
-        (isFiltering | async) === false &&
         !status &&
-        ((totalCount | async) || 0) > selection.length)
+        ((totalItems | async) || 0) > selection.length)
     ) {
       <div class="selection-bar">
         <div class="title-xxs">
           @if (allResourcesSelected) {
-            {{ 'resource.select.kb-resources-selected' | translate: { num: totalCount | async } }}
+            @if (isFiltering | async) {
+              {{ 'resource.select.filtered-resources-selected' | translate: { num: totalItems | async } }}
+            } @else {
+              {{ 'resource.select.kb-resources-selected' | translate: { num: totalItems | async } }}
+            }
           } @else {
             {{ 'resource.select.page-resources-selected' | translate: { num: selection.length } }}
           }
@@ -146,7 +149,11 @@
             size="small"
             (click)="selectAllResources()"
             [disabled]="bulkAction.inProgress">
-            {{ 'resource.select.select-kb-resources' | translate: { num: totalCount | async } }}
+            @if (isFiltering | async) {
+              {{ 'resource.select.select-filtered-resources' | translate: { num: totalItems | async } }}
+            } @else {
+              {{ 'resource.select.select-kb-resources' | translate: { num: totalItems | async } }}
+            }
           </pa-button>
         }
       </div>

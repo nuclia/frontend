@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angular/core';
 import { BulkAction, ColumnHeader, MenuAction, PAGE_SIZES } from './resource-list.model';
 import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
-import { delay, map, switchMap } from 'rxjs/operators';
+import { delay, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
 import { FeaturesService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { HeaderCell, IconModel } from '@guillotinaweb/pastanaga-angular';
 import {
@@ -15,6 +15,7 @@ import {
   mergeMap,
   Observable,
   of,
+  Subject,
   take,
   tap,
   toArray,
@@ -62,6 +63,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   pageSizes = PAGE_SIZES;
   headerHeight = this.resourceListService.headerHeight;
   isAdminOrContrib = this.features.isKbAdminOrContrib;
+  unsubscribeAll = new Subject<void>();
 
   isSummarizationAuthorized = this.features.authorized.summarization;
 
@@ -119,10 +121,17 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   ngOnInit() {
     this.resourceListService.status = this.status;
     this.resourceListService.loadResources().subscribe();
+    combineLatest([this.data, this.page])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(() => {
+        this.clearSelection();
+      });
   }
 
   ngOnDestroy() {
     this.resourceListService.clear();
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   protected getApplySortingMapper() {
@@ -467,7 +476,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
 
   private getAllResources(): Observable<Resource[]> {
     this.isLoading = true;
-    return this.resourceListService.getAllResources(this.sorting, this.status).pipe(
+    return this.resourceListService.getAllResources(this.sorting, this.status, true).pipe(
       tap(() => {
         this.isLoading = false;
         this.cdr.markForCheck();

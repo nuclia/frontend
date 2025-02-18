@@ -24,6 +24,7 @@ import {
   DEFAULT_LABELS_LOGIC,
   DEFAULT_PAGE_SIZE,
   DEFAULT_SORTING,
+  formatQuery,
   getSearchOptions,
   LabelsLogic,
   ResourceListParams,
@@ -246,7 +247,7 @@ export class ResourceListService {
       page: this._page.value,
       pageSize: this._pageSize.value,
       sort: this._sort,
-      query: this._query.value.trim().replace('.', '\\.'),
+      query: formatQuery(this._query.value),
       filters: this._filters.value,
       labelsLogic: this._labelsLogic.value,
     };
@@ -343,12 +344,17 @@ export class ResourceListService {
   getAllResources(
     sort: SortOption = DEFAULT_SORTING,
     status?: RESOURCE_STATUS,
+    applyFilters = false,
   ): Observable<{ resources: Resource[]; incomplete: boolean }> {
     let kb: KnowledgeBox;
     let errors = 0;
+    const query = applyFilters ? formatQuery(this._query.value) : '';
+    const filters = applyFilters
+      ? { filters: this._filters.value, labelsLogic: this._labelsLogic.value, query }
+      : { filters: [], query };
     const getResourcesPage = (kb: KnowledgeBox, page = 0) => {
-      const searchOptions = getSearchOptions({ page, sort, status, pageSize: 200, query: '', filters: [] });
-      return kb.catalog('', searchOptions);
+      const searchOptions = getSearchOptions({ page, sort, status, pageSize: 200, ...filters });
+      return kb.catalog(query, searchOptions);
     };
     return this.sdk.currentKb.pipe(
       take(1),
