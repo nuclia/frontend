@@ -103,23 +103,21 @@
                 <span class="nav-link-title">{{ 'navbar.ai-models' | translate }}</span>
               </a>
               @if (!standalone) {
-                @if (isTasksAutomationEnabled | async) {
-                  <a
-                    [routerLink]="
-                      (isAdminOrContrib | async) && (isTasksAutomationAuthorized | async) ? kbUrl + '/tasks' : null
-                    "
-                    routerLinkActive="active"
-                    data-cy="go-to-tasks"
-                    class="nav-link sub-item"
-                    [class.disabled]="!(isAdminOrContrib | async)"
-                    [stfUnauthorizedFeature]="(isTasksAutomationAuthorized | async) === false">
-                    <pa-icon name="submenu"></pa-icon>
-                    <span class="nav-link-title">{{ 'tasks-automation.page-title' | translate }}</span>
-                    @if (isTasksAutomationAuthorized | async) {
-                      <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
-                    }
-                  </a>
-                }
+                <a
+                  [routerLink]="
+                    (isAdminOrContrib | async) && (isTasksAutomationAuthorized | async) ? kbUrl + '/tasks' : null
+                  "
+                  routerLinkActive="active"
+                  data-cy="go-to-tasks"
+                  class="nav-link sub-item"
+                  [class.disabled]="!(isAdminOrContrib | async)"
+                  [stfUnauthorizedFeature]="(isTasksAutomationAuthorized | async) === false">
+                  <pa-icon name="submenu"></pa-icon>
+                  <span class="nav-link-title">{{ 'tasks-automation.page-title' | translate }}</span>
+                  @if (isTasksAutomationAuthorized | async) {
+                    <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
+                  }
+                </a>
                 @if (isRemiMetricsEnabled | async) {
                   <a
                     [routerLink]="(isAdminOrContrib | async) && !(invalidKey | async) ? kbUrl + '/metrics' : null"
