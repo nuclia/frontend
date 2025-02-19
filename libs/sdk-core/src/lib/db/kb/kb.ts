@@ -1134,4 +1134,20 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     const encodedEmail = encodeURIComponent(email);
     return this.nuclia.rest.delete(`${endpoint}/invite?email=${encodedEmail}`, undefined, undefined, zone);
   }
+
+  /**
+   * Add an embedding model to the Knowledge box
+   * @param model
+   */
+  addVectorset(model: string): Observable<void> {
+    return this.nuclia.rest.post(`/kb/${this.id}/vectorsets/${model}`, {});
+  }
+
+  /**
+   * Remove an embedding model from the Knowledge box
+   * @param model
+   */
+  removeVectorset(model: string): Observable<void> {
+    return this.nuclia.rest.delete(`/kb/${this.id}/vectorsets/${model}`);
+  }
 }
