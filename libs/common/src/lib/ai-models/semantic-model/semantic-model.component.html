@@ -24,6 +24,55 @@
     </div>
   </nsi-two-columns-configuration-item>
 
+  <nsi-two-columns-configuration-item
+    noTopBorder
+    itemTitle="kb.ai-models.semantic-model.other-models.title"
+    description="kb.ai-models.semantic-model.other-models.description"
+    badge="generic.badge.beta">
+    <div class="other-models">
+      @for (model of otherModels; track model.value) {
+        <div class="semantic-model">
+          <div>
+            @if (semanticModelsName[model.value]) {
+              <div class="body-m">
+                {{ 'user.kb.creation-form.models.options.' + semanticModelsName[model.value] | translate }}
+              </div>
+              <div class="help">({{ model.value }})</div>
+            } @else {
+              <div class="body-m">{{ model.value }}</div>
+            }
+          </div>
+          @if (model.migration) {
+            <div class="progress">
+              <nsi-progress-bar
+                [progress]="null"
+                greyTrack></nsi-progress-bar>
+              <pa-button
+                size="small"
+                aspect="basic"
+                (click)="cancel(model.value, model.migration.id)">
+                {{ 'generic.cancel' | translate }}
+              </pa-button>
+            </div>
+          } @else {
+            <pa-button
+              size="small"
+              aspect="basic"
+              [disabled]="migrationInProgress"
+              (click)="enable(model.value)">
+              {{ 'kb.ai-models.semantic-model.other-models.enable' | translate }}
+            </pa-button>
+          }
+        </div>
+      }
+      <nsi-info-card
+        icon="warning"
+        type="warning">
+        {{ 'kb.ai-models.semantic-model.other-models.cost' | translate }}
+      </nsi-info-card>
+    </div>
+  </nsi-two-columns-configuration-item>
+
   <nsi-sticky-footer>
     <pa-button
       aspect="basic"

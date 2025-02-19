@@ -2,10 +2,20 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LearningConfigurationDirective } from '../learning-configuration.directive';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { StickyFooterComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import {
+  InfoCardComponent,
+  ProgressBarComponent,
+  StickyFooterComponent,
+  TwoColumnsConfigurationItemComponent,
+} from '@nuclia/sistema';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { catchError, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { LearningConfigurationOption, SemanticModelMigration, TaskOnBatch } from '@nuclia/core';
+
+interface SemanticModelMigrationTask extends TaskOnBatch {
+  parameters: SemanticModelMigration;
+}
 
 @Component({
   selector: 'stf-semantic-model',
@@ -18,8 +28,11 @@ import { catchError, of, switchMap, tap } from 'rxjs';
     PaTogglesModule,
     StickyFooterComponent,
     PaButtonModule,
+    InfoCardComponent,
+    ProgressBarComponent,
   ],
   templateUrl: './semantic-model.component.html',
+  styleUrl: './semantic-model.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SemanticModelComponent extends LearningConfigurationDirective {
@@ -29,6 +42,10 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
 
   semanticModels: string[] = [];
   semanticModelsName: { [value: string]: string } = {};
+  otherModels: LearningConfigurationOption[] = [];
+  migrationInProgress = false;
+  updateModelsSubject = new Subject<void>();
+  unsubscribeAll = new Subject<void>();
 
   get defaultModelControl() {
     return this.configForm.controls.default_semantic_model;
@@ -42,9 +59,30 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
     return this.kbConfigBackup?.['default_semantic_model'];
   }
 
+  constructor() {
+    super();
+    this.updateModelsSubject
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        switchMap(() => this.getActiveMigration()),
+      )
+      .subscribe((activeMigration) => {
+        this.updateModels(activeMigration);
+      });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+
   protected resetForm(): void {
+    this.updateModelsSubject.next();
+  }
+
+  updateModels(activeMigration?: SemanticModelMigrationTask) {
     if (this.learningConfigurations) {
-      this.semanticModelsName = (this.learningConfigurations['default_semantic_model'].options || []).reduce(
+      this.semanticModelsName = (this.learningConfigurations['semantic_models'].options || []).reduce(
         (names, model) => {
           names[model.value] = model.name;
           return names;
@@ -55,8 +93,16 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
 
     const kbConfig = this.kbConfigBackup;
     if (kbConfig) {
-      this.semanticModels = kbConfig['semantic_models'];
+      const migrationModel = activeMigration?.parameters.semantic_model_id;
+      this.migrationInProgress = !!activeMigration;
+      this.semanticModels = kbConfig['semantic_models'].filter((model: string) => migrationModel !== model);
       this.defaultModelControl.patchValue(kbConfig['default_semantic_model']);
+      this.otherModels = (this.learningConfigurations?.['semantic_models'].options || [])
+        .filter((option) => !this.semanticModels.includes(option.value) || migrationModel === option.value)
+        .map((option) => ({
+          ...option,
+          migration: migrationModel === option.value ? activeMigration : undefined,
+        }));
       setTimeout(() => {
         this.configForm.markAsPristine();
         this.cdr.markForCheck();
@@ -85,5 +131,52 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
         this.configForm.markAsPristine();
         this.saving = false;
       });
+  }
+
+  enable(model: string) {
+    this.migrationInProgress = true;
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          kb
+            .addVectorset(model)
+            .pipe(switchMap(() => kb.taskManager.startTask('semantic-model-migrator', { semantic_model_id: model }))),
+        ),
+        catchError(() => {
+          this.toaster.error(this.translate.instant('kb.ai-models.semantic-model.other-models.failure'));
+          return of(undefined);
+        }),
+        map(() => undefined),
+      )
+      .subscribe(() => {
+        this.updateModelsSubject.next();
+      });
+  }
+
+  cancel(model: string, taskId: string) {
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          kb.removeVectorset(model).pipe(
+            switchMap(() => this.sdk.refreshCurrentKb()),
+            switchMap(() => kb.taskManager.stopTask(taskId)),
+            switchMap(() => kb.taskManager.deleteTask(taskId)),
+          ),
+        ),
+      )
+      .subscribe(() => {
+        this.updateModelsSubject.next();
+      });
+  }
+
+  getActiveMigration() {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.taskManager.getTasks()),
+      map((tasks) => tasks.running.find((task) => task.task.name === 'semantic-model-migrator')),
+      map((tasks) => tasks as SemanticModelMigrationTask | undefined),
+    );
   }
 }

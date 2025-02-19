@@ -55,6 +55,7 @@ export class AiModelsComponent implements OnInit {
   noKbConfig = false;
 
   isSummarizationAuthorized = this.features.authorized.summarization;
+  isVectorsetAuthorized = this.features.authorized.vectorset;
   isAnonymizationAuthorized = this.features.authorized.anonymization;
 
   constructor(
@@ -100,6 +101,13 @@ export class AiModelsComponent implements OnInit {
         .subscribe(() => (this.selectedTab = tab));
     } else if (tab === 'anonymization') {
       this.isAnonymizationAuthorized
+        .pipe(
+          take(1),
+          filter((authorized) => authorized),
+        )
+        .subscribe(() => (this.selectedTab = tab));
+    } else if (tab === 'semantic-model') {
+      this.isVectorsetAuthorized
         .pipe(
           take(1),
           filter((authorized) => authorized),
