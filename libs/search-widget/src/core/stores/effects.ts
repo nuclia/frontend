@@ -47,6 +47,7 @@ import {
   getFindParagraphs,
   getUrlParams,
   hasNoResultsWithAutofilter,
+  markdownToTxt,
   updateQueryParams,
 } from '../utils';
 import {
@@ -208,8 +209,9 @@ export function initAnswer() {
         distinctUntilChanged(),
       )
       .subscribe((text) => {
-        let lang = currentLanguage.getValue();
-        speak(text, lang);
+        const lang = currentLanguage.getValue();
+        const speakable = markdownToTxt(text);
+        speak(speakable, lang);
       }),
   );
 }
