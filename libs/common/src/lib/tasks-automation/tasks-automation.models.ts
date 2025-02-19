@@ -1,5 +1,13 @@
 import { isObject } from '@flaps/core';
-import { TaskName, TaskOnBatch, TaskOnGoing, TaskParameters } from '@nuclia/core';
+import { DataAugmentationParameters, TaskName, TaskOnBatch, TaskOnGoing } from '@nuclia/core';
+
+export interface DataAugmentationTaskOnGoing extends TaskOnGoing {
+  parameters: DataAugmentationParameters;
+}
+
+export interface DataAugmentationTaskOnBatch extends TaskOnBatch {
+  parameters: DataAugmentationParameters;
+}
 
 export interface TaskConfiguration {
   title: string;
@@ -26,7 +34,7 @@ export interface OneTimeTask extends BaseTask {
   type: 'one-time';
 }
 
-export function mapBatchToOneTimeTask(task: TaskOnBatch): OneTimeTask {
+export function mapBatchToOneTimeTask(task: DataAugmentationTaskOnBatch): OneTimeTask {
   return {
     id: task.id,
     taskName: task.task.name,
@@ -37,7 +45,7 @@ export function mapBatchToOneTimeTask(task: TaskOnBatch): OneTimeTask {
   };
 }
 
-export function mapOnGoingToAutomatedTask(task: TaskOnGoing): AutomatedTask {
+export function mapOnGoingToAutomatedTask(task: DataAugmentationTaskOnGoing): AutomatedTask {
   return {
     id: task.id,
     taskName: task.task.name || '',
@@ -47,7 +55,7 @@ export function mapOnGoingToAutomatedTask(task: TaskOnGoing): AutomatedTask {
   };
 }
 
-function mapParameters(parameters: TaskParameters): TaskConfiguration {
+function mapParameters(parameters: DataAugmentationParameters): TaskConfiguration {
   return {
     title: parameters.name || '',
     filters: [

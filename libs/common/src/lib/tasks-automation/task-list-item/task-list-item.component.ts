@@ -66,14 +66,10 @@ export class TaskListItemComponent {
 
   get firstColumn(): { field: 'fieldName' | 'labelSets' | 'nerFamily'; header: string } {
     switch (this.taskType) {
-      case 'llm-graph':
-      case 'synthetic-questions':
-      case 'ask':
-      case 'llama-guard':
-      case 'prompt-guard':
-        return { field: 'fieldName', header: 'tasks-automation.table.header.field-name' };
       case 'labeler':
         return { field: 'labelSets', header: 'tasks-automation.table.header.label-sets' };
+      default:
+        return { field: 'fieldName', header: 'tasks-automation.table.header.field-name' };
     }
   }
 }

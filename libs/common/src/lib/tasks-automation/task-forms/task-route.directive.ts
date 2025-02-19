@@ -2,11 +2,12 @@ import { Directive, inject } from '@angular/core';
 import { filter, map, shareReplay, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
-import { ApplyOption, TaskStatus } from '@nuclia/core';
+import { ApplyOption, DataAugmentationParameters, TaskStatus } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 
 export interface TaskWithApplyOption extends TaskStatus {
   applyOption: ApplyOption;
+  parameters: DataAugmentationParameters;
 }
 
 @Directive({

@@ -3,6 +3,8 @@ import { SDKService } from '@flaps/core';
 import { map, ReplaySubject, switchMap, take, tap } from 'rxjs';
 import {
   AutomatedTask,
+  DataAugmentationTaskOnBatch,
+  DataAugmentationTaskOnGoing,
   mapBatchToOneTimeTask,
   mapOnGoingToAutomatedTask,
   OneTimeTask,
@@ -70,15 +72,25 @@ export class TasksAutomationService {
     return this._currentKb.pipe(
       take(1),
       switchMap((kb) => kb.taskManager.getTask(taskId)),
+      map((response) => response as { request: DataAugmentationTaskOnBatch; config: DataAugmentationTaskOnGoing }),
     );
   }
 
   private mapTaskList(response: TaskListResponse) {
     const taskList: (AutomatedTask | OneTimeTask)[] = [];
 
-    response.running.forEach((task) => taskList.push(mapBatchToOneTimeTask(task)));
-    response.done.forEach((task) => taskList.push(mapBatchToOneTimeTask(task)));
-    response.configs.forEach((task) => taskList.push(mapOnGoingToAutomatedTask(task)));
+    response.running
+      .filter((task) => task.task.data_augmentation)
+      .map((task) => task as DataAugmentationTaskOnBatch)
+      .forEach((task) => taskList.push(mapBatchToOneTimeTask(task)));
+    response.done
+      .filter((item) => item.task.data_augmentation)
+      .map((task) => task as DataAugmentationTaskOnBatch)
+      .forEach((task) => taskList.push(mapBatchToOneTimeTask(task)));
+    response.configs
+      .filter((item) => item.task.data_augmentation)
+      .map((task) => task as DataAugmentationTaskOnGoing)
+      .forEach((task) => taskList.push(mapOnGoingToAutomatedTask(task)));
 
     return taskList;
   }
