@@ -408,3 +408,55 @@ export function getThumbnailInfos(result: TypedResult) {
   }
   return { fallback, isPlayable };
 }
+
+const block = (text: { text: string }) => {
+  return text.text + '\n\n';
+};
+const line = (text: { text: string }) => {
+  return text.text + '\n';
+};
+const inline = (text: { text: string }) => {
+  return text.text;
+};
+const newline = () => '\n';
+const empty = () => '';
+
+const TxtRenderer = {
+  // Block elements
+  space: empty,
+  code: block,
+  blockquote: block,
+  html: empty,
+  heading: block,
+  hr: newline,
+  list: (data: { items: { text: string }[] }) => data.items.map((item) => line(item)).join('\n'),
+  listitem: line,
+  checkbox: empty,
+  paragraph: block,
+  table: (data: { header: { text: string }[]; rows: { text: string }[][] }) =>
+    data.header
+      .map((header) => header)
+      .concat(data.rows.reduce((acc, row) => acc.concat(row), []))
+      .map(inline)
+      .join('\n'),
+  tablerow: line,
+  tablecell: line,
+  // Inline elements
+  strong: inline,
+  em: inline,
+  codespan: inline,
+  br: newline,
+  del: inline,
+  link: inline,
+  image: inline,
+  text: inline,
+  // etc.
+  options: {},
+};
+
+export function markdownToTxt(markdown: string): string {
+  if (!marked) {
+    return markdown;
+  }
+  return marked.marked(markdown, { renderer: TxtRenderer });
+}
