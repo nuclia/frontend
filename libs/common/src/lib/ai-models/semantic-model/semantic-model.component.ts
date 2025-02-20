@@ -12,10 +12,13 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { LearningConfigurationOption, SemanticModelMigration, TaskOnBatch } from '@nuclia/core';
+import { StandaloneService } from '../../services';
 
 interface SemanticModelMigrationTask extends TaskOnBatch {
   parameters: SemanticModelMigration;
 }
+
+const HUGGING_FACE_MODEL = 'hf_embedding';
 
 @Component({
   selector: 'stf-semantic-model',
@@ -43,8 +46,9 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
   semanticModels: string[] = [];
   semanticModelsName: { [value: string]: string } = {};
   otherModels: LearningConfigurationOption[] = [];
-  migrationInProgress = false;
+  activeMigration?: SemanticModelMigrationTask;
   updateModelsSubject = new Subject<void>();
+  standalone = this.standaloneService.standalone;
   unsubscribeAll = new Subject<void>();
 
   get defaultModelControl() {
@@ -59,7 +63,7 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
     return this.kbConfigBackup?.['default_semantic_model'];
   }
 
-  constructor() {
+  constructor(private standaloneService: StandaloneService) {
     super();
     this.updateModelsSubject
       .pipe(
@@ -93,16 +97,15 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
 
     const kbConfig = this.kbConfigBackup;
     if (kbConfig) {
+      this.activeMigration = activeMigration;
       const migrationModel = activeMigration?.parameters.semantic_model_id;
-      this.migrationInProgress = !!activeMigration;
       this.semanticModels = kbConfig['semantic_models'].filter((model: string) => migrationModel !== model);
       this.defaultModelControl.patchValue(kbConfig['default_semantic_model']);
-      this.otherModels = (this.learningConfigurations?.['semantic_models'].options || [])
-        .filter((option) => !this.semanticModels.includes(option.value) || migrationModel === option.value)
-        .map((option) => ({
-          ...option,
-          migration: migrationModel === option.value ? activeMigration : undefined,
-        }));
+      this.otherModels = (this.learningConfigurations?.['semantic_models'].options || []).filter(
+        (option) =>
+          (!this.semanticModels.includes(option.value) || option.value === migrationModel) &&
+          option.value !== HUGGING_FACE_MODEL, // At the moment backend does not allow to add a Hugging face semantic model
+      );
       setTimeout(() => {
         this.configForm.markAsPristine();
         this.cdr.markForCheck();
@@ -134,7 +137,6 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
   }
 
   enable(model: string) {
-    this.migrationInProgress = true;
     this.sdk.currentKb
       .pipe(
         take(1),
@@ -172,6 +174,9 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
   }
 
   getActiveMigration() {
+    if (this.standalone) {
+      return of(undefined);
+    }
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.taskManager.getTasks()),
