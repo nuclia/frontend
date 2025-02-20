@@ -19,15 +19,20 @@
 
   onMount(() => {
     const resizeObserver = new ResizeObserver((entries) => {
-      if (expanded && entries[0].contentRect.height !== contentHeight) {
-        contentHeight = entries[0].contentRect.height;
-      }
+      window.requestAnimationFrame(() => {
+        if (!Array.isArray(entries) || !entries.length) {
+          return;
+        }
+        if (expanded && entries[0].contentRect.height !== contentHeight) {
+          contentHeight = entries[0].contentRect.height;
+        }
+      });
     });
     resizeObserver.observe(content);
 
     return () => {
       resizeObserver.disconnect();
-    }
+    };
   });
 
   const expand = async () => {
