@@ -19,6 +19,7 @@ env:
 permissions:
   id-token: write
   contents: write
+  actions: read
 
 jobs:
   build:
@@ -149,6 +150,8 @@ jobs:
           skip-ecr-push: true
           push: true
           tag-latest: main
+          ghapp-nuclia-service-bot-id: ${{ vars.GHAPP_NUCLIA_SERVICE_BOT_ID }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.GHAPP_NUCLIA_SERVICE_BOT_PK }}
 
       - name: Publish NucliaDB admin app
         if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes' && github.ref == 'refs/heads/main'
