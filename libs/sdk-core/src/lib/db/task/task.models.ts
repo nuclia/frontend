@@ -1,4 +1,11 @@
-export type TaskName = 'labeler' | 'llm-graph' | 'synthetic-questions' | 'ask' | 'llama-guard' | 'prompt-guard';
+export type TaskName =
+  | 'labeler'
+  | 'llm-graph'
+  | 'synthetic-questions'
+  | 'ask'
+  | 'llama-guard'
+  | 'prompt-guard'
+  | 'semantic-model-migrator';
 export type ApplyOption = 'ALL' | 'EXISTING' | 'NEW';
 
 /**
@@ -121,10 +128,12 @@ export interface LLMConfig {
   };
 }
 
+export type TaskParameters = DataAugmentationParameters | SemanticModelMigration;
+
 /**
- * Parameters used to configure tasks
+ * Parameters used to configure data augmentation tasks
  */
-export interface TaskParameters {
+export interface DataAugmentationParameters {
   name: string;
   filter: {
     contains?: string[];
@@ -135,6 +144,11 @@ export interface TaskParameters {
   llm: LLMConfig;
   on?: TaskApplyTo;
   operations?: Operation[];
+}
+
+export interface SemanticModelMigration {
+  semantic_model_id: string;
+  hf_embedding_key?: any;
 }
 
 export interface TaskStatus {

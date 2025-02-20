@@ -24,6 +24,7 @@
         {{ 'kb.ai-models.tabs.summarization' | translate }}
       </pa-tab>
       <pa-tab
+        [stfUnauthorizedFeature]="!standalone && (isVectorsetAuthorized | async) === false"
         (click)="selectTab('semantic-model')"
         [active]="selectedTab === 'semantic-model'">
         {{ 'kb.ai-models.tabs.semantic-model' | translate }}

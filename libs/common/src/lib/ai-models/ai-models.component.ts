@@ -20,6 +20,7 @@ import { filter, forkJoin, map, of, Subject, take } from 'rxjs';
 import { LearningConfigurations, WritableKnowledgeBox } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { removeDeprecatedModels } from './ai-models.utils';
+import { StandaloneService } from '../services';
 
 @Component({
   selector: 'stf-ai-models',
@@ -55,12 +56,15 @@ export class AiModelsComponent implements OnInit {
   noKbConfig = false;
 
   isSummarizationAuthorized = this.features.authorized.summarization;
+  isVectorsetAuthorized = this.features.authorized.vectorset;
   isAnonymizationAuthorized = this.features.authorized.anonymization;
+  standalone = this.standaloneService.standalone;
 
   constructor(
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
+    private standaloneService: StandaloneService,
   ) {}
 
   ngOnInit() {
@@ -103,6 +107,13 @@ export class AiModelsComponent implements OnInit {
         .pipe(
           take(1),
           filter((authorized) => authorized),
+        )
+        .subscribe(() => (this.selectedTab = tab));
+    } else if (tab === 'semantic-model') {
+      this.isVectorsetAuthorized
+        .pipe(
+          take(1),
+          filter((authorized) => this.standalone || authorized),
         )
         .subscribe(() => (this.selectedTab = tab));
     } else {
