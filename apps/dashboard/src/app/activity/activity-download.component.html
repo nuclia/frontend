@@ -29,7 +29,7 @@
     </pa-tabs>
     @for (tab of activityTabs[selectedTab]; track tab) {
       @if (tab === selectedActivityTab) {
-        <div class="download-list" [hidden]="">
+        <div class="download-list">
           @for (item of activity[selectedActivityTab] | async; track selectedActivityTab + item.month) {
             <pa-expander
               [disabled]="
