@@ -38,7 +38,7 @@
           buttonOnlyToggle>
           <pa-expander-header>
             <div class="download-item">
-              <div class="body-m">{{ item.formatted }}</div>
+              <div class="body-m">{{ item.date | date: 'MMMM y' }}</div>
               @if (!!downloads[selectedActivityTab + '-' + item.month]) {
                 <div class="email-sent">
                   @if (downloads[selectedActivityTab + '-' + item.month].status === 'pending') {
@@ -54,6 +54,16 @@
             </div>
           </pa-expander-header>
           <pa-expander-body>
+            @if (
+              item.date < migrationgDate &&
+              (selectedActivityTab === chatActivityTab || selectedActivityTab === searchActivityTab)
+            ) {
+              <nsi-info-card
+                type="warning"
+                icon="warning">
+                {{ 'activity.migration-warning' | translate }}
+              </nsi-info-card>
+            }
             <app-log-table
               [rows]="
                 !!downloads[selectedActivityTab + '-' + item.month]

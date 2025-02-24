@@ -17,7 +17,6 @@ import {
 } from 'rxjs';
 import { SDKService, UserService } from '@flaps/core';
 import { EventType } from '@nuclia/core';
-import { format } from 'date-fns';
 import { SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { LogEntry } from './log.models';
@@ -65,6 +64,9 @@ export class ActivityDownloadComponent implements OnDestroy {
   email = this.user.userPrefs.pipe(map((user) => user?.email || ''));
   selectedTab: Tab = 'resources';
   selectedActivityTab: ActivityTab = this.activityTabs[this.selectedTab][0];
+  migrationgDate = new Date(Date.UTC(2024, 9, 1));
+  chatActivityTab = EventType.CHAT;
+  searchActivityTab = EventType.SEARCH;
 
   activity = [...this.activityTabs.searches, ...this.activityTabs.resources].reduce(
     (acc, tab) => {
@@ -72,14 +74,14 @@ export class ActivityDownloadComponent implements OnDestroy {
         take(1),
         switchMap((kb) => kb.activityMonitor.getMonthsWithActivity(tab).pipe(map((res) => res.downloads))),
         map((res) =>
-          res.sort((a, b) => a.localeCompare(b) * -1).map((month) => ({ month, formatted: this.formatDate(month) })),
+          res.sort((a, b) => a.localeCompare(b) * -1).map((month) => ({ month, date: this.parseDate(month) })),
         ),
         shareReplay(),
       );
 
       return acc;
     },
-    {} as { [key in ActivityTab]: Observable<{ month: string; formatted: string }[]> },
+    {} as { [key in ActivityTab]: Observable<{ month: string; date: Date }[]> },
   );
 
   constructor(
@@ -123,7 +125,8 @@ export class ActivityDownloadComponent implements OnDestroy {
                 this.downloads[key].rows = ndjson
                   .split('\n')
                   .filter((s) => !!s)
-                  .map((row) => new LogEntry(row));
+                  .map((row) => new LogEntry(row))
+                  .reverse();
                 this.cdr?.markForCheck();
               }
             }),
@@ -178,9 +181,8 @@ export class ActivityDownloadComponent implements OnDestroy {
     this.cdr?.markForCheck();
   }
 
-  formatDate(value: string) {
+  parseDate(value: string) {
     const [year, month] = value.split('-');
-    const date = new Date(parseInt(year), parseInt(month) - 1, 2);
-    return format(date, 'MMMM yyyy');
+    return new Date(parseInt(year), parseInt(month) - 1, 2);
   }
 }

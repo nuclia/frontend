@@ -1,16 +1,44 @@
-<div class="container">
+<div class="filters">
   <pa-input (valueChange)="search($event)">{{ 'activity.filter' | translate }}</pa-input>
+  <div>
+    <nsi-dropdown-button
+      aspect="basic"
+      [popupRef]="visibleColumns">
+      {{ 'activity.columns' | translate }}
+    </nsi-dropdown-button>
+    <pa-dropdown #visibleColumns>
+      @for (header of headers; track header) {
+        <pa-option
+          [value]="header"
+          (selectOption)="selectHeader(header, $event)"
+          dontCloseOnSelect>
+          <pa-checkbox
+            [value]="displayedHeaders.includes(header)"
+            (change)="this.toggleHeader(header)">
+            {{ header }}
+          </pa-checkbox>
+        </pa-option>
+      }
+    </pa-dropdown>
+  </div>
+</div>
+
+<div class="container">
   <div class="table">
-    <pa-table [columns]="'repeat(' + (headers.length || 1) + ', fit-content(400px))'">
+    <pa-table
+      border
+      [columns]="'repeat(' + (displayedHeaders.length || 1) + ', fit-content(400px))'">
       @if (displayedRows.length === 0) {
         <pa-table-row>
           <pa-table-cell>N/A</pa-table-cell>
         </pa-table-row>
       } @else {
         <pa-table-header>
-          @for (title of headers; track title) {
-            <pa-table-cell>{{ title }}</pa-table-cell>
-          }
+          <pa-table-row>
+            @for (title of displayedHeaders; track title) {
+              <pa-table-cell header>{{ title }}</pa-table-cell>
+            }
+          </pa-table-row>
         </pa-table-header>
       }
       @for (row of displayedRows; track row.id) {
@@ -26,15 +54,17 @@
             </div>
           </pa-table-cell>
           @for (cell of row.data; track cell[0]) {
-            <pa-table-cell>
-              <div class="body-s">
-                @if (cell[1].type === 'object') {
-                  <pre>{{ cell[1].value | json }}</pre>
-                } @else {
-                  {{ cell[1].value }}
-                }
-              </div>
-            </pa-table-cell>
+            @if (displayedHeaders.includes(cell[0])) {
+              <pa-table-cell>
+                <div class="body-s">
+                  @if (cell[1].type === 'object') {
+                    <pre>{{ cell[1].value | json }}</pre>
+                  } @else {
+                    {{ cell[1].value }}
+                  }
+                </div>
+              </pa-table-cell>
+            }
           }
         </pa-table-row>
       }
