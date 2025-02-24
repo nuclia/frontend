@@ -76,7 +76,7 @@ export class ActivityDownloadComponent implements OnDestroy {
         map((res) =>
           res.sort((a, b) => a.localeCompare(b) * -1).map((month) => ({ month, date: this.parseDate(month) })),
         ),
-        shareReplay(),
+        shareReplay(1),
       );
 
       return acc;
