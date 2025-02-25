@@ -99,7 +99,7 @@
             <pa-expander-header>{{ 'upload.advanced.title' | translate }}</pa-expander-header>
             <pa-expander-body>
               <app-extraction-select
-                [(configId)]="configId"
+                [(configId)]="extractStrategy"
                 (heightChange)="updateOptionsExpander = updateOptionsExpander + 1"
                 (close)="close()"></app-extraction-select>
             </pa-expander-body>

@@ -13,7 +13,7 @@
           (valueChange)="selectConfigId($event)"
           [label]="'upload.advanced.extraction.configuration' | translate">
           @for (strategy of strategies | keyvalue; track strategy) {
-            <pa-option [value]="strategy.key">{{ strategy.key }}</pa-option>
+            <pa-option [value]="strategy.key">{{ strategy.value.name || strategy.key }}</pa-option>
           }
         </pa-select>
         @if (!!strategies[configId || '']?.ai_tables || !!strategies[configId || '']?.vllm_config) {

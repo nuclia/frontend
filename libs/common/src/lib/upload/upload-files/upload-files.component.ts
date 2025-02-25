@@ -70,7 +70,7 @@ export class UploadFilesComponent {
   noLimit = this.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   isTrial = this.features.isTrial;
-  configId: string | undefined;
+  extractStrategy?: string;
 
   get allowedFiles(): File[] {
     return this.noLimit
@@ -144,6 +144,11 @@ export class UploadFilesComponent {
       if (this.langCode) {
         labelledFiles.forEach((file) => {
           file.lang = this.langCode.getRawValue();
+        });
+      }
+      if (this.extractStrategy) {
+        labelledFiles.forEach((file) => {
+          file.payload = { ...(file.payload || {}), processing_options: { extract_strategy: this.extractStrategy } };
         });
       }
       /*

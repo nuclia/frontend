@@ -58,7 +58,7 @@ export class UploadSitemapComponent {
   headers: { key: string; value: string }[] = [];
   cookies: { key: string; value: string }[] = [];
   localstorage: { key: string; value: string }[] = [];
-  configId?: string;
+  extractStrategy?: string;
 
   constructor(
     public modal: ModalRef,
@@ -91,8 +91,9 @@ export class UploadSitemapComponent {
                     this.cleanParameters(this.headers),
                     this.cleanParameters(this.cookies),
                     this.cleanParameters(this.localstorage),
+                    this.extractStrategy,
                   )
-                : this.uploadService.createCloudFileResource(link, this.selectedLabels),
+                : this.uploadService.createCloudFileResource(link, this.selectedLabels, this.extractStrategy),
             ),
           ),
         ),
