@@ -41,10 +41,10 @@ export class ExtractionComponent {
       )
       .onClose.pipe(
         filter((data) => !!data),
-        switchMap(({ name, config }) =>
+        switchMap((config) =>
           this.sdk.currentKb.pipe(
             take(1),
-            switchMap((kb) => kb.createExtractStrategy(name, config)),
+            switchMap((kb) => kb.createExtractStrategy(config)),
           ),
         ),
         switchMap(() => this.updateStrategies()),
@@ -81,10 +81,10 @@ export class ExtractionComponent {
     );
   }
 
-  displayStrategy(name: string, config: ExtractConfig) {
+  displayStrategy(id: string, config: ExtractConfig) {
     this.modalService.openModal(
       ExtractionModalComponent,
-      new ModalConfig({ data: { learningConfigurations: this.learningConfigurations, name, config } }),
+      new ModalConfig({ data: { learningConfigurations: this.learningConfigurations, id, config } }),
     );
   }
 }

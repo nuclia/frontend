@@ -10,7 +10,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ExtractConfig, LearningConfigurations } from '@nuclia/core';
+import { ExtractConfig, ExtractLLMConfig, LearningConfigurations } from '@nuclia/core';
 import { BadgeComponent, ButtonMiniComponent, InfoCardComponent } from '@nuclia/sistema';
 
 @Component({
@@ -34,32 +34,29 @@ export class ExtractionModalComponent implements OnInit {
   features = inject(FeaturesService);
 
   generativeModels = this.modal.config.data?.learningConfigurations?.['generative_model']?.options || [];
-  name = this.modal.config.data?.name;
+  id = this.modal.config.data?.id;
   config = this.modal.config.data?.config;
-  createMode = !this.name;
+  createMode = !this.id;
 
   aiTablesEnabled = this.features.unstable.aiTableProcessing;
   visualLLMEnabled = this.features.unstable.visualLLMProcessing;
 
   configForm = new FormGroup({
-    name: new FormControl<string>('', {
-      validators: [Validators.required, Validators.pattern('[0-9a-zA-Z-]+')],
-      nonNullable: true,
-    }),
+    name: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
     processing: new FormControl<'ai_tables' | 'vllm_config' | 'none'>('none', { nonNullable: true }),
     vllm_config: new FormGroup({
       rules: new FormArray<FormControl<string>>([new FormControl<string>('', { nonNullable: true })]),
       customVLLM: new FormControl<boolean>(false, { nonNullable: true }),
       llm: new FormGroup({
         generative_model: new FormControl<string>('', { nonNullable: true }),
-        generative_prompt: new FormControl<string>('', { nonNullable: true }),
+        generative_prompt_id: new FormControl<string>('', { nonNullable: true }),
       }),
     }),
     ai_tables: new FormGroup({
       customLLM: new FormControl<boolean>(false, { nonNullable: true }),
       llm: new FormGroup({
         generative_model: new FormControl<string>('', { nonNullable: true }),
-        generative_prompt: new FormControl<string>('', { nonNullable: true }),
+        generative_prompt_id: new FormControl<string>('', { nonNullable: true }),
       }),
     }),
     split: new FormGroup({
@@ -68,10 +65,7 @@ export class ExtractionModalComponent implements OnInit {
   });
 
   validationMessages = {
-    name: {
-      required: 'validation.required',
-      pattern: 'kb.ai-models.extraction.config.invalid-name',
-    },
+    name: { required: 'validation.required' },
   };
 
   get processing() {
@@ -92,8 +86,8 @@ export class ExtractionModalComponent implements OnInit {
 
   constructor(
     private modal: ModalRef<
-      { learningConfigurations: LearningConfigurations; name?: string; config?: ExtractConfig },
-      { name: string; config: ExtractConfig }
+      { learningConfigurations: LearningConfigurations; id?: string; config?: ExtractConfig },
+      ExtractConfig
     >,
   ) {}
 
@@ -104,16 +98,20 @@ export class ExtractionModalComponent implements OnInit {
         this.addRule();
       });
       this.configForm.patchValue({
-        name: this.name,
+        name: this.config.name,
         processing: !!this.config.vllm_config ? 'vllm_config' : !!this.config.ai_tables ? 'ai_tables' : 'none',
         vllm_config: {
           customVLLM: !!this.config.vllm_config?.llm,
           rules: this.config.vllm_config?.rules,
-          llm: this.config.vllm_config?.llm,
+          llm: {
+            generative_model: this.config.vllm_config?.llm?.generative_model || '',
+          },
         },
         ai_tables: {
           customLLM: !!this.config.ai_tables?.llm,
-          llm: this.config.ai_tables?.llm,
+          llm: {
+            generative_model: this.config.ai_tables?.llm?.generative_model || '',
+          },
         },
         split: this.config.split,
       });
@@ -126,25 +124,17 @@ export class ExtractionModalComponent implements OnInit {
       return;
     }
     const values = this.configForm.getRawValue();
-    let payload: ExtractConfig = {};
+    let payload: ExtractConfig = {
+      name: values.name,
+    };
     if (values.processing === 'ai_tables') {
       payload.ai_tables = {
-        llm: values.ai_tables.customLLM
-          ? {
-              generative_model: values.ai_tables.llm.generative_model || undefined,
-              generative_prompt: values.ai_tables.llm.generative_prompt || undefined,
-            }
-          : undefined,
+        llm: values.ai_tables.customLLM ? this.getLLMConfig(values.ai_tables.llm.generative_model) : undefined,
       };
     }
     if (values.processing === 'vllm_config') {
       payload.vllm_config = {
-        llm: values.vllm_config.customVLLM
-          ? {
-              generative_model: values.vllm_config.llm.generative_model || undefined,
-              generative_prompt: values.ai_tables.llm.generative_prompt || undefined,
-            }
-          : undefined,
+        llm: values.vllm_config.customVLLM ? this.getLLMConfig(values.vllm_config.llm.generative_model) : undefined,
         rules: values.vllm_config.rules.map((line) => line.trim()).filter((line) => !!line),
       };
     }
@@ -153,7 +143,7 @@ export class ExtractionModalComponent implements OnInit {
         max_paragraph: values.split.max_paragraph,
       };
     }
-    this.modal.close({ name: values.name, config: payload });
+    this.modal.close(payload);
   }
 
   close(): void {
@@ -166,5 +156,17 @@ export class ExtractionModalComponent implements OnInit {
 
   removeRule(index: number) {
     this.rules.removeAt(index);
+  }
+
+  getLLMConfig(model?: string): ExtractLLMConfig {
+    const modelOption = this.getGenerativeModel(model || '');
+    return {
+      generative_model: model || undefined,
+      generative_provider: model ? modelOption?.provider : undefined,
+    };
+  }
+
+  getGenerativeModel(value: string) {
+    return this.generativeModels.find((model) => model.value === value);
   }
 }

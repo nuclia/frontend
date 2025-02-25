@@ -559,7 +559,6 @@
 	"kb.ai-models.extraction.config.custom-prompt": "Prompt de extracción personalizado",
 	"kb.ai-models.extraction.config.customize-model": "Personalizar modelo generativo",
 	"kb.ai-models.extraction.config.generative-model": "Modelo generativo",
-	"kb.ai-models.extraction.config.invalid-name": "El nombre sólo debe contener letras, cifras y -",
 	"kb.ai-models.extraction.config.name": "Nombre de configuración",
 	"kb.ai-models.extraction.config.processing.ai_tables.help": "Convierte el contenido de las tablas en MarkDown que puede ser utilizado por un LLM.",
 	"kb.ai-models.extraction.config.processing.ai_tables.label": "Interpretar tablas",

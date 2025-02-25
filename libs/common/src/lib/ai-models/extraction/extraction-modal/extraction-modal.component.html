@@ -1,13 +1,12 @@
 <pa-modal-advanced fitContent>
   <pa-modal-title>
-    <h2>{{ createMode ? ('kb.ai-models.extraction.config.create' | translate) : name }}</h2>
+    <h2>{{ createMode ? ('kb.ai-models.extraction.config.create' | translate) : config?.name || id }}</h2>
   </pa-modal-title>
 
   <pa-modal-content>
     <form
       class="form"
-      [formGroup]="configForm"
-      (ngSubmit)="save()">
+      [formGroup]="configForm">
       <pa-input
         formControlName="name"
         [errorMessages]="validationMessages.name">
@@ -55,22 +54,25 @@
                             ">
                             {{ 'kb.ai-models.extraction.config.processing.vllm_config.rules.rule' | translate }}
                           </pa-input>
-                          <pa-button
-                            size="small"
-                            aspect="basic"
-                            icon="trash"
-                            kind="destructive"
-                            [disabled]="!createMode"
-                            (click)="removeRule($index)">
-                            {{ 'generic.delete' | translate }}
-                          </pa-button>
+                          @if (createMode) {
+                            <pa-button
+                              size="small"
+                              aspect="basic"
+                              icon="trash"
+                              kind="destructive"
+                              (click)="removeRule($index)">
+                              {{ 'generic.delete' | translate }}
+                            </pa-button>
+                          }
                         </div>
                       }
-                      <nsi-button-mini
-                        icon="plus"
-                        (click)="addRule()">
-                        {{ 'kb.ai-models.extraction.config.processing.vllm_config.rules.add-rule' | translate }}
-                      </nsi-button-mini>
+                      @if (createMode) {
+                        <nsi-button-mini
+                          icon="plus"
+                          (click)="addRule()">
+                          {{ 'kb.ai-models.extraction.config.processing.vllm_config.rules.add-rule' | translate }}
+                        </nsi-button-mini>
+                      }
                     </div>
                     <pa-toggle
                       labelOnRight
@@ -86,11 +88,13 @@
                             <pa-option [value]="model.value">{{ model.name }}</pa-option>
                           }
                         </pa-select>
+                        <!--
                         <pa-textarea
-                          formControlName="generative_prompt"
+                          formControlName="generative_prompt_id"
                           rows="3">
                           {{ 'kb.ai-models.extraction.config.custom-prompt' | translate }}
                         </pa-textarea>
+                        -->
                       </ng-container>
                     }
                   </div>
@@ -126,11 +130,13 @@
                             <pa-option [value]="model.value">{{ model.name }}</pa-option>
                           }
                         </pa-select>
+                        <!-- 
                         <pa-textarea
-                          formControlName="generative_prompt"
+                          formControlName="generative_prompt_id"
                           rows="3">
                           {{ 'kb.ai-models.extraction.config.custom-prompt' | translate }}
                         </pa-textarea>
+                        -->
                       </ng-container>
                     }
                   </div>

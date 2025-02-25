@@ -559,7 +559,6 @@
 	"kb.ai-models.extraction.config.custom-prompt": "Prompt d'extracció personalitzat",
 	"kb.ai-models.extraction.config.customize-model": "Personalitzar el model generatiu",
 	"kb.ai-models.extraction.config.generative-model": "Model generatiu",
-	"kb.ai-models.extraction.config.invalid-name": "El nom només ha de contenir lletres, xifres i -",
 	"kb.ai-models.extraction.config.name": "Nom de la configuració",
 	"kb.ai-models.extraction.config.processing.ai_tables.help": "Converteix el contingut de les taules en MarkDown que pot ser utilitzat per un LLM.",
 	"kb.ai-models.extraction.config.processing.ai_tables.label": "Interpretar taules",

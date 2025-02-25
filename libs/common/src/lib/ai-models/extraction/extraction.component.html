@@ -13,7 +13,7 @@
             <pa-table-row
               clickable
               (click)="displayStrategy(strategy.key, strategy.value)">
-              <pa-table-cell class="body-m">{{ strategy.key }}</pa-table-cell>
+              <pa-table-cell class="body-m">{{ strategy.value.name || strategy.key }}</pa-table-cell>
               <pa-table-cell>
                 <pa-button
                   icon="trash"

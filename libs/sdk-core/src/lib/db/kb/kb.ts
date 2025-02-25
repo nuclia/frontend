@@ -1154,33 +1154,14 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   getExtractStrategies(): Observable<ExtractStrategies> {
-    return of({
-      test1: {
-        vllm_config: {
-          llm: { generative_model: 'gemini-1-5-flash-vision', generative_provider: 'google' },
-          rules: ['ignore titles'],
-        },
-        ai_tables: { llm: undefined },
-        split: { max_paragraph: 200 },
-      },
-      test2: {
-        ai_tables: {
-          llm: { generative_model: 'gemini-1-5-flash-vision', generative_provider: 'google' },
-        },
-        split: { max_paragraph: 220 },
-      },
-      test3: {},
-    } as any);
-    //return this.nuclia.rest.get<ExtractStrategies>('/extract_strategies');
+    return this.nuclia.rest.get<ExtractStrategies>(`${this.path}/extract_strategies`);
   }
 
-  createExtractStrategy(id: string, config: ExtractConfig): Observable<void> {
-    return of(undefined);
-    //return this.nuclia.rest.post<void>('/extract_strategies', config);
+  createExtractStrategy(config: ExtractConfig): Observable<void> {
+    return this.nuclia.rest.post<void>(`${this.path}/extract_strategies`, config);
   }
 
   deleteExtractStrategy(id: string): Observable<void> {
-    return of(undefined);
-    //return this.nuclia.rest.delete(`/extract_strategies/${id}`);
+    return this.nuclia.rest.delete(`${this.path}/extract_strategies/strategy/${id}`);
   }
 }

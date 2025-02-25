@@ -243,7 +243,7 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   getExtractStrategies(): Observable<ExtractStrategies>;
 
-  createExtractStrategy(id: string, config: ExtractConfig): Observable<void>;
+  createExtractStrategy(config: ExtractConfig): Observable<void>;
 
   deleteExtractStrategy(id: string): Observable<void>;
 }
@@ -498,16 +498,17 @@ export type ExtractStrategies = {
 };
 
 export interface ExtractConfig {
+  name?: string;
   vllm_config?: ExtractVLLMConfig;
   ai_tables?: { llm?: ExtractLLMConfig };
-  split?: { max_paragraph: number };
+  split?: { max_paragraph?: number };
 }
 
 export interface ExtractLLMConfig {
-  user_keys?: any;
   generative_model?: string;
   generative_provider?: string;
-  generative_prompt?: string;
+  generative_prompt_id?: string;
+  user_keys?: any;
 }
 
 export interface ExtractVLLMConfig {
