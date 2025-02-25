@@ -241,6 +241,10 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   inviteToKb(data: InviteKbData): Observable<void>;
 
+  addVectorset(model: string): Observable<void>;
+
+  removeVectorset(model: string): Observable<void>;
+
   getExtractStrategies(): Observable<ExtractStrategies>;
 
   createExtractStrategy(config: ExtractConfig): Observable<void>;

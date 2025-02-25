@@ -33,8 +33,6 @@ export class UploadFilesComponent {
     nonNullable: true,
     validators: [Validators.pattern(/^[a-z]{2}$/)],
   });
-
-  /*
   betaProcessings = ['table', 'invoice', 'visual-llm'];
   processings = forkJoin([
     this.features.unstable.tableProcessing.pipe(take(1)),
@@ -64,12 +62,12 @@ export class UploadFilesComponent {
     }),
   );
   processing = 'none';
-  */
 
   standalone = this.standaloneService.standalone;
   noLimit = this.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   isTrial = this.features.isTrial;
+  extractConfigEnabled = this.features.unstable.extractConfig;
   extractStrategy?: string;
 
   get allowedFiles(): File[] {
@@ -151,7 +149,6 @@ export class UploadFilesComponent {
           file.payload = { ...(file.payload || {}), processing_options: { extract_strategy: this.extractStrategy } };
         });
       }
-      /*
       if (this.processing !== 'none') {
         labelledFiles.forEach((file) => {
           if ((this.processing !== 'blankline' || file.type === 'text/plain') && this.processing !== 'visual-llm') {
@@ -164,7 +161,6 @@ export class UploadFilesComponent {
           }
         });
       }
-      */
       this.uploadService.uploadFilesAndManageCompletion(labelledFiles);
     } else {
       this.close.emit();

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { LabelModule, ParametersTableComponent, SDKService } from '@flaps/core';
+import { FeaturesService, LabelModule, ParametersTableComponent, SDKService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
 import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 import {
@@ -58,6 +58,7 @@ export class UploadSitemapComponent {
   headers: { key: string; value: string }[] = [];
   cookies: { key: string; value: string }[] = [];
   localstorage: { key: string; value: string }[] = [];
+  extractConfigEnabled = this.features.unstable.extractConfig;
   extractStrategy?: string;
 
   constructor(
@@ -65,6 +66,7 @@ export class UploadSitemapComponent {
     private sdk: SDKService,
     private uploadService: UploadService,
     private cdr: ChangeDetectorRef,
+    private features: FeaturesService,
   ) {}
 
   close(): void {

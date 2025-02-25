@@ -55,10 +55,11 @@
         </pa-expander-header>
         <pa-expander-body>
           <div class="options">
-            <app-extraction-select
-              [(configId)]="extractStrategy"
-              (close)="close()"></app-extraction-select>
-
+            @if (extractConfigEnabled | async) {
+              <app-extraction-select
+                [(configId)]="extractStrategy"
+                (close)="close()"></app-extraction-select>
+            }
             <div class="table-title title-xs">
               {{ 'upload.sitemap.headers' | translate }}
               <pa-icon

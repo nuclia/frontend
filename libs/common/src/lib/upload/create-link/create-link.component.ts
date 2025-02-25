@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
 import { Observable, switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
@@ -51,6 +51,7 @@ export class CreateLinkComponent {
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
+  extractConfigEnabled = this.features.unstable.extractConfig;
   extractStrategy?: string;
   updateOptionsExpander = 0;
 
@@ -68,6 +69,7 @@ export class CreateLinkComponent {
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private standaloneService: StandaloneService,
+    private features: FeaturesService,
   ) {}
 
   add() {

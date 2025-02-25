@@ -29,11 +29,13 @@
         [active]="selectedTab === 'semantic-model'">
         {{ 'kb.ai-models.tabs.semantic-model' | translate }}
       </pa-tab>
-      <pa-tab
-        (click)="selectTab('extraction')"
-        [active]="selectedTab === 'extraction'">
-        {{ 'kb.ai-models.tabs.extraction' | translate }}
-      </pa-tab>
+      @if (extractConfigEnabled | async) {
+        <pa-tab
+          (click)="selectTab('extraction')"
+          [active]="selectedTab === 'extraction'">
+          {{ 'kb.ai-models.tabs.extraction' | translate }}
+        </pa-tab>
+      }
       <pa-tab
         [stfUnauthorizedFeature]="(isAnonymizationAuthorized | async) === false"
         (click)="selectTab('anonymization')"
