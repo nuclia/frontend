@@ -48,7 +48,9 @@ export class ParagraphService {
     const paragraphs: Paragraph[] = messages
       ? getConversationParagraphs(fieldId, resource, messages)
       : getParagraphs(fieldId, resource);
-    const enhancedParagraphs = getParagraphsWithClassifications(paragraphs, fieldId, resource);
+    const enhancedParagraphs = getParagraphsWithClassifications(paragraphs, fieldId, resource).filter(
+      (paragraph) => !(paragraph.kind === 'OCR' && !paragraph.text),
+    );
     this.setupParagraphs(enhancedParagraphs);
   }
 
