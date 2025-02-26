@@ -55,7 +55,7 @@
         </pa-expander-header>
         <pa-expander-body>
           <div class="options">
-            @if (extractConfigEnabled | async) {
+            @if ((extractConfigEnabled | async) && !standalone) {
               <app-extraction-select
                 [(configId)]="extractStrategy"
                 (close)="close()"></app-extraction-select>

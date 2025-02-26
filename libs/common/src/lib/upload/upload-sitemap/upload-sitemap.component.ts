@@ -19,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SitemapSelectComponent } from './sitemap-select/sitemap-select.component';
 import { catchError, defer, from, map, of, switchMap } from 'rxjs';
 import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
+import { StandaloneService } from '../../services';
 
 @Component({
   selector: 'app-upload-sitemap',
@@ -58,6 +59,7 @@ export class UploadSitemapComponent {
   headers: { key: string; value: string }[] = [];
   cookies: { key: string; value: string }[] = [];
   localstorage: { key: string; value: string }[] = [];
+  standalone = this.standaloneService.standalone;
   extractConfigEnabled = this.features.unstable.extractConfig;
   extractStrategy?: string;
 
@@ -67,6 +69,7 @@ export class UploadSitemapComponent {
     private uploadService: UploadService,
     private cdr: ChangeDetectorRef,
     private features: FeaturesService,
+    private standaloneService: StandaloneService,
   ) {}
 
   close(): void {

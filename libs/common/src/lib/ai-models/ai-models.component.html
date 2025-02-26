@@ -29,7 +29,7 @@
         [active]="selectedTab === 'semantic-model'">
         {{ 'kb.ai-models.tabs.semantic-model' | translate }}
       </pa-tab>
-      @if (extractConfigEnabled | async) {
+      @if ((extractConfigEnabled | async) && !standalone) {
         <pa-tab
           (click)="selectTab('extraction')"
           [active]="selectedTab === 'extraction'">

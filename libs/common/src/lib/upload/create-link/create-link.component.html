@@ -92,7 +92,7 @@
             </pa-expander-body>
           </pa-expander>
         }
-        @if ((extractConfigEnabled | async) && linkForm.value.type !== 'csv') {
+        @if ((extractConfigEnabled | async) && !standalone && linkForm.value.type !== 'csv') {
           <pa-expander
             [contentLoaded]="updateOptionsExpander"
             [expanded]="false">

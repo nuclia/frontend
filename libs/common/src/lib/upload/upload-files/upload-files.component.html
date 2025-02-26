@@ -114,7 +114,7 @@
             </pa-input>
           }
         </div>
-        @if (extractConfigEnabled | async) {
+        @if ((extractConfigEnabled | async) && !standalone) {
           <app-extraction-select
             [(configId)]="extractStrategy"
             (close)="cancel()"></app-extraction-select>
