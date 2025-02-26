@@ -1452,6 +1452,7 @@
 	"tasks-automation.form.field-name.label": "Préfixe du champ",
 	"tasks-automation.form.field-name.placeholder": "Nom du champs",
 	"tasks-automation.form.filter.all": "tout",
+	"tasks-automation.form.filter.apply-to-da-fields": "Appliquer aux champs générés par l'augmentation des données",
 	"tasks-automation.form.filter.description": "L’action ne s’appliquera qu’aux ressources correspondant à la sélection.",
 	"tasks-automation.form.filter.excluded-fields.button-label": "Types de champs exclus",
 	"tasks-automation.form.filter.fields.all-types": "Tous types de champs",

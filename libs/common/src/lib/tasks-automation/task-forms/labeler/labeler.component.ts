@@ -10,7 +10,7 @@ import {
   LabelingConfigurationComponent,
 } from '../labeling-configuration/labeling-configuration.component';
 import { TasksAutomationService } from '../../tasks-automation.service';
-import { LabelOperation, TaskApplyTo } from '@nuclia/core';
+import { LabelOperation, TaskApplyTo, TaskName } from '@nuclia/core';
 import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 import { map } from 'rxjs';
 
@@ -35,6 +35,7 @@ import { map } from 'rxjs';
 export class LabelerComponent extends TaskRouteDirective {
   taskAutomation = inject(TasksAutomationService);
   TaskApplyTo = TaskApplyTo;
+  type: TaskName = 'labeler';
 
   labelingConfig?: LabelingConfiguration;
   labelOperation = this.task.pipe(
@@ -52,7 +53,7 @@ export class LabelerComponent extends TaskRouteDirective {
     };
     this.taskAutomation
       .startTask(
-        'labeler',
+        this.type,
         {
           name: commonConfig.name,
           filter: commonConfig.filter,

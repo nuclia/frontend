@@ -64,6 +64,12 @@
             </div>
           </div>
         }
+        @if (apply_to_agent_generated_fields) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.filter.apply-to-da-fields' | translate }}</label>
+          </div>
+        }
       </div>
     </nsi-two-columns-configuration-item>
   }

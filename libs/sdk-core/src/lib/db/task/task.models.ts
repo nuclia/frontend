@@ -141,6 +141,7 @@ export interface DataAugmentationParameters {
     field_types?: string[];
     labels?: string[];
     not_field_types?: string[];
+    apply_to_agent_generated_fields?: boolean;
   };
   llm: LLMConfig;
   on?: TaskApplyTo;
