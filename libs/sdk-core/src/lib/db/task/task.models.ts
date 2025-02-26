@@ -139,6 +139,7 @@ export interface DataAugmentationParameters {
     contains?: string[];
     resource_type?: string[];
     field_types?: string[];
+    labels?: string[];
     not_field_types?: string[];
   };
   llm: LLMConfig;

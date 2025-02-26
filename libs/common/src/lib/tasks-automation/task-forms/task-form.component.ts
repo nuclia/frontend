@@ -55,6 +55,7 @@ export interface TaskFormCommonConfig {
     //searchIn: 'titleOrContent' | 'title' | 'content';
     contains: string[];
     field_types: string[];
+    labels?: string[];
   };
   llm: LLMConfig;
   webhook?: TaskTrigger;
@@ -287,6 +288,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       filter: {
         contains: rawValue.filter.contains ? [rawValue.filter.contains] : [],
         field_types: this.selectedFieldTypes,
+        labels: this.labelFilters,
       },
     });
   }

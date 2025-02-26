@@ -44,6 +44,7 @@ export class TaskSettingsComponent {
   );
   fieldTypes: FIELD_TYPE[] = [];
   notFieldTypes: FIELD_TYPE[] = [];
+  labels: string[] = [];
   triggers: Trigger[] = [];
 
   @Input()
@@ -54,6 +55,9 @@ export class TaskSettingsComponent {
     }
     if (value?.parameters.filter.not_field_types?.length) {
       this.notFieldTypes = this.mapFieldTypes(value.parameters.filter.not_field_types);
+    }
+    if (value?.parameters.filter.labels?.length) {
+      this.labels = value.parameters.filter.labels;
     }
     if (value) {
       this.triggers = this.mapTriggers(value);

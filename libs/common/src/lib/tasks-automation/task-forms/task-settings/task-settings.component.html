@@ -53,6 +53,17 @@
             </div>
           </div>
         }
+        @if (labels.length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}</label>
+            <div class="filters">
+              @for (label of labels; track label) {
+                <div>{{ label }}</div>
+              }
+            </div>
+          </div>
+        }
       </div>
     </nsi-two-columns-configuration-item>
   }
