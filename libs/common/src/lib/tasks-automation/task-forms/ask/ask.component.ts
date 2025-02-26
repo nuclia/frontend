@@ -8,7 +8,7 @@ import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-ang
 import { TaskRouteDirective } from '../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TasksAutomationService } from '../../tasks-automation.service';
-import { TaskApplyTo } from '@nuclia/core';
+import { TaskApplyTo, TaskName } from '@nuclia/core';
 import { map } from 'rxjs';
 
 @Component({
@@ -44,6 +44,7 @@ export class AskComponent extends TaskRouteDirective {
   };
 
   askOperation = this.task.pipe(map((task) => task?.parameters?.operations?.find((operation) => operation.ask)?.ask));
+  type: TaskName = 'ask';
 
   jsonExample = {
     name: 'book',
@@ -79,7 +80,7 @@ export class AskComponent extends TaskRouteDirective {
     }
     this.taskAutomation
       .startTask(
-        'ask',
+        this.type,
         {
           name: commonConfig.name,
           filter: commonConfig.filter,

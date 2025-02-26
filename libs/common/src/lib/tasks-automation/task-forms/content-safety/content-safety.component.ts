@@ -7,7 +7,7 @@ import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component'
 import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 import { TaskRouteDirective } from '../task-route.directive';
 import { TasksAutomationService } from '../../tasks-automation.service';
-import { TaskApplyTo } from '@nuclia/core';
+import { TaskApplyTo, TaskName } from '@nuclia/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -29,6 +29,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 export class ContentSafetyComponent extends TaskRouteDirective {
   taskAutomation = inject(TasksAutomationService);
   TaskApplyTo = TaskApplyTo;
+  type: TaskName = 'llama-guard';
 
   form = new FormGroup({
     on: new FormControl<'resources' | 'text-blocks'>('resources', { nonNullable: true }),
@@ -37,7 +38,7 @@ export class ContentSafetyComponent extends TaskRouteDirective {
   activateTask(commonConfig: TaskFormCommonConfig) {
     this.taskAutomation
       .startTask(
-        'llama-guard',
+        this.type,
         {
           name: commonConfig.name,
           filter: commonConfig.filter,

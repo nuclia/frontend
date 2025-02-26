@@ -8,7 +8,7 @@ import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TasksAutomationService } from '../../tasks-automation.service';
-import { QAOperation, TaskApplyTo } from '@nuclia/core';
+import { QAOperation, TaskApplyTo, TaskName } from '@nuclia/core';
 import { map } from 'rxjs';
 
 @Component({
@@ -28,6 +28,7 @@ import { map } from 'rxjs';
 })
 export class QuestionAnswerComponent extends TaskRouteDirective {
   taskAutomation = inject(TasksAutomationService);
+  type: TaskName = 'synthetic-questions';
 
   questionAnswerForm = new FormGroup({
     generate_answers_prompt: new FormControl<string>('', { nonNullable: true }),
@@ -45,7 +46,7 @@ export class QuestionAnswerComponent extends TaskRouteDirective {
     operation.triggers = commonConfig.webhook && [commonConfig.webhook];
     this.taskAutomation
       .startTask(
-        'synthetic-questions',
+        this.type,
         {
           name: commonConfig.name,
           filter: commonConfig.filter,

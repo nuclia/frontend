@@ -13,7 +13,7 @@ import {
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GraphOperation, TaskApplyTo } from '@nuclia/core';
+import { GraphOperation, TaskApplyTo, TaskName } from '@nuclia/core';
 import { TasksAutomationService } from '../../tasks-automation.service';
 import { STFUtils } from '@flaps/core';
 import { map } from 'rxjs';
@@ -41,6 +41,7 @@ import { map } from 'rxjs';
 })
 export class GraphExtractionComponent extends TaskRouteDirective {
   private taskAutomation = inject(TasksAutomationService);
+  type: TaskName = 'llm-graph';
 
   graphOperation = this.task.pipe(
     map((task) => task?.parameters?.operations?.find((operation) => operation.graph)?.graph),
@@ -153,7 +154,7 @@ export class GraphExtractionComponent extends TaskRouteDirective {
     };
     this.taskAutomation
       .startTask(
-        'llm-graph',
+        this.type,
         {
           name: commonConfig.name,
           filter: commonConfig.filter,

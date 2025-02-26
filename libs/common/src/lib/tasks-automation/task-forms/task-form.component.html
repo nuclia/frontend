@@ -83,8 +83,8 @@
             }
           </pa-dropdown>
         </div>
-        <!--
-        @if (hasLabelSets | async) {
+
+        <!-- @if (hasLabelSets | async) {
           <app-label-dropdown
             fullWidth
             [selection]="labelSelection"
@@ -96,8 +96,12 @@
               ({{ labelSelectionCount }})
             }
           </app-label-dropdown>
+        } -->
+        @if (can_apply_to_agent_generated_fields) {
+          <pa-toggle formControlName="apply_to_agent_generated_fields">
+            {{ 'tasks-automation.form.filter.apply-to-da-fields' | translate }}
+          </pa-toggle>
         }
-        -->
       </div>
     </nsi-two-columns-configuration-item>
   }
