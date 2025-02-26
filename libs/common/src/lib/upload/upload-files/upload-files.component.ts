@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { forkJoin, map, take } from 'rxjs';
+import { forkJoin, map, shareReplay, switchMap, take } from 'rxjs';
 import { DroppedFile, FeaturesService, SDKService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { UploadService } from '../upload.service';
@@ -67,6 +67,8 @@ export class UploadFilesComponent {
   noLimit = this.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   isTrial = this.features.isTrial;
+  extractConfigEnabled = this.features.unstable.extractConfig;
+  extractStrategy?: string;
 
   get allowedFiles(): File[] {
     return this.noLimit
@@ -140,6 +142,11 @@ export class UploadFilesComponent {
       if (this.langCode) {
         labelledFiles.forEach((file) => {
           file.lang = this.langCode.getRawValue();
+        });
+      }
+      if (this.extractStrategy) {
+        labelledFiles.forEach((file) => {
+          file.payload = { ...(file.payload || {}), processing_options: { extract_strategy: this.extractStrategy } };
         });
       }
       if (this.processing !== 'none') {
