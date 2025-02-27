@@ -44,7 +44,9 @@ export class TaskSettingsComponent {
   );
   fieldTypes: FIELD_TYPE[] = [];
   notFieldTypes: FIELD_TYPE[] = [];
+  labels: string[] = [];
   triggers: Trigger[] = [];
+  apply_to_agent_generated_fields = false;
 
   @Input()
   set task(value: TaskWithApplyOption | undefined) {
@@ -55,6 +57,10 @@ export class TaskSettingsComponent {
     if (value?.parameters.filter.not_field_types?.length) {
       this.notFieldTypes = this.mapFieldTypes(value.parameters.filter.not_field_types);
     }
+    if (value?.parameters.filter.labels?.length) {
+      this.labels = value.parameters.filter.labels;
+    }
+    this.apply_to_agent_generated_fields = value?.parameters.filter.apply_to_agent_generated_fields || false;
     if (value) {
       this.triggers = this.mapTriggers(value);
     }

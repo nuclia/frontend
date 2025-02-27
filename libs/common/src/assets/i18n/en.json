@@ -1454,6 +1454,7 @@
 	"tasks-automation.form.field-name.label": "Prefix of the field",
 	"tasks-automation.form.field-name.placeholder": "Field name",
 	"tasks-automation.form.filter.all": "all",
+	"tasks-automation.form.filter.apply-to-da-fields": "Apply to Data Augmention generated fields",
 	"tasks-automation.form.filter.description": "The action will apply only to resources matching the selection.",
 	"tasks-automation.form.filter.excluded-fields.button-label": "Excluded field types",
 	"tasks-automation.form.filter.fields.all-types": "All field types",

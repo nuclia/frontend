@@ -55,6 +55,8 @@ export interface TaskFormCommonConfig {
     //searchIn: 'titleOrContent' | 'title' | 'content';
     contains: string[];
     field_types: string[];
+    labels?: string[];
+    apply_to_agent_generated_fields?: boolean;
   };
   llm: LLMConfig;
   webhook?: TaskTrigger;
@@ -117,6 +119,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     filter: new FormGroup({
       //searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent', { nonNullable: true }),
       contains: new FormControl<string>('', { nonNullable: true }),
+      apply_to_agent_generated_fields: new FormControl<boolean>(false),
     }),
     llm: new FormGroup({
       model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -187,6 +190,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   get filterProperties() {
     return this.properties?.['filter']?.['anyOf']?.[0]?.properties;
   }
+  can_apply_to_agent_generated_fields = false;
 
   ngOnInit() {
     this.tasksAutomation.initTaskList();
@@ -198,6 +202,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       )
       .subscribe((task) => {
         this.taskDefinition = task;
+        this.can_apply_to_agent_generated_fields = task.name === 'labeler' || task.name === 'llm-graph';
         this.cdr.markForCheck();
       });
 
@@ -287,6 +292,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       filter: {
         contains: rawValue.filter.contains ? [rawValue.filter.contains] : [],
         field_types: this.selectedFieldTypes,
+        labels: this.labelFilters,
+        apply_to_agent_generated_fields: !!rawValue.filter.apply_to_agent_generated_fields,
       },
     });
   }

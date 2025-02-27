@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TaskRouteDirective } from '../task-route.directive';
 import { TasksAutomationService } from '../../tasks-automation.service';
-import { TaskApplyTo } from '@nuclia/core';
+import { TaskApplyTo, TaskName } from '@nuclia/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 
@@ -30,6 +30,7 @@ import { TaskSettingsComponent } from '../task-settings/task-settings.component'
 export class LLMSecurityComponent extends TaskRouteDirective {
   taskAutomation = inject(TasksAutomationService);
   TaskApplyTo = TaskApplyTo;
+  type: TaskName = 'prompt-guard';
 
   form = new FormGroup({
     on: new FormControl<'resources' | 'text-blocks'>('resources', { nonNullable: true }),
@@ -38,7 +39,7 @@ export class LLMSecurityComponent extends TaskRouteDirective {
   activateTask(commonConfig: TaskFormCommonConfig) {
     this.taskAutomation
       .startTask(
-        'prompt-guard',
+        this.type,
         {
           name: commonConfig.name,
           filter: commonConfig.filter,
