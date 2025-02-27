@@ -178,6 +178,8 @@ jobs:
           skip-context-creation: true
           push: true
           tag-latest: main
+          ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
+          ghapp-nuclia-service-bot-pk:  ${{ secrets.PK_GHAPP_NUCLIABOT }}
 
       - name: Create 404 page for gh-pages
         if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
