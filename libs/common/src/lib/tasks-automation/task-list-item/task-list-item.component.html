@@ -107,6 +107,13 @@
                 </pa-option>
               }
             }
+            @if (task.canClean && task.status !== 'cleaning' && task.status !== 'progress') {
+              <pa-option
+                (selectOption)="clean.emit(task)"
+                destructive>
+                {{ 'tasks-automation.actions.clean' | translate }}
+              </pa-option>
+            }
             <pa-option
               (selectOption)="delete.emit(task.id)"
               destructive>

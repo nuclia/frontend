@@ -61,6 +61,7 @@ export class TaskListItemComponent {
   @Output() stop = new EventEmitter<string>();
   @Output() delete = new EventEmitter<string>();
   @Output() restart = new EventEmitter<string>();
+  @Output() clean = new EventEmitter<AutomatedTask | OneTimeTask>();
 
   private _taskList: TaskWithFilters[] = [];
 
