@@ -17,6 +17,8 @@ import {
   Counters,
   Entities,
   EntitiesGroup,
+  ExtractConfig,
+  ExtractStrategies,
   FullKbUser,
   IKnowledgeBox,
   IKnowledgeBoxCreation,
@@ -989,6 +991,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     metadata?: UserMetadata,
     synchronous = true,
     origin?: Origin,
+    extract_strategy?: string,
   ): Observable<{ uuid: string }> {
     return this.createResource(
       {
@@ -997,6 +1000,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
         title: link.uri,
         icon: 'application/stf-link',
         ...(origin ? { origin } : {}),
+        ...(extract_strategy ? { processing_options: { extract_strategy } } : {}),
       },
       synchronous,
     );
@@ -1149,5 +1153,17 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
    */
   removeVectorset(model: string): Observable<void> {
     return this.nuclia.rest.delete(`/kb/${this.id}/vectorsets/${model}`);
+  }
+
+  getExtractStrategies(): Observable<ExtractStrategies> {
+    return this.nuclia.rest.get<ExtractStrategies>(`${this.path}/extract_strategies`);
+  }
+
+  createExtractStrategy(config: ExtractConfig): Observable<void> {
+    return this.nuclia.rest.post<void>(`${this.path}/extract_strategies`, config);
+  }
+
+  deleteExtractStrategy(id: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/extract_strategies/strategy/${id}`);
   }
 }

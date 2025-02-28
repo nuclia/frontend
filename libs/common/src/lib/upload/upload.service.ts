@@ -235,6 +235,7 @@ export class UploadService {
     headers?: { [id: string]: string },
     cookies?: { [id: string]: string },
     localstorage?: { [id: string]: string },
+    extract_strategy?: string,
   ) {
     return this.sdk.currentKb.pipe(
       take(1),
@@ -244,12 +245,13 @@ export class UploadService {
           { classifications },
           true,
           REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
+          extract_strategy,
         ),
       ),
     );
   }
 
-  createCloudFileResource(uri: string, classifications: Classification[]) {
+  createCloudFileResource(uri: string, classifications: Classification[], extract_strategy?: string) {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
@@ -261,6 +263,7 @@ export class UploadService {
               file: { uri },
             },
           },
+          ...(extract_strategy ? { processing_options: { extract_strategy } } : {}),
         }),
       ),
     );

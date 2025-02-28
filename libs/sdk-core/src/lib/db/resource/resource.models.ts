@@ -45,6 +45,7 @@ export interface ICreateResource {
   conversations?: { [key: string]: ConversationField };
   security?: Security;
   hidden?: boolean;
+  processing_options?: ProcessingOptions;
 }
 
 export enum FIELD_TYPE {
@@ -109,6 +110,10 @@ export interface Origin {
 
 export interface Security {
   access_groups: string[];
+}
+
+export interface ProcessingOptions {
+  extract_strategy?: string;
 }
 
 export interface IError {

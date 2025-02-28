@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { SDKService } from '@flaps/core';
+import { FeaturesService, SDKService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
 import { Observable, switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
@@ -51,6 +51,9 @@ export class CreateLinkComponent {
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
   pendingResourcesLimit = PENDING_RESOURCES_LIMIT;
+  extractConfigEnabled = this.features.unstable.extractConfig;
+  extractStrategy?: string;
+  updateOptionsExpander = 0;
 
   get invalid() {
     return (
@@ -66,6 +69,7 @@ export class CreateLinkComponent {
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private standaloneService: StandaloneService,
+    private features: FeaturesService,
   ) {}
 
   add() {
@@ -89,6 +93,7 @@ export class CreateLinkComponent {
                 this.selectedLabels,
                 formValue.css_selector,
                 formValue.xpath,
+                this.extractStrategy,
               ),
             ),
           );
@@ -101,6 +106,7 @@ export class CreateLinkComponent {
               this.selectedLabels,
               formValue.css_selector,
               formValue.xpath,
+              this.extractStrategy,
             ),
           ]);
           break;
@@ -157,9 +163,19 @@ export class CreateLinkComponent {
     labels: Classification[],
     css_selector?: string | null,
     xpath?: string | null,
+    extract_strategy?: string,
   ): Observable<{ uuid: string }> {
     return isCloudFile
-      ? this.uploadService.createCloudFileResource(link, labels)
-      : this.uploadService.createLinkResource(link, labels, css_selector, xpath);
+      ? this.uploadService.createCloudFileResource(link, labels, extract_strategy)
+      : this.uploadService.createLinkResource(
+          link,
+          labels,
+          css_selector,
+          xpath,
+          undefined,
+          undefined,
+          undefined,
+          extract_strategy,
+        );
   }
 }
