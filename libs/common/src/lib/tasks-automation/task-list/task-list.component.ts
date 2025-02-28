@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskListItemComponent } from '../task-list-item/task-list-item.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
-import { map, of, Subject, switchMap } from 'rxjs';
-import { BadgeComponent, InfoCardComponent, SisToastService } from '@nuclia/sistema';
+import { BaseTask } from '../tasks-automation.models';
+import { filter, map, of, Subject, switchMap } from 'rxjs';
+import { BadgeComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { FeaturesService } from '@flaps/core';
 
 @Component({
@@ -21,6 +22,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
   private taskAutomation = inject(TasksAutomationService);
   private toaster = inject(SisToastService);
   private features = inject(FeaturesService);
+  private modalService = inject(SisModalService);
+  private translate = inject(TranslateService);
   private unsubscribeAll = new Subject<void>();
 
   labelerTasks = this.taskAutomation.taskList.pipe(
@@ -83,5 +86,19 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
   restartTask(taskId: string) {
     this.taskAutomation.restartTask(taskId).subscribe();
+  }
+
+  cleanTask(task: BaseTask) {
+    this.modalService
+      .openConfirm({
+        title: this.translate.instant('tasks-automation.confirm-clean.title', { agent: task.title }),
+        description: 'tasks-automation.confirm-clean.description',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.taskAutomation.cleanTask(task.id)),
+      )
+      .subscribe();
   }
 }

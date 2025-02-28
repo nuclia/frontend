@@ -15,6 +15,7 @@ export interface TaskDefinition {
   name: TaskName;
   data_augmentation: boolean;
   description?: string;
+  can_cleanup?: boolean;
 }
 
 /**
@@ -179,6 +180,7 @@ export interface TaskOnBatch extends TaskStatus {
   completed: boolean;
   scheduled_at: string;
   completed_at: string;
+  cleanup_parent_task_id?: string; 
 }
 
 /**
