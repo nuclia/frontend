@@ -100,7 +100,7 @@ export class TasksAutomationService {
     response.configs
       .filter((item) => item.task.data_augmentation)
       .map((task) => task as DataAugmentationTaskOnGoing)
-      .forEach((task) => taskList.push(mapOnGoingToAutomatedTask(task)));
+      .forEach((task) => taskList.push(mapOnGoingToAutomatedTask(task, tasksBeingCleaned.includes(task.id))));
 
     return taskList;
   }

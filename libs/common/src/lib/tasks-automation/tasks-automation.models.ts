@@ -28,6 +28,7 @@ export interface BaseTask extends TaskConfiguration {
 
 export interface AutomatedTask extends BaseTask {
   type: 'automated';
+  status: 'watching' | 'cleaning';
 }
 
 export interface OneTimeTask extends BaseTask {
@@ -55,12 +56,13 @@ export function mapBatchToOneTimeTask(task: DataAugmentationTaskOnBatch, cleanin
   };
 }
 
-export function mapOnGoingToAutomatedTask(task: DataAugmentationTaskOnGoing): AutomatedTask {
+export function mapOnGoingToAutomatedTask(task: DataAugmentationTaskOnGoing, cleaning: boolean): AutomatedTask {
   return {
     id: task.id,
     taskName: task.task.name || '',
     canClean: !!task.task.can_cleanup,
     type: 'automated',
+    status: cleaning ? 'cleaning' : 'watching',
     creationDate: task.defined_at ? `${task.defined_at}+00:00` : '',
     ...mapParameters(task.parameters),
   };

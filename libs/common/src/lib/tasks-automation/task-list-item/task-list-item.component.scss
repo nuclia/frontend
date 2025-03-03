@@ -38,6 +38,7 @@
   }
 
   .task-status {
+    &.watching,
     &.progress {
       color: $color-tertiary-regular;
     }
