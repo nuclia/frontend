@@ -21,6 +21,7 @@ export class PreviewService {
     map(([kb, account]) => {
       return this.sanitizer.bypassSecurityTrustHtml(`<nuclia-viewer id="viewer-widget"
         knowledgebox="${kb.id}"
+        features="knowledgeGraph"
         zone="${this.sdk.nuclia.options.zone}"
         client="dashboard"
         cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"

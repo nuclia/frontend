@@ -134,8 +134,8 @@
         stroke={!!selectedNode && (link.source.id === selectedNode.id || link.target.id === selectedNode.id)
           ? '#000'
           : !!selectedNode
-          ? '#C4C4C450'
-          : '#00000050'} />
+            ? '#C4C4C450'
+            : '#00000050'} />
     {/each}
 
     {#each renderedDots as dot, i (dot.id)}
@@ -154,10 +154,11 @@
           r={dot.radius}>
           <title>{dot.ner}</title>
         </circle>
-        {#if filteredNodes[i].radius > 20}
+        {#if filteredNodes[i].radius > 20 || filteredNodes.length < 30}
           <text
             x={dot.x}
             y={dot.y}
+            class:small={filteredNodes[i].radius < 20}
             text-anchor="middle"
             dy="5"
             fill={!selectedNode ||

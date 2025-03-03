@@ -1,5 +1,12 @@
 <script lang="ts">
-  import type { NerFamily, NerLink, NerNode, PositionWithRelevance, RelationWithRelevance } from '../../core';
+  import type {
+    EntityPositionsWithRelevance,
+    NerFamily,
+    NerLink,
+    NerNode,
+    PositionWithRelevance,
+    RelationWithRelevance,
+  } from '../../core';
   import { fieldMetadata, generatedEntitiesColor, graphState, translateInstant } from '../../core';
   import { Checkbox, Expander } from '../../common';
   import Graph from './Graph.svelte';
@@ -46,9 +53,9 @@
           const target: NerNode = link.target;
           const radiusSum = source.radius + target.radius;
           return radiusSum + radiusSum / 2;
-        })
+        }),
     ],
-    ['charge', d3.forceManyBody().strength(chargeStrength)]
+    ['charge', d3.forceManyBody().strength(chargeStrength)],
   ].filter((d) => d);
 
   onMount(() => {
@@ -56,7 +63,7 @@
       .pipe(
         filter((metadata) => !!metadata),
         map((metadata) => metadata as FieldMetadata),
-        takeUntil(unsubscribeAll)
+        takeUntil(unsubscribeAll),
       )
       .subscribe((metadata) => {
         const { relations, positions } = getRelevanceLists(metadata);
@@ -72,7 +79,7 @@
     graphState.reset();
   });
 
-  function getNodes(positions: PositionWithRelevance): NerNode[] {
+  function getNodes(positions: EntityPositionsWithRelevance): NerNode[] {
     const relevanceList = Object.values(positions)
       .map((position) => position.relevance)
       .filter((value) => value);
@@ -90,25 +97,25 @@
             family,
             relevance,
             color: generatedEntitiesColor[family] || defaultFamilyColor,
-            radius: Math.max(Math.min(relevance * radiusRatio, maxRadius || 0), minRadius)
+            radius: Math.max(Math.min(relevance * radiusRatio, maxRadius || 0), minRadius),
           });
           return list;
         }, [] as NerNode[])
         // keep only relevant nodes which are in a link
         .filter(
-          (node) => node.relevance > 0 && links.some((link) => link.source === node.id || link.target === node.id)
+          (node) => node.relevance > 0 && links.some((link) => link.source === node.id || link.target === node.id),
         )
     );
   }
 
-  function getLinks(relations: RelationWithRelevance[], positions: PositionWithRelevance): NerLink[] {
+  function getLinks(relations: RelationWithRelevance[], positions: EntityPositionsWithRelevance): NerLink[] {
     return relations
       .filter(
         (relation) =>
           !!relation.from &&
           positions[`${relation.from.group}/${relation.from.value}`] &&
           !!relation.to &&
-          positions[`${relation.to.group}/${relation.to.value}`]
+          positions[`${relation.to.group}/${relation.to.value}`],
       )
       .map((relation) => ({
         source: `${relation.from?.group}/${relation.from?.value}`,
@@ -116,7 +123,7 @@
         fromGroup: relation.from?.group,
         toGroup: relation.to.group,
         relevance: relation.relevance || 0,
-        label: relation.label
+        label: relation.label,
       }));
   }
 
@@ -129,11 +136,11 @@
    */
   function getRelevanceLists(metadata: FieldMetadata): {
     relations: RelationWithRelevance[];
-    positions: PositionWithRelevance;
+    positions: EntityPositionsWithRelevance;
   } {
     const customNerPositions = Object.entries(metadata.entities)
       .filter(([key]) => key !== DEFAULT_NER_KEY)
-      .reduce((acc, [, value]) => {
+      .reduce((acc, [key, value]) => {
         value.entities.forEach((entity) => {
           acc[`${entity.label}/${entity.text}`] = { position: entity.positions, entity: entity.text };
         });
@@ -166,10 +173,10 @@
         const relevance = Math.min(from?.relevance || 0, to?.relevance || 0);
         return {
           ...relation,
-          relevance
+          relevance,
         };
       }),
-      positions
+      positions,
     };
   }
 
@@ -187,7 +194,7 @@
         return {
           id,
           color,
-          label: !!generatedEntityColor ? translateInstant('entities.' + id.toLowerCase()) : id.toLocaleLowerCase()
+          label: !!generatedEntityColor ? translateInstant('entities.' + id.toLowerCase()) : id.toLocaleLowerCase(),
         };
       })
       .sort((a, b) => a.label.localeCompare(b.label));
