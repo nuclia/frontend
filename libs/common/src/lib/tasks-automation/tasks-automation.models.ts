@@ -22,6 +22,7 @@ export interface BaseTask extends TaskConfiguration {
   id: string;
   taskName: TaskName;
   creationDate: string;
+  canClean: boolean;
   type: 'automated' | 'one-time';
 }
 
@@ -30,16 +31,25 @@ export interface AutomatedTask extends BaseTask {
 }
 
 export interface OneTimeTask extends BaseTask {
-  status: 'completed' | 'progress' | 'stopped' | 'error';
+  status: 'completed' | 'progress' | 'stopped' | 'error' | 'cleaning';
   type: 'one-time';
 }
 
-export function mapBatchToOneTimeTask(task: DataAugmentationTaskOnBatch): OneTimeTask {
+export function mapBatchToOneTimeTask(task: DataAugmentationTaskOnBatch, cleaning: boolean): OneTimeTask {
   return {
     id: task.id,
     taskName: task.task.name,
+    canClean: !!task.task.can_cleanup,
     type: 'one-time',
-    status: task.completed ? 'completed' : task.failed ? 'error' : task.stopped ? 'stopped' : 'progress',
+    status: cleaning
+      ? 'cleaning'
+      : task.completed
+        ? 'completed'
+        : task.failed
+          ? 'error'
+          : task.stopped
+            ? 'stopped'
+            : 'progress',
     creationDate: task.scheduled_at ? `${task.scheduled_at}+00:00` : '',
     ...mapParameters(task.parameters),
   };
@@ -49,6 +59,7 @@ export function mapOnGoingToAutomatedTask(task: DataAugmentationTaskOnGoing): Au
   return {
     id: task.id,
     taskName: task.task.name || '',
+    canClean: !!task.task.can_cleanup,
     type: 'automated',
     creationDate: task.defined_at ? `${task.defined_at}+00:00` : '',
     ...mapParameters(task.parameters),

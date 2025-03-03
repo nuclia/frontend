@@ -34664,6 +34664,29 @@
 								<name>actions</name>
 								<children>
 									<concept_node>
+										<name>clean</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
 										<name>delete</name>
 										<description/>
 										<comment/>
@@ -34831,6 +34854,57 @@
 									</translation>
 								</translations>
 							</concept_node>
+							<folder_node>
+								<name>confirm-clean</name>
+								<children>
+									<concept_node>
+										<name>description</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>title</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+								</children>
+							</folder_node>
 							<folder_node>
 								<name>content-safety</name>
 								<children>
@@ -38016,6 +38090,29 @@
 							<folder_node>
 								<name>status</name>
 								<children>
+									<concept_node>
+										<name>cleaning</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
 									<concept_node>
 										<name>completed</name>
 										<description/>
