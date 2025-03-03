@@ -38,9 +38,11 @@
   }
 
   .task-status {
+    &.watching,
     &.progress {
       color: $color-tertiary-regular;
     }
+    &.cleaning,
     &.error {
       color: $color-secondary-stronger;
     }

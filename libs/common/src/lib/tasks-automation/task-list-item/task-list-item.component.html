@@ -70,17 +70,11 @@
           }
         </pa-table-cell>
         <pa-table-cell>
-          @if (task.type === 'automated') {
-            <span class="task-status body-s progress">
-              {{ 'tasks-automation.status.watching' | translate }}
-            </span>
-          } @else {
             <span
               class="task-status body-s"
               [class]="task.status">
               {{ 'tasks-automation.status.' + task.status | translate }}
             </span>
-          }
         </pa-table-cell>
         <pa-table-cell>
           <span class="body-s">
@@ -106,6 +100,13 @@
                   {{ 'tasks-automation.actions.stop' | translate }}
                 </pa-option>
               }
+            }
+            @if (task.canClean && task.status !== 'cleaning' && task.status !== 'progress') {
+              <pa-option
+                (selectOption)="clean.emit(task)"
+                destructive>
+                {{ 'tasks-automation.actions.clean' | translate }}
+              </pa-option>
             }
             <pa-option
               (selectOption)="delete.emit(task.id)"
