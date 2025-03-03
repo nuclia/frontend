@@ -17,6 +17,10 @@
 
     text {
       font-weight: var(--font-weight-bold);
+      &.small {
+        font-size: var(--font-size-small);
+        font-weight: var(--font-weight-body);
+      }
     }
   }
 
