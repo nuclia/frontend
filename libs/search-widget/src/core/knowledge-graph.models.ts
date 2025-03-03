@@ -6,6 +6,9 @@ export interface NerFamily {
   label: string;
 }
 
+export interface EntityPositionsWithRelevance {
+  [entityId: string]: PositionWithRelevance;
+}
 export interface PositionWithRelevance extends EntityPosition {
   relevance?: number;
 }
