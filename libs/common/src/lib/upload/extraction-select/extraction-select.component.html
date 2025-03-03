@@ -1,0 +1,38 @@
+<div class="extraction-select">
+  @if (extractStrategies | async; as strategies) {
+    <pa-toggle
+      labelOnRight
+      [value]="enabled"
+      (valueChange)="toggle()">
+      {{ 'upload.advanced.extraction.title' | translate }}
+    </pa-toggle>
+    @if (enabled) {
+      @if ((strategies | keyvalue).length > 0) {
+        <pa-select
+          [value]="configId"
+          (valueChange)="selectConfigId($event)"
+          [label]="'upload.advanced.extraction.configuration' | translate">
+          @for (strategy of strategies | keyvalue; track strategy) {
+            <pa-option [value]="strategy.key">{{ strategy.value.name || strategy.key }}</pa-option>
+          }
+        </pa-select>
+        @if (!!strategies[configId || '']?.ai_tables || !!strategies[configId || '']?.vllm_config) {
+          <nsi-info-card
+            type="warning"
+            icon="warning">
+            {{ 'upload.advanced.extraction.warning' | translate }}
+          </nsi-info-card>
+        }
+      } @else {
+        <nsi-info-card>
+          {{ 'upload.advanced.extraction.empty' | translate }}
+          <a
+            [routerLink]="(kbUrl | async) + '/ai-models'"
+            (click)="close.emit()">
+            {{ 'navbar.ai-models' | translate }}
+          </a>
+        </nsi-info-card>
+      }
+    }
+  }
+</div>

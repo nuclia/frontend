@@ -5,6 +5,7 @@
 - Add `predictAnswer` method to `KnowledgeBox` class
 - Add support for `semantic-model-migrator` tasks
 - Support adding or remove semantic models
+- Add support for extract strategies
 
 # 1.24.1 (2025-02-05)
 
