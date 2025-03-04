@@ -240,6 +240,16 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   updateUsers(data: KbUserPayload): Observable<void>;
 
   inviteToKb(data: InviteKbData): Observable<void>;
+
+  addVectorset(model: string): Observable<void>;
+
+  removeVectorset(model: string): Observable<void>;
+
+  getExtractStrategies(): Observable<ExtractStrategies>;
+
+  createExtractStrategy(config: ExtractConfig): Observable<void>;
+
+  deleteExtractStrategy(id: string): Observable<void>;
 }
 
 export type PINECONE_REGIONS =
@@ -486,3 +496,26 @@ export interface ResourceOperationNotification extends ResourceBaseNotification 
   operation: NotificationOperation;
 }
 export type ResourceProcessingNotification = ResourceBaseNotification;
+
+export type ExtractStrategies = {
+  [id: string]: ExtractConfig;
+};
+
+export interface ExtractConfig {
+  name?: string;
+  vllm_config?: ExtractVLLMConfig;
+  ai_tables?: { llm?: ExtractLLMConfig };
+  split?: { max_paragraph?: number };
+}
+
+export interface ExtractLLMConfig {
+  generative_model?: string;
+  generative_provider?: string;
+  generative_prompt_id?: string;
+  user_keys?: any;
+}
+
+export interface ExtractVLLMConfig {
+  llm?: ExtractLLMConfig;
+  rules?: string[];
+}

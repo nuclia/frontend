@@ -1,0 +1,177 @@
+<pa-modal-advanced fitContent>
+  <pa-modal-title>
+    <h2>{{ createMode ? ('kb.ai-models.extraction.config.create' | translate) : config?.name || id }}</h2>
+  </pa-modal-title>
+
+  <pa-modal-content>
+    <form
+      class="form"
+      [formGroup]="configForm">
+      <pa-input
+        formControlName="name"
+        [errorMessages]="validationMessages.name">
+        {{ 'kb.ai-models.extraction.config.name' | translate }}
+      </pa-input>
+      <div>
+        <h4>{{ 'kb.ai-models.extraction.config.processing.title' | translate }}</h4>
+        <pa-radio-group
+          name="processing"
+          formControlName="processing"
+          noBackground>
+          <div class="processings">
+            <div class="container-with-border">
+              <pa-radio value="none">{{ 'kb.ai-models.extraction.config.processing.none.label' | translate }}</pa-radio>
+            </div>
+            @if (visualLLMEnabled | async) {
+              <div class="container-with-border">
+                <div class="beta-option">
+                  <pa-radio
+                    value="vllm_config"
+                    [help]="'kb.ai-models.extraction.config.processing.vllm_config.help' | translate">
+                    {{ 'kb.ai-models.extraction.config.processing.vllm_config.label' | translate }}
+                  </pa-radio>
+                  <nsi-badge kind="tertiary">BETA</nsi-badge>
+                </div>
+                @if (processing === 'vllm_config') {
+                  <div
+                    class="extra-fields"
+                    formGroupName="vllm_config">
+                    <nsi-info-card>
+                      {{ 'kb.ai-models.extraction.config.processing.vllm_config.warning' | translate }}
+                    </nsi-info-card>
+                    <div
+                      class="rules"
+                      formArrayName="rules">
+                      <div class="body-m">
+                        {{ 'kb.ai-models.extraction.config.processing.vllm_config.rules.rules-help' | translate }}
+                      </div>
+                      @for (rule of rules.controls; track rule) {
+                        <div class="rule">
+                          <pa-input
+                            [formControl]="rule"
+                            [placeholder]="
+                              'kb.ai-models.extraction.config.processing.vllm_config.rules.placeholder' | translate
+                            ">
+                            {{ 'kb.ai-models.extraction.config.processing.vllm_config.rules.rule' | translate }}
+                          </pa-input>
+                          @if (createMode) {
+                            <pa-button
+                              size="small"
+                              aspect="basic"
+                              icon="trash"
+                              kind="destructive"
+                              (click)="removeRule($index)">
+                              {{ 'generic.delete' | translate }}
+                            </pa-button>
+                          }
+                        </div>
+                      }
+                      @if (createMode) {
+                        <nsi-button-mini
+                          icon="plus"
+                          (click)="addRule()">
+                          {{ 'kb.ai-models.extraction.config.processing.vllm_config.rules.add-rule' | translate }}
+                        </nsi-button-mini>
+                      }
+                    </div>
+                    <pa-toggle
+                      labelOnRight
+                      formControlName="customVLLM">
+                      {{ 'kb.ai-models.extraction.config.customize-model' | translate }}
+                    </pa-toggle>
+                    @if (useCustomVLLM) {
+                      <ng-container formGroupName="llm">
+                        <pa-select
+                          formControlName="generative_model"
+                          [label]="'kb.ai-models.extraction.config.generative-model' | translate">
+                          @for (model of generativeModels; track model.value) {
+                            <pa-option [value]="model.value">{{ model.name }}</pa-option>
+                          }
+                        </pa-select>
+                        <!--
+                        <pa-textarea
+                          formControlName="generative_prompt_id"
+                          rows="3">
+                          {{ 'kb.ai-models.extraction.config.custom-prompt' | translate }}
+                        </pa-textarea>
+                        -->
+                      </ng-container>
+                    }
+                  </div>
+                }
+              </div>
+            }
+            @if (aiTablesEnabled | async) {
+              <div class="container-with-border">
+                <pa-radio
+                  value="ai_tables"
+                  [help]="'kb.ai-models.extraction.config.processing.ai_tables.help' | translate">
+                  {{ 'kb.ai-models.extraction.config.processing.ai_tables.label' | translate }}
+                </pa-radio>
+                @if (processing === 'ai_tables') {
+                  <div
+                    class="extra-fields"
+                    formGroupName="ai_tables">
+                    <nsi-info-card>
+                      <span
+                        [innerHTML]="'kb.ai-models.extraction.config.processing.ai_tables.warning' | translate"></span>
+                    </nsi-info-card>
+                    <pa-toggle
+                      labelOnRight
+                      formControlName="customLLM">
+                      {{ 'kb.ai-models.extraction.config.customize-model' | translate }}
+                    </pa-toggle>
+                    @if (useCustomLLM) {
+                      <ng-container formGroupName="llm">
+                        <pa-select
+                          formControlName="generative_model"
+                          [label]="'kb.ai-models.extraction.config.generative-model' | translate">
+                          @for (model of generativeModels; track model.value) {
+                            <pa-option [value]="model.value">{{ model.name }}</pa-option>
+                          }
+                        </pa-select>
+                        <!-- 
+                        <pa-textarea
+                          formControlName="generative_prompt_id"
+                          rows="3">
+                          {{ 'kb.ai-models.extraction.config.custom-prompt' | translate }}
+                        </pa-textarea>
+                        -->
+                      </ng-container>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </pa-radio-group>
+      </div>
+
+      <div formGroupName="split">
+        <h4>{{ 'kb.ai-models.extraction.config.text-splitting.title' | translate }}</h4>
+        <pa-input
+          type="number"
+          formControlName="max_paragraph">
+          {{ 'kb.ai-models.extraction.config.text-splitting.max-paragraph' | translate }}
+        </pa-input>
+      </div>
+    </form>
+  </pa-modal-content>
+
+  @if (createMode) {
+    <pa-modal-footer>
+      <pa-button
+        aspect="basic"
+        (click)="close()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        kind="primary"
+        type="submit"
+        [disabled]="configForm.invalid"
+        (click)="save()">
+        {{ 'generic.save' | translate }}
+      </pa-button>
+    </pa-modal-footer>
+  }
+</pa-modal-advanced>

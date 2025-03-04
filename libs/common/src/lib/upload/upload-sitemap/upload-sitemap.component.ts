@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { LabelModule, ParametersTableComponent, SDKService } from '@flaps/core';
+import { FeaturesService, LabelModule, ParametersTableComponent, SDKService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
 import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 import {
@@ -18,14 +18,16 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { SitemapSelectComponent } from './sitemap-select/sitemap-select.component';
 import { catchError, defer, from, map, of, switchMap } from 'rxjs';
+import { ExtractionSelectComponent } from '../extraction-select/extraction-select.component';
+import { StandaloneService } from '../../services';
 
 @Component({
   selector: 'app-upload-sitemap',
-  standalone: true,
   imports: [
     CommonModule,
     InfoCardComponent,
     LabelModule,
+    ExtractionSelectComponent,
     PaButtonModule,
     PaExpanderModule,
     PaIconModule,
@@ -57,12 +59,17 @@ export class UploadSitemapComponent {
   headers: { key: string; value: string }[] = [];
   cookies: { key: string; value: string }[] = [];
   localstorage: { key: string; value: string }[] = [];
+  standalone = this.standaloneService.standalone;
+  extractConfigEnabled = this.features.unstable.extractConfig;
+  extractStrategy?: string;
 
   constructor(
     public modal: ModalRef,
     private sdk: SDKService,
     private uploadService: UploadService,
     private cdr: ChangeDetectorRef,
+    private features: FeaturesService,
+    private standaloneService: StandaloneService,
   ) {}
 
   close(): void {
@@ -89,8 +96,9 @@ export class UploadSitemapComponent {
                     this.cleanParameters(this.headers),
                     this.cleanParameters(this.cookies),
                     this.cleanParameters(this.localstorage),
+                    this.extractStrategy,
                   )
-                : this.uploadService.createCloudFileResource(link, this.selectedLabels),
+                : this.uploadService.createCloudFileResource(link, this.selectedLabels, this.extractStrategy),
             ),
           ),
         ),
