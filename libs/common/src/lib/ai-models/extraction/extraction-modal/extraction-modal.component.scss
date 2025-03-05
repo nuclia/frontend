@@ -30,18 +30,3 @@ h4 {
   padding: rhythm(2) 0 0 rhythm(3);
   margin-top: rhythm(2);
 }
-
-.rules {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(2);
-  margin-bottom: rhythm(2);
-}
-
-.rule {
-  display: flex;
-  gap: rhythm(1);
-  pa-input {
-    flex-grow: 1;
-  }
-}

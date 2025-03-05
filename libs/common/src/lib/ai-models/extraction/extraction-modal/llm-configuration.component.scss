@@ -1,0 +1,26 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.rules {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin-bottom: rhythm(4);
+}
+
+.rule {
+  display: flex;
+  gap: rhythm(1);
+  pa-input {
+    flex-grow: 1;
+  }
+}
+
+nsi-button-mini {
+  align-self: flex-start;
+}
+
+.custom-llm {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
