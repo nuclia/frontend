@@ -52,12 +52,12 @@ export class ExtractionComponent {
       .subscribe();
   }
 
-  deleteStrategy(id: string, event?: Event) {
+  deleteStrategy(id: string, config: ExtractConfig, event?: Event) {
     event?.stopPropagation();
     return this.modalService
       .openConfirm({
         title: 'kb.ai-models.extraction.delete.title',
-        description: this.translate.instant('kb.ai-models.extraction.delete.description', { id }),
+        description: this.translate.instant('kb.ai-models.extraction.delete.description', { name: config.name }),
         confirmLabel: 'generic.delete',
         isDestructive: true,
       })

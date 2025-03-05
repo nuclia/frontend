@@ -20,7 +20,7 @@
                   kind="destructive"
                   aspect="basic"
                   size="small"
-                  (click)="deleteStrategy(strategy.key, $event)">
+                  (click)="deleteStrategy(strategy.key, strategy.value, $event)">
                   {{ 'generic.delete' | translate }}
                 </pa-button>
               </pa-table-cell>

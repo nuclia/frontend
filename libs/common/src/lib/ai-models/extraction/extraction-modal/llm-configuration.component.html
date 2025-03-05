@@ -1,0 +1,60 @@
+<div [formGroup]="configForm">
+  <div
+    class="rules"
+    formArrayName="rules">
+    <div class="body-m">
+      {{ 'kb.ai-models.extraction.config.processing.rules.rules-help' | translate }}
+    </div>
+    @for (rule of rules.controls; track rule) {
+      <div class="rule">
+        <pa-input
+          [formControl]="rule"
+          [placeholder]="'kb.ai-models.extraction.config.processing.rules.placeholder' | translate">
+          {{ 'kb.ai-models.extraction.config.processing.rules.rule' | translate }}
+        </pa-input>
+        @if (createMode) {
+          <pa-button
+            size="small"
+            aspect="basic"
+            icon="trash"
+            kind="destructive"
+            (click)="removeRule($index)">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
+        }
+      </div>
+    }
+    @if (createMode) {
+      <nsi-button-mini
+        icon="plus"
+        (click)="addRule()">
+        {{ 'kb.ai-models.extraction.config.processing.rules.add-rule' | translate }}
+      </nsi-button-mini>
+    }
+  </div>
+  <div class="custom-llm">
+    <pa-toggle
+      labelOnRight
+      formControlName="customLLM">
+      {{ 'kb.ai-models.extraction.config.customize-model' | translate }}
+    </pa-toggle>
+    @if (useCustomModel) {
+      <ng-container formGroupName="llm">
+        <pa-select
+          formControlName="generative_model"
+          [label]="'kb.ai-models.extraction.config.generative-model' | translate">
+          @for (model of generativeModels; track model.value) {
+            <pa-option [value]="model.value">{{ model.name }}</pa-option>
+          }
+        </pa-select>
+        <!-- 
+        <pa-textarea
+          formControlName="generative_prompt_id"
+          rows="3">
+          {{ 'kb.ai-models.extraction.config.custom-prompt' | translate }}
+        </pa-textarea>
+        -->
+      </ng-container>
+    }
+  </div>
+</div>
