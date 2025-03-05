@@ -218,7 +218,7 @@
             }
             @if (visibleColumns.includes('created')) {
               <pa-table-cell center>
-                <span class="body-s">{{ row.resource.created | date: 'mediumDate' }}</span>
+                <span class="body-s">{{ row.resource.created + 'Z' | date: 'mediumDate' }}</span>
               </pa-table-cell>
             }
             @if (visibleColumns.includes('language')) {

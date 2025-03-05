@@ -17,6 +17,7 @@ import {
   trimLabelSets,
 } from '../resource-filters.utils';
 import { Classification, getFilterFromLabel, getLabelFromFilter, LabelSets, Search } from '@nuclia/core';
+import { endOfDay } from 'date-fns';
 
 @Component({
   templateUrl: './resource-list.component.html',
@@ -145,7 +146,7 @@ export class ResourceListComponent implements OnDestroy {
   applyDates() {
     this.dateDropdown?.close();
     const start = this.dateForm.value.start;
-    const end = this.dateForm.value.end ? `${this.dateForm.value.end.slice(0, 10)}T23:59:59.000Z` : undefined;
+    const end = this.dateForm.value.end ? endOfDay(new Date(this.dateForm.value.end)).toISOString() : undefined;
     this.filterOptions.creation = {
       start: start ? { filter: getFilterFromDate(start, 'start'), date: start } : undefined,
       end: end ? { filter: getFilterFromDate(end, 'end'), date: end } : undefined,

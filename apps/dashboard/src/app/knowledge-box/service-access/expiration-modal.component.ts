@@ -11,15 +11,15 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './expiration-modal.component.scss',
 })
 export class ExpirationModalComponent {
-  expiration = new FormControl<Date>(new Date(), {
+  expiration = new FormControl<string>(new Date().toISOString(), {
     nonNullable: true,
     validators: [DateAfter(new Date().toISOString()), Validators.required],
   });
 
-  constructor(public modal: ModalRef<void, { expiration: Date }>) {
+  constructor(public modal: ModalRef<void, { expiration: string }>) {
     const date = new Date();
     date.setFullYear(date.getFullYear() + 1);
-    this.expiration.setValue(date);
+    this.expiration.setValue(date.toISOString());
   }
 
   add() {
