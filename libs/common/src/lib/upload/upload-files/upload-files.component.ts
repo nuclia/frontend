@@ -146,7 +146,7 @@ export class UploadFilesComponent {
       }
       if (this.extractStrategy) {
         labelledFiles.forEach((file) => {
-          file.payload = { ...(file.payload || {}), processing_options: { extract_strategy: this.extractStrategy } };
+          file.processing = this.extractStrategy;
         });
       }
       if (this.processing !== 'none') {
