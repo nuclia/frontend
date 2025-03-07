@@ -100,14 +100,13 @@ export const upload = (
   if (!metadata.md5 && !(data instanceof ArrayBuffer)) {
     metadata.md5 = (data as FileWithMetadata).md5;
   }
-  const extract_strategy = (data as FileWithMetadata).payload?.processing_options?.extract_strategy;
-  if (extract_strategy) {
-    metadata.processing = extract_strategy;
-  }
   if ((data as FileWithMetadata).processing) {
     metadata.processing = (data as FileWithMetadata).processing;
+    // TO BE REMOVED WHEN EXTRACT STRATEGIES ARE ON PROD
     // TUS is not supported for visual-llm processing
-    TUS = false;
+    if (metadata.processing === 'vllm_extract') {
+      TUS = false;
+    }
   }
   return (data instanceof ArrayBuffer ? of(data) : from(data.arrayBuffer())).pipe(
     switchMap((buff) =>
