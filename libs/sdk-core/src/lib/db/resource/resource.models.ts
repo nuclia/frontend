@@ -113,7 +113,7 @@ export interface Security {
 }
 
 export interface ProcessingOptions {
-  extract_strategy?: string;
+  ml_text?: boolean;
 }
 
 export interface IError {
@@ -154,6 +154,7 @@ export interface FileField {
   language?: string;
   password?: string;
   external?: boolean;
+  extract_strategy?: string;
 }
 
 export interface FileFieldExtractedData extends ExtractedData {
@@ -245,6 +246,7 @@ export interface LinkField {
   localstorage?: { [id: string]: string };
   css_selector?: string | null;
   xpath?: string | null;
+  extract_strategy?: string;
 }
 
 export class TextFieldData implements IFieldData {
@@ -261,6 +263,7 @@ export type TextFieldFormat = TextFormat | 'JSON' | 'JSONL';
 export interface TextField {
   body: string;
   format?: TextFieldFormat;
+  extract_strategy?: string;
 }
 
 export interface ExtractedData {

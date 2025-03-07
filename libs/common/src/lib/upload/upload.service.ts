@@ -241,11 +241,18 @@ export class UploadService {
       take(1),
       switchMap((kb) =>
         kb.createLinkResource(
-          { uri, css_selector: css_selector || null, xpath: xpath || null, headers, cookies, localstorage },
+          {
+            uri,
+            css_selector: css_selector || null,
+            xpath: xpath || null,
+            headers,
+            cookies,
+            localstorage,
+            extract_strategy,
+          },
           { classifications },
           true,
           REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
-          extract_strategy,
         ),
       ),
     );
@@ -261,9 +268,9 @@ export class UploadService {
           files: {
             ['cloud-file']: {
               file: { uri },
+              extract_strategy,
             },
           },
-          ...(extract_strategy ? { processing_options: { extract_strategy } } : {}),
         }),
       ),
     );
