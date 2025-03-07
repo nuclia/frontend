@@ -100,6 +100,10 @@ export const upload = (
   if (!metadata.md5 && !(data instanceof ArrayBuffer)) {
     metadata.md5 = (data as FileWithMetadata).md5;
   }
+  const extract_strategy = (data as FileWithMetadata).payload?.processing_options?.extract_strategy;
+  if (extract_strategy) {
+    metadata.processing = extract_strategy;
+  }
   if ((data as FileWithMetadata).processing) {
     metadata.processing = (data as FileWithMetadata).processing;
     // TUS is not supported for visual-llm processing
@@ -188,6 +192,9 @@ export const TUSuploadFile = (
 
   if (uploadMetadata.length > 0) {
     headers['upload-metadata'] = uploadMetadata.join(',');
+  }
+  if (metadata?.processing) {
+    headers['x-extract-strategy'] = metadata.processing;
   }
   return of(true).pipe(
     switchMap(() => nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true)),
