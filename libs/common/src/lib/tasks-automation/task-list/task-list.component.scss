@@ -3,7 +3,7 @@
 .page-spacing {
   display: flex;
   flex-direction: column;
-  gap: rhythm(4);
+  gap: rhythm(5);
 }
 
 .with-badge {
@@ -12,11 +12,31 @@
   gap: rhythm(1);
 }
 
-.task-list {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(1.5);
+.header {
+  color: $color-neutral-regular;
+  padding: rhythm(1) 0;
 }
-.section {
-  margin-bottom: 0;
+
+a:hover {
+  color: $color-tertiary-strong;
+}
+
+.task-type {
+  align-items: center;
+  display: flex;
+  gap: rhythm(0.5);
+}
+
+.section h2 {
+  color: $color-neutral-regular;
+  margin-bottom: rhythm(1.5);
+}
+
+.create-task {
+  display: flex;
+  gap: rhythm(1.5);
+  flex-wrap: wrap;
+  app-task-card {
+    width: rhythm(45);
+  }
 }

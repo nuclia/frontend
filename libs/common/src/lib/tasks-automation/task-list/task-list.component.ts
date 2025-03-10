@@ -1,44 +1,59 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TaskListItemComponent } from '../task-list-item/task-list-item.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
-import { map, of, Subject, switchMap } from 'rxjs';
-import { BadgeComponent, InfoCardComponent, SisToastService } from '@nuclia/sistema';
+import { BehaviorSubject, combineLatest, filter, map, of, switchMap } from 'rxjs';
+import { BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { FeaturesService } from '@flaps/core';
+import {
+  PaButtonModule,
+  PaCardModule,
+  PaDateTimeModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTableModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { TaskCardComponent } from './task-card.component';
+import { TASK_ICONS } from '../tasks-automation.models';
 
 @Component({
   selector: 'app-task-list',
-  imports: [BadgeComponent, CommonModule, TaskListItemComponent, TranslateModule, InfoCardComponent],
+  imports: [
+    BadgeComponent,
+    CommonModule,
+    PaButtonModule,
+    PaCardModule,
+    PaDateTimeModule,
+    PaDropdownModule,
+    PaIconModule,
+    PaPopupModule,
+    PaTableModule,
+    RouterModule,
+    TaskCardComponent,
+    TranslateModule,
+  ],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaskListComponent implements OnInit, OnDestroy {
+export class TaskListComponent implements OnInit {
   private router = inject(Router);
   private activeRoute = inject(ActivatedRoute);
   private taskAutomation = inject(TasksAutomationService);
   private toaster = inject(SisToastService);
+  private modalService = inject(SisModalService);
   private features = inject(FeaturesService);
-  private unsubscribeAll = new Subject<void>();
 
-  labelerTasks = this.taskAutomation.taskList.pipe(
-    map((taskList) => taskList.filter((task) => task.taskName === 'labeler')),
+  icons = TASK_ICONS;
+  isDescending = new BehaviorSubject<boolean>(true);
+  taskList = combineLatest([this.taskAutomation.taskList, this.isDescending]).pipe(
+    map(([taskList, isDescending]) =>
+      taskList.sort((a, b) => a.creationDate.localeCompare(b.creationDate) * (isDescending ? -1 : 1)),
+    ),
   );
-  askTasks = this.taskAutomation.taskList.pipe(map((taskList) => taskList.filter((task) => task.taskName === 'ask')));
-  graphTasks = this.taskAutomation.taskList.pipe(
-    map((taskList) => taskList.filter((task) => task.taskName === 'llm-graph')),
-  );
-  questionAnswerTasks = this.taskAutomation.taskList.pipe(
-    map((taskList) => taskList.filter((task) => task.taskName === 'synthetic-questions')),
-  );
-  contentSafetyTasks = this.taskAutomation.taskList.pipe(
-    map((taskList) => taskList.filter((task) => task.taskName === 'llama-guard')),
-  );
-  llmSecurityTasks = this.taskAutomation.taskList.pipe(
-    map((taskList) => taskList.filter((task) => task.taskName === 'prompt-guard')),
-  );
+
   labelerTaskEnabled = this.features.authorized.labelerTask;
   askTaskEnabled = this.features.authorized.askTask;
   graphTaskEnabled = this.features.unstable.graphTask;
@@ -50,38 +65,65 @@ export class TaskListComponent implements OnInit, OnDestroy {
     this.taskAutomation.initTaskList();
   }
 
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
-  }
-
   createTask(taskPath: string) {
     this.router.navigate([`./${taskPath}`], { relativeTo: this.activeRoute });
   }
 
-  deleteTask(taskId: string) {
-    this.taskAutomation
-      .getTask(taskId)
-      .pipe(
-        switchMap((response) => {
-          const inProgress =
-            response.request && !response.request.completed && !response.request.stopped && !response.request.failed;
-          if (inProgress) {
-            this.toaster.error('tasks-automation.errors.deleting');
-            return of(null);
-          } else {
-            return this.taskAutomation.deleteTask(taskId);
-          }
-        }),
+  toggleOrder() {
+    this.isDescending.next(!this.isDescending.value);
+  }
+
+  deleteTask(taskId: string, deleteData: boolean) {
+    this.modalService
+      .openConfirm({
+        title: `tasks-automation.actions.${deleteData ? 'delete-all' : 'delete-agent'}.title`,
+        description: `tasks-automation.actions.${deleteData ? 'delete-all' : 'delete-agent'}.description`,
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this._stopTask(taskId)),
+        switchMap(() => this.taskAutomation.deleteTask(taskId, deleteData)),
       )
-      .subscribe();
+      .subscribe(() => {
+        this.toaster.success(`tasks-automation.actions.${deleteData ? 'delete-all' : 'delete-agent'}.success`);
+      });
   }
 
   stopTask(taskId: string) {
-    this.taskAutomation.stopTask(taskId).subscribe();
+    this._stopTask(taskId).subscribe();
   }
 
   restartTask(taskId: string) {
     this.taskAutomation.restartTask(taskId).subscribe();
+  }
+
+  cleanTask(taskId: string) {
+    this.modalService
+      .openConfirm({
+        title: 'tasks-automation.actions.delete-data.title',
+        description: 'tasks-automation.actions.delete-data.description',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this._stopTask(taskId)),
+        switchMap(() => this.taskAutomation.cleanTask(taskId)),
+      )
+      .subscribe(() => {
+        this.toaster.success('tasks-automation.actions.delete-data.success');
+      });
+  }
+
+  private _stopTask(taskId: string) {
+    return this.taskAutomation.getTask(taskId).pipe(
+      switchMap((response) => {
+        const inProgress =
+          response.request && !response.request.completed && !response.request.stopped && !response.request.failed;
+        return inProgress ? this.taskAutomation.stopTask(taskId) : of(undefined);
+      }),
+    );
   }
 }
