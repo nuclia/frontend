@@ -7,7 +7,7 @@
     <div class="page-description">{{ 'tasks-automation.page-description' | translate }}</div>
   </div>
 
-  @if (((taskList | async) || [])?.length > 0) {
+  @if (((taskList | async) || []).length > 0) {
     <div class="section">
       <h2 class="body-m">{{ 'tasks-automation.your-agents' | translate }}</h2>
       <pa-table
