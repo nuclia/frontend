@@ -43,6 +43,11 @@ export interface Prompts {
   rephrase?: string;
 }
 
+export interface MinScore {
+  bm25?: number;
+  semantic?: number;
+}
+
 export interface RankFusion {
   name: 'rrf';
   boosting: {
@@ -54,7 +59,7 @@ export interface BaseSearchOptions {
   fields?: string[];
   filters?: string[] | Filter[];
   keyword_filters?: string[] | Filter[];
-  min_score?: number;
+  min_score?: number | MinScore;
   range_creation_start?: string;
   range_creation_end?: string;
   range_modification_start?: string;
@@ -111,6 +116,10 @@ export interface SearchOptions extends BaseSearchOptions {
   with_duplicates?: boolean;
   with_synonyms?: boolean;
   rephrase_prompt?: string;
+  /** Only for GET requests */
+  min_score_bm25?: number;
+  /** Only for GET requests */
+  min_score_semantic?: number;
 }
 
 export interface CatalogOptions extends SearchOptions {
