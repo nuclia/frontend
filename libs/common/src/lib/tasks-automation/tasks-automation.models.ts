@@ -9,20 +9,22 @@ export interface DataAugmentationTaskOnBatch extends TaskOnBatch {
   parameters: DataAugmentationParameters;
 }
 
-export interface TaskConfiguration {
-  title: string;
-  filters: { label: string; count?: number }[];
-  hasPrompt?: boolean;
-  fieldName?: string;
-  labelSets?: string;
-  nerFamily?: string;
-}
+export const TASK_ICONS: { [key in TaskName]?: string } = {
+  labeler: 'labeler',
+  ask: 'generator',
+  'llm-graph': 'graph',
+  'synthetic-questions': 'question-answer',
+  'prompt-guard': 'unlock',
+  'llama-guard': 'shield-check',
+};
 
-export interface BaseTask extends TaskConfiguration {
+export interface BaseTask {
   id: string;
+  title: string;
   taskName: TaskName;
   creationDate: string;
   type: 'automated' | 'one-time';
+  canClean: boolean;
 }
 
 export interface AutomatedTask extends BaseTask {
@@ -36,37 +38,26 @@ export interface OneTimeTask extends BaseTask {
 
 export function mapBatchToOneTimeTask(task: DataAugmentationTaskOnBatch): OneTimeTask {
   return {
-    id: task.id,
-    taskName: task.task.name,
     type: 'one-time',
     status: task.completed ? 'completed' : task.failed ? 'error' : task.stopped ? 'stopped' : 'progress',
-    creationDate: task.scheduled_at ? `${task.scheduled_at}+00:00` : '',
-    ...mapParameters(task.parameters),
+    ...getBaseTask(task),
   };
 }
 
 export function mapOnGoingToAutomatedTask(task: DataAugmentationTaskOnGoing): AutomatedTask {
   return {
-    id: task.id,
-    taskName: task.task.name || '',
     type: 'automated',
-    creationDate: task.defined_at ? `${task.defined_at}+00:00` : '',
-    ...mapParameters(task.parameters),
+    ...getBaseTask(task),
   };
 }
 
-function mapParameters(parameters: DataAugmentationParameters): TaskConfiguration {
+function getBaseTask(task: DataAugmentationTaskOnGoing | DataAugmentationTaskOnBatch) {
   return {
-    title: parameters.name || '',
-    filters: [
-      { label: 'contains', count: parameters.filter?.contains?.length || 0 },
-      { label: 'field_types', count: parameters.filter?.field_types?.length || 0 },
-    ],
-    hasPrompt: false, // TODO: extract prompt from parameters
-    labelSets: (parameters.operations || [])
-      .map((operation) => operation.label?.ident)
-      .filter((l) => !!l)
-      .join(', '),
+    id: task.id,
+    title: task.parameters.name || '',
+    taskName: task.task.name,
+    creationDate: `${task.timestamp}+00:00`,
+    canClean: !!task.task.can_cleanup,
   };
 }
 

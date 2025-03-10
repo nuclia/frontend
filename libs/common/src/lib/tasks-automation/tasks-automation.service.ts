@@ -24,46 +24,53 @@ export class TasksAutomationService {
   taskDefinitions = this._tasksData.pipe(map((data) => this.resolveReferences(data.tasks)));
 
   initTaskList() {
-    this._currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) => kb.taskManager.getTasks()),
-      )
-      .subscribe((taskList) => {
-        this._tasksData.next(taskList);
-      });
+    this.updateTasks().subscribe();
   }
 
   startTask(taskName: TaskName, parameters: TaskParameters, apply: ApplyOption) {
     return this._currentKb.pipe(
       take(1),
-      switchMap((kb) =>
-        kb.taskManager.startTask(taskName, parameters, apply).pipe(switchMap(() => kb.taskManager.getTasks())),
-      ),
-      tap((response) => this._tasksData.next(response)),
+      switchMap((kb) => kb.taskManager.startTask(taskName, parameters, apply)),
+      switchMap(() => this.updateTasks()),
     );
   }
 
   stopTask(taskId: string) {
     return this._currentKb.pipe(
       take(1),
-      switchMap((kb) => kb.taskManager.stopTask(taskId).pipe(switchMap(() => kb.taskManager.getTasks()))),
-      tap((response) => this._tasksData.next(response)),
+      switchMap((kb) => kb.taskManager.stopTask(taskId)),
+      switchMap(() => this.updateTasks()),
     );
   }
 
-  deleteTask(taskId: string) {
+  deleteTask(taskId: string, deleteData: boolean) {
     return this._currentKb.pipe(
       take(1),
-      switchMap((kb) => kb.taskManager.deleteTask(taskId).pipe(switchMap(() => kb.taskManager.getTasks()))),
-      tap((response) => this._tasksData.next(response)),
+      switchMap((kb) => kb.taskManager.deleteTask(taskId, deleteData)),
+      switchMap(() => this.updateTasks()),
     );
   }
 
   restartTask(taskId: string) {
     return this._currentKb.pipe(
       take(1),
-      switchMap((kb) => kb.taskManager.restartTask(taskId).pipe(switchMap(() => kb.taskManager.getTasks()))),
+      switchMap((kb) => kb.taskManager.restartTask(taskId)),
+      switchMap(() => this.updateTasks()),
+    );
+  }
+
+  cleanTask(taskId: string) {
+    return this._currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.taskManager.cleanTask(taskId)),
+      switchMap(() => this.updateTasks()),
+    );
+  }
+
+  updateTasks() {
+    return this._currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.taskManager.getTasks(1000)),
       tap((response) => this._tasksData.next(response)),
     );
   }
@@ -80,11 +87,11 @@ export class TasksAutomationService {
     const taskList: (AutomatedTask | OneTimeTask)[] = [];
 
     response.running
-      .filter((task) => task.task.data_augmentation)
+      .filter((task) => task.task.data_augmentation && !task.cleanup_parent_task_id)
       .map((task) => task as DataAugmentationTaskOnBatch)
       .forEach((task) => taskList.push(mapBatchToOneTimeTask(task)));
     response.done
-      .filter((item) => item.task.data_augmentation)
+      .filter((task) => task.task.data_augmentation && !task.cleanup_parent_task_id)
       .map((task) => task as DataAugmentationTaskOnBatch)
       .forEach((task) => taskList.push(mapBatchToOneTimeTask(task)));
     response.configs
