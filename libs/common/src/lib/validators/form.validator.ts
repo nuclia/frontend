@@ -1,5 +1,5 @@
 import { AbstractControl, ValidatorFn } from '@angular/forms';
-import { isBefore } from 'date-fns';
+import { isAfter, isBefore } from 'date-fns';
 
 const forbiddenSlugPattern = new RegExp(/[^\w-_]+/g);
 export function Sluggable(kbSlug = false): ValidatorFn {
@@ -38,5 +38,12 @@ export function DateAfter(after: string): ValidatorFn {
   return (control: AbstractControl) => {
     const date = control.getRawValue();
     return isBefore(date, after) ? { dateBefore: true } : null;
+  };
+}
+
+export function DateBefore(before: string): ValidatorFn {
+  return (control: AbstractControl) => {
+    const date = control.getRawValue();
+    return isAfter(date, before) ? { dateAfter: true } : null;
   };
 }

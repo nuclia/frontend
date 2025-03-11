@@ -1,9 +1,14 @@
 <pa-modal-advanced fitContentHeight>
-  <pa-modal-title>{{ 'api-key-management.expiration-date' | translate }}</pa-modal-title>
+  <pa-modal-title>{{ 'api-key-management.expiration-date.title' | translate }}</pa-modal-title>
   <pa-modal-content>
     <pa-date-picker
       [formControl]="expiration"
       [label]="'generic.date' | translate"></pa-date-picker>
+    @if (invalidDate | async) {
+      <nsi-info-card type="warning">
+        {{ 'api-key-management.expiration-date.invalid' | translate: { max: maxDate | date: 'mediumDate' } }}
+      </nsi-info-card>
+    }
   </pa-modal-content>
   <pa-modal-footer>
     <pa-button
