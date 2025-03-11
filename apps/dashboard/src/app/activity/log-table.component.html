@@ -43,16 +43,20 @@
       }
       @for (row of displayedRows; track row.id) {
         <pa-table-row>
-          <pa-table-cell>
-            <div class="body-s">
-              <pa-datetime [datetime]="row.date"></pa-datetime>
-            </div>
-          </pa-table-cell>
-          <pa-table-cell>
-            <div class="body-s">
-              {{ row.id }}
-            </div>
-          </pa-table-cell>
+          @if (displayedHeaders.includes('Date')) {
+            <pa-table-cell>
+              <div class="body-s">
+                <pa-datetime [datetime]="row.date"></pa-datetime>
+              </div>
+            </pa-table-cell>
+          }
+          @if (displayedHeaders.includes('ID')) {
+            <pa-table-cell>
+              <div class="body-s">
+                {{ row.id }}
+              </div>
+            </pa-table-cell>
+          }
           @for (cell of row.data; track cell[0]) {
             @if (displayedHeaders.includes(cell[0])) {
               <pa-table-cell>
