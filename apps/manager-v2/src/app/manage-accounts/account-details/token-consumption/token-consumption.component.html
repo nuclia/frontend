@@ -42,15 +42,11 @@
       [(value)]="toTime"></pa-input>
     <div class="body-m from-to">To:</div>
     <strong>{{ to }}</strong>
-    @if (toInFuture || invalidToTime) {
+    @if (invalidToTime) {
       <nsi-info-card
         type="warning"
         icon="warning">
-        @if (invalidToTime) {
-          Invalid time: {{ toTime }}
-        } @else if (toInFuture) {
-          This date is in the future!
-        }
+        Invalid time: {{ toTime }}
       </nsi-info-card>
     }
   </div>
