@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
 import { TokenDialogComponent } from '@flaps/common';
-import { SisModalService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { ExpirationModalComponent } from './expiration-modal.component';
 
 @Component({
@@ -39,6 +39,7 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
     private modalService: SisModalService,
     private sdk: SDKService,
     private features: FeaturesService,
+    private toaster: SisToastService,
   ) {}
 
   ngOnInit(): void {
@@ -116,6 +117,10 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
           switchMap(() => this.updateServiceAccess()),
         ),
       ),
+      catchError((error) => {
+        this.toaster.error('api-key-management.create-key.error');
+        throw error;
+      }),
       tap(() => {
         if (!this.isExpanded(id)) {
           this.toggleSA(id);
