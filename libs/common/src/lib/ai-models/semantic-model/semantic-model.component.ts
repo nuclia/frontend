@@ -5,12 +5,13 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   InfoCardComponent,
   ProgressBarComponent,
+  SisModalService,
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { catchError, filter, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { LearningConfigurationOption, SemanticModelMigration, TaskOnBatch } from '@nuclia/core';
 import { StandaloneService } from '../../services';
 
@@ -63,7 +64,10 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
     return this.kbConfigBackup?.['default_semantic_model'];
   }
 
-  constructor(private standaloneService: StandaloneService) {
+  constructor(
+    private standaloneService: StandaloneService,
+    private modalService: SisModalService,
+  ) {
     super();
     this.updateModelsSubject
       .pipe(
@@ -137,8 +141,15 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
   }
 
   enable(model: string) {
-    this.sdk.currentKb
-      .pipe(
+    this.modalService
+      .openConfirm({
+        title: 'kb.ai-models.semantic-model.other-models.warning.title',
+        description: 'kb.ai-models.semantic-model.other-models.warning.description',
+        confirmLabel: 'kb.ai-models.semantic-model.other-models.enable',
+      })
+      .onClose.pipe(
+        filter((confirm) => confirm),
+        switchMap(() => this.sdk.currentKb),
         take(1),
         switchMap((kb) =>
           kb
