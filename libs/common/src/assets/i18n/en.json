@@ -590,6 +590,8 @@
 	"kb.ai-models.semantic-model.other-models.enable": "Enable model",
 	"kb.ai-models.semantic-model.other-models.failure": "An error occurred when enabling the model.",
 	"kb.ai-models.semantic-model.other-models.title": "Enable other embeddings models",
+	"kb.ai-models.semantic-model.other-models.warning.description": "For a large Knowledge Box, this operation may generate significant extra costs.",
+	"kb.ai-models.semantic-model.other-models.warning.title": "Cost information",
 	"kb.ai-models.summarization.prompt.description": "Defines a custom prompt that will be used instead of the default prompt when generating a summary.",
 	"kb.ai-models.summarization.prompt.title": "Set a prompt",
 	"kb.ai-models.summarization.select-llm.description": "Choose the LLM that will provide the best on-demand summarization for your data.",
