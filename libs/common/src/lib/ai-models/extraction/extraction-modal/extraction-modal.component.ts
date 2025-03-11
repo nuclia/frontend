@@ -10,7 +10,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { AiTablesConfig, ExtractConfig, ExtractVLLMConfig, LearningConfigurations } from '@nuclia/core';
+import { ExtractConfig, ExtractVLLMConfig, LearningConfigurations } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { LLMConfigurationComponent } from './llm-configuration.component';
 
@@ -42,7 +42,7 @@ export class ExtractionModalComponent implements OnInit {
   visualLLMEnabled = this.features.unstable.visualLLMProcessing;
 
   vllmConfig?: ExtractVLLMConfig;
-  aiTables?: AiTablesConfig;
+  aiTables?: ExtractVLLMConfig;
 
   configForm = new FormGroup({
     name: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),

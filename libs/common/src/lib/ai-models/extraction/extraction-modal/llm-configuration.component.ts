@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnI
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { AiTablesConfig, ExtractLLMConfig, ExtractVLLMConfig, LearningConfigurationOption } from '@nuclia/core';
+import { ExtractLLMConfig, ExtractVLLMConfig, LearningConfigurationOption } from '@nuclia/core';
 import { ButtonMiniComponent } from '@nuclia/sistema';
 import { startWith, Subject, takeUntil } from 'rxjs';
 
@@ -26,9 +26,9 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
   @Input() generativeModels: LearningConfigurationOption[] = [];
   @Input() createMode: boolean = true;
   @Input() isAiTable: boolean = false;
-  @Input() config: ExtractVLLMConfig | AiTablesConfig | undefined;
+  @Input() config: ExtractVLLMConfig | undefined;
 
-  @Output() valueChange = new EventEmitter<ExtractVLLMConfig | AiTablesConfig>();
+  @Output() valueChange = new EventEmitter<ExtractVLLMConfig>();
   private unsubscribeAll = new Subject<void>();
 
   configForm = new FormGroup({
@@ -61,7 +61,7 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
       });
       this.configForm.patchValue({
         customLLM: !!this.config?.llm,
-        merge_pages: (this.config as AiTablesConfig)?.merge_pages || false,
+        merge_pages: this.config?.merge_pages || false,
         rules: this.config?.rules,
         llm: {
           generative_model: this.config?.llm?.generative_model || '',
