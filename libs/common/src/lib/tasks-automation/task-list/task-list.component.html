@@ -7,67 +7,138 @@
     <div class="page-description">{{ 'tasks-automation.page-description' | translate }}</div>
   </div>
 
-  <h2 class="section">{{ 'tasks-automation.data-augmentation-section' | translate }}</h2>
-  <div class="task-list">
-    <app-task-list-item
-      taskType="labeler"
-      taskTitle="tasks-automation.labeler.title"
-      taskDescription="tasks-automation.labeler.description"
-      [taskList]="labelerTasks | async"
-      (newTask)="createTask('labeler')"
-      (delete)="deleteTask($event)"
-      (restart)="restartTask($event)"
-      (stop)="stopTask($event)"
-      [readyForBeta]="labelerTaskEnabled | async"></app-task-list-item>
-    <app-task-list-item
-      taskType="ask"
-      taskTitle="tasks-automation.generator.title"
-      taskDescription="tasks-automation.generator.description"
-      [taskList]="askTasks | async"
-      (newTask)="createTask('ask')"
-      (delete)="deleteTask($event)"
-      (restart)="restartTask($event)"
-      (stop)="stopTask($event)"
-      [readyForBeta]="askTaskEnabled | async"></app-task-list-item>
-    <app-task-list-item
-      taskType="llm-graph"
-      taskTitle="tasks-automation.graph-extraction.title"
-      taskDescription="tasks-automation.graph-extraction.description"
-      [taskList]="graphTasks | async"
-      (newTask)="createTask('llm-graph')"
-      (delete)="deleteTask($event)"
-      (restart)="restartTask($event)"
-      [readyForBeta]="graphTaskEnabled | async"
-      (stop)="stopTask($event)"></app-task-list-item>
-    <app-task-list-item
-      taskType="synthetic-questions"
-      taskTitle="tasks-automation.question-answer.title"
-      taskDescription="tasks-automation.question-answer.description"
-      [taskList]="questionAnswerTasks | async"
-      (newTask)="createTask('synthetic-questions')"
-      (delete)="deleteTask($event)"
-      (restart)="restartTask($event)"
-      [readyForBeta]="questionsTaskEnabled | async"
-      (stop)="stopTask($event)"></app-task-list-item>
-    <app-task-list-item
-      taskType="prompt-guard"
-      taskTitle="tasks-automation.llm-security.title"
-      taskDescription="tasks-automation.llm-security.description"
-      [taskList]="llmSecurityTasks | async"
-      (newTask)="createTask('prompt-guard')"
-      (delete)="deleteTask($event)"
-      (restart)="restartTask($event)"
-      [readyForBeta]="promptSafetyTaskEnabled | async"
-      (stop)="stopTask($event)"></app-task-list-item>
-    <app-task-list-item
-      taskType="llama-guard"
-      taskTitle="tasks-automation.content-safety.title"
-      taskDescription="tasks-automation.content-safety.description"
-      [taskList]="contentSafetyTasks | async"
-      (newTask)="createTask('llama-guard')"
-      (delete)="deleteTask($event)"
-      (restart)="restartTask($event)"
-      [readyForBeta]="contentSafetyTaskEnabled | async"
-      (stop)="stopTask($event)"></app-task-list-item>
+  @if (((taskList | async) || []).length > 0) {
+    <div class="section">
+      <h2 class="body-m">{{ 'tasks-automation.your-agents' | translate }}</h2>
+      <pa-table
+        border
+        columns="repeat(3, 250px) 1fr 80px">
+        <pa-table-header>
+          <pa-table-cell header>
+            <span class="header">{{ 'tasks-automation.table.header.name' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="header">{{ 'tasks-automation.table.header.type' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-sortable-header-cell
+            [isDescending]="isDescending | async"
+            (sort)="toggleOrder()"
+            enabled>
+            <span class="header">{{ 'tasks-automation.table.header.creation-date' | translate }}</span>
+          </pa-table-sortable-header-cell>
+          <pa-table-cell header>
+            <span class="header">{{ 'tasks-automation.table.header.activity' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="header">{{ 'tasks-automation.table.header.actions' | translate }}</span>
+          </pa-table-cell>
+        </pa-table-header>
+        @for (task of taskList | async; track task) {
+          <pa-table-row>
+            <pa-table-cell>
+              <a
+                class="title-xxs"
+                [routerLink]="task.taskName + '/' + task.id">
+                {{ task.title }}
+              </a>
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="task-type">
+                <pa-icon
+                  [name]="icons[task.taskName] || ''"
+                  size="small"></pa-icon>
+                <span class="title-xxs">{{ 'tasks-automation.type.' + task.taskName + '.title' | translate }}</span>
+              </span>
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s">
+                <pa-datetime
+                  [datetime]="task.creationDate"
+                  dateOnly></pa-datetime>
+              </span>
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s">
+                @if (task.type === 'automated') {
+                  {{ 'tasks-automation.status.watching' | translate }}
+                } @else {
+                  {{ 'tasks-automation.status.' + task.status | translate }}
+                }
+              </span>
+            </pa-table-cell>
+            <pa-table-cell-menu>
+              <pa-button
+                aspect="basic"
+                icon="more-vertical"
+                size="small"
+                [paPopup]="cellMenu"></pa-button>
+              <pa-dropdown #cellMenu>
+                @if (task.type === 'one-time') {
+                  @if (task.status === 'stopped') {
+                    <pa-option (selectOption)="restartTask(task.id)">
+                      {{ 'tasks-automation.actions.restart' | translate }}
+                    </pa-option>
+                  }
+                  @if (task.status === 'progress') {
+                    <pa-option (selectOption)="stopTask(task.id)">
+                      {{ 'tasks-automation.actions.stop' | translate }}
+                    </pa-option>
+                  }
+                }
+                @if (task.canClean) {
+                  <pa-option
+                    (selectOption)="cleanTask(task.id)"
+                    destructive>
+                    {{ 'tasks-automation.actions.delete-data.title' | translate }}
+                  </pa-option>
+                }
+                <pa-option
+                  (selectOption)="deleteTask(task.id, false)"
+                  destructive>
+                  {{ 'tasks-automation.actions.delete-agent.title' | translate }}
+                </pa-option>
+                @if (task.canClean) {
+                  <pa-option
+                    (selectOption)="deleteTask(task.id, true)"
+                    destructive>
+                    {{ 'tasks-automation.actions.delete-all.title' | translate }}
+                  </pa-option>
+                }
+              </pa-dropdown>
+            </pa-table-cell-menu>
+          </pa-table-row>
+        }
+      </pa-table>
+    </div>
+  }
+
+  <div class="section">
+    <h2 class="body-m">{{ 'tasks-automation.data-augmentation-section' | translate }}</h2>
+    <div class="create-task">
+      <app-task-card
+        type="labeler"
+        (newTask)="createTask('labeler')"
+        [ready]="labelerTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="ask"
+        (newTask)="createTask('ask')"
+        [ready]="askTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="llm-graph"
+        (newTask)="createTask('llm-graph')"
+        [ready]="graphTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="synthetic-questions"
+        (newTask)="createTask('synthetic-questions')"
+        [ready]="questionsTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="llama-guard"
+        (newTask)="createTask('llama-guard')"
+        [ready]="contentSafetyTaskEnabled | async"></app-task-card>
+      <app-task-card
+        type="prompt-guard"
+        (newTask)="createTask('prompt-guard')"
+        [ready]="promptSafetyTaskEnabled | async"></app-task-card>
+    </div>
   </div>
 </div>
