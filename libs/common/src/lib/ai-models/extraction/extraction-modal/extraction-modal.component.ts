@@ -46,7 +46,7 @@ export class ExtractionModalComponent implements OnInit {
 
   configForm = new FormGroup({
     name: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
-    processing: new FormControl< 'ai_tables' | 'vllm_config' | 'none'>('none', { nonNullable: true }),
+    processing: new FormControl<'ai_tables' | 'vllm_config' | 'none'>('none', { nonNullable: true }),
     split: new FormGroup({
       max_paragraph: new FormControl<number | null>(null, { nonNullable: true }),
     }),
