@@ -10,7 +10,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, InfoCardComponent, SisToastService } from '@nuclia/sistema';
 import { NucliaTokensMetric } from '@nuclia/core';
-import { isBefore, isFuture, subDays } from 'date-fns';
+import { isBefore, isFuture, set, subDays } from 'date-fns';
 import { AccountService } from '../../account.service';
 import { ManagerStore } from '../../../manager.store';
 import { BehaviorSubject, filter, map, switchMap, take } from 'rxjs';
@@ -102,24 +102,27 @@ export class TokenConsumptionComponent implements OnInit {
     if (this.invalidFromTime) {
       return '';
     }
-    const formattedTime = `${this.fromTime < 10 ? '0' : ''}${this.fromTime}:00:00`;
-    const timestamp = `${this.fromDate.split('T')[0]}T${formattedTime}`;
-    return new Date(timestamp).toISOString();
+    return set(new Date(this.fromDate), {
+      hours: this.fromTime,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    }).toISOString();
   }
 
   get to() {
     if (this.invalidToTime) {
       return '';
     }
-    const formattedTime = `${this.toTime < 10 ? '0' : ''}${this.toTime}:00:00`;
-    const timestamp = `${this.toDate.split('T')[0]}T${formattedTime}`;
-    return new Date(timestamp).toISOString();
+    return set(new Date(this.toDate), {
+      hours: this.toTime,
+      minutes: 0,
+      seconds: 0,
+      milliseconds: 0,
+    }).toISOString();
   }
   get fromInFuture() {
     return isFuture(this.from);
-  }
-  get toInFuture() {
-    return isFuture(this.to);
   }
   get invalidFromTime() {
     return this.fromTime < 0 || this.fromTime > 24;
@@ -134,6 +137,6 @@ export class TokenConsumptionComponent implements OnInit {
     return isBefore(this.to, this.from);
   }
   get invalidForm() {
-    return this.fromInFuture || this.toInFuture || this.invalidFromTime || this.invalidToTime || this.invalidRange;
+    return this.fromInFuture || this.invalidFromTime || this.invalidToTime || this.invalidRange;
   }
 }

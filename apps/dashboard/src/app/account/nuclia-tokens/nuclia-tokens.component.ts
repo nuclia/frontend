@@ -151,7 +151,7 @@ export class NucliaTokensComponent implements OnDestroy {
           }
           return enhancedDetail;
         })
-        .filter((detail) => detail.total >= 1); // Hide details having less than 1 token
+        .filter((detail) => detail.total > 0); // Hide details with 0 tokens
     }),
   );
 
