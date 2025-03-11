@@ -566,6 +566,7 @@
 	"kb.ai-models.extraction.config.name": "Configuration name",
 	"kb.ai-models.extraction.config.processing.ai_tables.help": "It converts table contents into MarkDown that can be used by a LLM.",
 	"kb.ai-models.extraction.config.processing.ai_tables.label": "Interpret tables",
+	"kb.ai-models.extraction.config.processing.ai_tables.merge-pages": "Merge tables split over several pages",
 	"kb.ai-models.extraction.config.processing.ai_tables.warning": "Please keep in mind that the use of this feature carries Nuclia token consumption.<br/>\n<ul>\n<li>It is only advised for documents with complex tables that are hard to read, have no visual delineations, or are split across several pages.</li>\n<li>It’s not needed for CSVs nor Excel files.</li>\n</ul>",
 	"kb.ai-models.extraction.config.processing.none.label": "None",
 	"kb.ai-models.extraction.config.processing.rules.add-rule": "Add rule",

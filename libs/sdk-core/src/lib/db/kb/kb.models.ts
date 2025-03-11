@@ -504,7 +504,7 @@ export type ExtractStrategies = {
 export interface ExtractConfig {
   name?: string;
   vllm_config?: ExtractVLLMConfig;
-  ai_tables?: ExtractVLLMConfig;
+  ai_tables?: AiTablesConfig;
   split?: { max_paragraph?: number };
 }
 
@@ -518,4 +518,8 @@ export interface ExtractLLMConfig {
 export interface ExtractVLLMConfig {
   llm?: ExtractLLMConfig;
   rules?: string[];
+}
+
+export interface AiTablesConfig extends ExtractVLLMConfig {
+  merge_pages: boolean;
 }

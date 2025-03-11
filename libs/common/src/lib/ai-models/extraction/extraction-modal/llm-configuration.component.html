@@ -7,11 +7,13 @@
     </div>
     @for (rule of rules.controls; track rule) {
       <div class="rule">
-        <pa-input
+        <pa-textarea
           [formControl]="rule"
+          [rows]="2"
+          resizable
           [placeholder]="'kb.ai-models.extraction.config.processing.rules.placeholder' | translate">
           {{ 'kb.ai-models.extraction.config.processing.rules.rule' | translate }}
-        </pa-input>
+        </pa-textarea>
         @if (createMode) {
           <pa-button
             size="small"
@@ -32,6 +34,15 @@
       </nsi-button-mini>
     }
   </div>
+  @if (isAiTable) {
+    <div>
+      <pa-toggle
+        labelOnRight
+        formControlName="merge_pages">
+        {{ 'kb.ai-models.extraction.config.processing.ai_tables.merge-pages' | translate }}
+      </pa-toggle>
+    </div>
+  }
   <div class="custom-llm">
     <pa-toggle
       labelOnRight
