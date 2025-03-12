@@ -35,10 +35,8 @@ import {
   ApplyOption,
   Classification,
   FIELD_TYPE,
-  LearningConfigurationOption,
   LLMConfig,
   longToShortFieldType,
-  Search,
   TaskFullDefinition,
   TaskName,
   TaskTrigger,
@@ -136,9 +134,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   get applyTaskValue() {
     return this.form.controls.applyTaskTo.value;
   }
-  get llmValue() {
-    return this.form.controls.llm.value;
-  }
 
   resourceCount?: number;
 
@@ -181,7 +176,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     return this.labelFilters.length;
   }
   taskDefinition?: TaskFullDefinition;
-  availableLLMs: LearningConfigurationOption[] = [];
+  availableLLMs: OptionModel[] = [];
   unsupportedLLMs = ['generative-multilingual-2023'];
 
   get properties() {
@@ -212,10 +207,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         switchMap((kb) => kb.getLearningSchema()),
       )
       .subscribe((schema) => {
-        this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || []).filter(
-          (option) => !this.unsupportedLLMs.includes(option.value),
-        );
+        this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || [])
+          .filter((option) => !this.unsupportedLLMs.includes(option.value))
+          .map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name }));
         this.form.controls.llm.patchValue({ model: 'gemini-1-5-flash' });
+        this.cdr.markForCheck();
       });
 
     combineLatest([this.form.valueChanges, this.selectedFilters])

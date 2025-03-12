@@ -113,22 +113,14 @@
       <div
         class="form-container"
         formGroupName="llm">
-        <pa-radio-group formControlName="model">
-          @for (llm of availableLLMs; track llm.value) {
-            <pa-radio [value]="llm.value">{{ llm.name }}</pa-radio>
-          }
-        </pa-radio-group>
-
-        <!--
-        @if (llmValue) {
-          // FIXME: update translation X param depending on the model
-          <nsi-info-card
-            type="warning"
-            icon="warning">
-            {{ 'tasks-automation.form.llm-selection.warning' | translate }}
-          </nsi-info-card>
-        }
-        -->
+        <pa-select
+          formControlName="model"
+          [options]="availableLLMs"></pa-select>
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'tasks-automation.form.llm-selection.warning' | translate }}
+        </nsi-info-card>
       </div>
     </nsi-two-columns-configuration-item>
   }
