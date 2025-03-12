@@ -24,7 +24,7 @@ import { LogEntry } from './log.models';
 type Tab = 'resources' | 'searches';
 type ActivityTab = EventType;
 
-const baseColumns = ['id', 'date', 'user_id', 'client_type'];
+const baseColumns = ['id', 'date', 'user_id', 'client_type', 'nuclia_tokens'];
 const resourceColumns = [...baseColumns, 'resource_id'];
 const searchColumns = [...baseColumns, 'question', 'resources_count', 'filter'];
 const chatColumns = [
