@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { BackButtonComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
-import { TaskSettingsComponent } from '../task-settings/task-settings.component';
-import { TaskRouteDirective } from '../task-route.directive';
+import { TaskRouteDirective } from '../../task-route.directive';
 import { TasksAutomationService } from '../../tasks-automation.service';
 import { TaskApplyTo, TaskName } from '@nuclia/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -14,11 +13,9 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     BackButtonComponent,
-    InfoCardComponent,
     PaTogglesModule,
     ReactiveFormsModule,
     TaskFormComponent,
-    TaskSettingsComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
   ],

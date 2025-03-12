@@ -1,7 +1,8 @@
 @if (task) {
   <nsi-two-columns-configuration-item
     itemTitle="tasks-automation.settings.title"
-    description="tasks-automation.settings.description">
+    description="tasks-automation.settings.description"
+    noTopBorder>
     <div class="settings-container">
       <div class="setting">
         <label>{{ 'tasks-automation.form.task-name.input-label' | translate }}</label>
@@ -72,7 +73,189 @@
       </div>
     </nsi-two-columns-configuration-item>
   }
-  <ng-content></ng-content>
+
+  @if (askOperation) {
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.generator.your-question.title"
+      description="tasks-automation.generator.your-question.description">
+      <div class="settings-container">
+        <div class="setting">
+          <label>{{ 'tasks-automation.generator.your-question.textarea-label' | translate }}</label>
+          @if (askOperation.json) {
+            <nsi-info-card>
+              <code class="body-s">{{ askOperation.question }}</code>
+            </nsi-info-card>
+          } @else {
+            <div>{{ askOperation.question }}</div>
+          }
+        </div>
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.field-name.label' | translate }}</label>
+          <div>{{ askOperation.destination }}</div>
+        </div>
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @if (labelOperation) {
+    <nsi-two-columns-configuration-item
+      noTopBorder
+      itemTitle="tasks-automation.form.labels-selection.title"
+      description="tasks-automation.form.labels-selection.description">
+      <div class="settings-container">
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.labels-selection.labelset' | translate }}</label>
+          <div>{{ labelOperation?.ident }}</div>
+        </div>
+        @if (labelOperation?.description) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}</label>
+            <div>{{ labelOperation.description }}</div>
+          </div>
+        }
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.labels-selection.label-list.title' | translate }}</label>
+          <pa-table
+            border
+            columns="1fr 2fr">
+            <pa-table-header>
+              <pa-table-cell header>
+                {{ 'tasks-automation.form.labels-selection.label-list.label' | translate }}
+              </pa-table-cell>
+              <pa-table-cell header>
+                {{ 'tasks-automation.form.labels-selection.label-list.when-to-apply' | translate }}
+              </pa-table-cell>
+            </pa-table-header>
+            @for (label of labelOperation.labels; track label) {
+              <pa-table-row>
+                <pa-table-cell>
+                  <span class="body-s">{{ label.label }}</span>
+                </pa-table-cell>
+                <pa-table-cell>
+                  <span class="body-s">{{ label.description || '-' }}</span>
+                </pa-table-cell>
+              </pa-table-row>
+            }
+          </pa-table>
+        </div>
+        <nsi-info-card>
+          @if (task.parameters.on === TaskApplyTo.FULL_FIELD) {
+            {{ 'tasks-automation.form.on.resources' | translate }}
+          } @else {
+            {{ 'tasks-automation.form.on.text-blocks' | translate }}
+          }
+        </nsi-info-card>
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @if (graphOperation) {
+    <nsi-two-columns-configuration-item
+      noTopBorder
+      itemTitle="tasks-automation.graph-extraction.ner-types.title"
+      description="tasks-automation.graph-extraction.ner-types.description">
+      <div class="settings-container">
+        <div class="setting">
+          <label>{{ 'tasks-automation.graph-extraction.ner-types.title' | translate }}</label>
+          <pa-table
+            border
+            columns="1fr 2fr">
+            <pa-table-header>
+              <pa-table-cell header>
+                {{ 'tasks-automation.graph-extraction.ner-types.ner-type' | translate }}
+              </pa-table-cell>
+              <pa-table-cell header>
+                {{ 'generic.description' | translate }}
+              </pa-table-cell>
+            </pa-table-header>
+            @for (entity of graphOperation.entity_defs; track entity) {
+              <pa-table-row>
+                <pa-table-cell>
+                  <span class="body-s">{{ entity.label }}</span>
+                </pa-table-cell>
+                <pa-table-cell>
+                  <span class="body-s">{{ entity.description || '-' }}</span>
+                </pa-table-cell>
+              </pa-table-row>
+            }
+          </pa-table>
+        </div>
+        @if ((graphOperation.examples || []).length > 0) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.graph-extraction.ner-examples.title' | translate }}</label>
+            <pa-table
+              border
+              columns="1fr 1fr">
+              <pa-table-header>
+                <pa-table-cell header>
+                  {{ 'tasks-automation.graph-extraction.ner-examples.ners' | translate }}
+                </pa-table-cell>
+                <pa-table-cell header>
+                  {{ 'tasks-automation.graph-extraction.example-text' | translate }}
+                </pa-table-cell>
+              </pa-table-header>
+              @for (example of graphOperation.examples; track example) {
+                <pa-table-row>
+                  <pa-table-cell>
+                    <div>
+                      <h4>{{ 'tasks-automation.graph-extraction.ner-examples.ners' | translate }}</h4>
+                      <ul class="body-s">
+                        @for (entity of example.entities; track entity) {
+                          <li>{{ entity.name }} ({{ entity.label }})</li>
+                        }
+                      </ul>
+                      <h4>{{ 'tasks-automation.graph-extraction.ner-examples.relations' | translate }}</h4>
+                      <ul class="body-s">
+                        @for (relation of example.relations; track relation) {
+                          <li>{{ relation.source }} &mdash; {{ relation.target }} ({{ relation.label }})</li>
+                        }
+                      </ul>
+                    </div>
+                  </pa-table-cell>
+                  <pa-table-cell>
+                    <span class="body-s">{{ example?.text || 'Some stuff' }}</span>
+                  </pa-table-cell>
+                </pa-table-row>
+              }
+            </pa-table>
+          </div>
+        }
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @if (qaOperation) {
+    <nsi-two-columns-configuration-item itemTitle="tasks-automation.question-answer.prompts.title">
+      <div class="settings-container">
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.prompts.question-prompt' | translate }}</label>
+          <div>{{ qaOperation.question_generator_prompt || '-' }}</div>
+        </div>
+        <div class="separator-line"></div>
+        <div class="setting">
+          <label>{{ 'tasks-automation.form.prompts.answer-prompt' | translate }}</label>
+          <div>{{ qaOperation.generate_answers_prompt || '-' }}</div>
+        </div>
+      </div>
+    </nsi-two-columns-configuration-item>
+  }
+
+  @if (task.task.name === 'prompt-guard' || task.task.name === 'llama-guard') {
+    <nsi-two-columns-configuration-item itemTitle="tasks-automation.llm-security.labeling.title">
+      <nsi-info-card>
+        @if (task.parameters.on === TaskApplyTo.FULL_FIELD) {
+          {{ 'tasks-automation.form.on.resources' | translate }}
+        } @else {
+          {{ 'tasks-automation.form.on.text-blocks' | translate }}
+        }
+      </nsi-info-card>
+    </nsi-two-columns-configuration-item>
+  }
+
   @for (trigger of triggers; track trigger) {
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.form.webhook.title"

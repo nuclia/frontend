@@ -14,86 +14,28 @@
     </div>
   </header>
 
-  @if (task | async; as task) {
-    <app-task-settings [task]="task">
-      @if (labelOperation | async; as labelOperation) {
-        <nsi-two-columns-configuration-item
-          noTopBorder
-          itemTitle="tasks-automation.form.labels-selection.title"
-          description="tasks-automation.form.labels-selection.description">
-          <div class="settings-container">
-            <div class="setting">
-              <label>{{ 'tasks-automation.form.labels-selection.labelset' | translate }}</label>
-              <div>{{ labelOperation?.ident }}</div>
+  <app-task-form
+    [type]="type"
+    triggerDescription="tasks-automation.labeler.trigger-description"
+    activateButtonLabel="tasks-automation.labeler.footer.activate-button-label"
+    footerNoteAutomation="tasks-automation.labeler.footer.apply-automation"
+    footerNoteOneTime="tasks-automation.labeler.footer.apply-one-time"
+    [validFormInside]="labelingConfig?.valid"
+    (activate)="activateTask($event)"
+    (cancel)="backToTaskList()">
+    <stf-labeling-configuration (configurationChange)="onConfigurationChange($event)">
+      <nsi-two-columns-configuration-item
+        itemTitle="tasks-automation.labeler.find-labels.title"
+        description="tasks-automation.labeler.find-labels.description">
+        <div class="form-container">
+          <nsi-info-card>
+            <div class="info-card-content-with-icon">
+              <span [innerHTML]="'tasks-automation.labeler.find-labels.info' | translate"></span>
+              <pa-icon name="label"></pa-icon>
             </div>
-            @if (labelOperation?.description) {
-              <div class="separator-line"></div>
-              <div class="setting">
-                <label>{{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}</label>
-                <div>{{ labelOperation.description }}</div>
-              </div>
-            }
-            <div class="separator-line"></div>
-            <div class="setting">
-              <label>{{ 'tasks-automation.form.labels-selection.label-list.title' | translate }}</label>
-              <pa-table
-                border
-                columns="1fr 2fr">
-                <pa-table-header>
-                  <pa-table-cell header>
-                    {{ 'tasks-automation.form.labels-selection.label-list.label' | translate }}
-                  </pa-table-cell>
-                  <pa-table-cell header>
-                    {{ 'tasks-automation.form.labels-selection.label-list.when-to-apply' | translate }}
-                  </pa-table-cell>
-                </pa-table-header>
-                @for (label of labelOperation.labels; track label) {
-                  <pa-table-row>
-                    <pa-table-cell>
-                      <span class="body-s">{{ label.label }}</span>
-                    </pa-table-cell>
-                    <pa-table-cell>
-                      <span class="body-s">{{ label.description || '-' }}</span>
-                    </pa-table-cell>
-                  </pa-table-row>
-                }
-              </pa-table>
-            </div>
-            <nsi-info-card>
-              @if (task.parameters.on === TaskApplyTo.FULL_FIELD) {
-                {{ 'tasks-automation.form.on.resources' | translate }}
-              } @else {
-                {{ 'tasks-automation.form.on.text-blocks' | translate }}
-              }
-            </nsi-info-card>
-          </div>
-        </nsi-two-columns-configuration-item>
-      }
-    </app-task-settings>
-  } @else {
-    <app-task-form
-      [type]="type"
-      triggerDescription="tasks-automation.labeler.trigger-description"
-      activateButtonLabel="tasks-automation.labeler.footer.activate-button-label"
-      footerNoteAutomation="tasks-automation.labeler.footer.apply-automation"
-      footerNoteOneTime="tasks-automation.labeler.footer.apply-one-time"
-      [validFormInside]="labelingConfig?.valid"
-      (activate)="activateTask($event)"
-      (cancel)="backToTaskList()">
-      <stf-labeling-configuration (configurationChange)="onConfigurationChange($event)">
-        <nsi-two-columns-configuration-item
-          itemTitle="tasks-automation.labeler.find-labels.title"
-          description="tasks-automation.labeler.find-labels.description">
-          <div class="form-container">
-            <nsi-info-card>
-              <div class="info-card-content-with-icon">
-                <span [innerHTML]="'tasks-automation.labeler.find-labels.info' | translate"></span>
-                <pa-icon name="label"></pa-icon>
-              </div>
-            </nsi-info-card>
-          </div>
-        </nsi-two-columns-configuration-item>
-      </stf-labeling-configuration>
-    </app-task-form>
-  }
+          </nsi-info-card>
+        </div>
+      </nsi-two-columns-configuration-item>
+    </stf-labeling-configuration>
+  </app-task-form>
 </div>
