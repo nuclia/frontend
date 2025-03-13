@@ -566,6 +566,8 @@
 	"kb.ai-models.extraction.config.name": "Nom de la configuració",
 	"kb.ai-models.extraction.config.processing.ai_tables.help": "Converteix el contingut de les taules en MarkDown que pot ser utilitzat per un LLM.",
 	"kb.ai-models.extraction.config.processing.ai_tables.label": "Interpretar taules",
+	"kb.ai-models.extraction.config.processing.ai_tables.max-merge-pages": "Quantitat màxima de pàgines per combinar",
+	"kb.ai-models.extraction.config.processing.ai_tables.max-merge-pages-help": "Quan fusioneu massa pàgines per extreure taules dividides, podeu assolir el límit de tokens de sortida de LLM.",
 	"kb.ai-models.extraction.config.processing.ai_tables.merge-pages": "Combina taules dividides en diverses pàgines",
 	"kb.ai-models.extraction.config.processing.ai_tables.warning": "Tingueu en compte que l’ús d’aquesta funció comporta el consum de tokens Nuclia.<br/>\n<ul>\n<li>Només s’aconsella per a documents amb taules complexes que són difícils de llegir, no tenen delimitació visual o estan dividits en diverses pàgines.</li>\n<li>No és necessari per als fitxers CSV ni Excel.</li>\n</ul>",
 	"kb.ai-models.extraction.config.processing.none.label": "Cap",

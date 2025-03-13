@@ -42,6 +42,14 @@
         {{ 'kb.ai-models.extraction.config.processing.ai_tables.merge-pages' | translate }}
       </pa-toggle>
     </div>
+    @if (mergePages) {
+      <pa-input
+        type="number"
+        formControlName="max_pages_to_merge"
+        [help]="'kb.ai-models.extraction.config.processing.ai_tables.max-merge-pages-help' | translate">
+        {{ 'kb.ai-models.extraction.config.processing.ai_tables.max-merge-pages' | translate }}
+      </pa-input>
+    }
   }
   <div class="custom-llm">
     <pa-toggle
