@@ -82,7 +82,7 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
         this.valueChange.emit({
           llm: values.customLLM ? this.getLLMConfig(values.llm.generative_model) : undefined,
           merge_pages: values.merge_pages,
-          max_pages_to_merge: values.max_pages_to_merge,
+          max_pages_to_merge: values.merge_pages ? values.max_pages_to_merge : undefined,
           rules: values.rules.map((line) => line.trim()).filter((line) => !!line),
         });
       });
