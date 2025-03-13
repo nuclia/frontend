@@ -576,7 +576,7 @@
 	"kb.ai-models.extraction.config.processing.rules.rule": "Regla",
 	"kb.ai-models.extraction.config.processing.rules.rules-help": "Pots proporcionar regles addicionals al LLM visual:",
 	"kb.ai-models.extraction.config.processing.title": "Processaments específics",
-	"kb.ai-models.extraction.config.processing.vllm_config.help": "Útil per a dissenys de pàgina no estàndard o taules complexes.",
+	"kb.ai-models.extraction.config.processing.vllm_config.help": "Útil per a dissenys de pàgina no estàndard o taules complexes. També pot millorar l'extracció de pàgines escanejades.",
 	"kb.ai-models.extraction.config.processing.vllm_config.label": "LLM visual",
 	"kb.ai-models.extraction.config.processing.vllm_config.warning": "Tingueu en compte que l'ús d'aquesta funció comporta el consum de Nuclia tokens.",
 	"kb.ai-models.extraction.config.text-splitting.max-paragraph": "Màxim de caràcters per paràgraf",
