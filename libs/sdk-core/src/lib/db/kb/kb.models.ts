@@ -519,4 +519,5 @@ export interface ExtractVLLMConfig {
   llm?: ExtractLLMConfig;
   rules?: string[];
   merge_pages?: boolean;
+  max_pages_to_merge?: number;
 }

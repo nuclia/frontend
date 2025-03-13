@@ -34,6 +34,7 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
   configForm = new FormGroup({
     rules: new FormArray<FormControl<string>>([new FormControl<string>('', { nonNullable: true })]),
     merge_pages: new FormControl<boolean>(false, { nonNullable: true }),
+    max_pages_to_merge: new FormControl<number>(3, { nonNullable: true }),
     customLLM: new FormControl<boolean>(false, { nonNullable: true }),
     llm: new FormGroup({
       generative_model: new FormControl<string>('', { nonNullable: true }),
@@ -46,6 +47,9 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
   }
   get rules() {
     return this.configForm.controls.rules;
+  }
+  get mergePages() {
+    return this.configForm.controls.merge_pages.value;
   }
 
   ngOnDestroy() {
@@ -62,6 +66,7 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
       this.configForm.patchValue({
         customLLM: !!this.config?.llm,
         merge_pages: this.config?.merge_pages || false,
+        max_pages_to_merge: this.config?.max_pages_to_merge || 3,
         rules: this.config?.rules,
         llm: {
           generative_model: this.config?.llm?.generative_model || '',
@@ -77,6 +82,7 @@ export class LLMConfigurationComponent implements OnDestroy, OnInit {
         this.valueChange.emit({
           llm: values.customLLM ? this.getLLMConfig(values.llm.generative_model) : undefined,
           merge_pages: values.merge_pages,
+          max_pages_to_merge: values.max_pages_to_merge,
           rules: values.rules.map((line) => line.trim()).filter((line) => !!line),
         });
       });
