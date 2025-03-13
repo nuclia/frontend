@@ -16,7 +16,7 @@
       }
       <div class="separator-line"></div>
       <div class="setting">
-        <label>{{ 'tasks-automation.table.header.applies-on' | translate }}</label>
+        <label>{{ 'tasks-automation.settings.applies-on' | translate }}</label>
         <div [innerHTML]="'tasks-automation.form.apply-task-to.' + task.applyOption.toLowerCase() | translate"></div>
       </div>
     </div>
@@ -30,7 +30,6 @@
           <label>{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</label>
           <div>{{ filter.contains?.[0] || '-' }}</div>
         </div>
-        <div class="separator-line"></div>
         @if (fieldTypes.length > 0) {
           <div class="separator-line"></div>
           <div class="setting">
