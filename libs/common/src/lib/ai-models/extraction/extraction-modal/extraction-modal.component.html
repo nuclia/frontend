@@ -14,60 +14,52 @@
       </pa-input>
       <div>
         <h4>{{ 'kb.ai-models.extraction.config.processing.title' | translate }}</h4>
-        <pa-radio-group
-          name="processing"
-          formControlName="processing"
-          noBackground>
-          <div class="processings">
+        <div class="processings">
+          @if (visualLLMEnabled | async) {
             <div class="container-with-border">
-              <pa-radio value="none">{{ 'kb.ai-models.extraction.config.processing.none.label' | translate }}</pa-radio>
+              <pa-checkbox
+                formControlName="vllm_config"
+                [help]="'kb.ai-models.extraction.config.processing.vllm_config.help' | translate">
+                {{ 'kb.ai-models.extraction.config.processing.vllm_config.label' | translate }}
+              </pa-checkbox>
+              @if (vllm_config) {
+                <div class="extra-fields">
+                  <nsi-info-card>
+                    {{ 'kb.ai-models.extraction.config.processing.vllm_config.warning' | translate }}
+                  </nsi-info-card>
+                  <stf-llm-configuration
+                    [generativeModels]="generativeModels"
+                    [createMode]="createMode"
+                    [config]="config?.vllm_config"
+                    (valueChange)="vllmConfig = $event"></stf-llm-configuration>
+                </div>
+              }
             </div>
-            @if (visualLLMEnabled | async) {
-              <div class="container-with-border">
-                <pa-radio
-                  value="vllm_config"
-                  [help]="'kb.ai-models.extraction.config.processing.vllm_config.help' | translate">
-                  {{ 'kb.ai-models.extraction.config.processing.vllm_config.label' | translate }}
-                </pa-radio>
-                @if (processing === 'vllm_config') {
-                  <div class="extra-fields">
-                    <nsi-info-card>
-                      {{ 'kb.ai-models.extraction.config.processing.vllm_config.warning' | translate }}
-                    </nsi-info-card>
-                    <stf-llm-configuration
-                      [generativeModels]="generativeModels"
-                      [createMode]="createMode"
-                      [config]="config?.vllm_config"
-                      (valueChange)="vllmConfig = $event"></stf-llm-configuration>
-                  </div>
-                }
-              </div>
-            }
-            @if (aiTablesEnabled | async) {
-              <div class="container-with-border">
-                <pa-radio
-                  value="ai_tables"
-                  [help]="'kb.ai-models.extraction.config.processing.ai_tables.help' | translate">
-                  {{ 'kb.ai-models.extraction.config.processing.ai_tables.label' | translate }}
-                </pa-radio>
-                @if (processing === 'ai_tables') {
-                  <div class="extra-fields">
-                    <nsi-info-card>
-                      <span
-                        [innerHTML]="'kb.ai-models.extraction.config.processing.ai_tables.warning' | translate"></span>
-                    </nsi-info-card>
-                    <stf-llm-configuration
-                      [generativeModels]="generativeModels"
-                      [createMode]="createMode"
-                      [config]="config?.ai_tables"
-                      [isAiTable]="true"
-                      (valueChange)="aiTables = $event"></stf-llm-configuration>
-                  </div>
-                }
-              </div>
-            }
-          </div>
-        </pa-radio-group>
+          }
+          @if (aiTablesEnabled | async) {
+            <div class="container-with-border">
+              <pa-checkbox
+                formControlName="ai_tables"
+                [help]="'kb.ai-models.extraction.config.processing.ai_tables.help' | translate">
+                {{ 'kb.ai-models.extraction.config.processing.ai_tables.label' | translate }}
+              </pa-checkbox>
+              @if (ai_tables) {
+                <div class="extra-fields">
+                  <nsi-info-card>
+                    <span
+                      [innerHTML]="'kb.ai-models.extraction.config.processing.ai_tables.warning' | translate"></span>
+                  </nsi-info-card>
+                  <stf-llm-configuration
+                    [generativeModels]="generativeModels"
+                    [createMode]="createMode"
+                    [config]="config?.ai_tables"
+                    [isAiTable]="true"
+                    (valueChange)="aiTables = $event"></stf-llm-configuration>
+                </div>
+              }
+            </div>
+          }
+        </div>
       </div>
 
       <div formGroupName="split">

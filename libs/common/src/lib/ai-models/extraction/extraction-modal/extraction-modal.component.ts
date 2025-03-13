@@ -46,7 +46,8 @@ export class ExtractionModalComponent implements OnInit {
 
   configForm = new FormGroup({
     name: new FormControl<string>('', { validators: [Validators.required], nonNullable: true }),
-    processing: new FormControl<'ai_tables' | 'vllm_config' | 'none'>('none', { nonNullable: true }),
+    vllm_config: new FormControl<boolean>(false, { nonNullable: true }),
+    ai_tables: new FormControl<boolean>(false, { nonNullable: true }),
     split: new FormGroup({
       max_paragraph: new FormControl<number | null>(null, { nonNullable: true }),
     }),
@@ -56,8 +57,12 @@ export class ExtractionModalComponent implements OnInit {
     name: { required: 'validation.required' },
   };
 
-  get processing() {
-    return this.configForm.controls.processing.value;
+  get vllm_config() {
+    return this.configForm.controls.vllm_config.value;
+  }
+
+  get ai_tables() {
+    return this.configForm.controls.ai_tables.value;
   }
 
   constructor(
@@ -71,7 +76,8 @@ export class ExtractionModalComponent implements OnInit {
     if (this.config) {
       this.configForm.patchValue({
         name: this.config.name,
-        processing: !!this.config.vllm_config ? 'vllm_config' : !!this.config.ai_tables ? 'ai_tables' : 'none',
+        vllm_config: !!this.config.vllm_config,
+        ai_tables: !!this.config.ai_tables,
         split: this.config.split,
       });
       this.configForm.disable();
@@ -86,11 +92,11 @@ export class ExtractionModalComponent implements OnInit {
     let payload: ExtractConfig = {
       name: values.name,
     };
-    if (values.processing === 'ai_tables') {
-      payload.ai_tables = this.aiTables;
-    }
-    if (values.processing === 'vllm_config') {
+    if (values.vllm_config) {
       payload.vllm_config = this.vllmConfig;
+    }
+    if (values.ai_tables) {
+      payload.ai_tables = this.aiTables;
     }
     if (values.split.max_paragraph) {
       payload.split = {
