@@ -24,7 +24,7 @@ export class PreviewService {
         features="knowledgeGraph"
         zone="${this.sdk.nuclia.options.zone}"
         client="dashboard"
-        cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
+        cdn="${this.backendConfig.getCDN() + '/'}"
         backend="${this.backendConfig.getAPIURL()}"
         state="${kb.state || ''}"
         kbslug="${kb.slug || ''}"

@@ -11,6 +11,7 @@ metadata:
 data:
   SITE_KEY: "{{ .Values.site_key }}"
   APP_NAME: {{ .Values.app_name }}
+  CDN: "{{ .Values.cdn }}"
   SENTRY_ENV: {{ .Values.sentry_environment }}
   SENTRY_URL: "{{ .Values.sentry_url }}"
   EDITOR_URL: "{{ .Values.editor_url }}"

@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { BackendConfigurationService, SDKService } from '@flaps/core';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  private backendConfig = inject(BackendConfigurationService);
+
   constructor(
     private router: Router,
     private sdk: SDKService,
@@ -15,12 +17,12 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError((error) => {
-        // 440 on requests to external APIs (like connectors)
+        // 400 on requests to external APIs
         // or to local NucliaDB should not redirect to login
+        const apiOrigin = this.backendConfig.getAPIOrigin();
         if (
-          request.url.startsWith('https://nuclia.cloud') ||
-          request.url.startsWith('https://stashify.cloud') ||
-          request.url.startsWith('https://gcp-global-dev-1.nuclia.io')
+          (window.location.hostname !== 'localhost' && request.url.startsWith(window.location.origin)) ||
+          (!!apiOrigin && request.url.startsWith(apiOrigin))
         ) {
           this.handle400Error(error);
         }

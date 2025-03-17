@@ -5,6 +5,7 @@
   "backend": {
     "app": "app",
     "apiOrigin": "https://nuclia.cloud",
+    "cdn": "https://cdn.nuclia.cloud",
     "apiPath": "/api"
   }
 }

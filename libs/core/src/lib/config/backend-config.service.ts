@@ -64,8 +64,8 @@ export class BackendConfigurationService {
     return this.config.version;
   }
 
-  getCDN(): string | undefined {
-    return this.config.backend?.cdn;
+  getCDN(): string {
+    return this.config.backend.cdn;
   }
 
   useRemoteLogin(): boolean {
