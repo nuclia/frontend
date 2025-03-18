@@ -8,6 +8,8 @@ function apply_path {
     test -n "$SITE_KEY"
     echo "Check that we have APP_NAME vars"
     test -n "$APP_NAME"
+    echo "Check that we have CDN vars"
+    test -n "$CDN"
     echo "Check that we have SENTRY_ENV vars"
     test -n "$SENTRY_ENV"
     echo "Check that we have SENTRY_URL vars"
@@ -27,6 +29,9 @@ function apply_path {
 
     echo "Configuring APP_NAME vars"
     sed -i "s#STF_DOCKER_CONFIG_APP_NAME#${APP_NAME}#g" $jsonFile
+
+    echo "Configuring APP_NAME vars"
+    sed -i "s#STF_DOCKER_CONFIG_CDN#${CDN}#g" $jsonFile
 
     echo "Configuring SENTRY_ENV vars"
     sed -i "s#STF_DOCKER_CONFIG_SENTRY_ENV#${SENTRY_ENV}#g" $jsonFile

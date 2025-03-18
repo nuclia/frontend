@@ -16,7 +16,7 @@ export type EnvironmentConfiguration = {
     sentry_environment?: string;
     sentry_url?: string;
     sentry_backend?: string;
-    cdn?: string;
+    cdn: string;
     allowed_hosts_redirect?: string[];
   };
 };
@@ -71,7 +71,7 @@ export class AppInitService {
               : config.backend.apiOrigin;
           config.backend.apiOrigin = apiOrigin;
           config.backend.api = apiOrigin + config.backend.apiPath;
-          config.backend.cdn = staticEnv.standalone ? 'https://cdn.nuclia.cloud' : apiOrigin.replace('//', '//cdn.');
+          config.backend.cdn = staticEnv.standalone ? 'https://cdn.nuclia.cloud' : config.backend.cdn;
           if (config.backend.cdn && !JS_INJECTED) {
             injectWidget(config.backend.cdn);
           }

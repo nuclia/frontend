@@ -192,7 +192,7 @@ export class SearchWidgetService {
     }
     const isPopupStyle = widgetOptions.widgetMode === 'popup';
     const isSearchMode = !widgetOptions.widgetMode || widgetOptions.widgetMode === 'page';
-    const scriptSrc = `https://cdn.nuclia.cloud/${widgetFileName}.umd.js`;
+    const scriptSrc = `${this.backendConfig.getCDN()}/${widgetFileName}.umd.js`;
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([kb, account]) => {
@@ -204,10 +204,16 @@ export class SearchWidgetService {
           kb.state === 'PRIVATE'
             ? `\n  state="${kb.state}"\n  account="${account.id}"\n  kbslug="${kb.slug}"\n  ${apiKey}`
             : '';
-        const backend = this.sdk.nuclia.options.standalone ? `\n  backend="${this.backendConfig.getAPIURL()}"` : '';
-
+        let backend = '';
+        if (this.sdk.nuclia.options.standalone || !this.backendConfig.getAPIURL().includes('nuclia.cloud')) {
+          backend = `\n  backend="${this.backendConfig.getAPIURL()}"`;
+        }
+        let cdn = '';
+        if (!this.backendConfig.getCDN().includes('nuclia.cloud')) {
+          cdn = `\n  cdn="${this.backendConfig.getCDN()}/"`;
+        }
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${copyDisclaimer}${lang}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${jsonSchema}${reranker}${rrfBoosting}${citationThreshold}${feedback}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${copyDisclaimer}${lang}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${cdn}${jsonSchema}${reranker}${rrfBoosting}${citationThreshold}${feedback}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
@@ -219,10 +225,9 @@ export class SearchWidgetService {
           /knowledgebox=/g,
           `audit_metadata='{"config":"${currentConfig.id}"}'\n  knowledgebox=`,
         );
-        const cdn = this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : '';
         const preview = this.sanitizer.bypassSecurityTrustHtml(
           baseSnippet
-            .replace('zone=', `client="dashboard" backend="${this.backendConfig.getAPIURL()}" cdn="${cdn}" zone=`)
+            .replace('zone=', `client="dashboard" zone=`)
             .replace('features="', `features="debug,`)
             .replace(apiKey, '')
             .replace(

@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import SparkMD5 from 'spark-md5';
-import { StaticEnvironmentConfiguration } from '../config';
+import { BackendConfigurationService, StaticEnvironmentConfiguration } from '../config';
 import { SDKService } from '../api/sdk.service';
 
 export interface Features {
@@ -28,6 +28,7 @@ const stageFeatures: Features = {};
 
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {
+  private backendConfig = inject(BackendConfigurationService);
   private accountMd5 = this.sdk.hasAccount.pipe(
     switchMap((hasAccount) =>
       hasAccount
@@ -40,7 +41,7 @@ export class FeatureFlagService {
   );
   // features-v2.json stored in the GitHub /status repo is automatically pushed to the Nuclia CDN
   // to avoid strict security policy issues in the customer side
-  private featuresData = fromFetch('https://cdn.nuclia.cloud/features/features-v2.json').pipe(
+  private featuresData = fromFetch(`${this.backendConfig.getCDN()}/features/features-v2.json`).pipe(
     switchMap((res) => res.json()),
     map((res) => res as FeaturesData),
     shareReplay(1),
