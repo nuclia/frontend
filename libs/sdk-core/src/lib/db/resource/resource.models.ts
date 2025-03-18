@@ -84,6 +84,7 @@ export type RelationEntityType = 'entity' | 'label' | 'resource' | 'user';
 export interface Relation {
   relation: RelationType;
   label?: string;
+  metadata?: RelationMetadata;
   from?: RelationEntity;
   to: RelationEntity;
 }
@@ -92,6 +93,15 @@ export interface RelationEntity {
   value: string;
   type: RelationEntityType;
   group?: string;
+}
+
+export interface RelationMetadata {
+  paragraph_id?: string;
+  source_start?: number;
+  source_end?: number;
+  to_start?: number;
+  to_end?: number;
+  data_augmentation_task_id?: string;
 }
 
 export interface Origin {
@@ -510,4 +520,34 @@ export enum ExtractedDataTypes {
   LINK = 'link',
   FILE = 'file',
   QUESTION_ANSWERS = 'question_answers',
+}
+
+export type TaskFilterType = 'graph' | 'label' | 'ask' | 'qa' | 'prompt_guard' | 'llama_guard';
+
+export interface TasksFilter {
+  type: TaskFilterType;
+  task_names?: string[];
+}
+
+export interface TaskResults {
+  results: { [key: string]: AugmentedField };
+}
+
+export interface AugmentedField {
+  metadata: FieldMetadata;
+  applied_data_augmentation: AppliedDataAugmentation;
+  input_nuclia_tokens: number;
+  output_nuclia_tokens: number;
+  time: number;
+}
+
+export interface AppliedDataAugmentation {
+  changed?: boolean;
+  qas?: {
+    question_answer: QuestionAnswer[];
+  };
+  new_text_fields?: {
+    text_field: TextField;
+    destination: string;
+  }[];
 }

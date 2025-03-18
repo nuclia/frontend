@@ -14,11 +14,13 @@
       [active]="selectedTab === 'configuration'">
       {{ 'Configuration' | translate }}
     </pa-tab>
-    <pa-tab
-      (click)="selectedTab = 'testing'"
-      [active]="selectedTab === 'testing'">
-      {{ 'Testing' | translate }}
-    </pa-tab>
+    @if (tasksSupportingTesting.includes((task | async)?.task?.name || 'ask')) {
+      <pa-tab
+        (click)="selectedTab = 'testing'"
+        [active]="selectedTab === 'testing'">
+        {{ 'Testing' | translate }}
+      </pa-tab>
+    }
   </pa-tabs>
 
   @switch (selectedTab) {
@@ -26,7 +28,7 @@
       <app-task-settings [task]="(task | async) || undefined"></app-task-settings>
     }
     @case ('testing') {
-      <div>Test</div>
+      <app-task-testing [task]="(task | async) || undefined"></app-task-testing>
     }
   }
 </div>

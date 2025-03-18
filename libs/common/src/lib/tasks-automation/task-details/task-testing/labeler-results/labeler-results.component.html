@@ -1,0 +1,42 @@
+@if (task?.parameters?.on === TaskApplyTo.FULL_FIELD) {
+  <div class="fields-labels">
+    @for (field of fieldsWithLabels | async; track field.key; let count = $count) {
+      <div>
+        @if (count > 1) {
+          <div class="title-xxs">{{ field.title }}</div>
+        }
+        <div class="labels">
+          @for (label of field.labels; track label.labelset + label.label) {
+            <nsi-label readonly>{{ label.label }}</nsi-label>
+          }
+        </div>
+      </div>
+    } @empty {
+      <nsi-info-card>{{ 'tasks-automation.testing.results.no-labels' | translate }}</nsi-info-card>
+    }
+  </div>
+} @else if (task?.parameters?.on === TaskApplyTo.TEXT_BLOCKS) {
+  <div class="paragraphs-labels">
+    @for (paragraph of paragraphsWithLabels | async; track paragraph.paragraphId) {
+      <div>
+        <div class="paragraph-text">
+          <pa-button
+            aspect="basic"
+            size="small"
+            [icon]="expanded[paragraph.paragraphId] ? 'chevron-down' : 'chevron-right'"
+            (click)="expandParagraph(paragraph.paragraphId)"></pa-button>
+          <div [class.ellipsis]="!expanded[paragraph.paragraphId]">
+            {{ paragraph.text }}
+          </div>
+        </div>
+        <div class="labels">
+          @for (label of paragraph.classifications; track label.labelset + label.label) {
+            <nsi-label readonly>{{ label.label }}</nsi-label>
+          }
+        </div>
+      </div>
+    } @empty {
+      <nsi-info-card>{{ 'tasks-automation.testing.results.no-labels' | translate }}</nsi-info-card>
+    }
+  </div>
+}

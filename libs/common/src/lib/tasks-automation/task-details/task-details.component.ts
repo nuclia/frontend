@@ -13,6 +13,8 @@ import {
 import { BackButtonComponent } from '@nuclia/sistema';
 import { TaskRouteDirective } from '../task-route.directive';
 import { TaskSettingsComponent } from '../task-forms/task-settings/task-settings.component';
+import { TaskTestingComponent } from './task-testing/task-testing.component';
+import { TaskName } from '@nuclia/core';
 
 @Component({
   imports: [
@@ -27,6 +29,7 @@ import { TaskSettingsComponent } from '../task-forms/task-settings/task-settings
     PaTabsModule,
     BackButtonComponent,
     TaskSettingsComponent,
+    TaskTestingComponent,
   ],
   templateUrl: './task-details.component.html',
   styleUrls: ['./task-details.component.scss'],
@@ -34,6 +37,7 @@ import { TaskSettingsComponent } from '../task-forms/task-settings/task-settings
 })
 export class TaskDetailsComponent extends TaskRouteDirective {
   selectedTab: 'configuration' | 'testing' = 'configuration';
+  tasksSupportingTesting: TaskName[] = ['ask', 'labeler', 'llm-graph'];
 
   constructor() {
     super();
