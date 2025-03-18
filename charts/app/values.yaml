@@ -21,6 +21,8 @@ service:
 site_key: XXX
 app_name: app
 cdn: XXX
+brand_name: XXX
+brand_domaine: XXX
 sentry_environment: stage
 sentry_url: XXX
 editor_url: XXX

@@ -11,6 +11,8 @@ metadata:
 data:
   API_PATH: {{ .Values.api_path }}
   SITE_KEY: "{{ .Values.site_key }}"
+  BRAND_NAME: "{{ .Values.brand_name }}"
+  BRAND_DOMAIN: "{{ .Values.brand_domain }}"
   APP_NAME: {{ .Values.app_name }}
   SENTRY_ENV: {{ .Values.sentry_environment }}
   SENTRY_URL: "{{ .Values.sentry_url }}"

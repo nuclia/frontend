@@ -38,6 +38,19 @@ function apply_path {
     echo "Configuring EMAIL_DOMAIN vars"
     sed -i "s#STF_DOCKER_CONFIG_EMAIL_DOMAIN#${EMAIL_DOMAIN}#g" $jsonFile
 
+    if [ -z "$BRAND_NAME" ]; then
+      echo "No re-branding";
+    else
+      echo "Re-branding to '$BRAND_NAME'";
+      sed -i "s/Nuclia/$BRAND_NAME/" /dist/apps/assets/i18n/**/*.json
+    fi
+
+    if [ -z "$BRAND_DOMAIN" ]; then
+      echo "No re-branding domain";
+    else
+      echo "Re-branding to '$BRAND_DOMAIN'";
+      sed -i "s/nuclia\.cloud/$BRAND_DOMAIN/" /dist/apps/assets/i18n/**/*.json
+    fi
 }
 
 # Should we monkey patch?
