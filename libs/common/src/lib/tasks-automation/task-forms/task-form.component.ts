@@ -261,7 +261,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
 
   updateFiltersWithLabels(labels: Classification[]) {
-    this.labelFilters = labels.map((label) => `/classification.labels/${label.labelset}/${label.label}`);
+    this.labelFilters = labels.map((label) => `${label.labelset}/${label.label}`);
     this.onToggleFilter();
   }
 
