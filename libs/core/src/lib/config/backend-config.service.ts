@@ -69,7 +69,7 @@ export class BackendConfigurationService {
   }
 
   getBrandName(): string {
-    return this.config.backend.barnd_name || 'Nuclia';
+    return this.config.backend.brand_name || 'Nuclia';
   }
 
   useRemoteLogin(): boolean {
