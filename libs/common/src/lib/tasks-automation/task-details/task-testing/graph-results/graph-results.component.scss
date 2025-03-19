@@ -1,0 +1,31 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.title-xxs {
+  color: $color-neutral-regular;
+}
+
+.family,
+.relations {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+  margin-bottom: rhythm(2);
+}
+
+.ners,
+.relation {
+  display: flex;
+  gap: rhythm(0.5);
+  flex-wrap: wrap;
+}
+
+.badge {
+  align-items: center;
+  border-radius: rhythm(0.5);
+  display: inline-flex;
+  height: rhythm(2.5);
+  padding: rhythm(0.25);
+  &.basic {
+    border: 1px solid $color-neutral-lighter;
+  }
+}

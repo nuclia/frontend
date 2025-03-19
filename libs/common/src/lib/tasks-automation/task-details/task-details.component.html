@@ -1,0 +1,34 @@
+<div class="page-spacing">
+  <header>
+    <nsi-back-button [link]="backRoute | async">
+      {{ 'tasks-automation.bach-to-tasks' | translate }}
+    </nsi-back-button>
+    <div>
+      <h1 class="page-title">{{ (task | async)?.parameters?.name }}</h1>
+    </div>
+  </header>
+
+  <pa-tabs notFullWidth>
+    <pa-tab
+      (click)="selectedTab = 'configuration'"
+      [active]="selectedTab === 'configuration'">
+      {{ 'Configuration' | translate }}
+    </pa-tab>
+    @if (tasksSupportingTesting.includes((task | async)?.task?.name || 'ask')) {
+      <pa-tab
+        (click)="selectedTab = 'testing'"
+        [active]="selectedTab === 'testing'">
+        {{ 'Testing' | translate }}
+      </pa-tab>
+    }
+  </pa-tabs>
+
+  @switch (selectedTab) {
+    @case ('configuration') {
+      <app-task-settings [task]="(task | async) || undefined"></app-task-settings>
+    }
+    @case ('testing') {
+      <app-task-testing [task]="(task | async) || undefined"></app-task-testing>
+    }
+  }
+</div>

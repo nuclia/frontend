@@ -1,12 +1,23 @@
 import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BadgeComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { BadgeComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LabelModule, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TaskWithApplyOption } from '../task-route.directive';
+import { TaskWithApplyOption } from '../../task-route.directive';
 import { map, switchMap, take } from 'rxjs';
-import { FIELD_TYPE, SHORT_FIELD_TYPE, shortToLongFieldType, TaskTrigger } from '@nuclia/core';
+import {
+  AskOperation,
+  FIELD_TYPE,
+  GraphOperation,
+  LabelOperation,
+  QAOperation,
+  SHORT_FIELD_TYPE,
+  shortToLongFieldType,
+  TaskApplyTo,
+  TaskTrigger,
+} from '@nuclia/core';
+import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
 
 interface Trigger {
   url: string;
@@ -24,6 +35,8 @@ interface Trigger {
     TranslateModule,
     BadgeComponent,
     ParametersTableComponent,
+    InfoCardComponent,
+    PaTableModule,
   ],
   templateUrl: './task-settings.component.html',
   styleUrl: './task-settings.component.scss',
@@ -47,6 +60,12 @@ export class TaskSettingsComponent {
   labels: string[] = [];
   triggers: Trigger[] = [];
   apply_to_agent_generated_fields = false;
+  TaskApplyTo = TaskApplyTo;
+
+  askOperation?: AskOperation;
+  labelOperation?: LabelOperation;
+  graphOperation?: GraphOperation;
+  qaOperation?: QAOperation;
 
   @Input()
   set task(value: TaskWithApplyOption | undefined) {
@@ -64,6 +83,10 @@ export class TaskSettingsComponent {
     if (value) {
       this.triggers = this.mapTriggers(value);
     }
+    this.askOperation = this.task?.parameters?.operations?.find((operation) => operation.ask)?.ask;
+    this.labelOperation = this.task?.parameters?.operations?.find((operation) => operation.label)?.label;
+    this.graphOperation = this.task?.parameters?.operations?.find((operation) => operation.graph)?.graph;
+    this.qaOperation = this.task?.parameters?.operations?.find((operation) => operation.qa)?.qa;
   }
   get task() {
     return this._task;

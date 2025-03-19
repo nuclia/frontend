@@ -14,45 +14,31 @@
     </div>
   </header>
 
-  @if (task | async; as task) {
-    <app-task-settings [task]="task">
-      <nsi-two-columns-configuration-item itemTitle="tasks-automation.llm-security.labeling.title">
-        <nsi-info-card>
-          @if (task.parameters.on === TaskApplyTo.FULL_FIELD) {
-            {{ 'tasks-automation.form.on.resources' | translate }}
-          } @else {
-            {{ 'tasks-automation.form.on.text-blocks' | translate }}
-          }
-        </nsi-info-card>
+  <app-task-form
+    [type]="type"
+    triggerDescription="tasks-automation.trigger-description"
+    activateButtonLabel="tasks-automation.llm-security.footer.activate-button-label"
+    footerNoteAutomation="tasks-automation.llm-security.footer.apply-automation"
+    footerNoteOneTime="tasks-automation.llm-security.footer.apply-one-time"
+    [validFormInside]="form.valid"
+    [modelsHidden]="true"
+    (cancel)="backToTaskList()"
+    (activate)="activateTask($event)">
+    <div [formGroup]="form">
+      <nsi-two-columns-configuration-item
+        itemTitle="tasks-automation.llm-security.labeling.title"
+        description="tasks-automation.llm-security.labeling.description">
+        <div class="form-container">
+          <pa-radio-group formControlName="on">
+            <pa-radio value="resources">
+              {{ 'tasks-automation.form.on.resources' | translate }}
+            </pa-radio>
+            <pa-radio value="text-blocks">
+              {{ 'tasks-automation.form.on.text-blocks' | translate }}
+            </pa-radio>
+          </pa-radio-group>
+        </div>
       </nsi-two-columns-configuration-item>
-    </app-task-settings>
-  } @else {
-    <app-task-form
-      [type]="type"
-      triggerDescription="tasks-automation.trigger-description"
-      activateButtonLabel="tasks-automation.llm-security.footer.activate-button-label"
-      footerNoteAutomation="tasks-automation.llm-security.footer.apply-automation"
-      footerNoteOneTime="tasks-automation.llm-security.footer.apply-one-time"
-      [validFormInside]="form.valid"
-      [modelsHidden]="true"
-      (cancel)="backToTaskList()"
-      (activate)="activateTask($event)">
-      <div [formGroup]="form">
-        <nsi-two-columns-configuration-item
-          itemTitle="tasks-automation.llm-security.labeling.title"
-          description="tasks-automation.llm-security.labeling.description">
-          <div class="form-container">
-            <pa-radio-group formControlName="on">
-              <pa-radio value="resources">
-                {{ 'tasks-automation.form.on.resources' | translate }}
-              </pa-radio>
-              <pa-radio value="text-blocks">
-                {{ 'tasks-automation.form.on.text-blocks' | translate }}
-              </pa-radio>
-            </pa-radio-group>
-          </div>
-        </nsi-two-columns-configuration-item>
-      </div>
-    </app-task-form>
-  }
+    </div>
+  </app-task-form>
 </div>

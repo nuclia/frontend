@@ -3,9 +3,8 @@ import { CommonModule } from '@angular/common';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
-import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TaskRouteDirective } from '../task-route.directive';
+import { TaskRouteDirective } from '../../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TasksAutomationService } from '../../tasks-automation.service';
 import { TaskApplyTo, TaskName } from '@nuclia/core';
@@ -19,7 +18,6 @@ import { map } from 'rxjs';
     PaTextFieldModule,
     ReactiveFormsModule,
     TaskFormComponent,
-    TaskSettingsComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     PaTogglesModule,

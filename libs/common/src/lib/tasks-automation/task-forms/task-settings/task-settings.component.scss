@@ -1,5 +1,20 @@
 @use 'apps/dashboard/src/variables' as *;
-@use '../task-form.common';
+
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}
+
+.setting {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+}
+
+pa-table {
+  margin-top: rhythm(1);
+}
 
 .filters {
   display: flex;

@@ -1,17 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { BackButtonComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
-import { TaskSettingsComponent } from '../task-settings/task-settings.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { TaskRouteDirective } from '../task-route.directive';
-import {
-  PaButtonModule,
-  PaIconModule,
-  PaPopupModule,
-  PaTableModule,
-  PaTextFieldModule,
-} from '@guillotinaweb/pastanaga-angular';
+import { TaskRouteDirective } from '../../task-route.directive';
+import { PaButtonModule, PaIconModule, PaPopupModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GraphOperation, TaskApplyTo, TaskName } from '@nuclia/core';
 import { TasksAutomationService } from '../../tasks-automation.service';
@@ -23,9 +16,7 @@ import { map } from 'rxjs';
   imports: [
     CommonModule,
     BackButtonComponent,
-    InfoCardComponent,
     TaskFormComponent,
-    TaskSettingsComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
     PaIconModule,
@@ -33,7 +24,6 @@ import { map } from 'rxjs';
     PaButtonModule,
     PaTextFieldModule,
     PaPopupModule,
-    PaTableModule,
   ],
   templateUrl: './graph-extraction.component.html',
   styleUrl: './graph-extraction.component.scss',

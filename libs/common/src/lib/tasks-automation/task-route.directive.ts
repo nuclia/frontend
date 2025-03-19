@@ -1,7 +1,7 @@
 import { Directive, inject } from '@angular/core';
 import { filter, map, shareReplay, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TasksAutomationService } from '../tasks-automation.service';
+import { TasksAutomationService } from './tasks-automation.service';
 import { ApplyOption, DataAugmentationParameters, TaskStatus } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -35,7 +35,7 @@ export class TaskRouteDirective {
     shareReplay(1),
   );
 
-  backRoute = this.activeRoute.params.pipe(map((params) => (!params['taskId'] ? '..' : '../..')));
+  backRoute = this.activeRoute.params.pipe(map((params) => (!params['taskId'] ? '..' : '..')));
 
   errorMessages = {
     required: 'validation.required',

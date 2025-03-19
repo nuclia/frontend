@@ -19,6 +19,8 @@ import type {
   ResourceData,
   ResourceField,
   Sentence,
+  TaskResults,
+  TasksFilter,
   TextField,
 } from './resource.models';
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
@@ -417,5 +419,13 @@ export class Resource extends ReadableResource implements IResource {
   setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {
     const fieldmetadata = setLabels(fieldId, fieldType, paragraphId, labels, this.fieldmetadata || []);
     return this.modify({ fieldmetadata }).pipe(tap(() => (this.fieldmetadata = fieldmetadata)));
+  }
+
+  /**
+   * Run tasks on the resource and return the results
+   * (the results are not stored within the resource).
+   */
+  runTasks(filters: TasksFilter[]) {
+    return this.nuclia.rest.post<TaskResults>(`${this.path}/run-agents`, { filters }, undefined, undefined, true);
   }
 }

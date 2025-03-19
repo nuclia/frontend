@@ -1,0 +1,8 @@
+@use 'apps/dashboard/src/variables' as *;
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+  margin-bottom: rhythm(4);
+}

@@ -1,0 +1,108 @@
+@if (task) {
+  <nsi-two-columns-configuration-item
+    itemTitle="tasks-automation.testing.title"
+    description="tasks-automation.testing.description"
+    badge="generic.badge.optional"
+    noTopBorder>
+    <div class="container">
+      <div>
+        <pa-input
+          icon="search"
+          [paPopup]="dropdown"
+          #popup="paPopupRef"
+          popupDisabled
+          [sameWidth]="true"
+          (keyUp)="!dropdown.isDisplayed && popup.toggle()"
+          (focusing)="!dropdown.isDisplayed && popup.toggle()"
+          (valueChange)="updateSuggestions.next($event)">
+          {{ 'tasks-automation.testing.search' | translate }}
+        </pa-input>
+        <pa-dropdown #dropdown>
+          @for (resource of suggestions | async; track resource.id) {
+            <pa-option (selectOption)="addResource(resource)">{{ resource.title }}</pa-option>
+          }
+        </pa-dropdown>
+      </div>
+      @if (resources.length > 0) {
+        <div class="resources">
+          @for (resource of resources; track resource.id) {
+            <pa-checkbox [(value)]="selected[resource.id]">{{ resource.title }}</pa-checkbox>
+          }
+        </div>
+      }
+      <pa-button
+        class="run"
+        [disabled]="selectedIds.length === 0 || loading"
+        (click)="run()">
+        {{ 'tasks-automation.testing.execute-test' | translate }}
+      </pa-button>
+    </div>
+  </nsi-two-columns-configuration-item>
+  <nsi-two-columns-configuration-item
+    itemTitle="tasks-automation.testing.results.title"
+    description="tasks-automation.testing.results.description">
+    @if (loading) {
+      <nsi-spinner size="small"></nsi-spinner>
+    } @else if (!results) {
+      <nsi-info-card>{{ 'tasks-automation.testing.results.empty' | translate }}</nsi-info-card>
+    } @else {
+      @for (item of results; track item.resource.id) {
+        <div class="resource-results">
+          <div class="title-s">{{ item.resource.title }}</div>
+          <app-test-results
+            [results]="item"
+            [task]="task"></app-test-results>
+        </div>
+        <div class="separator-line"></div>
+      }
+      <pa-button
+        size="small"
+        aspect="basic"
+        icon="trash"
+        iconAndText
+        (click)="clearResults()">
+        {{ 'tasks-automation.testing.results.clear' | translate }}
+      </pa-button>
+    }
+  </nsi-two-columns-configuration-item>
+  @if (tokens) {
+    <nsi-two-columns-configuration-item
+      itemTitle="tasks-automation.testing.tokens.title"
+      description="tasks-automation.testing.tokens.description">
+      <pa-table
+        border
+        columns="1fr 1fr">
+        <pa-table-header>
+          <pa-table-cell header>
+            <span class="header">{{ 'tasks-automation.testing.tokens.action' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell header>
+            <span class="header">Nuclia Tokens</span>
+          </pa-table-cell>
+        </pa-table-header>
+        <pa-table-row>
+          <pa-table-cell><span class="title-xxs">Input</span></pa-table-cell>
+          <pa-table-cell>
+            <span class="body-s">{{ this.tokens.input | number: '1.0-6' }}</span>
+          </pa-table-cell>
+        </pa-table-row>
+        <pa-table-row>
+          <pa-table-cell><span class="title-xxs">Output</span></pa-table-cell>
+          <pa-table-cell>
+            <span class="body-s">{{ this.tokens.output | number: '1.0-6' }}</span>
+          </pa-table-cell>
+        </pa-table-row>
+        <pa-table-row>
+          <pa-table-cell>
+            <span class="title-xxs">{{ 'tasks-automation.testing.tokens.total' | translate }}</span>
+          </pa-table-cell>
+          <pa-table-cell>
+            <span class="body-s">
+              {{ this.tokens.input + this.tokens.output | number: '1.0-6' }}
+            </span>
+          </pa-table-cell>
+        </pa-table-row>
+      </pa-table>
+    </nsi-two-columns-configuration-item>
+  }
+}

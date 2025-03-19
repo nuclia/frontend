@@ -27,18 +27,3 @@ header {
 .inline-form {
   justify-content: space-between;
 }
-
-.settings-container {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(1.5);
-
-  .setting {
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(0.5);
-  }
-  pa-table {
-    margin-top: rhythm(1);
-  }
-}

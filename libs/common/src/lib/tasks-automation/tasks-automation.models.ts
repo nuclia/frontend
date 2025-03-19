@@ -1,5 +1,5 @@
 import { isObject } from '@flaps/core';
-import { DataAugmentationParameters, TaskName, TaskOnBatch, TaskOnGoing } from '@nuclia/core';
+import { DataAugmentationParameters, TaskFilterType, TaskName, TaskOnBatch, TaskOnGoing } from '@nuclia/core';
 
 export interface DataAugmentationTaskOnGoing extends TaskOnGoing {
   parameters: DataAugmentationParameters;
@@ -78,4 +78,23 @@ export function resolveSchemaReferences(schema: { [key: string]: any }, defs: { 
     },
     {} as { [key: string]: any },
   );
+}
+
+export function getTaskFilterTypeFromTaskName(name: TaskName): TaskFilterType | null {
+  switch (name) {
+    case 'labeler':
+      return 'label';
+    case 'synthetic-questions':
+      return 'qa';
+    case 'llm-graph':
+      return 'graph';
+    case 'llama-guard':
+      return 'llama_guard';
+    case 'prompt-guard':
+      return 'prompt_guard'
+    case 'ask':
+      return 'ask'
+    default:
+      return null;
+  }
 }
