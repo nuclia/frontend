@@ -5,7 +5,7 @@
     <img
       class="topbar-logo-expanded"
       [src]="!standalone ? assetsPath + '/logos/logo.svg' : 'assets/logos/nucliadb.svg'"
-      [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
+      [alt]="!standalone ? brandName : 'NucliaDB'" />
     @if (isStageOrDev) {
       <img
         src="assets/logos/stage-icon.svg"
@@ -16,7 +16,7 @@
     <img
       class="topbar-logo-collapsed"
       [src]="!standalone ? 'assets/logos/nuclia-symbol.svg' : 'assets/logos/nucliadb-symbol.svg'"
-      [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
+      [alt]="!standalone ? brandName : 'NucliaDB'" />
   </button>
 
   @if (showDemo) {

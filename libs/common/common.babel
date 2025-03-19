@@ -2075,6 +2075,29 @@
 									</translation>
 								</translations>
 							</concept_node>
+							<concept_node>
+								<name>nua_webhook_hint</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
 							<folder_node>
 								<name>nuclia-tokens</name>
 								<children>
@@ -5460,6 +5483,29 @@
 								</translations>
 							</concept_node>
 							<concept_node>
+								<name>nucliadb</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
 								<name>on_premise_cost</name>
 								<description/>
 								<comment/>
@@ -5834,6 +5880,29 @@
 							</concept_node>
 							<concept_node>
 								<name>postal_code</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>preprocessing</name>
 								<description/>
 								<comment/>
 								<translations>
@@ -6769,6 +6838,29 @@
 							</concept_node>
 							<concept_node>
 								<name>token-help</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>tokens</name>
 								<description/>
 								<comment/>
 								<translations>

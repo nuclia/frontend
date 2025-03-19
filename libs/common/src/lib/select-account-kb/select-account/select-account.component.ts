@@ -31,6 +31,7 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   private backendConfig = inject(BackendConfigurationService);
   assetsPath = this.backendConfig.getAssetsPath();
+  brandName = this.backendConfig.getBrandName();
 
   standalone = this.environment.standalone;
 

@@ -22,6 +22,7 @@ export class AppLayoutComponent implements OnInit {
   isRoot = false;
   private backendConfig = inject(BackendConfigurationService);
   assetsPath = this.backendConfig.getAssetsPath();
+  brandName = this.backendConfig.getBrandName();
 
   constructor(
     private router: Router,
