@@ -217,7 +217,7 @@
   style:--filters-height={filterHeight}>
   {#if !$hideLogo}
     <img
-      src={`${getCDN()}logos/nuclia-grey.svg`}
+      src={`${getCDN()}logos/logo-grey.svg`}
       class="logo"
       alt={brandName} />
   {/if}
