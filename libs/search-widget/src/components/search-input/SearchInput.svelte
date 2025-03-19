@@ -51,6 +51,7 @@
 
   let searchInputElement: Textarea;
   const dispatch = createEventDispatcher();
+  const brandName = import.meta.env.VITE_BRAND_NAME || 'Nuclia';
 
   let inputContainerElement: HTMLElement | undefined;
   let filterButtonElement: HTMLElement | undefined;
@@ -218,7 +219,7 @@
     <img
       src={`${getCDN()}logos/nuclia-grey.svg`}
       class="logo"
-      alt="Nuclia" />
+      alt={brandName} />
   {/if}
   <div class="input-container">
     <div
