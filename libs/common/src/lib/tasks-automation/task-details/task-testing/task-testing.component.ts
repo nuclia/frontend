@@ -89,11 +89,7 @@ export class TaskTestingComponent {
         switchMap((kb) =>
           forkJoin(
             this.selectedIds.map((id) => {
-              const resource = new Resource(
-                this.sdk.nuclia,
-                kb.id,
-                this.resources.find((res) => res.id === id) as IResource,
-              );
+              const resource = kb.getResourceFromData(this.resources.find((res) => res.id === id) as IResource);
               return resource
                 .runTasks([
                   {
