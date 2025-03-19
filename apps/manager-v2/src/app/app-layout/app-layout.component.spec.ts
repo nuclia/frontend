@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppLayoutComponent } from './app-layout.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SDKService, UserService } from '@flaps/core';
+import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
@@ -30,6 +30,7 @@ describe('AppLayoutComponent', () => {
           },
         } as unknown as SDKService),
         MockProvider(UserService, { userInfo: of(undefined) }),
+        MockProvider(BackendConfigurationService),
       ],
     }).compileComponents();
 

@@ -4,7 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SelectAccountKbService } from '../select-account-kb.service';
 
 import { SelectAccountComponent } from './select-account.component';
-import { TranslatePipeMock } from '@flaps/core';
+import { BackendConfigurationService, TranslatePipeMock } from '@flaps/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { of } from 'rxjs';
@@ -27,6 +27,7 @@ describe('SelectComponent', () => {
           },
         },
         MockProvider('staticEnvironmentConfiguration', { standalone: false }),
+        MockProvider(BackendConfigurationService),
       ],
     }).compileComponents();
   }));
