@@ -20,6 +20,7 @@ export class TestPageComponent {
   kb = this.sdk.currentKb;
   private backendConfig = inject(BackendConfigurationService);
   assetsPath = this.backendConfig.getAssetsPath();
+  brandName = this.backendConfig.getBrandName();
 
   selected?: string;
   darkMode = false;

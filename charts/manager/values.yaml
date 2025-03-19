@@ -23,6 +23,7 @@ site_key: XXX
 app_name: app
 brand_name: XXX
 brand_domain: XXX
+assets_path: XXX
 sentry_environment: stage
 sentry_url: XXX
 

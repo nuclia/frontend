@@ -16,6 +16,7 @@ export class ConsentComponent implements OnInit {
   error: string | null = null;
   private backendConfig = inject(BackendConfigurationService);
   assetsPath = this.backendConfig.getAssetsPath();
+  brandName = this.backendConfig.getBrandName();
 
   @ViewChild('form') form: ElementRef | undefined;
 

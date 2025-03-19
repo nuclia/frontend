@@ -12,4 +12,5 @@ export class UserContainerComponent {
   @Input({ transform: booleanAttribute }) alignLeft = false;
   private backendConfig = inject(BackendConfigurationService);
   assetsPath = this.backendConfig.getAssetsPath();
+  brandName = this.backendConfig.getBrandName();
 }

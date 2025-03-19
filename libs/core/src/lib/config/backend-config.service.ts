@@ -68,6 +68,10 @@ export class BackendConfigurationService {
     return this.config.backend.assetsPath || 'assets';
   }
 
+  getBrandName(): string {
+    return this.config.backend.barnd_name || 'Nuclia';
+  }
+
   useRemoteLogin(): boolean {
     return this.config.remoteLogin || false;
   }

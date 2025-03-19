@@ -13,4 +13,5 @@ export class PageNotFoundComponent {
   baseHref = inject(APP_BASE_HREF, { optional: true }) || '/';
   private backendConfig = inject(BackendConfigurationService);
   assetsPath = this.backendConfig.getAssetsPath();
+  brandName = this.backendConfig.getBrandName();
 }

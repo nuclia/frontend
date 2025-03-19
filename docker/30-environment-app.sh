@@ -51,6 +51,9 @@ function apply_path {
     echo "Configuring SAML_ENABLED vars"
     sed -i "s#STF_DOCKER_CONFIG_SAML_ENABLED#${SAML_ENABLED}#g" $jsonFile
 
+    echo "Check that we have BRAND_NAME vars"
+    test -n "$BRAND_NAME"
+    sed -i "s#STF_DOCKER_CONFIG_BRAND_NAME#${BRAND_NAME}#g" $jsonFile
     if [ "$BRAND_NAME" == Nuclia ]; then
       echo "No re-branding";
     else
@@ -66,13 +69,12 @@ function apply_path {
       sed -i "s/nuclia\.cloud/$BRAND_DOMAIN/" /dist/assets/i18n/**/*.json
     fi
 
-    if [ -z "$ASSETS_PATH"]; then
-      echo "No assets path";
-    else
-      echo "Using assets from '$ASSETS_PATH'";
-      sed -i "s#STF_DOCKER_CONFIG_ASSETS_PATH#${ASSETS_PATH}#g" $jsonFile
-      sed -i -E "s#assets\/(overrides|logos|favicon)#${ASSETS_PATH}/\1#g" /dist/index.html
-    fi
+    echo "Check that we have ASSETS_PATH vars"
+    test -n "$ASSETS_PATH"
+
+    echo "Using assets from '$ASSETS_PATH'";
+    sed -i "s#STF_DOCKER_CONFIG_ASSETS_PATH#${ASSETS_PATH}#g" $jsonFile
+    sed -i -E "s#assets\/(overrides|logos|favicon)#${ASSETS_PATH}/\1#g" /dist/index.html
 }
 
 # Should we monkey patch?
