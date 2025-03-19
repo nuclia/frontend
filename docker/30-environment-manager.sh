@@ -38,18 +38,26 @@ function apply_path {
     echo "Configuring EMAIL_DOMAIN vars"
     sed -i "s#STF_DOCKER_CONFIG_EMAIL_DOMAIN#${EMAIL_DOMAIN}#g" $jsonFile
 
-    if [ -z "$BRAND_NAME" ]; then
+    if [ "$BRAND_NAME" == Nuclia ]; then
       echo "No re-branding";
     else
       echo "Re-branding to '$BRAND_NAME'";
-      sed -i "s/Nuclia/$BRAND_NAME/" /dist/apps/assets/i18n/**/*.json
+      sed -i "s/Nuclia/$BRAND_NAME/" /dist/assets/i18n/**/*.json
     fi
 
-    if [ -z "$BRAND_DOMAIN" ]; then
+    if [ "$BRAND_DOMAIN" == nuclia.cloud ]; then
       echo "No re-branding domain";
     else
       echo "Re-branding to '$BRAND_DOMAIN'";
-      sed -i "s/nuclia\.cloud/$BRAND_DOMAIN/" /dist/apps/assets/i18n/**/*.json
+      sed -i "s/nuclia\.cloud/$BRAND_DOMAIN/" /dist/assets/i18n/**/*.json
+    fi
+
+    if [ -z "$ASSETS_PATH"]; then
+      echo "No assets path";
+    else
+      echo "Using assets from '$ASSETS_PATH'";
+      sed -i "s#STF_DOCKER_CONFIG_ASSETS_PATH#${ASSETS_PATH}#g" $jsonFile
+      sed -i -E "s#assets\/(overrides|logos|favicon)#${ASSETS_PATH}/\1#g" /dist/index.html
     fi
 }
 

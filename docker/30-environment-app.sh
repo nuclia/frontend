@@ -51,14 +51,14 @@ function apply_path {
     echo "Configuring SAML_ENABLED vars"
     sed -i "s#STF_DOCKER_CONFIG_SAML_ENABLED#${SAML_ENABLED}#g" $jsonFile
 
-    if [ -z "$BRAND_NAME" ]; then
+    if [ "$BRAND_NAME" == Nuclia ]; then
       echo "No re-branding";
     else
       echo "Re-branding to '$BRAND_NAME'";
       sed -i "s/Nuclia/$BRAND_NAME/" /dist/assets/i18n/**/*.json
     fi
 
-    if [ -z "$BRAND_DOMAIN" ]; then
+    if [ "$BRAND_DOMAIN" == nuclia.cloud ]; then
       echo "No re-branding domain";
     else
       echo "Re-branding to '$BRAND_DOMAIN'";
