@@ -17,6 +17,7 @@ export type EnvironmentConfiguration = {
     sentry_url?: string;
     sentry_backend?: string;
     cdn: string;
+    assetsPath?: string;
     allowed_hosts_redirect?: string[];
   };
 };
@@ -30,7 +31,6 @@ export type StaticEnvironmentConfiguration = {
     new_api?: boolean;
     oauth?: string;
   };
-  base_asset_url?: string;
   locales?: string[]; // List of registred locales in the app
   standalone?: boolean;
 };

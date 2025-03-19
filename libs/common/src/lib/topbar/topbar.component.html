@@ -4,7 +4,7 @@
     (click)="goToHome()">
     <img
       class="topbar-logo-expanded"
-      [src]="!standalone ? 'assets/logos/logo.svg' : 'assets/logos/nucliadb.svg'"
+      [src]="!standalone ? assetsPath + '/logos/logo.svg' : 'assets/logos/nucliadb.svg'"
       [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
     @if (isStageOrDev) {
       <img

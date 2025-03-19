@@ -5,17 +5,17 @@ $color-dark-stronger: #000;
 
 $color-light-stronger: #fff;
 
-$color-neutral-regular: hsl(0, 0%, 44%);
-$color-neutral-light: hsl(0, 0%, 77%);
-$color-neutral-lighter: hsl(0, 0%, 90%);
-$color-neutral-lightest: hsl(240, 7%, 97%);
+$color-neutral-regular: var(--custom-color-neutral-regular, hsl(0, 0%, 44%));
+$color-neutral-light: var(--custom-color-neutral-light, hsl(0, 0%, 77%));
+$color-neutral-lighter: var(--custom-color-neutral-lighter, hsl(0, 0%, 90%));
+$color-neutral-lightest: var(--custom-color-neutral-lightest, hsl(240, 7%, 97%));
 
-$color-primary-stronger: hsl(336, 100%, 24%);
-$color-primary-strong: hsl(336, 100%, 36%);
-$color-primary-regular: hsl(336, 100%, 50%); // #FF0066
-$color-primary-light: hsl(336, 100%, 73%);
-$color-primary-lighter: hsl(336, 100%, 90%); // #FFA8CB
-$color-primary-lightest: hsl(336, 100%, 96%);
+$color-primary-stronger: var(--custom-color-primary-stronger, hsl(336, 100%, 24%));
+$color-primary-strong: var(--custom-color-primary-strong, hsl(336, 100%, 36%));
+$color-primary-regular: var(--custom-color-primary-regular, hsl(336, 100%, 50%)); // #FF0066
+$color-primary-light: var(--custom-color-primary-light, hsl(336, 100%, 73%));
+$color-primary-lighter: var(--custom-color-primary-lighter, hsl(336, 100%, 90%)); // #FFA8CB
+$color-primary-lightest: var(--custom-color-primary-lightest, hsl(336, 100%, 96%));
 
 // Secondary
 $color-secondary-stronger: hsl(51, 78%, 32%);

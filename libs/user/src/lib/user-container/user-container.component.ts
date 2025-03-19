@@ -1,4 +1,5 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { BackendConfigurationService } from '@flaps/core';
 
 @Component({
   selector: 'nus-user-container',
@@ -9,4 +10,6 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, Input } from '@an
 })
 export class UserContainerComponent {
   @Input({ transform: booleanAttribute }) alignLeft = false;
+  private backendConfig = inject(BackendConfigurationService);
+  assetsPath = this.backendConfig.getAssetsPath();
 }

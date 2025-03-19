@@ -13,6 +13,7 @@ data:
   SITE_KEY: "{{ .Values.site_key }}"
   BRAND_NAME: "{{ .Values.brand_name }}"
   BRAND_DOMAIN: "{{ .Values.brand_domain }}"
+  ASSETS_PATH: "{{ .Values.assets_path }}"
   APP_NAME: {{ .Values.app_name }}
   SENTRY_ENV: {{ .Values.sentry_environment }}
   SENTRY_URL: "{{ .Values.sentry_url }}"

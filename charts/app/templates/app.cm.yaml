@@ -14,6 +14,7 @@ data:
   CDN: "{{ .Values.cdn }}"
   BRAND_NAME: "{{ .Values.brand_name }}"
   BRAND_DOMAIN: "{{ .Values.brand_domain }}"
+  ASSETS_PATH: "{{ .Values.assets_path }}"
   SENTRY_ENV: {{ .Values.sentry_environment }}
   SENTRY_URL: "{{ .Values.sentry_url }}"
   EDITOR_URL: "{{ .Values.editor_url }}"

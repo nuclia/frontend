@@ -1,7 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { NavigationStart, Router, Scroll } from '@angular/router';
 import { filter, Observable, of, Subject } from 'rxjs';
-import { standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
+import { BackendConfigurationService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
 import { selectAnimations } from '../utils';
 import { Account } from '@nuclia/core';
@@ -21,6 +29,8 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   );
   selectKb: boolean = false;
   unsubscribeAll = new Subject<void>();
+  private backendConfig = inject(BackendConfigurationService);
+  assetsPath = this.backendConfig.getAssetsPath();
 
   standalone = this.environment.standalone;
 

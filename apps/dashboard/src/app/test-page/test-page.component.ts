@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DEFAULT_WIDGET_CONFIG, NUCLIA_STANDARD_SEARCH_CONFIG, SearchWidgetService } from '@flaps/common';
-import { SDKService } from '@flaps/core';
+import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { map, switchMap, take } from 'rxjs';
@@ -18,6 +18,8 @@ export class TestPageComponent {
   searchConfigs = this.searchWidgetService.searchConfigurations;
   widgetPreview = this.searchWidgetService.widgetPreview;
   kb = this.sdk.currentKb;
+  private backendConfig = inject(BackendConfigurationService);
+  assetsPath = this.backendConfig.getAssetsPath();
 
   selected?: string;
   darkMode = false;
