@@ -1,0 +1,58 @@
+@if (learningConfigurations; as learningConfig) {
+  <div class="form-container">
+    @if (generativeModel?.user_key) {
+      @if (learningConfig['user_keys'].schemas?.[generativeModel?.user_key || '']; as userKeys) {
+        <div class="separator"></div>
+        @if (modelsRequiringUserKey.includes(generativeModel?.value)) {
+          <div class="title-s">
+            {{
+              'kb.ai-models.answer-generation.select-llm.own-key.title'
+                | translate
+                  : {
+                      provider: keyProviders[generativeModel?.user_key || ''] || generativeModel?.user_key
+                    }
+            }}
+          </div>
+        } @else {
+          <pa-toggle
+            labelOnRight
+            [stfUnauthorizedFeature]="(isUserPromptsAuthorized | async) === false"
+            fullProBadge
+            [formControl]="userKeysToggle"
+            (valueChange)="onOwnKeyToggle()">
+            {{
+              'kb.ai-models.answer-generation.select-llm.own-key.label'
+                | translate
+                  : {
+                      provider: keyProviders[generativeModel?.user_key || ''] || generativeModel?.user_key
+                    }
+            }}
+          </pa-toggle>
+        }
+        @if (hasOwnKey) {
+          <div
+            class="form-container"
+            [formGroup]="userKeysGroup">
+            @for (field of userKeys.properties | keyvalue; track field.key) {
+              @if (field.value['widget'] === 'textarea') {
+                <pa-textarea
+                  resizable
+                  [formControlName]="field.key"
+                  [rows]="2"
+                  [help]="(userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')">
+                  {{ field.value.title }}
+                </pa-textarea>
+              } @else {
+                <pa-input
+                  [formControlName]="field.key"
+                  [help]="(userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')">
+                  {{ field.value.title }}
+                </pa-input>
+              }
+            }
+          </div>
+        }
+      }
+    }
+  </div>
+}
