@@ -45,13 +45,13 @@ interface Trigger {
 export class TaskSettingsComponent {
   private sdk = inject(SDKService);
 
-  modelNames = this.sdk.currentKb.pipe(
+  modelsInfo = this.sdk.currentKb.pipe(
     take(1),
     switchMap((kb) => kb.getLearningSchema()),
     map((schema) =>
       (schema?.['generative_model'].options || []).reduce(
-        (acc, curr) => ({ ...acc, [curr.value]: curr.name }),
-        {} as { [id: string]: string },
+        (acc, curr) => ({ ...acc, [curr.value]: { name: curr.name, userKey: curr.user_key || '' } }),
+        {} as { [id: string]: { name: string; userKey: string } },
       ),
     ),
   );

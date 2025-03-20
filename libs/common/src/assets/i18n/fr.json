@@ -1589,6 +1589,7 @@
 	"tasks-automation.settings.description": "Détails des paramètres choisis.",
 	"tasks-automation.settings.filter.description": "La tâche s'exécutera uniquement pour les ressources correspondant aux filtres sélectionnés.",
 	"tasks-automation.settings.filter.title": "Filtres sélectionnés",
+	"tasks-automation.settings.own-key": "Clé propre",
 	"tasks-automation.settings.title": "Paramètres de l'agent",
 	"tasks-automation.status.completed": "Terminé",
 	"tasks-automation.status.error": "Erreur",

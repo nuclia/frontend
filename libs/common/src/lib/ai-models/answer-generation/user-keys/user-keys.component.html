@@ -3,7 +3,7 @@
     @if (generativeModel?.user_key) {
       @if (learningConfig['user_keys'].schemas?.[generativeModel?.user_key || '']; as userKeys) {
         <div class="separator"></div>
-        @if (modelsRequiringUserKey.includes(generativeModel?.value)) {
+        @if (modelsRequiringUserKey.includes(generativeModel?.value || '')) {
           <div class="title-s">
             {{
               'kb.ai-models.answer-generation.select-llm.own-key.title'

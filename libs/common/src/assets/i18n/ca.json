@@ -1589,6 +1589,7 @@
 	"tasks-automation.settings.description": "Detalls de la configuració escollida.",
 	"tasks-automation.settings.filter.description": "La tasca només s'executarà per als recursos que coincideixin amb els filtres seleccionats.",
 	"tasks-automation.settings.filter.title": "Filtres seleccionats",
+	"tasks-automation.settings.own-key": "Clau pròpia",
 	"tasks-automation.settings.title": "Configuració de l'agent",
 	"tasks-automation.status.completed": "Completat",
 	"tasks-automation.status.error": "Per error",
