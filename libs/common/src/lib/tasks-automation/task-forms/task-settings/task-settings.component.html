@@ -12,7 +12,12 @@
         <div class="separator-line"></div>
         <div class="setting">
           <label>LLM</label>
-          <div>{{ (modelNames | async)?.[model] }}</div>
+          @if ((modelsInfo | async)?.[model]; as modelInfo) {
+            <div>{{ modelInfo.name }}</div>
+            @if (task.parameters.llm.keys?.[modelInfo.userKey]) {
+              <div>({{ 'tasks-automation.settings.own-key' | translate }})</div>
+            }
+          }
         </div>
       }
       <div class="separator-line"></div>

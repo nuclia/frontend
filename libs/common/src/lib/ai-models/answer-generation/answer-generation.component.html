@@ -21,67 +21,10 @@
               </pa-radio>
             }
           </pa-radio-group>
-
-          @if (currentGenerativeModel?.user_key) {
-            @if (learningConfig['user_keys'].schemas?.[currentGenerativeModel?.user_key || '']; as userKeys) {
-              <div class="separator"></div>
-              @if (modelsRequiringUserKey.includes(generativeModelValue)) {
-                <div class="title-s">
-                  {{
-                    'kb.ai-models.answer-generation.select-llm.own-key.title'
-                      | translate
-                        : {
-                            provider:
-                              keyProviders[currentGenerativeModel?.user_key || ''] || currentGenerativeModel?.user_key
-                          }
-                  }}
-                </div>
-              } @else {
-                <pa-toggle
-                  labelOnRight
-                  [stfUnauthorizedFeature]="(isSummarizationAuthorized | async) === false"
-                  fullProBadge
-                  [formControl]="userKeyToggle"
-                  (valueChange)="onOwnKeyToggle()">
-                  {{
-                    'kb.ai-models.answer-generation.select-llm.own-key.label'
-                      | translate
-                        : {
-                            provider:
-                              keyProviders[currentGenerativeModel?.user_key || ''] || currentGenerativeModel?.user_key
-                          }
-                  }}
-                </pa-toggle>
-              }
-              @if (hasOwnKey) {
-                <div
-                  class="form-container"
-                  [formGroup]="userKeysGroup">
-                  @for (field of userKeys.properties | keyvalue; track field.key) {
-                    @if (field.value['widget'] === 'textarea') {
-                      <pa-textarea
-                        resizable
-                        [formControlName]="field.key"
-                        [rows]="2"
-                        [help]="
-                          (userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')
-                        ">
-                        {{ field.value.title }}
-                      </pa-textarea>
-                    } @else {
-                      <pa-input
-                        [formControlName]="field.key"
-                        [help]="
-                          (userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')
-                        ">
-                        {{ field.value.title }}
-                      </pa-input>
-                    }
-                  }
-                </div>
-              }
-            }
-          }
+          <stf-user-keys
+            [generativeModel]="currentGenerativeModel"
+            [learningConfigurations]="learningConfig"
+            (formReady)="userKeysForm = $event"></stf-user-keys>
         }
       </div>
     </nsi-two-columns-configuration-item>
@@ -168,14 +111,14 @@
     <nsi-sticky-footer>
       <pa-button
         aspect="basic"
-        [disabled]="configForm.pristine"
+        [disabled]="pristine"
         (click)="resetForm()">
         {{ 'generic.cancel' | translate }}
       </pa-button>
       <pa-button
         kind="primary"
         type="submit"
-        [disabled]="configForm.invalid || configForm.pristine">
+        [disabled]="invalid || pristine">
         {{ 'kb.ai-models.common.save' | translate }}
       </pa-button>
     </nsi-sticky-footer>

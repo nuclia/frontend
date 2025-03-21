@@ -116,6 +116,10 @@
         <pa-select
           formControlName="model"
           [options]="availableLLMs"></pa-select>
+        <stf-user-keys
+          [learningConfigurations]="learningConfigurations"
+          [generativeModel]="generativeModel"
+          (formReady)="initUserKeysForm($event)"></stf-user-keys>
         <nsi-info-card
           type="warning"
           icon="warning">
@@ -194,7 +198,7 @@
     <pa-button
       kind="primary"
       type="submit"
-      [disabled]="form.invalid || !validFormInside">
+      [disabled]="form.invalid || userKeysForm?.invalid || !validFormInside">
       {{ activateButtonLabel | translate }}
     </pa-button>
   </nsi-sticky-footer>

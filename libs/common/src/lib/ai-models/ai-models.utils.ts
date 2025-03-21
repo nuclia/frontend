@@ -35,3 +35,16 @@ export function removeDeprecatedModels(learningSchema: LearningConfigurations) {
     },
   };
 }
+
+export const keyProviders: { [key: string]: string } = {
+  azure_openai: 'Azure OpenAI',
+  openai: 'OpenAI',
+  anthropic: 'Anthropic',
+  claude3: 'Anthropic',
+  palm: 'Google',
+  mistral: 'Mistral',
+  azure_mistral: 'Azure Mistral',
+  'chatgpt-vision': 'ChatGPT Vision',
+  chatgpt4: 'ChatGPT 4',
+  hf_llm: 'Hugging Face',
+};

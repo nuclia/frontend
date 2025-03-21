@@ -35,6 +35,7 @@ import {
   ApplyOption,
   Classification,
   FIELD_TYPE,
+  LearningConfigurations,
   LLMConfig,
   longToShortFieldType,
   TaskFullDefinition,
@@ -45,6 +46,7 @@ import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } 
 import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
+import { UserKeysComponent, UserKeysForm } from '../../ai-models';
 
 export interface TaskFormCommonConfig {
   name: string;
@@ -79,6 +81,7 @@ export interface TaskFormCommonConfig {
     PaTableModule,
     PaButtonModule,
     StickyFooterComponent,
+    UserKeysComponent,
   ],
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.scss',
@@ -126,6 +129,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       url: new FormControl<string>('', { nonNullable: true }),
     }),
   });
+  userKeysForm?: UserKeysForm;
   headers: { key: string; value: string }[] = [];
   parameters: { key: string; value: string }[] = [];
 
@@ -133,6 +137,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   get applyTaskValue() {
     return this.form.controls.applyTaskTo.value;
+  }
+  get generativeModel() {
+    return this.learningConfigurations?.['generative_model'].options?.find(
+      (option) => option.value === this.form.controls.llm.controls.model.value,
+    );
   }
 
   resourceCount?: number;
@@ -176,6 +185,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     return this.labelFilters.length;
   }
   taskDefinition?: TaskFullDefinition;
+  learningConfigurations?: LearningConfigurations;
   availableLLMs: OptionModel[] = [];
   unsupportedLLMs = ['generative-multilingual-2023'];
 
@@ -207,6 +217,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         switchMap((kb) => kb.getLearningSchema()),
       )
       .subscribe((schema) => {
+        this.learningConfigurations = schema;
         this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || [])
           .filter((option) => !this.unsupportedLLMs.includes(option.value))
           .map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name }));
@@ -237,6 +248,13 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  initUserKeysForm(form: UserKeysForm) {
+    this.userKeysForm = form;
+    this.userKeysForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      this.cdr.detectChanges();
+    });
   }
 
   toggleAll(filter: 'types' | 'fieldTypes', event: MouseEvent | KeyboardEvent) {
@@ -272,6 +290,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   activateTask() {
     const rawValue = this.form.getRawValue();
+    const userKeys = this.userKeysForm?.getRawValue();
     this.activate.emit({
       ...rawValue,
       webhook: rawValue.webhook.url.trim()
@@ -290,6 +309,13 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         field_types: this.selectedFieldTypes,
         labels: this.labelFilters,
         apply_to_agent_generated_fields: !!rawValue.filter.apply_to_agent_generated_fields,
+      },
+      llm: {
+        ...rawValue.llm,
+        keys:
+          this.generativeModel?.user_key && userKeys?.enabled
+            ? { [this.generativeModel.user_key]: userKeys.user_keys }
+            : {},
       },
     });
   }
