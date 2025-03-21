@@ -2,6 +2,7 @@
 
 /private_keys
 .env
+libs/search-widget/public/overrides
 
 # compiled output
 /dist
