@@ -51,8 +51,13 @@ export class MissingLabelsDialogComponent {
   );
   missingLabels = forkJoin([this._allLabels, this.labelsService.labelSets.pipe(take(1))]).pipe(
     map(([allLabels, declaredLabels]) => {
+      const declaredLabelsets = Object.keys(declaredLabels || {});
       return Object.entries(allLabels).reduce(
         (acc, [labelSet, labels]) => {
+          const matchingLabelset = declaredLabelsets.find(
+            (declaredLabelset) => declaredLabelset.toLocaleLowerCase() === labelSet.toLocaleLowerCase(),
+          );
+          labelSet = matchingLabelset || labelSet;
           const missing = labels.filter(
             (label) => !(declaredLabels?.[labelSet]?.labels?.map((label) => label.title) || []).includes(label),
           );
