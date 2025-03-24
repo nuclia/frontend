@@ -13,7 +13,7 @@ export class SsoService {
     private config: BackendConfigurationService,
   ) {}
 
-  getSsoLoginUrl(provider: 'google' | 'github'): string {
+  getSsoLoginUrl(provider: 'google' | 'github' | 'microsoft'): string {
     return `${this.config.getAPIURL()}/auth/${provider}/authorize?came_from=${window.location.origin}`;
   }
 
