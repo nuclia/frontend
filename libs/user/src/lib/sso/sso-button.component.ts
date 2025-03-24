@@ -4,7 +4,7 @@ import { WINDOW } from '@ng-web-apis/common';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { TranslateService } from '@ngx-translate/core';
 
-type Provider = 'google' | 'github';
+type Provider = 'google' | 'github' | 'microsoft';
 
 @Component({
   selector: 'stf-sso-button',

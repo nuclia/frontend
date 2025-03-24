@@ -35,6 +35,10 @@ describe('SsoButtonComponent', () => {
     component.provider = 'github';
     expect(component.icon).toBe(`assets/sso-icons/github.svg`);
     expect(component.providerName).toBe(`Github`);
+
+    component.provider = 'microsoft';
+    expect(component.icon).toBe(`assets/sso-icons/microsoft.svg`);
+    expect(component.providerName).toBe(`Microsoft`);
   });
 
   it('should translate google workspace on signup', () => {
@@ -45,6 +49,10 @@ describe('SsoButtonComponent', () => {
     component.provider = 'github';
     expect(component.icon).toBe(`assets/sso-icons/github.svg`);
     expect(component.providerName).toBe(`Github`);
+
+    component.provider = 'microsoft';
+    expect(component.icon).toBe(`assets/sso-icons/microsoft.svg`);
+    expect(component.providerName).toBe(`Microsoft`);
   });
 
   it('should redirect to sso login URL when clicking on the button', () => {
