@@ -4,6 +4,7 @@ import {
   Component,
   EventEmitter,
   inject,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -20,11 +21,13 @@ import {
   PaDropdownModule,
   PaPopupModule,
   PaIconModule,
+  OptionModel,
 } from '@guillotinaweb/pastanaga-angular';
 import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo } from '@nuclia/core';
-import { filter, forkJoin, map, Observable, Subject } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, Observable, Subject } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { switchMap, take, takeUntil } from 'rxjs/operators';
+import { shareReplay, startWith, switchMap, take, takeUntil } from 'rxjs/operators';
+import { TaskWithApplyOption } from '../../task-route.directive';
 
 export interface LabelingConfiguration {
   label: LabelOperation;
@@ -64,9 +67,21 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
     return this._type;
   }
 
+  @Input() set task(value: TaskWithApplyOption | undefined | null) {
+    if (value) {
+      this._task = value;
+      this.initForm(value);
+    }
+  }
+  get task() {
+    return this._task;
+  }
+  private _task?: TaskWithApplyOption;
+
   @Output() configurationChange = new EventEmitter<LabelingConfiguration>();
 
   labelSets: LabelSets | null = null;
+  labelSetOptions: OptionModel[] = [];
   hasLabelSet = false;
 
   labelingForm = new FormGroup({
@@ -90,6 +105,18 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
     return this.labelingForm.value.ident;
   }
 
+  labelOptions = combineLatest([
+    this.labelService.labelSets,
+    this.labelingForm.controls.ident.valueChanges.pipe(startWith(this.selectedLabelset)),
+  ]).pipe(
+    map(([labelSets, selectedLabelset]) =>
+      (labelSets?.[selectedLabelset || '']?.labels || []).map(
+        (label) => new OptionModel({ id: label.title, value: label.title, label: label.title }),
+      ),
+    ),
+    shareReplay(1),
+  );
+
   ngOnInit() {
     this.labelingForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.configurationChange.emit({
@@ -99,6 +126,21 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
       });
     });
     this.updateLabelsets();
+  }
+
+  initForm(task: TaskWithApplyOption) {
+    const labelOperation = task.parameters?.operations?.find((operation) => operation.label)?.label;
+    if (labelOperation) {
+      this.labelingForm.controls.labels.clear();
+      labelOperation.labels?.forEach(() => {
+        this.addLabel();
+      });
+      this.labelingForm.patchValue({
+        ...labelOperation,
+        on: task.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks',
+      });
+    }
+    this.cdr.markForCheck();
   }
 
   addLabel() {
@@ -160,6 +202,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
         map(([labelSets, hasLabelSet]) => {
           this.labelSets = labelSets;
           this.hasLabelSet = hasLabelSet;
+          this.labelSetOptions = labelSets ? this.getLabelsetOptions(labelSets) : [];
           return undefined;
         }),
       );
@@ -171,6 +214,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
         map(([labelSets, hasLabelSet]) => {
           this.labelSets = labelSets;
           this.hasLabelSet = hasLabelSet;
+          this.labelSetOptions = labelSets ? this.getLabelsetOptions(labelSets) : [];
           return undefined;
         }),
       );
@@ -178,5 +222,10 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   }
   updateLabelsets(type: 'resources' | 'text-blocks' = 'resources') {
     this._updateLabelsets(type).subscribe(() => this.cdr.markForCheck());
+  }
+  getLabelsetOptions(labelSets: LabelSets) {
+    return Object.entries(labelSets).map(
+      ([key, labelSet]) => new OptionModel({ id: key, value: key, label: labelSet.title }),
+    );
   }
 }

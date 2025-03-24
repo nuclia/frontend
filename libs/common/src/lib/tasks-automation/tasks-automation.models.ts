@@ -1,5 +1,5 @@
 import { isObject } from '@flaps/core';
-import { DataAugmentationParameters, TaskFilterType, TaskName, TaskOnBatch, TaskOnGoing } from '@nuclia/core';
+import { DataAugmentationParameters, Operation, TaskName, TaskOnBatch, TaskOnGoing } from '@nuclia/core';
 
 export interface DataAugmentationTaskOnGoing extends TaskOnGoing {
   parameters: DataAugmentationParameters;
@@ -80,7 +80,7 @@ export function resolveSchemaReferences(schema: { [key: string]: any }, defs: { 
   );
 }
 
-export function getTaskFilterTypeFromTaskName(name: TaskName): TaskFilterType | null {
+export function getOperationFromTaskName(name: TaskName): keyof Operation | null {
   switch (name) {
     case 'labeler':
       return 'label';

@@ -15,30 +15,23 @@ export const TASK_AUTOMATION_ROUTES: Routes = [
         path: '',
         component: TaskListComponent,
       },
-      {
-        path: 'ask',
-        component: AskComponent,
-      },
-      {
-        path: 'synthetic-questions',
-        component: QuestionAnswerComponent,
-      },
-      {
-        path: 'labeler',
-        component: LabelerComponent,
-      },
-      {
-        path: 'llm-graph',
-        component: GraphExtractionComponent,
-      },
-      {
-        path: 'prompt-guard',
-        component: LLMSecurityComponent,
-      },
-      {
-        path: 'llama-guard',
-        component: ContentSafetyComponent,
-      },
+      { path: 'ask', component: AskComponent },
+      { path: 'ask/:taskId', component: AskComponent },
+
+      { path: 'synthetic-questions', component: QuestionAnswerComponent },
+      { path: 'synthetic-questions/:taskId', component: QuestionAnswerComponent },
+
+      { path: 'labeler', component: LabelerComponent },
+      { path: 'labeler/:taskId', component: LabelerComponent },
+
+      { path: 'llm-graph', component: GraphExtractionComponent },
+      { path: 'llm-graph/:taskId', component: GraphExtractionComponent },
+
+      { path: 'prompt-guard', component: LLMSecurityComponent },
+      { path: 'prompt-guard/:taskId', component: LLMSecurityComponent },
+
+      { path: 'llama-guard', component: ContentSafetyComponent },
+      { path: 'llama-guard/:taskId', component: ContentSafetyComponent },
       {
         path: ':taskId',
         component: TaskDetailsComponent,

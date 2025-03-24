@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent } from '@nuclia/sistema';
 import { PaCardModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
-import {} from 'stream';
 import { TASK_ICONS } from '../tasks-automation.models';
 import { TaskName } from '@nuclia/core';
 

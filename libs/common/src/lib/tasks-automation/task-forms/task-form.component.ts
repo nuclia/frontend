@@ -42,17 +42,18 @@ import {
   TaskName,
   TaskTrigger,
 } from '@nuclia/core';
-import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap } from 'rxjs';
 import { debounceTime, take, takeUntil } from 'rxjs/operators';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 import { UserKeysComponent, UserKeysForm } from '../../ai-models';
+import { TaskWithApplyOption } from '../task-route.directive';
+import { getOperationFromTaskName } from '../tasks-automation.models';
 
 export interface TaskFormCommonConfig {
   name: string;
   applyTaskTo: ApplyOption;
   filter: {
-    //searchIn: 'titleOrContent' | 'title' | 'content';
     contains: string[];
     field_types: string[];
     labels?: string[];
@@ -109,21 +110,38 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   // Flag indicating if the form inside ng-content is valid
   @Input({ transform: booleanAttribute }) validFormInside = false;
   // Flag indicating if the model selection is hidden
-  @Input({ transform: booleanAttribute }) modelsHidden = false;
+  @Input({ transform: booleanAttribute }) set modelsHidden(value: boolean) {
+    this._modelsHidden = value;
+    this.form.controls.llm.controls.model.clearValidators();
+  }
+  get modelsHidden() {
+    return this._modelsHidden;
+  }
+  private _modelsHidden: boolean = false;
+  // Task whose data is displayed in the form
+  @Input() set task(value: TaskWithApplyOption | undefined | null) {
+    if (value) {
+      this._task = value;
+      this.initForm(value);
+    }
+  }
+  get task() {
+    return this._task;
+  }
+  private _task?: TaskWithApplyOption;
 
   @Output() cancel = new EventEmitter<void>();
-  @Output() activate = new EventEmitter<TaskFormCommonConfig>();
+  @Output() save = new EventEmitter<TaskFormCommonConfig>();
 
   form = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     applyTaskTo: new FormControl<ApplyOption>('NEW', { nonNullable: true }),
     filter: new FormGroup({
-      //searchIn: new FormControl<'titleOrContent' | 'title' | 'content'>('titleOrContent', { nonNullable: true }),
       contains: new FormControl<string>('', { nonNullable: true }),
       apply_to_agent_generated_fields: new FormControl<boolean>(false),
     }),
     llm: new FormGroup({
-      model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+      model: new FormControl<string>('gemini-1-5-flash', { nonNullable: true, validators: [Validators.required] }),
     }),
     webhook: new FormGroup({
       url: new FormControl<string>('', { nonNullable: true }),
@@ -149,7 +167,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   fieldTypeFilters: OptionModel[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text, FIELD_TYPE.conversation].map(
     (t) => new OptionModel({ id: longToShortFieldType(t), value: longToShortFieldType(t), label: t }),
   );
-  allFieldTypesSelected = false;
+  get allFieldTypesSelected() {
+    return this.fieldTypeFilters.every((option) => option.selected);
+  }
   get fieldTypeSelectionCount(): number {
     return this.fieldTypeFilters.filter((option) => option.selected).length;
   }
@@ -161,26 +181,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
 
   hasLabelSets = this.labelService.hasResourceLabelSets;
-  resourceLabelSets = this.labelService.resourceLabelSets.pipe(
-    tap((labelSets) => {
-      if (labelSets) {
-        // FIXME for edition depending on how the filters will be stored
-        const currentFilters: string[] = [];
-        this.labelSelection = Object.entries(labelSets).reduce((selection, [id, labelset]) => {
-          labelset.labels.forEach((label) => {
-            const labelFilter = `/classification.labels/${id}/${label.title}`;
-            if (currentFilters.includes(labelFilter)) {
-              selection.push({ labelset: id, label: label.title });
-            }
-          });
-          return selection;
-        }, [] as Classification[]);
-        this.cdr.markForCheck();
-      }
-    }),
-  );
+  resourceLabelSets = this.labelService.resourceLabelSets;
   labelSelection: Classification[] = [];
-  labelFilters: string[] = [];
+  get labelFilters() {
+    return this.labelSelection.map((label) => `${label.labelset}/${label.label}`);
+  }
   get labelSelectionCount(): number {
     return this.labelFilters.length;
   }
@@ -221,7 +226,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || [])
           .filter((option) => !this.unsupportedLLMs.includes(option.value))
           .map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name }));
-        this.form.controls.llm.patchValue({ model: 'gemini-1-5-flash' });
         this.cdr.markForCheck();
       });
 
@@ -250,8 +254,40 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
+  initForm(task: TaskWithApplyOption) {
+    const triggers =
+      this.task?.parameters.operations?.[0]?.[getOperationFromTaskName(this.task.task.name) || 'ask']?.triggers?.[0];
+    this.form.patchValue({
+      ...task.parameters,
+      filter: { ...task.parameters.filter, contains: task.parameters.filter.contains?.[0] || '' },
+      applyTaskTo: task.applyOption,
+      webhook: { url: triggers?.url || '' },
+    });
+    this.fieldTypeFilters.forEach((option) => {
+      option.selected = (task.parameters.filter.field_types || []).includes(option.id);
+    });
+    this.labelSelection = (task.parameters.filter.labels || []).map((label) => ({
+      labelset: label.split('/')[0],
+      label: label.split('/')[1],
+    }));
+    if (triggers) {
+      this.headers = Object.entries(triggers.headers || {}).map(([key, value]) => ({ key, value }));
+      this.parameters = Object.entries(triggers.params || {}).map(([key, value]) => ({ key, value }));
+    }
+    this.form.controls.applyTaskTo.disable();
+    this.cdr.markForCheck();
+  }
+
   initUserKeysForm(form: UserKeysForm) {
     this.userKeysForm = form;
+    if (this.task && this.generativeModel?.user_key) {
+      const userkeys = this.task.parameters.llm.keys?.[this.generativeModel.user_key];
+      this.userKeysForm.patchValue({
+        enabled: !!userkeys,
+        user_keys: userkeys,
+      });
+    }
+    // Change detection is needed when the child component changes the form
     this.userKeysForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.cdr.detectChanges();
     });
@@ -278,20 +314,18 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateFiltersWithLabels(labels: Classification[]) {
-    this.labelFilters = labels.map((label) => `${label.labelset}/${label.label}`);
+  updateFiltersWithLabels() {
     this.onToggleFilter();
   }
 
   onToggleFilter() {
-    this.allFieldTypesSelected = this.fieldTypeFilters.every((option) => option.selected);
     this.selectedFilters.next(this.selectedFieldTypes.concat(this.labelFilters));
   }
 
-  activateTask() {
+  onSave() {
     const rawValue = this.form.getRawValue();
     const userKeys = this.userKeysForm?.getRawValue();
-    this.activate.emit({
+    this.save.emit({
       ...rawValue,
       webhook: rawValue.webhook.url.trim()
         ? {
@@ -318,12 +352,5 @@ export class TaskFormComponent implements OnInit, OnDestroy {
             : {},
       },
     });
-  }
-
-  setHeaders(headers: { key: string; value: string }[]) {
-    this.headers = headers;
-  }
-  setParameters(parameters: { key: string; value: string }[]) {
-    this.parameters = parameters;
   }
 }

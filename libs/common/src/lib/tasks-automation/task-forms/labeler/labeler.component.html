@@ -15,15 +15,18 @@
   </header>
 
   <app-task-form
+    [task]="task | async"
     [type]="type"
     triggerDescription="tasks-automation.labeler.trigger-description"
     activateButtonLabel="tasks-automation.labeler.footer.activate-button-label"
     footerNoteAutomation="tasks-automation.labeler.footer.apply-automation"
     footerNoteOneTime="tasks-automation.labeler.footer.apply-one-time"
     [validFormInside]="labelingConfig?.valid"
-    (activate)="activateTask($event)"
+    (save)="onSave($event)"
     (cancel)="backToTaskList()">
-    <stf-labeling-configuration (configurationChange)="onConfigurationChange($event)">
+    <stf-labeling-configuration
+      [task]="task | async"
+      (configurationChange)="onConfigurationChange($event)">
       <nsi-two-columns-configuration-item
         itemTitle="tasks-automation.labeler.find-labels.title"
         description="tasks-automation.labeler.find-labels.description">

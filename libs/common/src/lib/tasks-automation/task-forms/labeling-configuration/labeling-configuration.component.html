@@ -22,11 +22,8 @@
         <pa-select
           formControlName="ident"
           [label]="'tasks-automation.form.labels-selection.labelset' | translate"
-          (change)="clearLabels()">
-          @for (labelset of labelSets | keyvalue; track labelset.key) {
-            <pa-option [value]="labelset.key">{{ labelset.value.title }}</pa-option>
-          }
-        </pa-select>
+          [options]="labelSetOptions"
+          (change)="clearLabels()"></pa-select>
         <div class="input-with-help">
           <pa-input formControlName="description">
             {{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}
@@ -60,11 +57,8 @@
           [formGroup]="label">
           <pa-select
             formControlName="label"
-            [label]="'tasks-automation.form.labels-selection.label-list.label' | translate">
-            @for (label of labelSets?.[selectedLabelset || '']?.labels || []; track label.title) {
-              <pa-option [value]="label.title">{{ label.title }}</pa-option>
-            }
-          </pa-select>
+            [options]="(labelOptions | async) || []"
+            [label]="'tasks-automation.form.labels-selection.label-list.label' | translate"></pa-select>
           <pa-input formControlName="description">
             {{ 'tasks-automation.form.labels-selection.label-list.when-to-apply' | translate }}
           </pa-input>

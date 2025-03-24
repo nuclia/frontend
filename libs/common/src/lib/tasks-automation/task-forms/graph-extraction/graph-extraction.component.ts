@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BackButtonComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
@@ -7,9 +7,8 @@ import { TaskRouteDirective } from '../../task-route.directive';
 import { PaButtonModule, PaIconModule, PaPopupModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GraphOperation, TaskApplyTo, TaskName } from '@nuclia/core';
-import { TasksAutomationService } from '../../tasks-automation.service';
 import { STFUtils } from '@flaps/core';
-import { map } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 
 @Component({
   selector: 'stf-graph-extraction',
@@ -30,7 +29,6 @@ import { map } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GraphExtractionComponent extends TaskRouteDirective {
-  private taskAutomation = inject(TasksAutomationService);
   type: TaskName = 'llm-graph';
 
   graphOperation = this.task.pipe(
@@ -38,6 +36,7 @@ export class GraphExtractionComponent extends TaskRouteDirective {
   );
 
   graphForm = new FormGroup({
+    ident: new FormControl('', { nonNullable: true }),
     entity_defs: new FormArray<FormGroup<{ label: FormControl<string>; description: FormControl<string> }>>([
       new FormGroup({
         label: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -80,6 +79,25 @@ export class GraphExtractionComponent extends TaskRouteDirective {
     return this.graphForm.controls.examples.controls;
   }
 
+  constructor() {
+    super();
+    this.graphOperation
+      .pipe(
+        filter((operation) => !!operation),
+        take(1),
+      )
+      .subscribe((operation) => {
+        this.graphForm.controls.entity_defs.clear();
+        operation.entity_defs?.forEach(() => {
+          this.addNerType();
+        });
+        operation.examples?.forEach((example, i) => {
+          this.addExample(example.entities.length, example.relations.length);
+        });
+        this.graphForm.patchValue(operation);
+      });
+  }
+
   getEntitiesControls(index: number) {
     return this.examplesControls[index].controls.entities.controls;
   }
@@ -101,8 +119,8 @@ export class GraphExtractionComponent extends TaskRouteDirective {
     this.graphForm.controls.entity_defs.removeAt(index);
   }
 
-  addExample() {
-    this.graphForm.controls.examples.push(this.initExampleGroup());
+  addExample(entities: number, relations: number) {
+    this.graphForm.controls.examples.push(this.initExampleGroup(entities, relations));
   }
 
   removeExample(index: number) {
@@ -136,52 +154,54 @@ export class GraphExtractionComponent extends TaskRouteDirective {
     this.examplesControls[exampleIndex].controls.relations.removeAt(relationIndex);
   }
 
-  activateTask(commonConfig: TaskFormCommonConfig) {
+  onSave(commonConfig: TaskFormCommonConfig) {
+    const values = this.graphForm.getRawValue();
     const graphOperation: GraphOperation = {
-      ...this.graphForm.getRawValue(),
-      ident: `${STFUtils.generateSlug(commonConfig.name)}_${STFUtils.generateRandomSlugSuffix()}`,
+      ...values,
+      ident: values.ident
+        ? values.ident
+        : `${STFUtils.generateSlug(commonConfig.name)}_${STFUtils.generateRandomSlugSuffix()}`,
       triggers: commonConfig.webhook && [commonConfig.webhook],
     };
-    this.taskAutomation
-      .startTask(
-        this.type,
-        {
-          name: commonConfig.name,
-          filter: commonConfig.filter,
-          llm: commonConfig.llm,
-          operations: [{ graph: graphOperation }],
-          on: TaskApplyTo.FULL_FIELD,
-        },
-        commonConfig.applyTaskTo,
-      )
-      .subscribe({
-        complete: () => this.backToTaskList(),
-        error: (error) => this.showError(error),
-      });
+    const parameters = {
+      name: commonConfig.name,
+      filter: commonConfig.filter,
+      llm: commonConfig.llm,
+      operations: [{ graph: graphOperation }],
+      on: TaskApplyTo.FULL_FIELD,
+    };
+    this.saveTask(this.type, parameters, commonConfig.applyTaskTo);
   }
 
-  private initExampleGroup() {
-    return new FormGroup({
-      entities: new FormArray<FormGroup<{ name: FormControl<string>; label: FormControl<string> }>>([
-        new FormGroup({
-          name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-          label: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-        }),
-      ]),
+  private initExampleGroup(entities: number, relations: number) {
+    const example = new FormGroup({
+      entities: new FormArray<FormGroup<{ name: FormControl<string>; label: FormControl<string> }>>([]),
       relations: new FormArray<
         FormGroup<{
           source: FormControl<string>;
           target: FormControl<string>;
           label: FormControl<string>;
         }>
-      >([
+      >([]),
+      text: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    });
+    for (let i = 0; i < entities; i++) {
+      example.controls.entities.push(
+        new FormGroup({
+          name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+          label: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+        }),
+      );
+    }
+    for (let i = 0; i < relations; i++) {
+      example.controls.relations.push(
         new FormGroup({
           source: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
           target: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
           label: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
         }),
-      ]),
-      text: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    });
+      );
+    }
+    return example;
   }
 }

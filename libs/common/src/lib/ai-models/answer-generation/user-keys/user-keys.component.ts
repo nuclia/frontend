@@ -5,7 +5,6 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -36,9 +35,10 @@ export type UserKeysForm = FormGroup<{
   templateUrl: './user-keys.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserKeysComponent implements OnChanges, OnDestroy, OnInit {
+export class UserKeysComponent implements OnChanges, OnDestroy {
   keyProviders = keyProviders;
   modelsRequiringUserKey = ['huggingface'];
+  ready = false;
 
   @Input() learningConfigurations?: LearningConfigurations;
   @Input() generativeModel?: LearningConfigurationOption;
@@ -83,10 +83,6 @@ export class UserKeysComponent implements OnChanges, OnDestroy, OnInit {
     });
   }
 
-  ngOnInit() {
-    this.formReady.emit(this.form);
-  }
-
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
@@ -122,6 +118,10 @@ export class UserKeysComponent implements OnChanges, OnDestroy, OnInit {
       this.updateValidators();
     }
     this.userKeysToggle.patchValue(this.modelsRequiringUserKey.includes(this.generativeModel?.value || ''));
+    if (!this.ready) {
+      this.ready = true;
+      this.formReady.emit(this.form);
+    }
   }
 
   updateValidators() {
