@@ -321,19 +321,14 @@ export function getFindParagraphs(results: Search.FindResults, fullId: FieldFull
 
 export function injectCustomCss(cssPath: string, element: HTMLElement) {
   if (cssPath) {
-    _injectCustomCss(cssPath, element);
+    fetch(cssPath)
+      .then((res) => res.text())
+      .then((css) => {
+        const style = document.createElement('style');
+        style.innerHTML = css;
+        element.getRootNode().appendChild(style);
+      });
   }
-}
-
-function _injectCustomCss(cssPath: string, element: HTMLElement) {
-  fetch(cssPath)
-    .then((res) => res.text())
-    .then((css) => {
-      const style = document.createElement('style');
-      style.innerHTML = css;
-      console.log(element.getRootNode());
-      element.getRootNode().appendChild(style);
-    });
 }
 
 export function hasNoResultsWithAutofilter(

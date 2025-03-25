@@ -34,14 +34,6 @@
         display: none;
       }
     }
-    .topbar-logo-collapsed {
-      display: block;
-      width: rhythm(4);
-      height: auto;
-      @media screen and (min-width: 960px) {
-        display: none;
-      }
-    }
   }
 
   .topbar-actions {
