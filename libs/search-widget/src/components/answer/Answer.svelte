@@ -48,8 +48,7 @@
 
   $: text = addReferences(answer.text || '', answer.citations || {});
 
-  $: sources =
-    answer.citations && answer.sources?.resources ? getSourcesResults(answer.sources?.resources, answer.citations) : [];
+  $: sources = getSourcesResults(answer);
 
   $: sources &&
     (element?.querySelectorAll('.sw-answer .ref') || []).forEach((ref) => {
@@ -105,7 +104,10 @@
     return text;
   }
 
-  function getSourcesResults(resources: { [key: string]: Search.FindResource }, citations: Citations): TypedResult[] {
+  function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
+    const resources = answer.sources?.resources || {};
+    const graphPrequeryResources = answer?.prequeries?.graph?.resources || {};
+    const citations = answer.citations || {};
     return Object.keys(citations).reduce((acc, citationId, index) => {
       // When using extra_context, the paragraphId is fake, like USER_CONTEXT_0
       // Note: the widget does not support extra_context, but a proxy could be injecting some
@@ -115,47 +117,47 @@
         const citationPath = citationId.split('/');
         const [resourceId, shortFieldType, fieldId] = citationPath;
         const resource = resources[resourceId];
-        if (resource) {
-          if (citationPath.length === 4) {
-            // the citation is about a paragraph
-            const paragraph = resources[resourceId]?.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[
-              citationId
-            ] as RankedParagraph;
+        const graphPrequeryResource = graphPrequeryResources[resourceId];
+        if (resource && citationPath.length === 4) {
+          // the citation is about a paragraph
+          const paragraph = resource.fields?.[`/${shortFieldType}/${fieldId}`]?.paragraphs?.[
+            citationId
+          ] as RankedParagraph;
+          if (paragraph) {
             paragraph.rank = index + 1;
-            if (paragraph) {
-              let field: FieldId;
-              if (shortFieldType === SHORT_FIELD_TYPE.generic) {
-                // we take the first other field that is not generic
-                field = getNonGenericField(resource.data || {});
-              } else {
-                field = {
-                  field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
-                  field_id: fieldId,
-                };
-              }
-              const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
-              if (!existing) {
-                const fieldData = getFieldDataFromResource(resource, field);
-                const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
-                acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] });
-              } else {
-                existing.paragraphs!.push(paragraph);
-              }
-            }
-          } else if (citationPath.length === 3) {
-            // the citation is about a resource
-            const existing = acc.find((r) => r.id === resource.id);
-            if (!existing) {
-              const field = {
+            let field: FieldId;
+            if (shortFieldType === SHORT_FIELD_TYPE.generic) {
+              // we take the first other field that is not generic
+              field = getNonGenericField(resource.data || {});
+            } else {
+              field = {
                 field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
                 field_id: fieldId,
               };
+            }
+            const existing = acc.find((r) => r.id === resource.id && r.field?.field_id === field.field_id);
+            if (!existing) {
               const fieldData = getFieldDataFromResource(resource, field);
               const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
-              acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [], ranks: [index + 1] });
+              acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] });
             } else {
-              existing.ranks!.push(index + 1);
+              existing.paragraphs!.push(paragraph);
             }
+          }
+        } else if ((resource && citationPath.length === 3) || graphPrequeryResource) {
+          // the citation is about a resource or a relation
+          const res = resources[resourceId] || graphPrequeryResource;
+          const existing = acc.find((r) => r.id === res.id);
+          if (!existing) {
+            const field = {
+              field_type: shortToLongFieldType(shortFieldType as SHORT_FIELD_TYPE) || FIELD_TYPE.generic,
+              field_id: fieldId,
+            };
+            const fieldData = getFieldDataFromResource(res, field);
+            const { resultType, resultIcon } = getResultType({ ...res, field, fieldData });
+            acc.push({ ...res, resultType, resultIcon, field, fieldData, paragraphs: [], ranks: [index + 1] });
+          } else {
+            existing.ranks!.push(index + 1);
           }
         }
       }
