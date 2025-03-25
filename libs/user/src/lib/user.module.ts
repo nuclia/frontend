@@ -62,6 +62,11 @@ export const userRoutes: Routes = [
     data: { github: true },
   },
   {
+    path: 'callbacks/microsoft',
+    component: CallbackComponent,
+    data: { microsoft: true },
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     component: ProfileComponent,

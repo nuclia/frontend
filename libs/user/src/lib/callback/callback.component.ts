@@ -39,7 +39,7 @@ export class CallbackComponent implements OnInit {
       this.redirect();
     } else if (
       !this.route.snapshot.queryParamMap.get('token') &&
-      (this.route.snapshot.data['google'] || this.route.snapshot.data['github'])
+      (this.route.snapshot.data['google'] || this.route.snapshot.data['github'] || this.route.snapshot.data['microsoft'])
     ) {
       this.ssoLogin();
     } else {
