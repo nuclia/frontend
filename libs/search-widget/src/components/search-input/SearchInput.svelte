@@ -218,7 +218,7 @@
   style:--filters-height={filterHeight}>
   {#if !$hideLogo}
     <img
-      src={`${getCDN()}${overrides}assets/logos/logo-grey.svg`}
+      src={`${getCDN()}${overrides}logos/logo-grey.svg`}
       class="logo"
       alt={brandName} />
   {/if}

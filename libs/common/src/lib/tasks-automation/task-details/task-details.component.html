@@ -7,13 +7,12 @@
       <div class="title">
         <h1 class="page-title">{{ task.parameters?.name }}</h1>
         <div class="actions">
-          @if (task.applyOption === 'NEW') {
-            <pa-button
-              aspect="basic"
-              (click)="modifyTask()">
-              {{ 'tasks-automation.actions.edit.edit-configuration' | translate }}
-            </pa-button>
-          }
+          <pa-button
+            aspect="basic"
+            [disabled]="task.applyOption !== 'NEW'"
+            (click)="modifyTask()">
+            {{ 'tasks-automation.actions.edit.edit-configuration' | translate }}
+          </pa-button>
         </div>
       </div>
     }
