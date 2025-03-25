@@ -1,6 +1,15 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  BackendConfigurationService,
   FeatureFlagService,
   FeaturesService,
   NavigationService,
@@ -51,6 +60,10 @@ export class TopbarComponent {
 
   showDemo = !this.standalone;
   notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
+
+  private backendConfig = inject(BackendConfigurationService);
+  assetsPath = this.backendConfig.getAssetsPath();
+  brandName = this.backendConfig.getBrandName();
 
   constructor(
     private router: Router,

@@ -51,19 +51,30 @@ function apply_path {
     echo "Configuring SAML_ENABLED vars"
     sed -i "s#STF_DOCKER_CONFIG_SAML_ENABLED#${SAML_ENABLED}#g" $jsonFile
 
-    if [ -z "$BRAND_NAME" ]; then
+    echo "Check that we have BRAND_NAME vars"
+    test -n "$BRAND_NAME"
+    sed -i "s#STF_DOCKER_CONFIG_BRAND_NAME#${BRAND_NAME}#g" $jsonFile
+    if [ "$BRAND_NAME" == Nuclia ]; then
       echo "No re-branding";
     else
       echo "Re-branding to '$BRAND_NAME'";
-      sed -i "s/Nuclia/$BRAND_NAME/" /dist/apps/assets/i18n/**/*.json
+      sed -i "s/Nuclia/$BRAND_NAME/" /dist/assets/i18n/**/*.json
+      sed -i "s/<title>Nuclia<\/title>/<title>$BRAND_NAME<\/title>/" /dist/index.html
     fi
 
-    if [ -z "$BRAND_DOMAIN" ]; then
+    if [ "$BRAND_DOMAIN" == nuclia.cloud ]; then
       echo "No re-branding domain";
     else
       echo "Re-branding to '$BRAND_DOMAIN'";
-      sed -i "s/nuclia\.cloud/$BRAND_DOMAIN/" /dist/apps/assets/i18n/**/*.json
+      sed -i "s/nuclia\.cloud/$BRAND_DOMAIN/" /dist/assets/i18n/**/*.json
     fi
+
+    echo "Check that we have ASSETS_PATH vars"
+    test -n "$ASSETS_PATH"
+
+    echo "Using assets from '$ASSETS_PATH'";
+    sed -i "s#STF_DOCKER_CONFIG_ASSETS_PATH#${ASSETS_PATH}#g" $jsonFile
+    sed -i -E "s#assets\/(overrides|logos|favicon)#${ASSETS_PATH}/\1#g" /dist/index.html
 }
 
 # Should we monkey patch?

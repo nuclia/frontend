@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OAuthConsentData, OAuthService } from '@flaps/core';
+import { BackendConfigurationService, OAuthConsentData, OAuthService } from '@flaps/core';
 
 const INVISIBLE_SCOPES = ['offline'];
 
@@ -14,10 +14,16 @@ export class ConsentComponent implements OnInit {
   consentChallenge: string | null = null;
   consentData: OAuthConsentData | undefined;
   error: string | null = null;
+  private backendConfig = inject(BackendConfigurationService);
+  assetsPath = this.backendConfig.getAssetsPath();
+  brandName = this.backendConfig.getBrandName();
 
   @ViewChild('form') form: ElementRef | undefined;
 
-  constructor(private route: ActivatedRoute, private oAuthService: OAuthService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private oAuthService: OAuthService,
+  ) {}
 
   ngOnInit(): void {
     const params = this.route.snapshot.queryParamMap;

@@ -8,7 +8,7 @@
 // =================================================
 // Family
 $font-family-sans-serif:
-  Inter,
+  var(--custom-font-family, Inter),
   Futura,
   -apple-system,
   BlinkMacSystemFont,

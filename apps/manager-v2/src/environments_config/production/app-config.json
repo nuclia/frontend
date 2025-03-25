@@ -4,6 +4,8 @@
   "backend": {
     "app": "STF_DOCKER_CONFIG_APP_NAME",
     "apiPath": "/api",
+    "brand_name": "STF_DOCKER_CONFIG_BRAND_NAME",
+    "assetsPath": "STF_DOCKER_CONFIG_ASSETS_PATH",
     "siteKey": "STF_DOCKER_CONFIG_SITE_KEY",
     "sentry_environment": "STF_DOCKER_CONFIG_SENTRY_ENV",
     "sentry_url": "STF_DOCKER_CONFIG_SENTRY_URL",

@@ -44,10 +44,6 @@ export class BackendConfigurationService {
     return this.staticConf.backend.social_login;
   }
 
-  getBaseAssetUrl(): string | undefined {
-    return this.staticConf.base_asset_url;
-  }
-
   getAllowedHostsRedirect(): string[] {
     return this.config.backend.allowed_hosts_redirect || [];
   }
@@ -66,6 +62,14 @@ export class BackendConfigurationService {
 
   getCDN(): string {
     return this.config.backend.cdn;
+  }
+
+  getAssetsPath(): string {
+    return this.config.backend.assetsPath || 'assets';
+  }
+
+  getBrandName(): string {
+    return this.config.backend.brand_name || 'Nuclia';
   }
 
   useRemoteLogin(): boolean {

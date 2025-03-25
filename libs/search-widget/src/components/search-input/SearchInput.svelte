@@ -51,6 +51,8 @@
 
   let searchInputElement: Textarea;
   const dispatch = createEventDispatcher();
+  const brandName = import.meta.env.VITE_BRAND_NAME || 'Nuclia';
+  const overrides = import.meta.env.VITE_OVERRIDES || '';
 
   let inputContainerElement: HTMLElement | undefined;
   let filterButtonElement: HTMLElement | undefined;
@@ -216,9 +218,9 @@
   style:--filters-height={filterHeight}>
   {#if !$hideLogo}
     <img
-      src={`${getCDN()}logos/nuclia-grey.svg`}
+      src={`${getCDN()}${overrides}assets/logos/logo-grey.svg`}
       class="logo"
-      alt="Nuclia" />
+      alt={brandName} />
   {/if}
   <div class="input-container">
     <div

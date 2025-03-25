@@ -26,7 +26,9 @@ describe('ConsentComponent', () => {
           useValue: {
             getAPIURL: () => 'key',
             getRecaptchaKey: () => 'key',
-            getSocialLogin: () => {}
+            getSocialLogin: () => {},
+            getAssetsPath: () => 'assets',
+            getBrandName: () => 'Nuclia',
           },
         },
       ],

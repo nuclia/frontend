@@ -19,7 +19,7 @@ import {
 import { getFileUrls } from './api';
 import type { TypedResult } from './models';
 
-let CDN = 'https://cdn.nuclia.cloud/';
+let CDN = import.meta.env.VITE_CDN || 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
 export const getCDN = () => CDN;
 

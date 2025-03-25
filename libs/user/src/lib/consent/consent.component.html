@@ -2,8 +2,8 @@
   <div class="consent-container">
     <img
       class="logo"
-      src="assets/logos/logo.svg"
-      alt="Nuclia" />
+      [src]="assetsPath + '/logos/logo.svg'"
+      [alt]="brandName" />
 
     <div
       *ngIf="error"

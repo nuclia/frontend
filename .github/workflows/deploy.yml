@@ -107,6 +107,24 @@ jobs:
           gsutil copy dist/libs/search-widget/*.css gs://$CDN_STORAGE
           gsutil copy -r libs/search-widget/public/* gs://$CDN_STORAGE
 
+      - name: Build & publish white-labelled widget
+        if: steps.check-deploy.outputs.deploy-widget == 'yes'
+        run: |-
+          echo "VITE_BRAND_NAME=WHITE_LABEL_BRAND_NAME_PLACEHOLDER" > .env
+          echo "VITE_OVERRIDES=WHITE_LABEL_OVERRIDES_PLACEHOLDER" >> .env
+          # yes, the final / is in purpose
+          echo "VITE_CDN=WHITE_CDN_PLACEHOLDER/" >> .env
+          npx nx build search-widget
+          for i in dist/libs/search-widget/*.css
+          do 
+            echo "WHITE_LABEL_EXTRA_CSS_PLACEHOLDER" >> $i
+          done
+          find dist/libs/search-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
+          # PUSH S3 COMMANDS
+          # copy dist/libs/search-widget/*.umd.js to S3
+          # copy dist/libs/search-widget/*.css to S3
+          # copy -r libs/search-widget/public/* to S3
+
       - name: Publish SDK
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         uses: JS-DevTools/npm-publish@v1
@@ -151,7 +169,7 @@ jobs:
           push: true
           tag-latest: main
           ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk:  ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
 
       - name: Publish NucliaDB admin app
         if: steps.check-deploy.outputs.deploy-nucliadb-admin == 'yes' && github.ref == 'refs/heads/main'
@@ -179,7 +197,7 @@ jobs:
           push: true
           tag-latest: main
           ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
-          ghapp-nuclia-service-bot-pk:  ${{ secrets.PK_GHAPP_NUCLIABOT }}
+          ghapp-nuclia-service-bot-pk: ${{ secrets.PK_GHAPP_NUCLIABOT }}
 
       - name: Create 404 page for gh-pages
         if: steps.check-deploy.outputs.deploy-sistema == 'yes' && github.ref == 'refs/heads/main'
@@ -225,8 +243,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
-          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: Login to Google Artifact Registry
@@ -270,7 +288,7 @@ jobs:
           image-version: ${{ env.SHORT_SHA }}
           hash: ${{ env.SHORT_SHA }}
           helm-chart-url: ${{ secrets.HELM_CHART_URL }}
-          chart-dir: "./charts/${{ env.APP_IMAGE_NAME }}"
+          chart-dir: './charts/${{ env.APP_IMAGE_NAME }}'
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
@@ -299,8 +317,8 @@ jobs:
         id: gcp-auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
-          service_account: "${{ env.GCP_SERVICE_ACCOUNT }}"
+          workload_identity_provider: '${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.GCP_SERVICE_ACCOUNT }}'
           token_format: access_token
 
       - name: Login to Google Artifact Registry
@@ -344,7 +362,7 @@ jobs:
           image-version: ${{ env.SHORT_SHA }}
           hash: ${{ env.SHORT_SHA }}
           helm-chart-url: ${{ secrets.HELM_CHART_URL }}
-          chart-dir: "./charts/${{ env.MANAGER_IMAGE_NAME }}"
+          chart-dir: './charts/${{ env.MANAGER_IMAGE_NAME }}'
           helm-version: v3.15.3
           push-to-artifact-registry: true
 
