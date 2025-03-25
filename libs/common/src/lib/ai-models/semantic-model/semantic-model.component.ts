@@ -9,7 +9,13 @@ import {
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaPopupModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, filter, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { LearningConfigurationOption, SemanticModelMigration, TaskOnBatch } from '@nuclia/core';
@@ -25,15 +31,17 @@ const HUGGING_FACE_MODEL = 'hf_embedding';
   selector: 'stf-semantic-model',
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    TwoColumnsConfigurationItemComponent,
-    PaTextFieldModule,
-    TranslateModule,
-    PaTogglesModule,
-    StickyFooterComponent,
-    PaButtonModule,
     InfoCardComponent,
+    PaButtonModule,
+    PaDropdownModule,
+    PaPopupModule,
+    PaTextFieldModule,
+    PaTogglesModule,
     ProgressBarComponent,
+    ReactiveFormsModule,
+    StickyFooterComponent,
+    TranslateModule,
+    TwoColumnsConfigurationItemComponent,
   ],
   templateUrl: './semantic-model.component.html',
   styleUrl: './semantic-model.component.scss',
@@ -194,5 +202,23 @@ export class SemanticModelComponent extends LearningConfigurationDirective {
       map((tasks) => tasks.running.find((task) => task.task.name === 'semantic-model-migrator')),
       map((tasks) => tasks as SemanticModelMigrationTask | undefined),
     );
+  }
+
+  delete(model: string) {
+    this.modalService
+      .openConfirm({
+        title: 'kb.ai-models.semantic-model.default-model.delete.title',
+        description: 'kb.ai-models.semantic-model.default-model.delete.description',
+        confirmLabel: 'generic.delete',
+      })
+      .onClose.pipe(
+        filter((confirm) => confirm),
+        switchMap(() => this.sdk.currentKb.pipe(take(1))),
+        switchMap((kb) => kb.removeVectorset(model)),
+        switchMap(() => this.sdk.refreshCurrentKb()),
+      )
+      .subscribe(() => {
+        this.toaster.success('kb.ai-models.semantic-model.default-model.delete.success');
+      });
   }
 }

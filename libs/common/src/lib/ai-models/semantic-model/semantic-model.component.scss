@@ -1,5 +1,12 @@
 @use 'apps/dashboard/src/variables' as *;
 
+.radio-container {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  justify-content: space-between;
+}
+
 .other-models {
   display: flex;
   flex-direction: column;
