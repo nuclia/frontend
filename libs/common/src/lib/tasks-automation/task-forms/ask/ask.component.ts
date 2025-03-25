@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,9 +6,8 @@ import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component'
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TaskRouteDirective } from '../../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TasksAutomationService } from '../../tasks-automation.service';
 import { TaskApplyTo, TaskName } from '@nuclia/core';
-import { map } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 
 @Component({
   imports: [
@@ -27,16 +26,15 @@ import { map } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AskComponent extends TaskRouteDirective {
-  taskAutomation = inject(TasksAutomationService);
   askForm = new FormGroup({
-    isJSON: new FormControl<boolean>(false, { nonNullable: true }),
+    json: new FormControl<boolean>(false, { nonNullable: true }),
     question: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    fieldName: new FormControl<string>('', {
+    destination: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern('[0-9a-zA-Z_]+')],
     }),
   });
-  override errorMessages = {
+  errorMessages = {
     required: 'validation.required',
     pattern: 'tasks-automation.generator.field-name.invalid',
   };
@@ -67,8 +65,20 @@ export class AskComponent extends TaskRouteDirective {
     },
   };
 
-  activateTask(commonConfig: TaskFormCommonConfig) {
-    if (this.askForm.get('isJSON')?.value) {
+  constructor() {
+    super();
+    this.askOperation
+      .pipe(
+        filter((operation) => !!operation),
+        take(1),
+      )
+      .subscribe((operation) => {
+        this.askForm.patchValue(operation);
+      });
+  }
+
+  onSave(commonConfig: TaskFormCommonConfig) {
+    if (this.askForm.get('json')?.value) {
       try {
         JSON.parse(this.askForm.get('question')?.value || '');
       } catch (e) {
@@ -76,30 +86,22 @@ export class AskComponent extends TaskRouteDirective {
         return;
       }
     }
-    this.taskAutomation
-      .startTask(
-        this.type,
+    const parameters = {
+      name: commonConfig.name,
+      filter: commonConfig.filter,
+      llm: commonConfig.llm,
+      on: TaskApplyTo.FULL_FIELD,
+      operations: [
         {
-          name: commonConfig.name,
-          filter: commonConfig.filter,
-          llm: commonConfig.llm,
-          on: TaskApplyTo.FULL_FIELD,
-          operations: [
-            {
-              ask: {
-                json: this.askForm.get('isJSON')?.value,
-                question: this.askForm.get('question')?.value,
-                destination: this.askForm.get('fieldName')?.value,
-                triggers: commonConfig.webhook && [commonConfig.webhook],
-              },
-            },
-          ],
+          ask: {
+            json: this.askForm.get('json')?.value,
+            question: this.askForm.get('question')?.value,
+            destination: this.askForm.get('destination')?.value,
+            triggers: commonConfig.webhook && [commonConfig.webhook],
+          },
         },
-        commonConfig.applyTaskTo,
-      )
-      .subscribe({
-        complete: () => this.backToTaskList(),
-        error: (error) => this.showError(error),
-      });
+      ],
+    };
+    this.saveTask(this.type, parameters, commonConfig.applyTaskTo);
   }
 }

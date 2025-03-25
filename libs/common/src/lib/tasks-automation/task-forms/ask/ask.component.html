@@ -15,6 +15,7 @@
   </header>
 
   <app-task-form
+    [task]="task | async"
     [type]="type"
     triggerDescription="tasks-automation.generator.trigger-description"
     activateButtonLabel="tasks-automation.generator.footer.activate-button-label"
@@ -22,25 +23,25 @@
     footerNoteOneTime="tasks-automation.generator.footer.apply-one-time"
     [validFormInside]="askForm.valid"
     (cancel)="backToTaskList()"
-    (activate)="activateTask($event)">
+    (save)="onSave($event)">
     <div [formGroup]="askForm">
       <nsi-two-columns-configuration-item
         itemTitle="tasks-automation.generator.your-question.title"
         description="tasks-automation.generator.your-question.description">
         <div class="form-container">
           <pa-toggle
-            formControlName="isJSON"
+            formControlName="json"
             labelOnRight>
             {{ 'tasks-automation.generator.your-question.use-json' | translate }}
           </pa-toggle>
           <nsi-info-card>
             {{
-              (!!askForm.get('isJSON')?.value
+              (!!askForm.get('json')?.value
                 ? 'tasks-automation.generator.your-question.info-json'
                 : 'tasks-automation.generator.your-question.info-text'
               ) | translate
             }}
-            @if (askForm.get('isJSON')?.value) {
+            @if (askForm.get('json')?.value) {
               <blockquote>
                 <code>
                   {{ jsonExample | json }}
@@ -65,7 +66,7 @@
           <div>
             <label>{{ 'tasks-automation.form.field-name.label' | translate }}</label>
             <pa-input
-              formControlName="fieldName"
+              formControlName="destination"
               [errorMessages]="errorMessages"
               [placeholder]="'tasks-automation.form.field-name.placeholder' | translate"></pa-input>
           </div>

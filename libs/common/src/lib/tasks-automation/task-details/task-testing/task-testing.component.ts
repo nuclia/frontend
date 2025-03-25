@@ -20,7 +20,7 @@ import {
 import { AugmentedField, IResource, Resource } from '@nuclia/core';
 import { debounceTime, forkJoin, map, of, Subject, switchMap, take } from 'rxjs';
 import { TestResultsComponent } from './test-results/test-results.component';
-import { getTaskFilterTypeFromTaskName } from '../../tasks-automation.models';
+import { getOperationFromTaskName } from '../../tasks-automation.models';
 
 export type TestResults = { resource: Resource; results: { [key: string]: AugmentedField } };
 
@@ -93,7 +93,7 @@ export class TaskTestingComponent {
               return resource
                 .runTasks([
                   {
-                    type: getTaskFilterTypeFromTaskName(this.task?.task.name || 'ask') || 'ask',
+                    type: getOperationFromTaskName(this.task?.task.name || 'ask') || 'ask',
                     task_names: [this.task?.parameters.name || ''],
                   },
                 ])

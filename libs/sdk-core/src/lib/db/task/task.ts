@@ -88,4 +88,13 @@ export class TaskManager {
   getTask(taskId: string): Observable<InspectTaskResponse> {
     return this.nuclia.rest.get<InspectTaskResponse>(`${this.kb.path}/task/${taskId}/inspect`);
   }
+
+  /**
+   * Edit a tasks
+   * @param taskId
+   * @param parameters Parameters configuring the task
+   */
+  editTask(taskId: string, parameters: TaskParameters) {
+    return this.nuclia.rest.patch(`${this.kb.path}/task/${taskId}`, { parameters });
+  }
 }

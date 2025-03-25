@@ -1,6 +1,6 @@
 <form
   [formGroup]="form"
-  (ngSubmit)="activateTask()">
+  (ngSubmit)="onSave()">
   <nsi-two-columns-configuration-item itemTitle="tasks-automation.form.task-name.title">
     <pa-input formControlName="name">{{ 'tasks-automation.form.task-name.input-label' | translate }}</pa-input>
   </nsi-two-columns-configuration-item>
@@ -30,15 +30,6 @@
         formGroupName="filter">
         @if (filters?.['contains']) {
           <div class="filter-row">
-            <!--
-            <pa-select formControlName="searchIn">
-              <pa-option value="titleOrContent">
-                {{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}
-              </pa-option>
-              <pa-option value="title">{{ 'tasks-automation.form.filter.search-in.title' | translate }}</pa-option>
-              <pa-option value="content">{{ 'tasks-automation.form.filter.search-in.content' | translate }}</pa-option>
-            </pa-select>
-            -->
             <div class="title-s">{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</div>
             <pa-input formControlName="contains">
               {{ 'tasks-automation.form.filter.search-input-label' | translate }}
@@ -87,9 +78,9 @@
         @if (hasLabelSets | async) {
           <app-label-dropdown
             fullWidth
-            [selection]="labelSelection"
+            [(selection)]="labelSelection"
             [labelSets]="resourceLabelSets | async"
-            (selectionChange)="updateFiltersWithLabels($event)"
+            (selectionChange)="updateFiltersWithLabels()"
             aspect="basic">
             {{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}
             @if (labelSelectionCount > 0) {
@@ -157,8 +148,7 @@
           <div>
             <app-parameters-table
               secretDisabled
-              [values]="headers"
-              (valuesChange)="setHeaders($event)"></app-parameters-table>
+              [(values)]="headers"></app-parameters-table>
           </div>
         </pa-expander-body>
       </pa-expander>
@@ -172,8 +162,7 @@
           <div>
             <app-parameters-table
               secretDisabled
-              [values]="parameters"
-              (valuesChange)="setParameters($event)"></app-parameters-table>
+              [(values)]="parameters"></app-parameters-table>
           </div>
         </pa-expander-body>
       </pa-expander>
@@ -199,7 +188,7 @@
       kind="primary"
       type="submit"
       [disabled]="form.invalid || userKeysForm?.invalid || !validFormInside">
-      {{ activateButtonLabel | translate }}
+      {{ (task ? 'tasks-automation.form.save' : activateButtonLabel) | translate }}
     </pa-button>
   </nsi-sticky-footer>
 </form>

@@ -3,22 +3,33 @@
     <nsi-back-button [link]="backRoute | async">
       {{ 'tasks-automation.bach-to-tasks' | translate }}
     </nsi-back-button>
-    <div>
-      <h1 class="page-title">{{ (task | async)?.parameters?.name }}</h1>
-    </div>
+    @if (task | async; as task) {
+      <div class="title">
+        <h1 class="page-title">{{ task.parameters?.name }}</h1>
+        <div class="actions">
+          @if (task.applyOption === 'NEW') {
+            <pa-button
+              aspect="basic"
+              (click)="modifyTask()">
+              {{ 'tasks-automation.actions.edit.edit-configuration' | translate }}
+            </pa-button>
+          }
+        </div>
+      </div>
+    }
   </header>
 
   <pa-tabs notFullWidth>
     <pa-tab
       (click)="selectedTab = 'configuration'"
       [active]="selectedTab === 'configuration'">
-      {{ 'Configuration' | translate }}
+      {{ 'tasks-automation.tab.configuration' | translate }}
     </pa-tab>
     @if (tasksSupportingTesting.includes((task | async)?.task?.name || 'ask')) {
       <pa-tab
         (click)="selectedTab = 'testing'"
         [active]="selectedTab === 'testing'">
-        {{ 'Testing' | translate }}
+        {{ 'tasks-automation.tab.testing' | translate }}
       </pa-tab>
     }
   </pa-tabs>

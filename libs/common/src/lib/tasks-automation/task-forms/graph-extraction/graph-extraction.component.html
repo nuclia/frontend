@@ -15,6 +15,7 @@
   </header>
 
   <app-task-form
+    [task]="task | async"
     [type]="type"
     triggerDescription="tasks-automation.graph-extraction.trigger-description"
     activateButtonLabel="tasks-automation.graph-extraction.footer.activate-button-label"
@@ -22,7 +23,7 @@
     footerNoteOneTime="tasks-automation.graph-extraction.footer.apply-one-time"
     [validFormInside]="validForm"
     (cancel)="backToTaskList()"
-    (activate)="activateTask($event)">
+    (save)="onSave($event)">
     <nsi-two-columns-configuration-item
       itemTitle="tasks-automation.graph-extraction.ner-types.title"
       description="tasks-automation.graph-extraction.ner-types.description">
@@ -191,7 +192,7 @@
             size="small"
             icon="plus"
             iconAndText
-            (click)="addExample()">
+            (click)="addExample(1, 1)">
             {{ 'tasks-automation.graph-extraction.ner-examples.add' | translate }}
           </pa-button>
         </div>

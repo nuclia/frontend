@@ -35,6 +35,14 @@ export class TasksAutomationService {
     );
   }
 
+  editTask(taskId: string, parameters: TaskParameters) {
+    return this._currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.taskManager.editTask(taskId, parameters)),
+      switchMap(() => this.updateTasks()),
+    );
+  }
+
   stopTask(taskId: string) {
     return this._currentKb.pipe(
       take(1),

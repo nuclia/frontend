@@ -38,7 +38,7 @@ export class ParametersTableComponent implements OnInit, OnDestroy {
 
   @Input()
   set values(values: { key: string; value: string; secret?: boolean }[]) {
-    if (values.length !== this.length) {
+    if (JSON.stringify(this.normalize(values)) !== JSON.stringify(this.rows.map((row) => row.value))) {
       this.length = values.length;
       this.setForm(values);
     }

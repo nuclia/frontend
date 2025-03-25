@@ -1,3 +1,5 @@
+import { Operation } from "../task";
+
 export interface IResource {
   id: string;
   slug?: string;
@@ -522,10 +524,8 @@ export enum ExtractedDataTypes {
   QUESTION_ANSWERS = 'question_answers',
 }
 
-export type TaskFilterType = 'graph' | 'label' | 'ask' | 'qa' | 'prompt_guard' | 'llama_guard';
-
 export interface TasksFilter {
-  type: TaskFilterType;
+  type: keyof Operation;
   task_names?: string[];
 }
 
