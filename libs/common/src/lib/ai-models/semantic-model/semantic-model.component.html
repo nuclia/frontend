@@ -12,12 +12,33 @@
       <pa-radio-group formControlName="default_semantic_model">
         @for (model of semanticModels; track model) {
           <pa-radio [value]="model">
-            @if (semanticModelsName[model]) {
-              {{ 'user.kb.creation-form.models.options.' + semanticModelsName[model] | translate }}
-              <small>({{ model }})</small>
-            } @else {
-              {{ model }}
-            }
+            <div class="radio-container">
+              <div>
+                @if (semanticModelsName[model]) {
+                  {{ 'user.kb.creation-form.models.options.' + semanticModelsName[model] | translate }}
+                  <small>({{ model }})</small>
+                } @else {
+                  {{ model }}
+                }
+              </div>
+              @if (!standalone) {
+                <div>
+                  <pa-button
+                    icon="more-vertical"
+                    size="small"
+                    aspect="basic"
+                    [paPopup]="actions"
+                    [disabled]="model === defaultModelBackup"></pa-button>
+                  <pa-dropdown #actions>
+                    <pa-option
+                      destructive
+                      (selectOption)="delete(model)">
+                      {{ 'kb.ai-models.semantic-model.default-model.delete.title' | translate }}
+                    </pa-option>
+                  </pa-dropdown>
+                </div>
+              }
+            </div>
           </pa-radio>
         }
       </pa-radio-group>
