@@ -165,7 +165,7 @@ jobs:
           file: docker/Dockerfile
           image-name: ${{ env.APP_IMAGE_NAME }}
           image-version: ${{ env.SHORT_SHA }}
-          skip-ecr-push: true
+          aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
           push: true
           tag-latest: main
           ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
@@ -192,7 +192,7 @@ jobs:
           file: docker/Dockerfile
           image-name: ${{ env.MANAGER_IMAGE_NAME }}
           image-version: ${{ env.SHORT_SHA }}
-          skip-ecr-push: true
+          aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
           skip-context-creation: true
           push: true
           tag-latest: main
