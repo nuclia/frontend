@@ -21,8 +21,8 @@ export class AppComponent implements OnInit, OnDestroy {
   version?: string;
 
   constructor(
-    private ngxTranslate: TranslateService,
     private paTranslate: PaTranslateService,
+    private ngxTranslate: TranslateService,
     private config: BackendConfigurationService,
   ) {
     const userLocale = localStorage.getItem(userLocaleKey);
