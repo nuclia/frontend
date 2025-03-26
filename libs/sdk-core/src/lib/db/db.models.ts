@@ -104,11 +104,12 @@ export interface AccountModification {
   title?: string;
   description?: string;
   g_speech_to_text?: boolean;
-  saml?: {
-    domain: string;
+  saml_config?: {
+    domains: string[];
     entity_id: string;
     sso_url: string;
     x509_cert: string;
+    authn_context?: 'exact' | 'minimum' | 'better' | 'maximum';
   };
 }
 

@@ -26,10 +26,11 @@ export class AccountManageComponent implements OnInit, OnDestroy {
     description: [''],
   });
   samlForm = this.formBuilder.group({
-    domain: [''],
-    entity_id: [''],
-    sso_url: [''],
-    x509_cert: [''],
+    domains: ['', [Validators.required]],
+    entity_id: ['', [Validators.required]],
+    sso_url: ['', [Validators.required]],
+    x509_cert: ['', [Validators.required]],
+    authn_context: [''],
   });
 
   validationMessages = {
@@ -119,7 +120,13 @@ export class AccountManageComponent implements OnInit, OnDestroy {
     if (this.samlForm.invalid || !this.account) return;
     this.sdk.nuclia.db
       .modifyAccount(this.account.slug, {
-        saml: this.samlForm.getRawValue(),
+        saml_config: {
+          domains: this.samlForm.value.domains.split(',').map((domain: string) => domain.trim()),
+          entity_id: this.samlForm.value.entity_id,
+          sso_url: this.samlForm.value.sso_url,
+          x509_cert: this.samlForm.value.x509_cert,
+          authn_context: this.samlForm.value.authn_context || undefined,
+        },
       })
       .pipe(concatMap(() => this.sdk.nuclia.db.getAccount(this.account?.slug || '')))
       .subscribe((account) => {
