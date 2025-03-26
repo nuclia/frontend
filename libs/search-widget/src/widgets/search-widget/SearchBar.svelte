@@ -105,10 +105,10 @@
 
   $: darkMode = mode === 'dark';
   $: {
-    widgetPlaceholder.set(placeholder || 'input.placeholder');
+    chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
   }
   $: {
-    chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
+    widgetPlaceholder.set(placeholder || 'input.placeholder');
   }
 
   let _features: WidgetFeatures = {};
