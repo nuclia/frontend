@@ -91,6 +91,11 @@
             {{ 'generic.save' | translate }}
           </pa-button>
           <pa-button
+            kind="destructive"
+            (click)="removeSaml()">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
+          <pa-button
             *ngIf="!samlForm.pristine"
             aspect="basic"
             (click)="initSamlForm()">
