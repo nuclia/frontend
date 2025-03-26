@@ -3,7 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
 import { BillingService, NavigationService, SDKService, SubscriptionStatus } from '@flaps/core';
-import { Account } from '@nuclia/core';
+import { Account, SamlConfig } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
@@ -26,10 +26,11 @@ export class AccountManageComponent implements OnInit, OnDestroy {
     description: [''],
   });
   samlForm = this.formBuilder.group({
-    domain: [''],
-    entity_id: [''],
-    sso_url: [''],
-    x509_cert: [''],
+    domains: ['', [Validators.required]],
+    entity_id: ['', [Validators.required]],
+    sso_url: ['', [Validators.required]],
+    x509_cert: ['', [Validators.required]],
+    authn_context: [''],
   });
 
   validationMessages = {
@@ -81,13 +82,9 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   }
 
   initSamlForm() {
-    if (this.account) {
-      this.samlForm.reset({
-        domain: this.account.domain,
-        entity_id: this.account.saml_entity_id,
-        sso_url: this.account.saml_sso_url,
-        x509_cert: this.account.saml_x509_cert,
-      });
+    if (this.account && this.account.saml_config) {
+      const config = this.account.saml_config;
+      this.samlForm.reset({ ...config, domains: config.domains.join(', ') });
     }
   }
 
@@ -117,11 +114,26 @@ export class AccountManageComponent implements OnInit, OnDestroy {
 
   saveSaml() {
     if (this.samlForm.invalid || !this.account) return;
+    this._saveSaml(this.account.slug, {
+      domains: this.samlForm.value.domains.split(',').map((domain: string) => domain.trim()),
+      entity_id: this.samlForm.value.entity_id,
+      sso_url: this.samlForm.value.sso_url,
+      x509_cert: this.samlForm.value.x509_cert,
+      authn_context: this.samlForm.value.authn_context || undefined,
+    });
+  }
+
+  removeSaml() {
+    if (!this.account) return;
+    this._saveSaml(this.account.slug, null);
+  }
+
+  private _saveSaml(slug: string, saml_config: SamlConfig | undefined | null) {
     this.sdk.nuclia.db
-      .modifyAccount(this.account.slug, {
-        saml: this.samlForm.getRawValue(),
+      .modifyAccount(slug, {
+        saml_config,
       })
-      .pipe(concatMap(() => this.sdk.nuclia.db.getAccount(this.account?.slug || '')))
+      .pipe(concatMap(() => this.sdk.nuclia.db.getAccount(slug)))
       .subscribe((account) => {
         this.sdk.account = account;
         this.initSamlForm();

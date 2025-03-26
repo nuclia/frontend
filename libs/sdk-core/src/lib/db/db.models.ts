@@ -33,6 +33,7 @@ export interface Account {
   saml_entity_id?: string;
   saml_sso_url?: string;
   saml_x509_cert?: string;
+  saml_config?: SamlConfig;
   slug: string;
   title: string;
   trial_expiration_date?: string;
@@ -100,16 +101,19 @@ export interface AccountCreation {
   zone?: string;
 }
 
+export interface SamlConfig {
+  domains: string[];
+  entity_id: string;
+  sso_url: string;
+  x509_cert: string;
+  authn_context?: 'exact' | 'minimum' | 'better' | 'maximum';
+}
+
 export interface AccountModification {
   title?: string;
   description?: string;
   g_speech_to_text?: boolean;
-  saml?: {
-    domain: string;
-    entity_id: string;
-    sso_url: string;
-    x509_cert: string;
-  };
+  saml_config?: SamlConfig | null;
 }
 
 export interface AccountStatus {

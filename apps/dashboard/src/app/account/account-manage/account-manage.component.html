@@ -58,8 +58,10 @@
       <form
         [formGroup]="samlForm"
         (ngSubmit)="saveSaml()">
-        <pa-input formControlName="domain">
-          {{ 'account.saml.domain' | translate }}
+        <pa-input
+          formControlName="domains"
+          [help]="'account.saml.domains-help' | translate">
+          {{ 'account.saml.domains' | translate }}
         </pa-input>
         <pa-input formControlName="entity_id">
           {{ 'account.saml.entity-id' | translate }}
@@ -72,12 +74,26 @@
           rows="3">
           {{ 'account.saml.x509-cert' | translate }}
         </pa-textarea>
+        <pa-select
+          formControlName="authn_context"
+          [label]="'account.saml.authn_context' | translate">
+          <pa-option value="">&mdash;</pa-option>
+          <pa-option value="exact">exact</pa-option>
+          <pa-option value="minimum">minimum</pa-option>
+          <pa-option value="better">better</pa-option>
+          <pa-option value="maximum">maximum</pa-option>
+        </pa-select>
         <div class="account-form-cta">
           <pa-button
             type="submit"
             kind="primary"
             [disabled]="samlForm.invalid || samlForm.pristine">
             {{ 'generic.save' | translate }}
+          </pa-button>
+          <pa-button
+            kind="destructive"
+            (click)="removeSaml()">
+            {{ 'generic.delete' | translate }}
           </pa-button>
           <pa-button
             *ngIf="!samlForm.pristine"
