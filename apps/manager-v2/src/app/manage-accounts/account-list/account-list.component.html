@@ -1,10 +1,19 @@
 <div class="wide-table-container">
-  <div class="filter-container">
-    <pa-input
-      [value]="filter$ | async"
-      (valueChange)="filter$.next($event)">
-      Filter
-    </pa-input>
+  <div class="table-actions">
+    <div class="filter-container">
+      <pa-input
+        [value]="filter$ | async"
+        (valueChange)="filter$.next($event)">
+        Filter
+      </pa-input>
+    </div>
+    <pa-button
+      routerLink="./add"
+      kind="primary"
+      icon="plus"
+      iconAndText>
+      Add account
+    </pa-button>
   </div>
 
   <pa-infinite-scroll (reachAnchor)="onReachAnchor()">
