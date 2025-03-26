@@ -31,6 +31,7 @@ import { PaymentLinksComponent } from './account-details/payment-links/payment-l
 import { STFPipesModule } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
+import { AddAccountComponent } from './add-account/add-account.component';
 
 const ROUTES: Routes = [
   {
@@ -40,6 +41,10 @@ const ROUTES: Routes = [
       {
         path: '',
         component: AccountListComponent,
+      },
+      {
+        path: 'add',
+        component: AddAccountComponent,
       },
       {
         path: ':accountId',
