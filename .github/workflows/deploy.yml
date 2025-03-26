@@ -120,10 +120,9 @@ jobs:
             echo "WHITE_LABEL_EXTRA_CSS_PLACEHOLDER" >> $i
           done
           find dist/libs/search-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
-          # PUSH S3 COMMANDS
-          # copy dist/libs/search-widget/*.umd.js to S3
-          # copy dist/libs/search-widget/*.css to S3
-          # copy -r libs/search-widget/public/* to S3
+          gsutil copy dist/libs/search-widget/*.umd.js gs://ncl-white-label-frontend-gcp-global-stage-1
+          gsutil copy dist/libs/search-widget/*.css gs://ncl-white-label-frontend-gcp-global-stage-1
+          gsutil copy -r libs/search-widget/public/* gs://ncl-white-label-frontend-gcp-global-stage-1
 
       - name: Publish SDK
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
