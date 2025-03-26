@@ -193,7 +193,7 @@ jobs:
           image-name: ${{ env.MANAGER_IMAGE_NAME }}
           image-version: ${{ env.SHORT_SHA }}
           aws-ecr-role: ${{ secrets.AWS_ECR_ROLE }}
-          skip-context-creation: true
+          skip-context-creation: ${{ steps.check-deploy.outputs.deploy-manager == 'yes' && steps.check-deploy.outputs.deploy-app == 'yes' }}
           push: true
           tag-latest: main
           ghapp-nuclia-service-bot-id: ${{ secrets.GHAPP_ID_NUCLIABOT }}
