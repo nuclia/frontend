@@ -13,6 +13,7 @@ import {
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AddUserComponent } from './add-user/add-user.component';
 
 const ROUTES: Routes = [
   {
@@ -22,6 +23,10 @@ const ROUTES: Routes = [
       {
         path: '',
         component: UserListComponent,
+      },
+      {
+        path: 'add',
+        component: AddUserComponent,
       },
       {
         path: ':userId',
