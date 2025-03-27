@@ -14,7 +14,7 @@
     }
   </button>
 
-  @if (showDemo) {
+  @if (showDemo && (hasDemoButton | async)) {
     <pa-button
       kind="primary"
       aspect="basic"

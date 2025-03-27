@@ -59,6 +59,7 @@ export class TopbarComponent {
   errorMessage = this.standaloneService.errorMessage;
 
   showDemo = !this.standalone;
+  hasDemoButton = this.features.authorized.showDemoButton;
   notificationsCount: Observable<number> = this.notificationService.unreadNotificationsCount;
 
   private backendConfig = inject(BackendConfigurationService);
