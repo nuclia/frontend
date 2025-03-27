@@ -1,0 +1,32 @@
+<div class="pa-main-container">
+  <div class="pa-main-container-wide">
+    <h3>New user</h3>
+    <form
+      [formGroup]="form"
+      (submit)="save()">
+      <pa-input
+        formControlName="name"
+        required>
+        Name
+      </pa-input>
+      <pa-input
+        formControlName="email"
+        required>
+        Email
+      </pa-input>
+      <footer>
+        <pa-button
+          type="submit"
+          kind="primary"
+          [disabled]="form.pristine || form.invalid || isSaving">
+          Save
+        </pa-button>
+        <pa-button
+          kind="destructive"
+          (click)="cancel()">
+          Cancel
+        </pa-button>
+      </footer>
+    </form>
+  </div>
+</div>
