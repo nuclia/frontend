@@ -27,7 +27,7 @@
 
     .topbar-logo-expanded {
       display: block;
-      width: rhythm(13);
+      width: var(--app-topbar-logo-width);
       height: auto;
       // this was based on Material. TODO: review breakpoints using pastanaga-angular variables
       @media screen and (max-width: 959px) {

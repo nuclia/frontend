@@ -12,6 +12,8 @@
 
   // z-index
   --app-zindex-topbar: 1000;
+
+  --app-topbar-logo-width: var(--custom-topbar-logo-width, calc(#{spacing.rhythm(12)} + #{spacing.rhythm(1)}));
 }
 
 html,
