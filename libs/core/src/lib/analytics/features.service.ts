@@ -120,5 +120,6 @@ export class FeaturesService {
         map((account) => ['stash-growth', 'stash-enterprise', 'v3growth', 'v3enterprise'].includes(account.type)),
       ),
     ]).pipe(map(([isAuthorized, isAccountTypeAllowed]) => isAuthorized || isAccountTypeAllowed)),
+    showDemoButton: this.featureFlag.isFeatureEnabled('demo-button'),
   };
 }
