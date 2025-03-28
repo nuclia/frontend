@@ -46,14 +46,18 @@
           class="form-container filter-form-container"
           formGroupName="filter">
           @if (filters?.['contains']) {
-            <div class="filter-row">
+            <div>
               <div class="title-s">{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</div>
               <pa-input formControlName="contains">
                 {{ 'tasks-automation.form.filter.search-input-label' | translate }}
               </pa-input>
+              <pa-toggle formControlName="contains_operator">
+                {{ 'tasks-automation.form.filter.operator' | translate }}
+              </pa-toggle>
             </div>
           }
           <div>
+            <div class="title-s">{{ 'tasks-automation.form.filter.fields.button-label' | translate }}</div>
             <nsi-dropdown-button
               fullWidth
               aspect="basic"
@@ -93,22 +97,30 @@
           </div>
 
           @if (hasLabelSets | async) {
-            <app-label-dropdown
-              fullWidth
-              [(selection)]="labelSelection"
-              [labelSets]="resourceLabelSets | async"
-              (selectionChange)="updateFiltersWithLabels()"
-              aspect="basic">
-              {{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}
-              @if (labelSelectionCount > 0) {
-                ({{ labelSelectionCount }})
-              }
-            </app-label-dropdown>
+            <div>
+              <div class="title-s">{{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}</div>
+
+              <app-label-dropdown
+                fullWidth
+                [(selection)]="labelSelection"
+                [labelSets]="resourceLabelSets | async"
+                (selectionChange)="updateFiltersWithLabels()"
+                aspect="basic">
+                {{ 'tasks-automation.form.filter.resource-labels.button-label' | translate }}
+                @if (labelSelectionCount > 0) {
+                  ({{ labelSelectionCount }})
+                }
+              </app-label-dropdown>
+              <pa-toggle formControlName="labels_operator">
+                {{ 'tasks-automation.form.filter.operator' | translate }}
+              </pa-toggle>
+            </div>
           }
           @if (can_apply_to_agent_generated_fields) {
-            <pa-toggle formControlName="apply_to_agent_generated_fields">
+            <div class="title-s apply-to-da-fields">
               {{ 'tasks-automation.form.filter.apply-to-da-fields' | translate }}
-            </pa-toggle>
+              <pa-toggle formControlName="apply_to_agent_generated_fields"></pa-toggle>
+            </div>
           }
         </div>
       </nsi-two-columns-configuration-item>

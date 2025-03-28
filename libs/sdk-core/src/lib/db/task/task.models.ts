@@ -138,9 +138,11 @@ export interface DataAugmentationParameters {
   name: string;
   filter: {
     contains?: string[];
+    contains_operator?: 0 | 1;
     resource_type?: string[];
     field_types?: string[];
     labels?: string[];
+    labels_operator?: 0 | 1;
     not_field_types?: string[];
     apply_to_agent_generated_fields?: boolean;
   };
