@@ -37,6 +37,7 @@ const chatColumns = [
   'model',
   'rag_strategies_names',
   'status',
+  'remi_scores',
 ];
 
 @Component({
