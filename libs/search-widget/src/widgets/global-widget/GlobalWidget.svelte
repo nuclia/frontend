@@ -215,32 +215,32 @@
 
         <div class="search-results-container">
           {#if $showResults && !$isEmptySearchQuery}
-            {#if $hasSearchError && !$hasPartialResults}
-              <div class="error">
-                {#if $searchError?.status === 402}
-                  <strong>{$_('error.feature-blocked')}</strong>
-                {:else}
-                  <strong>{$_('error.search')}</strong>
-                {/if}
+            {#if $hasPartialResults}
+              <div class="partial-results-warning">
+                <strong>{$_('error.partial-results')}</strong>
               </div>
-            {:else if !$pendingResults && $resultList.length === 0}
-              <strong>{$_('results.empty')}</strong>
-              <div
-                class="results-end"
-                use:renderingDone />
-            {:else}
-              {#if $hasPartialResults}
-                <div class="partial-results-warning">
-                  <strong>{$_('error.partial-results')}</strong>
-                </div>
-              {/if}
-              <div class="results-container">
-                <div class="results">
-                  {#if $isAnswerEnabled}
-                    <div bind:offsetHeight={answerHeight}>
-                      <InitialAnswer />
-                    </div>
-                  {/if}
+            {/if}
+            <div class="results-container">
+              <div class="results">
+                {#if $isAnswerEnabled}
+                  <div bind:offsetHeight={answerHeight}>
+                    <InitialAnswer />
+                  </div>
+                {/if}
+                {#if $hasSearchError && !$hasPartialResults}
+                  <div class="error">
+                    {#if $searchError?.status === 402}
+                      <strong>{$_('error.feature-blocked')}</strong>
+                    {:else}
+                      <strong>{$_('error.search')}</strong>
+                    {/if}
+                  </div>
+                {:else if !$pendingResults && $resultList.length === 0 && !$isAnswerEnabled}
+                  <strong>{$_('results.empty')}</strong>
+                  <div
+                    class="results-end"
+                    use:renderingDone />
+                {:else if $resultList.length > 0}
                   <div class="search-results">
                     {#each $resultList as result, i (getResultUniqueKey(result))}
                       <ResultRow {result} />
@@ -256,11 +256,11 @@
                         on:loadMore={onLoadMore} />
                     {/if}
                   </div>
-                </div>
+                {/if}
               </div>
-              {#if $showLoading}
-                <LoadingDots />
-              {/if}
+            </div>
+            {#if $showLoading}
+              <LoadingDots />
             {/if}
           {/if}
         </div>
