@@ -20,7 +20,6 @@
 	"login.error.aws.invalid_customer_token": "Customer_token invalide",
 	"login.error.aws.missing_customer_token": "Customer_token manquant",
 	"login.error.get_consent_error": "Une erreur s'est produite lors de la récupération des informations relatives au consentement",
-	"login.error.google_workspace": "L'inscription avec Google est limitée aux domaines professionnels, désolé.",
 	"login.error.login_error": "Une erreur s'est produite lors de la connexion",
 	"login.error.no_personal_email": "L'accès à Nuclia est limité aux emails professionnels",
 	"login.error.oops": "Oups ! Quelque chose n'a pas marché !",
