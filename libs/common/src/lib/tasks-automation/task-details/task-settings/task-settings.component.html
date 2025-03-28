@@ -29,7 +29,7 @@
       <div class="settings-container">
         <div class="setting">
           <label>{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</label>
-          <div>{{ filter.contains?.[0] || '-' }}</div>
+          <div>{{ filter.contains?.join(', ') || '-' }}</div>
           @if (filter.contains_operator === 1) {
             <div>
               {{ 'tasks-automation.form.filter.operator' | translate }}
