@@ -30,6 +30,11 @@
         <div class="setting">
           <label>{{ 'tasks-automation.form.filter.search-in.title-or-content' | translate }}</label>
           <div>{{ filter.contains?.[0] || '-' }}</div>
+          @if (filter.contains_operator === 1) {
+            <div>
+              {{ 'tasks-automation.form.filter.operator' | translate }}
+            </div>
+          }
         </div>
         @if (fieldTypes.length > 0) {
           <div class="separator-line"></div>
@@ -62,6 +67,11 @@
                 <div>{{ label }}</div>
               }
             </div>
+            @if (filter.contains_operator === 1) {
+              <div>
+                {{ 'tasks-automation.form.filter.operator' | translate }}
+              </div>
+            }
           </div>
         }
         @if (apply_to_agent_generated_fields) {

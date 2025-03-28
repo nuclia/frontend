@@ -2,24 +2,22 @@
 @use '../task.common';
 
 :host {
-  .filter-form-container {
-    .filter-row {
-      align-items: center;
-      display: flex;
-      gap: rhythm(1.5);
-
-      & > * {
-        width: calc((100% - #{rhythm(1.5)}) / 2);
-      }
-    }
-  }
-
   header {
     align-items: flex-start;
     display: flex;
     flex-direction: column;
     gap: rhythm(4);
     margin-bottom: rhythm(4);
+  }
+
+  .title-s {
+    margin-bottom: rhythm(1);
+  }
+  .apply-to-da-fields {
+    display: flex;
+    pa-toggle {
+      margin-left: auto;
+    }
   }
 
   app-parameters-table {
