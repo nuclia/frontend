@@ -67,6 +67,7 @@ function apply_path {
     else
       echo "Re-branding to '$BRAND_DOMAIN'";
       sed -i "s/nuclia\.cloud/$BRAND_DOMAIN/" /dist/assets/i18n/**/*.json
+      sed -i "s/nuclia\.com/$BRAND_DOMAIN/" /dist/assets/i18n/**/*.json
     fi
 
     echo "Check that we have ASSETS_PATH vars"
