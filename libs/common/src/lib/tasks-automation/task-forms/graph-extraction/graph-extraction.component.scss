@@ -1,5 +1,5 @@
 @use 'apps/dashboard/src/variables' as *;
-@use '../task-form.common';
+@use '../../task.common';
 
 .input-with-help {
   align-items: center;

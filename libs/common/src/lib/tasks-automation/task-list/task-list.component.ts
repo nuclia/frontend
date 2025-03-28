@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -35,10 +35,10 @@ import { TASK_ICONS } from '../tasks-automation.models';
     TranslateModule,
   ],
   templateUrl: './task-list.component.html',
-  styleUrl: './task-list.component.scss',
+  styleUrls: ['./task-list.component.scss', '../_task.common.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaskListComponent implements OnInit {
+export class TaskListComponent {
   private router = inject(Router);
   private activeRoute = inject(ActivatedRoute);
   private taskAutomation = inject(TasksAutomationService);
@@ -50,7 +50,9 @@ export class TaskListComponent implements OnInit {
   isDescending = new BehaviorSubject<boolean>(true);
   taskList = combineLatest([this.taskAutomation.taskList, this.isDescending]).pipe(
     map(([taskList, isDescending]) =>
-      taskList.sort((a, b) => a.creationDate.localeCompare(b.creationDate) * (isDescending ? -1 : 1)),
+      taskList
+        .filter((task) => task.type === 'automated')
+        .sort((a, b) => a.creationDate.localeCompare(b.creationDate) * (isDescending ? -1 : 1)),
     ),
   );
 
@@ -61,10 +63,6 @@ export class TaskListComponent implements OnInit {
   promptSafetyTaskEnabled = this.features.unstable.promptSafetyTask;
   contentSafetyTaskEnabled = this.features.unstable.contentSafetyTask;
 
-  ngOnInit() {
-    this.taskAutomation.initTaskList();
-  }
-
   createTask(taskPath: string) {
     this.router.navigate([`./${taskPath}`], { relativeTo: this.activeRoute });
   }
@@ -73,57 +71,11 @@ export class TaskListComponent implements OnInit {
     this.isDescending.next(!this.isDescending.value);
   }
 
-  deleteTask(taskId: string, deleteData: boolean) {
-    this.modalService
-      .openConfirm({
-        title: `tasks-automation.actions.${deleteData ? 'delete-all' : 'delete-agent'}.title`,
-        description: `tasks-automation.actions.${deleteData ? 'delete-all' : 'delete-agent'}.description`,
-        confirmLabel: 'generic.delete',
-        isDestructive: true,
-      })
-      .onClose.pipe(
-        filter((confirm) => !!confirm),
-        switchMap(() => this._stopTask(taskId)),
-        switchMap(() => this.taskAutomation.deleteTask(taskId, deleteData)),
-      )
-      .subscribe(() => {
-        this.toaster.success(`tasks-automation.actions.${deleteData ? 'delete-all' : 'delete-agent'}.success`);
-      });
+  cleanTask(taskId: string, name: string) {
+    this.taskAutomation.cleanOnGoingTask(taskId, name).subscribe();
   }
 
-  stopTask(taskId: string) {
-    this._stopTask(taskId).subscribe();
-  }
-
-  restartTask(taskId: string) {
-    this.taskAutomation.restartTask(taskId).subscribe();
-  }
-
-  cleanTask(taskId: string) {
-    this.modalService
-      .openConfirm({
-        title: 'tasks-automation.actions.delete-data.title',
-        description: 'tasks-automation.actions.delete-data.description',
-        confirmLabel: 'generic.delete',
-        isDestructive: true,
-      })
-      .onClose.pipe(
-        filter((confirm) => !!confirm),
-        switchMap(() => this._stopTask(taskId)),
-        switchMap(() => this.taskAutomation.cleanTask(taskId)),
-      )
-      .subscribe(() => {
-        this.toaster.success('tasks-automation.actions.delete-data.success');
-      });
-  }
-
-  private _stopTask(taskId: string) {
-    return this.taskAutomation.getTask(taskId).pipe(
-      switchMap((response) => {
-        const inProgress =
-          response.request && !response.request.completed && !response.request.stopped && !response.request.failed;
-        return inProgress ? this.taskAutomation.stopTask(taskId) : of(undefined);
-      }),
-    );
+  deleteTask(taskId: string, name: string, deleteData: boolean) {
+    this.taskAutomation.deleteOnGoingTask(taskId, name, deleteData).subscribe();
   }
 }

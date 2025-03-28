@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { InfoCardComponent, LABEL_COLORS, LabelColor } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { TestResults } from '../task-testing.component';
-import { TaskWithApplyOption } from '../../../task-route.directive';
 import { Relation } from '@nuclia/core';
 import { combineLatest, map, ReplaySubject } from 'rxjs';
+import { DataAugmentationTaskOnGoing } from '../../../tasks-automation.models';
 
 @Component({
   selector: 'app-graph-results',
@@ -24,7 +24,7 @@ export class GraphResultsComponent {
     }
   }
 
-  @Input({ required: true }) task: TaskWithApplyOption | undefined;
+  @Input({ required: true }) task: DataAugmentationTaskOnGoing | undefined;
 
   extractedNERs = this.resultsSubject.pipe(
     map((results) => {

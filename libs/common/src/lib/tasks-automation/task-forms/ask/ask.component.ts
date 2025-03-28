@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { TaskRouteDirective } from '../../task-route.directive';
+import { TaskRouteDirective } from '../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskApplyTo, TaskName } from '@nuclia/core';
 import { filter, map, take } from 'rxjs';
@@ -12,7 +12,6 @@ import { filter, map, take } from 'rxjs';
 @Component({
   imports: [
     CommonModule,
-    BackButtonComponent,
     InfoCardComponent,
     PaTextFieldModule,
     ReactiveFormsModule,
@@ -22,7 +21,7 @@ import { filter, map, take } from 'rxjs';
     PaTogglesModule,
   ],
   templateUrl: './ask.component.html',
-  styleUrl: '../_task-form.common.scss',
+  styleUrl: '../../_task.common.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AskComponent extends TaskRouteDirective {
@@ -102,6 +101,6 @@ export class AskComponent extends TaskRouteDirective {
         },
       ],
     };
-    this.saveTask(this.type, parameters, commonConfig.applyTaskTo);
+    this.saveTask(this.type, parameters);
   }
 }

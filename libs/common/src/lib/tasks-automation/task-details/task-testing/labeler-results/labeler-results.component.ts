@@ -4,7 +4,6 @@ import { InfoCardComponent, SisLabelModule } from '@nuclia/sistema';
 import { SDKService } from '@flaps/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TestResults } from '../task-testing.component';
-import { TaskWithApplyOption } from '../../../task-route.directive';
 import {
   ExtractedDataTypes,
   FIELD_TYPE,
@@ -16,6 +15,7 @@ import {
 import { map, ReplaySubject, switchMap, take } from 'rxjs';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { getParagraphId, ParagraphWithText } from 'libs/common/src/lib/resources';
+import { DataAugmentationTaskOnGoing } from '../../../tasks-automation.models';
 
 @Component({
   selector: 'app-labeler-results',
@@ -32,14 +32,14 @@ export class LabelerResultsComponent {
   expanded: { [paragraphId: string]: boolean | undefined } = {};
   TaskApplyTo = TaskApplyTo;
 
-  @Input({required: true})
+  @Input({ required: true })
   set results(value: TestResults | undefined) {
     if (value) {
       this.resultsSubject.next(value);
     }
   }
 
-  @Input({required: true}) task: TaskWithApplyOption | undefined;
+  @Input({ required: true }) task: DataAugmentationTaskOnGoing | undefined;
 
   fieldsWithLabels = this.resultsSubject.pipe(
     map((results) => {

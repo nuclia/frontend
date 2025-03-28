@@ -10,6 +10,9 @@
   display: flex;
   flex-direction: column;
   gap: rhythm(0.5);
+  > div {
+    font-size: $font-size-body-m;
+  }
 }
 
 pa-table {

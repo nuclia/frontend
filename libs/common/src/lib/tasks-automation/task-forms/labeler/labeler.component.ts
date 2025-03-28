@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TaskRouteDirective } from '../../task-route.directive';
-import { BackButtonComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { TaskRouteDirective } from '../task-route.directive';
+import { InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
@@ -14,7 +14,6 @@ import { LabelOperation, TaskApplyTo, TaskName } from '@nuclia/core';
 @Component({
   imports: [
     CommonModule,
-    BackButtonComponent,
     InfoCardComponent,
     TaskFormComponent,
     TranslateModule,
@@ -24,7 +23,7 @@ import { LabelOperation, TaskApplyTo, TaskName } from '@nuclia/core';
     PaIconModule,
   ],
   templateUrl: './labeler.component.html',
-  styleUrl: '../_task-form.common.scss',
+  styleUrl: '../../_task.common.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelerComponent extends TaskRouteDirective {
@@ -48,6 +47,6 @@ export class LabelerComponent extends TaskRouteDirective {
       operations: [{ label: labelOperation }],
       on: this.labelingConfig?.on !== undefined ? this.labelingConfig.on : TaskApplyTo.FULL_FIELD,
     };
-    this.saveTask(this.type, parameters, commonConfig.applyTaskTo);
+    this.saveTask(this.type, parameters);
   }
 }

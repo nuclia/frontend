@@ -189,6 +189,7 @@ export interface TaskOnBatch extends TaskStatus {
  */
 export interface TaskOnGoing extends TaskStatus {
   defined_at: string;
+  enabled: boolean;
 }
 
 /**

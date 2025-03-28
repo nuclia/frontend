@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BackButtonComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { TaskRouteDirective } from '../../task-route.directive';
+import { TaskRouteDirective } from '../task-route.directive';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { QAOperation, TaskApplyTo, TaskName } from '@nuclia/core';
 import { filter, map, take } from 'rxjs';
@@ -12,7 +12,6 @@ import { filter, map, take } from 'rxjs';
 @Component({
   imports: [
     CommonModule,
-    BackButtonComponent,
     TaskFormComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
@@ -20,7 +19,7 @@ import { filter, map, take } from 'rxjs';
     ReactiveFormsModule,
   ],
   templateUrl: './question-answer.component.html',
-  styleUrl: '../_task-form.common.scss',
+  styleUrl: '../../_task.common.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuestionAnswerComponent extends TaskRouteDirective {
@@ -59,6 +58,6 @@ export class QuestionAnswerComponent extends TaskRouteDirective {
       on: TaskApplyTo.FULL_FIELD,
       operations: [{ qa: operation }],
     };
-    this.saveTask(this.type, parameters, commonConfig.applyTaskTo);
+    this.saveTask(this.type, parameters);
   }
 }

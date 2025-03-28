@@ -27,7 +27,7 @@ import { LabelOperation, LabelSet, LabelSetKind, LabelSets, TaskApplyTo } from '
 import { combineLatest, filter, forkJoin, map, Observable, Subject } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { shareReplay, startWith, switchMap, take, takeUntil } from 'rxjs/operators';
-import { TaskWithApplyOption } from '../../task-route.directive';
+import { DataAugmentationTaskOnGoing } from '../../tasks-automation.models';
 
 export interface LabelingConfiguration {
   label: LabelOperation;
@@ -67,7 +67,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
     return this._type;
   }
 
-  @Input() set task(value: TaskWithApplyOption | undefined | null) {
+  @Input() set task(value: DataAugmentationTaskOnGoing | undefined | null) {
     if (value) {
       this._task = value;
       this.initForm(value);
@@ -76,7 +76,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   get task() {
     return this._task;
   }
-  private _task?: TaskWithApplyOption;
+  private _task?: DataAugmentationTaskOnGoing;
 
   @Output() configurationChange = new EventEmitter<LabelingConfiguration>();
 
@@ -128,7 +128,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
     this.updateLabelsets();
   }
 
-  initForm(task: TaskWithApplyOption) {
+  initForm(task: DataAugmentationTaskOnGoing) {
     const labelOperation = task.parameters?.operations?.find((operation) => operation.label)?.label;
     if (labelOperation) {
       this.labelingForm.controls.labels.clear();

@@ -2,11 +2,14 @@
   (cardClick)="newTask.emit()"
   [disabled]="!ready">
   <div class="task-card">
-    <div class="title-s">
-      <pa-icon
+    <div class="card-title">
+      <div class="task-type">
+        <pa-icon
         size="small"
         [name]="icons[type] || ''"></pa-icon>
-      {{  'tasks-automation.type.' + type + '.title' | translate }}
+        <span class="title-s">{{  'tasks-automation.type.' + type + '.title' | translate }}</span>
+      </div>
+
       @if (!ready) {
         <nsi-badge kind="tertiary">{{ 'tasks-automation.coming-soon' | translate }}</nsi-badge>
       }

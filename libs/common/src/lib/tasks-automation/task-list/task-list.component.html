@@ -27,7 +27,7 @@
             <span class="header">{{ 'tasks-automation.table.header.creation-date' | translate }}</span>
           </pa-table-sortable-header-cell>
           <pa-table-cell header>
-            <span class="header">{{ 'tasks-automation.table.header.activity' | translate }}</span>
+            <span class="header">{{ 'tasks-automation.table.header.status' | translate }}</span>
           </pa-table-cell>
           <pa-table-cell header>
             <span class="header">{{ 'tasks-automation.table.header.actions' | translate }}</span>
@@ -59,10 +59,10 @@
             </pa-table-cell>
             <pa-table-cell>
               <span class="body-s">
-                @if (task.type === 'automated') {
-                  {{ 'tasks-automation.status.watching' | translate }}
+                @if (task.enabled) {
+                  {{ 'tasks-automation.status.active' | translate }}
                 } @else {
-                  {{ 'tasks-automation.status.' + task.status | translate }}
+                  {{ 'tasks-automation.status.disabled' | translate }}
                 }
               </span>
             </pa-table-cell>
@@ -73,33 +73,21 @@
                 size="small"
                 [paPopup]="cellMenu"></pa-button>
               <pa-dropdown #cellMenu>
-                @if (task.type === 'one-time') {
-                  @if (task.status === 'stopped') {
-                    <pa-option (selectOption)="restartTask(task.id)">
-                      {{ 'tasks-automation.actions.restart' | translate }}
-                    </pa-option>
-                  }
-                  @if (task.status === 'progress') {
-                    <pa-option (selectOption)="stopTask(task.id)">
-                      {{ 'tasks-automation.actions.stop' | translate }}
-                    </pa-option>
-                  }
-                }
                 @if (task.canClean) {
                   <pa-option
-                    (selectOption)="cleanTask(task.id)"
+                    (selectOption)="cleanTask(task.id, task.title)"
                     destructive>
                     {{ 'tasks-automation.actions.delete-data.title' | translate }}
                   </pa-option>
                 }
                 <pa-option
-                  (selectOption)="deleteTask(task.id, false)"
+                  (selectOption)="deleteTask(task.id, task.title, false)"
                   destructive>
                   {{ 'tasks-automation.actions.delete-agent.title' | translate }}
                 </pa-option>
                 @if (task.canClean) {
                   <pa-option
-                    (selectOption)="deleteTask(task.id, true)"
+                    (selectOption)="deleteTask(task.id, task.title, true)"
                     destructive>
                     {{ 'tasks-automation.actions.delete-all.title' | translate }}
                   </pa-option>

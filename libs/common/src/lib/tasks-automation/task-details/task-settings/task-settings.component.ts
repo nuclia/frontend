@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BadgeComponent, InfoCardComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LabelModule, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TaskWithApplyOption } from '../../task-route.directive';
 import { map, switchMap, take } from 'rxjs';
 import {
   AskOperation,
@@ -18,6 +17,7 @@ import {
   TaskTrigger,
 } from '@nuclia/core';
 import { PaTableModule } from '@guillotinaweb/pastanaga-angular';
+import { DataAugmentationTaskOnGoing } from '../../tasks-automation.models';
 
 interface Trigger {
   url: string;
@@ -68,7 +68,7 @@ export class TaskSettingsComponent {
   qaOperation?: QAOperation;
 
   @Input()
-  set task(value: TaskWithApplyOption | undefined) {
+  set task(value: DataAugmentationTaskOnGoing | undefined) {
     this._task = value;
     if (value?.parameters.filter.field_types?.length) {
       this.fieldTypes = this.mapFieldTypes(value.parameters.filter.field_types);
@@ -91,13 +91,13 @@ export class TaskSettingsComponent {
   get task() {
     return this._task;
   }
-  private _task: TaskWithApplyOption | undefined;
+  private _task: DataAugmentationTaskOnGoing | undefined;
 
   private mapFieldTypes(fieldTypes: string[]) {
     return fieldTypes.map((type) => shortToLongFieldType(type as SHORT_FIELD_TYPE)).filter((type) => !!type);
   }
 
-  private mapTriggers(task: TaskWithApplyOption) {
+  private mapTriggers(task: DataAugmentationTaskOnGoing) {
     return (task.parameters.operations || []).reduce((acc, curr) => {
       Object.entries(curr).forEach(([, operation]) => {
         const triggers = (operation?.triggers || []).map((trigger: TaskTrigger) => ({

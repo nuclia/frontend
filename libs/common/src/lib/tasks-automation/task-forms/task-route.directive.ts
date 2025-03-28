@@ -1,15 +1,9 @@
 import { Directive, inject } from '@angular/core';
 import { filter, map, shareReplay, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TasksAutomationService } from './tasks-automation.service';
-import { ApplyOption, DataAugmentationParameters, TaskName, TaskParameters, TaskStatus } from '@nuclia/core';
+import { TasksAutomationService } from '../tasks-automation.service';
+import { TaskName, TaskParameters } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { NavigationService } from '@flaps/core';
-
-export interface TaskWithApplyOption extends TaskStatus {
-  applyOption: ApplyOption;
-  parameters: DataAugmentationParameters;
-}
 
 @Directive({
   selector: '[stfTaskRoute]',
@@ -20,7 +14,6 @@ export class TaskRouteDirective {
   protected router = inject(Router);
   protected tasksAutomation = inject(TasksAutomationService);
   protected toaster = inject(SisToastService);
-  protected navigation = inject(NavigationService);
 
   taskId = this.activeRoute.params.pipe(
     filter((params) => !!params['taskId']),
@@ -28,18 +21,11 @@ export class TaskRouteDirective {
   );
   task = this.taskId.pipe(
     switchMap((taskId) => this.tasksAutomation.getTask(taskId)),
-    map((response) => {
-      const applyOption: ApplyOption =
-        response.config && response.request ? 'ALL' : response.request ? 'EXISTING' : 'NEW';
-      const task = response.config || response.request;
-      return task ? { ...task, applyOption } : undefined;
-    }),
+    map((response) => response.config),
     shareReplay(1),
   );
 
-  backRoute = this.navigation.kbUrl.pipe(map((kbUrl) => `${kbUrl}/tasks`));
-
-  saveTask(type: TaskName, parameters: TaskParameters, applyTo: ApplyOption) {
+  saveTask(type: TaskName, parameters: TaskParameters) {
     this.activeRoute.params
       .pipe(
         map((params) => params['taskId']),
@@ -47,22 +33,28 @@ export class TaskRouteDirective {
         switchMap((taskId) =>
           taskId
             ? this.tasksAutomation.editTask(taskId, parameters).pipe(map(() => taskId))
-            : this.tasksAutomation.startTask(type, parameters, applyTo).pipe(map(() => undefined)),
+            : this.tasksAutomation.startTask(type, parameters).pipe(map((res) => res.id)),
+        ),
+        switchMap((taskId) =>
+          this.tasksAutomation.tasksRoute.pipe(
+            take(1),
+            map((route) => route + `/${taskId}`),
+          ),
         ),
       )
       .subscribe({
-        next: (taskId) => {
-          this.router.navigate([taskId ? `../../${taskId}` : `..`], { relativeTo: this.activeRoute });
+        next: (taskRoute) => {
+          this.router.navigate([taskRoute]);
         },
         error: (error) => this.showError(error),
       });
   }
 
   backToTaskList() {
-    this.backRoute
+    this.tasksAutomation.tasksRoute
       .pipe(
         take(1),
-        switchMap((backRoute) => this.router.navigate([backRoute])),
+        switchMap((tasksRoute) => this.router.navigate([tasksRoute])),
       )
       .subscribe();
   }
