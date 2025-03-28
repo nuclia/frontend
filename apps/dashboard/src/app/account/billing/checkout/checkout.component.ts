@@ -35,7 +35,7 @@ import {
   SubscriptionError,
   UserService,
 } from '@flaps/core';
-import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
+import { COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
 import { ReviewComponent } from '../review/review.component';
@@ -54,7 +54,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    vat: new FormControl<string>('', { nonNullable: true }),
+    vat: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     phone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     address: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     country: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -74,7 +74,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   loading = false;
   countries = COUNTRIES;
-  requiredVatCountries = REQUIRED_VAT_COUNTRIES;
   countryList = Object.entries(COUNTRIES)
     .map(([code, name]) => ({ code, name }))
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -123,9 +122,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
   get isCompany() {
     return !this.customerForm.value.not_company;
-  }
-  get vatRequired() {
-    return this.customerForm.controls.vat.hasValidator(Validators.required);
   }
 
   private _stripe: any;
@@ -205,9 +201,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   updateCustomerValidation(newValues: typeof this.customerForm.value) {
     const values = { ...this.customerForm.value, ...newValues };
     this.customerForm.controls.company.setValidators(values.not_company ? [] : [Validators.required]);
-    this.customerForm.controls.vat.setValidators(
-      !values.not_company && this.requiredVatCountries.includes(values.country || '') ? [Validators.required] : [],
-    );
+    this.customerForm.controls.vat.setValidators(values.not_company ? [] : [Validators.required]);
     this.customerForm.controls.company.updateValueAndValidity();
     this.customerForm.controls.vat.updateValueAndValidity();
   }
