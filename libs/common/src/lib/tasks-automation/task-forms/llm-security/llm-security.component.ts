@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BackButtonComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
-import { TaskRouteDirective } from '../../task-route.directive';
+import { TaskRouteDirective } from '../task-route.directive';
 import { TaskApplyTo, TaskName } from '@nuclia/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { filter, take } from 'rxjs';
@@ -12,7 +12,6 @@ import { filter, take } from 'rxjs';
 @Component({
   imports: [
     CommonModule,
-    BackButtonComponent,
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
@@ -21,7 +20,7 @@ import { filter, take } from 'rxjs';
     TwoColumnsConfigurationItemComponent,
   ],
   templateUrl: './llm-security.component.html',
-  styleUrl: '../_task-form.common.scss',
+  styleUrl: '../../_task.common.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LLMSecurityComponent extends TaskRouteDirective {
@@ -52,6 +51,6 @@ export class LLMSecurityComponent extends TaskRouteDirective {
       on: this.form.value.on === 'resources' ? TaskApplyTo.FULL_FIELD : TaskApplyTo.TEXT_BLOCKS,
       operations: [{ prompt_guard: { enabled: true, triggers: commonConfig.webhook && [commonConfig.webhook] } }],
     };
-    this.saveTask(this.type, parameters, commonConfig.applyTaskTo);
+    this.saveTask(this.type, parameters);
   }
 }

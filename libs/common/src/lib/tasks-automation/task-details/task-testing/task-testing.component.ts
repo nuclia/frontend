@@ -8,7 +8,6 @@ import {
 } from '@nuclia/sistema';
 import { SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TaskWithApplyOption } from '../../task-route.directive';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -20,7 +19,7 @@ import {
 import { AugmentedField, IResource, Resource } from '@nuclia/core';
 import { debounceTime, forkJoin, map, of, Subject, switchMap, take } from 'rxjs';
 import { TestResultsComponent } from './test-results/test-results.component';
-import { getOperationFromTaskName } from '../../tasks-automation.models';
+import { DataAugmentationTaskOnGoing, getOperationFromTaskName } from '../../tasks-automation.models';
 
 export type TestResults = { resource: Resource; results: { [key: string]: AugmentedField } };
 
@@ -56,7 +55,7 @@ export class TaskTestingComponent {
   results?: TestResults[];
   tokens?: { input: number; output: number };
 
-  @Input() task: TaskWithApplyOption | undefined;
+  @Input() task: DataAugmentationTaskOnGoing | undefined;
 
   suggestions = this.updateSuggestions.pipe(
     debounceTime(300),

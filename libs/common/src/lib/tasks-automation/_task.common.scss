@@ -1,0 +1,54 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.form-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+
+  & > * {
+    width: 100%;
+  }
+}
+
+.breadcrumbs {
+  align-items: center;
+  background-color: $color-neutral-lightest;
+  border-radius: $border-radius-button;
+  color: $color-neutral-regular;
+  display: inline-flex;
+  gap: rhythm(2);
+  padding: rhythm(0.5) rhythm(1.5);
+  a {
+    @include body-m();
+    text-decoration: none;
+  }
+  span {
+    @include title-s();
+    color: $color-dark-stronger;
+  }
+}
+
+.task-type {
+  align-items: center;
+  display: flex;
+  gap: rhythm(0.5);
+  &.with-background {
+    background-color: $color-neutral-lightest;
+    border-radius: $border-radius-button;
+    padding: 0 rhythm(0.5);
+  }
+  pa-icon {
+    display: flex;
+  }
+}
+
+.info-card-content-with-icon {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+}
+
+.inline-form {
+  justify-content: space-between;
+}

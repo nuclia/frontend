@@ -7,13 +7,22 @@ header {
   margin-bottom: rhythm(4);
 }
 
+.breadcrumbs {
+  align-self: flex-start;
+}
+
 .title {
+  align-items: center;
   display: flex;
   gap: rhythm(2);
-  justify-content: space-between;
+}
+
+.page-title {
+  margin: 0;
 }
 
 .actions {
   display: flex;
   gap: rhythm(1);
+  margin-left: auto;
 }

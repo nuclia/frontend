@@ -14,7 +14,6 @@ import { CommonModule } from '@angular/common';
 import {
   DropdownButtonComponent,
   InfoCardComponent,
-  SisToastService,
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
@@ -23,6 +22,7 @@ import {
   PaButtonModule,
   PaDropdownModule,
   PaExpanderModule,
+  PaIconModule,
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -32,7 +32,6 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { LabelModule, LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  ApplyOption,
   Classification,
   FIELD_TYPE,
   LearningConfigurations,
@@ -42,17 +41,16 @@ import {
   TaskName,
   TaskTrigger,
 } from '@nuclia/core';
-import { BehaviorSubject, combineLatest, filter, map, Subject, switchMap } from 'rxjs';
-import { debounceTime, take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, filter, map, Subject, switchMap } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 import { UserKeysComponent, UserKeysForm } from '../../ai-models';
-import { TaskWithApplyOption } from '../task-route.directive';
-import { getOperationFromTaskName } from '../tasks-automation.models';
+import { DataAugmentationTaskOnGoing, getOperationFromTaskName } from '../tasks-automation.models';
+import { RouterModule } from '@angular/router';
 
 export interface TaskFormCommonConfig {
   name: string;
-  applyTaskTo: ApplyOption;
   filter: {
     contains: string[];
     field_types: string[];
@@ -72,6 +70,7 @@ export interface TaskFormCommonConfig {
     LabelModule,
     PaDropdownModule,
     PaExpanderModule,
+    PaIconModule,
     ParametersTableComponent,
     PaTextFieldModule,
     PaTogglesModule,
@@ -81,6 +80,7 @@ export interface TaskFormCommonConfig {
     TranslateModule,
     PaTableModule,
     PaButtonModule,
+    RouterModule,
     StickyFooterComponent,
     UserKeysComponent,
   ],
@@ -90,7 +90,6 @@ export interface TaskFormCommonConfig {
 })
 export class TaskFormComponent implements OnInit, OnDestroy {
   private labelService = inject(LabelsService);
-  private toaster = inject(SisToastService);
   private sdk = inject(SDKService);
   private cdr = inject(ChangeDetectorRef);
   private tasksAutomation = inject(TasksAutomationService);
@@ -101,8 +100,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input() type: TaskName = 'labeler';
   // Text displayed in the info card below Trigger label on the right column
   @Input() triggerDescription = '';
-  // Label displayed on the submit button
-  @Input() activateButtonLabel = '';
   // Note displayed on the footer when task is applied automatically
   @Input() footerNoteAutomation = '';
   // Note displayed on the footer when task is applied once
@@ -119,7 +116,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   }
   private _modelsHidden: boolean = false;
   // Task whose data is displayed in the form
-  @Input() set task(value: TaskWithApplyOption | undefined | null) {
+  @Input() set task(value: DataAugmentationTaskOnGoing | undefined | null) {
     if (value) {
       this._task = value;
       this.initForm(value);
@@ -128,14 +125,13 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   get task() {
     return this._task;
   }
-  private _task?: TaskWithApplyOption;
+  private _task?: DataAugmentationTaskOnGoing;
 
   @Output() cancel = new EventEmitter<void>();
   @Output() save = new EventEmitter<TaskFormCommonConfig>();
 
   form = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    applyTaskTo: new FormControl<ApplyOption>('NEW', { nonNullable: true }),
     filter: new FormGroup({
       contains: new FormControl<string>('', { nonNullable: true }),
       apply_to_agent_generated_fields: new FormControl<boolean>(false),
@@ -150,12 +146,10 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   userKeysForm?: UserKeysForm;
   headers: { key: string; value: string }[] = [];
   parameters: { key: string; value: string }[] = [];
+  tasksRoute = this.tasksAutomation.tasksRoute;
 
   selectedFilters = new BehaviorSubject<string[]>([]);
 
-  get applyTaskValue() {
-    return this.form.controls.applyTaskTo.value;
-  }
   get generativeModel() {
     return this.learningConfigurations?.['generative_model'].options?.find(
       (option) => option.value === this.form.controls.llm.controls.model.value,
@@ -203,7 +197,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   can_apply_to_agent_generated_fields = false;
 
   ngOnInit() {
-    this.tasksAutomation.initTaskList();
     this.tasksAutomation.taskDefinitions
       .pipe(
         map((tasks) => tasks.find((task) => task.name === this.type)),
@@ -229,6 +222,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       });
 
+    /*
     combineLatest([this.form.valueChanges, this.selectedFilters])
       .pipe(
         filter(([data]) => data.applyTaskTo === 'EXISTING'),
@@ -247,6 +241,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
         },
         error: () => this.toaster.error('tasks-automation.errors.counting-resources'),
       });
+    */
   }
 
   ngOnDestroy() {
@@ -254,13 +249,12 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  initForm(task: TaskWithApplyOption) {
+  initForm(task: DataAugmentationTaskOnGoing) {
     const triggers =
       this.task?.parameters.operations?.[0]?.[getOperationFromTaskName(this.task.task.name) || 'ask']?.triggers?.[0];
     this.form.patchValue({
       ...task.parameters,
       filter: { ...task.parameters.filter, contains: task.parameters.filter.contains?.[0] || '' },
-      applyTaskTo: task.applyOption,
       webhook: { url: triggers?.url || '' },
     });
     this.fieldTypeFilters.forEach((option) => {
@@ -274,7 +268,6 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       this.headers = Object.entries(triggers.headers || {}).map(([key, value]) => ({ key, value }));
       this.parameters = Object.entries(triggers.params || {}).map(([key, value]) => ({ key, value }));
     }
-    this.form.controls.applyTaskTo.disable();
     this.cdr.markForCheck();
   }
 

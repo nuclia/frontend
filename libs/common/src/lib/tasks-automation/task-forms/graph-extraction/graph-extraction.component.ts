@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BackButtonComponent, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
+import { TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TaskFormCommonConfig, TaskFormComponent } from '../task-form.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { TaskRouteDirective } from '../../task-route.directive';
+import { TaskRouteDirective } from '../task-route.directive';
 import { PaButtonModule, PaIconModule, PaPopupModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GraphOperation, TaskApplyTo, TaskName } from '@nuclia/core';
@@ -14,7 +14,6 @@ import { filter, map, take } from 'rxjs';
   selector: 'stf-graph-extraction',
   imports: [
     CommonModule,
-    BackButtonComponent,
     TaskFormComponent,
     TranslateModule,
     TwoColumnsConfigurationItemComponent,
@@ -170,7 +169,7 @@ export class GraphExtractionComponent extends TaskRouteDirective {
       operations: [{ graph: graphOperation }],
       on: TaskApplyTo.FULL_FIELD,
     };
-    this.saveTask(this.type, parameters, commonConfig.applyTaskTo);
+    this.saveTask(this.type, parameters);
   }
 
   private initExampleGroup(entities: number, relations: number) {

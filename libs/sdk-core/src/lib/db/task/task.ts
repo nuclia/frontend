@@ -50,10 +50,12 @@ export class TaskManager {
    */
   startTask(
     name: TaskName,
-    parameters: TaskParameters,
+    parameters?: TaskParameters,
     apply: ApplyOption = 'EXISTING',
+    enabled?: boolean,
+    uuid_task?: string,
   ): Observable<StartStopTaskResponse> {
-    return this.nuclia.rest.post(`${this.kb.path}/task/start`, { name, parameters, apply });
+    return this.nuclia.rest.post(`${this.kb.path}/task/start`, { name, parameters, apply, enabled, uuid_task });
   }
 
   /**
@@ -96,5 +98,13 @@ export class TaskManager {
    */
   editTask(taskId: string, parameters: TaskParameters) {
     return this.nuclia.rest.patch(`${this.kb.path}/task/${taskId}`, { parameters });
+  }
+
+  /**
+   * Enable or disable a tasks
+   * @param enabled
+   */
+  enableTask(taskId: string, enabled: boolean) {
+    return this.nuclia.rest.post(`${this.kb.path}/task/${taskId}/enable`, { enabled });
   }
 }

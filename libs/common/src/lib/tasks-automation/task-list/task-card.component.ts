@@ -10,7 +10,7 @@ import { TaskName } from '@nuclia/core';
   selector: 'app-task-card',
   imports: [BadgeComponent, CommonModule, PaCardModule, PaIconModule, TranslateModule],
   templateUrl: './task-card.component.html',
-  styleUrl: './task-card.component.scss',
+  styleUrls: ['./task-card.component.scss', '../_task.common.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskCardComponent {

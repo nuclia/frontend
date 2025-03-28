@@ -1,5 +1,5 @@
 @use 'apps/dashboard/src/variables' as *;
-@use 'task-form.common';
+@use '../task.common';
 
 :host {
   .filter-form-container {
@@ -13,6 +13,15 @@
       }
     }
   }
+
+  header {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
+    margin-bottom: rhythm(4);
+  }
+
   app-parameters-table {
     display: block;
     margin-top: rhythm(1);

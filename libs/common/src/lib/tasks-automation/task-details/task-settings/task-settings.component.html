@@ -20,11 +20,6 @@
           }
         </div>
       }
-      <div class="separator-line"></div>
-      <div class="setting">
-        <label>{{ 'tasks-automation.settings.applies-on' | translate }}</label>
-        <div [innerHTML]="'tasks-automation.form.apply-task-to.' + task.applyOption.toLowerCase() | translate"></div>
-      </div>
     </div>
   </nsi-two-columns-configuration-item>
   @if (task.parameters.filter; as filter) {

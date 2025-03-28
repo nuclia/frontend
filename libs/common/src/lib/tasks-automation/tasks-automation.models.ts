@@ -29,6 +29,7 @@ export interface BaseTask {
 
 export interface AutomatedTask extends BaseTask {
   type: 'automated';
+  enabled: boolean;
 }
 
 export interface OneTimeTask extends BaseTask {
@@ -47,6 +48,7 @@ export function mapBatchToOneTimeTask(task: DataAugmentationTaskOnBatch): OneTim
 export function mapOnGoingToAutomatedTask(task: DataAugmentationTaskOnGoing): AutomatedTask {
   return {
     type: 'automated',
+    enabled: task.enabled,
     ...getBaseTask(task),
   };
 }
