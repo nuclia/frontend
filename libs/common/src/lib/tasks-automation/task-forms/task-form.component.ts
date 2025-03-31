@@ -53,8 +53,10 @@ export interface TaskFormCommonConfig {
   name: string;
   filter: {
     contains: string[];
+    contains_operator?: 0 | 1;
     field_types: string[];
     labels?: string[];
+    labels_operator?: 0 | 1;
     apply_to_agent_generated_fields?: boolean;
   };
   llm: LLMConfig;
@@ -134,6 +136,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     filter: new FormGroup({
       contains: new FormControl<string>('', { nonNullable: true }),
+      contains_operator: new FormControl<boolean>(false),
+      labels_operator: new FormControl<boolean>(false),
       apply_to_agent_generated_fields: new FormControl<boolean>(false),
     }),
     llm: new FormGroup({
@@ -254,7 +258,12 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       this.task?.parameters.operations?.[0]?.[getOperationFromTaskName(this.task.task.name) || 'ask']?.triggers?.[0];
     this.form.patchValue({
       ...task.parameters,
-      filter: { ...task.parameters.filter, contains: task.parameters.filter.contains?.[0] || '' },
+      filter: {
+        ...task.parameters.filter,
+        contains: task.parameters.filter.contains?.join(', ') || '',
+        contains_operator: task.parameters.filter.contains_operator === 1,
+        labels_operator: task.parameters.filter.labels_operator === 1,
+      },
       webhook: { url: triggers?.url || '' },
     });
     this.fieldTypeFilters.forEach((option) => {
@@ -332,9 +341,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
           }
         : undefined,
       filter: {
-        contains: rawValue.filter.contains ? [rawValue.filter.contains] : [],
+        contains: rawValue.filter.contains ? rawValue.filter.contains.split(',').map((s) => s.trim()) : [],
+        contains_operator: rawValue.filter.contains_operator ? 1 : 0,
         field_types: this.selectedFieldTypes,
         labels: this.labelFilters,
+        labels_operator: rawValue.filter.labels_operator ? 1 : 0,
         apply_to_agent_generated_fields: !!rawValue.filter.apply_to_agent_generated_fields,
       },
       llm: {
