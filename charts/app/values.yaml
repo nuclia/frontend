@@ -31,7 +31,7 @@ email_domain: XXX
 saml_enabled: XXX
 
 virtualService:
-  enabled: true
+  enabled: false
   gateway: XXX
   host: XXX
   http:
