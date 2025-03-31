@@ -16,6 +16,7 @@ export class AddUserComponent {
   form = new FormGroup({
     email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    type: new FormControl<'USER' | 'ROOT'>('USER', { nonNullable: true, validators: [Validators.required] }),
   });
   private userService = inject(UserService);
   private cdr = inject(ChangeDetectorRef);
