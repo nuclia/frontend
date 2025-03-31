@@ -1,12 +1,14 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { SelectAccountKbService } from '@flaps/common';
-import { catchError, of, switchMap } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, forkJoin, of, switchMap } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { UserService } from '@flaps/core';
 
 export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
   const selectService: SelectAccountKbService = inject(SelectAccountKbService);
   const router: Router = inject(Router);
+  const userService = inject(UserService);
 
   const selectedAccount = route.children[0]?.paramMap.get('account');
 
@@ -26,11 +28,17 @@ export const selectAccountGuard = (route: ActivatedRouteSnapshot) => {
       map(() => true),
     );
   }
-  return selectService.loadAccounts().pipe(
-    switchMap((accounts) => {
+  return forkJoin([selectService.loadAccounts().pipe(take(1)), userService.userInfo.pipe(take(1))]).pipe(
+    switchMap(([accounts, userInfo]) => {
       // No accounts
       if (accounts.length === 0) {
-        return of(router.createUrlTree(['/user/onboarding']));
+        // if the user can create an account, redirect to onboarding
+        if (userInfo?.create) {
+          return of(router.createUrlTree(['/user/onboarding']));
+        } else {
+          // no accounts and no create permission, redirect to logout
+          return of(router.createUrlTree(['/user/logout']));
+        }
       } else if (accounts.length === 1) {
         const accountSlug = accounts[0].slug;
         // redirect to kb selection
