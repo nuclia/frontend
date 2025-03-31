@@ -14,42 +14,71 @@
   </div>
   <div class="pa-main-container-wide">
     <h3>User details</h3>
-    <form [formGroup]="userForm">
+    <form
+      [formGroup]="userForm"
+      (submit)="save()">
       <pa-input
         readonly
         formControlName="id">
         Id
       </pa-input>
       <pa-input
-        readonly
+        [readonly]="!isEdit"
         formControlName="email">
         Email
       </pa-input>
+      @if (!isEdit) {
+        <pa-input
+          readonly
+          formControlName="last_login">
+          Last login
+        </pa-input>
+
+        <pa-input
+          [readonly]="!isEdit"
+          formControlName="language">
+          Language
+        </pa-input>
+        <pa-input
+          [readonly]="!isEdit"
+          formControlName="providers">
+          Providers
+        </pa-input>
+      }
       <pa-input
-        readonly
-        formControlName="last_login">
-        Last login
-      </pa-input>
-      <pa-input
-        readonly
-        formControlName="language">
-        Language
-      </pa-input>
-      <pa-input
-        readonly
-        formControlName="providers">
-        Providers
-      </pa-input>
-      <pa-input
-        readonly
+        [readonly]="!isEdit"
         formControlName="name">
         Name
       </pa-input>
-      <pa-input
-        readonly
-        formControlName="type">
-        Type
-      </pa-input>
+      <pa-select
+        formControlName="type"
+        [readonly]="!isEdit"
+        label="Type"
+        required>
+        <pa-option value="USER">USER</pa-option>
+        <pa-option value="ROOT">ROOT</pa-option>
+      </pa-select>
+      <footer>
+        @if (!isEdit) {
+          <pa-button
+            kind="destructive"
+            (click)="edit()">
+            Edit
+          </pa-button>
+        } @else {
+          <pa-button
+            type="submit"
+            kind="primary"
+            [disabled]="userForm.pristine || userForm.invalid || isSaving">
+            Save
+          </pa-button>
+          <pa-button
+            kind="destructive"
+            (click)="cancel()">
+            Cancel
+          </pa-button>
+        }
+      </footer>
     </form>
   </div>
 </div>
