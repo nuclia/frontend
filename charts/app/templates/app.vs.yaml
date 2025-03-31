@@ -15,15 +15,15 @@ spec:
   hosts:
   - "{{ .Values.virtualService.host }}"
   http:
+  {{- with .Values.virtualService.extraMatch }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
   - match:
-    - uri:
-        regex: ^/.{0,2}
-    - uri:
-        # avoid only /api
-        regex: ^/([^a]|a[^p]|ap[^i]|api[^/]).*
+    {{- toYaml .Values.virtualService.http.match | nindent 4 }}
+    {{- with .Values.virtualService.http.retries }}
     retries:
-      attempts: 3
-      retryOn: connect-failure
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     route:
     - destination:
         host: "{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
