@@ -17,7 +17,13 @@
     type WidgetFeedback,
   } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
-  import { askQuestion, initAnswer, initUsageTracking, initViewer } from '../../core/stores/effects';
+  import {
+    askQuestion,
+    initAnswer,
+    initChatHistoryPersistence,
+    initUsageTracking,
+    initViewer,
+  } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
   import {
@@ -188,6 +194,9 @@
     initAnswer();
     initViewer();
     initUsageTracking(no_tracking);
+    if (_features.persistChatHistory) {
+      initChatHistoryPersistence();
+    }
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);

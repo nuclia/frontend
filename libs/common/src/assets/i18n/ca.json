@@ -1363,6 +1363,8 @@
 	"search.widgets.form.widget-options.open-new-tabs.toggle-description": "Obriu enllaços i/o fitxers en una pestanya nova",
 	"search.widgets.form.widget-options.permalinks.toggle-description": "Afegeix paràmetres addicionals a l’URL perquè els usuaris puguin copiar i compartir un enllaç directe a un recurs específic o als resultats de la cerca.",
 	"search.widgets.form.widget-options.permalinks.toggle-label": "Enllaços permanents",
+	"search.widgets.form.widget-options.persist-chat-history.toggle-description": "L'historial de xat s'emmagatzemarà a l'emmagatzematge local del navegador i es restaurarà sempre que es mostri el giny. S'aplica només al giny de xat.",
+	"search.widgets.form.widget-options.persist-chat-history.toggle-label": "Persistir l'historial de xat",
 	"search.widgets.form.widget-options.placeholder.input-label": "Placeholder",
 	"search.widgets.form.widget-options.placeholder.toggle-description": "Canvieu el text que voleu que aparegui a la barra de cerca quan no estigui actiu. El text predeterminat és \"Escriu la teva pregunta aquí\".",
 	"search.widgets.form.widget-options.placeholder.toggle-label": "Personalitza el placeholder de la barra de cerca",

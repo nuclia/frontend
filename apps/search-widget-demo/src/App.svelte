@@ -1,5 +1,6 @@
 <script lang="ts">
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
+  import { NucliaChat } from '../../../libs/search-widget/src/widgets/chat-widget';
 
   // const kb = '1f4e4651-580c-40db-8d20-c8dfdfffa530'; // books
   const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
@@ -13,14 +14,14 @@
 
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
-  const askFeatures = 'answers,permalink,autocompleteFromNERs,zcitations,relations';
+  const askFeatures = 'answers,permalink,autocompleteFromNERs,zcitations,persistChatHistory';
   const findFeatures = 'filter,autofilter,useSynonyms,permalink,hideThumbnails,autocompleteFromNERs';
   const allFeatures =
     'filter,suggestions,permalink,zrelations,zknowledgeGraph,znavigateToLink,znavigateToFile,answers,citations,zhideResults,displayMetadata,hideThumbnails,znoBM25forChat';
 </script>
 
 <main>
-  <NucliaSearchBar
+  <NucliaChat
     zone="europe-1"
     {backend}
     cdn="/"
@@ -28,7 +29,6 @@
     lang="en"
     no_tracking
     features={askFeatures} />
-  <NucliaSearchResults no_tracking />
 </main>
 
 <style lang="scss">

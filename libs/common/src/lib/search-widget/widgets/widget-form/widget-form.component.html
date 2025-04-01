@@ -164,6 +164,20 @@
             </div>
             <div class="config-form-field">
               <pa-toggle
+                formControlName="persistChatHistory"
+                [disabled]="!chatStyleEnabled"
+                withBackground
+                spaceBetweenLabelAndToggle>
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.persist-chat-history.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.persist-chat-history.toggle-description' | translate }}
+              </div>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
                 formControlName="hideLogo"
                 withBackground
                 spaceBetweenLabelAndToggle>

@@ -68,6 +68,7 @@ import {
 import { fieldData, fieldFullId, viewerData, viewerState } from './viewer.store';
 import {
   answerState,
+  appendChatEntry,
   chat,
   chatError,
   currentAnswer,
@@ -85,6 +86,8 @@ import { currentLanguage, translateInstant } from '../i18n';
 import { reset } from '../reset';
 
 const subscriptions: Subscription[] = [];
+
+const CHAT_HISTORY_KEY = 'nuclia.chat.history';
 
 function resetStatesAndEffects() {
   subscriptions.forEach((subscription) => subscription.unsubscribe());
@@ -437,7 +440,7 @@ export function askQuestion(
                 // error is set only once
                 hasError = true;
                 const text = result.status === -2 ? getNotEngoughDataMessage() : messages[`${result.status}`];
-                chat.set({
+                appendChatEntry.set({
                   question,
                   answer: {
                     inError: true,
@@ -460,7 +463,7 @@ export function askQuestion(
               }
               currentAnswer.set(result);
             } else {
-              chat.set({ question, answer: result });
+              appendChatEntry.set({ question, answer: result });
               pendingResults.set(false);
             }
           }
@@ -481,4 +484,19 @@ export function initUsageTracking(noTracking?: boolean) {
         .subscribe((engagement) => logEvent('engage', { ...engagement })),
     );
   }
+}
+
+export function initChatHistoryPersistence() {
+  const chatHistory = localStorage.getItem(CHAT_HISTORY_KEY);
+  if (chatHistory) {
+    chat.set(JSON.parse(chatHistory));
+  }
+  subscriptions.push(
+    chat
+      .pipe(
+        distinctUntilChanged(),
+        filter((history) => !history[history.length - 1]?.answer?.incomplete),
+      )
+      .subscribe((history) => localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history))),
+  );
 }

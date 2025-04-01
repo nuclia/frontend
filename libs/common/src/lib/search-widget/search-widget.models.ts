@@ -132,6 +132,7 @@ export interface WidgetConfiguration {
   hideDownload: boolean;
   openNewTab: boolean;
   noChatHistory: boolean;
+  persistChatHistory: boolean;
   speech: boolean;
   speechSynthesis: boolean;
   feedback: WidgetFeedback;
@@ -264,6 +265,7 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   hideDownload: false,
   openNewTab: false,
   noChatHistory: false,
+  persistChatHistory: false,
   speech: false,
   speechSynthesis: false,
   feedback: 'none',
@@ -328,6 +330,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     hideDownload: widgetOptions.hideDownload,
     openNewTab: (widgetOptions.navigateToLink || widgetOptions.navigateToFile) && widgetOptions.openNewTab,
     noChatHistory: widgetOptions.noChatHistory,
+    persistChatHistory: widgetOptions.persistChatHistory,
     speech: widgetOptions.speech,
     speechSynthesis: widgetOptions.speechSynthesis,
     collapseTextBlocks: widgetOptions.collapseTextBlocks,
