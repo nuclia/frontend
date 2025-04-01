@@ -1363,6 +1363,8 @@
 	"search.widgets.form.widget-options.open-new-tabs.toggle-description": "Open links and/or files in a new tab",
 	"search.widgets.form.widget-options.permalinks.toggle-description": "Adds extra parameters to the URL so that users can copy and share a direct link to a specific resource or search results.",
 	"search.widgets.form.widget-options.permalinks.toggle-label": "Permalinks",
+	"search.widgets.form.widget-options.persist-chat-history.toggle-description": "The chat history will be stored in the browser localstorage and restored whenever the widget is displayed. Applies only to the chat widget.",
+	"search.widgets.form.widget-options.persist-chat-history.toggle-label": "Persist chat history",
 	"search.widgets.form.widget-options.placeholder.input-label": "Placeholder",
 	"search.widgets.form.widget-options.placeholder.toggle-description": "Change the text that you want to appear in the search bar when not active. The default text is “Type your question here”.",
 	"search.widgets.form.widget-options.placeholder.toggle-label": "Customize search bar placeholder",

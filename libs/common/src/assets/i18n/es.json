@@ -1363,6 +1363,8 @@
 	"search.widgets.form.widget-options.open-new-tabs.toggle-description": "Abrir enlaces y/o archivos en una nueva pestaña",
 	"search.widgets.form.widget-options.permalinks.toggle-description": "Agrega parámetros adicionales a la URL para que los usuarios puedan copiar y compartir un enlace directo a un recurso o resultados de búsqueda específicos.",
 	"search.widgets.form.widget-options.permalinks.toggle-label": "Enlaces permanentes",
+	"search.widgets.form.widget-options.persist-chat-history.toggle-description": "El historial de chat se guardará en el almacenamiento local del navegador y se restaurará cada vez que se muestre el widget. Aplica únicamente al widget de chat.",
+	"search.widgets.form.widget-options.persist-chat-history.toggle-label": "Persistir el historial de chat",
 	"search.widgets.form.widget-options.placeholder.input-label": "Placeholder",
 	"search.widgets.form.widget-options.placeholder.toggle-description": "Cambia el texto que quieres que aparezca en la barra de búsqueda cuando no esté activa. El texto predeterminado es \"Escriba su pregunta aquí\".",
 	"search.widgets.form.widget-options.placeholder.toggle-label": "Personalizar el placeholder de la barra de búsqueda",

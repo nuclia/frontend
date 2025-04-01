@@ -173,6 +173,7 @@
         not_enough_data_message,
       },
       no_tracking,
+      true,
     );
 
     // Setup widget in the store

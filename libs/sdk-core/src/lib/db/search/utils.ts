@@ -152,6 +152,7 @@ export interface WidgetFeatures {
   displaySearchButton?: boolean;
   hideDownload?: boolean;
   disableRAG?: boolean;
+  persistChatHistory?: boolean;
 }
 
 export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';

@@ -70,11 +70,19 @@ export const lastSpeakableFullAnswer = answerState.reader((state) =>
     : undefined,
 );
 
-export const chat = answerState.writer<Ask.Entry[], { question: string; answer: Ask.Answer }>(
+export const chat = answerState.writer<Ask.Entry[]>(
   (state) =>
     state.isStreaming
       ? [...state.chat, { question: state.currentQuestion, answer: { ...state.currentAnswer, incomplete: true } }]
       : state.chat,
+  (state, params) => ({
+    ...state,
+    chat: params,
+  }),
+);
+
+export const appendChatEntry = answerState.writer<undefined, { question: string; answer: Ask.Answer }>(
+  () => undefined,
   (state, params) => ({
     ...state,
     chat: [

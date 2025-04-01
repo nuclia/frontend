@@ -87,6 +87,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     notEnoughDataMessage: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     hideLogo: new FormControl<boolean>(false, { nonNullable: true }),
     noChatHistory: new FormControl<boolean>(false, { nonNullable: true }),
+    persistChatHistory: new FormControl<boolean>(false, { nonNullable: true }),
     permalink: new FormControl<boolean>(false, { nonNullable: true }),
     displaySearchButton: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
@@ -130,6 +131,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
   get popupStyleEnabled() {
     return this.form.controls.widgetMode.value === 'popup';
+  }
+  get chatStyleEnabled() {
+    return this.form.controls.widgetMode.value === 'chat';
   }
   get navigateToLinkOrFileEnabled() {
     return this.form.controls.navigateToFile.value || this.form.controls.navigateToLink.value;
@@ -198,6 +202,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     this.savedWidget = widget;
     this.currentWidget = { ...this.savedWidget };
     this.form.patchValue(this.currentWidget.widgetConfig);
+    this.onWidgetModeChange(this.currentWidget.widgetConfig.widgetMode);
     this.cdr.detectChanges();
   }
 
@@ -281,6 +286,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   onWidgetModeChange(value: string) {
     if (value === 'popup') {
       this.form.controls.darkMode.setValue('light');
+    }
+    if (value !== 'chat') {
+      this.form.controls.persistChatHistory.setValue(false);
     }
   }
 
