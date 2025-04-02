@@ -1623,6 +1623,7 @@
 	"tasks-automation.table.header.type": "Agent type",
 	"tasks-automation.table.processed": "{{count}} processed",
 	"tasks-automation.testing.description": "Select one or multiple resources to run a test of the agent.",
+	"tasks-automation.testing.disabled": "At the moment, agents using keyword or label filters cannot be tested.",
 	"tasks-automation.testing.error": "An error occurred when testing the agent.",
 	"tasks-automation.testing.execute-test": "Execute test run",
 	"tasks-automation.testing.results.clear": "Clear all test results",
