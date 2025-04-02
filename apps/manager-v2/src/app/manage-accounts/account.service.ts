@@ -45,6 +45,9 @@ export class AccountService {
    * Get account details and set `AccountDetails` and `KbList` in store.
    */
   loadAccountDetails(accountId: string): Observable<AccountDetails> {
+    this.store.setKbList([]);
+    this.store.setAccountDetails(null);
+    this.store.setBlockedFeatures([]);
     return this.regionalService.getAccount(accountId).pipe(
       switchMap((account) => {
         const accountDetails = this.regionalService.mapAccountToDetails(account);
