@@ -1623,6 +1623,7 @@
 	"tasks-automation.table.header.type": "Tipo de agente",
 	"tasks-automation.table.processed": "{{count}} procesado",
 	"tasks-automation.testing.description": "Seleccione uno o varios recursos para ejecutar una prueba del agente.",
+	"tasks-automation.testing.disabled": "Por el momento no es posible probar agentes que utilicen filtros de palabras clave o etiquetas.",
 	"tasks-automation.testing.error": "Se produjo un error al probar el agente.",
 	"tasks-automation.testing.execute-test": "Ejecutar la prueba",
 	"tasks-automation.testing.results.clear": "Borrar todos los resultados de la prueba",
