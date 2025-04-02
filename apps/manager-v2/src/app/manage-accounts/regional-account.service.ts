@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { catchError, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary } from './account-ui.models';
 import { Account, Kb } from './regional-account.models';
 import { ZoneService } from '../manage-zones/zone.service';
@@ -30,29 +30,31 @@ export class RegionalAccountService {
   getKbList(accountSlug: string): Observable<KbSummary[]> {
     return forkJoin([this.zoneService.getZoneDict(), this.sdk.nuclia.db.getKbIndexes(accountSlug)]).pipe(
       switchMap(([zoneDict, indexes]) =>
-        forkJoin(
-          indexes.map((index) => {
-            const zone = zoneDict[index.zone_id];
-            return this.sdk.nuclia.rest
-              .get<Kb>(`${ACCOUNT_ENDPOINT}/${index.account_id}/kb/${index.kb_id}`, undefined, undefined, zone.slug)
-              .pipe(
-                map((kb) => ({
-                  ...kb,
-                  accountId: index.account_id,
-                  zone,
-                  private: kb.state === 'PRIVATE',
-                  activity: {
-                    redash: `http://redash.nuclia.com/queries/24?p_KB=${kb.id}`,
-                    grafana: `http://platform.grafana.nuclia.com/d/${
-                      index.account_id
-                    }/1-nucliadb-knowledgebox?orgId=1&var-kbid=${kb.id}&var-cluster=${
-                      zone.slug === 'europe-1' ? 'flaps' : zone.slug
-                    }&var-container=All&var-service=All&var-trace_min_duration=0s&from=now-12h&to=now`,
-                  },
-                })),
-              );
-          }),
-        ),
+        indexes.length === 0
+          ? of([])
+          : forkJoin(
+              indexes.map((index) => {
+                const zone = zoneDict[index.zone_id];
+                return this.sdk.nuclia.rest
+                  .get<Kb>(`${ACCOUNT_ENDPOINT}/${index.account_id}/kb/${index.kb_id}`, undefined, undefined, zone.slug)
+                  .pipe(
+                    map((kb) => ({
+                      ...kb,
+                      accountId: index.account_id,
+                      zone,
+                      private: kb.state === 'PRIVATE',
+                      activity: {
+                        redash: `http://redash.nuclia.com/queries/24?p_KB=${kb.id}`,
+                        grafana: `http://platform.grafana.nuclia.com/d/${
+                          index.account_id
+                        }/1-nucliadb-knowledgebox?orgId=1&var-kbid=${kb.id}&var-cluster=${
+                          zone.slug === 'europe-1' ? 'flaps' : zone.slug
+                        }&var-container=All&var-service=All&var-trace_min_duration=0s&from=now-12h&to=now`,
+                      },
+                    })),
+                  );
+              }),
+            ),
       ),
     );
   }
