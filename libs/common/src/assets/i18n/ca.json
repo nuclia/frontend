@@ -1623,7 +1623,6 @@
 	"tasks-automation.table.header.type": "Tipus d'agent",
 	"tasks-automation.table.processed": "{{count}} processats",
 	"tasks-automation.testing.description": "Seleccioneu un o diversos recursos per executar una prova de l'agent.",
-	"tasks-automation.testing.disabled": "De moment, els agents que utilitzen filtres de paraules clau o d'etiquetes no es poden provar.",
 	"tasks-automation.testing.error": "S'ha produït un error en provar l'agent.",
 	"tasks-automation.testing.execute-test": "Executar la prova",
 	"tasks-automation.testing.results.clear": "Esborra tots els resultats de la prova",

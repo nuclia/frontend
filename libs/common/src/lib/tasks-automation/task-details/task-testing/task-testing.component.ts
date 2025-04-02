@@ -77,12 +77,6 @@ export class TaskTestingComponent {
       .map(([key]) => key);
   }
 
-  get isDisabled() {
-    return (
-      (this.task?.parameters.filter.contains?.length || 0) > 0 || (this.task?.parameters.filter.labels?.length || 0) > 0
-    );
-  }
-
   run() {
     this.loading = true;
     this.results = undefined;

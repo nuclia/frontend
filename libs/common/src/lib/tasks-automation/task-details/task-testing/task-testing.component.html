@@ -8,7 +8,6 @@
       <div>
         <pa-input
           icon="search"
-          [disabled]="isDisabled"
           [paPopup]="dropdown"
           #popup="paPopupRef"
           popupDisabled
@@ -30,13 +29,6 @@
             <pa-checkbox [(value)]="selected[resource.id]">{{ resource.title }}</pa-checkbox>
           }
         </div>
-      }
-      @if (isDisabled) {
-        <nsi-info-card
-          type="warning"
-          icon="warning">
-          {{ 'tasks-automation.testing.disabled' | translate }}
-        </nsi-info-card>
       }
       <pa-button
         class="run"
