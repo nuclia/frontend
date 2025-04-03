@@ -6,3 +6,4 @@ export * from './select-kb.guard';
 export * from './set-account.guard';
 export * from './set-kb.guard';
 export * from './set-local-kb.guard';
+export * from './set-agent.guard';
