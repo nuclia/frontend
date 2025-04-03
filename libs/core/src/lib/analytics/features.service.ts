@@ -65,6 +65,7 @@ export class FeaturesService {
     contentSafetyTask: this.featureFlag.isFeatureEnabled('content-safety-task'),
     graphSearch: this.featureFlag.isFeatureEnabled('graph-search'),
     extractConfig: this.featureFlag.isFeatureEnabled('extract-config'),
+    retrievalAgents: this.featureFlag.isFeatureEnabled('retrieval-agents'),
   };
 
   /**

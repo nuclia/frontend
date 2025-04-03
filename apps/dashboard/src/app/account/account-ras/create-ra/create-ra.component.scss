@@ -1,0 +1,9 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.create-agent-form {
+  label {
+    @include title-xs();
+    color: $color-neutral-regular;
+    margin-bottom: rhythm(0.5);
+  }
+}
