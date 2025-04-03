@@ -87,6 +87,7 @@ export class SearchConfigurationComponent {
   private unsubscribeAll = new Subject<void>();
 
   @Input({ transform: booleanAttribute }) displayWidgetButtonLine = false;
+  @Input({ transform: booleanAttribute }) onlySupportedConfigs = false;
   @Input() configurationContainer?: ElementRef;
   @Input() mainTitle = '';
 
@@ -122,6 +123,7 @@ export class SearchConfigurationComponent {
   initialised = false;
 
   isConfigModified = false;
+  isConfigUnsupported = false;
   canModifyConfig = this.features.isKbAdmin;
 
   get isNucliaConfig() {
@@ -183,7 +185,9 @@ export class SearchConfigurationComponent {
   private setConfigurations() {
     return forkJoin([
       this.sdk.currentKb.pipe(take(1)),
-      this.searchWidgetService.searchConfigurations.pipe(take(1)),
+      this.onlySupportedConfigs
+        ? this.searchWidgetService.supportedSearchConfigurations.pipe(take(1))
+        : this.searchWidgetService.searchConfigurations.pipe(take(1)),
     ]).pipe(
       tap(([kb, savedConfigs]) => {
         const standardConfigOption = new OptionModel({
@@ -287,6 +291,7 @@ export class SearchConfigurationComponent {
         this.savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, configs);
         this.currentConfig = { ...this.savedConfig };
         this.isConfigModified = false;
+        this.isConfigUnsupported = !!this.savedConfig.unsupported;
         this.updateWidget();
         this.cdr.markForCheck();
       },
@@ -315,6 +320,7 @@ export class SearchConfigurationComponent {
         resultDisplay: { ...this.savedConfig.resultDisplay },
       };
       this.isConfigModified = false;
+      this.isConfigUnsupported = false;
     }
   }
 

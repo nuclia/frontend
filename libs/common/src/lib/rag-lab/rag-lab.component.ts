@@ -14,9 +14,8 @@ import { RouterLink } from '@angular/router';
 import { RagLabService } from './rag-lab.service';
 import { forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 import { LabLayoutComponent } from './lab-layout/lab-layout.component';
-import { getRequestOptions, RequestConfigAndQueries } from './rag-lab.models';
-import { getPreselectedFilterList, getRagStrategies, SearchConfiguration } from '../search-widget';
-import { getRAGImageStrategies, getRAGStrategies, Reranker } from '@nuclia/core';
+import { RequestConfigAndQueries } from './rag-lab.models';
+import { getChatOptions, SearchConfiguration } from '../search-widget';
 
 @Component({
   selector: 'stf-rag-lab',
@@ -233,7 +232,7 @@ export class RagLabComponent implements OnChanges {
         const requestConfig: RequestConfigAndQueries = {
           searchConfigId: configId,
           queries,
-          ...getRequestOptions(searchConfig, defaultGenerativeModel),
+          ...getChatOptions(searchConfig, defaultGenerativeModel),
         };
         return requestConfig;
       })

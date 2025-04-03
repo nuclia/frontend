@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { injectScript, renderMarkdown, SDKService } from '@flaps/core';
+import { renderMarkdown, SDKService } from '@flaps/core';
 import { ModalConfig, ModalRef, ModalService } from '@guillotinaweb/pastanaga-angular';
 import { BehaviorSubject, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
 import { Ask, ChatOptions, IErrorResponse, LearningConfiguration, Prompts } from '@nuclia/core';
 import { LoadingDialogComponent } from './loading-dialog';
 import { catchError, filter, map } from 'rxjs/operators';
-import { NUCLIA_STANDARD_SEARCH_CONFIG, SearchAndWidgets, SearchConfiguration } from '../search-widget';
+import { NUCLIA_STANDARD_SEARCH_CONFIG, SearchConfiguration, SearchWidgetService } from '../search-widget';
 import { GENERATIVE_MODEL_KEY, RequestConfig, RequestConfigAndQueries, ResultEntry } from './rag-lab.models';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -16,6 +16,7 @@ export class RagLabService {
   private sdk = inject(SDKService);
   private modalService = inject(ModalService);
   private translate = inject(TranslateService);
+  private searchWidgetService = inject(SearchWidgetService);
 
   private _loadingModal?: ModalRef;
   private _progress$ = new BehaviorSubject<number | null>(null);
@@ -53,12 +54,15 @@ export class RagLabService {
   loadKbConfigAndModels(): Observable<void> {
     return this.sdk.currentKb.pipe(
       take(1),
-      tap((kb) => {
-        const savedConfigurations = (kb.search_configs as SearchAndWidgets)?.searchConfigurations || [];
+      switchMap((kb) =>
+        forkJoin([
+          kb.getConfiguration(),
+          kb.getLearningSchema(),
+          this.searchWidgetService.supportedSearchConfigurations.pipe(take(1)),
+        ]),
+      ),
+      map(([config, schema, savedConfigurations]) => {
         this._searchConfigurations.next([{ ...NUCLIA_STANDARD_SEARCH_CONFIG }].concat(savedConfigurations));
-      }),
-      switchMap((kb) => forkJoin([kb.getConfiguration(), kb.getLearningSchema()])),
-      map(([config, schema]) => {
         this._kbConfigBackup.next(config);
         this._generativeModelList.next({
           ...schema[GENERATIVE_MODEL_KEY],

@@ -33,10 +33,10 @@ import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
 import { delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { debounceTime, tap } from 'rxjs/operators';
+import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { ResourceViewerService } from '../resources';
 import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from './widgets/dialogs';
-import { SisModalService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { SearchWidgetStorageService } from './search-widget-storage.service';
 
@@ -52,6 +52,7 @@ export class SearchWidgetService {
   private modalService = inject(SisModalService);
   private viewerService = inject(ResourceViewerService);
   private searchWidgetStorage = inject(SearchWidgetStorageService);
+  private toaster = inject(SisToastService);
 
   private currentQuery = '';
   private currentFilters: string[] = [];
@@ -65,6 +66,9 @@ export class SearchWidgetService {
     scrollContainer?: string;
   }>();
   searchConfigurations = this.searchWidgetStorage.searchConfigurations;
+  supportedSearchConfigurations = this.searchConfigurations.pipe(
+    map((configs) => configs.filter((config) => !config.unsupported)),
+  );
   widgetList = this.searchWidgetStorage.widgetList;
 
   constructor() {
@@ -92,17 +96,10 @@ export class SearchWidgetService {
   }
 
   saveSearchConfig(kbId: string, name: string, config: SearchConfiguration) {
-    return this.searchConfigurations.pipe(
-      take(1),
-      switchMap((searchConfigs) => {
-        // Override the config if it exists, add it otherwise
-        const itemIndex = searchConfigs.findIndex((item) => item.id === name);
-        if (itemIndex > -1) {
-          searchConfigs[itemIndex] = config;
-        } else {
-          searchConfigs.push({ ...config, id: name });
-        }
-        return this.searchWidgetStorage.storeConfigs(searchConfigs);
+    return this.searchWidgetStorage.storeSearchConfig(name, config).pipe(
+      catchError((error) => {
+        this.toaster.error('search.configuration.save-error');
+        throw error;
       }),
       tap(() => {
         this.saveSelectedSearchConfig(kbId, name);
@@ -115,18 +112,8 @@ export class SearchWidgetService {
     selectionMap[kbId] = name;
     this.storage.setItem(SAVED_CONFIG_KEY, JSON.stringify(selectionMap));
   }
-
   deleteSearchConfig(configId: string) {
-    return this.searchConfigurations.pipe(
-      take(1),
-      switchMap((searchConfigs) => {
-        const itemIndex = searchConfigs.findIndex((item) => item.id === configId);
-        if (itemIndex > -1) {
-          searchConfigs.splice(itemIndex, 1);
-        }
-        return this.searchWidgetStorage.storeConfigs(searchConfigs);
-      }),
-    );
+    return this.searchWidgetStorage.deleteSearchConfig(configId);
   }
 
   generateWidgetSnippet(

@@ -1,11 +1,19 @@
 import { inject, Injectable } from '@angular/core';
-import { SearchAndWidgets, SearchConfiguration, Widget } from './search-widget.models';
-import { FeaturesService, SDKService, STFUtils } from '@flaps/core';
-import { filter, map, Observable, of, Subject, switchMap, take } from 'rxjs';
+import {
+  getChatOptions,
+  getFindOptions,
+  getSearchConfigFromSearchOptions,
+  SearchAndWidgets,
+  SearchConfiguration,
+  Widget,
+} from './search-widget.models';
+import { SDKService } from '@flaps/core';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { concatMap, startWith, tap } from 'rxjs/operators';
+import { map, shareReplay, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { compareDesc } from 'date-fns';
 import { StandaloneService } from '../services';
+import { SearchConfig } from '@nuclia/core';
 
 const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
 const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
@@ -16,7 +24,6 @@ const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
 export class SearchWidgetStorageService {
   private sdk = inject(SDKService);
   private storage = inject(LOCAL_STORAGE);
-  private features = inject(FeaturesService);
   private standaloneService = inject(StandaloneService);
 
   private storageUpdated = new Subject<void>();
@@ -27,16 +34,25 @@ export class SearchWidgetStorageService {
   searchConfigurations: Observable<SearchConfiguration[]> = this.storageUpdated.pipe(
     startWith(true),
     switchMap(() => this.sdk.currentKb.pipe(take(1))),
-    map((kb) => {
+    switchMap((kb) => {
       if (this.standaloneService.standalone) {
         const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
           this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
         );
-        return configMap[kb.id] || [];
+        return of(configMap[kb.id] || []);
       } else {
-        return (kb.search_configs as SearchAndWidgets)?.searchConfigurations || [];
+        return kb.getSearchConfigs().pipe(
+          map((searchOptions) => {
+            const searchConfigs = (kb.search_configs as SearchAndWidgets)?.searchConfigurations || [];
+            const missingConfigs = Object.entries(searchOptions)
+              .filter(([key]) => !searchConfigs.some((config) => config.id === key))
+              .map(([key, value]) => getSearchConfigFromSearchOptions(key, value));
+            return searchConfigs.concat(missingConfigs);
+          }),
+        );
       }
     }),
+    shareReplay(1),
   );
 
   widgetList: Observable<Widget[]> = this.storageUpdated.pipe(
@@ -64,7 +80,51 @@ export class SearchWidgetStorageService {
     );
   }
 
-  storeConfigs(updatedConfigs: SearchConfiguration[]) {
+  storeSearchConfig(name: string, config: SearchConfiguration) {
+    return forkJoin([this._storeSearchConfig(name, config), this._storeSearchOptions(name, config)]).pipe(
+      tap(() => this.storageUpdated.next()),
+    );
+  }
+
+  deleteSearchConfig(name: string) {
+    return forkJoin([this._deleteSearchConfig(name), this._deleteSearchOptions(name)]).pipe(
+      tap(() => this.storageUpdated.next()),
+    );
+  }
+
+  private _storeSearchConfig(name: string, config: SearchConfiguration) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      map((kb) => (kb.search_configs as SearchAndWidgets)?.searchConfigurations || []),
+      switchMap((searchConfigs) => {
+        // Override the config if it exists, add it otherwise
+        const itemIndex = searchConfigs.findIndex((item) => item.id === name);
+        if (itemIndex > -1) {
+          searchConfigs[itemIndex] = config;
+        } else {
+          searchConfigs.push({ ...config, id: name });
+        }
+        return this._updateSearchConfig(searchConfigs);
+      }),
+    );
+  }
+
+  private _deleteSearchConfig(configId: string) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      map((kb) => (kb.search_configs as SearchAndWidgets)?.searchConfigurations || []),
+      take(1),
+      switchMap((searchConfigs) => {
+        const itemIndex = searchConfigs.findIndex((item) => item.id === configId);
+        if (itemIndex > -1) {
+          searchConfigs.splice(itemIndex, 1);
+        }
+        return this._updateSearchConfig(searchConfigs);
+      }),
+    );
+  }
+
+  private _updateSearchConfig(configs: SearchConfiguration[]) {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => {
@@ -72,19 +132,58 @@ export class SearchWidgetStorageService {
           const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
             this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
           );
-          configMap[kb.id] = updatedConfigs;
+          configMap[kb.id] = configs;
           this.storage.setItem(SEARCH_CONFIGS_KEY, JSON.stringify(configMap));
           return of(undefined);
         } else {
           return this.searchAndWidgets.pipe(
             take(1),
-            switchMap((data) => kb.modify({ search_configs: { ...data, searchConfigurations: updatedConfigs } })),
+            switchMap((data) => kb.modify({ search_configs: { ...data, searchConfigurations: configs } })),
             switchMap(() => this.sdk.refreshCurrentKb()),
           );
         }
       }),
-      tap(() => this.storageUpdated.next()),
     );
+  }
+
+  private _storeSearchOptions(name: string, config: SearchConfiguration) {
+    let searchOptions: SearchConfig;
+    if (config.generativeAnswer.generateAnswer) {
+      searchOptions = { kind: 'ask', config: getChatOptions(config) };
+    } else {
+      searchOptions = { kind: 'find', config: getFindOptions(config) };
+    }
+    if (this.standaloneService.standalone) {
+      return of(undefined);
+    } else {
+      return this.sdk.currentKb.pipe(
+        take(1),
+        switchMap((kb) =>
+          kb
+            .getSearchConfigs()
+            .pipe(
+              switchMap((configs) =>
+                configs[name] ? kb.updateSearchConfig(name, searchOptions) : kb.createSearchConfig(name, searchOptions),
+              ),
+            ),
+        ),
+      );
+    }
+  }
+
+  private _deleteSearchOptions(name: string) {
+    if (this.standaloneService.standalone) {
+      return of(undefined);
+    } else {
+      return this.sdk.currentKb.pipe(
+        take(1),
+        switchMap((kb) =>
+          kb
+            .getSearchConfigs()
+            .pipe(switchMap((configs) => (configs[name] ? kb.deleteSearchConfig(name) : of(undefined)))),
+        ),
+      );
+    }
   }
 
   storeWidgets(updatedWidgets: Widget[]) {
