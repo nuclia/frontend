@@ -19,6 +19,7 @@ import {
   SelectKbComponent,
   selectKbGuard,
   setAccountGuard,
+  setAgentGuard,
   setKbGuard,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
@@ -36,6 +37,8 @@ import { FeedbackComponent } from './farewell/feedback.component';
 import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
 import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
 import { TestPageComponent } from './test-page/test-page.component';
+import { RetrievalAgentComponent } from './retrieval-agent/retrieval-agent.component';
+import { AgentDashboardComponent } from './retrieval-agent/agent-dashboard/agent-dashboard.component';
 
 const routes: Routes = [
   {
@@ -160,6 +163,17 @@ const routes: Routes = [
                   import('../../../../libs/common/src/lib/tasks-automation/tasks-automation.routes').then(
                     (m) => m.TASK_AUTOMATION_ROUTES,
                   ),
+              },
+            ],
+          },
+          {
+            path: ':zone/agent/:agent',
+            component: RetrievalAgentComponent,
+            canActivate: [setAgentGuard],
+            children: [
+              {
+                path: '',
+                component: AgentDashboardComponent,
               },
             ],
           },
