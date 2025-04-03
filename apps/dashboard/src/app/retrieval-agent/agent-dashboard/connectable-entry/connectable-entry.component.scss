@@ -1,0 +1,27 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  background: $color-neutral-lighter;
+  border-radius: rhythm(0.5);
+  color: $color-neutral-regular;
+  display: flex;
+  align-items: center;
+  font-size: font-size(xxs);
+  font-weight: $font-weight-semi-bold;
+  height: rhythm(5);
+  justify-content: center;
+  line-height: line-height(s);
+  padding: 0 rhythm(1);
+  text-transform: uppercase;
+
+  .output {
+    background: $color-light-stronger;
+    border-radius: 50%;
+    border: 1.5px solid $color-neutral-regular;
+    flex-shrink: 0;
+    height: rhythm(2);
+    position: absolute;
+    right: calc(#{rhythm(1)} * -1);
+    width: rhythm(2);
+  }
+}
