@@ -8,5 +8,27 @@
     </pa-button>
   </div>
 
-  <div class="workflow-container">TODO</div>
+  <div class="workflow-container">
+    <div class="workflow-col first-col">
+      <app-agent-box>
+        <app-connectable-entry #preprocess>preprocess</app-connectable-entry>
+        <app-arrow-down></app-arrow-down>
+        <app-connectable-entry #context>Retrieval context</app-connectable-entry>
+        <app-arrow-down></app-arrow-down>
+        <app-connectable-entry #postprocess>postprocess</app-connectable-entry>
+      </app-agent-box>
+    </div>
+    <div class="workflow-col">
+      <app-agent-box
+        inputTitle="Rephrase"
+        [inputEntry]="preprocess">
+        <div style="height: 40px; background: #c4c4c4">Toto</div>
+      </app-agent-box>
+      <app-agent-box
+        inputTitle="Conditional"
+        [inputEntry]="context">
+        <div style="height: 40px; background: #c4c4c4">Toto</div>
+      </app-agent-box>
+    </div>
+  </div>
 </div>

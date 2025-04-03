@@ -1,0 +1,29 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  background: $color-light-stronger;
+  border: 1.5px solid $color-neutral-regular;
+  border-radius: rhythm(1);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: rhythm(1);
+  padding: rhythm(1);
+  position: relative;
+  width: rhythm(45);
+
+  .title-s {
+    padding: 0 rhythm(1);
+  }
+  .input {
+    background: $color-light-stronger;
+    border-radius: 50%;
+    border: 1.5px solid $color-neutral-regular;
+    flex-shrink: 0;
+    height: rhythm(2);
+    position: absolute;
+    left: calc(#{rhythm(1)} * -1);
+    top: calc(#{rhythm(2)} - 2px);
+    width: rhythm(2);
+  }
+}
