@@ -250,6 +250,16 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   createExtractStrategy(config: ExtractConfig): Observable<void>;
 
   deleteExtractStrategy(id: string): Observable<void>;
+
+  getSearchConfig(id: string): Observable<SearchConfig>;
+
+  getSearchConfigs(): Observable<SearchConfigs>;
+
+  createSearchConfig(id: string, config: SearchConfig): Observable<void>;
+
+  updateSearchConfig(id: string, config: SearchConfig): Observable<void>;
+
+  deleteSearchConfig(id: string): Observable<void>;
 }
 
 export type PINECONE_REGIONS =
@@ -520,4 +530,18 @@ export interface ExtractVLLMConfig {
   rules?: string[];
   merge_pages?: boolean;
   max_pages_to_merge?: number;
+}
+
+export type SearchConfigs = { [key: string]: SearchConfig };
+
+export type SearchConfig = AskConfig | FindConfig;
+
+export interface AskConfig {
+  kind: 'ask';
+  config: ChatOptions;
+}
+
+export interface FindConfig {
+  kind: 'find';
+  config: SearchOptions;
 }

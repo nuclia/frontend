@@ -6,6 +6,7 @@ import {
   RAGStrategy,
   RagStrategyName,
 } from '../kb';
+import { Filter } from './search.models';
 
 export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
   // ragStrategies format example: 'full_resource|3|true|/classification.labels/doctype/product_manuals#/icon/image,field_extension|t/field1|f/field2,hierarchy|2,neighbouring_paragraphs|2|2,conversation|attachments_text|15'
@@ -110,6 +111,23 @@ export function getRAGImageStrategies(ragImageStrategies: string): RAGImageStrat
     })
     .filter((s) => s) as RAGImageStrategy[];
   return strategies as RAGImageStrategy[];
+}
+
+export function parsePreselectedFilters(preselectedFilters: string): string[] | Filter[] {
+  const advancedFilterRE = /({[^{}]+})/g;
+  const advancedFilters = preselectedFilters.match(advancedFilterRE);
+  return advancedFilters
+    ? advancedFilters
+        .map((filter) => {
+          try {
+            return JSON.parse(filter);
+          } catch (e) {
+            console.warn('Malformed advanced filter: wrong JSON syntax.', filter);
+            return undefined;
+          }
+        })
+        .filter((filter) => filter)
+    : preselectedFilters.split(',');
 }
 
 export interface WidgetFeatures {

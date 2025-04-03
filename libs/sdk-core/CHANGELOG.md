@@ -11,6 +11,7 @@
   - Edit an existing task
   - Enable or disable a tasks
 - Support `/run-agents` endpoint to run tasks on a resources
+- Support endpoints to manage search configurations
 
 # 1.24.1 (2025-02-05)
 

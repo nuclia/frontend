@@ -28,6 +28,7 @@ import {
   LabelSetKind,
   LinkFieldData,
   NER_FILTER_PREFIX,
+  parsePreselectedFilters,
   ResourceProperties,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
@@ -201,24 +202,12 @@ export const showAttachedImages = searchState.writer<boolean>(
   }),
 );
 
-const advancedFilterRE = /({[^{}]+})/g;
 export const preselectedFilters = searchState.writer<string[] | Filter[], string>(
   (state) => state.preselectedFilters,
   (state, preselectedFilters) => {
-    const advancedFilters = preselectedFilters.match(advancedFilterRE);
-    const filters: string[] = !!advancedFilters
-      ? advancedFilters.map((filter) => {
-          try {
-            return JSON.parse(filter);
-          } catch (e) {
-            console.warn('Malformed advanced filter: wrong JSON syntax.', filter);
-            return filter;
-          }
-        })
-      : preselectedFilters.split(',');
     return {
       ...state,
-      preselectedFilters: filters,
+      preselectedFilters: parsePreselectedFilters(preselectedFilters),
     };
   },
 );
