@@ -872,5 +872,10 @@ function hasUnsupportedOptions(searchOptions: SearchConfig) {
     'vectorset',
   ];
 
-  return Object.keys(searchOptions.config).some((key) => !supportedOptions.includes(key));
+  return (
+    Object.keys(searchOptions.config).some((key) => !supportedOptions.includes(key)) ||
+    (searchOptions.config as ChatOptions).rag_strategies?.find(
+      (strategy) => strategy.name === RagStrategyName.PREQUERIES,
+    )
+  );
 }
