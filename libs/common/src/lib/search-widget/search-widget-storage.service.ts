@@ -10,7 +10,7 @@ import {
 import { SDKService } from '@flaps/core';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { map, shareReplay, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { compareDesc } from 'date-fns';
 import { StandaloneService } from '../services';
 import { SearchConfig } from '@nuclia/core';
@@ -52,7 +52,6 @@ export class SearchWidgetStorageService {
         );
       }
     }),
-    shareReplay(1),
   );
 
   widgetList: Observable<Widget[]> = this.storageUpdated.pipe(
