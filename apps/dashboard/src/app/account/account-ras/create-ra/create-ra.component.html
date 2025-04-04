@@ -1,0 +1,25 @@
+<pa-modal-advanced fitContentHeight>
+  <pa-modal-title>{{ 'account.retrieval-agents.create-dialog.title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <form
+      class="create-agent-form"
+      [formGroup]="form"
+      (ngSubmit)="create()">
+      <label for="name">{{ 'account.retrieval-agents.create-dialog.agent-name' | translate }}</label>
+      <pa-input
+        externalLabel
+        id="name"
+        [placeholder]="'account.retrieval-agents.create-dialog.name-placeholder' | translate"
+        formControlName="name"></pa-input>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button aspect="basic">{{ 'generic.cancel' | translate }}</pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="form.invalid">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

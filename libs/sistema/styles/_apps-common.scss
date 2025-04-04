@@ -68,6 +68,9 @@ pa-button.full-width {
 
   .page-title {
     @include typography.display-s();
+    align-items: center;
+    display: flex;
+    gap: spacing.rhythm(1);
     margin-bottom: spacing.rhythm(1);
   }
   .page-description {
