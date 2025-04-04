@@ -39,8 +39,7 @@ export class LinkComponent {
   viewbox = computed(() => `0 0 ${this.width} ${this.height()}`);
   d = computed(() => {
     const dy = this.height() - 1;
-    const dx = (75 * this.height()) / defaultSize;
     const width = this.width - 3;
-    return this.goDown() ? `M2 1 C51 1 88 ${dy} ${width} ${dy}` : `M2 ${dy} C${dx} ${dy} ${dx} 1 ${width} 1`;
+    return this.goDown() ? `M2 1 C51 1 88 ${dy} ${width} ${dy}` : `M2 ${dy} C72 ${dy} 72 1 ${width} 1`;
   });
 }

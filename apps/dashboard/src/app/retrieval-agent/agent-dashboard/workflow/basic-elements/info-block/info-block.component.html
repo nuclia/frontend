@@ -1,0 +1,8 @@
+<div #content>
+  <ng-content></ng-content>
+</div>
+@if (!hasContent()) {
+  <div class="empty">
+    {{ 'retrieval-agents.workflow.missing-configuration' | translate }}
+  </div>
+}

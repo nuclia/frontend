@@ -1,33 +1,43 @@
+import { CommonModule } from '@angular/common';
 import {
-  AfterContentInit,
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   inject,
   ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
-import { AgentBoxComponent } from './agent-box/agent-box.component';
-import { ConnectableEntryComponent } from './connectable-entry/connectable-entry.component';
-import { ArrowDownComponent } from './arrow-down.component';
-import { LinkService } from './link/link.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { LinkService, WorkflowService } from './workflow';
+import { AgentConnectorComponent } from './workflow/agent-connector/agent-connector.component';
+import { ConnectableEntryComponent } from './workflow/basic-elements';
 
 @Component({
-  imports: [CommonModule, ArrowDownComponent, PaButtonModule, AgentBoxComponent, ConnectableEntryComponent],
+  imports: [CommonModule, TranslateModule, PaButtonModule, AgentConnectorComponent],
   templateUrl: './agent-dashboard.component.html',
   styleUrl: './agent-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
 })
 export class AgentDashboardComponent implements AfterViewInit {
   private linkService = inject(LinkService);
+  private workflowService = inject(WorkflowService);
 
   @ViewChild('linkContainer') linkContainer?: ElementRef;
+  @ViewChild('workflowContainer') workflowContainer?: ElementRef;
 
   ngAfterViewInit(): void {
     if (this.linkContainer) {
       this.linkService.container = this.linkContainer;
     }
+    if (this.workflowContainer) {
+      this.workflowService.columnContainer = this.workflowContainer;
+    }
+  }
+
+  addNode(data: { entry: ConnectableEntryComponent; targetColumn: number }) {
+    this.workflowService.addNodeAndLink(data.entry, data.targetColumn);
   }
 }

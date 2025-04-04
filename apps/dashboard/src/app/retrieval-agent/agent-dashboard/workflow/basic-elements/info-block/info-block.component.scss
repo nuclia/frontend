@@ -1,0 +1,11 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(0.5);
+  padding: rhythm(1);
+
+  .empty {
+    color: $color-neutral-regular;
+  }
+}
