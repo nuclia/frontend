@@ -1092,6 +1092,7 @@
 	"resource.warning.message": "Missatge",
 	"resource.warning.warning": "Avís",
 	"resource.warning.warnings": "Avisos",
+	"retrieval-agents.workflow.conditional-node.title": "Condició",
 	"search.configuration.action.continue": "Continua",
 	"search.configuration.action.create-widget": "Crea un giny",
 	"search.configuration.action.get-code": "Obtenir codi",

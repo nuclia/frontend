@@ -19,27 +19,10 @@
         <app-connectable-entry #postprocess>postprocess</app-connectable-entry>
       </app-agent-box>
     </div>
-    <div class="workflow-col">
-      <app-agent-box
-        inputTitle="Rephrase"
-        [inputEntry]="preprocess">
-        <div style="height: 40px; background: #c4c4c4">selected</div>
-      </app-agent-box>
-      <app-agent-box
-        inputTitle="Conditional"
-        [inputEntry]="context">
-        <div style="height: 40px; background: #c4c4c4">processed</div>
-      </app-agent-box>
-      <app-agent-box
-        inputTitle="Conditional"
-        [inputEntry]="context">
-        <div style="height: 40px; background: #c4c4c4">processing</div>
-      </app-agent-box>
-      <app-agent-box
-        inputTitle="Conditional"
-        [inputEntry]="context">
-        <div style="height: 40px; background: #c4c4c4">default</div>
-      </app-agent-box>
+    <div
+      #col2
+      class="workflow-col">
+      <app-conditional-node></app-conditional-node>
     </div>
   </div>
 </div>

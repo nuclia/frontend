@@ -10,8 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ConnectableEntryComponent } from '../connectable-entry/connectable-entry.component';
-import { LinkService } from '../link/link.service';
+import { BoxDirective } from '../box.directive';
 
 @Component({
   selector: 'app-agent-box',
@@ -20,14 +19,7 @@ import { LinkService } from '../link/link.service';
   styleUrl: './agent-box.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AgentBoxComponent implements AfterViewInit {
-  private linkService = inject(LinkService);
-
-  agent = input(false, { transform: booleanAttribute });
-  inputTitle = input('');
-  inputEntry = input<ConnectableEntryComponent>();
-  state = input<'default' | 'selected' | 'processing' | 'processed'>('default');
-
+export class AgentBoxComponent extends BoxDirective implements AfterViewInit {
   @ViewChild('inputElement') inputElement?: ElementRef;
 
   @HostBinding('class') get stateClass() {

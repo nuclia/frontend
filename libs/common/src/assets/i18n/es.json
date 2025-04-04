@@ -1092,6 +1092,7 @@
 	"resource.warning.message": "Mensaje",
 	"resource.warning.warning": "Advertencia",
 	"resource.warning.warnings": "Advertencias",
+	"retrieval-agents.workflow.conditional-node.title": "Condición",
 	"search.configuration.action.continue": "Continuar",
 	"search.configuration.action.create-widget": "Crear widget",
 	"search.configuration.action.get-code": "Obtener código",

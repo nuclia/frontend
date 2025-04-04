@@ -1,0 +1,12 @@
+<app-agent-box
+  [inputTitle]="'retrieval-agents.workflow.conditional-node.title' | translate"
+  [inputEntry]="inputEntry()">
+  <app-connectable-entry
+    #if
+    noOutput>
+    if
+  </app-connectable-entry>
+  <app-info-block>{{ ifData() }}</app-info-block>
+  <app-connectable-entry #then>then</app-connectable-entry>
+  <app-connectable-entry #else>else</app-connectable-entry>
+</app-agent-box>
