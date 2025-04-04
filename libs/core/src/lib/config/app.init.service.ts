@@ -18,6 +18,7 @@ export type EnvironmentConfiguration = {
     sentry_backend?: string;
     cdn: string;
     brand_name?: string;
+    noStripe: boolean;
     assetsPath?: string;
     allowed_hosts_redirect?: string[];
   };

@@ -21,6 +21,7 @@ service:
 api_path: XXX
 site_key: XXX
 app_name: app
+no_stripe: false
 brand_name: XXX
 brand_domain: XXX
 assets_path: XXX

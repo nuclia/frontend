@@ -16,6 +16,8 @@ function apply_path {
     test -n "$SENTRY_URL"
     echo "Check that we have STF_VERSION vars"
     test -n "$STF_VERSION"
+    echo "Check that we have STF_DOCKER_CONFIG_NO_STRIPE vars"
+    test -n "$STF_DOCKER_CONFIG_NO_STRIPE"
 
     echo "Configuring API_PATH vars"
     sed -i "s#STF_DOCKER_CONFIG_API_PATH#${API_PATH}#g" $jsonFile
@@ -37,6 +39,9 @@ function apply_path {
 
     echo "Configuring EMAIL_DOMAIN vars"
     sed -i "s#STF_DOCKER_CONFIG_EMAIL_DOMAIN#${EMAIL_DOMAIN}#g" $jsonFile
+
+    echo "Configuring EMAIL_DOMAIN vars"
+    sed -i "s#STF_DOCKER_CONFIG_NO_STRIPE#${NO_STRIPE}#g" $jsonFile
 
     echo "Check that we have BRAND_NAME vars"
     test -n "$BRAND_NAME"

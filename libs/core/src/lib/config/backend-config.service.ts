@@ -75,4 +75,8 @@ export class BackendConfigurationService {
   useRemoteLogin(): boolean {
     return this.config.remoteLogin || false;
   }
+
+  noStripe(): boolean {
+    return this.config.backend.noStripe;
+  }
 }

@@ -7,6 +7,7 @@ import { AccountDetailsStore } from './account-details.store';
 import { ZoneService } from '../../manage-zones/zone.service';
 import { of } from 'rxjs';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { BackendConfigurationService } from '@flaps/core';
 
 describe('AccountDetailsComponent', () => {
   let component: AccountDetailsComponent;
@@ -22,6 +23,7 @@ describe('AccountDetailsComponent', () => {
           loadZones: jest.fn(() => of([])),
         }),
         MockProvider(AccountDetailsStore),
+        MockProvider(BackendConfigurationService),
       ],
     }).compileComponents();
 
