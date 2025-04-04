@@ -9,7 +9,7 @@
     (click)="goProfile()">
     {{ 'generic.user_preferences' | translate }}
   </pa-option>
-  @if ((isBillingEnabled | async) && (isAccountManager | async)) {
+  @if ((isBillingEnabled | async) && (isAccountManager | async) && !noStripe) {
     <pa-separator></pa-separator>
     <pa-option
       icon="payment"
