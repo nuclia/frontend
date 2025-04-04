@@ -19,6 +19,7 @@
       @if (canModifyConfig | async) {
         <nsi-button-mini
           icon="widget"
+          [disabled]="isConfigUnsupported"
           (click)="triggerCreateWidget()">
           {{ 'search.configuration.action.create-widget' | translate }}
         </nsi-button-mini>
@@ -34,7 +35,7 @@
         <nsi-button-mini
           icon="lab"
           routerLink="../rag-lab"
-          [disabled]="configurations.length <= 1"
+          [disabled]="configurations.length <= 1 || isConfigUnsupported"
           paTooltip="search.configuration.action.rag-lab-tooltip">
           {{ 'search.configuration.action.rag-lab' | translate }}
         </nsi-button-mini>
@@ -62,10 +63,11 @@
         <div class="config-actions">
           <nsi-button-mini
             icon="undo"
+            [disabled]="isConfigUnsupported"
             (click)="resetConfig()">
             {{ 'search.configuration.action.reset' | translate }}
           </nsi-button-mini>
-          @if (canModifyConfig | async) {
+          @if ((canModifyConfig | async) && !isConfigUnsupported) {
             <div>
               <nsi-button-mini
                 icon="download"
@@ -89,57 +91,69 @@
   }
 
   @if (initialised) {
-    <pa-accordion (toggleAccordion)="scrollOnTop()">
-      <pa-accordion-item
-        #searchBox
-        id="search-box"
-        [itemTitle]="'search.configuration.search-box.section-title' | translate"
-        [description]="'search.configuration.search-box.section-description' | translate"
-        (expandedChange)="updateSearchBoxHeight()">
-        <pa-accordion-item-body>
-          <stf-search-box-form
-            [config]="savedConfig?.searchBox"
-            [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
-            [semanticModels]="semanticModels"
-            (configChanged)="updateSearchBoxConfig($event)"
-            (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
-        </pa-accordion-item-body>
-      </pa-accordion-item>
-      <pa-accordion-item
-        #generativeAnswer
-        id="generative-answer"
-        [itemTitle]="'search.configuration.generative-answer.section-title' | translate"
-        [description]="'search.configuration.generative-answer.section-description' | translate"
-        (expandedChange)="updateGenerativeAnswerHeight()">
-        <pa-accordion-item-body>
-          <stf-generative-answer-form
-            [config]="savedConfig?.generativeAnswer"
-            [defaultPrompt]="defaultPromptFromSettings"
-            [defaultSystemPrompt]="defaultSystemPromptFromSettings"
-            [promptInfos]="promptInfos"
-            [generativeModels]="generativeModels"
-            [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
-            (configChanged)="updateGenerativeAnswerConfig($event)"
-            (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
-        </pa-accordion-item-body>
-      </pa-accordion-item>
-      <pa-accordion-item
-        #results
-        id="results"
-        [itemTitle]="'search.configuration.result-display.section-title' | translate"
-        [description]="'search.configuration.result-display.section-description' | translate"
-        (expandedChange)="updateResultsHeight()">
-        <pa-accordion-item-body>
-          <stf-results-display-form
-            [config]="savedConfig?.resultDisplay"
-            [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
-            [modelNames]="generativeModelNames"
-            [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
-            [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
-            (configChanged)="updateResultDisplayConfig($event)"
-            (heightChanged)="updateResultsHeight()"></stf-results-display-form>
-        </pa-accordion-item-body>
-      </pa-accordion-item>
-    </pa-accordion>
+    @if (isConfigUnsupported) {
+      <nsi-info-card
+        type="warning"
+        icon="warning">
+        {{ 'search.configuration.unsupported-warning' | translate }}
+      </nsi-info-card>
+      <pa-textarea
+        [rows]="12"
+        readonly
+        [value]="currentConfig?.sourceConfig?.config | json"></pa-textarea>
+    } @else {
+      <pa-accordion (toggleAccordion)="scrollOnTop()">
+        <pa-accordion-item
+          #searchBox
+          id="search-box"
+          [itemTitle]="'search.configuration.search-box.section-title' | translate"
+          [description]="'search.configuration.search-box.section-description' | translate"
+          (expandedChange)="updateSearchBoxHeight()">
+          <pa-accordion-item-body>
+            <stf-search-box-form
+              [config]="savedConfig?.searchBox"
+              [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
+              [semanticModels]="semanticModels"
+              (configChanged)="updateSearchBoxConfig($event)"
+              (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+        <pa-accordion-item
+          #generativeAnswer
+          id="generative-answer"
+          [itemTitle]="'search.configuration.generative-answer.section-title' | translate"
+          [description]="'search.configuration.generative-answer.section-description' | translate"
+          (expandedChange)="updateGenerativeAnswerHeight()">
+          <pa-accordion-item-body>
+            <stf-generative-answer-form
+              [config]="savedConfig?.generativeAnswer"
+              [defaultPrompt]="defaultPromptFromSettings"
+              [defaultSystemPrompt]="defaultSystemPromptFromSettings"
+              [promptInfos]="promptInfos"
+              [generativeModels]="generativeModels"
+              [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+              (configChanged)="updateGenerativeAnswerConfig($event)"
+              (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+        <pa-accordion-item
+          #results
+          id="results"
+          [itemTitle]="'search.configuration.result-display.section-title' | translate"
+          [description]="'search.configuration.result-display.section-description' | translate"
+          (expandedChange)="updateResultsHeight()">
+          <pa-accordion-item-body>
+            <stf-results-display-form
+              [config]="savedConfig?.resultDisplay"
+              [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
+              [modelNames]="generativeModelNames"
+              [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
+              [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+              (configChanged)="updateResultDisplayConfig($event)"
+              (heightChanged)="updateResultsHeight()"></stf-results-display-form>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+      </pa-accordion>
+    }
   }
 </section>

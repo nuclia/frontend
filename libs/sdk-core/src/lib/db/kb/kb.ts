@@ -34,6 +34,8 @@ import {
   ResourceOperationNotification,
   ResourcePagination,
   ResourceProcessingNotification,
+  SearchConfig,
+  SearchConfigs,
   SentenceToken,
   ServiceAccount,
   ServiceAccountCreation,
@@ -1163,5 +1165,25 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   deleteExtractStrategy(id: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/extract_strategies/strategy/${id}`);
+  }
+
+  getSearchConfig(id: string): Observable<SearchConfig> {
+    return this.nuclia.rest.get<SearchConfig>(`${this.path}/search_configurations${id}`);
+  }
+
+  getSearchConfigs(): Observable<SearchConfigs> {
+    return this.nuclia.rest.get<SearchConfigs>(`${this.path}/search_configurations`);
+  }
+
+  createSearchConfig(id: string, config: SearchConfig): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/search_configurations/${id}`, config);
+  }
+
+  updateSearchConfig(id: string, config: SearchConfig): Observable<void> {
+    return this.nuclia.rest.patch<void>(`${this.path}/search_configurations/${id}`, config);
+  }
+
+  deleteSearchConfig(id: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/search_configurations/${id}`);
   }
 }

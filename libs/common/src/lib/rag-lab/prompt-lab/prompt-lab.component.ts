@@ -14,9 +14,9 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LearningConfiguration, Prompts } from '@nuclia/core';
 import { RagLabService } from '../rag-lab.service';
 import { LabLayoutComponent } from '../lab-layout/lab-layout.component';
-import { getRequestOptions, RequestConfigAndQueries } from '../rag-lab.models';
+import { RequestConfigAndQueries } from '../rag-lab.models';
 import { SDKService } from '@flaps/core';
-import { SearchConfiguration, SearchWidgetService } from '../../search-widget';
+import { getChatOptions, SearchConfiguration, SearchWidgetService } from '../../search-widget';
 
 @Component({
   selector: 'stf-prompt-lab',
@@ -112,7 +112,7 @@ export class PromptLabComponent implements OnDestroy {
         take(1),
         switchMap((configs) => {
           const selectedConfig = configs.find((config) => config.id === this.currentConfig) as SearchConfiguration;
-          const requestOptions = getRequestOptions(selectedConfig);
+          const requestOptions = getChatOptions(selectedConfig);
           const rephrasePrompt =
             typeof requestOptions?.prompt === 'string' ? undefined : requestOptions?.prompt?.rephrase;
           let prompt: Prompts | undefined;

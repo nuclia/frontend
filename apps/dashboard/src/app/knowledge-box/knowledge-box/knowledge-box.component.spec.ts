@@ -6,7 +6,6 @@ import { MockProvider } from 'ng-mocks';
 import { SisModalService } from '@nuclia/sistema';
 import { FeaturesService, SDKService } from '@flaps/core';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SearchWidgetStorageService } from '@flaps/common';
 
 describe('KnowledgeBoxComponent', () => {
   let component: KnowledgeBoxComponent;
@@ -17,10 +16,9 @@ describe('KnowledgeBoxComponent', () => {
       imports: [RouterTestingModule],
       declarations: [KnowledgeBoxComponent],
       providers: [
-        MockProvider(SDKService, { counters: of({ resources: 0 }), currentKb: of({}) } as SDKService),
+        MockProvider(SDKService, { counters: of({ resources: 0 }) } as SDKService),
         MockProvider(SisModalService),
         MockProvider(FeaturesService, { isKbAdmin: of(true) }),
-        MockProvider(SearchWidgetStorageService, { migrateConfigsAndWidgets: () => of() }),
       ],
     }).compileComponents();
   });

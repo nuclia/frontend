@@ -9,6 +9,7 @@ import type {
 } from '../resource';
 import type { ResourceProperties } from '../db.models';
 import { RAGImageStrategy, RAGStrategy } from '../kb';
+import { Ask } from './ask.models';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
@@ -99,6 +100,7 @@ export interface ChatOptions extends BaseSearchOptions {
   answer_json_schema?: object;
   extra_context?: string[];
   citation_threshold?: number;
+  features?: Ask.Features[];
 }
 
 export interface SearchOptions extends BaseSearchOptions {
@@ -116,6 +118,7 @@ export interface SearchOptions extends BaseSearchOptions {
   with_duplicates?: boolean;
   with_synonyms?: boolean;
   rephrase_prompt?: string;
+  features?: Search.Features[];
   /** Only for GET requests */
   min_score_bm25?: number;
   /** Only for GET requests */
