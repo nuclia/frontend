@@ -2,7 +2,9 @@
 
 .agent-dashboard {
   $height-toolbar: rhythm(6);
+
   .agent-dashboard-toolbar {
+    background-color: $color-light-stronger;
     border-bottom: 1px solid $color-neutral-light;
     height: $height-toolbar;
     padding: rhythm(1);
@@ -12,19 +14,18 @@
     background-color: hsl(336, 100%, 96%, 25%);
     background-size: rhythm(2.5) rhythm(2.5);
     background-image: radial-gradient(circle, $color-neutral-lighter rhythm(0.25), rgba(0, 0, 0, 0) rhythm(0.25));
+    overflow: auto;
     display: flex;
     height: calc(100dvh - #{$height-toolbar} - var(--app-topbar-height));
+    position: relative;
     width: 100%;
 
     .workflow-col {
       display: flex;
       flex-direction: column;
       gap: rhythm(3);
+      height: fit-content;
       padding: rhythm(8);
-
-      &.first-col {
-        padding-top: rhythm(22);
-      }
     }
   }
 }
