@@ -1,7 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { StandaloneService } from '../services';
-import { BillingService, FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  BillingService,
+  FeaturesService,
+  NavigationService,
+  SDKService,
+} from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -59,6 +65,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isTrial = this.features.isTrial;
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
+  noStripe = this.backendConfig.noStripe();
   isTasksAutomationAuthorized = this.features.authorized.taskAutomation;
   isSynonymsEnabled = this.features.unstable.synonyms;
   isRemiMetricsEnabled = this.features.unstable.remiMetrics;
@@ -78,6 +85,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private standaloneService: StandaloneService,
     private billing: BillingService,
+    private backendConfig: BackendConfigurationService,
   ) {}
 
   ngOnInit(): void {

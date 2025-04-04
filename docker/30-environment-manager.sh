@@ -40,7 +40,7 @@ function apply_path {
     echo "Configuring EMAIL_DOMAIN vars"
     sed -i "s#STF_DOCKER_CONFIG_EMAIL_DOMAIN#${EMAIL_DOMAIN}#g" $jsonFile
 
-    echo "Configuring EMAIL_DOMAIN vars"
+    echo "Configuring NO_STRIPE vars"
     sed -i "s#STF_DOCKER_CONFIG_NO_STRIPE#${NO_STRIPE}#g" $jsonFile
 
     echo "Check that we have BRAND_NAME vars"

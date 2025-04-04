@@ -22,7 +22,8 @@ function apply_path {
     test -n "$EMAIL_DOMAIN"
     echo "Check that we have SAML_ENABLED vars"
     test -n "$SAML_ENABLED"
-
+    echo "Check that we have STF_DOCKER_CONFIG_NO_STRIPE vars"
+    test -n "$STF_DOCKER_CONFIG_NO_STRIPE"
 
     echo "Configuring SITE_KEY vars"
     sed -i "s#STF_DOCKER_CONFIG_SITE_KEY#${SITE_KEY}#g" $jsonFile
@@ -51,6 +52,9 @@ function apply_path {
     echo "Configuring SAML_ENABLED vars"
     sed -i "s#STF_DOCKER_CONFIG_SAML_ENABLED#${SAML_ENABLED}#g" $jsonFile
 
+    echo "Configuring NO_STRIPE vars"
+    sed -i "s#STF_DOCKER_CONFIG_NO_STRIPE#${NO_STRIPE}#g" $jsonFile
+    
     echo "Check that we have BRAND_NAME vars"
     test -n "$BRAND_NAME"
     sed -i "s#STF_DOCKER_CONFIG_BRAND_NAME#${BRAND_NAME}#g" $jsonFile
