@@ -870,6 +870,7 @@ function hasUnsupportedOptions(searchOptions: SearchConfig) {
     'show_hidden',
     'top_k',
     'vectorset',
+    'with_synonyms',
   ];
 
   return (
