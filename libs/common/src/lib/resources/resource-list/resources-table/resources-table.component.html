@@ -39,12 +39,19 @@
           @if (hasLabelSets | async) {
             <app-label-dropdown
               [labelSets]="labelSets | async"
-              (selectionChange)="updateLabelList($event)"
+              (selectionChange)="updateAddLabelList($event)"
               (close)="addLabelsToSelection()"
-              [disabled]="allResourcesSelected"
               aspect="basic"
               size="small">
-              {{ 'resource.add_labels' | translate }}
+              {{ 'resource.labels.add' | translate }}
+            </app-label-dropdown>
+            <app-label-dropdown
+              [labelSets]="labelSets | async"
+              (selectionChange)="updateRemoveLabelList($event)"
+              (close)="removeLabelsToSelection()"
+              aspect="basic"
+              size="small">
+              {{ 'resource.labels.remove' | translate }}
             </app-label-dropdown>
           }
           @if (isSummarizationAuthorized | async) {
@@ -69,12 +76,6 @@
                 <pa-option (selectOption)="bulkChangeVisibility(true)">{{ 'resource.hide' | translate }}</pa-option>
                 <pa-option (selectOption)="bulkChangeVisibility(false)">{{ 'resource.unhide' | translate }}</pa-option>
               </pa-dropdown>
-            </div>
-          }
-          @if (bulkAction.inProgress) {
-            <div class="body-m">
-              {{ bulkAction.label | translate }}
-              {{ bulkAction.done }} / {{ bulkAction.total }}
             </div>
           }
         </div>
@@ -116,6 +117,12 @@
         </pa-dropdown>
       </div>
     </div>
+    @if (bulkAction.inProgress) {
+      <div class="body-m">
+        {{ bulkAction.label | translate }}
+        {{ bulkAction.done }} / {{ bulkAction.total }}
+      </div>
+    }
     @if (
       allResourcesSelected ||
       ((allSelected | async) === true &&
