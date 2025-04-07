@@ -51,7 +51,9 @@ import { MySubscriptionComponent } from './billing/my-subscription/my-subscripti
 import { UsageComponent } from './billing/usage/usage.component';
 import { HistoryComponent } from './billing/history/history.component';
 import { NucliaTokensComponent } from './nuclia-tokens';
- 
+import { AccountRasComponent } from './account-ras/account-ras.component';
+import { RaListComponent } from './account-ras/ra-list/ra-list.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -92,6 +94,12 @@ const routes: Routes = [
         component: KbCreationComponent,
       },
     ],
+  },
+  {
+    path: 'ras',
+    component: AccountRasComponent,
+    canActivate: [accountOwnerGuard],
+    children: [{ path: '', component: RaListComponent }],
   },
   {
     path: 'users',
@@ -171,6 +179,7 @@ const routes: Routes = [
     AccountHomeComponent,
     AccountManageComponent,
     AccountKbsComponent,
+    AccountRasComponent,
     UsersDialogComponent,
     AccountNUAComponent,
     ClientDialogComponent,
