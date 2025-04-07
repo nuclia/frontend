@@ -274,7 +274,7 @@
               <span class="nav-link-title">{{ 'navbar.retrieval-agents' | translate }}</span>
             </a>
           </div>
-          @if (isBillingEnabled | async) {
+          @if ((isBillingEnabled | async) && !noStripe) {
             <div class="group-items">
               <a
                 [routerLink]="(accountUrl | async) + '/billing/subscriptions'"
