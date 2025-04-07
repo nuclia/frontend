@@ -1,19 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ColoredLabel, ColumnHeader, DEFAULT_PREFERENCES, RESOURCE_LIST_PREFERENCES } from '../resource-list.model';
 import { delay, filter, map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  defer,
-  from,
-  Observable,
-  of,
-  skip,
-  Subject,
-  take,
-  toArray,
-} from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, defer, from, Observable, of, skip, take, toArray } from 'rxjs';
 import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
 import { Classification, deDuplicateList, LabelSets, Resource, UserClassification } from '@nuclia/core';
 import { LabelsService } from '@flaps/core';
@@ -247,22 +235,23 @@ export class ResourcesTableComponent extends ResourcesTableDirective implements 
                   const bulkActionItems = resources.map((resource) =>
                     this.updateBulkAction(
                       defer(() =>
-                        resource.modify({
-                          usermetadata: {
-                            ...resource.usermetadata,
-                            classifications: remove
-                              ? this.removeLabels(resource, labels)
-                              : this.mergeExistingAndSelectedLabels(resource, labelSets, labels),
-                          },
-                        }),
+                        resource
+                          .modify({
+                            usermetadata: {
+                              ...resource.usermetadata,
+                              classifications: remove
+                                ? this.removeLabels(resource, labels)
+                                : this.mergeExistingAndSelectedLabels(resource, labelSets, labels),
+                            },
+                          })
+                          .pipe(delay(1000)),
                       ),
                     ),
                   );
                   return from(bulkActionItems);
                 }),
-                mergeMap((obs) => obs, 6),
+                mergeMap((obs) => obs, 5),
                 toArray(),
-                delay(1000),
                 switchMap(() => this.resourceListService.loadResources()),
                 tap(() => {
                   this.manageBulkActionResults('labelling');
