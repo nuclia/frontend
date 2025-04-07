@@ -15,7 +15,7 @@ data:
   BRAND_DOMAIN: "{{ .Values.brand_domain }}"
   ASSETS_PATH: "{{ .Values.assets_path }}"
   APP_NAME: {{ .Values.app_name }}
-  NO_STRIPE: {{ .Values.no_stripe }}
+  NO_STRIPE: "{{ .Values.no_stripe }}"
   SENTRY_ENV: {{ .Values.sentry_environment }}
   SENTRY_URL: "{{ .Values.sentry_url }}"
   STF_VERSION: "{{ .Chart.Version }}"
