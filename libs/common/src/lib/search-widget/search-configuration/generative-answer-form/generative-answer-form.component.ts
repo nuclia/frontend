@@ -77,7 +77,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     preferMarkdown: new FormControl<boolean>(false, { nonNullable: true }),
     ragStrategies: new FormGroup({
       includeTextualHierarchy: new FormControl<boolean>(false, { nonNullable: true }),
-      additionalCharacters: new FormControl<number | null>(null),
       includeNeighbouringParagraphs: new FormControl<boolean>(false, { nonNullable: true }),
       precedingParagraphs: new FormControl<number | null>(null),
       succeedingParagraphs: new FormControl<number | null>(null),
@@ -175,9 +174,6 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   }
   get fieldsAsContextEnabled() {
     return this.form.controls.ragStrategies.controls.fieldsAsContext.value;
-  }
-  get includeTextualHierarchyEnabled() {
-    return this.form.controls.ragStrategies.controls.includeTextualHierarchy.value;
   }
   get includeNeighbouringParagraphsEnabled() {
     return this.form.controls.ragStrategies.controls.includeNeighbouringParagraphs.value;
