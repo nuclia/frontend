@@ -436,7 +436,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     );
   }
 
-  private updateBulkAction(observable: Observable<void>): Observable<any> {
+  protected updateBulkAction(observable: Observable<void>): Observable<any> {
     return observable.pipe(
       tap(() => {
         this.bulkAction = {
@@ -455,7 +455,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     );
   }
 
-  private manageBulkActionResults(action: 'reprocessing' | 'deleting' | 'hiding' | 'unhiding') {
+  protected manageBulkActionResults(action: 'reprocessing' | 'deleting' | 'hiding' | 'unhiding' | 'labelling') {
     if (this.bulkAction.errors > 0) {
       const message = this.translate.instant(
         this.bulkAction.errors > 1 ? `error.${action}-resources` : `error.${action}-resource`,
@@ -474,7 +474,7 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private getAllResources(): Observable<Resource[]> {
+  protected getAllResources(): Observable<Resource[]> {
     this.isLoading = true;
     return this.resourceListService.getAllResources(this.sorting, this.status, true).pipe(
       tap(() => {
