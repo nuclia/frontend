@@ -24,7 +24,7 @@
     }
   }
 
-  function refreshPosition() {
+  export function refreshPosition() {
     if (parentElement) {
       if (!fixedRootParentChecked) {
         fixedRootParent = getFixedRootParentIfAny(parentElement);

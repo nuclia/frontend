@@ -21,6 +21,16 @@
 </script>
 
 <main>
+  <NucliaSearchBar
+    zone="europe-1"
+    {backend}
+    cdn="/"
+    knowledgebox={kb}
+    lang="en"
+    no_tracking
+    features={askFeatures} />
+  <NucliaSearchResults no_tracking />
+  <!--
   <NucliaChat
     zone="europe-1"
     {backend}
@@ -29,6 +39,7 @@
     lang="en"
     no_tracking
     features={askFeatures} />
+  -->
 </main>
 
 <style lang="scss">

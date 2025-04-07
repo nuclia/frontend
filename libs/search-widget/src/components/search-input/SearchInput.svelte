@@ -62,6 +62,7 @@
   let showFilterDropdowns = false;
   let hasFilters = false;
   let filterHeight: string | undefined;
+  let suggestionsModal: Modal | undefined;
 
   interface Filter {
     type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end';
@@ -169,6 +170,14 @@
     }
   };
 
+  const onInput = () => {
+    triggerSuggestions.next();
+    if (showSuggestions) {
+      // Make sure the position of the suggestions is correct if the input height changes
+      suggestionsModal?.refreshPosition();
+    }
+  }
+
   const autocompleteEntity = (entity: { family: string; value: string }) => {
     searchOptions.pipe(take(1)).subscribe((options) => {
       autocomplete(entity.value);
@@ -246,7 +255,7 @@
       placeholder={$_($widgetPlaceholder)}
       bind:this={searchInputElement}
       bind:value={$typeAhead}
-      on:input={() => triggerSuggestions.next()}
+      on:input={onInput}
       on:keypress={onKeyPress}
       on:keyup={onKeyUp}></Textarea>
 
@@ -328,6 +337,7 @@
   show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
   popup={true}
   parentElement={inputContainerElement}
+  bind:this={suggestionsModal}
   on:close={closeSuggestions}>
   <div class="sw-suggestions-container">
     <Suggestions
