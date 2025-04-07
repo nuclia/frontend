@@ -1,4 +1,4 @@
-import { ApplicationRef, createComponent, ElementRef, inject, Injectable } from '@angular/core';
+import { ApplicationRef, ComponentRef, createComponent, ElementRef, inject, Injectable } from '@angular/core';
 import { LinkComponent } from './link.component';
 
 interface BoundingBox {
@@ -23,7 +23,7 @@ export class LinkService {
     return this._container;
   }
 
-  drawLink(leftBox: BoundingBox, rightBox: BoundingBox) {
+  drawLink(leftBox: BoundingBox, rightBox: BoundingBox): ComponentRef<LinkComponent> | undefined {
     if (!this.container) {
       return;
     }
@@ -44,5 +44,14 @@ export class LinkService {
     this.applicationRef.attachView(linkRef.hostView);
     this.container.nativeElement.appendChild(linkRef.location.nativeElement);
     linkRef.changeDetectorRef.detectChanges();
+    return linkRef;
+  }
+
+  removeLink(linkRef: ComponentRef<LinkComponent>) {
+    if (!this.container) {
+      return;
+    }
+    this.container.nativeElement.removeChild(linkRef.location.nativeElement);
+    this.applicationRef.detachView(linkRef.hostView);
   }
 }

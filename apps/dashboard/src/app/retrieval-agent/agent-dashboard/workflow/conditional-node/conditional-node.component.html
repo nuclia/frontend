@@ -2,7 +2,8 @@
   [state]="state()"
   [inputTitle]="'retrieval-agents.workflow.conditional-node.title' | translate"
   [origin]="origin()"
-  (outputClick)="onOutputClick($event)">
+  (outputClick)="onOutputClick($event)"
+  (trashClick)="onTrashClick()">
   <app-connectable-entry
     #if
     noOutput>

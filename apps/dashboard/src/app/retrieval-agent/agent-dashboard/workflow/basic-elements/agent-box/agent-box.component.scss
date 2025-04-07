@@ -32,7 +32,11 @@
   }
 
   .title-s {
-    padding: 0 rhythm(1);
+    align-items: center;
+    display: flex;
+    height: rhythm(4);
+    justify-content: space-between;
+    padding-left: rhythm(1);
   }
   .input {
     background: $color-light-stronger;

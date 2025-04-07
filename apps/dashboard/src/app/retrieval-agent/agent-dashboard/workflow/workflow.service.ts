@@ -8,7 +8,10 @@ import {
   Renderer2,
   RendererFactory2,
 } from '@angular/core';
-import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
+import { ModalService } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
+import { ConnectableEntryComponent, LinkService, NodeDirective } from './basic-elements';
 import { ConditionalNodeComponent } from './conditional-node/conditional-node.component';
 
 @Injectable({
@@ -16,7 +19,10 @@ import { ConditionalNodeComponent } from './conditional-node/conditional-node.co
 })
 export class WorkflowService {
   private _container?: ElementRef;
-  private _activeNode = '';
+  private _selectedNode = '';
+  private translate = inject(TranslateService);
+  private linkService = inject(LinkService);
+  private modalService = inject(ModalService);
   private applicationRef = inject(ApplicationRef);
   private rendererFactory = inject(RendererFactory2);
   private renderer: Renderer2 = this.rendererFactory.createRenderer(null, null);
@@ -32,17 +38,11 @@ export class WorkflowService {
     return this._container;
   }
 
-  set activeNode(nodeId: string) {
-    if (this.activeNode && this.nodes[this.activeNode]) {
-      this.nodes[this.activeNode].setInput('state', 'default');
-    }
-    if (this.nodes[nodeId]) {
-      this.nodes[nodeId].setInput('state', 'selected');
-      this._activeNode = nodeId;
-    }
+  set selectedNode(nodeId: string) {
+    this._selectedNode = nodeId;
   }
-  get activeNode() {
-    return this._activeNode;
+  get selectedNode() {
+    return this._selectedNode;
   }
 
   addNodeAndLink(origin: ConnectableEntryComponent, columnIndex: number) {
@@ -63,8 +63,54 @@ export class WorkflowService {
     column.appendChild(nodeRef.location.nativeElement);
     nodeRef.changeDetectorRef.detectChanges();
     nodeRef.instance.addNode.subscribe((data) => this.addNodeAndLink(data.entry, data.targetColumn));
+    nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
+    nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id));
+    nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
 
     this.nodes[nodeRef.instance.id] = nodeRef;
-    this.activeNode = nodeRef.instance.id;
+    this.selectNode(nodeRef.instance.id);
+  }
+
+  removeNodeAndLink(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
+    this.modalService
+      .openConfirm({
+        title: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.title'),
+        description: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.description'),
+        isDestructive: true,
+        confirmLabel: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.confirm-button'),
+      })
+      .onClose.pipe(filter((confirm) => !!confirm))
+      .subscribe(() => {
+        if (nodeRef.instance.boxComponent?.linkRef) {
+          this.linkService.removeLink(nodeRef.instance.boxComponent.linkRef);
+        }
+        column.removeChild(nodeRef.location.nativeElement);
+        this.applicationRef.detachView(nodeRef.hostView);
+        delete this.nodes[nodeRef.instance.id];
+        if (this.selectedNode === nodeRef.instance.id) {
+          this.selectedNode = '';
+        }
+        this.updateLinksOnColumn(nodeRef.instance.nextColumnIndex);
+      });
+  }
+
+  private selectNode(nodeId: string) {
+    if (this.selectedNode && this.nodes[this.selectedNode]) {
+      this.nodes[this.selectedNode].setInput('state', 'default');
+    }
+    if (this.nodes[nodeId]) {
+      this.nodes[nodeId].setInput('state', 'selected');
+    }
+    this.selectedNode = nodeId;
+  }
+
+  private updateLinksOnColumn(nextColumnIndex: number) {
+    Object.values(this.nodes)
+      .filter((nodeRef) => nodeRef.instance.nextColumnIndex === nextColumnIndex)
+      .forEach((nodeRef) => {
+        if (nodeRef.instance.boxComponent) {
+          nodeRef.instance.boxComponent.updateLink();
+        }
+      });
   }
 }

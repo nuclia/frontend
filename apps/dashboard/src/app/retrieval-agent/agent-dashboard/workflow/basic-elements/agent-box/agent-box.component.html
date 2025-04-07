@@ -4,6 +4,15 @@
     #inputElement></div>
   <div class="title-s">
     {{ inputTitle() }}
+    @if (state() === 'selected') {
+      <pa-button
+        aspect="basic"
+        size="small"
+        icon="trash"
+        (click)="trashClick.emit()">
+        {{ 'retrieval-agents.workflow.delete-node' | translate }}
+      </pa-button>
+    }
   </div>
 }
 <ng-content></ng-content>

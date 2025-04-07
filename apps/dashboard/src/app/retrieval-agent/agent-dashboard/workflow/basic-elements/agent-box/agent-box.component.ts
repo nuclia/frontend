@@ -4,6 +4,7 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  ComponentRef,
   ContentChildren,
   ElementRef,
   HostBinding,
@@ -13,15 +14,17 @@ import {
   QueryList,
   ViewChild,
 } from '@angular/core';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { ConnectableEntryComponent } from '../connectable-entry/connectable-entry.component';
-import { LinkService } from '../link';
+import { LinkComponent, LinkService } from '../link';
 
 let boxIndex = 0;
 
 @Component({
   selector: 'app-agent-box',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule, PaButtonModule],
   templateUrl: './agent-box.component.html',
   styleUrl: './agent-box.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +33,7 @@ export class AgentBoxComponent implements AfterViewInit {
   protected linkService = inject(LinkService);
   protected unsubscribeAll = new Subject<void>();
   readonly id = `box-${boxIndex++}`;
+  linkRef?: ComponentRef<LinkComponent>;
 
   agent = input(false, { transform: booleanAttribute });
   inputTitle = input('');
@@ -37,6 +41,7 @@ export class AgentBoxComponent implements AfterViewInit {
   state = input<'default' | 'selected' | 'processing' | 'processed'>('default');
 
   outputClick = output<ConnectableEntryComponent>();
+  trashClick = output<void>();
 
   @ViewChild('inputElement') inputElement?: ElementRef;
   @ContentChildren(ConnectableEntryComponent) connectableEntries?: QueryList<ConnectableEntryComponent>;
@@ -58,16 +63,27 @@ export class AgentBoxComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const entry = this.origin();
-    if (entry && this.inputElement) {
-      const leftBox = entry.outputElement.nativeElement.getBoundingClientRect();
-      const rightBox = this.inputElement.nativeElement.getBoundingClientRect();
-      this.linkService.drawLink(leftBox, rightBox);
-    }
+    this.addLink();
   }
 
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  updateLink() {
+    if (this.linkRef) {
+      this.linkService.removeLink(this.linkRef);
+    }
+    this.addLink();
+  }
+
+  private addLink() {
+    const entry = this.origin();
+    if (entry && this.inputElement) {
+      const leftBox = entry.outputElement.nativeElement.getBoundingClientRect();
+      const rightBox = this.inputElement.nativeElement.getBoundingClientRect();
+      this.linkRef = this.linkService.drawLink(leftBox, rightBox);
+    }
   }
 }
