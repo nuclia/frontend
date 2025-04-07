@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { Subject } from 'rxjs';
 import { BackendConfigurationService, STFUtils } from '@flaps/core';
-import { TranslateService } from '@ngx-translate/core';
-import { takeUntil } from 'rxjs/operators';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
@@ -15,10 +15,9 @@ const userLocaleKey = 'NUCLIA_USER_LOCALE';
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
+  version?: string;
 
   private unsubscribeAll: Subject<void> = new Subject<void>();
-
-  version?: string;
 
   constructor(
     private paTranslate: PaTranslateService,
