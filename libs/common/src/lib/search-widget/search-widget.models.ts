@@ -55,7 +55,6 @@ export interface SearchBoxConfig {
 }
 export interface RagStrategiesConfig {
   includeTextualHierarchy: boolean;
-  additionalCharacters: number | null;
   metadatasRagStrategy: boolean;
   metadatas: { [key in RAG_METADATAS]: boolean } | undefined;
   graphRagStrategy: boolean;
@@ -219,7 +218,6 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   preferMarkdown: false,
   ragStrategies: {
     includeTextualHierarchy: false,
-    additionalCharacters: null,
     metadatasRagStrategy: false,
     metadatas: {
       origin: false,
@@ -453,8 +451,9 @@ export function getRagStrategies(ragStrategiesConfig: RagStrategiesConfig) {
       ragStrategies.push(`${RagStrategyName.FIELD_EXTENSION}|${fieldIds}`);
     }
     if (ragStrategiesConfig.includeTextualHierarchy) {
-      ragStrategies.push(`${RagStrategyName.HIERARCHY}|${ragStrategiesConfig.additionalCharacters || 1000}`);
-    } else if (ragStrategiesConfig.includeNeighbouringParagraphs) {
+      ragStrategies.push(RagStrategyName.HIERARCHY);
+    }
+    if (ragStrategiesConfig.includeNeighbouringParagraphs) {
       const preceding =
         typeof ragStrategiesConfig.precedingParagraphs === 'number' ? ragStrategiesConfig.precedingParagraphs : 2;
       const succeeding =
@@ -811,9 +810,6 @@ function getRagStrategyFromSearchOptions(strategies: RAGStrategy[], imageStrateg
         break;
       case 'hierarchy':
         config.includeTextualHierarchy = true;
-        if (typeof ragStrategy.count === 'number') {
-          config.additionalCharacters = ragStrategy.count;
-        }
         break;
       case 'neighbouring_paragraphs':
         config.includeNeighbouringParagraphs = true;
@@ -866,6 +862,7 @@ function hasUnsupportedOptions(searchOptions: SearchConfig) {
     'rag_strategies',
     'rag_images_strategies',
     'rephrase',
+    'rephrase_prompt',
     'reranker',
     'show_hidden',
     'top_k',
@@ -877,6 +874,9 @@ function hasUnsupportedOptions(searchOptions: SearchConfig) {
     Object.keys(searchOptions.config).some((key) => !supportedOptions.includes(key)) ||
     (searchOptions.config as ChatOptions).rag_strategies?.find(
       (strategy) => strategy.name === RagStrategyName.PREQUERIES,
-    )
+    ) ||
+    (searchOptions.config as ChatOptions).rag_strategies?.find(
+      (strategy) => strategy.name === RagStrategyName.HIERARCHY,
+    )?.count
   );
 }

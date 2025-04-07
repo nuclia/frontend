@@ -1,6 +1,7 @@
 import {
   FullResourceStrategy,
   GraphStrategy,
+  HierarchyStrategy,
   type RAGImageStrategy,
   RagImageStrategyName,
   RAGStrategy,
@@ -30,7 +31,11 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
         }
         return fullResourceStartegy;
       } else if (name === RagStrategyName.HIERARCHY) {
-        return { name, count: parseInt(rest[0], 10) };
+        const hierarchyStartegy: HierarchyStrategy = { name };
+        if (rest.length === 1) {
+          hierarchyStartegy.count = parseInt(rest[0], 10);
+        }
+        return hierarchyStartegy;
       } else if (name === RagStrategyName.FIELD_EXTENSION) {
         return { name, fields: rest };
       } else if (name === RagStrategyName.METADATAS) {
@@ -76,15 +81,6 @@ export function getRAGStrategies(ragStrategies: string): RAGStrategy[] {
   ) {
     console.error(
       `Incompatible RAG strategies: 'full_resource' strategy is not compatible with 'field_extension', 'hierarchy' or 'neighbouring_paragraphs'`,
-    );
-    return [];
-  }
-  if (
-    strategiesNames.includes(RagStrategyName.HIERARCHY) &&
-    strategiesNames.includes(RagStrategyName.NEIGHBOURING_PARAGRAPHS)
-  ) {
-    console.error(
-      `Incompatible RAG strategies: 'hierarchy' and 'neighbouring_paragraphs' strategies cannot be used simultaneously`,
     );
     return [];
   }

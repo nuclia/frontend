@@ -27542,29 +27542,6 @@
 															</translation>
 														</translations>
 													</concept_node>
-													<concept_node>
-														<name>incompatible-strategies</name>
-														<description/>
-														<comment/>
-														<translations>
-															<translation>
-																<language>ca-ES</language>
-																<approved>false</approved>
-															</translation>
-															<translation>
-																<language>en-US</language>
-																<approved>false</approved>
-															</translation>
-															<translation>
-																<language>es-ES</language>
-																<approved>false</approved>
-															</translation>
-															<translation>
-																<language>fr-FR</language>
-																<approved>false</approved>
-															</translation>
-														</translations>
-													</concept_node>
 													<folder_node>
 														<name>metadatas</name>
 														<children>
@@ -27961,29 +27938,6 @@
 													<folder_node>
 														<name>textual-hierarchy</name>
 														<children>
-															<concept_node>
-																<name>input-label</name>
-																<description/>
-																<comment/>
-																<translations>
-																	<translation>
-																		<language>ca-ES</language>
-																		<approved>false</approved>
-																	</translation>
-																	<translation>
-																		<language>en-US</language>
-																		<approved>false</approved>
-																	</translation>
-																	<translation>
-																		<language>es-ES</language>
-																		<approved>false</approved>
-																	</translation>
-																	<translation>
-																		<language>fr-FR</language>
-																		<approved>false</approved>
-																	</translation>
-																</translations>
-															</concept_node>
 															<concept_node>
 																<name>toggle-description</name>
 																<description/>

@@ -215,15 +215,6 @@
               'search.configuration.generative-answer.rag-strategies.textual-hierarchy.toggle-description' | translate
             }}
           </div>
-          <div
-            class="extra-fields"
-            [class.visible]="includeTextualHierarchyEnabled">
-            <pa-input
-              formControlName="additionalCharacters"
-              type="number">
-              {{ 'search.configuration.generative-answer.rag-strategies.textual-hierarchy.input-label' | translate }}
-            </pa-input>
-          </div>
         </div>
         <div class="config-form-field">
           <pa-toggle
@@ -243,14 +234,9 @@
                 | translate
             }}
           </div>
-          @if (includeNeighbouringParagraphsEnabled && includeTextualHierarchyEnabled) {
-            <nsi-info-card type="warning">
-              {{ 'search.configuration.generative-answer.rag-strategies.incompatible-strategies' | translate }}
-            </nsi-info-card>
-          }
           <div
             class="extra-fields"
-            [class.visible]="includeNeighbouringParagraphsEnabled && !includeTextualHierarchyEnabled">
+            [class.visible]="includeNeighbouringParagraphsEnabled">
             <pa-input
               formControlName="precedingParagraphs"
               type="number">
