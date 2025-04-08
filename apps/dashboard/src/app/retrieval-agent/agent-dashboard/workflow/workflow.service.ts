@@ -14,8 +14,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { ConnectableEntryComponent, LinkService, NodeDirective, NodeSelectorComponent } from './basic-elements';
 import { ConditionalNodeComponent } from './conditional-node/conditional-node.component';
+import { CypherNodeComponent } from './cypher-node/cypher-node.component';
+import { InternetNodeComponent } from './internet-node/internet-node.component';
+import { NucliaDBNodeComponent } from './nucliadb-node/nucliadb-node.component';
 import { RephraseNodeComponent } from './rephrase-node/rephrase-node.component';
 import { RestartNodeComponent } from './restart-node/restart-node.component';
+import { SqlNodeComponent } from './sql-node/sql-node.component';
 import { SummarizeNodeComponent } from './summarize-node/summarize-node.component';
 import { ValidationNodeComponent } from './validation-node/validation-node.component';
 import { nodesByEntryType, nodeSelectorIcons, NodeType } from './workflow.models';
@@ -80,7 +84,10 @@ export class WorkflowService {
     const originType = origin.type();
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
     this.sideBarOpen.set(true);
-    this.sideBarTitle.set(this.translate.instant(`retrieval-agents.workflow.sidebar-title.${originType}`));
+    const titleKey = ['preprocess', 'postprocess', 'retrieval-context'].includes(originType)
+      ? `retrieval-agents.workflow.sidebar-title.${originType}`
+      : 'retrieval-agents.workflow.sidebar-title.default';
+    this.sideBarTitle.set(this.translate.instant(titleKey));
 
     container.innerHTML = '';
     const possibleNodes = nodesByEntryType[originType] || [];
@@ -213,6 +220,22 @@ export class WorkflowService {
         });
       case 'restart':
         return createComponent(RestartNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
+      case 'nucliaDB':
+        return createComponent(NucliaDBNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
+      case 'internet':
+        return createComponent(InternetNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
+      case 'sql':
+        return createComponent(SqlNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
+      case 'cypher':
+        return createComponent(CypherNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
     }

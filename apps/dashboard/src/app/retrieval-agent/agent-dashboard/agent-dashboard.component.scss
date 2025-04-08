@@ -21,6 +21,7 @@
     height: $height-main;
     position: relative;
     width: 100%;
+    transition: width $transition-slide;
 
     .workflow-col {
       display: flex;
@@ -28,6 +29,10 @@
       gap: rhythm(3);
       height: fit-content;
       padding: rhythm(8);
+    }
+
+    &.sidebar-open {
+      width: calc(100% - #{$width-sidenav});
     }
   }
 
