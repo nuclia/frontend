@@ -13,15 +13,17 @@ import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { ConnectableEntryComponent, LinkService, NodeDirective, NodeSelectorComponent } from './basic-elements';
-import { ConditionalNodeComponent } from './conditional-node/conditional-node.component';
-import { CypherNodeComponent } from './cypher-node/cypher-node.component';
-import { InternetNodeComponent } from './internet-node/internet-node.component';
-import { NucliaDBNodeComponent } from './nucliadb-node/nucliadb-node.component';
-import { RephraseNodeComponent } from './rephrase-node/rephrase-node.component';
-import { RestartNodeComponent } from './restart-node/restart-node.component';
-import { SqlNodeComponent } from './sql-node/sql-node.component';
-import { SummarizeNodeComponent } from './summarize-node/summarize-node.component';
-import { ValidationNodeComponent } from './validation-node/validation-node.component';
+import {
+  ConditionalNodeComponent,
+  CypherNodeComponent,
+  InternetNodeComponent,
+  NucliaDBNodeComponent,
+  RephraseNodeComponent,
+  RestartNodeComponent,
+  SqlNodeComponent,
+  SummarizeNodeComponent,
+  ValidationNodeComponent,
+} from './nodes';
 import { nodesByEntryType, nodeSelectorIcons, NodeType } from './workflow.models';
 
 const COLUMN_CLASS = 'workflow-col';

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { AgentBoxComponent, ConnectableEntryComponent, InfoBlockComponent, NodeDirective } from '../basic-elements';
+import { AgentBoxComponent, ConnectableEntryComponent, InfoBlockComponent, NodeDirective } from '../../basic-elements';
 
 @Component({
   selector: 'app-conditional-node',
