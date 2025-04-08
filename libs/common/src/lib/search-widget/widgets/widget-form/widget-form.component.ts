@@ -289,6 +289,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     }
     if (value !== 'chat') {
       this.form.controls.persistChatHistory.setValue(false);
+      this.form.controls.persistChatHistory.disable();
+    } else {
+      this.form.controls.persistChatHistory.enable();
     }
   }
 
