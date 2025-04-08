@@ -20,6 +20,8 @@ import { SummarizeNodeComponent } from './summarize-node/summarize-node.componen
 import { ValidationNodeComponent } from './validation-node/validation-node.component';
 import { nodesByEntryType, nodeSelectorIcons, NodeType } from './workflow.models';
 
+const COLUMN_CLASS = 'workflow-col';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -48,7 +50,19 @@ export class WorkflowService {
     return this._selectedNode;
   }
 
-  columnContainer?: ElementRef;
+  private _columnContainer?: ElementRef;
+  set columnContainer(container: ElementRef) {
+    this._columnContainer = container;
+    const existingColumns = container.nativeElement.querySelectorAll(`.${COLUMN_CLASS}`);
+    if (existingColumns) {
+      existingColumns.forEach((column: HTMLElement) => {
+        this.columns.push(column);
+      });
+    }
+  }
+  get columnContainer(): ElementRef | undefined {
+    return this._columnContainer;
+  }
   sidebarContentWrapper?: ElementRef;
 
   sideBarTitle = signal('');
@@ -112,7 +126,7 @@ export class WorkflowService {
         if (this.selectedNode === nodeRef.instance.id) {
           this.selectedNode = '';
         }
-        this.updateLinksOnColumn(nodeRef.instance.nextColumnIndex);
+        this.updateLinksOnColumn(nodeRef.instance.columnIndex);
       });
   }
 
@@ -125,7 +139,7 @@ export class WorkflowService {
   private addNode(origin: ConnectableEntryComponent, columnIndex: number, nodeType: NodeType) {
     if (this.columnContainer && this.columns.length <= columnIndex) {
       const newColumn = this.renderer.createElement('div') as HTMLElement;
-      newColumn.classList.add('workflow-col');
+      newColumn.classList.add(COLUMN_CLASS);
       this.renderer.appendChild(this.columnContainer.nativeElement, newColumn);
       this.columns.push(newColumn);
     }
@@ -133,7 +147,7 @@ export class WorkflowService {
     const column: HTMLElement = this.columns[columnIndex];
     let nodeRef: ComponentRef<NodeDirective> = this.getNodeRef(nodeType);
     nodeRef.setInput('origin', origin);
-    nodeRef.instance.nextColumnIndex = columnIndex + 1;
+    nodeRef.instance.columnIndex = columnIndex;
     this.applicationRef.attachView(nodeRef.hostView);
     column.appendChild(nodeRef.location.nativeElement);
     nodeRef.changeDetectorRef.detectChanges();
@@ -162,11 +176,11 @@ export class WorkflowService {
 
   /**
    * Update all the links’ positions on the specified column.
-   * @param nextColumnIndex index of the column to be updated as it is stored in the nodes
+   * @param columnIndex index of the column in which node’s links must be updated
    */
-  private updateLinksOnColumn(nextColumnIndex: number) {
+  private updateLinksOnColumn(columnIndex: number) {
     Object.values(this.nodes)
-      .filter((node) => node.nodeRef.instance.nextColumnIndex === nextColumnIndex)
+      .filter((node) => node.nodeRef.instance.columnIndex === columnIndex)
       .forEach((node) => {
         if (node.nodeRef.instance.boxComponent) {
           node.nodeRef.instance.boxComponent.updateLink();
@@ -174,6 +188,11 @@ export class WorkflowService {
       });
   }
 
+  /**
+   * Create and return the component corresponding to the specified node type.
+   * @param nodeType Type of the node to be created
+   * @returns ComponentRef<NodeDirective> corresponding to the node type.
+   */
   private getNodeRef(nodeType: NodeType): ComponentRef<NodeDirective> {
     switch (nodeType) {
       case 'rephrase':

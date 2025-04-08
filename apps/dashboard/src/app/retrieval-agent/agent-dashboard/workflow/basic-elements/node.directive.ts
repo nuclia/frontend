@@ -7,7 +7,7 @@ let nodeCount = 0;
 @Directive({})
 export class NodeDirective {
   readonly id = `node-${nodeCount++}`;
-  nextColumnIndex = 0;
+  columnIndex = 0;
 
   origin = input<ConnectableEntryComponent>();
   state = input<'default' | 'selected' | 'processing' | 'processed'>('default');
@@ -35,7 +35,7 @@ export class NodeDirective {
   }
 
   onOutputClick(entry: ConnectableEntryComponent) {
-    this.addNode.emit({ entry, targetColumn: this.nextColumnIndex });
+    this.addNode.emit({ entry, targetColumn: this.columnIndex + 1 });
   }
   onTrashClick() {
     this.removeNode.emit();
