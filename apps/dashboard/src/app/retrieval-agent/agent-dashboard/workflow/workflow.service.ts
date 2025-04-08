@@ -53,6 +53,7 @@ export class WorkflowService {
   get selectedNode() {
     return this._selectedNode;
   }
+  private currentOrigin?: ConnectableEntryComponent;
 
   private _columnContainer?: ElementRef;
   set columnContainer(container: ElementRef) {
@@ -77,10 +78,20 @@ export class WorkflowService {
    * @param origin Connectable entry to be linked to the newly created node
    * @param columnIndex Index of the column in which the node should be added
    */
-  addNodeFrom(origin: ConnectableEntryComponent, columnIndex: number) {
+  triggerNodeCreation(origin: ConnectableEntryComponent, columnIndex: number) {
     if (!this.sidebarContentWrapper) {
       return;
     }
+    // Keep only one origin point in active state
+    if (this.currentOrigin) {
+      this.currentOrigin.activeState.set(false);
+    }
+    this.currentOrigin = origin;
+    // Unselect node if needed
+    if (this.selectedNode) {
+      this.selectNode('');
+    }
+
     const originType = origin.type();
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
     this.sideBarOpen.set(true);
@@ -158,13 +169,14 @@ export class WorkflowService {
     this.applicationRef.attachView(nodeRef.hostView);
     column.appendChild(nodeRef.location.nativeElement);
     nodeRef.changeDetectorRef.detectChanges();
-    nodeRef.instance.addNode.subscribe((data) => this.addNodeFrom(data.entry, data.targetColumn));
+    nodeRef.instance.addNode.subscribe((data) => this.triggerNodeCreation(data.entry, data.targetColumn));
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
     nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id));
     nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
 
     this.nodes[nodeRef.instance.id] = { nodeRef, nodeType };
     this.selectNode(nodeRef.instance.id);
+    origin.activeState.set(false);
   }
 
   /**

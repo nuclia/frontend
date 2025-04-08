@@ -34,12 +34,17 @@ export class LinkComponent {
   @HostBinding('style.top.px') @Input() top?: number;
 
   goDown = input(false, { transform: booleanAttribute });
+  samePosition = input(false, { transform: booleanAttribute });
   height = input(defaultSize);
 
   viewbox = computed(() => `0 0 ${this.width} ${this.height()}`);
   d = computed(() => {
     const dy = this.height() - 1;
     const width = this.width - 3;
-    return this.goDown() ? `M2 1 C51 1 88 ${dy} ${width} ${dy}` : `M2 ${dy} C72 ${dy} 72 1 ${width} 1`;
+    if (this.samePosition()) {
+      return this.goDown() ? `M2 ${dy} L${width} 1` : `M2 ${this.height() / 2} L${width} ${dy}`;
+    } else {
+      return this.goDown() ? `M2 1 C51 1 88 ${dy} ${width} ${dy}` : `M2 ${dy} C72 ${dy} 72 1 ${width} 1`;
+    }
   });
 }

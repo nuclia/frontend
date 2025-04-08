@@ -45,7 +45,7 @@ export class AgentDashboardComponent implements AfterViewInit {
   }
 
   addNode(data: { entry: ConnectableEntryComponent; targetColumn: number }) {
-    this.workflowService.addNodeFrom(data.entry, data.targetColumn);
+    this.workflowService.triggerNodeCreation(data.entry, data.targetColumn);
   }
 
   closeSideBar() {

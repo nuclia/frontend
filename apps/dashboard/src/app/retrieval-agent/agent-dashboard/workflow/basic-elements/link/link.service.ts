@@ -27,14 +27,20 @@ export class LinkService {
     if (!this.container) {
       return;
     }
+    const samePosition = Math.abs(leftBox.top - rightBox.top) <= 16;
     const goDown = leftBox.top < rightBox.top;
     const containerBox = this.container.nativeElement.getBoundingClientRect();
     const linkRef = createComponent(LinkComponent, {
       environmentInjector: this.environmentInjector,
     });
     linkRef.instance.left = leftBox.right - containerBox.left;
-    linkRef.setInput('height', Math.abs(leftBox.bottom - rightBox.bottom) + 2);
-    if (goDown) {
+    const height = Math.abs(leftBox.bottom - rightBox.bottom) + 2;
+    linkRef.setInput('height', height);
+    if (samePosition) {
+      const topAdjustment = height < 5 ? -3 : 0;
+      linkRef.instance.top = leftBox.top - containerBox.top + topAdjustment;
+      linkRef.setInput('samePosition', samePosition);
+    } else if (goDown) {
       linkRef.instance.top = leftBox.top - containerBox.top + 8;
       linkRef.setInput('goDown', true);
     } else {

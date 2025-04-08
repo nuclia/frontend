@@ -19,6 +19,7 @@
     background: $color-light-stronger;
     border-radius: 50%;
     border: 1.5px solid $color-neutral-regular;
+    cursor: pointer;
     display: flex;
     flex-shrink: 0;
     height: rhythm(2);
@@ -34,9 +35,9 @@
       transition: opacity $transition-hint;
     }
 
-    &:hover {
+    &:hover,
+    &.active {
       border-color: $color-primary-regular;
-      cursor: pointer;
 
       svg {
         opacity: 1;

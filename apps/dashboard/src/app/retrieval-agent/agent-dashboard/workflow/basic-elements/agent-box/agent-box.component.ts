@@ -12,6 +12,7 @@ import {
   input,
   output,
   QueryList,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
@@ -43,6 +44,8 @@ export class AgentBoxComponent implements AfterViewInit {
   outputClick = output<ConnectableEntryComponent>();
   trashClick = output<void>();
 
+  visible = signal(false);
+
   @ViewChild('inputElement') inputElement?: ElementRef;
   @ContentChildren(ConnectableEntryComponent) connectableEntries?: QueryList<ConnectableEntryComponent>;
 
@@ -55,6 +58,9 @@ export class AgentBoxComponent implements AfterViewInit {
   @HostBinding('attr.data-id') get boxId() {
     return this.id;
   }
+  @HostBinding('class.visible') get visibility() {
+    return this.visible();
+  }
 
   ngAfterContentInit(): void {
     this.connectableEntries?.forEach((entry: ConnectableEntryComponent) => {
@@ -63,6 +69,7 @@ export class AgentBoxComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    setTimeout(() => this.visible.set(true));
     this.addLink();
   }
 
