@@ -6,6 +6,7 @@ import type {
   IResource,
   RelationEntityType,
   RelationType,
+  RESOURCE_STATUS,
 } from '../resource';
 import type { ResourceProperties } from '../db.models';
 import { RAGImageStrategy, RAGStrategy } from '../kb';
@@ -129,7 +130,92 @@ export interface CatalogOptions extends SearchOptions {
   hidden?: boolean;
   page_number?: number;
   page_size?: number;
+  filter_expression?: {
+    resource: ResourceFilterExpression;
+  };
 }
+
+export interface And<T> {
+  and: T[];
+}
+export interface Or<T> {
+  or: T[];
+}
+export interface Not<T> {
+  not: T[];
+}
+export interface ResourceFilter {
+  prop: 'resource';
+  id?: string;
+  slug?: string;
+}
+export interface DateCreatedFilter {
+  prop: 'created';
+  since?: string;
+  until?: string;
+}
+export interface DateModifiedFilter {
+  prop: 'modified';
+  since?: string;
+  until?: string;
+}
+export interface LabelFilter {
+  prop: 'label';
+  labelset: string;
+  label?: string;
+}
+export interface ResourceMimetypeFilter {
+  prop: 'resource_mimetype';
+  type: string;
+  subtype?: string;
+}
+export interface LanguageFilter {
+  prop: 'language';
+  language: string;
+  only_primary?: boolean;
+}
+export interface OriginTagFilter {
+  prop: 'origin_tag';
+  tag: string;
+}
+export interface OriginMetadataFilter {
+  prop: 'origin_metadata';
+  field: string;
+  value?: string;
+}
+export interface OriginPathFilter {
+  prop: 'origin_path';
+  prefix?: string;
+}
+export interface OriginSourceFilter {
+  prop: 'origin_source';
+  id?: string;
+}
+export interface OriginCollaboratorFilter {
+  prop: 'origin_collaborator';
+  collaborator: string;
+}
+export interface StatusFilter {
+  prop: 'status';
+  status: RESOURCE_STATUS;
+}
+
+export type ResourceFilterExpression =
+  | And<ResourceFilterExpression>
+  | Or<ResourceFilterExpression>
+  | Not<ResourceFilterExpression>
+  | ResourceFilter
+  | DateCreatedFilter
+  | DateModifiedFilter
+  | LabelFilter
+  | ResourceMimetypeFilter
+  | LanguageFilter
+  | OriginTagFilter
+  | OriginMetadataFilter
+  | OriginPathFilter
+  | OriginSourceFilter
+  | OriginCollaboratorFilter
+  | StatusFilter;
 
 export enum SHORT_FIELD_TYPE {
   text = 't',

@@ -67,6 +67,7 @@ import { SistemaInfoCardComponent } from './sistema-pages/sistema-cards/sistema-
 import { SistemaBadgeComponent } from './sistema-pages/sistema-badge/sistema-badge.component';
 import { SistemaPalettePageComponent } from './sistema-pages/pastanaga-pages-override/sistema-palette/sistema-palette.component';
 import { SistemaButtonMiniComponent } from './sistema-pages/sistema-button-mini/sistema-button-mini.component';
+import { SistemaSearchInputComponent } from './sistema-pages/sistema-search-input/sistema-search-input.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -97,6 +98,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'folder-tree', title: 'Folder tree', type: SistemaFolderTreeComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
       { view: 'password-input', title: 'Password input', type: SistemaPasswordInputComponent },
+      { view: 'search-input', title: 'Search input', type: SistemaSearchInputComponent },
       { view: 'segmented-buttons', title: 'Segmented buttons', type: SistemaSegmentedButtonsComponent },
       { view: 'spinner', title: 'Spinner', type: SistemaSpinnerComponent },
       { view: 'sticky-footer', title: 'Sticky footer', type: SistemaStickyFooterComponent },

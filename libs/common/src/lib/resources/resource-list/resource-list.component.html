@@ -141,13 +141,15 @@
           }
 
           @if (isMainView || isProcessedView) {
-            <pa-input
+            <nsi-search-input
               icon="search"
+              [modes]="searchModes"
               [value]="query | async"
+              (modeSelected)="onModeChange($event)"
               (valueChange)="onQueryChange($event)"
               (keyup.enter)="search()">
               {{ 'stash.search' | translate }}
-            </pa-input>
+            </nsi-search-input>
           }
         </div>
 

@@ -1,0 +1,13 @@
+@use '../../../styles/variables' as *;
+
+.nsi-search-input {
+  .pa-field-container {
+    align-items: center;
+    display: flex;
+    gap: rhythm(0.5);
+    padding-right: rhythm(0.5);
+  }
+  .nsi-search-input-button {
+    cursor: pointer;
+  }
+}
