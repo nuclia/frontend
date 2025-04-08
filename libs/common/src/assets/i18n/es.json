@@ -1259,6 +1259,8 @@
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.help.path": "Ruta del recurso en el sistema de origen",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.help.tags": "Tags definidas en la propiedad \"origin\" del recurso",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.help.tags-placeholder": "Nombre de tag",
+	"search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-label": "Filtrar por etiqueta",
+	"search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-labelset": "Filtrar por conjunto de etiquetas",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.ner.family": "Familia NER",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.ner.value": "Valor NER",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.status.error": "Error",

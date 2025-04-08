@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, of, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -19,11 +19,21 @@ import { ResourceListService } from '../../../../resources';
 import { LabelModule } from '@flaps/core';
 import { Classification } from '@nuclia/core';
 import { NerFamily, NerService } from '../../../../entities';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { DropdownButtonComponent, InfoCardComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-filter-value',
-  imports: [CommonModule, ReactiveFormsModule, PaTextFieldModule, TranslateModule, LabelModule, InfoCardComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PaDropdownModule,
+    PaTextFieldModule,
+    PaTogglesModule,
+    TranslateModule,
+    LabelModule,
+    InfoCardComponent,
+    DropdownButtonComponent,
+  ],
   styleUrl: 'filter-value.component.scss',
   templateUrl: './filter-value.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,8 +56,10 @@ export class FilterValueComponent implements OnInit, OnDestroy {
     pattern: 'search.configuration.search-box.preselected-filters.assistant.filter-value.validation.mime-type-pattern',
   };
 
+  labelSelectionMode: 'label' | 'labelset' = 'label';
   selectedLabelSetTitle?: string;
   labelSelection?: Classification;
+  labelSetSelection?: string;
   nerFamilies: NerFamily[] = [];
   nerForm = new FormGroup({
     family: new FormControl('', Validators.required),
@@ -76,8 +88,13 @@ export class FilterValueComponent implements OnInit, OnDestroy {
 
     if (this.filterType === 'classification.labels' && this.valueControl.value) {
       const [labelset, label] = this.valueControl.value.split('/');
-      if (labelset && label) {
-        this.labelSelection = { labelset, label };
+      if (labelset || label) {
+        this.labelSelectionMode = label ? 'label' : 'labelset';
+        if (label) {
+          this.labelSelection = { labelset, label };
+        } else {
+          this.labelSetSelection = labelset;
+        }
         this.setSelectedLabelSetTitle();
         this.cdr.detectChanges();
       }
@@ -93,6 +110,18 @@ export class FilterValueComponent implements OnInit, OnDestroy {
     this.labelSelection = labels[0];
     this.valueControl.patchValue(`${labels[0].labelset}/${labels[0].label}`);
     this.setSelectedLabelSetTitle();
+  }
+
+  updateValueWithLabelSet(labelSet: string) {
+    this.labelSetSelection = labelSet;
+    this.valueControl.patchValue(labelSet);
+    this.setSelectedLabelSetTitle();
+  }
+
+  clearLabels() {
+    this.labelSelection = undefined;
+    this.labelSetSelection = undefined;
+    this.valueControl.reset();
   }
 
   familyChange(family: NerFamily) {
@@ -139,10 +168,10 @@ export class FilterValueComponent implements OnInit, OnDestroy {
   }
 
   private setSelectedLabelSetTitle() {
-    if (this.labelSelection) {
-      const classification = this.labelSelection;
+    if (this.labelSelection || this.labelSetSelection) {
+      const labelSetId = this.labelSelection?.labelset || this.labelSetSelection;
       this.labelSets.pipe(take(1)).subscribe((labelSets) => {
-        const labelSet = labelSets[classification.labelset];
+        const labelSet = labelSets[labelSetId || ''];
         if (labelSet) {
           this.selectedLabelSetTitle = labelSet.title;
         }

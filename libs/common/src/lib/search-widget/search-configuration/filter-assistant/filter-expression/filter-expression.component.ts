@@ -145,10 +145,9 @@ export class FilterExpressionComponent implements OnInit, OnDestroy {
   }
 
   private emitFilters() {
-    const validFilters = this.filters.filter((filter) => !!filter.type && !!filter.value);
     this.expressionChange.emit({
       combine: this.filteringExpression.getRawValue(),
-      filters: validFilters,
+      filters: this.filters,
     });
   }
 }

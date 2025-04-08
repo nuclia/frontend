@@ -1259,6 +1259,8 @@
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.help.path": "Path of the resource in the source system",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.help.tags": "Tags defined in the resource’s \"origin\" property",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.help.tags-placeholder": "Tag name",
+	"search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-label": "Filter by label",
+	"search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-labelset": "Filter by label set",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.ner.family": "NER family",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.ner.value": "NER value",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.status.error": "Error",
