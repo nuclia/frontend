@@ -7,7 +7,6 @@ import { AgentBoxComponent, ConnectableEntryComponent, InfoBlockComponent, NodeD
   selector: 'app-conditional-node',
   imports: [CommonModule, TranslateModule, AgentBoxComponent, ConnectableEntryComponent, InfoBlockComponent],
   templateUrl: './conditional-node.component.html',
-  styleUrl: './conditional-node.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConditionalNodeComponent extends NodeDirective {

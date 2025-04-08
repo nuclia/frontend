@@ -1,0 +1,10 @@
+<div class="title-xs">
+  {{ nodeTitle() }}
+
+  @if (icon(); as icon) {
+    <pa-icon
+      size="small"
+      [name]="icon"></pa-icon>
+  }
+</div>
+<div class="body-s">{{ description() }}</div>

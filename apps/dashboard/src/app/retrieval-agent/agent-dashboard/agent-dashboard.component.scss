@@ -2,6 +2,8 @@
 
 .agent-dashboard {
   $height-toolbar: rhythm(6);
+  $height-main: calc(100dvh - #{$height-toolbar} - var(--app-topbar-height));
+  $width-sidenav: rhythm(45);
 
   .agent-dashboard-toolbar {
     background-color: $color-light-stronger;
@@ -16,7 +18,7 @@
     background-image: radial-gradient(circle, $color-neutral-lighter rhythm(0.25), rgba(0, 0, 0, 0) rhythm(0.25));
     overflow: auto;
     display: flex;
-    height: calc(100dvh - #{$height-toolbar} - var(--app-topbar-height));
+    height: $height-main;
     position: relative;
     width: 100%;
 
@@ -26,6 +28,39 @@
       gap: rhythm(3);
       height: fit-content;
       padding: rhythm(8);
+    }
+  }
+
+  .sidebar {
+    background-color: $color-light-stronger;
+    border-left: 1px solid $color-neutral-light;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(3);
+    height: $height-main;
+    padding: rhythm(3);
+    position: absolute;
+    right: -$width-sidenav;
+    top: $height-toolbar;
+    transition: right $transition-slide;
+    width: $width-sidenav;
+
+    &.open {
+      right: 0;
+    }
+
+    .title-s {
+      align-items: center;
+      display: flex;
+      height: rhythm(4);
+      justify-content: space-between;
+      margin-right: - rhythm(1);
+    }
+
+    .sidebar-content {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1.5);
     }
   }
 }

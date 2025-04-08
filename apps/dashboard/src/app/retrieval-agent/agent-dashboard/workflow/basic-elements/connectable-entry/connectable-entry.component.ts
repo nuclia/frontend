@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -7,7 +8,7 @@ import {
   output,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { EntryType } from '../../workflow.models';
 
 @Component({
   selector: 'app-connectable-entry',
@@ -34,6 +35,7 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConnectableEntryComponent {
+  type = input.required<EntryType>();
   noOutput = input(false, { transform: booleanAttribute });
   clickOutput = output();
 

@@ -5,15 +5,15 @@
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
   <app-connectable-entry
-    #if
+    type="if"
     noOutput>
     {{ 'retrieval-agents.workflow.conditional-node.if' | translate }}
   </app-connectable-entry>
   <app-info-block>{{ ifData() }}</app-info-block>
-  <app-connectable-entry #then>
+  <app-connectable-entry type="then">
     {{ 'retrieval-agents.workflow.conditional-node.then' | translate }}
   </app-connectable-entry>
-  <app-connectable-entry #else>
+  <app-connectable-entry type="else">
     {{ 'retrieval-agents.workflow.conditional-node.else' | translate }}
   </app-connectable-entry>
 </app-agent-box>

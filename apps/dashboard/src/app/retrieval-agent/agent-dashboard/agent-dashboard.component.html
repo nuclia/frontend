@@ -16,4 +16,22 @@
       <app-agent-connector (addNode)="addNode($event)"></app-agent-connector>
     </div>
   </div>
+
+  <div
+    #sidebar
+    class="sidebar"
+    [class.open]="sideBarOpen()">
+    <div class="title-s">
+      {{ sideBarTitle() }}
+      <pa-button
+        aspect="basic"
+        icon="cross"
+        (click)="closeSideBar()">
+        Close side panel
+      </pa-button>
+    </div>
+    <div
+      #sidebarContentWrapper
+      class="sidebar-content"></div>
+  </div>
 </div>
