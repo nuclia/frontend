@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { distinctUntilChanged, filter, forkJoin, merge, Observable, of, Subject, take } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { FeaturesService, SDKService } from '@flaps/core';
-import { DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
+import { ControlModel, DropdownComponent, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../../upload/upload.service';
 import { ResourceListService } from './resource-list.service';
 import {
@@ -46,6 +46,12 @@ export class ResourceListComponent implements OnDestroy {
   filterOptions: Filters = { classification: [], mainTypes: [], creation: {}, hidden: undefined };
   andLogicForLabels: boolean = false;
   displayedLabelSets: LabelSets = {};
+  searchModes = [
+    new ControlModel({ id: 'title', value: 'title', label: 'stash.search-modes.title' }),
+    new ControlModel({ id: 'uid', value: 'uid', label: 'stash.search-modes.uid' }),
+    new ControlModel({ id: 'slug', value: 'slug', label: 'stash.search-modes.slug' }),
+  ];
+  searchMode: 'title' | 'uid' | 'slug' = 'title';
 
   dateForm = new FormGroup({
     start: new FormControl<string>(''),
@@ -305,5 +311,11 @@ export class ResourceListComponent implements OnDestroy {
     const labels = filters.classification.map((option) => getLabelFromFilter(option.id));
     this.displayedLabelSets = trimLabelSets(labelSets, labels);
     this.cdr.markForCheck();
+  }
+
+  onModeChange(mode: string) {
+    this.searchMode = mode as 'title' | 'uid' | 'slug';
+    this.resourceListService.setSearchMode(this.searchMode);
+    this.search();
   }
 }

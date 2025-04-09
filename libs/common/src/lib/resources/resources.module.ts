@@ -33,6 +33,7 @@ import {
   SisIconsModule,
   SisLabelModule,
   SisProgressModule,
+  SisSearchInputComponent,
   SisStatusComponent,
   StickyFooterComponent,
 } from '@nuclia/sistema';
@@ -185,6 +186,7 @@ const ROUTES: Routes = [
     SisStatusComponent,
     BackButtonComponent,
     DropdownButtonComponent,
+    SisSearchInputComponent,
 
     // Nuclia
     PaginationModule,

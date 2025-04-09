@@ -71,33 +71,55 @@ export interface ResourceListParams {
   filters: string[];
   labelsLogic?: LabelsLogic;
 }
-export function getSearchOptions(params: ResourceListParams): CatalogOptions {
-  const labelsOperator = params.labelsLogic === 'AND' ? FilterOperator.all : FilterOperator.any;
-  const filters: Filter[] = [
-    { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/icon/')) },
-    { [labelsOperator]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
-    { [FilterOperator.any]: params.status ? [`/n/s/${params.status}`] : [] },
-  ].filter((item) => (Object.values(item)[0] || []).length > 0);
-  const start = params.filters.find((filter) => filter.startsWith(CREATION_START_PREFIX));
-  const end = params.filters.find((filter) => filter.startsWith(CREATION_END_PREFIX));
-  const hiddenFilter = params.filters.find((filter) => filter.startsWith(HIDDEN_PREFIX));
+export function getSearchOptions(params: ResourceListParams, uid?: string, slug?: string): CatalogOptions {
+  if (uid) {
+    return {
+      filter_expression: {
+        resource: {
+          prop: 'resource',
+          id: uid,
+        },
+      },
+    };
+  } else if (slug) {
+    return {
+      filter_expression: {
+        resource: {
+          prop: 'resource',
+          slug,
+        },
+      },
+    };
+  } else {
+    const labelsOperator = params.labelsLogic === 'AND' ? FilterOperator.all : FilterOperator.any;
+    const filters: Filter[] = [
+      { [FilterOperator.any]: params.filters.filter((filter) => filter.startsWith('/icon/')) },
+      { [labelsOperator]: params.filters.filter((filter) => filter.startsWith('/classification.labels/')) },
+      { [FilterOperator.any]: params.status ? [`/n/s/${params.status}`] : [] },
+    ].filter((item) => (Object.values(item)[0] || []).length > 0);
+    const start = params.filters.find((filter) => filter.startsWith(CREATION_START_PREFIX));
+    const end = params.filters.find((filter) => filter.startsWith(CREATION_END_PREFIX));
+    const hiddenFilter = params.filters.find((filter) => filter.startsWith(HIDDEN_PREFIX));
 
-  return {
-    page_number: params.page,
-    page_size: params.pageSize,
-    sort: params.sort,
-    range_creation_start: start ? getDateFromFilter(start) : undefined,
-    range_creation_end: end ? getDateFromFilter(end) : undefined,
-    hidden: hiddenFilter ? getVisibilityFromFilter(hiddenFilter) : undefined,
-    filters,
-  };
+    return {
+      page_number: params.page,
+      page_size: params.pageSize,
+      sort: params.sort,
+      range_creation_start: start ? getDateFromFilter(start) : undefined,
+      range_creation_end: end ? getDateFromFilter(end) : undefined,
+      hidden: hiddenFilter ? getVisibilityFromFilter(hiddenFilter) : undefined,
+      filters,
+    };
+  }
 }
 export function searchResources(
   kb: WritableKnowledgeBox,
   resourceListParams: ResourceListParams,
+  uid?: string,
+  slug?: string,
 ): Observable<{ results: Search.Results; kbId: string }> {
-  const searchOptions = getSearchOptions(resourceListParams);
-  return kb.catalog(resourceListParams.query, searchOptions).pipe(
+  const searchOptions = getSearchOptions(resourceListParams, uid, slug);
+  return kb.catalog(uid || slug ? '' : resourceListParams.query, searchOptions).pipe(
     map((res) => ({
       results: (res.type === 'error' ? { type: 'searchResults' } : res) as Search.Results,
       kbId: kb.id,

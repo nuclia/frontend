@@ -31,11 +31,13 @@ import {
   SisLabelModule,
   SisPasswordInputModule,
   SisProgressModule,
+  SisSearchInputComponent,
 } from '@nuclia/sistema';
 import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistema-dropdown-button.component';
 import { SistemaPasswordInputComponent } from './sistema-password-input/sistema-password-input.component';
 import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { SistemaSearchInputComponent } from './sistema-search-input/sistema-search-input.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +52,7 @@ import { TranslateModule } from '@ngx-translate/core';
     SistemaBackButtonComponent,
     SistemaDropdownButtonComponent,
     SistemaPasswordInputComponent,
+    SistemaSearchInputComponent,
     SistemaSpinnerComponent,
   ],
   imports: [
@@ -71,6 +74,7 @@ import { TranslateModule } from '@ngx-translate/core';
     BackButtonComponent,
     DropdownButtonComponent,
     SisPasswordInputModule,
+    SisSearchInputComponent,
     SisProgressModule,
     ReactiveFormsModule,
     SisLabelModule,

@@ -73,6 +73,8 @@ export class ResourceListService {
   data = this._data.asObservable();
   private _query = new BehaviorSubject<string>('');
   query = this._query.asObservable();
+  private _searchMode = new BehaviorSubject<'title' | 'uid' | 'slug'>('title');
+  searchMode = this._searchMode.asObservable();
   private _headerHeight = new BehaviorSubject<number>(0);
   headerHeight = this._headerHeight.asObservable();
   private _labelsLogic = new BehaviorSubject<LabelsLogic>(DEFAULT_LABELS_LOGIC);
@@ -137,6 +139,7 @@ export class ResourceListService {
     this._query.next('');
     this._filters.next([]);
     this._labelsLogic.next(DEFAULT_LABELS_LOGIC);
+    this._searchMode.next('title');
   }
 
   get sort(): SortOption {
@@ -174,6 +177,10 @@ export class ResourceListService {
 
   setQuery(query: string) {
     this._query.next(query);
+  }
+
+  setSearchMode(mode: 'title' | 'uid' | 'slug') {
+    this._searchMode.next(mode);
   }
 
   setHeaderHeight(height: number) {
@@ -251,11 +258,19 @@ export class ResourceListService {
       filters: this._filters.value,
       labelsLogic: this._labelsLogic.value,
     };
+    const searchMode = this._searchMode.value;
     return forkJoin([
       this.labelSets.pipe(take(1)),
       this.sdk.currentKb.pipe(
         take(1),
-        switchMap((kb) => searchResources(kb, resourceListParams)),
+        switchMap((kb) =>
+          searchResources(
+            kb,
+            resourceListParams,
+            searchMode === 'uid' ? this._query.value : undefined,
+            searchMode === 'slug' ? this._query.value : undefined,
+          ),
+        ),
       ),
     ]).pipe(
       map(([labelSets, { results, kbId }]) => {
