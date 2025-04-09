@@ -1259,6 +1259,8 @@
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.help.path": "Ruta del recurs al sistema font",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.help.tags": "Tags definides a la propietat \"origin\" del recurs",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.help.tags-placeholder": "Nom del tag",
+	"search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-label": "Filtra per etiqueta",
+	"search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-labelset": "Filtra per conjunt d'etiquetes",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.ner.family": "Família NER",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.ner.value": "Valor NER",
 	"search.configuration.search-box.preselected-filters.assistant.filter-value.status.error": "Error",

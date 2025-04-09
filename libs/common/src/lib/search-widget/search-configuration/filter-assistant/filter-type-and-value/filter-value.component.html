@@ -9,19 +9,49 @@
     </pa-input>
   }
   @case ('classification.labels') {
-    <div class="labels-container">
-      <app-label-dropdown
-        aspect="basic"
-        single
-        [labelSets]="labelSets | async"
-        (selectionChange)="updateValueWithLabels($event)">
-        {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
-      </app-label-dropdown>
-      @if (selectedLabelSetTitle || labelSelection) {
-        <nsi-info-card type="highlight">
-          {{ selectedLabelSetTitle || labelSelection?.labelset }}: {{ labelSelection?.label }}
-        </nsi-info-card>
-      }
+    <div class="fields-container">
+      <pa-radio-group
+        [(value)]="labelSelectionMode"
+        (change)="clearLabels()">
+        <pa-radio value="label">{{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-label' | translate }}</pa-radio>
+        <pa-radio value="labelset">{{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.label.by-labelset' | translate }}</pa-radio>
+      </pa-radio-group>
+      <div class="labels-container">
+        @if (labelSelectionMode === 'label') {
+          <app-label-dropdown
+            aspect="basic"
+            single
+            [fullWidth]="true"
+            [labelSets]="labelSets | async"
+            (selectionChange)="updateValueWithLabels($event)">
+            {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
+          </app-label-dropdown>
+          @if (labelSelection) {
+            <nsi-info-card type="highlight">
+              {{ selectedLabelSetTitle || labelSelection?.labelset }}: {{ labelSelection?.label }}
+            </nsi-info-card>
+          }
+        } @else {
+          <div>
+            <nsi-dropdown-button
+              freeWidth
+              aspect="basic"
+              [popupRef]="menu">
+              {{ 'search.configuration.search-box.preselected-filters.assistant.filter-value.field-label' | translate }}
+            </nsi-dropdown-button>
+            <pa-dropdown #menu>
+              @for (labelSet of (labelSets | async) || {} | keyvalue; track labelSet.key) {
+                <pa-option (selectOption)="updateValueWithLabelSet(labelSet.key)">
+                  {{ labelSet.value.title }}
+                </pa-option>
+              }
+            </pa-dropdown>
+          </div>
+          @if (labelSetSelection) {
+            <nsi-info-card type="highlight">{{ selectedLabelSetTitle }}</nsi-info-card>
+          }
+        }
+      </div>
     </div>
   }
   @case ('entities') {
