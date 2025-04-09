@@ -146,7 +146,7 @@ function manageSearchRequest(
   );
 }
 
-const serialize = (params: { [key: string]: string | string[] }, others: SearchOptions): string => {
+const serialize = (params: { [key: string]: string | string[] }, others: SearchOptions | CatalogOptions): string => {
   Object.entries(others || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       if (Array.isArray(value)) {

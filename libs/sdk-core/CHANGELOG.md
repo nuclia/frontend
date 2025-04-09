@@ -1,4 +1,8 @@
-# 1.24.2 (unreleased)
+# 1.25.0 (2025-04-09)
+
+### Feature
+
+- Support for `filter_expression`
 
 ### Improvements
 
