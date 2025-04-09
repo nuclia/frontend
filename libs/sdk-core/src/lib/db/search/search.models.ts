@@ -7,6 +7,7 @@ import type {
   RelationEntityType,
   RelationType,
   RESOURCE_STATUS,
+  TypeParagraph,
 } from '../resource';
 import type { ResourceProperties } from '../db.models';
 import { RAGImageStrategy, RAGStrategy } from '../kb';
@@ -106,6 +107,11 @@ export interface ChatOptions extends BaseSearchOptions {
 
 export interface SearchOptions extends BaseSearchOptions {
   faceted?: string[];
+  filter_expression?: {
+    field?: FieldFilterExpression;
+    paragraph?: ParagraphFilterExpression;
+    operator: 'and' | 'or';
+  };
   sort?: SortOption;
   /**
    * @deprecated use top_k
@@ -126,7 +132,7 @@ export interface SearchOptions extends BaseSearchOptions {
   min_score_semantic?: number;
 }
 
-export interface CatalogOptions extends SearchOptions {
+export interface CatalogOptions extends Omit<SearchOptions, 'filter_expression'> {
   hidden?: boolean;
   page_number?: number;
   page_size?: number;
@@ -149,6 +155,15 @@ export interface ResourceFilter {
   id?: string;
   slug?: string;
 }
+export interface FieldFilter {
+  prop: 'field';
+  type: FIELD_TYPE;
+  name?: string;
+}
+export interface KeywordFilter {
+  prop: 'keyword';
+  word: string;
+}
 export interface DateCreatedFilter {
   prop: 'created';
   since?: string;
@@ -168,6 +183,16 @@ export interface ResourceMimetypeFilter {
   prop: 'resource_mimetype';
   type: string;
   subtype?: string;
+}
+export interface FieldMimetypeFilter {
+  prop: 'field_mimetype';
+  type: string;
+  subtype?: string;
+}
+export interface EntityFilter {
+  prop: 'entity';
+  subtype: string;
+  value?: string;
 }
 export interface LanguageFilter {
   prop: 'language';
@@ -199,6 +224,43 @@ export interface StatusFilter {
   prop: 'status';
   status: RESOURCE_STATUS;
 }
+export interface GeneratedFilter {
+  prop: 'generated';
+  by: string;
+  da_task?: string;
+}
+export interface KindFilter {
+  prop: 'kind';
+  kind: TypeParagraph;
+}
+
+export type FieldFilterExpression =
+  | And<FieldFilterExpression>
+  | Or<FieldFilterExpression>
+  | Not<FieldFilterExpression>
+  | ResourceFilter
+  | FieldFilter
+  | KeywordFilter
+  | DateCreatedFilter
+  | DateModifiedFilter
+  | LabelFilter
+  | ResourceMimetypeFilter
+  | FieldMimetypeFilter
+  | EntityFilter
+  | LanguageFilter
+  | OriginTagFilter
+  | OriginMetadataFilter
+  | OriginPathFilter
+  | OriginSourceFilter
+  | OriginCollaboratorFilter
+  | GeneratedFilter;
+
+export type ParagraphFilterExpression =
+  | And<ParagraphFilterExpression>
+  | Or<ParagraphFilterExpression>
+  | Not<ParagraphFilterExpression>
+  | LabelFilter
+  | KindFilter;
 
 export type ResourceFilterExpression =
   | And<ResourceFilterExpression>
