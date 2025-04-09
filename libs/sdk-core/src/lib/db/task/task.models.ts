@@ -106,6 +106,7 @@ export interface AskOperation extends BaseOperation {
   question?: string;
   destination?: string;
   json?: boolean;
+  user_prompt?: string;
 }
 
 export interface GuardOperation extends BaseOperation {

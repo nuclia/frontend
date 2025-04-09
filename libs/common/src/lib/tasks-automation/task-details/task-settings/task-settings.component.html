@@ -90,13 +90,14 @@
       description="tasks-automation.generator.your-question.description">
       <div class="settings-container">
         <div class="setting">
-          <label>{{ 'tasks-automation.generator.your-question.textarea-label' | translate }}</label>
           @if (askOperation.json) {
+            <label>{{ 'tasks-automation.generator.your-question.json-schema' | translate }}</label>
             <nsi-info-card>
               <code class="body-s">{{ askOperation.question }}</code>
             </nsi-info-card>
           } @else {
-            <div>{{ askOperation.question }}</div>
+            <label>{{ 'tasks-automation.generator.your-question.question-label' | translate }}</label>
+            <div>{{ askOperation.user_prompt || askOperation.question }}</div>
           }
         </div>
         <div class="separator-line"></div>
