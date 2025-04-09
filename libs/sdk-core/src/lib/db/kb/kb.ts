@@ -55,7 +55,18 @@ import {
 } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { ask, catalog, ChatOptions, find, predictAnswer, search, Search, SearchOptions, suggest } from '../search';
+import {
+  ask,
+  catalog,
+  CatalogOptions,
+  ChatOptions,
+  find,
+  predictAnswer,
+  search,
+  Search,
+  SearchOptions,
+  suggest,
+} from '../search';
 import { Training } from '../training';
 import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
 import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
@@ -579,7 +590,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
   }
 
-  catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse> {
+  catalog(query: string, options?: CatalogOptions): Observable<Search.Results | IErrorResponse> {
     return catalog(this.nuclia, this.id, query, options);
   }
 
