@@ -24,7 +24,7 @@
               </pa-checkbox>
               @if (vllm_config) {
                 <div class="extra-fields">
-                  <nsi-info-card>
+                  <nsi-info-card type="warning">
                     {{ 'kb.ai-models.extraction.config.processing.vllm_config.warning' | translate }}
                   </nsi-info-card>
                   <stf-llm-configuration
@@ -45,7 +45,7 @@
               </pa-checkbox>
               @if (ai_tables) {
                 <div class="extra-fields">
-                  <nsi-info-card>
+                  <nsi-info-card type="warning">
                     <span
                       [innerHTML]="'kb.ai-models.extraction.config.processing.ai_tables.warning' | translate"></span>
                   </nsi-info-card>
