@@ -1,4 +1,4 @@
-import { ChatOptions } from '@nuclia/core';
+import { Ask, ChatOptions } from '@nuclia/core';
 
 export const GENERATIVE_MODEL_KEY = 'generative_model';
 
@@ -16,4 +16,5 @@ export interface ResultEntry {
   answer: string;
   configId?: string;
   rendered?: string;
+  tokens?: Ask.AskTokens;
 }
