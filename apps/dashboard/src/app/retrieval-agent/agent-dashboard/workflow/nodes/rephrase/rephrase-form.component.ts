@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OptionHeaderModel, OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ConfigurationFormComponent } from '../../basic-elements';
+import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
 
 @Component({
   selector: 'app-rephrase-form',
@@ -18,12 +18,12 @@ import { ConfigurationFormComponent } from '../../basic-elements';
   templateUrl: './rephrase-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RephraseFormComponent {
+export class RephraseFormComponent extends FormDirective {
   form = new FormGroup({
     rephrase: new FormGroup({
       prompt: new FormControl('', { validators: [Validators.required], nonNullable: true }),
       extend: new FormControl(false),
-      askTo: new FormControl(''),
+      kb: new FormControl('', { nonNullable: true }),
       synonyms: new FormControl(false),
       history: new FormControl(false),
       userInfo: new FormControl(false),
@@ -43,7 +43,6 @@ export class RephraseFormComponent {
   }
 
   submit() {
-    // TODO
-    console.log('submit rephrase form', this.form.getRawValue().rephrase);
+    this.submitForm.emit(this.form.getRawValue().rephrase);
   }
 }

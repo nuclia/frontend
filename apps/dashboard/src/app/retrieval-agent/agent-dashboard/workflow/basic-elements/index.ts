@@ -6,4 +6,5 @@ export * from './node-box/node-box.component';
 export * from './node-selector/node-selector.component';
 
 export * from './arrow-down.component';
+export * from './form.directive';
 export * from './node.directive';

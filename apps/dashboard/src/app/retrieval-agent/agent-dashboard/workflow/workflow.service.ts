@@ -12,7 +12,13 @@ import {
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
-import { ConnectableEntryComponent, LinkService, NodeDirective, NodeSelectorComponent } from './basic-elements';
+import {
+  ConnectableEntryComponent,
+  FormDirective,
+  LinkService,
+  NodeDirective,
+  NodeSelectorComponent,
+} from './basic-elements';
 import {
   ConditionalNodeComponent,
   CypherNodeComponent,
@@ -25,7 +31,7 @@ import {
   SummarizeNodeComponent,
   ValidationNodeComponent,
 } from './nodes';
-import { nodesByEntryType, nodeSelectorIcons, NodeType } from './workflow.models';
+import { AgentWorkflow, Node, NODE_SELECTOR_ICONS, NODES_BY_ENTRY_TYPE, NodeType } from './workflow.models';
 
 const COLUMN_CLASS = 'workflow-col';
 
@@ -43,10 +49,7 @@ export class WorkflowService {
 
   private columns: HTMLElement[] = [];
   private nodes: {
-    [id: string]: {
-      nodeRef: ComponentRef<NodeDirective>;
-      nodeType: NodeType;
-    };
+    [id: string]: Node;
   } = {};
 
   private _selectedNode = '';
@@ -75,6 +78,11 @@ export class WorkflowService {
 
   sideBarTitle = signal('');
   sideBarOpen = signal(false);
+  agentWorkflow = signal<AgentWorkflow>({
+    preprocess: [],
+    context: [],
+    postprocess: [],
+  });
 
   /**
    * Trigger node creation by opening the sidebar containing the possible node types for the connectable entry of origin.
@@ -100,7 +108,7 @@ export class WorkflowService {
       ? `retrieval-agents.workflow.sidebar-title.${originType}`
       : 'retrieval-agents.workflow.sidebar-title.default';
     const container: HTMLElement = this.openEmptySidebar(titleKey);
-    const possibleNodes = nodesByEntryType[originType] || [];
+    const possibleNodes = NODES_BY_ENTRY_TYPE[originType] || [];
     possibleNodes.forEach((nodeType) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       selectorRef.setInput(
@@ -111,7 +119,7 @@ export class WorkflowService {
         'description',
         this.translate.instant(`retrieval-agents.workflow.node-types.${nodeType}.description`),
       );
-      selectorRef.setInput('icon', nodeSelectorIcons[nodeType]);
+      selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
@@ -189,18 +197,36 @@ export class WorkflowService {
     if (this.selectedNode && this.nodes[this.selectedNode]) {
       this.nodes[this.selectedNode].nodeRef.setInput('state', 'default');
     }
-    if (this.nodes[nodeId]) {
-      this.nodes[nodeId].nodeRef.setInput('state', 'selected');
+    const node = this.nodes[nodeId];
+    if (node) {
+      node.nodeRef.setInput('state', 'selected');
     }
     this.selectedNode = nodeId;
 
     const container: HTMLElement = this.openEmptySidebar('retrieval-agents.workflow.node-types.rephrase.title');
-    // TODO get form based on node type
-    const formRef = createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
+    const formRef = this.getFormRef(node.nodeType);
     this.applicationRef.attachView(formRef.hostView);
     container.appendChild(formRef.location.nativeElement);
     formRef.changeDetectorRef.detectChanges();
-    // RephraseFormComponent
+    formRef.instance.submitForm.subscribe((config) => this.saveNodeConfiguration(config, nodeId));
+  }
+
+  /**
+   * Save the node configuration and close the sidebar.
+   * @param config Node configuration
+   * @param nodeId Identifier of the node to save
+   */
+  private saveNodeConfiguration(config: any, nodeId: string) {
+    const node = this.nodes[nodeId];
+    if (!node) {
+      return;
+    }
+    console.log('save', config, node);
+    node.nodeConfig = config;
+    node.nodeRef.setInput('state', 'default');
+    node.nodeRef.setInput('config', config);
+    this.selectedNode = '';
+    this.closeSidebar();
   }
 
   /**
@@ -235,7 +261,20 @@ export class WorkflowService {
   }
 
   /**
-   * Create and return the component corresponding to the specified node type.
+   * Close the sidebar and reset its title and content.
+   */
+  private closeSidebar() {
+    if (!this.sidebarContentWrapper) {
+      throw new Error('Sidebar container not initialized');
+    }
+    const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
+    this.sideBarOpen.set(false);
+    this.sideBarTitle.set('');
+    container.innerHTML = '';
+  }
+
+  /**
+   * Create and return the node component corresponding to the specified node type.
    * @param nodeType Type of the node to be created
    * @returns ComponentRef<NodeDirective> corresponding to the node type.
    */
@@ -277,6 +316,29 @@ export class WorkflowService {
         return createComponent(CypherNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
+    }
+  }
+
+  /**
+   * Create and return the form component corresponding to the specified node type.
+   * @param nodeType Type of the node corresponding to the form to be created
+   * @returns ComponentRef<FormDirective> corresponding to the node type.
+   */
+
+  private getFormRef(nodeType: NodeType): ComponentRef<FormDirective> {
+    switch (nodeType) {
+      case 'rephrase':
+        return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
+      case 'conditional':
+      case 'validation':
+      case 'summarize':
+      case 'restart':
+      case 'nucliaDB':
+      case 'internet':
+      case 'sql':
+      case 'cypher':
+        // FIXME
+        return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
     }
   }
 }

@@ -1117,7 +1117,7 @@
 	"retrieval-agents.workflow.node-types.nucliaDB.title": "Preguntar a NucliaDB",
 	"retrieval-agents.workflow.node-types.rephrase.description": "Opciones de reformulación",
 	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.label": "Preguntar a",
-	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder": "Seleccionar la(s) fuente(s)",
+	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder": "Seleccionar fuente",
 	"retrieval-agents.workflow.node-types.rephrase.form.extend": "Extender",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.help": "Incluir el historial de la sesión",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.label": "Historial",

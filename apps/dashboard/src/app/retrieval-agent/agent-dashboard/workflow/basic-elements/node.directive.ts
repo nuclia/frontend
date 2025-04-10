@@ -11,6 +11,7 @@ export class NodeDirective {
 
   origin = input<ConnectableEntryComponent>();
   state = input<'default' | 'selected' | 'processing' | 'processed'>('default');
+  config = input<unknown>();
 
   addNode = output<{ entry: ConnectableEntryComponent; targetColumn: number }>();
   removeNode = output();
