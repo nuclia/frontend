@@ -20,11 +20,15 @@ export const nodesByEntryType: { [entry: string]: NodeType[] } = {
 };
 
 export const nodeSelectorIcons: { [nodeType: string]: string } = {
-  rephrase: 'rephrase',
   conditional: 'dataflow',
-  validation: 'validation',
-  summarize: 'summary',
+  cypher: 'file-code',
+  internet: 'globe',
+  nucliaDB: 'database',
+  rephrase: 'rephrase',
   restart: 'repeat',
+  sql: 'file-code',
+  summarize: 'summary',
+  validation: 'validation',
 };
 
 export interface RephraseConfiguration {
