@@ -132,6 +132,7 @@ export class RagLabService {
               .ask(query, undefined, undefined, {
                 ...options,
                 synchronous: true,
+                debug: true,
               })
               .pipe(
                 switchMap((answer) => {
@@ -157,6 +158,7 @@ export class RagLabService {
                             result: answer,
                             options,
                             rendered,
+                            tokens: answer.metadata?.tokens,
                           },
                           forTab,
                         ),
@@ -188,10 +190,11 @@ export class RagLabService {
       result: Ask.Answer | IErrorResponse | string;
       options: RequestConfig;
       rendered?: string;
+      tokens?: Ask.AskTokens;
     },
     forTab: 'prompt' | 'rag',
   ) {
-    const { query, options, result } = entry;
+    const { query, options, result, tokens } = entry;
     const configId = options.searchConfigId;
     const model = options.generative_model as string;
     const modelName = this.getModelName(model);
@@ -206,7 +209,7 @@ export class RagLabService {
           ? (result as Ask.Answer).text
           : `Error: ${result.detail}`;
     if (queryEntry) {
-      queryEntry.results.push({ configId, model, modelName, answer, rendered: entry.rendered });
+      queryEntry.results.push({ configId, model, modelName, answer, rendered: entry.rendered, tokens });
       entries.splice(entryIndex, 1, queryEntry);
       results.next([...entries]);
     } else {
@@ -215,7 +218,7 @@ export class RagLabService {
           {
             query,
             prompt: options.prompt as Prompts,
-            results: [{ configId, model, modelName, answer, rendered: entry.rendered }],
+            results: [{ configId, model, modelName, answer, rendered: entry.rendered, tokens }],
           },
         ]),
       );

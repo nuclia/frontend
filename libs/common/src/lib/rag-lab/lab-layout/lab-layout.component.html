@@ -47,10 +47,30 @@
                       <div class="answer-container">
                         <div class="config-container">
                           @if (result.configId) {
-                            <span class="title-xxs">{{ result.configId }}</span>
-                            ({{ result.modelName }})
+                            <div>
+                              <span class="title-xxs">{{ result.configId }}</span>
+                              ({{ result.modelName }})
+                            </div>
                           } @else {
                             <span class="title-xxs">{{ result.modelName }}</span>
+                          }
+                          @if (result.tokens) {
+                            <div class="tokens-container">
+                              <div>
+                                <span>{{ 'rag-lab.common.results.input-tokens' | translate }}:</span>
+                                <strong>{{ result.tokens.input_nuclia | number: '1.0-6' }}</strong>
+                              </div>
+                              <div>
+                                <span>{{ 'rag-lab.common.results.output-tokens' | translate }}:</span>
+                                <strong>{{ result.tokens.output_nuclia | number: '1.0-6' }}</strong>
+                              </div>
+                              <div>
+                                <span>{{ 'generic.total' | translate }}:</span>
+                                <strong>
+                                  {{ result.tokens.input_nuclia + result.tokens.output_nuclia | number: '1.0-6' }}
+                                </strong>
+                              </div>
+                            </div>
                           }
                         </div>
                         <div

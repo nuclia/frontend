@@ -107,9 +107,20 @@
       opacity $transition-hint;
 
     .config-container {
+      align-items: center;
       background: $color-neutral-lighter;
+      display: flex;
+      justify-content: space-between;
       padding: rhythm(0.5) rhythm(1.5);
       margin: 0 calc(#{rhythm(1.5) * -1});
+    }
+    .tokens-container {
+      display: flex;
+      justify-content: space-between;
+      gap: rhythm(2);
+      strong {
+        margin-left: rhythm(0.5);
+      }
     }
   }
 
