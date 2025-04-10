@@ -32,6 +32,7 @@ export class AskComponent extends TaskRouteDirective {
       nonNullable: true,
       validators: [Validators.required, Validators.pattern('[0-9a-zA-Z_]+')],
     }),
+    customPrompt: new FormControl<boolean>(false, { nonNullable: true }),
   });
   errorMessages = {
     required: 'validation.required',
@@ -64,6 +65,13 @@ export class AskComponent extends TaskRouteDirective {
     },
   };
 
+  get isJSON() {
+    return this.askForm.controls.json.value;
+  }
+  get customPrompt() {
+    return this.askForm.controls.customPrompt.value;
+  }
+
   constructor() {
     super();
     this.askOperation
@@ -72,7 +80,13 @@ export class AskComponent extends TaskRouteDirective {
         take(1),
       )
       .subscribe((operation) => {
-        this.askForm.patchValue(operation);
+        const customPrompt = !!operation.user_prompt && !operation.json;
+        this.askForm.patchValue({
+          ...operation,
+          question: customPrompt ? operation.user_prompt : operation.question,
+          customPrompt,
+        });
+        this.updateForm();
       });
   }
 
@@ -93,8 +107,9 @@ export class AskComponent extends TaskRouteDirective {
       operations: [
         {
           ask: {
-            json: this.askForm.get('json')?.value,
-            question: this.askForm.get('question')?.value,
+            json: this.isJSON,
+            question: this.customPrompt && !this.isJSON ? '' : this.askForm.get('question')?.value,
+            user_prompt: this.customPrompt && !this.isJSON ? this.askForm.get('question')?.value : undefined,
             destination: this.askForm.get('destination')?.value,
             triggers: commonConfig.webhook && [commonConfig.webhook],
           },
@@ -102,5 +117,15 @@ export class AskComponent extends TaskRouteDirective {
       ],
     };
     this.saveTask(this.type, parameters);
+  }
+
+  updateForm() {
+    const customPrompt = this.askForm.controls.customPrompt;
+    if (this.isJSON) {
+      customPrompt.reset();
+      customPrompt.disable();
+    } else {
+      customPrompt.enable();
+    }
   }
 }

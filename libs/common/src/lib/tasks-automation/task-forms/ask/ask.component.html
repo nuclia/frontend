@@ -14,30 +14,50 @@
       <div class="form-container">
         <pa-toggle
           formControlName="json"
-          labelOnRight>
+          labelOnRight
+          (valueChange)="updateForm()">
           {{ 'tasks-automation.generator.your-question.use-json' | translate }}
         </pa-toggle>
-        <nsi-info-card>
-          {{
-            (!!askForm.get('json')?.value
-              ? 'tasks-automation.generator.your-question.info-json'
-              : 'tasks-automation.generator.your-question.info-text'
-            ) | translate
-          }}
-          @if (askForm.get('json')?.value) {
+        <pa-toggle
+          formControlName="customPrompt"
+          labelOnRight>
+          {{ 'tasks-automation.generator.your-question.advanced-prompt' | translate }}
+        </pa-toggle>
+        @if (isJSON) {
+          <nsi-info-card>
+            {{ 'tasks-automation.generator.your-question.info-json' | translate }}
             <blockquote>
               <code>
                 {{ jsonExample | json }}
               </code>
             </blockquote>
+          </nsi-info-card>
+          <pa-textarea
+            rows="4"
+            formControlName="question"
+            [errorMessages]="errorMessages">
+            {{ 'tasks-automation.generator.your-question.json-schema' | translate }}
+          </pa-textarea>
+        } @else {
+          @if (customPrompt) {
+            <nsi-info-card>
+              <span [innerHTML]="'tasks-automation.generator.your-question.info-prompt' | translate"></span>
+            </nsi-info-card>
+          } @else {
+            <nsi-info-card>{{ 'tasks-automation.generator.your-question.info-question' | translate }}</nsi-info-card>
           }
-        </nsi-info-card>
-        <pa-textarea
-          rows="4"
-          formControlName="question"
-          [errorMessages]="errorMessages">
-          {{ 'tasks-automation.generator.your-question.textarea-label' | translate }}
-        </pa-textarea>
+          <pa-textarea
+            rows="4"
+            formControlName="question"
+            [errorMessages]="errorMessages">
+            {{
+              (customPrompt
+                ? 'tasks-automation.generator.your-question.prompt-label'
+                : 'tasks-automation.generator.your-question.question-label'
+              ) | translate
+            }}
+          </pa-textarea>
+        }
       </div>
     </nsi-two-columns-configuration-item>
 
