@@ -1576,7 +1576,7 @@
 	"tasks-automation.generator.footer.apply-automation": "Appliquez votre requête à toutes les ressources existantes et futures correspondant à la sélection.",
 	"tasks-automation.generator.footer.apply-one-time": "Appliquez votre requête uniquement à {{count}} ressources existantes.",
 	"tasks-automation.generator.trigger-description": "Pour chaque ressource traitée avec la requête",
-	"tasks-automation.generator.your-question.advanced-prompt": "Utiliser prompt avancée",
+	"tasks-automation.generator.your-question.advanced-prompt": "Utiliser un prompt avancé",
 	"tasks-automation.generator.your-question.description": "La question sera appliquée à toutes les ressources de la sélection et les réponses seront générées dans un nouveau champ.",
 	"tasks-automation.generator.your-question.info-json": "Saisissez un schéma JSON décrivant les attributs que vous souhaitez obtenir à partir du document. Exemple :",
 	"tasks-automation.generator.your-question.info-prompt": "Le prompt doit inclure le mot <strong>{context}</strong> entre accolades.<br>Exemples : « Rédigez un bref résumé de ce document : {context} » ou « Quelle est la date de fin du contrat suivant ? {context} »",
