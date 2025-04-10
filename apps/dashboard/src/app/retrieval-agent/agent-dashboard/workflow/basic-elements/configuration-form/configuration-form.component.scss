@@ -1,0 +1,47 @@
+@use 'apps/dashboard/src/variables' as *;
+@use '../../../agent-dashboard.tokens' as dashboard;
+
+.node-configuration-form {
+  $footer-height: rhythm(8);
+
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  height: calc(
+    #{dashboard.$height-main} - #{dashboard.$padding-sidebar} * 2 - #{dashboard.$height-sidebar-header} - #{$footer-height}
+  );
+  // those margin and padding right allow to stick the scrollbar on the side
+  margin-right: calc(#{dashboard.$padding-sidebar} * -1);
+  padding: rhythm(2) dashboard.$padding-sidebar rhythm(2) 0;
+  overflow: auto;
+
+  .form-entry > label {
+    color: $color-neutral-regular;
+    font-size: size(m);
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: rhythm(0.5);
+  }
+
+  .toggle-block {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+  }
+
+  footer {
+    background-color: $color-light-stronger;
+    box-shadow: $box-shadow-border-top;
+    bottom: 0;
+    display: flex;
+    gap: rhythm(1.5);
+    left: 0;
+    padding: rhythm(1.5);
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+
+    > * {
+      flex: 1;
+    }
+  }
+}

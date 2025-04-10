@@ -18,6 +18,7 @@ import {
   CypherNodeComponent,
   InternetNodeComponent,
   NucliaDBNodeComponent,
+  RephraseFormComponent,
   RephraseNodeComponent,
   RestartNodeComponent,
   SqlNodeComponent,
@@ -95,14 +96,10 @@ export class WorkflowService {
     }
 
     const originType = origin.type();
-    const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
-    this.sideBarOpen.set(true);
     const titleKey = ['preprocess', 'postprocess', 'retrieval-context'].includes(originType)
       ? `retrieval-agents.workflow.sidebar-title.${originType}`
       : 'retrieval-agents.workflow.sidebar-title.default';
-    this.sideBarTitle.set(this.translate.instant(titleKey));
-
-    container.innerHTML = '';
+    const container: HTMLElement = this.openEmptySidebar(titleKey);
     const possibleNodes = nodesByEntryType[originType] || [];
     possibleNodes.forEach((nodeType) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
@@ -177,8 +174,8 @@ export class WorkflowService {
     nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
 
     this.nodes[nodeRef.instance.id] = { nodeRef, nodeType };
-    this.selectNode(nodeRef.instance.id);
     origin.activeState.set(false);
+    this.selectNode(nodeRef.instance.id);
   }
 
   /**
@@ -186,6 +183,9 @@ export class WorkflowService {
    * @param nodeId Identifier of the node to select
    */
   private selectNode(nodeId: string) {
+    if (!this.sidebarContentWrapper) {
+      return;
+    }
     if (this.selectedNode && this.nodes[this.selectedNode]) {
       this.nodes[this.selectedNode].nodeRef.setInput('state', 'default');
     }
@@ -193,6 +193,14 @@ export class WorkflowService {
       this.nodes[nodeId].nodeRef.setInput('state', 'selected');
     }
     this.selectedNode = nodeId;
+
+    const container: HTMLElement = this.openEmptySidebar('retrieval-agents.workflow.node-types.rephrase.title');
+    // TODO get form based on node type
+    const formRef = createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
+    this.applicationRef.attachView(formRef.hostView);
+    container.appendChild(formRef.location.nativeElement);
+    formRef.changeDetectorRef.detectChanges();
+    // RephraseFormComponent
   }
 
   /**
@@ -207,6 +215,23 @@ export class WorkflowService {
           node.nodeRef.instance.boxComponent.updateLink();
         }
       });
+  }
+
+  /**
+   * Open the sidebar, set its title and empty its content.
+   * @param titleKey translation key of the sidebar title
+   * @returns the sidebar content HTML element
+   */
+  private openEmptySidebar(titleKey: string): HTMLElement {
+    if (!this.sidebarContentWrapper) {
+      throw new Error('Sidebar container not initialized');
+    }
+
+    const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
+    this.sideBarOpen.set(true);
+    this.sideBarTitle.set(this.translate.instant(titleKey));
+    container.innerHTML = '';
+    return container;
   }
 
   /**

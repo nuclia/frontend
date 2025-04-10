@@ -1,14 +1,11 @@
 @use 'apps/dashboard/src/variables' as *;
+@use 'agent-dashboard.tokens' as dashboard;
 
 .agent-dashboard {
-  $height-toolbar: rhythm(6);
-  $height-main: calc(100dvh - #{$height-toolbar} - var(--app-topbar-height));
-  $width-sidenav: rhythm(45);
-
   .agent-dashboard-toolbar {
     background-color: $color-light-stronger;
     border-bottom: 1px solid $color-neutral-light;
-    height: $height-toolbar;
+    height: dashboard.$height-toolbar;
     padding: rhythm(1);
   }
 
@@ -18,7 +15,7 @@
     background-image: radial-gradient(circle, $color-neutral-lighter rhythm(0.25), rgba(0, 0, 0, 0) rhythm(0.25));
     overflow: auto;
     display: flex;
-    height: $height-main;
+    height: dashboard.$height-main;
     position: relative;
     width: 100%;
     transition: width $transition-slide;
@@ -32,26 +29,24 @@
     }
 
     &.sidebar-open {
-      width: calc(100% - #{$width-sidenav});
+      width: calc(100% - #{dashboard.$width-sidebar});
     }
   }
 
   .sidebar {
-    $padding-sidebar: rhythm(3);
-
     background-color: $color-light-stronger;
     border-left: 1px solid $color-neutral-light;
     display: flex;
     flex-direction: column;
-    gap: rhythm(3);
-    height: $height-main;
-    padding: $padding-sidebar;
+    gap: rhythm(1);
+    height: dashboard.$height-main;
+    padding: dashboard.$padding-sidebar;
     padding-right: 0;
     position: absolute;
-    right: -$width-sidenav;
-    top: $height-toolbar;
+    right: calc(#{dashboard.$width-sidebar} * -1);
+    top: dashboard.$height-toolbar;
     transition: right $transition-slide;
-    width: $width-sidenav;
+    width: dashboard.$width-sidebar;
 
     &.open {
       right: 0;
@@ -60,9 +55,8 @@
     .title-s {
       align-items: center;
       display: flex;
-      height: rhythm(4);
+      height: dashboard.$height-sidebar-header;
       justify-content: space-between;
-      margin-right: - rhythm(1);
     }
 
     .sidebar-content {
@@ -70,7 +64,7 @@
       flex-direction: column;
       gap: rhythm(1.5);
       overflow-y: auto;
-      padding-right: $padding-sidebar;
+      padding-right: dashboard.$padding-sidebar;
     }
   }
 }

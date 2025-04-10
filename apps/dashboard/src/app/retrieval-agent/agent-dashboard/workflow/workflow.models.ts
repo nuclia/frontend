@@ -26,3 +26,12 @@ export const nodeSelectorIcons: { [nodeType: string]: string } = {
   summarize: 'summary',
   restart: 'repeat',
 };
+
+export interface RephraseConfiguration {
+  prompt: string;
+  extend: boolean;
+  askTo?: string;
+  synonyms: boolean;
+  history: boolean;
+  userInfo: boolean;
+}

@@ -1,19 +1,19 @@
 <app-agent-box
   [state]="state()"
-  [inputTitle]="'retrieval-agents.workflow.conditional-node.title' | translate"
+  [inputTitle]="'retrieval-agents.workflow.node-types.conditional.node.title' | translate"
   [origin]="origin()"
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
   <app-connectable-entry
     type="if"
     noOutput>
-    {{ 'retrieval-agents.workflow.conditional-node.if' | translate }}
+    {{ 'retrieval-agents.workflow.node-types.conditional.node.if' | translate }}
   </app-connectable-entry>
   <app-info-block>{{ ifData() }}</app-info-block>
   <app-connectable-entry type="then">
-    {{ 'retrieval-agents.workflow.conditional-node.then' | translate }}
+    {{ 'retrieval-agents.workflow.node-types.conditional.node.then' | translate }}
   </app-connectable-entry>
   <app-connectable-entry type="else">
-    {{ 'retrieval-agents.workflow.conditional-node.else' | translate }}
+    {{ 'retrieval-agents.workflow.node-types.conditional.node.else' | translate }}
   </app-connectable-entry>
 </app-agent-box>
