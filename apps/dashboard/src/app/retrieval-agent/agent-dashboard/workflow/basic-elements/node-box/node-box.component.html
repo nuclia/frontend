@@ -1,9 +1,9 @@
-@if (inputTitle()) {
+@if (nodeTitle()) {
   <div
     class="input"
     #inputElement></div>
   <div class="title-s">
-    {{ inputTitle() }}
+    {{ nodeTitle() }}
     @if (state() === 'selected') {
       <pa-button
         aspect="basic"

@@ -24,20 +24,20 @@ import { LinkComponent, LinkService } from '../link';
 let boxIndex = 0;
 
 @Component({
-  selector: 'app-agent-box',
+  selector: 'app-node-box',
   imports: [CommonModule, TranslateModule, PaButtonModule],
-  templateUrl: './agent-box.component.html',
-  styleUrl: './agent-box.component.scss',
+  templateUrl: './node-box.component.html',
+  styleUrl: './node-box.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AgentBoxComponent implements AfterViewInit {
+export class NodeBoxComponent implements AfterViewInit {
   protected linkService = inject(LinkService);
   protected unsubscribeAll = new Subject<void>();
   readonly id = `box-${boxIndex++}`;
   linkRef?: ComponentRef<LinkComponent>;
 
   agent = input(false, { transform: booleanAttribute });
-  inputTitle = input('');
+  nodeTitle = input('');
   origin = input<ConnectableEntryComponent>();
   state = input<'default' | 'selected' | 'processing' | 'processed'>('default');
 

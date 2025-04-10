@@ -1,6 +1,8 @@
-<app-agent-box
+<app-node-box
   [state]="state()"
-  [inputTitle]="'retrieval-agents.workflow.node-types.validation.title' | translate"
+  [nodeTitle]="'retrieval-agents.workflow.node-types.validation.title' | translate"
   [origin]="origin()"
   (outputClick)="onOutputClick($event)"
-  (trashClick)="onTrashClick()"></app-agent-box>
+  (trashClick)="onTrashClick()">
+  <app-config-block></app-config-block>
+</app-node-box>

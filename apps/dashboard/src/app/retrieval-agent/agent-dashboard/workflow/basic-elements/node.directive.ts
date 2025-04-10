@@ -1,6 +1,6 @@
 import { Directive, HostListener, input, output, ViewChild } from '@angular/core';
-import { AgentBoxComponent } from './agent-box/agent-box.component';
 import { ConnectableEntryComponent } from './connectable-entry/connectable-entry.component';
+import { NodeBoxComponent } from './node-box/node-box.component';
 
 let nodeCount = 0;
 
@@ -16,7 +16,7 @@ export class NodeDirective {
   removeNode = output();
   selectNode = output();
 
-  @ViewChild(AgentBoxComponent) boxComponent?: AgentBoxComponent;
+  @ViewChild(NodeBoxComponent) boxComponent?: NodeBoxComponent;
 
   /**
    * Select the node on click only when not clicking on an output button

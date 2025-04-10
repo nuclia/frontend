@@ -9,11 +9,11 @@ export type NodeType =
   | 'sql'
   | 'cypher';
 
-export type EntryType = 'preprocess' | 'retrieval-context' | 'postprocess' | 'if' | 'then' | 'else';
+export type EntryType = 'preprocess' | 'context' | 'postprocess' | 'if' | 'then' | 'else';
 
 export const nodesByEntryType: { [entry: string]: NodeType[] } = {
   preprocess: ['rephrase'],
-  'retrieval-context': ['conditional', 'nucliaDB', 'internet', 'sql', 'cypher'],
+  context: ['conditional', 'nucliaDB', 'internet', 'sql', 'cypher'],
   postprocess: ['conditional', 'validation', 'summarize', 'restart'],
   then: ['conditional', 'nucliaDB', 'internet', 'sql', 'cypher'],
   else: ['conditional', 'nucliaDB', 'internet', 'sql', 'cypher'],

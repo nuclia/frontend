@@ -10,12 +10,11 @@ import {
 } from '@angular/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { LinkService, WorkflowService } from './workflow';
-import { AgentConnectorComponent } from './workflow/agent-connector/agent-connector.component';
+import { LinkService, WorkflowRootComponent, WorkflowService } from './workflow';
 import { ConnectableEntryComponent } from './workflow/basic-elements';
 
 @Component({
-  imports: [CommonModule, TranslateModule, PaButtonModule, AgentConnectorComponent],
+  imports: [CommonModule, TranslateModule, PaButtonModule, WorkflowRootComponent],
   templateUrl: './agent-dashboard.component.html',
   styleUrl: './agent-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
