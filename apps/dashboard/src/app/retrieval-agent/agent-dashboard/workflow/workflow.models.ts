@@ -12,7 +12,7 @@ export type NodeType =
   | 'sql'
   | 'cypher';
 
-export type EntryType = 'preprocess' | 'context' | 'postprocess' | 'if' | 'then' | 'else';
+export type EntryType = 'preprocess' | 'context' | 'postprocess';
 
 export interface Node {
   nodeRef: ComponentRef<NodeDirective>;

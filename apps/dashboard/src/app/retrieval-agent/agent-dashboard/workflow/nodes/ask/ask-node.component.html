@@ -5,4 +5,8 @@
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
   <app-config-block [config]="askConfig()"></app-config-block>
+
+  <app-connectable-entry type="context">
+    {{ 'retrieval-agents.workflow.connectable-entry.fallback' | translate }}
+  </app-connectable-entry>
 </app-node-box>

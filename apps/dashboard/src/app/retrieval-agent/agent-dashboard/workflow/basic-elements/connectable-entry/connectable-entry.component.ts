@@ -2,10 +2,8 @@ import { CommonModule } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
-  inject,
   input,
   output,
   signal,
@@ -21,8 +19,6 @@ import { EntryType } from '../../workflow.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConnectableEntryComponent {
-  private cdr = inject(ChangeDetectorRef);
-
   type = input.required<EntryType>();
   noOutput = input(false, { transform: booleanAttribute });
   clickOutput = output();

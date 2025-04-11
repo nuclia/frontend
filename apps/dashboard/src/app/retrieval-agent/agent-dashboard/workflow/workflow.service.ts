@@ -115,10 +115,9 @@ export class WorkflowService {
 
     this._currentOrigin = origin;
     const originType = origin.type();
-    const titleKey = ['preprocess', 'postprocess', 'retrieval-context'].includes(originType)
-      ? `retrieval-agents.workflow.sidebar.node-creation.${originType}`
-      : 'retrieval-agents.workflow.sidebar.node-creation.default';
-    const container: HTMLElement = this.openSidebarWithTitle(titleKey);
+    const container: HTMLElement = this.openSidebarWithTitle(
+      `retrieval-agents.workflow.sidebar.node-creation.${originType}`,
+    );
     container.classList.add('no-form');
     const possibleNodes = NODES_BY_ENTRY_TYPE[originType] || [];
     possibleNodes.forEach((nodeType) => {
