@@ -7,7 +7,7 @@ export type NodeType =
   | 'validation'
   | 'summarize'
   | 'restart'
-  | 'nucliaDB'
+  | 'nuclia'
   | 'internet'
   | 'sql'
   | 'cypher';
@@ -22,7 +22,7 @@ export interface Node {
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
   preprocess: ['rephrase'],
-  context: ['conditional', 'nucliaDB', 'internet', 'sql', 'cypher'],
+  context: ['conditional', 'nuclia', 'internet', 'sql', 'cypher'],
   postprocess: ['validation', 'summarize', 'restart'],
 };
 

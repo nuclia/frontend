@@ -29,7 +29,9 @@ export class AgentDashboardComponent implements AfterViewInit {
   @ViewChild('sidebarContentWrapper') sidebarContentWrapper?: ElementRef;
 
   sideBarTitle = this.workflowService.sideBarTitle;
+  sideBarDescription = this.workflowService.sideBarDescription;
   sideBarOpen = this.workflowService.sideBarOpen;
+  activeSideBar = this.workflowService.activeSideBar;
 
   ngAfterViewInit(): void {
     if (this.linkContainer) {
@@ -41,6 +43,13 @@ export class AgentDashboardComponent implements AfterViewInit {
     if (this.sidebarContentWrapper) {
       this.workflowService.sidebarContentWrapper = this.sidebarContentWrapper;
     }
+  }
+
+  openDrivers() {
+    this.workflowService.openSidebar('drivers');
+  }
+  openRules() {
+    this.workflowService.openSidebar('rules');
   }
 
   addNode(data: { entry: ConnectableEntryComponent; targetColumn: number }) {

@@ -12,7 +12,7 @@
   .config-block {
     display: flex;
     flex-direction: column;
-    font-size: size(s);
+    font-size: font-size(xxs);
     gap: rhythm(0.5);
 
     .title {

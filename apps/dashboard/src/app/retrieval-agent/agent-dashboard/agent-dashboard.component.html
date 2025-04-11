@@ -1,11 +1,40 @@
 <div class="agent-dashboard">
   <div class="agent-dashboard-toolbar">
-    <pa-button
-      icon="menu"
-      aspect="basic"
-      size="small">
-      {{ 'retrieval-agents.open-navbar-button' | translate }}
-    </pa-button>
+    <div class="button-group">
+      <pa-button
+        icon="menu"
+        aspect="basic"
+        size="small">
+        {{ 'retrieval-agents.workflow.toolbar-buttons.toggle-navbar' | translate }}
+      </pa-button>
+      <pa-button
+        aspect="basic"
+        size="small"
+        [active]="activeSideBar() === 'drivers'"
+        (click)="openDrivers()">
+        {{ 'retrieval-agents.workflow.toolbar-buttons.drivers' | translate }}
+      </pa-button>
+      <pa-button
+        aspect="basic"
+        size="small"
+        [active]="activeSideBar() === 'rules'"
+        (click)="openRules()">
+        {{ 'retrieval-agents.workflow.toolbar-buttons.rules' | translate }}
+      </pa-button>
+    </div>
+    <div class="button-group">
+      <pa-button
+        size="small"
+        icon="play"
+        iconAndText="">
+        {{ 'retrieval-agents.workflow.toolbar-buttons.test-agent' | translate }}
+      </pa-button>
+      <pa-button
+        size="small"
+        kind="primary">
+        {{ 'retrieval-agents.workflow.toolbar-buttons.manage-sessions' | translate }}
+      </pa-button>
+    </div>
   </div>
 
   <div
@@ -22,15 +51,20 @@
     #sidebar
     class="sidebar"
     [class.open]="sideBarOpen()">
-    <div class="title-s">
-      {{ sideBarTitle() }}
-      <pa-button
-        aspect="basic"
-        icon="cross"
-        (click)="closeSideBar()">
-        {{ 'retrieval-agents.workflow.sidebar.close-button' | translate }}
-      </pa-button>
-    </div>
+    <header>
+      <div class="title-m">
+        {{ sideBarTitle() }}
+        <pa-button
+          aspect="basic"
+          icon="cross"
+          (click)="closeSideBar()">
+          {{ 'retrieval-agents.workflow.sidebar.close-button' | translate }}
+        </pa-button>
+      </div>
+      @if (sideBarDescription(); as description) {
+        <div class="description">{{ description }}</div>
+      }
+    </header>
     <div
       #sidebarContentWrapper
       class="sidebar-content"></div>

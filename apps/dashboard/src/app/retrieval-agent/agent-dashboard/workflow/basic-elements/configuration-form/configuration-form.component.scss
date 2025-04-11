@@ -8,7 +8,8 @@
   flex-direction: column;
   gap: rhythm(3);
   height: calc(
-    #{dashboard.$height-main} - #{dashboard.$padding-sidebar} * 2 - #{dashboard.$height-sidebar-header} - #{$footer-height}
+    #{dashboard.$height-main} - #{dashboard.$padding-sidebar} - #{dashboard.$height-sidebar-header} - #{$footer-height} -
+      #{rhythm(1)}
   );
   // those margin and padding right allow to stick the scrollbar on the side
   margin-right: calc(#{dashboard.$padding-sidebar} * -1);
@@ -17,7 +18,7 @@
 
   .form-entry > label {
     color: $color-neutral-regular;
-    font-size: size(m);
+    font-size: font-size(s);
     font-weight: $font-weight-semi-bold;
     margin-bottom: rhythm(0.5);
   }

@@ -58,7 +58,9 @@ export class WorkflowService {
   private _currentOrigin?: ConnectableEntryComponent;
   private _columnContainer?: ElementRef;
   private _sideBarTitle = signal('');
+  private _sideBarDescription = signal('');
   private _sideBarOpen = signal(false);
+  private _activeSideBar = signal<'' | 'drivers' | 'rules'>('');
   // TODO
   private _agentWorkflow = signal<AgentWorkflow>({
     preprocess: [],
@@ -88,7 +90,9 @@ export class WorkflowService {
 
   // computed signals are readonly: we don't want components to interact directly with the sidebar
   sideBarTitle = computed(() => this._sideBarTitle());
+  sideBarDescription = computed(() => this._sideBarDescription());
   sideBarOpen = computed(() => this._sideBarOpen());
+  activeSideBar = computed(() => this._activeSideBar());
 
   /**
    * Trigger node creation by opening the sidebar containing the possible node types for the connectable entry of origin.
@@ -99,21 +103,15 @@ export class WorkflowService {
     if (!this.sidebarContentWrapper) {
       return;
     }
-    // Keep only one origin point in active state
-    if (this._currentOrigin) {
-      this._currentOrigin.activeState.set(false);
-    }
-    this._currentOrigin = origin;
-    // Unselect node if needed
-    if (this.selectedNode) {
-      this.selectNode('');
-    }
+    this.resetState();
 
+    this._currentOrigin = origin;
     const originType = origin.type();
     const titleKey = ['preprocess', 'postprocess', 'retrieval-context'].includes(originType)
-      ? `retrieval-agents.workflow.sidebar-title.${originType}`
-      : 'retrieval-agents.workflow.sidebar-title.default';
-    const container: HTMLElement = this.openEmptySidebar(titleKey);
+      ? `retrieval-agents.workflow.sidebar.node-creation.${originType}`
+      : 'retrieval-agents.workflow.sidebar.node-creation.default';
+    const container: HTMLElement = this.openSidebarWithTitle(titleKey);
+    container.classList.add('no-form');
     const possibleNodes = NODES_BY_ENTRY_TYPE[originType] || [];
     possibleNodes.forEach((nodeType) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
@@ -129,7 +127,9 @@ export class WorkflowService {
       this.applicationRef.attachView(selectorRef.hostView);
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
-      selectorRef.instance.select.subscribe(() => this.addNode(origin, columnIndex, nodeType));
+      selectorRef.instance.select.subscribe(() => {
+        this.addNode(origin, columnIndex, nodeType);
+      });
     });
   }
 
@@ -163,20 +163,51 @@ export class WorkflowService {
   }
 
   /**
-   * Close the sidebar, reset its title and content, and reset node selection.
+   * Close the sidebar and reset its content and node selection.
    */
   closeSidebar() {
-    if (!this.sidebarContentWrapper) {
-      throw new Error('Sidebar container not initialized');
-    }
-    const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
     this._sideBarOpen.set(false);
     this.unselectNode();
     // Wait until the slide animation is done before emptying the sidebar
-    setTimeout(() => {
-      this._sideBarTitle.set('');
-      container.innerHTML = '';
-    }, SLIDE_DURATION);
+    setTimeout(() => this.resetState(), SLIDE_DURATION);
+  }
+
+  /**
+   * Open sidebar for specified content
+   * @param content drivers | rules
+   */
+  openSidebar(content: 'drivers' | 'rules') {
+    this.resetState();
+    this._activeSideBar.set(content);
+    this._sideBarTitle.set(this.translate.instant(`retrieval-agents.workflow.sidebar.${content}.title`));
+    this._sideBarDescription.set(this.translate.instant(`retrieval-agents.workflow.sidebar.${content}.description`));
+    // TODO components for those forms
+    this._sideBarOpen.set(true);
+  }
+
+  /**
+   * Reset state:
+   * - remove current origin if any,
+   * - reset sidebar title, description and content.
+   */
+  private resetState() {
+    if (!this.sidebarContentWrapper) {
+      throw new Error('Sidebar container not initialized');
+    }
+    // Unselect node if needed
+    this.unselectNode();
+
+    // remove current origin if any so all outputs have their default state
+    if (this._currentOrigin) {
+      this._currentOrigin.activeState.set(false);
+      this._currentOrigin = undefined;
+    }
+    // Reset the side bar
+    const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
+    this._activeSideBar.set('');
+    this._sideBarTitle.set('');
+    this._sideBarDescription.set('');
+    container.innerHTML = '';
   }
 
   /**
@@ -218,14 +249,15 @@ export class WorkflowService {
     if (!this.sidebarContentWrapper) {
       return;
     }
-    this.unselectNode();
+    this.resetState();
     const node = this.nodes[nodeId];
     if (node) {
       node.nodeRef.setInput('state', 'selected');
     }
     this.selectedNode = nodeId;
 
-    const container: HTMLElement = this.openEmptySidebar('retrieval-agents.workflow.node-types.rephrase.title');
+    const container: HTMLElement = this.openSidebarWithTitle('retrieval-agents.workflow.node-types.rephrase.title');
+    container.classList.remove('no-form');
     const formRef = this.getFormRef(node.nodeType);
     this.applicationRef.attachView(formRef.hostView);
     container.appendChild(formRef.location.nativeElement);
@@ -279,19 +311,17 @@ export class WorkflowService {
   }
 
   /**
-   * Open the sidebar, set its title and empty its content.
+   * Open the sidebar with specified title
    * @param titleKey translation key of the sidebar title
    * @returns the sidebar content HTML element
    */
-  private openEmptySidebar(titleKey: string): HTMLElement {
+  private openSidebarWithTitle(titleKey: string): HTMLElement {
     if (!this.sidebarContentWrapper) {
       throw new Error('Sidebar container not initialized');
     }
-
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
     this._sideBarOpen.set(true);
     this._sideBarTitle.set(this.translate.instant(titleKey));
-    container.innerHTML = '';
     return container;
   }
 
@@ -322,7 +352,7 @@ export class WorkflowService {
         return createComponent(RestartNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
-      case 'nucliaDB':
+      case 'nuclia':
         return createComponent(NucliaDBNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
@@ -346,7 +376,6 @@ export class WorkflowService {
    * @param nodeType Type of the node corresponding to the form to be created
    * @returns ComponentRef<FormDirective> corresponding to the node type.
    */
-
   private getFormRef(nodeType: NodeType): ComponentRef<FormDirective> {
     switch (nodeType) {
       case 'rephrase':
@@ -355,7 +384,7 @@ export class WorkflowService {
       case 'validation':
       case 'summarize':
       case 'restart':
-      case 'nucliaDB':
+      case 'nuclia':
       case 'internet':
       case 'sql':
       case 'cypher':

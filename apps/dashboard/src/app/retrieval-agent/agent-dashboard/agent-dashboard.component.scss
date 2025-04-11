@@ -5,8 +5,16 @@
   .agent-dashboard-toolbar {
     background-color: $color-light-stronger;
     border-bottom: 1px solid $color-neutral-light;
+    display: flex;
+    justify-content: space-between;
     height: dashboard.$height-toolbar;
     padding: rhythm(1);
+
+    .button-group {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+    }
   }
 
   .workflow-container {
@@ -52,11 +60,18 @@
       right: 0;
     }
 
-    .title-s {
-      align-items: center;
-      display: flex;
-      height: dashboard.$height-sidebar-header;
-      justify-content: space-between;
+    header {
+      .title-m {
+        align-items: center;
+        display: flex;
+        height: dashboard.$height-sidebar-header;
+        justify-content: space-between;
+      }
+
+      .description {
+        color: $color-neutral-regular;
+        font-size: font-size(s);
+      }
     }
 
     .sidebar-content {
@@ -65,6 +80,11 @@
       gap: rhythm(1.5);
       overflow-y: auto;
       padding-right: dashboard.$padding-sidebar;
+
+      &.no-form {
+        padding-bottom: rhythm(2);
+        padding-top: rhythm(2);
+      }
     }
   }
 }
