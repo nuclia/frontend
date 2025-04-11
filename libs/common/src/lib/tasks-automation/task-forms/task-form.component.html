@@ -102,6 +102,7 @@
 
               <app-label-dropdown
                 fullWidth
+                [multiple]="true"
                 [(selection)]="labelSelection"
                 [labelSets]="resourceLabelSets | async"
                 (selectionChange)="updateFiltersWithLabels()"
