@@ -42,7 +42,7 @@ export class LinkComponent {
     const dy = this.height() - 1;
     const width = this.width - 3;
     if (this.samePosition()) {
-      return this.goDown() ? `M2 ${dy} L${width} 1` : `M2 ${this.height() / 2} L${width} ${dy}`;
+      return this.goDown() ? `M2 ${this.height() / 2} L${width} ${dy}` : `M2 ${dy} L${width} 1`;
     } else {
       return this.goDown() ? `M2 1 C51 1 88 ${dy} ${width} ${dy}` : `M2 ${dy} C72 ${dy} 72 1 ${width} 1`;
     }

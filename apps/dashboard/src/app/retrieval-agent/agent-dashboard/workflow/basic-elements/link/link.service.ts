@@ -36,13 +36,10 @@ export class LinkService {
     linkRef.instance.left = leftBox.right - containerBox.left;
     const height = Math.abs(leftBox.bottom - rightBox.bottom) + 2;
     linkRef.setInput('height', height);
-    if (samePosition) {
-      const topAdjustment = height < 5 ? -3 : 0;
-      linkRef.instance.top = leftBox.top - containerBox.top + topAdjustment;
-      linkRef.setInput('samePosition', samePosition);
-    } else if (goDown) {
+    linkRef.setInput('goDown', goDown);
+    linkRef.setInput('samePosition', samePosition);
+    if (goDown) {
       linkRef.instance.top = leftBox.top - containerBox.top + 8;
-      linkRef.setInput('goDown', true);
     } else {
       linkRef.instance.top = rightBox.top - containerBox.top + 8;
     }
