@@ -52,3 +52,7 @@ export interface RephraseAgent {
   history: boolean;
   userInfo: boolean;
 }
+
+export interface ConditionalAgent {
+  prompt: string;
+}

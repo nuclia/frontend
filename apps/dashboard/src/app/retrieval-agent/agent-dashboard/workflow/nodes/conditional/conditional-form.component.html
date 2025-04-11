@@ -1,0 +1,17 @@
+<app-configuration-form
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <div class="form-entry">
+      <label for="prompt">{{ 'retrieval-agents.workflow.node-types.conditional.form.prompt.label' | translate }}</label>
+      <pa-textarea
+        id="prompt"
+        formControlName="prompt"
+        rows="2"
+        [placeholder]="'retrieval-agents.workflow.node-types.conditional.form.prompt.placeholder' | translate"
+        [help]="'retrieval-agents.workflow.node-types.conditional.form.prompt.help' | translate"
+        externalLabel></pa-textarea>
+    </div>
+  </ng-container>
+</app-configuration-form>

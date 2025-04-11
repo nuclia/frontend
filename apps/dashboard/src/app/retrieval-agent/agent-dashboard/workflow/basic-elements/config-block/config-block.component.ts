@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 export interface ConfigBlockItem {
-  title: string;
+  title?: string;
   content: string;
 }
 

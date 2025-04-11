@@ -6,7 +6,9 @@
   <div class="config-block">
     @for (block of config(); track $index) {
       <div>
-        <div class="title">{{ block.title }}</div>
+        @if (block.title) {
+          <div class="title">{{ block.title }}</div>
+        }
         <div>{{ block.content }}</div>
       </div>
     }

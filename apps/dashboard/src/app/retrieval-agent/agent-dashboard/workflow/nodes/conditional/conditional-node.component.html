@@ -1,6 +1,6 @@
 <app-node-box
   [state]="state()"
-  [nodeTitle]="'retrieval-agents.workflow.node-types.conditional.node.title' | translate"
+  [nodeTitle]="'retrieval-agents.workflow.node-types.conditional.title' | translate"
   [origin]="origin()"
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
@@ -9,7 +9,7 @@
     noOutput>
     {{ 'retrieval-agents.workflow.node-types.conditional.node.if' | translate }}
   </app-connectable-entry>
-  <app-config-block></app-config-block>
+  <app-config-block [config]="conditionalConfig()"></app-config-block>
   <app-connectable-entry type="then">
     {{ 'retrieval-agents.workflow.node-types.conditional.node.then' | translate }}
   </app-connectable-entry>

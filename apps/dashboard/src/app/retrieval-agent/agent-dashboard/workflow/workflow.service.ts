@@ -21,6 +21,7 @@ import {
   NodeSelectorComponent,
 } from './basic-elements';
 import {
+  ConditionalFormComponent,
   ConditionalNodeComponent,
   CypherNodeComponent,
   InternetNodeComponent,
@@ -256,7 +257,9 @@ export class WorkflowService {
     }
     this.selectedNode = nodeId;
 
-    const container: HTMLElement = this.openSidebarWithTitle('retrieval-agents.workflow.node-types.rephrase.title');
+    const container: HTMLElement = this.openSidebarWithTitle(
+      `retrieval-agents.workflow.node-types.${node.nodeType}.title`,
+    );
     container.classList.remove('no-form');
     const formRef = this.getFormRef(node.nodeType);
     this.applicationRef.attachView(formRef.hostView);
@@ -381,6 +384,7 @@ export class WorkflowService {
       case 'rephrase':
         return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
       case 'conditional':
+        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'validation':
       case 'summarize':
       case 'restart':

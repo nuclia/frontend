@@ -25,8 +25,13 @@ import { FormGroup } from '@angular/forms';
 export abstract class FormDirective {
   abstract form: FormGroup;
   abstract configForm: FormGroup;
-  abstract submit(): void;
 
   submitForm = output<unknown>();
   cancel = output<void>();
+
+  submit() {
+    if (this.form.valid) {
+      this.submitForm.emit(this.configForm.getRawValue());
+    }
+  }
 }

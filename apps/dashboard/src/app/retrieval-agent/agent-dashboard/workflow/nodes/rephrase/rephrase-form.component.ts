@@ -19,7 +19,7 @@ import { ConfigurationFormComponent, FormDirective } from '../../basic-elements'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RephraseFormComponent extends FormDirective {
-  form = new FormGroup({
+  override form = new FormGroup({
     rephrase: new FormGroup({
       prompt: new FormControl('', { validators: [Validators.required], nonNullable: true }),
       extend: new FormControl(false),
@@ -52,9 +52,5 @@ export class RephraseFormComponent extends FormDirective {
     if (!this.isExtendEnabled && this.kbControl.value) {
       this.kbControl.patchValue('');
     }
-  }
-
-  submit() {
-    this.submitForm.emit(this.form.getRawValue().rephrase);
   }
 }

@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { ConfigBlockComponent, ConnectableEntryComponent, NodeBoxComponent, NodeDirective } from '../../basic-elements';
+import {
+  ConfigBlockComponent,
+  ConfigBlockItem,
+  ConnectableEntryComponent,
+  NodeBoxComponent,
+  NodeDirective,
+} from '../../basic-elements';
+import { ConditionalAgent } from '../../workflow.models';
 
 @Component({
   selector: 'app-conditional-node',
@@ -9,4 +16,12 @@ import { ConfigBlockComponent, ConnectableEntryComponent, NodeBoxComponent, Node
   templateUrl: './conditional-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConditionalNodeComponent extends NodeDirective {}
+export class ConditionalNodeComponent extends NodeDirective {
+  conditionalConfig = computed<ConfigBlockItem[]>(() => {
+    if (this.config()) {
+      const config = this.config() as ConditionalAgent;
+      return [{ content: config.prompt }];
+    }
+    return [];
+  });
+}
