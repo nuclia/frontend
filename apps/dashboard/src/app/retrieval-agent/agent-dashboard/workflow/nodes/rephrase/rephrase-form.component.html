@@ -1,7 +1,8 @@
 <app-configuration-form
   [form]="form"
+  (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
-  <ng-container [formGroup]="form.controls.rephrase">
+  <ng-container [formGroup]="configForm">
     <div class="form-entry">
       <label for="prompt">{{ 'retrieval-agents.workflow.node-types.rephrase.form.prompt.label' | translate }}</label>
       <pa-textarea
@@ -15,7 +16,8 @@
     <div class="toggle-block">
       <pa-toggle
         formControlName="extend"
-        withBackground>
+        withBackground
+        (valueChange)="onExtendChange()">
         {{ 'retrieval-agents.workflow.node-types.rephrase.form.extend' | translate }}
       </pa-toggle>
       @if (isExtendEnabled) {

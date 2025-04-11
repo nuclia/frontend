@@ -6,7 +6,8 @@
   <footer>
     <pa-button
       class="full-width"
-      aspect="basic">
+      aspect="basic"
+      (click)="cancel.emit()">
       {{ 'generic.cancel' | translate }}
     </pa-button>
     <pa-button

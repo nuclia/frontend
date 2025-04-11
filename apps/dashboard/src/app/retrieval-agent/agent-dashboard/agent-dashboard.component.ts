@@ -48,6 +48,6 @@ export class AgentDashboardComponent implements AfterViewInit {
   }
 
   closeSideBar() {
-    this.workflowService.sideBarOpen.set(false);
+    this.workflowService.closeSidebar();
   }
 }

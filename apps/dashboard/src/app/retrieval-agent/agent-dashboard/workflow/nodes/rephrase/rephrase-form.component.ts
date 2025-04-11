@@ -38,8 +38,20 @@ export class RephraseFormComponent extends FormDirective {
     new OptionModel({ id: '3', value: 'kbForum', label: 'User forum' }),
   ];
 
+  override get configForm() {
+    return this.form.controls.rephrase;
+  }
   get isExtendEnabled() {
     return this.form.controls.rephrase.controls.extend.getRawValue();
+  }
+  get kbControl() {
+    return this.form.controls.rephrase.controls.kb;
+  }
+
+  onExtendChange() {
+    if (!this.isExtendEnabled && this.kbControl.value) {
+      this.kbControl.patchValue('');
+    }
   }
 
   submit() {

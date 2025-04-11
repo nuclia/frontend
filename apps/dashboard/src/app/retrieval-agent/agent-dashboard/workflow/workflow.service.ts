@@ -1,6 +1,7 @@
 import {
   ApplicationRef,
   ComponentRef,
+  computed,
   createComponent,
   ElementRef,
   inject,
@@ -34,6 +35,7 @@ import {
 import { AgentWorkflow, Node, NODE_SELECTOR_ICONS, NODES_BY_ENTRY_TYPE, NodeType } from './workflow.models';
 
 const COLUMN_CLASS = 'workflow-col';
+const SLIDE_DURATION = 800;
 
 @Injectable({
   providedIn: 'root',
@@ -53,15 +55,23 @@ export class WorkflowService {
   } = {};
 
   private _selectedNode = '';
+  private _currentOrigin?: ConnectableEntryComponent;
+  private _columnContainer?: ElementRef;
+  private _sideBarTitle = signal('');
+  private _sideBarOpen = signal(false);
+  // TODO
+  private _agentWorkflow = signal<AgentWorkflow>({
+    preprocess: [],
+    context: [],
+    postprocess: [],
+  });
+
   set selectedNode(nodeId: string) {
     this._selectedNode = nodeId;
   }
   get selectedNode() {
     return this._selectedNode;
   }
-  private currentOrigin?: ConnectableEntryComponent;
-
-  private _columnContainer?: ElementRef;
   set columnContainer(container: ElementRef) {
     this._columnContainer = container;
     const existingColumns = container.nativeElement.querySelectorAll(`.${COLUMN_CLASS}`);
@@ -76,13 +86,9 @@ export class WorkflowService {
   }
   sidebarContentWrapper?: ElementRef;
 
-  sideBarTitle = signal('');
-  sideBarOpen = signal(false);
-  agentWorkflow = signal<AgentWorkflow>({
-    preprocess: [],
-    context: [],
-    postprocess: [],
-  });
+  // computed signals are readonly: we don't want components to interact directly with the sidebar
+  sideBarTitle = computed(() => this._sideBarTitle());
+  sideBarOpen = computed(() => this._sideBarOpen());
 
   /**
    * Trigger node creation by opening the sidebar containing the possible node types for the connectable entry of origin.
@@ -94,10 +100,10 @@ export class WorkflowService {
       return;
     }
     // Keep only one origin point in active state
-    if (this.currentOrigin) {
-      this.currentOrigin.activeState.set(false);
+    if (this._currentOrigin) {
+      this._currentOrigin.activeState.set(false);
     }
-    this.currentOrigin = origin;
+    this._currentOrigin = origin;
     // Unselect node if needed
     if (this.selectedNode) {
       this.selectNode('');
@@ -152,7 +158,25 @@ export class WorkflowService {
           this.selectedNode = '';
         }
         this.updateLinksOnColumn(nodeRef.instance.columnIndex);
+        this.closeSidebar();
       });
+  }
+
+  /**
+   * Close the sidebar, reset its title and content, and reset node selection.
+   */
+  closeSidebar() {
+    if (!this.sidebarContentWrapper) {
+      throw new Error('Sidebar container not initialized');
+    }
+    const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
+    this._sideBarOpen.set(false);
+    this.unselectNode();
+    // Wait until the slide animation is done before emptying the sidebar
+    setTimeout(() => {
+      this._sideBarTitle.set('');
+      container.innerHTML = '';
+    }, SLIDE_DURATION);
   }
 
   /**
@@ -194,9 +218,7 @@ export class WorkflowService {
     if (!this.sidebarContentWrapper) {
       return;
     }
-    if (this.selectedNode && this.nodes[this.selectedNode]) {
-      this.nodes[this.selectedNode].nodeRef.setInput('state', 'default');
-    }
+    this.unselectNode();
     const node = this.nodes[nodeId];
     if (node) {
       node.nodeRef.setInput('state', 'selected');
@@ -209,6 +231,22 @@ export class WorkflowService {
     container.appendChild(formRef.location.nativeElement);
     formRef.changeDetectorRef.detectChanges();
     formRef.instance.submitForm.subscribe((config) => this.saveNodeConfiguration(config, nodeId));
+    formRef.instance.cancel.subscribe(() => this.closeSidebar());
+
+    const config = node.nodeConfig;
+    if (config) {
+      formRef.instance.configForm.patchValue(config);
+    }
+  }
+
+  /**
+   * Unselect current selected node if any
+   */
+  private unselectNode() {
+    if (this.selectedNode && this.nodes[this.selectedNode]) {
+      this.nodes[this.selectedNode].nodeRef.setInput('state', 'default');
+    }
+    this.selectedNode = '';
   }
 
   /**
@@ -221,11 +259,8 @@ export class WorkflowService {
     if (!node) {
       return;
     }
-    console.log('save', config, node);
     node.nodeConfig = config;
-    node.nodeRef.setInput('state', 'default');
     node.nodeRef.setInput('config', config);
-    this.selectedNode = '';
     this.closeSidebar();
   }
 
@@ -254,23 +289,10 @@ export class WorkflowService {
     }
 
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
-    this.sideBarOpen.set(true);
-    this.sideBarTitle.set(this.translate.instant(titleKey));
+    this._sideBarOpen.set(true);
+    this._sideBarTitle.set(this.translate.instant(titleKey));
     container.innerHTML = '';
     return container;
-  }
-
-  /**
-   * Close the sidebar and reset its title and content.
-   */
-  private closeSidebar() {
-    if (!this.sidebarContentWrapper) {
-      throw new Error('Sidebar container not initialized');
-    }
-    const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
-    this.sideBarOpen.set(false);
-    this.sideBarTitle.set('');
-    container.innerHTML = '';
   }
 
   /**
