@@ -8,6 +8,7 @@ import {
   NodeBoxComponent,
   NodeDirective,
 } from '../../basic-elements';
+import { ValidationAgent } from '../../workflow.models';
 
 @Component({
   selector: 'app-validation-node',
@@ -18,8 +19,8 @@ import {
 export class ValidationNodeComponent extends NodeDirective {
   validationConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
-      // const config = this.config() as ValidationAgent;
-      // return [{ content: config.prompt }];
+      const config = this.config() as ValidationAgent;
+      return [{ content: config.prompt }];
     }
     return [];
   });

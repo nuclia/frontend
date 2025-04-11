@@ -29,6 +29,8 @@ export abstract class FormDirective {
   submitForm = output<unknown>();
   cancel = output<void>();
 
+  config?: unknown;
+
   submit() {
     if (this.form.valid) {
       this.submitForm.emit(this.configForm.getRawValue());

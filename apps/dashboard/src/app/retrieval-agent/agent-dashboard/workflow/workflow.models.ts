@@ -41,7 +41,7 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
 export interface AgentWorkflow {
   preprocess: RephraseAgent[];
   context: ConditionalAgent[];
-  postprocess: [];
+  postprocess: (ValidationAgent | SummarizeAgent | RestartAgent)[];
 }
 
 export interface RephraseAgent {
@@ -55,4 +55,18 @@ export interface RephraseAgent {
 
 export interface ConditionalAgent {
   prompt: string;
+}
+
+export interface ValidationAgent {
+  prompt: string;
+}
+
+export interface SummarizeAgent {
+  prompt: string;
+}
+
+export interface RestartAgent {
+  prompt: string;
+  retries: number;
+  rules: string[];
 }

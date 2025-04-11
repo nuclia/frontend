@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
@@ -13,7 +13,9 @@ import { ConfigurationFormComponent, FormDirective } from '../../basic-elements'
 })
 export class SummarizeFormComponent extends FormDirective {
   override form = new FormGroup({
-    summarize: new FormGroup({}),
+    summarize: new FormGroup({
+      prompt: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    }),
   });
   override get configForm() {
     return this.form.controls.summarize;

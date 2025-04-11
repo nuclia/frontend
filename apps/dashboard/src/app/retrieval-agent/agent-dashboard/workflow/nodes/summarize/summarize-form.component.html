@@ -3,6 +3,15 @@
   (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
-    <div class="form-entry"></div>
+    <div class="form-entry">
+      <label for="prompt">Prompt</label>
+      <pa-textarea
+        id="prompt"
+        formControlName="prompt"
+        rows="2"
+        resizable
+        [placeholder]="'retrieval-agents.workflow.node-types.summarize.prompt-placeholder' | translate"
+        externalLabel=""></pa-textarea>
+    </div>
   </ng-container>
 </app-configuration-form>

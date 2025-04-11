@@ -37,7 +37,6 @@ import {
   SqlNodeComponent,
   SummarizeFormComponent,
   SummarizeNodeComponent,
-  ValidationFormComponent,
   ValidationNodeComponent,
 } from './nodes';
 import { AgentWorkflow, Node, NODE_SELECTOR_ICONS, NODES_BY_ENTRY_TYPE, NodeType } from './workflow.models';
@@ -268,16 +267,18 @@ export class WorkflowService {
     );
     container.classList.remove('no-form');
     const formRef = this.getFormRef(node.nodeType);
+    const config = node.nodeConfig;
+    if (config) {
+      // For some forms like Restart, the patch won't work for all fields,
+      // so we also pass the config to handle those specific cases directly in the form components
+      formRef.instance.config = config;
+      formRef.instance.configForm.patchValue(config);
+    }
     this.applicationRef.attachView(formRef.hostView);
     container.appendChild(formRef.location.nativeElement);
     formRef.changeDetectorRef.detectChanges();
     formRef.instance.submitForm.subscribe((config) => this.saveNodeConfiguration(config, nodeId));
     formRef.instance.cancel.subscribe(() => this.closeSidebar());
-
-    const config = node.nodeConfig;
-    if (config) {
-      formRef.instance.configForm.patchValue(config);
-    }
   }
 
   /**
@@ -392,7 +393,7 @@ export class WorkflowService {
       case 'conditional':
         return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'validation':
-        return createComponent(ValidationFormComponent, { environmentInjector: this.environmentInjector });
+        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'summarize':
         return createComponent(SummarizeFormComponent, { environmentInjector: this.environmentInjector });
       case 'restart':

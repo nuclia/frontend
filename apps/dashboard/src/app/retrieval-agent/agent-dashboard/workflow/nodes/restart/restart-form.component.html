@@ -3,6 +3,56 @@
   (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
-    <div class="form-entry"></div>
+    <div class="form-entry">
+      <label for="prompt">Prompt</label>
+      <pa-textarea
+        id="prompt"
+        formControlName="prompt"
+        rows="2"
+        resizable
+        externalLabel=""></pa-textarea>
+    </div>
+    <div class="form-entry">
+      <label for="retries">{{ 'retrieval-agents.workflow.node-types.restart.form.retries.label' | translate }}</label>
+      <pa-input
+        id="retries"
+        type="number"
+        min="0"
+        externalLabel=""
+        formControlName="retries"
+        [errorMessages]="{
+          pattern: 'retrieval-agents.workflow.node-types.restart.form.retries.integer-error' | translate
+        }"></pa-input>
+    </div>
+    <div
+      class="form-entry rules"
+      formArrayName="rules">
+      <label for="rules">{{ 'retrieval-agents.workflow.node-types.restart.form.rules.label' | translate }}</label>
+      @for (rule of rules.controls; track $index) {
+        <div class="rule">
+          <pa-textarea
+            id="rules"
+            resizable
+            [formControl]="rule"
+            [placeholder]="'retrieval-agents.workflow.node-types.restart.form.rules.placeholder' | translate"
+            externalLabel=""></pa-textarea>
+          @if ($index > 0) {
+            <pa-button
+              size="small"
+              aspect="basic"
+              icon="trash"
+              (click)="removeRule($index)">
+              {{ 'retrieval-agents.workflow.node-types.restart.form.rules.remove' | translate }}
+            </pa-button>
+          }
+        </div>
+      }
+      <pa-button
+        aspect="basic"
+        size="small"
+        (click)="addRule()">
+        {{ 'retrieval-agents.workflow.node-types.restart.form.rules.add' | translate }}
+      </pa-button>
+    </div>
   </ng-container>
 </app-configuration-form>

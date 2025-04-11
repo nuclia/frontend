@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
+import { RestartAgent } from '../../workflow.models';
 
 @Component({
   selector: 'app-restart-node',
@@ -12,8 +13,8 @@ import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective 
 export class RestartNodeComponent extends NodeDirective {
   restartConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
-      // const config = this.config() as RestartAgent;
-      // return [{ content: config.prompt }];
+      const config = this.config() as RestartAgent;
+      return [{ title: 'Prompt', content: config.prompt }];
     }
     return [];
   });
