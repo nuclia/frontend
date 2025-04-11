@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { ConfigBlockComponent, NodeBoxComponent, NodeDirective } from '../../basic-elements';
+import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
 
 @Component({
   selector: 'app-validation-node',
@@ -9,4 +9,12 @@ import { ConfigBlockComponent, NodeBoxComponent, NodeDirective } from '../../bas
   templateUrl: './validation-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ValidationNodeComponent extends NodeDirective {}
+export class ValidationNodeComponent extends NodeDirective {
+  validationConfig = computed<ConfigBlockItem[]>(() => {
+    if (this.config()) {
+      // const config = this.config() as ValidationAgent;
+      // return [{ content: config.prompt }];
+    }
+    return [];
+  });
+}

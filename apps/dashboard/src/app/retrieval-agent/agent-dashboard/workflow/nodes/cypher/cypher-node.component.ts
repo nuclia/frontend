@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { ConfigBlockComponent, NodeBoxComponent, NodeDirective } from '../../basic-elements';
+import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
 
 @Component({
   selector: 'app-cypher-node',
@@ -9,4 +9,12 @@ import { ConfigBlockComponent, NodeBoxComponent, NodeDirective } from '../../bas
   templateUrl: './cypher-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CypherNodeComponent extends NodeDirective {}
+export class CypherNodeComponent extends NodeDirective {
+  cypherConfig = computed<ConfigBlockItem[]>(() => {
+    if (this.config()) {
+      // const config = this.config() as CypherAgent;
+      // return [{ content: config.prompt }];
+    }
+    return [];
+  });
+}

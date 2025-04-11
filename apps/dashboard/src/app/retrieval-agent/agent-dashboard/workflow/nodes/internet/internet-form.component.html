@@ -1,0 +1,8 @@
+<app-configuration-form
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <div class="form-entry"></div>
+  </ng-container>
+</app-configuration-form>

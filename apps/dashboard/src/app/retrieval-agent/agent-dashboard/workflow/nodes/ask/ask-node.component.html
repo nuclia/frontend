@@ -1,8 +1,8 @@
 <app-node-box
   [state]="state()"
-  [nodeTitle]="'retrieval-agents.workflow.node-types.nucliaDB.title' | translate"
+  [nodeTitle]="'retrieval-agents.workflow.node-types.ask.title' | translate"
   [origin]="origin()"
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
-  <app-config-block></app-config-block>
+  <app-config-block [config]="askConfig()"></app-config-block>
 </app-node-box>

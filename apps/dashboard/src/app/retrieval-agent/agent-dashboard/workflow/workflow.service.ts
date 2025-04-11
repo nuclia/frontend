@@ -21,16 +21,23 @@ import {
   NodeSelectorComponent,
 } from './basic-elements';
 import {
+  AskFormComponent,
+  AskNodeComponent,
   ConditionalFormComponent,
   ConditionalNodeComponent,
+  CypherFormComponent,
   CypherNodeComponent,
+  InternetFormComponent,
   InternetNodeComponent,
-  NucliaDBNodeComponent,
   RephraseFormComponent,
   RephraseNodeComponent,
+  RestartFormComponent,
   RestartNodeComponent,
+  SqlFormComponent,
   SqlNodeComponent,
+  SummarizeFormComponent,
   SummarizeNodeComponent,
+  ValidationFormComponent,
   ValidationNodeComponent,
 } from './nodes';
 import { AgentWorkflow, Node, NODE_SELECTOR_ICONS, NODES_BY_ENTRY_TYPE, NodeType } from './workflow.models';
@@ -355,8 +362,8 @@ export class WorkflowService {
         return createComponent(RestartNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
-      case 'nuclia':
-        return createComponent(NucliaDBNodeComponent, {
+      case 'ask':
+        return createComponent(AskNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
       case 'internet':
@@ -386,14 +393,19 @@ export class WorkflowService {
       case 'conditional':
         return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'validation':
+        return createComponent(ValidationFormComponent, { environmentInjector: this.environmentInjector });
       case 'summarize':
+        return createComponent(SummarizeFormComponent, { environmentInjector: this.environmentInjector });
       case 'restart':
-      case 'nuclia':
+        return createComponent(RestartFormComponent, { environmentInjector: this.environmentInjector });
+      case 'ask':
+        return createComponent(AskFormComponent, { environmentInjector: this.environmentInjector });
       case 'internet':
+        return createComponent(InternetFormComponent, { environmentInjector: this.environmentInjector });
       case 'sql':
+        return createComponent(SqlFormComponent, { environmentInjector: this.environmentInjector });
       case 'cypher':
-        // FIXME
-        return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
+        return createComponent(CypherFormComponent, { environmentInjector: this.environmentInjector });
     }
   }
 }

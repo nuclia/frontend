@@ -4,15 +4,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
 
 @Component({
-  selector: 'app-summarize-node',
+  selector: 'app-ask-node',
   imports: [CommonModule, ConfigBlockComponent, NodeBoxComponent, TranslateModule],
-  templateUrl: './summarize-node.component.html',
+  templateUrl: './ask-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SummarizeNodeComponent extends NodeDirective {
-  summarizeConfig = computed<ConfigBlockItem[]>(() => {
+export class AskNodeComponent extends NodeDirective {
+  askConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
-      // const config = this.config() as SummarizeAgent;
+      // const config = this.config() as AskAgent;
       // return [{ content: config.prompt }];
     }
     return [];

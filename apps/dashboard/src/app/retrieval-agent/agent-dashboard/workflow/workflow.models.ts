@@ -7,7 +7,7 @@ export type NodeType =
   | 'validation'
   | 'summarize'
   | 'restart'
-  | 'nuclia'
+  | 'ask'
   | 'internet'
   | 'sql'
   | 'cypher';
@@ -22,7 +22,7 @@ export interface Node {
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
   preprocess: ['rephrase'],
-  context: ['conditional', 'nuclia', 'internet', 'sql', 'cypher'],
+  context: ['conditional', 'ask', 'internet', 'sql', 'cypher'],
   postprocess: ['validation', 'summarize', 'restart'],
 };
 
@@ -30,7 +30,7 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   conditional: 'dataflow',
   cypher: 'file-code',
   internet: 'globe',
-  nucliaDB: 'database',
+  ask: 'database',
   rephrase: 'rephrase',
   restart: 'repeat',
   sql: 'file-code',
@@ -40,7 +40,7 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
 
 export interface AgentWorkflow {
   preprocess: RephraseAgent[];
-  context: [];
+  context: ConditionalAgent[];
   postprocess: [];
 }
 

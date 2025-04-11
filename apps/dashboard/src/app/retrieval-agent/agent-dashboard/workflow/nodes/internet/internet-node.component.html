@@ -4,5 +4,5 @@
   [origin]="origin()"
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
-  <app-config-block></app-config-block>
+  <app-config-block [config]="internetConfig()"></app-config-block>
 </app-node-box>
