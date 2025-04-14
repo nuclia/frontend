@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
-import { of } from 'rxjs';
+import { filter, map, of, switchMap, take } from 'rxjs';
 
 export const setAgentGuard = (route: ActivatedRouteSnapshot) => {
   const sdk: SDKService = inject(SDKService);
@@ -16,7 +16,30 @@ export const setAgentGuard = (route: ActivatedRouteSnapshot) => {
     return of(router.createUrlTree(['/select']));
   }
 
-  // this.nuclia.options.zone = zone;
-  //TODO agent guard with real permissions
-  return !sdk.nuclia.options.standalone && isRetrievalAgentsEnabled;
+  return isRetrievalAgentsEnabled.pipe(
+    switchMap((enabled) => {
+      return !enabled
+        ? of(router.createUrlTree(['/select']))
+        : sdk.currentAccount.pipe(
+            switchMap((account) => {
+              return sdk.nuclia.db.getRetrievalAgentsForZone(account.id, zone).pipe(
+                switchMap((ras) => {
+                  const ra = ras.find((item) => item.slug === agentSlug);
+                  if (!ra) {
+                    sdk.cleanAccount();
+                    return of(router.createUrlTree(['/select']));
+                  }
+                  sdk.nuclia.options.knowledgeBox = ra.id;
+                  return sdk.setCurrentRetrievalAgent(account.id, ra.id, zone);
+                }),
+              );
+            }),
+            // Wait until currentRa is updated
+            switchMap(() => sdk.currentRa),
+            filter((ra) => ra.slug === agentSlug),
+            take(1),
+            map(() => true),
+          );
+    }),
+  );
 };

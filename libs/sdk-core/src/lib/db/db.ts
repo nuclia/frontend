@@ -49,7 +49,7 @@ import type {
   KnowledgeBoxCreation,
 } from './kb';
 import { IStandaloneKb, WritableKnowledgeBox } from './kb';
-import { IRetrievalAgentItem } from './retrieval-agent';
+import { IRetrievalAgentItem, WritableRetrievalAgent } from './retrieval-agent';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
 /** Allows you to access Nuclia accounts and/or Nuclia Knowledge Boxes. */
@@ -232,7 +232,8 @@ export class Db implements IDb {
    * @param zone
    */
   getRetrievalAgentsForZone(accountId: string, zone: string): Observable<IRetrievalAgentItem[]> {
-    return this._getKnowledgeBoxesForZone(accountId, zone, 'agent');
+    // FIXME: we call the one for KB until the one for agent is working on the backend side
+    return this._getKnowledgeBoxesForZone(accountId, zone, 'kb'); //this._getKnowledgeBoxesForZone(accountId, zone, 'agent');
   }
 
   /**
@@ -269,6 +270,40 @@ export class Db implements IDb {
       return of(
         new WritableKnowledgeBox(this.nuclia, '', {
           id: kbId as string,
+          zone: zone || (this.nuclia.options.zone as string),
+          slug: '',
+          title: '',
+        }),
+      );
+    }
+  }
+
+  getRetrievalAgent(): Observable<WritableRetrievalAgent>;
+  getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<WritableRetrievalAgent>;
+  getRetrievalAgent(accountId?: string, retrievalAgentId?: string, zone?: string): Observable<WritableRetrievalAgent> {
+    const accountID = accountId || this.nuclia.options.accountId;
+    const raId = retrievalAgentId || this.nuclia.options.knowledgeBox;
+    const zoneSlug = zone || this.nuclia.options.zone;
+
+    if (accountID) {
+      if (!this.nuclia.options.proxy && (!raId || !zoneSlug)) {
+        throw new Error('Retrieval Agent id and zone must be provided as parameters or in the Nuclia options');
+      }
+      const request = this.nuclia.rest.get<IKnowledgeBoxBase>(
+        `/account/${accountID}/kb/${raId}`,
+        undefined,
+        undefined,
+        this.nuclia.options.proxy ? undefined : zoneSlug,
+      );
+
+      return request.pipe(map((kb) => new WritableRetrievalAgent(this.nuclia, accountID as string, kb)));
+    } else {
+      if ((!this.nuclia.options.knowledgeBox && !raId) || (!this.nuclia.options.zone && !zone)) {
+        throw new Error('Retrieval Agent id and zone must be provided as parameters or in the Nuclia options');
+      }
+      return of(
+        new WritableRetrievalAgent(this.nuclia, '', {
+          id: raId as string,
           zone: zone || (this.nuclia.options.zone as string),
           slug: '',
           title: '',
