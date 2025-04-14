@@ -103,6 +103,7 @@ export class AccountService {
    */
   loadKb(kbSummary: KbSummary): Observable<KbDetails> {
     return this.store.accountDetails.pipe(
+      take(1),
       switchMap((accountDetails) =>
         accountDetails ? of(accountDetails) : this.loadAccountDetails(kbSummary.accountId),
       ),
