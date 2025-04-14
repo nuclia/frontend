@@ -20,7 +20,7 @@ import type { EntityGroup, WidgetOptions } from './models';
 import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
 import { _, translateInstant } from './i18n';
 import { suggestionError } from './stores/suggestions.store';
-import { searchError, searchOptions, showAttachedImages } from './stores/search.store';
+import { displayedMetadata, searchError, searchOptions, showAttachedImages } from './stores/search.store';
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { reset } from './reset';
@@ -58,6 +58,7 @@ let AUDIT_METADATA: { [key: string]: string } | undefined = undefined;
 let RERANKER: Reranker | undefined = undefined;
 let CITATION_THRESHOLD: number | undefined = undefined;
 let RRF_BOOSTING: number | undefined = undefined;
+const ASK_SHOW: ResourceProperties[] = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
 
 export const initNuclia = (
   options: NucliaOptions,
@@ -119,6 +120,12 @@ export const initNuclia = (
   }
   if (widgetOptions.copy_disclaimer) {
     disclaimer.set(widgetOptions.copy_disclaimer);
+  }
+  if (widgetOptions.metadata) {
+    displayedMetadata.set(widgetOptions.metadata);
+    if (widgetOptions.metadata.includes('extra:')) {
+      ASK_SHOW.push(ResourceProperties.EXTRA);
+    }
   }
 
   nucliaApi = new Nuclia(options);
@@ -222,7 +229,7 @@ export const getAnswer = (
 
   const defaultOptions: ChatOptions = {
     highlight: HIGHLIGHT,
-    show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
+    show: ASK_SHOW,
     generative_model,
     vectorset,
     citations: CITATIONS,

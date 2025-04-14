@@ -110,6 +110,7 @@ export interface ResultDisplayConfig {
   displayResults: boolean;
   showResultType: 'citations' | 'all-resources';
   displayMetadata: boolean;
+  metadatas: string[];
   displayThumbnails: boolean;
   showAttachedImages: boolean;
   displayFieldList: boolean;
@@ -252,6 +253,7 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   displayResults: false,
   showResultType: 'citations',
   displayMetadata: false,
+  metadatas: [],
   displayThumbnails: true,
   showAttachedImages: false,
   displayFieldList: false,
@@ -552,6 +554,9 @@ function getJsonSchemaValue(config: ResultDisplayConfig) {
 export function getJsonSchema(config: ResultDisplayConfig): string {
   let schema = getJsonSchemaValue(config);
   return !!schema ? `\n  json_schema='${schema}'` : '';
+}
+export function getMetadata(config: ResultDisplayConfig): string {
+  return config.displayMetadata && config.metadatas.length > 0 ? `\n  metadata="${config.metadatas.join(',')}"` : '';
 }
 export function getWidgetTheme(options: WidgetConfiguration): string {
   return options.darkMode === 'dark' ? `\n  mode="dark"` : '';

@@ -56,6 +56,7 @@
   export let vectorset = '';
   export let audit_metadata = '';
   export let copy_disclaimer: string | undefined = undefined;
+  export let metadata: string | undefined = undefined;
 
   $: darkMode = mode === 'dark';
 
@@ -112,6 +113,7 @@
         vectorset,
         audit_metadata,
         copy_disclaimer,
+        metadata,
       },
     );
 

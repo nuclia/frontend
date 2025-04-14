@@ -56,6 +56,12 @@ export interface LabelSetFilter {
   kind: LabelSetKind;
 }
 
+export interface ResultMetadata {
+  origin: { path: string; type: 'string' | 'list' | 'date' }[];
+  field: { path: string; type: 'string' | 'list' | 'date' }[];
+  extra: { path: string; type: 'string' | 'list' | 'date' }[];
+}
+
 type EngagementType = 'CHAT' | 'RESULT';
 
 const EXTENDED_RESULTS = 100;
@@ -87,6 +93,7 @@ interface SearchState {
     searchId: string | undefined;
     engagement: Engagement;
   };
+  metadata: ResultMetadata;
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -104,6 +111,11 @@ export const searchState = new SvelteState<SearchState>({
     resultsReceived: false,
     searchId: undefined,
     engagement: {},
+  },
+  metadata: {
+    origin: [],
+    field: [],
+    extra: [],
   },
 });
 
@@ -154,8 +166,43 @@ export const searchResults = searchState.writer<
   },
 );
 
+function getNestedValue(obj: any, path: string): any {
+  return path.split('.').reduce((acc, key) => acc && acc[key], obj);
+}
+function getMetadata(
+  metadata: { path: string; type: 'string' | 'list' | 'date' }[],
+  obj: any,
+): { label: string; value: string; type: 'string' | 'list' | 'date' }[] {
+  if (!obj) {
+    return [];
+  }
+  const metadataValues: { label: string; value: string; type: 'string' | 'list' | 'date' }[] = [];
+  metadata.forEach(({ path, type }) => {
+    const value = getNestedValue(obj, path);
+    const label = path.split('.').pop() || path;
+    if (value) {
+      metadataValues.push({ label, value, type });
+    }
+  });
+  return metadataValues;
+}
 export const resultList = searchState.reader<TypedResult[]>((state) => {
-  return state.results.resultList;
+  return state.results.resultList.map((result) => {
+    const metadataValues: { label: string; value: string; type: 'string' | 'list' | 'date' }[] = [];
+    if (state.metadata.origin.length > 0) {
+      metadataValues.push(...getMetadata(state.metadata.origin, result.origin));
+    }
+    if (state.metadata.field.length > 0) {
+      metadataValues.push(...getMetadata(state.metadata.field, result.fieldData?.value));
+    }
+    if (state.metadata.extra.length > 0) {
+      metadataValues.push(...getMetadata(state.metadata.extra, result.extra?.metadata));
+    }
+    if (metadataValues.length > 0) {
+      result.resultMetadata = metadataValues;
+    }
+    return result;
+  });
 });
 
 export const showResults = searchState.writer<boolean>(
@@ -399,6 +446,40 @@ export const trackingResultsReceived = searchState.writer<boolean>(
 export const trackingReset = searchState.writer<undefined>(
   () => undefined,
   (state) => ({ ...state, tracking: { ...state.tracking, startTime: 0, resultsReceived: false } }),
+);
+
+function getType(value: string): 'string' | 'list' | 'date' {
+  const parts = value.split(':');
+  if (parts.length > 2) {
+    const type = parts[2];
+    if (type === 'string' || type === 'list' || type === 'date') {
+      return type as 'string' | 'list' | 'date';
+    }
+  }
+  return 'string';
+}
+
+export const displayedMetadata = searchState.writer<ResultMetadata, string>(
+  (state) => state.metadata,
+  (state, params) => {
+    const values = params.split(',');
+    const metadata: ResultMetadata = {
+      origin: values
+        .filter((value) => value.startsWith('origin'))
+        .map((value) => ({ path: value.split(':')[1], type: getType(value) })),
+      field: values
+        .filter((value) => value.startsWith('field'))
+        .map((value) => ({ path: value.split(':')[1], type: getType(value) })),
+      extra: values
+        .filter((value) => value.startsWith('extra'))
+        .map((value) => ({ path: value.split(':')[1], type: getType(value) })),
+    };
+    return {
+      ...state,
+      metadata,
+      show: metadata.extra.length > 0 ? [...state.show, ResourceProperties.EXTRA] : state.show,
+    };
+  },
 );
 
 // emits the tracking data only after corresponding results are received

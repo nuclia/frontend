@@ -57,7 +57,18 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
 
   @Input() set config(value: ResultDisplayConfig | undefined) {
     if (value) {
-      this.form.patchValue(value);
+      const { metadatas, ...rest } = value;
+      const mainMetadatas = this.DISPLAYED_METADATAS.reduce(
+        (acc, metadata) => {
+          acc[metadata.value] = metadatas.includes(metadata.value);
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      );
+      const otherMetadatas = metadatas
+        .filter((metadata) => !this.DISPLAYED_METADATAS.map((m) => m.value).includes(metadata))
+        .join('\n');
+      this.form.patchValue({ ...rest, metadatas: mainMetadatas, metadatasOthers: otherMetadatas });
     }
   }
   @Input() set useSynonymsEnabled(value: boolean) {
@@ -91,10 +102,29 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<ResultDisplayConfig>();
 
+  DISPLAYED_METADATAS = [
+    { value: 'origin:created:date', label: 'search.configuration.result-display.display-metadata.origin-created-date' },
+    {
+      value: 'origin:contributors:list',
+      label: 'search.configuration.result-display.display-metadata.origin-contributors-list',
+    },
+    { value: 'origin:tags:list', label: 'search.configuration.result-display.display-metadata.origin-tags-list' },
+    { value: 'field:file.size', label: 'search.configuration.result-display.display-metadata.field-file-size' },
+  ];
   form = new FormGroup({
     displayResults: new FormControl<boolean>(false, { nonNullable: true }),
     showResultType: new FormControl<'citations' | 'all-resources'>('all-resources', { nonNullable: true }),
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
+    metadatas: new FormGroup(
+      this.DISPLAYED_METADATAS.reduce(
+        (controls, metadata) => {
+          controls[metadata.value] = new FormControl<boolean>(false, { nonNullable: true });
+          return controls;
+        },
+        {} as Record<string, FormControl<boolean>>,
+      ),
+    ),
+    metadatasOthers: new FormControl<string>('', { nonNullable: true }),
     displayThumbnails: new FormControl<boolean>(false, { nonNullable: true }),
     showAttachedImages: new FormControl<boolean>(false, { nonNullable: true }),
     displayFieldList: new FormControl<boolean>(false, { nonNullable: true }),
@@ -124,14 +154,25 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   get citationsEnabled() {
     return this.showResultTypeControl.value === 'citations';
   }
+  get metadataEnabled() {
+    return this.form.controls.displayMetadata.value;
+  }
   get customizeThresholdEnabled() {
     return this.form.controls.customizeThreshold.value;
   }
 
   ngOnInit() {
-    this.form.valueChanges
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(() => this.configChanged.emit({ ...this.form.getRawValue() }));
+    this.form.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      const { metadatas, metadatasOthers, ...rest } = this.form.getRawValue();
+      const mains = Object.entries(metadatas)
+        .filter(([, value]) => value)
+        .map(([key]) => key);
+      const others = metadatasOthers
+        .split('\n')
+        .map((metadata) => metadata.trim())
+        .filter((metadata) => !!metadata);
+      this.configChanged.emit({ ...rest, metadatas: [...mains, ...others] });
+    });
   }
 
   ngOnDestroy() {

@@ -11,6 +11,7 @@ export type RankedFieldResult = Overwrite<Search.FieldResult, { paragraphs: Rank
 export interface TypedResult extends RankedFieldResult {
   resultType: ResultType;
   resultIcon: string;
+  resultMetadata?: { label: string; value: string | string[]; type: 'string' | 'list' | 'date' }[];
 }
 
 export interface FindResultsAsList extends Omit<Search.FindResults, 'resources'> {
@@ -61,6 +62,7 @@ export interface WidgetOptions {
   feedback?: WidgetFeedback;
   copy_disclaimer?: string;
   not_enough_data_message?: string;
+  metadata?: string;
 }
 
 export interface WidgetAction {
