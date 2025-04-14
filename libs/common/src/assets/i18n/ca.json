@@ -1266,7 +1266,7 @@
 	"search.configuration.result-display.display-metadata.origin-contributors-list": "Col·laboradors",
 	"search.configuration.result-display.display-metadata.origin-created-date": "Data de creació",
 	"search.configuration.result-display.display-metadata.origin-tags-list": "Etiquetes",
-	"search.configuration.result-display.display-metadata.others-help": "Les metadades poden pertànyer als tipus següents: 'origin', 'field', o 'extra'. El seu tipus pot ser 'string', 'date', o 'list. Utilitzeu la sintaxi següent: \"kind:path:type\", exemple: \"origin:file.md5:string\". Un valor per línia.",
+	"search.configuration.result-display.display-metadata.others-help": "Les metadades poden pertànyer als tipus següents: 'origin', 'field', o 'extra'. El seu tipus pot ser 'string', 'date', o 'list. Utilitzeu la sintaxi següent: \"kind:path:type\", exemple: \"field:file.md5:string\". Un valor per línia.",
 	"search.configuration.result-display.display-metadata.others-label": "Altres",
 	"search.configuration.result-display.display-metadata.toggle-description": "Les metadades es mostren sota el títol de cada recurs.",
 	"search.configuration.result-display.display-metadata.toggle-label": "Mostra metadades",

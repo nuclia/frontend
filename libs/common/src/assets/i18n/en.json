@@ -1266,7 +1266,7 @@
 	"search.configuration.result-display.display-metadata.origin-contributors-list": "Contributors",
 	"search.configuration.result-display.display-metadata.origin-created-date": "Creation date",
 	"search.configuration.result-display.display-metadata.origin-tags-list": "Tags",
-	"search.configuration.result-display.display-metadata.others-help": "Metadata can belong to the following kinds: 'origin', 'field', or 'extra'. Their type can be either 'string', 'date', or 'list'. Use the following syntax: \"kind:path:type\", example: \"origin:file.md5:string\". One value per line.",
+	"search.configuration.result-display.display-metadata.others-help": "Metadata can belong to the following kinds: 'origin', 'field', or 'extra'. Their type can be either 'string', 'date', or 'list'. Use the following syntax: \"kind:path:type\", example: \"field:file.md5:string\". One value per line.",
 	"search.configuration.result-display.display-metadata.others-label": "Others",
 	"search.configuration.result-display.display-metadata.toggle-description": "Metadata are displayed under the title of each resource.",
 	"search.configuration.result-display.display-metadata.toggle-label": "Display metadata",
