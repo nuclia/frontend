@@ -1138,7 +1138,7 @@
 	"retrieval-agents.workflow.node-types.root.postprocess": "Postprocess",
 	"retrieval-agents.workflow.node-types.root.preprocess": "preprocess",
 	"retrieval-agents.workflow.node-types.root.retrieval-context": "Retrieval context",
-	"retrieval-agents.workflow.node-types.sql.description": "Access data from tyour SQL database",
+	"retrieval-agents.workflow.node-types.sql.description": "Access data from your SQL database",
 	"retrieval-agents.workflow.node-types.sql.title": "SQL query",
 	"retrieval-agents.workflow.node-types.summarize.description": "Summarize the output",
 	"retrieval-agents.workflow.node-types.summarize.prompt-placeholder": "Prompt for the summary format",
