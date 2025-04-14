@@ -307,12 +307,12 @@ export class WorkflowService {
   }
 
   /**
-   * Update all the links’ positions on the specified column.
-   * @param columnIndex index of the column in which node’s links must be updated
+   * Update all the links’ positions on the specified column and the next ones.
+   * @param columnIndex index of the first column in which node’s links must be updated
    */
   private updateLinksOnColumn(columnIndex: number) {
     Object.values(this.nodes)
-      .filter((node) => node.nodeRef.instance.columnIndex === columnIndex)
+      .filter((node) => node.nodeRef.instance.columnIndex >= columnIndex)
       .forEach((node) => {
         if (node.nodeRef.instance.boxComponent) {
           node.nodeRef.instance.boxComponent.updateLink();
