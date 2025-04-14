@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
-import { StandaloneService } from '../services';
+import { NavigationEnd, Router } from '@angular/router';
 import {
   BackendConfigurationService,
   BillingService,
@@ -8,7 +7,8 @@ import {
   NavigationService,
   SDKService,
 } from '@flaps/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { StandaloneService } from '../services';
 
 @Component({
   selector: 'app-navbar',
@@ -23,6 +23,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     map(([account, kb]) => {
       return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
     }),
+  );
+  inAgent: Observable<boolean> = merge(
+    of(this.navigationService.inAgentSpace(location.pathname)),
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => this.navigationService.inAgentSpace((event as NavigationEnd).url)),
+      takeUntil(this.unsubscribeAll),
+    ),
   );
   inAccount: Observable<boolean> = merge(
     of(this.navigationService.inAccountManagement(location.pathname)),
@@ -55,6 +63,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   showSettings = false;
   kbUrl: string = '';
+  agentUrl: string = '';
 
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
@@ -96,6 +105,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
         const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
         this.kbUrl = this.navigationService.getKbUrl(account.slug, kbSlug);
         this.cdr.markForCheck();
+      });
+    // FIXME get agent
+    combineLatest([this.sdk.currentAccount, of({ slug: 'toto' })])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(([account, agent]) => {
+        this.agentUrl = this.navigationService.getAgentUrl(account.slug, agent.slug);
+        console.log(this.agentUrl);
       });
     this.inSettings
       .pipe(

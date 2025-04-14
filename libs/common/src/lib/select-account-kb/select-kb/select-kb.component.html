@@ -39,6 +39,31 @@
     <div class="select-kb-body">
       @if (((kbs | async)?.length || 0) > 0) {
         <div class="select-kb-list">
+          @if (!standalone && (isRetrievalAgentEnabled | async)) {
+            @for (ra of ras | async; track ra.id) {
+              @if (ra.id) {
+                <a
+                  class="kb"
+                  data-cy="ra-list-item"
+                  [class.disabled]="!ra.role_on_kb"
+                  (click)="goToRa(ra)">
+                  <pa-icon
+                    size="small"
+                    name="workflows"></pa-icon>
+
+                  <span
+                    class="kb-title"
+                    [paTooltip]="'select.ra-tooltip' | translate: { ra: ra.title }">
+                    {{ ra.title }}
+                  </span>
+
+                  <pa-icon
+                    name="chevron-right"
+                    size="small"></pa-icon>
+                </a>
+              }
+            }
+          }
           @for (kb of kbs | async; track kb.id) {
             @if (kb.id) {
               <a
@@ -55,14 +80,21 @@
                     kind="destructive"
                     size="small"
                     (click)="deleteKb($event, kb.id, kb.zone, kb.title)"></pa-button>
+                } @else {
+                  <pa-icon
+                    size="small"
+                    name="knowledge-box"></pa-icon>
                 }
 
-                {{ kb.title }}
-                @if (!!kb.role_on_kb) {
-                  <pa-icon
-                    name="chevron-right"
-                    size="small"></pa-icon>
-                }
+                <span
+                  class="kb-title"
+                  [paTooltip]="'select.kb-tooltip' | translate: { kb: kb.title }">
+                  {{ kb.title }}
+                </span>
+
+                <pa-icon
+                  name="chevron-right"
+                  size="small"></pa-icon>
               </a>
             }
           }

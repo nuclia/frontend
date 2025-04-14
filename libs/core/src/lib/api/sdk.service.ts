@@ -3,6 +3,7 @@ import {
   Account,
   Counters,
   IKnowledgeBoxItem,
+  IRetrievalAgentItem,
   KBRoles,
   KnowledgeBox,
   Nuclia,
@@ -25,8 +26,8 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { BackendConfigurationService } from '../config';
 import { take } from 'rxjs/operators';
+import { BackendConfigurationService } from '../config';
 import { standaloneSimpleAccount } from '../models/account.model';
 
 @Injectable({ providedIn: 'root' })
@@ -41,9 +42,12 @@ export class SDKService {
   private _kb = new BehaviorSubject<KnowledgeBox | null>(null);
   private _currentKB = new ReplaySubject<WritableKnowledgeBox>(1);
   private _kbList = new ReplaySubject<IKnowledgeBoxItem[]>(1);
+  private _raList = new ReplaySubject<IRetrievalAgentItem[]>(1);
   private _refreshingKbList = new BehaviorSubject<boolean>(false);
+  private _refreshingRaList = new BehaviorSubject<boolean>(false);
   private _refreshCounter = new Subject<boolean>();
   private _triggerRefreshKbs = new Subject<boolean>();
+  private _triggerRefreshRas = new Subject<boolean>();
   private _repetitiveRefreshCounter = new Subject<void>();
   private _isKbLoaded = false;
 
@@ -52,6 +56,8 @@ export class SDKService {
   currentKb = this._currentKB.asObservable();
   kbList: Observable<IKnowledgeBoxItem[]> = this._kbList.asObservable();
   refreshingKbList: Observable<boolean> = this._refreshingKbList.asObservable();
+  raList: Observable<IRetrievalAgentItem[]> = this._raList.asObservable();
+  refreshingRaList: Observable<boolean> = this._refreshingRaList.asObservable();
   currentAccount: Observable<Account> = this._account.pipe(
     filter((account) => !!account),
     map((account) => account as Account),
@@ -75,11 +81,17 @@ export class SDKService {
 
   constructor(private config: BackendConfigurationService) {
     this._triggerRefreshKbs.subscribe((refreshCurrentKb) => this._refreshKbList(refreshCurrentKb));
-    this.currentAccount.subscribe(() => this.refreshKbList());
+    this._triggerRefreshRas.subscribe((refreshCurrentRa) => this._refreshRaList(refreshCurrentRa));
+    this.currentAccount.subscribe(() => {
+      this.refreshKbList();
+      this.refreshRaList();
+    });
 
     combineLatest([this._kb, this._account])
       .pipe(
-        distinctUntilChanged(([previous], [current]) => previous?.id === current?.id && previous?.slug === current?.slug),
+        distinctUntilChanged(
+          ([previous], [current]) => previous?.id === current?.id && previous?.slug === current?.slug,
+        ),
         filter(([kb, account]) => !!kb && !!kb.slug && !!account),
         map(([kb, account]) => [kb, account] as [KnowledgeBox, Account]),
         switchMap(([kb, account]) =>
@@ -180,6 +192,10 @@ export class SDKService {
     this._triggerRefreshKbs.next(refreshCurrentKb);
   }
 
+  refreshRaList(refreshCurrentRa = false) {
+    this._triggerRefreshRas.next(refreshCurrentRa);
+  }
+
   private _refreshKbList(refreshCurrentKb = false) {
     this._refreshingKbList.next(true);
     const kbList: Observable<IKnowledgeBoxItem[]> = this.nuclia.options.standalone
@@ -212,6 +228,25 @@ export class SDKService {
     }
   }
 
+  private _refreshRaList(refreshCurrentRa = false) {
+    this.currentAccount
+      .pipe(
+        take(1),
+        switchMap((account) => this.nuclia.db.getRetrievalAgents(account.slug, account.id)),
+      )
+      .subscribe({
+        next: (list) => {
+          this._raList.next(list.sort((a, b) => (a.title || '').localeCompare(b.title || '')));
+          this._refreshingRaList.next(false);
+        },
+        error: () => this._refreshingRaList.next(false),
+      });
+
+    if (refreshCurrentRa) {
+      this.refreshCurrentRa().subscribe();
+    }
+  }
+
   refreshCurrentKb() {
     return forkJoin([this.currentAccount.pipe(take(1)), this.currentKb.pipe(take(1))]).pipe(
       switchMap(([account, kb]) =>
@@ -221,6 +256,19 @@ export class SDKService {
         ),
       ),
     );
+  }
+
+  refreshCurrentRa() {
+    //TODO
+    return of();
+    // return forkJoin([this.currentAccount.pipe(take(1)), this.currentRa.pipe(take(1))]).pipe(
+    //   switchMap(([account, ra]) =>
+    //     this.nuclia.db.getRetrievalAgent(account.id, ra.id, ra.zone).pipe(
+    //       map((data) => new WritableKnowledgeBox(this.nuclia, account.slug || account.id, data)),
+    //       tap((newKb) => this._currentKB.next(newKb)),
+    //     ),
+    //   ),
+    // );
   }
 
   private countersRefreshSubscriptions() {

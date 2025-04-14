@@ -43,12 +43,13 @@ import {
 } from './db.models';
 import type {
   EventList,
-  IKnowledgeBoxCreation,
+  IKnowledgeBoxBase,
   IKnowledgeBoxItem,
   IKnowledgeBoxStandalone,
   KnowledgeBoxCreation,
 } from './kb';
 import { IStandaloneKb, WritableKnowledgeBox } from './kb';
+import { IRetrievalAgentItem } from './retrieval-agent';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
 /** Allows you to access Nuclia accounts and/or Nuclia Knowledge Boxes. */
@@ -149,18 +150,19 @@ export class Db implements IDb {
     return this.nuclia.rest.get<{ kbs: IStandaloneKb[] }>('/kbs').pipe(map((result) => result.kbs));
   }
 
-  /**
-   * Returns a list of all the Knowledge Boxes for the given account. Account slug and id can be provided in the Nuclia options or as parameters.
-   */
-  getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
-  getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
-  getKnowledgeBoxes(accountSlug?: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
+  private _getKnowledgeBoxes(
+    accountSlug?: string,
+    accountId?: string,
+    mode: 'kb' | 'agent' = 'kb',
+  ): Observable<IKnowledgeBoxItem[]> {
     const slug = accountSlug || this.nuclia.options.account;
     const id = accountId || this.nuclia.options.accountId;
     if (!slug || !id) {
       return throwError(
         () =>
-          'Account slug and ID must be provided in order to load KBs. You can provide them as parameter or in Nuclia options.',
+          `Account slug and ID must be provided in order to load ${
+            mode === 'kb' ? 'KBs' : 'retrieval agents'
+          }. You can provide them as parameter or in Nuclia options.`,
       );
     }
     return forkJoin([this.nuclia.rest.getZones(), this.getKbIndexes(slug)]).pipe(
@@ -172,7 +174,9 @@ export class Db implements IDb {
           }
           return zoneIds;
         }, [] as string[]);
-        return zones.length > 0 ? forkJoin(zones.map((zone) => this.getKnowledgeBoxesForZone(id, zone))) : of([]);
+        return zones.length > 0
+          ? forkJoin(zones.map((zone) => this._getKnowledgeBoxesForZone(id, zone, mode)))
+          : of([]);
       }),
       map((kbByZone) =>
         kbByZone.reduce((kbList, list) => {
@@ -182,13 +186,53 @@ export class Db implements IDb {
     );
   }
 
+  private _getKnowledgeBoxesForZone(
+    accountId: string,
+    zone: string,
+    mode: 'kb' | 'agent' = 'kb',
+  ): Observable<IKnowledgeBoxItem[]> {
+    return this.nuclia.rest.get<IKnowledgeBoxItem[]>(
+      `/account/${accountId}/kbs?mode=${mode}`,
+      undefined,
+      undefined,
+      zone,
+    );
+  }
+
+  /**
+   * Returns a list of all the Knowledge Boxes for the given account. Account slug and id can be provided in the Nuclia options or as parameters.
+   */
+  getKnowledgeBoxes(): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug: string, accountId: string): Observable<IKnowledgeBoxItem[]>;
+  getKnowledgeBoxes(accountSlug?: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
+    return this._getKnowledgeBoxes(accountSlug, accountId);
+  }
+
   /**
    * Returns the list of Knowledge Boxes for the given account id and zone.
    * @param accountId
    * @param zone
    */
   getKnowledgeBoxesForZone(accountId: string, zone: string): Observable<IKnowledgeBoxItem[]> {
-    return this.nuclia.rest.get<IKnowledgeBoxItem[]>(`/account/${accountId}/kbs`, undefined, undefined, zone);
+    return this._getKnowledgeBoxesForZone(accountId, zone);
+  }
+
+  /**
+   * Returns a list of all the Retrieval Agents for the given account. Account slug and id can be provided in the Nuclia options or as parameters.
+   */
+  getRetrievalAgents(): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgents(accountSlug: string, accountId: string): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgents(accountSlug?: string, accountId?: string): Observable<IKnowledgeBoxItem[]> {
+    return this._getKnowledgeBoxes(accountSlug, accountId, 'agent');
+  }
+
+  /**
+   * Returns the list of Retrieval Agents for the given account id and zone.
+   * @param accountId
+   * @param zone
+   */
+  getRetrievalAgentsForZone(accountId: string, zone: string): Observable<IRetrievalAgentItem[]> {
+    return this._getKnowledgeBoxesForZone(accountId, zone, 'agent');
   }
 
   /**
@@ -208,9 +252,9 @@ export class Db implements IDb {
         throw new Error('Knowledge Box id and zone must be provided as parameters or in the Nuclia options');
       }
 
-      const request: Observable<IKnowledgeBoxCreation | IKnowledgeBoxStandalone> = this.nuclia.options.standalone
+      const request: Observable<IKnowledgeBoxBase | IKnowledgeBoxStandalone> = this.nuclia.options.standalone
         ? this.nuclia.rest.get<IKnowledgeBoxStandalone>(`/kb/${kbId}`)
-        : this.nuclia.rest.get<IKnowledgeBoxCreation>(
+        : this.nuclia.rest.get<IKnowledgeBoxBase>(
             `/account/${accountID}/kb/${kbId}`,
             undefined,
             undefined,
@@ -257,7 +301,7 @@ export class Db implements IDb {
       creation = this.nuclia.rest.post<IKnowledgeBoxStandalone>('/kbs', knowledgeBox).pipe(map((res) => res.uuid));
     } else {
       creation = this.nuclia.rest
-        .post<IKnowledgeBoxCreation>(`/account/${accountId}/kbs`, knowledgeBox, undefined, undefined, undefined, zone)
+        .post<IKnowledgeBoxBase>(`/account/${accountId}/kbs`, knowledgeBox, undefined, undefined, undefined, zone)
         .pipe(map((res) => res.id));
     }
     return creation.pipe(

@@ -1,13 +1,13 @@
 import type { Observable } from 'rxjs';
-import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
-import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
-import type { Ask, CatalogOptions, ChatOptions, PredictAnswerOptions, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
 import { LearningConfigurations, ResourceProperties } from '../db.models';
 import { NotificationMessage, NotificationOperation } from '../notifications';
+import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
+import type { Ask, CatalogOptions, ChatOptions, PredictAnswerOptions, Search, SearchOptions } from '../search';
 import { Agentic } from '../search/agentic';
-import { ActivityMonitor } from './activity';
 import { TaskManager } from '../task';
+import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
+import { ActivityMonitor } from './activity';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -17,7 +17,7 @@ export enum LabelSetKind {
   PARAGRAPHS = 'PARAGRAPHS',
 }
 
-export interface IKnowledgeBoxCreation {
+export interface IKnowledgeBoxBase {
   id: string;
   slug: string;
   title: string;
@@ -42,7 +42,7 @@ export interface IKnowledgeBoxStandalone {
   };
 }
 
-export interface IKnowledgeBoxItem extends IKnowledgeBoxCreation {
+export interface IKnowledgeBoxItem extends IKnowledgeBoxBase {
   role_on_kb?: KBRoles;
 }
 
@@ -80,7 +80,7 @@ export interface KbInvite {
   expires: string;
 }
 
-export interface IKnowledgeBox extends IKnowledgeBoxCreation {
+export interface IKnowledgeBox extends IKnowledgeBoxBase {
   external_index_provider?: 'pinecone';
 
   get path(): string;

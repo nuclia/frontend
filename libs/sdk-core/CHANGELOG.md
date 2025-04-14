@@ -1,3 +1,13 @@
+# 1.26.0 (Unreleased)
+
+### Feature
+
+- Support Retrieval Agents
+
+### Improvements
+
+- Rename `IKnowledgeBoxCreation` interface to `IKnowledgeBoxBase`
+
 # 1.25.0 (2025-04-09)
 
 ### Feature

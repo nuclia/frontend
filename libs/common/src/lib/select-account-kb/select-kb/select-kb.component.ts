@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
+import { IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
 import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
-import { IKnowledgeBoxItem } from '@nuclia/core';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-select-kb',
@@ -19,6 +19,7 @@ export class SelectKbComponent implements OnDestroy {
   standalone = this.selectService.standalone;
 
   kbs: Observable<IKnowledgeBoxItem[] | null> = this.sdk.kbList.pipe(shareReplay());
+  ras: Observable<IKnowledgeBoxItem[] | null> = this.sdk.kbList.pipe(shareReplay()); //FIXME this.sdk.raList.pipe(shareReplay());
   hasSeveralAccounts: Observable<boolean> = this.selectService.accounts.pipe(
     map((accounts) => !!accounts && accounts.length > 1),
   );
@@ -34,14 +35,14 @@ export class SelectKbComponent implements OnDestroy {
         ),
       );
 
+  isRetrievalAgentEnabled = this.features.unstable.retrievalAgents;
+
   constructor(
     private navigation: NavigationService,
     private selectService: SelectAccountKbService,
     private router: Router,
     private sdk: SDKService,
-    private toast: SisToastService,
     private modalService: SisModalService,
-    private zoneService: ZoneService,
     private features: FeaturesService,
   ) {}
 
@@ -74,6 +75,20 @@ export class SelectKbComponent implements OnDestroy {
         this.account
           .pipe(take(1))
           .subscribe((account) => this.router.navigate([this.navigation.getKbUrl(account.slug, kbSlug)]));
+      }
+    }
+  }
+
+  goToRa(ra: IRetrievalAgentItem) {
+    if (ra.slug && ra.role_on_kb) {
+      const raSlug = ra.slug;
+      this.sdk.nuclia.options.knowledgeBox = ra.id;
+
+      if (!this.standalone) {
+        this.sdk.nuclia.options.zone = ra.zone;
+        forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([, account]) =>
+          this.router.navigate([this.navigation.getRetrievalAgentUrl(account.slug, raSlug)]),
+        );
       }
     }
   }

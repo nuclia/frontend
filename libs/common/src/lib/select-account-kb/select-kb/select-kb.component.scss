@@ -65,7 +65,7 @@
     cursor: pointer;
     display: flex;
     height: rhythm(5);
-    justify-content: center;
+    justify-content: space-between;
     position: relative;
     text-decoration: none;
     transition: background-color $transition-hint;
@@ -92,11 +92,13 @@
       }
     }
 
+    .kb-title {
+      flex: 1;
+      text-align: center;
+    }
+
     pa-icon {
-      position: absolute;
-      top: 50%;
-      right: rhythm(1.5);
-      transform: translateY(-50%);
+      padding: 0 rhythm(1);
     }
   }
 

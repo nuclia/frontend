@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService, SDKService, standaloneSimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
 import { combineLatest, forkJoin, map, Observable, take } from 'rxjs';
 
+const IN_AGENT = new RegExp('at/[^/]+/[^/]+/agent');
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
 const IN_ACCOUNT_BILLING = new RegExp('/at/[^/]+/manage/billing');
 
@@ -42,6 +43,9 @@ export class NavigationService {
   inAccountManagement(path: string): boolean {
     return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
   }
+  inAgentSpace(path: string): boolean {
+    return path.match(IN_AGENT) !== null;
+  }
   inKbSettings(path: string, kbUrl: string): boolean {
     // pages common to NucliaDB admin and Dashboard
     const commonPages = ['ai-models', 'entities', 'label-sets', 'manage', 'metrics'];
@@ -73,6 +77,10 @@ export class NavigationService {
 
   getAccountUrl(accountSlug: string): string {
     return `/at/${accountSlug}`;
+  }
+
+  getRetrievalAgentUrl(accountSlug: string, agentSlug: string): string {
+    return `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/agent/${agentSlug}`;
   }
 
   getKbUrl(accountSlug: string, kbSlug: string): string {

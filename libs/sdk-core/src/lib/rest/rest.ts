@@ -1,7 +1,7 @@
 import { catchError, from, map, Observable, of, Subscriber, switchMap } from 'rxjs';
-import type { INuclia, IRest } from '../models';
-import { KBRoles } from '../db/kb/kb.models';
 import { NucliaDBRole } from '../auth/auth.models';
+import { KBRoles } from '../db/kb/kb.models';
+import type { INuclia, IRest } from '../models';
 
 export const ABORT_STREAMING_REASON = 'Stop listening to streaming';
 const NS_BINDING_ABORTED_ERROR = 'TypeError: NetworkError when attempting to fetch resource.';
