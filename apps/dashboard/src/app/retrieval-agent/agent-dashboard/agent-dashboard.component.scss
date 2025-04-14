@@ -1,0 +1,99 @@
+@use 'apps/dashboard/src/variables' as *;
+@use 'agent-dashboard.tokens' as dashboard;
+
+.agent-dashboard {
+  .agent-dashboard-toolbar {
+    background-color: $color-light-stronger;
+    border-bottom: 1px solid $color-neutral-light;
+    display: flex;
+    justify-content: space-between;
+    height: dashboard.$height-toolbar;
+    padding: rhythm(1);
+
+    .button-group {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+    }
+  }
+
+  .workflow-container {
+    background-color: hsl(336, 100%, 96%, 25%);
+    background-size: rhythm(2.5) rhythm(2.5);
+    background-image: radial-gradient(circle, $color-neutral-lighter rhythm(0.25), rgba(0, 0, 0, 0) rhythm(0.25));
+    overflow: auto;
+    display: flex;
+    height: dashboard.$height-main;
+    position: relative;
+    width: 100%;
+    transition: width $transition-slide;
+
+    .workflow-col {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(3);
+      height: fit-content;
+      padding: rhythm(8);
+    }
+
+    &.sidebar-open {
+      width: calc(100% - #{dashboard.$width-sidebar});
+    }
+  }
+
+  .sidebar {
+    background-color: $color-light-stronger;
+    border-left: 1px solid $color-neutral-light;
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+    height: dashboard.$height-main;
+    padding: dashboard.$padding-sidebar;
+    padding-right: 0;
+    position: absolute;
+    right: calc(#{dashboard.$width-sidebar} * -1);
+    top: dashboard.$height-toolbar;
+    transition: right $transition-slide;
+    width: dashboard.$width-sidebar;
+
+    &.open {
+      right: 0;
+    }
+
+    header {
+      .title-m {
+        align-items: center;
+        display: flex;
+        height: dashboard.$height-sidebar-header;
+        justify-content: space-between;
+      }
+
+      .description {
+        color: $color-neutral-regular;
+        font-size: font-size(s);
+      }
+    }
+
+    .sidebar-content {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1.5);
+      overflow-y: auto;
+      padding-right: dashboard.$padding-sidebar;
+
+      &.no-form {
+        padding-bottom: rhythm(2);
+        padding-top: rhythm(2);
+      }
+
+      > .section-title {
+        @include title-s();
+        color: $color-neutral-regular;
+        margin-bottom: calc(#{rhythm(1)} * -1);
+      }
+      .last-of-section {
+        margin-bottom: rhythm(1.5);
+      }
+    }
+  }
+}

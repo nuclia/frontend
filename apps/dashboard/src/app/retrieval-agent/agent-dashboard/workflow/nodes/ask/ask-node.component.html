@@ -1,0 +1,12 @@
+<app-node-box
+  [state]="state()"
+  [nodeTitle]="'retrieval-agents.workflow.node-types.ask.title' | translate"
+  [origin]="origin()"
+  (outputClick)="onOutputClick($event)"
+  (trashClick)="onTrashClick()">
+  <app-config-block [config]="askConfig()"></app-config-block>
+
+  <app-connectable-entry type="context">
+    {{ 'retrieval-agents.workflow.connectable-entry.fallback' | translate }}
+  </app-connectable-entry>
+</app-node-box>

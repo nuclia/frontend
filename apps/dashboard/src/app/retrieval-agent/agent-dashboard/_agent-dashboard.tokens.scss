@@ -1,0 +1,7 @@
+@use 'apps/dashboard/src/variables' as *;
+
+$height-toolbar: rhythm(6);
+$height-main: calc(100dvh - #{$height-toolbar} - var(--app-topbar-height));
+$height-sidebar-header: rhythm(4);
+$padding-sidebar: rhythm(3);
+$width-sidebar: rhythm(45);

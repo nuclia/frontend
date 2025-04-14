@@ -1,0 +1,21 @@
+<form
+  class="node-configuration-form"
+  [formGroup]="form()"
+  (ngSubmit)="onSubmit()">
+  <ng-content></ng-content>
+  <footer>
+    <pa-button
+      class="full-width"
+      aspect="basic"
+      (click)="cancel.emit()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      class="full-width"
+      kind="primary"
+      type="submit"
+      [disabled]="form().invalid">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </footer>
+</form>

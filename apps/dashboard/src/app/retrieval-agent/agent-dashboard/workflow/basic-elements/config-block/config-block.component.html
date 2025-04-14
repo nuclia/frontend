@@ -1,0 +1,16 @@
+@if (config().length === 0) {
+  <div class="empty">
+    {{ 'retrieval-agents.workflow.missing-configuration' | translate }}
+  </div>
+} @else {
+  <div class="config-block">
+    @for (block of config(); track $index) {
+      <div>
+        @if (block.title) {
+          <div class="title">{{ block.title }}</div>
+        }
+        <div>{{ block.content }}</div>
+      </div>
+    }
+  </div>
+}
