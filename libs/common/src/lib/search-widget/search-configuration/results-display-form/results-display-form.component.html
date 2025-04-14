@@ -64,6 +64,30 @@
       <div class="config-form-help">
         {{ 'search.configuration.result-display.display-metadata.toggle-description' | translate }}
       </div>
+
+      <div
+        class="extra-fields"
+        [class.visible]="metadataEnabled"
+        formGroupName="metadatas">
+        @for (metadata of DISPLAYED_METADATAS; track metadata) {
+          <pa-checkbox [formControlName]="metadata">
+            {{
+              'search.configuration.result-display.display-metadata.' +
+                metadata.replaceAll(':', '-').replaceAll('.', '-') | translate
+            }}
+          </pa-checkbox>
+        }
+      </div>
+      <pa-textarea
+        class="extra-fields"
+        formControlName="metadatasOthers"
+        [class.visible]="metadataEnabled"
+        resizable
+        help="search.configuration.result-display.display-metadata.others-help"
+        rows="4"
+        (resizing)="heightChanged.emit()">
+        {{ 'search.configuration.result-display.display-metadata.others-label' | translate }}
+      </pa-textarea>
     </div>
     <div class="config-form-field">
       <pa-toggle

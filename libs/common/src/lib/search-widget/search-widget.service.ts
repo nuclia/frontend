@@ -11,6 +11,7 @@ import {
   getLang,
   getMaxParagraphs,
   getMaxTokens,
+  getMetadata,
   getNotEnoughDataMessage,
   getPlaceholder,
   getPreselectedFilters,
@@ -155,6 +156,7 @@ export class SearchWidgetService {
     const vectorset = currentConfig.searchBox.vectorset ? `\n  vectorset="${currentConfig.searchBox.vectorset}"` : '';
     const queryPrepend = getQueryPrepend(currentConfig.searchBox);
     const jsonSchema = getJsonSchema(currentConfig.resultDisplay);
+    const metadata = getMetadata(currentConfig.resultDisplay);
     const reranker = getReranker(currentConfig.searchBox);
     const rrfBoosting = getRrfBoosting(currentConfig.searchBox);
     const citationThreshold = getCitationThreshold(currentConfig.resultDisplay);
@@ -200,7 +202,7 @@ export class SearchWidgetService {
           cdn = `\n  cdn="${this.backendConfig.getCDN()}/"`;
         }
         let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${copyDisclaimer}${lang}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${cdn}${jsonSchema}${reranker}${rrfBoosting}${citationThreshold}${feedback}`;
+        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${copyDisclaimer}${lang}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${cdn}${jsonSchema}${metadata}${reranker}${rrfBoosting}${citationThreshold}${feedback}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;

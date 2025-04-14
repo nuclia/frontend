@@ -93,6 +93,7 @@
   export let rrf_boosting: number | string | undefined = undefined;
   export let feedback: WidgetFeedback = 'answer';
   export let copy_disclaimer: string | undefined = undefined;
+  export let metadata: string | undefined = undefined;
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -254,6 +255,7 @@
         feedback,
         copy_disclaimer,
         not_enough_data_message,
+        metadata,
       },
       no_tracking,
     );
