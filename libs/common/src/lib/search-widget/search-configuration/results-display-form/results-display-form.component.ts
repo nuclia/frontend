@@ -60,12 +60,14 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
       const { metadatas, ...rest } = value;
       const mainMetadatas = this.DISPLAYED_METADATAS.reduce(
         (acc, metadata) => {
-          acc[metadata] = metadatas.includes(metadata);
+          acc[metadata.value] = metadatas.includes(metadata.value);
           return acc;
         },
         {} as Record<string, boolean>,
       );
-      const otherMetadatas = metadatas.filter((metadata) => !this.DISPLAYED_METADATAS.includes(metadata)).join('\n');
+      const otherMetadatas = metadatas
+        .filter((metadata) => !this.DISPLAYED_METADATAS.map((m) => m.value).includes(metadata))
+        .join('\n');
       this.form.patchValue({ ...rest, metadatas: mainMetadatas, metadatasOthers: otherMetadatas });
     }
   }
@@ -100,15 +102,23 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   @Output() heightChanged = new EventEmitter<void>();
   @Output() configChanged = new EventEmitter<ResultDisplayConfig>();
 
-  DISPLAYED_METADATAS = ['origin:created:date', 'origin:contributors:list', 'origin:tags:list', 'field:file.size'];
+  DISPLAYED_METADATAS = [
+    { value: 'origin:created:date', label: 'search.configuration.result-display.display-metadata.origin-created-date' },
+    {
+      value: 'origin:contributors:list',
+      label: 'search.configuration.result-display.display-metadata.origin-contributors-list',
+    },
+    { value: 'origin:tags:list', label: 'search.configuration.result-display.display-metadata.origin-tags-list' },
+    { value: 'field:file.size', label: 'search.configuration.result-display.display-metadata.field-file-size' },
+  ];
   form = new FormGroup({
     displayResults: new FormControl<boolean>(false, { nonNullable: true }),
     showResultType: new FormControl<'citations' | 'all-resources'>('all-resources', { nonNullable: true }),
     displayMetadata: new FormControl<boolean>(false, { nonNullable: true }),
     metadatas: new FormGroup(
-      Object.values(this.DISPLAYED_METADATAS).reduce(
+      this.DISPLAYED_METADATAS.reduce(
         (controls, metadata) => {
-          controls[metadata] = new FormControl<boolean>(false, { nonNullable: true });
+          controls[metadata.value] = new FormControl<boolean>(false, { nonNullable: true });
           return controls;
         },
         {} as Record<string, FormControl<boolean>>,

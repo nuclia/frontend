@@ -69,12 +69,9 @@
         class="extra-fields"
         [class.visible]="metadataEnabled"
         formGroupName="metadatas">
-        @for (metadata of DISPLAYED_METADATAS; track metadata) {
-          <pa-checkbox [formControlName]="metadata">
-            {{
-              'search.configuration.result-display.display-metadata.' +
-                metadata.replaceAll(':', '-').replaceAll('.', '-') | translate
-            }}
+        @for (metadata of DISPLAYED_METADATAS; track metadata.value) {
+          <pa-checkbox [formControlName]="metadata.value">
+            {{ metadata.label | translate }}
           </pa-checkbox>
         }
       </div>
