@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, debounceTime, filter, map, of, Subject, switchMap, tap } from 'rxjs';
+import { combineLatest, debounceTime, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { AccountService } from '../../account.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -61,6 +61,7 @@ export class KbDetailsComponent implements OnInit, OnDestroy {
       ),
     ])
       .pipe(
+        takeUntil(this.unsubscribeAll),
         switchMap(([account, { kbId, zoneId }]) =>
           this.accountService.loadKb({
             accountId: account.id,
