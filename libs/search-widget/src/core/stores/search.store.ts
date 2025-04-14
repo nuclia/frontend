@@ -189,7 +189,6 @@ function getMetadata(
 export const resultList = searchState.reader<TypedResult[]>((state) => {
   return state.results.resultList.map((result) => {
     const metadataValues: { label: string; value: string; type: 'string' | 'list' | 'date' }[] = [];
-    console.log('result', result);
     if (state.metadata.origin.length > 0) {
       metadataValues.push(...getMetadata(state.metadata.origin, result.origin));
     }
