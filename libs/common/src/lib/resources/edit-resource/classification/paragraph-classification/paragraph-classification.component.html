@@ -2,7 +2,7 @@
   @if (paragraphLoaded | async) {
     <div class="main-container">
       <div>
-        <div class="search-box-container">
+        <div class="sticky-header">
           <pa-input
             [icon]="searchQuery ? 'cross' : 'search'"
             [class.can-reset]="!!searchQuery"
@@ -12,7 +12,7 @@
             {{ 'resource.field.search' | translate }}
           </pa-input>
         </div>
-        <div class="scrollable-area with-search-and-footer paragraphs-container">
+        <div class="scrollable-area paragraphs-container">
           <pa-infinite-scroll (reachAnchor)="loadMore()">
             <div
               class="paragraph-container"

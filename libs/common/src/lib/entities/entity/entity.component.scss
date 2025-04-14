@@ -1,0 +1,12 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.entity {
+  align-items: center;
+  border-radius: rhythm(0.5);
+  display: inline-flex;
+  height: rhythm(2.5);
+  padding: rhythm(0.25);
+  &.border {
+    border: 1px solid $color-neutral-lighter;
+  }
+}

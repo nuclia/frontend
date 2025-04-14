@@ -1,6 +1,11 @@
 @use 'apps/dashboard/src/variables' as *;
 @use '../../edit-resource.tokens' as tokens;
 
+pa-tabs {
+  display: block;
+  margin-bottom: rhythm(2);
+}
+
 .paragraph-container {
   p {
     margin-bottom: 0;

@@ -1,0 +1,52 @@
+<div class="main-container">
+  <div class="scrollable-area with-right-panel">
+    @if (noRelations | async) {
+      <p class="body-m">{{ 'resource.relations.no-relations' | translate }}</p>
+    } @else {
+      @for (group of filteredRelations | async | keyvalue; track group.key) {
+        <div class="relations">
+          @if (group.key === 'default') {
+            <div class="title-s">{{ 'resource.relations.default' | translate }}</div>
+          } @else {
+            <div class="title-s">{{ ((taskNames | async) || {})[group.key] || group.key }}</div>
+          }
+          @for (
+            relation of group.value;
+            track (relation.from?.value || '') + (relation.label || '') + relation.to.value
+          ) {
+            <div class="relation">
+              <app-entity [backgroundColor]="colors[relation.from?.group || ''] || '#e6e6e6'">
+                {{ relation.from?.value }}
+              </app-entity>
+              <app-entity [border]="true">{{ relation.label }}</app-entity>
+              <app-entity [backgroundColor]="colors[relation.to.group || ''] || '#e6e6e6'">
+                {{ relation.to.value }}
+              </app-entity>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+  <div class="right-panel-container">
+    @if (relationFilters | async; as filters) {
+      @if (filters.length > 0) {
+        <div class="container-with-border">
+          <div class="title-s">{{ 'resource.relations.filters' | translate }}</div>
+          <pa-checkbox
+            [value]="((selectedFilters | async) || []).includes('default')"
+            (change)="toggleFilter('default')">
+            {{ 'resource.relations.default' | translate }}
+          </pa-checkbox>
+          @for (filter of filters; track filter) {
+            <pa-checkbox
+              [value]="((selectedFilters | async) || []).includes(filter)"
+              (change)="toggleFilter(filter)">
+              {{ ((taskNames | async) || {})[filter] || filter }}
+            </pa-checkbox>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

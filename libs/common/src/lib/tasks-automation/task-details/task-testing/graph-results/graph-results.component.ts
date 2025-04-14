@@ -6,10 +6,11 @@ import { TestResults } from '../task-testing.component';
 import { Relation } from '@nuclia/core';
 import { combineLatest, map, ReplaySubject } from 'rxjs';
 import { DataAugmentationTaskOnGoing } from '../../../tasks-automation.models';
+import { EntityComponent } from 'libs/common/src/lib/entities/entity/entity.component';
 
 @Component({
   selector: 'app-graph-results',
-  imports: [CommonModule, InfoCardComponent, TranslateModule],
+  imports: [CommonModule, EntityComponent, InfoCardComponent, TranslateModule],
   templateUrl: './graph-results.component.html',
   styleUrl: './graph-results.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

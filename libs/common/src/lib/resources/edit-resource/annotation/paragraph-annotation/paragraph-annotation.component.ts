@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { combineLatest, forkJoin, map, Observable, switchMap, take } from 'rxjs';
 import { Search } from '@nuclia/core';
 import { EntityGroup, ParagraphWithTextAndAnnotations } from '../../edit-resource.helpers';
-import { takeUntil } from 'rxjs/operators';
+import { shareReplay, takeUntil } from 'rxjs/operators';
 import { ParagraphAnnotationService } from './paragraph-annotation.service';
 import { SelectFirstFieldDirective } from '../../select-first-field/select-first-field.directive';
 
@@ -17,15 +17,17 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
   hasParagraph: Observable<boolean> = this.annotationService.hasParagraph;
   paragraphLoaded: Observable<boolean> = this.annotationService.paragraphLoaded;
 
-  entityFamilies: Observable<EntityGroup[]> = this.editResource
-    .loadResourceEntities()
-    .pipe(map((families) => families.filter((family) => family.entities.length > 0)));
+  entityFamilies: Observable<EntityGroup[]> = this.editResource.loadResourceEntities().pipe(
+    map((families) => families.filter((family) => family.entities.length > 0)),
+    shareReplay(1),
+  );
   selectedFamily: Observable<EntityGroup | null> = this.annotationService.selectedFamily;
 
   previousQuery?: string;
   searchQuery = '';
   hasMoreResults = false;
   extendedResults = false;
+  selectedTab: 'ners' | 'relations' = 'ners';
 
   constructor(
     private annotationService: ParagraphAnnotationService,
