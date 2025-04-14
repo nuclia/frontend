@@ -1266,7 +1266,7 @@
 	"search.configuration.result-display.display-metadata.origin-contributors-list": "Colaboradores",
 	"search.configuration.result-display.display-metadata.origin-created-date": "Fecha de creación",
 	"search.configuration.result-display.display-metadata.origin-tags-list": "Etiquetas",
-	"search.configuration.result-display.display-metadata.others-help": "Los metadatos pueden ser de los siguientes tipos: 'origin', 'field', o 'extra'. Su tipo puede ser 'string', 'date', o 'list'. Utilice la siguiente sintaxis: \"kind:path:type\", por ejemplo: \"origin:file.md5:string\". Un valor por línea.",
+	"search.configuration.result-display.display-metadata.others-help": "Los metadatos pueden ser de los siguientes tipos: 'origin', 'field', o 'extra'. Su tipo puede ser 'string', 'date', o 'list'. Utilice la siguiente sintaxis: \"kind:path:type\", por ejemplo: \"field:file.md5:string\". Un valor por línea.",
 	"search.configuration.result-display.display-metadata.others-label": "Otros",
 	"search.configuration.result-display.display-metadata.toggle-description": "Los metadatos se muestran debajo del título de cada recurso.",
 	"search.configuration.result-display.display-metadata.toggle-label": "Mostrar metadatos",

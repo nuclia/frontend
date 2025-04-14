@@ -1266,7 +1266,7 @@
 	"search.configuration.result-display.display-metadata.origin-contributors-list": "Contributeurs",
 	"search.configuration.result-display.display-metadata.origin-created-date": "Date de création",
 	"search.configuration.result-display.display-metadata.origin-tags-list": "Mots clés",
-	"search.configuration.result-display.display-metadata.others-help": "Les métadonnées peuvent être de type 'origin', 'field', or 'extra'. Leur type peut être 'string', 'date', ou 'list'. Utilisez la syntaxe suivante : \"kind:path:type\", exemple: \"origin:file.md5:string\". Une valeur par ligne.",
+	"search.configuration.result-display.display-metadata.others-help": "Les métadonnées peuvent être de type 'origin', 'field', or 'extra'. Leur type peut être 'string', 'date', ou 'list'. Utilisez la syntaxe suivante : \"kind:path:type\", exemple: \"field:file.md5:string\". Une valeur par ligne.",
 	"search.configuration.result-display.display-metadata.others-label": "Autres",
 	"search.configuration.result-display.display-metadata.toggle-description": "Les métadonnées sont affichées sous le titre de chaque ressource.",
 	"search.configuration.result-display.display-metadata.toggle-label": "Afficher les métadonnées",
