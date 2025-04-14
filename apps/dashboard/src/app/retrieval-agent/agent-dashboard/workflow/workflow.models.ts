@@ -1,5 +1,11 @@
 import { ComponentRef } from '@angular/core';
-import { NodeDirective } from './basic-elements';
+import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
+
+export interface WorkflowRoot {
+  preprocess: ConnectableEntryComponent;
+  context: ConnectableEntryComponent;
+  postprocess: ConnectableEntryComponent;
+}
 
 export type NodeType =
   | 'rephrase'

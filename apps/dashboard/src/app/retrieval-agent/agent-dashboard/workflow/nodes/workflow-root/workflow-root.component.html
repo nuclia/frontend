@@ -1,15 +1,21 @@
 <app-node-box
   agent
   (outputClick)="onOutputClick($event)">
-  <app-connectable-entry type="preprocess">
+  <app-connectable-entry
+    #preprocess
+    type="preprocess">
     {{ 'retrieval-agents.workflow.node-types.root.preprocess' | translate }}
   </app-connectable-entry>
   <app-arrow-down></app-arrow-down>
-  <app-connectable-entry type="context">
-    {{ 'retrieval-agents.workflow.node-types.root.retrieval-context' | translate }}
+  <app-connectable-entry
+    #context
+    type="context">
+    {{ 'retrieval-agents.workflow.node-types.root.context' | translate }}
   </app-connectable-entry>
   <app-arrow-down></app-arrow-down>
-  <app-connectable-entry type="postprocess">
+  <app-connectable-entry
+    #postprocess
+    type="postprocess">
     {{ 'retrieval-agents.workflow.node-types.root.postprocess' | translate }}
   </app-connectable-entry>
 </app-node-box>

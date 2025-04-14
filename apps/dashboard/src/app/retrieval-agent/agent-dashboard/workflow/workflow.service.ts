@@ -39,7 +39,15 @@ import {
   SummarizeNodeComponent,
   ValidationNodeComponent,
 } from './nodes';
-import { AgentWorkflow, Node, NODE_SELECTOR_ICONS, NODES_BY_ENTRY_TYPE, NodeType } from './workflow.models';
+import {
+  AgentWorkflow,
+  EntryType,
+  Node,
+  NODE_SELECTOR_ICONS,
+  NODES_BY_ENTRY_TYPE,
+  NodeType,
+  WorkflowRoot,
+} from './workflow.models';
 
 const COLUMN_CLASS = 'workflow-col';
 const SLIDE_DURATION = 800;
@@ -61,13 +69,14 @@ export class WorkflowService {
     [id: string]: Node;
   } = {};
 
+  private _workflowRoot?: WorkflowRoot;
   private _selectedNode = '';
   private _currentOrigin?: ConnectableEntryComponent;
   private _columnContainer?: ElementRef;
   private _sideBarTitle = signal('');
   private _sideBarDescription = signal('');
   private _sideBarOpen = signal(false);
-  private _activeSideBar = signal<'' | 'drivers' | 'rules'>('');
+  private _activeSideBar = signal<'' | 'drivers' | 'rules' | 'add'>('');
   // TODO
   private _agentWorkflow = signal<AgentWorkflow>({
     preprocess: [],
@@ -75,6 +84,12 @@ export class WorkflowService {
     postprocess: [],
   });
 
+  set workflowRoot(root: WorkflowRoot) {
+    this._workflowRoot = root;
+  }
+  get workflowRoot(): WorkflowRoot | undefined {
+    return this._workflowRoot;
+  }
   set selectedNode(nodeId: string) {
     this._selectedNode = nodeId;
   }
@@ -102,6 +117,29 @@ export class WorkflowService {
   activeSideBar = computed(() => this._activeSideBar());
 
   /**
+   * Trigger add node from the toolbar: open the sidebar with the list of possible nodes for each root entry.
+   * Selecting a node will add it directly to corresponding root entry.
+   */
+  triggerAddNode() {
+    if (!this.workflowRoot) {
+      throw new Error('Workflow root not initialized');
+    }
+    const root = this.workflowRoot;
+    this.resetState();
+    this._activeSideBar.set('add');
+    const container: HTMLElement = this.openSidebarWithTitle(`retrieval-agents.workflow.sidebar.node-creation.toolbar`);
+    container.classList.add('no-form');
+    const sections: EntryType[] = ['preprocess', 'context', 'postprocess'];
+    sections.forEach((section) => {
+      const title: HTMLElement = this.renderer.createElement('div');
+      title.classList.add('section-title');
+      title.textContent = this.translate.instant(`retrieval-agents.workflow.node-types.root.${section}`);
+      container.appendChild(title);
+      this.displayPossibleNodes(section, container, root[section], 1);
+    });
+  }
+
+  /**
    * Trigger node creation by opening the sidebar containing the possible node types for the connectable entry of origin.
    * @param origin Connectable entry to be linked to the newly created node
    * @param columnIndex Index of the column in which the node should be added
@@ -118,8 +156,24 @@ export class WorkflowService {
       `retrieval-agents.workflow.sidebar.node-creation.${originType}`,
     );
     container.classList.add('no-form');
+    this.displayPossibleNodes(originType, container, origin, columnIndex);
+  }
+
+  /**
+   * Display the list of possible nodes for an origin type
+   * @param originType Entry type of origin: 'preprocess' | 'context' | 'postprocess'
+   * @param container sidebar container
+   * @param origin Connectable entry to be linked to the newly created node when selecting one of the listed nodes
+   * @param columnIndex Index of the column in which the node should be added
+   */
+  private displayPossibleNodes(
+    originType: EntryType,
+    container: HTMLElement,
+    origin: ConnectableEntryComponent,
+    columnIndex: number,
+  ) {
     const possibleNodes = NODES_BY_ENTRY_TYPE[originType] || [];
-    possibleNodes.forEach((nodeType) => {
+    possibleNodes.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       selectorRef.setInput(
         'nodeTitle',
@@ -136,6 +190,10 @@ export class WorkflowService {
       selectorRef.instance.select.subscribe(() => {
         this.addNode(origin, columnIndex, nodeType);
       });
+
+      if (index === possibleNodes.length - 1) {
+        selectorRef.location.nativeElement.classList.add('last-of-section');
+      }
     });
   }
 
@@ -187,7 +245,6 @@ export class WorkflowService {
     this._activeSideBar.set(content);
     this._sideBarTitle.set(this.translate.instant(`retrieval-agents.workflow.sidebar.${content}.title`));
     this._sideBarDescription.set(this.translate.instant(`retrieval-agents.workflow.sidebar.${content}.description`));
-    // TODO components for those forms
     this._sideBarOpen.set(true);
   }
 

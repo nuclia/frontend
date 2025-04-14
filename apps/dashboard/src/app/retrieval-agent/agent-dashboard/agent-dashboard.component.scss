@@ -85,6 +85,15 @@
         padding-bottom: rhythm(2);
         padding-top: rhythm(2);
       }
+
+      > .section-title {
+        @include title-s();
+        color: $color-neutral-regular;
+        margin-bottom: calc(#{rhythm(1)} * -1);
+      }
+      .last-of-section {
+        margin-bottom: rhythm(1.5);
+      }
     }
   }
 }

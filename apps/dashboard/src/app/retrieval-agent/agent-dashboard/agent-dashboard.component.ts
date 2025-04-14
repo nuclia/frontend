@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { LinkService, WorkflowRootComponent, WorkflowService } from './workflow';
+import { LinkService, WorkflowRoot, WorkflowRootComponent, WorkflowService } from './workflow';
 import { ConnectableEntryComponent } from './workflow/basic-elements';
 
 @Component({
@@ -45,6 +45,11 @@ export class AgentDashboardComponent implements AfterViewInit {
     }
   }
 
+  setRoot($event: WorkflowRoot) {
+    console.log('set root', $event);
+    this.workflowService.workflowRoot = $event;
+  }
+
   openDrivers() {
     this.workflowService.openSidebar('drivers');
   }
@@ -52,7 +57,11 @@ export class AgentDashboardComponent implements AfterViewInit {
     this.workflowService.openSidebar('rules');
   }
 
-  addNode(data: { entry: ConnectableEntryComponent; targetColumn: number }) {
+  addNode() {
+    this.workflowService.triggerAddNode();
+  }
+
+  addNodeFromEntry(data: { entry: ConnectableEntryComponent; targetColumn: number }) {
     this.workflowService.triggerNodeCreation(data.entry, data.targetColumn);
   }
 
