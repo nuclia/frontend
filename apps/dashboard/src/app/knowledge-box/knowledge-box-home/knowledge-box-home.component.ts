@@ -87,6 +87,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     }),
   );
   canUpgrade = this.features.canUpgrade;
+  hasUserSurvey = this.features.unstable.userSurvey;
 
   selectedResourcesTab: 'processed' | 'pending' = 'processed';
   latestProcessedResources: Observable<IResource[]> = this.currentKb.pipe(
