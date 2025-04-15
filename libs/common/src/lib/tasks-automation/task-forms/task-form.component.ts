@@ -49,6 +49,8 @@ import { UserKeysComponent, UserKeysForm } from '../../ai-models';
 import { DataAugmentationTaskOnGoing, getOperationFromTaskName } from '../tasks-automation.models';
 import { RouterModule } from '@angular/router';
 
+const DEFAULT_CHEAP_LLM = 'gemini-1-5-flash';
+
 export interface TaskFormCommonConfig {
   name: string;
   filter: {
@@ -141,7 +143,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       apply_to_agent_generated_fields: new FormControl<boolean>(false),
     }),
     llm: new FormGroup({
-      model: new FormControl<string>('gemini-1-5-flash', { nonNullable: true, validators: [Validators.required] }),
+      model: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     }),
     webhook: new FormGroup({
       url: new FormControl<string>('', { nonNullable: true }),
@@ -220,6 +222,12 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       )
       .subscribe((schema) => {
         this.learningConfigurations = schema;
+        const hasDefaultLLM = (schema?.['generative_model']?.options || []).some(
+          (option) => option.value === DEFAULT_CHEAP_LLM,
+        );
+        this.form.controls.llm.controls.model.setValue(
+          hasDefaultLLM ? DEFAULT_CHEAP_LLM : schema?.['generative_model']?.default,
+        );
         this.availableLLMs = (removeDeprecatedModels(schema)?.['generative_model'].options || [])
           .filter((option) => !this.unsupportedLLMs.includes(option.value))
           .map((option) => new OptionModel({ id: option.value, value: option.value, label: option.name }));
