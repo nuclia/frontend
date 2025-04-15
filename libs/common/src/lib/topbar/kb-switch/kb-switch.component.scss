@@ -2,28 +2,15 @@
 
 :host {
   display: block;
-
-  pa-button.kb-switch ::ng-deep {
-    .pa-button {
-      width: rhythm(24);
-
-      .pa-button-wrapper {
-        flex: 1 0 auto;
-      }
-    }
-    .pa-button-label {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-
-      pa-icon {
-        margin-left: rhythm(2);
-      }
-    }
-  }
+  min-width: rhythm(24);
 
   pa-option.demo-kb {
     color: $color-neutral-regular;
+  }
+
+  .title-wrapper {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
   }
 }

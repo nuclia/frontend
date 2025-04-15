@@ -46,7 +46,6 @@ export class AgentDashboardComponent implements AfterViewInit {
   }
 
   setRoot($event: WorkflowRoot) {
-    console.log('set root', $event);
     this.workflowService.workflowRoot = $event;
   }
 

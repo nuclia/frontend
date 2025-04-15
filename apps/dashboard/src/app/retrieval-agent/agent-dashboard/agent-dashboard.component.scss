@@ -5,6 +5,7 @@
   .agent-dashboard-toolbar {
     background-color: $color-light-stronger;
     border-bottom: 1px solid $color-neutral-light;
+    border-left: 1px solid $color-neutral-light;
     display: flex;
     justify-content: space-between;
     height: dashboard.$height-toolbar;

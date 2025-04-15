@@ -1,6 +1,6 @@
+import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { inject } from '@angular/core';
 import { filter, map, of, switchMap, take } from 'rxjs';
 
 export const setKbGuard = (route: ActivatedRouteSnapshot) => {

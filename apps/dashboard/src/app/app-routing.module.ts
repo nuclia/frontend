@@ -3,6 +3,7 @@ import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
   AiModelsComponent,
+  aragOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
@@ -24,21 +25,20 @@ import {
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
 import { FarewellComponent } from './farewell/farewell.component';
-import { RedirectComponent } from './redirect/redirect.component';
+import { FeedbackComponent } from './farewell/feedback.component';
 import {
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
   KnowledgeBoxKeysComponent,
   KnowledgeBoxUsersComponent,
 } from './knowledge-box';
-import { inviteGuard } from './onboarding/invite/invite.guard';
-import { InviteComponent } from './onboarding/invite/invite.component';
-import { FeedbackComponent } from './farewell/feedback.component';
 import { AwsOnboardingComponent } from './onboarding/aws-onboarding/aws-onboarding.component';
 import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
+import { InviteComponent } from './onboarding/invite/invite.component';
+import { inviteGuard } from './onboarding/invite/invite.guard';
+import { RedirectComponent } from './redirect/redirect.component';
+import { AgentDashboardComponent, RetrievalAgentComponent, SessionsListComponent } from './retrieval-agent';
 import { TestPageComponent } from './test-page/test-page.component';
-import { RetrievalAgentComponent } from './retrieval-agent/retrieval-agent.component';
-import { AgentDashboardComponent } from './retrieval-agent/agent-dashboard/agent-dashboard.component';
 
 const routes: Routes = [
   {
@@ -167,13 +167,50 @@ const routes: Routes = [
             ],
           },
           {
-            path: ':zone/agent/:agent',
+            path: ':zone/arag/:agent',
             component: RetrievalAgentComponent,
             canActivate: [setAgentGuard],
             children: [
               {
                 path: '',
                 component: AgentDashboardComponent,
+              },
+              {
+                path: 'sessions',
+                component: SessionsListComponent,
+              },
+              {
+                path: 'search',
+                component: SearchPageComponent,
+              },
+              {
+                path: 'widgets',
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/search-widget/widgets/widgets.routes').then(
+                    (m) => m.WIDGETS_ROUTES,
+                  ),
+              },
+              {
+                path: 'manage',
+                component: KnowledgeBoxSettingsComponent,
+              },
+              {
+                path: 'ai-models',
+                component: AiModelsComponent,
+              },
+              {
+                path: 'users',
+                component: KnowledgeBoxUsersComponent,
+                canActivate: [aragOwnerGuard],
+              },
+              {
+                path: 'keys',
+                component: KnowledgeBoxKeysComponent,
+                canActivate: [aragOwnerGuard],
+              },
+              {
+                path: 'activity',
+                loadChildren: () => import('./activity/activity.module').then((m) => m.ActivityModule),
               },
             ],
           },

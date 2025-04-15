@@ -8,6 +8,7 @@ import {
   AccountTypes,
   EventList,
   IKnowledgeBoxItem,
+  IRetrievalAgentItem,
   IStandaloneKb,
   KbIndex,
   KBRoles,
@@ -20,6 +21,7 @@ import {
   ProcessingPullResponse,
   ProcessingPushResponse,
   QueryInfo,
+  RetrievalAgent,
   UsageAggregation,
   UsagePoint,
   Welcome,
@@ -140,6 +142,13 @@ export interface IDb {
     knowledgeBox: KnowledgeBoxCreation,
     zone?: string,
   ): Observable<WritableKnowledgeBox>;
+
+  getRetrievalAgents(): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgents(accountSlug: string, accountId: string): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgentsForZone(accountId: string, zone: string): Observable<IRetrievalAgentItem[]>;
+  getRetrievalAgent(): Observable<RetrievalAgent>;
+  getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<RetrievalAgent>;
+
   getUsage(
     accountId: string,
     from: string,

@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { filter, Observable, of, Subject } from 'rxjs';
-import { catchError, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { SDKService, STFUtils } from '@flaps/core';
-import { WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { WritableKnowledgeBox } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { Sluggable } from '../validators';
+import { filter, merge, Observable, of, Subject } from 'rxjs';
+import { catchError, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { StandaloneService } from '../services';
+import { Sluggable } from '../validators';
 
 @Component({
   templateUrl: './knowledge-box-settings.component.html',
@@ -60,10 +60,12 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
-      this.kb = kb;
-      this.resetKbForm();
-    });
+    merge(this.sdk.currentKb, this.sdk.currentArag)
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe((kb) => {
+        this.kb = kb;
+        this.resetKbForm();
+      });
   }
 
   ngOnDestroy() {

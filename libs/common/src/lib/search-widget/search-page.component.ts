@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,16 +8,15 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
-import { SearchConfigurationComponent } from './search-configuration';
-import { SearchWidgetService } from './search-widget.service';
-import { SisModalService } from '@nuclia/sistema';
-import { CreateWidgetDialogComponent } from './widgets';
-import { filter, map, switchMap } from 'rxjs';
-import { DEFAULT_WIDGET_CONFIG, SearchConfiguration } from './search-widget.models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { SisModalService } from '@nuclia/sistema';
+import { filter, map, switchMap } from 'rxjs';
+import { SearchConfigurationComponent } from './search-configuration';
+import { DEFAULT_WIDGET_CONFIG, SearchConfiguration } from './search-widget.models';
+import { SearchWidgetService } from './search-widget.service';
+import { CreateWidgetDialogComponent } from './widgets';
 
 @Component({
   selector: 'stf-search-page',

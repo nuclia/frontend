@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-declaration-merging */
 import {
   catchError,
   defer,
-  from,
   map,
   Observable,
   of,
@@ -13,6 +13,39 @@ import {
   throwError,
   timer,
 } from 'rxjs';
+import type { IErrorResponse, INuclia } from '../../models';
+import { ABORT_STREAMING_REASON } from '../../rest';
+import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
+import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
+import {
+  ExtractedDataTypes,
+  ICreateResource,
+  IResource,
+  LinkField,
+  Origin,
+  Resource,
+  retry429Config,
+  UserMetadata,
+} from '../resource';
+import {
+  ask,
+  catalog,
+  CatalogOptions,
+  ChatOptions,
+  find,
+  predictAnswer,
+  search,
+  Search,
+  SearchOptions,
+  suggest,
+} from '../search';
+import { Agentic } from '../search/agentic';
+import { Ask, PredictAnswerOptions } from '../search/ask.models';
+import { TaskManager } from '../task';
+import { Training } from '../training';
+import type { UploadResponse } from '../upload';
+import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
+import { ActivityMonitor } from './activity';
 import {
   Counters,
   Entities,
@@ -21,7 +54,7 @@ import {
   ExtractStrategies,
   FullKbUser,
   IKnowledgeBox,
-  IKnowledgeBoxCreation,
+  IKnowledgeBoxBase,
   IKnowledgeBoxStandalone,
   InviteKbData,
   IWritableKnowledgeBox,
@@ -42,39 +75,6 @@ import {
   Synonyms,
   SynonymsPayload,
 } from './kb.models';
-import type { IErrorResponse, INuclia } from '../../models';
-import {
-  ExtractedDataTypes,
-  ICreateResource,
-  IResource,
-  LinkField,
-  Origin,
-  Resource,
-  retry429Config,
-  UserMetadata,
-} from '../resource';
-import type { UploadResponse } from '../upload';
-import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import {
-  ask,
-  catalog,
-  CatalogOptions,
-  ChatOptions,
-  find,
-  predictAnswer,
-  search,
-  Search,
-  SearchOptions,
-  suggest,
-} from '../search';
-import { Training } from '../training';
-import { LearningConfigurations, normalizeSchemaProperty, ResourceProperties } from '../db.models';
-import { getAllNotifications, NotificationMessage, NotificationOperation, NotificationType } from '../notifications';
-import { ABORT_STREAMING_REASON } from '../../rest';
-import { Ask, PredictAnswerOptions } from '../search/ask.models';
-import { Agentic } from '../search/agentic';
-import { ActivityMonitor } from './activity';
-import { TaskManager } from '../task';
 
 const TEMP_TOKEN_DURATION = 5 * 60 * 1000; // 5 min
 
@@ -137,7 +137,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     return `${this.nuclia.regionalBackend}/v1/kb/${this.id}`;
   }
 
-  constructor(nuclia: INuclia, account: string, data: IKnowledgeBoxCreation | IKnowledgeBoxStandalone) {
+  constructor(nuclia: INuclia, account: string, data: IKnowledgeBoxBase | IKnowledgeBoxStandalone) {
     this.nuclia = nuclia;
     this.accountId = account;
     if ('uuid' in data) {

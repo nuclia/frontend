@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -11,12 +12,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ButtonMiniComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
-import { GenerativeAnswerFormComponent } from './generative-answer-form';
-import { ResultsDisplayFormComponent } from './results-display-form';
-import { SearchBoxFormComponent } from './search-box-form';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { FeaturesService, SDKService } from '@flaps/core';
 import {
   AccordionBodyDirective,
   AccordionComponent,
@@ -30,11 +28,12 @@ import {
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { RouterLink } from '@angular/router';
-import { FeaturesService, SDKService } from '@flaps/core';
-import { SearchWidgetService } from '../search-widget.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LearningConfigurations } from '@nuclia/core';
+import { ButtonMiniComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
+import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 import {
   GenerativeAnswerConfig,
   isSameConfigurations,
@@ -42,11 +41,12 @@ import {
   SearchBoxConfig,
   SearchConfiguration,
 } from '../search-widget.models';
-import { takeUntil } from 'rxjs/operators';
-import { LearningConfigurations } from '@nuclia/core';
+import { SearchWidgetService } from '../search-widget.service';
+import { GenerativeAnswerFormComponent } from './generative-answer-form';
+import { ResultsDisplayFormComponent } from './results-display-form';
 import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
+import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
-import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 
 const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
 

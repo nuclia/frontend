@@ -32,6 +32,8 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { UsersManageModule } from '../knowledge-box';
+import { AccountAragComponent } from './account-arag/account-arag.component';
+import { AragListComponent } from './account-arag/arag-list/arag-list.component';
 import { AccountHomeComponent } from './account-home/account-home.component';
 import { AccountKbsComponent } from './account-kbs/account-kbs.component';
 import { KbListComponent } from './account-kbs/kb-list/kb-list.component';
@@ -41,8 +43,6 @@ import { AccountManageComponent } from './account-manage/account-manage.componen
 import { AccountNUAComponent } from './account-nua/account-nua.component';
 import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
-import { AccountRasComponent } from './account-ras/account-ras.component';
-import { RaListComponent } from './account-ras/ra-list/ra-list.component';
 import { AccountStatusComponent } from './account-status/account-status.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
 import { BillingComponent } from './billing/billing.component';
@@ -97,10 +97,10 @@ const routes: Routes = [
     ],
   },
   {
-    path: 'ras',
-    component: AccountRasComponent,
+    path: 'arag',
+    component: AccountAragComponent,
     canActivate: [accountOwnerGuard, agentFeatureEnabledGuard],
-    children: [{ path: '', component: RaListComponent }],
+    children: [{ path: '', component: AragListComponent }],
   },
   {
     path: 'users',
@@ -180,7 +180,7 @@ const routes: Routes = [
     AccountHomeComponent,
     AccountManageComponent,
     AccountKbsComponent,
-    AccountRasComponent,
+    AccountAragComponent,
     UsersDialogComponent,
     AccountNUAComponent,
     ClientDialogComponent,

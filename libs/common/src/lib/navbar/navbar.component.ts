@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
-import { StandaloneService } from '../services';
+import { NavigationEnd, Router } from '@angular/router';
 import {
   BackendConfigurationService,
   BillingService,
@@ -8,7 +7,8 @@ import {
   NavigationService,
   SDKService,
 } from '@flaps/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { combineLatest, filter, map, merge, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { StandaloneService } from '../services';
 
 @Component({
   selector: 'app-navbar',
@@ -24,6 +24,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
     }),
   );
+  inArag: Observable<boolean> = merge(
+    of(this.navigationService.inAragSpace(location.pathname)),
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => this.navigationService.inAragSpace((event as NavigationEnd).url)),
+      takeUntil(this.unsubscribeAll),
+    ),
+  );
   inAccount: Observable<boolean> = merge(
     of(this.navigationService.inAccountManagement(location.pathname)),
     this.router.events.pipe(
@@ -32,13 +40,26 @@ export class NavbarComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribeAll),
     ),
   );
-  inSettings: Observable<boolean> = this.properKbId.pipe(
+  inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
         of(this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl)),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
           map((event) => this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl)),
+          takeUntil(this.unsubscribeAll),
+        ),
+      ),
+    ),
+  );
+  inAragSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
+    map(([account, agent]) => this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
+    switchMap((raUrl) =>
+      merge(
+        of(this.navigationService.inAragSettings(location.pathname, raUrl)),
+        this.router.events.pipe(
+          filter((event) => event instanceof NavigationEnd),
+          map((event) => this.navigationService.inAragSettings((event as NavigationEnd).url, raUrl)),
           takeUntil(this.unsubscribeAll),
         ),
       ),
@@ -55,6 +76,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   showSettings = false;
   kbUrl: string = '';
+  aragUrl: string = '';
 
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
@@ -62,6 +84,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   isKbAdmin = this.features.isKbAdmin;
+  isAragAdmin = this.features.isAragAdmin;
   isTrial = this.features.isTrial;
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
@@ -97,7 +120,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.kbUrl = this.navigationService.getKbUrl(account.slug, kbSlug);
         this.cdr.markForCheck();
       });
-    this.inSettings
+
+    combineLatest([this.sdk.currentAccount, this.sdk.currentArag])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(
+        ([account, agent]) => (this.aragUrl = this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
+      );
+    this.inKbSettings
+      .pipe(
+        filter((inSettings) => inSettings),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((inSettings) => {
+        this.showSettings = inSettings;
+        this.cdr.markForCheck();
+      });
+    this.inAragSettings
       .pipe(
         filter((inSettings) => inSettings),
         takeUntil(this.unsubscribeAll),
