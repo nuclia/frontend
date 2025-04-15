@@ -1277,6 +1277,8 @@
 	"search.configuration.result-display.display-results.toggle-label": "Display results",
 	"search.configuration.result-display.display-thumbnails.toggle-description": "Thumbnails are a preview of the resource.",
 	"search.configuration.result-display.display-thumbnails.toggle-label": "Display thumbnails",
+	"search.configuration.result-display.hide-answer.toggle-description": "Hide the generated answer. Only useful when the user cares about the citations but not about the answer itself.",
+	"search.configuration.result-display.hide-answer.toggle-label": "Hide answer",
 	"search.configuration.result-display.json-schema.info": "For maximal accuracy, please include a description for each field of the schema.",
 	"search.configuration.result-display.json-schema.textarea-label": "JSON schema",
 	"search.configuration.result-display.json-schema.toggle-description": "You provide a JSON schema describing the structure of the answer you’ll get.",

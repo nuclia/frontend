@@ -1277,6 +1277,8 @@
 	"search.configuration.result-display.display-results.toggle-label": "Mostrar resultados",
 	"search.configuration.result-display.display-thumbnails.toggle-description": "Las miniaturas son una vista previa del recurso.",
 	"search.configuration.result-display.display-thumbnails.toggle-label": "Mostrar miniaturas",
+	"search.configuration.result-display.hide-answer.toggle-description": "Ocultar la respuesta generada. Solo es útil cuando al usuario le interesan las citas, pero no la respuesta en sí.",
+	"search.configuration.result-display.hide-answer.toggle-label": "Ocultar respuesta",
 	"search.configuration.result-display.json-schema.info": "Para mayor precisión, incluya una descripción de cada campo del esquema.",
 	"search.configuration.result-display.json-schema.textarea-label": "Esquema JSON",
 	"search.configuration.result-display.json-schema.toggle-description": "Usted proporciona un esquema JSON que describe la estructura de la respuesta que obtendrá.",

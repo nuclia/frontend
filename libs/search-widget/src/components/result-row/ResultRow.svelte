@@ -24,6 +24,7 @@
     feedbackOnResults,
     isAnswerEnabled,
     collapseTextBlocks,
+    hideAnswer,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
@@ -142,7 +143,9 @@
       <DocTypeIndicator type={result.resultType} />
     </div>
   </div>
-  <div class="result-container">
+  <div
+    class="result-container"
+    class:no-citations={$hideAnswer}>
     <div class="result-title-container">
       {#if $collapseTextBlocks}
         <IconButton
