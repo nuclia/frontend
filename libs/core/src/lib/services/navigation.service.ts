@@ -43,7 +43,7 @@ export class NavigationService {
   inAccountManagement(path: string): boolean {
     return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
   }
-  inAgentSpace(path: string): boolean {
+  inAragSpace(path: string): boolean {
     return path.match(IN_ARAG) !== null;
   }
   inKbSettings(path: string, kbUrl: string): boolean {

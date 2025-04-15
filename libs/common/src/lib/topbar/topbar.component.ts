@@ -33,7 +33,6 @@ export class TopbarComponent {
 
   userInfo = this.userService.userInfo;
   account = this.sdk.currentAccount;
-  kb = this.sdk.currentKb;
   isStageOrDev = this.featureFlagService.isStageOrDev;
   private _account = this.sdk.currentAccount.pipe(shareReplay());
   accountType = this._account.pipe(map((account) => account.type));

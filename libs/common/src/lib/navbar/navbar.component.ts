@@ -24,11 +24,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return this.navigationService.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id);
     }),
   );
-  inAgent: Observable<boolean> = merge(
-    of(this.navigationService.inAgentSpace(location.pathname)),
+  inArag: Observable<boolean> = merge(
+    of(this.navigationService.inAragSpace(location.pathname)),
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
-      map((event) => this.navigationService.inAgentSpace((event as NavigationEnd).url)),
+      map((event) => this.navigationService.inAragSpace((event as NavigationEnd).url)),
       takeUntil(this.unsubscribeAll),
     ),
   );
@@ -52,7 +52,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       ),
     ),
   );
-  inAgentSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
+  inAragSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
     map(([account, agent]) => this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
     switchMap((raUrl) =>
       merge(
@@ -135,7 +135,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.showSettings = inSettings;
         this.cdr.markForCheck();
       });
-    this.inAgentSettings
+    this.inAragSettings
       .pipe(
         filter((inSettings) => inSettings),
         takeUntil(this.unsubscribeAll),

@@ -95,7 +95,7 @@ export class SDKService {
 
   constructor(private config: BackendConfigurationService) {
     this._triggerRefreshKbs.subscribe((refreshCurrentKb) => this._refreshKbList(refreshCurrentKb));
-    this._triggerRefreshArags.subscribe((refreshCurrentRa) => this._refreshRaList(refreshCurrentRa));
+    this._triggerRefreshArags.subscribe((refreshCurrentRa) => this._refreshAragList(refreshCurrentRa));
     this.currentAccount.subscribe(() => {
       this.refreshKbList();
       this.refreshRaList();
@@ -135,6 +135,7 @@ export class SDKService {
       )
       .subscribe((arag) => {
         this._currentArag.next(arag);
+        this._currentKB.next(arag);
       });
 
     this.countersRefreshSubscriptions();
@@ -144,6 +145,7 @@ export class SDKService {
   cleanAccount() {
     this.account = null;
     this.kb = null;
+    this.arag = null;
   }
 
   setCurrentAccount(accountSlug: string): Observable<Account> {
@@ -278,8 +280,8 @@ export class SDKService {
     this._triggerRefreshKbs.next(refreshCurrentKb);
   }
 
-  refreshRaList(refreshCurrentRa = false) {
-    this._triggerRefreshArags.next(refreshCurrentRa);
+  refreshRaList(refreshCurrentArag = false) {
+    this._triggerRefreshArags.next(refreshCurrentArag);
   }
 
   private _refreshKbList(refreshCurrentKb = false) {
@@ -314,7 +316,7 @@ export class SDKService {
     }
   }
 
-  private _refreshRaList(refreshCurrentRa = false) {
+  private _refreshAragList(refreshCurrentRa = false) {
     this.currentAccount
       .pipe(
         take(1),
@@ -329,7 +331,7 @@ export class SDKService {
       });
 
     if (refreshCurrentRa) {
-      this.refreshCurrentRa().subscribe();
+      this.refreshCurrentArag().subscribe();
     }
   }
 
@@ -344,7 +346,7 @@ export class SDKService {
     );
   }
 
-  refreshCurrentRa() {
+  refreshCurrentArag() {
     return forkJoin([this.currentAccount.pipe(take(1)), this.currentArag.pipe(take(1))]).pipe(
       switchMap(([account, arag]) =>
         this.nuclia.db.getRetrievalAgent(account.id, arag.id, arag.zone).pipe(

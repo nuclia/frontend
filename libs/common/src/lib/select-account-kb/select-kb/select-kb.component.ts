@@ -19,7 +19,7 @@ export class SelectKbComponent implements OnDestroy {
   standalone = this.selectService.standalone;
 
   kbs: Observable<IKnowledgeBoxItem[] | null> = this.sdk.kbList.pipe(shareReplay());
-  arags: Observable<IRetrievalAgentItem[] | null> = this.sdk.kbList.pipe(shareReplay()); //FIXME this.sdk.aragList.pipe(shareReplay());
+  arags: Observable<IRetrievalAgentItem[] | null> = this.sdk.aragList.pipe(shareReplay());
   hasSeveralAccounts: Observable<boolean> = this.selectService.accounts.pipe(
     map((accounts) => !!accounts && accounts.length > 1),
   );
