@@ -110,6 +110,7 @@ export interface ResultDisplayConfig {
   displayResults: boolean;
   showResultType: 'citations' | 'all-resources';
   displayMetadata: boolean;
+  hideAnswer: boolean;
   metadatas: string[];
   displayThumbnails: boolean;
   showAttachedImages: boolean;
@@ -253,6 +254,7 @@ export const DEFAULT_RESULT_DISPLAY_CONFIG: ResultDisplayConfig = {
   displayResults: false,
   showResultType: 'citations',
   displayMetadata: false,
+  hideAnswer: false,
   metadatas: [],
   displayThumbnails: true,
   showAttachedImages: false,
@@ -332,6 +334,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     citations: config.resultDisplay.displayResults && config.resultDisplay.showResultType === 'citations',
     hideResults: !config.resultDisplay.displayResults || config.resultDisplay.showResultType === 'citations',
     displayMetadata: config.resultDisplay.displayMetadata,
+    hideAnswer: config.resultDisplay.hideAnswer,
     hideThumbnails: !config.resultDisplay.displayThumbnails,
     showAttachedImages: config.resultDisplay.showAttachedImages,
     relations: config.resultDisplay.relations,

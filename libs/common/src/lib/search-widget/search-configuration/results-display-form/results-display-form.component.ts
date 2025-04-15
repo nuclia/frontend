@@ -134,6 +134,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
     jsonSchema: new FormControl<string>('', { nonNullable: true, validators: [JsonValidator()] }),
     customizeThreshold: new FormControl<boolean>(false, { nonNullable: true }),
     citationThreshold: new FormControl<number>(INITIAL_CITATION_THRESHOLD, { nonNullable: true }),
+    hideAnswer: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   isKnowledgeGraphEnabled = this.featuresService.unstable.knowledgeGraph;

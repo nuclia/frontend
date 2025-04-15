@@ -1277,6 +1277,8 @@
 	"search.configuration.result-display.display-results.toggle-label": "Mostra resultats",
 	"search.configuration.result-display.display-thumbnails.toggle-description": "Les miniatures són una vista prèvia del recurs.",
 	"search.configuration.result-display.display-thumbnails.toggle-label": "Mostra miniatures",
+	"search.configuration.result-display.hide-answer.toggle-description": "Amaga la resposta generada. Només útil quan l'usuari es preocupa per les cites però no per la resposta en si.",
+	"search.configuration.result-display.hide-answer.toggle-label": "Amaga la resposta",
 	"search.configuration.result-display.json-schema.info": "Per obtenir la màxima precisió, incloeu una descripció per a cada camp de l’esquema.",
 	"search.configuration.result-display.json-schema.textarea-label": "Esquema JSON",
 	"search.configuration.result-display.json-schema.toggle-description": "Proporcioneu un esquema JSON que descriu l’estructura de la resposta que obtindreu.",

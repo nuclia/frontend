@@ -24,7 +24,7 @@ import { displayedMetadata, searchError, searchOptions, showAttachedImages } fro
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { reset } from './reset';
-import { chatError, disclaimer } from './stores/answers.store';
+import { chatError, disclaimer, hideAnswer } from './stores/answers.store';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.KEYWORD, Search.Features.SEMANTIC];
 const DEFAULT_CHAT_MODE = [Ask.Features.KEYWORD, Ask.Features.SEMANTIC];
@@ -95,6 +95,9 @@ export const initNuclia = (
   }
   if (widgetOptions.not_enough_data_message) {
     NOT_ENOUGH_DATA_MESSAGE = widgetOptions.not_enough_data_message;
+  }
+  if (widgetOptions.features?.hideAnswer) {
+    hideAnswer.set(true);
   }
   CITATIONS = !!widgetOptions.features?.citations;
   HIGHLIGHT = !!widgetOptions.features?.highlight;

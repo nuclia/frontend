@@ -22,6 +22,7 @@
     getNonGenericField,
     getResultType,
     hasNotEnoughData,
+    hideAnswer,
     isCitationsEnabled,
     showAttachedImages,
     type RankedParagraph,
@@ -209,88 +210,101 @@
 <div
   class="sw-answer"
   bind:this={element}>
-  <div
-    class="answer-text"
-    class:error={answer.inError}>
-    <MarkdownRendering {text} />
-  </div>
-  {#if $showAttachedImages && images.length > 0}
-    <div class="images">
-      {#each images as image}
-        <Image path={$imageTemplate.replace(IMAGE_PLACEHOLDER, image)} />
-      {/each}
+  {#if !$hideAnswer}
+    <div
+      class="answer-text"
+      class:error={answer.inError}>
+      <MarkdownRendering {text} />
     </div>
+    {#if $showAttachedImages && images.length > 0}
+      <div class="images">
+        {#each images as image}
+          <Image path={$imageTemplate.replace(IMAGE_PLACEHOLDER, image)} />
+        {/each}
+      </div>
+    {/if}
   {/if}
   {#if !answer.inError}
-    <div class="actions">
-      {#if !$chat[rank]?.answer.incomplete}
-        {#if !$hasNotEnoughData}
-          <div class="copy smaller">
-            <IconButton
-              aspect="basic"
-              icon={copied ? 'check' : 'copy'}
-              size="small"
-              kind="secondary"
-              on:click={() => copyAnswer()} />
-            <Tooltip
-              visible={copied}
-              title={$_('answer.copied')}
-              x="0"
-              y="34" />
-          </div>
-          {#if $feedbackOnAnswer}
-            <div>
-              <Feedback {rank} />
-            </div>
-          {/if}
-          {#if $debug}
-            <div class="smaller">
+    {#if !$hideAnswer}
+      <div class="actions">
+        {#if !$chat[rank]?.answer.incomplete}
+          {#if !$hasNotEnoughData}
+            <div class="copy smaller">
               <IconButton
                 aspect="basic"
-                icon="info"
+                icon={copied ? 'check' : 'copy'}
                 size="small"
                 kind="secondary"
-                on:click={() => (showMetadata = true)} />
-              <AnswerMetadata
-                {answer}
-                bind:show={showMetadata} />
+                on:click={() => copyAnswer()} />
+              <Tooltip
+                visible={copied}
+                title={$_('answer.copied')}
+                x="0"
+                y="34" />
             </div>
+            {#if $feedbackOnAnswer}
+              <div>
+                <Feedback {rank} />
+              </div>
+            {/if}
+            {#if $debug}
+              <div class="smaller">
+                <IconButton
+                  aspect="basic"
+                  icon="info"
+                  size="small"
+                  kind="secondary"
+                  on:click={() => (showMetadata = true)} />
+                <AnswerMetadata
+                  {answer}
+                  bind:show={showMetadata} />
+              </div>
+            {/if}
+            {#if initialAnswer}
+              <Button
+                aspect="basic"
+                size="small"
+                on:click={() => dispatch('openChat')}>
+                <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
+              </Button>
+            {/if}
           {/if}
-          {#if initialAnswer}
+          {#if $debug}
             <Button
               aspect="basic"
               size="small"
-              on:click={() => dispatch('openChat')}>
-              <span class="go-to-chat title-s">{$_('answer.chat-action')}</span>
+              on:click={() => downloadDump()}>
+              <span class="title-s">{$_('answer.download-log')}</span>
             </Button>
           {/if}
         {/if}
-        {#if $debug}
-          <Button
-            aspect="basic"
-            size="small"
-            on:click={() => downloadDump()}>
-            <span class="title-s">{$_('answer.download-log')}</span>
-          </Button>
-        {/if}
-      {/if}
-    </div>
+      </div>
+    {/if}
     {#if $isCitationsEnabled && !$hasNotEnoughData && !$disableRAG}
       <div class="sources-container">
         {#if sources.length > 0}
-          <Expander expanded={$expandedCitations === undefined ? initialAnswer : $expandedCitations}>
-            <div
-              class="title-s"
-              slot="header">
-              {$_('answer.sources')}
-            </div>
+          {#if $hideAnswer}
             <div class="sources-list">
               <Sources
                 {sources}
                 answerRank={rank}
                 selected={selectedCitation} />
             </div>
-          </Expander>
+          {:else}
+            <Expander expanded={$expandedCitations === undefined ? initialAnswer : $expandedCitations}>
+              <div
+                class="title-s"
+                slot="header">
+                {$_('answer.sources')}
+              </div>
+              <div class="sources-list">
+                <Sources
+                  {sources}
+                  answerRank={rank}
+                  selected={selectedCitation} />
+              </div>
+            </Expander>
+          {/if}
         {:else if !answer.incomplete}
           <div class="title-s">{$_('answer.sources')}</div>
           <div class="no-citations">{$_('answer.no-citations')}</div>

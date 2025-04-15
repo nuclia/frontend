@@ -12,6 +12,7 @@ interface AnswerState {
   input: string;
   disclaimer?: string;
   notEnoughData: boolean;
+  hideAnswer: boolean;
 }
 
 const EMPTY_ANSWER = { type: 'answer' as const, text: '', id: '' };
@@ -23,6 +24,7 @@ export const answerState = new SvelteState<AnswerState>({
   isSpeechOn: false,
   input: '',
   notEnoughData: false,
+  hideAnswer: false,
 });
 
 export const chatInput = answerState.writer<string, string>(
@@ -149,4 +151,9 @@ export const disclaimer = answerState.writer<string | undefined, string | undefi
 export const hasNotEnoughData = answerState.writer<boolean, boolean>(
   (state) => state.notEnoughData,
   (state, param) => ({ ...state, notEnoughData: param }),
+);
+
+export const hideAnswer = answerState.writer<boolean, boolean>(
+  (state) => state.hideAnswer,
+  (state, param) => ({ ...state, hideAnswer: param }),
 );

@@ -191,4 +191,17 @@
       </pa-textarea>
     </div>
   </div>
+  <div class="config-form-field">
+    <pa-toggle
+      formControlName="hideAnswer"
+      withBackground
+      spaceBetweenLabelAndToggle>
+      <span class="toggle-label">
+        {{ 'search.configuration.result-display.hide-answer.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.result-display.hide-answer.toggle-description' | translate }}
+    </div>
+  </div>
 </form>

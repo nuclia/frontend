@@ -78,6 +78,9 @@
       background-color: var(--citation-number-background-hover-color);
     }
   }
+  .no-citations .number {
+    display: none;
+  }
   .paragraph-container {
     display: flex;
     flex-direction: column;
