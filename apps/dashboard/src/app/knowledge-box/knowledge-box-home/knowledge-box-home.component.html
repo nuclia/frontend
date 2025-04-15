@@ -448,7 +448,8 @@
     }
   }
 </div>
-
-@if ((searchQueriesCounts | async)?.sinceCreation; as sinceCreation) {
-  <app-knowledge-box-survey [totalSearch]="sinceCreation.search + sinceCreation.chat"></app-knowledge-box-survey>
+@if (hasUserSurvey | async) {
+  @if ((searchQueriesCounts | async)?.sinceCreation; as sinceCreation) {
+    <app-knowledge-box-survey [totalSearch]="sinceCreation.search + sinceCreation.chat"></app-knowledge-box-survey>
+  }
 }

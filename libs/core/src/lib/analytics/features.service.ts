@@ -66,6 +66,7 @@ export class FeaturesService {
     graphSearch: this.featureFlag.isFeatureEnabled('graph-search'),
     extractConfig: this.featureFlag.isFeatureEnabled('extract-config'),
     retrievalAgents: this.featureFlag.isFeatureEnabled('retrieval-agents'),
+    userSurvey: this.featureFlag.isFeatureEnabled('user-survey'),
   };
 
   /**
