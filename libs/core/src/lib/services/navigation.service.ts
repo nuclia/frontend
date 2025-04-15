@@ -67,6 +67,11 @@ export class NavigationService {
       return path.match(new RegExp(pattern)) !== null;
     }
   }
+  inAgentSettings(path: string, agentUrl: string): boolean {
+    const settingsPages = ['ai-models', 'manage', 'activity', 'users', 'keys', 'rag-lab'];
+    const pattern = `${agentUrl}/(${settingsPages.join('|')})`;
+    return path.match(new RegExp(pattern)) !== null;
+  }
   inKbUpload(path: string, kbUrl: string): boolean {
     const pattern = `${kbUrl}/upload`;
     return path.match(new RegExp(pattern)) !== null;

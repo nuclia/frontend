@@ -40,13 +40,26 @@ export class NavbarComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribeAll),
     ),
   );
-  inSettings: Observable<boolean> = this.properKbId.pipe(
+  inKbSettings: Observable<boolean> = this.properKbId.pipe(
     switchMap((kbUrl) =>
       merge(
         of(this.navigationService.inKbSettings(this.standalone ? location.hash : location.pathname, kbUrl)),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
           map((event) => this.navigationService.inKbSettings((event as NavigationEnd).url, kbUrl)),
+          takeUntil(this.unsubscribeAll),
+        ),
+      ),
+    ),
+  );
+  inAgentSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentRa]).pipe(
+    map(([account, agent]) => this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
+    switchMap((raUrl) =>
+      merge(
+        of(this.navigationService.inAgentSettings(location.pathname, raUrl)),
+        this.router.events.pipe(
+          filter((event) => event instanceof NavigationEnd),
+          map((event) => this.navigationService.inAgentSettings((event as NavigationEnd).url, raUrl)),
           takeUntil(this.unsubscribeAll),
         ),
       ),
@@ -71,6 +84,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   isKbAdmin = this.features.isKbAdmin;
+  isRaAdmin = this.features.isRaAdmin;
   isTrial = this.features.isTrial;
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
@@ -106,14 +120,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.kbUrl = this.navigationService.getKbUrl(account.slug, kbSlug);
         this.cdr.markForCheck();
       });
-    // FIXME get agent
-    combineLatest([this.sdk.currentAccount, of({ slug: 'toto' })])
+
+    combineLatest([this.sdk.currentAccount, this.sdk.currentRa])
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(([account, agent]) => {
-        this.agentUrl = this.navigationService.getAgentUrl(account.slug, agent.slug);
-        console.log(this.agentUrl);
+      .subscribe(
+        ([account, agent]) => (this.agentUrl = this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
+      );
+    this.inKbSettings
+      .pipe(
+        filter((inSettings) => inSettings),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((inSettings) => {
+        this.showSettings = inSettings;
+        this.cdr.markForCheck();
       });
-    this.inSettings
+    this.inAgentSettings
       .pipe(
         filter((inSettings) => inSettings),
         takeUntil(this.unsubscribeAll),

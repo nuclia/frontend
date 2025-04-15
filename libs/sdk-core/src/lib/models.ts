@@ -21,11 +21,11 @@ import {
   ProcessingPullResponse,
   ProcessingPushResponse,
   QueryInfo,
+  RetrievalAgent,
   UsageAggregation,
   UsagePoint,
   Welcome,
   WritableKnowledgeBox,
-  WritableRetrievalAgent,
 } from './db';
 
 export interface INuclia {
@@ -146,8 +146,8 @@ export interface IDb {
   getRetrievalAgents(): Observable<IRetrievalAgentItem[]>;
   getRetrievalAgents(accountSlug: string, accountId: string): Observable<IRetrievalAgentItem[]>;
   getRetrievalAgentsForZone(accountId: string, zone: string): Observable<IRetrievalAgentItem[]>;
-  getRetrievalAgent(): Observable<WritableRetrievalAgent>;
-  getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<WritableRetrievalAgent>;
+  getRetrievalAgent(): Observable<RetrievalAgent>;
+  getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<RetrievalAgent>;
 
   getUsage(
     accountId: string,

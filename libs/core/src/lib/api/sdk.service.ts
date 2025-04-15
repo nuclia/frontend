@@ -7,8 +7,8 @@ import {
   KBRoles,
   KnowledgeBox,
   Nuclia,
+  RetrievalAgent,
   WritableKnowledgeBox,
-  WritableRetrievalAgent,
 } from '@nuclia/core';
 import {
   BehaviorSubject,
@@ -18,6 +18,7 @@ import {
   filter,
   forkJoin,
   map,
+  merge,
   Observable,
   of,
   ReplaySubject,
@@ -69,7 +70,9 @@ export class SDKService {
   );
   counters = new ReplaySubject<Counters>(1);
   pendingRefresh = new BehaviorSubject(false);
-  isAdminOrContrib = this.currentKb.pipe(map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
+  isAdminOrContrib = merge(this.currentKb, this.currentRa).pipe(
+    map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib),
+  );
 
   get isKbLoaded() {
     return this._isKbLoaded;
@@ -81,7 +84,7 @@ export class SDKService {
   set kb(kb: KnowledgeBox | null) {
     this._kb.next(kb);
   }
-  set ra(ra: KnowledgeBox | null) {
+  set ra(ra: RetrievalAgent | null) {
     this._ra.next(ra);
   }
 
@@ -156,16 +159,11 @@ export class SDKService {
     }
   }
 
-  setCurrentRetrievalAgent(
-    accountId: string,
-    raId: string,
-    zone?: string,
-    force = false,
-  ): Observable<WritableRetrievalAgent> {
+  setCurrentRetrievalAgent(accountId: string, raId: string, zone?: string, force = false): Observable<RetrievalAgent> {
     // returns the current ra and set it if not set
     const currentRa = this._ra.value;
     if (!force && currentRa && currentRa.id === raId) {
-      return of(currentRa as WritableRetrievalAgent);
+      return of(currentRa as RetrievalAgent);
     } else {
       this.nuclia.options.zone = zone;
       return this.nuclia.db.getRetrievalAgent(accountId, raId, zone).pipe(
@@ -227,6 +225,39 @@ export class SDKService {
       return throwError(() => ({
         status: 403,
         message: `No KB found for ${kbSlug} in account ${accountSlug} on ${zone}.`,
+      }));
+    }
+  }
+
+  setCurrentRetrievalAgentFromSlug(accountSlug: string, agentSlug: string, zone?: string): Observable<RetrievalAgent> {
+    const currentRa = this._ra.value;
+    const currentAccount = this._account.value;
+    this.nuclia.options.zone = zone;
+    if (currentRa && currentRa.slug === agentSlug) {
+      return of(currentRa as RetrievalAgent);
+    } else if (zone) {
+      return (currentAccount ? of(currentAccount) : this.setCurrentAccount(accountSlug)).pipe(
+        switchMap((account) => {
+          this.nuclia.options.accountId = account.id;
+          return this.nuclia.db.getRetrievalAgentsForZone(account.id, zone).pipe(
+            switchMap((ras) => {
+              const ra = ras.find((item) => item.slug === agentSlug);
+              if (!ra) {
+                return throwError(() => ({
+                  status: 403,
+                  message: `No Retrieval Agent found for ${agentSlug} in account ${accountSlug} on ${zone}.`,
+                }));
+              }
+              this.nuclia.options.knowledgeBox = ra.id;
+              return this.setCurrentRetrievalAgent(account.id, ra.id, zone);
+            }),
+          );
+        }),
+      );
+    } else {
+      return throwError(() => ({
+        status: 403,
+        message: `No Retrieval Agent found for ${agentSlug} in account ${accountSlug} on ${zone}.`,
       }));
     }
   }

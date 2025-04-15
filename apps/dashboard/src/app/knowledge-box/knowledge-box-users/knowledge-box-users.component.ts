@@ -8,6 +8,10 @@ import { SDKService } from '@flaps/core';
       <h2 class="display-s">{{ 'navbar.users' | translate }}</h2>
       @if (kb | async; as kb) {
         <app-users-manage [kb]="kb"></app-users-manage>
+      } @else {
+        @if (ra | async; as ra) {
+          <app-users-manage [kb]="ra"></app-users-manage>
+        }
       }
     </div>
   `,
@@ -17,6 +21,7 @@ import { SDKService } from '@flaps/core';
 })
 export class KnowledgeBoxUsersComponent {
   kb = this.sdk.currentKb;
+  ra = this.sdk.currentRa;
 
   constructor(private sdk: SDKService) {}
 }

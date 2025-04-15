@@ -1,15 +1,13 @@
 import { map, Observable } from 'rxjs';
-import { InviteKbData, KnowledgeBox, WritableKnowledgeBox } from '../kb';
+import { InviteKbData, WritableKnowledgeBox } from '../kb';
 import { ExtractedDataTypes } from '../resource';
-import { IRetrievalAgent, IWritableRetrievalAgent, SessionList, SessionProperties } from './retrieval-agent.models';
+import { IRetrievalAgent, SessionList, SessionProperties } from './retrieval-agent.models';
 import { ISession } from './session.models';
 
 /**
- * Provides access to all the Retrieval Agent contents and services in read mode.
- *
- * For any Retrieval Agent operation that requires write access, you need to use `WritableRetrievalAgent` instead.
+ * Provides access to all the Retrieval Agent contents and services.
  */
-export class RetrievalAgent extends KnowledgeBox implements IRetrievalAgent {
+export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAgent {
   /**
    * Retrieves a session from the Retrieval Agent.
    *
@@ -47,21 +45,6 @@ export class RetrievalAgent extends KnowledgeBox implements IRetrievalAgent {
     return this.listResources(page, size).pipe(
       map((resourceList) => ({ sessions: resourceList.resources, pagignation: resourceList.pagination })),
     );
-  }
-}
-
-/**
- * Extends `RetrievalAgent` with all the write operations.
- */
-export class WritableRetrievalAgent extends WritableKnowledgeBox implements IWritableRetrievalAgent {
-  /**
-   * Create and indexes a new session in the Retrieval Agent.
-   * @param session
-   * @param synchronous
-   * @returns
-   */
-  createSession(session: ISession, synchronous: boolean): Observable<{ uuid: string }> {
-    return this.createResource(session, synchronous);
   }
 
   /**

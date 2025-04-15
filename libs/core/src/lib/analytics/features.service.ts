@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
+import { AccountTypes } from '@nuclia/core';
 import { combineLatest, map, Observable } from 'rxjs';
 import { SDKService } from '../api';
 import { FeatureFlagService } from './feature-flag.service';
-import { AccountTypes } from '@nuclia/core';
 
 const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'stash-starter', 'v3starter'];
 
@@ -15,6 +15,7 @@ export class FeaturesService {
 
   private _account = this.sdk.currentAccount;
   private _kb = this.sdk.currentKb;
+  private _ra = this.sdk.currentRa;
 
   /**
    * PERMISSIONS and ACCOUNT TYPES
@@ -22,6 +23,8 @@ export class FeaturesService {
   isKbAdminOrContrib = this.sdk.isAdminOrContrib;
   isKbAdmin = this._kb.pipe(map((kb) => !!kb.admin || kb.accountId === 'local'));
   isKBContrib = this._kb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isRaAdmin = this._ra.pipe(map((ra) => !!ra.admin || ra.accountId === 'local'));
+  isRaContrib = this._ra.pipe(map((ra) => !!ra.admin || !!ra.contrib));
   isAccountManager = this._account.pipe(
     map((account) => {
       return account.can_manage_account;

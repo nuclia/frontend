@@ -49,7 +49,7 @@ import type {
   KnowledgeBoxCreation,
 } from './kb';
 import { IStandaloneKb, WritableKnowledgeBox } from './kb';
-import { IRetrievalAgentItem, WritableRetrievalAgent } from './retrieval-agent';
+import { IRetrievalAgentItem, RetrievalAgent } from './retrieval-agent';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
 /** Allows you to access Nuclia accounts and/or Nuclia Knowledge Boxes. */
@@ -278,9 +278,9 @@ export class Db implements IDb {
     }
   }
 
-  getRetrievalAgent(): Observable<WritableRetrievalAgent>;
-  getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<WritableRetrievalAgent>;
-  getRetrievalAgent(accountId?: string, retrievalAgentId?: string, zone?: string): Observable<WritableRetrievalAgent> {
+  getRetrievalAgent(): Observable<RetrievalAgent>;
+  getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<RetrievalAgent>;
+  getRetrievalAgent(accountId?: string, retrievalAgentId?: string, zone?: string): Observable<RetrievalAgent> {
     const accountID = accountId || this.nuclia.options.accountId;
     const raId = retrievalAgentId || this.nuclia.options.knowledgeBox;
     const zoneSlug = zone || this.nuclia.options.zone;
@@ -296,13 +296,13 @@ export class Db implements IDb {
         this.nuclia.options.proxy ? undefined : zoneSlug,
       );
 
-      return request.pipe(map((kb) => new WritableRetrievalAgent(this.nuclia, accountID as string, kb)));
+      return request.pipe(map((kb) => new RetrievalAgent(this.nuclia, accountID as string, kb)));
     } else {
       if ((!this.nuclia.options.knowledgeBox && !raId) || (!this.nuclia.options.zone && !zone)) {
         throw new Error('Retrieval Agent id and zone must be provided as parameters or in the Nuclia options');
       }
       return of(
-        new WritableRetrievalAgent(this.nuclia, '', {
+        new RetrievalAgent(this.nuclia, '', {
           id: raId as string,
           zone: zone || (this.nuclia.options.zone as string),
           slug: '',
