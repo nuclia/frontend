@@ -210,7 +210,7 @@
 <div
   class="sw-answer"
   bind:this={element}>
-  {#if !$hideAnswer}
+  {#if !$hideAnswer || answer.inError}
     <div
       class="answer-text"
       class:error={answer.inError}>
