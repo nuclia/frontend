@@ -5,6 +5,7 @@
   <app-label-dropdown
     *ngIf="!disabled"
     [size]="size"
+    [fullWidth]="true"
     [labelSets]="labelSets$ | async"
     [selection]="selection"
     (selectionChange)="updateSelection($event)">
