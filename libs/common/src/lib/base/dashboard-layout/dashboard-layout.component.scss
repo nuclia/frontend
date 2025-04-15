@@ -11,10 +11,20 @@ $height-status-bar: rhythm(9);
   nav {
     flex: 0 0 auto;
     width: $width-sidenav;
+    transition: width $transition-slide;
+
+    &.collapsed {
+      width: 0;
+    }
   }
 
   .dashboard-content {
     width: calc(100vw - #{$width-sidenav});
+    transition: width $transition-slide;
+
+    &.full-width {
+      width: 100vw;
+    }
 
     .status-bar {
       height: $height-status-bar;
