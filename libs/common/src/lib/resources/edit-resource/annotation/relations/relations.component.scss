@@ -1,18 +1,16 @@
 @use 'apps/dashboard/src/variables' as *;
 
-.title-xxs {
-  color: $color-neutral-regular;
+.title-s {
+  margin-bottom: rhythm(0.5);
 }
 
-.family,
 .relations {
   display: flex;
   flex-direction: column;
   gap: rhythm(0.5);
-  margin-bottom: rhythm(2);
+  margin-bottom: rhythm(3);
 }
 
-.ners,
 .relation {
   display: flex;
   gap: rhythm(0.5);

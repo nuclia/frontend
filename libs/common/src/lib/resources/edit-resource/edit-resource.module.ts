@@ -45,6 +45,7 @@ import { HintModule } from '../../hint/hint.module';
 import { ThumbnailComponent } from './profile/thumbnail/thumbnail.component';
 import { PipesModule } from '../../pipes';
 import { PreviewTableComponent } from './preview/preview-table.component';
+import { RelationsComponent } from './annotation/relations/relations.component';
 
 @NgModule({
   imports: [
@@ -82,6 +83,7 @@ import { PreviewTableComponent } from './preview/preview-table.component';
     LabelsExpanderComponent,
     PipesModule,
     PaTooltipModule,
+    RelationsComponent,
   ],
   declarations: [
     AddFieldComponent,

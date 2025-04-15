@@ -4,17 +4,16 @@
     <div class="family">
       <div>
         @if ((familyColors | async)?.[family.key]; as color) {
-          <span
-            class="badge"
-            [style.background-color]="color.mainColor"
-            [style.color]="color.textColor">
+          <app-entity
+            [backgroundColor]="color.mainColor"
+            [textColor]="color.textColor">
             {{ family.key }}
-          </span>
+          </app-entity>
         }
       </div>
       <div class="ners">
         @for (ner of family.value; track ner) {
-          <span class="badge basic">{{ ner }}</span>
+          <app-entity [border]="true">{{ ner }}</app-entity>
         }
       </div>
     </div>
@@ -26,19 +25,17 @@
     <div class="relations">
       @for (relation of relations | async; track relation.from?.value + relation.to.value) {
         <div class="relation">
-          <span
-            class="badge"
-            [style.background-color]="relation.fromColor.mainColor"
-            [style.color]="relation.fromColor.textColor">
+          <app-entity
+            [backgroundColor]="relation.fromColor.mainColor"
+            [textColor]="relation.fromColor.textColor">
             {{ relation.from?.value }}
-          </span>
-          <span class="badge basic">{{ relation.label }}</span>
-          <span
-            class="badge"
-            [style.background-color]="relation.toColor.mainColor"
-            [style.color]="relation.toColor.textColor">
+          </app-entity>
+          <app-entity [border]="true">{{ relation.label }}</app-entity>
+          <app-entity
+            [backgroundColor]="relation.toColor.mainColor"
+            [textColor]="relation.toColor.textColor">
             {{ relation.to.value }}
-          </span>
+          </app-entity>
         </div>
       }
     </div>
