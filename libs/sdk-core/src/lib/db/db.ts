@@ -191,8 +191,9 @@ export class Db implements IDb {
     zone: string,
     mode: 'kb' | 'agent' = 'kb',
   ): Observable<IKnowledgeBoxItem[]> {
+    const modeParam = mode === 'agent' ? `?mode=agent` : '';
     return this.nuclia.rest.get<IKnowledgeBoxItem[]>(
-      `/account/${accountId}/kbs?mode=${mode}`,
+      `/account/${accountId}/kbs${modeParam}`,
       undefined,
       undefined,
       zone,
