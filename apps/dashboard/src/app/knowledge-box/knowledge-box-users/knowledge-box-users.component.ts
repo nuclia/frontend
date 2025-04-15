@@ -9,8 +9,8 @@ import { SDKService } from '@flaps/core';
       @if (kb | async; as kb) {
         <app-users-manage [kb]="kb"></app-users-manage>
       } @else {
-        @if (ra | async; as ra) {
-          <app-users-manage [kb]="ra"></app-users-manage>
+        @if (arag | async; as arag) {
+          <app-users-manage [kb]="arag"></app-users-manage>
         }
       }
     </div>
@@ -21,7 +21,7 @@ import { SDKService } from '@flaps/core';
 })
 export class KnowledgeBoxUsersComponent {
   kb = this.sdk.currentKb;
-  ra = this.sdk.currentRa;
+  arag = this.sdk.currentArag;
 
   constructor(private sdk: SDKService) {}
 }

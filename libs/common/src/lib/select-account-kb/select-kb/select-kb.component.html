@@ -40,21 +40,21 @@
       @if (((kbs | async)?.length || 0) > 0) {
         <div class="select-kb-list">
           @if (!standalone && (isRetrievalAgentEnabled | async)) {
-            @for (ra of ras | async; track ra.id) {
-              @if (ra.id) {
+            @for (arag of arags | async; track arag.id) {
+              @if (arag.id) {
                 <a
                   class="kb"
-                  data-cy="ra-list-item"
-                  [class.disabled]="!ra.role_on_kb"
-                  (click)="goToRa(ra)">
+                  data-cy="arag-list-item"
+                  [class.disabled]="!arag.role_on_kb"
+                  (click)="goToArag(arag)">
                   <pa-icon
                     size="small"
                     name="workflows"></pa-icon>
 
                   <span
                     class="kb-title"
-                    [paTooltip]="'select.ra-tooltip' | translate: { ra: ra.title }">
-                    {{ ra.title }}
+                    [paTooltip]="'select.arag-tooltip' | translate: { arag: arag.title }">
+                    {{ arag.title }}
                   </span>
 
                   <pa-icon

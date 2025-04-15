@@ -23,20 +23,20 @@ export const setAgentGuard = (route: ActivatedRouteSnapshot) => {
         : sdk.currentAccount.pipe(
             switchMap((account) => {
               return sdk.nuclia.db.getRetrievalAgentsForZone(account.id, zone).pipe(
-                switchMap((ras) => {
-                  const ra = ras.find((item) => item.slug === agentSlug);
-                  if (!ra) {
+                switchMap((arags) => {
+                  const arag = arags.find((item) => item.slug === agentSlug);
+                  if (!arag) {
                     sdk.cleanAccount();
                     return of(router.createUrlTree(['/select']));
                   }
-                  sdk.nuclia.options.knowledgeBox = ra.id;
-                  return sdk.setCurrentRetrievalAgent(account.id, ra.id, zone);
+                  sdk.nuclia.options.knowledgeBox = arag.id;
+                  return sdk.setCurrentRetrievalAgent(account.id, arag.id, zone);
                 }),
               );
             }),
             // Wait until currentRa is updated
-            switchMap(() => sdk.currentRa),
-            filter((ra) => ra.slug === agentSlug),
+            switchMap(() => sdk.currentArag),
+            filter((arag) => arag.slug === agentSlug),
             take(1),
             map(() => true),
           );

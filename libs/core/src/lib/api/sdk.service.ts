@@ -42,35 +42,35 @@ export class SDKService {
 
   private _account = new BehaviorSubject<Account | null>(null);
   private _kb = new BehaviorSubject<KnowledgeBox | null>(null);
-  private _ra = new BehaviorSubject<KnowledgeBox | null>(null);
+  private _arag = new BehaviorSubject<RetrievalAgent | null>(null);
   private _currentKB = new ReplaySubject<WritableKnowledgeBox>(1);
-  private _currentRa = new ReplaySubject<WritableKnowledgeBox>(1);
+  private _currentArag = new ReplaySubject<RetrievalAgent>(1);
   private _kbList = new ReplaySubject<IKnowledgeBoxItem[]>(1);
-  private _raList = new ReplaySubject<IRetrievalAgentItem[]>(1);
+  private _aragList = new ReplaySubject<IRetrievalAgentItem[]>(1);
   private _refreshingKbList = new BehaviorSubject<boolean>(false);
-  private _refreshingRaList = new BehaviorSubject<boolean>(false);
+  private _refreshingAragList = new BehaviorSubject<boolean>(false);
   private _refreshCounter = new Subject<boolean>();
   private _triggerRefreshKbs = new Subject<boolean>();
-  private _triggerRefreshRas = new Subject<boolean>();
+  private _triggerRefreshArags = new Subject<boolean>();
   private _repetitiveRefreshCounter = new Subject<void>();
   private _isKbLoaded = false;
-  private _isRaLoaded = false;
+  private _isAragLoaded = false;
 
   hasAccount = this._account.pipe(map((account) => account !== null));
   hasKb = this._kb.pipe(map((kb) => kb !== null));
   currentKb = this._currentKB.asObservable();
-  currentRa = this._currentRa.asObservable();
+  currentArag = this._currentArag.asObservable();
   kbList: Observable<IKnowledgeBoxItem[]> = this._kbList.asObservable();
   refreshingKbList: Observable<boolean> = this._refreshingKbList.asObservable();
-  raList: Observable<IRetrievalAgentItem[]> = this._raList.asObservable();
-  refreshingRaList: Observable<boolean> = this._refreshingRaList.asObservable();
+  aragList: Observable<IRetrievalAgentItem[]> = this._aragList.asObservable();
+  refreshingAragList: Observable<boolean> = this._refreshingAragList.asObservable();
   currentAccount: Observable<Account> = this._account.pipe(
     filter((account) => !!account),
     map((account) => account as Account),
   );
   counters = new ReplaySubject<Counters>(1);
   pendingRefresh = new BehaviorSubject(false);
-  isAdminOrContrib = merge(this.currentKb, this.currentRa).pipe(
+  isAdminOrContrib = merge(this.currentKb, this.currentArag).pipe(
     map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib),
   );
 
@@ -78,14 +78,14 @@ export class SDKService {
     return this._isKbLoaded;
   }
   get isRaLoaded() {
-    return this._isRaLoaded;
+    return this._isAragLoaded;
   }
 
   set kb(kb: KnowledgeBox | null) {
     this._kb.next(kb);
   }
-  set ra(ra: RetrievalAgent | null) {
-    this._ra.next(ra);
+  set arag(arag: RetrievalAgent | null) {
+    this._arag.next(arag);
   }
 
   set account(account: Account | null) {
@@ -95,7 +95,7 @@ export class SDKService {
 
   constructor(private config: BackendConfigurationService) {
     this._triggerRefreshKbs.subscribe((refreshCurrentKb) => this._refreshKbList(refreshCurrentKb));
-    this._triggerRefreshRas.subscribe((refreshCurrentRa) => this._refreshRaList(refreshCurrentRa));
+    this._triggerRefreshArags.subscribe((refreshCurrentRa) => this._refreshRaList(refreshCurrentRa));
     this.currentAccount.subscribe(() => {
       this.refreshKbList();
       this.refreshRaList();
@@ -119,22 +119,22 @@ export class SDKService {
         this._currentKB.next(kb);
       });
 
-    combineLatest([this._ra, this._account])
+    combineLatest([this._arag, this._account])
       .pipe(
         distinctUntilChanged(
           ([previous], [current]) => previous?.id === current?.id && previous?.slug === current?.slug,
         ),
-        filter(([ra, account]) => !!ra && !!ra.slug && !!account),
-        map(([ra, account]) => [ra, account] as [KnowledgeBox, Account]),
-        switchMap(([ra, account]) =>
+        filter(([arag, account]) => !!arag && !!arag.slug && !!account),
+        map(([arag, account]) => [arag, account] as [RetrievalAgent, Account]),
+        switchMap(([arag, account]) =>
           this.nuclia.db
-            .getRetrievalAgent(account.id, ra.id, ra.zone)
-            .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug || account.id, data))),
+            .getRetrievalAgent(account.id, arag.id, arag.zone)
+            .pipe(map((data) => new RetrievalAgent(this.nuclia, account.slug || account.id, data))),
         ),
-        tap(() => (this._isRaLoaded = true)),
+        tap(() => (this._isAragLoaded = true)),
       )
-      .subscribe((ra) => {
-        this._currentRa.next(ra);
+      .subscribe((arag) => {
+        this._currentArag.next(arag);
       });
 
     this.countersRefreshSubscriptions();
@@ -159,17 +159,22 @@ export class SDKService {
     }
   }
 
-  setCurrentRetrievalAgent(accountId: string, raId: string, zone?: string, force = false): Observable<RetrievalAgent> {
-    // returns the current ra and set it if not set
-    const currentRa = this._ra.value;
-    if (!force && currentRa && currentRa.id === raId) {
+  setCurrentRetrievalAgent(
+    accountId: string,
+    aragId: string,
+    zone?: string,
+    force = false,
+  ): Observable<RetrievalAgent> {
+    // returns the current arag and set it if not set
+    const currentRa = this._arag.value;
+    if (!force && currentRa && currentRa.id === aragId) {
       return of(currentRa as RetrievalAgent);
     } else {
       this.nuclia.options.zone = zone;
-      return this.nuclia.db.getRetrievalAgent(accountId, raId, zone).pipe(
-        map((ra) => {
-          this.ra = ra;
-          return ra;
+      return this.nuclia.db.getRetrievalAgent(accountId, aragId, zone).pipe(
+        map((arag) => {
+          this.arag = arag;
+          return arag;
         }),
       );
     }
@@ -230,7 +235,7 @@ export class SDKService {
   }
 
   setCurrentRetrievalAgentFromSlug(accountSlug: string, agentSlug: string, zone?: string): Observable<RetrievalAgent> {
-    const currentRa = this._ra.value;
+    const currentRa = this._arag.value;
     const currentAccount = this._account.value;
     this.nuclia.options.zone = zone;
     if (currentRa && currentRa.slug === agentSlug) {
@@ -240,16 +245,16 @@ export class SDKService {
         switchMap((account) => {
           this.nuclia.options.accountId = account.id;
           return this.nuclia.db.getRetrievalAgentsForZone(account.id, zone).pipe(
-            switchMap((ras) => {
-              const ra = ras.find((item) => item.slug === agentSlug);
-              if (!ra) {
+            switchMap((arags) => {
+              const arag = arags.find((item) => item.slug === agentSlug);
+              if (!arag) {
                 return throwError(() => ({
                   status: 403,
                   message: `No Retrieval Agent found for ${agentSlug} in account ${accountSlug} on ${zone}.`,
                 }));
               }
-              this.nuclia.options.knowledgeBox = ra.id;
-              return this.setCurrentRetrievalAgent(account.id, ra.id, zone);
+              this.nuclia.options.knowledgeBox = arag.id;
+              return this.setCurrentRetrievalAgent(account.id, arag.id, zone);
             }),
           );
         }),
@@ -274,7 +279,7 @@ export class SDKService {
   }
 
   refreshRaList(refreshCurrentRa = false) {
-    this._triggerRefreshRas.next(refreshCurrentRa);
+    this._triggerRefreshArags.next(refreshCurrentRa);
   }
 
   private _refreshKbList(refreshCurrentKb = false) {
@@ -317,10 +322,10 @@ export class SDKService {
       )
       .subscribe({
         next: (list) => {
-          this._raList.next(list.sort((a, b) => (a.title || '').localeCompare(b.title || '')));
-          this._refreshingRaList.next(false);
+          this._aragList.next(list.sort((a, b) => (a.title || '').localeCompare(b.title || '')));
+          this._refreshingAragList.next(false);
         },
-        error: () => this._refreshingRaList.next(false),
+        error: () => this._refreshingAragList.next(false),
       });
 
     if (refreshCurrentRa) {
@@ -340,11 +345,11 @@ export class SDKService {
   }
 
   refreshCurrentRa() {
-    return forkJoin([this.currentAccount.pipe(take(1)), this.currentRa.pipe(take(1))]).pipe(
-      switchMap(([account, ra]) =>
-        this.nuclia.db.getRetrievalAgent(account.id, ra.id, ra.zone).pipe(
-          map((data) => new WritableKnowledgeBox(this.nuclia, account.slug || account.id, data)),
-          tap((newRa) => this._currentRa.next(newRa)),
+    return forkJoin([this.currentAccount.pipe(take(1)), this.currentArag.pipe(take(1))]).pipe(
+      switchMap(([account, arag]) =>
+        this.nuclia.db.getRetrievalAgent(account.id, arag.id, arag.zone).pipe(
+          map((data) => new RetrievalAgent(this.nuclia, account.slug || account.id, data)),
+          tap((newArag) => this._currentArag.next(newArag)),
         ),
       ),
     );

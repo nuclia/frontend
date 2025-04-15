@@ -52,14 +52,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
       ),
     ),
   );
-  inAgentSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentRa]).pipe(
+  inAgentSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
     map(([account, agent]) => this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
     switchMap((raUrl) =>
       merge(
-        of(this.navigationService.inAgentSettings(location.pathname, raUrl)),
+        of(this.navigationService.inAragSettings(location.pathname, raUrl)),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
-          map((event) => this.navigationService.inAgentSettings((event as NavigationEnd).url, raUrl)),
+          map((event) => this.navigationService.inAragSettings((event as NavigationEnd).url, raUrl)),
           takeUntil(this.unsubscribeAll),
         ),
       ),
@@ -76,7 +76,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   showSettings = false;
   kbUrl: string = '';
-  agentUrl: string = '';
+  aragUrl: string = '';
 
   account = this.sdk.currentAccount;
   kb = this.sdk.currentKb;
@@ -84,7 +84,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   isAdminOrContrib = this.features.isKbAdminOrContrib;
   isKbAdmin = this.features.isKbAdmin;
-  isRaAdmin = this.features.isRaAdmin;
+  isAragAdmin = this.features.isAragAdmin;
   isTrial = this.features.isTrial;
   isAccountManager = this.features.isAccountManager;
   isBillingEnabled = this.features.unstable.billing;
@@ -121,10 +121,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       });
 
-    combineLatest([this.sdk.currentAccount, this.sdk.currentRa])
+    combineLatest([this.sdk.currentAccount, this.sdk.currentArag])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(
-        ([account, agent]) => (this.agentUrl = this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
+        ([account, agent]) => (this.aragUrl = this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
       );
     this.inKbSettings
       .pipe(

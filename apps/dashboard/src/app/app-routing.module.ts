@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
-  agentOwnerGuard,
   AiModelsComponent,
+  aragOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
@@ -167,7 +167,7 @@ const routes: Routes = [
             ],
           },
           {
-            path: ':zone/agent/:agent',
+            path: ':zone/arag/:agent',
             component: RetrievalAgentComponent,
             canActivate: [setAgentGuard],
             children: [
@@ -201,12 +201,12 @@ const routes: Routes = [
               {
                 path: 'users',
                 component: KnowledgeBoxUsersComponent,
-                canActivate: [agentOwnerGuard],
+                canActivate: [aragOwnerGuard],
               },
               {
                 path: 'keys',
                 component: KnowledgeBoxKeysComponent,
-                canActivate: [agentOwnerGuard],
+                canActivate: [aragOwnerGuard],
               },
               {
                 path: 'activity',

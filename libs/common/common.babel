@@ -36380,7 +36380,7 @@
 						<name>select</name>
 						<children>
 							<concept_node>
-								<name>kb-tooltip</name>
+								<name>arag-tooltip</name>
 								<description/>
 								<comment/>
 								<translations>
@@ -36403,7 +36403,7 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>ra-tooltip</name>
+								<name>kb-tooltip</name>
 								<description/>
 								<comment/>
 								<translations>

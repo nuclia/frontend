@@ -15,7 +15,7 @@ export class FeaturesService {
 
   private _account = this.sdk.currentAccount;
   private _kb = this.sdk.currentKb;
-  private _ra = this.sdk.currentRa;
+  private _arag = this.sdk.currentArag;
 
   /**
    * PERMISSIONS and ACCOUNT TYPES
@@ -23,8 +23,8 @@ export class FeaturesService {
   isKbAdminOrContrib = this.sdk.isAdminOrContrib;
   isKbAdmin = this._kb.pipe(map((kb) => !!kb.admin || kb.accountId === 'local'));
   isKBContrib = this._kb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
-  isRaAdmin = this._ra.pipe(map((ra) => !!ra.admin || ra.accountId === 'local'));
-  isRaContrib = this._ra.pipe(map((ra) => !!ra.admin || !!ra.contrib));
+  isAragAdmin = this._arag.pipe(map((arag) => !!arag.admin || arag.accountId === 'local'));
+  isAragContrib = this._arag.pipe(map((arag) => !!arag.admin || !!arag.contrib));
   isAccountManager = this._account.pipe(
     map((account) => {
       return account.can_manage_account;

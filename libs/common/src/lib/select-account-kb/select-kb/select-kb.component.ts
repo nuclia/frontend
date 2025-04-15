@@ -19,7 +19,7 @@ export class SelectKbComponent implements OnDestroy {
   standalone = this.selectService.standalone;
 
   kbs: Observable<IKnowledgeBoxItem[] | null> = this.sdk.kbList.pipe(shareReplay());
-  ras: Observable<IKnowledgeBoxItem[] | null> = this.sdk.kbList.pipe(shareReplay()); //FIXME this.sdk.raList.pipe(shareReplay());
+  arags: Observable<IRetrievalAgentItem[] | null> = this.sdk.kbList.pipe(shareReplay()); //FIXME this.sdk.aragList.pipe(shareReplay());
   hasSeveralAccounts: Observable<boolean> = this.selectService.accounts.pipe(
     map((accounts) => !!accounts && accounts.length > 1),
   );
@@ -79,13 +79,13 @@ export class SelectKbComponent implements OnDestroy {
     }
   }
 
-  goToRa(ra: IRetrievalAgentItem) {
-    if (ra.slug && ra.role_on_kb) {
-      const raSlug = ra.slug;
-      this.sdk.nuclia.options.knowledgeBox = ra.id;
+  goToArag(arag: IRetrievalAgentItem) {
+    if (arag.slug && arag.role_on_kb) {
+      const raSlug = arag.slug;
+      this.sdk.nuclia.options.knowledgeBox = arag.id;
 
       if (!this.standalone) {
-        this.sdk.nuclia.options.zone = ra.zone;
+        this.sdk.nuclia.options.zone = arag.zone;
         forkJoin([this.sdk.nuclia.rest.getZones(), this.account.pipe(take(1))]).subscribe(([, account]) =>
           this.router.navigate([this.navigation.getRetrievalAgentUrl(account.slug, raSlug)]),
         );

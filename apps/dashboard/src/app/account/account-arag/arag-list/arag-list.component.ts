@@ -1,11 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FeaturesService, SDKService } from '@flaps/core';
-import { Account, IKnowledgeBoxItem } from '@nuclia/core';
-import { of, Subject } from 'rxjs';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { BadgeComponent, SisProgressModule, InfoCardComponent } from '@nuclia/sistema';
-import { filter, switchMap, take } from 'rxjs/operators';
 import {
   ModalService,
   PaButtonModule,
@@ -14,10 +9,15 @@ import {
   PaTableModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { CreateRaComponent } from '../create-ra/create-ra.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Account, IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
+import { BadgeComponent, InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
+import { of, Subject } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs/operators';
+import { CreateAragComponent } from '../create-arag/create-arag.component';
 
 @Component({
-  selector: 'app-ra-list',
+  selector: 'app-arag-list',
   imports: [
     CommonModule,
     SisProgressModule,
@@ -30,16 +30,16 @@ import { CreateRaComponent } from '../create-ra/create-ra.component';
     BadgeComponent,
     InfoCardComponent,
   ],
-  templateUrl: './ra-list.component.html',
-  styleUrl: './ra-list.component.scss',
+  templateUrl: './arag-list.component.html',
+  styleUrl: './arag-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RaListComponent implements OnInit, OnDestroy {
+export class AragListComponent implements OnInit, OnDestroy {
   isLoading = false;
   account?: Account;
   retrievalAgents: IKnowledgeBoxItem[] | undefined;
   maxRetrievalAgents: number = 1;
-  canAddRa = this.features.isAccountManager;
+  canAddArag = this.features.isAccountManager;
   unsubscribeAll = new Subject<void>();
 
   constructor(
@@ -60,8 +60,8 @@ export class RaListComponent implements OnInit, OnDestroy {
           return of([]); //TODO this.sdk.kbList;
         }),
       )
-      .subscribe((ras) => {
-        this.retrievalAgents = ras;
+      .subscribe((arags) => {
+        this.retrievalAgents = arags;
         this.cdr?.markForCheck();
       });
   }
@@ -71,9 +71,9 @@ export class RaListComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  createRa() {
+  createArag() {
     this.modalService
-      .openModal(CreateRaComponent)
+      .openModal(CreateAragComponent)
       .onClose.pipe(filter((data) => !!data))
       .subscribe((data) => {
         // TODO
@@ -81,16 +81,16 @@ export class RaListComponent implements OnInit, OnDestroy {
       });
   }
 
-  deleteRa(ra: IKnowledgeBoxItem) {
+  deleteArag(arag: IRetrievalAgentItem) {
     this.modalService
       .openConfirm({
-        title: this.translate.instant('account.retrieval-agents.confirm-deletion', { name: ra.title }),
+        title: this.translate.instant('account.retrieval-agents.confirm-deletion', { name: arag.title }),
         isDestructive: true,
       })
       .onClose.pipe(filter((confirmed) => !!confirmed))
       .subscribe(() => {
         // TODO
-        console.log('Delete agent', ra.title);
+        console.log('Delete agent', arag.title);
       });
   }
 }

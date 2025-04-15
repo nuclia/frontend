@@ -5,8 +5,8 @@
 }
 
 @if (account && retrievalAgents) {
-  <div class="account-ras page-spacing">
-    <div class="account-ras-header">
+  <div class="account-arag page-spacing">
+    <div class="account-arag-header">
       <div>
         <h1 class="page-title">
           {{ 'account.retrieval-agents.title' | translate }}
@@ -16,12 +16,12 @@
         <p class="page-description">{{ 'account.retrieval-agents.description' | translate }}</p>
       </div>
 
-      @if (canAddRa | async) {
+      @if (canAddArag | async) {
         <pa-button
           size="small"
-          data-cy="add-ra"
+          data-cy="add-arag"
           [disabled]="retrievalAgents.length >= maxRetrievalAgents && maxRetrievalAgents !== -1"
-          (click)="createRa()">
+          (click)="createArag()">
           {{ 'account.retrieval-agents.create' | translate }}
         </pa-button>
       }
@@ -41,9 +41,9 @@
           <pa-table-cell header>{{ 'account.retrieval-agents.table.modification-date' | translate }}</pa-table-cell>
           <pa-table-cell-menu header>{{ 'account.retrieval-agents.table.actions' | translate }}</pa-table-cell-menu>
         </pa-table-header>
-        @for (ra of retrievalAgents; track ra.id) {
+        @for (arag of retrievalAgents; track arag.id) {
           <pa-table-row>
-            <pa-table-cell>{{ ra.title }}</pa-table-cell>
+            <pa-table-cell>{{ arag.title }}</pa-table-cell>
             <pa-table-cell></pa-table-cell>
             <pa-table-cell></pa-table-cell>
             <pa-table-cell></pa-table-cell>
@@ -65,7 +65,7 @@
                   <pa-option
                     icon="trash"
                     destructive
-                    (click)="deleteRa(ra)">
+                    (click)="deleteArag(arag)">
                     {{ 'account.retrieval-agents.menu.delete' | translate }}
                   </pa-option>
                 </pa-dropdown>

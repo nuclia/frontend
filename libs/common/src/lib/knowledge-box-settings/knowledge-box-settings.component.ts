@@ -60,7 +60,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    merge(this.sdk.currentKb, this.sdk.currentRa)
+    merge(this.sdk.currentKb, this.sdk.currentArag)
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((kb) => {
         this.kb = kb;

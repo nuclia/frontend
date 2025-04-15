@@ -43,22 +43,24 @@ export const knowledgeBoxOwnerGuard = (route: ActivatedRouteSnapshot, routerStat
   }
 };
 
-export const agentOwnerGuard = (route: ActivatedRouteSnapshot, routerState: RouterStateSnapshot) => {
+export const aragOwnerGuard = (route: ActivatedRouteSnapshot, routerState: RouterStateSnapshot) => {
   const navigation: NavigationService = inject(NavigationService);
   const router: Router = inject(Router);
   const sdk: SDKService = inject(SDKService);
 
   const accountSlug = routerState.root.firstChild?.firstChild?.paramMap.get('account');
-  const raParams = routerState.root.firstChild?.firstChild?.firstChild?.paramMap;
-  const raSlug = raParams?.get('agent');
-  const zone = raParams?.get('zone') || undefined;
-  if (!accountSlug || !raSlug) {
+  const aragParams = routerState.root.firstChild?.firstChild?.firstChild?.paramMap;
+  const aragSlug = aragParams?.get('agent');
+  const zone = aragParams?.get('zone') || undefined;
+  if (!accountSlug || !aragSlug) {
     return of(false);
   } else {
     return sdk
-      .setCurrentRetrievalAgentFromSlug(accountSlug, raSlug, zone)
+      .setCurrentRetrievalAgentFromSlug(accountSlug, aragSlug, zone)
       .pipe(
-        switchMap((ra) => (!!ra.admin ? of(true) : navigation.homeUrl.pipe(map((url) => router.createUrlTree([url]))))),
+        switchMap((arag) =>
+          !!arag.admin ? of(true) : navigation.homeUrl.pipe(map((url) => router.createUrlTree([url]))),
+        ),
       );
   }
 };
