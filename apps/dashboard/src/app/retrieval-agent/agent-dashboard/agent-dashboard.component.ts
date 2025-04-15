@@ -8,6 +8,7 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
+import { DashboardLayoutService } from '@flaps/common';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { LinkService, WorkflowRoot, WorkflowRootComponent, WorkflowService } from './workflow';
@@ -23,6 +24,7 @@ import { ConnectableEntryComponent } from './workflow/basic-elements';
 export class AgentDashboardComponent implements AfterViewInit {
   private linkService = inject(LinkService);
   private workflowService = inject(WorkflowService);
+  private layoutService = inject(DashboardLayoutService);
 
   @ViewChild('linkContainer') linkContainer?: ElementRef;
   @ViewChild('workflowContainer') workflowContainer?: ElementRef;
@@ -66,5 +68,9 @@ export class AgentDashboardComponent implements AfterViewInit {
 
   closeSideBar() {
     this.workflowService.closeSidebar();
+  }
+
+  toggleMainNav() {
+    this.layoutService.toggleNav();
   }
 }

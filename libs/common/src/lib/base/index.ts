@@ -1,4 +1,4 @@
 export * from './base.component';
 export * from './base.module';
-export * from './dashboard-layout/dashboard-layout.component';
+export * from './dashboard-layout';
 export * from './empty.component';
