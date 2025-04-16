@@ -148,6 +148,7 @@ export interface WidgetConfiguration {
   displaySearchButton: boolean;
   navigateToLink: boolean;
   navigateToFile: boolean;
+  navigateToOriginURL: boolean;
   hideDownload: boolean;
   openNewTab: boolean;
   noChatHistory: boolean;
@@ -282,6 +283,7 @@ export const DEFAULT_WIDGET_CONFIG: WidgetConfiguration = {
   displaySearchButton: false,
   navigateToLink: false,
   navigateToFile: false,
+  navigateToOriginURL: false,
   hideDownload: false,
   openNewTab: false,
   noChatHistory: false,
@@ -348,8 +350,11 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     displaySearchButton: widgetOptions.displaySearchButton,
     navigateToLink: widgetOptions.navigateToLink,
     navigateToFile: widgetOptions.navigateToFile,
+    navigateToOriginURL: widgetOptions.navigateToOriginURL,
     hideDownload: widgetOptions.hideDownload,
-    openNewTab: (widgetOptions.navigateToLink || widgetOptions.navigateToFile) && widgetOptions.openNewTab,
+    openNewTab:
+      (widgetOptions.navigateToLink || widgetOptions.navigateToFile || widgetOptions.navigateToOriginURL) &&
+      widgetOptions.openNewTab,
     noChatHistory: widgetOptions.noChatHistory,
     persistChatHistory: widgetOptions.persistChatHistory,
     speech: widgetOptions.speech,

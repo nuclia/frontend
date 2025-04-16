@@ -241,6 +241,20 @@
             </div>
             <div class="config-form-field">
               <pa-toggle
+                formControlName="navigateToOriginURL"
+                withBackground
+                spaceBetweenLabelAndToggle
+                (valueChange)="updateWidgetOptionsHeight()">
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.navigate-to-origin.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.navigate-to-origin.toggle-description' | translate }}
+              </div>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
                 formControlName="hideDownload"
                 withBackground
                 spaceBetweenLabelAndToggle
@@ -250,7 +264,7 @@
                 </span>
               </pa-toggle>
             </div>
-            @if (navigateToLinkOrFileEnabled) {
+            @if (navigateToExternalEnabled) {
               <div class="config-form-field">
                 <pa-toggle
                   formControlName="openNewTab"

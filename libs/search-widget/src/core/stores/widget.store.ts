@@ -15,6 +15,9 @@ export const widgetFeedback = writableSubject<WidgetFeedback>('answer');
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));
+export const navigateToOriginURL: Observable<boolean> = widgetFeatures.pipe(
+  map((features) => !!features?.navigateToOriginURL),
+);
 export const openNewTab: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.openNewTab));
 export const hasFilterButton: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.filter));
 export const isAnswerEnabled: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.answers));
