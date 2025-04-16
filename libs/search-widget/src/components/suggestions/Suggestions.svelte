@@ -17,6 +17,7 @@
     goToUrl,
     navigateToFile,
     navigateToLink,
+    navigateToOriginURL,
     NO_SUGGESTION_RESULTS,
     openNewTab,
     selectedEntity,
@@ -38,12 +39,18 @@
       .pipe(
         switchMap((resource) => {
           const firstResourceField = getFirstResourceField(resource);
-          return combineLatest([navigateToFile, navigateToLink]).pipe(
+          return combineLatest([navigateToFile, navigateToLink, navigateToOriginURL]).pipe(
             take(1),
-            switchMap(([navigateToFile, navigateToLink]) =>
+            switchMap(([navigateToFile, navigateToLink, navigateToOriginURL]) =>
               iif(
                 () => (navigateToFile || navigateToLink) && !!firstResourceField,
-                getNavigationUrl(navigateToFile, navigateToLink, resource, firstResourceField as ResourceField),
+                getNavigationUrl(
+                  navigateToFile,
+                  navigateToLink,
+                  navigateToOriginURL,
+                  resource,
+                  firstResourceField as ResourceField,
+                ),
                 of(false),
               ),
             ),
@@ -75,11 +82,11 @@
         ...resource,
         resultType,
         resultIcon,
-        field: { field_id: field.field_id, field_type: field.field_type }
+        field: { field_id: field.field_id, field_type: field.field_type },
       };
       viewerData.set({
         result,
-        selectedParagraphIndex: -1
+        selectedParagraphIndex: -1,
       });
     }
   }

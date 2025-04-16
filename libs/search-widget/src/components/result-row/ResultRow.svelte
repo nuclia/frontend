@@ -25,6 +25,7 @@
     isAnswerEnabled,
     collapseTextBlocks,
     hideAnswer,
+    navigateToOriginURL,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
@@ -70,12 +71,14 @@
     }
   }
 
-  const url = combineLatest([navigateToFile, navigateToLink]).pipe(
+  const url = combineLatest([navigateToFile, navigateToLink, navigateToOriginURL]).pipe(
     take(1),
-    switchMap(([toFile, toLink]) => {
+    switchMap(([toFile, toLink, toOrigin]) => {
       if (result.field) {
         const resourceField: ResourceField = { ...result.field, ...result.fieldData };
-        return toFile || toLink ? getNavigationUrl(toFile, toLink, result, resourceField) : of(undefined);
+        return toFile || toLink || toOrigin
+          ? getNavigationUrl(toFile, toLink, toOrigin, result, resourceField)
+          : of(undefined);
       }
       return of(undefined);
     }),

@@ -278,34 +278,43 @@ export const NEWLINE_REGEX = /\n/g;
 export const getNavigationUrl = (
   navigateToFile: boolean,
   navigateToLink: boolean,
+  navigateToOriginURL: boolean,
   resource: IResource,
   field: ResourceField,
 ): Observable<string | undefined> => {
-  const url = getExternalUrl(resource, field);
-  const isFile = field.field_type === FIELD_TYPE.file;
-  if (url && navigateToLink && !isYoutubeUrl(url)) {
+  const url = getExternalUrl(resource, navigateToOriginURL, field);
+  if (url && navigateToOriginURL) {
     return of(url);
-  } else if (isFile && navigateToFile) {
-    if (url) {
-      return of(url);
-    } else {
-      const fileUrl = (field as FileFieldData)?.value?.file?.uri;
-      return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
-    }
   } else {
-    return of(undefined);
+    const isFile = field.field_type === FIELD_TYPE.file;
+    if (url && navigateToLink && !isYoutubeUrl(url)) {
+      return of(url);
+    } else if (isFile && navigateToFile) {
+      if (url) {
+        return of(url);
+      } else {
+        const fileUrl = (field as FileFieldData)?.value?.file?.uri;
+        return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
+      }
+    } else {
+      return of(undefined);
+    }
   }
 };
 
-export const getExternalUrl = (resource: IResource, field?: ResourceField) => {
-  if (field?.field_type === FIELD_TYPE.link) {
-    return (field.value as LinkField).uri;
-  } else if (field?.field_type === FIELD_TYPE.file && (field.value as FileField)?.external) {
-    return (field.value as FileField).file?.uri;
-  } else if (resource.origin?.url) {
+export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean, field: ResourceField) => {
+  if (navigateToOriginURL && resource.origin?.url) {
     return resource.origin.url;
   } else {
-    return undefined;
+    if (field?.field_type === FIELD_TYPE.link) {
+      return (field.value as LinkField).uri;
+    } else if (field?.field_type === FIELD_TYPE.file && (field.value as FileField)?.external) {
+      return (field.value as FileField).file?.uri;
+    } else if (resource.origin?.url) {
+      return resource.origin.url;
+    } else {
+      return undefined;
+    }
   }
 };
 

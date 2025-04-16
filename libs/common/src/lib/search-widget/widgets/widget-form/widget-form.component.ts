@@ -92,6 +92,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     displaySearchButton: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToLink: new FormControl<boolean>(false, { nonNullable: true }),
     navigateToFile: new FormControl<boolean>(false, { nonNullable: true }),
+    navigateToOriginURL: new FormControl<boolean>(false, { nonNullable: true }),
     hideDownload: new FormControl<boolean>(false, { nonNullable: true }),
     openNewTab: new FormControl<boolean>(false, { nonNullable: true }),
     speech: new FormControl<boolean>(false, { nonNullable: true }),
@@ -135,8 +136,12 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   get chatStyleEnabled() {
     return this.form.controls.widgetMode.value === 'chat';
   }
-  get navigateToLinkOrFileEnabled() {
-    return this.form.controls.navigateToFile.value || this.form.controls.navigateToLink.value;
+  get navigateToExternalEnabled() {
+    return (
+      this.form.controls.navigateToFile.value ||
+      this.form.controls.navigateToLink.value ||
+      this.form.controls.navigateToOriginURL.value
+    );
   }
   get speechOn() {
     return this.form.controls.speech.value;

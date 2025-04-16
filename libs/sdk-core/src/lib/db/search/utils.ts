@@ -131,6 +131,7 @@ export interface WidgetFeatures {
   highlight?: boolean;
   navigateToFile?: boolean;
   navigateToLink?: boolean;
+  navigateToOriginURL?: boolean;
   permalink?: boolean;
   relations?: boolean;
   suggestions?: boolean;
