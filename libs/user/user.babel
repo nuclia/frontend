@@ -529,7 +529,7 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>login-error</name>
+										<name>login_error</name>
 										<description/>
 										<comment/>
 										<translations>
