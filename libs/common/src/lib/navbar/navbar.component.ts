@@ -54,12 +54,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   );
   inAragSettings: Observable<boolean> = combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
     map(([account, agent]) => this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
-    switchMap((raUrl) =>
+    switchMap((aragUrl) =>
       merge(
-        of(this.navigationService.inAragSettings(location.pathname, raUrl)),
+        of(this.navigationService.inAragSettings(location.pathname, aragUrl)),
         this.router.events.pipe(
           filter((event) => event instanceof NavigationEnd),
-          map((event) => this.navigationService.inAragSettings((event as NavigationEnd).url, raUrl)),
+          map((event) => this.navigationService.inAragSettings((event as NavigationEnd).url, aragUrl)),
           takeUntil(this.unsubscribeAll),
         ),
       ),

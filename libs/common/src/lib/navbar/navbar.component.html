@@ -1,7 +1,11 @@
+@let isInAccount = inAccount | async;
+@let isInArag = inArag | async;
+
+
 <div class="app-navbar">
   <div class="navbar-scroll-container">
-    @if (!(inAccount | async)) {
-      @if (standalone || !(inArag | async)) {
+    @if (!isInAccount) {
+      @if (standalone || !isInArag) {
         <div class="navbar-content">
           <div class="nav-group">
             <div class="group-items">
@@ -329,7 +333,7 @@
       }
     }
 
-    @if (!standalone && (inAccount | async) && (isAccountManager | async)) {
+    @if (!standalone && isInAccount && (isAccountManager | async)) {
       <div class="navbar-content dark">
         <div class="nav-group">
           <div class="group-items">
