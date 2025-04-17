@@ -23,6 +23,7 @@ export class LoginComponent {
   loginChallenge: string | undefined;
 
   message: string | null = null;
+  loginError: boolean = false;
   formError: boolean = false;
   error: string | null = null;
 
@@ -122,8 +123,9 @@ export class LoginComponent {
       next: () => {
         this.router.navigate(['/']);
       },
-      error: () => {
-        this.formError = true;
+      error: (error) => {
+        this.loginError = true;
+        this.formError = error.status === 401;
         this.isLoggingIn = false;
       },
     });
