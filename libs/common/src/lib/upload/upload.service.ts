@@ -236,6 +236,7 @@ export class UploadService {
     cookies?: { [id: string]: string },
     localstorage?: { [id: string]: string },
     extract_strategy?: string,
+    language?: string,
   ) {
     return this.sdk.currentKb.pipe(
       take(1),
@@ -249,6 +250,7 @@ export class UploadService {
             cookies,
             localstorage,
             extract_strategy,
+            language,
           },
           { classifications },
           true,
@@ -258,7 +260,12 @@ export class UploadService {
     );
   }
 
-  createCloudFileResource(uri: string, classifications: Classification[], extract_strategy?: string) {
+  createCloudFileResource(
+    uri: string,
+    classifications: Classification[],
+    extract_strategy?: string,
+    language?: string,
+  ) {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
@@ -269,6 +276,7 @@ export class UploadService {
             ['cloud-file']: {
               file: { uri },
               extract_strategy,
+              language,
             },
           },
         }),

@@ -47,6 +47,11 @@ export class CreateLinkComponent {
   pending = false;
   selectedLabels: Classification[] = [];
   csv: Row[] = [];
+  automaticLanguageDetection = true;
+  langCode = new FormControl<string | undefined>(undefined, {
+    nonNullable: true,
+    validators: [Validators.pattern(/^[a-z]{2}$/)],
+  });
 
   standalone = this.standaloneService.standalone;
   hasValidKey = this.standaloneService.hasValidKey;
@@ -94,6 +99,7 @@ export class CreateLinkComponent {
                 formValue.css_selector,
                 formValue.xpath,
                 this.extractStrategy,
+                this.langCode.value,
               ),
             ),
           );
@@ -107,6 +113,7 @@ export class CreateLinkComponent {
               formValue.css_selector,
               formValue.xpath,
               this.extractStrategy,
+              this.langCode.value,
             ),
           ]);
           break;
@@ -118,7 +125,15 @@ export class CreateLinkComponent {
               switchMap(() =>
                 this.uploadService.bulkUpload(
                   this.csv.map((row) =>
-                    this.getResourceCreationObs(isCloudFile, row.link, row.labels, row.css_selector, row.xpath),
+                    this.getResourceCreationObs(
+                      isCloudFile,
+                      row.link,
+                      row.labels,
+                      row.css_selector,
+                      row.xpath,
+                      this.extractStrategy,
+                      this.langCode.value,
+                    ),
                   ),
                 ),
               ),
@@ -164,9 +179,10 @@ export class CreateLinkComponent {
     css_selector?: string | null,
     xpath?: string | null,
     extract_strategy?: string,
+    language?: string,
   ): Observable<{ uuid: string }> {
     return isCloudFile
-      ? this.uploadService.createCloudFileResource(link, labels, extract_strategy)
+      ? this.uploadService.createCloudFileResource(link, labels, extract_strategy, language)
       : this.uploadService.createLinkResource(
           link,
           labels,
@@ -176,6 +192,7 @@ export class CreateLinkComponent {
           undefined,
           undefined,
           extract_strategy,
+          language,
         );
   }
 }
