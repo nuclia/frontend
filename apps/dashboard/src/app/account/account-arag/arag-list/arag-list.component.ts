@@ -80,7 +80,6 @@ export class AragListComponent implements OnInit, OnDestroy {
     }
     this.sdk.nuclia.options.zone = arag.zone;
     const route = this.navigation.getRetrievalAgentUrl(this.account.slug, arag.slug);
-    console.log('go to arag', route);
     this.router.navigate([route]);
   }
 
@@ -90,7 +89,6 @@ export class AragListComponent implements OnInit, OnDestroy {
     }
     this.sdk.nuclia.options.zone = arag.zone;
     const route = this.navigation.getAragSessionsUrl(this.account.slug, arag.slug);
-    console.log('go to arag sessions', route);
     this.router.navigate([route]);
   }
 
@@ -100,7 +98,6 @@ export class AragListComponent implements OnInit, OnDestroy {
     }
     this.sdk.nuclia.options.zone = arag.zone;
     const route = this.navigation.getAragSettingsUrl(this.account.slug, arag.slug);
-    console.log('go to arag settings', route);
     this.router.navigate([route]);
   }
 
