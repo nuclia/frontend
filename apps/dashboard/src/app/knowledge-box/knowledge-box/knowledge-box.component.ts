@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { forkJoin, Subject, take } from 'rxjs';
-import { SisModalService } from '@nuclia/sistema';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FeaturesService, SDKService } from '@flaps/core';
+import { SisModalService } from '@nuclia/sistema';
 import { GETTING_STARTED_DONE_KEY } from '@nuclia/user';
+import { forkJoin, Subject, take } from 'rxjs';
 import { GettingStartedComponent } from '../../onboarding/getting-started/getting-started.component';
 import { WelcomeInExistingKBComponent } from '../../onboarding/welcome-in-existing-kb/welcome-in-existing-kb.component';
 
@@ -24,7 +24,7 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
     if (!gettingStartedDone) {
       forkJoin([this.sdk.counters.pipe(take(1)), this.features.isKbAdmin.pipe(take(1))]).subscribe(
         ([counters, isKbAdmin]) => {
-          if (counters.resources === 0 && isKbAdmin) {
+          if (counters?.resources === 0 && isKbAdmin) {
             this.modalService.openModal(GettingStartedComponent);
           } else if (!isKbAdmin) {
             this.modalService.openModal(WelcomeInExistingKBComponent);

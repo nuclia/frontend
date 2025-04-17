@@ -55,6 +55,7 @@ export class SDKService {
   private _repetitiveRefreshCounter = new Subject<void>();
   private _isKbLoaded = false;
   private _isAragLoaded = false;
+  private _isArag = new Subject<boolean>();
 
   hasAccount = this._account.pipe(map((account) => account !== null));
   hasKb = this._kb.pipe(map((kb) => kb !== null));
@@ -68,7 +69,7 @@ export class SDKService {
     filter((account) => !!account),
     map((account) => account as Account),
   );
-  counters = new ReplaySubject<Counters>(1);
+  counters = new ReplaySubject<Counters | undefined>(1);
   pendingRefresh = new BehaviorSubject(false);
   isAdminOrContrib = merge(this.currentKb, this.currentArag).pipe(
     map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib),
@@ -77,7 +78,7 @@ export class SDKService {
   get isKbLoaded() {
     return this._isKbLoaded;
   }
-  get isRaLoaded() {
+  get isAragLoaded() {
     return this._isAragLoaded;
   }
 
@@ -91,6 +92,13 @@ export class SDKService {
   set account(account: Account | null) {
     this.nuclia.options.accountId = account?.id;
     this._account.next(account);
+  }
+
+  get isArag(): Observable<boolean> {
+    return this._isArag.asObservable();
+  }
+  set isArag(isArag: boolean) {
+    this._isArag.next(isArag);
   }
 
   constructor(private config: BackendConfigurationService) {
@@ -135,7 +143,7 @@ export class SDKService {
       )
       .subscribe((arag) => {
         this._currentArag.next(arag);
-        this._currentKB.next(arag);
+        this.kb = arag;
       });
 
     this.countersRefreshSubscriptions();
@@ -361,8 +369,8 @@ export class SDKService {
     this._refreshCounter
       .pipe(
         filter((refresh) => refresh),
-        switchMap(() => this.currentKb),
-        switchMap((kb) => kb.counters()),
+        switchMap(() => this.isArag),
+        switchMap((isArag) => (isArag ? of(undefined) : this.currentKb.pipe(switchMap((kb) => kb.counters())))),
         tap((counters) => this.counters.next(counters)),
       )
       .subscribe();
@@ -377,9 +385,9 @@ export class SDKService {
             delay(5000),
             tap((counters) => {
               if (currentTotal === -1) {
-                currentTotal = counters.resources;
+                currentTotal = counters?.resources || 0;
               }
-              const keepPulling = retries < 15 && currentTotal === counters.resources;
+              const keepPulling = retries < 15 && currentTotal === counters?.resources;
               this._refreshCounter.next(keepPulling);
               if (!keepPulling) {
                 this.pendingRefresh.next(false);
