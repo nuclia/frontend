@@ -7,6 +7,12 @@
     gap: rhythm(4);
     margin-bottom: rhythm(4);
   }
+
+  .go-to-arag {
+    @include body-s();
+    font-weight: $font-weight-semi-bold;
+    text-decoration: underline;
+  }
 }
 
 .loading-shade {

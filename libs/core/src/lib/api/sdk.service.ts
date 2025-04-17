@@ -98,7 +98,7 @@ export class SDKService {
     this._triggerRefreshArags.subscribe((refreshCurrentRa) => this._refreshAragList(refreshCurrentRa));
     this.currentAccount.subscribe(() => {
       this.refreshKbList();
-      this.refreshRaList();
+      this.refreshAragList();
     });
 
     combineLatest([this._kb, this._account])
@@ -280,7 +280,7 @@ export class SDKService {
     this._triggerRefreshKbs.next(refreshCurrentKb);
   }
 
-  refreshRaList(refreshCurrentArag = false) {
+  refreshAragList(refreshCurrentArag = false) {
     this._triggerRefreshArags.next(refreshCurrentArag);
   }
 

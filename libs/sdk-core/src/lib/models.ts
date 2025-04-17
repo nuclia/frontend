@@ -22,6 +22,7 @@ import {
   ProcessingPushResponse,
   QueryInfo,
   RetrievalAgent,
+  RetrievalAgentCreation,
   UsageAggregation,
   UsagePoint,
   Welcome,
@@ -148,6 +149,11 @@ export interface IDb {
   getRetrievalAgentsForZone(accountId: string, zone: string): Observable<IRetrievalAgentItem[]>;
   getRetrievalAgent(): Observable<RetrievalAgent>;
   getRetrievalAgent(accountId: string, retrievalAgentId: string, zone?: string): Observable<RetrievalAgent>;
+  createRetrievalAgent(
+    accountId: string,
+    retrievalAgent: RetrievalAgentCreation,
+    zone: string,
+  ): Observable<RetrievalAgent>;
 
   getUsage(
     accountId: string,
