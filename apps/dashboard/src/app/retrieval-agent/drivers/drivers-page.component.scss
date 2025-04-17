@@ -1,0 +1,11 @@
+@use 'apps/dashboard/src/variables' as *;
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+
+  .title-xs {
+    color: $color-neutral-regular;
+  }
+}

@@ -1,3 +1,4 @@
-export * from './agent-dashboard/agent-dashboard.component';
+export * from './agent-dashboard';
+export * from './drivers';
 export * from './retrieval-agent.component';
-export * from './sessions-list/sessions-list.component';
+export * from './sessions-list';
