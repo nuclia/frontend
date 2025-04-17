@@ -20,7 +20,7 @@
 	"login.error.aws.invalid_customer_token": "Customer_token no válido",
 	"login.error.aws.missing_customer_token": "Falta el customer_token",
 	"login.error.get_consent_error": "Se ha producido un error al obtener la información de consentimiento",
-	"login.error.login_error": "Se ha producido un error durante la autenticación",
+	"login.error.login-error": "Inténtalo nuevamente o contacta a tu administrador.",
 	"login.error.no_personal_email": "El acceso a Nuclia está restringido a los correos electrónicos de la empresa",
 	"login.error.oops": "Ups! Algo ha ido mal!",
 	"login.error.submit_consent_error": "Se ha producido un error al dar los permisos",

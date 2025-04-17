@@ -57,18 +57,19 @@
         <div class="login_policy body-xs">
           <span [innerHTML]="'user.consent' | translate"></span>
         </div>
-        <div
-          class="login_form_error body-xs"
-          data-cy="login-error"
-          *ngIf="formError">
-          <pa-icon
-            name="warning"
-            size="small"></pa-icon>
-          <div>
-            <strong>{{ 'login.error.auth_error' | translate }}&nbsp;</strong>
-            <span>{{ 'login.try_again' | translate }}</span>
+        @if (loginError) {
+          <div
+            class="login_form_error body-xs"
+            data-cy="login-error">
+            <pa-icon
+              name="warning"
+              size="small"></pa-icon>
+            <div>
+              <strong>{{ 'login.error.auth_error' | translate }}&nbsp;</strong>
+              <span>{{ (formError ? 'login.try_again' : 'login.error.login-error') | translate }}</span>
+            </div>
           </div>
-        </div>
+        }
         <div class="login_submit">
           <pa-button
             class="full-width"
