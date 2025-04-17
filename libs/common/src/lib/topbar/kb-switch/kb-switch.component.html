@@ -4,7 +4,7 @@
     size="small"
     aspect="basic"
     fullWidth
-    [icon]="current?.state !== 'PUBLISHED' ? 'lock' : undefined"
+    [icon]="current?.state === 'PRIVATE' ? 'lock' : undefined"
     [popupRef]="kbSwitch">
     {{ current?.title }}
   </nsi-dropdown-button>
@@ -16,7 +16,7 @@
       [disabled]="!kb.role_on_kb && !standalone"
       iconOnRight
       [paTooltip]="kb.title || ''"
-      [icon]="kb.state === 'PUBLISHED' ? '' : 'lock'"
+      [icon]="kb.state === 'PRIVATE' ? 'lock' : ''"
       (selectOption)="goToKb(kb)">
       <div class="title-wrapper">
         <pa-icon

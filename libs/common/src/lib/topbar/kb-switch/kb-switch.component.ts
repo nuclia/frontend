@@ -22,9 +22,9 @@ export class KbSwitchComponent implements OnDestroy {
   standalone: boolean = this.sdk.nuclia.options.standalone || false;
   knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
   arags: Observable<IRetrievalAgentItem[]> = this.sdk.aragList;
-  showKbSelector: Observable<boolean> = combineLatest([this.knowledgeBoxes, this.arags]).pipe(
-    map(([kbs, arags]) => kbs.length > 1 || arags.length > 1 || this.standalone),
-  );
+  showKbSelector: Observable<boolean> = this.standalone
+    ? this.knowledgeBoxes.pipe(map((kbs) => kbs.length > 1))
+    : combineLatest([this.knowledgeBoxes, this.arags]).pipe(map(([kbs, arags]) => kbs.length > 1 || arags.length > 1));
 
   constructor(
     private sdk: SDKService,
