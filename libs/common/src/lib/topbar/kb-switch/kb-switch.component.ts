@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, Output } f
 import { Router } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
-import { combineLatest, map, Observable, Subject, take } from 'rxjs';
+import { combineLatest, map, Observable, of, Subject, take } from 'rxjs';
 
 @Component({
   selector: 'app-kb-switch',
@@ -23,7 +23,7 @@ export class KbSwitchComponent implements OnDestroy {
   knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
   arags: Observable<IRetrievalAgentItem[]> = this.sdk.aragList;
   showKbSelector: Observable<boolean> = this.standalone
-    ? this.knowledgeBoxes.pipe(map((kbs) => kbs.length > 1))
+    ? of(true)
     : combineLatest([this.knowledgeBoxes, this.arags]).pipe(map(([kbs, arags]) => kbs.length > 1 || arags.length > 1));
 
   constructor(
