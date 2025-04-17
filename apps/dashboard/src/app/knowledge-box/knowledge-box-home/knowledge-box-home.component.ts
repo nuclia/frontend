@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
 import { AppService, RangeChartData, RemiMetricsService, searchResources } from '@flaps/common';
-import { ChartData, MetricsService } from '../../account/metrics.service';
+import { FeaturesService, NavigationService, SDKService, ZoneService } from '@flaps/core';
+import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
+import { BlockedFeature, Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
 import { combineLatest, filter, map, Observable, shareReplay, Subject, switchMap, take } from 'rxjs';
-import { BlockedFeature, Counters, IResource, RESOURCE_STATUS, SortField, UsageType } from '@nuclia/core';
-import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { UsageModalComponent } from './kb-usage/usage-modal.component';
 import { takeUntil } from 'rxjs/operators';
+import { ChartData, MetricsService } from '../../account/metrics.service';
+import { UsageModalComponent } from './kb-usage/usage-modal.component';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -42,7 +42,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, OnDestroy {
     map((kb) => kb.state),
     map((state) => (state ? `dashboard-home.state.${state.toLowerCase()}` : '')),
   );
-  counters: Observable<Counters> = this.sdk.counters;
+  counters: Observable<Counters | undefined> = this.sdk.counters;
 
   allChartsData: Observable<Partial<{ [key in UsageType]: ChartData }>> = this.isAccountManager.pipe(
     filter((isManager) => isManager),

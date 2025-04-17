@@ -10,6 +10,12 @@ export type IRetrievalAgentItem = IKnowledgeBoxItem;
 export type SessionProperties = ResourceProperties;
 export type SessionPagination = ResourcePagination;
 
+export interface RetrievalAgentCreation {
+  slug: string;
+  title: string;
+  mode: 'agent';
+}
+
 export interface SessionList {
   sessions: Session[];
   pagignation: SessionPagination;

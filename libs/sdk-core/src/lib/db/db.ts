@@ -49,7 +49,7 @@ import type {
   KnowledgeBoxCreation,
 } from './kb';
 import { IStandaloneKb, WritableKnowledgeBox } from './kb';
-import { IRetrievalAgentItem, RetrievalAgent } from './retrieval-agent';
+import { IRetrievalAgentBase, IRetrievalAgentItem, RetrievalAgent, RetrievalAgentCreation } from './retrieval-agent';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
 /** Allows you to access Nuclia accounts and/or Nuclia Knowledge Boxes. */
@@ -233,8 +233,7 @@ export class Db implements IDb {
    * @param zone
    */
   getRetrievalAgentsForZone(accountId: string, zone: string): Observable<IRetrievalAgentItem[]> {
-    // FIXME: we call the one for KB until the one for agent is working on the backend side
-    return this._getKnowledgeBoxesForZone(accountId, zone, 'kb'); //this._getKnowledgeBoxesForZone(accountId, zone, 'agent');
+    return this._getKnowledgeBoxesForZone(accountId, zone, 'agent');
   }
 
   /**
@@ -348,6 +347,36 @@ export class Db implements IDb {
         return this.getKnowledgeBox(accountId, id, zone);
       }),
     );
+  }
+
+  /**
+   * Creates a new Retrieval Agent.
+    ```ts
+    const retrievalAgent = {
+      slug: 'my-arag',
+      title: 'My retrieval agent',
+      mode: 'agent'
+    };
+    nuclia.db.createRetrievalAgent('my-account-id', 'europe-1', retrievalAgent).subscribe((retrievalAgent) => {
+      console.log('retrieval agent', retrievalAgent);
+    });
+   */
+  createRetrievalAgent(
+    accountId: string,
+    retrievalAgent: RetrievalAgentCreation,
+    zone: string,
+  ): Observable<RetrievalAgent> {
+    return this.nuclia.rest
+      .post<IRetrievalAgentBase>(`/account/${accountId}/kbs`, retrievalAgent, undefined, undefined, undefined, zone)
+      .pipe(
+        map((res) => res.id),
+        switchMap((id) => {
+          if (!id) {
+            throw 'Retrieval Agent creation failed';
+          }
+          return this.getRetrievalAgent(accountId, id, zone);
+        }),
+      );
   }
 
   /**

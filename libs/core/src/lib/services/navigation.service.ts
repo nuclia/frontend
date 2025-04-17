@@ -88,6 +88,14 @@ export class NavigationService {
     return `/at/${accountSlug}/${this.sdk.nuclia.options.zone}/arag/${agentSlug}`;
   }
 
+  getAragSessionsUrl(accountSlug: string, agentSlug: string): string {
+    return `${this.getRetrievalAgentUrl(accountSlug, agentSlug)}/sessions`;
+  }
+
+  getAragSettingsUrl(accountSlug: string, agentSlug: string): string {
+    return `${this.getRetrievalAgentUrl(accountSlug, agentSlug)}/manage`;
+  }
+
   getKbUrl(accountSlug: string, kbSlug: string): string {
     return this.sdk.nuclia.options.standalone
       ? `/at/${accountSlug}/${kbSlug}`

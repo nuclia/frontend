@@ -18,7 +18,6 @@
 
       @if (canAddArag | async) {
         <pa-button
-          size="small"
           data-cy="add-arag"
           [disabled]="retrievalAgents.length >= maxRetrievalAgents && maxRetrievalAgents !== -1"
           (click)="createArag()">
@@ -32,22 +31,20 @@
     } @else {
       <pa-table
         border
-        columns="1fr minmax(auto, 1fr) repeat(3, 1fr) 96px">
+        columns="1fr 96px">
         <pa-table-header>
           <pa-table-cell header>{{ 'account.retrieval-agents.table.name' | translate }}</pa-table-cell>
-          <pa-table-cell header>{{ 'account.retrieval-agents.table.sources' | translate }}</pa-table-cell>
-          <pa-table-cell header>{{ 'account.retrieval-agents.table.sessions' | translate }}</pa-table-cell>
-          <pa-table-cell header>{{ 'account.retrieval-agents.table.creation-date' | translate }}</pa-table-cell>
-          <pa-table-cell header>{{ 'account.retrieval-agents.table.modification-date' | translate }}</pa-table-cell>
           <pa-table-cell-menu header>{{ 'account.retrieval-agents.table.actions' | translate }}</pa-table-cell-menu>
         </pa-table-header>
         @for (arag of retrievalAgents; track arag.id) {
           <pa-table-row>
-            <pa-table-cell>{{ arag.title }}</pa-table-cell>
-            <pa-table-cell></pa-table-cell>
-            <pa-table-cell></pa-table-cell>
-            <pa-table-cell></pa-table-cell>
-            <pa-table-cell></pa-table-cell>
+            <pa-table-cell clickable="">
+              <a
+                class="go-to-arag"
+                (click)="goToArag(arag)">
+                {{ arag.title }}
+              </a>
+            </pa-table-cell>
             <pa-table-cell-menu>
               <div>
                 <pa-button
@@ -60,8 +57,16 @@
                 </pa-button>
                 <!-- Router links to edit configuration and session list -->
                 <pa-dropdown #menu>
-                  <pa-option icon="settings">{{ 'account.retrieval-agents.menu.edit' | translate }}</pa-option>
-                  <pa-option icon="list">{{ 'account.retrieval-agents.menu.sessions-list' | translate }}</pa-option>
+                  <pa-option
+                    icon="settings"
+                    (click)="goToSettings(arag)">
+                    {{ 'account.retrieval-agents.menu.edit' | translate }}
+                  </pa-option>
+                  <pa-option
+                    icon="list"
+                    (click)="goToSessions(arag)">
+                    {{ 'account.retrieval-agents.menu.sessions-list' | translate }}
+                  </pa-option>
                   <pa-option
                     icon="trash"
                     destructive

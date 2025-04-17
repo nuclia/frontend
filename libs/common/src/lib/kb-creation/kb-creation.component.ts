@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   FeaturesService,
   NavigationService,
@@ -8,28 +10,25 @@ import {
   STFUtils,
   ZoneService,
 } from '@flaps/core';
+import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 import {
   BackButtonComponent,
-  InfoCardComponent,
   SisModalService,
   SisProgressModule,
   SisToastService,
   StickyFooterComponent,
   TwoColumnsConfigurationItemComponent,
 } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IErrorMessages, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import {
   EmbeddingsModelFormComponent,
   LearningConfigurationForm,
   VectorDatabaseFormComponent,
   VectorDbModel,
 } from '@nuclia/user';
+import { filter, forkJoin, map, of, ReplaySubject, Subject, switchMap, take, tap, throwError } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } from '@nuclia/core';
 
 @Component({
   selector: 'app-kb-creation',
@@ -45,7 +44,6 @@ import { ExternalIndexProvider, KnowledgeBoxCreation, LearningConfigurations } f
     PaTogglesModule,
     EmbeddingsModelFormComponent,
     SisProgressModule,
-    InfoCardComponent,
     VectorDatabaseFormComponent,
   ],
   templateUrl: './kb-creation.component.html',

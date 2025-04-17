@@ -34,11 +34,14 @@ export const setAgentGuard = (route: ActivatedRouteSnapshot) => {
                 }),
               );
             }),
-            // Wait until currentRa is updated
+            // Wait until currentArag is updated
             switchMap(() => sdk.currentArag),
             filter((arag) => arag.slug === agentSlug),
             take(1),
-            map(() => true),
+            map(() => {
+              sdk.isArag = true;
+              return true;
+            }),
           );
     }),
   );

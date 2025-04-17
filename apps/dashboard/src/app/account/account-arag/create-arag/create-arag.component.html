@@ -5,20 +5,30 @@
       class="create-agent-form"
       [formGroup]="form"
       (ngSubmit)="create()">
-      <label for="name">{{ 'account.retrieval-agents.create-dialog.agent-name' | translate }}</label>
-      <pa-input
-        externalLabel
-        id="name"
-        [placeholder]="'account.retrieval-agents.create-dialog.name-placeholder' | translate"
-        formControlName="name"></pa-input>
+      <div>
+        <label for="name">{{ 'account.retrieval-agents.create-dialog.agent-name' | translate }}</label>
+        <pa-input
+          externalLabel
+          id="name"
+          [placeholder]="'account.retrieval-agents.create-dialog.name-placeholder' | translate"
+          formControlName="name"></pa-input>
+      </div>
+      <div>
+        <label for="zone">{{ 'account.retrieval-agents.create-dialog.zone' | translate }}</label>
+        <pa-radio-group formControlName="zone">
+          @for (zone of zones | async; track zone.slug) {
+            <pa-radio [value]="zone.slug">{{ zone.title }}</pa-radio>
+          }
+        </pa-radio-group>
+      </div>
     </form>
   </pa-modal-content>
   <pa-modal-footer>
     <pa-button aspect="basic">{{ 'generic.cancel' | translate }}</pa-button>
     <pa-button
       kind="primary"
-      type="submit"
-      [disabled]="form.invalid">
+      [disabled]="form.invalid"
+      (click)="create()">
       {{ 'generic.save' | translate }}
     </pa-button>
   </pa-modal-footer>
