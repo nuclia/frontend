@@ -417,10 +417,13 @@ export const loadMore = searchState.writer<number, void>(
 
 export const pageNumber = searchState.writer<number>(
   (state) => (state.options.top_k === EXTENDED_RESULTS ? 1 : 0),
-  (state, page) => ({
-    ...state,
-    options: { ...state.options, top_k: page === 0 ? undefined : EXTENDED_RESULTS },
-  }),
+  (state, page) => {
+    const { top_k, ...rest } = state.options;
+    return {
+      ...state,
+      options: page === 0 ? rest : { ...rest, top_k: EXTENDED_RESULTS },
+    };
+  },
 );
 
 export const pendingResults = searchState.writer<boolean>(
