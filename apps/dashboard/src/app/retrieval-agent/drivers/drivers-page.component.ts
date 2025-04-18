@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaDropdownModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -11,7 +11,7 @@ import {
   SisToastService,
   StickyFooterComponent,
 } from '@nuclia/sistema';
-import { catchError, filter, Observable, of, switchMap, throwError } from 'rxjs';
+import { filter, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { CypherDriverModalComponent } from './cypher-driver';
 import { InternetDriverModalComponent } from './internet-driver';
 import { McpDriverModalComponent } from './mcp-driver';
@@ -33,22 +33,36 @@ import { SqlDriverModalComponent } from './sql-driver';
   styleUrl: './drivers-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DriversPageComponent {
+export class DriversPageComponent implements OnDestroy {
   private sdk = inject(SDKService);
   private modal = inject(SisModalService);
   private toaster = inject(SisToastService);
   private translate = inject(TranslateService);
 
+  private _unsubscribeAll = new Subject<void>();
+
   drivers$: Observable<Driver[]> = this.sdk.currentArag.pipe(
-    switchMap((arag) => arag.getDrivers()),
-    catchError((error) => {
-      if (error.status === 404) {
-        return of([]);
-      } else {
-        return throwError(() => error);
-      }
-    }),
+    switchMap((arag) => arag.drivers),
+    tap((list) => console.log(list)),
+    takeUntil(this._unsubscribeAll),
   );
+
+  // drivers$: Observable<Driver[]> = this.sdk.currentArag.pipe(
+  //   switchMap((arag) => arag.getDrivers()),
+  //   catchError((error) => {
+  //     if (error.status === 404) {
+  //       return of([]);
+  //     } else {
+  //       return throwError(() => error);
+  //     }
+  //   }),
+  //   takeUntil(this._unsubscribeAll),
+  // );
+
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
+  }
 
   addDriver(type: 'nuclia' | 'internet' | 'sql' | 'cypher' | 'mcp') {
     let modalRef: ModalRef;

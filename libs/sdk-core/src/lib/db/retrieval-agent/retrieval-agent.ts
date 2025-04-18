@@ -1,4 +1,4 @@
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
 import { ExtractedDataTypes } from '../resource';
 import { Driver } from './driver.models';
@@ -14,6 +14,80 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   override get path(): string {
     return `/kb/${this.id}/agent`;
+  }
+
+  private _drivers = new BehaviorSubject<Driver[]>([
+    {
+      id: 'brave-driver_2292',
+      name: 'Brave driver',
+      provider: 'brave',
+      config: {
+        key: 'brave-key',
+      },
+    },
+    {
+      id: 'perplexity-driver_3555',
+      name: 'Perplexity driver',
+      provider: 'perplexity',
+      config: {
+        key: 'perplexity-key',
+      },
+    },
+    {
+      id: 'tavily-driver_3095',
+      name: 'Tavily driver',
+      provider: 'tavily',
+      config: {
+        key: 'tavily-key',
+      },
+    },
+    {
+      id: 'sql-driver-1_1cf0',
+      name: 'SQL driver 1',
+      provider: 'sql',
+      config: {
+        dsn: 'my-sql-1',
+        sql_schema: null,
+      },
+    },
+    {
+      id: 'sql-driver-2_2237',
+      name: 'SQL driver 2',
+      provider: 'sql',
+      config: {
+        dsn: 'my-sql-2',
+        sql_schema: null,
+      },
+    },
+    {
+      id: 'cypher-driver_23c9',
+      name: 'Cypher driver',
+      provider: 'cypher',
+      config: {
+        username: 'user',
+        password: 'pass',
+        url: '/cypher/url',
+        timeout: 0,
+        enhanced_schema: true,
+        database: null,
+        config: {},
+      },
+    },
+    {
+      id: 'mcp-driver_2068',
+      name: 'MCP driver',
+      provider: 'mcp',
+      config: {
+        uri: '/mcp/uri',
+        key: 'mcp-key',
+        timeout: 5,
+        sse_read_timeout: 300,
+        headers: {},
+      },
+    },
+  ]);
+  get drivers() {
+    return this._drivers.asObservable();
   }
 
   /**
@@ -68,7 +142,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * Get the list of drivers of the Retrieval Agent
    */
   getDrivers(): Observable<Driver[]> {
-    return this.nuclia.rest.get<Driver[]>(`${this.path}/drivers`);
+    return of(this._drivers.value); //this.nuclia.rest.get<Driver[]>(`${this.path}/drivers`);
   }
 
   /**
@@ -76,7 +150,9 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * @param driver BraveDriver | CypherDriver | NucliaDBDriver | PerplexityDriver | TavilyDriver | SqlDriver | McpDriver
    */
   addDriver(driver: Driver): Observable<void> {
-    return this.nuclia.rest.post(`${this.path}/drivers`, driver);
+    this._drivers.next(this._drivers.value.concat([driver]));
+    return of();
+    // return this.nuclia.rest.post(`${this.path}/drivers`, driver);
   }
 
   /**
