@@ -237,6 +237,15 @@
                 <span class="nav-link-title">{{ 'navbar.agent.sessions-list' | translate }}</span>
               </a>
               <a
+                [routerLink]="aragUrl + '/drivers'"
+                class="nav-link"
+                routerLinkActive="active"
+                data-cy="go-to-drivers-page"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <pa-icon name="puzzle"></pa-icon>
+                <span class="nav-link-title">{{ 'navbar.agent.drivers' | translate }}</span>
+              </a>
+              <a
                 class="nav-link"
                 data-cy="go-to-search"
                 routerLinkActive="active"

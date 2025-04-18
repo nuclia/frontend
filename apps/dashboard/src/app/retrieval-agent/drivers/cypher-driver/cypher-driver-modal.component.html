@@ -1,0 +1,103 @@
+<pa-modal-advanced fitContentHeight="">
+  <pa-modal-title>{{ 'retrieval-agents.drivers.types.cypher' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <form [formGroup]="form">
+      <div class="form-entry">
+        <label for="name">{{ 'retrieval-agents.drivers.form.driver-name' | translate }}</label>
+        <pa-input
+          id="name"
+          externalLabel
+          formControlName="name"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="username">{{ 'retrieval-agents.drivers.form.cypher.username' | translate }}</label>
+        <pa-input
+          id="username"
+          externalLabel
+          formControlName="username"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="password">{{ 'retrieval-agents.drivers.form.cypher.password' | translate }}</label>
+        <nsi-password-input
+          id="password"
+          externalLabel
+          formControlName="password"></nsi-password-input>
+      </div>
+      <div class="form-entry">
+        <label for="url">{{ 'retrieval-agents.drivers.form.cypher.url' | translate }}</label>
+        <pa-input
+          id="url"
+          externalLabel
+          formControlName="url"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="timeout">{{ 'retrieval-agents.drivers.form.timeout' | translate }}</label>
+        <pa-input
+          id="timeout"
+          type="number"
+          externalLabel
+          formControlName="timeout"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="database">{{ 'retrieval-agents.drivers.form.cypher.database' | translate }}</label>
+        <pa-input
+          id="database"
+          externalLabel
+          formControlName="database"></pa-input>
+      </div>
+
+      <pa-toggle
+        formControlName="enhanced_schema"
+        labelOnRight=""
+        withBackground>
+        <span class="title-xs">{{ 'retrieval-agents.drivers.form.cypher.enhanced-schema' | translate }}</span>
+      </pa-toggle>
+
+      <ng-container formGroupName="extra">
+        <div class="form-entry">
+          <div class="label-and-button">
+            <label>{{ 'retrieval-agents.drivers.form.cypher.extra.label' | translate }}</label>
+            <pa-button
+              size="small"
+              aspect="basic"
+              (click)="addConfigProperty()">
+              {{ 'retrieval-agents.drivers.form.cypher.extra.add' | translate }}
+            </pa-button>
+          </div>
+          @for (group of extraGroup.controls | keyvalue; track group.key) {
+            <div
+              class="config-property-form"
+              [formGroup]="group.value">
+              <pa-input formControlName="property">
+                {{ 'retrieval-agents.drivers.form.cypher.extra.property-name' | translate }}
+              </pa-input>
+              <pa-input formControlName="value">
+                {{ 'retrieval-agents.drivers.form.cypher.extra.property-value' | translate }}
+              </pa-input>
+              <pa-button
+                icon="trash"
+                aspect="basic"
+                size="small"
+                (click)="removeProperty(group.key)">
+                {{ 'retrieval-agents.drivers.form.cypher.extra.remove' | translate }}
+              </pa-button>
+            </div>
+          }
+        </div>
+      </ng-container>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid"
+      (click)="submit()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

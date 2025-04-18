@@ -55,9 +55,10 @@ export interface CypherConfig {
   username: string;
   password: string;
   url: string;
-  timeout: number;
+  timeout: number | null;
   enhanced_schema: boolean;
-  database: string;
+  database: string | null;
+  config: { [property: string]: string | number | null };
 }
 
 export interface NucliaDBConfig {
@@ -74,13 +75,13 @@ export type TavilyConfig = InternetConfig;
 
 export interface SqlConfig {
   dsn: string;
-  sql_schema: string;
+  sql_schema: string | null;
 }
 
 export interface McpConfig {
-  key: string;
   uri: string;
-  headers: unknown;
+  key: string | null;
+  headers: { [property: string]: string };
   timeout: number;
   sse_read_timeout: number;
 }

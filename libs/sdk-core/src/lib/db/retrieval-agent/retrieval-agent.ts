@@ -72,6 +72,14 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   }
 
   /**
+   * Add driver to the Retrieval Agent
+   * @param driver BraveDriver | CypherDriver | NucliaDBDriver | PerplexityDriver | TavilyDriver | SqlDriver | McpDriver
+   */
+  addDriver(driver: Driver): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/drivers`, driver);
+  }
+
+  /**
    * Get the list of rules of the Retrieval Agent
    */
   getRules(): Observable<(Rule | string)[]> {

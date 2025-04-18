@@ -1,0 +1,28 @@
+<div class="page-spacing">
+  <header>
+    <div class="page-title">{{ 'retrieval-agents.drivers.title' | translate }}</div>
+    <div class="page-description">{{ 'retrieval-agents.drivers.description' | translate }}</div>
+  </header>
+
+  <div class="driver-list">
+    @let drivers = drivers$ | async;
+    @if (!drivers || drivers.length === 0) {
+      <nsi-info-card>
+        {{'retrieval-agents.drivers.empty' | translate}}
+      </nsi-info-card>
+    }
+  </div>
+
+  <nsi-sticky-footer>
+    <div class="add-driver-container">
+      <nsi-dropdown-button icon="circle-plus" iconAndText fullWidth [popupRef]="driverTypes">{{ 'retrieval-agents.drivers.add-driver-button' | translate }}</nsi-dropdown-button>
+      <pa-dropdown #driverTypes>
+        <pa-option (selectOption)="addDriver('nuclia')">{{'retrieval-agents.drivers.types.nuclia' | translate}}</pa-option>
+        <pa-option (selectOption)="addDriver('internet')">{{'retrieval-agents.drivers.types.internet' | translate}}</pa-option>
+        <pa-option (selectOption)="addDriver('sql')">{{'retrieval-agents.drivers.types.sql' | translate}}</pa-option>
+        <pa-option (selectOption)="addDriver('cypher')">{{'retrieval-agents.drivers.types.cypher' | translate}}</pa-option>
+        <pa-option (selectOption)="addDriver('mcp')">{{'retrieval-agents.drivers.types.mcp' | translate}}</pa-option>
+      </pa-dropdown>
+    </div>
+  </nsi-sticky-footer>
+</div>

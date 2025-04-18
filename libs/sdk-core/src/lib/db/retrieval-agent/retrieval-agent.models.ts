@@ -44,6 +44,7 @@ export interface IRetrievalAgent
   inviteToAgent(data: InviteKbData): Observable<void>;
 
   getDrivers(): Observable<Driver[]>;
+  addDriver(driver: Driver): Observable<void>;
   getRules(): Observable<(Rule | string)[]>;
 }
 

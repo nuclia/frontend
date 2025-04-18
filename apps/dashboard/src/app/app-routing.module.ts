@@ -37,7 +37,12 @@ import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
 import { InviteComponent } from './onboarding/invite/invite.component';
 import { inviteGuard } from './onboarding/invite/invite.guard';
 import { RedirectComponent } from './redirect/redirect.component';
-import { AgentDashboardComponent, RetrievalAgentComponent, SessionsListComponent } from './retrieval-agent';
+import {
+  AgentDashboardComponent,
+  DriversPageComponent,
+  RetrievalAgentComponent,
+  SessionsListComponent,
+} from './retrieval-agent';
 import { TestPageComponent } from './test-page/test-page.component';
 
 const routes: Routes = [
@@ -178,6 +183,10 @@ const routes: Routes = [
               {
                 path: 'sessions',
                 component: SessionsListComponent,
+              },
+              {
+                path: 'drivers',
+                component: DriversPageComponent,
               },
               {
                 path: 'search',

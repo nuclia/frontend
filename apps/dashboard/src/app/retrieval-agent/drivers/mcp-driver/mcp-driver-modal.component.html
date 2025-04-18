@@ -1,0 +1,90 @@
+<pa-modal-advanced fitContentHeight="">
+  <pa-modal-title>{{ 'retrieval-agents.drivers.types.mcp' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <form [formGroup]="form">
+      <div class="form-entry">
+        <label for="name">{{ 'retrieval-agents.drivers.form.driver-name' | translate }}</label>
+        <pa-input
+          id="name"
+          externalLabel
+          formControlName="name"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="uri">{{ 'retrieval-agents.drivers.form.mcp.uri' | translate }}</label>
+        <pa-input
+          id="uri"
+          externalLabel
+          formControlName="uri"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="key">{{ 'retrieval-agents.drivers.form.key' | translate }}</label>
+        <pa-input
+          id="key"
+          externalLabel
+          formControlName="key"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="timeout">{{ 'retrieval-agents.drivers.form.timeout' | translate }}</label>
+        <pa-input
+          id="timeout"
+          externalLabel
+          type="number"
+          formControlName="timeout"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="sse_read_timeout">{{ 'retrieval-agents.drivers.form.mcp.sse-read-timeout' | translate }}</label>
+        <pa-input
+          id="sse_read_timeout"
+          externalLabel
+          type="number"
+          formControlName="sse_read_timeout"></pa-input>
+      </div>
+
+      <ng-container formGroupName="headers">
+        <div class="form-entry">
+          <div class="label-and-button">
+            <label>{{ 'retrieval-agents.drivers.form.mcp.headers.label' | translate }}</label>
+            <pa-button
+              size="small"
+              aspect="basic"
+              (click)="addHeader()">
+              {{ 'retrieval-agents.drivers.form.mcp.headers.add' | translate }}
+            </pa-button>
+          </div>
+          @for (group of headersGroup.controls | keyvalue; track group.key) {
+            <div
+              class="config-property-form"
+              [formGroup]="group.value">
+              <pa-input formControlName="property">
+                {{ 'retrieval-agents.drivers.form.mcp.headers.property-name' | translate }}
+              </pa-input>
+              <pa-input formControlName="value">
+                {{ 'retrieval-agents.drivers.form.mcp.headers.property-value' | translate }}
+              </pa-input>
+              <pa-button
+                icon="trash"
+                aspect="basic"
+                size="small"
+                (click)="removeHeader(group.key)">
+                {{ 'retrieval-agents.drivers.form.mcp.headers.remove' | translate }}
+              </pa-button>
+            </div>
+          }
+        </div>
+      </ng-container>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid"
+      (click)="submit()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>
