@@ -45,7 +45,7 @@ export class LabelsService {
       .pipe(
         filter((kb) => !!kb),
         distinctUntilKeyChanged('id'),
-        switchMap(() => this.sdk.isArag),
+        switchMap(() => this.sdk.isArag || of(false)),
         switchMap((isArag) => (isArag ? of(undefined) : this.refreshLabelsSets())),
       )
       .subscribe();
