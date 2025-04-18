@@ -1,8 +1,9 @@
-# 1.26.0 (Unreleased)
+# 1.26.0 (2025-04-18)
 
 ### Feature
 
-- Support Retrieval Agents
+- Support Retrieval Agents (still alpha feature, do not use in production)
+- Provide the SDK as a UMD module for browser usage
 
 ### Improvements
 

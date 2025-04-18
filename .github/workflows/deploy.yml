@@ -131,6 +131,11 @@ jobs:
           token: ${{ secrets.NPM_TOKEN }}
           package: ./dist/sdk-core/package.json
 
+      - name: Push SDK to CDN
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
+        run: |-
+          gsutil copy dist/sdk-core/umd/index.js gs://$CDN_STORAGE/nuclia-sdk.umd.js
+
       - name: Generate and push SDK docs
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         run: |-
