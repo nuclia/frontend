@@ -28,7 +28,7 @@
       class="form-entry rules"
       formArrayName="rules">
       <label for="rules">{{ 'retrieval-agents.workflow.node-types.restart.form.rules.label' | translate }}</label>
-      @for (rule of rules.controls; track $index) {
+      @for (rule of rules.controls; track rule) {
         <div class="rule">
           <pa-textarea
             id="rules"
