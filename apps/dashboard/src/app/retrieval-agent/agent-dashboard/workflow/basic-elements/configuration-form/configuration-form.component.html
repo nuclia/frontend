@@ -1,5 +1,6 @@
 <form
   class="node-configuration-form"
+  [style]="headerHeight() ? '--header-height:' + headerHeight() : ''"
   [formGroup]="form()"
   (ngSubmit)="onSubmit()">
   <ng-content></ng-content>

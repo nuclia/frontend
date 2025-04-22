@@ -10,7 +10,6 @@ import {
   RendererFactory2,
   signal,
 } from '@angular/core';
-import { SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -41,15 +40,7 @@ import {
   ValidationNodeComponent,
 } from './nodes';
 import { RulesPanelComponent } from './sidebar';
-import {
-  AgentWorkflow,
-  EntryType,
-  Node,
-  NODE_SELECTOR_ICONS,
-  NODES_BY_ENTRY_TYPE,
-  NodeType,
-  WorkflowRoot,
-} from './workflow.models';
+import { EntryType, Node, NODE_SELECTOR_ICONS, NODES_BY_ENTRY_TYPE, NodeType, WorkflowRoot } from './workflow.models';
 
 const COLUMN_CLASS = 'workflow-col';
 const SLIDE_DURATION = 800;
@@ -60,7 +51,6 @@ type SidebarPanel = 'rules';
   providedIn: 'root',
 })
 export class WorkflowService {
-  private sdk = inject(SDKService);
   private translate = inject(TranslateService);
   private linkService = inject(LinkService);
   private modalService = inject(ModalService);
@@ -82,12 +72,6 @@ export class WorkflowService {
   private _sideBarDescription = signal('');
   private _sideBarOpen = signal(false);
   private _activeSideBar = signal<'' | SidebarPanel | 'add'>('');
-  // TODO
-  private _agentWorkflow = signal<AgentWorkflow>({
-    preprocess: [],
-    context: [],
-    postprocess: [],
-  });
 
   set workflowRoot(root: WorkflowRoot) {
     this._workflowRoot = root;
@@ -113,6 +97,7 @@ export class WorkflowService {
   get columnContainer(): ElementRef | undefined {
     return this._columnContainer;
   }
+  sidebarHeader?: ElementRef;
   sidebarContentWrapper?: ElementRef;
 
   // computed signals are readonly: we don't want components to interact directly with the sidebar
@@ -242,22 +227,29 @@ export class WorkflowService {
   }
 
   /**
-   * Open sidebar for specified panel
-   * @param panel drivers | rules
+   * Open rule sidebar
    */
-  openSidebar(panel: SidebarPanel) {
+  openRuleSidebar() {
     this.resetState();
-    this._activeSideBar.set(panel);
+    this._activeSideBar.set('rules');
 
     const container: HTMLElement = this.openSidebarWithTitle(
-      `retrieval-agents.workflow.sidebar.${panel}.title`,
-      `retrieval-agents.workflow.sidebar.${panel}.description`,
+      `retrieval-agents.workflow.sidebar.rules.title`,
+      `retrieval-agents.workflow.sidebar.rules.description`,
     );
     container.classList.remove('no-form');
-    const panelRef = this.getPanelRef(panel);
+    const panelRef = createComponent(RulesPanelComponent, { environmentInjector: this.environmentInjector });
     this.applicationRef.attachView(panelRef.hostView);
     container.appendChild(panelRef.location.nativeElement);
     panelRef.changeDetectorRef.detectChanges();
+    panelRef.instance.cancel.subscribe(() => this.closeSidebar());
+    setTimeout(() => {
+      if (this.sidebarHeader) {
+        const headerHeight = this.sidebarHeader.nativeElement.getBoundingClientRect().height;
+        console.log(`headerHeight: ${headerHeight}`);
+        panelRef.setInput('headerHeight', `${headerHeight}px`);
+      }
+    });
   }
 
   /**
@@ -477,18 +469,6 @@ export class WorkflowService {
         return createComponent(SqlFormComponent, { environmentInjector: this.environmentInjector });
       case 'cypher':
         return createComponent(CypherFormComponent, { environmentInjector: this.environmentInjector });
-    }
-  }
-
-  /**
-   * Create and return the panel component corresponding to the specified sidebar.
-   * @param panel 'rules'
-   * @returns
-   */
-  private getPanelRef(panel: SidebarPanel): ComponentRef<RulesPanelComponent> {
-    switch (panel) {
-      case 'rules':
-        return createComponent(RulesPanelComponent, { environmentInjector: this.environmentInjector });
     }
   }
 }

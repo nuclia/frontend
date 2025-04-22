@@ -101,4 +101,12 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   getRules(): Observable<(Rule | string)[]> {
     return this.nuclia.rest.get<(Rule | string)[]>(`${this.path}/rules`);
   }
+
+  /**
+   * Set the list of rules of the Retrieval Agent
+   * @param rules List of rules to set
+   */
+  setRules(rules: string[]): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/rules`, { rules });
+  }
 }

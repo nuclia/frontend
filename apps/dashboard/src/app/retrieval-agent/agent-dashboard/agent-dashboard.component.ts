@@ -28,6 +28,7 @@ export class AgentDashboardComponent implements AfterViewInit {
 
   @ViewChild('linkContainer') linkContainer?: ElementRef;
   @ViewChild('workflowContainer') workflowContainer?: ElementRef;
+  @ViewChild('sidebarHeader') sidebarHeader?: ElementRef;
   @ViewChild('sidebarContentWrapper') sidebarContentWrapper?: ElementRef;
 
   sideBarTitle = this.workflowService.sideBarTitle;
@@ -45,6 +46,9 @@ export class AgentDashboardComponent implements AfterViewInit {
     if (this.sidebarContentWrapper) {
       this.workflowService.sidebarContentWrapper = this.sidebarContentWrapper;
     }
+    if (this.sidebarHeader) {
+      this.workflowService.sidebarHeader = this.sidebarHeader;
+    }
   }
 
   setRoot($event: WorkflowRoot) {
@@ -52,7 +56,7 @@ export class AgentDashboardComponent implements AfterViewInit {
   }
 
   openRules() {
-    this.workflowService.openSidebar('rules');
+    this.workflowService.openRuleSidebar();
   }
 
   addNode() {

@@ -1205,6 +1205,8 @@
 	"retrieval-agents.workflow.sidebar.node-creation.preprocess": "Agregar nodo de preprocesamiento",
 	"retrieval-agents.workflow.sidebar.node-creation.toolbar": "Agregar nodo",
 	"retrieval-agents.workflow.sidebar.rules.description": "Añade reglas generales que se aplicarán a todo el agente.",
+	"retrieval-agents.workflow.sidebar.rules.errors.get-rules": "Se ha producido un error al cargar las reglas",
+	"retrieval-agents.workflow.sidebar.rules.errors.set-rules": "Se ha producido un error al guardar las reglas.",
 	"retrieval-agents.workflow.sidebar.rules.title": "Normas",
 	"retrieval-agents.workflow.toolbar-buttons.add-node": "Agregar nodo",
 	"retrieval-agents.workflow.toolbar-buttons.manage-sessions": "Administrar sesiones",

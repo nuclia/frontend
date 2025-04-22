@@ -1,8 +1,36 @@
 <app-configuration-form
   [form]="form"
-  (cancel)="cancel()"
+  [headerHeight]="headerHeight()"
+  (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
-    <div class="form-entry"></div>
+    @for (rule of rules; track rule) {
+      <div class="form-entry">
+        <label [for]="'rule' + $index">{{ 'Rule' | translate }}</label>
+        <div class="entry-with-button">
+          <pa-textarea
+            [id]="'rule' + $index"
+            [formControl]="rule"
+            rows="2"
+            resizable=""
+            externalLabel=""></pa-textarea>
+          @if (rules.length > 1) {
+            <pa-button
+              icon="trash"
+              size="small"
+              aspect="basic"
+              (click)="removeRule($index)">
+              {{ 'Delete rule' | translate }}
+            </pa-button>
+          }
+        </div>
+      </div>
+    }
+    <pa-button
+      aspect="basic"
+      size="small"
+      (click)="addRule()">
+      {{ 'Add rule' | translate }}
+    </pa-button>
   </ng-container>
 </app-configuration-form>

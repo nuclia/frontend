@@ -47,7 +47,9 @@ export interface IRetrievalAgent
   addDriver(driver: Driver): Observable<void>;
   patchDriver(driver: Driver): Observable<void>;
   deleteDriver(driverId: string): Observable<void>;
+
   getRules(): Observable<(Rule | string)[]>;
+  setRules(rules: string[]): Observable<void>;
 }
 
 export interface Rule {
