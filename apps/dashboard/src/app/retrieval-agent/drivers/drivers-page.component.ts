@@ -11,14 +11,8 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Driver } from '@nuclia/core';
-import {
-  DropdownButtonComponent,
-  InfoCardComponent,
-  SisModalService,
-  SisToastService,
-  StickyFooterComponent,
-} from '@nuclia/sistema';
-import { catchError, filter, Observable, of, Subject, switchMap, takeUntil, throwError } from 'rxjs';
+import { DropdownButtonComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
+import { catchError, filter, Observable, of, Subject, switchMap, take, takeUntil, throwError } from 'rxjs';
 import { CypherDriverModalComponent } from './cypher-driver';
 import { InternetDriverModalComponent } from './internet-driver';
 import { McpDriverModalComponent } from './mcp-driver';
@@ -35,7 +29,6 @@ import { SqlDriverModalComponent } from './sql-driver';
     PaTableModule,
     DropdownButtonComponent,
     InfoCardComponent,
-    StickyFooterComponent,
     TranslateModule,
   ],
   templateUrl: './drivers-page.component.html',
@@ -89,12 +82,15 @@ export class DriversPageComponent implements OnDestroy {
     modalRef.onClose
       .pipe(
         filter((driver) => !!driver),
-        switchMap((driver) => this.sdk.currentArag.pipe(switchMap((arag) => arag.addDriver(driver)))),
+        switchMap((driver) =>
+          this.sdk.currentArag.pipe(
+            take(1),
+            switchMap((arag) => arag.addDriver(driver)),
+          ),
+        ),
+        switchMap(() => this.sdk.refreshCurrentArag()),
       )
       .subscribe({
-        next: () => {
-          this.sdk.refreshCurrentArag();
-        },
         error: () => {
           this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.creation'));
         },
@@ -125,12 +121,15 @@ export class DriversPageComponent implements OnDestroy {
     modalRef.onClose
       .pipe(
         filter((driver) => !!driver),
-        switchMap((driver) => this.sdk.currentArag.pipe(switchMap((arag) => arag.patchDriver(driver)))),
+        switchMap((driver) =>
+          this.sdk.currentArag.pipe(
+            take(1),
+            switchMap((arag) => arag.patchDriver(driver)),
+          ),
+        ),
+        switchMap(() => this.sdk.refreshCurrentArag()),
       )
       .subscribe({
-        next: () => {
-          this.sdk.refreshCurrentArag();
-        },
         error: () => {
           this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.edition'));
         },
@@ -146,12 +145,15 @@ export class DriversPageComponent implements OnDestroy {
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
-        switchMap(() => this.sdk.currentArag.pipe(switchMap((arag) => arag.deleteDriver(driver.id)))),
+        switchMap(() =>
+          this.sdk.currentArag.pipe(
+            take(1),
+            switchMap((arag) => arag.deleteDriver(driver.id)),
+          ),
+        ),
+        switchMap(() => this.sdk.refreshCurrentArag()),
       )
       .subscribe({
-        next: () => {
-          this.sdk.refreshCurrentArag();
-        },
         error: () => {
           this.toaster.error(this.translate.instant('retrieval-agents.drivers.errors.deletion'));
         },

@@ -68,7 +68,9 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * Get the list of drivers of the Retrieval Agent
    */
   getDrivers(): Observable<Driver[]> {
-    return this.nuclia.rest.get<Driver[]>(`${this.path}/drivers`);
+    return this.nuclia.rest
+      .get<{ config: Driver }[]>(`${this.path}/drivers`)
+      .pipe(map((list) => list.map((item) => item.config)));
   }
 
   /**
@@ -99,7 +101,9 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * Get the list of rules of the Retrieval Agent
    */
   getRules(): Observable<(Rule | string)[]> {
-    return this.nuclia.rest.get<(Rule | string)[]>(`${this.path}/rules`);
+    return this.nuclia.rest
+      .get<{ rules: (Rule | string)[] }>(`${this.path}/rules`)
+      .pipe(map((response) => response.rules));
   }
 
   /**

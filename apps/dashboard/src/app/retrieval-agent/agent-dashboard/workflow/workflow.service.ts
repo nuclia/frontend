@@ -47,8 +47,6 @@ import { EntryType, Node, NODE_SELECTOR_ICONS, NODES_BY_ENTRY_TYPE, NodeType, Wo
 const COLUMN_CLASS = 'workflow-col';
 const SLIDE_DURATION = 800;
 
-type SidebarPanel = 'rules';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -73,7 +71,8 @@ export class WorkflowService {
   private _sideBarTitle = signal('');
   private _sideBarDescription = signal('');
   private _sideBarOpen = signal(false);
-  private _activeSideBar = signal<'' | SidebarPanel | 'add'>('');
+  private _activeSideBar = signal<'' | 'rules' | 'add'>('');
+  private _currentPanel?: ComponentRef<RulesPanelComponent | FormDirective>;
 
   set workflowRoot(root: WorkflowRoot) {
     this._workflowRoot = root;
@@ -248,10 +247,10 @@ export class WorkflowService {
     setTimeout(() => {
       if (this.sidebarHeader) {
         const headerHeight = this.sidebarHeader.nativeElement.getBoundingClientRect().height;
-        console.log(`headerHeight: ${headerHeight}`);
         panelRef.setInput('headerHeight', `${headerHeight}px`);
       }
     });
+    this._currentPanel = panelRef;
   }
 
   /**
@@ -276,7 +275,13 @@ export class WorkflowService {
     this._activeSideBar.set('');
     this._sideBarTitle.set('');
     this._sideBarDescription.set('');
-    container.innerHTML = '';
+    if (this._currentPanel) {
+      this._currentPanel.destroy();
+      this._currentPanel = undefined;
+      setTimeout(() => (container.innerHTML = ''));
+    } else {
+      container.innerHTML = '';
+    }
   }
 
   /**
@@ -342,6 +347,7 @@ export class WorkflowService {
     formRef.changeDetectorRef.detectChanges();
     formRef.instance.submitForm.subscribe((config) => this.saveNodeConfiguration(config, nodeId));
     formRef.instance.cancel.subscribe(() => this.closeSidebar());
+    this._currentPanel = formRef;
   }
 
   /**

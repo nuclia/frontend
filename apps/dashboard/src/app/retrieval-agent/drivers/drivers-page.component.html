@@ -1,6 +1,18 @@
 <div class="page-spacing">
   <header>
-    <div class="page-title">{{ 'retrieval-agents.drivers.title' | translate }}</div>
+    <div class="page-title">
+      {{ 'retrieval-agents.drivers.title' | translate }}
+      <div class="add-driver-container">
+        <nsi-dropdown-button icon="circle-plus" iconAndText fullWidth [popupRef]="driverTypes">{{ 'retrieval-agents.drivers.add.button' | translate }}</nsi-dropdown-button>
+        <pa-dropdown #driverTypes>
+          <pa-option (selectOption)="addDriver('nuclia')">{{'retrieval-agents.drivers.add.nuclia' | translate}}</pa-option>
+          <pa-option (selectOption)="addDriver('internet')">{{'retrieval-agents.drivers.add.internet' | translate}}</pa-option>
+          <pa-option (selectOption)="addDriver('sql')">{{'retrieval-agents.drivers.add.sql' | translate}}</pa-option>
+          <pa-option (selectOption)="addDriver('cypher')">{{'retrieval-agents.drivers.add.cypher' | translate}}</pa-option>
+          <pa-option (selectOption)="addDriver('mcp')">{{'retrieval-agents.drivers.add.mcp' | translate}}</pa-option>
+        </pa-dropdown>
+      </div>
+    </div>
     <div class="page-description">{{ 'retrieval-agents.drivers.description' | translate }}</div>
   </header>
 
@@ -35,17 +47,4 @@
       </pa-table>
     }
   </div>
-
-  <nsi-sticky-footer>
-    <div class="add-driver-container">
-      <nsi-dropdown-button icon="circle-plus" iconAndText fullWidth [popupRef]="driverTypes">{{ 'retrieval-agents.drivers.add.button' | translate }}</nsi-dropdown-button>
-      <pa-dropdown #driverTypes>
-        <pa-option (selectOption)="addDriver('nuclia')">{{'retrieval-agents.drivers.add.nuclia' | translate}}</pa-option>
-        <pa-option (selectOption)="addDriver('internet')">{{'retrieval-agents.drivers.add.internet' | translate}}</pa-option>
-        <pa-option (selectOption)="addDriver('sql')">{{'retrieval-agents.drivers.add.sql' | translate}}</pa-option>
-        <pa-option (selectOption)="addDriver('cypher')">{{'retrieval-agents.drivers.add.cypher' | translate}}</pa-option>
-        <pa-option (selectOption)="addDriver('mcp')">{{'retrieval-agents.drivers.add.mcp' | translate}}</pa-option>
-      </pa-dropdown>
-    </div>
-  </nsi-sticky-footer>
 </div>
