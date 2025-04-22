@@ -103,6 +103,7 @@ export interface GenerativeAnswerConfig {
   limitParagraphs: boolean;
   paragraphsLimit: number | null;
   preferMarkdown: boolean;
+  contextImages: boolean;
   ragStrategies: RagStrategiesConfig;
 }
 
@@ -219,6 +220,7 @@ export const DEFAULT_GENERATIVE_ANSWER_CONFIG: GenerativeAnswerConfig = {
   limitParagraphs: false,
   paragraphsLimit: null,
   preferMarkdown: false,
+  contextImages: false,
   ragStrategies: {
     includeTextualHierarchy: false,
     metadatasRagStrategy: false,
@@ -323,6 +325,7 @@ export function getFeatures(config: SearchConfiguration, widgetOptions: WidgetCo
     // Search configuration
     answers: config.generativeAnswer.generateAnswer,
     preferMarkdown: config.generativeAnswer.generateAnswer && config.generativeAnswer.preferMarkdown,
+    contextImages: config.generativeAnswer.generateAnswer && config.generativeAnswer.contextImages,
     semanticOnly: config.searchBox.generateAnswerWith === 'only-semantic',
     rephrase: config.searchBox.rephraseQuery,
     filter: config.searchBox.filter,

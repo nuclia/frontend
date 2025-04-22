@@ -3,7 +3,14 @@
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
   import Suggestions from '../suggestions/Suggestions.svelte';
-  import { addEntityFilter, type EntityFilter, hasSearchButton, searchOptions } from '../../core';
+  import {
+    addEntityFilter,
+    addImage,
+    type EntityFilter,
+    hasContextImages,
+    hasSearchButton,
+    searchOptions,
+  } from '../../core';
   import {
     _,
     autocomplete,
@@ -48,6 +55,7 @@
   import SearchFilters from '../search-filters/SearchFilters.svelte';
   import type { Classification } from '@nuclia/core';
   import Textarea from '../../common/textarea/Textarea.svelte';
+  import InputImages from '../input-images/InputImages.svelte';
 
   let searchInputElement: Textarea;
   const dispatch = createEventDispatcher();
@@ -63,6 +71,7 @@
   let hasFilters = false;
   let filterHeight: string | undefined;
   let suggestionsModal: Modal | undefined;
+  let fileInputElement: HTMLInputElement | undefined;
 
   interface Filter {
     type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end';
@@ -176,7 +185,7 @@
       // Make sure the position of the suggestions is correct if the input height changes
       suggestionsModal?.refreshPosition();
     }
-  }
+  };
 
   const autocompleteEntity = (entity: { family: string; value: string }) => {
     searchOptions.pipe(take(1)).subscribe((options) => {
@@ -215,6 +224,16 @@
     searchQuery.set('');
     dispatch('resetQuery');
   }
+
+  function onFileSelected() {
+    const file = fileInputElement?.files?.[0];
+    if (file) {
+      addImage(file);
+    }
+  }
+  function selectImage() {
+    fileInputElement?.click();
+  }
 </script>
 
 <form
@@ -231,50 +250,65 @@
       class="logo"
       alt={brandName} />
   {/if}
-  <div class="input-container">
-    <div
-      class="search-icon-container"
-      class:has-cross={$typeAhead.length > 0}>
-      {#if $typeAhead.length > 0}
+  <div>
+    <div class="input-container">
+      <div
+        class="search-icon-container"
+        class:has-cross={$typeAhead.length > 0}>
+        {#if $typeAhead.length > 0}
+          <IconButton
+            aspect="basic"
+            icon="cross"
+            ariaLabel={$_('input.clear')}
+            size="small"
+            on:click={clear}
+            on:enter={clear} />
+        {:else}
+          <div class="search-icon">
+            <Icon name="search" />
+          </div>
+        {/if}
+      </div>
+      <Textarea
+        name="nuclia-search-field"
+        ariaLabel="Search input"
+        placeholder={$_($widgetPlaceholder)}
+        bind:this={searchInputElement}
+        bind:value={$typeAhead}
+        on:input={onInput}
+        on:keypress={onKeyPress}
+        on:keyup={onKeyUp}></Textarea>
+      {#if $hasContextImages}
+        <input
+          type="file"
+          accept="image/*"
+          on:change={onFileSelected}
+          bind:this={fileInputElement} />
         <IconButton
           aspect="basic"
-          icon="cross"
-          ariaLabel={$_('input.clear')}
-          size="small"
-          on:click={clear}
-          on:enter={clear} />
-      {:else}
-        <div class="search-icon">
-          <Icon name="search" />
+          icon="photo"
+          ariaLabel={$_('input.add-image')}
+          on:click={selectImage}
+          on:enter={selectImage} />
+      {/if}
+      {#if $hasSearchButton && $typeAhead.length > 0}
+        <IconButton
+          icon="search"
+          aspect="basic"
+          on:click={search} />
+      {/if}
+      {#if $hasFilterButton}
+        <div bind:this={filterButtonElement}>
+          <IconButton
+            icon="filter"
+            aspect="basic"
+            size="medium"
+            active={showFilterDropdowns}
+            on:click={toggleFilter} />
         </div>
       {/if}
     </div>
-    <Textarea
-      name="nuclia-search-field"
-      ariaLabel="Search input"
-      placeholder={$_($widgetPlaceholder)}
-      bind:this={searchInputElement}
-      bind:value={$typeAhead}
-      on:input={onInput}
-      on:keypress={onKeyPress}
-      on:keyup={onKeyUp}></Textarea>
-
-    {#if $hasSearchButton && $typeAhead.length > 0}
-      <IconButton
-        icon="search"
-        aspect="basic"
-        on:click={search} />
-    {/if}
-    {#if $hasFilterButton}
-      <div bind:this={filterButtonElement}>
-        <IconButton
-          icon="filter"
-          aspect="basic"
-          size="medium"
-          active={showFilterDropdowns}
-          on:click={toggleFilter} />
-      </div>
-    {/if}
+    <InputImages />
   </div>
 
   {#if $filters.length > 0}

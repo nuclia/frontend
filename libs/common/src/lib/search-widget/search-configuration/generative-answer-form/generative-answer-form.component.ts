@@ -75,6 +75,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
     limitParagraphs: new FormControl<boolean>(false, { nonNullable: true }),
     paragraphsLimit: new FormControl<number | null>(null),
     preferMarkdown: new FormControl<boolean>(false, { nonNullable: true }),
+    contextImages: new FormControl<boolean>(false, { nonNullable: true }),
     ragStrategies: new FormGroup({
       includeTextualHierarchy: new FormControl<boolean>(false, { nonNullable: true }),
       includeNeighbouringParagraphs: new FormControl<boolean>(false, { nonNullable: true }),

@@ -102,6 +102,10 @@
       margin-top: var(--rhythm-0_5);
     }
   }
+
+  input[type='file'] {
+    display: none;
+  }
 }
 
 @media (min-width: 448px) {

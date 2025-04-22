@@ -1235,6 +1235,8 @@
 	"search.configuration.generative-answer.generative-model.kb-settings": "(desde la configuración de KB)",
 	"search.configuration.generative-answer.generative-model.select-label": "Modelo generativo actual",
 	"search.configuration.generative-answer.generative-model.title": "Modelo generativo específico",
+	"search.configuration.generative-answer.images-in-question.toggle-description": "Permitir a los usuarios agregar imágenes a su pregunta textual.",
+	"search.configuration.generative-answer.images-in-question.toggle-label": "Utilice imágenes en las preguntas",
 	"search.configuration.generative-answer.limit-paragraphs.toggle-description": "Para controlar cuántos de los párrafos más relevantes se pasan al LLM para generar la respuesta. Valor predeterminado: 20.",
 	"search.configuration.generative-answer.limit-paragraphs.toggle-label": "Mejores resultados",
 	"search.configuration.generative-answer.limit-token.max-input": "Máximo de tokens de entrada",

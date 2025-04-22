@@ -103,6 +103,10 @@ export interface ChatOptions extends BaseSearchOptions {
   extra_context?: string[];
   citation_threshold?: number;
   features?: Ask.Features[];
+  extra_context_images?: {
+    content_type: string;
+    b64encoded: string;
+  }[];
 }
 
 export interface SearchOptions extends BaseSearchOptions {
