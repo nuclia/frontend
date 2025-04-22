@@ -1,7 +1,7 @@
 import { map, Observable } from 'rxjs';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
 import { ExtractedDataTypes } from '../resource';
-import { Driver } from './driver.models';
+import { Driver, DriverCreation } from './driver.models';
 import { IRetrievalAgent, Rule, SessionList, SessionProperties } from './retrieval-agent.models';
 import { ISession } from './session.models';
 
@@ -75,7 +75,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * Add driver to the Retrieval Agent
    * @param driver BraveDriver | CypherDriver | NucliaDBDriver | PerplexityDriver | TavilyDriver | SqlDriver | McpDriver
    */
-  addDriver(driver: Driver): Observable<void> {
+  addDriver(driver: DriverCreation): Observable<void> {
     return this.nuclia.rest.post(`${this.path}/drivers`, driver);
   }
 

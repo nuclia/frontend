@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { STFUtils } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { McpDriver } from '@nuclia/core';
+import { DriverCreation, McpConfig, McpDriver } from '@nuclia/core';
 
 let headerIndex = 0;
 
@@ -55,9 +54,8 @@ export class McpDriverModalComponent {
   submit() {
     if (this.form.valid) {
       const { name, headers, ...rawConfig } = this.form.getRawValue();
-      const config = { ...rawConfig, headers: this.formatHeaders(headers) };
-      const driver: McpDriver = {
-        id: `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
+      const config: McpConfig = { ...rawConfig, headers: this.formatHeaders(headers) };
+      const driver: DriverCreation = {
         name,
         provider: 'mcp',
         config,

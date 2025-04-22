@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { STFUtils } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { BraveDriver, IDriver, PerplexityDriver, TavilyDriver } from '@nuclia/core';
+import { BraveDriver, DriverCreation, InternetConfig, PerplexityDriver, TavilyDriver } from '@nuclia/core';
 
 @Component({
   selector: 'app-internet-driver-modal',
@@ -46,9 +45,8 @@ export class InternetDriverModalComponent {
     if (this.form.valid) {
       const { provider, name, ...rawConfig } = this.form.getRawValue();
       if (provider) {
-        const config = provider === 'brave' ? rawConfig : { key: rawConfig.key };
-        const driver: IDriver = {
-          id: this.config ? this.config.id : `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
+        const config: InternetConfig = provider === 'brave' ? rawConfig : { key: rawConfig.key };
+        const driver: DriverCreation = {
           name,
           provider,
           config,

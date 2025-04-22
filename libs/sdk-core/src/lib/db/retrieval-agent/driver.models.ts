@@ -5,6 +5,8 @@ export interface IDriver {
   config: BraveConfig | CypherConfig | NucliaDBConfig | PerplexityConfig | TavilyConfig | SqlConfig | McpConfig;
 }
 
+export type DriverCreation = Omit<IDriver, 'id'>;
+
 export type Driver =
   | BraveDriver
   | CypherDriver

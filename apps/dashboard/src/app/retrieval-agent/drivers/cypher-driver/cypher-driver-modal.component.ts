@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { STFUtils } from '@flaps/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -10,7 +9,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { CypherDriver } from '@nuclia/core';
+import { CypherConfig, CypherDriver, DriverCreation } from '@nuclia/core';
 import { SisPasswordInputModule } from '@nuclia/sistema';
 
 let propertyIndex = 0;
@@ -73,9 +72,8 @@ export class CypherDriverModalComponent {
   submit() {
     if (this.form.valid) {
       const { name, extra, ...rawConfig } = this.form.getRawValue();
-      const config = { ...rawConfig, config: this.formatExtraConfig(extra) };
-      const driver: CypherDriver = {
-        id: this.config ? this.config.id : `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
+      const config: CypherConfig = { ...rawConfig, config: this.formatExtraConfig(extra) };
+      const driver: DriverCreation = {
         name,
         provider: 'cypher',
         config,
