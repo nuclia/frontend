@@ -128,5 +128,5 @@ export function searchResources(
 }
 
 export function formatQuery(query: string) {
-  return query.trim().replace('.', '\\.');
+  return query.trim();
 }
