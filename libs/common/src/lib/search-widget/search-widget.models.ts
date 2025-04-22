@@ -111,7 +111,7 @@ export interface ResultDisplayConfig {
   showResultType: 'citations' | 'all-resources';
   displayMetadata: boolean;
   hideAnswer: boolean;
-  metadatas: string[];
+  metadatas?: string[];
   displayThumbnails: boolean;
   showAttachedImages: boolean;
   displayFieldList: boolean;
@@ -564,7 +564,9 @@ export function getJsonSchema(config: ResultDisplayConfig): string {
   return !!schema ? `\n  json_schema='${schema}'` : '';
 }
 export function getMetadata(config: ResultDisplayConfig): string {
-  return config.displayMetadata && config.metadatas.length > 0 ? `\n  metadata="${config.metadatas.join(',')}"` : '';
+  return config.displayMetadata && (config.metadatas || []).length > 0
+    ? `\n  metadata="${(config.metadatas || []).join(',')}"`
+    : '';
 }
 export function getWidgetTheme(options: WidgetConfiguration): string {
   return options.darkMode === 'dark' ? `\n  mode="dark"` : '';

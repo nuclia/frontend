@@ -60,12 +60,12 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
       const { metadatas, ...rest } = value;
       const mainMetadatas = this.DISPLAYED_METADATAS.reduce(
         (acc, metadata) => {
-          acc[metadata.value] = metadatas.includes(metadata.value);
+          acc[metadata.value] = (metadatas || []).includes(metadata.value);
           return acc;
         },
         {} as Record<string, boolean>,
       );
-      const otherMetadatas = metadatas
+      const otherMetadatas = (metadatas || [])
         .filter((metadata) => !this.DISPLAYED_METADATAS.map((m) => m.value).includes(metadata))
         .join('\n');
       this.form.patchValue({ ...rest, metadatas: mainMetadatas, metadatasOthers: otherMetadatas });
