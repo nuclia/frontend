@@ -195,6 +195,20 @@
         {{ 'search.configuration.generative-answer.prefer-markdown.toggle-description' | translate }}
       </div>
     </div>
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="contextImages"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.generative-answer.images-in-question.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.generative-answer.images-in-question.toggle-description' | translate }}
+      </div>
+    </div>
     @if (useSearchResults) {
       <ng-container formGroupName="ragStrategies">
         <div class="subsection-title">

@@ -63,3 +63,4 @@ export const hasSearchButton = widgetFeatures.pipe(map((features) => !!features?
 export const collapseTextBlocks = widgetFeatures.pipe(map((features) => !!features?.collapseTextBlocks));
 export const hideDownload: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.hideDownload));
 export const disableRAG: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.disableRAG));
+export const hasContextImages = widgetFeatures.pipe(map((features) => !!features?.contextImages));

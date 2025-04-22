@@ -169,6 +169,7 @@ export interface WidgetFeatures {
   disableRAG?: boolean;
   persistChatHistory?: boolean;
   hideAnswer?: boolean;
+  contextImages?: boolean;
 }
 
 export type WidgetFeedback = 'none' | 'answer' | 'answerAndResults';

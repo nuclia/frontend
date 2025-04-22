@@ -1235,6 +1235,8 @@
 	"search.configuration.generative-answer.generative-model.kb-settings": "(des de la configuració de la KB)",
 	"search.configuration.generative-answer.generative-model.select-label": "Model generatiu actual",
 	"search.configuration.generative-answer.generative-model.title": "Model generatiu específic",
+	"search.configuration.generative-answer.images-in-question.toggle-description": "Permet als usuaris afegir imatges a la seva pregunta textual.",
+	"search.configuration.generative-answer.images-in-question.toggle-label": "Utilitzeu imatges en preguntes",
 	"search.configuration.generative-answer.limit-paragraphs.toggle-description": "Controlar quants dels paràgrafs més rellevants es passen al LLM per generar la resposta. Per defecte: 20.",
 	"search.configuration.generative-answer.limit-paragraphs.toggle-label": "Millors resultats",
 	"search.configuration.generative-answer.limit-token.max-input": "Nombre màxim de tokens d’entrada",

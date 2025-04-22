@@ -94,6 +94,10 @@ interface SearchState {
     engagement: Engagement;
   };
   metadata: ResultMetadata;
+  images: {
+    content_type: string;
+    b64encoded: string;
+  }[];
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -117,6 +121,7 @@ export const searchState = new SvelteState<SearchState>({
     field: [],
     extra: [],
   },
+  images: [],
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -450,6 +455,41 @@ export const trackingReset = searchState.writer<undefined>(
   () => undefined,
   (state) => ({ ...state, tracking: { ...state.tracking, startTime: 0, resultsReceived: false } }),
 );
+
+export const images = searchState.writer<
+  {
+    content_type: string;
+    b64encoded: string;
+  }[],
+  {
+    content_type: string;
+    b64encoded: string;
+  }[]
+>(
+  (state) => state.images,
+  (state, images) => ({
+    ...state,
+    images,
+  }),
+);
+
+export function addImage(fileObj: File) {
+  const reader = new FileReader();
+  reader.readAsDataURL(fileObj);
+  reader.onload = () => {
+    const base64 = reader.result as string;
+    const content_type = fileObj.type;
+    images.set([...images.getValue(), { content_type, b64encoded: base64.split(',')[1] }]);
+  };
+}
+
+export function removeImage(index: number) {
+  const currentImages = images.getValue();
+  if (currentImages[index]) {
+    currentImages.splice(index, 1);
+    images.set(currentImages);
+  }
+}
 
 function getType(value: string): 'string' | 'list' | 'date' {
   const parts = value.split(':');
