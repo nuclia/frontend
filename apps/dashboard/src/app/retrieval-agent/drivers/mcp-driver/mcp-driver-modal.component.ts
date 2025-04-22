@@ -24,12 +24,29 @@ export class McpDriverModalComponent {
     sse_read_timeout: new FormControl<number>(300, { nonNullable: true, validators: [Validators.pattern('^[0-9]*$')] }),
     headers: new FormGroup({}),
   });
+  isEdit: boolean;
 
   get headersGroup() {
     return this.form.controls.headers;
   }
+  get config() {
+    return this.modal.config.data;
+  }
 
-  constructor(public modal: ModalRef) {}
+  constructor(public modal: ModalRef<McpDriver>) {
+    const driver = this.modal.config.data;
+    this.isEdit = !!driver;
+    if (!!driver) {
+      const config = driver.config;
+      this.form.patchValue({ name: driver.name, ...config });
+      const headers = Object.entries(config.headers);
+      if (headers.length > 0) {
+        headers.forEach(([property, value]) => {
+          this.addHeader(property, `${value}`);
+        });
+      }
+    }
+  }
 
   cancel() {
     this.modal.close();
@@ -49,12 +66,12 @@ export class McpDriverModalComponent {
     }
   }
 
-  addHeader() {
+  addHeader(property?: string, value?: string) {
     this.headersGroup.addControl(
       `header${headerIndex++}`,
       new FormGroup({
-        property: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-        value: new FormControl(''),
+        property: new FormControl<string>(property || '', { nonNullable: true, validators: [Validators.required] }),
+        value: new FormControl(value || ''),
       }),
     );
   }

@@ -19,8 +19,19 @@ export class SqlDriverModalComponent {
     dsn: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     sql_schema: new FormControl<string | null>(null),
   });
+  isEdit: boolean;
+  get config() {
+    return this.modal.config.data;
+  }
 
-  constructor(public modal: ModalRef) {}
+  constructor(public modal: ModalRef<SqlDriver>) {
+    const driver = this.modal.config.data;
+    this.isEdit = !!driver;
+    if (!!driver) {
+      const config = driver.config;
+      this.form.patchValue({ name: driver.name, ...config });
+    }
+  }
 
   cancel() {
     this.modal.close();

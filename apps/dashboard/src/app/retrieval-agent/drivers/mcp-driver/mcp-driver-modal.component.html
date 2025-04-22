@@ -1,5 +1,10 @@
 <pa-modal-advanced fitContentHeight="">
-  <pa-modal-title>{{ 'retrieval-agents.drivers.types.mcp' | translate }}</pa-modal-title>
+  <pa-modal-title>
+    {{
+      (isEdit ? 'retrieval-agents.drivers.edit-modal-title' : 'retrieval-agents.drivers.add.mcp')
+        | translate: { name: config?.name }
+    }}
+  </pa-modal-title>
   <pa-modal-content>
     <form [formGroup]="form">
       <div class="form-entry">
@@ -82,7 +87,7 @@
     </pa-button>
     <pa-button
       kind="primary"
-      [disabled]="form.invalid"
+      [disabled]="form.invalid || form.pristine"
       (click)="submit()">
       {{ 'generic.save' | translate }}
     </pa-button>

@@ -26,59 +26,61 @@
       }
     </div>
 
-    @if (!retrievalAgents || retrievalAgents.length === 0) {
-      <nsi-info-card icon="info">{{ 'account.retrieval-agents.empty-list' | translate }}</nsi-info-card>
-    } @else {
-      <pa-table
-        border
-        columns="1fr 96px">
-        <pa-table-header>
-          <pa-table-cell header>{{ 'account.retrieval-agents.table.name' | translate }}</pa-table-cell>
-          <pa-table-cell-menu header>{{ 'account.retrieval-agents.table.actions' | translate }}</pa-table-cell-menu>
-        </pa-table-header>
-        @for (arag of retrievalAgents; track arag.id) {
-          <pa-table-row [disabled]="!arag.role_on_kb">
-            <pa-table-cell>
-              <a
-                class="go-to-arag"
-                (click)="goToArag(arag)">
-                {{ arag.title }}
-              </a>
-            </pa-table-cell>
-            <pa-table-cell-menu>
-              <div>
-                <pa-button
-                  icon="more-vertical"
-                  aspect="basic"
-                  size="small"
-                  [paPopup]="menu"
-                  paTooltip="generic.actions">
-                  {{ 'generic.actions' | translate }}
-                </pa-button>
-                <!-- Router links to edit configuration and session list -->
-                <pa-dropdown #menu>
-                  <pa-option
-                    icon="settings"
-                    (click)="goToSettings(arag)">
-                    {{ 'account.retrieval-agents.menu.edit' | translate }}
-                  </pa-option>
-                  <pa-option
-                    icon="list"
-                    (click)="goToSessions(arag)">
-                    {{ 'account.retrieval-agents.menu.sessions-list' | translate }}
-                  </pa-option>
-                  <pa-option
-                    icon="trash"
-                    destructive
-                    (click)="deleteArag(arag)">
-                    {{ 'account.retrieval-agents.menu.delete' | translate }}
-                  </pa-option>
-                </pa-dropdown>
-              </div>
-            </pa-table-cell-menu>
-          </pa-table-row>
-        }
-      </pa-table>
-    }
+    <div class="account-arag-content">
+      @if (!retrievalAgents || retrievalAgents.length === 0) {
+        <nsi-info-card icon="info">{{ 'account.retrieval-agents.empty-list' | translate }}</nsi-info-card>
+      } @else {
+        <pa-table
+          border
+          columns="1fr 96px">
+          <pa-table-header>
+            <pa-table-cell header>{{ 'account.retrieval-agents.table.name' | translate }}</pa-table-cell>
+            <pa-table-cell-menu header>{{ 'account.retrieval-agents.table.actions' | translate }}</pa-table-cell-menu>
+          </pa-table-header>
+          @for (arag of retrievalAgents; track arag.id) {
+            <pa-table-row [disabled]="!arag.role_on_kb">
+              <pa-table-cell>
+                <a
+                  class="go-to-arag"
+                  (click)="goToArag(arag)">
+                  {{ arag.title }}
+                </a>
+              </pa-table-cell>
+              <pa-table-cell-menu>
+                <div>
+                  <pa-button
+                    icon="more-vertical"
+                    aspect="basic"
+                    size="small"
+                    [paPopup]="menu"
+                    paTooltip="generic.actions">
+                    {{ 'generic.actions' | translate }}
+                  </pa-button>
+                  <!-- Router links to edit configuration and session list -->
+                  <pa-dropdown #menu>
+                    <pa-option
+                      icon="settings"
+                      (click)="goToSettings(arag)">
+                      {{ 'account.retrieval-agents.menu.edit' | translate }}
+                    </pa-option>
+                    <pa-option
+                      icon="list"
+                      (click)="goToSessions(arag)">
+                      {{ 'account.retrieval-agents.menu.sessions-list' | translate }}
+                    </pa-option>
+                    <pa-option
+                      icon="trash"
+                      destructive
+                      (click)="deleteArag(arag)">
+                      {{ 'account.retrieval-agents.menu.delete' | translate }}
+                    </pa-option>
+                  </pa-dropdown>
+                </div>
+              </pa-table-cell-menu>
+            </pa-table-row>
+          }
+        </pa-table>
+      }
+    </div>
   </div>
 }

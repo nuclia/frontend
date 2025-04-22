@@ -8,6 +8,10 @@
   .add-driver-container {
     width: rhythm(28);
   }
+
+  .driver-list {
+    max-width: $width-large-screen;
+  }
 }
 
 section {

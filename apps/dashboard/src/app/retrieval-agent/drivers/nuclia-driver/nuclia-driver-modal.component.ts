@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { NucliaDBDriver } from '@nuclia/core';
 
 @Component({
   selector: 'app-nuclia-driver-modal',
@@ -15,8 +16,14 @@ export class NucliaDriverModalComponent {
   form = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
+  isEdit: boolean;
+  get config() {
+    return this.modal.config.data;
+  }
 
-  constructor(public modal: ModalRef) {}
+  constructor(public modal: ModalRef<NucliaDBDriver>) {
+    this.isEdit = !!this.modal.config.data;
+  }
 
   cancel() {
     this.modal.close();

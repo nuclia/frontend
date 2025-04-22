@@ -42,12 +42,29 @@ export class CypherDriverModalComponent {
     database: new FormControl<string | null>(null),
     extra: new FormGroup({}),
   });
+  isEdit: boolean;
 
   get extraGroup() {
     return this.form.controls.extra;
   }
+  get config() {
+    return this.modal.config.data;
+  }
 
-  constructor(public modal: ModalRef) {}
+  constructor(public modal: ModalRef<CypherDriver>) {
+    const driver = this.modal.config.data;
+    this.isEdit = !!driver;
+    if (!!driver) {
+      const config = driver.config;
+      this.form.patchValue({ name: driver.name, ...config, timeout: config.timeout || 0 });
+      const extraConfig = Object.entries(config.config);
+      if (extraConfig.length > 0) {
+        extraConfig.forEach(([property, value]) => {
+          this.addConfigProperty(property, `${value}`);
+        });
+      }
+    }
+  }
 
   cancel() {
     this.modal.close();
@@ -58,7 +75,7 @@ export class CypherDriverModalComponent {
       const { name, extra, ...rawConfig } = this.form.getRawValue();
       const config = { ...rawConfig, config: this.formatExtraConfig(extra) };
       const driver: CypherDriver = {
-        id: `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
+        id: this.config ? this.config.id : `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
         name,
         provider: 'cypher',
         config,
@@ -67,15 +84,15 @@ export class CypherDriverModalComponent {
     }
   }
 
-  addConfigProperty() {
+  addConfigProperty(property?: string, value?: string) {
     this.extraGroup.addControl(
       `property_${propertyIndex}`,
       new FormGroup({
-        property: new FormControl<string>('', {
+        property: new FormControl<string>(property || '', {
           nonNullable: true,
           validators: [Validators.required],
         }),
-        value: new FormControl<string>('', { nonNullable: true }),
+        value: new FormControl<string>(value || '', { nonNullable: true }),
       }),
     );
     propertyIndex++;

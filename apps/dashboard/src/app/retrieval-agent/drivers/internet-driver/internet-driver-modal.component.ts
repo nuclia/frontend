@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { STFUtils } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { IDriver } from '@nuclia/core';
+import { BraveDriver, IDriver, PerplexityDriver, TavilyDriver } from '@nuclia/core';
 
 @Component({
   selector: 'app-internet-driver-modal',
@@ -20,12 +20,23 @@ export class InternetDriverModalComponent {
     key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     endpoint: new FormControl<string | undefined>(undefined, { nonNullable: true }),
   });
+  isEdit: boolean;
 
   get providerValue() {
     return this.form.controls.provider.getRawValue();
   }
+  get config() {
+    return this.modal.config.data;
+  }
 
-  constructor(public modal: ModalRef) {}
+  constructor(public modal: ModalRef<BraveDriver | PerplexityDriver | TavilyDriver>) {
+    const driver = this.modal.config.data;
+    this.isEdit = !!driver;
+    if (!!driver) {
+      const config = driver.config;
+      this.form.patchValue({ name: driver.name, provider: driver.provider, ...config });
+    }
+  }
 
   cancel() {
     this.modal.close();
@@ -37,7 +48,7 @@ export class InternetDriverModalComponent {
       if (provider) {
         const config = provider === 'brave' ? rawConfig : { key: rawConfig.key };
         const driver: IDriver = {
-          id: `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
+          id: this.config ? this.config.id : `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
           name,
           provider,
           config,
