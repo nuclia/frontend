@@ -4,7 +4,7 @@
   </div>
 } @else {
   <div class="config-block">
-    @for (block of config(); track $index) {
+    @for (block of config(); track block) {
       <div>
         @if (block.title) {
           <div class="title">{{ block.title }}</div>

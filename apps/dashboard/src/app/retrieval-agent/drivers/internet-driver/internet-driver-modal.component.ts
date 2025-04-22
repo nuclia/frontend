@@ -1,0 +1,60 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { STFUtils } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { BraveDriver, IDriver, PerplexityDriver, TavilyDriver } from '@nuclia/core';
+
+@Component({
+  selector: 'app-internet-driver-modal',
+  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  templateUrl: './internet-driver-modal.component.html',
+  styleUrl: '../driver-form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class InternetDriverModalComponent {
+  form = new FormGroup({
+    name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    provider: new FormControl<'brave' | 'perplexity' | 'tavily' | ''>('', { nonNullable: true }),
+    key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    endpoint: new FormControl<string | undefined>(undefined, { nonNullable: true }),
+  });
+  isEdit: boolean;
+
+  get providerValue() {
+    return this.form.controls.provider.getRawValue();
+  }
+  get config() {
+    return this.modal.config.data;
+  }
+
+  constructor(public modal: ModalRef<BraveDriver | PerplexityDriver | TavilyDriver>) {
+    const driver = this.modal.config.data;
+    this.isEdit = !!driver;
+    if (!!driver) {
+      const config = driver.config;
+      this.form.patchValue({ name: driver.name, provider: driver.provider, ...config });
+    }
+  }
+
+  cancel() {
+    this.modal.close();
+  }
+
+  submit() {
+    if (this.form.valid) {
+      const { provider, name, ...rawConfig } = this.form.getRawValue();
+      if (provider) {
+        const config = provider === 'brave' ? rawConfig : { key: rawConfig.key };
+        const driver: IDriver = {
+          id: this.config ? this.config.id : `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
+          name,
+          provider,
+          config,
+        };
+        this.modal.close(driver);
+      }
+    }
+  }
+}

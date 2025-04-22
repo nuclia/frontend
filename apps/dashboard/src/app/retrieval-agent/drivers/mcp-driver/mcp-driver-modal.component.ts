@@ -1,0 +1,94 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { STFUtils } from '@flaps/core';
+import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { McpDriver } from '@nuclia/core';
+
+let headerIndex = 0;
+
+@Component({
+  selector: 'app-mcp-driver-modal',
+  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  templateUrl: './mcp-driver-modal.component.html',
+  styleUrl: '../driver-form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class McpDriverModalComponent {
+  form = new FormGroup({
+    name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    uri: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    key: new FormControl<string | null>(null),
+    timeout: new FormControl<number>(5, { nonNullable: true, validators: [Validators.pattern('^[0-9]*$')] }),
+    sse_read_timeout: new FormControl<number>(300, { nonNullable: true, validators: [Validators.pattern('^[0-9]*$')] }),
+    headers: new FormGroup({}),
+  });
+  isEdit: boolean;
+
+  get headersGroup() {
+    return this.form.controls.headers;
+  }
+  get config() {
+    return this.modal.config.data;
+  }
+
+  constructor(public modal: ModalRef<McpDriver>) {
+    const driver = this.modal.config.data;
+    this.isEdit = !!driver;
+    if (!!driver) {
+      const config = driver.config;
+      this.form.patchValue({ name: driver.name, ...config });
+      const headers = Object.entries(config.headers);
+      if (headers.length > 0) {
+        headers.forEach(([property, value]) => {
+          this.addHeader(property, `${value}`);
+        });
+      }
+    }
+  }
+
+  cancel() {
+    this.modal.close();
+  }
+
+  submit() {
+    if (this.form.valid) {
+      const { name, headers, ...rawConfig } = this.form.getRawValue();
+      const config = { ...rawConfig, headers: this.formatHeaders(headers) };
+      const driver: McpDriver = {
+        id: `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
+        name,
+        provider: 'mcp',
+        config,
+      };
+      this.modal.close(driver);
+    }
+  }
+
+  addHeader(property?: string, value?: string) {
+    this.headersGroup.addControl(
+      `header${headerIndex++}`,
+      new FormGroup({
+        property: new FormControl<string>(property || '', { nonNullable: true, validators: [Validators.required] }),
+        value: new FormControl(value || ''),
+      }),
+    );
+  }
+
+  removeHeader(key: string) {
+    this.headersGroup.removeControl(key);
+  }
+
+  private formatHeaders(extra: { [property: string]: { property: string; value: string } }): {
+    [property: string]: string;
+  } {
+    return Object.values(extra).reduce(
+      (config, entry) => {
+        config[entry.property] = entry.value;
+        return config;
+      },
+      {} as { [property: string]: string },
+    );
+  }
+}

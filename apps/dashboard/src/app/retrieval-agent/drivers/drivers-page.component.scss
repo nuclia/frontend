@@ -1,0 +1,25 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.page-spacing {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+
+  .add-driver-container {
+    width: rhythm(28);
+  }
+
+  .driver-list {
+    max-width: $width-large-screen;
+  }
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(0.5);
+
+  .title-xs {
+    color: $color-neutral-regular;
+  }
+}

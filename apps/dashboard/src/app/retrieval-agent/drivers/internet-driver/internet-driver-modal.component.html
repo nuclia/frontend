@@ -1,0 +1,60 @@
+<pa-modal-advanced fitContentHeight="">
+  <pa-modal-title>
+    {{
+      (isEdit ? 'retrieval-agents.drivers.edit-modal-title' : 'retrieval-agents.drivers.add.internet')
+        | translate: { name: config?.name }
+    }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <form [formGroup]="form">
+      <div class="form-entry">
+        <label for="name">{{ 'retrieval-agents.drivers.form.driver-name' | translate }}</label>
+        <pa-input
+          id="name"
+          externalLabel
+          formControlName="name"></pa-input>
+      </div>
+      <div class="form-entry">
+        <label for="provider">{{ 'retrieval-agents.drivers.form.internet.provider' | translate }}</label>
+        <pa-select
+          id="provider"
+          externalLabel
+          formControlName="provider">
+          <pa-option value="brave">Brave</pa-option>
+          <pa-option value="perplexity">Perplexity</pa-option>
+          <pa-option value="tavily">Tavily</pa-option>
+        </pa-select>
+      </div>
+      <div class="form-entry">
+        <label for="key">{{ 'retrieval-agents.drivers.form.key' | translate }}</label>
+        <pa-input
+          id="key"
+          externalLabel
+          formControlName="key"></pa-input>
+      </div>
+
+      @if (providerValue === 'brave') {
+        <div class="form-entry">
+          <label for="endpoint">{{ 'retrieval-agents.drivers.form.internet.endpoint' | translate }}</label>
+          <pa-input
+            id="endpoint"
+            externalLabel
+            formControlName="endpoint"></pa-input>
+        </div>
+      }
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="form.invalid || form.pristine"
+      (click)="submit()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

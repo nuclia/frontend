@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { ResourceProperties } from '../db.models';
 import { IKnowledgeBoxBase, IKnowledgeBoxItem, InviteKbData, IWritableKnowledgeBox, ResourcePagination } from '../kb';
 import { ExtractedDataTypes } from '../resource';
+import { Driver } from './driver.models';
 import { Session } from './session';
 import { ISession } from './session.models';
 
@@ -41,4 +42,14 @@ export interface IRetrievalAgent
   getFullSessionBySlug(slug: string): Observable<ISession>;
   listSessions(page?: number, size?: number): Observable<SessionList>;
   inviteToAgent(data: InviteKbData): Observable<void>;
+
+  getDrivers(): Observable<Driver[]>;
+  addDriver(driver: Driver): Observable<void>;
+  patchDriver(driver: Driver): Observable<void>;
+  deleteDriver(driverId: string): Observable<void>;
+  getRules(): Observable<(Rule | string)[]>;
+}
+
+export interface Rule {
+  prompt: string;
 }

@@ -51,9 +51,6 @@ export class AgentDashboardComponent implements AfterViewInit {
     this.workflowService.workflowRoot = $event;
   }
 
-  openDrivers() {
-    this.workflowService.openSidebar('drivers');
-  }
   openRules() {
     this.workflowService.openSidebar('rules');
   }

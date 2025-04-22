@@ -10,8 +10,12 @@
 
   .go-to-arag {
     @include body-s();
+    cursor: pointer;
     font-weight: $font-weight-semi-bold;
     text-decoration: underline;
+  }
+  .account-arag-content {
+    max-width: $width-large-screen;
   }
 }
 

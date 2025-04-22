@@ -1,13 +1,21 @@
 import { map, Observable } from 'rxjs';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
 import { ExtractedDataTypes } from '../resource';
-import { IRetrievalAgent, SessionList, SessionProperties } from './retrieval-agent.models';
+import { Driver } from './driver.models';
+import { IRetrievalAgent, Rule, SessionList, SessionProperties } from './retrieval-agent.models';
 import { ISession } from './session.models';
 
 /**
  * Provides access to all the Retrieval Agent contents and services.
  */
 export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAgent {
+  /**
+   * The Retrieval Agent path on the regional API.
+   */
+  override get path(): string {
+    return `/kb/${this.id}/agent`;
+  }
+
   /**
    * Retrieves a session from the Retrieval Agent.
    *
@@ -30,7 +38,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     return this.getResource(uuid, show, extracted);
   }
   /**
-   * Retrieves a sessions from the Retrieval Agent with all its attached metadata and content.
+   * Retrieves a session from the Retrieval Agent with all its attached metadata and content.
    */
   getFullSession(uuid: string): Observable<ISession> {
     return this.getFullResource(uuid);
@@ -54,5 +62,43 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   inviteToAgent(data: InviteKbData): Observable<void> {
     return this.inviteToKb(data);
+  }
+
+  /**
+   * Get the list of drivers of the Retrieval Agent
+   */
+  getDrivers(): Observable<Driver[]> {
+    return this.nuclia.rest.get<Driver[]>(`${this.path}/drivers`);
+  }
+
+  /**
+   * Add driver to the Retrieval Agent
+   * @param driver BraveDriver | CypherDriver | NucliaDBDriver | PerplexityDriver | TavilyDriver | SqlDriver | McpDriver
+   */
+  addDriver(driver: Driver): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/drivers`, driver);
+  }
+
+  /**
+   * Edit driver
+   * @param driver BraveDriver | CypherDriver | NucliaDBDriver | PerplexityDriver | TavilyDriver | SqlDriver | McpDriver
+   */
+  patchDriver(driver: Driver): Observable<void> {
+    return this.nuclia.rest.patch(`${this.path}/driver/${driver.id}`, driver);
+  }
+
+  /**
+   * Delete driver
+   * @param driverId Identifier of the driver to delete
+   */
+  deleteDriver(driverId: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/driver/${driverId}`);
+  }
+
+  /**
+   * Get the list of rules of the Retrieval Agent
+   */
+  getRules(): Observable<(Rule | string)[]> {
+    return this.nuclia.rest.get<(Rule | string)[]>(`${this.path}/rules`);
   }
 }
