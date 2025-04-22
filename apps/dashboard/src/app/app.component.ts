@@ -1,7 +1,14 @@
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { BackendConfigurationService, SDKService, STFSplashScreenService, STFUtils, UserService } from '@flaps/core';
+import {
+  BackendConfigurationService,
+  LabelsService,
+  SDKService,
+  STFSplashScreenService,
+  STFUtils,
+  UserService,
+} from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, Subject } from 'rxjs';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
@@ -31,6 +38,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private sdk: SDKService,
     private modalService: SisModalService,
     private paTranslate: PaTranslateService,
+    private labelService: LabelsService,
     @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();
@@ -47,6 +55,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.config.useRemoteLogin()) {
       this.remoteLogin();
     }
+    this.labelService.initLabelSets();
   }
 
   ngOnInit() {

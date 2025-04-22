@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { BackendConfigurationService, STFUtils } from '@flaps/core';
+import { BackendConfigurationService, LabelsService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -23,6 +23,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private ngxTranslate: TranslateService,
     private config: BackendConfigurationService,
     private paTranslate: PaTranslateService,
+    private labelService: LabelsService,
   ) {
     if (location.href.includes('/admin/admin/')) {
       // after OAuth flow, we need to restore hash-based routing
@@ -31,6 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const userLocale = localStorage.getItem(userLocaleKey);
     this.initTranslate(userLocale);
+    this.labelService.initLabelSets();
   }
 
   ngOnInit() {
