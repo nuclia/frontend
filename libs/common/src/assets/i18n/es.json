@@ -1166,6 +1166,7 @@
 	"retrieval-agents.workflow.node-types.conditional.title": "Condición",
 	"retrieval-agents.workflow.node-types.cypher.description": "Acceda a los datos de su base de datos Cypher",
 	"retrieval-agents.workflow.node-types.cypher.title": "Consulta Cypher",
+	"retrieval-agents.workflow.node-types.historical.title": "Histórico",
 	"retrieval-agents.workflow.node-types.internet.description": "Perplexity, Brave, Tavily",
 	"retrieval-agents.workflow.node-types.internet.title": "Búsqueda en Internet",
 	"retrieval-agents.workflow.node-types.rephrase.description": "Opciones de reformulación",

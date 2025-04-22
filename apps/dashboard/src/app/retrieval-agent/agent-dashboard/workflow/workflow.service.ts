@@ -27,6 +27,8 @@ import {
   ConditionalNodeComponent,
   CypherFormComponent,
   CypherNodeComponent,
+  HistoricalFormComponent,
+  HistoricalNodeComponent,
   InternetFormComponent,
   InternetNodeComponent,
   RephraseFormComponent,
@@ -405,6 +407,10 @@ export class WorkflowService {
    */
   private getNodeRef(nodeType: NodeType): ComponentRef<NodeDirective> {
     switch (nodeType) {
+      case 'historical':
+        return createComponent(HistoricalNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
       case 'rephrase':
         return createComponent(RephraseNodeComponent, {
           environmentInjector: this.environmentInjector,
@@ -451,6 +457,8 @@ export class WorkflowService {
    */
   private getFormRef(nodeType: NodeType): ComponentRef<FormDirective> {
     switch (nodeType) {
+      case 'historical':
+        return createComponent(HistoricalFormComponent, { environmentInjector: this.environmentInjector });
       case 'rephrase':
         return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
       case 'conditional':

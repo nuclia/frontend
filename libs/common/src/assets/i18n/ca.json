@@ -1166,6 +1166,7 @@
 	"retrieval-agents.workflow.node-types.conditional.title": "Condició",
 	"retrieval-agents.workflow.node-types.cypher.description": "Accediu a les dades de la vostra base de dades de Cypher",
 	"retrieval-agents.workflow.node-types.cypher.title": "Consulta Cypher",
+	"retrieval-agents.workflow.node-types.historical.title": "Històric",
 	"retrieval-agents.workflow.node-types.internet.description": "Perplexity, Brave, Tavily",
 	"retrieval-agents.workflow.node-types.internet.title": "Cerca a Internet",
 	"retrieval-agents.workflow.node-types.rephrase.description": "Opcions de reformulació",

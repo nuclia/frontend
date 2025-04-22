@@ -8,6 +8,7 @@ export interface WorkflowRoot {
 }
 
 export type NodeType =
+  | 'historical'
   | 'rephrase'
   | 'conditional'
   | 'validation'
@@ -27,16 +28,17 @@ export interface Node {
 }
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
-  preprocess: ['rephrase'],
+  preprocess: ['historical', 'rephrase'],
   context: ['conditional', 'ask', 'internet', 'sql', 'cypher'],
   postprocess: ['validation', 'summarize', 'restart'],
 };
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
+  ask: 'database',
   conditional: 'dataflow',
   cypher: 'file-code',
+  historical: 'history',
   internet: 'globe',
-  ask: 'database',
   rephrase: 'rephrase',
   restart: 'repeat',
   sql: 'file-code',

@@ -1173,6 +1173,8 @@
 	"retrieval-agents.workflow.node-types.conditional.title": "Condition",
 	"retrieval-agents.workflow.node-types.cypher.description": "Access data from your Cypher database",
 	"retrieval-agents.workflow.node-types.cypher.title": "Cypher query",
+	"retrieval-agents.workflow.node-types.historical.description": "To be defined with Ramon",
+	"retrieval-agents.workflow.node-types.historical.title": "Historical",
 	"retrieval-agents.workflow.node-types.internet.description": "Perplexity, Brave, Tavily",
 	"retrieval-agents.workflow.node-types.internet.title": "Internet search",
 	"retrieval-agents.workflow.node-types.rephrase.description": "Rephrase options",
