@@ -1,0 +1,23 @@
+<pa-modal-advanced>
+  <pa-modal-title>{{ 'tasks-automation.actions.duplicate.title' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <p>{{ 'tasks-automation.actions.duplicate.description' | translate }}</p>
+    <form [formGroup]="form">
+      <pa-input formControlName="name">
+        {{ 'tasks-automation.actions.duplicate.name' | translate }}
+      </pa-input>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      (click)="save()"
+      [disabled]="form.invalid">
+      {{ 'pastanaga.confirm' | translate }}
+    </pa-button>
+    <pa-button
+      kind="destructive"
+      (click)="close()">
+      {{ 'pastanaga.cancel' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

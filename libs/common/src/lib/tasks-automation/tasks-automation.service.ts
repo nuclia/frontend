@@ -13,6 +13,7 @@ import {
 import { TaskFullDefinition, TaskListResponse, TaskName, TaskParameters } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { Router } from '@angular/router';
+import { TaskDuplicateDialogComponent } from './task-list/task-duplicate-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +40,31 @@ export class TasksAutomationService {
       take(1),
       switchMap((kb) => kb.taskManager.startTask(taskName, parameters, 'NEW', false)),
       switchMap((res) => this.updateTasks().pipe(map(() => res))),
+    );
+  }
+
+  duplicateTask(taskId: string) {
+    return this.modalService.openModal(TaskDuplicateDialogComponent).onClose.pipe(
+      filter((name) => !!name),
+      switchMap((name) =>
+        this.configs.pipe(
+          take(1),
+          map((configs) => configs.find((task) => task.id === taskId)),
+          filter((task) => !!task),
+          switchMap((task) => {
+            const parameters = task.parameters;
+            parameters.name = name;
+            parameters.operations = parameters.operations?.map((operation) => {
+              if (operation.ask) {
+                operation.ask.destination = `${operation.ask.destination}_copy`;
+              }
+              return operation;
+            });
+            return this.startTask(task.task.name, parameters);
+          }),
+          switchMap((res) => this.goToEditTask(res.id)),
+        ),
+      ),
     );
   }
 

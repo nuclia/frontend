@@ -80,4 +80,8 @@ export class TaskListComponent {
   editTask(taskId: string) {
     this.taskAutomation.goToEditTask(taskId).subscribe();
   }
+
+  duplicateTask(taskId: string) {
+    this.taskAutomation.duplicateTask(taskId).subscribe();
+  }
 }
