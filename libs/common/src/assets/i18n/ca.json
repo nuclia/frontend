@@ -1639,7 +1639,7 @@
 	"tasks-automation.actions.delete-data.success": "Les dades generades se suprimiran en breu.",
 	"tasks-automation.actions.delete-data.title": "Elimina les dades generades",
 	"tasks-automation.actions.duplicate.action": "Duplicat",
-	"tasks-automation.actions.duplicate.description": "Es crearà un agent nou basant-se en els mateixos paràmetres que l'agent original. si l'agent defineix un nom de camp, es completarà amb el sufix \"_copy\", per unicitat.",
+	"tasks-automation.actions.duplicate.description": "Es crearà un agent nou basant-se en els mateixos paràmetres que l'agent original.",
 	"tasks-automation.actions.duplicate.name": "Nom de l'agent",
 	"tasks-automation.actions.duplicate.title": "Duplicar l'agent",
 	"tasks-automation.actions.edit.description": "En continuar, acceptes que s'aturarà qualsevol treball actiu.",

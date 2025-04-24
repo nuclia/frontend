@@ -1639,7 +1639,7 @@
 	"tasks-automation.actions.delete-data.success": "Vos données générées seront supprimées sous peu.",
 	"tasks-automation.actions.delete-data.title": "Supprimer les données générées",
 	"tasks-automation.actions.duplicate.action": "Dupliquer",
-	"tasks-automation.actions.duplicate.description": "Un nouvel agent sera créé sur la base des mêmes paramètres que l'agent d'origine. Si l'agent définit un nom de champ, il sera complété par le suffixe \"_copy\", par souci d'unicité.",
+	"tasks-automation.actions.duplicate.description": "Un nouvel agent sera créé sur la base des mêmes paramètres que l'agent d'origine.",
 	"tasks-automation.actions.duplicate.name": "Nom de l'agent",
 	"tasks-automation.actions.duplicate.title": "Dupliquer l'agent",
 	"tasks-automation.actions.edit.description": "En continuant, vous acceptez que tout travail actif soit arrêté.",
