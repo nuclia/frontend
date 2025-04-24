@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
+import { HistoricalAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-historical-node',
@@ -10,10 +11,17 @@ import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HistoricalNodeComponent extends NodeDirective {
+  private translate = inject(TranslateService);
+
   historicalConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
-      // const config = this.config() as HistoricalAgent;
-      // return [{ content: config.prompt }];
+      const config = this.config() as HistoricalAgentUI;
+      const configDescription = this.translate.instant(
+        config.all
+          ? 'retrieval-agents.workflow.node-types.historical.config.on'
+          : 'retrieval-agents.workflow.node-types.historical.config.off',
+      );
+      return [{ content: configDescription }];
     }
     return [];
   });

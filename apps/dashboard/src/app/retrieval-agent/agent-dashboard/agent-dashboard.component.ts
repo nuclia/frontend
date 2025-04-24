@@ -5,12 +5,14 @@ import {
   Component,
   ElementRef,
   inject,
+  OnDestroy,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { DashboardLayoutService } from '@flaps/common';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 import { LinkService, WorkflowRoot, WorkflowRootComponent, WorkflowService } from './workflow';
 import { ConnectableEntryComponent } from './workflow/basic-elements';
 
@@ -21,10 +23,12 @@ import { ConnectableEntryComponent } from './workflow/basic-elements';
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class AgentDashboardComponent implements AfterViewInit {
+export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private linkService = inject(LinkService);
   private workflowService = inject(WorkflowService);
   private layoutService = inject(DashboardLayoutService);
+
+  private unsubscribeAll = new Subject<void>();
 
   @ViewChild('linkContainer') linkContainer?: ElementRef;
   @ViewChild('workflowContainer') workflowContainer?: ElementRef;
@@ -51,8 +55,14 @@ export class AgentDashboardComponent implements AfterViewInit {
     }
   }
 
-  setRoot($event: WorkflowRoot) {
-    this.workflowService.workflowRoot = $event;
+  ngOnDestroy(): void {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+    this.workflowService.cleanWorkflow();
+  }
+
+  setRoot(root: WorkflowRoot) {
+    this.workflowService.initAndUpdateWorkflow(root).pipe(takeUntil(this.unsubscribeAll)).subscribe();
   }
 
   openRules() {

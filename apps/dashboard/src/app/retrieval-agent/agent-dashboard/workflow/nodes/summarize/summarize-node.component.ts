@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
-import { SummarizeAgent } from '../../workflow.models';
+import { SummarizeAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-summarize-node',
@@ -13,7 +13,7 @@ import { SummarizeAgent } from '../../workflow.models';
 export class SummarizeNodeComponent extends NodeDirective {
   summarizeConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
-      const config = this.config() as SummarizeAgent;
+      const config = this.config() as SummarizeAgentUI;
       return [{ title: 'Prompt', content: config.prompt }];
     }
     return [];

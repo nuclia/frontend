@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
-import { RephraseAgent } from '../../workflow.models';
+import { RephraseAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-rephrase-node',
@@ -13,7 +13,7 @@ import { RephraseAgent } from '../../workflow.models';
 export class RephraseNodeComponent extends NodeDirective {
   rephraseConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
-      const config = this.config() as RephraseAgent;
+      const config = this.config() as RephraseAgentUI;
       const items: ConfigBlockItem[] = [];
       if (config.kb) {
         items.push({ title: 'Knowledge Box', content: config.kb });

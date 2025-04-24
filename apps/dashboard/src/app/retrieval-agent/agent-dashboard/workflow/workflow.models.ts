@@ -1,4 +1,5 @@
 import { ComponentRef } from '@angular/core';
+import { ContextAgent, PostprocessAgent, PreprocessAgent, RephraseAgent, RephraseAgentCreation } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 
 export interface WorkflowRoot {
@@ -25,6 +26,7 @@ export interface Node {
   nodeRef: ComponentRef<NodeDirective>;
   nodeType: NodeType;
   nodeConfig?: any;
+  agent?: PreprocessAgent | ContextAgent | PostprocessAgent;
 }
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
@@ -46,35 +48,55 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   validation: 'validation',
 };
 
-export interface AgentWorkflow {
-  preprocess: RephraseAgent[];
-  context: ConditionalAgent[];
-  postprocess: (ValidationAgent | SummarizeAgent | RestartAgent)[];
+export interface HistoricalAgentUI {
+  all: boolean;
 }
 
-export interface RephraseAgent {
+export interface RephraseAgentUI {
   prompt: string;
-  kb?: string;
+  kb: string;
   extend: boolean;
   synonyms: boolean;
   history: boolean;
   userInfo: boolean;
 }
 
-export interface ConditionalAgent {
+export interface ConditionalAgentUI {
   prompt: string;
 }
 
-export interface ValidationAgent {
+export interface ValidationAgentUI {
   prompt: string;
 }
 
-export interface SummarizeAgent {
+export interface SummarizeAgentUI {
   prompt: string;
 }
 
-export interface RestartAgent {
+export interface RestartAgentUI {
   prompt: string;
   retries: number;
   rules: string[];
+}
+
+export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
+  return {
+    module: 'rephrase',
+    kb: config.kb,
+    extends: config.extend,
+    synonyms: config.synonyms,
+    session_info: config.userInfo,
+    history: config.history,
+    rules: [config.prompt],
+  };
+}
+export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
+  return {
+    kb: agent.kb,
+    prompt: agent.rules?.[0] || '',
+    extend: agent.extends || false,
+    synonyms: agent.synonyms || false,
+    userInfo: agent.session_info || false,
+    history: agent.history || false,
+  };
 }

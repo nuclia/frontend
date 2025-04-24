@@ -3,6 +3,11 @@
   (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
-    <div class="form-entry"></div>
+    <pa-toggle
+      formControlName="all"
+      withBackground
+      [help]="'retrieval-agents.workflow.node-types.historical.form.all.help' | translate">
+      {{ 'retrieval-agents.workflow.node-types.historical.form.all.label' | translate }}
+    </pa-toggle>
   </ng-container>
 </app-configuration-form>

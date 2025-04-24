@@ -47,10 +47,4 @@ export class RephraseFormComponent extends FormDirective {
   get kbControl() {
     return this.form.controls.rephrase.controls.kb;
   }
-
-  onExtendChange() {
-    if (!this.isExtendEnabled && this.kbControl.value) {
-      this.kbControl.patchValue('');
-    }
-  }
 }

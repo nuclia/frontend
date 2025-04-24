@@ -2,7 +2,18 @@ import { map, Observable } from 'rxjs';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
 import { ExtractedDataTypes } from '../resource';
 import { Driver, DriverCreation } from './driver.models';
-import { IRetrievalAgent, Rule, SessionList, SessionProperties } from './retrieval-agent.models';
+import {
+  ContextAgent,
+  ContextAgentCreation,
+  IRetrievalAgent,
+  PostprocessAgent,
+  PostprocessAgentCreation,
+  PreprocessAgent,
+  PreprocessAgentCreation,
+  Rule,
+  SessionList,
+  SessionProperties,
+} from './retrieval-agent.models';
 import { ISession } from './session.models';
 
 /**
@@ -112,5 +123,101 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   setRules(rules: string[]): Observable<void> {
     return this.nuclia.rest.post(`${this.path}/rules`, { rules });
+  }
+
+  /**
+   * Get the list of preprocess agents from the Retrieval Agent.
+   * @returns the list of preprocess agents
+   */
+  getPreprocess(): Observable<PreprocessAgent[]> {
+    return this.nuclia.rest.get<PreprocessAgent[]>(`${this.path}/preprocess`);
+  }
+
+  /**
+   * Add a preprocess agent to the Retrieval Agent.
+   * @param agent data representing the preprocess agent to add
+   */
+  addPreprocess(agent: PreprocessAgentCreation): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/preprocess`, agent);
+  }
+
+  /**
+   * Edit an existing preprocess agent.
+   * @param agent Modified preprocess agent to be saved.
+   */
+  patchPreprocess(agent: PreprocessAgent): Observable<void> {
+    return this.nuclia.rest.patch(`${this.path}/preprocess/${agent.id}`, agent);
+  }
+
+  /**
+   * Delete a preprocess agent from the Retrieval Agent.
+   * @param agentId Identifier of the preprocess agent to delete
+   */
+  deletePreprocess(agentId: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/preprocess/${agentId}`);
+  }
+
+  /**
+   * Get the list of context agents from the Retrieval Agent.
+   * @returns The list of context agents
+   */
+  getContext(): Observable<ContextAgent[]> {
+    return this.nuclia.rest.get<ContextAgent[]>(`${this.path}/context`);
+  }
+
+  /**
+   * Add a context agent to the Retrieval Agent.
+   * @param agent data representing the context agent to add
+   */
+  addContext(agent: ContextAgentCreation): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/context`, agent);
+  }
+
+  /**
+   * Edit an existing context agent.
+   * @param agent Modified context agent to be saved
+   */
+  patchContext(agent: ContextAgent): Observable<void> {
+    return this.nuclia.rest.patch(`${this.path}/context/${agent.id}`, agent);
+  }
+
+  /**
+   * Delete a context agent from the Retrieval Agent.
+   * @param agentId Identifier of the agent to delete.
+   */
+  deleteContext(agentId: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/context/${agentId}`);
+  }
+
+  /**
+   * Get the list of postprocess agents from the Retrieval Agent.
+   * @returns The list of postprocess agents
+   */
+  getPostprocess(): Observable<PostprocessAgent[]> {
+    return this.nuclia.rest.get<PostprocessAgent[]>(`${this.path}/postprocess`);
+  }
+
+  /**
+   * Add a postprocess agent to the Retrieval Agent.
+   * @param agent data representing the postprocess agent to add
+   */
+  addPostprocess(agent: PostprocessAgentCreation): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/postprocess`, agent);
+  }
+
+  /**
+   * Edit an existing postprocess agent.
+   * @param agent Modified postprocess agent to be saved
+   */
+  patchPostprocess(agent: PostprocessAgent): Observable<void> {
+    return this.nuclia.rest.patch(`${this.path}/postprocess/${agent.id}`, agent);
+  }
+
+  /**
+   * Delete a postprocess agent from the Retrieval Agent.
+   * @param agentId Identifier of the agent to delete
+   */
+  deletePostprocess(agentId: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/postprocess/${agentId}`);
   }
 }

@@ -41,6 +41,7 @@ export interface IRetrievalAgent
   getSessionBySlug(slug: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession>;
   getFullSessionBySlug(slug: string): Observable<ISession>;
   listSessions(page?: number, size?: number): Observable<SessionList>;
+
   inviteToAgent(data: InviteKbData): Observable<void>;
 
   getDrivers(): Observable<Driver[]>;
@@ -50,8 +51,205 @@ export interface IRetrievalAgent
 
   getRules(): Observable<(Rule | string)[]>;
   setRules(rules: string[]): Observable<void>;
+
+  getPreprocess(): Observable<PreprocessAgent[]>;
+  addPreprocess(agent: PreprocessAgentCreation): Observable<void>;
+  patchPreprocess(agent: PreprocessAgent): Observable<void>;
+  deletePreprocess(agentId: string): Observable<void>;
+
+  getContext(): Observable<ContextAgent[]>;
+  addContext(agent: ContextAgentCreation): Observable<void>;
+  patchContext(agent: ContextAgent): Observable<void>;
+  deleteContext(agentId: string): Observable<void>;
+
+  getPostprocess(): Observable<PostprocessAgent[]>;
+  addPostprocess(agent: PostprocessAgentCreation): Observable<void>;
+  patchPostprocess(agent: PostprocessAgent): Observable<void>;
+  deletePostprocess(agentId: string): Observable<void>;
 }
 
 export interface Rule {
   prompt: string;
+}
+
+export type PreprocessModule = 'historical' | 'rephrase';
+export type ContextModule =
+  | 'sql'
+  | 'tavily'
+  | 'perplexity'
+  | 'mcp'
+  | 'brave'
+  | 'cypher'
+  | 'ask'
+  | 'conditional'
+  | 'restricted'
+  | 'duckduckgo'
+  | 'google'
+  | 'sparql';
+export type PostprocessModule = 'summarize' | 'validation' | 'restart' | 'remi';
+
+export interface BaseAgent {
+  id: string;
+  rules: string[];
+  validate_model: string;
+  summarize_model: string;
+  title?: string;
+}
+
+export interface PreprocessAgent extends BaseAgent {
+  module: PreprocessModule;
+}
+export interface ContextAgent extends BaseAgent {
+  module: ContextModule;
+}
+export interface PostprocessAgent extends BaseAgent {
+  module: PostprocessModule;
+}
+export type PreprocessAgentCreation = HistoricalAgentCreation | RephraseAgentCreation;
+export type ContextAgentCreation =
+  | SqlAgent
+  | TavilyAgent
+  | PerplexityAgent
+  | McpAgent
+  | BraveAgent
+  | CypherAgent
+  | AskAgent
+  | ConditionalAgent
+  | RestrictedAgent
+  | DuckduckgoAgent
+  | GoogleAgent
+  | SparkleAgent;
+export type PostprocessAgentCreation = SummarizeAgent | ValidationAgent | RestartAgent | RemiAgent;
+
+export interface HistoricalAgent extends PreprocessAgent, HistoricalAgentCreation {
+  module: 'historical';
+}
+export interface RephraseAgent extends PreprocessAgent, RephraseAgentCreation {
+  module: 'rephrase';
+}
+export interface SqlAgent extends ContextAgent, SqlAgentCreation {
+  module: 'sql';
+}
+export interface TavilyAgent extends ContextAgent, TavilyAgentCreation {
+  module: 'tavily';
+}
+export interface PerplexityAgent extends ContextAgent, PerplexityAgentCreation {
+  module: 'perplexity';
+}
+export interface McpAgent extends ContextAgent, McpAgentCreation {
+  module: 'mcp';
+}
+export interface BraveAgent extends ContextAgent, BraveAgentCreation {
+  module: 'brave';
+}
+export interface CypherAgent extends ContextAgent, CypherAgentCreation {
+  module: 'cypher';
+}
+export interface AskAgent extends ContextAgent, AskAgentCreation {
+  module: 'ask';
+}
+export interface ConditionalAgent extends ContextAgent, ConditionalAgentCreation {
+  module: 'conditional';
+}
+export interface RestrictedAgent extends ContextAgent, RestrictedAgentCreation {
+  module: 'restricted';
+}
+export interface DuckduckgoAgent extends ContextAgent, DuckduckgoAgentCreation {
+  module: 'duckduckgo';
+}
+export interface GoogleAgent extends ContextAgent, GoogleAgentCreation {
+  module: 'google';
+}
+export interface SparkleAgent extends ContextAgent, SparkleAgentCreation {
+  module: 'sparql';
+}
+export interface SummarizeAgent extends PostprocessAgent, SummarizeAgentCreation {
+  module: 'summarize';
+}
+export interface ValidationAgent extends PostprocessAgent, ValidationAgentCreation {
+  module: 'validation';
+}
+export interface RestartAgent extends PostprocessAgent, RestartAgentCreation {
+  module: 'restart';
+}
+export interface RemiAgent extends PostprocessAgent, RemiAgentCreation {
+  module: 'remi';
+}
+
+export interface HistoricalAgentCreation {
+  module: 'historical';
+  all: boolean;
+}
+export interface RephraseAgentCreation {
+  module: 'rephrase';
+  kb: string;
+  rules: string[];
+  rids?: string[];
+  labels?: string[];
+  synonyms?: boolean;
+  extends?: boolean;
+  session_info?: boolean;
+  history?: boolean;
+  model?: string;
+}
+
+export interface SqlAgentCreation {
+  module: 'sql';
+}
+
+export interface TavilyAgentCreation {
+  module: 'tavily';
+}
+
+export interface PerplexityAgentCreation {
+  module: 'perplexity';
+}
+
+export interface McpAgentCreation {
+  module: 'mcp';
+}
+
+export interface BraveAgentCreation {
+  module: 'brave';
+}
+
+export interface CypherAgentCreation {
+  module: 'cypher';
+}
+
+export interface AskAgentCreation {
+  module: 'ask';
+}
+
+export interface ConditionalAgentCreation {
+  module: 'conditional';
+}
+
+export interface RestrictedAgentCreation {
+  module: 'restricted';
+}
+
+export interface DuckduckgoAgentCreation {
+  module: 'duckduckgo';
+}
+
+export interface GoogleAgentCreation {
+  module: 'google';
+}
+
+export interface SparkleAgentCreation {
+  module: 'sparql';
+}
+
+export interface SummarizeAgentCreation {
+  module: 'summarize';
+}
+export interface ValidationAgentCreation {
+  module: 'validation';
+}
+export interface RestartAgentCreation {
+  module: 'restart';
+}
+export interface RemiAgentCreation {
+  module: 'remi';
 }
