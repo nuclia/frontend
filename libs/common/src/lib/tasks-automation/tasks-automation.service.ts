@@ -12,6 +12,8 @@ import {
 } from './tasks-automation.models';
 import { TaskFullDefinition, TaskListResponse, TaskName, TaskParameters } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { Router } from '@angular/router';
+import { TaskDuplicateDialogComponent } from './task-list/task-duplicate-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +23,7 @@ export class TasksAutomationService {
   private modalService = inject(SisModalService);
   private toaster = inject(SisToastService);
   private navigation = inject(NavigationService);
+  private router = inject(Router);
 
   private _currentKb = this.sdk.currentKb;
   private _initialData = this._currentKb.pipe(switchMap((kb) => kb.taskManager.getTasks(1000)));
@@ -37,6 +40,31 @@ export class TasksAutomationService {
       take(1),
       switchMap((kb) => kb.taskManager.startTask(taskName, parameters, 'NEW', false)),
       switchMap((res) => this.updateTasks().pipe(map(() => res))),
+    );
+  }
+
+  duplicateTask(taskId: string) {
+    return this.modalService.openModal(TaskDuplicateDialogComponent).onClose.pipe(
+      filter((name) => !!name),
+      switchMap((name) =>
+        this.configs.pipe(
+          take(1),
+          map((configs) => configs.find((task) => task.id === taskId)),
+          filter((task) => !!task),
+          switchMap((task) => {
+            const parameters = task.parameters;
+            parameters.name = name;
+            parameters.operations = parameters.operations?.map((operation) => {
+              if (operation.ask) {
+                operation.ask.destination = `${operation.ask.destination}_copy`;
+              }
+              return operation;
+            });
+            return this.startTask(task.task.name, parameters);
+          }),
+          switchMap((res) => this.goToEditTask(res.id)),
+        ),
+      ),
     );
   }
 
@@ -205,5 +233,36 @@ export class TasksAutomationService {
         },
       };
     });
+  }
+
+  goToEditTask(taskId: string) {
+    return this.configs.pipe(
+      take(1),
+      map((configs) => configs.find((config) => config.id === taskId)),
+      filter((task) => !!task),
+      switchMap((task) =>
+        this.getBatchTasks(task?.parameters.name || '', 'progress').pipe(
+          switchMap((activeTasks) =>
+            (activeTasks.length > 0
+              ? this.modalService
+                  .openConfirm({
+                    title: 'tasks-automation.actions.edit.title',
+                    description: 'tasks-automation.actions.edit.description',
+                    confirmLabel: 'generic.continue',
+                  })
+                  .onClose.pipe(
+                    filter((confirm) => confirm),
+                    switchMap(() => this.stopBatchTasks(task?.parameters.name || '')),
+                  )
+              : of(undefined)
+            ).pipe(switchMap(() => this.tasksRoute.pipe(map((path) => ({ path, task }))))),
+          ),
+
+          tap(({ path, task }) => {
+            this.router.navigate([`${path}/${task?.task.name}/${task?.id}`]);
+          }),
+        ),
+      ),
+    );
   }
 }
