@@ -119,6 +119,12 @@
           <label>{{ 'tasks-automation.form.labels-selection.labelset' | translate }}</label>
           <div>{{ labelOperation?.ident }}</div>
         </div>
+        @if (labelOperation?.multiple) {
+          <div class="separator-line"></div>
+          <div class="setting">
+            <label>{{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}</label>
+          </div>
+        }
         @if (labelOperation?.description) {
           <div class="separator-line"></div>
           <div class="setting">

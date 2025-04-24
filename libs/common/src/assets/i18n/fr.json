@@ -1683,6 +1683,7 @@
 	"tasks-automation.form.labels-selection.labelset": "Jeu d'étiquettes",
 	"tasks-automation.form.labels-selection.labelset-description": "Description de l'ensemble d'étiquettes",
 	"tasks-automation.form.labels-selection.labelset-description-help": "Cette description aide le LLM à comprendre le but de l'ensemble d'étiquettes sélectionné",
+	"tasks-automation.form.labels-selection.multiple-labels": "Autoriser l'agent à définir plusieurs étiquettes sur la même ressource",
 	"tasks-automation.form.labels-selection.title": "Sélectionnez les étiquettes",
 	"tasks-automation.form.llm-selection.description": "Le LLM choisi effectuera la tâche.",
 	"tasks-automation.form.llm-selection.title": "Sélectionner le LLM",

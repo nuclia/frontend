@@ -1683,6 +1683,7 @@
 	"tasks-automation.form.labels-selection.labelset": "Conjunto de etiquetas",
 	"tasks-automation.form.labels-selection.labelset-description": "Descripción del conjunto de etiquetas",
 	"tasks-automation.form.labels-selection.labelset-description-help": "Esta descripción ayuda al LLM a comprender el propósito del conjunto de etiquetas seleccionado.",
+	"tasks-automation.form.labels-selection.multiple-labels": "Permitir que el agente establezca múltiples etiquetas en el mismo recurso",
 	"tasks-automation.form.labels-selection.title": "Seleccionar etiquetas",
 	"tasks-automation.form.llm-selection.description": "El LLM elegido realizará la tarea.",
 	"tasks-automation.form.llm-selection.title": "Seleccionar el LLM",

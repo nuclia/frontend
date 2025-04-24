@@ -23,7 +23,7 @@
           formControlName="ident"
           [label]="'tasks-automation.form.labels-selection.labelset' | translate"
           [options]="labelSetOptions"
-          (change)="clearLabels()"></pa-select>
+          (valueChange)="clearLabels()"></pa-select>
         <div class="input-with-help">
           <pa-input formControlName="description">
             {{ 'tasks-automation.form.labels-selection.labelset-description' | translate }}
@@ -35,6 +35,9 @@
             <div>{{ 'tasks-automation.form.labels-selection.labelset-description-help' | translate }}</div>
           </pa-popover>
         </div>
+        <pa-toggle formControlName="multiple">
+          {{ 'tasks-automation.form.labels-selection.multiple-labels' | translate }}
+        </pa-toggle>
       </div>
     } @else {
       <pa-button
