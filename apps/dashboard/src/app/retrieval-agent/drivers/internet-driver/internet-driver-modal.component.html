@@ -20,9 +20,36 @@
           id="provider"
           externalLabel
           formControlName="provider">
-          <pa-option value="brave">Brave</pa-option>
-          <pa-option value="perplexity">Perplexity</pa-option>
-          <pa-option value="tavily">Tavily</pa-option>
+          <pa-option
+            value="brave"
+            [description]="
+              hasBrave
+                ? ('retrieval-agents.drivers.form.internet.already-configured' | translate: { name: 'Brave' })
+                : ''
+            "
+            [disabled]="hasBrave">
+            Brave
+          </pa-option>
+          <pa-option
+            value="perplexity"
+            [description]="
+              hasPerplexity
+                ? ('retrieval-agents.drivers.form.internet.already-configured' | translate: { name: 'Perplexity' })
+                : ''
+            "
+            [disabled]="hasPerplexity">
+            Perplexity
+          </pa-option>
+          <pa-option
+            value="tavily"
+            [description]="
+              hasTavily
+                ? ('retrieval-agents.drivers.form.internet.already-configured' | translate: { name: 'Tavily' })
+                : ''
+            "
+            [disabled]="hasTavily">
+            Tavily
+          </pa-option>
         </pa-select>
       </div>
       <div class="form-entry">
