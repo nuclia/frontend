@@ -12,6 +12,7 @@ import {
 } from './tasks-automation.models';
 import { TaskFullDefinition, TaskListResponse, TaskName, TaskParameters } from '@nuclia/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,7 @@ export class TasksAutomationService {
   private modalService = inject(SisModalService);
   private toaster = inject(SisToastService);
   private navigation = inject(NavigationService);
+  private router = inject(Router);
 
   private _currentKb = this.sdk.currentKb;
   private _initialData = this._currentKb.pipe(switchMap((kb) => kb.taskManager.getTasks(1000)));
@@ -205,5 +207,36 @@ export class TasksAutomationService {
         },
       };
     });
+  }
+
+  goToEditTask(taskId: string) {
+    return this.configs.pipe(
+      take(1),
+      map((configs) => configs.find((config) => config.id === taskId)),
+      filter((task) => !!task),
+      switchMap((task) =>
+        this.getBatchTasks(task?.parameters.name || '', 'progress').pipe(
+          switchMap((activeTasks) =>
+            (activeTasks.length > 0
+              ? this.modalService
+                  .openConfirm({
+                    title: 'tasks-automation.actions.edit.title',
+                    description: 'tasks-automation.actions.edit.description',
+                    confirmLabel: 'generic.continue',
+                  })
+                  .onClose.pipe(
+                    filter((confirm) => confirm),
+                    switchMap(() => this.stopBatchTasks(task?.parameters.name || '')),
+                  )
+              : of(undefined)
+            ).pipe(switchMap(() => this.tasksRoute.pipe(map((path) => ({ path, task }))))),
+          ),
+
+          tap(({ path, task }) => {
+            this.router.navigate([`${path}/${task?.task.name}/${task?.id}`]);
+          }),
+        ),
+      ),
+    );
   }
 }

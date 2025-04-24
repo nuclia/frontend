@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TasksAutomationService } from '../tasks-automation.service';
-import { BehaviorSubject, combineLatest, filter, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { BadgeComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { FeaturesService } from '@flaps/core';
 import {
@@ -42,8 +42,6 @@ export class TaskListComponent {
   private router = inject(Router);
   private activeRoute = inject(ActivatedRoute);
   private taskAutomation = inject(TasksAutomationService);
-  private toaster = inject(SisToastService);
-  private modalService = inject(SisModalService);
   private features = inject(FeaturesService);
 
   icons = TASK_ICONS;
@@ -77,5 +75,9 @@ export class TaskListComponent {
 
   deleteTask(taskId: string, name: string, deleteData: boolean) {
     this.taskAutomation.deleteOnGoingTask(taskId, name, deleteData).subscribe();
+  }
+
+  editTask(taskId: string) {
+    this.taskAutomation.goToEditTask(taskId).subscribe();
   }
 }

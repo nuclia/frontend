@@ -73,6 +73,11 @@
                 size="small"
                 [paPopup]="cellMenu"></pa-button>
               <pa-dropdown #cellMenu>
+                <pa-option
+                  (selectOption)="editTask(task.id)"
+                  destructive>
+                  {{ 'tasks-automation.actions.edit.edit-configuration' | translate }}
+                </pa-option>
                 @if (task.canClean) {
                   <pa-option
                     (selectOption)="cleanTask(task.id, task.title)"

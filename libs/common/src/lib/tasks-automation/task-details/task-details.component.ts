@@ -58,32 +58,12 @@ export class TaskDetailsComponent {
   tasksRoute = this.taskAutomation.tasksRoute;
 
   modifyTask() {
-    this.task
+    this.taskId
       .pipe(
         take(1),
-        switchMap((task) =>
-          this.taskAutomation.getBatchTasks(task?.parameters.name || '', 'progress').pipe(
-            switchMap((activeTasks) =>
-              activeTasks.length > 0
-                ? this.modalService
-                    .openConfirm({
-                      title: 'tasks-automation.actions.edit.title',
-                      description: 'tasks-automation.actions.edit.description',
-                      confirmLabel: 'generic.continue',
-                    })
-                    .onClose.pipe(
-                      filter((confirm) => confirm),
-                      switchMap(() => this.taskAutomation.stopBatchTasks(task?.parameters.name || '')),
-                    )
-                : of(undefined),
-            ),
-          ),
-        ),
-        switchMap(() => this.task.pipe(take(1))),
+        switchMap((taskId) => this.taskAutomation.goToEditTask(taskId)),
       )
-      .subscribe((task) => {
-        this.router.navigate([`../${task?.task.name}/${task?.id}`], { relativeTo: this.activeRoute });
-      });
+      .subscribe();
   }
 
   cleanTask(taskId: string, name: string) {
