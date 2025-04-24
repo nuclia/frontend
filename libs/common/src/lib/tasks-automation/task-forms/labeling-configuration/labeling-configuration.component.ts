@@ -88,6 +88,7 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
     on: new FormControl('resources', { nonNullable: true }),
     ident: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl('', { nonNullable: true }),
+    multiple: new FormControl<boolean>(false, { nonNullable: true }),
     labels: new FormArray([
       new FormGroup({
         label: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -158,8 +159,18 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   }
 
   clearLabels() {
+    const currentLabelset = this.labelSets?.[this.labelingForm.controls.ident.value];
+    if (currentLabelset?.multiple) {
+      this.labelingForm.controls.multiple.enable();
+      this.labelingForm.controls.multiple.setValue(true);
+    } else {
+      this.labelingForm.controls.multiple.disable();
+      this.labelingForm.controls.multiple.setValue(false);
+    }
     this.labelingForm.controls.labels.clear();
+    this.labelingForm.controls.description.setValue('');
     this.addLabel();
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy() {

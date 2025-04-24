@@ -1683,6 +1683,7 @@
 	"tasks-automation.form.labels-selection.labelset": "Conjunt d'etiquetes",
 	"tasks-automation.form.labels-selection.labelset-description": "Descripció del conjunt d'etiquetes",
 	"tasks-automation.form.labels-selection.labelset-description-help": "Aquesta descripció ajuda el LLM a entendre el propòsit del conjunt d'etiquetes seleccionat",
+	"tasks-automation.form.labels-selection.multiple-labels": "Permet que l'agent estableixi diverses etiquetes al mateix recurs",
 	"tasks-automation.form.labels-selection.title": "Seleccionar etiquetes",
 	"tasks-automation.form.llm-selection.description": "El LLM escollit realitzarà la tasca.",
 	"tasks-automation.form.llm-selection.title": "Seleccionar el LLM",

@@ -1690,6 +1690,7 @@
 	"tasks-automation.form.labels-selection.labelset": "Label set",
 	"tasks-automation.form.labels-selection.labelset-description": "Label set description",
 	"tasks-automation.form.labels-selection.labelset-description-help": "This description helps the LLM understand the purpose of the selected label set",
+	"tasks-automation.form.labels-selection.multiple-labels": "Allow the agent to set multiple labels on the same resource",
 	"tasks-automation.form.labels-selection.title": "Select labels",
 	"tasks-automation.form.llm-selection.description": "The chosen LLM will perform the task.",
 	"tasks-automation.form.llm-selection.title": "Select the LLM",

@@ -64,6 +64,7 @@ export interface LabelOperation extends BaseOperation {
     description?: string;
   }[];
   ident?: string;
+  multiple?: boolean;
   description?: string;
 }
 
