@@ -14,8 +14,10 @@ import { SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  ContextAgent,
   ContextAgentCreation,
   HistoricalAgent,
+  PostprocessAgent,
   PostprocessAgentCreation,
   PreprocessAgent,
   PreprocessAgentCreation,
@@ -54,6 +56,10 @@ import {
 import { RulesPanelComponent } from './sidebar';
 import {
   EntryType,
+  InternetAgent,
+  internetAgentToUi,
+  internetUiToCreation,
+  isInternetProvider,
   Node,
   NODE_SELECTOR_ICONS,
   NODES_BY_ENTRY_TYPE,
@@ -142,18 +148,44 @@ export class WorkflowService {
         return of([[], [], []]);
       }),
       tap(([preprocess, context, postprocess]) => {
-        // TODO: context & postprocess
         console.log(preprocess, context, postprocess);
         this.cleanWorkflow();
         preprocess.forEach((agent) => {
-          const nodeRef = this.addNode(root.preprocess, 1, agent.module);
-          this.nodes[nodeRef.instance.id].agent = agent;
-          const config = this.getConfigFromAgent(agent);
-          this.nodes[nodeRef.instance.id].nodeConfig = config;
-          nodeRef.setInput('config', config);
+          setTimeout(() => {
+            this.createNodeFromSavedWorkflow(root.preprocess, agent.module, agent);
+          });
+        });
+        context.forEach((agent) => {
+          setTimeout(() => {
+            const module = isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
+            this.createNodeFromSavedWorkflow(root.context, module, agent);
+          });
+        });
+        postprocess.forEach((agent) => {
+          setTimeout(() => {
+            this.createNodeFromSavedWorkflow(root.postprocess, agent.module, agent);
+          });
         });
       }),
     );
+  }
+
+  /**
+   * Create and add node on workflow based on what is saved in current Arag
+   * @param rootEntry
+   * @param nodeType
+   * @param agent
+   */
+  private createNodeFromSavedWorkflow(
+    rootEntry: ConnectableEntryComponent,
+    nodeType: NodeType,
+    agent: PreprocessAgent | ContextAgent | PostprocessAgent,
+  ) {
+    const nodeRef = this.addNode(rootEntry, 1, nodeType);
+    this.nodes[nodeRef.instance.id].agent = agent;
+    const config = this.getConfigFromAgent(agent);
+    this.nodes[nodeRef.instance.id].nodeConfig = config;
+    nodeRef.setInput('config', config);
   }
 
   /**
@@ -285,6 +317,7 @@ export class WorkflowService {
             case 'validation':
             case 'summarize':
             case 'restart':
+            case 'remi':
               return arag.deletePostprocess(agent.id);
           }
         }),
@@ -587,6 +620,8 @@ export class WorkflowService {
         return createComponent(CypherNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
+      default:
+        throw new Error(`No node component for type ${nodeType}`);
     }
   }
 
@@ -617,6 +652,8 @@ export class WorkflowService {
         return createComponent(SqlFormComponent, { environmentInjector: this.environmentInjector });
       case 'cypher':
         return createComponent(CypherFormComponent, { environmentInjector: this.environmentInjector });
+      default:
+        throw new Error(`No form component for type ${nodeType}`);
     }
   }
 
@@ -629,25 +666,41 @@ export class WorkflowService {
         return { module: nodeType, ...config };
       case 'rephrase':
         return rephraseUiToCreation(config);
+      case 'internet':
+        return internetUiToCreation(config);
       case 'conditional':
       case 'validation':
       case 'summarize':
       case 'restart':
       case 'ask':
-      case 'internet':
       case 'sql':
       case 'cypher':
-        // TODO: other agent types
+      // TODO: other agent types
+      default:
         return { module: nodeType, ...config };
     }
   }
 
-  private getConfigFromAgent(agent: PreprocessAgent): any {
+  private getConfigFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): any {
     switch (agent.module) {
       case 'historical':
         return { all: (agent as HistoricalAgent).all };
       case 'rephrase':
         return rephraseAgentToUi(agent as RephraseAgent);
+      case 'brave':
+      case 'perplexity':
+      case 'tavily':
+      case 'duckduckgo':
+      case 'google':
+        return internetAgentToUi(agent as InternetAgent);
+      case 'sql':
+      case 'mcp':
+      case 'cypher':
+      case 'ask':
+      case 'conditional':
+      case 'restricted':
+      case 'sparql':
+      // TODO: other agent types
     }
   }
 }

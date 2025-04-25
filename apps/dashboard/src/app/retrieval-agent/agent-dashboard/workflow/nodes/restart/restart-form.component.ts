@@ -17,7 +17,6 @@ import { RestartAgentUI } from '../../workflow.models';
     ConfigurationFormComponent,
   ],
   templateUrl: './restart-form.component.html',
-  styleUrl: './restart-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RestartFormComponent extends FormDirective implements OnInit {

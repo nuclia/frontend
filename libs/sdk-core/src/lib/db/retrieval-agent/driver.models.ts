@@ -1,4 +1,5 @@
-export type ProviderType = 'brave' | 'cypher' | 'nucliadb' | 'perplexity' | 'tavily' | 'sql' | 'mcp';
+export type InternetProviderType = 'brave' | 'perplexity' | 'tavily' | 'duckduckgo' | 'google';
+export type ProviderType = InternetProviderType | 'cypher' | 'nucliadb' | 'sql' | 'mcp';
 
 export interface IDriver {
   id: string;

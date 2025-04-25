@@ -1,5 +1,22 @@
 import { ComponentRef } from '@angular/core';
-import { ContextAgent, PostprocessAgent, PreprocessAgent, RephraseAgent, RephraseAgentCreation } from '@nuclia/core';
+import {
+  BraveAgent,
+  BraveAgentCreation,
+  ContextAgent,
+  DuckduckgoAgent,
+  DuckduckgoAgentCreation,
+  GoogleAgent,
+  GoogleAgentCreation,
+  InternetProviderType,
+  PerplexityAgent,
+  PerplexityAgentCreation,
+  PostprocessAgent,
+  PreprocessAgent,
+  RephraseAgent,
+  RephraseAgentCreation,
+  TavilyAgent,
+  TavilyAgentCreation,
+} from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 
 export interface WorkflowRoot {
@@ -18,8 +35,14 @@ export type NodeType =
   | 'ask'
   | 'internet'
   | 'sql'
-  | 'cypher';
+  | 'cypher'
+  | 'remi';
 
+const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'duckduckgo', 'google'];
+export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
+export function isInternetProvider(x: any): x is InternetProvider {
+  return INTERNET_PROVIDERS.includes(x);
+}
 export type EntryType = 'preprocess' | 'context' | 'postprocess';
 
 export interface Node {
@@ -61,6 +84,12 @@ export interface RephraseAgentUI {
   userInfo: boolean;
 }
 
+export interface InternetAgentUI {
+  provider: InternetProviderType;
+  brave: Omit<BraveAgentCreation, 'module'>;
+  perplexity: Omit<PerplexityAgentCreation, 'module'>;
+}
+
 export interface ConditionalAgentUI {
   prompt: string;
 }
@@ -98,5 +127,48 @@ export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
     synonyms: agent.synonyms || false,
     userInfo: agent.session_info || false,
     history: agent.history || false,
+  };
+}
+
+export type InternetAgentCreation =
+  | BraveAgentCreation
+  | PerplexityAgentCreation
+  | TavilyAgentCreation
+  | DuckduckgoAgentCreation
+  | GoogleAgentCreation;
+export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | DuckduckgoAgent | GoogleAgent;
+export function internetUiToCreation(config: InternetAgentUI): InternetAgentCreation {
+  switch (config.provider) {
+    case 'brave':
+      return {
+        module: config.provider,
+        ...config.brave,
+      };
+    case 'perplexity':
+      return {
+        module: config.provider,
+        ...config.perplexity,
+      };
+    case 'tavily':
+    case 'duckduckgo':
+    case 'google':
+      return {
+        module: config.provider,
+      };
+  }
+}
+export function internetAgentToUi(agent: InternetAgent): InternetAgentUI {
+  return {
+    provider: agent.module,
+    brave: {
+      country: agent.module === 'brave' ? agent.country : '',
+      domain: agent.module === 'brave' ? agent.domain : '',
+    },
+    perplexity: {
+      domain: agent.module === 'perplexity' ? agent.domain : [''],
+      top_k: agent.module === 'perplexity' ? agent.top_k : 0,
+      related_questions: agent.module === 'perplexity' ? agent.related_questions : false,
+      images: agent.module === 'perplexity' ? agent.images : false,
+    },
   };
 }

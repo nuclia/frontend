@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { ResourceProperties } from '../db.models';
 import { IKnowledgeBoxBase, IKnowledgeBoxItem, InviteKbData, IWritableKnowledgeBox, ResourcePagination } from '../kb';
 import { ExtractedDataTypes } from '../resource';
-import { Driver, DriverCreation, ProviderType } from './driver.models';
+import { Driver, DriverCreation, InternetProviderType, ProviderType } from './driver.models';
 import { Session } from './session';
 import { ISession } from './session.models';
 
@@ -74,17 +74,13 @@ export interface Rule {
 
 export type PreprocessModule = 'historical' | 'rephrase';
 export type ContextModule =
+  | InternetProviderType
   | 'sql'
-  | 'tavily'
-  | 'perplexity'
   | 'mcp'
-  | 'brave'
   | 'cypher'
   | 'ask'
   | 'conditional'
   | 'restricted'
-  | 'duckduckgo'
-  | 'google'
   | 'sparql';
 export type PostprocessModule = 'summarize' | 'validation' | 'restart' | 'remi';
 
@@ -107,19 +103,23 @@ export interface PostprocessAgent extends BaseAgent {
 }
 export type PreprocessAgentCreation = HistoricalAgentCreation | RephraseAgentCreation;
 export type ContextAgentCreation =
-  | SqlAgent
-  | TavilyAgent
-  | PerplexityAgent
-  | McpAgent
-  | BraveAgent
-  | CypherAgent
-  | AskAgent
-  | ConditionalAgent
-  | RestrictedAgent
-  | DuckduckgoAgent
-  | GoogleAgent
-  | SparkleAgent;
-export type PostprocessAgentCreation = SummarizeAgent | ValidationAgent | RestartAgent | RemiAgent;
+  | SqlAgentCreation
+  | TavilyAgentCreation
+  | PerplexityAgentCreation
+  | McpAgentCreation
+  | BraveAgentCreation
+  | CypherAgentCreation
+  | AskAgentCreation
+  | ConditionalAgentCreation
+  | RestrictedAgentCreation
+  | DuckduckgoAgentCreation
+  | GoogleAgentCreation
+  | SparkleAgentCreation;
+export type PostprocessAgentCreation =
+  | SummarizeAgentCreation
+  | ValidationAgentCreation
+  | RestartAgentCreation
+  | RemiAgentCreation;
 
 export interface HistoricalAgent extends PreprocessAgent, HistoricalAgentCreation {
   module: 'historical';
@@ -203,14 +203,20 @@ export interface TavilyAgentCreation {
 
 export interface PerplexityAgentCreation {
   module: 'perplexity';
-}
-
-export interface McpAgentCreation {
-  module: 'mcp';
+  domain: string[];
+  top_k: number;
+  related_questions: boolean;
+  images: boolean;
 }
 
 export interface BraveAgentCreation {
   module: 'brave';
+  domain: string | null;
+  country: string | null;
+}
+
+export interface McpAgentCreation {
+  module: 'mcp';
 }
 
 export interface CypherAgentCreation {

@@ -24,19 +24,19 @@
     font-weight: $font-weight-semi-bold;
     margin-bottom: rhythm(0.5);
   }
+  .form-entry.field-list {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(0.5);
+  }
   .entry-with-button {
+    align-items: center;
     display: flex;
     gap: rhythm(1);
 
     :first-child {
       flex: 1 0 auto;
     }
-  }
-
-  .toggle-block {
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(1);
   }
 
   footer {
