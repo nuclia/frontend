@@ -36,6 +36,9 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
+  AccordionBodyDirective,
+  AccordionComponent,
+  AccordionItemComponent,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -71,6 +74,10 @@ import { RelationsComponent } from './annotation/relations/relations.component';
     PaTextFieldModule,
     PaTogglesModule,
     PaFocusableModule,
+    PaTableModule,
+    AccordionComponent,
+    AccordionItemComponent,
+    AccordionBodyDirective,
 
     STFPipesModule,
     PaTooltipModule,

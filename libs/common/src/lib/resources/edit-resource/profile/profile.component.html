@@ -5,190 +5,238 @@
       *ngIf="isFormReady"
       [formGroup]="form"
       (ngSubmit)="save()">
-      <pa-expander [contentLoaded]="updateGeneralExpanderSize | async">
-        <pa-expander-header>
-          <div class="title-s">{{ 'resource.preview.general' | translate }}</div>
-        </pa-expander-header>
-        <pa-expander-body>
-          <div class="form-section">
-            <pa-input
-              id="uid"
-              readonly
-              [value]="(resource | async)?.uuid">
-              {{ 'generic.uid' | translate }}
-            </pa-input>
-            <pa-input
-              id="slug"
-              formControlName="slug">
-              {{ 'generic.slug' | translate }}
-            </pa-input>
-            <pa-input
-              id="title"
-              formControlName="title">
-              {{ 'resource.title' | translate }}
-            </pa-input>
-            <pa-textarea
-              id="summary"
-              formControlName="summary"
-              resizable
-              (resizing)="onResizingTextarea($event)"
-              [rows]="5">
-              {{ 'resource.summary' | translate }}
-            </pa-textarea>
+      <pa-accordion allowMultipleExpanded>
+        <pa-accordion-item
+          id="general"
+          #generalAccordionItem
+          [itemTitle]="'resource.preview.general' | translate"
+          expanded>
+          <pa-accordion-item-body>
+            <div class="form-section">
+              <pa-input
+                id="uid"
+                readonly
+                [value]="(resource | async)?.uuid">
+                {{ 'generic.uid' | translate }}
+              </pa-input>
+              <pa-input
+                id="slug"
+                formControlName="slug">
+                {{ 'generic.slug' | translate }}
+              </pa-input>
+              <pa-input
+                id="title"
+                formControlName="title">
+                {{ 'resource.title' | translate }}
+              </pa-input>
+              <pa-textarea
+                id="summary"
+                formControlName="summary"
+                resizable
+                (resizing)="onResizingTextarea(generalAccordionItem)"
+                [rows]="5">
+                {{ 'resource.summary' | translate }}
+              </pa-textarea>
 
-            @if (hiddenResourcesEnabled | async) {
-              <pa-toggle
-                formControlName="hidden"
-                labelOnRight>
-                {{ 'resource.hidden' | translate }}
-              </pa-toggle>
-            }
-            <div>
+              @if (hiddenResourcesEnabled | async) {
+                <pa-toggle
+                  formControlName="hidden"
+                  labelOnRight>
+                  {{ 'resource.hidden' | translate }}
+                </pa-toggle>
+              }
               <div>
-                <label class="title-s">
-                  {{ 'resource.thumbnail.label' | translate }}
-                </label>
-                <div class="body-s">{{ 'resource.thumbnail.help' | translate }}</div>
-              </div>
-              <div class="thumbnails-container">
-                @if (!newThumbnail) {
-                  <div class="drop-container">
-                    <div
-                      class="drop-image-area"
-                      [class.file-over]="hasBaseDropZoneOver"
-                      stfFileDrop
-                      fileDropAccept="image/*"
-                      (fileOver)="fileOverBase($event)"
-                      (atFileDrop)="uploadThumbnail($event)"
-                      (click)="chooseFiles($event)">
-                      <span>{{ 'resource.thumbnail.drop' | translate }}</span>
+                <div>
+                  <label class="title-s">
+                    {{ 'resource.thumbnail.label' | translate }}
+                  </label>
+                  <div class="body-s">{{ 'resource.thumbnail.help' | translate }}</div>
+                </div>
+                <div class="thumbnails-container">
+                  @if (!newThumbnail) {
+                    <div class="drop-container">
+                      <div
+                        class="drop-image-area"
+                        [class.file-over]="hasBaseDropZoneOver"
+                        stfFileDrop
+                        fileDropAccept="image/*"
+                        (fileOver)="fileOverBase($event)"
+                        (atFileDrop)="uploadThumbnail($event)"
+                        (click)="chooseFiles($event)">
+                        <span>{{ 'resource.thumbnail.drop' | translate }}</span>
+                      </div>
                     </div>
-                  </div>
-                }
+                  }
 
-                <input
-                  #thumbnailFileInput
-                  type="file"
-                  accept="image/*"
-                  stfFileSelect
-                  hidden
-                  (atFileSelect)="uploadThumbnail($event)" />
+                  <input
+                    #thumbnailFileInput
+                    type="file"
+                    accept="image/*"
+                    stfFileSelect
+                    hidden
+                    (atFileSelect)="uploadThumbnail($event)" />
 
-                @if (newThumbnail) {
-                  <stf-thumbnail
-                    alt="New thumbnail"
-                    [url]="newThumbnail"
-                    [selected]="newThumbnail === selectedThumbnail"
-                    (select)="selectThumbnail(newThumbnail)"
-                    (delete)="markThumbnailForDeletion(newThumbnail)"></stf-thumbnail>
-                }
-
-                @for (thumb of thumbnails | async; track thumb.uri) {
-                  <div>
+                  @if (newThumbnail) {
                     <stf-thumbnail
-                      [disabled]="isSaving"
-                      [url]="thumb.blob"
-                      [selected]="thumb.uri === selectedThumbnail"
-                      [alt]="'Thumbnail ' + $index"
-                      (select)="selectThumbnail(thumb.uri)"
-                      (delete)="markThumbnailForDeletion(thumb.uri)"></stf-thumbnail>
-                  </div>
-                }
-                @if (isSaving) {
-                  <div class="loading-mask">
-                    <nsi-spinner></nsi-spinner>
-                  </div>
-                }
+                      alt="New thumbnail"
+                      [url]="newThumbnail"
+                      [selected]="newThumbnail === selectedThumbnail"
+                      (select)="selectThumbnail(newThumbnail)"
+                      (delete)="markThumbnailForDeletion(newThumbnail)"></stf-thumbnail>
+                  }
+
+                  @for (thumb of thumbnailsLoaded | async; track thumb.uri) {
+                    <div>
+                      <stf-thumbnail
+                        [disabled]="isSaving"
+                        [url]="thumb.blob"
+                        [selected]="thumb.uri === selectedThumbnail"
+                        [alt]="'Thumbnail ' + $index"
+                        (select)="selectThumbnail(thumb.uri)"
+                        (delete)="markThumbnailForDeletion(thumb.uri)"></stf-thumbnail>
+                    </div>
+                  }
+                  @if (isSaving) {
+                    <div class="loading-mask">
+                      <nsi-spinner></nsi-spinner>
+                    </div>
+                  }
+                </div>
               </div>
             </div>
-          </div>
-        </pa-expander-body>
-      </pa-expander>
-      <pa-expander>
-        <pa-expander-header>
-          <div class="title-s">{{ 'resource.preview.origin' | translate }}</div>
-        </pa-expander-header>
-        <pa-expander-body>
-          <section
-            formGroupName="origin"
-            class="form-section">
-            <pa-input
-              id="authors"
-              help="resource.origin.collaborators-helper"
-              formControlName="collaborators">
-              {{ 'resource.origin.collaborators' | translate }}
-            </pa-input>
-            <pa-date-picker
-              id="created"
-              [label]="'resource.origin.created' | translate"
-              formControlName="created"></pa-date-picker>
-            <pa-date-picker
-              id="modified"
-              [label]="'resource.origin.modified' | translate"
-              formControlName="modified"></pa-date-picker>
-            <pa-input
-              id="filename"
-              formControlName="filename">
-              {{ 'resource.origin.filename' | translate }}
-            </pa-input>
-            <pa-input
-              id="url"
-              formControlName="url">
-              {{ 'resource.origin.url' | translate }}
-            </pa-input>
-            <pa-textarea
-              id="related"
-              formControlName="related"
-              [rows]="3">
-              {{ 'resource.origin.related' | translate }}
-            </pa-textarea>
-            <pa-input
-              id="path"
-              formControlName="path">
-              {{ 'resource.origin.path' | translate }}
-            </pa-input>
-          </section>
-        </pa-expander-body>
-      </pa-expander>
-      <pa-expander [contentLoaded]="editExtraMetadata">
-        <pa-expander-header>
-          <div class="title-s">{{ 'resource.extra-metadata.label' | translate }}</div>
-        </pa-expander-header>
-        <pa-expander-body>
-          <section class="form-section extra-metadata-container">
-            <pa-toggle [(value)]="editExtraMetadata">{{ 'resource.extra-metadata.edit-toggle' | translate }}</pa-toggle>
-
-            @if (editExtraMetadata) {
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+        <pa-accordion-item
+          id="origin"
+          [itemTitle]="'resource.preview.origin' | translate"
+          #originAccordionItem>
+          <pa-accordion-item-body>
+            <section
+              formGroupName="origin"
+              class="form-section">
+              <pa-input
+                id="authors"
+                help="resource.origin.collaborators-helper"
+                formControlName="collaborators">
+                {{ 'resource.origin.collaborators' | translate }}
+              </pa-input>
+              <pa-date-picker
+                id="created"
+                [label]="'resource.origin.created' | translate"
+                formControlName="created"></pa-date-picker>
+              <pa-date-picker
+                id="modified"
+                [label]="'resource.origin.modified' | translate"
+                formControlName="modified"></pa-date-picker>
+              <pa-input
+                id="filename"
+                formControlName="filename">
+                {{ 'resource.origin.filename' | translate }}
+              </pa-input>
+              <pa-input
+                id="url"
+                formControlName="url">
+                {{ 'resource.origin.url' | translate }}
+              </pa-input>
               <pa-textarea
-                id="extra"
-                formControlName="extra"
-                [rows]="5">
-                {{ 'resource.extra-metadata.label' | translate }}
+                id="related"
+                formControlName="related"
+                [rows]="3">
+                {{ 'resource.origin.related' | translate }}
               </pa-textarea>
-            } @else {
-              <nsi-json-viewer [json]="extraMetadata"></nsi-json-viewer>
-            }
-          </section>
-        </pa-expander-body>
-      </pa-expander>
-      <pa-expander>
-        <pa-expander-header>
-          <div class="title-s">{{ 'resource.security.label' | translate }}</div>
-        </pa-expander-header>
-        <pa-expander-body>
-          <section
-            class="form-section"
-            formGroupName="security">
-            <pa-textarea
-              [rows]="3"
-              [help]="'resource.security.access-groups.help' | translate"
-              formControlName="access_groups"
-              resizable>
-              {{ 'resource.security.access-groups.label' | translate }}
-            </pa-textarea>
-          </section>
-        </pa-expander-body>
-      </pa-expander>
+              <pa-input
+                id="path"
+                formControlName="path">
+                {{ 'resource.origin.path' | translate }}
+              </pa-input>
+              <div>
+                <div class="title-s">{{ 'resource.origin.metadata.title' | translate }}</div>
+                <pa-table
+                  formArrayName="metadata"
+                  columns="45% 45% auto">
+                  <pa-table-header>
+                    <pa-table-cell header>{{ 'resource.origin.metadata.key' | translate }}</pa-table-cell>
+                    <pa-table-cell header>{{ 'resource.origin.metadata.value' | translate }}</pa-table-cell>
+                    <pa-table-cell header></pa-table-cell>
+                  </pa-table-header>
+                  @for (entry of metadataControls; track entry; let entryIndex = $index) {
+                    <pa-table-row [formGroup]="entry">
+                      <pa-table-cell>
+                        <pa-input
+                          formControlName="key"
+                          [placeholder]="'resource.origin.metadata.key' | translate"></pa-input>
+                      </pa-table-cell>
+                      <pa-table-cell>
+                        <pa-input
+                          formControlName="value"
+                          [placeholder]="'resource.origin.metadata.value' | translate"></pa-input>
+                      </pa-table-cell>
+                      <pa-table-cell>
+                        <pa-button
+                          aspect="basic"
+                          size="small"
+                          icon="trash"
+                          (click)="removeMetadata(entryIndex)"></pa-button>
+                      </pa-table-cell>
+                    </pa-table-row>
+                  }
+                </pa-table>
+                <pa-button
+                  size="small"
+                  icon="plus"
+                  iconAndText
+                  (click)="addMetadata()">
+                  {{ 'resource.origin.metadata.add' | translate }}
+                </pa-button>
+              </div>
+            </section>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+        <pa-accordion-item
+          id="extra"
+          #extraAccordionItem
+          [itemTitle]="'resource.extra-metadata.label' | translate">
+          <pa-accordion-item-body>
+            <section class="form-section extra-metadata-container">
+              <pa-toggle [(value)]="editExtraMetadata">
+                {{ 'resource.extra-metadata.edit-toggle' | translate }}
+              </pa-toggle>
+
+              @if (editExtraMetadata) {
+                <pa-textarea
+                  id="extra"
+                  formControlName="extra"
+                  resizable
+                  (resizing)="onResizingTextarea(extraAccordionItem)"
+                  [rows]="5">
+                  {{ 'resource.extra-metadata.label' | translate }}
+                </pa-textarea>
+              } @else {
+                <nsi-json-viewer [json]="extraMetadata"></nsi-json-viewer>
+              }
+            </section>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+        <pa-accordion-item
+          id="security"
+          #securityAccordionItem
+          [itemTitle]="'resource.security.label' | translate">
+          <pa-accordion-item-body>
+            <section
+              class="form-section"
+              formGroupName="security">
+              <pa-textarea
+                [rows]="3"
+                [help]="'resource.security.access-groups.help' | translate"
+                formControlName="access_groups"
+                resizable
+                (resizing)="onResizingTextarea(securityAccordionItem)">
+                {{ 'resource.security.access-groups.label' | translate }}
+              </pa-textarea>
+            </section>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+      </pa-accordion>
     </form>
 
     <footer class="form-buttons with-right-panel">
