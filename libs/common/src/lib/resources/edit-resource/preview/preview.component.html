@@ -244,6 +244,20 @@
 
             <div class="title-xxs">{{ 'resource.origin.path' | translate }}</div>
             <p>{{ origin.path || '–' }}</p>
+
+            <div class="title-xxs">{{ 'resource.origin.metadata.title' | translate }}</div>
+            @if (origin.metadata; as originMetadata) {
+              <pa-table columns="50% 50%">
+                @for (item of originMetadata | keyvalue; track item.key) {
+                  <pa-table-row>
+                    <pa-table-cell>{{ item.key }}</pa-table-cell>
+                    <pa-table-cell>{{ item.value }}</pa-table-cell>
+                  </pa-table-row>
+                }
+              </pa-table>
+            } @else {
+              <p>–</p>
+            }
           }
           @if (extraMetadata | async; as extraMetadata) {
             <div class="title-m title-with-button">

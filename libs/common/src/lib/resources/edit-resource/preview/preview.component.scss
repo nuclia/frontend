@@ -149,3 +149,7 @@
   display: flex;
   justify-content: space-between;
 }
+
+pa-table ::ng-deep .pa-table-grid--row {
+  font-size: font-size(s);
+}
