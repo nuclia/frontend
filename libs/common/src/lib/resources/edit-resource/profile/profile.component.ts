@@ -205,9 +205,9 @@ export class ResourceProfileComponent implements OnInit {
       this.currentValue.security?.access_groups,
     );
     return {
-      slug: this.getStringAttribute(value.slug, this.currentValue.slug),
-      title: this.getStringAttribute(value.title, this.currentValue.title),
-      summary: this.getStringAttribute(value.summary, this.currentValue.summary),
+      slug: value.slug || undefined,
+      title: value.title || undefined,
+      summary: value.summary || undefined,
       hidden: hiddenResources ? value.hidden : undefined,
       origin: {
         ...this.currentValue.origin,
@@ -215,15 +215,15 @@ export class ResourceProfileComponent implements OnInit {
           value.origin.collaborators.split(',').map((s) => s.trim()),
           this.currentValue.origin?.collaborators,
         ),
-        url: this.getStringAttribute(value.origin.url, this.currentValue.origin?.url),
-        filename: this.getStringAttribute(value.origin.filename, this.currentValue.origin?.filename),
-        created: this.getStringAttribute(value.origin.created, this.currentValue.origin?.created),
-        modified: this.getStringAttribute(value.origin.modified, this.currentValue.origin?.modified),
+        url: value.origin.url || undefined,
+        filename: value.origin.filename || undefined,
+        created: value.origin.created || undefined,
+        modified: value.origin.modified || undefined,
         related: this.getArrayAttribute(
           value.origin.related.split('\n').map((s) => s.trim()),
           this.currentValue.origin?.related,
         ),
-        path: this.getStringAttribute(value.origin.path, this.currentValue.origin?.path),
+        path: value.origin.path || undefined,
         metadata: value.origin.metadata.reduce(
           (acc, entry) => {
             if (entry.key.trim() === '') {
@@ -246,19 +246,7 @@ export class ResourceProfileComponent implements OnInit {
 
   private getArrayAttribute(newValue: string[] | undefined, oldValue: string[] | undefined): string[] | undefined {
     const newValues = (newValue || []).map((s) => s.trim()).filter((s) => s.length > 0);
-    if (newValues.length === 0 && (oldValue || []).length > 0) {
-      return [];
-    } else {
-      return newValues.length === 0 ? undefined : newValue;
-    }
-  }
-
-  private getStringAttribute(newValue: string | undefined, oldValue: string | undefined): string | undefined {
-    if (oldValue && !newValue) {
-      return '';
-    } else {
-      return newValue || undefined;
-    }
+    return newValues.length === 0 ? undefined : newValue;
   }
 
   chooseFiles($event: MouseEvent) {
