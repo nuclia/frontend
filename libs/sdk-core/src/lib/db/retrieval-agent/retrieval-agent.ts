@@ -1,7 +1,7 @@
 import { map, Observable } from 'rxjs';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
 import { ExtractedDataTypes } from '../resource';
-import { Driver, DriverCreation } from './driver.models';
+import { Driver, DriverCreation, ProviderType } from './driver.models';
 import {
   ContextAgent,
   ContextAgentCreation,
@@ -77,11 +77,15 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
 
   /**
    * Get the list of drivers of the Retrieval Agent
+   * @param provider Optional parameter allowing to filter the drivers to get only the ones corresponding to the given provider type
    */
-  getDrivers(): Observable<Driver[]> {
-    return this.nuclia.rest
-      .get<{ config: Driver }[]>(`${this.path}/drivers`)
-      .pipe(map((list) => list.map((item) => item.config)));
+  getDrivers(provider?: ProviderType): Observable<Driver[]> {
+    return this.nuclia.rest.get<{ config: Driver }[]>(`${this.path}/drivers`).pipe(
+      map((list) => {
+        const drivers = list.map((item) => item.config);
+        return provider ? drivers.filter((driver) => driver.provider === provider) : drivers;
+      }),
+    );
   }
 
   /**

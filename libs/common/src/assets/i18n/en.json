@@ -1195,7 +1195,7 @@
 	"retrieval-agents.workflow.node-types.internet.title": "Internet search",
 	"retrieval-agents.workflow.node-types.rephrase.description": "Rephrase options",
 	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.label": "Ask to",
-	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder": "Select source",
+	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder": "Select a Nuclia KB source",
 	"retrieval-agents.workflow.node-types.rephrase.form.extend": "Extend",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.help": "Include the history of the session",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.label": "History",

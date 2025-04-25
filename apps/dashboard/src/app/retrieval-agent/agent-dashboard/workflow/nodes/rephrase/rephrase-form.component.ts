@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { OptionHeaderModel, OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { SDKService } from '@flaps/core';
+import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { NucliaDBDriver } from '@nuclia/core';
+import { map, Observable, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
 
 @Component({
@@ -19,6 +22,8 @@ import { ConfigurationFormComponent, FormDirective } from '../../basic-elements'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RephraseFormComponent extends FormDirective {
+  private sdk = inject(SDKService);
+
   override form = new FormGroup({
     rephrase: new FormGroup({
       prompt: new FormControl('', { validators: [Validators.required], nonNullable: true }),
@@ -30,21 +35,15 @@ export class RephraseFormComponent extends FormDirective {
     }),
   });
 
-  // TODO: get sources depending on enabled KBs on drivers section
-  sourceOptions: (OptionHeaderModel | OptionModel)[] = [
-    new OptionHeaderModel({ id: 'sourceHeader', label: 'Nuclia KBs' }),
-    new OptionModel({ id: '1', value: 'kbManuals', label: 'User manuals' }),
-    new OptionModel({ id: '2', value: 'kbGuides', label: 'Maintenance guides' }),
-    new OptionModel({ id: '3', value: 'kbForum', label: 'User forum' }),
-  ];
-
   override get configForm() {
     return this.form.controls.rephrase;
   }
-  get isExtendEnabled() {
-    return this.form.controls.rephrase.controls.extend.getRawValue();
-  }
-  get kbControl() {
-    return this.form.controls.rephrase.controls.kb;
-  }
+
+  sourceOptions: Observable<OptionModel[]> = this.sdk.currentArag.pipe(
+    take(1),
+    switchMap((arag) => arag.getDrivers('nucliadb') as Observable<NucliaDBDriver[]>),
+    map((drivers) =>
+      drivers.map((driver) => new OptionModel({ id: driver.id, label: driver.name, value: driver.config.kbid })),
+    ),
+  );
 }

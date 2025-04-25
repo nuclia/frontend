@@ -1188,7 +1188,7 @@
 	"retrieval-agents.workflow.node-types.internet.title": "Cerca a Internet",
 	"retrieval-agents.workflow.node-types.rephrase.description": "Opcions de reformulació",
 	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.label": "Demanar a",
-	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder": "Seleccioneu la font",
+	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder": "Seleccionar una font de Nuclia KB",
 	"retrieval-agents.workflow.node-types.rephrase.form.extend": "Ampliar",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.help": "Incloeu l'historial de la sessió",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.label": "Historial",

@@ -1188,7 +1188,7 @@
 	"retrieval-agents.workflow.node-types.internet.title": "Recherche sur Internet",
 	"retrieval-agents.workflow.node-types.rephrase.description": "Options de reformulation",
 	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.label": "Demander à",
-	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder": "Sélectionner la source",
+	"retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder": "Sélectionner une source Nuclia KB",
 	"retrieval-agents.workflow.node-types.rephrase.form.extend": "Étendre",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.help": "Inclure l'historique de la session",
 	"retrieval-agents.workflow.node-types.rephrase.form.history.label": "Historique",

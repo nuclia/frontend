@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { ResourceProperties } from '../db.models';
 import { IKnowledgeBoxBase, IKnowledgeBoxItem, InviteKbData, IWritableKnowledgeBox, ResourcePagination } from '../kb';
 import { ExtractedDataTypes } from '../resource';
-import { Driver, DriverCreation } from './driver.models';
+import { Driver, DriverCreation, ProviderType } from './driver.models';
 import { Session } from './session';
 import { ISession } from './session.models';
 
@@ -44,7 +44,7 @@ export interface IRetrievalAgent
 
   inviteToAgent(data: InviteKbData): Observable<void>;
 
-  getDrivers(): Observable<Driver[]>;
+  getDrivers(provider?: ProviderType): Observable<Driver[]>;
   addDriver(driver: DriverCreation): Observable<void>;
   patchDriver(driver: Driver): Observable<void>;
   deleteDriver(driverId: string): Observable<void>;

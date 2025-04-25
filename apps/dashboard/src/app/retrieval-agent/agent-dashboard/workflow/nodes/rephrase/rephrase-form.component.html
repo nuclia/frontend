@@ -20,7 +20,7 @@
         formControlName="kb"
         externalLabel
         [placeholder]="'retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder' | translate"
-        [options]="sourceOptions"></pa-select>
+        [options]="sourceOptions | async"></pa-select>
     </div>
     <pa-toggle
       formControlName="extend"
