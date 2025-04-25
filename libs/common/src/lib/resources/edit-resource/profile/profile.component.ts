@@ -196,34 +196,69 @@ export class ResourceProfileComponent implements OnInit {
   }
 
   getValue(hiddenResources = false): Partial<Resource> {
+    if (!this.currentValue) {
+      return {};
+    }
     const value = this.form.getRawValue();
-    return this.currentValue
-      ? {
-          slug: value.slug,
-          title: value.title,
-          summary: value.summary,
-          hidden: hiddenResources ? value.hidden : undefined,
-          origin: {
-            ...this.currentValue.origin,
-            collaborators: value.origin.collaborators.split(',').map((s) => s.trim()),
-            url: value.origin.url,
-            filename: value.origin.filename,
-            created: value.origin.created || undefined,
-            modified: value.origin.modified || undefined,
-            related: value.origin.related.split('\n').map((s) => s.trim()),
-            path: value.origin.path || undefined,
-            metadata: value.origin.metadata.reduce(
-              (acc, entry) => {
-                acc[entry.key] = entry.value;
-                return acc;
-              },
-              {} as { [key: string]: string },
-            ),
+    const security = this.getArrayAttribute(
+      value.security.access_groups.split('\n'),
+      this.currentValue.security?.access_groups,
+    );
+    return {
+      slug: this.getStringAttribute(value.slug, this.currentValue.slug),
+      title: this.getStringAttribute(value.title, this.currentValue.title),
+      summary: this.getStringAttribute(value.summary, this.currentValue.summary),
+      hidden: hiddenResources ? value.hidden : undefined,
+      origin: {
+        ...this.currentValue.origin,
+        collaborators: this.getArrayAttribute(
+          value.origin.collaborators.split(',').map((s) => s.trim()),
+          this.currentValue.origin?.collaborators,
+        ),
+        url: this.getStringAttribute(value.origin.url, this.currentValue.origin?.url),
+        filename: this.getStringAttribute(value.origin.filename, this.currentValue.origin?.filename),
+        created: this.getStringAttribute(value.origin.created, this.currentValue.origin?.created),
+        modified: this.getStringAttribute(value.origin.modified, this.currentValue.origin?.modified),
+        related: this.getArrayAttribute(
+          value.origin.related.split('\n').map((s) => s.trim()),
+          this.currentValue.origin?.related,
+        ),
+        path: this.getStringAttribute(value.origin.path, this.currentValue.origin?.path),
+        metadata: value.origin.metadata.reduce(
+          (acc, entry) => {
+            if (entry.key.trim() === '') {
+              return acc;
+            }
+            acc[entry.key] = entry.value;
+            return acc;
           },
-          extra: value.extra ? { metadata: JSON.parse(value.extra) } : undefined,
-          security: value.security ? { access_groups: value.security.access_groups.split('\n') } : undefined,
-        }
-      : {};
+          {} as { [key: string]: string },
+        ),
+      },
+      extra: value.extra
+        ? { metadata: JSON.parse(value.extra) }
+        : !!this.currentValue.extra
+          ? { metadata: {} }
+          : undefined,
+      security: security ? { access_groups: security } : undefined,
+    };
+  }
+
+  private getArrayAttribute(newValue: string[] | undefined, oldValue: string[] | undefined): string[] | undefined {
+    const newValues = (newValue || []).map((s) => s.trim()).filter((s) => s.length > 0);
+    if (newValues.length === 0 && (oldValue || []).length > 0) {
+      return [];
+    } else {
+      return newValues.length === 0 ? undefined : newValue;
+    }
+  }
+
+  private getStringAttribute(newValue: string | undefined, oldValue: string | undefined): string | undefined {
+    if (oldValue && !newValue) {
+      return '';
+    } else {
+      return newValue || undefined;
+    }
   }
 
   chooseFiles($event: MouseEvent) {
