@@ -7,6 +7,7 @@
       (ngSubmit)="save()">
       <pa-accordion allowMultipleExpanded>
         <pa-accordion-item
+          id="general"
           #generalAccordionItem
           [itemTitle]="'resource.preview.general' | translate"
           expanded>
@@ -84,7 +85,7 @@
                       (delete)="markThumbnailForDeletion(newThumbnail)"></stf-thumbnail>
                   }
 
-                  @for (thumb of thumbnails | async; track thumb.uri) {
+                  @for (thumb of thumbnailsLoaded | async; track thumb.uri) {
                     <div>
                       <stf-thumbnail
                         [disabled]="isSaving"
@@ -106,6 +107,7 @@
           </pa-accordion-item-body>
         </pa-accordion-item>
         <pa-accordion-item
+          id="origin"
           [itemTitle]="'resource.preview.origin' | translate"
           #originAccordionItem>
           <pa-accordion-item-body>
@@ -191,6 +193,7 @@
           </pa-accordion-item-body>
         </pa-accordion-item>
         <pa-accordion-item
+          id="extra"
           #extraAccordionItem
           [itemTitle]="'resource.extra-metadata.label' | translate">
           <pa-accordion-item-body>
@@ -215,6 +218,7 @@
           </pa-accordion-item-body>
         </pa-accordion-item>
         <pa-accordion-item
+          id="security"
           #securityAccordionItem
           [itemTitle]="'resource.security.label' | translate">
           <pa-accordion-item-body>
