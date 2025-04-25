@@ -16,12 +16,14 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   ContextAgent,
   ContextAgentCreation,
+  CypherAgent,
   HistoricalAgent,
   PostprocessAgent,
   PostprocessAgentCreation,
   PreprocessAgent,
   PreprocessAgentCreation,
   RephraseAgent,
+  SqlAgent,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { catchError, filter, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
@@ -66,6 +68,8 @@ import {
   NodeType,
   rephraseAgentToUi,
   rephraseUiToCreation,
+  sqlAgentToUi,
+  sqlUiToCreation,
   WorkflowRoot,
 } from './workflow.models';
 
@@ -283,7 +287,7 @@ export class WorkflowService {
   }
 
   /**
-   * Ask for confirmation and remove a node and the corresponding links from the workflow.
+   * Remove a node and the corresponding links from the workflow. Adk for confirmation if the node was already stored in the backend.
    * @param nodeRef Node to remove
    * @param column Column from which the node must be removed
    */
@@ -291,44 +295,50 @@ export class WorkflowService {
     const node = this.nodes[nodeRef.instance.id];
     const agent = node?.agent;
     if (!agent) {
-      throw new Error('No agent stored locally for this nodeRef');
+      this._removeNodeAndLinks(nodeRef, column);
+      this.closeSidebar();
+    } else {
+      this.modalService
+        .openConfirm({
+          title: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.title'),
+          description: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.description'),
+          isDestructive: true,
+          confirmLabel: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.confirm-button'),
+        })
+        .onClose.pipe(
+          filter((confirm) => !!confirm),
+          switchMap(() =>
+            this.sdk.currentArag.pipe(
+              take(1),
+              switchMap((arag) => {
+                switch (node.nodeType) {
+                  case 'historical':
+                  case 'rephrase':
+                    return arag.deletePreprocess(agent.id);
+                  case 'conditional':
+                  case 'ask':
+                  case 'internet':
+                  case 'sql':
+                  case 'cypher':
+                    return arag.deleteContext(agent.id);
+                  case 'validation':
+                  case 'summarize':
+                  case 'restart':
+                  case 'remi':
+                    return arag.deletePostprocess(agent.id);
+                }
+              }),
+            ),
+          ),
+        )
+        .subscribe({
+          next: () => {
+            this._removeNodeAndLinks(nodeRef, column);
+            this.closeSidebar();
+          },
+          error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.delete-agent')),
+        });
     }
-    this.modalService
-      .openConfirm({
-        title: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.title'),
-        description: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.description'),
-        isDestructive: true,
-        confirmLabel: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.confirm-button'),
-      })
-      .onClose.pipe(
-        filter((confirm) => !!confirm),
-        switchMap(() => this.sdk.currentArag.pipe(take(1))),
-        switchMap((arag) => {
-          switch (node.nodeType) {
-            case 'historical':
-            case 'rephrase':
-              return arag.deletePreprocess(agent.id);
-            case 'conditional':
-            case 'ask':
-            case 'internet':
-            case 'sql':
-            case 'cypher':
-              return arag.deleteContext(agent.id);
-            case 'validation':
-            case 'summarize':
-            case 'restart':
-            case 'remi':
-              return arag.deletePostprocess(agent.id);
-          }
-        }),
-      )
-      .subscribe({
-        next: () => {
-          this._removeNodeAndLinks(nodeRef, column);
-          this.closeSidebar();
-        },
-        error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.delete-agent')),
-      });
   }
 
   private _removeNodeAndLinks(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
@@ -662,19 +672,20 @@ export class WorkflowService {
     config: any,
   ): PreprocessAgentCreation | ContextAgentCreation | PostprocessAgentCreation {
     switch (nodeType) {
-      case 'historical':
-        return { module: nodeType, ...config };
       case 'rephrase':
         return rephraseUiToCreation(config);
       case 'internet':
         return internetUiToCreation(config);
+      case 'sql':
+        return sqlUiToCreation(config);
+      case 'historical':
+      case 'cypher':
+        return { module: nodeType, ...config };
       case 'conditional':
       case 'validation':
       case 'summarize':
       case 'restart':
       case 'ask':
-      case 'sql':
-      case 'cypher':
       // TODO: other agent types
       default:
         return { module: nodeType, ...config };
@@ -684,7 +695,7 @@ export class WorkflowService {
   private getConfigFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): any {
     switch (agent.module) {
       case 'historical':
-        return { all: (agent as HistoricalAgent).all };
+        return { ...(agent as HistoricalAgent) };
       case 'rephrase':
         return rephraseAgentToUi(agent as RephraseAgent);
       case 'brave':
@@ -694,8 +705,10 @@ export class WorkflowService {
       case 'google':
         return internetAgentToUi(agent as InternetAgent);
       case 'sql':
-      case 'mcp':
+        return sqlAgentToUi(agent as SqlAgent);
       case 'cypher':
+        return { ...(agent as CypherAgent) };
+      case 'mcp':
       case 'ask':
       case 'conditional':
       case 'restricted':

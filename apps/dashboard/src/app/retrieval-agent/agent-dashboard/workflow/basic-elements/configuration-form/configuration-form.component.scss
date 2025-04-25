@@ -18,6 +18,10 @@
   padding: rhythm(2) dashboard.$padding-sidebar rhythm(2) 0;
   overflow: auto;
 
+  pa-toggle .pa-field-label {
+    color: $color-neutral-regular;
+    font-weight: $font-weight-semi-bold;
+  }
   .form-entry > label {
     color: $color-neutral-regular;
     font-size: font-size(s);

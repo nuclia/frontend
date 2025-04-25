@@ -15,7 +15,7 @@
       class="full-width"
       kind="primary"
       type="submit"
-      [disabled]="form().invalid">
+      [disabled]="form().invalid || form().pristine">
       {{ 'generic.save' | translate }}
     </pa-button>
   </footer>

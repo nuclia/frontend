@@ -121,6 +121,137 @@ export type PostprocessAgentCreation =
   | RestartAgentCreation
   | RemiAgentCreation;
 
+export interface HistoricalAgentCreation {
+  module: 'historical';
+  all: boolean;
+}
+export interface RephraseAgentCreation {
+  module: 'rephrase';
+  kb: string;
+  rules: string[];
+  rids?: string[];
+  labels?: string[];
+  synonyms?: boolean;
+  extends?: boolean;
+  session_info?: boolean;
+  history?: boolean;
+  model?: string;
+}
+
+export interface SqlAgentCreation {
+  module: 'sql';
+  source: string;
+  description?: string | null;
+  sqlschema?: string | null;
+  retries?: number;
+  ignore_tables?: string[];
+  include_tables?: string[];
+  sample_rows_in_table_info?: number;
+  indexes_in_table_info?: boolean;
+  custom_table_info?: { [property: string]: unknown };
+  view_support?: boolean;
+  max_string_length?: number;
+  lazy_table_reflection?: boolean;
+  conversion_model?: string;
+}
+
+export interface TavilyAgentCreation {
+  module: 'tavily';
+}
+
+export interface PerplexityAgentCreation {
+  module: 'perplexity';
+  domain: string[];
+  top_k: number;
+  related_questions: boolean;
+  images: boolean;
+}
+
+export interface BraveAgentCreation {
+  module: 'brave';
+  domain: string | null;
+  country: string | null;
+}
+
+export interface McpAgentCreation {
+  module: 'mcp';
+}
+
+export interface CypherAgentCreation {
+  module: 'cypher';
+  source: string;
+  exclude_types?: string[];
+  include_types?: string[];
+  allow_dangerous_requests?: boolean;
+  top_k?: number;
+  model?: string;
+}
+
+export interface AskAgentCreation {
+  module: 'ask';
+  sources: string[];
+  fallback?: ContextAgent;
+  pre_queries?: string[];
+  filters?: string[];
+  security_groups?: string[];
+  rephrase_semantic_custom_prompt?: string;
+  rephrase_lexical_custom_prompt?: string;
+  keyword_custom_prompt?: string;
+  visual_enable_prompt?: string;
+  date_range_enabled?: boolean;
+  before?: number;
+  after?: number;
+  extra_fields?: string[];
+  full_resource?: boolean;
+  vllm?: boolean;
+  query_entities?: { name: string; type?: string; subtype?: string }[];
+  retrieve_related?: string;
+  configuration_model?: string;
+  configuration_json_model?: string;
+}
+
+export interface ConditionalAgentCreation {
+  module: 'conditional';
+  then: ContextAgent;
+  else?: ContextAgent;
+  prompt?: string;
+  has_keywords?: string[];
+  similarity?: string[];
+  on?: 'QUESTION' | 'ANSWER' | 'CONTEXT';
+  model?: string;
+}
+
+export interface RestrictedAgentCreation {
+  module: 'restricted';
+  code: string;
+}
+
+export interface DuckduckgoAgentCreation {
+  module: 'duckduckgo';
+}
+
+export interface GoogleAgentCreation {
+  module: 'google';
+  model_id?: string;
+}
+
+export interface SparkleAgentCreation {
+  module: 'sparql';
+}
+
+export interface SummarizeAgentCreation {
+  module: 'summarize';
+}
+export interface ValidationAgentCreation {
+  module: 'validation';
+}
+export interface RestartAgentCreation {
+  module: 'restart';
+}
+export interface RemiAgentCreation {
+  module: 'remi';
+}
+
 export interface HistoricalAgent extends PreprocessAgent, HistoricalAgentCreation {
   module: 'historical';
 }
@@ -173,89 +304,5 @@ export interface RestartAgent extends PostprocessAgent, RestartAgentCreation {
   module: 'restart';
 }
 export interface RemiAgent extends PostprocessAgent, RemiAgentCreation {
-  module: 'remi';
-}
-
-export interface HistoricalAgentCreation {
-  module: 'historical';
-  all: boolean;
-}
-export interface RephraseAgentCreation {
-  module: 'rephrase';
-  kb: string;
-  rules: string[];
-  rids?: string[];
-  labels?: string[];
-  synonyms?: boolean;
-  extends?: boolean;
-  session_info?: boolean;
-  history?: boolean;
-  model?: string;
-}
-
-export interface SqlAgentCreation {
-  module: 'sql';
-}
-
-export interface TavilyAgentCreation {
-  module: 'tavily';
-}
-
-export interface PerplexityAgentCreation {
-  module: 'perplexity';
-  domain: string[];
-  top_k: number;
-  related_questions: boolean;
-  images: boolean;
-}
-
-export interface BraveAgentCreation {
-  module: 'brave';
-  domain: string | null;
-  country: string | null;
-}
-
-export interface McpAgentCreation {
-  module: 'mcp';
-}
-
-export interface CypherAgentCreation {
-  module: 'cypher';
-}
-
-export interface AskAgentCreation {
-  module: 'ask';
-}
-
-export interface ConditionalAgentCreation {
-  module: 'conditional';
-}
-
-export interface RestrictedAgentCreation {
-  module: 'restricted';
-}
-
-export interface DuckduckgoAgentCreation {
-  module: 'duckduckgo';
-}
-
-export interface GoogleAgentCreation {
-  module: 'google';
-}
-
-export interface SparkleAgentCreation {
-  module: 'sparql';
-}
-
-export interface SummarizeAgentCreation {
-  module: 'summarize';
-}
-export interface ValidationAgentCreation {
-  module: 'validation';
-}
-export interface RestartAgentCreation {
-  module: 'restart';
-}
-export interface RemiAgentCreation {
   module: 'remi';
 }

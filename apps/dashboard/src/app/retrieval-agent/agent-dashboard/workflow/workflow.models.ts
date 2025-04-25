@@ -14,6 +14,8 @@ import {
   PreprocessAgent,
   RephraseAgent,
   RephraseAgentCreation,
+  SqlAgent,
+  SqlAgentCreation,
   TavilyAgent,
   TavilyAgentCreation,
 } from '@nuclia/core';
@@ -90,6 +92,20 @@ export interface InternetAgentUI {
   perplexity: Omit<PerplexityAgentCreation, 'module'>;
 }
 
+export interface SqlAgentUI {
+  source: string;
+  prompt?: string;
+  retries: number;
+}
+
+export interface CypherAgentUI {
+  source: string;
+  exclude_types: string[];
+  include_types: string[];
+  allow_dangerous_requests: boolean;
+  top_k: number;
+}
+
 export interface ConditionalAgentUI {
   prompt: string;
 }
@@ -129,7 +145,21 @@ export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
     history: agent.history || false,
   };
 }
-
+export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
+  const { prompt, ...agentConfig } = config;
+  return {
+    module: 'sql',
+    description: prompt,
+    ...agentConfig,
+  };
+}
+export function sqlAgentToUi(agent: SqlAgent): SqlAgentUI {
+  return {
+    source: agent.source,
+    prompt: agent.description || '',
+    retries: agent.retries || 3,
+  };
+}
 export type InternetAgentCreation =
   | BraveAgentCreation
   | PerplexityAgentCreation

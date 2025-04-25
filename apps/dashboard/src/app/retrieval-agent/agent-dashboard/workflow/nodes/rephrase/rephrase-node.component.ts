@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } 
 import { SDKService } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IKnowledgeBoxItem } from '@nuclia/core';
-import { switchMap } from 'rxjs';
+import { switchMap, take } from 'rxjs';
 import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
 import { RephraseAgentUI } from '../../workflow.models';
 
@@ -33,7 +33,10 @@ export class RephraseNodeComponent extends NodeDirective implements OnInit {
 
   ngOnInit(): void {
     this.sdk.currentAccount
-      .pipe(switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)))
+      .pipe(
+        take(1),
+        switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
+      )
       .subscribe((kbList) => this.kbList.set(kbList));
   }
 }
