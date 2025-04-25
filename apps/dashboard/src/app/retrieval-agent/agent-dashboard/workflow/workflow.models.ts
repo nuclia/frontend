@@ -1,5 +1,7 @@
 import { ComponentRef } from '@angular/core';
 import {
+  AskAgent,
+  AskAgentCreation,
   BraveAgent,
   BraveAgentCreation,
   ContextAgent,
@@ -106,6 +108,16 @@ export interface CypherAgentUI {
   top_k: number;
 }
 
+export interface AskAgentUI {
+  sources: string;
+  rephrase_semantic_custom_prompt?: string;
+  rephrase_lexical_custom_prompt?: string;
+  keyword_custom_prompt?: string;
+  visual_enable_prompt?: string;
+  full_resource?: boolean;
+  vllm?: boolean;
+}
+
 export interface ConditionalAgentUI {
   prompt: string;
 }
@@ -143,6 +155,20 @@ export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
     synonyms: agent.synonyms || false,
     userInfo: agent.session_info || false,
     history: agent.history || false,
+  };
+}
+export function askUiToCreation(config: AskAgentUI): AskAgentCreation {
+  const { sources, ...agentConfig } = config;
+  return {
+    module: 'ask',
+    sources: sources.split(','),
+    ...agentConfig,
+  };
+}
+export function askAgentToUi(agent: AskAgent): AskAgentUI {
+  return {
+    ...agent,
+    sources: agent.sources.join(','),
   };
 }
 export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {

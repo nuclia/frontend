@@ -14,10 +14,9 @@ import { SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  AskAgent,
   ContextAgent,
   ContextAgentCreation,
-  CypherAgent,
-  HistoricalAgent,
   PostprocessAgent,
   PostprocessAgentCreation,
   PreprocessAgent,
@@ -57,6 +56,8 @@ import {
 } from './nodes';
 import { RulesPanelComponent } from './sidebar';
 import {
+  askAgentToUi,
+  askUiToCreation,
   EntryType,
   InternetAgent,
   internetAgentToUi,
@@ -678,24 +679,21 @@ export class WorkflowService {
         return internetUiToCreation(config);
       case 'sql':
         return sqlUiToCreation(config);
+      case 'ask':
+        return askUiToCreation(config);
       case 'historical':
       case 'cypher':
-        return { module: nodeType, ...config };
       case 'conditional':
       case 'validation':
       case 'summarize':
       case 'restart':
-      case 'ask':
-      // TODO: other agent types
-      default:
+      case 'remi':
         return { module: nodeType, ...config };
     }
   }
 
   private getConfigFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): any {
     switch (agent.module) {
-      case 'historical':
-        return { ...(agent as HistoricalAgent) };
       case 'rephrase':
         return rephraseAgentToUi(agent as RephraseAgent);
       case 'brave':
@@ -706,14 +704,15 @@ export class WorkflowService {
         return internetAgentToUi(agent as InternetAgent);
       case 'sql':
         return sqlAgentToUi(agent as SqlAgent);
-      case 'cypher':
-        return { ...(agent as CypherAgent) };
-      case 'mcp':
       case 'ask':
+        return askAgentToUi(agent as AskAgent);
+      case 'historical':
+      case 'cypher':
+      case 'mcp':
       case 'conditional':
       case 'restricted':
       case 'sparql':
-      // TODO: other agent types
+        return { ...agent };
     }
   }
 }
