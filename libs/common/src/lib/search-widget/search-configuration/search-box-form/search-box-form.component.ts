@@ -21,11 +21,11 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
-import { SearchBoxConfig } from '../../search-widget.models';
 import { filter, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { FeaturesService, SDKService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { FilterAssistantModalComponent } from '../filter-assistant';
+import { Widget } from '@nuclia/core';
 
 @Component({
   selector: 'stf-search-box-form',
@@ -51,7 +51,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   private modalService = inject(SisModalService);
   private sdk = inject(SDKService);
 
-  @Input() set config(value: SearchBoxConfig | undefined) {
+  @Input() set config(value: Widget.SearchBoxConfig | undefined) {
     if (value) {
       this.form.patchValue(value);
     }
@@ -66,7 +66,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   @Input({ required: true }) semanticModels: OptionModel[] = [];
 
   @Output() heightChanged = new EventEmitter<void>();
-  @Output() configChanged = new EventEmitter<SearchBoxConfig>();
+  @Output() configChanged = new EventEmitter<Widget.SearchBoxConfig>();
 
   form = new FormGroup({
     filter: new FormControl<boolean>(false, { nonNullable: true }),

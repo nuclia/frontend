@@ -15,7 +15,8 @@ import { RagLabService } from './rag-lab.service';
 import { forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 import { LabLayoutComponent } from './lab-layout/lab-layout.component';
 import { RequestConfigAndQueries } from './rag-lab.models';
-import { getChatOptions, SearchConfiguration } from '../search-widget';
+import { getChatOptions } from '../search-widget';
+import { Widget } from '@nuclia/core';
 
 @Component({
   selector: 'stf-rag-lab',
@@ -45,7 +46,7 @@ export class RagLabComponent implements OnChanges {
     map((kbConfig) => kbConfig?.['generative_model'] || ''),
   );
   generativeModelMap = this.ragLabService.generativeModelMap;
-  searchConfigurations: Observable<SearchConfiguration[]> = this.ragLabService.searchConfigurations.pipe(
+  searchConfigurations: Observable<Widget.SearchConfiguration[]> = this.ragLabService.searchConfigurations.pipe(
     tap((configs) => {
       configs.forEach((config) =>
         this.form.addControl(config.id, new FormControl<boolean>(false, { nonNullable: true })),
@@ -215,7 +216,7 @@ export class RagLabComponent implements OnChanges {
   }
 
   private getRequestConfigList(
-    configurations: SearchConfiguration[],
+    configurations: Widget.SearchConfiguration[],
     defaultGenerativeModel: string,
   ): RequestConfigAndQueries[] {
     return this.selectedConfigs

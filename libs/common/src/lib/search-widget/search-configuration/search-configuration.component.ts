@@ -29,18 +29,12 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LearningConfigurations } from '@nuclia/core';
+import { LearningConfigurations, Widget } from '@nuclia/core';
 import { ButtonMiniComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
-import {
-  GenerativeAnswerConfig,
-  isSameConfigurations,
-  ResultDisplayConfig,
-  SearchBoxConfig,
-  SearchConfiguration,
-} from '../search-widget.models';
+import { isSameConfigurations } from '../search-widget.models';
 import { SearchWidgetService } from '../search-widget.service';
 import { GenerativeAnswerFormComponent } from './generative-answer-form';
 import { ResultsDisplayFormComponent } from './results-display-form';
@@ -91,7 +85,7 @@ export class SearchConfigurationComponent {
   @Input() configurationContainer?: ElementRef;
   @Input() mainTitle = '';
 
-  @Output() configUpdate = new EventEmitter<SearchConfiguration>();
+  @Output() configUpdate = new EventEmitter<Widget.SearchConfiguration>();
   @Output() createWidget = new EventEmitter<void>();
 
   @ViewChild('searchBox', { read: AccordionItemComponent }) searchBoxItem?: AccordionItemComponent;
@@ -107,8 +101,8 @@ export class SearchConfigurationComponent {
 
   selectedConfig = new FormControl<string>('');
 
-  savedConfig?: SearchConfiguration;
-  currentConfig?: SearchConfiguration;
+  savedConfig?: Widget.SearchConfiguration;
+  currentConfig?: Widget.SearchConfiguration;
 
   generativeModelFromSettings = '';
   semanticModelFromSettings = '';
@@ -376,7 +370,7 @@ export class SearchConfigurationComponent {
     );
   }
 
-  updateSearchBoxConfig(config: SearchBoxConfig) {
+  updateSearchBoxConfig(config: Widget.SearchBoxConfig) {
     if (!this.savedConfig) {
       return;
     }
@@ -385,7 +379,7 @@ export class SearchConfigurationComponent {
     this.isConfigModified = !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
   }
-  updateGenerativeAnswerConfig(config: GenerativeAnswerConfig) {
+  updateGenerativeAnswerConfig(config: Widget.GenerativeAnswerConfig) {
     if (!this.savedConfig) {
       return;
     }
@@ -394,7 +388,7 @@ export class SearchConfigurationComponent {
     this.isConfigModified = !isSameConfigurations(this.currentConfig, this.savedConfig);
     this.updateWidget();
   }
-  updateResultDisplayConfig(config: ResultDisplayConfig) {
+  updateResultDisplayConfig(config: Widget.ResultDisplayConfig) {
     if (!this.savedConfig) {
       return;
     }

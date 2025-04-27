@@ -1,34 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import {
-  DEFAULT_WIDGET_CONFIG,
-  getAskToResource,
-  getChatPlaceholder,
-  getCitationThreshold,
-  getCopyDisclaimer,
-  getFeatures,
-  getFilters,
-  getJsonSchema,
-  getLang,
-  getMaxParagraphs,
-  getMaxTokens,
-  getMetadata,
-  getNotEnoughDataMessage,
-  getPlaceholder,
-  getPreselectedFilters,
-  getPrompt,
-  getQueryPrepend,
-  getRagStrategiesProperties,
-  getRephrasePrompt,
-  getReranker,
-  getRrfBoosting,
-  getSystemPrompt,
-  getWidgetTheme,
-  NUCLIA_STANDARD_SEARCH_CONFIG,
-  SAVED_CONFIG_KEY,
-  SearchConfiguration,
-  Widget,
-  WidgetConfiguration,
-} from './search-widget.models';
+import { DEFAULT_WIDGET_CONFIG, SAVED_CONFIG_KEY } from './search-widget.models';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFUtils } from '@flaps/core';
 import { delay, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
@@ -40,6 +11,7 @@ import { DuplicateWidgetDialogComponent, RenameWidgetDialogComponent } from './w
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { SearchWidgetStorageService } from './search-widget-storage.service';
+import { getWidgetParameters, NUCLIA_STANDARD_SEARCH_CONFIG, Widget } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
@@ -57,13 +29,14 @@ export class SearchWidgetService {
 
   private currentQuery = '';
   private currentFilters: string[] = [];
-  private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string }>();
+  private _widgetPreview = new Subject<{ preview: SafeHtml; snippet: string; synchSnippet?: string }>();
   private _logs = new Subject<any>();
   widgetPreview = this._widgetPreview.asObservable();
   logs = this._logs.asObservable();
   private _generateWidgetSnippetSubject = new Subject<{
-    currentConfig: SearchConfiguration;
-    widgetOptions: WidgetConfiguration;
+    currentConfig: Widget.SearchConfiguration;
+    widgetOptions: Widget.WidgetConfiguration;
+    widgetId?: string;
     scrollContainer?: string;
   }>();
   searchConfigurations = this.searchWidgetStorage.searchConfigurations;
@@ -76,8 +49,8 @@ export class SearchWidgetService {
     this._generateWidgetSnippetSubject
       .pipe(
         debounceTime(300),
-        switchMap(({ currentConfig, widgetOptions, scrollContainer }) =>
-          this._generateWidgetSnippet(currentConfig, widgetOptions, scrollContainer),
+        switchMap(({ currentConfig, widgetOptions, widgetId, scrollContainer }) =>
+          this._generateWidgetSnippet(currentConfig, widgetOptions, widgetId, scrollContainer),
         ),
         delay(100), // wait for the widget to render
         tap(() => this.reinitWidgetPreview()),
@@ -85,7 +58,7 @@ export class SearchWidgetService {
       .subscribe();
   }
 
-  getSelectedSearchConfig(kbId: string, configs: SearchConfiguration[]): SearchConfiguration {
+  getSelectedSearchConfig(kbId: string, configs: Widget.SearchConfiguration[]): Widget.SearchConfiguration {
     const standardConfiguration = { ...NUCLIA_STANDARD_SEARCH_CONFIG };
     const savedConfigMap: { [kbId: string]: string } = JSON.parse(this.storage.getItem(SAVED_CONFIG_KEY) || '{}');
     const savedConfigId = savedConfigMap[kbId];
@@ -96,7 +69,7 @@ export class SearchWidgetService {
     return savedConfig ? savedConfig : standardConfiguration;
   }
 
-  saveSearchConfig(kbId: string, name: string, config: SearchConfiguration) {
+  saveSearchConfig(kbId: string, name: string, config: Widget.SearchConfiguration) {
     return this.searchWidgetStorage.storeSearchConfig(name, config).pipe(
       catchError((error) => {
         this.toaster.error('search.configuration.save-error');
@@ -118,52 +91,22 @@ export class SearchWidgetService {
   }
 
   generateWidgetSnippet(
-    currentConfig: SearchConfiguration,
-    widgetOptions: WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
+    currentConfig: Widget.SearchConfiguration,
+    widgetOptions: Widget.WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
+    widgetId?: string,
     scrollContainer?: string,
   ) {
-    this._generateWidgetSnippetSubject.next({ currentConfig, widgetOptions, scrollContainer });
+    this._generateWidgetSnippetSubject.next({ currentConfig, widgetOptions, widgetId, scrollContainer });
   }
 
   private _generateWidgetSnippet(
-    currentConfig: SearchConfiguration,
-    widgetOptions: WidgetConfiguration,
+    currentConfig: Widget.SearchConfiguration,
+    widgetOptions: Widget.WidgetConfiguration,
+    widgetId?: string,
     scrollContainer?: string,
-  ): Observable<{ preview: SafeHtml; snippet: string }> {
+  ): Observable<{ preview: SafeHtml; snippet: string; synchSnippet?: string }> {
     this.deleteWidgetPreview();
 
-    // Search configuration
-    const features = getFeatures(currentConfig, widgetOptions);
-    const placeholder = getPlaceholder(widgetOptions);
-    const chatPlaceholder = getChatPlaceholder(widgetOptions);
-    const copyDisclaimer = getCopyDisclaimer(widgetOptions);
-    const lang = getLang(widgetOptions);
-    const prompt = getPrompt(currentConfig.generativeAnswer);
-    const systemPrompt = getSystemPrompt(currentConfig.generativeAnswer);
-    const rephrasePrompt = getRephrasePrompt(currentConfig.searchBox);
-    const filters = getFilters(currentConfig.searchBox);
-    const preselectedFilters = getPreselectedFilters(currentConfig.searchBox);
-    const { ragProperties, ragImagesProperties } = getRagStrategiesProperties(
-      currentConfig.generativeAnswer.ragStrategies,
-    );
-    const notEnoughDataMessage = getNotEnoughDataMessage(widgetOptions);
-    const askToResource = getAskToResource(currentConfig.generativeAnswer);
-    const maxTokens = getMaxTokens(currentConfig.generativeAnswer);
-    const maxParagraphs = getMaxParagraphs(currentConfig.generativeAnswer);
-    const generativeModel = currentConfig.generativeAnswer.generativeModel
-      ? `\n  generativemodel="${currentConfig.generativeAnswer.generativeModel}"`
-      : '';
-    const vectorset = currentConfig.searchBox.vectorset ? `\n  vectorset="${currentConfig.searchBox.vectorset}"` : '';
-    const queryPrepend = getQueryPrepend(currentConfig.searchBox);
-    const jsonSchema = getJsonSchema(currentConfig.resultDisplay);
-    const metadata = getMetadata(currentConfig.resultDisplay);
-    const reranker = getReranker(currentConfig.searchBox);
-    const rrfBoosting = getRrfBoosting(currentConfig.searchBox);
-    const citationThreshold = getCitationThreshold(currentConfig.resultDisplay);
-
-    // Widget options
-    const theme = getWidgetTheme(widgetOptions);
-    const feedback = `\n  feedback="${widgetOptions.feedback}"`;
     let tagName;
     let widgetFileName;
     switch (widgetOptions.widgetMode) {
@@ -182,6 +125,11 @@ export class SearchWidgetService {
     const isPopupStyle = widgetOptions.widgetMode === 'popup';
     const isSearchMode = !widgetOptions.widgetMode || widgetOptions.widgetMode === 'page';
     const scriptSrc = `${this.backendConfig.getCDN()}/${widgetFileName}.umd.js`;
+    const widgetParameters = getWidgetParameters(currentConfig, widgetOptions);
+    const parameters = Object.entries(widgetParameters)
+      .filter(([, value]) => !!value)
+      .map(([key, value]) => `\n  ${key}="${this.escapeParameter(value || '')}"`)
+      .join('');
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([kb, account]) => {
@@ -201,19 +149,27 @@ export class SearchWidgetService {
         if (!this.backendConfig.getCDN().includes('nuclia.cloud')) {
           cdn = `\n  cdn="${this.backendConfig.getCDN()}/"`;
         }
-        let baseSnippet = `<${tagName}${theme}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${features}${prompt}${systemPrompt}${rephrasePrompt}${ragProperties}${ragImagesProperties}${placeholder}${chatPlaceholder}${copyDisclaimer}${lang}${notEnoughDataMessage}${askToResource}${maxTokens}${maxParagraphs}${queryPrepend}${generativeModel}${vectorset}${filters}${preselectedFilters}${privateDetails}${backend}${cdn}${jsonSchema}${metadata}${reranker}${rrfBoosting}${citationThreshold}${feedback}`;
+        let baseSnippet = `<${tagName}\n  knowledgebox="${kb.id}"`;
+        baseSnippet += `\n  ${zone}${privateDetails}${backend}${cdn}${parameters}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
         } else if (isSearchMode) {
+          const theme = widgetParameters.mode ? `\n mode="${widgetParameters.mode}"` : '';
           baseSnippet += `<nuclia-search-results ${theme}></nuclia-search-results>`;
         }
 
-        const snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`.replace(
+        let snippet = `<script src="${scriptSrc}"></script>\n${baseSnippet}`.replace(
           /knowledgebox=/g,
           `audit_metadata='{"config":"${currentConfig.id}"}'\n  knowledgebox=`,
         );
+        let synchSnippet: string | undefined;
+        if (widgetId) {
+          const accountParam = privateDetails ? '' : `\n  account="${account.id}"`;
+          synchSnippet = snippet
+            .replace(parameters, '')
+            .replace(`></${tagName}>`, `${accountParam}\n  widget_id="${widgetId}"></${tagName}>`);
+        }
         const preview = this.sanitizer.bypassSecurityTrustHtml(
           baseSnippet
             .replace('zone=', `client="dashboard" zone=`)
@@ -225,10 +181,14 @@ export class SearchWidgetService {
             ),
         );
 
-        this._widgetPreview.next({ snippet, preview });
-        return { snippet, preview };
+        this._widgetPreview.next({ snippet, preview, synchSnippet });
+        return { snippet, preview, synchSnippet };
       }),
     );
+  }
+
+  escapeParameter(prompt: string) {
+    return prompt.trim().replace(/"/g, '&quot;').replace(/\n/g, '&#10;');
   }
 
   resetSearchQuery() {
@@ -284,7 +244,7 @@ export class SearchWidgetService {
    */
   createWidget(
     name: string,
-    widgetConfig: WidgetConfiguration,
+    widgetConfig: Widget.WidgetConfiguration,
     searchConfigId: string,
     generativeModel: string,
     vectorset: string,
@@ -311,7 +271,7 @@ export class SearchWidgetService {
     );
   }
 
-  updateWidget(widgetSlug: string, widgetConfig: WidgetConfiguration, searchConfigId: string) {
+  updateWidget(widgetSlug: string, widgetConfig: Widget.WidgetConfiguration, searchConfigId: string) {
     return this.widgetList.pipe(
       take(1),
       switchMap((storedWidgets) => {
@@ -333,7 +293,7 @@ export class SearchWidgetService {
     );
   }
 
-  duplicateWidget(widget: Widget): Observable<string> {
+  duplicateWidget(widget: Widget.Widget): Observable<string> {
     return this.modalService
       .openModal(DuplicateWidgetDialogComponent, new ModalConfig({ data: { name: widget.name } }))
       .onClose.pipe(
@@ -383,7 +343,7 @@ export class SearchWidgetService {
     );
   }
 
-  private _duplicateWidget(widget: Widget, newName: string): Observable<string> {
+  private _duplicateWidget(widget: Widget.Widget, newName: string): Observable<string> {
     return this.widgetList.pipe(
       take(1),
       switchMap((storedWidgets) => {

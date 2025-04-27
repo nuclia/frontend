@@ -13,12 +13,12 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaSliderModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { INITIAL_CITATION_THRESHOLD, ResultDisplayConfig } from '../../search-widget.models';
 import { Subject } from 'rxjs';
 import { FeaturesService } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 import { JsonValidator } from '../../../validators';
+import { INITIAL_CITATION_THRESHOLD, Widget } from '@nuclia/core';
 
 // TODO remove when all LLMs support JSON output
 const LLM_WITH_JSON_OUTPUT_SUPPORT: string[] = [
@@ -55,7 +55,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
 
-  @Input() set config(value: ResultDisplayConfig | undefined) {
+  @Input() set config(value: Widget.ResultDisplayConfig | undefined) {
     if (value) {
       const { metadatas, ...rest } = value;
       const mainMetadatas = this.DISPLAYED_METADATAS.reduce(
@@ -100,7 +100,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   @Input() useSearchResults = true;
 
   @Output() heightChanged = new EventEmitter<void>();
-  @Output() configChanged = new EventEmitter<ResultDisplayConfig>();
+  @Output() configChanged = new EventEmitter<Widget.ResultDisplayConfig>();
 
   DISPLAYED_METADATAS = [
     { value: 'origin:created:date', label: 'search.configuration.result-display.display-metadata.origin-created-date' },

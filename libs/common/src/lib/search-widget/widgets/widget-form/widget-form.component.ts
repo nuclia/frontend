@@ -22,7 +22,6 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { SearchConfiguration, Widget } from '../../search-widget.models';
 import { SearchWidgetService } from '../../search-widget.service';
 import { combineLatest, filter, forkJoin, map, startWith, Subject, switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -30,7 +29,7 @@ import { takeUntil, tap } from 'rxjs/operators';
 import { deepEqual, FeaturesService, SDKService } from '@flaps/core';
 import { SearchConfigurationComponent } from '../../search-configuration';
 import { EmbedWidgetDialogComponent } from '../dialogs';
-import { WidgetFeedback } from '@nuclia/core';
+import { Widget } from '@nuclia/core';
 
 @Component({
   imports: [
@@ -70,8 +69,8 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   @ViewChild('widgetOptions', { read: AccordionItemComponent }) widgetOptionsItem?: AccordionItemComponent;
 
-  savedWidget?: Widget;
-  currentWidget?: Widget;
+  savedWidget?: Widget.Widget;
+  currentWidget?: Widget.Widget;
   isNotModified = true;
 
   form = new FormGroup({
@@ -97,7 +96,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     openNewTab: new FormControl<boolean>(false, { nonNullable: true }),
     speech: new FormControl<boolean>(false, { nonNullable: true }),
     speechSynthesis: new FormControl<boolean>(false, { nonNullable: true }),
-    feedback: new FormControl<WidgetFeedback>('none', { nonNullable: true }),
+    feedback: new FormControl<Widget.WidgetFeedback>('none', { nonNullable: true }),
     lang: new FormControl<string>('', { nonNullable: true }),
     customizeCitationVisibility: new FormControl<boolean>(false, { nonNullable: true }),
     collapseTextBlocks: new FormControl<boolean>(false, { nonNullable: true }),
@@ -106,14 +105,14 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
 
   widgetFormExpanded = true;
 
-  snippet = '';
+  snippets?: { snippet: string; synchSnippet?: string };
   widgetPreview = this.searchWidgetService.widgetPreview.pipe(
     tap((data) => {
-      this.snippet = data.snippet;
+      this.snippets = data;
       this.cdr.markForCheck();
     }),
   );
-  configChanges = new Subject<SearchConfiguration>();
+  configChanges = new Subject<Widget.SearchConfiguration>();
 
   get customizePlaceholderEnabled() {
     return this.form.controls.customizePlaceholder.value;
@@ -192,6 +191,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         this.searchWidgetService.generateWidgetSnippet(
           searchConfig,
           this.form.getRawValue(),
+          this.currentWidget?.slug,
           '.widget-preview-container',
         );
       });
@@ -203,7 +203,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     this.searchWidgetService.resetSearchQuery();
   }
 
-  private initWidget(widget: Widget) {
+  private initWidget(widget: Widget.Widget) {
     this.savedWidget = widget;
     this.currentWidget = { ...this.savedWidget };
     this.form.patchValue(this.currentWidget.widgetConfig);
@@ -231,7 +231,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   }
 
   embedWidget() {
-    this.modalService.openModal(EmbedWidgetDialogComponent, new ModalConfig({ data: { code: this.snippet } }));
+    if (this.snippets) {
+      this.modalService.openModal(EmbedWidgetDialogComponent, new ModalConfig({ data: { code: this.snippets } }));
+    }
   }
 
   rename() {
@@ -281,7 +283,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateSearchConfig(searchConfig: SearchConfiguration) {
+  updateSearchConfig(searchConfig: Widget.SearchConfiguration) {
     this.configChanges.next(searchConfig);
 
     this.isNotModified = searchConfig.id === this.savedWidget?.searchConfigId;

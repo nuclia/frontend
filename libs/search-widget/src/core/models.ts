@@ -1,4 +1,4 @@
-import type { FieldFullId, Reranker, Search, WidgetFeatures, WidgetFeedback } from '@nuclia/core';
+import type { FieldFullId, Reranker, Search, Widget } from '@nuclia/core';
 
 export type ResultType = 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | 'conversation' | 'text';
 
@@ -44,7 +44,7 @@ export const NO_SUGGESTION_RESULTS: Search.Suggestions = {
 
 export interface WidgetOptions {
   fuzzyOnly?: boolean;
-  features?: WidgetFeatures;
+  features?: Widget.WidgetFeatures;
   prompt?: string;
   system_prompt?: string;
   rephrase_prompt?: string;
@@ -59,7 +59,7 @@ export interface WidgetOptions {
   reranker?: Reranker;
   citation_threshold?: number;
   rrf_boosting?: number;
-  feedback?: WidgetFeedback;
+  feedback?: Widget.WidgetFeedback;
   copy_disclaimer?: string;
   not_enough_data_message?: string;
   metadata?: string;
