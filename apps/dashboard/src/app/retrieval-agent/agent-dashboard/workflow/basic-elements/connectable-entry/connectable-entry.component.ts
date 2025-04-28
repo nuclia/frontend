@@ -9,7 +9,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { EntryType } from '../../workflow.models';
+import { NodeCategory } from '../../workflow.models';
 
 @Component({
   selector: 'app-connectable-entry',
@@ -20,7 +20,7 @@ import { EntryType } from '../../workflow.models';
 })
 export class ConnectableEntryComponent {
   id = input.required<string>();
-  type = input.required<EntryType>();
+  type = input.required<NodeCategory>();
   required = input(false, { transform: booleanAttribute });
   noOutput = input(false, { transform: booleanAttribute });
   clickOutput = output();

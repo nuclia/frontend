@@ -6,20 +6,20 @@
   (trashClick)="onTrashClick()">
   <app-connectable-entry
     id="if"
-    type="context"
+    [type]="category()"
     noOutput>
     {{ 'retrieval-agents.workflow.connectable-entry.if' | translate }}
   </app-connectable-entry>
   <app-config-block [config]="conditionalConfig()"></app-config-block>
   <app-connectable-entry
     id="then"
-    type="context"
+    [type]="category()"
     required>
     {{ 'retrieval-agents.workflow.connectable-entry.then' | translate }}
   </app-connectable-entry>
   <app-connectable-entry
     id="else"
-    type="context">
+    [type]="category()">
     {{ 'retrieval-agents.workflow.connectable-entry.else' | translate }}
   </app-connectable-entry>
 </app-node-box>

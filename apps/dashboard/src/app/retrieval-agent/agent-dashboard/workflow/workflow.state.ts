@@ -1,7 +1,7 @@
 import { ComponentRef, signal } from '@angular/core';
 import { ContextAgent, PostprocessAgent, PreprocessAgent } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
-import { Node, NodeConfig, NodeType } from './workflow.models';
+import { Node, NodeCategory, NodeConfig, NodeType } from './workflow.models';
 
 // TODO sidebar state
 
@@ -57,8 +57,8 @@ export function getNode(id: string): Node | undefined {
  * @param nodeRef
  * @param nodeType
  */
-export function addNode(nodeRef: ComponentRef<NodeDirective>, nodeType: NodeType) {
-  nodes.update((items) => ({ ...items, [nodeRef.instance.id]: { nodeRef, nodeType, children: [] } }));
+export function addNode(nodeRef: ComponentRef<NodeDirective>, nodeType: NodeType, nodeCategory: NodeCategory) {
+  nodes.update((items) => ({ ...items, [nodeRef.instance.id]: { nodeRef, nodeType, nodeCategory, children: [] } }));
 }
 
 /**

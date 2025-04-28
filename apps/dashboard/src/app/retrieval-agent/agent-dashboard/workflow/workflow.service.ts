@@ -53,12 +53,12 @@ import {
 } from './nodes';
 import { RulesPanelComponent } from './sidebar';
 import {
-  EntryType,
   getAgentFromConfig,
   getConfigFromAgent,
   getNodeTypeFromModule,
   Node,
   NODE_SELECTOR_ICONS,
+  NodeCategory,
   NodeConfig,
   NODES_BY_ENTRY_TYPE,
   NodeType,
@@ -156,19 +156,19 @@ export class WorkflowService {
         preprocess.forEach((agent) => {
           setTimeout(() => {
             const module = getNodeTypeFromModule(agent.module);
-            this.createNodeFromSavedWorkflow(root.preprocess, module, agent);
+            this.createNodeFromSavedWorkflow(root.preprocess, module, 'preprocess', agent);
           });
         });
         context.forEach((agent) => {
           setTimeout(() => {
             const module = getNodeTypeFromModule(agent.module);
-            this.createNodeFromSavedWorkflow(root.context, module, agent);
+            this.createNodeFromSavedWorkflow(root.context, module, 'context', agent);
           });
         });
         postprocess.forEach((agent) => {
           setTimeout(() => {
             const module = getNodeTypeFromModule(agent.module);
-            this.createNodeFromSavedWorkflow(root.postprocess, module, agent);
+            this.createNodeFromSavedWorkflow(root.postprocess, module, 'postprocess', agent);
           });
         });
       }),
@@ -184,10 +184,11 @@ export class WorkflowService {
   private createNodeFromSavedWorkflow(
     entry: ConnectableEntryComponent,
     nodeType: NodeType,
+    nodeCategory: NodeCategory,
     agent: PreprocessAgent | ContextAgent | PostprocessAgent,
     column = 1,
   ) {
-    const nodeRef = this.addNode(entry, column, nodeType);
+    const nodeRef = this.addNode(entry, column, nodeType, nodeCategory);
     const { config, children } = getConfigFromAgent(agent);
     updateNode(nodeRef.instance.id, agent, config);
     if (children) {
@@ -199,7 +200,7 @@ export class WorkflowService {
           if (!parentEntry) {
             throw new Error(`Entry ${child.entry} no found in parent outputs`);
           }
-          this.createNodeFromSavedWorkflow(parentEntry, module, child.agent, column + 1);
+          this.createNodeFromSavedWorkflow(parentEntry, module, nodeCategory, child.agent, column + 1);
         });
       });
     }
@@ -229,7 +230,7 @@ export class WorkflowService {
     this._activeSideBar.set('add');
     const container: HTMLElement = this.openSidebarWithTitle(`retrieval-agents.workflow.sidebar.node-creation.toolbar`);
     container.classList.add('no-form');
-    const sections: EntryType[] = ['preprocess', 'context', 'postprocess'];
+    const sections: NodeCategory[] = ['preprocess', 'context', 'postprocess'];
     sections.forEach((section) => {
       const title: HTMLElement = this.renderer.createElement('div');
       title.classList.add('section-title');
@@ -267,7 +268,7 @@ export class WorkflowService {
    * @param columnIndex Index of the column in which the node should be added
    */
   private displayPossibleNodes(
-    originType: EntryType,
+    originType: NodeCategory,
     container: HTMLElement,
     origin: ConnectableEntryComponent,
     columnIndex: number,
@@ -288,7 +289,7 @@ export class WorkflowService {
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
       selectorRef.instance.select.subscribe(() => {
-        const nodeRef = this.addNode(origin, columnIndex, nodeType);
+        const nodeRef = this.addNode(origin, columnIndex, nodeType, originType);
         nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
         this.selectNode(nodeRef.instance.id);
       });
@@ -324,20 +325,12 @@ export class WorkflowService {
             this.sdk.currentArag.pipe(
               take(1),
               switchMap((arag) => {
-                switch (node.nodeType) {
-                  case 'historical':
-                  case 'rephrase':
+                switch (node.nodeCategory) {
+                  case 'preprocess':
                     return arag.deletePreprocess(agent.id);
-                  case 'conditional':
-                  case 'ask':
-                  case 'internet':
-                  case 'sql':
-                  case 'cypher':
+                  case 'context':
                     return arag.deleteContext(agent.id);
-                  case 'validation':
-                  case 'summarize':
-                  case 'restart':
-                  case 'remi':
+                  case 'postprocess':
                     return arag.deletePostprocess(agent.id);
                 }
               }),
@@ -438,6 +431,7 @@ export class WorkflowService {
     origin: ConnectableEntryComponent,
     columnIndex: number,
     nodeType: NodeType,
+    nodeCategory: NodeCategory,
   ): ComponentRef<NodeDirective> {
     if (this.columnContainer && this.columns.length <= columnIndex) {
       const newColumn = this.renderer.createElement('div') as HTMLElement;
@@ -449,6 +443,7 @@ export class WorkflowService {
     const column: HTMLElement = this.columns[columnIndex];
     let nodeRef: ComponentRef<NodeDirective> = this.getNodeRef(nodeType);
     nodeRef.setInput('origin', origin);
+    nodeRef.setInput('category', nodeCategory);
     nodeRef.instance.columnIndex = columnIndex;
     this.applicationRef.attachView(nodeRef.hostView);
     column.appendChild(nodeRef.location.nativeElement);
@@ -457,7 +452,7 @@ export class WorkflowService {
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
     nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id));
 
-    addNode(nodeRef, nodeType);
+    addNode(nodeRef, nodeType, nodeCategory);
     origin.activeState.set(false);
     return nodeRef;
   }
