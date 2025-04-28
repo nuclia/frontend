@@ -33,11 +33,12 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import type { FindResultsAsList, ResultType, TypedResult } from '../models';
+import type { FindResultsAsList, ResultType, TypedResult, DisplayableMetadata, ResultMetadata } from '../models';
 import { NO_RESULT_LIST } from '../models';
 import { combineLatest, filter, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
 import { orFilterLogic } from './widget.store';
+import { getResultMetadata } from '../utils';
 
 interface SearchFilters {
   labels?: LabelFilter[];
@@ -54,12 +55,6 @@ export interface EntityFilter {
 export interface LabelSetFilter {
   id: string;
   kind: LabelSetKind;
-}
-
-export interface ResultMetadata {
-  origin: { path: string; type: 'string' | 'list' | 'date' }[];
-  field: { path: string; type: 'string' | 'list' | 'date' }[];
-  extra: { path: string; type: 'string' | 'list' | 'date' }[];
 }
 
 type EngagementType = 'CHAT' | 'RESULT';
@@ -171,38 +166,9 @@ export const searchResults = searchState.writer<
   },
 );
 
-function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((acc, key) => acc && acc[key], obj);
-}
-function getMetadata(
-  metadata: { path: string; type: 'string' | 'list' | 'date' }[],
-  obj: any,
-): { label: string; value: string; type: 'string' | 'list' | 'date' }[] {
-  if (!obj) {
-    return [];
-  }
-  const metadataValues: { label: string; value: string; type: 'string' | 'list' | 'date' }[] = [];
-  metadata.forEach(({ path, type }) => {
-    const value = getNestedValue(obj, path);
-    const label = path.split('.').pop() || path;
-    if (value) {
-      metadataValues.push({ label, value, type });
-    }
-  });
-  return metadataValues;
-}
 export const resultList = searchState.reader<TypedResult[]>((state) => {
   return state.results.resultList.map((result) => {
-    const metadataValues: { label: string; value: string; type: 'string' | 'list' | 'date' }[] = [];
-    if (state.metadata.origin.length > 0) {
-      metadataValues.push(...getMetadata(state.metadata.origin, result.origin));
-    }
-    if (state.metadata.field.length > 0) {
-      metadataValues.push(...getMetadata(state.metadata.field, result.fieldData?.value));
-    }
-    if (state.metadata.extra.length > 0) {
-      metadataValues.push(...getMetadata(state.metadata.extra, result.extra?.metadata));
-    }
+    const metadataValues = getResultMetadata(state.metadata, result, result.fieldData);
     if (metadataValues.length > 0) {
       result.resultMetadata = metadataValues;
     }

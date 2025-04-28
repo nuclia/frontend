@@ -14,11 +14,13 @@
     debug,
     disableRAG,
     disclaimer,
+    displayedMetadata,
     downloadDump,
     expandedCitations,
     feedbackOnAnswer,
     getAttachedImageTemplate,
     getFieldDataFromResource,
+    getResultMetadata,
     getNonGenericField,
     getResultType,
     hasNotEnoughData,
@@ -106,6 +108,7 @@
   }
 
   function getSourcesResults(answer: Partial<Ask.Answer>): TypedResult[] {
+    const metadata = displayedMetadata.getValue();
     const resources = answer.sources?.resources || {};
     const graphPrequeryResources = answer?.prequeries?.graph?.resources || {};
     const citations = answer.citations || {};
@@ -140,7 +143,16 @@
             if (!existing) {
               const fieldData = getFieldDataFromResource(resource, field);
               const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
-              acc.push({ ...resource, resultType, resultIcon, field, fieldData, paragraphs: [paragraph] });
+              const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+              acc.push({
+                ...resource,
+                resultType,
+                resultIcon,
+                field,
+                fieldData,
+                paragraphs: [paragraph],
+                resultMetadata,
+              });
             } else {
               existing.paragraphs!.push(paragraph);
             }
@@ -156,7 +168,17 @@
             };
             const fieldData = getFieldDataFromResource(res, field);
             const { resultType, resultIcon } = getResultType({ ...res, field, fieldData });
-            acc.push({ ...res, resultType, resultIcon, field, fieldData, paragraphs: [], ranks: [index + 1] });
+            const resultMetadata = getResultMetadata(metadata, resource, fieldData);
+            acc.push({
+              ...res,
+              resultType,
+              resultIcon,
+              field,
+              fieldData,
+              paragraphs: [],
+              resultMetadata,
+              ranks: [index + 1],
+            });
           } else {
             existing.ranks!.push(index + 1);
           }

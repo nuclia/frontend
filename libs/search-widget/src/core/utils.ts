@@ -23,7 +23,7 @@ import {
   type Widget,
 } from '@nuclia/core';
 import { getFileUrls } from './api';
-import type { TypedResult } from './models';
+import type { TypedResult, ResultMetadata, DisplayableMetadata } from './models';
 
 let CDN = import.meta.env.VITE_CDN || 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -503,4 +503,40 @@ export function loadWidgetConfig(id: string, options: NucliaOptions) {
       return getWidgetParameters(searchConfig, widget.widgetConfig);
     }),
   );
+}
+
+function getNestedValue(obj: any, path: string): any {
+  return path.split('.').reduce((acc, key) => acc && acc[key], obj);
+}
+
+function getMetadata(
+  metadata: { path: string; type: 'string' | 'list' | 'date' }[],
+  obj: any,
+): { label: string; value: string; type: 'string' | 'list' | 'date' }[] {
+  if (!obj) {
+    return [];
+  }
+  const metadataValues: { label: string; value: string; type: 'string' | 'list' | 'date' }[] = [];
+  metadata.forEach(({ path, type }) => {
+    const value = getNestedValue(obj, path);
+    const label = path.split('.').pop() || path;
+    if (value) {
+      metadataValues.push({ label, value, type });
+    }
+  });
+  return metadataValues;
+}
+
+export function getResultMetadata(metadata: ResultMetadata, resource: IResource, field: IFieldData | undefined) {
+  const metadataValues: DisplayableMetadata[] = [];
+  if (metadata.origin.length > 0) {
+    metadataValues.push(...getMetadata(metadata.origin, resource.origin));
+  }
+  if (metadata.field.length > 0) {
+    metadataValues.push(...getMetadata(metadata.field, field?.value));
+  }
+  if (metadata.extra.length > 0) {
+    metadataValues.push(...getMetadata(metadata.extra, resource.extra?.metadata));
+  }
+  return metadataValues;
 }
