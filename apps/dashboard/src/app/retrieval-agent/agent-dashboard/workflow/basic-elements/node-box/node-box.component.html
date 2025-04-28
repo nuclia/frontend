@@ -9,7 +9,7 @@
         aspect="basic"
         size="small"
         icon="trash"
-        (click)="trashClick.emit()">
+        (click)="removeNode($event)">
         {{ 'retrieval-agents.workflow.delete-node' | translate }}
       </pa-button>
     }
