@@ -52,7 +52,7 @@ export type EntryType = 'preprocess' | 'context' | 'postprocess';
 export interface Node {
   nodeRef: ComponentRef<NodeDirective>;
   nodeType: NodeType;
-  nodeConfig?: any;
+  nodeConfig?: NodeConfig;
   agent?: PreprocessAgent | ContextAgent | PostprocessAgent;
 }
 
@@ -74,6 +74,18 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   summarize: 'summary',
   validation: 'validation',
 };
+
+export type NodeConfig =
+  | HistoricalAgentUI
+  | RephraseAgentUI
+  | InternetAgentUI
+  | SqlAgentUI
+  | CypherAgentUI
+  | AskAgentUI
+  | ConditionalAgentUI
+  | ValidationAgentUI
+  | SummarizeAgentUI
+  | RestartAgentUI;
 
 export interface HistoricalAgentUI {
   all: boolean;

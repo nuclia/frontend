@@ -63,7 +63,6 @@ import {
   internetAgentToUi,
   internetUiToCreation,
   isInternetProvider,
-  Node,
   NODE_SELECTOR_ICONS,
   NODES_BY_ENTRY_TYPE,
   NodeType,
@@ -73,6 +72,18 @@ import {
   sqlUiToCreation,
   WorkflowRoot,
 } from './workflow.models';
+import {
+  addNode,
+  deleteNode,
+  getNode,
+  getNodes,
+  resetCurrentOrigin,
+  resetNodes,
+  selectNode,
+  setCurrentOrigin,
+  unselectNode,
+  updateNode,
+} from './workflow.state';
 
 const COLUMN_CLASS = 'workflow-col';
 const SLIDE_DURATION = 800;
@@ -92,13 +103,8 @@ export class WorkflowService {
   private environmentInjector = this.applicationRef.injector;
 
   private columns: HTMLElement[] = [];
-  private nodes: {
-    [id: string]: Node;
-  } = {};
 
   private _workflowRoot?: WorkflowRoot;
-  private _selectedNode = '';
-  private _currentOrigin?: ConnectableEntryComponent;
   private _columnContainer?: ElementRef;
   private _sideBarTitle = signal('');
   private _sideBarDescription = signal('');
@@ -112,12 +118,7 @@ export class WorkflowService {
   get workflowRoot(): WorkflowRoot | undefined {
     return this._workflowRoot;
   }
-  set selectedNode(nodeId: string) {
-    this._selectedNode = nodeId;
-  }
-  get selectedNode() {
-    return this._selectedNode;
-  }
+
   set columnContainer(container: ElementRef) {
     // columnContainer setter is called on init of agent-dashboard, so we first clear columns from previous dashboard if any (can happened when switching arag)
     this.columns = [];
@@ -153,6 +154,7 @@ export class WorkflowService {
         return of([[], [], []]);
       }),
       tap(([preprocess, context, postprocess]) => {
+        // TODO: cleanup console
         console.log(preprocess, context, postprocess);
         this.cleanWorkflow();
         preprocess.forEach((agent) => {
@@ -160,6 +162,7 @@ export class WorkflowService {
             this.createNodeFromSavedWorkflow(root.preprocess, agent.module, agent);
           });
         });
+        // TODO: initialise child nodes if any
         context.forEach((agent) => {
           setTimeout(() => {
             const module = isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
@@ -187,10 +190,8 @@ export class WorkflowService {
     agent: PreprocessAgent | ContextAgent | PostprocessAgent,
   ) {
     const nodeRef = this.addNode(rootEntry, 1, nodeType);
-    this.nodes[nodeRef.instance.id].agent = agent;
     const config = this.getConfigFromAgent(agent);
-    this.nodes[nodeRef.instance.id].nodeConfig = config;
-    nodeRef.setInput('config', config);
+    updateNode(nodeRef.instance.id, agent, config);
   }
 
   /**
@@ -198,10 +199,10 @@ export class WorkflowService {
    */
   cleanWorkflow() {
     this.closeSidebar();
-    Object.values(this.nodes).forEach((node) =>
+    getNodes().forEach((node) =>
       this._removeNodeAndLinks(node.nodeRef, this.columns[node.nodeRef.instance.columnIndex]),
     );
-    this.nodes = {};
+    resetNodes();
   }
 
   /**
@@ -238,7 +239,7 @@ export class WorkflowService {
     }
     this.resetState();
 
-    this._currentOrigin = origin;
+    setCurrentOrigin(origin);
     const originType = origin.type();
     const container: HTMLElement = this.openSidebarWithTitle(
       `retrieval-agents.workflow.sidebar.node-creation.${originType}`,
@@ -293,7 +294,7 @@ export class WorkflowService {
    * @param column Column from which the node must be removed
    */
   removeNodeAndLink(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
-    const node = this.nodes[nodeRef.instance.id];
+    const node = getNode(nodeRef.instance.id);
     const agent = node?.agent;
     if (!agent) {
       this._removeNodeAndLinks(nodeRef, column);
@@ -348,10 +349,7 @@ export class WorkflowService {
     }
     column.removeChild(nodeRef.location.nativeElement);
     this.applicationRef.detachView(nodeRef.hostView);
-    delete this.nodes[nodeRef.instance.id];
-    if (this.selectedNode === nodeRef.instance.id) {
-      this.selectedNode = '';
-    }
+    deleteNode(nodeRef.instance.id);
     this.updateLinksOnColumn(nodeRef.instance.columnIndex);
   }
 
@@ -360,7 +358,7 @@ export class WorkflowService {
    */
   closeSidebar() {
     this._sideBarOpen.set(false);
-    this.unselectNode();
+    unselectNode();
     // Wait until the slide animation is done before emptying the sidebar
     setTimeout(() => this.resetState(), SLIDE_DURATION);
   }
@@ -401,13 +399,11 @@ export class WorkflowService {
       throw new Error('Sidebar container not initialized');
     }
     // Unselect node if needed
-    this.unselectNode();
+    unselectNode();
 
     // remove current origin if any so all outputs have their default state
-    if (this._currentOrigin) {
-      this._currentOrigin.activeState.set(false);
-      this._currentOrigin = undefined;
-    }
+    resetCurrentOrigin();
+
     // Reset the side bar
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
     this._activeSideBar.set('');
@@ -450,7 +446,7 @@ export class WorkflowService {
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
     nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id));
 
-    this.nodes[nodeRef.instance.id] = { nodeRef, nodeType };
+    addNode(nodeRef, nodeType);
     origin.activeState.set(false);
     return nodeRef;
   }
@@ -464,11 +460,10 @@ export class WorkflowService {
       return;
     }
     this.resetState();
-    const node = this.nodes[nodeId];
-    if (node) {
-      node.nodeRef.setInput('state', 'selected');
+    const node = selectNode(nodeId);
+    if (!node) {
+      throw new Error(`No node ${nodeId} in the state.`);
     }
-    this.selectedNode = nodeId;
 
     const container: HTMLElement = this.openSidebarWithTitle(
       `retrieval-agents.workflow.node-types.${node.nodeType}.title`,
@@ -487,17 +482,8 @@ export class WorkflowService {
     formRef.changeDetectorRef.detectChanges();
     formRef.instance.submitForm.subscribe((config) => this.saveNodeConfiguration(config, nodeId));
     formRef.instance.cancel.subscribe(() => this.closeSidebar());
+    // TODO: mode currentPanel in state
     this._currentPanel = formRef;
-  }
-
-  /**
-   * Unselect current selected node if any
-   */
-  private unselectNode() {
-    if (this.selectedNode && this.nodes[this.selectedNode]) {
-      this.nodes[this.selectedNode].nodeRef.setInput('state', 'default');
-    }
-    this.selectedNode = '';
   }
 
   /**
@@ -506,7 +492,7 @@ export class WorkflowService {
    * @param nodeId Identifier of the node to save
    */
   private saveNodeConfiguration(config: any, nodeId: string) {
-    const node = this.nodes[nodeId];
+    const node = getNode(nodeId);
     if (!node) {
       return;
     }
@@ -558,7 +544,7 @@ export class WorkflowService {
    * @param columnIndex index of the first column in which node’s links must be updated
    */
   private updateLinksOnColumn(columnIndex: number) {
-    Object.values(this.nodes)
+    getNodes()
       .filter((node) => node.nodeRef.instance.columnIndex >= columnIndex)
       .forEach((node) => {
         if (node.nodeRef.instance.boxComponent) {
