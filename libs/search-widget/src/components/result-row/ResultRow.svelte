@@ -183,11 +183,10 @@
           </span>
         {/if}
       </h3>
-
-      {#if $displayMetadata}
-        <FieldMetadata {result} />
-      {/if}
     </div>
+    {#if $displayMetadata}
+      <FieldMetadata {result} />
+    {/if}
 
     <Expander
       {expanded}

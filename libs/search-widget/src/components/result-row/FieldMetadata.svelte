@@ -5,7 +5,6 @@
 
   export let result: TypedResult;
 
-  let lineCount = 2;
   let expanded = false;
   let metadataElements: HTMLElement[] = [];
   $: lastMetadata = metadataElements[metadataElements.length - 1];
@@ -23,16 +22,6 @@
 
   function expandMetadata() {
     expanded = !expanded;
-    if (expanded) {
-      // on mobile metadata can be on several lines, so to make a simple calculation we consider we can display 2 items per line
-      lineCount =
-        metadataElements.reduce((count, element) => {
-          if (element.offsetTop > 0) {
-            count = count + 1;
-          }
-          return count;
-        }, 1) / 2;
-    }
   }
 
   function onResize() {
@@ -46,10 +35,10 @@
 {#if result.resultMetadata && result.resultMetadata.length > 0}
   <div
     class="sw-field-metadata"
-    class:expanded
-    style:--line-count={lineCount}>
+    class:expanded>
     <div
-      class="metadata-container ellipsis"
+      class="metadata-container"
+      class:ellipsis={!expanded}
       on:click={expandMetadata}
       on:keyup={(e) => {
         if (e.key === 'Enter') expandMetadata();

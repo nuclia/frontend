@@ -8,10 +8,22 @@ export interface RankedParagraph extends Search.FindParagraph {
 }
 export type RankedFieldResult = Overwrite<Search.FieldResult, { paragraphs: RankedParagraph[] }> & { ranks?: number[] };
 
+export interface DisplayableMetadata {
+  label: string;
+  value: string | string[];
+  type: 'string' | 'list' | 'date';
+}
+
+export interface ResultMetadata {
+  origin: { path: string; type: 'string' | 'list' | 'date' }[];
+  field: { path: string; type: 'string' | 'list' | 'date' }[];
+  extra: { path: string; type: 'string' | 'list' | 'date' }[];
+}
+
 export interface TypedResult extends RankedFieldResult {
   resultType: ResultType;
   resultIcon: string;
-  resultMetadata?: { label: string; value: string | string[]; type: 'string' | 'list' | 'date' }[];
+  resultMetadata?: DisplayableMetadata[];
 }
 
 export interface FindResultsAsList extends Omit<Search.FindResults, 'resources'> {

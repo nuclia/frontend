@@ -2,16 +2,22 @@
   --expander-width: var(--rhythm-3);
 
   color: var(--color-neutral-regular);
+  cursor: pointer;
   display: flex;
   height: var(--expander-width);
+  max-height: var(--expander-width);
   position: relative;
-  transition: height var(--transition-fast);
+  transition: max-height var(--transition-fast);
 
   &.expanded {
-    height: calc(var(--expander-width) * 2);
+    height: auto;
+    max-height: 50vh;
 
     .expander-container {
       transform: rotate(180deg);
+    }
+    .metadata-container {
+      display: block;
     }
   }
 
@@ -34,9 +40,6 @@
 
 @media (max-width: 647px) {
   .sw-field-metadata {
-    &.expanded {
-      height: calc(var(--expander-width) * var(--line-count, 2));
-    }
     .expander-container {
       left: unset !important;
       right: 0;
