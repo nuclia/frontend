@@ -2,10 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { renderMarkdown, SDKService } from '@flaps/core';
 import { ModalConfig, ModalRef, ModalService } from '@guillotinaweb/pastanaga-angular';
 import { BehaviorSubject, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
-import { Ask, ChatOptions, IErrorResponse, LearningConfiguration, Prompts } from '@nuclia/core';
+import { Ask, ChatOptions, IErrorResponse, LearningConfiguration, NUCLIA_STANDARD_SEARCH_CONFIG, Prompts, Widget } from '@nuclia/core';
 import { LoadingDialogComponent } from './loading-dialog';
 import { catchError, filter, map } from 'rxjs/operators';
-import { NUCLIA_STANDARD_SEARCH_CONFIG, SearchConfiguration, SearchWidgetService } from '../search-widget';
+import { SearchWidgetService } from '../search-widget';
 import { GENERATIVE_MODEL_KEY, RequestConfig, RequestConfigAndQueries, ResultEntry } from './rag-lab.models';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -38,7 +38,7 @@ export class RagLabService {
   private _kbConfigBackup = new BehaviorSubject<{ [id: string]: any } | null>(null);
   private _generativeModelList = new BehaviorSubject<LearningConfiguration | null>(null);
   private _generativeModelMap = new BehaviorSubject<{ [value: string]: string } | null>(null);
-  private _searchConfigurations = new BehaviorSubject<SearchConfiguration[]>([]);
+  private _searchConfigurations = new BehaviorSubject<Widget.SearchConfiguration[]>([]);
 
   kbConfigBackup = this._kbConfigBackup.asObservable();
   generativeModelList = this._generativeModelList.asObservable();

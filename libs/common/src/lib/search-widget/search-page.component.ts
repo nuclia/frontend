@@ -14,9 +14,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
 import { filter, map, switchMap } from 'rxjs';
 import { SearchConfigurationComponent } from './search-configuration';
-import { DEFAULT_WIDGET_CONFIG, SearchConfiguration } from './search-widget.models';
+import { DEFAULT_WIDGET_CONFIG } from './search-widget.models';
 import { SearchWidgetService } from './search-widget.service';
 import { CreateWidgetDialogComponent } from './widgets';
+import { Widget } from '@nuclia/core';
 
 @Component({
   selector: 'stf-search-page',
@@ -34,7 +35,7 @@ export class SearchPageComponent implements OnDestroy {
 
   @ViewChild('configurationContainer') configurationContainerElement?: ElementRef;
   widgetPreview = this.searchWidgetService.widgetPreview;
-  searchConfig?: SearchConfiguration;
+  searchConfig?: Widget.SearchConfiguration;
 
   configPanelCollapsed = false;
 
@@ -67,8 +68,8 @@ export class SearchPageComponent implements OnDestroy {
     }
   }
 
-  updateConfig(config: SearchConfiguration) {
+  updateConfig(config: Widget.SearchConfiguration) {
     this.searchConfig = config;
-    this.searchWidgetService.generateWidgetSnippet(this.searchConfig, undefined, '.search-preview-container');
+    this.searchWidgetService.generateWidgetSnippet(this.searchConfig, undefined, undefined, '.search-preview-container');
   }
 }

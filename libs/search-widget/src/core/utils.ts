@@ -7,14 +7,20 @@ import {
   type FieldFullId,
   type FileField,
   FileFieldData,
+  getWidgetParameters,
   type IFieldData,
   type IResource,
   type LinkField,
   longToShortFieldType,
+  Nuclia,
+  NUCLIA_STANDARD_SEARCH_CONFIG,
+  NUCLIA_STANDARD_SEARCH_CONFIG_ID,
+  type NucliaOptions,
   type ResourceField,
   Search,
   sliceUnicode,
   type TextFieldFormat,
+  type Widget,
 } from '@nuclia/core';
 import { getFileUrls } from './api';
 import type { TypedResult } from './models';
@@ -468,4 +474,33 @@ export function markdownToTxt(markdown: string): string {
     return markdown;
   }
   return marked.marked(markdown, { renderer: TxtRenderer });
+}
+
+export function loadWidgetConfig(id: string, options: NucliaOptions) {
+  if (!options.account || !options.knowledgeBox || !options.zone) {
+    console.error('Account id, Knowledge Box id and zone must be provided to load the widget configuration');
+    return of({});
+  }
+  return new Nuclia(options).db.getKnowledgeBox(options.account, options.knowledgeBox, options.zone).pipe(
+    map((kb) => {
+      const widget = (kb.search_configs?.['widgets'] || []).find((widget: Widget.Widget) => widget.slug === id);
+      if (!widget) {
+        console.error(`Widget not found: "${id}"`);
+        return of({});
+      }
+      let searchConfig;
+      if (widget.searchConfigId === NUCLIA_STANDARD_SEARCH_CONFIG_ID) {
+        searchConfig = NUCLIA_STANDARD_SEARCH_CONFIG;
+      } else {
+        searchConfig = (kb.search_configs?.['searchConfigurations'] || []).find(
+          (config: Widget.SearchConfiguration) => config.id === widget.searchConfigId,
+        );
+      }
+      if (!searchConfig) {
+        console.error(`Search configuration not found: "${widget.searchConfigId}"`);
+        return of({});
+      }
+      return getWidgetParameters(searchConfig, widget.widgetConfig);
+    }),
+  );
 }

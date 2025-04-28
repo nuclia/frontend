@@ -4,8 +4,6 @@ import {
   getFindOptions,
   getSearchConfigFromSearchOptions,
   SearchAndWidgets,
-  SearchConfiguration,
-  Widget,
 } from './search-widget.models';
 import { SDKService } from '@flaps/core';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
@@ -13,7 +11,7 @@ import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { map, startWith, switchMap, take, tap } from 'rxjs/operators';
 import { compareDesc } from 'date-fns';
 import { StandaloneService } from '../services';
-import { SearchConfig } from '@nuclia/core';
+import { SearchConfig, Widget } from '@nuclia/core';
 
 const SEARCH_CONFIGS_KEY = 'NUCLIA_SEARCH_CONFIGS';
 const SAVED_WIDGETS_KEY = 'NUCLIA_SAVED_WIDGETS';
@@ -31,12 +29,12 @@ export class SearchWidgetStorageService {
 
   ragLabQuestions: Observable<string[]> = this.searchAndWidgets.pipe(map((data) => data?.ragLabQuestions || []));
 
-  searchConfigurations: Observable<SearchConfiguration[]> = this.storageUpdated.pipe(
+  searchConfigurations: Observable<Widget.SearchConfiguration[]> = this.storageUpdated.pipe(
     startWith(true),
     switchMap(() => this.sdk.currentKb.pipe(take(1))),
     switchMap((kb) => {
       if (this.standaloneService.standalone) {
-        const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
+        const configMap: { [kbId: string]: Widget.SearchConfiguration[] } = JSON.parse(
           this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
         );
         return of(configMap[kb.id] || []);
@@ -54,12 +52,14 @@ export class SearchWidgetStorageService {
     }),
   );
 
-  widgetList: Observable<Widget[]> = this.storageUpdated.pipe(
+  widgetList: Observable<Widget.Widget[]> = this.storageUpdated.pipe(
     startWith(true),
     switchMap(() => this.sdk.currentKb.pipe(take(1))),
     map((kb) => {
       if (this.standaloneService.standalone) {
-        const widgetsMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+        const widgetsMap: { [kbId: string]: Widget.Widget[] } = JSON.parse(
+          this.storage.getItem(SAVED_WIDGETS_KEY) || '{}',
+        );
         return widgetsMap[kb.id] || [];
       } else {
         return (kb.search_configs as SearchAndWidgets)?.widgets || [];
@@ -79,7 +79,7 @@ export class SearchWidgetStorageService {
     );
   }
 
-  storeSearchConfig(name: string, config: SearchConfiguration) {
+  storeSearchConfig(name: string, config: Widget.SearchConfiguration) {
     return forkJoin([this._storeSearchConfig(name, config), this._storeSearchOptions(name, config)]).pipe(
       tap(() => this.storageUpdated.next()),
     );
@@ -91,7 +91,7 @@ export class SearchWidgetStorageService {
     );
   }
 
-  private _storeSearchConfig(name: string, config: SearchConfiguration) {
+  private _storeSearchConfig(name: string, config: Widget.SearchConfiguration) {
     return this.sdk.currentKb.pipe(
       take(1),
       map((kb) => (kb.search_configs as SearchAndWidgets)?.searchConfigurations || []),
@@ -123,12 +123,12 @@ export class SearchWidgetStorageService {
     );
   }
 
-  private _updateSearchConfig(configs: SearchConfiguration[]) {
+  private _updateSearchConfig(configs: Widget.SearchConfiguration[]) {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => {
         if (this.standaloneService.standalone) {
-          const configMap: { [kbId: string]: SearchConfiguration[] } = JSON.parse(
+          const configMap: { [kbId: string]: Widget.SearchConfiguration[] } = JSON.parse(
             this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
           );
           configMap[kb.id] = configs;
@@ -145,7 +145,7 @@ export class SearchWidgetStorageService {
     );
   }
 
-  private _storeSearchOptions(name: string, config: SearchConfiguration) {
+  private _storeSearchOptions(name: string, config: Widget.SearchConfiguration) {
     let searchOptions: SearchConfig;
     if (config.generativeAnswer.generateAnswer) {
       searchOptions = { kind: 'ask', config: getChatOptions(config) };
@@ -185,12 +185,14 @@ export class SearchWidgetStorageService {
     }
   }
 
-  storeWidgets(updatedWidgets: Widget[]) {
+  storeWidgets(updatedWidgets: Widget.Widget[]) {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => {
         if (this.standaloneService.standalone) {
-          const widgetsMap: { [kbId: string]: Widget[] } = JSON.parse(this.storage.getItem(SAVED_WIDGETS_KEY) || '{}');
+          const widgetsMap: { [kbId: string]: Widget.Widget[] } = JSON.parse(
+            this.storage.getItem(SAVED_WIDGETS_KEY) || '{}',
+          );
           widgetsMap[kb.id] = updatedWidgets;
           this.storage.setItem(SAVED_WIDGETS_KEY, JSON.stringify(widgetsMap));
           return of(undefined);

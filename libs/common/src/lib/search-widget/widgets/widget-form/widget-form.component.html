@@ -15,6 +15,7 @@
       <pa-button
         icon="code"
         iconAndText
+        [disabled]="!snippets"
         (click)="embedWidget()">
         {{ 'search.widgets.form.actions.embed-widget' | translate }}
       </pa-button>

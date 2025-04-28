@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { DEFAULT_WIDGET_CONFIG, NUCLIA_STANDARD_SEARCH_CONFIG, SearchWidgetService } from '@flaps/common';
+import { DEFAULT_WIDGET_CONFIG, SearchWidgetService } from '@flaps/common';
+import { NUCLIA_STANDARD_SEARCH_CONFIG } from '@nuclia/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';

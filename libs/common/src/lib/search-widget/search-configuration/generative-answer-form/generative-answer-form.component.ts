@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
-import { GenerativeAnswerConfig, MODELS_SUPPORTING_VISION } from '../../search-widget.models';
+import { MODELS_SUPPORTING_VISION } from '../../search-widget.models';
 import { takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -19,7 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { RouterLink } from '@angular/router';
-import { RAG_METADATAS } from '@nuclia/core';
+import { RAG_METADATAS, Widget } from '@nuclia/core';
 
 @Component({
   selector: 'stf-generative-answer-form',
@@ -43,7 +43,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
 
-  @Input() set config(value: GenerativeAnswerConfig | undefined) {
+  @Input() set config(value: Widget.GenerativeAnswerConfig | undefined) {
     if (value) {
       this.form.patchValue(value);
     }
@@ -55,7 +55,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   @Input() useSearchResults = true;
 
   @Output() heightChanged = new EventEmitter<void>();
-  @Output() configChanged = new EventEmitter<GenerativeAnswerConfig>();
+  @Output() configChanged = new EventEmitter<Widget.GenerativeAnswerConfig>();
 
   form = new FormGroup({
     generateAnswer: new FormControl<boolean>(false, { nonNullable: true }),

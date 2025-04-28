@@ -1,9 +1,9 @@
 import { writableSubject } from '../state-lib';
 import { combineLatest, map, Observable } from 'rxjs';
 import type { WidgetAction, WidgetFilters } from '../models';
-import type { RAGImageStrategy, RAGStrategy, WidgetFeatures, WidgetFeedback } from '@nuclia/core';
+import type { RAGImageStrategy, RAGStrategy, Widget } from '@nuclia/core';
 
-export const widgetFeatures = writableSubject<WidgetFeatures | null>(null);
+export const widgetFeatures = writableSubject<Widget.WidgetFeatures | null>(null);
 export const widgetPlaceholder = writableSubject<string>('input.placeholder');
 export const chatPlaceholder = writableSubject<string>('answer.placeholder');
 export const widgetFilters = writableSubject<WidgetFilters>({});
@@ -11,7 +11,7 @@ export const widgetRagStrategies = writableSubject<RAGStrategy[]>([]);
 export const widgetImageRagStrategies = writableSubject<RAGImageStrategy[]>([]);
 export const widgetJsonSchema = writableSubject<object | null>(null);
 export const widgetActions = writableSubject<WidgetAction[]>([]);
-export const widgetFeedback = writableSubject<WidgetFeedback>('answer');
+export const widgetFeedback = writableSubject<Widget.WidgetFeedback>('answer');
 
 export const navigateToLink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));
