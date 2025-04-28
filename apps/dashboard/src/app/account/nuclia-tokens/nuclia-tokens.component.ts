@@ -40,7 +40,7 @@ import { InfoCardComponent } from '@nuclia/sistema';
 import { MetricsService } from '../metrics.service';
 
 const groups = {
-  processing: ['sentence', 'extract_tables', 'token', 'relations'],
+  processing: ['sentence', 'extract_tables', 'vllm_extraction', 'token', 'relations'],
   summarization: ['summarize'],
   answers: ['question_answer', 'rephrase', 'rerank'],
   suggestions: ['suggestions'],
