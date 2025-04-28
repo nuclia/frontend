@@ -4,18 +4,27 @@ import {
   AskAgentCreation,
   BraveAgent,
   BraveAgentCreation,
+  ConditionalAgent,
+  ConditionalAgentCreation,
   ContextAgent,
-  DuckduckgoAgent,
-  DuckduckgoAgentCreation,
+  ContextAgentCreation,
+  ContextModule,
+  CypherAgent,
   GoogleAgent,
   GoogleAgentCreation,
+  HistoricalAgent,
   InternetProviderType,
   PerplexityAgent,
   PerplexityAgentCreation,
   PostprocessAgent,
+  PostprocessAgentCreation,
+  PostprocessModule,
   PreprocessAgent,
+  PreprocessAgentCreation,
+  PreprocessModule,
   RephraseAgent,
   RephraseAgentCreation,
+  RestrictedAgent,
   SqlAgent,
   SqlAgentCreation,
   TavilyAgent,
@@ -42,7 +51,7 @@ export type NodeType =
   | 'cypher'
   | 'remi';
 
-const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'duckduckgo', 'google'];
+const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
 export function isInternetProvider(x: any): x is InternetProvider {
   return INTERNET_PROVIDERS.includes(x);
@@ -54,6 +63,7 @@ export interface Node {
   nodeType: NodeType;
   nodeConfig?: NodeConfig;
   agent?: PreprocessAgent | ContextAgent | PostprocessAgent;
+  children: Node[];
 }
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
@@ -83,15 +93,33 @@ export type NodeConfig =
   | CypherAgentUI
   | AskAgentUI
   | ConditionalAgentUI
+  | McpAgentUI
+  | RestrictedAgentUI
+  | SparqlAgentUI
   | ValidationAgentUI
   | SummarizeAgentUI
   | RestartAgentUI;
 
-export interface HistoricalAgentUI {
+export type ContextAgentUI =
+  | InternetAgentUI
+  | SqlAgentUI
+  | CypherAgentUI
+  | AskAgentUI
+  | ConditionalAgentUI
+  | McpAgentUI
+  | RestrictedAgentUI
+  | SparqlAgentUI;
+export type PostprocessAgentUI = ValidationAgentUI | SummarizeAgentUI | RestartAgentUI;
+
+export interface NodeConfigUI {
+  childRequired?: boolean;
+}
+
+export interface HistoricalAgentUI extends NodeConfigUI {
   all: boolean;
 }
 
-export interface RephraseAgentUI {
+export interface RephraseAgentUI extends NodeConfigUI {
   prompt: string;
   kb: string;
   extend: boolean;
@@ -100,19 +128,19 @@ export interface RephraseAgentUI {
   userInfo: boolean;
 }
 
-export interface InternetAgentUI {
+export interface InternetAgentUI extends NodeConfigUI {
   provider: InternetProviderType;
   brave: Omit<BraveAgentCreation, 'module'>;
   perplexity: Omit<PerplexityAgentCreation, 'module'>;
 }
 
-export interface SqlAgentUI {
+export interface SqlAgentUI extends NodeConfigUI {
   source: string;
   prompt?: string;
   retries: number;
 }
 
-export interface CypherAgentUI {
+export interface CypherAgentUI extends NodeConfigUI {
   source: string;
   exclude_types: string[];
   include_types: string[];
@@ -120,7 +148,7 @@ export interface CypherAgentUI {
   top_k: number;
 }
 
-export interface AskAgentUI {
+export interface AskAgentUI extends NodeConfigUI {
   sources: string;
   rephrase_semantic_custom_prompt?: string;
   rephrase_lexical_custom_prompt?: string;
@@ -130,19 +158,26 @@ export interface AskAgentUI {
   vllm?: boolean;
 }
 
-export interface ConditionalAgentUI {
+export interface ConditionalAgentUI extends NodeConfigUI {
   prompt: string;
 }
 
-export interface ValidationAgentUI {
+export interface RestrictedAgentUI extends NodeConfigUI {
+  code: string;
+}
+
+export interface McpAgentUI extends NodeConfigUI {}
+export interface SparqlAgentUI extends NodeConfigUI {}
+
+export interface ValidationAgentUI extends NodeConfigUI {
   prompt: string;
 }
 
-export interface SummarizeAgentUI {
+export interface SummarizeAgentUI extends NodeConfigUI {
   prompt: string;
 }
 
-export interface RestartAgentUI {
+export interface RestartAgentUI extends NodeConfigUI {
   prompt: string;
   retries: number;
   rules: string[];
@@ -159,30 +194,62 @@ export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCrea
     rules: [config.prompt],
   };
 }
-export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
+export function rephraseAgentToUi(agent: RephraseAgent): { config: RephraseAgentUI } {
   return {
-    kb: agent.kb,
-    prompt: agent.rules?.[0] || '',
-    extend: agent.extends || false,
-    synonyms: agent.synonyms || false,
-    userInfo: agent.session_info || false,
-    history: agent.history || false,
+    config: {
+      kb: agent.kb,
+      prompt: agent.rules?.[0] || '',
+      extend: agent.extends || false,
+      synonyms: agent.synonyms || false,
+      userInfo: agent.session_info || false,
+      history: agent.history || false,
+    },
   };
 }
-export function askUiToCreation(config: AskAgentUI): AskAgentCreation {
+export function askUiToCreation(config: AskAgentUI, fallback?: Node): AskAgentCreation {
   const { sources, ...agentConfig } = config;
+  // TODO: save fallback
   return {
     module: 'ask',
     sources: sources.split(','),
     ...agentConfig,
   };
 }
-export function askAgentToUi(agent: AskAgent): AskAgentUI {
+export function askAgentToUi(agent: AskAgent): { config: AskAgentUI } {
   return {
-    ...agent,
-    sources: agent.sources.join(','),
+    config: {
+      ...agent,
+      sources: agent.sources.join(','),
+      childRequired: false,
+    },
   };
 }
+export function conditionalUiToAgent(config: ConditionalAgentUI, then: ContextAgentCreation): ConditionalAgentCreation {
+  const { childRequired, ...agentConfig } = config;
+  return {
+    module: 'conditional',
+    ...agentConfig,
+    then,
+  };
+}
+
+export function conditionalAgentToUi(agent: ConditionalAgent): {
+  config: ConditionalAgentUI;
+  children: { entry: string; agent: ContextAgent }[];
+} {
+  const children = [{ entry: 'then', agent: agent.then as ContextAgent }];
+  if (agent.else) {
+    children.push({ entry: 'else', agent: agent.else as ContextAgent });
+  }
+  return {
+    config: {
+      ...agent,
+      prompt: agent.prompt || '',
+    },
+    children,
+  };
+}
+
 export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
   const { prompt, ...agentConfig } = config;
   return {
@@ -191,20 +258,21 @@ export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
     ...agentConfig,
   };
 }
-export function sqlAgentToUi(agent: SqlAgent): SqlAgentUI {
+export function sqlAgentToUi(agent: SqlAgent): { config: SqlAgentUI } {
   return {
-    source: agent.source,
-    prompt: agent.description || '',
-    retries: agent.retries || 3,
+    config: {
+      source: agent.source,
+      prompt: agent.description || '',
+      retries: agent.retries || 3,
+    },
   };
 }
 export type InternetAgentCreation =
   | BraveAgentCreation
   | PerplexityAgentCreation
   | TavilyAgentCreation
-  | DuckduckgoAgentCreation
   | GoogleAgentCreation;
-export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | DuckduckgoAgent | GoogleAgent;
+export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | GoogleAgent;
 export function internetUiToCreation(config: InternetAgentUI): InternetAgentCreation {
   switch (config.provider) {
     case 'brave':
@@ -218,25 +286,98 @@ export function internetUiToCreation(config: InternetAgentUI): InternetAgentCrea
         ...config.perplexity,
       };
     case 'tavily':
-    case 'duckduckgo':
     case 'google':
       return {
         module: config.provider,
       };
   }
 }
-export function internetAgentToUi(agent: InternetAgent): InternetAgentUI {
+export function internetAgentToUi(agent: InternetAgent): { config: InternetAgentUI } {
   return {
-    provider: agent.module,
-    brave: {
-      country: agent.module === 'brave' ? agent.country : '',
-      domain: agent.module === 'brave' ? agent.domain : '',
-    },
-    perplexity: {
-      domain: agent.module === 'perplexity' ? agent.domain : [''],
-      top_k: agent.module === 'perplexity' ? agent.top_k : 0,
-      related_questions: agent.module === 'perplexity' ? agent.related_questions : false,
-      images: agent.module === 'perplexity' ? agent.images : false,
+    config: {
+      provider: agent.module,
+      brave: {
+        country: agent.module === 'brave' ? agent.country : '',
+        domain: agent.module === 'brave' ? agent.domain : '',
+      },
+      perplexity: {
+        domain: agent.module === 'perplexity' ? agent.domain : [''],
+        top_k: agent.module === 'perplexity' ? agent.top_k : 0,
+        related_questions: agent.module === 'perplexity' ? agent.related_questions : false,
+        images: agent.module === 'perplexity' ? agent.images : false,
+      },
     },
   };
+}
+
+export function getAgentFromConfig(
+  nodeType: NodeType,
+  config: NodeConfig,
+  children: Node[] = [],
+): PreprocessAgentCreation | ContextAgentCreation | PostprocessAgentCreation {
+  switch (nodeType) {
+    case 'rephrase':
+      return rephraseUiToCreation(config as RephraseAgentUI);
+    case 'internet':
+      return internetUiToCreation(config as InternetAgentUI);
+    case 'sql':
+      return sqlUiToCreation(config as SqlAgentUI);
+    case 'ask':
+      return askUiToCreation(config as AskAgentUI, children[0]);
+    case 'historical':
+      return { module: nodeType, ...(config as HistoricalAgentUI) };
+    case 'cypher':
+      return { module: nodeType, ...(config as CypherAgentUI) } as CypherAgent;
+    case 'conditional':
+      const child = children[0];
+      const childConfig = child.nodeConfig;
+      if (!childConfig) {
+        throw new Error(`getAgentFromConfig: no config stored for conditional child`);
+      }
+      const then = getAgentFromConfig(child.nodeType, childConfig);
+      return conditionalUiToAgent(config as ConditionalAgentUI, then as ContextAgentCreation);
+    case 'validation':
+    case 'summarize':
+    case 'restart':
+    case 'remi':
+      return { module: nodeType, ...(config as any) };
+  }
+}
+
+export function getConfigFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): {
+  config: NodeConfig;
+  children?: { entry: string; agent: PreprocessAgent | ContextAgent | PostprocessAgent }[];
+} {
+  switch (agent.module) {
+    case 'rephrase':
+      return rephraseAgentToUi(agent as RephraseAgent);
+    case 'brave':
+    case 'perplexity':
+    case 'tavily':
+    case 'google':
+      return internetAgentToUi(agent as InternetAgent);
+    case 'sql':
+      return sqlAgentToUi(agent as SqlAgent);
+    case 'ask':
+      return askAgentToUi(agent as AskAgent);
+    case 'conditional':
+      return conditionalAgentToUi(agent as ConditionalAgent);
+    case 'historical':
+      return { config: { ...(agent as HistoricalAgent) } };
+    case 'cypher':
+      return { config: { ...(agent as CypherAgent) } };
+    case 'restricted':
+      return { config: { ...(agent as RestrictedAgent) } };
+    case 'mcp':
+    case 'sparql':
+    case 'summarize':
+    case 'validation':
+    case 'restart':
+    case 'remi':
+      return { config: { ...agent } as NodeConfig };
+  }
+}
+
+export function getNodeTypeFromModule(module: PreprocessModule | ContextModule | PostprocessModule): NodeType {
+  return isInternetProvider(module) ? 'internet' : (module as NodeType);
 }

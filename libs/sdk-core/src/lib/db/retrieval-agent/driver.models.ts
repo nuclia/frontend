@@ -1,4 +1,4 @@
-export type InternetProviderType = 'brave' | 'perplexity' | 'tavily' | 'duckduckgo' | 'google';
+export type InternetProviderType = 'brave' | 'perplexity' | 'tavily' | 'google';
 export type ProviderType = InternetProviderType | 'cypher' | 'nucliadb' | 'sql' | 'mcp';
 
 export interface IDriver {

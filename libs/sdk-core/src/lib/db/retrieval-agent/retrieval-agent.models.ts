@@ -112,9 +112,8 @@ export type ContextAgentCreation =
   | AskAgentCreation
   | ConditionalAgentCreation
   | RestrictedAgentCreation
-  | DuckduckgoAgentCreation
   | GoogleAgentCreation
-  | SparkleAgentCreation;
+  | SparqlAgentCreation;
 export type PostprocessAgentCreation =
   | SummarizeAgentCreation
   | ValidationAgentCreation
@@ -180,11 +179,11 @@ export interface McpAgentCreation {
 export interface CypherAgentCreation {
   module: 'cypher';
   source: string;
-  exclude_types?: string[];
-  include_types?: string[];
-  allow_dangerous_requests?: boolean;
-  top_k?: number;
-  model?: string;
+  exclude_types: string[];
+  include_types: string[];
+  allow_dangerous_requests: boolean;
+  top_k: number;
+  model: string;
 }
 
 export interface AskAgentCreation {
@@ -212,8 +211,8 @@ export interface AskAgentCreation {
 
 export interface ConditionalAgentCreation {
   module: 'conditional';
-  then: ContextAgent;
-  else?: ContextAgent;
+  then: ContextAgentCreation;
+  else?: ContextAgentCreation;
   prompt?: string;
   has_keywords?: string[];
   similarity?: string[];
@@ -226,16 +225,12 @@ export interface RestrictedAgentCreation {
   code: string;
 }
 
-export interface DuckduckgoAgentCreation {
-  module: 'duckduckgo';
-}
-
 export interface GoogleAgentCreation {
   module: 'google';
   model_id?: string;
 }
 
-export interface SparkleAgentCreation {
+export interface SparqlAgentCreation {
   module: 'sparql';
 }
 
@@ -285,13 +280,10 @@ export interface ConditionalAgent extends ContextAgent, ConditionalAgentCreation
 export interface RestrictedAgent extends ContextAgent, RestrictedAgentCreation {
   module: 'restricted';
 }
-export interface DuckduckgoAgent extends ContextAgent, DuckduckgoAgentCreation {
-  module: 'duckduckgo';
-}
 export interface GoogleAgent extends ContextAgent, GoogleAgentCreation {
   module: 'google';
 }
-export interface SparkleAgent extends ContextAgent, SparkleAgentCreation {
+export interface SparqlAgent extends ContextAgent, SparqlAgentCreation {
   module: 'sparql';
 }
 export interface SummarizeAgent extends PostprocessAgent, SummarizeAgentCreation {

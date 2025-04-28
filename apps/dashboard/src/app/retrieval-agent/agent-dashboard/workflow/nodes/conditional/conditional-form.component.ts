@@ -15,6 +15,8 @@ export class ConditionalFormComponent extends FormDirective {
   override form = new FormGroup({
     conditional: new FormGroup({
       prompt: new FormControl<string>('', { validators: Validators.required, nonNullable: true }),
+      // Property not shown in the form used in NodeConfigUI model
+      childRequired: new FormControl(true),
     }),
   });
   override get configForm() {

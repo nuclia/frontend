@@ -5,10 +5,14 @@
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
   <app-config-block [config]="validationConfig()"></app-config-block>
-  <app-connectable-entry type="postprocess">
+  <app-connectable-entry
+    id="then"
+    type="postprocess">
     {{ 'retrieval-agents.workflow.connectable-entry.then' | translate }}
   </app-connectable-entry>
-  <app-connectable-entry type="postprocess">
+  <app-connectable-entry
+    id="else"
+    type="postprocess">
     {{ 'retrieval-agents.workflow.connectable-entry.else' | translate }}
   </app-connectable-entry>
 </app-node-box>

@@ -14,15 +14,12 @@ import { SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  AskAgent,
   ContextAgent,
   ContextAgentCreation,
   PostprocessAgent,
   PostprocessAgentCreation,
   PreprocessAgent,
   PreprocessAgentCreation,
-  RephraseAgent,
-  SqlAgent,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { catchError, filter, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
@@ -56,31 +53,30 @@ import {
 } from './nodes';
 import { RulesPanelComponent } from './sidebar';
 import {
-  askAgentToUi,
-  askUiToCreation,
   EntryType,
-  InternetAgent,
-  internetAgentToUi,
-  internetUiToCreation,
-  isInternetProvider,
+  getAgentFromConfig,
+  getConfigFromAgent,
+  getNodeTypeFromModule,
+  Node,
   NODE_SELECTOR_ICONS,
+  NodeConfig,
   NODES_BY_ENTRY_TYPE,
   NodeType,
-  rephraseAgentToUi,
-  rephraseUiToCreation,
-  sqlAgentToUi,
-  sqlUiToCreation,
   WorkflowRoot,
 } from './workflow.models';
 import {
+  addChild,
   addNode,
   deleteNode,
   getNode,
   getNodes,
+  getParentNode,
   resetCurrentOrigin,
   resetNodes,
   selectNode,
   setCurrentOrigin,
+  setNodeConfig,
+  setParentNode,
   unselectNode,
   updateNode,
 } from './workflow.state';
@@ -159,19 +155,20 @@ export class WorkflowService {
         this.cleanWorkflow();
         preprocess.forEach((agent) => {
           setTimeout(() => {
-            this.createNodeFromSavedWorkflow(root.preprocess, agent.module, agent);
+            const module = getNodeTypeFromModule(agent.module);
+            this.createNodeFromSavedWorkflow(root.preprocess, module, agent);
           });
         });
-        // TODO: initialise child nodes if any
         context.forEach((agent) => {
           setTimeout(() => {
-            const module = isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
+            const module = getNodeTypeFromModule(agent.module);
             this.createNodeFromSavedWorkflow(root.context, module, agent);
           });
         });
         postprocess.forEach((agent) => {
           setTimeout(() => {
-            this.createNodeFromSavedWorkflow(root.postprocess, agent.module, agent);
+            const module = getNodeTypeFromModule(agent.module);
+            this.createNodeFromSavedWorkflow(root.postprocess, module, agent);
           });
         });
       }),
@@ -180,18 +177,32 @@ export class WorkflowService {
 
   /**
    * Create and add node on workflow based on what is saved in current Arag
-   * @param rootEntry
+   * @param entry
    * @param nodeType
    * @param agent
    */
   private createNodeFromSavedWorkflow(
-    rootEntry: ConnectableEntryComponent,
+    entry: ConnectableEntryComponent,
     nodeType: NodeType,
     agent: PreprocessAgent | ContextAgent | PostprocessAgent,
+    column = 1,
   ) {
-    const nodeRef = this.addNode(rootEntry, 1, nodeType);
-    const config = this.getConfigFromAgent(agent);
+    const nodeRef = this.addNode(entry, column, nodeType);
+    const { config, children } = getConfigFromAgent(agent);
     updateNode(nodeRef.instance.id, agent, config);
+    if (children) {
+      const outputs = (nodeRef.instance.boxComponent?.connectableEntries || []).filter((item) => !item.noOutput());
+      children.forEach((child) => {
+        setTimeout(() => {
+          const module = getNodeTypeFromModule(child.agent.module);
+          const parentEntry = outputs.find((output) => output.id() === child.entry);
+          if (!parentEntry) {
+            throw new Error(`Entry ${child.entry} no found in parent outputs`);
+          }
+          this.createNodeFromSavedWorkflow(parentEntry, module, child.agent, column + 1);
+        });
+      });
+    }
   }
 
   /**
@@ -462,7 +473,7 @@ export class WorkflowService {
     this.resetState();
     const node = selectNode(nodeId);
     if (!node) {
-      throw new Error(`No node ${nodeId} in the state.`);
+      throw new Error(`selectNode: No node ${nodeId} in the state.`);
     }
 
     const container: HTMLElement = this.openSidebarWithTitle(
@@ -482,24 +493,74 @@ export class WorkflowService {
     formRef.changeDetectorRef.detectChanges();
     formRef.instance.submitForm.subscribe((config) => this.saveNodeConfiguration(config, nodeId));
     formRef.instance.cancel.subscribe(() => this.closeSidebar());
-    // TODO: mode currentPanel in state
     this._currentPanel = formRef;
   }
 
   /**
-   * Save the node configuration and close the sidebar.
+   * Save the node configuration in state/backend and close the sidebar.
    * @param config Node configuration
    * @param nodeId Identifier of the node to save
    */
-  private saveNodeConfiguration(config: any, nodeId: string) {
+  private saveNodeConfiguration(config: NodeConfig, nodeId: string) {
+    setNodeConfig(nodeId, config);
+
+    const parentNode = getParentNode();
+    const child = getNode(nodeId);
+    if (parentNode && child) {
+      addChild(parentNode.nodeRef.instance.id, child);
+    }
+
+    // FIXME: manage edition
+    if (config.childRequired) {
+      this.addRequiredNode(nodeId);
+    } else {
+      this.saveInBackend(nodeId, config, parentNode);
+    }
+  }
+
+  /**
+   * Emit click event on the required output of the node, so the panel will open on node selection
+   * @param nodeId Identifier of the node with required output
+   */
+  private addRequiredNode(nodeId: string) {
+    const node = getNode(nodeId);
+    if (!node) {
+      throw new Error(`addRequiredNode: Node ${nodeId} not found in the state.`);
+    }
+    const entries = node.nodeRef.instance.boxComponent?.connectableEntries;
+    if (!entries) {
+      throw new Error(`addRequiredNode: no entries found for node ${nodeId}.`);
+    }
+    const requiredEntry = entries.find((entry) => entry.required());
+    if (requiredEntry) {
+      requiredEntry.onOutputClick();
+      setParentNode(node);
+    }
+  }
+
+  /**
+   * Save the agent in the backend
+   * @param nodeId Node identifier
+   * @param config Configuration to be transformed into the agent to save
+   * @param parent Optional parent node of the node to save
+   */
+  private saveInBackend(nodeId: string, config: NodeConfig, parent: Node | null) {
     const node = getNode(nodeId);
     if (!node) {
       return;
     }
+    // FIXME how to manage edition mode?
     const agent = node.agent;
+    const nodeType = node.nodeType;
     let creationObs: Observable<void>;
-    let creationData = this.getAgentFromConfig(node.nodeType, config);
-    if (NODES_BY_ENTRY_TYPE['preprocess'].includes(node.nodeType)) {
+    let creationData;
+    if (parent && parent.nodeConfig) {
+      const parentItem = getNode(parent.nodeRef.instance.id);
+      creationData = getAgentFromConfig(parent.nodeType, parent.nodeConfig, parentItem?.children);
+    } else {
+      creationData = getAgentFromConfig(nodeType, config, node.children);
+    }
+    if (NODES_BY_ENTRY_TYPE['preprocess'].includes(nodeType)) {
       creationObs = this.sdk.currentArag.pipe(
         take(1),
         switchMap((arag) =>
@@ -508,7 +569,7 @@ export class WorkflowService {
             : arag.addPreprocess(creationData as PreprocessAgentCreation),
         ),
       );
-    } else if (NODES_BY_ENTRY_TYPE['context'].includes(node.nodeType)) {
+    } else if (NODES_BY_ENTRY_TYPE['context'].includes(nodeType)) {
       creationObs = this.sdk.currentArag.pipe(
         take(1),
         switchMap((arag) =>
@@ -517,7 +578,7 @@ export class WorkflowService {
             : arag.addContext(creationData as ContextAgentCreation),
         ),
       );
-    } else if (NODES_BY_ENTRY_TYPE['postprocess'].includes(node.nodeType)) {
+    } else if (NODES_BY_ENTRY_TYPE['postprocess'].includes(nodeType)) {
       creationObs = this.sdk.currentArag.pipe(
         take(1),
         switchMap((arag) =>
@@ -527,12 +588,10 @@ export class WorkflowService {
         ),
       );
     } else {
-      throw new Error(`Node type ${node.nodeType} not mapped in NODES_BY_ENTRY_TYPE`);
+      throw new Error(`Node type ${nodeType} not mapped in NODES_BY_ENTRY_TYPE`);
     }
     creationObs.subscribe({
       next: () => {
-        node.nodeConfig = config;
-        node.nodeRef.setInput('config', config);
         this.closeSidebar();
       },
       error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent')),
@@ -651,54 +710,6 @@ export class WorkflowService {
         return createComponent(CypherFormComponent, { environmentInjector: this.environmentInjector });
       default:
         throw new Error(`No form component for type ${nodeType}`);
-    }
-  }
-
-  private getAgentFromConfig(
-    nodeType: NodeType,
-    config: any,
-  ): PreprocessAgentCreation | ContextAgentCreation | PostprocessAgentCreation {
-    switch (nodeType) {
-      case 'rephrase':
-        return rephraseUiToCreation(config);
-      case 'internet':
-        return internetUiToCreation(config);
-      case 'sql':
-        return sqlUiToCreation(config);
-      case 'ask':
-        return askUiToCreation(config);
-      case 'historical':
-      case 'cypher':
-      case 'conditional':
-      case 'validation':
-      case 'summarize':
-      case 'restart':
-      case 'remi':
-        return { module: nodeType, ...config };
-    }
-  }
-
-  private getConfigFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): any {
-    switch (agent.module) {
-      case 'rephrase':
-        return rephraseAgentToUi(agent as RephraseAgent);
-      case 'brave':
-      case 'perplexity':
-      case 'tavily':
-      case 'duckduckgo':
-      case 'google':
-        return internetAgentToUi(agent as InternetAgent);
-      case 'sql':
-        return sqlAgentToUi(agent as SqlAgent);
-      case 'ask':
-        return askAgentToUi(agent as AskAgent);
-      case 'historical':
-      case 'cypher':
-      case 'mcp':
-      case 'conditional':
-      case 'restricted':
-      case 'sparql':
-        return { ...agent };
     }
   }
 }

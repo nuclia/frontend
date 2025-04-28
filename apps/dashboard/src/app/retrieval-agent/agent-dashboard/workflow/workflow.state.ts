@@ -9,7 +9,13 @@ import { Node, NodeConfig, NodeType } from './workflow.models';
 export const nodes = signal<{ [id: string]: Node }>({});
 export const selectedNode = signal('');
 export const currentOrigin = signal<ConnectableEntryComponent | null>(null);
+export const parentNode = signal<Node | null>(null);
 
+/**
+ * Set selected node and returns it
+ * @param id
+ * @returns
+ */
 export function selectNode(id: string): Node | undefined {
   const node = getNode(id);
   if (node) {
@@ -36,6 +42,7 @@ export function unselectNode() {
 export function getNodes(): Node[] {
   return Object.values(nodes());
 }
+
 /**
  * Get specific node
  * @param id Node identifier
@@ -51,7 +58,7 @@ export function getNode(id: string): Node | undefined {
  * @param nodeType
  */
 export function addNode(nodeRef: ComponentRef<NodeDirective>, nodeType: NodeType) {
-  nodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: { nodeRef, nodeType } }));
+  nodes.update((items) => ({ ...items, [nodeRef.instance.id]: { nodeRef, nodeType, children: [] } }));
 }
 
 /**
@@ -65,9 +72,24 @@ export function updateNode(
   agent: PreprocessAgent | ContextAgent | PostprocessAgent,
   nodeConfig: NodeConfig,
 ) {
-  const node = nodes()[id];
-  nodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, agent, nodeConfig } }));
-  node.nodeRef.setInput('config', nodeConfig);
+  const node = getNode(id);
+  if (node) {
+    nodes.update((items) => ({ ...items, [id]: { ...node, agent, nodeConfig } }));
+    node.nodeRef.setInput('config', nodeConfig);
+  }
+}
+
+/**
+ * Set node config in the state and the corresponding nodeRef
+ * @param id
+ * @param config
+ */
+export function setNodeConfig(id: string, config: NodeConfig) {
+  const node = getNode(id);
+  if (node) {
+    node.nodeRef.setInput('config', config);
+    nodes.update((items) => ({ ...items, [id]: { ...node, nodeConfig: config } }));
+  }
 }
 
 /**
@@ -89,6 +111,7 @@ export function deleteNode(id: string) {
 export function resetNodes() {
   nodes.set({});
 }
+
 /**
  * Set current origin of the node in creation
  * @param origin
@@ -102,4 +125,21 @@ export function setCurrentOrigin(origin: ConnectableEntryComponent) {
 export function resetCurrentOrigin() {
   currentOrigin()?.activeState.set(false);
   currentOrigin.set(null);
+}
+
+export function setParentNode(node: Node) {
+  parentNode.set(node);
+}
+export function getParentNode(): Node | null {
+  return parentNode();
+}
+export function resetParentNode() {
+  parentNode.set(null);
+}
+
+export function addChild(parentId: string, child: Node) {
+  const parent = getNode(parentId);
+  if (parent) {
+    nodes.update((items) => ({ ...items, [parentId]: { ...parent, children: [...parent.children, child] } }));
+  }
 }

@@ -3,18 +3,21 @@
   (outputClick)="onOutputClick($event)">
   <app-connectable-entry
     #preprocess
+    id="preprocess"
     type="preprocess">
     {{ 'retrieval-agents.workflow.node-types.root.preprocess' | translate }}
   </app-connectable-entry>
   <app-arrow-down></app-arrow-down>
   <app-connectable-entry
     #context
+    id="context"
     type="context">
     {{ 'retrieval-agents.workflow.node-types.root.context' | translate }}
   </app-connectable-entry>
   <app-arrow-down></app-arrow-down>
   <app-connectable-entry
     #postprocess
+    id="postprocess"
     type="postprocess">
     {{ 'retrieval-agents.workflow.node-types.root.postprocess' | translate }}
   </app-connectable-entry>

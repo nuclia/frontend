@@ -19,7 +19,9 @@ import { EntryType } from '../../workflow.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConnectableEntryComponent {
+  id = input.required<string>();
   type = input.required<EntryType>();
+  required = input(false, { transform: booleanAttribute });
   noOutput = input(false, { transform: booleanAttribute });
   clickOutput = output();
   activeState = signal(false);

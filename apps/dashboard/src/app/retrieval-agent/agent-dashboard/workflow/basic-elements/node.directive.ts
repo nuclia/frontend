@@ -17,7 +17,7 @@ export class NodeDirective {
   removeNode = output();
   selectNode = output();
 
-  @ViewChild(NodeBoxComponent) boxComponent?: NodeBoxComponent;
+  @ViewChild(NodeBoxComponent) boxComponent!: NodeBoxComponent;
 
   /**
    * Select the node on click only when not clicking on an output button
