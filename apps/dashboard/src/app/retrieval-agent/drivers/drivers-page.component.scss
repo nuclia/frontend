@@ -5,21 +5,24 @@
   flex-direction: column;
   gap: rhythm(3);
 
+  header {
+    background: $color-light-stronger;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .page-title {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+
   .add-driver-container {
     width: rhythm(28);
   }
 
   .driver-list {
     max-width: $width-large-screen;
-  }
-}
-
-section {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(0.5);
-
-  .title-xs {
-    color: $color-neutral-regular;
   }
 }

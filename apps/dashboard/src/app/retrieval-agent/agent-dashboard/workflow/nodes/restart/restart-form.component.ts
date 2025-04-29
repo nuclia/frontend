@@ -4,7 +4,7 @@ import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } fr
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
-import { RestartAgent } from '../../workflow.models';
+import { RestartAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-restart-form',
@@ -17,7 +17,6 @@ import { RestartAgent } from '../../workflow.models';
     ConfigurationFormComponent,
   ],
   templateUrl: './restart-form.component.html',
-  styleUrl: './restart-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RestartFormComponent extends FormDirective implements OnInit {
@@ -41,7 +40,7 @@ export class RestartFormComponent extends FormDirective implements OnInit {
 
   ngOnInit() {
     if (this.config) {
-      const config = this.config as RestartAgent;
+      const config = this.config as RestartAgentUI;
       if (config.rules.length > 1) {
         // Add rules control to the form to display all the rules already stored
         for (let i = 0; i < config.rules.length - 1; i++) {

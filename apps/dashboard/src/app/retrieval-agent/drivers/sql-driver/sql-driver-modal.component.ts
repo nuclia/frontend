@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { STFUtils } from '@flaps/core';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { SqlDriver } from '@nuclia/core';
+import { DriverCreation, SqlDriver } from '@nuclia/core';
 
 @Component({
   selector: 'app-sql-driver',
@@ -40,8 +39,7 @@ export class SqlDriverModalComponent {
   submit() {
     if (this.form.valid) {
       const { name, ...config } = this.form.getRawValue();
-      const driver: SqlDriver = {
-        id: `${STFUtils.generateSlug(name)}_${STFUtils.generateRandomSlugSuffix()}`,
+      const driver: DriverCreation = {
         name,
         provider: 'sql',
         config,

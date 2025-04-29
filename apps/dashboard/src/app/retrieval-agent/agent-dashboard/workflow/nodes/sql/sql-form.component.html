@@ -3,6 +3,29 @@
   (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
-    <div class="form-entry"></div>
+    <div class="form-entry">
+      <label for="source">{{ 'retrieval-agents.workflow.node-types.sql.form.source' | translate }}</label>
+      <pa-select
+        id="source"
+        formControlName="source"
+        externalLabel=""
+        [options]="sourceOptions | async"></pa-select>
+    </div>
+    <div class="form-entry">
+      <label for="prompt">{{ 'retrieval-agents.workflow.node-types.sql.form.prompt' | translate }}</label>
+      <pa-textarea
+        id="prompt"
+        formControlName="prompt"
+        externalLabel=""
+        rows="2"
+        resizable=""></pa-textarea>
+    </div>
+    <div class="form-entry">
+      <label for="retries">{{ 'retrieval-agents.workflow.node-types.sql.form.retries' | translate }}</label>
+      <pa-input
+        id="retries"
+        formControlName="retries"
+        externalLabel=""></pa-input>
+    </div>
   </ng-container>
 </app-configuration-form>

@@ -124,7 +124,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     combineLatest([this.sdk.currentAccount, this.sdk.currentArag])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(
-        ([account, agent]) => (this.aragUrl = this.navigationService.getRetrievalAgentUrl(account.slug, agent.slug)),
+        ([account, arag]) => (this.aragUrl = this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug)),
       );
     this.inKbSettings
       .pipe(

@@ -14,6 +14,52 @@
           externalLabel
           formControlName="name"></pa-input>
       </div>
+      <div class="form-entry">
+        <label for="kb">{{ 'retrieval-agents.drivers.form.nuclia.kb' | translate }}</label>
+        <pa-select
+          id="kb"
+          externalLabel
+          formControlName="kbid">
+          @for (kb of kbList; track kb.id) {
+            <pa-option
+              [value]="kb.id"
+              (selectOption)="checkFormValidators(kb.role_on_kb)">
+              {{ kb.title }}
+            </pa-option>
+          }
+        </pa-select>
+      </div>
+      <div class="form-entry">
+        <label for="description">{{ 'retrieval-agents.drivers.form.nuclia.description.label' | translate }}</label>
+        <pa-textarea
+          id="description"
+          formControlName="description"
+          externalLabel=""
+          rows="2"
+          resizable=""
+          [help]="'retrieval-agents.drivers.form.nuclia.description.help' | translate"></pa-textarea>
+      </div>
+
+      @if (isEdit) {
+        <pa-toggle
+          formControlName="keepExistingKey"
+          withBackground>
+          {{ 'retrieval-agents.drivers.form.nuclia.keep-existing-key' | translate }}
+        </pa-toggle>
+      }
+
+      @if (kb && kb.role_on_kb !== 'SOWNER') {
+        <div class="form-entry">
+          <label for="key">{{ 'retrieval-agents.drivers.form.nuclia.key.label' | translate }}</label>
+          <pa-input
+            id="key"
+            formControlName="key"
+            externalLabel=""
+            [help]="'retrieval-agents.drivers.form.nuclia.key.help' | translate"></pa-input>
+        </div>
+      } @else if (kb && !keepExistingKey) {
+        <nsi-info-card>{{ 'retrieval-agents.drivers.form.nuclia.key.owner-info' | translate }}</nsi-info-card>
+      }
     </form>
   </pa-modal-content>
   <pa-modal-footer>

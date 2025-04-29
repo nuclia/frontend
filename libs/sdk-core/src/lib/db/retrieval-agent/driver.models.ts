@@ -1,9 +1,14 @@
+export type InternetProviderType = 'brave' | 'perplexity' | 'tavily' | 'duckduckgo' | 'google';
+export type ProviderType = InternetProviderType | 'cypher' | 'nucliadb' | 'sql' | 'mcp';
+
 export interface IDriver {
   id: string;
-  provider: 'brave' | 'cypher' | 'nucliadb' | 'perplexity' | 'tavily' | 'sql' | 'mcp';
+  provider: ProviderType;
   name: string;
   config: BraveConfig | CypherConfig | NucliaDBConfig | PerplexityConfig | TavilyConfig | SqlConfig | McpConfig;
 }
+
+export type DriverCreation = Omit<IDriver, 'id'>;
 
 export type Driver =
   | BraveDriver
@@ -64,8 +69,7 @@ export interface CypherConfig {
 export interface NucliaDBConfig {
   url: string;
   manager: string;
-  key: string;
-  filters: string[];
+  key?: string;
   description: string;
   kbid: string;
 }

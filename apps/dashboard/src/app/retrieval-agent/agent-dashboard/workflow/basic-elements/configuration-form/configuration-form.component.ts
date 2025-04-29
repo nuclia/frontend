@@ -14,6 +14,8 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class ConfigurationFormComponent {
   form = input.required<FormGroup>();
+
+  headerHeight = input();
   triggerSubmit = output();
   cancel = output();
 

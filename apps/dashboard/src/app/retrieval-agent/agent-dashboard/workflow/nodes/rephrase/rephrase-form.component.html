@@ -13,25 +13,20 @@
         rows="2"
         resizable=""></pa-textarea>
     </div>
-    <div class="toggle-block">
-      <pa-toggle
-        formControlName="extend"
-        withBackground
-        (valueChange)="onExtendChange()">
-        {{ 'retrieval-agents.workflow.node-types.rephrase.form.extend' | translate }}
-      </pa-toggle>
-      @if (isExtendEnabled) {
-        <div class="form-entry">
-          <label for="askTo">{{ 'retrieval-agents.workflow.node-types.rephrase.form.ask-to.label' | translate }}</label>
-          <pa-select
-            id="askTo"
-            formControlName="kb"
-            externalLabel
-            [placeholder]="'retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder' | translate"
-            [options]="sourceOptions"></pa-select>
-        </div>
-      }
+    <div class="form-entry">
+      <label for="askTo">{{ 'retrieval-agents.workflow.node-types.rephrase.form.ask-to.label' | translate }}</label>
+      <pa-select
+        id="askTo"
+        formControlName="kb"
+        externalLabel
+        [placeholder]="'retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder' | translate"
+        [options]="sourceOptions | async"></pa-select>
     </div>
+    <pa-toggle
+      formControlName="extend"
+      withBackground>
+      {{ 'retrieval-agents.workflow.node-types.rephrase.form.extend' | translate }}
+    </pa-toggle>
 
     <pa-toggle
       formControlName="synonyms"

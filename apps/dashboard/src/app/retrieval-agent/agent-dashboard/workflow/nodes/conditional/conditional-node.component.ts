@@ -8,7 +8,7 @@ import {
   NodeBoxComponent,
   NodeDirective,
 } from '../../basic-elements';
-import { ConditionalAgent } from '../../workflow.models';
+import { ConditionalAgentUI } from '../../workflow.models';
 
 @Component({
   selector: 'app-conditional-node',
@@ -19,7 +19,7 @@ import { ConditionalAgent } from '../../workflow.models';
 export class ConditionalNodeComponent extends NodeDirective {
   conditionalConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
-      const config = this.config() as ConditionalAgent;
+      const config = this.config() as ConditionalAgentUI;
       return [{ content: config.prompt }];
     }
     return [];

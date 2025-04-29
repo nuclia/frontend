@@ -1,5 +1,6 @@
 <form
   class="node-configuration-form"
+  [style]="headerHeight() ? '--header-height:' + headerHeight() : ''"
   [formGroup]="form()"
   (ngSubmit)="onSubmit()">
   <ng-content></ng-content>
@@ -14,7 +15,7 @@
       class="full-width"
       kind="primary"
       type="submit"
-      [disabled]="form().invalid">
+      [disabled]="form().invalid || form().pristine">
       {{ 'generic.save' | translate }}
     </pa-button>
   </footer>

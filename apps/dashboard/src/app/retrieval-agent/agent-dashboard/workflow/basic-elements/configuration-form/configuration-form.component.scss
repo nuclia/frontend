@@ -8,25 +8,39 @@
   flex-direction: column;
   gap: rhythm(3);
   height: calc(
-    #{dashboard.$height-main} - #{dashboard.$padding-sidebar} - #{dashboard.$height-sidebar-header} - #{$footer-height} -
-      #{rhythm(1)}
+    #{dashboard.$height-main} - #{dashboard.$padding-sidebar} - var(
+        --header-height,
+        #{dashboard.$height-sidebar-header}
+      ) - #{$footer-height} - #{rhythm(1)}
   );
   // those margin and padding right allow to stick the scrollbar on the side
   margin-right: calc(#{dashboard.$padding-sidebar} * -1);
   padding: rhythm(2) dashboard.$padding-sidebar rhythm(2) 0;
   overflow: auto;
 
+  pa-toggle .pa-field-label {
+    color: $color-neutral-regular;
+    font-weight: $font-weight-semi-bold;
+  }
   .form-entry > label {
     color: $color-neutral-regular;
     font-size: font-size(s);
     font-weight: $font-weight-semi-bold;
     margin-bottom: rhythm(0.5);
   }
-
-  .toggle-block {
+  .form-entry.field-list {
     display: flex;
     flex-direction: column;
+    gap: rhythm(0.5);
+  }
+  .entry-with-button {
+    align-items: center;
+    display: flex;
     gap: rhythm(1);
+
+    :first-child {
+      flex: 1 0 auto;
+    }
   }
 
   footer {

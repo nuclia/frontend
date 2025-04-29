@@ -1,6 +1,7 @@
 export * from './ask';
 export * from './conditional';
 export * from './cypher';
+export * from './historical';
 export * from './internet';
 export * from './rephrase';
 export * from './restart';

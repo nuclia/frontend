@@ -3,6 +3,81 @@
   (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
-    <div class="form-entry"></div>
+    <div class="form-entry field-list">
+      <div class="form-entry">
+        <label for="sources">{{ 'retrieval-agents.workflow.node-types.ask.form.sources' | translate }}</label>
+        <pa-select
+          id="sources"
+          formControlName="sources"
+          externalLabel=""
+          multiple=""
+          [options]="sourceOptions()"></pa-select>
+      </div>
+      @if (sourceOptions()?.length === 0) {
+        <nsi-info-card type="warning">
+          {{ 'retrieval-agents.workflow.node-types.ask.form.no-source' | translate }}
+        </nsi-info-card>
+        <pa-button
+          aspect="basic"
+          size="small"
+          [routerLink]="driversPath()">
+          {{ 'retrieval-agents.workflow.node-types.ask.form.go-to-drivers' | translate }}
+        </pa-button>
+      }
+    </div>
+    <div class="form-entry">
+      <label for="rephrase_semantic_custom_prompt">
+        {{ 'retrieval-agents.workflow.node-types.ask.form.rephrase_semantic_custom_prompt' | translate }}
+      </label>
+      <pa-textarea
+        id="rephrase_semantic_custom_prompt"
+        formControlName="rephrase_semantic_custom_prompt"
+        externalLabel=""
+        rows="2"
+        resizable="true"></pa-textarea>
+    </div>
+    <div class="form-entry">
+      <label for="rephrase_lexical_custom_prompt">
+        {{ 'retrieval-agents.workflow.node-types.ask.form.rephrase_lexical_custom_prompt' | translate }}
+      </label>
+      <pa-textarea
+        id="rephrase_lexical_custom_prompt"
+        formControlName="rephrase_lexical_custom_prompt"
+        externalLabel=""
+        rows="2"
+        resizable="true"></pa-textarea>
+    </div>
+    <div class="form-entry">
+      <label for="keyword_custom_prompt">
+        {{ 'retrieval-agents.workflow.node-types.ask.form.keyword_custom_prompt' | translate }}
+      </label>
+      <pa-textarea
+        id="keyword_custom_prompt"
+        formControlName="keyword_custom_prompt"
+        externalLabel=""
+        rows="2"
+        resizable="true"></pa-textarea>
+    </div>
+    <div class="form-entry">
+      <label for="visual_enable_prompt">
+        {{ 'retrieval-agents.workflow.node-types.ask.form.visual_enable_prompt' | translate }}
+      </label>
+      <pa-textarea
+        id="visual_enable_prompt"
+        formControlName="visual_enable_prompt"
+        externalLabel=""
+        rows="2"
+        resizable="true"></pa-textarea>
+    </div>
+    <pa-toggle
+      formControlName="full_resource"
+      withBackground>
+      {{ 'retrieval-agents.workflow.node-types.ask.form.full_resource' | translate }}
+    </pa-toggle>
+    <pa-toggle
+      formControlName="vllm"
+      withBackground>
+      {{ 'retrieval-agents.workflow.node-types.ask.form.vllm' | translate }}
+    </pa-toggle>
   </ng-container>
 </app-configuration-form>
