@@ -1,4 +1,5 @@
 import { Directive, HostListener, input, output, ViewChild } from '@angular/core';
+import { NodeCategory, NodeConfig } from '../workflow.models';
 import { ConnectableEntryComponent } from './connectable-entry/connectable-entry.component';
 import { NodeBoxComponent } from './node-box/node-box.component';
 
@@ -11,13 +12,14 @@ export class NodeDirective {
 
   origin = input<ConnectableEntryComponent>();
   state = input<'default' | 'selected' | 'processing' | 'processed'>('default');
-  config = input<unknown>();
+  config = input<NodeConfig>();
+  category = input.required<NodeCategory>();
 
   addNode = output<{ entry: ConnectableEntryComponent; targetColumn: number }>();
   removeNode = output();
   selectNode = output();
 
-  @ViewChild(NodeBoxComponent) boxComponent?: NodeBoxComponent;
+  @ViewChild(NodeBoxComponent) boxComponent!: NodeBoxComponent;
 
   /**
    * Select the node on click only when not clicking on an output button

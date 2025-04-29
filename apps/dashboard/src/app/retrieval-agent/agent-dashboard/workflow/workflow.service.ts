@@ -56,22 +56,36 @@ import { RulesPanelComponent } from './sidebar';
 import {
   askAgentToUi,
   askUiToCreation,
+  getNodeTypeFromAgent,
   InternetAgent,
   internetAgentToUi,
   internetUiToCreation,
-  isInternetProvider,
   NODE_SELECTOR_ICONS,
   NodeCategory,
+  NodeConfig,
   NODES_BY_ENTRY_TYPE,
   NodeType,
-  ParentNode,
   rephraseAgentToUi,
   rephraseUiToCreation,
   sqlAgentToUi,
   sqlUiToCreation,
   WorkflowRoot,
 } from './workflow.models';
-import { resetSidebar, setActiveSidebar, setOpenSidebar, setSidebarHeader } from './workflow.state';
+import {
+  addNode,
+  deleteNode,
+  getAllNodes,
+  resetCurrentOrigin,
+  resetNodes,
+  resetSidebar,
+  selectNode,
+  setActiveSidebar,
+  setCurrentOrigin,
+  setOpenSidebar,
+  setSidebarHeader,
+  unselectNode,
+  updateNode,
+} from './workflow.state';
 
 const COLUMN_CLASS = 'workflow-col';
 const SLIDE_DURATION = 800;
@@ -91,13 +105,8 @@ export class WorkflowService {
   private environmentInjector = this.applicationRef.injector;
 
   private columns: HTMLElement[] = [];
-  private nodes: {
-    [id: string]: ParentNode;
-  } = {};
 
   private _workflowRoot?: WorkflowRoot;
-  private _selectedNode = '';
-  private _currentOrigin?: ConnectableEntryComponent;
   private _columnContainer?: ElementRef;
   private _currentPanel?: ComponentRef<RulesPanelComponent | FormDirective>;
 
@@ -107,12 +116,7 @@ export class WorkflowService {
   get workflowRoot(): WorkflowRoot | undefined {
     return this._workflowRoot;
   }
-  set selectedNode(nodeId: string) {
-    this._selectedNode = nodeId;
-  }
-  get selectedNode() {
-    return this._selectedNode;
-  }
+
   set columnContainer(container: ElementRef) {
     // columnContainer setter is called on init of agent-dashboard, so we first clear columns from previous dashboard if any (can happened when switching arag)
     this.columns = [];
@@ -142,22 +146,20 @@ export class WorkflowService {
         return of([[], [], []]);
       }),
       tap(([preprocess, context, postprocess]) => {
-        console.log(preprocess, context, postprocess);
         this.cleanWorkflow();
         preprocess.forEach((agent) => {
           setTimeout(() => {
-            this.createNodeFromSavedWorkflow(root.preprocess, agent.module, 'preprocess', agent);
+            this.createNodeFromSavedWorkflow(root.preprocess, 'preprocess', agent);
           });
         });
         context.forEach((agent) => {
           setTimeout(() => {
-            const module = isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
-            this.createNodeFromSavedWorkflow(root.context, module, 'context', agent);
+            this.createNodeFromSavedWorkflow(root.context, 'context', agent);
           });
         });
         postprocess.forEach((agent) => {
           setTimeout(() => {
-            this.createNodeFromSavedWorkflow(root.postprocess, agent.module, 'postprocess', agent);
+            this.createNodeFromSavedWorkflow(root.postprocess, 'postprocess', agent);
           });
         });
       }),
@@ -167,20 +169,18 @@ export class WorkflowService {
   /**
    * Create and add node on workflow based on what is saved in current Arag
    * @param rootEntry
-   * @param nodeType
+   * @param nodeCategory
    * @param agent
    */
   private createNodeFromSavedWorkflow(
     rootEntry: ConnectableEntryComponent,
-    nodeType: NodeType,
     nodeCategory: NodeCategory,
     agent: PreprocessAgent | ContextAgent | PostprocessAgent,
   ) {
+    const nodeType = getNodeTypeFromAgent(agent);
     const nodeRef = this.addNode(rootEntry, 1, nodeType, nodeCategory);
-    // this.nodes[nodeRef.instance.id].agent = agent;
     const config = this.getConfigFromAgent(agent);
-    this.nodes[nodeRef.instance.id].nodeConfig = config;
-    nodeRef.setInput('config', config);
+    updateNode(nodeRef.instance.id, nodeCategory, { nodeConfig: config, agent });
   }
 
   /**
@@ -188,10 +188,8 @@ export class WorkflowService {
    */
   cleanWorkflow() {
     this.closeSidebar();
-    Object.values(this.nodes).forEach((node) =>
-      this._removeNodeAndLinks(node.nodeRef, this.columns[node.nodeRef.instance.columnIndex]),
-    );
-    this.nodes = {};
+    resetNodes();
+    // FIXME: call this._removeNodeAndLinks in effect?
   }
 
   /**
@@ -228,7 +226,7 @@ export class WorkflowService {
     }
     this.resetState();
 
-    this._currentOrigin = origin;
+    setCurrentOrigin(origin);
     const originType = origin.type();
     const container: HTMLElement = this.openSidebarWithTitle(
       `retrieval-agents.workflow.sidebar.node-creation.${originType}`,
@@ -268,7 +266,7 @@ export class WorkflowService {
       selectorRef.instance.select.subscribe(() => {
         const nodeRef = this.addNode(origin, columnIndex, nodeType, nodeCategory);
         nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-        this.selectNode(nodeRef.instance.id);
+        this.selectNode(nodeRef.instance.id, nodeCategory);
       });
 
       if (index === possibleNodes.length - 1) {
@@ -283,11 +281,12 @@ export class WorkflowService {
    * @param column Column from which the node must be removed
    */
   removeNodeAndLink(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
-    const node = this.nodes[nodeRef.instance.id];
     // if (!agent) {
     this._removeNodeAndLinks(nodeRef, column);
     this.closeSidebar();
     // } else {
+    // const category = nodeRef.instance.category();
+    // const node = getNode(nodeRef.instance.id, category);
     // const agent = node?.agent;
     //   this.modalService
     //     .openConfirm({
@@ -333,15 +332,13 @@ export class WorkflowService {
   }
 
   private _removeNodeAndLinks(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
-    if (nodeRef.instance.boxComponent?.linkRef) {
+    if (nodeRef.instance.boxComponent.linkRef) {
       this.linkService.removeLink(nodeRef.instance.boxComponent.linkRef);
     }
     column.removeChild(nodeRef.location.nativeElement);
     this.applicationRef.detachView(nodeRef.hostView);
-    delete this.nodes[nodeRef.instance.id];
-    if (this.selectedNode === nodeRef.instance.id) {
-      this.selectedNode = '';
-    }
+    unselectNode();
+    deleteNode(nodeRef.instance.id, nodeRef.instance.category());
     this.updateLinksOnColumn(nodeRef.instance.columnIndex);
   }
 
@@ -350,7 +347,7 @@ export class WorkflowService {
    */
   closeSidebar() {
     setOpenSidebar(false);
-    this.unselectNode();
+    unselectNode();
     // Wait until the slide animation is done before emptying the sidebar
     setTimeout(() => this.resetState(), SLIDE_DURATION);
   }
@@ -391,13 +388,11 @@ export class WorkflowService {
       throw new Error('Sidebar container not initialized');
     }
     // Unselect node if needed
-    this.unselectNode();
+    unselectNode();
 
     // remove current origin if any so all outputs have their default state
-    if (this._currentOrigin) {
-      this._currentOrigin.activeState.set(false);
-      this._currentOrigin = undefined;
-    }
+    resetCurrentOrigin();
+
     // Reset the side bar
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
     resetSidebar();
@@ -431,15 +426,16 @@ export class WorkflowService {
     const column: HTMLElement = this.columns[columnIndex];
     let nodeRef: ComponentRef<NodeDirective> = this.getNodeRef(nodeType);
     nodeRef.setInput('origin', origin);
+    nodeRef.setInput('category', nodeCategory);
     nodeRef.instance.columnIndex = columnIndex;
     this.applicationRef.attachView(nodeRef.hostView);
     column.appendChild(nodeRef.location.nativeElement);
     nodeRef.changeDetectorRef.detectChanges();
     nodeRef.instance.addNode.subscribe((data) => this.triggerNodeCreation(data.entry, data.targetColumn));
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
-    nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id));
+    nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id, nodeCategory));
 
-    this.nodes[nodeRef.instance.id] = { nodeRef, nodeType, nodeCategory };
+    addNode(nodeRef, nodeType, nodeCategory);
     origin.activeState.set(false);
     return nodeRef;
   }
@@ -447,17 +443,17 @@ export class WorkflowService {
   /**
    * Select a node based on its id and open the corresponding configuration form on the sidebar.
    * @param nodeId Identifier of the node to be selected
+   * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
    */
-  private selectNode(nodeId: string) {
+  private selectNode(nodeId: string, nodeCategory: NodeCategory) {
     if (!this.sidebarContentWrapper) {
       return;
     }
     this.resetState();
-    const node = this.nodes[nodeId];
-    if (node) {
-      node.nodeRef.setInput('state', 'selected');
+    const node = selectNode(nodeId, nodeCategory);
+    if (!node) {
+      throw new Error(`selectNode: No node with id=${nodeId} in category ${nodeCategory}`);
     }
-    this.selectedNode = nodeId;
 
     const container: HTMLElement = this.openSidebarWithTitle(
       `retrieval-agents.workflow.node-types.${node.nodeType}.title`,
@@ -474,34 +470,21 @@ export class WorkflowService {
     this.applicationRef.attachView(formRef.hostView);
     container.appendChild(formRef.location.nativeElement);
     formRef.changeDetectorRef.detectChanges();
-    formRef.instance.submitForm.subscribe((config) => this.saveNodeConfiguration(config, nodeId));
+    formRef.instance.submitForm.subscribe((config) => this.saveNodeConfiguration(config, nodeId, nodeCategory));
     formRef.instance.cancel.subscribe(() => this.closeSidebar());
     this._currentPanel = formRef;
-  }
-
-  /**
-   * Unselect current selected node if any
-   */
-  private unselectNode() {
-    if (this.selectedNode && this.nodes[this.selectedNode]) {
-      this.nodes[this.selectedNode].nodeRef.setInput('state', 'default');
-    }
-    this.selectedNode = '';
   }
 
   /**
    * Save the node configuration and close the sidebar.
    * @param config Node configuration
    * @param nodeId Identifier of the node to save
+   * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
    */
-  private saveNodeConfiguration(config: any, nodeId: string) {
-    const node = this.nodes[nodeId];
-    if (!node) {
-      return;
-    }
-    node.nodeConfig = config;
-    node.nodeRef.setInput('config', config);
+  private saveNodeConfiguration(config: NodeConfig, nodeId: string, nodeCategory: NodeCategory) {
+    updateNode(nodeId, nodeCategory, { nodeConfig: config });
     this.closeSidebar();
+    // FIXME
     // const agent = node.agent;
     // let creationObs: Observable<void>;
     // let creationData = this.getAgentFromConfig(node.nodeType, config);
@@ -550,13 +533,9 @@ export class WorkflowService {
    * @param columnIndex index of the first column in which node’s links must be updated
    */
   private updateLinksOnColumn(columnIndex: number) {
-    Object.values(this.nodes)
+    getAllNodes()
       .filter((node) => node.nodeRef.instance.columnIndex >= columnIndex)
-      .forEach((node) => {
-        if (node.nodeRef.instance.boxComponent) {
-          node.nodeRef.instance.boxComponent.updateLink();
-        }
-      });
+      .forEach((node) => node.nodeRef.instance.boxComponent.updateLink());
   }
 
   /**

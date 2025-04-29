@@ -154,6 +154,9 @@ export interface RestartAgentUI {
   rules: string[];
 }
 
+export function getNodeTypeFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): NodeType {
+  return isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
+}
 export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
   return {
     module: 'rephrase',

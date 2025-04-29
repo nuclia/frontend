@@ -20,6 +20,7 @@ import {
   sideBarDescription,
   sideBarOpen,
   sideBarTitle,
+  WorkflowEffectService,
   WorkflowRoot,
   WorkflowRootComponent,
   WorkflowService,
@@ -36,6 +37,8 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private linkService = inject(LinkService);
   private workflowService = inject(WorkflowService);
   private layoutService = inject(DashboardLayoutService);
+  // required to initialise effects
+  private workflowEffects = inject(WorkflowEffectService);
 
   private unsubscribeAll = new Subject<void>();
 

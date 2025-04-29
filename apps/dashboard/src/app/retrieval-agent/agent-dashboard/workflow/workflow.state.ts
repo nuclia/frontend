@@ -1,6 +1,6 @@
 import { ComponentRef, computed, signal } from '@angular/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
-import { NodeCategory, NodeType, ParentNode } from './workflow.models';
+import { NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
 
 /**
  * Sidebar state
@@ -43,6 +43,14 @@ const contextNodes = signal<{ [id: string]: ParentNode }>({});
 const postprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const selectedNode = signal<{ id: string; nodeCategory: NodeCategory } | null>(null);
 const currentOrigin = signal<ConnectableEntryComponent | null>(null);
+
+export const workflow = computed(() => {
+  return {
+    preprocess: preprocessNodes(),
+    context: contextNodes(),
+    postprocess: postprocessNodes(),
+  };
+});
 
 /**
  * Set selected node and returns it
@@ -89,23 +97,38 @@ export function getNode(id: string, nodeCategory: NodeCategory): ParentNode | un
       return postprocessNodes()[id];
   }
 }
-
+/**
+ * Get all nodes
+ * @returns List of nodes from all categories.
+ */
+export function getAllNodes(): ParentNode[] {
+  return Object.values(preprocessNodes())
+    .concat(Object.values(contextNodes()))
+    .concat(Object.values(postprocessNodes()));
+}
 /**
  * Add node to the specified category
  * @param nodeRef
  * @param nodeType
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+ * @param nodeConfig Optional: Node configuration from Agent
  */
-export function addNode(nodeRef: ComponentRef<NodeDirective>, nodeType: NodeType, nodeCategory: NodeCategory) {
+export function addNode(
+  nodeRef: ComponentRef<NodeDirective>,
+  nodeType: NodeType,
+  nodeCategory: NodeCategory,
+  nodeConfig?: NodeConfig,
+) {
+  const node = { nodeRef, nodeType, nodeCategory, nodeConfig };
   switch (nodeCategory) {
     case 'preprocess':
-      preprocessNodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: { nodeRef, nodeType, nodeCategory } }));
+      preprocessNodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: node }));
       break;
     case 'context':
-      contextNodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: { nodeRef, nodeType, nodeCategory } }));
+      contextNodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: node }));
       break;
     case 'postprocess':
-      postprocessNodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: { nodeRef, nodeType, nodeCategory } }));
+      postprocessNodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: node }));
       break;
   }
 }
@@ -143,6 +166,32 @@ export function resetNodes() {
   preprocessNodes.set({});
   contextNodes.set({});
   postprocessNodes.set({});
+}
+
+/**
+ * Update node
+ * @param id Node identifier
+ * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+ * @param partialNode Partial node updated
+ */
+export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: Partial<ParentNode>) {
+  const node = getNode(id, nodeCategory);
+  if (node) {
+    switch (nodeCategory) {
+      case 'preprocess':
+        preprocessNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
+        break;
+      case 'context':
+        contextNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
+        break;
+      case 'postprocess':
+        postprocessNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
+        break;
+    }
+    if (partialNode.nodeConfig) {
+      node.nodeRef.setInput('config', partialNode.nodeConfig);
+    }
+  }
 }
 
 /**
