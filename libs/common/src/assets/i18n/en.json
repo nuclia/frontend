@@ -1520,7 +1520,7 @@
 	"search.widgets.action.rename": "Rename",
 	"search.widgets.dialog.code-snippet.copy-button": "Copy",
 	"search.widgets.dialog.code-snippet.description": "Copy and paste the following code to embed it on your website.",
-	"search.widgets.dialog.code-snippet.synchronize-config": "Synchronize configuration",
+	"search.widgets.dialog.code-snippet.synchronized-config": "Synchronized configuration",
 	"search.widgets.dialog.code-snippet.title": "Code snippet",
 	"search.widgets.dialog.code-snippet.warning": "Note that changes to the widget or search configuration will automatically apply to the widget.",
 	"search.widgets.dialog.create-widget.confirm-button": "Set up widget",
