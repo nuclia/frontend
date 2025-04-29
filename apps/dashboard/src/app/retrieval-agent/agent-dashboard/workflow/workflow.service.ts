@@ -25,7 +25,7 @@ import {
   SqlAgent,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { catchError, filter, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
+import { catchError, forkJoin, of, switchMap, tap } from 'rxjs';
 import {
   ConnectableEntryComponent,
   FormDirective,
@@ -288,58 +288,58 @@ export class WorkflowService {
   }
 
   /**
-   * Remove a node and the corresponding links from the workflow. Adk for confirmation if the node was already stored in the backend.
+   * Remove a node and the corresponding links from the workflow. Ask for confirmation if the node was already stored in the backend.
    * @param nodeRef Node to remove
    * @param column Column from which the node must be removed
    */
   removeNodeAndLink(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
     const node = this.nodes[nodeRef.instance.id];
     const agent = node?.agent;
-    if (!agent) {
-      this._removeNodeAndLinks(nodeRef, column);
-      this.closeSidebar();
-    } else {
-      this.modalService
-        .openConfirm({
-          title: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.title'),
-          description: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.description'),
-          isDestructive: true,
-          confirmLabel: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.confirm-button'),
-        })
-        .onClose.pipe(
-          filter((confirm) => !!confirm),
-          switchMap(() =>
-            this.sdk.currentArag.pipe(
-              take(1),
-              switchMap((arag) => {
-                switch (node.nodeType) {
-                  case 'historical':
-                  case 'rephrase':
-                    return arag.deletePreprocess(agent.id);
-                  case 'conditional':
-                  case 'ask':
-                  case 'internet':
-                  case 'sql':
-                  case 'cypher':
-                    return arag.deleteContext(agent.id);
-                  case 'validation':
-                  case 'summarize':
-                  case 'restart':
-                  case 'remi':
-                    return arag.deletePostprocess(agent.id);
-                }
-              }),
-            ),
-          ),
-        )
-        .subscribe({
-          next: () => {
-            this._removeNodeAndLinks(nodeRef, column);
-            this.closeSidebar();
-          },
-          error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.delete-agent')),
-        });
-    }
+    // if (!agent) {
+    this._removeNodeAndLinks(nodeRef, column);
+    this.closeSidebar();
+    // } else {
+    //   this.modalService
+    //     .openConfirm({
+    //       title: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.title'),
+    //       description: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.description'),
+    //       isDestructive: true,
+    //       confirmLabel: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.confirm-button'),
+    //     })
+    //     .onClose.pipe(
+    //       filter((confirm) => !!confirm),
+    //       switchMap(() =>
+    //         this.sdk.currentArag.pipe(
+    //           take(1),
+    //           switchMap((arag) => {
+    //             switch (node.nodeType) {
+    //               case 'historical':
+    //               case 'rephrase':
+    //                 return arag.deletePreprocess(agent.id);
+    //               case 'conditional':
+    //               case 'ask':
+    //               case 'internet':
+    //               case 'sql':
+    //               case 'cypher':
+    //                 return arag.deleteContext(agent.id);
+    //               case 'validation':
+    //               case 'summarize':
+    //               case 'restart':
+    //               case 'remi':
+    //                 return arag.deletePostprocess(agent.id);
+    //             }
+    //           }),
+    //         ),
+    //       ),
+    //     )
+    //     .subscribe({
+    //       next: () => {
+    //         this._removeNodeAndLinks(nodeRef, column);
+    //         this.closeSidebar();
+    //       },
+    //       error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.delete-agent')),
+    //     });
+    // }
   }
 
   private _removeNodeAndLinks(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
@@ -510,47 +510,50 @@ export class WorkflowService {
     if (!node) {
       return;
     }
-    const agent = node.agent;
-    let creationObs: Observable<void>;
-    let creationData = this.getAgentFromConfig(node.nodeType, config);
-    if (NODES_BY_ENTRY_TYPE['preprocess'].includes(node.nodeType)) {
-      creationObs = this.sdk.currentArag.pipe(
-        take(1),
-        switchMap((arag) =>
-          !!agent
-            ? arag.patchPreprocess({ ...agent, ...(creationData as PreprocessAgentCreation) })
-            : arag.addPreprocess(creationData as PreprocessAgentCreation),
-        ),
-      );
-    } else if (NODES_BY_ENTRY_TYPE['context'].includes(node.nodeType)) {
-      creationObs = this.sdk.currentArag.pipe(
-        take(1),
-        switchMap((arag) =>
-          !!agent
-            ? arag.patchContext({ ...agent, ...(creationData as ContextAgentCreation) })
-            : arag.addContext(creationData as ContextAgentCreation),
-        ),
-      );
-    } else if (NODES_BY_ENTRY_TYPE['postprocess'].includes(node.nodeType)) {
-      creationObs = this.sdk.currentArag.pipe(
-        take(1),
-        switchMap((arag) =>
-          !!agent
-            ? arag.patchPostprocess({ ...agent, ...(creationData as PostprocessAgentCreation) })
-            : arag.addPostprocess(creationData as PostprocessAgentCreation),
-        ),
-      );
-    } else {
-      throw new Error(`Node type ${node.nodeType} not mapped in NODES_BY_ENTRY_TYPE`);
-    }
-    creationObs.subscribe({
-      next: () => {
-        node.nodeConfig = config;
-        node.nodeRef.setInput('config', config);
-        this.closeSidebar();
-      },
-      error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent')),
-    });
+    node.nodeConfig = config;
+    node.nodeRef.setInput('config', config);
+    this.closeSidebar();
+    // const agent = node.agent;
+    // let creationObs: Observable<void>;
+    // let creationData = this.getAgentFromConfig(node.nodeType, config);
+    // if (NODES_BY_ENTRY_TYPE['preprocess'].includes(node.nodeType)) {
+    //   creationObs = this.sdk.currentArag.pipe(
+    //     take(1),
+    //     switchMap((arag) =>
+    //       !!agent
+    //         ? arag.patchPreprocess({ ...agent, ...(creationData as PreprocessAgentCreation) })
+    //         : arag.addPreprocess(creationData as PreprocessAgentCreation),
+    //     ),
+    //   );
+    // } else if (NODES_BY_ENTRY_TYPE['context'].includes(node.nodeType)) {
+    //   creationObs = this.sdk.currentArag.pipe(
+    //     take(1),
+    //     switchMap((arag) =>
+    //       !!agent
+    //         ? arag.patchContext({ ...agent, ...(creationData as ContextAgentCreation) })
+    //         : arag.addContext(creationData as ContextAgentCreation),
+    //     ),
+    //   );
+    // } else if (NODES_BY_ENTRY_TYPE['postprocess'].includes(node.nodeType)) {
+    //   creationObs = this.sdk.currentArag.pipe(
+    //     take(1),
+    //     switchMap((arag) =>
+    //       !!agent
+    //         ? arag.patchPostprocess({ ...agent, ...(creationData as PostprocessAgentCreation) })
+    //         : arag.addPostprocess(creationData as PostprocessAgentCreation),
+    //     ),
+    //   );
+    // } else {
+    //   throw new Error(`Node type ${node.nodeType} not mapped in NODES_BY_ENTRY_TYPE`);
+    // }
+    // creationObs.subscribe({
+    //   next: () => {
+    //     node.nodeConfig = config;
+    //     node.nodeRef.setInput('config', config);
+    //     this.closeSidebar();
+    //   },
+    //   error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent')),
+    // });
   }
 
   /**
