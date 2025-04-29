@@ -46,19 +46,26 @@ export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
 export function isInternetProvider(x: any): x is InternetProvider {
   return INTERNET_PROVIDERS.includes(x);
 }
-export type EntryType = 'preprocess' | 'context' | 'postprocess';
+export type NodeCategory = 'preprocess' | 'context' | 'postprocess';
 
-export interface Node {
+export interface NodeModel {
   nodeRef: ComponentRef<NodeDirective>;
   nodeType: NodeType;
+  nodeCategory: NodeCategory;
   nodeConfig?: NodeConfig;
   agent?: PreprocessAgent | ContextAgent | PostprocessAgent;
 }
 
+export interface ParentNode extends NodeModel {
+  then?: ParentNode[];
+  else?: ParentNode[];
+  fallback?: ParentNode;
+}
+
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
-  preprocess: ['historical', 'rephrase'],
+  preprocess: ['historical', 'rephrase', 'conditional'],
   context: ['conditional', 'ask', 'internet', 'sql', 'cypher'],
-  postprocess: ['validation', 'summarize', 'restart'],
+  postprocess: ['validation', 'summarize', 'restart', 'conditional'],
 };
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {

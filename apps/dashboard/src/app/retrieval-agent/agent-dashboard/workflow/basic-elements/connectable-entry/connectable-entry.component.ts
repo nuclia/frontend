@@ -9,7 +9,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { EntryType } from '../../workflow.models';
+import { NodeCategory } from '../../workflow.models';
 
 @Component({
   selector: 'app-connectable-entry',
@@ -19,7 +19,7 @@ import { EntryType } from '../../workflow.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConnectableEntryComponent {
-  type = input.required<EntryType>();
+  type = input.required<NodeCategory>();
   noOutput = input(false, { transform: booleanAttribute });
   clickOutput = output();
   activeState = signal(false);

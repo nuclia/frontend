@@ -13,8 +13,17 @@ import { DashboardLayoutService } from '@flaps/common';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { LinkService, WorkflowRoot, WorkflowRootComponent, WorkflowService } from './workflow';
-import { ConnectableEntryComponent } from './workflow/basic-elements';
+import {
+  activeSideBar,
+  ConnectableEntryComponent,
+  LinkService,
+  sideBarDescription,
+  sideBarOpen,
+  sideBarTitle,
+  WorkflowRoot,
+  WorkflowRootComponent,
+  WorkflowService,
+} from './workflow';
 
 @Component({
   imports: [CommonModule, TranslateModule, PaButtonModule, WorkflowRootComponent],
@@ -35,10 +44,10 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   @ViewChild('sidebarHeader') sidebarHeader?: ElementRef;
   @ViewChild('sidebarContentWrapper') sidebarContentWrapper?: ElementRef;
 
-  sideBarTitle = this.workflowService.sideBarTitle;
-  sideBarDescription = this.workflowService.sideBarDescription;
-  sideBarOpen = this.workflowService.sideBarOpen;
-  activeSideBar = this.workflowService.activeSideBar;
+  sideBarTitle = sideBarTitle;
+  sideBarDescription = sideBarDescription;
+  sideBarOpen = sideBarOpen;
+  activeSideBar = activeSideBar;
 
   ngAfterViewInit(): void {
     if (this.linkContainer) {

@@ -1,14 +1,12 @@
 import {
   ApplicationRef,
   ComponentRef,
-  computed,
   createComponent,
   ElementRef,
   inject,
   Injectable,
   Renderer2,
   RendererFactory2,
-  signal,
 } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
@@ -58,21 +56,22 @@ import { RulesPanelComponent } from './sidebar';
 import {
   askAgentToUi,
   askUiToCreation,
-  EntryType,
   InternetAgent,
   internetAgentToUi,
   internetUiToCreation,
   isInternetProvider,
-  Node,
   NODE_SELECTOR_ICONS,
+  NodeCategory,
   NODES_BY_ENTRY_TYPE,
   NodeType,
+  ParentNode,
   rephraseAgentToUi,
   rephraseUiToCreation,
   sqlAgentToUi,
   sqlUiToCreation,
   WorkflowRoot,
 } from './workflow.models';
+import { resetSidebar, setActiveSidebar, setOpenSidebar, setSidebarHeader } from './workflow.state';
 
 const COLUMN_CLASS = 'workflow-col';
 const SLIDE_DURATION = 800;
@@ -93,17 +92,13 @@ export class WorkflowService {
 
   private columns: HTMLElement[] = [];
   private nodes: {
-    [id: string]: Node;
+    [id: string]: ParentNode;
   } = {};
 
   private _workflowRoot?: WorkflowRoot;
   private _selectedNode = '';
   private _currentOrigin?: ConnectableEntryComponent;
   private _columnContainer?: ElementRef;
-  private _sideBarTitle = signal('');
-  private _sideBarDescription = signal('');
-  private _sideBarOpen = signal(false);
-  private _activeSideBar = signal<'' | 'rules' | 'add'>('');
   private _currentPanel?: ComponentRef<RulesPanelComponent | FormDirective>;
 
   set workflowRoot(root: WorkflowRoot) {
@@ -135,12 +130,6 @@ export class WorkflowService {
   sidebarHeader?: ElementRef;
   sidebarContentWrapper?: ElementRef;
 
-  // computed signals are readonly: we don't want components to interact directly with the sidebar
-  sideBarTitle = computed(() => this._sideBarTitle());
-  sideBarDescription = computed(() => this._sideBarDescription());
-  sideBarOpen = computed(() => this._sideBarOpen());
-  activeSideBar = computed(() => this._activeSideBar());
-
   /**
    * Initialise the workflow with the agents saved in current Arag, update the workflow when current Arag changes.
    */
@@ -157,18 +146,18 @@ export class WorkflowService {
         this.cleanWorkflow();
         preprocess.forEach((agent) => {
           setTimeout(() => {
-            this.createNodeFromSavedWorkflow(root.preprocess, agent.module, agent);
+            this.createNodeFromSavedWorkflow(root.preprocess, agent.module, 'preprocess', agent);
           });
         });
         context.forEach((agent) => {
           setTimeout(() => {
             const module = isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
-            this.createNodeFromSavedWorkflow(root.context, module, agent);
+            this.createNodeFromSavedWorkflow(root.context, module, 'context', agent);
           });
         });
         postprocess.forEach((agent) => {
           setTimeout(() => {
-            this.createNodeFromSavedWorkflow(root.postprocess, agent.module, agent);
+            this.createNodeFromSavedWorkflow(root.postprocess, agent.module, 'postprocess', agent);
           });
         });
       }),
@@ -184,10 +173,11 @@ export class WorkflowService {
   private createNodeFromSavedWorkflow(
     rootEntry: ConnectableEntryComponent,
     nodeType: NodeType,
+    nodeCategory: NodeCategory,
     agent: PreprocessAgent | ContextAgent | PostprocessAgent,
   ) {
-    const nodeRef = this.addNode(rootEntry, 1, nodeType);
-    this.nodes[nodeRef.instance.id].agent = agent;
+    const nodeRef = this.addNode(rootEntry, 1, nodeType, nodeCategory);
+    // this.nodes[nodeRef.instance.id].agent = agent;
     const config = this.getConfigFromAgent(agent);
     this.nodes[nodeRef.instance.id].nodeConfig = config;
     nodeRef.setInput('config', config);
@@ -214,10 +204,10 @@ export class WorkflowService {
     }
     const root = this.workflowRoot;
     this.resetState();
-    this._activeSideBar.set('add');
+    setActiveSidebar('add');
     const container: HTMLElement = this.openSidebarWithTitle(`retrieval-agents.workflow.sidebar.node-creation.toolbar`);
     container.classList.add('no-form');
-    const sections: EntryType[] = ['preprocess', 'context', 'postprocess'];
+    const sections: NodeCategory[] = ['preprocess', 'context', 'postprocess'];
     sections.forEach((section) => {
       const title: HTMLElement = this.renderer.createElement('div');
       title.classList.add('section-title');
@@ -249,18 +239,18 @@ export class WorkflowService {
 
   /**
    * Display the list of possible nodes for an origin type
-   * @param originType Entry type of origin: 'preprocess' | 'context' | 'postprocess'
+   * @param nodeCategory Entry type of origin: 'preprocess' | 'context' | 'postprocess'
    * @param container sidebar container
    * @param origin Connectable entry to be linked to the newly created node when selecting one of the listed nodes
    * @param columnIndex Index of the column in which the node should be added
    */
   private displayPossibleNodes(
-    originType: EntryType,
+    nodeCategory: NodeCategory,
     container: HTMLElement,
     origin: ConnectableEntryComponent,
     columnIndex: number,
   ) {
-    const possibleNodes = NODES_BY_ENTRY_TYPE[originType] || [];
+    const possibleNodes = NODES_BY_ENTRY_TYPE[nodeCategory] || [];
     possibleNodes.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
       selectorRef.setInput(
@@ -276,7 +266,7 @@ export class WorkflowService {
       container.appendChild(selectorRef.location.nativeElement);
       selectorRef.changeDetectorRef.detectChanges();
       selectorRef.instance.select.subscribe(() => {
-        const nodeRef = this.addNode(origin, columnIndex, nodeType);
+        const nodeRef = this.addNode(origin, columnIndex, nodeType, nodeCategory);
         nodeRef.location.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
         this.selectNode(nodeRef.instance.id);
       });
@@ -294,11 +284,11 @@ export class WorkflowService {
    */
   removeNodeAndLink(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
     const node = this.nodes[nodeRef.instance.id];
-    const agent = node?.agent;
     // if (!agent) {
     this._removeNodeAndLinks(nodeRef, column);
     this.closeSidebar();
     // } else {
+    // const agent = node?.agent;
     //   this.modalService
     //     .openConfirm({
     //       title: this.translate.instant('retrieval-agents.workflow.confirm-node-deletion.title'),
@@ -359,7 +349,7 @@ export class WorkflowService {
    * Close the sidebar and reset its content and node selection.
    */
   closeSidebar() {
-    this._sideBarOpen.set(false);
+    setOpenSidebar(false);
     this.unselectNode();
     // Wait until the slide animation is done before emptying the sidebar
     setTimeout(() => this.resetState(), SLIDE_DURATION);
@@ -370,7 +360,7 @@ export class WorkflowService {
    */
   openRuleSidebar() {
     this.resetState();
-    this._activeSideBar.set('rules');
+    setActiveSidebar('rules');
 
     const container: HTMLElement = this.openSidebarWithTitle(
       `retrieval-agents.workflow.sidebar.rules.title`,
@@ -410,9 +400,7 @@ export class WorkflowService {
     }
     // Reset the side bar
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
-    this._activeSideBar.set('');
-    this._sideBarTitle.set('');
-    this._sideBarDescription.set('');
+    resetSidebar();
     if (this._currentPanel) {
       this._currentPanel.destroy();
       this._currentPanel = undefined;
@@ -431,6 +419,7 @@ export class WorkflowService {
     origin: ConnectableEntryComponent,
     columnIndex: number,
     nodeType: NodeType,
+    nodeCategory: NodeCategory,
   ): ComponentRef<NodeDirective> {
     if (this.columnContainer && this.columns.length <= columnIndex) {
       const newColumn = this.renderer.createElement('div') as HTMLElement;
@@ -450,7 +439,7 @@ export class WorkflowService {
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
     nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id));
 
-    this.nodes[nodeRef.instance.id] = { nodeRef, nodeType };
+    this.nodes[nodeRef.instance.id] = { nodeRef, nodeType, nodeCategory };
     origin.activeState.set(false);
     return nodeRef;
   }
@@ -581,9 +570,8 @@ export class WorkflowService {
       throw new Error('Sidebar container not initialized');
     }
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
-    this._sideBarOpen.set(true);
-    this._sideBarTitle.set(this.translate.instant(titleKey));
-    this._sideBarDescription.set(descriptionKey ? this.translate.instant(descriptionKey) : '');
+    setOpenSidebar(true);
+    setSidebarHeader(this.translate.instant(titleKey), descriptionKey ? this.translate.instant(descriptionKey) : '');
     return container;
   }
 
