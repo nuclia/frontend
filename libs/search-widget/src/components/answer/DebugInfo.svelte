@@ -9,7 +9,7 @@
   export let show = false;
 </script>
 
-<div class="sw-debug-modal">
+<div class="sw-debug-info">
   <Modal
     {show}
     on:close={() => {
@@ -103,4 +103,4 @@
 
 <style
   lang="scss"
-  src="./DebugModal.scss"></style>
+  src="./DebugInfo.scss"></style>

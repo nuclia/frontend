@@ -36,7 +36,7 @@
     rephrasedQuery,
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
-  import { DebugModal, InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
+  import { DebugInfo, InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
   import { Button, IconButton } from '../../common';
 
@@ -126,7 +126,7 @@
                   size="small"
                   kind="secondary"
                   on:click={() => (showMetadata = true)} />
-                <DebugModal
+                <DebugInfo
                   rephrasedQuery={$rephrasedQuery}
                   bind:show={showMetadata} />
               </div>
