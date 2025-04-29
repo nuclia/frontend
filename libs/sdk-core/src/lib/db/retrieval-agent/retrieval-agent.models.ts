@@ -72,7 +72,7 @@ export interface Rule {
   prompt: string;
 }
 
-export type PreprocessModule = 'historical' | 'rephrase';
+export type PreprocessModule = 'historical' | 'rephrase' | 'conditional';
 export type ContextModule =
   | InternetProviderType
   | 'sql'
@@ -82,14 +82,14 @@ export type ContextModule =
   | 'conditional'
   | 'restricted'
   | 'sparql';
-export type PostprocessModule = 'summarize' | 'validation' | 'restart' | 'remi';
+export type PostprocessModule = 'summarize' | 'validation' | 'restart' | 'remi' | 'external' | 'conditional';
 
 export interface BaseAgent {
   id: string;
   rules: string[];
-  validate_model: string;
-  summarize_model: string;
   title?: string;
+  validate_model?: string;
+  summarize_model?: string;
 }
 
 export interface PreprocessAgent extends BaseAgent {
@@ -112,14 +112,14 @@ export type ContextAgentCreation =
   | AskAgentCreation
   | ConditionalAgentCreation
   | RestrictedAgentCreation
-  | DuckduckgoAgentCreation
   | GoogleAgentCreation
   | SparkleAgentCreation;
 export type PostprocessAgentCreation =
   | SummarizeAgentCreation
   | ValidationAgentCreation
   | RestartAgentCreation
-  | RemiAgentCreation;
+  | RemiAgentCreation
+  | ExternalAgentCreation;
 
 export interface HistoricalAgentCreation {
   module: 'historical';
@@ -212,8 +212,8 @@ export interface AskAgentCreation {
 
 export interface ConditionalAgentCreation {
   module: 'conditional';
-  then: ContextAgent;
-  else?: ContextAgent;
+  then: BaseAgent[];
+  else_?: BaseAgent[];
   prompt?: string;
   has_keywords?: string[];
   similarity?: string[];
@@ -226,13 +226,9 @@ export interface RestrictedAgentCreation {
   code: string;
 }
 
-export interface DuckduckgoAgentCreation {
-  module: 'duckduckgo';
-}
-
 export interface GoogleAgentCreation {
   module: 'google';
-  model_id?: string;
+  gen_model_id?: string;
 }
 
 export interface SparkleAgentCreation {
@@ -241,15 +237,26 @@ export interface SparkleAgentCreation {
 
 export interface SummarizeAgentCreation {
   module: 'summarize';
+  prompt?: string;
+  model?: string;
+  images?: boolean;
 }
 export interface ValidationAgentCreation {
   module: 'validation';
+  then?: PostprocessAgentCreation[];
+  else_?: PostprocessAgentCreation[];
 }
 export interface RestartAgentCreation {
   module: 'restart';
+  prompt: string;
+  model: string;
+  retries?: number;
 }
 export interface RemiAgentCreation {
   module: 'remi';
+}
+export interface ExternalAgentCreation {
+  module: 'external';
 }
 
 export interface HistoricalAgent extends PreprocessAgent, HistoricalAgentCreation {
@@ -285,9 +292,6 @@ export interface ConditionalAgent extends ContextAgent, ConditionalAgentCreation
 export interface RestrictedAgent extends ContextAgent, RestrictedAgentCreation {
   module: 'restricted';
 }
-export interface DuckduckgoAgent extends ContextAgent, DuckduckgoAgentCreation {
-  module: 'duckduckgo';
-}
 export interface GoogleAgent extends ContextAgent, GoogleAgentCreation {
   module: 'google';
 }
@@ -305,4 +309,7 @@ export interface RestartAgent extends PostprocessAgent, RestartAgentCreation {
 }
 export interface RemiAgent extends PostprocessAgent, RemiAgentCreation {
   module: 'remi';
+}
+export interface ExternalAgent extends PostprocessAgent, ExternalAgentCreation {
+  module: 'external';
 }

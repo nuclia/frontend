@@ -5,8 +5,6 @@ import {
   BraveAgent,
   BraveAgentCreation,
   ContextAgent,
-  DuckduckgoAgent,
-  DuckduckgoAgentCreation,
   GoogleAgent,
   GoogleAgentCreation,
   InternetProviderType,
@@ -40,9 +38,10 @@ export type NodeType =
   | 'internet'
   | 'sql'
   | 'cypher'
-  | 'remi';
+  | 'remi'
+  | 'external';
 
-const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'duckduckgo', 'google'];
+const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
 export function isInternetProvider(x: any): x is InternetProvider {
   return INTERNET_PROVIDERS.includes(x);
@@ -52,7 +51,7 @@ export type EntryType = 'preprocess' | 'context' | 'postprocess';
 export interface Node {
   nodeRef: ComponentRef<NodeDirective>;
   nodeType: NodeType;
-  nodeConfig?: any;
+  nodeConfig?: NodeConfig;
   agent?: PreprocessAgent | ContextAgent | PostprocessAgent;
 }
 
@@ -74,6 +73,18 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   summarize: 'summary',
   validation: 'validation',
 };
+
+export type NodeConfig =
+  | HistoricalAgentUI
+  | RephraseAgentUI
+  | InternetAgentUI
+  | SqlAgentUI
+  | CypherAgentUI
+  | AskAgentUI
+  | ConditionalAgentUI
+  | ValidationAgentUI
+  | SummarizeAgentUI
+  | RestartAgentUI;
 
 export interface HistoricalAgentUI {
   all: boolean;
@@ -190,9 +201,8 @@ export type InternetAgentCreation =
   | BraveAgentCreation
   | PerplexityAgentCreation
   | TavilyAgentCreation
-  | DuckduckgoAgentCreation
   | GoogleAgentCreation;
-export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | DuckduckgoAgent | GoogleAgent;
+export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | GoogleAgent;
 export function internetUiToCreation(config: InternetAgentUI): InternetAgentCreation {
   switch (config.provider) {
     case 'brave':
@@ -206,7 +216,6 @@ export function internetUiToCreation(config: InternetAgentUI): InternetAgentCrea
         ...config.perplexity,
       };
     case 'tavily':
-    case 'duckduckgo':
     case 'google':
       return {
         module: config.provider,

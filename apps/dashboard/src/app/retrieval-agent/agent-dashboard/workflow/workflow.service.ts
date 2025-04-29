@@ -691,6 +691,7 @@ export class WorkflowService {
       case 'summarize':
       case 'restart':
       case 'remi':
+      case 'external':
         return { module: nodeType, ...config };
     }
   }
@@ -702,7 +703,6 @@ export class WorkflowService {
       case 'brave':
       case 'perplexity':
       case 'tavily':
-      case 'duckduckgo':
       case 'google':
         return internetAgentToUi(agent as InternetAgent);
       case 'sql':
