@@ -550,6 +550,8 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
+export const rephrasedQuery = searchState.reader((state) => state.results.rephrased_query);
+
 export const triggerSearch: Subject<{ more: true } | void> = new Subject<{ more: true } | void>();
 
 export const addLabelFilter = (label: Classification, kinds: LabelSetKind[]) => {

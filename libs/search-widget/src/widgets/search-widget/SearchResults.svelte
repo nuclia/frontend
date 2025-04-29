@@ -33,11 +33,12 @@
     type WidgetAction,
     widgetActions,
     widgetJsonSchema,
+    rephrasedQuery,
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
-  import { InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
+  import { DebugModal, InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
-  import { Button } from '../../common';
+  import { Button, IconButton } from '../../common';
 
   export let cssPath = '';
   export let mode = '';
@@ -61,6 +62,7 @@
 
   let svgSprite: string;
   let container: HTMLElement;
+  let showMetadata = false;
 
   onMount(() => {
     if (pendingResults.getValue() || resultList.getValue().length > 0) {
@@ -115,7 +117,20 @@
           {/if}
         {/if}
         {#if !$isAnswerEnabled && $debug}
-          <div>
+          <div class="actions">
+            {#if $rephrasedQuery}
+              <div>
+                <IconButton
+                  aspect="basic"
+                  icon="info"
+                  size="small"
+                  kind="secondary"
+                  on:click={() => (showMetadata = true)} />
+                <DebugModal
+                  rephrasedQuery={$rephrasedQuery}
+                  bind:show={showMetadata} />
+              </div>
+            {/if}
             <Button
               aspect="basic"
               size="small"

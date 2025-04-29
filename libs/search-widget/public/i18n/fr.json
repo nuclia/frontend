@@ -15,6 +15,8 @@
 	"answer.json-answer.title": "Réponse JSON",
 	"answer.metadata.first-word-time": "Temps jusqu'au premier mot",
 	"answer.metadata.prompt-context": "Vous trouverez ci-dessous les blocs de texte fournis comme contexte dans le Prompt envoyé au LLM.",
+	"answer.metadata.rephrase": "Reformulation",
+	"answer.metadata.rephrased-query": "Requête reformulée",
 	"answer.metadata.seconds": "Secondes",
 	"answer.metadata.text-blocks": "Blocs de texte",
 	"answer.metadata.title": "Métadonnées de réponse",
