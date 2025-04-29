@@ -19,8 +19,17 @@ import { NodeCategory } from '../../workflow.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConnectableEntryComponent {
-  type = input.required<NodeCategory>();
+  // identifier of the connectable entry
+  id = input.required<string>();
+  // category to display when clicking on output
+  category = input.required<NodeCategory>();
+  // is this entry required for the node to be valid
+  required = input(false, { transform: booleanAttribute });
+  // does this entry have an output marker
   noOutput = input(false, { transform: booleanAttribute });
+  // identifier of this entry’s parent node
+  nodeId = input<string | null>();
+
   clickOutput = output();
   activeState = signal(false);
 

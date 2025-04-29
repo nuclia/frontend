@@ -227,16 +227,16 @@ export class WorkflowService {
     this.resetState();
 
     setCurrentOrigin(origin);
-    const originType = origin.type();
+    const originCategory = origin.category();
     const container: HTMLElement = this.openSidebarWithTitle(
-      `retrieval-agents.workflow.sidebar.node-creation.${originType}`,
+      `retrieval-agents.workflow.sidebar.node-creation.${originCategory}`,
     );
     container.classList.add('no-form');
-    this.displayPossibleNodes(originType, container, origin, columnIndex);
+    this.displayPossibleNodes(originCategory, container, origin, columnIndex);
   }
 
   /**
-   * Display the list of possible nodes for an origin type
+   * Display the list of possible nodes for a node category
    * @param nodeCategory Entry type of origin: 'preprocess' | 'context' | 'postprocess'
    * @param container sidebar container
    * @param origin Connectable entry to be linked to the newly created node when selecting one of the listed nodes
