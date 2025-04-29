@@ -42,7 +42,7 @@ import {
   TaskTrigger,
 } from '@nuclia/core';
 import { BehaviorSubject, filter, map, Subject, switchMap } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { delay, take, takeUntil } from 'rxjs/operators';
 import { TasksAutomationService } from '../tasks-automation.service';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
 import { UserKeysComponent, UserKeysForm } from '../../ai-models';
@@ -153,7 +153,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   headers: { key: string; value: string }[] = [];
   parameters: { key: string; value: string }[] = [];
   tasksRoute = this.tasksAutomation.tasksRoute;
-
+  formInitialized = new BehaviorSubject(false);
   selectedFilters = new BehaviorSubject<string[]>([]);
 
   get generativeModel() {
@@ -287,18 +287,27 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       this.headers = Object.entries(triggers.headers || {}).map(([key, value]) => ({ key, value }));
       this.parameters = Object.entries(triggers.params || {}).map(([key, value]) => ({ key, value }));
     }
+    this.formInitialized.next(true);
     this.cdr.markForCheck();
   }
 
   initUserKeysForm(form: UserKeysForm) {
     this.userKeysForm = form;
-    if (this.task && this.generativeModel?.user_key) {
-      const userkeys = this.task.parameters.llm.keys?.[this.generativeModel.user_key];
-      this.userKeysForm.patchValue({
-        enabled: !!userkeys,
-        user_keys: userkeys,
+    this.formInitialized
+      .pipe(
+        filter((value) => value),
+        take(1),
+        delay(100), // Wait until the form is updated
+      )
+      .subscribe(() => {
+        if (this.generativeModel?.user_key) {
+          const userkeys = this.task?.parameters.llm.keys?.[this.generativeModel.user_key];
+          this.userKeysForm?.patchValue({
+            enabled: !!userkeys,
+            user_keys: userkeys,
+          });
+        }
       });
-    }
     // Change detection is needed when the child component changes the form
     this.userKeysForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.cdr.detectChanges();
