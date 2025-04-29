@@ -57,9 +57,10 @@ export interface NodeModel {
 }
 
 export interface ParentNode extends NodeModel {
-  then?: ParentNode[];
-  else?: ParentNode[];
-  fallback?: ParentNode;
+  // we store the child nodes’ UI id
+  then?: string[];
+  else?: string[];
+  fallback?: string;
 }
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {

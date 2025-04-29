@@ -332,6 +332,7 @@ export class WorkflowService {
   }
 
   private _removeNodeAndLinks(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
+    // TODO remove also children if any
     if (nodeRef.instance.boxComponent.linkRef) {
       this.linkService.removeLink(nodeRef.instance.boxComponent.linkRef);
     }
@@ -435,7 +436,7 @@ export class WorkflowService {
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
     nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id, nodeCategory));
 
-    addNode(nodeRef, nodeType, nodeCategory);
+    addNode(nodeRef, nodeType, nodeCategory, origin);
     origin.activeState.set(false);
     return nodeRef;
   }

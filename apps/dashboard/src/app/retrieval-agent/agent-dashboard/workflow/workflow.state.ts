@@ -1,6 +1,6 @@
 import { ComponentRef, computed, signal } from '@angular/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
-import { NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
+import { NodeCategory, NodeType, ParentNode } from './workflow.models';
 
 /**
  * Sidebar state
@@ -41,6 +41,7 @@ export const activeSideBar = computed(() => sidebar().active);
 const preprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const contextNodes = signal<{ [id: string]: ParentNode }>({});
 const postprocessNodes = signal<{ [id: string]: ParentNode }>({});
+const childNodes = signal<{ [id: string]: ParentNode }>({});
 const selectedNode = signal<{ id: string; nodeCategory: NodeCategory } | null>(null);
 const currentOrigin = signal<ConnectableEntryComponent | null>(null);
 
@@ -49,6 +50,7 @@ export const workflow = computed(() => {
     preprocess: preprocessNodes(),
     context: contextNodes(),
     postprocess: postprocessNodes(),
+    children: childNodes(),
   };
 });
 
@@ -88,15 +90,28 @@ export function unselectNode() {
  * @returns The node corresponding to specified id or undefined
  */
 export function getNode(id: string, nodeCategory: NodeCategory): ParentNode | undefined {
+  let node;
   switch (nodeCategory) {
     case 'preprocess':
-      return preprocessNodes()[id];
+      node = preprocessNodes()[id];
+      break;
     case 'context':
-      return contextNodes()[id];
+      node = contextNodes()[id];
+      break;
     case 'postprocess':
-      return postprocessNodes()[id];
+      node = postprocessNodes()[id];
+      break;
   }
+  if (!node) {
+    node = childNodes()[id];
+  }
+  return node;
 }
+
+function _isChildNode(id: string): boolean {
+  return !!childNodes()[id];
+}
+
 /**
  * Get all nodes
  * @returns List of nodes from all categories.
@@ -111,24 +126,48 @@ export function getAllNodes(): ParentNode[] {
  * @param nodeRef
  * @param nodeType
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
- * @param nodeConfig Optional: Node configuration from Agent
+ * @param origin Connectable entry of origin
  */
 export function addNode(
   nodeRef: ComponentRef<NodeDirective>,
   nodeType: NodeType,
   nodeCategory: NodeCategory,
-  nodeConfig?: NodeConfig,
+  origin: ConnectableEntryComponent,
 ) {
-  const node = { nodeRef, nodeType, nodeCategory, nodeConfig };
+  const node = { nodeRef, nodeType, nodeCategory };
+  const nodeId = nodeRef.instance.id;
+  const parentId = origin.nodeId();
+
+  if (!parentId) {
+    _addNode(nodeId, nodeCategory, node);
+  } else {
+    childNodes.update((children) => ({ ...children, [nodeRef.instance.id]: node }));
+    // Reference child in parent
+    const parent = getNode(parentId, nodeCategory);
+    if (!parent) {
+      throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
+    }
+    const property = origin.id();
+    if (property === 'then' || property === 'else') {
+      const childIds = parent[property] || [];
+      childIds.push(nodeId);
+      updateNode(parentId, nodeCategory, { [property]: childIds });
+    } else if (property === 'fallback') {
+      updateNode(parentId, nodeCategory, { fallback: nodeId });
+    }
+  }
+}
+
+function _addNode(id: string, nodeCategory: NodeCategory, node: ParentNode) {
   switch (nodeCategory) {
     case 'preprocess':
-      preprocessNodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: node }));
+      preprocessNodes.update((_nodes) => ({ ..._nodes, [id]: node }));
       break;
     case 'context':
-      contextNodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: node }));
+      contextNodes.update((_nodes) => ({ ..._nodes, [id]: node }));
       break;
     case 'postprocess':
-      postprocessNodes.update((_nodes) => ({ ..._nodes, [nodeRef.instance.id]: node }));
+      postprocessNodes.update((_nodes) => ({ ..._nodes, [id]: node }));
       break;
   }
 }
@@ -143,20 +182,34 @@ export function deleteNode(id: string, nodeCategory: NodeCategory) {
     unselectNode();
   }
   let nodeSignal;
-  switch (nodeCategory) {
-    case 'preprocess':
-      nodeSignal = preprocessNodes;
-      break;
-    case 'context':
-      nodeSignal = contextNodes;
-      break;
-    case 'postprocess':
-      nodeSignal = postprocessNodes;
-      break;
+  if (_isChildNode(id)) {
+    nodeSignal = childNodes;
+  } else {
+    switch (nodeCategory) {
+      case 'preprocess':
+        nodeSignal = preprocessNodes;
+        break;
+      case 'context':
+        nodeSignal = contextNodes;
+        break;
+      case 'postprocess':
+        nodeSignal = postprocessNodes;
+        break;
+    }
   }
+  const nodeList = nodeSignal();
+  const node = nodeList[id];
+  if (node && (node.then || node.else || node.fallback)) {
+    const childToDelete = (node.then || []).concat(node.else || []);
+    if (node.fallback) {
+      childToDelete.push(node.fallback);
+    }
+    childToDelete.forEach((nodeId) => deleteNode(nodeId, nodeCategory));
+  }
+  // Get nodes again as the list might have changed if there was children to delete
   const _nodes = nodeSignal();
   delete _nodes[id];
-  nodeSignal.set(_nodes);
+  nodeSignal.set({ ..._nodes });
 }
 
 /**
@@ -176,7 +229,14 @@ export function resetNodes() {
  */
 export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: Partial<ParentNode>) {
   const node = getNode(id, nodeCategory);
-  if (node) {
+  if (!node) {
+    throw new Error(`updateNode: Node ${id} not found.`);
+  }
+
+  const isChild = _isChildNode(id);
+  if (isChild) {
+    childNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
+  } else {
     switch (nodeCategory) {
       case 'preprocess':
         preprocessNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
@@ -188,9 +248,10 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
         postprocessNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
         break;
     }
-    if (partialNode.nodeConfig) {
-      node.nodeRef.setInput('config', partialNode.nodeConfig);
-    }
+  }
+
+  if (partialNode.nodeConfig) {
+    node.nodeRef.setInput('config', partialNode.nodeConfig);
   }
 }
 
