@@ -97,6 +97,14 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
     return this._generativeModel;
   }
   private _generativeModel = '';
+  @Input() set generateAnswer(value: boolean) {
+    this._generateAnswer = value;
+    this.disableCitations(this.jsonOutputEnabled, value);
+  }
+  get generateAnswer() {
+    return this._generateAnswer;
+  }
+  private _generateAnswer = true;
   @Input() useSearchResults = true;
 
   @Output() heightChanged = new EventEmitter<void>();
@@ -184,8 +192,8 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
   /**
    * Citations are incompatible with json output
    */
-  disableCitations(jsonOutputEnabled: boolean) {
-    if (jsonOutputEnabled) {
+  disableCitations(jsonOutputEnabled: boolean, generateAnswer: boolean) {
+    if (jsonOutputEnabled || !generateAnswer) {
       this.showResultTypeControl.patchValue('all-resources');
       this.showResultTypeControl.disable();
     } else if (this.showResultTypeControl.disabled) {

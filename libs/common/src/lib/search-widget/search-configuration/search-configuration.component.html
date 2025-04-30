@@ -148,6 +148,7 @@
               [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
               [modelNames]="generativeModelNames"
               [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
+              [generateAnswer]="currentConfig?.generativeAnswer?.generateAnswer"
               [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
               (configChanged)="updateResultDisplayConfig($event)"
               (heightChanged)="updateResultsHeight()"></stf-results-display-form>
