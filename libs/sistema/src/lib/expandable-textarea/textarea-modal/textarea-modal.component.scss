@@ -1,0 +1,16 @@
+@use 'apps/dashboard/src/variables' as *;
+
+pa-textarea {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  width: rhythm(90);
+}
+
+pa-textarea ::ng-deep {
+  .pa-field,
+  .pa-field-container,
+  textarea {
+    height: 100%;
+  }
+}

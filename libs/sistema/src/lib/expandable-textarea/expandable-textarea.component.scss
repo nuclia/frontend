@@ -1,0 +1,17 @@
+@use '../../../styles/variables' as *;
+@use '../../../../pastanaga-angular/projects/pastanaga-angular/src/lib/controls/textfield/textarea/textarea.component.scss';
+
+:host:hover {
+  position: relative;
+  .expand {
+    display: block;
+  }
+}
+
+.expand {
+  background-color: $color-light-stronger;
+  display: none;
+  position: absolute;
+  right: rhythm(0.5);
+  top: rhythm(0.5);
+}
