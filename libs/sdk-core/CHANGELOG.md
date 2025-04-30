@@ -1,3 +1,9 @@
+# 1.26.1 (unreleased)
+
+### Improvements
+
+- Add `rephrased_query` property to `FindResults` interface
+
 # 1.26.0 (2025-04-18)
 
 ### Feature

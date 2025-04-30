@@ -7,7 +7,7 @@
   import { Button, Expander, IconButton, Tooltip } from '../../common';
   import { MarkdownRendering } from '../viewer';
   import Sources from './Sources.svelte';
-  import AnswerMetadata from './AnswerMetadata.svelte';
+  import DebugInfo from './DebugInfo.svelte';
   import Image from '../image/Image.svelte';
   import {
     chat,
@@ -277,8 +277,9 @@
                   size="small"
                   kind="secondary"
                   on:click={() => (showMetadata = true)} />
-                <AnswerMetadata
+                <DebugInfo
                   {answer}
+                  rephrasedQuery={answer.sources?.rephrased_query}
                   bind:show={showMetadata} />
               </div>
             {/if}

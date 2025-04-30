@@ -328,6 +328,7 @@ export namespace Search {
     relations?: Relations;
     autofilters?: string[];
     searchId?: string;
+    rephrased_query?: string;
   }
 
   export interface FindResource extends IResource {

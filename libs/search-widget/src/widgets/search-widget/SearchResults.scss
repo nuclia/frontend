@@ -35,6 +35,12 @@ h3 {
   display: none;
 }
 
+.actions {
+  align-items: center;
+  display: flex;
+  gap: var(--rhythm-0_5);
+}
+
 @media (min-width: 1200px) {
   .results-container {
     flex-direction: row;
