@@ -1,7 +1,7 @@
 @if (learningConfigurations; as learningConfig) {
   <div class="form-container">
     @if (generativeModel?.user_key) {
-      @if (learningConfig['user_keys'].schemas?.[generativeModel?.user_key || '']; as userKeys) {
+      @if (userKeys) {
         <div class="separator"></div>
         @if (modelsRequiringUserKey.includes(generativeModel?.value || '')) {
           <div class="title-s">
@@ -33,21 +33,54 @@
           <div
             class="form-container"
             [formGroup]="userKeysGroup">
-            @for (field of userKeys.properties | keyvalue; track field.key) {
-              @if (field.value['widget'] === 'textarea') {
-                <pa-textarea
-                  resizable
-                  [formControlName]="field.key"
-                  [rows]="2"
-                  [help]="(userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')">
-                  {{ field.value.title }}
-                </pa-textarea>
+            @for (field of userKeysPropertiesEntries; track field.key) {
+              @if (field.value.isSubForm) {
+                <div [formGroupName]="field.key">
+                  <div class="title-s">
+                    {{ field.value.title }}
+                  </div>
+                  <div class="subfields form-container">
+                    @for (subfield of field.value.properties; track subfield.key) {
+                      @if (subfield.value.type === 'boolean') {
+                        <pa-toggle
+                          [formControlName]="subfield.key"
+                          [help]="subfield.value.description">
+                          {{ subfield.value.title }}
+                        </pa-toggle>
+                      } @else if (subfield.value.type === 'number' || subfield.value.type === 'integer') {
+                        <pa-input
+                          [formControlName]="subfield.key"
+                          type="number"
+                          [step]="subfield.value.type === 'number' ? '0.01' : '1'"
+                          [help]="subfield.value.description">
+                          {{ subfield.value.title }}
+                        </pa-input>
+                      } @else {
+                        <pa-input
+                          [formControlName]="subfield.key"
+                          [help]="subfield.value.description">
+                          {{ subfield.value.title }}
+                        </pa-input>
+                      }
+                    }
+                  </div>
+                </div>
               } @else {
-                <pa-input
-                  [formControlName]="field.key"
-                  [help]="(userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')">
-                  {{ field.value.title }}
-                </pa-input>
+                @if (field.value['widget'] === 'textarea') {
+                  <pa-textarea
+                    resizable
+                    [formControlName]="field.key"
+                    [rows]="2"
+                    [help]="(userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')">
+                    {{ field.value.title }}
+                  </pa-textarea>
+                } @else {
+                  <pa-input
+                    [formControlName]="field.key"
+                    [help]="(userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')">
+                    {{ field.value.title }}
+                  </pa-input>
+                }
               }
             }
           </div>
