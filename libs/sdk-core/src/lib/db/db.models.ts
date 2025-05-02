@@ -293,6 +293,8 @@ export interface LearningConfigurationProperty {
   // used in hf_embedding
   default?: any;
   description?: string;
+  anyOf?: { type: string }[];
+  $ref?: string;
 }
 
 export interface LearningConfigurationSchema {
@@ -300,6 +302,31 @@ export interface LearningConfigurationSchema {
   type: string;
   properties: { [key: string]: LearningConfigurationProperty };
   required: string[];
+  $defs?: { [key: string]: LearningConfigurationSchema };
+}
+
+export function getLearningConfigPropType(property: LearningConfigurationProperty): string {
+  if (property.type) {
+    return property.type;
+  }
+  if (property.anyOf) {
+    const types = property.anyOf.map((item) => item.type).filter((item) => item !== 'null');
+    if (types.length === 1) {
+      return types[0];
+    }
+  }
+  return 'string';
+}
+
+export function getSubSchema(
+  schema: LearningConfigurationSchema,
+  property: LearningConfigurationProperty,
+): LearningConfigurationSchema | undefined {
+  const key = property.$ref?.split('/').pop();
+  if (key && schema.$defs && schema.$defs[key]) {
+    return schema.$defs[key];
+  }
+  return undefined;
 }
 
 export type LearningConfigurationSet = { id: string; data: LearningConfiguration }[];

@@ -13,15 +13,25 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, take, takeUntil } from 'rxjs';
-import { LearningConfigurationOption, LearningConfigurations } from '@nuclia/core';
+import {
+  getLearningConfigPropType,
+  getSubSchema,
+  type LearningConfigurationOption,
+  type LearningConfigurations,
+  type LearningConfigurationProperty,
+} from '@nuclia/core';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { keyProviders } from '../../ai-models.utils';
+import { KeyValue } from '@angular/common';
 
 export type UserKeysForm = FormGroup<{
   enabled: FormControl<boolean>;
   user_keys: FormGroup<{ [key: string]: any }>;
 }>;
 
+interface UserKeysProperties {
+  [key: string]: LearningConfigurationProperty & { isSubForm?: boolean };
+}
 @Component({
   selector: 'stf-user-keys',
   imports: [
@@ -33,6 +43,7 @@ export type UserKeysForm = FormGroup<{
     UnauthorizedFeatureDirective,
   ],
   templateUrl: './user-keys.component.html',
+  styleUrls: ['./user-keys.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserKeysComponent implements OnChanges, OnDestroy {
@@ -49,6 +60,10 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
       this.updateForm();
     }
   }
+  // Preserve original property order
+  originalOrder = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
+    return 0;
+  };
 
   form: UserKeysForm = new FormGroup({
     enabled: new FormControl<boolean>(false, { nonNullable: true }),
@@ -67,6 +82,33 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
   }
   get userKeysGroup() {
     return this.form.controls.user_keys;
+  }
+  get userKeys() {
+    return this.learningConfigurations && this.generativeModel?.user_key
+      ? this.learningConfigurations['user_keys'].schemas?.[this.generativeModel.user_key]
+      : undefined;
+  }
+  get userKeysProperties(): UserKeysProperties {
+    return Object.entries(this.userKeys?.properties || {}).reduce((acc, [key, prop]) => {
+      // TEMPORARY, for now the tokenizer field is useless
+      if (key === 'tokenizer') {
+        return acc;
+      }
+      const subSchema = this.userKeys && getSubSchema(this.userKeys, this.userKeys?.properties?.[key]);
+      if (subSchema && subSchema.properties) {
+        acc[key] = {
+          ...prop,
+          isSubForm: true,
+          properties: Object.entries(subSchema.properties).reduce((acc, [subKey, subProp]) => {
+            acc[subKey] = { ...subProp, type: getLearningConfigPropType(subProp) };
+            return acc;
+          }, {} as UserKeysProperties),
+        };
+      } else {
+        acc[key] = prop;
+      }
+      return acc;
+    }, {} as any);
   }
 
   constructor(
@@ -98,9 +140,8 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
     }
     if (this.generativeModel.user_key) {
       // add user_keys controls corresponding to generative model if any
-      const newUserKeys = Object.keys(
-        this.learningConfigurations['user_keys'].schemas?.[this.generativeModel?.user_key]?.properties || {},
-      );
+      const userKeysConfig = this.learningConfigurations['user_keys'].schemas?.[this.generativeModel.user_key];
+      const newUserKeys = Object.keys(userKeysConfig?.properties || {});
       Object.keys(this.userKeysGroup.controls).forEach((oldKey) => {
         if (newUserKeys.includes(oldKey)) {
           // clean up value from previous fields
@@ -112,7 +153,30 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
       });
       newUserKeys.forEach((key) => {
         if (!this.userKeysGroup.get(key)) {
-          this.userKeysGroup.addControl(key, new FormControl<string>(''));
+          // TEMPORARY, for now the tokenizer field is useless
+          if (key === 'tokenizer') {
+            return;
+          }
+          const subSchema = userKeysConfig && getSubSchema(userKeysConfig, userKeysConfig?.properties?.[key]);
+          if (subSchema && subSchema.properties) {
+            const subForm = new FormGroup({});
+            Object.entries(subSchema.properties).forEach(([subKey, prop]) => {
+              const subKeyType = getLearningConfigPropType(prop);
+              if (subKeyType === 'boolean') {
+                subForm.addControl(subKey, new FormControl<boolean>(prop.default || false, { nonNullable: true }));
+              } else if (subKeyType === 'number' || subKeyType === 'integer') {
+                subForm.addControl(
+                  subKey,
+                  new FormControl<number>(prop.default || prop.default === 0 ? prop.default : null),
+                );
+              } else {
+                subForm.addControl(subKey, new FormControl<string>(prop.default || ''));
+              }
+            });
+            this.userKeysGroup.addControl(key, subForm);
+          } else {
+            this.userKeysGroup.addControl(key, new FormControl<string>(''));
+          }
         }
       });
       this.updateValidators();
