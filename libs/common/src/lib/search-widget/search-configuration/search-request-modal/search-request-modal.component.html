@@ -60,6 +60,15 @@
           } @else {
             <nsi-info-card>
               <pre><code class="body-s">{{ payloadJson }}</code></pre>
+              <pa-button
+                class="copy"
+                aspect="basic"
+                icon="copy"
+                iconAndText
+                size="small"
+                (click)="copy('payload')">
+                {{ (copied['payload'] ? 'generic.copied' : 'generic.copy') | translate }}
+              </pa-button>
             </nsi-info-card>
           }
         </div>
@@ -103,6 +112,15 @@
           } @else {
             <nsi-info-card>
               <pre><code class="body-s">{{ headersJson }}</code></pre>
+              <pa-button
+                class="copy"
+                aspect="basic"
+                icon="copy"
+                iconAndText
+                size="small"
+                (click)="copy('headers')">
+                {{ (copied['headers'] ? 'generic.copied' : 'generic.copy') | translate }}
+              </pa-button>
             </nsi-info-card>
           }
         </div>

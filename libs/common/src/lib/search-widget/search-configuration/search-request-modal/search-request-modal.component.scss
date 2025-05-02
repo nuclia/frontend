@@ -27,3 +27,12 @@ pre {
 .help {
   color: $color-neutral-regular;
 }
+
+nsi-info-card {
+  position: relative;
+  .copy {
+    position: absolute;
+    right: rhythm(2);
+    top: rhythm(1.5);
+  }
+}
