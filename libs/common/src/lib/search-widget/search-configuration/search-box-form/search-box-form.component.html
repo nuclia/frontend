@@ -152,13 +152,14 @@
         <div
           class="extra-fields"
           [class.visible]="useRephrasePromptEnabled">
-          <pa-textarea
+          <nsi-expandable-textarea
             formControlName="rephrasePrompt"
             resizable
             rows="4"
+            modalTitle="search.configuration.search-box.rephrase-prompt.textarea-label"
             (resizing)="heightChanged.emit()">
             {{ 'search.configuration.search-box.rephrase-prompt.textarea-label' | translate }}
-          </pa-textarea>
+          </nsi-expandable-textarea>
         </div>
       </div>
     }

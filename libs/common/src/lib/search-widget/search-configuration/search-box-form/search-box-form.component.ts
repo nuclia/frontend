@@ -20,7 +20,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { BadgeComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { FeaturesService, SDKService, UnauthorizedFeatureDirective } from '@flaps/core';
@@ -41,6 +41,7 @@ import { Widget } from '@nuclia/core';
     UnauthorizedFeatureDirective,
     PaButtonModule,
     BadgeComponent,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './search-box-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

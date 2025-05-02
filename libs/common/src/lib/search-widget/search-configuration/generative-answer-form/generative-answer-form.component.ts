@@ -16,7 +16,7 @@ import { takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { BadgeComponent, InfoCardComponent } from '@nuclia/sistema';
+import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { RouterLink } from '@angular/router';
 import { RAG_METADATAS, Widget } from '@nuclia/core';
@@ -34,6 +34,7 @@ import { RAG_METADATAS, Widget } from '@nuclia/core';
     RouterLink,
     PaTextFieldModule,
     BadgeComponent,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './generative-answer-form.component.html',
   styleUrl: './generative-answer-form.component.scss',

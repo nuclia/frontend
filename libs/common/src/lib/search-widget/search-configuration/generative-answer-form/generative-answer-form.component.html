@@ -55,14 +55,15 @@
         @if (userPromptInfo) {
           <nsi-info-card>{{ userPromptInfo }}</nsi-info-card>
         }
-        <pa-textarea
+        <nsi-expandable-textarea
           formControlName="prompt"
           resizable
           rows="4"
           help="search.configuration.generative-answer.prompt.textarea-help"
+          modalTitle="search.configuration.generative-answer.prompt.textarea-label"
           (resizing)="heightChanged.emit()">
           {{ 'search.configuration.generative-answer.prompt.textarea-label' | translate }}
-        </pa-textarea>
+        </nsi-expandable-textarea>
       </div>
     </div>
     <div class="config-form-field">
@@ -89,14 +90,15 @@
       <div
         class="extra-fields"
         [class.visible]="useSystemPromptEnabled">
-        <pa-textarea
+        <nsi-expandable-textarea
           formControlName="systemPrompt"
           resizable
           rows="4"
           help="search.configuration.generative-answer.prompt.textarea-help"
+          modalTitle="search.configuration.generative-answer.system-prompt.textarea-label"
           (resizing)="heightChanged.emit()">
-          System prompt
-        </pa-textarea>
+          {{ 'search.configuration.generative-answer.system-prompt.textarea-label' | translate }}
+        </nsi-expandable-textarea>
       </div>
     </div>
     @if (useSearchResults) {

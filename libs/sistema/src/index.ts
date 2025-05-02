@@ -3,6 +3,7 @@ export * from './lib/badge';
 export * from './lib/button-mini';
 export * from './lib/dropdown-button';
 export * from './lib/cards';
+export * from './lib/expandable-textarea';
 export * from './lib/folder-list';
 export * from './lib/folder-tree';
 export * from './lib/home-container';
