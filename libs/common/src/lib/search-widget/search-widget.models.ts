@@ -76,8 +76,8 @@ function getBaseSearchOptions(searchConfig: Widget.SearchConfiguration): BaseSea
     autofilter: searchConfig.searchBox.autofilter,
     show_hidden: searchConfig.searchBox.showHiddenResources,
   };
-  if (searchConfig.searchBox.semanticReranking) {
-    options.reranker = Reranker.PREDICT;
+  if (!searchConfig.searchBox.semanticReranking) {
+    options.reranker = Reranker.NOOP;
   }
   if (searchConfig.searchBox.rrfBoosting && typeof searchConfig.searchBox.rrfSemanticBoosting === 'number') {
     options.rank_fusion = { name: 'rrf', boosting: { semantic: searchConfig.searchBox.rrfSemanticBoosting } };
@@ -176,7 +176,7 @@ export function getSearchConfigFromSearchOptions(id: string, searchOptions: Sear
     autofilter: !!options.autofilter,
     highlight: !!options.highlight,
     rephraseQuery: !!options.rephrase,
-    semanticReranking: options.reranker === 'predict',
+    semanticReranking: options.reranker === undefined || options.reranker === Reranker.PREDICT,
     showHiddenResources: !!options.show_hidden,
     vectorset: options.vectorset || '',
   };
