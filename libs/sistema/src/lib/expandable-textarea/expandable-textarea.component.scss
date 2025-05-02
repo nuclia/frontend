@@ -9,9 +9,12 @@
 }
 
 .expand {
-  background-color: $color-light-stronger;
   display: none;
   position: absolute;
-  right: rhythm(0.5);
+  right: rhythm(1.5); // Avoid overlapping with the scrollbar
   top: rhythm(0.5);
+}
+
+.pa-field-textarea {
+  padding-right: rhythm(4);
 }
