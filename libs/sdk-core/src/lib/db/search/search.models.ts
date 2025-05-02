@@ -292,7 +292,7 @@ export enum SHORT_FIELD_TYPE {
 }
 
 export enum Reranker {
-  MULTI_MATCH_BOOSTER = 'multi_match_booster',
+  NOOP = 'noop',
   PREDICT = 'predict',
 }
 

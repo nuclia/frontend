@@ -9,7 +9,7 @@ import {
   RagStrategyName,
   SearchConfig,
 } from '../kb';
-import { Filter } from './search.models';
+import { Filter, Reranker } from './search.models';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Widget {
@@ -714,8 +714,8 @@ function getMetadata(config: Widget.ResultDisplayConfig): string {
 function getWidgetTheme(options: Widget.WidgetConfiguration): string {
   return options.darkMode === 'dark' ? 'dark' : '';
 }
-function getReranker(config: Widget.SearchBoxConfig): string {
-  return config.semanticReranking ? 'predict' : '';
+function getReranker(config: Widget.SearchBoxConfig): string | undefined {
+  return config.semanticReranking ? undefined : Reranker.NOOP;
 }
 function getRrfBoosting(config: Widget.SearchBoxConfig): string {
   return config.rrfBoosting && config.rrfSemanticBoosting !== undefined ? config.rrfSemanticBoosting.toString() : '';
