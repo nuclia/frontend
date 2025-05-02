@@ -159,7 +159,7 @@
       formControlName="jsonOutput"
       withBackground
       spaceBetweenLabelAndToggle
-      (valueChange)="disableCitations($event)">
+      (valueChange)="disableCitations($event, generateAnswer)">
       <span class="toggle-label">
         {{ 'search.configuration.result-display.json-schema.toggle-label' | translate }}
         <nsi-badge kind="tertiary">{{ 'generic.badge.beta' | translate }}</nsi-badge>
