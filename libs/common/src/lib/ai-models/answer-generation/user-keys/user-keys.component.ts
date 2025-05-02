@@ -30,7 +30,10 @@ export type UserKeysForm = FormGroup<{
 }>;
 
 interface UserKeysProperties {
-  [key: string]: LearningConfigurationProperty & { isSubForm?: boolean };
+  [key: string]: LearningConfigurationProperty & {
+    isSubForm?: boolean;
+    properties?: { key: string; value: LearningConfigurationProperty }[];
+  };
 }
 @Component({
   selector: 'stf-user-keys',
@@ -60,10 +63,6 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
       this.updateForm();
     }
   }
-  // Preserve original property order
-  originalOrder = (a: KeyValue<number, string>, b: KeyValue<number, string>): number => {
-    return 0;
-  };
 
   form: UserKeysForm = new FormGroup({
     enabled: new FormControl<boolean>(false, { nonNullable: true }),
@@ -99,16 +98,23 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
         acc[key] = {
           ...prop,
           isSubForm: true,
-          properties: Object.entries(subSchema.properties).reduce((acc, [subKey, subProp]) => {
-            acc[subKey] = { ...subProp, type: getLearningConfigPropType(subProp) };
-            return acc;
-          }, {} as UserKeysProperties),
+          properties: Object.entries(subSchema.properties).map(([subKey, subProp]) => ({
+            key: subKey,
+            value: { ...subProp, type: getLearningConfigPropType(subProp) },
+          })),
         };
       } else {
         acc[key] = prop;
       }
       return acc;
     }, {} as any);
+  }
+
+  get userKeysPropertiesEntries() {
+    return Object.entries(this.userKeysProperties).map(([key, value]) => ({
+      key,
+      value,
+    }));
   }
 
   constructor(
