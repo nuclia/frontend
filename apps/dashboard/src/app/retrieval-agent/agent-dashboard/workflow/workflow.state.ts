@@ -176,13 +176,16 @@ function _addNode(id: string, nodeCategory: NodeCategory, node: ParentNode) {
  * Delete node
  * @param id Node identifier
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+ * @returns the list of children’s nodeRef deleted as well
  */
-export function deleteNode(id: string, nodeCategory: NodeCategory) {
+export function deleteNode(id: string, nodeCategory: NodeCategory): ComponentRef<NodeDirective>[] {
   if (selectedNode()?.id === id) {
     unselectNode();
   }
+  const isChild = _isChildNode(id);
+  let childrenRefs: ComponentRef<NodeDirective>[] = [];
   let nodeSignal;
-  if (_isChildNode(id)) {
+  if (isChild) {
     nodeSignal = childNodes;
   } else {
     switch (nodeCategory) {
@@ -199,17 +202,23 @@ export function deleteNode(id: string, nodeCategory: NodeCategory) {
   }
   const nodeList = nodeSignal();
   const node = nodeList[id];
+  if (isChild) {
+    childrenRefs.push(node.nodeRef);
+  }
   if (node && (node.then || node.else || node.fallback)) {
     const childToDelete = (node.then || []).concat(node.else || []);
     if (node.fallback) {
       childToDelete.push(node.fallback);
     }
-    childToDelete.forEach((nodeId) => deleteNode(nodeId, nodeCategory));
+    childToDelete.forEach((nodeId) => {
+      childrenRefs = childrenRefs.concat(deleteNode(nodeId, nodeCategory));
+    });
   }
   // Get nodes again as the list might have changed if there was children to delete
   const _nodes = nodeSignal();
   delete _nodes[id];
   nodeSignal.set({ ..._nodes });
+  return childrenRefs;
 }
 
 /**

@@ -332,15 +332,28 @@ export class WorkflowService {
   }
 
   private _removeNodeAndLinks(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
-    // TODO remove also children if any
+    // Remove selected node
+    this._removeFromDom(nodeRef, column);
+    unselectNode();
+
+    // Remove also corresponding children
+    const deletedChildren = deleteNode(nodeRef.instance.id, nodeRef.instance.category());
+    deletedChildren.forEach((ref) => {
+      const columnIndex = ref.instance.columnIndex;
+      const childColumn = this.columns[columnIndex];
+      this._removeFromDom(ref, childColumn);
+    });
+
+    // Update remaining links positions
+    this.updateLinksOnColumn(nodeRef.instance.columnIndex);
+  }
+
+  private _removeFromDom(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
     if (nodeRef.instance.boxComponent.linkRef) {
       this.linkService.removeLink(nodeRef.instance.boxComponent.linkRef);
     }
     column.removeChild(nodeRef.location.nativeElement);
     this.applicationRef.detachView(nodeRef.hostView);
-    unselectNode();
-    deleteNode(nodeRef.instance.id, nodeRef.instance.category());
-    this.updateLinksOnColumn(nodeRef.instance.columnIndex);
   }
 
   /**
