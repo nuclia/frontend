@@ -1,11 +1,11 @@
 import resolve from '@rollup/plugin-node-resolve';
-import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import generatePackageJson from 'rollup-plugin-generate-package-json';
-import dts from 'rollup-plugin-dts';
+import typescript from '@rollup/plugin-typescript';
 import copy from 'rollup-plugin-copy';
-import packageJson from './package.json' assert { type: 'json' };
+import dts from 'rollup-plugin-dts';
+import generatePackageJson from 'rollup-plugin-generate-package-json';
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import packageJson from './package.json' with { type: 'json' };
 
 export default [
   {
