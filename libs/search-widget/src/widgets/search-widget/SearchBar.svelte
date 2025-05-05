@@ -13,7 +13,7 @@
     type RAGStrategy,
     type Widget,
   } from '@nuclia/core';
-  import { downloadDump, getApiErrors, initNuclia, resetNuclia } from '../../core/api';
+  import { downloadDump, getApiErrors, initNuclia, resetNuclia, getSearchConfig } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import { get_current_component } from 'svelte/internal';
   import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
@@ -42,7 +42,9 @@
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
   import {
+    askBackendConfig,
     entityRelations,
+    findBackendConfig,
     preselectedFilters,
     searchFilters,
     searchQuery,
@@ -52,7 +54,7 @@
   import { type WidgetFilters } from '../../core';
   import { InfoCard, onClosePreview } from '../../components';
   import { IconButton, Modal } from '../../common';
-  import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
+  import { BehaviorSubject, delay, filter, firstValueFrom, of, tap } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -95,6 +97,7 @@
   export let copy_disclaimer: string | undefined = undefined;
   export let metadata: string | undefined = undefined;
   export let widget_id: string | undefined = undefined;
+  export let search_config_id: string | undefined = undefined;
 
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
@@ -168,6 +171,7 @@
       rrf_boosting,
       feedback,
       widget_id,
+      search_config_id,
     });
   }
 
@@ -317,7 +321,20 @@
       initUsageTracking(no_tracking);
       injectCustomCss(cssPath, container);
 
-      _ready.next(true);
+      if (search_config_id) {
+        getSearchConfig(search_config_id).subscribe((config) => {
+          if (config) {
+            if (config.kind === 'find') {
+              findBackendConfig.set(config.config);
+            } else if (config.kind === 'ask') {
+              askBackendConfig.set(config.config);
+            }
+            _ready.next(true);
+          }
+        });
+      } else {
+        _ready.next(true);
+      }
     });
     return () => resetNuclia();
   });

@@ -1,7 +1,7 @@
 <svelte:options customElement="nuclia-chat" />
 
 <script lang="ts">
-  import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
+  import { getApiErrors, getSearchConfig, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import { get_current_component } from 'svelte/internal';
   import { loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
@@ -27,8 +27,10 @@
   import Chat from '../../components/answer/Chat.svelte';
   import { injectCustomCss } from '../../core/utils';
   import {
+    askBackendConfig,
     chatPlaceholder,
     chatInput,
+    findBackendConfig,
     preselectedFilters,
     widgetFeatures,
     widgetFeedback,
@@ -75,6 +77,7 @@
   export let copy_disclaimer: string | undefined = undefined;
   export let metadata: string | undefined = undefined;
   export let widget_id: string | undefined = undefined;
+  export let search_config_id: string | undefined = undefined;
 
   export let layout: 'inline' | 'fullscreen' = 'inline';
   export let height = '';
@@ -220,7 +223,20 @@
       loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
       injectCustomCss(cssPath, container);
 
-      _ready.next(true);
+      if (search_config_id) {
+        getSearchConfig(search_config_id).subscribe((config) => {
+          if (config) {
+            if (config.kind === 'find') {
+              findBackendConfig.set(config.config);
+            } else if (config.kind === 'ask') {
+              askBackendConfig.set(config.config);
+            }
+            _ready.next(true);
+          }
+        });
+      } else {
+        _ready.next(true);
+      }
     });
 
     return () => reset();

@@ -65,6 +65,7 @@ import {
   searchState,
   trackingEngagement,
   triggerSearch,
+  askBackendConfig,
 } from './search.store';
 import { fieldData, fieldFullId, viewerClosed, viewerData, viewerOpened, viewerState } from './viewer.store';
 import {
@@ -428,12 +429,18 @@ export function askQuestion(
         combinedFilters.pipe(take(1)),
         disableRAG.pipe(take(1)),
         images.pipe(take(1)),
+        askBackendConfig.pipe(take(1)),
       ]),
     ),
-    switchMap(([entries, filters, disableRAG, extra_context_images]) =>
-      (disableRAG
-        ? getAnswerWithoutRAG(question, entries, options)
-        : getAnswer(question, entries, { ...options, filters, extra_context_images })
+    switchMap(([entries, filters, disableRAG, extra_context_images, backendConfig]) => {
+      if (backendConfig) {
+        // if backend config is et, it takes precedence over everything else
+        options = backendConfig;
+      }
+      return (
+        disableRAG
+          ? getAnswerWithoutRAG(question, entries, options)
+          : getAnswer(question, entries, { ...options, filters, extra_context_images })
       ).pipe(
         tap((result) => {
           hasNotEnoughData.set(result.type === 'error' && result.status === -2);
@@ -478,8 +485,8 @@ export function askQuestion(
             }
           }
         }),
-      ),
-    ),
+      );
+    }),
   );
 }
 

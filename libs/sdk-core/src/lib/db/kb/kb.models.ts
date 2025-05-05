@@ -176,6 +176,9 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
     scheduled?: boolean,
     limit?: number,
   ): Observable<{ cursor: string; results: ProcessingStatus[] }>;
+  getSearchConfig(id: string): Observable<SearchConfig>;
+
+  getSearchConfigs(): Observable<SearchConfigs>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
@@ -250,10 +253,6 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   createExtractStrategy(config: ExtractConfig): Observable<void>;
 
   deleteExtractStrategy(id: string): Observable<void>;
-
-  getSearchConfig(id: string): Observable<SearchConfig>;
-
-  getSearchConfigs(): Observable<SearchConfigs>;
 
   createSearchConfig(id: string, config: SearchConfig): Observable<void>;
 
