@@ -1,4 +1,5 @@
 import { ComponentRef, computed, signal } from '@angular/core';
+import { ContextAgent, PostprocessAgent, PreprocessAgent } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 import { NodeCategory, NodeType, ParentNode } from './workflow.models';
 
@@ -36,8 +37,31 @@ export const sideBarOpen = computed(() => sidebar().open);
 export const activeSideBar = computed(() => sidebar().active);
 
 /**
+ * Backend state
+ */
+export interface BackendState {
+  preprocess: PreprocessAgent[];
+  context: ContextAgent[];
+  postprocess: PostprocessAgent[];
+}
+const backendState = signal<BackendState>({
+  preprocess: [],
+  context: [],
+  postprocess: [],
+});
+
+export function setBackendState(state: BackendState) {
+  backendState.set(state);
+}
+
+export function getBackendState(): BackendState {
+  return backendState();
+}
+
+/**
  * Workflow state
  */
+export const nodeInitialisationDone = signal(false);
 const preprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const contextNodes = signal<{ [id: string]: ParentNode }>({});
 const postprocessNodes = signal<{ [id: string]: ParentNode }>({});
@@ -45,6 +69,12 @@ const childNodes = signal<{ [id: string]: ParentNode }>({});
 const selectedNode = signal<{ id: string; nodeCategory: NodeCategory } | null>(null);
 const currentOrigin = signal<ConnectableEntryComponent | null>(null);
 
+export interface WorkflowState {
+  preprocess: { [id: string]: ParentNode };
+  context: { [id: string]: ParentNode };
+  postprocess: { [id: string]: ParentNode };
+  children: { [id: string]: ParentNode };
+}
 export const workflow = computed(() => {
   return {
     preprocess: preprocessNodes(),

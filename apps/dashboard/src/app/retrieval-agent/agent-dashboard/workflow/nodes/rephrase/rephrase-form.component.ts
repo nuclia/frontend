@@ -27,8 +27,8 @@ export class RephraseFormComponent extends FormDirective {
   override form = new FormGroup({
     rephrase: new FormGroup({
       prompt: new FormControl('', { validators: [Validators.required], nonNullable: true }),
+      kb: new FormControl('', { validators: [Validators.required], nonNullable: true }),
       extend: new FormControl(false),
-      kb: new FormControl('', { nonNullable: true }),
       synonyms: new FormControl(false),
       history: new FormControl(false),
       userInfo: new FormControl(false),

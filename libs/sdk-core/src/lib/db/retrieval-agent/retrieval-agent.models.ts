@@ -86,8 +86,9 @@ export type PostprocessModule = 'summarize' | 'validation' | 'restart' | 'remi' 
 
 export interface BaseAgent {
   id: string;
-  rules: string[];
+  rules: string[] | null;
   title?: string;
+  model?: string;
   validate_model?: string;
   summarize_model?: string;
 }
@@ -132,7 +133,7 @@ export interface RephraseAgentCreation {
   rids?: string[];
   labels?: string[];
   synonyms?: boolean;
-  extends?: boolean;
+  extend?: boolean;
   session_info?: boolean;
   history?: boolean;
   model?: string;
@@ -264,6 +265,7 @@ export interface HistoricalAgent extends PreprocessAgent, HistoricalAgentCreatio
 }
 export interface RephraseAgent extends PreprocessAgent, RephraseAgentCreation {
   module: 'rephrase';
+  rules: string[];
 }
 export interface SqlAgent extends ContextAgent, SqlAgentCreation {
   module: 'sql';
@@ -306,6 +308,7 @@ export interface ValidationAgent extends PostprocessAgent, ValidationAgentCreati
 }
 export interface RestartAgent extends PostprocessAgent, RestartAgentCreation {
   module: 'restart';
+  model: string;
 }
 export interface RemiAgent extends PostprocessAgent, RemiAgentCreation {
   module: 'remi';

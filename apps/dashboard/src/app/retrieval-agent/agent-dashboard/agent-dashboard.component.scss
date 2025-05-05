@@ -2,6 +2,8 @@
 @use 'agent-dashboard.tokens' as dashboard;
 
 .agent-dashboard {
+  position: relative;
+
   .agent-dashboard-toolbar {
     background-color: $color-light-stronger;
     border-bottom: 1px solid $color-neutral-light;
