@@ -1,11 +1,19 @@
-export type InternetProviderType = 'brave' | 'perplexity' | 'tavily' | 'duckduckgo' | 'google';
-export type ProviderType = InternetProviderType | 'cypher' | 'nucliadb' | 'sql' | 'mcp';
+export type InternetProviderType = 'brave' | 'perplexity' | 'tavily' | 'google';
+export type ProviderType = InternetProviderType | 'cypher' | 'nucliadb' | 'sql' | 'mcpsse' | 'mcpstdio';
 
 export interface IDriver {
   id: string;
   provider: ProviderType;
   name: string;
-  config: BraveConfig | CypherConfig | NucliaDBConfig | PerplexityConfig | TavilyConfig | SqlConfig | McpConfig;
+  config:
+    | BraveConfig
+    | CypherConfig
+    | NucliaDBConfig
+    | PerplexityConfig
+    | TavilyConfig
+    | SqlConfig
+    | McpSseConfig
+    | McpStdioConfig;
 }
 
 export type DriverCreation = Omit<IDriver, 'id'>;
@@ -17,7 +25,7 @@ export type Driver =
   | PerplexityDriver
   | TavilyDriver
   | SqlDriver
-  | McpDriver;
+  | McpSseDriver;
 
 export interface BraveDriver extends IDriver {
   provider: 'brave';
@@ -43,9 +51,13 @@ export interface SqlDriver extends IDriver {
   provider: 'sql';
   config: SqlConfig;
 }
-export interface McpDriver extends IDriver {
-  provider: 'mcp';
-  config: McpConfig;
+export interface McpSseDriver extends IDriver {
+  provider: 'mcpsse';
+  config: McpSseConfig;
+}
+export interface McpStdioDriver extends IDriver {
+  provider: 'mcpstdio';
+  config: McpStdioConfig;
 }
 
 export interface InternetConfig {
@@ -82,10 +94,18 @@ export interface SqlConfig {
   sql_schema: string | null;
 }
 
-export interface McpConfig {
+export interface McpSseConfig {
   uri: string;
   key: string | null;
   headers: { [property: string]: string };
   timeout: number;
   sse_read_timeout: number;
+}
+export interface McpStdioConfig {
+  command: string;
+  args: string[];
+  env: { [property: string]: string };
+  cwd?: string;
+  encoding?: string;
+  encoding_error_handler?: 'strict' | 'ignore' | 'replace';
 }

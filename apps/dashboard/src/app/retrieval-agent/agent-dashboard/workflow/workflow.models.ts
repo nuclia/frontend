@@ -5,15 +5,16 @@ import {
   BraveAgent,
   BraveAgentCreation,
   ContextAgent,
-  DuckduckgoAgent,
-  DuckduckgoAgentCreation,
+  ContextAgentCreation,
   GoogleAgent,
   GoogleAgentCreation,
   InternetProviderType,
   PerplexityAgent,
   PerplexityAgentCreation,
   PostprocessAgent,
+  PostprocessAgentCreation,
   PreprocessAgent,
+  PreprocessAgentCreation,
   RephraseAgent,
   RephraseAgentCreation,
   SqlAgent,
@@ -40,26 +41,35 @@ export type NodeType =
   | 'internet'
   | 'sql'
   | 'cypher'
-  | 'remi';
+  | 'remi'
+  | 'external';
 
-const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'duckduckgo', 'google'];
+const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
 export function isInternetProvider(x: any): x is InternetProvider {
   return INTERNET_PROVIDERS.includes(x);
 }
-export type EntryType = 'preprocess' | 'context' | 'postprocess';
+export type NodeCategory = 'preprocess' | 'context' | 'postprocess';
 
-export interface Node {
+export interface NodeModel {
   nodeRef: ComponentRef<NodeDirective>;
   nodeType: NodeType;
-  nodeConfig?: any;
+  nodeCategory: NodeCategory;
+  nodeConfig?: NodeConfig;
   agent?: PreprocessAgent | ContextAgent | PostprocessAgent;
 }
 
+export interface ParentNode extends NodeModel {
+  // properties to store the child nodes’ UI id.
+  then?: string[];
+  else?: string[];
+  fallback?: string;
+}
+
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
-  preprocess: ['historical', 'rephrase'],
+  preprocess: ['historical', 'rephrase', 'conditional'],
   context: ['conditional', 'ask', 'internet', 'sql', 'cypher'],
-  postprocess: ['validation', 'summarize', 'restart'],
+  postprocess: ['validation', 'summarize', 'restart', 'conditional'],
 };
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
@@ -75,11 +85,27 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   validation: 'validation',
 };
 
-export interface HistoricalAgentUI {
+export interface CommonAgentConfig {
+  rules: string[] | null;
+}
+
+export type NodeConfig =
+  | HistoricalAgentUI
+  | RephraseAgentUI
+  | InternetAgentUI
+  | SqlAgentUI
+  | CypherAgentUI
+  | AskAgentUI
+  | ConditionalAgentUI
+  | ValidationAgentUI
+  | SummarizeAgentUI
+  | RestartAgentUI;
+
+export interface HistoricalAgentUI extends CommonAgentConfig {
   all: boolean;
 }
 
-export interface RephraseAgentUI {
+export interface RephraseAgentUI extends CommonAgentConfig {
   prompt: string;
   kb: string;
   extend: boolean;
@@ -90,17 +116,17 @@ export interface RephraseAgentUI {
 
 export interface InternetAgentUI {
   provider: InternetProviderType;
-  brave: Omit<BraveAgentCreation, 'module'>;
-  perplexity: Omit<PerplexityAgentCreation, 'module'>;
+  brave: CommonAgentConfig & Omit<BraveAgentCreation, 'module'>;
+  perplexity: CommonAgentConfig & Omit<PerplexityAgentCreation, 'module'>;
 }
 
-export interface SqlAgentUI {
+export interface SqlAgentUI extends CommonAgentConfig {
   source: string;
   prompt?: string;
   retries: number;
 }
 
-export interface CypherAgentUI {
+export interface CypherAgentUI extends CommonAgentConfig {
   source: string;
   exclude_types: string[];
   include_types: string[];
@@ -108,53 +134,59 @@ export interface CypherAgentUI {
   top_k: number;
 }
 
-export interface AskAgentUI {
+export interface AskAgentUI extends CommonAgentConfig {
   sources: string;
   rephrase_semantic_custom_prompt?: string;
   rephrase_lexical_custom_prompt?: string;
-  keyword_custom_prompt?: string;
+  keywords_custom_prompt?: string;
   visual_enable_prompt?: string;
   full_resource?: boolean;
   vllm?: boolean;
 }
 
-export interface ConditionalAgentUI {
+export interface ConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
 }
 
-export interface ValidationAgentUI {
+export interface ValidationAgentUI extends CommonAgentConfig {
   prompt: string;
 }
 
-export interface SummarizeAgentUI {
+export interface SummarizeAgentUI extends CommonAgentConfig {
   prompt: string;
 }
 
-export interface RestartAgentUI {
+export interface RestartAgentUI extends CommonAgentConfig {
   prompt: string;
   retries: number;
   rules: string[];
 }
 
+export function getNodeTypeFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): NodeType {
+  return isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
+}
 export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
+  const { prompt, userInfo, ...agentConfig } = config;
   return {
     module: 'rephrase',
-    kb: config.kb,
-    extends: config.extend,
-    synonyms: config.synonyms,
-    session_info: config.userInfo,
-    history: config.history,
-    rules: [config.prompt],
+    ...agentConfig,
+    session_info: userInfo,
+    rules: [prompt],
+    rids: [],
+    labels: [],
   };
 }
 export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
+  const { rules, session_info, ...uiConfig } = agent;
+  // FIXME: check with ramon rules vs prompt
   return {
-    kb: agent.kb,
-    prompt: agent.rules?.[0] || '',
-    extend: agent.extends || false,
-    synonyms: agent.synonyms || false,
-    userInfo: agent.session_info || false,
-    history: agent.history || false,
+    ...uiConfig,
+    prompt: rules?.[0] || '',
+    userInfo: session_info || false,
+    extend: uiConfig.extend || false,
+    synonyms: uiConfig.synonyms || false,
+    history: uiConfig.history || false,
+    rules: null,
   };
 }
 export function askUiToCreation(config: AskAgentUI): AskAgentCreation {
@@ -169,6 +201,7 @@ export function askAgentToUi(agent: AskAgent): AskAgentUI {
   return {
     ...agent,
     sources: agent.sources.join(','),
+    rules: agent.rules || null,
   };
 }
 export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
@@ -180,19 +213,20 @@ export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
   };
 }
 export function sqlAgentToUi(agent: SqlAgent): SqlAgentUI {
+  const { description, retries, ...uiConfig } = agent;
   return {
-    source: agent.source,
-    prompt: agent.description || '',
-    retries: agent.retries || 3,
+    ...uiConfig,
+    prompt: description || '',
+    retries: retries || 3,
+    rules: agent.rules || null,
   };
 }
 export type InternetAgentCreation =
   | BraveAgentCreation
   | PerplexityAgentCreation
   | TavilyAgentCreation
-  | DuckduckgoAgentCreation
   | GoogleAgentCreation;
-export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | DuckduckgoAgent | GoogleAgent;
+export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | GoogleAgent;
 export function internetUiToCreation(config: InternetAgentUI): InternetAgentCreation {
   switch (config.provider) {
     case 'brave':
@@ -206,7 +240,6 @@ export function internetUiToCreation(config: InternetAgentUI): InternetAgentCrea
         ...config.perplexity,
       };
     case 'tavily':
-    case 'duckduckgo':
     case 'google':
       return {
         module: config.provider,
@@ -219,12 +252,66 @@ export function internetAgentToUi(agent: InternetAgent): InternetAgentUI {
     brave: {
       country: agent.module === 'brave' ? agent.country : '',
       domain: agent.module === 'brave' ? agent.domain : '',
+      rules: agent.rules || null,
     },
     perplexity: {
       domain: agent.module === 'perplexity' ? agent.domain : [''],
       top_k: agent.module === 'perplexity' ? agent.top_k : 0,
       related_questions: agent.module === 'perplexity' ? agent.related_questions : false,
       images: agent.module === 'perplexity' ? agent.images : false,
+      rules: agent.rules || null,
     },
   };
+}
+export function getAgentFromConfig(
+  nodeType: NodeType,
+  config: any,
+): PreprocessAgentCreation | ContextAgentCreation | PostprocessAgentCreation {
+  switch (nodeType) {
+    case 'rephrase':
+      return rephraseUiToCreation(config);
+    case 'internet':
+      return internetUiToCreation(config);
+    case 'sql':
+      return sqlUiToCreation(config);
+    case 'ask':
+      return askUiToCreation(config);
+    case 'historical':
+    case 'cypher':
+    case 'conditional':
+    case 'validation':
+    case 'summarize':
+    case 'restart':
+    case 'remi':
+    case 'external':
+      return { module: nodeType, ...config };
+  }
+}
+
+export function getConfigFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): NodeConfig {
+  switch (agent.module) {
+    case 'rephrase':
+      return rephraseAgentToUi(agent as RephraseAgent);
+    case 'brave':
+    case 'perplexity':
+    case 'tavily':
+    case 'google':
+      return internetAgentToUi(agent as InternetAgent);
+    case 'sql':
+      return sqlAgentToUi(agent as SqlAgent);
+    case 'ask':
+      return askAgentToUi(agent as AskAgent);
+    case 'historical':
+    case 'cypher':
+    case 'mcp':
+    case 'conditional':
+    case 'restricted':
+    case 'sparql':
+    case 'validation':
+    case 'summarize':
+    case 'restart':
+    case 'remi':
+    case 'external':
+      return { ...agent } as any as NodeConfig;
+  }
 }

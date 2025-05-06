@@ -15,7 +15,7 @@ import { DropdownButtonComponent, InfoCardComponent, SisModalService, SisToastSe
 import { catchError, filter, map, Observable, of, Subject, switchMap, take, takeUntil, tap, throwError } from 'rxjs';
 import { CypherDriverModalComponent } from './cypher-driver';
 import { InternetDriverModalComponent } from './internet-driver';
-import { McpDriverModalComponent } from './mcp-driver';
+import { McpSseDriverModalComponent, McpStdioDriverModalComponent } from './mcp-driver';
 import { NucliaDriverModalComponent } from './nuclia-driver';
 import { SqlDriverModalComponent } from './sql-driver';
 
@@ -73,7 +73,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  addDriver(type: 'nuclia' | 'internet' | 'sql' | 'cypher' | 'mcp') {
+  addDriver(type: 'nuclia' | 'internet' | 'sql' | 'cypher' | 'mcpsse' | 'mcpstdio') {
     let modalRef$: Observable<ModalRef>;
     switch (type) {
       case 'nuclia':
@@ -92,8 +92,11 @@ export class DriversPageComponent implements OnInit, OnDestroy {
       case 'cypher':
         modalRef$ = of(this.modal.openModal(CypherDriverModalComponent));
         break;
-      case 'mcp':
-        modalRef$ = of(this.modal.openModal(McpDriverModalComponent));
+      case 'mcpsse':
+        modalRef$ = of(this.modal.openModal(McpSseDriverModalComponent));
+        break;
+      case 'mcpstdio':
+        modalRef$ = of(this.modal.openModal(McpStdioDriverModalComponent));
         break;
     }
     modalRef$
@@ -142,8 +145,8 @@ export class DriversPageComponent implements OnInit, OnDestroy {
       case 'sql':
         modalRef$ = of(this.modal.openModal(SqlDriverModalComponent, new ModalConfig({ data: driver })));
         break;
-      case 'mcp':
-        modalRef$ = of(this.modal.openModal(McpDriverModalComponent, new ModalConfig({ data: driver })));
+      case 'mcpsse':
+        modalRef$ = of(this.modal.openModal(McpSseDriverModalComponent, new ModalConfig({ data: driver })));
         break;
     }
     modalRef$

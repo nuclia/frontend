@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  effect,
   ElementRef,
   inject,
   OnDestroy,
@@ -13,8 +14,18 @@ import { DashboardLayoutService } from '@flaps/common';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { LinkService, WorkflowRoot, WorkflowRootComponent, WorkflowService } from './workflow';
-import { ConnectableEntryComponent } from './workflow/basic-elements';
+import {
+  activeSideBar,
+  ConnectableEntryComponent,
+  LinkService,
+  sideBarDescription,
+  sideBarOpen,
+  sideBarTitle,
+  WorkflowEffectService,
+  WorkflowRoot,
+  WorkflowRootComponent,
+  WorkflowService,
+} from './workflow';
 
 @Component({
   imports: [CommonModule, TranslateModule, PaButtonModule, WorkflowRootComponent],
@@ -27,6 +38,7 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private linkService = inject(LinkService);
   private workflowService = inject(WorkflowService);
   private layoutService = inject(DashboardLayoutService);
+  private workflowEffects = inject(WorkflowEffectService);
 
   private unsubscribeAll = new Subject<void>();
 
@@ -35,10 +47,14 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   @ViewChild('sidebarHeader') sidebarHeader?: ElementRef;
   @ViewChild('sidebarContentWrapper') sidebarContentWrapper?: ElementRef;
 
-  sideBarTitle = this.workflowService.sideBarTitle;
-  sideBarDescription = this.workflowService.sideBarDescription;
-  sideBarOpen = this.workflowService.sideBarOpen;
-  activeSideBar = this.workflowService.activeSideBar;
+  sideBarTitle = sideBarTitle;
+  sideBarDescription = sideBarDescription;
+  sideBarOpen = sideBarOpen;
+  activeSideBar = activeSideBar;
+
+  constructor() {
+    effect(() => this.workflowEffects.initEffect());
+  }
 
   ngAfterViewInit(): void {
     if (this.linkContainer) {

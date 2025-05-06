@@ -35,7 +35,7 @@ export class AskFormComponent extends FormDirective implements OnInit {
       sources: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
       rephrase_semantic_custom_prompt: new FormControl<string>('', { nonNullable: true }),
       rephrase_lexical_custom_prompt: new FormControl<string>('', { nonNullable: true }),
-      keyword_custom_prompt: new FormControl<string>('', { nonNullable: true }),
+      keywords_custom_prompt: new FormControl<string>('', { nonNullable: true }),
       visual_enable_prompt: new FormControl<string>('', { nonNullable: true }),
       full_resource: new FormControl<boolean>(false, { nonNullable: true }),
       vllm: new FormControl<boolean>(true, { nonNullable: true }),

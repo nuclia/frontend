@@ -3,18 +3,18 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { DriverCreation, McpConfig, McpDriver } from '@nuclia/core';
+import { DriverCreation, McpSseConfig, McpSseDriver } from '@nuclia/core';
 
 let headerIndex = 0;
 
 @Component({
-  selector: 'app-mcp-driver-modal',
+  selector: 'app-mcpsse-driver-modal',
   imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
-  templateUrl: './mcp-driver-modal.component.html',
+  templateUrl: './mcpsse-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class McpDriverModalComponent {
+export class McpSseDriverModalComponent {
   form = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     uri: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -32,7 +32,7 @@ export class McpDriverModalComponent {
     return this.modal.config.data;
   }
 
-  constructor(public modal: ModalRef<McpDriver>) {
+  constructor(public modal: ModalRef<McpSseDriver>) {
     const driver = this.modal.config.data;
     this.isEdit = !!driver;
     if (!!driver) {
@@ -54,10 +54,10 @@ export class McpDriverModalComponent {
   submit() {
     if (this.form.valid) {
       const { name, headers, ...rawConfig } = this.form.getRawValue();
-      const config: McpConfig = { ...rawConfig, headers: this.formatHeaders(headers) };
+      const config: McpSseConfig = { ...rawConfig, headers: this.formatHeaders(headers) };
       const driver: DriverCreation = {
         name,
-        provider: 'mcp',
+        provider: 'mcpsse',
         config,
       };
       this.modal.close(driver);

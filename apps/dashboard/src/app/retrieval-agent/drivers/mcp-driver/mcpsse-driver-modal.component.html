@@ -1,7 +1,7 @@
 <pa-modal-advanced fitContentHeight="">
   <pa-modal-title>
     {{
-      (isEdit ? 'retrieval-agents.drivers.edit-modal-title' : 'retrieval-agents.drivers.add.mcp')
+      (isEdit ? 'retrieval-agents.drivers.edit-modal-title' : 'retrieval-agents.drivers.add.mcpsse')
         | translate: { name: config?.name }
     }}
   </pa-modal-title>
@@ -15,7 +15,7 @@
           formControlName="name"></pa-input>
       </div>
       <div class="form-entry">
-        <label for="uri">{{ 'retrieval-agents.drivers.form.mcp.uri' | translate }}</label>
+        <label for="uri">{{ 'retrieval-agents.drivers.form.mcpsse.uri' | translate }}</label>
         <pa-input
           id="uri"
           externalLabel
@@ -37,7 +37,7 @@
           formControlName="timeout"></pa-input>
       </div>
       <div class="form-entry">
-        <label for="sse_read_timeout">{{ 'retrieval-agents.drivers.form.mcp.sse-read-timeout' | translate }}</label>
+        <label for="sse_read_timeout">{{ 'retrieval-agents.drivers.form.mcpsse.sse-read-timeout' | translate }}</label>
         <pa-input
           id="sse_read_timeout"
           externalLabel
@@ -48,12 +48,12 @@
       <ng-container formGroupName="headers">
         <div class="form-entry">
           <div class="label-and-button">
-            <label>{{ 'retrieval-agents.drivers.form.mcp.headers.label' | translate }}</label>
+            <label>{{ 'retrieval-agents.drivers.form.mcpsse.headers.label' | translate }}</label>
             <pa-button
               size="small"
               aspect="basic"
               (click)="addHeader()">
-              {{ 'retrieval-agents.drivers.form.mcp.headers.add' | translate }}
+              {{ 'retrieval-agents.drivers.form.mcpsse.headers.add' | translate }}
             </pa-button>
           </div>
           @for (group of headersGroup.controls | keyvalue; track group.key) {
@@ -61,17 +61,17 @@
               class="config-property-form"
               [formGroup]="group.value">
               <pa-input formControlName="property">
-                {{ 'retrieval-agents.drivers.form.mcp.headers.property-name' | translate }}
+                {{ 'retrieval-agents.drivers.form.mcpsse.headers.property-name' | translate }}
               </pa-input>
               <pa-input formControlName="value">
-                {{ 'retrieval-agents.drivers.form.mcp.headers.property-value' | translate }}
+                {{ 'retrieval-agents.drivers.form.mcpsse.headers.property-value' | translate }}
               </pa-input>
               <pa-button
                 icon="trash"
                 aspect="basic"
                 size="small"
                 (click)="removeHeader(group.key)">
-                {{ 'retrieval-agents.drivers.form.mcp.headers.remove' | translate }}
+                {{ 'retrieval-agents.drivers.form.mcpsse.headers.remove' | translate }}
               </pa-button>
             </div>
           }
