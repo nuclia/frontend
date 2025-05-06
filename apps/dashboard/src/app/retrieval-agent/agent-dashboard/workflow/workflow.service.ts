@@ -316,8 +316,8 @@ export class WorkflowService {
     const node = getNode(nodeRef.instance.id, category);
     const agent = node?.agent;
     if (!agent) {
-      this._removeNodeAndLinks(nodeRef, column);
       this.closeSidebar();
+      this._removeNodeAndLinks(nodeRef, column);
     } else {
       this.modalService
         .openConfirm({
@@ -342,8 +342,9 @@ export class WorkflowService {
     this._removeFromDom(nodeRef, column);
     unselectNode();
 
-    // Remove also corresponding children
-    const deletedChildren = deleteNode(nodeRef.instance.id, nodeRef.instance.category());
+    // Remove also corresponding children if any
+    const nodeId = nodeRef.instance.id;
+    const deletedChildren = deleteNode(nodeId, nodeRef.instance.category()).filter((ref) => ref.instance.id !== nodeId);
     deletedChildren.forEach((ref) => {
       const columnIndex = ref.instance.columnIndex;
       const childColumn = this.columns[columnIndex];

@@ -219,7 +219,7 @@ function _addNode(id: string, nodeCategory: NodeCategory, node: ParentNode) {
  * Delete node
  * @param id Node identifier
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
- * @returns the list of children’s nodeRef deleted as well
+ * @returns the list of children’s nodeRef deleted. Warning: this list includes the nodeRef corresponding to the node identifier if corresponding node is also a child
  */
 export function deleteNode(id: string, nodeCategory: NodeCategory): ComponentRef<NodeDirective>[] {
   if (selectedNode()?.id === id) {
@@ -280,7 +280,7 @@ export function resetNodes() {
  * @param partialNode Partial node updated
  */
 export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: Partial<ParentNode>) {
-  console.debug(`updateNode ${id} with`, partialNode);
+  console.debug(`State: updateNode ${id} with`, partialNode);
   const node = getNode(id, nodeCategory);
   if (!node) {
     throw new Error(`updateNode: Node ${id} not found.`);
