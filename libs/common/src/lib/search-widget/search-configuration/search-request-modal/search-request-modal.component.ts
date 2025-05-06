@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalRef, PaButtonModule, PaModalModule, PaTableModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -41,6 +41,7 @@ export class SearchRequestModalComponent {
 
   payloadJson = JSON.stringify(this.modal.config?.data?.['params'] || {}, undefined, 4);
   headersJson = JSON.stringify(this.headers, undefined, 4);
+  copied: { [key: string]: boolean } = {};
 
   payloadFormat: 'tabular' | 'json' = 'tabular';
   headersFormat: 'tabular' | 'json' = 'tabular';
@@ -50,6 +51,7 @@ export class SearchRequestModalComponent {
   constructor(
     public modal: ModalRef<{ [key: string]: any }>,
     private sdk: SDKService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   private getPythonCode(endpoint: string, params: { [key: string]: any }): string {
@@ -82,5 +84,15 @@ search.${method}(
     query="${query || ''}",${otherParams}
 )`;
     }
+  }
+
+  copy(data: 'payload' | 'headers') {
+    navigator.clipboard.writeText(data === 'payload' ? this.payloadJson : this.headersJson);
+    this.copied[data] = true;
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.copied[data] = false;
+      this.cdr.markForCheck();
+    }, 2000);
   }
 }

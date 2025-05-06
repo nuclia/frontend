@@ -255,9 +255,15 @@ export class TasksAutomationService {
                     switchMap(() => this.stopBatchTasks(task?.parameters.name || '')),
                   )
               : of(undefined)
-            ).pipe(switchMap(() => this.tasksRoute.pipe(map((path) => ({ path, task }))))),
+            ).pipe(
+              switchMap(() =>
+                this.tasksRoute.pipe(
+                  take(1),
+                  map((path) => ({ path, task })),
+                ),
+              ),
+            ),
           ),
-
           tap(({ path, task }) => {
             this.router.navigate([`${path}/${task?.task.name}/${task?.id}`]);
           }),
