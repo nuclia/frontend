@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  effect,
   ElementRef,
   inject,
   OnDestroy,
@@ -37,7 +38,6 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   private linkService = inject(LinkService);
   private workflowService = inject(WorkflowService);
   private layoutService = inject(DashboardLayoutService);
-  // required to initialise effects
   private workflowEffects = inject(WorkflowEffectService);
 
   private unsubscribeAll = new Subject<void>();
@@ -51,6 +51,10 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   sideBarDescription = sideBarDescription;
   sideBarOpen = sideBarOpen;
   activeSideBar = activeSideBar;
+
+  constructor() {
+    effect(() => this.workflowEffects.initEffect());
+  }
 
   ngAfterViewInit(): void {
     if (this.linkContainer) {

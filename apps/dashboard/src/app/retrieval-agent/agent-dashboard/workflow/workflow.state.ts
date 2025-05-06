@@ -1,7 +1,7 @@
 import { ComponentRef, computed, signal } from '@angular/core';
 import { ContextAgent, PostprocessAgent, PreprocessAgent } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
-import { NodeCategory, NodeType, ParentNode } from './workflow.models';
+import { NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
 
 /**
  * Sidebar state
@@ -58,6 +58,10 @@ export function getBackendState(): BackendState {
   return backendState();
 }
 
+export function updateBackendState(partialState: Partial<BackendState>) {
+  console.debug(` => updateBackendState with`, partialState);
+  backendState.update((state) => ({ ...state, ...partialState }));
+}
 /**
  * Workflow state
  */
@@ -157,17 +161,24 @@ export function getAllNodes(): ParentNode[] {
  * @param nodeType
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
  * @param origin Connectable entry of origin
+ * @param nodeConfig Optional configuration of the node
+ * @param agent Optional agent corresponding to the node
  */
 export function addNode(
   nodeRef: ComponentRef<NodeDirective>,
   nodeType: NodeType,
   nodeCategory: NodeCategory,
   origin: ConnectableEntryComponent,
+  nodeConfig?: NodeConfig,
+  agent?: PreprocessAgent | ContextAgent | PostprocessAgent,
 ) {
-  const node = { nodeRef, nodeType, nodeCategory };
+  const node = { nodeRef, nodeType, nodeCategory, nodeConfig, agent };
   const nodeId = nodeRef.instance.id;
   const parentId = origin.nodeId();
 
+  if (nodeConfig) {
+    node.nodeRef.setInput('config', nodeConfig);
+  }
   if (!parentId) {
     _addNode(nodeId, nodeCategory, node);
   } else {
@@ -176,6 +187,8 @@ export function addNode(
     const parent = getNode(parentId, nodeCategory);
     if (!parent) {
       throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
+    } else if (!parent.nodeConfig) {
+      throw new Error(`No config in parent ${parentId} in category ${nodeCategory}`);
     }
     const property = origin.id();
     if (property === 'then' || property === 'else') {
@@ -267,6 +280,7 @@ export function resetNodes() {
  * @param partialNode Partial node updated
  */
 export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: Partial<ParentNode>) {
+  console.debug(`updateNode node ${id} with`, partialNode);
   const node = getNode(id, nodeCategory);
   if (!node) {
     throw new Error(`updateNode: Node ${id} not found.`);

@@ -60,7 +60,7 @@ export interface NodeModel {
 }
 
 export interface ParentNode extends NodeModel {
-  // we store the child nodes’ UI id
+  // properties to store the child nodes’ UI id.
   then?: string[];
   else?: string[];
   fallback?: string;
@@ -138,7 +138,7 @@ export interface AskAgentUI extends CommonAgentConfig {
   sources: string;
   rephrase_semantic_custom_prompt?: string;
   rephrase_lexical_custom_prompt?: string;
-  keyword_custom_prompt?: string;
+  keywords_custom_prompt?: string;
   visual_enable_prompt?: string;
   full_resource?: boolean;
   vllm?: boolean;
@@ -166,27 +166,27 @@ export function getNodeTypeFromAgent(agent: PreprocessAgent | ContextAgent | Pos
   return isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
 }
 export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
+  const { prompt, userInfo, ...agentConfig } = config;
   return {
     module: 'rephrase',
-    kb: config.kb,
-    extend: config.extend,
-    synonyms: config.synonyms,
-    session_info: config.userInfo,
-    history: config.history,
-    rules: [config.prompt],
+    ...agentConfig,
+    session_info: userInfo,
+    rules: [prompt],
     rids: [],
     labels: [],
   };
 }
 export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
+  const { rules, session_info, ...uiConfig } = agent;
+  // FIXME: check with ramon rules vs prompt
   return {
-    kb: agent.kb,
-    prompt: agent.rules?.[0] || '',
-    extend: agent.extend || false,
-    synonyms: agent.synonyms || false,
-    userInfo: agent.session_info || false,
-    history: agent.history || false,
-    rules: agent.rules,
+    ...uiConfig,
+    prompt: rules?.[0] || '',
+    userInfo: session_info || false,
+    extend: uiConfig.extend || false,
+    synonyms: uiConfig.synonyms || false,
+    history: uiConfig.history || false,
+    rules: null,
   };
 }
 export function askUiToCreation(config: AskAgentUI): AskAgentCreation {
@@ -201,6 +201,7 @@ export function askAgentToUi(agent: AskAgent): AskAgentUI {
   return {
     ...agent,
     sources: agent.sources.join(','),
+    rules: agent.rules || null,
   };
 }
 export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
@@ -212,11 +213,12 @@ export function sqlUiToCreation(config: SqlAgentUI): SqlAgentCreation {
   };
 }
 export function sqlAgentToUi(agent: SqlAgent): SqlAgentUI {
+  const { description, retries, ...uiConfig } = agent;
   return {
-    source: agent.source,
-    prompt: agent.description || '',
-    retries: agent.retries || 3,
-    rules: agent.rules,
+    ...uiConfig,
+    prompt: description || '',
+    retries: retries || 3,
+    rules: agent.rules || null,
   };
 }
 export type InternetAgentCreation =
@@ -250,14 +252,14 @@ export function internetAgentToUi(agent: InternetAgent): InternetAgentUI {
     brave: {
       country: agent.module === 'brave' ? agent.country : '',
       domain: agent.module === 'brave' ? agent.domain : '',
-      rules: agent.rules,
+      rules: agent.rules || null,
     },
     perplexity: {
       domain: agent.module === 'perplexity' ? agent.domain : [''],
       top_k: agent.module === 'perplexity' ? agent.top_k : 0,
       related_questions: agent.module === 'perplexity' ? agent.related_questions : false,
       images: agent.module === 'perplexity' ? agent.images : false,
-      rules: agent.rules,
+      rules: agent.rules || null,
     },
   };
 }

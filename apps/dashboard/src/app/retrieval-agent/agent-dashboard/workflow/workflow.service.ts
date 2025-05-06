@@ -11,7 +11,14 @@ import {
 import { SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { ContextAgent, PostprocessAgent, PreprocessAgent } from '@nuclia/core';
+import {
+  AskAgent,
+  ConditionalAgent,
+  ContextAgent,
+  PostprocessAgent,
+  PreprocessAgent,
+  ValidationAgent,
+} from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { catchError, filter, forkJoin, of, switchMap, tap } from 'rxjs';
 import {
@@ -159,16 +166,56 @@ export class WorkflowService {
    * @param rootEntry
    * @param nodeCategory
    * @param agent
+   * @param columnIndex Column index in which the node will be placed. 1 by default
    */
   private createNodeFromSavedWorkflow(
     rootEntry: ConnectableEntryComponent,
     nodeCategory: NodeCategory,
     agent: PreprocessAgent | ContextAgent | PostprocessAgent,
+    columnIndex = 1,
   ) {
     const nodeType = getNodeTypeFromAgent(agent);
-    const nodeRef = this.addNode(rootEntry, 1, nodeType, nodeCategory);
     const config = getConfigFromAgent(agent);
-    updateNode(nodeRef.instance.id, nodeCategory, { nodeConfig: config, agent });
+    const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent);
+    if (agent.module === 'ask') {
+      const askAgent = agent as AskAgent;
+      if (askAgent.fallback) {
+        console.debug(`create fallback:`, agent);
+        const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
+        if (!entry) {
+          throw new Error(`No 'fallback' entry found on Ask node ${nodeRef.instance.id}`);
+        }
+        this.createNodeFromSavedWorkflow(entry, nodeCategory, askAgent.fallback, columnIndex + 1);
+      }
+    } else if (agent.module === 'conditional' || agent.module === 'validation') {
+      const conditionalAgent = agent as ConditionalAgent | ValidationAgent;
+      this.createChildNodes(nodeRef, 'then', nodeCategory, columnIndex, conditionalAgent);
+      this.createChildNodes(nodeRef, 'else_', nodeCategory, columnIndex, conditionalAgent);
+    }
+  }
+
+  private createChildNodes(
+    nodeRef: ComponentRef<NodeDirective>,
+    property: 'then' | 'else_',
+    nodeCategory: NodeCategory,
+    columnIndex: number,
+    agent: ConditionalAgent | ValidationAgent,
+  ) {
+    if (agent[property]) {
+      const prop = property.replace('_', '');
+      const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === prop);
+      if (!entry) {
+        throw new Error(`No 'then' entry found on Conditional/Validation node ${nodeRef.instance.id}`);
+      }
+      agent[property].forEach((child) =>
+        this.createNodeFromSavedWorkflow(
+          entry,
+          nodeCategory,
+          child as PreprocessAgent | ContextAgent | PostprocessAgent,
+          columnIndex + 1,
+        ),
+      );
+    }
   }
 
   /**
@@ -391,6 +438,8 @@ export class WorkflowService {
    * @param origin Connectable entry to be linked to the newly created node
    * @param columnIndex Index of the column in which the node should be added
    * @param nodeType Type of the node to be created
+   * @param nodeConfig Optional configuration of the node
+   * @param agent Optional agent corresponding to the node
    * @returns ComponentRef<NodeDirective>: Created node referrence
    */
   private addNode(
@@ -398,6 +447,8 @@ export class WorkflowService {
     columnIndex: number,
     nodeType: NodeType,
     nodeCategory: NodeCategory,
+    nodeConfig?: NodeConfig,
+    agent?: PreprocessAgent | ContextAgent | PostprocessAgent,
   ): ComponentRef<NodeDirective> {
     if (this.columnContainer && this.columns.length <= columnIndex) {
       const newColumn = this.renderer.createElement('div') as HTMLElement;
@@ -418,7 +469,7 @@ export class WorkflowService {
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
     nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id, nodeCategory));
 
-    addNode(nodeRef, nodeType, nodeCategory, origin);
+    addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agent);
     origin.activeState.set(false);
     return nodeRef;
   }

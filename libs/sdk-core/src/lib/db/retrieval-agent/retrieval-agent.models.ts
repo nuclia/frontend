@@ -201,7 +201,7 @@ export interface AskAgentCreation {
   security_groups?: string[];
   rephrase_semantic_custom_prompt?: string;
   rephrase_lexical_custom_prompt?: string;
-  keyword_custom_prompt?: string;
+  keywords_custom_prompt?: string;
   visual_enable_prompt?: string;
   date_range_enabled?: boolean;
   before?: number;
