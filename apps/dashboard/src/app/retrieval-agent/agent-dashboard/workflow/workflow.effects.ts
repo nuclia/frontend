@@ -2,8 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { deepEqual, SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  AskAgent,
   AskAgentCreation,
   BaseAgent,
+  ConditionalAgent,
   ConditionalAgentCreation,
   ContextAgent,
   ContextAgentCreation,
@@ -72,37 +74,50 @@ export class WorkflowEffectService {
     } else {
       const agent = backendState[category].find((agent) => agent.id === agentId);
       if (!agent) {
-        console.debug(' - Check for updates: UI node:', node);
+        console.debug(' - Check for updates: UI node', node);
         console.error(`Agent id ${agentId} not found in backend state`);
         return;
       }
 
-      if (!deepEqual(uiAgent, agent, true)) {
+      // Manage node potential children cases first
+      if (node.fallback) {
         // TODO: save children of children?
-        console.debug(` - Update agent`, node, uiAgent, agent);
-        if (node.fallback) {
-          const child = getNode(node.fallback, category);
-          if (!child?.nodeConfig) {
-            return;
-          } else {
-            const childAgent = getAgentFromConfig(child.nodeType, child.nodeConfig);
+        const child = getNode(node.fallback, category);
+        if (!child?.nodeConfig) {
+          return;
+        } else {
+          const askAgent = agent as AskAgent;
+          const childAgent = getAgentFromConfig(child.nodeType, child.nodeConfig);
+          if (!askAgent.fallback || !deepEqual(childAgent, askAgent.fallback, true)) {
             (uiAgent as AskAgentCreation).fallback = childAgent as ContextAgent;
             console.debug(` -> Update ask agent with fallback ${node.fallback}`, uiAgent);
-          }
-        } else if (node.then) {
-          const childAgents: BaseAgent[] = this.getChildAgents(node, 'then', category);
-          if (childAgents.length > 0) {
-            (uiAgent as ConditionalAgentCreation).then = childAgents;
-            console.debug(` -> Update node with then`, childAgents);
-          }
-        } else if (node.else) {
-          const childAgents: BaseAgent[] = this.getChildAgents(node, 'else', category);
-          if (childAgents.length > 0) {
-            (uiAgent as ConditionalAgentCreation).else_ = childAgents;
-            console.debug(` -> Update node with else`, childAgents);
+            this.updateAgent(agent, uiAgent, category);
           }
         }
-        this.updateAgent(agent, uiAgent, category);
+      } else if (node.then || node.else) {
+        const conditionalAgent = agent as ConditionalAgent;
+        const thenAgents: BaseAgent[] = this.getChildAgents(node, 'then', category);
+        const elseAgents: BaseAgent[] = this.getChildAgents(node, 'else', category);
+        let shouldUpdate = false;
+        if (thenAgents.length > 0 && !deepEqual(thenAgents, conditionalAgent.then, true)) {
+          (uiAgent as ConditionalAgentCreation).then = thenAgents;
+          console.debug(` -> Update node with then`, thenAgents);
+          shouldUpdate = true;
+        }
+        if (elseAgents.length > 0 && !deepEqual(elseAgents, conditionalAgent.else_, true)) {
+          (uiAgent as ConditionalAgentCreation).else_ = elseAgents;
+          console.debug(` -> Update node with else`, elseAgents);
+          shouldUpdate = true;
+        }
+        if (shouldUpdate) {
+          this.updateAgent(agent, uiAgent, category);
+        }
+      } else {
+        // If no children, we simply check for deep equality
+        if (!deepEqual(uiAgent, agent, true)) {
+          console.debug(` - Update agent`, node, uiAgent, agent);
+          this.updateAgent(agent, uiAgent, category);
+        }
       }
     }
   }

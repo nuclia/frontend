@@ -2,11 +2,25 @@
  * Perform a deep comparison between two objects to determine if they are equivalent.
  * Based on this blog article: https://blog.jmorbegoso.com/post/check-objects-deep-equality-in-typescript/
  *
- * @param object1
- * @param object2
+ * @param object1 object or array
+ * @param object2 object or array
  * @param deepIncluded: when true, check only if properties of object1 are all included and equivalent as the ones in object2. This way, object1 can have less properties than object2
  */
 export function deepEqual(object1: object, object2: object, deepIncluded?: boolean): boolean {
+  // For arrays, we check deep equality of each item
+  if (Array.isArray(object1) && Array.isArray(object2)) {
+    if (object1.length !== object2.length) return false;
+    return object1.every((item, index) => {
+      const value1 = item;
+      const value2 = object2[index];
+      if (isObject(value1) && isObject(value2)) {
+        return deepEqual(value1, value2, deepIncluded);
+      } else {
+        return value1 === value2;
+      }
+    });
+  }
+
   // Get the objects keys
   const keys1 = Object.keys(object1);
   const keys2 = Object.keys(object2);
@@ -30,7 +44,7 @@ export function deepEqual(object1: object, object2: object, deepIncluded?: boole
 
     if (isObject(value1) && isObject(value2)) {
       // Both are objects, so compare them using deepEqual
-      if (!deepEqual(value1, value2)) return false;
+      if (!deepEqual(value1, value2, deepIncluded)) return false;
     } else {
       // Both aren't objects, so compare them using equality operator
       if (value1 !== value2) return false;

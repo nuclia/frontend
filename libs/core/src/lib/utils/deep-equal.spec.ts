@@ -9,6 +9,7 @@ describe('deepEqual', () => {
     });
     it('should return true if object1 is fully included in object 2', () => {
       expect(deepEqual({ c: [1, 2], d: [{ a: 1 }], e: { a: 'toto' } }, object2, true)).toBe(true);
+      expect(deepEqual([{ c: [1, 2], d: [{ a: 1 }], e: { a: 'toto' } }], [object2], true)).toBe(true);
     });
     it('should return false if object1 is not fully included in object 2', () => {
       expect(deepEqual({ c: [1, 2], d: [{ a: 1 }], e: { a: 'toto' }, f: 2 }, object2, true)).toBe(false);

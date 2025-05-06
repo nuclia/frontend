@@ -218,7 +218,7 @@ export interface AskAgentCreation {
 export interface ConditionalAgentCreation {
   module: 'conditional';
   then: BaseAgent[];
-  else_?: BaseAgent[];
+  else_: BaseAgent[];
   prompt?: string;
   has_keywords?: string[];
   similarity?: string[];

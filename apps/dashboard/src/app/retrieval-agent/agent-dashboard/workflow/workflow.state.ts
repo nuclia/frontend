@@ -280,7 +280,7 @@ export function resetNodes() {
  * @param partialNode Partial node updated
  */
 export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: Partial<ParentNode>) {
-  console.debug(`updateNode node ${id} with`, partialNode);
+  console.debug(`updateNode ${id} with`, partialNode);
   const node = getNode(id, nodeCategory);
   if (!node) {
     throw new Error(`updateNode: Node ${id} not found.`);

@@ -141,21 +141,9 @@ export class WorkflowService {
       tap(([preprocess, context, postprocess]) => {
         setBackendState({ preprocess, context, postprocess });
         this.cleanWorkflow();
-        preprocess.forEach((agent) => {
-          setTimeout(() => {
-            this.createNodeFromSavedWorkflow(root.preprocess, 'preprocess', agent);
-          });
-        });
-        context.forEach((agent) => {
-          setTimeout(() => {
-            this.createNodeFromSavedWorkflow(root.context, 'context', agent);
-          });
-        });
-        postprocess.forEach((agent) => {
-          setTimeout(() => {
-            this.createNodeFromSavedWorkflow(root.postprocess, 'postprocess', agent);
-          });
-        });
+        preprocess.forEach((agent) => this.createNodeFromSavedWorkflow(root.preprocess, 'preprocess', agent));
+        context.forEach((agent) => this.createNodeFromSavedWorkflow(root.context, 'context', agent));
+        postprocess.forEach((agent) => this.createNodeFromSavedWorkflow(root.postprocess, 'postprocess', agent));
         setTimeout(() => nodeInitialisationDone.set(true));
       }),
     );
@@ -174,24 +162,26 @@ export class WorkflowService {
     agent: PreprocessAgent | ContextAgent | PostprocessAgent,
     columnIndex = 1,
   ) {
-    const nodeType = getNodeTypeFromAgent(agent);
-    const config = getConfigFromAgent(agent);
-    const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent);
-    if (agent.module === 'ask') {
-      const askAgent = agent as AskAgent;
-      if (askAgent.fallback) {
-        console.debug(`create fallback:`, agent);
-        const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
-        if (!entry) {
-          throw new Error(`No 'fallback' entry found on Ask node ${nodeRef.instance.id}`);
+    // Create node within a setTimeout to prevent slightly mispositioned links
+    setTimeout(() => {
+      const nodeType = getNodeTypeFromAgent(agent);
+      const config = getConfigFromAgent(agent);
+      const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent);
+      if (agent.module === 'ask') {
+        const askAgent = agent as AskAgent;
+        if (askAgent.fallback) {
+          const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
+          if (!entry) {
+            throw new Error(`No 'fallback' entry found on Ask node ${nodeRef.instance.id}`);
+          }
+          this.createNodeFromSavedWorkflow(entry, nodeCategory, askAgent.fallback, columnIndex + 1);
         }
-        this.createNodeFromSavedWorkflow(entry, nodeCategory, askAgent.fallback, columnIndex + 1);
+      } else if (agent.module === 'conditional' || agent.module === 'validation') {
+        const conditionalAgent = agent as ConditionalAgent | ValidationAgent;
+        this.createChildNodes(nodeRef, 'then', nodeCategory, columnIndex, conditionalAgent);
+        this.createChildNodes(nodeRef, 'else_', nodeCategory, columnIndex, conditionalAgent);
       }
-    } else if (agent.module === 'conditional' || agent.module === 'validation') {
-      const conditionalAgent = agent as ConditionalAgent | ValidationAgent;
-      this.createChildNodes(nodeRef, 'then', nodeCategory, columnIndex, conditionalAgent);
-      this.createChildNodes(nodeRef, 'else_', nodeCategory, columnIndex, conditionalAgent);
-    }
+    });
   }
 
   private createChildNodes(
@@ -201,7 +191,7 @@ export class WorkflowService {
     columnIndex: number,
     agent: ConditionalAgent | ValidationAgent,
   ) {
-    if (agent[property]) {
+    if (agent[property] && agent[property].length > 0) {
       const prop = property.replace('_', '');
       const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === prop);
       if (!entry) {
