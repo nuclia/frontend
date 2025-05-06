@@ -455,4 +455,18 @@ export class SearchConfigurationComponent {
     this.currentJsonConfig = jsonConfig;
     this.isConfigModified = this.currentConfig !== this.originalJsonConfig;
   }
+
+  switchToJsonMode() {
+    this.modalService
+      .openConfirm({
+        title: this.translate.instant('search.configuration.action.switch-mode-confirm'),
+        isDestructive: true,
+      })
+      .onClose.pipe(filter((confirm) => !!confirm))
+      .subscribe(() => {
+        this.isConfigUnsupported = true;
+        this.currentJsonConfig = JSON.stringify(this.currentConfig?.sourceConfig?.config, null, 2);
+        this.cdr.markForCheck();
+      });
+  }
 }

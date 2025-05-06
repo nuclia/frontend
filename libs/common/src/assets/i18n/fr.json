@@ -1344,6 +1344,8 @@
 	"search.configuration.action.reset": "Réinitialiser",
 	"search.configuration.action.save": "Enregistrer",
 	"search.configuration.action.save-as-new": "Enregistrer comme nouvelle configuration",
+	"search.configuration.action.switch-mode": "Passe en mode d'édition JSON direct. Ce mode permet d'utiliser les fonctionnalités avancées de l'API, mais désactive certaines options d'interface utilisateur du widget.",
+	"search.configuration.action.switch-mode-confirm": "Une fois passé en mode JSON, vous ne pouvez pas revenir au mode normal.",
 	"search.configuration.current-config-title": "Configuration actuelle",
 	"search.configuration.delete-config-confirm.description": "Cette action ne peut pas être annulée. La suppression de la configuration effacera son enregistrement dans la liste déroulante des configurations sauvegardées.",
 	"search.configuration.delete-config-confirm.title": "Supprimer {{configName}} ?",

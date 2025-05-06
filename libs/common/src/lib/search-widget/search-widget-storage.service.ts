@@ -41,7 +41,16 @@ export class SearchWidgetStorageService {
       } else {
         return kb.getSearchConfigs().pipe(
           map((searchOptions) => {
-            const searchConfigs = (kb.search_configs as SearchAndWidgets)?.searchConfigurations || [];
+            const searchConfigs = ((kb.search_configs as SearchAndWidgets)?.searchConfigurations || []).map(
+              (config) => {
+                const searchOption = Object.entries(searchOptions).find(([key]) => key === config.id);
+                if (searchOption) {
+                  return { ...config, sourceConfig: searchOption[1] };
+                } else {
+                  return config;
+                }
+              },
+            );
             const missingConfigs = Object.entries(searchOptions)
               .filter(([key]) => !searchConfigs.some((config) => config.id === key))
               .map(([key, value]) => getSearchConfigFromSearchOptions(key, value));

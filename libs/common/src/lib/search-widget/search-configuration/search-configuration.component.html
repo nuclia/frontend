@@ -19,7 +19,6 @@
       @if (canModifyConfig | async) {
         <nsi-button-mini
           icon="widget"
-          [disabled]="isConfigUnsupported"
           (click)="triggerCreateWidget()">
           {{ 'search.configuration.action.create-widget' | translate }}
         </nsi-button-mini>
@@ -60,6 +59,11 @@
       </span>
 
       <div class="config-actions">
+        <nsi-button-mini
+          icon="file-code"
+          [disabled]="isConfigUnsupported"
+          (click)="switchToJsonMode()"
+          [help]="'search.configuration.action.switch-mode' | translate"></nsi-button-mini>
         <nsi-button-mini
           icon="undo"
           [disabled]="!isConfigModified"

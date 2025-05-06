@@ -1358,6 +1358,8 @@
 	"search.configuration.action.reset": "Reset",
 	"search.configuration.action.save": "Save",
 	"search.configuration.action.save-as-new": "Save as new configuration",
+	"search.configuration.action.switch-mode": "Switch to direct JSON edit mode. The JSON edit mode allows using advanced features of the API but disables some of UI-related options of the widget.",
+	"search.configuration.action.switch-mode-confirm": "Once switched to JSON mode, you cannot switch back to regular mode.",
 	"search.configuration.current-config-title": "Current configuration",
 	"search.configuration.delete-config-confirm.description": "This action cannot be undone. Deleting the configuration will delete its record in the saved configuration dropdown.",
 	"search.configuration.delete-config-confirm.title": "Delete {{configName}} ?",

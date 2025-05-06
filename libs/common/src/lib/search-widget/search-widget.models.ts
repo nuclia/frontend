@@ -168,8 +168,8 @@ export function getSearchConfigFromSearchOptions(id: string, searchOptions: Sear
   config.id = id;
   if (hasUnsupportedOptions(searchOptions)) {
     config.unsupported = true;
-    config.sourceConfig = searchOptions;
   }
+  config.sourceConfig = searchOptions;
   const options = searchOptions.config;
   config.searchBox = {
     ...config.searchBox,
