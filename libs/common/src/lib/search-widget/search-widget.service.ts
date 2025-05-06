@@ -149,8 +149,12 @@ export class SearchWidgetService {
         if (!this.backendConfig.getCDN().includes('nuclia.cloud')) {
           cdn = `\n  cdn="${this.backendConfig.getCDN()}/"`;
         }
+        let searchConfigId = '';
+        if (currentConfig.unsupported) {
+          searchConfigId = `\n  search_config_id="${currentConfig.id}"`;
+        }
         let baseSnippet = `<${tagName}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${privateDetails}${backend}${cdn}${parameters}`;
+        baseSnippet += `\n  ${zone}${privateDetails}${backend}${cdn}${parameters}${searchConfigId}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;

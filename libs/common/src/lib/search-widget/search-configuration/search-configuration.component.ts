@@ -103,6 +103,8 @@ export class SearchConfigurationComponent {
 
   savedConfig?: Widget.SearchConfiguration;
   currentConfig?: Widget.SearchConfiguration;
+  originalJsonConfig?: string;
+  currentJsonConfig?: string;
 
   generativeModelFromSettings = '';
   semanticModelFromSettings = '';
@@ -286,6 +288,10 @@ export class SearchConfigurationComponent {
         this.currentConfig = { ...this.savedConfig };
         this.isConfigModified = false;
         this.isConfigUnsupported = !!this.savedConfig.unsupported;
+        this.originalJsonConfig = this.isConfigUnsupported
+          ? JSON.stringify(this.currentConfig?.sourceConfig?.config, null, 2)
+          : '';
+        this.currentJsonConfig = this.originalJsonConfig;
         this.updateWidget();
         this.cdr.markForCheck();
       },
@@ -314,7 +320,7 @@ export class SearchConfigurationComponent {
         resultDisplay: { ...this.savedConfig.resultDisplay },
       };
       this.isConfigModified = false;
-      this.isConfigUnsupported = false;
+      this.currentJsonConfig = this.originalJsonConfig;
     }
   }
 
@@ -325,6 +331,7 @@ export class SearchConfigurationComponent {
         .onClose.pipe(
           filter((confirm) => !!confirm),
           switchMap((configName) => this._saveConfig(configName)),
+          filter((success) => !!success),
           switchMap(() => this.setConfigurations()),
         )
         .subscribe();
@@ -357,16 +364,32 @@ export class SearchConfigurationComponent {
   }
 
   private _saveConfig(configName: string) {
+    if (this.isConfigUnsupported && this.currentConfig?.sourceConfig) {
+      try {
+        this.currentConfig.sourceConfig.config = JSON.parse(this.currentJsonConfig || '');
+      } catch (e) {
+        this.toaster.error('search.configuration.json-config-error');
+        return of(false);
+      }
+    }
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
         this.currentConfig
-          ? this.searchWidgetService.saveSearchConfig(kb.id, configName, this.currentConfig)
-          : of(undefined),
+          ? this.searchWidgetService.saveSearchConfig(kb.id, configName, this.currentConfig).pipe(
+              map(() => {
+                if (this.isConfigUnsupported) {
+                  this.updateWidget();
+                }
+                this.isConfigModified = false;
+                this.originalJsonConfig = this.isConfigUnsupported
+                  ? JSON.stringify(this.currentConfig?.sourceConfig?.config, null, 2)
+                  : '';
+                return true;
+              }),
+            )
+          : of(false),
       ),
-      tap(() => {
-        this.isConfigModified = false;
-      }),
     );
   }
 
@@ -426,5 +449,10 @@ export class SearchConfigurationComponent {
       this.lastQuery = undefined;
       this.configUpdate.emit(this.currentConfig);
     }
+  }
+
+  updateJsonConfig(jsonConfig: string) {
+    this.currentJsonConfig = jsonConfig;
+    this.isConfigModified = this.currentConfig !== this.originalJsonConfig;
   }
 }
