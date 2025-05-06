@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ModalRef, PaButtonModule, PaExpanderModule, PaModalModule } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SDKService } from '../../../api';
-import { concatMap, forkJoin, map, Observable, of, shareReplay, switchMap, take, toArray } from 'rxjs';
+import { catchError, concatMap, forkJoin, map, Observable, of, shareReplay, switchMap, take, toArray } from 'rxjs';
 import { LabelsService } from '../../labels.service';
 import { LABEL_MAIN_COLORS } from '../utils';
 import {
@@ -14,6 +14,7 @@ import {
   LabelSet,
   LabelSetKind,
 } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './missing-labels-dialog.component.html',
@@ -22,6 +23,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MissingLabelsDialogComponent {
+  saving = false;
   private _allLabels: Observable<{ [labelSet: string]: string[] }> = this.sdk.currentKb.pipe(
     take(1),
     switchMap((kb) =>
@@ -77,9 +79,14 @@ export class MissingLabelsDialogComponent {
     public modal: ModalRef,
     private sdk: SDKService,
     private labelsService: LabelsService,
+    private toaster: SisToastService,
+    private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   declare() {
+    this.saving = true;
+    this.cdr.markForCheck();
     forkJoin([this.missingLabels.pipe(take(1)), this.labelsService.labelSets.pipe(take(1))])
       .pipe(
         map(([missingLabels, declaredLabels]) => {
@@ -98,7 +105,16 @@ export class MissingLabelsDialogComponent {
                   kind: [LabelSetKind.RESOURCES],
                   labels: missing,
                 };
-            return this.labelsService.saveLabelSet(labelSet, payload);
+            return this.labelsService.saveLabelSet(labelSet, payload).pipe(
+              catchError((error) => {
+                if (error?.status === 422) {
+                  this.toaster.error(this.translate.instant('label-set.duplicate-title', { title: payload.title }));
+                } else {
+                  this.toaster.error('label-set.error');
+                }
+                throw error;
+              }),
+            );
           });
         }),
         switchMap((observables) =>

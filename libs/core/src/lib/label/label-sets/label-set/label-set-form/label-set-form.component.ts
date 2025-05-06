@@ -16,8 +16,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { InfoCardComponent, LABEL_COLORS, SisLabelModule } from '@nuclia/sistema';
-import { TranslateModule } from '@ngx-translate/core';
+import { InfoCardComponent, LABEL_COLORS, SisLabelModule, SisToastService } from '@nuclia/sistema';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { LabelsService } from '../../../labels.service';
 import { FeaturesService } from '../../../../analytics';
@@ -53,8 +53,9 @@ const KINDS = [
 })
 export class LabelSetFormComponent implements OnInit, OnChanges {
   private labelsService = inject(LabelsService);
-  private features = inject(FeaturesService);
   private cdr = inject(ChangeDetectorRef);
+  private toaster = inject(SisToastService);
+  private translate = inject(TranslateService);
   private unsubscribeAll = new Subject<void>();
 
   @Input({ transform: booleanAttribute }) addNew = false;
@@ -247,7 +248,18 @@ export class LabelSetFormComponent implements OnInit, OnChanges {
         switchMap(() => this.labelsService.refreshLabelsSets()),
         take(1),
       )
-      .subscribe(() => this.done.emit({ id: slug, labelSet }));
+      .subscribe({
+        next: () => {
+          this.done.emit({ id: slug, labelSet });
+        },
+        error: (error) => {
+          if (error?.status === 422) {
+            this.toaster.error(this.translate.instant('label-set.duplicate-title', { title: labelSet.title }));
+          } else {
+            this.toaster.error('label-set.error');
+          }
+        },
+      });
   }
 
   validateLabelList($event: Event) {
