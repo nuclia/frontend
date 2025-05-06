@@ -150,10 +150,14 @@ function _isChildNode(id: string): boolean {
  * Get all nodes
  * @returns List of nodes from all categories.
  */
-export function getAllNodes(): ParentNode[] {
-  return Object.values(preprocessNodes())
+export function getAllNodes(includeChildren = false): ParentNode[] {
+  let allNodes = Object.values(preprocessNodes())
     .concat(Object.values(contextNodes()))
     .concat(Object.values(postprocessNodes()));
+  if (includeChildren) {
+    allNodes = allNodes.concat(Object.values(childNodes()));
+  }
+  return allNodes;
 }
 /**
  * Add node to the specified category

@@ -213,7 +213,7 @@ export class WorkflowService {
    */
   cleanWorkflow() {
     // Remove all nodes from the DOM
-    getAllNodes().forEach((node) => {
+    getAllNodes(true).forEach((node) => {
       const columnIndex = node.nodeRef.instance.columnIndex;
       const column = this.columns[columnIndex];
       this._removeFromDom(node.nodeRef, column);
