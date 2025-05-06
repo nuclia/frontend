@@ -53,17 +53,17 @@ export interface IRetrievalAgent
   setRules(rules: string[]): Observable<void>;
 
   getPreprocess(): Observable<PreprocessAgent[]>;
-  addPreprocess(agent: PreprocessAgentCreation): Observable<void>;
+  addPreprocess(agent: PreprocessAgentCreation): Observable<{ id: string }>;
   patchPreprocess(agent: PreprocessAgent): Observable<void>;
   deletePreprocess(agentId: string): Observable<void>;
 
   getContext(): Observable<ContextAgent[]>;
-  addContext(agent: ContextAgentCreation): Observable<void>;
+  addContext(agent: ContextAgentCreation): Observable<{ id: string }>;
   patchContext(agent: ContextAgent): Observable<void>;
   deleteContext(agentId: string): Observable<void>;
 
   getPostprocess(): Observable<PostprocessAgent[]>;
-  addPostprocess(agent: PostprocessAgentCreation): Observable<void>;
+  addPostprocess(agent: PostprocessAgentCreation): Observable<{ id: string }>;
   patchPostprocess(agent: PostprocessAgent): Observable<void>;
   deletePostprocess(agentId: string): Observable<void>;
 }
@@ -85,21 +85,25 @@ export type ContextModule =
 export type PostprocessModule = 'summarize' | 'validation' | 'restart' | 'remi' | 'external' | 'conditional';
 
 export interface BaseAgent {
-  id: string;
-  rules: string[] | null;
+  module: PreprocessModule | ContextModule | PostprocessModule;
+  rules?: string[] | null;
   title?: string;
   model?: string;
   validate_model?: string;
   summarize_model?: string;
 }
 
-export interface PreprocessAgent extends BaseAgent {
+export interface StoredAgent extends BaseAgent {
+  id: string;
+}
+
+export interface PreprocessAgent extends StoredAgent {
   module: PreprocessModule;
 }
-export interface ContextAgent extends BaseAgent {
+export interface ContextAgent extends StoredAgent {
   module: ContextModule;
 }
-export interface PostprocessAgent extends BaseAgent {
+export interface PostprocessAgent extends StoredAgent {
   module: PostprocessModule;
 }
 export type PreprocessAgentCreation = HistoricalAgentCreation | RephraseAgentCreation;

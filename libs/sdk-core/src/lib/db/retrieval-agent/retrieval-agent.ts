@@ -141,8 +141,8 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * Add a preprocess agent to the Retrieval Agent.
    * @param agent data representing the preprocess agent to add
    */
-  addPreprocess(agent: PreprocessAgentCreation): Observable<void> {
-    return this.nuclia.rest.post(`${this.path}/preprocess`, agent);
+  addPreprocess(agent: PreprocessAgentCreation): Observable<{ id: string }> {
+    return this.nuclia.rest.post<{ id: string }>(`${this.path}/preprocess`, agent);
   }
 
   /**
@@ -173,8 +173,8 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * Add a context agent to the Retrieval Agent.
    * @param agent data representing the context agent to add
    */
-  addContext(agent: ContextAgentCreation): Observable<void> {
-    return this.nuclia.rest.post(`${this.path}/context`, agent);
+  addContext(agent: ContextAgentCreation): Observable<{ id: string }> {
+    return this.nuclia.rest.post<{ id: string }>(`${this.path}/context`, agent);
   }
 
   /**
@@ -205,8 +205,8 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * Add a postprocess agent to the Retrieval Agent.
    * @param agent data representing the postprocess agent to add
    */
-  addPostprocess(agent: PostprocessAgentCreation): Observable<void> {
-    return this.nuclia.rest.post(`${this.path}/postprocess`, agent);
+  addPostprocess(agent: PostprocessAgentCreation): Observable<{ id: string }> {
+    return this.nuclia.rest.post<{ id: string }>(`${this.path}/postprocess`, agent);
   }
 
   /**
