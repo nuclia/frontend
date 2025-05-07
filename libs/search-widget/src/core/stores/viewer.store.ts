@@ -19,7 +19,7 @@ import {
 } from '@nuclia/core';
 import { getFileUrls, getResourceField } from '../api';
 import type { Observable } from 'rxjs';
-import { filter, map, of, switchMap, take } from 'rxjs';
+import { filter, map, of, pairwise, switchMap, take } from 'rxjs';
 
 export interface ViewerState {
   currentResult: TypedResult | null;
@@ -312,6 +312,15 @@ export const transcripts = viewerState.writer<Search.FindParagraph[]>(
 export const fieldSummary = viewerState.reader<string>((state) => state.summary);
 
 export const fieldType = viewerState.reader<FIELD_TYPE | null>((state) => state.fieldFullId?.field_type || null);
+
+export const viewerOpened = isPreviewing.pipe(
+  pairwise(),
+  filter(([prev, curr]) => !prev && curr),
+);
+export const viewerClosed = isPreviewing.pipe(
+  pairwise(),
+  filter(([prev, curr]) => prev && !curr),
+);
 
 export function getFieldUrl(forcePdf?: boolean): Observable<string> {
   return viewerState.store.pipe(

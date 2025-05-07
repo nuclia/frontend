@@ -66,7 +66,7 @@ import {
   trackingEngagement,
   triggerSearch,
 } from './search.store';
-import { fieldData, fieldFullId, viewerData, viewerState } from './viewer.store';
+import { fieldData, fieldFullId, viewerClosed, viewerData, viewerOpened, viewerState } from './viewer.store';
 import {
   answerState,
   appendChatEntry,
@@ -360,20 +360,28 @@ function initStoreFromUrlParams() {
 }
 
 // Load field data when fieldFullId is set
-export function initViewer() {
-  const subscription = fieldFullId
-    .pipe(
-      distinctUntilChanged(),
-      switchMap((fullId) => {
-        if (fullId) {
-          return getResourceField(fullId).pipe(tap((resourceField) => fieldData.set(resourceField)));
-        } else {
-          return of(null);
-        }
-      }),
-    )
-    .subscribe();
-  subscriptions.push(subscription);
+export function initViewer(dispatch?: (event: string, details: boolean) => void) {
+  const viewerSubscriptions = [
+    fieldFullId
+      .pipe(
+        distinctUntilChanged(),
+        switchMap((fullId) => {
+          if (fullId) {
+            return getResourceField(fullId).pipe(tap((resourceField) => fieldData.set(resourceField)));
+          } else {
+            return of(null);
+          }
+        }),
+      )
+      .subscribe(),
+    viewerClosed.subscribe(() => {
+      dispatch?.('closePreview', true);
+    }),
+    viewerOpened.subscribe(() => {
+      dispatch?.('openPreview', true);
+    }),
+  ];
+  subscriptions.push(...viewerSubscriptions);
 }
 
 export function setupTriggerGraphNerSearch() {
