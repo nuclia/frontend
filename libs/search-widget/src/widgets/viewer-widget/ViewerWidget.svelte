@@ -20,7 +20,7 @@
     widgetFeatures,
   } from '../../core';
   import type { TypedResult } from '../../core';
-  import { onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import type { FieldFullId, KBStates, Widget } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
@@ -100,6 +100,11 @@
   let container: HTMLElement;
   let _features: Widget.WidgetFeatures = {};
 
+  const dispatch = createEventDispatcher();
+  const dispatchCustomEvent = (name: string, detail: any) => {
+    dispatch(name, detail);
+  };
+
   onMount(() => {
     if (cdn) {
       setCDN(cdn);
@@ -133,7 +138,7 @@
 
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-    initViewer();
+    initViewer(dispatchCustomEvent);
     injectCustomCss(cssPath, container);
 
     _ready.next(true);

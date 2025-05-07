@@ -49,8 +49,8 @@
     triggerSearch,
   } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
-  import { type WidgetFilters } from '../../core';
-  import { InfoCard } from '../../components';
+  import { viewerClosed, viewerOpened, type WidgetFilters } from '../../core';
+  import { InfoCard, onClosePreview } from '../../components';
   import { IconButton, Modal } from '../../common';
   import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
 
@@ -173,6 +173,10 @@
 
   export function dump() {
     downloadDump();
+  }
+
+  export function closePreview() {
+    onClosePreview();
   }
 
   const dispatch = createEventDispatcher();
@@ -305,7 +309,7 @@
       setLang(lang);
 
       setupTriggerSearch(dispatchCustomEvent);
-      initViewer();
+      initViewer(dispatchCustomEvent);
 
       if (_features.knowledgeGraph) {
         setupTriggerGraphNerSearch();

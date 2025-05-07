@@ -212,6 +212,7 @@ export class SearchWidgetService {
     searchWidget?.addEventListener('logs', (event: { detail: any }) => {
       this._logs.next(event.detail);
     });
+    this.viewerService.handleBackButton(searchWidget);
     this.viewerService.init('nuclia-search-results');
   }
 
