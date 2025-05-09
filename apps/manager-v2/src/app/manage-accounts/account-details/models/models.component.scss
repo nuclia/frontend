@@ -1,0 +1,15 @@
+@use 'apps/manager-v2/src/variables' as *;
+
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.zone {
+  margin-bottom: rhythm(4);
+}
+
+.title-s {
+  margin-bottom: rhythm(1);
+}

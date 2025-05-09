@@ -232,4 +232,16 @@ export class AccountService {
       }),
     );
   }
+
+  /**
+   * Load account models and add them to the store
+   */
+  loadAccountModels(accountId: string) {
+    return this.regionalService.getModelsPerZone(accountId).pipe(
+      map((models) => {
+        this.store.setAccountModels(models);
+        return models;
+      }),
+    );
+  }
 }
