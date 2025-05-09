@@ -1,5 +1,6 @@
 import { AccountBlockingState, AccountLimits, AccountTypes, BlockedFeature, KBStates } from '@nuclia/core';
 import { AccountUser } from './global-account.models';
+import { ZoneSummary } from '../manage-zones/zone.models';
 
 export type DedicatedProcessorsState = 'enabled' | 'disabled' | 'paused';
 
@@ -42,4 +43,47 @@ export interface Kb {
   created: string;
   admin: boolean;
   contrib: boolean;
+}
+
+export enum ModelType {
+  GENERATIVE = 'GENERATIVE',
+  NER = 'NER',
+  RESOURCE_LABELER = 'RESOURCE_LABELER',
+  CLASSIFIER = 'CLASSIFIER',
+  ANONYMIZER = 'ANONYMIZER',
+  VISUAL_LABELER = 'VISUAL_LABELER',
+  SUMMARY = 'SUMMARY',
+  DUMMY = 'DUMMY',
+  PARAGRAPH_LABELER = 'PARAGRAPH_LABELER',
+  EMBEDDINGS = 'EMBEDDINGS',
+  RELATIONS = 'RELATIONS',
+}
+
+interface BaseAccountModel {
+  model_id: string | null;
+  account: string | null;
+  model_type: ModelType | null;
+  trained_date: string | null;
+  location: string | null;
+  trained_kbid: string | null;
+}
+
+export interface AccountModelSummary extends BaseAccountModel {
+  title: string | null;
+}
+
+export interface AccountModel extends BaseAccountModel {
+  log: string | null;
+  kbids: string[];
+}
+
+export interface AccountModelPayload {
+  model_type: ModelType;
+  location: string;
+  description?: string;
+}
+
+export interface ZoneModels {
+  zone: ZoneSummary;
+  models: AccountModelSummary[];
 }

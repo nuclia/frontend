@@ -1,0 +1,24 @@
+<h3>{{ backupModel?.location || '' }}</h3>
+<form
+  [formGroup]="kbForm"
+  (ngSubmit)="save()">
+  <label class="title-s">Enable on Knowledge Boxes:</label>
+  @for (kb of kbForm.controls | keyvalue; track kb.key) {
+    <pa-checkbox [formControlName]="kb.key">
+      {{ ((modelNames | async) || {})[kb.key] }}
+    </pa-checkbox>
+  }
+  <footer>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="kbForm.pristine || isSaving">
+      Save
+    </pa-button>
+    <pa-button
+      aspect="basic"
+      (click)="cancel()">
+      Cancel
+    </pa-button>
+  </footer>
+</form>

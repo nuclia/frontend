@@ -1,0 +1,34 @@
+<h3>Add model</h3>
+<form
+  [formGroup]="modelForm"
+  (ngSubmit)="create()">
+  <pa-input formControlName="description">Name</pa-input>
+  <pa-input
+    formControlName="location"
+    help='Use format: "provider:model"'>
+    Model
+  </pa-input>
+  <pa-select
+    formControlName="model_type"
+    [options]="modelTypes"
+    label="Model type"></pa-select>
+  <pa-select
+    formControlName="zone"
+    [options]="zones | async"
+    label="Zone"></pa-select>
+
+  <section>
+    <label class="title-s">Enable on Knowledge Boxes:</label>
+    @for (kb of kbList; track kb.id) {
+      <pa-checkbox [(value)]="selectedKbs[kb.id]">{{ kb.title }}</pa-checkbox>
+    }
+  </section>
+
+  <footer>
+    <pa-button
+      type="submit"
+      [disabled]="modelForm.pristine || modelForm.invalid || isSaving">
+      Save
+    </pa-button>
+  </footer>
+</form>
