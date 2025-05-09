@@ -5,13 +5,14 @@
   <ng-container [formGroup]="configForm">
     <div class="form-entry">
       <label for="prompt">{{ 'retrieval-agents.workflow.node-types.rephrase.form.prompt.label' | translate }}</label>
-      <pa-textarea
+      <nsi-expandable-textarea
         id="prompt"
         formControlName="prompt"
         externalLabel
+        modalTitle="retrieval-agents.workflow.node-types.rephrase.form.prompt.label"
         [placeholder]="'retrieval-agents.workflow.node-types.rephrase.form.prompt.placeholder' | translate"
         rows="2"
-        resizable=""></pa-textarea>
+        resizable=""></nsi-expandable-textarea>
     </div>
     <div class="form-entry">
       <label for="askTo">{{ 'retrieval-agents.workflow.node-types.rephrase.form.ask-to.label' | translate }}</label>
@@ -46,5 +47,6 @@
       [help]="'retrieval-agents.workflow.node-types.rephrase.form.user-info.help' | translate">
       {{ 'retrieval-agents.workflow.node-types.rephrase.form.user-info.label' | translate }}
     </pa-toggle>
+    <app-rules-field [form]="configForm"></app-rules-field>
   </ng-container>
 </app-configuration-form>

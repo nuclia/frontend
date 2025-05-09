@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SDKService } from '@flaps/core';
 import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { NucliaDBDriver } from '@nuclia/core';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
 import { map, Observable, switchMap, take } from 'rxjs';
-import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
+import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 
 @Component({
   selector: 'app-rephrase-form',
@@ -17,6 +18,8 @@ import { ConfigurationFormComponent, FormDirective } from '../../basic-elements'
     PaTextFieldModule,
     PaTogglesModule,
     ConfigurationFormComponent,
+    RulesFieldComponent,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './rephrase-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +35,8 @@ export class RephraseFormComponent extends FormDirective {
       synonyms: new FormControl(false),
       history: new FormControl(false),
       userInfo: new FormControl(false),
+      rules: new FormArray<FormControl<string>>([new FormControl<string>('', { nonNullable: true })]),
+      // TODO manage rids and labels
     }),
   });
 

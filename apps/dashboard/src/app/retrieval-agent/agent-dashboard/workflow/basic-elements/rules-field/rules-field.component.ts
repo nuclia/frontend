@@ -13,6 +13,9 @@ import { ExpandableTextareaComponent } from '@nuclia/sistema';
   encapsulation: ViewEncapsulation.None,
 })
 export class RulesFieldComponent {
+  /**
+   * Required form group containing a FormArray control named "rules": FormGroup<{ rules: FormArray<FormControl<string>> }>
+   */
   form = input.required<FormGroup>();
 
   get rules(): FormArray<FormControl<string>> {
