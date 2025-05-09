@@ -158,6 +158,7 @@ export interface SummarizeAgentUI extends CommonAgentConfig {
 
 export interface RestartAgentUI extends CommonAgentConfig {
   prompt: string;
+  model: string;
   retries: number;
   rules: string[];
 }

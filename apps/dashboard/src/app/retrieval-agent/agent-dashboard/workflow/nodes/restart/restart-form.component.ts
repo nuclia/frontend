@@ -3,7 +3,8 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { RestartAgentUI } from '../../workflow.models';
 
 @Component({
@@ -15,6 +16,8 @@ import { RestartAgentUI } from '../../workflow.models';
     PaButtonModule,
     PaTextFieldModule,
     ConfigurationFormComponent,
+    RulesFieldComponent,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './restart-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,7 +26,8 @@ export class RestartFormComponent extends FormDirective implements OnInit {
   override form = new FormGroup({
     restart: new FormGroup({
       prompt: new FormControl('', { validators: Validators.required, nonNullable: true }),
-      retries: new FormControl<number>(0, {
+      model: new FormControl('', { validators: Validators.required, nonNullable: true }),
+      retries: new FormControl<number>(2, {
         validators: [Validators.required, Validators.pattern('^[0-9]*$')],
         nonNullable: true,
       }),

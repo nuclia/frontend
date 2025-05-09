@@ -4,6 +4,7 @@ export * from './connectable-entry/connectable-entry.component';
 export * from './link';
 export * from './node-box/node-box.component';
 export * from './node-selector/node-selector.component';
+export * from './rules-field/rules-field.component';
 
 export * from './arrow-down.component';
 export * from './form.directive';
