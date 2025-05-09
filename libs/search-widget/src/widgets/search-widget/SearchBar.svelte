@@ -49,7 +49,7 @@
     triggerSearch,
   } from '../../core/stores/search.store';
   import { typeAhead } from '../../core/stores/suggestions.store';
-  import { viewerClosed, viewerOpened, type WidgetFilters } from '../../core';
+  import { type WidgetFilters } from '../../core';
   import { InfoCard, onClosePreview } from '../../components';
   import { IconButton, Modal } from '../../common';
   import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
