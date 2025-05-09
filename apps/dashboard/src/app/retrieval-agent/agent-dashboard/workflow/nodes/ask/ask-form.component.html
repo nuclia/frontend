@@ -83,5 +83,8 @@
       withBackground>
       {{ 'retrieval-agents.workflow.node-types.ask.form.vllm' | translate }}
     </pa-toggle>
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
   </ng-container>
 </app-configuration-form>

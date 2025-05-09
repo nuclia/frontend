@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NavigationService, SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NucliaDBDriver } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { forkJoin, map, Observable, switchMap, take } from 'rxjs';
-import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
+import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 
 @Component({
   selector: 'app-ask-form',
@@ -23,6 +23,7 @@ import { ConfigurationFormComponent, FormDirective } from '../../basic-elements'
     PaTogglesModule,
     ConfigurationFormComponent,
     ExpandableTextareaComponent,
+    RulesFieldComponent,
   ],
   templateUrl: './ask-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,6 +41,7 @@ export class AskFormComponent extends FormDirective implements OnInit {
       visual_enable_prompt: new FormControl<string>('', { nonNullable: true }),
       full_resource: new FormControl<boolean>(false, { nonNullable: true }),
       vllm: new FormControl<boolean>(true, { nonNullable: true }),
+      rules: new FormArray<FormControl<string>>([]),
     }),
   });
   override get configForm() {
