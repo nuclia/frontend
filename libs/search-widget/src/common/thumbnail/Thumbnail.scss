@@ -18,6 +18,10 @@
     justify-content: center;
   }
 
+  &.clickable {
+    cursor: pointer;
+  }
+
   .thumbnail-placeholder {
     height: var(--rhythm-32);
     width: 100%;

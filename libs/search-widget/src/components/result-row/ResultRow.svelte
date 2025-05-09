@@ -140,7 +140,9 @@
         src={result.thumbnail}
         fallback={thumbnailInfo.fallback}
         aspectRatio="5/4"
-        on:loaded={() => (thumbnailLoaded = true)} />
+        clickable
+        on:loaded={() => (thumbnailLoaded = true)}
+        on:click={() => clickOnResult() } />
     {/if}
     <div class="doc-type-container">
       <DocTypeIndicator type={result.resultType} />
