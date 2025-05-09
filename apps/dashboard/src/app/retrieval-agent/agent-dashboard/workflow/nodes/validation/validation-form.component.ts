@@ -1,32 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 
 @Component({
-  selector: 'app-historical-form',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    PaTextFieldModule,
-    PaTogglesModule,
-    ConfigurationFormComponent,
-    RulesFieldComponent,
-  ],
-  templateUrl: './historical-form.component.html',
+  selector: 'app-validation-form',
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, ConfigurationFormComponent, RulesFieldComponent],
+  templateUrl: './validation-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HistoricalFormComponent extends FormDirective {
+export class ValidationFormComponent extends FormDirective {
   override form = new FormGroup({
-    historical: new FormGroup({
-      all: new FormControl(true, { nonNullable: true }),
+    validation: new FormGroup({
       rules: new FormArray<FormControl<string>>([]),
     }),
   });
   override get configForm() {
-    return this.form.controls.historical;
+    return this.form.controls.validation;
   }
 }

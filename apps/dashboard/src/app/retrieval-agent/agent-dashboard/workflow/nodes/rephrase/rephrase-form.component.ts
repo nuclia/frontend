@@ -35,7 +35,7 @@ export class RephraseFormComponent extends FormDirective {
       synonyms: new FormControl(false),
       history: new FormControl(false),
       userInfo: new FormControl(false),
-      rules: new FormArray<FormControl<string>>([new FormControl<string>('', { nonNullable: true })]),
+      rules: new FormArray<FormControl<string>>([]),
       // TODO manage rids and labels
     }),
   });

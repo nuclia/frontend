@@ -1,0 +1,112 @@
+<app-configuration-form
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <div class="form-entry">
+      <label for="url">{{ 'retrieval-agents.workflow.node-types.external.form.url' | translate }}</label>
+      <pa-input
+        id="url"
+        externalLabel=""
+        formControlName="url"></pa-input>
+    </div>
+
+    <div class="form-entry">
+      <label for="description">
+        {{ 'retrieval-agents.workflow.node-types.external.form.description.label' | translate }}
+      </label>
+      <nsi-expandable-textarea
+        id="description"
+        externalLabel=""
+        modalTitle="retrieval-agents.workflow.node-types.external.form.description.label"
+        rows="2"
+        resizable
+        formControlName="description"
+        help="retrieval-agents.workflow.node-types.external.form.description.help"></nsi-expandable-textarea>
+    </div>
+
+    <div class="form-entry">
+      <label for="prompt">
+        {{ 'retrieval-agents.workflow.node-types.external.form.prompt.label' | translate }}
+      </label>
+      <nsi-expandable-textarea
+        id="prompt"
+        externalLabel=""
+        modalTitle="retrieval-agents.workflow.node-types.external.form.prompt.label"
+        rows="2"
+        resizable
+        formControlName="prompt"
+        help="retrieval-agents.workflow.node-types.external.form.prompt.help"></nsi-expandable-textarea>
+    </div>
+
+    <div class="form-entry">
+      <label for="method">{{ 'retrieval-agents.workflow.node-types.external.form.method' | translate }}</label>
+      <pa-radio-group
+        id="method"
+        formControlName="method">
+        <pa-radio value="POST">POST</pa-radio>
+        <pa-radio value="GET">GET</pa-radio>
+        <pa-radio value="PATCH">PATCH</pa-radio>
+      </pa-radio-group>
+    </div>
+
+    <div class="form-entry">
+      <label for="payload">Payload</label>
+      <pa-radio-group
+        id="payload"
+        formControlName="payload">
+        <pa-radio value="none">
+          {{ 'retrieval-agents.workflow.node-types.external.form.no-payload' | translate }}
+        </pa-radio>
+        <pa-radio value="context">
+          {{ 'retrieval-agents.workflow.node-types.external.form.context' | translate }}
+        </pa-radio>
+        <pa-radio value="call_schema">
+          {{ 'retrieval-agents.workflow.node-types.external.form.call_schema.label' | translate }}
+        </pa-radio>
+        <pa-radio value="call_obj">
+          {{ 'retrieval-agents.workflow.node-types.external.form.call_obj.label' | translate }}
+        </pa-radio>
+      </pa-radio-group>
+    </div>
+
+    @switch (payloadValue) {
+      @case ('call_schema') {
+        <div class="form-entry">
+          <label for="call_schema">
+            {{ 'retrieval-agents.workflow.node-types.external.form.call_schema.label' | translate }}
+          </label>
+          <nsi-expandable-textarea
+            id="call_schema"
+            formControlName="call_schema"
+            rows="2"
+            resizable
+            help="retrieval-agents.workflow.node-types.external.form.call_schema.help"
+            modalTitle="retrieval-agents.workflow.node-types.external.form.call_schema"></nsi-expandable-textarea>
+        </div>
+      }
+      @case ('call_obj') {
+        <div class="form-entry">
+          <label for="call_obj">
+            {{ 'retrieval-agents.workflow.node-types.external.form.call_obj.label' | translate }}
+          </label>
+          <nsi-expandable-textarea
+            id="call_obj"
+            formControlName="call_obj"
+            rows="2"
+            resizable
+            help="retrieval-agents.workflow.node-types.external.form.call_obj.help"
+            modalTitle="retrieval-agents.workflow.node-types.external.form.call_obj.label"></nsi-expandable-textarea>
+        </div>
+      }
+    }
+
+    <app-headers-field
+      [form]="configForm"
+      [config]="externalConfig"></app-headers-field>
+
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
+  </ng-container>
+</app-configuration-form>

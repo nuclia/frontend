@@ -6,6 +6,8 @@ import {
   BraveAgentCreation,
   ContextAgent,
   ContextAgentCreation,
+  ExternalAgent,
+  ExternalAgentCreation,
   GoogleAgent,
   GoogleAgentCreation,
   InternetProviderType,
@@ -69,7 +71,7 @@ export interface ParentNode extends NodeModel {
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
   preprocess: ['historical', 'rephrase', 'conditional'],
   context: ['conditional', 'ask', 'internet', 'sql', 'cypher'],
-  postprocess: ['validation', 'summarize', 'restart', 'conditional'],
+  postprocess: ['validation', 'summarize', 'restart', 'conditional', 'remi', 'external'],
 };
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
@@ -83,6 +85,8 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   sql: 'file-code',
   summarize: 'summary',
   validation: 'validation',
+  remi: 'chart',
+  external: 'globe',
 };
 
 export interface CommonAgentConfig {
@@ -99,7 +103,8 @@ export type NodeConfig =
   | ConditionalAgentUI
   | ValidationAgentUI
   | SummarizeAgentUI
-  | RestartAgentUI;
+  | RestartAgentUI
+  | ExternalAgentUI;
 
 export interface HistoricalAgentUI extends CommonAgentConfig {
   all: boolean;
@@ -114,10 +119,10 @@ export interface RephraseAgentUI extends CommonAgentConfig {
   userInfo: boolean;
 }
 
-export interface InternetAgentUI {
+export interface InternetAgentUI extends CommonAgentConfig {
   provider: InternetProviderType;
-  brave: CommonAgentConfig & Omit<BraveAgentCreation, 'module'>;
-  perplexity: CommonAgentConfig & Omit<PerplexityAgentCreation, 'module'>;
+  brave: Omit<CommonAgentConfig, 'rules'> & Omit<BraveAgentCreation, 'module'>;
+  perplexity: Omit<CommonAgentConfig, 'rules'> & Omit<PerplexityAgentCreation, 'module'>;
 }
 
 export interface SqlAgentUI extends CommonAgentConfig {
@@ -161,6 +166,18 @@ export interface RestartAgentUI extends CommonAgentConfig {
   model: string;
   retries: number;
   rules: string[];
+}
+
+export interface ExternalAgentUI extends CommonAgentConfig {
+  url: string;
+  payload: 'none' | 'context' | 'call_schema' | 'call_obj';
+  prompt?: string;
+  method?: 'POST' | 'GET' | 'PATCH';
+  description?: string;
+  call_schema?: string;
+  call_obj?: string;
+  headers?: { [property: string]: { property: string; value: string } };
+  model?: string;
 }
 
 export function getNodeTypeFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): NodeType {
@@ -222,6 +239,41 @@ export function sqlAgentToUi(agent: SqlAgent): SqlAgentUI {
     rules: agent.rules || null,
   };
 }
+export function externalUiToCreation(config: ExternalAgentUI): ExternalAgentCreation {
+  const { payload, headers, call_schema, call_obj, ...agentConfig } = config;
+  const context = payload === 'context';
+  let formattedCallObj, formattedCallSchema;
+  if (payload === 'call_obj' && call_obj) {
+    formattedCallObj = JSON.parse(call_obj);
+  } else if (payload === 'call_schema' && call_schema) {
+    formattedCallSchema = JSON.parse(call_schema);
+  }
+  return {
+    module: 'external',
+    headers: headers ? formatHeaders(headers) : undefined,
+    context,
+    call_schema: formattedCallSchema,
+    call_obj: formattedCallObj,
+    ...agentConfig,
+  };
+}
+export function externalAgentToUi(agent: ExternalAgent): ExternalAgentUI {
+  const { headers, call_schema, call_obj, ...uiConfig } = agent;
+  const uiHeaders: { [property: string]: { property: string; value: string } } = {};
+  if (headers) {
+    Object.entries(headers).forEach(([property, value], index) => {
+      uiHeaders['header' + index] = { property, value };
+    });
+  }
+  return {
+    ...uiConfig,
+    payload: agent.context ? 'context' : agent.call_obj ? 'call_obj' : agent.call_schema ? 'call_schema' : 'none',
+    rules: agent.rules || null,
+    headers: uiHeaders,
+    call_schema: JSON.stringify(call_schema),
+    call_obj: JSON.stringify(call_obj),
+  };
+}
 export type InternetAgentCreation =
   | BraveAgentCreation
   | PerplexityAgentCreation
@@ -229,38 +281,43 @@ export type InternetAgentCreation =
   | GoogleAgentCreation;
 export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | GoogleAgent;
 export function internetUiToCreation(config: InternetAgentUI): InternetAgentCreation {
+  const baseConfig = {
+    rules: config.rules,
+  };
   switch (config.provider) {
     case 'brave':
       return {
         module: config.provider,
+        ...baseConfig,
         ...config.brave,
       };
     case 'perplexity':
       return {
         module: config.provider,
+        ...baseConfig,
         ...config.perplexity,
       };
     case 'tavily':
     case 'google':
       return {
         module: config.provider,
+        ...baseConfig,
       };
   }
 }
 export function internetAgentToUi(agent: InternetAgent): InternetAgentUI {
   return {
     provider: agent.module,
+    rules: agent.rules || null,
     brave: {
       country: agent.module === 'brave' ? agent.country : '',
       domain: agent.module === 'brave' ? agent.domain : '',
-      rules: agent.rules || null,
     },
     perplexity: {
       domain: agent.module === 'perplexity' ? agent.domain : [''],
       top_k: agent.module === 'perplexity' ? agent.top_k : 0,
       related_questions: agent.module === 'perplexity' ? agent.related_questions : false,
       images: agent.module === 'perplexity' ? agent.images : false,
-      rules: agent.rules || null,
     },
   };
 }
@@ -277,6 +334,8 @@ export function getAgentFromConfig(
       return sqlUiToCreation(config);
     case 'ask':
       return askUiToCreation(config);
+    case 'external':
+      return externalUiToCreation(config);
     case 'historical':
     case 'cypher':
     case 'conditional':
@@ -284,7 +343,6 @@ export function getAgentFromConfig(
     case 'summarize':
     case 'restart':
     case 'remi':
-    case 'external':
       return { module: nodeType, ...config };
   }
 }
@@ -302,6 +360,8 @@ export function getConfigFromAgent(agent: PreprocessAgent | ContextAgent | Postp
       return sqlAgentToUi(agent as SqlAgent);
     case 'ask':
       return askAgentToUi(agent as AskAgent);
+    case 'external':
+      return externalAgentToUi(agent as ExternalAgent);
     case 'historical':
     case 'cypher':
     case 'mcp':
@@ -312,7 +372,18 @@ export function getConfigFromAgent(agent: PreprocessAgent | ContextAgent | Postp
     case 'summarize':
     case 'restart':
     case 'remi':
-    case 'external':
       return { ...agent } as any as NodeConfig;
   }
+}
+
+export function formatHeaders(extra: { [property: string]: { property: string; value: string } }): {
+  [property: string]: string;
+} {
+  return Object.values(extra).reduce(
+    (config, entry) => {
+      config[entry.property] = entry.value;
+      return config;
+    },
+    {} as { [property: string]: string },
+  );
 }

@@ -47,6 +47,8 @@
       [help]="'retrieval-agents.workflow.node-types.rephrase.form.user-info.help' | translate">
       {{ 'retrieval-agents.workflow.node-types.rephrase.form.user-info.label' | translate }}
     </pa-toggle>
-    <app-rules-field [form]="configForm"></app-rules-field>
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
   </ng-container>
 </app-configuration-form>

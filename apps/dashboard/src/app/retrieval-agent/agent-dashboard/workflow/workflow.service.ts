@@ -35,10 +35,14 @@ import {
   ConditionalNodeComponent,
   CypherFormComponent,
   CypherNodeComponent,
+  ExternalFormComponent,
+  ExternalNodeComponent,
   HistoricalFormComponent,
   HistoricalNodeComponent,
   InternetFormComponent,
   InternetNodeComponent,
+  RemiFormComponent,
+  RemiNodeComponent,
   RephraseFormComponent,
   RephraseNodeComponent,
   RestartFormComponent,
@@ -47,6 +51,7 @@ import {
   SqlNodeComponent,
   SummarizeFormComponent,
   SummarizeNodeComponent,
+  ValidationFormComponent,
   ValidationNodeComponent,
 } from './nodes';
 import { RulesPanelComponent } from './sidebar';
@@ -584,6 +589,14 @@ export class WorkflowService {
         return createComponent(CypherNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
+      case 'remi':
+        return createComponent(RemiNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
+      case 'external':
+        return createComponent(ExternalNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
       default:
         throw new Error(`No node component for type ${nodeType}`);
     }
@@ -603,7 +616,7 @@ export class WorkflowService {
       case 'conditional':
         return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'validation':
-        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
+        return createComponent(ValidationFormComponent, { environmentInjector: this.environmentInjector });
       case 'summarize':
         return createComponent(SummarizeFormComponent, { environmentInjector: this.environmentInjector });
       case 'restart':
@@ -616,6 +629,10 @@ export class WorkflowService {
         return createComponent(SqlFormComponent, { environmentInjector: this.environmentInjector });
       case 'cypher':
         return createComponent(CypherFormComponent, { environmentInjector: this.environmentInjector });
+      case 'remi':
+        return createComponent(RemiFormComponent, { environmentInjector: this.environmentInjector });
+      case 'external':
+        return createComponent(ExternalFormComponent, { environmentInjector: this.environmentInjector });
       default:
         throw new Error(`No form component for type ${nodeType}`);
     }

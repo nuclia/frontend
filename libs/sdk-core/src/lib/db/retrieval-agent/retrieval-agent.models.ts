@@ -262,6 +262,15 @@ export interface RemiAgentCreation {
 }
 export interface ExternalAgentCreation {
   module: 'external';
+  url: string;
+  prompt?: string;
+  method?: 'POST' | 'GET' | 'PATCH';
+  description?: string;
+  call_schema?: unknown;
+  call_obj?: unknown;
+  headers?: { [name: string]: string };
+  model?: string;
+  context: boolean;
 }
 
 export interface HistoricalAgent extends PreprocessAgent, HistoricalAgentCreation {
