@@ -1,0 +1,24 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.form-entry {
+  label {
+    color: $color-neutral-regular;
+    font-size: font-size(s);
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: rhythm(0.5);
+  }
+  .label-and-button {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+  .config-property-form {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  .config-property-form {
+    margin-top: rhythm(2);
+  }
+}

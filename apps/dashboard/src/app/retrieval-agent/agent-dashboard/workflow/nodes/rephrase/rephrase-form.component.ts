@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SDKService } from '@flaps/core';
-import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { NavigationService, SDKService } from '@flaps/core';
+import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { NucliaDBDriver } from '@nuclia/core';
-import { map, Observable, switchMap, take } from 'rxjs';
-import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
+import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
+import { forkJoin, map, Observable, switchMap, take } from 'rxjs';
+import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 
 @Component({
   selector: 'app-rephrase-form',
@@ -14,15 +16,21 @@ import { ConfigurationFormComponent, FormDirective } from '../../basic-elements'
     CommonModule,
     ReactiveFormsModule,
     TranslateModule,
+    PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,
     ConfigurationFormComponent,
+    RulesFieldComponent,
+    ExpandableTextareaComponent,
+    InfoCardComponent,
+    RouterLink,
   ],
   templateUrl: './rephrase-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RephraseFormComponent extends FormDirective {
+export class RephraseFormComponent extends FormDirective implements OnInit {
   private sdk = inject(SDKService);
+  private navigationService = inject(NavigationService);
 
   override form = new FormGroup({
     rephrase: new FormGroup({
@@ -32,6 +40,8 @@ export class RephraseFormComponent extends FormDirective {
       synonyms: new FormControl(false),
       history: new FormControl(false),
       userInfo: new FormControl(false),
+      rules: new FormArray<FormControl<string>>([]),
+      // TODO manage rids and labels
     }),
   });
 
@@ -39,11 +49,22 @@ export class RephraseFormComponent extends FormDirective {
     return this.form.controls.rephrase;
   }
 
-  sourceOptions: Observable<OptionModel[]> = this.sdk.currentArag.pipe(
-    take(1),
-    switchMap((arag) => arag.getDrivers('nucliadb') as Observable<NucliaDBDriver[]>),
-    map((drivers) =>
-      drivers.map((driver) => new OptionModel({ id: driver.id, label: driver.name, value: driver.config.kbid })),
-    ),
-  );
+  private aragUrl = signal('');
+  driversPath = computed(() => `${this.aragUrl()}/drivers`);
+  sourceOptions = signal<OptionModel[] | null>(null);
+
+  ngOnInit() {
+    forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentArag.pipe(take(1))])
+      .pipe(
+        map(([account, arag]) => {
+          this.aragUrl.set(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
+          return arag;
+        }),
+        switchMap((arag) => arag.getDrivers('nucliadb') as Observable<NucliaDBDriver[]>),
+        map((drivers) =>
+          drivers.map((driver) => new OptionModel({ id: driver.id, label: driver.name, value: driver.config.kbid })),
+        ),
+      )
+      .subscribe((options) => this.sourceOptions.set(options));
+  }
 }

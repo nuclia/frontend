@@ -4,12 +4,21 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { DriverCreation, McpSseConfig, McpSseDriver } from '@nuclia/core';
+import { formatHeaders, HeadersFieldComponent } from '../../agent-dashboard/workflow';
 
 let headerIndex = 0;
 
 @Component({
   selector: 'app-mcpsse-driver-modal',
-  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [
+    CommonModule,
+    PaButtonModule,
+    PaModalModule,
+    PaTextFieldModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    HeadersFieldComponent,
+  ],
   templateUrl: './mcpsse-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,7 +63,7 @@ export class McpSseDriverModalComponent {
   submit() {
     if (this.form.valid) {
       const { name, headers, ...rawConfig } = this.form.getRawValue();
-      const config: McpSseConfig = { ...rawConfig, headers: this.formatHeaders(headers) };
+      const config: McpSseConfig = { ...rawConfig, headers: formatHeaders(headers) };
       const driver: DriverCreation = {
         name,
         provider: 'mcpsse',
@@ -76,17 +85,5 @@ export class McpSseDriverModalComponent {
 
   removeHeader(key: string) {
     this.headersGroup.removeControl(key);
-  }
-
-  private formatHeaders(extra: { [property: string]: { property: string; value: string } }): {
-    [property: string]: string;
-  } {
-    return Object.values(extra).reduce(
-      (config, entry) => {
-        config[entry.property] = entry.value;
-        return config;
-      },
-      {} as { [property: string]: string },
-    );
   }
 }

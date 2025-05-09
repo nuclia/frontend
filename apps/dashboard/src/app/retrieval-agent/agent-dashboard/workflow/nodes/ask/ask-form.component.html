@@ -29,45 +29,49 @@
       <label for="rephrase_semantic_custom_prompt">
         {{ 'retrieval-agents.workflow.node-types.ask.form.rephrase_semantic_custom_prompt' | translate }}
       </label>
-      <pa-textarea
+      <nsi-expandable-textarea
         id="rephrase_semantic_custom_prompt"
         formControlName="rephrase_semantic_custom_prompt"
         externalLabel=""
         rows="2"
-        resizable="true"></pa-textarea>
+        modalTitle="retrieval-agents.workflow.node-types.ask.form.rephrase_semantic_custom_prompt"
+        resizable="true"></nsi-expandable-textarea>
     </div>
     <div class="form-entry">
       <label for="rephrase_lexical_custom_prompt">
         {{ 'retrieval-agents.workflow.node-types.ask.form.rephrase_lexical_custom_prompt' | translate }}
       </label>
-      <pa-textarea
+      <nsi-expandable-textarea
         id="rephrase_lexical_custom_prompt"
         formControlName="rephrase_lexical_custom_prompt"
         externalLabel=""
         rows="2"
-        resizable="true"></pa-textarea>
+        modalTitle="retrieval-agents.workflow.node-types.ask.form.rephrase_lexical_custom_prompt"
+        resizable="true"></nsi-expandable-textarea>
     </div>
     <div class="form-entry">
       <label for="keywords_custom_prompt">
         {{ 'retrieval-agents.workflow.node-types.ask.form.keywords_custom_prompt' | translate }}
       </label>
-      <pa-textarea
+      <nsi-expandable-textarea
         id="keywords_custom_prompt"
         formControlName="keywords_custom_prompt"
         externalLabel=""
         rows="2"
-        resizable="true"></pa-textarea>
+        modalTitle="retrieval-agents.workflow.node-types.ask.form.keywords_custom_prompt"
+        resizable="true"></nsi-expandable-textarea>
     </div>
     <div class="form-entry">
       <label for="visual_enable_prompt">
         {{ 'retrieval-agents.workflow.node-types.ask.form.visual_enable_prompt' | translate }}
       </label>
-      <pa-textarea
+      <nsi-expandable-textarea
         id="visual_enable_prompt"
         formControlName="visual_enable_prompt"
         externalLabel=""
         rows="2"
-        resizable="true"></pa-textarea>
+        modalTitle="retrieval-agents.workflow.node-types.ask.form.visual_enable_prompt"
+        resizable="true"></nsi-expandable-textarea>
     </div>
     <pa-toggle
       formControlName="full_resource"
@@ -79,5 +83,8 @@
       withBackground>
       {{ 'retrieval-agents.workflow.node-types.ask.form.vllm' | translate }}
     </pa-toggle>
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
   </ng-container>
 </app-configuration-form>

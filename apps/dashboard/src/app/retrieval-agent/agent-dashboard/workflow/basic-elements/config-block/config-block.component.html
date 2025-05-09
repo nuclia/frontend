@@ -9,7 +9,7 @@
         @if (block.title) {
           <div class="title">{{ block.title }}</div>
         }
-        <div>{{ block.content }}</div>
+        <div [innerHTML]="block.content"></div>
       </div>
     }
   </div>

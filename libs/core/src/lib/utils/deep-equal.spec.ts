@@ -3,7 +3,7 @@ import { deepEqual } from './deep-equal';
 describe('deepEqual', () => {
   const object2 = { a: 1, b: '2', c: [1, 2], d: [{ a: 1 }], e: { a: 'toto' } };
 
-  describe('with deepOnlcuded true', () => {
+  describe('with deepIncluded true', () => {
     it('should return true if two objects are equivalent', () => {
       expect(deepEqual({ a: 1, b: '2', c: [1, 2], d: [{ a: 1 }], e: { a: 'toto' } }, object2, true)).toBe(true);
     });
@@ -21,6 +21,26 @@ describe('deepEqual', () => {
       expect(deepEqual({ c: [1, 2], d: [{ a: 1 }], e: { a: 'titi' } }, object2, true)).toBe(false);
       expect(deepEqual({ a: 2, c: [1, 2], d: [{ a: 1 }], e: { a: 'toto' } }, object2, true)).toBe(false);
       expect(deepEqual({ b: 2, c: [1, 2], d: [{ a: 1 }], e: { a: 'toto' } }, object2, true)).toBe(false);
+    });
+
+    it('should return true when comparing null and undefined', () => {
+      expect(
+        deepEqual(
+          {
+            some: undefined,
+            headers: {
+              other: null,
+            },
+          },
+          {
+            some: null,
+            headers: {
+              other: undefined,
+            },
+          },
+          true,
+        ),
+      ).toBe(true);
     });
   });
 });

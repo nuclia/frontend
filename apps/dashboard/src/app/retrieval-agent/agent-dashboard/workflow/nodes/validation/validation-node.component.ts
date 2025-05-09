@@ -18,6 +18,7 @@ import { ValidationAgentUI } from '../../workflow.models';
 })
 export class ValidationNodeComponent extends NodeDirective {
   validationConfig = computed<ConfigBlockItem[]>(() => {
+    // FIXME So far there is no prompt on the backend model for validation. Waiting for Ramon’s confirmation it's in purpose
     if (this.config()) {
       const config = this.config() as ValidationAgentUI;
       return [{ content: config.prompt }];

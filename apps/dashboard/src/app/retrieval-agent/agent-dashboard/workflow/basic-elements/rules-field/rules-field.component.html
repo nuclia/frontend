@@ -1,0 +1,33 @@
+<ng-container [formGroup]="form()">
+  <div
+    class="form-entry field-list"
+    formArrayName="rules">
+    <label for="rules">{{ 'retrieval-agents.workflow.common-forms.rules.label' | translate }}</label>
+    @for (rule of rules.controls; track rule) {
+      <div class="entry-with-button">
+        <nsi-expandable-textarea
+          id="rules"
+          resizable
+          modalTitle="retrieval-agents.workflow.common-forms.rules.label"
+          [formControl]="rule"
+          [placeholder]="'retrieval-agents.workflow.common-forms.rules.placeholder' | translate"
+          externalLabel=""></nsi-expandable-textarea>
+        @if ($index > 0) {
+          <pa-button
+            size="small"
+            aspect="basic"
+            icon="trash"
+            (click)="removeRule($index)">
+            {{ 'retrieval-agents.workflow.common-forms.rules.remove' | translate }}
+          </pa-button>
+        }
+      </div>
+    }
+    <pa-button
+      aspect="basic"
+      size="small"
+      (click)="addRule()">
+      {{ 'retrieval-agents.workflow.common-forms.rules.add' | translate }}
+    </pa-button>
+  </div>
+</ng-container>

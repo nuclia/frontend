@@ -30,7 +30,7 @@ export abstract class FormDirective {
   submitForm = output<NodeConfig>();
   cancel = output<void>();
 
-  config?: unknown;
+  config?: NodeConfig;
 
   submit() {
     if (this.form.valid) {

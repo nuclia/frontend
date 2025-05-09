@@ -8,18 +8,12 @@
   <pa-modal-content>
     <form [formGroup]="form">
       <div class="form-entry">
-        <label for="name">{{ 'retrieval-agents.drivers.form.driver-name' | translate }}</label>
-        <pa-input
-          id="name"
-          externalLabel
-          formControlName="name"></pa-input>
-      </div>
-      <div class="form-entry">
         <label for="provider">{{ 'retrieval-agents.drivers.form.internet.provider' | translate }}</label>
         <pa-select
           id="provider"
           externalLabel
-          formControlName="provider">
+          formControlName="provider"
+          (valueChange)="onProviderChange()">
           <pa-option
             value="brave"
             [description]="
@@ -29,6 +23,16 @@
             "
             [disabled]="hasBrave">
             Brave
+          </pa-option>
+          <pa-option
+            value="google"
+            [description]="
+              hasBrave
+                ? ('retrieval-agents.drivers.form.internet.already-configured' | translate: { name: 'Google' })
+                : ''
+            "
+            [disabled]="hasGoogle">
+            Google
           </pa-option>
           <pa-option
             value="perplexity"
@@ -53,6 +57,13 @@
         </pa-select>
       </div>
       <div class="form-entry">
+        <label for="name">{{ 'retrieval-agents.drivers.form.driver-name' | translate }}</label>
+        <pa-input
+          id="name"
+          externalLabel
+          formControlName="name"></pa-input>
+      </div>
+      <div class="form-entry">
         <label for="key">{{ 'retrieval-agents.drivers.form.key' | translate }}</label>
         <pa-input
           id="key"
@@ -67,6 +78,33 @@
             id="endpoint"
             externalLabel
             formControlName="endpoint"></pa-input>
+        </div>
+      } @else if (providerValue === 'google') {
+        <pa-toggle
+          formControlName="vertexai"
+          withBackground>
+          {{ 'retrieval-agents.drivers.form.internet.vertexai' | translate }}
+        </pa-toggle>
+        <div class="form-entry">
+          <label for="credentials">{{ 'retrieval-agents.drivers.form.internet.credentials' | translate }}</label>
+          <pa-input
+            id="credentials"
+            externalLabel
+            formControlName="credentials"></pa-input>
+        </div>
+        <div class="form-entry">
+          <label for="project">{{ 'retrieval-agents.drivers.form.internet.project' | translate }}</label>
+          <pa-input
+            id="project"
+            externalLabel
+            formControlName="project"></pa-input>
+        </div>
+        <div class="form-entry">
+          <label for="location">{{ 'retrieval-agents.drivers.form.internet.location' | translate }}</label>
+          <pa-input
+            id="location"
+            externalLabel
+            formControlName="location"></pa-input>
         </div>
       }
     </form>

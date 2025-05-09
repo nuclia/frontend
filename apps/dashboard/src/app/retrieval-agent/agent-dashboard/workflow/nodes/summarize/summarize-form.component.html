@@ -5,13 +5,22 @@
   <ng-container [formGroup]="configForm">
     <div class="form-entry">
       <label for="prompt">Prompt</label>
-      <pa-textarea
+      <nsi-expandable-textarea
         id="prompt"
         formControlName="prompt"
         rows="2"
         resizable
+        [modalTitle]="'retrieval-agents.workflow.node-types.summarize.prompt-placeholder' | translate"
         [placeholder]="'retrieval-agents.workflow.node-types.summarize.prompt-placeholder' | translate"
-        externalLabel=""></pa-textarea>
+        externalLabel=""></nsi-expandable-textarea>
     </div>
+    <pa-toggle
+      formControlName="images"
+      withBackground="">
+      {{ 'retrieval-agents.workflow.node-types.summarize.images' | translate }}
+    </pa-toggle>
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
   </ng-container>
 </app-configuration-form>

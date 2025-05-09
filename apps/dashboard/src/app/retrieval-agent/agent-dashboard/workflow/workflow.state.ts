@@ -59,7 +59,6 @@ export function getBackendState(): BackendState {
 }
 
 export function updateBackendState(partialState: Partial<BackendState>) {
-  console.debug(` => updateBackendState with`, partialState);
   backendState.update((state) => ({ ...state, ...partialState }));
 }
 /**
@@ -275,6 +274,7 @@ export function resetNodes() {
   preprocessNodes.set({});
   contextNodes.set({});
   postprocessNodes.set({});
+  childNodes.set({});
 }
 
 /**
@@ -284,7 +284,6 @@ export function resetNodes() {
  * @param partialNode Partial node updated
  */
 export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: Partial<ParentNode>) {
-  console.debug(`State: updateNode ${id} with`, partialNode);
   const node = getNode(id, nodeCategory);
   if (!node) {
     throw new Error(`updateNode: Node ${id} not found.`);

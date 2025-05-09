@@ -45,38 +45,9 @@
           formControlName="sse_read_timeout"></pa-input>
       </div>
 
-      <ng-container formGroupName="headers">
-        <div class="form-entry">
-          <div class="label-and-button">
-            <label>{{ 'retrieval-agents.drivers.form.mcpsse.headers.label' | translate }}</label>
-            <pa-button
-              size="small"
-              aspect="basic"
-              (click)="addHeader()">
-              {{ 'retrieval-agents.drivers.form.mcpsse.headers.add' | translate }}
-            </pa-button>
-          </div>
-          @for (group of headersGroup.controls | keyvalue; track group.key) {
-            <div
-              class="config-property-form"
-              [formGroup]="group.value">
-              <pa-input formControlName="property">
-                {{ 'retrieval-agents.drivers.form.mcpsse.headers.property-name' | translate }}
-              </pa-input>
-              <pa-input formControlName="value">
-                {{ 'retrieval-agents.drivers.form.mcpsse.headers.property-value' | translate }}
-              </pa-input>
-              <pa-button
-                icon="trash"
-                aspect="basic"
-                size="small"
-                (click)="removeHeader(group.key)">
-                {{ 'retrieval-agents.drivers.form.mcpsse.headers.remove' | translate }}
-              </pa-button>
-            </div>
-          }
-        </div>
-      </ng-container>
+      <app-headers-field
+        [form]="form"
+        [config]="config?.config"></app-headers-field>
     </form>
   </pa-modal-content>
   <pa-modal-footer>

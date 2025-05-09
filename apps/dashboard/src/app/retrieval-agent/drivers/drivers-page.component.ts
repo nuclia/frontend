@@ -125,6 +125,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
       case 'brave':
       case 'tavily':
       case 'perplexity':
+      case 'google':
         modalRef$ = of(
           this.modal.openModal(
             InternetDriverModalComponent,
@@ -147,6 +148,9 @@ export class DriversPageComponent implements OnInit, OnDestroy {
         break;
       case 'mcpsse':
         modalRef$ = of(this.modal.openModal(McpSseDriverModalComponent, new ModalConfig({ data: driver })));
+        break;
+      case 'mcpstdio':
+        modalRef$ = of(this.modal.openModal(McpStdioDriverModalComponent, new ModalConfig({ data: driver })));
         break;
     }
     modalRef$
