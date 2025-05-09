@@ -180,6 +180,8 @@ export interface BraveAgentCreation {
 
 export interface McpAgentCreation {
   module: 'mcp';
+  source: string;
+  transport: 'SSE' | 'STDIO';
 }
 
 export interface CypherAgentCreation {

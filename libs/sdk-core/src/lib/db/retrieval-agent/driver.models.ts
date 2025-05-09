@@ -27,7 +27,8 @@ export type Driver =
   | TavilyDriver
   | GoogleDriver
   | SqlDriver
-  | McpSseDriver;
+  | McpSseDriver
+  | McpStdioDriver;
 
 export interface BraveDriver extends IDriver {
   provider: 'brave';

@@ -45,7 +45,8 @@ export type NodeType =
   | 'cypher'
   | 'remi'
   | 'external'
-  | 'restricted';
+  | 'restricted'
+  | 'mcp';
 
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
@@ -71,7 +72,7 @@ export interface ParentNode extends NodeModel {
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
   preprocess: ['historical', 'rephrase', 'conditional'],
-  context: ['conditional', 'ask', 'internet', 'sql', 'cypher', 'restricted'],
+  context: ['conditional', 'ask', 'internet', 'sql', 'cypher', 'restricted', 'mcp'],
   postprocess: ['validation', 'summarize', 'restart', 'conditional', 'remi', 'external'],
 };
 
@@ -89,6 +90,7 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   validation: 'validation',
   remi: 'chart',
   external: 'globe',
+  mcp: 'file',
 };
 
 export interface CommonAgentConfig {
@@ -107,7 +109,8 @@ export type NodeConfig =
   | SummarizeAgentUI
   | RestartAgentUI
   | ExternalAgentUI
-  | RestrictedAgentUI;
+  | RestrictedAgentUI
+  | McpAgentUI;
 
 export interface HistoricalAgentUI extends CommonAgentConfig {
   all: boolean;
@@ -150,6 +153,11 @@ export interface AskAgentUI extends CommonAgentConfig {
   visual_enable_prompt?: string;
   full_resource?: boolean;
   vllm?: boolean;
+}
+
+export interface McpAgentUI extends CommonAgentConfig {
+  source: string;
+  transport: 'SSE' | 'STDIO';
 }
 
 export interface ConditionalAgentUI extends CommonAgentConfig {
@@ -353,6 +361,7 @@ export function getAgentFromConfig(
     case 'restart':
     case 'remi':
     case 'restricted':
+    case 'mcp':
       return { module: nodeType, ...config };
   }
 }

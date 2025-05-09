@@ -56,6 +56,7 @@ import {
   ValidationFormComponent,
   ValidationNodeComponent,
 } from './nodes';
+import { McpFormComponent, McpNodeComponent } from './nodes/mcp';
 import { RulesPanelComponent } from './sidebar';
 import {
   getConfigFromAgent,
@@ -603,6 +604,10 @@ export class WorkflowService {
         return createComponent(RestrictedNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
+      case 'mcp':
+        return createComponent(McpNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
       default:
         throw new Error(`No node component for type ${nodeType}`);
     }
@@ -641,6 +646,8 @@ export class WorkflowService {
         return createComponent(ExternalFormComponent, { environmentInjector: this.environmentInjector });
       case 'restricted':
         return createComponent(RestrictedFormComponent, { environmentInjector: this.environmentInjector });
+      case 'mcp':
+        return createComponent(McpFormComponent, { environmentInjector: this.environmentInjector });
       default:
         throw new Error(`No form component for type ${nodeType}`);
     }

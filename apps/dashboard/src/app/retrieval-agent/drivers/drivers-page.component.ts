@@ -149,6 +149,9 @@ export class DriversPageComponent implements OnInit, OnDestroy {
       case 'mcpsse':
         modalRef$ = of(this.modal.openModal(McpSseDriverModalComponent, new ModalConfig({ data: driver })));
         break;
+      case 'mcpstdio':
+        modalRef$ = of(this.modal.openModal(McpStdioDriverModalComponent, new ModalConfig({ data: driver })));
+        break;
     }
     modalRef$
       .pipe(
