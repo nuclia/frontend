@@ -125,6 +125,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
       case 'brave':
       case 'tavily':
       case 'perplexity':
+      case 'google':
         modalRef$ = of(
           this.modal.openModal(
             InternetDriverModalComponent,

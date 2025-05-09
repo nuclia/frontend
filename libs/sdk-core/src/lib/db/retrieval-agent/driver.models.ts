@@ -11,6 +11,7 @@ export interface IDriver {
     | NucliaDBConfig
     | PerplexityConfig
     | TavilyConfig
+    | GoogleConfig
     | SqlConfig
     | McpSseConfig
     | McpStdioConfig;
@@ -24,12 +25,17 @@ export type Driver =
   | NucliaDBDriver
   | PerplexityDriver
   | TavilyDriver
+  | GoogleDriver
   | SqlDriver
   | McpSseDriver;
 
 export interface BraveDriver extends IDriver {
   provider: 'brave';
   config: BraveConfig;
+}
+export interface GoogleDriver extends IDriver {
+  provider: 'google';
+  config: GoogleConfig;
 }
 export interface CypherDriver extends IDriver {
   provider: 'cypher';
@@ -66,6 +72,13 @@ export interface InternetConfig {
 
 export interface BraveConfig extends InternetConfig {
   endpoint?: string;
+}
+export interface GoogleConfig {
+  vertexai?: boolean;
+  api_key?: string;
+  credentials?: string;
+  project?: string;
+  location?: string;
 }
 
 export interface CypherConfig {

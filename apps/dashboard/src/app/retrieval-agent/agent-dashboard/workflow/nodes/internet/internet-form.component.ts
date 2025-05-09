@@ -6,7 +6,7 @@ import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from 
 import { TranslateModule } from '@ngx-translate/core';
 import { InternetProviderType } from '@nuclia/core';
 import { map, Observable, switchMap, take } from 'rxjs';
-import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
+import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { InternetAgentUI, isInternetProvider } from '../../workflow.models';
 
 @Component({
@@ -19,6 +19,7 @@ import { InternetAgentUI, isInternetProvider } from '../../workflow.models';
     PaTextFieldModule,
     PaTogglesModule,
     ConfigurationFormComponent,
+    RulesFieldComponent,
   ],
   templateUrl: './internet-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +29,7 @@ export class InternetFormComponent extends FormDirective implements OnInit {
 
   override form = new FormGroup({
     internet: new FormGroup({
+      rules: new FormArray<FormControl<string>>([]),
       provider: new FormControl<InternetProviderType | ''>('', {
         validators: [Validators.required],
         nonNullable: true,

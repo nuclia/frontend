@@ -32,7 +32,9 @@ export class RulesFieldComponent implements OnInit {
     if (config?.rules) {
       if (config.rules.length > 1) {
         // Add rules control to the form to display all the rules already stored
-        for (let i = 0; i < config.rules.length - 1; i++) {
+        // some forms have a field displayed by default, others don't
+        const numberOfRulesToCreate = config.rules.length - this.rules.length;
+        for (let i = 0; i < numberOfRulesToCreate; i++) {
           this.addRule();
         }
         this.rules.patchValue(config.rules);
