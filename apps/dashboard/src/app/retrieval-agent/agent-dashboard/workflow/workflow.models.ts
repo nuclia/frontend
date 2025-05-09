@@ -44,7 +44,8 @@ export type NodeType =
   | 'sql'
   | 'cypher'
   | 'remi'
-  | 'external';
+  | 'external'
+  | 'restricted';
 
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
@@ -70,7 +71,7 @@ export interface ParentNode extends NodeModel {
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
   preprocess: ['historical', 'rephrase', 'conditional'],
-  context: ['conditional', 'ask', 'internet', 'sql', 'cypher'],
+  context: ['conditional', 'ask', 'internet', 'sql', 'cypher', 'restricted'],
   postprocess: ['validation', 'summarize', 'restart', 'conditional', 'remi', 'external'],
 };
 
@@ -78,6 +79,7 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   ask: 'database',
   conditional: 'dataflow',
   cypher: 'file-code',
+  restricted: 'file-code',
   historical: 'history',
   internet: 'globe',
   rephrase: 'rephrase',
@@ -104,7 +106,8 @@ export type NodeConfig =
   | ValidationAgentUI
   | SummarizeAgentUI
   | RestartAgentUI
-  | ExternalAgentUI;
+  | ExternalAgentUI
+  | RestrictedAgentUI;
 
 export interface HistoricalAgentUI extends CommonAgentConfig {
   all: boolean;
@@ -154,11 +157,13 @@ export interface ConditionalAgentUI extends CommonAgentConfig {
 }
 
 export interface ValidationAgentUI extends CommonAgentConfig {
+  // FIXME: cleanup if Ramon confirm there is no prompt for validation agent
   prompt: string;
 }
 
 export interface SummarizeAgentUI extends CommonAgentConfig {
   prompt: string;
+  images?: boolean;
 }
 
 export interface RestartAgentUI extends CommonAgentConfig {
@@ -178,6 +183,10 @@ export interface ExternalAgentUI extends CommonAgentConfig {
   call_obj?: string;
   headers?: { [property: string]: { property: string; value: string } };
   model?: string;
+}
+
+export interface RestrictedAgentUI extends CommonAgentConfig {
+  code: string;
 }
 
 export function getNodeTypeFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): NodeType {
@@ -343,6 +352,7 @@ export function getAgentFromConfig(
     case 'summarize':
     case 'restart':
     case 'remi':
+    case 'restricted':
       return { module: nodeType, ...config };
   }
 }

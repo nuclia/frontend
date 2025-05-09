@@ -47,6 +47,8 @@ import {
   RephraseNodeComponent,
   RestartFormComponent,
   RestartNodeComponent,
+  RestrictedFormComponent,
+  RestrictedNodeComponent,
   SqlFormComponent,
   SqlNodeComponent,
   SummarizeFormComponent,
@@ -597,6 +599,10 @@ export class WorkflowService {
         return createComponent(ExternalNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
+      case 'restricted':
+        return createComponent(RestrictedNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
       default:
         throw new Error(`No node component for type ${nodeType}`);
     }
@@ -633,6 +639,8 @@ export class WorkflowService {
         return createComponent(RemiFormComponent, { environmentInjector: this.environmentInjector });
       case 'external':
         return createComponent(ExternalFormComponent, { environmentInjector: this.environmentInjector });
+      case 'restricted':
+        return createComponent(RestrictedFormComponent, { environmentInjector: this.environmentInjector });
       default:
         throw new Error(`No form component for type ${nodeType}`);
     }

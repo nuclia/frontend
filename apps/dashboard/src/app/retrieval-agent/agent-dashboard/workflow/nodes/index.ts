@@ -7,6 +7,7 @@ export * from './internet';
 export * from './remi';
 export * from './rephrase';
 export * from './restart';
+export * from './restricted';
 export * from './sql';
 export * from './summarize';
 export * from './validation';
