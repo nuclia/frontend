@@ -16,6 +16,10 @@ export function deepEqual(object1: object, object2: object, deepIncluded?: boole
       if (isObject(value1) && isObject(value2)) {
         return deepEqual(value1, value2, deepIncluded);
       } else {
+        // we consider undefined and null as equivalent
+        if (value1 === undefined || value1 === null) {
+          return value1 == value2;
+        }
         return value1 === value2;
       }
     });
@@ -47,7 +51,13 @@ export function deepEqual(object1: object, object2: object, deepIncluded?: boole
       if (!deepEqual(value1, value2, deepIncluded)) return false;
     } else {
       // Both aren't objects, so compare them using equality operator
-      if (value1 !== value2) return false;
+      if (value1 !== value2) {
+        // we consider undefined and null as equivalent
+        if (value1 === undefined || value1 === null) {
+          return value1 == value2;
+        }
+        return false;
+      }
     }
   }
 
