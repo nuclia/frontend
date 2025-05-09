@@ -496,8 +496,9 @@ export function initUsageTracking(noTracking?: boolean) {
   }
 }
 
-export function initChatHistoryPersistence() {
-  const chatHistory = localStorage.getItem(CHAT_HISTORY_KEY);
+export function initChatHistoryPersistence(id?: string) {
+  const key = id ? `${CHAT_HISTORY_KEY}.${id}` : CHAT_HISTORY_KEY;
+  const chatHistory = localStorage.getItem(key);
   if (chatHistory) {
     chat.set(JSON.parse(chatHistory));
   }
@@ -507,6 +508,6 @@ export function initChatHistoryPersistence() {
         distinctUntilChanged(),
         filter((history) => !history[history.length - 1]?.answer?.incomplete),
       )
-      .subscribe((history) => localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history))),
+      .subscribe((history) => localStorage.setItem(key, JSON.stringify(history))),
   );
 }

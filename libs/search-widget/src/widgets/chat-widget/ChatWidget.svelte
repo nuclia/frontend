@@ -51,6 +51,7 @@
   export let standalone = false;
   export let proxy = false;
   export let cssPath = '';
+  export let id = '';
   export let prompt = '';
   export let system_prompt = '';
   export let rephrase_prompt = '';
@@ -209,7 +210,7 @@
       initViewer();
       initUsageTracking(no_tracking);
       if (_features.persistChatHistory) {
-        initChatHistoryPersistence();
+        initChatHistoryPersistence(id);
       }
 
       lang = lang || window.navigator.language.split('-')[0] || 'en';
