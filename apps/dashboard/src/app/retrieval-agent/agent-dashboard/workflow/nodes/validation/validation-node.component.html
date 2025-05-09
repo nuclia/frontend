@@ -4,8 +4,7 @@
   [origin]="origin()"
   (outputClick)="onOutputClick($event)"
   (trashClick)="onTrashClick()">
-  <!-- So far there is no prompt on the backend model for validation. Waiting for Ramon’s confirmation it's in purpose -->
-  <!-- <app-config-block [config]="validationConfig()"></app-config-block> -->
+  <app-config-block [config]="validationConfig()"></app-config-block>
   <app-connectable-entry
     id="then"
     category="postprocess"

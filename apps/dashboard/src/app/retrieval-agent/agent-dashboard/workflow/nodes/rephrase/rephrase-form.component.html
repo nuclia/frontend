@@ -14,15 +14,29 @@
         rows="2"
         resizable=""></nsi-expandable-textarea>
     </div>
-    <div class="form-entry">
-      <label for="askTo">{{ 'retrieval-agents.workflow.node-types.rephrase.form.ask-to.label' | translate }}</label>
-      <pa-select
-        id="askTo"
-        formControlName="kb"
-        externalLabel
-        [placeholder]="'retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder' | translate"
-        [options]="sourceOptions | async"></pa-select>
+    <div class="form-entry field-list">
+      <div class="form-entry">
+        <label for="askTo">{{ 'retrieval-agents.workflow.node-types.rephrase.form.ask-to.label' | translate }}</label>
+        <pa-select
+          id="askTo"
+          formControlName="kb"
+          externalLabel
+          [placeholder]="'retrieval-agents.workflow.node-types.rephrase.form.ask-to.placeholder' | translate"
+          [options]="sourceOptions()"></pa-select>
+      </div>
+      @if (sourceOptions()?.length === 0) {
+        <nsi-info-card type="warning">
+          {{ 'retrieval-agents.workflow.node-types.ask.form.no-source' | translate }}
+        </nsi-info-card>
+        <pa-button
+          aspect="basic"
+          size="small"
+          [routerLink]="driversPath()">
+          {{ 'retrieval-agents.workflow.node-types.ask.form.go-to-drivers' | translate }}
+        </pa-button>
+      }
     </div>
+
     <pa-toggle
       formControlName="extend"
       withBackground>

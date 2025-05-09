@@ -6,7 +6,7 @@ import { NavigationService, SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { NucliaDBDriver } from '@nuclia/core';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { forkJoin, map, Observable, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
 
@@ -22,6 +22,7 @@ import { ConfigurationFormComponent, FormDirective } from '../../basic-elements'
     PaTextFieldModule,
     PaTogglesModule,
     ConfigurationFormComponent,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './ask-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,9 +46,9 @@ export class AskFormComponent extends FormDirective implements OnInit {
     return this.form.controls.ask;
   }
 
-  aragUrl = signal('');
-  sourceOptions = signal<OptionModel[] | null>(null);
+  private aragUrl = signal('');
   driversPath = computed(() => `${this.aragUrl()}/drivers`);
+  sourceOptions = signal<OptionModel[] | null>(null);
 
   ngOnInit() {
     forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentArag.pipe(take(1))])
