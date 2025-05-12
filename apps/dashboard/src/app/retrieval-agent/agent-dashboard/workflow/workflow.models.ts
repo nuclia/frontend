@@ -189,7 +189,7 @@ export interface ExternalAgentUI extends CommonAgentConfig {
   description?: string;
   call_schema?: string;
   call_obj?: string;
-  headers?: { [property: string]: { property: string; value: string } };
+  headers?: { [property: string]: string };
   model?: string;
 }
 
@@ -257,7 +257,7 @@ export function sqlAgentToUi(agent: SqlAgent): SqlAgentUI {
   };
 }
 export function externalUiToCreation(config: ExternalAgentUI): ExternalAgentCreation {
-  const { payload, headers, call_schema, call_obj, ...agentConfig } = config;
+  const { payload, call_schema, call_obj, ...agentConfig } = config;
   const context = payload === 'context';
   let formattedCallObj, formattedCallSchema;
   if (payload === 'call_obj' && call_obj) {
@@ -267,7 +267,6 @@ export function externalUiToCreation(config: ExternalAgentUI): ExternalAgentCrea
   }
   return {
     module: 'external',
-    headers: headers ? formatHeaders(headers) : undefined,
     context,
     call_schema: formattedCallSchema,
     call_obj: formattedCallObj,
@@ -275,18 +274,11 @@ export function externalUiToCreation(config: ExternalAgentUI): ExternalAgentCrea
   };
 }
 export function externalAgentToUi(agent: ExternalAgent): ExternalAgentUI {
-  const { headers, call_schema, call_obj, ...uiConfig } = agent;
-  const uiHeaders: { [property: string]: { property: string; value: string } } = {};
-  if (headers) {
-    Object.entries(headers).forEach(([property, value], index) => {
-      uiHeaders['header' + index] = { property, value };
-    });
-  }
+  const { call_schema, call_obj, ...uiConfig } = agent;
   return {
     ...uiConfig,
     payload: agent.context ? 'context' : agent.call_obj ? 'call_obj' : agent.call_schema ? 'call_schema' : 'none',
     rules: agent.rules || null,
-    headers: uiHeaders,
     call_schema: JSON.stringify(call_schema),
     call_obj: JSON.stringify(call_obj),
   };

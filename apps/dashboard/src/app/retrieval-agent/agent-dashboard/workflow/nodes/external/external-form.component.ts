@@ -11,7 +11,7 @@ import {
   HeadersFieldComponent,
   RulesFieldComponent,
 } from '../../basic-elements';
-import { ExternalAgentUI } from '../../workflow.models';
+import { ExternalAgentUI, formatHeaders } from '../../workflow.models';
 
 @Component({
   selector: 'app-external-form',
@@ -43,7 +43,6 @@ export class ExternalFormComponent extends FormDirective {
       rules: new FormArray<FormControl<string>>([]),
     }),
   });
-  // TODO: make sure call_obj & call_schema are valid JSON.
   override get configForm() {
     return this.form.controls.remi;
   }
@@ -57,5 +56,16 @@ export class ExternalFormComponent extends FormDirective {
 
   get externalConfig(): ExternalAgentUI {
     return this.config as ExternalAgentUI;
+  }
+
+  override submit() {
+    if (this.form.valid) {
+      const rawConfig = this.configForm.getRawValue();
+      const config: ExternalAgentUI = {
+        ...rawConfig,
+        headers: rawConfig.headers ? formatHeaders(rawConfig.headers) : undefined,
+      };
+      this.submitForm.emit(config);
+    }
   }
 }

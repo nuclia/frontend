@@ -47,12 +47,6 @@ export class McpSseDriverModalComponent {
     if (!!driver) {
       const config = driver.config;
       this.form.patchValue({ name: driver.name, ...config });
-      const headers = Object.entries(config.headers);
-      if (headers.length > 0) {
-        headers.forEach(([property, value]) => {
-          this.addHeader(property, `${value}`);
-        });
-      }
     }
   }
 
@@ -71,19 +65,5 @@ export class McpSseDriverModalComponent {
       };
       this.modal.close(driver);
     }
-  }
-
-  addHeader(property?: string, value?: string) {
-    this.headersGroup.addControl(
-      `header${headerIndex++}`,
-      new FormGroup({
-        property: new FormControl<string>(property || '', { nonNullable: true, validators: [Validators.required] }),
-        value: new FormControl(value || ''),
-      }),
-    );
-  }
-
-  removeHeader(key: string) {
-    this.headersGroup.removeControl(key);
   }
 }
