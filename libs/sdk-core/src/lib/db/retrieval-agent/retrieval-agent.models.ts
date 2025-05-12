@@ -208,9 +208,9 @@ export interface AskAgentCreation {
   date_range_enabled?: boolean;
   before?: number;
   after?: number;
-  extra_fields?: string[];
-  full_resource?: boolean;
-  vllm?: boolean;
+  extra_fields: string[];
+  full_resource: boolean;
+  vllm: boolean;
   query_entities?: { name: string; type?: string; subtype?: string }[];
   retrieve_related?: string;
   configuration_model?: string;

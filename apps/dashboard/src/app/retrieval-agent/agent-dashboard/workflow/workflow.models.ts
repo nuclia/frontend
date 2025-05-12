@@ -156,12 +156,20 @@ export interface CypherAgentUI extends CommonAgentConfig {
 
 export interface AskAgentUI extends CommonAgentConfig {
   sources: string;
+  pre_queries?: string[];
+  filters?: string[];
+  security_groups?: string[];
   rephrase_semantic_custom_prompt?: string;
   rephrase_lexical_custom_prompt?: string;
   keywords_custom_prompt?: string;
   visual_enable_prompt?: string;
-  full_resource?: boolean;
-  vllm?: boolean;
+  before?: number;
+  after?: number;
+  extra_fields: string[];
+  full_resource: boolean;
+  vllm: boolean;
+  query_entities?: { name: string; type?: string; subtype?: string }[];
+  retrieve_related?: string;
 }
 
 export interface McpAgentUI extends CommonAgentConfig {
