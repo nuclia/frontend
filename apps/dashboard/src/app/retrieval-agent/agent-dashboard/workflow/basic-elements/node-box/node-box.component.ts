@@ -39,7 +39,7 @@ export class NodeBoxComponent implements AfterViewInit {
   agent = input(false, { transform: booleanAttribute });
   nodeTitle = input('');
   origin = input<ConnectableEntryComponent>();
-  state = input<'default' | 'selected' | 'processing' | 'processed'>('default');
+  state = input<'default' | 'unsaved' | 'selected' | 'processing' | 'processed'>('default');
 
   outputClick = output<ConnectableEntryComponent>();
   trashClick = output<void>();
@@ -84,11 +84,13 @@ export class NodeBoxComponent implements AfterViewInit {
     }
     this.addLink();
   }
+
   removeNode(event: MouseEvent | KeyboardEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.trashClick.emit();
   }
+
   private addLink() {
     const entry = this.origin();
     if (entry && this.inputElement) {

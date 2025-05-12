@@ -29,12 +29,21 @@
     width: 100%;
     transition: width $transition-slide;
 
+    $gap: rhythm(3);
+    $padding: rhythm(8);
     .workflow-col {
       display: flex;
       flex-direction: column;
-      gap: rhythm(3);
+      gap: $gap;
       height: fit-content;
-      padding: rhythm(8);
+      padding: $padding;
+
+      .column-section {
+        display: flex;
+        flex-direction: column;
+        gap: $gap;
+        min-height: calc((#{dashboard.$height-main} - #{$padding}* 2 - #{$gap}* 2 - 8px) / 3);
+      }
     }
 
     &.sidebar-open {

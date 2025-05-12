@@ -88,6 +88,11 @@ export const workflow = computed(() => {
 });
 
 /**
+ * Selected node id or undefined.
+ */
+export const selectedNodeId = computed(() => selectedNode()?.id);
+
+/**
  * Set selected node and returns it
  * @param id Node identifier
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
@@ -190,8 +195,6 @@ export function addNode(
     const parent = getNode(parentId, nodeCategory);
     if (!parent) {
       throw new Error(`Parent ${parentId} not found in category ${nodeCategory}`);
-    } else if (!parent.nodeConfig) {
-      throw new Error(`No config in parent ${parentId} in category ${nodeCategory}`);
     }
     const property = origin.id();
     if (property === 'then' || property === 'else') {
