@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ .Release.Name }}-config"
+  name: app-config
   labels:
     app: app
     version: "{{ .Values.hash }}"

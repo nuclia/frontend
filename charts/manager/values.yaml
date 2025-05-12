@@ -39,3 +39,6 @@ podDisruptionBudget:
 # annotations:
 #   what: "add annotations"
 #   where: "in the pods"
+envFrom:
+  - configMapRef:
+      name: manager-config
