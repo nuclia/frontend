@@ -29,17 +29,20 @@
     width: 100%;
     transition: width $transition-slide;
 
+    $gap: rhythm(3);
+    $padding: rhythm(8);
     .workflow-col {
       display: flex;
       flex-direction: column;
-      gap: rhythm(3);
-      padding: rhythm(8);
+      gap: $gap;
+      height: fit-content;
+      padding: $padding;
 
       .column-section {
         display: flex;
         flex-direction: column;
-        gap: rhythm(3);
-        min-height: calc(100% / 3);
+        gap: $gap;
+        min-height: calc((#{dashboard.$height-main} - #{$padding}* 2 - #{$gap}* 2 - 8px) / 3);
       }
     }
 
