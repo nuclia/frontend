@@ -13,7 +13,7 @@ import {
 import { DashboardLayoutService } from '@flaps/common';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { auditTime, fromEvent, Subject, takeUntil } from 'rxjs';
 import {
   activeSideBar,
   ConnectableEntryComponent,
@@ -69,6 +69,11 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
     if (this.sidebarHeader) {
       this.workflowService.sidebarHeader = this.sidebarHeader;
     }
+
+    // Update the links on resize
+    fromEvent(window, 'resize')
+      .pipe(auditTime(100), takeUntil(this.unsubscribeAll))
+      .subscribe(() => this.workflowService.updateAllLinks());
   }
 
   ngOnDestroy(): void {

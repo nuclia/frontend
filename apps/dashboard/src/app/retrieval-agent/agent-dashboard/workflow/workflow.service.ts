@@ -159,6 +159,13 @@ export class WorkflowService {
   }
 
   /**
+   * Update all links.
+   */
+  updateAllLinks() {
+    this.updateLinksOnColumn(1);
+  }
+
+  /**
    * Create and add node on workflow based on what is saved in current Arag
    * @param rootEntry
    * @param nodeCategory
