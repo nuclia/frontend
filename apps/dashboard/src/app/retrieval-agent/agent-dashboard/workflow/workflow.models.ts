@@ -135,6 +135,15 @@ export interface SqlAgentUI extends CommonAgentConfig {
   source: string;
   prompt?: string;
   retries: number;
+  sqlschema?: string | null;
+  ignore_tables: string[];
+  include_tables: string[];
+  sample_rows_in_table_info?: number;
+  indexes_in_table_info?: boolean;
+  custom_table_info?: { [property: string]: unknown };
+  view_support?: boolean;
+  max_string_length?: number;
+  lazy_table_reflection?: boolean;
 }
 
 export interface CypherAgentUI extends CommonAgentConfig {
@@ -396,5 +405,18 @@ export function formatHeaders(extra: { [property: string]: { property: string; v
       return config;
     },
     {} as { [property: string]: string },
+  );
+}
+
+export function formatExtraConfig(extra: { [property: string]: { property: string; value: string } }): {
+  [property: string]: string | number | null;
+} {
+  return Object.values(extra).reduce(
+    (config, entry) => {
+      const intValue = parseInt(entry.value, 10);
+      config[entry.property] = isNaN(intValue) ? entry.value : intValue;
+      return config;
+    },
+    {} as { [property: string]: string | number | null },
   );
 }

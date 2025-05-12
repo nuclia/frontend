@@ -11,6 +11,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { CypherConfig, CypherDriver, DriverCreation } from '@nuclia/core';
 import { SisPasswordInputModule } from '@nuclia/sistema';
+import { formatExtraConfig } from '../../agent-dashboard/workflow';
 
 let propertyIndex = 0;
 
@@ -72,7 +73,7 @@ export class CypherDriverModalComponent {
   submit() {
     if (this.form.valid) {
       const { name, extra, ...rawConfig } = this.form.getRawValue();
-      const config: CypherConfig = { ...rawConfig, config: this.formatExtraConfig(extra) };
+      const config: CypherConfig = { ...rawConfig, config: formatExtraConfig(extra) };
       const driver: DriverCreation = {
         name,
         provider: 'cypher',
@@ -98,18 +99,5 @@ export class CypherDriverModalComponent {
 
   removeProperty(key: string) {
     this.extraGroup.removeControl(key);
-  }
-
-  private formatExtraConfig(extra: { [property: string]: { property: string; value: string } }): {
-    [property: string]: string | number | null;
-  } {
-    return Object.values(extra).reduce(
-      (config, entry) => {
-        const intValue = parseInt(entry.value, 10);
-        config[entry.property] = isNaN(intValue) ? entry.value : intValue;
-        return config;
-      },
-      {} as { [property: string]: string | number | null },
-    );
   }
 }

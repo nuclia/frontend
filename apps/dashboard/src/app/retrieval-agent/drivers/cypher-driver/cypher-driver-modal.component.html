@@ -66,7 +66,7 @@
               size="small"
               aspect="basic"
               (click)="addConfigProperty()">
-              {{ 'retrieval-agents.drivers.form.cypher.extra.add' | translate }}
+              {{ 'retrieval-agents.workflow.common-forms.property.add' | translate }}
             </pa-button>
           </div>
           @for (group of extraGroup.controls | keyvalue; track group.key) {
@@ -74,17 +74,17 @@
               class="config-property-form"
               [formGroup]="group.value">
               <pa-input formControlName="property">
-                {{ 'retrieval-agents.drivers.form.cypher.extra.property-name' | translate }}
+                {{ 'retrieval-agents.workflow.common-forms.property.name' | translate }}
               </pa-input>
               <pa-input formControlName="value">
-                {{ 'retrieval-agents.drivers.form.cypher.extra.property-value' | translate }}
+                {{ 'retrieval-agents.workflow.common-forms.property.value' | translate }}
               </pa-input>
               <pa-button
                 icon="trash"
                 aspect="basic"
                 size="small"
                 (click)="removeProperty(group.key)">
-                {{ 'retrieval-agents.drivers.form.cypher.extra.remove' | translate }}
+                {{ 'retrieval-agents.workflow.common-forms.property.remove' | translate }}
               </pa-button>
             </div>
           }

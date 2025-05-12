@@ -149,8 +149,8 @@ export interface SqlAgentCreation {
   description?: string | null;
   sqlschema?: string | null;
   retries?: number;
-  ignore_tables?: string[];
-  include_tables?: string[];
+  ignore_tables: string[];
+  include_tables: string[];
   sample_rows_in_table_info?: number;
   indexes_in_table_info?: boolean;
   custom_table_info?: { [property: string]: unknown };
