@@ -95,6 +95,11 @@ export class SqlFormComponent extends FormDirective implements OnInit {
             this.addConfigProperty(property, `${value}`);
           });
         }
+        if (config.ignore_tables.length > 0) {
+          this.includeTableControl.disable();
+        } else if (config.include_tables.length > 0) {
+          this.ignoreTableControl.disable();
+        }
       }
     }
   }
