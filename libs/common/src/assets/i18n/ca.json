@@ -1296,7 +1296,7 @@
 	"retrieval-agents.workflow.node-types.root.postprocess": "Postprocés",
 	"retrieval-agents.workflow.node-types.root.preprocess": "Preprocés",
 	"retrieval-agents.workflow.node-types.sql.description": "Accedar a les dades de la vostra base de dades SQL",
-	"retrieval-agents.workflow.node-types.sql.form.custom_table_info.label": "Personalitza la informació de les taules",
+	"retrieval-agents.workflow.node-types.sql.form.custom_table_info.label": "Informació de taula personalitzada",
 	"retrieval-agents.workflow.node-types.sql.form.go-to-drivers": "Creeu un controlador de SQL",
 	"retrieval-agents.workflow.node-types.sql.form.ignore_tables.disabled": "Esborra primer el camp \"Inclou taules\", ja que són mútuament excloents.",
 	"retrieval-agents.workflow.node-types.sql.form.ignore_tables.help": "Llista de taules per ignorar, separades per comes",

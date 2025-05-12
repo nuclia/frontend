@@ -87,19 +87,22 @@ export class SqlFormComponent extends FormDirective implements OnInit {
       .subscribe((options) => this.sourceOptions.set(options));
 
     if (this.config) {
-      const config = this.config as SqlAgentUI;
-      if (config.custom_table_info) {
-        const extraConfig = Object.entries(config.custom_table_info);
+      const { custom_table_info, ignore_tables, include_tables } = this.config as SqlAgentUI;
+      if (custom_table_info) {
+        const extraConfig = Object.entries(custom_table_info);
         if (extraConfig.length > 0) {
           extraConfig.forEach(([property, value]) => {
             this.addConfigProperty(property, `${value}`);
           });
         }
-        if (config.ignore_tables.length > 0) {
-          this.includeTableControl.disable();
-        } else if (config.include_tables.length > 0) {
-          this.ignoreTableControl.disable();
-        }
+      }
+      if (ignore_tables.length > 0) {
+        this.includeTableControl.disable();
+        this.ignoreTableControl.patchValue(ignore_tables.join(', '));
+      }
+      if (include_tables.length > 0) {
+        this.ignoreTableControl.disable();
+        this.includeTableControl.patchValue(include_tables.join(', '));
       }
     }
   }
@@ -118,8 +121,8 @@ export class SqlFormComponent extends FormDirective implements OnInit {
       const { ignore_tables, include_tables, custom_table_info, ...rawConfig } = this.configForm.getRawValue();
       const config: SqlAgentUI = {
         ...rawConfig,
-        ignore_tables: ignore_tables ? ignore_tables.split(',').map((item) => item.trim()) : [],
-        include_tables: include_tables ? include_tables.split(',').map((item) => item.trim()) : [],
+        ignore_tables: ignore_tables ? (ignore_tables || '').split(',').map((item) => item.trim()) : [],
+        include_tables: include_tables ? (include_tables || '').split(',').map((item) => item.trim()) : [],
         custom_table_info: formatExtraConfig(custom_table_info),
       };
       this.submitForm.emit(config);

@@ -1296,7 +1296,7 @@
 	"retrieval-agents.workflow.node-types.root.postprocess": "Post-traitement",
 	"retrieval-agents.workflow.node-types.root.preprocess": "Prétraitement",
 	"retrieval-agents.workflow.node-types.sql.description": "Accéder aux données de votre base de données SQL",
-	"retrieval-agents.workflow.node-types.sql.form.custom_table_info.label": "Personnaliser les informations des tables",
+	"retrieval-agents.workflow.node-types.sql.form.custom_table_info.label": "Informations sur les tables personnalisées",
 	"retrieval-agents.workflow.node-types.sql.form.go-to-drivers": "Créer un pilote SQL",
 	"retrieval-agents.workflow.node-types.sql.form.ignore_tables.disabled": "Effacez d'abord le champ « Inclure les tables », car ils s'excluent mutuellement",
 	"retrieval-agents.workflow.node-types.sql.form.ignore_tables.help": "Liste des tables à ignorer, séparées par des virgules",
