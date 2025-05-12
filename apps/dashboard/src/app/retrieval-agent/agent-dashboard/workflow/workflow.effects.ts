@@ -80,6 +80,14 @@ export class WorkflowEffectService {
         node.nodeRef.setInput('state', 'unsaved');
       }
     }
+
+    // Disable fallback entry when a node is already linked to it, enable it otherwise (for the case a child node has been removed)
+    const fallbackEntry = node.nodeRef.instance.boxComponent.connectableEntries?.find(
+      (entry) => entry.id() === 'fallback',
+    );
+    if (fallbackEntry) {
+      fallbackEntry.disabledState.set(!!node.fallback);
+    }
   }
 
   private checkForUpdates(node: ParentNode, backendState: BackendState, category: NodeCategory) {

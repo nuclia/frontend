@@ -19,7 +19,6 @@
     background: $color-light-stronger;
     border-radius: 50%;
     border: 1.5px solid $color-neutral-regular;
-    cursor: pointer;
     display: flex;
     flex-shrink: 0;
     height: rhythm(2);
@@ -35,13 +34,21 @@
       transition: opacity $transition-hint;
     }
 
-    &:hover,
-    &.active {
-      border-color: $color-primary-regular;
+    &:not(.disabled) {
+      cursor: pointer;
 
-      svg {
-        opacity: 1;
+      &:hover,
+      &.active {
+        border-color: $color-primary-regular;
+
+        svg {
+          opacity: 1;
+        }
       }
+    }
+    &.disabled {
+      border-color: $color-neutral-light;
+      cursor: default;
     }
   }
 }
