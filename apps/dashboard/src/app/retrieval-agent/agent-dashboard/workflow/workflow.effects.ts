@@ -22,6 +22,7 @@ import {
   getBackendState,
   getNode,
   nodeInitialisationDone,
+  selectedNodeId,
   updateBackendState,
   updateNode,
   workflow,
@@ -42,14 +43,25 @@ export class WorkflowEffectService {
     }
     const backendState = getBackendState();
     const workflowState = workflow();
+
     console.debug('Effect:');
     console.debug('    backendState', { ...backendState });
     console.debug('    workflowState', { ...workflowState });
 
     // Check if there are changes to be saved in the workflow
-    Object.values(workflowState.preprocess).forEach((node) => this.checkForUpdates(node, backendState, 'preprocess'));
-    Object.values(workflowState.context).forEach((node) => this.checkForUpdates(node, backendState, 'context'));
-    Object.values(workflowState.postprocess).forEach((node) => this.checkForUpdates(node, backendState, 'postprocess'));
+    Object.values(workflowState.preprocess).forEach((node) => {
+      this.checkNodeState(node);
+      this.checkForUpdates(node, backendState, 'preprocess');
+    });
+    Object.values(workflowState.context).forEach((node) => {
+      this.checkNodeState(node);
+      this.checkForUpdates(node, backendState, 'context');
+    });
+    Object.values(workflowState.postprocess).forEach((node) => {
+      this.checkNodeState(node);
+      this.checkForUpdates(node, backendState, 'postprocess');
+    });
+    Object.values(workflowState.children).forEach((node) => this.checkNodeState(node));
 
     // Check if there are nodes to be deleted from the backend
     Object.values(backendState.preprocess).forEach((agent) =>
@@ -59,6 +71,15 @@ export class WorkflowEffectService {
     Object.values(backendState.postprocess).forEach((agent) =>
       this.checkForDeletion(agent.id, workflowState, 'postprocess'),
     );
+  }
+
+  private checkNodeState(node: ParentNode) {
+    if (!node.nodeConfig) {
+      const selectedNode = selectedNodeId();
+      if (selectedNode !== node.nodeRef.instance.id) {
+        node.nodeRef.setInput('state', 'unsaved');
+      }
+    }
   }
 
   private checkForUpdates(node: ParentNode, backendState: BackendState, category: NodeCategory) {

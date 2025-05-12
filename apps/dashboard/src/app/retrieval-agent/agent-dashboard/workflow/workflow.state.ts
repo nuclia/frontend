@@ -88,6 +88,11 @@ export const workflow = computed(() => {
 });
 
 /**
+ * Selected node id or undefined.
+ */
+export const selectedNodeId = computed(() => selectedNode()?.id);
+
+/**
  * Set selected node and returns it
  * @param id Node identifier
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'

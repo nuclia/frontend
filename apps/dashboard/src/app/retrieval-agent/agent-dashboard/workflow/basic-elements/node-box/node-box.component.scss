@@ -36,6 +36,10 @@
   &.processed {
     border: 1px solid $color-success-strong;
   }
+  &.unsaved {
+    background: $color-secondary-lightest;
+    border: 1px solid $color-secondary-strong;
+  }
 
   .title-s {
     align-items: center;
