@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AccountBlockingState, BlockedFeature } from '@nuclia/core';
 import { AccountDetails, AccountUser, KbDetails, KbSummary } from './manage-accounts/account-ui.models';
+import { ZoneModels } from './manage-accounts/regional-account.models';
 
 const BLOCKING_STATE_LABEL = {
   [AccountBlockingState.UNBLOCKED]: 'Active',
@@ -17,6 +18,7 @@ export class ManagerStore {
   private _blockedFeatures: BehaviorSubject<BlockedFeature[]> = new BehaviorSubject<BlockedFeature[]>([]);
   private _currentState: BehaviorSubject<string> = new BehaviorSubject<string>('');
   private _accountUsers: BehaviorSubject<AccountUser[]> = new BehaviorSubject<AccountUser[]>([]);
+  private _accountModels: BehaviorSubject<ZoneModels[]> = new BehaviorSubject<ZoneModels[]>([]);
 
   accountDetails: Observable<AccountDetails | null> = this._accountDetails.asObservable();
   kbList: Observable<KbSummary[]> = this._kbList.asObservable();
@@ -24,6 +26,7 @@ export class ManagerStore {
   blockedFeatures: Observable<BlockedFeature[]> = this._blockedFeatures.asObservable();
   currentState: Observable<string> = this._currentState.asObservable();
   accountUsers: Observable<AccountUser[]> = this._accountUsers.asObservable();
+  accountModels: Observable<ZoneModels[]> = this._accountModels.asObservable();
 
   setAccountDetails(details: AccountDetails | null) {
     this._accountDetails.next(details);
@@ -52,6 +55,9 @@ export class ManagerStore {
         }
       }),
     );
+  }
+  setAccountModels(models: ZoneModels[]) {
+    this._accountModels.next(models);
   }
 
   getAccountId(): string | undefined {
