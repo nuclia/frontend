@@ -1,5 +1,6 @@
 <app-configuration-form
   [form]="form"
+  [submitDisabled]="form.invalid"
   (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
@@ -9,5 +10,8 @@
       [help]="'retrieval-agents.workflow.node-types.historical.form.all.help' | translate">
       {{ 'retrieval-agents.workflow.node-types.historical.form.all.label' | translate }}
     </pa-toggle>
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
   </ng-container>
 </app-configuration-form>

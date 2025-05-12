@@ -3,16 +3,29 @@
   (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
-    <div class="form-entry">
-      <label for="provider">
-        {{ 'retrieval-agents.workflow.node-types.internet.form.provider.label' | translate }}
-      </label>
-      <pa-select
-        id="provider"
-        formControlName="provider"
-        externalLabel
-        [placeholder]="'retrieval-agents.workflow.node-types.internet.form.provider.placeholder' | translate"
-        [options]="providerOptions | async"></pa-select>
+    <div class="form-entry field-list">
+      <div class="form-entry">
+        <label for="provider">
+          {{ 'retrieval-agents.workflow.node-types.internet.form.provider.label' | translate }}
+        </label>
+        <pa-select
+          id="provider"
+          formControlName="provider"
+          externalLabel
+          [placeholder]="'retrieval-agents.workflow.node-types.internet.form.provider.placeholder' | translate"
+          [options]="providerOptions()"></pa-select>
+      </div>
+      @if (providerOptions()?.length === 0) {
+        <nsi-info-card type="warning">
+          {{ 'retrieval-agents.workflow.node-types.internet.form.no-source' | translate }}
+        </nsi-info-card>
+        <pa-button
+          aspect="basic"
+          size="small"
+          [routerLink]="driversPath()">
+          {{ 'retrieval-agents.workflow.node-types.internet.form.go-to-drivers' | translate }}
+        </pa-button>
+      }
     </div>
     @if (provider === 'brave') {
       <ng-container formGroupName="brave">
@@ -83,5 +96,9 @@
         </pa-toggle>
       </ng-container>
     }
+
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
   </ng-container>
 </app-configuration-form>

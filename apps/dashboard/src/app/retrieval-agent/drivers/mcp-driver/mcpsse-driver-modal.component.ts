@@ -4,12 +4,21 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ModalRef, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { DriverCreation, McpSseConfig, McpSseDriver } from '@nuclia/core';
+import { formatHeaders, HeadersFieldComponent } from '../../agent-dashboard/workflow';
 
 let headerIndex = 0;
 
 @Component({
   selector: 'app-mcpsse-driver-modal',
-  imports: [CommonModule, PaButtonModule, PaModalModule, PaTextFieldModule, ReactiveFormsModule, TranslateModule],
+  imports: [
+    CommonModule,
+    PaButtonModule,
+    PaModalModule,
+    PaTextFieldModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    HeadersFieldComponent,
+  ],
   templateUrl: './mcpsse-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,12 +47,6 @@ export class McpSseDriverModalComponent {
     if (!!driver) {
       const config = driver.config;
       this.form.patchValue({ name: driver.name, ...config });
-      const headers = Object.entries(config.headers);
-      if (headers.length > 0) {
-        headers.forEach(([property, value]) => {
-          this.addHeader(property, `${value}`);
-        });
-      }
     }
   }
 
@@ -54,7 +57,7 @@ export class McpSseDriverModalComponent {
   submit() {
     if (this.form.valid) {
       const { name, headers, ...rawConfig } = this.form.getRawValue();
-      const config: McpSseConfig = { ...rawConfig, headers: this.formatHeaders(headers) };
+      const config: McpSseConfig = { ...rawConfig, headers: formatHeaders(headers) };
       const driver: DriverCreation = {
         name,
         provider: 'mcpsse',
@@ -62,31 +65,5 @@ export class McpSseDriverModalComponent {
       };
       this.modal.close(driver);
     }
-  }
-
-  addHeader(property?: string, value?: string) {
-    this.headersGroup.addControl(
-      `header${headerIndex++}`,
-      new FormGroup({
-        property: new FormControl<string>(property || '', { nonNullable: true, validators: [Validators.required] }),
-        value: new FormControl(value || ''),
-      }),
-    );
-  }
-
-  removeHeader(key: string) {
-    this.headersGroup.removeControl(key);
-  }
-
-  private formatHeaders(extra: { [property: string]: { property: string; value: string } }): {
-    [property: string]: string;
-  } {
-    return Object.values(extra).reduce(
-      (config, entry) => {
-        config[entry.property] = entry.value;
-        return config;
-      },
-      {} as { [property: string]: string },
-    );
   }
 }
