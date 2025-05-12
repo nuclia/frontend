@@ -88,6 +88,7 @@ import {
 } from './workflow.state';
 
 const COLUMN_CLASS = 'workflow-col';
+const COLUMN_SECTION_CLASS = 'column-section';
 const SLIDE_DURATION = 800;
 
 @Injectable({
@@ -367,7 +368,12 @@ export class WorkflowService {
     if (nodeRef.instance.boxComponent.linkRef) {
       this.linkService.removeLink(nodeRef.instance.boxComponent.linkRef);
     }
-    column.removeChild(nodeRef.location.nativeElement);
+    const category = nodeRef.instance.category();
+    const section = column.querySelector(`#${category}`);
+    if (!section) {
+      throw new Error(`Section ${category} not found in column`);
+    }
+    section.removeChild(nodeRef.location.nativeElement);
     this.applicationRef.detachView(nodeRef.hostView);
   }
 
@@ -449,28 +455,48 @@ export class WorkflowService {
     nodeConfig?: NodeConfig,
     agent?: PreprocessAgent | ContextAgent | PostprocessAgent,
   ): ComponentRef<NodeDirective> {
-    if (this.columnContainer && this.columns.length <= columnIndex) {
-      const newColumn = this.renderer.createElement('div') as HTMLElement;
-      newColumn.classList.add(COLUMN_CLASS);
-      this.renderer.appendChild(this.columnContainer.nativeElement, newColumn);
-      this.columns.push(newColumn);
+    if (this.columns.length <= columnIndex) {
+      this.createColumn();
     }
 
     const column: HTMLElement = this.columns[columnIndex];
+    const section: HTMLElement | null = column.querySelector(`#${nodeCategory}`);
+    if (!section) {
+      throw new Error(`Section missing for category ${nodeCategory} in column ${columnIndex}`);
+    }
     let nodeRef: ComponentRef<NodeDirective> = this.getNodeRef(nodeType);
     nodeRef.setInput('origin', origin);
     nodeRef.setInput('category', nodeCategory);
     nodeRef.instance.columnIndex = columnIndex;
     this.applicationRef.attachView(nodeRef.hostView);
-    column.appendChild(nodeRef.location.nativeElement);
+    section.appendChild(nodeRef.location.nativeElement);
     nodeRef.changeDetectorRef.detectChanges();
     nodeRef.instance.addNode.subscribe((data) => this.triggerNodeCreation(data.entry, data.targetColumn));
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
     nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id, nodeCategory));
 
+    setTimeout(() => this.updateLinksOnColumn(columnIndex));
     addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agent);
     origin.activeState.set(false);
     return nodeRef;
+  }
+
+  /**
+   * Create a column with three sections: one for each node category.
+   */
+  private createColumn() {
+    if (this.columnContainer) {
+      const newColumn = this.renderer.createElement('div') as HTMLElement;
+      newColumn.classList.add(COLUMN_CLASS);
+      for (let category of ['preprocess', 'context', 'postprocess']) {
+        const section = this.renderer.createElement('div') as HTMLElement;
+        section.id = category;
+        section.classList.add(COLUMN_SECTION_CLASS);
+        this.renderer.appendChild(newColumn, section);
+      }
+      this.renderer.appendChild(this.columnContainer.nativeElement, newColumn);
+      this.columns.push(newColumn);
+    }
   }
 
   /**
@@ -487,7 +513,7 @@ export class WorkflowService {
     if (!node) {
       throw new Error(`selectNode: No node with id=${nodeId} in category ${nodeCategory}`);
     }
-
+    const columnIndex = node.nodeRef.instance.columnIndex;
     const container: HTMLElement = this.openSidebarWithTitle(
       `retrieval-agents.workflow.node-types.${node.nodeType}.title`,
     );
@@ -503,7 +529,9 @@ export class WorkflowService {
     this.applicationRef.attachView(formRef.hostView);
     container.appendChild(formRef.location.nativeElement);
     formRef.changeDetectorRef.detectChanges();
-    formRef.instance.submitForm.subscribe((config) => this.saveNodeConfiguration(config, nodeId, nodeCategory));
+    formRef.instance.submitForm.subscribe((config) =>
+      this.saveNodeConfiguration(config, nodeId, nodeCategory, columnIndex),
+    );
     formRef.instance.cancel.subscribe(() => this.closeSidebar());
     this._currentPanel = formRef;
   }
@@ -513,9 +541,11 @@ export class WorkflowService {
    * @param config Node configuration
    * @param nodeId Identifier of the node to save
    * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+   * @param columnIndex Column index (so we can update the links of other nodes)
    */
-  private saveNodeConfiguration(config: NodeConfig, nodeId: string, nodeCategory: NodeCategory) {
+  private saveNodeConfiguration(config: NodeConfig, nodeId: string, nodeCategory: NodeCategory, columnIndex: number) {
     updateNode(nodeId, nodeCategory, { nodeConfig: config });
+    setTimeout(() => this.updateLinksOnColumn(columnIndex));
     this.closeSidebar();
   }
 
@@ -524,7 +554,7 @@ export class WorkflowService {
    * @param columnIndex index of the first column in which node’s links must be updated
    */
   private updateLinksOnColumn(columnIndex: number) {
-    getAllNodes()
+    getAllNodes(true)
       .filter((node) => node.nodeRef.instance.columnIndex >= columnIndex)
       .forEach((node) => node.nodeRef.instance.boxComponent.updateLink());
   }

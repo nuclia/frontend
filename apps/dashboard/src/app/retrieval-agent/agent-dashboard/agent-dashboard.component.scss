@@ -35,6 +35,13 @@
       gap: rhythm(3);
       height: fit-content;
       padding: rhythm(8);
+
+      .column-section {
+        display: flex;
+        flex-direction: column;
+        gap: rhythm(3);
+        min-height: calc(100dvh / 3);
+      }
     }
 
     &.sidebar-open {

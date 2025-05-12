@@ -84,11 +84,13 @@ export class NodeBoxComponent implements AfterViewInit {
     }
     this.addLink();
   }
+
   removeNode(event: MouseEvent | KeyboardEvent) {
     event.preventDefault();
     event.stopPropagation();
     this.trashClick.emit();
   }
+
   private addLink() {
     const entry = this.origin();
     if (entry && this.inputElement) {
