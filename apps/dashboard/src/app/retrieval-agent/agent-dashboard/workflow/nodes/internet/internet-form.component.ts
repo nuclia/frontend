@@ -9,7 +9,7 @@ import { InternetProviderType } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { forkJoin, map, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
-import { InternetAgentUI } from '../../workflow.models';
+import { InternetAgentUI, isInternetProvider } from '../../workflow.models';
 
 @Component({
   selector: 'app-internet-form',
@@ -73,12 +73,14 @@ export class InternetFormComponent extends FormDirective implements OnInit {
           this.aragUrl.set(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
           return arag;
         }),
-        switchMap((arag) => arag.getDrivers('sql')),
+        switchMap((arag) => arag.getDrivers()),
         map((drivers) =>
-          drivers.map(
-            (driver) =>
-              new OptionModel({ id: driver.id, label: driver.name, value: driver.provider, help: driver.provider }),
-          ),
+          drivers
+            .filter((driver) => isInternetProvider(driver.provider))
+            .map(
+              (driver) =>
+                new OptionModel({ id: driver.id, label: driver.name, value: driver.provider, help: driver.provider }),
+            ),
         ),
       )
       .subscribe((options) => this.providerOptions.set(options));

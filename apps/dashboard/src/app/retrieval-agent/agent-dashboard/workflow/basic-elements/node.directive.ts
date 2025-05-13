@@ -18,6 +18,7 @@ export class NodeDirective {
   addNode = output<{ entry: ConnectableEntryComponent; targetColumn: number }>();
   removeNode = output();
   selectNode = output();
+  configUpdated = output();
 
   @ViewChild(NodeBoxComponent) boxComponent!: NodeBoxComponent;
 

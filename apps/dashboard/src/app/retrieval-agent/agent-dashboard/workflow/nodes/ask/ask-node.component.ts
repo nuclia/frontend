@@ -50,6 +50,9 @@ export class AskNodeComponent extends NodeDirective implements OnInit {
         take(1),
         switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
       )
-      .subscribe((kbList) => this.kbList.set(kbList));
+      .subscribe((kbList) => {
+        this.kbList.set(kbList);
+        this.configUpdated.emit();
+      });
   }
 }

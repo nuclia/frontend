@@ -178,26 +178,23 @@ export class WorkflowService {
     agent: PreprocessAgent | ContextAgent | PostprocessAgent,
     columnIndex = 1,
   ) {
-    // Create node within a setTimeout to prevent slightly mispositioned links
-    setTimeout(() => {
-      const nodeType = getNodeTypeFromAgent(agent);
-      const config = getConfigFromAgent(agent);
-      const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent);
-      if (agent.module === 'ask') {
-        const askAgent = agent as AskAgent;
-        if (askAgent.fallback) {
-          const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
-          if (!entry) {
-            throw new Error(`No 'fallback' entry found on Ask node ${nodeRef.instance.id}`);
-          }
-          this.createNodeFromSavedWorkflow(entry, nodeCategory, askAgent.fallback, columnIndex + 1);
+    const nodeType = getNodeTypeFromAgent(agent);
+    const config = getConfigFromAgent(agent);
+    const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent);
+    if (agent.module === 'ask') {
+      const askAgent = agent as AskAgent;
+      if (askAgent.fallback) {
+        const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === 'fallback');
+        if (!entry) {
+          throw new Error(`No 'fallback' entry found on Ask node ${nodeRef.instance.id}`);
         }
-      } else if (agent.module === 'conditional' || agent.module === 'validation') {
-        const conditionalAgent = agent as ConditionalAgent | ValidationAgent;
-        this.createChildNodes(nodeRef, 'then', nodeCategory, columnIndex, conditionalAgent);
-        this.createChildNodes(nodeRef, 'else_', nodeCategory, columnIndex, conditionalAgent);
+        this.createNodeFromSavedWorkflow(entry, nodeCategory, askAgent.fallback, columnIndex + 1);
       }
-    });
+    } else if (agent.module === 'conditional' || agent.module === 'validation') {
+      const conditionalAgent = agent as ConditionalAgent | ValidationAgent;
+      this.createChildNodes(nodeRef, 'then', nodeCategory, columnIndex, conditionalAgent);
+      this.createChildNodes(nodeRef, 'else_', nodeCategory, columnIndex, conditionalAgent);
+    }
   }
 
   private createChildNodes(
@@ -358,9 +355,13 @@ export class WorkflowService {
     this._removeFromDom(nodeRef, column);
     unselectNode();
 
-    // Remove also corresponding children if any
+    // Update state
     const nodeId = nodeRef.instance.id;
-    const deletedChildren = deleteNode(nodeId, nodeRef.instance.category()).filter((ref) => ref.instance.id !== nodeId);
+    const parentId = nodeRef.instance.origin()?.nodeId();
+    const deletedChildren = deleteNode(nodeId, nodeRef.instance.category(), parentId).filter(
+      (ref) => ref.instance.id !== nodeId,
+    );
+    // and remove corresponding children if any
     deletedChildren.forEach((ref) => {
       const columnIndex = ref.instance.columnIndex;
       const childColumn = this.columns[columnIndex];
@@ -481,6 +482,7 @@ export class WorkflowService {
     nodeRef.instance.addNode.subscribe((data) => this.triggerNodeCreation(data.entry, data.targetColumn));
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
     nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id, nodeCategory));
+    nodeRef.instance.configUpdated.subscribe(() => setTimeout(() => this.updateLinksOnColumn(columnIndex)));
 
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
     addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agent);

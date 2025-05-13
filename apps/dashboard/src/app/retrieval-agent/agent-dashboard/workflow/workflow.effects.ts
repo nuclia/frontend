@@ -38,13 +38,14 @@ export class WorkflowEffectService {
   private translate = inject(TranslateService);
 
   initEffect() {
+    console.debug('Effect:');
     if (!nodeInitialisationDone()) {
+      console.debug(`    Initialising nodes`);
       return;
     }
     const backendState = getBackendState();
     const workflowState = workflow();
 
-    console.debug('Effect:');
     console.debug('    backendState', { ...backendState });
     console.debug('    workflowState', { ...workflowState });
 
@@ -80,6 +81,14 @@ export class WorkflowEffectService {
         node.nodeRef.setInput('state', 'unsaved');
       }
     }
+
+    // Disable fallback entry when a node is already linked to it, enable it otherwise (for the case a child node has been removed)
+    const fallbackEntry = node.nodeRef.instance.boxComponent.connectableEntries?.find(
+      (entry) => entry.id() === 'fallback',
+    );
+    if (fallbackEntry) {
+      fallbackEntry.disabledState.set(!!node.fallback);
+    }
   }
 
   private checkForUpdates(node: ParentNode, backendState: BackendState, category: NodeCategory) {
@@ -107,32 +116,10 @@ export class WorkflowEffectService {
         if (!child?.nodeConfig) {
           return;
         } else {
-          const askAgent = agent as AskAgent;
-          const childAgent = getAgentFromConfig(child.nodeType, child.nodeConfig);
-          if (!askAgent.fallback || !deepEqual(childAgent, askAgent.fallback, true)) {
-            (uiAgent as AskAgentCreation).fallback = childAgent as ContextAgent;
-            console.debug(` -> Update ask agent with fallback ${node.fallback}`, uiAgent);
-            this.updateAgent(agent, uiAgent, category);
-          }
+          this.updateFallbackChild(agent as AskAgent, child, uiAgent as AskAgentCreation);
         }
       } else if (node.then || node.else) {
-        const conditionalAgent = agent as ConditionalAgent;
-        const thenAgents: BaseAgent[] = this.getChildAgents(node, 'then', category);
-        const elseAgents: BaseAgent[] = this.getChildAgents(node, 'else', category);
-        let shouldUpdate = false;
-        if (thenAgents.length > 0 && !deepEqual(thenAgents, conditionalAgent.then, true)) {
-          (uiAgent as ConditionalAgentCreation).then = thenAgents;
-          console.debug(` -> Update node with then`, thenAgents);
-          shouldUpdate = true;
-        }
-        if (elseAgents.length > 0 && !deepEqual(elseAgents, conditionalAgent.else_, true)) {
-          (uiAgent as ConditionalAgentCreation).else_ = elseAgents;
-          console.debug(` -> Update node with else`, elseAgents);
-          shouldUpdate = true;
-        }
-        if (shouldUpdate) {
-          this.updateAgent(agent, uiAgent, category);
-        }
+        this.updateConditionalChildren(agent as ConditionalAgent, node, uiAgent as ConditionalAgentCreation);
       } else {
         // If no children, we simply check for deep equality
         if (!deepEqual(uiAgent, agent, true)) {
@@ -140,6 +127,40 @@ export class WorkflowEffectService {
           this.updateAgent(agent, uiAgent, category);
         }
       }
+    }
+  }
+
+  private updateFallbackChild(askAgent: AskAgent, child: ParentNode, uiAgent: AskAgentCreation) {
+    const childAgent = getAgentFromConfig(child.nodeType, child.nodeConfig);
+    if (!askAgent.fallback || !deepEqual(childAgent, askAgent.fallback, true)) {
+      // children added or updated on UI, save it on backend
+      uiAgent.fallback = childAgent as ContextAgent;
+      console.debug(` -> Update ask agent with fallback`, uiAgent);
+      this.updateAgent(askAgent, uiAgent, child.nodeCategory);
+    }
+  }
+
+  private updateConditionalChildren(
+    conditionalAgent: ConditionalAgent,
+    node: ParentNode,
+    uiAgent: ConditionalAgentCreation,
+  ) {
+    const category = node.nodeCategory;
+    const thenAgents: BaseAgent[] = this.getChildAgents(node, 'then', category);
+    const elseAgents: BaseAgent[] = this.getChildAgents(node, 'else', category);
+    let shouldUpdate = false;
+    if (thenAgents.length > 0 && !deepEqual(thenAgents, conditionalAgent.then, true)) {
+      uiAgent.then = thenAgents;
+      console.debug(` -> Update node with then`, thenAgents);
+      shouldUpdate = true;
+    }
+    if (elseAgents.length > 0 && !deepEqual(elseAgents, conditionalAgent.else_, true)) {
+      uiAgent.else_ = elseAgents;
+      console.debug(` -> Update node with else`, elseAgents);
+      shouldUpdate = true;
+    }
+    if (shouldUpdate) {
+      this.updateAgent(conditionalAgent, uiAgent, category);
     }
   }
 

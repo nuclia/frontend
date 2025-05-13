@@ -156,6 +156,7 @@ export interface CypherAgentUI extends CommonAgentConfig {
 
 export interface AskAgentUI extends CommonAgentConfig {
   sources: string;
+  fallback?: ContextAgent | null;
   pre_queries?: string[];
   filters?: string[];
   security_groups?: string[];

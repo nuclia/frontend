@@ -32,11 +32,14 @@ export class ConnectableEntryComponent {
 
   clickOutput = output();
   activeState = signal(false);
+  disabledState = signal(false);
 
   @ViewChild('output') outputElement!: ElementRef;
 
   onOutputClick() {
-    this.clickOutput.emit();
-    this.activeState.set(true);
+    if (!this.disabledState()) {
+      this.clickOutput.emit();
+      this.activeState.set(true);
+    }
   }
 }
