@@ -197,7 +197,7 @@ export interface CypherAgentCreation {
 export interface AskAgentCreation {
   module: 'ask';
   sources: string[];
-  fallback?: ContextAgent;
+  fallback?: ContextAgent | null;
   pre_queries?: string[];
   filters?: string[];
   security_groups?: string[];

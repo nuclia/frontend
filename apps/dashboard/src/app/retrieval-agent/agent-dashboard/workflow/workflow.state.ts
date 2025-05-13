@@ -1,7 +1,7 @@
 import { ComponentRef, computed, signal } from '@angular/core';
 import { ContextAgent, PostprocessAgent, PreprocessAgent } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
-import { NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
+import { AskAgentUI, NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
 
 /**
  * Sidebar state
@@ -225,12 +225,35 @@ function _addNode(id: string, nodeCategory: NodeCategory, node: ParentNode) {
  * Delete node
  * @param id Node identifier
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+ * @param parentId Parent node identifier if any
  * @returns the list of children’s nodeRef deleted. Warning: this list includes the nodeRef corresponding to the node identifier if corresponding node is also a child
  */
-export function deleteNode(id: string, nodeCategory: NodeCategory): ComponentRef<NodeDirective>[] {
+export function deleteNode(
+  id: string,
+  nodeCategory: NodeCategory,
+  parentId?: string | null,
+): ComponentRef<NodeDirective>[] {
   if (selectedNode()?.id === id) {
     unselectNode();
   }
+  // remove ref from parent
+  if (parentId) {
+    const parentNode = getNode(parentId, nodeCategory);
+    if (parentNode) {
+      if (parentNode.fallback === id) {
+        const nodeConfig = parentNode.nodeConfig as AskAgentUI;
+        nodeConfig.fallback = null;
+        updateNode(parentId, nodeCategory, { fallback: undefined, nodeConfig });
+      } else if ((parentNode.then || []).includes(id)) {
+        const childIds = (parentNode.then || []).filter((childId) => childId !== id);
+        updateNode(parentId, nodeCategory, { then: childIds });
+      } else if ((parentNode.else || []).includes(id)) {
+        const childIds = (parentNode.else || []).filter((childId) => childId !== id);
+        updateNode(parentId, nodeCategory, { else: childIds });
+      }
+    }
+  }
+
   const isChild = _isChildNode(id);
   let childrenRefs: ComponentRef<NodeDirective>[] = [];
   let nodeSignal;
