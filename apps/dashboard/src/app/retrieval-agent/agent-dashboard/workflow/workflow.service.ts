@@ -79,7 +79,6 @@ import {
   resetSidebar,
   selectNode,
   setActiveSidebar,
-  setBackendState,
   setCurrentOrigin,
   setOpenSidebar,
   setSidebarHeader,
@@ -148,7 +147,6 @@ export class WorkflowService {
         return of([[], [], []]);
       }),
       tap(([preprocess, context, postprocess]) => {
-        setBackendState({ preprocess, context, postprocess });
         this.cleanWorkflow();
         preprocess.forEach((agent) => this.createNodeFromSavedWorkflow(root.preprocess, 'preprocess', agent));
         context.forEach((agent) => this.createNodeFromSavedWorkflow(root.context, 'context', agent));
@@ -180,7 +178,7 @@ export class WorkflowService {
   ) {
     const nodeType = getNodeTypeFromAgent(agent);
     const config = getConfigFromAgent(agent);
-    const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent);
+    const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent.id, true);
     if (agent.module === 'ask') {
       const askAgent = agent as AskAgent;
       if (askAgent.fallback) {
@@ -327,7 +325,7 @@ export class WorkflowService {
   removeNodeAndLink(nodeRef: ComponentRef<NodeDirective>, column: HTMLElement) {
     const category = nodeRef.instance.category();
     const node = getNode(nodeRef.instance.id, category);
-    const agent = node?.agent;
+    const agent = node?.agentId;
     if (!agent) {
       this.closeSidebar();
       this._removeNodeAndLinks(nodeRef, column);
@@ -461,7 +459,8 @@ export class WorkflowService {
     nodeType: NodeType,
     nodeCategory: NodeCategory,
     nodeConfig?: NodeConfig,
-    agent?: PreprocessAgent | ContextAgent | PostprocessAgent,
+    agentId?: string,
+    isSaved = false,
   ): ComponentRef<NodeDirective> {
     if (this.columns.length <= columnIndex) {
       this.createColumn();
@@ -485,7 +484,7 @@ export class WorkflowService {
     nodeRef.instance.configUpdated.subscribe(() => setTimeout(() => this.updateLinksOnColumn(columnIndex)));
 
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
-    addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agent);
+    addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agentId, isSaved);
     origin.activeState.set(false);
     return nodeRef;
   }

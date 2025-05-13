@@ -55,16 +55,15 @@ export function isInternetProvider(x: any): x is InternetProvider {
 }
 export type NodeCategory = 'preprocess' | 'context' | 'postprocess';
 
-export interface NodeModel {
+export interface ParentNode {
   nodeRef: ComponentRef<NodeDirective>;
   nodeType: NodeType;
   nodeCategory: NodeCategory;
+  isSaved: boolean;
   nodeConfig?: NodeConfig;
-  agent?: PreprocessAgent | ContextAgent | PostprocessAgent;
-}
-
-export interface ParentNode extends NodeModel {
+  agentId?: string;
   // properties to store the child nodes’ UI id.
+  parentId?: string;
   then?: string[];
   else?: string[];
   fallback?: string;
