@@ -86,24 +86,35 @@ export type PostprocessModule = 'summarize' | 'validation' | 'restart' | 'remi' 
 
 export interface BaseAgent {
   module: PreprocessModule | ContextModule | PostprocessModule;
+  id?: string;
   rules?: string[] | null;
   title?: string;
   model?: string;
   validate_model?: string;
   summarize_model?: string;
 }
-
-export interface StoredAgent extends BaseAgent {
-  id: string;
-}
-
-export interface PreprocessAgent extends StoredAgent {
+// Base agents without ids (not stored yet or stored as a child)
+export interface BasePreprocessAgent extends BaseAgent {
   module: PreprocessModule;
 }
-export interface ContextAgent extends StoredAgent {
+export interface BaseContextAgent extends BaseAgent {
   module: ContextModule;
 }
-export interface PostprocessAgent extends StoredAgent {
+export interface BasePostprocessAgent extends BaseAgent {
+  module: PostprocessModule;
+}
+
+// Agents with ids (stored)
+export interface PreprocessAgent extends BaseAgent {
+  id: string;
+  module: PreprocessModule;
+}
+export interface ContextAgent extends BaseAgent {
+  id: string;
+  module: ContextModule;
+}
+export interface PostprocessAgent extends BaseAgent {
+  id: string;
   module: PostprocessModule;
 }
 export type PreprocessAgentCreation = HistoricalAgentCreation | RephraseAgentCreation;
@@ -197,8 +208,9 @@ export interface CypherAgentCreation {
 export interface AskAgentCreation {
   module: 'ask';
   sources: string[];
-  fallback?: ContextAgent | null;
+  fallback?: BaseContextAgent | null;
   pre_queries?: string[];
+  // TODO: provide model to Ramon and he will update it
   filters?: string[];
   security_groups?: string[];
   rephrase_semantic_custom_prompt?: string;
@@ -211,6 +223,7 @@ export interface AskAgentCreation {
   extra_fields: string[];
   full_resource: boolean;
   vllm: boolean;
+  // for knowledge graph search, to be further discussed later
   query_entities?: { name: string; type?: string; subtype?: string }[];
   retrieve_related?: string;
   configuration_model?: string;

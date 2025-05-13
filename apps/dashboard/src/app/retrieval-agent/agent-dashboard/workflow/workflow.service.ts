@@ -13,6 +13,9 @@ import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   AskAgent,
+  BaseContextAgent,
+  BasePostprocessAgent,
+  BasePreprocessAgent,
   ConditionalAgent,
   ContextAgent,
   PostprocessAgent,
@@ -173,7 +176,13 @@ export class WorkflowService {
   private createNodeFromSavedWorkflow(
     rootEntry: ConnectableEntryComponent,
     nodeCategory: NodeCategory,
-    agent: PreprocessAgent | ContextAgent | PostprocessAgent,
+    agent:
+      | BasePreprocessAgent
+      | BaseContextAgent
+      | BasePostprocessAgent
+      | PreprocessAgent
+      | ContextAgent
+      | PostprocessAgent,
     columnIndex = 1,
   ) {
     const nodeType = getNodeTypeFromAgent(agent);
@@ -206,7 +215,7 @@ export class WorkflowService {
       const prop = property.replace('_', '');
       const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === prop);
       if (!entry) {
-        throw new Error(`No 'then' entry found on Conditional/Validation node ${nodeRef.instance.id}`);
+        throw new Error(`No '${prop}' entry found on Conditional/Validation node ${nodeRef.instance.id}`);
       }
       agent[property].forEach((child) =>
         this.createNodeFromSavedWorkflow(

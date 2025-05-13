@@ -1,10 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ContextAgent, ContextAgentCreation, PostprocessAgentCreation, PreprocessAgentCreation } from '@nuclia/core';
+import {
+  BaseContextAgent,
+  ContextAgentCreation,
+  PostprocessAgentCreation,
+  PreprocessAgentCreation,
+} from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { Observable, switchMap, take } from 'rxjs';
-import { AskAgentUI, getAgentFromConfig, NodeCategory, ParentNode } from './workflow.models';
+import { AskAgentUI, ConditionalAgentUI, getAgentFromConfig, NodeCategory, ParentNode } from './workflow.models';
 import {
   getNode,
   nodeInitialisationDone,
@@ -113,20 +118,36 @@ export class WorkflowEffectService {
   private getFullyConfiguredRootNode(childNode: ParentNode): ParentNode | undefined {
     if (childNode.parentId) {
       const parentNode = getNode(childNode.parentId, childNode.nodeCategory);
-      if (!parentNode?.nodeConfig) {
+      if (!parentNode || !parentNode.nodeConfig) {
         return;
       }
-      if (parentNode?.fallback === childNode.nodeRef.instance.id) {
+      const childId = childNode.nodeRef.instance.id;
+      if (parentNode.fallback === childId) {
         (parentNode.nodeConfig as AskAgentUI).fallback = getAgentFromConfig(
           childNode.nodeType,
           childNode.nodeConfig,
-        ) as ContextAgent;
-        if (parentNode.parentId) {
-          return this.getFullyConfiguredRootNode(parentNode);
-        } else {
-          return parentNode;
+        ) as BaseContextAgent;
+      } else if (parentNode.then || parentNode.else) {
+        const parentConfig = parentNode.nodeConfig as ConditionalAgentUI;
+        if ((parentNode.then || []).includes(childId)) {
+          const then = parentConfig.then || [];
+          // FIXME: find a way to check if the element already exists in the list => if so update it, if not add it
+          // then.push(getAgentFromConfig(childNode.nodeType, childNode.nodeConfig));
+          parentConfig.then = then;
         }
-      } // TODO: manage conditional children case
+        if ((parentNode.else || []).includes(childId)) {
+          const else_ = parentConfig.else_ || [];
+          // FIXME: find a way to check if the element already exists in the list => if so update it, if not add it
+          // else_.push(getAgentFromConfig(childNode.nodeType, childNode.nodeConfig));
+          parentConfig.else_ = else_;
+        }
+      }
+
+      if (parentNode.parentId) {
+        return this.getFullyConfiguredRootNode(parentNode);
+      } else {
+        return parentNode;
+      }
     }
     return;
   }
