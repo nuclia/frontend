@@ -108,6 +108,11 @@
           {{ 'search.configuration.unsupported-info' | translate }}
         </nsi-info-card>
       }
+      <pa-toggle
+        [value]="useGenerativeAnswer"
+        (valueChange)="updateGenerativeAnswer($event)">
+        {{ 'search.configuration.use-generative-answer' | translate }}
+      </pa-toggle>
       <pa-textarea
         [rows]="12"
         [value]="currentJsonConfig"

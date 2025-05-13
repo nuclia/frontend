@@ -1588,6 +1588,7 @@
 	"search.configuration.search-request-modal.title": "Code for the search request",
 	"search.configuration.unsupported-info": "This search configuration is using API options not covered by the basic search widget features.",
 	"search.configuration.unsupported-warning": "Save the configuration to apply your changes to the search page on the side.",
+	"search.configuration.use-generative-answer": "Use generative answer",
 	"search.description": "Try Nuclia search on your Knowledge Box and set up your search configuration.",
 	"search.title": "Search",
 	"search.widgets.action.create-widget-button": "Create widget",

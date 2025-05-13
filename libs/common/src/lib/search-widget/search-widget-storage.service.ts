@@ -1,10 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import {
-  getChatOptions,
-  getFindOptions,
-  getSearchConfigFromSearchOptions,
-  SearchAndWidgets,
-} from './search-widget.models';
+import { getChatOptions, getFindOptions, SearchAndWidgets } from './search-widget.models';
 import { SDKService } from '@flaps/core';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -29,7 +24,7 @@ export class SearchWidgetStorageService {
 
   ragLabQuestions: Observable<string[]> = this.searchAndWidgets.pipe(map((data) => data?.ragLabQuestions || []));
 
-  searchConfigurations: Observable<Widget.SearchConfiguration[]> = this.storageUpdated.pipe(
+  searchConfigurations: Observable<Widget.AnySearchConfiguration[]> = this.storageUpdated.pipe(
     startWith(true),
     switchMap(() => this.sdk.currentKb.pipe(take(1))),
     switchMap((kb) => {
@@ -37,24 +32,29 @@ export class SearchWidgetStorageService {
         const configMap: { [kbId: string]: Widget.SearchConfiguration[] } = JSON.parse(
           this.storage.getItem(SEARCH_CONFIGS_KEY) || '{}',
         );
-        return of(configMap[kb.id] || []);
+        return of(
+          (configMap[kb.id] || []).map((config) => ({ ...config, type: 'config' }) as Widget.TypedSearchConfiguration),
+        );
       } else {
         return kb.getSearchConfigs().pipe(
           map((searchOptions) => {
-            const searchConfigs = ((kb.search_configs as SearchAndWidgets)?.searchConfigurations || []).map(
-              (config) => {
-                const searchOption = Object.entries(searchOptions).find(([key]) => key === config.id);
-                if (searchOption) {
-                  return { ...config, sourceConfig: searchOption[1] };
-                } else {
-                  return config;
-                }
-              },
-            );
-            const missingConfigs = Object.entries(searchOptions)
+            const searchConfigs = ((kb.search_configs as SearchAndWidgets)?.searchConfigurations || [])
+              .filter((config) => !config.unsupported)
+              .map(
+                (config) =>
+                  ({
+                    ...config,
+                    type: 'config',
+                  }) as Widget.TypedSearchConfiguration,
+              );
+            const missingConfigs: Widget.SearchAPIConfig[] = Object.entries(searchOptions)
               .filter(([key]) => !searchConfigs.some((config) => config.id === key))
-              .map(([key, value]) => getSearchConfigFromSearchOptions(key, value));
-            return searchConfigs.concat(missingConfigs);
+              .map(([id, value]) => ({
+                id,
+                value,
+                type: 'api',
+              }));
+            return [...searchConfigs, ...missingConfigs];
           }),
         );
       }
@@ -88,10 +88,29 @@ export class SearchWidgetStorageService {
     );
   }
 
-  storeSearchConfig(name: string, config: Widget.SearchConfiguration) {
-    return forkJoin([this._storeSearchConfig(name, config), this._storeSearchOptions(name, config)]).pipe(
-      tap(() => this.storageUpdated.next()),
-    );
+  storeSearchConfig(name: string, config: Widget.AnySearchConfiguration): Observable<void> {
+    if (config.type === 'api') {
+      return forkJoin([this._storeSearchOptions(name, config.value), this._deleteSearchConfig(name)]).pipe(
+        map(() => {
+          this.storageUpdated.next();
+          return;
+        }),
+      );
+    } else {
+      let searchOptions: SearchConfig;
+      if (config.generativeAnswer.generateAnswer) {
+        searchOptions = { kind: 'ask', config: getChatOptions(config) };
+      } else {
+        searchOptions = { kind: 'find', config: getFindOptions(config) };
+      }
+
+      return forkJoin([this._storeSearchConfig(name, config), this._storeSearchOptions(name, searchOptions)]).pipe(
+        map(() => {
+          this.storageUpdated.next();
+          return;
+        }),
+      );
+    }
   }
 
   deleteSearchConfig(name: string) {
@@ -126,8 +145,10 @@ export class SearchWidgetStorageService {
         const itemIndex = searchConfigs.findIndex((item) => item.id === configId);
         if (itemIndex > -1) {
           searchConfigs.splice(itemIndex, 1);
+          return this._updateSearchConfig(searchConfigs);
+        } else {
+          return of(undefined);
         }
-        return this._updateSearchConfig(searchConfigs);
       }),
     );
   }
@@ -154,13 +175,8 @@ export class SearchWidgetStorageService {
     );
   }
 
-  private _storeSearchOptions(name: string, config: Widget.SearchConfiguration) {
-    let searchOptions: SearchConfig;
-    if (config.generativeAnswer.generateAnswer) {
-      searchOptions = { kind: 'ask', config: getChatOptions(config) };
-    } else {
-      searchOptions = { kind: 'find', config: getFindOptions(config) };
-    }
+  private _storeSearchOptions(name: string, config: SearchConfig) {
+    console.log('storeSearchOptions', name, config);
     if (this.standaloneService.standalone) {
       return of(undefined);
     } else {
@@ -171,7 +187,7 @@ export class SearchWidgetStorageService {
             .getSearchConfigs()
             .pipe(
               switchMap((configs) =>
-                configs[name] ? kb.updateSearchConfig(name, searchOptions) : kb.createSearchConfig(name, searchOptions),
+                configs[name] ? kb.updateSearchConfig(name, config) : kb.createSearchConfig(name, config),
               ),
             ),
         ),

@@ -2,7 +2,15 @@ import { inject, Injectable } from '@angular/core';
 import { renderMarkdown, SDKService } from '@flaps/core';
 import { ModalConfig, ModalRef, ModalService } from '@guillotinaweb/pastanaga-angular';
 import { BehaviorSubject, forkJoin, Observable, of, switchMap, take, tap } from 'rxjs';
-import { Ask, ChatOptions, IErrorResponse, LearningConfiguration, NUCLIA_STANDARD_SEARCH_CONFIG, Prompts, Widget } from '@nuclia/core';
+import {
+  Ask,
+  ChatOptions,
+  IErrorResponse,
+  LearningConfiguration,
+  NUCLIA_STANDARD_SEARCH_CONFIG,
+  Prompts,
+  Widget,
+} from '@nuclia/core';
 import { LoadingDialogComponent } from './loading-dialog';
 import { catchError, filter, map } from 'rxjs/operators';
 import { SearchWidgetService } from '../search-widget';
@@ -38,7 +46,7 @@ export class RagLabService {
   private _kbConfigBackup = new BehaviorSubject<{ [id: string]: any } | null>(null);
   private _generativeModelList = new BehaviorSubject<LearningConfiguration | null>(null);
   private _generativeModelMap = new BehaviorSubject<{ [value: string]: string } | null>(null);
-  private _searchConfigurations = new BehaviorSubject<Widget.SearchConfiguration[]>([]);
+  private _searchConfigurations = new BehaviorSubject<Widget.TypedSearchConfiguration[]>([]);
 
   kbConfigBackup = this._kbConfigBackup.asObservable();
   generativeModelList = this._generativeModelList.asObservable();

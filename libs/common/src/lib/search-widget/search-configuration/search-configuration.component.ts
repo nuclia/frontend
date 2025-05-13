@@ -29,18 +29,19 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LearningConfigurations, Widget } from '@nuclia/core';
+import { LearningConfigurations, Widget, SearchConfig } from '@nuclia/core';
 import { ButtonMiniComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { filter, forkJoin, map, of, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { removeDeprecatedModels } from '../../ai-models/ai-models.utils';
-import { isSameConfigurations } from '../search-widget.models';
+import { getChatOptions, getFindOptions, isSameConfigurations } from '../search-widget.models';
 import { SearchWidgetService } from '../search-widget.service';
 import { GenerativeAnswerFormComponent } from './generative-answer-form';
 import { ResultsDisplayFormComponent } from './results-display-form';
 import { SaveConfigModalComponent } from './save-config-modal/save-config-modal.component';
 import { SearchBoxFormComponent } from './search-box-form';
 import { SearchRequestModalComponent } from './search-request-modal';
+import { PaTogglesModule } from '../../../../../pastanaga-angular/projects/pastanaga-angular/src/lib/controls/toggles/toggles.module';
 
 const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
 
@@ -64,6 +65,7 @@ const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA']
     RouterLink,
     TranslateModule,
     PaTooltipModule,
+    PaTogglesModule,
   ],
   templateUrl: './search-configuration.component.html',
   styleUrl: './search-configuration.component.scss',
@@ -85,7 +87,7 @@ export class SearchConfigurationComponent {
   @Input() configurationContainer?: ElementRef;
   @Input() mainTitle = '';
 
-  @Output() configUpdate = new EventEmitter<Widget.SearchConfiguration>();
+  @Output() configUpdate = new EventEmitter<Widget.AnySearchConfiguration>();
   @Output() createWidget = new EventEmitter<void>();
 
   @ViewChild('searchBox', { read: AccordionItemComponent }) searchBoxItem?: AccordionItemComponent;
@@ -101,10 +103,11 @@ export class SearchConfigurationComponent {
 
   selectedConfig = new FormControl<string>('');
 
-  savedConfig?: Widget.SearchConfiguration;
-  currentConfig?: Widget.SearchConfiguration;
+  savedConfig?: Widget.AnySearchConfiguration;
+  currentConfig?: Widget.AnySearchConfiguration;
   originalJsonConfig?: string;
   currentJsonConfig?: string;
+  useGenerativeAnswer = false;
 
   generativeModelFromSettings = '';
   semanticModelFromSettings = '';
@@ -186,6 +189,18 @@ export class SearchConfigurationComponent {
         : this.searchWidgetService.searchConfigurations.pipe(take(1)),
     ]).pipe(
       tap(([kb, savedConfigs]) => {
+        savedConfigs = savedConfigs.map((item) => {
+          // backward compatibility
+          if (item.type === 'config' && item.unsupported && item.sourceConfig) {
+            return {
+              type: 'api',
+              id: item.id,
+              value: item.sourceConfig,
+            };
+          } else {
+            return item;
+          }
+        });
         const standardConfigOption = new OptionModel({
           id: 'nuclia-standard',
           value: 'nuclia-standard',
@@ -205,8 +220,10 @@ export class SearchConfigurationComponent {
                 value: item.id,
                 label: item.id,
                 help:
-                  this.generativeModelNames[item.generativeAnswer?.generativeModel] ||
-                  item.generativeAnswer?.generativeModel,
+                  item.type === 'config'
+                    ? this.generativeModelNames[item.generativeAnswer?.generativeModel] ||
+                      item.generativeAnswer?.generativeModel
+                    : undefined,
               }),
           ),
         );
@@ -287,10 +304,14 @@ export class SearchConfigurationComponent {
         this.savedConfig = this.searchWidgetService.getSelectedSearchConfig(kb.id, configs);
         this.currentConfig = { ...this.savedConfig };
         this.isConfigModified = false;
-        this.isConfigUnsupported = !!this.savedConfig.unsupported;
-        this.originalJsonConfig = this.isConfigUnsupported
-          ? JSON.stringify(this.currentConfig?.sourceConfig?.config, null, 2)
-          : '';
+        if (this.savedConfig.type === 'api') {
+          this.isConfigUnsupported = true;
+          this.originalJsonConfig = JSON.stringify(this.savedConfig.value.config, null, 2);
+          this.useGenerativeAnswer = this.savedConfig.value.kind === 'ask';
+        } else {
+          this.isConfigUnsupported = false;
+          this.originalJsonConfig = '';
+        }
         this.currentJsonConfig = this.originalJsonConfig;
         this.updateWidget();
         this.cdr.markForCheck();
@@ -313,14 +334,19 @@ export class SearchConfigurationComponent {
 
   resetConfig() {
     if (this.savedConfig) {
-      this.savedConfig = {
-        id: this.savedConfig.id,
-        searchBox: { ...this.savedConfig.searchBox },
-        generativeAnswer: { ...this.savedConfig.generativeAnswer },
-        resultDisplay: { ...this.savedConfig.resultDisplay },
-      };
+      if (this.savedConfig.type === 'config') {
+        this.savedConfig = {
+          type: 'config',
+          id: this.savedConfig.id,
+          searchBox: { ...this.savedConfig.searchBox },
+          generativeAnswer: { ...this.savedConfig.generativeAnswer },
+          resultDisplay: { ...this.savedConfig.resultDisplay },
+        };
+      } else {
+        this.currentJsonConfig = this.originalJsonConfig;
+        this.useGenerativeAnswer = this.savedConfig.value.kind === 'ask';
+      }
       this.isConfigModified = false;
-      this.currentJsonConfig = this.originalJsonConfig;
     }
   }
 
@@ -364,9 +390,12 @@ export class SearchConfigurationComponent {
   }
 
   private _saveConfig(configName: string) {
-    if (this.isConfigUnsupported && this.currentConfig?.sourceConfig) {
+    if (this.isConfigUnsupported && this.currentConfig?.type === 'api') {
       try {
-        this.currentConfig.sourceConfig.config = JSON.parse(this.currentJsonConfig || '');
+        this.currentConfig.value = {
+          kind: this.useGenerativeAnswer ? 'ask' : 'find',
+          config: JSON.parse(this.currentJsonConfig || ''),
+        };
       } catch (e) {
         this.toaster.error('search.configuration.json-config-error');
         return of(false);
@@ -382,9 +411,8 @@ export class SearchConfigurationComponent {
                   this.updateWidget();
                 }
                 this.isConfigModified = false;
-                this.originalJsonConfig = this.isConfigUnsupported
-                  ? JSON.stringify(this.currentConfig?.sourceConfig?.config, null, 2)
-                  : '';
+                this.originalJsonConfig =
+                  this.currentConfig?.type === 'api' ? JSON.stringify(this.currentConfig.value, null, 2) : '';
                 return true;
               }),
             )
@@ -394,7 +422,7 @@ export class SearchConfigurationComponent {
   }
 
   updateSearchBoxConfig(config: Widget.SearchBoxConfig) {
-    if (!this.savedConfig) {
+    if (!this.savedConfig || this.currentConfig?.type !== 'config') {
       return;
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
@@ -403,7 +431,7 @@ export class SearchConfigurationComponent {
     this.updateWidget();
   }
   updateGenerativeAnswerConfig(config: Widget.GenerativeAnswerConfig) {
-    if (!this.savedConfig) {
+    if (!this.savedConfig || this.currentConfig?.type !== 'config') {
       return;
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
@@ -412,7 +440,7 @@ export class SearchConfigurationComponent {
     this.updateWidget();
   }
   updateResultDisplayConfig(config: Widget.ResultDisplayConfig) {
-    if (!this.savedConfig) {
+    if (!this.savedConfig || this.currentConfig?.type !== 'config') {
       return;
     }
     const currentConfig = this.currentConfig || { ...this.savedConfig };
@@ -465,8 +493,35 @@ export class SearchConfigurationComponent {
       .onClose.pipe(filter((confirm) => !!confirm))
       .subscribe(() => {
         this.isConfigUnsupported = true;
-        this.currentJsonConfig = JSON.stringify(this.currentConfig?.sourceConfig?.config, null, 2);
+        if (this.currentConfig?.type === 'config') {
+          const isAsk = !!this.currentConfig.generativeAnswer.generateAnswer;
+          const config: SearchConfig = isAsk
+            ? {
+                kind: 'ask',
+                config: getChatOptions(this.currentConfig),
+              }
+            : {
+                kind: 'find',
+                config: getFindOptions(this.currentConfig),
+              };
+          this.currentConfig = {
+            type: 'api',
+            id: this.currentConfig.id,
+            value: config,
+          };
+          this.currentJsonConfig = JSON.stringify(config.config, null, 2);
+          this.useGenerativeAnswer = isAsk;
+        }
         this.cdr.markForCheck();
       });
+  }
+
+  updateGenerativeAnswer(useGenerativeAnswer: boolean) {
+    this.useGenerativeAnswer = useGenerativeAnswer;
+    if (this.currentConfig?.type === 'api') {
+      this.currentConfig.value.kind = useGenerativeAnswer ? 'ask' : 'find';
+    }
+    this.isConfigModified = true;
+    this.cdr.markForCheck();
   }
 }

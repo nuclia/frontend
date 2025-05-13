@@ -189,7 +189,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         }
         this.checkIsModified();
         this.searchWidgetService.generateWidgetSnippet(
-          searchConfig,
+          { ...searchConfig, type: 'config' },
           this.form.getRawValue(),
           this.currentWidget?.slug,
           '.widget-preview-container',

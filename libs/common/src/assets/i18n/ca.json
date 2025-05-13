@@ -1574,6 +1574,7 @@
 	"search.configuration.search-request-modal.title": "Codi per a la sol·licitud de cerca",
 	"search.configuration.unsupported-info": "Aquesta configuració de cerca utilitza opcions de l'API no cobertes per les funcions bàsiques del widget de cerca.",
 	"search.configuration.unsupported-warning": "Deseu la configuració per aplicar els canvis a la pàgina de cerca del lateral.",
+	"search.configuration.use-generative-answer": "Utilitza una resposta generativa",
 	"search.description": "Proveu la cerca de Nuclia al vostre Knowledge Box i configureu la vostra configuració de cerca.",
 	"search.title": "Cerca",
 	"search.widgets.action.create-widget-button": "Crea un giny",
