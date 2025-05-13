@@ -149,8 +149,8 @@ export interface SqlAgentCreation {
   description?: string | null;
   sqlschema?: string | null;
   retries?: number;
-  ignore_tables?: string[];
-  include_tables?: string[];
+  ignore_tables: string[];
+  include_tables: string[];
   sample_rows_in_table_info?: number;
   indexes_in_table_info?: boolean;
   custom_table_info?: { [property: string]: unknown };
@@ -208,9 +208,9 @@ export interface AskAgentCreation {
   date_range_enabled?: boolean;
   before?: number;
   after?: number;
-  extra_fields?: string[];
-  full_resource?: boolean;
-  vllm?: boolean;
+  extra_fields: string[];
+  full_resource: boolean;
+  vllm: boolean;
   query_entities?: { name: string; type?: string; subtype?: string }[];
   retrieve_related?: string;
   configuration_model?: string;

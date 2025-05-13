@@ -22,7 +22,8 @@
     color: $color-neutral-regular;
     font-weight: $font-weight-semi-bold;
   }
-  .form-entry > label {
+  .form-entry > label,
+  .label-and-button > label {
     color: $color-neutral-regular;
     font-size: font-size(s);
     font-weight: $font-weight-semi-bold;
@@ -41,6 +42,20 @@
     :first-child {
       flex: 1 0 auto;
     }
+  }
+  .label-and-button {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+  .config-property-form {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+
+  .config-property-form {
+    margin-top: rhythm(2);
   }
 
   footer {

@@ -41,8 +41,123 @@
       <pa-input
         id="retries"
         formControlName="retries"
+        type="number"
         externalLabel=""></pa-input>
     </div>
+    <div class="form-entry">
+      <label for="sqlschema">{{ 'retrieval-agents.workflow.node-types.sql.form.sqlschema' | translate }}</label>
+      <nsi-expandable-textarea
+        id="sqlschema"
+        formControlName="sqlschema"
+        externalLabel=""
+        rows="2"
+        modalTitle="retrieval-agents.workflow.node-types.sql.form.sqlschema"
+        resizable=""></nsi-expandable-textarea>
+    </div>
+    <div class="form-entry">
+      <label for="ignore_tables">
+        {{ 'retrieval-agents.workflow.node-types.sql.form.ignore_tables.label' | translate }}
+      </label>
+      <nsi-expandable-textarea
+        id="ignore_tables"
+        formControlName="ignore_tables"
+        externalLabel=""
+        rows="2"
+        modalTitle="retrieval-agents.workflow.node-types.sql.form.ignore_tables.label"
+        resizable=""
+        [help]="
+          ignoreTableControl.disabled
+            ? 'retrieval-agents.workflow.node-types.sql.form.ignore_tables.disabled'
+            : 'retrieval-agents.workflow.node-types.sql.form.ignore_tables.help'
+        "
+        (valueChange)="manageTableExclusionState('ignore_tables')"></nsi-expandable-textarea>
+    </div>
+    <div class="form-entry">
+      <label for="include_tables">
+        {{ 'retrieval-agents.workflow.node-types.sql.form.include_tables.label' | translate }}
+      </label>
+      <nsi-expandable-textarea
+        id="include_tables"
+        formControlName="include_tables"
+        externalLabel=""
+        rows="2"
+        modalTitle="retrieval-agents.workflow.node-types.sql.form.include_tables.label"
+        resizable=""
+        [help]="
+          includeTableControl.disabled
+            ? 'retrieval-agents.workflow.node-types.sql.form.include_tables.disabled'
+            : 'retrieval-agents.workflow.node-types.sql.form.include_tables.help'
+        "
+        (valueChange)="manageTableExclusionState('include_tables')"></nsi-expandable-textarea>
+    </div>
+    <div class="form-entry">
+      <label for="sample_rows_in_table_info">
+        {{ 'retrieval-agents.workflow.node-types.sql.form.sample_rows_in_table_info' | translate }}
+      </label>
+      <pa-input
+        id="sample_rows_in_table_info"
+        formControlName="sample_rows_in_table_info"
+        type="number"
+        externalLabel=""></pa-input>
+    </div>
+    <pa-toggle
+      formControlName="indexes_in_table_info"
+      withBackground="">
+      {{ 'retrieval-agents.workflow.node-types.sql.form.indexes_in_table_info' | translate }}
+    </pa-toggle>
+    <ng-container formGroupName="custom_table_info">
+      <div class="form-entry">
+        <div class="label-and-button">
+          <label>{{ 'retrieval-agents.workflow.node-types.sql.form.custom_table_info.label' | translate }}</label>
+          <pa-button
+            size="small"
+            aspect="basic"
+            (click)="addConfigProperty()">
+            {{ 'retrieval-agents.workflow.common-forms.property.add' | translate }}
+          </pa-button>
+        </div>
+        @for (group of customTableControl.controls | keyvalue; track group.key) {
+          <div
+            class="config-property-form"
+            [formGroup]="group.value">
+            <pa-input formControlName="property">
+              {{ 'retrieval-agents.workflow.common-forms.property.name' | translate }}
+            </pa-input>
+            <pa-input formControlName="value">
+              {{ 'retrieval-agents.workflow.common-forms.property.value' | translate }}
+            </pa-input>
+            <pa-button
+              icon="trash"
+              aspect="basic"
+              size="small"
+              (click)="removeProperty(group.key)">
+              {{ 'retrieval-agents.workflow.common-forms.property.remove' | translate }}
+            </pa-button>
+          </div>
+        }
+      </div>
+    </ng-container>
+
+    <div class="form-entry">
+      <label for="max_string_length">
+        {{ 'retrieval-agents.workflow.node-types.sql.form.max_string_length' | translate }}
+      </label>
+      <pa-input
+        id="max_string_length"
+        formControlName="max_string_length"
+        type="number"
+        externalLabel=""></pa-input>
+    </div>
+    <pa-toggle
+      formControlName="view_support"
+      withBackground="">
+      {{ 'retrieval-agents.workflow.node-types.sql.form.view_support' | translate }}
+    </pa-toggle>
+    <pa-toggle
+      formControlName="lazy_table_reflection"
+      withBackground="">
+      {{ 'retrieval-agents.workflow.node-types.sql.form.lazy_table_reflection' | translate }}
+    </pa-toggle>
     <app-rules-field
       [form]="configForm"
       [config]="config"></app-rules-field>

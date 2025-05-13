@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -13,6 +14,7 @@ import {
   Self,
   SimpleChanges,
 } from '@angular/core';
+import { NgControl, ReactiveFormsModule } from '@angular/forms';
 import {
   ModalConfig,
   PaButtonModule,
@@ -21,12 +23,10 @@ import {
   TextareaComponent,
   TextFieldUtilityService,
 } from '@guillotinaweb/pastanaga-angular';
-import { NgControl, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { takeUntil } from 'rxjs';
 import { SisModalService } from '../sis-modal.service';
 import { TextareaModalComponent } from './textarea-modal/textarea-modal.component';
-import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'nsi-expandable-textarea',
@@ -72,8 +72,8 @@ export class ExpandableTextareaComponent
     this.modalService
       .openModal(
         TextareaModalComponent,
-        new ModalConfig<{ value: string; title: string }>({
-          data: { value: this.control.value, title: this.modalTitle },
+        new ModalConfig<{ value: string; title: string; help?: string; placeholder?: string }>({
+          data: { value: this.control.value, title: this.modalTitle, help: this.help, placeholder: this.placeholder },
         }),
       )
       .onClose.pipe(takeUntil(this.terminator$))

@@ -8,9 +8,10 @@ pa-textarea {
 }
 
 pa-textarea ::ng-deep {
-  .pa-field,
-  .pa-field-container,
-  textarea {
+  .pa-field {
     height: 100%;
+  }
+  .pa-field-container {
+    height: calc(100% - #{rhythm(4)});
   }
 }

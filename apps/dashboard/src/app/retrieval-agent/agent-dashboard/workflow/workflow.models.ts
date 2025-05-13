@@ -135,6 +135,15 @@ export interface SqlAgentUI extends CommonAgentConfig {
   source: string;
   prompt?: string;
   retries: number;
+  sqlschema?: string | null;
+  ignore_tables: string[];
+  include_tables: string[];
+  sample_rows_in_table_info?: number;
+  indexes_in_table_info?: boolean;
+  custom_table_info?: { [property: string]: unknown };
+  view_support?: boolean;
+  max_string_length?: number;
+  lazy_table_reflection?: boolean;
 }
 
 export interface CypherAgentUI extends CommonAgentConfig {
@@ -147,12 +156,20 @@ export interface CypherAgentUI extends CommonAgentConfig {
 
 export interface AskAgentUI extends CommonAgentConfig {
   sources: string;
+  pre_queries?: string[];
+  filters?: string[];
+  security_groups?: string[];
   rephrase_semantic_custom_prompt?: string;
   rephrase_lexical_custom_prompt?: string;
   keywords_custom_prompt?: string;
   visual_enable_prompt?: string;
-  full_resource?: boolean;
-  vllm?: boolean;
+  before?: number;
+  after?: number;
+  extra_fields: string[];
+  full_resource: boolean;
+  vllm: boolean;
+  query_entities?: { name: string; type?: string; subtype?: string }[];
+  retrieve_related?: string;
 }
 
 export interface McpAgentUI extends CommonAgentConfig {
@@ -396,5 +413,18 @@ export function formatHeaders(extra: { [property: string]: { property: string; v
       return config;
     },
     {} as { [property: string]: string },
+  );
+}
+
+export function formatExtraConfig(extra: { [property: string]: { property: string; value: string } }): {
+  [property: string]: string | number | null;
+} {
+  return Object.values(extra).reduce(
+    (config, entry) => {
+      const intValue = parseInt(entry.value, 10);
+      config[entry.property] = isNaN(intValue) ? entry.value : intValue;
+      return config;
+    },
+    {} as { [property: string]: string | number | null },
   );
 }
