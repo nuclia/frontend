@@ -481,6 +481,7 @@ export class WorkflowService {
     nodeRef.instance.addNode.subscribe((data) => this.triggerNodeCreation(data.entry, data.targetColumn));
     nodeRef.instance.removeNode.subscribe(() => this.removeNodeAndLink(nodeRef, column));
     nodeRef.instance.selectNode.subscribe(() => this.selectNode(nodeRef.instance.id, nodeCategory));
+    nodeRef.instance.configUpdated.subscribe(() => setTimeout(() => this.updateLinksOnColumn(columnIndex)));
 
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
     addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agent);
