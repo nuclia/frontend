@@ -7,6 +7,7 @@
   export let fallback = '';
   export let aspectRatio: '5/4' | '16/9' = '5/4';
   export let noBackground = false;
+  export let clickable = false;
 
   let loaded = false;
 
@@ -36,7 +37,9 @@
 <div
   class="sw-thumbnail"
   class:thumbnail-background={!noBackground}
-  class:thumbnail-fallback={!src && !!fallback}>
+  class:thumbnail-fallback={!src && !!fallback}
+  class:clickable
+  on:click={() => clickable && dispatch('click')}>
   {#if loaded}
     {#if !src}
       <Icon name={fallback} size="large" />
