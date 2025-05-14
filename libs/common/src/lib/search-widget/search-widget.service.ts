@@ -67,16 +67,7 @@ export class SearchWidgetService {
     }
     const savedConfig = configs.find((config) => config.id === savedConfigId);
     if (savedConfig) {
-      // backward compatibility
-      if (savedConfig.type === 'config' && savedConfig.unsupported && savedConfig.sourceConfig) {
-        return {
-          type: 'api',
-          id: savedConfig.id,
-          value: savedConfig.sourceConfig,
-        };
-      } else {
-        return savedConfig;
-      }
+      return savedConfig;
     } else {
       return standardConfiguration;
     }

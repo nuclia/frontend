@@ -191,18 +191,6 @@ export class SearchConfigurationComponent {
         : this.searchWidgetService.searchConfigurations.pipe(take(1)),
     ]).pipe(
       tap(([kb, savedConfigs]) => {
-        savedConfigs = savedConfigs.map((item) => {
-          // backward compatibility
-          if (item.type === 'config' && item.unsupported && item.sourceConfig) {
-            return {
-              type: 'api',
-              id: item.id,
-              value: item.sourceConfig,
-            };
-          } else {
-            return item;
-          }
-        });
         const standardConfigOption = new OptionModel({
           id: 'nuclia-standard',
           value: 'nuclia-standard',

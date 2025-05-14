@@ -38,15 +38,13 @@ export class SearchWidgetStorageService {
       } else {
         return kb.getSearchConfigs().pipe(
           map((searchOptions) => {
-            const searchConfigs = ((kb.search_configs as SearchAndWidgets)?.searchConfigurations || [])
-              .filter((config) => !config.unsupported)
-              .map(
-                (config) =>
-                  ({
-                    ...config,
-                    type: 'config',
-                  }) as Widget.TypedSearchConfiguration,
-              );
+            const searchConfigs = ((kb.search_configs as SearchAndWidgets)?.searchConfigurations || []).map(
+              (config) =>
+                ({
+                  ...config,
+                  type: 'config',
+                }) as Widget.TypedSearchConfiguration,
+            );
             const missingConfigs: Widget.SearchAPIConfig[] = Object.entries(searchOptions)
               .filter(([key]) => !searchConfigs.some((config) => config.id === key))
               .map(([id, value]) => ({

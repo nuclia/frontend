@@ -128,9 +128,6 @@ export namespace Widget {
     searchBox: SearchBoxConfig;
     generativeAnswer: GenerativeAnswerConfig;
     resultDisplay: ResultDisplayConfig;
-    // obsolete, but preserved for backward compatibility
-    unsupported?: boolean;
-    sourceConfig?: SearchConfig;
   }
 
   export interface WidgetConfiguration {
