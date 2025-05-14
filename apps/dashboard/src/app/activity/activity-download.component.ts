@@ -20,9 +20,19 @@ import { EventType } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { LogEntry } from './log.models';
+import { ActivityService } from './activity.service';
 
 type Tab = 'resources' | 'searches';
 type ActivityTab = EventType;
+type ActivityDownload = {
+  [key: string]: {
+    status: 'pending' | 'completed';
+    requestId?: string;
+    url?: string;
+    rows?: LogEntry[];
+    fromCache: boolean;
+  };
+};
 
 const baseColumns = ['id', 'date', 'user_id', 'client_type', 'nuclia_tokens'];
 const resourceColumns = [...baseColumns, 'resource_id'];
@@ -53,14 +63,7 @@ export class ActivityDownloadComponent implements OnDestroy {
     searches: [EventType.CHAT, EventType.SEARCH],
     resources: [EventType.PROCESSED, EventType.NEW, EventType.MODIFIED],
   };
-  downloads: {
-    [key: string]: {
-      status: 'pending' | 'completed';
-      requestId?: string;
-      url?: string;
-      rows?: LogEntry[];
-    };
-  } = {};
+  downloads: ActivityDownload = {};
   watchList = new Subject<{ key: string; requestId: string }>();
   email = this.user.userPrefs.pipe(map((user) => user?.email || ''));
   selectedTab: Tab = 'resources';
@@ -91,7 +94,11 @@ export class ActivityDownloadComponent implements OnDestroy {
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
     private translate: TranslateService,
+    private activityService: ActivityService,
   ) {
+    this.getStoredActivity().subscribe((activity) => {
+      this.downloads = activity;
+    });
     this.watchList
       .pipe(
         mergeMap(({ key, requestId }) =>
@@ -111,26 +118,23 @@ export class ActivityDownloadComponent implements OnDestroy {
                   return false;
                 }),
                 take(1),
+                concatMap(() => {
+                  const url = this.downloads[key].url;
+                  if (!url) {
+                    return of(null);
+                  } else {
+                    return from(fetch(url).then((res) => res.text()));
+                  }
+                }),
+                tap((ndjson) => {
+                  this.activityService.storeActivity(kb.id, key, ndjson || '');
+                  if (ndjson) {
+                    this.downloads[key].rows = this.parseNdjson(ndjson);
+                    this.cdr?.markForCheck();
+                  }
+                }),
               ),
             ),
-            concatMap(() => {
-              const url = this.downloads[key].url;
-              if (!url) {
-                return of(null);
-              } else {
-                return from(fetch(url).then((res) => res.text()));
-              }
-            }),
-            tap((ndjson) => {
-              if (ndjson) {
-                this.downloads[key].rows = ndjson
-                  .split('\n')
-                  .filter((s) => !!s)
-                  .map((row) => new LogEntry(row))
-                  .reverse();
-                this.cdr?.markForCheck();
-              }
-            }),
           ),
         ),
       )
@@ -162,7 +166,7 @@ export class ActivityDownloadComponent implements OnDestroy {
             .pipe(
               tap((res) => {
                 const key = `${eventType}-${month}`;
-                this.downloads[key] = { status: 'pending', requestId: res.request_id };
+                this.downloads[key] = { status: 'pending', requestId: res.request_id, fromCache: false };
                 this.watchList.next({ key: key, requestId: res.request_id });
                 this.cdr?.markForCheck();
               }),
@@ -185,5 +189,32 @@ export class ActivityDownloadComponent implements OnDestroy {
   parseDate(value: string) {
     const [year, month] = value.split('-');
     return new Date(parseInt(year), parseInt(month) - 1, 2);
+  }
+
+  parseNdjson(ndjson: string) {
+    return ndjson
+      .split('\n')
+      .filter((s) => !!s)
+      .map((row) => new LogEntry(row))
+      .reverse();
+  }
+
+  getStoredActivity() {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      map((kb) => {
+        const cache = this.activityService.getStoredActivity();
+        return cache[kb.id]
+          ? Object.entries(cache[kb.id]).reduce((acc, [event, value]) => {
+              acc[event] = {
+                status: 'completed',
+                fromCache: true,
+                rows: this.parseNdjson(value.data),
+              };
+              return acc;
+            }, {} as ActivityDownload)
+          : {};
+      }),
+    );
   }
 }
