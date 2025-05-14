@@ -10,10 +10,11 @@ import {
   PaIconModule,
   PaPopupModule,
   PaTabsModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { ActivityDownloadComponent } from './activity-download.component';
 import { ActivityLogTableComponent } from './log-table.component';
-import { InfoCardComponent } from '@nuclia/sistema';
+import { InfoCardComponent, SisProgressModule } from '@nuclia/sistema';
 
 const ROUTES = [
   {
@@ -33,8 +34,10 @@ const ROUTES = [
     PaIconModule,
     PaPopupModule,
     PaExpanderModule,
+    PaTooltipModule,
     ActivityLogTableComponent,
     InfoCardComponent,
+    SisProgressModule,
   ],
   declarations: [ActivityDownloadComponent],
   exports: [],

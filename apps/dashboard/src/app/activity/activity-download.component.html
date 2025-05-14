@@ -42,11 +42,17 @@
                 <div class="download-item">
                   <div class="body-m">{{ item.date | date: 'MMMM y' }}</div>
                   @if (!!downloads[selectedActivityTab + '-' + item.month]) {
-                    <div class="email-sent">
-                      @if (downloads[selectedActivityTab + '-' + item.month].status === 'pending') {
+                    @if (downloads[selectedActivityTab + '-' + item.month].status === 'pending') {
+                      <div class="email-sent">
                         <pa-icon name="clock-dash"></pa-icon>
-                      }
-                    </div>
+                      </div>
+                    } @else if (downloads[selectedActivityTab + '-' + item.month].fromCache) {
+                      <pa-button
+                        icon="reload"
+                        aspect="basic"
+                        paTooltip="generic.refresh"
+                        (click)="download(selectedActivityTab, item.month)"></pa-button>
+                    }
                   } @else {
                     <pa-button
                       icon="download"
@@ -56,22 +62,26 @@
                 </div>
               </pa-expander-header>
               <pa-expander-body>
-                @if (
-                  item.date < migrationgDate &&
-                  (selectedActivityTab === chatActivityTab || selectedActivityTab === searchActivityTab)
-                ) {
-                  <nsi-info-card
-                    type="warning"
-                    icon="warning">
-                    {{ 'activity.migration-warning' | translate }}
-                  </nsi-info-card>
+                @if (downloads[selectedActivityTab + '-' + item.month]?.status === 'pending') {
+                  <nsi-spinner></nsi-spinner>
+                } @else {
+                  @if (
+                    item.date < migrationgDate &&
+                    (selectedActivityTab === chatActivityTab || selectedActivityTab === searchActivityTab)
+                  ) {
+                    <nsi-info-card
+                      type="warning"
+                      icon="warning">
+                      {{ 'activity.migration-warning' | translate }}
+                    </nsi-info-card>
+                  }
+                  <app-log-table
+                    [rows]="
+                      !!downloads[selectedActivityTab + '-' + item.month]
+                        ? downloads[selectedActivityTab + '-' + item.month].rows || []
+                        : []
+                    "></app-log-table>
                 }
-                <app-log-table
-                  [rows]="
-                    !!downloads[selectedActivityTab + '-' + item.month]
-                      ? downloads[selectedActivityTab + '-' + item.month].rows || []
-                      : []
-                  "></app-log-table>
               </pa-expander-body>
             </pa-expander>
           }
