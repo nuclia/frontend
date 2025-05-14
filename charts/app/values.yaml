@@ -18,7 +18,6 @@ service:
   internalPort: 80
   externalPort: 80
 
-site_key: XXX
 app_name: app
 no_stripe: false
 cdn: XXX
@@ -26,7 +25,6 @@ brand_name: XXX
 brand_domain: XXX
 assets_path: XXX
 sentry_environment: stage
-sentry_url: XXX
 editor_url: XXX
 email_domain: XXX
 saml_enabled: XXX
@@ -71,3 +69,8 @@ podDisruptionBudget:
 envFrom:
   - configMapRef:
       name: app-config
+
+## Intended to be used with secret
+# env:
+#   SITE_KEY: XXX
+#   SENTRY_URL: XXX
