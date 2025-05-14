@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { SisToastService } from '@nuclia/sistema';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { combineLatest, forkJoin, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { combineLatest, forkJoin, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { ManagerStore } from '../../../../manager.store';
 import { CommonModule } from '@angular/common';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
@@ -80,13 +80,12 @@ export class AddModelComponent implements OnDestroy {
       this.regionalService
         .createModel(formValues, accountId, zone)
         .pipe(
-          switchMap(({ id }) =>
-            forkJoin(
-              Object.entries(this.selectedKbs)
-                .filter(([, enabled]) => enabled)
-                .map(([kbId]) => this.regionalService.addModelToKb(id, accountId, kbId, zone)),
-            ),
-          ),
+          switchMap(({ id }) => {
+            const requests = Object.entries(this.selectedKbs)
+              .filter(([, enabled]) => enabled)
+              .map(([kbId]) => this.regionalService.addModelToKb(id, accountId, kbId, zone));
+            return requests.length > 0 ? forkJoin(requests) : of([]);
+          }),
         )
         .subscribe({
           next: () => {
