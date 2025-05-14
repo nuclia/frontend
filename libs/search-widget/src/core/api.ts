@@ -13,6 +13,7 @@ import type {
   Resource,
   ResourceField,
   SearchOptions,
+  SearchConfig,
 } from '@nuclia/core';
 import { Ask, ExtractedDataTypes, Nuclia, ResourceFieldProperties, ResourceProperties, Search } from '@nuclia/core';
 import { filter, forkJoin, from, map, merge, Observable, of, switchMap, take, tap } from 'rxjs';
@@ -20,7 +21,13 @@ import type { EntityGroup, WidgetOptions } from './models';
 import { downloadAsJSON, entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
 import { _, translateInstant } from './i18n';
 import { suggestionError } from './stores/suggestions.store';
-import { displayedMetadata, searchError, searchOptions, showAttachedImages } from './stores/search.store';
+import {
+  displayedMetadata,
+  searchError,
+  searchOptions,
+  showAttachedImages,
+  findBackendConfig,
+} from './stores/search.store';
 import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
 import { reset } from './reset';
@@ -203,7 +210,11 @@ export const search = (query: string, options: SearchOptions): Observable<Search
     query = QUERY_PREPEND + ' ' + query;
   }
 
-  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...SEARCH_OPTIONS, ...options }).pipe(
+  return findBackendConfig.pipe(
+    take(1),
+    switchMap((backendConfig) =>
+      nucliaApi!.knowledgeBox.find(query, SEARCH_MODE, backendConfig || { ...SEARCH_OPTIONS, ...options }),
+    ),
     filter((res) => {
       if (res.type === 'error') {
         searchError.set(res);
@@ -554,4 +565,11 @@ export function getAttachedImageTemplate(placeholder: string): Observable<string
 
 export function getNotEngoughDataMessage() {
   return NOT_ENOUGH_DATA_MESSAGE || 'answer.error.llm_cannot_answer';
+}
+
+export function getSearchConfig(id: string): Observable<SearchConfig> {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.getSearchConfig(id);
 }

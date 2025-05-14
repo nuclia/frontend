@@ -49,6 +49,7 @@
   export let copy_disclaimer: string | undefined = undefined;
   export let metadata: string | undefined = undefined;
   export let widget_id: string | undefined = undefined;
+  export let search_config_id: string | undefined = undefined;
 
   let searchBar: any;
   let visible = false;
@@ -155,7 +156,8 @@
             {feedback}
             {copy_disclaimer}
             {metadata}
-            {widget_id} />
+            {widget_id}
+            {search_config_id} />
         </div>
         <div class="search-results-container">
           <SearchResults />

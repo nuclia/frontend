@@ -189,7 +189,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
         }
         this.checkIsModified();
         this.searchWidgetService.generateWidgetSnippet(
-          searchConfig,
+          { ...searchConfig, type: 'config' },
           this.form.getRawValue(),
           this.currentWidget?.slug,
           '.widget-preview-container',
@@ -283,7 +283,10 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateSearchConfig(searchConfig: Widget.SearchConfiguration) {
+  updateSearchConfig(searchConfig: Widget.AnySearchConfiguration) {
+    if (searchConfig.type === 'api') {
+      return;
+    }
     this.configChanges.next(searchConfig);
 
     this.isNotModified = searchConfig.id === this.savedWidget?.searchConfigId;

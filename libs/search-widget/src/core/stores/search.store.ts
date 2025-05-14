@@ -1,5 +1,6 @@
 import { SvelteState } from '../state-lib';
 import type {
+  Ask,
   Classification,
   FieldId,
   Filter,
@@ -11,6 +12,7 @@ import type {
   ResourceField,
   Search,
   SearchOptions,
+  ChatOptions,
 } from '@nuclia/core';
 import {
   FIELD_TYPE,
@@ -75,6 +77,10 @@ interface SearchState {
   filters: SearchFilters;
   preselectedFilters: string[] | Filter[];
   options: SearchOptions;
+  backendConfig: {
+    find?: SearchOptions;
+    ask?: ChatOptions;
+  };
   show: ResourceProperties[];
   results: FindResultsAsList;
   error?: IErrorResponse;
@@ -100,6 +106,7 @@ export const searchState = new SvelteState<SearchState>({
   filters: {},
   preselectedFilters: [],
   options: {},
+  backendConfig: {},
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   results: NO_RESULT_LIST,
   pending: false,
@@ -782,3 +789,19 @@ export function getNonGenericField(data: ResourceData) {
       return fullId.field_type !== FIELD_TYPE.generic;
     })[0];
 }
+
+export const findBackendConfig = searchState.writer<SearchOptions | undefined>(
+  (state) => state.backendConfig.find,
+  (state, config) => ({
+    ...state,
+    backendConfig: { find: config },
+  }),
+);
+
+export const askBackendConfig = searchState.writer<ChatOptions | undefined>(
+  (state) => state.backendConfig.ask,
+  (state, config) => ({
+    ...state,
+    backendConfig: { ask: config },
+  }),
+);

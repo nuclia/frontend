@@ -35,7 +35,7 @@ export class SearchPageComponent implements OnDestroy {
 
   @ViewChild('configurationContainer') configurationContainerElement?: ElementRef;
   widgetPreview = this.searchWidgetService.widgetPreview;
-  searchConfig?: Widget.SearchConfiguration;
+  searchConfig?: Widget.AnySearchConfiguration;
 
   configPanelCollapsed = false;
 
@@ -44,7 +44,7 @@ export class SearchPageComponent implements OnDestroy {
   }
 
   createWidget() {
-    if (this.searchConfig) {
+    if (this.searchConfig?.type === 'config') {
       const searchConfigId = this.searchConfig.id;
       const generativeModel = this.searchConfig.generativeAnswer.generativeModel;
       const vectorset = this.searchConfig.searchBox.vectorset;
@@ -68,8 +68,13 @@ export class SearchPageComponent implements OnDestroy {
     }
   }
 
-  updateConfig(config: Widget.SearchConfiguration) {
+  updateConfig(config: Widget.AnySearchConfiguration) {
     this.searchConfig = config;
-    this.searchWidgetService.generateWidgetSnippet(this.searchConfig, undefined, undefined, '.search-preview-container');
+    this.searchWidgetService.generateWidgetSnippet(
+      this.searchConfig,
+      undefined,
+      undefined,
+      '.search-preview-container',
+    );
   }
 }

@@ -19,7 +19,6 @@
       @if (canModifyConfig | async) {
         <nsi-button-mini
           icon="widget"
-          [disabled]="isConfigUnsupported"
           (click)="triggerCreateWidget()">
           {{ 'search.configuration.action.create-widget' | translate }}
         </nsi-button-mini>
@@ -59,48 +58,63 @@
         }
       </span>
 
-      @if (isConfigModified) {
-        <div class="config-actions">
-          <nsi-button-mini
-            icon="undo"
-            [disabled]="isConfigUnsupported"
-            (click)="resetConfig()">
-            {{ 'search.configuration.action.reset' | translate }}
-          </nsi-button-mini>
-          @if ((canModifyConfig | async) && !isConfigUnsupported) {
-            <div>
-              <nsi-button-mini
-                icon="download"
-                [paPopup]="isNucliaConfig ? null : saveMenu"
-                (click)="isNucliaConfig ? saveConfig() : null">
-                {{ 'search.configuration.action.save' | translate }}
-              </nsi-button-mini>
-              <pa-dropdown #saveMenu>
-                <pa-option (selectOption)="saveConfig()">
-                  {{ 'search.configuration.action.save-as-new' | translate }}
-                </pa-option>
-                <pa-option (selectOption)="overwriteConfig()">
-                  {{ 'search.configuration.action.overwrite' | translate }}
-                </pa-option>
-              </pa-dropdown>
-            </div>
-          }
-        </div>
-      }
+      <div class="config-actions">
+        <nsi-button-mini
+          icon="file-code"
+          [disabled]="isConfigUnsupported"
+          (click)="switchToJsonMode()"
+          [help]="'search.configuration.action.switch-mode' | translate"></nsi-button-mini>
+        <nsi-button-mini
+          icon="undo"
+          [disabled]="!isConfigModified"
+          (click)="resetConfig()">
+          {{ 'search.configuration.action.reset' | translate }}
+        </nsi-button-mini>
+        @if (canModifyConfig | async) {
+          <div>
+            <nsi-button-mini
+              icon="download"
+              [disabled]="!isConfigModified"
+              [paPopup]="isNucliaConfig ? null : saveMenu"
+              (click)="isNucliaConfig ? saveConfig() : null">
+              {{ 'search.configuration.action.save' | translate }}
+            </nsi-button-mini>
+            <pa-dropdown #saveMenu>
+              <pa-option (selectOption)="saveConfig()">
+                {{ 'search.configuration.action.save-as-new' | translate }}
+              </pa-option>
+              <pa-option (selectOption)="overwriteConfig()">
+                {{ 'search.configuration.action.overwrite' | translate }}
+              </pa-option>
+            </pa-dropdown>
+          </div>
+        }
+      </div>
     </div>
   }
 
   @if (initialised) {
     @if (isConfigUnsupported) {
-      <nsi-info-card
-        type="warning"
-        icon="warning">
-        {{ 'search.configuration.unsupported-warning' | translate }}
-      </nsi-info-card>
+      @if (originalJsonConfig !== currentJsonConfig) {
+        <nsi-info-card
+          type="warning"
+          icon="warning">
+          {{ 'search.configuration.unsupported-warning' | translate }}
+        </nsi-info-card>
+      } @else {
+        <nsi-info-card icon="info">
+          {{ 'search.configuration.unsupported-info' | translate }}
+        </nsi-info-card>
+      }
+      <pa-toggle
+        [value]="useGenerativeAnswer"
+        (valueChange)="updateGenerativeAnswer($event)">
+        {{ 'search.configuration.use-generative-answer' | translate }}
+      </pa-toggle>
       <pa-textarea
         [rows]="12"
-        readonly
-        [value]="currentConfig?.sourceConfig?.config | json"></pa-textarea>
+        [value]="currentJsonConfig"
+        (valueChange)="updateJsonConfig($event)"></pa-textarea>
     } @else {
       <pa-accordion (toggleAccordion)="scrollOnTop()">
         <pa-accordion-item
@@ -111,8 +125,8 @@
           (expandedChange)="updateSearchBoxHeight()">
           <pa-accordion-item-body>
             <stf-search-box-form
-              [config]="savedConfig?.searchBox"
-              [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
+              [config]="savedConfigAsTypedSearchConfiguration?.searchBox"
+              [relationsEnabled]="currentConfigAsTypedSearchConfiguration?.resultDisplay?.relations || false"
               [semanticModels]="semanticModels"
               (configChanged)="updateSearchBoxConfig($event)"
               (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
@@ -126,12 +140,12 @@
           (expandedChange)="updateGenerativeAnswerHeight()">
           <pa-accordion-item-body>
             <stf-generative-answer-form
-              [config]="savedConfig?.generativeAnswer"
+              [config]="savedConfigAsTypedSearchConfiguration?.generativeAnswer"
               [defaultPrompt]="defaultPromptFromSettings"
               [defaultSystemPrompt]="defaultSystemPromptFromSettings"
               [promptInfos]="promptInfos"
               [generativeModels]="generativeModels"
-              [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+              [useSearchResults]="currentConfigAsTypedSearchConfiguration?.searchBox?.useSearchResults ?? true"
               (configChanged)="updateGenerativeAnswerConfig($event)"
               (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
           </pa-accordion-item-body>
@@ -144,12 +158,12 @@
           (expandedChange)="updateResultsHeight()">
           <pa-accordion-item-body>
             <stf-results-display-form
-              [config]="savedConfig?.resultDisplay"
-              [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
+              [config]="savedConfigAsTypedSearchConfiguration?.resultDisplay"
+              [useSynonymsEnabled]="currentConfigAsTypedSearchConfiguration?.searchBox?.useSynonyms || false"
               [modelNames]="generativeModelNames"
-              [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
-              [generateAnswer]="currentConfig?.generativeAnswer?.generateAnswer ?? true"
-              [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+              [generativeModel]="currentConfigAsTypedSearchConfiguration?.generativeAnswer?.generativeModel"
+              [generateAnswer]="currentConfigAsTypedSearchConfiguration?.generativeAnswer?.generateAnswer ?? true"
+              [useSearchResults]="currentConfigAsTypedSearchConfiguration?.searchBox?.useSearchResults ?? true"
               (configChanged)="updateResultDisplayConfig($event)"
               (heightChanged)="updateResultsHeight()"></stf-results-display-form>
           </pa-accordion-item-body>

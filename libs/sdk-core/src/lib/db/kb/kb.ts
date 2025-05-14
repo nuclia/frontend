@@ -845,6 +845,14 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
     return this.nuclia.rest.get(`${this.path}/processing-status?${queryParams}`);
   }
+
+  getSearchConfig(id: string): Observable<SearchConfig> {
+    return this.nuclia.rest.get<SearchConfig>(`${this.path}/search_configurations/${id}`);
+  }
+
+  getSearchConfigs(): Observable<SearchConfigs> {
+    return this.nuclia.rest.get<SearchConfigs>(`${this.path}/search_configurations`);
+  }
 }
 
 /** Extends `KnowledgeBox` with all the write operations. */
@@ -1176,14 +1184,6 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   deleteExtractStrategy(id: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/extract_strategies/strategy/${id}`);
-  }
-
-  getSearchConfig(id: string): Observable<SearchConfig> {
-    return this.nuclia.rest.get<SearchConfig>(`${this.path}/search_configurations${id}`);
-  }
-
-  getSearchConfigs(): Observable<SearchConfigs> {
-    return this.nuclia.rest.get<SearchConfigs>(`${this.path}/search_configurations`);
   }
 
   createSearchConfig(id: string, config: SearchConfig): Observable<void> {

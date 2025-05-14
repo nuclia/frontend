@@ -115,13 +115,19 @@ export namespace Widget {
     citationThreshold: number;
   }
 
+  export interface SearchAPIConfig {
+    id: string;
+    value: SearchConfig;
+    type: 'api';
+  }
+  export type TypedSearchConfiguration = SearchConfiguration & { type: 'config' };
+  export type AnySearchConfiguration = TypedSearchConfiguration | SearchAPIConfig;
+
   export interface SearchConfiguration {
     id: string;
     searchBox: SearchBoxConfig;
     generativeAnswer: GenerativeAnswerConfig;
     resultDisplay: ResultDisplayConfig;
-    unsupported?: boolean;
-    sourceConfig?: SearchConfig;
   }
 
   export interface WidgetConfiguration {
@@ -308,7 +314,8 @@ const DEFAULT_RESULT_DISPLAY_CONFIG: Widget.ResultDisplayConfig = {
   citationThreshold: INITIAL_CITATION_THRESHOLD,
 };
 
-export const NUCLIA_STANDARD_SEARCH_CONFIG: Widget.SearchConfiguration = {
+export const NUCLIA_STANDARD_SEARCH_CONFIG: Widget.TypedSearchConfiguration = {
+  type: 'config',
   id: NUCLIA_STANDARD_SEARCH_CONFIG_ID,
   searchBox: {
     ...DEFAULT_SEARCH_BOX_CONFIG,

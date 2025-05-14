@@ -34,14 +34,14 @@ export class SearchWidgetService {
   widgetPreview = this._widgetPreview.asObservable();
   logs = this._logs.asObservable();
   private _generateWidgetSnippetSubject = new Subject<{
-    currentConfig: Widget.SearchConfiguration;
+    currentConfig: Widget.AnySearchConfiguration;
     widgetOptions: Widget.WidgetConfiguration;
     widgetId?: string;
     scrollContainer?: string;
   }>();
   searchConfigurations = this.searchWidgetStorage.searchConfigurations;
   supportedSearchConfigurations = this.searchConfigurations.pipe(
-    map((configs) => configs.filter((config) => !config.unsupported)),
+    map((configs) => configs.filter((config) => config.type === 'config')),
   );
   widgetList = this.searchWidgetStorage.widgetList;
 
@@ -58,7 +58,7 @@ export class SearchWidgetService {
       .subscribe();
   }
 
-  getSelectedSearchConfig(kbId: string, configs: Widget.SearchConfiguration[]): Widget.SearchConfiguration {
+  getSelectedSearchConfig(kbId: string, configs: Widget.AnySearchConfiguration[]): Widget.AnySearchConfiguration {
     const standardConfiguration = { ...NUCLIA_STANDARD_SEARCH_CONFIG };
     const savedConfigMap: { [kbId: string]: string } = JSON.parse(this.storage.getItem(SAVED_CONFIG_KEY) || '{}');
     const savedConfigId = savedConfigMap[kbId];
@@ -66,10 +66,14 @@ export class SearchWidgetService {
       return standardConfiguration;
     }
     const savedConfig = configs.find((config) => config.id === savedConfigId);
-    return savedConfig ? savedConfig : standardConfiguration;
+    if (savedConfig) {
+      return savedConfig;
+    } else {
+      return standardConfiguration;
+    }
   }
 
-  saveSearchConfig(kbId: string, name: string, config: Widget.SearchConfiguration) {
+  saveSearchConfig(kbId: string, name: string, config: Widget.AnySearchConfiguration) {
     return this.searchWidgetStorage.storeSearchConfig(name, config).pipe(
       catchError((error) => {
         this.toaster.error('search.configuration.save-error');
@@ -91,7 +95,7 @@ export class SearchWidgetService {
   }
 
   generateWidgetSnippet(
-    currentConfig: Widget.SearchConfiguration,
+    currentConfig: Widget.AnySearchConfiguration,
     widgetOptions: Widget.WidgetConfiguration = DEFAULT_WIDGET_CONFIG,
     widgetId?: string,
     scrollContainer?: string,
@@ -100,7 +104,7 @@ export class SearchWidgetService {
   }
 
   private _generateWidgetSnippet(
-    currentConfig: Widget.SearchConfiguration,
+    currentConfig: Widget.AnySearchConfiguration,
     widgetOptions: Widget.WidgetConfiguration,
     widgetId?: string,
     scrollContainer?: string,
@@ -125,11 +129,14 @@ export class SearchWidgetService {
     const isPopupStyle = widgetOptions.widgetMode === 'popup';
     const isSearchMode = !widgetOptions.widgetMode || widgetOptions.widgetMode === 'page';
     const scriptSrc = `${this.backendConfig.getCDN()}/${widgetFileName}.umd.js`;
-    const widgetParameters = getWidgetParameters(currentConfig, widgetOptions);
-    const parameters = Object.entries(widgetParameters)
-      .filter(([, value]) => !!value)
-      .map(([key, value]) => `\n  ${key}="${this.escapeParameter(value || '')}"`)
-      .join('');
+    const widgetParameters =
+      currentConfig.type === 'config' ? getWidgetParameters(currentConfig, widgetOptions) : undefined;
+    const parameters = !!widgetParameters
+      ? Object.entries(widgetParameters)
+          .filter(([, value]) => !!value)
+          .map(([key, value]) => `\n  ${key}="${this.escapeParameter(value || '')}"`)
+          .join('')
+      : '';
 
     return forkJoin([this.sdk.currentKb.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))]).pipe(
       map(([kb, account]) => {
@@ -149,13 +156,17 @@ export class SearchWidgetService {
         if (!this.backendConfig.getCDN().includes('nuclia.cloud')) {
           cdn = `\n  cdn="${this.backendConfig.getCDN()}/"`;
         }
+        let searchConfigId = '';
+        if (currentConfig.type === 'api') {
+          searchConfigId = `\n  search_config_id="${currentConfig.id}"`;
+        }
         let baseSnippet = `<${tagName}\n  knowledgebox="${kb.id}"`;
-        baseSnippet += `\n  ${zone}${privateDetails}${backend}${cdn}${parameters}`;
+        baseSnippet += `\n  ${zone}${privateDetails}${backend}${cdn}${parameters}${searchConfigId}`;
         baseSnippet += `></${tagName}>\n`;
         if (isPopupStyle) {
           baseSnippet += `<div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div>`;
         } else if (isSearchMode) {
-          const theme = widgetParameters.mode ? `\n mode="${widgetParameters.mode}"` : '';
+          const theme = widgetParameters?.mode ? `\n mode="${widgetParameters.mode}"` : '';
           baseSnippet += `<nuclia-search-results ${theme}></nuclia-search-results>`;
         }
 
