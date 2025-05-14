@@ -53,6 +53,9 @@ $height-pagination: rhythm(9);
     100vh - var(--app-topbar-height) - var(--app-layout-padding-top) - var(--filters-header-height) - #{$height-table-header} -
       #{$height-pagination} + rhythm(3)
   );
+  .hidden-resource pa-table-cell ::ng-deep .pa-table-grid--cell {
+    color: $color-neutral-regular;
+  }
 }
 
 table {

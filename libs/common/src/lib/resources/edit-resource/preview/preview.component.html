@@ -191,6 +191,13 @@
     } @else {
       @if (resource | async; as resource) {
         <div class="resource-container">
+          @if (resource.hidden) {
+            <nsi-info-card
+              icon="warning"
+              type="warning">
+              {{ 'resource.preview.hide-warning' | translate }}
+            </nsi-info-card>
+          }
           <div class="title-m">{{ 'resource.preview.general' | translate }}</div>
 
           <div class="title-xxs">{{ 'generic.uid' | translate }}</div>
