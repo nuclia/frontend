@@ -20,6 +20,7 @@ import {
   JsonViewerComponent,
   LabelsExpanderComponent,
   SisProgressModule,
+  InfoCardComponent,
 } from '@nuclia/sistema';
 import {
   PaButtonModule,
@@ -91,6 +92,7 @@ import { RelationsComponent } from './annotation/relations/relations.component';
     PipesModule,
     PaTooltipModule,
     RelationsComponent,
+    InfoCardComponent,
   ],
   declarations: [
     AddFieldComponent,

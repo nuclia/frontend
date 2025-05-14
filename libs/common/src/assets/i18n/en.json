@@ -1043,6 +1043,7 @@
 	"resource.preview.answers": "Answers",
 	"resource.preview.content": "Field content",
 	"resource.preview.general": "General",
+	"resource.preview.hide-warning": "This resource is hidden, it will not be retrieved with a regular search query.",
 	"resource.preview.labels": "Labels",
 	"resource.preview.open-viewer": "Open viewer",
 	"resource.preview.origin": "Origin",

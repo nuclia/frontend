@@ -188,7 +188,7 @@
       </pa-table-sortable-header>
 
       @for (row of data | async; track row.resource.id) {
-        <pa-table-row>
+        <pa-table-row [class.hidden-resource]="row.resource.hidden">
           @if (isAdminOrContrib | async) {
             <pa-table-cell>
               <pa-checkbox
