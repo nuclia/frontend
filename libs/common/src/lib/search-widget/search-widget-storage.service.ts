@@ -176,7 +176,6 @@ export class SearchWidgetStorageService {
   }
 
   private _storeSearchOptions(name: string, config: SearchConfig) {
-    console.log('storeSearchOptions', name, config);
     if (this.standaloneService.standalone) {
       return of(undefined);
     } else {

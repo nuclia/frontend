@@ -102,9 +102,7 @@
           {{ 'search.configuration.unsupported-warning' | translate }}
         </nsi-info-card>
       } @else {
-        <nsi-info-card
-          type="info"
-          icon="info">
+        <nsi-info-card icon="info">
           {{ 'search.configuration.unsupported-info' | translate }}
         </nsi-info-card>
       }
@@ -127,8 +125,8 @@
           (expandedChange)="updateSearchBoxHeight()">
           <pa-accordion-item-body>
             <stf-search-box-form
-              [config]="savedConfig?.searchBox"
-              [relationsEnabled]="currentConfig?.resultDisplay?.relations || false"
+              [config]="savedConfigAsTypedSearchConfiguration?.searchBox"
+              [relationsEnabled]="currentConfigAsTypedSearchConfiguration?.resultDisplay?.relations || false"
               [semanticModels]="semanticModels"
               (configChanged)="updateSearchBoxConfig($event)"
               (heightChanged)="updateSearchBoxHeight()"></stf-search-box-form>
@@ -142,12 +140,12 @@
           (expandedChange)="updateGenerativeAnswerHeight()">
           <pa-accordion-item-body>
             <stf-generative-answer-form
-              [config]="savedConfig?.generativeAnswer"
+              [config]="savedConfigAsTypedSearchConfiguration?.generativeAnswer"
               [defaultPrompt]="defaultPromptFromSettings"
               [defaultSystemPrompt]="defaultSystemPromptFromSettings"
               [promptInfos]="promptInfos"
               [generativeModels]="generativeModels"
-              [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+              [useSearchResults]="currentConfigAsTypedSearchConfiguration?.searchBox?.useSearchResults ?? true"
               (configChanged)="updateGenerativeAnswerConfig($event)"
               (heightChanged)="updateGenerativeAnswerHeight()"></stf-generative-answer-form>
           </pa-accordion-item-body>
@@ -160,12 +158,12 @@
           (expandedChange)="updateResultsHeight()">
           <pa-accordion-item-body>
             <stf-results-display-form
-              [config]="savedConfig?.resultDisplay"
-              [useSynonymsEnabled]="currentConfig?.searchBox?.useSynonyms || false"
+              [config]="savedConfigAsTypedSearchConfiguration?.resultDisplay"
+              [useSynonymsEnabled]="currentConfigAsTypedSearchConfiguration?.searchBox?.useSynonyms || false"
               [modelNames]="generativeModelNames"
-              [generativeModel]="currentConfig?.generativeAnswer?.generativeModel"
-              [generateAnswer]="currentConfig?.generativeAnswer?.generateAnswer ?? true"
-              [useSearchResults]="currentConfig?.searchBox?.useSearchResults ?? true"
+              [generativeModel]="currentConfigAsTypedSearchConfiguration?.generativeAnswer?.generativeModel"
+              [generateAnswer]="currentConfigAsTypedSearchConfiguration?.generativeAnswer?.generateAnswer ?? true"
+              [useSearchResults]="currentConfigAsTypedSearchConfiguration?.searchBox?.useSearchResults ?? true"
               (configChanged)="updateResultDisplayConfig($event)"
               (heightChanged)="updateResultsHeight()"></stf-results-display-form>
           </pa-accordion-item-body>

@@ -104,7 +104,9 @@ export class SearchConfigurationComponent {
   selectedConfig = new FormControl<string>('');
 
   savedConfig?: Widget.AnySearchConfiguration;
+  savedConfigAsTypedSearchConfiguration = this.savedConfig as Widget.TypedSearchConfiguration;
   currentConfig?: Widget.AnySearchConfiguration;
+  currentConfigAsTypedSearchConfiguration = this.currentConfig as Widget.TypedSearchConfiguration;
   originalJsonConfig?: string;
   currentJsonConfig?: string;
   useGenerativeAnswer = false;
