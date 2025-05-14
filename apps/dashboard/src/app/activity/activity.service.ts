@@ -28,7 +28,7 @@ export class ActivityService {
       activity = {};
       modified = true;
     }
-    const expirationDate = new Date().getTime() - CACHE_DURATION;
+    const expirationDate = Date.now() - CACHE_DURATION;
     Object.entries(activity).forEach(([kbId, events]) => {
       Object.entries(events).forEach(([event, value]) => {
         if (value.timestamp < expirationDate) {
@@ -52,10 +52,31 @@ export class ActivityService {
       timestamp: new Date().getTime(),
       data,
     };
+    this._storeActivity(activity);
+  }
+
+  private _storeActivity(activity: ActivityCache) {
     try {
       this.storage.setItem(ACTIVITY_KEY, JSON.stringify(activity));
-    } catch {
-      // Local storage quota is exceeded
+    } catch (error) {
+      if (error instanceof DOMException) {
+        // Local storage quota is exceeded, remove earliest entry and retry
+        let toRemove: { kbId: string; event: string } | undefined = undefined;
+        let earliestDate = Infinity;
+        
+        Object.entries(activity).forEach(([kbId, events]) => {
+          Object.entries(events).forEach(([event, value]) => {
+            if (value.timestamp < earliestDate && value.timestamp < Date.now() - 5 * 60 * 1000) {
+              earliestDate = value.timestamp;
+              toRemove = { kbId, event };
+            }
+          });
+        });
+        if (toRemove) {
+          delete activity[(toRemove as any).kbId][(toRemove as any).event];
+          this._storeActivity(activity);
+        }
+      }
     }
   }
 }
