@@ -12,6 +12,7 @@ import { LogEntry } from './log.models';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
+import { unparse } from 'papaparse';
 
 @Component({
   standalone: true,
@@ -34,6 +35,8 @@ import { DropdownButtonComponent } from '@nuclia/sistema';
 })
 export class ActivityLogTableComponent {
   private cdr = inject(ChangeDetectorRef);
+  @Input() month: string = '';
+  @Input() event: string = '';
   @Input()
   set rows(v: LogEntry[]) {
     this._rows = v;
@@ -85,5 +88,27 @@ export class ActivityLogTableComponent {
     this.hiddenHeaders = this.hiddenHeaders.includes(header)
       ? this.hiddenHeaders.filter((item) => item !== header)
       : this.hiddenHeaders.concat(header);
+  }
+
+  download() {
+    const headers = this.displayedHeaders;
+    const rows = this.rows.map((row) => [
+      ...(this.displayedHeaders.includes('Date') ? [row.date] : []),
+      ...(this.displayedHeaders.includes('ID') ? [row.id] : []),
+      ...row.data
+        .filter((column) => this.displayedHeaders.includes(column[0]))
+        .map((column) => (column[1].type === 'object' ? JSON.stringify(column[1].value, null, 2) : column[1].value)),
+    ]);
+    const csv = unparse([headers, ...rows]);
+    const filename = `Nuclia_Activity_${this.event}_${this.month}.csv`;
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.click();
+      URL.revokeObjectURL(url);
+    }
   }
 }

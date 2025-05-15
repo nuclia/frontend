@@ -37,7 +37,11 @@
                 !downloads[selectedActivityTab + '-' + item.month].rows
               "
               card
-              buttonOnlyToggle>
+              buttonOnlyToggle
+              (toggleExpander)="
+                visibleTables[selectedActivityTab + '-' + item.month] =
+                  !visibleTables[selectedActivityTab + '-' + item.month]
+              ">
               <pa-expander-header>
                 <div class="download-item">
                   <div class="body-m">{{ item.date | date: 'MMMM y' }}</div>
@@ -64,7 +68,7 @@
               <pa-expander-body>
                 @if (downloads[selectedActivityTab + '-' + item.month]?.status === 'pending') {
                   <nsi-spinner></nsi-spinner>
-                } @else {
+                } @else if (visibleTables[selectedActivityTab + '-' + item.month]) {
                   @if (
                     item.date < migrationgDate &&
                     (selectedActivityTab === chatActivityTab || selectedActivityTab === searchActivityTab)
@@ -76,6 +80,8 @@
                     </nsi-info-card>
                   }
                   <app-log-table
+                    [month]="item.month"
+                    [event]="selectedActivityTab"
                     [rows]="
                       !!downloads[selectedActivityTab + '-' + item.month]
                         ? downloads[selectedActivityTab + '-' + item.month].rows || []
