@@ -80,6 +80,17 @@ export function resetDeletedNode() {
 }
 
 /**
+ * Check if a node has at least one child in its then property
+ * @param nodeId Node identifier
+ * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
+ * @returns true if the node has at least one chile in its then category
+ */
+export function hasChildInThen(nodeId: string, nodeCategory: NodeCategory): boolean {
+  const node = getNode(nodeId, nodeCategory);
+  return !!node && !!node.then && node.then.length >= 1;
+}
+
+/**
  * Set selected node and returns it
  * @param id Node identifier
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
@@ -154,6 +165,7 @@ export function getAllNodes(includeChildren = false): ParentNode[] {
   }
   return allNodes;
 }
+
 /**
  * Add node to the specified category
  * @param nodeRef
@@ -163,6 +175,7 @@ export function getAllNodes(includeChildren = false): ParentNode[] {
  * @param nodeConfig Optional configuration of the node
  * @param isSaved Optional flag indicating the node is already saved in the backend (false by default)
  * @param agentId Optional agent identifier corresponding to the node
+ * @param childIndex Index of the child in parent’s then/else list (optional)
  */
 export function addNode(
   nodeRef: ComponentRef<NodeDirective>,
@@ -172,8 +185,9 @@ export function addNode(
   nodeConfig?: NodeConfig,
   agentId?: string,
   isSaved = false,
+  childIndex?: number,
 ) {
-  const node: ParentNode = { nodeRef, nodeType, nodeCategory, nodeConfig, agentId, isSaved };
+  const node: ParentNode = { nodeRef, nodeType, nodeCategory, nodeConfig, agentId, isSaved, childIndex };
   const nodeId = nodeRef.instance.id;
   const parentId = origin.nodeId();
 
@@ -343,6 +357,29 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
   if (partialNode.nodeConfig) {
     node.nodeRef.setInput('config', partialNode.nodeConfig);
   }
+}
+
+/**
+ * Update two nodes at once: parent and child
+ * @param nodeCategory Node category of both nodes
+ * @param parent Parent id and partial node to save
+ * @param children Children list of id and index to save
+ */
+export function updateParentAndChild(
+  nodeCategory: NodeCategory,
+  parent: { id: string; partialNode: Partial<ParentNode> },
+  children: { id: string; childIndex: number }[],
+) {
+  children.forEach((child) => {
+    const childNode = childNodes()[child.id];
+    if (childNode) {
+      childNodes.update((_nodes) => ({
+        ..._nodes,
+        [child.id]: { ...childNode, childIndex: child.childIndex, isSaved: true },
+      }));
+    }
+  });
+  updateNode(parent.id, nodeCategory, parent.partialNode);
 }
 
 /**

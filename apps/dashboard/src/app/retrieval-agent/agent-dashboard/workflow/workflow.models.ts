@@ -79,6 +79,8 @@ export interface ParentNode {
   then?: string[];
   else?: string[];
   fallback?: string;
+  // If node is a child, index in the parent then/else list
+  childIndex?: number;
 }
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
@@ -90,7 +92,9 @@ export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   ask: 'database',
-  conditional: 'dataflow',
+  pre_conditional: 'dataflow',
+  context_conditional: 'dataflow',
+  post_conditional: 'dataflow',
   cypher: 'file-code',
   restricted: 'file-code',
   historical: 'history',
@@ -193,8 +197,8 @@ export interface McpAgentUI extends CommonAgentConfig {
 
 export interface BaseConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
-  then?: (BasePreprocessAgent | BaseContextAgent | BasePostprocessAgent)[];
-  else_?: (BasePreprocessAgent | BaseContextAgent | BasePostprocessAgent)[];
+  then?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
+  else_?: (BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent)[];
 }
 export interface PreConditionalAgentUI extends CommonAgentConfig {
   prompt: string;

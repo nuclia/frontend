@@ -9,14 +9,22 @@ import {
   PreprocessAgentCreation,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { Observable, switchMap, take } from 'rxjs';
-import { AskAgentUI, BaseConditionalAgentUI, getAgentFromConfig, NodeCategory, ParentNode } from './workflow.models';
+import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import {
+  AskAgentUI,
+  BaseConditionalAgentUI,
+  getAgentFromConfig,
+  isCondionalNode,
+  NodeCategory,
+  ParentNode,
+} from './workflow.models';
 import {
   getNode,
   nodeInitialisationDone,
   resetDeletedNode,
   selectedNodeId,
   updateNode,
+  updateParentAndChild,
   workflow,
   WorkflowState,
 } from './workflow.state';
@@ -39,41 +47,54 @@ export class WorkflowEffectService {
 
     console.debug('    workflowState', { ...workflowState });
 
-    // Check if there are changes to be saved in the workflow
-    workflowState.preprocess.forEach((node) => {
-      this.checkNodeState(node);
-      this.checkForUpdates(node);
-    });
-    workflowState.context.forEach((node) => {
-      this.checkNodeState(node);
-      this.checkForUpdates(node);
-    });
-    workflowState.generation.forEach((node) => {
-      this.checkNodeState(node);
-      this.checkForUpdates(node);
-    });
-    workflowState.postprocess.forEach((node) => {
-      this.checkNodeState(node);
-      this.checkForUpdates(node);
-    });
+    // First checks for updates on children, as those changes may trigger updates on the parent
+    let requests: { request: Observable<void>; nodeId: string; log: string }[] = [];
     workflowState.children.forEach((node) => this.checkNodeState(node));
     if (workflowState.children.length > 0) {
-      this.checkForChildrenUpdates(workflowState);
+      requests = this.checkForChildrenUpdates(workflowState);
+    }
+
+    // Check if there are changes to be saved in the backend
+    workflowState.preprocess.forEach((node) => this.checkNodeAndUpdateRequests(node, requests));
+    workflowState.context.forEach((node) => this.checkNodeAndUpdateRequests(node, requests));
+    workflowState.generation.forEach((node) => this.checkNodeAndUpdateRequests(node, requests));
+    workflowState.postprocess.forEach((node) => this.checkNodeAndUpdateRequests(node, requests));
+
+    if (requests.length > 0) {
+      forkJoin(
+        requests.map((item) => {
+          console.debug(`${item.log} from ${item.nodeId}`);
+          return item.request;
+        }),
+      ).subscribe();
     }
 
     // Check if there is a node to be deleted from the backend
     if (workflowState.deletedAgent) {
-      console.debug(` -> Delete agent from backend`, workflowState.deletedAgent);
+      console.debug(` -> Delete agent from backend`, { ...workflowState.deletedAgent });
       this.deleteAgent(workflowState.deletedAgent);
     }
   }
 
-  private checkNodeState(node: ParentNode) {
-    if (!node.nodeConfig) {
+  private checkNodeAndUpdateRequests(node: ParentNode, requests: { request: Observable<void>; nodeId: string }[]) {
+    const fullyConfigured = this.checkNodeState(node);
+    if (fullyConfigured) {
+      const data = this.checkForUpdates(node);
+      if (data && !requests.find((item) => item.nodeId === data.nodeId)) {
+        requests.push(data);
+      }
+    }
+  }
+
+  private checkNodeState(node: ParentNode): boolean {
+    const fullyConfigured = this.isFullyConfigured(node);
+    if (!fullyConfigured) {
       const selectedNode = selectedNodeId();
       if (selectedNode !== node.nodeRef.instance.id) {
         node.nodeRef.setInput('state', 'unsaved');
       }
+    } else if (node.isSaved) {
+      node.nodeRef.setInput('state', 'default');
     }
 
     // Disable fallback entry when a node is already linked to it, enable it otherwise (for the case a child node has been removed)
@@ -83,108 +104,184 @@ export class WorkflowEffectService {
     if (fallbackEntry) {
       fallbackEntry.disabledState.set(!!node.fallback);
     }
+
+    return fullyConfigured;
   }
 
-  private checkForUpdates(node: ParentNode) {
+  private isFullyConfigured(node: ParentNode): boolean {
     if (!node.nodeConfig) {
-      // Node is not ready to be saved
+      return false;
+    } else if (isCondionalNode(node.nodeType)) {
+      const config = node.nodeConfig as BaseConditionalAgentUI;
+      if (!config.then || config.then.length < 1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private checkForUpdates(node: ParentNode): { request: Observable<void>; nodeId: string; log: string } | undefined {
+    // Check if node is ready to be saved
+    if (!this.isFullyConfigured(node)) {
       return;
     }
-
+    const nodeId = node.nodeRef.instance.id;
     const agentId = node.agentId;
     if (!agentId) {
-      console.debug(` - Add agent`, node);
-      this.addAgent(node);
+      const request = this.addAgent(node).pipe(
+        map(({ id }) => updateNode(node.nodeRef.instance.id, node.nodeCategory, { agentId: id, isSaved: true })),
+        catchError(() => {
+          this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent'));
+          return of();
+        }),
+      );
+      return { request, nodeId, log: ' - Add agent' };
     } else if (!node.isSaved) {
-      console.debug(` - Update agent`, node);
-      this.updateAgent(node, agentId).subscribe({
-        next: () => updateNode(node.nodeRef.instance.id, node.nodeCategory, { isSaved: true }),
-        error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent')),
-      });
-    }
-  }
-
-  private checkForChildrenUpdates(workflowState: WorkflowState) {
-    workflowState.children
-      .filter((child) => !!child.nodeConfig && !child.isSaved)
-      .forEach((node) => {
-        const parentNode = this.getFullyConfiguredRootNode(node);
-        const agentId = parentNode?.agentId;
-        if (parentNode && agentId) {
-          console.debug(` -> Update agent with children`, parentNode);
-          this.updateAgent(parentNode, agentId).subscribe({
-            next: () => updateNode(node.nodeRef.instance.id, node.nodeCategory, { isSaved: true }),
-            error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent')),
-          });
-        }
-      });
-  }
-
-  private getFullyConfiguredRootNode(childNode: ParentNode): ParentNode | undefined {
-    if (childNode.parentId) {
-      const parentNode = getNode(childNode.parentId, childNode.nodeCategory);
-      if (!parentNode || !parentNode.nodeConfig) {
-        return;
-      }
-      const childId = childNode.nodeRef.instance.id;
-      if (parentNode.fallback === childId) {
-        (parentNode.nodeConfig as AskAgentUI).fallback = getAgentFromConfig(
-          childNode.nodeType,
-          childNode.nodeConfig,
-        ) as BaseContextAgent;
-      } else if (parentNode.then || parentNode.else) {
-        const parentConfig = parentNode.nodeConfig as BaseConditionalAgentUI;
-        if ((parentNode.then || []).includes(childId)) {
-          const then = parentConfig.then || [];
-          // FIXME: find a way to check if the element already exists in the list => if so update it, if not add it
-          // To do so: store in the node the index of the child in the parent list
-          // then.push(getAgentFromConfig(childNode.nodeType, childNode.nodeConfig));
-          parentConfig.then = then;
-        }
-        if ((parentNode.else || []).includes(childId)) {
-          const else_ = parentConfig.else_ || [];
-          // FIXME: find a way to check if the element already exists in the list => if so update it, if not add it
-          // To do so: store in the node the index of the child in the parent list
-          // else_.push(getAgentFromConfig(childNode.nodeType, childNode.nodeConfig));
-          parentConfig.else_ = else_;
-        }
-      }
-
-      if (parentNode.parentId) {
-        return this.getFullyConfiguredRootNode(parentNode);
-      } else {
-        return parentNode;
-      }
+      const request = this.updateAgent(node, agentId).pipe(
+        tap(() => updateNode(node.nodeRef.instance.id, node.nodeCategory, { isSaved: true })),
+        catchError(() => {
+          this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent'));
+          return of();
+        }),
+      );
+      return { request, nodeId, log: ' - Update agent' };
     }
     return;
   }
 
+  private checkForChildrenUpdates(
+    workflowState: WorkflowState,
+  ): { request: Observable<void>; nodeId: string; log: string }[] {
+    const requests: { request: Observable<void>; nodeId: string; log: string }[] = [];
+    workflowState.children
+      .filter((child) => !!child.nodeConfig && !child.isSaved)
+      .forEach((node) => {
+        const data = this.getFullyConfiguredRootNode(node);
+        if (!data) {
+          return;
+        }
+        const { parentNode, children } = data;
+        const nodeId = parentNode.nodeRef.instance.id;
+        const agentId = parentNode?.agentId;
+        if (parentNode) {
+          if (agentId) {
+            const request = this.updateAgent(parentNode, agentId).pipe(
+              tap(() => {
+                const partialNode = { isSaved: true };
+                if (children.length > 0) {
+                  updateParentAndChild(node.nodeCategory, { id: nodeId, partialNode }, children);
+                } else {
+                  updateNode(nodeId, node.nodeCategory, partialNode);
+                }
+              }),
+              catchError(() => {
+                this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent'));
+                return of();
+              }),
+            );
+            requests.push({ request, nodeId, log: ' - Update agent with children' });
+          } else {
+            const request = this.addAgent(parentNode).pipe(
+              map(({ id }) => {
+                const partialNode = { agentId: id, isSaved: true };
+                if (children.length > 0) {
+                  updateParentAndChild(node.nodeCategory, { id: nodeId, partialNode }, children);
+                } else {
+                  updateNode(nodeId, node.nodeCategory, partialNode);
+                }
+              }),
+              catchError(() => {
+                this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent'));
+                return of();
+              }),
+            );
+            requests.push({ request, nodeId, log: ' - Add agent with children' });
+          }
+        }
+      });
+    return requests;
+  }
+
+  private getFullyConfiguredRootNode(
+    childNode: ParentNode,
+  ): { parentNode: ParentNode; children: { id: string; childIndex: number }[] } | undefined {
+    if (!childNode.parentId) {
+      return;
+    }
+    const parentNode = getNode(childNode.parentId, childNode.nodeCategory);
+    let updatedChildren: { id: string; childIndex: number }[] = [];
+    if (!parentNode || !parentNode.nodeConfig) {
+      return;
+    }
+    const childId = childNode.nodeRef.instance.id;
+    if (parentNode.fallback === childId) {
+      (parentNode.nodeConfig as AskAgentUI).fallback = getAgentFromConfig(
+        childNode.nodeType,
+        childNode.nodeConfig,
+      ) as BaseContextAgent;
+    } else if (parentNode.then || parentNode.else) {
+      if ((parentNode.then || []).includes(childId)) {
+        updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'then'));
+      } else if ((parentNode.else || []).includes(childId)) {
+        updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'else_'));
+      }
+    }
+
+    if (parentNode.parentId) {
+      const levelUp = this.getFullyConfiguredRootNode(parentNode);
+      return levelUp
+        ? { parentNode: levelUp.parentNode, children: updatedChildren.concat(levelUp.children) }
+        : undefined;
+    } else {
+      return { parentNode, children: updatedChildren };
+    }
+  }
+
+  /**
+   * Update parent node children with child config for the given property. The corresponding children list will be updated.
+   * @param parentNode
+   * @param childNode
+   * @param property then | else_
+   * @returns updated child id and index in the children list
+   */
+  private updateConditionalChildrenConfig(
+    parentNode: ParentNode,
+    childNode: ParentNode,
+    property: 'then' | 'else_',
+  ): { id: string; childIndex: number } {
+    const parentConfig = parentNode.nodeConfig as BaseConditionalAgentUI;
+    const children = parentConfig[property] || [];
+    const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig);
+    let updatedChild;
+    if (typeof childNode.childIndex === 'number') {
+      children[childNode.childIndex] = childConfig;
+      updatedChild = { id: childNode.nodeRef.instance.id, childIndex: childNode.childIndex };
+    } else {
+      children.push(childConfig);
+      const childIndex = children.length - 1;
+      updatedChild = { id: childNode.nodeRef.instance.id, childIndex };
+    }
+    parentConfig[property] = children;
+    return updatedChild;
+  }
+
   private addAgent(node: ParentNode) {
     const agentCreation = getAgentFromConfig(node.nodeType, node.nodeConfig);
-    this.sdk.currentArag
-      .pipe(
-        take(1),
-        switchMap((arag) => {
-          switch (node.nodeCategory) {
-            case 'preprocess':
-              return arag.addPreprocess(agentCreation as PreprocessAgentCreation);
-            case 'context':
-              return arag.addContext(agentCreation as ContextAgentCreation);
-            case 'generation':
-              return arag.addGeneration(agentCreation as GenerationAgentCreation);
-            case 'postprocess':
-              return arag.addPostprocess(agentCreation as PostprocessAgentCreation);
-          }
-        }),
-      )
-      .subscribe({
-        next: ({ id }) => {
-          updateNode(node.nodeRef.instance.id, node.nodeCategory, { agentId: id, isSaved: true });
-        },
-        error: () => {
-          this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.save-agent'));
-        },
-      });
+    return this.sdk.currentArag.pipe(
+      take(1),
+      switchMap((arag) => {
+        switch (node.nodeCategory) {
+          case 'preprocess':
+            return arag.addPreprocess(agentCreation as PreprocessAgentCreation);
+          case 'context':
+            return arag.addContext(agentCreation as ContextAgentCreation);
+          case 'generation':
+            return arag.addGeneration(agentCreation as GenerationAgentCreation);
+          case 'postprocess':
+            return arag.addPostprocess(agentCreation as PostprocessAgentCreation);
+        }
+      }),
+    );
   }
 
   private updateAgent(node: ParentNode, agentId: string): Observable<void> {

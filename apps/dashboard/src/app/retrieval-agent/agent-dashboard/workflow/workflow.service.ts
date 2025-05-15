@@ -76,6 +76,7 @@ import {
   deleteNode,
   getAllNodes,
   getNode,
+  hasChildInThen,
   nodeInitialisationDone,
   resetCurrentOrigin,
   resetNodes,
@@ -145,12 +146,39 @@ export class WorkflowService {
     return this.sdk.currentArag.pipe(
       tap(() => nodeInitialisationDone.set(false)),
       switchMap((arag) =>
-        forkJoin([arag.getPreprocess(), arag.getContext(), arag.getGeneration(), arag.getPostprocess()]),
+        forkJoin([
+          arag.getPreprocess().pipe(
+            catchError(() => {
+              this.toaster.error(
+                this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.preprocess'),
+              );
+              return of([]);
+            }),
+          ),
+          arag.getContext().pipe(
+            catchError(() => {
+              this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.context'));
+              return of([]);
+            }),
+          ),
+          arag.getGeneration().pipe(
+            catchError(() => {
+              this.toaster.error(
+                this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.generation'),
+              );
+              return of([]);
+            }),
+          ),
+          arag.getPostprocess().pipe(
+            catchError(() => {
+              this.toaster.error(
+                this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.postprocess'),
+              );
+              return of([]);
+            }),
+          ),
+        ]),
       ),
-      catchError(() => {
-        this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.loading-workflow'));
-        return of([[], [], [], []]);
-      }),
       tap(([preprocess, context, generation, postprocess]) => {
         this.cleanWorkflow();
         preprocess.forEach((agent) => this.createNodeFromSavedWorkflow(root.preprocess, 'preprocess', agent));
@@ -175,6 +203,7 @@ export class WorkflowService {
    * @param nodeCategory
    * @param agent
    * @param columnIndex Column index in which the node will be placed. 1 by default
+   * @param childIndex Index of the child in parent’s then/else list
    */
   private createNodeFromSavedWorkflow(
     rootEntry: ConnectableEntryComponent,
@@ -189,10 +218,11 @@ export class WorkflowService {
       | GenerateAgent
       | PostprocessAgent,
     columnIndex = 1,
+    childIndex?: number,
   ) {
     const nodeType = getNodeTypeFromAgent(agent);
     const config = getConfigFromAgent(agent);
-    const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent.id, true);
+    const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent.id, true, childIndex);
     if (agent.module === 'ask') {
       const askAgent = agent as AskAgent;
       if (askAgent.fallback) {
@@ -222,12 +252,13 @@ export class WorkflowService {
       if (!entry) {
         throw new Error(`No '${prop}' entry found on conditional node ${nodeRef.instance.id}`);
       }
-      agent[property].forEach((child) =>
+      agent[property].forEach((child, index) =>
         this.createNodeFromSavedWorkflow(
           entry,
           nodeCategory,
           child as PreprocessAgent | ContextAgent | PostprocessAgent,
           columnIndex + 1,
+          index,
         ),
       );
     }
@@ -466,6 +497,8 @@ export class WorkflowService {
    * @param nodeType Type of the node to be created
    * @param nodeConfig Optional configuration of the node
    * @param agent Optional agent corresponding to the node
+   * @param isSaved Flag indicating if the node is already saved in the backend (false by default)
+   * @param childIndex Index of the child in parent’s then/else list (optional)
    * @returns ComponentRef<NodeDirective>: Created node referrence
    */
   private addNode(
@@ -476,6 +509,7 @@ export class WorkflowService {
     nodeConfig?: NodeConfig,
     agentId?: string,
     isSaved = false,
+    childIndex?: number,
   ): ComponentRef<NodeDirective> {
     if (this.columns.length <= columnIndex) {
       this.createColumn();
@@ -499,7 +533,7 @@ export class WorkflowService {
     nodeRef.instance.configUpdated.subscribe(() => setTimeout(() => this.updateLinksOnColumn(columnIndex)));
 
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
-    addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agentId, isSaved);
+    addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agentId, isSaved, childIndex);
     origin.activeState.set(false);
     return nodeRef;
   }
@@ -553,7 +587,7 @@ export class WorkflowService {
     container.appendChild(formRef.location.nativeElement);
     formRef.changeDetectorRef.detectChanges();
     formRef.instance.submitForm.subscribe((config) =>
-      this.saveNodeConfiguration(config, nodeId, nodeCategory, columnIndex),
+      this.saveNodeConfiguration(config, nodeId, nodeCategory, node.nodeType, columnIndex),
     );
     formRef.instance.cancel.subscribe(() => this.closeSidebar());
     this._currentPanel = formRef;
@@ -568,12 +602,43 @@ export class WorkflowService {
    * @param config Node configuration
    * @param nodeId Identifier of the node to save
    * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+   * @param nodeType Node type
    * @param columnIndex Column index (so we can update the links of other nodes)
    */
-  private saveNodeConfiguration(config: NodeConfig, nodeId: string, nodeCategory: NodeCategory, columnIndex: number) {
+  private saveNodeConfiguration(
+    config: NodeConfig,
+    nodeId: string,
+    nodeCategory: NodeCategory,
+    nodeType: NodeType,
+    columnIndex: number,
+  ) {
     updateNode(nodeId, nodeCategory, { nodeConfig: config });
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
-    this.closeSidebar();
+    if (isCondionalNode(nodeType) && !hasChildInThen(nodeId, nodeCategory)) {
+      this.addRequiredNode(nodeId, nodeCategory);
+    } else {
+      this.closeSidebar();
+    }
+  }
+
+  /**
+   * Trigger required child node creation
+   * @param nodeId Parent node id
+   * @param nodeCategory Parent node category
+   */
+  private addRequiredNode(nodeId: string, nodeCategory: NodeCategory) {
+    const node = getNode(nodeId, nodeCategory);
+    if (!node) {
+      throw new Error(`addRequiredNode: Node ${nodeId} not found in the state.`);
+    }
+    const entries = node.nodeRef.instance.boxComponent.connectableEntries;
+    if (!entries) {
+      throw new Error(`addRequiredNode: no entries found for node ${nodeId}.`);
+    }
+    const requiredEntry = entries.find((entry) => entry.required());
+    if (requiredEntry) {
+      requiredEntry.onOutputClick();
+    }
   }
 
   /**

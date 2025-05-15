@@ -1,5 +1,6 @@
 <app-configuration-form
   [form]="form"
+  [submitDisabled]="form.invalid"
   (cancel)="cancel.emit()"
   (triggerSubmit)="submit()">
   <ng-container [formGroup]="configForm">
