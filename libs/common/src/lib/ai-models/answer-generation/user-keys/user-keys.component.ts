@@ -22,7 +22,6 @@ import {
 } from '@nuclia/core';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
 import { keyProviders } from '../../ai-models.utils';
-import { KeyValue } from '@angular/common';
 
 export type UserKeysForm = FormGroup<{
   enabled: FormControl<boolean>;
@@ -89,25 +88,32 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
   }
   get userKeysProperties(): UserKeysProperties {
     return Object.entries(this.userKeys?.properties || {}).reduce((acc, [key, prop]) => {
-      // TEMPORARY, for now the tokenizer field is useless
-      if (key === 'tokenizer') {
-        return acc;
-      }
       const subSchema = this.userKeys && getSubSchema(this.userKeys, this.userKeys?.properties?.[key]);
-      if (subSchema && subSchema.properties) {
-        acc[key] = {
-          ...prop,
-          isSubForm: true,
-          properties: Object.entries(subSchema.properties).map(([subKey, subProp]) => ({
-            key: subKey,
-            value: { ...subProp, type: getLearningConfigPropType(subProp) },
-          })),
-        };
+      if (subSchema) {
+        if (subSchema.properties) {
+          acc[key] = {
+            ...prop,
+            isSubForm: true,
+            properties: Object.entries(subSchema.properties).map(([subKey, subProp]) => ({
+              key: subKey,
+              value: { ...subProp, type: getLearningConfigPropType(subProp) },
+            })),
+          };
+        } else if (subSchema.enum) {
+          acc[key] = {
+            ...prop,
+            title: subSchema.title,
+            values: subSchema.enum.map((value, index) => ({
+              value: `${value}`,
+              label: subSchema.titles?.[index] || `${value}`,
+            })),
+          };
+        }
       } else {
         acc[key] = prop;
       }
       return acc;
-    }, {} as any);
+    }, {} as UserKeysProperties);
   }
 
   get userKeysPropertiesEntries() {
@@ -159,10 +165,6 @@ export class UserKeysComponent implements OnChanges, OnDestroy {
       });
       newUserKeys.forEach((key) => {
         if (!this.userKeysGroup.get(key)) {
-          // TEMPORARY, for now the tokenizer field is useless
-          if (key === 'tokenizer') {
-            return;
-          }
           const subSchema = userKeysConfig && getSubSchema(userKeysConfig, userKeysConfig?.properties?.[key]);
           if (subSchema && subSchema.properties) {
             const subForm = new FormGroup({});
