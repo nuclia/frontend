@@ -78,6 +78,7 @@ export class ActivityDownloadComponent implements OnDestroy {
   migrationgDate = new Date(Date.UTC(2024, 9, 1));
   chatActivityTab = EventType.CHAT;
   searchActivityTab = EventType.SEARCH;
+  visibleTables: { [key: string]: boolean } = {};
 
   activity = [...this.activityTabs.searches, ...this.activityTabs.resources].reduce(
     (acc, tab) => {
