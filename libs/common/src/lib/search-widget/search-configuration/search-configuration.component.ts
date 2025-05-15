@@ -10,6 +10,8 @@ import {
   inject,
   Input,
   Output,
+  Pipe,
+  PipeTransform,
   ViewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -45,6 +47,13 @@ import { PaTogglesModule } from '../../../../../pastanaga-angular/projects/pasta
 
 const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA'];
 
+@Pipe({ name: 'isTypedConfig' })
+export class IsTypedConfigPipe implements PipeTransform {
+  transform(value?: Widget.AnySearchConfiguration): value is Widget.TypedSearchConfiguration {
+    return value?.type === 'config';
+  }
+}
+
 @Component({
   selector: 'stf-search-configuration',
   imports: [
@@ -66,6 +75,7 @@ const NUCLIA_SEMANTIC_MODELS = ['ENGLISH', 'MULTILINGUAL', 'MULTILINGUAL_ALPHA']
     TranslateModule,
     PaTooltipModule,
     PaTogglesModule,
+    IsTypedConfigPipe,
   ],
   templateUrl: './search-configuration.component.html',
   styleUrl: './search-configuration.component.scss',
@@ -104,9 +114,7 @@ export class SearchConfigurationComponent {
   selectedConfig = new FormControl<string>('');
 
   savedConfig?: Widget.AnySearchConfiguration;
-  savedConfigAsTypedSearchConfiguration = this.savedConfig as Widget.TypedSearchConfiguration;
   currentConfig?: Widget.AnySearchConfiguration;
-  currentConfigAsTypedSearchConfiguration = this.currentConfig as Widget.TypedSearchConfiguration;
   originalJsonConfig?: string;
   currentJsonConfig?: string;
   useGenerativeAnswer = false;
