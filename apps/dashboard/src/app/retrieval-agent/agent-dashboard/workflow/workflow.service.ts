@@ -13,14 +13,15 @@ import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   AskAgent,
+  BaseConditionalAgentCreation,
   BaseContextAgent,
+  BaseGenerationAgent,
   BasePostprocessAgent,
   BasePreprocessAgent,
-  ConditionalAgent,
   ContextAgent,
+  GenerateAgent,
   PostprocessAgent,
   PreprocessAgent,
-  ValidationAgent,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { catchError, filter, forkJoin, of, switchMap, tap } from 'rxjs';
@@ -56,14 +57,13 @@ import {
   SqlNodeComponent,
   SummarizeFormComponent,
   SummarizeNodeComponent,
-  ValidationFormComponent,
-  ValidationNodeComponent,
 } from './nodes';
 import { McpFormComponent, McpNodeComponent } from './nodes/mcp';
 import { RulesPanelComponent } from './sidebar';
 import {
   getConfigFromAgent,
   getNodeTypeFromAgent,
+  isCondionalNode,
   NODE_SELECTOR_ICONS,
   NodeCategory,
   NodeConfig,
@@ -144,15 +144,18 @@ export class WorkflowService {
     this.workflowRoot = root;
     return this.sdk.currentArag.pipe(
       tap(() => nodeInitialisationDone.set(false)),
-      switchMap((arag) => forkJoin([arag.getPreprocess(), arag.getContext(), arag.getPostprocess()])),
+      switchMap((arag) =>
+        forkJoin([arag.getPreprocess(), arag.getContext(), arag.getGeneration(), arag.getPostprocess()]),
+      ),
       catchError(() => {
         this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.loading-workflow'));
-        return of([[], [], []]);
+        return of([[], [], [], []]);
       }),
-      tap(([preprocess, context, postprocess]) => {
+      tap(([preprocess, context, generation, postprocess]) => {
         this.cleanWorkflow();
         preprocess.forEach((agent) => this.createNodeFromSavedWorkflow(root.preprocess, 'preprocess', agent));
         context.forEach((agent) => this.createNodeFromSavedWorkflow(root.context, 'context', agent));
+        generation.forEach((agent) => this.createNodeFromSavedWorkflow(root.generation, 'generation', agent));
         postprocess.forEach((agent) => this.createNodeFromSavedWorkflow(root.postprocess, 'postprocess', agent));
         setTimeout(() => nodeInitialisationDone.set(true));
       }),
@@ -179,9 +182,11 @@ export class WorkflowService {
     agent:
       | BasePreprocessAgent
       | BaseContextAgent
+      | BaseGenerationAgent
       | BasePostprocessAgent
       | PreprocessAgent
       | ContextAgent
+      | GenerateAgent
       | PostprocessAgent,
     columnIndex = 1,
   ) {
@@ -197,8 +202,8 @@ export class WorkflowService {
         }
         this.createNodeFromSavedWorkflow(entry, nodeCategory, askAgent.fallback, columnIndex + 1);
       }
-    } else if (agent.module === 'conditional' || agent.module === 'validation') {
-      const conditionalAgent = agent as ConditionalAgent | ValidationAgent;
+    } else if (isCondionalNode(agent.module)) {
+      const conditionalAgent = agent as unknown as BaseConditionalAgentCreation;
       this.createChildNodes(nodeRef, 'then', nodeCategory, columnIndex, conditionalAgent);
       this.createChildNodes(nodeRef, 'else_', nodeCategory, columnIndex, conditionalAgent);
     }
@@ -209,13 +214,13 @@ export class WorkflowService {
     property: 'then' | 'else_',
     nodeCategory: NodeCategory,
     columnIndex: number,
-    agent: ConditionalAgent | ValidationAgent,
+    agent: BaseConditionalAgentCreation,
   ) {
     if (agent[property] && agent[property].length > 0) {
       const prop = property.replace('_', '');
       const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === prop);
       if (!entry) {
-        throw new Error(`No '${prop}' entry found on Conditional/Validation node ${nodeRef.instance.id}`);
+        throw new Error(`No '${prop}' entry found on conditional node ${nodeRef.instance.id}`);
       }
       agent[property].forEach((child) =>
         this.createNodeFromSavedWorkflow(
@@ -256,7 +261,7 @@ export class WorkflowService {
     setActiveSidebar('add');
     const container: HTMLElement = this.openSidebarWithTitle(`retrieval-agents.workflow.sidebar.node-creation.toolbar`);
     container.classList.add('no-form');
-    const sections: NodeCategory[] = ['preprocess', 'context', 'postprocess'];
+    const sections: NodeCategory[] = ['preprocess', 'context', 'generation', 'postprocess'];
     sections.forEach((section) => {
       const title: HTMLElement = this.renderer.createElement('div');
       title.classList.add('section-title');
@@ -302,13 +307,14 @@ export class WorkflowService {
     const possibleNodes = NODES_BY_ENTRY_TYPE[nodeCategory] || [];
     possibleNodes.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
+      const nodeTypeKey = this.getNodeTypeKey(nodeType);
       selectorRef.setInput(
         'nodeTitle',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeType}.title`),
+        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
       );
       selectorRef.setInput(
         'description',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeType}.description`),
+        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.description`),
       );
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
       this.applicationRef.attachView(selectorRef.hostView);
@@ -505,7 +511,7 @@ export class WorkflowService {
     if (this.columnContainer) {
       const newColumn = this.renderer.createElement('div') as HTMLElement;
       newColumn.classList.add(COLUMN_CLASS);
-      for (let category of ['preprocess', 'context', 'postprocess']) {
+      for (let category of ['preprocess', 'context', 'generation', 'postprocess']) {
         const section = this.renderer.createElement('div') as HTMLElement;
         section.id = category;
         section.classList.add(COLUMN_SECTION_CLASS);
@@ -532,7 +538,7 @@ export class WorkflowService {
     }
     const columnIndex = node.nodeRef.instance.columnIndex;
     const container: HTMLElement = this.openSidebarWithTitle(
-      `retrieval-agents.workflow.node-types.${node.nodeType}.title`,
+      `retrieval-agents.workflow.node-types.${this.getNodeTypeKey(node.nodeType)}.title`,
     );
     container.classList.remove('no-form');
     const formRef = this.getFormRef(node.nodeType);
@@ -551,6 +557,10 @@ export class WorkflowService {
     );
     formRef.instance.cancel.subscribe(() => this.closeSidebar());
     this._currentPanel = formRef;
+  }
+
+  private getNodeTypeKey(nodeType: NodeType): string {
+    return nodeType.includes('conditional') ? 'conditional' : nodeType;
   }
 
   /**
@@ -607,12 +617,16 @@ export class WorkflowService {
         return createComponent(RephraseNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
-      case 'conditional':
+      case 'pre_conditional':
         return createComponent(ConditionalNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
-      case 'validation':
-        return createComponent(ValidationNodeComponent, {
+      case 'context_conditional':
+        return createComponent(ConditionalNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
+      case 'post_conditional':
+        return createComponent(ConditionalNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
       case 'summarize':
@@ -671,10 +685,12 @@ export class WorkflowService {
         return createComponent(HistoricalFormComponent, { environmentInjector: this.environmentInjector });
       case 'rephrase':
         return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
-      case 'conditional':
+      case 'pre_conditional':
         return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
-      case 'validation':
-        return createComponent(ValidationFormComponent, { environmentInjector: this.environmentInjector });
+      case 'context_conditional':
+        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
+      case 'post_conditional':
+        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'summarize':
         return createComponent(SummarizeFormComponent, { environmentInjector: this.environmentInjector });
       case 'restart':

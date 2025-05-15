@@ -2,8 +2,8 @@ import { ComponentRef } from '@angular/core';
 import {
   AskAgent,
   AskAgentCreation,
-  BaseAgent,
   BaseContextAgent,
+  BaseGenerationAgent,
   BasePostprocessAgent,
   BasePreprocessAgent,
   BraveAgent,
@@ -11,6 +11,7 @@ import {
   ContextAgentCreation,
   ExternalAgent,
   ExternalAgentCreation,
+  GenerationAgentCreation,
   GoogleAgent,
   GoogleAgentCreation,
   InternetProviderType,
@@ -30,31 +31,41 @@ import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 export interface WorkflowRoot {
   preprocess: ConnectableEntryComponent;
   context: ConnectableEntryComponent;
+  generation: ConnectableEntryComponent;
   postprocess: ConnectableEntryComponent;
 }
 
 export type NodeType =
   | 'historical'
   | 'rephrase'
-  | 'conditional'
-  | 'validation'
-  | 'summarize'
-  | 'restart'
+  | 'pre_conditional'
+  | 'context_conditional'
   | 'ask'
   | 'internet'
   | 'sql'
   | 'cypher'
+  | 'mcp'
+  | 'restricted'
+  | 'summarize'
+  | 'generate'
+  | 'post_conditional'
   | 'remi'
   | 'external'
-  | 'restricted'
-  | 'mcp';
+  | 'restart';
 
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
 export function isInternetProvider(x: any): x is InternetProvider {
   return INTERNET_PROVIDERS.includes(x);
 }
-export type NodeCategory = 'preprocess' | 'context' | 'postprocess';
+
+const CONDITIONAL_NODES: NodeType[] = ['pre_conditional', 'context_conditional', 'post_conditional', 'remi'];
+export type CondionalNodeType = (typeof CONDITIONAL_NODES)[number];
+export function isCondionalNode(x: any): x is CondionalNodeType {
+  return CONDITIONAL_NODES.includes(x);
+}
+
+export type NodeCategory = 'preprocess' | 'context' | 'generation' | 'postprocess';
 
 export interface ParentNode {
   nodeRef: ComponentRef<NodeDirective>;
@@ -71,9 +82,10 @@ export interface ParentNode {
 }
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
-  preprocess: ['historical', 'rephrase', 'conditional'],
-  context: ['conditional', 'ask', 'internet', 'sql', 'cypher', 'restricted', 'mcp'],
-  postprocess: ['validation', 'summarize', 'restart', 'conditional', 'remi', 'external'],
+  preprocess: ['historical', 'rephrase', 'pre_conditional'],
+  context: ['context_conditional', 'ask', 'internet', 'sql', 'cypher', 'restricted', 'mcp'],
+  generation: ['summarize', 'generate'],
+  postprocess: ['restart', 'post_conditional', 'remi', 'external'],
 };
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
@@ -87,8 +99,8 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   restart: 'repeat',
   sql: 'file-code',
   summarize: 'summary',
-  validation: 'validation',
-  remi: 'chart',
+  generate: 'generator',
+  remi: 'validation',
   external: 'globe',
   mcp: 'file',
 };
@@ -100,17 +112,18 @@ export interface CommonAgentConfig {
 export type NodeConfig =
   | HistoricalAgentUI
   | RephraseAgentUI
+  | PreConditionalAgentUI
+  | ContextConditionalAgentUI
   | InternetAgentUI
   | SqlAgentUI
   | CypherAgentUI
-  | AskAgentUI
-  | ConditionalAgentUI
-  | ValidationAgentUI
-  | SummarizeAgentUI
-  | RestartAgentUI
-  | ExternalAgentUI
   | RestrictedAgentUI
-  | McpAgentUI;
+  | McpAgentUI
+  | AskAgentUI
+  | SummarizeAgentUI
+  | PostConditionalAgentUI
+  | RestartAgentUI
+  | ExternalAgentUI;
 
 export interface HistoricalAgentUI extends CommonAgentConfig {
   all: boolean;
@@ -178,15 +191,25 @@ export interface McpAgentUI extends CommonAgentConfig {
   transport: 'SSE' | 'STDIO';
 }
 
-export interface ConditionalAgentUI extends CommonAgentConfig {
+export interface BaseConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
-  then?: BaseAgent[];
-  else_?: BaseAgent[];
+  then?: (BasePreprocessAgent | BaseContextAgent | BasePostprocessAgent)[];
+  else_?: (BasePreprocessAgent | BaseContextAgent | BasePostprocessAgent)[];
 }
-
-export interface ValidationAgentUI extends CommonAgentConfig {
-  // FIXME: cleanup if Ramon confirm there is no prompt for validation agent
+export interface PreConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
+  then?: BasePreprocessAgent[];
+  else_?: BasePreprocessAgent[];
+}
+export interface ContextConditionalAgentUI extends CommonAgentConfig {
+  prompt: string;
+  then?: BaseContextAgent[];
+  else_?: BaseContextAgent[];
+}
+export interface PostConditionalAgentUI extends CommonAgentConfig {
+  prompt: string;
+  then?: BasePostprocessAgent[];
+  else_?: BasePostprocessAgent[];
 }
 
 export interface SummarizeAgentUI extends CommonAgentConfig {
@@ -217,7 +240,9 @@ export interface RestrictedAgentUI extends CommonAgentConfig {
   code: string;
 }
 
-export function getNodeTypeFromAgent(agent: BasePreprocessAgent | BaseContextAgent | BasePostprocessAgent): NodeType {
+export function getNodeTypeFromAgent(
+  agent: BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent,
+): NodeType {
   return isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
 }
 export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
@@ -353,7 +378,7 @@ export function internetAgentToUi(agent: InternetAgent): InternetAgentUI {
 export function getAgentFromConfig(
   nodeType: NodeType,
   config: any,
-): PreprocessAgentCreation | ContextAgentCreation | PostprocessAgentCreation {
+): PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation {
   switch (nodeType) {
     case 'rephrase':
       return rephraseUiToCreation(config);
@@ -367,9 +392,11 @@ export function getAgentFromConfig(
       return externalUiToCreation(config);
     case 'historical':
     case 'cypher':
-    case 'conditional':
-    case 'validation':
+    case 'pre_conditional':
+    case 'context_conditional':
+    case 'post_conditional':
     case 'summarize':
+    case 'generate':
     case 'restart':
     case 'remi':
     case 'restricted':
@@ -378,7 +405,9 @@ export function getAgentFromConfig(
   }
 }
 
-export function getConfigFromAgent(agent: BasePreprocessAgent | BaseContextAgent | BasePostprocessAgent): NodeConfig {
+export function getConfigFromAgent(
+  agent: BasePreprocessAgent | BaseContextAgent | BaseGenerationAgent | BasePostprocessAgent,
+): NodeConfig {
   switch (agent.module) {
     case 'rephrase':
       return rephraseAgentToUi(agent as RephraseAgent);
@@ -396,11 +425,13 @@ export function getConfigFromAgent(agent: BasePreprocessAgent | BaseContextAgent
     case 'historical':
     case 'cypher':
     case 'mcp':
-    case 'conditional':
+    case 'pre_conditional':
+    case 'context_conditional':
+    case 'post_conditional':
     case 'restricted':
     case 'sparql':
-    case 'validation':
     case 'summarize':
+    case 'generate':
     case 'restart':
     case 'remi':
       return { ...agent } as any as NodeConfig;

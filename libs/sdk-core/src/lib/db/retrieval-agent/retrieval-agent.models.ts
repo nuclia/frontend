@@ -62,6 +62,11 @@ export interface IRetrievalAgent
   patchContext(agent: ContextAgent): Observable<void>;
   deleteContext(agentId: string): Observable<void>;
 
+  getGeneration(): Observable<GenerationAgent[]>;
+  addGeneration(agent: GenerationAgentCreation): Observable<{ id: string }>;
+  patchGeneration(agent: GenerationAgent): Observable<void>;
+  deleteGeneration(agentId: string): Observable<void>;
+
   getPostprocess(): Observable<PostprocessAgent[]>;
   addPostprocess(agent: PostprocessAgentCreation): Observable<{ id: string }>;
   patchPostprocess(agent: PostprocessAgent): Observable<void>;
@@ -72,20 +77,21 @@ export interface Rule {
   prompt: string;
 }
 
-export type PreprocessModule = 'historical' | 'rephrase' | 'conditional';
+export type PreprocessModule = 'historical' | 'rephrase' | 'pre_conditional';
 export type ContextModule =
   | InternetProviderType
   | 'sql'
   | 'mcp'
   | 'cypher'
   | 'ask'
-  | 'conditional'
+  | 'context_conditional'
   | 'restricted'
   | 'sparql';
-export type PostprocessModule = 'summarize' | 'validation' | 'restart' | 'remi' | 'external' | 'conditional';
+export type GenerationModule = 'summarize' | 'generate';
+export type PostprocessModule = 'restart' | 'remi' | 'external' | 'post_conditional';
 
 export interface BaseAgent {
-  module: PreprocessModule | ContextModule | PostprocessModule;
+  module: PreprocessModule | ContextModule | GenerationModule | PostprocessModule;
   id?: string;
   rules?: string[] | null;
   title?: string;
@@ -100,6 +106,9 @@ export interface BasePreprocessAgent extends BaseAgent {
 export interface BaseContextAgent extends BaseAgent {
   module: ContextModule;
 }
+export interface BaseGenerationAgent extends BaseAgent {
+  module: GenerationModule;
+}
 export interface BasePostprocessAgent extends BaseAgent {
   module: PostprocessModule;
 }
@@ -112,6 +121,10 @@ export interface PreprocessAgent extends BaseAgent {
 export interface ContextAgent extends BaseAgent {
   id: string;
   module: ContextModule;
+}
+export interface GenerationAgent extends BaseAgent {
+  id: string;
+  module: GenerationModule;
 }
 export interface PostprocessAgent extends BaseAgent {
   id: string;
@@ -126,16 +139,12 @@ export type ContextAgentCreation =
   | BraveAgentCreation
   | CypherAgentCreation
   | AskAgentCreation
-  | ConditionalAgentCreation
+  | ContextConditionalAgentCreation
   | RestrictedAgentCreation
   | GoogleAgentCreation
-  | SparkleAgentCreation;
-export type PostprocessAgentCreation =
-  | SummarizeAgentCreation
-  | ValidationAgentCreation
-  | RestartAgentCreation
-  | RemiAgentCreation
-  | ExternalAgentCreation;
+  | SparqlAgentCreation;
+export type GenerationAgentCreation = SummarizeAgentCreation | GenerateAgentCreation;
+export type PostprocessAgentCreation = RestartAgentCreation | RemiAgentCreation | ExternalAgentCreation;
 
 export interface HistoricalAgentCreation {
   module: 'historical';
@@ -230,15 +239,25 @@ export interface AskAgentCreation {
   configuration_json_model?: string;
 }
 
-export interface ConditionalAgentCreation {
-  module: 'conditional';
-  then: BaseAgent[];
-  else_: BaseAgent[];
+export interface BaseConditionalAgentCreation {
   prompt?: string;
-  has_keywords?: string[];
-  similarity?: string[];
-  on?: 'QUESTION' | 'ANSWER' | 'CONTEXT';
-  model?: string;
+  then: (PreprocessAgent | ContextAgent | PostprocessAgent)[];
+  else_: (PreprocessAgent | ContextAgent | PostprocessAgent)[];
+}
+export interface PreConditionalAgentCreation extends BaseConditionalAgentCreation {
+  module: 'pre_conditional';
+  then: PreprocessAgent[];
+  else_: PreprocessAgent[];
+}
+export interface ContextConditionalAgentCreation extends BaseConditionalAgentCreation {
+  module: 'context_conditional';
+  then: ContextAgent[];
+  else_: ContextAgent[];
+}
+export interface PostConditionalAgentCreation extends BaseConditionalAgentCreation {
+  module: 'post_conditional';
+  then: PostprocessAgent[];
+  else_: PostprocessAgent[];
 }
 
 export interface RestrictedAgentCreation {
@@ -251,7 +270,7 @@ export interface GoogleAgentCreation {
   gen_model_id?: string;
 }
 
-export interface SparkleAgentCreation {
+export interface SparqlAgentCreation {
   module: 'sparql';
 }
 
@@ -261,10 +280,12 @@ export interface SummarizeAgentCreation {
   model?: string;
   images?: boolean;
 }
-export interface ValidationAgentCreation {
-  module: 'validation';
-  then?: PostprocessAgentCreation[];
-  else_?: PostprocessAgentCreation[];
+export interface GenerateAgentCreation {
+  module: 'generate';
+  prompt?: string;
+  model?: string;
+  images?: boolean;
+  generate_images?: boolean;
 }
 export interface RestartAgentCreation {
   module: 'restart';
@@ -274,6 +295,8 @@ export interface RestartAgentCreation {
 }
 export interface RemiAgentCreation {
   module: 'remi';
+  then?: PostprocessAgentCreation[];
+  else_?: PostprocessAgentCreation[];
 }
 export interface ExternalAgentCreation {
   module: 'external';
@@ -316,8 +339,14 @@ export interface CypherAgent extends ContextAgent, CypherAgentCreation {
 export interface AskAgent extends ContextAgent, AskAgentCreation {
   module: 'ask';
 }
-export interface ConditionalAgent extends ContextAgent, ConditionalAgentCreation {
-  module: 'conditional';
+export interface PreConditionalAgent extends PreprocessAgent, PreConditionalAgentCreation {
+  module: 'pre_conditional';
+}
+export interface ContextConditionalAgent extends ContextAgent, ContextConditionalAgentCreation {
+  module: 'context_conditional';
+}
+export interface PostConditionalAgent extends PostprocessAgent, PostConditionalAgentCreation {
+  module: 'post_conditional';
 }
 export interface RestrictedAgent extends ContextAgent, RestrictedAgentCreation {
   module: 'restricted';
@@ -325,14 +354,14 @@ export interface RestrictedAgent extends ContextAgent, RestrictedAgentCreation {
 export interface GoogleAgent extends ContextAgent, GoogleAgentCreation {
   module: 'google';
 }
-export interface SparkleAgent extends ContextAgent, SparkleAgentCreation {
+export interface SparkleAgent extends ContextAgent, SparqlAgentCreation {
   module: 'sparql';
 }
-export interface SummarizeAgent extends PostprocessAgent, SummarizeAgentCreation {
-  module: 'summarize';
+export interface GenerateAgent extends GenerationAgent, GenerateAgentCreation {
+  module: 'generate';
 }
-export interface ValidationAgent extends PostprocessAgent, ValidationAgentCreation {
-  module: 'validation';
+export interface SummarizeAgent extends GenerationAgent, SummarizeAgentCreation {
+  module: 'summarize';
 }
 export interface RestartAgent extends PostprocessAgent, RestartAgentCreation {
   module: 'restart';

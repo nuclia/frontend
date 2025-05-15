@@ -4,12 +4,13 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   BaseContextAgent,
   ContextAgentCreation,
+  GenerationAgentCreation,
   PostprocessAgentCreation,
   PreprocessAgentCreation,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { Observable, switchMap, take } from 'rxjs';
-import { AskAgentUI, ConditionalAgentUI, getAgentFromConfig, NodeCategory, ParentNode } from './workflow.models';
+import { AskAgentUI, BaseConditionalAgentUI, getAgentFromConfig, NodeCategory, ParentNode } from './workflow.models';
 import {
   getNode,
   nodeInitialisationDone,
@@ -44,6 +45,10 @@ export class WorkflowEffectService {
       this.checkForUpdates(node);
     });
     workflowState.context.forEach((node) => {
+      this.checkNodeState(node);
+      this.checkForUpdates(node);
+    });
+    workflowState.generation.forEach((node) => {
       this.checkNodeState(node);
       this.checkForUpdates(node);
     });
@@ -128,16 +133,18 @@ export class WorkflowEffectService {
           childNode.nodeConfig,
         ) as BaseContextAgent;
       } else if (parentNode.then || parentNode.else) {
-        const parentConfig = parentNode.nodeConfig as ConditionalAgentUI;
+        const parentConfig = parentNode.nodeConfig as BaseConditionalAgentUI;
         if ((parentNode.then || []).includes(childId)) {
           const then = parentConfig.then || [];
           // FIXME: find a way to check if the element already exists in the list => if so update it, if not add it
+          // To do so: store in the node the index of the child in the parent list
           // then.push(getAgentFromConfig(childNode.nodeType, childNode.nodeConfig));
           parentConfig.then = then;
         }
         if ((parentNode.else || []).includes(childId)) {
           const else_ = parentConfig.else_ || [];
           // FIXME: find a way to check if the element already exists in the list => if so update it, if not add it
+          // To do so: store in the node the index of the child in the parent list
           // else_.push(getAgentFromConfig(childNode.nodeType, childNode.nodeConfig));
           parentConfig.else_ = else_;
         }
@@ -163,6 +170,8 @@ export class WorkflowEffectService {
               return arag.addPreprocess(agentCreation as PreprocessAgentCreation);
             case 'context':
               return arag.addContext(agentCreation as ContextAgentCreation);
+            case 'generation':
+              return arag.addGeneration(agentCreation as GenerationAgentCreation);
             case 'postprocess':
               return arag.addPostprocess(agentCreation as PostprocessAgentCreation);
           }
@@ -188,6 +197,8 @@ export class WorkflowEffectService {
             return arag.patchPreprocess({ id: agentId, ...(agentConfig as PreprocessAgentCreation) });
           case 'context':
             return arag.patchContext({ id: agentId, ...(agentConfig as ContextAgentCreation) });
+          case 'generation':
+            return arag.patchGeneration({ id: agentId, ...(agentConfig as GenerationAgentCreation) });
           case 'postprocess':
             return arag.patchPostprocess({ id: agentId, ...(agentConfig as PostprocessAgentCreation) });
         }
@@ -205,6 +216,8 @@ export class WorkflowEffectService {
               return arag.deletePreprocess(deletedNode.id);
             case 'context':
               return arag.deleteContext(deletedNode.id);
+            case 'generation':
+              return arag.deleteGeneration(deletedNode.id);
             case 'postprocess':
               return arag.deletePostprocess(deletedNode.id);
           }
