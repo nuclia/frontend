@@ -1252,6 +1252,8 @@
 	"retrieval-agents.workflow.node-types.external.form.url": "URL per trucar",
 	"retrieval-agents.workflow.node-types.external.title": "Trucada externa",
 	"retrieval-agents.workflow.node-types.generate.description": "Generació de text / JSON / imatges",
+	"retrieval-agents.workflow.node-types.generate.generate_image": "Generar imatge",
+	"retrieval-agents.workflow.node-types.generate.prompt-placeholder": "Prompt del format de text generat",
 	"retrieval-agents.workflow.node-types.generate.title": "Generació",
 	"retrieval-agents.workflow.node-types.historical.config.off": "Desactivat: l'historial de sessions no s'utilitzarà",
 	"retrieval-agents.workflow.node-types.historical.config.on": "Activat: s'utilitzarà tot l'historial de sessions",

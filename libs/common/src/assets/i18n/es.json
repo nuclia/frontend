@@ -1252,6 +1252,8 @@
 	"retrieval-agents.workflow.node-types.external.form.url": "URL para llamar",
 	"retrieval-agents.workflow.node-types.external.title": "Llamada externa",
 	"retrieval-agents.workflow.node-types.generate.description": "Generación de texto / JSON / imagen",
+	"retrieval-agents.workflow.node-types.generate.generate_image": "Generar Imagen",
+	"retrieval-agents.workflow.node-types.generate.prompt-placeholder": "Prompt para el format de texto generado",
 	"retrieval-agents.workflow.node-types.generate.title": "Generación",
 	"retrieval-agents.workflow.node-types.historical.config.off": "Desactivado: no se utilizará el historial de sesiones",
 	"retrieval-agents.workflow.node-types.historical.config.on": "Activado: se utilizará todo el historial de sesiones",

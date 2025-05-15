@@ -285,7 +285,7 @@ export interface GenerateAgentCreation {
   prompt?: string;
   model?: string;
   images?: boolean;
-  generate_images?: boolean;
+  generate_image?: boolean;
 }
 export interface RestartAgentCreation {
   module: 'restart';

@@ -1252,6 +1252,8 @@
 	"retrieval-agents.workflow.node-types.external.form.url": "URL à appeler",
 	"retrieval-agents.workflow.node-types.external.title": "Appel externe",
 	"retrieval-agents.workflow.node-types.generate.description": "Génération de texte / JSON / image",
+	"retrieval-agents.workflow.node-types.generate.generate_image": "Générer une image",
+	"retrieval-agents.workflow.node-types.generate.prompt-placeholder": "Prompt pour le format du texte généré",
 	"retrieval-agents.workflow.node-types.generate.title": "Génétation",
 	"retrieval-agents.workflow.node-types.historical.config.off": "Désactivé : l'historique de la session n'est pas utilisé",
 	"retrieval-agents.workflow.node-types.historical.config.on": "Activé : tout l'historique de la session sera utilisé",

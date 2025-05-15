@@ -1,0 +1,26 @@
+<app-configuration-form
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <div class="form-entry">
+      <label for="prompt">Prompt</label>
+      <nsi-expandable-textarea
+        id="prompt"
+        formControlName="prompt"
+        rows="2"
+        resizable
+        [modalTitle]="'retrieval-agents.workflow.node-types.generate.prompt-placeholder' | translate"
+        [placeholder]="'retrieval-agents.workflow.node-types.generate.prompt-placeholder' | translate"
+        externalLabel=""></nsi-expandable-textarea>
+    </div>
+    <pa-toggle
+      formControlName="generate_image"
+      withBackground="">
+      {{ 'retrieval-agents.workflow.node-types.generate.generate_image' | translate }}
+    </pa-toggle>
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
+  </ng-container>
+</app-configuration-form>

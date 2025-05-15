@@ -41,10 +41,14 @@ import {
   CypherNodeComponent,
   ExternalFormComponent,
   ExternalNodeComponent,
+  GenerateFormComponent,
+  GenerateNodeComponent,
   HistoricalFormComponent,
   HistoricalNodeComponent,
   InternetFormComponent,
   InternetNodeComponent,
+  McpFormComponent,
+  McpNodeComponent,
   RemiFormComponent,
   RemiNodeComponent,
   RephraseFormComponent,
@@ -58,7 +62,6 @@ import {
   SummarizeFormComponent,
   SummarizeNodeComponent,
 } from './nodes';
-import { McpFormComponent, McpNodeComponent } from './nodes/mcp';
 import { RulesPanelComponent } from './sidebar';
 import {
   getConfigFromAgent,
@@ -734,6 +737,10 @@ export class WorkflowService {
         return createComponent(McpNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
+      case 'generate':
+        return createComponent(GenerateNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
       default:
         throw new Error(`No node component for type ${nodeType}`);
     }
@@ -776,6 +783,8 @@ export class WorkflowService {
         return createComponent(RestrictedFormComponent, { environmentInjector: this.environmentInjector });
       case 'mcp':
         return createComponent(McpFormComponent, { environmentInjector: this.environmentInjector });
+      case 'generate':
+        return createComponent(GenerateFormComponent, { environmentInjector: this.environmentInjector });
       default:
         throw new Error(`No form component for type ${nodeType}`);
     }

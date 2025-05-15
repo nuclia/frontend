@@ -220,6 +220,10 @@ export interface SummarizeAgentUI extends CommonAgentConfig {
   prompt: string;
   images?: boolean;
 }
+export interface GenerateAgentUI extends CommonAgentConfig {
+  prompt: string;
+  generate_image?: boolean;
+}
 
 export interface RestartAgentUI extends CommonAgentConfig {
   prompt: string;
