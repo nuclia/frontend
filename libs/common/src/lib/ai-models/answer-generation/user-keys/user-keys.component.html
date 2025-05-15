@@ -74,6 +74,18 @@
                     [help]="(userKeys.required.includes(field.key) ? required + ' ' : '') + (field.value.info || '')">
                     {{ field.value.title }}
                   </pa-textarea>
+                } @else if (field.value.values) {
+                  <div>
+                    <label [for]="field.key">{{ field.value.title }}</label>
+                    <p class="body-s">{{ field.value.description }}</p>
+                    <pa-radio-group [formControlName]="field.key">
+                      @for (value of field.value.values; track value.value) {
+                        <pa-radio [value]="value.value">
+                          {{ value.label }}
+                        </pa-radio>
+                      }
+                    </pa-radio-group>
+                  </div>
                 } @else {
                   <pa-input
                     [formControlName]="field.key"

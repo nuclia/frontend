@@ -7,7 +7,7 @@ import { LearningConfigurationDirective } from '../learning-configuration.direct
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { filter, of, Subject, take } from 'rxjs';
-import { LearningConfigurationOption } from '@nuclia/core';
+import { getSubSchema, LearningConfigurationOption } from '@nuclia/core';
 import { UserKeysComponent, UserKeysForm } from './user-keys/user-keys.component';
 import { keyProviders } from '../ai-models.utils';
 
@@ -109,11 +109,25 @@ export class AnswerGenerationComponent extends LearningConfigurationDirective im
       this.updateCurrentGenerativeModel();
       // Wait for the user key form to update before setting their values
       setTimeout(() => {
-        if (this.currentGenerativeModel?.user_key) {
+        const userKeyId = this.currentGenerativeModel?.user_key;
+        if (userKeyId) {
           if (kbConfig['user_keys']) {
-            const ownKey = !!kbConfig['user_keys'][this.currentGenerativeModel?.user_key];
+            const ownKey = !!kbConfig['user_keys'][userKeyId];
+            let userKeys = kbConfig['user_keys'][userKeyId];
+            const schema = this.learningConfigurations?.['user_keys'].schemas?.[userKeyId];
+            if (userKeys && schema) {
+              userKeys = Object.entries(userKeys).reduce((acc, [key, prop]) => {
+                const subSchema = getSubSchema(schema, schema.properties?.[key]);
+                if (subSchema && subSchema.enum) {
+                  // enum are integers, but pastanaga radio groups only accept strings
+                  prop = `${prop}`;
+                }
+                acc[key] = prop;
+                return acc;
+              }, {} as any);
+            }
             this.userKeyToggle?.patchValue(ownKey);
-            this.userKeysGroup?.patchValue(kbConfig['user_keys'][this.currentGenerativeModel?.user_key]);
+            this.userKeysGroup?.patchValue(userKeys);
           }
         }
         this.configForm.markAsPristine();

@@ -295,14 +295,17 @@ export interface LearningConfigurationProperty {
   description?: string;
   anyOf?: { type: string }[];
   $ref?: string;
+  values?: { value: string; label: string }[];
 }
 
 export interface LearningConfigurationSchema {
   title: string;
-  type: string;
+  type: 'integer' | 'number' | 'string' | 'boolean';
   properties: { [key: string]: LearningConfigurationProperty };
   required: string[];
   $defs?: { [key: string]: LearningConfigurationSchema };
+  enum?: number[];
+  titles?: string[];
 }
 
 export function getLearningConfigPropType(property: LearningConfigurationProperty): string {
