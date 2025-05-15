@@ -14,6 +14,7 @@ import { Driver } from '@nuclia/core';
 import { DropdownButtonComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { catchError, filter, map, Observable, of, Subject, switchMap, take, takeUntil, tap, throwError } from 'rxjs';
 import { CypherDriverModalComponent } from './cypher-driver';
+import { GuardrailsDriverModalComponent } from './guardrails-driver';
 import { InternetDriverModalComponent } from './internet-driver';
 import { McpSseDriverModalComponent, McpStdioDriverModalComponent } from './mcp-driver';
 import { NucliaDriverModalComponent } from './nuclia-driver';
@@ -73,7 +74,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  addDriver(type: 'nuclia' | 'internet' | 'sql' | 'cypher' | 'mcpsse' | 'mcpstdio') {
+  addDriver(type: 'nuclia' | 'internet' | 'guardrails' | 'sql' | 'cypher' | 'mcpsse' | 'mcpstdio') {
     let modalRef$: Observable<ModalRef>;
     switch (type) {
       case 'nuclia':
@@ -97,6 +98,9 @@ export class DriversPageComponent implements OnInit, OnDestroy {
         break;
       case 'mcpstdio':
         modalRef$ = of(this.modal.openModal(McpStdioDriverModalComponent));
+        break;
+      case 'guardrails':
+        modalRef$ = of(this.modal.openModal(GuardrailsDriverModalComponent));
         break;
     }
     modalRef$
@@ -151,6 +155,9 @@ export class DriversPageComponent implements OnInit, OnDestroy {
         break;
       case 'mcpstdio':
         modalRef$ = of(this.modal.openModal(McpStdioDriverModalComponent, new ModalConfig({ data: driver })));
+        break;
+      case 'alinia':
+        modalRef$ = of(this.modal.openModal(GuardrailsDriverModalComponent, new ModalConfig({ data: driver })));
         break;
     }
     modalRef$
