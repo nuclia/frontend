@@ -2,9 +2,12 @@ import { ComponentRef } from '@angular/core';
 import {
   AskAgent,
   AskAgentCreation,
+  BaseAgent,
+  BaseContextAgent,
+  BasePostprocessAgent,
+  BasePreprocessAgent,
   BraveAgent,
   BraveAgentCreation,
-  ContextAgent,
   ContextAgentCreation,
   ExternalAgent,
   ExternalAgentCreation,
@@ -13,9 +16,7 @@ import {
   InternetProviderType,
   PerplexityAgent,
   PerplexityAgentCreation,
-  PostprocessAgent,
   PostprocessAgentCreation,
-  PreprocessAgent,
   PreprocessAgentCreation,
   RephraseAgent,
   RephraseAgentCreation,
@@ -55,16 +56,15 @@ export function isInternetProvider(x: any): x is InternetProvider {
 }
 export type NodeCategory = 'preprocess' | 'context' | 'postprocess';
 
-export interface NodeModel {
+export interface ParentNode {
   nodeRef: ComponentRef<NodeDirective>;
   nodeType: NodeType;
   nodeCategory: NodeCategory;
+  isSaved: boolean;
   nodeConfig?: NodeConfig;
-  agent?: PreprocessAgent | ContextAgent | PostprocessAgent;
-}
-
-export interface ParentNode extends NodeModel {
+  agentId?: string;
   // properties to store the child nodes’ UI id.
+  parentId?: string;
   then?: string[];
   else?: string[];
   fallback?: string;
@@ -156,7 +156,7 @@ export interface CypherAgentUI extends CommonAgentConfig {
 
 export interface AskAgentUI extends CommonAgentConfig {
   sources: string;
-  fallback?: ContextAgent | null;
+  fallback?: BaseContextAgent | null;
   pre_queries?: string[];
   filters?: string[];
   security_groups?: string[];
@@ -180,6 +180,8 @@ export interface McpAgentUI extends CommonAgentConfig {
 
 export interface ConditionalAgentUI extends CommonAgentConfig {
   prompt: string;
+  then?: BaseAgent[];
+  else_?: BaseAgent[];
 }
 
 export interface ValidationAgentUI extends CommonAgentConfig {
@@ -215,7 +217,7 @@ export interface RestrictedAgentUI extends CommonAgentConfig {
   code: string;
 }
 
-export function getNodeTypeFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): NodeType {
+export function getNodeTypeFromAgent(agent: BasePreprocessAgent | BaseContextAgent | BasePostprocessAgent): NodeType {
   return isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
 }
 export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
@@ -376,7 +378,7 @@ export function getAgentFromConfig(
   }
 }
 
-export function getConfigFromAgent(agent: PreprocessAgent | ContextAgent | PostprocessAgent): NodeConfig {
+export function getConfigFromAgent(agent: BasePreprocessAgent | BaseContextAgent | BasePostprocessAgent): NodeConfig {
   switch (agent.module) {
     case 'rephrase':
       return rephraseAgentToUi(agent as RephraseAgent);

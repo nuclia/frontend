@@ -1,5 +1,4 @@
 import { ComponentRef, computed, signal } from '@angular/core';
-import { ContextAgent, PostprocessAgent, PreprocessAgent } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 import { AskAgentUI, NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
 
@@ -37,31 +36,6 @@ export const sideBarOpen = computed(() => sidebar().open);
 export const activeSideBar = computed(() => sidebar().active);
 
 /**
- * Backend state
- */
-export interface BackendState {
-  preprocess: PreprocessAgent[];
-  context: ContextAgent[];
-  postprocess: PostprocessAgent[];
-}
-const backendState = signal<BackendState>({
-  preprocess: [],
-  context: [],
-  postprocess: [],
-});
-
-export function setBackendState(state: BackendState) {
-  backendState.set(state);
-}
-
-export function getBackendState(): BackendState {
-  return backendState();
-}
-
-export function updateBackendState(partialState: Partial<BackendState>) {
-  backendState.update((state) => ({ ...state, ...partialState }));
-}
-/**
  * Workflow state
  */
 export const nodeInitialisationDone = signal(false);
@@ -71,19 +45,22 @@ const postprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const childNodes = signal<{ [id: string]: ParentNode }>({});
 const selectedNode = signal<{ id: string; nodeCategory: NodeCategory } | null>(null);
 const currentOrigin = signal<ConnectableEntryComponent | null>(null);
+const deletedAgent = signal<{ id: string; category: NodeCategory } | null>(null);
 
 export interface WorkflowState {
-  preprocess: { [id: string]: ParentNode };
-  context: { [id: string]: ParentNode };
-  postprocess: { [id: string]: ParentNode };
-  children: { [id: string]: ParentNode };
+  preprocess: ParentNode[];
+  context: ParentNode[];
+  postprocess: ParentNode[];
+  children: ParentNode[];
+  deletedAgent: { id: string; category: NodeCategory } | null;
 }
-export const workflow = computed(() => {
+export const workflow = computed<WorkflowState>(() => {
   return {
-    preprocess: preprocessNodes(),
-    context: contextNodes(),
-    postprocess: postprocessNodes(),
-    children: childNodes(),
+    preprocess: Object.values(preprocessNodes()),
+    context: Object.values(contextNodes()),
+    postprocess: Object.values(postprocessNodes()),
+    children: Object.values(childNodes()),
+    deletedAgent: deletedAgent(),
   };
 });
 
@@ -91,6 +68,13 @@ export const workflow = computed(() => {
  * Selected node id or undefined.
  */
 export const selectedNodeId = computed(() => selectedNode()?.id);
+
+/**
+ * Reset deletedNode on state
+ */
+export function resetDeletedNode() {
+  deletedAgent.set(null);
+}
 
 /**
  * Set selected node and returns it
@@ -170,7 +154,8 @@ export function getAllNodes(includeChildren = false): ParentNode[] {
  * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
  * @param origin Connectable entry of origin
  * @param nodeConfig Optional configuration of the node
- * @param agent Optional agent corresponding to the node
+ * @param isSaved Optional flag indicating the node is already saved in the backend (false by default)
+ * @param agentId Optional agent identifier corresponding to the node
  */
 export function addNode(
   nodeRef: ComponentRef<NodeDirective>,
@@ -178,9 +163,10 @@ export function addNode(
   nodeCategory: NodeCategory,
   origin: ConnectableEntryComponent,
   nodeConfig?: NodeConfig,
-  agent?: PreprocessAgent | ContextAgent | PostprocessAgent,
+  agentId?: string,
+  isSaved = false,
 ) {
-  const node = { nodeRef, nodeType, nodeCategory, nodeConfig, agent };
+  const node: ParentNode = { nodeRef, nodeType, nodeCategory, nodeConfig, agentId, isSaved };
   const nodeId = nodeRef.instance.id;
   const parentId = origin.nodeId();
 
@@ -190,6 +176,7 @@ export function addNode(
   if (!parentId) {
     _addNode(nodeId, nodeCategory, node);
   } else {
+    node.parentId = parentId;
     childNodes.update((children) => ({ ...children, [nodeRef.instance.id]: node }));
     // Reference child in parent
     const parent = getNode(parentId, nodeCategory);
@@ -200,9 +187,9 @@ export function addNode(
     if (property === 'then' || property === 'else') {
       const childIds = parent[property] || [];
       childIds.push(nodeId);
-      updateNode(parentId, nodeCategory, { [property]: childIds });
+      updateNode(parentId, nodeCategory, { [property]: childIds, isSaved });
     } else if (property === 'fallback') {
-      updateNode(parentId, nodeCategory, { fallback: nodeId });
+      updateNode(parentId, nodeCategory, { fallback: nodeId, isSaved });
     }
   }
 }
@@ -276,6 +263,9 @@ export function deleteNode(
   const node = nodeList[id];
   if (isChild) {
     childrenRefs.push(node.nodeRef);
+  } else if (node.agentId) {
+    // Set agent that should be deleted from the backend
+    deletedAgent.set({ id: node.agentId, category: nodeCategory });
   }
   if (node && (node.then || node.else || node.fallback)) {
     const childToDelete = (node.then || []).concat(node.else || []);
@@ -316,18 +306,19 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
   }
 
   const isChild = _isChildNode(id);
+  const updatedNode = { ...node, ...partialNode, isSaved: partialNode.isSaved || false };
   if (isChild) {
-    childNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
+    childNodes.update((_nodes) => ({ ..._nodes, [id]: updatedNode }));
   } else {
     switch (nodeCategory) {
       case 'preprocess':
-        preprocessNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
+        preprocessNodes.update((_nodes) => ({ ..._nodes, [id]: updatedNode }));
         break;
       case 'context':
-        contextNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
+        contextNodes.update((_nodes) => ({ ..._nodes, [id]: updatedNode }));
         break;
       case 'postprocess':
-        postprocessNodes.update((_nodes) => ({ ..._nodes, [id]: { ...node, ...partialNode } }));
+        postprocessNodes.update((_nodes) => ({ ..._nodes, [id]: updatedNode }));
         break;
     }
   }
