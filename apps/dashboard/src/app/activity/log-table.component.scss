@@ -22,3 +22,10 @@
     margin: 0;
   }
 }
+.show-more {
+  cursor: pointer;
+  font-weight: $font-weight-bold;
+  &:hover {
+    color: $color-neutral-regular;
+  }
+}

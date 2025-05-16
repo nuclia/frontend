@@ -69,9 +69,29 @@
               <pa-table-cell>
                 <div class="body-s">
                   @if (cell[1].type === 'object') {
-                    <pre>{{ cell[1].value | json }}</pre>
+                    @if (cell[1].value | json; as json) {
+                      @if (json.split('\n').length > maxLines) {
+                        <pre>{{ json.split('\n').slice(0, maxLines).join('\n') }}…</pre>
+                        <span
+                          class="show-more"
+                          (click)="showMore(cell)">
+                          {{ 'generic.show_more' | translate }}
+                        </span>
+                      } @else {
+                        <pre>{{ json }}</pre>
+                      }
+                    }
                   } @else {
-                    {{ cell[1].value }}
+                    @if (cell[1].value.length > maxCharacters) {
+                      {{ cell[1].value.slice(0, maxCharacters) }}…
+                      <span
+                        class="show-more"
+                        (click)="showMore(cell)">
+                        {{ 'generic.show_more' | translate }}
+                      </span>
+                    } @else {
+                      {{ cell[1].value }}
+                    }
                   }
                 </div>
               </pa-table-cell>

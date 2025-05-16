@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input } from '@angular/core';
 import {
+  ModalConfig,
   PaButtonModule,
   PaDateTimeModule,
   PaDropdownModule,
@@ -8,11 +9,12 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { LogEntry } from './log.models';
+import { LogEntry, LogValueObject, LogValueString } from './log.models';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { DropdownButtonComponent } from '@nuclia/sistema';
+import { DropdownButtonComponent, SisModalService } from '@nuclia/sistema';
 import { unparse } from 'papaparse';
+import { ActivityLogTableModalComponent } from './log-table-modal.component';
 
 @Component({
   standalone: true,
@@ -35,6 +37,8 @@ import { unparse } from 'papaparse';
 })
 export class ActivityLogTableComponent {
   private cdr = inject(ChangeDetectorRef);
+  private modalService = inject(SisModalService);
+
   @Input() month: string = '';
   @Input() event: string = '';
   @Input()
@@ -53,6 +57,8 @@ export class ActivityLogTableComponent {
   displayedRows: LogEntry[] = [];
   headers: string[] = [];
   hiddenHeaders: string[] = [];
+  maxLines = 6;
+  maxCharacters = 300;
 
   get displayedHeaders() {
     return this.headers.filter((header) => !this.hiddenHeaders.includes(header));
@@ -110,5 +116,12 @@ export class ActivityLogTableComponent {
       link.click();
       URL.revokeObjectURL(url);
     }
+  }
+
+  showMore(cell: [string, LogValueString | LogValueObject]) {
+    this.modalService.openModal(
+      ActivityLogTableModalComponent,
+      new ModalConfig({ data: { title: cell[0], value: cell[1].value, json: cell[1].type === 'object' } }),
+    );
   }
 }
