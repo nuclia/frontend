@@ -1370,6 +1370,7 @@
 	"retrieval-agents.workflow.sidebar.rules.errors.get-rules": "An error occurred while loading the rules",
 	"retrieval-agents.workflow.sidebar.rules.errors.set-rules": "An error occurred while saving the rules.",
 	"retrieval-agents.workflow.sidebar.rules.title": "Rules",
+	"retrieval-agents.workflow.sidebar.test.title": "Test agent",
 	"retrieval-agents.workflow.toolbar-buttons.add-node": "Add node",
 	"retrieval-agents.workflow.toolbar-buttons.manage-sessions": "Manage sessions",
 	"retrieval-agents.workflow.toolbar-buttons.rules": "Rules",

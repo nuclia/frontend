@@ -63,11 +63,21 @@
     position: absolute;
     right: calc(#{dashboard.$width-sidebar} * -1);
     top: dashboard.$height-toolbar;
-    transition: right $transition-slide;
     width: dashboard.$width-sidebar;
+
+    &.large {
+      right: calc(#{dashboard.$width-sidebar-large} * -1);
+      width: dashboard.$width-sidebar-large;
+    }
 
     &.open {
       right: 0;
+    }
+    &.open,
+    &.closing {
+      transition:
+        right $transition-slide,
+        width $transition-response;
     }
 
     header {
