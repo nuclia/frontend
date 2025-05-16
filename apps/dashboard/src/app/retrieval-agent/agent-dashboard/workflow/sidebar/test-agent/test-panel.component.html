@@ -1,1 +1,29 @@
-<p>test-panel works!</p>
+<div class="test-panel">
+  <div class="form-entry">
+    <label for="question">Input</label>
+    <pa-textarea
+      id="question"
+      rows="2"
+      resizable
+      placeholder="User question"
+      externalLabel=""
+      [formControl]="question"></pa-textarea>
+  </div>
+  <pa-button
+    size="small"
+    [disabled]="question.invalid"
+    (click)="triggerRun()">
+    Run test
+  </pa-button>
+
+  @if (runningTest()) {
+    <footer>
+      <pa-button
+        aspect="basic"
+        size="small"
+        (click)="triggerStop()">
+        Stop
+      </pa-button>
+    </footer>
+  }
+</div>

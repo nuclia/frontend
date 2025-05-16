@@ -51,6 +51,26 @@ export const sideBarLarge = computed(() => sidebar().large);
 export const activeSideBar = computed(() => sidebar().active);
 
 /**
+ * Test agent state
+ */
+const testAgent = signal<{
+  running: boolean;
+  question: string;
+}>({
+  running: false,
+  question: '',
+});
+
+export const testAgentRunning = computed(() => testAgent().running);
+
+export function runTest(question: string) {
+  testAgent.update((state) => ({ ...state, question, running: true }));
+}
+export function stopTest() {
+  testAgent.update((state) => ({ ...state, running: false }));
+}
+
+/**
  * Workflow state
  */
 export const nodeInitialisationDone = signal(false);
