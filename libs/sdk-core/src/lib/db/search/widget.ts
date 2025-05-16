@@ -41,6 +41,8 @@ export namespace Widget {
     rrfSemanticBoosting?: number;
     vectorset: string; // aka semantic model
     useSearchResults: boolean;
+    limitParagraphs: boolean;
+    paragraphsLimit: number | null;
   }
 
   export interface RagStrategiesConfig {
@@ -91,8 +93,6 @@ export namespace Widget {
     limitTokenConsumption: boolean;
     tokenConsumptionLimit: number | null;
     outputTokenConsumptionLimit: number | null;
-    limitParagraphs: boolean;
-    paragraphsLimit: number | null;
     preferMarkdown: boolean;
     contextImages: boolean;
     ragStrategies: RagStrategiesConfig;
@@ -248,6 +248,8 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   rrfBoosting: false,
   vectorset: '',
   useSearchResults: true,
+  limitParagraphs: false,
+  paragraphsLimit: null,
 };
 const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
   generateAnswer: false,
@@ -261,8 +263,6 @@ const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
   limitTokenConsumption: false,
   tokenConsumptionLimit: null,
   outputTokenConsumptionLimit: null,
-  limitParagraphs: false,
-  paragraphsLimit: null,
   preferMarkdown: false,
   contextImages: false,
   ragStrategies: {
@@ -468,7 +468,7 @@ export function getWidgetParameters(
     ask_to_resource: getAskToResource(searchConfig.generativeAnswer),
     max_tokens: getMaxTokens(searchConfig.generativeAnswer),
     max_output_tokens: getMaxOutputTokens(searchConfig.generativeAnswer),
-    max_paragraphs: getMaxParagraphs(searchConfig.generativeAnswer),
+    max_paragraphs: getMaxParagraphs(searchConfig.searchBox),
     generativemodel: searchConfig.generativeAnswer.generativeModel ? searchConfig.generativeAnswer.generativeModel : '',
     vectorset: searchConfig.searchBox.vectorset ? searchConfig.searchBox.vectorset : '',
     query_prepend: getQueryPrepend(searchConfig.searchBox),
@@ -695,7 +695,7 @@ function getMaxOutputTokens(config: Widget.GenerativeAnswerConfig): string | und
     ? config.outputTokenConsumptionLimit.toString()
     : undefined;
 }
-function getMaxParagraphs(config: Widget.GenerativeAnswerConfig): string | undefined {
+function getMaxParagraphs(config: Widget.SearchBoxConfig): string | undefined {
   return config.limitParagraphs && !!config.paragraphsLimit ? config.paragraphsLimit.toString() : undefined;
 }
 function getQueryPrepend(config: Widget.SearchBoxConfig): string {

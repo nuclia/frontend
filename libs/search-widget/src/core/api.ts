@@ -185,6 +185,9 @@ export const initNuclia = (
     ? widgetOptions.max_tokens
     : { context: widgetOptions.max_tokens, answer: widgetOptions.max_output_tokens };
   MAX_PARAGRAPHS = widgetOptions.max_paragraphs || undefined;
+  if (MAX_PARAGRAPHS) {
+    SEARCH_OPTIONS.top_k = MAX_PARAGRAPHS;
+  }
   QUERY_PREPEND = widgetOptions.query_prepend || '';
   CITATION_THRESHOLD = widgetOptions.citation_threshold;
   RRF_BOOSTING = widgetOptions.rrf_boosting;

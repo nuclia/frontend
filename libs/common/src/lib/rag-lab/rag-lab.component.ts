@@ -91,10 +91,8 @@ export class RagLabComponent implements OnChanges {
           if (config.generativeAnswer.limitTokenConsumption && config.generativeAnswer.tokenConsumptionLimit) {
             features.push(this.translate.instant('search.configuration.generative-answer.limit-token.toggle-label'));
           }
-          if (config.generativeAnswer.limitParagraphs && !!config.generativeAnswer.paragraphsLimit) {
-            features.push(
-              this.translate.instant('search.configuration.generative-answer.limit-paragraphs.toggle-label'),
-            );
+          if (config.searchBox.limitParagraphs && !!config.searchBox.paragraphsLimit) {
+            features.push(this.translate.instant('search.configuration.search-box.limit-paragraphs.toggle-label'));
           }
           if (config.generativeAnswer.askSpecificResource && config.generativeAnswer.specificResourceSlug) {
             features.push(this.translate.instant('search.configuration.generative-answer.ask-resource.toggle-label'));
