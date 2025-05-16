@@ -743,8 +743,8 @@ export class WorkflowService {
         return createComponent(GenerateNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
-      case 'pre_guardrails':
-      case 'post_guardrails':
+      case 'preprocess_alinia':
+      case 'postprocess_alinia':
         return createComponent(GuardrailsNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
@@ -792,8 +792,8 @@ export class WorkflowService {
         return createComponent(McpFormComponent, { environmentInjector: this.environmentInjector });
       case 'generate':
         return createComponent(GenerateFormComponent, { environmentInjector: this.environmentInjector });
-      case 'pre_guardrails':
-      case 'post_guardrails':
+      case 'preprocess_alinia':
+      case 'postprocess_alinia':
         return createComponent(GuardrailsFormComponent, { environmentInjector: this.environmentInjector });
       default:
         throw new Error(`No form component for type ${nodeType}`);

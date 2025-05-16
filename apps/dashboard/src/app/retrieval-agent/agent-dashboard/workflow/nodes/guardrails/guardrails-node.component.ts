@@ -33,11 +33,8 @@ export class GuardrailsNodeComponent extends NodeDirective {
   });
 
   nodeTitle = computed(() => {
-    if (this.category()) {
-      return `retrieval-agents.workflow.node-types.${
-        this.category() === 'preprocess' ? 'pre_guardrails' : 'post_guardrails'
-      }.title`;
-    }
-    return '';
+    return `retrieval-agents.workflow.node-types.${
+      this.category() === 'preprocess' ? 'preprocess_alinia' : 'postprocess_alinia'
+    }.title`;
   });
 }

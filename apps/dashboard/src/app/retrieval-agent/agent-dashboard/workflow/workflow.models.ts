@@ -45,7 +45,7 @@ export type NodeType =
   | 'historical'
   | 'rephrase'
   | 'pre_conditional'
-  | 'pre_guardrails'
+  | 'preprocess_alinia'
   | 'context_conditional'
   | 'ask'
   | 'internet'
@@ -59,7 +59,7 @@ export type NodeType =
   | 'remi'
   | 'external'
   | 'restart'
-  | 'post_guardrails';
+  | 'postprocess_alinia';
 
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
@@ -92,10 +92,10 @@ export interface ParentNode {
 }
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
-  preprocess: ['historical', 'rephrase', 'pre_conditional', 'pre_guardrails'],
+  preprocess: ['historical', 'rephrase', 'pre_conditional', 'preprocess_alinia'],
   context: ['context_conditional', 'ask', 'internet', 'sql', 'cypher', 'restricted', 'mcp'],
   generation: ['summarize', 'generate'],
-  postprocess: ['restart', 'post_conditional', 'remi', 'external', 'post_guardrails'],
+  postprocess: ['restart', 'post_conditional', 'remi', 'external', 'postprocess_alinia'],
 };
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
@@ -115,8 +115,8 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   remi: 'validation',
   external: 'globe',
   mcp: 'file',
-  pre_guardrails: 'shield-check',
-  post_guardrails: 'shield-check',
+  preprocess_alinia: 'shield-check',
+  postprocess_alinia: 'shield-check',
 };
 
 export interface CommonAgentConfig {
@@ -454,8 +454,8 @@ export function getAgentFromConfig(
       return askUiToCreation(config);
     case 'external':
       return externalUiToCreation(config);
-    case 'pre_guardrails':
-    case 'post_guardrails':
+    case 'preprocess_alinia':
+    case 'postprocess_alinia':
       return guardrailsUiToCreation(config);
     case 'historical':
     case 'cypher':

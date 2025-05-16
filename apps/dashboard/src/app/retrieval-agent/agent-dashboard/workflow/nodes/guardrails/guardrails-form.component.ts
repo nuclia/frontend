@@ -38,12 +38,15 @@ export class GuardrailsFormComponent extends FormDirective implements OnInit {
   override form = new FormGroup({
     guardrails: new FormGroup({
       rules: new FormArray<FormControl<string>>([]),
-      provider: new FormControl<GuardrailsProviderType | ''>('alinia', {
+      provider: new FormControl<GuardrailsProviderType>('alinia', {
         validators: [Validators.required],
         nonNullable: true,
       }),
       alinia: new FormGroup({
-        preconfig: new FormControl<GuardrailsPreconfig | ''>('', { nonNullable: true }),
+        preconfig: new FormControl<GuardrailsPreconfig | ''>('', {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
         detection_config: new FormControl<string | null>(null, { validators: [JsonValidator()] }),
       }),
     }),
@@ -120,5 +123,26 @@ export class GuardrailsFormComponent extends FormDirective implements OnInit {
       this.customConfigControl.removeValidators(Validators.required);
     }
     this.customConfigControl.updateValueAndValidity();
+  }
+
+  override submit(): void {
+    if (this.form.valid) {
+      const category = this.category();
+      if (category === 'preprocess' || category === 'postprocess') {
+        const { alinia, ...rawConfig } = this.configForm.getRawValue();
+        const preconfig = alinia.preconfig as GuardrailsPreconfig;
+        const config: GuardrailsAgentUI = {
+          ...rawConfig,
+          category,
+          alinia: {
+            preconfig: alinia.preconfig as GuardrailsPreconfig,
+            detection_config:
+              preconfig === 'CUSTOM' && alinia.detection_config ? JSON.parse(alinia.detection_config) : null,
+            metadata: null,
+          },
+        };
+        this.submitForm.emit(config);
+      }
+    }
   }
 }
