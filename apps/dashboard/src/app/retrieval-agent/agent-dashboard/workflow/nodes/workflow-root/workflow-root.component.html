@@ -1,5 +1,5 @@
 <app-node-box
-  agent
+  root
   (outputClick)="onOutputClick($event)">
   <app-connectable-entry
     #preprocess
@@ -13,6 +13,13 @@
     id="context"
     category="context">
     {{ 'retrieval-agents.workflow.node-types.root.context' | translate }}
+  </app-connectable-entry>
+  <app-arrow-down></app-arrow-down>
+  <app-connectable-entry
+    #generation
+    id="generation"
+    category="generation">
+    {{ 'retrieval-agents.workflow.node-types.root.generation' | translate }}
   </app-connectable-entry>
   <app-arrow-down></app-arrow-down>
   <app-connectable-entry

@@ -1,12 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
+import {
+  ConfigBlockComponent,
+  ConfigBlockItem,
+  ConnectableEntryComponent,
+  NodeBoxComponent,
+  NodeDirective,
+} from '../../basic-elements';
 import { CommonAgentConfig } from '../../workflow.models';
 
 @Component({
   selector: 'app-remi-node',
-  imports: [CommonModule, NodeBoxComponent, TranslateModule, ConfigBlockComponent],
+  imports: [CommonModule, ConnectableEntryComponent, NodeBoxComponent, TranslateModule, ConfigBlockComponent],
   templateUrl: './remi-node.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

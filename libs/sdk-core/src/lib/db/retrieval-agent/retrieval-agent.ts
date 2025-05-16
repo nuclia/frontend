@@ -5,6 +5,8 @@ import { Driver, DriverCreation, ProviderType } from './driver.models';
 import {
   ContextAgent,
   ContextAgentCreation,
+  GenerationAgent,
+  GenerationAgentCreation,
   IRetrievalAgent,
   PostprocessAgent,
   PostprocessAgentCreation,
@@ -140,6 +142,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   /**
    * Add a preprocess agent to the Retrieval Agent.
    * @param agent data representing the preprocess agent to add
+   * @returns An observable providing the created agent id.
    */
   addPreprocess(agent: PreprocessAgentCreation): Observable<{ id: string }> {
     return this.nuclia.rest.post<{ id: string }>(`${this.path}/preprocess`, agent);
@@ -172,6 +175,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   /**
    * Add a context agent to the Retrieval Agent.
    * @param agent data representing the context agent to add
+   * @returns An observable providing the created agent id.
    */
   addContext(agent: ContextAgentCreation): Observable<{ id: string }> {
     return this.nuclia.rest.post<{ id: string }>(`${this.path}/context`, agent);
@@ -194,6 +198,39 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   }
 
   /**
+   * Get the list of generation agents from the Retrieval Agent.
+   * @returns The list of generation agents
+   */
+  getGeneration(): Observable<GenerationAgent[]> {
+    return this.nuclia.rest.get<GenerationAgent[]>(`${this.path}/generation`);
+  }
+
+  /**
+   * Add a generation agent to the Retrieval Agent.
+   * @param agent data representing the generation agent to add.
+   * @returns An observable providing the created agent id.
+   */
+  addGeneration(agent: GenerationAgentCreation): Observable<{ id: string }> {
+    return this.nuclia.rest.post<{ id: string }>(`${this.path}/generation`, agent);
+  }
+
+  /**
+   * Edit an existing generation agent.
+   * @param agent Modified generation agent to be saved
+   */
+  patchGeneration(agent: GenerationAgent): Observable<void> {
+    return this.nuclia.rest.patch(`${this.path}/generation/${agent.id}`, agent);
+  }
+
+  /**
+   * Delete a generation agent from the Retrieval Agent.
+   * @param agentId Identifier off the agent to delete
+   */
+  deleteGeneration(agentId: string): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/generation/${agentId}`);
+  }
+
+  /**
    * Get the list of postprocess agents from the Retrieval Agent.
    * @returns The list of postprocess agents
    */
@@ -204,6 +241,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   /**
    * Add a postprocess agent to the Retrieval Agent.
    * @param agent data representing the postprocess agent to add
+   * @returns An observable providing the created agent id.
    */
   addPostprocess(agent: PostprocessAgentCreation): Observable<{ id: string }> {
     return this.nuclia.rest.post<{ id: string }>(`${this.path}/postprocess`, agent);

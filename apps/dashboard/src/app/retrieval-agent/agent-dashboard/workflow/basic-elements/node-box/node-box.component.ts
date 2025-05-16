@@ -36,7 +36,7 @@ export class NodeBoxComponent implements AfterViewInit {
   readonly id = `box-${boxIndex++}`;
   linkRef?: ComponentRef<LinkComponent>;
 
-  agent = input(false, { transform: booleanAttribute });
+  root = input(false, { transform: booleanAttribute });
   nodeTitle = input('');
   origin = input<ConnectableEntryComponent>();
   state = input<'default' | 'unsaved' | 'selected' | 'processing' | 'processed'>('default');
@@ -52,8 +52,8 @@ export class NodeBoxComponent implements AfterViewInit {
   @HostBinding('class') get stateClass() {
     return this.state();
   }
-  @HostBinding('class.is-agent') get isAgent() {
-    return this.agent();
+  @HostBinding('class.is-root') get isRoot() {
+    return this.root();
   }
   @HostBinding('attr.data-id') get boxId() {
     return this.id;

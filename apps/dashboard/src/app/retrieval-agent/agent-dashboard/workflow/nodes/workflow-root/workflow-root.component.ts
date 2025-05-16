@@ -15,12 +15,14 @@ export class WorkflowRootComponent extends NodeDirective implements AfterViewIni
 
   @ViewChild('preprocess', { read: ConnectableEntryComponent }) preprocess!: ConnectableEntryComponent;
   @ViewChild('context', { read: ConnectableEntryComponent }) context!: ConnectableEntryComponent;
+  @ViewChild('generation', { read: ConnectableEntryComponent }) generation!: ConnectableEntryComponent;
   @ViewChild('postprocess', { read: ConnectableEntryComponent }) postprocess!: ConnectableEntryComponent;
 
   ngAfterViewInit(): void {
     this.rootInitialized.emit({
       preprocess: this.preprocess,
       context: this.context,
+      generation: this.generation,
       postprocess: this.postprocess,
     });
   }

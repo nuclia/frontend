@@ -41,6 +41,7 @@ export const activeSideBar = computed(() => sidebar().active);
 export const nodeInitialisationDone = signal(false);
 const preprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const contextNodes = signal<{ [id: string]: ParentNode }>({});
+const generationNodes = signal<{ [id: string]: ParentNode }>({});
 const postprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const childNodes = signal<{ [id: string]: ParentNode }>({});
 const selectedNode = signal<{ id: string; nodeCategory: NodeCategory } | null>(null);
@@ -50,6 +51,7 @@ const deletedAgent = signal<{ id: string; category: NodeCategory } | null>(null)
 export interface WorkflowState {
   preprocess: ParentNode[];
   context: ParentNode[];
+  generation: ParentNode[];
   postprocess: ParentNode[];
   children: ParentNode[];
   deletedAgent: { id: string; category: NodeCategory } | null;
@@ -58,6 +60,7 @@ export const workflow = computed<WorkflowState>(() => {
   return {
     preprocess: Object.values(preprocessNodes()),
     context: Object.values(contextNodes()),
+    generation: Object.values(generationNodes()),
     postprocess: Object.values(postprocessNodes()),
     children: Object.values(childNodes()),
     deletedAgent: deletedAgent(),
@@ -77,9 +80,20 @@ export function resetDeletedNode() {
 }
 
 /**
+ * Check if a node has at least one child in its then property
+ * @param nodeId Node identifier
+ * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
+ * @returns true if the node has at least one chile in its then category
+ */
+export function hasChildInThen(nodeId: string, nodeCategory: NodeCategory): boolean {
+  const node = getNode(nodeId, nodeCategory);
+  return !!node && !!node.then && node.then.length >= 1;
+}
+
+/**
  * Set selected node and returns it
  * @param id Node identifier
- * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+ * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
  * @returns Node found or undefined
  */
 export function selectNode(id: string, nodeCategory: NodeCategory): ParentNode | undefined {
@@ -108,7 +122,7 @@ export function unselectNode() {
 /**
  * Get specific node
  * @param id Node identifier
- * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+ * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
  * @returns The node corresponding to specified id or undefined
  */
 export function getNode(id: string, nodeCategory: NodeCategory): ParentNode | undefined {
@@ -119,6 +133,9 @@ export function getNode(id: string, nodeCategory: NodeCategory): ParentNode | un
       break;
     case 'context':
       node = contextNodes()[id];
+      break;
+    case 'generation':
+      node = generationNodes()[id];
       break;
     case 'postprocess':
       node = postprocessNodes()[id];
@@ -141,21 +158,24 @@ function _isChildNode(id: string): boolean {
 export function getAllNodes(includeChildren = false): ParentNode[] {
   let allNodes = Object.values(preprocessNodes())
     .concat(Object.values(contextNodes()))
+    .concat(Object.values(generationNodes()))
     .concat(Object.values(postprocessNodes()));
   if (includeChildren) {
     allNodes = allNodes.concat(Object.values(childNodes()));
   }
   return allNodes;
 }
+
 /**
  * Add node to the specified category
  * @param nodeRef
  * @param nodeType
- * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+ * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
  * @param origin Connectable entry of origin
  * @param nodeConfig Optional configuration of the node
  * @param isSaved Optional flag indicating the node is already saved in the backend (false by default)
  * @param agentId Optional agent identifier corresponding to the node
+ * @param childIndex Index of the child in parent’s then/else list (optional)
  */
 export function addNode(
   nodeRef: ComponentRef<NodeDirective>,
@@ -165,8 +185,9 @@ export function addNode(
   nodeConfig?: NodeConfig,
   agentId?: string,
   isSaved = false,
+  childIndex?: number,
 ) {
-  const node: ParentNode = { nodeRef, nodeType, nodeCategory, nodeConfig, agentId, isSaved };
+  const node: ParentNode = { nodeRef, nodeType, nodeCategory, nodeConfig, agentId, isSaved, childIndex };
   const nodeId = nodeRef.instance.id;
   const parentId = origin.nodeId();
 
@@ -202,6 +223,9 @@ function _addNode(id: string, nodeCategory: NodeCategory, node: ParentNode) {
     case 'context':
       contextNodes.update((_nodes) => ({ ..._nodes, [id]: node }));
       break;
+    case 'generation':
+      generationNodes.update((_nodes) => ({ ..._nodes, [id]: node }));
+      break;
     case 'postprocess':
       postprocessNodes.update((_nodes) => ({ ..._nodes, [id]: node }));
       break;
@@ -211,7 +235,7 @@ function _addNode(id: string, nodeCategory: NodeCategory, node: ParentNode) {
 /**
  * Delete node
  * @param id Node identifier
- * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+ * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
  * @param parentId Parent node identifier if any
  * @returns the list of children’s nodeRef deleted. Warning: this list includes the nodeRef corresponding to the node identifier if corresponding node is also a child
  */
@@ -254,6 +278,9 @@ export function deleteNode(
       case 'context':
         nodeSignal = contextNodes;
         break;
+      case 'generation':
+        nodeSignal = generationNodes;
+        break;
       case 'postprocess':
         nodeSignal = postprocessNodes;
         break;
@@ -289,6 +316,7 @@ export function deleteNode(
 export function resetNodes() {
   preprocessNodes.set({});
   contextNodes.set({});
+  generationNodes.set({});
   postprocessNodes.set({});
   childNodes.set({});
 }
@@ -296,7 +324,7 @@ export function resetNodes() {
 /**
  * Update node
  * @param id Node identifier
- * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+ * @param nodeCategory Node category: 'preprocess' | 'context' | 'generate' | 'postprocess'
  * @param partialNode Partial node updated
  */
 export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: Partial<ParentNode>) {
@@ -317,6 +345,9 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
       case 'context':
         contextNodes.update((_nodes) => ({ ..._nodes, [id]: updatedNode }));
         break;
+      case 'generation':
+        generationNodes.update((_nodes) => ({ ..._nodes, [id]: updatedNode }));
+        break;
       case 'postprocess':
         postprocessNodes.update((_nodes) => ({ ..._nodes, [id]: updatedNode }));
         break;
@@ -326,6 +357,29 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
   if (partialNode.nodeConfig) {
     node.nodeRef.setInput('config', partialNode.nodeConfig);
   }
+}
+
+/**
+ * Update two nodes at once: parent and child
+ * @param nodeCategory Node category of both nodes
+ * @param parent Parent id and partial node to save
+ * @param children Children list of id and index to save
+ */
+export function updateParentAndChild(
+  nodeCategory: NodeCategory,
+  parent: { id: string; partialNode: Partial<ParentNode> },
+  children: { id: string; childIndex: number }[],
+) {
+  children.forEach((child) => {
+    const childNode = childNodes()[child.id];
+    if (childNode) {
+      childNodes.update((_nodes) => ({
+        ..._nodes,
+        [child.id]: { ...childNode, childIndex: child.childIndex, isSaved: true },
+      }));
+    }
+  });
+  updateNode(parent.id, nodeCategory, parent.partialNode);
 }
 
 /**

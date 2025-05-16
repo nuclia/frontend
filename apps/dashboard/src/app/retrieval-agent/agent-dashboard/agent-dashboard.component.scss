@@ -42,7 +42,7 @@
         display: flex;
         flex-direction: column;
         gap: $gap;
-        min-height: calc((#{dashboard.$height-main} - #{$padding}* 2 - #{$gap}* 2 - 8px) / 3);
+        min-height: calc((#{dashboard.$height-main} - #{$padding}* 2 - #{$gap}* 3 - 8px) / 4);
       }
     }
 

@@ -1,5 +1,13 @@
 export type InternetProviderType = 'brave' | 'perplexity' | 'tavily' | 'google';
-export type ProviderType = InternetProviderType | 'cypher' | 'nucliadb' | 'sql' | 'mcpsse' | 'mcpstdio';
+export type GuardrailsProviderType = 'alinia';
+export type ProviderType =
+  | InternetProviderType
+  | GuardrailsProviderType
+  | 'cypher'
+  | 'nucliadb'
+  | 'sql'
+  | 'mcpsse'
+  | 'mcpstdio';
 
 export interface IDriver {
   id: string;
@@ -28,7 +36,8 @@ export type Driver =
   | GoogleDriver
   | SqlDriver
   | McpSseDriver
-  | McpStdioDriver;
+  | McpStdioDriver
+  | AliniaDriver;
 
 export interface BraveDriver extends IDriver {
   provider: 'brave';
@@ -65,6 +74,10 @@ export interface McpSseDriver extends IDriver {
 export interface McpStdioDriver extends IDriver {
   provider: 'mcpstdio';
   config: McpStdioConfig;
+}
+export interface AliniaDriver extends IDriver {
+  provider: 'alinia';
+  config: AliniaConfig;
 }
 
 export interface InternetConfig {
@@ -122,4 +135,7 @@ export interface McpStdioConfig {
   cwd?: string;
   encoding?: string;
   encoding_error_handler?: 'strict' | 'ignore' | 'replace';
+}
+export interface AliniaConfig {
+  key: string;
 }

@@ -13,14 +13,15 @@ import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   AskAgent,
+  BaseConditionalAgentCreation,
   BaseContextAgent,
+  BaseGenerationAgent,
   BasePostprocessAgent,
   BasePreprocessAgent,
-  ConditionalAgent,
   ContextAgent,
+  GenerateAgent,
   PostprocessAgent,
   PreprocessAgent,
-  ValidationAgent,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { catchError, filter, forkJoin, of, switchMap, tap } from 'rxjs';
@@ -40,10 +41,14 @@ import {
   CypherNodeComponent,
   ExternalFormComponent,
   ExternalNodeComponent,
+  GenerateFormComponent,
+  GenerateNodeComponent,
   HistoricalFormComponent,
   HistoricalNodeComponent,
   InternetFormComponent,
   InternetNodeComponent,
+  McpFormComponent,
+  McpNodeComponent,
   RemiFormComponent,
   RemiNodeComponent,
   RephraseFormComponent,
@@ -56,14 +61,12 @@ import {
   SqlNodeComponent,
   SummarizeFormComponent,
   SummarizeNodeComponent,
-  ValidationFormComponent,
-  ValidationNodeComponent,
 } from './nodes';
-import { McpFormComponent, McpNodeComponent } from './nodes/mcp';
 import { RulesPanelComponent } from './sidebar';
 import {
   getConfigFromAgent,
   getNodeTypeFromAgent,
+  isCondionalNode,
   NODE_SELECTOR_ICONS,
   NodeCategory,
   NodeConfig,
@@ -76,6 +79,7 @@ import {
   deleteNode,
   getAllNodes,
   getNode,
+  hasChildInThen,
   nodeInitialisationDone,
   resetCurrentOrigin,
   resetNodes,
@@ -144,15 +148,45 @@ export class WorkflowService {
     this.workflowRoot = root;
     return this.sdk.currentArag.pipe(
       tap(() => nodeInitialisationDone.set(false)),
-      switchMap((arag) => forkJoin([arag.getPreprocess(), arag.getContext(), arag.getPostprocess()])),
-      catchError(() => {
-        this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.loading-workflow'));
-        return of([[], [], []]);
-      }),
-      tap(([preprocess, context, postprocess]) => {
+      switchMap((arag) =>
+        forkJoin([
+          arag.getPreprocess().pipe(
+            catchError(() => {
+              this.toaster.error(
+                this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.preprocess'),
+              );
+              return of([]);
+            }),
+          ),
+          arag.getContext().pipe(
+            catchError(() => {
+              this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.context'));
+              return of([]);
+            }),
+          ),
+          arag.getGeneration().pipe(
+            catchError(() => {
+              this.toaster.error(
+                this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.generation'),
+              );
+              return of([]);
+            }),
+          ),
+          arag.getPostprocess().pipe(
+            catchError(() => {
+              this.toaster.error(
+                this.translate.instant('retrieval-agents.workflow.errors.loading-workflow.postprocess'),
+              );
+              return of([]);
+            }),
+          ),
+        ]),
+      ),
+      tap(([preprocess, context, generation, postprocess]) => {
         this.cleanWorkflow();
         preprocess.forEach((agent) => this.createNodeFromSavedWorkflow(root.preprocess, 'preprocess', agent));
         context.forEach((agent) => this.createNodeFromSavedWorkflow(root.context, 'context', agent));
+        generation.forEach((agent) => this.createNodeFromSavedWorkflow(root.generation, 'generation', agent));
         postprocess.forEach((agent) => this.createNodeFromSavedWorkflow(root.postprocess, 'postprocess', agent));
         setTimeout(() => nodeInitialisationDone.set(true));
       }),
@@ -172,6 +206,7 @@ export class WorkflowService {
    * @param nodeCategory
    * @param agent
    * @param columnIndex Column index in which the node will be placed. 1 by default
+   * @param childIndex Index of the child in parent’s then/else list
    */
   private createNodeFromSavedWorkflow(
     rootEntry: ConnectableEntryComponent,
@@ -179,15 +214,18 @@ export class WorkflowService {
     agent:
       | BasePreprocessAgent
       | BaseContextAgent
+      | BaseGenerationAgent
       | BasePostprocessAgent
       | PreprocessAgent
       | ContextAgent
+      | GenerateAgent
       | PostprocessAgent,
     columnIndex = 1,
+    childIndex?: number,
   ) {
     const nodeType = getNodeTypeFromAgent(agent);
     const config = getConfigFromAgent(agent);
-    const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent.id, true);
+    const nodeRef = this.addNode(rootEntry, columnIndex, nodeType, nodeCategory, config, agent.id, true, childIndex);
     if (agent.module === 'ask') {
       const askAgent = agent as AskAgent;
       if (askAgent.fallback) {
@@ -197,8 +235,8 @@ export class WorkflowService {
         }
         this.createNodeFromSavedWorkflow(entry, nodeCategory, askAgent.fallback, columnIndex + 1);
       }
-    } else if (agent.module === 'conditional' || agent.module === 'validation') {
-      const conditionalAgent = agent as ConditionalAgent | ValidationAgent;
+    } else if (isCondionalNode(agent.module)) {
+      const conditionalAgent = agent as unknown as BaseConditionalAgentCreation;
       this.createChildNodes(nodeRef, 'then', nodeCategory, columnIndex, conditionalAgent);
       this.createChildNodes(nodeRef, 'else_', nodeCategory, columnIndex, conditionalAgent);
     }
@@ -209,20 +247,21 @@ export class WorkflowService {
     property: 'then' | 'else_',
     nodeCategory: NodeCategory,
     columnIndex: number,
-    agent: ConditionalAgent | ValidationAgent,
+    agent: BaseConditionalAgentCreation,
   ) {
     if (agent[property] && agent[property].length > 0) {
       const prop = property.replace('_', '');
       const entry = nodeRef.instance.boxComponent.connectableEntries?.find((entry) => entry.id() === prop);
       if (!entry) {
-        throw new Error(`No '${prop}' entry found on Conditional/Validation node ${nodeRef.instance.id}`);
+        throw new Error(`No '${prop}' entry found on conditional node ${nodeRef.instance.id}`);
       }
-      agent[property].forEach((child) =>
+      agent[property].forEach((child, index) =>
         this.createNodeFromSavedWorkflow(
           entry,
           nodeCategory,
           child as PreprocessAgent | ContextAgent | PostprocessAgent,
           columnIndex + 1,
+          index,
         ),
       );
     }
@@ -256,7 +295,7 @@ export class WorkflowService {
     setActiveSidebar('add');
     const container: HTMLElement = this.openSidebarWithTitle(`retrieval-agents.workflow.sidebar.node-creation.toolbar`);
     container.classList.add('no-form');
-    const sections: NodeCategory[] = ['preprocess', 'context', 'postprocess'];
+    const sections: NodeCategory[] = ['preprocess', 'context', 'generation', 'postprocess'];
     sections.forEach((section) => {
       const title: HTMLElement = this.renderer.createElement('div');
       title.classList.add('section-title');
@@ -302,13 +341,14 @@ export class WorkflowService {
     const possibleNodes = NODES_BY_ENTRY_TYPE[nodeCategory] || [];
     possibleNodes.forEach((nodeType, index) => {
       const selectorRef = createComponent(NodeSelectorComponent, { environmentInjector: this.environmentInjector });
+      const nodeTypeKey = this.getNodeTypeKey(nodeType);
       selectorRef.setInput(
         'nodeTitle',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeType}.title`),
+        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.title`),
       );
       selectorRef.setInput(
         'description',
-        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeType}.description`),
+        this.translate.instant(`retrieval-agents.workflow.node-types.${nodeTypeKey}.description`),
       );
       selectorRef.setInput('icon', NODE_SELECTOR_ICONS[nodeType]);
       this.applicationRef.attachView(selectorRef.hostView);
@@ -460,6 +500,8 @@ export class WorkflowService {
    * @param nodeType Type of the node to be created
    * @param nodeConfig Optional configuration of the node
    * @param agent Optional agent corresponding to the node
+   * @param isSaved Flag indicating if the node is already saved in the backend (false by default)
+   * @param childIndex Index of the child in parent’s then/else list (optional)
    * @returns ComponentRef<NodeDirective>: Created node referrence
    */
   private addNode(
@@ -470,6 +512,7 @@ export class WorkflowService {
     nodeConfig?: NodeConfig,
     agentId?: string,
     isSaved = false,
+    childIndex?: number,
   ): ComponentRef<NodeDirective> {
     if (this.columns.length <= columnIndex) {
       this.createColumn();
@@ -493,7 +536,7 @@ export class WorkflowService {
     nodeRef.instance.configUpdated.subscribe(() => setTimeout(() => this.updateLinksOnColumn(columnIndex)));
 
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
-    addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agentId, isSaved);
+    addNode(nodeRef, nodeType, nodeCategory, origin, nodeConfig, agentId, isSaved, childIndex);
     origin.activeState.set(false);
     return nodeRef;
   }
@@ -505,7 +548,7 @@ export class WorkflowService {
     if (this.columnContainer) {
       const newColumn = this.renderer.createElement('div') as HTMLElement;
       newColumn.classList.add(COLUMN_CLASS);
-      for (let category of ['preprocess', 'context', 'postprocess']) {
+      for (let category of ['preprocess', 'context', 'generation', 'postprocess']) {
         const section = this.renderer.createElement('div') as HTMLElement;
         section.id = category;
         section.classList.add(COLUMN_SECTION_CLASS);
@@ -532,7 +575,7 @@ export class WorkflowService {
     }
     const columnIndex = node.nodeRef.instance.columnIndex;
     const container: HTMLElement = this.openSidebarWithTitle(
-      `retrieval-agents.workflow.node-types.${node.nodeType}.title`,
+      `retrieval-agents.workflow.node-types.${this.getNodeTypeKey(node.nodeType)}.title`,
     );
     container.classList.remove('no-form');
     const formRef = this.getFormRef(node.nodeType);
@@ -547,10 +590,14 @@ export class WorkflowService {
     container.appendChild(formRef.location.nativeElement);
     formRef.changeDetectorRef.detectChanges();
     formRef.instance.submitForm.subscribe((config) =>
-      this.saveNodeConfiguration(config, nodeId, nodeCategory, columnIndex),
+      this.saveNodeConfiguration(config, nodeId, nodeCategory, node.nodeType, columnIndex),
     );
     formRef.instance.cancel.subscribe(() => this.closeSidebar());
     this._currentPanel = formRef;
+  }
+
+  private getNodeTypeKey(nodeType: NodeType): string {
+    return nodeType.includes('conditional') ? 'conditional' : nodeType;
   }
 
   /**
@@ -558,12 +605,43 @@ export class WorkflowService {
    * @param config Node configuration
    * @param nodeId Identifier of the node to save
    * @param nodeCategory Node category: 'preprocess' | 'context' | 'postprocess'
+   * @param nodeType Node type
    * @param columnIndex Column index (so we can update the links of other nodes)
    */
-  private saveNodeConfiguration(config: NodeConfig, nodeId: string, nodeCategory: NodeCategory, columnIndex: number) {
+  private saveNodeConfiguration(
+    config: NodeConfig,
+    nodeId: string,
+    nodeCategory: NodeCategory,
+    nodeType: NodeType,
+    columnIndex: number,
+  ) {
     updateNode(nodeId, nodeCategory, { nodeConfig: config });
     setTimeout(() => this.updateLinksOnColumn(columnIndex));
-    this.closeSidebar();
+    if (isCondionalNode(nodeType) && !hasChildInThen(nodeId, nodeCategory)) {
+      this.addRequiredNode(nodeId, nodeCategory);
+    } else {
+      this.closeSidebar();
+    }
+  }
+
+  /**
+   * Trigger required child node creation
+   * @param nodeId Parent node id
+   * @param nodeCategory Parent node category
+   */
+  private addRequiredNode(nodeId: string, nodeCategory: NodeCategory) {
+    const node = getNode(nodeId, nodeCategory);
+    if (!node) {
+      throw new Error(`addRequiredNode: Node ${nodeId} not found in the state.`);
+    }
+    const entries = node.nodeRef.instance.boxComponent.connectableEntries;
+    if (!entries) {
+      throw new Error(`addRequiredNode: no entries found for node ${nodeId}.`);
+    }
+    const requiredEntry = entries.find((entry) => entry.required());
+    if (requiredEntry) {
+      requiredEntry.onOutputClick();
+    }
   }
 
   /**
@@ -607,12 +685,16 @@ export class WorkflowService {
         return createComponent(RephraseNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
-      case 'conditional':
+      case 'pre_conditional':
         return createComponent(ConditionalNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
-      case 'validation':
-        return createComponent(ValidationNodeComponent, {
+      case 'context_conditional':
+        return createComponent(ConditionalNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
+      case 'post_conditional':
+        return createComponent(ConditionalNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
       case 'summarize':
@@ -655,6 +737,10 @@ export class WorkflowService {
         return createComponent(McpNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
+      case 'generate':
+        return createComponent(GenerateNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
       default:
         throw new Error(`No node component for type ${nodeType}`);
     }
@@ -671,10 +757,12 @@ export class WorkflowService {
         return createComponent(HistoricalFormComponent, { environmentInjector: this.environmentInjector });
       case 'rephrase':
         return createComponent(RephraseFormComponent, { environmentInjector: this.environmentInjector });
-      case 'conditional':
+      case 'pre_conditional':
         return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
-      case 'validation':
-        return createComponent(ValidationFormComponent, { environmentInjector: this.environmentInjector });
+      case 'context_conditional':
+        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
+      case 'post_conditional':
+        return createComponent(ConditionalFormComponent, { environmentInjector: this.environmentInjector });
       case 'summarize':
         return createComponent(SummarizeFormComponent, { environmentInjector: this.environmentInjector });
       case 'restart':
@@ -695,6 +783,8 @@ export class WorkflowService {
         return createComponent(RestrictedFormComponent, { environmentInjector: this.environmentInjector });
       case 'mcp':
         return createComponent(McpFormComponent, { environmentInjector: this.environmentInjector });
+      case 'generate':
+        return createComponent(GenerateFormComponent, { environmentInjector: this.environmentInjector });
       default:
         throw new Error(`No form component for type ${nodeType}`);
     }

@@ -19,11 +19,11 @@
   &.visible {
     opacity: 1;
   }
-  &.is-agent {
+  &.is-root {
     border: 1.5px solid $color-neutral-regular;
-    margin-top: rhythm(17);
+    margin-top: rhythm(8);
   }
-  &:not(.is-agent).default:hover {
+  &:not(.is-root).default:hover {
     border: 1px solid $color-primary-regular;
     cursor: pointer;
   }
@@ -58,5 +58,11 @@
     left: calc(#{rhythm(1)} * -1);
     top: calc(#{rhythm(2)} - 2px);
     width: rhythm(2);
+  }
+
+  @media (min-height: $height-viewport-medium-min) {
+    &.is-root {
+      margin-top: rhythm(17);
+    }
   }
 }
