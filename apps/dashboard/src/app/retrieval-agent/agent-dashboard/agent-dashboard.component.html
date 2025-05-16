@@ -31,7 +31,9 @@
         size="small"
         icon="play"
         iconSize="medium"
-        iconAndText="">
+        iconAndText=""
+        [active]="activeSideBar() === 'test'"
+        (click)="openTest()">
         {{ 'retrieval-agents.workflow.toolbar-buttons.test-agent' | translate }}
       </pa-button>
       <pa-button
@@ -59,7 +61,9 @@
   <div
     #sidebar
     class="sidebar"
-    [class.open]="sideBarOpen()">
+    [class.large]="sideBarLarge()"
+    [class.open]="sideBarOpen()"
+    [class.closing]="sideBarClosing()">
     <header #sidebarHeader>
       <div class="title-m">
         {{ sideBarTitle() }}

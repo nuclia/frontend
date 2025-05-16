@@ -1354,6 +1354,7 @@
 	"retrieval-agents.workflow.sidebar.rules.errors.get-rules": "Se ha producido un error al cargar las reglas",
 	"retrieval-agents.workflow.sidebar.rules.errors.set-rules": "Se ha producido un error al guardar las reglas.",
 	"retrieval-agents.workflow.sidebar.rules.title": "Normas",
+	"retrieval-agents.workflow.sidebar.test.title": "Pruebe el agente",
 	"retrieval-agents.workflow.toolbar-buttons.add-node": "Agregar nodo",
 	"retrieval-agents.workflow.toolbar-buttons.manage-sessions": "Administrar sesiones",
 	"retrieval-agents.workflow.toolbar-buttons.rules": "Normas",

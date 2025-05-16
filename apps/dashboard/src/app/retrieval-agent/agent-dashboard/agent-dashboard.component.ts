@@ -18,7 +18,9 @@ import {
   activeSideBar,
   ConnectableEntryComponent,
   LinkService,
+  sideBarClosing,
   sideBarDescription,
+  sideBarLarge,
   sideBarOpen,
   sideBarTitle,
   WorkflowEffectService,
@@ -50,6 +52,8 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   sideBarTitle = sideBarTitle;
   sideBarDescription = sideBarDescription;
   sideBarOpen = sideBarOpen;
+  sideBarClosing = sideBarClosing;
+  sideBarLarge = sideBarLarge;
   activeSideBar = activeSideBar;
 
   constructor() {
@@ -92,6 +96,10 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
 
   addNode() {
     this.workflowService.triggerAddNode();
+  }
+
+  openTest() {
+    this.workflowService.openTestSidebar();
   }
 
   addNodeFromEntry(data: { entry: ConnectableEntryComponent; targetColumn: number }) {

@@ -5,34 +5,49 @@ import { AskAgentUI, NodeCategory, NodeConfig, NodeType, ParentNode } from './wo
 /**
  * Sidebar state
  */
-const sidebar = signal<{ title: string; description: string; open: boolean; active: '' | 'rules' | 'add' }>({
+const sidebar = signal<{
+  title: string;
+  description: string;
+  open: boolean;
+  closing: boolean;
+  active: '' | 'rules' | 'add' | 'test';
+  large: boolean;
+}>({
   title: '',
   description: '',
   open: false,
+  closing: false,
   active: '',
+  large: false,
 });
 
-export function setActiveSidebar(active: '' | 'rules' | 'add') {
-  sidebar.update((bar) => ({ ...bar, active }));
+export function setActiveSidebar(active: '' | 'rules' | 'add' | 'test') {
+  const large = active === 'test';
+  sidebar.update((bar) => ({ ...bar, active, large }));
 }
 export function setOpenSidebar(open: boolean) {
-  sidebar.update((bar) => ({ ...bar, open }));
+  const closing = !open;
+  sidebar.update((bar) => ({ ...bar, open, closing }));
 }
 export function setSidebarHeader(title: string, description = '') {
   sidebar.update((bar) => ({ ...bar, title, description }));
 }
-export function resetSidebar() {
+export function resetSidebar(keepOpen = false) {
   sidebar.set({
     title: '',
     description: '',
-    open: false,
+    open: keepOpen ? sidebar().open : false,
+    closing: false,
     active: '',
+    large: false,
   });
 }
 // computed signals are readonly: we don't want components to interact directly with the sidebar
 export const sideBarTitle = computed(() => sidebar().title);
 export const sideBarDescription = computed(() => sidebar().description);
 export const sideBarOpen = computed(() => sidebar().open);
+export const sideBarClosing = computed(() => sidebar().closing);
+export const sideBarLarge = computed(() => sidebar().large);
 export const activeSideBar = computed(() => sidebar().active);
 
 /**
