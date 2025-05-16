@@ -1,23 +1,16 @@
-import { cloneDeep, deepEqual } from '@flaps/core';
+import { deepEqual } from '@flaps/core';
 import {
   Ask,
   BaseSearchOptions,
   ChatOptions,
-  INITIAL_CITATION_THRESHOLD,
-  NUCLIA_STANDARD_SEARCH_CONFIG,
   getJsonSchemaValue,
   getPreselectedFilterValue,
   getRagStrategies,
   parseRAGImageStrategies,
   parseRAGStrategies,
   parsePreselectedFilters,
-  RAG_METADATAS,
-  RAGImageStrategy,
-  RAGStrategy,
-  RagStrategyName,
   Reranker,
   Search,
-  SearchConfig,
   SearchOptions,
   Widget,
 } from '@nuclia/core';
@@ -88,8 +81,8 @@ function getBaseSearchOptions(searchConfig: Widget.SearchConfiguration): BaseSea
       options.filters = parsePreselectedFilters(filters);
     }
   }
-  if (searchConfig.generativeAnswer.limitParagraphs && !!searchConfig.generativeAnswer.paragraphsLimit) {
-    options.top_k = searchConfig.generativeAnswer.paragraphsLimit;
+  if (searchConfig.searchBox.limitParagraphs && !!searchConfig.searchBox.paragraphsLimit) {
+    options.top_k = searchConfig.searchBox.paragraphsLimit;
   }
   return options;
 }

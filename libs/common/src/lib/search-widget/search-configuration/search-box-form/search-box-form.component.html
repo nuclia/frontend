@@ -217,6 +217,28 @@
     </div>
     <div class="config-form-field">
       <pa-toggle
+        formControlName="limitParagraphs"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.limit-paragraphs.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.limit-paragraphs.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="limitParagraphsEnabled">
+        <pa-input
+          externalLabel
+          formControlName="paragraphsLimit"
+          type="number"></pa-input>
+      </div>
+    </div>
+    <div class="config-form-field">
+      <pa-toggle
         formControlName="prependTheQuery"
         withBackground
         spaceBetweenLabelAndToggle
