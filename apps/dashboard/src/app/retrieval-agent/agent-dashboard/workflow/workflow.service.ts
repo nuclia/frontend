@@ -62,6 +62,7 @@ import {
   SummarizeFormComponent,
   SummarizeNodeComponent,
 } from './nodes';
+import { GuardrailsFormComponent, GuardrailsNodeComponent } from './nodes/guardrails';
 import { RulesPanelComponent } from './sidebar';
 import {
   getConfigFromAgent,
@@ -579,6 +580,7 @@ export class WorkflowService {
     );
     container.classList.remove('no-form');
     const formRef = this.getFormRef(node.nodeType);
+    formRef.setInput('category', nodeCategory);
     const config = node.nodeConfig;
     if (config) {
       // For some forms like Restart, the patch won't work for all fields,
@@ -741,6 +743,11 @@ export class WorkflowService {
         return createComponent(GenerateNodeComponent, {
           environmentInjector: this.environmentInjector,
         });
+      case 'preprocess_alinia':
+      case 'postprocess_alinia':
+        return createComponent(GuardrailsNodeComponent, {
+          environmentInjector: this.environmentInjector,
+        });
       default:
         throw new Error(`No node component for type ${nodeType}`);
     }
@@ -785,6 +792,9 @@ export class WorkflowService {
         return createComponent(McpFormComponent, { environmentInjector: this.environmentInjector });
       case 'generate':
         return createComponent(GenerateFormComponent, { environmentInjector: this.environmentInjector });
+      case 'preprocess_alinia':
+      case 'postprocess_alinia':
+        return createComponent(GuardrailsFormComponent, { environmentInjector: this.environmentInjector });
       default:
         throw new Error(`No form component for type ${nodeType}`);
     }

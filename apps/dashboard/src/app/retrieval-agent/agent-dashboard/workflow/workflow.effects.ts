@@ -38,14 +38,10 @@ export class WorkflowEffectService {
   private translate = inject(TranslateService);
 
   initEffect() {
-    console.debug('Effect:');
     if (!nodeInitialisationDone()) {
-      console.debug(`    Initialising nodes`);
       return;
     }
     const workflowState = workflow();
-
-    console.debug('    workflowState', { ...workflowState });
 
     // First checks for updates on children, as those changes may trigger updates on the parent
     let requests: { request: Observable<void>; nodeId: string; log: string }[] = [];
@@ -61,17 +57,11 @@ export class WorkflowEffectService {
     workflowState.postprocess.forEach((node) => this.checkNodeAndUpdateRequests(node, requests));
 
     if (requests.length > 0) {
-      forkJoin(
-        requests.map((item) => {
-          console.debug(`${item.log} from ${item.nodeId}`);
-          return item.request;
-        }),
-      ).subscribe();
+      forkJoin(requests.map((item) => item.request)).subscribe();
     }
 
     // Check if there is a node to be deleted from the backend
     if (workflowState.deletedAgent) {
-      console.debug(` -> Delete agent from backend`, { ...workflowState.deletedAgent });
       this.deleteAgent(workflowState.deletedAgent);
     }
   }
@@ -93,7 +83,7 @@ export class WorkflowEffectService {
       if (selectedNode !== node.nodeRef.instance.id) {
         node.nodeRef.setInput('state', 'unsaved');
       }
-    } else if (node.isSaved) {
+    } else if (node.isSaved && node.nodeRef.instance.state() === 'unsaved') {
       node.nodeRef.setInput('state', 'default');
     }
 

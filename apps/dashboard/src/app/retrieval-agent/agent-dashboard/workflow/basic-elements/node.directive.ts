@@ -11,7 +11,7 @@ export class NodeDirective {
   columnIndex = 0;
 
   origin = input<ConnectableEntryComponent>();
-  state = input<'default' | 'selected' | 'processing' | 'processed'>('default');
+  state = input<'default' | 'selected' | 'processing' | 'processed' | 'unsaved'>('default');
   config = input<NodeConfig>();
   category = input.required<NodeCategory>();
 

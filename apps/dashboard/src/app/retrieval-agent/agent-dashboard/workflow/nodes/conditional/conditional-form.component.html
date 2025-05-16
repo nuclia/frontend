@@ -5,14 +5,15 @@
   <ng-container [formGroup]="configForm">
     <div class="form-entry">
       <label for="prompt">{{ 'retrieval-agents.workflow.node-types.conditional.form.prompt.label' | translate }}</label>
-      <pa-textarea
+      <nsi-expandable-textarea
         id="prompt"
         formControlName="prompt"
         rows="2"
         resizable
         [placeholder]="'retrieval-agents.workflow.node-types.conditional.form.prompt.placeholder' | translate"
         [help]="'retrieval-agents.workflow.node-types.conditional.form.prompt.help' | translate"
-        externalLabel></pa-textarea>
+        modalTitle="retrieval-agents.workflow.node-types.conditional.form.prompt.placeholder"
+        externalLabel></nsi-expandable-textarea>
     </div>
   </ng-container>
 </app-configuration-form>

@@ -1,0 +1,63 @@
+<app-configuration-form
+  [form]="form"
+  (cancel)="cancel.emit()"
+  (triggerSubmit)="submit()">
+  <ng-container [formGroup]="configForm">
+    <div class="form-entry field-list">
+      <div class="form-entry">
+        <label for="provider">
+          {{ 'retrieval-agents.workflow.node-types.guardrails.form.provider.label' | translate }}
+        </label>
+        <pa-select
+          id="provider"
+          formControlName="provider"
+          externalLabel
+          [placeholder]="'retrieval-agents.workflow.node-types.guardrails.form.provider.placeholder' | translate"
+          [options]="providerOptions()"></pa-select>
+      </div>
+      @if (providerOptions()?.length === 0) {
+        <nsi-info-card type="warning">
+          {{ 'retrieval-agents.workflow.node-types.guardrails.form.no-source' | translate }}
+        </nsi-info-card>
+        <pa-button
+          aspect="basic"
+          size="small"
+          [routerLink]="driversPath()">
+          {{ 'retrieval-agents.workflow.node-types.guardrails.form.go-to-drivers' | translate }}
+        </pa-button>
+      }
+    </div>
+    @if (provider === 'alinia') {
+      <ng-container formGroupName="alinia">
+        <div class="form-entry">
+          <label for="preconfig">
+            {{ 'retrieval-agents.workflow.node-types.guardrails.form.preconfig.label' | translate }}
+          </label>
+          <pa-select
+            id="preconfig"
+            formControlName="preconfig"
+            externalLabel=""
+            [options]="preconfigOptions()"
+            (valueChange)="updateValidators()"></pa-select>
+        </div>
+        @if (preconfigValue === 'CUSTOM') {
+          <div class="form-entry">
+            <label for="detection_config">
+              {{ 'retrieval-agents.workflow.node-types.guardrails.form.detection_config.label' | translate }}
+            </label>
+            <nsi-expandable-textarea
+              id="detection_config"
+              formControlName="detection_config"
+              rows="3"
+              modalTitle="retrieval-agents.workflow.node-types.guardrails.form.detection_config.label"
+              help="retrieval-agents.workflow.node-types.guardrails.form.detection_config.help"
+              externalLabel=""></nsi-expandable-textarea>
+          </div>
+        }
+      </ng-container>
+    }
+    <app-rules-field
+      [form]="configForm"
+      [config]="config"></app-rules-field>
+  </ng-container>
+</app-configuration-form>

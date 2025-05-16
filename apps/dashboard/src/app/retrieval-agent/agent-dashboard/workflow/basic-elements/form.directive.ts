@@ -1,6 +1,6 @@
-import { Directive, output } from '@angular/core';
+import { Directive, input, output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { NodeConfig } from '../workflow.models';
+import { NodeCategory, NodeConfig } from '../workflow.models';
 
 /**
    * FormDirective contains 2 abstract FormGroup and an abstract method, as well as two outputs.
@@ -27,6 +27,7 @@ export abstract class FormDirective {
   abstract form: FormGroup;
   abstract configForm: FormGroup;
 
+  category = input.required<NodeCategory>();
   submitForm = output<NodeConfig>();
   cancel = output<void>();
 

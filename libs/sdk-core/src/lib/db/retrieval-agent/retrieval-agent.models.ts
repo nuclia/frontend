@@ -77,7 +77,7 @@ export interface Rule {
   prompt: string;
 }
 
-export type PreprocessModule = 'historical' | 'rephrase' | 'pre_conditional';
+export type PreprocessModule = 'historical' | 'rephrase' | 'pre_conditional' | 'preprocess_alinia';
 export type ContextModule =
   | InternetProviderType
   | 'sql'
@@ -88,7 +88,7 @@ export type ContextModule =
   | 'restricted'
   | 'sparql';
 export type GenerationModule = 'summarize' | 'generate';
-export type PostprocessModule = 'restart' | 'remi' | 'external' | 'post_conditional';
+export type PostprocessModule = 'restart' | 'remi' | 'external' | 'post_conditional' | 'postprocess_alinia';
 
 export interface BaseAgent {
   module: PreprocessModule | ContextModule | GenerationModule | PostprocessModule;
@@ -130,7 +130,7 @@ export interface PostprocessAgent extends BaseAgent {
   id: string;
   module: PostprocessModule;
 }
-export type PreprocessAgentCreation = HistoricalAgentCreation | RephraseAgentCreation;
+export type PreprocessAgentCreation = HistoricalAgentCreation | RephraseAgentCreation | PreprocessAliniaCreation;
 export type ContextAgentCreation =
   | SqlAgentCreation
   | TavilyAgentCreation
@@ -144,7 +144,11 @@ export type ContextAgentCreation =
   | GoogleAgentCreation
   | SparqlAgentCreation;
 export type GenerationAgentCreation = SummarizeAgentCreation | GenerateAgentCreation;
-export type PostprocessAgentCreation = RestartAgentCreation | RemiAgentCreation | ExternalAgentCreation;
+export type PostprocessAgentCreation =
+  | RestartAgentCreation
+  | RemiAgentCreation
+  | ExternalAgentCreation
+  | PostprocessAliniaCreation;
 
 export interface HistoricalAgentCreation {
   module: 'historical';
@@ -311,6 +315,25 @@ export interface ExternalAgentCreation {
   context: boolean;
 }
 
+export type GuardrailsPreconfig = 'INAPPROPRIATE' | 'COMPLIANCE' | 'FINANCIAL_COMPLIANT' | 'CUSTOM';
+export interface BaseAliniaAgentCreation {
+  preconfig: GuardrailsPreconfig;
+  metadata: {
+    user_id: string | number | null;
+    environment: string | null;
+  } | null;
+  detection_config: object | null;
+}
+
+export interface PreprocessAliniaCreation extends BaseAliniaAgentCreation {
+  module: 'preprocess_alinia';
+  preconfig: 'INAPPROPRIATE' | 'CUSTOM';
+}
+export interface PostprocessAliniaCreation extends BaseAliniaAgentCreation {
+  module: 'postprocess_alinia';
+  preconfig: GuardrailsPreconfig;
+}
+
 export interface HistoricalAgent extends PreprocessAgent, HistoricalAgentCreation {
   module: 'historical';
 }
@@ -372,4 +395,10 @@ export interface RemiAgent extends PostprocessAgent, RemiAgentCreation {
 }
 export interface ExternalAgent extends PostprocessAgent, ExternalAgentCreation {
   module: 'external';
+}
+export interface PreprocessAliniaAgent extends PreprocessAgent, PreprocessAliniaCreation {
+  module: 'preprocess_alinia';
+}
+export interface PostprocessAliniaAgent extends PostprocessAgent, PostprocessAliniaCreation {
+  module: 'postprocess_alinia';
 }

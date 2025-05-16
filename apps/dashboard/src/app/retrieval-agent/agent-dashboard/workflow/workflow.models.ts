@@ -2,6 +2,7 @@ import { ComponentRef } from '@angular/core';
 import {
   AskAgent,
   AskAgentCreation,
+  BaseAliniaAgentCreation,
   BaseContextAgent,
   BaseGenerationAgent,
   BasePostprocessAgent,
@@ -14,10 +15,15 @@ import {
   GenerationAgentCreation,
   GoogleAgent,
   GoogleAgentCreation,
+  GuardrailsProviderType,
   InternetProviderType,
   PerplexityAgent,
   PerplexityAgentCreation,
+  PostprocessAliniaAgent as PostAliniaAgent,
+  PostprocessAliniaCreation as PostAliniaCreation,
   PostprocessAgentCreation,
+  PreprocessAliniaAgent as PreAliniaAgent,
+  PreprocessAliniaCreation as PreAliniaCreation,
   PreprocessAgentCreation,
   RephraseAgent,
   RephraseAgentCreation,
@@ -39,6 +45,7 @@ export type NodeType =
   | 'historical'
   | 'rephrase'
   | 'pre_conditional'
+  | 'preprocess_alinia'
   | 'context_conditional'
   | 'ask'
   | 'internet'
@@ -51,7 +58,8 @@ export type NodeType =
   | 'post_conditional'
   | 'remi'
   | 'external'
-  | 'restart';
+  | 'restart'
+  | 'postprocess_alinia';
 
 const INTERNET_PROVIDERS: InternetProviderType[] = ['brave', 'perplexity', 'tavily', 'google'];
 export type InternetProvider = (typeof INTERNET_PROVIDERS)[number];
@@ -84,10 +92,10 @@ export interface ParentNode {
 }
 
 export const NODES_BY_ENTRY_TYPE: { [entry: string]: NodeType[] } = {
-  preprocess: ['historical', 'rephrase', 'pre_conditional'],
+  preprocess: ['historical', 'rephrase', 'pre_conditional', 'preprocess_alinia'],
   context: ['context_conditional', 'ask', 'internet', 'sql', 'cypher', 'restricted', 'mcp'],
   generation: ['summarize', 'generate'],
-  postprocess: ['restart', 'post_conditional', 'remi', 'external'],
+  postprocess: ['restart', 'post_conditional', 'remi', 'external', 'postprocess_alinia'],
 };
 
 export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
@@ -107,6 +115,8 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
   remi: 'validation',
   external: 'globe',
   mcp: 'file',
+  preprocess_alinia: 'shield-check',
+  postprocess_alinia: 'shield-check',
 };
 
 export interface CommonAgentConfig {
@@ -127,7 +137,8 @@ export type NodeConfig =
   | SummarizeAgentUI
   | PostConditionalAgentUI
   | RestartAgentUI
-  | ExternalAgentUI;
+  | ExternalAgentUI
+  | GuardrailsAgentUI;
 
 export interface HistoricalAgentUI extends CommonAgentConfig {
   all: boolean;
@@ -146,6 +157,12 @@ export interface InternetAgentUI extends CommonAgentConfig {
   provider: InternetProviderType;
   brave: Omit<CommonAgentConfig, 'rules'> & Omit<BraveAgentCreation, 'module'>;
   perplexity: Omit<CommonAgentConfig, 'rules'> & Omit<PerplexityAgentCreation, 'module'>;
+}
+
+export interface GuardrailsAgentUI extends CommonAgentConfig {
+  provider: GuardrailsProviderType;
+  category: 'preprocess' | 'postprocess';
+  alinia: Omit<CommonAgentConfig, 'rules'> & Omit<BaseAliniaAgentCreation, 'module'>;
 }
 
 export interface SqlAgentUI extends CommonAgentConfig {
@@ -222,6 +239,7 @@ export interface SummarizeAgentUI extends CommonAgentConfig {
 }
 export interface GenerateAgentUI extends CommonAgentConfig {
   prompt: string;
+  images?: boolean;
   generate_image?: boolean;
 }
 
@@ -336,6 +354,44 @@ export function externalAgentToUi(agent: ExternalAgent): ExternalAgentUI {
     call_obj: JSON.stringify(call_obj),
   };
 }
+
+export type GuardrailsAgentCreation = PreAliniaCreation | PostAliniaCreation;
+export type GuardrailsAgent = PreAliniaAgent | PostAliniaAgent;
+export function guardrailsUiToCreation(config: GuardrailsAgentUI): GuardrailsAgentCreation {
+  const baseConfig = {
+    rules: config.rules,
+  };
+  switch (config.category) {
+    case 'preprocess':
+      const preconfig = config.alinia.preconfig;
+      if (!(preconfig === 'INAPPROPRIATE' || preconfig === 'CUSTOM')) {
+        throw new Error(`Guardrails preconfig ${preconfig} is not allowed for preprocess ${config.provider} agent.`);
+      }
+      return {
+        module: 'preprocess_alinia',
+        ...baseConfig,
+        ...config.alinia,
+        preconfig,
+      };
+    case 'postprocess':
+      return {
+        module: 'postprocess_alinia',
+        ...baseConfig,
+        ...config.alinia,
+      };
+  }
+}
+export function guardrailsAgentToUi(agent: GuardrailsAgent): GuardrailsAgentUI {
+  return {
+    provider: 'alinia', // For now alinia is the only provider available
+    category: agent.module.startsWith('preprocess') ? 'preprocess' : 'postprocess',
+    rules: agent.rules || null,
+    alinia: {
+      ...agent,
+    },
+  };
+}
+
 export type InternetAgentCreation =
   | BraveAgentCreation
   | PerplexityAgentCreation
@@ -398,6 +454,9 @@ export function getAgentFromConfig(
       return askUiToCreation(config);
     case 'external':
       return externalUiToCreation(config);
+    case 'preprocess_alinia':
+    case 'postprocess_alinia':
+      return guardrailsUiToCreation(config);
     case 'historical':
     case 'cypher':
     case 'pre_conditional':
@@ -430,6 +489,9 @@ export function getConfigFromAgent(
       return askAgentToUi(agent as AskAgent);
     case 'external':
       return externalAgentToUi(agent as ExternalAgent);
+    case 'preprocess_alinia':
+    case 'postprocess_alinia':
+      return guardrailsAgentToUi(agent as GuardrailsAgent);
     case 'historical':
     case 'cypher':
     case 'mcp':
