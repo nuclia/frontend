@@ -6,3 +6,10 @@ $height-sidebar-header: rhythm(4);
 $padding-sidebar: rhythm(3);
 $width-sidebar: rhythm(45);
 $width-sidebar-large: rhythm(80);
+
+@mixin form-label() {
+  color: $color-neutral-regular;
+  font-size: font-size(s);
+  font-weight: $font-weight-semi-bold;
+  margin-bottom: rhythm(0.5);
+}

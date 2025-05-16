@@ -24,10 +24,7 @@
   }
   .form-entry > label,
   .label-and-button > label {
-    color: $color-neutral-regular;
-    font-size: font-size(s);
-    font-weight: $font-weight-semi-bold;
-    margin-bottom: rhythm(0.5);
+    @include dashboard.form-label();
   }
   .form-entry.field-list {
     display: flex;
