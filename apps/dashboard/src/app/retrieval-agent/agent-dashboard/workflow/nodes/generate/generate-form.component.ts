@@ -25,6 +25,7 @@ export class GenerateFormComponent extends FormDirective {
   override form = new FormGroup({
     summarize: new FormGroup({
       prompt: new FormControl('', { validators: Validators.required, nonNullable: true }),
+      images: new FormControl(false),
       generate_image: new FormControl(false),
       rules: new FormArray<FormControl<string>>([]),
     }),

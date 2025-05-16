@@ -93,7 +93,7 @@ export class WorkflowEffectService {
       if (selectedNode !== node.nodeRef.instance.id) {
         node.nodeRef.setInput('state', 'unsaved');
       }
-    } else if (node.isSaved) {
+    } else if (node.isSaved && node.nodeRef.instance.state() === 'unsaved') {
       node.nodeRef.setInput('state', 'default');
     }
 

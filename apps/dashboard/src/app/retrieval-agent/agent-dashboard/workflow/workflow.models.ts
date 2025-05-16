@@ -239,6 +239,7 @@ export interface SummarizeAgentUI extends CommonAgentConfig {
 }
 export interface GenerateAgentUI extends CommonAgentConfig {
   prompt: string;
+  images?: boolean;
   generate_image?: boolean;
 }
 

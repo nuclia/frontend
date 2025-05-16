@@ -58,7 +58,9 @@
             [help]="'retrieval-agents.drivers.form.nuclia.key.help' | translate"></pa-input>
         </div>
       } @else if (kb && !keepExistingKey) {
-        <nsi-info-card>{{ 'retrieval-agents.drivers.form.nuclia.key.owner-info' | translate }}</nsi-info-card>
+        <nsi-info-card icon="info">
+          {{ 'retrieval-agents.drivers.form.nuclia.key.owner-info' | translate }}
+        </nsi-info-card>
       }
     </form>
   </pa-modal-content>
