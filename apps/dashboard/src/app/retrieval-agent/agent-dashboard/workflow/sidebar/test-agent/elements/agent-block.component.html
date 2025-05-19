@@ -1,0 +1,17 @@
+<blockquote>
+  <app-chip>{{ title() | translate }}</app-chip>
+  <div class="description">{{ description() | translate }}</div>
+
+  @for (item of config(); track item) {
+    <div class="config">
+      @if (item.title) {
+        <span>{{ item.title }}:</span>
+      }
+      <span>{{ item.content }}</span>
+    </div>
+  }
+
+  @if (formattedCost()) {
+    <div class="cost">{{ formattedCost() }}</div>
+  }
+</blockquote>

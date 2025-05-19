@@ -102,8 +102,8 @@
       padding-right: dashboard.$padding-sidebar;
 
       &.no-form {
-        padding-bottom: rhythm(2);
-        padding-top: rhythm(2);
+        padding-bottom: dashboard.$padding-sidebar-content;
+        padding-top: dashboard.$padding-sidebar-content;
       }
 
       > .section-title {

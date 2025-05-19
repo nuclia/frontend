@@ -28,7 +28,6 @@ import { ConfigurationFormComponent } from '../../basic-elements';
     TranslateModule,
   ],
   templateUrl: './rules-panel.component.html',
-  styleUrl: './rules-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RulesPanelComponent implements OnInit, OnDestroy {

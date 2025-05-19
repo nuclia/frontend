@@ -17,6 +17,40 @@
   </pa-button>
 
   @if (runningTest()) {
+    @if (runningQuestion()) {
+      <div class="block-separator"></div>
+      <div class="interactions">
+        <section class="category-section">
+          <app-chip fill>User input</app-chip>
+          <blockquote class="user-input">
+            {{ runningQuestion() }}
+          </blockquote>
+        </section>
+
+        <section class="category-section">
+          <app-chip fill>Preprocess</app-chip>
+          <app-agent-block
+            nodeType="rephrase"
+            [config]="[
+              { content: 'Rebranding and obsolete naming', title: 'Source' },
+              { content: 'Rephrase the query using the proper naming', title: 'Prompt' }
+            ]"
+            [cost]="{ timing: 2221, tokens: 126 }"></app-agent-block>
+        </section>
+
+        <section class="category-section">
+          <app-chip fill>Context retrieval</app-chip>
+          <app-agent-block
+            nodeType="context_conditional"
+            [config]="[
+              { content: 'If the question is about a product', title: 'Prompt' },
+              { content: 'Condition true' }
+            ]"
+            [cost]="{ timing: 325, tokens: 142 }"></app-agent-block>
+        </section>
+      </div>
+    }
+
     <footer>
       <pa-button
         aspect="basic"

@@ -62,6 +62,7 @@ const testAgent = signal<{
 });
 
 export const testAgentRunning = computed(() => testAgent().running);
+export const testAgentQuestion = computed(() => testAgent().question);
 
 export function runTest(question: string) {
   testAgent.update((state) => ({ ...state, question, running: true }));

@@ -3,20 +3,54 @@
 
 .test-panel {
   $footer-height: rhythm(4);
+  $footer-padding-top: rhythm(1.5);
+  $footer-padding-bottom: rhythm(3);
 
   display: flex;
   flex-direction: column;
   gap: rhythm(1.5);
+  height: calc(
+    #{dashboard.$height-main} - #{dashboard.$padding-sidebar} * 2 - #{dashboard.$padding-sidebar-content} - #{dashboard.$height-sidebar-header} -
+      #{$footer-height} - #{$footer-padding-top} - #{$footer-padding-bottom}
+  );
 
   .form-entry > label {
     @include dashboard.form-label();
+  }
+
+  .block-separator {
+    border-top: 1px solid $color-neutral-lighter;
+  }
+
+  .interactions {
+    display: flex;
+    flex-direction: column;
+    font-family: $font-family-monospace;
+    gap: rhythm(2.5);
+
+    .category-section {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1.5);
+
+      blockquote {
+        border-left: 1px solid $color-neutral-light;
+        font-size: 0.6875rem; // 11px is not in sistema typography but 10px is too small here, so following Vincent’s design we used a custom font-size value here
+        margin: 0;
+        padding-left: rhythm(1);
+        &.user-input,
+        > .config {
+          color: $color-neutral-regular;
+        }
+      }
+    }
   }
 
   footer {
     background-color: $color-light-stronger;
     bottom: 0;
     left: 0;
-    padding: rhythm(1.5) rhythm(3) rhythm(3);
+    padding: $footer-padding-top rhythm(3) $footer-padding-bottom;
     position: absolute;
     width: 100%;
     z-index: 1;
