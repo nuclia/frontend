@@ -1,4 +1,11 @@
-# 1.26.1 (unreleased)
+# 1.27.0 (unreleased)
+
+### Feature
+
+- Support communication through WebSockets with new methods in `Rest`:
+  - openWebSocket: open a WebSocket connection and returns an Observable streaming the messages received
+  - closeWebSocket: close the WebSocket connection
+  - send: send a message to a WebSocket previously opened
 
 ### Improvements
 

@@ -7,12 +7,15 @@ import {
   ContextAgentCreation,
   GenerationAgent,
   GenerationAgentCreation,
+  InteractionOperation,
   IRetrievalAgent,
   PostprocessAgent,
   PostprocessAgentCreation,
   PreprocessAgent,
   PreprocessAgentCreation,
   Rule,
+  SessionCreation,
+  SessionCreationResponse,
   SessionList,
   SessionProperties,
 } from './retrieval-agent.models';
@@ -66,6 +69,66 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     return this.listResources(page, size).pipe(
       map((resourceList) => ({ sessions: resourceList.resources, pagignation: resourceList.pagination })),
     );
+  }
+
+  /**
+   * Create sessions on the retrieval agent
+   * @param session
+   * @returns
+   */
+  createSession(session: SessionCreation): Observable<SessionCreationResponse> {
+    return this.nuclia.rest.post<SessionCreationResponse>(`${this.path}/sessions`, session);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private interactionStream?: Observable<any>;
+
+  private getWsPath(sessionId: string): string {
+    return `${this.path}/sessions/${sessionId}/ws`;
+  }
+
+  /**
+   * Open a WebSocket for the session interactions if needed and return the corresponding interaction stream observable.
+   * @param sessionId Session identifier
+   * @returns
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  listenSessionInteractions(sessionId: string): Observable<any> {
+    const path = this.getWsPath(sessionId);
+    if (!this.interactionStream) {
+      this.interactionStream = this.nuclia.rest.openWebSocket(path);
+    }
+    return this.interactionStream;
+  }
+
+  /**
+   * Interact with the session by sending a question or quit operation
+   * @param sessionId Session identifier
+   * @param question Question to send to the agent
+   * @param operation Operation: question (0) or quit (1)
+   * @returns
+   */
+  interactWithSession(sessionId: string, question: string, operation: InteractionOperation) {
+    const path = this.getWsPath(sessionId);
+    if (!this.interactionStream) {
+      this.interactionStream = this.nuclia.rest.openWebSocket(path);
+    }
+
+    this.nuclia.rest.send(path, {
+      question,
+      operation,
+    });
+    if (operation === InteractionOperation.quit) {
+      this.nuclia.rest.closeWebSocket(path);
+    }
+  }
+
+  /**
+   * Reset the session interaction.
+   */
+  resetSessionInteraction(sessionId: string) {
+    this.interactWithSession(sessionId, '', InteractionOperation.quit);
+    this.interactionStream = undefined;
   }
 
   /**
