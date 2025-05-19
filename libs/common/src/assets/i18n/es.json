@@ -1375,6 +1375,8 @@
 	"search.configuration.current-config-title": "Configuración actual",
 	"search.configuration.delete-config-confirm.description": "Esta acción no se puede deshacer. Al eliminar la configuración se borrará su registro en el desplegable de configuraciones guardadas.",
 	"search.configuration.delete-config-confirm.title": "Borrar {{configName}} ?",
+	"search.configuration.find-resource-modal.title": "Buscar recurso por título",
+	"search.configuration.generative-answer.ask-resource.assistant-button-label": "Usar asistente",
 	"search.configuration.generative-answer.ask-resource.input-label": "Slug de recursos",
 	"search.configuration.generative-answer.ask-resource.pattern-error": "Un slug sólo contiene caracteres alfanuméricos, guiones y guiones bajos.",
 	"search.configuration.generative-answer.ask-resource.toggle-description": "La respuesta generativa utilizará el texto completo de este recurso específico como contexto en lugar de los resultados de búsqueda que coincidan con la consulta. Nota: si el contenido del texto del recurso es demasiado largo, es posible que se acorte cuando se pase al LLM.",

@@ -1375,6 +1375,8 @@
 	"search.configuration.current-config-title": "Configuració actual",
 	"search.configuration.delete-config-confirm.description": "Aquesta acció no es pot desfer. Si suprimiu la configuració, se suprimirà el seu registre al menú desplegable de configuració desada.",
 	"search.configuration.delete-config-confirm.title": "Vols suprimir {{configName}} ?",
+	"search.configuration.find-resource-modal.title": "Cerca recursos per títol",
+	"search.configuration.generative-answer.ask-resource.assistant-button-label": "Utilitzar assistent",
 	"search.configuration.generative-answer.ask-resource.input-label": "Slug del recurs",
 	"search.configuration.generative-answer.ask-resource.pattern-error": "Un slug només conté caràcters alfanumèrics, guions i guions baixos.",
 	"search.configuration.generative-answer.ask-resource.toggle-description": "La resposta generativa utilitzarà tot el text d’aquest recurs específic com a context en lloc dels resultats de la cerca que coincideixen amb la consulta. Nota: si el contingut del text del recurs és massa llarg, es pot escurçar quan es passa al LLM.",

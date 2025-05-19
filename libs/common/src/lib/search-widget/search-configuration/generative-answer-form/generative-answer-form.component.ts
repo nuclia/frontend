@@ -1,5 +1,4 @@
 import {
-  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -12,26 +11,26 @@ import {
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { MODELS_SUPPORTING_VISION } from '../../search-widget.models';
-import { takeUntil, tap } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { OptionModel, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
+import { BadgeComponent, ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { FeaturesService, UnauthorizedFeatureDirective } from '@flaps/core';
-import { RouterLink } from '@angular/router';
 import { RAG_METADATAS, Widget } from '@nuclia/core';
+import { FindResourceModalComponent } from '../find-resource-modal';
 
 @Component({
   selector: 'stf-generative-answer-form',
   imports: [
     CommonModule,
+    PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,
     ReactiveFormsModule,
     TranslateModule,
     InfoCardComponent,
     UnauthorizedFeatureDirective,
-    RouterLink,
     PaTextFieldModule,
     BadgeComponent,
     ExpandableTextareaComponent,
@@ -43,6 +42,7 @@ import { RAG_METADATAS, Widget } from '@nuclia/core';
 export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
   private featuresService = inject(FeaturesService);
+  private modalService = inject(SisModalService);
 
   @Input() set config(value: Widget.GenerativeAnswerConfig | undefined) {
     if (value) {
@@ -223,5 +223,14 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       this.includeParagraphImagesControl.enable();
     }
     this.heightChanged.emit();
+  }
+
+  searchResource() {
+    this.modalService
+      .openModal(FindResourceModalComponent)
+      .onClose.pipe(filter((resource) => resource))
+      .subscribe((resource) => {
+        this.form.controls.specificResourceSlug.patchValue(resource.slug);
+      });
   }
 }

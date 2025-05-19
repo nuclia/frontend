@@ -1375,6 +1375,8 @@
 	"search.configuration.current-config-title": "Configuration actuelle",
 	"search.configuration.delete-config-confirm.description": "Cette action ne peut pas être annulée. La suppression de la configuration effacera son enregistrement dans la liste déroulante des configurations sauvegardées.",
 	"search.configuration.delete-config-confirm.title": "Supprimer {{configName}} ?",
+	"search.configuration.find-resource-modal.title": "Rechercher une ressource par titre",
+	"search.configuration.generative-answer.ask-resource.assistant-button-label": "Utiliser l'assistant",
 	"search.configuration.generative-answer.ask-resource.input-label": "Slug de la ressource",
 	"search.configuration.generative-answer.ask-resource.pattern-error": "Un slug ne contient que des caractères alphanumériques, des tirets et des traits de soulignement.",
 	"search.configuration.generative-answer.ask-resource.toggle-description": "La réponse générative utilisera l’intégralité du texte de cette ressource spécifique comme contexte au lieu des résultats de recherche correspondant à la requête. Remarque : si le contenu du texte de la ressource est trop long, il peut être raccourci lorsqu’il est transmis au LLM.",
