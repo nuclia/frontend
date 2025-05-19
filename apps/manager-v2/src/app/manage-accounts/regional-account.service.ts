@@ -59,9 +59,13 @@ export class RegionalAccountService {
                         }&var-container=All&var-service=All&var-trace_min_duration=0s&from=now-12h&to=now`,
                       },
                     })),
+                    catchError(() => {
+                      console.error(`Loading KB ${index.kb_id} failed`);
+                      return of(undefined);
+                    }),
                   );
               }),
-            ),
+            ).pipe(map((kbs) => kbs.filter((kb) => !!kb) as KbSummary[])),
       ),
     );
   }
