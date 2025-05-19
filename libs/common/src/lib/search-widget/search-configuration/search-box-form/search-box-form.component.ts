@@ -100,6 +100,8 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     rrfSemanticBoosting: new FormControl<number>(1, { nonNullable: true }),
     vectorset: new FormControl<string>('', { nonNullable: true }),
     useSearchResults: new FormControl<boolean>(true, { nonNullable: true }),
+    limitParagraphs: new FormControl<boolean>(false, { nonNullable: true }),
+    paragraphsLimit: new FormControl<number | null>(null),
   });
 
   synonymsEnabled = this.featuresService.unstable.synonyms;
@@ -136,6 +138,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   }
   get useRephrasePromptEnabled() {
     return this.form.controls.useRephrasePrompt.value;
+  }
+  get limitParagraphsEnabled() {
+    return this.form.controls.limitParagraphs.value;
   }
   get rrfBoostingEnabled() {
     return this.form.controls.rrfBoosting.value;
