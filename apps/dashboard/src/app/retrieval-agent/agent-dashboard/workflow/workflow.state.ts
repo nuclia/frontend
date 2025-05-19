@@ -368,7 +368,7 @@ export function updateNode(id: string, nodeCategory: NodeCategory, partialNode: 
 export function updateParentAndChild(
   nodeCategory: NodeCategory,
   parent: { id: string; partialNode: Partial<ParentNode> },
-  children: { id: string; childIndex: number }[],
+  children: { id: string; childIndex?: number }[],
 ) {
   children.forEach((child) => {
     const childNode = childNodes()[child.id];
