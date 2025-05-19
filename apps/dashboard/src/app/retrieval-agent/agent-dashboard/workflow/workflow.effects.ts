@@ -38,10 +38,14 @@ export class WorkflowEffectService {
   private translate = inject(TranslateService);
 
   initEffect() {
+    const LOGS_ENABLED = false;
     if (!nodeInitialisationDone()) {
       return;
     }
     const workflowState = workflow();
+    if (LOGS_ENABLED) {
+      console.debug(`Effect:\n    Workflow state`, workflowState);
+    }
 
     // First checks for updates on children, as those changes may trigger updates on the parent
     let requests: { request: Observable<void>; nodeId: string; log: string }[] = [];
@@ -57,7 +61,14 @@ export class WorkflowEffectService {
     workflowState.postprocess.forEach((node) => this.checkNodeAndUpdateRequests(node, requests));
 
     if (requests.length > 0) {
-      forkJoin(requests.map((item) => item.request)).subscribe();
+      forkJoin(
+        requests.map((item) => {
+          if (LOGS_ENABLED) {
+            console.debug(item.log);
+          }
+          return item.request;
+        }),
+      ).subscribe();
     }
 
     // Check if there is a node to be deleted from the backend
@@ -194,21 +205,20 @@ export class WorkflowEffectService {
 
   private getFullyConfiguredRootNode(
     childNode: ParentNode,
-  ): { parentNode: ParentNode; children: { id: string; childIndex: number }[] } | undefined {
+  ): { parentNode: ParentNode; children: { id: string; childIndex?: number }[] } | undefined {
     if (!childNode.parentId) {
       return;
     }
     const parentNode = getNode(childNode.parentId, childNode.nodeCategory);
-    let updatedChildren: { id: string; childIndex: number }[] = [];
+    let updatedChildren: { id: string; childIndex?: number }[] = [];
     if (!parentNode || !parentNode.nodeConfig) {
       return;
     }
     const childId = childNode.nodeRef.instance.id;
     if (parentNode.fallback === childId) {
-      (parentNode.nodeConfig as AskAgentUI).fallback = getAgentFromConfig(
-        childNode.nodeType,
-        childNode.nodeConfig,
-      ) as BaseContextAgent;
+      const childConfig = getAgentFromConfig(childNode.nodeType, childNode.nodeConfig) as BaseContextAgent;
+      (parentNode.nodeConfig as AskAgentUI).fallback = childConfig;
+      updatedChildren.push({ id: childId });
     } else if (parentNode.then || parentNode.else) {
       if ((parentNode.then || []).includes(childId)) {
         updatedChildren.push(this.updateConditionalChildrenConfig(parentNode, childNode, 'then'));
