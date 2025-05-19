@@ -132,14 +132,18 @@ export class LabelingConfigurationComponent implements OnInit, OnDestroy {
   initForm(task: DataAugmentationTaskOnGoing) {
     const labelOperation = task.parameters?.operations?.find((operation) => operation.label)?.label;
     if (labelOperation) {
+      const { labels, ...rest } = labelOperation;
+      this.labelingForm.patchValue({
+        ...rest,
+        on: task.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks',
+      });
       this.labelingForm.controls.labels.clear();
       labelOperation.labels?.forEach(() => {
         this.addLabel();
       });
-      this.labelingForm.patchValue({
-        ...labelOperation,
-        on: task.parameters.on === TaskApplyTo.FULL_FIELD ? 'resources' : 'text-blocks',
-      });
+      if (labels) {
+        this.labelingForm.controls.labels.patchValue(labels);
+      }
     }
     this.cdr.markForCheck();
   }
