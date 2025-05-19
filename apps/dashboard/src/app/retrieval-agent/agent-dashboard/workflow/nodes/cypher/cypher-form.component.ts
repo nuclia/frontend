@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { NavigationService, SDKService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoCardComponent } from '@nuclia/sistema';
-import { forkJoin, map, switchMap, take } from 'rxjs';
+import { map, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective } from '../../basic-elements';
 import { CypherAgentUI } from '../../workflow.models';
+import { aragUrl } from '../../workflow.state';
 
 @Component({
   selector: 'app-cypher-form',
@@ -28,7 +29,6 @@ import { CypherAgentUI } from '../../workflow.models';
 })
 export class CypherFormComponent extends FormDirective implements OnInit {
   private sdk = inject(SDKService);
-  private navigationService = inject(NavigationService);
 
   override form = new FormGroup({
     cypher: new FormGroup({
@@ -50,17 +50,13 @@ export class CypherFormComponent extends FormDirective implements OnInit {
     return this.configForm.controls.include_types;
   }
 
-  aragUrl = signal('');
   sourceOptions = signal<OptionModel[] | null>(null);
-  driversPath = computed(() => `${this.aragUrl()}/drivers`);
+  driversPath = computed(() => `${aragUrl()}/drivers`);
 
   ngOnInit(): void {
-    forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentArag.pipe(take(1))])
+    this.sdk.currentArag
       .pipe(
-        map(([account, arag]) => {
-          this.aragUrl.set(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
-          return arag;
-        }),
+        take(1),
         switchMap((arag) => arag.getDrivers('cypher')),
         map((drivers) =>
           drivers.map((driver) => new OptionModel({ id: driver.id, label: driver.name, value: driver.id })),

@@ -3,6 +3,15 @@ import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 import { AskAgentUI, NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
 
 /**
+ * Global state
+ */
+const _aragUrl = signal('');
+export function setAragUrl(url: string) {
+  _aragUrl.set(url);
+}
+export const aragUrl = computed(() => _aragUrl());
+
+/**
  * Sidebar state
  */
 const sidebar = signal<{

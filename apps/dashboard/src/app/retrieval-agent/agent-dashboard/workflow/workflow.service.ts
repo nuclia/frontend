@@ -8,7 +8,7 @@ import {
   Renderer2,
   RendererFactory2,
 } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -24,7 +24,7 @@ import {
   PreprocessAgent,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { catchError, filter, forkJoin, of, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, filter, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import {
   ConnectableEntryComponent,
   FormDirective,
@@ -87,6 +87,7 @@ import {
   resetSidebar,
   selectNode,
   setActiveSidebar,
+  setAragUrl,
   setCurrentOrigin,
   setOpenSidebar,
   setSidebarHeader,
@@ -105,6 +106,7 @@ export class WorkflowService {
   private sdk = inject(SDKService);
   private toaster = inject(SisToastService);
   private translate = inject(TranslateService);
+  private navigationService = inject(NavigationService);
   private linkService = inject(LinkService);
   private modalService = inject(ModalService);
   private applicationRef = inject(ApplicationRef);
@@ -147,8 +149,12 @@ export class WorkflowService {
    */
   initAndUpdateWorkflow(root: WorkflowRoot) {
     this.workflowRoot = root;
-    return this.sdk.currentArag.pipe(
-      tap(() => nodeInitialisationDone.set(false)),
+    return combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
+      map(([account, arag]) => {
+        nodeInitialisationDone.set(false);
+        setAragUrl(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
+        return arag;
+      }),
       switchMap((arag) =>
         forkJoin([
           arag.getPreprocess().pipe(

@@ -2,14 +2,15 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { NavigationService, SDKService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Driver, McpSseDriver, McpStdioDriver } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { forkJoin, map, switchMap, take } from 'rxjs';
+import { switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { McpAgentUI } from '../../workflow.models';
+import { aragUrl } from '../../workflow.state';
 
 @Component({
   selector: 'app-mcp-form',
@@ -30,7 +31,6 @@ import { McpAgentUI } from '../../workflow.models';
 export class McpFormComponent extends FormDirective implements OnInit {
   private sdk = inject(SDKService);
   private toaster = inject(SisToastService);
-  private navigationService = inject(NavigationService);
 
   override form = new FormGroup({
     mcp: new FormGroup({
@@ -49,9 +49,8 @@ export class McpFormComponent extends FormDirective implements OnInit {
 
   private drivers = signal<Driver[]>([]);
   private transport = signal<'SSE' | 'STDIO' | ''>('');
-  private aragUrl = signal('');
 
-  driversPath = computed(() => `${this.aragUrl()}/drivers`);
+  driversPath = computed(() => `${aragUrl()}/drivers`);
   mcpList = computed<(McpSseDriver | McpStdioDriver)[]>(() => {
     switch (this.transport()) {
       case 'SSE':
@@ -66,12 +65,9 @@ export class McpFormComponent extends FormDirective implements OnInit {
   noStdioDriver = signal(false);
 
   ngOnInit(): void {
-    forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentArag.pipe(take(1))])
+    this.sdk.currentArag
       .pipe(
-        map(([account, arag]) => {
-          this.aragUrl.set(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
-          return arag;
-        }),
+        take(1),
         switchMap((arag) => arag.getDrivers()),
       )
       .subscribe({
