@@ -97,6 +97,15 @@
       }
     </div>
   </section>
+  <section>
+    <div class="title-l">{{ 'kb.metrics.download.title' | translate }}</div>
+    <nsi-info-card>
+      {{ 'kb.metrics.download.description' | translate }}
+      <a [routerLink]="(kbUrl | async) + '/activity/download'">
+        {{ 'navbar.activity' | translate }}
+      </a>
+    </nsi-info-card>
+  </section>
   <section
     class="missing-knowledge"
     [style]="missingKnowledgeHeaderHeight">

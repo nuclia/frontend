@@ -658,6 +658,8 @@
 	"kb.metrics.definition.answer-relevance": "Pertinence de la réponse générée par rapport à la requête de l’utilisateur.",
 	"kb.metrics.definition.context-relevance": "Pertinence du contexte extrait par rapport à la requête de l’utilisateur.",
 	"kb.metrics.definition.groundedness": "Mesure à quel point la réponse s’appuie sur le contexte.",
+	"kb.metrics.download.description": "Vous pouvez télécharger des métriques détaillées pour chaque question dans le",
+	"kb.metrics.download.title": "Télécharger les métriques",
 	"kb.metrics.error.evolution-not-loaded": "Un problème s’est produit lors du chargement des données sur l’évolution des performances, veuillez réessayer plus tard.",
 	"kb.metrics.error.health-status-not-loaded": "Un problème s’est produit lors du chargement de l’état de santé, veuillez réessayer plus tard.",
 	"kb.metrics.error.missing-knowledge-not-loaded": "Un problème s’est produit lors du chargement des connaissances manquantes, veuillez réessayer plus tard.",
