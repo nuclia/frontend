@@ -11,6 +11,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   AccordionBodyDirective,
@@ -47,6 +48,7 @@ import { DateAfter } from '../validators';
 import { MissingKnowledgeDetailsComponent } from './missing-knowledge-details/missing-knowledge-details.component';
 import { PreviewService } from '../resources';
 import { SafeHtml } from '@angular/platform-browser';
+import { NavigationService } from '@flaps/core';
 
 @Component({
   imports: [
@@ -67,6 +69,7 @@ import { SafeHtml } from '@angular/platform-browser';
     AccordionExtraDescriptionDirective,
     MissingKnowledgeDetailsComponent,
     PaButtonModule,
+    RouterModule,
   ],
   templateUrl: './metrics-page.component.html',
   styleUrl: './metrics-page.component.scss',
@@ -75,6 +78,7 @@ import { SafeHtml } from '@angular/platform-browser';
 export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   private remiMetrics = inject(RemiMetricsService);
   private previewService = inject(PreviewService);
+  private navigationService = inject(NavigationService);
   private cdr = inject(ChangeDetectorRef);
 
   private unsubscribeAll: Subject<void> = new Subject();
@@ -134,6 +138,7 @@ export class MetricsPageComponent implements AfterViewInit, OnInit, OnDestroy {
   badFeedbackLoading: Observable<boolean> = this.remiMetrics.badFeedbackLoading;
 
   viewerWidget: Observable<SafeHtml> = this.previewService.viewerWidget.pipe(takeUntil(this.unsubscribeAll));
+  kbUrl = this.navigationService.kbUrl;
 
   get lowContextMonthControl() {
     return this.lowContextCriteria.controls.month;

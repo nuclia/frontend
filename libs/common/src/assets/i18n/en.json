@@ -658,6 +658,8 @@
 	"kb.metrics.definition.answer-relevance": "Relevance of the generated answer to the user query.",
 	"kb.metrics.definition.context-relevance": "Relevance of the retrieved context to the user query.",
 	"kb.metrics.definition.groundedness": "Measures the extent to which the response is based on the context.",
+	"kb.metrics.download.description": "You can download detailed metrics for each question in the",
+	"kb.metrics.download.title": "Download metrics",
 	"kb.metrics.error.evolution-not-loaded": "Something went wrong while loading the performance evolution data, please try again later.",
 	"kb.metrics.error.health-status-not-loaded": "Something went wrong while loading the health status, please try again later.",
 	"kb.metrics.error.missing-knowledge-not-loaded": "Something went wrong while loading the missing knowledge, please try again later.",
