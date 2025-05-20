@@ -118,8 +118,21 @@
       @if (standalone || (canAddKb | async) === true) {
         <pa-button
           data-cy="create-kb-button"
+          aspect="basic"
+          icon="knowledge-box"
+          iconAndText
           (click)="createKb()">
           {{ 'kb.create.title' | translate }}
+        </pa-button>
+      }
+      @if ((canAddArag | async) === true) {
+        <pa-button
+          data-cy="create-arag-button"
+          aspect="basic"
+          icon="workflows"
+          iconAndText=""
+          (click)="createArag()">
+          {{ 'select.arag-create-button' | translate }}
         </pa-button>
       }
     </div>

@@ -80,6 +80,16 @@
             </pa-table-row>
           }
         </pa-table>
+
+        <nsi-sticky-footer>
+          @if (retrievalAgents.length > 0 && maxRetrievalAgents !== -1) {
+            <div
+              footerNote
+              class="account-kbs-counter">
+              {{ 'account.kb.count' | translate: { count: retrievalAgents.length, max: maxRetrievalAgents } }}
+            </div>
+          }
+        </nsi-sticky-footer>
       }
     </div>
   </div>
