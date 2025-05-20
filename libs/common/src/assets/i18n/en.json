@@ -1414,6 +1414,8 @@
 	"search.configuration.current-config-title": "Current configuration",
 	"search.configuration.delete-config-confirm.description": "This action cannot be undone. Deleting the configuration will delete its record in the saved configuration dropdown.",
 	"search.configuration.delete-config-confirm.title": "Delete {{configName}} ?",
+	"search.configuration.find-resource-modal.title": "Find resource by title",
+	"search.configuration.generative-answer.ask-resource.assistant-button-label": "Use assistant",
 	"search.configuration.generative-answer.ask-resource.input-label": "Resource’s slug",
 	"search.configuration.generative-answer.ask-resource.pattern-error": "A slug contains only alphanumeric characters, dashes and underscores.",
 	"search.configuration.generative-answer.ask-resource.toggle-description": "The generative answer will use the entire text of this specific resource as context instead of the search results matching the query. Note: if the resource text content is too long, it might be shortened when passed to the LLM.",
