@@ -30,8 +30,18 @@
     align-items: center;
     display: flex;
 
-    ::ng-deep .pa-button {
+    pa-button:first-child ::ng-deep .pa-button {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: none;
+    }
+    pa-button:last-child ::ng-deep .pa-button {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    pa-button:not(:first-child):not(:last-child) ::ng-deep .pa-button {
       border-radius: 0;
+      border-right: none;
     }
   }
 }

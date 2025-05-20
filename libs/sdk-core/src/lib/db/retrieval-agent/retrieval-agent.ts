@@ -67,8 +67,21 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   }
   listSessions(page?: number, size?: number): Observable<SessionList> {
     return this.listResources(page, size).pipe(
-      map((resourceList) => ({ sessions: resourceList.resources, pagignation: resourceList.pagination })),
+      map((resourceList) => ({ sessions: resourceList.resources, pagination: resourceList.pagination })),
     );
+
+    // const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter((p) => p).join('&');
+    // return this.nuclia.rest
+    //   .get<{
+    //     resources: ISession[];
+    //     pagination: SessionPagination;
+    //   }>(`${this.path}/sessions${params ? '?' + params : ''}`)
+    //   .pipe(
+    //     map((res) => ({
+    //       sessions: res.resources.map((resource) => new Session(this.nuclia, this.id, resource)),
+    //       pagination: res.pagination as SessionPagination,
+    //     })),
+    //   );
   }
 
   /**

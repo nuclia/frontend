@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -9,12 +11,11 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaDropdownModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { RESOURCE_STATUS } from '@nuclia/core';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { ResourceListService } from '../resource-list.service';
-import { RESOURCE_STATUS } from '@nuclia/core';
 
 @Component({
   selector: 'stf-table-pagination',
@@ -45,7 +46,7 @@ export class TablePaginationComponent implements OnInit {
     return this._page;
   }
 
-  @Input({ transform: numberAttribute }) items = 0;
+  @Input({ transform: booleanAttribute }) noDownload = false;
   @Input({ transform: numberAttribute }) totalItems = 0;
   @Input({ transform: numberAttribute }) totalKbResources = 0;
   @Input({ transform: numberAttribute }) pageSize = 0;

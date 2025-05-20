@@ -19,7 +19,7 @@ export interface RetrievalAgentCreation {
 
 export interface SessionList {
   sessions: Session[];
-  pagignation: SessionPagination;
+  pagination: SessionPagination;
 }
 
 export interface SessionCreationResponse {
