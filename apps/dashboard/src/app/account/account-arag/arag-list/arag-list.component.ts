@@ -12,7 +12,13 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Account, IRetrievalAgentItem, RetrievalAgent, RetrievalAgentCreation } from '@nuclia/core';
-import { BadgeComponent, InfoCardComponent, SisProgressModule, SisToastService } from '@nuclia/sistema';
+import {
+  BadgeComponent,
+  InfoCardComponent,
+  SisProgressModule,
+  SisToastService,
+  StickyFooterComponent,
+} from '@nuclia/sistema';
 import { Subject, throwError } from 'rxjs';
 import { catchError, filter, map, switchMap, take } from 'rxjs/operators';
 import { CreateAragComponent } from '../create-arag/create-arag.component';
@@ -29,6 +35,7 @@ import { CreateAragComponent } from '../create-arag/create-arag.component';
     TranslateModule,
     PaTooltipModule,
     BadgeComponent,
+    StickyFooterComponent,
     InfoCardComponent,
   ],
   templateUrl: './arag-list.component.html',
@@ -70,6 +77,7 @@ export class AragListComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap((account) => {
           this.account = account;
+          // TODO: replace by max_arags once implemented in the backend
           this.maxRetrievalAgents = account.max_kbs;
           return this.sdk.aragList;
         }),
@@ -149,8 +157,12 @@ export class AragListComponent implements OnInit, OnDestroy {
           this.sdk.refreshAragList();
           this.setLoading(false);
         },
-        error: () => {
-          this.toaster.error('account.retrieval-agents.error.create');
+        error: (error) => {
+          const message =
+            error.status === 402
+              ? 'account.retrieval-agents.error.creation-limit'
+              : 'account.retrieval-agents.error.create';
+          this.toaster.error(message);
           this.setLoading(false);
         },
       });
