@@ -1,1 +1,126 @@
-<p>sessions-list works!</p>
+<div class="session-list page-spacing">
+  <header>
+    <div class="page-title">{{ 'retrieval-agents.session-list.title' | translate }}</div>
+    <div class="page-description">{{ 'retrieval-agents.session-list.description' | translate }}</div>
+  </header>
+
+  @if (noSessions()) {
+    <nsi-info-card icon="info">{{ 'retrieval-agents.session-list.empty' | translate }}</nsi-info-card>
+    <pa-button routerLink="..">{{ 'retrieval-agents.session-list.setup-workflow' | translate }}</pa-button>
+  } @else {
+    <div class="session-list-content">
+      <div class="search-bar">
+        <pa-input
+          class="search-input"
+          icon="search"
+          [formControl]="searchControl"
+          (enter)="triggerSearch()">
+          {{ 'stash.search' | translate }}
+        </pa-input>
+        <nsi-dropdown-button
+          freeWidth
+          aspect="basic"
+          [popupRef]="dateFilters">
+          {{ 'resource.filter.date-added' | translate }}
+          {{ selectedDates.length ? '(' + selectedDates.length + ')' : '' }}
+        </nsi-dropdown-button>
+        <pa-dropdown #dateFilters>
+          <div class="date-filters">
+            @if (dateFilters.isDisplayed) {
+              <!-- TODO: remove above condition once date pickers can be reset programmatically -->
+              <form
+                [formGroup]="dateForm"
+                (ngSubmit)="applyDates()">
+                <pa-date-picker
+                  formControlName="start"
+                  [label]="'resource.filter.from' | translate"
+                  isInPopup></pa-date-picker>
+                <pa-date-picker
+                  formControlName="end"
+                  [label]="'resource.filter.until' | translate"
+                  isInPopup></pa-date-picker>
+                <div class="date-filters-buttons">
+                  <pa-button
+                    class="full-width"
+                    aspect="basic"
+                    (click)="dateFilters.close()">
+                    {{ 'generic.cancel' | translate }}
+                  </pa-button>
+                  <pa-button
+                    type="submit"
+                    class="full-width">
+                    {{ 'resource.filter.apply' | translate }}
+                  </pa-button>
+                </div>
+              </form>
+            }
+          </div>
+        </pa-dropdown>
+      </div>
+
+      <div
+        class="table-container"
+        [style]="'--table-top-position:' + tableTopPosition()"
+        #tableContainer>
+        <pa-table [columns]="tableLayout">
+          <pa-table-sortable-header
+            noBackground
+            [cells]="headerCells"
+            (sort)="sortBy($event)"></pa-table-sortable-header>
+
+          @for (session of sessions(); track session.id) {
+            <pa-table-cell>
+              @if (session.icon | mimeIcon; as icon) {
+                <pa-icon [name]="icon"></pa-icon>
+              }
+              <div
+                class="body-s"
+                data-cy="resource-title">
+                <a
+                  [routerLink]="'./' + session.id + '/edit/preview'"
+                  (click)="onClickLink($event)">
+                  {{ session.title }}
+                </a>
+              </div>
+            </pa-table-cell>
+            <pa-table-cell>
+              <span class="body-s">{{ session.created | date: 'mediumDate' }}</span>
+            </pa-table-cell>
+            <pa-table-cell-menu>
+              <div>
+                <pa-button
+                  icon="more-vertical"
+                  data-cy="menu-button"
+                  aspect="basic"
+                  size="small"
+                  paTooltip="generic.actions"
+                  [paPopup]="menu">
+                  {{ 'generic.actions' | translate }}
+                </pa-button>
+                <pa-dropdown #menu>
+                  <pa-option
+                    destructive
+                    (selectOption)="deleteSession(session)">
+                    {{ 'generic.delete' | translate }}
+                  </pa-option>
+                </pa-dropdown>
+              </div>
+            </pa-table-cell-menu>
+          }
+        </pa-table>
+      </div>
+
+      <nsi-sticky-footer>
+        <stf-table-pagination
+          noDownload
+          [totalItems]="totalItems()"
+          [page]="page()"
+          [totalPages]="totalPages()"
+          [pageSize]="pageSize()"
+          [pageSizes]="pageSizes"
+          (pageChange)="loadPage($event)"
+          (pageSizeChange)="onPageSizeChange($event)"></stf-table-pagination>
+      </nsi-sticky-footer>
+    </div>
+  }
+</div>

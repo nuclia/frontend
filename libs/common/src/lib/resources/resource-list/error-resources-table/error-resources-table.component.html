@@ -157,7 +157,6 @@
 </div>
 <nsi-sticky-footer>
   <stf-table-pagination
-    [items]="(data | async)?.length || 0"
     [totalItems]="totalItems | async"
     [totalKbResources]="totalKbResources | async"
     [page]="page | async"

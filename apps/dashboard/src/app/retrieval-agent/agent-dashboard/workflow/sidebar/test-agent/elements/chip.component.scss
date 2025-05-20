@@ -1,0 +1,13 @@
+@use 'apps/dashboard/src/variables' as *;
+
+:host {
+  pa-chip ::ng-deep .pa-chip {
+    border-radius: 6px;
+    height: rhythm(3);
+    padding: rhythm(0.25) rhythm(1);
+
+    .pa-chip-content-wrapper {
+      font-weight: $font-weight-semi-bold;
+    }
+  }
+}

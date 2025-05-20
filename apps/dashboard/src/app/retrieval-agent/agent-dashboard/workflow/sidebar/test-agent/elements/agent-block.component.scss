@@ -1,0 +1,18 @@
+@use 'apps/dashboard/src/variables' as *;
+
+blockquote {
+  border-left: 1px solid $color-neutral-light;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.6875rem; // 11px is not in sistema typography but 10px is too small here, so following Vincent’s design we used a custom font-size value here
+  gap: rhythm(0.5);
+  margin: 0;
+  padding-left: rhythm(1);
+
+  .config {
+    color: $color-neutral-regular;
+  }
+  .cost {
+    color: $color-success-strong;
+  }
+}

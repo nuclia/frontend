@@ -63,11 +63,21 @@
     position: absolute;
     right: calc(#{dashboard.$width-sidebar} * -1);
     top: dashboard.$height-toolbar;
-    transition: right $transition-slide;
     width: dashboard.$width-sidebar;
+
+    &.large {
+      right: calc(#{dashboard.$width-sidebar-large} * -1);
+      width: dashboard.$width-sidebar-large;
+    }
 
     &.open {
       right: 0;
+    }
+    &.open,
+    &.closing {
+      transition:
+        right $transition-slide,
+        width $transition-response;
     }
 
     header {
@@ -92,8 +102,8 @@
       padding-right: dashboard.$padding-sidebar;
 
       &.no-form {
-        padding-bottom: rhythm(2);
-        padding-top: rhythm(2);
+        padding-bottom: dashboard.$padding-sidebar-content;
+        padding-top: dashboard.$padding-sidebar-content;
       }
 
       > .section-title {

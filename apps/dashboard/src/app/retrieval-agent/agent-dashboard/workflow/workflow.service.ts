@@ -8,7 +8,7 @@ import {
   Renderer2,
   RendererFactory2,
 } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { NavigationService, SDKService } from '@flaps/core';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -24,7 +24,7 @@ import {
   PreprocessAgent,
 } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { catchError, filter, forkJoin, of, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, filter, forkJoin, map, of, switchMap, tap } from 'rxjs';
 import {
   ConnectableEntryComponent,
   FormDirective,
@@ -63,7 +63,7 @@ import {
   SummarizeNodeComponent,
 } from './nodes';
 import { GuardrailsFormComponent, GuardrailsNodeComponent } from './nodes/guardrails';
-import { RulesPanelComponent } from './sidebar';
+import { RulesPanelComponent, TestPanelComponent } from './sidebar';
 import {
   getConfigFromAgent,
   getNodeTypeFromAgent,
@@ -87,6 +87,7 @@ import {
   resetSidebar,
   selectNode,
   setActiveSidebar,
+  setAragUrl,
   setCurrentOrigin,
   setOpenSidebar,
   setSidebarHeader,
@@ -105,6 +106,7 @@ export class WorkflowService {
   private sdk = inject(SDKService);
   private toaster = inject(SisToastService);
   private translate = inject(TranslateService);
+  private navigationService = inject(NavigationService);
   private linkService = inject(LinkService);
   private modalService = inject(ModalService);
   private applicationRef = inject(ApplicationRef);
@@ -147,8 +149,12 @@ export class WorkflowService {
    */
   initAndUpdateWorkflow(root: WorkflowRoot) {
     this.workflowRoot = root;
-    return this.sdk.currentArag.pipe(
-      tap(() => nodeInitialisationDone.set(false)),
+    return combineLatest([this.sdk.currentAccount, this.sdk.currentArag]).pipe(
+      map(([account, arag]) => {
+        nodeInitialisationDone.set(false);
+        setAragUrl(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
+        return arag;
+      }),
       switchMap((arag) =>
         forkJoin([
           arag.getPreprocess().pipe(
@@ -292,7 +298,7 @@ export class WorkflowService {
       throw new Error('Workflow root not initialized');
     }
     const root = this.workflowRoot;
-    this.resetState();
+    this.resetState(true);
     setActiveSidebar('add');
     const container: HTMLElement = this.openSidebarWithTitle(`retrieval-agents.workflow.sidebar.node-creation.toolbar`);
     container.classList.add('no-form');
@@ -315,7 +321,7 @@ export class WorkflowService {
     if (!this.sidebarContentWrapper) {
       return;
     }
-    this.resetState();
+    this.resetState(true);
 
     setCurrentOrigin(origin);
     const originCategory = origin.category();
@@ -447,7 +453,7 @@ export class WorkflowService {
    * Open rule sidebar
    */
   openRuleSidebar() {
-    this.resetState();
+    this.resetState(true);
     setActiveSidebar('rules');
 
     const container: HTMLElement = this.openSidebarWithTitle(
@@ -470,11 +476,31 @@ export class WorkflowService {
   }
 
   /**
+   * Open test sidebar
+   */
+  openTestSidebar() {
+    this.resetState(true);
+    setActiveSidebar('test');
+    // create the panel and open the sidebar in timeout to prevent jumping slide animation because of the large width setup
+    setTimeout(() => {
+      const container: HTMLElement = this.openSidebarWithTitle(`retrieval-agents.workflow.sidebar.test.title`);
+      container.classList.add('no-form');
+      const panelRef = createComponent(TestPanelComponent, { environmentInjector: this.environmentInjector });
+      this.applicationRef.attachView(panelRef.hostView);
+      container.appendChild(panelRef.location.nativeElement);
+      panelRef.changeDetectorRef.detectChanges();
+      panelRef.instance.cancel.subscribe(() => this.closeSidebar());
+    }, 10);
+  }
+
+  /**
    * Reset state:
+   * - unselect node
    * - remove current origin if any,
    * - reset sidebar title, description and content.
+   * @param keepSidebarOpen Flag indicating if we should keep the sidebar open while resetting the state ()
    */
-  private resetState() {
+  private resetState(keepSidebarOpen = false) {
     if (!this.sidebarContentWrapper) {
       throw new Error('Sidebar container not initialized');
     }
@@ -486,7 +512,7 @@ export class WorkflowService {
 
     // Reset the side bar
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
-    resetSidebar();
+    resetSidebar(keepSidebarOpen);
     if (this._currentPanel) {
       this._currentPanel.destroy();
       this._currentPanel = undefined;
@@ -667,8 +693,8 @@ export class WorkflowService {
       throw new Error('Sidebar container not initialized');
     }
     const container: HTMLElement = this.sidebarContentWrapper.nativeElement;
-    setOpenSidebar(true);
     setSidebarHeader(this.translate.instant(titleKey), descriptionKey ? this.translate.instant(descriptionKey) : '');
+    setTimeout(() => setOpenSidebar(true));
     return container;
   }
 

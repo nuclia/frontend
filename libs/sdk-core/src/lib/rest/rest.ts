@@ -28,6 +28,7 @@ export class Rest implements IRest {
   private nuclia: INuclia;
   private zones?: { [key: string]: string };
   private streamErrorAt?: number;
+  private webSockets: { [path: string]: WebSocket } = {};
 
   public constructor(nuclia: INuclia) {
     this.nuclia = nuclia;
@@ -409,5 +410,65 @@ export class Rest implements IRest {
     result.set(arr1);
     result.set(arr2, arr1.length);
     return result;
+  }
+
+  /**
+   * Open a WebSocket for the given path
+   * @param path
+   * @returns Observable streaming the messages received on the WebSocket
+   */
+  openWebSocket<T>(path: string): Observable<T> {
+    const wsUrl = this.getFullUrl(path).replace('https', 'wss');
+    if (this.webSockets[wsUrl]) {
+      throw new Error(`A websocket is already open on ${path}`);
+    }
+    this.webSockets[wsUrl] = new WebSocket(wsUrl);
+
+    return new Observable((observer) => {
+      this.webSockets[wsUrl].onmessage = function (event) {
+        console.log(`Message`, event);
+        observer.next(event.data);
+      };
+      this.webSockets[wsUrl].onclose = function (event) {
+        console.debug(`Close event:`, event);
+        observer.complete();
+      };
+      this.webSockets[wsUrl].onerror = function (event) {
+        console.debug(`Error event:`, event);
+        observer.error(event);
+      };
+    });
+  }
+
+  /**
+   * Close the WebSocket opened on the given path
+   * @param path
+   */
+  closeWebSocket(path: string) {
+    const wsUrl = this.getFullUrl(path).replace('https', 'wss');
+    if (!this.webSockets[wsUrl]) {
+      console.error(`No web socket opened on ${path}.`);
+    }
+    this.webSockets[wsUrl].close();
+    delete this.webSockets[wsUrl];
+  }
+
+  /**
+   * Send data on the WebSocket previously opened on the given path
+   * @param path
+   * @param data
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  send(path: string, data: any) {
+    const wsUrl = this.getFullUrl(path).replace('https', 'wss');
+    if (!this.webSockets[wsUrl]) {
+      throw new Error(
+        `No web socket opened on ${path}. You must open a web socket by calling openWebSocket() before sending data.`,
+      );
+    }
+    const ws = this.webSockets[wsUrl];
+    ws.onopen = function () {
+      ws.send(data);
+    };
   }
 }

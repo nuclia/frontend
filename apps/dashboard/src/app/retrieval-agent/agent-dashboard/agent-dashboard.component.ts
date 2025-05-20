@@ -10,15 +10,19 @@ import {
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { DashboardLayoutService } from '@flaps/common';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { auditTime, fromEvent, Subject, takeUntil } from 'rxjs';
 import {
   activeSideBar,
+  aragUrl,
   ConnectableEntryComponent,
   LinkService,
+  sideBarClosing,
   sideBarDescription,
+  sideBarLarge,
   sideBarOpen,
   sideBarTitle,
   WorkflowEffectService,
@@ -28,7 +32,7 @@ import {
 } from './workflow';
 
 @Component({
-  imports: [CommonModule, TranslateModule, PaButtonModule, WorkflowRootComponent],
+  imports: [CommonModule, TranslateModule, PaButtonModule, WorkflowRootComponent, RouterLink],
   templateUrl: './agent-dashboard.component.html',
   styleUrl: './agent-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,9 +51,12 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
   @ViewChild('sidebarHeader') sidebarHeader?: ElementRef;
   @ViewChild('sidebarContentWrapper') sidebarContentWrapper?: ElementRef;
 
+  aragUrl = aragUrl;
   sideBarTitle = sideBarTitle;
   sideBarDescription = sideBarDescription;
   sideBarOpen = sideBarOpen;
+  sideBarClosing = sideBarClosing;
+  sideBarLarge = sideBarLarge;
   activeSideBar = activeSideBar;
 
   constructor() {
@@ -92,6 +99,10 @@ export class AgentDashboardComponent implements AfterViewInit, OnDestroy {
 
   addNode() {
     this.workflowService.triggerAddNode();
+  }
+
+  openTest() {
+    this.workflowService.openTestSidebar();
   }
 
   addNodeFromEntry(data: { entry: ConnectableEntryComponent; targetColumn: number }) {

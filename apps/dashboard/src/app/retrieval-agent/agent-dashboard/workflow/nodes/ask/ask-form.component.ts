@@ -7,9 +7,10 @@ import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from 
 import { TranslateModule } from '@ngx-translate/core';
 import { NucliaDBDriver } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
-import { forkJoin, map, Observable, switchMap, take } from 'rxjs';
+import { map, Observable, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { AskAgentUI } from '../../workflow.models';
+import { aragUrl } from '../../workflow.state';
 
 @Component({
   selector: 'app-ask-form',
@@ -58,17 +59,14 @@ export class AskFormComponent extends FormDirective implements OnInit {
     return this.configForm.controls.vllm.value;
   }
 
-  private aragUrl = signal('');
+  aragUrl = aragUrl;
   driversPath = computed(() => `${this.aragUrl()}/drivers`);
   sourceOptions = signal<OptionModel[] | null>(null);
 
   ngOnInit() {
-    forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentArag.pipe(take(1))])
+    this.sdk.currentArag
       .pipe(
-        map(([account, arag]) => {
-          this.aragUrl.set(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
-          return arag;
-        }),
+        take(1),
         switchMap((arag) => arag.getDrivers('nucliadb') as Observable<NucliaDBDriver[]>),
         map((drivers) =>
           drivers.map((driver) => new OptionModel({ id: driver.id, label: driver.name, value: driver.config.kbid })),

@@ -3,37 +3,82 @@ import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 import { AskAgentUI, NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
 
 /**
+ * Global state
+ */
+const _aragUrl = signal('');
+export function setAragUrl(url: string) {
+  _aragUrl.set(url);
+}
+export const aragUrl = computed(() => _aragUrl());
+
+/**
  * Sidebar state
  */
-const sidebar = signal<{ title: string; description: string; open: boolean; active: '' | 'rules' | 'add' }>({
+const sidebar = signal<{
+  title: string;
+  description: string;
+  open: boolean;
+  closing: boolean;
+  active: '' | 'rules' | 'add' | 'test';
+  large: boolean;
+}>({
   title: '',
   description: '',
   open: false,
+  closing: false,
   active: '',
+  large: false,
 });
 
-export function setActiveSidebar(active: '' | 'rules' | 'add') {
-  sidebar.update((bar) => ({ ...bar, active }));
+export function setActiveSidebar(active: '' | 'rules' | 'add' | 'test') {
+  const large = active === 'test';
+  sidebar.update((bar) => ({ ...bar, active, large }));
 }
 export function setOpenSidebar(open: boolean) {
-  sidebar.update((bar) => ({ ...bar, open }));
+  const closing = !open;
+  sidebar.update((bar) => ({ ...bar, open, closing }));
 }
 export function setSidebarHeader(title: string, description = '') {
   sidebar.update((bar) => ({ ...bar, title, description }));
 }
-export function resetSidebar() {
+export function resetSidebar(keepOpen = false) {
   sidebar.set({
     title: '',
     description: '',
-    open: false,
+    open: keepOpen ? sidebar().open : false,
+    closing: false,
     active: '',
+    large: false,
   });
 }
 // computed signals are readonly: we don't want components to interact directly with the sidebar
 export const sideBarTitle = computed(() => sidebar().title);
 export const sideBarDescription = computed(() => sidebar().description);
 export const sideBarOpen = computed(() => sidebar().open);
+export const sideBarClosing = computed(() => sidebar().closing);
+export const sideBarLarge = computed(() => sidebar().large);
 export const activeSideBar = computed(() => sidebar().active);
+
+/**
+ * Test agent state
+ */
+const testAgent = signal<{
+  running: boolean;
+  question: string;
+}>({
+  running: false,
+  question: '',
+});
+
+export const testAgentRunning = computed(() => testAgent().running);
+export const testAgentQuestion = computed(() => testAgent().question);
+
+export function runTest(question: string) {
+  testAgent.update((state) => ({ ...state, question, running: true }));
+}
+export function stopTest() {
+  testAgent.update((state) => ({ ...state, running: false }));
+}
 
 /**
  * Workflow state

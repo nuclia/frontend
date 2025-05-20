@@ -3,14 +3,15 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } 
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { JsonValidator } from '@flaps/common';
-import { NavigationService, SDKService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GuardrailsPreconfig, GuardrailsProviderType } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
-import { forkJoin, map, switchMap, take } from 'rxjs';
+import { map, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { GuardrailsAgentUI } from '../../workflow.models';
+import { aragUrl } from '../../workflow.state';
 
 @Component({
   selector: 'app-guardrails-form',
@@ -33,7 +34,6 @@ import { GuardrailsAgentUI } from '../../workflow.models';
 export class GuardrailsFormComponent extends FormDirective implements OnInit {
   private sdk = inject(SDKService);
   private translate = inject(TranslateService);
-  private navigationService = inject(NavigationService);
 
   override form = new FormGroup({
     guardrails: new FormGroup({
@@ -65,19 +65,15 @@ export class GuardrailsFormComponent extends FormDirective implements OnInit {
     return this.configForm.controls.alinia.controls.detection_config;
   }
 
-  private aragUrl = signal('');
-  driversPath = computed(() => `${this.aragUrl()}/drivers`);
+  driversPath = computed(() => `${aragUrl()}/drivers`);
   providerOptions = signal<OptionModel[] | null>(null);
 
   preconfigOptions = signal<OptionModel[]>([]);
 
   ngOnInit(): void {
-    forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.currentArag.pipe(take(1))])
+    this.sdk.currentArag
       .pipe(
-        map(([account, arag]) => {
-          this.aragUrl.set(this.navigationService.getRetrievalAgentUrl(account.slug, arag.slug));
-          return arag;
-        }),
+        take(1),
         switchMap((arag) => arag.getDrivers('alinia')),
         map((drivers) =>
           drivers.map(

@@ -19,7 +19,26 @@ export interface RetrievalAgentCreation {
 
 export interface SessionList {
   sessions: Session[];
-  pagignation: SessionPagination;
+  pagination: SessionPagination;
+}
+
+export interface SessionCreationResponse {
+  uuid: string;
+  elapsed: number;
+  seqid: number;
+}
+
+export interface SessionCreation {
+  slug: string;
+  name: string;
+  summary: string;
+  data: string;
+  format: 'PLAIN' | 'HTML' | 'RST' | 'MARKDOWN' | 'JSON' | 'KEEP_MARKDOWN' | 'JSONL' | 'PLAIN_BLANKLINE_SPLIT';
+}
+
+export enum InteractionOperation {
+  question = 0,
+  quit = 1,
 }
 
 export interface IRetrievalAgent
@@ -41,6 +60,11 @@ export interface IRetrievalAgent
   getSessionBySlug(slug: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession>;
   getFullSessionBySlug(slug: string): Observable<ISession>;
   listSessions(page?: number, size?: number): Observable<SessionList>;
+  createSession(session: SessionCreation): Observable<SessionCreationResponse>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  listenSessionInteractions(sessionId: string): Observable<any>;
+  interactWithSession(sessionId: string, question: string, operation: InteractionOperation): void;
+  resetSessionInteraction(sessionId: string): void;
 
   inviteToAgent(data: InviteKbData): Observable<void>;
 

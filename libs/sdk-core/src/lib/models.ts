@@ -121,6 +121,11 @@ export interface IRest {
   ): {
     [key: string]: string;
   };
+
+  openWebSocket<T>(path: string): Observable<T>;
+  closeWebSocket(path: string): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  send(path: string, data: any): void;
 }
 export interface IDb {
   getAccounts(): Observable<Account[]>;

@@ -1,0 +1,45 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+
+  .table-container {
+    position: relative;
+    min-height: calc(100dvh - var(--app-topbar-height) - var(--table-top-position));
+  }
+
+  .search-bar {
+    display: flex;
+    gap: rhythm(1);
+    margin-bottom: rhythm(2);
+
+    .search-input {
+      min-width: rhythm(32);
+    }
+
+    .date-filters {
+      padding: rhythm(2);
+
+      pa-date-picker {
+        display: block;
+        margin-bottom: rhythm(1.5);
+      }
+
+      .date-filters-buttons {
+        display: flex;
+        gap: rhythm(1);
+        margin-top: rhythm(4);
+      }
+
+      pa-button {
+        width: 50%;
+      }
+    }
+  }
+
+  stf-table-pagination {
+    width: 100%;
+  }
+}
