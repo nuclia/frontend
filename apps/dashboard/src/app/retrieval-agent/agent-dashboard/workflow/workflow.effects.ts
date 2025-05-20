@@ -72,8 +72,12 @@ export class WorkflowEffectService {
     }
 
     // Check if there is a node to be deleted from the backend
-    if (workflowState.deletedAgent) {
-      this.deleteAgent(workflowState.deletedAgent);
+    if (workflowState.deletedAgents.length > 0) {
+      const requests = workflowState.deletedAgents.map((node) => this.deleteAgent(node));
+      forkJoin(requests).subscribe({
+        next: () => resetDeletedNode(),
+        error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.delete-agent')),
+      });
     }
   }
 
@@ -303,26 +307,21 @@ export class WorkflowEffectService {
     );
   }
 
-  private deleteAgent(deletedNode: { id: string; category: NodeCategory }): void {
-    this.sdk.currentArag
-      .pipe(
-        take(1),
-        switchMap((arag) => {
-          switch (deletedNode.category) {
-            case 'preprocess':
-              return arag.deletePreprocess(deletedNode.id);
-            case 'context':
-              return arag.deleteContext(deletedNode.id);
-            case 'generation':
-              return arag.deleteGeneration(deletedNode.id);
-            case 'postprocess':
-              return arag.deletePostprocess(deletedNode.id);
-          }
-        }),
-      )
-      .subscribe({
-        next: () => resetDeletedNode(),
-        error: () => this.toaster.error(this.translate.instant('retrieval-agents.workflow.errors.delete-agent')),
-      });
+  private deleteAgent(deletedNode: { id: string; category: NodeCategory }): Observable<void> {
+    return this.sdk.currentArag.pipe(
+      take(1),
+      switchMap((arag) => {
+        switch (deletedNode.category) {
+          case 'preprocess':
+            return arag.deletePreprocess(deletedNode.id);
+          case 'context':
+            return arag.deleteContext(deletedNode.id);
+          case 'generation':
+            return arag.deleteGeneration(deletedNode.id);
+          case 'postprocess':
+            return arag.deletePostprocess(deletedNode.id);
+        }
+      }),
+    );
   }
 }

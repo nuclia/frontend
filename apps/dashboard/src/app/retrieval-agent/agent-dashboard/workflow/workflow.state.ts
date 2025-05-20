@@ -91,7 +91,7 @@ const postprocessNodes = signal<{ [id: string]: ParentNode }>({});
 const childNodes = signal<{ [id: string]: ParentNode }>({});
 const selectedNode = signal<{ id: string; nodeCategory: NodeCategory } | null>(null);
 const currentOrigin = signal<ConnectableEntryComponent | null>(null);
-const deletedAgent = signal<{ id: string; category: NodeCategory } | null>(null);
+const deletedAgents = signal<{ id: string; category: NodeCategory }[]>([]);
 
 export interface WorkflowState {
   preprocess: ParentNode[];
@@ -99,7 +99,7 @@ export interface WorkflowState {
   generation: ParentNode[];
   postprocess: ParentNode[];
   children: ParentNode[];
-  deletedAgent: { id: string; category: NodeCategory } | null;
+  deletedAgents: { id: string; category: NodeCategory }[];
 }
 export const workflow = computed<WorkflowState>(() => {
   return {
@@ -108,7 +108,7 @@ export const workflow = computed<WorkflowState>(() => {
     generation: Object.values(generationNodes()),
     postprocess: Object.values(postprocessNodes()),
     children: Object.values(childNodes()),
-    deletedAgent: deletedAgent(),
+    deletedAgents: deletedAgents(),
   };
 });
 
@@ -121,7 +121,7 @@ export const selectedNodeId = computed(() => selectedNode()?.id);
  * Reset deletedNode on state
  */
 export function resetDeletedNode() {
-  deletedAgent.set(null);
+  deletedAgents.set([]);
 }
 
 /**
@@ -336,8 +336,9 @@ export function deleteNode(
   if (isChild) {
     childrenRefs.push(node.nodeRef);
   } else if (node.agentId) {
+    const id = node.agentId;
     // Set agent that should be deleted from the backend
-    deletedAgent.set({ id: node.agentId, category: nodeCategory });
+    deletedAgents.update((deleted) => [...deleted, { id, category: nodeCategory }]);
   }
   if (node && (node.then || node.else || node.fallback)) {
     const childToDelete = (node.then || []).concat(node.else || []);
