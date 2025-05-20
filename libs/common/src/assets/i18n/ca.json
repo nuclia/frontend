@@ -1710,6 +1710,7 @@
 	"search.widgets.table-columns.name": "Nom del widget",
 	"search.widgets.table-columns.search-config": "Configuració de cerca",
 	"search.widgets.title": "Ginys",
+	"select.arag-create-button": "Crear un agent de recuperació",
 	"select.arag-tooltip": "Aneu a l'agent de recol·lecció: {{arag}}",
 	"select.kb-tooltip": "Vés al Knowledge Box: {{kb}}",
 	"setup.set_password": "Estableix la contrasenya",

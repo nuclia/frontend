@@ -70,6 +70,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
       map((resourceList) => ({ sessions: resourceList.resources, pagination: resourceList.pagination })),
     );
 
+    // FIXME: cleanup once backend is fixed
     // const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter((p) => p).join('&');
     // return this.nuclia.rest
     //   .get<{

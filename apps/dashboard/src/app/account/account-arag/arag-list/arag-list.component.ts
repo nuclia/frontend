@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService, STFUtils } from '@flaps/core';
 import {
   ModalService,
@@ -44,6 +44,7 @@ export class AragListComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private navigation = inject(NavigationService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   unsubscribeAll = new Subject<void>();
   isLoading = false;
@@ -54,6 +55,16 @@ export class AragListComponent implements OnInit, OnDestroy {
   aragUrl?: string;
 
   ngOnInit(): void {
+    this.route.queryParams
+      .pipe(
+        take(1),
+        filter((params) => params['create']),
+      )
+      .subscribe(() => {
+        this.createArag();
+        this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
+      });
+
     this.sdk.currentAccount
       .pipe(take(1))
       .pipe(

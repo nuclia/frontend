@@ -131,6 +131,9 @@ export class NavigationService {
   getKbCreationUrl(accountSlug: string): string {
     return `${this.getAccountUrl(accountSlug)}/manage/kbs/create`;
   }
+  getAragCreationUrl(accountSlug: string): string {
+    return `${this.getAccountUrl(accountSlug)}/manage/arag`;
+  }
 
   getKbUsersUrl(accountSlug: string, kbSlug: string): string {
     return `${this.getKbUrl(accountSlug, kbSlug)}/users`;

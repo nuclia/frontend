@@ -1710,6 +1710,7 @@
 	"search.widgets.table-columns.name": "Nombre del widget",
 	"search.widgets.table-columns.search-config": "Configuración de búsqueda",
 	"search.widgets.title": "Widgets",
+	"select.arag-create-button": "Creación de un agente de recuperación",
 	"select.arag-tooltip": "Ir al agente de cosecha: {{arag}}",
 	"select.kb-tooltip": "Ir a la Knowledge Box: {{kb}}",
 	"setup.set_password": "Establece tu contraseña",

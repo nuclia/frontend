@@ -1735,6 +1735,7 @@
 	"search.widgets.table-columns.name": "Widget name",
 	"search.widgets.table-columns.search-config": "Search configuration",
 	"search.widgets.title": "Widgets",
+	"select.arag-create-button": "Create a Retrieval Agent",
 	"select.arag-tooltip": "Go to retrieval agent: {{arag}}",
 	"select.kb-tooltip": "Go to Knowledge Box: {{kb}}",
 	"setup.set_password": "Set your password",

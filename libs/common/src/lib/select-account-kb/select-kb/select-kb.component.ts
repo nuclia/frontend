@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FeaturesService, NavigationService, SDKService } from '@flaps/core';
 import { IKnowledgeBoxItem, IRetrievalAgentItem } from '@nuclia/core';
 import { SisModalService } from '@nuclia/sistema';
-import { filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, Observable, of, shareReplay, Subject, switchMap, take } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SelectAccountKbService } from '../select-account-kb.service';
 
@@ -26,16 +26,18 @@ export class SelectKbComponent implements OnDestroy {
 
   account = this.sdk.currentAccount;
   canManage = this.features.isAccountManager;
-  canAddKb = this.standalone
-    ? of(true)
-    : this.account.pipe(
-        map(
-          (account) =>
-            account.can_manage_account && (account.max_kbs > (account.current_kbs || 0) || account.max_kbs === -1),
-        ),
-      );
+  private _canAddKb = this.account.pipe(
+    map(
+      (account) =>
+        account.can_manage_account && (account.max_kbs > (account.current_kbs || 0) || account.max_kbs === -1),
+    ),
+  );
+  canAddKb = this.standalone ? of(true) : this._canAddKb;
 
   isRetrievalAgentEnabled = this.features.unstable.retrievalAgents;
+  canAddArag: Observable<boolean> = combineLatest([this.isRetrievalAgentEnabled, this._canAddKb]).pipe(
+    map(([aragEnabled, canAddKb]) => !this.standalone && aragEnabled && canAddKb),
+  );
 
   constructor(
     private navigation: NavigationService,
@@ -48,11 +50,15 @@ export class SelectKbComponent implements OnDestroy {
 
   createKb() {
     this.account
-      .pipe(
-        take(1),
-        switchMap((account) => this.router.navigate([this.navigation.getKbCreationUrl(account.slug)])),
-      )
-      .subscribe();
+      .pipe(take(1))
+      .subscribe((account) => this.router.navigate([this.navigation.getKbCreationUrl(account.slug)]));
+  }
+  createArag() {
+    this.account
+      .pipe(take(1))
+      .subscribe((account) =>
+        this.router.navigate([this.navigation.getAragCreationUrl(account.slug)], { queryParams: { create: true } }),
+      );
   }
 
   goToAccountManage() {
