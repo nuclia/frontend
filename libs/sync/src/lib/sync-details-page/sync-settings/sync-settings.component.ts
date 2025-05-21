@@ -14,8 +14,8 @@ import { IConnector, ISyncEntity, LogEntity } from '../../logic';
 import { SisLabelModule, TwoColumnsConfigurationItemComponent } from '@nuclia/sistema';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaDateTimeModule, PaIconModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
-import { LabelsService, ParametersTableComponent } from '@flaps/core';
-import { filter, map, take } from 'rxjs';
+import { LabelsService, ParametersTableComponent, SDKService } from '@flaps/core';
+import { filter, map, switchMap, take } from 'rxjs';
 import { LabelSets } from '@nuclia/core';
 import { ColoredLabel } from '@flaps/common';
 import { ActivatedRoute } from '@angular/router';
@@ -41,6 +41,7 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
   private labelService = inject(LabelsService);
   private cdr = inject(ChangeDetectorRef);
   private currentRoute = inject(ActivatedRoute);
+  private sdk = inject(SDKService);
 
   @Input({ required: true }) sync!: ISyncEntity;
   @Input({ required: true }) connector: IConnector | null = null;
@@ -58,6 +59,7 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
 
   labelSets: LabelSets = {};
   coloredLabels: ColoredLabel[] = [];
+  extractStrategy = '';
 
   ngAfterViewInit() {
     this.currentRoute.queryParams
@@ -92,5 +94,17 @@ export class SyncSettingsComponent implements AfterViewInit, OnInit {
           this.sync.labels?.map((label) => ({ ...label, color: this.labelSets[label.labelset]?.color })) || [];
         this.cdr.detectChanges();
       });
+    const extract_strategy = this.sync.extract_strategy;
+    if (extract_strategy) {
+      this.sdk.currentKb
+        .pipe(
+          take(1),
+          switchMap((kb) => kb.getExtractStrategies()),
+        )
+        .subscribe((strategies) => {
+          this.extractStrategy = strategies[extract_strategy]?.name || '';
+          this.cdr.markForCheck();
+        });
+    }
   }
 }

@@ -18,6 +18,8 @@
 	"sync.add-page.description.rss": "Upload and synchronize content from a RSS source.",
 	"sync.add-page.description.sharepoint": "Upload and synchronize content from selected Sharepoint folders.",
 	"sync.add-page.description.sitemap": "Upload and synchronize web pages content from a sitemap.",
+	"sync.add-page.extract-config.description": "Apply a custom configuration when extracting the content",
+	"sync.add-page.extract-config.title": "Extract configuration",
 	"sync.add-page.filter-resources.description": "We will only sync the resources matching the selection.",
 	"sync.add-page.filter-resources.file-extension.exclude": "Exclude",
 	"sync.add-page.filter-resources.file-extension.include": "Include",

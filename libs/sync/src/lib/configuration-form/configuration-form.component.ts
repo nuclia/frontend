@@ -30,7 +30,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ColoredLabel } from '@flaps/common';
+import { ColoredLabel, ExtractionSelectComponent } from '@flaps/common';
 import { ConfigurationForm, FiltersResources } from './configuration.model';
 
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
@@ -50,6 +50,7 @@ const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);
     PaDatePickerModule,
     SisLabelModule,
     PaTogglesModule,
+    ExtractionSelectComponent,
   ],
   templateUrl: './configuration-form.component.html',
   styleUrl: './configuration-form.component.scss',
@@ -82,6 +83,9 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
       });
       this.labelSelection = value.labels || [];
       this.extensionList = this.formatExtensionList(filterResources.extensions);
+      if (value.extract_strategy) {
+        this.extractStrategy = value.extract_strategy;
+      }
 
       if (value.connector.parameters) {
         Object.entries(value.connector.parameters).forEach(([key, value]) => {
@@ -118,6 +122,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   extensionList: string[] = [];
   tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
   invalidTables: string[] = [];
+  extractStrategy = '';
 
   private _extra: { [key: string]: string } = {};
 
@@ -267,6 +272,15 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     if (config.syncSecurityGroups !== null) {
       syncEntity.syncSecurityGroups = config.syncSecurityGroups;
     }
+    if (this.extractStrategy) {
+      syncEntity.extract_strategy = this.extractStrategy;
+    }
     this.configurationChange.emit(syncEntity);
+  }
+
+  updateExtractStrategy(strategy: string) {
+    this.extractStrategy = strategy;
+    this.validForm.emit(this.form.valid);
+    this.emitSyncEntity();
   }
 }

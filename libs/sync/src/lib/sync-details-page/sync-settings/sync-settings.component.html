@@ -110,6 +110,13 @@
   }
 }
 
+@if (extractStrategy) {
+  <nsi-two-columns-configuration-item
+    itemTitle="sync.add-page.extract-config.title"
+    description="sync.add-page.extract-config.description">
+    <div>{{ extractStrategy }}</div>
+  </nsi-two-columns-configuration-item>
+}
 <nsi-two-columns-configuration-item
   itemTitle="sync.details.activity-log.title"
   description="sync.details.activity-log.description">

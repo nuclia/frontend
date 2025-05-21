@@ -18,6 +18,8 @@
 	"sync.add-page.description.rss": "Cargue y sincronice contenido desde una fuente RSS.",
 	"sync.add-page.description.sharepoint": "Cargue y sincronice contenido de carpetas seleccionadas de Sharepoint.",
 	"sync.add-page.description.sitemap": "Cargue y sincronice el contenido de las páginas web desde un mapa del sitio.",
+	"sync.add-page.extract-config.description": "Aplicar una configuración personalizada al extraer el contenido",
+	"sync.add-page.extract-config.title": "Configuración de extracción",
 	"sync.add-page.filter-resources.description": "Solo sincronizaremos los recursos que coincidan con la selección.",
 	"sync.add-page.filter-resources.file-extension.exclude": "Excluir",
 	"sync.add-page.filter-resources.file-extension.include": "Incluir",
