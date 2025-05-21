@@ -18,6 +18,8 @@
 	"sync.add-page.description.rss": "Carregueu i sincronitzeu contingut des d'una font RSS.",
 	"sync.add-page.description.sharepoint": "Carregueu i sincronitzeu contingut de les carpetes de Sharepoint seleccionades.",
 	"sync.add-page.description.sitemap": "Carregueu i sincronitzeu contingut de pàgines web des d'un mapa del lloc.",
+	"sync.add-page.extract-config.description": "Aplica una configuració personalitzada en extreure el contingut",
+	"sync.add-page.extract-config.title": "Configuració d'extracció",
 	"sync.add-page.filter-resources.description": "Només sincronitzarem els recursos que coincideixin amb la selecció.",
 	"sync.add-page.filter-resources.file-extension.exclude": "Excloure",
 	"sync.add-page.filter-resources.file-extension.include": "Incloure",

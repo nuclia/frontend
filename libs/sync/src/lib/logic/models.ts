@@ -114,6 +114,7 @@ export interface ISyncEntity {
   lastSyncGMT?: string;
   disabled?: boolean;
   syncSecurityGroups?: boolean;
+  extract_strategy?: string;
 }
 
 export interface SyncBasicData {

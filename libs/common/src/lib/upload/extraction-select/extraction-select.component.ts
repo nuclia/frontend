@@ -17,8 +17,16 @@ import { RouterModule } from '@angular/router';
 export class ExtractionSelectComponent<T> {
   sdk = inject(SDKService);
   navigationService = inject(NavigationService);
+  enabled: boolean = false;
 
-  @Input() configId: string | undefined;
+  private _configId: string | undefined;
+  @Input() set configId(value: string | undefined) {
+    this._configId = value;
+    this.enabled = !!value;
+  }
+  get configId() {
+    return this._configId;
+  }
   @Output() configIdChange = new EventEmitter<string | undefined>();
   @Output() heightChange = new EventEmitter<void>();
   @Output() close = new EventEmitter<void>();
@@ -29,7 +37,6 @@ export class ExtractionSelectComponent<T> {
     switchMap((kb) => kb.getExtractStrategies()),
     shareReplay(1),
   );
-  enabled: boolean = false;
 
   toggle() {
     this.enabled = !this.enabled;
