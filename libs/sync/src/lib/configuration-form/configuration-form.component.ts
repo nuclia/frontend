@@ -122,7 +122,7 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
   extensionList: string[] = [];
   tables: { [tableId: string]: { key: string; value: string; secret: boolean }[] } = {};
   invalidTables: string[] = [];
-  extractStrategy = '';
+  extractStrategy: string | undefined = '';
 
   private _extra: { [key: string]: string } = {};
 
@@ -272,13 +272,11 @@ export class ConfigurationFormComponent implements OnInit, OnDestroy {
     if (config.syncSecurityGroups !== null) {
       syncEntity.syncSecurityGroups = config.syncSecurityGroups;
     }
-    if (this.extractStrategy) {
-      syncEntity.extract_strategy = this.extractStrategy;
-    }
+    syncEntity.extract_strategy = this.extractStrategy;
     this.configurationChange.emit(syncEntity);
   }
 
-  updateExtractStrategy(strategy: string) {
+  updateExtractStrategy(strategy: string | undefined) {
     this.extractStrategy = strategy;
     this.validForm.emit(this.form.valid);
     this.emitSyncEntity();
