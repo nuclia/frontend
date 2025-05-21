@@ -1,20 +1,35 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { createEventDispatcher, onMount } from 'svelte';
   import { freezeBackground, iOSDevice, getFixedRootParentIfAny, unblockBackground } from './modal.utils';
 
-  export let show = false;
-  export let popup = false;
-  export let parentElement: HTMLElement | undefined = undefined;
-  export let fixedRootParent: HTMLElement | undefined = undefined;
-  export let alignTo = '';
-  export let modalWidth = '';
-  let top: number | undefined = undefined;
-  let left: number | undefined = undefined;
+  interface Props {
+    show?: boolean;
+    popup?: boolean;
+    parentElement?: HTMLElement | undefined;
+    fixedRootParent?: HTMLElement | undefined;
+    alignTo?: string;
+    modalWidth?: string;
+    children?: import('svelte').Snippet;
+  }
+
+  let {
+    show = $bindable(false),
+    popup = false,
+    parentElement = undefined,
+    fixedRootParent = $bindable(undefined),
+    alignTo = '',
+    modalWidth = '',
+    children,
+  }: Props = $props();
+  let top: number | undefined = $state(undefined);
+  let left: number | undefined = $state(undefined);
   let fixedRootParentChecked = false;
 
   const isIOS = iOSDevice();
 
-  $: {
+  run(() => {
     if (!popup) {
       if (show) {
         freezeBackground();
@@ -22,7 +37,7 @@
         unblockBackground();
       }
     }
-  }
+  });
 
   export function refreshPosition() {
     if (parentElement) {
@@ -46,13 +61,15 @@
     }
   }
 
-  $: if (show) {
-    refreshPosition();
-  }
+  run(() => {
+    if (show) {
+      refreshPosition();
+    }
+  });
 
   const dispatch = createEventDispatcher();
-  let modalContentHeight: string = '100%';
-  let modalContentContainer: HTMLElement;
+  let modalContentHeight: string = $state('100%');
+  let modalContentContainer: HTMLElement = $state();
 
   function setModalContentHeight() {
     if (modalContentContainer) {
@@ -88,18 +105,18 @@
 </script>
 
 <svelte:window
-  on:keydown={closeOnEsc}
-  on:resize={setModalContentHeight} />
+  onkeydown={closeOnEsc}
+  onresize={setModalContentHeight} />
 {#if show}
   <div
     class="sw-modal-backdrop fade"
     class:visible={!popup}
     class:popup
     class:align-right={alignTo === 'right'}
-    on:click={outsideClick}>
+    onclick={outsideClick}>
     <dialog
       class="modal"
-      on:click={insideClick}
+      onclick={insideClick}
       style:--popup-top="{top || 0}px"
       style:--popup-left="{left || 0}px"
       style:--modal-width={modalWidth ? modalWidth : ''}>
@@ -107,7 +124,7 @@
         class="modal-content"
         bind:this={modalContentContainer}
         style:--modal-content-height={modalContentHeight}>
-        <slot />
+        {@render children?.()}
       </div>
     </dialog>
   </div>

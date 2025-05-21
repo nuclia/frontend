@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { Observable, of, switchMap } from 'rxjs';
   import { fieldData, getTextFile } from '../../../../core';
   import type { FileField, Search, TextField } from '@nuclia/core';
@@ -6,13 +8,15 @@
   import HtmlRenderer from './HtmlRendering.svelte';
   import { getUnMarked } from '../../utils';
 
-  export let selectedParagraph: Search.FindParagraph | undefined;
-  export let isHtml: boolean;
+  interface Props {
+    selectedParagraph: Search.FindParagraph | undefined;
+    isHtml: boolean;
+  }
 
-  let bodyElement: HTMLElement;
+  let { selectedParagraph, isHtml }: Props = $props();
+
+  let bodyElement: HTMLElement = $state();
   const nonWords = new RegExp(/\W/g);
-
-  $: !!selectedParagraph && bodyElement && highlightSelection();
 
   let body: Observable<string> = fieldData.pipe(
     switchMap((data) => {
@@ -51,6 +55,9 @@
       }
     }
   }
+  run(() => {
+    !!selectedParagraph && bodyElement && highlightSelection();
+  });
 </script>
 
 <div class="sw-text-rendering">

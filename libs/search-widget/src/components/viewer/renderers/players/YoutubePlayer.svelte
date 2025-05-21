@@ -1,20 +1,28 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import { getYoutubeId } from '../../../../core/utils';
 
-  export let uri: string;
-  export let time: number;
-  let playerElement: HTMLElement;
-  let player: any;
+  interface Props {
+    uri: string;
+    time: number;
+  }
+
+  let { uri, time }: Props = $props();
+  let playerElement: HTMLElement = $state();
+  let player: any = $state();
   let apiReady = false;
-  let videoReady = false;
+  let videoReady = $state(false);
   let paused = false;
   const dispatch = createEventDispatcher();
 
-  $: if (videoReady && typeof time === 'number') {
-    player?.seekTo(time);
-    player?.playVideo();
-  }
+  run(() => {
+    if (videoReady && typeof time === 'number') {
+      player?.seekTo(time);
+      player?.playVideo();
+    }
+  });
 
   if (!(window as any).onYouTubeIframeAPIReady) {
     (window as any).onYouTubeIframeAPIReady = () => {
@@ -57,7 +65,7 @@
             onReady: onPlayerReady,
             onStateChange: (event) => {
               paused = event.data === youtube.PlayerState.PAUSED;
-            }
+            },
           },
         });
         clearInterval(waitForPlayer);
@@ -81,11 +89,12 @@
 <svelte:head>
   <script src="https://www.youtube.com/iframe_api"></script>
 </svelte:head>
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 <div class="sw-youtube">
   <div
     class="player"
-    bind:this={playerElement} />
+    bind:this={playerElement}>
+  </div>
 </div>
 
 <style

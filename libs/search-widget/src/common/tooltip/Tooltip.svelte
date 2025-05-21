@@ -1,8 +1,5 @@
 <script>
-  export let title;
-  export let x;
-  export let y;
-  export let visible;
+  let { title, x, y, visible } = $props();
 </script>
 
 <div

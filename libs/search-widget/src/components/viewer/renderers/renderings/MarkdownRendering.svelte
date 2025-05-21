@@ -4,12 +4,16 @@
   import { isRightToLeft } from '../../../../common';
 
   const dispatch = createEventDispatcher();
-  export let text = '';
+  interface Props {
+    text?: string;
+  }
 
-  $: trimmedText = text.trim();
-  $: isRTL = isRightToLeft(trimmedText);
-  let bodyElement: HTMLElement;
-  let markedLoaded = false;
+  let { text = '' }: Props = $props();
+
+  let trimmedText = $derived(text.trim());
+  let isRTL = $derived(isRightToLeft(trimmedText));
+  let bodyElement: HTMLElement = $state();
+  let markedLoaded = $state(false);
   const onMarkedLoaded = () => {
     markedLoaded = true;
     setTimeout(() => dispatch('setElement', bodyElement), 500);
@@ -19,7 +23,7 @@
 <svelte:head>
   <script
     src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"
-    on:load={onMarkedLoaded}></script>
+    onload={onMarkedLoaded}></script>
 </svelte:head>
 
 {#if markedLoaded && trimmedText}

@@ -1,6 +1,12 @@
 <script>
-  export let name;
-  export let size = ''; // 'small' | 'large' (medium by default)
+  /**
+   * @typedef {Object} Props
+   * @property {any} name
+   * @property {string} [size] - 'small' | 'large' (medium by default)
+   */
+
+  /** @type {Props} */
+  let { name, size = '' } = $props();
 </script>
 
 {#if name}

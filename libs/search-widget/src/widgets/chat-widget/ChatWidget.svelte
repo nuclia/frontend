@@ -1,6 +1,8 @@
 <svelte:options customElement="nuclia-chat" />
 
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { getApiErrors, getSearchConfig, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
   import { get_current_component } from 'svelte/internal';
@@ -40,47 +42,91 @@
   import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
   import { Viewer } from '../../components';
 
-  export let backend = 'https://nuclia.cloud/api';
-  export let zone = 'europe-1';
-  export let knowledgebox;
-  export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
-  export let account = '';
-  export let client = 'widget';
-  export let state: KBStates = 'PUBLISHED';
-  export let features = '';
-  export let standalone = false;
-  export let proxy = false;
-  export let cssPath = '';
-  export let id = '';
-  export let prompt = '';
-  export let system_prompt = '';
-  export let rephrase_prompt = '';
-  export let generativemodel = '';
-  export let preselected_filters = '';
-  export let no_tracking = false;
-  export let rag_strategies = '';
-  export let rag_images_strategies = '';
-  export let not_enough_data_message = '';
-  export let max_tokens: number | string | undefined = undefined;
-  export let max_output_tokens: number | string | undefined = undefined;
-  export let max_paragraphs: number | string | undefined = undefined;
-  export let query_prepend = '';
-  export let vectorset = '';
-  export let chat_placeholder = '';
-  export let audit_metadata = '';
-  export let reranker: Reranker | undefined = undefined;
-  export let citation_threshold: number | string | undefined = undefined;
-  export let rrf_boosting: number | string | undefined = undefined;
-  export let feedback: Widget.WidgetFeedback = 'answer';
-  export let copy_disclaimer: string | undefined = undefined;
-  export let metadata: string | undefined = undefined;
-  export let widget_id: string | undefined = undefined;
-  export let search_config_id: string | undefined = undefined;
+  interface Props {
+    backend?: string;
+    zone?: string;
+    knowledgebox: any;
+    lang?: string;
+    cdn?: string;
+    apikey?: string;
+    account?: string;
+    client?: string;
+    kbstate?: KBStates;
+    features?: string;
+    standalone?: boolean;
+    proxy?: boolean;
+    cssPath?: string;
+    id?: string;
+    prompt?: string;
+    system_prompt?: string;
+    rephrase_prompt?: string;
+    generativemodel?: string;
+    preselected_filters?: string;
+    no_tracking?: boolean;
+    rag_strategies?: string;
+    rag_images_strategies?: string;
+    not_enough_data_message?: string;
+    max_tokens?: number | string | undefined;
+    max_output_tokens?: number | string | undefined;
+    max_paragraphs?: number | string | undefined;
+    query_prepend?: string;
+    vectorset?: string;
+    chat_placeholder?: string;
+    audit_metadata?: string;
+    reranker?: Reranker | undefined;
+    citation_threshold?: number | string | undefined;
+    rrf_boosting?: number | string | undefined;
+    feedback?: Widget.WidgetFeedback;
+    copy_disclaimer?: string | undefined;
+    metadata?: string | undefined;
+    widget_id?: string | undefined;
+    search_config_id?: string | undefined;
+    layout?: 'inline' | 'fullscreen';
+    height?: string;
+  }
 
-  export let layout: 'inline' | 'fullscreen' = 'inline';
-  export let height = '';
+  let {
+    backend = 'https://nuclia.cloud/api',
+    zone = 'europe-1',
+    knowledgebox,
+    lang = $bindable(''),
+    cdn = '',
+    apikey = '',
+    account = '',
+    client = 'widget',
+    kbstate = 'PUBLISHED',
+    features = '',
+    standalone = false,
+    proxy = false,
+    cssPath = '',
+    id = '',
+    prompt = '',
+    system_prompt = '',
+    rephrase_prompt = '',
+    generativemodel = '',
+    preselected_filters = '',
+    no_tracking = false,
+    rag_strategies = '',
+    rag_images_strategies = '',
+    not_enough_data_message = '',
+    max_tokens = undefined,
+    max_output_tokens = undefined,
+    max_paragraphs = undefined,
+    query_prepend = '',
+    vectorset = '',
+    chat_placeholder = '',
+    audit_metadata = '',
+    reranker = undefined,
+    citation_threshold = undefined,
+    rrf_boosting = undefined,
+    feedback = 'answer',
+    copy_disclaimer = undefined,
+    metadata = undefined,
+    widget_id = undefined,
+    search_config_id = undefined,
+    layout = 'inline',
+    height = '',
+  }: Props = $props();
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImageStrategies: RAGImageStrategy[] = [];
   let _max_tokens: number | undefined;
@@ -89,11 +135,11 @@
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
 
-  $: {
+  run(() => {
     chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
-  }
+  });
 
-  let showChat = layout === 'inline';
+  let showChat = $state(layout === 'inline');
 
   export function openChat() {
     showChat = true;
@@ -127,8 +173,8 @@
     dispatch(name, detail);
   };
 
-  let svgSprite: string;
-  let container: HTMLElement;
+  let svgSprite: string = $state();
+  let container: HTMLElement = $state();
   const component = get_current_component();
 
   ready.pipe(delay(200)).subscribe(() => {
@@ -175,7 +221,7 @@
 
       nucliaAPI = initNuclia(
         nucliaOptions,
-        state,
+        kbstate,
         {
           features: _features,
           prompt,
@@ -243,7 +289,7 @@
   });
 </script>
 
-<svelte:element this="style">{@html globalCss}</svelte:element>
+<svelte:element this={'style'}>{@html globalCss}</svelte:element>
 
 <div
   bind:this={container}

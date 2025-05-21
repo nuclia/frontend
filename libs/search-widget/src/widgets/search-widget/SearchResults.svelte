@@ -42,11 +42,15 @@
   import { Button, IconButton } from '../../common';
   import ResultsOrder from '../../components/results-order/ResultsOrder.svelte';
 
-  export let cssPath = '';
-  export let mode = '';
-  export let scrollableContainerSelector = '';
-  export let no_tracking = false;
-  $: darkMode = mode === 'dark';
+  interface Props {
+    cssPath?: string;
+    mode?: string;
+    scrollableContainerSelector?: string;
+    no_tracking?: boolean;
+  }
+
+  let { cssPath = '', mode = '', scrollableContainerSelector = '', no_tracking = false }: Props = $props();
+  let darkMode = $derived(mode === 'dark');
 
   const showLoading = pendingResults.pipe(debounceTime(500));
 
@@ -62,9 +66,9 @@
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
 
-  let svgSprite: string;
-  let container: HTMLElement;
-  let showMetadata = false;
+  let svgSprite: string = $state();
+  let container: HTMLElement = $state();
+  let showMetadata = $state(false);
 
   onMount(() => {
     if (pendingResults.getValue() || resultList.getValue().length > 0) {
@@ -95,7 +99,7 @@
   const onLoadMore = () => loadMore.set();
 </script>
 
-<svelte:element this="style">{@html globalCss}</svelte:element>
+<svelte:element this={'style'}>{@html globalCss}</svelte:element>
 
 <div
   bind:this={container}
@@ -154,7 +158,8 @@
           <strong>{$_('results.empty')}</strong>
           <div
             class="results-end"
-            use:renderingDone />
+            use:renderingDone>
+          </div>
         {:else if $resultList.length > 0}
           <div>
             <h3 class="title-s">
@@ -175,7 +180,8 @@
                 {#if i === $resultList.length - 1}
                   <div
                     class="results-end"
-                    use:renderingDone />
+                    use:renderingDone>
+                  </div>
                 {/if}
               {/each}
               {#if $hasMore && !$hideResults}

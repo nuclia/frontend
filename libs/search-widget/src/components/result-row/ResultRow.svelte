@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run, preventDefault } from 'svelte/legacy';
+
   import {
     AllResultsToggle,
     DocTypeIndicator,
@@ -36,25 +38,31 @@
   import Feedback from '../answer/Feedback.svelte';
   import Expander from '../../common/expander/Expander.svelte';
 
-  export let result: TypedResult;
-  export let selected = 0;
-  export let isSource = false;
-  export let answerRank: number | undefined;
+  interface Props {
+    result: TypedResult;
+    selected?: number;
+    isSource?: boolean;
+    answerRank: number | undefined;
+  }
 
-  let thumbnailLoaded = false;
-  let showAllResults = $collapseTextBlocks;
+  let { result, selected = 0, isSource = false, answerRank }: Props = $props();
 
-  let thumbnailInfo = { fallback: '', isPlayable: false };
-  let innerWidth = window.innerWidth;
-  let toggledParagraphHeights: { [id: string]: number } = {};
-  let nonToggledParagraphCount = 4;
-  let toggledParagraphTotalHeight = 0;
+  let thumbnailLoaded = $state(false);
+  let showAllResults = $state($collapseTextBlocks);
+
+  let thumbnailInfo = $state({ fallback: '', isPlayable: false });
+  let innerWidth = $state(window.innerWidth);
+  let toggledParagraphHeights: { [id: string]: number } = $state({});
+  let nonToggledParagraphCount = $state(4);
+  let toggledParagraphTotalHeight = $state(0);
   let metaKeyOn = false;
-  let expanded = !$collapseTextBlocks;
-  $: isMobile = isMobileViewport(innerWidth);
-  $: paragraphs = result.paragraphs || [];
-  $: thumbnailInfo = getThumbnailInfos(result);
-  $: {
+  let expanded = $state(!$collapseTextBlocks);
+  let isMobile = $derived(isMobileViewport(innerWidth));
+  let paragraphs = $derived(result.paragraphs || []);
+  run(() => {
+    thumbnailInfo = getThumbnailInfos(result);
+  });
+  run(() => {
     if (showAllResults) {
       toggledParagraphTotalHeight = Object.values(toggledParagraphHeights).reduce((acc, height) => acc + height, 0);
       nonToggledParagraphCount = paragraphs.length - Object.keys(toggledParagraphHeights).length;
@@ -69,7 +77,7 @@
       );
       nonToggledParagraphCount = visibleParagraphs.length - visibleToggledParagraphs.length;
     }
-  }
+  });
 
   const url = combineLatest([navigateToFile, navigateToLink, navigateToOriginURL]).pipe(
     take(1),
@@ -118,8 +126,8 @@
 
 <svelte:window
   bind:innerWidth
-  on:keydown={onKeyDown}
-  on:keyup={onKeyUp} />
+  onkeydown={onKeyDown}
+  onkeyup={onKeyUp} />
 
 <div
   class="sw-result-row"
@@ -142,7 +150,7 @@
         aspectRatio="5/4"
         clickable
         on:loaded={() => (thumbnailLoaded = true)}
-        on:click={() => clickOnResult() } />
+        on:click={() => clickOnResult()} />
     {/if}
     <div class="doc-type-container">
       <DocTypeIndicator type={result.resultType} />
@@ -171,14 +179,14 @@
         {#if $url}
           <a
             href={$url}
-            on:click|preventDefault={() => clickOnResult()}>
+            onclick={preventDefault(() => clickOnResult())}>
             {result?.title}
           </a>
         {:else}
           <span
             tabindex="0"
-            on:click={() => clickOnResult()}
-            on:keyup={(e) => {
+            onclick={() => clickOnResult()}
+            onkeyup={(e) => {
               if (e.key === 'Enter') clickOnResult();
             }}>
             {result?.title}
