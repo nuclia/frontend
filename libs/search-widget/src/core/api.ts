@@ -308,7 +308,7 @@ export const getAnswerWithoutRAG = (
     prefer_markdown: options?.prefer_markdown,
     json_schema: options?.answer_json_schema,
   };
-  return nucliaApi.knowledgeBox.predictAnswer(question, predictOptions);
+  return nucliaApi.knowledgeBox.predictAnswer(question, predictOptions, false);
 };
 
 export const sendFeedback = (answerId: string, approved: boolean, comment?: string, textBlockId?: string) => {

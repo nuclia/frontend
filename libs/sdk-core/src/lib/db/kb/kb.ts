@@ -454,8 +454,12 @@ export class KnowledgeBox implements IKnowledgeBox {
       });
     ```
    */
-  predictAnswer(question: string, options?: PredictAnswerOptions): Observable<Ask.Answer | IErrorResponse> {
-    return predictAnswer(this.nuclia, this.path, question, options);
+  predictAnswer(
+    question: string,
+    options?: PredictAnswerOptions,
+    synchronous = true,
+  ): Observable<Ask.Answer | IErrorResponse> {
+    return predictAnswer(this.nuclia, this.path, question, options, synchronous);
   }
 
   /**
@@ -475,7 +479,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     ```
   */
   generate(question: string, context: string[] = []): Observable<{ answer: string; cannotAnswer: boolean }> {
-    return this.predictAnswer(question, { query_context: context }).pipe(
+    return this.predictAnswer(question, { query_context: context }, true).pipe(
       map((res) =>
         res.type === 'answer' ? { answer: res.text, cannotAnswer: false } : { answer: res.detail, cannotAnswer: true },
       ),
@@ -523,7 +527,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     json_schema: object,
     context: string[] = [],
   ): Observable<{ answer: object; success: boolean }> {
-    return this.predictAnswer(question, { query_context: context, json_schema }).pipe(
+    return this.predictAnswer(question, { query_context: context, json_schema }, true).pipe(
       map((res) =>
         res.type === 'answer' ? { answer: res.jsonAnswer, success: true } : { answer: {}, success: false },
       ),

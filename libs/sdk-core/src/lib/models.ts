@@ -107,8 +107,12 @@ export interface IRest {
   getZoneSlug(zoneId: string): Observable<string>;
   getFullUrl(path: string): string;
   getObjectURL(path: string): Observable<string>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getStreamedResponse(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>;
+  getStreamedResponse(
+    path: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body: any,
+    extraHeaders?: { [key: string]: string },
+  ): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>;
 
   getStreamMessages(path: string, controller: AbortController): Observable<{ data: Uint8Array; headers: Headers }>;
   checkAuthorization(path: string): Observable<{ allowed: boolean; roles: (KBRoles | NucliaDBRole)[] }>;
