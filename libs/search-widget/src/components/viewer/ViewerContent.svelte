@@ -10,20 +10,21 @@
     PdfRenderer,
     SpreadsheetRenderer,
     TextRenderer,
-    VideoRenderer
+    VideoRenderer,
   } from './renderers';
 
-  export let noResultNavigator;
-  let resultType: ResultType | null;
-  const stateSubscription = currentResultType.pipe(filter(type => !!type)).subscribe((value) => resultType = value);
+  let { noResultNavigator } = $props();
+  let resultType: ResultType | null = $state();
+  const stateSubscription = currentResultType.pipe(filter((type) => !!type)).subscribe((value) => (resultType = value));
 
   onDestroy(() => {
     stateSubscription.unsubscribe();
   });
 </script>
 
-<div class="sw-viewer-content"
-     class:no-result-navigator={noResultNavigator}>
+<div
+  class="sw-viewer-content"
+  class:no-result-navigator={noResultNavigator}>
   {#if resultType === 'audio'}
     <AudioRenderer />
   {:else if resultType === 'conversation'}
@@ -44,5 +45,3 @@
 <style
   lang="scss"
   src="./ViewerContent.scss"></style>
-
-

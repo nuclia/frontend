@@ -32,28 +32,18 @@
   const preselection: Observable<string[]> = preselectedFilters;
   const dispatch = createEventDispatcher();
 
-  const selectedLabelSets: Observable<string[]> = combineLatest([
-    labelSetFilters,
-    preselection
-  ])
-    .pipe(
-      map(([filters, preselection]) => filters.map((filter) => filter.id).concat(preselection))
-    );
-  const selectedLabels: Observable<string[]> = combineLatest([
-    labelFilters,
-    preselection
-  ])
-    .pipe(
-      map(([filters, preselection]) => filters.map((filter) => getFilterFromLabel(filter.classification)).concat(preselection))
-    );
-  const selectedEntities: Observable<string[]> = combineLatest([
-    entityFilters,
-    preselection
-  ])
-    .pipe(
-      map(([filters, preselection]) => filters.map((filter) => getFilterFromEntity(filter)).concat(preselection))
-    );
-  let expanders: { [id: string]: boolean } = {};
+  const selectedLabelSets: Observable<string[]> = combineLatest([labelSetFilters, preselection]).pipe(
+    map(([filters, preselection]) => filters.map((filter) => filter.id).concat(preselection)),
+  );
+  const selectedLabels: Observable<string[]> = combineLatest([labelFilters, preselection]).pipe(
+    map(([filters, preselection]) =>
+      filters.map((filter) => getFilterFromLabel(filter.classification)).concat(preselection),
+    ),
+  );
+  const selectedEntities: Observable<string[]> = combineLatest([entityFilters, preselection]).pipe(
+    map(([filters, preselection]) => filters.map((filter) => getFilterFromEntity(filter)).concat(preselection)),
+  );
+  let expanders: { [id: string]: boolean } = $state({});
 
   function selectLabelSet(labelSet: LabelSetWithId, selected: boolean) {
     if (selected) {
@@ -92,14 +82,15 @@
   }
 
   onMount(() => {
-    combineLatest([labelFilters, hasRangeCreation]).pipe(take(1)).subscribe(([filters, hasRangeCreation]) => {
-      expanders = filters.map((filter) => filter.classification.labelset).reduce(
-        (acc, curr) => ({ ...acc, [curr]: true }),
-        {}
-      );
-      expanders['created'] = hasRangeCreation;
-    });
-    const initialFilters =  searchFilters.getValue();
+    combineLatest([labelFilters, hasRangeCreation])
+      .pipe(take(1))
+      .subscribe(([filters, hasRangeCreation]) => {
+        expanders = filters
+          .map((filter) => filter.classification.labelset)
+          .reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
+        expanders['created'] = hasRangeCreation;
+      });
+    const initialFilters = searchFilters.getValue();
     const initialCreation = `${creationStart.getValue()}${creationEnd.getValue()}`;
     return () => {
       if (
@@ -110,7 +101,6 @@
       }
     };
   });
-
 </script>
 
 <div class="sw-search-filters">
@@ -120,7 +110,7 @@
       class:expanded={expanders['created']}>
       <div
         class="header-content"
-        on:click={() => toggleExpander('created')}>
+        onclick={() => toggleExpander('created')}>
         <span>
           {$_('input.date_created')}
         </span>
@@ -142,7 +132,7 @@
               id="range-creation-start"
               type="date"
               value={$creationStart}
-              on:change={(e) => creationStart.set(e.target.value || undefined)} />
+              onchange={(e) => creationStart.set(e.target.value || undefined)} />
           </div>
         </div>
         <div>
@@ -152,8 +142,7 @@
               id="range-creation-end"
               type="date"
               value={$creationEnd}
-              on:change={(e) => creationEnd.set(e.target.value || undefined)}
-            />
+              onchange={(e) => creationEnd.set(e.target.value || undefined)} />
           </div>
         </div>
       </div>
@@ -166,7 +155,7 @@
       <div
         class="header-content"
         class:not-expandable={!$filterByLabels && $filterByLabelFamilies}
-        on:click={(event) => ($filterByLabels ? onClickLabelExpander(labelSet.id, event) : undefined)}>
+        onclick={(event) => ($filterByLabels ? onClickLabelExpander(labelSet.id, event) : undefined)}>
         {#if $filterByLabelFamilies}
           <Checkbox
             checked={$selectedLabelSets.includes(labelSet.id)}
@@ -175,7 +164,7 @@
             {labelSet.title}
           </Checkbox>
         {:else}
-          <div title="{labelSet.title}">{labelSet.title}</div>
+          <div title={labelSet.title}>{labelSet.title}</div>
         {/if}
       </div>
       {#if $filterByLabels}
@@ -195,8 +184,10 @@
         {#each labelSet.labels as label}
           <div>
             <Checkbox
-              checked={$selectedLabels.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title })) || $selectedLabelSets.includes(labelSet.id)}
-              disabled={$selectedLabelSets.includes(labelSet.id) || $preselection.includes(getFilterFromLabel({labelset: labelSet.id, label: label.title}))}
+              checked={$selectedLabels.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title })) ||
+                $selectedLabelSets.includes(labelSet.id)}
+              disabled={$selectedLabelSets.includes(labelSet.id) ||
+                $preselection.includes(getFilterFromLabel({ labelset: labelSet.id, label: label.title }))}
               on:change={(event) => selectLabel(labelSet, label, event.detail)}>
               {label.title}
             </Checkbox>
@@ -209,8 +200,10 @@
     <div
       class="header"
       class:expanded={expanders[family.id]}>
-      <div class="header-content" on:click={() => toggleEntitiesExpander(family.id)}>
-        <span title="{family.title}">
+      <div
+        class="header-content"
+        onclick={() => toggleEntitiesExpander(family.id)}>
+        <span title={family.title}>
           {family.title}
         </span>
       </div>
@@ -227,7 +220,7 @@
         {#each family.entities || [] as entity}
           <div>
             <Checkbox
-              checked={$selectedEntities.includes(getFilterFromEntity({family: family.id, entity: entity}))}
+              checked={$selectedEntities.includes(getFilterFromEntity({ family: family.id, entity: entity }))}
               on:change={(event) => selectEntity(family, entity, event.detail)}>
               {entity}
             </Checkbox>

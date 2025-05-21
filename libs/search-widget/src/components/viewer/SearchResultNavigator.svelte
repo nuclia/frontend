@@ -1,19 +1,25 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import IconButton from '../../common/button/IconButton.svelte';
   import { _ } from '../../core/i18n';
   import { createEventDispatcher } from 'svelte';
 
-  export let resultIndex;
-  export let total;
-  export let disabled = false;
+  interface Props {
+    resultIndex: any;
+    total: any;
+    disabled?: boolean;
+  }
 
-  let offsetWidth = 0;
+  let { resultIndex, total, disabled = false }: Props = $props();
+
+  let offsetWidth = $state(0);
   let containerElement: HTMLElement;
   const dispatch = createEventDispatcher();
 
-  $: {
+  run(() => {
     dispatch('offsetWidth', { offsetWidth });
-  }
+  });
 
   const openPrevious = () => {
     dispatch('openPrevious');

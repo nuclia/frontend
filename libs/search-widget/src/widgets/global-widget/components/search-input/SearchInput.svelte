@@ -17,11 +17,11 @@
   import { searchQuery, triggerSearch } from '../../../../core/stores/search.store';
   import Textarea from '../../../../common/textarea/Textarea.svelte';
 
-  let searchInputElement: HTMLInputElement;
+  let searchInputElement: HTMLInputElement = $state();
   const dispatch = createEventDispatcher();
 
-  let inputContainerElement: HTMLElement | undefined;
-  let showSuggestions = false;
+  let inputContainerElement: HTMLElement | undefined = $state();
+  let showSuggestions = $state(false);
 
   onMount(() => {
     searchInputElement?.focus();

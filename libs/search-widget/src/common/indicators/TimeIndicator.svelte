@@ -3,10 +3,14 @@
   import { createEventDispatcher } from 'svelte';
   import Icon from '../icons/Icon.svelte';
 
-  export let start: number | undefined;
-  export let selected = false;
-  export let hover = false;
-  export let minimized = false;
+  interface Props {
+    start: number | undefined;
+    selected?: boolean;
+    hover?: boolean;
+    minimized?: boolean;
+  }
+
+  let { start, selected = false, hover = false, minimized = false }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
@@ -21,8 +25,8 @@
     class:selected
     class:minimized
     class:hovering={hover}
-    on:click={play}
-    on:keyup={(e) => {
+    onclick={play}
+    onkeyup={(e) => {
       if (e.key === 'Enter') play();
     }}
     tabindex="0">

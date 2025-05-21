@@ -9,50 +9,96 @@
   import { getApiErrors, isEmptySearchQuery, pendingResults, showResults } from '../../core';
   import type { KBStates, Reranker, Widget } from '@nuclia/core';
 
-  export let backend = 'https://nuclia.cloud/api';
-  export let zone = 'europe-1';
-  export let knowledgebox: string;
-  export let placeholder = '';
-  export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
-  export let account = '';
-  export let client = 'widget';
-  export let state: KBStates = 'PUBLISHED';
-  export let features = '';
-  export let standalone = false;
-  export let proxy = false;
-  export let filters = '';
-  export let preselected_filters = '';
-  export let cssPath = '';
-  export let prompt = '';
-  export let system_prompt = '';
-  export let rephrase_prompt = '';
-  export let generativemodel = '';
-  export let no_tracking = false;
-  export let rag_strategies = '';
-  export let rag_images_strategies = '';
-  export let not_enough_data_message = '';
-  export let ask_to_resource = '';
-  export let max_tokens: number | undefined = undefined;
-  export let max_output_tokens: number | undefined = undefined;
-  export let max_paragraphs: number | undefined = undefined;
-  export let query_prepend = '';
-  export let json_schema = '';
-  export let vectorset = '';
-  export let chat_placeholder = '';
-  export let audit_metadata = '';
-  export let reranker: Reranker | undefined = undefined;
-  export let citation_threshold: number | string | undefined = undefined;
-  export let rrf_boosting: number | string | undefined = undefined;
-  export let feedback: Widget.WidgetFeedback = 'answer';
-  export let copy_disclaimer: string | undefined = undefined;
-  export let metadata: string | undefined = undefined;
-  export let widget_id: string | undefined = undefined;
-  export let search_config_id: string | undefined = undefined;
+  interface Props {
+    backend?: string;
+    zone?: string;
+    knowledgebox: string;
+    placeholder?: string;
+    lang?: string;
+    cdn?: string;
+    apikey?: string;
+    account?: string;
+    client?: string;
+    kbstate?: KBStates;
+    features?: string;
+    standalone?: boolean;
+    proxy?: boolean;
+    filters?: string;
+    preselected_filters?: string;
+    cssPath?: string;
+    prompt?: string;
+    system_prompt?: string;
+    rephrase_prompt?: string;
+    generativemodel?: string;
+    no_tracking?: boolean;
+    rag_strategies?: string;
+    rag_images_strategies?: string;
+    not_enough_data_message?: string;
+    ask_to_resource?: string;
+    max_tokens?: number | undefined;
+    max_output_tokens?: number | undefined;
+    max_paragraphs?: number | undefined;
+    query_prepend?: string;
+    json_schema?: string;
+    vectorset?: string;
+    chat_placeholder?: string;
+    audit_metadata?: string;
+    reranker?: Reranker | undefined;
+    citation_threshold?: number | string | undefined;
+    rrf_boosting?: number | string | undefined;
+    feedback?: Widget.WidgetFeedback;
+    copy_disclaimer?: string | undefined;
+    metadata?: string | undefined;
+    widget_id?: string | undefined;
+    search_config_id?: string | undefined;
+  }
 
-  let searchBar: any;
-  let visible = false;
+  let {
+    backend = 'https://nuclia.cloud/api',
+    zone = 'europe-1',
+    knowledgebox,
+    placeholder = '',
+    lang = '',
+    cdn = '',
+    apikey = '',
+    account = '',
+    client = 'widget',
+    kbstate = 'PUBLISHED',
+    features = '',
+    standalone = false,
+    proxy = false,
+    filters = '',
+    preselected_filters = '',
+    cssPath = '',
+    prompt = '',
+    system_prompt = '',
+    rephrase_prompt = '',
+    generativemodel = '',
+    no_tracking = false,
+    rag_strategies = '',
+    rag_images_strategies = '',
+    not_enough_data_message = '',
+    ask_to_resource = '',
+    max_tokens = undefined,
+    max_output_tokens = undefined,
+    max_paragraphs = undefined,
+    query_prepend = '',
+    json_schema = '',
+    vectorset = '',
+    chat_placeholder = '',
+    audit_metadata = '',
+    reranker = undefined,
+    citation_threshold = undefined,
+    rrf_boosting = undefined,
+    feedback = 'answer',
+    copy_disclaimer = undefined,
+    metadata = undefined,
+    widget_id = undefined,
+    search_config_id = undefined,
+  }: Props = $props();
+
+  let searchBar: any = $state();
+  let visible = $state(false);
 
   export function search(query: string, filters?: string[], doNotTriggerSearch = false) {
     visible = true;
@@ -100,6 +146,50 @@
       toggleSearchVisibility();
     }
   }
+
+  export {
+    backend,
+    zone,
+    knowledgebox,
+    placeholder,
+    lang,
+    cdn,
+    apikey,
+    account,
+    client,
+    kbstate,
+    features,
+    standalone,
+    proxy,
+    filters,
+    preselected_filters,
+    cssPath,
+    prompt,
+    system_prompt,
+    rephrase_prompt,
+    generativemodel,
+    no_tracking,
+    rag_strategies,
+    rag_images_strategies,
+    not_enough_data_message,
+    ask_to_resource,
+    max_tokens,
+    max_output_tokens,
+    max_paragraphs,
+    query_prepend,
+    json_schema,
+    vectorset,
+    chat_placeholder,
+    audit_metadata,
+    reranker,
+    citation_threshold,
+    rrf_boosting,
+    feedback,
+    copy_disclaimer,
+    metadata,
+    widget_id,
+    search_config_id,
+  };
 </script>
 
 <div
@@ -108,8 +198,8 @@
   {#if visible}
     <div
       class="backdrop"
-      on:keyup={onBackdropKeyup}
-      on:click={onBackdropClick}>
+      onkeyup={onBackdropKeyup}
+      onclick={onBackdropClick}>
       <div
         class="search-container"
         class:with-results={$showResults && !$isEmptySearchQuery}
@@ -126,7 +216,7 @@
             {apikey}
             {account}
             {client}
-            {state}
+            {kbstate}
             {features}
             {standalone}
             {proxy}

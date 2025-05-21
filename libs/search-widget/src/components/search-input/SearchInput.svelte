@@ -57,21 +57,21 @@
   import Textarea from '../../common/textarea/Textarea.svelte';
   import InputImages from '../input-images/InputImages.svelte';
 
-  let searchInputElement: Textarea;
+  let searchInputElement: Textarea = $state();
   const dispatch = createEventDispatcher();
   const brandName = import.meta.env.VITE_BRAND_NAME || 'Nuclia';
   const overrides = import.meta.env.VITE_OVERRIDES || '';
 
-  let inputContainerElement: HTMLElement | undefined;
-  let filterButtonElement: HTMLElement | undefined;
-  let filterContainerElement: HTMLElement | undefined;
-  let filterDropdownPosition: { top: number; left: number; width: number } | undefined;
-  let showSuggestions = false;
-  let showFilterDropdowns = false;
+  let inputContainerElement: HTMLElement | undefined = $state();
+  let filterButtonElement: HTMLElement | undefined = $state();
+  let filterContainerElement: HTMLElement | undefined = $state();
+  let filterDropdownPosition: { top: number; left: number; width: number } | undefined = $state();
+  let showSuggestions = $state(false);
+  let showFilterDropdowns = $state(false);
   let hasFilters = false;
-  let filterHeight: string | undefined;
-  let suggestionsModal: Modal | undefined;
-  let fileInputElement: HTMLInputElement | undefined;
+  let filterHeight: string | undefined = $state();
+  let suggestionsModal: Modal | undefined = $state();
+  let fileInputElement: HTMLInputElement | undefined = $state();
 
   interface Filter {
     type: 'label' | 'labelset' | 'entity' | 'creation-start' | 'creation-end';
@@ -282,7 +282,7 @@
         <input
           type="file"
           accept="image/*"
-          on:change={onFileSelected}
+          onchange={onFileSelected}
           bind:this={fileInputElement} />
         <IconButton
           aspect="basic"

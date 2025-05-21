@@ -3,15 +3,27 @@
   import type { ResultType } from '../../core';
   import { Search } from '@nuclia/core';
 
-  export let paragraph: Search.FindParagraph;
-  export let resultType: ResultType;
-  export let stack = false;
-  export let ellipsis = false;
-  export let selected = false;
-  export let noIndicator = false;
-  export let disabled = false;
+  interface Props {
+    paragraph: Search.FindParagraph;
+    resultType: ResultType;
+    stack?: boolean;
+    ellipsis?: boolean;
+    selected?: boolean;
+    noIndicator?: boolean;
+    disabled?: boolean;
+  }
 
-  let hovering = false;
+  let {
+    paragraph,
+    resultType,
+    stack = false,
+    ellipsis = false,
+    selected = false,
+    noIndicator = false,
+    disabled = false,
+  }: Props = $props();
+
+  let hovering = $state(false);
   let expanded = true;
 
   const dispatch = createEventDispatcher();
@@ -19,12 +31,11 @@
     dispatch('open', true);
   };
   const mediaKinds: ResultType[] = ['audio', 'video'];
-  $: isMedia = mediaKinds.includes(resultType);
-  $: isPdf = resultType === 'pdf';
+  let isMedia = $derived(mediaKinds.includes(resultType));
+  let isPdf = $derived(resultType === 'pdf');
 
-  let paragraphElement: HTMLElement;
-  $: hasEllipsis = paragraphElement && paragraphElement.offsetWidth < paragraphElement.scrollWidth;
-
+  let paragraphElement: HTMLElement = $state();
+  let hasEllipsis = $derived(paragraphElement && paragraphElement.offsetWidth < paragraphElement.scrollWidth);
 </script>
 
 <li class="sw-paragraph-result">
@@ -34,16 +45,15 @@
     class:stack
     class:selected
     class:disabled
-    on:mouseenter={() => (hovering = true)}
-    on:mouseleave={() => (hovering = false)}
-    on:click={disabled ? null : open}
-    on:keyup={(e) => {
-      if(e.key === 'Enter' && !disabled) open()
-    }}
-  >
+    onmouseenter={() => (hovering = true)}
+    onmouseleave={() => (hovering = false)}
+    onclick={disabled ? null : open}
+    onkeyup={(e) => {
+      if (e.key === 'Enter' && !disabled) open();
+    }}>
     <div
       class="paragraph-text"
-      class:ellipsis={ellipsis}
+      class:ellipsis
       bind:this={paragraphElement}>
       {@html paragraph.text.trim()}
     </div>
