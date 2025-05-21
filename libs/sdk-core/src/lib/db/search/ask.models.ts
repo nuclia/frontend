@@ -129,6 +129,25 @@ export namespace Ask {
     answer_json?: any;
     error_details?: string;
   }
+
+  export interface PredictAnswerResponseItem {
+    chunk: TextPredictAnswerResponseItem | StatusPredictAnswerResponseItem | JsonPredictAnswerResponseItem;
+  }
+
+  export interface TextPredictAnswerResponseItem {
+    type: 'text';
+    text: string;
+  }
+
+  export interface StatusPredictAnswerResponseItem {
+    type: 'status';
+    code: string;
+  }
+
+  export interface JsonPredictAnswerResponseItem {
+    type: 'object';
+    object: any;
+  }
 }
 
 export interface Citations {

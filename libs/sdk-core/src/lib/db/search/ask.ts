@@ -171,55 +171,106 @@ export function predictAnswer(
   nuclia: INuclia,
   path: string,
   question: string,
-  options?: PredictAnswerOptions,
+  options: PredictAnswerOptions = {},
+  synchronous?: boolean,
 ): Observable<Ask.Answer | IErrorResponse> {
   const endpoint = `${path}/predict/chat`;
   const body = { question, user_id: Ask.Author.USER, ...options };
+  const extraHeaders: { [key: string]: string } = synchronous ? {} : { accept: 'application/x-ndjson' };
   nuclia.events?.log('lastQuery', {
     endpoint,
     params: body,
-    headers: nuclia.rest.getHeaders('POST', endpoint, {}, true),
+    headers: nuclia.rest.getHeaders('POST', endpoint, extraHeaders, synchronous),
     nucliaOptions: nuclia.options,
   });
-  return nuclia.rest.post<Response>(endpoint, body, undefined, true).pipe(
-    switchMap((res) => {
-      const id = res.headers.get('nuclia-learning-id') || '';
-      return from(res.text()).pipe(
-        map((text) => {
-          if (options?.json_schema) {
-            const rows = text.split('\n').filter((d) => d);
-            return rows.reduce(
-              (acc, row) => {
-                const obj = JSON.parse(row).chunk;
-                if (obj.type === 'object') {
-                  acc.jsonAnswer = obj.object;
+  return (
+    synchronous
+      ? nuclia.rest.post<Response>(endpoint, body, extraHeaders, true).pipe(
+          switchMap((res) => {
+            const id = res.headers.get('nuclia-learning-id') || '';
+            return from(res.text()).pipe(
+              map((text) => {
+                if (options?.json_schema) {
+                  const rows = text.split('\n').filter((d) => d);
+                  return rows.reduce(
+                    (acc, row) => {
+                      const obj = JSON.parse(row).chunk;
+                      if (obj.type === 'object') {
+                        acc.jsonAnswer = obj.object;
+                      }
+                      if (obj.type === 'status') {
+                        acc.status = parseInt(obj.code);
+                      }
+                      return acc;
+                    },
+                    { id, answer: '' } as { id: string; answer: string; jsonAnswer: object; status: number },
+                  );
+                } else {
+                  return { id, answer: text.slice(0, -1), jsonAnswer: undefined, status: parseInt(text.slice(-1)) };
                 }
-                if (obj.type === 'status') {
-                  acc.status = parseInt(obj.code);
-                }
-                return acc;
-              },
-              { id, answer: '' } as { id: string; answer: string; jsonAnswer: object; status: number },
+              }),
             );
-          } else {
-            return { id, answer: text.slice(0, -1), jsonAnswer: undefined, status: parseInt(text.slice(-1)) };
-          }
-        }),
-      );
-    }),
-    map(({ id, answer, jsonAnswer, status }) => {
-      if (!Number.isNaN(status) && status !== 0) {
-        return { type: 'error', status, detail: answer } as IErrorResponse;
-      }
-      return {
-        type: 'answer',
-        id,
-        text: answer,
-        jsonAnswer,
-        incomplete: false,
-        inError: false,
-      } as Ask.Answer;
-    }),
+          }),
+          map(({ id, answer, jsonAnswer, status }) => {
+            if (!Number.isNaN(status) && status !== 0) {
+              return { type: 'error', status, detail: answer } as IErrorResponse;
+            }
+            return {
+              type: 'answer',
+              id,
+              text: answer,
+              jsonAnswer,
+              incomplete: false,
+              inError: false,
+            } as Ask.Answer;
+          }),
+        )
+      : nuclia.rest.getStreamedResponse(endpoint, body, extraHeaders).pipe(
+          map(({ data, incomplete, headers }) => {
+            const id = headers.get('nuclia-learning-id') || '';
+            let previous = '';
+            const rows = new TextDecoder()
+              .decode(data.buffer)
+              .split('\n')
+              .filter((d) => d);
+            const items = rows.reduce((acc, row) => {
+              previous += row;
+              try {
+                const obj = JSON.parse(previous) as Ask.PredictAnswerResponseItem;
+                acc.push(obj);
+                previous = '';
+              } catch (e) {
+                // block is not complete yet
+              }
+              return acc;
+            }, [] as Ask.PredictAnswerResponseItem[]);
+            const statusItem = items.find((item) => item.chunk.type === 'status');
+            if (statusItem) {
+              const item = statusItem.chunk as Ask.StatusPredictAnswerResponseItem;
+              const status = parseInt(item.code, 10);
+              if (!Number.isNaN(status) && status !== 0) {
+                return { type: 'error', status } as IErrorResponse;
+              }
+            }
+            const jsonAnswerItem = items.find((item) => item.chunk.type === 'object');
+            const jsonAnswer = jsonAnswerItem
+              ? (jsonAnswerItem.chunk as Ask.JsonPredictAnswerResponseItem).object
+              : undefined;
+            const text = items
+              .filter((item) => item.chunk.type === 'text')
+              .map((item) => (item.chunk as Ask.TextPredictAnswerResponseItem).text)
+              .join('');
+            return {
+              type: 'answer',
+              id,
+              text,
+              jsonAnswer,
+              incomplete,
+              inError: false,
+            } as Ask.Answer;
+          }),
+        )
+  ).pipe(
     catchError((error) => of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse)),
     tap((res) => nuclia.events?.log('lastResults', res)),
   );

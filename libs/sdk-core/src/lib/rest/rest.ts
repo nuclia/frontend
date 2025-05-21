@@ -271,12 +271,13 @@ export class Rest implements IRest {
   getStreamedResponse(
     path: string,
     body: unknown,
+    extraHeaders?: { [key: string]: string },
   ): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }> {
     path = this.getFullUrl(path);
     return new Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>((observer) => {
       fetch(path, {
         method: 'POST',
-        headers: this.getHeaders('POST', path),
+        headers: this.getHeaders('POST', path, extraHeaders),
         body: JSON.stringify(body),
       }).then(
         (res) => {
