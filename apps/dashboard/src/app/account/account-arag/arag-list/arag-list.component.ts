@@ -19,7 +19,7 @@ import {
   SisToastService,
   StickyFooterComponent,
 } from '@nuclia/sistema';
-import { Subject, throwError } from 'rxjs';
+import { forkJoin, Subject, throwError } from 'rxjs';
 import { catchError, filter, map, switchMap, take } from 'rxjs/operators';
 import { CreateAragComponent } from '../create-arag/create-arag.component';
 
@@ -62,20 +62,12 @@ export class AragListComponent implements OnInit, OnDestroy {
   aragUrl?: string;
 
   ngOnInit(): void {
-    this.route.queryParams
+    let creation = false;
+    forkJoin([this.route.queryParams.pipe(take(1)), this.sdk.currentAccount.pipe(take(1))])
       .pipe(
-        take(1),
-        filter((params) => params['create']),
-      )
-      .subscribe(() => {
-        this.createArag();
-        this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
-      });
-
-    this.sdk.currentAccount
-      .pipe(take(1))
-      .pipe(
-        switchMap((account) => {
+        switchMap(([params, account]) => {
+          creation = params['create'] === 'true';
+          this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
           this.account = account;
           this.maxRetrievalAgents = account.max_arags;
           return this.sdk.aragList;
@@ -84,6 +76,10 @@ export class AragListComponent implements OnInit, OnDestroy {
       .subscribe((arags) => {
         this.retrievalAgents = arags;
         this.cdr?.markForCheck();
+        if (creation) {
+          this.createArag();
+          creation = false;
+        }
       });
   }
 
@@ -120,6 +116,10 @@ export class AragListComponent implements OnInit, OnDestroy {
   }
 
   createArag() {
+    if (this.maxRetrievalAgents !== -1 && this.maxRetrievalAgents <= (this.retrievalAgents || []).length) {
+      this.toaster.warning(this.translate.instant('account.retrieval-agents.error.creation-limit'));
+      return;
+    }
     this.modalService
       .openModal(CreateAragComponent)
       .onClose.pipe(
