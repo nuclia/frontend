@@ -1,0 +1,92 @@
+<pa-demo-page>
+  <pa-demo-title>Expandable textarea</pa-demo-title>
+  <pa-demo-description>
+    <p>
+      Pastanaga textarea is resizable like a basic HTML textarea element, but in some cases where the text can be really
+      long and the form is in a side panel for example, the textarea may still be too small to display properly its full
+      text content.
+    </p>
+    <p>
+      In such case, expandable textarea is the solution as it extends Pastanaga textarea (meaning all options from
+      Pastanaga textarea are available) and displays a button to make the textarea fullscreen in a modal.
+    </p>
+  </pa-demo-description>
+  <pa-demo-examples>
+    <nsi-expandable-textarea
+      id="prompt"
+      formControlName="prompt"
+      rows="2"
+      resizable
+      placeholder="If…"
+      help="Provides more clues to extract parameters"
+      modalTitle="Extra prompt"
+      externalLabel>
+      Extra prompt
+    </nsi-expandable-textarea>
+  </pa-demo-examples>
+
+  <pa-demo-usage>
+    <h4>Input</h4>
+    <dl>
+      <dt>modalTitle</dt>
+      <dd>Required string used as title for the modal opened when clicking on the expand button</dd>
+    </dl>
+
+    <h3>
+      Inherited from
+      <code>TextareaComponent</code>
+    </h3>
+    <h4>Inputs</h4>
+    <dl>
+      <dt>autoHeight</dt>
+      <dd>
+        allow textarea to expand with user entries or according to currentValue: boolean
+        <small>(default: false)</small>
+      </dd>
+
+      <dt>resizable</dt>
+      <dd>
+        boolean allowing user to resize the textarea
+        <small>(default: true)</small>
+      </dd>
+
+      <dt>rows</dt>
+      <dd>
+        number of rows displayed in the textarea
+        <small>(default: 1)</small>
+      </dd>
+
+      <dt>maxRows</dt>
+      <dd>
+        max number of rows when used in combination with autoHeight. Not used when a
+        <code>maxHeight</code>
+        is defined
+        <small>(optional)</small>
+      </dd>
+
+      <dt>maxHeight</dt>
+      <dd>
+        number of pixels defining the maxHeight of the textarea
+        <small>(optional)</small>
+      </dd>
+    </dl>
+
+    <h4>Outputs</h4>
+    <dl>
+      <dt>resizing</dt>
+      <dd>
+        Event triggered when resizing the textarea. It is triggered only if
+        <code>resizable</code>
+        is true, and it contains the
+        <code>DOMRect</code>
+        of the textarea element.
+      </dd>
+    </dl>
+
+    <pa-demo-native-text-field-usage></pa-demo-native-text-field-usage>
+  </pa-demo-usage>
+
+  <pa-demo-code>
+    <pre><code>{{codeExample}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>
