@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { GlobalAccountService } from './global-account.service';
+import { AccountTypeDefaults, AccountService as CoreAccountService, SDKService } from '@flaps/core';
 import { AccountLimitsPatchPayload, AccountTypes, NucliaTokensMetric } from '@nuclia/core';
 import { forkJoin, map, Observable, of, shareReplay, switchMap, take, tap, throwError } from 'rxjs';
-import { AccountService as CoreAccountService, AccountTypeDefaults, SDKService } from '@flaps/core';
-import { AccountUserType, KbRoles } from './global-account.models';
+import { ManagerStore } from '../manager.store';
 import {
   AccountConfigurationPayload,
   AccountDetails,
@@ -14,7 +13,8 @@ import {
   KbDetails,
   KbSummary,
 } from './account-ui.models';
-import { ManagerStore } from '../manager.store';
+import { AccountUserType, KbRoles } from './global-account.models';
+import { GlobalAccountService } from './global-account.service';
 import { RegionalAccountService } from './regional-account.service';
 
 @Injectable({

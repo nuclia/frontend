@@ -9,6 +9,7 @@ export const standaloneSimpleAccount: Account = {
   can_manage_account: false,
   blocked_features: [] as BlockedFeature[],
   max_kbs: -1,
+  max_arags: -1,
   max_users: null,
   creation_date: '',
 };
@@ -27,6 +28,7 @@ export interface AccountStatus {
 
 export interface AccountTypeDefaults {
   max_kbs: number;
+  max_arags: number;
   max_dedicated_processors: number;
   max_trial_days: number;
   monthly_limit_paragraphs_processed: number;
@@ -37,8 +39,8 @@ export interface AccountTypeDefaults {
   monthly_limit_hosted_answers_generated: number;
   monthly_limit_self_hosted_searches_performed: number;
   monthly_limit_self_hosted_answers_generated: number;
-  storage_limit_max_bytes_per_kb: number,
-  storage_limit_max_resources_per_kb: number,
+  storage_limit_max_bytes_per_kb: number;
+  storage_limit_max_resources_per_kb: number;
   upload_limit_max_media_file_size: number;
   upload_limit_max_non_media_file_size: number;
 }

@@ -1,3 +1,4 @@
+import { Language, UserType } from '@flaps/core';
 import {
   Account,
   AccountBlockingState,
@@ -6,7 +7,6 @@ import {
   AccountTypes,
   WelcomeUser,
 } from '@nuclia/core';
-import { Language, UserType } from '@flaps/core';
 import { DedicatedProcessorsState } from './regional-account.models';
 
 export interface AccountSummary {
@@ -61,6 +61,7 @@ export interface AccountPatchPayload {
   type?: string;
   dedicated_processors_state?: string;
   kbs?: number;
+  arags?: number;
   max_dedicated_processors?: number;
   data?: object;
   blocking_state?: AccountBlockingState;

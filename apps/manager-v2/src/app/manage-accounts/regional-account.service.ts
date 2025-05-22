@@ -1,6 +1,10 @@
 import { inject, Injectable } from '@angular/core';
+import { STATUS_FACET } from '@flaps/common';
 import { SDKService } from '@flaps/core';
+import { KBRoles, Nuclia } from '@nuclia/core';
 import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { ZoneSummary } from '../manage-zones/zone.models';
+import { ZoneService } from '../manage-zones/zone.service';
 import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary } from './account-ui.models';
 import {
   Account,
@@ -10,10 +14,6 @@ import {
   Kb,
   ZoneModels,
 } from './regional-account.models';
-import { ZoneService } from '../manage-zones/zone.service';
-import { KBRoles, Nuclia } from '@nuclia/core';
-import { ZoneSummary } from '../manage-zones/zone.models';
-import { STATUS_FACET } from '@flaps/common';
 
 const MANAGE_ACCOUNT_ENDPOINT = '/manage/@account';
 const ACCOUNT_ENDPOINT = '/account';
@@ -221,6 +221,7 @@ export class RegionalAccountService {
       email: account.email,
       limits: account.limits,
       maxKbs: account.stashes.max_stashes,
+      maxArags: account.arags.max_arags,
       trialExpirationDate: account.trial_expiration_date,
       users: account.users,
       created: account.created,
