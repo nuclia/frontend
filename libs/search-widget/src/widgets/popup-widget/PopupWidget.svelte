@@ -1,5 +1,10 @@
 <svelte:options
-  customElement="nuclia-popup"
+  customElement={{
+    tag: 'nuclia-popup',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }}
   accessors />
 
 <script lang="ts">

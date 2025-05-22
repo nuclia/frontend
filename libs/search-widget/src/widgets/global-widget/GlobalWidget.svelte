@@ -1,5 +1,10 @@
 <svelte:options
-  customElement="nuclia-global-search"
+  customElement={{
+    tag: 'nuclia-global-search',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }}
   accessors />
 
 <script lang="ts">

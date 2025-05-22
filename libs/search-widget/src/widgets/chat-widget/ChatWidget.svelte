@@ -5,7 +5,6 @@
 
   import { getApiErrors, getSearchConfig, initNuclia, resetNuclia } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { get_current_component } from 'svelte/internal';
   import { loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import {
@@ -175,7 +174,7 @@
 
   let svgSprite: string = $state();
   let container: HTMLElement = $state();
-  const component = get_current_component();
+  let component: any;
 
   ready.pipe(delay(200)).subscribe(() => {
     // any feature that calls the Nuclia API immediately at init time must be done here

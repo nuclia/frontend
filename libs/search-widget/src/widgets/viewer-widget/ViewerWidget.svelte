@@ -1,4 +1,10 @@
-<svelte:options customElement="nuclia-viewer" />
+<svelte:options
+  customElement={{
+    tag: 'nuclia-viewer',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }} />
 
 <script lang="ts">
   import { run } from 'svelte/legacy';
