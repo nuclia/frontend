@@ -56,9 +56,6 @@ export interface IRetrievalAgent
     | 'deleteAllSynonyms'
   > {
   getSession(uuid: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession>;
-  getFullSession(uuid: string): Observable<ISession>;
-  getSessionBySlug(slug: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession>;
-  getFullSessionBySlug(slug: string): Observable<ISession>;
   listSessions(page?: number, size?: number): Observable<SessionList>;
   createSession(session: SessionCreation): Observable<SessionCreationResponse>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,6 +1,5 @@
 import { map, Observable } from 'rxjs';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
-import { ExtractedDataTypes } from '../resource';
 import { Driver, DriverCreation, ProviderType } from './driver.models';
 import {
   ContextAgent,
@@ -17,8 +16,9 @@ import {
   SessionCreation,
   SessionCreationResponse,
   SessionList,
-  SessionProperties,
+  SessionPagination,
 } from './retrieval-agent.models';
+import { Session } from './session';
 import { ISession } from './session.models';
 
 /**
@@ -35,11 +35,6 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   /**
    * Retrieves a session from the Retrieval Agent.
    *
-   * - `show` defines which properties are returned. Default retrieves only the basic metadata.
-   * - `extracted` defines which extracted data are returned.
-   *    It is ignored if `ResourceProperties.EXTRACTED` is not in the returned properties.
-   *    Default is an empty array.
-   *
    * Example:
     ```ts
     nuclia.db
@@ -50,39 +45,28 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
       });
     ```
    */
-  getSession(uuid: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession> {
-    return this.getResource(uuid, show, extracted);
+  getSession(sessionId: string): Observable<ISession> {
+    return this.nuclia.rest.get<ISession>(`${this.path}/session/${sessionId}`);
   }
   /**
-   * Retrieves a session from the Retrieval Agent with all its attached metadata and content.
+   * List all the sessions stored in the Retrieval Agent.
+   * @param page Page index (0 by default)
+   * @param size Page size
+   * @returns Paginated sessions list
    */
-  getFullSession(uuid: string): Observable<ISession> {
-    return this.getFullResource(uuid);
-  }
-  getSessionBySlug(slug: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession> {
-    return this.getResourceBySlug(slug, show, extracted);
-  }
-  getFullSessionBySlug(slug: string): Observable<ISession> {
-    return this.getFullResourceBySlug(slug);
-  }
   listSessions(page?: number, size?: number): Observable<SessionList> {
-    return this.listResources(page, size).pipe(
-      map((resourceList) => ({ sessions: resourceList.resources, pagination: resourceList.pagination })),
-    );
-
-    // FIXME: cleanup once backend is fixed
-    // const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter((p) => p).join('&');
-    // return this.nuclia.rest
-    //   .get<{
-    //     resources: ISession[];
-    //     pagination: SessionPagination;
-    //   }>(`${this.path}/sessions${params ? '?' + params : ''}`)
-    //   .pipe(
-    //     map((res) => ({
-    //       sessions: res.resources.map((resource) => new Session(this.nuclia, this.id, resource)),
-    //       pagination: res.pagination as SessionPagination,
-    //     })),
-    //   );
+    const params = [page ? `page=${page}` : '', size ? `size=${size}` : ''].filter((p) => p).join('&');
+    return this.nuclia.rest
+      .get<{
+        resources: ISession[];
+        pagination: SessionPagination;
+      }>(`${this.path}/sessions${params ? '?' + params : ''}`)
+      .pipe(
+        map((res) => ({
+          sessions: res.resources.map((resource) => new Session(this.nuclia, this.id, resource)),
+          pagination: res.pagination as SessionPagination,
+        })),
+      );
   }
 
   /**

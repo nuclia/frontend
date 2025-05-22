@@ -9,6 +9,21 @@
       externalLabel=""
       [formControl]="question"></pa-textarea>
   </div>
+  @if (sessions().length > 0) {
+    <div class="form-entry">
+      <label for="session">Test session</label>
+      <pa-select
+        id="session"
+        [formControl]="session">
+        <pa-option value="new">Create new session</pa-option>
+        @for (session of sessions(); track session.id) {
+          <pa-option [value]="session.id">
+            {{ session.title }}
+          </pa-option>
+        }
+      </pa-select>
+    </div>
+  }
   <pa-button
     size="small"
     [disabled]="question.invalid"
