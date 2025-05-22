@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators, FormArray } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { FeaturesService, SDKService } from '@flaps/core';
+import { AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
 import { FIELD_TYPE, Resource } from '@nuclia/core';
 import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { delay, shareReplay, take, takeUntil } from 'rxjs/operators';
-import { EditResourceService } from '../edit-resource.service';
 import { JsonValidator } from '../../../validators';
-import { ActivatedRoute } from '@angular/router';
-import { ResourceNavigationService } from '../resource-navigation.service';
 import { Thumbnail } from '../edit-resource.helpers';
-import { AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
+import { EditResourceService } from '../edit-resource.service';
+import { ResourceNavigationService } from '../resource-navigation.service';
 
 @Component({
   templateUrl: 'profile.component.html',

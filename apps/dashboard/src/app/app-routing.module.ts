@@ -6,13 +6,19 @@ import {
   aragOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
+  EditResourceComponent,
   EmptyComponent,
   knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
   MetricsPageComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
+  PreviewComponent,
   RagLabPageComponent,
+  ResourceFileComponent,
+  ResourceLinkComponent,
+  ResourceProfileComponent,
+  ResourceTextComponent,
   rootGuard,
   SearchPageComponent,
   SelectAccountComponent,
@@ -41,6 +47,7 @@ import {
   AgentDashboardComponent,
   DriversPageComponent,
   RetrievalAgentComponent,
+  SessionsComponent,
   SessionsListComponent,
 } from './retrieval-agent';
 import { TestPageComponent } from './test-page/test-page.component';
@@ -182,7 +189,49 @@ const routes: Routes = [
               },
               {
                 path: 'sessions',
-                component: SessionsListComponent,
+                component: SessionsComponent,
+                children: [
+                  {
+                    path: '',
+                    component: SessionsListComponent,
+                  },
+                  {
+                    path: ':id/edit',
+                    component: EditResourceComponent,
+                    data: { mode: 'arag' },
+                    children: [
+                      {
+                        path: '',
+                        redirectTo: 'session',
+                        pathMatch: 'full',
+                      },
+                      {
+                        path: 'session',
+                        component: ResourceProfileComponent,
+                      },
+                      {
+                        path: 'text/:fieldId',
+                        component: ResourceTextComponent,
+                      },
+                      {
+                        path: 'link/:fieldId',
+                        component: ResourceLinkComponent,
+                      },
+                      {
+                        path: 'file/:fieldId',
+                        component: ResourceFileComponent,
+                      },
+                      {
+                        path: 'preview',
+                        component: PreviewComponent,
+                      },
+                      {
+                        path: 'preview/:fieldType/:fieldId',
+                        component: PreviewComponent,
+                      },
+                    ],
+                  },
+                ],
               },
               {
                 path: 'drivers',

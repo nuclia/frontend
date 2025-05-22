@@ -7,13 +7,13 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
-import { EditResourceService } from './edit-resource.service';
+import { SisModalService } from '@nuclia/sistema';
+import { combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { DATA_AUGMENTATION_ERROR, EditResourceView, getErrors } from './edit-resource.helpers';
-import { SisModalService } from '@nuclia/sistema';
-import { FeaturesService, NavigationService, SDKService, UNAUTHORIZED_ICON } from '@flaps/core';
+import { EditResourceService } from './edit-resource.service';
 import { ResourceNavigationService } from './resource-navigation.service';
 
 interface ResourceFieldWithIcon extends ResourceField {
@@ -31,7 +31,13 @@ interface ResourceFieldWithIcon extends ResourceField {
 })
 export class EditResourceComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
-  backRoute: Observable<string> = this.navigationService.homeUrl.pipe(map((homeUrl) => `${homeUrl}/resources`));
+  isArag = this.route.data.pipe(
+    map((data) => data['mode'] === 'arag'),
+    takeUntil(this.unsubscribeAll),
+  );
+  backRoute: Observable<string> = combineLatest([this.navigationService.homeUrl, this.isArag]).pipe(
+    map(([homeUrl, isArag]) => (isArag ? `${homeUrl}/sessions` : `${homeUrl}/resources`)),
+  );
   currentView: EditResourceView | null = null;
   currentField: Observable<FieldId | 'resource'> = this.editResource.currentField;
   resource: Observable<Resource | null> = this.editResource.resource;
@@ -153,14 +159,24 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   }
 
   deleteResource() {
-    this.modal
-      .openConfirm({
-        title: 'resource.confirm-delete.title',
-        description: 'resource.confirm-delete.description',
-        confirmLabel: 'generic.delete',
-        isDestructive: true,
-      })
-      .onClose.pipe(
+    this.isArag
+      .pipe(
+        switchMap((isArag) => {
+          const confirmData = isArag
+            ? {
+                title: 'retrieval-agents.sessions.list.confirm-deletion.title',
+                description: 'retrieval-agents.sessions.list.confirm-deletion.description',
+              }
+            : {
+                title: 'resource.confirm-delete.title',
+                description: 'resource.confirm-delete.description',
+              };
+          return this.modal.openConfirm({
+            ...confirmData,
+            confirmLabel: 'generic.delete',
+            isDestructive: true,
+          }).onClose;
+        }),
         filter((confirm) => !!confirm),
         switchMap(() => this.editResource.resource),
         take(1),
