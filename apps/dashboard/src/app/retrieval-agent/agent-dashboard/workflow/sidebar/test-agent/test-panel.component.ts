@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, output, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { Session } from '@nuclia/core';
 import { testAgentQuestion, testAgentRunning } from '../../workflow.state';
 import { AgentBlockComponent, ChipComponent } from './elements';
@@ -9,7 +10,15 @@ import { TestPanelService } from './test-panel.service';
 
 @Component({
   selector: 'app-test-panel',
-  imports: [CommonModule, ReactiveFormsModule, PaButtonModule, PaTextFieldModule, ChipComponent, AgentBlockComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PaButtonModule,
+    PaTextFieldModule,
+    ChipComponent,
+    AgentBlockComponent,
+    TranslateModule,
+  ],
   templateUrl: './test-panel.component.html',
   styleUrl: './test-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
