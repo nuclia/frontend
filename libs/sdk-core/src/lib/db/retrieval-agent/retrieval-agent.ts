@@ -82,6 +82,8 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   private interactionStream?: Observable<any>;
 
   private getWsPath(sessionId: string): string {
+    // FIXME: the endpoint should be without the s, but it raise a 404. with the s we got a 403.
+    // return `${this.path}/session/${sessionId}/ws`;
     return `${this.path}/sessions/${sessionId}/ws`;
   }
 
