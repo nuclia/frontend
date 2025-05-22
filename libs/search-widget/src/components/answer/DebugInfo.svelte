@@ -85,11 +85,11 @@
           </p>
           <div class="expander-container">
             <Expander expanded={false}>
-              <div
-                class="title-s"
-                slot="header">
-                {$_('answer.debug.text-blocks')}
-              </div>
+              {#snippet header()}
+                <div class="title-s">
+                  {$_('answer.debug.text-blocks')}
+                </div>
+              {/snippet}
               <div class="context-list">
                 {#each answer.promptContext as text}
                   <div class="context-item body-m">
