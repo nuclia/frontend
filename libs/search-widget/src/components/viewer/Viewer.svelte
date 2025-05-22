@@ -470,47 +470,48 @@
                     on:click={resetInternalSearch} />
                 {/if}
               </div>
-
               {#if result?.paragraphs.length > 0 || state.searchInFieldResults !== null}
                 <MetadataContainer
                   sectionId="search"
                   expanded={sidePanelSectionOpen === 'search'}
                   on:toggle={(event) => toggleSection(event.detail)}>
-                  <span slot="sectionTitle">
-                    {$_('viewer.search-results', {
-                      count:
-                        state.searchInFieldResults !== null
-                          ? state.searchInFieldResults.length
-                          : result?.paragraphs.length,
-                    })}
-                  </span>
-                  <ul
-                    class="sw-paragraphs-container"
-                    slot="sectionContent">
-                    {#if state.searchInFieldResults !== null}
-                      {#each state.searchInFieldResults as paragraph, index}
-                        <ParagraphResult
-                          {paragraph}
-                          stack={true}
-                          minimized={isMobile}
-                          resultType={result?.resultType}
-                          noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                          selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
-                          on:open={() => selectParagraph(index)} />
-                      {/each}
-                    {:else}
-                      {#each result?.paragraphs as paragraph, index}
-                        <ParagraphResult
-                          {paragraph}
-                          stack={true}
-                          minimized={isMobile}
-                          resultType={result?.resultType}
-                          noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                          selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
-                          on:open={() => selectParagraph(index)} />
-                      {/each}
-                    {/if}
-                  </ul>
+                  {#snippet sectionTitle()}
+                    <span>
+                      {$_('viewer.search-results', {
+                        count:
+                          state.searchInFieldResults !== null
+                            ? state.searchInFieldResults.length
+                            : result?.paragraphs.length,
+                      })}
+                    </span>
+                  {/snippet}
+                  {#snippet sectionContent()}
+                    <ul class="sw-paragraphs-container">
+                      {#if state.searchInFieldResults !== null}
+                        {#each state.searchInFieldResults as paragraph, index}
+                          <ParagraphResult
+                            {paragraph}
+                            stack={true}
+                            minimized={isMobile}
+                            resultType={result?.resultType}
+                            noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                            selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                            on:open={() => selectParagraph(index)} />
+                        {/each}
+                      {:else}
+                        {#each result?.paragraphs as paragraph, index}
+                          <ParagraphResult
+                            {paragraph}
+                            stack={true}
+                            minimized={isMobile}
+                            resultType={result?.resultType}
+                            noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                            selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                            on:open={() => selectParagraph(index)} />
+                        {/each}
+                      {/if}
+                    </ul>
+                  {/snippet}
                 </MetadataContainer>
               {/if}
             {/if}
@@ -520,19 +521,21 @@
                 sectionId="transcripts"
                 expanded={sidePanelSectionOpen === 'transcripts'}
                 on:toggle={(event) => toggleSection(event.detail)}>
-                <span slot="sectionTitle">{$_('viewer.full-transcripts')}</span>
-                <ul
-                  class="sw-paragraphs-container"
-                  slot="sectionContent">
-                  {#each $transcripts as paragraph, index}
-                    <ParagraphResult
-                      {paragraph}
-                      selected={state.playFromTranscript && index === state.selectedParagraphIndex}
-                      resultType={result?.resultType}
-                      stack
-                      on:open={() => selectTranscript(paragraph, index)} />
-                  {/each}
-                </ul>
+                {#snippet sectionTitle()}
+                  <span>{$_('viewer.full-transcripts')}</span>
+                {/snippet}
+                {#snippet sectionContent()}
+                  <ul class="sw-paragraphs-container">
+                    {#each $transcripts as paragraph, index}
+                      <ParagraphResult
+                        {paragraph}
+                        selected={state.playFromTranscript && index === state.selectedParagraphIndex}
+                        resultType={result?.resultType}
+                        stack
+                        on:open={() => selectTranscript(paragraph, index)} />
+                    {/each}
+                  </ul>
+                {/snippet}
               </MetadataContainer>
             {/if}
 
@@ -541,12 +544,14 @@
                 sectionId="summary"
                 expanded={sidePanelSectionOpen === 'summary'}
                 on:toggle={(event) => toggleSection(event.detail)}>
-                <span slot="sectionTitle">{$_('viewer.summary')}</span>
-                <div
-                  class="summary-container"
-                  slot="sectionContent">
-                  {$fieldSummary}
-                </div>
+                {#snippet sectionTitle()}
+                  <span>{$_('viewer.summary')}</span>
+                {/snippet}
+                {#snippet sectionContent()}
+                  <div class="summary-container">
+                    {$fieldSummary}
+                  </div>
+                {/snippet}
               </MetadataContainer>
             {/if}
 
@@ -555,32 +560,34 @@
                 sectionId="items"
                 expanded={sidePanelSectionOpen === 'items'}
                 on:toggle={(event) => toggleSection(event.detail)}>
-                <span slot="sectionTitle">{$_('viewer.items')}</span>
-                <ul
-                  class="field-list"
-                  slot="sectionContent">
-                  {#each $fieldList as item}
-                    <li
-                      class:current={item.field_id === $fieldFullId.field_id}
-                      on:click={() => navigateToField(item)}>
-                      <div class="field-icon">
-                        <Icon
-                          size="small"
-                          name={item.field_type === 'conversation'
-                            ? 'chat'
-                            : item.field_type === 'text'
-                              ? 'file'
-                              : item.field_type} />
-                      </div>
-                      <div class="field-item">
-                        <span class={item.field_id === $fieldFullId.field_id ? 'title-xxs' : 'body-s'}>
-                          {item.field_type}
-                        </span>
-                        <small class="body-xs">{item.field_id}</small>
-                      </div>
-                    </li>
-                  {/each}
-                </ul>
+                {#snippet sectionTitle()}
+                  <span>{$_('viewer.items')}</span>
+                {/snippet}
+                {#snippet sectionContent()}
+                  <ul class="field-list">
+                    {#each $fieldList as item}
+                      <li
+                        class:current={item.field_id === $fieldFullId.field_id}
+                        on:click={() => navigateToField(item)}>
+                        <div class="field-icon">
+                          <Icon
+                            size="small"
+                            name={item.field_type === 'conversation'
+                              ? 'chat'
+                              : item.field_type === 'text'
+                                ? 'file'
+                                : item.field_type} />
+                        </div>
+                        <div class="field-item">
+                          <span class={item.field_id === $fieldFullId.field_id ? 'title-xxs' : 'body-s'}>
+                            {item.field_type}
+                          </span>
+                          <small class="body-xs">{item.field_id}</small>
+                        </div>
+                      </li>
+                    {/each}
+                  </ul>
+                {/snippet}
               </MetadataContainer>
             {/if}
           {/if}
