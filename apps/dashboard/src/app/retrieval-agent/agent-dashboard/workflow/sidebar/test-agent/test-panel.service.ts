@@ -17,13 +17,14 @@ export class TestPanelService {
     runTest(question);
     // Create the session
     const smallHash = (Math.random() + 1).toString(36).substring(7);
+    // TODO: reuse session if one exists
     this.sdk.currentArag
       .pipe(
         take(1),
         switchMap((arag) =>
           arag
             .createSession({
-              name: 'Test session',
+              name: question,
               slug: `test-session-${smallHash}`,
               data: '',
               summary: `Testing retrieval agent ${arag.title}.`,
