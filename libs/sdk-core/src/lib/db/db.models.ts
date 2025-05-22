@@ -29,6 +29,7 @@ export interface Account {
   id: string;
   limits?: AccountLimits;
   max_kbs: number;
+  max_arags: number;
   max_users: number | null;
   saml_entity_id?: string;
   saml_sso_url?: string;

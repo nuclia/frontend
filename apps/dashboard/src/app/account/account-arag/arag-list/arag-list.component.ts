@@ -77,8 +77,7 @@ export class AragListComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap((account) => {
           this.account = account;
-          // TODO: replace by max_arags once implemented in the backend
-          this.maxRetrievalAgents = account.max_kbs;
+          this.maxRetrievalAgents = account.max_arags;
           return this.sdk.aragList;
         }),
       )

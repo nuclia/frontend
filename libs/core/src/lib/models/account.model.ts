@@ -9,6 +9,7 @@ export const standaloneSimpleAccount: Account = {
   can_manage_account: false,
   blocked_features: [] as BlockedFeature[],
   max_kbs: -1,
+  max_arags: -1,
   max_users: null,
   creation_date: '',
 };
