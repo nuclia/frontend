@@ -77,6 +77,38 @@
       }
     </div>
   </div>
+  <div>
+    <label
+      class="title-xxs"
+      for="max-arags">
+      Max retrieval agents available
+    </label>
+    <div
+      class="radio-limit-container"
+      formGroupName="arags">
+      <pa-radio-group
+        id="arags"
+        formControlName="arags_radio">
+        <pa-radio value="unlimited">Unlimited</pa-radio>
+        <pa-radio value="limit">Limit</pa-radio>
+      </pa-radio-group>
+      @if (configForm.controls.arags.controls.arags_radio.value === 'limit') {
+        <div class="limit-container">
+          <pa-input
+            type="number"
+            externalLabel
+            formControlName="maxArags"></pa-input>
+          <pa-button
+            icon="reload"
+            paTooltip="Reset to default"
+            aspect="basic"
+            (click)="resetMaxAragsToDefault()">
+            Reset to default
+          </pa-button>
+        </div>
+      }
+    </div>
+  </div>
   <nma-form-footer
     [disabled]="configForm.pristine || configForm.invalid || isSaving"
     (cancel)="reset()"></nma-form-footer>

@@ -41,6 +41,10 @@
           <strong>{{ account.maxKbs === -1 ? 'Unlimited' : account.maxKbs }}</strong>
         </div>
         <div>
+          Max ARAGs:
+          <strong>{{ account.maxArags === -1 ? 'Unlimited' : account.maxArags }}</strong>
+        </div>
+        <div>
           Activity:
           <a
             [href]="'http://redash.nuclia.com/queries/25?p_account=' + account.id"

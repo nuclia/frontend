@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
+import { AccountBlockingState, AccountLimitsPatchPayload, AccountTypes } from '@nuclia/core';
 import { Observable } from 'rxjs';
+import { AccountConfigurationPayload, BlockedFeatureFormValues } from './account-ui.models';
 import {
   AccountPatchPayload,
   AccountSummary,
@@ -12,8 +14,6 @@ import {
   PaymentLinkPayload,
   SearchPrice,
 } from './global-account.models';
-import { AccountBlockingState, AccountLimitsPatchPayload, AccountTypes } from '@nuclia/core';
-import { AccountConfigurationPayload, BlockedFeatureFormValues } from './account-ui.models';
 
 const ACCOUNTS_ENDPOINT = '/manage/@accounts';
 const ACCOUNT_ENDPOINT = '/manage/@account';
@@ -39,6 +39,7 @@ export class GlobalAccountService {
       type: data.type,
       trial_expiration_date: data.trialExpirationDate,
       kbs: data.maxKbs,
+      arags: data.maxArags,
     };
     return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}`, payload);
   }
@@ -78,7 +79,7 @@ export class GlobalAccountService {
   }
 
   getSearchPrice(usageType: 'licensed' | 'metered', accountType?: AccountTypes) {
-    const params = `usage_type=${usageType}`+ (accountType ? `&account_type=${accountType}` : '');
+    const params = `usage_type=${usageType}` + (accountType ? `&account_type=${accountType}` : '');
     return this.sdk.nuclia.rest.get<SearchPrice[]>(`/billing/stripe/search_prices?${params}`);
   }
   getBillingFormulas() {
