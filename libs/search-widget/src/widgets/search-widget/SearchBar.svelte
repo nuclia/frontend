@@ -1,5 +1,10 @@
 <svelte:options
-  customElement="nuclia-search-bar"
+  customElement={{
+    tag: 'nuclia-search-bar',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }}
   accessors />
 
 <script lang="ts">
@@ -17,7 +22,7 @@
   } from '@nuclia/core';
   import { downloadDump, getApiErrors, initNuclia, resetNuclia, getSearchConfig } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { get_current_component } from 'svelte/internal';
+  // import { get_current_component } from 'svelte/internal';
   import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
@@ -255,7 +260,7 @@
       });
     }
   });
-  const component = get_current_component();
+  // const component = get_current_component();
 
   onMount(() => {
     const nucliaOptions = {
@@ -270,9 +275,10 @@
       accountId: account,
     };
     (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((config) => {
-      if (Object.keys(config).length > 0) {
-        component.$set(config);
-      }
+      // TODO: restore widget config loaded from backend
+      // if (Object.keys(config).length > 0) {
+      //   component.$set(config);
+      // }
 
       if (cdn) {
         setCDN(cdn);
@@ -394,52 +400,6 @@
   function hideRelations() {
     showRelations = false;
   }
-
-  export {
-    backend,
-    zone,
-    knowledgebox,
-    placeholder,
-    lang,
-    cdn,
-    apikey,
-    account,
-    client,
-    kbstate,
-    features,
-    standalone,
-    proxy,
-    mode,
-    filters,
-    preselected_filters,
-    cssPath,
-    prompt,
-    system_prompt,
-    rephrase_prompt,
-    generativemodel,
-    no_tracking,
-    rag_strategies,
-    rag_images_strategies,
-    not_enough_data_message,
-    ask_to_resource,
-    max_tokens,
-    max_output_tokens,
-    max_paragraphs,
-    query_prepend,
-    json_schema,
-    vectorset,
-    chat_placeholder,
-    audit_metadata,
-    reranker,
-    citation_threshold,
-    rrf_boosting,
-    feedback,
-    copy_disclaimer,
-    metadata,
-    widget_id,
-    search_config_id,
-    initHook,
-  };
 </script>
 
 <svelte:element this={'style'}>{@html globalCss}</svelte:element>
