@@ -244,8 +244,8 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
   deleteSession(session: Session) {
     this.modalService
       .openConfirm({
-        title: 'retrieval-agents.session-list.confirm-deletion.title',
-        description: 'retrieval-agents.session-list.confirm-deletion.description',
+        title: 'retrieval-agents.sessions.list.confirm-deletion.title',
+        description: 'retrieval-agents.sessions.list.confirm-deletion.description',
         confirmLabel: 'generic.delete',
         isDestructive: true,
       })
@@ -255,8 +255,8 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
         switchMap(() => this.loadSessionsFromCatalog()),
       )
       .subscribe({
-        next: () => this.toaster.success('retrieval-agents.session-list.toasts.deletion-success'),
-        error: () => this.toaster.error('retrieval-agents.session-list.toasts.deletion-error'),
+        next: () => this.toaster.success('retrieval-agents.sessions.list.toasts.deletion-success'),
+        error: () => this.toaster.error('retrieval-agents.sessions.list.toasts.deletion-error'),
       });
   }
 }

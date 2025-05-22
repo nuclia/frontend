@@ -1,4 +1,21 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { SafeHtml } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LabelsService, SDKService } from '@flaps/core';
+import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
+import {
+  Classification,
+  FIELD_TYPE,
+  FieldId,
+  FileFieldData,
+  IError,
+  Message,
+  MessageAttachment,
+  Resource,
+  TextField,
+  TypeParagraph,
+} from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
   combineLatest,
@@ -12,19 +29,7 @@ import {
   take,
 } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ParagraphService } from '../paragraph.service';
-import {
-  Classification,
-  FIELD_TYPE,
-  FieldId,
-  FileFieldData,
-  IError,
-  Message,
-  MessageAttachment,
-  Resource,
-  TextField,
-  TypeParagraph,
-} from '@nuclia/core';
+import { trimLabelSets } from '../../resource-filters.utils';
 import {
   DATA_AUGMENTATION_ERROR,
   getErrors,
@@ -35,16 +40,11 @@ import {
   ParagraphWithTextAndImage,
   Thumbnail,
 } from '../edit-resource.helpers';
-import { LabelsService, SDKService } from '@flaps/core';
-import { SafeHtml } from '@angular/platform-browser';
 import { EditResourceService } from '../edit-resource.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ParagraphService } from '../paragraph.service';
 import { ResourceNavigationService } from '../resource-navigation.service';
 import { PreviewService } from './preview.service';
-import { trimLabelSets } from '../../resource-filters.utils';
-import { ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { WarningModalComponent } from './warning-modal/warning-modal.component';
-import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './preview.component.html',
@@ -59,6 +59,10 @@ export class PreviewComponent implements OnInit, OnDestroy {
   private modalService = inject(SisModalService);
 
   unsubscribeAll = new Subject<void>();
+  isArag = this.route.data.pipe(
+    map((data) => data['mode'] === 'arag'),
+    takeUntil(this.unsubscribeAll),
+  );
   paragraphs = this.paragraphService.paragraphList as Observable<ParagraphWithTextAndClassifications[]>;
   jsonTextField = this.editResourceService.currentFieldData.pipe(
     map((field) =>
@@ -208,7 +212,6 @@ export class PreviewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.editResource.setCurrentView('preview');
-
     combineLatest([this.fieldId, this.resource])
       .pipe(
         switchMap(([fieldId, resource]) => {

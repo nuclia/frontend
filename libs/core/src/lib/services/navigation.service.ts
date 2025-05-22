@@ -18,10 +18,12 @@ export class NavigationService {
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
-  homeUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb]).pipe(
-    map(([account, kb]) => {
+  homeUrl: Observable<string> = combineLatest([this.sdk.currentAccount, this.sdk.currentKb, this.sdk.currentArag]).pipe(
+    map(([account, kb, arag]) => {
       if (account && this.inAccountManagement(location.pathname)) {
         return this.getAccountManageUrl(account.slug);
+      } else if (account && arag) {
+        return this.getRetrievalAgentUrl(account.slug, arag.slug);
       } else if (account && kb) {
         const kbSlug = this.sdk.nuclia.options.standalone ? kb.id : kb.slug;
         return this.getKbUrl(account.slug, kbSlug);

@@ -313,7 +313,7 @@
   </div>
   <div class="buttons-container">
     <div class="buttons">
-      @if (currentFieldId) {
+      @if (currentFieldId && !(isArag | async)) {
         <pa-button
           [disabled]="loadingPreview"
           (click)="openViewer()">

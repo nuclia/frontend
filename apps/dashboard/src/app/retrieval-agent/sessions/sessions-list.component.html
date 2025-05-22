@@ -1,12 +1,12 @@
 <div class="session-list page-spacing">
   <header>
-    <div class="page-title">{{ 'retrieval-agents.session-list.title' | translate }}</div>
-    <div class="page-description">{{ 'retrieval-agents.session-list.description' | translate }}</div>
+    <div class="page-title">{{ 'retrieval-agents.sessions.list.title' | translate }}</div>
+    <div class="page-description">{{ 'retrieval-agents.sessions.list.description' | translate }}</div>
   </header>
 
   @if (noSessions()) {
-    <nsi-info-card icon="info">{{ 'retrieval-agents.session-list.empty' | translate }}</nsi-info-card>
-    <pa-button routerLink="..">{{ 'retrieval-agents.session-list.setup-workflow' | translate }}</pa-button>
+    <nsi-info-card icon="info">{{ 'retrieval-agents.sessions.list.empty' | translate }}</nsi-info-card>
+    <pa-button routerLink="..">{{ 'retrieval-agents.sessions.list.setup-workflow' | translate }}</pa-button>
   } @else {
     <div class="session-list-content">
       <div class="search-bar">
