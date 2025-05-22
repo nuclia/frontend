@@ -1,19 +1,36 @@
 <div class="test-panel">
   <div class="form-entry">
-    <label for="question">Input</label>
+    <label for="question">{{ 'retrieval-agents.workflow.sidebar.test.form.input-label' | translate }}</label>
     <pa-textarea
       id="question"
       rows="2"
       resizable
-      placeholder="User question"
       externalLabel=""
+      [placeholder]="'retrieval-agents.workflow.sidebar.test.form.input-placeholder' | translate"
       [formControl]="question"></pa-textarea>
   </div>
+  @if (sessions().length > 0) {
+    <div class="form-entry">
+      <label for="session">{{ 'retrieval-agents.workflow.sidebar.test.form.session-select.label' | translate }}</label>
+      <pa-select
+        id="session"
+        [formControl]="session">
+        <pa-option value="new">
+          {{ 'retrieval-agents.workflow.sidebar.test.form.session-select.new' | translate }}
+        </pa-option>
+        @for (session of sessions(); track session.id) {
+          <pa-option [value]="session.id">
+            {{ session.title }}
+          </pa-option>
+        }
+      </pa-select>
+    </div>
+  }
   <pa-button
     size="small"
     [disabled]="question.invalid"
     (click)="triggerRun()">
-    Run test
+    {{ 'retrieval-agents.workflow.sidebar.test.form.run-button' | translate }}
   </pa-button>
 
   @if (runningTest()) {
@@ -21,7 +38,7 @@
       <div class="block-separator"></div>
       <div class="interactions">
         <section class="category-section">
-          <app-chip fill>User input</app-chip>
+          <app-chip fill>{{ 'retrieval-agents.workflow.sidebar.test.interactions.user-input' | translate }}</app-chip>
           <blockquote class="user-input">
             {{ runningQuestion() }}
           </blockquote>
@@ -56,7 +73,7 @@
         aspect="basic"
         size="small"
         (click)="triggerStop()">
-        Stop
+        {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
       </pa-button>
     </footer>
   }

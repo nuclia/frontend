@@ -427,7 +427,7 @@ export class Rest implements IRest {
 
     return new Observable((observer) => {
       this.webSockets[wsUrl].onmessage = function (event) {
-        console.log(`Message`, event);
+        console.debug(`Message`, event);
         observer.next(event.data);
       };
       this.webSockets[wsUrl].onclose = function (event) {

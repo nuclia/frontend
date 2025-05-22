@@ -41,11 +41,13 @@ import { Session, SortField, SortOption } from '@nuclia/core';
 import {
   DropdownButtonComponent,
   InfoCardComponent,
+  SisModalService,
+  SisToastService,
   StandaloneMimeIconPipe,
   StickyFooterComponent,
 } from '@nuclia/sistema';
 import { endOfDay } from 'date-fns';
-import { catchError, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 
 @Component({
   selector: 'app-sessions-list',
@@ -75,6 +77,8 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
   private sdk = inject(SDKService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private modalService = inject(SisModalService);
+  private toaster = inject(SisToastService);
 
   @ViewChild('tableContainer') tableContainer?: ElementRef;
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
@@ -236,8 +240,23 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
   onClickLink($event: MouseEvent) {
     $event.stopPropagation();
   }
+
   deleteSession(session: Session) {
-    // TODO: delete session
-    console.debug(`TODO: Delete session`, session);
+    this.modalService
+      .openConfirm({
+        title: 'retrieval-agents.session-list.confirm-deletion.title',
+        description: 'retrieval-agents.session-list.confirm-deletion.description',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => session.delete()),
+        switchMap(() => this.loadSessionsFromCatalog()),
+      )
+      .subscribe({
+        next: () => this.toaster.success('retrieval-agents.session-list.toasts.deletion-success'),
+        error: () => this.toaster.error('retrieval-agents.session-list.toasts.deletion-error'),
+      });
   }
 }
