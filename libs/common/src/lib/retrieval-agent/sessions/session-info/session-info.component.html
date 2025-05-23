@@ -1,0 +1,23 @@
+@let info = (sessionInfo | async);
+@if(info) {
+  @if (!info.body) {
+    <nsi-info-card icon="info">{{'retrieval-agents.sessions.preview.no-session-info' | translate}} </nsi-info-card>
+  } @else {
+    <div class="session-info">
+      @switch (info.format) {
+        @case ('PLAIN') {
+          <p>{{ info.body }}</p>
+        }
+        @case ('HTML') {
+          <div [innerHTML]="info.body"></div>
+        }
+        @case('MARKDOWN') {
+          <div [innerHTML]="getFormattedMarkdown(info.body) | async"></div>
+        }
+        @default {
+          <p [innerHTML]="info.body | lineBreakFormatter"></p>
+        }
+      }
+    </div>
+  }
+}

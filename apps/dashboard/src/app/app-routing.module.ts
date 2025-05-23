@@ -19,7 +19,6 @@ import {
   RagLabPageComponent,
   ResourceFileComponent,
   ResourceLinkComponent,
-  ResourceProfileComponent,
   ResourceTextComponent,
   RetrievalAgentComponent,
   rootGuard,
@@ -28,6 +27,7 @@ import {
   selectAccountGuard,
   SelectKbComponent,
   selectKbGuard,
+  SessionInfoComponent,
   SessionsComponent,
   SessionsListComponent,
   setAccountGuard,
@@ -200,12 +200,12 @@ const routes: Routes = [
                     children: [
                       {
                         path: '',
-                        redirectTo: 'session',
+                        redirectTo: 'preview',
                         pathMatch: 'full',
                       },
                       {
-                        path: 'session',
-                        component: ResourceProfileComponent,
+                        path: 'preview',
+                        component: SessionInfoComponent,
                       },
                       {
                         path: 'text/:fieldId',
@@ -218,10 +218,6 @@ const routes: Routes = [
                       {
                         path: 'file/:fieldId',
                         component: ResourceFileComponent,
-                      },
-                      {
-                        path: 'preview',
-                        component: PreviewComponent,
                       },
                       {
                         path: 'preview/:fieldType/:fieldId',

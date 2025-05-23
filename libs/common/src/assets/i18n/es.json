@@ -1190,6 +1190,7 @@
 	"retrieval-agents.sessions.list.title": "Lista de sesiones",
 	"retrieval-agents.sessions.list.toasts.deletion-error": "Se ha producido un error al eliminar la sesión",
 	"retrieval-agents.sessions.list.toasts.deletion-success": "La sesión se ha eliminado correctamente.",
+	"retrieval-agents.sessions.preview.no-session-info": "No se proporcionó información inicial al crear la sesión",
 	"retrieval-agents.sessions.preview.session-info": "Info de la sesión",
 	"retrieval-agents.workflow.common-forms.headers.add": "Agregar encabezado",
 	"retrieval-agents.workflow.common-forms.headers.label": "Encabezados",

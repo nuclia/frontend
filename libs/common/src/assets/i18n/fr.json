@@ -1190,6 +1190,7 @@
 	"retrieval-agents.sessions.list.title": "Liste des sessions",
 	"retrieval-agents.sessions.list.toasts.deletion-error": "Une erreur s’est produite lors de la suppression de la session",
 	"retrieval-agents.sessions.list.toasts.deletion-success": "La session a été supprimée avec succès.",
+	"retrieval-agents.sessions.preview.no-session-info": "Aucune information initiale n’a été fournie lors de la création de la session",
 	"retrieval-agents.sessions.preview.session-info": "Infos sur la session",
 	"retrieval-agents.workflow.common-forms.headers.add": "Ajouter un en-tête",
 	"retrieval-agents.workflow.common-forms.headers.label": "En-têtes",
