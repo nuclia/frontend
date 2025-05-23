@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { JsonValidator } from '@flaps/common';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { ExpandableTextareaComponent } from '../../../../../../../../../libs/sistema/src/lib/expandable-textarea/expandable-textarea.component';
+import { ExpandableTextareaComponent } from '@nuclia/sistema';
+import { JsonValidator } from '../../../../../validators';
 import {
   ConfigurationFormComponent,
   FormDirective,
