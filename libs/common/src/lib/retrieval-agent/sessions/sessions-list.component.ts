@@ -45,6 +45,7 @@ import {
   getFilterFromVisibility,
   PAGE_SIZES,
   ResourceListParams,
+  ResourceNavigationService,
   searchResources,
   TablePaginationComponent,
 } from '../../resources';
@@ -79,6 +80,7 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
   private route = inject(ActivatedRoute);
   private modalService = inject(SisModalService);
   private toaster = inject(SisToastService);
+  private navigationService = inject(ResourceNavigationService);
 
   @ViewChild('tableContainer') tableContainer?: ElementRef;
   @ViewChild('dateFilters') dateDropdown?: DropdownComponent;
@@ -170,9 +172,17 @@ export class SessionsListComponent implements AfterViewInit, OnInit {
       switchMap((arag) => searchResources(arag, listParams)),
       map(({ results, kbId }) => {
         this.pagination.update((pagination) => ({ ...pagination, total: results.fulltext?.total || 0 }));
-        return Object.values(results.resources || {}).map(
+        const sessions = Object.values(results.resources || {}).map(
           (sessionData) => new Session(this.sdk.nuclia, kbId, sessionData),
         );
+        const hasMore = !!results.fulltext?.next_page;
+        this.navigationService.navigationData = {
+          ...listParams,
+          resourceIdList: sessions.map((session) => session.id),
+          hasMore,
+          isArag: true,
+        };
+        return sessions;
       }),
       tap((sessions) => this.sessions.set(sessions)),
       catchError((error) => {

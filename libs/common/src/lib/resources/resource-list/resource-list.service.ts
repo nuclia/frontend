@@ -1,5 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { LabelsService, SDKService } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  IError,
+  IResource,
+  KnowledgeBox,
+  LabelSets,
+  ProcessingStatus,
+  Resource,
+  RESOURCE_STATUS,
+  SortOption,
+} from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
 import {
   BehaviorSubject,
   catchError,
@@ -20,6 +32,9 @@ import {
   take,
   tap,
 } from 'rxjs';
+import { FormatETAPipe } from '../../pipes';
+import { UploadService } from '../../upload/upload.service';
+import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';
 import {
   DEFAULT_LABELS_LOGIC,
   DEFAULT_PAGE_SIZE,
@@ -31,21 +46,6 @@ import {
   ResourceWithLabels,
   searchResources,
 } from './resource-list.model';
-import {
-  IError,
-  IResource,
-  KnowledgeBox,
-  LabelSets,
-  ProcessingStatus,
-  Resource,
-  RESOURCE_STATUS,
-  SortOption,
-} from '@nuclia/core';
-import { TranslateService } from '@ngx-translate/core';
-import { UploadService } from '../../upload/upload.service';
-import { SisToastService } from '@nuclia/sistema';
-import { ResourceNavigationService } from '../edit-resource/resource-navigation.service';
-import { FormatETAPipe } from '../../pipes';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
