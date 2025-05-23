@@ -143,6 +143,7 @@ export class ResultsDisplayFormComponent implements OnInit, OnDestroy {
     customizeThreshold: new FormControl<boolean>(false, { nonNullable: true }),
     citationThreshold: new FormControl<number>(INITIAL_CITATION_THRESHOLD, { nonNullable: true }),
     hideAnswer: new FormControl<boolean>(false, { nonNullable: true }),
+    sortResults: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   isKnowledgeGraphEnabled = this.featuresService.unstable.knowledgeGraph;

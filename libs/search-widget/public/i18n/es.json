@@ -81,6 +81,8 @@
 	"results.count": "Resultado {{index}} de {{total}}",
 	"results.empty": "No resultado",
 	"results.more_labels": "{{count}} etiquetas más",
+	"results.order.by-date": "Ordenar por fecha",
+	"results.order.by-relevance": "Ordenar por relevancia",
 	"results.sentences": "Frases relevantes",
 	"results.summary": "Resumen",
 	"results.title": "Resultados",

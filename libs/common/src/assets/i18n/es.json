@@ -1519,6 +1519,8 @@
 	"search.configuration.result-display.section-title": "Opciones de visualización de resultados",
 	"search.configuration.result-display.show-attached-images.toggle-description": "Mostrar imágenes asociadas a los párrafos recuperados en los resultados.",
 	"search.configuration.result-display.show-attached-images.toggle-label": "Mostrar imágenes adjuntas",
+	"search.configuration.result-display.sort-results.toggle-description": "El usuario podrá definir el orden de los resultados de la búsqueda.",
+	"search.configuration.result-display.sort-results.toggle-label": "Ordenar los resultados",
 	"search.configuration.save-changes-modal.description": "Guarde o restablezca la configuración de búsqueda antes de crear un widget.",
 	"search.configuration.save-changes-modal.title": "Configuración de búsqueda modificada",
 	"search.configuration.save-config-modal.description": "Dale un nombre a tu configuración de búsqueda para volver a encontrarla.",

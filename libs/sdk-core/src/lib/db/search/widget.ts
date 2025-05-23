@@ -113,6 +113,7 @@ export namespace Widget {
     jsonSchema: string;
     customizeThreshold: boolean;
     citationThreshold: number;
+    sortResults: boolean;
   }
 
   export interface SearchAPIConfig {
@@ -214,6 +215,7 @@ export namespace Widget {
     persistChatHistory?: boolean;
     hideAnswer?: boolean;
     contextImages?: boolean;
+    sortResults?: boolean;
   }
 }
 
@@ -312,6 +314,7 @@ const DEFAULT_RESULT_DISPLAY_CONFIG: Widget.ResultDisplayConfig = {
   jsonSchema: '',
   customizeThreshold: false,
   citationThreshold: INITIAL_CITATION_THRESHOLD,
+  sortResults: false,
 };
 
 export const NUCLIA_STANDARD_SEARCH_CONFIG: Widget.TypedSearchConfiguration = {
@@ -513,6 +516,7 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     knowledgeGraph: config.resultDisplay.relationGraph,
     displayFieldList: config.resultDisplay.displayFieldList,
     disableRAG: config.searchBox.useSearchResults === undefined ? false : !config.searchBox.useSearchResults,
+    sortResults: config.resultDisplay.sortResults,
 
     // Widget options
     hideLogo: widgetOptions.hideLogo,

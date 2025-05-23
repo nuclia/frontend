@@ -81,6 +81,8 @@
 	"results.count": "Resultat {{index}} de {{total}}",
 	"results.empty": "Cap resultat",
 	"results.more_labels": "{{count}} etiquetes més",
+	"results.order.by-date": "Ordenar per data",
+	"results.order.by-relevance": "Ordena per rellevància",
 	"results.sentences": "Frases rellevants",
 	"results.summary": "Resum",
 	"results.title": "Resultats",
