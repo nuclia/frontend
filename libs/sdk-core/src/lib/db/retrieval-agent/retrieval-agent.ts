@@ -78,13 +78,27 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     return this.nuclia.rest.post<SessionCreationResponse>(`${this.path}/sessions`, session);
   }
 
+  /**
+   * Interact with the session with am HTTP POST request. This method doesn't allow to have feedbacks while the agent is running, we only get the end results once everything is done.
+   * @param sessionId Session identifier
+   * @param question Question to send to the agent
+   * @returns
+   */
+  interaction(sessionId: string, question: string): Observable<unknown> {
+    return this.nuclia.rest.post(this.getInteractionPath(sessionId), {
+      question,
+      operation: InteractionOperation.question,
+    });
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private interactionStream?: Observable<any>;
 
+  private getInteractionPath(sessionId: string): string {
+    return `${this.path}/session/${sessionId}`;
+  }
   private getWsPath(sessionId: string): string {
-    // FIXME: the endpoint should be without the s, but it raise a 404. with the s we got a 403.
-    // return `${this.path}/session/${sessionId}/ws`;
-    return `${this.path}/sessions/${sessionId}/ws`;
+    return `${this.getInteractionPath(sessionId)}/ws`;
   }
 
   /**

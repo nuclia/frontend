@@ -60,6 +60,7 @@ export interface IRetrievalAgent
   createSession(session: SessionCreation): Observable<SessionCreationResponse>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   listenSessionInteractions(sessionId: string): Observable<any>;
+  interaction(sessionId: string, question: string): Observable<unknown>;
   interactWithSession(sessionId: string, question: string, operation: InteractionOperation): void;
   resetSessionInteraction(sessionId: string): void;
 
