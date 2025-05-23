@@ -1,4 +1,5 @@
 import { booleanAttribute, Component, computed, HostBinding, Input, input } from '@angular/core';
+import { NodeState } from '../../workflow.models';
 
 let count = 0;
 const defaultSize = 116;
@@ -16,7 +17,7 @@ const defaultSize = 116;
       <g>
         <path
           [attr.d]="d()"
-          stroke="#707070"
+          [attr.stroke]="stroke()"
           stroke-width="1.5"
           stroke-linecap="round" />
       </g>
@@ -36,7 +37,17 @@ export class LinkComponent {
   goDown = input(false, { transform: booleanAttribute });
   samePosition = input(false, { transform: booleanAttribute });
   height = input(defaultSize);
+  state = input<NodeState>('default');
 
+  stroke = computed(() => {
+    switch (this.state()) {
+      case 'processing':
+      case 'processed':
+        return '#16a249';
+      default:
+        return '#707070';
+    }
+  });
   viewbox = computed(() => `0 0 ${this.width} ${this.height()}`);
   d = computed(() => {
     const dy = this.height() - 1;

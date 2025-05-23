@@ -50,5 +50,8 @@
       border-color: $color-neutral-light;
       cursor: default;
     }
+    &.processing {
+      border: 1.5px solid $color-success-strong;
+    }
   }
 }
