@@ -88,6 +88,9 @@ export class SDKService {
   set arag(arag: RetrievalAgent | null) {
     this._arag.next(arag);
   }
+  get arag(): Observable<RetrievalAgent | null> {
+    return this._arag.asObservable();
+  }
 
   set account(account: Account | null) {
     this.nuclia.options.accountId = account?.id;
