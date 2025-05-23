@@ -1190,6 +1190,7 @@
 	"retrieval-agents.sessions.list.title": "Llista de sessions",
 	"retrieval-agents.sessions.list.toasts.deletion-error": "S'ha produït un error en suprimir la sessió",
 	"retrieval-agents.sessions.list.toasts.deletion-success": "La sessió s'ha suprimit correctament.",
+	"retrieval-agents.sessions.preview.no-session-info": "No es va proporcionar informació inicial en crear la sessió",
 	"retrieval-agents.sessions.preview.session-info": "Info de la sessió",
 	"retrieval-agents.workflow.common-forms.headers.add": "Afegeix una capçalera",
 	"retrieval-agents.workflow.common-forms.headers.label": "Capçaleres",

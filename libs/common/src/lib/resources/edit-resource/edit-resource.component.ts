@@ -31,8 +31,8 @@ interface ResourceFieldWithIcon extends ResourceField {
 })
 export class EditResourceComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
-  isArag = this.route.data.pipe(
-    map((data) => data['mode'] === 'arag'),
+  isArag = combineLatest([this.route.data, this.features.unstable.retrievalAgents]).pipe(
+    map(([data, isAragEnabled]) => isAragEnabled && data['mode'] === 'arag'),
     takeUntil(this.unsubscribeAll),
   );
   backRoute: Observable<string> = combineLatest([this.navigationService.homeUrl, this.isArag]).pipe(
@@ -90,13 +90,13 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private sdk: SDKService,
     public resourceNavigationService: ResourceNavigationService,
   ) {
-    this.route.params
+    combineLatest([this.route.params, this.isArag])
       .pipe(
-        filter((params) => !!params['id']),
-        switchMap((params) => {
+        filter(([params]) => !!params['id']),
+        switchMap(([params, isArag]) => {
           const resourceId = params['id'];
           this.resourceNavigationService.currentResourceId = resourceId;
-          return this.editResource.loadResource(resourceId);
+          return isArag ? this.editResource.loadSession(resourceId) : this.editResource.loadResource(resourceId);
         }),
         takeUntil(this.unsubscribeAll),
       )

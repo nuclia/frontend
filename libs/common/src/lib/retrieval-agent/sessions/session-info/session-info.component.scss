@@ -1,0 +1,9 @@
+@use 'apps/dashboard/src/variables' as *;
+
+.session-info {
+  color: $color-neutral-regular;
+}
+
+nsi-info-card {
+  margin-top: calc(-1 * #{rhythm(2)}); // align the info card with the side nav text
+}

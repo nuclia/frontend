@@ -1201,6 +1201,7 @@
 	"retrieval-agents.sessions.list.title": "Sessions list",
 	"retrieval-agents.sessions.list.toasts.deletion-error": "An error occurred while deleting the session",
 	"retrieval-agents.sessions.list.toasts.deletion-success": "The session was successfully deleted.",
+	"retrieval-agents.sessions.preview.no-session-info": "No initial information were provided when creating the session",
 	"retrieval-agents.sessions.preview.session-info": "Session info",
 	"retrieval-agents.workflow.common-forms.headers.add": "Add header",
 	"retrieval-agents.workflow.common-forms.headers.label": "Headers",
