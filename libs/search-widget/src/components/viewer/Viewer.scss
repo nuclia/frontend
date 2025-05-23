@@ -46,15 +46,6 @@
       height: var(--rhythm-5);
       width: 1px;
     }
-
-    .viewer-menu {
-      li {
-        align-items: center;
-        display: flex;
-        height: var(--rhythm-4);
-        padding: 0 var(--rhythm-1_5);
-      }
-    }
   }
 
   .viewer-body {
@@ -231,19 +222,6 @@
   .sw-viewer {
     .side-panel-button {
       cursor: pointer;
-    }
-
-    .viewer-menu li {
-      background: var(--color-light-stronger);
-      cursor: pointer;
-      transition: background var(--transition-superfast);
-
-      &:hover {
-        background: var(--color-neutral-lightest);
-      }
-      &:active {
-        background: var(--color-neutral-lighter);
-      }
     }
 
     .field-list {

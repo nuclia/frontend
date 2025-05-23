@@ -82,6 +82,8 @@
 	"results.count": "Result {{index}} of {{total}}",
 	"results.empty": "No result found",
 	"results.more_labels": "{{count}} more labels",
+	"results.order.by-date": "Sort by date",
+	"results.order.by-relevance": "Sort by relevance",
 	"results.sentences": "Relevant sentences",
 	"results.summary": "Summary",
 	"results.title": "Results",

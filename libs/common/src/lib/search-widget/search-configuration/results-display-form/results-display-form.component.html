@@ -204,4 +204,17 @@
       {{ 'search.configuration.result-display.hide-answer.toggle-description' | translate }}
     </div>
   </div>
+    <div class="config-form-field">
+    <pa-toggle
+      formControlName="sortResults"
+      withBackground
+      spaceBetweenLabelAndToggle>
+      <span class="toggle-label">
+        {{ 'search.configuration.result-display.sort-results.toggle-label' | translate }}
+      </span>
+    </pa-toggle>
+    <div class="config-form-help">
+      {{ 'search.configuration.result-display.sort-results.toggle-description' | translate }}
+    </div>
+  </div>
 </form>

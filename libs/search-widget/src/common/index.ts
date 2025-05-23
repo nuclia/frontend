@@ -8,6 +8,7 @@ export * from './indicators';
 export { default as InfiniteScroll } from './infinite-scroll/InfiniteScroll.svelte';
 export * from './label';
 export * from './modal';
+export { default as Option } from './dropdown/Option.svelte';
 export * from './paragraph-result';
 export * from './spinner';
 export * from './tabs';

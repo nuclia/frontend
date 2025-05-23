@@ -34,11 +34,13 @@
     widgetActions,
     widgetJsonSchema,
     rephrasedQuery,
+    hasSortButton,
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { DebugInfo, InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
   import { Button, IconButton } from '../../common';
+  import ResultsOrder from '../../components/results-order/ResultsOrder.svelte';
 
   export let cssPath = '';
   export let mode = '';
@@ -155,7 +157,14 @@
             use:renderingDone />
         {:else if $resultList.length > 0}
           <div>
-            <h3 class="title-s">{$_('results.title')}</h3>
+            <h3 class="title-s">
+              {$_('results.title')}
+              {#if $hasSortButton}
+                <div class="sort">
+                  <ResultsOrder></ResultsOrder>
+                </div>
+              {/if}
+            </h3>
             <div
               class="search-results"
               class:collapsed={$collapseTextBlocks}>

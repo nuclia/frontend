@@ -1,6 +1,5 @@
 import { SvelteState } from '../state-lib';
 import type {
-  Ask,
   Classification,
   FieldId,
   Filter,
@@ -35,7 +34,7 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import type { FindResultsAsList, ResultType, TypedResult, DisplayableMetadata, ResultMetadata } from '../models';
+import type { FindResultsAsList, ResultType, TypedResult, ResultMetadata } from '../models';
 import { NO_RESULT_LIST } from '../models';
 import { combineLatest, filter, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
@@ -58,6 +57,8 @@ export interface LabelSetFilter {
   id: string;
   kind: LabelSetKind;
 }
+
+export type ResultsOrder = 'relevance' | 'date';
 
 type EngagementType = 'CHAT' | 'RESULT';
 
@@ -99,6 +100,7 @@ interface SearchState {
     content_type: string;
     b64encoded: string;
   }[];
+  resultsOrder: ResultsOrder;
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -124,6 +126,7 @@ export const searchState = new SvelteState<SearchState>({
     extra: [],
   },
   images: [],
+  resultsOrder: 'relevance',
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -174,13 +177,21 @@ export const searchResults = searchState.writer<
 );
 
 export const resultList = searchState.reader<TypedResult[]>((state) => {
-  return state.results.resultList.map((result) => {
+  const list = state.results.resultList.map((result) => {
     const metadataValues = getResultMetadata(state.metadata, result, result.fieldData);
     if (metadataValues.length > 0) {
       result.resultMetadata = metadataValues;
     }
     return result;
   });
+  if (state.resultsOrder === 'date') {
+    list.sort((a, b) => {
+      const createdA = a.origin?.created || a.created || '';
+      const createdB = b.origin?.created || b.created || '';
+      return createdA === createdB ? 0 : createdA < createdB ? 1 : -1;
+    });
+  }
+  return list;
 });
 
 export const showResults = searchState.writer<boolean>(
@@ -235,6 +246,14 @@ export const preselectedFilters = searchState.writer<string[] | Filter[], string
       preselectedFilters: parsePreselectedFilters(preselectedFilters),
     };
   },
+);
+
+export const resultsOrder = searchState.writer<ResultsOrder>(
+  (state) => state.resultsOrder,
+  (state, resultsOrder) => ({
+    ...state,
+    resultsOrder,
+  }),
 );
 
 export const searchFilters = searchState.writer<string[], { filters: string[] }>(

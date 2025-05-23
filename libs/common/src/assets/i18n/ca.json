@@ -1519,6 +1519,8 @@
 	"search.configuration.result-display.section-title": "Opcions de visualització de resultats",
 	"search.configuration.result-display.show-attached-images.toggle-description": "Mostra imatges associades amb els paràgrafs recuperats als resultats.",
 	"search.configuration.result-display.show-attached-images.toggle-label": "Mostra les imatges adjuntes",
+	"search.configuration.result-display.sort-results.toggle-description": "L'usuari podrà definir l'ordre dels resultats de la cerca.",
+	"search.configuration.result-display.sort-results.toggle-label": "Ordena els resultats",
 	"search.configuration.save-changes-modal.description": "Deseu o reinicieu la configuració de cerca abans de crear un widget.",
 	"search.configuration.save-changes-modal.title": "Configuració de cerca modificada",
 	"search.configuration.save-config-modal.description": "Doneu un nom a la vostra configuració de cerca per tornar-la a trobar.",

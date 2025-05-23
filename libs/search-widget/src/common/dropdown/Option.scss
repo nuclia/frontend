@@ -1,0 +1,24 @@
+.sw-option {
+  align-items: center;
+  display: flex;
+  height: var(--rhythm-5);
+  padding: 0 var(--rhythm-1_5);
+  &.selected {
+    background: var(--color-neutral-lighter);
+  }
+}
+
+@media (hover: hover) {
+  .sw-option:not(.selected) {
+    background: var(--color-light-stronger);
+    cursor: pointer;
+    transition: background-color var(--transition-superfast);
+
+    &:hover {
+      background: var(--color-neutral-lightest);
+    }
+    &:active {
+      background: var(--color-neutral-lighter);
+    }
+  }
+}

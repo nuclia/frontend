@@ -24,7 +24,12 @@
 }
 
 h3 {
+  align-items: center;
+  display: flex;
   margin-top: 0;
+}
+.sort {
+  margin-left: auto;
 }
 
 .results {

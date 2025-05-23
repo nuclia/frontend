@@ -46,6 +46,7 @@
     Icon,
     IconButton,
     isMobileViewport,
+    Option,
     ParagraphResult,
     unblockBackground,
   } from '../../common';
@@ -359,9 +360,9 @@
             <Dropdown
               position={menuPosition}
               on:close={() => (displayMenu = false)}>
-              <ul class="viewer-menu">
+              <ul>
                 {#each $widgetActions as item}
-                  <li on:click={() => clickOnMenu(item)}>{item.label}</li>
+                <Option on:select={() => clickOnMenu(item)}>{item.label}</Option>
                 {/each}
               </ul>
             </Dropdown>

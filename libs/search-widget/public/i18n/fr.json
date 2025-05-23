@@ -79,6 +79,8 @@
 	"results.count": "Résultat {{index}} sur {{total}}",
 	"results.empty": "Aucun résultat trouvé",
 	"results.more_labels": "{{count}}  autres labels",
+	"results.order.by-date": "Trier par date",
+	"results.order.by-relevance": "Trier par pertinence",
 	"results.sentences": "Phrases pertinentes",
 	"results.summary": "Résumé",
 	"results.title": "Résultats",
