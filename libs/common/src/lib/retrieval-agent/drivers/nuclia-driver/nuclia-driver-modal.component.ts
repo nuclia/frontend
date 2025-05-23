@@ -13,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DriverCreation, IKnowledgeBoxItem, NucliaDBConfig, NucliaDBDriver } from '@nuclia/core';
 import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter, map, of, switchMap, take } from 'rxjs';
-import { ExpirationModalComponent } from '../../../../../../../apps/dashboard/src/app/knowledge-box/service-access/expiration-modal.component';
+import { ExpirationModalComponent } from '../../../token-dialog/expiration-modal.component';
 
 @Component({
   selector: 'app-nuclia-driver-modal',

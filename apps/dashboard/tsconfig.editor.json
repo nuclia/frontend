@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "../../libs/common/src/lib/token-dialog/expiration-modal.component.ts"],
   "compilerOptions": {
     "types": ["jest", "node"]
   },
