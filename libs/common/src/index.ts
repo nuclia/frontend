@@ -18,6 +18,7 @@ export * from './lib/pagination';
 export * from './lib/pipes';
 export * from './lib/rag-lab';
 export * from './lib/resources';
+export * from './lib/retrieval-agent';
 export * from './lib/search-widget';
 export * from './lib/select-account-kb';
 export * from './lib/services';

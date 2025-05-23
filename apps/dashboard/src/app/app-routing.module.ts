@@ -2,10 +2,12 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
+  AgentDashboardComponent,
   AiModelsComponent,
   aragOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
+  DriversPageComponent,
   EditResourceComponent,
   EmptyComponent,
   knowledgeBoxOwnerGuard,
@@ -19,12 +21,15 @@ import {
   ResourceLinkComponent,
   ResourceProfileComponent,
   ResourceTextComponent,
+  RetrievalAgentComponent,
   rootGuard,
   SearchPageComponent,
   SelectAccountComponent,
   selectAccountGuard,
   SelectKbComponent,
   selectKbGuard,
+  SessionsComponent,
+  SessionsListComponent,
   setAccountGuard,
   setAgentGuard,
   setKbGuard,
@@ -43,13 +48,6 @@ import { awsGuard } from './onboarding/aws-onboarding/aws.guard';
 import { InviteComponent } from './onboarding/invite/invite.component';
 import { inviteGuard } from './onboarding/invite/invite.guard';
 import { RedirectComponent } from './redirect/redirect.component';
-import {
-  AgentDashboardComponent,
-  DriversPageComponent,
-  RetrievalAgentComponent,
-  SessionsComponent,
-  SessionsListComponent,
-} from './retrieval-agent';
 import { TestPageComponent } from './test-page/test-page.component';
 
 const routes: Routes = [

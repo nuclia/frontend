@@ -11,10 +11,10 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DashboardLayoutService } from '@flaps/common';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { auditTime, fromEvent, Subject, takeUntil } from 'rxjs';
+import { DashboardLayoutService } from '../../base';
 import {
   activeSideBar,
   aragUrl,

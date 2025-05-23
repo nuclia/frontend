@@ -12,18 +12,6 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
-import {
-  ColumnHeader,
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_SORTING,
-  Filters,
-  getFilterFromDate,
-  getFilterFromVisibility,
-  PAGE_SIZES,
-  ResourceListParams,
-  searchResources,
-  TablePaginationComponent,
-} from '@flaps/common';
 import { SDKService } from '@flaps/core';
 import {
   DropdownComponent,
@@ -48,6 +36,18 @@ import {
 } from '@nuclia/sistema';
 import { endOfDay } from 'date-fns';
 import { catchError, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import {
+  ColumnHeader,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_SORTING,
+  Filters,
+  getFilterFromDate,
+  getFilterFromVisibility,
+  PAGE_SIZES,
+  ResourceListParams,
+  searchResources,
+  TablePaginationComponent,
+} from '../../resources';
 
 @Component({
   selector: 'app-sessions-list',
