@@ -73,6 +73,7 @@ export function isCondionalNode(x: any): x is CondionalNodeType {
   return CONDITIONAL_NODES.includes(x);
 }
 
+export type NodeState = 'default' | 'unsaved' | 'selected' | 'processing' | 'processed';
 export type NodeCategory = 'preprocess' | 'context' | 'generation' | 'postprocess';
 
 export interface ParentNode {

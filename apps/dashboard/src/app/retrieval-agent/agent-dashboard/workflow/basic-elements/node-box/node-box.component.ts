@@ -6,6 +6,7 @@ import {
   Component,
   ComponentRef,
   ContentChildren,
+  effect,
   ElementRef,
   HostBinding,
   inject,
@@ -18,6 +19,7 @@ import {
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
+import { NodeState } from '../../workflow.models';
 import { ConnectableEntryComponent } from '../connectable-entry/connectable-entry.component';
 import { LinkComponent, LinkService } from '../link';
 
@@ -39,7 +41,7 @@ export class NodeBoxComponent implements AfterViewInit {
   root = input(false, { transform: booleanAttribute });
   nodeTitle = input('');
   origin = input<ConnectableEntryComponent>();
-  state = input<'default' | 'unsaved' | 'selected' | 'processing' | 'processed'>('default');
+  state = input<NodeState>('default');
 
   outputClick = output<ConnectableEntryComponent>();
   trashClick = output<void>();
@@ -60,6 +62,20 @@ export class NodeBoxComponent implements AfterViewInit {
   }
   @HostBinding('class.visible') get visibility() {
     return this.visible();
+  }
+
+  constructor() {
+    effect(() => {
+      const entry = this.origin();
+      const state = this.state();
+      if (!!entry) {
+        if (state === 'processed' || state === 'processing') {
+          entry.outputElement.nativeElement.classList.add('processing');
+        } else {
+          entry.outputElement.nativeElement.classList.remove('processing');
+        }
+      }
+    });
   }
 
   ngAfterContentInit(): void {
@@ -97,6 +113,9 @@ export class NodeBoxComponent implements AfterViewInit {
       const leftBox = entry.outputElement.nativeElement.getBoundingClientRect();
       const rightBox = this.inputElement.nativeElement.getBoundingClientRect();
       this.linkRef = this.linkService.drawLink(leftBox, rightBox);
+      if (this.linkRef) {
+        this.linkRef.setInput('state', this.state());
+      }
     }
   }
 }

@@ -37,10 +37,17 @@
     </div>
 
     <div class="select-kb-body">
-      @if (((kbs | async)?.length || 0) > 0) {
+      @let isAragEnabled = isRetrievalAgentEnabled | async;
+      @let kbList = kbs | async;
+      @let kbCount = (kbList || []).length;
+      @let aragList = arags | async;
+      @let aragCount = (aragList || []).length;
+      @let showList = isAragEnabled ? (kbCount > 0 || aragCount > 0) : kbCount > 0;
+
+      @if (showList) {
         <div class="select-kb-list">
-          @if (!standalone && (isRetrievalAgentEnabled | async)) {
-            @for (arag of arags | async; track arag.id) {
+          @if (!standalone && isAragEnabled) {
+            @for (arag of aragList; track arag.id) {
               @if (arag.id) {
                 <a
                   class="kb"
@@ -64,7 +71,7 @@
               }
             }
           }
-          @for (kb of kbs | async; track kb.id) {
+          @for (kb of kbList; track kb.id) {
             @if (kb.id) {
               <a
                 class="kb"

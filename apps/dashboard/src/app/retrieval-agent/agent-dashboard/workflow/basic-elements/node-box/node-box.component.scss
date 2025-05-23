@@ -16,6 +16,31 @@
     opacity $transition-process-in;
   width: rhythm(45);
 
+  .title-s {
+    align-items: center;
+    display: flex;
+    height: rhythm(4);
+    justify-content: space-between;
+    padding-left: rhythm(1);
+  }
+  .input {
+    background: $color-light-stronger;
+    border-radius: 50%;
+    border: 1.5px solid $color-neutral-regular;
+    flex-shrink: 0;
+    height: rhythm(2);
+    position: absolute;
+    left: calc(#{rhythm(1)} * -1);
+    top: calc(#{rhythm(2)} - 2px);
+    width: rhythm(2);
+  }
+
+  @media (min-height: $height-viewport-medium-min) {
+    &.is-root {
+      margin-top: rhythm(17);
+    }
+  }
+
   &.visible {
     opacity: 1;
   }
@@ -41,28 +66,8 @@
     border: 1px solid $color-secondary-strong;
   }
 
-  .title-s {
-    align-items: center;
-    display: flex;
-    height: rhythm(4);
-    justify-content: space-between;
-    padding-left: rhythm(1);
-  }
-  .input {
-    background: $color-light-stronger;
-    border-radius: 50%;
-    border: 1.5px solid $color-neutral-regular;
-    flex-shrink: 0;
-    height: rhythm(2);
-    position: absolute;
-    left: calc(#{rhythm(1)} * -1);
-    top: calc(#{rhythm(2)} - 2px);
-    width: rhythm(2);
-  }
-
-  @media (min-height: $height-viewport-medium-min) {
-    &.is-root {
-      margin-top: rhythm(17);
-    }
+  &.processing .input,
+  &.processed .input {
+    border: 1.5px solid $color-success-strong;
   }
 }
