@@ -42,7 +42,7 @@ export class InternetDriverModalComponent {
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     provider: new FormControl<InternetProviderType | ''>('', { nonNullable: true }),
     key: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    endpoint: new FormControl<string | undefined>(undefined, { nonNullable: true }),
+    endpoint: new FormControl<string>('web', { nonNullable: true }),
     vertexai: new FormControl<boolean>(false, { nonNullable: true, validators: [Validators.required] }),
     credentials: new FormControl<string | undefined>(undefined, { nonNullable: true }),
     project: new FormControl<string | undefined>(undefined, { nonNullable: true }),
