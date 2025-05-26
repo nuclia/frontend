@@ -1,6 +1,8 @@
 @use 'typography.tokens' as typography;
-@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
-
-$font-size-side-nav-item: typography.font-size(s);
-$line-height-side-nav-item: typography.line-height(m);
-$height-side-nav-item: spacing.rhythm(5);
+@use './spacing.tokens' as spacing;
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/side-nav.tokens'
+  with(
+    $font-size-side-nav-item: typography.font-size(s),
+    $line-height-side-nav-item: typography.line-height(m),
+    $height-side-nav-item: spacing.rhythm(5)
+  );

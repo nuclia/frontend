@@ -1,247 +1,87 @@
 @use 'sass:map';
 @use './palette.tokens' as palette;
-@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/typography.tokens' as typography;
-@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
+@use './spacing.tokens' as spacing;
 
-// =================================================
-// TYPOGRAPHY
-// =================================================
-// Family
-$font-family-sans-serif:
-  var(--custom-font-family, Inter),
-  Futura,
-  -apple-system,
-  BlinkMacSystemFont,
-  'Segoe UI',
-  Roboto,
-  'Helvetica Neue',
-  Arial,
-  sans-serif,
-  'Apple Color Emoji',
-  'Segoe UI Emoji',
-  'Segoe UI Symbol';
-$font-family-monospace: 'Source Code Pro', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-  monospace;
-$font-family-body: $font-family-sans-serif;
-
-// Weight
-$font-weight-thin: 300;
-$font-weight-regular: 400;
-$font-weight-semi-bold: 600;
-$font-weight-bold: 700;
-
-$font-weight-overline: $font-weight-semi-bold;
-$font-weight-body-xs: $font-weight-regular;
-$font-weight-body-s: $font-weight-regular;
-$font-weight-body-m: $font-weight-regular;
-$font-weight-title-xxs: $font-weight-semi-bold;
-$font-weight-title-xs: $font-weight-semi-bold;
-$font-weight-title-s: $font-weight-semi-bold;
-$font-weight-title-m: $font-weight-semi-bold;
-$font-weight-title-l: $font-weight-bold;
-$font-weight-display-s: $font-weight-bold;
-
-// Sizes
 $font-size-base: 1rem;
 /* prettier-ignore */
-$font-size: (
-  xxs: ($font-size-base * .625),  // 10px - 0.625 rem
-  xs: ($font-size-base * .75),    // 12px - 0.75 rem
-  s:  ($font-size-base * .875),   // 14px - 0.875 rem
-  m:  $font-size-base,            // 16px - 1 rem
-  l:  ($font-size-base * 1.125),  // 18px - 1.125 rem
-  xl:  ($font-size-base * 1.25),  // 20px - 1.25 rem
-  xxl:  ($font-size-base * 1.5),  // 24px - 1.5 rem
-  // display
-  d1:     ($font-size-base * 1.375),  // 22px - 1.375 rem
-  d1-md:  ($font-size-base * 1.625),  // 26px - 1.625 rem
-  d2:     ($font-size-base * 1.75),   // 28px - 1.75 rem
-  d2-md:  ($font-size-base * 2),      // 32px - 2 rem
-  d3:     ($font-size-base * 2.25),   // 36px - 2.25 rem
-  d3-md:  ($font-size-base * 3),      // 48px - 3 rem
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/typography.tokens' with (
+  // =================================================
+  // TYPOGRAPHY
+  // =================================================
+  $font-family-sans-serif: var(--custom-font-family, Inter),
+  $font-family-monospace: 'Source Code Pro',
+  $font-weight-semi-bold: 600,
+  $font-size: (
+    xxs: ($font-size-base * .625),  // 10px - 0.625 rem
+    xs: ($font-size-base * .75),    // 12px - 0.75 rem
+    s:  ($font-size-base * .875),   // 14px - 0.875 rem
+    m:  $font-size-base,            // 16px - 1 rem
+    l:  ($font-size-base * 1.125),  // 18px - 1.125 rem
+    xl:  ($font-size-base * 1.25),  // 20px - 1.25 rem
+    xxl:  ($font-size-base * 1.5),  // 24px - 1.5 rem
+    // display
+    d1:     ($font-size-base * 1.375),  // 22px - 1.375 rem
+    d1-md:  ($font-size-base * 1.625),  // 26px - 1.625 rem
+    d2:     ($font-size-base * 1.75),   // 28px - 1.75 rem
+    d2-md:  ($font-size-base * 2),      // 32px - 2 rem
+    d3:     ($font-size-base * 2.25),   // 36px - 2.25 rem
+    d3-md:  ($font-size-base * 3),      // 48px - 3 rem
+  ),
+  $line-height: (
+    xs: ($font-size-base * .875),   // 14px - 0.875 rem
+    s:  ($font-size-base * 1),      // 16px - 1 rem
+    m:  ($font-size-base * 1.25),   // 20px - 1.25 rem
+    l:  ($font-size-base * 1.5),    // 24px - 1.5 rem
+    xl: ($font-size-base * 1.75),   // 28px - 1.75 rem
+    xxl: ($font-size-base * 2),     // 32px - 2 rem
+    // display
+    d1:     ($font-size-base * 1.625),  // 26px - 1.625 rem
+    d1-md:  ($font-size-base * 1.75),   // 28px - 1.75 rem
+    d2:     ($font-size-base * 1.875),  // 30px - 1.875 rem
+    d2-md:  ($font-size-base * 2.125),  // 34px - 2.125 rem
+    d3:     ($font-size-base * 2.25),   // 36px - 2.25 rem
+    d3-md:  ($font-size-base * 2.75),   // 44px - 2.75 rem
+  ),
+  $font-weight-title-l: 700,
+  $font-weight-display-s: 700,
+  $font-size-overline: .5rem,
+  $font-size-body-xs: 0.625rem,
+  $font-size-body-s: 0.75rem,
+  $font-size-title-xxs: 0.75rem,
+  $font-size-title-xs: 0.875rem,
+  $font-size-title-s: 0.875rem,
+  $font-size-title-m: 1rem,
+  $font-size-title-l: 1.125rem,
+  $font-size-display-s: 1.5rem,
+  $font-size-display-m: 2.25rem,
+  $font-size-title-s-md: 0.875rem,
+  $font-size-title-m-md: 1rem,
+  $font-size-title-l-md: 1.125rem,
+  $font-size-display-s-md: 1.5rem,
+  $font-size-display-m-md: 2.25rem,
+  $line-height-body-m: 1.25rem,
+  $line-height-title-xxs: 1.5rem,
+  $line-height-title-s: 2rem,
+  $line-height-title-m: 1.625rem,
+  $line-height-title-s-md: 1.625rem,
+  $line-height-title-m-md: 1.75rem,
+  $line-height-body: 1.4,
+
+
+  $letter-spacing-overline: 0,
+  $letter-spacing-body-xs: 0,
+  $letter-spacing-body-s: 0,
+  $letter-spacing-body-m: 0,
+  $letter-spacing-title-xxs: 0,
+  $letter-spacing-title-xs: 0,
+  $letter-spacing-title-s: 0,
+  $letter-spacing-title-m: 0,
+  $letter-spacing-title-l: 0,
+  $letter-spacing-display-s: 0,
+  $letter-spacing-display-m: 0,
+  $letter-spacing-title-s-md: 0,
+  $letter-spacing-title-m-md: 0,
+  $letter-spacing-title-l-md: 0,
+  $letter-spacing-display-s-md: 0,
+  $letter-spacing-display-m-md: 0,
 );
-@function font-size($t-shirt-size) {
-  @return map.get($font-size, $t-shirt-size);
-}
-
-$font-size-overline: spacing.rhythm(1);
-$font-size-body-xs: font-size(xxs);
-$font-size-body-s: font-size(xs);
-$font-size-title-xxs: font-size(xs);
-$font-size-title-xs: font-size(s);
-$font-size-title-s: font-size(s);
-$font-size-title-m: font-size(m);
-$font-size-title-l: font-size(l);
-$font-size-display-s: font-size(xxl);
-$font-size-display-m: font-size(d2);
-
-$font-size-title-s-md: font-size(s);
-$font-size-title-m-md: font-size(m);
-$font-size-title-l-md: font-size(l);
-$font-size-display-s-md: font-size(xxl);
-$font-size-display-m-md: font-size(d2);
-
-// Line height
-/* prettier-ignore */
-$line-height: (
-  xs: ($font-size-base * .875),   // 14px - 0.875 rem
-  s:  ($font-size-base * 1),      // 16px - 1 rem
-  m:  ($font-size-base * 1.25),   // 20px - 1.25 rem
-  l:  ($font-size-base * 1.5),    // 24px - 1.5 rem
-  xl: ($font-size-base * 1.75),   // 28px - 1.75 rem
-  xxl: ($font-size-base * 2),     // 32px - 2 rem
-  // display
-  d1:     ($font-size-base * 1.625),  // 26px - 1.625 rem
-  d1-md:  ($font-size-base * 1.75),   // 28px - 1.75 rem
-  d2:     ($font-size-base * 1.875),  // 30px - 1.875 rem
-  d2-md:  ($font-size-base * 2.125),  // 34px - 2.125 rem
-  d3:     ($font-size-base * 2.25),   // 36px - 2.25 rem
-  d3-md:  ($font-size-base * 2.75),   // 44px - 2.75 rem
-);
-@function line-height($t-shirt-size) {
-  @return map.get($line-height, $t-shirt-size);
-}
-
-$line-height-body: 1.4;
-
-$line-height-overline: line-height(s);
-$line-height-body-xs: line-height(s);
-$line-height-body-s: line-height(m);
-$line-height-body-m: line-height(m);
-$line-height-title-xxs: line-height(l);
-$line-height-title-xs: line-height(l);
-$line-height-title-s: line-height(xxl);
-$line-height-title-m: line-height(d1);
-$line-height-title-l: line-height(d1);
-$line-height-display-s: line-height(d2);
-$line-height-display-m: line-height(d3);
-
-$line-height-title-s-md: line-height(d1);
-$line-height-title-m-md: line-height(d1-md);
-$line-height-title-l-md: line-height(d1-md);
-$line-height-display-s-md: line-height(d2-md);
-$line-height-display-m-md: line-height(d3-md);
-
-// Letter spacing
-$letter-spacing-overline: 0;
-$letter-spacing-body-xs: 0;
-$letter-spacing-body-s: 0;
-$letter-spacing-body-m: 0;
-$letter-spacing-title-xxs: 0;
-$letter-spacing-title-xs: 0;
-$letter-spacing-title-s: 0;
-$letter-spacing-title-m: 0;
-$letter-spacing-title-l: 0;
-$letter-spacing-display-s: 0;
-$letter-spacing-display-m: 0;
-
-$letter-spacing-title-s-md: 0;
-$letter-spacing-title-m-md: 0;
-$letter-spacing-title-l-md: 0;
-$letter-spacing-display-s-md: 0;
-$letter-spacing-display-m-md: 0;
-
-// =================================================
-// SHADOWS
-// =================================================
-$shadow-small: 1px 1px 2px rgba(palette.$color-dark-stronger, 0.3);
-
-$color-text-disabled: palette.$color-neutral-regular;
-
-@mixin overline {
-  font-size: $font-size-overline;
-  line-height: $line-height-overline;
-  letter-spacing: $letter-spacing-overline;
-  font-weight: $font-weight-overline;
-  text-transform: uppercase;
-}
-@mixin body-xs {
-  font-size: $font-size-body-xs;
-  line-height: $line-height-body-xs;
-  letter-spacing: $letter-spacing-body-xs;
-  font-weight: $font-weight-body-xs;
-}
-@mixin body-s {
-  font-size: $font-size-body-s;
-  line-height: $line-height-body-s;
-  letter-spacing: $letter-spacing-body-s;
-  font-weight: $font-weight-body-s;
-}
-@mixin body-m {
-  font-size: typography.$font-size-body-m;
-  line-height: $line-height-body-m;
-  letter-spacing: $letter-spacing-body-m;
-  font-weight: $font-weight-body-m;
-}
-@mixin title-xxs {
-  font-size: $font-size-title-xxs;
-  line-height: $line-height-title-xxs;
-  letter-spacing: $letter-spacing-title-xxs;
-  font-weight: $font-weight-title-xxs;
-}
-@mixin title-xs {
-  font-size: $font-size-title-xs;
-  line-height: $line-height-title-xs;
-  letter-spacing: $letter-spacing-title-xs;
-  font-weight: $font-weight-title-xs;
-}
-@mixin title-s-mobile {
-  font-size: $font-size-title-s;
-  line-height: $line-height-title-s;
-  letter-spacing: $letter-spacing-title-s;
-  font-weight: $font-weight-title-s;
-}
-@mixin title-s {
-  font-size: $font-size-title-s-md;
-  line-height: $line-height-title-s-md;
-  letter-spacing: $letter-spacing-title-s-md;
-  font-weight: $font-weight-title-s;
-}
-@mixin title-m-mobile {
-  font-size: $font-size-title-m;
-  line-height: $line-height-title-m;
-  letter-spacing: $letter-spacing-title-m;
-  font-weight: $font-weight-title-m;
-}
-@mixin title-m {
-  font-size: $font-size-title-m-md;
-  line-height: $line-height-title-m-md;
-  letter-spacing: $letter-spacing-title-m-md;
-  font-weight: $font-weight-title-m;
-}
-@mixin title-l-mobile {
-  font-size: $font-size-title-l;
-  line-height: $line-height-title-l;
-  letter-spacing: $letter-spacing-title-l;
-  font-weight: $font-weight-title-l;
-}
-@mixin title-l {
-  font-size: $font-size-title-l-md;
-  line-height: $line-height-title-l-md;
-  letter-spacing: $letter-spacing-title-l-md;
-  font-weight: $font-weight-title-l;
-}
-@mixin display-s-mobile {
-  font-size: $font-size-display-s;
-  line-height: $line-height-display-s;
-  letter-spacing: $letter-spacing-display-s;
-  font-weight: $font-weight-display-s;
-}
-@mixin display-s {
-  font-size: $font-size-display-s-md;
-  line-height: $line-height-display-s-md;
-  letter-spacing: $letter-spacing-display-s-md;
-  font-weight: $font-weight-display-s;
-}
-@mixin display-m-mobile {
-  font-size: $font-size-display-m;
-  line-height: $line-height-display-m;
-  letter-spacing: $letter-spacing-display-m;
-  font-weight: $font-weight-display-m;
-}
-@mixin display-m {
-  font-size: $font-size-display-m-md;
-  line-height: $line-height-display-m-md;
-  letter-spacing: $letter-spacing-display-m-md;
-  font-weight: $font-weight-display-m;
-}

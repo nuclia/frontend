@@ -1,6 +1,4 @@
-@use 'variables';
-@use '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
-@use '../../sistema/theme/tokens/_typography.tokens.scss' as typography;
+@use 'variables' as variables;
 
 :root {
   --app-background-color: variables.$color-light-stronger;
@@ -13,7 +11,7 @@
   // z-index
   --app-zindex-topbar: 1000;
 
-  --app-topbar-logo-width: var(--custom-topbar-logo-width, calc(#{spacing.rhythm(12)} + #{spacing.rhythm(1)}));
+  --app-topbar-logo-width: var(--custom-topbar-logo-width, calc(#{variables.rhythm(12)} + #{variables.rhythm(1)}));
 }
 
 html,
@@ -49,7 +47,7 @@ code.endpoint {
 }
 
 .pa-popup {
-  min-width: spacing.rhythm(16);
+  min-width: variables.rhythm(16);
 }
 
 pa-button.full-width {
@@ -60,21 +58,21 @@ pa-button.full-width {
   }
 }
 
-.page-spacing {
+.page-variables {
   min-height: calc(100vh - var(--app-topbar-height));
   padding: var(--app-layout-padding-top) var(--app-layout-padding-right) var(--app-layout-padding-bottom)
     var(--app-layout-padding-left);
   position: relative;
 
   .page-title {
-    @include typography.display-s();
+    @include variables.display-s();
     align-items: center;
     display: flex;
-    gap: spacing.rhythm(1);
-    margin-bottom: spacing.rhythm(1);
+    gap: variables.rhythm(1);
+    margin-bottom: variables.rhythm(1);
   }
   .page-description {
-    @include typography.body-m();
+    @include variables.body-m();
     color: variables.$color-neutral-regular;
   }
 }
@@ -88,10 +86,10 @@ ul.nsi-list {
     background: variables.$color-neutral-lightest;
     cursor: pointer;
     display: flex;
-    gap: spacing.rhythm(1);
+    gap: variables.rhythm(1);
     justify-content: space-between;
-    line-height: spacing.rhythm(5);
-    padding-right: spacing.rhythm(1);
+    line-height: variables.rhythm(5);
+    padding-right: variables.rhythm(1);
     text-transform: capitalize;
     transition: background variables.$transition-hint;
 
@@ -100,7 +98,7 @@ ul.nsi-list {
       align-items: center;
 
       pa-button {
-        height: spacing.rhythm(4);
+        height: variables.rhythm(4);
         opacity: 0;
         transition: opacity variables.$transition-hint;
       }
@@ -145,26 +143,26 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: spacing.rhythm(2);
+  gap: variables.rhythm(2);
 
   &.small-gap {
-    gap: spacing.rhythm(1.5);
+    gap: variables.rhythm(1.5);
   }
 
   .label-field-container {
     display: flex;
     flex-direction: column;
-    gap: spacing.rhythm(1);
+    gap: variables.rhythm(1);
   }
 }
 
 .inline-form {
   align-items: center;
   display: flex;
-  gap: spacing.rhythm(2);
+  gap: variables.rhythm(2);
 
   &.small-gap {
-    gap: spacing.rhythm(1);
+    gap: variables.rhythm(1);
   }
   &.full-width > *:not(span) {
     flex: 1 0 auto;
@@ -177,8 +175,8 @@ pa-table.header-above .pa-table-grid--head .pa-table-grid--header {
 
 .container-with-border {
   border: 1px solid variables.$color-neutral-lighter;
-  border-radius: spacing.rhythm(1);
-  padding: spacing.rhythm(2);
+  border-radius: variables.rhythm(1);
+  padding: variables.rhythm(2);
 }
 
 a.accent-link {
@@ -204,7 +202,7 @@ pa-checkbox.unauthorized,
 pa-toggle.unauthorized {
   align-items: center;
   display: flex;
-  gap: spacing.rhythm(1);
+  gap: variables.rhythm(1);
   justify-content: space-between;
 
   .pa-toggle {
@@ -212,15 +210,15 @@ pa-toggle.unauthorized {
   }
 }
 pa-toggle.unauthorized {
-  padding-right: spacing.rhythm(1);
+  padding-right: variables.rhythm(1);
 }
 .beta-option {
   align-items: center;
   display: flex;
-  gap: spacing.rhythm(1);
+  gap: variables.rhythm(1);
   pa-radio {
     flex: 1 0 auto;
-    max-width: calc(100% - #{spacing.rhythm(5)} - #{spacing.rhythm(0.5)});
+    max-width: calc(100% - #{variables.rhythm(5)} - #{variables.rhythm(0.5)});
   }
 }
 pa-option pa-icon {
@@ -231,7 +229,7 @@ pa-option pa-icon {
   justify-content: center;
 
   pa-button {
-    min-width: spacing.rhythm(16);
+    min-width: variables.rhythm(16);
     width: unset;
   }
 }

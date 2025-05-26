@@ -1,49 +1,51 @@
 // Spacing
 $spacer: 0.5rem; // 1 unit - 8px - 0.5rem
 /* prettier-ignore */
-$rhythm: (
-  0: 0,
-  .25: ($spacer * .25),   //   .25 unit -   2px -   .125 rem
-  .5: ($spacer * .5),     //   .5  unit -   4px -   .25  rem
-  .75: ($spacer * .75),   //   .75 unit -   6px -   .375 rem
-  1: $spacer,             //  1    unit -   8px -   .5   rem
-  1.5: ($spacer * 1.5),   //  1.5  unit -  12px -   .75  rem
-  2: ($spacer * 2),       //  2    unit -  16px -  1     rem
-  2.5: ($spacer * 2.5),   //  2.5  unit -  20px -  1.25  rem
-  3: ($spacer * 3),       //  3    unit -  24px -  1.5   rem
-  3.5: ($spacer * 3.5),   //  3.5  unit -  28px -  1.75  rem
-  4: ($spacer * 4),       //  4    unit -  32px -  2     rem
-  5: ($spacer * 5),       //  5    unit -  40px -  2.5   rem
-  6: ($spacer * 6),       //  6    unit -  48px -  3     rem
-  7: ($spacer * 7),       //  7    unit -  56px -  3.5   rem
-  8: ($spacer * 8),       //  8    unit -  64px -  4     rem
-  9: ($spacer * 9),       //  9    unit -  72px -  4.5   rem
-  10: ($spacer * 10),     //  10   unit -  80px -  5     rem
-  12: ($spacer * 12),     //  12   unit -  96px -  6     rem
-  13: ($spacer * 13),     //  13   unit - 104px -  6.5   rem
-  14: ($spacer * 14),     //  14   unit - 112px -  7     rem
-  15: ($spacer * 15),     //  15   unit - 120px -  7.5   rem
-  16: ($spacer * 16),     //  16   unit - 128px -  8     rem
-  17: ($spacer * 17),     //  17   unit - 136px -  8.5   rem
-  20: ($spacer * 20),     //  20   unit - 160px - 10     rem
-  22: ($spacer * 22),     //  22   unit - 176px - 11     rem
-  24: ($spacer * 24),     //  24   unit - 192px - 12     rem
-  26: ($spacer * 26),     //  26   unit - 208px - 13     rem
-  28: ($spacer * 28),     //  28   unit - 224px - 14     rem
-  32: ($spacer * 32),     //  32   unit - 256px - 16     rem
-  35: ($spacer * 35),     //  35   unit - 280px - 17.5   rem
-  40: ($spacer * 40),     //  40   unit - 320px - 20     rem
-  41: ($spacer * 41),     //  41   unit - 328px - 20.5   rem
-  45: ($spacer * 45),     //  45   unit - 360px - 22.5   rem
-  47: ($spacer * 47),     //  47   unit - 376px - 23.5   rem
-  48: ($spacer * 48),     //  48   unit - 384px - 24     rem
-  50: ($spacer * 50),     //  50   unit - 400px - 25     rem
-  53: ($spacer * 53),     //  53   unit - 424px - 26.5   rem
-  56: ($spacer * 56),     //  56   unit - 448px - 28     rem
-  60: ($spacer * 60),     //  60   unit - 480px - 30     rem
-  64: ($spacer * 64),     //  64   unit - 512px - 32     rem
-  80: ($spacer * 80),     //  80   unit - 640px - 40     rem
-  90: ($spacer * 90),     //  90   unit - 720px - 45     rem
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' with (
+  $rhythm: (
+    0: 0,
+    .25: ($spacer * .25),   //   .25 unit -   2px -   .125 rem
+    .5: ($spacer * .5),     //   .5  unit -   4px -   .25  rem
+    .75: ($spacer * .75),   //   .75 unit -   6px -   .375 rem
+    1: $spacer,             //  1    unit -   8px -   .5   rem
+    1.5: ($spacer * 1.5),   //  1.5  unit -  12px -   .75  rem
+    2: ($spacer * 2),       //  2    unit -  16px -  1     rem
+    2.5: ($spacer * 2.5),   //  2.5  unit -  20px -  1.25  rem
+    3: ($spacer * 3),       //  3    unit -  24px -  1.5   rem
+    3.5: ($spacer * 3.5),   //  3.5  unit -  28px -  1.75  rem
+    4: ($spacer * 4),       //  4    unit -  32px -  2     rem
+    5: ($spacer * 5),       //  5    unit -  40px -  2.5   rem
+    6: ($spacer * 6),       //  6    unit -  48px -  3     rem
+    7: ($spacer * 7),       //  7    unit -  56px -  3.5   rem
+    8: ($spacer * 8),       //  8    unit -  64px -  4     rem
+    9: ($spacer * 9),       //  9    unit -  72px -  4.5   rem
+    10: ($spacer * 10),     //  10   unit -  80px -  5     rem
+    12: ($spacer * 12),     //  12   unit -  96px -  6     rem
+    13: ($spacer * 13),     //  13   unit - 104px -  6.5   rem
+    14: ($spacer * 14),     //  14   unit - 112px -  7     rem
+    15: ($spacer * 15),     //  15   unit - 120px -  7.5   rem
+    16: ($spacer * 16),     //  16   unit - 128px -  8     rem
+    17: ($spacer * 17),     //  17   unit - 136px -  8.5   rem
+    20: ($spacer * 20),     //  20   unit - 160px - 10     rem
+    22: ($spacer * 22),     //  22   unit - 176px - 11     rem
+    24: ($spacer * 24),     //  24   unit - 192px - 12     rem
+    26: ($spacer * 26),     //  26   unit - 208px - 13     rem
+    28: ($spacer * 28),     //  28   unit - 224px - 14     rem
+    32: ($spacer * 32),     //  32   unit - 256px - 16     rem
+    35: ($spacer * 35),     //  35   unit - 280px - 17.5   rem
+    40: ($spacer * 40),     //  40   unit - 320px - 20     rem
+    41: ($spacer * 41),     //  41   unit - 328px - 20.5   rem
+    45: ($spacer * 45),     //  45   unit - 360px - 22.5   rem
+    47: ($spacer * 47),     //  47   unit - 376px - 23.5   rem
+    48: ($spacer * 48),     //  48   unit - 384px - 24     rem
+    50: ($spacer * 50),     //  50   unit - 400px - 25     rem
+    53: ($spacer * 53),     //  53   unit - 424px - 26.5   rem
+    56: ($spacer * 56),     //  56   unit - 448px - 28     rem
+    60: ($spacer * 60),     //  60   unit - 480px - 30     rem
+    64: ($spacer * 64),     //  64   unit - 512px - 32     rem
+    80: ($spacer * 80),     //  80   unit - 640px - 40     rem
+    90: ($spacer * 90),     //  90   unit - 720px - 45     rem
+  ),
 );
 
 // layout

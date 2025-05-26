@@ -1,7 +1,8 @@
 @use './palette.tokens' as palette;
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/menu.tokens' with (
+  $color-text-menu-option-destructive: palette.$color-secondary-stronger,
+  $color-background-menu-option-destructive-hover: palette.$color-secondary-lightest,
+  $color-background-menu-option-destructive-active: palette.$color-secondary-lighter,
 
-$color-text-menu-option-destructive: palette.$color-secondary-stronger;
-$color-background-menu-option-destructive-hover: palette.$color-secondary-lightest;
-$color-background-menu-option-destructive-active: palette.$color-secondary-lighter;
-
-$color-border-menu-separator: palette.$color-neutral-lighter;
+  $color-border-menu-separator: palette.$color-neutral-lighter
+);

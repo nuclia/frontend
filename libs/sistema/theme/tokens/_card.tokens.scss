@@ -1,3 +1,3 @@
-@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
-
-$border-radius-card: spacing.rhythm(1);
+@use './spacing.tokens' as spacing;
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/card.tokens'
+  with($border-radius-card: spacing.rhythm(1));

@@ -1,17 +1,19 @@
 @use './palette.tokens' as palette;
-@use '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as pastanaga;
+@use './spacing.tokens' as spacing;
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/tables.tokens'
+  with(
+    $color-text-table-header: palette.$color-dark-stronger,
+    $color-text-table-header-row: palette.$color-dark-stronger,
 
-$color-text-table-header: palette.$color-dark-stronger;
-$color-text-table-header-row: palette.$color-dark-stronger;
+    $color-border-table: palette.$color-neutral-light,
+    $color-border-table-header: palette.$color-neutral-light,
+    $color-border-table-header-row: palette.$color-neutral-light,
+    $color-border-table-row: palette.$color-neutral-lighter,
 
-$color-border-table: palette.$color-neutral-light;
-$color-border-table-header: palette.$color-neutral-light;
-$color-border-table-header-row: palette.$color-neutral-light;
-$color-border-table-row: palette.$color-neutral-lighter;
+    $color-background-table-header-row: palette.$color-light-stronger,
+    $color-background-table-header: palette.$color-neutral-lightest,
 
-$color-background-table-header-row: palette.$color-light-stronger;
-$color-background-table-header: palette.$color-neutral-lightest;
-
-$padding-table-cell-medium: pastanaga.rhythm(0.5) pastanaga.rhythm(2);
-$min-height-table-cell: pastanaga.rhythm(5);
-$text-transform-table-header: none;
+    $padding-table-cell-medium: spacing.rhythm(0.5) spacing.rhythm(2),
+    $min-height-table-cell: spacing.rhythm(5),
+    $text-transform-table-header: none
+  );

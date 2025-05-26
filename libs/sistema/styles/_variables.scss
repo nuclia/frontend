@@ -1,9 +1,10 @@
-@use '../../pastanaga-angular/projects/pastanaga-angular/src/styles/variables';
-@use '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens' as spacing;
+@forward 'overrides';
 @forward 'mixins';
+@use '../theme/tokens/palette.tokens' as palette;
+@use '../theme/tokens/spacing.tokens' as spacing;
 
-$color-text-link-accent: variables.$color-primary-regular;
-$color-text-link-accent-hover: variables.$color-primary-strong;
+$color-text-link-accent: palette.$color-primary-regular;
+$color-text-link-accent-hover: palette.$color-primary-strong;
 
 $height-top-bar: spacing.rhythm(9);
 $padding-top-page: spacing.rhythm(4);
