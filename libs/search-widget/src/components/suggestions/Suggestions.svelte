@@ -45,15 +45,16 @@
       .pipe(
         switchMap((resource) => {
           const firstResourceField = getFirstResourceField(resource);
-          return combineLatest([navigateToFile, navigateToLink, navigateToOriginURL]).pipe(
+          return combineLatest([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab]).pipe(
             take(1),
-            switchMap(([navigateToFile, navigateToLink, navigateToOriginURL]) =>
+            switchMap(([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab]) =>
               iif(
-                () => (navigateToFile || navigateToLink) && !!firstResourceField,
+                () => (navigateToFile || navigateToLink || openNewTab) && !!firstResourceField,
                 getNavigationUrl(
                   navigateToFile,
                   navigateToLink,
                   navigateToOriginURL,
+                  openNewTab,
                   resource,
                   firstResourceField as ResourceField,
                 ),

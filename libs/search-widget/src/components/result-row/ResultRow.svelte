@@ -79,13 +79,13 @@
     }
   });
 
-  const url = combineLatest([navigateToFile, navigateToLink, navigateToOriginURL]).pipe(
+  const url = combineLatest([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab]).pipe(
     take(1),
-    switchMap(([toFile, toLink, toOrigin]) => {
+    switchMap(([toFile, toLink, toOrigin, newTab]) => {
       if (result.field) {
         const resourceField: ResourceField = { ...result.field, ...result.fieldData };
-        return toFile || toLink || toOrigin
-          ? getNavigationUrl(toFile, toLink, toOrigin, result, resourceField)
+        return toFile || toLink || toOrigin || newTab
+          ? getNavigationUrl(toFile, toLink, toOrigin, newTab, result, resourceField)
           : of(undefined);
       }
       return of(undefined);

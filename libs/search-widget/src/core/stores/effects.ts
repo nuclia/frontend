@@ -43,11 +43,16 @@ import {
 import type { Ask, BaseSearchOptions, ChatOptions, FieldFullId, IErrorResponse } from '@nuclia/core';
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import {
-  formatQueryKey,
+  creationEndKey,
+  creationStartKey,
+  filterKey,
   getFindParagraphs,
+  getPreviewParam,
   getUrlParams,
   hasNoResultsWithAutofilter,
   markdownToTxt,
+  previewKey,
+  queryKey,
   updateQueryParams,
 } from '../utils';
 import {
@@ -147,12 +152,6 @@ export function activateTypeAheadSuggestions() {
 
   subscriptions.push(subscription);
 }
-
-const queryKey = formatQueryKey('query');
-const filterKey = formatQueryKey('filter');
-const previewKey = formatQueryKey('preview');
-const creationStartKey = formatQueryKey('creationStart');
-const creationEndKey = formatQueryKey('creationEnd');
 
 /**
  * Initialise answer feature
@@ -268,16 +267,22 @@ export function activatePermalinks() {
         filter((data) => !!data.fieldFullId),
       )
       .subscribe((viewerState) => {
-        const previewId = `${viewerState.fieldFullId?.resourceId}|${viewerState.fieldFullId?.field_type}|${viewerState.fieldFullId?.field_id}`;
-        const selectedIndex = `${viewerState.selectedParagraphIndex}`;
         const urlParams = getUrlParams();
-        urlParams.set(previewKey, `${previewId}|${selectedIndex}`);
+        urlParams.set(
+          previewKey,
+          getPreviewParam(
+            viewerState.fieldFullId?.resourceId || '',
+            viewerState.fieldFullId as FieldFullId,
+            viewerState.selectedParagraphIndex,
+          ),
+        );
         updateQueryParams(urlParams);
       }),
     //Remove preview parameters from the URL when preview is closed
     fieldFullId
       .pipe(
         distinctUntilChanged(),
+        skip(1),
         filter((fullId) => !fullId),
       )
       .subscribe(() => {

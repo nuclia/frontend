@@ -527,7 +527,10 @@ export function getFeatures(config: Widget.SearchConfiguration, widgetOptions: W
     navigateToOriginURL: widgetOptions.navigateToOriginURL,
     hideDownload: widgetOptions.hideDownload,
     openNewTab:
-      (widgetOptions.navigateToLink || widgetOptions.navigateToFile || widgetOptions.navigateToOriginURL) &&
+      (widgetOptions.navigateToLink ||
+        widgetOptions.navigateToFile ||
+        widgetOptions.navigateToOriginURL ||
+        widgetOptions.permalink) &&
       widgetOptions.openNewTab,
     noChatHistory: widgetOptions.noChatHistory,
     persistChatHistory: widgetOptions.persistChatHistory,

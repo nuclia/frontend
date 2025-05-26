@@ -5,6 +5,7 @@ import {
   type BaseSearchOptions,
   FIELD_TYPE,
   type FieldFullId,
+  type FieldId,
   type FileField,
   FileFieldData,
   getWidgetParameters,
@@ -96,6 +97,12 @@ export const formatQueryKey = (key: string): string => {
   return `__nuclia_${key}__`;
 };
 
+export const queryKey = formatQueryKey('query');
+export const filterKey = formatQueryKey('filter');
+export const previewKey = formatQueryKey('preview');
+export const creationStartKey = formatQueryKey('creationStart');
+export const creationEndKey = formatQueryKey('creationEnd');
+
 export const updateQueryParams = (urlParams: URLSearchParams) => {
   const params = urlParams.toString();
   const baseUrl = `${location.pathname}${location.hash.split('?')[0]}`;
@@ -110,6 +117,10 @@ export function getUrlParams(): URLSearchParams {
       : window.location.search;
   return new URLSearchParams(params);
 }
+
+export const getPreviewParam = (resourceId: string, field: FieldId, paragraphIndex: number) => {
+  return `${resourceId}|${field.field_type}|${field.field_id}|${paragraphIndex}`;
+};
 
 /**
  * Coerces a value (usually a string coming from a prop) to a boolean.
@@ -285,6 +296,7 @@ export const getNavigationUrl = (
   navigateToFile: boolean,
   navigateToLink: boolean,
   navigateToOriginURL: boolean,
+  openNewTab: boolean,
   resource: IResource,
   field: ResourceField,
 ): Observable<string | undefined> => {
@@ -302,6 +314,8 @@ export const getNavigationUrl = (
         const fileUrl = (field as FileFieldData)?.value?.file?.uri;
         return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
       }
+    } else if (openNewTab) {
+      return of(getPreviewUrl(resource.id, field, 0));
     } else {
       return of(undefined);
     }
@@ -322,6 +336,14 @@ export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean
       return undefined;
     }
   }
+};
+
+export const getPreviewUrl = (resourceId: string, field: FieldId, paragraphIndex: number) => {
+  const previewParam = getPreviewParam(resourceId, field, paragraphIndex);
+  const params = getUrlParams();
+  params.set(previewKey, previewParam);
+  const baseUrl = `${location.origin}${location.pathname}${location.hash.split('?')[0]}`;
+  return params ? `${baseUrl}?${params}` : baseUrl;
 };
 
 export function getFieldIdWithShortType(fullId: FieldFullId): string {
