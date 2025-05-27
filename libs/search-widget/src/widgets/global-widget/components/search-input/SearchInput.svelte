@@ -32,7 +32,7 @@
     triggerSearch.next();
     dispatch('search');
     // Make sure the keyboard disappear when triggering search in Mobile
-    searchInputElement.blur();
+    searchInputElement?.blur();
   };
 
   const onKeyPress = (event: { detail: KeyboardEvent }) => {
