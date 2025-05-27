@@ -42,8 +42,10 @@ $font-size-base: 1rem;
     d3:     ($font-size-base * 2.25),   // 36px - 2.25 rem
     d3-md:  ($font-size-base * 2.75),   // 44px - 2.75 rem
   ),
+  $font-weight-overline: 600,
   $font-weight-title-l: 700,
   $font-weight-display-s: 700,
+
   $font-size-overline: .5rem,
   $font-size-body-xs: 0.625rem,
   $font-size-body-s: 0.75rem,
@@ -59,6 +61,7 @@ $font-size-base: 1rem;
   $font-size-title-l-md: 1.125rem,
   $font-size-display-s-md: 1.5rem,
   $font-size-display-m-md: 2.25rem,
+
   $line-height-body-m: 1.25rem,
   $line-height-title-xxs: 1.5rem,
   $line-height-title-s: 2rem,
