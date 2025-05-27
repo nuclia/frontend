@@ -46,6 +46,7 @@ $spacer: 0.5rem; // 1 unit - 8px - 0.5rem
     80: ($spacer * 80),     //  80   unit - 640px - 40     rem
     90: ($spacer * 90),     //  90   unit - 720px - 45     rem
   ),
+  $border-radius-default: 0.25rem,
 );
 
 // layout
@@ -55,7 +56,5 @@ $height-viewport-medium-min: 800px;
 $width-large-screen: 1024px;
 
 // We need to support wide screen resolution (2560x1080) for the Manager app
-$size-viewport-wide-max: 1999px !default;
-$size-viewport-wide-min: 2000px !default;
-
-$border-radius-default: 4px;
+$size-viewport-wide-max: 1999px;
+$size-viewport-wide-min: 2000px;

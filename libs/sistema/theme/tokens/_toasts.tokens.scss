@@ -17,12 +17,12 @@
     $background-toast-success: palette.$color-neutral-lighter,
     $color-toast-success: palette.$color-dark-stronger,
 
-    $background-toast-button-info-hover: rgba(palette.$color-dark-stronger, 0.15),
-    $background-toast-button-success-hover: rgba(palette.$color-dark-stronger, 0.15),
-    $background-toast-button-error-hover: rgba(palette.$color-dark-stronger, 0.15),
-    $background-toast-button-info-active: rgba(palette.$color-dark-stronger, 0.25),
-    $background-toast-button-success-active: rgba(palette.$color-dark-stronger, 0.25),
-    $background-toast-button-error-active: rgba(palette.$color-dark-stronger, 0.25),
+    $background-toast-button-info-hover: rgba(0, 0, 0, 0.15),
+    $background-toast-button-success-hover: rgba(0, 0, 0, 0.15),
+    $background-toast-button-error-hover: rgba(0, 0, 0, 0.15),
+    $background-toast-button-info-active: rgba(0, 0, 0, 0.25),
+    $background-toast-button-success-active: rgba(0, 0, 0, 0.25),
+    $background-toast-button-error-active: rgba(0, 0, 0, 0.25),
     //=====================================
     // SPACING
     //=====================================
