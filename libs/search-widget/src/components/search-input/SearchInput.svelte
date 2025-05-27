@@ -10,8 +10,6 @@
     hasContextImages,
     hasSearchButton,
     searchOptions,
-  } from '../../core';
-  import {
     _,
     autocomplete,
     autofilters,
@@ -135,7 +133,7 @@
     triggerSearch.next();
     dispatch('search');
     // Make sure the keyboard disappear when triggering search in Mobile
-    searchInputElement.blur();
+    searchInputElement?.blur();
   };
 
   const removeFilter = (filter: Filter) => {
