@@ -1,6 +1,5 @@
-@use 'libs/sistema/theme/fonts';
-@use 'libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
-@use 'libs/sistema/styles/apps-common';
+@use '../../../libs/sistema/styles/apps-common';
+@use '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
 
 :root {
   --app-background-color: $color-light-stronger;

@@ -1,5 +1,5 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { BaseModalComponent, PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
@@ -8,7 +8,10 @@ import { ProgressBarComponent, SisProgressModule } from '@nuclia/sistema';
   selector: 'nsi-loading-dialog',
   imports: [CommonModule, PaButtonModule, TranslateModule, SisProgressModule, ProgressBarComponent],
   templateUrl: './loading-dialog.component.html',
-  styleUrl: './loading-dialog.component.scss',
+  styleUrls: [
+    '../../../../../pastanaga-angular/projects/pastanaga-angular/src/lib/modal/confirmation-dialog/confirmation-dialog.component.scss',
+    './loading-dialog.component.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadingDialogComponent extends BaseModalComponent implements AfterViewInit {
