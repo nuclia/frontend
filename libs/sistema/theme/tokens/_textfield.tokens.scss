@@ -2,7 +2,6 @@
 @use './typography.tokens' as typography;
 @use './spacing.tokens' as spacing;
 
-$padding-field-control-top: spacing.rhythm(1);
 @forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/textfield.tokens'
   with(
     //=====================================
@@ -30,7 +29,8 @@ $padding-field-control-top: spacing.rhythm(1);
     // SPACING and SHADOWS
     //=====================================
     $height-field-control: calc(#{spacing.rhythm(5)} - #{spacing.rhythm(0.25)}),
-    $top-control-label: $padding-field-control-top,
+    $padding-field-control-top: spacing.rhythm(1),
+    $top-control-label: spacing.rhythm(1),
     $translateY-text-field-label: spacing.rhythm(3),
     $top-select-chevron: spacing.rhythm(1)
   );
