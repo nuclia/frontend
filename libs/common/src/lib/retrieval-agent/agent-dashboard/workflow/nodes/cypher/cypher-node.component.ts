@@ -21,7 +21,7 @@ export class CypherNodeComponent extends NodeDirective implements OnInit {
   cypherConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
       const config = this.config() as CypherAgentUI;
-      const source = this.cypherDrivers().find((driver) => driver.id === config.source);
+      const source = this.cypherDrivers().find((driver) => driver.identifier === config.source);
       return [
         {
           title: this.translate.instant('retrieval-agents.workflow.node-types.cypher.form.source'),

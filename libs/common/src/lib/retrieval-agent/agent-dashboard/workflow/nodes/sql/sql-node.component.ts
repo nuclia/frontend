@@ -21,7 +21,7 @@ export class SqlNodeComponent extends NodeDirective implements OnInit {
   sqlConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
       const config = this.config() as SqlAgentUI;
-      const source = this.sqlDrivers().find((driver) => driver.id === config.source);
+      const source = this.sqlDrivers().find((driver) => driver.identifier === config.source);
       const display: ConfigBlockItem[] = [
         {
           title: this.translate.instant('retrieval-agents.workflow.node-types.sql.form.source'),

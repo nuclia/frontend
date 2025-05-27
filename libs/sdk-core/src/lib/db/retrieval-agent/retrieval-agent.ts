@@ -1,6 +1,6 @@
 import { map, Observable } from 'rxjs';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
-import { Driver, DriverCreation } from './driver.models';
+import { Driver, IDriver } from './driver.models';
 import { AragAnswer, InteractionOperation } from './interactions.models';
 import {
   ContextAgent,
@@ -173,7 +173,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * Add driver to the Retrieval Agent
    * @param driver BraveDriver | CypherDriver | NucliaDBDriver | PerplexityDriver | TavilyDriver | SqlDriver | McpDriver
    */
-  addDriver(driver: DriverCreation): Observable<void> {
+  addDriver(driver: IDriver): Observable<void> {
     return this.nuclia.rest.post(`${this.path}/drivers`, driver);
   }
 
@@ -182,7 +182,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * @param driver BraveDriver | CypherDriver | NucliaDBDriver | PerplexityDriver | TavilyDriver | SqlDriver | McpDriver
    */
   patchDriver(driver: Driver): Observable<void> {
-    return this.nuclia.rest.patch(`${this.path}/driver/${driver.id}`, driver);
+    return this.nuclia.rest.patch(`${this.path}/driver/${driver.identifier}`, driver);
   }
 
   /**

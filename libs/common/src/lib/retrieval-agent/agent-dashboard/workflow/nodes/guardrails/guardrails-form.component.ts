@@ -78,7 +78,12 @@ export class GuardrailsFormComponent extends FormDirective implements OnInit {
         map((drivers) =>
           drivers.map(
             (driver) =>
-              new OptionModel({ id: driver.id, label: driver.name, value: driver.provider, help: driver.provider }),
+              new OptionModel({
+                id: driver.identifier,
+                label: driver.name,
+                value: driver.identifier,
+                help: driver.provider,
+              }),
           ),
         ),
       )
