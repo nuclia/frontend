@@ -1,12 +1,12 @@
 import { map, Observable } from 'rxjs';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
-import { Driver, DriverCreation, ProviderType } from './driver.models';
+import { Driver, DriverCreation } from './driver.models';
+import { AragAnswer, InteractionOperation } from './interactions.models';
 import {
   ContextAgent,
   ContextAgentCreation,
   GenerationAgent,
   GenerationAgentCreation,
-  InteractionOperation,
   IRetrievalAgent,
   PostprocessAgent,
   PostprocessAgentCreation,
@@ -18,6 +18,7 @@ import {
   SessionList,
   SessionPagination,
 } from './retrieval-agent.models';
+import { ProviderType } from './retrieval-agent.types';
 import { Session } from './session';
 import { ISession } from './session.models';
 
@@ -84,8 +85,9 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * @param question Question to send to the agent
    * @returns
    */
-  interaction(sessionId: string, question: string): Observable<unknown> {
-    return this.nuclia.rest.post(this.getInteractionPath(sessionId), {
+  interaction(sessionId: string, question: string): Observable<AragAnswer[]> {
+    const fullPath = this.getInteractionPath(sessionId);
+    return this.nuclia.rest.post(fullPath, {
       question,
       operation: InteractionOperation.question,
     });

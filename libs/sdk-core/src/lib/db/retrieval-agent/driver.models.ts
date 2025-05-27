@@ -1,13 +1,4 @@
-export type InternetProviderType = 'brave' | 'perplexity' | 'tavily' | 'google';
-export type GuardrailsProviderType = 'alinia';
-export type ProviderType =
-  | InternetProviderType
-  | GuardrailsProviderType
-  | 'cypher'
-  | 'nucliadb'
-  | 'sql'
-  | 'mcpsse'
-  | 'mcpstdio';
+import { ProviderType } from './retrieval-agent.types';
 
 export interface IDriver {
   id: string;

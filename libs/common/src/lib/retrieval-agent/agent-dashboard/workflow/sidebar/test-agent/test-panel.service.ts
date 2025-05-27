@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { InteractionOperation, RetrievalAgent, Session } from '@nuclia/core';
-import { map, Observable, switchMap, take, tap } from 'rxjs';
+import { RetrievalAgent, Session } from '@nuclia/core';
+import { map, Observable, switchMap, take } from 'rxjs';
 import { runTest, stopTest } from '../../workflow.state';
 
 const TEST_SESSION_SLUG_PREFIX = 'test-session';
@@ -55,16 +55,16 @@ export class TestPanelService {
         switchMap(({ sessionId, arag }) => {
           this.currentSessionId = sessionId;
           // Open the websocket connection and send the question
-          return arag
-            .listenSessionInteractions(sessionId)
-            .pipe(tap(() => arag.interactWithSession(sessionId, question, InteractionOperation.question)));
-          // return arag.interaction(sessionId, question);
+          // return arag
+          //   .listenSessionInteractions(sessionId)
+          //   .pipe(tap(() => arag.interactWithSession(sessionId, question, InteractionOperation.question)));
+          return arag.interaction(sessionId, question);
         }),
       )
       .subscribe({
         next: (data) => {
           // TODO: update the state with the data we get from the session
-          console.debug(`Data we get from websocket:`, data);
+          console.debug(`Data we get from interaction:`, data);
         },
         error: (error) => {
           console.error(`Error occurred while creating the session`, error);
