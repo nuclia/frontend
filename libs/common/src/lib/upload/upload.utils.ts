@@ -22,7 +22,9 @@ export function getFilesGroupedByType(filesOrFileList: File[] | FileList): {
     )
     .map((file) => {
       // Some file types (like .mkv) are not recognized by some browsers
-      return file.type ? file : new File([file], file.name, { type: mime.getType(file.name) || undefined });
+      return file.type
+        ? file
+        : new File([file], file.name, { type: (mime as unknown as any).getType(file.name) || undefined });
     });
   const mediaFiles = getFilesByType(files, true);
   const nonMediaFiles = getFilesByType(files, false);
