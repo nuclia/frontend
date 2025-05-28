@@ -291,6 +291,7 @@ export const getNavigationUrl = (
   navigateToLink: boolean,
   navigateToOriginURL: boolean,
   openNewTab: boolean,
+  permalink: boolean,
   resource: IResource,
   field: ResourceField,
   paragraph?: Search.FindParagraph,
@@ -316,7 +317,7 @@ export const getNavigationUrl = (
         const fileUrl = (field as FileFieldData)?.value?.file?.uri;
         return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
       }
-    } else if (openNewTab) {
+    } else if (openNewTab && permalink) {
       return of(getPreviewUrl(resource.id, field, paragraph));
     } else {
       return of(undefined);

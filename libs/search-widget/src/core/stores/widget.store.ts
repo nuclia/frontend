@@ -19,6 +19,7 @@ export const navigateToOriginURL: Observable<boolean> = widgetFeatures.pipe(
   map((features) => !!features?.navigateToOriginURL),
 );
 export const openNewTab: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.openNewTab));
+export const permalink: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.permalink));
 export const hasFilterButton: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.filter));
 export const isAnswerEnabled: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.answers));
 export const isCitationsEnabled: Observable<boolean> = widgetFeatures.pipe(map((features) => !!features?.citations));

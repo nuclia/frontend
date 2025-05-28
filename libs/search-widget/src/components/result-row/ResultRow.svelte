@@ -26,6 +26,7 @@
     collapseTextBlocks,
     hideAnswer,
     navigateToOriginURL,
+    permalink,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
@@ -92,13 +93,13 @@
   }
 
   function getUrl(paragraph?: Search.FindParagraph) {
-    return combineLatest([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab]).pipe(
+    return combineLatest([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab, permalink]).pipe(
       take(1),
-      switchMap(([toFile, toLink, toOrigin, newTab]) => {
+      switchMap(([toFile, toLink, toOrigin, newTab, permalink]) => {
         if (result.field) {
           const resourceField: ResourceField = { ...result.field, ...result.fieldData };
           return toFile || toLink || toOrigin || newTab
-            ? getNavigationUrl(toFile, toLink, toOrigin, newTab, result, resourceField, paragraph)
+            ? getNavigationUrl(toFile, toLink, toOrigin, newTab, permalink, result, resourceField, paragraph)
             : of(undefined);
         }
         return of(undefined);
