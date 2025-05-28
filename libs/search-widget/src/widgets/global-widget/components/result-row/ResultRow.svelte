@@ -13,7 +13,7 @@
   function clickOnResult(paragraph?: Search.FindParagraph) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.origin?.url) {
-      goToUrl(result.origin.url¡);
+      goToUrl(result.origin.url);
     }
   }
 </script>
