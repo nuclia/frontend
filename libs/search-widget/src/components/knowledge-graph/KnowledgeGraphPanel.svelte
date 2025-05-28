@@ -31,7 +31,8 @@
           <li>
             <div
               class="family-dot"
-              style:background={edge.source.id === $graphSelection.id ? edge.target.color : edge.source.color} />
+              style:background={edge.source.id === $graphSelection.id ? edge.target.color : edge.source.color}>
+            </div>
             {edge.source.ner}
             <strong>{edge.label}</strong>
             {edge.target.ner}

@@ -1,7 +1,11 @@
 <script lang="ts">
-  export let path = '';
+  interface Props {
+    path?: string;
+  }
 
-  let expose = false;
+  let { path = '' }: Props = $props();
+
+  let expose = $state(false);
 
   function toggleExpose() {
     expose = !expose;
@@ -15,8 +19,8 @@
 </script>
 
 <div
-  on:click={toggleExpose}
-  on:keypress={keypress}
+  onclick={toggleExpose}
+  onkeypress={keypress}
   class="image"
   class:expose>
   <img src={path} />

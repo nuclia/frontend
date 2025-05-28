@@ -3,13 +3,14 @@
   import { IconButton } from '../../common';
   import { formatSize, formatDate } from '../../core';
 
-  export let result: TypedResult;
+  interface Props {
+    result: TypedResult;
+  }
 
-  let expanded = false;
-  let metadataElements: HTMLElement[] = [];
-  $: lastMetadata = metadataElements[metadataElements.length - 1];
-  $: hasMoreMetadata = !!lastMetadata && lastMetadata.offsetTop > 1;
-  $: expanderLeft = getExpanderLeftPosition(metadataElements);
+  let { result }: Props = $props();
+
+  let expanded = $state(false);
+  let metadataElements: HTMLElement[] = $state([]);
 
   function getExpanderLeftPosition(elements: HTMLElement[]) {
     return elements.reduce((left, element) => {
@@ -28,9 +29,12 @@
     hasMoreMetadata = !!lastMetadata && lastMetadata.offsetTop > 1;
     expanderLeft = getExpanderLeftPosition(metadataElements);
   }
+  let lastMetadata = $derived(metadataElements[metadataElements.length - 1]);
+  let hasMoreMetadata = $derived(!!lastMetadata && lastMetadata.offsetTop > 1);
+  let expanderLeft = $derived(getExpanderLeftPosition(metadataElements));
 </script>
 
-<svelte:window on:resize={onResize} />
+<svelte:window onresize={onResize} />
 
 {#if result.resultMetadata && result.resultMetadata.length > 0}
   <div
@@ -39,8 +43,8 @@
     <div
       class="metadata-container"
       class:ellipsis={!expanded}
-      on:click={expandMetadata}
-      on:keyup={(e) => {
+      onclick={expandMetadata}
+      onkeyup={(e) => {
         if (e.key === 'Enter') expandMetadata();
       }}>
       {#each result.resultMetadata as metadata, i}

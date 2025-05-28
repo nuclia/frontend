@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { getPdfJsBaseUrl, getPdfSrc } from '../../../../core';
   import { onDestroy, onMount } from 'svelte';
   import type { Subscription } from 'rxjs';
@@ -7,38 +9,36 @@
   import { getUnMarked } from '../../utils';
   import type { Search } from '@nuclia/core';
 
-  export let src: string;
-  export let paragraph: Search.FindParagraph;
-  export let showController = true;
+  interface Props {
+    src: string;
+    paragraph: Search.FindParagraph;
+    showController?: boolean;
+  }
+
+  let { src, paragraph, showController = true }: Props = $props();
 
   const pdfJsLib = window['pdfjs-dist/build/pdf'];
   const pdfJsViewer = window['pdfjs-dist/web/pdf_viewer'];
   pdfJsLib.GlobalWorkerOptions.workerSrc = `${getPdfJsBaseUrl()}/build/pdf.worker.js`;
 
-  let innerWidth = window.innerWidth;
-  let pdfContainerElement: HTMLElement;
-  let containerOffsetWidth;
-  let pdfViewer;
+  let innerWidth = $state(window.innerWidth);
+  let pdfContainerElement: HTMLElement = $state();
+  let containerOffsetWidth = $state();
+  let pdfViewer = $state();
   let eventBus;
   let findController;
   let linkService;
 
-  let currentPage = 1;
-  let totalPage = 1;
-  let zoom: number = 1;
-  let pdfInitialized = false;
+  let currentPage = $state(1);
+  let totalPage = $state(1);
+  let zoom: number = $state(1);
+  let pdfInitialized = $state(false);
 
   const updateTextLayerMatch$: Subject<{ paragraphFound: boolean; page: number }> = new Subject<{
     paragraphFound: boolean;
     page: number;
   }>();
   const subscriptions: Subscription[] = [];
-
-  $: src && loadPdf();
-  $: pdfViewer && paragraph && paragraph.text && findSelectedText();
-  $: pdfViewer && !paragraph && unselectText();
-  $: isMobile = isMobileViewport(innerWidth);
-  $: scale = isMobile ? 'page-fit' : 'auto';
 
   onMount(() => {
     loadPdf();
@@ -159,17 +159,28 @@
       pdfViewer.currentScaleValue = scale;
     }
   }
+  run(() => {
+    src && loadPdf();
+  });
+  run(() => {
+    pdfViewer && paragraph && paragraph.text && findSelectedText();
+  });
+  run(() => {
+    pdfViewer && !paragraph && unselectText();
+  });
+  let isMobile = $derived(isMobileViewport(innerWidth));
+  let scale = $derived(isMobile ? 'page-fit' : 'auto');
 </script>
 
 <svelte:window
   bind:innerWidth
-  on:resize={resize} />
+  onresize={resize} />
 <div
   class="pdf-container"
   bind:this={pdfContainerElement}
   bind:offsetWidth={containerOffsetWidth}
   style:--container-width="{containerOffsetWidth}px">
-  <div class="pdfViewer" />
+  <div class="pdfViewer"></div>
   {#if !src || !pdfInitialized}
     <div class="loading-container">
       <Spinner />

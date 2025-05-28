@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import Answer from './Answer.svelte';
   import { _, chat, chatPlaceholder, hasChatEntries, isStreaming, resetChat } from '../../core';
   import ChatInput from './ChatInput.svelte';
@@ -7,21 +9,25 @@
   import { freezeBackground, Icon, IconButton, LoadingDots, unblockBackground } from '../../common';
   import Button from '../../common/button/Button.svelte';
 
-  export let fullscreen = true;
-  export let show = !fullscreen;
-  export let height;
-  export let standaloneChat = false;
+  interface Props {
+    fullscreen?: boolean;
+    show?: any;
+    height: any;
+    standaloneChat?: boolean;
+  }
 
-  $: {
+  let { fullscreen = true, show = !fullscreen, height, standaloneChat = false }: Props = $props();
+
+  run(() => {
     if (fullscreen) {
       show ? freezeBackground(true) : unblockBackground(true);
     }
-  }
+  });
 
   const dispatch = createEventDispatcher();
-  let entriesContainerElement: HTMLDivElement;
+  let entriesContainerElement: HTMLDivElement = $state();
 
-  let isScrolling = false;
+  let isScrolling = $state(false);
 
   onMount(() => {
     const sub = chat

@@ -1,12 +1,16 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
-  export let hasMore = true;
-  export let scrollableContainerSelector = '';
+  interface Props {
+    hasMore?: boolean;
+    scrollableContainerSelector?: string;
+  }
+
+  let { hasMore = true, scrollableContainerSelector = '' }: Props = $props();
 
   const dispatch = createEventDispatcher();
   let mustLoadMore = false;
-  let component: HTMLElement | undefined = undefined;
+  let component: HTMLElement | undefined = $state(undefined);
   let scrollableContainer: HTMLElement | null;
 
   onMount(() => {
@@ -49,4 +53,5 @@
 
 <div
   bind:this={component}
-  style="width:0px" />
+  style="width:0px">
+</div>

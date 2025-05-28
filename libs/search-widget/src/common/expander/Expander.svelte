@@ -1,21 +1,23 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { createEventDispatcher, onMount, tick } from 'svelte';
   import { IconButton } from '../button';
 
-  export let expanded: boolean = false;
-  export let duration: number = 300;
+  interface Props {
+    expanded?: boolean;
+    duration?: number;
+    header?: import('svelte').Snippet;
+    children?: import('svelte').Snippet;
+  }
+
+  let { expanded = $bindable(false), duration = 300, header, children }: Props = $props();
 
   const dispatch = createEventDispatcher();
-  let content: HTMLElement;
-  let showContent: boolean = false;
-  let contentHeight = 0;
+  let content: HTMLElement = $state();
+  let showContent: boolean = $state(false);
+  let contentHeight = $state(0);
   let timer;
-
-  $: if (expanded) {
-    expand();
-  } else {
-    collapse();
-  }
 
   onMount(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -50,13 +52,20 @@
       dispatch('toggleExpander', { expanded: false });
     }, duration);
   };
+  run(() => {
+    if (expanded) {
+      expand();
+    } else {
+      collapse();
+    }
+  });
 </script>
 
 <div class="sw-expander">
-  {#if $$slots.header}
+  {#if header}
     <div
-      on:click={() => (expanded = !expanded)}
-      on:keypress={(e) => {
+      onclick={() => (expanded = !expanded)}
+      onkeypress={(e) => {
         if (e.key === 'Enter') {
           expanded = !expanded;
         }
@@ -69,7 +78,7 @@
           size="small"
           aspect="basic" />
       </span>
-      <slot name="header" />
+      {@render header?.()}
     </div>
   {/if}
   <div
@@ -78,7 +87,7 @@
     style:visibility={showContent ? 'visible' : 'hidden'}
     style:transition={`height ${duration}ms`}>
     <div bind:this={content}>
-      <slot />
+      {@render children?.()}
     </div>
   </div>
 </div>

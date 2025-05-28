@@ -2,7 +2,14 @@ import { OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { Classification, LabelSets, Search } from '@nuclia/core';
 import mime from 'mime';
 
-export const MIME_FACETS = ['/icon/application', '/icon/audio', '/icon/image', '/icon/text', '/icon/video', '/icon/message'];
+export const MIME_FACETS = [
+  '/icon/application',
+  '/icon/audio',
+  '/icon/image',
+  '/icon/text',
+  '/icon/video',
+  '/icon/message',
+];
 export const LANGUAGE_FACET = ['/metadata.language'];
 export const MAX_FACETS_PER_REQUEST = 50;
 
@@ -83,7 +90,7 @@ export function formatFiltersFromFacets(allFacets: Search.FacetsResult, queryPar
   if (facetGroups.mainTypes.length > 0) {
     facetGroups.mainTypes.forEach((facet) => {
       let help: string | undefined = facet.key.substring(5);
-      let label = mime.getExtension(help) || (facet.key.split('/').pop() as string);
+      let label = (mime as unknown as any).getExtension(help) || (facet.key.split('/').pop() as string);
       if (label === 'stf-link') {
         label = 'link';
       }
@@ -126,7 +133,7 @@ export function getVisibilityFromFilter(filter: string) {
 }
 
 export function getFilterFromVisibility(hidden: boolean) {
-  return `${HIDDEN_PREFIX}/${hidden ? 'true' : 'false'}`
+  return `${HIDDEN_PREFIX}/${hidden ? 'true' : 'false'}`;
 }
 
 export function trimLabelSets(labelSets: LabelSets, classifications: Classification[]) {

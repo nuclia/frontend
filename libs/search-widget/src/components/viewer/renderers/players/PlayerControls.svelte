@@ -1,47 +1,21 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { IconButton } from '../../../../common';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { lightFormat } from 'date-fns';
 
-  export let player; //HTMLMediaElement
+  let { player = $bindable() } = $props();
 
   const dispatch = createEventDispatcher();
-  let timelineElement: HTMLElement;
-  let volumeElement: HTMLElement;
-  let displayVolume = false;
+  let timelineElement: HTMLElement = $state();
+  let volumeElement: HTMLElement = $state();
+  let displayVolume = $state(false);
   let progressIntervalId: number;
-  let currentTime = '';
-  let totalTime = '';
-  let progress = 0;
-  let playing = false;
-
-  $: if (player) {
-    // don't override existing callbacks
-    const onLoadedData = player.onloadeddata;
-    const onEnded = player.onended;
-    const onPlay = player.onplay;
-    // add callbacks needed for PlayerControls
-    player.onloadeddata = () => {
-      totalTime = getFormattedTimeFromSeconds(player.duration);
-      currentTime = getFormattedTimeFromSeconds(player.currentTime);
-      player.volume = 0.75;
-      if (typeof onLoadedData === 'function') {
-        onLoadedData();
-      }
-    };
-    player.onplay = () => {
-      playing = true;
-      if (typeof onPlay === 'function') {
-        onPlay();
-      }
-    }
-    player.onended = () => {
-      playing = false;
-      if (typeof onEnded === 'function') {
-        onEnded();
-      }
-    }
-  }
+  let currentTime = $state('');
+  let totalTime = $state('');
+  let progress = $state(0);
+  let playing = $state(false);
 
   onMount(() => {
     progressIntervalId = setInterval(() => {
@@ -58,7 +32,6 @@
       player.pause();
     }
   });
-
 
   function getFormattedTimeFromSeconds(seconds: number): string {
     let date = new Date('2022T00:00:00');
@@ -105,9 +78,38 @@
     playing = !player.paused;
   }
 
+  run(() => {
+    if (player) {
+      // don't override existing callbacks
+      const onLoadedData = player.onloadeddata;
+      const onEnded = player.onended;
+      const onPlay = player.onplay;
+      // add callbacks needed for PlayerControls
+      player.onloadeddata = () => {
+        totalTime = getFormattedTimeFromSeconds(player.duration);
+        currentTime = getFormattedTimeFromSeconds(player.currentTime);
+        player.volume = 0.75;
+        if (typeof onLoadedData === 'function') {
+          onLoadedData();
+        }
+      };
+      player.onplay = () => {
+        playing = true;
+        if (typeof onPlay === 'function') {
+          onPlay();
+        }
+      };
+      player.onended = () => {
+        playing = false;
+        if (typeof onEnded === 'function') {
+          onEnded();
+        }
+      };
+    }
+  });
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 <div class="sw-player-controls">
   <IconButton
     icon={playing ? 'pause' : player?.currentTime === player?.duration ? 'refresh' : 'play'}
@@ -118,10 +120,11 @@
   <div
     class="timeline"
     bind:this={timelineElement}
-    on:click={(event) => seekTime(event)}>
+    onclick={(event) => seekTime(event)}>
     <div
       class="progress"
-      style:width={`${progress}%`} />
+      style:width={`${progress}%`}>
+    </div>
   </div>
   <div class="time">{totalTime}</div>
   <IconButton
@@ -135,10 +138,11 @@
     <div
       class="volume"
       bind:this={volumeElement}
-      on:click={(event) => updateVolume(event)}>
+      onclick={(event) => updateVolume(event)}>
       <div
         class="level"
-        style:height={`${player?.volume * 100}%`} />
+        style:height={`${player?.volume * 100}%`}>
+      </div>
     </div>
   </div>
 </div>

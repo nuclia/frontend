@@ -3,9 +3,13 @@
   import { clickOutside } from '../actions/actions';
   import { freezeBackground, unblockBackground } from '../modal/modal.utils';
 
-  export let position: { top?: number; bottom?: number; left?: number; right?: number; width: number } | undefined =
-    undefined;
-  export let secondary = false;
+  interface Props {
+    position?: { top?: number; bottom?: number; left: number; right?: number; width: number } | undefined;
+    secondary?: boolean;
+    children?: import('svelte').Snippet;
+  }
+
+  let { position = undefined, secondary = false, children }: Props = $props();
 
   onMount(() => {
     if (!secondary) {
@@ -30,8 +34,8 @@
   style:bottom={typeof position?.bottom === 'number' ? position?.bottom + 'px' : 'auto'}
   style:width={position?.width + 'px'}
   use:clickOutside
-  on:outclick={close}>
-  <slot />
+  onoutclick={close}>
+  {@render children?.()}
 </div>
 
 <style

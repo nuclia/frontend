@@ -29,12 +29,14 @@
         <div>
           <div class="title-m">{$_('answer.debug.rephrase')}</div>
           <table class="body-m">
-            <tr>
-              <td>{$_('answer.debug.rephrased-query')}</td>
-              <td class="title-s">
-                {rephrasedQuery}
-              </td>
-            </tr>
+            <tbody>
+              <tr>
+                <td>{$_('answer.debug.rephrased-query')}</td>
+                <td class="title-s">
+                  {rephrasedQuery}
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
       {/if}
@@ -43,32 +45,34 @@
         <div>
           <div class="title-m">{$_('answer.debug.title')}</div>
           <table class="body-m">
-            {#if answer?.metadata?.tokens}
-              <tr>
-                <td>Input Nuclia tokens</td>
-                <td class="title-s">{answer.metadata.tokens.input_nuclia}</td>
-              </tr>
-              <tr>
-                <td>Output Nuclia tokens</td>
-                <td class="title-s">{answer.metadata.tokens.output_nuclia}</td>
-              </tr>
-            {/if}
-            {#if answer?.metadata?.timings}
-              <tr>
-                <td>{$_('answer.debug.total-time')}</td>
-                <td class="title-s">
-                  {answer.metadata.timings.generative_total?.toFixed(3)}
-                  {$_('answer.debug.seconds')}
-                </td>
-              </tr>
-              <tr>
-                <td>{$_('answer.debug.first-word-time')}</td>
-                <td class="title-s">
-                  {answer.metadata.timings.generative_first_chunk?.toFixed(3)}
-                  {$_('answer.debug.seconds')}
-                </td>
-              </tr>
-            {/if}
+            <tbody>
+              {#if answer?.metadata?.tokens}
+                <tr>
+                  <td>Input Nuclia tokens</td>
+                  <td class="title-s">{answer.metadata.tokens.input_nuclia}</td>
+                </tr>
+                <tr>
+                  <td>Output Nuclia tokens</td>
+                  <td class="title-s">{answer.metadata.tokens.output_nuclia}</td>
+                </tr>
+              {/if}
+              {#if answer?.metadata?.timings}
+                <tr>
+                  <td>{$_('answer.debug.total-time')}</td>
+                  <td class="title-s">
+                    {answer.metadata.timings.generative_total?.toFixed(3)}
+                    {$_('answer.debug.seconds')}
+                  </td>
+                </tr>
+                <tr>
+                  <td>{$_('answer.debug.first-word-time')}</td>
+                  <td class="title-s">
+                    {answer.metadata.timings.generative_first_chunk?.toFixed(3)}
+                    {$_('answer.debug.seconds')}
+                  </td>
+                </tr>
+              {/if}
+            </tbody>
           </table>
         </div>
       {/if}
@@ -81,11 +85,11 @@
           </p>
           <div class="expander-container">
             <Expander expanded={false}>
-              <div
-                class="title-s"
-                slot="header">
-                {$_('answer.debug.text-blocks')}
-              </div>
+              {#snippet header()}
+                <div class="title-s">
+                  {$_('answer.debug.text-blocks')}
+                </div>
+              {/snippet}
               <div class="context-list">
                 {#each answer.promptContext as text}
                   <div class="context-item body-m">

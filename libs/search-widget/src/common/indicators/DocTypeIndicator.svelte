@@ -1,30 +1,34 @@
 <script lang="ts">
-  export let type;
+  import { run } from 'svelte/legacy';
 
-  let typeIndicator = '';
-  $: switch (type) {
-    case 'audio':
-      typeIndicator = 'audio';
-      break;
-    case 'conversation':
-      typeIndicator = 'conv';
-      break;
-    case 'image':
-      typeIndicator = 'image';
-      break;
-    case 'pdf':
-      typeIndicator = 'document';
-      break;
-    case 'spreadsheet':
-      typeIndicator = 'spreadsheet';
-      break;
-    case 'text':
-      typeIndicator = 'text';
-      break;
-    case 'video':
-      typeIndicator = 'video';
-      break;
-  }
+  let { type } = $props();
+
+  let typeIndicator = $state('');
+  run(() => {
+    switch (type) {
+      case 'audio':
+        typeIndicator = 'audio';
+        break;
+      case 'conversation':
+        typeIndicator = 'conv';
+        break;
+      case 'image':
+        typeIndicator = 'image';
+        break;
+      case 'pdf':
+        typeIndicator = 'document';
+        break;
+      case 'spreadsheet':
+        typeIndicator = 'spreadsheet';
+        break;
+      case 'text':
+        typeIndicator = 'text';
+        break;
+      case 'video':
+        typeIndicator = 'video';
+        break;
+    }
+  });
 </script>
 
 <div class="sw-doc-type-indicator">

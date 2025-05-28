@@ -15,7 +15,11 @@
   import { filter } from 'rxjs/operators';
   import { DEFAULT_NER_KEY, type EntityPositions, type FieldMetadata } from '@nuclia/core';
 
-  export let rightPanelOpen = false;
+  interface Props {
+    rightPanelOpen?: boolean;
+  }
+
+  let { rightPanelOpen = false }: Props = $props();
 
   const dispatch = createEventDispatcher();
   const unsubscribeAll: Subject<void> = new Subject();
@@ -25,38 +29,42 @@
   const maxRadius = 64;
   const minRadius = 6;
 
-  let families: NerFamily[] = [];
-  let innerHeight: number;
-  let innerWidth: number;
-  let nodes: NerNode[];
-  let links: NerLink[];
+  let families: NerFamily[] = $state([]);
+  let innerHeight: number = $state();
+  let innerWidth: number = $state();
+  let nodes: NerNode[] = $state();
+  let links: NerLink[] = $state();
 
-  let visibleFamilies: string[];
+  let visibleFamilies: string[] = $state();
 
-  $: graphWidth = rightPanelOpen ? innerWidth - leftPanelWidth - rightPanelWidth : innerWidth - leftPanelWidth;
-  $: graphHeight = innerHeight - 80;
+  let graphWidth = $derived(
+    rightPanelOpen ? innerWidth - leftPanelWidth - rightPanelWidth : innerWidth - leftPanelWidth,
+  );
+  let graphHeight = $derived(innerHeight - 80);
 
-  $: chargeStrength = !nodes || nodes.length > 100 ? -80 : -160;
-  $: centerPosition = [graphWidth / 2, graphHeight / 2];
-  $: activeForceX = d3.forceX().x(centerPosition[0]);
-  $: activeForceY = d3.forceY().y(centerPosition[1]);
-  $: forces = [
-    ['x', activeForceX],
-    ['y', activeForceY],
+  let chargeStrength = $derived(!nodes || nodes.length > 100 ? -80 : -160);
+  let centerPosition = $derived([graphWidth / 2, graphHeight / 2]);
+  let activeForceX = $derived(d3.forceX().x(centerPosition[0]));
+  let activeForceY = $derived(d3.forceY().y(centerPosition[1]));
+  let forces = $derived(
     [
-      'link',
-      d3
-        .forceLink()
-        .id((d) => (d as NerNode).id)
-        .distance((link: d3.SimulationLinkDatum<any>) => {
-          const source: NerNode = link.source;
-          const target: NerNode = link.target;
-          const radiusSum = source.radius + target.radius;
-          return radiusSum + radiusSum / 2;
-        }),
-    ],
-    ['charge', d3.forceManyBody().strength(chargeStrength)],
-  ].filter((d) => d);
+      ['x', activeForceX],
+      ['y', activeForceY],
+      [
+        'link',
+        d3
+          .forceLink()
+          .id((d) => (d as NerNode).id)
+          .distance((link: d3.SimulationLinkDatum<any>) => {
+            const source: NerNode = link.source;
+            const target: NerNode = link.target;
+            const radiusSum = source.radius + target.radius;
+            return radiusSum + radiusSum / 2;
+          }),
+      ],
+      ['charge', d3.forceManyBody().strength(chargeStrength)],
+    ].filter((d) => d),
+  );
 
   onMount(() => {
     fieldMetadata
@@ -225,17 +233,16 @@
   <div class="left-panel">
     <div class="ner-families-container">
       <Expander on:toggleExpander>
-        <div
-          class="title-s"
-          slot="header">
-          Entity families
-        </div>
+        {#snippet header()}
+          <div class="title-s">Entity families</div>
+        {/snippet}
         <ul class="ner-families">
           {#each families as family}
             <li>
               <div
                 class="family-color"
-                style:background={family.color} />
+                style:background={family.color}>
+              </div>
               <Checkbox
                 checked={visibleFamilies.includes(family.id)}
                 on:change={(event) => toggleFamily(family, event.detail)}>

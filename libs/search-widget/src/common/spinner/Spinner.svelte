@@ -1,8 +1,16 @@
 <script>
-  export let size = 'medium';
+  import { run } from 'svelte/legacy';
 
-  let sizeVar;
-  $: {
+  /**
+   * @typedef {Object} Props
+   * @property {string} [size]
+   */
+
+  /** @type {Props} */
+  let { size = 'medium' } = $props();
+
+  let sizeVar = $state();
+  run(() => {
     switch (size) {
       case 'small':
         sizeVar = `var(--rhythm-4)`;
@@ -13,7 +21,7 @@
       default:
         sizeVar = '';
     }
-  }
+  });
 </script>
 
 <div
@@ -21,12 +29,12 @@
   style:--inner-size={sizeVar}>
   <div class="spinner">
     <div class="inner">
-      <div class="gap" />
+      <div class="gap"></div>
       <div class="left">
-        <div class="half-circle" />
+        <div class="half-circle"></div>
       </div>
       <div class="right">
-        <div class="half-circle" />
+        <div class="half-circle"></div>
       </div>
     </div>
   </div>

@@ -4,20 +4,24 @@
   import { _, chat, sendFeedback, type RankedParagraph } from '../../core';
   import { Button, Checkbox, Dropdown, isMobileViewport } from '../../common';
 
-  export let rank = 0;
-  export let paragraph: RankedParagraph | undefined = undefined;
-  export let size: 'small' | 'xsmall' = 'small';
+  interface Props {
+    rank?: number;
+    paragraph?: RankedParagraph | undefined;
+    size?: 'small' | 'xsmall';
+  }
 
-  let approved: 'good' | 'bad' | '' = '';
-  let button: HTMLElement | undefined;
-  let showDropdown = false;
-  let position: { top?: number; bottom?: number; left: number; width: number } | undefined = undefined;
+  let { rank = 0, paragraph = undefined, size = 'small' }: Props = $props();
+
+  let approved: 'good' | 'bad' | '' = $state('');
+  let button: HTMLElement | undefined = $state();
+  let showDropdown = $state(false);
+  let position: { top?: number; bottom?: number; left: number; width: number } | undefined = $state(undefined);
   let options = ['wrong-answer', 'wrong-citations', 'wrong-results'];
-  let checked: { [key: string]: boolean } = {};
-  let feedback = '';
+  let checked: { [key: string]: boolean } = $state({});
+  let feedback = $state('');
 
-  $: isGood = approved === 'good';
-  $: isBad = approved === 'bad';
+  let isGood = $derived(approved === 'good');
+  let isBad = $derived(approved === 'bad');
 
   function send(good: boolean) {
     chat
@@ -54,7 +58,6 @@
   function closeDropdown() {
     showDropdown = false;
   }
-
 </script>
 
 {#if !$chat[rank]?.answer.incomplete}
@@ -102,7 +105,8 @@
             <textarea
               bind:value={feedback}
               rows="3"
-              placeholder={$_('answer.feedback.comments')}></textarea>
+              placeholder={$_('answer.feedback.comments')}>
+            </textarea>
             <div class="submit">
               <Button on:click={() => send(false)}>
                 {$_('answer.feedback.submit')}

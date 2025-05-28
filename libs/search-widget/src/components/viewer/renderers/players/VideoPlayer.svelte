@@ -1,30 +1,32 @@
 <script lang="ts">
-  import { createEventDispatcher, onDestroy, onMount } from "svelte";
+  import { run } from 'svelte/legacy';
+
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { getTempToken, isPrivateKnowledgeBox } from '../../../../core';
-  import { PlayerControls } from "./index";
+  import { PlayerControls } from './index';
 
-  export let src;
-  export let time;
-  export let contentType;
+  let { src, time, contentType } = $props();
 
-  $: isDashVideo = contentType === 'text/xml';
+  let isDashVideo = $derived(contentType === 'text/xml');
 
   const dispatch = createEventDispatcher();
 
-  let player: HTMLMediaElement;
+  let player: HTMLMediaElement = $state();
   let dashPlayer: any;
-  let loaded = false;
+  let loaded = $state(false);
   let paused = true;
 
-  $: if (loaded && typeof time === 'number') {
-    if (player) {
-      player.currentTime = time;
+  run(() => {
+    if (loaded && typeof time === 'number') {
+      if (player) {
+        player.currentTime = time;
 
-      if (paused) {
-        player.play();
+        if (paused) {
+          player.play();
+        }
       }
     }
-  }
+  });
 
   onDestroy(() => {
     if (dashPlayer) {
@@ -74,7 +76,7 @@
   {#if isDashVideo}
     <script
       src="https://cdn.dashjs.org/v4.7.1/dash.all.min.js"
-      on:load={onLoadDash}></script>
+      onload={onLoadDash}></script>
   {/if}
 </svelte:head>
 
@@ -82,11 +84,13 @@
   <video
     preload="auto"
     crossorigin="anonymous"
-    on:canplay={canPlay}
+    oncanplay={canPlay}
     bind:this={player}>
-    <source {src} type={contentType} />
+    <source
+      {src}
+      type={contentType} />
   </video>
-  <PlayerControls {player}/>
+  <PlayerControls {player} />
 </div>
 
 <style

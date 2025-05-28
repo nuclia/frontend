@@ -1,6 +1,7 @@
 <script lang="ts">
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
   import { NucliaChat } from '../../../libs/search-widget/src/widgets/chat-widget';
+  import { NucliaPopupWidget } from '../../../libs/search-widget/src/widgets/popup-widget';
 
   // const kb = '1f4e4651-580c-40db-8d20-c8dfdfffa530'; // books
   const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
@@ -39,7 +40,17 @@
     lang="en"
     no_tracking
     features={askFeatures} />
+    
   -->
+  <!-- <NucliaPopupWidget
+    zone="europe-1"
+    {backend}
+    cdn="/"
+    knowledgebox={kb}
+    lang="en"
+    no_tracking
+    features={askFeatures} />
+  <div data-nuclia="search-widget-button">Click here to open the Nuclia search widget</div> -->
 </main>
 
 <style lang="scss">

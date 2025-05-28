@@ -5,7 +5,7 @@
   import Chat from './Chat.svelte';
   import { trackingEngagement } from '../../core/stores/search.store';
 
-  let showChat = false;
+  let showChat = $state(false);
 
   function openChat() {
     showChat = true;

@@ -1,8 +1,12 @@
 <script lang="ts">
-  export let text = '';
+  interface Props {
+    text?: string;
+  }
+
+  let { text = '' }: Props = $props();
 
   // TODO render formatted RST
-  $: formattedText = text.trim().replace(/\n/g, '<br>');
+  let formattedText = $derived(text.trim().replace(/\n/g, '<br>'));
 </script>
 
 {@html formattedText}

@@ -4,11 +4,11 @@
   import { getFieldUrl, playFrom } from '../../../core';
   import { onDestroy } from 'svelte';
 
-  let mediaLoading = true;
-  let mediaTime = 0;
+  let mediaLoading = $state(true);
+  let mediaTime = $state(0);
   const mediaUrl: Observable<string> = getFieldUrl();
 
-  const subscription = playFrom.subscribe((time: number) => mediaTime = time);
+  const subscription = playFrom.subscribe((time: number) => (mediaTime = time));
 
   onDestroy(() => {
     subscription.unsubscribe();

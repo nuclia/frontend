@@ -1,7 +1,11 @@
 <script lang="ts">
-  export let text = '';
+  interface Props {
+    text?: string;
+  }
 
-  $: formattedText = text.trim().replace(/\n/g, '<br>');
+  let { text = '' }: Props = $props();
+
+  let formattedText = $derived(text.trim().replace(/\n/g, '<br>'));
 </script>
 
 {@html formattedText}

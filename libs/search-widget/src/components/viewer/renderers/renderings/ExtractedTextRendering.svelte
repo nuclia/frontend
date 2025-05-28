@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import type { Observable } from 'rxjs';
   import { map } from 'rxjs';
   import { fieldData, getExtractedTexts } from '../../../../core';
@@ -6,13 +8,15 @@
   import PlainTextRenderer from './PlainTextRendering.svelte';
   import RstRenderer from './RstRendering.svelte';
 
-  export let selectedParagraph: Search.FindParagraph | undefined;
-  export let isRst = false;
+  interface Props {
+    selectedParagraph: Search.FindParagraph | undefined;
+    isRst?: boolean;
+  }
 
-  let textViewerElement: HTMLElement;
-  let selected = '';
+  let { selectedParagraph, isRst = false }: Props = $props();
 
-  $: !!selectedParagraph && textViewerElement && highlightSelection();
+  let textViewerElement: HTMLElement = $state();
+  let selected = $state('');
 
   let extractedTexts: Observable<{ shortId: string; text: string }[]> = fieldData.pipe(
     map((data) => getExtractedTexts(data)),
@@ -25,10 +29,15 @@
     selected = selectedParagraph?.id.split('/').pop() || '';
     if (selected) {
       setTimeout(() =>
-        textViewerElement?.querySelector(`#paragraph${selected}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }),
+        textViewerElement
+          ?.querySelector(`#paragraph${selected}`)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }),
       );
     }
   }
+  run(() => {
+    !!selectedParagraph && textViewerElement && highlightSelection();
+  });
 </script>
 
 <div

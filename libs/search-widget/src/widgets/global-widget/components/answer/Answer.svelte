@@ -1,18 +1,25 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import Feedback from './Feedback.svelte';
   import type { Ask } from '@nuclia/core';
   import { isMobileViewport } from '../../../../common/utils';
   import { MarkdownRendering } from '../../../../components/viewer/renderers/renderings';
 
-  export let answer: Partial<Ask.Answer>;
-  export let rank = 0;
-  export let hideFeedback = false;
-  let text = '';
-  let innerWidth = window.innerWidth;
-  
-  $: text = answer.text || '';
-  $: isMobile = isMobileViewport(innerWidth);
+  interface Props {
+    answer: Partial<Ask.Answer>;
+    rank?: number;
+    hideFeedback?: boolean;
+  }
 
+  let { answer, rank = 0, hideFeedback = false }: Props = $props();
+  let text = $state('');
+  let innerWidth = $state(window.innerWidth);
+
+  run(() => {
+    text = answer.text || '';
+  });
+  let isMobile = $derived(isMobileViewport(innerWidth));
 </script>
 
 <svelte:window bind:innerWidth />
