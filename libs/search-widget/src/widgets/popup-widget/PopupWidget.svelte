@@ -151,50 +151,6 @@
       toggleSearchVisibility();
     }
   }
-
-  export {
-    backend,
-    zone,
-    knowledgebox,
-    placeholder,
-    lang,
-    cdn,
-    apikey,
-    account,
-    client,
-    kbstate,
-    features,
-    standalone,
-    proxy,
-    filters,
-    preselected_filters,
-    cssPath,
-    prompt,
-    system_prompt,
-    rephrase_prompt,
-    generativemodel,
-    no_tracking,
-    rag_strategies,
-    rag_images_strategies,
-    not_enough_data_message,
-    ask_to_resource,
-    max_tokens,
-    max_output_tokens,
-    max_paragraphs,
-    query_prepend,
-    json_schema,
-    vectorset,
-    chat_placeholder,
-    audit_metadata,
-    reranker,
-    citation_threshold,
-    rrf_boosting,
-    feedback,
-    copy_disclaimer,
-    metadata,
-    widget_id,
-    search_config_id,
-  };
 </script>
 
 <div
