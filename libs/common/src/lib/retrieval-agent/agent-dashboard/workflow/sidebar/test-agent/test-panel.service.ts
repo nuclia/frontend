@@ -64,7 +64,7 @@ export class TestPanelService {
       .subscribe({
         next: (data) => {
           // TODO: update the state with the data we get from the session
-          console.debug(`Data we get from websocket:`, data);
+          console.debug(`Data we get from interaction:`, data);
         },
         error: (error) => {
           console.error(`Error occurred while creating the session`, error);

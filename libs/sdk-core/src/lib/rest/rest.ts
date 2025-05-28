@@ -426,15 +426,20 @@ export class Rest implements IRest {
     this.webSockets[wsUrl] = new WebSocket(wsUrl);
 
     return new Observable((observer) => {
-      this.webSockets[wsUrl].onmessage = function (event) {
+      const ws = this.webSockets[wsUrl];
+      ws.onopen = function (event) {
+        console.debug(`Open event`, event);
+        observer.next('Opened' as T);
+      };
+      ws.onmessage = function (event) {
         console.debug(`Message`, event);
         observer.next(event.data);
       };
-      this.webSockets[wsUrl].onclose = function (event) {
+      ws.onclose = function (event) {
         console.debug(`Close event:`, event);
         observer.complete();
       };
-      this.webSockets[wsUrl].onerror = function (event) {
+      ws.onerror = function (event) {
         console.debug(`Error event:`, event);
         observer.error(event);
       };
@@ -455,7 +460,7 @@ export class Rest implements IRest {
   }
 
   /**
-   * Send data on the WebSocket previously opened on the given path
+   * Send data on the WebSocket previously opened on the given path.
    * @param path
    * @param data
    */
@@ -468,8 +473,6 @@ export class Rest implements IRest {
       );
     }
     const ws = this.webSockets[wsUrl];
-    ws.onopen = function () {
-      ws.send(data);
-    };
+    ws.send(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
   }
 }

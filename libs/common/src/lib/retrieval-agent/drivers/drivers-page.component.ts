@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { SDKService, STFUtils } from '@flaps/core';
 import {
   ModalConfig,
   ModalRef,
@@ -10,7 +10,7 @@ import {
   PaTableModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Driver } from '@nuclia/core';
+import { Driver, DriverCreation } from '@nuclia/core';
 import { DropdownButtonComponent, InfoCardComponent, SisModalService, SisToastService } from '@nuclia/sistema';
 import { catchError, filter, map, Observable, of, Subject, switchMap, take, takeUntil, tap, throwError } from 'rxjs';
 import { CypherDriverModalComponent } from './cypher-driver';
@@ -107,6 +107,12 @@ export class DriversPageComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap((modalRef) => modalRef.onClose),
         filter((driver) => !!driver),
+        map((driver: DriverCreation) => {
+          return {
+            ...driver,
+            identifier: `${driver.provider}-${STFUtils.generateRandomSlugSuffix()}`,
+          };
+        }),
         switchMap((driver) =>
           this.sdk.currentArag.pipe(
             take(1),
@@ -123,7 +129,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
   }
 
   edit(driver: Driver) {
-    const driverId = driver.id;
+    const driverId = driver.identifier;
     let modalRef$: Observable<ModalRef>;
     switch (driver.provider) {
       case 'brave':
@@ -167,7 +173,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
         switchMap((driver) =>
           this.sdk.currentArag.pipe(
             take(1),
-            switchMap((arag) => arag.patchDriver({ id: driverId, ...driver })),
+            switchMap((arag) => arag.patchDriver({ identifier: driverId, ...driver })),
           ),
         ),
         switchMap(() => this.sdk.refreshCurrentArag()),
@@ -191,7 +197,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
         switchMap(() =>
           this.sdk.currentArag.pipe(
             take(1),
-            switchMap((arag) => arag.deleteDriver(driver.id)),
+            switchMap((arag) => arag.deleteDriver(driver.identifier)),
           ),
         ),
         switchMap(() => this.sdk.refreshCurrentArag()),

@@ -37,7 +37,10 @@
     @if (runningQuestion()) {
       <div class="block-separator"></div>
       <div class="interactions">
-        <section class="category-section">
+        @if (runningTest()) {
+          Waiting for a response…
+        }
+        <!-- <section class="category-section">
           <app-chip fill>{{ 'retrieval-agents.workflow.sidebar.test.interactions.user-input' | translate }}</app-chip>
           <blockquote class="user-input">
             {{ runningQuestion() }}
@@ -64,7 +67,7 @@
               { content: 'Condition true' }
             ]"
             [cost]="{ timing: 325, tokens: 142 }"></app-agent-block>
-        </section>
+        </section> -->
       </div>
     }
 

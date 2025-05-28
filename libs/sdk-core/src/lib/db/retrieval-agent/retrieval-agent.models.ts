@@ -2,7 +2,16 @@ import { Observable } from 'rxjs';
 import { ResourceProperties } from '../db.models';
 import { IKnowledgeBoxBase, IKnowledgeBoxItem, InviteKbData, IWritableKnowledgeBox, ResourcePagination } from '../kb';
 import { ExtractedDataTypes } from '../resource';
-import { Driver, DriverCreation, InternetProviderType, ProviderType } from './driver.models';
+import { Driver } from './driver.models';
+import { AragAnswer, InteractionOperation } from './interactions.models';
+import {
+  AragModule,
+  ContextModule,
+  GenerationModule,
+  PostprocessModule,
+  PreprocessModule,
+  ProviderType,
+} from './retrieval-agent.types';
 import { Session } from './session';
 import { ISession } from './session.models';
 
@@ -36,11 +45,6 @@ export interface SessionCreation {
   format: 'PLAIN' | 'HTML' | 'RST' | 'MARKDOWN' | 'JSON' | 'KEEP_MARKDOWN' | 'JSONL' | 'PLAIN_BLANKLINE_SPLIT';
 }
 
-export enum InteractionOperation {
-  question = 0,
-  quit = 1,
-}
-
 export interface IRetrievalAgent
   extends Omit<
     IWritableKnowledgeBox,
@@ -58,16 +62,15 @@ export interface IRetrievalAgent
   getSession(uuid: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession>;
   listSessions(page?: number, size?: number): Observable<SessionList>;
   createSession(session: SessionCreation): Observable<SessionCreationResponse>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  listenSessionInteractions(sessionId: string): Observable<any>;
-  interaction(sessionId: string, question: string): Observable<unknown>;
+  listenSessionInteractions(sessionId: string): Observable<AragAnswer[]>;
+  interaction(sessionId: string, question: string): Observable<AragAnswer[]>;
   interactWithSession(sessionId: string, question: string, operation: InteractionOperation): void;
   resetSessionInteraction(sessionId: string): void;
 
   inviteToAgent(data: InviteKbData): Observable<void>;
 
   getDrivers(provider?: ProviderType): Observable<Driver[]>;
-  addDriver(driver: DriverCreation): Observable<void>;
+  addDriver(driver: Driver): Observable<void>;
   patchDriver(driver: Driver): Observable<void>;
   deleteDriver(driverId: string): Observable<void>;
 
@@ -99,21 +102,8 @@ export interface Rule {
   prompt: string;
 }
 
-export type PreprocessModule = 'historical' | 'rephrase' | 'pre_conditional' | 'preprocess_alinia';
-export type ContextModule =
-  | InternetProviderType
-  | 'sql'
-  | 'mcp'
-  | 'cypher'
-  | 'ask'
-  | 'context_conditional'
-  | 'restricted'
-  | 'sparql';
-export type GenerationModule = 'summarize' | 'generate';
-export type PostprocessModule = 'restart' | 'remi' | 'external' | 'post_conditional' | 'postprocess_alinia';
-
 export interface BaseAgent {
-  module: PreprocessModule | ContextModule | GenerationModule | PostprocessModule;
+  module: AragModule;
   id?: string;
   rules?: string[] | null;
   title?: string;

@@ -41,7 +41,8 @@ export class TestPanelComponent implements OnInit {
   triggerRun() {
     if (this.question.valid) {
       this.question.disable();
-      this.service.runTest(this.question.getRawValue(), this.session.getRawValue());
+      const question = this.question.getRawValue().trim();
+      this.service.runTest(question, this.session.getRawValue());
     }
   }
 

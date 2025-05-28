@@ -26,7 +26,7 @@ export class McpNodeComponent extends NodeDirective implements OnInit {
           title: this.translate.instant('retrieval-agents.workflow.node-types.mcp.form.source'),
           content: [config.source]
             .map((source) => {
-              const mcp = this.mcpList().find((mcp) => mcp.id === source);
+              const mcp = this.mcpList().find((mcp) => mcp.identifier === source);
               return mcp?.name || source;
             })
             .join(', '),

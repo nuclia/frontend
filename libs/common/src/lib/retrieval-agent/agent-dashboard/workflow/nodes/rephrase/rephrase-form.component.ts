@@ -58,7 +58,9 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
         take(1),
         switchMap((arag) => arag.getDrivers('nucliadb') as Observable<NucliaDBDriver[]>),
         map((drivers) =>
-          drivers.map((driver) => new OptionModel({ id: driver.id, label: driver.name, value: driver.config.kbid })),
+          drivers.map(
+            (driver) => new OptionModel({ id: driver.identifier, label: driver.name, value: driver.identifier }),
+          ),
         ),
       )
       .subscribe((options) => this.sourceOptions.set(options));

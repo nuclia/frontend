@@ -1,16 +1,7 @@
-export type InternetProviderType = 'brave' | 'perplexity' | 'tavily' | 'google';
-export type GuardrailsProviderType = 'alinia';
-export type ProviderType =
-  | InternetProviderType
-  | GuardrailsProviderType
-  | 'cypher'
-  | 'nucliadb'
-  | 'sql'
-  | 'mcpsse'
-  | 'mcpstdio';
+import { ProviderType } from './retrieval-agent.types';
 
 export interface IDriver {
-  id: string;
+  identifier: string;
   provider: ProviderType;
   name: string;
   config:
@@ -25,7 +16,7 @@ export interface IDriver {
     | McpStdioConfig;
 }
 
-export type DriverCreation = Omit<IDriver, 'id'>;
+export type DriverCreation = Omit<IDriver, 'identifier'>;
 
 export type Driver =
   | BraveDriver

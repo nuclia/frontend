@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { NavigationService, SDKService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { NucliaDBDriver } from '@nuclia/core';
@@ -32,7 +32,6 @@ import { aragUrl } from '../../workflow.state';
 })
 export class AskFormComponent extends FormDirective implements OnInit {
   private sdk = inject(SDKService);
-  private navigationService = inject(NavigationService);
 
   override form = new FormGroup({
     ask: new FormGroup({
@@ -69,7 +68,9 @@ export class AskFormComponent extends FormDirective implements OnInit {
         take(1),
         switchMap((arag) => arag.getDrivers('nucliadb') as Observable<NucliaDBDriver[]>),
         map((drivers) =>
-          drivers.map((driver) => new OptionModel({ id: driver.id, label: driver.name, value: driver.config.kbid })),
+          drivers.map(
+            (driver) => new OptionModel({ id: driver.identifier, label: driver.name, value: driver.identifier }),
+          ),
         ),
       )
       .subscribe((options) => this.sourceOptions.set(options));

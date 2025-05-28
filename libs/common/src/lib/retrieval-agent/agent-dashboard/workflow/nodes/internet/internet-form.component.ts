@@ -75,7 +75,12 @@ export class InternetFormComponent extends FormDirective implements OnInit {
             .filter((driver) => isInternetProvider(driver.provider))
             .map(
               (driver) =>
-                new OptionModel({ id: driver.id, label: driver.name, value: driver.provider, help: driver.provider }),
+                new OptionModel({
+                  id: driver.identifier,
+                  label: driver.name,
+                  value: driver.identifier,
+                  help: driver.provider,
+                }),
             ),
         ),
       )
