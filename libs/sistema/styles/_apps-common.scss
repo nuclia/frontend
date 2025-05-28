@@ -43,7 +43,8 @@ code.endpoint {
 }
 
 .pa-toast-container {
-  z-index: 10000;
+  // TEMPORARY FIX, we need to make sure apps_common does overides Pastanaga's defaults
+  z-index: 10000 !important;
 }
 
 .pa-popup {
