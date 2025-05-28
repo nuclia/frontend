@@ -5,6 +5,7 @@ import {
   type BaseSearchOptions,
   FIELD_TYPE,
   type FieldFullId,
+  type FieldId,
   type FileField,
   FileFieldData,
   getWidgetParameters,
@@ -16,6 +17,7 @@ import {
   NUCLIA_STANDARD_SEARCH_CONFIG,
   NUCLIA_STANDARD_SEARCH_CONFIG_ID,
   type NucliaOptions,
+  type Paragraph,
   type ResourceField,
   Search,
   sliceUnicode,
@@ -96,6 +98,13 @@ export const formatQueryKey = (key: string): string => {
   return `__nuclia_${key}__`;
 };
 
+export const queryKey = formatQueryKey('query');
+export const filterKey = formatQueryKey('filter');
+export const previewKey = formatQueryKey('preview');
+export const paragraphKey = formatQueryKey('paragraph');
+export const creationStartKey = formatQueryKey('creationStart');
+export const creationEndKey = formatQueryKey('creationEnd');
+
 export const updateQueryParams = (urlParams: URLSearchParams) => {
   const params = urlParams.toString();
   const baseUrl = `${location.pathname}${location.hash.split('?')[0]}`;
@@ -110,6 +119,10 @@ export function getUrlParams(): URLSearchParams {
       : window.location.search;
   return new URLSearchParams(params);
 }
+
+export const getPreviewParam = (resourceId: string, field: FieldId) => {
+  return `${resourceId}|${field.field_type}|${field.field_id}`;
+};
 
 /**
  * Coerces a value (usually a string coming from a prop) to a boolean.
@@ -213,17 +226,9 @@ export function slugify(text: string): string {
   );
 }
 
-export function goToUrl(url: string, paragraphText?: string, newTab = false) {
+export function goToUrl(url: string, newTab = false) {
   const urlObject = new URL(url);
   if (urlObject.protocol.startsWith('http')) {
-    let textFragment = '';
-    const supportsTextFragments = 'fragmentDirective' in document;
-    if (paragraphText && supportsTextFragments && !urlObject.hash) {
-      textFragment = getTextFragment(paragraphText);
-      if (textFragment) {
-        url = url + textFragment;
-      }
-    }
     window.open(url, newTab ? '_blank' : '_self');
   } else {
     console.info(`Invalid URL: ${url}`);
@@ -285,8 +290,11 @@ export const getNavigationUrl = (
   navigateToFile: boolean,
   navigateToLink: boolean,
   navigateToOriginURL: boolean,
+  openNewTab: boolean,
+  permalink: boolean,
   resource: IResource,
   field: ResourceField,
+  paragraph?: Search.FindParagraph,
 ): Observable<string | undefined> => {
   const url = getExternalUrl(resource, navigateToOriginURL, field);
   if (url && navigateToOriginURL) {
@@ -294,6 +302,13 @@ export const getNavigationUrl = (
   } else {
     const isFile = field.field_type === FIELD_TYPE.file;
     if (url && navigateToLink && !isYoutubeUrl(url)) {
+      const supportsTextFragments = 'fragmentDirective' in document;
+      if (paragraph?.text && supportsTextFragments && !new URL(url).hash) {
+        const textFragment = getTextFragment(paragraph.text);
+        if (textFragment) {
+          return of(url + textFragment);
+        }
+      }
       return of(url);
     } else if (isFile && navigateToFile) {
       if (url) {
@@ -302,6 +317,8 @@ export const getNavigationUrl = (
         const fileUrl = (field as FileFieldData)?.value?.file?.uri;
         return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
       }
+    } else if (openNewTab && permalink) {
+      return of(getPreviewUrl(resource.id, field, paragraph));
     } else {
       return of(undefined);
     }
@@ -322,6 +339,21 @@ export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean
       return undefined;
     }
   }
+};
+
+export const getPreviewUrl = (resourceId: string, field: FieldId, paragraph?: Search.FindParagraph) => {
+  const previewParam = getPreviewParam(resourceId, field);
+  const params = getUrlParams();
+  params.delete(queryKey);
+  params.delete(filterKey);
+  params.delete(creationStartKey);
+  params.delete(creationEndKey);
+  params.set(previewKey, previewParam);
+  if (paragraph) {
+    params.set(paragraphKey, paragraph?.id.split('/').pop() || '');
+  }
+  const baseUrl = `${location.origin}${location.pathname}${location.hash.split('?')[0]}`;
+  return params ? `${baseUrl}?${params}` : baseUrl;
 };
 
 export function getFieldIdWithShortType(fullId: FieldFullId): string {

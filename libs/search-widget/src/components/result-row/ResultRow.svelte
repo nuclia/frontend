@@ -26,6 +26,7 @@
     collapseTextBlocks,
     hideAnswer,
     navigateToOriginURL,
+    permalink,
   } from '../../core';
   import type { TypedResult } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
@@ -71,28 +72,16 @@
     }
   }
 
-  const url = combineLatest([navigateToFile, navigateToLink, navigateToOriginURL]).pipe(
-    take(1),
-    switchMap(([toFile, toLink, toOrigin]) => {
-      if (result.field) {
-        const resourceField: ResourceField = { ...result.field, ...result.fieldData };
-        return toFile || toLink || toOrigin
-          ? getNavigationUrl(toFile, toLink, toOrigin, result, resourceField)
-          : of(undefined);
-      }
-      return of(undefined);
-    }),
-  );
-
+  const url = getUrl();
   const IMAGE_PLACEHOLDER = '__IMAGE_PATH__';
   const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
 
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
-      forkJoin([url, openNewTab.pipe(take(1))]).subscribe(([url, openNewTab]) => {
+      forkJoin([getUrl(paragraph), openNewTab.pipe(take(1))]).subscribe(([url, openNewTab]) => {
         if (url) {
-          goToUrl(url, paragraph?.text, metaKeyOn || openNewTab);
+          goToUrl(url, metaKeyOn || openNewTab);
         } else {
           viewerData.set({
             result,
@@ -101,6 +90,21 @@
         }
       });
     }
+  }
+
+  function getUrl(paragraph?: Search.FindParagraph) {
+    return combineLatest([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab, permalink]).pipe(
+      take(1),
+      switchMap(([toFile, toLink, toOrigin, newTab, permalink]) => {
+        if (result.field) {
+          const resourceField: ResourceField = { ...result.field, ...result.fieldData };
+          return toFile || toLink || toOrigin || newTab
+            ? getNavigationUrl(toFile, toLink, toOrigin, newTab, permalink, result, resourceField, paragraph)
+            : of(undefined);
+        }
+        return of(undefined);
+      }),
+    );
   }
 
   function onKeyDown(event: KeyboardEvent) {

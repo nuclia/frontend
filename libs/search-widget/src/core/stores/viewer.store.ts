@@ -7,6 +7,7 @@ import type {
   FieldMetadata,
   ConversationField,
   ConversationFieldPages,
+  Paragraph,
 } from '@nuclia/core';
 import {
   FIELD_TYPE,
@@ -156,7 +157,7 @@ export const selectedParagraph = viewerState.reader<Search.FindParagraph | null>
     if (!!state.searchInFieldResults) {
       return state.searchInFieldResults[state.selectedParagraphIndex];
     }
-    if (state.currentResult && state.currentResult.paragraphs) {
+    if (state.currentResult && state.currentResult.paragraphs && state.selectedParagraphIndex !== -1) {
       return state.currentResult.paragraphs[state.selectedParagraphIndex];
     }
   }
@@ -301,6 +302,20 @@ export const fieldMetadata = viewerState.writer<FieldMetadata | undefined, Field
       : state,
 );
 
+export const resultParagraphs = viewerState.writer<Search.FindParagraph[]>(
+  (state) => state.currentResult?.paragraphs || [],
+  (state, paragraphs) =>
+    state.currentResult
+      ? {
+          ...state,
+          currentResult: {
+            ...state.currentResult,
+            paragraphs: paragraphs,
+          },
+        }
+      : state,
+);
+
 export const transcripts = viewerState.writer<Search.FindParagraph[]>(
   (state) => state.transcripts,
   (state, transcripts) => ({
@@ -362,29 +377,9 @@ export function loadTranscripts() {
             (paragraph) => paragraph.kind === 'TRANSCRIPT',
           );
           const fieldFullId = state.fieldFullId;
-          return paragraphs.map((paragraph, index) => {
-            const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
-            const start = paragraph.start || 0;
-            const end = paragraph.end || 0;
-            const id = `${fieldFullId.resourceId}/${longToShortFieldType(fieldFullId.field_type)}/${
-              fieldFullId.field_id
-            }/${start}-${end}`;
-            return {
-              id,
-              order: paragraph.order || 0,
-              text: paragraphText,
-              labels: [],
-              score: 0,
-              score_type: Search.FindScoreType.BOTH,
-              position: {
-                index,
-                start,
-                end,
-                start_seconds: paragraph.start_seconds,
-                end_seconds: paragraph.end_seconds,
-              },
-            };
-          });
+          return paragraphs.map((paragraph, index) =>
+            getFindParagraphFromParagraph(paragraph, fieldFullId, text, index),
+          );
         }
       }),
     )
@@ -425,4 +420,38 @@ export function loadMessagePage(page: number) {
         },
       });
     });
+}
+
+export function getFindParagraphFromParagraph(
+  paragraph: Paragraph,
+  fieldFullId: FieldFullId,
+  text: string,
+  index?: number,
+): Search.FindParagraph {
+  const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
+  const start = paragraph.start || 0;
+  const end = paragraph.end || 0;
+  const id = `${fieldFullId.resourceId}/${longToShortFieldType(fieldFullId.field_type)}/${
+    fieldFullId.field_id
+  }/${start}-${end}`;
+  return {
+    id,
+    order: paragraph.order || 0,
+    text: paragraphText,
+    labels: [],
+    score: 0,
+    score_type: Search.FindScoreType.BOTH,
+    position: {
+      index: index || 0,
+      start,
+      end,
+      start_seconds: paragraph.start_seconds,
+      end_seconds: paragraph.end_seconds,
+      page_number: paragraph.page?.page,
+    },
+    fuzzy_result: false,
+    page_with_visual: !!paragraph.page?.page_with_visual,
+    is_a_table: !!paragraph.representation?.is_a_table,
+    reference: paragraph.representation?.reference_file || '',
+  };
 }
