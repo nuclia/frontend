@@ -1,4 +1,4 @@
-import { Operation } from "../task";
+import { Operation } from '../task';
 
 export interface IResource {
   id: string;
@@ -411,6 +411,8 @@ export interface Paragraph {
   sentences?: Sentence[];
   key?: string;
   order?: number;
+  page?: { page?: number; page_with_visual?: boolean };
+  representation?: { is_a_table: boolean; reference_file?: string };
 }
 
 export interface Sentence {
