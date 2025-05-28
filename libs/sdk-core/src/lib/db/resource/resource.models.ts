@@ -411,6 +411,7 @@ export interface Paragraph {
   sentences?: Sentence[];
   key?: string;
   order?: number;
+  page?: { page?: number; page_with_visual?: boolean };
 }
 
 export interface Sentence {

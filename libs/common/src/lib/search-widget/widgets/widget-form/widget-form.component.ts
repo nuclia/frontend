@@ -142,6 +142,9 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       this.form.controls.navigateToOriginURL.value
     );
   }
+  get permalinkEnabled() {
+    return this.form.controls.permalink.value;
+  }
   get speechOn() {
     return this.form.controls.speech.value;
   }

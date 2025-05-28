@@ -15,6 +15,7 @@ import { suggestions, suggestionState, triggerSuggestions, typeAhead } from './s
 import {
   combineLatest,
   debounceTime,
+  delay,
   distinctUntilChanged,
   filter,
   forkJoin,
@@ -51,6 +52,7 @@ import {
   getUrlParams,
   hasNoResultsWithAutofilter,
   markdownToTxt,
+  paragraphKey,
   previewKey,
   queryKey,
   updateQueryParams,
@@ -72,7 +74,17 @@ import {
   triggerSearch,
   askBackendConfig,
 } from './search.store';
-import { fieldData, fieldFullId, viewerClosed, viewerData, viewerOpened, viewerState } from './viewer.store';
+import {
+  fieldData,
+  fieldFullId,
+  getFindParagraphFromParagraph,
+  resultParagraphs,
+  selectedParagraphIndex,
+  viewerClosed,
+  viewerData,
+  viewerOpened,
+  viewerState,
+} from './viewer.store';
 import {
   answerState,
   appendChatEntry,
@@ -270,11 +282,7 @@ export function activatePermalinks() {
         const urlParams = getUrlParams();
         urlParams.set(
           previewKey,
-          getPreviewParam(
-            viewerState.fieldFullId?.resourceId || '',
-            viewerState.fieldFullId as FieldFullId,
-            viewerState.selectedParagraphIndex,
-          ),
+          getPreviewParam(viewerState.fieldFullId?.resourceId || '', viewerState.fieldFullId as FieldFullId),
         );
         updateQueryParams(urlParams);
       }),
@@ -288,6 +296,7 @@ export function activatePermalinks() {
       .subscribe(() => {
         const urlParams = getUrlParams();
         urlParams.delete(previewKey);
+        urlParams.delete(paragraphKey);
         updateQueryParams(urlParams);
       }),
   ];
@@ -317,8 +326,9 @@ function initStoreFromUrlParams() {
 
   // Viewer store
   const preview = urlParams.get(previewKey);
+  const initialParagraph = urlParams.get(paragraphKey);
   if (preview) {
-    const [resourceId, type, field_id, selectedIndex] = preview.split('|');
+    const [resourceId, type, field_id] = preview.split('|');
     const field_type = getFieldTypeFromString(type);
     if (resourceId && field_type && field_id) {
       resultList
@@ -351,16 +361,35 @@ function initStoreFromUrlParams() {
               );
             }
           }),
+          tap((previewResult: TypedResult | undefined) => {
+            if (previewResult) {
+              viewerData.set({ result: previewResult, selectedParagraphIndex: -1 });
+            }
+          }),
+          switchMap(() =>
+            initialParagraph
+              ? viewerData.pipe(
+                  // wait untill paragraphs are loaded
+                  filter((data) => !!data.currentResult?.fieldData?.extracted),
+                  take(1),
+                  delay(10),
+                  tap((data) => {
+                    const text = data.currentResult?.fieldData?.extracted?.text?.text || '';
+                    const fieldFullId = data.fieldFullId;
+                    const [start, end] = initialParagraph?.split('-') || ['0', '0'];
+                    const paragraph = data.currentResult?.fieldData?.extracted?.metadata?.metadata.paragraphs.find(
+                      (paragraph) => paragraph.start == parseInt(start) && paragraph.end === parseInt(end),
+                    );
+                    if (paragraph && fieldFullId) {
+                      resultParagraphs.set([getFindParagraphFromParagraph(paragraph, fieldFullId, text)]);
+                      selectedParagraphIndex.set({ index: 0, playFromTranscripts: false });
+                    }
+                  }),
+                )
+              : of(undefined),
+          ),
         )
-        .subscribe((previewResult: TypedResult | undefined) => {
-          const index = selectedIndex !== 'null' ? parseInt(selectedIndex, 10) : -1;
-          if (previewResult) {
-            viewerData.set({
-              result: previewResult,
-              selectedParagraphIndex: index,
-            });
-          }
-        });
+        .subscribe();
     }
   }
 }

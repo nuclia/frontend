@@ -265,7 +265,7 @@
                 </span>
               </pa-toggle>
             </div>
-            @if (navigateToExternalEnabled) {
+            @if (navigateToExternalEnabled || permalinkEnabled) {
               <div class="config-form-field">
                 <pa-toggle
                   formControlName="openNewTab"

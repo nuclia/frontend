@@ -79,26 +79,14 @@
     }
   });
 
-  const url = combineLatest([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab]).pipe(
-    take(1),
-    switchMap(([toFile, toLink, toOrigin, newTab]) => {
-      if (result.field) {
-        const resourceField: ResourceField = { ...result.field, ...result.fieldData };
-        return toFile || toLink || toOrigin || newTab
-          ? getNavigationUrl(toFile, toLink, toOrigin, newTab, result, resourceField)
-          : of(undefined);
-      }
-      return of(undefined);
-    }),
-  );
-
+  const url = getUrl();
   const IMAGE_PLACEHOLDER = '__IMAGE_PATH__';
   const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
 
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
-      forkJoin([url, openNewTab.pipe(take(1))]).subscribe(([url, openNewTab]) => {
+      forkJoin([getUrl(paragraph), openNewTab.pipe(take(1))]).subscribe(([url, openNewTab]) => {
         if (url) {
           goToUrl(url, paragraph?.text, metaKeyOn || openNewTab);
         } else {
@@ -109,6 +97,21 @@
         }
       });
     }
+  }
+
+  function getUrl(paragraph?: Search.FindParagraph) {
+    return combineLatest([navigateToFile, navigateToLink, navigateToOriginURL, openNewTab]).pipe(
+      take(1),
+      switchMap(([toFile, toLink, toOrigin, newTab]) => {
+        if (result.field) {
+          const resourceField: ResourceField = { ...result.field, ...result.fieldData };
+          return toFile || toLink || toOrigin || newTab
+            ? getNavigationUrl(toFile, toLink, toOrigin, newTab, result, resourceField, paragraph)
+            : of(undefined);
+        }
+        return of(undefined);
+      }),
+    );
   }
 
   function onKeyDown(event: KeyboardEvent) {

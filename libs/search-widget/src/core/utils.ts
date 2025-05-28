@@ -17,6 +17,7 @@ import {
   NUCLIA_STANDARD_SEARCH_CONFIG,
   NUCLIA_STANDARD_SEARCH_CONFIG_ID,
   type NucliaOptions,
+  type Paragraph,
   type ResourceField,
   Search,
   sliceUnicode,
@@ -100,6 +101,7 @@ export const formatQueryKey = (key: string): string => {
 export const queryKey = formatQueryKey('query');
 export const filterKey = formatQueryKey('filter');
 export const previewKey = formatQueryKey('preview');
+export const paragraphKey = formatQueryKey('paragraph');
 export const creationStartKey = formatQueryKey('creationStart');
 export const creationEndKey = formatQueryKey('creationEnd');
 
@@ -118,8 +120,8 @@ export function getUrlParams(): URLSearchParams {
   return new URLSearchParams(params);
 }
 
-export const getPreviewParam = (resourceId: string, field: FieldId, paragraphIndex: number) => {
-  return `${resourceId}|${field.field_type}|${field.field_id}|${paragraphIndex}`;
+export const getPreviewParam = (resourceId: string, field: FieldId) => {
+  return `${resourceId}|${field.field_type}|${field.field_id}`;
 };
 
 /**
@@ -299,6 +301,7 @@ export const getNavigationUrl = (
   openNewTab: boolean,
   resource: IResource,
   field: ResourceField,
+  paragraph?: Search.FindParagraph,
 ): Observable<string | undefined> => {
   const url = getExternalUrl(resource, navigateToOriginURL, field);
   if (url && navigateToOriginURL) {
@@ -315,7 +318,7 @@ export const getNavigationUrl = (
         return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
       }
     } else if (openNewTab) {
-      return of(getPreviewUrl(resource.id, field, 0));
+      return of(getPreviewUrl(resource.id, field, paragraph));
     } else {
       return of(undefined);
     }
@@ -338,10 +341,17 @@ export const getExternalUrl = (resource: IResource, navigateToOriginURL: boolean
   }
 };
 
-export const getPreviewUrl = (resourceId: string, field: FieldId, paragraphIndex: number) => {
-  const previewParam = getPreviewParam(resourceId, field, paragraphIndex);
+export const getPreviewUrl = (resourceId: string, field: FieldId, paragraph?: Search.FindParagraph) => {
+  const previewParam = getPreviewParam(resourceId, field);
   const params = getUrlParams();
+  params.delete(queryKey);
+  params.delete(filterKey);
+  params.delete(creationStartKey);
+  params.delete(creationEndKey);
   params.set(previewKey, previewParam);
+  if (paragraph) {
+    params.set(paragraphKey, paragraph?.id.split('/').pop() || '');
+  }
   const baseUrl = `${location.origin}${location.pathname}${location.hash.split('?')[0]}`;
   return params ? `${baseUrl}?${params}` : baseUrl;
 };
