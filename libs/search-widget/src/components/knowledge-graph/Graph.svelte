@@ -35,17 +35,18 @@
 
   let filteredNodes = $state();
   let filteredLinks = $state();
+  let simulation: any;
 
-  let simulation = $derived(
-    d3
+  run(() => {
+    simulation = d3
       .forceSimulation()
       .nodes(nodes)
       .on('tick', () => {
         // update the renderedDots and renderedLinks references to trigger an update
         renderedDots = [...(filteredNodes || nodes)];
         renderedLinks = filteredLinks && filteredLinks.length > 0 ? [...filteredLinks] : [...links];
-      }),
-  );
+      });
+  });
 
   run(() => {
     // re-initialize forces when they change
