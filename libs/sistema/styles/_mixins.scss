@@ -1,8 +1,8 @@
-@import '../../pastanaga-angular/projects/pastanaga-angular/src/styles/variables';
+@use '../theme/tokens/palette.tokens' as palette;
 
 @mixin dark-mode() {
-  background-color: $color-dark-stronger;
-  color: $color-light-stronger;
+  background-color: palette.$color-dark-stronger;
+  color: palette.$color-light-stronger;
 }
 
 @mixin reset-button() {

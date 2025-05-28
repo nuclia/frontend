@@ -1,5 +1,5 @@
 @use '../../../styles/variables' as *;
-@use '../../../theme/tokens/_typography.tokens.scss' as typography;
+@use '../../../theme/tokens/typography.tokens' as typography;
 
 :host {
   align-items: center;

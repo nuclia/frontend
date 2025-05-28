@@ -1,0 +1,31 @@
+// core
+@forward '../theme/fonts';
+@forward '../theme/tokens/palette.tokens';
+@forward '../theme/tokens/spacing.tokens';
+@forward '../theme/tokens/typography.tokens';
+@forward '../theme/tokens/scrollbar.tokens';
+@forward '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/shadows.tokens';
+@forward '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/transitions.tokens';
+@forward '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/z-index.tokens';
+@forward '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/layout.tokens';
+
+// components
+@forward '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/avatar.tokens';
+@forward '../theme/tokens/body.tokens';
+@forward '../theme/tokens/buttons.tokens';
+@forward '../theme/tokens/card.tokens';
+@forward '../theme/tokens/chips.tokens';
+@forward '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/icon.tokens';
+@forward '../theme/tokens/expander.tokens';
+@forward '../theme/tokens/menu.tokens';
+@forward '../theme/tokens/modal.tokens';
+@forward '../theme/tokens/popover.tokens';
+@forward '../theme/tokens/table.tokens';
+@forward '../theme/tokens/tabs.tokens';
+@forward '../theme/tokens/textfield.tokens';
+@forward '../theme/tokens/toasts.tokens';
+@forward '../theme/tokens/toggle.tokens';
+@forward '../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/tooltip.tokens';
+
+// Utility scss functions and mixin
+@forward '../../pastanaga-angular/projects/pastanaga-angular/src/styles/utils';

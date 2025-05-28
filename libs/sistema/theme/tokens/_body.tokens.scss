@@ -1,4 +1,9 @@
-@forward './palette.tokens';
-
-$color-text-link-regular: inherit;
-$color-text-link-regular-hover: inherit;
+@use '../tokens/palette.tokens' as palette;
+@use '../tokens/typography.tokens' as typography;
+@forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/body.tokens'
+  with(
+    $color-text-link-regular: inherit,
+    $color-text-link-regular-hover: inherit,
+    $color-text-disabled: palette.$color-neutral-regular,
+    $font-weight-label: typography.$font-weight-regular
+  );

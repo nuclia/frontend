@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
-import { StickyFooterComponent } from '@nuclia/sistema';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { StickyFooterComponent } from '@nuclia/sistema';
+import { PaDemoModule } from '../../../../../../libs/pastanaga-angular/projects/demo/src';
 
 @Component({
   selector: 'nsd-sistema-sticky-footer',
   imports: [CommonModule, PaDemoModule, StickyFooterComponent, PaButtonModule],
   templateUrl: './sistema-sticky-footer.component.html',
-  styleUrl: './sistema-sticky-footer.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SistemaStickyFooterComponent {

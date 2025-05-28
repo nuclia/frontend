@@ -1,8 +1,6 @@
-@use '../../../libs/sistema/theme/fonts';
+@use '../../../libs/sistema/styles/apps-common';
 @use '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
-@use 'apps/sistema-demo/src/variables' as *;
 @use '../../../libs/pastanaga-angular/projects/pastanaga-angular/src/styles/grid';
-@use 'libs/sistema/styles/apps-common';
 
 .form-field-config {
   .state-option {
