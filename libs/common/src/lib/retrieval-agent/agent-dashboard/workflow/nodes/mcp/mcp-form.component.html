@@ -48,8 +48,8 @@
       <pa-select
         id="source"
         formControlName="source">
-        @for (source of mcpList(); track source.id) {
-          <pa-option [value]="source.id">{{ source.name }}</pa-option>
+        @for (source of mcpList(); track source.identifier) {
+          <pa-option [value]="source.identifier">{{ source.name }}</pa-option>
         }
       </pa-select>
     </div>
