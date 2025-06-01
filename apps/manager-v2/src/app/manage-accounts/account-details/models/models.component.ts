@@ -5,7 +5,7 @@ import { ManagerStore } from '../../../manager.store';
 import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaDropdownModule, PaPopupModule, PaTableModule } from '@guillotinaweb/pastanaga-angular';
 import { RegionalAccountService } from '../../regional-account.service';
-import { AccountModelSummary } from '../../regional-account.models';
+import { CustomModelItem } from '@nuclia/core';
 import { AccountService } from '../../account.service';
 import { RouterModule } from '@angular/router';
 
@@ -33,7 +33,7 @@ export class ModelsComponent {
       .subscribe();
   }
 
-  delete(event: Event, model: AccountModelSummary, zone: string) {
+  delete(event: Event, model: CustomModelItem, zone: string) {
     event.preventDefault();
     event.stopPropagation();
     this.modalService

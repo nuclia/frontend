@@ -6,6 +6,7 @@
   - openWebSocket: open a WebSocket connection and returns an Observable streaming the messages received
   - closeWebSocket: close the WebSocket connection
   - send: send a message to a WebSocket previously opened
+- Support endpoints to manage custom models
 
 ### Improvements
 

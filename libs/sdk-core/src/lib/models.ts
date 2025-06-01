@@ -6,6 +6,8 @@ import {
   AccountModification,
   AccountStatus,
   AccountTypes,
+  CustomModel,
+  CustomModelItem,
   EventList,
   IKnowledgeBoxItem,
   IRetrievalAgentItem,
@@ -204,6 +206,10 @@ export interface IDb {
   inviteToAccount(accountSlug: string, data: InviteAccountUserPayload): Observable<void>;
   getAccountInvitations(accountId: string): Observable<PendingInvitation[]>;
   deleteAccountInvitation(accountId: string, email: string): Observable<void>;
+  getModels(accountId: string, zone: string): Observable<CustomModelItem[]>;
+  getModel(modelId: string, accountId: string, zone: string): Observable<CustomModel>;
+  addModelToKb(modelId: string, accountId: string, kbId: string, zone: string): Observable<void>;
+  deleteModelFromKb(modelId: string, accountId: string, kbId: string, zone: string): Observable<void>;
 }
 
 export interface NucliaOptions {

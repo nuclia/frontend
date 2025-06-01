@@ -406,6 +406,16 @@
               </a>
             </div>
           }
+          <div class="group-items">
+            <a
+              [routerLink]="(accountUrl | async) + '/models'"
+              routerLinkActive="active"
+              data-cy="go-to-models"
+              class="nav-link">
+              <pa-icon name="settings"></pa-icon>
+              <span class="nav-link-title">{{ 'navbar.models' | translate }}</span>
+            </a>
+          </div>
           @if ((isBillingEnabled | async) && !noStripe) {
             <div class="group-items">
               <a

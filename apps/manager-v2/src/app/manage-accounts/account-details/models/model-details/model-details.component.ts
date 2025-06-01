@@ -4,10 +4,10 @@ import { combineLatest, filter, forkJoin, map, of, shareReplay, Subject, switchM
 import { ManagerStore } from '../../../../manager.store';
 import { CommonModule } from '@angular/common';
 import { PaButtonModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { RegionalAccountService } from '../../../regional-account.service';
-import { AccountModel } from '../../../regional-account.models';
 import { ActivatedRoute } from '@angular/router';
 import { SisToastService } from '@nuclia/sistema';
+import { CustomModel } from '@nuclia/core';
+import { SDKService } from '@flaps/core';
 
 @Component({
   imports: [CommonModule, PaButtonModule, PaTogglesModule, ReactiveFormsModule],
@@ -19,7 +19,7 @@ export class ModelDetailsComponent implements OnDestroy, OnInit {
 
   kbForm = new FormGroup<{ [key: string]: FormControl<boolean> }>({});
   isSaving = false;
-  backupModel?: AccountModel;
+  backupModel?: CustomModel;
   zone?: string;
   modelNames = this.store.kbList.pipe(
     map((kbs) => kbs.reduce((acc, curr) => ({ ...acc, [curr.id]: curr.title }), {} as { [id: string]: string })),
@@ -28,7 +28,7 @@ export class ModelDetailsComponent implements OnDestroy, OnInit {
 
   constructor(
     private store: ManagerStore,
-    private regionalService: RegionalAccountService,
+    private sdk: SDKService,
     private route: ActivatedRoute,
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
@@ -57,7 +57,7 @@ export class ModelDetailsComponent implements OnDestroy, OnInit {
               ),
           );
         }),
-        switchMap(([account, modelId, zoneSlug]) => this.regionalService.getModel(modelId, account.id, zoneSlug)),
+        switchMap(([account, modelId, zoneSlug]) => this.sdk.nuclia.db.getModel(modelId, account.id, zoneSlug)),
       )
       .subscribe((model) => {
         if (model) {
@@ -71,7 +71,7 @@ export class ModelDetailsComponent implements OnDestroy, OnInit {
     this.unsubscribeAll.complete();
   }
 
-  initForm(model: AccountModel) {
+  initForm(model: CustomModel) {
     this.backupModel = model;
     this.kbForm.reset();
     model.kbids.forEach((id) => {
@@ -95,11 +95,11 @@ export class ModelDetailsComponent implements OnDestroy, OnInit {
       .filter(([kbId, enabled]) => kbIds.includes(kbId) && !enabled)
       .map(([kbId]) => kbId);
     const requests = [
-      ...toAdd.map((kbId) => this.regionalService.addModelToKb(modelId, accountId, kbId, this.zone || '')),
-      ...toDelete.map((kbId) => this.regionalService.deleteModelFromKb(modelId, accountId, kbId, this.zone || '')),
+      ...toAdd.map((kbId) => this.sdk.nuclia.db.addModelToKb(modelId, accountId, kbId, zone)),
+      ...toDelete.map((kbId) => this.sdk.nuclia.db.deleteModelFromKb(modelId, accountId, kbId, zone)),
     ];
     (requests.length > 0 ? forkJoin(requests) : of([]))
-      .pipe(switchMap(() => this.regionalService.getModel(modelId, accountId, zone)))
+      .pipe(switchMap(() => this.sdk.nuclia.db.getModel(modelId, accountId, zone)))
       .subscribe({
         next: (model) => {
           this.initForm(model);

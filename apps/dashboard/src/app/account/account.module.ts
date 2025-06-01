@@ -54,6 +54,7 @@ import { RedirectComponent } from './billing/redirect.component';
 import { SubscriptionsComponent } from './billing/subscriptions/subscriptions.component';
 import { UsageComponent } from './billing/usage/usage.component';
 import { NucliaTokensComponent } from './nuclia-tokens';
+import { AccountModelsComponent } from './account-models/account-models.component';
 
 const routes: Routes = [
   {
@@ -101,6 +102,11 @@ const routes: Routes = [
     component: AccountAragComponent,
     canActivate: [accountOwnerGuard, agentFeatureEnabledGuard],
     children: [{ path: '', component: AragListComponent }],
+  },
+  {
+    path: 'models',
+    component: AccountModelsComponent,
+    canActivate: [accountOwnerGuard],
   },
   {
     path: 'users',
