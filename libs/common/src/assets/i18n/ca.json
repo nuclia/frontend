@@ -166,7 +166,7 @@
 	"activity.migration-warning": "Les preguntes anteriors al setembre de 2024 no s'inclouen al registre a causa de la migració de dades.",
 	"activity.resource": "Recurs",
 	"activity.timestamp": "Segell de temps",
-	"activity.type.chat": "Preguntes i respostes generatives",
+	"activity.type.ask": "Preguntes i respostes generatives",
 	"activity.type.modified": "Modificats",
 	"activity.type.new": "Creats",
 	"activity.type.processed": "Processats",
