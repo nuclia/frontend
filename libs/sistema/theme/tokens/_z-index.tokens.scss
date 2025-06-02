@@ -1,3 +1,4 @@
 @forward '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/z-index.tokens' with (
-  $z-index-toast: 10000
+  $z-index-toast: 10000,
+  $z-index-modal-backdrop: 9999
 );
