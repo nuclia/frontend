@@ -146,7 +146,6 @@ export interface HistoricalAgentUI extends CommonAgentConfig {
 }
 
 export interface RephraseAgentUI extends CommonAgentConfig {
-  prompt: string;
   kb: string;
   extend: boolean;
   synonyms: boolean;
@@ -273,27 +272,23 @@ export function getNodeTypeFromAgent(
   return isInternetProvider(agent.module) ? 'internet' : (agent.module as NodeType);
 }
 export function rephraseUiToCreation(config: RephraseAgentUI): RephraseAgentCreation {
-  const { prompt, userInfo, ...agentConfig } = config;
+  const { userInfo, ...agentConfig } = config;
   return {
     module: 'rephrase',
     ...agentConfig,
     session_info: userInfo,
-    rules: [prompt],
     rids: [],
     labels: [],
   };
 }
 export function rephraseAgentToUi(agent: RephraseAgent): RephraseAgentUI {
-  const { rules, session_info, ...uiConfig } = agent;
-  // FIXME: check with ramon rules vs prompt
+  const { session_info, ...uiConfig } = agent;
   return {
     ...uiConfig,
-    prompt: rules?.[0] || '',
     userInfo: session_info || false,
     extend: uiConfig.extend || false,
     synonyms: uiConfig.synonyms || false,
     history: uiConfig.history || false,
-    rules: null,
   };
 }
 export function askUiToCreation(config: AskAgentUI): AskAgentCreation {

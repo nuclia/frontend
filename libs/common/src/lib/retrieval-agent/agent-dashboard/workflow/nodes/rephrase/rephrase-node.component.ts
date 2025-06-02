@@ -25,7 +25,6 @@ export class RephraseNodeComponent extends NodeDirective implements OnInit {
         const kb = this.kbList().find((kb) => kb.id === config.kb);
         items.push({ title: 'Knowledge Box', content: kb?.title || config.kb });
       }
-      items.push({ title: 'Prompt', content: config.prompt });
       return items;
     }
     return [];
