@@ -20,7 +20,6 @@ import type {
   ResourceField,
   Sentence,
   TaskResults,
-  TasksFilter,
   TextField,
 } from './resource.models';
 import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
@@ -425,7 +424,7 @@ export class Resource extends ReadableResource implements IResource {
    * Run tasks on the resource and return the results
    * (the results are not stored within the resource).
    */
-  runTasks(filters: TasksFilter[]) {
-    return this.nuclia.rest.post<TaskResults>(`${this.path}/run-agents`, { filters }, undefined, undefined, true);
+  runTasks(agents_ids?: string[]) {
+    return this.nuclia.rest.post<TaskResults>(`${this.path}/run-agents`, { agents_ids }, undefined, undefined, true);
   }
 }
