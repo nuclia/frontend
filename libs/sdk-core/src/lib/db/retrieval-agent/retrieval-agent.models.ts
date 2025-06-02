@@ -147,13 +147,13 @@ export type ContextAgentCreation =
   | SqlAgentCreation
   | TavilyAgentCreation
   | PerplexityAgentCreation
-  | McpAgentCreation
   | BraveAgentCreation
+  | GoogleAgentCreation
+  | McpAgentCreation
   | CypherAgentCreation
   | AskAgentCreation
   | ContextConditionalAgentCreation
   | RestrictedAgentCreation
-  | GoogleAgentCreation
   | SparqlAgentCreation;
 export type GenerationAgentCreation = SummarizeAgentCreation | GenerateAgentCreation;
 export type PostprocessAgentCreation =
@@ -197,10 +197,12 @@ export interface SqlAgentCreation {
 
 export interface TavilyAgentCreation {
   module: 'tavily';
+  source: string;
 }
 
 export interface PerplexityAgentCreation {
   module: 'perplexity';
+  source: string;
   domain: string[];
   top_k: number;
   related_questions: boolean;
@@ -209,6 +211,7 @@ export interface PerplexityAgentCreation {
 
 export interface BraveAgentCreation {
   module: 'brave';
+  source: string;
   domain: string | null;
   country: string | null;
 }
@@ -282,6 +285,7 @@ export interface RestrictedAgentCreation {
 
 export interface GoogleAgentCreation {
   module: 'google';
+  source: string;
   gen_model_id?: string;
 }
 

@@ -29,6 +29,7 @@ export type Driver =
   | McpSseDriver
   | McpStdioDriver
   | AliniaDriver;
+export type InternetDriver = BraveDriver | PerplexityDriver | TavilyDriver | GoogleDriver;
 
 export interface BraveDriver extends IDriver {
   provider: 'brave';

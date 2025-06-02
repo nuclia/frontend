@@ -169,8 +169,9 @@ export interface RephraseAgentUI extends CommonAgentConfig {
 
 export interface InternetAgentUI extends CommonAgentConfig {
   provider: InternetProviderType;
-  brave: Omit<CommonAgentConfig, 'rules'> & Omit<BraveAgentCreation, 'module'>;
-  perplexity: Omit<CommonAgentConfig, 'rules'> & Omit<PerplexityAgentCreation, 'module'>;
+  source: string;
+  brave: Omit<BraveAgentCreation, 'module' | 'source'>;
+  perplexity: Omit<PerplexityAgentCreation, 'module' | 'source'>;
 }
 
 export interface GuardrailsAgentUI extends CommonAgentConfig {
@@ -411,6 +412,7 @@ export type InternetAgent = BraveAgent | PerplexityAgent | TavilyAgent | GoogleA
 export function internetUiToCreation(config: InternetAgentUI): InternetAgentCreation {
   const baseConfig = {
     rules: config.rules,
+    source: config.source,
   };
   switch (config.provider) {
     case 'brave':
@@ -437,6 +439,7 @@ export function internetAgentToUi(agent: InternetAgent): InternetAgentUI {
   return {
     provider: agent.module,
     rules: agent.rules || null,
+    source: agent.source,
     brave: {
       country: agent.module === 'brave' ? agent.country : '',
       domain: agent.module === 'brave' ? agent.domain : '',
