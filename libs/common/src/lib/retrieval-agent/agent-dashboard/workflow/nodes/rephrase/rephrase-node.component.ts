@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { IKnowledgeBoxItem } from '@nuclia/core';
 import { switchMap, take } from 'rxjs';
 import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
@@ -15,6 +15,7 @@ import { RephraseAgentUI } from '../../workflow.models';
 })
 export class RephraseNodeComponent extends NodeDirective implements OnInit {
   private sdk = inject(SDKService);
+  private translate = inject(TranslateService);
   private kbList = signal<IKnowledgeBoxItem[]>([]);
 
   rephraseConfig = computed<ConfigBlockItem[]>(() => {
@@ -23,7 +24,10 @@ export class RephraseNodeComponent extends NodeDirective implements OnInit {
       const items: ConfigBlockItem[] = [];
       if (config.kb) {
         const kb = this.kbList().find((kb) => kb.id === config.kb);
-        items.push({ title: 'Knowledge Box', content: kb?.title || config.kb });
+        items.push({
+          title: this.translate.instant('retrieval-agents.workflow.node-types.rephrase.source'),
+          content: kb?.title || config.kb,
+        });
       }
       return items;
     }

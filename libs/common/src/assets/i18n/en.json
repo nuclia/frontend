@@ -1339,6 +1339,7 @@
 	"retrieval-agents.workflow.node-types.rephrase.form.synonyms.label": "Synonyms",
 	"retrieval-agents.workflow.node-types.rephrase.form.user-info.help": "Include information about the user",
 	"retrieval-agents.workflow.node-types.rephrase.form.user-info.label": "User info",
+	"retrieval-agents.workflow.node-types.rephrase.source": "Source",
 	"retrieval-agents.workflow.node-types.rephrase.title": "Rephrase",
 	"retrieval-agents.workflow.node-types.restart.description": "Restart the workflow",
 	"retrieval-agents.workflow.node-types.restart.form.retries.integer-error": "Must be an integer",

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { IKnowledgeBoxItem } from '@nuclia/core';
+import { NucliaDBDriver } from '@nuclia/core';
 import { switchMap, take } from 'rxjs';
 import {
   ConfigBlockComponent,
@@ -22,7 +22,7 @@ import { AskAgentUI } from '../../workflow.models';
 export class AskNodeComponent extends NodeDirective implements OnInit {
   private sdk = inject(SDKService);
   private translate = inject(TranslateService);
-  private kbList = signal<IKnowledgeBoxItem[]>([]);
+  private driverList = signal<NucliaDBDriver[]>([]);
 
   askConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
@@ -33,8 +33,8 @@ export class AskNodeComponent extends NodeDirective implements OnInit {
           content: config.sources
             .split(',')
             .map((source) => {
-              const kb = this.kbList().find((kb) => kb.id === source);
-              return kb?.title || source;
+              const driver = this.driverList().find((driver) => driver.identifier === source);
+              return driver?.name || source;
             })
             .join(', '),
         },
@@ -45,13 +45,13 @@ export class AskNodeComponent extends NodeDirective implements OnInit {
   });
 
   ngOnInit(): void {
-    this.sdk.currentAccount
+    this.sdk.currentArag
       .pipe(
         take(1),
-        switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug, account.id)),
+        switchMap((arag) => arag.getDrivers('nucliadb')),
       )
-      .subscribe((kbList) => {
-        this.kbList.set(kbList);
+      .subscribe((drivers) => {
+        this.driverList.set(drivers as NucliaDBDriver[]);
         this.configUpdated.emit();
       });
   }

@@ -1325,6 +1325,7 @@
 	"retrieval-agents.workflow.node-types.rephrase.form.synonyms.label": "Sinónimos",
 	"retrieval-agents.workflow.node-types.rephrase.form.user-info.help": "Incluir información sobre el usuario",
 	"retrieval-agents.workflow.node-types.rephrase.form.user-info.label": "Información del usuario",
+	"retrieval-agents.workflow.node-types.rephrase.source": "Fuente",
 	"retrieval-agents.workflow.node-types.rephrase.title": "Reformular",
 	"retrieval-agents.workflow.node-types.restart.description": "Reiniciar el flujo de trabajo",
 	"retrieval-agents.workflow.node-types.restart.form.retries.integer-error": "Debe ser un numero entero",

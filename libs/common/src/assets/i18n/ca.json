@@ -1325,6 +1325,7 @@
 	"retrieval-agents.workflow.node-types.rephrase.form.synonyms.label": "Sinònims",
 	"retrieval-agents.workflow.node-types.rephrase.form.user-info.help": "Incloure informació sobre l'usuari",
 	"retrieval-agents.workflow.node-types.rephrase.form.user-info.label": "Informació de l'usuari",
+	"retrieval-agents.workflow.node-types.rephrase.source": "Font",
 	"retrieval-agents.workflow.node-types.rephrase.title": "Reformular",
 	"retrieval-agents.workflow.node-types.restart.description": "Reiniciar el flux de treball",
 	"retrieval-agents.workflow.node-types.restart.form.retries.integer-error": "Ha de ser un nombre enter",
