@@ -61,13 +61,15 @@ export class AccountModelsComponent implements OnInit, OnDestroy {
           this.sdk.nuclia.db.getModels(account.id, zone.slug).pipe(
             map((models) => models.filter((model) => model.model_type === ModelType.GENERATIVE)),
             switchMap((modelItems) =>
-              forkJoin(
-                modelItems.map((modelItem) =>
-                  this.sdk.nuclia.db
-                    .getModel(modelItem.model_id || '', account.id, zone.slug)
-                    .pipe(map((model) => ({ ...model, title: modelItem.title }))),
-                ),
-              ),
+              modelItems.length === 0
+                ? of([])
+                : forkJoin(
+                    modelItems.map((modelItem) =>
+                      this.sdk.nuclia.db
+                        .getModel(modelItem.model_id || '', account.id, zone.slug)
+                        .pipe(map((model) => ({ ...model, title: modelItem.title }))),
+                    ),
+                  ),
             ),
             map((models) => ({ zone, models: models as CustomModelWithTitle[] })),
             catchError(() => of({ zone, models: [] })),
@@ -88,14 +90,16 @@ export class AccountModelsComponent implements OnInit, OnDestroy {
 
   defaultModels = forkJoin([this.sdk.currentAccount.pipe(take(1)), this.kbList.pipe(take(1))]).pipe(
     switchMap(([account, kbList]) =>
-      forkJoin(
-        kbList.map((kb) => {
-          this.sdk.nuclia.options.zone = kb.zone;
-          return new KnowledgeBox(this.sdk.nuclia, account.id, kb)
-            .getConfiguration()
-            .pipe(map((config) => ({ id: kb.id, defaultModel: config['generative_model'] })));
-        }),
-      ),
+      kbList.length === 0
+        ? of([])
+        : forkJoin(
+            kbList.map((kb) => {
+              this.sdk.nuclia.options.zone = kb.zone;
+              return new KnowledgeBox(this.sdk.nuclia, account.id, kb)
+                .getConfiguration()
+                .pipe(map((config) => ({ id: kb.id, defaultModel: config['generative_model'] })));
+            }),
+          ),
     ),
     map((defaultModels) =>
       defaultModels.reduce(
