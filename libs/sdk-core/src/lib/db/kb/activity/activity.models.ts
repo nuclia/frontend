@@ -75,7 +75,7 @@ export type DownloadFormat = 'application/x-ndjson' | 'text/csv';
 
 export interface ActivityLogDownloadQuery {
   year_month: string;
-  show?: string[];
+  show?: string[] | 'all';
   filters: ActivityLogFilters | ActivityLogSearchFilters | ActivityLogChatFilters;
   email_address?: string;
   notify_via_email?: boolean;
