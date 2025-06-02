@@ -1,0 +1,14 @@
+<blockquote>
+  @if (title()) {
+    <stf-chip>{{ title() | translate }}</stf-chip>
+  }
+  <div class="description">{{ description() | translate }}</div>
+
+  @for (step of answer()?.steps; track step) {
+    <stf-agent-step [step]="step"></stf-agent-step>
+  }
+
+  @if (result()?.answer; as resultAnswer) {
+    <div [innerHTML]="resultAnswer | lineBreakFormatter"></div>
+  }
+</blockquote>

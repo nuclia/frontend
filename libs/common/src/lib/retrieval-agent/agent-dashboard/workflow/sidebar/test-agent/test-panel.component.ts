@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Session } from '@nuclia/core';
-import { testAgentQuestion, testAgentRunning } from '../../workflow.state';
+import { testAgentAnswersByCategory, testAgentQuestion, testAgentRunning } from '../../workflow.state';
 import { AgentBlockComponent, ChipComponent } from './elements';
 import { TestPanelService } from './test-panel.service';
 
@@ -33,6 +33,7 @@ export class TestPanelComponent implements OnInit {
   sessions = signal<Session[]>([]);
   runningTest = testAgentRunning;
   runningQuestion = testAgentQuestion;
+  rawAnswers = testAgentAnswersByCategory;
 
   ngOnInit(): void {
     this.service.getTestSessions().subscribe((sessions) => this.sessions.set(sessions));

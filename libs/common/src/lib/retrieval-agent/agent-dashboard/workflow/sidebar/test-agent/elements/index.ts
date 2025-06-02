@@ -1,2 +1,3 @@
-export * from './agent-block.component';
-export * from './chip.component';
+export * from './agent-block';
+export * from './agent-step';
+export * from './chip';

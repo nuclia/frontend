@@ -87,10 +87,32 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   interaction(sessionId: string, question: string): Observable<AragAnswer[]> {
     const fullPath = this.getInteractionPath(sessionId);
-    return this.nuclia.rest.post(fullPath, {
-      question,
-      operation: InteractionOperation.question,
-    });
+    return this.nuclia.rest
+      .getStreamedResponse(fullPath, {
+        question,
+        operation: InteractionOperation.question,
+      })
+      .pipe(
+        map(({ data }) => {
+          const rows = new TextDecoder()
+            .decode(data.buffer)
+            .split('\n')
+            .filter((d) => d);
+          let previous = '';
+          const items: AragAnswer[] = rows.reduce((list, row) => {
+            previous += row;
+            try {
+              const obj = JSON.parse(previous) as AragAnswer;
+              list.push(obj);
+              previous = '';
+            } catch (e) {
+              // block is not complete yet
+            }
+            return list;
+          }, [] as AragAnswer[]);
+          return items;
+        }),
+      );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

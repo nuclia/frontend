@@ -37,7 +37,7 @@ export interface AragAnswerStep {
 
 export interface AragAnswerChunk {
   chunk_id: string;
-  title: string;
+  title: string | null;
   text: string;
   labels: string[];
   url: string[];
