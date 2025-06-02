@@ -42,11 +42,6 @@ code.endpoint {
   word-break: break-all;
 }
 
-.pa-toast-container {
-  // TEMPORARY FIX, we need to make sure apps_common does overides Pastanaga's defaults
-  z-index: 10000 !important;
-}
-
 .pa-popup {
   min-width: variables.rhythm(16);
 }
