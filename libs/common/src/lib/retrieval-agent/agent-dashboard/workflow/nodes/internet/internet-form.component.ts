@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { InternetProviderType } from '@nuclia/core';
+import { InternetDriver, InternetProviderType } from '@nuclia/core';
 import { InfoCardComponent } from '@nuclia/sistema';
 import { map, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
@@ -35,7 +35,7 @@ export class InternetFormComponent extends FormDirective implements OnInit {
   override form = new FormGroup({
     internet: new FormGroup({
       rules: new FormArray<FormControl<string>>([]),
-      provider: new FormControl<InternetProviderType | ''>('', {
+      source: new FormControl<string>('', {
         validators: [Validators.required],
         nonNullable: true,
       }),
@@ -56,7 +56,7 @@ export class InternetFormComponent extends FormDirective implements OnInit {
   }
 
   get provider() {
-    return this.configForm.controls.provider.getRawValue();
+    return this.configForm.controls.source.getRawValue();
   }
   get perplexityDomains() {
     return this.configForm.controls.perplexity.controls.domain;
@@ -64,25 +64,26 @@ export class InternetFormComponent extends FormDirective implements OnInit {
 
   driversPath = computed(() => `${aragUrl()}/drivers`);
   providerOptions = signal<OptionModel[] | null>(null);
+  drivers = signal<InternetDriver[]>([]);
 
   ngOnInit(): void {
     this.sdk.currentArag
       .pipe(
         take(1),
         switchMap((arag) => arag.getDrivers()),
-        map((drivers) =>
-          drivers
-            .filter((driver) => isInternetProvider(driver.provider))
-            .map(
-              (driver) =>
-                new OptionModel({
-                  id: driver.identifier,
-                  label: driver.name,
-                  value: driver.identifier,
-                  help: driver.provider,
-                }),
-            ),
-        ),
+        map((drivers) => {
+          const internetDrivers = drivers.filter((driver) => isInternetProvider(driver.provider));
+          this.drivers.set(internetDrivers as InternetDriver[]);
+          return internetDrivers.map(
+            (driver) =>
+              new OptionModel({
+                id: driver.identifier,
+                label: driver.name,
+                value: driver.identifier,
+                help: driver.provider,
+              }),
+          );
+        }),
       )
       .subscribe((options) => this.providerOptions.set(options));
     if (this.config) {
@@ -101,5 +102,22 @@ export class InternetFormComponent extends FormDirective implements OnInit {
   }
   removePerplexityDomain(index: number) {
     this.perplexityDomains.removeAt(index);
+  }
+
+  override submit(): void {
+    if (this.form.valid) {
+      const rawValue = this.configForm.getRawValue();
+      const provider: InternetProviderType | undefined = this.drivers().find(
+        (driver) => driver.identifier === rawValue.source,
+      )?.provider;
+      if (!provider) {
+        throw new Error(`Source ${rawValue.source} not found in driver list`);
+      }
+      const internetForm: InternetAgentUI = {
+        ...rawValue,
+        provider,
+      };
+      this.submitForm.emit(internetForm);
+    }
   }
 }
