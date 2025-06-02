@@ -33,51 +33,71 @@
     {{ 'retrieval-agents.workflow.sidebar.test.form.run-button' | translate }}
   </pa-button>
 
-  @if (runningTest()) {
-    @if (runningQuestion()) {
-      <div class="block-separator"></div>
-      <div class="interactions">
-        @if (runningTest()) {
-          Waiting for a response…
-        }
-        <!-- <section class="category-section">
-          <app-chip fill>{{ 'retrieval-agents.workflow.sidebar.test.interactions.user-input' | translate }}</app-chip>
-          <blockquote class="user-input">
-            {{ runningQuestion() }}
-          </blockquote>
-        </section>
-
+  @if (runningQuestion()) {
+    <div class="block-separator"></div>
+    <div class="interactions">
+      <section class="category-section">
+        <stf-chip fill>{{ 'retrieval-agents.workflow.sidebar.test.interactions.user-input' | translate }}</stf-chip>
+        <blockquote class="user-input">
+          {{ runningQuestion() }}
+        </blockquote>
+      </section>
+      @if (runningTest() && rawAnswers().length === 0) {
+        Waiting for a response…
+      }
+      @if (rawAnswers().preprocess.length > 0) {
         <section class="category-section">
-          <app-chip fill>Preprocess</app-chip>
-          <app-agent-block
-            nodeType="rephrase"
-            [config]="[
-              { content: 'Rebranding and obsolete naming', title: 'Source' },
-              { content: 'Rephrase the query using the proper naming', title: 'Prompt' }
-            ]"
-            [cost]="{ timing: 2221, tokens: 126 }"></app-agent-block>
+          <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.preprocess' | translate }}</stf-chip>
+          @for (item of rawAnswers().preprocess; track item.seqid) {
+            <app-agent-block [answer]="item"></app-agent-block>
+          }
         </section>
-
+      }
+      @if (rawAnswers().context.length > 0) {
         <section class="category-section">
-          <app-chip fill>Context retrieval</app-chip>
-          <app-agent-block
-            nodeType="context_conditional"
-            [config]="[
-              { content: 'If the question is about a product', title: 'Prompt' },
-              { content: 'Condition true' }
-            ]"
-            [cost]="{ timing: 325, tokens: 142 }"></app-agent-block>
-        </section> -->
-      </div>
+          <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.context' | translate }}</stf-chip>
+          @for (item of rawAnswers().context; track item.seqid) {
+            <app-agent-block [answer]="item"></app-agent-block>
+          }
+        </section>
+      }
+      @if (rawAnswers().generation.length > 0) {
+        <section class="category-section">
+          <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.generation' | translate }}</stf-chip>
+          @for (item of rawAnswers().generation; track item.seqid) {
+            <app-agent-block [answer]="item"></app-agent-block>
+          }
+        </section>
+      }
+      @if (rawAnswers().postprocess.length > 0) {
+        <section class="category-section">
+          <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.postprocess' | translate }}</stf-chip>
+          @for (item of rawAnswers().postprocess; track item.seqid) {
+            <app-agent-block [answer]="item"></app-agent-block>
+          }
+        </section>
+      }
+      @if (rawAnswers().results.length > 0) {
+        <section class="category-section">
+          <stf-chip fill>
+            {{ 'retrieval-agents.workflow.sidebar.test.interactions.results.title' | translate }}
+          </stf-chip>
+          @for (item of rawAnswers().results; track item.seqid) {
+            <app-agent-block [result]="item"></app-agent-block>
+          }
+        </section>
+      }
+    </div>
+
+    @if (runningTest()) {
+      <footer>
+        <pa-button
+          aspect="basic"
+          size="small"
+          (click)="triggerStop()">
+          {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
+        </pa-button>
+      </footer>
     }
-
-    <footer>
-      <pa-button
-        aspect="basic"
-        size="small"
-        (click)="triggerStop()">
-        {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
-      </pa-button>
-    </footer>
   }
 </div>

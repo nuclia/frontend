@@ -1,8 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { InteractionOperation, RetrievalAgent, Session } from '@nuclia/core';
-import { map, Observable, switchMap, take, tap } from 'rxjs';
-import { runTest, stopTest } from '../../workflow.state';
+import { AnswerOperation, RetrievalAgent, Session } from '@nuclia/core';
+import { SisToastService } from '@nuclia/sistema';
+import { map, Observable, switchMap, take } from 'rxjs';
+import { runTest, stopTest, updateTestResults } from '../../workflow.state';
 
 const TEST_SESSION_SLUG_PREFIX = 'test-session';
 
@@ -11,7 +12,7 @@ const TEST_SESSION_SLUG_PREFIX = 'test-session';
 })
 export class TestPanelService {
   private sdk = inject(SDKService);
-
+  private toaster = inject(SisToastService);
   private currentSessionId?: string;
 
   getTestSessions(): Observable<Session[]> {
@@ -55,19 +56,23 @@ export class TestPanelService {
         switchMap(({ sessionId, arag }) => {
           this.currentSessionId = sessionId;
           // Open the websocket connection and send the question
-          return arag
-            .listenSessionInteractions(sessionId)
-            .pipe(tap(() => arag.interactWithSession(sessionId, question, InteractionOperation.question)));
-          // return arag.interaction(sessionId, question);
+          // return arag
+          //   .listenSessionInteractions(sessionId)
+          //   .pipe(tap(() => arag.interactWithSession(sessionId, question, InteractionOperation.question)));
+          return arag.interaction(sessionId, question);
         }),
       )
       .subscribe({
         next: (data) => {
-          // TODO: update the state with the data we get from the session
-          console.debug(`Data we get from interaction:`, data);
+          updateTestResults(data);
+          const lastMessage = data[data.length - 1];
+          if (lastMessage.operation === AnswerOperation.done || lastMessage.operation === AnswerOperation.error) {
+            stopTest();
+          }
         },
-        error: (error) => {
-          console.error(`Error occurred while creating the session`, error);
+        error: () => {
+          this.toaster.error('retrieval-agents.workflow.sidebar.test.toasts.session-creation-error');
+          stopTest();
         },
       });
   }
@@ -85,8 +90,8 @@ export class TestPanelService {
       .subscribe({
         // Update the state
         next: () => stopTest(),
-        error: (error) => {
-          console.error(`Error occurred while closing the session interactions`, error);
+        error: () => {
+          this.toaster.error('retrieval-agents.workflow.sidebar.test.toasts.session-closing-error');
         },
       });
   }

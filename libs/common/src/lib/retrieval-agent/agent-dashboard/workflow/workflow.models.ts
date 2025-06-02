@@ -1,5 +1,9 @@
 import { ComponentRef } from '@angular/core';
 import {
+  AnswerOperation,
+  AragAnswerContext,
+  AragAnswerStep,
+  AragModule,
   AskAgent,
   AskAgentCreation,
   BaseAliniaAgentCreation,
@@ -122,6 +126,16 @@ export const NODE_SELECTOR_ICONS: { [nodeType: string]: string } = {
 
 export interface CommonAgentConfig {
   rules: string[] | null;
+}
+
+export interface AragAnswerUi {
+  module: AragModule;
+  answer: string | null;
+  generated_text: string | null;
+  steps: AragAnswerStep[];
+  context: AragAnswerContext | null;
+  operation: AnswerOperation;
+  seqid: number | null;
 }
 
 export type NodeConfig =

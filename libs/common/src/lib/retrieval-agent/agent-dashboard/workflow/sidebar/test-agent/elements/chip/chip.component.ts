@@ -3,7 +3,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@an
 import { PaChipsModule } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
-  selector: 'app-chip',
+  selector: 'stf-chip',
   imports: [CommonModule, PaChipsModule],
   templateUrl: './chip.component.html',
   styleUrl: './chip.component.scss',
