@@ -169,7 +169,6 @@ export interface HistoricalAgentCreation {
 export interface RephraseAgentCreation {
   module: 'rephrase';
   kb: string;
-  rules: string[];
   rids?: string[];
   labels?: string[];
   synonyms?: boolean;

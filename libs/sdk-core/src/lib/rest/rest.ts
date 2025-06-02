@@ -413,13 +413,18 @@ export class Rest implements IRest {
     return result;
   }
 
+  private getWsUrl(path: string, ephemeralToken: string): string {
+    return `${this.getFullUrl(path).replace('https', 'wss')}?eph-token=${ephemeralToken}`;
+  }
+
   /**
    * Open a WebSocket for the given path
    * @param path
+   * @param ephemeralToken Ephemeral token authorizing WebSocket connection
    * @returns Observable streaming the messages received on the WebSocket
    */
-  openWebSocket<T>(path: string): Observable<T> {
-    const wsUrl = this.getFullUrl(path).replace('https', 'wss');
+  openWebSocket<T>(path: string, ephemeralToken: string): Observable<T> {
+    const wsUrl = this.getWsUrl(path, ephemeralToken);
     if (this.webSockets[wsUrl]) {
       throw new Error(`A websocket is already open on ${path}`);
     }
@@ -449,9 +454,10 @@ export class Rest implements IRest {
   /**
    * Close the WebSocket opened on the given path
    * @param path
+   * @param ephemeralToken Ephemeral token authorizing WebSocket connection
    */
-  closeWebSocket(path: string) {
-    const wsUrl = this.getFullUrl(path).replace('https', 'wss');
+  closeWebSocket(path: string, ephemeralToken: string) {
+    const wsUrl = this.getWsUrl(path, ephemeralToken);
     if (!this.webSockets[wsUrl]) {
       console.error(`No web socket opened on ${path}.`);
     }
@@ -462,11 +468,12 @@ export class Rest implements IRest {
   /**
    * Send data on the WebSocket previously opened on the given path.
    * @param path
+   * @param ephemeralToken Ephemeral token authorizing WebSocket connection
    * @param data
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  send(path: string, data: any) {
-    const wsUrl = this.getFullUrl(path).replace('https', 'wss');
+  send(path: string, ephemeralToken: string, data: any) {
+    const wsUrl = this.getWsUrl(path, ephemeralToken);
     if (!this.webSockets[wsUrl]) {
       throw new Error(
         `No web socket opened on ${path}. You must open a web socket by calling openWebSocket() before sending data.`,

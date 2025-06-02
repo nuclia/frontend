@@ -6,7 +6,7 @@ import { SDKService } from '@flaps/core';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { NucliaDBDriver } from '@nuclia/core';
-import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
+import { InfoCardComponent } from '@nuclia/sistema';
 import { map, Observable, switchMap, take } from 'rxjs';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { aragUrl } from '../../workflow.state';
@@ -22,7 +22,6 @@ import { aragUrl } from '../../workflow.state';
     PaTogglesModule,
     ConfigurationFormComponent,
     RulesFieldComponent,
-    ExpandableTextareaComponent,
     InfoCardComponent,
     RouterLink,
   ],
@@ -34,7 +33,6 @@ export class RephraseFormComponent extends FormDirective implements OnInit {
 
   override form = new FormGroup({
     rephrase: new FormGroup({
-      prompt: new FormControl('', { validators: [Validators.required], nonNullable: true }),
       kb: new FormControl('', { validators: [Validators.required], nonNullable: true }),
       extend: new FormControl(false),
       synonyms: new FormControl(false),

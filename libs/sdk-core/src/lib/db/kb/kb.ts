@@ -649,10 +649,11 @@ export class KnowledgeBox implements IKnowledgeBox {
     ```ts
     const downloadLink = `${nuclia.rest.getFullpath(filePath)}?eph-token=${nuclia.knowledgeBox.getTempToken()}`;
     ```
+   * @param payload Optional payload to provide extra data for the token generation
    */
-  getTempToken(): Observable<string> {
+  getTempToken(payload?: any): Observable<string> {
     if (!this.tempTokenReplay || this.tempTokenExpiration < Date.now()) {
-      this.tempTokenReplay = this._getTempToken().pipe(
+      this.tempTokenReplay = this._getTempToken(payload).pipe(
         map((res) => res.token),
         shareReplay(1),
       );
@@ -660,7 +661,8 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
     return this.tempTokenReplay;
   }
-  private _getTempToken(): Observable<{ token: string }> {
+
+  private _getTempToken(payload?: any): Observable<{ token: string }> {
     if (!this.nuclia.options.standalone) {
       const accountId = this.nuclia.options.accountId;
       const zone = this.nuclia.options.zone;
@@ -669,7 +671,7 @@ export class KnowledgeBox implements IKnowledgeBox {
       }
       return this.nuclia.rest.post<{ token: string }>(
         `/account/${accountId}/kb/${this.id}/ephemeral_tokens`,
-        {},
+        payload || {},
         undefined,
         undefined,
         undefined,

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { ExpandableTextareaComponent } from '@nuclia/sistema';
@@ -24,7 +24,7 @@ import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '
 export class SummarizeFormComponent extends FormDirective {
   override form = new FormGroup({
     summarize: new FormGroup({
-      prompt: new FormControl('', { validators: Validators.required, nonNullable: true }),
+      prompt: new FormControl('', { nonNullable: true }),
       images: new FormControl(false),
       rules: new FormArray<FormControl<string>>([]),
     }),
