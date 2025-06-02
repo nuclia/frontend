@@ -78,9 +78,7 @@
                   destructive>
                   {{ 'tasks-automation.actions.edit.edit-configuration' | translate }}
                 </pa-option>
-                <pa-option
-                  (selectOption)="duplicateTask(task.id)"
-                  destructive>
+                <pa-option (selectOption)="duplicateTask(task.id)">
                   {{ 'tasks-automation.actions.duplicate.action' | translate }}
                 </pa-option>
                 @if (task.canClean) {
