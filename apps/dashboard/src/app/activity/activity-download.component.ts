@@ -155,8 +155,6 @@ export class ActivityDownloadComponent implements OnDestroy {
   }
 
   download(eventType: EventType, month: string) {
-    let show =
-      eventType === EventType.SEARCH ? searchColumns : eventType === EventType.CHAT ? chatColumns : resourceColumns;
     this.sdk.currentKb
       .pipe(
         switchMap((kb) =>
@@ -167,7 +165,7 @@ export class ActivityDownloadComponent implements OnDestroy {
                 year_month: month,
                 filters: {},
                 notify_via_email: true,
-                show,
+                show: 'all',
               },
               'application/x-ndjson',
             )
