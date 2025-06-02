@@ -1267,7 +1267,7 @@
 	"retrieval-agents.workflow.node-types.external.form.prompt.label": "Extra prompt",
 	"retrieval-agents.workflow.node-types.external.form.url": "URL à appeler",
 	"retrieval-agents.workflow.node-types.external.title": "Appel externe",
-	"retrieval-agents.workflow.node-types.generate.config.default-prompt": "Générez du texte / JSON / image à l’aide du prompt par défaut",
+	"retrieval-agents.workflow.node-types.generate.config.default-prompt": "Générer du texte / JSON / image à l’aide du prompt par défaut",
 	"retrieval-agents.workflow.node-types.generate.description": "Génération de texte / JSON / image",
 	"retrieval-agents.workflow.node-types.generate.generate_image": "Générer une image",
 	"retrieval-agents.workflow.node-types.generate.images": "Utilise des images",
