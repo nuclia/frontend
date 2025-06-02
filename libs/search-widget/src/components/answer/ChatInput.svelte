@@ -8,12 +8,16 @@
   import { Subscription, filter } from 'rxjs';
   import { onMount } from 'svelte';
 
-  export let placeholder = '';
-  export let fullscreen;
+  interface Props {
+    placeholder?: string;
+    fullscreen: any;
+  }
 
-  let inputElement: Textarea;
-  let question = '';
-  let isListening = false;
+  let { placeholder = '', fullscreen }: Props = $props();
+
+  let inputElement: Textarea = $state();
+  let question = $state('');
+  let isListening = $state(false);
 
   const subs: Subscription[] = [];
   const isSpeechStarted = SpeechStore.isStarted;

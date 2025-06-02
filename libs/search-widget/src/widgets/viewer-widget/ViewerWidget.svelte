@@ -1,6 +1,14 @@
-<svelte:options customElement="nuclia-viewer" />
+<svelte:options
+  customElement={{
+    tag: 'nuclia-viewer',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }} />
 
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import {
     getFieldType,
     getResourceById,
@@ -28,36 +36,45 @@
   import { onClosePreview, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
 
-  export let backend = 'https://nuclia.cloud/api';
-  export let zone = '';
-  export let knowledgebox = '';
-  export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
-  export let account = '';
-  export let client = 'widget';
-  export let state: KBStates = 'PUBLISHED';
-  export let features = '';
-  export let standalone = false;
-  export let proxy = false;
-  export let cssPath = '';
-  export let no_tracking = false;
-
-  export let rid = '';
-  export let field_id = '';
-  export let field_type = '';
-
-  $: fieldType = getFieldType(field_type);
-  $: if (rid && field_id && fieldType) {
-    const fullId = {
-      resourceId: rid,
-      field_id,
-      field_type: fieldType,
-    };
-    openPreview(fullId);
-  } else {
-    closePreview();
+  interface Props {
+    backend?: string;
+    zone?: string;
+    knowledgebox?: string;
+    lang?: string;
+    cdn?: string;
+    apikey?: string;
+    account?: string;
+    client?: string;
+    kbstate?: KBStates;
+    features?: string;
+    standalone?: boolean;
+    proxy?: boolean;
+    cssPath?: string;
+    no_tracking?: boolean;
+    rid?: string;
+    field_id?: string;
+    field_type?: string;
   }
+
+  let {
+    backend = 'https://nuclia.cloud/api',
+    zone = '',
+    knowledgebox = '',
+    lang = $bindable(''),
+    cdn = '',
+    apikey = '',
+    account = '',
+    client = 'widget',
+    kbstate = 'PUBLISHED',
+    features = '',
+    standalone = false,
+    proxy = false,
+    cssPath = '',
+    no_tracking = false,
+    rid = '',
+    field_id = '',
+    field_type = '',
+  }: Props = $props();
 
   widgetActions.set([]);
   export function setViewerMenu(actions: WidgetAction[]) {
@@ -96,8 +113,8 @@
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
 
-  let svgSprite;
-  let container: HTMLElement;
+  let svgSprite = $state();
+  let container: HTMLElement = $state();
   let _features: Widget.WidgetFeatures = {};
 
   const dispatch = createEventDispatcher();
@@ -128,7 +145,7 @@
         standalone,
         proxy,
       },
-      state,
+      kbstate,
       {},
       no_tracking,
     );
@@ -145,9 +162,22 @@
 
     return () => reset();
   });
+  let fieldType = $derived(getFieldType(field_type));
+  run(() => {
+    if (rid && field_id && fieldType) {
+      const fullId = {
+        resourceId: rid,
+        field_id,
+        field_type: fieldType,
+      };
+      openPreview(fullId);
+    } else {
+      closePreview();
+    }
+  });
 </script>
 
-<svelte:element this="style">{@html globalCss}</svelte:element>
+<svelte:element this={'style'}>{@html globalCss}</svelte:element>
 
 <div
   bind:this={container}

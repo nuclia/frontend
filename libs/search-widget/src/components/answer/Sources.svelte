@@ -2,9 +2,13 @@
   import { type TypedResult, hideThumbnails } from '../../core';
   import { ResultRow } from '../result-row';
 
-  export let sources: TypedResult[] = [];
-  export let selected: number | undefined;
-  export let answerRank: number | undefined;
+  interface Props {
+    sources?: TypedResult[];
+    selected: number | undefined;
+    answerRank: number | undefined;
+  }
+
+  let { sources = [], selected, answerRank }: Props = $props();
 </script>
 
 <div class="sw-sources">

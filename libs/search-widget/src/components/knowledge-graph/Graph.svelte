@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import type { NerLinkHydrated, NerLink, NerNode } from '../../core/knowledge-graph.models';
   import { createEventDispatcher } from 'svelte';
   import { graphSearchResults, graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
@@ -7,39 +9,46 @@
   // utility function for translating elements
   const move = (x, y) => `transform: translate(${x}px, ${y}px)`;
 
-  // svg dimensions
-  export let height;
-  export let width;
-  // an array of our particles
-  export let nodes = [];
-  // an array of [name, force] pairs
-  export let forces = [];
-  // an array NerLink to display as edges and apply as force.links
-  export let links = [];
-  // array of visible family ids
-  export let visibleFamilies;
+  interface Props {
+    // svg dimensions
+    height: any;
+    width: any;
+    // an array of our particles
+    nodes?: any;
+    // an array of [name, force] pairs
+    forces?: any;
+    // an array NerLink to display as edges and apply as force.links
+    links?: any;
+    // array of visible family ids
+    visibleFamilies: any;
+  }
+
+  let { height, width, nodes = [], forces = [], links = [], visibleFamilies }: Props = $props();
 
   const dispatch = createEventDispatcher();
-  let usedForceNames = [];
-  let renderedDots = [];
-  let renderedLinks: NerLink[] = [];
+  let usedForceNames = $state([]);
+  let renderedDots = $state([]);
+  let renderedLinks: NerLink[] = $state([]);
 
-  let selectedNode: NerNode | null = null;
-  let selectedNodeRelationIds: string[] = [];
+  let selectedNode: NerNode | null = $state(null);
+  let selectedNodeRelationIds: string[] = $state([]);
 
-  let filteredNodes;
-  let filteredLinks;
+  let filteredNodes = $state();
+  let filteredLinks = $state();
+  let simulation: any;
 
-  $: simulation = d3
-    .forceSimulation()
-    .nodes(nodes)
-    .on('tick', () => {
-      // update the renderedDots and renderedLinks references to trigger an update
-      renderedDots = [...(filteredNodes || nodes)];
-      renderedLinks = filteredLinks && filteredLinks.length > 0 ? [...filteredLinks] : [...links];
-    });
+  run(() => {
+    simulation = d3
+      .forceSimulation()
+      .nodes(nodes)
+      .on('tick', () => {
+        // update the renderedDots and renderedLinks references to trigger an update
+        renderedDots = [...(filteredNodes || nodes)];
+        renderedLinks = filteredLinks && filteredLinks.length > 0 ? [...filteredLinks] : [...links];
+      });
+  });
 
-  $: {
+  run(() => {
     // re-initialize forces when they change
     forces.forEach(([name, force]) => {
       simulation.force(name, force);
@@ -61,9 +70,9 @@
     // kick our simulation into high gear
     simulation.alpha(1);
     simulation.restart();
-  }
+  });
 
-  $: {
+  run(() => {
     // Filter nodes and edges depending on families selected on the left panel
     if (visibleFamilies) {
       filteredNodes = nodes.filter((node) => visibleFamilies.includes(node.family));
@@ -84,7 +93,7 @@
       renderedDots = [...filteredNodes];
       renderedLinks = [...filteredLinks];
     }
-  }
+  });
 
   function selectNode(node: NerNode | null, event?: MouseEvent) {
     if (event) {
@@ -118,7 +127,7 @@
 
 <figure
   class="sw-graph"
-  on:click={() => selectNode(null)}>
+  onclick={() => selectNode(null)}>
   {#if !!selectedNode}
     <div class="unselect-help">Click anywhere on the graph to unselect</div>
   {/if}
@@ -142,7 +151,7 @@
       <g
         class="node"
         class:selected={selectedNode === filteredNodes[i]}
-        on:click={(event) => selectNode(filteredNodes[i], event)}>
+        onclick={(event) => selectNode(filteredNodes[i], event)}>
         <circle
           style={move(dot.x, dot.y)}
           fill={!selectedNode ||

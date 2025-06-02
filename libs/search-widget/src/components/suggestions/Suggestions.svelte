@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import type { Classification, IResource, ResourceField, Search } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
   import Label from '../../common/label/Label.svelte';
@@ -29,9 +31,13 @@
   } from '../../core';
   import { createEventDispatcher } from 'svelte';
 
-  export let paragraphs: Search.Paragraph[] = [];
-  export let entities: { family: string; value: string }[] = [];
-  export let labels: Classification[] = [];
+  interface Props {
+    paragraphs?: Search.Paragraph[];
+    entities?: { family: string; value: string }[];
+    labels?: Classification[];
+  }
+
+  let { paragraphs = [], entities = [], labels = [] }: Props = $props();
 
   const dispatch = createEventDispatcher();
 
@@ -146,8 +152,8 @@
           {#each paragraphs.slice(0, 4) as paragraph}
             <div
               class="paragraph"
-              on:click|preventDefault={() => goToResource(paragraph)}
-              on:keyup={(e) => {
+              onclick={preventDefault(() => goToResource(paragraph))}
+              onkeyup={(e) => {
                 if (e.key === 'Enter') goToResource(paragraph);
               }}
               tabindex="0">

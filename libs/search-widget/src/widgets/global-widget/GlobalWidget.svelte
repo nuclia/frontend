@@ -1,5 +1,10 @@
 <svelte:options
-  customElement="nuclia-global-search"
+  customElement={{
+    tag: 'nuclia-global-search',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }}
   accessors />
 
 <script lang="ts">
@@ -40,25 +45,47 @@
   import { LoadingDots, InfiniteScroll } from '../../common';
   import { debounceTime } from 'rxjs';
 
-  export let backend = 'https://nuclia.cloud/api';
-  export let zone = 'europe-1';
-  export let knowledgebox: string;
-  export let placeholder = '';
-  export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
-  export let account = '';
-  export let client = 'widget';
-  export let state: KBStates = 'PUBLISHED';
-  export let features = '';
-  export let standalone = false;
-  export let mode = '';
-  export let vectorset = '';
-  export let audit_metadata = '';
-  export let copy_disclaimer: string | undefined = undefined;
-  export let metadata: string | undefined = undefined;
+  interface Props {
+    backend?: string;
+    zone?: string;
+    knowledgebox: string;
+    placeholder?: string;
+    lang?: string;
+    cdn?: string;
+    apikey?: string;
+    account?: string;
+    client?: string;
+    kbstate?: KBStates;
+    features?: string;
+    standalone?: boolean;
+    mode?: string;
+    vectorset?: string;
+    audit_metadata?: string;
+    copy_disclaimer?: string | undefined;
+    metadata?: string | undefined;
+  }
 
-  $: darkMode = mode === 'dark';
+  let {
+    backend = 'https://nuclia.cloud/api',
+    zone = 'europe-1',
+    knowledgebox,
+    placeholder = '',
+    lang = $bindable(''),
+    cdn = '',
+    apikey = '',
+    account = '',
+    client = 'widget',
+    kbstate = 'PUBLISHED',
+    features = '',
+    standalone = false,
+    mode = '',
+    vectorset = '',
+    audit_metadata = '',
+    copy_disclaimer = undefined,
+    metadata = undefined,
+  }: Props = $props();
+
+  let darkMode = $derived(mode === 'dark');
 
   let _features: WidgetFeatures = {};
 
@@ -83,10 +110,10 @@
   };
 
   const showLoading = pendingResults.pipe(debounceTime(500));
-  let svgSprite: string;
-  let ready = false;
-  let visible = false;
-  let answerHeight: number;
+  let svgSprite: string = $state();
+  let ready = $state(false);
+  let visible = $state(false);
+  let answerHeight: number = $state();
 
   onMount(() => {
     if (cdn) {
@@ -107,7 +134,7 @@
         standalone,
         account,
       },
-      state,
+      kbstate,
       {
         features: _features,
         vectorset,
@@ -196,9 +223,29 @@
   function onLoadMore() {
     loadMore.set();
   }
+
+  export {
+    backend,
+    zone,
+    knowledgebox,
+    placeholder,
+    lang,
+    cdn,
+    apikey,
+    account,
+    client,
+    kbstate,
+    features,
+    standalone,
+    mode,
+    vectorset,
+    audit_metadata,
+    copy_disclaimer,
+    metadata,
+  };
 </script>
 
-<svelte:element this="style">{@html globalCss}</svelte:element>
+<svelte:element this={'style'}>{@html globalCss}</svelte:element>
 <div
   class="nuclia-widget"
   class:dark-mode={darkMode}
@@ -206,8 +253,8 @@
   {#if ready && !!svgSprite && visible}
     <div
       class="backdrop"
-      on:keyup={onBackdropKeyup}
-      on:click={onBackdropClick}>
+      onkeyup={onBackdropKeyup}
+      onclick={onBackdropClick}>
       <div
         class="search-container"
         class:with-results={$showResults && !$isEmptySearchQuery}>
@@ -241,7 +288,8 @@
                   <strong>{$_('results.empty')}</strong>
                   <div
                     class="results-end"
-                    use:renderingDone />
+                    use:renderingDone>
+                  </div>
                 {:else if $resultList.length > 0}
                   <div class="search-results">
                     {#each $resultList as result, i (getResultUniqueKey(result))}
@@ -249,7 +297,8 @@
                       {#if i === $resultList.length - 1}
                         <div
                           class="results-end"
-                          use:renderingDone />
+                          use:renderingDone>
+                        </div>
                       {/if}
                     {/each}
                     {#if $hasMore}

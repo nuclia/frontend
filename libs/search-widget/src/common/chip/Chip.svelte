@@ -3,11 +3,16 @@
   import IconButton from '../button/IconButton.svelte';
   import { getFontColor } from '../../core/utils';
 
-  export let clickable = false;
-  export let removable = false;
-  export let color = '';
+  interface Props {
+    clickable?: boolean;
+    removable?: boolean;
+    color?: string;
+    children?: import('svelte').Snippet;
+  }
 
-  $: fontColor = color && getFontColor(color);
+  let { clickable = false, removable = false, color = '', children }: Props = $props();
+
+  let fontColor = $derived(color && getFontColor(color));
 
   const dispatch = createEventDispatcher();
   const remove = (event) => {
@@ -26,7 +31,7 @@
     if (clickable && event.key === 'Enter') {
       dispatch('click');
     }
-  }
+  };
 </script>
 
 <div
@@ -36,10 +41,10 @@
   style:background-color={color}
   style:color={fontColor}
   tabindex={clickable ? 0 : -1}
-  on:click={onClick}
-  on:keyup={onKeyup}>
+  onclick={onClick}
+  onkeyup={onKeyup}>
   <span>
-    <slot />
+    {@render children?.()}
   </span>
   {#if removable}
     <IconButton

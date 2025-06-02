@@ -1,14 +1,21 @@
 <script lang="ts">
+  import { createBubbler } from 'svelte/legacy';
+
+  const bubble = createBubbler();
   import { createEventDispatcher } from 'svelte';
   import { isRightToLeft } from '../utils';
 
-  export let value = '';
-  export let name = '';
-  export let placeholder = '';
-  export let ariaLabel = '';
+  interface Props {
+    value?: string;
+    name?: string;
+    placeholder?: string;
+    ariaLabel?: string;
+  }
 
-  let element: HTMLTextAreaElement;
-  $: isRTL = isRightToLeft(value);
+  let { value = $bindable(''), name = '', placeholder = '', ariaLabel = '' }: Props = $props();
+
+  let element: HTMLTextAreaElement = $state();
+  let isRTL = $derived(isRightToLeft(value));
 
   const dispatch = createEventDispatcher();
 
@@ -44,9 +51,10 @@
     aria-label={ariaLabel}
     style:direction={isRTL ? 'rtl' : 'ltr'}
     bind:value
-    on:input
-    on:keypress={onKeyPress}
-    on:keyup={onKeyUp} />
+    oninput={bubble('input')}
+    onkeypress={onKeyPress}
+    onkeyup={onKeyUp}>
+  </textarea>
 </div>
 
 <style

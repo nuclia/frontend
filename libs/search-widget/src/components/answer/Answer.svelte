@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { _ } from '../../core/i18n';
   import Feedback from './Feedback.svelte';
   import type { Ask, Citations, FieldId, Search } from '@nuclia/core';
@@ -33,47 +35,25 @@
   import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
   import { take } from 'rxjs';
 
-  export let answer: Partial<Ask.Answer>;
-  export let rank = 0;
-  export let initialAnswer = false;
-  let text = '';
-  let selectedCitation: number | undefined;
-  let element: HTMLElement | undefined;
-  let copied = false;
-  let showMetadata = false;
-  let showDisclaimer = false;
+  interface Props {
+    answer: Partial<Ask.Answer>;
+    rank?: number;
+    initialAnswer?: boolean;
+  }
+
+  let { answer, rank = 0, initialAnswer = false }: Props = $props();
+  let text = $state('');
+  let selectedCitation: number | undefined = $state();
+  let element: HTMLElement | undefined = $state();
+  let copied = $state(false);
+  let showMetadata = $state(false);
+  let showDisclaimer = $state(false);
 
   const dispatch = createEventDispatcher();
 
   const IMAGE_PLACEHOLDER = '__IMAGE_PATH__';
   const imageTemplate = getAttachedImageTemplate(IMAGE_PLACEHOLDER);
   const TABLE_BORDER = new RegExp(/^[-|]+$/);
-
-  $: text = addReferences(answer.text || '', answer.citations || {});
-
-  $: sources = getSourcesResults(answer);
-
-  $: sources &&
-    (element?.querySelectorAll('.sw-answer .ref') || []).forEach((ref) => {
-      ref.addEventListener('mouseenter', onMouseEnter);
-      ref.addEventListener('mouseleave', onMouseLeave);
-    });
-
-  $: images =
-    answer.citations && sources
-      ? sources.reduce(
-          (all, source) =>
-            all.concat(
-              source.paragraphs
-                .filter((paragraph) => paragraph.reference)
-                .map(
-                  (paragraph) =>
-                    `${source.id}/${source.field?.field_type}/${source.field?.field_id}/download/extracted/generated/${paragraph.reference}`,
-                ),
-            ),
-          [] as string[],
-        )
-      : [];
 
   function addReferences(text: string, citations: Citations) {
     Object.values(citations)
@@ -227,6 +207,33 @@
       }, 2000);
     });
   }
+  run(() => {
+    text = addReferences(answer.text || '', answer.citations || {});
+  });
+  let sources = $derived(getSourcesResults(answer));
+  run(() => {
+    sources &&
+      (element?.querySelectorAll('.sw-answer .ref') || []).forEach((ref) => {
+        ref.addEventListener('mouseenter', onMouseEnter);
+        ref.addEventListener('mouseleave', onMouseLeave);
+      });
+  });
+  let images = $derived(
+    answer.citations && sources
+      ? sources.reduce(
+          (all, source) =>
+            all.concat(
+              source.paragraphs
+                .filter((paragraph) => paragraph.reference)
+                .map(
+                  (paragraph) =>
+                    `${source.id}/${source.field?.field_type}/${source.field?.field_id}/download/extracted/generated/${paragraph.reference}`,
+                ),
+            ),
+          [] as string[],
+        )
+      : [],
+  );
 </script>
 
 <div
@@ -315,11 +322,11 @@
             </div>
           {:else}
             <Expander expanded={$expandedCitations === undefined ? initialAnswer : $expandedCitations}>
-              <div
-                class="title-s"
-                slot="header">
-                {$_('answer.sources')}
-              </div>
+              {#snippet header()}
+                <div class="title-s">
+                  {$_('answer.sources')}
+                </div>
+              {/snippet}
               <div class="sources-list">
                 <Sources
                   {sources}

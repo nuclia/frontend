@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { onDestroy } from 'svelte';
   import {
     combineLatest,
@@ -19,12 +21,10 @@
   import { HtmlRendering, MarkdownRendering, PlainTextRendering, RstRendering } from './renderings';
   import { Button } from '../../../common';
 
-  let viewerElement: HTMLElement;
+  let viewerElement: HTMLElement = $state();
   let stopHighlight: Subject<void> = new Subject<void>();
   let selectedId: string | undefined;
-  let page = 1;
-
-  $: !!viewerElement && highlightSelection();
+  let page = $state(1);
 
   type MessageWithParagraphs = Message & { paragraphIds: string[] };
   const messages: Observable<MessageWithParagraphs[]> = combineLatest([fieldFullId, fieldData]).pipe(
@@ -53,24 +53,26 @@
   }
 
   function highlightSelection() {
-    selectedParagraph.pipe(
-      distinctUntilChanged(),
-      tap(paragraph => selectedId = paragraph?.id),
-      filter(paragraph => !!paragraph),
-      map(paragraph => paragraph as Search.FindParagraph),
-      switchMap((paragraph) => {
-        const selectedElementId = formatValidId(paragraph.id);
-        return interval(200).pipe(
-          map(() => viewerElement?.querySelector(`#${selectedElementId}`)),
-          filter((paragraphElement) => !!paragraphElement),
-          map(paragraphElement => paragraphElement as HTMLElement),
-          takeUntil(stopHighlight),
-        )
-      })
-    ).subscribe(paragraphElement => {
-      paragraphElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      stopHighlight.next();
-    });
+    selectedParagraph
+      .pipe(
+        distinctUntilChanged(),
+        tap((paragraph) => (selectedId = paragraph?.id)),
+        filter((paragraph) => !!paragraph),
+        map((paragraph) => paragraph as Search.FindParagraph),
+        switchMap((paragraph) => {
+          const selectedElementId = formatValidId(paragraph.id);
+          return interval(200).pipe(
+            map(() => viewerElement?.querySelector(`#${selectedElementId}`)),
+            filter((paragraphElement) => !!paragraphElement),
+            map((paragraphElement) => paragraphElement as HTMLElement),
+            takeUntil(stopHighlight),
+          );
+        }),
+      )
+      .subscribe((paragraphElement) => {
+        paragraphElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        stopHighlight.next();
+      });
   }
 
   function formatValidId(id: string) {
@@ -83,6 +85,9 @@
 
   onDestroy(() => {
     stopHighlight.next();
+  });
+  run(() => {
+    !!viewerElement && highlightSelection();
   });
 </script>
 

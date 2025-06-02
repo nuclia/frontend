@@ -1,8 +1,15 @@
 <svelte:options
-  customElement="nuclia-search-bar"
+  customElement={{
+    tag: 'nuclia-search-bar',
+    props: {
+      kbstate: { attribute: 'state' },
+    },
+  }}
   accessors />
 
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import {
     parseRAGImageStrategies,
     parseRAGStrategies,
@@ -15,7 +22,7 @@
   } from '@nuclia/core';
   import { downloadDump, getApiErrors, initNuclia, resetNuclia, getSearchConfig } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { get_current_component } from 'svelte/internal';
+  // import { get_current_component } from 'svelte/internal';
   import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
@@ -56,49 +63,6 @@
   import { IconButton, Modal } from '../../common';
   import { BehaviorSubject, delay, filter, firstValueFrom, of, tap } from 'rxjs';
 
-  export let backend = 'https://nuclia.cloud/api';
-  export let zone = 'europe-1';
-  export let knowledgebox: string;
-  export let placeholder = '';
-  export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
-  export let account = '';
-  export let client = 'widget';
-  export let state: KBStates = 'PUBLISHED';
-  export let features = '';
-  export let standalone = false;
-  export let proxy = false;
-  export let mode = '';
-  export let filters = '';
-  export let preselected_filters = '';
-  export let cssPath = '';
-  export let prompt = '';
-  export let system_prompt = '';
-  export let rephrase_prompt = '';
-  export let generativemodel = '';
-  export let no_tracking = false;
-  export let rag_strategies = '';
-  export let rag_images_strategies = '';
-  export let not_enough_data_message = '';
-  export let ask_to_resource = '';
-  export let max_tokens: number | string | undefined = undefined;
-  export let max_output_tokens: number | string | undefined = undefined;
-  export let max_paragraphs: number | string | undefined = undefined;
-  export let query_prepend = '';
-  export let json_schema = '';
-  export let vectorset = '';
-  export let chat_placeholder = '';
-  export let audit_metadata = '';
-  export let reranker: Reranker | undefined = undefined;
-  export let citation_threshold: number | string | undefined = undefined;
-  export let rrf_boosting: number | string | undefined = undefined;
-  export let feedback: Widget.WidgetFeedback = 'answer';
-  export let copy_disclaimer: string | undefined = undefined;
-  export let metadata: string | undefined = undefined;
-  export let widget_id: string | undefined = undefined;
-  export let search_config_id: string | undefined = undefined;
-
   let _ready = new BehaviorSubject(false);
   const ready = _ready.asObservable().pipe(filter((r) => r));
   export const onReady = () => firstValueFrom(ready);
@@ -106,15 +70,105 @@
   export const reset = () => resetNuclia();
 
   let nucliaAPI: Nuclia;
-  export let initHook: (n: Nuclia) => void = () => {};
+  interface Props {
+    backend?: string;
+    zone?: string;
+    knowledgebox: string;
+    placeholder?: string;
+    lang?: string;
+    cdn?: string;
+    apikey?: string;
+    account?: string;
+    client?: string;
+    kbstate?: KBStates;
+    features?: string;
+    standalone?: boolean;
+    proxy?: boolean;
+    mode?: string;
+    filters?: string;
+    preselected_filters?: string;
+    cssPath?: string;
+    prompt?: string;
+    system_prompt?: string;
+    rephrase_prompt?: string;
+    generativemodel?: string;
+    no_tracking?: boolean;
+    rag_strategies?: string;
+    rag_images_strategies?: string;
+    not_enough_data_message?: string;
+    ask_to_resource?: string;
+    max_tokens?: number | string | undefined;
+    max_output_tokens?: number | string | undefined;
+    max_paragraphs?: number | string | undefined;
+    query_prepend?: string;
+    json_schema?: string;
+    vectorset?: string;
+    chat_placeholder?: string;
+    audit_metadata?: string;
+    reranker?: Reranker | undefined;
+    citation_threshold?: number | string | undefined;
+    rrf_boosting?: number | string | undefined;
+    feedback?: Widget.WidgetFeedback;
+    copy_disclaimer?: string | undefined;
+    metadata?: string | undefined;
+    widget_id?: string | undefined;
+    search_config_id?: string | undefined;
+    initHook?: (n: Nuclia) => void;
+  }
 
-  $: darkMode = mode === 'dark';
-  $: {
+  let {
+    backend = 'https://nuclia.cloud/api',
+    zone = 'europe-1',
+    knowledgebox,
+    placeholder = '',
+    lang = $bindable(''),
+    cdn = '',
+    apikey = '',
+    account = '',
+    client = 'widget',
+    kbstate = 'PUBLISHED',
+    features = '',
+    standalone = false,
+    proxy = false,
+    mode = '',
+    filters = '',
+    preselected_filters = '',
+    cssPath = '',
+    prompt = '',
+    system_prompt = '',
+    rephrase_prompt = '',
+    generativemodel = '',
+    no_tracking = false,
+    rag_strategies = '',
+    rag_images_strategies = '',
+    not_enough_data_message = '',
+    ask_to_resource = '',
+    max_tokens = undefined,
+    max_output_tokens = undefined,
+    max_paragraphs = undefined,
+    query_prepend = '',
+    json_schema = '',
+    vectorset = '',
+    chat_placeholder = '',
+    audit_metadata = '',
+    reranker = undefined,
+    citation_threshold = undefined,
+    rrf_boosting = undefined,
+    feedback = 'answer',
+    copy_disclaimer = undefined,
+    metadata = undefined,
+    widget_id = undefined,
+    search_config_id = undefined,
+    initHook = () => {},
+  }: Props = $props();
+
+  let darkMode = $derived(mode === 'dark');
+  run(() => {
     chatPlaceholder.set(chat_placeholder || 'answer.placeholder');
-  }
-  $: {
+  });
+  run(() => {
     widgetPlaceholder.set(placeholder || 'input.placeholder');
-  }
+  });
 
   let _features: Widget.WidgetFeatures = {};
   let _filters: WidgetFilters = {};
@@ -188,10 +242,10 @@
     dispatch(name, detail);
   };
 
-  let svgSprite: string;
-  let container: HTMLElement;
+  let svgSprite: string = $state();
+  let container: HTMLElement = $state();
 
-  let showRelations = false;
+  let showRelations = $state(false);
 
   ready.pipe(delay(200)).subscribe(() => {
     initHook(nucliaAPI);
@@ -206,7 +260,7 @@
       });
     }
   });
-  const component = get_current_component();
+  // const component = get_current_component();
 
   onMount(() => {
     const nucliaOptions = {
@@ -221,9 +275,10 @@
       accountId: account,
     };
     (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((config) => {
-      if (Object.keys(config).length > 0) {
-        component.$set(config);
-      }
+      // TODO: restore widget config loaded from backend
+      // if (Object.keys(config).length > 0) {
+      //   component.$set(config);
+      // }
 
       if (cdn) {
         setCDN(cdn);
@@ -255,7 +310,7 @@
 
       nucliaAPI = initNuclia(
         nucliaOptions,
-        state,
+        kbstate,
         {
           features: _features,
           prompt,
@@ -347,7 +402,7 @@
   }
 </script>
 
-<svelte:element this="style">{@html globalCss}</svelte:element>
+<svelte:element this={'style'}>{@html globalCss}</svelte:element>
 
 <div
   bind:this={container}

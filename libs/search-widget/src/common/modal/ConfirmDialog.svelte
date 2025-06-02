@@ -1,16 +1,30 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { createEventDispatcher } from 'svelte';
   import Button from '../button/Button.svelte';
   import { freezeBackground, unblockBackground } from './modal.utils';
 
-  export let show = false;
-  export let closeable = false;
-  export let buttons = [
-    { label: 'Cancel', action: 'cancel' },
-    { label: 'Confirm', action: 'confirm', kind: 'primary' },
-  ];
+  interface Props {
+    show?: boolean;
+    closeable?: boolean;
+    buttons?: any;
+    children?: import('svelte').Snippet;
+  }
 
-  $: show && freezeBackground();
+  let {
+    show = $bindable(false),
+    closeable = false,
+    buttons = [
+      { label: 'Cancel', action: 'cancel' },
+      { label: 'Confirm', action: 'confirm', kind: 'primary' },
+    ],
+    children,
+  }: Props = $props();
+
+  run(() => {
+    show && freezeBackground();
+  });
 
   const dispatch = createEventDispatcher();
   const close = (action) => {
@@ -28,10 +42,10 @@
 {#if show}
   <div
     class="sw-modal-backdrop fade"
-    on:click={outsideClick}>
+    onclick={outsideClick}>
     <dialog class="modal">
       <div class="modal-content">
-        <slot />
+        {@render children?.()}
         <footer class="confirm-footer">
           {#each buttons as button}
             <Button
