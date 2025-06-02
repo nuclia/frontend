@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfigBlockComponent, ConfigBlockItem, NodeBoxComponent, NodeDirective } from '../../basic-elements';
 import { SummarizeAgentUI } from '../../workflow.models';
 
@@ -11,10 +11,17 @@ import { SummarizeAgentUI } from '../../workflow.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SummarizeNodeComponent extends NodeDirective {
+  private translate = inject(TranslateService);
   summarizeConfig = computed<ConfigBlockItem[]>(() => {
     if (this.config()) {
       const config = this.config() as SummarizeAgentUI;
-      return [{ title: 'Prompt', content: config.prompt }];
+      const promptConfig = config.prompt
+        ? {
+            title: 'Prompt',
+            content: config.prompt,
+          }
+        : { content: this.translate.instant('retrieval-agents.workflow.node-types.summarize.config.default-prompt') };
+      return [promptConfig];
     }
     return [];
   });
