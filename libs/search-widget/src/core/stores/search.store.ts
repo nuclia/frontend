@@ -166,6 +166,7 @@ export const searchResults = searchState.writer<
       },
       pending: false,
       showResults: true,
+      resultsOrder: params.append ? state.resultsOrder : 'relevance',
       filters: {
         ...state.filters,
         autofilters: params.append
