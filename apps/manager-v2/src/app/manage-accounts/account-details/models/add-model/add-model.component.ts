@@ -7,9 +7,10 @@ import { CommonModule } from '@angular/common';
 import { OptionModel, PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { RegionalAccountService } from '../../../regional-account.service';
 import { ZoneService } from '../../../../manage-zones/zone.service';
-import { ModelType } from '../../../regional-account.models';
+import { ModelType } from '@nuclia/core';
 import { Router } from '@angular/router';
 import { KbSummary } from '../../../account-ui.models';
+import { SDKService } from '@flaps/core';
 
 @Component({
   imports: [CommonModule, PaButtonModule, PaTextFieldModule, PaTogglesModule, ReactiveFormsModule],
@@ -52,6 +53,7 @@ export class AddModelComponent implements OnDestroy {
   constructor(
     private store: ManagerStore,
     private regionalService: RegionalAccountService,
+    private sdk: SDKService,
     private zoneService: ZoneService,
     private toast: SisToastService,
     private router: Router,
@@ -77,13 +79,12 @@ export class AddModelComponent implements OnDestroy {
     const { zone, ...formValues } = this.modelForm.getRawValue();
     const accountId = this.store.getAccountId();
     if (accountId) {
-      this.regionalService
-        .createModel(formValues, accountId, zone)
+      this.regionalService.createModel(formValues, accountId, zone)
         .pipe(
           switchMap(({ id }) => {
             const requests = Object.entries(this.selectedKbs)
               .filter(([, enabled]) => enabled)
-              .map(([kbId]) => this.regionalService.addModelToKb(id, accountId, kbId, zone));
+              .map(([kbId]) => this.sdk.nuclia.db.addModelToKb(id, accountId, kbId, zone));
             return requests.length > 0 ? forkJoin(requests) : of([]);
           }),
         )

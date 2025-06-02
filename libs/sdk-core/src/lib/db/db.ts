@@ -27,6 +27,8 @@ import {
   AccountCreation,
   AccountModification,
   AccountStatus,
+  CustomModel,
+  CustomModelItem,
   KbIndex,
   LearningConfigurations,
   normalizeSchemaProperty,
@@ -773,5 +775,40 @@ export class Db implements IDb {
    */
   deleteAccountInvitation(accountId: string, email: string): Observable<void> {
     return this.nuclia.rest.delete(`/account/${accountId}/invite/${email}`);
+  }
+
+  /**
+   * Get the list of custom models of an account
+   */
+  getModels(accountId: string, zone: string) {
+    return this.nuclia.rest.get<CustomModelItem[]>(`/account/${accountId}/models`, undefined, undefined, zone);
+  }
+
+  /**
+   * Get a custom models
+   */
+  getModel(modelId: string, accountId: string, zone: string) {
+    return this.nuclia.rest.get<CustomModel>(`/account/${accountId}/model/${modelId}`, undefined, undefined, zone);
+  }
+
+  /**
+   * Add a custom model to a Knowledge Box
+   */
+  addModelToKb(modelId: string, accountId: string, kbId: string, zone: string) {
+    return this.nuclia.rest.post<void>(
+      `/account/${accountId}/models/${kbId}`,
+      { id: modelId },
+      undefined,
+      undefined,
+      true,
+      zone,
+    );
+  }
+
+  /**
+   * Add a custom model to a Knowledge Box
+   */
+  deleteModelFromKb(modelId: string, accountId: string, kbId: string, zone: string) {
+    return this.nuclia.rest.delete(`/account/${accountId}/models/${kbId}/${modelId}`, undefined, true, zone);
   }
 }

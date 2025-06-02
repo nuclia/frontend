@@ -397,3 +397,35 @@ export interface QueryInfo {
   sentence?: SentenceSearch;
   query: string;
 }
+
+export enum ModelType {
+  GENERATIVE = 'GENERATIVE',
+  NER = 'NER',
+  RESOURCE_LABELER = 'RESOURCE_LABELER',
+  CLASSIFIER = 'CLASSIFIER',
+  ANONYMIZER = 'ANONYMIZER',
+  VISUAL_LABELER = 'VISUAL_LABELER',
+  SUMMARY = 'SUMMARY',
+  DUMMY = 'DUMMY',
+  PARAGRAPH_LABELER = 'PARAGRAPH_LABELER',
+  EMBEDDINGS = 'EMBEDDINGS',
+  RELATIONS = 'RELATIONS',
+}
+
+interface BaseCustomModel {
+  model_id: string | null;
+  account: string | null;
+  model_type: ModelType | null;
+  trained_date: string | null;
+  location: string | null;
+  trained_kbid: string | null;
+}
+
+export interface CustomModelItem extends BaseCustomModel {
+  title: string | null;
+}
+
+export interface CustomModel extends BaseCustomModel {
+  log: string | null;
+  kbids: string[];
+}

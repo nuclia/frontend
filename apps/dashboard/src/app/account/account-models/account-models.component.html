@@ -1,0 +1,49 @@
+@if (isLoading) {
+  <div class="loading-shade">
+    <nsi-spinner></nsi-spinner>
+  </div>
+}
+
+<div class="account-models page-spacing">
+  <div class="account-models-header">
+    <div>
+      <h1 class="page-title">{{ 'account.models.title' | translate }}</h1>
+      <p class="page-description">{{ 'account.models.description' | translate }}</p>
+    </div>
+  </div>
+
+  @if (!isLoading) {
+    <div class="account-models-content">
+      @if (!hasModels) {
+        <nsi-info-card icon="info">{{ 'account.models.empty-list' | translate }}</nsi-info-card>
+      } @else {
+        @for (kb of kbList | async; track kb.id) {
+          <nsi-two-columns-configuration-item
+            [itemTitle]="kb.title"
+            description="account.models.selection">
+            <div class="toggles">
+              @for (model of selection[kb.id]; track model.modelId) {
+                <pa-toggle
+                  withBackground
+                  [disabled]="model.default || isSaving"
+                  [(value)]="model.selected"
+                  (click)="!model.default && !isSaving && save(model.modelId, kb.id, kb.zone, model.selected)">
+                  <span class="toggle-label">
+                    {{ model.title }}
+                    @if (model.default) {
+                      <nsi-badge
+                        kind="tertiary"
+                        icon="lock-filled">
+                        {{ 'account.models.default' | translate }}
+                      </nsi-badge>
+                    }
+                  </span>
+                </pa-toggle>
+              }
+            </div>
+          </nsi-two-columns-configuration-item>
+        }
+      }
+    </div>
+  }
+</div>

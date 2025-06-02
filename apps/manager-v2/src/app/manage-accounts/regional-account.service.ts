@@ -6,14 +6,7 @@ import { catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 
 import { ZoneSummary } from '../manage-zones/zone.models';
 import { ZoneService } from '../manage-zones/zone.service';
 import { AccountDetails, AccountUser, KbCounters, KbDetails, KbSummary } from './account-ui.models';
-import {
-  Account,
-  AccountModel,
-  AccountModelPayload,
-  AccountModelSummary,
-  Kb,
-  ZoneModels,
-} from './regional-account.models';
+import { Account, AccountModelPayload, Kb, ZoneModels } from './regional-account.models';
 
 const MANAGE_ACCOUNT_ENDPOINT = '/manage/@account';
 const ACCOUNT_ENDPOINT = '/account';
@@ -259,24 +252,6 @@ export class RegionalAccountService {
     );
   }
 
-  getModels(accountId: string, zoneSlug: string) {
-    return this.sdk.nuclia.rest.get<AccountModelSummary[]>(
-      `/account/${accountId}/models`,
-      undefined,
-      undefined,
-      zoneSlug,
-    );
-  }
-
-  getModel(modelId: string, accountId: string, zoneSlug: string) {
-    return this.sdk.nuclia.rest.get<AccountModel>(
-      `/account/${accountId}/model/${modelId}`,
-      undefined,
-      undefined,
-      zoneSlug,
-    );
-  }
-
   createModel(data: AccountModelPayload, accountId: string, zoneSlug: string) {
     return this.sdk.nuclia.rest.post<{ id: string }>(
       `/account/${accountId}/models`,
@@ -298,7 +273,7 @@ export class RegionalAccountService {
       switchMap((zones) =>
         forkJoin(
           Object.values(zones).map((zone) =>
-            this.getModels(accountId, zone.slug).pipe(
+            this.sdk.nuclia.db.getModels(accountId, zone.slug).pipe(
               map((models) => ({ zone, models })),
               catchError(() => of({ zone, models: [] })),
             ),
@@ -306,20 +281,5 @@ export class RegionalAccountService {
         ),
       ),
     );
-  }
-
-  addModelToKb(modelId: string, accountId: string, kbId: string, zoneSlug: string) {
-    return this.sdk.nuclia.rest.post<void>(
-      `/account/${accountId}/models/${kbId}`,
-      { id: modelId },
-      undefined,
-      undefined,
-      true,
-      zoneSlug,
-    );
-  }
-
-  deleteModelFromKb(modelId: string, accountId: string, kbId: string, zoneSlug: string) {
-    return this.sdk.nuclia.rest.delete(`/account/${accountId}/models/${kbId}/${modelId}`, undefined, true, zoneSlug);
   }
 }
