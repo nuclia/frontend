@@ -42,9 +42,6 @@
           {{ runningQuestion() }}
         </blockquote>
       </section>
-      @if (runningTest() && rawAnswers().length === 0) {
-        Waiting for a response…
-      }
       @if (rawAnswers().preprocess.length > 0) {
         <section class="category-section">
           <stf-chip fill>{{ 'retrieval-agents.workflow.node-types.root.preprocess' | translate }}</stf-chip>

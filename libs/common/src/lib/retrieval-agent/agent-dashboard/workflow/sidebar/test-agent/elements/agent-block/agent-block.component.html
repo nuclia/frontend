@@ -8,7 +8,7 @@
     <stf-agent-step [step]="step"></stf-agent-step>
   }
 
-  @if (result(); as data) {
-    <div [innerHTML]="data.answer | lineBreakFormatter"></div>
+  @if (result()?.answer; as resultAnswer) {
+    <div [innerHTML]="resultAnswer | lineBreakFormatter"></div>
   }
 </blockquote>
