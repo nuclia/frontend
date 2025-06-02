@@ -1,4 +1,4 @@
-import { map, Observable } from 'rxjs';
+import { map, Observable, switchMap, tap } from 'rxjs';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
 import { Driver, IDriver } from './driver.models';
 import { AragAnswer, InteractionOperation } from './interactions.models';
@@ -95,7 +95,15 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private interactionStream?: Observable<any>;
+  private interactionToken?: string;
 
+  private getInteractionStream(sessionId: string) {
+    const path = this.getWsPath(sessionId);
+    return this.getTempToken({ agent_session: sessionId }).pipe(
+      tap((token) => (this.interactionToken = token)),
+      switchMap((token) => this.nuclia.rest.openWebSocket(path, token)),
+    );
+  }
   private getInteractionPath(sessionId: string): string {
     return `${this.path}/session/${sessionId}`;
   }
@@ -110,9 +118,8 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   listenSessionInteractions(sessionId: string): Observable<any> {
-    const path = this.getWsPath(sessionId);
     if (!this.interactionStream) {
-      this.interactionStream = this.nuclia.rest.openWebSocket(path);
+      this.interactionStream = this.getInteractionStream(sessionId);
     }
     return this.interactionStream;
   }
@@ -127,15 +134,17 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   interactWithSession(sessionId: string, question: string, operation: InteractionOperation) {
     const path = this.getWsPath(sessionId);
     if (!this.interactionStream) {
-      this.interactionStream = this.nuclia.rest.openWebSocket(path);
+      this.interactionStream = this.getInteractionStream(sessionId);
     }
 
-    this.nuclia.rest.send(path, {
-      question,
-      operation,
-    });
-    if (operation === InteractionOperation.quit) {
-      this.nuclia.rest.closeWebSocket(path);
+    if (this.interactionToken) {
+      this.nuclia.rest.send(path, this.interactionToken, {
+        question,
+        operation,
+      });
+      if (operation === InteractionOperation.quit) {
+        this.nuclia.rest.closeWebSocket(path, this.interactionToken);
+      }
     }
   }
 
@@ -145,6 +154,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   resetSessionInteraction(sessionId: string) {
     this.interactWithSession(sessionId, '', InteractionOperation.quit);
     this.interactionStream = undefined;
+    this.interactionToken = undefined;
   }
 
   /**
