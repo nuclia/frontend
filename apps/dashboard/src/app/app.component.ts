@@ -36,8 +36,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private ngxTranslate: TranslateService,
     private config: BackendConfigurationService,
     private sdk: SDKService,
-    private modalService: SisModalService,
     private labelService: LabelsService,
+    private modalService: SisModalService,
     private paTranslate: PaTranslateService,
     @Inject(DOCUMENT) private document: any,
   ) {
