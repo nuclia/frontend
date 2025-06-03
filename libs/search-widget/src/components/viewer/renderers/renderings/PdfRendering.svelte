@@ -179,7 +179,8 @@
   class="pdf-container"
   bind:this={pdfContainerElement}
   bind:offsetWidth={containerOffsetWidth}
-  style:--container-width="{containerOffsetWidth}px">
+  style:--container-width="{containerOffsetWidth}px"
+  style:position="absolute">
   <div class="pdfViewer"></div>
   {#if !src || !pdfInitialized}
     <div class="loading-container">
