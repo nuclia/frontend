@@ -114,11 +114,6 @@ jobs:
           # yes, the final / is in purpose
           echo "VITE_CDN=WHITE_CDN_PLACEHOLDER/" >> .env
           npx nx build search-widget
-          # TO BE FIXED IN NEXT PR
-          # for i in dist/libs/search-widget/*.css
-          # do 
-          #   echo "WHITE_LABEL_EXTRA_CSS_PLACEHOLDER" >> $i
-          # done
           find dist/libs/search-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
           gsutil copy dist/libs/search-widget/*.umd.js gs://ncl-white-label-frontend-gcp-global-stage-1
           gsutil copy -r libs/search-widget/public/* gs://ncl-white-label-frontend-gcp-global-stage-1
