@@ -85,6 +85,7 @@ import {
   resetCurrentOrigin,
   resetNodes,
   resetSidebar,
+  resetTestAgent,
   selectNode,
   setActiveSidebar,
   setAragUrl,
@@ -287,6 +288,8 @@ export class WorkflowService {
     this.closeSidebar();
     // Reset the state
     resetNodes();
+    // Reset test panel when changing workflow
+    resetTestAgent();
   }
 
   /**

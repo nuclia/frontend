@@ -1,4 +1,7 @@
-<div class="test-panel">
+<form
+  class="test-panel"
+  [formGroup]="form"
+  (ngSubmit)="triggerRun()">
   <div class="form-entry">
     <label for="question">{{ 'retrieval-agents.workflow.sidebar.test.form.input-label' | translate }}</label>
     <pa-textarea
@@ -7,14 +10,14 @@
       resizable
       externalLabel=""
       [placeholder]="'retrieval-agents.workflow.sidebar.test.form.input-placeholder' | translate"
-      [formControl]="question"></pa-textarea>
+      formControlName="question"></pa-textarea>
   </div>
   @if (sessions().length > 0) {
     <div class="form-entry">
       <label for="session">{{ 'retrieval-agents.workflow.sidebar.test.form.session-select.label' | translate }}</label>
       <pa-select
         id="session"
-        [formControl]="session">
+        formControlName="session">
         <pa-option value="new">
           {{ 'retrieval-agents.workflow.sidebar.test.form.session-select.new' | translate }}
         </pa-option>
@@ -28,8 +31,8 @@
   }
   <pa-button
     size="small"
-    [disabled]="question.invalid"
-    (click)="triggerRun()">
+    type="submit"
+    [disabled]="form.invalid || form.disabled">
     {{ 'retrieval-agents.workflow.sidebar.test.form.run-button' | translate }}
   </pa-button>
 
@@ -86,15 +89,14 @@
       }
     </div>
 
-    @if (runningTest()) {
-      <footer>
-        <pa-button
-          aspect="basic"
-          size="small"
-          (click)="triggerStop()">
-          {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
-        </pa-button>
-      </footer>
-    }
+    <footer>
+      <pa-button
+        aspect="basic"
+        size="small"
+        [disabled]="!runningTest()"
+        (click)="triggerStop()">
+        {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
+      </pa-button>
+    </footer>
   }
-</div>
+</form>
