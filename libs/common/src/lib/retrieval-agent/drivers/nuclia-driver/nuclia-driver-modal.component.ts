@@ -67,21 +67,30 @@ export class NucliaDriverModalComponent {
     return this.modal.config.data?.kbList || [];
   }
   get kb() {
-    return this.kbList.find((kb) => kb.id === this.form.controls.kbid.getRawValue());
+    return this.getKb(this.form.controls.kbid.getRawValue());
   }
 
   private existingKey?: string;
 
+  private getKb(kbId: string): IKnowledgeBoxItem | undefined {
+    return this.kbList.find((kb) => kb.id === kbId);
+  }
+
   constructor(public modal: ModalRef<{ driver: NucliaDBDriver; kbList: IKnowledgeBoxItem[] }>) {
     const data = this.modal.config.data;
-    this.isEdit = !!data?.driver;
-    if (data?.driver) {
-      this.existingKey = data.driver.config.key;
+    const driver = data?.driver;
+    this.isEdit = !!driver;
+    if (driver) {
+      const kbid = driver.config.kbid;
+      const custom = !this.getKb(kbid);
+      this.existingKey = driver.config.key;
       this.form.patchValue({
-        name: data.driver.name,
-        kbid: data.driver.config.kbid,
-        description: data.driver.config.description,
+        name: driver.name,
+        kbid,
+        description: driver.config.description,
         keepExistingKey: true,
+        custom,
+        key: custom ? driver.config.key : undefined,
       });
     }
   }

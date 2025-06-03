@@ -65,6 +65,14 @@
             }
           </pa-select>
         </div>
+
+        @if (isEdit) {
+          <pa-toggle
+            formControlName="keepExistingKey"
+            withBackground>
+            {{ 'retrieval-agents.drivers.form.nuclia.keep-existing-key' | translate }}
+          </pa-toggle>
+        }
         @if (kb && kb.role_on_kb !== 'SOWNER') {
           <div class="form-entry">
             <label for="key">{{ 'retrieval-agents.drivers.form.nuclia.key.label' | translate }}</label>
@@ -104,14 +112,6 @@
           modalTitle="retrieval-agents.workflow.node-types.ask.form.filters.label"
           resizable="true"></nsi-expandable-textarea>
       </div>
-
-      @if (isEdit) {
-        <pa-toggle
-          formControlName="keepExistingKey"
-          withBackground>
-          {{ 'retrieval-agents.drivers.form.nuclia.keep-existing-key' | translate }}
-        </pa-toggle>
-      }
     </form>
   </pa-modal-content>
   <pa-modal-footer>
