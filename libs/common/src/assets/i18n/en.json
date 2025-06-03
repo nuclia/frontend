@@ -172,7 +172,7 @@
 	"activity.migration-warning": "Questions before September 2024 are not included in the log due to data migration.",
 	"activity.resource": "Resource",
 	"activity.timestamp": "Time stamp",
-	"activity.type.chat": "Questions & Generative answers",
+	"activity.type.ask": "Questions & Generative answers",
 	"activity.type.modified": "Edited",
 	"activity.type.new": "Created",
 	"activity.type.processed": "Processed",

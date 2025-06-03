@@ -4150,7 +4150,7 @@
 								<name>type</name>
 								<children>
 									<concept_node>
-										<name>chat</name>
+										<name>ask</name>
 										<description/>
 										<comment/>
 										<translations>

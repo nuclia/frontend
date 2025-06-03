@@ -69,6 +69,7 @@ export enum EventType {
   SEARCH = 'search',
   PROCESSED = 'processed',
   CHAT = 'chat',
+  ASK = 'ask',
 }
 
 export type DownloadFormat = 'application/x-ndjson' | 'text/csv';

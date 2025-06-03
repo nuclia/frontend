@@ -67,7 +67,7 @@ const chatColumns = [
 export class ActivityDownloadComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
   activityTabs: { [tab in Tab]: ActivityTab[] } = {
-    searches: [EventType.CHAT, EventType.SEARCH],
+    searches: [EventType.ASK, EventType.SEARCH],
     resources: [EventType.PROCESSED, EventType.NEW, EventType.MODIFIED],
   };
   downloads: ActivityDownload = {};
@@ -76,7 +76,7 @@ export class ActivityDownloadComponent implements OnDestroy {
   selectedTab: Tab = 'resources';
   selectedActivityTab: ActivityTab = this.activityTabs[this.selectedTab][0];
   migrationgDate = new Date(Date.UTC(2024, 9, 1));
-  chatActivityTab = EventType.CHAT;
+  askActivityTab = EventType.ASK;
   searchActivityTab = EventType.SEARCH;
   visibleTables: { [key: string]: boolean } = {};
 
