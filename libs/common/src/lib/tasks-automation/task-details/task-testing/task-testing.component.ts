@@ -90,12 +90,7 @@ export class TaskTestingComponent {
             this.selectedIds.map((id) => {
               const resource = kb.getResourceFromData(this.resources.find((res) => res.id === id) as IResource);
               return resource
-                .runTasks([
-                  {
-                    type: getOperationFromTaskName(this.task?.task.name || 'ask') || 'ask',
-                    task_names: [this.task?.parameters.name || ''],
-                  },
-                ])
+                .runTasks([this.task?.id || ''])
                 .pipe(map((results) => ({ results: results.results, resource })));
             }),
           ),

@@ -526,11 +526,6 @@ export enum ExtractedDataTypes {
   QUESTION_ANSWERS = 'question_answers',
 }
 
-export interface TasksFilter {
-  type: keyof Operation;
-  task_names?: string[];
-}
-
 export interface TaskResults {
   results: { [key: string]: AugmentedField };
 }
