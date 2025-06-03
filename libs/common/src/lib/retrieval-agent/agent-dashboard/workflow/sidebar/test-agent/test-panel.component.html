@@ -29,6 +29,9 @@
       </pa-select>
     </div>
   }
+  <div class="form-entry">
+    <pa-checkbox formControlName="useWs">Use WebSocket (uncheck to use POST interaction instead)</pa-checkbox>
+  </div>
   <pa-button
     size="small"
     type="submit"
@@ -93,10 +96,17 @@
       <pa-button
         aspect="basic"
         size="small"
-        [disabled]="!runningTest()"
+        [disabled]="stopDisabled()"
         (click)="triggerStop()">
         {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
       </pa-button>
+      @if (runningTest()) {
+        <div class="running-loader">
+          <nsi-progress-bar
+            greyTrack
+            [progress]="null"></nsi-progress-bar>
+        </div>
+      }
     </footer>
   }
 </form>

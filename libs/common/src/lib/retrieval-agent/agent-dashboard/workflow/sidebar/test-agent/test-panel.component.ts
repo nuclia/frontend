@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Session } from '@nuclia/core';
+import { ProgressBarComponent } from '@nuclia/sistema';
 import { testAgentAnswersByCategory, testAgentQuestion, testAgentRunning } from '../../workflow.state';
 import { AgentBlockComponent, ChipComponent } from './elements';
 import { TestPanelService } from './test-panel.service';
@@ -18,6 +19,8 @@ import { TestPanelService } from './test-panel.service';
     ChipComponent,
     AgentBlockComponent,
     TranslateModule,
+    ProgressBarComponent,
+    PaTogglesModule,
   ],
   templateUrl: './test-panel.component.html',
   styleUrl: './test-panel.component.scss',
@@ -28,6 +31,7 @@ export class TestPanelComponent implements OnInit {
   form = new FormGroup({
     question: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     session: new FormControl('new', { nonNullable: true, validators: [Validators.required] }),
+    useWs: new FormControl(true, { nonNullable: true }),
   });
 
   get question() {
@@ -36,6 +40,9 @@ export class TestPanelComponent implements OnInit {
   get session() {
     return this.form.controls.session;
   }
+  get useWs() {
+    return this.form.controls.useWs.getRawValue();
+  }
 
   cancel = output();
 
@@ -43,6 +50,8 @@ export class TestPanelComponent implements OnInit {
   runningTest = testAgentRunning;
   runningQuestion = testAgentQuestion;
   rawAnswers = testAgentAnswersByCategory;
+
+  stopDisabled = computed(() => this.runningTest() === false);
 
   constructor() {
     effect(() => {
@@ -61,7 +70,7 @@ export class TestPanelComponent implements OnInit {
   triggerRun() {
     if (this.question.valid) {
       const question = this.question.getRawValue().trim();
-      this.service.runTest(question, this.session.getRawValue());
+      this.service.runTest(question, this.session.getRawValue(), this.useWs);
     }
   }
 
