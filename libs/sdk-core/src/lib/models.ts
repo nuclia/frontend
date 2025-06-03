@@ -129,10 +129,6 @@ export interface IRest {
   };
 
   getWsUrl(path: string, ephemeralToken: string): string;
-  openWebSocket<T>(path: string, ephemeralToken: string): Observable<T>;
-  closeWebSocket(path: string, ephemeralToken: string): void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  send(path: string, ephemeralToken: string, data: any): void;
 }
 export interface IDb {
   getAccounts(): Observable<Account[]>;

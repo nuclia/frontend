@@ -3,7 +3,7 @@ import { ResourceProperties } from '../db.models';
 import { IKnowledgeBoxBase, IKnowledgeBoxItem, InviteKbData, IWritableKnowledgeBox, ResourcePagination } from '../kb';
 import { ExtractedDataTypes } from '../resource';
 import { Driver } from './driver.models';
-import { AragAnswer, InteractionOperation } from './interactions.models';
+import { AragAnswer } from './interactions.models';
 import {
   AragModule,
   ContextModule,
@@ -62,10 +62,7 @@ export interface IRetrievalAgent
   getSession(uuid: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession>;
   listSessions(page?: number, size?: number): Observable<SessionList>;
   createSession(session: SessionCreation): Observable<SessionCreationResponse>;
-  listenSessionInteractions(sessionId: string): Observable<AragAnswer[]>;
   interaction(sessionId: string, question: string): Observable<AragAnswer[]>;
-  interactWithSession(sessionId: string, question: string, operation: InteractionOperation): void;
-  resetSessionInteraction(sessionId: string): void;
 
   inviteToAgent(data: InviteKbData): Observable<void>;
 
