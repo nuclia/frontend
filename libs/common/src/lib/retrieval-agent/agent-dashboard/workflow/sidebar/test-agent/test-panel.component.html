@@ -86,15 +86,14 @@
       }
     </div>
 
-    @if (runningTest()) {
-      <footer>
-        <pa-button
-          aspect="basic"
-          size="small"
-          (click)="triggerStop()">
-          {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
-        </pa-button>
-      </footer>
-    }
+    <footer>
+      <pa-button
+        aspect="basic"
+        size="small"
+        [disabled]="!runningTest()"
+        (click)="triggerStop()">
+        {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
+      </pa-button>
+    </footer>
   }
 </div>
