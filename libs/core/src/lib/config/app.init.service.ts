@@ -94,28 +94,7 @@ function injectWidget(cdnUrl: string) {
   searchWidget.type = 'text/javascript';
   searchWidget.async = true;
   searchWidget.defer = true;
-  searchWidget.src = `${cdnUrl}/nuclia-video-widget.umd.js`;
+  searchWidget.src = `${cdnUrl}/nuclia-widget.umd.js`;
   searchWidget.onload = () => (JS_INJECTED = true);
   window.document.body.appendChild(searchWidget);
-
-  const viewer = window.document.createElement('script');
-  viewer.type = 'text/javascript';
-  viewer.async = true;
-  viewer.defer = true;
-  viewer.src = `${cdnUrl}/nuclia-viewer-widget.umd.js`;
-  window.document.body.appendChild(viewer);
-
-  const popup = window.document.createElement('script');
-  popup.type = 'text/javascript';
-  popup.async = true;
-  popup.defer = true;
-  popup.src = `${cdnUrl}/nuclia-popup-widget.umd.js`;
-  window.document.body.appendChild(popup);
-
-  const chat = window.document.createElement('script');
-  chat.type = 'text/javascript';
-  chat.async = true;
-  chat.defer = true;
-  chat.src = `${cdnUrl}/nuclia-chat-widget.umd.js`;
-  window.document.body.appendChild(chat);
 }

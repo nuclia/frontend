@@ -4,7 +4,8 @@
     props: {
       kbstate: { attribute: 'state' },
     },
-  }} />
+  }}
+  accessors />
 
 <script lang="ts">
   import { run } from 'svelte/legacy';
@@ -170,7 +171,7 @@
         field_id,
         field_type: fieldType,
       };
-      openPreview(fullId);
+      openPreview(fullId).subscribe();
     } else {
       closePreview();
     }
