@@ -11,9 +11,10 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { DriverCreation, IKnowledgeBoxItem, NucliaDBConfig, NucliaDBDriver } from '@nuclia/core';
-import { InfoCardComponent, SisModalService } from '@nuclia/sistema';
+import { ExpandableTextareaComponent, InfoCardComponent, SisModalService } from '@nuclia/sistema';
 import { filter, map, of, switchMap, take } from 'rxjs';
 import { ExpirationModalComponent } from '../../../token-dialog/expiration-modal.component';
+import { getListFromTextarea } from '../../arag.utils';
 
 @Component({
   selector: 'app-nuclia-driver-modal',
@@ -26,6 +27,7 @@ import { ExpirationModalComponent } from '../../../token-dialog/expiration-modal
     InfoCardComponent,
     ReactiveFormsModule,
     TranslateModule,
+    ExpandableTextareaComponent,
   ],
   templateUrl: './nuclia-driver-modal.component.html',
   styleUrl: '../driver-form.scss',
@@ -39,9 +41,14 @@ export class NucliaDriverModalComponent {
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     kbid: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    key: new FormControl<string>(''),
+    key: new FormControl<string>('', { nonNullable: true }),
+    filters: new FormControl<string>('', { nonNullable: true }),
     keepExistingKey: new FormControl<boolean>(false, { nonNullable: true }),
+    custom: new FormControl<boolean>(false, { nonNullable: true }),
+    url: new FormControl<string>('https://europe-1.nuclia.cloud/api', { nonNullable: true }),
+    manager: new FormControl<string>('https://europe-1.nuclia.cloud/api', { nonNullable: true }),
   });
+
   isEdit: boolean;
 
   get keyControl() {
@@ -50,7 +57,9 @@ export class NucliaDriverModalComponent {
   get keepExistingKey() {
     return this.form.controls.keepExistingKey.getRawValue();
   }
-
+  get customConfig() {
+    return this.form.controls.custom.getRawValue();
+  }
   get config() {
     return this.modal.config.data?.driver;
   }
@@ -93,51 +102,65 @@ export class NucliaDriverModalComponent {
 
   submit() {
     if (this.form.valid) {
-      const { name, ...rawConfig } = this.form.getRawValue();
-      this.sdk.currentAccount
-        .pipe(
-          take(1),
-          switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.id, rawConfig.kbid)),
-          switchMap((kb) => {
-            const serviceTitle = `Agent ${name} key`;
-            if (rawConfig.key) {
-              return of({ kb, key: rawConfig.key });
-            } else if (this.keepExistingKey) {
-              return of({ kb, key: this.existingKey });
-            } else {
-              return this.modalService.openModal(ExpirationModalComponent).onClose.pipe(
-                filter((expiration) => !!expiration),
-                switchMap(({ expiration }) =>
-                  kb.createServiceAccount({ title: serviceTitle, role: 'SMEMBER' }).pipe(
-                    switchMap(() => kb.getServiceAccounts()),
-                    switchMap((list) => {
-                      const sa = list.find((service) => service.title === serviceTitle);
-                      const expires = Math.floor(new Date(expiration).getTime() / 1000).toString();
-                      return kb.createKey(sa?.id || '', expires).pipe(map((data) => ({ kb, key: data.token })));
-                    }),
+      const { name, filters, custom, keepExistingKey, ...rawConfig } = this.form.getRawValue();
+      const filterList = getListFromTextarea(filters || '');
+      if (custom) {
+        const config: NucliaDBConfig = {
+          ...rawConfig,
+          filters: filterList,
+        };
+        this.submitConfig(name, config);
+      } else {
+        this.sdk.currentAccount
+          .pipe(
+            take(1),
+            switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.id, rawConfig.kbid)),
+            switchMap((kb) => {
+              const serviceTitle = `Agent ${name} key`;
+              if (rawConfig.key) {
+                return of({ kb, key: rawConfig.key });
+              } else if (keepExistingKey) {
+                return of({ kb, key: this.existingKey });
+              } else {
+                return this.modalService.openModal(ExpirationModalComponent).onClose.pipe(
+                  filter((expiration) => !!expiration),
+                  switchMap(({ expiration }) =>
+                    kb.createServiceAccount({ title: serviceTitle, role: 'SMEMBER' }).pipe(
+                      switchMap(() => kb.getServiceAccounts()),
+                      switchMap((list) => {
+                        const sa = list.find((service) => service.title === serviceTitle);
+                        const expires = Math.floor(new Date(expiration).getTime() / 1000).toString();
+                        return kb.createKey(sa?.id || '', expires).pipe(map((data) => ({ kb, key: data.token })));
+                      }),
+                    ),
                   ),
-                ),
-              );
-            }
-          }),
-        )
-        .subscribe({
-          next: ({ kb, key }) => {
-            const url = kb.fullpath.slice(0, kb.fullpath.indexOf('/api') + 4);
-            const config: NucliaDBConfig = {
-              ...rawConfig,
-              url,
-              manager: url,
-              key,
-            };
-            const driver: DriverCreation = {
-              name,
-              provider: 'nucliadb',
-              config,
-            };
-            this.modal.close(driver);
-          },
-        });
+                );
+              }
+            }),
+          )
+          .subscribe({
+            next: ({ kb, key }) => {
+              const url = kb.fullpath.slice(0, kb.fullpath.indexOf('/api') + 4);
+              const config: NucliaDBConfig = {
+                ...rawConfig,
+                url,
+                manager: url,
+                key,
+                filters: filterList,
+              };
+              this.submitConfig(name, config);
+            },
+          });
+      }
     }
+  }
+
+  private submitConfig(name: string, config: NucliaDBConfig) {
+    const driver: DriverCreation = {
+      name,
+      provider: 'nucliadb',
+      config,
+    };
+    this.modal.close(driver);
   }
 }

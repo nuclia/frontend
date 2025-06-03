@@ -103,6 +103,7 @@ export interface NucliaDBConfig {
   key?: string;
   description: string;
   kbid: string;
+  filters: string[];
 }
 
 export type PerplexityConfig = InternetConfig;
