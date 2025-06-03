@@ -64,10 +64,12 @@ export class TestPanelService {
       )
       .subscribe({
         next: (data) => {
-          updateTestResults(data);
-          const lastMessage = data[data.length - 1];
-          if (lastMessage.operation === AnswerOperation.done || lastMessage.operation === AnswerOperation.error) {
-            stopTest();
+          if (data) {
+            updateTestResults(data);
+            const lastMessage = data[data.length - 1];
+            if (lastMessage.operation === AnswerOperation.done || lastMessage.operation === AnswerOperation.error) {
+              stopTest();
+            }
           }
         },
         error: () => {

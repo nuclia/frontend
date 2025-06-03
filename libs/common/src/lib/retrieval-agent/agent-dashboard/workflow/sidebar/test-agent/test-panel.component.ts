@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit, output, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Session } from '@nuclia/core';
@@ -25,8 +25,17 @@ import { TestPanelService } from './test-panel.service';
 })
 export class TestPanelComponent implements OnInit {
   private service = inject(TestPanelService);
-  question = new FormControl('', { nonNullable: true, validators: [Validators.required] });
-  session = new FormControl('new', { nonNullable: true, validators: [Validators.required] });
+  form = new FormGroup({
+    question: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    session: new FormControl('new', { nonNullable: true, validators: [Validators.required] }),
+  });
+
+  get question() {
+    return this.form.controls.question;
+  }
+  get session() {
+    return this.form.controls.session;
+  }
 
   cancel = output();
 
@@ -38,9 +47,9 @@ export class TestPanelComponent implements OnInit {
   constructor() {
     effect(() => {
       if (this.runningTest()) {
-        this.question.disable();
+        this.form.disable();
       } else {
-        this.question.enable();
+        this.form.enable();
       }
     });
   }
