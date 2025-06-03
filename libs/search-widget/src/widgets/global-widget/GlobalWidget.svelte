@@ -223,26 +223,6 @@
   function onLoadMore() {
     loadMore.set();
   }
-
-  export {
-    backend,
-    zone,
-    knowledgebox,
-    placeholder,
-    lang,
-    cdn,
-    apikey,
-    account,
-    client,
-    kbstate,
-    features,
-    standalone,
-    mode,
-    vectorset,
-    audit_metadata,
-    copy_disclaimer,
-    metadata,
-  };
 </script>
 
 <svelte:element this={'style'}>{@html globalCss}</svelte:element>
