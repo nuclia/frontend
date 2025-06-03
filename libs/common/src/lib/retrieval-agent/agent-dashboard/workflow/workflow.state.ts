@@ -81,6 +81,13 @@ const testAgent = signal<{
   answers: [],
 });
 
+export function resetTestAgent() {
+  testAgent.set({
+    running: false,
+    question: '',
+    answers: [],
+  });
+}
 function aragAnswerToUi(data: AragAnswer, module: AragModule): AragAnswerUi {
   return {
     module,
