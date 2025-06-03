@@ -112,23 +112,19 @@ export class SearchWidgetService {
     this.deleteWidgetPreview();
 
     let tagName;
-    let widgetFileName;
     switch (widgetOptions.widgetMode) {
       case 'popup':
         tagName = 'nuclia-popup';
-        widgetFileName = 'nuclia-popup-widget';
         break;
       case 'chat':
         tagName = 'nuclia-chat';
-        widgetFileName = 'nuclia-chat-widget';
         break;
       default:
         tagName = 'nuclia-search-bar';
-        widgetFileName = 'nuclia-video-widget';
     }
     const isPopupStyle = widgetOptions.widgetMode === 'popup';
     const isSearchMode = !widgetOptions.widgetMode || widgetOptions.widgetMode === 'page';
-    const scriptSrc = `${this.backendConfig.getCDN()}/${widgetFileName}.umd.js`;
+    const scriptSrc = `${this.backendConfig.getCDN()}/nuclia-widget.umd.js`;
     const widgetParameters =
       currentConfig.type === 'config' ? getWidgetParameters(currentConfig, widgetOptions) : undefined;
     const parameters = !!widgetParameters

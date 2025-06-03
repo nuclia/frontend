@@ -7,7 +7,7 @@ The Nuclia widget allows to embed a ready-to-use search box in your website or w
 Copy/paste the following snippet in your HTML code:
 
 ```html
-<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
+<script src="https://cdn.nuclia.cloud/nuclia-widget.umd.js"></script>
 <nuclia-search-bar
   knowledgebox="<YOUR-KB-ID>"
   zone="europe-1"
