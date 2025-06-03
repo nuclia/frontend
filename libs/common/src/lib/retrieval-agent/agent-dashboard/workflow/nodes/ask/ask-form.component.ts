@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NucliaDBDriver } from '@nuclia/core';
 import { ExpandableTextareaComponent, InfoCardComponent } from '@nuclia/sistema';
 import { map, Observable, switchMap, take } from 'rxjs';
+import { getListFromTextarea } from '../../../../arag.utils';
 import { ConfigurationFormComponent, FormDirective, RulesFieldComponent } from '../../basic-elements';
 import { AskAgentUI } from '../../workflow.models';
 import { aragUrl } from '../../workflow.state';
@@ -95,19 +96,11 @@ export class AskFormComponent extends FormDirective implements OnInit {
       const config: AskAgentUI = {
         ...rawConfig,
         visual_enable_prompt: rawConfig.vllm ? visual_enable_prompt : undefined,
-        extra_fields: this.getListFromTextarea(extra_fields),
-        filters: this.getListFromTextarea(filters),
-        security_groups: this.getListFromTextarea(security_groups),
+        extra_fields: getListFromTextarea(extra_fields),
+        filters: getListFromTextarea(filters),
+        security_groups: getListFromTextarea(security_groups),
       };
       this.submitForm.emit(config);
     }
-  }
-
-  private getListFromTextarea(value: string): string[] {
-    return (value || '')
-      .trim()
-      .split('\n')
-      .map((item) => item.trim())
-      .filter((item) => !!item);
   }
 }
