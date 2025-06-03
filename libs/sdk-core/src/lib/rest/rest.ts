@@ -413,7 +413,7 @@ export class Rest implements IRest {
     return result;
   }
 
-  private getWsUrl(path: string, ephemeralToken: string): string {
+  getWsUrl(path: string, ephemeralToken: string): string {
     return `${this.getFullUrl(path).replace('https', 'wss')}?eph-token=${ephemeralToken}`;
   }
 

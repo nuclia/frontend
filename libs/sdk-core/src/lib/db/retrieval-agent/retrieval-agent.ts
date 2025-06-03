@@ -132,6 +132,10 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   private getWsPath(sessionId: string): string {
     return `${this.getInteractionPath(sessionId)}/ws`;
   }
+  getWsUrl(sessionId: string) {
+    const path = this.getWsPath(sessionId);
+    return this.getTempToken({ agent_session: sessionId }).pipe(map((token) => this.nuclia.rest.getWsUrl(path, token)));
+  }
 
   /**
    * Open a WebSocket for the session interactions if needed and return the corresponding interaction stream observable.

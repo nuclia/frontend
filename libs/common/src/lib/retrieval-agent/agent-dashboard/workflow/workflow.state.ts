@@ -164,13 +164,16 @@ export const testAgentAnswersByCategory = computed(() => {
 });
 
 export function runTest(question: string) {
-  testAgent.update((state) => ({ ...state, question, running: true }));
+  testAgent.update((state) => ({ ...state, question, running: true, answers: [] }));
 }
 export function stopTest() {
   testAgent.update((state) => ({ ...state, running: false }));
 }
 export function updateTestResults(answers: AragAnswer[]) {
   testAgent.update((state) => ({ ...state, answers }));
+}
+export function addAnswer(answer: AragAnswer) {
+  testAgent.update((state) => ({ ...state, answers: state.answers.concat([answer]) }));
 }
 
 /**

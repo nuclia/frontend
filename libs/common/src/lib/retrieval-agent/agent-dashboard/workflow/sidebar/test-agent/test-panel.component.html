@@ -93,10 +93,17 @@
       <pa-button
         aspect="basic"
         size="small"
-        [disabled]="!runningTest()"
+        [disabled]="stopDisabled()"
         (click)="triggerStop()">
         {{ 'retrieval-agents.workflow.sidebar.test.form.stop-button' | translate }}
       </pa-button>
+      @if (runningTest()) {
+        <div class="running-loader">
+          <nsi-progress-bar
+            greyTrack
+            [progress]="null"></nsi-progress-bar>
+        </div>
+      }
     </footer>
   }
 </form>

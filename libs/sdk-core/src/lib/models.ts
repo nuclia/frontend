@@ -128,6 +128,7 @@ export interface IRest {
     [key: string]: string;
   };
 
+  getWsUrl(path: string, ephemeralToken: string): string;
   openWebSocket<T>(path: string, ephemeralToken: string): Observable<T>;
   closeWebSocket(path: string, ephemeralToken: string): void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
