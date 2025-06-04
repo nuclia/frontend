@@ -112,6 +112,7 @@
     metadata?: string | undefined;
     widget_id?: string | undefined;
     search_config_id?: string | undefined;
+    security_groups?: string | undefined;
     initHook: (n: Nuclia) => void = () => {};
   }
 
@@ -160,6 +161,7 @@
   let metadata = $derived(componentProps.metadata || config.metadata);
   let widget_id = $derived(componentProps.widget_id || config.widget_id);
   let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
+  let security_groups = $derived(componentProps.security_groups || config.security_groups);
   let initHook = $derived(componentProps.initHook || config.initHook);
 
   let darkMode = $derived(mode === 'dark');
@@ -172,6 +174,7 @@
 
   let _filters: WidgetFilters = {};
   let _features: Widget.WidgetFeatures = {};
+  let _securityGroups: string[] | undefined;
   let _jsonSchema: object | null = null;
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImagesStrategies: RAGImageStrategy[] = [];
@@ -291,6 +294,7 @@
       if (Object.keys(_filters).length === 0) {
         _filters.labels = true;
       }
+      _securityGroups = security_groups?.split(',').filter((group) => !!group);
       _ragStrategies = parseRAGStrategies(rag_strategies);
       _ragImagesStrategies = parseRAGImageStrategies(rag_images_strategies);
       try {
@@ -328,6 +332,7 @@
           copy_disclaimer,
           not_enough_data_message,
           metadata,
+          security_groups: _securityGroups,
         },
         no_tracking,
       );

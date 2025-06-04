@@ -82,6 +82,7 @@ export interface BaseSearchOptions {
   top_k?: number;
   reranker?: Reranker;
   rank_fusion?: RankFusion;
+  security?: { groups: string[] };
 }
 
 export interface ChatOptions extends BaseSearchOptions {
@@ -130,10 +131,6 @@ export interface SearchOptions extends BaseSearchOptions {
   with_synonyms?: boolean;
   rephrase_prompt?: string;
   features?: Search.Features[];
-  /** Only for GET requests */
-  min_score_bm25?: number;
-  /** Only for GET requests */
-  min_score_semantic?: number;
 }
 
 export interface CatalogOptions extends Omit<SearchOptions, 'filter_expression'> {

@@ -80,6 +80,7 @@
     metadata?: string | undefined;
     widget_id?: string | undefined;
     search_config_id?: string | undefined;
+    security_groups?: string | undefined;
     layout?: 'inline' | 'fullscreen' = 'inline';
     height?: string;
   }
@@ -124,6 +125,7 @@
   let metadata = $derived(componentProps.metadata || config.metadata);
   let widget_id = $derived(componentProps.widget_id || config.widget_id);
   let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
+  let security_groups = $derived(componentProps.security_groups || config.security_groups);
   let layout = $derived(componentProps.layout || config.layout);
   let height = $derived(componentProps.height || config.height);
 
@@ -167,6 +169,7 @@
   let nucliaAPI: Nuclia;
 
   let _features: Widget.WidgetFeatures = {};
+  let _securityGroups: string[] | undefined;
 
   const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {
@@ -207,7 +210,7 @@
         (acc, current) => ({ ...acc, [current as keyof Widget.WidgetFeatures]: true }),
         {},
       );
-
+      _securityGroups = security_groups?.split(',').filter((group) => !!group);
       _ragStrategies = parseRAGStrategies(rag_strategies);
       _ragImageStrategies = parseRAGImageStrategies(rag_images_strategies);
       _max_tokens = typeof max_tokens === 'string' ? parseInt(max_tokens, 10) : max_tokens;
@@ -239,6 +242,7 @@
           copy_disclaimer,
           not_enough_data_message,
           metadata,
+          security_groups: _securityGroups,
         },
         no_tracking,
       );

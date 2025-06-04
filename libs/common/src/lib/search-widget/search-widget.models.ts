@@ -135,6 +135,11 @@ export function getChatOptions(searchConfig: Widget.SearchConfiguration, default
   if (schema) {
     requestOptions.answer_json_schema = JSON.parse(schema);
   }
+  if (searchConfig.searchBox.useSecurityGroups && searchConfig.searchBox.securityGroups) {
+    requestOptions.security = {
+      groups: searchConfig.searchBox.securityGroups.split('\n').map((group) => group.trim()),
+    };
+  }
   return requestOptions;
 }
 

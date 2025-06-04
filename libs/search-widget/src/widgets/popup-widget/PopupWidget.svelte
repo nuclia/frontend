@@ -56,6 +56,7 @@
     metadata?: string | undefined;
     widget_id?: string | undefined;
     search_config_id?: string | undefined;
+    security_groups?: string | undefined;
   }
 
   let {
@@ -100,6 +101,7 @@
     metadata = undefined,
     widget_id = undefined,
     search_config_id = undefined,
+    security_groups = undefined,
   }: Props = $props();
 
   let searchBar: any = $state();
@@ -208,7 +210,8 @@
             {copy_disclaimer}
             {metadata}
             {widget_id}
-            {search_config_id} />
+            {search_config_id}
+            {security_groups} />
         </div>
         <div class="search-results-container">
           <SearchResults />
