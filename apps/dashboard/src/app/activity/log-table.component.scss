@@ -20,6 +20,9 @@
   width: max-content;
   pre {
     margin: 0;
+    max-width: rhythm(60);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 .show-more {
