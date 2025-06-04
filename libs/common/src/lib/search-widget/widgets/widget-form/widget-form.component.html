@@ -193,7 +193,8 @@
               <pa-toggle
                 formControlName="permalink"
                 withBackground
-                spaceBetweenLabelAndToggle>
+                spaceBetweenLabelAndToggle
+                (valueChange)="onNavigationChange({ permalink: $event })">
                 <span class="toggle-label">
                   {{ 'search.widgets.form.widget-options.permalinks.toggle-label' | translate }}
                 </span>
@@ -217,7 +218,7 @@
                 formControlName="navigateToLink"
                 withBackground
                 spaceBetweenLabelAndToggle
-                (valueChange)="updateWidgetOptionsHeight()">
+                (valueChange)="onNavigationChange({ navigateToLink: $event })">
                 <span class="toggle-label">
                   {{ 'search.widgets.form.widget-options.navigate-to-link.toggle-label' | translate }}
                 </span>
@@ -231,7 +232,7 @@
                 formControlName="navigateToFile"
                 withBackground
                 spaceBetweenLabelAndToggle
-                (valueChange)="updateWidgetOptionsHeight()">
+                (valueChange)="onNavigationChange({ navigateToFile: $event })">
                 <span class="toggle-label">
                   {{ 'search.widgets.form.widget-options.navigate-to-files.toggle-label' | translate }}
                 </span>
@@ -245,13 +246,29 @@
                 formControlName="navigateToOriginURL"
                 withBackground
                 spaceBetweenLabelAndToggle
-                (valueChange)="updateWidgetOptionsHeight()">
+                (valueChange)="onNavigationChange({ navigateToOriginURL: $event })">
                 <span class="toggle-label">
                   {{ 'search.widgets.form.widget-options.navigate-to-origin.toggle-label' | translate }}
                 </span>
               </pa-toggle>
               <div class="config-form-help">
                 {{ 'search.widgets.form.widget-options.navigate-to-origin.toggle-description' | translate }}
+              </div>
+            </div>
+            <div class="config-form-field">
+              <pa-toggle
+                formControlName="openNewTab"
+                withBackground
+                spaceBetweenLabelAndToggle>
+                <span class="toggle-label">
+                  {{ 'search.widgets.form.widget-options.open-new-tab.toggle-label' | translate }}
+                </span>
+              </pa-toggle>
+              <div class="config-form-help">
+                {{ 'search.widgets.form.widget-options.open-new-tab.toggle-description' | translate }}
+                @if (openNewTabDisabled) {
+                  <div>{{ 'search.widgets.form.widget-options.open-new-tab.toggle-disabled' | translate }}</div>
+                }
               </div>
             </div>
             <div class="config-form-field">
@@ -265,21 +282,6 @@
                 </span>
               </pa-toggle>
             </div>
-            @if (navigateToExternalEnabled || permalinkEnabled) {
-              <div class="config-form-field">
-                <pa-toggle
-                  formControlName="openNewTab"
-                  withBackground
-                  spaceBetweenLabelAndToggle>
-                  <span class="toggle-label">
-                    {{ 'search.widgets.form.widget-options.open-new-tab.toggle-label' | translate }}
-                  </span>
-                </pa-toggle>
-                <div class="config-form-help">
-                  {{ 'search.widgets.form.widget-options.open-new-tabs.toggle-description' | translate }}
-                </div>
-              </div>
-            }
             <div class="config-form-field">
               <pa-input
                 formControlName="lang"
