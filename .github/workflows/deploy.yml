@@ -130,6 +130,13 @@ jobs:
         run: |-
           gsutil copy dist/sdk-core/umd/index.js gs://$CDN_STORAGE/nuclia-sdk.umd.js
 
+      - name: Invalidate CDN cache stage
+        if: ${{ ( steps.check-deploy.outputs.deploy-widget == 'yes' || steps.check-deploy.outputs.deploy-sdk == 'yes') && github.ref == 'refs/heads/main' }}
+        env:
+          GCP_PROJECT: ${{ secrets.GCP_STAGE_PROJECT_ID }}
+        run: |
+          gcloud compute url-maps invalidate-cdn-cache ${CDN_STORAGE} --path "/*" --global --project ${GCP_PROJECT}
+
       - name: Generate and push SDK docs
         if: steps.check-deploy.outputs.deploy-sdk == 'yes' && github.ref == 'refs/heads/main'
         run: |-
