@@ -170,8 +170,8 @@
     widgetPlaceholder.set(placeholder || 'input.placeholder');
   });
 
-  let _features: Widget.WidgetFeatures = {};
   let _filters: WidgetFilters = {};
+  let _features: Widget.WidgetFeatures = {};
   let _jsonSchema: object | null = null;
   let _ragStrategies: RAGStrategy[] = [];
   let _ragImagesStrategies: RAGImageStrategy[] = [];
