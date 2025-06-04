@@ -135,21 +135,17 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
   get chatStyleEnabled() {
     return this.form.controls.widgetMode.value === 'chat';
   }
-  get navigateToExternalEnabled() {
-    return (
-      this.form.controls.navigateToFile.value ||
-      this.form.controls.navigateToLink.value ||
-      this.form.controls.navigateToOriginURL.value
-    );
-  }
-  get permalinkEnabled() {
-    return this.form.controls.permalink.value;
-  }
   get speechOn() {
     return this.form.controls.speech.value;
   }
   get customizeCitationVisibilityEnabled() {
     return this.form.controls.customizeCitationVisibility.value;
+  }
+  get openNewTabControl() {
+    return this.form.controls.openNewTab;
+  }
+  get openNewTabDisabled() {
+    return this.openNewTabControl.disabled;
   }
 
   ngOnInit() {
@@ -211,6 +207,7 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
     this.currentWidget = { ...this.savedWidget };
     this.form.patchValue(this.currentWidget.widgetConfig);
     this.onWidgetModeChange(this.currentWidget.widgetConfig.widgetMode);
+    this.onNavigationChange(this.currentWidget.widgetConfig);
     this.cdr.detectChanges();
   }
 
@@ -305,6 +302,16 @@ export class WidgetFormComponent implements OnInit, OnDestroy {
       this.form.controls.persistChatHistory.disable();
     } else {
       this.form.controls.persistChatHistory.enable();
+    }
+  }
+
+  onNavigationChange(value: Partial<Widget.WidgetConfiguration>) {
+    const config = { ...this.form.getRawValue(), ...value };
+    if (!config.navigateToLink && !config.navigateToFile && !config.navigateToOriginURL && !config.permalink) {
+      this.openNewTabControl.setValue(false);
+      this.openNewTabControl.disable();
+    } else {
+      this.openNewTabControl.enable();
     }
   }
 
