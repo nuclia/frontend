@@ -340,5 +340,34 @@
         </div>
       </div>
     }
+    <div class="config-form-field">
+      <pa-toggle
+        formControlName="useSecurityGroups"
+        withBackground
+        spaceBetweenLabelAndToggle
+        (valueChange)="heightChanged.emit()">
+        <span class="toggle-label">
+          {{ 'search.configuration.search-box.security-groups.toggle-label' | translate }}
+        </span>
+      </pa-toggle>
+      <div class="config-form-help">
+        {{ 'search.configuration.search-box.security-groups.toggle-description' | translate }}
+      </div>
+      <div
+        class="extra-fields"
+        [class.visible]="securityGroupsEnabled">
+        <nsi-info-card type="warning">
+          {{ 'search.configuration.search-box.security-groups.info-box' | translate }}
+        </nsi-info-card>
+        <pa-textarea
+          formControlName="securityGroups"
+          resizable
+          rows="4"
+          help="search.configuration.search-box.security-groups.textarea-help"
+          (resizing)="heightChanged.emit()">
+          {{ 'search.configuration.search-box.security-groups.toggle-label' | translate }}
+        </pa-textarea>
+      </div>
+    </div>
   }
 </form>

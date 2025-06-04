@@ -102,6 +102,8 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     useSearchResults: new FormControl<boolean>(true, { nonNullable: true }),
     limitParagraphs: new FormControl<boolean>(false, { nonNullable: true }),
     paragraphsLimit: new FormControl<number | null>(null),
+    useSecurityGroups: new FormControl<boolean>(false, { nonNullable: true }),
+    securityGroups: new FormControl<string>('', { nonNullable: true }),
   });
 
   synonymsEnabled = this.featuresService.unstable.synonyms;
@@ -144,6 +146,9 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
   }
   get rrfBoostingEnabled() {
     return this.form.controls.rrfBoosting.value;
+  }
+  get securityGroupsEnabled() {
+    return this.form.controls.useSecurityGroups.value;
   }
 
   ngOnInit() {

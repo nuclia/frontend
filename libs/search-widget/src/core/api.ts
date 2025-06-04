@@ -65,6 +65,7 @@ let AUDIT_METADATA: { [key: string]: string } | undefined = undefined;
 let RERANKER: Reranker | undefined = undefined;
 let CITATION_THRESHOLD: number | undefined = undefined;
 let RRF_BOOSTING: number | undefined = undefined;
+let SECURITY_GROUPS: string[] | undefined;
 const ASK_SHOW: ResourceProperties[] = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
 
 export const initNuclia = (
@@ -188,6 +189,10 @@ export const initNuclia = (
   if (MAX_PARAGRAPHS) {
     SEARCH_OPTIONS.top_k = MAX_PARAGRAPHS;
   }
+  SECURITY_GROUPS = (widgetOptions.security_groups?.length || 0) > 0 ? widgetOptions.security_groups : undefined;
+  if (SECURITY_GROUPS) {
+    SEARCH_OPTIONS.security = { groups: SECURITY_GROUPS };
+  }
   QUERY_PREPEND = widgetOptions.query_prepend || '';
   CITATION_THRESHOLD = widgetOptions.citation_threshold;
   RRF_BOOSTING = widgetOptions.rrf_boosting;
@@ -259,6 +264,7 @@ export const getAnswer = (
     reranker: RERANKER,
     citation_threshold: CITATION_THRESHOLD,
     rank_fusion: RRF_BOOSTING ? { name: 'rrf', boosting: { semantic: RRF_BOOSTING } } : undefined,
+    security: SECURITY_GROUPS ? { groups: SECURITY_GROUPS } : undefined,
   };
   if (prompt || systemPrompt || REPHRASE_PROMPT) {
     defaultOptions.prompt = {

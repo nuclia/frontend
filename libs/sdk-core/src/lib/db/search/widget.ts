@@ -43,6 +43,8 @@ export namespace Widget {
     useSearchResults: boolean;
     limitParagraphs: boolean;
     paragraphsLimit: number | null;
+    useSecurityGroups: boolean;
+    securityGroups: string;
   }
 
   export interface RagStrategiesConfig {
@@ -252,6 +254,8 @@ const DEFAULT_SEARCH_BOX_CONFIG: Widget.SearchBoxConfig = {
   useSearchResults: true,
   limitParagraphs: false,
   paragraphsLimit: null,
+  useSecurityGroups: false,
+  securityGroups: '',
 };
 const DEFAULT_GENERATIVE_ANSWER_CONFIG: Widget.GenerativeAnswerConfig = {
   generateAnswer: false,
@@ -487,6 +491,7 @@ export function getWidgetParameters(
     not_enough_data_message: getNotEnoughDataMessage(widgetOptions),
     mode: getWidgetTheme(widgetOptions),
     feedback: widgetOptions.feedback,
+    security_groups: getSecurityGroups(searchConfig.searchBox),
   };
 }
 
@@ -737,5 +742,13 @@ function getRrfBoosting(config: Widget.SearchBoxConfig): string {
 function getCitationThreshold(config: Widget.ResultDisplayConfig): string | undefined {
   return config.showResultType === 'citations' && config.customizeThreshold
     ? config.citationThreshold.toString()
+    : undefined;
+}
+function getSecurityGroups(config: Widget.SearchBoxConfig): string | undefined {
+  return config.useSecurityGroups && config.securityGroups
+    ? config.securityGroups
+        .split('\n')
+        .map((group) => group.trim())
+        .join(',')
     : undefined;
 }

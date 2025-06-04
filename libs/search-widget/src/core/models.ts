@@ -75,6 +75,7 @@ export interface WidgetOptions {
   copy_disclaimer?: string;
   not_enough_data_message?: string;
   metadata?: string;
+  security_groups?: string[];
 }
 
 export interface WidgetAction {
