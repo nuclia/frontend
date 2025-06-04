@@ -532,7 +532,8 @@ export function loadWidgetConfig(id: string, options: NucliaOptions) {
         console.error(`Search configuration not found: "${widget.searchConfigId}"`);
         return of({});
       }
-      return getWidgetParameters(searchConfig, widget.widgetConfig);
+      const params = getWidgetParameters(searchConfig, widget.widgetConfig);
+      return Object.fromEntries(Object.entries(params).filter(([_, value]) => value !== null && value !== ''));
     }),
   );
 }

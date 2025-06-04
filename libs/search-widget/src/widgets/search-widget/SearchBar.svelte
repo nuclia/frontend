@@ -22,7 +22,6 @@
   } from '@nuclia/core';
   import { downloadDump, getApiErrors, initNuclia, resetNuclia, getSearchConfig } from '../../core/api';
   import { createEventDispatcher, onMount } from 'svelte';
-  // import { get_current_component } from 'svelte/internal';
   import { injectCustomCss, loadFonts, loadSvgSprite, loadWidgetConfig, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
@@ -70,20 +69,20 @@
   export const reset = () => resetNuclia();
 
   let nucliaAPI: Nuclia;
-  interface Props {
-    backend?: string;
-    zone?: string;
+  class Props {
+    backend = 'https://nuclia.cloud/api';
+    zone = 'europe-1';
     knowledgebox: string;
     placeholder?: string;
     lang?: string;
     cdn?: string;
     apikey?: string;
     account?: string;
-    client?: string;
-    kbstate?: KBStates;
+    client = 'widget';
+    kbstate: KBStates = 'PUBLISHED';
     features?: string;
-    standalone?: boolean;
-    proxy?: boolean;
+    standalone = false;
+    proxy = false;
     mode?: string;
     filters?: string;
     preselected_filters?: string;
@@ -92,7 +91,7 @@
     system_prompt?: string;
     rephrase_prompt?: string;
     generativemodel?: string;
-    no_tracking?: boolean;
+    no_tracking = false;
     rag_strategies?: string;
     rag_images_strategies?: string;
     not_enough_data_message?: string;
@@ -108,59 +107,60 @@
     reranker?: Reranker | undefined;
     citation_threshold?: number | string | undefined;
     rrf_boosting?: number | string | undefined;
-    feedback?: Widget.WidgetFeedback;
+    feedback: Widget.WidgetFeedback = 'answer';
     copy_disclaimer?: string | undefined;
     metadata?: string | undefined;
     widget_id?: string | undefined;
     search_config_id?: string | undefined;
-    initHook?: (n: Nuclia) => void;
+    initHook: (n: Nuclia) => void = () => {};
   }
 
-  let {
-    backend = 'https://nuclia.cloud/api',
-    zone = 'europe-1',
-    knowledgebox,
-    placeholder = '',
-    lang = $bindable(''),
-    cdn = '',
-    apikey = '',
-    account = '',
-    client = 'widget',
-    kbstate = 'PUBLISHED',
-    features = '',
-    standalone = false,
-    proxy = false,
-    mode = '',
-    filters = '',
-    preselected_filters = '',
-    cssPath = '',
-    prompt = '',
-    system_prompt = '',
-    rephrase_prompt = '',
-    generativemodel = '',
-    no_tracking = false,
-    rag_strategies = '',
-    rag_images_strategies = '',
-    not_enough_data_message = '',
-    ask_to_resource = '',
-    max_tokens = undefined,
-    max_output_tokens = undefined,
-    max_paragraphs = undefined,
-    query_prepend = '',
-    json_schema = '',
-    vectorset = '',
-    chat_placeholder = '',
-    audit_metadata = '',
-    reranker = undefined,
-    citation_threshold = undefined,
-    rrf_boosting = undefined,
-    feedback = 'answer',
-    copy_disclaimer = undefined,
-    metadata = undefined,
-    widget_id = undefined,
-    search_config_id = undefined,
-    initHook = () => {},
-  }: Props = $props();
+  let { ...componentProps } = $props();
+  let config = $state(new Props());
+
+  let backend = $derived(componentProps.backend || config.backend);
+  let zone = $derived(componentProps.zone || config.zone);
+  let knowledgebox = $derived(componentProps.knowledgebox || config.knowledgebox);
+  let placeholder = $derived(componentProps.placeholder || config.placeholder);
+  let lang = $derived(componentProps.lang || config.lang || window.navigator.language.split('-')[0] || 'en');
+  let cdn = $derived(componentProps.cdn || config.cdn);
+  let apikey = $derived(componentProps.apikey || config.apikey);
+  let account = $derived(componentProps.account || config.account);
+  let client = $derived(componentProps.client || config.client);
+  let kbstate = $derived(componentProps.kbstate || config.kbstate);
+  let features = $derived(componentProps.features || config.features);
+  let standalone = $derived(componentProps.standalone || config.standalone);
+  let proxy = $derived(componentProps.proxy || config.proxy);
+  let mode = $derived(componentProps.mode || config.mode);
+  let filters = $derived(componentProps.filters || config.filters);
+  let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
+  let cssPath = $derived(componentProps.cssPath || config.cssPath);
+  let prompt = $derived(componentProps.prompt || config.prompt);
+  let system_prompt = $derived(componentProps.system_prompt || config.system_prompt);
+  let rephrase_prompt = $derived(componentProps.rephrase_prompt || config.rephrase_prompt);
+  let generativemodel = $derived(componentProps.generativemodel || config.generativemodel);
+  let no_tracking = $derived(componentProps.no_tracking || config.no_tracking);
+  let rag_strategies = $derived(componentProps.rag_strategies || config.rag_strategies);
+  let rag_images_strategies = $derived(componentProps.rag_images_strategies || config.rag_images_strategies);
+  let not_enough_data_message = $derived(componentProps.not_enough_data_message || config.not_enough_data_message);
+  let ask_to_resource = $derived(componentProps.ask_to_resource || config.ask_to_resource);
+  let max_tokens = $derived(componentProps.max_tokens || config.max_tokens);
+  let max_output_tokens = $derived(componentProps.max_output_tokens || config.max_output_tokens);
+  let max_paragraphs = $derived(componentProps.max_paragraphs || config.max_paragraphs);
+  let query_prepend = $derived(componentProps.query_prepend || config.query_prepend);
+  let json_schema = $derived(componentProps.json_schema || config.json_schema);
+  let vectorset = $derived(componentProps.vectorset || config.vectorset);
+  let chat_placeholder = $derived(componentProps.chat_placeholder || config.chat_placeholder);
+  let audit_metadata = $derived(componentProps.audit_metadata || config.audit_metadata);
+  let reranker = $derived(componentProps.reranker || config.reranker);
+  let citation_threshold = $derived(componentProps.citation_threshold || config.citation_threshold);
+  let rrf_boosting = $derived(componentProps.rrf_boosting || config.rrf_boosting);
+  let feedback = $derived(componentProps.feedback || config.feedback);
+  let copy_disclaimer = $derived(componentProps.copy_disclaimer || config.copy_disclaimer);
+  let metadata = $derived(componentProps.metadata || config.metadata);
+  let widget_id = $derived(componentProps.widget_id || config.widget_id);
+  let search_config_id = $derived(componentProps.search_config_id || config.search_config_id);
+  let initHook = $derived(componentProps.initHook || config.initHook);
 
   let darkMode = $derived(mode === 'dark');
   run(() => {
@@ -274,11 +274,8 @@
       account,
       accountId: account,
     };
-    (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((config) => {
-      // TODO: restore widget config loaded from backend
-      // if (Object.keys(config).length > 0) {
-      //   component.$set(config);
-      // }
+    (widget_id ? loadWidgetConfig(widget_id, nucliaOptions) : of({})).subscribe((loadedProperties) => {
+      config = { ...config, ...loadedProperties };
 
       if (cdn) {
         setCDN(cdn);
@@ -364,7 +361,6 @@
         activateTypeAheadSuggestions();
       }
 
-      lang = lang || window.navigator.language.split('-')[0] || 'en';
       setLang(lang);
 
       setupTriggerSearch(dispatchCustomEvent);
