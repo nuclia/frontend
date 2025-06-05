@@ -63,6 +63,7 @@ export interface IRetrievalAgent
   listSessions(page?: number, size?: number): Observable<SessionList>;
   createSession(session: SessionCreation): Observable<SessionCreationResponse>;
   interaction(sessionId: string, question: string): Observable<AragAnswer[]>;
+  getWsUrl(sessionId: string, fromCursor?: number): Observable<string>;
 
   inviteToAgent(data: InviteKbData): Observable<void>;
 

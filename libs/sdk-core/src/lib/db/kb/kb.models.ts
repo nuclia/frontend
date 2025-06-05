@@ -159,8 +159,9 @@ export interface IKnowledgeBox extends IKnowledgeBoxBase {
 
   listResources(page?: number, size?: number): Observable<ResourceList>;
 
-  getTempToken(): Observable<string>;
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getTempToken(payload?: any, ignoreExpiration?: boolean): Observable<string>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getConfiguration(): Observable<{ [id: string]: any }>;
   getLearningSchema(): Observable<LearningConfigurations>;
 

@@ -650,9 +650,12 @@ export class KnowledgeBox implements IKnowledgeBox {
     const downloadLink = `${nuclia.rest.getFullpath(filePath)}?eph-token=${nuclia.knowledgeBox.getTempToken()}`;
     ```
    * @param payload Optional payload to provide extra data for the token generation
+   * @param ignoreExpiration Optional By default, a temp token is valid for 5min and the same token returned if this method is called several times during this time.
+   * Passing ignoreExpiration flag to true will ignore this expiration delay and will always return a new token.
    */
-  getTempToken(payload?: any): Observable<string> {
-    if (!this.tempTokenReplay || this.tempTokenExpiration < Date.now()) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getTempToken(payload?: any, ignoreExpiration = false): Observable<string> {
+    if (ignoreExpiration || !this.tempTokenReplay || this.tempTokenExpiration < Date.now()) {
       this.tempTokenReplay = this._getTempToken(payload).pipe(
         map((res) => res.token),
         shareReplay(1),
@@ -661,7 +664,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     }
     return this.tempTokenReplay;
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _getTempToken(payload?: any): Observable<{ token: string }> {
     if (!this.nuclia.options.standalone) {
       const accountId = this.nuclia.options.accountId;
@@ -681,7 +684,7 @@ export class KnowledgeBox implements IKnowledgeBox {
       return this.nuclia.rest.get<{ token: string }>('/temp-access-token');
     }
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getConfiguration(): Observable<{ [id: string]: any }> {
     return this.nuclia.rest.get<{ [id: string]: any }>(`/kb/${this.id}/configuration`);
   }

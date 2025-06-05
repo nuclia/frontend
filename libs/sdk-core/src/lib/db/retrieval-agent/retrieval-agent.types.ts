@@ -33,6 +33,22 @@ export type AragModule =
   | 'restart'
   | 'postprocess_alinia';
 
+export function getCategoryFromModule(
+  module: AragModule,
+): 'preprocess' | 'context' | 'generation' | 'postprocess' | undefined {
+  if (isPreprocessModule(module)) {
+    return 'preprocess';
+  } else if (isContextModule(module)) {
+    return 'context';
+  } else if (isGenerationModule(module)) {
+    return 'generation';
+  } else if (isPostprocessModule(module)) {
+    return 'postprocess';
+  } else {
+    return;
+  }
+}
+
 const PREPROCESS_MODULES: AragModule[] = ['historical', 'rephrase', 'pre_conditional', 'preprocess_alinia'];
 export type PreprocessModule = (typeof PREPROCESS_MODULES)[number];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

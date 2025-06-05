@@ -1,13 +1,5 @@
 import { ComponentRef, computed, signal } from '@angular/core';
-import {
-  AnswerOperation,
-  AragAnswer,
-  AragModule,
-  isContextModule,
-  isGenerationModule,
-  isPostprocessModule,
-  isPreprocessModule,
-} from '@nuclia/core';
+import { AnswerOperation, AragAnswer, AragModule, getCategoryFromModule } from '@nuclia/core';
 import { ConnectableEntryComponent, NodeDirective } from './basic-elements';
 import { AragAnswerUi, AskAgentUI, NodeCategory, NodeConfig, NodeType, ParentNode } from './workflow.models';
 
@@ -102,6 +94,8 @@ function aragAnswerToUi(data: AragAnswer, module: AragModule): AragAnswerUi {
 
 export const testAgentRunning = computed(() => testAgent().running);
 export const testAgentQuestion = computed(() => testAgent().question);
+export const testAgentLastAnswer = computed(() => testAgent().answers.slice(-1)[0]);
+export const testAgentHasAllAnswers = computed(() => testAgentLastAnswer().operation === AnswerOperation.done);
 export const testAgentAnswersByCategory = computed(() => {
   return testAgent().answers.reduce(
     (categories, data) => {
@@ -110,38 +104,7 @@ export const testAgentAnswersByCategory = computed(() => {
           categories.error.push(data);
           break;
         case AnswerOperation.answer:
-          if (data.step) {
-            const module = data.step.module;
-            if (isPreprocessModule(module)) {
-              const existingAnswer = categories.preprocess.find((item) => item.module === module);
-              if (existingAnswer) {
-                existingAnswer.steps.push(data.step);
-              } else {
-                categories.preprocess.push(aragAnswerToUi(data, module));
-              }
-            } else if (isContextModule(data.step.module)) {
-              const existingAnswer = categories.context.find((item) => item.module === module);
-              if (existingAnswer) {
-                existingAnswer.steps.push(data.step);
-              } else {
-                categories.context.push(aragAnswerToUi(data, module));
-              }
-            } else if (isGenerationModule(data.step.module)) {
-              const existingAnswer = categories.generation.find((item) => item.module === module);
-              if (existingAnswer) {
-                existingAnswer.steps.push(data.step);
-              } else {
-                categories.generation.push(aragAnswerToUi(data, module));
-              }
-            } else if (isPostprocessModule(data.step.module)) {
-              const existingAnswer = categories.postprocess.find((item) => item.module === module);
-              if (existingAnswer) {
-                existingAnswer.steps.push(data.step);
-              } else {
-                categories.postprocess.push(aragAnswerToUi(data, module));
-              }
-            }
-          }
+          addAnswer(categories, data);
           break;
         case AnswerOperation.done:
           categories.results.push(data);
@@ -153,26 +116,59 @@ export const testAgentAnswersByCategory = computed(() => {
       return categories;
     },
     {
-      preprocess: [] as AragAnswerUi[],
-      context: [] as AragAnswerUi[],
-      generation: [] as AragAnswerUi[],
-      postprocess: [] as AragAnswerUi[],
-      error: [] as AragAnswer[],
-      results: [] as AragAnswer[],
-    },
+      preprocess: [],
+      context: [],
+      generation: [],
+      postprocess: [],
+      error: [],
+      results: [],
+    } as AnswersByCategory,
   );
 });
 
-export function runTest(question: string) {
-  testAgent.update((state) => ({ ...state, question, running: true, answers: [] }));
+interface AnswersByCategory {
+  preprocess: AragAnswerUi[];
+  context: AragAnswerUi[];
+  generation: AragAnswerUi[];
+  postprocess: AragAnswerUi[];
+  error: AragAnswer[];
+  results: AragAnswer[];
 }
-export function stopTest() {
+
+function addAnswer(categories: AnswersByCategory, data: AragAnswer) {
+  let module: AragModule | null = null;
+  if (data.step) {
+    module = data.step.module;
+  } else if (data.context) {
+    module = data.context.agent;
+  }
+  if (module) {
+    addAnswerToCategory(categories, module, data);
+  }
+}
+
+function addAnswerToCategory(categories: AnswersByCategory, module: AragModule, data: AragAnswer) {
+  const category = getCategoryFromModule(module);
+  if (category) {
+    const existingAnswer = categories[category].find((item) => item.module === module);
+    if (existingAnswer && data.step) {
+      existingAnswer.steps.push(data.step);
+    } else {
+      categories[category].push(aragAnswerToUi(data, module));
+    }
+  }
+}
+
+export function testAgentRun(question: string, keepAnswers = false) {
+  testAgent.update((state) => ({ ...state, question, running: true, answers: keepAnswers ? state.answers : [] }));
+}
+export function testAgentStop() {
   testAgent.update((state) => ({ ...state, running: false }));
 }
-export function updateTestResults(answers: AragAnswer[]) {
+export function testAgentUpdateResults(answers: AragAnswer[]) {
   testAgent.update((state) => ({ ...state, answers }));
 }
-export function addAnswer(answer: AragAnswer) {
+export function testAgentAddAnswer(answer: AragAnswer) {
   testAgent.update((state) => ({ ...state, answers: state.answers.concat([answer]) }));
 }
 

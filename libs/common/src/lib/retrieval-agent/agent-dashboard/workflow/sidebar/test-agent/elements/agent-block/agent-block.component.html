@@ -8,6 +8,10 @@
     <stf-agent-step [step]="step"></stf-agent-step>
   }
 
+  @if (answer()?.context; as context) {
+    <stf-agent-context [context]="context"></stf-agent-context>
+  }
+
   @if (result()?.answer; as resultAnswer) {
     <div [innerHTML]="resultAnswer | lineBreakFormatter"></div>
   }
