@@ -214,7 +214,7 @@ export class RegionalAccountService {
       email: account.email,
       limits: account.limits,
       maxKbs: account.stashes.max_stashes,
-      maxArags: account.arags.max_arags,
+      maxArags: account.arags?.max_arags || 0,
       trialExpirationDate: account.trial_expiration_date,
       users: account.users,
       created: account.created,
