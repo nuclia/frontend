@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { AragAnswer, AragModule } from '@nuclia/core';
-import { LineBreakFormatterPipe } from 'libs/common/src/lib/pipes';
-import { getFormattedCost } from 'libs/common/src/lib/retrieval-agent/arag.utils';
+import { LineBreakFormatterPipe } from '../../../../../../../pipes';
+import { getFormattedCost } from '../../../../../../arag.utils';
 import { AragAnswerUi } from '../../../../workflow.models';
 import { AgentContextComponent } from '../agent-context';
 import { AgentStepComponent } from '../agent-step';

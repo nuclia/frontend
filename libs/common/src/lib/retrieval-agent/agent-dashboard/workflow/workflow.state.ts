@@ -195,18 +195,6 @@ function addAnswerToCategory(categories: RawAnswersByCategory, data: AragAnswer)
   }
 }
 
-// function addAnswerToCategory(categories: AnswersByCategory, module: AragModule, data: AragAnswer) {
-//   const category = getCategoryFromModule(module);
-//   if (category) {
-//     const existingAnswer = categories[category].find((item) => item.module === module);
-//     if (existingAnswer && data.step) {
-//       existingAnswer.steps.push(data.step);
-//     } else {
-//       categories[category].push(aragAnswerToUi(data, module));
-//     }
-//   }
-// }
-
 export function testAgentRun(question: string, keepAnswers = false) {
   testAgent.update((state) => ({ ...state, question, running: true, answers: keepAnswers ? state.answers : [] }));
 }
