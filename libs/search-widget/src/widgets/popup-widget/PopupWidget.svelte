@@ -30,7 +30,7 @@
     proxy?: boolean;
     filters?: string;
     preselected_filters?: string;
-    cssPath?: string;
+    csspath?: string;
     prompt?: string;
     system_prompt?: string;
     rephrase_prompt?: string;
@@ -75,7 +75,7 @@
     proxy = false,
     filters = '',
     preselected_filters = '',
-    cssPath = '',
+    csspath = '',
     prompt = '',
     system_prompt = '',
     rephrase_prompt = '',
@@ -185,7 +185,7 @@
             {proxy}
             {filters}
             {preselected_filters}
-            {cssPath}
+            {csspath}
             {prompt}
             {system_prompt}
             {rephrase_prompt}

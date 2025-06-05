@@ -86,7 +86,7 @@
     mode?: string;
     filters?: string;
     preselected_filters?: string;
-    cssPath?: string;
+    csspath?: string;
     prompt?: string;
     system_prompt?: string;
     rephrase_prompt?: string;
@@ -135,7 +135,7 @@
   let mode = $derived(componentProps.mode || config.mode);
   let filters = $derived(componentProps.filters || config.filters);
   let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
-  let cssPath = $derived(componentProps.cssPath || config.cssPath);
+  let csspath = $derived(componentProps.csspath || config.csspath);
   let prompt = $derived(componentProps.prompt || config.prompt);
   let system_prompt = $derived(componentProps.system_prompt || config.system_prompt);
   let rephrase_prompt = $derived(componentProps.rephrase_prompt || config.rephrase_prompt);
@@ -375,7 +375,7 @@
         setupTriggerGraphNerSearch();
       }
       initUsageTracking(no_tracking);
-      injectCustomCss(cssPath, container);
+      injectCustomCss(csspath, container);
 
       if (search_config_id) {
         getSearchConfig(search_config_id).subscribe((config) => {
