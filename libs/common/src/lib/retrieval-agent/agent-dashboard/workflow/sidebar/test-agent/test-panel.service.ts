@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { AnswerOperation, InteractionOperation, RetrievalAgent, Session } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { map, Observable, switchMap, take } from 'rxjs';
+import { map, Observable, switchMap, take, tap } from 'rxjs';
 import {
   testAgentAddAnswer,
   testAgentHasAllAnswers,
@@ -30,14 +30,14 @@ export class TestPanelService {
     );
   }
 
-  runTest(question: string, sessionId: string, useWS = true, fromCursor?: number) {
-    // update the state and keep the existing answers only when a cursor is provided
-    testAgentRun(question, typeof fromCursor === 'number');
-    let sessionRequest: Observable<{ sessionId: string; arag: RetrievalAgent }>;
+  private getOrCreateSession(
+    sessionId: string,
+    question: string,
+  ): Observable<{ sessionId: string; arag: RetrievalAgent }> {
     if (sessionId === 'new') {
       // Create the session
       const smallHash = (Math.random() + 1).toString(36).substring(7);
-      sessionRequest = this.sdk.currentArag.pipe(
+      return this.sdk.currentArag.pipe(
         take(1),
         switchMap((arag) =>
           arag
@@ -52,20 +52,34 @@ export class TestPanelService {
         ),
       );
     } else {
-      sessionRequest = this.sdk.currentArag.pipe(
+      return this.sdk.currentArag.pipe(
         take(1),
         switchMap((arag) => arag.getSession(sessionId).pipe(map((session) => ({ sessionId: session.id, arag })))),
       );
     }
+  }
+
+  runTest(question: string, userSessionId: string, useWS = true, fromCursor?: number) {
+    // update the state and keep the existing answers only when a cursor is provided
+    testAgentRun(question, typeof fromCursor === 'number');
+    const sessionRequest: Observable<{ sessionId: string; arag: RetrievalAgent }> = this.getOrCreateSession(
+      userSessionId,
+      question,
+    );
 
     if (useWS) {
-      sessionRequest.pipe(switchMap(({ sessionId, arag }) => arag.getWsUrl(sessionId))).subscribe({
-        next: (wsUrl) => this.openWebSocket(wsUrl, question, sessionId),
-        error: () => {
-          this.toaster.error('retrieval-agents.workflow.sidebar.test.toasts.session-creation-error');
-          testAgentStop();
-        },
-      });
+      sessionRequest
+        .pipe(
+          switchMap(({ sessionId, arag }) =>
+            arag.getWsUrl(sessionId, fromCursor).pipe(tap((wsUrl) => this.openWebSocket(wsUrl, question, sessionId))),
+          ),
+        )
+        .subscribe({
+          error: () => {
+            this.toaster.error('retrieval-agents.workflow.sidebar.test.toasts.session-creation-error');
+            testAgentStop();
+          },
+        });
     } else {
       sessionRequest
         .pipe(
