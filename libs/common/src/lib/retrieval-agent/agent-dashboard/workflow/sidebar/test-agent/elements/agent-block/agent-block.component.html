@@ -5,7 +5,7 @@
   <div class="description">{{ description() | translate }}</div>
 
   @if (answer(); as answer) {
-    <pa-expander>
+    <pa-expander [contentLoaded]="answer.steps">
       <pa-expander-header>
         <span class="expander-header">
           {{ 'retrieval-agents.workflow.sidebar.test.interactions.steps' | translate }}
@@ -21,7 +21,7 @@
     </pa-expander>
 
     @if (answer.context; as context) {
-      <pa-expander>
+      <pa-expander [contentLoaded]="context">
         <pa-expander-header>
           <span class="expander-header">
             {{ 'retrieval-agents.workflow.sidebar.test.interactions.context.title' | translate }}
