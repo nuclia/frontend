@@ -123,7 +123,9 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   }
   getWsUrl(sessionId: string) {
     const path = this.getWsPath(sessionId);
-    return this.getTempToken({ agent_session: sessionId }).pipe(map((token) => this.nuclia.rest.getWsUrl(path, token)));
+    return this.getTempToken({ agent_session: sessionId }, true).pipe(
+      map((token) => this.nuclia.rest.getWsUrl(path, token)),
+    );
   }
 
   /**

@@ -68,7 +68,7 @@ export class TestPanelService {
               // Update the state
               addAnswer(data);
               if (data.operation === AnswerOperation.done || data.operation === AnswerOperation.error) {
-                ws.close();
+                ws.close(1000);
                 stopTest();
               }
             }
@@ -111,11 +111,15 @@ export class TestPanelService {
   }
 
   stopTest() {
+    this.closeWsConnection();
+  }
+
+  private closeWsConnection() {
     if (!this.currentWs) {
       console.error('No current WebSocket stored');
       return;
     }
     this.currentWs.send(JSON.stringify({ question: '', operation: InteractionOperation.quit }));
-    this.currentWs.close();
+    this.currentWs.close(1000);
   }
 }
