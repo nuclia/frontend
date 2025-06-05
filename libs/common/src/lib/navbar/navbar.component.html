@@ -406,6 +406,7 @@
               </a>
             </div>
           }
+          @if (isModelManagementEnabled | async) {
           <div class="group-items">
             <a
               [routerLink]="(accountUrl | async) + '/models'"
@@ -416,6 +417,7 @@
               <span class="nav-link-title">{{ 'navbar.models' | translate }}</span>
             </a>
           </div>
+          }
           @if ((isBillingEnabled | async) && !noStripe) {
             <div class="group-items">
               <a
