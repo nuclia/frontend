@@ -1,18 +1,43 @@
-<blockquote>
+<stf-blockquote>
   @if (title()) {
     <stf-chip>{{ title() | translate }}</stf-chip>
   }
   <div class="description">{{ description() | translate }}</div>
 
-  @for (step of answer()?.steps; track step) {
-    <stf-agent-step [step]="step"></stf-agent-step>
-  }
+  @if (answer(); as answer) {
+    <pa-expander>
+      <pa-expander-header>
+        <span class="expander-header">
+          {{ 'retrieval-agents.workflow.sidebar.test.interactions.steps' | translate }}
+        </span>
+      </pa-expander-header>
+      <pa-expander-body>
+        <div class="step-container">
+          @for (step of answer.steps; track step) {
+            <stf-agent-step [step]="step"></stf-agent-step>
+          }
+        </div>
+      </pa-expander-body>
+    </pa-expander>
 
-  @if (answer()?.context; as context) {
-    <stf-agent-context [context]="context"></stf-agent-context>
+    @if (answer.context; as context) {
+      <pa-expander>
+        <pa-expander-header>
+          <span class="expander-header">
+            {{ 'retrieval-agents.workflow.sidebar.test.interactions.context.title' | translate }}
+          </span>
+        </pa-expander-header>
+        <pa-expander-body>
+          <stf-agent-context [context]="context"></stf-agent-context>
+        </pa-expander-body>
+      </pa-expander>
+      @if (contextCost(); as cost) {
+        <div class="cost">{{ cost }}</div>
+      }
+    }
   }
 
   @if (result()?.answer; as resultAnswer) {
     <div [innerHTML]="resultAnswer | lineBreakFormatter"></div>
   }
-</blockquote>
+</stf-blockquote>

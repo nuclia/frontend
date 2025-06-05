@@ -1,22 +1,28 @@
-<blockquote>
+<stf-blockquote>
   <stf-chip>{{ step().title }}</stf-chip>
-
   @if (step().prompt; as prompt) {
-    <div class="config">
-      Prompt:
-      <span [innerHTML]="prompt | lineBreakFormatter"></span>
-    </div>
+    <pa-expander [expanded]="false">
+      <pa-expander-header>Prompt</pa-expander-header>
+      <pa-expander-body>
+        <div class="config">
+          <span [innerHTML]="prompt | lineBreakFormatter"></span>
+        </div>
+      </pa-expander-body>
+    </pa-expander>
   }
   @if (step().reason; as reason) {
     <div class="config">
-      Reason:
+      <span class="config-title">Reason:</span>
       <span [innerHTML]="reason | lineBreakFormatter"></span>
     </div>
   }
   @if (step().value; as value) {
-    <div class="config"><span [innerHTML]="value | lineBreakFormatter"></span></div>
+    <div class="config">
+      <span class="config-title">Value:</span>
+      <span [innerHTML]="value | lineBreakFormatter"></span>
+    </div>
   }
-  @if (formattedCost()) {
-    <div class="cost">{{ formattedCost() }}</div>
+  @if (formattedCost(); as cost) {
+    <div class="cost">{{ cost }}</div>
   }
-</blockquote>
+</stf-blockquote>
