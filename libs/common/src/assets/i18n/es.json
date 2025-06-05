@@ -1398,6 +1398,7 @@
 	"retrieval-agents.workflow.sidebar.test.interactions.context.title": "Contexto",
 	"retrieval-agents.workflow.sidebar.test.interactions.results.description": "Volviendo el resultado final...",
 	"retrieval-agents.workflow.sidebar.test.interactions.results.title": "Resultado",
+	"retrieval-agents.workflow.sidebar.test.interactions.steps": "Pasos",
 	"retrieval-agents.workflow.sidebar.test.interactions.user-input": "Entrada del usuario",
 	"retrieval-agents.workflow.sidebar.test.title": "Pruebe el agente",
 	"retrieval-agents.workflow.sidebar.test.toasts.session-closing-error": "Se ha producido un error al cerrar las interacciones de la sesión.",

@@ -80,9 +80,9 @@ export function resetTestAgent() {
     answers: [],
   });
 }
-function aragAnswerToUi(data: AragAnswer, module: AragModule): AragAnswerUi {
+function aragAnswerToUi(data: AragAnswerWithModule): AragAnswerUi {
   return {
-    module,
+    module: data.module,
     answer: data.answer,
     context: data.context,
     generated_text: data.generated_text,
@@ -92,19 +92,25 @@ function aragAnswerToUi(data: AragAnswer, module: AragModule): AragAnswerUi {
   };
 }
 
+const categories: ('preprocess' | 'context' | 'generation' | 'postprocess')[] = [
+  'preprocess',
+  'context',
+  'generation',
+  'postprocess',
+];
 export const testAgentRunning = computed(() => testAgent().running);
 export const testAgentQuestion = computed(() => testAgent().question);
 export const testAgentLastAnswer = computed(() => testAgent().answers.slice(-1)[0]);
 export const testAgentHasAllAnswers = computed(() => testAgentLastAnswer().operation === AnswerOperation.done);
 export const testAgentAnswersByCategory = computed(() => {
-  return testAgent().answers.reduce(
+  const sortedAnswers = testAgent().answers.reduce(
     (categories, data) => {
       switch (data.operation) {
         case AnswerOperation.error:
           categories.error.push(data);
           break;
         case AnswerOperation.answer:
-          addAnswer(categories, data);
+          addAnswerToCategory(categories, data);
           break;
         case AnswerOperation.done:
           categories.results.push(data);
@@ -116,17 +122,45 @@ export const testAgentAnswersByCategory = computed(() => {
       return categories;
     },
     {
-      preprocess: [],
-      context: [],
-      generation: [],
-      postprocess: [],
-      error: [],
-      results: [],
-    } as AnswersByCategory,
+      preprocess: [] as AragAnswerWithModule[],
+      context: [] as AragAnswerWithModule[],
+      generation: [] as AragAnswerWithModule[],
+      postprocess: [] as AragAnswerWithModule[],
+      error: [] as AragAnswer[],
+      results: [] as AragAnswer[],
+    },
   );
+
+  const answersByCat: AnswersByCategory = {
+    preprocess: [],
+    context: [],
+    generation: [],
+    postprocess: [],
+    error: [],
+    results: [],
+  };
+  categories.forEach((category) => {
+    let previousAnswer: AragAnswerUi | undefined;
+    sortedAnswers[category].forEach((answer) => {
+      if (!previousAnswer || previousAnswer.context) {
+        previousAnswer = aragAnswerToUi(answer);
+        answersByCat[category].push(previousAnswer);
+      } else {
+        // grouping steps of a same module together
+        if (answer.module === previousAnswer.module) {
+          if (answer.step) {
+            previousAnswer.steps.push(answer.step);
+          } else if (answer.context) {
+            previousAnswer.context = answer.context;
+          }
+        }
+      }
+    });
+  });
+  return answersByCat;
 });
 
-interface AnswersByCategory {
+export interface AnswersByCategory {
   preprocess: AragAnswerUi[];
   context: AragAnswerUi[];
   generation: AragAnswerUi[];
@@ -134,8 +168,19 @@ interface AnswersByCategory {
   error: AragAnswer[];
   results: AragAnswer[];
 }
+interface AragAnswerWithModule extends AragAnswer {
+  module: AragModule;
+}
+interface RawAnswersByCategory {
+  preprocess: AragAnswerWithModule[];
+  context: AragAnswerWithModule[];
+  generation: AragAnswerWithModule[];
+  postprocess: AragAnswerWithModule[];
+  error: AragAnswer[];
+  results: AragAnswer[];
+}
 
-function addAnswer(categories: AnswersByCategory, data: AragAnswer) {
+function addAnswerToCategory(categories: RawAnswersByCategory, data: AragAnswer) {
   let module: AragModule | null = null;
   if (data.step) {
     module = data.step.module;
@@ -143,18 +188,9 @@ function addAnswer(categories: AnswersByCategory, data: AragAnswer) {
     module = data.context.agent;
   }
   if (module) {
-    addAnswerToCategory(categories, module, data);
-  }
-}
-
-function addAnswerToCategory(categories: AnswersByCategory, module: AragModule, data: AragAnswer) {
-  const category = getCategoryFromModule(module);
-  if (category) {
-    const existingAnswer = categories[category].find((item) => item.module === module);
-    if (existingAnswer && data.step) {
-      existingAnswer.steps.push(data.step);
-    } else {
-      categories[category].push(aragAnswerToUi(data, module));
+    const category = getCategoryFromModule(module);
+    if (category) {
+      categories[category].push({ ...data, module });
     }
   }
 }

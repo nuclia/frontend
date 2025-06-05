@@ -1,18 +1,18 @@
-<blockquote>
-  <stf-chip>{{ 'retrieval-agents.workflow.sidebar.test.interactions.context.title' | translate }}</stf-chip>
-
+<stf-blockquote>
   @if (context().summary; as summary) {
     <div class="config">
-      Summary:
+      <span class="config-title">Summary:</span>
       <span [innerHTML]="summary | lineBreakFormatter"></span>
     </div>
   }
   @if (context().answer; as answer) {
     <div class="config">
-      Answer:
+      <span class="config-title">Answer:</span>
       <span [innerHTML]="answer | lineBreakFormatter"></span>
     </div>
   }
 
-  <div class="config">Based on {{ context().chunks.length }} chunks.</div>
-</blockquote>
+  <div class="config">
+    <div class="config-title">Based on {{ context().chunks.length }} chunks.</div>
+  </div>
+</stf-blockquote>

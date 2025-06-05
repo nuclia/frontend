@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { AragAnswer, AragModule } from '@nuclia/core';
-import { LineBreakFormatterPipe } from 'libs/common/src/lib/pipes';
+import { LineBreakFormatterPipe } from '../../../../../../../pipes';
+import { getFormattedCost } from '../../../../../../arag.utils';
 import { AragAnswerUi } from '../../../../workflow.models';
 import { AgentContextComponent } from '../agent-context';
 import { AgentStepComponent } from '../agent-step';
+import { BlockquoteComponent } from '../blockquote';
 import { ChipComponent } from '../chip';
 
 @Component({
@@ -13,10 +16,12 @@ import { ChipComponent } from '../chip';
   imports: [
     CommonModule,
     ChipComponent,
-    TranslateModule,
+    BlockquoteComponent,
     AgentStepComponent,
     AgentContextComponent,
     LineBreakFormatterPipe,
+    PaExpanderModule,
+    TranslateModule,
   ],
   templateUrl: './agent-block.component.html',
   styleUrl: './agent-block.component.scss',
@@ -25,6 +30,20 @@ import { ChipComponent } from '../chip';
 export class AgentBlockComponent {
   answer = input<AragAnswerUi>();
   result = input<AragAnswer>();
+
+  contextCost = computed(() => {
+    const cost = (this.answer()?.steps || []).reduce(
+      (cost, step) => {
+        return {
+          timing: cost.timing + step.timeit,
+          input: cost.input + step.input_nuclia_tokens,
+          output: cost.output + step.output_nuclia_tokens,
+        };
+      },
+      { timing: 0, input: 0, output: 0 },
+    );
+    return getFormattedCost(cost.timing, cost.input, cost.output);
+  });
 
   title = computed(() => {
     const answer = this.answer();
