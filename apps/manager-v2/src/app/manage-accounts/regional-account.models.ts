@@ -35,7 +35,7 @@ export interface Account {
   stashes: {
     max_stashes: number;
   };
-  arags: {
+  arags?: {
     max_arags: number;
   };
   title: string;
