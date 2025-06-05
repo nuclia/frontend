@@ -50,7 +50,7 @@
     features?: string;
     standalone?: boolean;
     proxy?: boolean;
-    cssPath?: string;
+    csspath?: string;
     no_tracking?: boolean;
     rid?: string;
     field_id?: string;
@@ -70,7 +70,7 @@
     features = '',
     standalone = false,
     proxy = false,
-    cssPath = '',
+    csspath = '',
     no_tracking = false,
     rid = '',
     field_id = '',
@@ -157,7 +157,7 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     initViewer(dispatchCustomEvent);
-    injectCustomCss(cssPath, container);
+    injectCustomCss(csspath, container);
 
     _ready.next(true);
 

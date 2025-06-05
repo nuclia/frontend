@@ -54,7 +54,7 @@
     features?: string;
     standalone = false;
     proxy = false;
-    cssPath?: string;
+    csspath?: string;
     id?: string;
     prompt?: string;
     system_prompt?: string;
@@ -99,7 +99,7 @@
   let features = $derived(componentProps.features || config.features);
   let standalone = $derived(componentProps.standalone || config.standalone);
   let proxy = $derived(componentProps.proxy || config.proxy);
-  let cssPath = $derived(componentProps.cssPath || config.cssPath);
+  let csspath = $derived(componentProps.csspath || config.csspath);
   let id = $derived(componentProps.id || config.id);
   let prompt = $derived(componentProps.prompt || config.prompt);
   let system_prompt = $derived(componentProps.system_prompt || config.system_prompt);
@@ -268,7 +268,7 @@
 
       loadFonts();
       loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-      injectCustomCss(cssPath, container);
+      injectCustomCss(csspath, container);
 
       if (search_config_id) {
         getSearchConfig(search_config_id).subscribe((config) => {
