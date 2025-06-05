@@ -1395,6 +1395,7 @@
 	"retrieval-agents.workflow.sidebar.test.form.session-select.label": "Sessió de prova",
 	"retrieval-agents.workflow.sidebar.test.form.session-select.new": "Crea una sessió nova",
 	"retrieval-agents.workflow.sidebar.test.form.stop-button": "Parar",
+	"retrieval-agents.workflow.sidebar.test.interactions.context.title": "Context",
 	"retrieval-agents.workflow.sidebar.test.interactions.results.description": "Retorn del resultat final...",
 	"retrieval-agents.workflow.sidebar.test.interactions.results.title": "Resultat",
 	"retrieval-agents.workflow.sidebar.test.interactions.user-input": "Entrada de l'usuari",

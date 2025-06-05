@@ -4,12 +4,20 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AragAnswer, AragModule } from '@nuclia/core';
 import { LineBreakFormatterPipe } from 'libs/common/src/lib/pipes';
 import { AragAnswerUi } from '../../../../workflow.models';
+import { AgentContextComponent } from '../agent-context';
 import { AgentStepComponent } from '../agent-step';
 import { ChipComponent } from '../chip';
 
 @Component({
   selector: 'app-agent-block',
-  imports: [CommonModule, ChipComponent, TranslateModule, AgentStepComponent, LineBreakFormatterPipe],
+  imports: [
+    CommonModule,
+    ChipComponent,
+    TranslateModule,
+    AgentStepComponent,
+    AgentContextComponent,
+    LineBreakFormatterPipe,
+  ],
   templateUrl: './agent-block.component.html',
   styleUrl: './agent-block.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

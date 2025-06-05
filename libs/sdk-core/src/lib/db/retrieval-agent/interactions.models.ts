@@ -51,7 +51,7 @@ export interface AragAnswerContext {
   images: unknown;
   structured: unknown[];
   source: string;
-  agent: string;
+  agent: AragModule;
   summary: string;
   answer: string | null;
   title: string;
