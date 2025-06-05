@@ -93,6 +93,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isSynonymsEnabled = this.features.unstable.synonyms;
   isRemiMetricsEnabled = this.features.unstable.remiMetrics;
   isRetrievalAgentsEnabled = this.features.unstable.retrievalAgents;
+  isModelManagementEnabled = this.features.unstable.modelManagement;
 
   isActivityAuthorized = this.features.authorized.activityLog;
   isPromptLabAuthorized = this.features.authorized.promptLab;

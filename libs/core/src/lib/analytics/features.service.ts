@@ -70,6 +70,7 @@ export class FeaturesService {
     extractConfig: this.featureFlag.isFeatureEnabled('extract-config'),
     retrievalAgents: this.featureFlag.isFeatureEnabled('retrieval-agents'),
     userSurvey: this.featureFlag.isFeatureEnabled('user-survey'),
+    modelManagement: this.featureFlag.isFeatureEnabled('model-management'),
   };
 
   /**
