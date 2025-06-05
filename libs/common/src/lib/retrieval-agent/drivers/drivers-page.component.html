@@ -57,9 +57,11 @@
           <pa-table-cell-menu header>{{ 'retrieval-agents.drivers.table.actions' | translate }}</pa-table-cell-menu>
         </pa-table-header>
         @for (driver of drivers(); track driver.identifier) {
-          <pa-table-row>
-            <pa-table-cell>{{ driver.name }}</pa-table-cell>
-            <pa-table-cell>{{ 'retrieval-agents.drivers.types.' + driver.provider | translate }}</pa-table-cell>
+          <pa-table-row clickable>
+            <pa-table-cell (click)="edit(driver)">{{ driver.name }}</pa-table-cell>
+            <pa-table-cell (click)="edit(driver)">
+              {{ 'retrieval-agents.drivers.types.' + driver.provider | translate }}
+            </pa-table-cell>
             <pa-table-cell-menu>
               <div>
                 <pa-button
