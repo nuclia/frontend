@@ -102,6 +102,8 @@ function aragAnswerToUi(data: AragAnswer, module: AragModule): AragAnswerUi {
 
 export const testAgentRunning = computed(() => testAgent().running);
 export const testAgentQuestion = computed(() => testAgent().question);
+export const testAgentLastAnswer = computed(() => testAgent().answers.slice(-1)[0]);
+export const testAgentHasAllAnswers = computed(() => testAgentLastAnswer().operation === AnswerOperation.done);
 export const testAgentAnswersByCategory = computed(() => {
   return testAgent().answers.reduce(
     (categories, data) => {
@@ -163,16 +165,16 @@ export const testAgentAnswersByCategory = computed(() => {
   );
 });
 
-export function runTest(question: string) {
-  testAgent.update((state) => ({ ...state, question, running: true, answers: [] }));
+export function testAgentRun(question: string, keepAnswers = false) {
+  testAgent.update((state) => ({ ...state, question, running: true, answers: keepAnswers ? state.answers : [] }));
 }
-export function stopTest() {
+export function testAgentStop() {
   testAgent.update((state) => ({ ...state, running: false }));
 }
-export function updateTestResults(answers: AragAnswer[]) {
+export function testAgentUpdateResults(answers: AragAnswer[]) {
   testAgent.update((state) => ({ ...state, answers }));
 }
-export function addAnswer(answer: AragAnswer) {
+export function testAgentAddAnswer(answer: AragAnswer) {
   testAgent.update((state) => ({ ...state, answers: state.answers.concat([answer]) }));
 }
 
