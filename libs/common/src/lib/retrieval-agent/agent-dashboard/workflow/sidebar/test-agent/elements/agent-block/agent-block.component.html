@@ -10,7 +10,7 @@
     small>
     @if (answer(); as answer) {
       <pa-accordion-item
-        #steps
+        #accordionForSteps
         id="steps"
         expanded
         [itemTitle]="'retrieval-agents.workflow.sidebar.test.interactions.steps' | translate">
@@ -19,7 +19,7 @@
             @for (step of answer.steps; track step) {
               <stf-agent-step
                 [step]="step"
-                (heightUpdated)="updateAccordionHeight(steps)"></stf-agent-step>
+                (heightUpdated)="updateAccordionHeight(accordionForSteps)"></stf-agent-step>
             }
           </div>
         </pa-accordion-item-body>
@@ -27,14 +27,14 @@
 
       @if (answer.context; as context) {
         <pa-accordion-item
-          #context
+          #accordionForContext
           id="context"
           expanded
           [itemTitle]="'retrieval-agents.workflow.sidebar.test.interactions.context.title' | translate">
           <pa-accordion-item-body>
             <stf-agent-context
               [context]="context"
-              (heightUpdated)="updateAccordionHeight(context)"></stf-agent-context>
+              (heightUpdated)="updateAccordionHeight(accordionForContext)"></stf-agent-context>
           </pa-accordion-item-body>
         </pa-accordion-item>
 
