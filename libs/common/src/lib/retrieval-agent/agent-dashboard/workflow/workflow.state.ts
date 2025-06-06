@@ -136,8 +136,8 @@ export const testAgentAnswersByCategory = computed(() => {
     context: [],
     generation: [],
     postprocess: [],
-    error: [],
-    results: [],
+    error: sortedAnswers.error,
+    results: sortedAnswers.results,
   };
   categories.forEach((category) => {
     let previousAnswer: AragAnswerUi | undefined;

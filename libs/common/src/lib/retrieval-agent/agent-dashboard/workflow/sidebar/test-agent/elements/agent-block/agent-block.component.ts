@@ -55,9 +55,7 @@ export class AgentBlockComponent {
   });
   description = computed(() => {
     const answer = this.answer();
-    if (this.result()) {
-      return 'retrieval-agents.workflow.sidebar.test.interactions.results.description';
-    } else if (answer) {
+    if (answer) {
       return `retrieval-agents.workflow.sidebar.test.description.${this.getNodeKey(answer.module)}`;
     } else {
       return '';
