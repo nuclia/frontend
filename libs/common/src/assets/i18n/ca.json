@@ -1402,6 +1402,7 @@
 	"retrieval-agents.workflow.sidebar.test.interactions.steps": "Passos",
 	"retrieval-agents.workflow.sidebar.test.interactions.user-input": "Entrada de l'usuari",
 	"retrieval-agents.workflow.sidebar.test.title": "Prova l'agent",
+	"retrieval-agents.workflow.sidebar.test.toasts.exception-unknown": "S'ha produït un error en interactuar amb l'agent",
 	"retrieval-agents.workflow.sidebar.test.toasts.session-closing-error": "S'ha produït un error en tancar les interaccions de la sessió.",
 	"retrieval-agents.workflow.sidebar.test.toasts.session-creation-error": "S'ha produït un error en crear la sessió.",
 	"retrieval-agents.workflow.toolbar-buttons.add-node": "Afegir un node",
