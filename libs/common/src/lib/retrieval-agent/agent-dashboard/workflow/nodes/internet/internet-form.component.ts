@@ -40,8 +40,8 @@ export class InternetFormComponent extends FormDirective implements OnInit {
         nonNullable: true,
       }),
       brave: new FormGroup({
-        domain: new FormControl<string>('', { nonNullable: true }),
-        country: new FormControl<string>('', { nonNullable: true }),
+        domain: new FormControl<string | null>(null),
+        country: new FormControl<string | null>(null),
       }),
       perplexity: new FormGroup({
         domain: new FormArray<FormControl<string>>([new FormControl<string>('', { nonNullable: true })]),
