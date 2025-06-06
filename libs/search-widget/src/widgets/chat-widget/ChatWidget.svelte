@@ -37,6 +37,7 @@
     widgetFeedback,
     widgetImageRagStrategies,
     widgetRagStrategies,
+    resetChat,
   } from '../../core';
   import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
   import { Viewer } from '../../components';
@@ -153,6 +154,9 @@
 
   export function ask(question: string, reset = true, doNotTriggerSearch = false) {
     if (doNotTriggerSearch) {
+      if (reset) {
+        resetChat.set();
+      }
       chatInput.set(question);
     } else {
       askQuestion(question, reset).subscribe();
