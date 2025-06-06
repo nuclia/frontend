@@ -94,7 +94,7 @@ export class TestPanelService {
               testAgentStop();
             } else if (lastMessage.operation === AnswerOperation.error) {
               this.toaster.error(
-                lastMessage.exception.detail || 'retrieval-agents.workflow.sidebar.test.toasts.exception-unknown',
+                lastMessage.exception?.detail || 'retrieval-agents.workflow.sidebar.test.toasts.exception-unknown',
               );
               testAgentStop();
             }

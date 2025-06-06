@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
+import { AccordionBodyDirective, AccordionComponent, AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { AragAnswer, AragModule } from '@nuclia/core';
 import { LineBreakFormatterPipe } from '../../../../../../../pipes';
@@ -20,7 +20,9 @@ import { ChipComponent } from '../chip';
     AgentStepComponent,
     AgentContextComponent,
     LineBreakFormatterPipe,
-    PaExpanderModule,
+    AccordionComponent,
+    AccordionBodyDirective,
+    AccordionItemComponent,
     TranslateModule,
   ],
   templateUrl: './agent-block.component.html',
@@ -61,6 +63,11 @@ export class AgentBlockComponent {
       return '';
     }
   });
+
+  updateAccordionHeight(item: AccordionItemComponent) {
+    // update accordion height once expander transition is done
+    setTimeout(() => item.updateContentHeight(), 200);
+  }
 
   private getNodeKey(module: AragModule) {
     let nodeKey;
