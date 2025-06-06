@@ -90,7 +90,12 @@ export class TestPanelService {
           next: (data) => {
             testAgentUpdateResults(data);
             const lastMessage = data[data.length - 1];
-            if (lastMessage.operation === AnswerOperation.done || lastMessage.operation === AnswerOperation.error) {
+            if (lastMessage.operation === AnswerOperation.done) {
+              testAgentStop();
+            } else if (lastMessage.operation === AnswerOperation.error) {
+              this.toaster.error(
+                lastMessage.exception.detail || 'retrieval-agents.workflow.sidebar.test.toasts.exception-unknown',
+              );
               testAgentStop();
             }
           },
@@ -119,7 +124,13 @@ export class TestPanelService {
       if (data) {
         // Update the state
         testAgentAddAnswer(data);
-        if (data.operation === AnswerOperation.done || data.operation === AnswerOperation.error) {
+        if (data.operation === AnswerOperation.done) {
+          ws.close(1000);
+          testAgentStop();
+        } else if (data.operation === AnswerOperation.error) {
+          this.toaster.error(
+            data.exception.detail || 'retrieval-agents.workflow.sidebar.test.toasts.exception-unknown',
+          );
           ws.close(1000);
           testAgentStop();
         }

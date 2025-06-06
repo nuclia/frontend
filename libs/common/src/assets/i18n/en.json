@@ -1426,6 +1426,7 @@
 	"retrieval-agents.workflow.sidebar.test.interactions.steps": "Steps",
 	"retrieval-agents.workflow.sidebar.test.interactions.user-input": "User input",
 	"retrieval-agents.workflow.sidebar.test.title": "Test agent",
+	"retrieval-agents.workflow.sidebar.test.toasts.exception-unknown": "An error occurred while interacting with the agent",
 	"retrieval-agents.workflow.sidebar.test.toasts.session-closing-error": "An error occurred while closing the session interactions.",
 	"retrieval-agents.workflow.sidebar.test.toasts.session-creation-error": "An error occurred while creating the session.",
 	"retrieval-agents.workflow.toolbar-buttons.add-node": "Add node",
