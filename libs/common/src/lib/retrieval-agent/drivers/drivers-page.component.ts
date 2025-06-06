@@ -79,6 +79,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'nuclia':
         modalRef$ = this.sdk.kbList.pipe(
+          take(1),
           map((kbList) => this.modal.openModal(NucliaDriverModalComponent, new ModalConfig({ data: { kbList } }))),
         );
         break;
