@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
+import { ChangeDetectionStrategy, Component, computed, effect, input, viewChildren } from '@angular/core';
+import { AccordionBodyDirective, AccordionComponent, AccordionItemComponent } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { AragAnswer, AragModule } from '@nuclia/core';
 import { LineBreakFormatterPipe } from '../../../../../../../pipes';
@@ -20,7 +20,9 @@ import { ChipComponent } from '../chip';
     AgentStepComponent,
     AgentContextComponent,
     LineBreakFormatterPipe,
-    PaExpanderModule,
+    AccordionComponent,
+    AccordionBodyDirective,
+    AccordionItemComponent,
     TranslateModule,
   ],
   templateUrl: './agent-block.component.html',
@@ -30,6 +32,8 @@ import { ChipComponent } from '../chip';
 export class AgentBlockComponent {
   answer = input<AragAnswerUi>();
   result = input<AragAnswer>();
+
+  accordionItems = viewChildren(AccordionItemComponent);
 
   contextCost = computed(() => {
     const cost = (this.answer()?.steps || []).reduce(
@@ -61,6 +65,20 @@ export class AgentBlockComponent {
       return '';
     }
   });
+
+  constructor() {
+    effect(() => {
+      const accordions = this.accordionItems();
+      if (this.answer()) {
+        accordions.forEach((item) => item.updateContentHeight());
+      }
+    });
+  }
+
+  updateAccordionHeight(item: AccordionItemComponent) {
+    // update accordion height once expander transition is done
+    setTimeout(() => item.updateContentHeight(), 200);
+  }
 
   private getNodeKey(module: AragModule) {
     let nodeKey;

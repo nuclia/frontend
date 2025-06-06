@@ -1,7 +1,9 @@
 <stf-blockquote>
   <stf-chip>{{ step().title }}</stf-chip>
   @if (step().prompt; as prompt) {
-    <pa-expander [expanded]="false">
+    <pa-expander
+      [expanded]="false"
+      (toggleExpander)="heightUpdated.emit()">
       <pa-expander-header>Prompt</pa-expander-header>
       <pa-expander-body>
         <div class="config">

@@ -4,38 +4,46 @@
   }
   <div class="description">{{ description() | translate }}</div>
 
-  @if (answer(); as answer) {
-    <pa-expander [contentLoaded]="answer.steps">
-      <pa-expander-header>
-        <span class="expander-header">
-          {{ 'retrieval-agents.workflow.sidebar.test.interactions.steps' | translate }}
-        </span>
-      </pa-expander-header>
-      <pa-expander-body>
-        <div class="step-container">
-          @for (step of answer.steps; track step) {
-            <stf-agent-step [step]="step"></stf-agent-step>
-          }
-        </div>
-      </pa-expander-body>
-    </pa-expander>
+  <pa-accordion
+    allowMultipleExpanded=""
+    noBorders
+    small>
+    @if (answer(); as answer) {
+      <pa-accordion-item
+        #accordionForSteps
+        id="steps"
+        expanded
+        [itemTitle]="'retrieval-agents.workflow.sidebar.test.interactions.steps' | translate">
+        <pa-accordion-item-body>
+          <div class="step-container">
+            @for (step of answer.steps; track step) {
+              <stf-agent-step
+                [step]="step"
+                (heightUpdated)="updateAccordionHeight(accordionForSteps)"></stf-agent-step>
+            }
+          </div>
+        </pa-accordion-item-body>
+      </pa-accordion-item>
 
-    @if (answer.context; as context) {
-      <pa-expander [contentLoaded]="context">
-        <pa-expander-header>
-          <span class="expander-header">
-            {{ 'retrieval-agents.workflow.sidebar.test.interactions.context.title' | translate }}
-          </span>
-        </pa-expander-header>
-        <pa-expander-body>
-          <stf-agent-context [context]="context"></stf-agent-context>
-        </pa-expander-body>
-      </pa-expander>
-      @if (contextCost(); as cost) {
-        <div class="cost">{{ cost }}</div>
+      @if (answer.context; as context) {
+        <pa-accordion-item
+          #accordionForContext
+          id="context"
+          expanded
+          [itemTitle]="'retrieval-agents.workflow.sidebar.test.interactions.context.title' | translate">
+          <pa-accordion-item-body>
+            <stf-agent-context
+              [context]="context"
+              (heightUpdated)="updateAccordionHeight(accordionForContext)"></stf-agent-context>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+
+        @if (contextCost(); as cost) {
+          <div class="cost">{{ cost }}</div>
+        }
       }
     }
-  }
+  </pa-accordion>
 
   @if (result()?.answer; as resultAnswer) {
     <div [innerHTML]="resultAnswer | lineBreakFormatter"></div>

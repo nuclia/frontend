@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { PaExpanderModule } from '@guillotinaweb/pastanaga-angular';
 import { AragAnswerStep } from '@nuclia/core';
 import { LineBreakFormatterPipe } from 'libs/common/src/lib/pipes';
@@ -16,6 +16,7 @@ import { ChipComponent } from '../chip';
 })
 export class AgentStepComponent {
   step = input.required<AragAnswerStep>();
+  heightUpdated = output();
 
   formattedCost = computed(() => {
     const input = this.step().input_nuclia_tokens;

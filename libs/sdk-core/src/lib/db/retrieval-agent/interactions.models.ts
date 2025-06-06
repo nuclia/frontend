@@ -13,7 +13,7 @@ export enum AnswerOperation {
 }
 
 export interface AragAnswer {
-  exception: { detail: string };
+  exception: { detail: string } | null;
   answer: string | null;
   generated_text: string | null;
   step: AragAnswerStep | null;
