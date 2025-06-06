@@ -1404,7 +1404,7 @@
 	"retrieval-agents.workflow.sidebar.test.description.external": "",
 	"retrieval-agents.workflow.sidebar.test.description.generate": "",
 	"retrieval-agents.workflow.sidebar.test.description.historical": "",
-	"retrieval-agents.workflow.sidebar.test.description.internet": "",
+	"retrieval-agents.workflow.sidebar.test.description.internet": "Retrieving data from internet…",
 	"retrieval-agents.workflow.sidebar.test.description.mcp": "",
 	"retrieval-agents.workflow.sidebar.test.description.postprocess_alinia": "",
 	"retrieval-agents.workflow.sidebar.test.description.preprocess_alinia": "",

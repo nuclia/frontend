@@ -1384,6 +1384,7 @@
 	"retrieval-agents.workflow.sidebar.rules.title": "Normas",
 	"retrieval-agents.workflow.sidebar.test.description.ask": "Recuperando datos de fuentes seleccionadas...",
 	"retrieval-agents.workflow.sidebar.test.description.conditional": "Evaluando la condición según el prompt…",
+	"retrieval-agents.workflow.sidebar.test.description.internet": "Recuperando datos de internet…",
 	"retrieval-agents.workflow.sidebar.test.description.remi": "Validando el contexto…",
 	"retrieval-agents.workflow.sidebar.test.description.rephrase": "Reformulando la entrada en función del prompt y la fuente…",
 	"retrieval-agents.workflow.sidebar.test.description.restart": "Reiniciando el flujo de trabajo…",

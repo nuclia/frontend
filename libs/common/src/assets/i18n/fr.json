@@ -1384,6 +1384,7 @@
 	"retrieval-agents.workflow.sidebar.rules.title": "Règles",
 	"retrieval-agents.workflow.sidebar.test.description.ask": "Récupération des données à partir des sources sélectionnées...",
 	"retrieval-agents.workflow.sidebar.test.description.conditional": "Évaluation de la condition en fonction du prompt…",
+	"retrieval-agents.workflow.sidebar.test.description.internet": "Récupération de données sur Internet…",
 	"retrieval-agents.workflow.sidebar.test.description.remi": "Validation du contexte…",
 	"retrieval-agents.workflow.sidebar.test.description.rephrase": "Reformule l'entrée en fonction du prompt et de la source…",
 	"retrieval-agents.workflow.sidebar.test.description.restart": "Redémarrage du flux de travail…",

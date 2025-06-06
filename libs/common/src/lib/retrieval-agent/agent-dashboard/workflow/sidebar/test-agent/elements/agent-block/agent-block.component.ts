@@ -72,6 +72,12 @@ export class AgentBlockComponent {
       case 'post_conditional':
         nodeKey = 'conditional';
         break;
+      case 'brave':
+      case 'google':
+      case 'perplexity':
+      case 'tavily':
+        nodeKey = 'internet';
+        break;
       default:
         nodeKey = module;
         break;
