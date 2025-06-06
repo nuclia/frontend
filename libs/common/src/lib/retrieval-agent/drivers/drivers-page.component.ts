@@ -147,6 +147,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
         break;
       case 'nucliadb':
         modalRef$ = this.sdk.kbList.pipe(
+          take(1),
           map((kbList) =>
             this.modal.openModal(
               NucliaDriverModalComponent,
