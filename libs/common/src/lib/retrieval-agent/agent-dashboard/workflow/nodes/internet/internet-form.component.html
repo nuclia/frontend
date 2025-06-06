@@ -13,7 +13,8 @@
           formControlName="source"
           externalLabel
           [placeholder]="'retrieval-agents.workflow.node-types.internet.form.provider.placeholder' | translate"
-          [options]="providerOptions()"></pa-select>
+          [options]="providerOptions()"
+          (valueChange)="updateCurrentDriver($event)"></pa-select>
       </div>
       @if (providerOptions()?.length === 0) {
         <nsi-info-card type="warning">
@@ -27,7 +28,7 @@
         </pa-button>
       }
     </div>
-    @if (provider === 'brave') {
+    @if (currentProvider() === 'brave') {
       <ng-container formGroupName="brave">
         <div class="form-entry">
           <label for="domain">
@@ -46,7 +47,7 @@
             externalLabel=""></pa-input>
         </div>
       </ng-container>
-    } @else if (provider === 'perplexity') {
+    } @else if (currentProvider() === 'perplexity') {
       <ng-container formGroupName="perplexity">
         <div class="form-entry field-list">
           <label for="domain">

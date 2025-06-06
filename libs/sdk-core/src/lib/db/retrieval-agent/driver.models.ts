@@ -1,6 +1,13 @@
 import { ProviderType } from './retrieval-agent.types';
 
 export interface IDriver {
+  /**
+   * Driver identifier, to be used in path URLs (endpoints)
+   */
+  id: string;
+  /**
+   * Driver configuration identifier, to be used in agent configuration
+   */
   identifier: string;
   provider: ProviderType;
   name: string;
@@ -16,7 +23,7 @@ export interface IDriver {
     | McpStdioConfig;
 }
 
-export type DriverCreation = Omit<IDriver, 'identifier'>;
+export type DriverCreation = Omit<IDriver, 'id'>;
 
 export type Driver =
   | BraveDriver

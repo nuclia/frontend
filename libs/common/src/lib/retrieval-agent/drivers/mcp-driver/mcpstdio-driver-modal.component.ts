@@ -73,7 +73,7 @@ export class McpStdioDriverModalComponent {
     if (this.form.valid) {
       const { name, env, ...rawConfig } = this.form.getRawValue();
       const config: McpStdioConfig = { ...rawConfig, env: this.formatEnv(env) };
-      const driver: DriverCreation = {
+      const driver: Omit<DriverCreation, 'identifier'> = {
         name,
         provider: 'mcpstdio',
         config,

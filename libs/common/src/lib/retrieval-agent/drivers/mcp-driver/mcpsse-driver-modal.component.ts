@@ -58,7 +58,7 @@ export class McpSseDriverModalComponent {
     if (this.form.valid) {
       const { name, headers, ...rawConfig } = this.form.getRawValue();
       const config: McpSseConfig = { ...rawConfig, headers: formatHeaders(headers) };
-      const driver: DriverCreation = {
+      const driver: Omit<DriverCreation, 'identifier'> = {
         name,
         provider: 'mcpsse',
         config,

@@ -165,7 +165,7 @@ export class NucliaDriverModalComponent {
   }
 
   private submitConfig(name: string, config: NucliaDBConfig) {
-    const driver: DriverCreation = {
+    const driver: Omit<DriverCreation, 'identifier'> = {
       name,
       provider: 'nucliadb',
       config,
