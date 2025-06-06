@@ -40,7 +40,7 @@
   import { DebugInfo, InitialAnswer, JsonAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
   import { injectCustomCss } from '../../core/utils';
   import { Button, IconButton } from '../../common';
-  import ResultsOrder from '../../components/results-order/ResultsOrder.svelte';
+  import ResultsOrderButton from '../../components/results-order/ResultsOrderButton.svelte';
 
   interface Props {
     csspath?: string;
@@ -166,7 +166,7 @@
               {$_('results.title')}
               {#if $hasSortButton}
                 <div class="sort">
-                  <ResultsOrder></ResultsOrder>
+                  <ResultsOrderButton></ResultsOrderButton>
                 </div>
               {/if}
             </h3>

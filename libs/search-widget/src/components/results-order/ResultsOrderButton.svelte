@@ -50,4 +50,4 @@
 
 <style
   lang="scss"
-  src="./resultsOrder.scss"></style>
+  src="./ResultsOrderButton.scss"></style>
