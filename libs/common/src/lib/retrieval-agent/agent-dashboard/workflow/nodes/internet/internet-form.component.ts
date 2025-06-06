@@ -65,6 +65,7 @@ export class InternetFormComponent extends FormDirective implements OnInit {
   driversPath = computed(() => `${aragUrl()}/drivers`);
   providerOptions = signal<OptionModel[] | null>(null);
   drivers = signal<InternetDriver[]>([]);
+  currentProvider = signal<string>('');
 
   ngOnInit(): void {
     this.sdk.currentArag
@@ -88,6 +89,7 @@ export class InternetFormComponent extends FormDirective implements OnInit {
       .subscribe((options) => this.providerOptions.set(options));
     if (this.config) {
       const config = this.config as InternetAgentUI;
+      this.currentProvider.set(config.provider);
       if (config.perplexity.domain.length > 1) {
         for (let i = 0; i < config.perplexity.domain.length - 1; i++) {
           this.addPerplexityDomain();
@@ -102,6 +104,18 @@ export class InternetFormComponent extends FormDirective implements OnInit {
   }
   removePerplexityDomain(index: number) {
     this.perplexityDomains.removeAt(index);
+  }
+
+  updateCurrentDriver(source: string) {
+    const options = this.providerOptions();
+    if (!options) {
+      return;
+    }
+    const currentOption = options.find((option) => option.value === source);
+    // provider is stored in option help
+    if (currentOption?.help) {
+      this.currentProvider.set(currentOption.help);
+    }
   }
 
   override submit(): void {
