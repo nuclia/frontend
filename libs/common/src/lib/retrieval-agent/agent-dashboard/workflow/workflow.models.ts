@@ -456,20 +456,21 @@ export function getAgentFromConfig(
   nodeType: NodeType,
   config: any,
 ): PreprocessAgentCreation | ContextAgentCreation | GenerationAgentCreation | PostprocessAgentCreation {
+  const cleanConfig = cleanupConfig(config);
   switch (nodeType) {
     case 'rephrase':
-      return rephraseUiToCreation(config);
+      return rephraseUiToCreation(cleanConfig);
     case 'internet':
-      return internetUiToCreation(config);
+      return internetUiToCreation(cleanConfig);
     case 'sql':
-      return sqlUiToCreation(config);
+      return sqlUiToCreation(cleanConfig);
     case 'ask':
-      return askUiToCreation(config);
+      return askUiToCreation(cleanConfig);
     case 'external':
-      return externalUiToCreation(config);
+      return externalUiToCreation(cleanConfig);
     case 'preprocess_alinia':
     case 'postprocess_alinia':
-      return guardrailsUiToCreation(config);
+      return guardrailsUiToCreation(cleanConfig);
     case 'historical':
     case 'cypher':
     case 'pre_conditional':
@@ -481,8 +482,26 @@ export function getAgentFromConfig(
     case 'remi':
     case 'restricted':
     case 'mcp':
-      return { module: nodeType, ...config };
+      return { module: nodeType, ...cleanConfig };
   }
+}
+
+/**
+ * Angular form usually send empty string when a field is not set, but the backend is expecting null in that case.
+ * So we're changing all empty strings by null in the config
+ * @param config Agent configuration
+ */
+function cleanupConfig(config: any): any {
+  if (typeof config === 'object' && !Array.isArray(config)) {
+    Object.entries(config).forEach(([key, value]) => {
+      if (value === '') {
+        config[key] = null;
+      } else if (value !== null && typeof value === 'object') {
+        config[key] = cleanupConfig(value);
+      }
+    });
+  }
+  return config;
 }
 
 export function getConfigFromAgent(
