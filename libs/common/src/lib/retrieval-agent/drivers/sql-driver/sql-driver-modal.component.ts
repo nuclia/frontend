@@ -39,7 +39,7 @@ export class SqlDriverModalComponent {
   submit() {
     if (this.form.valid) {
       const { name, ...config } = this.form.getRawValue();
-      const driver: DriverCreation = {
+      const driver: Omit<DriverCreation, 'identifier'> = {
         name,
         provider: 'sql',
         config,

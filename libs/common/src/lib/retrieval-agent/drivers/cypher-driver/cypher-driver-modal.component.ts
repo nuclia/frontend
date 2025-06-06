@@ -74,7 +74,7 @@ export class CypherDriverModalComponent {
     if (this.form.valid) {
       const { name, extra, ...rawConfig } = this.form.getRawValue();
       const config: CypherConfig = { ...rawConfig, config: formatExtraConfig(extra) };
-      const driver: DriverCreation = {
+      const driver: Omit<DriverCreation, 'identifier'> = {
         name,
         provider: 'cypher',
         config,

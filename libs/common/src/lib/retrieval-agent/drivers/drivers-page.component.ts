@@ -128,10 +128,9 @@ export class DriversPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  edit(driver: Driver) {
-    const driverId = driver.identifier;
+  edit(driverToEdit: Driver) {
     let modalRef$: Observable<ModalRef>;
-    switch (driver.provider) {
+    switch (driverToEdit.provider) {
       case 'brave':
       case 'tavily':
       case 'perplexity':
@@ -139,31 +138,34 @@ export class DriversPageComponent implements OnInit, OnDestroy {
         modalRef$ = of(
           this.modal.openModal(
             InternetDriverModalComponent,
-            new ModalConfig({ data: { driver, driverList: this.drivers() } }),
+            new ModalConfig({ data: { driver: driverToEdit, driverList: this.drivers() } }),
           ),
         );
         break;
       case 'cypher':
-        modalRef$ = of(this.modal.openModal(CypherDriverModalComponent, new ModalConfig({ data: driver })));
+        modalRef$ = of(this.modal.openModal(CypherDriverModalComponent, new ModalConfig({ data: driverToEdit })));
         break;
       case 'nucliadb':
         modalRef$ = this.sdk.kbList.pipe(
           map((kbList) =>
-            this.modal.openModal(NucliaDriverModalComponent, new ModalConfig({ data: { kbList, driver } })),
+            this.modal.openModal(
+              NucliaDriverModalComponent,
+              new ModalConfig({ data: { kbList, driver: driverToEdit } }),
+            ),
           ),
         );
         break;
       case 'sql':
-        modalRef$ = of(this.modal.openModal(SqlDriverModalComponent, new ModalConfig({ data: driver })));
+        modalRef$ = of(this.modal.openModal(SqlDriverModalComponent, new ModalConfig({ data: driverToEdit })));
         break;
       case 'mcpsse':
-        modalRef$ = of(this.modal.openModal(McpSseDriverModalComponent, new ModalConfig({ data: driver })));
+        modalRef$ = of(this.modal.openModal(McpSseDriverModalComponent, new ModalConfig({ data: driverToEdit })));
         break;
       case 'mcpstdio':
-        modalRef$ = of(this.modal.openModal(McpStdioDriverModalComponent, new ModalConfig({ data: driver })));
+        modalRef$ = of(this.modal.openModal(McpStdioDriverModalComponent, new ModalConfig({ data: driverToEdit })));
         break;
       case 'alinia':
-        modalRef$ = of(this.modal.openModal(GuardrailsDriverModalComponent, new ModalConfig({ data: driver })));
+        modalRef$ = of(this.modal.openModal(GuardrailsDriverModalComponent, new ModalConfig({ data: driverToEdit })));
         break;
     }
     modalRef$
@@ -173,7 +175,8 @@ export class DriversPageComponent implements OnInit, OnDestroy {
         switchMap((driver) =>
           this.sdk.currentArag.pipe(
             take(1),
-            switchMap((arag) => arag.patchDriver({ identifier: driverId, ...driver })),
+            // edition modal doesn't return identifiers properties, but they are present in driverToEdit
+            switchMap((arag) => arag.patchDriver({ ...driverToEdit, ...driver })),
           ),
         ),
         switchMap(() => this.sdk.refreshCurrentArag()),
@@ -197,7 +200,7 @@ export class DriversPageComponent implements OnInit, OnDestroy {
         switchMap(() =>
           this.sdk.currentArag.pipe(
             take(1),
-            switchMap((arag) => arag.deleteDriver(driver.identifier)),
+            switchMap((arag) => arag.deleteDriver(driver.id)),
           ),
         ),
         switchMap(() => this.sdk.refreshCurrentArag()),

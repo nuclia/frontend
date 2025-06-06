@@ -134,7 +134,7 @@ export class InternetDriverModalComponent {
             break;
         }
 
-        const driver: DriverCreation = {
+        const driver: Omit<DriverCreation, 'identifier'> = {
           name,
           provider,
           config,
