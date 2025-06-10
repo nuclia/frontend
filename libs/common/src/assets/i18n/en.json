@@ -1646,6 +1646,7 @@
 	"search.configuration.search-box.preselected-filters.assistant.warning.malformed-expression": "One expression from the preselected filters’ input is malformed",
 	"search.configuration.search-box.preselected-filters.assistant.warning.malformed-expressions": "{{count}} expressions from the preselected filters’ input are malformed",
 	"search.configuration.search-box.preselected-filters.assistant-button-label": "Use assistant",
+	"search.configuration.search-box.preselected-filters.filter-expression.textarea-label": "Filter expression",
 	"search.configuration.search-box.preselected-filters.info-box": "Filter format <a href=\"https://docs.nuclia.dev/docs/rag/search-strategy#filters\" target=\"_blank\" rel=\"noopener noreferrer\">documented here</a>. These filters will be applied to any search queries without being visible to the end users. ",
 	"search.configuration.search-box.preselected-filters.textarea-help": "One filter expression per line",
 	"search.configuration.search-box.preselected-filters.textarea-label": "Preselected filters",

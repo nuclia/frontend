@@ -5,8 +5,10 @@ import { forkJoin, Subscription } from 'rxjs';
 import {
   askQuestion,
   autofilerDisabled,
+  combinedFilterExpression,
   combinedFilters,
   disableAnswers,
+  filterExpression,
   hideResults,
   isAnswerEnabled,
   isEmptySearchQuery,
@@ -61,6 +63,8 @@ export const setupTriggerSearch = (
                 searchShow.pipe(take(1)),
                 searchFilters.pipe(take(1)),
                 combinedFilters.pipe(take(1)),
+                combinedFilterExpression.pipe(take(1)),
+                filterExpression.pipe(take(1)),
                 autofilerDisabled.pipe(take(1)),
                 isAnswerEnabled.pipe(take(1)),
                 widgetRagStrategies.pipe(take(1)),
@@ -78,6 +82,8 @@ export const setupTriggerSearch = (
                     show,
                     filters,
                     combinedFilters,
+                    combinedFilterExpression,
+                    filterExpression,
                     autoFilterDisabled,
                     isAnswerEnabled,
                     ragStrategies,
@@ -89,7 +95,8 @@ export const setupTriggerSearch = (
                     const currentOptions: SearchOptions = {
                       ...options,
                       show,
-                      filters: combinedFilters,
+                      filters: filterExpression ? undefined : combinedFilters,
+                      filter_expression: filterExpression ? combinedFilterExpression : undefined,
                       ...(autoFilterDisabled ? { autofilter: false } : {}),
                     };
                     if (isAnswerEnabled && !trigger?.more) {

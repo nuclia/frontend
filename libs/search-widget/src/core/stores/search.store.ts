@@ -3,6 +3,7 @@ import type {
   Classification,
   FieldId,
   Filter,
+  FilterExpression,
   IErrorResponse,
   IFieldData,
   IResource,
@@ -33,13 +34,14 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import { combineLatest, filter, map, Subject } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
 import type { FindResultsAsList, ResultMetadata, ResultType, TypedResult } from '../models';
 import { NO_RESULT_LIST } from '../models';
 import { SvelteState } from '../state-lib';
 import { getResultMetadata } from '../utils';
 import { orFilterLogic } from './widget.store';
+import { labelSets } from './labels.store';
 
 interface SearchFilters {
   labels?: LabelFilter[];
@@ -77,6 +79,7 @@ interface SearchState {
   query: string;
   filters: SearchFilters;
   preselectedFilters: string[] | Filter[];
+  filterExpression?: FilterExpression;
   options: SearchOptions;
   backendConfig: {
     find?: SearchOptions;
@@ -107,6 +110,7 @@ export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
   preselectedFilters: [],
+  filterExpression: undefined,
   options: {},
   backendConfig: {},
   show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
@@ -249,6 +253,16 @@ export const preselectedFilters = searchState.writer<string[] | Filter[], string
   },
 );
 
+export const filterExpression = searchState.writer<FilterExpression | undefined>(
+  (state) => state.filterExpression,
+  (state, filterExpression) => {
+    return {
+      ...state,
+      filterExpression,
+    };
+  },
+);
+
 export const resultsOrder = searchState.writer<ResultsOrder>(
   (state) => state.resultsOrder,
   (state, resultsOrder) => ({
@@ -315,6 +329,77 @@ export const combinedFilters = combineLatest([searchFilters, preselectedFilters,
       const isAdvancedFilters = preselectedFilters.every((filter) => typeof filter === 'object');
       return isAdvancedFilters ? filters.concat(preselectedFilters) : filters.concat([{ all: preselectedFilters }]);
     }
+  }),
+);
+
+export const combinedFilterExpression: Observable<FilterExpression> = combineLatest([
+  searchState.reader<SearchFilters>((state) => state.filters),
+  orFilterLogic,
+  filterExpression,
+  labelSets,
+]).pipe(
+  map(([filters, orFilterLogic, filterExpression, labelSets]) => {
+    if (
+      ((filterExpression?.operator === 'and' || !filterExpression?.operator) && orFilterLogic) ||
+      (filterExpression?.operator === 'or' && !orFilterLogic)
+    ) {
+      // Filters cannot be combined
+      return filterExpression || {};
+    }
+    const fieldFilters = {
+      [orFilterLogic ? 'or' : 'and']: [
+        ...(filters.entities || [])?.map((entity) => ({
+          prop: 'entity',
+          subtype: entity.family,
+          value: entity.entity,
+        })),
+        ...(filters.labels || [])
+          ?.filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.RESOURCES))
+          .map((label) => ({
+            prop: 'label',
+            labelset: label.classification.labelset,
+            label: label.classification.label,
+          })),
+        ...(filters.labelSets || [])
+          ?.filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.RESOURCES))
+          .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
+      ],
+    };
+    const paragraphFilters = {
+      [orFilterLogic ? 'or' : 'and']: [
+        ...(filters.labels || [])
+          .filter((label) => labelSets[label.classification.labelset]?.kind.includes(LabelSetKind.PARAGRAPHS))
+          .map((label) => ({
+            prop: 'label',
+            labelset: label.classification.labelset,
+            label: label.classification.label,
+          })),
+        ...(filters.labelSets || [])
+          .filter((labelset) => labelSets[labelset.id]?.kind.includes(LabelSetKind.PARAGRAPHS))
+          .map((labelset) => ({ prop: 'label', labelset: labelset.id })),
+      ],
+    };
+    const hasFieldFilters = Object.values(fieldFilters)[0].length > 0;
+    const hasParagraphFilters = Object.values(paragraphFilters)[0].length > 0;
+    return {
+      ...(filterExpression || {}),
+      field:
+        filterExpression?.field && hasFieldFilters
+          ? {
+              and: [filterExpression.field, fieldFilters],
+            }
+          : hasFieldFilters
+            ? fieldFilters
+            : filterExpression?.field,
+      paragraph:
+        filterExpression?.paragraph && hasParagraphFilters
+          ? {
+              and: [filterExpression.paragraph, paragraphFilters],
+            }
+          : hasParagraphFilters
+            ? paragraphFilters
+            : filterExpression?.paragraph,
+    };
   }),
 );
 
