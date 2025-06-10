@@ -1,3 +1,4 @@
+import { IErrorResponse } from '../../models';
 import { AragModule } from './retrieval-agent.types';
 
 export enum InteractionOperation {
@@ -56,4 +57,13 @@ export interface AragAnswerContext {
   answer: string | null;
   title: string;
   missing: unknown;
+}
+
+export function mapErrorResponseFromAnswer(message: AragAnswer): IErrorResponse {
+  return {
+    type: 'error',
+    status: AnswerOperation.error,
+    detail: message.exception?.detail || '',
+    body: message,
+  };
 }

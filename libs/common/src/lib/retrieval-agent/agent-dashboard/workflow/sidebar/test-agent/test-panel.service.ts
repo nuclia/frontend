@@ -1,16 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { AnswerOperation, InteractionOperation, RetrievalAgent, Session } from '@nuclia/core';
+import { AnswerOperation, RetrievalAgent, Session } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { map, Observable, switchMap, take, tap } from 'rxjs';
-import {
-  testAgentAddAnswer,
-  testAgentHasAllAnswers,
-  testAgentLastAnswer,
-  testAgentRun,
-  testAgentStop,
-  testAgentUpdateResults,
-} from '../../workflow.state';
+import { catchError, map, Observable, switchMap, take, tap, throwError } from 'rxjs';
+import { testAgentAddAnswer, testAgentRun, testAgentStop } from '../../workflow.state';
 
 const TEST_SESSION_SLUG_PREFIX = 'test-session';
 
@@ -20,7 +13,7 @@ const TEST_SESSION_SLUG_PREFIX = 'test-session';
 export class TestPanelService {
   private sdk = inject(SDKService);
   private toaster = inject(SisToastService);
-  private currentWs?: WebSocket;
+  private currentSessionId?: string;
 
   getTestSessions(): Observable<Session[]> {
     return this.sdk.currentArag.pipe(
@@ -48,7 +41,14 @@ export class TestPanelService {
               summary: `Testing retrieval agent ${arag.title}.`,
               format: 'PLAIN',
             })
-            .pipe(map((response) => ({ sessionId: response.uuid, arag }))),
+            .pipe(
+              map((response) => ({ sessionId: response.uuid, arag })),
+              catchError((error) => {
+                this.toaster.error('retrieval-agents.workflow.sidebar.test.toasts.session-creation-error');
+                testAgentStop();
+                return throwError(() => error);
+              }),
+            ),
         ),
       );
     } else {
@@ -62,107 +62,47 @@ export class TestPanelService {
   runTest(question: string, userSessionId: string, useWS = true, fromCursor?: number) {
     // update the state and keep the existing answers only when a cursor is provided
     testAgentRun(question, typeof fromCursor === 'number');
-    const sessionRequest: Observable<{ sessionId: string; arag: RetrievalAgent }> = this.getOrCreateSession(
-      userSessionId,
-      question,
-    );
 
-    if (useWS) {
-      sessionRequest
-        .pipe(
-          switchMap(({ sessionId, arag }) =>
-            arag.getWsUrl(sessionId, fromCursor).pipe(tap((wsUrl) => this.openWebSocket(wsUrl, question, sessionId))),
-          ),
-        )
-        .subscribe({
-          error: () => {
-            this.toaster.error('retrieval-agents.workflow.sidebar.test.toasts.session-creation-error');
-            testAgentStop();
-          },
-        });
-    } else {
-      sessionRequest
-        .pipe(
-          // Use POST interaction
-          switchMap(({ sessionId, arag }) => arag.interaction(sessionId, question)),
-        )
-        .subscribe({
-          next: (data) => {
-            testAgentUpdateResults(data);
-            const lastMessage = data[data.length - 1];
-            if (lastMessage.operation === AnswerOperation.done) {
+    this.getOrCreateSession(userSessionId, question)
+      .pipe(
+        tap(({ sessionId }) => (this.currentSessionId = sessionId)),
+        switchMap(({ sessionId, arag }) => arag.interact(sessionId, question, useWS ? 'WS' : 'POST')),
+      )
+      .subscribe({
+        next: (data) => {
+          if (data.type === 'answer') {
+            const message = data.answer;
+            if (message.operation === AnswerOperation.answer) {
+              testAgentAddAnswer(message);
+            } else if (message.operation === AnswerOperation.done || message.operation === AnswerOperation.error) {
               testAgentStop();
-            } else if (lastMessage.operation === AnswerOperation.error) {
-              this.toaster.error(
-                lastMessage.exception?.detail || 'retrieval-agents.workflow.sidebar.test.toasts.exception-unknown',
-              );
-              testAgentStop();
+              if (message.operation === AnswerOperation.error) {
+                this.toaster.error(
+                  message.exception?.detail || 'retrieval-agents.workflow.sidebar.test.toasts.exception-unknown',
+                );
+              }
             }
-          },
-          error: () => {
-            this.toaster.error('retrieval-agents.workflow.sidebar.test.toasts.session-creation-error');
+          } else {
+            this.toaster.error(data.detail || 'retrieval-agents.workflow.sidebar.test.toasts.exception-unknown');
             testAgentStop();
-          },
-        });
-    }
+          }
+        },
+        error: () => {
+          this.toaster.error('retrieval-agents.workflow.sidebar.test.toasts.exception-unknown');
+          testAgentStop();
+        },
+      });
   }
 
   stopTest() {
-    this.closeWsConnection();
-  }
-
-  private openWebSocket(wsUrl: string, question: string, sessionId: string) {
-    const ws = new WebSocket(wsUrl);
-    this.currentWs = ws;
-    ws.onopen = () => {
-      const message = { question, operation: InteractionOperation.question };
-      // and send the question
-      ws.send(JSON.stringify(message));
-    };
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data) {
-        // Update the state
-        testAgentAddAnswer(data);
-        if (data.operation === AnswerOperation.done) {
-          ws.close(1000);
-          testAgentStop();
-        } else if (data.operation === AnswerOperation.error) {
-          this.toaster.error(
-            data.exception.detail || 'retrieval-agents.workflow.sidebar.test.toasts.exception-unknown',
-          );
-          ws.close(1000);
-          testAgentStop();
-        }
-      }
-    };
-    ws.onerror = (error) => {
-      console.debug('Error: ', error);
-      testAgentStop();
-    };
-
-    ws.onclose = (event) => {
-      // When close status is not a normal one, we check we got all the answers
-      if (event.code === 1000 || testAgentHasAllAnswers()) {
-        testAgentStop();
-      } else {
-        // If not we reopen a connection from the last seqId
-        const lastSeqId = testAgentLastAnswer().seqid;
-        if (lastSeqId !== null) {
-          this.runTest(question, sessionId, true, lastSeqId + 1);
-        } else {
-          testAgentStop();
-        }
-      }
-    };
-  }
-
-  private closeWsConnection() {
-    if (!this.currentWs) {
-      console.error('No current WebSocket stored');
-      return;
+    if (this.currentSessionId) {
+      const sessionId = this.currentSessionId;
+      this.sdk.currentArag
+        .pipe(
+          take(1),
+          map((arag) => arag.stopInteraction(sessionId)),
+        )
+        .subscribe(() => testAgentStop());
     }
-    this.currentWs.send(JSON.stringify({ question: '', operation: InteractionOperation.quit }));
-    this.currentWs.close(1000);
   }
 }
