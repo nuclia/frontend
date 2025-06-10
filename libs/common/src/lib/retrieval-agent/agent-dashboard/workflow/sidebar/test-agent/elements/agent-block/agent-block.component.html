@@ -9,21 +9,23 @@
     noBorders
     small>
     @if (answer(); as answer) {
-      <pa-accordion-item
-        #accordionForSteps
-        id="steps"
-        expanded
-        [itemTitle]="'retrieval-agents.workflow.sidebar.test.interactions.steps' | translate">
-        <pa-accordion-item-body>
-          <div class="step-container">
-            @for (step of answer.steps; track step) {
-              <stf-agent-step
-                [step]="step"
-                (heightUpdated)="updateAccordionHeight(accordionForSteps)"></stf-agent-step>
-            }
-          </div>
-        </pa-accordion-item-body>
-      </pa-accordion-item>
+      @if (answer.steps.length > 0) {
+        <pa-accordion-item
+          #accordionForSteps
+          id="steps"
+          expanded
+          [itemTitle]="'retrieval-agents.workflow.sidebar.test.interactions.steps' | translate">
+          <pa-accordion-item-body>
+            <div class="step-container">
+              @for (step of answer.steps; track step) {
+                <stf-agent-step
+                  [step]="step"
+                  (heightUpdated)="updateAccordionHeight(accordionForSteps)"></stf-agent-step>
+              }
+            </div>
+          </pa-accordion-item-body>
+        </pa-accordion-item>
+      }
 
       @if (answer.context; as context) {
         <pa-accordion-item
