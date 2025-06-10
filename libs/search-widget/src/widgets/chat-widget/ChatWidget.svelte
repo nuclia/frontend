@@ -5,6 +5,7 @@
     parseRAGImageStrategies,
     parseRAGStrategies,
     Reranker,
+    type FilterExpression,
     type KBStates,
     type Nuclia,
     type RAGImageStrategy,
@@ -20,6 +21,7 @@
     askBackendConfig,
     chatInput,
     chatPlaceholder,
+    filterExpression,
     findBackendConfig,
     preselectedFilters,
     resetChat,
@@ -59,6 +61,7 @@
     rephrase_prompt?: string;
     generativemodel?: string;
     preselected_filters?: string;
+    filter_expression?: string;
     no_tracking = false;
     rag_strategies?: string;
     rag_images_strategies?: string;
@@ -104,6 +107,7 @@
   let rephrase_prompt = $derived(componentProps.rephrase_prompt || config.rephrase_prompt);
   let generativemodel = $derived(componentProps.generativemodel || config.generativemodel);
   let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
+  let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
   let no_tracking = $derived(componentProps.no_tracking || config.no_tracking);
   let rag_strategies = $derived(componentProps.rag_strategies || config.rag_strategies);
   let rag_images_strategies = $derived(componentProps.rag_images_strategies || config.rag_images_strategies);
@@ -176,6 +180,7 @@
 
   let _features: Widget.WidgetFeatures = {};
   let _securityGroups: string[] | undefined;
+  let _filter_expression: FilterExpression | undefined;
 
   const dispatch = createEventDispatcher();
   const dispatchCustomEvent = (name: string, detail: any) => {
@@ -226,6 +231,11 @@
         typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
       _rrf_boosting = typeof rrf_boosting === 'string' ? parseFloat(rrf_boosting) : rrf_boosting;
       _max_paragraphs = typeof max_paragraphs === 'string' ? parseInt(max_paragraphs, 10) : max_paragraphs;
+      try {
+        _filter_expression = filter_expression ? JSON.parse(filter_expression) : undefined;
+      } catch (e) {
+        console.log(`Invalid filter_expression`);
+      }
 
       nucliaAPI = initNuclia(
         nucliaOptions,
@@ -262,6 +272,8 @@
 
       if (preselected_filters) {
         preselectedFilters.set(preselected_filters);
+      } else if (_filter_expression) {
+        filterExpression.set(_filter_expression);
       }
 
       initAnswer();

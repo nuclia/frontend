@@ -83,6 +83,7 @@ export class SearchBoxFormComponent implements OnInit, OnDestroy {
     suggestResults: new FormControl<boolean>(false, { nonNullable: true }),
     autocompleteFromNERs: new FormControl<boolean>(false, { nonNullable: true }),
     preselectedFilters: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
+    preselectedFilterExpression: new FormControl<string>('', { nonNullable: true, updateOn: 'blur' }),
     useSynonyms: new FormControl<boolean>(false, { nonNullable: true }),
     highlight: new FormControl<boolean>(false, { nonNullable: true }),
     prependTheQuery: new FormControl<boolean>(false, { nonNullable: true }),

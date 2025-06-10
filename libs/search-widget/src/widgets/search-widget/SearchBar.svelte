@@ -12,6 +12,7 @@
     parseRAGImageStrategies,
     parseRAGStrategies,
     Reranker,
+    type FilterExpression,
     type KBStates,
     type Nuclia,
     type RAGImageStrategy,
@@ -41,6 +42,7 @@
   import {
     askBackendConfig,
     entityRelations,
+    filterExpression,
     findBackendConfig,
     preselectedFilters,
     searchFilters,
@@ -84,6 +86,7 @@
     mode?: string;
     filters?: string;
     preselected_filters?: string;
+    filter_expression?: string;
     csspath?: string;
     prompt?: string;
     system_prompt?: string;
@@ -132,6 +135,7 @@
   let mode = $derived(componentProps.mode || config.mode);
   let filters = $derived(componentProps.filters || config.filters);
   let preselected_filters = $derived(componentProps.preselected_filters || config.preselected_filters);
+  let filter_expression = $derived(componentProps.filter_expression || config.filter_expression);
   let csspath = $derived(componentProps.csspath || config.csspath);
   let prompt = $derived(componentProps.prompt || config.prompt);
   let system_prompt = $derived(componentProps.system_prompt || config.system_prompt);
@@ -179,6 +183,7 @@
   let _citation_threshold: number | undefined;
   let _rrf_boosting: number | undefined;
   let _max_paragraphs: number | undefined;
+  let _filter_expression: FilterExpression | undefined;
   let initHook: (n: Nuclia) => void = () => {};
 
   export function setInitHook(fn: (n: Nuclia) => void) {
@@ -211,6 +216,7 @@
       rephrase_prompt,
       generativemodel,
       preselected_filters,
+      _filter_expression,
       mode,
       proxy,
       standalone,
@@ -309,6 +315,11 @@
         typeof citation_threshold === 'string' ? parseFloat(citation_threshold) : citation_threshold;
       _rrf_boosting = typeof rrf_boosting === 'string' ? parseFloat(rrf_boosting) : rrf_boosting;
       _max_paragraphs = typeof max_paragraphs === 'string' ? parseInt(max_paragraphs, 10) : max_paragraphs;
+      try {
+        _filter_expression = filter_expression ? JSON.parse(filter_expression) : undefined;
+      } catch (e) {
+        console.log(`Invalid filter_expression`);
+      }
 
       nucliaAPI = initNuclia(
         nucliaOptions,
@@ -356,6 +367,8 @@
       }
       if (preselected_filters) {
         preselectedFilters.set(preselected_filters);
+      } else if (_filter_expression) {
+        filterExpression.set(_filter_expression);
       }
       if (_features.answers) {
         initAnswer();
