@@ -46,6 +46,9 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
 
   @Input() set config(value: Widget.GenerativeAnswerConfig | undefined) {
     if (value) {
+      if (value.ragStrategies?.graph) {
+        value.ragStrategies.graph.exclude_processor_relations = !!value.ragStrategies.graph.agentic_graph_only;
+      }
       this.form.patchValue(value);
     }
   }
@@ -95,7 +98,7 @@ export class GenerativeAnswerFormComponent implements OnInit, OnDestroy {
       graph: new FormGroup({
         hops: new FormControl<number | null>(3),
         top_k: new FormControl<number | null>(50),
-        agentic_graph_only: new FormControl<boolean>(false, { nonNullable: true }),
+        exclude_processor_relations: new FormControl<boolean>(false, { nonNullable: true }),
         relation_text_as_paragraphs: new FormControl<boolean>(false, { nonNullable: true }),
         generative_relation_ranking: new FormControl<boolean>(false, { nonNullable: true }),
         suggest_query_entity_detection: new FormControl<boolean>(false, { nonNullable: true }),
