@@ -387,7 +387,11 @@ export interface GraphStrategy {
   name: RagStrategyName.GRAPH;
   hops: number;
   top_k: number;
-  agentic_graph_only?: boolean;
+  /** @deprecated
+   * Use exclude_processor_relations
+   */
+  agentic_graph_only?: boolean; // backward compat
+  exclude_processor_relations?: boolean;
   relation_ranking?: 'generative' | 'reranker';
   relation_text_as_paragraphs?: boolean;
   query_entity_detection?: 'predict' | 'suggest';

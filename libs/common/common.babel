@@ -36135,7 +36135,7 @@
 														<name>graph</name>
 														<children>
 															<concept_node>
-																<name>agentic_graph_only</name>
+																<name>exclude_processor_relations</name>
 																<description/>
 																<comment/>
 																<translations>
@@ -36158,7 +36158,7 @@
 																</translations>
 															</concept_node>
 															<concept_node>
-																<name>agentic_graph_only_help</name>
+																<name>exclude_processor_relations_help</name>
 																<description/>
 																<comment/>
 																<translations>

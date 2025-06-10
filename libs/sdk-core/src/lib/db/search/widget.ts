@@ -56,7 +56,11 @@ export namespace Widget {
       | {
           hops: number | null;
           top_k: number | null;
-          agentic_graph_only: boolean;
+          /** @deprecated
+           * Use exclude_processor_relations
+           */
+          agentic_graph_only?: boolean;
+          exclude_processor_relations?: boolean;
           relation_text_as_paragraphs: boolean;
           generative_relation_ranking: boolean;
           suggest_query_entity_detection: boolean;
@@ -384,7 +388,7 @@ export function parseRAGStrategies(ragStrategies: string): RAGStrategy[] {
       } else if (name === RagStrategyName.GRAPH) {
         const strategy: Partial<GraphStrategy> = { name, hops: parseInt(rest[0], 10), top_k: parseInt(rest[1], 10) };
         if (rest.length > 2) {
-          strategy.agentic_graph_only = rest[2] === 'true';
+          strategy.exclude_processor_relations = rest[2] === 'true';
         }
         if (rest.length > 3) {
           strategy.relation_text_as_paragraphs = rest[3] === 'true';
@@ -653,7 +657,7 @@ export function getRagStrategies(ragStrategiesConfig: Widget.RagStrategiesConfig
     let strategy = `${RagStrategyName.GRAPH}`;
     strategy += `|${ragStrategiesConfig.graph.hops || 3}`;
     strategy += `|${ragStrategiesConfig.graph.top_k || 50}`;
-    strategy += `|${ragStrategiesConfig.graph.agentic_graph_only}`;
+    strategy += `|${ragStrategiesConfig.graph.exclude_processor_relations}`;
     strategy += `|${ragStrategiesConfig.graph.relation_text_as_paragraphs}`;
     strategy += `|${ragStrategiesConfig.graph.generative_relation_ranking}`;
     strategy += `|${ragStrategiesConfig.graph.suggest_query_entity_detection}`;

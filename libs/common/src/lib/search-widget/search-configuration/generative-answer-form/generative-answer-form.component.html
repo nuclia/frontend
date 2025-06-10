@@ -358,11 +358,14 @@
                 {{ 'search.configuration.generative-answer.rag-strategies.graph.top_k' | translate }}
               </pa-input>
               <pa-checkbox
-                formControlName="agentic_graph_only"
+                formControlName="exclude_processor_relations"
                 [help]="
-                  'search.configuration.generative-answer.rag-strategies.graph.agentic_graph_only_help' | translate
+                  'search.configuration.generative-answer.rag-strategies.graph.exclude_processor_relations_help'
+                    | translate
                 ">
-                {{ 'search.configuration.generative-answer.rag-strategies.graph.agentic_graph_only' | translate }}
+                {{
+                  'search.configuration.generative-answer.rag-strategies.graph.exclude_processor_relations' | translate
+                }}
               </pa-checkbox>
               <pa-checkbox
                 formControlName="relation_text_as_paragraphs"
