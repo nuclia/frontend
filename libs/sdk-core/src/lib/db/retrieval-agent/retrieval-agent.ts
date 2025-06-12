@@ -109,12 +109,19 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     }
   }
 
-  private _interactThroughWs(
+  private _interactThroughWs(sessionId: string, question: string): Observable<AragResponse | IErrorResponse> {
+    const answerSubject = new Subject<AragResponse | IErrorResponse>();
+    this.openWebSocket(sessionId, question, answerSubject);
+
+    return answerSubject.asObservable();
+  }
+
+  private openWebSocket(
     sessionId: string,
     question: string,
+    answerSubject: Subject<AragResponse | IErrorResponse>,
     fromCursor?: number,
-  ): Observable<AragResponse | IErrorResponse> {
-    const answerSubject = new Subject<AragResponse | IErrorResponse>();
+  ) {
     let lastMessage: AragAnswer | undefined;
     this.getWsUrl(sessionId, fromCursor).subscribe({
       next: (wsUrl) => {
@@ -132,11 +139,9 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             if (lastMessage.operation === AnswerOperation.done) {
               ws.close(1000);
               answerSubject.next({ type: 'answer', answer: lastMessage });
-              answerSubject.complete();
             } else if (lastMessage.operation === AnswerOperation.error) {
               ws.close(1000);
               answerSubject.next(mapErrorResponseFromAnswer(lastMessage));
-              answerSubject.complete();
             } else {
               answerSubject.next({ type: 'answer', answer: lastMessage });
             }
@@ -155,7 +160,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             // If not we reopen a connection from the last seqId
             const lastSeqId = lastMessage?.seqid || null;
             if (lastSeqId !== null) {
-              this._interactThroughWs(sessionId, question, lastSeqId + 1);
+              this.openWebSocket(sessionId, question, answerSubject, lastSeqId + 1);
             } else {
               answerSubject.complete();
             }
@@ -167,8 +172,6 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
         answerSubject.complete();
       },
     });
-
-    return answerSubject.asObservable();
   }
 
   /**
