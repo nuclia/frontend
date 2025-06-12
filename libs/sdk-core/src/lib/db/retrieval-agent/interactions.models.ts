@@ -13,6 +13,11 @@ export enum AnswerOperation {
   error = 4,
 }
 
+export interface AragResponse {
+  type: 'answer';
+  answer: AragAnswer;
+}
+
 export interface AragAnswer {
   exception: { detail: string } | null;
   answer: string | null;
@@ -26,7 +31,7 @@ export interface AragAnswer {
 export interface AragAnswerStep {
   original_question_uuid: string;
   actual_question_uuid: string;
-  module: AragModule;
+  module: AragModule | 'router'; // FIXME: remove router once backend will be fixed
   title: string;
   value: string;
   reason: string;

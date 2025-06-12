@@ -1,8 +1,14 @@
-import { map, Observable, Subject } from 'rxjs';
+import { from, map, Observable, Subject, switchMap } from 'rxjs';
 import { IErrorResponse } from '../../models';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
 import { Driver, DriverCreation } from './driver.models';
-import { AnswerOperation, AragAnswer, InteractionOperation, mapErrorResponseFromAnswer } from './interactions.models';
+import {
+  AnswerOperation,
+  AragAnswer,
+  AragResponse,
+  InteractionOperation,
+  mapErrorResponseFromAnswer,
+} from './interactions.models';
 import {
   ContextAgent,
   ContextAgentCreation,
@@ -86,7 +92,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     sessionId: string,
     question: string,
     method: 'POST' | 'WS' = 'WS',
-  ): Observable<{ type: 'answer'; answer: AragAnswer } | IErrorResponse> {
+  ): Observable<AragResponse | IErrorResponse> {
     switch (method) {
       case 'POST':
         return this._interactThroughPost(sessionId, question);
@@ -107,8 +113,8 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     sessionId: string,
     question: string,
     fromCursor?: number,
-  ): Observable<{ type: 'answer'; answer: AragAnswer } | IErrorResponse> {
-    const answerSubject = new Subject<{ type: 'answer'; answer: AragAnswer } | IErrorResponse>();
+  ): Observable<AragResponse | IErrorResponse> {
+    const answerSubject = new Subject<AragResponse | IErrorResponse>();
     let lastMessage: AragAnswer | undefined;
     this.getWsUrl(sessionId, fromCursor).subscribe({
       next: (wsUrl) => {
@@ -171,18 +177,16 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
    * @param question Question to send to the agent
    * @returns
    */
-  private _interactThroughPost(
-    sessionId: string,
-    question: string,
-  ): Observable<{ type: 'answer'; answer: AragAnswer } | IErrorResponse> {
+  private _interactThroughPost(sessionId: string, question: string): Observable<AragResponse | IErrorResponse> {
     const fullPath = this.getInteractionPath(sessionId);
+    let lastMessage: AragAnswer | undefined;
     return this.nuclia.rest
       .getStreamedResponse(fullPath, {
         question,
         operation: InteractionOperation.question,
       })
       .pipe(
-        map(({ data }) => {
+        switchMap(({ data }) => {
           const rows = new TextDecoder()
             .decode(data.buffer)
             .split('\n')
@@ -192,17 +196,26 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             previous += row;
             try {
               const obj = JSON.parse(previous) as AragAnswer;
-              list.push(obj);
+              if (!lastMessage || (lastMessage.seqid && obj.seqid && obj.seqid > lastMessage.seqid)) {
+                list.push(obj);
+              }
               previous = '';
             } catch (e) {
               // block is not complete yet
             }
             return list;
           }, [] as AragAnswer[]);
-          const lastMessage = items[items.length - 1];
-          return lastMessage.operation === AnswerOperation.error
-            ? mapErrorResponseFromAnswer(lastMessage)
-            : { type: 'answer', answer: lastMessage };
+
+          if (items.length > 0) {
+            lastMessage = items[items.length - 1];
+          }
+          return from(
+            items.map((item) =>
+              item.operation === AnswerOperation.error
+                ? mapErrorResponseFromAnswer(item)
+                : ({ type: 'answer', answer: item } as AragResponse),
+            ),
+          );
         }),
       );
   }
