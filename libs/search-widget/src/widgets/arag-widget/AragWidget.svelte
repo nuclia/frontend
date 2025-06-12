@@ -4,18 +4,22 @@
   }} />
 
 <script lang="ts">
-  import { Nuclia, type NucliaOptions } from '@nuclia/core';
+  import { Nuclia, type AragAnswerContext, type NucliaOptions } from '@nuclia/core';
   import { BehaviorSubject, filter, firstValueFrom, switchMap, take, tap } from 'rxjs';
   import { onMount } from 'svelte';
+  import { Expander, LoadingDots } from '../../common';
   import globalCss from '../../common/global.css?inline';
   import { SearchInput } from '../../components';
   import {
     addAragAnswer,
+    aragAnswerState,
+    fillState,
     getApiErrors,
     isEmptySearchQuery,
     loadFonts,
     loadSvgSprite,
     resetNuclia,
+    resetState,
     searchQuery,
     setAragError,
     setAragQuestion,
@@ -99,9 +103,19 @@
   function stopInteraction() {
     if (nucliaAPI && session) {
       nucliaAPI.arag.stopInteraction(session);
-      stopAgent();
     }
+    stopAgent();
   }
+
+  const aragLastMessage = $derived(
+    aragAnswerState.answers.length > 0 ? aragAnswerState.answers[aragAnswerState.answers.length - 1] : undefined,
+  );
+  const contextList = $derived.by<AragAnswerContext[]>(() => {
+    console.log(`Answer list:`, $state.snapshot(aragAnswerState.answers));
+    return aragAnswerState.answers
+      .filter((message) => !!message.context)
+      .map((message) => message.context as AragAnswerContext);
+  });
 </script>
 
 <svelte:element this={'style'}>{@html globalCss}</svelte:element>
@@ -111,7 +125,56 @@
   data-version="__NUCLIA_DEV_VERSION__">
   {#if $ready && !!svgSprite}
     <div class="search-box">
+      <button onclick={() => fillState()}>Run demo</button>
+      <button onclick={() => resetState()}>Reset</button>
       <SearchInput on:resetQuery={() => stopInteraction()} />
+      {#if aragAnswerState.running}
+        <div class="loading-container"><LoadingDots small={true} /></div>
+      {/if}
+    </div>
+
+    <div class="arag-results-container">
+      {#if aragLastMessage?.answer}
+        <strong>Answer:</strong>
+        <blockquote>{aragLastMessage.answer}</blockquote>
+      {/if}
+      {#if aragAnswerState.error}
+        Error: {aragAnswerState.error.detail}
+      {/if}
+      {#if aragAnswerState.running || aragLastMessage?.answer}
+        <Expander expanded={!aragLastMessage?.answer}>
+          {#snippet header()}
+            <div class="title-s">Details</div>
+          {/snippet}
+          <p class="step">
+            <strong>Running agent {aragLastMessage?.step?.module}:</strong>
+            {aragLastMessage?.step?.title}…
+          </p>
+
+          {#each contextList as context}
+            <div class="step">
+              <p>
+                <strong>Agent {context.agent} context:</strong>
+              </p>
+              <Expander expanded={false}>
+                {#snippet header()}
+                  {context.question}
+                {/snippet}
+                <ul>
+                  <li>
+                    <strong>Answer</strong>
+                    : {context.answer}
+                  </li>
+                  <li>
+                    <strong>Summary</strong>
+                    : {context.summary}
+                  </li>
+                </ul>
+              </Expander>
+            </div>
+          {/each}
+        </Expander>
+      {/if}
     </div>
   {/if}
   <div

@@ -4,7 +4,7 @@
   const arag = 'f1c0a434-4419-4816-a265-8b43505cbd3e'; // Agent dragon
   const account = 'fc1ebf90-632b-4ca5-a406-ca93ccf1920d'; // mat-testing
   const session = 'da7bb69f67864275b8bd1e07f312957c';
-  // FIXME: don't commit API key
+  // WARNING: don't commit API key
   const apikey = '';
   // const kb = '1f4e4651-580c-40db-8d20-c8dfdfffa530'; // books
   // const kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat

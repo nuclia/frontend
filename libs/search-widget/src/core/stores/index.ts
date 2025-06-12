@@ -1,5 +1,5 @@
 export * from './answers.store';
-export * from './arag.state.svelte';
+export * from './arag-state.svelte';
 export * from './effects';
 export * from './entities.store';
 export * from './graph.store';
