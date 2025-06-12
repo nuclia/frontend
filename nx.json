@@ -1,15 +1,6 @@
 {
-  "affected": {
-    "defaultBase": "main"
-  },
   "cli": {
     "packageManager": "yarn"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nx/workspace/tasks-runners/default",
-      "options": {}
-    }
   },
   "generators": {
     "@nx/angular:application": {
@@ -73,6 +64,5 @@
       "!{projectRoot}/src/test-setup.[jt]s"
     ]
   },
-  "parallel": 1,
-  "useLegacyCache": true
+  "parallel": 1
 }

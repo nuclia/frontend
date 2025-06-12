@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { IErrorResponse } from '../../models';
 import { ResourceProperties } from '../db.models';
 import { IKnowledgeBoxBase, IKnowledgeBoxItem, InviteKbData, IWritableKnowledgeBox, ResourcePagination } from '../kb';
 import { ExtractedDataTypes } from '../resource';
@@ -62,8 +63,12 @@ export interface IRetrievalAgent
   getSession(uuid: string, show?: SessionProperties[], extracted?: ExtractedDataTypes[]): Observable<ISession>;
   listSessions(page?: number, size?: number): Observable<SessionList>;
   createSession(session: SessionCreation): Observable<SessionCreationResponse>;
-  interaction(sessionId: string, question: string): Observable<AragAnswer[]>;
-  getWsUrl(sessionId: string, fromCursor?: number): Observable<string>;
+  interact(
+    sessionId: string,
+    question: string,
+    method: 'POST' | 'WS',
+  ): Observable<{ type: 'answer'; answer: AragAnswer } | IErrorResponse>;
+  stopInteraction(sessionId: string): void;
 
   inviteToAgent(data: InviteKbData): Observable<void>;
 

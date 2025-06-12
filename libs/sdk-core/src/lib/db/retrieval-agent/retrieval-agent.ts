@@ -1,7 +1,14 @@
-import { map, Observable } from 'rxjs';
+import { from, map, Observable, Subject, switchMap } from 'rxjs';
+import { IErrorResponse } from '../../models';
 import { InviteKbData, WritableKnowledgeBox } from '../kb';
 import { Driver, DriverCreation } from './driver.models';
-import { AragAnswer, InteractionOperation } from './interactions.models';
+import {
+  AnswerOperation,
+  AragAnswer,
+  AragResponse,
+  InteractionOperation,
+  mapErrorResponseFromAnswer,
+} from './interactions.models';
 import {
   ContextAgent,
   ContextAgentCreation,
@@ -26,6 +33,8 @@ import { ISession } from './session.models';
  * Provides access to all the Retrieval Agent contents and services.
  */
 export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAgent {
+  private wsConnections: { [sessionId: string]: WebSocket } = {};
+
   /**
    * The Retrieval Agent path on the regional API.
    */
@@ -79,21 +88,105 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
     return this.nuclia.rest.post<SessionCreationResponse>(`${this.path}/sessions`, session);
   }
 
+  interact(
+    sessionId: string,
+    question: string,
+    method: 'POST' | 'WS' = 'WS',
+  ): Observable<AragResponse | IErrorResponse> {
+    switch (method) {
+      case 'POST':
+        return this._interactThroughPost(sessionId, question);
+      case 'WS':
+        return this._interactThroughWs(sessionId, question);
+    }
+  }
+
+  stopInteraction(sessionId: string) {
+    if (this.wsConnections[sessionId]) {
+      this.wsConnections[sessionId].send(JSON.stringify({ question: '', operation: InteractionOperation.quit }));
+      this.wsConnections[sessionId].close(1000);
+      delete this.wsConnections[sessionId];
+    }
+  }
+
+  private _interactThroughWs(
+    sessionId: string,
+    question: string,
+    fromCursor?: number,
+  ): Observable<AragResponse | IErrorResponse> {
+    const answerSubject = new Subject<AragResponse | IErrorResponse>();
+    let lastMessage: AragAnswer | undefined;
+    this.getWsUrl(sessionId, fromCursor).subscribe({
+      next: (wsUrl) => {
+        const ws = new WebSocket(wsUrl);
+        this.wsConnections[sessionId] = ws;
+        ws.onopen = () => {
+          const message = { question, operation: InteractionOperation.question };
+          // and send the question
+          ws.send(JSON.stringify(message));
+        };
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data) {
+            lastMessage = data as AragAnswer;
+            if (lastMessage.operation === AnswerOperation.done) {
+              ws.close(1000);
+              answerSubject.next({ type: 'answer', answer: lastMessage });
+              answerSubject.complete();
+            } else if (lastMessage.operation === AnswerOperation.error) {
+              ws.close(1000);
+              answerSubject.next(mapErrorResponseFromAnswer(lastMessage));
+              answerSubject.complete();
+            } else {
+              answerSubject.next({ type: 'answer', answer: lastMessage });
+            }
+          }
+        };
+        ws.onerror = (error) => {
+          answerSubject.next({ type: 'error', status: -1, detail: 'WebSocket error', body: error });
+          answerSubject.complete();
+        };
+
+        ws.onclose = (event) => {
+          // When close status is not a normal one, we check we got all the answers
+          if (event.code === 1000 || lastMessage?.operation === AnswerOperation.done) {
+            answerSubject.complete();
+          } else {
+            // If not we reopen a connection from the last seqId
+            const lastSeqId = lastMessage?.seqid || null;
+            if (lastSeqId !== null) {
+              this._interactThroughWs(sessionId, question, lastSeqId + 1);
+            } else {
+              answerSubject.complete();
+            }
+          }
+        };
+      },
+      error: (error) => {
+        answerSubject.next({ type: 'error', status: error.status, detail: error.detail, body: error.body });
+        answerSubject.complete();
+      },
+    });
+
+    return answerSubject.asObservable();
+  }
+
   /**
-   * Interact with the session with am HTTP POST request. This method doesn't allow to have feedbacks while the agent is running, we only get the end results once everything is done.
+   * Interact with the session with an HTTP POST request.
    * @param sessionId Session identifier
    * @param question Question to send to the agent
    * @returns
    */
-  interaction(sessionId: string, question: string): Observable<AragAnswer[]> {
+  private _interactThroughPost(sessionId: string, question: string): Observable<AragResponse | IErrorResponse> {
     const fullPath = this.getInteractionPath(sessionId);
+    let lastMessage: AragAnswer | undefined;
     return this.nuclia.rest
       .getStreamedResponse(fullPath, {
         question,
         operation: InteractionOperation.question,
       })
       .pipe(
-        map(({ data }) => {
+        switchMap(({ data }) => {
           const rows = new TextDecoder()
             .decode(data.buffer)
             .split('\n')
@@ -103,14 +196,26 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
             previous += row;
             try {
               const obj = JSON.parse(previous) as AragAnswer;
-              list.push(obj);
+              if (!lastMessage || (lastMessage.seqid && obj.seqid && obj.seqid > lastMessage.seqid)) {
+                list.push(obj);
+              }
               previous = '';
             } catch (e) {
               // block is not complete yet
             }
             return list;
           }, [] as AragAnswer[]);
-          return items;
+
+          if (items.length > 0) {
+            lastMessage = items[items.length - 1];
+          }
+          return from(
+            items.map((item) =>
+              item.operation === AnswerOperation.error
+                ? mapErrorResponseFromAnswer(item)
+                : ({ type: 'answer', answer: item } as AragResponse),
+            ),
+          );
         }),
       );
   }
@@ -121,7 +226,7 @@ export class RetrievalAgent extends WritableKnowledgeBox implements IRetrievalAg
   private getWsPath(sessionId: string): string {
     return `${this.getInteractionPath(sessionId)}/ws`;
   }
-  getWsUrl(sessionId: string, fromCursor?: number) {
+  private getWsUrl(sessionId: string, fromCursor?: number) {
     const path = this.getWsPath(sessionId);
     return this.getTempToken({ agent_session: sessionId }, true).pipe(
       map((token) => {

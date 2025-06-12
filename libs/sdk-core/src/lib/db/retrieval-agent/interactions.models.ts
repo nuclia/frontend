@@ -1,3 +1,4 @@
+import { IErrorResponse } from '../../models';
 import { AragModule } from './retrieval-agent.types';
 
 export enum InteractionOperation {
@@ -10,6 +11,11 @@ export enum AnswerOperation {
   start = 2,
   done = 3,
   error = 4,
+}
+
+export interface AragResponse {
+  type: 'answer';
+  answer: AragAnswer;
 }
 
 export interface AragAnswer {
@@ -25,7 +31,7 @@ export interface AragAnswer {
 export interface AragAnswerStep {
   original_question_uuid: string;
   actual_question_uuid: string;
-  module: AragModule;
+  module: AragModule | 'router'; // FIXME: remove router once backend will be fixed
   title: string;
   value: string;
   reason: string;
@@ -56,4 +62,13 @@ export interface AragAnswerContext {
   answer: string | null;
   title: string;
   missing: unknown;
+}
+
+export function mapErrorResponseFromAnswer(message: AragAnswer): IErrorResponse {
+  return {
+    type: 'error',
+    status: AnswerOperation.error,
+    detail: message.exception?.detail || '',
+    body: message,
+  };
 }
