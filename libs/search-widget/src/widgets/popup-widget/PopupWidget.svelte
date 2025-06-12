@@ -11,7 +11,14 @@
   import { onMount } from 'svelte';
   import SearchBar from '../search-widget/SearchBar.svelte';
   import SearchResults from '../search-widget/SearchResults.svelte';
-  import { getApiErrors, isEmptySearchQuery, pendingResults, showResults } from '../../core';
+  import {
+    getApiErrors,
+    isEmptySearchQuery,
+    pendingResults,
+    previewKey,
+    showResults,
+    hasPermalinkToRender,
+  } from '../../core';
   import type { KBStates, Reranker, Widget } from '@nuclia/core';
 
   interface Props {
@@ -118,6 +125,9 @@
     const searchButtons = document.querySelectorAll('[data-nuclia="search-widget-button"]');
     if (searchButtons.length > 0) {
       searchButtons.forEach((button) => button.addEventListener('click', toggleSearchVisibility));
+      if (hasPermalinkToRender()) {
+        visible = true;
+      }
       return true;
     } else {
       return false;

@@ -120,6 +120,11 @@ export function getUrlParams(): URLSearchParams {
   return new URLSearchParams(params);
 }
 
+export function hasPermalinkToRender(): boolean {
+  const urlParams = getUrlParams();
+  return !!urlParams.get(previewKey) || !!urlParams.get(queryKey);
+}
+
 export const getPreviewParam = (resourceId: string, field: FieldId) => {
   return `${resourceId}|${field.field_type}|${field.field_id}`;
 };
