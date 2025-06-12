@@ -1,9 +1,9 @@
-import { Db, KnowledgeBox } from './db';
+import { firstValueFrom } from 'rxjs';
 import { Authentication } from './auth';
+import { Db, KnowledgeBox, RetrievalAgent } from './db';
+import { Events } from './events';
 import type { IAuthentication, IDb, INuclia, IRest, NucliaOptions, PromiseMapper } from './models';
 import { Rest } from './rest';
-import { firstValueFrom } from 'rxjs';
-import { Events } from './events';
 
 export class Nuclia implements INuclia {
   options: NucliaOptions;
@@ -15,6 +15,7 @@ export class Nuclia implements INuclia {
   db: IDb;
   events = new Events();
   private readKb?: KnowledgeBox;
+  private _arag?: RetrievalAgent;
 
   /** The Nuclia global backend URL. */
   get backend(): string {
@@ -42,6 +43,26 @@ export class Nuclia implements INuclia {
       });
     }
     return this.readKb;
+  }
+
+  /**
+   * Direct access to the current Retrieval Agent instance
+   */
+  get arag(): RetrievalAgent {
+    if (this.options.standalone) {
+      throw new Error('Retrieval agent is not available on standalone mode.');
+    } else if (!this.options.knowledgeBox || !this.options.zone) {
+      throw new Error('zone and knowledge box (ie. retrieval agent) id must be defined in the Nuclia options');
+    }
+    if (!this._arag) {
+      this._arag = new RetrievalAgent(this, '', {
+        id: this.options.knowledgeBox,
+        zone: this.options.zone || '',
+        slug: this.options.kbSlug || '',
+        title: '',
+      });
+    }
+    return this._arag;
   }
 
   /** Similar to `knowledgeBox`, but the returned object exposes `Promises` instead of RxJS `Observables`. */
