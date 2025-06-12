@@ -51,7 +51,7 @@ export class TestPanelComponent implements OnInit {
   runningQuestion = testAgentQuestion;
   rawAnswers = testAgentAnswersByCategory;
 
-  stopDisabled = computed(() => this.runningTest() === false);
+  stopDisabled = computed(() => this.runningTest() === false || !this.useWs);
 
   constructor() {
     effect(() => {

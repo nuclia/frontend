@@ -73,6 +73,7 @@ const testAgent = signal<{
   answers: [],
 });
 
+// prettier-ignore
 export function resetTestAgent() {
   testAgent.set({
     running: false,
@@ -183,7 +184,9 @@ interface RawAnswersByCategory {
 function addAnswerToCategory(categories: RawAnswersByCategory, data: AragAnswer) {
   let module: AragModule | null = null;
   if (data.step) {
-    module = data.step.module;
+    // FIXME: backend is not consitent in term of step modules for now.
+    // Clean up this temporary fix once it become consisten
+    module = data.step.module === 'router' ? 'ask' : data.step.module;
   } else if (data.context) {
     module = data.context.agent;
   }
