@@ -15,7 +15,7 @@
   } from '@nuclia/core';
   import { BehaviorSubject, delay, filter, firstValueFrom, of } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
-  import globalCss from '../../common/_global.scss?inline';
+  import globalCss from '../../common/global.css?inline';
   import { Viewer } from '../../components';
   import Chat from '../../components/answer/Chat.svelte';
   import {

@@ -14,7 +14,7 @@
   import { ResourceProperties } from '@nuclia/core';
   import { BehaviorSubject, filter, firstValueFrom, forkJoin, Observable } from 'rxjs';
   import { createEventDispatcher, onMount } from 'svelte';
-  import globalCss from '../../common/_global.scss?inline';
+  import globalCss from '../../common/global.css?inline';
   import { onClosePreview, Viewer } from '../../components';
   import type { TypedResult } from '../../core';
   import {

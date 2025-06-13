@@ -13,7 +13,7 @@
   import { take } from 'rxjs/operators';
   import { createEventDispatcher, onMount } from 'svelte';
   import { InfiniteScroll, LoadingDots } from '../../common';
-  import globalCss from '../../common/_global.scss?inline';
+  import globalCss from '../../common/global.css?inline';
   import { logEvent } from '../../core';
   import { getApiErrors, initNuclia, resetNuclia } from '../../core/api';
   import { _, setLang } from '../../core/i18n';
