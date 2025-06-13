@@ -59,6 +59,12 @@
     </pa-toggle>
     @if (useCustomModel) {
       <ng-container formGroupName="llm">
+        @if (vllmOnly) {
+          <!-- TODO: remove when backend will indicate which LLMs have visual capability -->
+          <nsi-info-card type="warning">
+            {{ 'kb.ai-models.extraction.config.processing.vllm_config.custom-model-warning' | translate }}
+          </nsi-info-card>
+        }
         <pa-select
           formControlName="generative_model"
           [label]="'kb.ai-models.extraction.config.generative-model' | translate">

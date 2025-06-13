@@ -613,6 +613,7 @@
 	"kb.ai-models.extraction.config.processing.rules.rule": "Règle",
 	"kb.ai-models.extraction.config.processing.rules.rules-help": "Vous pouvez fournir des règles supplémentaires au LLM visuel:",
 	"kb.ai-models.extraction.config.processing.title": "Traitements spécifiques",
+	"kb.ai-models.extraction.config.processing.vllm_config.custom-model-warning": "Assurez-vous de sélectionner un modèle doté de capacités visuelles.",
 	"kb.ai-models.extraction.config.processing.vllm_config.help": "Utile pour les mises en page non standard ou les tableaux complexes. Cela peut également améliorer l'extraction des pages numérisées.",
 	"kb.ai-models.extraction.config.processing.vllm_config.label": "LLM visuel",
 	"kb.ai-models.extraction.config.processing.vllm_config.warning": "Veuillez garder à l’esprit que l’utilisation de cette fonctionnalité entraîne une consommation de jetons Nuclia.",

@@ -613,6 +613,7 @@
 	"kb.ai-models.extraction.config.processing.rules.rule": "Regla",
 	"kb.ai-models.extraction.config.processing.rules.rules-help": "Puede proporcionar reglas adicionales al LLM visual:",
 	"kb.ai-models.extraction.config.processing.title": "Procesamientos específicos",
+	"kb.ai-models.extraction.config.processing.vllm_config.custom-model-warning": "Asegúrese de seleccionar un modelo con capacidad visual.",
 	"kb.ai-models.extraction.config.processing.vllm_config.help": "Útil para diseños de página no estándar o tablas complejas. También puede mejorar la extracción de páginas escaneadas.",
 	"kb.ai-models.extraction.config.processing.vllm_config.label": "LLM visual",
 	"kb.ai-models.extraction.config.processing.vllm_config.warning": "Tenga en cuenta que el uso de esta función conlleva el consumo de Nuclia tokens.",
